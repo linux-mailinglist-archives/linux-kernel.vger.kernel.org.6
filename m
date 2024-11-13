@@ -1,191 +1,268 @@
-Return-Path: <linux-kernel+bounces-407638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 749299C7052
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:11:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EB779C7056
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 14:12:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03C201F2330B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:11:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2EE81F2139B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 13:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A73CB1DF726;
-	Wed, 13 Nov 2024 13:11:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A351E04A2;
+	Wed, 13 Nov 2024 13:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n0FhHWPv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="PJtXT4LK"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E7F1DF251;
-	Wed, 13 Nov 2024 13:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80DD21DE3CA;
+	Wed, 13 Nov 2024 13:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731503477; cv=none; b=CUui97C2vsv1Eefa/bmywwbHiayisBRtZAC7Pt2IBKJZmhpUKzWrZ/F9z7fk1+7upggU/efAmJdW5g4wKdUQLO/f/QCSvVSDDfUIpvZBgy1iKTvQLfPhpaow0MG6nM53oDoVQQ4yiO0Pd8uqrS18sLSI/YaWpkl1msxJgXJ6R8M=
+	t=1731503532; cv=none; b=MZfFzxogtHaWhw0EBw2ZaAjC0unLfUomj1V+TWGFTvOGHtJzC17BbDCY1HRkTKnVDVXJQ4xjOvV+lniSwmQasbfX6vqFrYQcd//7S80YBRzD2ureVRfoc1g+xflkk6Lkr9HSTuhpQqRz43Gzvu5B18GbwP7TJDvQ1tmEihxU57I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731503477; c=relaxed/simple;
-	bh=zfie/E1ejEu920lClS0G5OiKpMGDI5CUJMDzl5K4lUw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BBvbgvbZM1OhUGKdJrRQ7wS/DLDVuX7zBKYj+V76afjLu6ltEwxENEnsfuXSFI02ssGGJzpLdC2gp8L9rrJWhiqnVjH+8ilFjGW8d0gEblXdG0OB00+UjGUAbO1k0ORnlF+ctnX96KMZTcFW1bJHMT6klnNDNPw3lS3TCiX5uu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n0FhHWPv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF8C7C4CECD;
-	Wed, 13 Nov 2024 13:11:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731503477;
-	bh=zfie/E1ejEu920lClS0G5OiKpMGDI5CUJMDzl5K4lUw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=n0FhHWPvyQLvZqMB0eHaqoWOdCe+0yMbIxwkd4UHj/PRkITg5aY/zrvQpf9mzUl3A
-	 vDS77KbwSD24OeCXnTmtm2V/eq3m959skV5YPVzSVBvc4QIFZsRN9r37FlU5XTlzF8
-	 T9f1CFScJBbnacidmq3ax1kozbvxuCws9BzUZbYGLX2QfID0xh1kyL711hnZMlt1Jb
-	 xceYZ8psEsKkplKTnocUPT4odCOb+8LQ45+ZnNNfC3p72N8tRXTG53+UD/eAO3Oels
-	 Dn4wo4T8PKNWmleothWFfZB+XImKsujIYAkYpLsF330dusfZHzMJr3RkuDHsVSMv5z
-	 M4Qq12Xsl8fLw==
-Date: Wed, 13 Nov 2024 14:11:12 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Simona Vetter <simona.vetter@ffwll.ch>, Thorsten Leemhuis
- <linux@leemhuis.info>, Jonathan Corbet <corbet@lwn.net>,
- workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] docs: reminder to not expose potentially private
- email addresses
-Message-ID: <20241113141112.10bde770@foz.lan>
-In-Reply-To: <20241113113650.GA31681@pendragon.ideasonboard.com>
-References: <f5bc0639a20d6fac68062466d5e3dd0519588d08.1731486825.git.linux@leemhuis.info>
-	<20241113102619.GC29944@pendragon.ideasonboard.com>
-	<b160f728-b34f-433d-8cc4-677605990936@leemhuis.info>
-	<CAKMK7uGwK0OYu+cVJnUVd5nMZRG8jJBXJUuo0xFXdyrubJFW4g@mail.gmail.com>
-	<20241113113650.GA31681@pendragon.ideasonboard.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1731503532; c=relaxed/simple;
+	bh=wFh7kXldyLqNCa6sxY5WzyOfpchYIA4lSf9YzeARiKk=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=VOydGnsk131RXqKSUqralHKNM0ulr5yv8AdFO/8Kj64GE+jEtNdjJlKMB6Dfo4EKWt39rQ9XOL0Kg6VL0KRs1AROxyWFSyUB5ur/Pk2MbbGXUBqxW/Mq0Y1CMgWS6xKVDnRg2IFtubU+I/9HOXdozdkB7KtoCRV02ouageays0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=PJtXT4LK; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1731503528;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5nbqMK/vu5S+EB8yB3j6/LM3bRJoguYvwGMWQ/46LZk=;
+	b=PJtXT4LKXzMdwKPDnSFOu2Zu5pLcSSqZyrhtfdFdRp3nsgHkNp75NTmSyCZ0KsXk/Vdttr
+	cXGDeY6bFxmzhtcbPAgdL/ilrU1OxmenfyFD611R/gPUGmRJs4yGP4y60Ierqnxbl+WtRZ
+	8Gg7RsmG5kYaNEr2WHYfYssVkdgry/uU6nJR66QbWo4QnBl/ylJiNgDfCFN+MvskoSUqLs
+	wm51Ly/fDEo9Sl/KQHeThFL13VZ5U2v8ejevruNygDtxFKa6QlREIwVHfesOfg7QU27hSr
+	R7imDatYBIldY5SxmIZQTMlaFVW9R8ht2BrMmvI5JdkFtRbD+q+KPh4aA4v29w==
+Date: Wed, 13 Nov 2024 14:12:07 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: =?UTF-8?Q?Tam=C3=A1s_Sz=C5=B1cs?= <tszucs@linux.com>
+Cc: Jonas Karlman <jonas@kwiboo.se>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, FUKAUMI Naoki
+ <naoki@radxa.com>, Chukun Pan <amadeus@jmu.edu.cn>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] arm64: dts: rockchip: Enable sdmmc2 on rock-3b and
+ set it up for SDIO devices
+In-Reply-To: <CA+Gksr+6pjsHY=Mx2gmPnTV6TRbD_4dXptAqph8RSpR1pR9LtA@mail.gmail.com>
+References: <20241111181807.13211-1-tszucs@linux.com>
+ <20241111181807.13211-3-tszucs@linux.com>
+ <9fbdf05c-42e6-4ac5-9542-805200bc8c87@kwiboo.se>
+ <260af427ae64d6f3b02a1579ee83eb3b@manjaro.org>
+ <CA+Gksr+WvS-S+jeYYG=Bo9cemvnJmjsmU4aj9YnD3t8-HY7wbw@mail.gmail.com>
+ <303ad3910668e852d6670d1c79dc22e0@manjaro.org>
+ <CA+GksrLLbfyHdvu1VYB4S+W78C0T1DEWu5W6pP2-g3KdBeT-LQ@mail.gmail.com>
+ <eed7f35d1311eced9144fd7a5656b58f@manjaro.org>
+ <CA+Gksr+aoDazT3b7uPFTOf5h3Drn3idZ5Kiris3k1fAxweXcyQ@mail.gmail.com>
+ <7229c5a3e9cef5dc05f6c42a846fcd29@manjaro.org>
+ <CA+Gksr+6pjsHY=Mx2gmPnTV6TRbD_4dXptAqph8RSpR1pR9LtA@mail.gmail.com>
+Message-ID: <3b0fbf639ac2f6cce233049a941ece04@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Em Wed, 13 Nov 2024 13:36:50 +0200
-Laurent Pinchart <laurent.pinchart@ideasonboard.com> escreveu:
+Hello Tamas,
 
-> On Wed, Nov 13, 2024 at 11:59:39AM +0100, Simona Vetter wrote:
-> > On Wed, 13 Nov 2024 at 11:55, Thorsten Leemhuis <linux@leemhuis.info> wrote:  
-> > >
-> > > On 13.11.24 11:26, Laurent Pinchart wrote:  
-> > > > On Wed, Nov 13, 2024 at 09:35:03AM +0100, Thorsten Leemhuis wrote:  
-> > > >> Remind developers to not expose private email addresses, as some people
-> > > >> become upset if their addresses end up in the lore archives or the Linux
-> > > >> git tree.
-> > > >>
-> > > >> While at it, explicitly mention the dangers of our bugzilla instance
-> > > >> here, as it makes it easy to forget that email addresses visible there
-> > > >> are only shown to logged-in users.
-> > > >>
-> > > >> These are not a theoretical issues, as one maintainer mentioned that
-> > > >> his employer received a EU GDPR (general data protection regulation)
-> > > >> complaint after exposuring a email address used in bugzilla through a
-> > > >> tag in a patch description.
-> > > >>
-> > > >> Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
-> > > >> ---
-> > > >> Note: this triggers a few checkpatch.pl complaints that are irrelevant
-> > > >> when when ti comes to changes like this.
-> > > >>
-> > > >> v1:
-> > > >> - initial version
-> > > >> ---
-> > > >>  Documentation/process/5.Posting.rst          | 17 +++++++++---
-> > > >>  Documentation/process/submitting-patches.rst | 27 +++++++++++++++++---
-> > > >>  2 files changed, 36 insertions(+), 8 deletions(-)
-> > > >>
-> > > >> diff --git a/Documentation/process/5.Posting.rst b/Documentation/process/5.Posting.rst
-> > > >> index b3eff03ea2491c..1f6942948db349 100644
-> > > >> --- a/Documentation/process/5.Posting.rst
-> > > >> +++ b/Documentation/process/5.Posting.rst
-> > > >> @@ -264,10 +264,19 @@ The tags in common use are:
-> > > >>   - Cc: the named person received a copy of the patch and had the
-> > > >>     opportunity to comment on it.
-> > > >>
-> > > >> -Be careful in the addition of tags to your patches, as only Cc: is appropriate
-> > > >> -for addition without the explicit permission of the person named; using
-> > > >> -Reported-by: is fine most of the time as well, but ask for permission if
-> > > >> -the bug was reported in private.
-> > > >> +Note, remember to respect other people's privacy when adding these tags:
-> > > >> +
-> > > >> + - Only specify email addresses, if owners explicitly permitted their use or
-> > > >> +   are fine with exposing them to the public based on previous actions found in
-> > > >> +   the lore archives. In practice you therefore often will be unable to hastily
-> > > >> +   specify addresses for users of bug trackers, as those usually do expose the
-> > > >> +   email addresses at all or only to logged in users. The latter is the case
-> > > >> +   for bugzilla.kernel.org, whose privacy policy explicitly states that 'your
-> > > >> +   email address will never be displayed to logged out users'.
-> > > >> +
-> > > >> + - Only Cc: is appropriate for addition without the explicit permission of the  
-> > > >
-> > > > Isn't Cc: as problematic as any other tag, is it ends up in both the git
-> > > > history and the lore archive ?  
-> > >
-> > > Hmmm. Good point, thx for bringing this up. And of course it is. But
-> > > it's the second point in a list and thus should not overrule the first
-> > > one. But I can see that it could be read like that. :-/ Up to some point
-> > > I even was aware of it, as the added "given the above constraints" later
-> > > in that point shows. But I guess I wanted to stay close to the previous
-> > > text and that is not sufficient.
-> > >
-> > > Hmmm. So how about writing the second point like this:
-> > >
-> > > """
-> > > Even if the email address is free to use in tags, it is only appropriate
-> > > to use in Cc: without explicit permission of the person named; using it
-> > > in Reported-by: likewise is often appropriate as well, but ask for
-> > > permission for bugs reported in private.
-> > > """
-> > >
-> > > Hope that "likewise" is sufficient here...  
-> > 
-> > I think these two points are fairly unrelated. The first is about
-> > using the email address, for privacy concerns. The second point is
-> > about adding the tag at all, which you're not allowed to do except for
-> > Cc: tags. Because forging reviewed/acked/tested-by tags is really not
-> > good. Putting the "no tag forgeries" rule under the privacy section is
-> > I think what's confusing here.  
+On 2024-11-13 12:17, Tamás Szűcs wrote:
+> On Wed, Nov 13, 2024 at 11:44 AM Dragan Simic <dsimic@manjaro.org> 
+> wrote:
+>> On 2024-11-13 11:24, Tamás Szűcs wrote:
+>> > On Wed, Nov 13, 2024 at 12:38 AM Dragan Simic <dsimic@manjaro.org>
+>> > wrote:
+>> >> On 2024-11-12 22:05, Tamás Szűcs wrote:
+>> >> > On Tue, Nov 12, 2024 at 4:16 PM Dragan Simic <dsimic@manjaro.org>
+>> >> > wrote:
+>> >> >> On 2024-11-12 15:35, Tamás Szűcs wrote:
+>> >> >> > I think it was totally fine to disable sdmmc2 at first, especially if
+>> >> >> > it couldn’t be tested or wasn’t needed right away. From what I’ve
+>> >> >> > seen, this board works great even at higher clock speeds than what
+>> >> >> > rk356x-base.dtsi suggests. I don’t have access to the RK3568 errata,
+>> >> >> > and there don’t seem to be any limits mentioned in the TRM either.
+>> >> >> > Overall, this board is doing just fine as it is.
+>> >> >>
+>> >> >> Sorry, I'm missing the point of mentioning some clock speeds?  Any
+>> >> >> chances, please, to clarify that a bit?
+>> >> >
+>> >> > It's all about stress scenarios, right. Sustained transfer at maximum
+>> >> > clock, multiple SD/MMC blocks used concurrently. That kind of thing.
+>> >> > Different data rates forced. I hope that answers your question.
+>> >>
+>> >> Ah, I see.  Though, I don't think we should worry much about that,
+>> >> although testing it all is, of course, a good thing to do.
+>> >
+>> > Better be safe than sorry. Let's just say I've seen worse.
+>> >
+>> >> >> > Regarding device tree overlays, they would be ideal for implementing
+>> >> >> > secondary functions, such as PCIe endpoint mode for users with
+>> >> >> > specific requirements. However, the primary functions for PCIe on the
+>> >> >> > M2E will be root complex mode, along with SDIO host, etc. In my view,
+>> >> >> > the hardware is well-designed and interconnected. Users have a
+>> >> >> > reasonable expectation that these primary functions should work
+>> >> >> > seamlessly without additional configuration, right out of the box.
+>> >> >>
+>> >> >> That's basically what I referred to in my earlier response, and in my
+>> >> >> previous response regarding the UART.  Users would expect the
+>> >> >> Bluetooth
+>> >> >> part to work as well, but the error messages I mentioned look nasty,
+>> >> >> so
+>> >> >> perhaps something should be done about that first.
+>> >> >
+>> >> > I'm not aware of any nasty error messages especially related to UART.
+>> >> > Well, MMC core will acknowledge when the platform part fails to
+>> >> > enumerate a device on sdmmc2, but there's nothing wrong with this.
+>> >> > It's not even an error -- certainly not a nasty one.
+>> >> >
+>> >> > [    1.799703] mmc_host mmc2: card is non-removable.
+>> >> > [    1.935011] mmc_host mmc2: Bus speed (slot 0) = 375000Hz (slot req
+>> >> > 400000Hz, actual 375000HZ div = 0)
+>> >> > [    7.195009] mmc_host mmc2: Bus speed (slot 0) = 375000Hz (slot req
+>> >> > 375000Hz, actual 375000HZ div = 0)
+>> >> > [   13.029540] mmc2: Failed to initialize a non-removable card
+>> >>
+>> >> This looks acceptable to me, but I'm now not really sure that we
+>> >> should enable the sdmmc2 in the board dts.  Let me explain.
+>> >>
+>> >> As Jonas demonstrated with the WiFi+Bluetooth DT overlay, additional
+>> >> DT configuration is needed to actually make an SDIO M.2 module plugged
+>> >> into the ROCK 3B's M.2 slot work, so what do we actually get from
+>> >> enabling the sdmmc2 in the board dts?  Just some error messages in
+>> >> the kernel log :) and AFAICT no additional functionality when an SDIO
+>> >> M.2 module is actually plugged into the slot.
+>> >
+>> > I think if you want to add a specific bluetooth DT overlay for your
+>> > favorite module, you should.
+>> > Our modules need this much and it's very useful already. I'm not
+>> > interested in nailing down every single one we have in a separate
+>> > overlay at this point.
+>> 
+>> It would help if you'd share more details about the M.2 SDIO
+>> module you're referring to, please.
 > 
-> Reviewed-by, Acked-by, Tested-by or Signed-off-by clearly must never be
-> forged, and that's indeed unrelated to privacy. Separating the privacy
-> concerns and the no-forgery concerns sounds like it would make the
-> document clearer.
+> Kindly refer to 3/3.
+
+Just had a look at that product list page, and even tried having
+a look at MAYA-W4_ProductSummary_UBXDOC-465451970-3565.pdf, for
+example, and all I see are some high-level product descriptions,
+with no technical details we'd need to have a look at.
+
+>> >> >> > Dragan, what did you mean by SDIO related power timing requirements?
+>> >> >>
+>> >> >> Whenever there's an SDIO module, there's usually some required timing
+>> >> >> of the power rails.  Though, I don't know what's that like with the
+>> >> >> non-standard M.2 SDIO modules that Radxa sells, which are intended to
+>> >> >> be used on Radxa boards with "hybrid" M.2 slots.
+>> >> >
+>> >> > Ok, I see. Not always. I can't comment on Radxa's SDIO module but I'm
+>> >> > sure it's reasonably standard. And so is the M.2 Key E on this board.
+>> >> > Actually, part of the appeal is that all standard buses are very
+>> >> > nicely wired up. I want everybody to be able to use them.
+>> >>
+>> >> Yes, but getting it all wired in some way unfortunately doesn't mean
+>> >> that it will all work without additional DT configuration in place,
+>> >> as described above.
+>> >
+>> > Agreed, well these are the common changes needed.
+>> 
+>> They are common indeed, but unless demonstrated they're all that's
+>> needed to get some M.2 SDIO module fully functional, it escapes me
+>> to see what are the benefits of including (and more importantly,
+>> enabling) these changes under the umbrella of commonality.
 > 
-> It's not just tag forgery though. I can imagine that some people would
-> be fine with their e-mail address appearing in lore, but wouldn't when
-> to be listed in any tag in the git history.
+> Please don't make it look harder than it is. Load device driver,
+> download firmware(s), you're set.
 
-I can't imagine that. This is for sure an exceptional case, on which
-people should explicitly notify.
+Well, all I can say to this is that you may be making the things
+look way simpler than they usually are.  Though, let's also see
+what other people will respond with.
 
-> I try to ask permission
-> before adding a Reported-by or Co-developed-by tag, even if the person
-> has participated in public discussions on mailing lists.
-
-If someone reports a problem publicly, IMO the right thing to do is
-to just add a reported-by to credit who reported the issue, except
-if, while doing the report, someone explicitly asks not to do so.
-Personally, I never faced such case, though.
-
-Co-developed-by requires explicit ack, perhaps with one exception:
-if we receive two or more independent patches with the same diff, which
-is common when there is an issue reported by commonly used CIs and
-static analyzers, all with their SoBs, I guess it should be ok to
-group them into a single patch and use Co-developed-by.
-
-> Should we
-> generalize asking for permission ? The alternative of saying that
-> Reported-by can "often" be added without explicit permission doesn't
-> seem very clear to me.
-
-I don't like "often" either, but it should be ok in the absense of a
-clearer alternative.
-
-Thanks,
-Mauro
+>> >> Also, I'm not really sure there's some strict standard for the "GPIO"
+>> >> and "UART" M.2 modules, that part of the specification was/is a bit
+>> >> blurry or perhaps even non-existent.  It's been a while since I wrote
+>> >> the M.2 aricle on English Wikipedia, :) maybe it's become defined
+>> >> better in the meantime.
+>> >>
+>> >> >> Once again, please use inline replying. [*]
+>> >> >>
+>> >> >> [*] https://en.wikipedia.org/wiki/Posting_style
+>> >> >>
+>> >> >> > On Tue, Nov 12, 2024 at 5:41 AM Dragan Simic <dsimic@manjaro.org>
+>> >> >> > wrote:
+>> >> >> >>
+>> >> >> >> Hello Jonas and Tamas,
+>> >> >> >>
+>> >> >> >> On 2024-11-11 20:06, Jonas Karlman wrote:
+>> >> >> >> > On 2024-11-11 19:17, Tamás Szűcs wrote:
+>> >> >> >> >> Enable SDIO on Radxa ROCK 3 Model B M.2 Key E. Add all supported UHS-I
+>> >> >> >> >> rates and
+>> >> >> >> >> enable 200 MHz maximum clock. Also, allow host wakeup via SDIO IRQ.
+>> >> >> >> >>
+>> >> >> >> >> Signed-off-by: Tamás Szűcs <tszucs@linux.com>
+>> >> >> >> >> ---
+>> >> >> >> >>  arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts | 8 +++++++-
+>> >> >> >> >>  1 file changed, 7 insertions(+), 1 deletion(-)
+>> >> >> >> >>
+>> >> >> >> >> diff --git a/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
+>> >> >> >> >> b/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
+>> >> >> >> >> index 242af5337cdf..b7527ba418f7 100644
+>> >> >> >> >> --- a/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
+>> >> >> >> >> +++ b/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
+>> >> >> >> >> @@ -688,14 +688,20 @@ &sdmmc2 {
+>> >> >> >> >>      cap-sd-highspeed;
+>> >> >> >> >>      cap-sdio-irq;
+>> >> >> >> >>      keep-power-in-suspend;
+>> >> >> >> >> +    max-frequency = <200000000>;
+>> >> >> >> >>      mmc-pwrseq = <&sdio_pwrseq>;
+>> >> >> >> >>      non-removable;
+>> >> >> >> >>      pinctrl-names = "default";
+>> >> >> >> >>      pinctrl-0 = <&sdmmc2m0_bus4 &sdmmc2m0_clk &sdmmc2m0_cmd>;
+>> >> >> >> >> +    sd-uhs-sdr12;
+>> >> >> >> >> +    sd-uhs-sdr25;
+>> >> >> >> >> +    sd-uhs-sdr50;
+>> >> >> >> >
+>> >> >> >> > I thought that lower speeds was implied by uhs-sdr104?
+>> >> >> >>
+>> >> >> >> Last time I went through the MMC drivers, they were implied.  IIRC,
+>> >> >> >> such backward mode compatibility is actually a requirement made by
+>> >> >> >> the MMC specification.
+>> >> >> >>
+>> >> >> >> >>      sd-uhs-sdr104;
+>> >> >> >> >> +    sd-uhs-ddr50;
+>> >> >> >> >>      vmmc-supply = <&vcc3v3_sys2>;
+>> >> >> >> >>      vqmmc-supply = <&vcc_1v8>;
+>> >> >> >> >> -    status = "disabled";
+>> >> >> >> >> +    wakeup-source;
+>> >> >> >> >> +    status = "okay";
+>> >> >> >> >
+>> >> >> >> > This should probably be enabled using an dt-overlay, there is no
+>> >> >> >> > SDIO device embedded on the board and the reason I left it disabled
+>> >> >> >> > in original board DT submission.
+>> >> >> >>
+>> >> >> >> Just went through the ROCK 3B schematic, version 1.51, and I think
+>> >> >> >> there should be no need for a separate overlay, because sdmmc2 goes
+>> >> >> >> to the M.2 slot on the board, which any user can plug an M.2 module
+>> >> >> >> into, and the SDIO interface is kind-of self-discoverable.
+>> >> >> >>
+>> >> >> >> Of course, all that unless there are some horribly looking :) error
+>> >> >> >> messages emitted to the kernel log when nothing is actually found,
+>> >> >> >> in which case the SDIO/MMC driers should be fixed first.  Also, I'm
+>> >> >> >> not sure what do we do with the possible SDIO-related power timing
+>> >> >> >> requirements?
 
