@@ -1,163 +1,165 @@
-Return-Path: <linux-kernel+bounces-407314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A0659C6BB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:46:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C2549C6BBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 10:47:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3780285A4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:46:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09E3A1F239D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8568B1F80CB;
-	Wed, 13 Nov 2024 09:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1521F8183;
+	Wed, 13 Nov 2024 09:47:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZKEyeK+6"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="buhMb819";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yDbbnAly";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="buhMb819";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yDbbnAly"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84220165EE3;
-	Wed, 13 Nov 2024 09:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1949D165EE3;
+	Wed, 13 Nov 2024 09:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731491176; cv=none; b=lIn6DprxnZJuJtYaT48eeegKB3DqPLvno6IUgaMizRuTdUYkrw98h2iSkLwYLiP649XxItOLm+rXq6TIs6fTaPJoZHzhfmuI3qnIFamqrkbmqyEbPswAc2AlKPqBcs7g6nbDlUfcTBnhvdm9ImwomxSzpDHfP7UGRGjemmtxRG0=
+	t=1731491221; cv=none; b=DO27v5vRBK4QHp9SBo1AkUPDSfGJDRYzAkr9jm0xCVSnUTkB392n2UezDitbDXdGZYrckoj8SY3vdUPjkSrIsAv0gpd+kGQpJ9WZ8WQwJ4AmonpSw3Tk4a0J1eYkNN66+BjhA0VYWdS7rMjHp31q9ZDuoOp9iejpWLgWQ80NBDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731491176; c=relaxed/simple;
-	bh=apE8jTV/ZkMww8QZb6cSv/1Or8/nWuo6+FYangEzxtA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V4FclAF9Ptj6lczMMbssUy2ga5ikANBvSUDyoEPYLYgX6IBaO80DSmnz5lCYPK7hokF17N9mVtKHewC62Kug7h/VqOHqDiZRcZSg4uk9KLGh7xJqYa4j69+Zg6zgSG/nTAtm5KjOm3Bm07zWtx1PtI5I8MxO6JUdFDVJFPIM5QA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZKEyeK+6; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B325FFF806;
-	Wed, 13 Nov 2024 09:46:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731491171;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1731491221; c=relaxed/simple;
+	bh=IGZBxUf6j8Fre9U4gMPDk+vI2SZImVE4LQ5NSf7swnk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AUTJhBs0zlK+Ac9zOAaxM8u6DTfUScpKJ65re6/lTfCkRbiOb4wMXy6gtPq+/8DG55BCRVarv+wy3S5SY14U6OhIHGZuXk1Z4zGxOPNzpJNzsFwKeITGscrK/Z7FBHoOuJ1FYhXfh9R/X9Hd3M9FU3NDcqUDYnOIRYMbtXdhh/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=buhMb819; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yDbbnAly; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=buhMb819; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yDbbnAly; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 40C641F37C;
+	Wed, 13 Nov 2024 09:46:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731491217; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=pHq+vYIrolU1nZUuSeLnYvUIGG1CZQC1c8NU0N+rIFc=;
-	b=ZKEyeK+6V5aRy331CcLZv4lE78JJh8eOCitutwiN/gjfA2MyLxRPJxyzjrZUvfD+58OFwd
-	u2wDu+EBSc+OBJN3w/29epRgCBPrlb/h6H/e/moCnbZEGnmtuRGeay2fiUVgWqRp9U2WX4
-	PU6m5qhVvh93cDuuTmQYtuFRhN/PNqXH1KFjcPutLbB3b9TLFEa3WkmMLjR4bSwz9C5At9
-	SLPa268aBsgfm4Odfu6S46V7BTEH6LmoCP0iqMxPdXwzgCgEtBf3Taja1KXAXp+Prug4v2
-	2+VWQXeqU4+/esBoCSJ6oU6satKkWtK4s6koW3E+p761tvCcEwQJ02PGSeYdWg==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Kory Maincent <kory.maincent@bootlin.com>, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-media@vger.kernel.org
-Subject:
- Re: [PATCH 1/9] dt-bindings: misc: Describe TI FPC202 dual port controller
-Date: Wed, 13 Nov 2024 10:46:10 +0100
-Message-ID: <4965494.31r3eYUQgx@fw-rgant>
-In-Reply-To: <20241108-reimburse-saucy-2682e370469a@spud>
-References:
- <20241108-fpc202-v1-0-fe42c698bc92@bootlin.com>
- <20241108-fpc202-v1-1-fe42c698bc92@bootlin.com>
- <20241108-reimburse-saucy-2682e370469a@spud>
+	bh=eWkg1hOqi+ycsd64ANkNglK3giwDFCmogHKWtrMRowk=;
+	b=buhMb819wZHU/8iqf/q4eAXXZ66+XnK0O9RtpFEbzsRnuZKFR/vQ9XNEHpi4PQ+SDjQYxh
+	3omCBb0a5uhojNHRXGnAinSk560ZVg7A4pxDGXEPRUpkJxU3iirp+4ZByUaCA3ofpYFVNs
+	+MFT4aXkNxijSPRa/QI2UwbMQBQAABk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731491217;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eWkg1hOqi+ycsd64ANkNglK3giwDFCmogHKWtrMRowk=;
+	b=yDbbnAlyF2GKghvTsSyOgC73RfRuK0CmRznxsYAEyAh7MPWFuUpakA1CP7JMuTqVqtx8tI
+	o3BlYDuKhMn48kDQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731491217; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eWkg1hOqi+ycsd64ANkNglK3giwDFCmogHKWtrMRowk=;
+	b=buhMb819wZHU/8iqf/q4eAXXZ66+XnK0O9RtpFEbzsRnuZKFR/vQ9XNEHpi4PQ+SDjQYxh
+	3omCBb0a5uhojNHRXGnAinSk560ZVg7A4pxDGXEPRUpkJxU3iirp+4ZByUaCA3ofpYFVNs
+	+MFT4aXkNxijSPRa/QI2UwbMQBQAABk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731491217;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eWkg1hOqi+ycsd64ANkNglK3giwDFCmogHKWtrMRowk=;
+	b=yDbbnAlyF2GKghvTsSyOgC73RfRuK0CmRznxsYAEyAh7MPWFuUpakA1CP7JMuTqVqtx8tI
+	o3BlYDuKhMn48kDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0AE5C13A6E;
+	Wed, 13 Nov 2024 09:46:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id wZs+ApF1NGcpFAAAD6G6ig
+	(envelope-from <hare@suse.de>); Wed, 13 Nov 2024 09:46:57 +0000
+Message-ID: <d73f8c20-27c1-4c13-9be3-7f127f9f093d@suse.de>
+Date: Wed, 13 Nov 2024 10:46:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-GND-Sasl: romain.gantois@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/8] driver core: bus: add irq_get_affinity callback to
+ bus_type
+To: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Bjorn Helgaas <bhelgaas@google.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Sagi Grimberg <sagi@grimberg.me>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, virtualization@lists.linux.dev,
+ linux-scsi@vger.kernel.org, megaraidlinux.pdl@broadcom.com,
+ mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com,
+ storagedev@microchip.com, linux-nvme@lists.infradead.org
+References: <20241112-refactor-blk-affinity-helpers-v3-0-573bfca0cbd8@kernel.org>
+ <20241112-refactor-blk-affinity-helpers-v3-1-573bfca0cbd8@kernel.org>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20241112-refactor-blk-affinity-helpers-v3-1-573bfca0cbd8@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-Hello Conor,
+On 11/12/24 14:26, Daniel Wagner wrote:
+> Introducing a callback in struct bus_type so that a subsystem
+> can hook up the getters directly. This approach avoids exposing
+> random getters in any subsystems APIs.
+> 
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> Signed-off-by: Daniel Wagner <wagi@kernel.org>
+> ---
+>   include/linux/device/bus.h | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-On vendredi 8 novembre 2024 19:23:37 heure normale d=E2=80=99Europe central=
-e Conor Dooley wrote:
-> On Fri, Nov 08, 2024 at 04:36:53PM +0100, Romain Gantois wrote:
-=2E..
-> > index
-> > 0000000000000000000000000000000000000000..ad11abe11e68aa266acdd6b43a5b4=
-25
-> > 340bbbba8 --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/misc/ti,fpc202.yaml
-> > @@ -0,0 +1,75 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/misc/ti,fpc202.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: TI FPC202 dual port controller with expanded IOs
-> > +
-> > +maintainers:
-> > +  - Romain Gantois <romain.gantois@bootlin.com>
-> > +
-> > +allOf:
-> > +  - $ref: /schemas/i2c/i2c-atr.yaml#
->=20
-> Gotta say, this looks absolutely nothing like the other i2c-atr user!
+Cheers,
 
-Indeed, the critical difference between the two is that the existing
-user has a global alias pool whereas this component doesn't. So
-the "i2c-alias-pool" property isn't relevant here, and it's currently
-the only property defined by the i2c-atr binding.
-
-We did consider defining a per-channel alias pool in the i2c-atr binding
-but the results were quite awkward and it didn't seem like this property
-belonged in the device tree at all, since the alias values were hardwired
-into the FPC202 and were known in advance.
-
->=20
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: ti,fpc202
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  gpio-controller: true
-> > +
-> > +  "#gpio-cells":
-> > +    const: 2
-> > +
-> > +  enable-gpios:
-> > +    description:
-> > +      Specifier for the GPIO connected to the EN pin.
-> > +    maxItems: 1
-> > +
->=20
-> > +  port0:
-> ports usually go in a ports node, and are port@0 not port0. That said,
-> these are i2c buses, so the node name would usually be i2c@ for those.
-> In fact, given you have i2c-mux as your node name, the binding for that
-> expects you to format your child nodes like '^i2c@[0-9a-f]+$'. Is there
-> a reason you can't just drop this ports business and go with a pattern
-> property here that restricts the pattern to '^i2c@[0-1]$'?
-
-I didn't think of restricting the pattern in this way, that is indeed more
-appropriate than using static port names.
-
-Moreover, I don't think that the "i2c-mux" naming is appropriate here,
-as the FPC202 isn't a mux at all. I'll look for a better name for the next
-iteration.
-
-Thanks,
-
-=2D-=20
-Romain Gantois, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
-
-
+Han nes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
