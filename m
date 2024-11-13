@@ -1,117 +1,234 @@
-Return-Path: <linux-kernel+bounces-408039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CB3D9C7962
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:56:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AAA99C79AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:13:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20B1928671A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:56:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D040B35A0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7941FF5F2;
-	Wed, 13 Nov 2024 16:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1CEF1FAC4F;
+	Wed, 13 Nov 2024 16:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uVr+GHjt"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="r0AXdNlU";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iF6RUUFg"
+Received: from flow-a5-smtp.messagingengine.com (flow-a5-smtp.messagingengine.com [103.168.172.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CC41E1C38
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3C314F114;
+	Wed, 13 Nov 2024 16:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731516965; cv=none; b=Y/gU27Zk326QIcr1+LdLhuHeYMovAcJXpRavl/Et74uFtaJKrsjzz8cLwXy4pfRCAV27tFKtBPOuRzKs57rp7aNThMgGe3TklsFicZb2JCgYy9QgXYOWnvfJnQW/diTmc4R533c5MCaL48p/g8u2pyJ3x1nE4KmdTp0M/VXDEVc=
+	t=1731517004; cv=none; b=bFbmPzbLBfa35V9/dyEr9dZ7dqo2pM4dIIZfqWGotLkn7BfqwzNf49goRZekfV/TBB8Z9JbCx99MCjSp+PKYoow3YnnZgHWsZnY0DYEhp3p8T2CikSYf9+lBY+mnvsJFbhdJzGhX7c9H5Q7Teu/XvL3M5GxBsQWnb+6fl3sJeCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731516965; c=relaxed/simple;
-	bh=KhrrPKe7vIHE0T1AZ9VXSsNl1IkVw8BKbNVwlgzjjoQ=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=LBi7hJ//H68OU3jWBmkIfAUVohcHwrZYHvEIJoCtj50LANCZXwDINWCjrpIBky8EMo2uaTwDnbJfQKfmN03F4TIPDqAxX/vb0LKJK6zjacPkplwlTNK9mm32fVGaw1P5iQTpTs2Nsnc+LdsbwK0t0vnbkJsDNk6zSofhIhzqOxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uVr+GHjt; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e33152c8225so14064295276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:56:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731516962; x=1732121762; darn=vger.kernel.org;
-        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=L+V0k3XPAXmnG43u3p674HXKA6KoBO29C9FYM4hkixQ=;
-        b=uVr+GHjtAtj/2xp52uanYsGfYzbhbWVEWbXLjO2Vmq8yOXxe1/V/RrKf2UE6Cnzbnw
-         w7q/EWHq/2Pjwh64Q3q8s9lplfuLj34Hz6n+9cw1xsqySoAvyEgYBPJ7K9kDAibLLtGK
-         anFgpWFGCDg3Pd9L/sCYfFKo1RUy9jCEJ+FGEAo6zkF7vlRKVpFylCNu2OXXO+OSLxrC
-         IlPfd0B1syF/75APuWnW97Thyb9BzCKi3ODS/SDybZ0bx4ySKRvk6UNIHfryhCD1gWcw
-         0cXe1lynIbFAuC5fvwnYJcA5IYT2OlS88F8O6+X71wiTP8IOxR7ZnkcCQyqkDITDT2bG
-         j3Cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731516962; x=1732121762;
-        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L+V0k3XPAXmnG43u3p674HXKA6KoBO29C9FYM4hkixQ=;
-        b=KiLDNsjTqy71HASyJm2R60YVfiR6/OTvTNxHUusotcpAGukJxpIgVGzaJHMqbWkFVh
-         rAkUqhhDfAnaXtETKVKCszSnVSNDGsuhAqiHmHTVWiiDdHl01LivpMgu4E15AHfg4FRv
-         8/BY7ZJ+Avds+HbKtRJ6uW/zgoDRMnFVfxaeW7N9C0y0Y8avuZ0pHzKlfEZy05hAmNZV
-         Xmh/pBkCyul4sqW7L77K3j5U0IeDOhgbimNZsdmPevUE/+H+ltC6O6W67XUIWwz1mVx2
-         qLH5TA/Sv2slpX8JZKwNKQ71CnKyYWgnqmO+LXQKDdDQGs3sdrspjIXBA01tBVQMXNnI
-         G+Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCXsVN7sKFX9jS9e2trejpj1aoc289Sq2ppA7eU1hFxc+7M0flvvD9Y/WOpyT/LRnxU8nC/XmJcHFCV/OFU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtpzRqH+453lWVzx8IrQhpKNfOwjNm6jFtRqZCTi2X6kyi5pgX
-	aUyAim/fVbUZGOTfSFmfKnICda6nIS+2b0v93+fMlWvR6Fart2HCzwp4R3VHAEx/aQviswiqXB5
-	nsODu5g==
-X-Google-Smtp-Source: AGHT+IGvQ+kdAce1NUAauszdwhpxP1WrhuGqEC/mW/M0hscdCrhGUXjO2u2QURd78mtp7VKccYIOr8ZSDXW5
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:ba3:1d9a:12e0:c4af])
- (user=irogers job=sendgmr) by 2002:a25:9004:0:b0:e24:a28e:9399 with SMTP id
- 3f1490d57ef6-e337f85ef60mr16884276.4.1731516962118; Wed, 13 Nov 2024 08:56:02
- -0800 (PST)
-Date: Wed, 13 Nov 2024 08:55:58 -0800
-Message-Id: <20241113165558.628856-1-irogers@google.com>
+	s=arc-20240116; t=1731517004; c=relaxed/simple;
+	bh=Gln7f93bMjVMGM8xqXr/FHKCuVM+DsDKYRfLO5thCqA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t36AS9YfkIGvxmmbKYxZ5BJgi1/xfLnkZnX+XfFoMYLzs2f/w4H37ESIHH8SUw2rvVowObvSun+lEGcq47wKrpyjzCV+EW4dAdrX57a5BPM5LmLUAAkaLUrQ7U0YlQMxYuky/29KCnARaEtuv1FvwznIjVSxRO1a7sfh0AZBic8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=r0AXdNlU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iF6RUUFg; arc=none smtp.client-ip=103.168.172.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailflow.phl.internal (Postfix) with ESMTP id 5DC3F202C79;
+	Wed, 13 Nov 2024 11:56:39 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-11.internal (MEProxy); Wed, 13 Nov 2024 11:56:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1731516999; x=
+	1731520599; bh=SP9rlrFBpcmQ6qKKULiRCZbz8BEPn3pzFUcaZuEaIt8=; b=r
+	0AXdNlU0anIB8CPrpnEyAD2XxZrL1kCJqpecobCcuaQzJeASnNO0cZyZeKVL/nqo
+	2zLl3T96oxzDPJA75HkVwFpzbRYudsWrImuquUSKdgPxl0u3rJdJMUlawqR24IKR
+	XOAg181QzkYWaFftZWToq6rRQStcfC+pSUicW5nQLoGFxE17y+FWTl6d3hDXLUNT
+	tDqxqTk1zT/jQ0UK5Iq5MrzOSImWBECPDgTtJ77rmrJ3qV9DB3cGzFsSX7/72fZJ
+	D+QvKPOfGfDXciwvG23NaVOZyWgA3lw5M3Q5PtzK6wz2MdtQN3Os4+2Mvvc+jPQF
+	TvSpcSPS5GFrYSk/QP5Ng==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1731516999; x=1731520599; bh=SP9rlrFBpcmQ6qKKULiRCZbz8BEPn3pzFUc
+	aZuEaIt8=; b=iF6RUUFgdferwXcDgGkd09QsXwqMEaoT8HoltP6UFq4Ujunj0QV
+	hsSjJNocVn0587t52oIsnrsDfBDy5hXWEgXSFKOkVK0xMudAmR9/EiWi4Jqk4fyM
+	DFOSmoRlgxOyXtx7iV8XSY/Ql7vbr8GhWWvAl1lGd0ik/L1pTgGNDD56X5Cv0cZI
+	YyKHCOBXYDqq1CtvpnXY2UDf/wOrFgqHu2ksJ/NsuX3z5WMIWatxbzidXRDQaCNa
+	hXQMG8wnJ1rLf1HQsVPYnMN6dyRljhlJ2TA0Zuyux5ugbhA0tEZriQ7+2JfrbJwx
+	EQfHTakD/BdB3dHqB6f0BPc7LW9yhMBpKSg==
+X-ME-Sender: <xms:Rto0Z5fL_VdDY9UywVksG2h2QXlviah0MpCQPVQDzHMv5qsxLq1poQ>
+    <xme:Rto0Z3N1I2UDCMZu0wxPATkC0lvu7x7pEOqYx9-4_Ns5LTDdved5cCi29QdEtGzc6
+    X4EnK8PPQYhq6AuRoM>
+X-ME-Received: <xmr:Rto0ZyisAuMpR9ch-_EmqCmM5dxoQqdSjawn2rozLu3K1eyh8rzeYiTp2ezx>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddtgdelgecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecu
+    hfhrohhmpefurggsrhhinhgrucffuhgsrhhotggruceoshgusehquhgvrghshihsnhgrih
+    hlrdhnvghtqeenucggtffrrghtthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefhkeeg
+    teehgeehieffgfeuvdeuffefgfduffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgspghr
+    tghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhhtohhnih
+    hosehophgvnhhvphhnrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhl
+    vgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    epphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeguohhnrghlugdrhhhu
+    nhhtvghrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheprhihrgiirghnohhvrdhsrdgrsehgmhgrihhlrdgtohhmpdhr
+    tghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepnhgvthguvghvse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:Rto0Zy-pkriPlH_BMJvCH8carHqd_rn0lz0RZ46T_giYfIQk1LTZ1g>
+    <xmx:Rto0Z1sHClCbXPfAVpaB9ryK3SqsjT0JfYpdDToTf0J4nmzb-43EQg>
+    <xmx:Rto0ZxGAq0lJade3WxcBFG_tTPbXz3EAbvnh35z3QPxUGpRNSHl6sg>
+    <xmx:Rto0Z8NeXrN8tO1_5N6mSGf0j3kxSafTgQz2J1Z0PbA8qaUgwtfxeg>
+    <xmx:R9o0Z7Du1OK8x-SwQljn3rHODjsLBQeqGwS1xaWY8GTR4s8kKEu1PfT->
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 13 Nov 2024 11:56:38 -0500 (EST)
+Date: Wed, 13 Nov 2024 17:56:36 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next v11 18/23] ovpn: implement peer
+ add/get/dump/delete via netlink
+Message-ID: <ZzTaRNeZjo48ArsR@hog>
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-18-de4698c73a25@openvpn.net>
+ <Zyjk781vOqV4kXhJ@hog>
+ <76191b85-6844-4a85-bb9c-ad19aa5110c5@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
-Subject: [PATCH v1] perf jevents: Fix build issue in '*/' in event descriptions
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, 
-	Sandipan Das <sandipan.das@amd.com>, Xu Yang <xu.yang_2@nxp.com>, 
-	Benjamin Gray <bgray@linux.ibm.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <76191b85-6844-4a85-bb9c-ad19aa5110c5@openvpn.net>
 
-For big string offsets we output comments for what string the offset
-is for. If the string contains a '*/' as seen in Intel Arrowlake event
-descriptions, then this causes C parsing issues for the generated
-pmu-events.c. Catch such '*/' values and escape to avoid this.
+2024-11-12, 15:19:50 +0100, Antonio Quartulli wrote:
+> On 04/11/2024 16:14, Sabrina Dubroca wrote:
+> > 2024-10-29, 11:47:31 +0100, Antonio Quartulli wrote:
+> > > +static int ovpn_nl_peer_precheck(struct ovpn_struct *ovpn,
+> > > +				 struct genl_info *info,
+> > > +				 struct nlattr **attrs)
+> > > +{
+> > > +	if (NL_REQ_ATTR_CHECK(info->extack, info->attrs[OVPN_A_PEER], attrs,
+> > > +			      OVPN_A_PEER_ID))
+> > > +		return -EINVAL;
+> > > +
+> > > +	if (attrs[OVPN_A_PEER_REMOTE_IPV4] && attrs[OVPN_A_PEER_REMOTE_IPV6]) {
+> > > +		NL_SET_ERR_MSG_MOD(info->extack,
+> > > +				   "cannot specify both remote IPv4 or IPv6 address");
+> > > +		return -EINVAL;
+> > > +	}
+> > > +
+> > > +	if (!attrs[OVPN_A_PEER_REMOTE_IPV4] &&
+> > > +	    !attrs[OVPN_A_PEER_REMOTE_IPV6] && attrs[OVPN_A_PEER_REMOTE_PORT]) {
+> > > +		NL_SET_ERR_MSG_MOD(info->extack,
+> > > +				   "cannot specify remote port without IP address");
+> > > +		return -EINVAL;
+> > > +	}
+> > > +
+> > > +	if (!attrs[OVPN_A_PEER_REMOTE_IPV4] &&
+> > > +	    attrs[OVPN_A_PEER_LOCAL_IPV4]) {
+> > > +		NL_SET_ERR_MSG_MOD(info->extack,
+> > > +				   "cannot specify local IPv4 address without remote");
+> > > +		return -EINVAL;
+> > > +	}
+> > > +
+> > > +	if (!attrs[OVPN_A_PEER_REMOTE_IPV6] &&
+> > > +	    attrs[OVPN_A_PEER_LOCAL_IPV6]) {
+> > 
+> > I think these consistency checks should account for v4mapped
+> > addresses. With remote=v4mapped and local=v6 we'll end up with an
+> > incorrect ipv4 "local" address (taken out of the ipv6 address's first
+> > 4B by ovpn_peer_reset_sockaddr). With remote=ipv6 and local=v4mapped,
+> > we'll pass the last 4B of OVPN_A_PEER_LOCAL_IPV6 to
+> > ovpn_peer_reset_sockaddr and try to read 16B (the full ipv6 address)
+> > out of that.
+> 
+> Right, a v4mapped address would fool this check.
+> How about checking if both or none addresses are v4mapped? This way we
+> should prevent such cases.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/pmu-events/jevents.py | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+I don't know when userspace would use v4mapped addresses, but treating
+a v4mapped address as a "proper" ipv4 address should work with the
+rest of the code, since you already have the conversion in
+ovpn_nl_attr_local_ip and ovpn_nl_attr_sockaddr_remote. So maybe you
+could do something like (rough idea and completely untested):
 
-diff --git a/tools/perf/pmu-events/jevents.py b/tools/perf/pmu-events/jevents.py
-index 6e71b09dbc2a..028cf3c43881 100755
---- a/tools/perf/pmu-events/jevents.py
-+++ b/tools/perf/pmu-events/jevents.py
-@@ -430,8 +430,11 @@ class JsonEvent:
-   def to_c_string(self, metric: bool) -> str:
-     """Representation of the event as a C struct initializer."""
- 
-+    def fix_comment(s: str) -> str:
-+        return s.replace('*/', '\*\/')
-+
-     s = self.build_c_string(metric)
--    return f'{{ { _bcs.offsets[s] } }}, /* {s} */\n'
-+    return f'{{ { _bcs.offsets[s] } }}, /* {fix_comment(s)} */\n'
- 
- 
- @lru_cache(maxsize=None)
+    static int get_family(attr_v4, attr_v6)
+    {
+       if (attr_v4)
+           return AF_INET;
+       if (attr_v6) {
+           if (ipv6_addr_v4mapped(attr_v6)
+               return AF_INET;
+           return AF_INET6;
+       }
+       return AF_UNSPEC;
+    }
+
+
+    // in _precheck:
+    // keep the   attrs[OVPN_A_PEER_REMOTE_IPV4] && attrs[OVPN_A_PEER_REMOTE_IPV6]  check
+    // maybe add a similar one for   LOCAL_IPV4 && LOCAL_IPV6
+
+    remote_family = get_family(attrs[OVPN_A_PEER_REMOTE_IPV4], attrs[OVPN_A_PEER_REMOTE_IPV6]);
+    local_family = get_family(attrs[OVPN_A_PEER_LOCAL_IPV4], attrs[OVPN_A_PEER_LOCAL_IPV6]);
+    if (remote_family != local_family) {
+        extack "incompatible address families";
+        return -EINVAL;
+    }
+
+That would mirror the conversion that
+ovpn_nl_attr_local_ip/ovpn_nl_attr_sockaddr_remote do.
+
+> > >   int ovpn_nl_peer_get_dumpit(struct sk_buff *skb, struct netlink_callback *cb)
+> > >   {
+> > [...]
+> > > +	} else {
+> > > +		rcu_read_lock();
+> > > +		hash_for_each_rcu(ovpn->peers->by_id, bkt, peer,
+> > > +				  hash_entry_id) {
+> > > +			/* skip already dumped peers that were dumped by
+> > > +			 * previous invocations
+> > > +			 */
+> > > +			if (last_idx > 0) {
+> > > +				last_idx--;
+> > > +				continue;
+> > > +			}
+> > 
+> > If a peer that was dumped during a previous invocation is removed in
+> > between, we'll miss one that's still present in the overall dump. I
+> > don't know how much it matters (I guses it depends on how the results
+> > of this dump are used by userspace), so I'll let you decide if this
+> > needs to be fixed immediately or if it can be ignored for now.
+> 
+> True, this is a risk I assumed.
+> Not extremely important if you ask me, but do you have any suggestion how to
+> avoid this in an elegant and lockless way?
+
+No, inconsistent dumps are an old problem with netlink, so I'm just
+mentioning it as something to be aware of. You can add
+genl_dump_check_consistent to let userspace know that it may have
+gotten incorrect information (you'll need to keep a counter and
+increment it when a peer is added/removed). On a very busy server you
+may never manage to get a consistent dump, if peers are going up and
+down very fast.
+
+There's been some progress for dumping netdevices in commit
+759ab1edb56c ("net: store netdevs in an xarray"), but that can still
+return incorrect data.
+
 -- 
-2.47.0.277.g8800431eea-goog
-
+Sabrina
 
