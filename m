@@ -1,102 +1,175 @@
-Return-Path: <linux-kernel+bounces-407150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EAF29C696E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:41:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 188E89C6972
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:43:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 095D5B25E15
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:41:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 614F2B24961
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BA317C7C9;
-	Wed, 13 Nov 2024 06:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B26185936;
+	Wed, 13 Nov 2024 06:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVg+GVaf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pzykdwsl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9088314F9FD;
-	Wed, 13 Nov 2024 06:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6C018133F
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 06:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731480096; cv=none; b=Lvyg3xNo6I2IcDI/z5Js1icyhNP2wkdTAul2COokTZLSl48I6ROtVZS8jGfHtOffp4upT7ImQfIyORqcQpg6jcYVh6Sv7P73teJn9gkBvYOGzY9GuMPxbhAEVq+9BsANGfsouA0HilPY+U089N0+h+TUg6o9Sq6ybOsXsA14TEE=
+	t=1731480217; cv=none; b=gXREtV5o5R8lytA4a5eqLor9B4q8qNKzkCzEnJwrPELGpx77lRz2pvKZG1IHO9YNZNZwXOsU2fTohcBV51ZE9FCGfCHPHGmpJk7kgKZ51Et3M+G/Q1XFj+D5TeSpUoxnxo+Os6Y36Vhx3fW7IaxWZQXypwZ2opHZs6n5Q+IoqfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731480096; c=relaxed/simple;
-	bh=wyQyDHdXtyzcRPz2ARXn4TOAdhuwmr5UYlMO4VyOe08=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=rKsq2HZLmtehef6laIEZ2xdHc0ncdk5iGFzp2gZCmBYoiaoRHl/qoBOAf5SQ1NGQQYxSDfUhIaFOqUB/QmNFpJeCWG/tnx6DUeoPUujjZiw+JyiWgnDoCCwptGaQVxLpTmU+senglMxmO8IaioOEd0gnspxr1W2mEXeBzpEEDFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iVg+GVaf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E24EC4CECD;
-	Wed, 13 Nov 2024 06:41:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731480096;
-	bh=wyQyDHdXtyzcRPz2ARXn4TOAdhuwmr5UYlMO4VyOe08=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=iVg+GVaf7TzsDb5ROiATlK6YmnGZpnTPtCf3ZmkWVtyv82UJ8wjnMoTdGV7OUFsXR
-	 zRXhsdxSYW0pwa6XyMRIlpafSWfukENwg5e9/zPrVTWGnAEXhg/jTz0ujtdRcWEBCT
-	 8Mcroin3/IfPwuNjNzUNd+YXFoViyHTmkVE0lU5VU8cdM1QeumcPnsWbqWsg5RQzFO
-	 oGxXTVaJwGFgAN9OfkqUz25JkoZA84UU3mLTEy5CM3dXfl9gGWfGcHc4ckBikrsvH3
-	 wtu+TCjXxNoiWiG7ioSnX5+Xh+syE2YNenbQByTt9DGuh/kJ4LFWztPJrDm+4MQMcU
-	 PQFaW19ZiB6lA==
-Message-ID: <e3ff8ec3-1995-408d-aa75-6afc11f51ebd@kernel.org>
-Date: Wed, 13 Nov 2024 15:41:34 +0900
+	s=arc-20240116; t=1731480217; c=relaxed/simple;
+	bh=1HntU/U9oIkJa4i1c5lKFEApaWnibKDf6f+RMdat61o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PRulO8WvWCPX3K1vVIGjFyaTe/huxYVlkqUzO2ha674zMKFSyTnPVz4K1RDXPKgg2kM2aUhXTgigO1U6ju9CCs4Npp2XyV2lNQ3vhQA4NpQ4Xvbozl+S0H1BaBQRBVUZdwXak+vvwMTuD8kRmZhfWSeMyj1g9kqZ+sGk9YmnTCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pzykdwsl; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731480215; x=1763016215;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1HntU/U9oIkJa4i1c5lKFEApaWnibKDf6f+RMdat61o=;
+  b=PzykdwslLWTmGU1iQnM/ehuaRCgWSXraY52O/Co5W98nK90F3qCK8KyD
+   gVOQnbpshY/CsGv69ZG2URpxQ0Mhfu7F1PU7ZUZtu2QFGCqPJmMdQwSF0
+   iBvE7ymWgVUimEyAvWAm2XdV8WCnMrsjia3GaS+QiEERoVcl3rD+FjxgE
+   MYaVd3dE7+5kZCXWFuTgwDFEu4d7NBssIxUzAXSNw2zulfB/bsKBvclUy
+   CjQXbbPT80Kwf8l+Rt1hO9MPK1to7V9fUcfv3+RZlV3NFqWHWK2K/4eHb
+   MsUqsgk05wHla7zpdp2DfNQcSXYVwBLnXC7x4pVgeLECWwsRQ/QpVf2OR
+   g==;
+X-CSE-ConnectionGUID: IlfRVBleQia30/8LcDDqog==
+X-CSE-MsgGUID: d+x+P3H4Rz6+u+Q8A+Wy6g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="18966249"
+X-IronPort-AV: E=Sophos;i="6.12,150,1728975600"; 
+   d="scan'208";a="18966249"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 22:43:35 -0800
+X-CSE-ConnectionGUID: gTHlVwJyR/+4vfkYN7Gf1w==
+X-CSE-MsgGUID: kzUO2/+xRpS8K/Koi01z9w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,150,1728975600"; 
+   d="scan'208";a="92232704"
+Received: from lkp-server01.sh.intel.com (HELO 80bd855f15b3) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 12 Nov 2024 22:43:30 -0800
+Received: from kbuild by 80bd855f15b3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tB768-00003h-1Q;
+	Wed, 13 Nov 2024 06:43:28 +0000
+Date: Wed, 13 Nov 2024 14:42:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yongbang Shi <shiyongbang@huawei.com>, xinliang.liu@linaro.org,
+	tiantao6@hisilicon.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+	daniel@ffwll.ch, kong.kongxinwei@hisilicon.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	liangjian010@huawei.com, chenjianmin@huawei.com,
+	lidongming5@huawei.com, shiyongbang@huawei.com, libaihan@huawei.com,
+	shenjian15@huawei.com, shaojijie@huawei.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 drm-dp 1/5] drm/hisilicon/hibmc: add dp aux in hibmc
+Message-ID: <202411131438.RZWYrWTE-lkp@intel.com>
+References: <20241112132348.2631150-2-shiyongbang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Damien Le Moal <dlemoal@kernel.org>
-Subject: Re: [PATCH v3] pinctrl: k210: Undef K210_PC_DEFAULT
-To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-Cc: linus.walleij@linaro.org, linux-riscv@lists.infradead.org,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241113063611.5330-1-zhangjiao2@cmss.chinamobile.com>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20241113063611.5330-1-zhangjiao2@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112132348.2631150-2-shiyongbang@huawei.com>
 
-On 11/13/24 15:36, zhangjiao2 wrote:
-> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-> 
-> When the temporary macro K210_PC_DEFAULT is no need anymore,
+Hi Yongbang,
 
-You forgot to fix "no need -> not needed".
-And you forgot to add my review tag as well.
+kernel test robot noticed the following build warnings:
 
-> use its name in the #undef statement instead of
-> the incorrect "DEFAULT" name.
-> 
-> Fixes: d4c34d09ab03 ("pinctrl: Add RISC-V Canaan Kendryte K210 FPIOA driver")
-> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-> ---
-> v2->v3:
-> 	Modify commit info.
-> 
->  drivers/pinctrl/pinctrl-k210.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-k210.c b/drivers/pinctrl/pinctrl-k210.c
-> index caf20215aaba..eddb01796a83 100644
-> --- a/drivers/pinctrl/pinctrl-k210.c
-> +++ b/drivers/pinctrl/pinctrl-k210.c
-> @@ -181,7 +181,7 @@ static const u32 k210_pinconf_mode_id_to_mode[] = {
->  	[K210_PC_DEFAULT_INT13] = K210_PC_MODE_IN | K210_PC_PU,
->  };
->  
-> -#undef DEFAULT
-> +#undef K210_PC_DEFAULT
->  
->  /*
->   * Pin functions configuration information.
+[auto build test WARNING on linus/master]
+[also build test WARNING on drm-misc/drm-misc-next v6.12-rc7 next-20241112]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Yongbang-Shi/drm-hisilicon-hibmc-add-dp-aux-in-hibmc/20241113-013224
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20241112132348.2631150-2-shiyongbang%40huawei.com
+patch subject: [PATCH v4 drm-dp 1/5] drm/hisilicon/hibmc: add dp aux in hibmc
+config: x86_64-buildonly-randconfig-003-20241113 (https://download.01.org/0day-ci/archive/20241113/202411131438.RZWYrWTE-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241113/202411131438.RZWYrWTE-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411131438.RZWYrWTE-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c:9:
+   In file included from drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h:14:
+   In file included from include/drm/display/drm_dp_helper.h:27:
+   In file included from include/linux/i2c.h:19:
+   In file included from include/linux/regulator/consumer.h:35:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:21:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c:9:
+>> drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h:31:11: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
+      31 |         value |= FIELD_PREP(mask, val);
+         |                  ^~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
+     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
+      72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+      73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      74 |                                  _pfx "type of reg too small for mask"); \
+         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+   include/linux/compiler_types.h:517:22: note: expanded from macro 'compiletime_assert'
+     517 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:505:23: note: expanded from macro '_compiletime_assert'
+     505 |         __compiletime_assert(condition, msg, prefix, suffix)
+         |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler_types.h:497:9: note: expanded from macro '__compiletime_assert'
+     497 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   2 warnings generated.
+
+
+vim +31 drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
+
+    22	
+    23	static inline void hibmc_dp_reg_write_field(struct hibmc_dp_dev *dp, u32 offset, u32 mask, u32 val)
+    24	{
+    25		u32 value;
+    26	
+    27		mutex_lock(&dp->lock);
+    28	
+    29		value = readl(dp->base + offset);
+    30		value &= ~mask;
+  > 31		value |= FIELD_PREP(mask, val);
+    32		writel(value, dp->base + offset);
+    33	
+    34		mutex_unlock(&dp->lock);
+    35	}
+    36	
 
 -- 
-Damien Le Moal
-Western Digital Research
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
