@@ -1,212 +1,222 @@
-Return-Path: <linux-kernel+bounces-407120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 078B89C6918
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:10:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0753E9C691A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 07:11:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA9072820AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:10:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0C411F23787
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 06:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CF017625F;
-	Wed, 13 Nov 2024 06:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB9A176ADB;
+	Wed, 13 Nov 2024 06:11:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="pvpYVg9n"
-Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="msavzauM"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2082.outbound.protection.outlook.com [40.107.243.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3667610F1
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 06:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731478230; cv=none; b=eg9QJd/jIlTQ9aY0wjLeIMRUtOVOxmMusJuqxYfOQl3P0Aho7oZ3DC7E/4Y67gTW1mQajxp0vCQje5ZSFbijsDiyoIy9kKpZW/1gcjXAvLQ2ZAgLEUYhZJGL9Ye8szy6J7jnpIm2vVQbS6mjnM7egg4/eexW3avfQ0JhtFwyx6o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731478230; c=relaxed/simple;
-	bh=o8cEd4noyujbrkmjxRhJsldqQk5Rilrgqa5P4dcoowM=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=tNs2AsTKKV9GBXiX8HGsFuAeWZuH6NccTEAF30/Rbx3odEr4X4vVNzyE3/Uj1dFyBrkxNbyi2uUB/kL6iGHryazRo3cnBZkYchtWTeuDyBgM+Yilf6YG2IXcX90oj+1Av5hhJb7EO/cmlkxI4V9Mambxu5OKFlKIfWYMcSsgX2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=pvpYVg9n; arc=none smtp.client-ip=44.202.169.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
-Received: from eig-obgw-5008a.ext.cloudfilter.net ([10.0.29.246])
-	by cmsmtp with ESMTPS
-	id Atj9tIA4oiA19B6aBtLYx3; Wed, 13 Nov 2024 06:10:27 +0000
-Received: from md-in-79.webhostbox.net ([43.225.55.182])
-	by cmsmtp with ESMTPS
-	id B6a8t7hMKOEiZB6a9tCHLJ; Wed, 13 Nov 2024 06:10:25 +0000
-X-Authority-Analysis: v=2.4 cv=K4AkHTWI c=1 sm=1 tr=0 ts=673442d1
- a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
- a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=-pn6D5nKLtMA:10
- a=adFrNvAlZa_jBKZnjswA:9 a=QEXdDO2ut3YA:10 a=ZCPYImcxYIQFgLOT52_G:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=IbJyGIYF+t0s5RGNOpKjoIQnVKjH/xfjQJ02Hcx//wY=; b=pvpYVg9n8DntXmS+V4Vhy7o/zg
-	aVTxKkjoOoFC5l4vT2DaRXchYrg5e+NgcELmsYXFwZ/8tvXorckG02G3m/ZMQo7LSwr5aadnTKA2Z
-	HhJgIF2WqWVig7Qml5Wdv8l2mVxyCciqQlCUXWYEE9x/eUXwBO4enSC/Uz+pJd4eLFSDBQL5WGUF/
-	6O5KssYI37VXId88b/kKWzFa79gJLfA/N6biu5xFvGCJGLxky/BmVFf8dequ5Oghw++QvszrnRahU
-	mLviAFI/XoH4IWSqklEPl1mT4Gzp2oJY57v+tCbvJR4UkQcjNGNgRRaULfFIMeimydocA1KXGEdJM
-	UT+x9MiQ==;
-Received: from [122.165.245.213] (port=35314 helo=[192.168.1.5])
-	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <parthiban@linumiz.com>)
-	id 1tB6a2-003Pv5-1e;
-	Wed, 13 Nov 2024 11:40:18 +0530
-Message-ID: <2ef6afa0-2756-493b-83a4-62e73a8e2af9@linumiz.com>
-Date: Wed, 13 Nov 2024 11:40:14 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3211A10F1;
+	Wed, 13 Nov 2024 06:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731478302; cv=fail; b=S/5soULQ0Tge2WI1UZU5FM9l5REEb/Uv2aFNOyFBmvWuu7wRBAsimiJ7gv190r3IMnJjpQJVuYzF3ZjtsLB1cRE3dcfTSCSL9WgPufLN33Z1mcBSavKoeeqkG/8qv+U9NcEH/4eSCNq0TFOpdeAQnqVkkBiewebjwi9AQsnsP30=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731478302; c=relaxed/simple;
+	bh=571gUQT/hZKe+sfF3B2vceLl1765gHuHzPqUq1HSnr0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=fO5Mlp3lWiaZQw8iskXiPvkkgSqUqASNDp/iSR/jZHA76TEcUgMAYaYJfFceDJdSSfVEcalXIQwImhFUcgiEvp74TvtI5bd1a2cwDSf38GGHAS4npmQoOwt17hBtHs3aEMignucjDWn9TYeSUVITxtNNJoBFXImkAfHY1rGuhmc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=msavzauM; arc=fail smtp.client-ip=40.107.243.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=y8AAFv1uWiUUriipQPpXwSS8ai+urmWQdYwPj3Z4k7zZc/uLAh5r+bxULDk/vhUqbTaaxZj+ViwOWuXAKfMk0xr4F5z9WOcu9Yer2bhZGYQc7KzRDAPMXH2x+x7rpeqvOMyUhYDRVuCLXvwv76U12csTkyVzmc4Fr2r5Ll9ol5mQW3rl17RhxukTfsykQHKLDXBgnVq3C+gNWRiz1UbCVLWxxdLnWwCQXoFR86psYMfb8mKCJHdojuYjtmIzy0C4gi5dIERh5ALis80SrqOemzH0ZJoknJRPFs68zEgoBBzuFrXwOirarxdcXqLSY01grKQWYG9khRghPA/5EjcP4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=T4oAjLSClmmbLP5BkY7NnpUuUSR8AvCmzDvYleVf+Xg=;
+ b=AwsSPYPgNeEWz57ayTkrVPPShrTAX7BLELKf4z2hgnGa9Rf5awEGvITVp1plrl+Ufz1E7waqxHQtAWEo/DlVGgGCz/hrlu8kskttZ7FLxx4xN2upHwZybr9POyyVdNJ8Y8BnB6ctvs+mIzqn4LPW/NiDoiheFKaeZonPLcjCmloOAHQKWv6YMPbfZxUeFk7qI/DjH0jhlzmosYqdxH4NMueNDohkXzuKElon824AXKqRnm6ERkwOPDPIYEBWk/o9sf+wXMOu5eqoPfLV/wPw51TCr0iicA/22TWYhcq6TEIsx0t1npdhvxEtPcABMBSQMpkdtLZneYUwRsn5G5oZ5Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=T4oAjLSClmmbLP5BkY7NnpUuUSR8AvCmzDvYleVf+Xg=;
+ b=msavzauMDPmlLsyA2nWZ16i6uYApKmDSS3ylaMCG1FsjdFCzqsHIiE06f+xg3obRyl44QZBRZ16uPu0C759kuWuUdc7uoltxE1RXBDXqD38yZpXtAz8JAsRFAyFzevAiVSZRdhXG7C2MkbsA/khK8/YN5tjuMo0KLanOSA443Wo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB6395.namprd12.prod.outlook.com (2603:10b6:510:1fd::14)
+ by CYYPR12MB8939.namprd12.prod.outlook.com (2603:10b6:930:b8::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.17; Wed, 13 Nov
+ 2024 06:11:38 +0000
+Received: from PH7PR12MB6395.namprd12.prod.outlook.com
+ ([fe80::5a9e:cee7:496:6421]) by PH7PR12MB6395.namprd12.prod.outlook.com
+ ([fe80::5a9e:cee7:496:6421%6]) with mapi id 15.20.8137.027; Wed, 13 Nov 2024
+ 06:11:38 +0000
+Message-ID: <19452eb2-10e7-e90e-fdf0-19269d04e84c@amd.com>
+Date: Wed, 13 Nov 2024 11:41:31 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v2] usb: xhci: quirk for data loss in ISOC transfers
+Content-Language: en-US
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, mathias.nyman@intel.com,
+ linux-kernel@vger.kernel.org
+References: <20241112122104.120633-1-Raju.Rangoju@amd.com>
+ <2024111226-spender-saturate-dc6e@gregkh>
+ <2a02f0c3-f535-4ac0-d29f-a33e0c45cf4c@amd.com>
+ <2024111330-crusher-alike-a88d@gregkh>
+From: "Rangoju, Raju" <raju.rangoju@amd.com>
+In-Reply-To: <2024111330-crusher-alike-a88d@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN3PR01CA0072.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:99::19) To PH7PR12MB6395.namprd12.prod.outlook.com
+ (2603:10b6:510:1fd::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: parthiban@linumiz.com, Andre Przywara <andre.przywara@arm.com>,
- Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Samuel Holland <samuel@sholland.org>,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/sun4i: Workaround TCON TOP conflict between DE0 and
- DE1
-To: John Watts <contact@jookia.org>
-References: <20241108-tcon_fix-v1-1-616218cc0d5f@jookia.org>
- <20241108115357.691b77b0@donnerap.manchester.arm.com>
- <Zy4SKCBwce3q0yj5@titan> <b26b9d86-4ff9-4543-85ce-176dccfbfa05@linumiz.com>
- <Zy4c9BFcrz2JVU6k@titan> <ZzNCsFiAiACFrQhE@titan>
- <f0d5b314-cfcc-4856-8d6e-09e437c075ec@linumiz.com> <ZzPluoI7xSTwhNcm@titan>
-Content-Language: en-US
-From: Parthiban <parthiban@linumiz.com>
-Organization: Linumiz
-In-Reply-To: <ZzPluoI7xSTwhNcm@titan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - linumiz.com
-X-BWhitelist: no
-X-Source-IP: 122.165.245.213
-X-Source-L: No
-X-Exim-ID: 1tB6a2-003Pv5-1e
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.5]) [122.165.245.213]:35314
-X-Source-Auth: parthiban@linumiz.com
-X-Email-Count: 1
-X-Org: HG=dishared_whb_net_legacy;ORG=directi;
-X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfC+EAsPFn9f+Vqv03RYR4IgAtkHrs+OdvT2KF6wvYE5k135GAZZNNp2aIXVDPfCXcqQIgbTO+KnGdAGzgHplQZKB0kkRtAI9Yk89Zcdd/IDJH4hQ67gI
- 66eVgXMYTWz/mIHcBggN3lLrjkMcWi8Q07nphCjl9F7qi+H3NsadM+RhNP70orRyBG+io5Ho66QbnREC73QaQH2TtkMY0aAqTBo=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB6395:EE_|CYYPR12MB8939:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7869cf38-6cdd-466b-4c28-08dd03aa08a6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TjBIRHZRUm5vTjVhSWZFcmZ6QkdtejNpazZZMGptQ0NJZHplK3p1TEFIaFoz?=
+ =?utf-8?B?S2V2dkpWNks4RHF6akIrZEwrTTlwTkhCZnMyRTYrUGVscExOWlByQjZ6QjBu?=
+ =?utf-8?B?TzRCaDFSTW8yL2FpYllKOXFHc0dtYk84ZWlCV3BGR2JlcDcrOVBkc2NKQ3JC?=
+ =?utf-8?B?aWRpdnlrVmFraDh6LzF0RGM3bEhnTkJNTmo5Z3JLdDYzRGdWbGo2ajhkOVhJ?=
+ =?utf-8?B?SU5LcEJpRUQ5S1VOcmZtdk9xWWR1OE44VVgzUE1weXhRTEpKZy9rOWJPM0ZM?=
+ =?utf-8?B?TlZlSVlRYTN1cFVzMHJEdWEzQTFVSWM2MEJONHFnWWFXS0pBTDAwcUhkNVBL?=
+ =?utf-8?B?RVBUbkNaU2lzcDV1RnkvV3ZEUmRoWFlwRmVsakpnMURzc3NPM05ZWXBlZzVy?=
+ =?utf-8?B?aDF6U0JOVysvQlEvS05JVGd2U0o5WkxoaWJ5SGxJMTVuS0d0Mlhuc211QkFQ?=
+ =?utf-8?B?WGUwb3krNXgwNWM1OXdETlIyNUdOQUNWeGVuYVNCUFJXUDJScHd3OGxrTkpn?=
+ =?utf-8?B?RVV1dWtTamllSlREMnplc0NybkM2cmFrTWxvNGRZZkZHaS9EMEp3S3J5Z1JB?=
+ =?utf-8?B?ZjRidGRYdkVWelhYdWhqa2h6am9NZmo1eVJhcFp1UERsUko0VDZJYU5QOWNv?=
+ =?utf-8?B?azNCMGdaTUtUS3grQlBVRzFsWThEN0VXaW5MbEE4NHk3Si9kU1hhdXNnUlRX?=
+ =?utf-8?B?UUFjRmRINlA4UnhORFRPbVhEZ3g1cDRCWDAvWS8rbWd3NVY5Tmg5Qmsza3ZZ?=
+ =?utf-8?B?K2xyd2ljTHJYTU4vN21NUVNOdDl4ZU1DaEFadTk5OUk2ck41NDk5MGJqWnV3?=
+ =?utf-8?B?L3FyWWwyN2g3Tm5WRGRHVnVESWtkV2NQcXlPYnc1ZHFHUEtMRXdoWmNpVlFS?=
+ =?utf-8?B?QlVOd01RQzNxdUU2TXl1Y0RtTlNCamdnZjM3ZzY5MUFWb1JKWkc0UFBmTWVy?=
+ =?utf-8?B?RVBRbUtGRUNFKzQybXNFOWZkVVFLcUtQV2F0S1RKSG92ZmszaFFnaU83V0t0?=
+ =?utf-8?B?WURMWDRkTXJpU1AvWi9wSU1OUFhpTXhXNFUzbWt1T0M1Zmg2Y2s1UFNBVEV6?=
+ =?utf-8?B?NjFJWG1jcUNtSW00VXUzM2I0N0FtLytTc2FYVUczbUNEN1VGK1cySnpEY0dT?=
+ =?utf-8?B?bmRFRlkzelo5Mi95cUZvZElRT1Bzd096MWpNRGZyUWIyZDgyc05PMTVjSFRQ?=
+ =?utf-8?B?NjFtNlVqVFFxQk5sTHFrYUJERHcrdzBaTk4yRWdYcHc4OVNkOTV5S29OeWla?=
+ =?utf-8?B?cUhmR1A4WlZ0UmJDY0Zsc1RKR2VzZ0JvM2Y5T0F6NnRjRXFRM1FxdE4wZjhY?=
+ =?utf-8?B?RVF2SVV5TERyL2ZHallrVnltTVZOR3ZWcG9saTc0dGtoM054ZGdSZnZHYk04?=
+ =?utf-8?B?Um54ZExhNUo2bHVldy95bDZnUTFxZmd5K01TS0RRQjVTOG9tTkxCem9reG1G?=
+ =?utf-8?B?ekp2OFN0TFVVcGpySTZGMUQ3bDE1UU1DL0FDNjdrZGptdGlmSkdhQ3VYa0RK?=
+ =?utf-8?B?ajdMVUpIV0Q1cFJ0VWZZWTJqNDVpZjF1aFdCQ3hxeXVIUU45OEMreUQxaG84?=
+ =?utf-8?B?VmNpRTZpQW40ZDUxaGYxVHlkckNLa3M2KzdPV29rNTFpY1JaeEZBUWlPRXVh?=
+ =?utf-8?B?cUlLNWNxYzIzclUyUFNtOWkzcTFONHRjaXhBL2pmVnoyQW5xMHp5c3J2WjRJ?=
+ =?utf-8?B?ZUswNjdXVXAvQVhMSEpVdU5HK1Y1cWhaazNiL3AwYlZDNnFkS3ZId1lDeStL?=
+ =?utf-8?Q?XjBebrDRn+9kBSncOlKh7lqh9XEU35WGuy9kM4R?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6395.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NS95U0NlQnRMdnFzc1p4N2RuSTUvbU5MUmw0UnpTMElhb3ZuKzVrTFVLY096?=
+ =?utf-8?B?SGJNTks0Y1ZZckVkNFAva09OcnRZUmV1OGdlMW1iUlZYbjlncE8yaXhQYU9E?=
+ =?utf-8?B?bXVkUmtYQkNpYzhXUVlGZUZ3Ym9DUTExbFNBSWlXZlVSdjZnOFVKUkZJc0NP?=
+ =?utf-8?B?elFma3AwM3F0ZlorYjZWZ2E2anVDcENTLzV3LzQ5d0FvRDJtQ0daYWtYYmhW?=
+ =?utf-8?B?ZjZLZUZrZUwwZWZVN2ZPWGRiMmJwaDMwSUhJRk9tZ00rY2dqa0k2RkxzNERm?=
+ =?utf-8?B?bmRmTDVmR3RXM0hkT283UENmVVpKSHMvVVlNdEJXM1dNZ1Fid0o1WEczb3Uy?=
+ =?utf-8?B?blZzUTRVdEszT0JDZEpTOEt3M3BaNHhVWktlMHBZZWJtemk4UkxaQVkvcDRa?=
+ =?utf-8?B?WWMvTFZHYlIrQW5ucGlmcDNxNnZ5ZnQ3WTMrWmRDSU9LTkkwM1ZNS3U3Ykpm?=
+ =?utf-8?B?Vjl4dU1XZVhKVGNmUzZpU1h6MW56SkQrdDJWZFdQallZRUY2OVU4RnduZ2py?=
+ =?utf-8?B?L3BEZWtjbytvQ0dkeHlLNmIyOU1zdmM2N240bmR0b1FiR1JNY1kybHlZQ2Ft?=
+ =?utf-8?B?NC9UTnc2VDFvejRIdHZDeVZVcFhmWjR2eitVTFloaXRDTGVWYjlLMUpBNUJh?=
+ =?utf-8?B?ckY2cXkwRkt4dUp3RUFqN0RpdE9ybmNOUXNaTG5taHZia1FoaVR2dkhlMkVt?=
+ =?utf-8?B?a1BTcVlwUlljYlBsN1psZDBwVzR0cGdBcXlvM2Y4MlNFd1NjYnkrUmxsT1VD?=
+ =?utf-8?B?NHNzNUw5MkpJbjdwTTFLandrZGpycFZpNmNkdjBmQ1dLVERvcGh1TVBGdjdN?=
+ =?utf-8?B?NzEyMnhBTEp3UDJMeEtlTlIwNk9QWmU1UUtreTZTWmZ5MWJVVXFhaCs5N3hW?=
+ =?utf-8?B?TkVxSEplS1JpYmZ5MG1KY3RyaVNHdFYxN0Fia2lPbllDKytSMDIrckdHTGdw?=
+ =?utf-8?B?R2x4aHdsWnJLNzRjbkVvNFdOWG1qbmhZRk9aeVVsWjJGd0lUOTd2RVlWU3lv?=
+ =?utf-8?B?MEpjVGhETFM2QnlGOUlBTmI4YWYzb1FtUGx0bUE2QldKa1VhWVlKWUxESmVB?=
+ =?utf-8?B?eVBKSVRuYk1lZjg3blpxSk5na1QzSm1QRkNTaEd4MXcxdnVRNFhJYklNOTZ1?=
+ =?utf-8?B?WFJtK1lQcVJnWG5zc1RySklYUlhWYnJ6OWZLcmdyQlgzQzJyb01xcW90UDRX?=
+ =?utf-8?B?eWNSWk04ampKSG5hMkpOaytrSCtKWkdRZlV4NlBiOWRBc05uVGJDVDBiSXJ1?=
+ =?utf-8?B?QVF1dFdJZUJDMTNsNTArSlZDRUZIWExpeUswUnFwUU1WbHFoNVZoZTBKTjRw?=
+ =?utf-8?B?Qnh2UXJyUVluQ1BJV3FucTVjK3NIY1pFY3VBcWs0bWhSenFWV1NncjVMT25H?=
+ =?utf-8?B?VU96aC9iVVBsdHhTTUdGWnZ3ZzJLSXJyWnNCRm80QUI1eWZOWE5xQTZVbGhy?=
+ =?utf-8?B?ZHZVWUhjV2g5cmd2Z3piYlcvT0pyYkRXUnNZMCtsL2ZGem5HL2tuNDg5QVhx?=
+ =?utf-8?B?MlRhNWdCanhzZmx1VkJnb3RrMm45QlBLclhLYWY0ZlZVYUhMSnpETGx2V3BR?=
+ =?utf-8?B?UHY0S3FESTJJZ294VGdya3ByRHIrVFp0WlNJdXJrWDc1SlRNYllSSGJrYjFE?=
+ =?utf-8?B?TFhCa0RLYXVERkV2SjB6ZTZqTDhMazVQVFVSKzcrVm53N1dQQnRsYXNIUWpk?=
+ =?utf-8?B?MWZZVGkxWitqclFNVnh2dXpUV1NkdkdCSmVEY2FRMjNMNnpLcENFcEJVTm1Z?=
+ =?utf-8?B?TDZVZ3RlZWxLT1Q5OHZOUzM2QXppWWJVRDlCcVN6OFlNMlQzekRzL1BXNWEr?=
+ =?utf-8?B?bjF0dzBidmlpSmtJVURmZkw4bldHNjQzYUhjeS8zcnZPVUVGcWh1WFhEamVI?=
+ =?utf-8?B?VGZaVndESEZYL2dxQWoyM3BmUVJ3WHI5SU5ub1crMkVoUkJxMEY4UXAyeUxa?=
+ =?utf-8?B?NUF1OFJiNllyTmRWNWRqcTdVeEdDcEpvaDR4bGFrVHVZQXlSOVVYeDI2SHJZ?=
+ =?utf-8?B?Q0FhWi9Ed1VGQnZkc0lXSWZnbmlCeG9MbWprbjYxVEdPYzAyZEg5Y2ppdlJx?=
+ =?utf-8?B?aXk4bTllRnlnZ0dkZGJNamNQZkltYnBleXhVMVo1NzNiV3BheWpGYkY1bk1p?=
+ =?utf-8?Q?3CG1uKhd8TOSwzUWRV1aT13aE?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7869cf38-6cdd-466b-4c28-08dd03aa08a6
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6395.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2024 06:11:38.4392
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7pPCM/s0PsNBQaFDoCwB9sdlm0BndYRR1+isfX4mtpxhovYdqeuLTmqYIZYLEpz2ZzDn6n3ZUQWj0bxnk5NjJQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8939
 
-On 11/13/24 5:03 AM, John Watts wrote:
-> Hi there,
-> 
-> On Tue, Nov 12, 2024 at 10:43:44PM +0530, Parthiban wrote:
->> #define TCON_TOP_PORT_DE0_MSK                   GENMASK(1, 0)
->> #define TCON_TOP_PORT_DE1_MSK                   GENMASK(5, 4)
+
+
+On 11/13/2024 11:35 AM, Greg KH wrote:
+> On Tue, Nov 12, 2024 at 07:02:40PM +0530, Rangoju, Raju wrote:
 >>
->> references towards DE0 and DE1 is for DE itself, not the mixers in the
->> current implementation.
+>>
+>> On 11/12/2024 5:54 PM, Greg KH wrote:
+>>> On Tue, Nov 12, 2024 at 05:51:04PM +0530, Raju Rangoju wrote:
+>>>> During the High-Speed Isochronous Audio transfers, xHCI
+>>>> controller on certain AMD platforms experiences momentary data
+>>>> loss. This results in Missed Service Errors (MSE) being
+>>>> generated by the xHCI.
+>>>>
+>>>> The root cause of the MSE is attributed to the ISOC OUT endpoint
+>>>> being omitted from scheduling. This can happen either when an IN
+>>>> endpoint with a 64ms service interval is pre-scheduled prior to
+>>>> the ISOC OUT endpoint or when the interval of the ISOC OUT
+>>>> endpoint is shorter than that of the IN endpoint. Consequently,
+>>>> the OUT service is neglected when an IN endpoint with a service
+>>>> interval exceeding 32ms is scheduled concurrently (every 64ms in
+>>>> this scenario).
+>>>>
+>>>> This issue is particularly seen on certain older AMD platforms.
+>>>> To mitigate this problem, it is recommended to adjust the service
+>>>> interval of the IN endpoint to not exceed 32ms (interval 8). This
+>>>> adjustment ensures that the OUT endpoint will not be bypassed,
+>>>> even if a smaller interval value is utilized.
+>>>>
+>>>> Signed-off-by: Raju Rangoju <Raju.Rangoju@amd.com>
+>>>
+>>> You don't want this backported to any older kernels?  Why not?
+>>
+>> Hi Greg, Yes, backporting is needed, but some of products were released back
+>> in 2018, not sure of the exact commit id to quote here for backporting as
+>> there were no precise commits that added this initial support in the first
+>> place.
+>>
+>> Would you mind tagging it to all stable kernels. Let me know if the patch
+>> needs to be respinned.
 > 
-> So the datasheet says it's for DE0/DE1 but the Allwinner driver and mainline
-> driver assume it's for mixers. There's a conflation between mixer and DE in
+> Yes, please resend it with the proper tag, don't ask maintainers to
+> hand-edit changes for you, that does not scale at all.
+>
 
-No, Mixers in upstream refers to RT-Mixers inside the DE. It's only the
-quirk for R40/D1 setting the DE ports using mixer numbering.
+Sure, I'll re-spin with a stable tag.
 
-> this case, especially because everywhere mixer1 is used on the A133 it is
-> switched to DE1. I'm also unaware of the R40 having two DEs which kind of
-> confirms this might be a typo. If anyone has actually tested the second output
-> of this it would help find out if it actually means DE1 or mixer1.
-
-Gave a quick try, but display went blue. My current assumption is that it's
-called INDEPENDENT DE, so DE1 <-> LCD1 is the only possibility. Yet to try
-that pipeline.
-
+> thanks,
 > 
->> Handling for mixer0 <-> lcd1 and mixer1 <-> lcd0 also needs to set
->> DE2TCON_MUX in de clock, which is missing now.
-> 
-> Hmm. Are you sure? Looking at the Allwinner drivers it has the method
-> de_top_set_de2tcon_mux in
-> drivers/video/fbdev/sunxi/disp2/disp/de/lowlevel_v33x/de330/de_top.c
-> which I think means it's for DE3? But I don't see it called anywhere?
-
-Missing in the upstream. 
-
-> 
-> This might be worth discussing in the DE3 patchset.
-> 
->> sun8i_tcon_top_set_hdmi_src for R40 already sets these values via quirks.
->> i.e controlling the port muxing. Also D1 quirks is same as R40. So the
->> original changes to make the DE1 point to TVx can also done in this quirk
->> without hardcoded value?
-> 
-> In this case I'm using an LCD which isn't HDMI, so I'm not too sure how much
-> this would help. Having it as a quirk also seems a bit overkill if this is a
-> general preventative fix, especially since Allwinner doesn't seem to test their
-> functionality. Relying on it seems like a mistake in this case.
-> 
-> My other thought is that when sun8i_tcon_top_de_config is called it could do
-> something. But I'm not sure what that something would actually be, given it may
-> be called twice in an (I assume) unknown order.
-> 
-> Say, if mixer1 is set as TV0 and and mixer0 is set as TV1 we would try to set mixer1
-> first, see that mixer0 is already set to TV0 then ... error? Even though the
-> final configuration doesn't have any conflicts.
-> 
-> I was thinking something like this for my next patch:
-> 
-> 	/*
-> 	 * Make sure that by default DE0 and DE1 are set to different outputs,
-> 	 * otherwise we get a strange tinting or unusable display on the T113.
-> 	*/
-> 	reg = readl(regs + TCON_TOP_PORT_SEL_REG);
-> 	reg &= ~TCON_TOP_PORT_DE0_MSK;
-> 	reg |= FIELD_PREP(TCON_TOP_PORT_DE0_MSK, 0);
-> 	reg &= ~TCON_TOP_PORT_DE1_MSK;
-> 	reg |= FIELD_PREP(TCON_TOP_PORT_DE1_MSK, 1);
-> 	writel(reg, regs + TCON_TOP_PORT_SEL_REG);
-> 
-> Perhaps this could be hidden behind a quirk? I would have to check to see which
-> chips have this behaviour, I'm not sure if it's a bug specific to the T113 or
-> D1/T113 or R40 too.
-> 
-> Also noting at the top of the file that DE0 and DE1 mean mixer0 and mixer1
-> might be good to reduce confusion.
-> 
-> What do you think? :)
-
-So far there is no real user for DE1 in upstream. DE_PORT_SELECT_REG value for
-DE1 can be negate of DE0, so that they won't conflict or cause timing issues.
-
-Also DE_PORT_SELECT_REG mentions only about TV and LCD muxing, but missing HDMI,
-DSI and so.
-
-Otherwise, if I get DE1 working in A133, I will try to add quirk to set DE0 and
-DE1 port mapping in that case to respective connector.
-
-Thanks,
-Parthiban
-
-> 
->> Thanks,
->> Parthiban
-> 
-> Thanks for your input!
-> 
-> John Watts
-
+> greg k-h
 
