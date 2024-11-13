@@ -1,194 +1,201 @@
-Return-Path: <linux-kernel+bounces-408316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB6B19C7D52
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:08:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AF979C7D5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 22:12:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCBFAB289D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:08:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFF3B285645
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 21:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83332071FA;
-	Wed, 13 Nov 2024 21:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638262076BD;
+	Wed, 13 Nov 2024 21:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mKkhmwDq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ps/yNT5b"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5C32064E9;
-	Wed, 13 Nov 2024 21:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0D61CAAC;
+	Wed, 13 Nov 2024 21:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731532107; cv=none; b=JcgyE76MrBcGNlP4idCQd1B7RDQf2Z3CZlZXBkY0oNgjjULxIfhx4sfBalklCtaY1KhnbQH6mLfIXx4T71LKDHmwFNLPGq9is1Lv3OImdgKC7+Q3F+Nq5KQjZ3UmJ1+JRqIdGoVQNI8E27McQEzFOpXLPSl55yvxgrojGQ6rdx4=
+	t=1731532327; cv=none; b=DvxYmjuUk/P0NZ++nQr7XMRO+h/kGmJgC6LKxCV6aGzYxCAb33jUGDdHRTI2nVrqNwmADG+uBVHrtA3xSDu8/nrZ2q4AEdeXdOP57XM0UL79s1YUHWXPJ/fhNMWVrQm0BRO/b97VpLA8bVi4aQhw3Xx9TNQy1edAN5OmBr7dk8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731532107; c=relaxed/simple;
-	bh=cvdwnx7NqJv45aohmea/u4F7NAdmBdqQNMMu7T5ROkk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i9jGFZv/vLfdja6HOgT6ctqvxdQauo7wjY6AT18krsi/jxVIbcPR87B+Mhise3J0r7RreWewJocic3jdzcdhFbYQTV838x4dz2sBw03eRzXA9jZnTP1065j/lduxzrtdXgUedMqTwl33Al2x6Hi/PcRvVhh7UDrfoblPQnD6rV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mKkhmwDq; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1731532327; c=relaxed/simple;
+	bh=MiOA+h2WEfYvSK6LWO85YbpCELWFRGGFH0WIAFxXeZc=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=LANgu8PShrpqGdhfpy8OIImboBzJFizGJiuHYRdBG1eb4zECVLydfhfNNH8maQ5IEJgIrEZdRkDwTtrcph/ZDqxjXUtl+/FLhC0dPZY87LPG2Vi0rps2V2GOXJKsBW+q5zQJuPB9kHt3ULklullN63Mt8tSh/HiNflgN+Z7yG44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ps/yNT5b; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731532106; x=1763068106;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=cvdwnx7NqJv45aohmea/u4F7NAdmBdqQNMMu7T5ROkk=;
-  b=mKkhmwDqWmhPkWrfef3vqDTxjy8U8JoYj4LeGcf3+afmE47bTihUbl48
-   aAxbc8DSFtu8NiH2QG+nCOw0QyXHYMx6XQezPkjdIpMPYjz9FNvShl0oU
-   4hxvxmnRFRaxP3+6d+pFCsCSbieSd7Ht8DKjU2OHJPAUF6iZrjHJtFcYT
-   cq0JevLp6ON0sA7lOtANBwHK60joU9lnKeEw1KD7Zeu+Wf4Z8b+OwAOgz
-   pUQ69IuqAKpTXtxaWoqP50PWCEEFLAs9ibprGMO/rrcjxJi6yPw1X5s40
-   KAE1372qyFqKCE8uiu9x+G3M1dhG/Yn64u/oUMigW8SyF69KeE0R4z6pR
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1731532326; x=1763068326;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=MiOA+h2WEfYvSK6LWO85YbpCELWFRGGFH0WIAFxXeZc=;
+  b=ps/yNT5bfYo9qlc1lHrS0D68/0gIS3pM+Doo+HGKh/LEIctOhdY1AtYM
+   ZLLHx4FzF9LSUMzEiIpIlF/bY0tHNbKkAR/UdAJVioayq3utu9bHJBS65
+   5HBraTNyYFADXhW7Sx1lq2fGudi9p9alB5PxIHICwXcH1ghp4iYFImosk
+   hUabUiTpH8bccdKMiDe/rcQwQ9PDdwcE05SFaZTa7r8BTYiB0zxSoCtja
+   GtY0hGppNrl/+zH4jJUHQwn4Q7y8NS8eIG3NvkS7VawHYGhQkjerxWpTn
+   J1JZ9yEHVMfIGRUosJRxk7Gd9NNltGn8R2y4GOVihv+yshrE4Q4OeBBjX
    g==;
-X-CSE-ConnectionGUID: XnFeFiALST6n+mshGPdHrg==
-X-CSE-MsgGUID: n7VYQmtcSXu5lgY912wD+A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="31553209"
+X-CSE-ConnectionGUID: KA3skogJTWSLY1V4ky2YAQ==
+X-CSE-MsgGUID: iVpW/84nSha1vD/zEH2PYA==
 X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
-   d="scan'208";a="31553209"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 13:08:25 -0800
-X-CSE-ConnectionGUID: 7KrIu2dmTeSwJk/FlT2D8g==
-X-CSE-MsgGUID: 0WO4fQx7QtCkf+yRLav87Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="92911383"
-Received: from kkkuntal-desk3 (HELO [10.124.220.196]) ([10.124.220.196])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 13:08:24 -0800
-Message-ID: <ff549c76-59a3-47f6-b68d-64ef957a7765@intel.com>
-Date: Wed, 13 Nov 2024 13:08:22 -0800
+   d="scan'208";a="265427892"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 Nov 2024 14:12:04 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 13 Nov 2024 14:11:34 -0700
+Received: from DEN-DL-M70577.microchip.com (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Wed, 13 Nov 2024 14:11:31 -0700
+From: Daniel Machon <daniel.machon@microchip.com>
+Subject: [PATCH net-next v2 0/8] net: lan969x: add RGMII support
+Date: Wed, 13 Nov 2024 22:11:08 +0100
+Message-ID: <20241113-sparx5-lan969x-switch-driver-4-v2-0-0db98ac096d1@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/25] x86/virt/tdx: Add SEAMCALL wrappers for TDX page
- cache management
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "seanjc@google.com" <seanjc@google.com>
-Cc: "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
- "Yao, Yuan" <yuan.yao@intel.com>, "Huang, Kai" <kai.huang@intel.com>,
- "binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>,
- "Li, Xiaoyao" <xiaoyao.li@intel.com>,
- "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "tony.lindgren@linux.intel.com" <tony.lindgren@linux.intel.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "Zhao, Yan Y" <yan.y.zhao@intel.com>,
- "Chatre, Reinette" <reinette.chatre@intel.com>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>
-References: <20241030190039.77971-1-rick.p.edgecombe@intel.com>
- <20241030190039.77971-9-rick.p.edgecombe@intel.com>
- <aff59a1a-c8e7-4784-b950-595875bf6304@intel.com>
- <309d1c35713dd901098ae1a3d9c3c7afa62b74d3.camel@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <309d1c35713dd901098ae1a3d9c3c7afa62b74d3.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOwVNWcC/4WOzQqDMBCEX0X23C1G419PfY/iIca1WahRNmIt4
+ rtXpfceh+Gbb1YIJEwBbtEKQjMHHvwekksE1hn/JOR2z5DEiVYq1hhGI0uGL+OrvFowvHmyDlv
+ hmQQ1tlnVFGUS6zIzsI+MQh0vp+ABnib0tExQ701jAmEjxlt3CHrD/gAch2mQz3loVif2c+f/3
+ LPCGLuiK1KV6zRv2nvPVgbreLzaoYd627YvYI63bfEAAAA=
+To: <UNGLinuxDriver@microchip.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Lars
+ Povlsen" <lars.povlsen@microchip.com>, Steen Hegelund
+	<Steen.Hegelund@microchip.com>, Horatiu Vultur
+	<horatiu.vultur@microchip.com>, Russell King <linux@armlinux.org.uk>,
+	<jacob.e.keller@intel.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>
+CC: <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+X-Mailer: b4 0.14-dev
 
-On 11/13/24 12:51, Edgecombe, Rick P wrote:
-> However, some future user of TDH.PHYMEM.PAGE.RECLAIM might want to do something
-> else where the enums could add code clarity. But this goes down the road of
-> building things that are not needed today.
+== Description:
 
-Here's why the current code is a bit suboptimal:
+This series is the fourth of a multi-part series, that prepares and adds
+support for the new lan969x switch driver.
 
-> +/* TDH.PHYMEM.PAGE.RECLAIM is allowed only when destroying the TD. */
-> +static int __tdx_reclaim_page(hpa_t pa)
-> +{
-...
-> +	for (i = TDX_SEAMCALL_RETRIES; i > 0; i--) {
-> +		err = tdh_phymem_page_reclaim(pa, &rcx, &rdx, &r8);
-...
-> +out:
-> +	if (WARN_ON_ONCE(err)) {
-> +		pr_tdx_error_3(TDH_PHYMEM_PAGE_RECLAIM, err, rcx, rdx, r8);
-> +		return -EIO;
-> +	}
-> +	return 0;
-> +}
+The upstreaming efforts is split into multiple series (might change a
+bit as we go along):
 
-Let's say I see the error get spit out on the console.  I can't make any
-sense out of it from this spot.  I need to go over to the TDX docs or
-tdh_phymem_page_reclaim() to look at the *comment* to figure out what
-these the registers are named.
+        1) Prepare the Sparx5 driver for lan969x (merged)
 
-The code as proposed has zero self-documenting properties.  It's
-actually completely non-self-documenting.  It isn't _any_ better for
-readability than just doing:
+        2) Add support for lan969x (same basic features as Sparx5
+           provides excl. FDMA and VCAP, merged).
 
-	struct tdx_module_args args = {};
+        3) Add lan969x VCAP functionality (merged).
 
-	for (i = TDX_SEAMCALL_RETRIES; i > 0; i--) {
-		args.rcx = pa;
-		err = seamcall_ret(TDH_PHYMEM_PAGE_RECLAIM, &args);
-		...
-	}
+    --> 4) Add RGMII support.
 
-	pr_tdx_error_3(TDH_PHYMEM_PAGE_RECLAIM, err,
-			args.rcx, args.rdx, args.r8);
+        5) Add FDMA support.
 
-Also, this is also showing a lack of naming discipline where things are
-named.  The first argument is 'pa' in here but 'page' on the other side:
+== RGMII support:
 
-> +u64 tdh_phymem_page_reclaim(u64 page, u64 *rcx, u64 *rdx, u64 *r8)
-> +{
-> +	struct tdx_module_args args = {
-> +		.rcx = page,
+The lan969x switch device includes two RGMII interfaces (port 28 and 29)
+supporting data speeds of 1 Gbps, 100 Mbps and 10 Mbps.
 
-I can't tell you how many recompiles it's cost me when I got lazy about
-physical addr vs. virtual addr vs. struct page vs. pfn.
+Details are in the commit description of the patches.
 
-So, yeah, I'd rather not export seamcall_ret(), but I'd rather do that
-than have a layer of abstraction that's adding little value while it
-also brings obfuscation.
+== Patch breakdown:
+
+Patch #1 does some preparation work.
+
+Patch #2 adds new function: is_port_rgmii() to the match data ops.
+
+Patch #3 uses the is_port_rgmii() in a number of places.
+
+Patch #4 uses the phy_interface_mode_is_rgmii() in a number of places.
+
+Patch #5 adds checks for RGMII PHY modes in sparx5_verify_speeds().
+
+Patch #6 adds registers required to configure RGMII.
+
+Patch #7 adds RGMII implementation.
+
+Patch #8 document RGMII delays.
+
+To: UNGLinuxDriver@microchip.com
+To: Andrew Lunn <andrew+netdev@lunn.ch>
+To: David S. Miller <davem@davemloft.net>
+To: Eric Dumazet <edumazet@google.com>
+To: Jakub Kicinski <kuba@kernel.org>
+To: Paolo Abeni <pabeni@redhat.com>
+To: Lars Povlsen <lars.povlsen@microchip.com>
+To: Steen Hegelund <Steen.Hegelund@microchip.com>
+To: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: Russell King <linux@armlinux.org.uk>
+To: jacob.e.keller@intel.com
+To: robh@kernel.org
+To: krzk+dt@kernel.org
+To: conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+
+Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+---
+Changes in v2:
+
+  Most changes are in patch #7. RGMII implementation has been moved to
+  it's own file lan969x_rgmii.c.
+
+  Details:
+
+    - Use ETH_P_8021Q and ETH_P_8021AD instead of the Sparx5 provided
+      equivalents (patch #7).
+    - Configure MAC delays through "{rx,tx}-internal-delay-ps"
+      properties (patch #7).
+    - Add selectors for all the phase shifts that the hardware supports
+      (instead of only 2.0 ns, patch #7).
+    - Add selectors for all the port speeds (instead of only 1000 mbps.)
+    - Document RGMII delays in dt-bindings.
+
+  - Link to v1: https://lore.kernel.org/r/20241106-sparx5-lan969x-switch-driver-4-v1-0-f7f7316436bd@microchip.com
+
+---
+Daniel Machon (8):
+      net: sparx5: do some preparation work
+      net: sparx5: add function for RGMII port check
+      net: sparx5: use is_port_rgmii() throughout
+      net: sparx5: use phy_interface_mode_is_rgmii()
+      net: sparx5: verify RGMII speeds
+      net: lan969x: add RGMII registers
+      net: lan969x: add RGMII implementation
+      dt-bindings: net: sparx5: document RGMII MAC delays
+
+ .../bindings/net/microchip,sparx5-switch.yaml      |  20 ++
+ drivers/net/ethernet/microchip/lan969x/Makefile    |   2 +-
+ drivers/net/ethernet/microchip/lan969x/lan969x.c   |   5 +
+ drivers/net/ethernet/microchip/lan969x/lan969x.h   |  10 +
+ .../net/ethernet/microchip/lan969x/lan969x_rgmii.c | 237 +++++++++++++++++++++
+ .../net/ethernet/microchip/sparx5/sparx5_main.c    |  29 ++-
+ .../net/ethernet/microchip/sparx5/sparx5_main.h    |   3 +
+ .../ethernet/microchip/sparx5/sparx5_main_regs.h   | 145 +++++++++++++
+ .../net/ethernet/microchip/sparx5/sparx5_phylink.c |   3 +
+ .../net/ethernet/microchip/sparx5/sparx5_port.c    |  57 +++--
+ .../net/ethernet/microchip/sparx5/sparx5_port.h    |   5 +
+ 11 files changed, 488 insertions(+), 28 deletions(-)
+---
+base-commit: 12079a59ce52e72a342c49cfacf0281213fd6f32
+change-id: 20241104-sparx5-lan969x-switch-driver-4-d59b7820485a
+
+Best regards,
+-- 
+Daniel Machon <daniel.machon@microchip.com>
+
 
