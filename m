@@ -1,133 +1,131 @@
-Return-Path: <linux-kernel+bounces-408073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F6E29C7A1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:42:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE9649C7A1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:43:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1421B284BD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:42:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 844F3284C19
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485EC2022DC;
-	Wed, 13 Nov 2024 17:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE0E201253;
+	Wed, 13 Nov 2024 17:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CqzHpRMP"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="JbcVNMaz"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EC6200C8B;
-	Wed, 13 Nov 2024 17:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961D21F80C8
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 17:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731519749; cv=none; b=HQXLSmDvRrgVacoW8OeCgMjQdBA6aq3Y4nK5MBsQnRWCUSRPPeQ3j4f2AAizx0RJ2yP9Qm3VOfPNZjmOsGwB6oElBkn94POcj7xgPwt3yaDB0rb6DWcgc0J6pfI5eb0lVp0zCt2n0/anE9W4IXaefm08PIR31fp5kPwe3rjqACo=
+	t=1731519802; cv=none; b=PoLHSp8xYdTyHZHQ9UqePiwp07T/oY62nnjzodEx4TqPWGwrxRVhgthmqKQFXe++rlj/6rw5BQ+fMBA2hC95dj4iw0xqLpN3P8YhJ656+gnTPFhu1d0nLnJDokuN9ND5GwYurM29ZBZwnNnYAv43tzV6Cv9xYrl5HIxxl0DaPm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731519749; c=relaxed/simple;
-	bh=ObunAKm5W1Dow0Kwt3YYfY+J8m0Z2alvoeRTljirf1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OJs2poaSBzWRYvnW3dK54GFNrQbrx70V5DfChb91qNBWdTbDXNKjtGZ90xB2SsO5YlDzv71OFKPS2Xckwj6zqqST+ndF7Gehd9LJR9wjVdhvHkm/QSF9o1s7mszNkFrwLmng/3GfNLEtpVZzkWAS0k7jp+djpavKcQv7hDnw/b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CqzHpRMP; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20c77459558so66082685ad.0;
-        Wed, 13 Nov 2024 09:42:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731519747; x=1732124547; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EkQ3Bc0x2MnJ+quZSzaa7K/N+DrwdsbsHIFuKS+JNB8=;
-        b=CqzHpRMPWEAFajkLyWIqygYl0Q4tCoEncloaWFw9GVZ4ZMx4phu/t6OJ0PjbtpSxdf
-         lYlJHc3aLBU+peEQwykRo6nJW9hPRlOQVwkfY5gsN5nRm9yp/1/7R/GkINoZlWh134u9
-         MhLoUC0uNI8RaFKyKZ+V+h7+q+eYetiKtrRRgBvqYFz2vRL93thE43XP1PaScPcJIIO7
-         EHzxE/3mLW1O+IHgujbuEcytBLFNAa7FxgZ+ZOUKsy33wy0GM9oilbX2vzIjMMg5Rhnq
-         alAAmYYqwy74pm1oataNgPxMFKGBK6qTyntV4qnpW+nT6BSuodOilOzPvgDhzQL43t4i
-         7ynQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731519747; x=1732124547;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EkQ3Bc0x2MnJ+quZSzaa7K/N+DrwdsbsHIFuKS+JNB8=;
-        b=vdo7bvZOH6y9f578KswWJyiXJq4Twy8Vk+iMXsvsN76XCXbEYSzjoSOFlT/32d0psR
-         BAu7qXdGV06Z9/S1fltkS56ulVEGLLy5nBNDZkyVMNia91wkt/v9YUOkFZlpCUeT/u8T
-         VphsFIm6AIYqN796auzZPzd2DkwDSvhxb3+TjoSN3Px6xpo3Yy8AH0VwzKdFGidiB8Ys
-         UIHb1Dbzx5WJB+wlBQL+QR4a31Uul5Tw/yrXAQ5z8LlWdnHLYmKaB8XKuRBriDz4SgKi
-         Le6/IS4MhkG/wlxtz/u87wwe9o2xZNzpgn+RZK2lZIHY0VuUIyIzEJFVhKqMziGZxuor
-         jejQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBqj69ItDcbXZ9KsMu1HtMKtak9XFZ5isFC/QMQ/2MPPfJrlHfrRuQpZgsbGZcR2BJC/y4AT468Aeo1d7jmc0O@vger.kernel.org, AJvYcCVT0rPmR5SGMSvk8Qt0r+gFaxBbhhvER0QVp2RpqNSTzBTF3HoSy9pDGya0BeGufwCLNbj4mzKl3DKjxesi@vger.kernel.org, AJvYcCXNFvh6XmtXw1grlcf/LabJE2ucLEdsA4yE43Vuu45YlbgeV2OVm77tXbFQMBURB2OytWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxe6CkORlJENObQLqa3k6zlWYDG2jDmnuQZUL3L4z0eKJJ/v9BN
-	Yr8RwpMUThqHTS61kRNQh0UyMcudBuQviVt5e9xZz5Eiw1QQLOM=
-X-Google-Smtp-Source: AGHT+IH9L8h4da0i04WU3+G03zV0G1bq0Xu8isL8T8sY10y4geZiB2iNtJ2O6Sub6z0rfSkkTlr8lw==
-X-Received: by 2002:a17:902:ea05:b0:20c:f3be:2f8b with SMTP id d9443c01a7336-211abae69b4mr93611095ad.30.1731519747516;
-        Wed, 13 Nov 2024 09:42:27 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e6c368sm113461825ad.240.2024.11.13.09.42.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 09:42:27 -0800 (PST)
-Date: Wed, 13 Nov 2024 09:42:26 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Alexis =?utf-8?Q?Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <shuah@kernel.org>, ebpf@linuxfoundation.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>,
-	Petar Penkov <ppenkov@google.com>, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 04/10] selftests/bpf: re-split main function
- into dedicated tests
-Message-ID: <ZzTlAmxagJmqNRe7@mini-arch>
-References: <20241113-flow_dissector-v1-0-27c4df0592dc@bootlin.com>
- <20241113-flow_dissector-v1-4-27c4df0592dc@bootlin.com>
+	s=arc-20240116; t=1731519802; c=relaxed/simple;
+	bh=OALoazKclIO9ccHWj0TEyY7sNsR9XGlZoklxT9m5mjA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GCMCFZnapqq7jsMBjjO04ziOpcuGKzdN2glyz/s44F51O7Cs7MZEzOYKsbqNl1md1aaIGO/ksgn/goX8M6E5PiXoEEYXUQh+NTIJKBK4Epe2dRhxsgbIkxEmmA2vvcpZywUVJ1GRVcO/snEtn421Z7OfnALrkV676mNO2okhhj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=JbcVNMaz; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.205] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4ADHghJK3892350
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 13 Nov 2024 09:42:43 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4ADHghJK3892350
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024101701; t=1731519764;
+	bh=rLCPBjoAte4lqvVkpLpAfnyJwAxmj2XjMD8qBOAnwbk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JbcVNMaz1eC8sjDUA582oArdVWGwob4mEbhSHIbuTXLbfKtnY3lPK/hw6gw/+9Uy4
+	 ZjWnR/J/SdqURyYIv9YeBVSL76avppEGmtHQ/fGMNLo/V4+VudxxM+JhDK7Axfa3g4
+	 Q18aydmMJAtC2D0Yk5+hjjy3gqHv2H9Nvh2T9PFwXDOsB41xN0OPjkcizdhIYdYykp
+	 xnGX++dIktTMjx35AeskjZLkbnTssN2vZpQA0jVHbvUhhDNnEi9rc1WW3+6+HusPWn
+	 Pv+f3uVTJycgtCfdzBxdiDIIeFeDqLqbh++AcYemL2VLCpVy0jkJ3b7isJESnTTHpT
+	 wi4LvTMUUCknA==
+Message-ID: <8e96372e-9fe8-4684-9873-9e7cafcae6a2@zytor.com>
+Date: Wed, 13 Nov 2024 09:42:42 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241113-flow_dissector-v1-4-27c4df0592dc@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] x86/fred: Clear WFE in missing-ENDBRANCH #CPs
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+        hpa@zytor.com, peterz@infradead.org, andrew.cooper3@citrix.com
+References: <20241113091313.3717338-1-xin@zytor.com>
+ <ZzR3s78NZDIi1Rxh@gmail.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <ZzR3s78NZDIi1Rxh@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 11/13, Alexis Lothoré (eBPF Foundation) wrote:
-> The flow_dissector runs plenty of tests over diffent kind of packets,
-> grouped into three categories: skb mode, non-skb mode with direct
-> attach, and non-skb with indirect attach.
+On 11/13/2024 1:56 AM, Ingo Molnar wrote:
 > 
-> Re-split the main function into dedicated tests. Each test now must have
-> its own setup/teardown, but for the advantage of being able to run them
-> separately.
+> * Xin Li (Intel) <xin@zytor.com> wrote:
 > 
-> Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
-> ---
->  .../selftests/bpf/prog_tests/flow_dissector.c      | 92 ++++++++++++++--------
->  1 file changed, 57 insertions(+), 35 deletions(-)
+>> +/*
+>> + * By definition, all missing-ENDBRANCH #CPs are a result of WFE && !ENDBR.
+>> + *
+>> + * For the kernel IBT no ENDBR selftest where #CPs are deliberately triggerred,
 > 
-> diff --git a/tools/testing/selftests/bpf/prog_tests/flow_dissector.c b/tools/testing/selftests/bpf/prog_tests/flow_dissector.c
-> index 6fbe8b6dad561aec02db552caea02517ac1e2109..c5dfff333fe31dd55ac152fe9b107828227c8177 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/flow_dissector.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/flow_dissector.c
-> @@ -549,63 +549,101 @@ static void run_tests_skb_less(int tap_fd, struct bpf_map *keys)
->  	}
->  }
->  
-> -static void test_skb_less_prog_attach(struct bpf_flow *skel, int tap_fd)
+> s/triggerred
+>   /triggered
+> 
+>> +static void ibt_clear_fred_wfe(struct pt_regs *regs)
+>> +{
+>> +	/*
+>> +	 * No need to do any FRED checks.
+>> +	 *
+>> +	 * For IDT event delivery, the high-order 48 bits of CS are pushed
+>> +	 * as 0s into stack, and later IRET ignores these bits.
+> 
+> s/into stack
+>   /into the stack
+> 
 
-[..]
-
-> +void serial_test_flow_dissector_skb_less_direct_attach(void)
-
-Any specific reason you keep these as serial? Seems like one of the benefits
-of splitting them up is to be able to run them in parallel?
+Thanks, fixing and sending v4 now.
+     Xin
 
