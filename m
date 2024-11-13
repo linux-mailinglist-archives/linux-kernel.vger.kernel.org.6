@@ -1,287 +1,180 @@
-Return-Path: <linux-kernel+bounces-408449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F08779C7EFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:56:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B8B19C7F0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:59:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DBCD1F224B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:56:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BAE628462C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:59:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BB618D633;
-	Wed, 13 Nov 2024 23:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1280018DF72;
+	Wed, 13 Nov 2024 23:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eLAY1U3X"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="iG8JpD0Q"
+Received: from alln-iport-7.cisco.com (alln-iport-7.cisco.com [173.37.142.94])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327F418C320
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 23:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE6C189916;
+	Wed, 13 Nov 2024 23:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.37.142.94
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731542188; cv=none; b=Z9bh35EkCDjtIMNePZxWtx9qatPOqDpp1T9ujjFRQBP+XawhXcdfkIeX4C3ikI54eS+6F7/yDb7ehCvXY1+NOBepoT5dRD6RX3HxmBc4t6A3CE/jJy0s75MTs9wqY7/2pyImm1Ma+6e6zJTW0ngOki5Z/Mgt4Yits5q5B/gy24Y=
+	t=1731542284; cv=none; b=YxIfN4SpqEq7+IEY705oVoqpPfAClMg1kjuTvZOIeCQu8Iu7B8ngfi9z/O5o/4Hl+LoAtwV1QlnReU3bewXqJGtPgduoR4XUJTdDFPazpdx/MTFfr5SkBf7MtvMdxENyUrGkmWzvD1ZvqK2v5wLXWM3AfTjWL9tclJVdVmvIT+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731542188; c=relaxed/simple;
-	bh=NonNEb/p36N4aNw8pMOp1DVBkj1VagGzEXC4C3d0/os=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UytJBujGZ2tVSSRZP64aQfngPJuG0fJ3TAV+oV48KHq900R91v+FSGWOTT86mhhyFoDv41zgfHTj9j37q3QgFEWWqQbFuj3vI27zXvI8pmbA5pFZIQ1SNyi58jpAc9DwVQh/66OXOPM8k9OLhDLkOLrU1IpegBtjC0R8tDFrNaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eLAY1U3X; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-20c8d7f9128so85469625ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:56:27 -0800 (PST)
+	s=arc-20240116; t=1731542284; c=relaxed/simple;
+	bh=C/Pb0O9EV/ymqhuOoiX9O7mCGREp+63wZqJY1vKc9RU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iXgd3vmjIgReAtWec/mEpTGDPL7GMMaxbhYf44UHlvnqE8byDZO4K198ZFrznt5H/tIpR3ZVXAq1AkD4jrtpNXrgs57dJ8POCys9O/OGNEoaFmSUZAehIILrKe39nLH0aQ4wSKJNMQXtmEOP+bVcdfNXhNUf6lUtDcluFww2XFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b=iG8JpD0Q; arc=none smtp.client-ip=173.37.142.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731542186; x=1732146986; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vr5S5GUuRLNtWM92jKG2I81mlCSBw1utW8NJkCQ7Lb8=;
-        b=eLAY1U3X2YSTNXQr/Kfk9eZFfUFj6DYoKTBx7PHrh3ybxcVbME2fSPrfEf4sG8MnZ0
-         6fokLZyS6oNZ19exrkgU81JVSzf+tl+AyEPi3WWQ/AeXvLO20elNvh7a0SvDvmYc1sd7
-         aH2SYqWEA7XNOv3EiyyhxNh6HQQd1F/A2mQOAEOZjvsgezqijKpxeEZMDjt93krpKiYv
-         /8GD07vk19KQaZyvV5uUzfOZrpU0jWGDOmgllppDFd4l4XlAfNV4TOpKdg4/r3eSDWi2
-         ZI6jEtRZomZ1MZr96bZNA7TG34JqPSI9dC8Id4fwMhhoY9uV1PxKsjg/mzf+BTe+k4Uv
-         213A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731542186; x=1732146986;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vr5S5GUuRLNtWM92jKG2I81mlCSBw1utW8NJkCQ7Lb8=;
-        b=W7G2Q170lNNO8YiXsj495gcVvJLAUt/G3uxH02GnOLIJyRRqfOKbqtsNmz98uSU9oc
-         Y0xIE7QtSJu4gRIGJqmC84GBk6KPC5qAIl54zgjHPbFYdxy/lfjCy032Me1np36+NmIp
-         vh/rZjr+Agen9kMeD4+8HngepVxu7TfPS/niB/eVlxTFhiWLL6bq3iH3hu79LvJJ+92O
-         e04DIKoO98fH3krhxil4e+yG2gkJQzIQ79Jo1UXugbz/3RZnMBvFd+2qI3qQq+rolArN
-         cu7ouZ9if0rGdDd7osfuW700cM30eHlUeD5fSju8BpJFFhOgmnF5k8EpsBZKViZIs/M4
-         t6Yg==
-X-Gm-Message-State: AOJu0YyBRYRuNoTDkiRXiuxo8gAXMYtfdgAnatoSo1pzypT9hb7cnt82
-	8dUu4aHZrEr7mK7mjTTWAFnKez4Y0X1t2Uj5l33hXViIBRl4uopOlYRQtkxT7fbsVEh5nfpv5uT
-	/pQ==
-X-Google-Smtp-Source: AGHT+IEn0Egc9e+jdjdcl5p3lcxUZPaJq7jsZW0myyVy6Dwg4xCLPAlzYX1BQwwv9eyILE9wT9IYH/2e6DA=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a17:902:e20b:b0:20c:857b:5dcb with SMTP id
- d9443c01a7336-211835150d4mr863225ad.4.1731542186557; Wed, 13 Nov 2024
- 15:56:26 -0800 (PST)
-Date: Wed, 13 Nov 2024 15:56:25 -0800
-In-Reply-To: <20241108130737.126567-1-pbonzini@redhat.com>
+  d=cisco.com; i=@cisco.com; l=2246; q=dns/txt; s=iport;
+  t=1731542282; x=1732751882;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=skuzlisS0FC9ZQmZMUTiNDgGcP7HKSZAqNh3ym7e9a0=;
+  b=iG8JpD0QFzTK/yvuOwnrpqM40VYvS56IJjfX+N0aNXemvIFvHuFqZhjT
+   VzwmPEBLH1Y8vCkLaXB7AndUHKXsqckGtDfh8jG07L73mCFLjlandYfmU
+   C6x7cpb/y+hR1dS8ZlAAbNNpPuAqOBnV1AaVzzIemMNkUbBvnIrEHsGfG
+   A=;
+X-CSE-ConnectionGUID: ocq09MqTSWKh2w57c2uXdw==
+X-CSE-MsgGUID: M8ekLbFaQtu13aC6Layrlw==
+X-IPAS-Result: =?us-ascii?q?A0ADAADHOzVnj5MQJK1aGgEBAQEBAQEBAQEDAQEBARIBA?=
+ =?us-ascii?q?QEBAgIBAQEBQIE/BQEBAQELAQGDP1pCSIRViB2HMIIhi3WSIxSBEQNWDwEBA?=
+ =?us-ascii?q?Q87CQQBAYUHikcCJjQJDgECBAEBAQEDAgMBAQEBAQEBAQEBAQsBAQUBAQECA?=
+ =?us-ascii?q?QcFFAEBAQEBATkFDjuFew1JARABhgInVjUCJgItGxYBEoMBAYJkAgERBrBPe?=
+ =?us-ascii?q?oEygQGEe9k4gWcGgRouAYhLAYFsg307hDwnG4FJRIEUAYIoUW+EGw6DdYJpB?=
+ =?us-ascii?q?IEQhk4liReRDogbCT+BBRwDWSERAVUTDQoLBwVjVzwDIm9qXHorgQ6BFzpDg?=
+ =?us-ascii?q?TuBIi8bIQtcgTeBGhQGFQSBDkY/gkppSzoCDQI2giQkWYJPhRqEbYRmglQvH?=
+ =?us-ascii?q?UADCxgNSBEsNQYOGwY9AW4HnmQBRoMxAQGBDisgMDV/EDaTGoNrjT6ha4Qkj?=
+ =?us-ascii?q?BaVRjOEBJQBkkiYdyKNXZVjhUKBZzqBWzMaCBsVgyITPxkPjjqIdYoqAbY/Q?=
+ =?us-ascii?q?zUCATgCBwsBAQMJhkiDfYQIgXwBAQ?=
+IronPort-Data: A9a23:poUozqp8M0qxgwgVvWCTgyIX5Y1eBmKNZRIvgKrLsJaIsI4StFCzt
+ garIBnQMq2DajamLYglbYW1/RgCsMTSx4dlQFdsrnw9FnhDpOPIVI+TRqvS04x+DSFioGZPt
+ Zh2hgzodZhsJpPkjk7zdOCn9T8kiPngqoPUUIbsIjp2SRJvVBAvgBdin/9RqoNziLBVOSvV0
+ T/Ji5OZYQXNNwJcaDpOt/va8Ug355wehRtB1rAATaET1LPhvyF94KI3fcmZM3b+S49IKe+2L
+ 86r5K255G7Q4yA2AdqjlLvhGmVSKlIFFVHT4pb+c/HKbilq/kTe4I5iXBYvQRs/ZwGyojxE4
+ I4lWapc5useFvakdOw1C3G0GszlVEFM0OevzXOX6aR/w6BaGpfh660GMa04AWEX0uF8GDkf0
+ OUkEw8ubkqc2r29mq+LRvY506zPLOGzVG8eknhkyTecCbMtRorOBvySo9RZxzw3wMtJGJ4yZ
+ eJANmEpN0qGOkMJYwtIYH49tL/Aan3XdTBVs1mSr6Mf6GnIxws327/oWDbQUofVFJQIzhfD/
+ goq+UzcUhwZENaxwAOZ7yv3j8SRuSrqQoYNQejQGvlC2wDLmTdJV3X6T2CTrfCnh0uWV9tBJ
+ kkQ/SQy664/6CSDQ9XgWhSqrWKssRkbVN5dVeY97Wmlyq3O5h2xBWUeSDNFLts8u6ceRiEg3
+ 3eKksnvCDgpt6eaIVqU8LuOoCzxPyUJIWIcTSsZSw1D6NmLiJk6hB/JT/55HaK1h8GzEjb1q
+ xiOrS4jl/AQgNQN2qGT41/KmXSvq4LPQwpz4R/YNkqj4x91aZCNeYOl8x7Y4OxGIYLfSUOO1
+ EXogOCX6OQISJXInyuXTaBURPei5u2ON3vXhlsH84QdGyqF/HW6JdF1+Q1FG2RpaNlZJjSzf
+ X/fplYEjHNMB0eCYahyaoO3Ls0ly6n8CNjoPsw4iPIQPvCdkyfZoUlTiV6s4oz7rKQ7fUgC1
+ XannSSEUSZy5UdPlWbeqwIhPVkDnX5WKYT7HsyT8vhf+eDCDEN5sJ9cWLd0Usg37bmfvCLe+
+ MtFOs2Bxn13CbKlO3SNq9BDfQ1TdxDX4KwaTeQKKIZvxSI7SQkc5wP5mOJJl3FNxv4Mz7yZp
+ BlRpGcDmAOk2xUr1jlmmlg4NeuwBswgxZ7KFSctJl2vk2Myepqi6bxXdp08O9EaGB9Lk5ZJo
+ w0+U5zYWJxnE22fkxxENMWVhNI5LnyD21nRVxdJlRBjJPaMsSSVoYe8JmMCNUAmUkKKiCfJi
+ +bwil2AGcFcGFUK4QS/QKvH8m5ddEM1wIpaN3Yk6PEKEKkw2OCG8xDMs8I=
+IronPort-HdrOrdr: A9a23:LDaS5K4hLJH2FZy+4wPXwPjXdLJyesId70hD6qkXc20sTiX4rb
+ HWoB1/73XJYVkqOU3I9eruBED4ewK6yXct2/h2AV7AZniFhILLFvAH0WKK+VSJdxEWkNQttp
+ uIG5IUNDSaNzZHZKjBgDVQQ+xM/DHEmJrY4Nvj8w==
+X-Talos-CUID: 9a23:JeWMQ2/GZ6zpUdsytLyVv0kfA5h0V2Th90jzIxWnVDliEqClRUDFrQ==
+X-Talos-MUID: 9a23:ua8hKwsD7ihpYnpUAs2noWFvN+Niza2XFF1Uypwt5e2NJDZ0JGLI
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.12,152,1728950400"; 
+   d="scan'208";a="379958930"
+Received: from alln-l-core-10.cisco.com ([173.36.16.147])
+  by alln-iport-7.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 13 Nov 2024 23:56:54 +0000
+Received: from neescoba-vicdev.cisco.com (neescoba-vicdev.cisco.com [171.70.41.192])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by alln-l-core-10.cisco.com (Postfix) with ESMTPS id 4CC311800026E;
+	Wed, 13 Nov 2024 23:56:53 +0000 (GMT)
+Received: by neescoba-vicdev.cisco.com (Postfix, from userid 412739)
+	id C164ECC128B; Wed, 13 Nov 2024 23:56:52 +0000 (GMT)
+From: Nelson Escobar <neescoba@cisco.com>
+Subject: [PATCH net-next v4 0/7] enic: Use all the resources configured on
+ VIC
+Date: Wed, 13 Nov 2024 23:56:32 +0000
+Message-Id: <20241113-remove_vic_resource_limits-v4-0-a34cf8570c67@cisco.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241108130737.126567-1-pbonzini@redhat.com>
-Message-ID: <ZzU8qY92Q2QNtuyg@google.com>
-Subject: Re: [PATCH] KVM: x86: switch hugepage recovery thread to vhost_task
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	michael.christie@oracle.com, Tejun Heo <tj@kernel.org>, 
-	Luca Boccassi <bluca@debian.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALA8NWcC/33OwWrDMAwG4FcpPs/Flt0m7WnvMUqwFbkVLHGxU
+ 9NR8u4zYbDQQ05C/Oj79RKZElMW591LJCqcOY51sR87gTc3XklyX3cBCqxWYGSiIRbqCmOXKMd
+ HQuq+eeApS3LuaMOJjofgRQXuiQI/F/xLjDTJkZ6TuNTkxnmK6WdpLXrJ/wpAWd2oZg+NVSChn
+ lDG6N0ncp17jMMCFFgf2a2vCkgllTn5Fh0dQt+/U+af0qrdpEyljHetBuMxBFxT8zz/Asdcub5
+ OAQAA
+X-Change-ID: 20241023-remove_vic_resource_limits-eaa64f9e65fb
+To: John Daley <johndale@cisco.com>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Christian Benvenuti <benve@cisco.com>, Satish Kharat <satishkh@cisco.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Nelson Escobar <neescoba@cisco.com>, Simon Horman <horms@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731542212; l=2306;
+ i=neescoba@cisco.com; s=20241023; h=from:subject:message-id;
+ bh=C/Pb0O9EV/ymqhuOoiX9O7mCGREp+63wZqJY1vKc9RU=;
+ b=K+ynWfctiRpYxZoer6Bvkt2aQ5PqEv4HAbO63HVTGqBM9N1FYKPQ8ss6AK36HivlVRiyKYT1G
+ xCS7f88kFZTC8ZsoUZTQ9/FSa1RcLHb3RVzx1xBretEGPK2OJvwFE7u
+X-Developer-Key: i=neescoba@cisco.com; a=ed25519;
+ pk=bLqWB7VU0KFoVybF4LVB4c2Redvnplt7+5zLHf4KwZM=
+X-Outbound-SMTP-Client: 171.70.41.192, neescoba-vicdev.cisco.com
+X-Outbound-Node: alln-l-core-10.cisco.com
 
-On Fri, Nov 08, 2024, Paolo Bonzini wrote:
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 8e853a5fc867..d5af4f8c5a6a 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -7281,7 +7281,7 @@ static int set_nx_huge_pages(const char *val, const struct kernel_param *kp)
->  			kvm_mmu_zap_all_fast(kvm);
->  			mutex_unlock(&kvm->slots_lock);
->  
-> -			wake_up_process(kvm->arch.nx_huge_page_recovery_thread);
-> +			vhost_task_wake(kvm->arch.nx_huge_page_recovery_thread);
->  		}
->  		mutex_unlock(&kvm_lock);
->  	}
-> @@ -7427,7 +7427,7 @@ static int set_nx_huge_pages_recovery_param(const char *val, const struct kernel
->  		mutex_lock(&kvm_lock);
->  
->  		list_for_each_entry(kvm, &vm_list, vm_list)
-> -			wake_up_process(kvm->arch.nx_huge_page_recovery_thread);
-> +			vhost_task_wake(kvm->arch.nx_huge_page_recovery_thread);
->  
->  		mutex_unlock(&kvm_lock);
->  	}
-> @@ -7530,62 +7530,65 @@ static void kvm_recover_nx_huge_pages(struct kvm *kvm)
->  	srcu_read_unlock(&kvm->srcu, rcu_idx);
->  }
->  
-> -static long get_nx_huge_page_recovery_timeout(u64 start_time)
-> +#define NX_HUGE_PAGE_DISABLED (-1)
+Allow users to configure and use more than 8 rx queues and 8 tx queues
+on the Cisco VIC.
 
-I don't see any point in using -1.  That's more legal (though still impossible
-and absurd) than an deadline of '0'.  And it's somewhat confusing because KVM
-uses -1 for the default nx_huge_pages value to indicate "enable the NX huge page
-mitigation if the CPU is vulnerable to L1TF", not "disable the mitigation".
+This series changes the maximum number of tx and rx queues supported
+from 8 to the hardware limit of 256, and allocates memory based on the
+number of resources configured on the VIC.
 
-> +static u64 get_nx_huge_page_recovery_next(void)
->  {
->  	bool enabled;
->  	uint period;
->  
->  	enabled = calc_nx_huge_pages_recovery_period(&period);
->  
-> -	return enabled ? start_time + msecs_to_jiffies(period) - get_jiffies_64()
-> -		       : MAX_SCHEDULE_TIMEOUT;
-> +	return enabled ? get_jiffies_64() + msecs_to_jiffies(period)
-> +		: NX_HUGE_PAGE_DISABLED;
+Signed-off-by: Nelson Escobar <neescoba@cisco.com>
+---
+Changes in v4:
+- Followed Vadim Fedorenko's suggestions for re-arranging enic_wq and
+  adding ____cacheline_aligned to the new structs.
+- Link to v3: https://lore.kernel.org/r/20241108-remove_vic_resource_limits-v3-0-3ba8123bcffc@cisco.com
 
-Please align the '?' and ':' to show that they are related paths of the ternary
-operator.  Moot point if we go without a literal '0'.
+Changes in v3:
+- Per Jakub's suggestions, split commit 5 into smaller commits and use
+  net_get_num_default_rss_queues() to set the number of RQs used.
+- Fixed an issue with commit 2 caught during testing with a missing
+  changed needed in enic_init_vnic_resources().
+- Link to v2: https://lore.kernel.org/r/20241024-remove_vic_resource_limits-v2-0-039b8cae5fdd@cisco.com
 
->  }
->  
-> -static int kvm_nx_huge_page_recovery_worker(struct kvm *kvm, uintptr_t data)
-> +static void kvm_nx_huge_page_recovery_worker_kill(void *data)
->  {
-> -	u64 start_time;
-> +}
-> +
-> +static bool kvm_nx_huge_page_recovery_worker(void *data)
-> +{
-> +	struct kvm *kvm = data;
->  	long remaining_time;
->  
-> -	while (true) {
-> -		start_time = get_jiffies_64();
-> -		remaining_time = get_nx_huge_page_recovery_timeout(start_time);
-> +	if (kvm->arch.nx_huge_page_next == NX_HUGE_PAGE_DISABLED)
-> +		return false;
-
-The "next" concept is broken.  Once KVM sees NX_HUGE_PAGE_DISABLED for a given VM,
-KVM will never re-evaluate nx_huge_page_next.  Similarly, if the recovery period
-and/or ratio changes, KVM won't recompute the "next" time until the current timeout
-has expired.
-
-I fiddled around with various ideas, but I don't see a better solution that something
-along the lines of KVM's request system, e.g. set a bool to indicate the params
-changed, and sprinkle smp_{r,w}mb() barriers to ensure the vhost task sees the
-new params.
-
-FWIW, I also found "next" to be confusing.  How about "deadline"? KVM uses that
-terminology for the APIC timer, i.e. it's familiar, intuitive, and accurate(ish).
-
-Something like this as fixup?  (comments would be nice)
+Changes in v2:
+- Followed Kalesh's suggestions: removed redundant NULL assigments,
+  returning -ENOMEM directly
+- Reviewed-by tag for Simon Horman <horms@kernel.org>
+- Marked Satish Kharat and John Daley as co-developers to better reflect
+  their role in this patch set
+- Link to v1: https://lore.kernel.org/r/20241022041707.27402-2-neescoba@cisco.com
 
 ---
- arch/x86/include/asm/kvm_host.h |  3 ++-
- arch/x86/kvm/mmu/mmu.c          | 34 +++++++++++++++++++++------------
- 2 files changed, 24 insertions(+), 13 deletions(-)
+Nelson Escobar (7):
+      enic: Create enic_wq/rq structures to bundle per wq/rq data
+      enic: Make MSI-X I/O interrupts come after the other required ones
+      enic: Save resource counts we read from HW
+      enic: Allocate arrays in enic struct based on VIC config
+      enic: Adjust used MSI-X wq/rq/cq/interrupt resources in a more robust way
+      enic: Move enic resource adjustments to separate function
+      enic: Move kdump check into enic_adjust_resources()
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 72f3bcfc54d7..e9fb8b9a9c2b 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1444,7 +1444,8 @@ struct kvm_arch {
- 
- 	struct kvm_x86_pmu_event_filter __rcu *pmu_event_filter;
- 	struct vhost_task *nx_huge_page_recovery_thread;
--	u64 nx_huge_page_next;
-+	u64 nx_huge_page_deadline;
-+	bool nx_huge_page_params_changed;
- 
- #ifdef CONFIG_X86_64
- 	/* The number of TDP MMU pages across all roots. */
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index d0c2d9d2588f..acfa14d4248b 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -7102,6 +7102,13 @@ static void mmu_destroy_caches(void)
- 	kmem_cache_destroy(mmu_page_header_cache);
- }
- 
-+static void mmu_wake_nx_huge_page_task(struct kvm *kvm)
-+{
-+	smp_wmb();
-+	WRITE_ONCE(kvm->arch.nx_huge_page_deadline, true);
-+	vhost_task_wake(kvm->arch.nx_huge_page_recovery_thread);
-+}
-+
- static int get_nx_huge_pages(char *buffer, const struct kernel_param *kp)
- {
- 	if (nx_hugepage_mitigation_hard_disabled)
-@@ -7162,7 +7169,7 @@ static int set_nx_huge_pages(const char *val, const struct kernel_param *kp)
- 			kvm_mmu_zap_all_fast(kvm);
- 			mutex_unlock(&kvm->slots_lock);
- 
--			vhost_task_wake(kvm->arch.nx_huge_page_recovery_thread);
-+			mmu_wake_nx_huge_page_task(kvm);
- 		}
- 		mutex_unlock(&kvm_lock);
- 	}
-@@ -7291,7 +7298,7 @@ static int set_nx_huge_pages_recovery_param(const char *val, const struct kernel
- 		mutex_lock(&kvm_lock);
- 
- 		list_for_each_entry(kvm, &vm_list, vm_list)
--			vhost_task_wake(kvm->arch.nx_huge_page_recovery_thread);
-+			mmu_wake_nx_huge_page_task(kvm);
- 
- 		mutex_unlock(&kvm_lock);
- 	}
-@@ -7394,17 +7401,14 @@ static void kvm_recover_nx_huge_pages(struct kvm *kvm)
- 	srcu_read_unlock(&kvm->srcu, rcu_idx);
- }
- 
--#define NX_HUGE_PAGE_DISABLED (-1)
--
--static u64 get_nx_huge_page_recovery_next(void)
-+static u64 get_nx_huge_page_recovery_deadline(void)
- {
- 	bool enabled;
- 	uint period;
- 
- 	enabled = calc_nx_huge_pages_recovery_period(&period);
- 
--	return enabled ? get_jiffies_64() + msecs_to_jiffies(period)
--		: NX_HUGE_PAGE_DISABLED;
-+	return enabled ? get_jiffies_64() + msecs_to_jiffies(period) : 0;
- }
- 
- static void kvm_nx_huge_page_recovery_worker_kill(void *data)
-@@ -7416,10 +7420,16 @@ static bool kvm_nx_huge_page_recovery_worker(void *data)
- 	struct kvm *kvm = data;
- 	long remaining_time;
- 
--	if (kvm->arch.nx_huge_page_next == NX_HUGE_PAGE_DISABLED)
-+	if (READ_ONCE(kvm->arch.nx_huge_page_params_changed)) {
-+		smp_rmb();
-+		WRITE_ONCE(kvm->arch.nx_huge_page_params_changed, false);
-+		kvm->arch.nx_huge_page_deadline = get_nx_huge_page_recovery_deadline();
-+	}
-+
-+	if (!kvm->arch.nx_huge_page_deadline)
- 		return false;
- 
--	remaining_time = kvm->arch.nx_huge_page_next - get_jiffies_64();
-+	remaining_time = kvm->arch.nx_huge_page_deadline - get_jiffies_64();
- 	if (remaining_time > 0) {
- 		schedule_timeout(remaining_time);
- 		/* check for signals and come back */
-@@ -7428,7 +7438,7 @@ static bool kvm_nx_huge_page_recovery_worker(void *data)
- 
- 	__set_current_state(TASK_RUNNING);
- 	kvm_recover_nx_huge_pages(kvm);
--	kvm->arch.nx_huge_page_next = get_nx_huge_page_recovery_next();
-+	kvm->arch.nx_huge_page_deadline = get_nx_huge_page_recovery_deadline();
- 	return true;
- }
- 
-@@ -7437,11 +7447,11 @@ int kvm_mmu_post_init_vm(struct kvm *kvm)
- 	if (nx_hugepage_mitigation_hard_disabled)
- 		return 0;
- 
--	kvm->arch.nx_huge_page_next = get_nx_huge_page_recovery_next();
-+	WRITE_ONCE(kvm->arch.nx_huge_page_params_changed, true);
- 	kvm->arch.nx_huge_page_recovery_thread = vhost_task_create(
- 		kvm_nx_huge_page_recovery_worker, kvm_nx_huge_page_recovery_worker_kill,
- 		kvm, "kvm-nx-lpage-recovery");
--	
-+
- 	if (!kvm->arch.nx_huge_page_recovery_thread)
- 		return -ENOMEM;
- 
+ drivers/net/ethernet/cisco/enic/enic.h         |  62 ++--
+ drivers/net/ethernet/cisco/enic/enic_ethtool.c |   8 +-
+ drivers/net/ethernet/cisco/enic/enic_main.c    | 386 +++++++++++++++----------
+ drivers/net/ethernet/cisco/enic/enic_res.c     |  42 +--
+ 4 files changed, 299 insertions(+), 199 deletions(-)
+---
+base-commit: 6f07cd8301706b661776074ddc97c991d107cc91
+change-id: 20241023-remove_vic_resource_limits-eaa64f9e65fb
 
-base-commit: 922a5630cd31e4414f964aa64f45a5884f40188c
---
+Best regards,
+-- 
+Nelson Escobar <neescoba@cisco.com>
+
 
