@@ -1,102 +1,134 @@
-Return-Path: <linux-kernel+bounces-408033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6909C9C7936
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:46:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 447B99C7943
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:50:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C18C1F24FE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:46:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0B6A1F25AE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF93614F114;
-	Wed, 13 Nov 2024 16:46:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E587D1DFE06;
+	Wed, 13 Nov 2024 16:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TAYt8T/V"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VRS6yRTO"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A59816A94A
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F4D1494CC
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731516370; cv=none; b=ErOHsFuIP+JprZO00SQWQnCA0fdb2JYGzmknBvr2spyMH+WwpVI3N2UKeK73MesnNTWEPNYEYRqy+3W46Sk0JmQuEIs6qnSkhT39aXfn5ugU5ZH7EZEVTtQpOV+2NhBEEHhV/+kEQVo9MxJO4pa9NUtHdZGM3eQZa6n4yAcvc9U=
+	t=1731516604; cv=none; b=YzVXbgEmCXdBGIf6zCTp3JKEv3gjcT8nOgXYQ8TAk70k7R0i7a1vBVqA7I0Iw19Jq3embCAPEbzORs9+FCL0LsXjlaesgo/Fhs5QsnERl3UUUBDa2YWJy5/SuWgpId0i4QOHVW2TLJnH1+/SNTLVGspfLdQy6ctiVmp9UFuPPn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731516370; c=relaxed/simple;
-	bh=Vwy1oSriyT+MIYawWcOFKmv9oUnxvII3WvkoO2ynRdA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gdhHFw4kicdVhMb8/UMJmRLba/PBFyxh7XkNiMTI1EUuWmMS/PhgKiPkWq0eDuxHLoSFOYNlxD7xF2nzaxWQ/Q8W4pH9f3Yz982wYCCroDGgH5SLEV++mLnRi23WzzrE0M8yOklU5vN1sUCXVm4NIzz1ERjkbzBnXuYkoe3qHIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TAYt8T/V; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1731516604; c=relaxed/simple;
+	bh=EZya+FJMrje5mV8wSDU3bo/PA6cVGmfWmw2e1OFYPnA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bTMthDjIl3jl5x1D+EkDlN9yybdVFlLRLNPrlEzKIVSI2I/bo4JLtj6Vofh3wKmoGYs36ySC0gbreLk3/CQR6W0EH+AJZTK6QTX53ltosrTKXM9/CkpRxw+omfcjJ6jVvDxcCrekViiCqrqjUBJZfzedYevcqGSokcwmjUnZt7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VRS6yRTO; arc=none smtp.client-ip=209.85.210.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d533b5412so4945994f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:46:07 -0800 (PST)
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7205b6f51f3so5818591b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:50:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731516366; x=1732121166; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zmkd5V8HB7Q4sGbZtrxWGBf5+TlXsok1y0ywIIUCx9M=;
-        b=TAYt8T/VBfmVwMCjba5GcN4v2jybXER9dVX/mahXo99h1DFmIfuXjyx6P9cyIY0F2J
-         RLz+SVI16yoTq/JY+y3VN1TEp2jjnH/fsfA3BeJ85oSIRq0NhNWEEFeFj/7lGamjTabm
-         mXmWCHsNg4FFrcvtHkPi69VS3cSGVOZ6AmoD4RnMVc+xmSqxZ1VwkVieZLRSahbYkmJ8
-         KPEUArxU/wUl6R9xi9whVIvuzS/lCa/e2MpQq0fPHcb13M7wSnpkQodWxvlChQqYRW6j
-         BsU2g6zfiocV3Sl8gyAGorRTtyWF8zjhe2a0xvwA349SUTof2+R5tB/tBWH25hBqNbKo
-         cSQA==
+        d=linaro.org; s=google; t=1731516602; x=1732121402; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RVxECdTcqAbi+Rrk8wDv8FKnY/+NvKNnZGAccXEI/84=;
+        b=VRS6yRTOKKKmkCPADA6N48gQitMwWjVbjugs+dRErpfGetHEIuyCbZWnzXchAPFonW
+         8N69dhIa2qg3NsoLXFEIueFUE+f0rGCf6oQfdrxLFZp5mgoHWp6ALMU4lcAsLQYgfgK0
+         NHFW6M9BUMaz9fM1IW5ROhBMYckR6cRAi7Q7Sb6LxTyB5j065FEMlX4Ob8emLazEtmnn
+         BaYfsYSSKY7lcO5QNx8uR1Wy0YC04aj6hMADtH16CydD/1/WLtc5Vp1xelS5sJuI9TOp
+         wyXI5u+O6l2OSeRPkNCdLW7ML4oDYw3sqxbHMZUrkvjLT/rlLxRA+M99/6D3odn+PWYx
+         8ugg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731516366; x=1732121166;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zmkd5V8HB7Q4sGbZtrxWGBf5+TlXsok1y0ywIIUCx9M=;
-        b=qOLQLG1u2mIQryg8/aHXS/UOT8rkGL1QWXyAVzWtR/Jz9kL83xqBo8/CAILZKknpj3
-         jzLoCKtg85H5b+CGMP/7Uy8mzwpkdoMZWPVRqYXCQUMhJlgsfA8pVF9YNkOI//hkE8es
-         FNi5zX1yOJXn+WRD/8KniJ3l3m8A45ZEZl4IpCJhtapiYN/CZQkUvGGA+vKPE23kjuBU
-         LwI38hjmKg7FnM3+7BRoAUZPuoxqGXHeFH8LvXVMx/ZVl7IYhtVE8/Iab52z9V+oitBi
-         DBdg3DU+LWoaFiGLPMJKgHnG26q4J9kWm8WsgIrv0WMnjlPFof5Gb0fkI9fQ+fj3ARIi
-         SgGw==
-X-Forwarded-Encrypted: i=1; AJvYcCXC5wsyLMa9SsvnxtKLopoTtJXN3QC1zDXDdHad7pRn2xh3LLmLr8Hn0984dNoEwvb138FtJRdgh1WtCUc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBKZ1SW+T1NSnwtvhHbQl3EpsnLD0G2xDIQZYqXdeJ70X7aUiT
-	jKo/IjegtjnMiyykJs9J21y/D2Auu8pa1EiD0GHz+de44Rnst1kLFH7QxonHoJA=
-X-Google-Smtp-Source: AGHT+IEPY0tVNdb8C+tYsDxL66F1F1lB+tkHPAObFKOXietn9feaRfTNcNYc2AdjkSxoREK/g4zzqw==
-X-Received: by 2002:a5d:5f81:0:b0:37d:4e74:684 with SMTP id ffacd0b85a97d-381f1888c09mr17565241f8f.52.1731516365863;
-        Wed, 13 Nov 2024 08:46:05 -0800 (PST)
-Received: from [192.168.0.48] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381eda0517csm18751675f8f.96.2024.11.13.08.46.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2024 08:46:05 -0800 (PST)
-Message-ID: <16d1f749-03e2-47fc-a7ff-d77ae0f30af9@linaro.org>
-Date: Wed, 13 Nov 2024 16:46:04 +0000
+        d=1e100.net; s=20230601; t=1731516602; x=1732121402;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RVxECdTcqAbi+Rrk8wDv8FKnY/+NvKNnZGAccXEI/84=;
+        b=ORZwp8+G1CU8d4GVhbZF4fCUJzAc1eWvo8Tmoh/6W7o9I+bRbd5kIlPj+HqDJsU4Jy
+         Ue/nINj8aOxVkFhpTN5tr5EIJjxlq2hX2lZ4kPpaE5awmNveyEUOTyKE/bvyXhVfD1BU
+         M9IM9ocFCIjhYLd4EYMO60eGFKlhngcod8HMTX9pVAfyRXVO/w/vAyeSh0Dj2CCezmIU
+         dhTXmuSkWjSeDWnwARJIubbJonkJcRoE/xfSJWTt0mPygNtNcBK4dHkbOKQ33DJQpyLo
+         bv3c5aPYM/6ZCmyFx4Pex2Jln2WIeIvKcOgs0v5COZtHsumWC8uBSkpP64mgfwZ/BeN+
+         3CVA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9qDZnz6B+a8K6TRAgdLbVXmadKXI918cTA4B7VrmAb3f2myqqzR2BXC+nZ67mbCEZK6sPHPD9+AM7n2o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7mgNwR83Al4an/GU7l9xfEZJ0ncDFOv5QDB1ClIiwf5MkJlU4
+	7UIpnRM2HV6fn2DoIXH0hMJYN4iDf7QDuIjIszpWPA8oD38jUDwOFA374TYdye+MSsDy1JtfjqJ
+	g
+X-Google-Smtp-Source: AGHT+IEJlVgaPrBBscQLqLbr/yoapzGNIccPwbYP5hzO2WPEIQAkd9edjzqTVN9xB76kHN3i3HKHAA==
+X-Received: by 2002:a05:6a00:1744:b0:71d:f64d:ec60 with SMTP id d2e1a72fcca58-72413297242mr29057380b3a.7.1731516602100;
+        Wed, 13 Nov 2024 08:50:02 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:fd79:a2fb:87a9:f18])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7240799bb0dsm13912298b3a.120.2024.11.13.08.50.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 08:50:01 -0800 (PST)
+Date: Wed, 13 Nov 2024 09:49:58 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: anish kumar <yesanishhere@gmail.com>
+Cc: andersson@kernel.org, corbet@lwn.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [RESEND PATCH V6 1/3] Documentation: remoteproc: update
+ introduction section
+Message-ID: <ZzTYtn5jple+dbMU@p14s>
+References: <20241106051016.89113-1-yesanishhere@gmail.com>
+ <20241106051016.89113-2-yesanishhere@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] arm64: dts: qcom: qcs615-ride: enable venus node
-To: Renjiang Han <quic_renjiang@quicinc.com>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241112-add-venus-for-qcs615-v2-0-e67947f957af@quicinc.com>
- <20241112-add-venus-for-qcs615-v2-4-e67947f957af@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241112-add-venus-for-qcs615-v2-4-e67947f957af@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106051016.89113-2-yesanishhere@gmail.com>
 
-On 12/11/2024 11:48, Renjiang Han wrote:
-> Enable the venus node so that the video codec will start working.
+On Tue, Nov 05, 2024 at 09:10:14PM -0800, anish kumar wrote:
+> Update the intrduction section to add key components
+> provided by remote processor framework.
 > 
-> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
+> Signed-off-by: anish kumar <yesanishhere@gmail.com>
+> ---
+>  Documentation/staging/remoteproc.rst | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/Documentation/staging/remoteproc.rst b/Documentation/staging/remoteproc.rst
+> index 348ee7e508ac..eeebbeca71de 100644
+> --- a/Documentation/staging/remoteproc.rst
+> +++ b/Documentation/staging/remoteproc.rst
+> @@ -29,6 +29,23 @@ remoteproc will add those devices. This makes it possible to reuse the
+>  existing virtio drivers with remote processor backends at a minimal development
+>  cost.
+>  
+> +The primary purpose of the remoteproc framework is to download firmware
+> +for remote processors and manage their lifecycle. The framework consists
+> +of several key components:
+> +
+> +- **Character Driver**: Provides userspace access to control the remote
+> +  processor.
+> +- **ELF Utility**: Offers functions for handling ELF files and managing
+> +  resources requested by the remote processor.
+> +- **Remoteproc Core**: Manages firmware downloads and recovery actions
+> +  in case of a remote processor crash.
+> +- **Coredump**: Provides facilities for coredumping and tracing from
+> +  the remote processor in the event of a crash.
+> +- **Userspace Interaction**: Uses sysfs and debugfs to manage the
+> +  lifecycle and status of the remote processor.
+> +- **Virtio Support**: Facilitates interaction with the virtio and
+> +  rpmsg bus.
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Some of the above is either inaccurate or incomplete.  It would be fairly time
+consuming for me to point out where the problems are, especially since I don't
+see a lot of value in adding this section.
+
+> +
+>  User API
+>  ========
+>  
+> -- 
+> 2.39.3 (Apple Git-146)
+> 
 
