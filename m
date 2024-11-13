@@ -1,138 +1,183 @@
-Return-Path: <linux-kernel+bounces-407990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 728039C79C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:17:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9C819C79A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 18:11:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74418B28578
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:13:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C2B1B36DBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A0F158DC4;
-	Wed, 13 Nov 2024 16:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 131EC1632E3;
+	Wed, 13 Nov 2024 16:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jLU0J3P7"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="jCyVMMJR"
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D94F171C9
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A58F8F6C
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731514387; cv=none; b=Pu6LBRdEmDR9xEtFRSEyuopBFSlFLZT5HwEwTML4lYmiS4ZfVp+o91Wxn3fpmNwk1roQ2jALvJuPiukw3YRd2U/QY959hIoxAkJ3Eqfsugdh1cIp/5uOMawJhN9WigvFM6XJniM0/01i9/It9mrlx9TalgAr/vyeO328Cg8PH7Y=
+	t=1731514433; cv=none; b=gpiahvQNnK04FoDM+xLu5ZwsNYGyBH+5Z4ivjUEdEErCR+mMEx/onp1gWoQu/L5sJX2sGZN0oPj4pTKmtVEcISVko4uqrbIQHaghEUnY66uMf07MLa3TgqlIAMNEBj/c4JjqKxLICx4ATbQ5sX1b4JIxnnVXG4vRQIE1ImRuX1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731514387; c=relaxed/simple;
-	bh=/70UgeSPQ4hOl+81apBVxeqoPl9OH4tSaQJnk7qPHtA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oQ25yq3WBZSDX6ao1T/hxzgzuEl+VujXRfyhWeM+QXHXtOBaaOYs1MSBe5ioywLARLuI8kzl99x7T7LnmKzdtb+Tg0TctnNRZ3Hf14iuN7ANk30nsT5vWFrw50dhcJsMfeLZOZGwBIqF9lL0oOqme8hOoMJXnOtGlyow3q/utNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jLU0J3P7; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9ec86a67feso1235722566b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:13:05 -0800 (PST)
+	s=arc-20240116; t=1731514433; c=relaxed/simple;
+	bh=7HWQ/VqZgyhSHZd91HoF8yCdwP+of9WeF4Yh1KQV7BE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rs5eCZyGJjSVY92oCAyGRD9jGvJ/Y6i3W3tEZjSLGEYiNeLGKduWX/KFFqUW2BAUu44wKRutRbvWV7n4B8IiLhvHavt8jQfzC6bXMEOfRNv/LqgVFSEf9Z6Stii/fVP+/myDIy8oplSIihoQiLztdUfvvZvf5dLlK22bt1fQdQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=jCyVMMJR; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5ee645cf763so2160651eaf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:13:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731514384; x=1732119184; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SPCRSYoPSHpwTYrkQfPBw1+Y7qPSaun9UleVAf6DtlE=;
-        b=jLU0J3P7WEhai6a6IlExZ8K/QosOAtqVYJ5ft6XqIiq2e27BiqYA5P8RAUKoOtMch8
-         fUp1Ch7NlbNPXI7NB1m3iy3tUPMhR64O+vcRWRz0lCnjdw92FDhRns6o7oecA79kv9KA
-         7GrAf7EbwN5+rw7OE6AnJfhlqUqcAsT52sSkuGapdNxEjNYzo8z5/nNNyKh+mn82gTIw
-         gEqLTHHdoR2+9AfGSo15UPnefoBt8TuZhjd3fF8cWQGo82g3qxj8cKni0AZe2fdcLrGj
-         jVzgGrNYtM8wti4sF6u/1lhyX8YG0kibLTg28t9Hv4ivcK6KkGBC9kJWqdrZ3i+dnYeK
-         HrHg==
+        d=sifive.com; s=google; t=1731514429; x=1732119229; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b4CnOM9V0G25evq0IkfWx5gKqtwex3+JBvT1EkxAWJE=;
+        b=jCyVMMJRZOft92rmgjFsP3jK3JLbWqZcaGXyMz40qYrjgttc8yEJhY7jqrB/gqK/+y
+         D+SOZId9qjrrJnGW6X/8heTjD372K9LsGgC4UEfHPQxjal+LF2O538+U6Hv0vntjjMl3
+         80hXhVeRNixVT6HGJ1HWhZVBwNbQFtgcFFRtKo12KNHP0baM+vriLZDpTpaPCIU/Ftld
+         G0uD/fq4As/pD77wGfseFLWCBZGm7lAhe3sen+uAvRSVbGMOXUJMG5Am/9W1TFZ0cv+I
+         dOmfpvAumQU6rqEv6oKwookaF4hT5Mde01ublxW8YgpR+5DjCfj7CSff+k+Vh1fLL0Qu
+         0R+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731514384; x=1732119184;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SPCRSYoPSHpwTYrkQfPBw1+Y7qPSaun9UleVAf6DtlE=;
-        b=w2f6feYD2rWO/QgN7DXGWLqRV9BobG+tn3yXcE/d1+uGjPPT+xWXzMKgb2eJ7RwRym
-         qeXqNHcYJTlVT/zk45P625ijy7kFh/0PgjHYZODY3So0Jk9mJ+5eTi7VrPjM4NHfZLLg
-         juHP0iW6z5JhJQW1Cv2ULo3vAeswbs8x8/ACDWmrRjxiepp76nqO3JPGzVIs8nqBBJzF
-         f1cAI2IlAvBPnRfaPy+gt0bBaVSsEJUE2CIOHcJKAA+trN5PSzirSEl7OFuAuYTycH9q
-         /7D+TWINIiR+FTtMx2EB+3zf/pW5Xo8g3N+PsY7+URSDZgWTN18XEtkS9B59rkP9W6N+
-         36vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSxPIQceBiXX+oojxf53UANyzj2rdyMACoO3XtX/h02S7wMADXABqEerLPjamIdOz/2O2q8odISblm0SE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9XSZ2m3DAE31t8rhDHDglTFseOUzTMNd+wCwG1MuRdGLOBP9/
-	OlrU0tPrGmy6FRdNLN6peShphaealiRzQNCa0+VQ8FpuxRSSkJ3AhqNqWDOWzLU=
-X-Google-Smtp-Source: AGHT+IFjZsCHovOOd6p/6Y6Rm1a3D613g06b2tt4FLhBkNEK/HNzyPsLILrVS2Y3DIliqWTK31ytdQ==
-X-Received: by 2002:a17:907:a4b:b0:a99:fc3d:7c76 with SMTP id a640c23a62f3a-a9ef001915amr2144913766b.37.1731514383858;
-        Wed, 13 Nov 2024 08:13:03 -0800 (PST)
-Received: from [192.168.68.163] ([145.224.90.214])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0e2eb28sm877229166b.197.2024.11.13.08.13.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2024 08:13:03 -0800 (PST)
-Message-ID: <c03b1604-cc41-4746-be3a-fc326152d556@linaro.org>
-Date: Wed, 13 Nov 2024 16:13:01 +0000
+        d=1e100.net; s=20230601; t=1731514429; x=1732119229;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b4CnOM9V0G25evq0IkfWx5gKqtwex3+JBvT1EkxAWJE=;
+        b=ObkmI/zVjw15bCJrJ3knpi7KMQPnH0UrsS8meJyztZPcvXWmc1o4Go8qighPqw4KnP
+         q6Rz18qf1Vg3An3BkYtVhrMUt4KFlybP5ykq7WZ3LUQ9lvhkhny0L3ipBlJFfRwnLHwZ
+         tcIxg8hiMBgJnOghYv/feu1FQNssGyofqFvOCzYf7ZkpLhD9y4UDBvT+TQf9pC+TU/nT
+         CNHzFZhdR4+dYRv1ighk5jL/D3yntz7gANZOH5NBJX8KNLz6PBcb7dbpf6irth+rnCdH
+         G86OVe0OjGb4wVzU8gYScVApgGs7V3xdll+P97H2tsJnO94Q1pCkwkRwmM4hKKWmTelb
+         2MOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ7/Ikrsaqi/Tn+sepbVwl5IrtmTbXDYiLDI4Sv12MyPi8v2gec+I9jRcNLXhGv5nlIsEI5sJRXvMDiNA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWSNZYXkAnKeEOB7SlQd57LZDLFkkDoLHsgGKmqQOaBLg5J6Tl
+	neSl3suzTiPXxiZbRIpPK5SfofgtsVnYJnB9n7o7gxFUODH3gZva860bREMtHfZMqSffwS9p0Uy
+	++pPpzsOhnP4eNCt6w7cKt5vKK7LxBnE2F6LWYQ==
+X-Google-Smtp-Source: AGHT+IGDFpRJff+OKPz21HLMWXvGQyDkqQzC8F4K0hofednOGXa7SW/5Crlgs/h6Bl5IR8Aw+zrRHhGFgVmxSg02ZdY=
+X-Received: by 2002:a05:6820:1805:b0:5eb:c72e:e29c with SMTP id
+ 006d021491bc7-5ee86a500a2mr5293321eaf.8.1731514429462; Wed, 13 Nov 2024
+ 08:13:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] perf/util: initialize is_test value in
- expr__ctx_new()
-To: Levi Yun <yeoreum.yun@arm.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- nd@arm.com, namhyung@kernel.org, mark.rutland@arm.com, irogers@google.com,
- james.clark2@arm.com
-References: <20241108143424.819126-1-yeoreum.yun@arm.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20241108143424.819126-1-yeoreum.yun@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241111-v5_user_cfi_series-v8-0-dce14aa30207@rivosinc.com> <20241111-v5_user_cfi_series-v8-24-dce14aa30207@rivosinc.com>
+In-Reply-To: <20241111-v5_user_cfi_series-v8-24-dce14aa30207@rivosinc.com>
+From: Nick Hu <nick.hu@sifive.com>
+Date: Thu, 14 Nov 2024 00:13:38 +0800
+Message-ID: <CAKddAkCCVjNHUinPWtOiK8Ki_ZkdoUCawfv1-+0B69J_1aJv5Q@mail.gmail.com>
+Subject: Re: [PATCH v8 24/29] riscv: enable kernel access to shadow stack
+ memory via FWFT sbi call
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
+	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
+	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
+	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
+	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Deepak
 
-
-On 08/11/2024 2:34 pm, Levi Yun wrote:
-> when expr_parse_ctx is allocated by expr_ctx_new(),
-> expr_scanner_ctx->is_test isn't initialize, so it has garbage value.
-> this can affects the result of expr__parse() return when it parses
-> non-exist event literal according to garbage value.
-> 
-> use calloc instead of malloc in expr_ctx_new() to fix this.
-> 
-> Fixes: 3340a08354ac ("perf pmu-events: Fix testing with JEVENTS_ARCH=all")
-> Signed-off-by: Levi Yun <yeoreum.yun@arm.com>
+On Tue, Nov 12, 2024 at 5:08=E2=80=AFAM Deepak Gupta <debug@rivosinc.com> w=
+rote:
+>
+> Kernel will have to perform shadow stack operations on user shadow stack.
+> Like during signal delivery and sigreturn, shadow stack token must be
+> created and validated respectively. Thus shadow stack access for kernel
+> must be enabled.
+>
+> In future when kernel shadow stacks are enabled for linux kernel, it must
+> be enabled as early as possible for better coverage and prevent imbalance
+> between regular stack and shadow stack. After `relocate_enable_mmu` has
+> been done, this is as early as possible it can enabled.
+>
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
 > ---
->   tools/perf/util/expr.c | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/tools/perf/util/expr.c b/tools/perf/util/expr.c
-> index 5e3732bc2fa5..bc119501f091 100644
-> --- a/tools/perf/util/expr.c
-> +++ b/tools/perf/util/expr.c
-> @@ -285,7 +285,7 @@ struct expr_parse_ctx *expr__ctx_new(void)
->   {
->   	struct expr_parse_ctx *ctx;
-> 
-> -	ctx = malloc(sizeof(struct expr_parse_ctx));
-> +	ctx = calloc(1, sizeof(struct expr_parse_ctx));
->   	if (!ctx)
->   		return NULL;
-> 
-> @@ -294,9 +294,6 @@ struct expr_parse_ctx *expr__ctx_new(void)
->   		free(ctx);
->   		return NULL;
->   	}
-> -	ctx->sctx.user_requested_cpu_list = NULL;
-> -	ctx->sctx.runtime = 0;
-> -	ctx->sctx.system_wide = false;
-> 
->   	return ctx;
->   }
+>  arch/riscv/kernel/asm-offsets.c |  4 ++++
+>  arch/riscv/kernel/head.S        | 12 ++++++++++++
+>  2 files changed, 16 insertions(+)
+>
+> diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offs=
+ets.c
+> index 766bd33f10cb..a22ab8a41672 100644
+> --- a/arch/riscv/kernel/asm-offsets.c
+> +++ b/arch/riscv/kernel/asm-offsets.c
+> @@ -517,4 +517,8 @@ void asm_offsets(void)
+>         DEFINE(FREGS_A6,            offsetof(struct ftrace_regs, a6));
+>         DEFINE(FREGS_A7,            offsetof(struct ftrace_regs, a7));
+>  #endif
+> +       DEFINE(SBI_EXT_FWFT, SBI_EXT_FWFT);
+> +       DEFINE(SBI_EXT_FWFT_SET, SBI_EXT_FWFT_SET);
+> +       DEFINE(SBI_FWFT_SHADOW_STACK, SBI_FWFT_SHADOW_STACK);
+> +       DEFINE(SBI_FWFT_SET_FLAG_LOCK, SBI_FWFT_SET_FLAG_LOCK);
+>  }
+> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
+> index 356d5397b2a2..6244408ca917 100644
+> --- a/arch/riscv/kernel/head.S
+> +++ b/arch/riscv/kernel/head.S
+> @@ -164,6 +164,12 @@ secondary_start_sbi:
+>         call relocate_enable_mmu
+>  #endif
+>         call .Lsetup_trap_vector
+> +       li a7, SBI_EXT_FWFT
+> +       li a6, SBI_EXT_FWFT_SET
+> +       li a0, SBI_FWFT_SHADOW_STACK
+> +       li a1, 1 /* enable supervisor to access shadow stack access */
+> +       li a2, SBI_FWFT_SET_FLAG_LOCK
+> +       ecall
+>         scs_load_current
+>         call smp_callin
+>  #endif /* CONFIG_SMP */
+> @@ -320,6 +326,12 @@ SYM_CODE_START(_start_kernel)
+>         la tp, init_task
+>         la sp, init_thread_union + THREAD_SIZE
+>         addi sp, sp, -PT_SIZE_ON_STACK
+> +       li a7, SBI_EXT_FWFT
+> +       li a6, SBI_EXT_FWFT_SET
+> +       li a0, SBI_FWFT_SHADOW_STACK
+> +       li a1, 1 /* enable supervisor to access shadow stack access */
+> +       li a2, SBI_FWFT_SET_FLAG_LOCK
+> +       ecall
+>         scs_load_current
+>
+>  #ifdef CONFIG_KASAN
+>
 > --
-> LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
-> 
-> 
+> 2.45.0
+>
+Should we clear the SBI_FWFT_SET_FLAG_LOCK before the cpu hotplug
+otherwise the menvcfg.sse won't be set by the fwft set sbi call when
+the hotplug cpu back to kernel?
 
-Reviewed-by: James Clark <james.clark@linaro.org>
-
-
+Regards,
+Nick
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
