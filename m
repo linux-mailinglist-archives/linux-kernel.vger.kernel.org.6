@@ -1,219 +1,141 @@
-Return-Path: <linux-kernel+bounces-408204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 326C69C7BF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:07:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA799C7BF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 20:10:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E46BB281DB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:07:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DE561F24006
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F76204031;
-	Wed, 13 Nov 2024 19:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF9F205E22;
+	Wed, 13 Nov 2024 19:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gn/50PUn"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RqsYtbL0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6684F15ADA4
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 19:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28AD205E15
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 19:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731524840; cv=none; b=K/nEcNeGTXZttAXzAFgt9OUqY2t1keoNfgP6znyuq+KUy+qfVFMvwaGae8AzX09N9zroosLqQySu8irJQBVozs3nV5Qg5VPh1XuU/AhQUbdjrluIlYmaNJT17vaBfiNMMFRqnGTqqfQjhJ7YgiyRFbMmpXYFiLjnz60KtviN4OI=
+	t=1731525005; cv=none; b=MUX2M9CckLsXSSrL8OBfW+igUPuSm3sDDat17/umeebVzI9gCB7Gd2B08RNrichlNaXr98XIekWkpmNv1/82CZvygDA2JjtjyH/nZoUpxKPsMosi/ndFq5LgdZpuMXDkSEjaWZzEx0zUJZPMJF+lN+Gx9rvybnaNcZ/nWZ9XAjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731524840; c=relaxed/simple;
-	bh=dJzjW6mC+hJ9E9ouofADVRGXMYGJoQzo1vNKPQ6ZBt0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oIM05z+eIWTEhDu8ddICaH3/DofpGJEKuyZJOMY/cJ80/RM2V3tux16NB/TZrXZQxrn2yk5ddICqaJ2AlLtw5FCcoam98mCSxhuno5uPe5bjAQGEy0aSbRE1I6W4G0+/zuBtn2pho/rEsaX9ag21PhCCL7UCTrTxZB9i7U+V1gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gn/50PUn; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9a850270e2so1327983166b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 11:07:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731524837; x=1732129637; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q13ryzNosnV/xJZBtK9f6BHsIvOTAR4m1CtdmIv3JKg=;
-        b=Gn/50PUnsiC8ASqqa+ptS/pO7r8oKMpfT5hlTJdSTCKE/ZzGQqRUwPYajtF4O4bwuq
-         T/nTfFkItTz4nLO9rGNsvQQON/F1/SCgsOqV5XS1+NApGTYARm8zxmQOsZtEksgpnzOI
-         WCLidMAIc7e30xSnIEs1VN5QytCM3w8852dAWMtC1LgvvhcxVak09G7GiCATb6RPoIYU
-         lQPfv5CVGv6YCK2FKhORK7hs9AiW9zcuelCIogEM5rX0mf1P0mJj7BgOkGRuh8QOQa/u
-         msh3ENioHyC9WjfFN7dzowS+ja5StyP8vW61IowrOR7GLX1WnSXm14NaCTMSOhhcG7V8
-         w3Uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731524837; x=1732129637;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q13ryzNosnV/xJZBtK9f6BHsIvOTAR4m1CtdmIv3JKg=;
-        b=HuAZrmb3/vcIJJeI6Su5YKJ3KaAXzjtvE3LRGwvS79eGyimx2x7YgiAz2rqn8QHMYH
-         aOa8ZpsuktQuO/a6ufj4Dq7zQM/zXjfafcAC2/HfSbXkeiVRHBNWd5cd0f4CJA7jtmWb
-         bncY/a9amd3la7rDwerGmEjgj8/1t3iGlMPPgYr2QNLUwRbMIYoRRY99v7SmH00b9D38
-         k4znWMAWFS7IWFy3pNMpavx2Lh6v5+Zr+07SgQZI+xAa6Gpc4hkB7boF5YraELZSr0e1
-         aOZwGNKXW+5ukEGePIayrQV65AcjO608s6Dg9rIkfDWS+P7brjZfGMsILJ4AZmAs1Jnh
-         /xNw==
-X-Gm-Message-State: AOJu0Yz55kgdwe+jnO7zI5IrAIjTIchZIyF93PumMvdtNriiHPouS6Wa
-	MPSzPbge+LcRSJ30hRcOv1uhwT3Zu70+GHzWFkEvxOhQQpXkI/2770wr1XYBIrIo6vepFUkDU5K
-	UCghOyiCUXMwqNpIVg1fsHaDbwCszq9qWRw0=
-X-Google-Smtp-Source: AGHT+IHlEG7voMOSbDHO/W3YquguiufNqqvK5nE93aiC6YEexxFH+95V2J7kw6FOL+djBBBXpxHn0IOM6XkIHr8ea0Y=
-X-Received: by 2002:a17:907:3e1a:b0:a9e:b610:8586 with SMTP id
- a640c23a62f3a-a9eefeade5dmr1866705666b.5.1731524836575; Wed, 13 Nov 2024
- 11:07:16 -0800 (PST)
+	s=arc-20240116; t=1731525005; c=relaxed/simple;
+	bh=YTenWURPNG80tAie5gN10CA/nw1UVLhT5fUcx+ziBCs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GV1KqccOTyRIIa1wbiY1SEx4W9z1Nb/MOJpzh3Qm168wyARr5iJwFDINzGlVv3Mv8YwWWtZKaby2n2UQHDS9sjLWzFU0TqM+KKgtKCujQGGNtFbKW3lrU+oQ4JBJfg82E2BDCtd6C86X86iSBLK0+1eM7ugufIDyYTu2NxQMhqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RqsYtbL0; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731525004; x=1763061004;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=YTenWURPNG80tAie5gN10CA/nw1UVLhT5fUcx+ziBCs=;
+  b=RqsYtbL0vjVKq45y+9bU/ysbChPsndRm1XuP+KnGdjxCC4vNCDIALvKA
+   AHfTP3XmqxJ0LCULthU2tA4H7agw0wH53UtWwwxI7hhlLkDqfH78mCR74
+   9D1h59tyBeXuZg91PyC6Q8nU5DrbnXzkfTvEdeWaJIvUOy4fNhlS5mKlL
+   eByhwOs/qJoZsOJlPPkytJ4EzHz8t7mNI27Y+onKC6AYKN1vLQCul5H/M
+   tIm0KOUDPXcTVed630FhcnHmk/mDv3hGgN6UBEqjEoePbesGmwzF34Fxo
+   yTsO0Xs7+CZa5fumwDPFsvj0HGIZMdzhjuPWL+4oCDeIC6gc+hBvyHPjc
+   Q==;
+X-CSE-ConnectionGUID: ueK0/kbYSgWr6ZorxScC+Q==
+X-CSE-MsgGUID: iICwep/FQG6pOuGZPEG5Pw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="56827490"
+X-IronPort-AV: E=Sophos;i="6.12,151,1728975600"; 
+   d="scan'208";a="56827490"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 11:10:03 -0800
+X-CSE-ConnectionGUID: CjUqLfJGTMm1s3nNACwQsA==
+X-CSE-MsgGUID: tgeSVRbjTo664YdWIVJbwQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,151,1728975600"; 
+   d="scan'208";a="92911653"
+Received: from kkkuntal-desk3 (HELO [10.124.220.196]) ([10.124.220.196])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 11:10:03 -0800
+Message-ID: <5a98b9bf-8004-47e0-82e6-77da49419e0b@intel.com>
+Date: Wed, 13 Nov 2024 11:10:01 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011232525.2513424-1-jstultz@google.com> <20241011232525.2513424-2-jstultz@google.com>
- <6afb936f-17c7-43fa-90e0-b9e780866097@app.fastmail.com>
-In-Reply-To: <6afb936f-17c7-43fa-90e0-b9e780866097@app.fastmail.com>
-From: John Stultz <jstultz@google.com>
-Date: Wed, 13 Nov 2024 11:07:05 -0800
-Message-ID: <CANDhNCo_CMNaVm5J+5ka24rb+gRjfeujyVakV6Hai_5j=V-axQ@mail.gmail.com>
-Subject: Re: [PATCH v13 1/7] locking/mutex: Remove wakeups from under mutex::wait_lock
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Joel Fernandes <joelaf@google.com>, Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Valentin Schneider <vschneid@redhat.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Benjamin Segall <bsegall@google.com>, 
-	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
-	Xuewen Yan <xuewen.yan94@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com, 
-	Davidlohr Bueso <dave@stgolabs.net>, regressions@lists.linux.dev, 
-	Thorsten Leemhuis <linux@leemhuis.info>, Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] x86/pkeys: Set XINUSE[PKRU] to 1 so that PKRU is
+ XRSTOR'd correctly
+To: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>,
+ linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, dave.hansen@linux.intel.com, tglx@linutronix.de,
+ mingo@kernel.org, rudi.horn@oracle.com, joe.jin@oracle.com
+References: <20241113181436.3518359-1-aruna.ramakrishna@oracle.com>
+ <20241113181436.3518359-2-aruna.ramakrishna@oracle.com>
+Content-Language: en-US
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <20241113181436.3518359-2-aruna.ramakrishna@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 13, 2024 at 10:18=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> wrot=
-e:
->
-> On Sat, Oct 12, 2024, at 01:25, John Stultz wrote:
-> > From: Peter Zijlstra <peterz@infradead.org>
-> >
-> > In preparation to nest mutex::wait_lock under rq::lock we need
-> > to remove wakeups from under it.
-> >
-> > Do this by utilizing wake_qs to defer the wakeup until after the
-> > lock is dropped.
->
-> To follow up from IRC, this patch is the one that caused a
-> boot time regression in linux-next in the regulator framework.
->
-> Anders Roxell found this during testing on the Rock Pi 4 board
-> (rockchips rk3399 based).
->
-> The book load with the NULL pointer dereference is at
-> https://lkft.validation.linaro.org/scheduler/job/7979980#L741
->
-> The interesting bit is this:
->
-> [ 0.957586] rk_gmac-dwmac fe300000.ethernet: Enable RX Mitigation via HW =
-Watchdog Timer"}
-> [ 0.969402] hub 6-0:1.0: USB hub found"}
-> [ 0.969450] hub 6-0:1.0: 1 port detected"}
-> [ 0.988163] Unable to handle kernel NULL pointer dereference at virtual a=
-ddress 0000000000000000"}
-> [ 0.988172] Mem abort info:"}
-> [ 0.988174]   ESR =3D 0x0000000096000004"}
-> [ 0.988176]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits"}
-> [ 0.988180]   SET =3D 0, FnV =3D 0"}
-> [ 0.988183]   EA =3D 0, S1PTW =3D 0"}
-> [ 0.988185]   FSC =3D 0x04: level 0 translation fault"}
-> [ 0.988187] Data abort info:"}
-> [ 0.988189]   ISV =3D 0, ISS =3D 0x00000004, ISS2 =3D 0x00000000"}
-> [ 0.988191]   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0"}
-> [ 0.988194]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0"}
-> [ 0.988197] [0000000000000000] user address but active_mm is swapper"}
-> [ 0.988201] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP"}
-> [ 0.988205] Modules linked in:"}
-> [ 0.988217] Hardware name: Radxa ROCK Pi 4B (DT)"}
-> [ 0.988225] pc : wake_up_q (kernel/sched/core.c:1059)
-> [ 0.988238] lr : wake_up_q (kernel/sched/core.c:1054)
-> [ 0.988243] sp : ffff800083433a00"}
-> [ 0.988245] x29: ffff800083433a00 x28: 0000000000000000 x27: ffff0000053b=
-6080"}
-> [ 0.988253] x26: ffff800083433b90 x25: ffff0000053b6000 x24: ffff80008009=
-8000"}
-> [ 0.988259] x23: 00000000ffffffff x22: 0000000000000001 x21: 000000000000=
-0000"}
-> [ 0.988265] x20: fffffffffffff850 x19: 0000000000000000 x18: 000000000000=
-0001"}
-> [ 0.988272] x17: ffff800075678000 x16: ffff800082728000 x15: 019ee6ab9800=
-6e30"}
-> [ 0.988278] x14: 000002ce459acd0c x13: 000b52b4cf08772c x12: 000000000000=
-000f"}
-> [ 0.988284] x11: 0000000000000000 x10: 0000000000000a50 x9 : ffff80008343=
-3870"}
-> [ 0.988291] x8 : ffff0000050fceb0 x7 : ffff0000f76ab9c0 x6 : 00000000000b=
-52b4"}
-> [ 0.988297] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 000000000000=
-0000"}
-> [ 0.988303] x2 : 0000000000002710 x1 : 0000000000000001 x0 : 000000000000=
-2710"}
-> [ 0.988310] Call trace:"}
-> [ 0.988313] wake_up_q+0x50/0xf0 P)"}
-> [ 0.988319] wake_up_q+0xa0/0xf0 L)"}
-> [ 0.988325] __ww_rt_mutex_lock.isra.0 (arch/arm64/include/asm/preempt.h:6=
-2 (discriminator 2) kernel/locking/rtmutex.c:1794 kernel/locking/ww_rt_mute=
-x.c:71)
-> [ 0.988333] ww_mutex_lock (kernel/locking/ww_rt_mutex.c:82)
-> [ 0.988338] regulator_lock_recursive (drivers/regulator/core.c:161 driver=
-s/regulator/core.c:333)
-> [ 0.988347] regulator_lock_recursive (drivers/regulator/core.c:348)
-> [ 0.988354] regulator_lock_dependent (drivers/regulator/core.c:409)
-> [ 0.988360] regulator_set_voltage (drivers/regulator/core.c:4173)
-> [ 0.988366] _opp_config_regulator_single (include/linux/regulator/consume=
-r.h:707 (discriminator 1) drivers/opp/core.c:933 drivers/opp/core.c:1019)
-> [ 0.988375] _set_opp (drivers/opp/core.c:1253)
-> [ 0.988379] dev_pm_opp_set_rate (drivers/opp/core.c:1357)
-> [ 0.988384] set_target (drivers/cpufreq/cpufreq-dt.c:63)
-> [ 0.988392] __cpufreq_driver_target (drivers/cpufreq/cpufreq.c:2292 drive=
-rs/cpufreq/cpufreq.c:2355)
-> [ 0.988398] sugov_work (kernel/sched/cpufreq_schedutil.c:537)
-> [ 0.988406] kthread_worker_fn (arch/arm64/include/asm/jump_label.h:32 inc=
-lude/linux/freezer.h:36 include/linux/freezer.h:54 kernel/kthread.c:861)
-> [ 0.988414] kthread (kernel/kthread.c:389)
-> [ 0.988420] ret_from_fork (arch/arm64/kernel/entry.S:863)
-> [ 0.988430] Code: f100067f 54000320 d11ec274 aa1303f5 (f9400273) "}
->
->
-> > @@ -1776,8 +1785,11 @@ static int __sched rt_mutex_slowlock(struct
-> > rt_mutex_base *lock,
-> >        * irqsave/restore variants.
-> >        */
-> >       raw_spin_lock_irqsave(&lock->wait_lock, flags);
-> > -     ret =3D __rt_mutex_slowlock_locked(lock, ww_ctx, state);
-> > +     ret =3D __rt_mutex_slowlock_locked(lock, ww_ctx, state, &wake_q);
-> > +     preempt_disable();
-> >       raw_spin_unlock_irqrestore(&lock->wait_lock, flags);
-> > +     wake_up_q(&wake_q);
-> > +     preempt_enable();
-> >       rt_mutex_post_schedule();
-> >
-> >       return ret;
->
-> This is apparently where things went wrong, but it's possible that
-> the actual root cause is in the regulator framework instead.
->
-> The NULL pointer itself happens when chasing wake_q->first->next,
-> so it would seem that one of these got reinitialized at
-> the wrong time, perhaps with a task_struct getting freed
-> or getting put on more than one wake_q_head lists at the
-> same time.
+On 11/13/24 10:14, Aruna Ramakrishna wrote:
+> PKRU value is not XRSTOR'd from the XSAVE area if the corresponding
+> XINUSE[i] bit is 0. When PKRU value is set to 0, it sets XINUSE[PKRU]
+> to 0 on AMD systems, which means the value updated on the sigframe
+> later (after a wrpkru(0)) is ignored.
 
-Thanks so much again to Anders for finding and reporting this!
+I think this is confusing XINUSE and XSTATE_BV.
 
-So I've managed to reproduce this and I'm chasing down what's going wrong n=
-ow.
+XINUSE is really internal to the CPU and is partially exposed in
+xgetbv(1).  But XINUSE is monolithic; it includes user and supervisor state.
 
-Thanks so much for the report!
--john
+XSTATE_BV is the actual memory location in the XSAVE buffer.
+
+So I think it's incorrect to say that XRSTOR behavior depends on XINUSE.
+ XRSTOR behavior depends on XSTATE_BV.
 
