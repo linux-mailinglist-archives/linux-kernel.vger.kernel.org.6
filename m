@@ -1,171 +1,287 @@
-Return-Path: <linux-kernel+bounces-408448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA1BC9C7EFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:55:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F08779C7EFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:56:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90BAD1F223D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:55:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DBCD1F224B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 23:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D0D18D633;
-	Wed, 13 Nov 2024 23:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BB618D633;
+	Wed, 13 Nov 2024 23:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MeqaBM03"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eLAY1U3X"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7CA618A6A0;
-	Wed, 13 Nov 2024 23:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327F418C320
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 23:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731542137; cv=none; b=BCcJ4qVW63HQOXxKI5bmjSfV9owBbVx3WC0Ui+OJ6VNN7nwyrPZUT68daIV5a1bZPNW738XXmSU4kP6cEq/2kK71V7gM7GNh33sB/lTStWLmTec+DubBwekqMohHxDs5CH+PjOiRCx24DQSq3Eg/U0z3ecIRW5yBqYqph1X6dsY=
+	t=1731542188; cv=none; b=Z9bh35EkCDjtIMNePZxWtx9qatPOqDpp1T9ujjFRQBP+XawhXcdfkIeX4C3ikI54eS+6F7/yDb7ehCvXY1+NOBepoT5dRD6RX3HxmBc4t6A3CE/jJy0s75MTs9wqY7/2pyImm1Ma+6e6zJTW0ngOki5Z/Mgt4Yits5q5B/gy24Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731542137; c=relaxed/simple;
-	bh=ItMqY/DQc5+bQ9nVL1ka+v2Fou18KSYRXrIlxeLivYg=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=Vue2cNBug643bKiDs50C+fcjQeuM9fi8gqxs4A0OHruYgXsM0evIYaDHMyXf6660ttoeH8SQLOyzviFT3GtyRVgQsOtBrOcJaLmhC/BrjVRKcdxq0ag+YkGlhWbv63711Jm2cGbmsWGMRAPtksvFq7+PTEihckB6FTVLGihs3eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MeqaBM03; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ADH1QC5015403;
-	Wed, 13 Nov 2024 23:55:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=Nyfj0bDUA/i5
-	CMGSuns1LVirTkcJuSpcYXzxbyy+MjE=; b=MeqaBM03xfYRu0LN1gBmLA/HyvPj
-	0aU44TZ+PEfTRcu2AhOhVIFxkdaRZ/qlyFLUrScvcR8jrlGxbMyjYbDscJV8EHmP
-	SusBqGyhgtHnWpL5X+NM9gvdlBATnb2LoBzQmga0xzkltF636ULg5riI9B26MTkc
-	n4T9ZJnFJf+0rwJOgWX9hMTQqX/P/WoUTNazvps5lzOQLASnSw310RudUZ1thtZ+
-	RuIoIdGUsb61izRQwbeLjR4lypbwkf9Jq1qS/3HN7u9IaNx2uYZG16dPYq6IivOa
-	dDKseluzoQBmydCF2NxOWxC5IorPSFHStTOPPU0xJqxEw6FiPUrs0UlUzg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vsf32559-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Nov 2024 23:55:30 +0000 (GMT)
-Received: from pps.filterd (NALASPPMTA03.qualcomm.com [127.0.0.1])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4ADNtTVO003188;
-	Wed, 13 Nov 2024 23:55:29 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by NALASPPMTA03.qualcomm.com (PPS) with ESMTP id 42vwj4khsx-1;
-	Wed, 13 Nov 2024 23:55:29 +0000
-Received: from NALASPPMTA03.qualcomm.com (NALASPPMTA03.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4ADNtTBk003183;
-	Wed, 13 Nov 2024 23:55:29 GMT
-Received: from hu-devc-lv-u18-c.qualcomm.com (hu-eserrao-lv.qualcomm.com [10.47.235.27])
-	by NALASPPMTA03.qualcomm.com (PPS) with ESMTP id 4ADNtT5H003182;
-	Wed, 13 Nov 2024 23:55:29 +0000
-Received: by hu-devc-lv-u18-c.qualcomm.com (Postfix, from userid 464172)
-	id CA8A850016F; Wed, 13 Nov 2024 15:55:28 -0800 (PST)
-From: Elson Roy Serrao <quic_eserrao@quicinc.com>
-To: gregkh@linuxfoundation.org, peter@korsgaard.com,
-        michal.vrastil@hidglobal.com, michal.vodicka@hidglobal.com
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Elson Roy Serrao <quic_eserrao@quicinc.com>
-Subject: [PATCH v2] Revert "usb: gadget: composite: fix OS descriptors w_value logic"
-Date: Wed, 13 Nov 2024 15:54:33 -0800
-Message-Id: <20241113235433.20244-1-quic_eserrao@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: jG3x1PpwfQOLRWJVSj_Rjzg2vvmbNKv0
-X-Proofpoint-GUID: jG3x1PpwfQOLRWJVSj_Rjzg2vvmbNKv0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- bulkscore=0 phishscore=0 malwarescore=0 suspectscore=0 priorityscore=1501
- clxscore=1011 mlxscore=0 spamscore=0 lowpriorityscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411130192
+	s=arc-20240116; t=1731542188; c=relaxed/simple;
+	bh=NonNEb/p36N4aNw8pMOp1DVBkj1VagGzEXC4C3d0/os=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=UytJBujGZ2tVSSRZP64aQfngPJuG0fJ3TAV+oV48KHq900R91v+FSGWOTT86mhhyFoDv41zgfHTj9j37q3QgFEWWqQbFuj3vI27zXvI8pmbA5pFZIQ1SNyi58jpAc9DwVQh/66OXOPM8k9OLhDLkOLrU1IpegBtjC0R8tDFrNaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eLAY1U3X; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-20c8d7f9128so85469625ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 15:56:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731542186; x=1732146986; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vr5S5GUuRLNtWM92jKG2I81mlCSBw1utW8NJkCQ7Lb8=;
+        b=eLAY1U3X2YSTNXQr/Kfk9eZFfUFj6DYoKTBx7PHrh3ybxcVbME2fSPrfEf4sG8MnZ0
+         6fokLZyS6oNZ19exrkgU81JVSzf+tl+AyEPi3WWQ/AeXvLO20elNvh7a0SvDvmYc1sd7
+         aH2SYqWEA7XNOv3EiyyhxNh6HQQd1F/A2mQOAEOZjvsgezqijKpxeEZMDjt93krpKiYv
+         /8GD07vk19KQaZyvV5uUzfOZrpU0jWGDOmgllppDFd4l4XlAfNV4TOpKdg4/r3eSDWi2
+         ZI6jEtRZomZ1MZr96bZNA7TG34JqPSI9dC8Id4fwMhhoY9uV1PxKsjg/mzf+BTe+k4Uv
+         213A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731542186; x=1732146986;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vr5S5GUuRLNtWM92jKG2I81mlCSBw1utW8NJkCQ7Lb8=;
+        b=W7G2Q170lNNO8YiXsj495gcVvJLAUt/G3uxH02GnOLIJyRRqfOKbqtsNmz98uSU9oc
+         Y0xIE7QtSJu4gRIGJqmC84GBk6KPC5qAIl54zgjHPbFYdxy/lfjCy032Me1np36+NmIp
+         vh/rZjr+Agen9kMeD4+8HngepVxu7TfPS/niB/eVlxTFhiWLL6bq3iH3hu79LvJJ+92O
+         e04DIKoO98fH3krhxil4e+yG2gkJQzIQ79Jo1UXugbz/3RZnMBvFd+2qI3qQq+rolArN
+         cu7ouZ9if0rGdDd7osfuW700cM30eHlUeD5fSju8BpJFFhOgmnF5k8EpsBZKViZIs/M4
+         t6Yg==
+X-Gm-Message-State: AOJu0YyBRYRuNoTDkiRXiuxo8gAXMYtfdgAnatoSo1pzypT9hb7cnt82
+	8dUu4aHZrEr7mK7mjTTWAFnKez4Y0X1t2Uj5l33hXViIBRl4uopOlYRQtkxT7fbsVEh5nfpv5uT
+	/pQ==
+X-Google-Smtp-Source: AGHT+IEn0Egc9e+jdjdcl5p3lcxUZPaJq7jsZW0myyVy6Dwg4xCLPAlzYX1BQwwv9eyILE9wT9IYH/2e6DA=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a17:902:e20b:b0:20c:857b:5dcb with SMTP id
+ d9443c01a7336-211835150d4mr863225ad.4.1731542186557; Wed, 13 Nov 2024
+ 15:56:26 -0800 (PST)
+Date: Wed, 13 Nov 2024 15:56:25 -0800
+In-Reply-To: <20241108130737.126567-1-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+References: <20241108130737.126567-1-pbonzini@redhat.com>
+Message-ID: <ZzU8qY92Q2QNtuyg@google.com>
+Subject: Re: [PATCH] KVM: x86: switch hugepage recovery thread to vhost_task
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	michael.christie@oracle.com, Tejun Heo <tj@kernel.org>, 
+	Luca Boccassi <bluca@debian.org>
+Content-Type: text/plain; charset="us-ascii"
 
-From: Michal Vrastil <michal.vrastil@hidglobal.com>
+On Fri, Nov 08, 2024, Paolo Bonzini wrote:
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index 8e853a5fc867..d5af4f8c5a6a 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -7281,7 +7281,7 @@ static int set_nx_huge_pages(const char *val, const struct kernel_param *kp)
+>  			kvm_mmu_zap_all_fast(kvm);
+>  			mutex_unlock(&kvm->slots_lock);
+>  
+> -			wake_up_process(kvm->arch.nx_huge_page_recovery_thread);
+> +			vhost_task_wake(kvm->arch.nx_huge_page_recovery_thread);
+>  		}
+>  		mutex_unlock(&kvm_lock);
+>  	}
+> @@ -7427,7 +7427,7 @@ static int set_nx_huge_pages_recovery_param(const char *val, const struct kernel
+>  		mutex_lock(&kvm_lock);
+>  
+>  		list_for_each_entry(kvm, &vm_list, vm_list)
+> -			wake_up_process(kvm->arch.nx_huge_page_recovery_thread);
+> +			vhost_task_wake(kvm->arch.nx_huge_page_recovery_thread);
+>  
+>  		mutex_unlock(&kvm_lock);
+>  	}
+> @@ -7530,62 +7530,65 @@ static void kvm_recover_nx_huge_pages(struct kvm *kvm)
+>  	srcu_read_unlock(&kvm->srcu, rcu_idx);
+>  }
+>  
+> -static long get_nx_huge_page_recovery_timeout(u64 start_time)
+> +#define NX_HUGE_PAGE_DISABLED (-1)
 
-This reverts commit ec6ce7075ef879b91a8710829016005dc8170f17.
+I don't see any point in using -1.  That's more legal (though still impossible
+and absurd) than an deadline of '0'.  And it's somewhat confusing because KVM
+uses -1 for the default nx_huge_pages value to indicate "enable the NX huge page
+mitigation if the CPU is vulnerable to L1TF", not "disable the mitigation".
 
-Fix installation of WinUSB driver using OS descriptors. Without the
-fix the drivers are not installed correctly and the property
-'DeviceInterfaceGUID' is missing on host side.
+> +static u64 get_nx_huge_page_recovery_next(void)
+>  {
+>  	bool enabled;
+>  	uint period;
+>  
+>  	enabled = calc_nx_huge_pages_recovery_period(&period);
+>  
+> -	return enabled ? start_time + msecs_to_jiffies(period) - get_jiffies_64()
+> -		       : MAX_SCHEDULE_TIMEOUT;
+> +	return enabled ? get_jiffies_64() + msecs_to_jiffies(period)
+> +		: NX_HUGE_PAGE_DISABLED;
 
-The original change was based on the assumption that the interface
-number is in the high byte of wValue but it is in the low byte,
-instead. Unfortunately, the fix is based on MS documentation which is
-also wrong.
+Please align the '?' and ':' to show that they are related paths of the ternary
+operator.  Moot point if we go without a literal '0'.
 
-The actual USB request for OS descriptors (using USB analyzer) looks
-like:
+>  }
+>  
+> -static int kvm_nx_huge_page_recovery_worker(struct kvm *kvm, uintptr_t data)
+> +static void kvm_nx_huge_page_recovery_worker_kill(void *data)
+>  {
+> -	u64 start_time;
+> +}
+> +
+> +static bool kvm_nx_huge_page_recovery_worker(void *data)
+> +{
+> +	struct kvm *kvm = data;
+>  	long remaining_time;
+>  
+> -	while (true) {
+> -		start_time = get_jiffies_64();
+> -		remaining_time = get_nx_huge_page_recovery_timeout(start_time);
+> +	if (kvm->arch.nx_huge_page_next == NX_HUGE_PAGE_DISABLED)
+> +		return false;
 
-Offset  0   1   2   3   4   5   6   7
-0x000   C1  A1  02  00  05  00  0A  00
+The "next" concept is broken.  Once KVM sees NX_HUGE_PAGE_DISABLED for a given VM,
+KVM will never re-evaluate nx_huge_page_next.  Similarly, if the recovery period
+and/or ratio changes, KVM won't recompute the "next" time until the current timeout
+has expired.
 
-C1: bmRequestType (device to host, vendor, interface)
-A1: nas magic number
-0002: wValue (2: nas interface)
-0005: wIndex (5: get extended property i.e. nas interface GUID)
-008E: wLength (142)
+I fiddled around with various ideas, but I don't see a better solution that something
+along the lines of KVM's request system, e.g. set a bool to indicate the params
+changed, and sprinkle smp_{r,w}mb() barriers to ensure the vhost task sees the
+new params.
 
-The fix was tested on Windows 10 and Windows 11.
+FWIW, I also found "next" to be confusing.  How about "deadline"? KVM uses that
+terminology for the APIC timer, i.e. it's familiar, intuitive, and accurate(ish).
 
-Cc: stable@vger.kernel.org
-Fixes: ec6ce7075ef8 ("usb: gadget: composite: fix OS descriptors w_value logic")
-Signed-off-by: Michal Vrastil <michal.vrastil@hidglobal.com>
-Signed-off-by: Elson Roy Serrao <quic_eserrao@quicinc.com>
+Something like this as fixup?  (comments would be nice)
+
 ---
-Changes in v2:
- - Added comments to explain wValue byte ordering discrepancy in MS OS
-   Descriptor Spec.
- - Link to v1: https://lore.kernel.org/all/9918669c-3bfd-4d42-93c4-218e9364b7cc@quicinc.com/T/
+ arch/x86/include/asm/kvm_host.h |  3 ++-
+ arch/x86/kvm/mmu/mmu.c          | 34 +++++++++++++++++++++------------
+ 2 files changed, 24 insertions(+), 13 deletions(-)
 
- drivers/usb/gadget/composite.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 72f3bcfc54d7..e9fb8b9a9c2b 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1444,7 +1444,8 @@ struct kvm_arch {
+ 
+ 	struct kvm_x86_pmu_event_filter __rcu *pmu_event_filter;
+ 	struct vhost_task *nx_huge_page_recovery_thread;
+-	u64 nx_huge_page_next;
++	u64 nx_huge_page_deadline;
++	bool nx_huge_page_params_changed;
+ 
+ #ifdef CONFIG_X86_64
+ 	/* The number of TDP MMU pages across all roots. */
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index d0c2d9d2588f..acfa14d4248b 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -7102,6 +7102,13 @@ static void mmu_destroy_caches(void)
+ 	kmem_cache_destroy(mmu_page_header_cache);
+ }
+ 
++static void mmu_wake_nx_huge_page_task(struct kvm *kvm)
++{
++	smp_wmb();
++	WRITE_ONCE(kvm->arch.nx_huge_page_deadline, true);
++	vhost_task_wake(kvm->arch.nx_huge_page_recovery_thread);
++}
++
+ static int get_nx_huge_pages(char *buffer, const struct kernel_param *kp)
+ {
+ 	if (nx_hugepage_mitigation_hard_disabled)
+@@ -7162,7 +7169,7 @@ static int set_nx_huge_pages(const char *val, const struct kernel_param *kp)
+ 			kvm_mmu_zap_all_fast(kvm);
+ 			mutex_unlock(&kvm->slots_lock);
+ 
+-			vhost_task_wake(kvm->arch.nx_huge_page_recovery_thread);
++			mmu_wake_nx_huge_page_task(kvm);
+ 		}
+ 		mutex_unlock(&kvm_lock);
+ 	}
+@@ -7291,7 +7298,7 @@ static int set_nx_huge_pages_recovery_param(const char *val, const struct kernel
+ 		mutex_lock(&kvm_lock);
+ 
+ 		list_for_each_entry(kvm, &vm_list, vm_list)
+-			vhost_task_wake(kvm->arch.nx_huge_page_recovery_thread);
++			mmu_wake_nx_huge_page_task(kvm);
+ 
+ 		mutex_unlock(&kvm_lock);
+ 	}
+@@ -7394,17 +7401,14 @@ static void kvm_recover_nx_huge_pages(struct kvm *kvm)
+ 	srcu_read_unlock(&kvm->srcu, rcu_idx);
+ }
+ 
+-#define NX_HUGE_PAGE_DISABLED (-1)
+-
+-static u64 get_nx_huge_page_recovery_next(void)
++static u64 get_nx_huge_page_recovery_deadline(void)
+ {
+ 	bool enabled;
+ 	uint period;
+ 
+ 	enabled = calc_nx_huge_pages_recovery_period(&period);
+ 
+-	return enabled ? get_jiffies_64() + msecs_to_jiffies(period)
+-		: NX_HUGE_PAGE_DISABLED;
++	return enabled ? get_jiffies_64() + msecs_to_jiffies(period) : 0;
+ }
+ 
+ static void kvm_nx_huge_page_recovery_worker_kill(void *data)
+@@ -7416,10 +7420,16 @@ static bool kvm_nx_huge_page_recovery_worker(void *data)
+ 	struct kvm *kvm = data;
+ 	long remaining_time;
+ 
+-	if (kvm->arch.nx_huge_page_next == NX_HUGE_PAGE_DISABLED)
++	if (READ_ONCE(kvm->arch.nx_huge_page_params_changed)) {
++		smp_rmb();
++		WRITE_ONCE(kvm->arch.nx_huge_page_params_changed, false);
++		kvm->arch.nx_huge_page_deadline = get_nx_huge_page_recovery_deadline();
++	}
++
++	if (!kvm->arch.nx_huge_page_deadline)
+ 		return false;
+ 
+-	remaining_time = kvm->arch.nx_huge_page_next - get_jiffies_64();
++	remaining_time = kvm->arch.nx_huge_page_deadline - get_jiffies_64();
+ 	if (remaining_time > 0) {
+ 		schedule_timeout(remaining_time);
+ 		/* check for signals and come back */
+@@ -7428,7 +7438,7 @@ static bool kvm_nx_huge_page_recovery_worker(void *data)
+ 
+ 	__set_current_state(TASK_RUNNING);
+ 	kvm_recover_nx_huge_pages(kvm);
+-	kvm->arch.nx_huge_page_next = get_nx_huge_page_recovery_next();
++	kvm->arch.nx_huge_page_deadline = get_nx_huge_page_recovery_deadline();
+ 	return true;
+ }
+ 
+@@ -7437,11 +7447,11 @@ int kvm_mmu_post_init_vm(struct kvm *kvm)
+ 	if (nx_hugepage_mitigation_hard_disabled)
+ 		return 0;
+ 
+-	kvm->arch.nx_huge_page_next = get_nx_huge_page_recovery_next();
++	WRITE_ONCE(kvm->arch.nx_huge_page_params_changed, true);
+ 	kvm->arch.nx_huge_page_recovery_thread = vhost_task_create(
+ 		kvm_nx_huge_page_recovery_worker, kvm_nx_huge_page_recovery_worker_kill,
+ 		kvm, "kvm-nx-lpage-recovery");
+-	
++
+ 	if (!kvm->arch.nx_huge_page_recovery_thread)
+ 		return -ENOMEM;
+ 
 
-diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
-index 0e151b54aae8..9225c21d1184 100644
---- a/drivers/usb/gadget/composite.c
-+++ b/drivers/usb/gadget/composite.c
-@@ -2111,8 +2111,20 @@ composite_setup(struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
- 			memset(buf, 0, w_length);
- 			buf[5] = 0x01;
- 			switch (ctrl->bRequestType & USB_RECIP_MASK) {
-+			/*
-+			 * The Microsoft CompatID OS Descriptor Spec(w_index = 0x4) and
-+			 * Extended Prop OS Desc Spec(w_index = 0x5) state that the
-+			 * HighByte of wValue is the InterfaceNumber and the LowByte is
-+			 * the PageNumber. This high/low byte ordering is incorrectly
-+			 * documented in the Spec. USB analyzer output on the below
-+			 * request packets show the high/low byte inverted i.e LowByte
-+			 * is the InterfaceNumber and the HighByte is the PageNumber.
-+			 * Since we dont support >64KB CompatID/ExtendedProp descriptors,
-+			 * PageNumber is set to 0. Hence verify that the HighByte is 0
-+			 * for below two cases.
-+			 */
- 			case USB_RECIP_DEVICE:
--				if (w_index != 0x4 || (w_value & 0xff))
-+				if (w_index != 0x4 || (w_value >> 8))
- 					break;
- 				buf[6] = w_index;
- 				/* Number of ext compat interfaces */
-@@ -2128,9 +2140,9 @@ composite_setup(struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
- 				}
- 				break;
- 			case USB_RECIP_INTERFACE:
--				if (w_index != 0x5 || (w_value & 0xff))
-+				if (w_index != 0x5 || (w_value >> 8))
- 					break;
--				interface = w_value >> 8;
-+				interface = w_value & 0xFF;
- 				if (interface >= MAX_CONFIG_INTERFACES ||
- 				    !os_desc_cfg->interface[interface])
- 					break;
--- 
-2.17.1
-
+base-commit: 922a5630cd31e4414f964aa64f45a5884f40188c
+--
 
