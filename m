@@ -1,137 +1,176 @@
-Return-Path: <linux-kernel+bounces-407245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 550569C6AB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:41:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F2169C6ABD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:41:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D3121F24387
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:41:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2149D281C4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E9718A92A;
-	Wed, 13 Nov 2024 08:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9416418B478;
+	Wed, 13 Nov 2024 08:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k0QPuq5q"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MYamTXmc"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1721185955
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 08:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E046189F33;
+	Wed, 13 Nov 2024 08:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731487275; cv=none; b=TqiR9W7Mb3hlrIieyJgZdV/R29v3nzVB0t2QFKQ2x6V+DDuTUITKbOKIr5OfooODOKN7AGbjFw6t8VXkq00uUuHyjFQgHI5BbwrguxXTmb1NKa3JI3R/+6yTeRwfZr4xuvXTmu5FhSPtWmJTfjIfF57YBHAIXIv+oqHGdb/idn0=
+	t=1731487296; cv=none; b=EF0caYKcMtgshcz8v/Ij77irA5zbMPTut4UXiJ41Zjpji9J91FSFwuYUfURGy6B1Qd6wN4RnvkO55CcqkhPdSRxU9+QYH5jTw3INaUyouUHP1t61L3BY2hOJlGtSIIsq/dinP3uOhrLvpI83ZgCWfo5YcptOADNracOn2S8RLKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731487275; c=relaxed/simple;
-	bh=9ac3S7GwjMYsuWPSg9A6e77/XxzmBRaa86u9PtncFZM=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=nktE4Os/3qCkCQjODZXWUATKWSOFym3B3ovYxHthQjsrRkEAOR61NjD0K7bgEV/sb6+K7CZKK6QMnXcqYLQn58t6PpD3HaiX/Pq6jLUMIn+Zeyn9Wu1lh0dyS+gZrXri6iP61VptKImw2vfgLYQITupFnqiNyRF4o4TKo9Jmv7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k0QPuq5q; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-21145812538so61061985ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 00:41:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731487273; x=1732092073; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hARpX5ZPx74ElNUTsqJ78OBOuYxJi1lpnBAIag7Jp+g=;
-        b=k0QPuq5qYNk5Tt7mSgrD0GRDXhRpBj/PfjyJOW/RXnnD9NfTlhC3Xq96mjLeHQZkn2
-         qLfFr433liUqzEMtLwwKa4K/0DIG/YbfypOKt0Joc+zOSVeVVDnYsac4tzHkXmmO38/z
-         XJT03AGZSCLK1irDK8JoCO+ZPw+LF4M8G/616hk1zJ5dYMkb/y3Bdfl/yG0g7aNXGnGk
-         AMzCecNqH4VcR7SUUbc4k+5tSRTofJuvZ6lsvtojlEkCAoT1on22zNXX4/J8+nKKE7KA
-         C4XzD+j8McF61YWMaTcWf2ylHrEq9QbbPain+TxfurlE3dW4+IjbaKzOlMx0jyDqN5RU
-         SESA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731487273; x=1732092073;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hARpX5ZPx74ElNUTsqJ78OBOuYxJi1lpnBAIag7Jp+g=;
-        b=D2D+K4ShBg5rs6EJaeqGck1zcpMoM3qALoR+teELxfvEaacsPTHR2OLzEpDEnwwKqN
-         oQu0/phjiLtdEHkRWIJS30XKkh5+7ICRO+hj2Y3v5uWGtOR3rR7x8eY1UU9CbYmQNKXs
-         L7dyxorm3PxSNhh4n82SwhAlXghBQ573FE3v2fzoYGsUFsFuG6NNHk3OjTnZn1IwVedb
-         rTzpAel+uu9jXuizHimwg3yXTVwkoKKLh6/yO5KJ+1Mg1Mg0SyXbnNCqcFyPsGvTrp8r
-         rX2DYpWEtx9lLcSowQ3+SFo2WhEPacTGmn8OxIamz36KHtP6EbVGPVhB6yj8qolk9U67
-         mXrA==
-X-Forwarded-Encrypted: i=1; AJvYcCVw3gmUpOWrX9XEhJOrTOrYMIoG5xoPTNm5m++Z/2XPmjQh3qc8xzoqD3cvah5kx/mTbCX037R464T6HoY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKyFRv1NzpyAUct07imYFG5sy8cgszsiSwWj8iYl1rlPqUfoAD
-	QEHrQMqyBUhdEP3IVnJL14VLdSYbjuEv+V4iuoTzVf3Td+JHyqlP
-X-Google-Smtp-Source: AGHT+IGIEuI1rvXnQCvJTS4p7g2yPIXhYnzr0HRFq8xLhfWXpkWFmXjk7RUi+cYqXEN3kz7hHMHcYw==
-X-Received: by 2002:a17:902:f54d:b0:20c:ecc9:c50b with SMTP id d9443c01a7336-21183d67ce4mr251260245ad.42.1731487272793;
-        Wed, 13 Nov 2024 00:41:12 -0800 (PST)
-Received: from debian.resnet.ucla.edu (s-169-232-97-87.resnet.ucla.edu. [169.232.97.87])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-21177ddd616sm105613825ad.63.2024.11.13.00.41.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 00:41:12 -0800 (PST)
-From: Daniel Yang <danielyangkang@gmail.com>
-To: Mark Fasheh <mark@fasheh.com>,
-	Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	"GitAuthor: Daniel Yang" <danielyangkang@gmail.com>,
-	ocfs2-devel@lists.linux.dev (open list:ORACLE CLUSTER FILESYSTEM 2 (OCFS2)),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] ocfs2: heartbeat: replace simple_strtoul with kstrtoul
-Date: Wed, 13 Nov 2024 00:41:07 -0800
-Message-Id: <20241113084108.186506-1-danielyangkang@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1731487296; c=relaxed/simple;
+	bh=3Xy7RmvnJhjsInhzwzGEhO79cRYr2kKRCLd3jTQyV4c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=iMAVeB3CDJjpMMSU9M8fFTDre8LEO8e+RN5sgYSNUKj8TyInTg75jvMJjU1mAkC5PEQsGRBfLX9BIr30ktaZQTM0GIU+uCZIXj3qZSXsQ6oa6+6ZWGrVUI4SKZvUywXokotZdocWOSe4tjdljsc8CIWMUqoxPx1HpmAOsuXuaP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MYamTXmc; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACMUEOP011057;
+	Wed, 13 Nov 2024 08:41:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JIiSOxCsrV9+my02m4jm+bEu5NWrTHZZqCu+q0C1YYQ=; b=MYamTXmcO2HxjNEm
+	Kf3v4EXSr/w4gsxRKaOXnwcftRLAGI7ldXKy91u+BC9QEvZ+kgxxCM19/5bI67yx
+	ZVUlxb1YhKI29bTuqb/cdkHdsmT5cTI7l+aO007jn5Hbiy+cadUkMZmd0gnFvllZ
+	8LMoFa2w2V/wnCF8fTBXoZFthF9YIHwlTRy6PeWMlpJXhzY293lMwzzG6vahxDz4
+	MvX/yLF6EJ5/FiVfjijRpWOZgpZY+g3a5nkCjQuKxBY4GiMfVvU/nirhJuWYdqNp
+	q25Ito7xfsw+Y/LverX7vI8Hedg2zBesew5+ONsPxNEYoAC11lZrB2aULhrYNyGe
+	wufXSg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42sxpqj7xt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 08:41:25 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AD8fOx1012940
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 08:41:24 GMT
+Received: from [10.216.46.238] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 13 Nov
+ 2024 00:41:19 -0800
+Message-ID: <02ddd6d3-283c-6e3d-ed00-37f18925c5f5@quicinc.com>
+Date: Wed, 13 Nov 2024 14:11:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v3 3/6] PCI: Add new start_link() & stop_link function ops
+Content-Language: en-US
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: <andersson@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        "Lorenzo
+ Pieralisi" <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
+	<kw@linux.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        "Rob Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor Dooley" <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        <cros-qcom-dts-watchers@chromium.org>,
+        Jingoo Han <jingoohan1@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
+        <quic_vbadigan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241112234149.GA1868239@bhelgaas>
+From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+In-Reply-To: <20241112234149.GA1868239@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Z2rNPFeWvzQUYEJU5qxjA7hy-0nxWiCC
+X-Proofpoint-ORIG-GUID: Z2rNPFeWvzQUYEJU5qxjA7hy-0nxWiCC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ lowpriorityscore=0 malwarescore=0 spamscore=0 mlxlogscore=654 phishscore=0
+ suspectscore=0 impostorscore=0 mlxscore=0 priorityscore=1501 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411130076
 
-The function simple_strtoul is deprecated due to ignoring overflows and
-also requires clunkier error checking. Replacing with kstrtoul() leads
-to safer code and cleaner error checking.
 
-Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
----
- fs/ocfs2/cluster/heartbeat.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/fs/ocfs2/cluster/heartbeat.c b/fs/ocfs2/cluster/heartbeat.c
-index dff18efbc..4fc1b23f1 100644
---- a/fs/ocfs2/cluster/heartbeat.c
-+++ b/fs/ocfs2/cluster/heartbeat.c
-@@ -1537,8 +1537,9 @@ static int o2hb_read_block_input(struct o2hb_region *reg,
- 	unsigned long bytes;
- 	char *p = (char *)page;
- 
--	bytes = simple_strtoul(p, &p, 0);
--	if (!p || (*p && (*p != '\n')))
-+	int ret = kstrtoul(p, 0, &bytes);
-+
-+	if (ret)
- 		return -EINVAL;
- 
- 	/* Heartbeat and fs min / max block sizes are the same. */
-@@ -1627,8 +1628,9 @@ static ssize_t o2hb_region_blocks_store(struct config_item *item,
- 	if (reg->hr_bdev_file)
- 		return -EINVAL;
- 
--	tmp = simple_strtoul(p, &p, 0);
--	if (!p || (*p && (*p != '\n')))
-+	int ret = kstrtoul(p, 0, &tmp);
-+
-+	if (ret)
- 		return -EINVAL;
- 
- 	if (tmp > O2NM_MAX_NODES || tmp == 0)
-@@ -2142,8 +2144,9 @@ static ssize_t o2hb_heartbeat_group_dead_threshold_store(struct config_item *ite
- 	unsigned long tmp;
- 	char *p = (char *)page;
- 
--	tmp = simple_strtoul(p, &p, 10);
--	if (!p || (*p && (*p != '\n')))
-+	int ret = kstrtoul(p, 10, &tmp);
-+
-+	if (ret)
-                 return -EINVAL;
- 
- 	/* this will validate ranges for us. */
--- 
-2.39.5
+On 11/13/2024 5:11 AM, Bjorn Helgaas wrote:
+> On Tue, Nov 12, 2024 at 08:31:35PM +0530, Krishna chaitanya chundru wrote:
+>> Certain devices like QPS615 which uses PCI pwrctl framework
+>> needs to configure the device before PCI link is up.
+>>
+>> If the controller driver already enables link training as part of
+>> its probe, after the device is powered on, controller and device
+>> participates in the link training and link can come up immediately
+>> and maynot have time to configure the device.
+>>
+>> So we need to stop the link training by using stop_link() and enable
+>> them back after device is configured by using start_link().
+> 
+> s/maynot/may not/
+> 
+> I think I'm missing the point here.  My assumption is this:
+> 
+>    - device starts as powered off
+>    - pwrctl turns on the power
+>    - link trains automatically
+>    - qcom driver claims device
+>    - qcom needs to configure things that need to happen before link
+>      train
+> The flow is this way
+      - device starts as powered off
+      - qcom controller driver probes
+      - qcom controller driver enables resources and starts link training
+      - As device is powered off link will not be up
+      - qcom/dwc driver starts enumeration even if the link is not up
+      - pci detects root complex device and creates pci_dev for it
+      - As part of pci_dev creation pwrctl frameworks comes into picture
+      - pwrctl turns on the power.
 
+The pwrctl driver is coming up only after qcom driver enables link
+training. Due to this flow we are trying add these stop_link() &
+start_link() so that before powering on the device stop the link
+training so that hw will not participate in the link training.
+Then power on the device do the required configurations and again start
+the link training.
+
+- Krishna Chaitanya.
+> but that can't be quite right because you wouldn't be able to fix it
+> by changing the qcom driver because it's not in the picture until the
+> link is already trained.
+> 
+> So maybe you can add a little more context here?
+>  >> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+>> ---
+>>   include/linux/pci.h | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/include/linux/pci.h b/include/linux/pci.h
+>> index 573b4c4c2be6..fe6a9b4b22ee 100644
+>> --- a/include/linux/pci.h
+>> +++ b/include/linux/pci.h
+>> @@ -806,6 +806,8 @@ struct pci_ops {
+>>   	void __iomem *(*map_bus)(struct pci_bus *bus, unsigned int devfn, int where);
+>>   	int (*read)(struct pci_bus *bus, unsigned int devfn, int where, int size, u32 *val);
+>>   	int (*write)(struct pci_bus *bus, unsigned int devfn, int where, int size, u32 val);
+>> +	int (*start_link)(struct pci_bus *bus);
+>> +	void (*stop_link)(struct pci_bus *bus);
+>>   };
+>>   
+>>   /*
+>>
+>> -- 
+>> 2.34.1
+>>
 
