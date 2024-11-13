@@ -1,231 +1,93 @@
-Return-Path: <linux-kernel+bounces-408097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8FF09C7B02
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:25:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03A179C7AF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 19:20:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC5CCB33BB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:58:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21F6EB296EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 17:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7E4206E8B;
-	Wed, 13 Nov 2024 17:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCAD203713;
+	Wed, 13 Nov 2024 17:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b="TxHuHcLT";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VgAfNE+C"
-Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uKG05vaX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5AF02038D4;
-	Wed, 13 Nov 2024 17:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B31A2040B2;
+	Wed, 13 Nov 2024 17:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731520538; cv=none; b=ng+HkfcQq4QobDUKs/5A1l9eFBpcXi54/85whN21ogxb5U6Rw0Y+e7LwXVzwmNP7pyuYlEBQUYGj+lQXHlmMyuQNrILKvX3wxPv5hha0z9RUwbKnpN4Skot+YnHbrdbty2+kRyQdnwau9hfRh5rHjDWrxbv2977wVY8QnNG2QvI=
+	t=1731520581; cv=none; b=NBtGmwhdb28BusdDBdLBj0nDHKTt7z4ASg3eWtKTHEjXoxpRlv8zPafce2Y3ayEd7dzifFdFt8bwO/vX9ScCgN4bBFZEerb3ZGo5ZF2uMXxJirHrbBIbqUL8e3d00Yi8PDIi9k0WyS/VP5pZo7Oh780BAaP+8ppIIbuXcv3WCHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731520538; c=relaxed/simple;
-	bh=9z0fkUawtgFOBoM9gsarHEhrMu7s9nLWUAKQBM2JJCA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mXlR+VZYYZGpeyEfeon+sIHR7q5hM+OewO+1+5kmA6njAi30oDLWyjCixKvv55TaYAH2LScOjU775hPL+ds0Bz3f0AWKmCCtAAkIwK01Bc1HwPHzXfcAVjXh91pCLVv3bYW3ea51mRIQ//xgUUp2CEsSSXpACdkc1T00BVCn4eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu; spf=pass smtp.mailfrom=e43.eu; dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b=TxHuHcLT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VgAfNE+C; arc=none smtp.client-ip=202.12.124.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=e43.eu
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfout.stl.internal (Postfix) with ESMTP id 80D6311401EC;
-	Wed, 13 Nov 2024 12:55:34 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Wed, 13 Nov 2024 12:55:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=e43.eu; h=cc:cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1731520534;
-	 x=1731606934; bh=AfsdjGskH8G9xKz2wh5f7jewD2z4hb6EP8wjUyjgt1k=; b=
-	TxHuHcLTfRP9eZBLr3Sg/hs6Sin7aQv1OIYPVoAzkHohXmPf+1+o1zpfOlKHub/3
-	/MTtiCxAiOB5w/s7j0HsCFJYPThhthfcnbOwspKet/ig+wNF19ulfaYCQg/7jYo/
-	Rirvp/DJGwFGq/yEX+w9LvJTRe1sfmv9765i1URDnanb551K1GsgUeNNlyoj8O2R
-	iVtRfHxUsa7D46VBFi2Q3jl8b5vHIyma9oXEtb5RcN1QYsXaW9ELmqWHQMrXFtz2
-	LcE+9FoD6zTwRnEdh/XKaTrYCt0GYrSTumIeQbjmynZsUuhxx9BEdhhgE3JxTKV8
-	LXKu7HxJfLHB5FSwNjqFaQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731520534; x=
-	1731606934; bh=AfsdjGskH8G9xKz2wh5f7jewD2z4hb6EP8wjUyjgt1k=; b=V
-	gAfNE+CzvoiRVjpQYVVsd9mo009KQ9e9JWXqRhPio4sP36u4aKu8P/+E9ljmbmjB
-	5Hb88YqSgUK/uWrg32jKNMaHsuVfErzJIGQg6W/b1gMylbCBZZcotjb/4NZIl84V
-	XS1Bob76/wn9IxmPr1jCRBq1jeY8HJ9YGzlO72IqOCZtYZn+WetS9xMoipEJ0Gtv
-	Oh3sLetNwJB8KJ6q8ryFxpvUVDTRlu7xeb1EufveSKiZosnW2gEPCDlOhW9i9var
-	S8kU7+QWTUxLNfAB3vc8A+CIZ8pTYMieoN98z/HV51upxLmyvE7GqaA+o7F0/ca6
-	KhuZivgTMe6mjCe3Fd1SA==
-X-ME-Sender: <xms:Fug0Z2sNf5MMIhj_Fhnd6RrXVz4oQHRFnnUCKqU7tad4jhzL98GehA>
-    <xme:Fug0Z7f0wGPdwABm89EPucqWkpV1h_3cRJXLZUOlsvs1JA89LSlPR6jyHnkuAvSF9
-    wsNHu-pBfnf8YcxZj8>
-X-ME-Received: <xmr:Fug0Zxz0GBeESgh-QSIi7NsYwOIcOzvMtGgQHwUw9y6ukETGt7OkouRwGtfdCOb8x54y0uft_8w2tYwI-dym2Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddtgddutdehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdej
-    necuhfhrohhmpefgrhhinhcuufhhvghphhgvrhguuceovghrihhnrdhshhgvphhhvghrug
-    esvgegfedrvghuqeenucggtffrrghtthgvrhhnpeegvdffgedugfeiveeifffggefhvddu
-    uedvkefgvdduueeuheffgffftddtffeuveenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpegvrhhinhdrshhhvghphhgvrhgusegvgeefrdgvuhdp
-    nhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrmh
-    hirhejfehilhesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
-    lhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjlhgrhihtohhnsehkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopegthhhutghkrdhlvghvvghrsehorhgrtghlvgdr
-    tghomhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdhorhhgrdhu
-    khdprhgtphhtthhopegvrhhinhdrshhhvghphhgvrhgusegvgeefrdgvuhdprhgtphhtth
-    hopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    jhgrtghksehsuhhsvgdrtgii
-X-ME-Proxy: <xmx:Fug0ZxOEpNddg0a0VKHePCw2D-qjtxE-3l9hUYA9SyKpuAZSCs1F9w>
-    <xmx:Fug0Z28SfRc4NQdkgcllIKl_krxzIOVVG3bYSkFaLHzrSnfHUr88aQ>
-    <xmx:Fug0Z5UvCyAT8SIUlY0un4P_hf5LOL4_MGF0eHW-RIqL86lBUQmj2Q>
-    <xmx:Fug0Z_exfDetFgO2O-vbFYCdOuq2ZMiH6YjMeJCeZUPcsWTAfckejA>
-    <xmx:Fug0Z30emXvq_LYfzCNVD1XmDddFZHMxSniiLQqhfTA9F3k26_VAVbD0>
-Feedback-ID: i313944f9:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 13 Nov 2024 12:55:33 -0500 (EST)
-From: Erin Shepherd <erin.shepherd@e43.eu>
-Date: Wed, 13 Nov 2024 17:55:25 +0000
-Subject: [PATCH v2 3/3] pidfs: implement file handle support
+	s=arc-20240116; t=1731520581; c=relaxed/simple;
+	bh=AWo3GO4KFiwPMorT9Fffr4FZc9Q28ZY7KkvSFl3qFdw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EYUTHLY9kf7QeI79slUmZxmLIiDB70mT+SsUTKpMAJLM5AakTLUYbYAdck/x0sQKeFCcDJ2hQGF/k/bmQzdF2BEX8LJT+lElZpGIAVXX5bZC+76DUoU13lerj/8S51CIo92aDPvfWU1z5aJxOfZAsJ6AkmCyXQpqaBZ5JqTyNLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uKG05vaX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9880EC4CECF;
+	Wed, 13 Nov 2024 17:56:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731520580;
+	bh=AWo3GO4KFiwPMorT9Fffr4FZc9Q28ZY7KkvSFl3qFdw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=uKG05vaXuHUg8KIHza6x4TdUnyxJEwXRvYkOH0g0wMRnD6rVC5sQGYb/AjMqurRGb
+	 56DIOYtKRs/8vV7jQRQYT1+HsGnby+QFd1sXVZgc7nvdyD86Rkzjv40A1H5YEMp8C4
+	 WNEyhm5RMxsXPRE6NedXIfFw3PZL7inUkNpf+8WCY9H3GHoCJpbuxGeLPBph1gFVui
+	 MvRCs4eU9+ul+/JrB9wYLKXjP5R0/aVLb4dxa7v83XthO2ud3a/TrH60HYDR//Naxx
+	 ymzB2ENPvD1Q3jzCUo9fClz3EY7OLfE52/A1WWykPwzjmnjpN5hW1BMiB6KWFL+Z3X
+	 ks3qhzUweUVQw==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Frank Li <Frank.Li@nxp.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] hwmon: tmp108: fix I3C dependency
+Date: Wed, 13 Nov 2024 18:55:33 +0100
+Message-Id: <20241113175615.2442851-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241113-pidfs_fh-v2-3-9a4d28155a37@e43.eu>
-References: <20241113-pidfs_fh-v2-0-9a4d28155a37@e43.eu>
-In-Reply-To: <20241113-pidfs_fh-v2-0-9a4d28155a37@e43.eu>
-To: Christian Brauner <brauner@kernel.org>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
- Chuck Lever <chuck.lever@oracle.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
- linux-nfs@vger.kernel.org, Erin Shepherd <erin.shepherd@e43.eu>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
-On 64-bit platforms, userspace can read the pidfd's inode in order to
-get a never-repeated PID identifier. On 32-bit platforms this identifier
-is not exposed, as inodes are limited to 32 bits. Instead expose the
-identifier via export_fh, which makes it available to userspace via
-name_to_handle_at
+From: Arnd Bergmann <arnd@arndb.de>
 
-In addition we implement fh_to_dentry, which allows userspace to
-recover a pidfd from a PID file handle.
+It's possible to build a kernel with tmp108 built-in but i3c support
+in a loadable module, but that results in a link failure:
 
-We stash the process' PID in the root pid namespace inside the handle,
-and use that to recover the pid (validating that pid->ino matches the
-value in the handle, i.e. that the pid has not been reused).
+x86_64-linux-ld: drivers/hwmon/tmp108.o: in function `p3t1085_i3c_probe':
+tmp108.c:(.text+0x5f9): undefined reference to `i3cdev_to_dev'
 
-We use the root namespace in order to ensure that file handles can be
-moved across namespaces; however, we validate that the PID exists in
-the current namespace before returning the inode.
+Add a Kconfig dependency to ensure only the working configurations
+are allowed.
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Erin Shepherd <erin.shepherd@e43.eu>
+Fixes: c40655e33106 ("hwmon: (tmp108) Add support for I3C device")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- fs/pidfs.c | 62 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 61 insertions(+), 1 deletion(-)
+ drivers/hwmon/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index 80675b6bf88459c22787edaa68db360bdc0d0782..0684a9b8fe71c5205fb153b2714bc9c672045fd5 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/anon_inodes.h>
-+#include <linux/exportfs.h>
- #include <linux/file.h>
- #include <linux/fs.h>
- #include <linux/magic.h>
-@@ -347,11 +348,69 @@ static const struct dentry_operations pidfs_dentry_operations = {
- 	.d_prune	= stashed_dentry_prune,
- };
- 
-+#define PIDFD_FID_LEN 3
-+
-+struct pidfd_fid {
-+	u64 ino;
-+	s32 pid;
-+} __packed;
-+
-+static int pidfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
-+			   struct inode *parent)
-+{
-+	struct pid *pid = inode->i_private;
-+	struct pidfd_fid *fid = (struct pidfd_fid *)fh;
-+
-+	if (*max_len < PIDFD_FID_LEN) {
-+		*max_len = PIDFD_FID_LEN;
-+		return FILEID_INVALID;
-+	}
-+
-+	fid->ino = pid->ino;
-+	fid->pid = pid_nr(pid);
-+	*max_len = PIDFD_FID_LEN;
-+	return FILEID_INO64_GEN;
-+}
-+
-+static struct dentry *pidfs_fh_to_dentry(struct super_block *sb,
-+					 struct fid *gen_fid,
-+					 int fh_len, int fh_type)
-+{
-+	int ret;
-+	struct path path;
-+	struct pidfd_fid *fid = (struct pidfd_fid *)gen_fid;
-+	struct pid *pid;
-+
-+	if (fh_type != FILEID_INO64_GEN || fh_len < PIDFD_FID_LEN)
-+		return NULL;
-+
-+	scoped_guard(rcu) {
-+		pid = find_pid_ns(fid->pid, &init_pid_ns);
-+		if (!pid || pid->ino != fid->ino || pid_vnr(pid) == 0)
-+			return NULL;
-+
-+		pid = get_pid(pid);
-+	}
-+
-+	ret = path_from_stashed(&pid->stashed, pidfs_mnt, pid, &path);
-+	if (ret < 0)
-+		return ERR_PTR(ret);
-+
-+	mntput(path.mnt);
-+	return path.dentry;
-+}
-+
-+static const struct export_operations pidfs_export_operations = {
-+	.encode_fh = pidfs_encode_fh,
-+	.fh_to_dentry = pidfs_fh_to_dentry,
-+	.flags = EXPORT_OP_UNRESTRICTED_OPEN,
-+};
-+
- static int pidfs_init_inode(struct inode *inode, void *data)
- {
- 	inode->i_private = data;
- 	inode->i_flags |= S_PRIVATE;
--	inode->i_mode |= S_IRWXU;
-+	inode->i_mode |= S_IRWXU | S_IRWXG | S_IRWXO;
- 	inode->i_op = &pidfs_inode_operations;
- 	inode->i_fop = &pidfs_file_operations;
- 	/*
-@@ -382,6 +441,7 @@ static int pidfs_init_fs_context(struct fs_context *fc)
- 		return -ENOMEM;
- 
- 	ctx->ops = &pidfs_sops;
-+	ctx->eops = &pidfs_export_operations;
- 	ctx->dops = &pidfs_dentry_operations;
- 	fc->s_fs_info = (void *)&pidfs_stashed_ops;
- 	return 0;
-
+diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+index f15e72b319af..dd376602f3f1 100644
+--- a/drivers/hwmon/Kconfig
++++ b/drivers/hwmon/Kconfig
+@@ -2297,6 +2297,7 @@ config SENSORS_TMP103
+ config SENSORS_TMP108
+ 	tristate "Texas Instruments TMP108"
+ 	depends on I2C
++	depends on I3C || !I3C
+ 	select REGMAP_I2C
+ 	select REGMAP_I3C if I3C
+ 	help
 -- 
-2.46.1
+2.39.5
 
 
