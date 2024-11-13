@@ -1,323 +1,129 @@
-Return-Path: <linux-kernel+bounces-406903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3600A9C65EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:24:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 814EF9C6622
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:39:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAB7D1F22701
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:24:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D669B32269
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3BDB665;
-	Wed, 13 Nov 2024 00:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30488BEE;
+	Wed, 13 Nov 2024 00:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mdKiHvRJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="1wyOMHs9"
+Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD5A5680;
-	Wed, 13 Nov 2024 00:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339193C2F
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 00:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731457462; cv=none; b=iETuJL5J9qaIWBJXjH4UFvW2DoNA9ggL9/34PTVpYSiTuraXjGxyQjGkF2WEqUsI/6wHsi7dW75a4nqExkyJIzsDxI1+09QryyQ2RDvXIFlLjKUMd3K65eHdTF6RO1ckGcpT2KjSNe4liBpyGs+bg2tKpdNi8KdPSwAwEVV48vk=
+	t=1731457479; cv=none; b=qgsfu6PnCUmWl+RzHm5pjzlEW9GctbakmuxFvpGNGne2l4DTIl4GZCf1lbwrRO9z4fQXs+jpqwHT+ljGfuR8EEMLeU6gJMdiWHeG1WwC/qT9eA2eWAqJNOuWWvcSMOyUIOkOQbj5hCyp2aK4BrgBapQC6hvM/3RU/sdmZAiDSTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731457462; c=relaxed/simple;
-	bh=zPGDDofFmfmk/Ba1bQlRmIX92zLydbyjQuQhjINhw2M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nXf2bVW0Ve4SdUHXEJyzhYi3XgT1Ii55X2kU78S0dRG7Sc/W/vIxdwHguNeezeNNacVmczZU7Mzju+sHIzXwLIOnMR5qWaFSMsK2Wgl6rYPu4yxQzb9AntR4r0EFzo+E1Y79ruUJCt4RnwHhZ4GAbRylJ+4gmwgcPg3pjsI1nRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mdKiHvRJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30645C4CECD;
-	Wed, 13 Nov 2024 00:24:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731457460;
-	bh=zPGDDofFmfmk/Ba1bQlRmIX92zLydbyjQuQhjINhw2M=;
-	h=From:To:Cc:Subject:Date:From;
-	b=mdKiHvRJq5u0OLwL50GIUPj+y26VWhpo4WpGbHP1iZx+6JYgjiFseTMhAbsL/B85w
-	 Al3lYewk5r8oZtDkSfHmqRVmPLQtfApLyIfQYy5HU85kAEQaKPpodh23xdW6UHP1or
-	 3pEkYZfCtz9u7zzQs2Fs9xivQ2SLgFsgfbrmwYpAuXk+JYkmfamZxO+1CEgdU+5JwN
-	 16Z1GOlUAeaEJyHtyj4rTmlpVESKskSDS3gjMI4G63o+yJxUUt8ntsTjyzKeAu39LY
-	 hkOoE1lZ+pCverSHMJhaW7kAxdaEwYfmJ4vMPlZVsox1r3HdkCF3Vc/Ji4/AnkCbHt
-	 eJPkx/W6KHePQ==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Roberto Sassu <roberto.sassu@huawei.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Thomas Huth <thuth@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Xiongwei Song <xiongwei.song@windriver.com>,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-	linux-kernel@vger.kernel.org (open list),
-	keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
-	Josh Poimboeuf <jpoimboe@kernel.org>
-Subject: [PATCH v3] tpm: Opt-in in disable PCR integrity protection
-Date: Wed, 13 Nov 2024 02:24:07 +0200
-Message-ID: <20241113002414.609168-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731457479; c=relaxed/simple;
+	bh=fuVcME5BsYF/KDmWaecJg6j3aQXYbUoEbKBzj/5I31g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r6pR+sZPd0s/7PMXNHTgXcg7XI2XyFtUbmyjtZCWdqyzWA4u0MMQdxuVEodxetciBpiTygviDW3bmAY91yDbUNZMnANQrqtoy9teTXfAMaPChHwuC/xYl8DpNgkZTWn+jZC9hIAxGNlD3b/3RlpLF4JXRjcX3RJFweroArbJx1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=1wyOMHs9; arc=none smtp.client-ip=44.202.169.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5003a.ext.cloudfilter.net ([10.0.29.159])
+	by cmsmtp with ESMTPS
+	id AXIJtyS7bnNFGB1BOtWNgY; Wed, 13 Nov 2024 00:24:30 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id B1BNtES7K827nB1BNtBN9d; Wed, 13 Nov 2024 00:24:29 +0000
+X-Authority-Analysis: v=2.4 cv=GeTcnhXL c=1 sm=1 tr=0 ts=6733f1bd
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=Xg3r5l62jPq6txtoRjwA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=K+fIiBWt3QFvo0A/lr0YOtxvjEv8y0POVh9URifPW0s=; b=1wyOMHs9YO8LVEQwXAXuHF3oRU
+	QdEii+Wv5f3WfBYi+yWlZSCbtpprVXAxNzx9CyJiufqaoeP1xeqxVmIXXTtBgika0xbPRrm7yaWF7
+	R85TOJTKveDX549WXKf83FCYty1vqVmFkcet5WlA2SCMW7YV5YlTV/ITILE0WJczmkQ6LM8NO2TvJ
+	MGQJAg2BkSTZuhDhVOaO1ogLN/9blBiTCyn80uel5bO9bisrCpMtox4G3hXHwVBizn48JnAQFIRUK
+	+ofPodWm6u/7zgjHYxPH6QkjXAoYPAqXrV2OnzjsKlBGCvbtdM6GJnJke4TRh4aWmzr0ksO/EZQcK
+	elAwVf1Q==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:38588 helo=[10.0.1.115])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1tB1BM-003zln-0M;
+	Tue, 12 Nov 2024 17:24:28 -0700
+Message-ID: <a604f668-b22a-497f-89f7-a2f84d07de58@w6rz.net>
+Date: Tue, 12 Nov 2024 16:24:25 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.11 000/184] 6.11.8-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20241112101900.865487674@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20241112101900.865487674@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1tB1BM-003zln-0M
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.115]) [73.223.253.157]:38588
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 16
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfCRty/kEXlylI0e0DU3j+69Dge/gjR/y8Q0fDppzGhfQOyI5CJAZgUgrPh8LNOBk4uArgphua+BEDyfWbz4vCiNH7RaJQiWCFD9btKT6mXtgOz06f99I
+ gkzZHv+YZbC2btegXl3qdFgHRgLZT1d8n5nxE9WrJexoanimUqbzZ/UihDa31ZDVuUWI+RDQusa2Vm40H7QWbilvPzHYs+wXDyc=
 
-The initial HMAC session feature added TPM bus encryption and/or integrity
-protection to various in-kernel TPM operations. This can cause performance
-bottlenecks with IMA, as it heavily utilizes PCR extend operations.
+On 11/12/24 02:19, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.11.8 release.
+> There are 184 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 14 Nov 2024 10:18:19 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.8-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-In order to mitigate this performance issue, introduce a kernel
-command-line parameter to the TPM driver for disabling the integrity
-protection for PCR extend operations (i.e. TPM2_PCR_Extend).
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
-Link: https://lore.kernel.org/linux-integrity/20241015193916.59964-1-zohar@linux.ibm.com/
-Fixes: 6519fea6fd37 ("tpm: add hmac checks to tpm2_pcr_extend()")
-Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Co-developed-by: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v3:
-- Please test this too ;-) I did quick testing only.
-- Fixed the reported glitches and mistakes.
-v2:
-- Followed Mimi's suggestions.
----
- .../admin-guide/kernel-parameters.txt         |  9 ++++
- drivers/char/tpm/tpm-buf.c                    | 20 ++++++++
- drivers/char/tpm/tpm2-cmd.c                   | 30 ++++++++---
- drivers/char/tpm/tpm2-sessions.c              | 51 ++++++++++---------
- include/linux/tpm.h                           |  3 ++
- 5 files changed, 82 insertions(+), 31 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 1666576acc0e..7107ad322b2e 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6727,6 +6727,15 @@
- 	torture.verbose_sleep_duration= [KNL]
- 			Duration of each verbose-printk() sleep in jiffies.
- 
-+	tpm.disable_pcr_integrity_protection= [HW,TPM]
-+			Do not protect PCR registers from unintended physical
-+			access, or interposers in the bus by the means of
-+			having an integrity protected session wrapped around
-+			TPM2_PCR_Extend command. Consider this in a situation
-+			where TPM is heavily utilized by IMA, thus protection
-+			causing a major performance hit, and the space where
-+			machines are deployed is by other means guarded.
-+
- 	tpm_suspend_pcr=[HW,TPM]
- 			Format: integer pcr id
- 			Specify that at suspend time, the tpm driver
-diff --git a/drivers/char/tpm/tpm-buf.c b/drivers/char/tpm/tpm-buf.c
-index cad0048bcc3c..e49a19fea3bd 100644
---- a/drivers/char/tpm/tpm-buf.c
-+++ b/drivers/char/tpm/tpm-buf.c
-@@ -146,6 +146,26 @@ void tpm_buf_append_u32(struct tpm_buf *buf, const u32 value)
- }
- EXPORT_SYMBOL_GPL(tpm_buf_append_u32);
- 
-+/**
-+ * tpm_buf_append_handle() - Add a handle
-+ * @chip:	&tpm_chip instance
-+ * @buf:	&tpm_buf instance
-+ * @handle:	a TPM object handle
-+ *
-+ * Add a handle to the buffer, and increase the count tracking the number of
-+ * handles in the command buffer. Works only for command buffers.
-+ */
-+void tpm_buf_append_handle(struct tpm_chip *chip, struct tpm_buf *buf, u32 handle)
-+{
-+	if (buf->flags & TPM_BUF_TPM2B) {
-+		dev_err(&chip->dev, "Invalid buffer type (TPM2B)\n");
-+		return;
-+	}
-+
-+	tpm_buf_append_u32(buf, handle);
-+	buf->handles++;
-+}
-+
- /**
-  * tpm_buf_read() - Read from a TPM buffer
-  * @buf:	&tpm_buf instance
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 1e856259219e..dfdcbd009720 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -14,6 +14,10 @@
- #include "tpm.h"
- #include <crypto/hash_info.h>
- 
-+static bool disable_pcr_integrity;
-+module_param(disable_pcr_integrity, bool, 0444);
-+MODULE_PARM_DESC(disable_pcr_integrity, "Disable integrity protection of TPM2_PCR_Extend");
-+
- static struct tpm2_hash tpm2_hash_map[] = {
- 	{HASH_ALGO_SHA1, TPM_ALG_SHA1},
- 	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
-@@ -232,18 +236,26 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
- 	int rc;
- 	int i;
- 
--	rc = tpm2_start_auth_session(chip);
--	if (rc)
--		return rc;
-+	if (!disable_pcr_integrity) {
-+		rc = tpm2_start_auth_session(chip);
-+		if (rc)
-+			return rc;
-+	}
- 
- 	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
- 	if (rc) {
--		tpm2_end_auth_session(chip);
-+		if (!disable_pcr_integrity)
-+			tpm2_end_auth_session(chip);
- 		return rc;
- 	}
- 
--	tpm_buf_append_name(chip, &buf, pcr_idx, NULL);
--	tpm_buf_append_hmac_session(chip, &buf, 0, NULL, 0);
-+	if (!disable_pcr_integrity) {
-+		tpm_buf_append_name(chip, &buf, pcr_idx, NULL);
-+		tpm_buf_append_hmac_session(chip, &buf, 0, NULL, 0);
-+	} else {
-+		tpm_buf_append_handle(chip, &buf, pcr_idx);
-+		tpm_buf_append_auth(chip, &buf, 0, NULL, 0);
-+	}
- 
- 	tpm_buf_append_u32(&buf, chip->nr_allocated_banks);
- 
-@@ -253,9 +265,11 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
- 			       chip->allocated_banks[i].digest_size);
- 	}
- 
--	tpm_buf_fill_hmac_session(chip, &buf);
-+	if (!disable_pcr_integrity)
-+		tpm_buf_fill_hmac_session(chip, &buf);
- 	rc = tpm_transmit_cmd(chip, &buf, 0, "attempting extend a PCR value");
--	rc = tpm_buf_check_hmac_response(chip, &buf, rc);
-+	if (!disable_pcr_integrity)
-+		rc = tpm_buf_check_hmac_response(chip, &buf, rc);
- 
- 	tpm_buf_destroy(&buf);
- 
-diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
-index 42df980168b6..a7c1b162251b 100644
---- a/drivers/char/tpm/tpm2-sessions.c
-+++ b/drivers/char/tpm/tpm2-sessions.c
-@@ -237,9 +237,7 @@ void tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
- #endif
- 
- 	if (!tpm2_chip_auth(chip)) {
--		tpm_buf_append_u32(buf, handle);
--		/* count the number of handles in the upper bits of flags */
--		buf->handles++;
-+		tpm_buf_append_handle(chip, buf, handle);
- 		return;
- 	}
- 
-@@ -272,6 +270,31 @@ void tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
- }
- EXPORT_SYMBOL_GPL(tpm_buf_append_name);
- 
-+void tpm_buf_append_auth(struct tpm_chip *chip, struct tpm_buf *buf,
-+			 u8 attributes, u8 *passphrase, int passphrase_len)
-+{
-+	/* offset tells us where the sessions area begins */
-+	int offset = buf->handles * 4 + TPM_HEADER_SIZE;
-+	u32 len = 9 + passphrase_len;
-+
-+	if (tpm_buf_length(buf) != offset) {
-+		/* not the first session so update the existing length */
-+		len += get_unaligned_be32(&buf->data[offset]);
-+		put_unaligned_be32(len, &buf->data[offset]);
-+	} else {
-+		tpm_buf_append_u32(buf, len);
-+	}
-+	/* auth handle */
-+	tpm_buf_append_u32(buf, TPM2_RS_PW);
-+	/* nonce */
-+	tpm_buf_append_u16(buf, 0);
-+	/* attributes */
-+	tpm_buf_append_u8(buf, 0);
-+	/* passphrase */
-+	tpm_buf_append_u16(buf, passphrase_len);
-+	tpm_buf_append(buf, passphrase, passphrase_len);
-+}
-+
- /**
-  * tpm_buf_append_hmac_session() - Append a TPM session element
-  * @chip: the TPM chip structure
-@@ -309,26 +332,8 @@ void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
- #endif
- 
- 	if (!tpm2_chip_auth(chip)) {
--		/* offset tells us where the sessions area begins */
--		int offset = buf->handles * 4 + TPM_HEADER_SIZE;
--		u32 len = 9 + passphrase_len;
--
--		if (tpm_buf_length(buf) != offset) {
--			/* not the first session so update the existing length */
--			len += get_unaligned_be32(&buf->data[offset]);
--			put_unaligned_be32(len, &buf->data[offset]);
--		} else {
--			tpm_buf_append_u32(buf, len);
--		}
--		/* auth handle */
--		tpm_buf_append_u32(buf, TPM2_RS_PW);
--		/* nonce */
--		tpm_buf_append_u16(buf, 0);
--		/* attributes */
--		tpm_buf_append_u8(buf, 0);
--		/* passphrase */
--		tpm_buf_append_u16(buf, passphrase_len);
--		tpm_buf_append(buf, passphrase, passphrase_len);
-+		tpm_buf_append_auth(chip, buf, attributes, passphrase,
-+				    passphrase_len);
- 		return;
- 	}
- 
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 587b96b4418e..20a40ade8030 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -421,6 +421,7 @@ void tpm_buf_append_u32(struct tpm_buf *buf, const u32 value);
- u8 tpm_buf_read_u8(struct tpm_buf *buf, off_t *offset);
- u16 tpm_buf_read_u16(struct tpm_buf *buf, off_t *offset);
- u32 tpm_buf_read_u32(struct tpm_buf *buf, off_t *offset);
-+void tpm_buf_append_handle(struct tpm_chip *chip, struct tpm_buf *buf, u32 handle);
- 
- /*
-  * Check if TPM device is in the firmware upgrade mode.
-@@ -505,6 +506,8 @@ void tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
- void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
- 				 u8 attributes, u8 *passphrase,
- 				 int passphraselen);
-+void tpm_buf_append_auth(struct tpm_chip *chip, struct tpm_buf *buf,
-+			 u8 attributes, u8 *passphrase, int passphraselen);
- static inline void tpm_buf_append_hmac_session_opt(struct tpm_chip *chip,
- 						   struct tpm_buf *buf,
- 						   u8 attributes,
--- 
-2.47.0
+Tested-by: Ron Economos <re@w6rz.net>
 
 
