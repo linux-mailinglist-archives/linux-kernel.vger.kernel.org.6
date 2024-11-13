@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-407895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C63E29C7733
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:31:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34C2C9C7738
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 16:32:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49FA91F28A9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:31:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B86DD1F28B94
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 15:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51BF2209F25;
-	Wed, 13 Nov 2024 15:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25202123E1;
+	Wed, 13 Nov 2024 15:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n8Es8uHN"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cfhfw912"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821F42076BC;
-	Wed, 13 Nov 2024 15:25:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB0120F5D3;
+	Wed, 13 Nov 2024 15:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731511543; cv=none; b=FRbvMTAfToX1ehZMJeUQlbYSJ9Og/75xnDjw76TLt/v8k19YWsINr/OUpya98yvVnPE3MDi6KhL3Dfe+ktlsfwNcfqPwxQzGnlj9oOJfIgndsKeA24NOaUPJ0dBlzldDYdbgAqjVaxASJ0A46J5LL1YWX05KcxGzEwRD4Xoi4cA=
+	t=1731511551; cv=none; b=dXHUdmXTbXURV7xj4d9CiZHTH6LTvc2HTiiiejYupvOM4YkB8FjGhsV+iVaE1n6D9DmffSeINVwd6sHmIN8EIQf+doq8pMoA1PDXJeegsLbkupUwnbOHALUrHoWfVCz5nH9jSkiHfJwfUmcNzbRmGFxjR1ymmMKZzJXRth2mVBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731511543; c=relaxed/simple;
-	bh=Edpx9LhLG10gjTrUewrh6rYC6L84oxZlcmQyZZzUqOc=;
+	s=arc-20240116; t=1731511551; c=relaxed/simple;
+	bh=0bxtNMeTjBtWsf3OXWlcIoRP5wE9plodK8FqBilBLYs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Uc9hcxCYSn0mZtCGglUs0LD7hHvW+I3yj2v/3YW+hQhfR+fDjhuKFfZIsiUqD+kNkISL5W2LLYNcUGFkHm93vPVH4DjO0FRp21OwuA3RtUfWo15senFxp/pqyqB3NGCAHf5TJ7JsFl5YM6nriNUVDXagGG1FkHSDFba+YIkPBgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n8Es8uHN; arc=none smtp.client-ip=192.198.163.10
+	 MIME-Version:Content-Type; b=bdRpoJPZs4kQr3Z0weC+F0ii67p+kYsJh4mp7Y/AUZFrIMD2m9t+GVf+4j355dOjlHkhI2rHJcJg0VM8O31FWCh2VACfnOzui3NDz2Z/i7dH+2QqaeFYQn9xkryuwEUtO8P0ZkuMMm2r1otElGztlQRkx8mMUTNhyhJ3Gqhu1i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cfhfw912; arc=none smtp.client-ip=192.198.163.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731511541; x=1763047541;
+  t=1731511549; x=1763047549;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Edpx9LhLG10gjTrUewrh6rYC6L84oxZlcmQyZZzUqOc=;
-  b=n8Es8uHNiG9zI5821W0+HCdhUPJQupUtNlGh2XYvaeqRVNacLSdao6tU
-   ggdwAdGy06PUR3k3aS9XaUf6AufYV5DBdoboF/EEEM+6CEOc6NORK0xhc
-   Vf5Qj3N/ChigfIoGQvtKtNuz+Mcxr8Nsbwbv89LOPgky1LoaC1WbJKvEw
-   Gz47eFfWvcBSG4llt7B7jaVIc8m8omFgCwSNUaDffkNvOX0XsDa/4+L5G
-   2nkDbg1cX9KPqJPi1T8Ew5gY+6uCiik4gEsyjd6DBDDEj3Ie4i5+EURgT
-   ECxm68TxZoc6IKXoRa/FD9oIR4nWCqUZ681UKOvg42CDXNJ1sntPWj0fE
-   A==;
-X-CSE-ConnectionGUID: OTM8qBU+QyOMnX1i9FTC6w==
-X-CSE-MsgGUID: 01mtXwL+SDOrZLj07vonrg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="42799344"
+  bh=0bxtNMeTjBtWsf3OXWlcIoRP5wE9plodK8FqBilBLYs=;
+  b=cfhfw912OoCsYFt9Qi/nchsj/S8W/sinRBeZAGpsoeHb3d27LUTYJg63
+   Ll7w5/eVLFDDzlEUdHZl8V683wPgdF6MI3/4OFvye2adffO3FG+7ZOVBg
+   AKInSafFtNKvsPJn9zQSjOPQDBmcsVHzChoT18XFEf/P3gw1kvj9HLw8k
+   +O8lCDVinuw/9h54rxfPXQUTDbxxcLYrLAi624w8fzm9iyfYtF4gLh0vQ
+   3gmltsZx1C4YukAWsiBcQBJKCMgMdaUHk42EDasw7B2+iEv39TMb3n6s2
+   e81R9VvzSKGd2W5GSPF4rcAhpvHhErMim5zh8vEX72GJ559DXe252gpC3
+   w==;
+X-CSE-ConnectionGUID: cP6RWc9qQg6sBvxFMiHEWQ==
+X-CSE-MsgGUID: WLtmal1MQEmUdsphocn+gg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="42799367"
 X-IronPort-AV: E=Sophos;i="6.12,151,1728975600"; 
-   d="scan'208";a="42799344"
+   d="scan'208";a="42799367"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 07:25:41 -0800
-X-CSE-ConnectionGUID: fong/m6OROeBfuWGRUTNtQ==
-X-CSE-MsgGUID: UZDpvXGFRf+/ToPF+MdA8A==
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 07:25:49 -0800
+X-CSE-ConnectionGUID: K7AHCZdBSm+D0rf7Sphu8w==
+X-CSE-MsgGUID: Rtg/y6x1T7apmnbRRivURQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,151,1728975600"; 
-   d="scan'208";a="118726954"
+   d="scan'208";a="118726970"
 Received: from newjersey.igk.intel.com ([10.102.20.203])
-  by orviesa002.jf.intel.com with ESMTP; 13 Nov 2024 07:25:37 -0800
+  by orviesa002.jf.intel.com with ESMTP; 13 Nov 2024 07:25:45 -0800
 From: Alexander Lobakin <aleksander.lobakin@intel.com>
 To: "David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
@@ -75,9 +75,9 @@ Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
 	bpf@vger.kernel.org,
 	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v5 10/19] xdp: get rid of xdp_frame::mem.id
-Date: Wed, 13 Nov 2024 16:24:33 +0100
-Message-ID: <20241113152442.4000468-11-aleksander.lobakin@intel.com>
+Subject: [PATCH net-next v5 12/19] xdp: add generic xdp_build_skb_from_buff()
+Date: Wed, 13 Nov 2024 16:24:35 +0100
+Message-ID: <20241113152442.4000468-13-aleksander.lobakin@intel.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241113152442.4000468-1-aleksander.lobakin@intel.com>
 References: <20241113152442.4000468-1-aleksander.lobakin@intel.com>
@@ -90,286 +90,99 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Initially, xdp_frame::mem.id was used to search for the corresponding
-&page_pool to return the page correctly.
-However, after that struct page now contains a direct pointer to its PP,
-further keeping of this field makes no sense. xdp_return_frame_bulk()
-still uses it to do a lookup, but this is rather a leftover.
-Remove xdp_frame::mem and replace it with ::mem_type, as only memory
-type still matters and we need to know it to be able to free the frame
-correctly.
-As a cute side effect, we can now make every scalar field in &xdp_frame
-of 4 byte width, speeding up accesses to them.
+The code which builds an skb from an &xdp_buff keeps multiplying itself
+around the drivers with almost no changes. Let's try to stop that by
+adding a generic function.
+Unlike __xdp_build_skb_from_frame(), always allocate an skbuff head
+using napi_build_skb() and make use of the available xdp_rxq pointer to
+assign the Rx queue index. In case of PP-backed buffer, mark the skb to
+be recycled, as every PP user's been switched to recycle skbs.
 
 Reviewed-by: Toke Høiland-Jørgensen <toke@redhat.com>
 Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
 ---
- include/net/xdp.h                             | 14 +++++-----
- .../net/ethernet/freescale/dpaa/dpaa_eth.c    |  2 +-
- drivers/net/veth.c                            |  4 +--
- kernel/bpf/cpumap.c                           |  2 +-
- net/bpf/test_run.c                            |  4 +--
- net/core/filter.c                             | 12 ++++----
- net/core/xdp.c                                | 28 +++++++++----------
- 7 files changed, 33 insertions(+), 33 deletions(-)
+ include/net/xdp.h |  1 +
+ net/core/xdp.c    | 55 +++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 56 insertions(+)
 
 diff --git a/include/net/xdp.h b/include/net/xdp.h
-index cce819ee17d3..d33d73e798fe 100644
+index 4c19042adf80..b0a25b7060ff 100644
 --- a/include/net/xdp.h
 +++ b/include/net/xdp.h
-@@ -169,13 +169,13 @@ xdp_get_buff_len(const struct xdp_buff *xdp)
+@@ -330,6 +330,7 @@ xdp_update_skb_shared_info(struct sk_buff *skb, u8 nr_frags,
+ void xdp_warn(const char *msg, const char *func, const int line);
+ #define XDP_WARN(msg) xdp_warn(msg, __func__, __LINE__)
  
- struct xdp_frame {
- 	void *data;
--	u16 len;
--	u16 headroom;
-+	u32 len;
-+	u32 headroom;
- 	u32 metasize; /* uses lower 8-bits */
- 	/* Lifetime of xdp_rxq_info is limited to NAPI/enqueue time,
--	 * while mem info is valid on remote CPU.
-+	 * while mem_type is valid on remote CPU.
- 	 */
--	struct xdp_mem_info mem;
-+	enum xdp_mem_type mem_type:32;
- 	struct net_device *dev_rx; /* used by cpumap */
- 	u32 frame_sz;
- 	u32 flags; /* supported values defined in xdp_buff_flags */
-@@ -306,13 +306,13 @@ struct xdp_frame *xdp_convert_buff_to_frame(struct xdp_buff *xdp)
- 	if (unlikely(xdp_update_frame_from_buff(xdp, xdp_frame) < 0))
- 		return NULL;
- 
--	/* rxq only valid until napi_schedule ends, convert to xdp_mem_info */
--	xdp_frame->mem = xdp->rxq->mem;
-+	/* rxq only valid until napi_schedule ends, convert to xdp_mem_type */
-+	xdp_frame->mem_type = xdp->rxq->mem.type;
- 
- 	return xdp_frame;
- }
- 
--void __xdp_return(void *data, struct xdp_mem_info *mem, bool napi_direct,
-+void __xdp_return(void *data, enum xdp_mem_type mem_type, bool napi_direct,
- 		  struct xdp_buff *xdp);
- void xdp_return_frame(struct xdp_frame *xdpf);
- void xdp_return_frame_rx_napi(struct xdp_frame *xdpf);
-diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-index bf5baef5c3e0..4948b4906584 100644
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-@@ -2281,7 +2281,7 @@ static int dpaa_a050385_wa_xdpf(struct dpaa_priv *priv,
- 	new_xdpf->len = xdpf->len;
- 	new_xdpf->headroom = priv->tx_headroom;
- 	new_xdpf->frame_sz = DPAA_BP_RAW_SIZE;
--	new_xdpf->mem.type = MEM_TYPE_PAGE_ORDER0;
-+	new_xdpf->mem_type = MEM_TYPE_PAGE_ORDER0;
- 
- 	/* Release the initial buffer */
- 	xdp_return_frame_rx_napi(xdpf);
-diff --git a/drivers/net/veth.c b/drivers/net/veth.c
-index 0d6d0d749d44..048eb599a95a 100644
---- a/drivers/net/veth.c
-+++ b/drivers/net/veth.c
-@@ -634,7 +634,7 @@ static struct xdp_frame *veth_xdp_rcv_one(struct veth_rq *rq,
- 			break;
- 		case XDP_TX:
- 			orig_frame = *frame;
--			xdp->rxq->mem = frame->mem;
-+			xdp->rxq->mem.type = frame->mem_type;
- 			if (unlikely(veth_xdp_tx(rq, xdp, bq) < 0)) {
- 				trace_xdp_exception(rq->dev, xdp_prog, act);
- 				frame = &orig_frame;
-@@ -646,7 +646,7 @@ static struct xdp_frame *veth_xdp_rcv_one(struct veth_rq *rq,
- 			goto xdp_xmit;
- 		case XDP_REDIRECT:
- 			orig_frame = *frame;
--			xdp->rxq->mem = frame->mem;
-+			xdp->rxq->mem.type = frame->mem_type;
- 			if (xdp_do_redirect(rq->dev, xdp, xdp_prog)) {
- 				frame = &orig_frame;
- 				stats->rx_drops++;
-diff --git a/kernel/bpf/cpumap.c b/kernel/bpf/cpumap.c
-index a2f46785ac3b..774accbd4a22 100644
---- a/kernel/bpf/cpumap.c
-+++ b/kernel/bpf/cpumap.c
-@@ -190,7 +190,7 @@ static int cpu_map_bpf_prog_run_xdp(struct bpf_cpu_map_entry *rcpu,
- 		int err;
- 
- 		rxq.dev = xdpf->dev_rx;
--		rxq.mem = xdpf->mem;
-+		rxq.mem.type = xdpf->mem_type;
- 		/* TODO: report queue_index to xdp_rxq_info */
- 
- 		xdp_convert_frame_to_buff(xdpf, &xdp);
-diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
-index 501ec4249fed..9ae2a7f1738b 100644
---- a/net/bpf/test_run.c
-+++ b/net/bpf/test_run.c
-@@ -153,7 +153,7 @@ static void xdp_test_run_init_page(netmem_ref netmem, void *arg)
- 	new_ctx->data = new_ctx->data_meta + meta_len;
- 
- 	xdp_update_frame_from_buff(new_ctx, frm);
--	frm->mem = new_ctx->rxq->mem;
-+	frm->mem_type = new_ctx->rxq->mem.type;
- 
- 	memcpy(&head->orig_ctx, new_ctx, sizeof(head->orig_ctx));
- }
-@@ -246,7 +246,7 @@ static void reset_ctx(struct xdp_page_head *head)
- 	head->ctx.data_meta = head->orig_ctx.data_meta;
- 	head->ctx.data_end = head->orig_ctx.data_end;
- 	xdp_update_frame_from_buff(&head->ctx, head->frame);
--	head->frame->mem = head->orig_ctx.rxq->mem;
-+	head->frame->mem_type = head->orig_ctx.rxq->mem.type;
- }
- 
- static int xdp_recv_frames(struct xdp_frame **frames, int nframes,
-diff --git a/net/core/filter.c b/net/core/filter.c
-index b40e091a764d..3ea82ff692fb 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -4105,13 +4105,13 @@ static int bpf_xdp_frags_increase_tail(struct xdp_buff *xdp, int offset)
- }
- 
- static void bpf_xdp_shrink_data_zc(struct xdp_buff *xdp, int shrink,
--				   struct xdp_mem_info *mem_info, bool release)
-+				   enum xdp_mem_type mem_type, bool release)
- {
- 	struct xdp_buff *zc_frag = xsk_buff_get_tail(xdp);
- 
- 	if (release) {
- 		xsk_buff_del_tail(zc_frag);
--		__xdp_return(NULL, mem_info, false, zc_frag);
-+		__xdp_return(NULL, mem_type, false, zc_frag);
- 	} else {
- 		zc_frag->data_end -= shrink;
- 	}
-@@ -4120,18 +4120,18 @@ static void bpf_xdp_shrink_data_zc(struct xdp_buff *xdp, int shrink,
- static bool bpf_xdp_shrink_data(struct xdp_buff *xdp, skb_frag_t *frag,
- 				int shrink)
- {
--	struct xdp_mem_info *mem_info = &xdp->rxq->mem;
-+	enum xdp_mem_type mem_type = xdp->rxq->mem.type;
- 	bool release = skb_frag_size(frag) == shrink;
- 
--	if (mem_info->type == MEM_TYPE_XSK_BUFF_POOL) {
--		bpf_xdp_shrink_data_zc(xdp, shrink, mem_info, release);
-+	if (mem_type == MEM_TYPE_XSK_BUFF_POOL) {
-+		bpf_xdp_shrink_data_zc(xdp, shrink, mem_type, release);
- 		goto out;
- 	}
- 
- 	if (release) {
- 		struct page *page = skb_frag_page(frag);
- 
--		__xdp_return(page_address(page), mem_info, false, NULL);
-+		__xdp_return(page_address(page), mem_type, false, NULL);
- 	}
- 
- out:
++struct sk_buff *xdp_build_skb_from_buff(const struct xdp_buff *xdp);
+ struct xdp_frame *xdp_convert_zc_to_xdp_frame(struct xdp_buff *xdp);
+ struct sk_buff *__xdp_build_skb_from_frame(struct xdp_frame *xdpf,
+ 					   struct sk_buff *skb,
 diff --git a/net/core/xdp.c b/net/core/xdp.c
-index 0fde1bb54192..b1b426a9b146 100644
+index b1b426a9b146..3a9a3c14b080 100644
 --- a/net/core/xdp.c
 +++ b/net/core/xdp.c
-@@ -427,12 +427,12 @@ EXPORT_SYMBOL_GPL(xdp_rxq_info_attach_page_pool);
-  * is used for those calls sites.  Thus, allowing for faster recycling
-  * of xdp_frames/pages in those cases.
-  */
--void __xdp_return(void *data, struct xdp_mem_info *mem, bool napi_direct,
-+void __xdp_return(void *data, enum xdp_mem_type mem_type, bool napi_direct,
- 		  struct xdp_buff *xdp)
- {
- 	struct page *page;
- 
--	switch (mem->type) {
-+	switch (mem_type) {
- 	case MEM_TYPE_PAGE_POOL:
- 		page = virt_to_head_page(data);
- 		if (napi_direct && xdp_return_frame_no_direct())
-@@ -455,7 +455,7 @@ void __xdp_return(void *data, struct xdp_mem_info *mem, bool napi_direct,
- 		break;
- 	default:
- 		/* Not possible, checked in xdp_rxq_info_reg_mem_model() */
--		WARN(1, "Incorrect XDP memory type (%d) usage", mem->type);
-+		WARN(1, "Incorrect XDP memory type (%d) usage", mem_type);
- 		break;
- 	}
+@@ -624,6 +624,61 @@ int xdp_alloc_skb_bulk(void **skbs, int n_skb, gfp_t gfp)
  }
-@@ -472,10 +472,10 @@ void xdp_return_frame(struct xdp_frame *xdpf)
- 	for (i = 0; i < sinfo->nr_frags; i++) {
- 		struct page *page = skb_frag_page(&sinfo->frags[i]);
+ EXPORT_SYMBOL_GPL(xdp_alloc_skb_bulk);
  
--		__xdp_return(page_address(page), &xdpf->mem, false, NULL);
-+		__xdp_return(page_address(page), xdpf->mem_type, false, NULL);
- 	}
- out:
--	__xdp_return(xdpf->data, &xdpf->mem, false, NULL);
-+	__xdp_return(xdpf->data, xdpf->mem_type, false, NULL);
- }
- EXPORT_SYMBOL_GPL(xdp_return_frame);
- 
-@@ -491,10 +491,10 @@ void xdp_return_frame_rx_napi(struct xdp_frame *xdpf)
- 	for (i = 0; i < sinfo->nr_frags; i++) {
- 		struct page *page = skb_frag_page(&sinfo->frags[i]);
- 
--		__xdp_return(page_address(page), &xdpf->mem, true, NULL);
-+		__xdp_return(page_address(page), xdpf->mem_type, true, NULL);
- 	}
- out:
--	__xdp_return(xdpf->data, &xdpf->mem, true, NULL);
-+	__xdp_return(xdpf->data, xdpf->mem_type, true, NULL);
- }
- EXPORT_SYMBOL_GPL(xdp_return_frame_rx_napi);
- 
-@@ -513,7 +513,7 @@ EXPORT_SYMBOL_GPL(xdp_return_frame_rx_napi);
- void xdp_return_frame_bulk(struct xdp_frame *xdpf,
- 			   struct xdp_frame_bulk *bq)
- {
--	if (xdpf->mem.type != MEM_TYPE_PAGE_POOL) {
-+	if (xdpf->mem_type != MEM_TYPE_PAGE_POOL) {
- 		xdp_return_frame(xdpf);
- 		return;
- 	}
-@@ -550,10 +550,11 @@ void xdp_return_buff(struct xdp_buff *xdp)
- 	for (i = 0; i < sinfo->nr_frags; i++) {
- 		struct page *page = skb_frag_page(&sinfo->frags[i]);
- 
--		__xdp_return(page_address(page), &xdp->rxq->mem, true, xdp);
-+		__xdp_return(page_address(page), xdp->rxq->mem.type, true,
-+			     xdp);
- 	}
- out:
--	__xdp_return(xdp->data, &xdp->rxq->mem, true, xdp);
-+	__xdp_return(xdp->data, xdp->rxq->mem.type, true, xdp);
- }
- EXPORT_SYMBOL_GPL(xdp_return_buff);
- 
-@@ -599,7 +600,7 @@ struct xdp_frame *xdp_convert_zc_to_xdp_frame(struct xdp_buff *xdp)
- 	xdpf->headroom = 0;
- 	xdpf->metasize = metasize;
- 	xdpf->frame_sz = PAGE_SIZE;
--	xdpf->mem.type = MEM_TYPE_PAGE_ORDER0;
-+	xdpf->mem_type = MEM_TYPE_PAGE_ORDER0;
- 
- 	xsk_buff_free(xdp);
- 	return xdpf;
-@@ -669,7 +670,7 @@ struct sk_buff *__xdp_build_skb_from_frame(struct xdp_frame *xdpf,
- 	 * - RX ring dev queue index	(skb_record_rx_queue)
- 	 */
- 
--	if (xdpf->mem.type == MEM_TYPE_PAGE_POOL)
-+	if (xdpf->mem_type == MEM_TYPE_PAGE_POOL)
- 		skb_mark_for_recycle(skb);
- 
- 	/* Allow SKB to reuse area used by xdp_frame */
-@@ -716,8 +717,7 @@ struct xdp_frame *xdpf_clone(struct xdp_frame *xdpf)
- 	nxdpf = addr;
- 	nxdpf->data = addr + headroom;
- 	nxdpf->frame_sz = PAGE_SIZE;
--	nxdpf->mem.type = MEM_TYPE_PAGE_ORDER0;
--	nxdpf->mem.id = 0;
-+	nxdpf->mem_type = MEM_TYPE_PAGE_ORDER0;
- 
- 	return nxdpf;
- }
++/**
++ * xdp_build_skb_from_buff - create an skb from an &xdp_buff
++ * @xdp: &xdp_buff to convert to an skb
++ *
++ * Perform common operations to create a new skb to pass up the stack from
++ * an &xdp_buff: allocate an skb head from the NAPI percpu cache, initialize
++ * skb data pointers and offsets, set the recycle bit if the buff is PP-backed,
++ * Rx queue index, protocol and update frags info.
++ *
++ * Return: new &sk_buff on success, %NULL on error.
++ */
++struct sk_buff *xdp_build_skb_from_buff(const struct xdp_buff *xdp)
++{
++	const struct xdp_rxq_info *rxq = xdp->rxq;
++	const struct skb_shared_info *sinfo;
++	struct sk_buff *skb;
++	u32 nr_frags = 0;
++	int metalen;
++
++	if (unlikely(xdp_buff_has_frags(xdp))) {
++		sinfo = xdp_get_shared_info_from_buff(xdp);
++		nr_frags = sinfo->nr_frags;
++	}
++
++	skb = napi_build_skb(xdp->data_hard_start, xdp->frame_sz);
++	if (unlikely(!skb))
++		return NULL;
++
++	skb_reserve(skb, xdp->data - xdp->data_hard_start);
++	__skb_put(skb, xdp->data_end - xdp->data);
++
++	metalen = xdp->data - xdp->data_meta;
++	if (metalen > 0)
++		skb_metadata_set(skb, metalen);
++
++	if (is_page_pool_compiled_in() && rxq->mem.type == MEM_TYPE_PAGE_POOL)
++		skb_mark_for_recycle(skb);
++
++	skb_record_rx_queue(skb, rxq->queue_index);
++
++	if (unlikely(nr_frags)) {
++		u32 tsize;
++
++		tsize = sinfo->xdp_frags_truesize ? : nr_frags * xdp->frame_sz;
++		xdp_update_skb_shared_info(skb, nr_frags,
++					   sinfo->xdp_frags_size, tsize,
++					   xdp_buff_is_frag_pfmemalloc(xdp));
++	}
++
++	skb->protocol = eth_type_trans(skb, rxq->dev);
++
++	return skb;
++}
++EXPORT_SYMBOL_GPL(xdp_build_skb_from_buff);
++
+ struct sk_buff *__xdp_build_skb_from_frame(struct xdp_frame *xdpf,
+ 					   struct sk_buff *skb,
+ 					   struct net_device *dev)
 -- 
 2.47.0
 
