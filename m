@@ -1,120 +1,118 @@
-Return-Path: <linux-kernel+bounces-407230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-407232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5940A9C6A8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:26:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5A8E9C6A93
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 09:31:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70073B23EDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:26:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73D39B240CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 08:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37DA018A937;
-	Wed, 13 Nov 2024 08:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7988618A92A;
+	Wed, 13 Nov 2024 08:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ltgtRILT"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/ClBW7J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6A5178CE4;
-	Wed, 13 Nov 2024 08:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30FB11CBA;
+	Wed, 13 Nov 2024 08:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731486379; cv=none; b=Wha9CbKDXwUlbLDtoZzEfJl8KkFkS3B86rviAzYY8PA+z8IefVd+RzDs+531HZsSTTifWd7PrjkSN3LmBKhTU5Y3Ztnrkz9UfpZ6uROql3hQ+Yn7bTQo5Rm1PHycp8zmQseW2fZ2CKy9yl7/U1GWIR60SoClKghCja+KEoIsxuE=
+	t=1731486677; cv=none; b=tmicqV9swm9+UjYyuETJFGaO8TfOFE+9oPxZRwCdtMmRP8SFFVnjf8AQ8AS3eHEWXYlnwywzqJcXpAE90Q/Wz2n5xcH4wO2g7HhP1oaE4oqDUndnquh6nZPldwwtr+keCqoBRivuF0WyGiyKBss0dxCKqjdzlLWAJrHdFK4hirI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731486379; c=relaxed/simple;
-	bh=NDnMXOg3a/YTXToq46OO3ahs23cF1TL4Ssqae3WYPzQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kqsXeizI4jqHoQdWjvRf2Dnta6EjMPl+giRa/WYvj9oz7/7Px1tAo7SOfHypwohfAp6hTbl/r73r2KTK2Kuq+Z5lo1q8QuWMjiUgkRge1OFh1HB64f57AfCFOmpTH9Mqc3JaSc5FNSgOqMK4FgQsqpDFZYhbjSEJMRRxkXAzuEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ltgtRILT; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3EFA0FF80B;
-	Wed, 13 Nov 2024 08:26:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731486369;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QL6WB2LZnSXEXRY0BOwCQ3u9d/gRvFiU2Qv5SmZq72A=;
-	b=ltgtRILT2fq/g9aK/lshySY//LY+2Ylz1Vn/tDkPD4KgLVsA/6ikdHwCJbMz3Lfsm9co1u
-	i/SbSWnB2qzJqFrb1FltAo2ZPBbjUU9iN2fQPEkBH1KOdokNl7U+kY8XZwvnDRdCmUmzab
-	Ril1aRlNm5OUHA9fUT2YuokkfHbYrhbYIEVO0K9m46xl2+7Az1slh8GY7gFqiVehkXlvxs
-	Up01h8QBDAVpiJTza0xXEzrMQHQD3qfiJsX1sA4UOcRROxkeHL/l0vzs/yojRElSVaM12F
-	ZeggogdYBEI86ulquCJB8O3AZqileX6F5xvTP0yZItLmZy5nlpV+7DFk3zW+zQ==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: <alex.aring@gmail.com>,  <davem@davemloft.net>,  <dmantipov@yandex.ru>,
-  <edumazet@google.com>,  <horms@kernel.org>,  <kuba@kernel.org>,
-  <linux-kernel@vger.kernel.org>,  <linux-usb@vger.kernel.org>,
-  <linux-wpan@vger.kernel.org>,  <netdev@vger.kernel.org>,
-  <pabeni@redhat.com>,  <stefan@datenfreihafen.org>,
-  <syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com>,
-  <syzkaller-bugs@googlegroups.com>
-Subject: Re: [PATCH] mac802154: add a check for slave data list before delete
-In-Reply-To: <20241112134145.959501-1-lizhi.xu@windriver.com> (Lizhi Xu's
-	message of "Tue, 12 Nov 2024 21:41:45 +0800")
-References: <87a5e4u35q.fsf@bootlin.com>
-	<20241112134145.959501-1-lizhi.xu@windriver.com>
-User-Agent: mu4e 1.12.1; emacs 29.4
-Date: Wed, 13 Nov 2024 09:26:07 +0100
-Message-ID: <87plmzsfog.fsf@bootlin.com>
+	s=arc-20240116; t=1731486677; c=relaxed/simple;
+	bh=bM0X38UhkBzintoDYGOc67/pd8CabjjLBzBwfbjIAU8=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=Wnr5uos7FVseb9t1UjpDPTjFtInrTZvSNlSXTK9OGAe6UdO3XDunTBWgcy5W4QK+vNzwzfIyd/zHibuDlap41IBA8p2fOlMMro8HHhL/S8hhAGNVndYIY6h8++DZA4N9nFcW2LVbaS+5MVpMyHntD/Mo728Qj45IYpMuWKpsdnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/ClBW7J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21A3CC4CECD;
+	Wed, 13 Nov 2024 08:31:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731486677;
+	bh=bM0X38UhkBzintoDYGOc67/pd8CabjjLBzBwfbjIAU8=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=V/ClBW7JwcDylSEPox1BqKSEFHkB+LEzuBaojbVOGIy5b+8a+S9VJV/1wKjvDGtV0
+	 xIS+YSt/XmC/DGYp82maL5LSjKKKldeiQBG0tt1iO6CR2A8256Q9TW88RcWeKul782
+	 2rPdxf9wR/C6F+3wSKfViRTW3D80A4BN+Xmiwdi7TYtidAqEGeQW02n7FEnXhfXZzu
+	 zVSu/f5IXmlPvHY3FuiOgv4U4g9J1Vq1XWVdJGAXAJv4mciSkwQO8a79YowB403YBf
+	 40kCVTCcm9QaMAS1UuzvQTfhy3XI9dXXXg/iUz+k/JJ5aEa3vZFLo5OLcu+aSP7sud
+	 tjBAAe6yRErhw==
+Date: Wed, 13 Nov 2024 02:31:15 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, 
+ linux-arm-kernel@lists.infradead.org, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ linux-amlogic@lists.infradead.org, Kevin Hilman <khilman@baylibre.com>, 
+ Conor Dooley <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+To: Xianwei Zhao <xianwei.zhao@amlogic.com>
+In-Reply-To: <20241113-a4_pinctrl-v6-1-35ba2401ee35@amlogic.com>
+References: <20241113-a4_pinctrl-v6-0-35ba2401ee35@amlogic.com>
+ <20241113-a4_pinctrl-v6-1-35ba2401ee35@amlogic.com>
+Message-Id: <173148667456.3371316.2229241108190941426.robh@kernel.org>
+Subject: Re: [PATCH v6 1/5] dt-bindings: pinctrl: move gpio-cells property
 
-On 12/11/2024 at 21:41:45 +08, Lizhi Xu <lizhi.xu@windriver.com> wrote:
 
-> On Tue, 12 Nov 2024 12:01:21 +0100, Miquel Raynal wrote:
->>On 12/11/2024 at 08:21:33 +08, Lizhi Xu <lizhi.xu@windriver.com> wrote:
->>
->>> On Mon, 11 Nov 2024 20:46:57 +0100, Miquel Raynal wrote:
->>>> On 08/11/2024 at 22:54:20 +08, Lizhi Xu <lizhi.xu@windriver.com> wrote:
->>>>
->>>> > syzkaller reported a corrupted list in ieee802154_if_remove. [1]
->>>> >
->>>> > Remove an IEEE 802.15.4 network interface after unregister an IEEE 8=
-02.15.4
->>>> > hardware device from the system.
->>>> >
->>>> > CPU0					CPU1
->>>> > =3D=3D=3D=3D					=3D=3D=3D=3D
->>>> > genl_family_rcv_msg_doit		ieee802154_unregister_hw
->>>> > ieee802154_del_iface			ieee802154_remove_interfaces
->>>> > rdev_del_virtual_intf_deprecated	list_del(&sdata->list)
->>>> > ieee802154_if_remove
->>>> > list_del_rcu
->>>>
->>>> FYI this is a "duplicate" but with a different approach than:
->>>> https://lore.kernel.org/linux-wpan/87v7wtpngj.fsf@bootlin.com/T/#m02ce=
-be86ec0171fc4d3350676bbdd4a7e3827077
->>> No, my patch was the first to fix it, someone else copied my
->>> patch. Here is my patch:
->>
->>Ok, so same question as to the other contributor, why not enclosing the
->>remaining list_del_rcu() within mutex protection? Can we avoid the
->>creation of the LISTDONE state bit?
-> From the analysis of the list itself, we can not rely on the newly added =
-state bit.=20
-> The net device has been unregistered, since the rcu grace period,
-> unregistration must be run before ieee802154_if_remove.
->
-> Following is my V2 patch, it has been tested and works well.
+On Wed, 13 Nov 2024 15:29:39 +0800, Xianwei Zhao wrote:
+> Move #gpio-cells property from common yaml file
+> to lower-level yaml files.
+> 
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> ---
+>  .../devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml          | 3 +++
+>  .../devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml      | 3 ---
+>  .../devicetree/bindings/pinctrl/amlogic,meson-pinctrl-g12a-aobus.yaml  | 3 +++
+>  .../bindings/pinctrl/amlogic,meson-pinctrl-g12a-periphs.yaml           | 3 +++
+>  .../devicetree/bindings/pinctrl/amlogic,meson8-pinctrl-aobus.yaml      | 3 +++
+>  .../devicetree/bindings/pinctrl/amlogic,meson8-pinctrl-cbus.yaml       | 3 +++
+>  6 files changed, 15 insertions(+), 3 deletions(-)
+> 
 
-Please send a proper v2, not an inline v2.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-However the new approach looks better to me, so you can add my
+yamllint warnings/errors:
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-g12a-aobus.yaml: patternProperties:^bank@[0-9a-f]+$:properties: 'gpio-controller' is a dependency of '#gpio-cells'
+	from schema $id: http://devicetree.org/meta-schemas/gpios.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-g12a-periphs.yaml: patternProperties:^bank@[0-9a-f]+$:properties: 'gpio-controller' is a dependency of '#gpio-cells'
+	from schema $id: http://devicetree.org/meta-schemas/gpios.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/amlogic,meson8-pinctrl-aobus.yaml: patternProperties:^bank@[0-9a-f]+$:properties: 'gpio-controller' is a dependency of '#gpio-cells'
+	from schema $id: http://devicetree.org/meta-schemas/gpios.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml: patternProperties:^bank@[0-9a-f]+$:properties: 'gpio-controller' is a dependency of '#gpio-cells'
+	from schema $id: http://devicetree.org/meta-schemas/gpios.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/amlogic,meson8-pinctrl-cbus.yaml: patternProperties:^bank@[0-9a-f]+$:properties: 'gpio-controller' is a dependency of '#gpio-cells'
+	from schema $id: http://devicetree.org/meta-schemas/gpios.yaml#
 
-Thanks,
-Miqu=C3=A8l
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241113-a4_pinctrl-v6-1-35ba2401ee35@amlogic.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
