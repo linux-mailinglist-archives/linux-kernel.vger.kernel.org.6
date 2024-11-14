@@ -1,348 +1,263 @@
-Return-Path: <linux-kernel+bounces-408818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDB599C83E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:20:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AB6B9C83EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:23:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6986FB225C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:20:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9FD8B23567
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44FAC1EBA0F;
-	Thu, 14 Nov 2024 07:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBB41F12FD;
+	Thu, 14 Nov 2024 07:23:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EELPGuMT"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="TF643W9Q"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1B11E50B
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84291E50B
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731568821; cv=none; b=PUdo104KCYYAnnGIzM/AQN2nnfYe1M0oaLFsS1RBa4oRC1bhDbPQ4/VqYkJH1jpmaFa2f78Va7dVfIem4GFjFi77Hy1eSOPixy3NL/hNvUrBrM7DXe8go3sxxYeuItSrZyaI9REKSvv1F68mNmtSLsut//Xer2ylxiLKADyiYyI=
+	t=1731569011; cv=none; b=pBz7fEFXg4cDqGgqxxivKGhPulWOngCBSfnFAy2SFaIeSK60azqfD3BE+kaMcn7qHW2yRtHfoG0pGwevCZjBe/YL3iNn9nt4qe/enM7gRAdyEirLF0lowBBTTYQCkWWQgp6hwM/nfX3PpCAbUFFYJAqBq5/WtDJNp/83M4qaUjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731568821; c=relaxed/simple;
-	bh=zgky1j2aFfjl+hd4xlKRKeSlNO9nWVhZn5rkK7CSDuI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=tfVryU2XZSgzIRUAGIuqxFjW07KFDY0EXIgBf6gNm8FqIR0EgR+oRI9/zF/jSft2zvRKsnNobpvm1FKAL2KRSRihRk+WO0yIBKbU0e8oF+X17j/tc1r8kmQbcwip4dQT66dR3QyCB2CI+hcCbt86afVkHjIGZcnXAJINRFv5fsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EELPGuMT; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53d8c08cfc4so197264e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 23:20:19 -0800 (PST)
+	s=arc-20240116; t=1731569011; c=relaxed/simple;
+	bh=FznkquujoVc4AGXvNQNSehVr0GYW7+fmlomCQC7lcDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qKnvR55bMzqbW72SbYPTmCL3UnTEfBRtWnoa/0Tls7NyxQ2oQuWDXvJAX/vnF9zmBOabRS/A6ZZp4sBz1MaefCl1lZ7HXFo/fF9F72tbyBJRqfcwffSaanJSlnwhDsex+CHY9v0jnSJcpBi66i+O1GlVx7kU2ATZRXTfN5kJJwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=TF643W9Q; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20cbca51687so2594515ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 23:23:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731568817; x=1732173617; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1CLbYiDjOmhi7BUQON9dwJTmGxEjLLat5Mat5RF6Th4=;
-        b=EELPGuMTz7lEQFmEMFxJSPhl8DV2b//ALosY0FFFvwGW1JThb2Fe4TKpF8SL3UB7HH
-         qRUWsHkaElD82iCVsah0oFVbqkkjuTjgQMY41CKFlj9dg/OSwFyVCWzuvBt6CKRLjN1M
-         TBMAIGFj5EDZZyBYpiK7yvFgGdqAvArKGDgkfD8JnCrHkdDj9QZWha9TUJm1Z++rfgaY
-         qPvL+RLL+r4UZkRLpIx4Ss80vXtmuNvHknsH4bNvWRTJb6Xjw4wCRT895yeHccT6xoJb
-         1JuQdW5/xc9KfFkIvHveRQRlaZ0vlQHRQP0BEzHoMRWLraOGnkXWBxerQMFJKqoi3oA1
-         Yu6g==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1731569008; x=1732173808; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jcVdx/PDcosiuJvg6s7470mt1Sbg0MJ8nbwkpgIFfDI=;
+        b=TF643W9QHlE7qhqr5uRfTcxpUsp30RKA4BqyyBwDQVbgmabZpfzeeIRi3R+pMeqyT+
+         Z8046g9nfbrjxVzKZ9lGqFlIBah5D9N1xKRN9ZYEIzn/s9HjW1wymT3N3X4wsSdPuQzq
+         bZN8r0CwlC7hwnc4pD1AqtPz4Hi1yBl7BuQhLNsEDZqFSnQIWAlG/CF9DjV/20i4ebD6
+         Yl30lNpxEHVjE1dIYCbTg0MlIBxeSDsZBM6nxIexYp5FBEkCJmKWh9Dhe/EKSe7aYxnu
+         g2uCAbprZdhnLez0WrXtlFamw5dGWnA0FDC53mqAbGGAx7grJ/1VN9kis9yc1t50wvGm
+         8kIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731568817; x=1732173617;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1CLbYiDjOmhi7BUQON9dwJTmGxEjLLat5Mat5RF6Th4=;
-        b=Gxc0m4Rd6vD2t/uCLwPY0hCRl/Xotc/LIzjNc9oJzXr6WN/CVB71vzLOSYeRjKQiTJ
-         L7KUK5jS6gl7NC2iFULlOYug+hAGQ40326nEC8h7qqAMD7ejy0mg3MTclsMf9lKgo/aD
-         tEqS8kB+1T6TLnuZbVg4lhpXH3SFlBhVAYzRWTTTsBEnGTjp5iucHhxmzTd0Obhv0ci4
-         1l+fhpYnD/IuTLzZjzInKRGFZ6rsmUFRbnKFM1qY3+2ZArGTfGrXpwAsi/j+qkZ/HSsE
-         5XBxkm89GyW1yeNvNRtGbeJBesJKyxcXkgdVrLbyQWR4jG07nwdElpdyzIpazdzg1tIU
-         gL/g==
-X-Forwarded-Encrypted: i=1; AJvYcCU46ZEJuTYElsx/a0YGofAffhXmdTsH2rr8WU4kRtQrAIcvbcBqlwp420iitjPZrCrkWtqkRQwz5eirm5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxImYWFaFbsBcntIVGURK5NNEU9mbL4kAh6kiJu+TRsJERGvOgD
-	uFF7J+jd7cYcSnH6ZlEYnAq9U6QYsMZu+t8DWgMysU7YJDpMeM9+Iv7yT8GJ
-X-Google-Smtp-Source: AGHT+IHZtL6F08gDQdPZ2tIZ0ORXRn70FzW41KTygwOA8SEkXem8NlGRAkrnUtTjUgHU9JZAdjM8SA==
-X-Received: by 2002:a05:6512:3c8e:b0:52c:9e82:a971 with SMTP id 2adb3069b0e04-53da5c2a138mr435539e87.7.1731568817349;
-        Wed, 13 Nov 2024 23:20:17 -0800 (PST)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da653dff0sm87474e87.195.2024.11.13.23.20.13
+        d=1e100.net; s=20230601; t=1731569008; x=1732173808;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jcVdx/PDcosiuJvg6s7470mt1Sbg0MJ8nbwkpgIFfDI=;
+        b=XYv9JOrhkVqtICNXV4q9kkJnZ0E89pZXcZ25qo1yjN9ok+WLU6au3hhPUkuYkmUQN2
+         hMEtjslX/S9rVao/VikH2cXVViMs+S5rV405PYkkacc5VdXsk+W0Pwmp+iu9UdmiIlZZ
+         /FvX8TFImDu+l/S5MqitwJD0eunzbX5LCgXWCqyL+yme7sg8XNoAcJZjMTbdqW+MCm04
+         KV6Kd+7pkVei1phHTOWvJW1S2YP+fGBco5IP4HiQL9BIe9DMP5I6n7/R7a7nuIMCXOSt
+         HdZ01o6TOF65cjdagoMoqvjVcrdfZfSnUWMJd7VlH8VkpjnjSSdJ3nZS2q96LiSKZC2B
+         LBng==
+X-Forwarded-Encrypted: i=1; AJvYcCWpfDSPL3JuXr1WR+hzOL3O7H9lG3a26VH+hZpCIpCMQ+gi/Ran4Z4hIgGIOwX00tShtDQiTGB/AzG9kpA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMo9pL/bHDLwgI5WitlQ6uOVw8KQRKAnIbOncTAhoNzIdczmdl
+	ymbaKEhbB7t4zG6qCv2RcTTI5tzKMKQZPgcpNWlP8xVsRmfU6/tPntTAIdFifDs=
+X-Google-Smtp-Source: AGHT+IEqIiAMaMvRr6traVqlETDXrksYLlEnbTBwgNuybxklLmBA23F6Bg0v7Zkwsdh3ki0S14Ja2g==
+X-Received: by 2002:a17:902:d4d2:b0:20b:5aff:dd50 with SMTP id d9443c01a7336-211c4ffd29emr15882815ad.31.1731569008105;
+        Wed, 13 Nov 2024 23:23:28 -0800 (PST)
+Received: from ghost ([2601:647:6700:64d0:4ece:7c14:cc18:73af])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211c7c290b1sm4623065ad.10.2024.11.13.23.23.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 23:20:15 -0800 (PST)
-Date: Thu, 14 Nov 2024 09:19:59 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] regulator: bd96801: Add ERRB IRQ
-Message-ID: <ZzWkny4lKpY09SX5@mva-rohm>
+        Wed, 13 Nov 2024 23:23:27 -0800 (PST)
+Date: Wed, 13 Nov 2024 23:23:24 -0800
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Yangyu Chen <cyy@cyyself.name>
+Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>,
+	Jessica Clarke <jrtc27@jrtc27.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Andy Chiu <andybnac@gmail.com>, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v11 10/14] riscv: hwprobe: Add thead vendor extension
+ probing
+Message-ID: <ZzWlbCiRuDKzilms@ghost>
+References: <20241113-xtheadvector-v11-0-236c22791ef9@rivosinc.com>
+ <20241113-xtheadvector-v11-10-236c22791ef9@rivosinc.com>
+ <tencent_5B500856E30E1FB920B6B68D6315EE70CC06@qq.com>
+ <ZzVoQi6D0U30p9sg@ghost>
+ <tencent_6A95637042401AD5F8BE05C7B4F11CAD7009@qq.com>
+ <ZzWAlJm1ShgsZr4m@ghost>
+ <tencent_9BB243901B8FF9FC0457B51D1CFF714B6209@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ntE+gc/XLTeMHbfd"
-Content-Disposition: inline
-
-
---ntE+gc/XLTeMHbfd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <tencent_9BB243901B8FF9FC0457B51D1CFF714B6209@qq.com>
 
-The ROHM BD96801 "scalable PMIC" provides two physical IRQs. The ERRB
-handling can in many cases be omitted because it is used to inform fatal
-IRQs, which usually kill the power from the SOC.
+On Thu, Nov 14, 2024 at 02:54:17PM +0800, Yangyu Chen wrote:
+> 
+> 
+> On 11/14/24 12:46, Charlie Jenkins wrote:
+> > On Thu, Nov 14, 2024 at 11:26:47AM +0800, Yangyu Chen wrote:
+> > > 
+> > > 
+> > > On 11/14/24 11:02, Charlie Jenkins wrote:
+> > > > On Thu, Nov 14, 2024 at 10:44:37AM +0800, Yangyu Chen wrote:
+> > > > > 
+> > > > > 
+> > > > > On 11/14/24 10:21, Charlie Jenkins wrote:
+> > > > > > Add a new hwprobe key "RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0" which
+> > > > > > allows userspace to probe for the new RISCV_ISA_VENDOR_EXT_XTHEADVECTOR
+> > > > > > vendor extension.
+> > > > > > 
+> > > > > 
+> > > > > Hi Charlie,
+> > > > > 
+> > > > > How about changing the name of the key from
+> > > > > "RISCV_ISA_VENDOR_EXT_XTHEADVECTOR" to "RISCV_HWPROBE_KEY_VENDOR_EXT_0" and
+> > > > > use marchid to identify what the vendor is, each vendor will have its own
+> > > > > bit definition in this value. So we can avoid adding so many hwprobe keys
+> > > > > for each vendor in the future.
+> > > > > 
+> > > > > I proposed a commit here: https://github.com/cyyself/linux/commit/36390645d85d1ac75dd71172f167719df4297f59
+> > > > 
+> > > > I actually originally had this in one of my first versions of this
+> > > > series but was convinced by Conor to change it. The problem with it was
+> > > > that tying vendor extensions to mvendorid means that it is enforced by
+> > > > the kernel that vendors cannot share vendor extensions. It is possible
+> > > > for vendor A to purchase IP that contains a vendor extension from vendor
+> > > > B. This vendor extension should work on platforms created by vendor A
+> > > > and vendor B. However, vendor A and vendor B have different mvendorids,
+> > > > so the kernel can't support this if it is tied to mvendorid.  It could
+> > > > be solved by duplicating every extension that vendors have, but then
+> > > > userspace software would have to keep in mind the mvendorid they are
+> > > > running on and check the different extensions for the different vendors
+> > > > even though the implementation of the extension is the same.
+> > > > 
+> > > > The original conversation where Conor and I agreed that it was better to
+> > > > have vendor extensions not rely on mvendorid:
+> > > > 
+> > > > https://lore.kernel.org/linux-riscv/20240416-husband-flavored-96c1dad58b6e@wendy/
+> > > > 
+> > > 
+> > > Thanks for your explanation. I will strongly agree with Conor's opinion if
+> > > the feature bitmask does not exist in RISC-V C-ABI.
+> > > 
+> > > However, as the feature mask defined in RISC-V C-ABI[1] uses the design
+> > > depending on marchid currently, should we reconsider this key for its use
+> > > case? The current target_clones and taget_version implemented in GCC[2] and
+> > > LLVM[3] also use the bitmask defined in C-ABI. I think if we use this key
+> > > depending on marchid, to make a key shared with all vendors will make this
+> > > cleaner.
+> > 
+> > Changing this will break linux userspace API. It is a non-workable
+> > solution for the kernel to associate extensions with marchid/mvendorid
+> > for the reasons provided. I fail to see why this ABI would require the
+> > kernel to behave in this manner. The ABI provides the marchid to be used
+> > by function multi-versioning and applications are free to use the
+> > marchid to change which function they want to compile. However, if they
+> > want to know if an extension is supported, then they need to use
+> > hwprobe. If they want to check if xtheadvector is supported, then they> call hwprobe with the xtheadvector key. This is true no matter what the
+> > mvendorid of the system is.
+> 
+> A userspace software can use either c-api defined feature masks or directly
+> use hwprobe syscall. If they use c-api defined feature masks as GCC or LLVM
+> did for compiler generated IFUNC resolver, the bitmask is guarded by
+> mvendorid. So my point at that time was that if the C-API defined way became
+> mainstream, why should we keep this key only for T-Head to increase the
+> maintenance overhead?
 
-There may however be use-cases where the SOC has a 'back-up' emergency
-power source which allows some very short time of operation to try to
-gracefully shut down sensitive hardware. Furthermore, it is possible the
-processor controlling the PMIC is not powered by the PMIC. In such cases
-handling the ERRB IRQs may be beneficial.
+Yes that makes sense. I was thinking that the Andes PMU extension had a
+hwprobe key, but I realized that it does not. This patch has been on the
+lists for so long I lost track! I was trying to design this to be
+forward-thinking, I believe that it makes more sense this way, but I am
+interested in the opinion of the c-api maintainers.
 
-Add support for ERRB IRQs.
+> 
+> This has been discussed here before in RISC-V C-API: https://github.com/riscv-non-isa/riscv-c-api-doc/pull/74#issuecomment-2128844747
+> 
+> But now (from the last email), you convinced me. So, I would like to make
+> the c-api change: https://github.com/riscv-non-isa/riscv-c-api-doc/issues/96
+> 
 
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-Reviewed-by: Mark Brown <broonie@kernel.org>
----
+Thank you for opening that!
 
-This patch was part of the:
-https://lore.kernel.org/all/cover.1727931468.git.mazziesaccount@gmail.com/
-The MFD part was applied by Lee, but I didn't see the regulator part in
-MFD or regulator repository. Perhaps it fell through the cracks? I know
-we're late in the cycle but I re-spin this now before I forgot... We do
-always have the next cycle, right? :)
+> > This does not add any complexity, "clean"
+> > code can equally be written following this scheme or following a scheme
+> > that relies on mvendorid. Ditching the reliance on mvendorid in the
+> > kernel allows the kernel to be as generic as possible, and allow
+> > whatever ABIs or hardware that exist to have a resiliant way of
+> > communicating with the kernel.
+> > 
+> 
+> OK. I'm just concerned about when these vendors will add the hwprobe key for
+> their own extension, which may introduce a potential merge conflict in the
+> kernel tree. It can also be a disaster if the hardware vendor ships their
+> kernel with these under-review patches for their products with hwprobe key
+> conflict with mainline kernel.
+> 
+> But we can avoid this now by adding each key for each vendor to avoid
+> potential conflict in the future. This can be a separate patch for future
+> work, so there is nothing to change here.
 
- drivers/regulator/bd96801-regulator.c | 130 +++++++++++++++++++++++---
- 1 file changed, 115 insertions(+), 15 deletions(-)
+Yes that is unfortunately the downside of hwprobe that it is a
+centralized source of these keys, and that can be exacerbated by this
+scheme were vendor keys are not completely isolated from each other.
+That would be very unfortunate if a vendor ships a kernel and binaries
+that has different keys than the mainline kernel. Hopefully vendors
+don't do that, but it should be manageable for vendors to submit their own
+keys.
 
-diff --git a/drivers/regulator/bd96801-regulator.c b/drivers/regulator/bd96=
-801-regulator.c
-index 9876cc05867e..3a9d772491a8 100644
---- a/drivers/regulator/bd96801-regulator.c
-+++ b/drivers/regulator/bd96801-regulator.c
-@@ -5,12 +5,7 @@
- /*
-  * This version of the "BD86801 scalable PMIC"'s driver supports only very
-  * basic set of the PMIC features. Most notably, there is no support for
-- * the ERRB interrupt and the configurations which should be done when the
-- * PMIC is in STBY mode.
-- *
-- * Supporting the ERRB interrupt would require dropping the regmap-IRQ
-- * usage or working around (or accepting a presense of) a naming conflict
-- * in debugFS IRQs.
-+ * the configurations which should be done when the PMIC is in STBY mode.
-  *
-  * Being able to reliably do the configurations like changing the
-  * regulator safety limits (like limits for the over/under -voltages, over
-@@ -22,16 +17,14 @@
-  * be the need to configure these safety limits. Hence it's not simple to
-  * come up with a generic solution.
-  *
-- * Users who require the ERRB handling and STBY state configurations can
-- * have a look at the original RFC:
-+ * Users who require the STBY state configurations can have a look at the
-+ * original RFC:
-  * https://lore.kernel.org/all/cover.1712920132.git.mazziesaccount@gmail.c=
-om/
-- * which implements a workaround to debugFS naming conflict and some of
-- * the safety limit configurations - but leaves the state change handling
-- * and synchronization to be implemented.
-+ * which implements some of the safety limit configurations - but leaves t=
-he
-+ * state change handling and synchronization to be implemented.
-  *
-  * It would be great to hear (and receive a patch!) if you implement the
-- * STBY configuration support or a proper fix to the debugFS naming
-- * conflict in your downstream driver ;)
-+ * STBY configuration support in your downstream driver ;)
-  */
-=20
- #include <linux/cleanup.h>
-@@ -728,6 +721,95 @@ static int initialize_pmic_data(struct device *dev,
- 	return 0;
- }
-=20
-+static int bd96801_map_event_all(int irq, struct regulator_irq_data *rid,
-+			  unsigned long *dev_mask)
-+{
-+	int i;
-+
-+	for (i =3D 0; i < rid->num_states; i++) {
-+		rid->states[i].notifs =3D REGULATOR_EVENT_FAIL;
-+		rid->states[i].errors =3D REGULATOR_ERROR_FAIL;
-+		*dev_mask |=3D BIT(i);
-+	}
-+
-+	return 0;
-+}
-+
-+static int bd96801_rdev_errb_irqs(struct platform_device *pdev,
-+				  struct regulator_dev *rdev)
-+{
-+	int i;
-+	void *retp;
-+	static const char * const single_out_errb_irqs[] =3D {
-+		"bd96801-%s-pvin-err", "bd96801-%s-ovp-err",
-+		"bd96801-%s-uvp-err", "bd96801-%s-shdn-err",
-+	};
-+
-+	for (i =3D 0; i < ARRAY_SIZE(single_out_errb_irqs); i++) {
-+		struct regulator_irq_desc id =3D {
-+			.map_event =3D bd96801_map_event_all,
-+			.irq_off_ms =3D 1000,
-+		};
-+		struct regulator_dev *rdev_arr[1];
-+		char tmp[255];
-+		int irq;
-+
-+		snprintf(tmp, 255, single_out_errb_irqs[i], rdev->desc->name);
-+		tmp[254] =3D 0;
-+		id.name =3D tmp;
-+
-+		irq =3D platform_get_irq_byname(pdev, tmp);
-+		if (irq < 0)
-+			continue;
-+
-+		rdev_arr[0] =3D rdev;
-+		retp =3D devm_regulator_irq_helper(&pdev->dev, &id, irq, 0,
-+						 REGULATOR_ERROR_FAIL, NULL,
-+						 rdev_arr, 1);
-+		if (IS_ERR(retp))
-+			return PTR_ERR(retp);
-+
-+	}
-+	return 0;
-+}
-+
-+static int bd96801_global_errb_irqs(struct platform_device *pdev,
-+				    struct regulator_dev **rdev, int num_rdev)
-+{
-+	int i, num_irqs;
-+	void *retp;
-+	static const char * const global_errb_irqs[] =3D {
-+		"bd96801-otp-err", "bd96801-dbist-err", "bd96801-eep-err",
-+		"bd96801-abist-err", "bd96801-prstb-err", "bd96801-drmoserr1",
-+		"bd96801-drmoserr2", "bd96801-slave-err", "bd96801-vref-err",
-+		"bd96801-tsd", "bd96801-uvlo-err", "bd96801-ovlo-err",
-+		"bd96801-osc-err", "bd96801-pon-err", "bd96801-poff-err",
-+		"bd96801-cmd-shdn-err", "bd96801-int-shdn-err"
-+	};
-+
-+	num_irqs =3D ARRAY_SIZE(global_errb_irqs);
-+	for (i =3D 0; i < num_irqs; i++) {
-+		int irq;
-+		struct regulator_irq_desc id =3D {
-+			.name =3D global_errb_irqs[i],
-+			.map_event =3D bd96801_map_event_all,
-+			.irq_off_ms =3D 1000,
-+		};
-+
-+		irq =3D platform_get_irq_byname(pdev, global_errb_irqs[i]);
-+		if (irq < 0)
-+			continue;
-+
-+		retp =3D devm_regulator_irq_helper(&pdev->dev, &id, irq, 0,
-+						 REGULATOR_ERROR_FAIL, NULL,
-+						  rdev, num_rdev);
-+		if (IS_ERR(retp))
-+			return PTR_ERR(retp);
-+	}
-+
-+	return 0;
-+}
-+
- static int bd96801_rdev_intb_irqs(struct platform_device *pdev,
- 				  struct bd96801_pmic_data *pdata,
- 				  struct bd96801_irqinfo *iinfo,
-@@ -783,11 +865,10 @@ static int bd96801_rdev_intb_irqs(struct platform_dev=
-ice *pdev,
- 	return 0;
- }
-=20
--
--
- static int bd96801_probe(struct platform_device *pdev)
- {
- 	struct regulator_dev *ldo_errs_rdev_arr[BD96801_NUM_LDOS];
-+	struct regulator_dev *all_rdevs[BD96801_NUM_REGULATORS];
- 	struct bd96801_regulator_data *rdesc;
- 	struct regulator_config config =3D {};
- 	int ldo_errs_arr[BD96801_NUM_LDOS];
-@@ -795,6 +876,7 @@ static int bd96801_probe(struct platform_device *pdev)
- 	int temp_notif_ldos =3D 0;
- 	struct device *parent;
- 	int i, ret;
-+	bool use_errb;
- 	void *retp;
-=20
- 	parent =3D pdev->dev.parent;
-@@ -819,6 +901,13 @@ static int bd96801_probe(struct platform_device *pdev)
- 	config.regmap =3D pdata->regmap;
- 	config.dev =3D parent;
-=20
-+	ret =3D of_property_match_string(pdev->dev.parent->of_node,
-+				       "interrupt-names", "errb");
-+	if (ret < 0)
-+		use_errb =3D false;
-+	else
-+		use_errb =3D true;
-+
- 	ret =3D bd96801_walk_regulator_dt(&pdev->dev, pdata->regmap, rdesc,
- 					BD96801_NUM_REGULATORS);
- 	if (ret)
-@@ -837,6 +926,7 @@ static int bd96801_probe(struct platform_device *pdev)
- 				rdesc[i].desc.name);
- 			return PTR_ERR(rdev);
- 		}
-+		all_rdevs[i] =3D rdev;
- 		/*
- 		 * LDOs don't have own temperature monitoring. If temperature
- 		 * notification was requested for this LDO from DT then we will
-@@ -856,6 +946,12 @@ static int bd96801_probe(struct platform_device *pdev)
- 			if (ret)
- 				return ret;
- 		}
-+		/* Register per regulator ERRB notifiers */
-+		if (use_errb) {
-+			ret =3D bd96801_rdev_errb_irqs(pdev, rdev);
-+			if (ret)
-+				return ret;
-+		}
- 	}
- 	if (temp_notif_ldos) {
- 		int irq;
-@@ -877,6 +973,10 @@ static int bd96801_probe(struct platform_device *pdev)
- 			return PTR_ERR(retp);
- 	}
-=20
-+	if (use_errb)
-+		return bd96801_global_errb_irqs(pdev, all_rdevs,
-+						ARRAY_SIZE(all_rdevs));
-+
- 	return 0;
- }
-=20
+Thank you for bringing this up, it is an important issue! A main goal of
+this series was to get vendor extensions in a state that would be able
+to grow into a future when there are lots of vendors.
 
-base-commit: 2d5404caa8c7bb5c4e0435f94b28834ae5456623
---=20
-2.47.0
-
-
---ntE+gc/XLTeMHbfd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmc1pJoACgkQeFA3/03a
-ocXw4wf/XqOelYToQHjC7/XUs0lQQqcNGu3YDj5Xn6OBWg0fpb0IgOep7u3y4WTc
-9n4o1PXxOp9wExFURqi7cSDvZkuFek1od7GowPwXVhmrYtTP99rUN1ce0p5IvZXY
-12sZ7q6AKjRBwvz6Byqi+FN45yJDfBMJtTX8ktybNCjIU/VDch8dU38SbYvZVHR9
-Bsx+bHDrDo75fl6+WIgHeLm4uFnB21tqSrMhsciHxwgwRYkJajhbvbImPhol35xM
-RoM/KBS6qh0ADm0WJxoffRqdTjJlvFFBIb/Wn9aKKTNDndbxK5TpnFbJAoPejcrk
-VXyq7QHAHhDn8DeZBEAudS4YfC+dTg==
-=u/CZ
------END PGP SIGNATURE-----
-
---ntE+gc/XLTeMHbfd--
+> 
+> Thanks,
+> Yangyu Chen
+> 
+> > - CHarlie
+> > 
+> > > 
+> > > [1] https://github.com/riscv-non-isa/riscv-c-api-doc/blob/main/src/c-api.adoc#function-multi-version
+> > > [2] https://github.com/gcc-mirror/gcc/blob/8564d0948c72df0a66d7eb47e15c6ab43e9b25ce/gcc/config/riscv/riscv.cc#L13016
+> > > [3] https://github.com/llvm/llvm-project/blob/f407dff50cdcbcfee9dd92397d3792627c3ac708/clang/lib/CodeGen/CGBuiltin.cpp#L14627
+> > > 
+> > > > > 
+> > > > > > This new key will allow userspace code to probe for which thead vendor
+> > > > > > extensions are supported. This API is modeled to be consistent with
+> > > > > > RISCV_HWPROBE_KEY_IMA_EXT_0. The bitmask returned will have each bit
+> > > > > > corresponding to a supported thead vendor extension of the cpumask set.
+> > > > > > Just like RISCV_HWPROBE_KEY_IMA_EXT_0, this allows a userspace program
+> > > > > > to determine all of the supported thead vendor extensions in one call.
+> > > > > > 
+> > > > > > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> > > > > > Reviewed-by: Evan Green <evan@rivosinc.com>
+> > > > > > ---
+> > > > > >     arch/riscv/include/asm/hwprobe.h                   |  3 +-
+> > > > > >     .../include/asm/vendor_extensions/thead_hwprobe.h  | 19 +++++++++++
+> > > > > >     .../include/asm/vendor_extensions/vendor_hwprobe.h | 37 ++++++++++++++++++++++
+> > > > > >     arch/riscv/include/uapi/asm/hwprobe.h              |  3 +-
+> > > > > >     arch/riscv/include/uapi/asm/vendor/thead.h         |  3 ++
+> > > > > >     arch/riscv/kernel/sys_hwprobe.c                    |  5 +++
+> > > > > >     arch/riscv/kernel/vendor_extensions/Makefile       |  1 +
+> > > > > >     .../riscv/kernel/vendor_extensions/thead_hwprobe.c | 19 +++++++++++
+> > > > > >     8 files changed, 88 insertions(+), 2 deletions(-)
+> > > > > > 
+> > > > > 
+> > > 
+> > > 
+> 
+> 
 
