@@ -1,315 +1,151 @@
-Return-Path: <linux-kernel+bounces-408595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B40C29C80DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:36:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2C549C80DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:38:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49BBF28123A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:36:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42E6C1F21592
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30521E8830;
-	Thu, 14 Nov 2024 02:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144371E3DE6;
+	Thu, 14 Nov 2024 02:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zl0+pQnW"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K1t3BCKd"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3691A33986
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 02:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198772F5A;
+	Thu, 14 Nov 2024 02:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731551787; cv=none; b=aJZ9MFOhPDsqbWNquB/cDGxlsDz/uQfzvLMkYf7KQPXxELtwCl6PlGnyATaiJoImgXuxEaU/rCRTjxH2nrTB69Z/4WPtzMS+jhoUR1FOa4hQStsDKvBMDH0i8aCDfr6zEpFlAWN8qNUf27Hi7SM7wy06KUo83z4Ts+Psafe7ixw=
+	t=1731551881; cv=none; b=cFEsx4e+0bJedso3CNxOZpglfjzBP0nlkHmy6mPy5IeWs27iMrZ9yhvim8qF4Fkp4czWPckduSJw8QyJerYt8xBKgLaFpu+6VpJxgP5FTpIEbwR/MGU4asJ6fXoyGt9psKJ1neUYNP+1VJf2uXKX1YnPCWbHvIdcmDIvB54WzRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731551787; c=relaxed/simple;
-	bh=p6QHmvybEVQoD7kyOD3B8r8jUEzQ4Zb6hkPuBqVTC9s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=a3hI8sz+FC2D1+e8C4USQUpG+gmHYHxZvCQKf+yzQCU0r8pMNdXUPYSs6vzkxiO101bckDbrF809aPwPwHzA4putYYT7BF2wnAlO6NtX81lZY1iRptCCnj8SlQPaiBk+/HHwzqv0jHJrEGnFHKSI9BKAuE2V4VLtJCFSkRGsTTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zl0+pQnW; arc=none smtp.client-ip=209.85.215.176
+	s=arc-20240116; t=1731551881; c=relaxed/simple;
+	bh=S4IFutQpnD3EFzpHxLT6cMh43oP/wbiKwdQWUo6R1nw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ggVxsUkORZvOk5J8ZHcs4FcTNYeqfRCHPLhQN93D7aIKUmdw9JLjAiAiXVym3uRpa8oKUyec1QgVtrk2sa/GP5KVglPH6eDPkcdO9hpedlCeQrOw9ZQehSu3zUPcKvGHyduM5lFSBXPaJyhJ9Hz4K/bqao+joQFsqCvOjvPTR7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K1t3BCKd; arc=none smtp.client-ip=209.85.166.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ea8c4ce232so84473a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 18:36:25 -0800 (PST)
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3a70315d38dso451305ab.0;
+        Wed, 13 Nov 2024 18:37:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731551785; x=1732156585; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1731551877; x=1732156677; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Jcs6rzC2mxL1y1c4MtvLOxy5NzIRqyAyQVXMf+UasRc=;
-        b=Zl0+pQnWlorPQ2dzKF+WjSWDerNEm+82UeftsL/HCtZpcBr1jBWY5oONw/bVoqGPJM
-         5PmA9DpX16vBsLFnCtUko5VEonV7+qeao9iemlYmK+8fzzSLOijUJXSZeUDE9wOpnXoS
-         KDX5RLeebQd6dl5iphSBsjUddxVTOikgkGDiswzeBvqYmEBnJ13Z7ygsZMFacpsnRhzx
-         eiOtSj7+DQ1jwNCYNYWcPRYHDHylAxRAgC7K5X4GtC56MwY/s2e45qIoRW1D5VB7Fwmz
-         ro9Ru3dAivnKr/8tb/lrFGXnBvrT3LX4S3NRWgrktZCSRSUbDLaC9fnB5xtKZKycNLML
-         Hysw==
+        bh=StFhRyIpCM9Uu8eeMJnktRCq06AyyCXEprdzl0A/TJI=;
+        b=K1t3BCKdzjIqY2VfoORbSKqwnrxejncR+867IvpfTzKT3fCdPU0ptNcpUk3QDYn1Vz
+         kXFT92bao/wvCoRDgnD0ZqCSKr2V5Su/yFvGAxlsq3mPtcv/Uyah0F8Cmsnmd6Nu2hSy
+         y8nmscmrK7qK0SDcJnGr5siUuXi1zXWtDF1A9u7ultdZBPObBrOtt2tqU01ehppcVvxX
+         JrDfymq89b1WBMwcHu+uAMKr+XFEZ0+ABxVqyVWAt8oaGWZHKOVaViKpQXky+nK5Z1lf
+         ZtGYdojARxjYA61J/FYprTMkruqVnYgrT3EyL6TzbzuF1OgsQAmbc6kADc6SlFE0zi5q
+         SLPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731551785; x=1732156585;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1731551877; x=1732156677;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Jcs6rzC2mxL1y1c4MtvLOxy5NzIRqyAyQVXMf+UasRc=;
-        b=W6aHn5xFJm4cGsUIraq4Cq5cad6YVLzV8AdSVy4Ps3o69moCnz/j01+uIoRGNMIebv
-         XmrmIW0d35IeqDA9TAGxMMPqM/SNNFxgl8ml3JdxcgaCAdk+mo/R9wR/PCeel/9jRFHO
-         3YQ6SmrUh5MZHELMgNf3HDQaZWXKhh3pDCPgdp5xlPOTRiodKYUgDprNwTGj9aM9kBCQ
-         VZv0Yvt0DKwll8RFtD+IipbRFuLooR+/TIHL5T1PdPMJaZ43sPdhTVLsuGptsxDDu/w5
-         Stzc9PWobmBlYbDuXQUNCLE/nroGycLSVF8tLMpUDdbU2xXtwnksV6c6yiZwrPl3vlkp
-         vO8w==
-X-Forwarded-Encrypted: i=1; AJvYcCXc8A0A5sJN58qJ+PidITgdrVUTVhPODUpgG6TdGhNHgqeqoEXqgroZKOANIEJLKWy6tTE7COMIu6S8GrU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSe54dw2VuaWvfjSg2P2fp2PO0q9eXajI1Waeby22qWQfk0Rtq
-	Rr12bzFHi3SoNXJ4DBcTqeHE59wbsweCXdyIL/5/HDM9h8MHAO9Y
-X-Google-Smtp-Source: AGHT+IF2/7Jm6c2A5GBt1njckTBUCXCP/8OxJGtx/E524qUnSGdxvJOAVI6kShVeviiRVREXwiCyCg==
-X-Received: by 2002:a05:6a21:918b:b0:1dc:43:f87a with SMTP id adf61e73a8af0-1dc8348d367mr861149637.37.1731551785192;
-        Wed, 13 Nov 2024 18:36:25 -0800 (PST)
-Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea02495974sm250670a91.20.2024.11.13.18.36.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 18:36:24 -0800 (PST)
-Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
-	by twhmp6px (Postfix) with ESMTPS id C42958085A;
-	Thu, 14 Nov 2024 10:42:49 +0800 (CST)
-From: Cheng Ming Lin <linchengming884@gmail.com>
-To: miquel.raynal@bootlin.com,
-	vigneshr@ti.com,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: richard@nod.at,
-	alvinzhou@mxic.com.tw,
-	leoyu@mxic.com.tw,
-	Cheng Ming Lin <chengminglin@mxic.com.tw>
-Subject: [PATCH v2 2/2] mtd: spi-nand: macronix: Add support for read retry
-Date: Thu, 14 Nov 2024 10:35:28 +0800
-Message-Id: <20241114023528.181583-3-linchengming884@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241114023528.181583-1-linchengming884@gmail.com>
-References: <20241114023528.181583-1-linchengming884@gmail.com>
+        bh=StFhRyIpCM9Uu8eeMJnktRCq06AyyCXEprdzl0A/TJI=;
+        b=YfVYOkU9XCO2qc2vWmV313/2XgsI79ng659cOovXW+6yczisCM/S/v1h2NflWTNqtl
+         fDVUAjSXXrMQYJyPI/CU2T3Qkfp42koP9elGbdpsF8ddZb06i1LnsYiISXJnoniFTBHC
+         ZfWTN0J2LlaEeEHDwuc4CsrpqCWL7aj794+kIlmhwci86/9c3kJazPKJFNULD5Vt4ofy
+         P37htM3vp91/79PFNbFsb1a7VjxbLJPBPNn6QyS0MCR0eksspuvjAJoQpsrIxCDWVxCX
+         adCbq4j+hywhBibRMOB54Nn22qqmtkUDw4A7C1k1nhMCalp5RWzy21xKbIDGbaZj88Q9
+         mNfw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFhTon12sfxT3SfVn9bjQnVkUjt7f10QWhoOOYoJ081zb6qr8d4btdxxnHzr0Mwo45JiEIDGpNS6RbtQbo@vger.kernel.org, AJvYcCVwl51g+0PITM6a5+F96cPvSkehF/4CPQM+Ncn1kyQz8I7giYHQ6hqOb7/EoiKndhjBhdhyCjEdUx4/@vger.kernel.org, AJvYcCXFqoYFbrTwHPe7w3/DI2Z/cPs7wFZcm2Ie9LTC+iOB7d3TuiApd2JAf3q2m223dZtdB2Hi7A0q1zT4@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIDNNYdD0rZ/sCiHTT88eA2T0dPZPAV8mjVte6tl31sHoZ0DKB
+	JU/aAHC5RwLFCrYdUAE50goxj4WZG/sGDBxmmyhuKZvErKI1LIY+Uma0PAOaSaGw8daiGTgcbDd
+	6Bs+XgPDf8xS8I42ZHsOPiU0lFp4=
+X-Google-Smtp-Source: AGHT+IGcTJSj30ycrQ3ffIAZN66OsQquO1B46KfWjrwu9f3E/Tq4Zk70MH8L6VADeTi2CDkmD1g2VJE9cA/VEkQCcgQ=
+X-Received: by 2002:a92:c56d:0:b0:3a5:e1f5:1572 with SMTP id
+ e9e14a558f8ab-3a71fed5de0mr5894775ab.22.1731551877130; Wed, 13 Nov 2024
+ 18:37:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241108100759.682260-1-shengjiu.wang@nxp.com>
+ <20241108100759.682260-4-shengjiu.wang@nxp.com> <PAXPR04MB84596DD01E6A066A621F590188582@PAXPR04MB8459.eurprd04.prod.outlook.com>
+In-Reply-To: <PAXPR04MB84596DD01E6A066A621F590188582@PAXPR04MB8459.eurprd04.prod.outlook.com>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Thu, 14 Nov 2024 10:37:44 +0800
+Message-ID: <CAA+D8AP=cdyvhtzDib8-T5GuHU9pXhPVgdomTQj8R=8CCFr5HQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] arm64: dts: imx93: Use IMX93_CLK_SPDIF_IPG as
+ SPDIF IPG clock
+To: Peng Fan <peng.fan@nxp.com>
+Cc: "S.J. Wang" <shengjiu.wang@nxp.com>, "abelvesa@kernel.org" <abelvesa@kernel.org>, 
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>, 
+	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>, 
+	"festevam@gmail.com" <festevam@gmail.com>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Cheng Ming Lin <chengminglin@mxic.com.tw>
+On Mon, Nov 11, 2024 at 11:11=E2=80=AFAM Peng Fan <peng.fan@nxp.com> wrote:
+>
+> > Subject: [PATCH v2 3/3] arm64: dts: imx93: Use IMX93_CLK_SPDIF_IPG
+> > as SPDIF IPG clock
+> >
+>
+> This patch has a fix tag, but the other two not have. So the other two
+> will not be backported and cause issue.
+>
+> So use fixes for all or drop fixes for all.
+>
 
-Add function for supporting read retry:
-- Set feature on Special Read for Data Recovery register.
+Should I add the one same fixes tag to all 3 commits?
 
-The Special Read for Data Recovery operation is enabled by
-Set Feature function.
+Best regards
+Shengjiu Wang
 
-There are 6 modes for the user to recover the lost data.
-
-Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
----
- drivers/mtd/nand/spi/macronix.c | 79 ++++++++++++++++++++++++++-------
- 1 file changed, 64 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/mtd/nand/spi/macronix.c b/drivers/mtd/nand/spi/macronix.c
-index d277c3220fdc..d7087bac8da7 100644
---- a/drivers/mtd/nand/spi/macronix.c
-+++ b/drivers/mtd/nand/spi/macronix.c
-@@ -14,6 +14,8 @@
- #define MACRONIX_ECCSR_BF_LAST_PAGE(eccsr) FIELD_GET(GENMASK(3, 0), eccsr)
- #define MACRONIX_ECCSR_BF_ACCUMULATED_PAGES(eccsr) FIELD_GET(GENMASK(7, 4), eccsr)
- #define MACRONIX_CFG_CONT_READ         BIT(2)
-+#define MACRONIX_FEATURE_ADDR_READ_RETRY 0x70
-+#define MACRONIX_NUM_READ_RETRY_MODES 6
- 
- #define STATUS_ECC_HAS_BITFLIPS_THRESHOLD (3 << 4)
- 
-@@ -136,6 +138,23 @@ static int macronix_set_cont_read(struct spinand_device *spinand, bool enable)
- 	return 0;
- }
- 
-+/**
-+ * macronix_set_read_retry - Set the retry mode
-+ * @spinand: SPI NAND device
-+ * @retry_mode: Specify which retry mode to set
-+ *
-+ * Return: 0 on success, a negative error code otherwise.
-+ */
-+static int macronix_set_read_retry(struct spinand_device *spinand,
-+					     unsigned int retry_mode)
-+{
-+	struct spi_mem_op op = SPINAND_SET_FEATURE_OP(MACRONIX_FEATURE_ADDR_READ_RETRY,
-+						      spinand->scratchbuf);
-+
-+	*spinand->scratchbuf = retry_mode;
-+	return spi_mem_exec_op(spinand->spimem, &op);
-+}
-+
- static const struct spinand_info macronix_spinand_table[] = {
- 	SPINAND_INFO("MX35LF1GE4AB",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x12),
-@@ -168,7 +187,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     macronix_ecc_get_status),
--		     SPINAND_CONT_READ(macronix_set_cont_read)),
-+		     SPINAND_CONT_READ(macronix_set_cont_read)
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35LF4GE4AD",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x37, 0x03),
- 		     NAND_MEMORG(1, 4096, 128, 64, 2048, 40, 1, 1, 1),
-@@ -179,7 +200,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     macronix_ecc_get_status),
--		     SPINAND_CONT_READ(macronix_set_cont_read)),
-+		     SPINAND_CONT_READ(macronix_set_cont_read)
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35LF1G24AD",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x14, 0x03),
- 		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
-@@ -188,7 +211,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 					      &write_cache_variants,
- 					      &update_cache_variants),
- 		     SPINAND_HAS_QE_BIT,
--		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35LF2G24AD",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x24, 0x03),
- 		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 2, 1, 1),
-@@ -198,7 +223,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 					      &update_cache_variants),
- 		     SPINAND_HAS_QE_BIT |
- 		     SPINAND_HAS_PROG_PLANE_SELECT_BIT,
--		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35LF2G24AD-Z4I8",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x64, 0x03),
- 		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
-@@ -207,7 +234,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 					      &write_cache_variants,
- 					      &update_cache_variants),
- 		     SPINAND_HAS_QE_BIT,
--		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35LF4G24AD",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x35, 0x03),
- 		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 2, 1, 1),
-@@ -217,7 +246,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 					      &update_cache_variants),
- 		     SPINAND_HAS_QE_BIT |
- 		     SPINAND_HAS_PROG_PLANE_SELECT_BIT,
--		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35LF4G24AD-Z4I8",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x75, 0x03),
- 		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
-@@ -226,7 +257,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 					      &write_cache_variants,
- 					      &update_cache_variants),
- 		     SPINAND_HAS_QE_BIT,
--		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX31LF1GE4BC",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x1e),
- 		     NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1),
-@@ -270,7 +303,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_HAS_QE_BIT |
- 		     SPINAND_HAS_PROG_PLANE_SELECT_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
--				     macronix_ecc_get_status)),
-+				     macronix_ecc_get_status),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35UF4G24AD-Z4I8",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xf5, 0x03),
- 		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
-@@ -280,7 +315,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 					      &update_cache_variants),
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
--				     macronix_ecc_get_status)),
-+				     macronix_ecc_get_status),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35UF4GE4AD",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xb7, 0x03),
- 		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
-@@ -291,7 +328,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     macronix_ecc_get_status),
--		     SPINAND_CONT_READ(macronix_set_cont_read)),
-+		     SPINAND_CONT_READ(macronix_set_cont_read)
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35UF2G14AC",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xa0),
- 		     NAND_MEMORG(1, 2048, 64, 64, 2048, 40, 2, 1, 1),
-@@ -314,7 +353,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_HAS_QE_BIT |
- 		     SPINAND_HAS_PROG_PLANE_SELECT_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
--				     macronix_ecc_get_status)),
-+				     macronix_ecc_get_status),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35UF2G24AD-Z4I8",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xe4, 0x03),
- 		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
-@@ -324,7 +365,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 					      &update_cache_variants),
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
--				     macronix_ecc_get_status)),
-+				     macronix_ecc_get_status),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35UF2GE4AD",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xa6, 0x03),
- 		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
-@@ -335,7 +378,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     macronix_ecc_get_status),
--		     SPINAND_CONT_READ(macronix_set_cont_read)),
-+		     SPINAND_CONT_READ(macronix_set_cont_read)
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35UF2GE4AC",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xa2, 0x01),
- 		     NAND_MEMORG(1, 2048, 64, 64, 2048, 40, 1, 1, 1),
-@@ -366,7 +411,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 					      &update_cache_variants),
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
--				     macronix_ecc_get_status)),
-+				     macronix_ecc_get_status),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35UF1GE4AD",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x96, 0x03),
- 		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
-@@ -377,7 +424,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     macronix_ecc_get_status),
--		     SPINAND_CONT_READ(macronix_set_cont_read)),
-+		     SPINAND_CONT_READ(macronix_set_cont_read)
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35UF1GE4AC",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x92, 0x01),
- 		     NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1),
--- 
-2.25.1
-
+> Regards,
+> Peng.
+>
+> > IMX93_CLK_BUS_WAKEUP is not accurate IPG clock, which missed the
+> > clock gate part.
+> >
+> > IMX93_CLK_SPDIF_IPG is the correct clock.
+> >
+> > Fixes: 1c4a4f7362fd ("arm64: dts: imx93: Add audio device nodes")
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> >  arch/arm64/boot/dts/freescale/imx93.dtsi | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/freescale/imx93.dtsi
+> > b/arch/arm64/boot/dts/freescale/imx93.dtsi
+> > index 688488de8cd2..56766fdb0b1e 100644
+> > --- a/arch/arm64/boot/dts/freescale/imx93.dtsi
+> > +++ b/arch/arm64/boot/dts/freescale/imx93.dtsi
+> > @@ -925,7 +925,7 @@ xcvr: xcvr@42680000 {
+> >                               reg-names =3D "ram", "regs", "rxfifo",
+> > "txfifo";
+> >                               interrupts =3D <GIC_SPI 203
+> > IRQ_TYPE_LEVEL_HIGH>,
+> >                                            <GIC_SPI 204
+> > IRQ_TYPE_LEVEL_HIGH>;
+> > -                             clocks =3D <&clk
+> > IMX93_CLK_BUS_WAKEUP>,
+> > +                             clocks =3D <&clk
+> > IMX93_CLK_SPDIF_IPG>,
+> >                                        <&clk
+> > IMX93_CLK_SPDIF_GATE>,
+> >                                        <&clk IMX93_CLK_DUMMY>,
+> >                                        <&clk
+> > IMX93_CLK_AUD_XCVR_GATE>;
+> > --
+> > 2.34.1
+>
 
