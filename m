@@ -1,78 +1,67 @@
-Return-Path: <linux-kernel+bounces-409937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52429C93A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:01:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7142B9C93BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:03:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3432AB2891E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:01:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CBAA286713
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C581ADFF9;
-	Thu, 14 Nov 2024 21:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935601ADFFD;
+	Thu, 14 Nov 2024 21:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K9/6YK4n"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nVLV72CZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C272BD04;
-	Thu, 14 Nov 2024 21:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0851AB6F1;
+	Thu, 14 Nov 2024 21:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731618081; cv=none; b=B6kkiE3iO/cmldtu0L3r5eglpnL91nl2xI1uDlmAcYd4P2uSHhV8yMXb4xSbPD8mvcn5Y9uwkhzCVcvNSXPLdhAQQ8sbyla0tF8FieRh8N86sgYbpXPqntXJh8yjAXRztSnFT8mfDN4sAIe6OnCnjtyWPPUcgrhadltOFQJuvac=
+	t=1731618218; cv=none; b=M+9dLX7FZPAGAkrRT63fpGWeCoC3nqOJnS7VtuoCWkgdu036EkYxdj98ve6ICmlv8nAgC0pb/ij/t4eqZG60wk0x1PAoCIkrUm6nclsYX/YuckZdfsLJqf/tCTr754XjWC/SCmGhpYtPHGx3vKWbUnWB56NT/m2j3mcfHPbfYEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731618081; c=relaxed/simple;
-	bh=0Xa51NQBmIFxJI/7q1BAtFG5/NjjcxuIeZfJ/7Nn0gI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mMgNx07seFA+MJyrJKuXsYIs6vwYJic2aLVZ4ukVBZs4b7TCVbtVXqzLmnr6JMiyG0NY+xTqdCKUn+mYQx982hJQ1LshHvv4wILJz/5S2heVkZxiYWxvlDdzcfVWe7DS/tOB9bxphA1pD0kIlQbHfETQsNZuhp9tCFdTfsEal4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K9/6YK4n; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731618080; x=1763154080;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=0Xa51NQBmIFxJI/7q1BAtFG5/NjjcxuIeZfJ/7Nn0gI=;
-  b=K9/6YK4nweuuX+l/RGZUXiwYlji6zf5C+yc59CoFiRSRpNSLIg/OuRy4
-   9jzZxxFGHVxAcYmKFvW9prucKWQMm0t4MnDhpwtyg1piCtjednxsAqoXq
-   dKjC8JdaUsYv/SjbJ1SqlZ/Cq6YY6KtjqjanmTfXsFrk/9s9lkF3wbfej
-   QHE29YG1+6D4aTlkF6bFRVLF3OFeDwLFNYzEn2kMwIdPdEtrDZmuZuHZj
-   zIk2RXMMJS5axV9+N4wEOZQapY5l/t8otMgePT+2I+TIQQNahVNwrdgH6
-   F3Fo9tzPJkXSkkTAeiFdmXmSLM+4dNPWbbVNeoHzUNNpwYSR1NlHoYHCC
-   A==;
-X-CSE-ConnectionGUID: enKjyZLNREKGZk35PP+y4g==
-X-CSE-MsgGUID: gQDUACC8Sq6D24IcBex2/g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11256"; a="42982411"
-X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
-   d="scan'208";a="42982411"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 13:01:19 -0800
-X-CSE-ConnectionGUID: svpUZT0nSKS/hiaIa8I6dQ==
-X-CSE-MsgGUID: O8qaj1ypQ8aFie3ZoxYChA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
-   d="scan'208";a="93403296"
-Received: from unknown (HELO vcostago-mobl3) ([10.241.226.11])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 13:01:19 -0800
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: brauner@kernel.org, miklos@szeredi.hu, hu1.chen@intel.com,
- malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com,
- linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/4] ovl: Optimize override/revert creds
-In-Reply-To: <CAOQ4uxiXt4Y=fP+nUfbKkf46of4em633Dmd+iUCFyB=5ijvHdw@mail.gmail.com>
-References: <20241107005720.901335-1-vinicius.gomes@intel.com>
- <20241107005720.901335-5-vinicius.gomes@intel.com>
- <CAOQ4uxgHwmAa4K3ca7i1G2gFQ1WBge855R19hgEk7BNy+EBqfg@mail.gmail.com>
- <87ldxnrkxw.fsf@intel.com>
- <CAOQ4uxguV9SkFihaCcyk1tADNJs4gb8wrA7J3SVYaNnzGhLusw@mail.gmail.com>
- <CAOQ4uxiXt4Y=fP+nUfbKkf46of4em633Dmd+iUCFyB=5ijvHdw@mail.gmail.com>
-Date: Thu, 14 Nov 2024 13:01:18 -0800
-Message-ID: <87h689sf6p.fsf@intel.com>
+	s=arc-20240116; t=1731618218; c=relaxed/simple;
+	bh=h6Ab78gAB0LmRRiWpEtwGJHwFKOOZ3XIieV5FxUsQIw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UDyyMOyyB3GPnRPk8iEGEKsak7tsRqVWCHjOjXYGHj05DJNH9Q49QEWom1gLjPZIeDJ4JfSzhj3p/W0aFEUHh/4MsH6/yTLmgih04pEgnPCHHO/xL5eObsSkT5ex+OUa1PH2rkmpfamOBfrMdFoAmDsbMJ5TrpgbOO05v96RFBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nVLV72CZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79295C4CECD;
+	Thu, 14 Nov 2024 21:03:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731618217;
+	bh=h6Ab78gAB0LmRRiWpEtwGJHwFKOOZ3XIieV5FxUsQIw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nVLV72CZYwZL5SSZBYfmQyD786QqOXvqALMVWo4kAljMWo4bGP9L9mt1qWlnVayYu
+	 XFyZmASnhW/XdZOdmomDuDvhjHuenPI6S6byKLiEvA7vAErR/B6fakZec17c7gSMjm
+	 94PZkIwMwmSnOO0QVLMtC1RLzZwgYBfviei9qtlCF9N6EbB/K7nIXRDTNF5sKcT3OV
+	 OQKOMzIQ/fU06XHqMVY20O8nR5FANrGe3p7VJigvd0Rl6eXrwF/9yMXrtWyUIHR5U/
+	 SHaUJQLOM4S81PEdHfIIt1/gDIP4jFNPVqlMzCYlxHB/lW6A8uI8Plz2Y4m0E1J3Oe
+	 Gmbe36EA7gvew==
+Date: Thu, 14 Nov 2024 18:03:35 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: Benjamin Peterson <benjamin@engflow.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>
+Subject: Re: [PATCH 2/2] perf tests: add test for trace output loss
+Message-ID: <ZzZlpwTy_nXKE8LF@x1>
+References: <20241106234518.115234-1-benjamin@engflow.com>
+ <20241106234518.115234-2-benjamin@engflow.com>
+ <ZzY1bPtoyRH-nRIV@x1>
+ <ZzY20vZluj44w1Gt@x1>
+ <CAEmfU+v8KR3Bd8w7kOX6ScGig106zh5gW9P5fwAw-BF3tmAp7A@mail.gmail.com>
+ <ZzZY7U0AFk3245vy@x1>
+ <CAH0uvojcZMVzDyNkWCSHMdwn59T2fgn6iGoqrh9NhaaQ5H2DOw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,104 +69,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH0uvojcZMVzDyNkWCSHMdwn59T2fgn6iGoqrh9NhaaQ5H2DOw@mail.gmail.com>
 
-Amir Goldstein <amir73il@gmail.com> writes:
+On Thu, Nov 14, 2024 at 12:16:46PM -0800, Howard Chu wrote:
+> Hello,
+> 
+> On Thu, Nov 14, 2024 at 12:09 PM Arnaldo Carvalho de Melo
+> <acme@kernel.org> wrote:
+> >
+> > On Thu, Nov 14, 2024 at 09:44:56AM -0800, Benjamin Peterson wrote:
+> > > > On Thu, Nov 14, 2024 at 02:37:52PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > > diff --git a/tools/perf/tests/shell/trace_exit_race.sh b/tools/perf/tests/shell/trace_exit_race.sh
+> > > > index 8b70324bc5b4fb4c..c37ed6bb9f7e8fab 100755
+> > > > --- a/tools/perf/tests/shell/trace_exit_race.sh
+> > > > +++ b/tools/perf/tests/shell/trace_exit_race.sh
+> > > > @@ -12,10 +12,10 @@
+> > > >  skip_if_no_perf_trace || exit 2
+> >
+> > > >  trace_shutdown_race() {
+> > > > -       for i in $(seq 100); do
+> > > > +       for _ in $(seq 100); do
+> > > >                 perf trace -e syscalls:sys_enter_exit_group true 2>>$file
+> > > >         done
+> > > > -       [ $(grep -c -E " +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$" $file) = "100" ]
+> > > > +       [ "$(grep -c -E ' +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$' $file)" = "100" ]
+> > > >  }
+> >
+> > > This all looks okay.
+> >
+> > The test is failing for me as there is garbage in the output of perf
+> > trace even with Namhyung having already applied your previous patch:
+> >
+> > ⬢ [acme@toolbox perf-tools-next]$ git log --oneline --author benjamin@engflow.com
+> > 12bd434f68ea45c7 (HEAD -> perf-tools-next) perf tests: Add test for 'perf trace' output loss
+> > efbcd2cd7eac10a9 perf trace: Do not lose last events in a race
+> > 5fb8e56542a3cf46 (perf-tools-next/tmp.perf-tools-next) perf trace: avoid garbage when not printing a trace event's arguments
+> > ⬢ [acme@toolbox perf-tools-next]$
+> >
+> > root@number:~# perf trace -e syscalls:sys_enter_exit_group true
+> >      0.000 true/1982428 syscalls:sys_enter_exit_group( k?m)
+> > root@number:~# perf trace -e syscalls:sys_enter_exit_group true
+> >      0.000 true/1982430 syscalls:sys_enter_exit_group()
+> > root@number:~# perf trace -e syscalls:sys_enter_exit_group true
+> >      0.000 true/1982432 syscalls:sys_enter_exit_group()
+> > root@number:~# perf trace -e syscalls:sys_enter_exit_group true
+> >      0.000 true/1982434 syscalls:sys_enter_exit_group()
+> > root@number:~# perf trace -e syscalls:sys_enter_exit_group true
+> >      0.000 true/1982437 syscalls:sys_enter_exit_group( k�)
+> > root@number:~# perf trace -e syscalls:sys_enter_exit_group true
+> >      0.000 true/1982439 syscalls:sys_enter_exit_group(, loads 8��1)
+> > root@number:~#
+> >
+> > So we don't _miss_ the events, which I was noticing and brought me to
+> > test your latest 2 patches, which I applied and added a Tested-by, now
+> > tryint to figure out this garbage...
+> 
+> Benjamin has already sent v2 to fix this:
+> https://lore.kernel.org/linux-perf-users/20241107232128.108981-2-benjamin@engflow.com/
 
-> On Thu, Nov 14, 2024 at 9:56=E2=80=AFAM Amir Goldstein <amir73il@gmail.co=
-m> wrote:
->>
->> On Wed, Nov 13, 2024 at 8:30=E2=80=AFPM Vinicius Costa Gomes
->> <vinicius.gomes@intel.com> wrote:
->> >
->> > Amir Goldstein <amir73il@gmail.com> writes:
->> >
->> > > On Thu, Nov 7, 2024 at 1:57=E2=80=AFAM Vinicius Costa Gomes
->> > > <vinicius.gomes@intel.com> wrote:
->> >
->> > [...]
->> >
->> > >
->> > > Vinicius,
->> > >
->> > > While testing fanotify with LTP tests (some are using overlayfs),
->> > > kmemleak consistently reports the problems below.
->> > >
->> > > Can you see the bug, because I don't see it.
->> > > Maybe it is a false positive...
->> >
->> > Hm, if the leak wasn't there before and we didn't touch anything relat=
-ed to
->> > prepare_creds(), I think that points to the leak being real.
->> >
->> > But I see your point, still not seeing it.
->> >
->> > This code should be equivalent to the code we have now (just boot
->> > tested):
->> >
->> > ----
->> > diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
->> > index 136a2c7fb9e5..7ebc2fd3097a 100644
->> > --- a/fs/overlayfs/dir.c
->> > +++ b/fs/overlayfs/dir.c
->> > @@ -576,8 +576,7 @@ static int ovl_setup_cred_for_create(struct dentry=
- *dentry, struct inode *inode,
->> >          * We must be called with creator creds already, otherwise we =
-risk
->> >          * leaking creds.
->> >          */
->> > -       WARN_ON_ONCE(override_creds(override_cred) !=3D ovl_creds(dent=
-ry->d_sb));
->> > -       put_cred(override_cred);
->> > +       WARN_ON_ONCE(override_creds_light(override_cred) !=3D ovl_cred=
-s(dentry->d_sb));
->> >
->> >         return 0;
->> >  }
->> > ----
->> >
->> > Does it change anything? (I wouldn't think so, just to try something)
->>
->> No, but I think this does:
->>
->
-> Vinicius,
->
-> Sorry, your fix is correct. I did not apply it properly when I tested.
->
-> I edited the comment as follows and applied on top of the patch
-> that I just sent [1]:
->
+Interesting, I wonder why b4 didn't pick the v2 :-\
 
-I just noticed there's a typo in the first sentence of the commit
-message, the function name that we are using revert_creds_light() is
-ovl_revert_creds(). Could you fix that while you are at it?
+I'll try it, but see my other message, maybe the way I fixed is simpler?
+Its a two liner that could be turned into a one liner by right at the
+start of the function setting bf[0] = '\0', that way we wouldn't need
+even to check if printed == 0 at the end.
 
-Glad that the fix works:
+Anyway, will test the newer version.
 
-Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-
->
-> -       put_cred(override_creds(override_cred));
-> +
-> +       /*
-> +        * Caller is going to match this with revert_creds_light() and dr=
-op
-> +        * reference on the returned creds.
-> +        * We must be called with creator creds already, otherwise we risk
-> +        * leaking creds.
-> +        */
-> +       old_cred =3D override_creds_light(override_cred);
-> +       WARN_ON_ONCE(old_cred !=3D ovl_creds(dentry->d_sb));
->
->         return override_cred;
->
-> Thanks,
-> Amir.
->
-> [1] https://lore.kernel.org/linux-unionfs/20241114100536.628162-1-amir73i=
-l@gmail.com/
-
---=20
-Vinicius
+- Arnaldo
 
