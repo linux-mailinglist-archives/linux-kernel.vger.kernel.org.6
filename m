@@ -1,76 +1,85 @@
-Return-Path: <linux-kernel+bounces-409956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CBFF9C9437
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:22:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 855F39C948C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:29:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A105DB238D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:22:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22281B228A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61911AE01F;
-	Thu, 14 Nov 2024 21:22:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED201ADFE0;
+	Thu, 14 Nov 2024 21:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="eorneKZ0";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="eorneKZ0"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H97JNTwM"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDBD2905;
-	Thu, 14 Nov 2024 21:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E224CB36
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 21:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731619344; cv=none; b=uU/i75i+lzsIDQUlYBb2EiNNUrKgTGF4iLsnTLao0nEt7Bx99EGt1uiZGZMyzjH1sL73KicS+ZO1t866LZzkjJjiSfXZEcCI4Jy0IiwNhrx5Sq4y3oT4YEic4tI/BR47+NN4J8MjDYaySi+XEJL3jqu9MSGbpC4lKc/b8f+n+gk=
+	t=1731619764; cv=none; b=sohAV/3b0kuYo1IsmI9bfP+V+V/JYPHqy59ACRs6Mjm81TfuTpse0Z8HGQXThUE2Tt5I+S6lXfjswKyv9/zJ6pqTzQ778hCo6soIguwaFLcC53yolonih1GJtpQbB1dBlMEriiEd6sePMgBqaLJacJlGQkzwHQ+xYih5cvsjFXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731619344; c=relaxed/simple;
-	bh=XCENbKrDfm/widL02i/vkrSPfF4JfIhdiWoAwb8DTuM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rEPHjg1hczL1He/mxTuZRTZaMkKZpzv0YDAEPK61BCAUCbu6BSakwiCW/um1XFu3LHTIPZ2oHwWmGHvcvIWJNQjI2gNxiyRyim2OAsQ+Kil6wUf4Ee0WW/vcye/iVgMgIBWpbXjZuLvyWSVQSLzb36gsVcCI4SP8META33QdPmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=eorneKZ0; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=eorneKZ0; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4365A1F7C7;
-	Thu, 14 Nov 2024 21:22:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1731619339; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=rU0YHa2Jhh/LrcKUOrvPemYgVnp4+HPNG1kzn4LEzBI=;
-	b=eorneKZ0VXlikKjijgLOA5CTiE213Gx8fn7+pC9OmUIPMHb2Ov1f+lF9l5BYvzsywwdaIK
-	1mF3n4qiiShEK0Wp1h4dWgQdnSfBhUmdFbzS9M5cKHBdt5sinxa+r5IGB70ShMI7kMiAHS
-	1nGWg85ec8YXC3LT8qiAJodonZk2oRU=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=eorneKZ0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1731619339; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=rU0YHa2Jhh/LrcKUOrvPemYgVnp4+HPNG1kzn4LEzBI=;
-	b=eorneKZ0VXlikKjijgLOA5CTiE213Gx8fn7+pC9OmUIPMHb2Ov1f+lF9l5BYvzsywwdaIK
-	1mF3n4qiiShEK0Wp1h4dWgQdnSfBhUmdFbzS9M5cKHBdt5sinxa+r5IGB70ShMI7kMiAHS
-	1nGWg85ec8YXC3LT8qiAJodonZk2oRU=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3BAD213794;
-	Thu, 14 Nov 2024 21:22:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id a4SHDgtqNmdddgAAD6G6ig
-	(envelope-from <dsterba@suse.com>); Thu, 14 Nov 2024 21:22:19 +0000
-From: David Sterba <dsterba@suse.com>
-To: torvalds@linux-foundation.org
-Cc: David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Btrfs fix for 6.12-rc8
-Date: Thu, 14 Nov 2024 22:22:10 +0100
-Message-ID: <cover.1731619157.git.dsterba@suse.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1731619764; c=relaxed/simple;
+	bh=H2HedUANVsUlNqEMn49Ng6o5Yx7OK7i0DBxc2jZFXJ4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aE+7ylzcPZUMaL1WZun6DoKs8s/zyP8NguTlGzRno9OV7isaa79ldE3ptly1+jb7rtWWg5B5/tXIJaZSPy/u1DKG5RPajMU2KWNufzDEOKYyQ52RfzMCePyfcwk3eoWjGk+E8VDfKiDq9E2tW3LJhXzYRJiaUfm6bfGP5etNjHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H97JNTwM; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20ce65c8e13so233325ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:29:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731619762; x=1732224562; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EuHFw6q03XCp7lup6jLddcHFjKtqe3X8eorkDm7w/hA=;
+        b=H97JNTwM0+/1q+jaI6brFX0QEqgXy95+hMuSoXp7TqA84dba4fYtx/Rb9+uiaujgYL
+         HUC8BYWGJht+EcS1V574Z8K5vwrr1N3qxrEorFJTs32/rZwPTHxyrsPMYBGnIUXxb0DY
+         DtPJZ7/hQCN38FpHRrvSB4YUbVvhfoh+U1crzczaagd0wH7EwtlaH+7Y9zr8eZuoaNoF
+         Bg6nXbKiz1W4mamc6Wbt1eeZ1xunDpJfY+V/T0reY9wbKtDpxeWZBxIkVGTjZSI4qT3M
+         1ylZxd14yZzT+q55jpg7zSUuEIoQK6muTX9Oe+UxbKLI61EUU15EtxfX2359zp2AyYb4
+         gYYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731619762; x=1732224562;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EuHFw6q03XCp7lup6jLddcHFjKtqe3X8eorkDm7w/hA=;
+        b=MkB/WznGWsKOCYxiVUmecTWPubX811dEragVYHnhB/TcXbrhlTvlFTj9oL7+8Uv8RC
+         ZDR9IvG54ZpNPOQsDwX+MPq55tuLJHFh/j6HY2NETL3yPzXmxgqof/lNbOcmaB0Fmd9K
+         zaebqkV26Y1EjCmDAkPBMHNH/DqHKvB305Vg54H3D3Ka8wJ53iDE84ChaUohqaT6HO+l
+         DMEkOWAenkDWr/jbOs7map0h6XXuwWNcMQERj6w39YnZUr+d34xSEgg6K0dRW7OYgjq0
+         dLAX/qTHQmqRhSwkcw1HYvGq5TyeUEk0JJZefTUjwbRdCp0SiJiFMPKix7UkTv1clIn3
+         NFkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUG7ytYhjK4kVUGkhPZegc3LAe602sQ2Wzf/bLEqCcADOGGZmzyK/vA67qeKS6PsGEauHi6odi+bq0fQKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGd+QEdTRszaKbohfTDWibkrhFhEGAV4DjpSJGjnS2JvuTdaqV
+	qoB9KZ0TjMl7KsN6QpAc3bnxXc1eX4mZHMjGek1kXY75zE1ODCPk
+X-Google-Smtp-Source: AGHT+IFyJEUxPZNPdrNl3tzCmtz/Zc9PrJDCThXArRtOM55/LgUVKGi1XczAzWCBjI9vkEB7+knyCw==
+X-Received: by 2002:a17:903:2a8e:b0:20c:bbac:2013 with SMTP id d9443c01a7336-211d0ecead8mr5050745ad.48.1731619761915;
+        Thu, 14 Nov 2024 13:29:21 -0800 (PST)
+Received: from newslab-Z390-AORUS-ELITE.. (pc51.csie.ntu.edu.tw. [140.112.31.242])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f45641sm832945ad.177.2024.11.14.13.29.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 13:29:21 -0800 (PST)
+From: Chin Yik Ming <yikming2222@gmail.com>
+To: palmer@dabbelt.com
+Cc: paul.walmsley@sifive.com,
+	aou@eecs.berkeley.edu,
+	alexghiti@rivosinc.com,
+	samuel.holland@sifive.com,
+	parri.andrea@gmail.com,
+	atishp@rivosinc.com,
+	charlie@rivosinc.com,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Chin Yik Ming <yikming2222@gmail.com>
+Subject: [PATCH] riscv: Fix a comment typo in set_mm_asid()
+Date: Fri, 15 Nov 2024 05:27:25 +0800
+Message-Id: <20241114212725.4172401-1-yikming2222@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,65 +87,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4365A1F7C7
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:mid]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
-X-Spam-Flag: NO
 
-Hi,
+s/verion/version
 
-one more fix that seems urgent and good to have in 6.12 final. It could
-potentially lead to unexpected transaction aborts, due to wrong
-comparison and order of processing of delayed refs.
-
-Please pull, thanks.
-
-----------------------------------------------------------------
-The following changes since commit 2b084d8205949dd804e279df8e68531da78be1e8:
-
-  btrfs: fix the length of reserved qgroup to free (2024-11-07 02:08:29 +0100)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.12-rc7-tag
-
-for you to fetch changes up to 7d493a5ecc26f861421af6e64427d5f697ddd395:
-
-  btrfs: fix incorrect comparison for delayed refs (2024-11-14 16:11:02 +0100)
-
-----------------------------------------------------------------
-Josef Bacik (1):
-      btrfs: fix incorrect comparison for delayed refs
-
- fs/btrfs/delayed-ref.c | 2 +-
+Signed-off-by: Chin Yik Ming <yikming2222@gmail.com>
+---
+ arch/riscv/mm/context.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/riscv/mm/context.c b/arch/riscv/mm/context.c
+index 4abe3de23225..55c20ad1f744 100644
+--- a/arch/riscv/mm/context.c
++++ b/arch/riscv/mm/context.c
+@@ -158,7 +158,7 @@ static void set_mm_asid(struct mm_struct *mm, unsigned int cpu)
+ 	 *
+ 	 * - We get a zero back from the cmpxchg and end up waiting on the
+ 	 *   lock. Taking the lock synchronises with the rollover and so
+-	 *   we are forced to see the updated verion.
++	 *   we are forced to see the updated version.
+ 	 *
+ 	 * - We get a valid context back from the cmpxchg then we continue
+ 	 *   using old ASID because __flush_context() would have marked ASID
+-- 
+2.34.1
+
 
