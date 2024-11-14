@@ -1,117 +1,108 @@
-Return-Path: <linux-kernel+bounces-409580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF9679C8EC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:53:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7984B9C8EC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:54:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D0771F21ED7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:53:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12B082866D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40737198A38;
-	Thu, 14 Nov 2024 15:45:47 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5A21A3035;
+	Thu, 14 Nov 2024 15:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nbrTtIq6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A6017084F;
-	Thu, 14 Nov 2024 15:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8826818D65F
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731599146; cv=none; b=pIZ8G909HCLk/wGw7LAawYqc1tx4Mxv/cscZJQNpe76vf1zU4+LWkXpL8bstKe5FXPM3STqEx+devqcv4f3+aVLwh524Ke/o+eRQ9fCxULLSG3M5C03LVC4MkZb7y/SGxFkN+QwYZbpZOzryakaTz7ZqQWRG9lgiwdMR9b0oUpE=
+	t=1731599204; cv=none; b=EuzdFf6dhQiaH2VQdknXcY2Yat8xD+wENtBQ9TomlQ906HyM3HoGtoHYoj4UrKHKHCGZnsOR1VL74QXFLZkqjLE4Rbc+FXEQQBAmfW5ePqlYzePT6l2LfjQQ2vUIGoY9QMobuhnd5PTXGdH4yqWahjj8CzCM0zuYyovXJvr3GU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731599146; c=relaxed/simple;
-	bh=9Z4M8hzYU/w6zX+l0vhoSq1ALisl/iiI9Bc2iEjZblk=;
+	s=arc-20240116; t=1731599204; c=relaxed/simple;
+	bh=ACn7OzEQUASlWmmsTog2lco7stO6Qltx2th3qYoOkoM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h3C1RMqIxOsDr2UUyafsCf+h2Xs7lxQAQzD9ZRZ1OuEnohC2pnjbE6IgQcYimh16I45/+tbK78WcR//OTlRiKwcKwHCret7t7F0gXDANYVg/Zbbv9Pv5/BCZiYltn+00MrJTbkLMl0VSsac8xuHhuHfOGpe4u1cWILQF/1oIoHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 6453A100FC22E;
-	Thu, 14 Nov 2024 16:45:33 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 25FC33C4907; Thu, 14 Nov 2024 16:45:33 +0100 (CET)
-Date: Thu, 14 Nov 2024 16:45:33 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Terry Bowman <terry.bowman@amd.com>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, nifan.cxl@gmail.com, ming4.li@intel.com,
-	dave@stgolabs.net, jonathan.cameron@huawei.com,
-	dave.jiang@intel.com, alison.schofield@intel.com,
-	vishal.l.verma@intel.com, dan.j.williams@intel.com,
-	bhelgaas@google.com, mahesh@linux.ibm.com, ira.weiny@intel.com,
-	oohall@gmail.com, Benjamin.Cheatham@amd.com, rrichter@amd.com,
-	nathan.fontenot@amd.com, Smita.KoralahalliChannabasappa@amd.com
-Subject: Re: [PATCH v3 03/15] cxl/pci: Introduce PCIe helper functions
- pcie_is_cxl() and pcie_is_cxl_port()
-Message-ID: <ZzYbHZvU_RFXZuk0@wunner.de>
-References: <20241113215429.3177981-1-terry.bowman@amd.com>
- <20241113215429.3177981-4-terry.bowman@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IDN+EMZo6JinSqUzrw7x45TAxowESGTkSyHGKOYOEJYdZNslc5gu1Oultqa/C3EPS8y6un9s4kN3/c8b/aL7nZnoF0wUHoMg93Xddv1lMWvckdjtQllxhmKd2Fu7CWXwIgghwqnrcw74uT5NpNSoglZ4gQIFhBGePb9MxLHtGl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nbrTtIq6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75EF1C4CECD;
+	Thu, 14 Nov 2024 15:46:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731599204;
+	bh=ACn7OzEQUASlWmmsTog2lco7stO6Qltx2th3qYoOkoM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nbrTtIq6U+SkHk4LIfsoahzxfRPjE2rDkDkuOKvNkbtCHPbzKb/dSztCQRqMuN3ea
+	 soL5aYPJCv0h3VPhbqswHg9jc9ThHyVMu/3TCmYwsihE8fBjO3q6U6JCa8j466D9Yg
+	 PaVM7uXNubCK+EGJfkvUA9eOOyzJtjMFRfu5sjKmCuW5+II+Uc0A6T/CLArC4BAegC
+	 DHGFOcM9i3jRBhQ+RySEH8Srckl2WTrwnps5yWi1xD4e7/7yWYCUKE1UF3hBLA7tim
+	 /IEo6gw76E+jBe1uuLKp2n+NUAlkWovfqVBl1lYb/2cRA9g8aSzWfMaO+sKYXmnCEd
+	 KjpfrN/Op76Uw==
+Date: Thu, 14 Nov 2024 08:46:41 -0700
+From: Keith Busch <kbusch@kernel.org>
+To: =?iso-8859-1?Q?Pawel?= Anikiel <panikiel@google.com>
+Cc: bob.beckett@collabora.com, axboe@kernel.dk, hch@lst.de,
+	kernel@collabora.com, linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org, sagi@grimberg.me
+Subject: Re: [PATCH] nvme-pci: 512 byte aligned dma pool segment quirk
+Message-ID: <ZzYbYSTiMddjuVjF@kbusch-mbp>
+References: <20241112195053.3939762-1-bob.beckett@collabora.com>
+ <20241114113803.3571128-1-panikiel@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20241113215429.3177981-4-terry.bowman@amd.com>
+In-Reply-To: <20241114113803.3571128-1-panikiel@google.com>
 
-On Wed, Nov 13, 2024 at 03:54:17PM -0600, Terry Bowman wrote:
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -5038,6 +5038,20 @@ static u16 cxl_port_dvsec(struct pci_dev *dev)
->  					 PCI_DVSEC_CXL_PORT);
->  }
->  
-> +bool pcie_is_cxl_port(struct pci_dev *dev)
-> +{
-> +	if (!pcie_is_cxl(dev))
-> +		return false;
-> +
-> +	if ((pci_pcie_type(dev) != PCI_EXP_TYPE_ROOT_PORT) &&
-> +	    (pci_pcie_type(dev) != PCI_EXP_TYPE_UPSTREAM) &&
-> +	    (pci_pcie_type(dev) != PCI_EXP_TYPE_DOWNSTREAM))
-> +		return false;
-> +
-> +	return cxl_port_dvsec(dev);
-> +}
-> +EXPORT_SYMBOL_GPL(pcie_is_cxl_port);
+On Thu, Nov 14, 2024 at 11:38:03AM +0000, Pawel Anikiel wrote:
+> I've been tracking down an issue that seems to be related (identical?) to
+> this one, and I would like to propose a different fix.
+> 
+> I have a device with the aforementioned NVMe-eMMC bridge, and I was
+> experiencing nvme read timeouts after updating the kernel from 5.15 to
+> 6.6. Doing a kernel bisect, I arrived at the same dma pool commit as
+> Robert in the original thread.
+> 
+> After trying out some changes in the nvme-pci driver, I came up with the
+> same fix as in this thread: change the alignment of the small pool to
+> 512. However, I wanted to get a deeper understanding of what's going on.
+> 
+> After a lot of analysis, I found out why the nvme timeouts were happening:
+> The bridge incorrectly implements PRP list chaining.
+> 
+> When doing a read of exactly 264 sectors, and allocating a PRP list with
+> offset 0xf00, the last PRP entry in that list lies right before a page
+> boundary.  The bridge incorrectly (?) assumes that it's a pointer to a
+> chained PRP list, tries to do a DMA to address 0x0, gets a bus error,
+> and crashes.
+> 
+> When doing a write of 264 sectors with PRP list offset of 0xf00,
+> the bridge treats data as a pointer, and writes incorrect data to
+> the drive. This might be why Robert is experiencing fs corruption.
 
-This doesn't need to be exported because the only caller introduced
-in this series is in drivers/pci/pcie/aer.c (in patch 05/15), which
-is dependent on CONFIG_PCIEAER, which is bool not tristate.
+This sounds very plausible, great analysis. Curious though, even without
+the dma pool optimizations, you could still allocate a PRP list at that
+offset. I wonder why the problem only showed up once we optimized the
+pool allocator.
+ 
+> So if my findings are right, the correct quirk would be "don't make PRP
+> lists ending on a page boundary".
 
-The "!pcie_is_cxl(dev)" check at the top of the function is identical
-to the return value "cxl_port_dvsec(dev)".  This looks redundant.
-However one cannot call pci_pcie_type() without first checking
-pci_is_pcie().  So I'm wondering if the "!pcie_is_cxl(dev)" check
-is actually erroneous and supposed to be "!pci_is_pcie(dev)"?
-That would make more sense to me.
+Coincidently enough, the quirk in this patch achieves that. But it's
+great to understand why it was successful.
 
-Alternatively, just return true instead of "cxl_port_dvsec(dev)".
-That would probably be the simplest solution here.
+> Changing the small dma pool alignment to 512 happens to fix the issue
+> because it never allocates a PRP list with offset 0xf00. Theoretically,
+> the issue could still happen with the page pool, but this bridge has
+> a max transfer size of 64 pages, which is not enough to fill an entire
+> page-sized PRP list.
 
-
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -443,6 +443,7 @@ struct pci_dev {
->  	unsigned int	is_hotplug_bridge:1;
->  	unsigned int	shpc_managed:1;		/* SHPC owned by shpchp */
->  	unsigned int	is_thunderbolt:1;	/* Thunderbolt controller */
-> +	unsigned int	is_cxl:1;               /* CXL alternate protocol */
-
-I suspect the audience consists mostly of CXL-unaware PCI developers,
-so spelling out Compute Express Link here (and omitting "alternate
-protocol" if it doesn't fit) might be more appropriate.
-
-Thanks,
-
-Lukas
+Thanks, this answers my question in the other thread: MDTS is too small
+to hit the same bug with the large pool.
 
