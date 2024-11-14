@@ -1,94 +1,54 @@
-Return-Path: <linux-kernel+bounces-409077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37E369C8753
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:20:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4DF89C8755
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:20:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBFA11F2193E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:20:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44EA31F21A08
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E0A1F81B1;
-	Thu, 14 Nov 2024 10:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3651F892E;
+	Thu, 14 Nov 2024 10:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="H1IDs8ap";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wUbPSJg7";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="H1IDs8ap";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wUbPSJg7"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QN3yrM/1"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC041F818E
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F661F818E;
+	Thu, 14 Nov 2024 10:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731578964; cv=none; b=qs9pgI2b3UuJfih2V2wFPK3mfNX+SLbBYM/jfs63WFBGs1ZTI8LCsBySepNzacJffF/lbDM5whRUOzNNiabe9kKLkgXQzPOAa4DBTBDy9Y8h2GRzjA1zzAnaCDue9baf4o5ZHNUvAaX98B0Z/JTT1Z0tuG5MNGyqt6VK92RTv0M=
+	t=1731578983; cv=none; b=CVUpuedE3m428JGjoA4Ol1MZiognmj7N7E5e+jOcPuXw8HI6OkDyLjvlIYxzx8dMkuo5uhs0G56CRWGZ/uw7dZzNrP5Mu29DzfUr+uIcaV2rYl0zAvawBZ7q3sqciuy66rmLyQZz9H/cqT/q/6TrmB8wh6jltVb3KFEqlE6s/9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731578964; c=relaxed/simple;
-	bh=KMzNPvCxaCOcEEb7CWWW5njE53kJtlshFvvmL4nwOlE=;
+	s=arc-20240116; t=1731578983; c=relaxed/simple;
+	bh=9v6T4QnJhlT/14lqewz/cD7UXZzr+tXru8yYkQINeKM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lHCK8I8v5Ml0f74T3PaDAfs5GUJqnLk04gvBRUPgHJawXNzKxtGiFmYgbD2fhG5hGIlv0bStb6T/xrHrjM+vUOC3XR82BUn6YnrXCS1Z68eTb0CIpec02XSF0/4VwZ9LuIcrnBTMHSrZUwYxr9r5GJzkYpiXR50wq2hOCbduu9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=H1IDs8ap; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wUbPSJg7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=H1IDs8ap; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wUbPSJg7; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 In-Reply-To:Content-Type; b=CobRXda8au3xYpvOWQUSrWJwL1XEi+gpZxCAlXUHzOG7X8u0j2VUo/QUPvWfXGoK8LnOLVYGjKDNgdFHmu415ha6MmNvLpkx/M/HBhkliv5J5EmD3+Gtp/yy977kOCMeWp4mp80xyEa1jekEVHBkKJoap5c6qBdMK1qw7Em/qrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QN3yrM/1; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1731578979;
+	bh=9v6T4QnJhlT/14lqewz/cD7UXZzr+tXru8yYkQINeKM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QN3yrM/1yu5g47zkJ/FfUbjcTcLmmfgIou7kCZ7fGHGXkyu0gNJVGpKtEpKKgRGPB
+	 uLQGRIsFJqjoaWbMeX94cb5K9L2bT/HLvQVNR/oy8FKmP/+RSH8JhUitgGOrytj8cq
+	 /e5PfCXFDEYWz4VgV4JADh4OjsWg+DngvI8pgSZOqSCBMgSeW3Faq5tDvcLtwqbsDg
+	 L9VCKxiB+PMxH4BR/vYeUy25aOdOQsr2Vjtpc4Spt8kGT4w3lqr4cQr23sNP5qeDP8
+	 u8xidXMdDh0h8y3XMfkUxgZCQF9LoqBIWDJ6BD/QcJfY3cywF2IZqAQpHWR+Z9wAjk
+	 enE2TA4HpZ4LA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 753E52119F;
-	Thu, 14 Nov 2024 10:09:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731578960; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Il6MCIWPQie3YJaODFOx8K/akx4KWy4DGzrSlIIzXQo=;
-	b=H1IDs8ap3R0WhxzhJfAHUhV8nquICuKmn5BuJQnAUKNFH6hm2KdhOqPqQr+gA4lgXT42kl
-	+gZj/NWcbBBcPErB7piRzIcSPlQB8UnLhFdXy3NX0M0djJ1WRSzQ0z/dtVh1HKntq23YBi
-	Vrs+1m6IdvMbffMB/70fSRZhc+9CLkg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731578960;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Il6MCIWPQie3YJaODFOx8K/akx4KWy4DGzrSlIIzXQo=;
-	b=wUbPSJg7bnBdXNUSJ01COjnVMsD68Mwtcu2s/SzXdEW6KYLyBSgrw6jQXDJH63C7yplZdT
-	9ifItblf8gGgiDBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731578960; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Il6MCIWPQie3YJaODFOx8K/akx4KWy4DGzrSlIIzXQo=;
-	b=H1IDs8ap3R0WhxzhJfAHUhV8nquICuKmn5BuJQnAUKNFH6hm2KdhOqPqQr+gA4lgXT42kl
-	+gZj/NWcbBBcPErB7piRzIcSPlQB8UnLhFdXy3NX0M0djJ1WRSzQ0z/dtVh1HKntq23YBi
-	Vrs+1m6IdvMbffMB/70fSRZhc+9CLkg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731578960;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Il6MCIWPQie3YJaODFOx8K/akx4KWy4DGzrSlIIzXQo=;
-	b=wUbPSJg7bnBdXNUSJ01COjnVMsD68Mwtcu2s/SzXdEW6KYLyBSgrw6jQXDJH63C7yplZdT
-	9ifItblf8gGgiDBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 66D9C13721;
-	Thu, 14 Nov 2024 10:09:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id f/HHGFDMNWc2GwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 14 Nov 2024 10:09:20 +0000
-Message-ID: <cb9cabed-0038-42b3-b9fc-c9ba62b12781@suse.cz>
-Date: Thu, 14 Nov 2024 11:09:20 +0100
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 003D017E35D3;
+	Thu, 14 Nov 2024 11:09:38 +0100 (CET)
+Message-ID: <545b6db8-c7d7-4a28-a040-12088f9002df@collabora.com>
+Date: Thu, 14 Nov 2024 11:09:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,93 +56,131 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] mm/slab: Avoid build bug for calls to kmalloc with a
- large constant
+Subject: Re: [PATCH v2 2/2] arm64: dts: mediatek: Introduce MT8188 Geralt
+ platform based Ciri
+To: Fei Shao <fshao@chromium.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org
+References: <20241105093222.4055774-1-fshao@chromium.org>
+ <20241105093222.4055774-3-fshao@chromium.org>
+ <b66dbf9e-b35b-482c-9eb7-112ef1f398d6@collabora.com>
+ <CAC=S1ngozo11g1vF2jnHjTLcNmP8tOMsQhK+LR0QWqoeXwSJjg@mail.gmail.com>
+ <59f4bcc1-c752-4f2f-8e55-349cc2432b8a@collabora.com>
+ <CAC=S1nhhfwHU5K5ZyUhZBhvz38LOZGLnGN-Rc1ZAup_VTfkpvA@mail.gmail.com>
+ <CAC=S1nj5PVJ=zwZiBLoOCHzsspaRw9ddAH_dXfPayD=LyW5wNA@mail.gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-To: Dave Kleikamp <dave.kleikamp@oracle.com>,
- Ryan Roberts <ryan.roberts@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241014105912.3207374-1-ryan.roberts@arm.com>
- <20241014105912.3207374-6-ryan.roberts@arm.com>
- <44312f4a-8b9c-49ce-9277-5873a94ca1bb@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <44312f4a-8b9c-49ce-9277-5873a94ca1bb@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_FIVE(0.00)[6]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <CAC=S1nj5PVJ=zwZiBLoOCHzsspaRw9ddAH_dXfPayD=LyW5wNA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 11/1/24 21:16, Dave Kleikamp wrote:
-> When boot-time page size is enabled, the test against KMALLOC_MAX_CACHE_SIZE
-> is no longer optimized out with a constant size, so a build bug may
-> occur on a path that won't be reached.
-
-That's rather unfortunate, the __builtin_constant_p(size) part of
-kmalloc_noprof() really expects things to resolve at compile time and it
-would be better to keep it that way.
-
-I think it would be better if we based KMALLOC_MAX_CACHE_SIZE itself on
-PAGE_SHIFT_MAX and kept it constant, instead of introducing
-KMALLOC_SHIFT_HIGH_MAX only for some sanity checks.
-
-So if the kernel was built to support 4k to 64k, but booted as 4k, it would
-still create and use kmalloc caches up to 128k. SLUB should handle that fine
-(if not, please report it :)
-
-Maybe we could also stop adding + 1 to PAGE_SHIFT_MAX if it's >=64k, so the
-cache size is max 64k and not 128k but that should be probably evaluated
-separately from this series.
-
-Vlastimil
-
-> Found compiling drivers/net/ethernet/qlogic/qed/qed_sriov.c
+Il 11/11/24 08:10, Fei Shao ha scritto:
+> On Fri, Nov 8, 2024 at 12:11 PM Fei Shao <fshao@chromium.org> wrote:
+>>
+>> On Thu, Nov 7, 2024 at 6:37 PM AngeloGioacchino Del Regno
+>> <angelogioacchino.delregno@collabora.com> wrote:
+>>>
+>>> Il 07/11/24 07:58, Fei Shao ha scritto:
+>>>> On Wed, Nov 6, 2024 at 9:19 PM AngeloGioacchino Del Regno
+>>>> <angelogioacchino.delregno@collabora.com> wrote:
+>>>>>
+>>>>> Il 05/11/24 10:30, Fei Shao ha scritto:
+>>>>>> Introduce MT8188-based Chromebook Ciri, also known commercially as
+>>>>>> Lenovo Chromebook Duet (11", 9).
+>>>>>>
+>>>>>> Ciri is a detachable device based on the Geralt design, where Geralt is
+>>>>>> the codename for the MT8188 platform. Ciri offers 8 SKUs to accommodate
+>>>>>> different combinations of second-source components, including:
+>>>>>> - audio codecs (RT5682S and ES8326)
+>>>>>> - speaker amps (TAS2563 and MAX98390)
+>>>>>> - MIPI-DSI panels (BOE nv110wum-l60 and IVO t109nw41)
+>>>>>>
+>>>>>> Signed-off-by: Fei Shao <fshao@chromium.org>
+>>>>>> ---
+> [...]
+>>>>>> +&pmic {
+>>>>>> +     interrupts-extended = <&pio 222 IRQ_TYPE_LEVEL_HIGH>;
+>>>>>> +};
+>>>>>> +
+>>>>>> +&scp {
+>>>>>
+>>>>> Is this SCP-dual or SCP?
+>>>>> I see SCP, but I also see a SCP-Dual memory region... what's going on here?
+>>>>>
+>>>>> Of course, the SCP-Dual won't work if you don't override the compatible string...
+>>>>
+>>>> To clarify, the second SCP core is used for MIPI camera in downstream,
+>>>> and I deliberately only describe the first SCP core here since the MTK
+>>>> camera ISP driver isn't in upstream at the moment.
+>>>> I had a fixup patch for removing the scp-dual reserved memory region,
+>>>> but likely it was missing during the rebase... let me check again if
+>>>> it can be removed, just in case there's firmware protecting the region
+>>>> and the kernel shouldn't access it.
+>>>>
+>>>
+>>> Hmm... but the second SCP core can still be brought up, even if the MIPI Camera
+>>> driver is not upstreamed yet, right?
+>>
+>> Well, that's true... and it should pave the way for validating the
+>> driver with the upstreamed DT whenever that becomes available.
+>>
+>>>
+>>> That shouldn't cause lockups and/or other kinds of bad behavior, and should
+>>> bring up a core and just never use it, without any particular issues.
+>>>
+>>> If we can enable the secondary core, let's just go for it.. as that will help
+>>> specifying the exact memory layout of this board (and failing to do that may
+>>> create some other issues, that's why I'm proposing to enable that even if it
+>>> is not really used in this case).
+>>>
+>>> What do you think? :-)
+>>>
+>>
+>> Sure, that sounds good to me, too.
+>> I started only with the essential DT bits to ensure the device can
+>> boot, which it does, so I guess it's time to bring that back. I'll
+>> incorporate that in v3.
+>> I plan to fix up the single SCP core node to SCP-dual directly, so
+>> please let me know if you prefer seeing that as an individual patch on
+>> top (either option works for me).
+>>
 > 
-> Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
-> ---
+> In fact, I noticed that it seems to require modifying mt8188.dtsi (and
+> potentially mt8390-genio-700-evk.dts) to support the second SCP core,
+> but I want to avoid doing so in this series if possible to keep this
+> as a pure new .dts introduction (if that makes sense).
 > 
-> Ryan,
+> I can think of 3 options here:
+> 1. I resend this series *with* the single SCP core enabled in
+> -geralt.dtsi. And then I send a follow-up series to introduce the
+> second SCP core and update the affected .dts{,i}.
+> 2. I resend this series *without* any SCP cores in -geralt.dtsi. And
+> then I send a follow-up series to introduce both of the SCP cores at
+> once, and update the affected .dts{,i}.
+> 3. I delete the parent (mt8188) scp declaration and re-describe the
+> dual-core SCP structure in -geralt.dtsi. This avoids touching
+> mt8188.dtsi and mt8390-genio-700-evk but leaves the dual-core SCP
+> stuff exclusively to geralt/ciri. I don't know if MT8390 wants to
+> utilize the second SCP core or not.
 > 
-> Please consider incorporating this fix or something similar into your
-> mm patch in the boot-time pages size patches.
+> I guess (3) is less likely what we want down the line, but that's just
+> for reference. Any preference/suggestion?
 > 
->   include/linux/slab.h | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/slab.h b/include/linux/slab.h
-> index 9848296ca6ba..a4c7507ab8ec 100644
-> --- a/include/linux/slab.h
-> +++ b/include/linux/slab.h
-> @@ -685,7 +685,8 @@ static __always_inline unsigned int __kmalloc_index(size_t size,
->   	if (size <= 1024 * 1024) return 20;
->   	if (size <=  2 * 1024 * 1024) return 21;
->   
-> -	if (!IS_ENABLED(CONFIG_PROFILE_ALL_BRANCHES) && size_is_constant)
-> +	if (!IS_ENABLED(CONFIG_ARM64_BOOT_TIME_PAGE_SIZE) &&
-> +	    !IS_ENABLED(CONFIG_PROFILE_ALL_BRANCHES) && size_is_constant)
->   		BUILD_BUG_ON_MSG(1, "unexpected size in kmalloc_index()");
->   	else
->   		BUG();
+
+I want to verify with MediaTek whether the Genio 700 EVK can make use of the
+dual-core SCP first, as it is highly possible that it indeed can and, if that
+is the case, counting that any product development would be anyway based on
+the EVK.... we will probably never see single-core SCP in MT8188 devicetrees
+ever again.
+
+Please send the Geralt/Ciri devicetrees without SCP support for now, so that
+we can get the vast majority of the code upstream - which anyway is likely
+95% of what you have right now... then I will either notify you for how to
+proceed with the SCP (especially if I come to a conclusion before you send
+the new series), or I will just send the SCP DT series on my own.
+
+Cheers,
+Angelo
 
 
