@@ -1,136 +1,153 @@
-Return-Path: <linux-kernel+bounces-408949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F5929C857A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:02:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A87949C8579
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:02:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90E31B281FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:02:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 396551F24FC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A80194A67;
-	Thu, 14 Nov 2024 09:01:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F8A1E884C;
+	Thu, 14 Nov 2024 09:02:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b+kBQhft"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EKTPSeFm"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47AE1304B0
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A731DE4DF;
+	Thu, 14 Nov 2024 09:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731574912; cv=none; b=CYWU8FuFyTPBd8UkZRPaRv65KKULLq7moTvQxcM7pu3RRc84UA3mzYM23Xl832b5iOPijXKZUYqlDhKD+z9TCzd1A8+RJgpqkAEnKbgdf4snQzdJNddx/hkmcuHef1y8hrHu2Svrw+HyDO1v7jTYJSsA2XemNo+x7g6cuTCkS6Q=
+	t=1731574929; cv=none; b=jtS4J0BeJezQ12MKXhlsdl1TSlFJ1ZOOHbkzPOGPT7qYpx6fAA9aNAXCRW0H8JRg/kRLJAjzeMwc2AGqjL3LnhimLfm4Fwz9aqxfqkC5JtQy/gBbxvdL3MMQ1nlx/MfMHaYZa1+zWUfzkXOd94uWPNBAJ9uk1ehBw//4X7ng6os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731574912; c=relaxed/simple;
-	bh=T23aK4kK/C7dpLAMu+Q5zpcRbeqquxUX93S7n31g8ko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oh0BSloAwCTf/PCiwYxqVX9bgKlDgmIUzM15SovADs1aKla0jQTWB7FBvK3V0/0b03E8gvXA2g55/HprbuCnlbETtP/cW8LSeIV8X7ZvkFoQCngsV9qcGByjAk0gBajXHTmYMTaA1emLvsVZfLxavq1HAicO4qRbz614T1//Tlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b+kBQhft; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7ea8c4ce232so306100a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:01:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731574909; x=1732179709; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=m8XEUri7CoZTq5vq/DzmBb1WzLljf7ctCSh1CJnt7ts=;
-        b=b+kBQhftYmsxFXZm1amTCaUYdKx4UBAq4dk6v3YnoUbcLk3+qwyhOFo4MZyTRjCHOC
-         DbFSJfft4aWvh2XjEBUDuY2zezZX3w7+3eRQRCTcI0s1jcd4I9JCGxC0CxcIPU5YNlYm
-         mGD9bemwdUtY/38XQiPWDSF4XUnczz4GAp8cKnhn5sfd6BZGC5hz2yQ6iWmY6zFN3bV0
-         I7+OEvcR3fSDPjEyHvePiMrB8lAr/9QuLUiKZKIpikckvIAl+yMFWiuurY+YcTpVFGFu
-         hfClWyL0kbJ4xpD+VQ2bJ+12T62gT2PeSHOBIqqsxleJUF00ArboeX5Y4kDw317PP+NU
-         XoUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731574909; x=1732179709;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m8XEUri7CoZTq5vq/DzmBb1WzLljf7ctCSh1CJnt7ts=;
-        b=QtCsu6d5YZhbRxsW5g8Ma9RkoQIDtcJ4T7oUM7jazlHUzC4cT2xIVq/2HH4b3qZWmC
-         Ryo4FmFeGx30vPcMX5degn5XW1r8AasYdFwP8vyDv8JzZcj9kZ7IfZjqrjr19xVC0UQM
-         Z1a23fZybn7eYR7Z2fV8/UQJFb3t4dZ6QpdFKrhzhP/nKTyJUqehCdT5TrQYOF7EiSJB
-         PWKJXhLmX9j6P5oakOoc23HDqkLg+2y5JRiGvszBL4/7GKwqkwTjS8TKqtaQpk1S8QHj
-         ombL01IUTW3H/wZtFeTCfzq9PKK3e1HnbNfFTe21frElyiUXRlvq+TpjxcYJ0Hsa9tbH
-         ZvTg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRGuXfvd4gsOKsymCKfdKkRwwKkeGGaXO0X3plXq3cpORb18k60rJ10I9CYvLbtPlzFVC19A3ueKfQu00=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVVbjjy5P94IN7SGeuIhhKrfoyZf6sr5qdSnGzJljank0yimms
-	ecCjzdoXSOLZE9IW2TNeDQpIOj7cbIOrbs5KBXmrjNSGnydTN3IUuJ4xlPe61sg=
-X-Google-Smtp-Source: AGHT+IF9ICqS2lyMmRBik5cNw7m35MJ5Mn9ZVdXEESxz2vH6U+lU1+8C4M51kQ1zPlNSPGNFGx7RWw==
-X-Received: by 2002:a05:6a20:e347:b0:1db:f00e:2dfe with SMTP id adf61e73a8af0-1dc8348c820mr1817985637.39.1731574908948;
-        Thu, 14 Nov 2024 01:01:48 -0800 (PST)
-Received: from localhost ([122.172.86.146])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8b36da8basm635461a12.3.2024.11.14.01.01.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 01:01:48 -0800 (PST)
-Date: Thu, 14 Nov 2024 14:31:46 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Tushar Khandelwal <Tushar.Khandelwal@arm.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mailbox: arm_mhuv2: clean up loop in get_irq_chan_comb()
-Message-ID: <20241114090146.u2cyg6fmykw57mei@vireshk-i7>
-References: <40fd7f80-26d6-4cfc-8bc5-f8572eae94d4@stanley.mountain>
+	s=arc-20240116; t=1731574929; c=relaxed/simple;
+	bh=33wkVH5z+Hi0e0Req1Aqd9thlLQV7c9L31n1CexDbWY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nV7JZGud1li1g2fcnWmywf4B1H/WxsPD2sCJkzDHELCalyoQt8vPHJd0WgtItCDtAjGyBdnZgsW7nF0d14Se2YTf/Mc430MjqZiYndX4UwvnCvrb28KK+/6poPIELMzW6EIKZLIGSTJNNnPRkkHhJJjE2ZLgJK4t4nAXsV0kUOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EKTPSeFm; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE7eVaJ012629;
+	Thu, 14 Nov 2024 09:01:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=MqeuLfUbDRNZZs8eevNfmr+SMsWmpyyfXM0xhonnd
+	C4=; b=EKTPSeFmHDSlws6slYmLKgGl+OVDRMdj0AixkqPrXJCM2BaEIs/chxb9F
+	e7ryueBDSK7MFOyX6MkaIr+hTr0MWoP+j1o0zkppfyr9SWf+z33EXLBkVKbVWBON
+	aup06GbULV1A7GkoKZae5r2QiKKXwUYhxlouDXSqcdaIyYreA/9HTzadr8LfL1rg
+	rMQ29thIklxQYV34jRiVtTXwyDuVB0/IaU3P8EjkwyKyRCgh1x1ojK/oVD6+uGv6
+	gx7gQvV9BWNI4lQrnh2X5rdMqOzoEGvK2ZVHha7Bb3gojceKekizyiP87AGtsPVT
+	JsAffUn7WCbNUqUxxnozB6OflV7Nw==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42wd0ygkay-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 09:01:58 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4ADNBcJV010514;
+	Thu, 14 Nov 2024 09:01:58 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 42tj2s82ar-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 09:01:57 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AE91sit27525788
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 14 Nov 2024 09:01:54 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6037A20040;
+	Thu, 14 Nov 2024 09:01:54 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 39A9820043;
+	Thu, 14 Nov 2024 09:01:54 +0000 (GMT)
+Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 14 Nov 2024 09:01:54 +0000 (GMT)
+From: Thomas Richter <tmricht@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org, namhyung@kernel.org, svens@linux.ibm.com
+Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
+        hca@linux.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PING PATCH] perf/test: fix perf ftrace test on s390
+Date: Thu, 14 Nov 2024 10:01:49 +0100
+Message-ID: <20241114090149.1489811-1-tmricht@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <40fd7f80-26d6-4cfc-8bc5-f8572eae94d4@stanley.mountain>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: aSeNnrogSbAZqLgBd0SUdPkTldE5351d
+X-Proofpoint-ORIG-GUID: aSeNnrogSbAZqLgBd0SUdPkTldE5351d
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ bulkscore=0 lowpriorityscore=0 mlxscore=0 mlxlogscore=763 suspectscore=0
+ malwarescore=0 impostorscore=0 phishscore=0 clxscore=1015
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411140065
 
-On 14-11-24, 12:00, Dan Carpenter wrote:
-> Both the inner and outer loops in this code use the "i" iterator.
-> The inner loop should really use a different iterator.
-> 
-> It doesn't affect things in practice because the data comes from the
-> device tree.  The "protocol" and "windows" variables are going to be
-> zero.  That means we're always going to hit the "return &chans[channel];"
-> statement and we're not going to want to iterate through the outer
-> loop again.
-> 
-> Still it's worth fixing this for future use cases.
-> 
-> Fixes: 5a6338cce9f4 ("mailbox: arm_mhuv2: Add driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/mailbox/arm_mhuv2.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/mailbox/arm_mhuv2.c b/drivers/mailbox/arm_mhuv2.c
-> index 0ec21dcdbde7..cff7c343ee08 100644
-> --- a/drivers/mailbox/arm_mhuv2.c
-> +++ b/drivers/mailbox/arm_mhuv2.c
-> @@ -500,7 +500,7 @@ static const struct mhuv2_protocol_ops mhuv2_data_transfer_ops = {
->  static struct mbox_chan *get_irq_chan_comb(struct mhuv2 *mhu, u32 __iomem *reg)
->  {
->  	struct mbox_chan *chans = mhu->mbox.chans;
-> -	int channel = 0, i, offset = 0, windows, protocol, ch_wn;
-> +	int channel = 0, i, j, offset = 0, windows, protocol, ch_wn;
->  	u32 stat;
->  
->  	for (i = 0; i < MHUV2_CMB_INT_ST_REG_CNT; i++) {
-> @@ -510,9 +510,9 @@ static struct mbox_chan *get_irq_chan_comb(struct mhuv2 *mhu, u32 __iomem *reg)
->  
->  		ch_wn = i * MHUV2_STAT_BITS + __builtin_ctz(stat);
->  
-> -		for (i = 0; i < mhu->length; i += 2) {
-> -			protocol = mhu->protocols[i];
-> -			windows = mhu->protocols[i + 1];
-> +		for (j = 0; j < mhu->length; j += 2) {
-> +			protocol = mhu->protocols[j];
-> +			windows = mhu->protocols[j + 1];
->  
->  			if (ch_wn >= offset + windows) {
->  				if (protocol == DOORBELL)
+On s390 the perf test case ftrace sometimes fails as follows:
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+  # ./perf test ftrace
+  79: perf ftrace tests    : FAILED!
+  #
 
+The failure depends on the kernel .config file. Some configurarions
+always work fine, some do not.  The ftrace profile test mostly fails,
+because the ring buffer was not large enough, and some lines
+(especially the interesting ones with nanosleep in it) where dropped.
+
+To achieve success for all our tested kernel configurations, enlarge
+the buffer to store the traces complete without wrapping.
+The default buffer size is too small  for all kernel configurations.
+Set the buffer size of /sys/kernel/tracing/buffer_size_kb to 16 MB
+
+
+Output after:
+  # ./perf test ftrace
+  79: perf ftrace tests     : Ok
+  #
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Suggested-by: Sven Schnelle <svens@linux.ibm.com>
+---
+ tools/perf/tests/shell/ftrace.sh | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/tools/perf/tests/shell/ftrace.sh b/tools/perf/tests/shell/ftrace.sh
+index a6ee740f0d7e..742d6b8f34d3 100755
+--- a/tools/perf/tests/shell/ftrace.sh
++++ b/tools/perf/tests/shell/ftrace.sh
+@@ -80,10 +80,21 @@ test_ftrace_profile() {
+     echo "perf ftrace profile test  [Success]"
+ }
+ 
++if [ "$(uname -m)" = "s390x" ]
++then
++	ftrace_size=$(cat /sys/kernel/tracing/buffer_size_kb)
++	echo 16384 > /sys/kernel/tracing/buffer_size_kb
++fi
++
+ test_ftrace_list
+ test_ftrace_trace
+ test_ftrace_latency
+ test_ftrace_profile
+ 
++if [ "$(uname -m)" = "s390x" ]
++then
++	echo $ftrace_size > /sys/kernel/tracing/buffer_size_kb
++fi
++
+ cleanup
+ exit 0
 -- 
-viresh
+2.47.0
+
 
