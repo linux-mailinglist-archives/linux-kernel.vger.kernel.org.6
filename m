@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-409828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E8C69C923D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:15:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D24AC9C9257
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:22:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9397B248AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:14:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29D22B2A77D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EFA81B219B;
-	Thu, 14 Nov 2024 19:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E3F1B21AD;
+	Thu, 14 Nov 2024 19:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="V+9cYduD"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Gqi+yGAh"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF2319F13C
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 19:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF7419F42F
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 19:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731611459; cv=none; b=WnAOEhwi+6z4W+5dvudmgj1bKJfYHFG6T5Lwg8Eff8Cxclb3M5vun2SDS2MtxpfNejW+CeYquAXTv53q7CnXKeAs/yVfbP5hLTV0FnCjWbrer44bvbI4wWVz6+1vKGSuGOQOH8/LaaKZB4uG+8xZhETFcEt6kjO7bMW9G0JP8Jg=
+	t=1731611460; cv=none; b=c5fPpj8U976eDkuQFrXIGP0XBCVZmmsEjtd2WbuN7XifUNK7MIcNu7hqrZ/J2poX7I9FTNvzWiTBvHy5JoF9lfHdo1ipN3cpQ6PtxUmZ1vqCSCaWIkFyK5jz0oFrUD/PvT8vLk03kANcTuQZMISTv4UX2mc/RMxwxm7G8YIXdbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731611459; c=relaxed/simple;
-	bh=oq440kgPkAQhG9oi3yrxId3dsdrPC0s/a6e3SBTmY9I=;
+	s=arc-20240116; t=1731611460; c=relaxed/simple;
+	bh=GTSzb2cA6iQFUD2LVLPdIY84kmKQY+ou4DnZ+2EhUOw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sqKHFoF5DwW5OVhuhxSZ86tWJNucL8zgbWxw6n+6/tf9acv9W5agUcpjHgdYmmHqwDgBbL7oj5iNOXIeIz/x0MjJV5wG+7iUas9TtgeVmF/jqApDbBQkBh64arAz4RW0p8O2e930HHOH6m9GoRj6KyQn/DwFFSV5ltSuM5kFKnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=V+9cYduD; arc=none smtp.client-ip=209.85.222.171
+	 In-Reply-To:To:Cc; b=l4MXGeuS4Gd04CsMjL2gk/bw/Y9zwZSOXqErAAtmid6/lp96KR84GKpDftRjc1dMB9momjSHle+tqNkz44uulC54UmWlynWsHKQoWk8IdVd/kYIkSPJ8R9lSjHfVsRd2Yx05AamTJbp3VSm+Qn7XbPQGsUlWjnnzJAI+dykREII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Gqi+yGAh; arc=none smtp.client-ip=209.85.219.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7b1b224f6c6so57330085a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:10:56 -0800 (PST)
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6d382664fadso5471226d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:10:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731611456; x=1732216256; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1731611457; x=1732216257; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fUNPuZP1461Q7ZURisQrbqS4YW2rP86ATE8dHXg5UnY=;
-        b=V+9cYduD+mDiLI0Nwaf79aQzvIEKTxZjYvlbsJXn0KPQxwMlgtt9VZMjS1qNNoB6fe
-         rF8NsUEoQeOM7u5xTHvujy42SEcMNUeim273T8x6DyyCXy4vkhepEbt998NkXK2/yl7A
-         pOcIfb7VB9d+XGrmXAbqZpsgEDrRjB3jlDY1Y=
+        bh=5zASJkExVzt3mz1dGZGb6YpVtR37par5ZxSQfpFLGtY=;
+        b=Gqi+yGAhM2LqdtHWH811XnV+hAqDqK5dwBNWbFA8SUVMz55DsV2uRyAX4qJ4VQ/Zk/
+         OssuyR/KQhjnquiGC39u+FJF3jPNLWfaogRk6HyvB4cMzx60GuVwBx2YSjsACRbWuaSv
+         mEUpapUskK6RkyHM4Xm1v0Mmlj6CSP8UletCs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731611456; x=1732216256;
+        d=1e100.net; s=20230601; t=1731611457; x=1732216257;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fUNPuZP1461Q7ZURisQrbqS4YW2rP86ATE8dHXg5UnY=;
-        b=Y5zeVH3ZVxYXvEHGrIvLg/yeQYsdBRr06TrNPyqMT9l+d6EGoT4I6DNzJ1+hpRiHi0
-         pCXBL/wmlTC75kw6WsdOrmjtoTbHwygovgOVxREoif7O0BjXaJWWCFRDZ92Ra3luXBFY
-         T/OUSnTA831LS5YDFWCUtL9fpHGbcwMIrKCwyn/N2ccqzQi/nmdJvXpjLZZdAIVT8UPA
-         vGKVXeTxjDKpwdKqMfAZqbdyjt6sQiYmR6C+0MYYtu0Er4ka2TTaqoInXPT0PUZbFtm4
-         XjkwvBbvtrdxjMgHVs6YHtrKzfuyU5NTesZQBomGeqfMP/sR8QxdawepOHdhsNV40wTB
-         hrrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfn78/HcHtSy4drolkaZgyEskNtxV9Ran3EjIBjEM5RDnM3e88LkBfGdqx5sU/AS56OTR0AuVTQo83KQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdSxIzgccCfW4TAsbACvktvqRz5lBwP7fR5Xn4jOy4661P5mv4
-	JId0/XdHZMEc8zrbubfP99+J28lUAjB0a2nsMXN2kp9Q+ERaXMHVyMvoZ0a2Wg==
-X-Google-Smtp-Source: AGHT+IG+L7MCCPunuQpdTHZAW3SSa7WlJBojBgUUn00gVEvYkzaXDKwAyHGPjRtQlCsfjqSPt192lw==
-X-Received: by 2002:a05:6214:398e:b0:6cb:832e:9267 with SMTP id 6a1803df08f44-6d3edca403emr33642486d6.7.1731611455939;
-        Thu, 14 Nov 2024 11:10:55 -0800 (PST)
+        bh=5zASJkExVzt3mz1dGZGb6YpVtR37par5ZxSQfpFLGtY=;
+        b=Cn0dimkbhqBvStVPCUAHbe24/9BXi6SN+XH/2PEgPs5gK8RsG7QExPTvhicFgbR22B
+         9lL3dnSaMOUG1QTWsYOjRNsVVbsgWUZIxgDdwSTOMgtHun2A06sXUKFqKYp507i5YhDK
+         EBMh2xfE8+fffLj1NPU3DPO+QpER82MZC0omnVBfj2CcvepWJVlvL2LExkMPgU0uUOLc
+         AePbD41+i3PyTMMoQMNHjD+B0uspW6yKl/xejJJQHfuaHM8+a0+S0066JwV5/5GfzXrI
+         tPESvfrTizIs1KpZ+6Ob9rp0ej4vFMksQkgGgXwY3yPQ29kE+iHxdlbeICdDtG8Dk+P1
+         icvA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ/fN/dVTjSd/j2On2jMafiaQ2AwPHFrPcKC/eJv4GGWUq/N8T/kV8SwgN57dKdiNKmkVDqQCCofXYypM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1oW6HQSDsheJfq5gQ64hawyCuhTIUqDI3qgTJRpE2ODDH/jb1
+	ymenfl8EOLdiXL8xhYp6IznvUzQng0MBob9qs8eULNbbQqeZibyk723R0av0Uw==
+X-Google-Smtp-Source: AGHT+IFwQipG5MnSIrGPPQp4Ve+16Xv+jGuSrD7kyFyzdHnlGC/qJY1Unw7LCbkK+PWogHsT4KSLpQ==
+X-Received: by 2002:a05:6214:118b:b0:6d3:dcce:a2d3 with SMTP id 6a1803df08f44-6d3dccea322mr96855556d6.47.1731611456783;
+        Thu, 14 Nov 2024 11:10:56 -0800 (PST)
 Received: from denia.c.googlers.com (189.216.85.34.bc.googleusercontent.com. [34.85.216.189])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3ee7cc7e1sm8857766d6.53.2024.11.14.11.10.55
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3ee7cc7e1sm8857766d6.53.2024.11.14.11.10.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 11:10:55 -0800 (PST)
+        Thu, 14 Nov 2024 11:10:56 -0800 (PST)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Thu, 14 Nov 2024 19:10:40 +0000
-Subject: [PATCH v15 11/19] media: uvcvideo: add support for compound
- controls
+Date: Thu, 14 Nov 2024 19:10:41 +0000
+Subject: [PATCH v15 12/19] media: uvcvideo: Factor out query_boundaries
+ from query_ctrl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,7 +75,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241114-uvc-roi-v15-11-64cfeb56b6f8@chromium.org>
+Message-Id: <20241114-uvc-roi-v15-12-64cfeb56b6f8@chromium.org>
 References: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
 In-Reply-To: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
@@ -84,138 +84,141 @@ To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
  Sakari Ailus <sakari.ailus@linux.intel.com>, 
  Hans Verkuil <hverkuil@xs4all.nl>
 Cc: Yunke Cao <yunkec@chromium.org>, linux-media@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>, 
- Yunke Cao <yunkec@google.com>
+ linux-kernel@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.13.0
 
-From: Yunke Cao <yunkec@google.com>
+Split the function in two parts. queryctrl_boundaries will be used in
+future patches.
 
-This patch adds support for compound controls. This is required to
-support controls that cannot be represented with a s64 data, such as the
-Region of Interest.
+No functional change expected from this patch.
 
-Signed-off-by: Yunke Cao <yunkec@google.com>
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/usb/uvc/uvc_ctrl.c | 224 ++++++++++++++++++++++++++++++++-------
- drivers/media/usb/uvc/uvcvideo.h |   5 +
- 2 files changed, 192 insertions(+), 37 deletions(-)
+ drivers/media/usb/uvc/uvc_ctrl.c | 106 ++++++++++++++++++++++-----------------
+ 1 file changed, 60 insertions(+), 46 deletions(-)
 
 diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-index 893d12cd3f90..e51cd0a2228a 100644
+index e51cd0a2228a..b591d7fddc37 100644
 --- a/drivers/media/usb/uvc/uvc_ctrl.c
 +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-@@ -367,6 +367,11 @@ static const u32 uvc_control_classes[] = {
+@@ -1367,53 +1367,11 @@ static u32 uvc_get_ctrl_bitmap(struct uvc_control *ctrl,
+ 	return ~0;
+ }
  
- static const int exposure_auto_mapping[] = { 2, 1, 4, 8 };
+-static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+-	struct uvc_control *ctrl,
+-	struct uvc_control_mapping *mapping,
+-	struct v4l2_queryctrl *v4l2_ctrl)
++static int __uvc_queryctrl_boundaries(struct uvc_video_chain *chain,
++				      struct uvc_control *ctrl,
++				      struct uvc_control_mapping *mapping,
++				      struct v4l2_queryctrl *v4l2_ctrl)
+ {
+-	struct uvc_control_mapping *master_map = NULL;
+-	struct uvc_control *master_ctrl = NULL;
+-
+-	memset(v4l2_ctrl, 0, sizeof(*v4l2_ctrl));
+-	v4l2_ctrl->id = mapping->id;
+-	v4l2_ctrl->type = mapping->v4l2_type;
+-	strscpy(v4l2_ctrl->name, uvc_map_get_name(mapping),
+-		sizeof(v4l2_ctrl->name));
+-	v4l2_ctrl->flags = 0;
+-
+-	if (!(ctrl->info.flags & UVC_CTRL_FLAG_GET_CUR))
+-		v4l2_ctrl->flags |= V4L2_CTRL_FLAG_WRITE_ONLY;
+-	if (!(ctrl->info.flags & UVC_CTRL_FLAG_SET_CUR))
+-		v4l2_ctrl->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+-
+-	if (mapping->master_id)
+-		__uvc_find_control(ctrl->entity, mapping->master_id,
+-				   &master_map, &master_ctrl, 0, 0);
+-	if (master_ctrl && (master_ctrl->info.flags & UVC_CTRL_FLAG_GET_CUR)) {
+-		s32 val;
+-		int ret;
+-
+-		if (WARN_ON(uvc_ctrl_mapping_is_compound(master_map)))
+-			return -EIO;
+-
+-		ret = __uvc_ctrl_get(chain, master_ctrl, master_map, &val);
+-		if (ret < 0)
+-			return ret;
+-
+-		if (val != mapping->master_manual)
+-				v4l2_ctrl->flags |= V4L2_CTRL_FLAG_INACTIVE;
+-	}
+-
+-	if (v4l2_ctrl->type >= V4L2_CTRL_COMPOUND_TYPES) {
+-		v4l2_ctrl->flags |= V4L2_CTRL_FLAG_HAS_PAYLOAD;
+-		v4l2_ctrl->default_value = 0;
+-		v4l2_ctrl->minimum = 0;
+-		v4l2_ctrl->maximum = 0;
+-		v4l2_ctrl->step = 0;
+-		return 0;
+-	}
+-
+ 	if (!ctrl->cached) {
+ 		int ret = uvc_ctrl_populate_cache(chain, ctrl);
+ 		if (ret < 0)
+@@ -1456,18 +1414,74 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+ 	if (ctrl->info.flags & UVC_CTRL_FLAG_GET_MIN)
+ 		v4l2_ctrl->minimum = uvc_mapping_get_s32(mapping, UVC_GET_MIN,
+ 				uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MIN));
++	else
++		v4l2_ctrl->minimum = 0;
  
-+static bool uvc_ctrl_mapping_is_compound(struct uvc_control_mapping *mapping)
+ 	if (ctrl->info.flags & UVC_CTRL_FLAG_GET_MAX)
+ 		v4l2_ctrl->maximum = uvc_mapping_get_s32(mapping, UVC_GET_MAX,
+ 				uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MAX));
++	else
++		v4l2_ctrl->maximum = 0;
+ 
+ 	if (ctrl->info.flags & UVC_CTRL_FLAG_GET_RES)
+ 		v4l2_ctrl->step = uvc_mapping_get_s32(mapping, UVC_GET_RES,
+ 				uvc_ctrl_data(ctrl, UVC_CTRL_DATA_RES));
++	else
++		v4l2_ctrl->step = 0;
+ 
+ 	return 0;
+ }
+ 
++static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
++				 struct uvc_control *ctrl,
++				 struct uvc_control_mapping *mapping,
++				 struct v4l2_queryctrl *v4l2_ctrl)
 +{
-+	return mapping->v4l2_type >= V4L2_CTRL_COMPOUND_TYPES;
-+}
++	struct uvc_control_mapping *master_map = NULL;
++	struct uvc_control *master_ctrl = NULL;
 +
- static s32 uvc_mapping_get_s32(struct uvc_control_mapping *mapping,
- 			       u8 query, const void *data_in)
- {
-@@ -1048,7 +1053,7 @@ static int uvc_entity_match_guid(const struct uvc_entity *entity,
- 
- static void __uvc_find_control(struct uvc_entity *entity, u32 v4l2_id,
- 	struct uvc_control_mapping **mapping, struct uvc_control **control,
--	int next)
-+	int next, int next_compound)
- {
- 	struct uvc_control *ctrl;
- 	struct uvc_control_mapping *map;
-@@ -1063,14 +1068,16 @@ static void __uvc_find_control(struct uvc_entity *entity, u32 v4l2_id,
- 			continue;
- 
- 		list_for_each_entry(map, &ctrl->info.mappings, list) {
--			if ((map->id == v4l2_id) && !next) {
-+			if (map->id == v4l2_id && !next && !next_compound) {
- 				*control = ctrl;
- 				*mapping = map;
- 				return;
- 			}
- 
- 			if ((*mapping == NULL || (*mapping)->id > map->id) &&
--			    (map->id > v4l2_id) && next) {
-+			    (map->id > v4l2_id) &&
-+			    (uvc_ctrl_mapping_is_compound(map) ?
-+			     next_compound : next)) {
- 				*control = ctrl;
- 				*mapping = map;
- 			}
-@@ -1084,6 +1091,7 @@ static struct uvc_control *uvc_find_control(struct uvc_video_chain *chain,
- 	struct uvc_control *ctrl = NULL;
- 	struct uvc_entity *entity;
- 	int next = v4l2_id & V4L2_CTRL_FLAG_NEXT_CTRL;
-+	int next_compound = v4l2_id & V4L2_CTRL_FLAG_NEXT_COMPOUND;
- 
- 	*mapping = NULL;
- 
-@@ -1092,12 +1100,13 @@ static struct uvc_control *uvc_find_control(struct uvc_video_chain *chain,
- 
- 	/* Find the control. */
- 	list_for_each_entry(entity, &chain->entities, chain) {
--		__uvc_find_control(entity, v4l2_id, mapping, &ctrl, next);
--		if (ctrl && !next)
-+		__uvc_find_control(entity, v4l2_id, mapping, &ctrl, next,
-+				   next_compound);
-+		if (ctrl && !next && !next_compound)
- 			return ctrl;
- 	}
- 
--	if (ctrl == NULL && !next)
-+	if (!ctrl && !next && !next_compound)
- 		uvc_dbg(chain->dev, CONTROL, "Control 0x%08x not found\n",
- 			v4l2_id);
- 
-@@ -1220,7 +1229,8 @@ static int __uvc_ctrl_get(struct uvc_video_chain *chain,
- static int __uvc_query_v4l2_class(struct uvc_video_chain *chain, u32 req_id,
- 				  u32 found_id)
- {
--	bool find_next = req_id & V4L2_CTRL_FLAG_NEXT_CTRL;
-+	bool find_next = req_id &
-+		(V4L2_CTRL_FLAG_NEXT_CTRL | V4L2_CTRL_FLAG_NEXT_COMPOUND);
- 	unsigned int i;
- 
- 	req_id &= V4L2_CTRL_ID_MASK;
-@@ -1310,10 +1320,12 @@ int uvc_ctrl_is_accessible(struct uvc_video_chain *chain, u32 v4l2_id,
- 	}
- 
- 	__uvc_find_control(ctrl->entity, mapping->master_id, &master_map,
--			   &master_ctrl, 0);
-+			   &master_ctrl, 0, 0);
- 
- 	if (!master_ctrl || !(master_ctrl->info.flags & UVC_CTRL_FLAG_GET_CUR))
- 		return 0;
-+	if (WARN_ON(uvc_ctrl_mapping_is_compound(master_map)))
-+		return -EIO;
- 
- 	ret = __uvc_ctrl_get(chain, master_ctrl, master_map, &val);
- 	if (ret >= 0 && val != mapping->master_manual)
-@@ -1377,10 +1389,15 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
- 
- 	if (mapping->master_id)
- 		__uvc_find_control(ctrl->entity, mapping->master_id,
--				   &master_map, &master_ctrl, 0);
++	memset(v4l2_ctrl, 0, sizeof(*v4l2_ctrl));
++	v4l2_ctrl->id = mapping->id;
++	v4l2_ctrl->type = mapping->v4l2_type;
++	strscpy(v4l2_ctrl->name, uvc_map_get_name(mapping),
++		sizeof(v4l2_ctrl->name));
++	v4l2_ctrl->flags = 0;
++
++	if (!(ctrl->info.flags & UVC_CTRL_FLAG_GET_CUR))
++		v4l2_ctrl->flags |= V4L2_CTRL_FLAG_WRITE_ONLY;
++	if (!(ctrl->info.flags & UVC_CTRL_FLAG_SET_CUR))
++		v4l2_ctrl->flags |= V4L2_CTRL_FLAG_READ_ONLY;
++
++	if (mapping->master_id)
++		__uvc_find_control(ctrl->entity, mapping->master_id,
 +				   &master_map, &master_ctrl, 0, 0);
- 	if (master_ctrl && (master_ctrl->info.flags & UVC_CTRL_FLAG_GET_CUR)) {
- 		s32 val;
--		int ret = __uvc_ctrl_get(chain, master_ctrl, master_map, &val);
++	if (master_ctrl && (master_ctrl->info.flags & UVC_CTRL_FLAG_GET_CUR)) {
++		s32 val;
 +		int ret;
 +
 +		if (WARN_ON(uvc_ctrl_mapping_is_compound(master_map)))
 +			return -EIO;
 +
 +		ret = __uvc_ctrl_get(chain, master_ctrl, master_map, &val);
- 		if (ret < 0)
- 			return ret;
- 
-@@ -1388,6 +1405,15 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
- 				v4l2_ctrl->flags |= V4L2_CTRL_FLAG_INACTIVE;
- 	}
- 
++		if (ret < 0)
++			return ret;
++
++		if (val != mapping->master_manual)
++			v4l2_ctrl->flags |= V4L2_CTRL_FLAG_INACTIVE;
++	}
++
 +	if (v4l2_ctrl->type >= V4L2_CTRL_COMPOUND_TYPES) {
 +		v4l2_ctrl->flags |= V4L2_CTRL_FLAG_HAS_PAYLOAD;
 +		v4l2_ctrl->default_value = 0;
@@ -225,329 +228,12 @@ index 893d12cd3f90..e51cd0a2228a 100644
 +		return 0;
 +	}
 +
- 	if (!ctrl->cached) {
- 		int ret = uvc_ctrl_populate_cache(chain, ctrl);
- 		if (ret < 0)
-@@ -1627,11 +1653,12 @@ static void uvc_ctrl_send_slave_event(struct uvc_video_chain *chain,
- 	u32 changes = V4L2_EVENT_CTRL_CH_FLAGS;
- 	s32 val = 0;
- 
--	__uvc_find_control(master->entity, slave_id, &mapping, &ctrl, 0);
-+	__uvc_find_control(master->entity, slave_id, &mapping, &ctrl, 0, 0);
- 	if (ctrl == NULL)
- 		return;
- 
--	if (__uvc_ctrl_get(chain, ctrl, mapping, &val) == 0)
-+	if (uvc_ctrl_mapping_is_compound(mapping) ||
-+	    __uvc_ctrl_get(chain, ctrl, mapping, &val) == 0)
- 		changes |= V4L2_EVENT_CTRL_CH_VALUE;
- 
- 	uvc_ctrl_send_event(chain, handle, ctrl, mapping, val, changes);
-@@ -1650,7 +1677,12 @@ void uvc_ctrl_status_event(struct uvc_video_chain *chain,
- 	ctrl->handle = NULL;
- 
- 	list_for_each_entry(mapping, &ctrl->info.mappings, list) {
--		s32 value = uvc_mapping_get_s32(mapping, UVC_GET_CUR, data);
-+		s32 value;
++	return __uvc_queryctrl_boundaries(chain, ctrl, mapping, v4l2_ctrl);
++}
 +
-+		if (uvc_ctrl_mapping_is_compound(mapping))
-+			value = 0;
-+		else
-+			value = uvc_mapping_get_s32(mapping, UVC_GET_CUR, data);
- 
- 		/*
- 		 * handle may be NULL here if the device sends auto-update
-@@ -1736,6 +1768,7 @@ static void uvc_ctrl_send_events(struct uvc_fh *handle,
- 
- 	for (i = 0; i < xctrls_count; ++i) {
- 		u32 changes = V4L2_EVENT_CTRL_CH_VALUE;
-+		s32 value;
- 
- 		ctrl = uvc_find_control(handle->chain, xctrls[i].id, &mapping);
- 		if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
-@@ -1760,6 +1793,10 @@ static void uvc_ctrl_send_events(struct uvc_fh *handle,
- 						  slave_id);
- 		}
- 
-+		if (uvc_ctrl_mapping_is_compound(mapping))
-+			value = 0;
-+		else
-+			value = xctrls[i].value;
- 		/*
- 		 * If the master is being modified in the same transaction
- 		 * flags may change too.
-@@ -1770,7 +1807,7 @@ static void uvc_ctrl_send_events(struct uvc_fh *handle,
- 			changes |= V4L2_EVENT_CTRL_CH_FLAGS;
- 
- 		uvc_ctrl_send_event(handle->chain, handle, ctrl, mapping,
--				    xctrls[i].value, changes);
-+				    value, changes);
- 	}
- }
- 
-@@ -1802,7 +1839,8 @@ static int uvc_ctrl_add_event(struct v4l2_subscribed_event *sev, unsigned elems)
- 		u32 changes = V4L2_EVENT_CTRL_CH_FLAGS;
- 		s32 val = 0;
- 
--		if (__uvc_ctrl_get(handle->chain, ctrl, mapping, &val) == 0)
-+		if (uvc_ctrl_mapping_is_compound(mapping) ||
-+		    __uvc_ctrl_get(handle->chain, ctrl, mapping, &val) == 0)
- 			changes |= V4L2_EVENT_CTRL_CH_VALUE;
- 
- 		uvc_ctrl_fill_event(handle->chain, &ev, ctrl, mapping, val,
-@@ -1935,7 +1973,7 @@ static int uvc_ctrl_find_ctrl_idx(struct uvc_entity *entity,
- 
- 	for (i = 0; i < ctrls->count; i++) {
- 		__uvc_find_control(entity, ctrls->controls[i].id, &mapping,
--				   &ctrl_found, 0);
-+				   &ctrl_found, 0, 0);
- 		if (uvc_control == ctrl_found)
- 			return i;
- 	}
-@@ -1971,19 +2009,59 @@ int __uvc_ctrl_commit(struct uvc_fh *handle, int rollback,
- 	return ret;
- }
- 
--int uvc_ctrl_get(struct uvc_video_chain *chain, u32 which,
--		 struct v4l2_ext_control *xctrl)
-+static int uvc_mapping_get_xctrl_compound(struct uvc_video_chain *chain,
-+					  struct uvc_control *ctrl,
-+					  struct uvc_control_mapping *mapping,
-+					  u32 which,
-+					  struct v4l2_ext_control *xctrl)
+ int uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+ 	struct v4l2_queryctrl *v4l2_ctrl)
  {
--	struct uvc_control *ctrl;
--	struct uvc_control_mapping *mapping;
--
--	if (__uvc_query_v4l2_class(chain, xctrl->id, 0) >= 0)
--		return -EACCES;
-+	u8 *data __free(kfree) = NULL;
-+	size_t size;
-+	u8 query;
-+	int ret;
-+	int id;
- 
--	ctrl = uvc_find_control(chain, xctrl->id, &mapping);
--	if (ctrl == NULL)
-+	switch (which) {
-+	case V4L2_CTRL_WHICH_CUR_VAL:
-+		ret = __uvc_ctrl_load_cur(chain, ctrl);
-+		if (ret < 0)
-+			return ret;
-+		id = UVC_CTRL_DATA_CURRENT;
-+		query = UVC_GET_CUR;
-+		break;
-+	case V4L2_CTRL_WHICH_DEF_VAL:
-+		ret = uvc_ctrl_populate_cache(chain, ctrl);
-+		if (ret < 0)
-+			return ret;
-+		id = UVC_CTRL_DATA_DEF;
-+		query = UVC_GET_DEF;
-+		break;
-+	default:
- 		return -EINVAL;
-+	}
-+
-+	size = DIV_ROUND_UP(mapping->size, 8);
-+	if (xctrl->size < size) {
-+		xctrl->size = size;
-+		return -ENOSPC;
-+	}
-+
-+	data = kmalloc(size, GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	ret = mapping->get(mapping, query, uvc_ctrl_data(ctrl, id), size, data);
-+	if (ret < 0)
-+		return ret;
-+
-+	return copy_to_user(xctrl->ptr, data, size) ? -EFAULT : 0;
-+}
- 
-+static int uvc_mapping_get_xctrl_std(struct uvc_video_chain *chain,
-+				     struct uvc_control *ctrl,
-+				     struct uvc_control_mapping *mapping,
-+				     u32 which, struct v4l2_ext_control *xctrl)
-+{
- 	switch (which) {
- 	case V4L2_CTRL_WHICH_CUR_VAL:
- 		return __uvc_ctrl_get(chain, ctrl, mapping, &xctrl->value);
-@@ -2002,6 +2080,33 @@ int uvc_ctrl_get(struct uvc_video_chain *chain, u32 which,
- 	return -EINVAL;
- }
- 
-+static int uvc_mapping_get_xctrl(struct uvc_video_chain *chain,
-+				 struct uvc_control *ctrl,
-+				 struct uvc_control_mapping *mapping,
-+				 u32 which, struct v4l2_ext_control *xctrl)
-+{
-+	if (uvc_ctrl_mapping_is_compound(mapping))
-+		return uvc_mapping_get_xctrl_compound(chain, ctrl, mapping,
-+						      which, xctrl);
-+	return uvc_mapping_get_xctrl_std(chain, ctrl, mapping, which, xctrl);
-+}
-+
-+int uvc_ctrl_get(struct uvc_video_chain *chain, u32 which,
-+		 struct v4l2_ext_control *xctrl)
-+{
-+	struct uvc_control *ctrl;
-+	struct uvc_control_mapping *mapping;
-+
-+	if (__uvc_query_v4l2_class(chain, xctrl->id, 0) >= 0)
-+		return -EACCES;
-+
-+	ctrl = uvc_find_control(chain, xctrl->id, &mapping);
-+	if (!ctrl)
-+		return -EINVAL;
-+
-+	return uvc_mapping_get_xctrl(chain, ctrl, mapping, which, xctrl);
-+}
-+
- static int uvc_ctrl_clamp(struct uvc_video_chain *chain,
- 			  struct uvc_control *ctrl,
- 			  struct uvc_control_mapping *mapping,
-@@ -2085,6 +2190,37 @@ static int uvc_ctrl_clamp(struct uvc_video_chain *chain,
- 	return 0;
- }
- 
-+static int uvc_mapping_set_xctrl_compound(struct uvc_control *ctrl,
-+					  struct uvc_control_mapping *mapping,
-+					  struct v4l2_ext_control *xctrl)
-+{
-+	u8 *data __free(kfree) = NULL;
-+	size_t size;
-+
-+	size = DIV_ROUND_UP(mapping->size, 8);
-+	if (xctrl->size != size)
-+		return -EINVAL;
-+
-+	data = memdup_user(xctrl->ptr, size);
-+	if (IS_ERR(data))
-+		return PTR_ERR(data);
-+
-+	return mapping->set(mapping, size, data,
-+			    uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
-+}
-+
-+static int uvc_mapping_set_xctrl(struct uvc_control *ctrl,
-+				 struct uvc_control_mapping *mapping,
-+				 struct v4l2_ext_control *xctrl)
-+{
-+	if (uvc_ctrl_mapping_is_compound(mapping))
-+		return uvc_mapping_set_xctrl_compound(ctrl, mapping, xctrl);
-+
-+	uvc_mapping_set_s32(mapping, xctrl->value,
-+			    uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
-+	return 0;
-+}
-+
- int uvc_ctrl_set(struct uvc_fh *handle, struct v4l2_ext_control *xctrl)
- {
- 	struct uvc_video_chain *chain = handle->chain;
-@@ -2122,8 +2258,9 @@ int uvc_ctrl_set(struct uvc_fh *handle, struct v4l2_ext_control *xctrl)
- 		       ctrl->info.size);
- 	}
- 
--	uvc_mapping_set_s32(mapping, xctrl->value,
--			    uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
-+	ret = uvc_mapping_set_xctrl(ctrl, mapping, xctrl);
-+	if (ret)
-+		return ret;
- 
- 	if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
- 		ctrl->handle = handle;
-@@ -2501,6 +2638,7 @@ static int __uvc_ctrl_add_mapping(struct uvc_video_chain *chain,
- 	struct uvc_control_mapping *map;
- 	unsigned int size;
- 	unsigned int i;
-+	int ret;
- 
- 	/*
- 	 * Most mappings come from static kernel data, and need to be duplicated.
-@@ -2518,8 +2656,10 @@ static int __uvc_ctrl_add_mapping(struct uvc_video_chain *chain,
- 	/* For UVCIOC_CTRL_MAP custom control */
- 	if (mapping->name) {
- 		map->name = kstrdup(mapping->name, GFP_KERNEL);
--		if (!map->name)
--			goto err_nomem;
-+		if (!map->name) {
-+			ret = -ENOMEM;
-+			goto free_mem;
-+		}
- 	}
- 
- 	INIT_LIST_HEAD(&map->ev_subs);
-@@ -2529,21 +2669,31 @@ static int __uvc_ctrl_add_mapping(struct uvc_video_chain *chain,
- 		       * fls(mapping->menu_mask);
- 		map->menu_mapping = kmemdup(mapping->menu_mapping, size,
- 					    GFP_KERNEL);
--		if (!map->menu_mapping)
--			goto err_nomem;
-+		if (!map->menu_mapping) {
-+			ret = -ENOMEM;
-+			goto free_mem;
-+		}
- 	}
- 	if (mapping->menu_names && mapping->menu_mask) {
- 		size = sizeof(mapping->menu_names[0])
- 		       * fls(mapping->menu_mask);
- 		map->menu_names = kmemdup(mapping->menu_names, size,
- 					  GFP_KERNEL);
--		if (!map->menu_names)
--			goto err_nomem;
-+		if (!map->menu_names) {
-+			ret = -ENOMEM;
-+			goto free_mem;
-+		}
- 	}
- 
--	if (map->get == NULL)
-+	if (uvc_ctrl_mapping_is_compound(map))
-+		if (WARN_ON(!map->set || !map->get)) {
-+			ret = -EIO;
-+			goto free_mem;
-+		}
-+
-+	if (!map->get)
- 		map->get = uvc_get_le_value;
--	if (map->set == NULL)
-+	if (!map->set)
- 		map->set = uvc_set_le_value;
- 
- 	for (i = 0; i < ARRAY_SIZE(uvc_control_classes); i++) {
-@@ -2561,12 +2711,12 @@ static int __uvc_ctrl_add_mapping(struct uvc_video_chain *chain,
- 
- 	return 0;
- 
--err_nomem:
-+free_mem:
- 	kfree(map->menu_names);
- 	kfree(map->menu_mapping);
- 	kfree(map->name);
- 	kfree(map);
--	return -ENOMEM;
-+	return ret;
- }
- 
- int uvc_ctrl_add_mapping(struct uvc_video_chain *chain,
-diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-index 3d32a56c5ff8..f429f325433b 100644
---- a/drivers/media/usb/uvc/uvcvideo.h
-+++ b/drivers/media/usb/uvc/uvcvideo.h
-@@ -115,7 +115,12 @@ struct uvc_control_mapping {
- 	u8 entity[16];
- 	u8 selector;
- 
-+	/*
-+	 * Size of the control data in the payload of the UVC control GET and
-+	 * SET requests, expressed in bits.
-+	 */
- 	u8 size;
-+
- 	u8 offset;
- 	enum v4l2_ctrl_type v4l2_type;
- 	u32 data_type;
 
 -- 
 2.47.0.338.g60cca15819-goog
