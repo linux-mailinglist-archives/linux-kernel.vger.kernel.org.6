@@ -1,243 +1,203 @@
-Return-Path: <linux-kernel+bounces-409598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A7949C8EF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:01:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1A269C8F9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:23:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE13F28AA2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:01:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC958B44D63
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8093617C230;
-	Thu, 14 Nov 2024 15:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0211714A5;
+	Thu, 14 Nov 2024 15:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ArzYZgqK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b="PHLKqB9T"
+Received: from dispatch1-us1.ppe-hosted.com (dispatch1-us1.ppe-hosted.com [67.231.154.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1777717BEC6
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731599904; cv=none; b=qsoB8KMOgiOFSQIjjZUpjceUmAYL26+B3rX7jwO7qn8ZgLVcsIGMI0Rf6XQG/keN6Cl7ataF8I9rBt3mrt8W4gqsHl3+nqb3QO28jq6tkOeDVnPAuNb0n9NBylyYRvsQ/5xHB2y17xkywxcu4VXD/FNbxHsW4hOEHGC30iwMvmE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731599904; c=relaxed/simple;
-	bh=R0XqAamMNscxNuoXObRJ02lOLz1+HI+3Z3noGMG9kCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vDGlQrGgLQsUVLIcv1fQqPjXAt/+YxX8cpi5E0YyHZ6fT6+cEjcumwgUZlnVTADbHrdffMwz+2vguFt7AeM1VLFHYFOE2hViFTklD2t9A5apOWU+roXvWDZ6zqJTQC5ER53sN0DwMF7bSiF6PHeXb4VRuHVS8T9RwqTI+bU4WBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ArzYZgqK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731599902;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TYMJBAU5BVBfRXr/IcaNUVmGDH7kSQCx5gS3ZVjn1Ps=;
-	b=ArzYZgqKb8ON7ifK8sNb3KyPis654bjURESQcDi0LkxbFAQJsoH4qr8e8rWZmfFrG1/qI4
-	l9qrCJNJWv133X+v5BuAwJ74wuIcTV+3G/KuhT/uR7qTD2QrAayrE8U+G7XVFDweEWYw25
-	EX0tMWgDg4S64Tf1LdVPRidyzP1ZFEA=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-393-i4Bpvf1OMYWft19gJEtD3w-1; Thu,
- 14 Nov 2024 10:58:17 -0500
-X-MC-Unique: i4Bpvf1OMYWft19gJEtD3w-1
-X-Mimecast-MFC-AGG-ID: i4Bpvf1OMYWft19gJEtD3w
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 98D751955BF4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BD51420A8;
 	Thu, 14 Nov 2024 15:58:14 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.88.110])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 92A711955F43;
-	Thu, 14 Nov 2024 15:58:09 +0000 (UTC)
-Date: Thu, 14 Nov 2024 10:58:06 -0500
-From: Phil Auld <pauld@redhat.com>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Qais Yousef <qyousef@layalina.io>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	Aashish Sharma <shraash@google.com>,
-	Shin Kawamura <kawasin@google.com>,
-	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] sched/deadline: Correctly account for allocated
- bandwidth during hotplug
-Message-ID: <20241114155806.GD471026@pauld.westford.csb>
-References: <20241114142810.794657-1-juri.lelli@redhat.com>
- <20241114142810.794657-3-juri.lelli@redhat.com>
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.154.183
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731599897; cv=none; b=Xi8ApPmYnYwZsOYsBaYxPKjUZKJFqDCYvFs8iZ2F4/9Xl4PkpEQ7aadMKOyWtmSKe/tb0wlXPb4AP9j0GGtaryc+Muq6vFEYLoSHQkyAcfkQ6RSEaGHnQoyyBvRzs29k+ERPrEbOrQKGlW1QRZTmNE7qDawpD+JFBVa0MXepToQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731599897; c=relaxed/simple;
+	bh=P+cOsdripRFvYlyp7WYqEoj6JQsmQNtvqopRVLA9AR4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=jTKrN6uA2bWxoPHoAacC1t1R/m6Jce885eLhVNP22aWxW2ppRs0ZLvdJ7T33Q02UtEgrlU1ZxtSGwxSTFuPsUS6aCAJ6BnF9kUw4mEzfxu7kzunJfHNNbq0P7kS/SQgeMM2zCaSvYLwdHrVdPWccXTpf2z1SfeVY511q2qr0mZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com; spf=pass smtp.mailfrom=candelatech.com; dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b=PHLKqB9T; arc=none smtp.client-ip=67.231.154.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=candelatech.com
+X-Virus-Scanned: Proofpoint Essentials engine
+Received: from mail3.candelatech.com (mail.candelatech.com [208.74.158.173])
+	by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTP id CC8CD440089;
+	Thu, 14 Nov 2024 15:58:10 +0000 (UTC)
+Received: from [192.168.1.23] (unknown [98.97.40.239])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by mail3.candelatech.com (Postfix) with ESMTPSA id 206D113C2B0;
+	Thu, 14 Nov 2024 07:58:09 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail3.candelatech.com 206D113C2B0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=candelatech.com;
+	s=default; t=1731599889;
+	bh=P+cOsdripRFvYlyp7WYqEoj6JQsmQNtvqopRVLA9AR4=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=PHLKqB9TrFph29oT1fpIsJICxW6RwWAJP+jxssgmtjLM85+rHMP0vToAGuR6uJgls
+	 SEh/YtLgiiQdSQg4JF1fCKzgdWm3VgLuLPjFN9kYVBvFqnCwkXROJRWsKAQTJWlp/P
+	 ViJ6rJVvIFpFW8oAdj+pjf0JkCc5NU8Dp3eBAgtU=
+Message-ID: <8df6ab0a-02fa-46d0-a19c-96545dcca035@candelatech.com>
+Date: Thu, 14 Nov 2024 07:58:08 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241114142810.794657-3-juri.lelli@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [wireless?] INFO: task hung in nl80211_pre_doit (3)
+To: syzbot <syzbot+da14e8c0ada830335981@syzkaller.appspotmail.com>,
+ johannes@sipsolutions.net, linux-kernel@vger.kernel.org,
+ linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <6735b24e.050a0220.2a2fcc.0063.GAE@google.com>
+Content-Language: en-MW
+From: Ben Greear <greearb@candelatech.com>
+Organization: Candela Technologies
+In-Reply-To: <6735b24e.050a0220.2a2fcc.0063.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MDID: 1731599892-1MVAkSQ1m9Rj
+X-MDID-O:
+ us5;at1;1731599892;1MVAkSQ1m9Rj;<greearb@candelatech.com>;3a4554d0eced4777ba762c7a41f48a81
+X-PPE-TRUSTED: V=1;DIR=OUT;
 
-On Thu, Nov 14, 2024 at 02:28:10PM +0000 Juri Lelli wrote:
-> For hotplug operations, DEADLINE needs to check that there is still enough
-> bandwidth left after removing the CPU that is going offline. We however
-> fail to do so currently.
+On 11/14/24 00:18, syzbot wrote:
+> Hello,
 > 
-> Restore the correct behavior by restructuring dl_bw_manage() a bit, so
-> that overflow conditions (not enough bandwidth left) are properly
-> checked. Also account for dl_server bandwidth, i.e. discount such
-> bandwidth in the calculation since NORMAL tasks will be anyway moved
-> away from the CPU as a result of the hotplug operation.
+> syzbot found the following issue on:
 > 
-> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
->
-
-Nice, thanks!
-
-Reviewed-by: Phil Auld <pauld@redhat.com>
-
-
-> ---
-> v1->v2: special case when total_bw = 0 (discounting dl_servers)
-> ---
->  kernel/sched/core.c     |  2 +-
->  kernel/sched/deadline.c | 48 +++++++++++++++++++++++++++++++++--------
->  kernel/sched/sched.h    |  2 +-
->  3 files changed, 41 insertions(+), 11 deletions(-)
+> HEAD commit:    de2f378f2b77 Merge tag 'nfsd-6.12-4' of git://git.kernel.o..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=12a245f7980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=64aa0d9945bd5c1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=da14e8c0ada830335981
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=160e635f980000
 > 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 43e453ab7e20..d1049e784510 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -8057,7 +8057,7 @@ static void cpuset_cpu_active(void)
->  static int cpuset_cpu_inactive(unsigned int cpu)
->  {
->  	if (!cpuhp_tasks_frozen) {
-> -		int ret = dl_bw_check_overflow(cpu);
-> +		int ret = dl_bw_deactivate(cpu);
->  
->  		if (ret)
->  			return ret;
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index a9cdbf058871..267ea8bacaf6 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -3470,29 +3470,31 @@ int dl_cpuset_cpumask_can_shrink(const struct cpumask *cur,
->  }
->  
->  enum dl_bw_request {
-> -	dl_bw_req_check_overflow = 0,
-> +	dl_bw_req_deactivate = 0,
->  	dl_bw_req_alloc,
->  	dl_bw_req_free
->  };
->  
->  static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
->  {
-> -	unsigned long flags;
-> +	unsigned long flags, cap;
->  	struct dl_bw *dl_b;
->  	bool overflow = 0;
-> +	u64 fair_server_bw = 0;
->  
->  	rcu_read_lock_sched();
->  	dl_b = dl_bw_of(cpu);
->  	raw_spin_lock_irqsave(&dl_b->lock, flags);
->  
-> -	if (req == dl_bw_req_free) {
-> +	cap = dl_bw_capacity(cpu);
-> +	switch (req) {
-> +	case dl_bw_req_free:
->  		__dl_sub(dl_b, dl_bw, dl_bw_cpus(cpu));
-> -	} else {
-> -		unsigned long cap = dl_bw_capacity(cpu);
-> -
-> +		break;
-> +	case dl_bw_req_alloc:
->  		overflow = __dl_overflow(dl_b, cap, 0, dl_bw);
->  
-> -		if (req == dl_bw_req_alloc && !overflow) {
-> +		if (!overflow) {
->  			/*
->  			 * We reserve space in the destination
->  			 * root_domain, as we can't fail after this point.
-> @@ -3501,6 +3503,34 @@ static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
->  			 */
->  			__dl_add(dl_b, dl_bw, dl_bw_cpus(cpu));
->  		}
-> +		break;
-> +	case dl_bw_req_deactivate:
-> +		/*
-> +		 * cpu is going offline and NORMAL tasks will be moved away
-> +		 * from it. We can thus discount dl_server bandwidth
-> +		 * contribution as it won't need to be servicing tasks after
-> +		 * the cpu is off.
-> +		 */
-> +		if (cpu_rq(cpu)->fair_server.dl_server)
-> +			fair_server_bw = cpu_rq(cpu)->fair_server.dl_bw;
-> +
-> +		/*
-> +		 * Not much to check if no DEADLINE bandwidth is present.
-> +		 * dl_servers we can discount, as tasks will be moved out the
-> +		 * offlined CPUs anyway.
-> +		 */
-> +		if (dl_b->total_bw - fair_server_bw > 0) {
-> +			/*
-> +			 * Leaving at least one CPU for DEADLINE tasks seems a
-> +			 * wise thing to do.
-> +			 */
-> +			if (dl_bw_cpus(cpu))
-> +				overflow = __dl_overflow(dl_b, cap, fair_server_bw, 0);
-> +			else
-> +				overflow = 1;
-> +		}
-> +
-> +		break;
->  	}
->  
->  	raw_spin_unlock_irqrestore(&dl_b->lock, flags);
-> @@ -3509,9 +3539,9 @@ static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
->  	return overflow ? -EBUSY : 0;
->  }
->  
-> -int dl_bw_check_overflow(int cpu)
-> +int dl_bw_deactivate(int cpu)
->  {
-> -	return dl_bw_manage(dl_bw_req_check_overflow, cpu, 0);
-> +	return dl_bw_manage(dl_bw_req_deactivate, cpu, 0);
->  }
->  
->  int dl_bw_alloc(int cpu, u64 dl_bw)
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index b1c3588a8f00..1fee840f1bab 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -362,7 +362,7 @@ extern void __getparam_dl(struct task_struct *p, struct sched_attr *attr);
->  extern bool __checkparam_dl(const struct sched_attr *attr);
->  extern bool dl_param_changed(struct task_struct *p, const struct sched_attr *attr);
->  extern int  dl_cpuset_cpumask_can_shrink(const struct cpumask *cur, const struct cpumask *trial);
-> -extern int  dl_bw_check_overflow(int cpu);
-> +extern int  dl_bw_deactivate(int cpu);
->  extern s64 dl_scaled_delta_exec(struct rq *rq, struct sched_dl_entity *dl_se, s64 delta_exec);
->  /*
->   * SCHED_DEADLINE supports servers (nested scheduling) with the following
-> -- 
-> 2.47.0
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-de2f378f.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/9ee61f45ffb8/vmlinux-de2f378f.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/a3b0e20d8f05/bzImage-de2f378f.xz
 > 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+da14e8c0ada830335981@syzkaller.appspotmail.com
+> 
+> INFO: task syz-executor:5427 blocked for more than 144 seconds.
+>        Not tainted 6.12.0-rc6-syzkaller-00279-gde2f378f2b77 #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:syz-executor    state:D stack:20096 pid:5427  tgid:5427  ppid:1      flags:0x00004006
+> Call Trace:
+>   <TASK>
+>   context_switch kernel/sched/core.c:5328 [inline]
+>   __schedule+0x184f/0x4c30 kernel/sched/core.c:6690
+>   __schedule_loop kernel/sched/core.c:6767 [inline]
+>   schedule+0x14b/0x320 kernel/sched/core.c:6782
+>   schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6839
+>   __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+>   __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+>   nl80211_pre_doit+0x5f/0x8b0 net/wireless/nl80211.c:16580
+>   genl_family_rcv_msg_doit net/netlink/genetlink.c:1110 [inline]
+>   genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+>   genl_rcv_msg+0xaaa/0xec0 net/netlink/genetlink.c:1210
+>   netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2551
+>   genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+>   netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+>   netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+>   netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+>   sock_sendmsg_nosec net/socket.c:729 [inline]
+>   __sock_sendmsg+0x221/0x270 net/socket.c:744
+>   __sys_sendto+0x39b/0x4f0 net/socket.c:2214
+>   __do_sys_sendto net/socket.c:2226 [inline]
+>   __se_sys_sendto net/socket.c:2222 [inline]
+>   __x64_sys_sendto+0xde/0x100 net/socket.c:2222
+>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f024ad805ac
+> RSP: 002b:00007ffd15eb6070 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
+> RAX: ffffffffffffffda RBX: 00007f024ba64620 RCX: 00007f024ad805ac
+> RDX: 0000000000000040 RSI: 00007f024ba64670 RDI: 0000000000000003
+> RBP: 0000000000000000 R08: 00007ffd15eb60c4 R09: 000000000000000c
+> R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
+> R13: 0000000000000000 R14: 00007f024ba64670 R15: 0000000000000000
+>   </TASK>
+> INFO: task syz-executor:5435 blocked for more than 148 seconds.
+>        Not tainted 6.12.0-rc6-syzkaller-00279-gde2f378f2b77 #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:syz-executor    state:D stack:20656 pid:5435  tgid:5435  ppid:1      flags:0x00004004
+> Call Trace:
+>   <TASK>
+>   context_switch kernel/sched/core.c:5328 [inline]
+>   __schedule+0x184f/0x4c30 kernel/sched/core.c:6690
+>   __schedule_loop kernel/sched/core.c:6767 [inline]
+>   schedule+0x14b/0x320 kernel/sched/core.c:6782
+>   schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6839
+>   __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+>   __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+>   rtnl_lock net/core/rtnetlink.c:79 [inline]
+>   rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6672
+>   netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2551
+>   netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+>   netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+>   netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+>   sock_sendmsg_nosec net/socket.c:729 [inline]
+>   __sock_sendmsg+0x221/0x270 net/socket.c:744
+>   __sys_sendto+0x39b/0x4f0 net/socket.c:2214
+>   __do_sys_sendto net/socket.c:2226 [inline]
+>   __se_sys_sendto net/socket.c:2222 [inline]
+>   __x64_sys_sendto+0xde/0x100 net/socket.c:2222
+>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7facdd1805ac
+> RSP: 002b:00007ffc7ba5d850 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
+> RAX: ffffffffffffffda RBX: 00007facdde64620 RCX: 00007facdd1805ac
+> RDX: 0000000000000040 RSI: 00007facdde64670 RDI: 0000000000000003
+> RBP: 0000000000000000 R08: 00007ffc7ba5d8a4 R09: 000000000000000c
+> R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
+> R13: 0000000000000000 R14: 00007facdde64670 R15: 0000000000000000
+>   </TASK>
+> 
+> Showing all locks held in the system:
+> 2 locks held by kworker/0:0/8:
+> 3 locks held by kworker/u4:0/11:
+> 2 locks held by kworker/u4:1/12:
+> 1 lock held by khungtaskd/25:
+>   #0: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+>   #0: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+>   #0: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6720
+
+Since those kworkers don't show locks, it must be because they are 'running'.
+
+The syzbot needs to learn to dump all tasks, or kernel lockdep needs to get
+smarter about dumping more useful information for running tasks.  I don't see how anyone
+can make progress from this report as it is, though I would very much like
+to understand this problem.  We see hints of similar bugs, but no luck
+reproducing them.
+
+This might show at least some of the needed info with no extra lockdep
+patches or significant changes to syzbot:
+
+echo 1 > /proc/sys/kernel/hung_task_all_cpu_backtrace
+
+Thanks,
+Ben
+
 
 -- 
+Ben Greear <greearb@candelatech.com>
+Candela Technologies Inc  http://www.candelatech.com
 
 
