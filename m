@@ -1,238 +1,132 @@
-Return-Path: <linux-kernel+bounces-409505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1834F9C8DB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:17:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D1B9C8DB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:17:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 324A6B24167
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:17:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FA501F24537
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE7113D601;
-	Thu, 14 Nov 2024 15:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC55A13D24D;
+	Thu, 14 Nov 2024 15:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aUbS9SaC"
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R1u6SOaW"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C47A1C68F;
-	Thu, 14 Nov 2024 15:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83551C68F;
+	Thu, 14 Nov 2024 15:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731597411; cv=none; b=SVXPWBHDT51bkIPN/vhJognScFLZF8w0ts35Q4GjIgtfVu9SF4Gvlv/pdm0UGWYXCpEXcwgbXfdD5ijFJVRw7qslvuMnC9Gsn2yJLMpLXD4yNgXO+ccI0OYVy4LrYe1xjlRi7HIjzdhqV/xKIrnpT/Y/EuQoU5eHCp93k1pPf4M=
+	t=1731597424; cv=none; b=CVZljbuqjUOvh/kL1ZVF8RIyUx2rrFJLQPJzY0R3HNc/qq+r3SWuXOlwJc/Opfik918ATp5gpNfc+x2YU44yyGmvuNQ7AjiQb1PuX9ZUQRlHj4An6h0t8ygAr4fkY0ymPcJiyjm56ua44gJpwnOu8ArsepMoMCUUKyJgJv7r6wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731597411; c=relaxed/simple;
-	bh=G9gHHmEIOJ8qOfsresv4aabOqWRAIqefGCSXzTHMTKo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YcXtWmQ487oOK/bu2BUoT6rLDnpSL8ft1yf9BongQLm+fUdQ+ykFgsT/Na65SqirpfdH1If3v1vYD2nEBVt09VsoV6F16uAo9IGXjjRh/9HdytOzuahpI7mHF7LgPMzLP1HLv4J/gCKynhXJBDgSnZ0Bhb9STwp1q5z6Jmk0fG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aUbS9SaC; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfout.phl.internal (Postfix) with ESMTP id 95FCB13803A7;
-	Thu, 14 Nov 2024 10:16:48 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Thu, 14 Nov 2024 10:16:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731597408; x=
-	1731683808; bh=syqfXqZchG+aofxMgVvogPa0niH6iMJQAZU3h4ASgag=; b=a
-	UbS9SaCU6Jz7ebwdNDz/scL+QjveZ4J5J4359OSD9bzyQ9q1BVlm87PDvJTIAOkY
-	XV6uidByYev6SLUAG/CDUwfzQXdqpMLnJ9mCkjoyGSn3zRaWtVNzEWmxxz0pGMW8
-	XF0dhUw6W3wKeQMBnISl7b9al/6jQwsZRvHuvUj+/xfTykNOqvA3YpKuCZ4HdzA/
-	B9wDHaJpZXgQkxMCPfTJxfX7JQk1aToUkt8jzWN1Ku+HhnEa3kxT8NGrjINAbGHx
-	yKE79gRMcRCSGJdVMyapH541jvUO+Ex6wf3itO6Tp3d9Z/mpv8aY5i2PqIZMfiT+
-	kCsGDEXG5Ypftzea0K89Q==
-X-ME-Sender: <xms:YBQ2Z05FsXnTwL1yc-jejLzoddmUGQmmBesv8t509wxukNK6qHT20w>
-    <xme:YBQ2Z16ynORccopE6hMHcjMBvMAizs3aVc7pFdsQkVQl3-2-qdc2Vpm1X_ydEoKDB
-    e7A8ewJFIOQWEg>
-X-ME-Received: <xmr:YBQ2Zze-AAn8jkQsuTy9riR2-K2YLaCKUHDO2NXbrOS8e-jnxzPHKdW_W2_z>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddvgdejgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtuden
-    ucfhrhhomhepkfguohcuufgthhhimhhmvghluceoihguohhstghhsehiughoshgthhdroh
-    hrgheqnecuggftrfgrthhtvghrnhepgeehkeduvdeujedvtddvgfdtvdfgvedukedttdet
-    veduvdekteevfedtveeujeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepihguohhstghhsehiughoshgthhdrohhrghdpnhgspghrtghpthht
-    ohepudejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrlhgvkhhsrghnuggvrh
-    drlhhosggrkhhinhesihhnthgvlhdrtghomhdprhgtphhtthhopegurghvvghmsegurghv
-    vghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtg
-    homhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgr
-    sggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehtohhkvgesrhgvughhrghtrd
-    gtohhmpdhrtghpthhtoheprghstheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggr
-    nhhivghlsehiohhgvggrrhgsohigrdhnvghtpdhrtghpthhtohepjhhohhhnrdhfrghsth
-    grsggvnhgusehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:YBQ2Z5LTzdGU_vnB3KdMpDzvgAWRLVTjH08x488ffzkMRsVKdBS0aw>
-    <xmx:YBQ2Z4IFlCN-7FmE7wbjCbzsWkk8DHIz1x4ha1IDDGc0hSf7K3Fppw>
-    <xmx:YBQ2Z6zAt3N0cLdp1TJp5a46ytvhPYs4WX2284HI0mElxmWrKCE0EQ>
-    <xmx:YBQ2Z8IihZX-5Nk3X4J3uViDvo6B_5PNrA0IHeEGdY4EyI2A5UH3ew>
-    <xmx:YBQ2Z549KvndPdNI2egnNZueTt4AUbTfROMOJw3rpmwr2aOvpXrZzbK1>
-Feedback-ID: i494840e7:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 14 Nov 2024 10:16:47 -0500 (EST)
-Date: Thu, 14 Nov 2024 17:16:44 +0200
-From: Ido Schimmel <idosch@idosch.org>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Magnus Karlsson <magnus.karlsson@intel.com>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v5 12/19] xdp: add generic
- xdp_build_skb_from_buff()
-Message-ID: <ZzYUXPq_KtjpNffW@shredder>
-References: <20241113152442.4000468-1-aleksander.lobakin@intel.com>
- <20241113152442.4000468-13-aleksander.lobakin@intel.com>
- <ZzYR2ZJ1mGRq12VL@shredder>
+	s=arc-20240116; t=1731597424; c=relaxed/simple;
+	bh=Q53Ic01HLtpIHqWLvJyKZj1a+099VDGe9zfLNq4lzJE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YtRElpJqWoaWR+De611ceOMKn2dISH0D3P9F8Rp/mH3klGDxM1s36rQ6EjcckYL04+nsrU3UXBTahHXY5AcxWktWjAqxQbJ6Ln3ieH7WEKWnzB2uNKHHPmy4f22g2ZxCGgoCAA8NylZ2wfcDElCy7xxs3jb2buPSSdXXwXn+TlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R1u6SOaW; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7eab7600800so89021a12.1;
+        Thu, 14 Nov 2024 07:17:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731597422; x=1732202222; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JotrJzBpOeR2thJqFXFw5L3unIDcudiSGFOlUbzMd08=;
+        b=R1u6SOaWSQbaeeGnUPiCBUxi6IaNplaXrNPT2PJX7UO9xRA6/XGNceEmNOTIGHed+z
+         Kg37c6g65paBVbPjrp7wSs5DN6Ny7bHfdabsxa43URJgjpSEzXfgdKLMxzaF+SllDCF9
+         hgmd4PYXqtIUmLVAR6L7lg5FqL2r7bsOqu+VZ5AAPkXccs7u1WABG0lclfsuyilLR1iC
+         ckqqeP2vixqY2fzofuYWJA7vx13s/aFgMplPjw/sUuq4KQQ2nP1XcWWN8eYrW7hkUX5X
+         U+vq1GPiOLv13ShJ0sdXILavC5O78CjRnVcpfN21B1ymRCnrcaTq/6j/fCPW9wizdF+r
+         S2NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731597422; x=1732202222;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JotrJzBpOeR2thJqFXFw5L3unIDcudiSGFOlUbzMd08=;
+        b=Z4dOlyl9m9JJ7B+2ngivHcwotiGS3Ju8SDiIZsJVCOyRYUPgGCLHoJEmQbYukYyoov
+         5Mu3ImvDK2ovNgUWkF0iDw0xR2Rud7dIVxrToJJamZkvQKb+EV4EsKHIOsw5GnfyyDgb
+         SjsF9nvVkx9ABxb+vlYK212vi6Wkoj4rE7afiC5PEst68wpLsfMfEGJR9JLF5MeBNjGi
+         peW5Vk9re05UNkEb+Yop2n6CcL6cF/TzPh7J1vuGwMTU01TR9D3GK3nyYF2oYwrqaCkE
+         uvC5ArceGHKaQNrdZuZPIjjEvQAG9njnmmNquaPNWmyDKILbipPNgLDeHpy2ejJKp6y1
+         tuVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUaeCCNTtoAch1rGgBH7mFJZVUdQ1qLpzrSyuO2gAh+0a4qFXwnGbLcjFGasnoLUgEtqYNzpSHz0GxoqvOm@vger.kernel.org, AJvYcCUckih6DlUEXj+lUxsOjz4DfMOKqXXp7ZBDqgKcVHhcxbv+XX5Igo+XFphNeoZuLsrx6KW0zGapV0cN@vger.kernel.org, AJvYcCVGSKs62Ik/wn5x23dsySASt5/Biv1VTTUewA6WzZ0EPnD5dE3kYPJCK7gqJ88CjoHrcDP+RgiMEOOm@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBQcj73Gs+Y2zZl9Uqdm8BBYWCICt+kIpUWiUTdDmwnBS7REJB
+	RBnSXsWyfhUgCtDPAAnYqkUjwrCyxULeOnHmv75G2n4Eq57vcFAd
+X-Google-Smtp-Source: AGHT+IFOzdCgJiTSHKh+t6Z6Xi2n3e3XGot6bXk4vTvc/TZ9/DAIaY0+AeU1fVaH8kKFm27vl/aK5A==
+X-Received: by 2002:a05:6a20:8403:b0:1d8:a203:95a4 with SMTP id adf61e73a8af0-1dc2296d9b1mr15461701637.5.1731597422055;
+        Thu, 14 Nov 2024 07:17:02 -0800 (PST)
+Received: from [100.116.227.126] ([45.32.86.188])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8b36dac83sm1215797a12.14.2024.11.14.07.16.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Nov 2024 07:17:01 -0800 (PST)
+Message-ID: <b59f6933-e1f1-49e9-be61-3e3b4323da87@gmail.com>
+Date: Thu, 14 Nov 2024 23:16:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZzYR2ZJ1mGRq12VL@shredder>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: iio: tyhx,hx9023s: Add performance
+ tuning configuration
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, yasin.lee.x@outlook.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241017-add-performance-tuning-configuration-v3-0-e7289791f523@gmail.com>
+ <20241017-add-performance-tuning-configuration-v3-1-e7289791f523@gmail.com>
+ <20241020140638.127a9dbf@jic23-huawei>
+Content-Language: en-US
+From: Yasin Lee <yasin.lee.x@gmail.com>
+In-Reply-To: <20241020140638.127a9dbf@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 14, 2024 at 05:06:06PM +0200, Ido Schimmel wrote:
-> Looks good (no objections to the patch), but I have a question. See
-> below.
-> 
-> On Wed, Nov 13, 2024 at 04:24:35PM +0100, Alexander Lobakin wrote:
-> > The code which builds an skb from an &xdp_buff keeps multiplying itself
-> > around the drivers with almost no changes. Let's try to stop that by
-> > adding a generic function.
-> > Unlike __xdp_build_skb_from_frame(), always allocate an skbuff head
-> > using napi_build_skb() and make use of the available xdp_rxq pointer to
-> > assign the Rx queue index. In case of PP-backed buffer, mark the skb to
-> > be recycled, as every PP user's been switched to recycle skbs.
-> > 
-> > Reviewed-by: Toke Høiland-Jørgensen <toke@redhat.com>
-> > Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
-> 
-> Reviewed-by: Ido Schimmel <idosch@nvidia.com>
-> 
-> > ---
-> >  include/net/xdp.h |  1 +
-> >  net/core/xdp.c    | 55 +++++++++++++++++++++++++++++++++++++++++++++++
-> >  2 files changed, 56 insertions(+)
-> > 
-> > diff --git a/include/net/xdp.h b/include/net/xdp.h
-> > index 4c19042adf80..b0a25b7060ff 100644
-> > --- a/include/net/xdp.h
-> > +++ b/include/net/xdp.h
-> > @@ -330,6 +330,7 @@ xdp_update_skb_shared_info(struct sk_buff *skb, u8 nr_frags,
-> >  void xdp_warn(const char *msg, const char *func, const int line);
-> >  #define XDP_WARN(msg) xdp_warn(msg, __func__, __LINE__)
-> >  
-> > +struct sk_buff *xdp_build_skb_from_buff(const struct xdp_buff *xdp);
-> >  struct xdp_frame *xdp_convert_zc_to_xdp_frame(struct xdp_buff *xdp);
-> >  struct sk_buff *__xdp_build_skb_from_frame(struct xdp_frame *xdpf,
-> >  					   struct sk_buff *skb,
-> > diff --git a/net/core/xdp.c b/net/core/xdp.c
-> > index b1b426a9b146..3a9a3c14b080 100644
-> > --- a/net/core/xdp.c
-> > +++ b/net/core/xdp.c
-> > @@ -624,6 +624,61 @@ int xdp_alloc_skb_bulk(void **skbs, int n_skb, gfp_t gfp)
-> >  }
-> >  EXPORT_SYMBOL_GPL(xdp_alloc_skb_bulk);
-> >  
-> > +/**
-> > + * xdp_build_skb_from_buff - create an skb from an &xdp_buff
-> > + * @xdp: &xdp_buff to convert to an skb
-> > + *
-> > + * Perform common operations to create a new skb to pass up the stack from
-> > + * an &xdp_buff: allocate an skb head from the NAPI percpu cache, initialize
-> > + * skb data pointers and offsets, set the recycle bit if the buff is PP-backed,
-> > + * Rx queue index, protocol and update frags info.
-> > + *
-> > + * Return: new &sk_buff on success, %NULL on error.
-> > + */
-> > +struct sk_buff *xdp_build_skb_from_buff(const struct xdp_buff *xdp)
-> > +{
-> > +	const struct xdp_rxq_info *rxq = xdp->rxq;
-> > +	const struct skb_shared_info *sinfo;
-> > +	struct sk_buff *skb;
-> > +	u32 nr_frags = 0;
-> > +	int metalen;
-> > +
-> > +	if (unlikely(xdp_buff_has_frags(xdp))) {
-> > +		sinfo = xdp_get_shared_info_from_buff(xdp);
-> > +		nr_frags = sinfo->nr_frags;
-> > +	}
-> > +
-> > +	skb = napi_build_skb(xdp->data_hard_start, xdp->frame_sz);
-> > +	if (unlikely(!skb))
-> > +		return NULL;
-> > +
-> > +	skb_reserve(skb, xdp->data - xdp->data_hard_start);
-> > +	__skb_put(skb, xdp->data_end - xdp->data);
-> > +
-> > +	metalen = xdp->data - xdp->data_meta;
-> > +	if (metalen > 0)
-> > +		skb_metadata_set(skb, metalen);
-> > +
-> > +	if (is_page_pool_compiled_in() && rxq->mem.type == MEM_TYPE_PAGE_POOL)
-> > +		skb_mark_for_recycle(skb);
-> > +
-> > +	skb_record_rx_queue(skb, rxq->queue_index);
-> > +
-> > +	if (unlikely(nr_frags)) {
-> > +		u32 tsize;
-> > +
-> > +		tsize = sinfo->xdp_frags_truesize ? : nr_frags * xdp->frame_sz;
-> > +		xdp_update_skb_shared_info(skb, nr_frags,
-> > +					   sinfo->xdp_frags_size, tsize,
-> > +					   xdp_buff_is_frag_pfmemalloc(xdp));
-> > +	}
-> > +
-> > +	skb->protocol = eth_type_trans(skb, rxq->dev);
-> 
-> The device we are working with has more ports (net devices) than Rx
-> queues, so each queue can receive packets from different net devices.
-> Currently, each Rx queue has its own NAPI instance and its own page
-> pool. All the Rx NAPI instances are initialized using the same dummy net
-> device which is allocated using alloc_netdev_dummy().
-> 
-> What are our options with regards to the XDP Rx queue info structure? As
-> evident by this patch, it does not seem valid to register one such
-> structure per Rx queue and pass the dummy net device. Would it be valid
-> to register one such structure per port (net device) and pass zero for
-> the queue index and NAPI ID?
 
-Actually, this does not seem to be valid either as we need to associate
-an XDP Rx queue info with the correct page pool :/
+On 10/20/24 21:06, Jonathan Cameron wrote:
+> On Thu, 17 Oct 2024 18:36:44 +0800
+> Yasin Lee <yasin.lee.x@gmail.com> wrote:
+>
+>> When hardware design introduces significant sensor data noise,
+>> performance can be improved by adjusting register settings.
+> Questions inline. Mostly around why these controls belong in DT.
+> What do they have to do with hardware / wiring etc rather than being
+> appropriate for userspace controls.
+>
+> So almost all are definite no to being suitable for device tree bindings.
+>
+> Jonathan
+>
+Hi Jonathan,
 
-> 
-> To be clear, I understand it is not a common use case.
-> 
-> Thanks
-> 
-> > +
-> > +	return skb;
-> > +}
-> > +EXPORT_SYMBOL_GPL(xdp_build_skb_from_buff);
-> > +
-> >  struct sk_buff *__xdp_build_skb_from_frame(struct xdp_frame *xdpf,
-> >  					   struct sk_buff *skb,
-> >  					   struct net_device *dev)
-> > -- 
-> > 2.47.0
-> > 
-> > 
+Thank you for the suggestions in your recent email. Following your 
+advice, I discussed these configurations in detail with engineers from 
+the HX9023S supplier. Based on their feedback, these settings are not 
+intended to be exposed to end-users. Typically, these configurations are 
+adjusted during the DVT phase of the end product by the supplier to 
+optimize performance, after which they are finalized and not meant to be 
+modified dynamically at the user level.
+
+Given this approach, it seems more appropriate to provide these settings 
+as part of a firmware file, allowing the configuration to be kept 
+internal and managed without user-level access. If this approach aligns 
+with your thoughts, I can prepare and submit a new patch focused on 
+firmware parsing and handling for these configurations.
+
+Thank you again for your valuable guidance, and I look forward to your 
+feedback.
+
+Best regards,
+Yasin Lee
+
+
 
