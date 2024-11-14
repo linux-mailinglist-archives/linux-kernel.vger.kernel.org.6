@@ -1,102 +1,155 @@
-Return-Path: <linux-kernel+bounces-409454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A04E9C8CEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:34:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F29F09C8D2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:47:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C77C2864D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:34:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49AADB2BE59
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DB52FE33;
-	Thu, 14 Nov 2024 14:34:44 +0000 (UTC)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C0B3D0C5;
+	Thu, 14 Nov 2024 14:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="E+qBOLrG"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F112F9E4
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 14:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF7AF9E4;
+	Thu, 14 Nov 2024 14:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731594884; cv=none; b=unXoTRWGqo7UcjZPHNPCDwi5Rg6dy9VtwteSINzWUj7aetIaIFY3xGe/frX8pZ+2MQNCgWDsoxLXnOTncphn1nR3skKDdgs72icstNns0cSzl9858BkbHtbneNTvj37ZIQ9JVamPgyLtpSLmmZzdPINvcZYAQaUHbNBnX1OVJDE=
+	t=1731594922; cv=none; b=jZB8IO4zg2hSI/VcFAE9+IFkuGyX5fRh8vMUaxrCuqVLTy6365KorD3XIrjlPNDRzVA/gl7YETLIrlJDj7n5KiSH3GPU/FA+ecC3BnadAgY9wP3G+6AUjhJRNPm6EZAd5D61DOZ9m1e26fFAhCxXrftWjLI0+ZKGcdU4Y02XS7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731594884; c=relaxed/simple;
-	bh=cdYypJcchO1v4yw6byfX6Shr1mcaFr3/1gTCqXWc0qs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kuq1xcyrUj4SztWJ+N3NoGcasdzffg/OdPrjl5jEXdVlrmEoys/9Q4TsZZ9tKqy01yP7mDP0aQjjN2hCsJsdKESiwI3Diky/4A9769M1f9G3IU54CXYJUKZWI2cPSd9iLc043Qra6wYzWrO0FIGqMca2ZueE/CGksY4YFoEjtWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6ee4beee4d1so3675327b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 06:34:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731594881; x=1732199681;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QEAcw9uV3ZgK8E/wHybD7i94tC5TQw6FAbTmmAV3SqA=;
-        b=oTOTBZCmq/tc2OhZ8AMxKhgF1e3PAnjTWgDMJYOestYSo3qCA6EB6/+pUJVXO37Ira
-         1S6o2V6m9V+A4rkLCNkE3yiT3n9TH/ZqESMO4NGMmnV3A2hxgKDCqSJP1Z1OBUYg/PUA
-         pxX6tPF2CIdC4OH7IvZu23TLGlT+9HLWm2SmflHULGvAQeoC9wNFitzgXkrlfIJNXzOB
-         g/A325/fuGO5KRtm0vpIsqPWlzQmGdFRzs1PHtKjrY8BWTCebVrp7gpMHiRN9xxZ8KvX
-         ycUU0M6ihwXiUfUZBY/8KaSgHylSE3ZVFac/3cOR4+UEzZx+ny5Bvpwi9+DQd2s6p09q
-         F/JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVRTHLuKaNekWHRrodhw/k+zU/y8jWzvYvrGilWAqUXAvORJS71hlgNNrX+E/iNEE2kQZvcTdlAN8cfX7A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNDYkP21ofdXFN9lWJ1ztpU1uvxPmJX5rnYcYcP4iOKG8Fc0rh
-	8fkwYp22fpI3BA/8S7bIu4VjR495JlFlMREu5PUOHnAbn0oMjR3k6gATIgS6
-X-Google-Smtp-Source: AGHT+IH4UC5JNhiXX/UvGaK1GwjDDU7/hsmF5F/8w+OtqtB18/OPB7TCylo42SrKiRxzIfTjZxDOnA==
-X-Received: by 2002:a05:690c:998e:b0:6e3:3521:88ff with SMTP id 00721157ae682-6ee433b299amr21224907b3.18.1731594880687;
-        Thu, 14 Nov 2024 06:34:40 -0800 (PST)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ee440742b8sm2579397b3.64.2024.11.14.06.34.40
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 06:34:40 -0800 (PST)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6e5a5a59094so7198667b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 06:34:40 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUwQQDUUunSSiK8/n9XXHTma5RYdSAdWTnzGDGKHjW2e0R7QrMi4G9cJQx152yi35KcXA+7RyF0ZiAc5Vs=@vger.kernel.org
-X-Received: by 2002:a05:690c:6ac1:b0:6ea:7c35:e2ab with SMTP id
- 00721157ae682-6ee433a2b9emr20348327b3.15.1731594879829; Thu, 14 Nov 2024
- 06:34:39 -0800 (PST)
+	s=arc-20240116; t=1731594922; c=relaxed/simple;
+	bh=DFpKUxNIg/0Q8AQl3GpB3e57cbY/U4sm5jilcZax0FY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nuHLwKxJ7ADqEG+a1Su8PkaUDFLPazBtJpNU18+vzyon5O4HNCj0xccixNx1tsqmxXP4Tk5+5h53W5NfXlPOm30URi4CIQdPKgOc26oEtBBvc6VaawjpMBPWmcMfXQM4ptR7U77Vq9Dbw8w/PEVHl2UNVyrs5qCb3QprGPX2Dm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=E+qBOLrG; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1731594915; x=1732199715; i=deller@gmx.de;
+	bh=7cL1d418pCLkOQWiNQwzOKQe/skb+LIVS7TMgzPtaDQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=E+qBOLrGAS6u1sUEZqTMCosHqbdJXMwTVuuZS7YTRAshuAzxGNZiKgAFBXlEJW2A
+	 8gwo17gdxuq/d0dHVZU+hchMdZMQxaL+9NkadmZ3VAFpEfqhtB6nKbYdiw71GfT3R
+	 nehKe4HZ8WEcpc8eom7eHR68SBarvdrSAIz85dsnS/rU0LvuZ7tDLawp5bLyUBykj
+	 BGEDQIFeV92A5ixRIf402r70v1PbREjqTf1QghGfL9Ve8WoGeHLGfNBpbelrq12Gw
+	 /98fhqiNqWoQVAbdWKGKzWtjaqLZ1SGK64OuuUczjZg64e/XH1wClFGJQLHJmLnil
+	 /naHNhdgE92PczkYXg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [10.8.0.6] ([78.94.87.245]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MeU0k-1tjplG3M5E-00pKcW; Thu, 14
+ Nov 2024 15:35:14 +0100
+Message-ID: <00edb739-458e-4ed0-a76c-4c6ceb4cbc3e@gmx.de>
+Date: Thu, 14 Nov 2024 15:35:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114131114.602234-1-mpe@ellerman.id.au> <20241114131114.602234-7-mpe@ellerman.id.au>
-In-Reply-To: <20241114131114.602234-7-mpe@ellerman.id.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 14 Nov 2024 15:34:28 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdW4f_6v-2ZLFxBvazPOEvF+4PG1E1f_Ye2j49y6ixmK_A@mail.gmail.com>
-Message-ID: <CAMuHMdW4f_6v-2ZLFxBvazPOEvF+4PG1E1f_Ye2j49y6ixmK_A@mail.gmail.com>
-Subject: Re: [RFC PATCH 07/10] powerpc: Remove CONFIG_ISA
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, arnd@arndb.de
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fbdev: omapfb: Remove some deadcode
+To: linux@treblig.org, u.kleine-koenig@baylibre.com,
+ linux-omap@vger.kernel.org
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20241026220133.93956-1-linux@treblig.org>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <20241026220133.93956-1-linux@treblig.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:pEWBPUavsm7cxfKaowBGPWSvRP1x9pkmKjPqUW2Bf1916up1DWy
+ cwBOOut9ZLa/poGj9F4J3FseU5DECw0WtI7dJwWrshJkUbFroGUDE9ya6Z5Q/3/OHiN1Asx
+ 2+jvUIhW45QiXRt5lwQfiYv9Htej3vJDoay4lJK5MinPWDoelGynVNwt8VdR6LMtQomNgxn
+ 9lgE5TknsZiEQYMDaxSlA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:cGRXIVaS8Vc=;9av0evoZdcdWSn5Ee3L4RxQbIZz
+ l+6uYoZX4xhBb/5z73HYO1J7ypc8rV7Dq52Y/pIzKIxmJx/2sntzg3PO7kXyLxl18/JWg8hOz
+ JSgo0APgJyIEvwHVfob1OXpXBWR8V1CEqFHvGE7NaoZ8sA72ap9uYsvHFeR7n66Jz8PyW76Sf
+ TaaJOcfmGSi/LqwkmcGtpmZgzgc0f4f7ZlOlcWszvlz/34c0hZ/Tl7AWY8ZavDTLLhwOze8wG
+ j6WsrSNA0bZhlt+xGqf9PuPTBumRC3mA++zvR8JbMglQePOkAISjZGriyNH4JJmdBnpbygt6q
+ wuRlkTwP0kGIwDUuLsKeFPyx95H24TuXYjThp4xoh5ltQUIgOlV10BWwCuuaGCh1eAUz6NAR4
+ L780PCz8vww4yUe4wTwZz3fuHoTiHwqniwcr9OIo7osqkkBs54ivNabXOhTx/DUnMdAdR6LSP
+ aX7Z8+E2yw89shXuuR+Iqdzg++Ks1eJU6dX2+fMoI0g2iATwT6aDTBUe84uXDvRSHoxYI3uAu
+ 4u4tpumvk2pzea/QGcjBU8JvGR1CG/JMBH/pZm9ZaW1E+l1QCkgG7RrT/nASiccyqRBQ59zTO
+ /NNofE1K+/WLDkO88cm14CxzQL2cK/jX1gpp1dRPrhXXjdfeFQwlo0sCZa4rTwhfz2mbQqSG8
+ eb6gmnAA+aBtL6VBCG5H/WH0a1Rqa8LJrLReP6pJ78r6MTfjXg6ATzcrdtspcVTpp2BNHnIz1
+ CyclAsMIR61dXpsQWd9M1NOcfPgP3ot0Ym7W4PWUwleb81UaLtRn34KEbI349bqT7kfnuF6Jv
+ d+pUzMcQI0n+VlftZnALjeYFou+YGg2D776jn84O1cpnTkndL/929PhqcWh/QsHG5+BRkk7xi
+ R+RpTLRIMjWnWtyfLGqBlTXaRqsjoaeuECh5K9vToMvbiyTKSrFax9x3D
 
-On Thu, Nov 14, 2024 at 2:11=E2=80=AFPM Michael Ellerman <mpe@ellerman.id.a=
-u> wrote:
-> ISA support depended on PPC_CHRP which has now been removed, making
-> ISA unselectable, so remove it.
+On 10/27/24 00:01, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 >
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+> commit f76ee892a99e ("omapfb: copy omapdss & displays for omapfb")
+> took a copy of the omapdrm code into omapfb, however at that point
+> a couple of functions were already unused at that point.
+>
+> Remove dispc_mgr_get_clock_div() and dispc_enable_fifomerge() from
+> the omapfb copy.
+>
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>   drivers/video/fbdev/omap2/omapfb/dss/dispc.c | 27 --------------------
+>   drivers/video/fbdev/omap2/omapfb/dss/dss.h   |  3 ---
+>   2 files changed, 30 deletions(-)
 
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+applied.
 
-Gr{oetje,eeting}s,
+Thanks!
+Helge
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
