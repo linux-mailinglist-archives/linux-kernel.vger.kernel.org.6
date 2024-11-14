@@ -1,99 +1,116 @@
-Return-Path: <linux-kernel+bounces-409368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 513569C8BDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:31:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62F0E9C8BD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:30:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F14BD1F22859
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:31:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF20B282BD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC0914287;
-	Thu, 14 Nov 2024 13:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218011FAEF3;
+	Thu, 14 Nov 2024 13:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=itb.spb.ru header.i=@itb.spb.ru header.b="GnJWUYsT"
-Received: from forward100a.mail.yandex.net (forward100a.mail.yandex.net [178.154.239.83])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fX8S5Sdb";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+B1g1otn"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 950D727713;
-	Thu, 14 Nov 2024 13:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE081F892A
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731591034; cv=none; b=FC8Nb8c4P/3OMcGxN/ygjzgUw3cNElFYEpB2LkHvyH9HZNaVP38XoNCteZSEPt6mPi5x5Br48vYP+FwX3zjqJzmoXiz6uk+cfKyW9uqmN8ucPpwIr/tNW0mHh0A+1/XJy6Wd4KMdqkwxFw/LmgVrKe3qXKv4WiMdYm6hPG/OmHs=
+	t=1731591000; cv=none; b=OEEoKJvsuNmf89bYnSzMefgiLDvHbZzs8t8o0FMvei9ToHp+l0rrcS8EB5JMEgvGcnY16GWnzJs1Z3Vf3aoSft8A09Yf6ENICXE2kkoqxHei1ekg1MbcmjMUZBzqLfZwGNFgiy+LOeqStjP/bgLXlxh65wr617wYKhx8KbROYCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731591034; c=relaxed/simple;
-	bh=N+95SUPCDeVezjIvLmSRMt9xtKwLIEKIT8yHmoXsTwE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=s4AHGmKLanP5qObsZJEK6h4Th/TZI3icmKr/PLbMQ48Z1rXJiIihsaDO0HJip5vgC1fKh99OpFl42j3Be74THhHn7Yr4GHHoED/fdTkWuY3+8ITLLy0G41CKoY8tfq7cFf/Od1dyd1SdizYg6EEjBOCrctn2rmrWgIYsUaEuOpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=itb.spb.ru; spf=pass smtp.mailfrom=itb.spb.ru; dkim=pass (1024-bit key) header.d=itb.spb.ru header.i=@itb.spb.ru header.b=GnJWUYsT; arc=none smtp.client-ip=178.154.239.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=itb.spb.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=itb.spb.ru
-Received: from mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net [IPv6:2a02:6b8:c15:2e9d:0:640:5e79:0])
-	by forward100a.mail.yandex.net (Yandex) with ESMTPS id EC13A46D7F;
-	Thu, 14 Nov 2024 16:30:15 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 5UMhj7SOkOs0-Qt1Ry5e6;
-	Thu, 14 Nov 2024 16:30:15 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=itb.spb.ru; s=mail;
-	t=1731591015; bh=gZ0+WktCY4kae80cYlBSDWycDxoMAO9lo1JSMCTl8nY=;
-	h=Message-Id:Date:Cc:Subject:To:From;
-	b=GnJWUYsTIi2Ty+Ei1xGBklJLAaqMyxNKPCViRssH/3GGkgxcVMGTmU9ynFNKUTTPd
-	 /YYkZHGFi9+S1sEhnOjMyjxh7EwlOqBcfxDagaD8T9gostyS9CWZonhTkvsAr+2ZxI
-	 9KS27V6FZ30e2Q9nUseAOo1Bxrak0AhBuYAyX+Lo=
-Authentication-Results: mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net; dkim=pass header.i=@itb.spb.ru
-From: Ivan Stepchenko <sid@itb.spb.ru>
-To: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Ivan Stepchenko <sid@itb.spb.ru>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Artem Bityutskiy <Artem.Bityutskiy@nokia.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	stable@vger.kernel.org
-Subject: [PATCH] mtd: onenand: Fix uninitialized retlen in do_otp_read()
-Date: Thu, 14 Nov 2024 16:29:51 +0300
-Message-Id: <20241114132951.12810-1-sid@itb.spb.ru>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731591000; c=relaxed/simple;
+	bh=fpwH0qlxTUI1SUkfWWAbZyerVOs+Aa1kMRn+YqcxFM8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sImWZGcilxZ+BbBhtSZfdTlgz7jFOJHBsLlN5SYrAF6hyASpKpiwDKz1yTiYwac8VSLWSchQGaLOf+wQdc2ICRexQJya+x7DfE+Q/wpKSRGrh+y8Z+wD+FtWMi28PNqs5ToqyO9f3M52P0XzZTuyLzYq89fR57dGaV0t0Qmrwy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fX8S5Sdb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+B1g1otn; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 14 Nov 2024 14:29:56 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731590997;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fpwH0qlxTUI1SUkfWWAbZyerVOs+Aa1kMRn+YqcxFM8=;
+	b=fX8S5SdbAX9dNqKCns/US9h2DPLksZnd6/b0vFEDn5Da3FUOPsvsrQC7GYSHkPcTIx/0Vu
+	idnpAH+3hE71Je7nouonUgitzskj75xnCdO/0ICql9RZLkxrYEs75f6G78frGAu5TnJd7T
+	Crcj8X1f6J2eoSARdlEHSWuDxoxMKBVhHCVO8RuFK8mhoodlgOWWpHgRq40qxc2XtdIlV+
+	HTnrViDJdGFqawjzpeDWKRQMt4JYEdkeruf3BtI3vi9f6rV1uyDYg4AxjJBEAeQChfvUvI
+	NuVCBHdA9+/5cD5UX5ySxflLtciHZSjkWTZwnfgd9qHZNscxD2JhDB8DId1b7g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731590997;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fpwH0qlxTUI1SUkfWWAbZyerVOs+Aa1kMRn+YqcxFM8=;
+	b=+B1g1otnAu2TOseAY1qA8NMRuawkhGLequANchGtJI02CeofW9/ByKve4/B7Vp6wR7Ol9j
+	cnuXZDzW3ydP7FAg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Huacai Chen <chenhuacai@loongson.cn>, Xuerui Wang <kernel@xen0n.name>,
+	loongarch@lists.linux.dev, Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-rt-devel@lists.linux.dev, Guo Ren <guoren@kernel.org>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] LoongArch: Allow to enable PREEMPT_RT
+Message-ID: <20241114132956.wafcHvaB@linutronix.de>
+References: <20241108091545.4182229-1-chenhuacai@loongson.cn>
+ <20241108091545.4182229-4-chenhuacai@loongson.cn>
+ <20241114103111.5W5ZY0D4@linutronix.de>
+ <CAAhV-H72YSNBGutYPOVi=S7nwLb6YOiQOFqnimAp=9D0wAJc3g@mail.gmail.com>
+ <20241114111409.LWKp5YEg@linutronix.de>
+ <CAAhV-H4ecBZsV+9SxLZ-JFiUK=b3tMqkLZe0djac0_390==MMw@mail.gmail.com>
+ <20241114113018.Ilo9ZsQo@linutronix.de>
+ <CAAhV-H4jDNG8nsW30U9zE1-c6dHwy2fSjy5hkZhpWWu3=og64A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAAhV-H4jDNG8nsW30U9zE1-c6dHwy2fSjy5hkZhpWWu3=og64A@mail.gmail.com>
 
-The function do_otp_read() does not set the output parameter *retlen,
-which is expected to contain the number of bytes actually read.
-As a result, in onenand_otp_walk(), the tmp_retlen variable remains
-uninitialized after calling do_otp_walk() and used to change
-the values of the buf, len and retlen variables.
+On 2024-11-14 19:36:38 [+0800], Huacai Chen wrote:
+> On Thu, Nov 14, 2024 at 7:30=E2=80=AFPM Sebastian Andrzej Siewior
+> <bigeasy@linutronix.de> wrote:
+> >
+> > On 2024-11-14 19:19:26 [+0800], Huacai Chen wrote:
+> > > > > > Why is ntpd/chronyd service affecting this? Is it running at pr=
+io 99?
+> > > > > > Otherwise it should not be noticed.
+> > > > > No, ntpd/chronyd doesn't affect latency. But they may trigger RTC
+> > > > > synchronization every 11 minutes, and RTC synchronization affects
+> > > > > latency. We can keep ntpd/chronyd running but disable RTC
+> > > > > synchronization by configuration, this is the least aggressive me=
+thod.
+> > > >
+> > > > What is "RTC synchronization" in this context?
+> > > Means the sync_hw_clock() function in kernel/time/ntp.c, it can be
+> > > enabled/disabled by chronyd configuration:
+> >
+> > But what exactly is sync_hw_clock() doing that is causing a problem
+> > here? The clock on HW is updated. The access to the RTC clock is
+> > preemptible.
+> This is a platform-specific problem, our RTC driver is
+> drivers/rtc/rtc-loongson.c, the write operation to RTC register is
+> slow.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Ach okay. So the pure read on the slow bus causes a delay because the
+CPU is stalled. That is not limited to chrony but should also have an
+affect if the user uses hwclock to read/ write the time.
 
-Fixes: 49dc08eeda70 ("[MTD] [OneNAND] fix numerous races")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ivan Stepchenko <sid@itb.spb.ru>
----
- drivers/mtd/nand/onenand/onenand_base.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/mtd/nand/onenand/onenand_base.c b/drivers/mtd/nand/onenand/onenand_base.c
-index f66385faf631..0dc2ea4fc857 100644
---- a/drivers/mtd/nand/onenand/onenand_base.c
-+++ b/drivers/mtd/nand/onenand/onenand_base.c
-@@ -2923,6 +2923,7 @@ static int do_otp_read(struct mtd_info *mtd, loff_t from, size_t len,
- 	ret = ONENAND_IS_4KB_PAGE(this) ?
- 		onenand_mlc_read_ops_nolock(mtd, from, &ops) :
- 		onenand_read_ops_nolock(mtd, from, &ops);
-+	*retlen = ops.retlen;
- 
- 	/* Exit OTP access mode */
- 	this->command(mtd, ONENAND_CMD_RESET, 0, 0);
--- 
-2.34.1
-
+> Huacai
+=20
+Sebastian
 
