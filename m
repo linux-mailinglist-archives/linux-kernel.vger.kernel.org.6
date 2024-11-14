@@ -1,148 +1,122 @@
-Return-Path: <linux-kernel+bounces-408752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C86CB9C832A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:29:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0A0C9C832C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:30:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74F261F235DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:29:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05312B24452
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB531EABD6;
-	Thu, 14 Nov 2024 06:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B4E1EBFF0;
+	Thu, 14 Nov 2024 06:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K95cwLb+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="l/m2ar5X"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BA82905;
-	Thu, 14 Nov 2024 06:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DB02905
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 06:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731565786; cv=none; b=NY8U+qIy9be1rt3S56w94lhMGQlK1HqqWeGPqg7l1+olFOCXZpZr64Dckf2a6AhbIvD3k+vRgT0LPNdQ0cntA2qrJ5zVNbw/OV9LLjh7StpfcaQJk4PUQ+yuBD8mybwhOygXxf/GxdvbOd8n4lRzSymqN1ir+aC0CeFOhJZcH14=
+	t=1731565796; cv=none; b=PuV7r5ZLCkW95gHO59e4p/98plsDLvrrKmtLIHKPCPafar00N0JqHiYSc+gqleS9a1qA7d9xlBslhoIXTPQdgOvpZi9ZspAfwismj64mdYWA6nPBu6qFsGqI4YlnXotKEu5osigvVXphtMjO2l+6voV9JtYEQtkikEls9C8knSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731565786; c=relaxed/simple;
-	bh=HcV4NOXXRaOmH5h5Or5rhxXoQDB5R00BKdZbMOnp8lM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=PTaQYz5zthq/rSh8RqV4PVc8yigbsGP9yYwdkxrO+LeMxK6Pa6tMv6Qk6YBa/ArXnUCEZHTaFE9S5DvVb80L1EMc7JGl4ZBXlD+DG7tpFGkBXqRTU2uIAF1S+gyLm2vandRJb/q1ESxT7PxinQGIF2I5ptW3sMaEQoMBkIM+DiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K95cwLb+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7140CC4CECF;
-	Thu, 14 Nov 2024 06:29:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731565786;
-	bh=HcV4NOXXRaOmH5h5Or5rhxXoQDB5R00BKdZbMOnp8lM=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=K95cwLb+p1yYUCN70l8UPvQFpiCisxPnTIjMh2jemhL9Ab8zhgIkm3zJIWe2bGoVk
-	 9cDIIT6+cGfXkya5MmAdOXet1ksg2xg8H1HqZlDDfbBzTcU98/M2TxI37EBPC/Sn3s
-	 1Njp3pwV6Maqvnr8ENr5oZbxppopzKNI8K/8kL9Iplyy8E9xqWyJBEI2uzFRjqzVLu
-	 kclfWWNL5badVUzkjJdNoWZC1javYGGtT0joHtlQeWcUpTi30LayCbHWNKaeJqTffP
-	 SsKIK1yxPbH3nB2GwAEik3kaN6CVXgPtlGqbdeu/qm0Gz1MsyfTm5u0FeGfJM0OLdj
-	 P6+cNON6HRfmg==
-Message-ID: <f0d81b33-486a-4b4a-8c51-9291ec272026@kernel.org>
-Date: Thu, 14 Nov 2024 07:29:40 +0100
+	s=arc-20240116; t=1731565796; c=relaxed/simple;
+	bh=3+namQukeZLx2CV7DlgaX+q4V2zRXwnmPu+JiK8qS+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ChrkrJm/6gYfwuzO2b4YQ8oyj1WWj0yyJgOWDuk7y3YNndjNrTXjWZFsMLqscb3LGqOM5jFc9sl6m1YTPbNhpdW1pnnKVyDHYHeUM4pRpflfcbWt6SBZCKh3Bw2BhhutvSQIsqZHDEkgyet5wWe5/bx4TUznjybYrIBcmOk1HJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=l/m2ar5X; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e91403950dso222199a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 22:29:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1731565794; x=1732170594; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e1U1d47krDEIIdDqbZ0ejinn2L3sss3M6fc+t7cgpMg=;
+        b=l/m2ar5XtOzpZfn8q/ouwrOY51Lv2ELudVY5Lm0xOC+tOEJ9DSaSd04vJdpwUWY0eD
+         TmzC6K4w/U/vFbsa8i5XzmSyzkXC9tT6k4ELz9GejE3NJvIwO67XxapY1B9+FsHmHiUY
+         CIljGFvDMActb9dJDHZDiD6jMDqoJNOLRvELw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731565794; x=1732170594;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e1U1d47krDEIIdDqbZ0ejinn2L3sss3M6fc+t7cgpMg=;
+        b=ayKmRhJ07/Z1R/g5/NeDxMTfsqQvUZFXiKtQjX0Td/jrZFgqZoSUn49fXOhHrvu1cH
+         sJBZ35xtcJPliH1rjxzePqjnSzD0yQyzD0vmvvaj8coQY28IkmlYkeSvV3XQv+ta5URU
+         P8CB6H+g3SajozhboD29kNxSjCgeo1koQZnHoBDzMs+iQtpZAQXHV/D49ZqjNe+BVEyC
+         nhtwLKATRAZA8PRfHjPOJBCCFA/QPW9u0i+VPZTjXgAJJEnBryfR/kcCitUeaSViSGuX
+         u5YCS/b5cYmX8FzF05gAnPKhV7ZxQ2zcuplczF+FbrMBc/OX7ixvhUCbwZF2y3ko6Lue
+         tQgw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3hmC2c39EA7urbXzUl+jjhVK2N8zG86sfp9oX5USDeV9JHr5ZcjXwiXTxGCdZQu6xslYjdx4q/shzGVM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6VxrbeZqmeZq23T0NtVLGL7bi9fSp/dYo18IO4RGp/NwqnjLf
+	QblAwwM+X/RVrSZac01QgEPFeQJWlcXjkfYLGsGVW03L/EzrQzpH/L88bqfAdV8=
+X-Google-Smtp-Source: AGHT+IEwKpd9ZK69/Lrrv6KF9AavgRm3fpHJJ9DYUNlx4ODRs/7h6HAJLacjxS3Wq18rSX5qKX82EQ==
+X-Received: by 2002:a17:90b:2747:b0:2e2:cf5c:8ee3 with SMTP id 98e67ed59e1d1-2e9b17138bcmr33101700a91.10.1731565793945;
+        Wed, 13 Nov 2024 22:29:53 -0800 (PST)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea024a4b49sm635461a91.26.2024.11.13.22.29.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 22:29:53 -0800 (PST)
+Date: Wed, 13 Nov 2024 22:29:50 -0800
+From: Joe Damato <jdamato@fastly.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, pabeni@redhat.com, edumazet@google.com,
+	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
+	mkarsten@uwaterloo.ca, "David S. Miller" <davem@davemloft.net>,
+	open list <linux-kernel@vger.kernel.org>,
+	Mina Almasry <almasrymina@google.com>,
+	Simon Horman <horms@kernel.org>
+Subject: Re: [net v2 0/2] Fix rcu_read_lock issues in netdev-genl
+Message-ID: <ZzWY3iAbgWEDcQzV@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	pabeni@redhat.com, edumazet@google.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, mkarsten@uwaterloo.ca,
+	"David S. Miller" <davem@davemloft.net>,
+	open list <linux-kernel@vger.kernel.org>,
+	Mina Almasry <almasrymina@google.com>,
+	Simon Horman <horms@kernel.org>
+References: <20241113021755.11125-1-jdamato@fastly.com>
+ <20241113184735.28416e41@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/8] serial: sh-sci: Check if TX data was written to
- device in .tx_empty()
-From: Jiri Slaby <jirislaby@kernel.org>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be,
- magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- gregkh@linuxfoundation.org, p.zabel@pengutronix.de, g.liakhovetski@gmx.de,
- lethal@linux-sh.org
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-serial@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org
-References: <20241108100513.2814957-1-claudiu.beznea.uj@bp.renesas.com>
- <20241108100513.2814957-3-claudiu.beznea.uj@bp.renesas.com>
- <530f4a8e-b71a-4db1-a2cc-df1fcfa132ec@kernel.org>
- <3711546e-a551-4cc9-a378-17aab5b426ef@tuxon.dev>
- <b3f67cd7-056a-43c2-98dc-e983649124ed@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <b3f67cd7-056a-43c2-98dc-e983649124ed@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241113184735.28416e41@kernel.org>
 
-On 14. 11. 24, 7:26, Jiri Slaby wrote:
->>>> --- a/drivers/tty/serial/sh-sci.c
->>>> +++ b/drivers/tty/serial/sh-sci.c
->>>> @@ -157,6 +157,7 @@ struct sci_port {
->>>>          bool has_rtscts;
->>>>        bool autorts;
->>>> +    bool first_time_tx;
->>>
->>> This is a misnomer. It suggests to be set only during the first TX.
->>
->> I chose this naming as this was the scenario I discovered it didn't work.
->> Reproducible though these steps:
->>
->> 1/ open the serial device (w/o running any TX/RX)
->> 2/ call tx_empty()
->>
->> What
->>> about ::did_tx, ::performed_tx, ::transmitted, or alike?
->>
->> I have nothing against any of these. Can you please let me know if you 
->> have
->> a preferred one?
+On Wed, Nov 13, 2024 at 06:47:35PM -0800, Jakub Kicinski wrote:
+> On Wed, 13 Nov 2024 02:17:50 +0000 Joe Damato wrote:
+> > base-commit: a58f00ed24b849d449f7134fd5d86f07090fe2f5
 > 
-> No, you choose, or invent even better one :). Or let AI do it for you.
+> which is a net-next commit.. please rebase on net
 
-FWIW both gemini and chatgpt answered by "tx_occurred" to my question. 
-Which I like the most, perhaps.
+I thought I asked about this in the previous thread, but I probably
+wasn't clear with my question.
 
--- 
-js
-suse labs
+Let me try again:
 
+Patch 1 will apply to net and is a fixes and CC's stable, and fixes
+a similar issue to the one Paolo reported, not the exact same path,
+though.
+
+Patch 2 will not apply to net, because the code it fixes is not in
+net yet. This fixes the splat Paolo reported.
+
+So... back to the question in the cover letter from the RFC :) I
+suppose the right thing to do is split the series:
+
+- Rebase patch 1 on net (it applies as is) and send it on its own
+- Send patch 2 on its own against net-next
+
+Or... something else ?
 
