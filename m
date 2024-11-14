@@ -1,166 +1,135 @@
-Return-Path: <linux-kernel+bounces-409433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ABF59C8CA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:16:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0D369C8D61
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:54:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FAF0286A9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:16:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CF5FB34982
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A1628E0F;
-	Thu, 14 Nov 2024 14:16:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA70552F71;
+	Thu, 14 Nov 2024 14:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LZSWk4VW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="uv7fAzsB"
+Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEBF2BAEF;
-	Thu, 14 Nov 2024 14:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A2ABE4E;
+	Thu, 14 Nov 2024 14:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.142.107.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731593794; cv=none; b=XBxb45PJNraCYafJZ5Ch35F81jY2Q5yvtD+EKKVyBbml2jabhl2gKPzzxSmS/7kuJDQhH1DJzPBcSrwDoekGzjkhoqQinXp7pjIC9QkMrBzd+xf8MA0PyThKwXQ/SbxR6g+rih8SQ8E4kND8Mih86Xg+Nq1vwg9bP+mfL+QnoFs=
+	t=1731595455; cv=none; b=FIYh7j6eiSRIzbjFNFJK6XzVEziNRvAmM3gLW5WieeYDnbifxlB9mkbn7iz9+cif+kRxBoABcgrHL5w333WerQFuYqpI4sprC5iMxWm7wF25XEAq7l9OgZv4GjwiPei3+iZIz817CHfYa4yh7gibOtrm+EeCYxgkIuQtucR6P3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731593794; c=relaxed/simple;
-	bh=8sAvdc8wyZI/7KPkZZEqmG8oX49PlB533Ukf6K+rw7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QptXBgBkmAqpajbm4EGlfULcYQlL3tTbbwYcoc3+dV0Mx3ebHfcS2vThUYW9jNqJZetpRsaPWkpYpbuvqDikgpoCpEwkXPLRCb8MgoUPUlHAhdxhle8HPrFYTnwYPnPboDQE9LAAquHoM3Dt/Q6eL6KJmQjwVXfwhoxCbD5tTjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LZSWk4VW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A08C6C4CECD;
-	Thu, 14 Nov 2024 14:16:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731593794;
-	bh=8sAvdc8wyZI/7KPkZZEqmG8oX49PlB533Ukf6K+rw7U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LZSWk4VWBVDlTHt4IovWDbPZvgaK4OS9qiEbhAk0QiISiaL4sSKbEbsoV7PsWrACr
-	 5jZU4pV+Wr6VDJF1V7DqJXknMoUsepOwn5Qk9Ykw5JT16tET7ALaDBfXaflMP5v0RD
-	 kZzNqf2N3xEmKrdVyIdoRXe4AmQO4vMb1hO6Etnv3YEwcqqSSzbORrQU/onV6njPxC
-	 pl7UALeEq+rLW0Sysx6O2osbp/wFebs5wt1EyzHSLwgMBa0jw843ez7oCr9JyJnJNs
-	 pcgrM/oujABLsPpJT5SVzaq092P6wvfeC9z2rQDN/7sYzD93SInD5oQdDiH/N918Iu
-	 rj02ctprzKzEQ==
-Date: Thu, 14 Nov 2024 15:16:28 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Erin Shepherd <erin.shepherd@e43.eu>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
-	linux-nfs@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] exportfs: allow fs to disable CAP_DAC_READ_SEARCH
- check
-Message-ID: <20241114-stuhl-verzaubern-0a3c711b221d@brauner>
-References: <20241113-pidfs_fh-v2-0-9a4d28155a37@e43.eu>
- <20241113-pidfs_fh-v2-2-9a4d28155a37@e43.eu>
- <CAOQ4uxgoT34WXFYncvPCZHwd2y3viaXjR=j08jM9c3x20Ar8Tg@mail.gmail.com>
+	s=arc-20240116; t=1731595455; c=relaxed/simple;
+	bh=H26batorxnoteqtdxYvUboB7FXUbMXYcOI3+nM9Jh9A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XDGzOENRTkFRHfT7nWMNBL6ZAGVorcNM9Fw1WOUCJpem8v69LJI/tmZYJTjV4WLzXrnxy9dBcHI104w3KJ9uezhSDvpWIPSTLF9E+6XA6yAsgcg2lvNZRyUxpCtCXSiVOPVvP+dptu4pHyP77DZM2XR6f///UNF6gIZGdNU7ouo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=uv7fAzsB; arc=none smtp.client-ip=98.142.107.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=GvJVT0/8Ca07L9DqPxv/ELgHwX51Qb7YdXz5v3dpySA=; b=uv7fAzsBMLTfPTnSPV1M3oK2fq
+	+FnrPhAr+DlgN2TriqhFirgWtmPUaSJy6u2y3jWwBHToD0wbe7ct/71YMZggBFv7H3IGkjzUZa3Jw
+	PRx+MgyXhWJQMmrMhc349/KXysoX0pPRGjnwSRlZXMSuwOJwIMvo4xDL5SzQeai68WiFk7JPasU82
+	9rsRlH9GrzsKYPhh262fl11HdrzSZ+p6bJ4OboC7irEC5BZxlgK6t8Umul5UWL+3DdI0KinQ4hlfW
+	e2q+alH2/MZ4ty2JdJ0ToOYGOiZ18Q+36txWJZj9KNbrM/t3FL9Qn8nF8ZC6Wa3z/2fc99uYc30ll
+	UtG1B9dA==;
+Received: from ip98-183-112-25.ok.ok.cox.net ([98.183.112.25]:52448 helo=[192.168.0.142])
+	by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <david@lechnology.com>)
+	id 1tBain-0006Yj-0s;
+	Thu, 14 Nov 2024 09:18:30 -0500
+Message-ID: <bd18152e-4435-4afb-80b9-22686af8f9fc@lechnology.com>
+Date: Thu, 14 Nov 2024 08:18:28 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxgoT34WXFYncvPCZHwd2y3viaXjR=j08jM9c3x20Ar8Tg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: davinci: Add NULL check in davinci_lpsc_clk_register
+To: Charles Han <hanchunchao@inspur.com>, mturquette@baylibre.com,
+ sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241114091422.75412-1-hanchunchao@inspur.com>
+Content-Language: en-US
+From: David Lechner <david@lechnology.com>
+Autocrypt: addr=david@lechnology.com; keydata=
+ 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
+In-Reply-To: <20241114091422.75412-1-hanchunchao@inspur.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Thu, Nov 14, 2024 at 07:37:19AM +0100, Amir Goldstein wrote:
-> On Wed, Nov 13, 2024 at 8:11 PM Erin Shepherd <erin.shepherd@e43.eu> wrote:
-> >
-> > For pidfs, there is no reason to restrict file handle decoding by
-> > CAP_DAC_READ_SEARCH. Introduce an export_ops flag that can indicate
-> > this
-> >
-> > Signed-off-by: Erin Shepherd <erin.shepherd@e43.eu>
-> > ---
-> >  fs/fhandle.c             | 36 +++++++++++++++++++++---------------
-> >  include/linux/exportfs.h |  3 +++
-> >  2 files changed, 24 insertions(+), 15 deletions(-)
-> >
-> > diff --git a/fs/fhandle.c b/fs/fhandle.c
-> > index 82df28d45cd70a7df525f50bbb398d646110cd99..056116e58f43983bc7bb86da170fb554c7a2fac7 100644
-> > --- a/fs/fhandle.c
-> > +++ b/fs/fhandle.c
-> > @@ -235,26 +235,32 @@ static int do_handle_to_path(struct file_handle *handle, struct path *path,
-> >         return 0;
-> >  }
-> >
-> > -/*
-> > - * Allow relaxed permissions of file handles if the caller has the
-> > - * ability to mount the filesystem or create a bind-mount of the
-> > - * provided @mountdirfd.
-> > - *
-> > - * In both cases the caller may be able to get an unobstructed way to
-> > - * the encoded file handle. If the caller is only able to create a
-> > - * bind-mount we need to verify that there are no locked mounts on top
-> > - * of it that could prevent us from getting to the encoded file.
-> > - *
-> > - * In principle, locked mounts can prevent the caller from mounting the
-> > - * filesystem but that only applies to procfs and sysfs neither of which
-> > - * support decoding file handles.
-> > - */
-> >  static inline bool may_decode_fh(struct handle_to_path_ctx *ctx,
-> >                                  unsigned int o_flags)
-> >  {
-> >         struct path *root = &ctx->root;
-> > +       struct export_operations *nop = root->mnt->mnt_sb->s_export_op;
-> > +
-> > +       if (nop && nop->flags & EXPORT_OP_UNRESTRICTED_OPEN)
-> > +               return true;
-> > +
-> > +       if (capable(CAP_DAC_READ_SEARCH))
-> > +               return true;
-> >
-> >         /*
-> > +        * Allow relaxed permissions of file handles if the caller has the
-> > +        * ability to mount the filesystem or create a bind-mount of the
-> > +        * provided @mountdirfd.
-> > +        *
-> > +        * In both cases the caller may be able to get an unobstructed way to
-> > +        * the encoded file handle. If the caller is only able to create a
-> > +        * bind-mount we need to verify that there are no locked mounts on top
-> > +        * of it that could prevent us from getting to the encoded file.
-> > +        *
-> > +        * In principle, locked mounts can prevent the caller from mounting the
-> > +        * filesystem but that only applies to procfs and sysfs neither of which
-> > +        * support decoding file handles.
-> > +        *
-> >          * Restrict to O_DIRECTORY to provide a deterministic API that avoids a
-> >          * confusing api in the face of disconnected non-dir dentries.
-> >          *
-> > @@ -293,7 +299,7 @@ static int handle_to_path(int mountdirfd, struct file_handle __user *ufh,
-> >         if (retval)
-> >                 goto out_err;
-> >
-> > -       if (!capable(CAP_DAC_READ_SEARCH) && !may_decode_fh(&ctx, o_flags)) {
-> > +       if (!may_decode_fh(&ctx, o_flags)) {
-> >                 retval = -EPERM;
-> >                 goto out_path;
-> >         }
-> > diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
-> > index 893a1d21dc1c4abc7e52325d7a4cf0adb407f039..459508b53e77ed0597cee217ffe3d82cc7cc11a4 100644
-> > --- a/include/linux/exportfs.h
-> > +++ b/include/linux/exportfs.h
-> > @@ -247,6 +247,9 @@ struct export_operations {
-> >                                                 */
-> >  #define EXPORT_OP_FLUSH_ON_CLOSE       (0x20) /* fs flushes file data on close */
-> >  #define EXPORT_OP_ASYNC_LOCK           (0x40) /* fs can do async lock request */
-> > +#define EXPORT_OP_UNRESTRICTED_OPEN    (0x80) /* FS allows open_by_handle_at
-> > +                                                 without CAP_DAC_READ_SEARCH
-> > +                                               */
+On 11/14/24 3:14 AM, Charles Han wrote:
+> devm_kasprintf() can return a NULL pointer on failure,but this
+> returned value in davinci_lpsc_clk_register() is not checked.
+> Add NULL check in davinci_lpsc_clk_register(), to handle kernel NULL
+> pointer dereference error.
 > 
-> Don't love the name, but I wonder, isn't SB_NOUSER already a good
-> enough indication that CAP_DAC_READ_SEARCH is irrelevant?
-> 
-> Essentially, mnt_fd is the user's proof that they can access the mount
-> and CAP_DAC_READ_SEARCH is the legacy "proof" that the user can
-> reach from mount the inode by path lookup.
-> 
-> Which reminds me, what is the mnt_fd expected for opening a pidfd
-> file by handle?
+> Fixes: c6ed4d734bc7 ("clk: davinci: New driver for davinci PSC clocks")
+> Signed-off-by: Charles Han <hanchunchao@inspur.com>
+> ---
 
-int pidfd_self = pidfd_open(getpid(), 0);
-open_by_handle_at(pidfd_self, ...);
+Reviewed-by: David Lechner <david@lechnology.com>
 
-is sufficient.
 
