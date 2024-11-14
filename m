@@ -1,167 +1,164 @@
-Return-Path: <linux-kernel+bounces-408941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 893499C8560
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:57:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92B589C8563
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:58:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E44B2841CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:57:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5799428422A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:58:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D921F7798;
-	Thu, 14 Nov 2024 08:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45C11F76AB;
+	Thu, 14 Nov 2024 08:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CPRL1XK1"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bfxawefe"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462331F76C2;
-	Thu, 14 Nov 2024 08:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E803E573
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731574578; cv=none; b=FZ++r7ZHL+dvNt9ZcVOXYKWv94kWDg+cqmQ05HLYEU7Q50rFBT+QSnCdpg5PFC/6FhHIkbwPIu/2ga+y+nr0V8XIuHwycOKYkoJr/RU0H8P4Kg86EDU+bkpnVs+Djfy684tkWVNdPQnea/iCs+ELuwQpUtyl6a7cG96AvLiHiVs=
+	t=1731574674; cv=none; b=WlavO1+6Y3WUcW5UIS5YGVnX055qbiyU+dUuBAFlKxdbqhzv0p7fAnJSlUeGxuh8jK7EYLx+ev7UoVztYHyhMSlVgZiuAa2L7/8GFvzLk4TXTHYFhZW4LMQlrZDBVpZGWqz1/y9/hB2CrVzhzos5yaGwRRc5j6R9XnB2VUaU4wI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731574578; c=relaxed/simple;
-	bh=+Kcks4+MoH1dGgJVxVViGL1/8SgAheSksGOdFZwz/lQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f2F0fgktQAZK6sgUsNRr9rABovboIoyQ3JGlKX75qzJPFDkiLuVZogzZ4lEh7bvQaqvVlIfNDLUJN/OmXD7qA+NmQttp6VBtfoJ7XwwtrijNiUgHX0FC9uvA8o2CoAdCwu4PsX/v8+qvJuQ+TeXc3m9opsUUW88Lc5RSdIW98LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CPRL1XK1; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6d3e9e854b8so4656916d6.1;
-        Thu, 14 Nov 2024 00:56:16 -0800 (PST)
+	s=arc-20240116; t=1731574674; c=relaxed/simple;
+	bh=rwLTIjTp1zdqDObkdY+d+liJFZYYxTRT5NDlHebd/78=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CQ3hSlPwTewFlbbpe6+oiuP2ieuGqRrtmpdgduBCzXytWlhP+w0oSR2DTm5fz9PFsFEQBKImU7mxShINRSTVSMXIGZ38i+nMDhNLRkrXptaVvLHeGPqGdhVqbb/qfAokdlXyO7wRro1EVudvIR8qrMjyEIxhZXaAPUtZ+eOu0AU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bfxawefe; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5cefa22e9d5so382707a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 00:57:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731574576; x=1732179376; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fka0qAiq0GtAsXHDcKvajqGKTaUu1AUnphiVt3sPZ0I=;
-        b=CPRL1XK1IoLh78FySDk4K+zHFmm39awbgnJhbHv7Wm1GdNkEcCoUMDq+l5H2dK8KQr
-         UvTFLO3yqToJyitAbcrfvacQkSMqvCBtF0az8f/KbdB7FFI/tsfgAzMKoo1VNeG+bbA2
-         scIxS5lMJ8BkepxpOUPXkWJX8OC07j1n6P1vJvD7n+l//H2FGc44MX7Uz96dWYwpjilt
-         xRkfPvSlnH16P8zlpTdeQqGA5IgANI+1/40W/hO4Be92ZEDavg5n+lcxCnbK6Ds7rLn1
-         zS2op7wYSn3hqCZ5L8Uo39BmTmH+Tfj9bWU9mPJFlAoQ8gGK+4CjwkLI0ePdvAIe3jua
-         m+zw==
+        d=linaro.org; s=google; t=1731574671; x=1732179471; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=RbQDz8bnzrpIu+TOHQPeiD1K6+1spFdelZENd64veIQ=;
+        b=bfxawefeF30w9s1W7pRUK/qIJVAq05mkWYpwHirM3jPRa/QQ7l1iMhO3fGlQ48xUIc
+         j54EM+ONN830Frw3Rq/adKAgo15mNtQu821YSX7RI1GuLxsAXAxh/JcIJITGiKjfiTrQ
+         fY7tza8b1J7ntonSJSfzNPDCg1DUmueG0VJR1Wa+0C8r/ce/Lc9xLD07gNV91TauG9P5
+         uJiqm/vNAMFKdZnWBzOSXs7gT4G9B1SvAKoon5Ko60O9UnPwP7SBO9A3igwPDfKf8aTN
+         xrskXxTSxIRWiX+iuxLL53BG6JqeFOlFb0gQUvW4Nee0+4as6Eeb2wRyupG73GGmzUut
+         RYyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731574576; x=1732179376;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fka0qAiq0GtAsXHDcKvajqGKTaUu1AUnphiVt3sPZ0I=;
-        b=IUIDeNz/1k6b/zpJHDR/TeFixZqnQXJHtXm313sLV+FxuFPdg5lgIgZoTm8mohR9gS
-         8xpeWNSTgaFf+NVCHp05L9HQtqiz6KjE+s9ABdvM+jHEWz631oCffayc7WGPczNkJ4v1
-         /74CQMj0PR0r2XYKGpePEQ986LOoN50tJs9/ztlMmLtctMJyVUCKdwUz0LzwcjNGVi93
-         U6jf0j8sJW1EUoKgsbM4ov3sxvvgQRIbXxnWnv856bNAOvbAoeYuf5gRnandkzkd//Jc
-         SVCpBF/Qjs7/js3pOyywFRPnmsbWMffHmHGXO0p0/PH2aPnO7p9jAn6E4gB4nPRl70HT
-         AV7g==
-X-Forwarded-Encrypted: i=1; AJvYcCV4wYMX/tXaA8D2YAQdJ3iBm31KVm8QuYc2n4xboKkweAZs8j5IT9e7z5oRKgG5XmaipSgYJmzpavBRPcvm@vger.kernel.org, AJvYcCVUq4j569PaRPE1ZXK5quJCPKMYzheUEPkm2kVVd5IAzHExCKIGjthH80X92I91x95riQC6UMc+3OjMzWue@vger.kernel.org, AJvYcCWNzaZRaVooWXyLKIfmqr5mqHBUTA9Z5ZNqGV5KAmq2LgmHPa6YpIOLK9W67Ht2jnnp1LKq9UOrT9CL0/ipsg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl7L9cMDHeJaCOMGuO9RxuwtG6vFYmNY2t3ovFBkWInzKbeHT7
-	B18Xb05iTQSM96rgoIi3/dZoJ4ed7I1OW9c9WmJ1xRFOH150TnmK9YV1tljkUu/u5EHmlQooX8o
-	932CxLzAf5PXwt6e32DWAkjOhZiM=
-X-Google-Smtp-Source: AGHT+IG8hDvpof60JZ2Ge/zGIiukxyq1BC4BuxYDCknzlwMwZ31CgP6PQwy9cyUjAN8fUmeH7M5Z2FDboGBy84qXMik=
-X-Received: by 2002:a05:6214:450e:b0:6ce:26d0:c7cd with SMTP id
- 6a1803df08f44-6d3e8fb7fa6mr39405556d6.2.1731574575934; Thu, 14 Nov 2024
- 00:56:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731574671; x=1732179471;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RbQDz8bnzrpIu+TOHQPeiD1K6+1spFdelZENd64veIQ=;
+        b=OzwqKWszfuw6HadEtsgjinWpXtbe795SpACSXYy2DvgeLrhMK+yfn025YOTi3dbecT
+         4vJN9vsbwBMjexOdz2oS50mWAqunptWQRh7fQkXQFYsLEF4IQ8JisT1+5+4BJiaiVLcE
+         +khY0g88oDGquQf8W0DJbyQG0bMnDaZQxTJT3a+3CHY+p7OOEe2OOBA8CVPM05uekHoK
+         eqSbOM216b8IzPByncrEqqp5WYy8B0AD5Vgj7+/hTnghDxFeAxwyE77truVOR01PFBPv
+         l9INLnEd77PMSkkIUtDEhJNxttlyhMIahpNBos7J7GxQw0QeBS435YbYeLZvbvYBRxy8
+         yDHw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrFmfRomNdeUsDzlIKMQ1L38qTbBeEEHB3T9PQaa2irbG6zyF2eDfhFP/yztsUj+OD37pufpRhW1YBOoc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYmAWGp3mZAvYmRHbQJjuszbJDsrBDbeR/utz3FPGipXb8DIJ3
+	PDmVZ6LpWVOpmi81IktUONFIEcaN0uf80/js1amTFwT3boeE5WkTCPvBTt6jLl0=
+X-Google-Smtp-Source: AGHT+IF+lgQLdO4dE5if0pVOm/wKl9mRYOB+40nEsOkzxOGa7AvqMKFsDRtr86qysSD1D/s8l9jt6Q==
+X-Received: by 2002:a05:6402:2355:b0:5c9:8a75:a707 with SMTP id 4fb4d7f45d1cf-5cf0a306754mr17336067a12.2.1731574670997;
+        Thu, 14 Nov 2024 00:57:50 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf79c0ad33sm355356a12.65.2024.11.14.00.57.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 00:57:50 -0800 (PST)
+Date: Thu, 14 Nov 2024 11:57:47 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Su Hui <suhui@nfschina.com>
+Cc: stuyoder@gmail.com, laurentiu.tudor@nxp.com, nathan@kernel.org,
+	ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
+	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] bus: fsl-mc:  Fix the double free in fsl_mc_device_add()
+Message-ID: <b767348e-d89c-416e-acea-1ebbff3bea20@stanley.mountain>
+References: <20241114082751.3475110-1-suhui@nfschina.com>
+ <656ca826-cb81-4b46-8e15-ec0b1044db8d@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107005720.901335-1-vinicius.gomes@intel.com>
- <20241107005720.901335-5-vinicius.gomes@intel.com> <CAOQ4uxgHwmAa4K3ca7i1G2gFQ1WBge855R19hgEk7BNy+EBqfg@mail.gmail.com>
- <87ldxnrkxw.fsf@intel.com>
-In-Reply-To: <87ldxnrkxw.fsf@intel.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 14 Nov 2024 09:56:04 +0100
-Message-ID: <CAOQ4uxguV9SkFihaCcyk1tADNJs4gb8wrA7J3SVYaNnzGhLusw@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] ovl: Optimize override/revert creds
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Cc: brauner@kernel.org, miklos@szeredi.hu, hu1.chen@intel.com, 
-	malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com, 
-	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <656ca826-cb81-4b46-8e15-ec0b1044db8d@stanley.mountain>
 
-On Wed, Nov 13, 2024 at 8:30=E2=80=AFPM Vinicius Costa Gomes
-<vinicius.gomes@intel.com> wrote:
->
-> Amir Goldstein <amir73il@gmail.com> writes:
->
-> > On Thu, Nov 7, 2024 at 1:57=E2=80=AFAM Vinicius Costa Gomes
-> > <vinicius.gomes@intel.com> wrote:
->
-> [...]
->
-> >
-> > Vinicius,
-> >
-> > While testing fanotify with LTP tests (some are using overlayfs),
-> > kmemleak consistently reports the problems below.
-> >
-> > Can you see the bug, because I don't see it.
-> > Maybe it is a false positive...
->
-> Hm, if the leak wasn't there before and we didn't touch anything related =
-to
-> prepare_creds(), I think that points to the leak being real.
->
-> But I see your point, still not seeing it.
->
-> This code should be equivalent to the code we have now (just boot
-> tested):
->
-> ----
-> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> index 136a2c7fb9e5..7ebc2fd3097a 100644
-> --- a/fs/overlayfs/dir.c
-> +++ b/fs/overlayfs/dir.c
-> @@ -576,8 +576,7 @@ static int ovl_setup_cred_for_create(struct dentry *d=
-entry, struct inode *inode,
->          * We must be called with creator creds already, otherwise we ris=
-k
->          * leaking creds.
->          */
-> -       WARN_ON_ONCE(override_creds(override_cred) !=3D ovl_creds(dentry-=
->d_sb));
-> -       put_cred(override_cred);
-> +       WARN_ON_ONCE(override_creds_light(override_cred) !=3D ovl_creds(d=
-entry->d_sb));
->
->         return 0;
->  }
-> ----
->
-> Does it change anything? (I wouldn't think so, just to try something)
+On Thu, Nov 14, 2024 at 11:41:25AM +0300, Dan Carpenter wrote:
+> On Thu, Nov 14, 2024 at 04:27:52PM +0800, Su Hui wrote:
+> > Clang static checker(scan-build) warning：
+> > drivers/bus/fsl-mc/fsl-mc-bus.c: line 909, column 2
+> > Attempt to free released memory.
+> > 
+> > When 'obj_desc->type' == "dprc" and begin to free 'mc_bus' and 'mc_dev',
+> > there is a double free problem because of 'mc_dev = &mc_bus->mc_dev'.
+> > Add a judgment to fix this problem.
+> > 
+> > Fixes: a042fbed0290 ("staging: fsl-mc: simplify couple of deallocations")
+> > Signed-off-by: Su Hui <suhui@nfschina.com>
+> > ---
+> >  drivers/bus/fsl-mc/fsl-mc-bus.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bus.c
+> > index 930d8a3ba722..8d2d5d3cc782 100644
+> > --- a/drivers/bus/fsl-mc/fsl-mc-bus.c
+> > +++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
+> > @@ -905,8 +905,10 @@ int fsl_mc_device_add(struct fsl_mc_obj_desc *obj_desc,
+> >  
+> >  error_cleanup_dev:
+> >  	kfree(mc_dev->regions);
+> > -	kfree(mc_bus);
+> > -	kfree(mc_dev);
+> > +	if (strcmp(mc_dev->obj_desc.type, "dprc") == 0)
+> 
+> This works, but it would probably be nicer to write this as:
+> 
+> 	if (is_fsl_mc_bus_dprc(mc_dev))
+> 		kfree(mc_bus);
+> 	else
+> 		kfree(mc_dev);
+> 
+> That way it would match the release function.
 
-No, but I think this does:
+   820          mc_dev->dev.release = fsl_mc_device_release;
 
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -576,7 +576,8 @@ static int ovl_setup_cred_for_create(struct dentry
-*dentry, struct inode *inode,
-         * We must be called with creator creds already, otherwise we risk
-         * leaking creds.
-         */
--       WARN_ON_ONCE(override_creds(override_cred) !=3D ovl_creds(dentry->d=
-_sb));
-+       old_cred =3D override_creds(override_cred);
-+       WARN_ON_ONCE(old_cred !=3D ovl_creds(dentry->d_sb));
-        put_cred(override_cred);
+	[ snip ]
 
-        return 0;
+   891           * The device-specific probe callback will get invoked by device_add()
+   892           */
+   893          error = device_add(&mc_dev->dev);
+   894          if (error < 0) {
+   895                  dev_err(parent_dev,
+   896                          "device_add() failed for device %s: %d\n",
+   897                          dev_name(&mc_dev->dev), error);
+   898                  goto error_cleanup_dev;
 
-Compiler optimized out override_creds(override_cred)? :-/
+I don't think this goto is correct.  I think fsl_mc_device_release() will be
+called automaticall on this path so the goto is a double free.
 
-However, this is not enough.
+   899          }
+   900  
+   901          dev_dbg(parent_dev, "added %s\n", dev_name(&mc_dev->dev));
+   902  
+   903          *new_mc_dev = mc_dev;
+   904          return 0;
+   905  
+   906  error_cleanup_dev:
+   907          kfree(mc_dev->regions);
+   908          if (is_fsl_mc_bus_dprc(mc_dev))
+   909                  kfree(mc_bus);
+   910          else
+   911                  kfree(mc_dev);
+   912  
+   913          return error;
+   914  }
 
-Dropping the ref of the new creds is going to drop the refcount to zero,
-so that is incorrect, we need to return the reference to the new creds
-explicitly to the callers. I will send a patch.
+regards,
+dan carpenter
 
-Thanks,
-Amir.
 
