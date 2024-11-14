@@ -1,118 +1,129 @@
-Return-Path: <linux-kernel+bounces-409223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBD779C8928
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:43:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F80F9C892F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:45:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 811ED284766
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:43:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7E5A284897
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9691F9400;
-	Thu, 14 Nov 2024 11:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DJ4Ssf5B"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0061F9A91;
+	Thu, 14 Nov 2024 11:45:17 +0000 (UTC)
+Received: from smtp-out.kfki.hu (smtp-out.kfki.hu [148.6.0.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964861F8185
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE7918C02F;
+	Thu, 14 Nov 2024 11:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.6.0.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731584596; cv=none; b=PdT9scrmxTnweCXR6z1klp2JyznAdYR/b86GCAJ2/TlxtAAhfGvhsMQ7sU6HBW+y3ZoOTLxdXjTYkL4YIxHMRslFEeF82vy5VONkEC7uacGzE2GUyjmG/9b79ALsKU8cX9U88dLV4qtUcgUsB+35VTW6AYNkztV7fWLfR/pmCuk=
+	t=1731584717; cv=none; b=TKg9cmy33Xg+qVu2xz4Rs0p5fzg7n64U8MzR8E6TEIwoDx9NiwdWpyPtm2xpZKrU2X3vR23I0bhWq4BK0LdiEaWYxQE/VAktCIUvA0qdmk7WwcpvV96fr95PDFlv3JgBBHDe5/DwmPkN4grJmq1fanW3TodqcdiOB5gG+nylejo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731584596; c=relaxed/simple;
-	bh=c7GXOwm87U/RMLNgN05PsYW204x5lYucKz/+G29oHIs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nvNEQ/s2Qv/KJfc+kL9sJyvhylzEmRA4yVZBIMO5T4OXyloxVwZVSelVn4qaL9lmOYu+WlPeLmnE+3Ou9jpUDdvkxcTp3JywxsKfMDxiEOmxfJoTM6lQSKtwNc5fDTuX2yaCXtwSkP9Ddrc2KKsA4rgOKs8Zxr6Kyqdh+ZHpzZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DJ4Ssf5B; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=KTGkrkiAlgVGT3mBdVTPJiuKbHOp6dm+tc/6MjUAEr0=; b=DJ4Ssf5B34n8C3rJ9KhSUbmu2N
-	HWU9Sh3WliCmHefC2EiFxat0Q+rAcA4ChLDo2QpPXnpXIAv9jj5n8GdSxEWGZHCvQ7pGbllQbP1cu
-	zi+n5wZ3RM/0lgVp/xA4bGdSfzJbnWkfOOrPoGwPuNAQdBmBn0cUBHVOSGS/9Ea7ugMN2zVetzVVO
-	ksJzlAXNB94zYhHArG2DOZpyZNgdR3pvBqETwq91pAp1valBjdeZ1D70e2vWIKXuNF6kRoFPBuKEJ
-	V9VfUDDAWAmzMNUB5HeeW5z4EbmHsZpsTq12oYXAtuCVaYHFxyCiwh6+C5Ffj6By2tHwi/2t+cqvJ
-	FaTus+7g==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tBYFh-00000000fFd-2uhE;
-	Thu, 14 Nov 2024 11:43:09 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 5BAAE300472; Thu, 14 Nov 2024 12:43:09 +0100 (CET)
-Date: Thu, 14 Nov 2024 12:43:09 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Rik van Riel <riel@surriel.com>
-Cc: Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
-	dave.hansen@linux.intel.com, luto@kernel.org, tglx@linutronix.de,
-	mingo@redhat.com, x86@kernel.org, kernel-team@meta.com,
-	hpa@zytor.com, bigeasy@linutronix.de
-Subject: Re: [PATCh 0/3] x86,tlb: context switch optimizations
-Message-ID: <20241114114309.GF38972@noisy.programming.kicks-ass.net>
-References: <20241109003727.3958374-1-riel@surriel.com>
- <20241113095550.GBZzR3pg-RhJKPDazS@fat_crate.local>
- <20241113095557.2d60a073@imladris.surriel.com>
- <20241114113617.GO6497@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1731584717; c=relaxed/simple;
+	bh=bnUVSsfKIRxnPADJrEdSRzBo/u/NdOCZ9jbg111mOBA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=cf+Ym2L6uZyQhQAYGQdVTOd+XRj3eCRGgwYHCabpb7DCXv6q2SO4GV5elIyVUjFnYzg5+gtOzxDy2MwFNC0A97QqenUIR5ruLqwpMTZnch6iu+dchjBuLkj07LQmjlFo46KQDKMDQtjO9LmrsLqm0W+wZQHf5uNJ4ewYbyq2lJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; arc=none smtp.client-ip=148.6.0.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
+Received: from localhost (localhost [127.0.0.1])
+	by smtp2.kfki.hu (Postfix) with ESMTP id 1FCAC32E01C3;
+	Thu, 14 Nov 2024 12:45:05 +0100 (CET)
+X-Virus-Scanned: Debian amavis at smtp2.kfki.hu
+Received: from smtp2.kfki.hu ([127.0.0.1])
+ by localhost (smtp2.kfki.hu [127.0.0.1]) (amavis, port 10026) with ESMTP
+ id hI9TfCIXrCvY; Thu, 14 Nov 2024 12:45:03 +0100 (CET)
+Received: from mentat.rmki.kfki.hu (254C26AF.nat.pool.telekom.hu [37.76.38.175])
+	(Authenticated sender: kadlecsik.jozsef@wigner.hu)
+	by smtp2.kfki.hu (Postfix) with ESMTPSA id B51AC32E01B7;
+	Thu, 14 Nov 2024 12:45:02 +0100 (CET)
+Received: by mentat.rmki.kfki.hu (Postfix, from userid 1000)
+	id CDDAD1428CC; Thu, 14 Nov 2024 12:45:01 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by mentat.rmki.kfki.hu (Postfix) with ESMTP id CB601142175;
+	Thu, 14 Nov 2024 12:45:01 +0100 (CET)
+Date: Thu, 14 Nov 2024 12:45:01 +0100 (CET)
+From: Jozsef Kadlecsik <kadlec@netfilter.org>
+To: Jeongjun Park <aha310510@gmail.com>
+cc: Pablo Neira Ayuso <pablo@netfilter.org>, 
+    David Miller <davem@davemloft.net>, edumazet@google.com, kuba@kernel.org, 
+    pabeni@redhat.com, horms@kernel.org, Patrick McHardy <kaber@trash.net>, 
+    netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    stable@vger.kernel.org, 
+    syzbot+58c872f7790a4d2ac951@syzkaller.appspotmail.com
+Subject: Re: [PATCH net v2] netfilter: ipset: add missing range check in
+ bitmap_ip_uadt
+In-Reply-To: <20241113130209.22376-1-aha310510@gmail.com>
+Message-ID: <de96a3be-deeb-efc0-dd64-8468598f15b0@netfilter.org>
+References: <20241113130209.22376-1-aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241114113617.GO6497@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=US-ASCII
+X-deepspam: ham 1%
 
-On Thu, Nov 14, 2024 at 12:36:17PM +0100, Peter Zijlstra wrote:
-> On Wed, Nov 13, 2024 at 09:55:57AM -0500, Rik van Riel wrote:
-> >  arch/x86/kernel/alternative.c | 11 +++--------
-> >  1 file changed, 3 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-> > index d17518ca19b8..f3caf5bc4df9 100644
-> > --- a/arch/x86/kernel/alternative.c
-> > +++ b/arch/x86/kernel/alternative.c
-> > @@ -1830,6 +1830,9 @@ static inline void unuse_temporary_mm(temp_mm_state_t prev_state)
-> >  	lockdep_assert_irqs_disabled();
-> >  	switch_mm_irqs_off(NULL, prev_state.mm, current);
-> >  
-> > +	/* Force a TLB flush next time poking_mm is used. */
-> > +	inc_mm_tlb_gen(poking_mm);
-> > +
-> >  	/*
-> >  	 * Restore the breakpoints if they were disabled before the temporary mm
-> >  	 * was loaded.
-> > @@ -1940,14 +1943,6 @@ static void *__text_poke(text_poke_f func, void *addr, const void *src, size_t l
-> >  	 */
-> >  	unuse_temporary_mm(prev);
-> >  
-> > -	/*
-> > -	 * Flushing the TLB might involve IPIs, which would require enabled
-> > -	 * IRQs, but not if the mm is not used, as it is in this point.
-> > -	 */
-> > -	flush_tlb_mm_range(poking_mm, poking_addr, poking_addr +
-> > -			   (cross_page_boundary ? 2 : 1) * PAGE_SIZE,
-> > -			   PAGE_SHIFT, false);
-> > -
-> >  	if (func == text_poke_memcpy) {
-> >  		/*
-> >  		 * If the text does not match what we just wrote then something is
-> 
-> So I really don't like this.
-> 
-> Yes it avoids the immediate problem, but we're now sending IPIs where we
-> shoulnd't be.
-> 
-> Fundamentally this whole text_poke thing is set up such that only a
-> single CPU will have this magical mapping with the aliasses. Having it
-> send IPIs is crazy.
+On Wed, 13 Nov 2024, Jeongjun Park wrote:
 
-I'm thinking the better fix is to make unuse_temporary_mm() explicitly
-clear the bit if we don't want switch_mm() to do it.
+> When tb[IPSET_ATTR_IP_TO] is not present but tb[IPSET_ATTR_CIDR] exists,
+> the values of ip and ip_to are slightly swapped. Therefore, the range check
+> for ip should be done later, but this part is missing and it seems that the
+> vulnerability occurs.
+> 
+> So we should add missing range checks and remove unnecessary range checks.
+> 
+> Cc: <stable@vger.kernel.org>
+> Reported-by: syzbot+58c872f7790a4d2ac951@syzkaller.appspotmail.com
+> Fixes: 72205fc68bd1 ("netfilter: ipset: bitmap:ip set type support")
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+
+Acked-by: Jozsef Kadlecsik <kadlec@netfilter.org>
+
+The patch should be applied to the stable branches too. Thanks!
+
+Best regards,
+Jozsef
+
+> ---
+>  net/netfilter/ipset/ip_set_bitmap_ip.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/net/netfilter/ipset/ip_set_bitmap_ip.c b/net/netfilter/ipset/ip_set_bitmap_ip.c
+> index e4fa00abde6a..5988b9bb9029 100644
+> --- a/net/netfilter/ipset/ip_set_bitmap_ip.c
+> +++ b/net/netfilter/ipset/ip_set_bitmap_ip.c
+> @@ -163,11 +163,8 @@ bitmap_ip_uadt(struct ip_set *set, struct nlattr *tb[],
+>  		ret = ip_set_get_hostipaddr4(tb[IPSET_ATTR_IP_TO], &ip_to);
+>  		if (ret)
+>  			return ret;
+> -		if (ip > ip_to) {
+> +		if (ip > ip_to)
+>  			swap(ip, ip_to);
+> -			if (ip < map->first_ip)
+> -				return -IPSET_ERR_BITMAP_RANGE;
+> -		}
+>  	} else if (tb[IPSET_ATTR_CIDR]) {
+>  		u8 cidr = nla_get_u8(tb[IPSET_ATTR_CIDR]);
+>  
+> @@ -178,7 +175,7 @@ bitmap_ip_uadt(struct ip_set *set, struct nlattr *tb[],
+>  		ip_to = ip;
+>  	}
+>  
+> -	if (ip_to > map->last_ip)
+> +	if (ip < map->first_ip || ip_to > map->last_ip)
+>  		return -IPSET_ERR_BITMAP_RANGE;
+>  
+>  	for (; !before(ip_to, ip); ip += map->hosts) {
+> --
+> 
+
+-- 
+E-mail : kadlec@netfilter.org, kadlec@blackhole.kfki.hu, kadlecsik.jozsef@wigner.hu
+Address: Wigner Research Centre for Physics
+         H-1525 Budapest 114, POB. 49, Hungary
 
