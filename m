@@ -1,73 +1,80 @@
-Return-Path: <linux-kernel+bounces-409186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C1049C8878
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:09:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B10399C88C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:21:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3F261F24ADA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:09:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C37D2B36023
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14671D9664;
-	Thu, 14 Nov 2024 11:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BCAA1F891D;
+	Thu, 14 Nov 2024 11:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ttkSUlFt"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Aq+BYOoM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA90D1F80D2
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED7E1D9664
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731582574; cv=none; b=FuIa0TGc1QtpKMjL6eNgLE1p/C1H7eyeVZFVt0pTLsLsFoEPAeOAZ8OlhmT5IN1Fv6S0X8Zys11pFzScBoRqq8gl32tL7HJkaoUS88EWEoFrOYrqVYEm8+o9ienKhbAg/wM00Dyz24v7DNKW//OEuTpzArH6wmA+kEle/gx+4bY=
+	t=1731582614; cv=none; b=bb0dgdftEs3SNg0i44a6sYhviL7mr1l+oeA6TRGytMnM5ge7gRD7cb0gjPhvsBhIalK44cfLsdZo6arECxgrKkm8CqrKnz05edMU6zNIViwgJYBLnrE0A87Pg2CZO0oYEW2dK8cTb0UhVns5jXQKNgoPDfm5jl0uBuV2Rm/dvWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731582574; c=relaxed/simple;
-	bh=tosTpACMBr90iqiDKF/YON69YfCEcBco4UivdlsdubU=;
+	s=arc-20240116; t=1731582614; c=relaxed/simple;
+	bh=+PJN9W5TUF8ROvz+Dk38kDMAFGpGNYq535RDxbaJqkg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fk620KiRBhG5S/olPGKn8B4KKeJLX+xc1h7zmObZFf2r+l0wVl6qX1bSkt9PCBbHoo2yUsQgqDnaWeb0JOQ4AIZIsmgOGW2ojH/zv2Ma27DVLkBsx+I7LMJQwBHHzfiaxfqj10+rz06rlbCJ+5SrCFyaBKGbStN0gF8cgbds41Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ttkSUlFt; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cf844d5a60so76371a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 03:09:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731582571; x=1732187371; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4B/6kX8Dv1v0x61K7KnGVF200oD26dvfXr9yaw5UIdA=;
-        b=ttkSUlFtI6IMMxHtMq/dbGF6NwPyQcgiu/xyNbf/d7lYYoKS+h9dbnjo8xjw9esYVp
-         NxnDwGUxR+tJmWTSpqZcmeth900MjXpGob0zG5QB1QZhE2YE1pUb8Jkk8RT5lTpNZuCt
-         VPYIGLazhPfVfJSxfQ5g+F1kKgcCd9ULX9xO4qCkVsFB1NKEqQqEW2DZf1WyVgoRLVwJ
-         HPiYw6eDft8DxatA17WiwTG6np/HJVXKW2hRMH3Xubj917EXbhCAr7mmG5oJgp/E3qRU
-         8HMKtTpQQIfL4enX9T/IfZAdMhEREktfnxHPG5OtEfQA9xon77FCvoHkC418JqOnSmML
-         yHbA==
+	 In-Reply-To:Content-Type; b=aoh7fPZagevLoFa2UkY2fopEy0S7eNGgPrjYWHNlLYdqS8oKuW+aQMX0QdDYrW7mjIAyBRmFcxNvDcIwPmkpVgDbRmIdzh7weLMKN0cC1aBmfZ3y0f6t3z2f7gFC4vVPF7tuex+SL4FtUeZD74HjTfvSNee8So+zTHO5CtY/WCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Aq+BYOoM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731582611;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sQSRWxbj4Jr6bem90b/I0QTuf7y4SyjrrPrHgroR4SM=;
+	b=Aq+BYOoMvBgvCe9CeWS33MxY9v0t/teSR0obVyRqq74rLaAF38V7pAYf/rmpuXPmyTldrp
+	JNA/Jajkpi+lTFsshkrkQ9krWzubNenXGzIruoPH+60tfI3zUKhAWHaNhelxbdPzzU5aYy
+	JxBH3eh1wXW+LcRCfTZurKShsulSxOk=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-553-xgEjuLHbOXSinfK1jLAh9w-1; Thu, 14 Nov 2024 06:10:10 -0500
+X-MC-Unique: xgEjuLHbOXSinfK1jLAh9w-1
+X-Mimecast-MFC-AGG-ID: xgEjuLHbOXSinfK1jLAh9w
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-460aca6cd0bso7007311cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 03:10:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731582571; x=1732187371;
+        d=1e100.net; s=20230601; t=1731582610; x=1732187410;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4B/6kX8Dv1v0x61K7KnGVF200oD26dvfXr9yaw5UIdA=;
-        b=OrKC+r72NC45nzIZyg+Vv+ia8VAEJlaS9852Hxg3Hv7qZrQ0a6spP55HBD/qUDA8G7
-         cCITSGZ1Ot05f5/lAskDOwet0o7mgWKcfyJsnK8IRNI3qZ+4DrH0C1UrnvnhRoKyRIXc
-         ncIESs6bhbTgyOkHhU7Gj5OueKzlrtoNratizZUag5k3Bw4gJw6m4QkEMDSPnK1K8qKc
-         TQIR/MPudNFopqVSB6xLwz82y32LaMBgfTAarNmDsL7UPfJwkThQpESOFhYWKdGW9yJp
-         QROGgntgV3/6U0bAN+G/xbX3mwN/AZSUszJ14KK5G0YiRR1fAhLIUD/5nNQr6QaiJty+
-         0MiA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDoqN2HjXob0fbcTQ5E8fpPi+7Ec2A5VrhFqTfIlU9T9vJYLe7rpKPKzE0O/iEBbRYHr6W2/vlEnwVVRo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeU9Rjs54NqXU81VWOLXvfEtd2LFw1jlz5bhhPncfZ0vHCszyD
-	ZQhxJgcWFi9HJuiiu3Eo7RHL0xnL45QzXktV1YTYlzEjmGwbgCejkwrlTjD2soM=
-X-Google-Smtp-Source: AGHT+IF2C+FExDVfDs7XP69Gi5qTPDO/xl7y4YZmBo3xSaFOop1jpkIHKM5PZ6uedcT0B056R4IB4g==
-X-Received: by 2002:a05:6402:43cd:b0:5cf:a27:c87e with SMTP id 4fb4d7f45d1cf-5cf75512e6cmr2581823a12.10.1731582571024;
-        Thu, 14 Nov 2024 03:09:31 -0800 (PST)
-Received: from [192.168.68.163] ([145.224.90.214])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf79c1de36sm458723a12.84.2024.11.14.03.09.28
+        bh=sQSRWxbj4Jr6bem90b/I0QTuf7y4SyjrrPrHgroR4SM=;
+        b=dfzKO92HYMky6KB93BCpWZFT2GekZYKZxF839LZX/sSgxWgjjaCP46nJbNbsuyaRXy
+         OmfepMYmPo/mnCpBxSVlk0Fz7qIsT/nD7PLaNY40lCG8mWZCMkIhDUiRy6RHrNoiuh63
+         5qdbDV5jvAkzfSWHLLHRvfJsyX+C9VIoMOYjfcSQD+/9c9F8qZMUMKma7g0ytagq/+7Y
+         KAJy4pzjBqpfy1L7Ppq/u2OGVIPZKnklzv/S/7dtGoIAIWoUxVNDcB90q6Es1MVLkjeW
+         FI5NB6Se+lgDXZqIUpM0gUMW9H/4QZoI7ZUPykjjccHSF4q9jA7ZLqBlzdLfRAkPeFfQ
+         Lc9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWg1h6sQqylXyNYQ0iQxUoKzEgtrpnDwSZ3cVtuEcOIS9xXr7D5qBTN9TZE67eb6umUNOD2utp03N6q0h4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu1rGtCH50flBGr5CMn3TRKVnw7Zg1vsZPU2s6TUEc7sN3g5a0
+	j3fW7PH5aVhRfbsbAgyTe+0iqeIhaC6dCybl6djJfxjtDQwYrr6yw7KPTO1LJO6HjmxB2k1v5h0
+	QT6UUMuQfh6F8ebrXFWEzXZzC9d3nOq+5lQCI4fd0ygeMmrSF/x8/rJiR7GUN/g==
+X-Received: by 2002:ac8:5dc6:0:b0:458:4129:1135 with SMTP id d75a77b69052e-4630930660fmr341014371cf.9.1731582609957;
+        Thu, 14 Nov 2024 03:10:09 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH7F+M/vbAnAssFq0op9LX2J4MXfyIul3bpH8Mbu3LUHXaUTQtWRodj5XOTZ0rPlg9LI4bX1w==
+X-Received: by 2002:ac8:5dc6:0:b0:458:4129:1135 with SMTP id d75a77b69052e-4630930660fmr341014071cf.9.1731582609592;
+        Thu, 14 Nov 2024 03:10:09 -0800 (PST)
+Received: from [192.168.88.24] (146-241-44-112.dyn.eolo.it. [146.241.44.112])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4635a9e97f4sm4224781cf.22.2024.11.14.03.10.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 03:09:30 -0800 (PST)
-Message-ID: <b107d9a6-48b7-468d-b36e-da9c587b7953@linaro.org>
-Date: Thu, 14 Nov 2024 11:09:27 +0000
+        Thu, 14 Nov 2024 03:10:08 -0800 (PST)
+Message-ID: <ff1c1622-a57c-471e-b41f-8fb4cb2f233d@redhat.com>
+Date: Thu, 14 Nov 2024 12:10:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,88 +82,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PING PATCH] perf/test: fix perf ftrace test on s390
-To: Thomas Richter <tmricht@linux.ibm.com>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org,
- svens@linux.ibm.com
-Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
- hca@linux.ibm.com
-References: <20241114090149.1489811-1-tmricht@linux.ibm.com>
+Subject: Re: [PATCH net v2] netfilter: ipset: add missing range check in
+ bitmap_ip_uadt
+To: Jeongjun Park <aha310510@gmail.com>, pablo@netfilter.org,
+ kadlec@netfilter.org
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ horms@kernel.org, kaber@trash.net, netfilter-devel@vger.kernel.org,
+ coreteam@netfilter.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ syzbot+58c872f7790a4d2ac951@syzkaller.appspotmail.com
+References: <20241113130209.22376-1-aha310510@gmail.com>
 Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20241114090149.1489811-1-tmricht@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241113130209.22376-1-aha310510@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 14/11/2024 9:01 am, Thomas Richter wrote:
-> On s390 the perf test case ftrace sometimes fails as follows:
+On 11/13/24 14:02, Jeongjun Park wrote:
+> When tb[IPSET_ATTR_IP_TO] is not present but tb[IPSET_ATTR_CIDR] exists,
+> the values of ip and ip_to are slightly swapped. Therefore, the range check
+> for ip should be done later, but this part is missing and it seems that the
+> vulnerability occurs.
 > 
->    # ./perf test ftrace
->    79: perf ftrace tests    : FAILED!
->    #
+> So we should add missing range checks and remove unnecessary range checks.
 > 
-> The failure depends on the kernel .config file. Some configurarions
-> always work fine, some do not.  The ftrace profile test mostly fails,
-> because the ring buffer was not large enough, and some lines
-> (especially the interesting ones with nanosleep in it) where dropped.
-> 
-> To achieve success for all our tested kernel configurations, enlarge
-> the buffer to store the traces complete without wrapping.
-> The default buffer size is too small  for all kernel configurations.
-> Set the buffer size of /sys/kernel/tracing/buffer_size_kb to 16 MB
-> 
-> 
-> Output after:
->    # ./perf test ftrace
->    79: perf ftrace tests     : Ok
->    #
-> 
-> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-> Suggested-by: Sven Schnelle <svens@linux.ibm.com>
-> ---
->   tools/perf/tests/shell/ftrace.sh | 11 +++++++++++
->   1 file changed, 11 insertions(+)
-> 
-> diff --git a/tools/perf/tests/shell/ftrace.sh b/tools/perf/tests/shell/ftrace.sh
-> index a6ee740f0d7e..742d6b8f34d3 100755
-> --- a/tools/perf/tests/shell/ftrace.sh
-> +++ b/tools/perf/tests/shell/ftrace.sh
-> @@ -80,10 +80,21 @@ test_ftrace_profile() {
->       echo "perf ftrace profile test  [Success]"
->   }
->   
-> +if [ "$(uname -m)" = "s390x" ]
-> +then
-> +	ftrace_size=$(cat /sys/kernel/tracing/buffer_size_kb)
-> +	echo 16384 > /sys/kernel/tracing/buffer_size_kb
-> +fi
-> +
+> Cc: <stable@vger.kernel.org>
+> Reported-by: syzbot+58c872f7790a4d2ac951@syzkaller.appspotmail.com
+> Fixes: 72205fc68bd1 ("netfilter: ipset: bitmap:ip set type support")
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
 
-It probably wouldn't be terrible to do this for all platforms to reduce 
-fragmentation. It doesn't do any harm and it only added a few seconds to 
-the test time even on a small Arm box, maybe it will prevent flakes 
-everywhere else in the future. But I don't feel too strongly about this one.
+@Pablo, @Jozsef: despite the subj prefix, I guess this should go via
+your tree. Please LMK if you prefer otherwise.
 
->   test_ftrace_list
->   test_ftrace_trace
->   test_ftrace_latency
->   test_ftrace_profile
->   
-> +if [ "$(uname -m)" = "s390x" ]
-> +then
-> +	echo $ftrace_size > /sys/kernel/tracing/buffer_size_kb
-> +fi
-> +
+Cheers,
 
-Restoring the value should be in cleanup() so it works on interrupt too.
-
-With that:
-
-Reviewed-by: James Clark <james.clark@linaro.org>
-
->   cleanup
->   exit 0
+Paolo
 
 
