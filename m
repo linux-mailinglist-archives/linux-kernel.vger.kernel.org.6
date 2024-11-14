@@ -1,116 +1,111 @@
-Return-Path: <linux-kernel+bounces-409843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0B449C926F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:30:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D0779C926B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:28:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3246DB2601B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:27:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0246A2843F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CCC1A01B9;
-	Thu, 14 Nov 2024 19:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A2C19DFB4;
+	Thu, 14 Nov 2024 19:28:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="lkmqC5Ym"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b="mWhMMrE5"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6C91991CB
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 19:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171B418A931
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 19:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731612463; cv=none; b=LaoR7CBX8mwCp6Y6L9gKmM+lY1x4dbW+CXB8DGq2cdk/LRexlM405MRQuQgQbrHqtuFXIcE+46sAuNmoH1GmQuDvt6gdUSyUQFlxA+LsJUz7DmPHmDzCnV6TCyAJoeM4e6EW+bpHv2ecF9gAZFa0nAqwaZlueL5VXAbY9ybVeME=
+	t=1731612505; cv=none; b=kggOSpCs+e1eGOJvqXftlPCFDRgffjDlBSF6TJ8HUk92yxJ9qG+rLeDpPhhYDew1bOL/0/QqWWIMGWqrPP/p/GlGFEMlg9aN+pGoei3j1VR6wFX7mvglhF+/9t9hvVuiskt1xb2fpBCTS3uQJ6IeW/vPWj/vsiAldkH+ZO5jpVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731612463; c=relaxed/simple;
-	bh=txcz9rml5UlukCVS1D+ITLftMxjZTir6dwyu0ic8vgU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r1YymavPX1L/C9dMeyo+p+bQ2Ud1PL5OovyVLyW+i1ciw2xBV4RToimztZmhA9kECc/hv00CeIHhNjzfqfRCvJBRppQOnIuUatzPZWIONgyOmUi4nZLVOVSu66dI0Kb0bvenqKGwb/RSpW7GnZJXznDUBKFBYU+YbxwjEpu+IYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=lkmqC5Ym; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c9693dc739so1572506a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:27:41 -0800 (PST)
+	s=arc-20240116; t=1731612505; c=relaxed/simple;
+	bh=F7Mi+XMXZibhLFSPUsTjAjWl5op8YFTJDlUSlBUzySs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K8Cef1DUX5gN2PC0ZB0LtYIg7Ir/IhY9Fi1B5uhJheW1vrYZMlC2CmgjLH7kQsIUncOJQIn/+r6jVTjWn8W3qcsxuAcucjrBs/Tv9i8gu1ZX4RQfL0nnaf+jPoSw8b8Lc3qJ5DGfXIKJIMl7e0lK/VauMPf9f4Pgz8IuEJj4zXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chrisdown.name; spf=pass smtp.mailfrom=chrisdown.name; dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b=mWhMMrE5; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chrisdown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chrisdown.name
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7b14df8f821so71334085a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:28:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1731612460; x=1732217260; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=chrisdown.name; s=google; t=1731612503; x=1732217303; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jeniB389OKvN5zEj18bT2eYMneg20P17C1/p3gN89l8=;
-        b=lkmqC5Ymx6d3saVpOtEWzHv1FucT57O8Ag67el/sfpPgk5EOvJYm3BD3HmwfyRuBBS
-         vP9Zgk6NTf00bk/GvcYeS1rtxCWYpzzaTCni5rBKUukfeBPWJfSlSFPX5fDTOUdznqbR
-         sU1PMlrIYyVPOZWcXpwr0mnK+mOPKPRGybkhVQKM6q2hPxj4TMyqlhidAh2y7zWKpZ4s
-         EAIJP8BpoTzJNFTgUXWAk1m5wFda0g6c8SbRxzWFHuFMzahHlRtZ0+9Oats6c0GDFECl
-         uRWCq5ale12V4Iu+2V75nqhFWeBVJdm6qHvfju5s/r1dqlXPTJQsDVjvYN8ZsW4JpfIL
-         8BLw==
+        bh=obe53CEzUW4cfZ3OgtlAtAeRMzZEw2tbXl8+grHrRTs=;
+        b=mWhMMrE5o1F8MfeTHiAAIe5idyRWkF9SHkHTqF5gQRxrlCrNczQnth8Ypw4ftRAYjO
+         wFD1eoaB9QvjtztZSNRMAt21E5wBG+uvYMunEl92Cy84dU273a+phuOk40rHttu4WqT7
+         Yn5ltg92vTDZ0Ditq55LUfMmGruw+zUH6uNAQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731612460; x=1732217260;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1731612503; x=1732217303;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jeniB389OKvN5zEj18bT2eYMneg20P17C1/p3gN89l8=;
-        b=uOvL+Q1+crr5fEh8Ea+CPufsHgrvJXenjYxXBqEuIP6p6XaPcC5CQw3UYkihUXERPC
-         aKC1+MsrfVfJzl+g9rOROImqCDOTKhKLFxQnuGA1DD01zNu8a4XIIAC4XiWeMd3aHr0W
-         DGKNJb7R6YIwGHpYbNeiiUOqDbiwaDkJy2IHqNMJwPjw0NT42Ta7vbWQJ6jHrYsqowNH
-         2fpvl4qGJ5oyvyrtDu9bIpmAhFUsu6l4kKzwEyAbt2uJ3aRjc0oGw6dX0EgTY+wO++47
-         KqDeOK0j0Hm50OWpqNyBsnyGiw3DA8z7aTT7y4sAAqsLj3wkTK+4P7/BopnK/hDuMQof
-         WUPg==
-X-Forwarded-Encrypted: i=1; AJvYcCWJOU649uCmFTNVUbOSrr7HixKR8CTkbaCqBAGhElVpe7hyuDn07D6uDQ/2jX3UMH8lB8EITthqOThTpLI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUaX1R/cJKxt7gbGk1nvaRrSwvGDHizx5orYHMz6tSbFU/pMeN
-	3CVZmrt1jOqjtmfd9ZkTJF8DErqvLHyfVrdyETVXgPnWM+se3DMJIGGrPWjFktmgENJ7C86lrSx
-	mUf1xwBPMBJIzLF/jhU7sQVReK7R4xgyhOV2RgQ==
-X-Google-Smtp-Source: AGHT+IFSQszniN+RtUbvA9KWKxINe1wk8KIYUXCCO8l/ucVV+qEreHHvFvj2XdwHBbQri+4d2NNe/piuHj9oJNb3iSo=
-X-Received: by 2002:a05:6402:2792:b0:5cb:dd06:90d5 with SMTP id
- 4fb4d7f45d1cf-5cf77eeb2acmr3116704a12.26.1731612459509; Thu, 14 Nov 2024
- 11:27:39 -0800 (PST)
+        bh=obe53CEzUW4cfZ3OgtlAtAeRMzZEw2tbXl8+grHrRTs=;
+        b=kPC1ZJ8uvZzkwhhJ+NKQJMlboGzaMtUAVpq3NFwMTuvMDntlQ0Mm6UuWo+FMCvcNY1
+         TL/nlBiVGM3eIuRafaXbZ/tuHlt9m44BdB64/LCa7FRf9iEcwBkJsx3DsgFkYVCObhTb
+         E8JYlZYTcnAH1gxiftbac9TzfmfEF099tfnVKcJHAhVrqra9kCFhEoCQU6+JrbxJ8ePB
+         AtR/0NMnvVBcBCvTFpFc8nBOL491O2d4NlbfUI/e6Vp39X0UV8yxO2GSyGgDMsWsVl6M
+         JLLLyevhu9CcaNS5CbTS0RSzb2Sy2g3u0/taRQLmggA5piDLP8zPJSKC9EL464mxj2r4
+         Rz4Q==
+X-Gm-Message-State: AOJu0YzONTBJbCLkBOlZQ8dz9zWV30VIoMwk7BApM62tvaVKhFRn28iE
+	xsPIvZZxUA72WbHLYenPSFq/UcwQx7bXkIrIIi9UM3Lz3LDnsMaECcvJ5PoKUq0=
+X-Google-Smtp-Source: AGHT+IExsOCCQP++BLuw6D/sjhJPo9+xebQIah8xNRSiGImAapw9/8XUW/QBHRKSGFrNTIN87N0DMQ==
+X-Received: by 2002:a05:620a:1a91:b0:7b1:572a:cd27 with SMTP id af79cd13be357-7b3622cef0dmr14182585a.18.1731612502980;
+        Thu, 14 Nov 2024 11:28:22 -0800 (PST)
+Received: from localhost ([163.114.130.129])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b35ca67582sm81428085a.123.2024.11.14.11.28.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 11:28:22 -0800 (PST)
+Date: Thu, 14 Nov 2024 14:28:22 -0500
+From: Chris Down <chris@chrisdown.name>
+To: Petr Mladek <pmladek@suse.com>
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Tony Lindgren <tony.lindgren@linux.intel.com>, kernel-team@fb.com
+Subject: Re: Conflict with FORCE_CON: Re: [PATCH v6 04/11] printk: Support
+ toggling per-console loglevel via syslog() and cmdline
+Message-ID: <ZzZPVp8_ZHbGgn5z@chrisdown.name>
+References: <cover.1730133890.git.chris@chrisdown.name>
+ <07141a533c4071c364c4f2eda6d97a9a89797e67.1730133890.git.chris@chrisdown.name>
+ <ZzM0T5b4uKIN0PM7@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112233613.6444-1-everestkc@everestkc.com.np> <20241113105939.GY4507@kernel.org>
-In-Reply-To: <20241113105939.GY4507@kernel.org>
-From: "Everest K.C." <everestkc@everestkc.com.np>
-Date: Thu, 14 Nov 2024 12:27:28 -0700
-Message-ID: <CAEO-vhFzEo12uU7EBOb6r6J7Ludhe4HNNGvfN71fSDQRmR16pQ@mail.gmail.com>
-Subject: Re: [PATCH][next] xfrm: Add error handling when nla_put_u32() returns
- an error
-To: Simon Horman <horms@kernel.org>
-Cc: steffen.klassert@secunet.com, herbert@gondor.apana.org.au, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <ZzM0T5b4uKIN0PM7@pathway.suse.cz>
+User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
 
-On Wed, Nov 13, 2024 at 3:59=E2=80=AFAM Simon Horman <horms@kernel.org> wro=
-te:
+Petr Mladek writes:
+>On Mon 2024-10-28 16:45:40, Chris Down wrote:
+>> A new module parameter (ignore_per_console_loglevel) is added, which can
+>> be set via the kernel command line or at runtime through
+>> /sys/module/printk/parameters/ignore_per_console_loglevel. When set, the
+>> per-console loglevels are ignored, and the global console loglevel
+>> (console_loglevel) is used for all consoles.
+>>
+>> During sysrq, we temporarily disable per-console loglevels to ensure all
+>> requisite messages are printed to the console. This is necessary because
+>> sysrq is often used in dire circumstances where access to
+>> /sys/class/console may not be trivially possible.
 >
-> On Tue, Nov 12, 2024 at 04:36:06PM -0700, Everest K.C. wrote:
-> > Error handling is missing when call to nla_put_u32() fails.
-> > Handle the error when the call to nla_put_u32() returns an error.
-> >
-> > The error was reported by Coverity Scan.
-> > Report:
-> > CID 1601525: (#1 of 1): Unused value (UNUSED_VALUE)
-> > returned_value: Assigning value from nla_put_u32(skb, XFRMA_SA_PCPU, x-=
->pcpu_num)
-> > to err here, but that stored value is overwritten before it can be used
-> >
-> > Fixes: 1ddf9916ac09 ("xfrm: Add support for per cpu xfrm state handling=
-.")
-> > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
->
-> Reviewed-by: Simon Horman <horms@kernel.org>
->
-> For future reference, I think the appropriate target for this tree
-> is ipsec-next rather than next.
->
->         Subject: [PATCH ipsec-next] xfrm: ...
-Should I send a patch to ipsec-next ?
->
-> ...
-- Everest K.C.
+>I have just pushed a patchset which removed the console_loglevel
+>manipulation from sysrq, see
+>https://lore.kernel.org/r/20241105-printk-loud-con-v2-0-bd3ecdf7b0e4@suse.com
+  
+Noted, so would you like me to change this to be based on current 
+printk/for-next, or is another branch preferred?
 
