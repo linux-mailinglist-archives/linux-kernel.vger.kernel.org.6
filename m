@@ -1,336 +1,222 @@
-Return-Path: <linux-kernel+bounces-408581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EEC59C80B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:27:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9693A9C80C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:27:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E25B31F24EB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:27:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D9E1281A75
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CCE01E8829;
-	Thu, 14 Nov 2024 02:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CB61F4FC4;
+	Thu, 14 Nov 2024 02:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="iYMl1eo+"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="21nS5M3y"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBFA1E009F;
-	Thu, 14 Nov 2024 02:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9BF1F26FF
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 02:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731551062; cv=none; b=gh6iQ9b8BuPwhjzp8am2QRUdZxgQJADkFfBD77p9+RTglQ0lQAiIX7/0ctNDpLTmFyJVAu1gi/zl6RkpvZwbnJwuwm4PGfmYAg9wKC0XrO640ne/C90BUUwk72Ti4J+NSU0OqSf8NegePYerfaX/Y8zVd7w3Gvu5j0vNnDFlZ/U=
+	t=1731551091; cv=none; b=VYPS/HSgiaDz+/UGeHSjpMHPhfRHDhZ92qZxgVV+kP0AxSthEVpJbgiNe6FguvUycwT3ZI/dkQ/6vWJQsvzDTdUvPfoqhKYQpuPb2KuaBFCj89p7c+cS3ghJ+Rq/+S/Jx1x6LsqDDLszJaxc6USyUWR1qLNBptdhzJdo2sj89GE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731551062; c=relaxed/simple;
-	bh=DLUDdLqDtqUZbyRSdnpJxOk9J6OBNQOtHRV+Y9p81hI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G78bA2RyB80k8hbzJCKDnsp3RFSO9YnH3XHN/p59QqzPmkoEBEXd2pCrAna0PktNYJWuGaBniSLqxP8ZS33lEBNoiE2UvSGd8NCphANf1nMTzLFt7dfdqu+qe1zYPpPdGsKGLbnTi22V5yanWrbVG8XNzRQBrjIyxlGsjWVB/X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=iYMl1eo+; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=bJRnowXW1WRxGxoVT/jc+6mYnFtGS0RSbqxGPing5B8=; b=iYMl1eo+3+I42+dS
-	oJhAcMA/rdLsenuRjgdpv2Q+Qa+OKU/NH9B1/golS9853C3l4RMZlL4veej2/ZNexJV8MAxs8aQFx
-	ChJwF0bdTFEK5+EqbNdzDV1yaD+4JZycEPVStxR2Lap+m/eBQ4umXJqpMvxchb7wz4wnCHorhs5sx
-	CsVvuIoOPJzu5XdjSnCJ82YDmOMwjIABupoe7sb6v5WrhNK1KIvZyxU8XYo6h2q353iK7vBkswFKt
-	CMMTZxu73gEerlp9wiqFGSRuatP+lEtIugSa9xwkDQAZJCursmaFqGfI/NPPOiYmMsN1qOUuHdEPW
-	brukEy+Z4YNthnXbDQ==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tBPWg-00HPvO-2U;
-	Thu, 14 Nov 2024 02:24:06 +0000
-From: linux@treblig.org
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	roberto.sassu@huaweicloud.com,
-	bpf@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 2/2] umd: Remove
-Date: Thu, 14 Nov 2024 02:24:00 +0000
-Message-ID: <20241114022400.301175-3-linux@treblig.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241114022400.301175-1-linux@treblig.org>
-References: <20241114022400.301175-1-linux@treblig.org>
+	s=arc-20240116; t=1731551091; c=relaxed/simple;
+	bh=04s8nDoCSLpivX7fgLAtuIRzvTm1jQi5mR5RZ+R6pjI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K4a6mqgT1tqb4u8GVEe9GKrRPYiGse6hOB3I0UsUat9OtVV7rseaFpHImU8ITHgwy/mjin0+JVQieOFbpvb7Hc60CAJ/11dYxHYTw412IJFkhHAn3oAq4sHIfT2VH1ijydDaOpbpXLZ2qW+qqwDQ9b1Xbo8LbypglCzEPJPbByY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=21nS5M3y; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20cdb889222so734455ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 18:24:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1731551089; x=1732155889; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bOcIjTHmkKYE/MldB59+Mp7THVJA1dMXMhLp3+u7Zpk=;
+        b=21nS5M3yK54DmA6u12c/sYhRVsS3FkR5a8Z4vLDh4l8dUJekGhoLQnnwzu7jo59W5k
+         EvH2nCnZFEHImJHRh6rtVhXHAYEW889rgpkqGpz2feN5brv9hbWxbMohk25IjerzyBpx
+         q3jWzut7bOvJR7YHyLdtICzvbB3I/oQDIIZ1GRmNYk9XR9aTGfEHFBlKkkHfLZ1a29Ps
+         sl7Yd+bGquFs5lGpYGLLvhuR9F3rOmNX9gV8EYe1tjEJjUvlyA1C1txcW+RHim9tm3ID
+         t/y+vvl17Xn7aF5ssGFW5YkfM4lZXJ2YFKSwVuPGN8fRQQus5aqIv5YBl2mWikuSlvSZ
+         RXiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731551089; x=1732155889;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bOcIjTHmkKYE/MldB59+Mp7THVJA1dMXMhLp3+u7Zpk=;
+        b=jcE4K+5NcpqtZ9YcIL7v4lg+VK5lKnWb5s+A5iQteTKn1V5j4bkjCF0ZJoS36LOiar
+         ixU2JDPTTCyeLzITgA8+LBGQ/ixdYW5c97hvMOJdF1J4OAeUA64GcZlzJm8qoW8rMeho
+         pBtveQrG//WidzjYam0IGbh75b+kwklFXvIoAYX4hkfqr2ucQABOQejSKesetSjrrxqF
+         kZzmVnXVVRlpIMt7/FRiAb8Y0Sq7tekYDK14RJMat0KNktytcL72wOjjXmkR2huX6qLA
+         X1AyNoy7S3FR0OAYCSGCYT3IfsItFOZFggcdLkyJ7NhxBdLiixeqNR2Lvjn3n6GgTOtZ
+         g56Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXG32Jqnpb8aIXlvgraDBipeXiGZZXdy72jvwKKi4S8DG/QQzI4oNdWqkzjFG7CTBWQ7QpM/giBuXVrQpM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5Oda7JP6EUpP0xtcnyebY191fgNcwVJwv8OvIz8jN0oyqNFQn
+	lRXybSO93tVnQ6R8yaY72lI9NfN/PEICMSCwQV0t97poZdtZU/KvEAuI3ph7O/A=
+X-Google-Smtp-Source: AGHT+IFIy/N8ljrKihYLsmstk+E2hofbr+iVsyyNJcXN7lh1fccE1mzDgwapJOQoIdXEKN3f21A9eg==
+X-Received: by 2002:a17:903:2a8e:b0:20b:6d71:4140 with SMTP id d9443c01a7336-211b5d2a3b4mr74048485ad.44.1731551089470;
+        Wed, 13 Nov 2024 18:24:49 -0800 (PST)
+Received: from ghost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211c7c2d520sm439875ad.29.2024.11.13.18.24.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 18:24:48 -0800 (PST)
+Date: Wed, 13 Nov 2024 18:24:45 -0800
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Yangyu Chen <cyy@cyyself.name>
+Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>,
+	Andy Chiu <andy.chiu@sifive.com>,
+	Jessica Clarke <jrtc27@jrtc27.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v10 05/14] riscv: vector: Use vlenb from DT for thead
+Message-ID: <ZzVfbS8-NizjKkst@ghost>
+References: <20240911-xtheadvector-v10-0-8d3930091246@rivosinc.com>
+ <20240911-xtheadvector-v10-5-8d3930091246@rivosinc.com>
+ <tencent_2EF88DF37C4B82B2DA0B8E49B85C312E2108@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <tencent_2EF88DF37C4B82B2DA0B8E49B85C312E2108@qq.com>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Sun, Nov 10, 2024 at 03:34:54AM +0800, Yangyu Chen wrote:
+> Hi Charlie,
+> 
+> I have tested this patchset with ghostwrite rebased to linux commit da4373fbcf ("Merge tag 'thermal-6.12-rc7' of git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm") [1] on my D1 Nezha board, with defconfig + CONFIG_ERRATA_THEAD_GHOSTWRITE=n, I got this message during boot:
+> 
+> [    0.027584] Kernel panic - not syncing: __kmem_cache_create_args: Failed to create slab 'riscv_vector_ctx'. Error -22
+> [    0.038057] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.12.0-rc6-00310-gb276cf69df24-dirty #11
+> [    0.047240] Hardware name: Allwinner D1 Nezha (DT)
+> [    0.052007] Call Trace:
+> [    0.054434] [<ffffffff80007172>] dump_backtrace+0x1c/0x24
+> [    0.059806] [<ffffffff809f6834>] show_stack+0x2c/0x38
+> [    0.064833] [<ffffffff80a040f0>] dump_stack_lvl+0x52/0x74
+> [    0.070206] [<ffffffff80a04126>] dump_stack+0x14/0x1c
+> [    0.075233] [<ffffffff809f6db6>] panic+0x10c/0x300
+> [    0.080000] [<ffffffff8017b5a0>] __kmem_cache_create_args+0x24a/0x2b6
+> [    0.086413] [<ffffffff80c04c68>] riscv_v_setup_ctx_cache+0x56/0x84
+> [    0.092566] [<ffffffff80c04288>] arch_task_cache_init+0x10/0x1c
+> [    0.098460] [<ffffffff80c07d02>] fork_init+0x68/0x1a8
+> [    0.103486] [<ffffffff80c00ed2>] start_kernel+0x77e/0x822
+> [    0.108870] ---[ end Kernel panic - not syncing: __kmem_cache_create_args: Failed to create slab 'riscv_vector_ctx'. Error -22 ]---
+> 
+> [1] https://github.com/cyyself/linux/tree/xtheadvector_20241110
+> 
+> On 9/12/24 13:55, Charlie Jenkins wrote:
+> >  diff --git a/arch/riscv/kernel/vector.c b/arch/riscv/kernel/vector.c
+> > index 682b3feee451..9775d6a9c8ee 100644
+> > --- a/arch/riscv/kernel/vector.c
+> > +++ b/arch/riscv/kernel/vector.c
+> > @@ -33,7 +33,17 @@ int riscv_v_setup_vsize(void)
+> >  {
+> >  	unsigned long this_vsize;
+> >  -	/* There are 32 vector registers with vlenb length. */
+> > +	/*
+> > +	 * There are 32 vector registers with vlenb length.
+> > +	 *
+> > +	 * If the thead,vlenb property was provided by the firmware, use that
+> > +	 * instead of probing the CSRs.
+> > +	 */
+> > +	if (thead_vlenb_of) {
+> > +		this_vsize = thead_vlenb_of * 32;
+> 
+> Then, I patched here which replaces "this_vsize" with "riscv_v_vsize". The kernel boots normally and I can see “xtheadvector" in /proc/cpuinfo.
+> 
+> However, when I try to run the "v_exec_initval_nolibc" test, the kernel panics with these outputs:
+> 
+> [  978.788878] Oops - illegal instruction [#1]
+> [  978.788897] Modules linked in:
+> [  978.788908] CPU: 0 UID: 1000 PID: 461 Comm: v_exec_initval_ Not tainted 6.12.0-rc6-00310-gb276cf69df24-dirty #12
+> [  978.788924] Hardware name: Allwinner D1 Nezha (DT)
+> [  978.788929] epc : do_trap_ecall_u+0x56/0x20a
+> [  978.788956]  ra : _new_vmalloc_restore_context_a0+0xc2/0xce
+> [  978.788974] epc : ffffffff80a04afe ra : ffffffff80a0e742 sp : ffffffc6003fbeb0
+> [  978.788983]  gp : ffffffff81717080 tp : ffffffd60723b300 t0 : ffffffff81001268
+> [  978.788991]  t1 : ffffffff80a04aa8 t2 : ffffffff810012a8 s0 : ffffffc6003fbee0
+> [  978.789000]  s1 : ffffffc6003fbee0 a0 : ffffffc6003fbee0 a1 : 000000000000005d
+> [  978.789007]  a2 : 0000000000000000 a3 : ffffffffffffffda a4 : 0000000000000003
+> [  978.789015]  a5 : 0000000000000000 a6 : 0000000002adb5fe a7 : 000000000000005d
+> [  978.789022]  s2 : 00000000000108a8 s3 : 0000000000000000 s4 : 0000000000000008
+> [  978.789030]  s5 : 0000003fb42ab780 s6 : 0000002adb5fe420 s7 : 0000002adb5fb9e0
+> [  978.789038]  s8 : 0000002adb5fe440 s9 : 0000002adb5fe420 s10: 0000002adb572ad4
+> [  978.789046]  s11: 0000002adb572ad0 t3 : 0000003fb43c5e3c t4 : 622f7273752f3d5f
+> [  978.789053]  t5 : 0000002adb5fd5a1 t6 : 0000000002adb5ff
+> [  978.789060] status: 8000000201800100 badaddr: 000000005e0fb057 cause: 0000000000000002
+> [  978.789069] [<ffffffff80a04afe>] do_trap_ecall_u+0x56/0x20a
+> [  978.789086] [<ffffffff80a0e742>] _new_vmalloc_restore_context_a0+0xc2/0xce
+> [  978.789113] Code: a073 1007 006f 1a60 7057 0c30 57fd 17fe 77d7 0c30 (b057) 5e0f
+> [  978.789123] ---[ end trace 0000000000000000 ]---
+> [  978.789131] Kernel panic - not syncing: Fatal exception in interrupt
+> [  978.937158] ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+> 
+> Is something wrong with my setup?
 
-The last use of the usermode driver code was removed by
-commit 98e20e5e13d2 ("bpfilter: remove bpfilter")
+Thanks for reporting this! I just sent out a new version with the fix.
+Something went wrong with the __riscv_v_vstate_discard() and was
+triggering this failure. I have tested that this new version is able to
+pass the testcase.
 
-Remove the code.
+https://lore.kernel.org/linux-riscv/20241113-xtheadvector-v11-0-236c22791ef9@rivosinc.com/T/#t
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- include/linux/usermode_driver.h |  19 ----
- kernel/Makefile                 |   1 -
- kernel/bpf/preload/Kconfig      |   4 -
- kernel/usermode_driver.c        | 191 --------------------------------
- 4 files changed, 215 deletions(-)
- delete mode 100644 include/linux/usermode_driver.h
- delete mode 100644 kernel/usermode_driver.c
+- Charlie
 
-diff --git a/include/linux/usermode_driver.h b/include/linux/usermode_driver.h
-deleted file mode 100644
-index ad970416260d..000000000000
---- a/include/linux/usermode_driver.h
-+++ /dev/null
-@@ -1,19 +0,0 @@
--#ifndef __LINUX_USERMODE_DRIVER_H__
--#define __LINUX_USERMODE_DRIVER_H__
--
--#include <linux/umh.h>
--#include <linux/path.h>
--
--struct umd_info {
--	const char *driver_name;
--	struct file *pipe_to_umh;
--	struct file *pipe_from_umh;
--	struct path wd;
--	struct pid *tgid;
--};
--int umd_load_blob(struct umd_info *info, const void *data, size_t len);
--int umd_unload_blob(struct umd_info *info);
--int fork_usermode_driver(struct umd_info *info);
--void umd_cleanup_helper(struct umd_info *info);
--
--#endif /* __LINUX_USERMODE_DRIVER_H__ */
-diff --git a/kernel/Makefile b/kernel/Makefile
-index 87866b037fbe..25d58da2a6ee 100644
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@ -12,7 +12,6 @@ obj-y     = fork.o exec_domain.o panic.o \
- 	    notifier.o ksysfs.o cred.o reboot.o \
- 	    async.o range.o smpboot.o ucount.o regset.o ksyms_common.o
- 
--obj-$(CONFIG_USERMODE_DRIVER) += usermode_driver.o
- obj-$(CONFIG_MULTIUSER) += groups.o
- obj-$(CONFIG_VHOST_TASK) += vhost_task.o
- 
-diff --git a/kernel/bpf/preload/Kconfig b/kernel/bpf/preload/Kconfig
-index f9b11d01c3b5..aef7b0bc96d6 100644
---- a/kernel/bpf/preload/Kconfig
-+++ b/kernel/bpf/preload/Kconfig
-@@ -1,8 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
--config USERMODE_DRIVER
--	bool
--	default n
--
- menuconfig BPF_PRELOAD
- 	bool "Preload BPF file system with kernel specific program and map iterators"
- 	depends on BPF
-diff --git a/kernel/usermode_driver.c b/kernel/usermode_driver.c
-deleted file mode 100644
-index 8303f4c7ca71..000000000000
---- a/kernel/usermode_driver.c
-+++ /dev/null
-@@ -1,191 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- * umd - User mode driver support
-- */
--#include <linux/shmem_fs.h>
--#include <linux/pipe_fs_i.h>
--#include <linux/mount.h>
--#include <linux/fs_struct.h>
--#include <linux/task_work.h>
--#include <linux/usermode_driver.h>
--
--static struct vfsmount *blob_to_mnt(const void *data, size_t len, const char *name)
--{
--	struct file_system_type *type;
--	struct vfsmount *mnt;
--	struct file *file;
--	ssize_t written;
--	loff_t pos = 0;
--
--	type = get_fs_type("tmpfs");
--	if (!type)
--		return ERR_PTR(-ENODEV);
--
--	mnt = kern_mount(type);
--	put_filesystem(type);
--	if (IS_ERR(mnt))
--		return mnt;
--
--	file = file_open_root_mnt(mnt, name, O_CREAT | O_WRONLY, 0700);
--	if (IS_ERR(file)) {
--		kern_unmount(mnt);
--		return ERR_CAST(file);
--	}
--
--	written = kernel_write(file, data, len, &pos);
--	if (written != len) {
--		int err = written;
--		if (err >= 0)
--			err = -ENOMEM;
--		filp_close(file, NULL);
--		kern_unmount(mnt);
--		return ERR_PTR(err);
--	}
--
--	fput(file);
--
--	/* Flush delayed fput so exec can open the file read-only */
--	flush_delayed_fput();
--	task_work_run();
--	return mnt;
--}
--
--/**
-- * umd_load_blob - Remember a blob of bytes for fork_usermode_driver
-- * @info: information about usermode driver
-- * @data: a blob of bytes that can be executed as a file
-- * @len:  The lentgh of the blob
-- *
-- */
--int umd_load_blob(struct umd_info *info, const void *data, size_t len)
--{
--	struct vfsmount *mnt;
--
--	if (WARN_ON_ONCE(info->wd.dentry || info->wd.mnt))
--		return -EBUSY;
--
--	mnt = blob_to_mnt(data, len, info->driver_name);
--	if (IS_ERR(mnt))
--		return PTR_ERR(mnt);
--
--	info->wd.mnt = mnt;
--	info->wd.dentry = mnt->mnt_root;
--	return 0;
--}
--EXPORT_SYMBOL_GPL(umd_load_blob);
--
--/**
-- * umd_unload_blob - Disassociate @info from a previously loaded blob
-- * @info: information about usermode driver
-- *
-- */
--int umd_unload_blob(struct umd_info *info)
--{
--	if (WARN_ON_ONCE(!info->wd.mnt ||
--			 !info->wd.dentry ||
--			 info->wd.mnt->mnt_root != info->wd.dentry))
--		return -EINVAL;
--
--	kern_unmount(info->wd.mnt);
--	info->wd.mnt = NULL;
--	info->wd.dentry = NULL;
--	return 0;
--}
--EXPORT_SYMBOL_GPL(umd_unload_blob);
--
--static int umd_setup(struct subprocess_info *info, struct cred *new)
--{
--	struct umd_info *umd_info = info->data;
--	struct file *from_umh[2];
--	struct file *to_umh[2];
--	int err;
--
--	/* create pipe to send data to umh */
--	err = create_pipe_files(to_umh, 0);
--	if (err)
--		return err;
--	err = replace_fd(0, to_umh[0], 0);
--	fput(to_umh[0]);
--	if (err < 0) {
--		fput(to_umh[1]);
--		return err;
--	}
--
--	/* create pipe to receive data from umh */
--	err = create_pipe_files(from_umh, 0);
--	if (err) {
--		fput(to_umh[1]);
--		replace_fd(0, NULL, 0);
--		return err;
--	}
--	err = replace_fd(1, from_umh[1], 0);
--	fput(from_umh[1]);
--	if (err < 0) {
--		fput(to_umh[1]);
--		replace_fd(0, NULL, 0);
--		fput(from_umh[0]);
--		return err;
--	}
--
--	set_fs_pwd(current->fs, &umd_info->wd);
--	umd_info->pipe_to_umh = to_umh[1];
--	umd_info->pipe_from_umh = from_umh[0];
--	umd_info->tgid = get_pid(task_tgid(current));
--	return 0;
--}
--
--static void umd_cleanup(struct subprocess_info *info)
--{
--	struct umd_info *umd_info = info->data;
--
--	/* cleanup if umh_setup() was successful but exec failed */
--	if (info->retval)
--		umd_cleanup_helper(umd_info);
--}
--
--/**
-- * umd_cleanup_helper - release the resources which were allocated in umd_setup
-- * @info: information about usermode driver
-- */
--void umd_cleanup_helper(struct umd_info *info)
--{
--	fput(info->pipe_to_umh);
--	fput(info->pipe_from_umh);
--	put_pid(info->tgid);
--	info->tgid = NULL;
--}
--EXPORT_SYMBOL_GPL(umd_cleanup_helper);
--
--/**
-- * fork_usermode_driver - fork a usermode driver
-- * @info: information about usermode driver (shouldn't be NULL)
-- *
-- * Returns either negative error or zero which indicates success in
-- * executing a usermode driver. In such case 'struct umd_info *info'
-- * is populated with two pipes and a tgid of the process. The caller is
-- * responsible for health check of the user process, killing it via
-- * tgid, and closing the pipes when user process is no longer needed.
-- */
--int fork_usermode_driver(struct umd_info *info)
--{
--	struct subprocess_info *sub_info;
--	const char *argv[] = { info->driver_name, NULL };
--	int err;
--
--	if (WARN_ON_ONCE(info->tgid))
--		return -EBUSY;
--
--	err = -ENOMEM;
--	sub_info = call_usermodehelper_setup(info->driver_name,
--					     (char **)argv, NULL, GFP_KERNEL,
--					     umd_setup, umd_cleanup, info);
--	if (!sub_info)
--		goto out;
--
--	err = call_usermodehelper_exec(sub_info, UMH_WAIT_EXEC);
--out:
--	return err;
--}
--EXPORT_SYMBOL_GPL(fork_usermode_driver);
--
--
--- 
-2.47.0
-
+> 
+> Thanks,
+> Yangyu Chen
+> 
+> > +		return 0;
+> > +	}
+> > +
+> >  	riscv_v_enable();
+> >  	this_vsize = csr_read(CSR_VLENB) * 32;
+> >  	riscv_v_disable();
+> > diff --git a/arch/riscv/kernel/vendor_extensions/thead.c b/arch/riscv/kernel/vendor_extensions/thead.c
+> > index 0f27baf8d245..519dbf70710a 100644
+> > --- a/arch/riscv/kernel/vendor_extensions/thead.c
+> > +++ b/arch/riscv/kernel/vendor_extensions/thead.c
+> > @@ -5,6 +5,7 @@
+> >  #include <asm/vendor_extensions/thead.h>
+> >    #include <linux/array_size.h>
+> > +#include <linux/cpumask.h>
+> >  #include <linux/types.h>
+> >    /* All T-Head vendor extensions supported in Linux */
+> > @@ -16,3 +17,13 @@ struct riscv_isa_vendor_ext_data_list riscv_isa_vendor_ext_list_thead = {
+> >  	.ext_data_count = ARRAY_SIZE(riscv_isa_vendor_ext_thead),
+> >  	.ext_data = riscv_isa_vendor_ext_thead,
+> >  };
+> > +
+> > +void disable_xtheadvector(void)
+> > +{
+> > +	int cpu;
+> > +
+> > +	for_each_possible_cpu(cpu)
+> > +		clear_bit(RISCV_ISA_VENDOR_EXT_XTHEADVECTOR, riscv_isa_vendor_ext_list_thead.per_hart_isa_bitmap[cpu].isa);
+> > +
+> > +	clear_bit(RISCV_ISA_VENDOR_EXT_XTHEADVECTOR, riscv_isa_vendor_ext_list_thead.all_harts_isa_bitmap.isa);
+> > +}
+> 
 
