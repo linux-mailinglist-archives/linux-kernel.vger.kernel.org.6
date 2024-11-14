@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-409776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9701D9C9146
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:01:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD5D69C91A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:28:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 401D81F23AFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:01:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36B97B2FBD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6653A18D647;
-	Thu, 14 Nov 2024 18:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107EE18D647;
+	Thu, 14 Nov 2024 18:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Kz6DF3tG"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ayKDzBeu"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F451C683
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 18:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6AC9AD5B;
+	Thu, 14 Nov 2024 18:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731607307; cv=none; b=eKWoG9lDdWyq57UVkEz3USF/hcbOXvXNhU3eV3s3EZ0P7hiBJHXKd2Vmn2LES1FYG385wZT+AL+95NnXovOyQ//BoQ+VQVMvZ89EL1AGOnUi8X0pCJ0xj6a806OK6+AbAaBSlQVKllqzBRzX1llgCAlv95nMEKJnf66URVlTPOY=
+	t=1731607396; cv=none; b=OgXTbnYt20N7cds34S+lN6giQKuROENS3VzTDFNfIVAlLKfC4VS6biiEeIYlJle9IO7BHBOEWf3Ooqs7nep1mCUudqMdaCWhTArmOGNFsYwMloFvjeAIFtPnmTqt+C5xi8vDjtPxVi+mMDox43RS5dNBP+b2mmo+qrV3xCPsMRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731607307; c=relaxed/simple;
-	bh=0v6QBOMoLylFix3ycLeSicUSCz0baDoUPdKck7c6QbU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aZU4NiM4anmzXsu2CnUwI3WXqMTICijlxj5NjqV6Eb81I6ngDR1VZ296ptNy5BfiZUUiyLw9aLKt81CIjhXv5Zx82qXxRnzGX6LHXByuXl9jElD0r2rIoaYUtHDFHcMx2ZE9iq7XjcYqxhYg4dMkSi963aAKRNN7KW8sWd/hEN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Kz6DF3tG; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-288b392b8daso524909fac.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:01:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731607304; x=1732212104; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FQa0McRJ6ktHn9JWaay5cO4vE1zjTG1spgas33tTGRY=;
-        b=Kz6DF3tGNy7oQ3edwLAIQJnXhXCzo0TOvNAY4G4isB/TNEzg5YIUTJUs/rya08za+A
-         hGkihggRLZ2VdsU1isSytQp0YuLy3QZIlVevQiqvvar0rThQ9khsxCQQrPuv393gRrQw
-         ME2NjuFZoS/2hl9G83Hvg9NptAXDWOXUhk3sFTJrnJH5ZaYNPBuPUpeGWSJtnE5SgqqS
-         nb4KSHmFRlU/emBGE0GLgD3kUjF9vSVonrf5IOibQGh9IdzbWNW0dvQKsZ4/8+jPS1kp
-         HNgODL9KsFZbSOs1PS1zgjSRoNH+wMocD3cJyRV4+okzgedDlKMLkIYqOX1eC2981nW8
-         bUvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731607304; x=1732212104;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FQa0McRJ6ktHn9JWaay5cO4vE1zjTG1spgas33tTGRY=;
-        b=u3BoCFNKS9ILxAhfzxxJxhDunxFNzCVtNlEenIL2TVwBlFlnz6xe3p0fo6+omp+1z9
-         8lCvRZ855ilrwHgFJahu+PVW6xLlChTvDIaDZ/GmlF7NwPX2TVGwBC4S85/lSSL/eGsE
-         oePZNpBUX38R9q79G0s33OHD4EDt3hq2c8ARIVuggp3LQt4awo84EO3K/10p5ENA5Naz
-         5OxWKrfzk7yL54JHOhlW15ZyYE0b2BnqF+yI4emp+QcO2DAHKnIF9i0sL+VVqzZt/TcF
-         stxWmap/owmThYL1wqeh6nJn1d34EZ5sZSiS5jzAws67ILGuK34II5m8IsnIN1F2oybG
-         oq9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVWuc797rsDcyLlderznYti7tVHjTYdj7O7LF36CW50zreM5dYMBPJPsFOE6DS6HuirHctZKHu47SJJ/bQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1n1OTX6H7NB35YgIU6OJommSBc6XhjPomM1e9yCMAgYWCF2pR
-	Nkzsl5RYJpiXSgKwPcUpnDmrqTnUKBFlaQUvACW17rAWOqufdMIcJVRLZewdE/U=
-X-Google-Smtp-Source: AGHT+IFoKXcjI2CaRY/oLgtT/oix+5apDbtPkI9pzbUKznrd7KQao0Yve/QbD7+Q2w+5aA9I6DSzbg==
-X-Received: by 2002:a05:6870:32d2:b0:270:1eca:e9fd with SMTP id 586e51a60fabf-296102a0557mr3342246fac.3.1731607303805;
-        Thu, 14 Nov 2024 10:01:43 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29610b57149sm679918fac.44.2024.11.14.10.01.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 10:01:43 -0800 (PST)
-Message-ID: <b977f98e-136b-486d-a52b-61c85708ced9@kernel.dk>
-Date: Thu, 14 Nov 2024 11:01:42 -0700
+	s=arc-20240116; t=1731607396; c=relaxed/simple;
+	bh=zJvIEoZunBTCy85yhHewfc0bMrsW09T9C/K+xnDIZCE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BtuUzpDNvRhaJrrXIYtocZllFfNv9u4SFuP68fbRqTxdywzKXmuTZvXisRdDHAvyfOJPfhIB0+Q6fBbL7AlMY3KbxZm0AekBOyyIe9WHZyu/oATNh5AJdc2n3FyFll1hfToUh4JAzvB9Ei5pSlG1WfVh17ofz7PutfKdpvolGk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ayKDzBeu; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AEHHvqX013436;
+	Thu, 14 Nov 2024 18:03:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WPAYMJWo3f8zQDT0GQK415PBZz2HjsisECbUAqr83y0=; b=ayKDzBeuCaZWunKC
+	7OzC2L4tttc5glZqLuainlHUTF/bQiAuAViuYRFJkF0E/ODH6MULHkBizx3z7/vJ
+	DZA9MkulieLHKGW0ZSIKnUxVFCrUwQl+yPrUA1L/R7jymmLno5LUgbORMYK3LS4y
+	G69AA9QsYjM+1a93ZILV2jMLIYcMPDVsJ1JOaCbkQ52lwCZr1ORKrxBM5MQo9pce
+	6S7SLbGpBW396Xiujukp58P4A7mqTJPefnn3WA3wA4iHiS/jq/3YcPPLwFN/t5KN
+	4z3MY42A5jM8ENEtwL/7dzMZBHciR8GJzA733qfkfpwRgjcZvyC4QK5+BgzyYRhb
+	pQpdwQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42w7ekkhrk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 18:03:03 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AEI32Kc004137
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 18:03:02 GMT
+Received: from [10.216.22.98] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 14 Nov
+ 2024 10:02:58 -0800
+Message-ID: <750739e8-62ad-4808-9d05-327d64355886@quicinc.com>
+Date: Thu, 14 Nov 2024 23:32:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,56 +64,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvme-pci: 512 byte aligned dma pool segment quirk
-To: Keith Busch <kbusch@kernel.org>, Bob Beckett <bob.beckett@collabora.com>
-Cc: Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- kernel@collabora.com, linux-nvme@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241112195053.3939762-1-bob.beckett@collabora.com>
- <ZzY6v4d71jliy78w@kbusch-mbp>
+Subject: Re: [PATCH v2 2/2] drm/msm/adreno: Setup SMMU aparture for
+ per-process page table
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Rob Clark
+	<robdclark@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Sean Paul <sean@poorly.run>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie
+	<airlied@gmail.com>,
+        Jessica Zhang <quic_jesszhan@quicinc.com>,
+        Simona Vetter
+	<simona@ffwll.ch>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>
+References: <20241110-adreno-smmu-aparture-v2-0-9b1fb2ee41d4@oss.qualcomm.com>
+ <20241110-adreno-smmu-aparture-v2-2-9b1fb2ee41d4@oss.qualcomm.com>
+ <CAF6AEGvD95RyUXDBjgmoefgO6QyeRw3tpa7EG1MLFKdxcoZ-4g@mail.gmail.com>
+ <5a959c08-cc90-4a05-88b2-e1ee666561e2@quicinc.com>
+ <9d690e39-2bda-4f5a-b7a5-2c9cf90a8065@oss.qualcomm.com>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZzY6v4d71jliy78w@kbusch-mbp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <9d690e39-2bda-4f5a-b7a5-2c9cf90a8065@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: TGtOpQLQz2PmenG2JnFc9QPo4X0TKqfp
+X-Proofpoint-GUID: TGtOpQLQz2PmenG2JnFc9QPo4X0TKqfp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
+ impostorscore=0 phishscore=0 lowpriorityscore=0 suspectscore=0
+ clxscore=1015 bulkscore=0 malwarescore=0 adultscore=0 priorityscore=1501
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411140142
 
-On 11/14/24 11:00 AM, Keith Busch wrote:
-> On Tue, Nov 12, 2024 at 07:50:00PM +0000, Bob Beckett wrote:
->> From: Robert Beckett <bob.beckett@collabora.com>
+On 11/14/2024 8:57 PM, Konrad Dybcio wrote:
+> On 12.11.2024 10:15 PM, Akhil P Oommen wrote:
+>> On 11/11/2024 8:38 PM, Rob Clark wrote:
+>>> On Sun, Nov 10, 2024 at 9:31 AM Bjorn Andersson
+>>> <bjorn.andersson@oss.qualcomm.com> wrote:
+>>>>
+>>>> Support for per-process page tables requires the SMMU aparture to be
+>>>> setup such that the GPU can make updates with the SMMU. On some targets
+>>>> this is done statically in firmware, on others it's expected to be
+>>>> requested in runtime by the driver, through a SCM call.
+>>>>
+>>>> One place where configuration is expected to be done dynamically is the
+>>>> QCS6490 rb3gen2.
+>>>>
+>>>> The downstream driver does this unconditioanlly on any A6xx and newer,
+>>>
+>>> nit, s/unconditioanlly/unconditionally/
+>>>
+>>>> so follow suite and make the call.
+>>>>
+>>>> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+>>>
+>>> Reviewed-by: Rob Clark <robdclark@gmail.com>
+>>>
+>>>
+>>>> ---
+>>>>  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 11 +++++++++++
+>>>>  1 file changed, 11 insertions(+)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+>>>> index 076be0473eb5..75f5367e73ca 100644
+>>>> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+>>>> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+>>>> @@ -572,8 +572,19 @@ struct drm_gem_object *adreno_fw_create_bo(struct msm_gpu *gpu,
+>>>>
+>>>>  int adreno_hw_init(struct msm_gpu *gpu)
+>>>>  {
 >>
->> We initially put in a quick fix of limiting the queue depth to 1
->> as experimentation showed that it fixed data corruption on 64GB
->> steamdecks.
+>> SCM calls into TZ can block for a very long time (seconds). It depends
+>> on concurrent activities from other drivers like crypto for eg:. So we
+>> should not do this in the gpu wake up path.
 >>
->> After further experimentation, it appears that the corruption
->> is fixed by aligning the small dma pool segments to 512 bytes.
->> Testing via desync image verification shows that it now passes
->> thousands of verification loops, where previously
->> it never managed above 7.
->>
->> Currently it is not known why this fixes the corruption.
->> Perhaps it is doing something nasty like using an mmc page
->> as a cache for the prp lists (mmc min. page size is 512 bytes)
->> and not invalidating properly, so that the dma pool change to
->> treats segment list as a stack ends up giving a previous
->> segment in the same cached page.
->>
->> This fixes the previous queue depth limitation as it fixes
->> the corruption without incurring a 37% tested performance
->> degredation.
->>
->> Fixes: 83bdfcbdbe5d ("nvme-pci: qdepth 1 quirk")
+>> Practically, gpu probe is the better place to do this.
 > 
-> I had this queued up for the nvme-6.12 pull request, which I'm about to
-> send out, but I guess we should drop it until we conclude this
-> discussion. With 6.12 likely to be released on Sunday, this better
-> mitigation would need to target 6.13, then stable.
+> Do we only have to do this once?
+> 
+> Do we have to redo it after CXPC?
 
-Since it's a long standing issue, it's not urgent it go into 6.12 in the
-first place. So I'd concur with that assessment, even before this
-discussion, it should just go into 6.13 and be marked for stable. It
-needs that anyway.
+Only once. Those registers have retention.
 
--- 
-Jens Axboe
+-Akhil.
+
+> 
+> Konrad
+
 
