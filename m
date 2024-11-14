@@ -1,47 +1,45 @@
-Return-Path: <linux-kernel+bounces-409291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B5509C8A8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:47:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2173C9C8A9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:47:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3B5F2852EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:47:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE59D1F244D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30181FAC44;
-	Thu, 14 Nov 2024 12:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QPc2tnyk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1471FAEF9;
+	Thu, 14 Nov 2024 12:47:19 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA731E883F;
-	Thu, 14 Nov 2024 12:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216021FAEF1;
+	Thu, 14 Nov 2024 12:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731588433; cv=none; b=UH9oob2tQIpKPJeAmzC3GWt1F7FLdbKJQ/R4945WCZeobqxVnbQ8kpO6ip/GQ3jnfH2dRxbqJq+iniEkIA+ovtfgMFovvbqIPxuI54Migkt4wxcUGHkpS2+nq1KFYRv/d1NNFg2lYdgjJ9GNFnENTdgbb7g3IKaHJEEMO/AG5ak=
+	t=1731588439; cv=none; b=jAMQIVGofSRDs4HrkFCKoSP5NCbI0ROjHoW0sSySUQ2QK8NiYKCoEQp8I9UQJ/zMRoRcLpdAcahLTeouMQt8E3aL+afA2R1/9pjdca66KWow66Mb2om9jB3VUKXro0jVDfm342bAvdfdImxiMJFThTFzx9eAHWcpfDVfOl3/nQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731588433; c=relaxed/simple;
-	bh=LM2UJ++XVFcdQxrEHjPndh+FibA3jWXJI7JXihkurqE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jh5MbxOGH7Y+c9mNxOu6OZo7iQZfjhg/cWu8tiV3ZhmHV8UPdiUwuwfJOA6P6m08G8HznIlReGvtMf232nARzzVAU2hvUBiJG/KYw7eVX1Qx8D5b8SKN9joY19UUapXVDblnnEjcfrmj6wlM5YFUyZj3XIU9YmzCTJGUhqcSPXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QPc2tnyk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDA07C4CECD;
-	Thu, 14 Nov 2024 12:47:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731588432;
-	bh=LM2UJ++XVFcdQxrEHjPndh+FibA3jWXJI7JXihkurqE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QPc2tnykPn/pZ7kmhZ4WbSfG617lzNmuAjNDOh0YHwi2oMeY3GfWDYDjAgs4lJLB3
-	 ObFpuQg1vVhCSVvxgOZQ6vOqMvrVIGun62oTpxFYvZaygvQEgEx77NjxQTifX+ClnZ
-	 wzx7b2sLGsApXR9hvMBDrUak4MoAs7vBrscooyCvb7oLdi4/8QeC5IiffNdcRRsdLS
-	 h1igR/PFOJYTn+Tc+2Fk+sXREjUilbHBpYMmMcaBQyXWgf567cqzOFq3CIAv3qdxuS
-	 LuIBX+sjI6WgO8JQez3xH1/lNww+Bl9bTEQpQIjvUOjiDBhnRd3vTcuestBjD3MJLL
-	 ow2H9jfQWt3ZQ==
-Message-ID: <e9d3a6c8-fb12-4926-8c2b-414017681f03@kernel.org>
-Date: Thu, 14 Nov 2024 14:47:07 +0200
+	s=arc-20240116; t=1731588439; c=relaxed/simple;
+	bh=DaeNh3V8A7sNYaGhQTiNRCHuFCp5y9qxRS8NBKYI9hM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uawTyFqw6+7ZTXRLM32ZaNl0gG0H1Dpmw04YvxZxN0QXkjSNGWDLleM1AEGkfHNjVDixLv79slAvZXS3bdyb4KNxcB6wKijnVrTg45kiTILD7en0gni6/3B4xEs+mPE7MNQzjdh6VxrPybSRoTii9XtM1z817LXQ/4WIcPEc9kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Xq0HN50PNz1T54P;
+	Thu, 14 Nov 2024 20:45:20 +0800 (CST)
+Received: from kwepemk200007.china.huawei.com (unknown [7.202.194.73])
+	by mail.maildlp.com (Postfix) with ESMTPS id AB39F140153;
+	Thu, 14 Nov 2024 20:47:12 +0800 (CST)
+Received: from [10.67.121.172] (10.67.121.172) by
+ kwepemk200007.china.huawei.com (7.202.194.73) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 14 Nov 2024 20:47:12 +0800
+Message-ID: <b67cecd0-e50c-40bd-99b7-b85482e55696@hisilicon.com>
+Date: Thu, 14 Nov 2024 20:47:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,125 +47,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 2/2] net: ethernet: ti: am65-cpsw: enable DSCP
- to priority map for RX
-To: Guillaume Nault <gnault@redhat.com>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, linux-omap@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, srk@ti.com,
- Pekka Varis <p-varis@ti.com>
-References: <20241109-am65-cpsw-multi-rx-dscp-v3-0-1cfb76928490@kernel.org>
- <20241109-am65-cpsw-multi-rx-dscp-v3-2-1cfb76928490@kernel.org>
- <ZzVBS1zXIy31pnaf@debian> <76dd6141-5852-43ae-af98-f0edf0bc10f5@kernel.org>
- <8bfe8acc-9514-4ba8-9498-2427ddb0bb78@kernel.org> <ZzXm6SHjRfbaOX14@debian>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <ZzXm6SHjRfbaOX14@debian>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v3 2/2] crypto: hisilicon/sec2 - fix for aead invalid
+ authsize
+To: Herbert Xu <herbert@gondor.apana.org.au>, Chenghai Huang
+	<huangchenghai2@huawei.com>
+CC: <davem@davemloft.net>, <linux-kernel@vger.kernel.org>,
+	<linux-crypto@vger.kernel.org>, <liulongfang@huawei.com>,
+	<qianweili@huawei.com>, <wangzhou1@hisilicon.com>
+References: <20241102025559.2256734-1-huangchenghai2@huawei.com>
+ <20241102025559.2256734-3-huangchenghai2@huawei.com>
+ <ZzAqQhiebKSuRzOm@gondor.apana.org.au>
+From: "linwenkai (C)" <linwenkai6@hisilicon.com>
+In-Reply-To: <ZzAqQhiebKSuRzOm@gondor.apana.org.au>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemk200007.china.huawei.com (7.202.194.73)
 
 
+在 2024/11/10 11:36, Herbert Xu 写道:
+> On Sat, Nov 02, 2024 at 10:55:59AM +0800, Chenghai Huang wrote:
+>> @@ -2226,15 +2236,15 @@ static int sec_aead_spec_check(struct sec_ctx *ctx, struct sec_req *sreq)
+>>   	struct device *dev = ctx->dev;
+>>   	int ret;
+>>   
+>> -	if (unlikely(req->cryptlen + req->assoclen > MAX_INPUT_DATA_LEN ||
+>> -	    req->assoclen > SEC_MAX_AAD_LEN)) {
+>> -		dev_err(dev, "aead input spec error!\n");
+>> +	/* Hardware does not handle cases where authsize is less than 4 bytes */
+>> +	if (unlikely(sz < MIN_MAC_LEN)) {
+>> +		ctx->a_ctx.fallback = true;
+> This is broken.  sec_aead_spec_check is a per-request function,
+> called without any locking.  Therefore it must not modify any
+> field in the tfm context (at least not without additional locking),
+> because multiple requests can be issued on the same tfm at any time.
+>
+> I suppose for this field in particular you could move it to
+> set_authsize and there it would be safe to change the tfm context.
+>
+> Cheers,
 
-On 14/11/2024 14:02, Guillaume Nault wrote:
-> On Thu, Nov 14, 2024 at 12:12:47PM +0200, Roger Quadros wrote:
->> On 14/11/2024 11:41, Roger Quadros wrote:
->>> On 14/11/2024 02:16, Guillaume Nault wrote:
->>>> So what about following the IETF mapping found in section 4.3?
->>>> https://datatracker.ietf.org/doc/html/rfc8325#section-4.3
->>>
->>> Thanks for this tip.
->>> I will update this patch to have the default DSCP to UP mapping as per
->>> above link and map all unused DSCP to UP 0.
->>
->> How does the below code look in this regard?
-> 
-> Looks generally good to me. A few comments inline though.
-> 
->> static void am65_cpsw_port_enable_dscp_map(struct am65_cpsw_port *slave)
->> {
->> 	int dscp, pri;
->> 	u32 val;
->>
->> 	/* Default DSCP to User Priority mapping as per:
->> 	 * https://datatracker.ietf.org/doc/html/rfc8325#section-4.3
-> 
-> Maybe also add a link to
-> https://datatracker.ietf.org/doc/html/rfc8622#section-11
-> which defines the LE PHB (Low Effort) and updates RFC 8325 accordingly.
-> 
->> 	 */
->> 	for (dscp = 0; dscp <= AM65_CPSW_DSCP_MAX; dscp++) {
->> 		switch (dscp) {
->> 		case 56:	/* CS7 */
->> 		case 48:	/* CS6 */
->> 			pri = 7;
->> 			break;
->> 		case 46:	/* EF */
->> 		case 44:	/* VA */
->> 			pri = 6;
->> 			break;
->> 		case 40:	/* CS5 */
->> 			pri = 5;
->> 			break;
->> 		case 32:	/* CS4 */
->> 		case 34:	/* AF41 */
->> 		case 36:	/* AF42 */
->> 		case 38:	/* AF43 */
->> 		case 24:	/* CS3 */
->> 		case 26:	/* AF31 */
->> 		case 28:	/* AF32 */
->> 		case 30:	/* AF33 */
-> 
-> Until case 32 (CS4) you've kept the order of RFC 8325, table 1.
-> It'd make life easier for reviewers if you could keep this order
-> here. That is, moving CS4 after AF43 and CS3 after AF33.
-> 
->> 			pri = 4;
->> 			break;
->> 		case 17:	/* AF21 */
-> 
-> AF21 is 18, not 17.
-> 
->> 		case 20:	/* AF22 */
->> 		case 22:	/* AF23 */
->> 			pri = 3;
->> 			break;
->> 		case 8:		/* CS1 */
-> 
-> Let's be complete and add the case for LE (RFC 8622), which also
-> maps to 1.
+Hi,
 
-All comments are valid. I will fix and send v4 for this series.
+I have found another setup for fallback in the sec_aead_param_check 
+function, so I need to fix it right too.
 
-> 
->> 			pri = 1;
->> 			break;
+The orignal code:
 
-For sake of completeness I will mention CS2, AF11, AF12, AF13
-here that can fallback to default case.
+static int sec_aead_param_check(struct sec_ctx *ctx, struct sec_req *sreq)
+{
 
->> 		default:
->> 			pri = 0;
->> 			break;
->> 		}
->>
->> 		am65_cpsw_port_set_dscp_map(slave, dscp, pri);
->> 	}
->>
->> 	/* enable port IPV4 and IPV6 DSCP for this port */
->> 	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_CTL);
->> 	val |= AM65_CPSW_PN_REG_CTL_DSCP_IPV4_EN |
->> 		AM65_CPSW_PN_REG_CTL_DSCP_IPV6_EN;
->> 	writel(val, slave->port_base + AM65_CPSW_PORTN_REG_CTL);
->> }
->>
->>>
+         if (ctx->sec->qm.ver == QM_HW_V2) {
+                 if (unlikely(!req->cryptlen || (!sreq->c_req.encrypt &&
+                              req->cryptlen <= authsize))) {
+                         ctx->a_ctx.fallback = true;
+                         return -EINVAL;
+                 }
+         }
+}
 
--- 
-cheers,
--roger
+After the modification, I used a temporary variable fallback to save the 
+state:
+
+static int sec_aead_param_check(struct sec_ctx *ctx, struct sec_req 
+*sreq, bool *fallback)
+{
+
+         if (ctx->sec->qm.ver == QM_HW_V2) {
+                 if (unlikely(!req->cryptlen || (!sreq->c_req.encrypt &&
+                              req->cryptlen <= authsize))) {
+                         *fallback = true;
+                         return -EINVAL;
+                 }
+         }
+}
+
+Same with  the sec_aead_spec_check function.
+
+static int sec_aead_spec_check(struct sec_ctx *ctx, struct sec_req 
+*sreq, bool *fallback) {
+
+         /* Hardware does not handle cases where authsize is less than 4 
+bytes */
+         if (unlikely(sz < MIN_MAC_LEN)) {
+                 *fallback = true;
+                 return -EINVAL;
+         }
+
+}
+
+Do you think it is a better way?
+
+Thanks,
 
 
