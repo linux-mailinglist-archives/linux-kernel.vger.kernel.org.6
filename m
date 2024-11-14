@@ -1,158 +1,136 @@
-Return-Path: <linux-kernel+bounces-408537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F8729C8024
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:45:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13A399C802A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:46:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EDA32839F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:45:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4D0D1F24846
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716D51CCEFD;
-	Thu, 14 Nov 2024 01:45:38 +0000 (UTC)
-Received: from smtp01.aussiebb.com.au (smtp01.aussiebb.com.au [121.200.0.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5390C1E47A8;
+	Thu, 14 Nov 2024 01:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RDm2bINM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B603079EA;
-	Thu, 14 Nov 2024 01:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.200.0.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29FB71C1AB6
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731548738; cv=none; b=NTm4jRmvvvZa+b08rSypmuFkZRwTyw7s8ie0xRjhqnQzFxEyDpZF0BPtEWPOrg5OHbFgkh4z8ZJxlG4nocgpxORsaX9mAwRuHlYw5YarWAAY8fM9vhaMCWW+u6HreRDK4JOi5KZjxjEgrdvSeOBT3zr38FJmOsdp6Q3bGpx0B+Y=
+	t=1731548757; cv=none; b=LEfBQkmOF7bg/9LvFI2ZJZcDtEQByK1tUceM1/p1JE0kHHAdZXHC6W+IkwaWta1BzEj+ZM69nNbx+evef/SoE5Oiu7vq48iI82afMxX1XAP7JTEMyEGKnvoaPtwOLvkqAeOvhLk0wCWCGoPbEOCch5rDRpy/jbr1zVBwd8BYB9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731548738; c=relaxed/simple;
-	bh=YT4Rq9IEpn86oPiqhyyRmqluXdSWRUkTeZRs5rTIS7c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D3Hw817ek83jvJrUpoGYxzxwluoIX657cRSRy0dJDu6vzMGvNrxRSOo3lu78kSw3I7ioONjNjvHl2DP6HOEt+Ce2nz4hPZxxE7L24f+Szj+j/BCBAk6cfG65rphXym/V4x/OmtKrJ8+Yi5sR3EH9TqcN6WgN/ncUQZi6bLPTb1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net; spf=fail smtp.mailfrom=themaw.net; arc=none smtp.client-ip=121.200.0.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=themaw.net
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp01.aussiebb.com.au (Postfix) with ESMTP id 06546100551;
-	Thu, 14 Nov 2024 12:45:27 +1100 (AEDT)
-X-Virus-Scanned: Debian amavisd-new at smtp01.aussiebb.com.au
-Received: from smtp01.aussiebb.com.au ([127.0.0.1])
-	by localhost (smtp01.aussiebb.com.au [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id E_S7LEThqzr5; Thu, 14 Nov 2024 12:45:26 +1100 (AEDT)
-Received: by smtp01.aussiebb.com.au (Postfix, from userid 116)
-	id DC0AF100B54; Thu, 14 Nov 2024 12:45:26 +1100 (AEDT)
-X-Spam-Level: 
-Received: from [192.168.1.229] (159-196-82-144.9fc452.per.static.aussiebb.net [159.196.82.144])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	s=arc-20240116; t=1731548757; c=relaxed/simple;
+	bh=bwGDRMVI7TyWZ6zyTO+7IA/7Wp5/HS+XvIpLC3KJ3dg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NwI25tW8Iq8VLSJUmf6mAICUuYuQHTAIu5FyQCju9wwKErlJUmEuCbEcfJSKuLD94esV6iQ1nCIlvn+j3HMLd7hVWpC/oZdyoTIDdYtE7aZu/ZUarn3/cwMS7lR0/qERX4tuP3LJevtnd0Tr+BzjPQwnh9X6t07rfg5VtjUsDJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RDm2bINM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731548755;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yR1GZUFS0LBQ/guHbrlldU7st7AuyATsxiMe8yNoBo0=;
+	b=RDm2bINMp6UNxpKjBJtK2TA9ryBVU0/+32CxLNOsQA8t3K4uNmL9tkgyEkeSLI48D4mgNP
+	CJiAS3BMeSIekUu5C8C5PJUjVQXaO9YhHD+4AUgCQ+/wx9ihm/HsgJTi9rGuoYkwUArQ2P
+	gD0GBXxf4x9wo3XignHA+mwDBaTaKEw=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-237--a1l96hQNMq7uvZ2A6y2Xg-1; Wed,
+ 13 Nov 2024 20:45:50 -0500
+X-MC-Unique: -a1l96hQNMq7uvZ2A6y2Xg-1
+X-Mimecast-MFC-AGG-ID: -a1l96hQNMq7uvZ2A6y2Xg
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: ian146@aussiebb.com.au)
-	by smtp01.aussiebb.com.au (Postfix) with ESMTPSA id D3E13100402;
-	Thu, 14 Nov 2024 12:45:24 +1100 (AEDT)
-Message-ID: <83b4c065-8cb4-4851-a557-aa47b7d03b6f@themaw.net>
-Date: Thu, 14 Nov 2024 09:45:23 +0800
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C22431955F41;
+	Thu, 14 Nov 2024 01:45:46 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.113])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5C92A30000DF;
+	Thu, 14 Nov 2024 01:45:31 +0000 (UTC)
+Date: Thu, 14 Nov 2024 09:45:27 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Daniel Wagner <wagi@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	John Garry <john.g.garry@oracle.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hannes Reinecke <hare@suse.de>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	virtualization@lists.linux.dev, linux-scsi@vger.kernel.org,
+	megaraidlinux.pdl@broadcom.com, mpi3mr-linuxdrv.pdl@broadcom.com,
+	MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com,
+	linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v4 01/10] driver core: bus: add irq_get_affinity callback
+ to bus_type
+Message-ID: <ZzVWNy3oer4jFjFk@fedora>
+References: <20241113-refactor-blk-affinity-helpers-v4-0-dd3baa1e267f@kernel.org>
+ <20241113-refactor-blk-affinity-helpers-v4-1-dd3baa1e267f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/3] fs: allow statmount to fetch the fs_subtype and
- sb_source
-To: Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>
-Cc: Karel Zak <kzak@redhat.com>, Christian Brauner <brauner@kernel.org>,
- Miklos Szeredi <miklos@szeredi.hu>, Josef Bacik <josef@toxicpanda.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>
-References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
- <20241112-antiseptisch-kinowelt-6634948a413e@brauner>
- <hss5w5in3wj3af3o2x3v3zfaj47gx6w7faeeuvnxwx2uieu3xu@zqqllubl6m4i>
- <63f3aa4b3d69b33f1193f4740f655ce6dae06870.camel@kernel.org>
- <20241113151848.hta3zax57z7lprxg@quack3>
-Content-Language: en-US
-From: Ian Kent <raven@themaw.net>
-Autocrypt: addr=raven@themaw.net; keydata=
- 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
-In-Reply-To: <20241113151848.hta3zax57z7lprxg@quack3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241113-refactor-blk-affinity-helpers-v4-1-dd3baa1e267f@kernel.org>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 13/11/24 23:18, Jan Kara wrote:
-> On Wed 13-11-24 08:45:06, Jeff Layton wrote:
->> On Wed, 2024-11-13 at 12:27 +0100, Karel Zak wrote:
->>> On Tue, Nov 12, 2024 at 02:39:21PM GMT, Christian Brauner wrote:
->>> Next on the wish list is a notification (a file descriptor that can be
->>> used in epoll) that returns a 64-bit ID when there is a change in the
->>> mount node. This will enable us to enhance systemd so that it does not
->>> have to read the entire mount table after every change.
->>>
->> New fanotify events for mount table changes, perhaps?
-> Now that I'm looking at it I'm not sure fanotify is a great fit for this
-> usecase. A lot of fanotify functionality does not really work for virtual
-> filesystems such as proc and hence we generally try to discourage use of
-> fanotify for them. So just supporting one type of event (like FAN_MODIFY)
-> on one file inside proc looks as rather inconsistent interface. But I
-> vaguely remember we were discussing some kind of mount event, weren't we?
-> Or was that for something else?
+On Wed, Nov 13, 2024 at 03:26:15PM +0100, Daniel Wagner wrote:
+> Introducing a callback in struct bus_type so that a subsystem
+> can hook up the getters directly. This approach avoids exposing
+> random getters in any subsystems APIs.
+> 
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Signed-off-by: Daniel Wagner <wagi@kernel.org>
+> ---
+>  include/linux/device/bus.h | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/include/linux/device/bus.h b/include/linux/device/bus.h
+> index cdc4757217f9bb4b36b5c3b8a48bab45737e44c5..b18658bce2c3819fc1cbeb38fb98391d56ec3317 100644
+> --- a/include/linux/device/bus.h
+> +++ b/include/linux/device/bus.h
+> @@ -48,6 +48,7 @@ struct fwnode_handle;
+>   *		will never get called until they do.
+>   * @remove:	Called when a device removed from this bus.
+>   * @shutdown:	Called at shut-down time to quiesce the device.
+> + * @irq_get_affinity:	Get IRQ affinity mask for the device on this bus.
+>   *
+>   * @online:	Called to put the device back online (after offlining it).
+>   * @offline:	Called to put the device offline for hot-removal. May fail.
+> @@ -87,6 +88,8 @@ struct bus_type {
+>  	void (*sync_state)(struct device *dev);
+>  	void (*remove)(struct device *dev);
+>  	void (*shutdown)(struct device *dev);
+> +	const struct cpumask *(*irq_get_affinity)(struct device *dev,
+> +			unsigned int irq_vec);
+>  
+>  	int (*online)(struct device *dev);
+>  	int (*offline)(struct device *dev);
+> 
 
-I still need to have a look at the existing notifications sub-systems but,
+Looks one nice abstraction,
 
-tbh, I also don't think they offer the needed functionality.
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-
-The thing that was most useful with David's notifications when I was trying
-
-to improve the mounts handling was the queuing interface. It allowed me to
-
-batch notifications up to around a couple of hundred and grab them in one go
-
-for processing. This significantly lowered the overhead of rapid fire event
-
-processing. The ability to go directly to an individual mount and get it's
-
-information only got about half the improvement I saw, the rest come 
-from the
-
-notifications improvement.
-
-
-Ian
+-- 
+Ming
 
 
