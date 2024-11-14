@@ -1,73 +1,74 @@
-Return-Path: <linux-kernel+bounces-408896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1219C9C84D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:26:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 438D59C84CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:26:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90430284C26
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:26:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 881581F22B07
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C7F1F7549;
-	Thu, 14 Nov 2024 08:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38931F7082;
+	Thu, 14 Nov 2024 08:25:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BTX68oJe"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="YeQcY/vb"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDEF1EF0A1;
-	Thu, 14 Nov 2024 08:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0C21F7553
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731572770; cv=none; b=Gg50mPYRrgkw2ejJXc60EaiZuNcZYVg/1YwhsAlZohzCaEWpRzR2xrtqCUj3j2CCPe4xgGtGxV15EMxuWU2J8kfgdU0p6s/G0m6By3DpCyfYccQbFkE98KDD+G4dSy1nw8syZ0ZsfpWDkG13mUgtQ2Va0lmIircagRAZdnXoAhI=
+	t=1731572746; cv=none; b=fpYA2RFR1p8h2g4pHoSV3urolVOfkEXdaS1IsmPCZx4EB1UukCGjv+MktmJ6QsnbIpFbz7Gtb5lj1XFCS9DJnrMM9VFgQkptMq/txf65OZIlZhob1sOwGPGh7RmGHW7Dej2dWnU9Zw3XNyDs+kViXHhJAa9ggss+gqtGwk4HrIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731572770; c=relaxed/simple;
-	bh=GYL1Z33iDAW71hbOa6kteXwSx93rgNSq06IBAENRps8=;
+	s=arc-20240116; t=1731572746; c=relaxed/simple;
+	bh=6Vee8QcL7yV8USCPdLdRXuF+gIl9+D5vlFvwmciO328=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jOOkc5c5LHhWdTAWWQJGpNLf7QrREEKKtD57j+baY85c1DyKGRiZuWKHFLEncz/xAWAW5NfF0oAF815v5ELPfDMZuN8TyYBgNmdMWvt2dxVe3gefGf0Lhm0FldDI63gRTox6iOmtUimyw5Lywz+9dLdq2zWDmGG2KPySZ8s3W7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BTX68oJe; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9e8522445dso59487566b.1;
-        Thu, 14 Nov 2024 00:26:08 -0800 (PST)
+	 In-Reply-To:Content-Type; b=PFpfRgDfkQw/cXWsgeAthei5IBlrkTVrUBUfp5RYdita568v+E1qiu4SWt0QlMAMPSJXFNsgUqqxu5ot0+H0IeX93tkN9MHbGnzMAzOjkbTlIj1dwe+PhcTGwTRrGm6MN8WOawUOShL0V8bbSjY+M2h2bZbzUUMge65pSDrL7/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=YeQcY/vb; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9acafdb745so63541266b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 00:25:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731572767; x=1732177567; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QLyvFPHpxm3Z8eNHyU2D0j8hgC2REPkIyuqNLE8iojs=;
-        b=BTX68oJeYJt0bR8R6A+taI/ORKH7YnGqKDicKitMoEO2CsZnPa57CUNerd+t3+gcjV
-         S8b+mMooNw1TWtT2Lnf1eeHimy9FiDhl1XWFv7xZY3hwX2p8Mcsf3nXTCoVAO0YAYO4Y
-         oiOhVoKag/vzwPr7DBX+NuYMdRVD+g13ydbgqOetHkAoBOX5VcbZscmYVcUWIDQQReDo
-         Z/FuM+LSeI1Mhk8O+QlQ2tMn3uyyxbdPAANlHsMPdAc0IDz4YVzzzYATaq/h+xXBiYQK
-         y7Mm764R3YYUR/jE4fQ9yhhURrhez+7tPdPB5E1ZQlwIqm4nhSRo8KjmXiSsSC4UQUyN
-         zb3Q==
+        d=openvpn.net; s=google; t=1731572742; x=1732177542; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=MUG53R1M4hAynYYPEtM8N64WD9TAg8ll+ij6nAnaJEw=;
+        b=YeQcY/vbqKqONyYJik+BXADHQGPWAVOpVSSOCsf4qvRDXU6zl2aXRg2TDFLrV8GDtY
+         aeTLcH6KsIp5X1wzTcNmWo5DfV8n6QYdjwRi6BSDJdCb5uhffwHA57pEZFSe09Djr7Yp
+         Dt7D7mSlu0OikyOux5hSutycKLGLH/YBBbID5qyz/oWFtF1f7ijzzfccRu9DkG2b22aI
+         ykJPvsd/2OnlQrkW3TOxIaxMuUH7xlLwRcPuSXAyvueAOi/HJkZ5NqWGU8mB7tlnqyTE
+         YNY82CCaAhqtcy5Q6CQByVCzJHERsl//rgGDEDhf/aKqqCqw9I39KIOiJwZew+CQPU7k
+         300w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731572767; x=1732177567;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QLyvFPHpxm3Z8eNHyU2D0j8hgC2REPkIyuqNLE8iojs=;
-        b=B5IyaQgHNdCIajVUhCP9wsdNXioZzGWUao8udZOGEpK/cIcscG1Cv9BOEjJMMUevhm
-         9gMqQKpdkva/aQWYxMeTO9tFokoNDfpE1wJEbL03rILU4rpQVmzy2FRak1fzcdnQTg9u
-         2g0cqivNm788l4L83hmZVtUxOyCzGhqszDfYVpdUxAaB7IZWC9nCd60EGiNZTczYCDaW
-         m7MeiD3i0JnK+VBxeg6BEI7vj61EKVMJWOJRTUDpfVRbZlmdGx6bwIDizHw4+/PkwMr5
-         9BLsUwYF2lONt3oWdEIVtcKpyTk2hTW4p/h72x6LY96Gim5Z3aEQXj+CzzfTTVKm6KoE
-         fTqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcomjE4p6ySFkyMrJ9zQybfYfsIB8O9GanwvpAsm/f6iBBcQxhEER7xkya5hPblkgBypNhaV+sErgc@vger.kernel.org, AJvYcCVf2s9FfdwkZEY9xiWxzpI5eK570uea2QhMLJoZOePfeSYxa/vzj2h7UDXROXTnA4UYgKWvhv39dE8aicpGdII5nUo=@vger.kernel.org, AJvYcCWH7HzHVcbpYnIN2cq0XelqEQ99QUhZMImh9TUxIXGVEdq1/FnEllGDx9QJJDI3LOuZRYRs+kCr0Lsm2/I4@vger.kernel.org
-X-Gm-Message-State: AOJu0YwICmSEIEQUquaU50IzoTsmMacaq/YHJ8062/49nYXJKBhF9yri
-	iY2Z36xPQNbADvog8O1Rh464mmT9jNp8XFaJbazVcGQwbmTcJboFYLKU6Q==
-X-Google-Smtp-Source: AGHT+IEf1WmcfXNdSENwfIUsrYNgAlR4c3RtKQdPsGuXCzLAnypp6yYLWhuIvEI3eSxUjjW590bBQw==
-X-Received: by 2002:a17:906:7305:b0:a9e:8612:f201 with SMTP id a640c23a62f3a-aa20cdf5073mr103350866b.59.1731572766864;
-        Thu, 14 Nov 2024 00:26:06 -0800 (PST)
-Received: from [192.168.35.18] ([77.85.230.22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df268d5sm35235566b.5.2024.11.14.00.26.05
+        d=1e100.net; s=20230601; t=1731572742; x=1732177542;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MUG53R1M4hAynYYPEtM8N64WD9TAg8ll+ij6nAnaJEw=;
+        b=KTr+nQuXV+fhDEzRsXv+vPzTuSB9UUrs5Q35FcjzBCb0si5ycRz1SOgNKNK/23lXwV
+         22C8PEMB9rmAV4GBZKzpiGcGMU4pqUjSQvsjBwWaKB2vkhM97zMNCjfg1U0YNurP4XHk
+         /UmHA3Nrt0Q60lAtPNifEJuxO4j+v1zLQFqDzWshObirkkQlaZy7r4fT+M0noyThTH9d
+         oAfRu8ATpBux1ok8uEYKz0RLM+al0MMUzrcUzQ7gTIk9ABvv5frkIZ5o1HGTyObJf/yK
+         tupcLrt+rz0YS5Jy7+U+3HZ+8bNHvo727BkwVKz+NmISH8I4jicUcdUjQU32ndx1qcW1
+         5NBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhqoFakAQ2Fg9LCae3ZZoZZXmjsqXG86DUZQOyqs2DyuRmVynJ54KN1yyUVB6J5l1mmrfR40PUqsQHaxA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywn7l1mGxAWWovESMjavQh0/r3dN4ddsyXatiYxcAdZ8nSjGBlh
+	6e4HI959EeClVQg0zY/2eOVcIYElN+GTCq2XxKmr6SR4sYYFjGWxOkTsHFnSWag=
+X-Google-Smtp-Source: AGHT+IHMBCARloQHWsBRhGBPdkFXRS+gu6h3BOv+wWntUo40Ek+a45U5+NJuK23CznPRgSIVLswVew==
+X-Received: by 2002:a17:907:78e:b0:a99:5f45:cb69 with SMTP id a640c23a62f3a-aa207680129mr283686066b.4.1731572742262;
+        Thu, 14 Nov 2024 00:25:42 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:3779:22d5:a322:7c13? ([2001:67c:2fbc:1:3779:22d5:a322:7c13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20e080a90sm34629066b.174.2024.11.14.00.25.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 00:26:06 -0800 (PST)
-Message-ID: <746e218b-a00c-49ac-a998-511696bc9525@gmail.com>
-Date: Thu, 14 Nov 2024 10:26:05 +0200
+        Thu, 14 Nov 2024 00:25:41 -0800 (PST)
+Message-ID: <aa9ec51d-6842-42e3-932e-1e1bd3cde42f@openvpn.net>
+Date: Thu, 14 Nov 2024 09:26:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,183 +76,126 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] arm64: dts: Add initial support for Samsung Galaxy
- S20 FE (r8s)
+Subject: Re: [PATCH net-next v11 17/23] ovpn: add support for peer floating
+To: Sabrina Dubroca <sd@queasysnail.net>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+ Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-17-de4698c73a25@openvpn.net> <ZzM0U81dmvdEWqdF@hog>
+ <955030bd-e230-448c-8a63-1b356590dd15@openvpn.net> <ZzSMrgFmbxX9NtIp@hog>
 Content-Language: en-US
-To: Denzeel Oliva <wachiturroxd150@gmail.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241112193149.1262-1-wachiturroxd150@gmail.com>
- <20241112193149.1262-3-wachiturroxd150@gmail.com>
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <20241112193149.1262-3-wachiturroxd150@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <ZzSMrgFmbxX9NtIp@hog>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+On 13/11/2024 12:25, Sabrina Dubroca wrote:
+> 2024-11-12, 15:03:00 +0100, Antonio Quartulli wrote:
+>> On 12/11/2024 11:56, Sabrina Dubroca wrote:
+>>> 2024-10-29, 11:47:30 +0100, Antonio Quartulli wrote:
+>>>> diff --git a/drivers/net/ovpn/io.c b/drivers/net/ovpn/io.c
+>>>> index 63c140138bf98e5d1df79a2565b666d86513323d..0e8a6f2c76bc7b2ccc287ad1187cf50f033bf261 100644
+>>>> --- a/drivers/net/ovpn/io.c
+>>>> +++ b/drivers/net/ovpn/io.c
+>>>> @@ -135,6 +135,15 @@ void ovpn_decrypt_post(void *data, int ret)
+>>>>    	/* keep track of last received authenticated packet for keepalive */
+>>>>    	peer->last_recv = ktime_get_real_seconds();
+>>>> +	if (peer->sock->sock->sk->sk_protocol == IPPROTO_UDP) {
+>>>
+>>> What prevents peer->sock from being replaced and released
+>>> concurrently?
+>>
+>> Technically nothing.
+>> Userspace currently does not even support updating a peer socket at runtime,
+>> but I wanted ovpn to be flexible enough from the beginning.
+> 
+> Is there a reason to do that? With TCP the peer would have to
+> reconnect, and I guess fully restart the whole process (become a new
+> peer with a new ID etc). With UDP, do you need to replace the socket?
 
+At the moment userspace won't try to do that, but I can foresee some 
+future use cases: i.e. a peer that switches to a different interface and 
+needs to open a new socket to keep sending data.
 
+Moreover, in userspace we're currently working on multisocket support 
+(theoretically server side only), therefore I can imagine a peer 
+floating from one socket to the other while keeping the session alive.
 
-On 11/12/24 21:31, Denzeel Oliva wrote:
-> Add initial support for the Samsung Galaxy S20 FE (r8s/SM-G780F) device.
-> Its launch was in 2020 and also based on the Exynos 990 SoC.
-> It is only configured with 6GB of RAM, although storage options may differ.
+This is all work in progress, but not that far in the future.
 
-As far as I can tell, there are models with more than 6gb's of ram.
-How would the memory node differ for them?
+For TCP, you're right, although at some point we may even implement 
+transport reconnections without losing the VPN state (this is not even 
+planned, just a brain dump).
 
->
-> This device tree adds support for the following:
->
-> - SimpleFB
-> - 6GB RAM
-> - Buttons
->
-> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
-> ---
->  arch/arm64/boot/dts/exynos/Makefile          |   1 +
->  arch/arm64/boot/dts/exynos/exynos990-r8s.dts | 115 +++++++++++++++++++
->  2 files changed, 116 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos990-r8s.dts
->
-> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-> index 7a934499b..948a2c6cb 100644
-> --- a/arch/arm64/boot/dts/exynos/Makefile
-> +++ b/arch/arm64/boot/dts/exynos/Makefile
-> @@ -9,5 +9,6 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
->  	exynos850-e850-96.dtb		\
->  	exynos8895-dreamlte.dtb		\
->  	exynos990-c1s.dtb		\
-> +	exynos990-r8s.dtb               \
->  	exynosautov9-sadk.dtb		\
->  	exynosautov920-sadk.dtb
-> diff --git a/arch/arm64/boot/dts/exynos/exynos990-r8s.dts b/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
-> new file mode 100644
-> index 000000000..b21863bbb
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
-> @@ -0,0 +1,115 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-> +/*
-> + * Samsung Galaxy S20 FE (r8s/SM-G780F) device tree source
-> + *
-> + * Copyright (c) 2024, Denzeel Oliva <wachiturroxd150@gmail.com>
-> + */
-> +
-> +/dts-v1/;
-> +#include "exynos990.dtsi"
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +/ {
-> +	model = "Samsung Galaxy S20 FE";
-> +	compatible = "samsung,r8s", "samsung,exynos990";
-> +
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
-> +
-> +	chosen {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		framebuffer0: framebuffer@f1000000 {
-> +			compatible = "simple-framebuffer";
-> +			reg = <0 0xf1000000 0 (1080 * 2400 * 4)>;
-> +			width = <1080>;
-> +			height = <2400>;
-> +			stride = <(1080 * 4)>;
-> +			format = "a8r8g8b8";
-> +		};
-> +	};
-> +
-> +	memory@80000000 {
-> +		device_type = "memory";
-> +		reg = <0x0 0x80000000 0x0 0x3ab00000>,
-> +		      /* Memory hole */
-> +		      <0x0 0xc1200000 0x0 0x1ee00000>,
-> +		      /* Memory hole */
-> +		      <0x0 0xe1900000 0x0 0x1e700000>,
-> +		      /* Memory hole - last block */
-> +		      <0x08 0x80000000 0x0 0x0c000000>;
+> 
+>> One approach might be to go back to peer->sock being unmutable and forget
+>> about this.
+>>
+>> OTOH, if we want to keep this flexibility (which I think is nice), I think I
+>> should make peer->sock an RCU pointer and access it accordingly.
+> 
+> You already use kfree_rcu for ovpn_socket, so the only difference
+> would be the __rcu annotation and helpers? (+ rcu_read_lock/unlock in
+> a few places)
+> 
+> Adding rcu_read_lock for peer->sock in ovpn_tcp_tx_work looks
+> painful... (another place that I missed where things could go bad if
+> the socket was updated in the current implementation, btw)
+> 
+> Maybe save that for later since you don't have a use case for it yet?
 
-0x08 -> 0x8
+I agree with you. I'll make the socket unmutable again and I'll work on 
+this later on.
 
-Best regards, Ivo.
+Thanks a lot for digging with me into this.
 
-> +	};
-> +
-> +	reserved-memory {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		cont_splash_mem: framebuffer@f1000000 {
-> +			reg = <0 0xf1000000 0 0x13c6800>;
-> +			no-map;
-> +		};
-> +
-> +		abox_reserved: audio@f7fb0000 {
-> +			reg = <0 0xf7fb0000 0 0x2a50000>;
-> +			no-map;
-> +		};
-> +	};
-> +
-> +	gpio-keys {
-> +		compatible = "gpio-keys";
-> +
-> +		pinctrl-0 = <&key_power &key_voldown &key_volup>;
-> +		pinctrl-names = "default";
-> +
-> +		power-key {
-> +			label = "Power";
-> +			linux,code = <KEY_POWER>;
-> +			gpios = <&gpa2 4 GPIO_ACTIVE_LOW>;
-> +			wakeup-source;
-> +		};
-> +
-> +		voldown-key {
-> +			label = "Volume Down";
-> +			linux,code = <KEY_VOLUMEDOWN>;
-> +			gpios = <&gpa0 4 GPIO_ACTIVE_LOW>;
-> +		};
-> +
-> +		volup-key {
-> +			label = "Volume Up";
-> +			linux,code = <KEY_VOLUMEUP>;
-> +			gpios = <&gpa0 3 GPIO_ACTIVE_LOW>;
-> +		};
-> +	};
-> +};
-> +
-> +&oscclk {
-> +	clock-frequency = <26000000>;
-> +};
-> +
-> +&pinctrl_alive {
-> +	key_power: key-power-pins {
-> +		samsung,pins = "gpa2-4";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-> +	};
-> +
-> +	key_voldown: key-voldown-pins {
-> +		samsung,pins = "gpa0-4";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-> +	};
-> +
-> +	key_volup: key-volup-pins {
-> +		samsung,pins = "gpa0-3";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-> +	};
-> +};
+Regards,
+
+-- 
+Antonio Quartulli
+OpenVPN Inc.
 
 
