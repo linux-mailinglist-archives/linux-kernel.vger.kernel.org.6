@@ -1,136 +1,201 @@
-Return-Path: <linux-kernel+bounces-409121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64D599C87AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:35:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F1DC9C87AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:35:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BB6F1F2187F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:35:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C8F628252C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778F61FAC52;
-	Thu, 14 Nov 2024 10:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D891F76C2;
+	Thu, 14 Nov 2024 10:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LHGS4Z8F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="MBQFC/GF"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03701FAC47;
-	Thu, 14 Nov 2024 10:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136AE1F7540
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731580311; cv=none; b=uY6LvXsdQ8oZC8rPyUKpYJpm50C1wi9CXX4bbity/jO6w+T0YY59ZOKaPDDrmcqf6FSHc0VxA0LeAQ9QKa+BuVJ4J9wahVT++neB1ov6UPC56D8BWjTdlBCSX0E2b5B1RHhj+2+enHQgz3FcsDPonZoHhZuVh99d82N5JD5Rt1U=
+	t=1731580335; cv=none; b=jiM7C/vdxeYZTzcrgKgRzz/bOv37Y//EWqkcKVl1qsoITg9Oad5xn4P36t7ijkteKvmFf9qspQ1ElXxsGJrVjluC7Gaz50eCkfkDYvxCnTdqGoFx7fqaAHXSIo4Pq8R2wMOHwMYT1VBDCxX3VFdnCKALZilBVaMuLBVxIPFhh04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731580311; c=relaxed/simple;
-	bh=PvtFbg/8OOw9SaJ63G51HlH+PGdB8FZuVIeCmRurLBE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l5TGd+wpWYO0nWSAcE2PrGJM5TCdoaQRaMDeCCySnQfiQD/WWyPTXeo0h8yanrPw3neAcuzJGEEabqG3harksEvMB2dy01f2Vr3paXL5sfH46RD3vCCRaHxZhYCIK52lp5NYkmDs7Raijb/eAhww/LvRbofsUsmqJ7XBpUckfHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LHGS4Z8F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5234EC4CECD;
-	Thu, 14 Nov 2024 10:31:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731580311;
-	bh=PvtFbg/8OOw9SaJ63G51HlH+PGdB8FZuVIeCmRurLBE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LHGS4Z8F0wL30Lex/0uqMZFucCEXI1nFoncTAeW5vuigAA8+b7gR1JsyvEdqyJVME
-	 I8fEu/64CvkiMa02Wj1eZukHaKJ1FDHN2uwQ6GjXZjfoXgAeooO/tWLVwBVeO6QUru
-	 arXJjQ2+VjqCyRIdxQx09FnYa3DgImEGdEvthKyFpX1N3e8HnY3wAzgEM4sh0Gtq7l
-	 9lMWEY+pRfALVU1Oy5ke+4Kd4ZlHkDj+M1BgNs/FAnbMstgjJo76vaZgT5toTpmFvQ
-	 Kcp3uMOg3VcI7qUTzKL4tLhRPMvF/e69yRCehWTAYHxQR9CPs0sW89KES4KTRMO/Dg
-	 rrlAlfloMvM/A==
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Werner Sembach <wse@tuxedocomputers.com>,
-	tux@tuxedocomputers.com,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Leemhuis <linux@leemhuis.info>
-Subject: [PATCH 2/2] module: Block modules by Tuxedo from accessing GPL symbols
-Date: Thu, 14 Nov 2024 11:31:34 +0100
-Message-ID: <20241114103133.547032-6-ukleinek@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241114103133.547032-4-ukleinek@kernel.org>
-References: <20241114103133.547032-4-ukleinek@kernel.org>
+	s=arc-20240116; t=1731580335; c=relaxed/simple;
+	bh=DTeHUQizHgGM0F2W5Jcw8OsYgIMucRypUAcng0CuKAc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r9x86OIde2IwyccMOmGqOt0gnBstAbyL931PNfhdJrEK8DdFA2nEojD3k/LJ2YUoJGfXDF7m+2dcbTeqIJC9Y3Tb5PfyFoYH6bEN02GYIAJUIdQiB5nIdlz7Sz0+JC1TfHv2UsA/WDTOJqdWqTDdJXi6mTbOGfrV6KpbzXywqNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=MBQFC/GF; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539fb49c64aso636549e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 02:32:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1731580331; x=1732185131; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=a0d1qrLF27Vwr69NZjn0r/8jpEAVBzVx/HFYFyUQblQ=;
+        b=MBQFC/GFVIH0ZourwRmIFWGPAg5BgmrNQK74vIPy6WMfuSCvDgR/Zr5aZEGc9JJcjV
+         57BH4RJLiZzuZ6n0BzJxRAcyDwcN5kL+/9Tfwk0XzQ7luPBapfEfd+DoFOLU0EDNldKy
+         oowtcCfIzsjLAP3m7C0fhcCXzBMfe8jKfUNRrotxUj2rStPQZVHB2Vzjy3T28tphxL5x
+         47XoK3rUt0JQibNEMVko/CGigM3VDg+49xfKQK2UkuFpvb3wyrtWWzxD5MKe7NyMRS5s
+         W7TLVzizhSj1K9sxgRqHNtstdg5mI4YTSC0xiLwPdapL1MtGvNLmBrLsBgnARrWUgcCX
+         Tt6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731580331; x=1732185131;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a0d1qrLF27Vwr69NZjn0r/8jpEAVBzVx/HFYFyUQblQ=;
+        b=oGwHo8GZxvL+saPMIFT5qy1ncmYNvuU3bOYUiR/wKwc7HSIQGl8UUWzW0aM3KklcXh
+         M5ldFa3FIvS5+7L/pZwcE/vCSM29C4cKX6yweUJNO3bqyIY2PokrWgrJn3KCr+qqKqnT
+         IAQIfnK82JplpGGrFtFDH2tNZWRCCC2GFWZ1mOLMRZwUoYUjRIVYOllftZNyAUVNVUx8
+         dot+wWM9qEQNVGTQJbrjD3wptwsP0zmR4/fTNLvRXWYyPVwkyeb56m6yjRn7iRgwtul/
+         zmTftTHSmn03h6QvSVmQk9C68R/m4DYiYxYcFPiOj5KGWNJtoOLmrDe3Pi7amZlVhAKC
+         DYMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3uJF2DgpTOwMB/wYSiAtBUmwtx7Ovu7rR4cmNk1BvQgQ46tWbXHbLZ0O9xjztvH9eWLs9b/A7VRZgrhA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBTN87YYn3QTUm1Mr3QCs0LozEf2otzLRYPTN6yJ2izyL78aDk
+	HyfmExa5aP1RK31lCCA/G5TuimXIzuU8ljlwvpWAwkeqrxbkcdW7pNf6nzstzPlFA3zmUTLOg7M
+	N
+X-Google-Smtp-Source: AGHT+IHd3oX3ni8cKLi44zCwkXhxdVFX9wScw/eOu0QOo7ZH+CwIThCw+6H/EIMe9KjR6h1HuTbOxw==
+X-Received: by 2002:a05:6512:3b82:b0:539:936c:9845 with SMTP id 2adb3069b0e04-53da5c7b691mr1371068e87.37.1731580331106;
+        Thu, 14 Nov 2024 02:32:11 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:3779:22d5:a322:7c13? ([2001:67c:2fbc:1:3779:22d5:a322:7c13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df51632sm47447466b.49.2024.11.14.02.32.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Nov 2024 02:32:10 -0800 (PST)
+Message-ID: <5ae6f624-5196-42f7-a0b8-85e2847b3fdf@openvpn.net>
+Date: Thu, 14 Nov 2024 11:32:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2072; i=ukleinek@kernel.org; h=from:subject; bh=PvtFbg/8OOw9SaJ63G51HlH+PGdB8FZuVIeCmRurLBE=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnNdGKZw0mWE7g1hW0HBpcAD8ExG6wnwPUjm1qA kSwKe5ZvrKJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZzXRigAKCRCPgPtYfRL+ TtkrB/4rIFmp9c+r8N9S94itqsftcS4Kbq6QmiC/frrvUpaYaB23tXERKy8bFqrq18+P9UEDGG/ Ocn6aGWji3HRYFBX1VWTyRwvdKvN/cppS8RYGKQjzdXWxh0QJzEs5u46W3vWQwVcL3CyhkxA4Ai 5KOW5xbnl4FCoisUa5U98eZdohaRS4vS/enfzd1tt2S4ZTLCzinb4WcD6Urlhi2BVk0kRuJTWhn cx13X/3uSQK2OEYxUvepHzz60UhRJzisdpMlgCs1n3RyMI3irMrwHejdBGZILg8vi6NVDvHkCPd fmy2jNxqS4AvdJqucu+YVXDKZpZAuaD81ocYy2tUgsp3v05q
-X-Developer-Key: i=ukleinek@kernel.org; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v11 18/23] ovpn: implement peer
+ add/get/dump/delete via netlink
+To: Sabrina Dubroca <sd@queasysnail.net>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+ Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-18-de4698c73a25@openvpn.net> <ZzIlxRbic7qLVD4F@hog>
+ <136282ad-77d9-4799-bd2d-f3c3c9df99c0@openvpn.net> <ZzSH-Ke4wuJcis0q@hog>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <ZzSH-Ke4wuJcis0q@hog>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Tuxedo licenses the modules used on their hardware under GPLv3+, to
-"keep control of the upstream pacing" – and want to re-license the code
-while upstreaming.
+On 13/11/2024 12:05, Sabrina Dubroca wrote:
+> 2024-11-12, 15:26:59 +0100, Antonio Quartulli wrote:
+>> On 11/11/2024 16:41, Sabrina Dubroca wrote:
+>>> 2024-10-29, 11:47:31 +0100, Antonio Quartulli wrote:
+>>>> +void ovpn_peer_hash_vpn_ip(struct ovpn_peer *peer)
+>>>> +	__must_hold(&peer->ovpn->peers->lock)
+>>>
+>>> Changes to peer->vpn_addrs are not protected by peers->lock, so those
+>>> could be getting updated while we're rehashing (and taking peer->lock
+>>> in ovpn_nl_peer_modify as I'm suggesting above also wouldn't prevent
+>>> that).
+>>>
+>>
+>> /me screams :-D
+> 
+> Sorry :)
+> 
+>> Indeed peers->lock is only about protecting the lists, not the content of
+>> the listed objects.
+>>
+>> How about acquiring the peers->lock before calling ovpn_nl_peer_modify()?
+> 
+> It seems like it would work. Maybe a bit weird to have conditional
+> locking (MP mode only), but ok. You already have this lock ordering
+> (hold peers->lock before taking peer->lock) in
+> ovpn_peer_keepalive_work_mp, so there should be no deadlock from doing
+> the same thing in the netlink code.
 
-They were asked to then at least not use MODULE_LICENSE("GPL") which
-declares compatibility to the kernel's GPLv2. They accepted the pull
-request and shortly after reverted the change and so continue to lie
-about the license.
+Yeah.
 
-So teach the module loader that these modules are proprietary despite
-their declaration to be GPLv2 compatible "until the legal stuff is
-sorted out".
+> 
+> Then I would also do that in ovpn_peer_float to protect that rehash.
 
-Link: https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/a8c09b6c2ce6393fe39d8652d133af9f06cfb427
-Signed-off-by: Uwe Kleine-König <ukleinek@kernel.org>
----
- kernel/module/main.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+I am not extremely comfortable with this, because it means acquiring 
+peers->lock on every packet (right now we do so only on peer->lock) and 
+it may defeat the advantage of the RCU locking on the hashtables.
+Wouldn't you agree?
 
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 878191c65efc..46badbb09d5e 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -2338,6 +2338,39 @@ static const char *module_license_offenders[] = {
- 
- 	/* lve claims to be GPL but upstream won't provide source */
- 	"lve",
-+
-+	/*
-+	 * Tuxedo distributes their kernel modules under GPLv3, but intentially
-+	 * lies in their MODULE_LICENSE() calls.
-+	 * See https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/a8c09b6c2ce6393fe39d8652d133af9f06cfb427
-+	 */
-+	"gxtp7380",
-+	"ite_8291",
-+	"ite_8291_lb",
-+	"ite_8297",
-+	"ite_829x",
-+	"stk8321",
-+	"tuxedo_compatibility_check",
-+	"tuxedo_io",
-+	"tuxedo_nb02_nvidia_power_ctrl",
-+	"tuxedo_nb04_keyboard",
-+	"tuxedo_nb04_wmi_ab",
-+	"tuxedo_nb04_wmi_bs",
-+	"tuxedo_nb04_sensors",
-+	"tuxedo_nb04_power_profiles",
-+	"tuxedo_nb04_kbd_backlight",
-+	"tuxedo_nb05_keyboard",
-+	"tuxedo_nb05_kbd_backlight",
-+	"tuxedo_nb05_power_profiles",
-+	"tuxedo_nb05_ec",
-+	"tuxedo_nb05_sensors",
-+	"tuxedo_nb05_fan_control",
-+	"tuxi_acpi",
-+	"tuxedo_tuxi_fan_control",
-+	"clevo_wmi",
-+	"tuxedo_keyboard",
-+	"clevo_acpi",
-+	"uniwill_wmi",
- };
- 
- /*
+An alternative would be to hold peer->lock for the entire function, but 
+this will lead to dead locks...no go either.
+
+> 
+> It feels like peers->lock is turning into a duplicate of
+> ovpn->lock. ovpn->lock used for P2P mode, peers->lock used
+> equivalently for MP mode. You might consider merging them (but I
+> wouldn't see it as necessary for merging the series unless there's a
+> locking issue with the current proposal).
+
+I agree: ovpn->lock was introduced to protect ovpn's fields, but 
+actually the only one e protect is peer.
+
+They are truly the same and I could therefore get rid of 
+ovpn->peers->lock and always use ovpn->lock.
+
+Will see how invasive this is and decide whether to commit it to v12 or not.
+
+Thanks!
+
+Regards,
+
 -- 
-2.45.2
+Antonio Quartulli
+OpenVPN Inc.
 
 
