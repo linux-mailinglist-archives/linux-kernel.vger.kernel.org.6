@@ -1,246 +1,237 @@
-Return-Path: <linux-kernel+bounces-408743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AC349C82FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:17:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1D7B9C8301
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:18:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0C411F233D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:17:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FA8B1F2346F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C90165F1A;
-	Thu, 14 Nov 2024 06:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F811EABA5;
+	Thu, 14 Nov 2024 06:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="GcWv0q7f"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UQ8V8tr2"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E10166F06
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 06:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018D72905;
+	Thu, 14 Nov 2024 06:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731565063; cv=none; b=NqDq86nJSBSXE/0dYjF4OJizA4ugCb6xrrbhw+tNbGL9Ol7udwg8HnS124D4K5kt9WkJvX+KQQDLrvIfBrz7a2DbPJjel1hPdcMSgk6mszYF8qU5uX1YoseT5GFA06Pgi/B2c40zkxlSyg9d7IUwVqu3z3HhaeXjmfI0VI4fZj8=
+	t=1731565089; cv=none; b=aGSMqw7DoW7EBsNnciGP4nJGU8B2eS3UF+Erzx6xFMRXePH0xBzLnV3arXTqQXV3R5H+MSkHJdXT5Q/PpZpR+ulA0qoygRhSSRe4tbDZbwq9gDMiw2qCXvthP5VRbm8TxyXgogMStVvoisFkVXY7JeBjAZHZP03S+qdqyVLMDzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731565063; c=relaxed/simple;
-	bh=yT3HAwpbW2e+ksrn/pbgGpcjS/F2Jj86TpPZr9FE/9c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SsCibfbBETftOzETmK/9ApiWaFjWCdSH8Zn/9DXnqZhZfO4GMM3YWz47yYzCVwTPS2YEpMmlfIxeN4vQ07O5QBUnKLkvLPDv51s5HeCmfybFv5olh6IYp/aXq2dD1/fewhs3m4YgZSmRtqs6KEA0XSObjIl2o/Ge0GlsfGr8ELU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=GcWv0q7f; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-29609ec9437so244787fac.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 22:17:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1731565061; x=1732169861; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bAHw3+SJRl1ztp43mDkxoKRsjkMTu01styDys5QSXWg=;
-        b=GcWv0q7fSQWejIRetXLUp9FNAz28caqKR35ZgqtPgw/26vLkEqoj+QPNKxefs3Cbk4
-         BGXOUJUUid7MZssMuFL5AscHBvR3rbZKiPb3utTXza4/PGjjTsKDd3bEsGLknCkmI1Eb
-         +7rvTwtxP4olZ1PTNVeBOVxOG20R9BLwXiwk7THY/Rj1yAnyFb7BzMmHlUK1pPlPPW6j
-         6y4nKFD/tJNt61bTfur4Th3CGiLkoe25vfXy8CqKL81tDYaPIEPCPFGbhSEwCS6Yw9vp
-         uEdzu+ZmnRE9rYPzdU3jPvkQUmmPdEK01KhA+obgttiPdMARZq1BfgEWZb3P70IEa7vd
-         4z+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731565061; x=1732169861;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bAHw3+SJRl1ztp43mDkxoKRsjkMTu01styDys5QSXWg=;
-        b=GryQRABWFI/rSvRK87ibzS6QFAY5nrJ5091OF8WCe5NapAWQmqqSW5NjHenwJ/5GxP
-         OjHcsdFmOapF1y/hoJWs/7ZjNG5ObCXoCqEM09j8+F8heIWbMJHNGFQXDk8LM8mGgeL5
-         I19Qa9zVnr/ajRMbCEod/Ldx/LN85UtC5F2wGMtLS/RFV2K4FOH2tIWHu3zL3FV6PlB6
-         rZJFwNlNg7mvvnEUjVQS00PmvA4sBlOIoeWp0DYqv/JYfJ9WHFtQ24cZn1HhwWR08Qp+
-         o84OFgXFqfPJtwcZuOokBa2moqEbkQoZElJm0iWkPe/Ho7ggJDqXyzjIOPss7/PZb6We
-         AjTw==
-X-Forwarded-Encrypted: i=1; AJvYcCXkc1mRLveGg6S4YHPcCYoroypK9OWdWdqs/hAPvjylkxENmqyOfh5RGBJg6EnIVBdAiswBkSini38Uia8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuttAP9/L6GDHbQeDQSEV6lASB13IGMwIzVD4CvcGrOExXj3R1
-	tHDRwocgukn/JUQ9+4IR1rl5V1w/VGQs8sWBj76z7fz2i2W9UQ+J7rCqgoMgyo0ztr2BZkEUAHZ
-	FaVQacy7F77Wf4ytsMvAotK2SgwQTRDHgGBQmwg==
-X-Google-Smtp-Source: AGHT+IF/SorbAbjXbn/nrCDj1xlGQZyh9Tb/1BFx5yZDCatQmC6DlRJonI//aGPXQYjj5gUcvfUUQConp4xKP57Wh80=
-X-Received: by 2002:a05:6871:8a5:b0:296:14ae:8b7d with SMTP id
- 586e51a60fabf-29614aed449mr409087fac.10.1731565060984; Wed, 13 Nov 2024
- 22:17:40 -0800 (PST)
+	s=arc-20240116; t=1731565089; c=relaxed/simple;
+	bh=sHJlo2FLFsJ7Uji8r7aDxn9YA49sJdhvgojiFNtwKzM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eZUPhjsWcv72z0LkX1gnQbN6bh0OwXXB1f6flHyFRrtX80pA8/SnI/o7twrfjTqdHYBgDhe6sZkEZ44/eX+A1prSD23dZ7O6pD73nM35EPbtjn4ChjmO/HTs6pJyaRTaWeDMr6gQJEU3i8WCYXPmnW6jztNcksSALD1H3CozOwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UQ8V8tr2; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ADH1YZc026934;
+	Thu, 14 Nov 2024 06:18:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	xV7SX88N/8wgOJjZeZMVo7UIpnrhyzDZOFnZkeq+pEE=; b=UQ8V8tr2RiRv6G5w
+	OFXu57nJ9ZvTcFJINliCKc0wKBYjlfb2BimA29i6xLaf0A24kkKVD1OyNIHomSch
+	B5k8QEPA/UoVeGky3GzY3lL9N5yt+4E0lFK4OcW5kR1sRZlCMzS1tqAIYgaEZt8F
+	MPxnbELDDQS3l8z70ZR1CCQCqIhxiA/HV4rbVa65nI8/ic5tjxpZ2MIzfv2m56rx
+	2L2aa5Bw5smEdVWU7wEX9S9XxafCmBmgWDC9O0IeDK7419s1XJF3nUURc4EZWLWK
+	POpuHBk7xMVkcX7jO0srNv03gHCimmemxYxJolciEfVj/aWopph2LnU3PXPW7TRq
+	FYl0Xw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vt732vus-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 06:18:01 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AE6I04d007750
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 06:18:00 GMT
+Received: from [10.253.78.176] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 13 Nov
+ 2024 22:17:58 -0800
+Message-ID: <8500baf7-59e4-4d8c-8485-3ef7aa106f16@quicinc.com>
+Date: Thu, 14 Nov 2024 14:17:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111-v5_user_cfi_series-v8-0-dce14aa30207@rivosinc.com>
- <20241111-v5_user_cfi_series-v8-24-dce14aa30207@rivosinc.com>
- <CAKddAkCCVjNHUinPWtOiK8Ki_ZkdoUCawfv1-+0B69J_1aJv5Q@mail.gmail.com>
- <ZzVNKvCu4MOs7O5z@debug.ba.rivosinc.com> <CAKddAkDbGYeONaksq6fzLzx47BHZo3Ar7Sog3MOgf7Y+Birovw@mail.gmail.com>
- <ZzVRbCZP9N4Os8Bj@debug.ba.rivosinc.com>
-In-Reply-To: <ZzVRbCZP9N4Os8Bj@debug.ba.rivosinc.com>
-From: Nick Hu <nick.hu@sifive.com>
-Date: Thu, 14 Nov 2024 14:17:30 +0800
-Message-ID: <CAKddAkBCByf570PXfz798FtBbeGQWe2LJpdzxkE+jv3Zd3ZV1w@mail.gmail.com>
-Subject: Re: [PATCH v8 24/29] riscv: enable kernel access to shadow stack
- memory via FWFT sbi call
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
-	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
-	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
-	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
-	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] bluetooth: qca: generate nvm fw name from boardid for
+ WCN6855
+To: Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
+        Marcel Holtmann
+	<marcel@holtmann.org>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+CC: <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Steev
+ Klimaszewski" <steev@kali.org>,
+        Bjorn Andersson <bjorande@quicinc.com>
+References: <20241003-bt-nvm-firmware-v1-1-79028931214f@oldschoolsolutions.biz>
+Content-Language: en-US
+From: quic_zijuhu <quic_zijuhu@quicinc.com>
+In-Reply-To: <20241003-bt-nvm-firmware-v1-1-79028931214f@oldschoolsolutions.biz>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: NC8lWdsXQcbDH1lmY5dfyrEcyaJscxGQ
+X-Proofpoint-GUID: NC8lWdsXQcbDH1lmY5dfyrEcyaJscxGQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ priorityscore=1501 lowpriorityscore=0 impostorscore=0 adultscore=0
+ clxscore=1011 mlxlogscore=999 mlxscore=0 phishscore=0 bulkscore=0
+ malwarescore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411140045
 
-Hi Deepak
+On 10/4/2024 3:21 AM, Jens Glathe wrote:
+> From: Steev Klimaszewski <steev@kali.org>
+> 
+> This is based on the 2066 work, which the 6855 is basically the same
+> thing.
+> 
+> The already existing function qca_generate_hsp_nvm_name() appears to do
+> the right steps to generate the hpnv file name. For WCN6855, the suffix
+> seems to be the board id with prefix b, though.
+> 
+> Add specific masking for boardid to generate the full name.
+> 
+> boardid == 0 -> use 0 as parameter
+> boardid <  0x100 -> add 0x0b00 to it, otherwise add 0xb000
+> 
+> This generates correct hpnv* file names for the files on the Windows
+> partition that appear to work better with the hardware than the default
+> .bin.
+> Tested on Lenovo Thinkpad X13s, Microsoft WDK2023, and HP Omnibook X14.
+> 
+> The specific firmware is found on the Windows partition, and is supposed
+> to work a little bit better than the default .bin.
+> 
+> Co-authored-by: Steev Klimaszewski <steev@kali.org>
+> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> Signed-off-by: Steev Klimaszewski <steev@kali.org>
+> ---
+> This is based on the 2066 work, which the 6855 is basically the same
+> thing.
+> 
+> It generates the fw name to load from the board id, taking the file
+> name format for the WCN6855 into account. The hpnv* firmware files 
+> can be found on the Windows partition ofthe device. They usually 
+> work better with the specific hardware. If the file is not found it 
+> retries with the default name.
+> 
+> This has been tested on:
+> 
+> Lenovo Thinkpad X13s
+> Microsoft Windows Dev Kit 2023 (Blackrock)
+> HP Omnibook X14
+> ---
+>  drivers/bluetooth/btqca.c | 28 +++++++++++++++++++++-------
+>  1 file changed, 21 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+> index dfbbac92242a8..ffc75680b322b 100644
+> --- a/drivers/bluetooth/btqca.c
+> +++ b/drivers/bluetooth/btqca.c
+> @@ -564,6 +564,21 @@ static int qca_download_firmware(struct hci_dev *hdev,
+>  					   config->fwname, ret);
+>  				return ret;
+>  			}
+> +			/* For WCN6855, if Windows firmware file isn't in place
+> +			 * then use the default .bin file.
+> +			 */
+> +		} else if (soc_type == QCA_WCN6855) {
+> +			bt_dev_dbg(hdev, "QCA Failed to request file: %s (%d)",
+> +				   config->fwname, ret);
+> +			snprintf(config->fwname, sizeof(config->fwname),
+> +				 "qca/hpnv%02x.bin", rom_ver);
+> +			bt_dev_info(hdev, "QCA Downloading %s", config->fwname);
+> +			ret = request_firmware(&fw, config->fwname, &hdev->dev);
+> +			if (ret) {
+> +				bt_dev_err(hdev, "QCA Failed to request file: %s (%d)",
+> +					   config->fwname, ret);
+> +				return ret;
+> +			}
 
-On Thu, Nov 14, 2024 at 9:25=E2=80=AFAM Deepak Gupta <debug@rivosinc.com> w=
-rote:
->
-> On Thu, Nov 14, 2024 at 09:20:14AM +0800, Nick Hu wrote:
-> >Hi Deepak
-> >
-> >On Thu, Nov 14, 2024 at 9:06=E2=80=AFAM Deepak Gupta <debug@rivosinc.com=
-> wrote:
-> >>
-> >> On Thu, Nov 14, 2024 at 12:13:38AM +0800, Nick Hu wrote:
-> >> >Hi Deepak
-> >> >
-> >> >On Tue, Nov 12, 2024 at 5:08=E2=80=AFAM Deepak Gupta <debug@rivosinc.=
-com> wrote:
-> >> >>
-> >> >> Kernel will have to perform shadow stack operations on user shadow =
-stack.
-> >> >> Like during signal delivery and sigreturn, shadow stack token must =
-be
-> >> >> created and validated respectively. Thus shadow stack access for ke=
-rnel
-> >> >> must be enabled.
-> >> >>
-> >> >> In future when kernel shadow stacks are enabled for linux kernel, i=
-t must
-> >> >> be enabled as early as possible for better coverage and prevent imb=
-alance
-> >> >> between regular stack and shadow stack. After `relocate_enable_mmu`=
- has
-> >> >> been done, this is as early as possible it can enabled.
-> >> >>
-> >> >> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> >> >> ---
-> >> >>  arch/riscv/kernel/asm-offsets.c |  4 ++++
-> >> >>  arch/riscv/kernel/head.S        | 12 ++++++++++++
-> >> >>  2 files changed, 16 insertions(+)
-> >> >>
-> >> >> diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/as=
-m-offsets.c
-> >> >> index 766bd33f10cb..a22ab8a41672 100644
-> >> >> --- a/arch/riscv/kernel/asm-offsets.c
-> >> >> +++ b/arch/riscv/kernel/asm-offsets.c
-> >> >> @@ -517,4 +517,8 @@ void asm_offsets(void)
-> >> >>         DEFINE(FREGS_A6,            offsetof(struct ftrace_regs, a6=
-));
-> >> >>         DEFINE(FREGS_A7,            offsetof(struct ftrace_regs, a7=
-));
-> >> >>  #endif
-> >> >> +       DEFINE(SBI_EXT_FWFT, SBI_EXT_FWFT);
-> >> >> +       DEFINE(SBI_EXT_FWFT_SET, SBI_EXT_FWFT_SET);
-> >> >> +       DEFINE(SBI_FWFT_SHADOW_STACK, SBI_FWFT_SHADOW_STACK);
-> >> >> +       DEFINE(SBI_FWFT_SET_FLAG_LOCK, SBI_FWFT_SET_FLAG_LOCK);
-> >> >>  }
-> >> >> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
-> >> >> index 356d5397b2a2..6244408ca917 100644
-> >> >> --- a/arch/riscv/kernel/head.S
-> >> >> +++ b/arch/riscv/kernel/head.S
-> >> >> @@ -164,6 +164,12 @@ secondary_start_sbi:
-> >> >>         call relocate_enable_mmu
-> >> >>  #endif
-> >> >>         call .Lsetup_trap_vector
-> >> >> +       li a7, SBI_EXT_FWFT
-> >> >> +       li a6, SBI_EXT_FWFT_SET
-> >> >> +       li a0, SBI_FWFT_SHADOW_STACK
-> >> >> +       li a1, 1 /* enable supervisor to access shadow stack access=
- */
-> >> >> +       li a2, SBI_FWFT_SET_FLAG_LOCK
-> >> >> +       ecall
-> >> >>         scs_load_current
-> >> >>         call smp_callin
-> >> >>  #endif /* CONFIG_SMP */
-> >> >> @@ -320,6 +326,12 @@ SYM_CODE_START(_start_kernel)
-> >> >>         la tp, init_task
-> >> >>         la sp, init_thread_union + THREAD_SIZE
-> >> >>         addi sp, sp, -PT_SIZE_ON_STACK
-> >> >> +       li a7, SBI_EXT_FWFT
-> >> >> +       li a6, SBI_EXT_FWFT_SET
-> >> >> +       li a0, SBI_FWFT_SHADOW_STACK
-> >> >> +       li a1, 1 /* enable supervisor to access shadow stack access=
- */
-> >> >> +       li a2, SBI_FWFT_SET_FLAG_LOCK
-> >> >> +       ecall
-> >> >>         scs_load_current
-> >> >>
-> >> >>  #ifdef CONFIG_KASAN
-> >> >>
-> >> >> --
-> >> >> 2.45.0
-> >> >>
-> >> >Should we clear the SBI_FWFT_SET_FLAG_LOCK before the cpu hotplug
-> >> >otherwise the menvcfg.sse won't be set by the fwft set sbi call when
-> >> >the hotplug cpu back to kernel?
-> >>
-> >> Hmm...
-> >>
-> >> An incoming hotplug CPU has no features setup on it.
-> >> I see that `sbi_cpu_start` will supply `secondary_start_sbi` as start
-> >> up code for incoming CPU. `secondary_start_sbi` is in head.S which con=
-verges
-> >> in `.Lsecondary_start_common`. And thus hotplugged CPU should be
-> >> issuing shadow stack set FWFT sbi as well.
-> >>
-> >> Am I missing something ?
-> >>
-> >This is the correct flow. However the opensbi will deny it due to the
-> >SBI_FWFT_SET_FLAG_LOCK already being set.
-> >So the menvcfg.sse will not set by this flow.
-> >
-> >if (conf->flags & SBI_FWFT_SET_FLAG_LOCK)
-> >                return SBI_EDENIED;
-> >
->
-> hmm... Why?
->
-> `conf` is pointing to per-hart state in firmware.
->
-> On this incoming cpu, opensbi (or equivalent) firmware must have
-> ensured that this per-hart state doesn't have lock set.
->
-> Am I missing something?
->
-Current OpenSBI doesn't clear the lock in the warm init of the hotplug path=
-.
-It seems like we need a patch to address it.
+NO
 
-Regards,
-Nick
-> >Regards,
-> >Nick
-> >> >
-> >> >Regards,
-> >> >Nick
-> >> >>
-> >> >> _______________________________________________
-> >> >> linux-riscv mailing list
-> >> >> linux-riscv@lists.infradead.org
-> >> >> http://lists.infradead.org/mailman/listinfo/linux-riscv
+1)
+qca_download_firmware() is  also called to download *PATCH* hpbtfw*, if
+downloading PATCH failed, your logic will wrongly download *NVM* hpnv*
+instead, right ?
+
+2)
+if board ID  is available, must use board id specific NVM, must not
+fallback to the default NVM is not for QCA_WCN6855.
+
+>  		} else {
+>  			bt_dev_err(hdev, "QCA Failed to request file: %s (%d)",
+>  				   config->fwname, ret);
+> @@ -773,6 +788,7 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+>  			 "qca/apbtfw%02x.tlv", rom_ver);
+>  		break;
+>  	case QCA_QCA2066:
+> +	case QCA_WCN6855:
+>  		snprintf(config.fwname, sizeof(config.fwname),
+>  			 "qca/hpbtfw%02x.tlv", rom_ver);
+
+>  		break;
+> @@ -788,10 +804,6 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+>  		snprintf(config.fwname, sizeof(config.fwname),
+>  			 "qca/msbtfw%02x.mbn", rom_ver);
+>  		break;
+> -	case QCA_WCN6855:
+> -		snprintf(config.fwname, sizeof(config.fwname),
+> -			 "qca/hpbtfw%02x.tlv", rom_ver);
+> -		break;
+>  	case QCA_WCN7850:
+>  		snprintf(config.fwname, sizeof(config.fwname),
+>  			 "qca/hmtbtfw%02x.tlv", rom_ver);
+> @@ -810,7 +822,7 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+>  	/* Give the controller some time to get ready to receive the NVM */
+>  	msleep(10);
+>  
+> -	if (soc_type == QCA_QCA2066 || soc_type == QCA_WCN7850)
+> +	if (soc_type == QCA_QCA2066 || soc_type == QCA_WCN7850 || soc_type == QCA_WCN6855)
+>  		qca_read_fw_board_id(hdev, &boardid);
+
+a switch since SOC types will become more and more
+>  
+>  	/* Download NVM configuration */
+> @@ -848,8 +860,10 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+>  				 "qca/msnv%02x.bin", rom_ver);
+>  			break;
+>  		case QCA_WCN6855:
+> -			snprintf(config.fwname, sizeof(config.fwname),
+> -				 "qca/hpnv%02x.bin", rom_ver);
+> +			qca_generate_hsp_nvm_name(config.fwname,
+> +				sizeof(config.fwname), ver, rom_ver,
+> +				boardid == 0 ? boardid : (boardid < 0x0100 ?
+> +				(boardid & 0x00ff)|0x0b00 : (boardid & 0x0fff)|0xb000));
+>  			break;
+
+why not to refer to existing qca_get_nvm_name_generic().
+
+i will post a patch and cc you.
+
+>  		case QCA_WCN7850:
+>  			qca_get_nvm_name_generic(&config, "hmt", rom_ver, boardid);
+> 
+> ---
+> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+> change-id: 20241003-bt-nvm-firmware-47e4d1b70a99
+> 
+> Best regards,
+
 
