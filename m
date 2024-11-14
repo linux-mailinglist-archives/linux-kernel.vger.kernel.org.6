@@ -1,211 +1,83 @@
-Return-Path: <linux-kernel+bounces-409033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76A279C86A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:58:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 870BD9C86B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:00:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FCC3B21EC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:57:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BD5BB28551
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66AFD1F9AB0;
-	Thu, 14 Nov 2024 09:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4248F1F7552;
+	Thu, 14 Nov 2024 09:56:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hx6fiCA1"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lz5KzGNg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571AE1F76AF;
-	Thu, 14 Nov 2024 09:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C4C1F7540;
+	Thu, 14 Nov 2024 09:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731578111; cv=none; b=c3dYc5O7QqGZaMYlcIXqPBaWHMoqF+LH+pwSDZpEOz+voKXh9NebsvhV6SK1j2sUouwJN5UjN9gceO8AvvY1TgVQl1tMah334PZI3gDUc7ONEYjpwxXwbxudCQ7u7Lez+lTVDb7sDu62qdk37RKuiooBU6v9lsLGZ4RgvdK0rAs=
+	t=1731578193; cv=none; b=AZAZ8OGcdZCwB5jmkDQmDrxHtF9dggYvxgDKn4qSL7TPMVwU75qbj+DcFEk4T4dTrolZHoZ863QjQlMcSTRh826pxBnu2IGayNjotGNnLbHGiVNUENzKdt6r1Mnpbhj3jbVoF/3aPEnv8LF41dY+MJTmJAL4IKs2EAM+TJSpj38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731578111; c=relaxed/simple;
-	bh=Sm0rX+FSTAdHbIUuipg8AflfiM27xqi8lxwbIDIKsyU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=WKOQJUVK/fvy1/eAlN1MtGyKOnkseYFwgHCMoirbvI0vLXEqxFDaoS573Y2OsDlVb+GfoezwgARfWQxNr1oSSvw6jE0ne/mbgueFa0ozv1Eeq7OjMXoUJgVxtuxT7ehLyvaill9hkJD+XA7cah43fYSpDjoXU+eNF3ZUWohMFNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hx6fiCA1; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE6AGsN015430;
-	Thu, 14 Nov 2024 09:55:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:date:from:in-reply-to:message-id:references:subject:to; s=
-	qcppdkim1; bh=uhOxfLJm7IAQxFMXnko7AWGcyTFeJVBwgwPDFqPcecM=; b=hx
-	6fiCA1yuNGs+WqHzbNNk33/hrcw8d2URrCYplBneT16f7iWNg50jKT2kMfJ1zkYI
-	znl1bAvwthyOKhQ4KXNiIwkVGwQ730CsDVJVwdz7QkOWm5181WmFaPXcvICTWzjH
-	uBhBjKYhu4vKHreNK3DDeMpkUKI4gX47g063CEKFPg8DqBZPTbtrYWvCvQr/Tenf
-	+SyBUHX6Ki0RkxwJDMGq66toWaHWXcZ6r6xOZIXJQsgjlySrvM0o6cvgFKQiNw6q
-	t8HizRCMSVL32tWz9QJ7NvlQDsZq5CMTDUL0JDZyIZs8yR4paGuKCpN/aMeKXR22
-	iEXDSbRll49LgVT4EFNw==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vsf34j3x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Nov 2024 09:55:07 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE9t3dR002289;
-	Thu, 14 Nov 2024 09:55:03 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 42t0tm9vy3-1;
-	Thu, 14 Nov 2024 09:55:03 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4AE9pYDs031808;
-	Thu, 14 Nov 2024 09:55:03 GMT
-Received: from hu-maiyas-hyd.qualcomm.com (hu-mukhopad-hyd.qualcomm.com [10.147.244.250])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 4AE9t2nK002257;
-	Thu, 14 Nov 2024 09:55:02 +0000
-Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 3978529)
-	id 0F9145009E1; Thu, 14 Nov 2024 15:25:02 +0530 (+0530)
-From: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
-To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_riteshk@quicinc.com,
-        quic_vproddut@quicinc.com, quic_abhinavk@quicinc.com
-Subject: [PATCH v3 2/2] arm64: dts: qcom: sa8775p-ride: Enable Display Port
-Date: Thu, 14 Nov 2024 15:25:00 +0530
-Message-Id: <20241114095500.18616-3-quic_mukhopad@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241114095500.18616-1-quic_mukhopad@quicinc.com>
-References: <20241114095500.18616-1-quic_mukhopad@quicinc.com>
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: BHPHuDT_VLfaY7chLxwWg8Fh1Nm2eblk
-X-Proofpoint-GUID: BHPHuDT_VLfaY7chLxwWg8Fh1Nm2eblk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- bulkscore=0 phishscore=0 malwarescore=0 suspectscore=0 priorityscore=1501
- clxscore=1015 mlxscore=0 spamscore=0 lowpriorityscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411140076
+	s=arc-20240116; t=1731578193; c=relaxed/simple;
+	bh=tRe9JEVSjXzf8eyCMsq+7kWaVlqoKITvYF4W3kKTBmw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=AxVG5pnlZIs9bCSd6kf7dqFSDilpH3vcQi3djVRgohxB8KoFJEMnScyOnNeZ8aQPr+Vbip2LVnNAhbl/OBzdkTnADiNcmoKJTZXMy2vuDM9EdRp/0t0URHSQVtsdhb1dRV/bFKyk4pKofVI9/veieYmhA/sGQG+gREp6/XWIKn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lz5KzGNg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF29CC4CECD;
+	Thu, 14 Nov 2024 09:56:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731578193;
+	bh=tRe9JEVSjXzf8eyCMsq+7kWaVlqoKITvYF4W3kKTBmw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Lz5KzGNgcTLPvMkijidhb3w2FLvsqYtEq6JDxqA/tBTbZp5G0z5bfjhOaa8FiLSVD
+	 jUQevTsGxZawRCMk9HghXSGltIBmPBOYG2l7JC4e49Wk0F3DXKcey0H0XZlvK9/a8x
+	 o2peVyFHjUfdO73GFd5eC4B9iUXftIiIqVlPJvKPHnmCL9Fr+tvbtXUElHAlOjTySq
+	 ojmx46Soa9kylORnkpMbBzuRyp8lpVA9axgnCLW+jQOGpTJ8k5vWPvDgnPUwHnjMnt
+	 4oNZb0f7re+r+r6NNhDMlXYj18x6taV/uwhar31sh2quSD8c0hEF07cXyswgkN2sIl
+	 GS0xFDnvqyH8A==
+From: Leon Romanovsky <leon@kernel.org>
+To: jgg@ziepe.ca, Junxian Huang <huangjunxian6@hisilicon.com>
+Cc: linux-rdma@vger.kernel.org, linuxarm@huawei.com, 
+ linux-kernel@vger.kernel.org, tangchengchang@huawei.com
+In-Reply-To: <20241112055553.3681129-1-huangjunxian6@hisilicon.com>
+References: <20241112055553.3681129-1-huangjunxian6@hisilicon.com>
+Subject: Re: [PATCH v3 for-next] RDMA/hns: Fix different dgids mapping to
+ the same dip_idx
+Message-Id: <173157818968.149949.6747918344361006095.b4-ty@kernel.org>
+Date: Thu, 14 Nov 2024 04:56:29 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-Enable DPTX0 and DPTX1 along with their corresponding PHYs for
-sa8775p-ride platform.
 
-Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 80 ++++++++++++++++++++++
- 1 file changed, 80 insertions(+)
+On Tue, 12 Nov 2024 13:55:53 +0800, Junxian Huang wrote:
+> DIP algorithm requires a one-to-one mapping between dgid and dip_idx.
+> Currently a queue 'spare_idx' is used to store QPN of QPs that use
+> DIP algorithm. For a new dgid, use a QPN from spare_idx as dip_idx.
+> This method lacks a mechanism for deduplicating QPN, which may result
+> in different dgids sharing the same dip_idx and break the one-to-one
+> mapping requirement.
+> 
+> [...]
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-index adb71aeff339..4847e4942386 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-@@ -27,6 +27,30 @@
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	dp0-connector {
-+		compatible = "dp-connector";
-+		label = "DP0";
-+		type = "full-size";
-+
-+		port {
-+			dp0_connector_in: endpoint {
-+				remote-endpoint = <&mdss0_dp0_out>;
-+			};
-+		};
-+	};
-+
-+	dp1-connector {
-+		compatible = "dp-connector";
-+		label = "DP1";
-+		type = "full-size";
-+
-+		port {
-+			dp1_connector_in: endpoint {
-+				remote-endpoint = <&mdss0_dp1_out>;
-+			};
-+		};
-+	};
- };
- 
- &apps_rsc {
-@@ -421,6 +445,50 @@
- 	status = "okay";
- };
- 
-+&mdss0 {
-+	status = "okay";
-+};
-+
-+&mdss0_dp0 {
-+	status = "okay";
-+
-+	pinctrl-0 = <&dp0_hot_plug_det>;
-+	pinctrl-names = "default";
-+};
-+
-+&mdss0_dp0_out {
-+	data-lanes = <0 1 2 3>;
-+	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
-+	remote-endpoint = <&dp0_connector_in>;
-+};
-+
-+&mdss0_dp0_phy {
-+	status = "okay";
-+
-+	vdda-phy-supply = <&vreg_l1c>;
-+	vdda-pll-supply = <&vreg_l4a>;
-+};
-+
-+&mdss0_dp1 {
-+	status = "okay";
-+
-+	pinctrl-0 = <&dp1_hot_plug_det>;
-+	pinctrl-names = "default";
-+};
-+
-+&mdss0_dp1_out {
-+	data-lanes = <0 1 2 3>;
-+	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
-+	remote-endpoint = <&dp1_connector_in>;
-+};
-+
-+&mdss0_dp1_phy {
-+	status = "okay";
-+
-+	vdda-phy-supply = <&vreg_l1c>;
-+	vdda-pll-supply = <&vreg_l4a>;
-+};
-+
- &pmm8654au_0_gpios {
- 	gpio-line-names = "DS_EN",
- 			  "POFF_COMPLETE",
-@@ -527,6 +595,18 @@
- };
- 
- &tlmm {
-+	dp0_hot_plug_det: dp0-hot-plug-det-state {
-+		pins = "gpio101";
-+		function = "edp0_hot";
-+		bias-disable;
-+	};
-+
-+	dp1_hot_plug_det: dp1-hot-plug-det-state {
-+		pins = "gpio102";
-+		function = "edp1_hot";
-+		bias-disable;
-+	};
-+
- 	ethernet0_default: ethernet0-default-state {
- 		ethernet0_mdc: ethernet0-mdc-pins {
- 			pins = "gpio8";
+Applied, thanks!
+
+[1/1] RDMA/hns: Fix different dgids mapping to the same dip_idx
+      https://git.kernel.org/rdma/rdma/c/faa62440a5772b
+
+Best regards,
 -- 
-2.17.1
+Leon Romanovsky <leon@kernel.org>
 
 
