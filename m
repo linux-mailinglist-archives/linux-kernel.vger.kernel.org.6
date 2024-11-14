@@ -1,306 +1,173 @@
-Return-Path: <linux-kernel+bounces-410096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99E9E9C9676
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:52:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DBDD9C9679
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:53:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 012B61F2265E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:52:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2D6E28166F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B14F1B21AA;
-	Thu, 14 Nov 2024 23:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D811AAE33;
+	Thu, 14 Nov 2024 23:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="rD0KuUJ4"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DwElYXWi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA611B3925;
-	Thu, 14 Nov 2024 23:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80DD41B2199
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 23:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731628322; cv=none; b=pS6YvYAjBnjqDtOD/EnVg8A/FEotCXZxepO5TCd5xLyb+aRJn2qtWdvE5k1nSr5U4YJiSAI8n3zI88FJ+wNLmMeucQCazQUobsL0IV2QntGbj23HT9rdZm2pHWukCm6ZNAItFaby7rNF3VGZehbB/532rvixOlielBTzIwA6mHo=
+	t=1731628400; cv=none; b=mR8evFmRVtLRpL59HUSKydYV2UZJHpg0YJ32GKFigVsyVTdIjV54Ob659HISY4biRtPgKrDkPrw/COByyUuJw6UmD9H55vglw2/rk2egioUhFIDKpCDsMDRkMCu8VCJNAlNpQ528Z5t0f7EqudGkU61mqN8A/HEw4jOFoptpmKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731628322; c=relaxed/simple;
-	bh=EDVMn39FcK9iVnhzsKw+iSaLRYVOwG9RYFe5HQsO1YY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DGTI9kU+wJXYTZhszsJVHwjrfNnOEB13txxfKW6eFDh8cmWReGYYqgtAQqTxkInalaFkrJb6hmA/ui0OA3UJC9exq0x7tBHRsFe+ifLlAzjVi/Rfg0TPyiea9QnUnP9qaYkCRPDw5XnRLD0/eoAKV9f5vgZkScDVkpzmxiNC2HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=rD0KuUJ4; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AELUnv5010937;
-	Thu, 14 Nov 2024 18:51:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=KkMJU
-	tXxeDpNtkEXtqDjzQW9ju6I2nwG3obMK3eeoDE=; b=rD0KuUJ4fLWRZKo+xPyYh
-	bufRw1nUX+/LG76qG0rAPO4kZIeIQH7zEVMHTLVxHC96b9N0Z8T8MKnuAln5VTX7
-	xHHWloAbuFhnLVnBFOgThtjXIMojBEY/quF1/JEjVKuqn9sGyDEG6JOUygIFJuUZ
-	b61PYmUs4Yj6M42TA2xjR0jMqgtnXlj4Jx46nFWmon5iRZePsNTiuINw2qUGvEOO
-	31XC3yKpgApWN1yQrkGUdU3rOVWnZLxRfmHEnGL4RfKhDv7h5aFa5jBgkMBOVsT7
-	nI4T+jobh9yH8A3dDw+cNnNJaBEB3Cs39LD/Yst0Ja473TCRZf8LvITGHs5gzSBH
-	w==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 42wc2n5337-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Nov 2024 18:51:47 -0500 (EST)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 4AENpjHQ006637
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 14 Nov 2024 18:51:45 -0500
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Thu, 14 Nov
- 2024 18:51:44 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Thu, 14 Nov 2024 18:51:44 -0500
-Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4AENpXo9028835;
-	Thu, 14 Nov 2024 18:51:36 -0500
-From: Marcelo Schmitt <marcelo.schmitt@analog.com>
-To: <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <marcelo.schmitt@analog.com>, <jic23@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <marcelo.schmitt1@gmail.com>
-CC: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 4/4] iio: adc: ad4000: Add support for PulSAR devices
-Date: Thu, 14 Nov 2024 20:51:32 -0300
-Message-ID: <a2a1bb929a83f5906a9c1fd9ba76889a3682cf95.1731626099.git.marcelo.schmitt@analog.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <cover.1731626099.git.marcelo.schmitt@analog.com>
-References: <cover.1731626099.git.marcelo.schmitt@analog.com>
+	s=arc-20240116; t=1731628400; c=relaxed/simple;
+	bh=/ICuXM+GV6dBITrJIBgI7/tWym7FEU0Fxzozxfuppnc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MfGOokrDubYjaNdMyirv3HLiionrKysXnj0xuZ9ur+xrv0Qw2n8XIXoa44xfHUZ+ep7jgWwbw5zFdCjEYIm88/ZT6mk8+yAqzWBkCw7eDk/bVsoc82djcjV31l9mKHndf4vkGWxbSSTFoJdvHvLOeOCdK6oY6iZs43umzA7ur4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DwElYXWi; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731628397;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rECe5FJajV/VYN0/GaapttFhgwn5vtFillXTURUY7NE=;
+	b=DwElYXWiPycHRnu0wCuV/iYV+cc81FNzEtg2ptCxeX5tIjorK4KFULT8qLIZr7hudtVwV8
+	Yb8LW8AZAcgd4HD8WPsXRs4g47xIDNtXEgxfkhRWKzBQxm4Iij4cT8sey00erb+slCk/x5
+	W4dPi0dW1gnbfprQzld8wOE2JQ9XF9M=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-394-zwemFynkP7mHgyBpggQkGw-1; Thu, 14 Nov 2024 18:53:15 -0500
+X-MC-Unique: zwemFynkP7mHgyBpggQkGw-1
+X-Mimecast-MFC-AGG-ID: zwemFynkP7mHgyBpggQkGw
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3822208f7f6so357884f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:53:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731628394; x=1732233194;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rECe5FJajV/VYN0/GaapttFhgwn5vtFillXTURUY7NE=;
+        b=a9mBGBvw6CDWFTZPGDWIfJ9MMWldXEpk0kfzvrUEYuVpL3Rt8WPo1a/BqiT/np1HKH
+         VXPO6dPUGWThRThpWw3i5weRi8nJNZbPSf39FW64M3A5Yvprq3PMTSKX8ffkOAQVCQWX
+         O8bZBIz7lqUC2LJRQh9Mrp3i2b6lGQJNQc0tHYE5RbANshv0JA6uWHVk1NJYUozQrKyu
+         +Wunlj2R2fvPvDQkogAy1lWl9qkPX8tw7qwOBqk8VzjoxuZwTU5zQ24d+Z45645pvi/f
+         hvfDsUgXn/cPV+8rYfmBzVNUi4X59rUqcWNFO0he+MRwAP9xEKabiArKsc5f1czlOBgj
+         HRTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmwjCZWaF4/YjIQr0SfsctYmle8ETGQUDeBH/oVA7bdDkUwiUFbeFMXTqq2j3OybDz5ibsrWibHSJXdgA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4R+dJfFnxkt3esUvbRFOraAyhv6/SvTptdU2fdHoa+4SkLpV/
+	AsLOU9LnSiM6Sy9+xHaUqmVxpm0FZ942S3KJILivfVnQPaMpvCz8C+OIdvgGsnkcmuBmx/DNTIw
+	yOqagZZCwfIi5WWvMFPtQPmhO5ur46ERMG4h+YxWDPkpEGkq/69tq6iPQAJioQtglZTVM+qATI6
+	G8N7QSyWc5v/t6/oimzCphlip929Re00wR0RVR
+X-Received: by 2002:a05:6000:156b:b0:374:c17a:55b5 with SMTP id ffacd0b85a97d-38225907519mr413189f8f.14.1731628393809;
+        Thu, 14 Nov 2024 15:53:13 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHKwOuvExVXPmSQhtLCT0FzFyo78jxZHYmPrEQdpvPU+torab91q63PrU3gZsTPFt//8kyo2JOBpOrw6eK7KKk=
+X-Received: by 2002:a05:6000:156b:b0:374:c17a:55b5 with SMTP id
+ ffacd0b85a97d-38225907519mr413177f8f.14.1731628393484; Thu, 14 Nov 2024
+ 15:53:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: E1zX0BbgcLVAHPwlwrZ_4n7k_dZU1XQD
-X-Proofpoint-ORIG-GUID: E1zX0BbgcLVAHPwlwrZ_4n7k_dZU1XQD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
- malwarescore=0 bulkscore=0 priorityscore=1501 adultscore=0 mlxlogscore=999
- phishscore=0 suspectscore=0 lowpriorityscore=0 impostorscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411140189
+References: <20241114094128.2198306-1-chenhuacai@loongson.cn>
+In-Reply-To: <20241114094128.2198306-1-chenhuacai@loongson.cn>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Fri, 15 Nov 2024 00:53:00 +0100
+Message-ID: <CABgObfbLYfAo=PGNPxEJXrttM575JeSV265madXmN2uuZEFqfQ@mail.gmail.com>
+Subject: Re: [GIT PULL] LoongArch KVM changes for v6.13
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
+	Bibo Mao <maobibo@loongson.cn>, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Xuerui Wang <kernel@xen0n.name>, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The AD4000 series and the single-channel PulSAR series of devices have
-similar SPI transfer specifications and wiring configurations.
-Single-channel PulSAR devices are slower than AD4000, and don't have a
-configuration register. That taken into account, single-channel PulSARs can
-be supported by the ad4000 driver without any increase in code complexity.
+On Thu, Nov 14, 2024 at 10:50=E2=80=AFAM Huacai Chen <chenhuacai@loongson.c=
+n> wrote:
+>
+> The following changes since commit 2d5404caa8c7bb5c4e0435f94b28834ae54566=
+23:
+>
+>   Linux 6.12-rc7 (2024-11-10 14:19:35 -0800)
+>
+> are available in the Git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson=
+.git tags/loongarch-kvm-6.13
+>
+> for you to fetch changes up to 9899b8201025d00b23aee143594a30c55cc4cc35:
+>
+>   irqchip/loongson-eiointc: Add virt extension support (2024-11-13 16:18:=
+27 +0800)
 
-Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
----
- drivers/iio/adc/ad4000.c | 163 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 163 insertions(+)
+Pulled, thanks.
 
-diff --git a/drivers/iio/adc/ad4000.c b/drivers/iio/adc/ad4000.c
-index 68ac77494263..8e31b42534f5 100644
---- a/drivers/iio/adc/ad4000.c
-+++ b/drivers/iio/adc/ad4000.c
-@@ -137,6 +137,41 @@ static const struct ad4000_time_spec ad4020_t_spec = {
- 	.t_quiet2_ns = 60,
- };
- 
-+/* AD7983, AD7984 */
-+static const struct ad4000_time_spec ad7983_t_spec = {
-+	.t_conv_ns = 500,
-+};
-+
-+/* AD7980, AD7982 */
-+static const struct ad4000_time_spec ad7980_t_spec = {
-+	.t_conv_ns = 800,
-+};
-+
-+/* AD7946, AD7686, AD7688, AD7988-5, AD7693 */
-+static const struct ad4000_time_spec ad7686_t_spec = {
-+	.t_conv_ns = 1600,
-+};
-+
-+/* AD7690 */
-+static const struct ad4000_time_spec ad7690_t_spec = {
-+	.t_conv_ns = 2100,
-+};
-+
-+/* AD7942, AD7685, AD7687, AD7694 */
-+static const struct ad4000_time_spec ad7687_t_spec = {
-+	.t_conv_ns = 3200,
-+};
-+
-+/* AD7691 */
-+static const struct ad4000_time_spec ad7691_t_spec = {
-+	.t_conv_ns = 3700,
-+};
-+
-+/* AD7988-1 */
-+static const struct ad4000_time_spec ad7988_1_t_spec = {
-+	.t_conv_ns = 9500,
-+};
-+
- struct ad4000_chip_info {
- 	const char *dev_name;
- 	struct iio_chan_spec chan_spec[2];
-@@ -259,6 +294,102 @@ static const struct ad4000_chip_info adaq4003_chip_info = {
- 	.has_hardware_gain = true,
- };
- 
-+static const struct ad4000_chip_info ad7685_chip_info = {
-+	.dev_name = "ad7685",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 0),
-+	.time_spec = &ad7687_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7686_chip_info = {
-+	.dev_name = "ad7686",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 0),
-+	.time_spec = &ad7686_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7687_chip_info = {
-+	.dev_name = "ad7687",
-+	.chan_spec = AD4000_DIFF_CHANNELS('s', 16, 0),
-+	.time_spec = &ad7687_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7688_chip_info = {
-+	.dev_name = "ad7688",
-+	.chan_spec = AD4000_DIFF_CHANNELS('s', 16, 0),
-+	.time_spec = &ad7686_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7690_chip_info = {
-+	.dev_name = "ad7690",
-+	.chan_spec = AD4000_DIFF_CHANNELS('s', 18, 0),
-+	.time_spec = &ad7690_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7691_chip_info = {
-+	.dev_name = "ad7691",
-+	.chan_spec = AD4000_DIFF_CHANNELS('s', 18, 0),
-+	.time_spec = &ad7691_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7693_chip_info = {
-+	.dev_name = "ad7693",
-+	.chan_spec = AD4000_DIFF_CHANNELS('s', 16, 0),
-+	.time_spec = &ad7686_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7694_chip_info = {
-+	.dev_name = "ad7694",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 0),
-+	.time_spec = &ad7687_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7942_chip_info = {
-+	.dev_name = "ad7942",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 14, 0),
-+	.time_spec = &ad7687_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7946_chip_info = {
-+	.dev_name = "ad7946",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 14, 0),
-+	.time_spec = &ad7686_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7980_chip_info = {
-+	.dev_name = "ad7980",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 0),
-+	.time_spec = &ad7980_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7982_chip_info = {
-+	.dev_name = "ad7982",
-+	.chan_spec = AD4000_DIFF_CHANNELS('s', 18, 0),
-+	.time_spec = &ad7980_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7983_chip_info = {
-+	.dev_name = "ad7983",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 0),
-+	.time_spec = &ad7983_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7984_chip_info = {
-+	.dev_name = "ad7984",
-+	.chan_spec = AD4000_DIFF_CHANNELS('s', 18, 0),
-+	.time_spec = &ad7983_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7988_1_chip_info = {
-+	.dev_name = "ad7988-1",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 0),
-+	.time_spec = &ad7988_1_t_spec,
-+};
-+
-+static const struct ad4000_chip_info ad7988_5_chip_info = {
-+	.dev_name = "ad7988-5",
-+	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 0),
-+	.time_spec = &ad7686_t_spec,
-+};
-+
- struct ad4000_state {
- 	struct spi_device *spi;
- 	struct gpio_desc *cnv_gpio;
-@@ -732,6 +863,22 @@ static const struct spi_device_id ad4000_id[] = {
- 	{ "ad4022", (kernel_ulong_t)&ad4022_chip_info },
- 	{ "adaq4001", (kernel_ulong_t)&adaq4001_chip_info },
- 	{ "adaq4003", (kernel_ulong_t)&adaq4003_chip_info },
-+	{ "ad7685", (kernel_ulong_t)&ad7685_chip_info },
-+	{ "ad7686", (kernel_ulong_t)&ad7686_chip_info },
-+	{ "ad7687", (kernel_ulong_t)&ad7687_chip_info },
-+	{ "ad7688", (kernel_ulong_t)&ad7688_chip_info },
-+	{ "ad7690", (kernel_ulong_t)&ad7690_chip_info },
-+	{ "ad7691", (kernel_ulong_t)&ad7691_chip_info },
-+	{ "ad7693", (kernel_ulong_t)&ad7693_chip_info },
-+	{ "ad7694", (kernel_ulong_t)&ad7694_chip_info },
-+	{ "ad7942", (kernel_ulong_t)&ad7942_chip_info },
-+	{ "ad7946", (kernel_ulong_t)&ad7946_chip_info },
-+	{ "ad7980", (kernel_ulong_t)&ad7980_chip_info },
-+	{ "ad7982", (kernel_ulong_t)&ad7982_chip_info },
-+	{ "ad7983", (kernel_ulong_t)&ad7983_chip_info },
-+	{ "ad7984", (kernel_ulong_t)&ad7984_chip_info },
-+	{ "ad7988-1", (kernel_ulong_t)&ad7988_1_chip_info },
-+	{ "ad7988-5", (kernel_ulong_t)&ad7988_5_chip_info },
- 	{ }
- };
- MODULE_DEVICE_TABLE(spi, ad4000_id);
-@@ -753,6 +900,22 @@ static const struct of_device_id ad4000_of_match[] = {
- 	{ .compatible = "adi,ad4022", .data = &ad4022_chip_info },
- 	{ .compatible = "adi,adaq4001", .data = &adaq4001_chip_info },
- 	{ .compatible = "adi,adaq4003", .data = &adaq4003_chip_info },
-+	{ .compatible = "adi,ad7685", .data = &ad7685_chip_info },
-+	{ .compatible = "adi,ad7686", .data = &ad7686_chip_info },
-+	{ .compatible = "adi,ad7687", .data = &ad7687_chip_info },
-+	{ .compatible = "adi,ad7688", .data = &ad7688_chip_info },
-+	{ .compatible = "adi,ad7690", .data = &ad7690_chip_info },
-+	{ .compatible = "adi,ad7691", .data = &ad7691_chip_info },
-+	{ .compatible = "adi,ad7693", .data = &ad7693_chip_info },
-+	{ .compatible = "adi,ad7694", .data = &ad7694_chip_info },
-+	{ .compatible = "adi,ad7942", .data = &ad7942_chip_info },
-+	{ .compatible = "adi,ad7946", .data = &ad7946_chip_info },
-+	{ .compatible = "adi,ad7980", .data = &ad7980_chip_info },
-+	{ .compatible = "adi,ad7982", .data = &ad7982_chip_info },
-+	{ .compatible = "adi,ad7983", .data = &ad7983_chip_info },
-+	{ .compatible = "adi,ad7984", .data = &ad7984_chip_info },
-+	{ .compatible = "adi,ad7988-1", .data = &ad7988_1_chip_info },
-+	{ .compatible = "adi,ad7988-5", .data = &ad7988_5_chip_info },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, ad4000_of_match);
--- 
-2.45.2
+Paolo
+
+> ----------------------------------------------------------------
+> LoongArch KVM changes for v6.13
+>
+> 1. Add iocsr and mmio bus simulation in kernel.
+> 2. Add in-kernel interrupt controller emulation.
+> 3. Add virt extension support for eiointc irqchip.
+>
+> ----------------------------------------------------------------
+> Bibo Mao (1):
+>       irqchip/loongson-eiointc: Add virt extension support
+>
+> Xianglai Li (11):
+>       LoongArch: KVM: Add iocsr and mmio bus simulation in kernel
+>       LoongArch: KVM: Add IPI device support
+>       LoongArch: KVM: Add IPI read and write function
+>       LoongArch: KVM: Add IPI user mode read and write function
+>       LoongArch: KVM: Add EIOINTC device support
+>       LoongArch: KVM: Add EIOINTC read and write functions
+>       LoongArch: KVM: Add EIOINTC user mode read and write functions
+>       LoongArch: KVM: Add PCHPIC device support
+>       LoongArch: KVM: Add PCHPIC read and write functions
+>       LoongArch: KVM: Add PCHPIC user mode read and write functions
+>       LoongArch: KVM: Add irqfd support
+>
+>  Documentation/arch/loongarch/irq-chip-model.rst    |   64 ++
+>  .../zh_CN/arch/loongarch/irq-chip-model.rst        |   55 ++
+>  arch/loongarch/include/asm/irq.h                   |    1 +
+>  arch/loongarch/include/asm/kvm_eiointc.h           |  123 +++
+>  arch/loongarch/include/asm/kvm_host.h              |   18 +-
+>  arch/loongarch/include/asm/kvm_ipi.h               |   45 +
+>  arch/loongarch/include/asm/kvm_pch_pic.h           |   62 ++
+>  arch/loongarch/include/uapi/asm/kvm.h              |   20 +
+>  arch/loongarch/kvm/Kconfig                         |    5 +-
+>  arch/loongarch/kvm/Makefile                        |    4 +
+>  arch/loongarch/kvm/exit.c                          |   82 +-
+>  arch/loongarch/kvm/intc/eiointc.c                  | 1027 ++++++++++++++=
+++++++
+>  arch/loongarch/kvm/intc/ipi.c                      |  475 +++++++++
+>  arch/loongarch/kvm/intc/pch_pic.c                  |  519 ++++++++++
+>  arch/loongarch/kvm/irqfd.c                         |   89 ++
+>  arch/loongarch/kvm/main.c                          |   19 +-
+>  arch/loongarch/kvm/vcpu.c                          |    3 +
+>  arch/loongarch/kvm/vm.c                            |   21 +
+>  drivers/irqchip/irq-loongson-eiointc.c             |  108 +-
+>  include/linux/kvm_host.h                           |    1 +
+>  include/trace/events/kvm.h                         |   35 +
+>  include/uapi/linux/kvm.h                           |    8 +
+>  22 files changed, 2735 insertions(+), 49 deletions(-)
+>  create mode 100644 arch/loongarch/include/asm/kvm_eiointc.h
+>  create mode 100644 arch/loongarch/include/asm/kvm_ipi.h
+>  create mode 100644 arch/loongarch/include/asm/kvm_pch_pic.h
+>  create mode 100644 arch/loongarch/kvm/intc/eiointc.c
+>  create mode 100644 arch/loongarch/kvm/intc/ipi.c
+>  create mode 100644 arch/loongarch/kvm/intc/pch_pic.c
+>  create mode 100644 arch/loongarch/kvm/irqfd.c
+>
 
 
