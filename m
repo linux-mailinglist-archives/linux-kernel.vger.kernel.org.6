@@ -1,108 +1,137 @@
-Return-Path: <linux-kernel+bounces-409392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05A6A9C8C84
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:10:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 023979C8BF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:38:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 215ADB2CBCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:50:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A14981F22B15
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B8F22331;
-	Thu, 14 Nov 2024 13:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H08tIFnA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60670208AD;
+	Thu, 14 Nov 2024 13:37:43 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B87D17C8B;
-	Thu, 14 Nov 2024 13:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA43F9C0
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731592213; cv=none; b=DZvm9C1JETF98Gge8ZlfoCFHogdE+VEl167QpMR0PEdV6G7c+Gl0LTC1gc7xLoF/kF+o/i/0Lr5H+oIaBOZofCZyiystlhZq4NrJBXgFnsr7EgcLDz2Qqs+idMDI+gff8Yyc0ebB0jrsyCaKiGvBhKZKdTkv2vZAgADlpNgY7ls=
+	t=1731591462; cv=none; b=JJKfAhwc+u32T32rFdQ0W+JPELZVXlAk1I554rDxiPmsqa6nxpkaYgR5aTZJC+YpZ41oEu2r0wloJSy7iPKQM7g7sqVplISYr8ijhQT1WU0BcMobMG1tiFii/sKynySO2/0C+LxiCRAp119EKz3vPlEcuPWrQUnlsKTXSMrLEM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731592213; c=relaxed/simple;
-	bh=RxFq6bYjSC95SEdvaMlXM31AEtsd7ZEogKLttu9p5dM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g+eHVgJXPZo0u6jn8LZ2+VLa8mp+4gkJR3x0I4q+hozysInBtTNWuqPBQxnJW6lxLi2eDXXZ129jA9RYYGZkxfp1VHpm6/pe7CiP9Om6PWBXZqKf9RJ163ZOC+yYPzfyeahMnx28fBv+Kw/FZgsl6TDoMMG2BIq7HXkHKalzwdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H08tIFnA; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731592212; x=1763128212;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=RxFq6bYjSC95SEdvaMlXM31AEtsd7ZEogKLttu9p5dM=;
-  b=H08tIFnArnRWl4TmrvoqpeAa6ul9RzNoalInMa48hiUh2uOEmfLGj4N9
-   UnSsev+LOxfg+yZholTx4ZYORE+hiVDK17oqJPHa036fPji2a5UDlRIto
-   45f03DP1Nf4a0Oe772jvn66LivLz9zfL16tnukxzsyPMihI7o0l8LSAXn
-   Fgu7BTECSUua8OvonHhy3CXZnnziNRuGj+TMGDymQd7f6JZs4/QHD2Kfs
-   /KQYthHCwfCug88Akc5z9KE9D2TH5ooWEeZ9SekDZlL6YfA/Pw8ykfX7A
-   k0dmPf/bdkqU++GkWkpqYBCWqfnuHKZX5sHMyvbZJmFq3jvOV/zh4NnJS
-   Q==;
-X-CSE-ConnectionGUID: eHjTXNaNQZevHSHZ3SA5fQ==
-X-CSE-MsgGUID: 40DMI41kToeIZ9Sds4vprg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11256"; a="42158949"
-X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
-   d="scan'208";a="42158949"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 05:50:10 -0800
-X-CSE-ConnectionGUID: uSzprHoUSGOcIj4vMWD/mg==
-X-CSE-MsgGUID: cOMhJ5kAQ3ucIjbtCIcFUw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
-   d="scan'208";a="88599940"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 05:50:09 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tBaEY-0000000Ejne-1oUB;
-	Thu, 14 Nov 2024 15:50:06 +0200
-Date: Thu, 14 Nov 2024 15:50:06 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] gpio: Move and sort Kconfig entries as suggested
-Message-ID: <ZzYADpZgTyQN_NDo@smile.fi.intel.com>
-References: <20241113171219.2949157-1-andriy.shevchenko@linux.intel.com>
- <CAMRc=MeaDjhxAwmTcNZ+oHniFn4EWVEmfP8MdNWitmD+Rr=scA@mail.gmail.com>
- <ZzXTbEcrLigXWpAu@smile.fi.intel.com>
- <CAMRc=MeEtyTXr6A4gXbbN=ZY1tzAQnbVMF0NYA2_6Xm3=jfS6Q@mail.gmail.com>
- <ZzXhf2zM9IisvZhs@smile.fi.intel.com>
- <CAMRc=Mdo2DysJRPvJRU9RwTCH8nmw_CFRYYoLfvfC8+j0K9roA@mail.gmail.com>
+	s=arc-20240116; t=1731591462; c=relaxed/simple;
+	bh=zFRjc2QWjRmKvoynQjm9yt4RkMSH2l39EGyq4CkzDXM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NgyflVQu9NcbkpL7bltAp/10CFu8OqiYl+/BbJ6mIY/+r6vXEWyzvtrrW8CFs72HGWtHRxwpuBhR2Wg7niwOLdeOQ/IATn/KvrZezT/L1QPUWEcPL8RwAcZLpuht65PpXltXNyOqi+cbfrptIyEtvfZfd/jO38SrXrCVpzTV48c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Xq1Np3SVkz1V4Fw;
+	Thu, 14 Nov 2024 21:35:06 +0800 (CST)
+Received: from kwepemf100008.china.huawei.com (unknown [7.202.181.222])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0FC181400DC;
+	Thu, 14 Nov 2024 21:37:37 +0800 (CST)
+Received: from huawei.com (10.175.103.91) by kwepemf100008.china.huawei.com
+ (7.202.181.222) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 14 Nov
+ 2024 21:37:36 +0800
+From: Zeng Heng <zengheng4@huawei.com>
+To: <james.morse@arm.com>, <Dave.Martin@arm.com>
+CC: <bobo.shaobowang@huawei.com>, <linux-kernel@vger.kernel.org>,
+	<jonathan.cameron@huawei.com>, <linux-arm-kernel@lists.infradead.org>
+Subject: [RFC PATCH mpam mpam/snapshot/v6.11-rc1 0/6] arm_mpam: Introduce the definitions of intPARTID and reqPARTID
+Date: Thu, 14 Nov 2024 21:50:31 +0800
+Message-ID: <20241114135037.918470-1-zengheng4@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=Mdo2DysJRPvJRU9RwTCH8nmw_CFRYYoLfvfC8+j0K9roA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemf100008.china.huawei.com (7.202.181.222)
 
-On Thu, Nov 14, 2024 at 01:59:19PM +0100, Bartosz Golaszewski wrote:
-> On Thu, Nov 14, 2024 at 12:39 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
+The patch set is applied for mpam/snapshot/v6.11-rc1 branch of
+https://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git
+repository.
+
+The narrow-partid feature in MPAM allows for a more efficient use of
+PARTIDs by enabling a many-to-one mapping of reqpartids (requested PARTIDs)
+to intpartids (internal PARTIDs). This mapping reduces the number of unique
+PARTIDs needed, thus allowing more tasks or processes to be monitored and
+managed with the available resources.
+
+Intpartid(Internal PARTID) is an internal identifier used by the hardware
+to represent a specific resource partition. It is a low-level identifier
+that the hardware uses to track and manage resource allocation and
+monitoring.
+
+Reqpartid(Request PARTID) is an identifier provided by the software when
+requesting resources from the memory system. It indicates the desired
+partition for resource monitoring. By using reqpartids, software can
+monitor specific resources or allow the system to subdivide smaller
+granularity partitions within existing partitions to serve as monitoring
+partitions.
+
+For the new rmid allocation strategy, it will check whether there is an
+available rmid of any reqPARTID which belongs to the input intPARTID.
+
+The MPAM driver statically assigns all reqPARTIDs to respective intPARTIDs,
+with a specific illustration as follows:
+
+m - Indicates the number of reqPARTIDs per intPARTID
+n - Indicates the total number of intPARTIDs
+(m * n) - Represents the total number of reqPARTIDs
+
+intPARTID_1 = 0
+    ├── reqPARTID_1_1 = 0
+    ├── reqPARTID_1_2 = 0 + n
+    ├── ...
+    └── reqPARTID_1_m = 0 + n * (m - 1)
+
+intPARTID_2 = 1
+    ├── reqPARTID_2_1 = 1
+    ├── reqPARTID_2_2 = 1 + n
+    ├── ...
+    └── reqPARTID_2_m = 1 + n * (m - 1)
 
 ...
 
-> You know what? How about just reordering Kconfig entries
-> alphabetically for this merge window and next release cycle we can
-> decide on what to do about Kconfig consistency?
+intPARTID_n = (n - 1)
 
-I think I expended time for this patch. Consider it as a report and proceed
-how you think is the best, Thanks!
+Each intPARTID has m reqPARTIDs, which are used to expand the number of
+monitoring groups under the control group. Therefore, the number of
+monitoring groups is no longer limited by the range of MPAM PMG, which
+enhances the extensibility of the system's monitoring capabilities.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Dave Martin (1):
+  arm_mpam: Set INTERNAL as needed when setting MSC controls
 
+Zeng Heng (5):
+  arm_mpam: Introduce the definitions of intPARTID and reqPARTID
+  arm_mpam: Create reqPARTIDs resource bitmap
+  arm_mpam: Enhance the rmid allocation strategy
+  arm_mpam: Call resctrl_sync_config() when allocate new reqPARTID
+  fs/resctrl: Add the helper to check if the task exists in the target
+    group
+
+ arch/x86/kernel/cpu/resctrl/core.c          |  20 +++
+ drivers/platform/arm64/mpam/mpam_devices.c  |  83 +++++++++--
+ drivers/platform/arm64/mpam/mpam_internal.h |   6 +
+ drivers/platform/arm64/mpam/mpam_resctrl.c  | 145 +++++++++++++++++++-
+ fs/resctrl/internal.h                       |   4 -
+ fs/resctrl/monitor.c                        |  16 ++-
+ fs/resctrl/pseudo_lock.c                    |   7 +-
+ fs/resctrl/rdtgroup.c                       |  84 ++++++++----
+ include/linux/resctrl.h                     |  30 ++++
+ 9 files changed, 344 insertions(+), 51 deletions(-)
+
+--
+2.25.1
 
 
