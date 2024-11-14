@@ -1,97 +1,221 @@
-Return-Path: <linux-kernel+bounces-409590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53EDD9C8F6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:13:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C8549C8ED6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:57:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C85DB43208
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:56:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF88F285421
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FED15C144;
-	Thu, 14 Nov 2024 15:50:39 +0000 (UTC)
-Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75875183098;
+	Thu, 14 Nov 2024 15:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="JPFbtK8n"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071EE2AEF1
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1766517B505
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731599439; cv=none; b=CH1sTNrwH6hLYOqDX2L4FlN3UW/v9O64TiXTXxQ86i6jz2CFGdFkFiEtqnLD7+NIgGQuAIPw8J0VypUS/KOXPdxY5utV8S3ETvisrXUUxrTzF16bmpHg1Ve74wpgx9oNRRFZus+x0051ZwTAwIlIY4jyXF58i9CtjdmTsWVyUes=
+	t=1731599451; cv=none; b=JFtwLRK/1pgUlLNtyYAowQ5Qt4nmU0bBOcOdaDs0e6bbpKfKkut8ZADRMqhXakWtkoKshDX32FnOepZnOyBzaeNin4vX69mWWyw6IPIQayPtP2EeD3XSnRR2nH5/4yovspECPGUO5t1eEeUS7nkSmrIEMzLgTMd4Btmgo5hOiN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731599439; c=relaxed/simple;
-	bh=vcxSPoO/LmnLNkcxwNba1mblqBCjbM4FVGKWelTaG7E=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=jXp5usq5fBCJymYn9Z5kGw1ACmpc2wvD0Kk3agR9pazUQ7R68v0UUAMjKc2omkZ2PhvBfRscJcHetjdK6rBYPBEGKEeCZoKxzCZvhvebuH3J3kKrIgbouoH1qbhsyxfri1xTzs/SDUpZzvwKGt356iBf4g/WoMSL0NpuMvp0YU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 67C9F2BFA23;
-	Thu, 14 Nov 2024 16:50:28 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id ltrO9K3SGxkH; Thu, 14 Nov 2024 16:50:27 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id BBCC42BFA25;
-	Thu, 14 Nov 2024 16:50:27 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id gjdoMpmc9UA2; Thu, 14 Nov 2024 16:50:27 +0100 (CET)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 8BCC62BFA23;
-	Thu, 14 Nov 2024 16:50:27 +0100 (CET)
-Date: Thu, 14 Nov 2024 16:50:27 +0100 (CET)
-From: Richard Weinberger <richard@nod.at>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-mtd <linux-mtd@lists.infradead.org>, joern <joern@lazybastard.org>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	Fabian Vogt <fvogt@suse.com>
-Message-ID: <1898930663.21166792.1731599427304.JavaMail.zimbra@nod.at>
-In-Reply-To: <20241114154442.25920-1-tiwai@suse.de>
-References: <20241114154442.25920-1-tiwai@suse.de>
-Subject: Re: [PATCH] mtd: phram: Add the kernel lock down check
+	s=arc-20240116; t=1731599451; c=relaxed/simple;
+	bh=I4+lQoZDoE5obNmbEbXZVyNC16ObpAZr7xb70Tlb8u4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IrkI9xaFDZ2O+v8wiP+gqftETt7Q1poBSddX2kRrEyrHWgQ0gZyOMM5iN/RwJBvSYjzYEE4OTjiaTmkI1ZaGEa9PQs6ANhiRPMSrl23QAONZ0y9rS6x6UJxq29tpJ5rXZyFSguUF+gccGNaLQJAj6mbTB/gjaetHTYu5YsVfyHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=JPFbtK8n; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20e6981ca77so9920555ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:50:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1731599449; x=1732204249; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=AuaBMTy+AeJsJU9fm4AZ56hQq3E5HBpfOKLhTwWZNeQ=;
+        b=JPFbtK8n7vK10qMiAGMkQV5oP3XPC9tk5kf0Yp9MIPs17610Qb1uCn89HsVtQzaU22
+         h9zEtSMYEtG1Elkl3rFfMQ97UWJmk5oSH3FZPP3s89GSMpOu74Bu0oUycIlyW2fLSdz/
+         f1eYv/zgXfwUg6yhxLhAbuNjA9EkECLHJ7v2+n98V9COIfVH8BP2HxSQbHLTHIZf+na9
+         0+S7dj7kMIpeq0kaxAg9apWL7qk2BLtbryl3e1Ps1/fy9NBbGGAxoF8MEStP+BEtfPGC
+         SUQgQuDW3t3ryMxvZf2sZ6pB9jM+/r6DA4NexLQ337PtsDdSrJttdx4iSkQ/mn7xasny
+         RVbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731599449; x=1732204249;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AuaBMTy+AeJsJU9fm4AZ56hQq3E5HBpfOKLhTwWZNeQ=;
+        b=bZrxtqQaGXuV4kNecR6ukvboWSCWQutZpFfHVNQ2y8qIGDTpG3yU+IodawRmv3IMQS
+         Oaw8ebn0AszXvLf1dYCEqA4cVK4tP15D8V/0tnMCKmjcI9h6yRaZsVeLPMeMHYGYfea9
+         tPTXYbeIYTTW0zkoqV24iJrR4SEv6ygfw1gCwoRrBj6aGlYQJsA5oEZRrqOZgYNsiAzL
+         JtJcsC75n5XAy0H8Gllut/HmcHMwu7/owm+rZzGZq7pYcRo38qd+ufcl8mv7CNkHoL1w
+         0LTJBEBex2l82GwwumZFMVVDRLksDWT1z12l0DqUGyA1nNAvzWrlsZmcrl8DEQ0FG7wn
+         1/sg==
+X-Forwarded-Encrypted: i=1; AJvYcCU49sjlXnKesVbtyJh8fRIP/ukC1KoxoTTPGGMF4k2QqiNOR/0CIh725AGzEk+xhCGdU/OLjOPm5QUm/Is=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNDyk9DAqmAYCnOqaIaZHnr5nZwmbLLilFIZ/z9DOBMLadlzIO
+	gJ6NKEkc6jtxoch4qGFOU/QO5mT6Ue6QP1ibUQhF5Htn0zLIaLQkrA6BSWWjwyg=
+X-Google-Smtp-Source: AGHT+IHTSbLYPW9H6IMMv3J9GeiSG052ik1ZNbE+SJ7zga3eJUIE3+gCfX95oRz+I+/KI8Ko3d5rzw==
+X-Received: by 2002:a17:902:cec7:b0:20c:7d4c:64db with SMTP id d9443c01a7336-211b5d542aemr85459765ad.49.1731599449294;
+        Thu, 14 Nov 2024 07:50:49 -0800 (PST)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211c7d377ecsm12256145ad.265.2024.11.14.07.50.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 07:50:48 -0800 (PST)
+Date: Thu, 14 Nov 2024 07:50:45 -0800
+From: Deepak Gupta <debug@rivosinc.com>
+To: Nick Hu <nick.hu@sifive.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	alistair.francis@wdc.com, richard.henderson@linaro.org,
+	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
+	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
+	cleger@rivosinc.com, alexghiti@rivosinc.com,
+	samitolvanen@google.com, broonie@kernel.org,
+	rick.p.edgecombe@intel.com
+Subject: Re: [PATCH v8 24/29] riscv: enable kernel access to shadow stack
+ memory via FWFT sbi call
+Message-ID: <ZzYcVW/4M0jab1T4@debug.ba.rivosinc.com>
+References: <20241111-v5_user_cfi_series-v8-0-dce14aa30207@rivosinc.com>
+ <20241111-v5_user_cfi_series-v8-24-dce14aa30207@rivosinc.com>
+ <CAKddAkCCVjNHUinPWtOiK8Ki_ZkdoUCawfv1-+0B69J_1aJv5Q@mail.gmail.com>
+ <ZzVNKvCu4MOs7O5z@debug.ba.rivosinc.com>
+ <CAKddAkDbGYeONaksq6fzLzx47BHZo3Ar7Sog3MOgf7Y+Birovw@mail.gmail.com>
+ <ZzVRbCZP9N4Os8Bj@debug.ba.rivosinc.com>
+ <CAKddAkBCByf570PXfz798FtBbeGQWe2LJpdzxkE+jv3Zd3ZV1w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF132 (Linux)/8.8.12_GA_3809)
-Thread-Topic: phram: Add the kernel lock down check
-Thread-Index: fEx14KVYL22/FSDt0R0dYYGq9HpsYA==
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKddAkBCByf570PXfz798FtBbeGQWe2LJpdzxkE+jv3Zd3ZV1w@mail.gmail.com>
 
------ Urspr=C3=BCngliche Mail -----
-> Von: "Takashi Iwai" <tiwai@suse.de>
-> An: "linux-mtd" <linux-mtd@lists.infradead.org>
-> CC: "joern" <joern@lazybastard.org>, "Miquel Raynal" <miquel.raynal@bootl=
-in.com>, "richard" <richard@nod.at>, "Vignesh
-> Raghavendra" <vigneshr@ti.com>, "linux-kernel" <linux-kernel@vger.kernel.=
-org>, "Fabian Vogt" <fvogt@suse.com>
-> Gesendet: Donnerstag, 14. November 2024 16:44:41
-> Betreff: [PATCH] mtd: phram: Add the kernel lock down check
 
-> The phram MTD driver may map any memory pages no matter whether it's
-> reserved or whatever used for systems, which basically allows user
-> bypassing the lock down.
->=20
-> Add the check and abort the probe if the kernel is locked down for
-> LOCKDOWN_DEV_MEM.
->=20
-> Reported-by: Fabian Vogt <fvogt@suse.com>
-> Suggested-by: Fabian Vogt <fvogt@suse.com>
-> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Hi Nick,
 
-Good catch!
+Thanks for reviewing and helping.
 
-Acked-by: Richard Weinberger <richard@nod.at>
+On Thu, Nov 14, 2024 at 02:17:30PM +0800, Nick Hu wrote:
+>Hi Deepak
+>
+>On Thu, Nov 14, 2024 at 9:25 AM Deepak Gupta <debug@rivosinc.com> wrote:
+>>
+>> On Thu, Nov 14, 2024 at 09:20:14AM +0800, Nick Hu wrote:
+>> >Hi Deepak
+>> >
+>> >On Thu, Nov 14, 2024 at 9:06 AM Deepak Gupta <debug@rivosinc.com> wrote:
+>> >> >> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
+>> >> >> index 356d5397b2a2..6244408ca917 100644
+>> >> >> --- a/arch/riscv/kernel/head.S
+>> >> >> +++ b/arch/riscv/kernel/head.S
+>> >> >> @@ -164,6 +164,12 @@ secondary_start_sbi:
+>> >> >>         call relocate_enable_mmu
+>> >> >>  #endif
+>> >> >>         call .Lsetup_trap_vector
+>> >> >> +       li a7, SBI_EXT_FWFT
+>> >> >> +       li a6, SBI_EXT_FWFT_SET
+>> >> >> +       li a0, SBI_FWFT_SHADOW_STACK
+>> >> >> +       li a1, 1 /* enable supervisor to access shadow stack access */
+>> >> >> +       li a2, SBI_FWFT_SET_FLAG_LOCK
+>> >> >> +       ecall
+>> >> >>         scs_load_current
+>> >> >>         call smp_callin
+>> >> >>  #endif /* CONFIG_SMP */
+>> >> >> @@ -320,6 +326,12 @@ SYM_CODE_START(_start_kernel)
+>> >> >>         la tp, init_task
+>> >> >>         la sp, init_thread_union + THREAD_SIZE
+>> >> >>         addi sp, sp, -PT_SIZE_ON_STACK
+>> >> >> +       li a7, SBI_EXT_FWFT
+>> >> >> +       li a6, SBI_EXT_FWFT_SET
+>> >> >> +       li a0, SBI_FWFT_SHADOW_STACK
+>> >> >> +       li a1, 1 /* enable supervisor to access shadow stack access */
+>> >> >> +       li a2, SBI_FWFT_SET_FLAG_LOCK
+>> >> >> +       ecall
+>> >> >>         scs_load_current
+>> >> >>
+>> >> >>  #ifdef CONFIG_KASAN
+>> >> >>
+>> >> >> --
+>> >> >> 2.45.0
+>> >> >>
+>> >> >Should we clear the SBI_FWFT_SET_FLAG_LOCK before the cpu hotplug
+>> >> >otherwise the menvcfg.sse won't be set by the fwft set sbi call when
+>> >> >the hotplug cpu back to kernel?
+>> >>
+>> >> Hmm...
+>> >>
+>> >> An incoming hotplug CPU has no features setup on it.
+>> >> I see that `sbi_cpu_start` will supply `secondary_start_sbi` as start
+>> >> up code for incoming CPU. `secondary_start_sbi` is in head.S which converges
+>> >> in `.Lsecondary_start_common`. And thus hotplugged CPU should be
+>> >> issuing shadow stack set FWFT sbi as well.
+>> >>
+>> >> Am I missing something ?
+>> >>
+>> >This is the correct flow. However the opensbi will deny it due to the
+>> >SBI_FWFT_SET_FLAG_LOCK already being set.
+>> >So the menvcfg.sse will not set by this flow.
+>> >
+>> >if (conf->flags & SBI_FWFT_SET_FLAG_LOCK)
+>> >                return SBI_EDENIED;
+>> >
+>>
+>> hmm... Why?
+>>
+>> `conf` is pointing to per-hart state in firmware.
+>>
+>> On this incoming cpu, opensbi (or equivalent) firmware must have
+>> ensured that this per-hart state doesn't have lock set.
+>>
+>> Am I missing something?
+>>
+>Current OpenSBI doesn't clear the lock in the warm init of the hotplug path.
+>It seems like we need a patch to address it.
 
-Thanks,
-//richard
+Got it thanks.
+Since you already know what's the problem, can you send a patch to opensbi.
+If you want rather have me do it, let me know. Thanks.
+
+>
+>Regards,
+>Nick
+>> >Regards,
+>> >Nick
+>> >> >
+>> >> >Regards,
+>> >> >Nick
+>> >> >>
+>> >> >> _______________________________________________
+>> >> >> linux-riscv mailing list
+>> >> >> linux-riscv@lists.infradead.org
+>> >> >> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
