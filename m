@@ -1,119 +1,160 @@
-Return-Path: <linux-kernel+bounces-409012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D41D9C8659
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:42:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB9699C8652
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:38:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1555A1F22812
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:42:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82BFB28270D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645911F709C;
-	Thu, 14 Nov 2024 09:41:56 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18591F583E;
+	Thu, 14 Nov 2024 09:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="afhDuexG"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38BD1DE2B5;
-	Thu, 14 Nov 2024 09:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C29113A3EC;
+	Thu, 14 Nov 2024 09:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731577316; cv=none; b=XVL7podmZtnrZnMIhEptgtugrJumF/aIODcwWXcAIYGbWLgy22kR35RH7cnfWu40wVOo/tYOev5BbY7uKMC37tixezd1VHIFWI3l2U/hG25Kp6fLneIkhy+ddRll/3KseBNQbGwfCW+lAvX2kdGNJ2DfxDyvZOIfsGzjY1inllc=
+	t=1731577126; cv=none; b=LGQP066vkRJ75kuXjCeoMbaKcmKUWxQjSEJc9voNkgTGsZviYqyoRzLulEacUI/KJTswjMbeqRjZ6/PA0WY5UT7PFRdBSn6+i2dSuKBinsKyYTK/pCuLDmK2sge66PbR9Mn7A71mYdhg4Onqeirx6gDr+sK5k2PqfMQrgEEkceY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731577316; c=relaxed/simple;
-	bh=i5t5uoZkJk//79g6cG/+3RQtJAGUYWU8qA/tQ9zZyqg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BsG+WmNBRzN0pyVeH2hImEooI0586MIVY7vL8swVemtOhoOI3+ZiLoQi1PwFwrD6qFDqGHjITGz/eyrTLO2ImrBq84Y43Y0vaVDT79p7aKm/ae0uicSjhirUaDe96108Y1Dfun+aTtv8bbJzPZPs/mEGAWnU97HQ2PVDWLlOg+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A566C4CECD;
-	Thu, 14 Nov 2024 09:41:52 +0000 (UTC)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Bibo Mao <maobibo@loongson.cn>
-Cc: kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [GIT PULL] LoongArch KVM changes for v6.13
-Date: Thu, 14 Nov 2024 17:41:28 +0800
-Message-ID: <20241114094128.2198306-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1731577126; c=relaxed/simple;
+	bh=Jg3FgyWPaL71rabeud5D50eE/bWgrW2xQ6HVGMLckVI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BJnVoAi+jpJ890pk3fSh1lHJiun4sfPPA1Tgh0qSHhCSM1Y9mMwBAdL6t/rzhJ7FFzavDuCoj49qsKw6LxuqKnUJprlWpTIepgMx8XCD/SmtPcjzsH1sLVhnPnPzcZFWF+qnVYcnqUZhahYdnhT3xPDUNAcIeJRGa+KQkBuMOVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=afhDuexG; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4316cce103dso5032245e9.3;
+        Thu, 14 Nov 2024 01:38:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731577123; x=1732181923; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=d35KLNXomOAr9zumvGG9Etjnd7QKJLy1hGTr+u/JGjw=;
+        b=afhDuexGyi0JEGc9h8f4zqdZiJHRGc2YueVZjh4jFde51nQp05QfHuqB5eZarrPV8L
+         l4tjshzLLqZt/qelWoXSREfnnwO2BKvgMSlbVufN+V3rRpM5Y4/5CWMfh9307q4R+BA/
+         M5LlPk3BWPwuBi6uYDTyOAqRUgREpQcTiNsJc2bJhx45W0GeD+emhhSLJTNI0TLqiJYs
+         44GdhKeLnsf6GcDeKXGRGwSw1EsoovIGD48QbXhU5u+Js3wE+Afy8H0UeJk12YilrD6W
+         Bc45uuPLk3s4At0H5GCvef+AFy6gDz1R5CbrwtXF0Q4VrnMV66gP/5OQ6pEx6c7hFlgD
+         /fPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731577123; x=1732181923;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d35KLNXomOAr9zumvGG9Etjnd7QKJLy1hGTr+u/JGjw=;
+        b=iKlWxfMLCnjwDaBDmWiiO8dlJa+Y+qFBFmUoNECecw5NW9vT+wfFokTaKTXjZKABez
+         tYgI31+xnn6kR0MgXLxw7JOPjfP8b3lFaiXzI6s/YvLg31bQVuiQc7ljPzf0SfX7yMcF
+         o3yGOgZhB45ELiGE4Whoql7/7dI7WrdUZwgzQ1ezB9pyvM14GKyTcVb/pD1Sf2NBzNkT
+         H9a+cf/I5Xl98xdKLLM24TxXtHWtBMfrtmpCii88ygyG6dPjU5C+HwreBFuVsYPIwARP
+         XGVdiyNSa25kTOfoM/cGxMENsGwbjSr13LYSqAMIEAQ2D8GvgBTZiTuwo5yS013GrFhb
+         BqVA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/n36ycRBplcCpP38ubh89pKSVkG/EAaowvCRs2thKlJfi8noUbz4QTdO1ezeHWdPLcg4KTKHemdg=@vger.kernel.org, AJvYcCWbRwHu2v/Z6kFHLv9yXlfd3r/Zv7Ynfx5CTzHMyiaCHcH61YkH+wV+HH1dt5fnHLkPXN2oAanK24GqUnYH@vger.kernel.org
+X-Gm-Message-State: AOJu0YyL3zH6LA45KxnxYkSIhALJ9i6fjUDB0PHNnnJfQwkyIL/p04ls
+	bkyToUuPxKszYtalFDFq8HluywaCZtgpI5oUSuGYWQsrCnt17Wf7qFxVch1tGH5F+dLY
+X-Google-Smtp-Source: AGHT+IEOFosBIQHfTQeeNEqGgyHag0IIyKVo2TGzp4lefpLaOPt0K0gfXhBh0atLZ9L2x01ng4qE0g==
+X-Received: by 2002:a05:600c:444e:b0:431:52a3:d9d5 with SMTP id 5b1f17b1804b1-432da6d6676mr16658115e9.0.1731577122464;
+        Thu, 14 Nov 2024 01:38:42 -0800 (PST)
+Received: from ?IPv6:2003:f6:ef02:f400:a23c:697f:16fb:11c5? (p200300f6ef02f400a23c697f16fb11c5.dip0.t-ipconnect.de. [2003:f6:ef02:f400:a23c:697f:16fb:11c5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da298760sm17222605e9.37.2024.11.14.01.38.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 01:38:42 -0800 (PST)
+Message-ID: <be375e24f74997743743fadf68125e176c23e2df.camel@gmail.com>
+Subject: Re: [PATCH] iio: accel: kx022a: Improve reset delay
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>, Matti Vaittinen
+	 <matti.vaittinen@fi.rohmeurope.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, 	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 14 Nov 2024 10:43:05 +0100
+In-Reply-To: <ZzWfXbjaDkFnu_Jg@mva-rohm>
+References: <ZzWfXbjaDkFnu_Jg@mva-rohm>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The following changes since commit 2d5404caa8c7bb5c4e0435f94b28834ae5456623:
+On Thu, 2024-11-14 at 08:57 +0200, Matti Vaittinen wrote:
+> All the sensors supported by kx022a driver seemed to require some delay
+> after software reset to be operational again. More or less a random
+> msleep(1) was added to cause the driver to go to sleep so the sensor has
+> time to become operational again.
+>=20
+> Now we have official docuumentation available:
+> https://fscdn.rohm.com/kionix/en/document/AN010_KX022ACR-Z_Power-on_Proce=
+dure_E.pdf
+> https://fscdn.rohm.com/kionix/en/document/TN027-Power-On-Procedure.pdf
+> https://fscdn.rohm.com/kionix/en/document/AN011_KX134ACR-LBZ_Power-on_Pro=
+cedure_E.pdf
+>=20
+> stating the required time is 2 ms.
+>=20
+> Due to the nature of the current msleep implementation, the msleep(1) is
+> likely to be sleeping more than 2ms already - but the value "1" is
+> misleading in case someone needs to optimize the start time and change
+> the msleep to a more accurate delay. Hence it is better for
+> "documentation" purposes to use value which actually reflects the
+> specified 2ms wait time.
+>=20
+> Change the value of delay after software reset to match the
+> specifications and add links to the power-on procedure specifications.
+>=20
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> ---
+> Sorry for not including this to the KX134ACR-LBZ series I sent
+> yesterday. It was only half an hour after I had sent the KX134ACR-LBZ
+> support when I was notified about the existence of the KX022ACR-Z
+> start-up procedure specification... Hence this lone patch to code which
+> I just sent a miscallaneous series for before.
+>=20
+> =C2=A0drivers/iio/accel/kionix-kx022a.c | 11 ++++++++---
+> =C2=A01 file changed, 8 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/iio/accel/kionix-kx022a.c b/drivers/iio/accel/kionix=
+-
+> kx022a.c
+> index 32387819995d..ccabe2e3b130 100644
+> --- a/drivers/iio/accel/kionix-kx022a.c
+> +++ b/drivers/iio/accel/kionix-kx022a.c
+> @@ -1121,10 +1121,15 @@ static int kx022a_chip_init(struct kx022a_data *d=
+ata)
+> =C2=A0		return ret;
+> =C2=A0
+> =C2=A0	/*
+> -	 * I've seen I2C read failures if we poll too fast after the sensor
+> -	 * reset. Slight delay gives I2C block the time to recover.
+> +	 * According to the power-on procedure documents, there is (at least)
+> +	 * 2ms delay required after the software reset. This should be same
+> for
+> +	 * all, KX022ACR-Z, KX132-1211, KX132ACR-LBZ and KX134ACR-LBZ.
+> +	 *
+> +	 *
+> https://fscdn.rohm.com/kionix/en/document/AN010_KX022ACR-Z_Power-on_Proce=
+dure_E.pdf
+> +	 *
+> https://fscdn.rohm.com/kionix/en/document/TN027-Power-On-Procedure.pdf
+> +	 *
+> https://fscdn.rohm.com/kionix/en/document/AN011_KX134ACR-LBZ_Power-on_Pro=
+cedure_E.pdf
+> =C2=A0	 */
+> -	msleep(1);
+> +	msleep(2);
 
-  Linux 6.12-rc7 (2024-11-10 14:19:35 -0800)
+msleep() is not advisable for something lower than 20ms. Maybe take the
+opportunity and change it to fsleep()?
 
-are available in the Git repository at:
+- Nuno S=C3=A1
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-kvm-6.13
-
-for you to fetch changes up to 9899b8201025d00b23aee143594a30c55cc4cc35:
-
-  irqchip/loongson-eiointc: Add virt extension support (2024-11-13 16:18:27 +0800)
-
-----------------------------------------------------------------
-LoongArch KVM changes for v6.13
-
-1. Add iocsr and mmio bus simulation in kernel.
-2. Add in-kernel interrupt controller emulation.
-3. Add virt extension support for eiointc irqchip.
-
-----------------------------------------------------------------
-Bibo Mao (1):
-      irqchip/loongson-eiointc: Add virt extension support
-
-Xianglai Li (11):
-      LoongArch: KVM: Add iocsr and mmio bus simulation in kernel
-      LoongArch: KVM: Add IPI device support
-      LoongArch: KVM: Add IPI read and write function
-      LoongArch: KVM: Add IPI user mode read and write function
-      LoongArch: KVM: Add EIOINTC device support
-      LoongArch: KVM: Add EIOINTC read and write functions
-      LoongArch: KVM: Add EIOINTC user mode read and write functions
-      LoongArch: KVM: Add PCHPIC device support
-      LoongArch: KVM: Add PCHPIC read and write functions
-      LoongArch: KVM: Add PCHPIC user mode read and write functions
-      LoongArch: KVM: Add irqfd support
-
- Documentation/arch/loongarch/irq-chip-model.rst    |   64 ++
- .../zh_CN/arch/loongarch/irq-chip-model.rst        |   55 ++
- arch/loongarch/include/asm/irq.h                   |    1 +
- arch/loongarch/include/asm/kvm_eiointc.h           |  123 +++
- arch/loongarch/include/asm/kvm_host.h              |   18 +-
- arch/loongarch/include/asm/kvm_ipi.h               |   45 +
- arch/loongarch/include/asm/kvm_pch_pic.h           |   62 ++
- arch/loongarch/include/uapi/asm/kvm.h              |   20 +
- arch/loongarch/kvm/Kconfig                         |    5 +-
- arch/loongarch/kvm/Makefile                        |    4 +
- arch/loongarch/kvm/exit.c                          |   82 +-
- arch/loongarch/kvm/intc/eiointc.c                  | 1027 ++++++++++++++++++++
- arch/loongarch/kvm/intc/ipi.c                      |  475 +++++++++
- arch/loongarch/kvm/intc/pch_pic.c                  |  519 ++++++++++
- arch/loongarch/kvm/irqfd.c                         |   89 ++
- arch/loongarch/kvm/main.c                          |   19 +-
- arch/loongarch/kvm/vcpu.c                          |    3 +
- arch/loongarch/kvm/vm.c                            |   21 +
- drivers/irqchip/irq-loongson-eiointc.c             |  108 +-
- include/linux/kvm_host.h                           |    1 +
- include/trace/events/kvm.h                         |   35 +
- include/uapi/linux/kvm.h                           |    8 +
- 22 files changed, 2735 insertions(+), 49 deletions(-)
- create mode 100644 arch/loongarch/include/asm/kvm_eiointc.h
- create mode 100644 arch/loongarch/include/asm/kvm_ipi.h
- create mode 100644 arch/loongarch/include/asm/kvm_pch_pic.h
- create mode 100644 arch/loongarch/kvm/intc/eiointc.c
- create mode 100644 arch/loongarch/kvm/intc/ipi.c
- create mode 100644 arch/loongarch/kvm/intc/pch_pic.c
- create mode 100644 arch/loongarch/kvm/irqfd.c
 
