@@ -1,92 +1,90 @@
-Return-Path: <linux-kernel+bounces-409731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E409C909A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:15:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F42B9C90A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:17:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34E261F2336A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:15:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A186C2867CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD9F18C014;
-	Thu, 14 Nov 2024 17:15:34 +0000 (UTC)
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA59188735;
+	Thu, 14 Nov 2024 17:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Rise8zEF"
+Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EAE18A6DD;
-	Thu, 14 Nov 2024 17:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9BD189F39
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 17:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731604533; cv=none; b=DMB7m8XwBMc9dtfgR09U08fU8sPnQgfyR6vpu7SiUn9dMkRMsudDaqG1ntGzjIDTGPKCwJ1GeNg64IDGsqLmDfTVuHFQjYPBguXBf/ZXNc/p5nrE+ZN67LD2Pg18UpkVrqskLxk8LfeTdjWEGgYT94oRWU/VbZexr1nSwCK6ZU8=
+	t=1731604577; cv=none; b=rPGxAW42B7rZmqUYi5F3kTeBdAVuZSk0mAqTIEqumWo2mkH5iyHcFzP2LdWdERoW+r4pXoqKXG0ECf4sroS1eKMEeGsHadlKVaM/eNV8e30T+1AZwY3PsM7qZ6G4P5H43LlLC3YZZVQ9ExCUVQ8gXZVI4MaHfvejCHbECfxAF50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731604533; c=relaxed/simple;
-	bh=OIAZ3ZNJiKMo8wuHkF4ZKAGVauGHtAc7AemOqtsOiEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vjypr9tVowNn57Xt7sjE5FFHmxp2RC0VEG8jWbcwy/cjaM/3bKfY4IoG8asDhMcpMY/3uy4QdY6cyDbYTJ/PjY5rjMx0RERvPkRZR+bFlued7fs9DwSSKscjA0Djo8MkJ8g9a/zS2R075/qyZEE9ft3PYoNZwuh5+NjFN0T1uSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2114214c63eso8298215ad.3;
-        Thu, 14 Nov 2024 09:15:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731604532; x=1732209332;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l1bc4cftDd3GrDfuwAEH+cZhcJcP5YbIzynrAshbXD8=;
-        b=A+a26IEytj9sHOxdg5S4tsi3He7LwHe/uOU3yGB1WHC/OgL/bIePuHPXzHVQzoiLkF
-         SUdWQUxqmnIP94f9fyZCnO3oC14P36/I1Of9UgGJq4b+I7ZwL8KeHRhpdCBcRPgusx0M
-         aRjv/baZ7lOkgEmd3D5t66PS9MYZNDnh8ANtzE8n2bVsrFr0xAOwDx7uhnkWPOgRQEVZ
-         xMfwDXA9scX8g06Hy59aIWHHb2Wi9Kh5+nG9ILLLd8xESVZZ9OnnJhuay6Pn67QpB0bM
-         SxIeZYw2F4h8cI1G1b42vrKPtutImTVPwci9VIbb92MrE4arMjt18/dPGKPcGGFNGhcu
-         oDvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNfHqhLsbucqPMADTGFKUUDix5qwEU95/BqW/KV2lA0jxFhYooAWxsA7L/Rkalg4r7rChLpyQogGzZqY8=@vger.kernel.org, AJvYcCXosz4zVNWUtQbXIl01auPnPSG+FgIub37fVhuT4dEQqIGGvlG8D4N9+CtLsKpeG4NJcnSZ4Psbf4kf@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAo5f+pSN3nM4SRs5hoU/53IbzZPTQBmXAy4wkLTZ33CQ8yI4p
-	SHMdN/O1HVHvWhrJDX8HPUX73h+Yx3OJrdrIK2OtVzn0FG4rwgSX
-X-Google-Smtp-Source: AGHT+IGt6zglfauvsdXQ3tfSgkYILbhvxz1Lk/mT8uX7FefciAUaDaL0uL+PwL1j62IU7Ifr++1/Ng==
-X-Received: by 2002:a17:903:230b:b0:20b:9062:7b16 with SMTP id d9443c01a7336-211834e6c2amr338905305ad.9.1731604531733;
-        Thu, 14 Nov 2024 09:15:31 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211c7c2c97dsm13147165ad.25.2024.11.14.09.15.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 09:15:31 -0800 (PST)
-Date: Fri, 15 Nov 2024 02:15:29 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-Cc: rick.wertenbroek@heig-vd.ch, dlemoal@kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: endpoint: Fix pci_epc_map map_size doc string
-Message-ID: <20241114171529.GA1489806@rocinante>
-References: <20241114161032.3046202-1-rick.wertenbroek@gmail.com>
+	s=arc-20240116; t=1731604577; c=relaxed/simple;
+	bh=jOHx66YrwX3NMZF4Q66DQBXh5tNbdf4q1OFzvUBl0sg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DIlKOrCsYjxEw1PEFZ/hRKadCFRwsM8UFIv9cgMSH+FuIq+hLgnJuy5z4Ugal8pJjxPbpkE8P6Ae2Pjj/Fn0Xm/b0Xu6HQsfMEPwu6PnpXVLuGhg4PLnTvU5Bmh7YLMERyooYwBGEwl5/8Xe+y0cfII5leJnmszKT2MD5vD81II=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Rise8zEF; arc=none smtp.client-ip=95.215.58.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <7f1b640d-2d95-4a85-94ac-d341dc9d353e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731604572;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jOHx66YrwX3NMZF4Q66DQBXh5tNbdf4q1OFzvUBl0sg=;
+	b=Rise8zEFTDRo2cw2CiRxNM55nOrMJ3PaNpOsxUx4wevIgTnNLh8XqxF5yxXGXXyQLis6Zn
+	YIsSd4P/1Zx7801/tHV7vCItxCqZcNcH755IjYcf5Dq/OfGE+n+XaqxqKBgwRkYCoSqp3F
+	XZr9fzvb5/soiZABMxeCWHY6nq+250Q=
+Date: Thu, 14 Nov 2024 09:16:06 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241114161032.3046202-1-rick.wertenbroek@gmail.com>
+Subject: Re: [BUG] BUG: unable to handle page fault for address:
+ ffffffffa6df0480
+Content-Language: en-GB
+To: Yeqi Fu <fufuyqqqqqq@gmail.com>
+Cc: "jakub@cloudflare.com" <jakub@cloudflare.com>,
+ "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+ "davem@davemloft.net" <davem@davemloft.net>,
+ "edumazet@google.com" <edumazet@google.com>,
+ "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com"
+ <pabeni@redhat.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "syzkaller@googlegroups.com" <syzkaller@googlegroups.com>,
+ bonan.ruan@u.nus.edu
+References: <B80BDA8B-4F1C-4293-8E98-AF78AEA7B3FA@gmail.com>
+ <12c598fe-b799-4f30-b871-a8b7191935ef@linux.dev>
+ <FF1DD544-67C5-4812-8E0D-5540930144C2@gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <FF1DD544-67C5-4812-8E0D-5540930144C2@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
 
-> Because some endpoint controllers have requirements on the alignment of
-> the controller physical memory address that must be used to map a RC PCI
-> address region, the map PCI start address is not necessarily the desired
-> PCI base address to be mapped. This can result in map_pci_addr being
-> lower than pci_addr as documented. This results in map_size covering the
-> range map_pci_addr..pci_addr+pci_size.
-> 
-> The old doc string had pci_addr twice instead of map_pci_addr..pci_addr.
-> Replace the erroneous doc string to reflect the actual range.
 
-Applied to endpoint, thank you!
 
-[01/01] PCI: endpoint: Fix pci_epc_map map_size kerneldoc string
-        https://git.kernel.org/pci/pci/c/36b25d04a9fe
+On 11/14/24 12:29 AM, Yeqi Fu wrote:
+> Thank you for your reply and assistance.
+> I have attached my kernel .config file for your reference. Please let me know if you need any more information to help reproduce the issue.
 
-	Krzysztof
+Still cannot reproduce with your config. You need to provide detailed start-to-end steps, including, compiler version, kernel top hash,
+qemu command line (e.g. number of cpus among other things), all command lines, etc.
+
+> Best,
+> Yeqi
+
+[...]
+
 
