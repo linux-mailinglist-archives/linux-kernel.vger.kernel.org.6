@@ -1,281 +1,205 @@
-Return-Path: <linux-kernel+bounces-410085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8722D9C9655
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:45:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E29A49C963D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:42:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53884B271FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:45:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0ED91B24DE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88CD71B85D0;
-	Thu, 14 Nov 2024 23:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF1D1B6CFD;
+	Thu, 14 Nov 2024 23:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Y58dZ3uo"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2051.outbound.protection.outlook.com [40.107.92.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PTcXgl8e"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0881E1B3925;
-	Thu, 14 Nov 2024 23:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731627764; cv=fail; b=m1X1ZjV00B1OJ/dvybTQhnt5cyOdbkPIRuutO9v0ki6rrx0ln2D+t8iLZHmEVC9Wx6S35mKlvjgJKTHRWgUCMD9mFex1NWHlqwtB18/7dS32w8ize8CfY55xc+PEFgCr6NMuoRD4zPAPfxzCern4vzORol6D1V6eucR1Hvvfm2M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731627764; c=relaxed/simple;
-	bh=K7FCSCB1/UdCGXN0skk7P9qLphpfWoki6WDNPCOhjwM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KGqjdgi60zp6nTXuudiFru7Jt8uu/VUG6Mc52nPiJM9zQ21I4o+Q3XVr0eSWUvU666KdvvMPzDFI60RJ8vMUghADHb9DKJpzez2S+59jQ8is52ajUIOldaDqhvGGhoz7zDvCg/+Muc98AJZ750DKv9xe30WpyMyICryz36FOnmw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Y58dZ3uo; arc=fail smtp.client-ip=40.107.92.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FJcFagszi0OXrxZEae3/hs8qES/NofTT+Jfv1oFCTEFSKo7A+n1bWqeJrhbU+oGxnEw44/uBhA56PYRrHPqZuKtEPXsaCImbpXv6QsX/JwTryXT0Xy37aBfMSV2lxaLLVz9H66u/Af1AdBFh8xxRiNzULDGpuaQcfSgeZmBylkEeBcz/UdOB9JZtfZ68MetCa5HUe+wTtQDA6iM3vPyVbnOrb/c0LZydEMfc7r5yhGnDe8QdeBLyONIC83FBZ2kukye4Pfn7bt1w84/uPOJtYDDZHBPz8fnDK/tKX5bk5UfJaMJywD/x79mIBcf1rBQDOc54sRGKfCMuX5JMDOXmLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Yx8EBTottlb086y5AJDbfeJB1cpERe97usByQVnBg10=;
- b=heYHijdp1u9pTBL+tOxTtDvY7CKqcspQ90yUEPFK3lGKMFYfZG/YW2uKTvrvAuWDGzST8Zy8zZ+r8iTfitpaWly3jISzLDM0JgCrbeXGNKJOT//45Czkcpq7PC2ZN4PdD5W5o4yoQYjw7zRXyNcdnZd+2CXRNTSQckiPsQ4leQBoapGLiRv37Hpkm+/2lAPKbpHICGZbsBGcNaE9a3cIht2rHdV0G6cFeRDJivNE1kaJammMKN7/MBkS/NI+OhA0XIvws2/c4ETVFx0ii9sKkKHuklWboLK+b4ppz8iKBff4W+mLN3Rw1ooI3h/slbFjPoFgv7nQ2Shn2laxhjlPJA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Yx8EBTottlb086y5AJDbfeJB1cpERe97usByQVnBg10=;
- b=Y58dZ3uooRGONFrQBGo1wFrUk1isCR11kln+W1cUjEkAtQWHSF5bNlcUePkjwtHfwizK9qzePUidtlKRwNkNx2ACRd9J9K2vcuLMl4xSxNsCcI/hzqPttz7u9734XBVA50I3UI0Qb+2EMsUkhBIeni/S4tL9SN9yQR1qw++eUEY=
-Received: from MW4PR04CA0078.namprd04.prod.outlook.com (2603:10b6:303:6b::23)
- by PH0PR12MB8127.namprd12.prod.outlook.com (2603:10b6:510:292::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.17; Thu, 14 Nov
- 2024 23:42:39 +0000
-Received: from CO1PEPF000044F1.namprd05.prod.outlook.com
- (2603:10b6:303:6b:cafe::71) by MW4PR04CA0078.outlook.office365.com
- (2603:10b6:303:6b::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.17 via Frontend
- Transport; Thu, 14 Nov 2024 23:42:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000044F1.mail.protection.outlook.com (10.167.241.71) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8158.14 via Frontend Transport; Thu, 14 Nov 2024 23:42:38 +0000
-Received: from AUSPRSAMPAT.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 14 Nov
- 2024 17:42:37 -0600
-From: "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>
-To: <kvm@vger.kernel.org>
-CC: <seanjc@google.com>, <pbonzini@redhat.com>, <pgonda@google.com>,
-	<thomas.lendacky@amd.com>, <michael.roth@amd.com>, <shuah@kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<sos-linux-ext-patches@mailman-svr.amd.com>, <pratikrajesh.sampat@amd.com>
-Subject: [PATCH v4 7/8] KVM: selftests: Abstractions for SEV to decouple policy from type
-Date: Thu, 14 Nov 2024 17:41:03 -0600
-Message-ID: <20241114234104.128532-8-pratikrajesh.sampat@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241114234104.128532-1-pratikrajesh.sampat@amd.com>
-References: <20241114234104.128532-1-pratikrajesh.sampat@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8811B6CEA;
+	Thu, 14 Nov 2024 23:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731627681; cv=none; b=Fp/jfxwoyfqTVL9hsL3yT0BXJB/YOKtbm+HnX4M/7TmJda1Z96OY/tAyQAVQ6rg/xhLWBvpAignHZmlugNUgflvB1SBvmlu6h65l4xVCm7RdiL7j1rcjQsY7CR4zO8XS+CNAVhr6BfPpu/DHZhPFUQKdiZWc9MiDtkeevB45dj8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731627681; c=relaxed/simple;
+	bh=UBpbiWquLqRO8+0oIrD36l/VRiFiV+lsOnKi9bFAoH0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SDzWaVpdGa0wi6s74rJ682pI+xCkcLPwa8LezH1/GtXWOWA1mHQpszUqE+vRmLru8QFjB4Tz+FIQoE+SqxnG1hdpElzkIEpcj17t41rHeSULll0Ktb1abfqwIBX4UClwA6JiZkPwcwuV1kd29H9czXUZvhXONjW0vHwYCxHL4AU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PTcXgl8e; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7240d93fffdso142923b3a.2;
+        Thu, 14 Nov 2024 15:41:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731627678; x=1732232478; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lWOkzk9IX/VIC/wGI1eUw6NOMFS4iLtIIZiKC2APgog=;
+        b=PTcXgl8erWjm0kC0nCKwPQV/IfZeq2n0a4YJ8zIbbFyBt/IqaDWBAKY0x+g5GBPTdp
+         ZDB+eWpUVhDQMnhh40hmfnn72RjxtdFo3tdseGLHg7fxfIi4xZ9ooThHOF4LI+FJs4fo
+         j8X8YaAVvJ/0egNOJIuZm8VCz8UEHTGuku7cQDgsVp6nvba/+B4iIyFDySknHBDM6AOD
+         LmJ1z+xEboimHEi+cgxccrzZHv5g8oclroWCRPHCymOQcKjhQ5yMB/JfdpBRYMXeESOc
+         KY6qF5P9rF2qRlmEzHmMupXkyvrIbQNKLBLsq63DNyT5G/89tpCjOkbHf9ayx3h1qM6C
+         f3XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731627678; x=1732232478;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lWOkzk9IX/VIC/wGI1eUw6NOMFS4iLtIIZiKC2APgog=;
+        b=LbNvMNNkafX6zlGFdQ9AIbVSXL+d8G+kTBNAWX09hUHI3Cojwj+Xzzo9Y6MYUCkyy6
+         nv816mcLe1KncKzwYPwDWWOUS7NrWBfcREueiQizETAlP0dQ0y/Z4NiAJOMARwvtmuIO
+         sOJASj0EOFo7n1/y3BwE4NqMCqnYShaly6+7q8350P3zS4eZoKQYt6GKmRdjuRGxcUyz
+         ARu9DadZy21j4SFFtKIcvPObM0HEyP1kQskgv1V9t3MtSshNhRp12XWFnA90pDYTVz4o
+         SE08iQMZ5zoNCUj5ZhFinLJukt6VRKat39waBgkw5imFpmXBJoX5twskgh9JS0nOfC2l
+         PlDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNX1s1QpBgxDsJU4vMQI9n4+TvkJsRaz+JkZ8bAjDvZy707d3g+AEBJHhJb739JdZR9zs=@vger.kernel.org, AJvYcCWv2dXrWsdv2Q8dCsdwN3YhjOvXQAL3vYvJv8X+zaPuvBXBlbwZwILydZ9fF5fU8gfLZTEyrtmKVTj8P1Jw@vger.kernel.org, AJvYcCXEvzP6IQRA0Yvh/58455KxukJxVDN/hb42XIppQOtpaDL2Z4EzN2L+16PMbMZ7my7Z6jR0MlbWh4V8KGOz5cEvQ6qp@vger.kernel.org
+X-Gm-Message-State: AOJu0YywkguJo7sZqFOfCK3KHOMOn6+HMhcXJbjj7QVs22ZHiz3yviwA
+	zYkzO0dw+oNBb1lQYYYJ3qCAA0XnGcEvWizRqTnzrUIuwnSbfD+3y7noDnu83i7DGwDphJAQNgK
+	kDWVB/41xr5eVloveHIRUmmOgRkQ=
+X-Google-Smtp-Source: AGHT+IGAMEVC6FYqpkx71XyUtxmC/kq4Od6rEDPLTdOVqFkPsGey+JX48FtyQiiebld0Fp3BoizP3Q9fUfNIyyw1X+U=
+X-Received: by 2002:a17:90b:48c4:b0:2e2:bd7a:71ea with SMTP id
+ 98e67ed59e1d1-2ea154cf3c7mr1035285a91.8.1731627677858; Thu, 14 Nov 2024
+ 15:41:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044F1:EE_|PH0PR12MB8127:EE_
-X-MS-Office365-Filtering-Correlation-Id: 79db32d0-cd8b-476c-e39d-08dd0506064e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?S1YAs6oISW0AMDWpOKtD0B9FmeMb43dwtVflnYgmy9Y8r0NAMaGIZjFbYj07?=
- =?us-ascii?Q?Xbka+3Sl16IubqqpcSkWC90mMJfvgICfj6VQ2r7BrDY7lGbBAE2UyTEoko0O?=
- =?us-ascii?Q?M4CuPaHHSjeY6o7evLDHfGGwN3ponoEZjUq8IRVkJHWhBPFhKqk/V8gODAob?=
- =?us-ascii?Q?Vt1UEar9o7jo/v+RWTjaaXgvD78Rcr4apXabSsGJ7Q9NdxTKUQnUGIu42VYY?=
- =?us-ascii?Q?qczTupgUKv+bVpnXqO2QEiM+R5qQ1cHqdFrT3QzCJAEp6TLM8t36C+oGypV3?=
- =?us-ascii?Q?/TjXx0mUB3epfrfG6vpHdpfmBZ4r5waqPNk6HwtdjgQmfi6tHMYO9g9U74ow?=
- =?us-ascii?Q?BHGn5yZe1g56MegFvp0n1S6JpdK5zARKrVVgiMtsmhy2toQK49Ne+hThYIB8?=
- =?us-ascii?Q?B8hpnsVbK4vpQrpSrp7MT6l4MfieBJI9XeD7G/LJDRW6VeKo/YTATR4PgR2S?=
- =?us-ascii?Q?E4lrsKci59iMiwAfFrL1itxx6+BbKQ0B1qAmDmiVCrSV/CeskaXHYWIqS5Q+?=
- =?us-ascii?Q?ujAQnmQbzWh0imFqCEuGJprllNAda0x6V4KcEae0XmodvKpv6kVyFXCHZDNt?=
- =?us-ascii?Q?dOHYb5eBp8wIJJR0rYY2gaatXYp8oG2IhOKfEzDGxpY2IS6efAf/c8Uluwt3?=
- =?us-ascii?Q?vg5xTop10PeSJqvDTJLzBZ7f0yqJ+6+R/upbbhRA4JwJdZatCQ9YrwavLeen?=
- =?us-ascii?Q?tOcwLD47S+vhSiJG03XC2fYSs7lE8b2IQWC6EGmt0gv7rDZ1Y1ys7N7dWBs5?=
- =?us-ascii?Q?HoBBfTlSkEv+KB1W8S2krU8cp6K5J30AcyV1PIhd/7bYuOtSUR9xYpUO8ok2?=
- =?us-ascii?Q?8+Y7iYGzP6jj8IgZYgk2ddZJh9qniXbiWEYAlhVxtDR93nars2u+NH1PXoge?=
- =?us-ascii?Q?qSBTnDPPLjHcwHgJEqeqSMHhxbkvQr4dniYFWWK4GfVi9TWHc/cHFk+tI8EU?=
- =?us-ascii?Q?B9dYnc2+uYpc0kZNnnox3+F6AoHASNM6Lv+gnoSoYn7bEfLO67v18wq+LX6r?=
- =?us-ascii?Q?2bgqvEhdg90+gbLdJOa9WhK5WO/fE/xZeufaFaVfnlKhsCd1/CcMKfmRMkXa?=
- =?us-ascii?Q?vcJJA3i3bG2bFHkO7kV3fotMkDQFJcb9Tvk1K7vVXyY8yPA15lSJcg3dcly3?=
- =?us-ascii?Q?yywjSI/Noqd4RQIb6RzsnESXQe9D98pHYDvLE6oPY+ODfBFYlvt9nQsxlEMh?=
- =?us-ascii?Q?dVJImnER2le5GvQ9+Ia9OIlNJv+AdsQdWg2PrYM3fpiVjgHvZhF+H7VTx908?=
- =?us-ascii?Q?6x8qIBebG2hT1IyT2kExsppGNdJveIL4GLJ/YOkEa7tcr6Qe+C69eU52dRZU?=
- =?us-ascii?Q?tuTGVnsLaxANMzrBsNq8CqAMORSH4ZRyeUyyZR8fnH/j0uBwzl9uZfatqTKK?=
- =?us-ascii?Q?EPNZXtkiWf+JM+fN+ucYslQIL4jbbudmjiM00UEhWWtPZjxl3Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2024 23:42:38.8379
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 79db32d0-cd8b-476c-e39d-08dd0506064e
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044F1.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8127
+References: <20241105133405.2703607-1-jolsa@kernel.org> <20241105133405.2703607-4-jolsa@kernel.org>
+In-Reply-To: <20241105133405.2703607-4-jolsa@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 14 Nov 2024 15:41:03 -0800
+Message-ID: <CAEf4BzbM+warM65tnYampngqOGzQ-FS7frH88Hayx7veMjpjZA@mail.gmail.com>
+Subject: Re: [RFC perf/core 03/11] uprobes: Add len argument to uprobe_write_opcode
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Song Liu <songliubraving@fb.com>, 
+	Yonghong Song <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Alan Maguire <alan.maguire@oracle.com>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In preparation for SNP, cleanup the smoke test to decouple deriving
-type from policy. Introduce, wrappers for SEV and SEV-ES types to
-abstract the parametrized launch tests calls and reduce verbosity.
+On Tue, Nov 5, 2024 at 5:34=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote:
+>
+> Adding len argument to uprobe_write_opcode as preparation
+> fo writing longer instructions in following changes.
 
-No functional change intended.
+typo: for
 
-Signed-off-by: Pratik R. Sampat <pratikrajesh.sampat@amd.com>
----
- .../selftests/kvm/x86_64/sev_smoke_test.c     | 50 ++++++++++++-------
- 1 file changed, 33 insertions(+), 17 deletions(-)
+>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  include/linux/uprobes.h |  3 ++-
+>  kernel/events/uprobes.c | 14 ++++++++------
+>  2 files changed, 10 insertions(+), 7 deletions(-)
+>
+> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+> index 28068f9fcdc1..7d23a4fee6f4 100644
+> --- a/include/linux/uprobes.h
+> +++ b/include/linux/uprobes.h
+> @@ -181,7 +181,8 @@ extern bool is_swbp_insn(uprobe_opcode_t *insn);
+>  extern bool is_trap_insn(uprobe_opcode_t *insn);
+>  extern unsigned long uprobe_get_swbp_addr(struct pt_regs *regs);
+>  extern unsigned long uprobe_get_trap_addr(struct pt_regs *regs);
+> -extern int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_st=
+ruct *mm, unsigned long vaddr, uprobe_opcode_t);
+> +extern int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_st=
+ruct *mm,
+> +                              unsigned long vaddr, uprobe_opcode_t *insn=
+, int len);
 
-diff --git a/tools/testing/selftests/kvm/x86_64/sev_smoke_test.c b/tools/testing/selftests/kvm/x86_64/sev_smoke_test.c
-index 53bc0af62bad..af1beabbbf8e 100644
---- a/tools/testing/selftests/kvm/x86_64/sev_smoke_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/sev_smoke_test.c
-@@ -61,7 +61,7 @@ static void compare_xsave(u8 *from_host, u8 *from_guest)
- 		abort();
- }
- 
--static void test_sync_vmsa(uint32_t policy)
-+static void __test_sync_vmsa(uint32_t type, uint64_t policy)
- {
- 	struct kvm_vcpu *vcpu;
- 	struct kvm_vm *vm;
-@@ -71,7 +71,7 @@ static void test_sync_vmsa(uint32_t policy)
- 	double x87val = M_PI;
- 	struct kvm_xsave __attribute__((aligned(64))) xsave = { 0 };
- 
--	vm = vm_sev_create_with_one_vcpu(KVM_X86_SEV_ES_VM, guest_code_xsave, &vcpu);
-+	vm = vm_sev_create_with_one_vcpu(type, guest_code_xsave, &vcpu);
- 	gva = vm_vaddr_alloc_shared(vm, PAGE_SIZE, KVM_UTIL_MIN_VADDR,
- 				    MEM_REGION_TEST_DATA);
- 	hva = addr_gva2hva(vm, gva);
-@@ -88,7 +88,7 @@ static void test_sync_vmsa(uint32_t policy)
- 	    : "ymm4", "st", "st(1)", "st(2)", "st(3)", "st(4)", "st(5)", "st(6)", "st(7)");
- 	vcpu_xsave_set(vcpu, &xsave);
- 
--	vm_sev_launch(vm, SEV_POLICY_ES | policy, NULL);
-+	vm_sev_launch(vm, policy, NULL);
- 
- 	/* This page is shared, so make it decrypted.  */
- 	memset(hva, 0, 4096);
-@@ -107,14 +107,12 @@ static void test_sync_vmsa(uint32_t policy)
- 	kvm_vm_free(vm);
- }
- 
--static void test_sev(void *guest_code, uint64_t policy)
-+static void __test_sev(void *guest_code, uint32_t type, uint64_t policy)
- {
- 	struct kvm_vcpu *vcpu;
- 	struct kvm_vm *vm;
- 	struct ucall uc;
- 
--	uint32_t type = policy & SEV_POLICY_ES ? KVM_X86_SEV_ES_VM : KVM_X86_SEV_VM;
--
- 	vm = vm_sev_create_with_one_vcpu(type, guest_code, &vcpu);
- 
- 	/* TODO: Validate the measurement is as expected. */
-@@ -149,6 +147,21 @@ static void test_sev(void *guest_code, uint64_t policy)
- 	kvm_vm_free(vm);
- }
- 
-+static void test_sev(uint64_t policy)
-+{
-+	__test_sev(guest_sev_code, KVM_X86_SEV_VM, policy);
-+}
-+
-+static void test_sev_es(uint64_t policy)
-+{
-+	__test_sev(guest_sev_es_code, KVM_X86_SEV_ES_VM, policy);
-+}
-+
-+static void test_sync_vmsa_sev_es(uint64_t policy)
-+{
-+	__test_sync_vmsa(KVM_X86_SEV_ES_VM, policy);
-+}
-+
- static void guest_shutdown_code(void)
- {
- 	struct desc_ptr idt;
-@@ -160,16 +173,14 @@ static void guest_shutdown_code(void)
- 	__asm__ __volatile__("ud2");
- }
- 
--static void test_sev_es_shutdown(void)
-+static void __test_sev_shutdown(uint32_t type, uint64_t policy)
- {
- 	struct kvm_vcpu *vcpu;
- 	struct kvm_vm *vm;
- 
--	uint32_t type = KVM_X86_SEV_ES_VM;
--
- 	vm = vm_sev_create_with_one_vcpu(type, guest_shutdown_code, &vcpu);
- 
--	vm_sev_launch(vm, SEV_POLICY_ES, NULL);
-+	vm_sev_launch(vm, policy, NULL);
- 
- 	vcpu_run(vcpu);
- 	TEST_ASSERT(vcpu->run->exit_reason == KVM_EXIT_SHUTDOWN,
-@@ -179,25 +190,30 @@ static void test_sev_es_shutdown(void)
- 	kvm_vm_free(vm);
- }
- 
-+static void test_sev_es_shutdown(uint64_t policy)
-+{
-+	__test_sev_shutdown(KVM_X86_SEV_ES_VM, SEV_POLICY_ES);
-+}
-+
- int main(int argc, char *argv[])
- {
- 	const u64 xf_mask = XFEATURE_MASK_X87_AVX;
- 
- 	TEST_REQUIRE(kvm_cpu_has(X86_FEATURE_SEV));
- 
--	test_sev(guest_sev_code, SEV_POLICY_NO_DBG);
--	test_sev(guest_sev_code, 0);
-+	test_sev(SEV_POLICY_NO_DBG);
-+	test_sev(0);
- 
- 	if (kvm_cpu_has(X86_FEATURE_SEV_ES)) {
--		test_sev(guest_sev_es_code, SEV_POLICY_ES | SEV_POLICY_NO_DBG);
--		test_sev(guest_sev_es_code, SEV_POLICY_ES);
-+		test_sev_es(SEV_POLICY_ES | SEV_POLICY_NO_DBG);
-+		test_sev_es(SEV_POLICY_ES);
- 
--		test_sev_es_shutdown();
-+		test_sev_es_shutdown(SEV_POLICY_ES);
- 
- 		if (kvm_has_cap(KVM_CAP_XCRS) &&
- 		    (xgetbv(0) & kvm_cpu_supported_xcr0() & xf_mask) == xf_mask) {
--			test_sync_vmsa(0);
--			test_sync_vmsa(SEV_POLICY_NO_DBG);
-+			test_sync_vmsa_sev_es(SEV_POLICY_ES);
-+			test_sync_vmsa_sev_es(SEV_POLICY_NO_DBG | SEV_POLICY_ES);
- 		}
- 	}
- 
--- 
-2.43.0
+is len in sizeof(uprobe_opcode_t) units or in bytes? it would be good
+to make this clearer
 
+it feels like passing `void *` for insns would be better, tbh...
+
+
+
+>  extern struct uprobe *uprobe_register(struct inode *inode, loff_t offset=
+, loff_t ref_ctr_offset, struct uprobe_consumer *uc);
+>  extern int uprobe_apply(struct uprobe *uprobe, struct uprobe_consumer *u=
+c, bool);
+>  extern void uprobe_unregister_nosync(struct uprobe *uprobe, struct uprob=
+e_consumer *uc);
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index e9308649bba3..3e275717789b 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -471,7 +471,7 @@ static int update_ref_ctr(struct uprobe *uprobe, stru=
+ct mm_struct *mm,
+>   * Return 0 (success) or a negative errno.
+>   */
+>  int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *m=
+m,
+> -                       unsigned long vaddr, uprobe_opcode_t opcode)
+> +                       unsigned long vaddr, uprobe_opcode_t *insn, int l=
+en)
+>  {
+>         struct uprobe *uprobe;
+>         struct page *old_page, *new_page;
+> @@ -480,7 +480,7 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, =
+struct mm_struct *mm,
+>         bool orig_page_huge =3D false;
+>         unsigned int gup_flags =3D FOLL_FORCE;
+>
+> -       is_register =3D is_swbp_insn(&opcode);
+> +       is_register =3D is_swbp_insn(insn);
+>         uprobe =3D container_of(auprobe, struct uprobe, arch);
+>
+>  retry:
+> @@ -491,7 +491,7 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, =
+struct mm_struct *mm,
+>         if (IS_ERR(old_page))
+>                 return PTR_ERR(old_page);
+>
+> -       ret =3D verify_opcode(old_page, vaddr, &opcode);
+> +       ret =3D verify_opcode(old_page, vaddr, insn);
+>         if (ret <=3D 0)
+>                 goto put_old;
+>
+> @@ -525,7 +525,7 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, =
+struct mm_struct *mm,
+>
+>         __SetPageUptodate(new_page);
+>         copy_highpage(new_page, old_page);
+> -       copy_to_page(new_page, vaddr, &opcode, UPROBE_SWBP_INSN_SIZE);
+> +       copy_to_page(new_page, vaddr, insn, len);
+>
+>         if (!is_register) {
+>                 struct page *orig_page;
+> @@ -582,7 +582,9 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, =
+struct mm_struct *mm,
+>   */
+>  int __weak set_swbp(struct arch_uprobe *auprobe, struct mm_struct *mm, u=
+nsigned long vaddr)
+>  {
+> -       return uprobe_write_opcode(auprobe, mm, vaddr, UPROBE_SWBP_INSN);
+> +       uprobe_opcode_t insn =3D UPROBE_SWBP_INSN;
+> +
+> +       return uprobe_write_opcode(auprobe, mm, vaddr, &insn, UPROBE_SWBP=
+_INSN_SIZE);
+>  }
+>
+>  /**
+> @@ -598,7 +600,7 @@ int __weak
+>  set_orig_insn(struct arch_uprobe *auprobe, struct mm_struct *mm, unsigne=
+d long vaddr)
+>  {
+>         return uprobe_write_opcode(auprobe, mm, vaddr,
+> -                       *(uprobe_opcode_t *)&auprobe->insn);
+> +                       (uprobe_opcode_t *)&auprobe->insn, UPROBE_SWBP_IN=
+SN_SIZE);
+>  }
+>
+>  /* uprobe should have guaranteed positive refcount */
+> --
+> 2.47.0
+>
 
