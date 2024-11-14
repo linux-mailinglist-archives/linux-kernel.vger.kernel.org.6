@@ -1,477 +1,980 @@
-Return-Path: <linux-kernel+bounces-408919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CCA19C8521
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:47:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1F799C8523
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:47:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFE9128203F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:47:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A27412819C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256451F942E;
-	Thu, 14 Nov 2024 08:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25721F76A3;
+	Thu, 14 Nov 2024 08:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=quectel.com header.i=@quectel.com header.b="oHwK1zp9"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2126.outbound.protection.outlook.com [40.107.255.126])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=friedrich.vock@gmx.de header.b="E90p/7+r"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58CAA1C303E;
-	Thu, 14 Nov 2024 08:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.126
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731573921; cv=fail; b=rpSALaDMCZxhluMpqx17Phawe3booH9besO9rfF5Yn2fGBvUy5qocmRBoZwpGo+AhScwdO7r0sF2/CHRq7UIvWxCKzza9Kg1dv58awOkwBvQbeGr4DVYRXbS7ShKzbZ9Jp6lMI7aHuF/fTMTwuJwBs9okTnlp0+QoHy6WjPvkPI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731573921; c=relaxed/simple;
-	bh=Jo9qu8b6mmq0XL73ONqtIgLSpe3rh8MYAZEGN5spXXg=;
-	h=Content-Type:From:To:CC:Subject:Date:Message-ID:MIME-Version; b=ML42vOFIIdvZcwLCASaSkYZYwu47mkcOymNzrTmjWtU0F889lwFLJr++FcwfAEpteFnXhNI0d5MS54m/L2diKWxmYCtrnDaOAKK9eAQdfsOJMlTMX0CyzIDxLxjCQWlNy0yf9hiTKnaDt8F/+8ERzyijCCYqOjF+5JHgseH4uh8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quectel.com; spf=pass smtp.mailfrom=quectel.com; dkim=pass (1024-bit key) header.d=quectel.com header.i=@quectel.com header.b=oHwK1zp9; arc=fail smtp.client-ip=40.107.255.126
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quectel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quectel.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cAZ8hu9BhNOClPZIGkl1lIEuwJpEGWOBUmgbovshngpnHe/96hU5tQjM51dUdz6OyyYWYGCYeHHY76p5WD309vRZwBsrUu4Y3EJN1NH20wkZnyEQ0U7//75s6kOmrKcsv2y768DBDs6aXe3m8Wc1oI3HwdI8CQqgwsRM3vHD/08nWCpX1l1uS/tETWO93QGcP1WTf+b+XeWe7E5aGoPVkn1jezW9jNG2Jt8c3UnaVf37HP+yIyCZbbkRcI/nQtzy8rlHHHlMVOO/msrkTvqr1u+Z3WXSIwjKpQ7EjbV47xzrLh+ehj4p+n9R6LfTYFPaCKjeyaGGjO9iFsGzE6zM7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Jo9qu8b6mmq0XL73ONqtIgLSpe3rh8MYAZEGN5spXXg=;
- b=atkBPnK1r3GxnOebtThecXwW4O5fZYt0oPtfdGEmtVpP4fYp4IpNsigCV1d1kQPC3bkYqG5bZxMmbKtIi/dx7g20+G3LFk7ceAW7Eaxfh7HBj35b3lr+GQnxCaamQJ+maQBii78yhhY3n5fyWZpx7Y2wbA3XEZ5VVWZssNrPbwf34r6UJd3YrENUxIO49u6osjQn6rupbKWCMk491uYPp4gWnWY9NDGddtvBR0DR7K2K+jb9G+mR+l28NNiSxQWofGHkoqHBA4o87DPXBV/5MYsUlPa0xnCP9qnQv22yjEarbwF1usqI10BnDZKpazDJCc2LEtd4MTFKQdAa21nFAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=quectel.com; dmarc=pass action=none header.from=quectel.com;
- dkim=pass header.d=quectel.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quectel.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Jo9qu8b6mmq0XL73ONqtIgLSpe3rh8MYAZEGN5spXXg=;
- b=oHwK1zp9pme1qnuR5GBU+yUaKiSyE9TuhK/XgyG2w6YQdnrrZ2UpXvNy9qsacvIDRc+RntWAXdMWbZgy/m3tYS3BAQd/S+HXHaQh6jo3uy4MKhX7kowXZg+ATaBsYy8+ErFknTgCZVSPGjcqxWBta4sDVIyzpS/K53kI0t7HYYE=
-Received: from KL1PR06MB6133.apcprd06.prod.outlook.com (2603:1096:820:d2::11)
- by TY0PR06MB4983.apcprd06.prod.outlook.com (2603:1096:400:1ad::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.12; Thu, 14 Nov
- 2024 08:45:08 +0000
-Received: from KL1PR06MB6133.apcprd06.prod.outlook.com
- ([fe80::38c1:829f:64d6:8e52]) by KL1PR06MB6133.apcprd06.prod.outlook.com
- ([fe80::38c1:829f:64d6:8e52%6]) with mapi id 15.20.8137.014; Thu, 14 Nov 2024
- 08:45:08 +0000
-Content-Type: multipart/mixed;
-	boundary="_000_KL1PR06MB6133B5403AA55BC79C13FF3B935B2KL1PR06MB6133apcp_"
-From: =?gb2312?B?SmVycnkgTWVuZyjDyb3cKQ==?= <jerry.meng@quectel.com>
-To: "loic.poulain@linaro.org" <loic.poulain@linaro.org>,
-	"ryazanov.s.a@gmail.com" <ryazanov.s.a@gmail.com>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH] net: wwan: Add WWAN sahara port type
-Thread-Topic: [PATCH] net: wwan: Add WWAN sahara port type
-Thread-Index: Ads2cYCQ6XEP0XT3TI+FyAO8qieyQw==
-Date: Thu, 14 Nov 2024 08:45:08 +0000
-Message-ID:
- <KL1PR06MB6133B5403AA55BC79C13FF3B935B2@KL1PR06MB6133.apcprd06.prod.outlook.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
- <KL1PR06MB6133B5403AA55BC79C13FF3B935B2@KL1PR06MB6133.apcprd06.prod.outlook.com>
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=quectel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: KL1PR06MB6133:EE_|TY0PR06MB4983:EE_
-x-ms-office365-filtering-correlation-id: 69111338-40ce-4306-549a-08dd0488a4d2
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?gb2312?B?d0dOWVV4R2FJY1U2NHRVaVI3Mm1pelBOcG42RzJsczBVQzJROXZhSytvVjcr?=
- =?gb2312?B?NWtEcmIwT1BlOTBkZGZBL0o0OTlsZU43QXJqSjhqYkU3M1N1ZzRCQ05RK3pC?=
- =?gb2312?B?LzhtTWFhZUpZV21jQW1obE1lbC80SlRwSjgrN3lWcXp3c0pDUzNGRUFadzY0?=
- =?gb2312?B?RlhocnhPTi82WVFoVzJxbnBjTWZ4T3FxK0lGL2xDbzJxcTFRMzJkbjhySnpZ?=
- =?gb2312?B?LzR4dlY1NmUxWDhETzVYcU9NazRmb2VKcjFiYUo0VTNhWXBMRGhtVDZJQWNK?=
- =?gb2312?B?Wmw2eVdVN2lwazJOcklaR3FrWlh2a2prcnlIeStEL21nc1JSeGIwLzdzTGNI?=
- =?gb2312?B?YWFIWHJmZm84WHdKNlRkZ0lDMHB0VUxvY0R2TE9JQlpMTUNqSTd4LzRGYnFB?=
- =?gb2312?B?M2lRWE5xR1JiUmFCa21vYmVvTnBSeVM2YmNsVmczZWR1ektqQlFpVHQ4UTZa?=
- =?gb2312?B?V0NWVjQyWHh2ZWtXYlE1QkRLR2p1L1I5WjdScmJLWmpyTkplNjYzdDk5alhj?=
- =?gb2312?B?SDBBbnpkNW1SMS9QbDVNS0ZVZXkvQ3VmYWE1dzNTM3BWSnJZZEYyNE5jMWJs?=
- =?gb2312?B?TEwwRmFvUzZFcnEzTW91a2xTVi9CajFza1FPck5JTElpc1U0VlljQ3EvYUFS?=
- =?gb2312?B?RWJibzM0YXduU052ZlREaVNkRDNQSG5KbGUrZTdZTENxWHVDZmxPR0xBNW1h?=
- =?gb2312?B?RzRMQ2E0QTQ0M3NmTFh2L3VqclVlaitnTTAxY0NXM1RqQ1gxVXVzRnRsUEo0?=
- =?gb2312?B?ZjNiYXFGTkJXdGJQTXAxbDl0TmtjU1VjZkdBVkozS2ZOcklDeWFQZkUxOUtS?=
- =?gb2312?B?Y2ZFM2o3MFQyQUxyUENidlN2eWN4S3ordjU3NWNSc09SWk5TMjNvNGg2YUxN?=
- =?gb2312?B?eGxxakY0eVZodlVLSXBDUXBCcGorZ0VnTDFwRm5iVmNpbHMvekhiRG1IMG40?=
- =?gb2312?B?OTBlR0czejI0MG53Wm1iaC9yamNMSXhFblY3YnMzeS9SR0FxTUcxVXhkU1Y1?=
- =?gb2312?B?WXk5Qng4U3NZWllQQi9CVVpjWnc1ZzV1NG5CWktCelB6WU1veE1ZN0E4R0I5?=
- =?gb2312?B?cHpUS1hJTUUxSE9xSTNhdTdjWGVkYi9QUkJQVTlWMzZ2bTBYbGhHV2l1cHB5?=
- =?gb2312?B?cmJhWUFZMUZUY1hyU0JVSUxhaHhFYTVvTnQ5aWEwOGZTZTA2Y0xEc2JqN0Uv?=
- =?gb2312?B?OHZoSVBtbWRieFRmbHhHaVFYeTNRNHpISGhuMGR5dlhkMnFNTjh0d1pZemEr?=
- =?gb2312?B?UytEZ0FoNUw5U3k5Qk9NU2RwWW4rRmhHMGNoWTZvMWpURjU0bzZnQ1BsRFFw?=
- =?gb2312?B?NFEwNmhDSVdKcEw4elJhSFhmeHZocUtPR0dtaWRZUGZmcWhmSjFFWVhlOEh4?=
- =?gb2312?B?RCtzNzFZeXUzc0lwVkVkTDZNNnl2ZFZPUlI3TVZjM1VKWHhQSEdENXAxWU5D?=
- =?gb2312?B?d2UrWDgrMzArTmd3ZWxDTlhJbzRIOWpMa2ZJTGRoS2xkdEVUeHBXVnNGekZt?=
- =?gb2312?B?YlljOVI0cjcxSDFFYmhHZ1VmbVI2NTlnUzBtZGJESzhLY214bUhsOElwa3NW?=
- =?gb2312?B?TER5Ukk5S1l3SC9IcElpZlNOL0dXM25aMlVrSldwQmErQzF3eVR0U2ZIWUhV?=
- =?gb2312?B?dlRSS2w2QXBqUVIvOGF1cVNrSEUreXRYc21VWHE3ZEo5c1dmSGJ3S3JMejYr?=
- =?gb2312?B?NEYyU2NzdDQ3N1ZxNVRreUEvelVZM1lkNTA3anpJNjNUUnJDdktzOHdJdDFs?=
- =?gb2312?B?M1ZHT1Bmc0VzTmJxaVVPVGVUSyt2Y3AyTFNnVXRBTEFCWU1MZXk5NzBoSzF4?=
- =?gb2312?Q?1yEwbKI+Qoa844gXpXAn4RbYCdlQzsH4yXdxg=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6133.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?gb2312?B?N3pnQXorRktHMXdZSFJWeTJSL0NORE1MT2NQRW12Z2tsVjAvVmdpRS9zYmU3?=
- =?gb2312?B?SDJxZndJanVVbElqdUE4WGtZMmJWUTJYc3hsUThTMWxXeFhLRFFoQjgrNXNv?=
- =?gb2312?B?RzlacHF0Zzh4NVRhbHJaemtEY3NqSTZtcGg0KzdyVGRMa3Zac3dtSTFhemg1?=
- =?gb2312?B?UDFTMEZ5ZVpDSndscVpDckN1a2VCLzZCQkZBN3k4a3dIZkFFbFVLbWhraGlC?=
- =?gb2312?B?VE03WGEzWXlIZnliYW1Vc2RMcnhCSnVPQ0tieHVETWFFNlYrZUdra25NMmdP?=
- =?gb2312?B?cDJxUzBBc0FNeG01RC9ia2MwaUlDQjR4bTRicUlqYW9VZ1IxUjR3SGQ0Z2NJ?=
- =?gb2312?B?U3dNc1QvRVZPcEZacW1CY3pGMlQrOGZaQXB1RnRBT25JUVdIVGQrV3RpMHc1?=
- =?gb2312?B?SnI4bHVHbzVETWtNdEtUYjZjcWZHeG9QcXk2Zy9xR2szcVhNLzZJUjd6dFlB?=
- =?gb2312?B?SHZJb0xNUmFGRjVubjdpTmRWWmsrVzFCR0ZuK1pjckxpeHBKOENmOXBiOFRr?=
- =?gb2312?B?bWE1SGJtdk9KS2p2UmhXcVdHYmhYRWdJVHhHVEZucEVnZmp5UlJkYVY2MGcz?=
- =?gb2312?B?TnVvSjQ0N1pXR0szTlVKMUxiUXV4TkUrSGR3MklkVkJxSXJiRU8yVTlsY1lW?=
- =?gb2312?B?OW0rdzgzVHlLREUvRTU5UkdiWWR1MjIvNG0weUF0ZUVLSHZNc0hMZVhLdTds?=
- =?gb2312?B?cHdTemQ5UVpZTTl0YTZWTzc1dGhIaTRnUGF2UDg3dnM1RnczdFlrakQ2bmJV?=
- =?gb2312?B?QllCd0tkeTlZMXMzdHZHZmpjSG9SQWtsVUZBeE5JT2hudmtuc2cyTVNlai9x?=
- =?gb2312?B?cng1L2tEVHJIdVZMaFYyNVZLalFlV0VCaEF4ZW1jQ3RsdEg2ZFhtR1laWTd6?=
- =?gb2312?B?MkUzcWlLUkY2Q3lzeEJWNU14YW1qQjV1WU5wU1lwSjM0QSsrOVlKSG9yVURi?=
- =?gb2312?B?cERHS3U0c0hvMEZJZUhIZGdURWo2cVhQNW9COENXODZ4L2ozL0EreUo3RXhm?=
- =?gb2312?B?MjlWQVZ0OUtIYXVvZGdoUjU1N2VkemxlTWpjMVUzL0M1cGRpUHZXUm1oM3d0?=
- =?gb2312?B?Rmt0OTgyT3pmaTZEaWJNaFZaVjcyM01OTFdxOWh3S1FSYnl0R3o1cFJTWEc4?=
- =?gb2312?B?cUxlSWtrdFh0OXJkdGpTYUgrbTJDN2Q1OUFIcmkzVng2bEhaUk1oY2Z3SzdB?=
- =?gb2312?B?bmxRdGwwWFpqQjh5MHdzT0JZajNuNG1ocUpVNUFTSFdEdk1zQTgvNjQzUTVC?=
- =?gb2312?B?ZTVCV21iMHRkZWZSVDEwdVZ3TzF6YWp3eE1CbGk1MFR6WXZCNTFibHBtUmZE?=
- =?gb2312?B?Y05JYnE2TzdzekNqL3RSQS9UckUwSHBVeFUvTmRqS1JrR2ZKNmUvakUydjN5?=
- =?gb2312?B?WTNTcnRDZG42WXR3d3Y1NzlmS2kyNEVITXlMUVduck85aVJFSGtPbms4akFh?=
- =?gb2312?B?YUlRYlphUVpWdDQzQ2RWYUd4Z0MxTlFhcUdkbmtTbm9JNnNDcGc5Ujd4c2E4?=
- =?gb2312?B?d3JoOC9RRlRYYi95V2N4a3V4OXhTblJHYSs1Y204MVNaOVk1MjhERUVNVk13?=
- =?gb2312?B?aW9UTVlncnRCbEVtZyt0YUxCT3lFU0hjZW1mbzVhTGJMQnRRcUZvUzZaWlNW?=
- =?gb2312?B?bHRtM05VREIwV0xlOWR2c2owYzJKT0tSb3l4dzJYa01ERjlXTzJ4S1lCOFI5?=
- =?gb2312?B?aysrdURzdEhpTVdGQS9GY0ovbGZNOTF0WHFDQXlFbm5meXoyVDdub3lnR2dB?=
- =?gb2312?B?NjJROXdPSnZUVWpqWHMwbTdpZGgveHFFTFF4ZmhKVXJkcHo4N1FYSTdlYVZ6?=
- =?gb2312?B?MEE5bDJYeGgvZTJkNFo2YS9VWGhFTi8xSW1RdWVZa3R2anEya0Z4K2FESjdw?=
- =?gb2312?B?VnFia1JDamREYVF4MlN1YVNrYWRTWTdkaVFjRmhzd2dkWkR2YUdnZHhNNGZ4?=
- =?gb2312?B?UUlLRnRSNytFMENLMC9TSjhjcHo3MEpKRVk1M0FlUDJGWHZISnBLczNsS0N0?=
- =?gb2312?B?R2p2VjdwRERkSnNyUEF3TVg1YnBIWThlbFpjSURObjFDK0Q2Z0dwb2IzbGZx?=
- =?gb2312?B?OFEvb1BVSmdzNFdwb0NqNHB6SFpWMGc3ajFOUEtGanhxeHpTb0dLZlEwTUJH?=
- =?gb2312?Q?WvEr0bavi/mIZjddL0UEkHbHz?=
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879FD1C303E;
+	Thu, 14 Nov 2024 08:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731573972; cv=none; b=AocM6ltxMWflQblWXEcEqFRbsmZG4OpF1itEr84wbdQK5b6mt5wxtfuvusxsbg7PqQgXE50stOKXjscQblS79kqPfAE1T3Q/smPbTggxY2rq34JwO/6NJvcKLqW5XhRKf5KdOr1Ch6FPw9LGo00G9tRR5Qi+y3Q9eKrbfntpQKg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731573972; c=relaxed/simple;
+	bh=bBiS93keTtOV2wmpsF/4OYOptNtUkrWM+gAlc78zg6w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZpanpyFShCDLe/i7o9WMdkKoP1Joh1oluudFH0FrSF220jgbsb4Tt/fmklkAB/bxUJqZitXY5KLZBKK59yJrWPksQp4Dte1pp8ChKCd0op4mBIk9zkECpybza+N/bVKfq5URAbMYE/05xICwS1/uHnoI8TAGWZA8CXbe+rSpW1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=friedrich.vock@gmx.de header.b=E90p/7+r; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1731573944; x=1732178744; i=friedrich.vock@gmx.de;
+	bh=bBiS93keTtOV2wmpsF/4OYOptNtUkrWM+gAlc78zg6w=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=E90p/7+rKpon+x/kiE1aYnGsmL9gcdI7BEy82KaEcO9UoKG7MMtYL9jlK8OJGSfI
+	 T0bBs+cXH6vxEDnsHRX43ZGJ9lBogMhYEeiL4gh9EzzMrzca86ypLAwXOhckth0cD
+	 uWnnALlgxCpU/a0uE8424j1qtFqlaU7qTPlbjwXy5VOonarTsdaD4o5xydizwF21U
+	 wpLV0r8OWM62rNMQBz7ir4YncdpTFFI5Gs7qOeCZxucYpeFn8SNeygrvbKZeTXXeb
+	 k16rQt61aeOEDajkX3Ro3qkiHmJvIBy0fl47YimafHOROFLg5znW3W8q28TT5vUFb
+	 CXHg1x+80S9BZe5P0g==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [10.8.35.78] ([134.34.7.78]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N4zAs-1tsIxg21Se-00wxRt; Thu, 14
+ Nov 2024 09:45:44 +0100
+Message-ID: <b7a4b0ad-81ca-4124-a117-4ed7baa99d8d@gmx.de>
+Date: Thu, 14 Nov 2024 09:45:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: quectel.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6133.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 69111338-40ce-4306-549a-08dd0488a4d2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2024 08:45:08.3682
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 7730d043-e129-480c-b1ba-e5b6a9f476aa
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: vmjJGVLow0rQztFn+sCrnDsVlvmIgXG1F4cgyHb1f1DvtjWr+SfFhapkXVJOvQoZ1fxGXebuIEwtQ46zuF7X9w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB4983
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/7] kernel/cgroup: Add "dev" memory accounting cgroup
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>,
+ Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: cgroups@vger.kernel.org, linux-mm@kvack.org,
+ Maxime Ripard <mripard@kernel.org>
+References: <20241023075302.27194-1-maarten.lankhorst@linux.intel.com>
+ <20241023075302.27194-2-maarten.lankhorst@linux.intel.com>
+ <91125995-3a33-4971-a581-e6e24ccf0b47@gmx.de>
+ <a3484c87-fefb-46f3-908e-d31474145a85@linux.intel.com>
+Content-Language: en-US
+From: Friedrich Vock <friedrich.vock@gmx.de>
+In-Reply-To: <a3484c87-fefb-46f3-908e-d31474145a85@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:iDOpL3zIRDKX3KV2RISn2OPy/x/eCaRwZCjR/si/J8APj9mRlyR
+ sqkptdF4qBNZJ1YSEqmLfk72J/gL1voNDwTTC+/w4/VQBSEWMpKLg+0G4U0+3OD3etpWSGi
+ gGiIpCQyxW0nIwGMN361YmqDqNPZ6rYnDRSY+VZYDcQsyxfiD4NSTZhFcbIe0blvGCH9EZm
+ 3OoN+XmaHmk8MornHAlDg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:uHi1/ViB1YE=;4yBSNREK7kml6ekvAsy7RHT9aWB
+ 4vZIb8GRW+SPzyv6f5t3R3oTguDm0XsQELDvRUc8/nyuRU3UqagPN3izXBjJuHEQ4RIbPzte5
+ Rqj7552kv+f7aNBziB2nA0OUQhkkf5P23TE5ELQTaQJ4jxJfGmjxpv18/mqzUIj7zie8ektM3
+ sTZ+xmSZPmIt+nro9lFnCVVNTTlmt6xZBriHtgcOqwX6EO60Wv3C6MwRDj2bgQs3LggCPAVX3
+ MbOocUIjy4DJ2OiSfRs2N+3vr5gWED3mh2wN+z8Dhr16Spt3Otiat5QtBvkDVR7JF/JQ0GDaY
+ cjr0uVVj0OD5evfgYLO1NAYQsq5oFQRzkp3PxWlSFtbhc5gFWPNxVlRvSHOh4Amf5FPayx1uJ
+ 9GWKPy839ClSYcuY2WSk06Ok8jA4ZD0pSsKRWPJgnRgjOySOOYY7joxA97CuAhdY87p+ITINQ
+ oCJlN3Vfw2P/sSp8ONinSVmO/4/ck9ThxZu8RqZT4xu/IaNbf/WnsM1nF43GKvzHd8BDcMi1R
+ BZkHnPrUXl0K/SGpqhkYs70WGmJZeV8wJcfaeHRta98zN60TMef21vLnJBttZST2UzJkf87FA
+ ZtFKu41A4HHumwwG+Y6jS5eHB7lNK+j1jAr+ip3lQYPOwxL0m/Qov9wn/HRDYTgmOI/rV31/q
+ JVdhuthDZ3Fy6wkhasbodoEPReb0lxAwNPjdlUpb4OZOtwBQkGfXrFpxZYniqMjQxoJ+dkees
+ GLkZuRUMPUMkJ2uRfnO5+KyIRJ40Sf6BwlJH/ukIPTVPtzSLdlrpE4La1hyuJ90g5/38NGuXb
+ gMbAJylcHppE0EDuMfhZkLZ2Gw4HbsFPsWXXua91kMna2OT6bl5Ok0g2T2vPYL7ztq0hOV2Zj
+ M0kCB0h0K35PXB7vMGruZwd9ZzIJWsSj3oJEWQFG6SwrqYYKz0JqMeKHD
 
---_000_KL1PR06MB6133B5403AA55BC79C13FF3B935B2KL1PR06MB6133apcp_
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+On 11.11.24 23:53, Maarten Lankhorst wrote:
+>
+>
+> Den 2024-10-28 kl. 15:53, skrev Friedrich Vock:
+>> On 23.10.24 09:52, Maarten Lankhorst wrote:
+>>> The initial version was based roughly on the rdma and misc cgroup
+>>> controllers, with a lot of the accounting code borrowed from rdma.
+>>>
+>>> The current version is a complete rewrite with page counter; it uses
+>>> the same min/low/max semantics as the memory cgroup as a result.
+>>>
+>>> There's a small mismatch as TTM uses u64, and page_counter long pages.
+>>> In practice it's not a problem. 32-bits systems don't really come with
+>>>> =3D4GB cards and as long as we're consistently wrong with units, it's
+>>> fine. The device page size may not be in the same units as kernel page
+>>> size, and each region might also have a different page size (VRAM vs
+>>> GART
+>>> for example).
+>>>
+>>> The interface is simple:
+>>> - populate dev_cgroup_try_charge->regions[..] name and size for each
+>>> active
+>>> =C2=A0=C2=A0 region, set num_regions accordingly.
+>>> - Call (dev,drmm)_cgroup_register_device()
+>>> - Use dev_cgroup_try_charge to check if you can allocate a chunk of
+>>> memory,
+>>> =C2=A0=C2=A0 use dev_cgroup__uncharge when freeing it. This may return=
+ an error
+>>> code,
+>>> =C2=A0=C2=A0 or -EAGAIN when the cgroup limit is reached. In that case=
+ a reference
+>>> =C2=A0=C2=A0 to the limiting pool is returned.
+>>> - The limiting cs can be used as compare function for
+>>> =C2=A0=C2=A0 dev_cgroup_state_evict_valuable.
+>>> - After having evicted enough, drop reference to limiting cs with
+>>> =C2=A0=C2=A0 dev_cgroup_pool_state_put.
+>>>
+>>> This API allows you to limit device resources with cgroups.
+>>> You can see the supported cards in /sys/fs/cgroup/dev.region.capacity
+>>> You need to echo +dev to cgroup.subtree_control, and then you can
+>>> partition memory.
+>>>
+>>> Co-developed-by: Friedrich Vock <friedrich.vock@gmx.de>
+>>> Signed-off-by: Friedrich Vock <friedrich.vock@gmx.de>
+>>> Co-developed-by: Maxime Ripard <mripard@kernel.org>
+>>> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+>>> Signed-off-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+>>> ---
+>>> =C2=A0 Documentation/admin-guide/cgroup-v2.rst |=C2=A0 51 ++
+>>> =C2=A0 Documentation/core-api/cgroup.rst=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0=C2=A0 9 +
+>>> =C2=A0 Documentation/core-api/index.rst=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+>>> =C2=A0 Documentation/gpu/drm-compute.rst=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0 54 ++
+>>> =C2=A0 include/linux/cgroup_dev.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 91 +++
+>>> =C2=A0 include/linux/cgroup_subsys.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 4 +
+>>> =C2=A0 include/linux/page_counter.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +-
+>>> =C2=A0 init/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 7 +
+>>> =C2=A0 kernel/cgroup/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=
+=A0 1 +
+>>> =C2=A0 kernel/cgroup/dev.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 | 893 ++++++++++++++++++++++++
+>>> =C2=A0 mm/page_counter.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 4 +-
+>>> =C2=A0 11 files changed, 1114 insertions(+), 3 deletions(-)
+>>> =C2=A0 create mode 100644 Documentation/core-api/cgroup.rst
+>>> =C2=A0 create mode 100644 Documentation/gpu/drm-compute.rst
+>>> =C2=A0 create mode 100644 include/linux/cgroup_dev.h
+>>> =C2=A0 create mode 100644 kernel/cgroup/dev.c
+>>>
+>>> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/
+>>> admin-guide/cgroup-v2.rst
+>>> index 69af2173555fb..e8fe79244af9c 100644
+>>> --- a/Documentation/admin-guide/cgroup-v2.rst
+>>> +++ b/Documentation/admin-guide/cgroup-v2.rst
+>>> @@ -2612,6 +2612,57 @@ RDMA Interface Files
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mlx4_0 hca_handle=3D1 hca_o=
+bject=3D20
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ocrdma1 hca_handle=3D1 hca_=
+object=3D23
+>>>
+>>> +DEV
+>>> +----
+>>> +
+>>> +The "dev" controller regulates the distribution and accounting of
+>>> +device resources, currently only memory regions. Because each memory
+>>> +region may have its own page size, which does not have to be equal
+>>> +to the system page size. the units are in bytes.
+>>> +
+>>> +DEV Interface Files
+>>> +~~~~~~~~~~~~~~~~~~~~
+>>> +
+>>> +=C2=A0 dev.region.max, dev.region.min, dev.region.low
+>>> +=C2=A0=C2=A0=C2=A0 A readwrite nested-keyed file that exists for all =
+the cgroups
+>>> +=C2=A0=C2=A0=C2=A0 except root that describes current configured reso=
+urce limit
+>>> +=C2=A0=C2=A0=C2=A0 for a device.
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 Lines are keyed by device name and are not ordered=
+.
+>>> +=C2=A0=C2=A0=C2=A0 Each line contains space separated resource name a=
+nd its configured
+>>> +=C2=A0=C2=A0=C2=A0 limit that can be distributed.
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 The following nested keys are defined.
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 Maximum amount of bytes that allocatable in this region
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 An example for xe follows::
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm/0000:03:00.0 vram0=3D1073741824 st=
+olen=3Dmax
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 The semantics are the same as for the memory cgrou=
+p controller,
+>>> and are
+>>> +=C2=A0=C2=A0=C2=A0 calculated in the same way.
+>>> +
+>>> +=C2=A0 dev.region.capacity
+>>> +=C2=A0=C2=A0=C2=A0 A read-only file that describes maximum region cap=
+acity.
+>>> +=C2=A0=C2=A0=C2=A0 It only exists on the root cgroup. Not all memory =
+can be
+>>> +=C2=A0=C2=A0=C2=A0 allocated by cgroups, as the kernel reserves some =
+for
+>>> +=C2=A0=C2=A0=C2=A0 internal use.
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 An example for xe follows::
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm/0000:03:00.0 vram0=3D8514437120 st=
+olen=3D67108864
+>>> +
+>>> +=C2=A0 dev.region.current
+>>> +=C2=A0=C2=A0=C2=A0 A read-only file that describes current resource u=
+sage.
+>>> +=C2=A0=C2=A0=C2=A0 It exists for all the cgroup except root.
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 An example for xe follows::
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 drm/0000:03:00.0 vram0=3D12550144 stol=
+en=3D8650752
+>>> +
+>>> =C2=A0 HugeTLB
+>>> =C2=A0 -------
+>>>
+>>> diff --git a/Documentation/core-api/cgroup.rst b/Documentation/core-
+>>> api/cgroup.rst
+>>> new file mode 100644
+>>> index 0000000000000..475b32255bd68
+>>> --- /dev/null
+>>> +++ b/Documentation/core-api/cgroup.rst
+>>> @@ -0,0 +1,9 @@
+>>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>> +Cgroup Kernel APIs
+>>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>> +
+>>> +Device Cgroup API (devcg)
+>>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+>>> +.. kernel-doc:: kernel/cgroup/dev.c
+>>> +=C2=A0=C2=A0 :export:
+>>> +
+>>> diff --git a/Documentation/core-api/index.rst b/Documentation/core-
+>>> api/index.rst
+>>> index 6a875743dd4b7..dbd6c4f9a6313 100644
+>>> --- a/Documentation/core-api/index.rst
+>>> +++ b/Documentation/core-api/index.rst
+>>> @@ -108,6 +108,7 @@ more memory-management documentation in
+>>> Documentation/mm/index.rst.
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 dma-isa-lpc
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 swiotlb
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 mm-api
+>>> +=C2=A0=C2=A0 cgroup
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 genalloc
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 pin_user_pages
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 boot-time-mm
+>>> diff --git a/Documentation/gpu/drm-compute.rst b/Documentation/gpu/
+>>> drm-compute.rst
+>>> new file mode 100644
+>>> index 0000000000000..116270976ef7a
+>>> --- /dev/null
+>>> +++ b/Documentation/gpu/drm-compute.rst
+>>> @@ -0,0 +1,54 @@
+>>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>> +Long running workloads and compute
+>>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>> +
+>>> +Long running workloads (compute) are workloads that will not
+>>> complete in 10
+>>> +seconds. (The time let the user wait before he reaches for the power
+>>> button).
+>>> +This means that other techniques need to be used to manage those
+>>> workloads,
+>>> +that cannot use fences.
+>>> +
+>>> +Some hardware may schedule compute jobs, and have no way to pre-empt
+>>> them, or
+>>> +have their memory swapped out from them. Or they simply want their
+>>> workload
+>>> +not to be preempted or swapped out at all.
+>>> +
+>>> +This means that it differs from what is described in driver-api/dma-
+>>> buf.rst.
+>>> +
+>>> +As with normal compute jobs, dma-fence may not be used at all. In
+>>> this case,
+>>> +not even to force preemption. The driver with is simply forced to
+>>> unmap a BO
+>>> +from the long compute job's address space on unbind immediately, not
+>>> even
+>>> +waiting for the workload to complete. Effectively this terminates
+>>> the workload
+>>> +when there is no hardware support to recover.
+>>> +
+>>> +Since this is undesirable, there need to be mitigations to prevent a
+>>> workload
+>>> +from being terminated. There are several possible approach, all with
+>>> their
+>>> +advantages and drawbacks.
+>>> +
+>>> +The first approach you will likely try is to pin all buffers used by
+>>> compute.
+>>> +This guarantees that the job will run uninterrupted, but also allows
+>>> a very
+>>> +denial of service attack by pinning as much memory as possible,
+>>> hogging the
+>>> +all GPU memory, and possibly a huge chunk of CPU memory.
+>>> +
+>>> +A second approach that will work slightly better on its own is
+>>> adding an option
+>>> +not to evict when creating a new job (any kind). If all of userspace
+>>> opts in
+>>> +to this flag, it would prevent cooperating userspace from forced
+>>> terminating
+>>> +older compute jobs to start a new one.
+>>> +
+>>> +If job preemption and recoverable pagefaults are not available,
+>>> those are the
+>>> +only approaches possible. So even with those, you want a separate
+>>> way of
+>>> +controlling resources. The standard kernel way of doing so is cgroups=
+.
+>>> +
+>>> +This creates a third option, using cgroups to prevent eviction. Both
+>>> GPU and
+>>> +driver-allocated CPU memory would be accounted to the correct
+>>> cgroup, and
+>>> +eviction would be made cgroup aware. This allows the GPU to be
+>>> partitioned
+>>> +into cgroups, that will allow jobs to run next to each other without
+>>> +interference.
+>>> +
+>>> +The interface to the cgroup would be similar to the current CPU memor=
+y
+>>> +interface, with similar semantics for min/low/high/max, if eviction c=
+an
+>>> +be made cgroup aware. For now only max is implemented.
+>>> +
+>>> +What should be noted is that each memory region (tiled memory for
+>>> example)
+>>> +should have its own accounting, using $card key0 =3D value0 key1 =3D
+>>> value1.
+>>> +
+>>> +The key is set to the regionid set by the driver, for example "tile0"=
+.
+>>> +For the value of $card, we use drmGetUnique().
+>>> diff --git a/include/linux/cgroup_dev.h b/include/linux/cgroup_dev.h
+>>> new file mode 100644
+>>> index 0000000000000..c6311d1d3ce48
+>>> --- /dev/null
+>>> +++ b/include/linux/cgroup_dev.h
+>>> @@ -0,0 +1,91 @@
+>>> +/* SPDX-License-Identifier: MIT */
+>>> +/*
+>>> + * Copyright =C2=A9 2023 Intel Corporation
+>>> + */
+>>> +
+>>> +#ifndef _CGROUP_DEV_H
+>>> +#define _CGROUP_DEV_H
+>>> +
+>>> +#include <linux/types.h>
+>>> +#include <linux/llist.h>
+>>> +
+>>> +struct dev_cgroup_pool_state;
+>>> +
+>>> +/*
+>>> + * Use 8 as max, because of N^2 lookup when setting things, can be
+>>> bumped if needed
+>>> + * Identical to TTM_NUM_MEM_TYPES to allow simplifying that code.
+>>> + */
+>>> +#define DEVICE_CGROUP_MAX_REGIONS 8
+>>> +
+>>> +/* Public definition of cgroup device, should not be modified after
+>>> _register() */
+>>> +struct dev_cgroup_device {
+>>> +=C2=A0=C2=A0=C2=A0 struct {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u64 size;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const char *name;
+>>> +=C2=A0=C2=A0=C2=A0 } regions[DEVICE_CGROUP_MAX_REGIONS];
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 int num_regions;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 /* used by cgroups, do not use */
+>>> +=C2=A0=C2=A0=C2=A0 void *priv;
+>>> +};
+>>> +
+>>> +#if IS_ENABLED(CONFIG_CGROUP_DEV)
+>>> +int dev_cgroup_register_device(struct dev_cgroup_device *cgdev,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const char *name);
+>>> +void dev_cgroup_unregister_device(struct dev_cgroup_device *cgdev);
+>>> +int dev_cgroup_try_charge(struct dev_cgroup_device *cgdev,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 u32 index, u64 size,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 struct dev_cgroup_pool_state **ret_pool,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 struct dev_cgroup_pool_state **ret_limit_pool);
+>>> +void dev_cgroup_uncharge(struct dev_cgroup_pool_state *pool,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 u32 index, u64 size);
+>>> +bool dev_cgroup_state_evict_valuable(struct dev_cgroup_device *dev,
+>>> int index,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct dev_cgroup_pool=
+_state *limit_pool,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct dev_cgroup_pool=
+_state *test_pool,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool ignore_low, bool =
+*ret_hit_low);
+>>> +
+>>> +void dev_cgroup_pool_state_put(struct dev_cgroup_pool_state *pool);
+>>> +#else
+>>> +static inline int
+>>> +dev_cgroup_register_device(struct dev_cgroup_device *cgdev,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 const char *name)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 return 0;
+>>> +}
+>>> +
+>>> +static inline void dev_cgroup_unregister_device(struct
+>>> dev_cgroup_device *cgdev)
+>>> +{
+>>> +}
+>>> +
+>>> +static int int dev_cgroup_try_charge(struct dev_cgroup_device *cgdev,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u32 index, u64 size,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct dev_cgroup_pool=
+_state **ret_pool,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct dev_cgroup_pool=
+_state **ret_limit_pool);
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 *ret_pool =3D NULL;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 if (ret_limit_pool)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *ret_limit_pool =3D NULL;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 return 0;
+>>> +}
+>>> +
+>>> +static inline void dev_cgroup_uncharge(struct dev_cgroup_pool_state
+>>> *pool,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u32 index,=
+ u64 size)
+>>> +{ }
+>>> +
+>>> +static inline
+>>> +bool dev_cgroup_state_evict_valuable(struct dev_cgroup_device *dev,
+>>> int index,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct dev_cgroup_pool=
+_state *limit_pool,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct dev_cgroup_pool=
+_state *test_pool,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool ignore_low, bool =
+*ret_hit_low)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 return true;
+>>> +}
+>>> +
+>>> +static inline void dev_cgroup_pool_state_put(struct
+>>> dev_cgroup_pool_state *pool)
+>>> +{ }
+>>> +
+>>> +#endif
+>>> +#endif=C2=A0=C2=A0=C2=A0 /* _CGROUP_DEV_H */
+>>> diff --git a/include/linux/cgroup_subsys.h b/include/linux/
+>>> cgroup_subsys.h
+>>> index 4452354872307..898340cfe5843 100644
+>>> --- a/include/linux/cgroup_subsys.h
+>>> +++ b/include/linux/cgroup_subsys.h
+>>> @@ -65,6 +65,10 @@ SUBSYS(rdma)
+>>> =C2=A0 SUBSYS(misc)
+>>> =C2=A0 #endif
+>>>
+>>> +#if IS_ENABLED(CONFIG_CGROUP_DEV)
+>>> +SUBSYS(dev)
+>>> +#endif
+>>> +
+>>> =C2=A0 /*
+>>> =C2=A0=C2=A0 * The following subsystems are not supported on the defau=
+lt
+>>> hierarchy.
+>>> =C2=A0=C2=A0 */
+>>> diff --git a/include/linux/page_counter.h b/include/linux/page_counter=
+.h
+>>> index 79dbd8bc35a72..d75376a1694ee 100644
+>>> --- a/include/linux/page_counter.h
+>>> +++ b/include/linux/page_counter.h
+>>> @@ -96,7 +96,7 @@ static inline void
+>>> page_counter_reset_watermark(struct page_counter *counter)
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 counter->watermark =3D usage;
+>>> =C2=A0 }
+>>>
+>>> -#ifdef CONFIG_MEMCG
+>>> +#if IS_ENABLED(CONFIG_MEMCG) || IS_ENABLED(CONFIG_CGROUP_DEVICE)
+>>> =C2=A0 void page_counter_calculate_protection(struct page_counter *roo=
+t,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 struct page_counter *counter,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 bool recursive_protection);
+>>> diff --git a/init/Kconfig b/init/Kconfig
+>>> index 530a382ee0feb..2da595facd97f 100644
+>>> --- a/init/Kconfig
+>>> +++ b/init/Kconfig
+>>> @@ -1123,6 +1123,13 @@ config CGROUP_RDMA
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Attaching processes with ac=
+tive RDMA resources to the cgroup
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 hierarchy is allowed even i=
+f can cross the hierarchy's limit.
+>>>
+>>> +config CGROUP_DEV
+>>> +=C2=A0=C2=A0=C2=A0 bool "Device controller"
+>>> +=C2=A0=C2=A0=C2=A0 help
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Provides the device subsystem controll=
+er.
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ...
+>>> +
+>>> =C2=A0 config CGROUP_FREEZER
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool "Freezer controller"
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 help
+>>> diff --git a/kernel/cgroup/Makefile b/kernel/cgroup/Makefile
+>>> index a5c9359d516f8..441d346fdc51f 100644
+>>> --- a/kernel/cgroup/Makefile
+>>> +++ b/kernel/cgroup/Makefile
+>>> @@ -7,4 +7,5 @@ obj-$(CONFIG_CGROUP_RDMA) +=3D rdma.o
+>>> =C2=A0 obj-$(CONFIG_CPUSETS) +=3D cpuset.o
+>>> =C2=A0 obj-$(CONFIG_CPUSETS_V1) +=3D cpuset-v1.o
+>>> =C2=A0 obj-$(CONFIG_CGROUP_MISC) +=3D misc.o
+>>> +obj-$(CONFIG_CGROUP_DEV) +=3D dev.o
+>>> =C2=A0 obj-$(CONFIG_CGROUP_DEBUG) +=3D debug.o
+>>> diff --git a/kernel/cgroup/dev.c b/kernel/cgroup/dev.c
+>>> new file mode 100644
+>>> index 0000000000000..e422ccbfbc444
+>>> --- /dev/null
+>>> +++ b/kernel/cgroup/dev.c
+>>> @@ -0,0 +1,893 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * Copyright 2023-2024 Intel Corporation (Maarten Lankhorst
+>>> <dev@lankhorst.se>)
+>>> + * Copyright 2024 Red Hat (Maxime Ripard <mripard@kernel.org>)
+>>> + * Partially based on the rdma and misc controllers, which bear the
+>>> following copyrights:
+>>> + *
+>>> + * Copyright 2020 Google LLC
+>>> + * Copyright (C) 2016 Parav Pandit <pandit.parav@gmail.com>
+>>> + */
+>>> +
+>>> +#include <linux/cgroup.h>
+>>> +#include <linux/cgroup_dev.h>
+>>> +#include <linux/list.h>
+>>> +#include <linux/mutex.h>
+>>> +#include <linux/page_counter.h>
+>>> +#include <linux/parser.h>
+>>> +#include <linux/slab.h>
+>>> +
+>>> +struct devcg_device {
+>>> +=C2=A0=C2=A0=C2=A0 /**
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * @ref: References keeping the device alive.
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * Keeps the device reference alive after a s=
+uccesful RCU lookup.
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>> +=C2=A0=C2=A0=C2=A0 struct kref ref;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 /** @rcu: RCU head for freeing */
+>>> +=C2=A0=C2=A0=C2=A0 struct rcu_head rcu;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 /**
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * @dev_node: Linked into &devcg_devices list=
+.
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * Protected by RCU and global spinlock.
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>> +=C2=A0=C2=A0=C2=A0 struct list_head dev_node;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 /**
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * @pools: List of pools linked to this devic=
+e.
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * Protected by global spinlock only
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>> +=C2=A0=C2=A0=C2=A0 struct list_head pools;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 /**
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * @base: Copy of the struct passed on regist=
+er.
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * A copy is made to prevent lifetime issues.=
+ devcg_device may
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * be kept alive when changing cgroups values=
+ concurrently through
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * rcu lookups.
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>> +=C2=A0=C2=A0=C2=A0 struct dev_cgroup_device base;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 /** @name: Name describing the node, set by
+>>> dev_cgroup_register_device */
+>>> +=C2=A0=C2=A0=C2=A0 const char *name;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 /**
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * @unregistered: Whether the device is unreg=
+istered by its caller.
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * No new pools should be added to the device=
+ afterwards.
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>> +=C2=A0=C2=A0=C2=A0 bool unregistered;
+>>> +};
+>>> +
+>>> +struct devcg_state {
+>>> +=C2=A0=C2=A0=C2=A0 struct cgroup_subsys_state css;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 struct list_head pools;
+>>> +};
+>>> +
+>>> +struct dev_cgroup_pool_state {
+>>> +=C2=A0=C2=A0=C2=A0 struct devcg_device *device;
+>>> +=C2=A0=C2=A0=C2=A0 struct devcg_state *cs;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 /* css node, RCU protected against device teardown=
+ */
+>>> +=C2=A0=C2=A0=C2=A0 struct list_head=C2=A0=C2=A0=C2=A0 css_node;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 /* dev node, no RCU protection required */
+>>> +=C2=A0=C2=A0=C2=A0 struct list_head=C2=A0=C2=A0=C2=A0 dev_node;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 int num_res, inited;
+>>> +=C2=A0=C2=A0=C2=A0 struct rcu_head rcu;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 struct devcg_pool_res {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct page_counter cnt;
+>>> +=C2=A0=C2=A0=C2=A0 } resources[];
+>>> +};
+>>> +
+>>> +/*
+>>> + * 3 operations require locking protection:
+>>> + * - Registering and unregistering device to/from list, requires
+>>> global lock.
+>>> + * - Adding a dev_cgroup_pool_state to a CSS, removing when CSS is
+>>> freed.
+>>> + * - Adding a dev_cgroup_pool_state to a device list.
+>>> + *
+>>> + * Since for the most common operations RCU provides enough
+>>> protection, I
+>>> + * do not think more granular locking makes sense. Most protection
+>>> is offered
+>>> + * by RCU and the lockless operating page_counter.
+>>> + */
+>>> +static DEFINE_SPINLOCK(devcg_lock);
+>>> +static LIST_HEAD(devcg_devices);
+>>> +
+>>> +static inline struct devcg_state *
+>>> +css_to_devcs(struct cgroup_subsys_state *css)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 return container_of(css, struct devcg_state, css);
+>>> +}
+>>> +
+>>> +static inline struct devcg_state *get_current_devcs(void)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 return css_to_devcs(task_get_css(current, dev_cgrp=
+_id));
+>>> +}
+>>> +
+>>> +static struct devcg_state *parent_devcs(struct devcg_state *cg)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 return cg->css.parent ? css_to_devcs(cg->css.paren=
+t) : NULL;
+>>> +}
+>>> +
+>>> +static void free_cg_pool(struct dev_cgroup_pool_state *pool)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 list_del(&pool->dev_node);
+>>> +=C2=A0=C2=A0=C2=A0 kfree(pool);
+>>> +}
+>>> +
+>>> +static void
+>>> +set_resource_min(struct dev_cgroup_pool_state *pool, int i, u64 val)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 page_counter_set_min(&pool->resources[i].cnt, val)=
+;
+>>> +}
+>>> +
+>>> +static void
+>>> +set_resource_low(struct dev_cgroup_pool_state *pool, int i, u64 val)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 page_counter_set_low(&pool->resources[i].cnt, val)=
+;
+>>> +}
+>>> +
+>>> +static void
+>>> +set_resource_max(struct dev_cgroup_pool_state *pool, int i, u64 val)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 page_counter_set_max(&pool->resources[i].cnt, val)=
+;
+>>> +}
+>>> +
+>>> +static u64 get_resource_low(struct dev_cgroup_pool_state *pool, int
+>>> idx)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 return pool ? READ_ONCE(pool->resources[idx].cnt.l=
+ow) : 0;
+>>> +}
+>>> +
+>>> +static u64 get_resource_min(struct dev_cgroup_pool_state *pool, int
+>>> idx)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 return pool ? READ_ONCE(pool->resources[idx].cnt.m=
+in) : 0;
+>>> +}
+>>> +
+>>> +static u64 get_resource_max(struct dev_cgroup_pool_state *pool, int
+>>> idx)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 return pool ? READ_ONCE(pool->resources[idx].cnt.m=
+ax) :
+>>> PAGE_COUNTER_MAX;
+>>> +}
+>>> +
+>>> +static u64 get_resource_current(struct dev_cgroup_pool_state *pool,
+>>> int idx)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 return pool ? page_counter_read(&pool->resources[i=
+dx].cnt) : 0;
+>>> +}
+>>> +
+>>> +static void reset_all_resource_limits(struct dev_cgroup_pool_state
+>>> *rpool)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 int i;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < rpool->num_res; i++) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 set_resource_min(rpool, i,=
+ 0);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 set_resource_low(rpool, i,=
+ 0);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 set_resource_max(rpool, i,=
+ PAGE_COUNTER_MAX);
+>>> +=C2=A0=C2=A0=C2=A0 }
+>>> +}
+>>> +
+>>> +static void devcs_offline(struct cgroup_subsys_state *css)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 struct devcg_state *devcs =3D css_to_devcs(css);
+>>> +=C2=A0=C2=A0=C2=A0 struct dev_cgroup_pool_state *pool;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 rcu_read_lock();
+>>> +=C2=A0=C2=A0=C2=A0 list_for_each_entry_rcu(pool, &devcs->pools, css_n=
+ode)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reset_all_resource_limits(=
+pool);
+>>> +=C2=A0=C2=A0=C2=A0 rcu_read_unlock();
+>>> +}
+>>> +
+>>> +static void devcs_free(struct cgroup_subsys_state *css)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 struct devcg_state *devcs =3D css_to_devcs(css);
+>>> +=C2=A0=C2=A0=C2=A0 struct dev_cgroup_pool_state *pool, *next;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 spin_lock(&devcg_lock);
+>>> +=C2=A0=C2=A0=C2=A0 list_for_each_entry_safe(pool, next, &devcs->pools=
+, css_node) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *The pool is dead an=
+d all references are 0,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * no need for RCU pr=
+otection with list_del_rcu or freeing.
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 list_del(&pool->css_node);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 free_cg_pool(pool);
+>>> +=C2=A0=C2=A0=C2=A0 }
+>>> +=C2=A0=C2=A0=C2=A0 spin_unlock(&devcg_lock);
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 kfree(devcs);
+>>> +}
+>>> +
+>>> +static struct cgroup_subsys_state *
+>>> +devcs_alloc(struct cgroup_subsys_state *parent_css)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 struct devcg_state *devcs =3D kzalloc(sizeof(*devc=
+s), GFP_KERNEL);
+>>> +=C2=A0=C2=A0=C2=A0 if (!devcs)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ERR_PTR(-ENOMEM);
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 INIT_LIST_HEAD(&devcs->pools);
+>>> +=C2=A0=C2=A0=C2=A0 return &devcs->css;
+>>> +}
+>>> +
+>>> +static struct dev_cgroup_pool_state *
+>>> +find_cg_pool_locked(struct devcg_state *devcs, struct devcg_device
+>>> *dev)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 struct dev_cgroup_pool_state *pool;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 list_for_each_entry_rcu(pool, &devcs->pools, css_n=
+ode,
+>>> spin_is_locked(&devcg_lock))
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (pool->device =3D=3D de=
+v)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 re=
+turn pool;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 return NULL;
+>>> +}
+>>> +
+>>> +static struct dev_cgroup_pool_state *pool_parent(struct
+>>> dev_cgroup_pool_state *pool)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 if (!pool->resources[0].cnt.parent)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return NULL;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 return container_of(pool->resources[0].cnt.parent,
+>>> typeof(*pool), resources[0].cnt);
+>>> +}
+>>> +
+>>> +/**
+>>> + * dev_cgroup_state_evict_valuable() - Check if we should evict from
+>>> test_pool
+>>> + * @dev: &dev_cgroup_device
+>>> + * @index: The index number of the region being tested.
+>>> + * @limit_pool: The pool for which we hit limits
+>>> + * @test_pool: The pool for which to test
+>>> + * @ignore_low: Whether we have to respect low watermarks.
+>>> + * @ret_hit_low: Pointer to whether it makes sense to consider low
+>>> watermark.
+>>> + *
+>>> + * This function returns true if we can evict from @test_pool, false
+>>> if not.
+>>> + * When returning false and @ignore_low is false, @ret_hit_low may
+>>> + * be set to true to indicate this function can be retried with
+>>> @ignore_low
+>>> + * set to true.
+>>> + *
+>>> + * Return: bool
+>>> + */
+>>> +bool dev_cgroup_state_evict_valuable(struct dev_cgroup_device *dev,
+>>> int index,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct dev_cgroup_pool=
+_state *limit_pool,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct dev_cgroup_pool=
+_state *test_pool,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool ignore_low, bool =
+*ret_hit_low)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 struct dev_cgroup_pool_state *pool =3D test_pool;
+>>> +=C2=A0=C2=A0=C2=A0 struct page_counter *climit, *ctest;
+>>> +=C2=A0=C2=A0=C2=A0 u64 used, min, low;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 /* Can always evict from current pool, despite lim=
+its */
+>>> +=C2=A0=C2=A0=C2=A0 if (limit_pool =3D=3D test_pool)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return true;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 if (limit_pool) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!parent_devcs(limit_po=
+ol->cs))
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 re=
+turn true;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (pool =3D test_pool; p=
+ool && limit_pool !=3D pool; pool =3D
+>>> pool_parent(pool))
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 {}
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!pool)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 re=
+turn false;
+>>> +=C2=A0=C2=A0=C2=A0 } else {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * If there is no cgr=
+oup limiting memory usage, use the root
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * cgroup instead for=
+ limit calculations.
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (limit_pool =3D test_p=
+ool; pool_parent(limit_pool);
+>>> limit_pool =3D pool_parent(limit_pool))
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 {}
+>>> +=C2=A0=C2=A0=C2=A0 }
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 climit =3D &limit_pool->resources[index].cnt;
+>>> +=C2=A0=C2=A0=C2=A0 ctest =3D &test_pool->resources[index].cnt;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 page_counter_calculate_protection(climit, ctest, t=
+rue);
+>>
+>> I realized we can't do this. As the documentation for
+>> page_counter_calculate_protection states:
+>>
+>>> WARNING: This function is not stateless! It can only be used as part
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 of a top-down tree it=
+eration, not for isolated queries.
+>>
+>> I authored a fix with [1], though I'm not super happy with having to
+>> iterate through the entire (sub-)hierarchy like this every time we
+>> consider eviction. If anyone has a better idea, feel free to propose it=
+.
+>>
+>> This branch also contains another idea [2][3] I've been playing around
+>> with. Essentially, what I'm trying to solve is TTM preferring to use
+>> system memory over evicting VRAM, even if the new VRAM allocation would
+>> be protected from eviction by low/min memory protection. In my testing,
+>> it leads to a better experience to try evicting unprotected allocations
+>> immediately in that case. I'm fine with this being follow-up work, but
+>> given that the patchset is still in a rather early stage I thought I'd
+>> pitch this now.
+> Hey,
+>
+> I don't know if an alternative implementation is needed here. I think
+> the current code is correct. The caller ensures that limit_pool and
+> test_pool are alive.
+>
 
-QWRkIGEgU2FoYXJhIHByb3RvY29sLWJhc2VkIGludGVyZmFjZSBmb3IgZG93bmxvYWRpbmcgcmFt
-ZHVtcA0KZnJvbSBRdWFsY29tbSBtb2RlbXMgaW4gU0JMIHJhbWR1bXAgbW9kZS4NCg0KU2lnbmVk
-LW9mZi1ieTogSmVycnkgTWVuZyA8amVycnkubWVuZ0BxdWVjdGVsLmNvbT4NCi0tLQ0KIGRyaXZl
-cnMvbmV0L3d3YW4vbWhpX3d3YW5fY3RybC5jIHwgMyArKy0NCiBkcml2ZXJzL25ldC93d2FuL3d3
-YW5fY29yZS5jICAgICB8IDQgKysrKw0KIGluY2x1ZGUvbGludXgvd3dhbi5oICAgICAgICAgICAg
-IHwgMiArKw0KIDMgZmlsZXMgY2hhbmdlZCwgOCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0p
-DQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC93d2FuL21oaV93d2FuX2N0cmwuYyBiL2RyaXZl
-cnMvbmV0L3d3YW4vbWhpX3d3YW5fY3RybC5jDQppbmRleCBlOWY5NzlkMmQuLjJjNmE3NTRhZiAx
-MDA2NDQNCi0tLSBhL2RyaXZlcnMvbmV0L3d3YW4vbWhpX3d3YW5fY3RybC5jDQorKysgYi9kcml2
-ZXJzL25ldC93d2FuL21oaV93d2FuX2N0cmwuYw0KQEAgLTI2Myw3ICsyNjMsOCBAQCBzdGF0aWMg
-Y29uc3Qgc3RydWN0IG1oaV9kZXZpY2VfaWQgbWhpX3d3YW5fY3RybF9tYXRjaF90YWJsZVtdID0g
-ew0KIAl7IC5jaGFuID0gIlFNSSIsIC5kcml2ZXJfZGF0YSA9IFdXQU5fUE9SVF9RTUkgfSwNCiAJ
-eyAuY2hhbiA9ICJESUFHIiwgLmRyaXZlcl9kYXRhID0gV1dBTl9QT1JUX1FDRE0gfSwNCiAJeyAu
-Y2hhbiA9ICJGSVJFSE9TRSIsIC5kcml2ZXJfZGF0YSA9IFdXQU5fUE9SVF9GSVJFSE9TRSB9LA0K
-LQl7fSwNCisgICAgICAgIHsgLmNoYW4gPSAiU0FIQVJBIiwgLmRyaXZlcl9kYXRhID0gV1dBTl9Q
-T1JUX1NBSEFSQX0sDQorICAgICAgICB7fSwNCiB9Ow0KIE1PRFVMRV9ERVZJQ0VfVEFCTEUobWhp
-LCBtaGlfd3dhbl9jdHJsX21hdGNoX3RhYmxlKTsNCiANCmRpZmYgLS1naXQgYS9kcml2ZXJzL25l
-dC93d2FuL3d3YW5fY29yZS5jIGIvZHJpdmVycy9uZXQvd3dhbi93d2FuX2NvcmUuYw0KaW5kZXgg
-YTUxZTI3NTU5Li5kMmZlNjAzZTYgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL25ldC93d2FuL3d3YW5f
-Y29yZS5jDQorKysgYi9kcml2ZXJzL25ldC93d2FuL3d3YW5fY29yZS5jDQpAQCAtMzQyLDYgKzM0
-MiwxMCBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IHsNCiAJCS5uYW1lID0gIk1JUEMiLA0KIAkJLmRl
-dnN1ZiA9ICJtaXBjIiwNCiAJfSwNCisgICAgICAgIFtXV0FOX1BPUlRfU0FIQVJBXSA9IHsNCisg
-ICAgICAgICAgICAgICAgLm5hbWUgPSAiU0FIQVJBIiwNCisgICAgICAgICAgICAgICAgLmRldnN1
-ZiA9ICJzYWhhcmEiLA0KKyAgICAgICAgfSwNCiB9Ow0KIA0KIHN0YXRpYyBzc2l6ZV90IHR5cGVf
-c2hvdyhzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2VfYXR0cmlidXRlICphdHRyLA0K
-ZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvd3dhbi5oIGIvaW5jbHVkZS9saW51eC93d2FuLmgN
-CmluZGV4IDc5Yzc4MTg3NS4uYjBlYTI3NmYyIDEwMDY0NA0KLS0tIGEvaW5jbHVkZS9saW51eC93
-d2FuLmgNCisrKyBiL2luY2x1ZGUvbGludXgvd3dhbi5oDQpAQCAtMTksNiArMTksNyBAQA0KICAq
-IEBXV0FOX1BPUlRfRkFTVEJPT1Q6IEZhc3Rib290IHByb3RvY29sIGNvbnRyb2wNCiAgKiBAV1dB
-Tl9QT1JUX0FEQjogQURCIHByb3RvY29sIGNvbnRyb2wNCiAgKiBAV1dBTl9QT1JUX01JUEM6IE1U
-SyBNSVBDIGRpYWdub3N0aWMgaW50ZXJmYWNlDQorICogQFdXQU5fUE9SVF9TQUhBUkE6IFNhaGFy
-YSBwcm90b2NvbC1iYXNlZCBpbnRlcmZhY2UgZm9yIGRvd25sb2FkaW5nIHJhbWR1bXAgZnJvbSBR
-dWFsY29tbSBtb2RlbXMNCiAgKg0KICAqIEBXV0FOX1BPUlRfTUFYOiBIaWdoZXN0IHN1cHBvcnRl
-ZCBwb3J0IHR5cGVzDQogICogQFdXQU5fUE9SVF9VTktOT1dOOiBTcGVjaWFsIHZhbHVlIHRvIGlu
-ZGljYXRlIGFuIHVua25vd24gcG9ydCB0eXBlDQpAQCAtMzQsNiArMzUsNyBAQCBlbnVtIHd3YW5f
-cG9ydF90eXBlIHsNCiAJV1dBTl9QT1JUX0ZBU1RCT09ULA0KIAlXV0FOX1BPUlRfQURCLA0KIAlX
-V0FOX1BPUlRfTUlQQywNCisJV1dBTl9QT1JUX1NBSEFSQSwNCiANCiAJLyogQWRkIG5ldyBwb3J0
-IHR5cGVzIGFib3ZlIHRoaXMgbGluZSAqLw0KIA0KLS0gDQoyLjI1LjENCg0K
+The issue is not about lifetimes. If you look into the implementation of
+page_counter_calculate_protection, it uses the parent's elow as part of
+calculating the current node's elow. However, unless we do a top-down
+iteration, the parent's elow value may be outdated or might never have
+been calculated at all yet. This is why the comment about requiring a
+top-down iteration exists, and I don't see why it shouldn't apply to us.
 
---_000_KL1PR06MB6133B5403AA55BC79C13FF3B935B2KL1PR06MB6133apcp_
-Content-Disposition: attachment; filename="winmail.dat"
-Content-Transfer-Encoding: base64
-Content-Type: application/ms-tnef; name="winmail.dat"
+Regards,
+Friedrich
 
-eJ8+In5jAQaQCAAEAAAAAAABAAEAAQeQBgAIAAAAqAMAAAAAAACrAAEJgAEAIQAAADg0NUEwQkEx
-Mjg4MDBGNDNCMkVBRTdEQjJBNzlFQ0M1AFQHAQ2ABAACAAAAAgACAAEFgAMADgAAAOgHCwAOAAgA
-LQAIAAQASQEBIIADAA4AAADoBwsADgAIAC0ACAAEAEkBAQiABwAYAAAASVBNLk1pY3Jvc29mdCBN
-YWlsLk5vdGUAMQgBBIABAC0AAABbUEFUQ0hdIG5ldDogd3dhbjogQWRkIFdXQU4gc2FoYXJhIHBv
-cnQgdHlwZQC9DgELgAEAIQAAADg0NUEwQkExMjg4MDBGNDNCMkVBRTdEQjJBNzlFQ0M1AFQHAQOQ
-BgB0NwAAXAAAAAIBfwABAAAAUQAAADxLTDFQUjA2TUI2MTMzQjU0MDNBQTU1QkM3OUMxM0ZGM0I5
-MzVCMkBLTDFQUjA2TUI2MTMzLmFwY3ByZDA2LnByb2Qub3V0bG9vay5jb20+AAAAAAsAHw4AAAAA
-AgEJEAEAAABZBQAAVQUAADkLAABMWkZ1JtUiCmEACmZiaWQEAABjY8BwZzEyNTIA/gND8HRleHQB
-9wKkA+MCAARjaArAc2V0MCDvB20CgwBQEU0yCoAGtAKAln0KgAjIOwliMTkOwL8JwxZyCjIWcQKA
-FWIqCbBzCfAEkGF0BbIOUANgc6JvAYAgRXgRwW4YMF0GUnYEkBe2AhByAMB0fQhQbhoxECAFwAWg
-G2RkmiADUiAQIheyXHYIkOR3awuAZDUdUwTwB0ANF3AwCnEX8mJrbWsGcwGQACAgQk1fQuBFR0lO
-fQr8AfEL8NAyIEFkHGBhBgER0R0h4HADYBiQCOEtYmHvEgAcYAuAG6FmANAZ4BrhoCBkb3duCQBh
-DeAFGcAgGHBtZHVtcDRcbAuAZQqAHINRddsHQAWgbRywBGJtBCALgNkGAEJMJPYmsy4ldSV1SFNp
-ZxhQZC0ZMGYhIvB5OiBKBJByeacF0AnwJOA8aipSLgeAKRnAQHEKUGMQIGwu9SZxPiV1LSzgJXUk
-MAUQCRoxcy8YUHQvd3dBAHAvbWhpXy5SXwUr4HIsESB8IDMg/CsrLQ8uFy7kBbAoUC+AezJSL6A0
-L9Ev4DAWC4BjSwpAAQAvJYF1eC5DLn5oMlM05i+gIYAzCC/AZocDEAeRGZRkLCA4I1ELEgAAIGkC
-IHMoKyk9N4AxJDAsABIQOCEoLS4pKHwN4AEgICzgZ2nZBUBhLzCfLq5iOy88PgcldR2xEDAgZTlm
-OQA3OWQyZC4uMoBjNmE3NTRhOpDxHpE2NDQseDsPPk8/Vk8y4T0/Q58/VkBAOqAy8DYzLDcv0Egy
-N6BH8T8fYTgQL4Ab4R9gSSFydb8r4CawLrEBAB1gI9BfDdDbSmMu518bERHAXwGRHnDwW10gPQMw
-AAAwJQyCHU0hICwgGaFNASJRTfRJIjeALkWESqAYgCHgAU0QV1dBTl9QT5hSVF9O4QMwfSxNX2FO
-ZkRJQUdPH1AqQwxETVEPTipGSVJF8EhPU0VTH1ApVuZVGT8wAE3kVShFQDTlTipTQfBIQVJBV29Q
-KVzEWt8bW+JVKn0WIDAlTU9EAFVMRV9ERVZJkkNiQFRBJ3BFKC6h9zeAS19MZilhZzn/Qo8xfQdF
-bzGLP2thNTFlMhlBIDU5QMBAkGZlNvwwM2xQQX9mz2nPRO9ub0NqaUfyMzQyLGygKz9y8h6QSP9K
-BU08VdMubs8lEBngTrFO8FBDXSB1b7NdUErAc3VmUE6xbQUg7mN3TFUZW3dbXk5M+1t3vzTmdndc
-xnz/fgZ4iHMiEz9/b1UbYVgwFnQFBBBpeiNLAAVAdHlwSwBzaM0kUChKBUq0ICpKsTeAjYarXxiA
-L0BpYnUQIP+HcIjCVUZmKzOvNLJwYIsPBzSxP2tAcGM3ODE4Q0EgQMBiMGVha7A2/mYhgGzPiu+N
-anAkkQ+NiP9H8hZwcyKVAUhwR/AwFodwA3PAWIlBU1RCT0/aVCogRiMQAlBvIpAiZx8b0i9ABvCV
-31CDQURCfyogmsGYX5lvUIN3AiogTfxUSwXQdxEkMAcwKXAZEP90MiNngjeWa1zEKiAiDyMffyQv
-J9Ml7ybxnFicX51kQWpYKiBIKWBoB5BJ4XX8cHAJERxRqYKF86Z5lnqAVU5LTk9XTqGh5YYgYwcx
-IHYHQApQHMA+b6MRDeAeUIkxA5F1br5rnuCkIKnocktzIzWVg/9AIDRAHLAu46mCTICGEU0u/Zaf
-VFVMmiu0T51Jgiey3fdcxFVIVWovlmAhohhQB+D/qfgh0AbgGjAcwC6wBCAlgt2HcC9lPW2hJXUy
-QNCPAA8AUCiLFULAgAAAAB8AQgABAAAAHgAAAEoAZQByAHIAeQAgAE0AZQBuAGcAKACZhHBnKQAA
-AAAAHwBlAAEAAAAuAAAAagBlAHIAcgB5AC4AbQBlAG4AZwBAAHEAdQBlAGMAdABlAGwALgBjAG8A
-bQAAAAAAHwBkAAEAAAAKAAAAUwBNAFQAUAAAAAAAAgFBAAEAAABuAAAAAAAAAIErH6S+oxAZnW4A
-3QEPVAIAAACASgBlAHIAcgB5ACAATQBlAG4AZwAoAJmEcGcpAAAAUwBNAFQAUAAAAGoAZQByAHIA
-eQAuAG0AZQBuAGcAQABxAHUAZQBjAHQAZQBsAC4AYwBvAG0AAAAAAB8AAl0BAAAALgAAAGoAZQBy
-AHIAeQAuAG0AZQBuAGcAQABxAHUAZQBjAHQAZQBsAC4AYwBvAG0AAAAAAB8A5V8BAAAANgAAAHMA
-aQBwADoAagBlAHIAcgB5AC4AbQBlAG4AZwBAAHEAdQBlAGMAdABlAGwALgBjAG8AbQAAAAAAAgEu
-DAEAAAAQAAAAiYghdY0uu0qQWC6tWeqHih8AGgwBAAAAHgAAAEoAZQByAHIAeQAgAE0AZQBuAGcA
-KACZhHBnKQAAAAAAHwAfDAEAAAAuAAAAagBlAHIAcgB5AC4AbQBlAG4AZwBAAHEAdQBlAGMAdABl
-AGwALgBjAG8AbQAAAAAAHwAeDAEAAAAKAAAAUwBNAFQAUAAAAAAAAgEZDAEAAABuAAAAAAAAAIEr
-H6S+oxAZnW4A3QEPVAIAAACASgBlAHIAcgB5ACAATQBlAG4AZwAoAJmEcGcpAAAAUwBNAFQAUAAA
-AGoAZQByAHIAeQAuAG0AZQBuAGcAQABxAHUAZQBjAHQAZQBsAC4AYwBvAG0AAAAAAB8AAV0BAAAA
-LgAAAGoAZQByAHIAeQAuAG0AZQBuAGcAQABxAHUAZQBjAHQAZQBsAC4AYwBvAG0AAAAAAAIBLQwB
-AAAAEAAAAImIIXWNLrtKkFgurVnqh4oLAEA6AQAAAB8AGgABAAAAEgAAAEkAUABNAC4ATgBvAHQA
-ZQAAAAAAAwDxPwQIAAALAEA6AQAAAAMA/T/kBAAAAgELMAEAAAAQAAAAhFoLoSiAD0Oy6ufbKnns
-xQMAFwABAAAAQAA5AACCIYJxNtsBQAAIMO/pVYJxNtsBCwApAAAAAAADAACACCAGAAAAAADAAAAA
-AAAARgEAAAAyAAAARQB4AGMAaABhAG4AZwBlAEEAcABwAGwAaQBjAGEAdABpAG8AbgBGAGwAYQBn
-AHMAAAAAACAAAAAfAACAhgMCAAAAAADAAAAAAAAARgEAAAAeAAAAYQBjAGMAZQBwAHQAbABhAG4A
-ZwB1AGEAZwBlAAAAAAABAAAAGgAAAHoAaAAtAEMATgAsACAAZQBuAC0AVQBTAAAAAAALAACACCAG
-AAAAAADAAAAAAAAARgAAAAAUhQAAAAAAAB8AAIATj/JB9IMUQaWE7ttaawv/AQAAABYAAABDAGwA
-aQBlAG4AdABJAG4AZgBvAAAAAAABAAAAKgAAAEMAbABpAGUAbgB0AD0ATQBTAEUAeABjAGgAYQBu
-AGcAZQBSAFAAQwAAAAAASAAAgAggBgAAAAAAwAAAAAAAAEYBAAAAIgAAAE4AZQB0AHcAbwByAGsA
-TQBlAHMAcwBhAGcAZQBJAGQAAAAAADgTEWnOQAZDVJoI3QSIpNIDADYAAAAAAB8ANwABAAAAWgAA
-AFsAUABBAFQAQwBIAF0AIABuAGUAdAA6ACAAdwB3AGEAbgA6ACAAQQBkAGQAIABXAFcAQQBOACAA
-cwBhAGgAYQByAGEAIABwAG8AcgB0ACAAdAB5AHAAZQAAAAAAHwA9AAEAAAACAAAAAAAAAEAABzDI
-6RiCcTbbAR8AcAABAAAAWgAAAFsAUABBAFQAQwBIAF0AIABuAGUAdAA6ACAAdwB3AGEAbgA6ACAA
-QQBkAGQAIABXAFcAQQBOACAAcwBhAGgAYQByAGEAIABwAG8AcgB0ACAAdAB5AHAAZQAAAAAAAgFx
-AAEAAAAWAAAAAds2cYCQ6XEP0XT3TI+FyAO8qieyQwAACwAAgBOP8kH0gxRBpYTu21prC/8BAAAA
-HAAAAEgAYQBzAFEAdQBvAHQAZQBkAFQAZQB4AHQAAAAAAAAAAwATEgAAAAADAN4/qAMAAB8ANRAB
-AAAAogAAADwASwBMADEAUABSADAANgBNAEIANgAxADMAMwBCADUANAAwADMAQQBBADUANQBCAEMA
-NwA5AEMAMQAzAEYARgAzAEIAOQAzADUAQgAyAEAASwBMADEAUABSADAANgBNAEIANgAxADMAMwAu
-AGEAcABjAHAAcgBkADAANgAuAHAAcgBvAGQALgBvAHUAdABsAG8AbwBrAC4AYwBvAG0APgAAAAAA
-CwAAgBOP8kH0gxRBpYTu21prC/8BAAAAKAAAAEkAcwBRAHUAbwB0AGUAZABUAGUAeAB0AEMAaABh
-AG4AZwBlAGQAAAAAAAAAHwD6PwEAAAAeAAAASgBlAHIAcgB5ACAATQBlAG4AZwAoAJmEcGcpAAAA
-AAACAQCAE4/yQfSDFEGlhO7bWmsL/wEAAAAuAAAASABlAGEAZABlAHIAQgBvAGQAeQBGAHIAYQBn
-AG0AZQBuAHQATABpAHMAdAAAAAAAAQAAACIAAAABAAoAAAAEAAAAAAAAABQAAAAAAAAAAAAAAP//
-//8AAAAAAAAfANk/AQAAAAACAABBAGQAZAAgAGEAIABTAGEAaABhAHIAYQAgAHAAcgBvAHQAbwBj
-AG8AbAAtAGIAYQBzAGUAZAAgAGkAbgB0AGUAcgBmAGEAYwBlACAAZgBvAHIAIABkAG8AdwBuAGwA
-bwBhAGQAaQBuAGcAIAByAGEAbQBkAHUAbQBwAA0ACgBmAHIAbwBtACAAUQB1AGEAbABjAG8AbQBt
-ACAAbQBvAGQAZQBtAHMAIABpAG4AIABTAEIATAAgAHIAYQBtAGQAdQBtAHAAIABtAG8AZABlAC4A
-DQAKAA0ACgBTAGkAZwBuAGUAZAAtAG8AZgBmAC0AYgB5ADoAIABKAGUAcgByAHkAIABNAGUAbgBn
-ACAAPABqAGUAcgByAHkALgBtAGUAbgBnAEAAcQB1AGUAYwB0AGUAbAAuAGMAbwBtAD4ADQAKAC0A
-LQAtAA0ACgAgAGQAcgBpAHYAZQByAHMALwBuAGUAdAAvAHcAdwBhAG4ALwBtAGgAaQBfAHcAdwBh
-AG4AXwBjAHQAcgBsAC4AYwAgAHwAIAAzACAAKwArAC0ADQAKACAAZAByAGkAdgBlAHIAcwAvAG4A
-ZQB0AC8AdwB3AGEAbgAvAHcAdwBhAG4AXwBjAG8AcgBlAC4AYwAgACAAIAAgACAAfAAgADQAIAAr
-ACsAKwArAA0ACgAgAGkAbgAAAAIBCwABAAAAEAAAAIRaC6EogA9Dsurn2yp57MUDACYAAAAAAAsA
-BgwAAAAAAgEQMAEAAABGAAAAAAAAAH+nOU4Yot9HlTsOCdv+gpgHAILDynG6gMlNjJfSTiwwcSwA
-AAAAAQsAAILDynG6gMlNjJfSTiwwcSwAAJ/y5GkAAAAAAgETMAEAAAAQAAAA6XEP0XT3TI+FyAO8
-qieyQwIBFDABAAAADAAAALsAAADCxR74QQAAAAMAWzMBAAAAAwBaNgAAAAADAGg2DQAAAAsA+jYB
-AAAAHwD4PwEAAAAeAAAASgBlAHIAcgB5ACAATQBlAG4AZwAoAJmEcGcpAAAAAAAfACJAAQAAAAYA
-AABFAFgAAAAAAB8AI0ABAAAA9AAAAC8ATwA9AEUAWABDAEgAQQBOAEcARQBMAEEAQgBTAC8ATwBV
-AD0ARQBYAEMASABBAE4ARwBFACAAQQBEAE0ASQBOAEkAUwBUAFIAQQBUAEkAVgBFACAARwBSAE8A
-VQBQACAAKABGAFkARABJAEIATwBIAEYAMgAzAFMAUABEAEwAVAApAC8AQwBOAD0AUgBFAEMASQBQ
-AEkARQBOAFQAUwAvAEMATgA9AEUAQQA0ADgAMQBEADUANwBGAEEANQAzADQAQQBCAEIAQgAwADYA
-NgAzADYAOABFADQAMwBDADYANQAxADIANAAtAFUAUwBFAFIAAAAfACRAAQAAAAYAAABFAFgAAAAA
-AB8AJUABAAAA9AAAAC8ATwA9AEUAWABDAEgAQQBOAEcARQBMAEEAQgBTAC8ATwBVAD0ARQBYAEMA
-SABBAE4ARwBFACAAQQBEAE0ASQBOAEkAUwBUAFIAQQBUAEkAVgBFACAARwBSAE8AVQBQACAAKABG
-AFkARABJAEIATwBIAEYAMgAzAFMAUABEAEwAVAApAC8AQwBOAD0AUgBFAEMASQBQAEkARQBOAFQA
-UwAvAEMATgA9AEUAQQA0ADgAMQBEADUANwBGAEEANQAzADQAQQBCAEIAQgAwADYANgAzADYAOABF
-ADQAMwBDADYANQAxADIANAAtAFUAUwBFAFIAAAAfADBAAQAAAB4AAABKAGUAcgByAHkAIABNAGUA
-bgBnACgAmYRwZykAAAAAAB8AMUABAAAAHgAAAEoAZQByAHIAeQAgAE0AZQBuAGcAKACZhHBnKQAA
-AAAAHwA4QAEAAAAeAAAASgBlAHIAcgB5ACAATQBlAG4AZwAoAJmEcGcpAAAAAAAfADlAAQAAAB4A
-AABKAGUAcgByAHkAIABNAGUAbgBnACgAmYRwZykAAAAAAAMAWUAAAAAAAwBaQAAAAAADADdQAQAA
-AAMACVkBAAAAHwAKXQEAAAAuAAAAagBlAHIAcgB5AC4AbQBlAG4AZwBAAHEAdQBlAGMAdABlAGwA
-LgBjAG8AbQAAAAAAHwALXQEAAAAuAAAAagBlAHIAcgB5AC4AbQBlAG4AZwBAAHEAdQBlAGMAdABl
-AGwALgBjAG8AbQAAAAAAAgEVXQEAAAASAAAAAkPQMHcp4QxIsbrltqn0dqoBAAACARZdAQAAABIA
-AAACQ9AwdynhDEixuuW2qfR2qgEAAAMAAIBQ42MLzJzQEbzbAIBfzM4EAQAAACQAAABJAG4AZABl
-AHgAaQBuAGcARQByAHIAbwByAEMAbwBkAGUAAAAbAAAAHwAAgFDjYwvMnNARvNsAgF/MzgQBAAAA
-KgAAAEkAbgBkAGUAeABpAG4AZwBFAHIAcgBvAHIATQBlAHMAcwBhAGcAZQAAAAAAAQAAAHAAAABJ
-AG4AZABlAHgAaQBuAGcAIABQAGUAbgBkAGkAbgBnACAAdwBoAGkAbABlACAAQgBpAGcARgB1AG4A
-bgBlAGwAUABPAEkASQBzAFUAcABUAG8ARABhAHQAZQAgAGkAcwAgAGYAYQBsAHMAZQAuAAAACwAA
-gFDjYwvMnNARvNsAgF/MzgQBAAAAJgAAAEkAcwBQAGUAcgBtAGEAbgBlAG4AdABGAGEAaQBsAHUA
-cgBlAAAAAAAAAAAAHwAAgB+k6zOoei5Cvnt54amOVLMBAAAAOAAAAEMAbwBuAHYAZQByAHMAYQB0
-AGkAbwBuAEkAbgBkAGUAeABUAHIAYQBjAGsAaQBuAGcARQB4AAAAAQAAAEQBAABJAEkAPQBbAEMA
-SQBEAD0AZAAxADAAZgA3ADEAZQA5AC0AZgA3ADcANAAtADgAZgA0AGMALQA4ADUAYwA4AC0AMAAz
-AGIAYwBhAGEAMgA3AGIAMgA0ADMAOwBJAEQAWABIAEUAQQBEAD0ARABCADMANgA3ADEAOAAwADkA
-MAA7AEkARABYAEMATwBVAE4AVAA9ADEAXQA7AFQARgBSAD0AVABoAHIAZQBhAGQARgBvAHIAawBp
-AG4AZwBJAHMARABpAHMAYQBiAGwAZQBkADsAVgBlAHIAcwBpAG8AbgA9AFYAZQByAHMAaQBvAG4A
-IAAxADUALgAyADAAIAAoAEIAdQBpAGwAZAAgADgAMQAzADcALgAwACkALAAgAFMAdABhAGcAZQA9
-AEgANAA7AFUAUAA9ADEAMAA7AEQAUAA9ADEAAAALAACACCAGAAAAAADAAAAAAAAARgAAAACChQAA
-AAAAAEAAAIAIIAYAAAAAAMAAAAAAAABGAAAAAL+FAABwL5KAcTbbAQIBAIAIIAYAAAAAAMAAAAAA
-AABGAQAAADYAAABJAG4AVAByAGEAbgBzAGkAdABNAGUAcwBzAGEAZwBlAEMAbwByAHIAZQBsAGEA
-dABvAHIAAAAAAAEAAAAQAAAA575g0LLtBEC4sCjgRe/8KwMADTQAAAAAHwAAgIYDAgAAAAAAwAAA
-AAAAAEYBAAAALgAAAGEAdQB0AGgAZQBuAHQAaQBjAGEAdABpAG8AbgAtAHIAZQBzAHUAbAB0AHMA
-AAAAAAEAAAC6AAAAZABrAGkAbQA9AG4AbwBuAGUAIAAoAG0AZQBzAHMAYQBnAGUAIABuAG8AdAAg
-AHMAaQBnAG4AZQBkACkAIABoAGUAYQBkAGUAcgAuAGQAPQBuAG8AbgBlADsAZABtAGEAcgBjAD0A
-bgBvAG4AZQAgAGEAYwB0AGkAbwBuAD0AbgBvAG4AZQAgAGgAZQBhAGQAZQByAC4AZgByAG8AbQA9
-AHEAdQBlAGMAdABlAGwALgBjAG8AbQA7AAAAAAAfAACAhgMCAAAAAADAAAAAAAAARgEAAAAgAAAA
-eAAtAG0AcwAtAGgAYQBzAC0AYQB0AHQAYQBjAGgAAAABAAAAAgAAAAAAAAAfAACAhgMCAAAAAADA
-AAAAAAAARgEAAAAuAAAAeAAtAG0AcwAtAHAAdQBiAGwAaQBjAHQAcgBhAGYAZgBpAGMAdAB5AHAA
-ZQAAAAAAAQAAAAwAAABFAG0AYQBpAGwAAAAfAACAhgMCAAAAAADAAAAAAAAARgEAAAA2AAAAeAAt
-AG0AcwAtAHQAcgBhAGYAZgBpAGMAdAB5AHAAZQBkAGkAYQBnAG4AbwBzAHQAaQBjAAAAAAABAAAA
-SAAAAEsATAAxAFAAUgAwADYATQBCADYAMQAzADMAOgBFAEUAXwB8AFQAWQAwAFAAUgAwADYATQBC
-ADQAOQA4ADMAOgBFAEUAXwAAAB8AAICGAwIAAAAAAMAAAAAAAABGAQAAAFAAAAB4AC0AbQBzAC0A
-bwBmAGYAaQBjAGUAMwA2ADUALQBmAGkAbAB0AGUAcgBpAG4AZwAtAGMAbwByAHIAZQBsAGEAdABp
-AG8AbgAtAGkAZAAAAAEAAABKAAAANgA5ADEAMQAxADMAMwA4AC0ANAAwAGMAZQAtADQAMwAwADYA
-LQA1ADQAOQBhAC0AMAA4AGQAZAAwADQAOAA4AGEANABkADIAAAAAAB8AAICGAwIAAAAAAMAAAAAA
-AABGAQAAADgAAAB4AC0AbQBzAC0AZQB4AGMAaABhAG4AZwBlAC0AcwBlAG4AZABlAHIAYQBkAGMA
-aABlAGMAawAAAAEAAAAEAAAAMQAAAB8AAICGAwIAAAAAAMAAAAAAAABGAQAAADoAAAB4AC0AbQBz
-AC0AZQB4AGMAaABhAG4AZwBlAC0AYQBuAHQAaQBzAHAAYQBtAC0AcgBlAGwAYQB5AAAAAAABAAAA
-BAAAADAAAAAfAACAhgMCAAAAAADAAAAAAAAARgEAAAAqAAAAeAAtAG0AaQBjAHIAbwBzAG8AZgB0
-AC0AYQBuAHQAaQBzAHAAYQBtAAAAAAABAAAAcgAAAEIAQwBMADoAMAA7AEEAUgBBADoAMQAzADIA
-MwAwADAANAAwAHwAMwA3ADYAMAAxADQAfAAzADYANgAwADEANgB8ADEAOAAwADAANwA5ADkAMAAy
-ADQAfAAzADgAMAA3ADAANwAwADAAMAAxADgAOwAAAAAAHwAAgIYDAgAAAAAAwAAAAAAAAEYBAAAA
-RAAAAHgALQBtAGkAYwByAG8AcwBvAGYAdAAtAGEAbgB0AGkAcwBwAGEAbQAtAG0AZQBzAHMAYQBn
-AGUALQBpAG4AZgBvAAAAAQAAANoKAAB3AEcATgBZAFUAeABHAGEASQBjAFUANgA0AHQAVQBpAFIA
-NwAyAG0AaQB6AFAATgBwAG4ANgBHADIAbABzADAAVQBDADIAUQA5AHYAYQBLACsAbwBWADcAKwA1
-AGsARAByAGIAMABPAFAAZQA5ADAAZABkAGYAQQAvAEoANAA5ADkAbABlAE4ANwBBAHIAagBKADgA
-agBiAEUANwAzAFMAdQBnADQAQgBDAE4AUQArAHoAQgAvADgAbQBNAGEAYQBlAEoAWQBXAG0AYwBB
-AG0AaABsAE0AZQBsAC8ANABKAFQAcABKADgAKwA3AHkAVgBxAHoAdwBzAEoAQwBTADMARgBFAEEA
-WgB3ADYANABGAFgAaAByAHgATwBOAC8ANgBZAFEAaABXADIAcQBuAHAAYwBNAGYAeABPAHEAcQAr
-AEkARgAvAGwAQwBvADIAcQBxADEAUQAzADIAZABuADgAcgBKAHoAWQAvADQAeAB2AFYANQA2AGUA
-MQBYADgARABPADUAWABxAE8ATQBrADQAZgBvAGUASgByADEAYgBhAEoANABVADMAYQBZAHAATABE
-AGgAbQBUADYASQBBAGMASgBaAGwANgB5AFcAVQA3AGkAcABrADIATgByAEkAWgBHAHEAawBaAFgA
-dgBrAGoAawByAHkASAB5ACsARAAvAG0AZwBzAFIAUgB4AGIAMAAvADcAcwBMAGMASABhAGEASABY
-AHIAZgBmAG8AOABYAHcASgA2AFQAZABnAEkAQwAwAHAAdABVAEwAbwBjAEQAdgBMAE8ASQBCAFoA
-TABNAEMAagBJADcAeAAvADQARgBiAHEAQQAzAGkAUQBYAE4AcQBHAFIAYgBSAGEAQgBrAG0AbwBi
-AGUAbwBOAHAAUgB5AFMANgBiAGMAbABWAGcAMwBlAGQAdQB6AEsAagBCAFEAaQBUAHQAOABRADYA
-WgBXAEMAVgBWADQAMgBYAHgAdgBlAGsAVwBiAFEANQBCAEQASwBHAGoAdQAvAFIAOQBaADcAUgBy
-AGIASwBaAGoAcgBOAEoAZQA2ADYAMwB0ADkAOQBqAFgAYwBIADAAQQBuAHoAZAA1AG0AUgAxAC8A
-UABsADUATQBLAEYAVQBlAHkALwBDAHUAZgBhAGEANQB3ADMAUwAzAHAAVgBKAHIAWQBkAEYAMgA0
-AE4AYwAxAGIAbABMAEwAMABGAGEAbwBTADYARQByAHEAMwBNAG8AdQBrAGwAUwBWAC8AQgBqADEA
-cwBrAFEATwByAE4ASQBMAEkAaQBzAFUANABWAFkAYwBDAHEALwBhAEEAUgBFAGIAYgBvADMANABh
-AHcAbgBTAE4AdgBmAFQARABpAFMAZABEADMAUABIAG4ASgBsAGUAKwBlADcAWQBMAEMAcQBYAHUA
-QwBmAGwATwBHAEwAQQA1AG0AYQBHADQATABDAGEANABBADQANAAzAHMAZgBMAFgAdgAvAHUAagBy
-AFUAZQBqACsAZwBNADAAMQBjAEMAVwAzAFQAagBDAFgAMQBVAHUAcwBGAHQAbABQAEoANABmADMA
-YgBhAHEARgBOAEIAVwB0AGIAUABNAHAAMQBsADkAdABOAGsAYwBTAFUAYwBmAEcAQQBWAEoAMwBL
-AGYATgByAEkAQwB5AGEAUABmAEUAMQA5AEsAUgBjAGYARQAzAGoANwAwAFQAMgBBAEwAcgBQAEMA
-YgB2AFMAdgB5AGMAeABLAHoAKwB2ADUANwA1AGMAUgBzAE8AUgBaAE4AUwAyADMAbwA0AGgANgBh
-AEwATQB4AGwAcQBqAEYANAB5AFYAaAB2AFUASwBJAHAAQwBRAHAAQgBwAGoAKwBnAEUAZwBMADEA
-cABGAG4AYgBWAGMAaQBsAHMALwB6AEgAYgBEAG0ASAAwAG4ANAA5ADAAZQBHAEcAMwB6ADIANAAw
-AG4AdwBaAG0AYgBoAC8AcgBqAGMATABJAHgARQBuAFYANwBiAHMAMwB5AC8AUgBHAEEAcQBNAEcA
-MQBVAHgAZABTAFYANQBZAHkAOQBCAHgAOABTAHMAWQBaAFkAUABCAC8AQgBVAFoAYwBaAHcANQBn
-ADUAdQA0AG4AQgBaAEsAQgB6AFAAegBZAE0AbwB4AE0AWQA3AEEAOABHAEIAOQBwAHoAVABLAFgA
-SQBNAEUAMQBIAE8AcQBJADMAYQB1ADcAYwBYAGUAZABiAC8AUABSAEIAUABVADkAVgAzADYAdgBt
-ADAAWABsAGgARwBXAGkAdQBwAHAAeQByAGIAYQBZAEEAWQAxAEYAVABjAFgAcgBTAEIAVQBJAEwA
-YQBoAHgARQBhADUAbwBOAHQAOQBpAGEAMAA4AGYAUwBlADAANgBjAEwARABzAGIAagA3AEUALwA4
-AHYAaABJAFAAbQBtAGQAYgB4AFQAZgBsAHgARwBpAFEAWAB5ADMAUQA0AHoASABIAGgAbgAwAGQA
-eQB2AFgAZAAyAHEATQBOADgAdAB3AFoAWQB6AGEAKwBTACsARABnAEEAaAA1AEwAOQBTAHkAOQBC
-AE8ATQBTAGQAcABZAG4AKwBGAGgARwAwAGMAaABZADYAbwAxAGoAVABGADUANABvADYAZwBDAFAA
-bABEAFEAcAA0AFEAMAA2AGgAQwBJAFcASgBwAEwAOAB6AFIAYQBIAFgAZgB4AHYAaABxAEsATwBH
-AEcAbQBpAGQAWQBQAGYAZgBxAGgAZgBKADEARQBZAFgAZQA4AEgAeABEACsAcwA3ADEAWQB5AHUA
-MwBzAEkAcABWAEUAZABMADYATQA2AHkAdgBkAFYATwBSAFIANwBNAFYAYwAzAFUASgBYAHgAUABI
-AEcARAA1AHAAMQBZAE4AQwB3AGUAKwBYADgAKwAzADAAKwBOAGcAdwBlAGwAQwBOAFgASQBvADQA
-SAA5AGoATABrAGYASQBMAGQAaABLAGwAZAB0AEUAVAB4AHAAVwBWAHMARgB6AEYAbQBiAFkAYwA5
-AFIANAByADcAMQBIADEARQBiAGgARwBnAFUAZgBtAFIANgA1ADkAZwBTADAAbQBkAGIARABLADgA
-SwBjAG0AeABtAEgAbAA4AEkAcABrAHMAVgBMAEQAeQBSAEkAOQBLAFkAdwBIAC8ASABwAEkAaQBm
-AFMATgAvAEcAVwAzAG4AWgAyAFUAawBKAFcAcABCAGEAKwBDADEAdwB5AFQAdABTAGYASABZAEgA
-VQB2AFQAUgBLAGwANgBBAHAAagBRAFIALwA4AGEAdQBxAFMAawBIAEUAKwB5AHQAWABzAG0AVQBY
-AHEANwBkAEoAOQBzAFcAZgBIAGIAdwBLAHIATAB6ADYAKwA0AEYAMgBTAGMAcwB0ADQANwA3AFYA
-cQA1AFQAawB5AEEALwB6AFUAWQAzAFkAZAA1ADAANwBqAHoASQA2ADMAVABSAHIAQwB2AEsAcwA4
-AHcASQB0ADEAbAAzAFYARwBPAFAAZgBzAEUAcwBOAGIAcQBpAFUATwBUAGUAVABLACsAdgBjAHAA
-MgBMAFMAZwBVAHQAQQBMAEEAQgBZAE0ATABlAHkAOQA3ADAAaABLADEAeAAxAHkARQB3AGIASwBJ
-ACsAUQBvAGEAOAA0ADQAZwBYAHAAWABBAG4ANABSAGIAWQBDAGQAbABRAHoAcwBIADQAeQBYAGQA
-eABnAD0AAAAAAB8AAICGAwIAAAAAAMAAAAAAAABGAQAAADgAAAB4AC0AZgBvAHIAZQBmAHIAbwBu
-AHQALQBhAG4AdABpAHMAcABhAG0ALQByAGUAcABvAHIAdAAAAAEAAACGAQAAQwBJAFAAOgAyADUA
-NQAuADIANQA1AC4AMgA1ADUALgAyADUANQA7AEMAVABSAFkAOgA7AEwAQQBOAEcAOgB6AGgALQBj
-AG4AOwBTAEMATAA6ADEAOwBTAFIAVgA6ADsASQBQAFYAOgBOAEwASQA7AFMARgBWADoATgBTAFAA
-TQA7AEgAOgBLAEwAMQBQAFIAMAA2AE0AQgA2ADEAMwAzAC4AYQBwAGMAcAByAGQAMAA2AC4AcABy
-AG8AZAAuAG8AdQB0AGwAbwBvAGsALgBjAG8AbQA7AFAAVABSADoAOwBDAEEAVAA6AE4ATwBOAEUA
-OwBTAEYAUwA6ACgAMQAzADIAMwAwADAANAAwACkAKAAzADcANgAwADEANAApACgAMwA2ADYAMAAx
-ADYAKQAoADEAOAAwADAANwA5ADkAMAAyADQAKQAoADMAOAAwADcAMAA3ADAAMAAwADEAOAApADsA
-RABJAFIAOgBPAFUAVAA7AFMARgBQADoAMQAxADAAMgA7AAAAAAAfAACAhgMCAAAAAADAAAAAAAAA
-RgEAAABcAAAAeAAtAG0AcwAtAGUAeABjAGgAYQBuAGcAZQAtAGEAbgB0AGkAcwBwAGEAbQAtAG0A
-ZQBzAHMAYQBnAGUAZABhAHQAYQAtAGMAaAB1AG4AawBjAG8AdQBuAHQAAAABAAAABAAAADEAAAAf
-AACAhgMCAAAAAADAAAAAAAAARgEAAABKAAAAeAAtAG0AcwAtAGUAeABjAGgAYQBuAGcAZQAtAGEA
-bgB0AGkAcwBwAGEAbQAtAG0AZQBzAHMAYQBnAGUAZABhAHQAYQAtADAAAAAAAAEAAACCDAAANwB6
-AGcAQQB6ACsARgBLAEcAMQB3AFkASABSAFYAeQAyAFIALwBDAE4ARABNAEwATwBjAFAARQBtAHYA
-ZwBrAGwAVgAwAC8AVgBnAGkARQAvAHMAYgBlADcASAAyAHEAZgB3AEkAagB1AFUAbABJAGoAdQBB
-ADgAWABrAFkAMgBiAFYAUQAyAFgAcwB4AGwAUQA4AFMAMQBsAFcAeABYAEsARABRAGgAQgA4ACsA
-NQBzAG8ARwA5AFoAcABxAHQAZwA4AHgANQBUAGEAbAByAFoAegBrAEQAYwBzAGoASQA2AG0AcABo
-ADQAKwA3AHIAVABkAEwAawB2AFoAcwB3AG0ASQAxAGEAegBoADUAUAAxAFMAMABGAHkAZQBaAEMA
-SgB3AGwAcQBaAEMAcgBDAHUAawBlAEIALwA2AEIAQgBGAEEANwB5ADgAawB3AEgAZgBBAEUAbABV
-AEsAbQBoAGsAaABpAEIAVABNADcAWABhADMAWQB5AEgAZgB5AGIAYQBtAFUAcwBkAEwAcgB4AEIA
-SgB1AE8AQwBLAGIAeAB1AEQATQBhAEUANgBWACsAZQBHAGsAawBuAE0AMgBnAE8AcAAyAHEAUwAw
-AEEAcwBBAE0AeABtADUARAAvAGIAawBjADAAaQBJAEMAQgA0AHgAbQA0AGIAcQBJAGoAYQBvAFUA
-ZwBSADEAUgA0AHcASABkADQAZwBjAEkAUwB3AE0AcwBUAC8ARQBWAE8AcABGAFoAcQBtAEIAYwB6
-AEYAMgBUACsAOABmAFoAQQBwAHUARgB0AEEATwBuAEkAUQBXAEgAVABkACsAVwB0AGkAMAB3ADUA
-SgByADgAbAB1AEcAbwA1AEQATQBrAE0AdABLAFQAYgA2AGMAcQBmAEcAeABvAFAAcQB5ADYAZwAv
-AHEARwBrADMAcQBYAE0ALwA2AEkAUgA3AHoAdABZAEEASAB2AEkAbwBMAE0AUgBhAEYARgA1AG4A
-bgA3AGkATgBkAFYAWgBrACsAVwAxAEIARwBGAG4AKwBaAGMAcgBMAGkAeABwAEoAOABDAGYAOQBw
-AGIAOABUAGsAbQBhADUASABiAG0AdgBPAEoASwBqAHYAUgBoAFcAcQBXAEcAYgBoAFgARQBnAEkA
-VAB4AEcAVABGAG4AcABFAGcAZgBqAHkAUgBSAGQAYQBWADYAMABnADMATgB1AG8ASgA0ADQANwBa
-AFcARwBLADMATgBVAEoAMQBMAGIAUQB1AHgATgBFACsASABkAHcAMgBJAGQAVgBCAHEASQByAGIA
-RQBPADIAVQA5AGwAYwBZAFYAOQBtACsAdwA4ADMAVAB5AEsARABFAC8ARQA1ADkAUgBHAGIAWQBk
-AHUAMgAyAC8ANABtADAAeQBBAHQAZQBFAEsASAB2AE0AcwBIAEwAZQBYAEsAdQA3AGwAcAB3AFMA
-egBkADkAUQBaAFkATQA5AHQAYQA2AFYATwA3ADUAdABoAEgAaQA0AGcAUABhAHYAUAA4ADcAdgBz
-ADUARgB3ADMAdABZAGsAagBEADYAbgBiAFUAQgBZAEIAdwBLAGQAeQA5AFkAMQBzADMAdAB2AEcA
-ZgBqAGMASABvAFIAQQBrAGwAVQBGAEEAeABOAEkATwBoAG4AdgBrAG4AcwBnADIATQBTAGUAagAv
-AHEAcgB4ADUALwBrAEQAVAByAEgAdQBWAEwAaABWADIANQBWAEsAagBRAGUAVwBFAEIAaABBAHgA
-ZQBtAGMAQwB0AGwAdABIADYAZABYAG0ARwBZAFoAWQA3AHoAMgBFADMAcQBpAEsAUgBGADYAQwB5
-AHMAeABCAFYANQBNAHgAYQBtAGoAQgA1AHUAWQBOAHAAUwBZAHAASgAzADQAQQArACsAOQBZAEoA
-SABvAHIAVQBEAGIAcABEAEcASwB1ADQAcwBIAG8AMABGAEkAZQBIAEgAZABnAFQARQBqADYAcQBY
-AFAANQBvAEIAOABDAFcAOAA2AHgALwBqADMALwBBACsAeQBKADcARQB4AGYAMgA5AFYAQQBWAHQA
-OQBLAEgAYQB1AG8AZABnAGgAUgA1ADUANwBlAGQAegBsAGUATQBqAGMAMQBVADMALwBDADUAcABk
-AGkAUAB2AFcAUgBtAGgAMwB3AHQARgBrAHQAOQA4ADIATwB6AGYAaQA2AEQAaQBiAE0AaABWAFoA
-VgA3ADIAMwBNAE4ATABXAHEAOQBoAHcASwBRAFIAYgB5AHQARwB6ADUAcABSAFMAWABHADgAcQBM
-AGUASQBrAGsAdABYAHQAOQByAGQAdABqAFMAYQBIACsAbQAyAEMANwBkADUAOQBBAEgAcgBpADMA
-VgB4ADYAbABIAFoAUgBNAGgAYwBmAHcASwA3AEEAbgBsAFEAdABsADAAWABaAGoAQgA4AHkAMAB3
-AHMATwBCAFkAagAzAG4ANABtAGgAcQBKAFUANQBBAFMASABXAEQAdgBNAHMAQQA4AC8ANgA0ADMA
-UQA1AEIAZQA1AEIAVwBtAGIAMAB0AGQAZQBmAFIAVAAxADAAdQBWAHcATwAxAHoAYQBqAHcAeABN
-AEIAbABpADUAMABUAHoAWQB2AEIANQAxAGIAbABwAG0AUgBmAEQAYwBOAEkAYgBxADYATwA3AHMA
-egBDAGoALwB0AFIAQQAvAFQAcgBFADAASABwAFUAeABVAC8ATgBkAGoASwBSAGsARwBmAEoANgBl
-AC8AagBFADIAdgAzAHkAWQAzAFMAcgB0AEMAZABuADYAWQB0AHcAdwB2ADUANwA5AGYASwBpADIA
-NABFAEgATQB5AEwAUQBXAG4AcgBPADkAaQBSAEUASABrAE8AbgBrADgAagBBAGEAYQBJAFEAYgBa
-AGEAUQBaAFYAdAA0ADMAQwBkAFYAYQBHAHgAZwBDADEATgBRAGEAcQBHAGQAbgBrAFMAbgBvAEkA
-NgBzAEMAcABnADkAUgA3AHgAcwBhADgAdwByAGgAOAAvAFEARgBUAFgAYgAvAHkAVwBjAHgAawB1
-AHgAOQB4AFMAbgBSAEcAYQArADUAYwBtADgAMQBTAFoAOQBZADUAMgA4AEQARQBFAE0AVgBNAHcA
-aQBvAFQATQBZAGcAcgB0AEIAbABFAG0AZwArAHQAYQBMAEIATwB5AEUAUwBIAGMAZQBtAGYAbwA1
-AGEATABiAEwAQgB0AFEAcQBGAG8AUwA2AFoAWgBTAFYAbAB0AG0AMwBOAFUARABCADAAVwBMAGUA
-OQBkAHYAcwBqADAAYwAyAEoATwBLAFIAbwB5AHgAdwAyAFgAawBNAEQARgA5AFcATwAyAHgASwBZ
-AEIAOABSADkAawArACsAdQBEAHMAdABIAGkATQBXAEYAQQAvAEYAYwBKAC8AbABmAE0AOQAxAHQA
-WABxAEMAQQB5AEUAbgBuAGYAeQB6ADIAVAA3AG4AbwB5AGcARwBnAEEANgAyAFEAOQB3AE8ASgB2
-AFQAVQBqAGoAWABzADAAbQA3AGkAZABoAC8AeABxAEUATABRAHgAZgBoAEoAVQByAGQAcAB6ADgA
-NwBRAFgASQA3AGUAYQBWAHoAMABBADkAbAAyAFgAeABoAC8AZQAyAGQANABaADYAYQAvAFUAWABo
-AEUATgAvADEASQBtAFEAdQBlAFkAawB0AHYAagBxADIAawBGAHgAKwBhAEQASgA3AHAAVgBxAGIA
-awBSAEMAagBkAEQAYQBRAHgAMgBTAHUAYQBTAGsAYQBkAFMAWQA3AGQAaQBRAGMARgBoAHMAdwBn
-AGQAWgBEAHYAYQBHAGcAZAB4AE0ANABmAHgAUQBJAEsARgB0AFIANwArAEUAMABDAEsAMAAvAFMA
-SgA4AGMAcAB6ADcAMABKAEoARQBZADUAMwBBAGUAUAAyAEYAWAB2AEgASgBwAEsAcwAzAGwASwBD
-AHQARwBqAHYAVgA3AHAARABEAGQASgBzAHIAUABBAHcATQBYADUAYgBwAEgAWQA4AGUAbABaAGMA
-SQBEAE4AbgAxAEMAKwBEADYAZwBHAHAAbwBiADMAbABmAHEAOABRAC8AbwBQAFUASgBnAHMANABX
-AHAAbwBDAGoANABwAHoASABaAFYAMABnADcAagAxAE4AUABLAEYAagB4AHEAeAB6AFMAbwBHAEsA
-ZgBRADAATQBCAEcAVwB2AEUAcgAwAGIAYQB2AGkALwBtAEkAWgBqAGQAZABMADAAVQBFAGsASABi
-AEgAegAAAAAABP0=
+> I believe it's roughly parallel to try_charge, but in 2 parts. As long
+> as the caller serializes call to evict_valuable, current code should be
+> fine?
+>
+> Kind regards,
+> Maarten Lankhorst
 
---_000_KL1PR06MB6133B5403AA55BC79C13FF3B935B2KL1PR06MB6133apcp_--
 
