@@ -1,117 +1,63 @@
-Return-Path: <linux-kernel+bounces-408508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 307529C7F9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:00:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A96F9C7FA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:01:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3F41282626
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:00:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C44011F2158C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C9A14A611;
-	Thu, 14 Nov 2024 00:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alistair23.me header.i=@alistair23.me header.b="l8tasvGm";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fNjGWWU1"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33F717BA6;
+	Thu, 14 Nov 2024 01:00:58 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551982B2D7;
-	Thu, 14 Nov 2024 00:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA32CB65C;
+	Thu, 14 Nov 2024 01:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731545864; cv=none; b=qz0RJEOv4oMOcnjeU9OH8RhQR86NLhaupaiX63leI/C+GCl1syKQMXj9ejblyfql9gVMSiUh/yhRHw+kubk8yiC/Y0pwoh4Jc7FpymYrwvyCaiIAiLtWgTKuNt7dpS+HgAbGikUmsW0RsVUdl0LD8GfYzv7NEJ+pnRRGPfOcw0s=
+	t=1731546058; cv=none; b=LyyVb7caqxbckTX0N5Z2Xcm+PwY+h/66tO+rmP8IuZVMjwZozOfAAEUp6GpSnXCqrZ1xW0cZTsoKloYPAMMG8fqi/lXjQMR9KtlI+99imtFa5DGqharM8MthXkY6SOhACrCd7L18NMOM9K28h2dD3aXikOid8dfZpcwVRo1+Y4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731545864; c=relaxed/simple;
-	bh=WjC01+sS6nKTi7io9kauOjUhdDFeBAC7nscRHge7Vs0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EZ20Ys3Z5T0gC8eyHqxdtgLxfKbOoZORPGxsPuZXyo2ZIqgOihF9w7ZIw1bJWRYS8uGCn9fDIRnQq57Yu5PPxUriDbLkHQze6m/G1Ez6/igKRWAfGLiZDT+3JUhImvSbWbcoY2k9a5ULwVBCfvbFTYbAo5w4Z8mkarDJVJQhtlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alistair23.me; spf=pass smtp.mailfrom=alistair23.me; dkim=pass (2048-bit key) header.d=alistair23.me header.i=@alistair23.me header.b=l8tasvGm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fNjGWWU1; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alistair23.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alistair23.me
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfout.stl.internal (Postfix) with ESMTP id F13DC11400AC;
-	Wed, 13 Nov 2024 19:57:41 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-07.internal (MEProxy); Wed, 13 Nov 2024 19:57:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alistair23.me;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1731545861; x=
-	1731632261; bh=+cKsHqUdRIqVh7tWBD/bK/cAI6O3Bzd18FXNBICgPtk=; b=l
-	8tasvGmgCTw5hQX6fWvxRwJLvEDSSBSGnUYGRiGjK1vp4k2VAlVTkyFcvLOKY9qy
-	FaXYA7R7lCD8lOqcwNerKhOr2uiHQweRLeJBBaGGnrIK2m5xglFUrFe6NVwZ+bAr
-	AfwHmMIjJ7yBVLzSMMk9T1WY8K9Yo+t28cRLy9aZY34ekWdZbqvcIhbzrAlYF2fL
-	w3GeeSEj96fjGYpXKuf7HPlQd54Wwotu8HD7G8Rqgx03xMI25PfdUUPfeStgkhT0
-	INEdR7xIX/B1yQRTogVBScfq9JPlgj8l+3GjQUxk7KTe6t98jOxd6NEpVc0TI7dV
-	ooYMUTRzV1pdD7et8GisA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1731545861; x=1731632261; bh=+
-	cKsHqUdRIqVh7tWBD/bK/cAI6O3Bzd18FXNBICgPtk=; b=fNjGWWU1iN9ZHk43O
-	Hks6z+3cOYVcXAjpniPMvOc3hZAvqdgk9fNLHJwXpn12e7d/CUXazibwUc7m8ME7
-	WVQPDmYIlAiuxTH/p50g2iMisnfd2GJPwwQf8cZepZ10iNL/oHX6VV/OklEKDeuj
-	Vk8pPugHpTEgnxc80eMO3/Tqr2WawbGRJ0U0qsyFy3thfXIjUClRAQkubiniz2Tc
-	Zm54dOA4K3f1rORJylKgm1CShI1ULsM5PMk7rTji6De/ojHFSOQfqzcYLTTXD7Ly
-	mu/UJ+nn9r6QJVHCOkdf4LScZ6Lk6cKcG4UbzCJ/wTCjpPPjk3iDtiWlbLnGHbyf
-	oj91g==
-X-ME-Sender: <xms:BUs1Z-Lap-l1rchG5AGJfVquaRUyRiPDLISQ7awOZMQ4EyDz485IGg>
-    <xme:BUs1Z2JabVcgna0cVtvOJ7UKWLXljMVOWEICIEpi9GaWvUPGMcbxlOMGxp-LAFQPQ
-    c_nx4SNZfCCmoDSvxk>
-X-ME-Received: <xmr:BUs1Z-vfe74kNm-Xjb1K4geZrVpBghzWPENl7ZgHPCrvk6JioOZloEgcxxNfc3xpSzW13Kl12zRA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddugddvkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecu
-    hfhrohhmpeetlhhishhtrghirhcuhfhrrghntghishcuoegrlhhishhtrghirhesrghlih
-    hsthgrihhrvdefrdhmvgeqnecuggftrfgrthhtvghrnhepiedtfeekteelvdelveevueeu
-    jeffuefguedvteekveejjeeutedufeethffgheehnecuvehluhhsthgvrhfuihiivgepud
-    enucfrrghrrghmpehmrghilhhfrhhomheprghlihhsthgrihhrsegrlhhishhtrghirhdv
-    fedrmhgvpdhnsggprhgtphhtthhopeduiedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtohepsggvnhhnohdrlhhoshhsihhnsehprhhothhonhdrmhgvpdhrtghpthhtohepsg
-    hoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgvsehklhhovghn
-    khdruggvvhdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpd
-    hrtghpthhtoheprgdrhhhinhgusghorhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegrlhhitggvrhihhhhlse
-    hgohhoghhlvgdrtghomhdprhgtphhtthhopegrlhhishhtrghirhdrfhhrrghntghishes
-    figutgdrtghomh
-X-ME-Proxy: <xmx:BUs1ZzblcuH1WFB3A_o7oUUu2GRqoLf3RFMSD7IkiYJ3hcoeRzWZEA>
-    <xmx:BUs1Z1bg5ZWSHSd4afgYGahn3lkDdcRx9MDAV3W1TO2G6TczBjsFrA>
-    <xmx:BUs1Z_BknD4ua4OA_QGZfi8PI-RJd_WQHgmuDfprX8sEIR-o2zc8sA>
-    <xmx:BUs1Z7YrJMs0oUg85J9DXY7dH1qpvN0xaF6ovCYP1mybjs7YhSDjpw>
-    <xmx:BUs1Z9LWXYP7ZEKXluYIZ2frCnbllkqIjdqkRwrFDt7rf8LbCGqexqBH>
-Feedback-ID: ifd214418:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 13 Nov 2024 19:57:37 -0500 (EST)
-From: Alistair Francis <alistair@alistair23.me>
-To: linux-kernel@vger.kernel.org,
-	benno.lossin@proton.me,
-	boqun.feng@gmail.com,
-	me@kloenk.dev,
-	alex.gaynor@gmail.com,
-	a.hindborg@kernel.org,
-	gary@garyguo.net,
-	aliceryhl@google.com,
-	alistair.francis@wdc.com,
-	bjorn3_gh@protonmail.com,
-	tmgross@umich.edu,
-	rust-for-linux@vger.kernel.org,
-	ojeda@kernel.org
-Cc: alistair23@gmail.com,
-	Alistair Francis <alistair@alistair23.me>,
-	Dirk Behme <dirk.behme@de.bosch.com>
-Subject: [PATCH v4 11/11] rust: helpers: Remove uaccess helpers
-Date: Thu, 14 Nov 2024 10:56:31 +1000
-Message-ID: <20241114005631.818440-12-alistair@alistair23.me>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241114005631.818440-1-alistair@alistair23.me>
-References: <20241114005631.818440-1-alistair@alistair23.me>
+	s=arc-20240116; t=1731546058; c=relaxed/simple;
+	bh=Sdte1bXz9if2x3IO8OtxTMjjInxKDDZzOUDWujj4qBE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L5IiCjh8qAdRDzJcePNN6J+GM6dreq288foRLFEXAiMlkPqN0all8c/FmrFop+RjgenNEFJf3+i3wF0uHaZTS5QMJ97oojpth2+UXGvG0E+vNYYyY0/Ho9RW3B0zJ3sSbZxVQ89kWukKMBJNemNjrz9ol2QWTGxyuMV8PoG10sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ADNNvQt027188;
+	Thu, 14 Nov 2024 01:00:32 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 42uwv4atm7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 14 Nov 2024 01:00:31 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Wed, 13 Nov 2024 17:00:30 -0800
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Wed, 13 Nov 2024 17:00:26 -0800
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <dmantipov@yandex.ru>
+CC: <alex.aring@gmail.com>, <davem@davemloft.net>, <edumazet@google.com>,
+        <horms@kernel.org>, <kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-wpan@vger.kernel.org>,
+        <lizhi.xu@windriver.com>, <miquel.raynal@bootlin.com>,
+        <netdev@vger.kernel.org>, <pabeni@redhat.com>,
+        <stefan@datenfreihafen.org>,
+        <syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: [PATCH] mac802154: add a check for slave data list before delete
+Date: Thu, 14 Nov 2024 09:00:25 +0800
+Message-ID: <20241114010025.3390836-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <6ff1052f-76d5-42a4-bf0c-ec587ca4faa4@yandex.ru>
+References: <6ff1052f-76d5-42a4-bf0c-ec587ca4faa4@yandex.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -119,87 +65,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: kEotep3QgK_SS0BR7KL13Nhho6MBM2x7
+X-Authority-Analysis: v=2.4 cv=Ke6AshYD c=1 sm=1 tr=0 ts=67354baf cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=VlfZXiiP6vEA:10 a=edf1wS77AAAA:8 a=qeNRcaFeDLre4J914O0A:9 a=ZXulRonScM0A:10 a=zZCYzV9kfG8A:10
+ a=DcSpbTIhAlouE1Uv7lRv:22
+X-Proofpoint-ORIG-GUID: kEotep3QgK_SS0BR7KL13Nhho6MBM2x7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-13_17,2024-11-13_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ spamscore=0 mlxlogscore=653 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 mlxscore=0 impostorscore=0 clxscore=1015 adultscore=0
+ phishscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2409260000 definitions=main-2411140005
 
-Now that we support wrap-static-fns we no longer need the custom helper.
+On Wed, 13 Nov 2024 13:29:55 +0300, Dmitry Antipov wrote:
+> On 11/12/24 4:41 PM, Lizhi Xu wrote:
+> 
+> >   	mutex_lock(&sdata->local->iflist_mtx);
+> > +	if (list_empty(&sdata->local->interfaces)) {
+> > +		mutex_unlock(&sdata->local->iflist_mtx);
+> > +		return;
+> > +	}
+> >   	list_del_rcu(&sdata->list);
+> >   	mutex_unlock(&sdata->local->iflist_mtx);
+> 
+> Note https://syzkaller.appspot.com/text?tag=ReproC&x=12a9f740580000 makes an
+> attempt to connect the only device. How this is expected to work if there are
+> more than one device?
+There are two locks (rtnl and iflist_mtx) to protection and synchronization
+local->interfaces, so no need to worry about multiple devices.
 
-Signed-off-by: Alistair Francis <alistair@alistair23.me>
-Tested-by: Dirk Behme <dirk.behme@de.bosch.com>
----
- rust/bindgen_static_functions   |  3 +++
- rust/bindings/bindings_helper.h |  1 +
- rust/helpers/helpers.c          |  6 ++----
- rust/helpers/uaccess.c          | 15 ---------------
- 4 files changed, 6 insertions(+), 19 deletions(-)
- delete mode 100644 rust/helpers/uaccess.c
-
-diff --git a/rust/bindgen_static_functions b/rust/bindgen_static_functions
-index 8bc291a7a799..ec48ad2e8c78 100644
---- a/rust/bindgen_static_functions
-+++ b/rust/bindgen_static_functions
-@@ -27,3 +27,6 @@
- 
- --allowlist-function get_task_struct
- --allowlist-function put_task_struct
-+
-+--allowlist-function copy_from_user
-+--allowlist-function copy_to_user
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index 63b78a833303..7847b2b3090b 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -24,6 +24,7 @@
- #include <linux/sched/signal.h>
- #include <linux/sched/task.h>
- #include <linux/slab.h>
-+#include <linux/uaccess.h>
- #include <linux/wait.h>
- #include <linux/workqueue.h>
- 
-diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-index ebe3a85c7210..42c28222f6c2 100644
---- a/rust/helpers/helpers.c
-+++ b/rust/helpers/helpers.c
-@@ -1,8 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Non-trivial C macros cannot be used in Rust. Similarly, inlined C functions
-- * cannot be called either. This file explicitly creates functions ("helpers")
-- * that wrap those so that they can be called from Rust.
-+ * Non-trivial C macros cannot be used in Rust. This file explicitly creates
-+ * functions ("helpers") that wrap those so that they can be called from Rust.
-  *
-  * Sorted alphabetically.
-  */
-@@ -16,7 +15,6 @@
- #include "slab.c"
- #include "spinlock.c"
- #include "task.c"
--#include "uaccess.c"
- #include "vmalloc.c"
- #include "wait.c"
- #include "workqueue.c"
-diff --git a/rust/helpers/uaccess.c b/rust/helpers/uaccess.c
-deleted file mode 100644
-index f49076f813cd..000000000000
---- a/rust/helpers/uaccess.c
-+++ /dev/null
-@@ -1,15 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--
--#include <linux/uaccess.h>
--
--unsigned long rust_helper_copy_from_user(void *to, const void __user *from,
--					 unsigned long n)
--{
--	return copy_from_user(to, from, n);
--}
--
--unsigned long rust_helper_copy_to_user(void __user *to, const void *from,
--				       unsigned long n)
--{
--	return copy_to_user(to, from, n);
--}
--- 
-2.47.0
-
+Lizhi
 
