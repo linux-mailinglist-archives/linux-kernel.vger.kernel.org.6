@@ -1,282 +1,238 @@
-Return-Path: <linux-kernel+bounces-409744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 821159C90CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:28:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60E099C90F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:40:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 127001F232EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:28:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E407E1F228B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0353C6BA;
-	Thu, 14 Nov 2024 17:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D087418D642;
+	Thu, 14 Nov 2024 17:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S0qn0cXH"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="TmUYOHke"
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297A71C683
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 17:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287A418C343
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 17:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731605298; cv=none; b=dtu3t27u/JjUICmXTfbC6LsNPoQpZSArgfo6Ee1zdk0jY2aEUoYD67UAin7zAeX2dNG6X8jVVhhj4WfYF/V/kokOwHPa4LJ8kW0VvOhl8Y/Vwx4p/7bhxRXnQ9Z9/aaJqhZt+/U+yyCofJ2BJzF4kPnZburciPzkCZwDlFtI+1g=
+	t=1731605995; cv=none; b=ZmhsIrwokkNwQ+FI7xSpePIQyrCpjRKjMIw5NVYJt31LMDbcCe4UToADfZKjbkjfFSMDlRHHDM/s3+zyNZHHieci4dyFpoauQlyL5W3GWqljEa0Ud3Z670M1yHs7Qgkz5s/0vCZpz7Mgim3DzgqX2iacdhZzcy8kUYEWZMuhPSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731605298; c=relaxed/simple;
-	bh=H4KQdNqPdafK8ASOUwb/NoICqx/zXnLGbTVG3nQABhY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G9nM0Q1A/XGJbL8fKgqmrXrhcPzzEWAiHteLeKtyuKYWVhxNA0ITgxE5Q7bdNTrA6o/tEe3UMnkzwnxXQjKMJhFVI3OOjorBINWZZ5bVE+S1XVBIf4o9zua5yKl3kzRJ98NDLi6vtSttt9Q/IkDC16WdGSPE3xJFAzT4nHzCkjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S0qn0cXH; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7ea9739647bso665950a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:28:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731605296; x=1732210096; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jINxuziEGUKxSEDQO12O3R9xdpJrug6G+fjPTMpWDhU=;
-        b=S0qn0cXHo/qmLhW/tDDVjel+eNsozSB5o5G1lOirEqQPRPv2G4NfUTEs1qSyvkr642
-         hriJu2WmquXVAYeyUJ7koLc9WKhiFCuNLxNFfPxuwghnlbmBjG0H040oOy8oGPw1rQxD
-         aTh5pNtlxbaYrafldl8M1PCiJXROHWiFpC8ZKlYBqWNaSTAW67dMMjEj18BpLEPi6W6r
-         sG1+KcA+NSmDc9amaaK0a5xkxr0J3UsL0NQ/A26BHUSy5bINOtjO5kpd+KzIIIyuNwSl
-         z/Vd+vyw7Owzc59RGCGdLaF173EOLfhYsCIOYFuMyHUTgi6ttcF/RFTvC1qA8+/xRQU2
-         8szQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731605296; x=1732210096;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jINxuziEGUKxSEDQO12O3R9xdpJrug6G+fjPTMpWDhU=;
-        b=eeSDc48v6E7PAXEKDScUZ44kIWqT4KdP6ugr/ezTk5avRA3dPWIuviUKeEMjGY9gk9
-         ywRn9JO4klVy3Pls+c8R/YOmvFQ+vW/JhiJ3qV3UWfYZ/A/9wziAL+yIxpRs3XjEfshK
-         RTqiYe50mJYRDNu2FYMm/+mYXTpGrJctoOArnec566cZl4UIYHidiV/XlgzV69ltKp9E
-         SDtCbmTNfrY4GspCewBR0u2hJ4GWjX0wJ9vpLe36t0kPnWjtwIeA/5S/VL4YC5Daeb+l
-         +miLuh0+KZgpnV4BbHKtIPpHTsBNqil2soGgsMVrhC9uOpgHgOVzOkKb4UQeYcqaPpJD
-         XnnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVGXNLq5YcwrHi0XGkt2UeU7V0uaMaJ05YHPXSXI9dEsxuXjmafpagLUsSp9CE+R+6CkxzDjZehHfRgpD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcPNiyLA735itbD0rvKMEaI68S6hjb9ApWTSoCL94mDD2RsjYW
-	3yJj64SkBfYUYEoNS4Q2arFlp5Jb1ZpT9jCMDfzBRecGk0v6Q+5yG9nCshVYQQ==
-X-Google-Smtp-Source: AGHT+IF0kTNpd9maxDbIGrdGFuphWSiT+uTWui2ph8Yv10bDI8Lj8IF7aQjnn3D4RSc5j+V9Z/0nTg==
-X-Received: by 2002:a17:90b:4b4f:b0:2e1:e19f:609b with SMTP id 98e67ed59e1d1-2e9b177fc81mr32873637a91.24.1731605296407;
-        Thu, 14 Nov 2024 09:28:16 -0800 (PST)
-Received: from thinkpad ([117.193.208.47])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea02495651sm1560066a91.16.2024.11.14.09.28.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 09:28:15 -0800 (PST)
-Date: Thu, 14 Nov 2024 22:58:06 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v7 0/7] PCI: dwc: opitimaze RC Host/EP pci_fixup_addr()
-Message-ID: <20241114172806.cusbzxlcqtayeqvw@thinkpad>
-References: <20241029-pci_fixup_addr-v7-0-8310dc24fb7c@nxp.com>
- <ZzYqKNAWRH6EMiny@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1731605995; c=relaxed/simple;
+	bh=0Ri26y6BNd727u8kMVaoNzmyXUjeTT1xZXrJxlQ7Tls=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mKsS1agUOwbd2x/IfBe+GwMTbMxWRq5ShTm6C0JUaVsUE71HaebSlBllTiBP58hllWxCEt0BOPNLcMkmvBKhx6482gKCWcD76R6Wh9PE1QBEIDnFZGjL8uYAZjwnIvHPl0uoRnwbxquyX7YLMrxTU8+p4RmVskT6F5jCzPH65uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=TmUYOHke; arc=none smtp.client-ip=66.163.184.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731605992; bh=263+m7XTl10hNqcF/0th/BSfkHJbQiC6Xwiw+AsLuFk=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=TmUYOHkeH0yYuMyMxji65Z4pI8IroL+otfWphrilXrck9S//cv8BuY1jmGyOc+XvY51Ef+hhiWX8shcF3q2gbE3s8AsQkSaR8MNsbYDJ0wGqA2L/A73LPZqekzYKHfpvHtOq9GvrRAtTqlx7BRbbGGwjTkAlSrxkwwFMZbgNqPMnuWcxWHHUa1VXXlG1HlUZoSALPFfv0DIRYFH/psbhuJSFyd46/WO35Zl6iF2RqcvOLKyN+lFKswWW+5iy2psmAiZOY6s/fKMZQkORf1rexp2LZ2Sbexz5KI2PHnbkYhTiQ6wIexO1yHpzygUynWjK8lMOjjpXVi6sg94FIPHNMQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731605992; bh=XmiUrRwF6lJx+Oty/gHfl3NpCBcXRVLrjm9ZVEhxgKr=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=HaSFlaX2mJkf+P2NBxLXXB8gVoa6jJiGu3dylVf0G4rjYbtHapdsxL4jtRW1bI8M0T8XJ+1N4RWIMiGq6rq1AJuOKWV4Me+B1m6bncDjW6JgVqalH6gVbs8qKnf/vnu95+cJ9qYZ8J+kf9VS9MWGuP3zLmw70zEgEo9Jpk5aS9baVgEwehMFwgnOZnx9nXRX7dE21CzBgU/AOKoGYEStkMLFp99OsZTFKksaGiMHntpt1Md/kdcWxDhxsLoB1UPraaCQA9gsjqd3RR5DRkN7hnJ0trx5USXKLrUePuDlaU6+VDGvtfjnWOdPZRQpgx+gA2YRFMOJn+aFnahJ70LhfQ==
+X-YMail-OSG: HeXyeTUVM1l145AB5nS_R73jMvyo1oKHYgE0ffzWIgs8pErH4mxLa6iSCn.o9HB
+ _62O4EqDuxAvZaVN0Ls2vCRSYTjb5ea3FBe4oTjOBp_Ynak3wENXPEQ6L3ZSMXMzz2EdGayke6iy
+ yuvm5PI1XEAUVuMzBlBrdvPKeWouAA3I4lkevvDO19Y9JpixgZ2sqjvyihZdkwmZqT2QDKChv..h
+ 63GyqoQQbeLcsONDXkQRdfk90vQFHHAiRn.9jBB0GFj2fCuueS3sNZ4Zg5iYAQGMBM8EoIw.jUrA
+ eaKPm5QDvZjdUg00aDHmyABrVdjpTDMrQt6cwv_20vwlZgmF7sKr_pMVy3sSTffblb7BGZ59w.xZ
+ FPRHXQbJdhj2kbA6vMofpdptNnIN5V1u4wYueT8BhkswqLLwf_1sKeqBTZ1yp0FEbC3rU91wMAVd
+ CJqlqEUfWw78aXa39RNke32qFf3C05TLxmtz7ydFdN61Y7HPj6.myUByH4n_HcAldepqybW3Vtwn
+ raAoGe8AzZYSicPn3Acg1MBqSkQXok.b6X89YGVCZB1GPntQhm0G3RwpLpHB4FByE4uXjTC9NvJm
+ ORGfsX6y7b3mNE57dxCcVXvBf61pbkqPIoWMApSabDY0jqN7a8m5N16K8eENmjJjgNGE1YB2G7Gd
+ t6JZAjB__qATXlpEYDxcF.wzx5HGQRFa.03vm2WONpfzL0KZMS.fKbRQlHXfjy8K4CVjUSfUvRze
+ dFre8UfnQRIfc80d0JZUUlHXfwashIgvtCeHPVMvK7BIaoywXphB9BivXsWaJDPp3c6qji1SSv3V
+ 9pKOqyZJ0bYNEFSRpFIcoIhxx3SdpWBpkCpWhYQuloPVd.L1JPUvk5GrTePcepubdA4cnlkqfIXJ
+ KpGJWyUX6uKl7EjYSY0S23AccKm5DCWBr21FCXh4kghR0Ly65nN4.G9XrCEPDhLV8x9Q.dTlXYFd
+ I_CvBh3g1Qnv_YT4aYjNrL824TfWRdE22Or7kQrKwlP.B0vSiwSCJ0XjnWmtooqBWtbusMSw.szK
+ F8lTxzVDNBGX9hW1ORzqLhM0Gd6ASK2cHTk7SdmhylRYmCwig05jt0IMFQ8FZVutuHJELUAW5Ulg
+ Uvw8b524F4XRVSPmf0O6i.lC42hpXZzB076FAs_.Eszu5Az7Jde2tReW4iAh6CYOYPUJbYaXDsbI
+ dUnQvdQaXfLhEb_Rf_wQtkOIT4mxFJAIwkLI_a9LnpiNQk1Fe0bsl0FQEHsWVP5455AjQLLSBvar
+ uOKi_FcI_lVt0hXApRuCdsZvdfOh.zHumvaCeCwxsCty2OTBsSFZu4INOpvqqNN4rMcnQH8_BDHC
+ RzJOQ1mLkul6ofhoEC8jhBLGFKbqPQMt_35VET9.znns6bPP47NIAgNMKakRQK3Aqvn4qo4KK7py
+ NiZxmWMsacY3bwPayHSENEFmrT6ZLlqM1bJMNE5OH8IlDJ3wCSGt8_LgR2OFrhjFS.O8M5CIffsD
+ 8cks25e9BOVlwZSWWeOBtY09_F2biy8vDjl4VunPJvMKInA388k9VB4Vhf42NQ1jXunS.NM6QLGB
+ SM3Aj7vvF0rol8WooiB8TZfALioEGZiy6ARV4F359fRJkflPVGhcVC1xCtLGpbJeVQ9B7eEhW6sF
+ 4TL75cZ.iiJ6DchYjGe6JrMMTSR08PtMAz8gbcqPSgvPZQU0orxsFvMcIisaIeShGk3PB5BxKjF6
+ Ss5ugUd4yRnUiaI_YrOutnvobpA0ptMqtTX5HHM5Qls0V48f_2j5BzMeEpFVTuiB62Cn0s_8LVC_
+ uR8cZQ.UIDDMMqZpV08rne.isV1F3H2BaOZyqlLEWu_6ZL2dIU_VAzbM95wQVp5HRB6cOObqLX98
+ wYdp8HLM4KBO6BoZGl8oFCKjiwPyzbUNg97Glr4gvzjUz0tq5PhHtNunSiac9R7bZNrBtFVGsaiT
+ MmNdAiSwvTI732oFOeVgZzb6zdGiYQL7o.UpgkWOP6SbnN.J1ER5OlUfpB4Eq26U.HnYtMypxiKg
+ 3RFJkZI1h__G7MXsgZumRfNQICYB94XKzxItbBDaNr_Oxguy5VIV5xpJXavAXtFpcgn3V72cxx7y
+ nXq0dOw9j.sznePAmPUu8lEJAamyiIVAcMRBgVyxgVbvLrtefhObrjX8QcWF2nQ7BdpcEViVz3EM
+ 0iWWC9G7me6esynGFjuuZSdpgWXfUTQPS2J12QJos5adC5xMrK6b48XSoY9QrP.BQOMZx9VM5x_B
+ Qae4RVmJeuKYdFKWfryEe6iDQP_9Nn7XtY4caGJkQr6VrgExhnVryKgLANl2r2f2x_gsWMI0FhMV
+ jxNEM.FE-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 81d03b63-939c-4e86-a69f-4777cd396e25
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Thu, 14 Nov 2024 17:39:52 +0000
+Received: by hermes--production-gq1-5dd4b47f46-9j75b (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID debdf0be1d06a72001b6043acb052466;
+          Thu, 14 Nov 2024 17:29:40 +0000 (UTC)
+Message-ID: <53a3601e-0999-4603-b69f-7bed39d4d89a@schaufler-ca.com>
+Date: Thu, 14 Nov 2024 09:29:39 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZzYqKNAWRH6EMiny@lizhi-Precision-Tower-5810>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
+To: "Dr. Greg" <greg@enjellic.com>, Song Liu <song@kernel.org>
+Cc: Song Liu <songliubraving@meta.com>,
+ "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>,
+ "andrii@kernel.org" <andrii@kernel.org>,
+ "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>,
+ "daniel@iogearbox.net" <daniel@iogearbox.net>,
+ "martin.lau@linux.dev" <martin.lau@linux.dev>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "brauner@kernel.org" <brauner@kernel.org>, "jack@suse.cz" <jack@suse.cz>,
+ "kpsingh@kernel.org" <kpsingh@kernel.org>,
+ "mattbobrowski@google.com" <mattbobrowski@google.com>,
+ "amir73il@gmail.com" <amir73il@gmail.com>,
+ "repnop@google.com" <repnop@google.com>,
+ "jlayton@kernel.org" <jlayton@kernel.org>, Josef Bacik
+ <josef@toxicpanda.com>, "mic@digikod.net" <mic@digikod.net>,
+ "gnoack@google.com" <gnoack@google.com>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20241112082600.298035-1-song@kernel.org>
+ <d3e82f51-d381-4aaf-a6aa-917d5ec08150@schaufler-ca.com>
+ <ACCC67D1-E206-4D9B-98F7-B24A2A44A532@fb.com>
+ <d7d23675-88e6-4f63-b04d-c732165133ba@schaufler-ca.com>
+ <332BDB30-BCDC-4F24-BB8C-DD29D5003426@fb.com>
+ <8c86c2b4-cd23-42e0-9eb6-2c8f7a4cbcd4@schaufler-ca.com>
+ <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com>
+ <20241114163641.GA8697@wind.enjellic.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20241114163641.GA8697@wind.enjellic.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22876 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Thu, Nov 14, 2024 at 11:49:44AM -0500, Frank Li wrote:
-> On Tue, Oct 29, 2024 at 12:36:33PM -0400, Frank Li wrote:
-> 
-> Mani:
-> 	Do you have chance to check dwc part?
-> 
+On 11/14/2024 8:36 AM, Dr. Greg wrote:
+> On Wed, Nov 13, 2024 at 10:57:05AM -0800, Song Liu wrote:
+>
+> Good morning, I hope the week is going well for everyone.
+>
+>> On Wed, Nov 13, 2024 at 10:06???AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>> On 11/12/2024 5:37 PM, Song Liu wrote:
+>> [...]
+>>>> Could you provide more information on the definition of "more
+>>>> consistent" LSM infrastructure?
+>>> We're doing several things. The management of security blobs
+>>> (e.g. inode->i_security) has been moved out of the individual
+>>> modules and into the infrastructure. The use of a u32 secid is
+>>> being replaced with a more general lsm_prop structure, except
+>>> where networking code won't allow it. A good deal of work has
+>>> gone into making the return values of LSM hooks consistent.
+>> Thanks for the information. Unifying per-object memory usage of
+>> different LSMs makes sense. However, I don't think we are limiting
+>> any LSM to only use memory from the lsm_blobs. The LSMs still
+>> have the freedom to use other memory allocators. BPF inode
+>> local storage, just like other BPF maps, is a way to manage
+>> memory. BPF LSM programs have full access to BPF maps. So
+>> I don't think it makes sense to say this BPF map is used by tracing,
+>> so we should not allow LSM to use it.
+>>
+>> Does this make sense?
+> As involved bystanders, some questions and thoughts that may help
+> further the discussion.
+>
+> With respect to inode specific storage, the currently accepted pattern
+> in the LSM world is roughly as follows:
+>
+> The LSM initialization code, at boot, computes the total amount of
+> storage needed by all of the LSM's that are requesting inode specific
+> storage.  A single pointer to that 'blob' of storage is included in
+> the inode structure.
+>
+> In an include file, an inline function similar to the following is
+> declared, whose purpose is to return the location inside of the
+> allocated storage or 'LSM inode blob' where a particular LSM's inode
+> specific data structure is located:
+>
+> static inline struct tsem_inode *tsem_inode(struct inode *inode)
+> {
+> 	return inode->i_security + tsem_blob_sizes.lbs_inode;
+> }
+>
+> In an LSM's implementation code, the function gets used in something
+> like the following manner:
+>
+> static int tsem_inode_alloc_security(struct inode *inode)
+> {
+> 	struct tsem_inode *tsip = tsem_inode(inode);
+>
+> 	/* Do something with the structure pointed to by tsip. */
+> }
+>
+> Christian appears to have already chimed in and indicated that there
+> is no appetite to add another pointer member to the inode structure.
+>
+> So, if this were to proceed forward, is it proposed that there will be
+> a 'flag day' requirement to have each LSM that uses inode specific
+> storage implement a security_inode_alloc() event handler that creates
+> an LSM specific BPF map key/value pair for that inode?
+>
+> Which, in turn, would require that the accessor functions be converted
+> to use a bpf key request to return the LSM specific information for
+> that inode?
+>
+> A flag day event is always somewhat of a concern, but the larger
+> concern may be the substitution of simple pointer arithmetic for a
+> body of more complex code.  One would assume with something like this,
+> that there may be a need for a shake-out period to determine what type
+> of potential regressions the more complex implementation may generate,
+> with regressions in security sensitive code always a concern.
+>
+> In a larger context.  Given that the current implementation works on
+> simple pointer arithmetic over a common block of storage, there is not
+> much of a safety guarantee that one LSM couldn't interfere with the
+> inode storage of another LSM.  However, using a generic BPF construct
+> such as a map, would presumably open the level of influence over LSM
+> specific inode storage to a much larger audience, presumably any BPF
+> program that would be loaded.
+>
+> The LSM inode information is obviously security sensitive, which I
+> presume would be be the motivation for Casey's concern that a 'mistake
+> by a BPF programmer could cause the whole system to blow up', which in
+> full disclosure is only a rough approximation of his statement.
+>
+> We obviously can't speak directly to Casey's concerns.  Casey, any
+> specific technical comments on the challenges of using a common inode
+> specific storage architecture?
 
-Frank,
+My objection to using a union for the BPF and LSM pointer is based
+on the observation that a lot of modern programmers don't know what
+a union does. The BPF programmer would see that there are two ways
+to accomplish their task, one for CONFIG_SECURITY=y and the other
+for when it isn't. The second is much simpler. Not understanding
+how kernel configuration works, nor being "real" C language savvy,
+the programmer installs code using the simpler interfaces on a
+Redhat system. The SELinux inode data is compromised by the BPF
+code, which thinks the data is its own. Hilarity ensues.
 
-Sorry for the delay. I plan to look into this (and other series) tomorrow.
-
-- Mani
-
-> Frank
-> 
-> > == RC side:
-> >
-> >             ┌─────────┐                    ┌────────────┐
-> >  ┌─────┐    │         │ IA: 0x8ff8_0000    │            │
-> >  │ CPU ├───►│   ┌────►├─────────────────┐  │ PCI        │
-> >  └─────┘    │   │     │ IA: 0x8ff0_0000 │  │            │
-> >   CPU Addr  │   │  ┌─►├─────────────┐   │  │ Controller │
-> > 0x7ff8_0000─┼───┘  │  │             │   │  │            │
-> >             │      │  │             │   │  │            │   PCI Addr
-> > 0x7ff0_0000─┼──────┘  │             │   └──► IOSpace   ─┼────────────►
-> >             │         │             │      │            │    0
-> > 0x7000_0000─┼────────►├─────────┐   │      │            │
-> >             └─────────┘         │   └──────► CfgSpace  ─┼────────────►
-> >              BUS Fabric         │          │            │    0
-> >                                 │          │            │
-> >                                 └──────────► MemSpace  ─┼────────────►
-> >                         IA: 0x8000_0000    │            │  0x8000_0000
-> >                                            └────────────┘
-> >
-> > Current dwc implimemnt, pci_fixup_addr() call back is needed when bus
-> > fabric convert cpu address before send to PCIe controller.
-> >
-> >     bus@5f000000 {
-> >             compatible = "simple-bus";
-> >             #address-cells = <1>;
-> >             #size-cells = <1>;
-> >             ranges = <0x80000000 0x0 0x70000000 0x10000000>;
-> >
-> >             pcie@5f010000 {
-> >                     compatible = "fsl,imx8q-pcie";
-> >                     reg = <0x5f010000 0x10000>, <0x8ff00000 0x80000>;
-> >                     reg-names = "dbi", "config";
-> >                     #address-cells = <3>;
-> >                     #size-cells = <2>;
-> >                     device_type = "pci";
-> >                     bus-range = <0x00 0xff>;
-> >                     ranges = <0x81000000 0 0x00000000 0x8ff80000 0 0x00010000>,
-> >                              <0x82000000 0 0x80000000 0x80000000 0 0x0ff00000>;
-> >             ...
-> >             };
-> >     };
-> >
-> > Device tree already can descript all address translate. Some hardware
-> > driver implement fixup function by mask some bits of cpu address. Last
-> > pci-imx6.c are little bit better by fetch memory resource's offset to do
-> > fixup.
-> >
-> > static u64 imx_pcie_cpu_addr_fixup(struct dw_pcie *pcie, u64 cpu_addr)
-> > {
-> > 	...
-> > 	entry = resource_list_first_type(&pp->bridge->windows, IORESOURCE_MEM);
-> > 	return cpu_addr - entry->offset;
-> > }
-> >
-> > But it is not good by using IORESOURCE_MEM to fix up io/cfg address map
-> > although address translate is the same as IORESOURCE_MEM.
-> >
-> > This patches to fetch untranslate range information for PCIe controller
-> > (pcie@5f010000: ranges). So current config ATU without cpu_fixup_addr().
-> >
-> > == EP side:
-> >
-> >                    Endpoint
-> >   ┌───────────────────────────────────────────────┐
-> >   │                             pcie-ep@5f010000  │
-> >   │                             ┌────────────────┐│
-> >   │                             │   Endpoint     ││
-> >   │                             │   PCIe         ││
-> >   │                             │   Controller   ││
-> >   │           bus@5f000000      │                ││
-> >   │           ┌──────────┐      │                ││
-> >   │           │          │ Outbound Transfer     ││
-> >   │┌─────┐    │  Bus     ┼─────►│ ATU  ──────────┬┬─────►
-> >   ││     │    │  Fabric  │Bus   │                ││PCI Addr
-> >   ││ CPU ├───►│          │Addr  │                ││0xA000_0000
-> >   ││     │CPU │          │0x8000_0000            ││
-> >   │└─────┘Addr└──────────┘      │                ││
-> >   │       0x7000_0000           └────────────────┘│
-> >   └───────────────────────────────────────────────┘
-> >
-> > bus@5f000000 {
-> >         compatible = "simple-bus";
-> >         ranges = <0x80000000 0x0 0x70000000 0x10000000>;
-> >
-> >         pcie-ep@5f010000 {
-> >                 reg = <0x5f010000 0x00010000>,
-> >                       <0x80000000 0x10000000>;
-> >                 reg-names = "dbi", "addr_space";
-> >                 ...                ^^^^
-> >         };
-> >         ...
-> > };
-> >
-> > Add `bus_addr_base` to configure the outbound window address for CPU write.
-> > The BUS fabric generally passes the same address to the PCIe EP controller,
-> > but some BUS fabrics convert the address before sending it to the PCIe EP
-> > controller.
-> >
-> > Above diagram, CPU write data to outbound windows address 0x7000_0000,
-> > Bus fabric convert it to 0x8000_0000. ATU should use BUS address
-> > 0x8000_0000 as input address and convert to PCI address 0xA000_0000.
-> >
-> > Previously, `cpu_addr_fixup()` was used to handle address conversion. Now,
-> > the device tree provides this information.
-> >
-> > The both pave the road to eliminate ugle cpu_fixup_addr() callback function.
-> >
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > ---
-> > Changes in v7:
-> > - fix
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202410291546.kvgEWJv7-lkp@intel.com/
-> > - Link to v6: https://lore.kernel.org/r/20241028-pci_fixup_addr-v6-0-ebebcd8fd4ff@nxp.com
-> >
-> > Changes in v6:
-> > - merge RC and EP to one thread!
-> > - Link to v5: https://lore.kernel.org/r/20241015-pci_fixup_addr-v5-0-ced556c85270@nxp.com
-> >
-> > Changes in v5:
-> > - update address order in diagram patches.
-> > - remove confused 0x5f00_0000 range
-> > - update patch1's commit message.
-> > - Link to v4: https://lore.kernel.org/r/20241008-pci_fixup_addr-v4-0-25e5200657bc@nxp.com
-> >
-> > Changes in v4:
-> > - Improve commit message by add driver source code path.
-> > - Link to v3: https://lore.kernel.org/r/20240930-pci_fixup_addr-v3-0-80ee70352fc7@nxp.com
-> >
-> > Changes in v3:
-> > - see each patch
-> > - Link to v2: https://lore.kernel.org/r/20240926-pci_fixup_addr-v2-0-e4524541edf4@nxp.com
-> >
-> > Changes in v2:
-> > - see each patch
-> > - Link to v1: https://lore.kernel.org/r/20240924-pci_fixup_addr-v1-0-57d14a91ec4f@nxp.com
-> >
-> > ---
-> > Frank Li (7):
-> >       of: address: Add parent_bus_addr to struct of_pci_range
-> >       PCI: dwc: Using parent_bus_addr in of_range to eliminate cpu_addr_fixup()
-> >       PCI: dwc: ep: Add bus_addr_base for outbound window
-> >       PCI: imx6: Remove cpu_addr_fixup()
-> >       dt-bindings: PCI: fsl,imx6q-pcie-ep: Add compatible string fsl,imx8q-pcie-ep
-> >       PCI: imx6: Pass correct sub mode when calling phy_set_mode_ext()
-> >       PCI: imx6: Add i.MX8Q PCIe Endpoint (EP) support
-> >
-> >  .../devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml | 38 ++++++++++++++-
-> >  drivers/of/address.c                               |  2 +
-> >  drivers/pci/controller/dwc/pci-imx6.c              | 46 +++++++++---------
-> >  drivers/pci/controller/dwc/pcie-designware-ep.c    | 21 ++++++++-
-> >  drivers/pci/controller/dwc/pcie-designware-host.c  | 55 +++++++++++++++++++++-
-> >  drivers/pci/controller/dwc/pcie-designware.h       |  9 ++++
-> >  include/linux/of_address.h                         |  1 +
-> >  7 files changed, 148 insertions(+), 24 deletions(-)
-> > ---
-> > base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-> > change-id: 20240924-pci_fixup_addr-a8568f9bbb34
-> >
-> > Best regards,
-> > ---
-> > Frank Li <Frank.Li@nxp.com>
-> >
-
--- 
-மணிவண்ணன் சதாசிவம்
+>
+> Song, FWIW going forward.  I don't know how closely you follow LSM
+> development, but we believe an unbiased observer would conclude that
+> there is some degree of reticence about BPF's involvement with the LSM
+> infrastructure by some of the core LSM maintainers, that in turn makes
+> these types of conversations technically sensitive.
+>
+>> Song
+> We will look forward to your thoughts on the above.
+>
+> Have a good week.
+>
+> As always,
+> Dr. Greg
+>
+> The Quixote Project - Flailing at the Travails of Cybersecurity
+>               https://github.com/Quixote-Project
 
