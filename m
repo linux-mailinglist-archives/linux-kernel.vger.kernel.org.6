@@ -1,122 +1,100 @@
-Return-Path: <linux-kernel+bounces-409987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 762F09C950B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:10:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C7659C9519
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:15:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2257C1F212BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:10:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BE582812E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655A61B3924;
-	Thu, 14 Nov 2024 22:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C5A1AF0DA;
+	Thu, 14 Nov 2024 22:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="judC/vmd"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PrKWzyAh"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225181B0F0E;
-	Thu, 14 Nov 2024 22:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD5D1ADFE2
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731622189; cv=none; b=WAYy5hrfA1oe8MhTH0DJYmpCGiJhOIWp8N7WBx9qaCA7AeNRvajFILVNKWQ5RuJjIyfTdOu80tsLhsVJveTNtCsP/E0uxDujJaVsChL/l1pF0wuE9g1eGAJJbLcmwZFQOARd/HGk6KFd7KeWOa3z4uzAz3QKBEv1JALO7MSVboE=
+	t=1731622547; cv=none; b=OKPo598SeRu35lL1QV/ri31FT4EZbkfqPdJQpTFhDDXir9O9uWr6EGk7dpUA61h+a1/VqytBGFnWYADJxsszxk2M0AtofX4m+s7wmuMdH4PiZUeaR3hupfA63qi2O/m6T4NFB5Y5X92ca8z9LG32gHjDgDGerNDLYw9Yjmu1aGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731622189; c=relaxed/simple;
-	bh=6IQyXRC9hYx6rGoIbfTLpkvZlOUYKn8M0olw07FHBkU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qosHReXmPEAHic6Qdp56GosnuNcAaxVNPRYv7avgFhdW0xI7d0+A/pQBAcbI4w9STQf3X65OxF68QLGrvnJbgUEPafZ8ocCNZTUIpk0pWW8RA4GSo/cPieSLIoWKKgyv770ebL//lnhnSpDddGA61vqWOsUi3a7SRk8bidWhh1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=judC/vmd; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4315eac969aso6807125e9.1;
-        Thu, 14 Nov 2024 14:09:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731622186; x=1732226986; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LP7Hi3Q6dgrff1lGnR4FQ8i3hpbGOOo16Puyr3RTY9M=;
-        b=judC/vmdeGm7YkTeIi5GpQ6slJYMYF4+sgsrWa6Ps5LFITQlu9pTrowKCBQvK6benT
-         NoutXvZNGHlupNiBDS6ftiLLBO0kLrTcw0WKPV93eR/FnsJ1oj+8jJ/PlSnUgDdgP+ut
-         /NkyLz+ScMGLGdp6+/IJBe3QXIDM56rcI3I4oGwtrE6MtOdN3kWBDtXhmWk8OByFNCm4
-         044o0rrLPQOb9QBNt23MHv78jeylvwOHZ5R+wXwOivVYYMe2apzWWoZC9sNEP5w8AqCM
-         iu8JfrgnvIrvccc/4h3IqAdRTajstAe74oXqWR8i9idnKNvyzW6zAJi+pX3pxU+gVhn8
-         3dxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731622186; x=1732226986;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LP7Hi3Q6dgrff1lGnR4FQ8i3hpbGOOo16Puyr3RTY9M=;
-        b=esVefOW3WWU4IuEY+Eih4ZiXcLGzq0Bmv4tSUbS7pOk+CQSFbB4kx0eV8L+zwXDxR3
-         G5NpsH1yVu3a2OPct2fUbNo8kO3zblXMNYcKCw+NZVxB7NcUQsXOrr1ZawI1bBo3k01f
-         VzISrchkJCJ3Bd1elJOm1ptu/MUJNvbGmYrxS4oModWa0F5ndNFbXCWojovHWrtkVeaY
-         /raY/nKlq9Rhube4XOfgrS0jwThdYXrHHVwCUYGZt33Jj+mubFu+rDkIN1nbqGcXUxHb
-         Z3Qvk252BgqyOtqVKXm5rnUHrfkroahbIAzjTq4qx+tWxuJDur9HythNtb6m6ZYG0uW8
-         6wuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMtaalWZlq7Ib9AkZJBiiX90o4S6aSpIw2/jbEXq+GOaw4Q4viWT3ZL6S2T3B8shSPchvpMUs7dr+KT6Xc+QoX@vger.kernel.org, AJvYcCVZGvzWq6FMLSgUkGUUNx/ev3mc+8GJwQ/BPAHKW5Yuwi+H+51BLPayQ2/D6SGYZARl6UgssSKC@vger.kernel.org, AJvYcCWpu5XmW8M6jGEQZYS9EQGW5K8G45C5pCudlUis5fKDIU9ncOxLwM56AM3ahoLsiGdaK8IFUaJSlOovDeE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrWvdqYWqbKMqdeLwAv7iVx8L33fzzQyCV4+8YRsiACVoS2y8U
-	iLL4WIIpQp12SqBsMHxl3JrglAHAbUD09WtMbTblP2zMNcrvGEU1
-X-Google-Smtp-Source: AGHT+IEggJ6DacuYcF0xDEFeIuZNohE2/vFF783XckdAnLBmD+z6MYMYdjru/EsyuHzKMnZgrtoNGQ==
-X-Received: by 2002:a05:600c:4514:b0:42c:b67b:816b with SMTP id 5b1f17b1804b1-432d97268d5mr47567085e9.1.1731622186241;
-        Thu, 14 Nov 2024 14:09:46 -0800 (PST)
-Received: from [192.168.0.2] ([69.6.8.124])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab80ad9sm33514395e9.25.2024.11.14.14.09.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 14:09:45 -0800 (PST)
-Message-ID: <4fa316ce-c6f7-41d8-bb47-00c15f76faba@gmail.com>
-Date: Fri, 15 Nov 2024 00:10:17 +0200
+	s=arc-20240116; t=1731622547; c=relaxed/simple;
+	bh=MYkHd8As34CFbGENrqkCxmOAaeYY73357pJ8flFE+A8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=StZ02DjAq+92S6rAznmE9KNs/ZApofZ/nfEH/RWEh2PKJmm3sR8K0oBlxn0tWBH61rLgZ+C2MUi8Xy2yiJHJ81b9NxNyFrUQV8g+Rv1taRyHI3KKNWAepsQ5BFm89oUKWdSTASRrwSlPGXnHMJTcAb9b25YgGgdTYMdhjnAID94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PrKWzyAh; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731622543;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=kg0r27nDHYo0HTdQPuoNFOxroH69LZyYnbGGxN3ORMk=;
+	b=PrKWzyAh+NAke01/Vl7QXLJstJ5J69wvo63D0+65cNoS75oyrXbFBI6d7vvRAhT1pYdUCQ
+	2VdnLmM9BvS75E+h9nOaSlGhlmzQ1AS6VRy0X4DSVSrktvM75S1r6nbetnhTjeK8i16ti7
+	lMBFLcvYP8+6xa7lpCZr316dpWe5wQw=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: "Theodore Ts'o" <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ext4: Use str_plural() instead of PLURAL() macro
+Date: Thu, 14 Nov 2024 23:14:39 +0100
+Message-ID: <20241114221438.38775-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v11 00/23] Introducing OpenVPN Data Channel
- Offload
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, sd@queasysnail.net,
- Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- steffen.klassert@secunet.com, antony.antony@secunet.com,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <2828411f-f2e5-4dfc-80ff-577eb5fd359a@gmail.com>
- <a7009e7e-a1f9-4aa5-ad41-2befc64b5d3e@openvpn.net>
-Content-Language: en-US
-From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-In-Reply-To: <a7009e7e-a1f9-4aa5-ad41-2befc64b5d3e@openvpn.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 14.11.2024 17:33, Antonio Quartulli wrote:
-> On 06/11/2024 02:18, Sergey Ryazanov wrote:
->> Regarding "big" topics I have only two concerns: link creation using 
->> RTNL and a switch statement usage. In the corresponding thread, I 
->> asked Jiri to clarify that "should" regarding .newlink implementation. 
->> Hope he will have a chance to find a time to reply.
-> 
-> True, but to be honest at this point I am fine with sticking to RTNL, 
-> also because we will soon introduce the ability to create 'persistent' 
-> ifaces, which a user should be able to create before starting openvpn.
+Remove the custom PLURAL() macro and use the str_plural() function
+instead.
 
-Could you share the use case for this functionality?
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ fs/ext4/orphan.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-> Going through RTNL for this is the best choice IMHO, therefore we have 
-> an extra use case in favour of this approach (next to what Jiri already 
-> mentioned).
+diff --git a/fs/ext4/orphan.c b/fs/ext4/orphan.c
+index e5b47dda3317..1320f91c9b3b 100644
+--- a/fs/ext4/orphan.c
++++ b/fs/ext4/orphan.c
+@@ -4,6 +4,7 @@
+ #include <linux/fs.h>
+ #include <linux/quotaops.h>
+ #include <linux/buffer_head.h>
++#include <linux/string_choices.h>
+ 
+ #include "ext4.h"
+ #include "ext4_jbd2.h"
+@@ -488,14 +489,12 @@ void ext4_orphan_cleanup(struct super_block *sb, struct ext4_super_block *es)
+ 		}
+ 	}
+ 
+-#define PLURAL(x) (x), ((x) == 1) ? "" : "s"
+-
+ 	if (nr_orphans)
+ 		ext4_msg(sb, KERN_INFO, "%d orphan inode%s deleted",
+-		       PLURAL(nr_orphans));
++			 nr_orphans, str_plural(nr_orphans));
+ 	if (nr_truncates)
+ 		ext4_msg(sb, KERN_INFO, "%d truncate%s cleaned up",
+-		       PLURAL(nr_truncates));
++			 nr_truncates, str_plural(nr_truncates));
+ #ifdef CONFIG_QUOTA
+ 	/* Turn off quotas if they were enabled for orphan cleanup */
+ 	if (quota_update) {
+-- 
+2.47.0
 
-In absence of arguments it's hard to understand, what's the "best" 
-meaning. So, I'm still not sure is it worth to split uAPI between two 
-interfaces. Anyway, it's up to maintainers to decide is it mergeable in 
-this form or not. I just shared some arguments for the full management 
-interface in GENL.
-
---
-Sergey
 
