@@ -1,126 +1,148 @@
-Return-Path: <linux-kernel+bounces-409147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC9EA9C87FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:47:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B3E539C87FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:47:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70E8E287A67
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:47:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7997E285250
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8F51F8F07;
-	Thu, 14 Nov 2024 10:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878991F8186;
+	Thu, 14 Nov 2024 10:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jxDE5vdp"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cQEPYpCi"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703301F80CC;
-	Thu, 14 Nov 2024 10:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684541F80D2
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731581185; cv=none; b=agVouWp4ZJdAqRJ86Xk+7X72p3kmUeOq/xOh5+37LTdHMVZAmL/TvfErfDdPV/AVU9JgBszo7ObBVPJrRHEodZRzQJidHvxVbQ54XpZRoti+Ev+vjr6EkDixmSIl+htZQnX7bjUVXycPbzK7zRf6/kTdOMishBZKHAiOTfNTaN0=
+	t=1731581191; cv=none; b=HKEIbiSHwwwBBKvCUlCOauubl7Ms/iz6YPLEIiV1/83oI7OSwfCiQMoSilzpxxFhc4IbEdpFyU6SNrOwSnCD/FkIDwZ03zufnZRgqfxA+/bZ4nv7seoCiWlmQ2PO6/9yIdM1PCRTOzXsVrC0iC/p3ajXhoR3yPhuGDOod26OElA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731581185; c=relaxed/simple;
-	bh=6GmTVh0328DG3z1UVIJJzkv4fJ3qqsmJH7jtABAW+Mw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FK22sqOzOAEg6T9eRk53hBHg8wjzP3Ul7/RT0J4vL5iMNmjtoUYXqxHwn91WM4VYCo7EB2JctNyz0Vby85HUPLzM32VfqZjlMECfjqPHM55Sfx70l01F6MnhiLMSFQoR4YcWG48D9XD7HvApBsyPYIqSJot7f7N4qh9FrfyQmtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jxDE5vdp; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 628354000C;
-	Thu, 14 Nov 2024 10:46:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731581174;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZXjkCtqX7WBxDao3IE3a8VvAAIvFEnT0KiRXJWPUYP8=;
-	b=jxDE5vdpag5h+2dL8KSGTV+QohJenpgiJERIiclWddgnRxschtdWzrEFI1tPPTw8mG7fOU
-	6LXy4C15Ci7lbsnfUipqFT5amaRmK+jEMin7ZIDL1+XQQdaChBqOqDnd2vGGikRnSrBQTA
-	p1nq+tTh4fj68pJnKY9ZvIVgOi52FmSuf6MbhybW8DOUSKjvRhf7HHHPYxxBzD56d4S+F7
-	z3jCQmkbfvQfB2qgj2se+8ftLTW2rU8LOMoDvV4oVfiBcRlRV9jvdrZQW9GMracvfMFaFD
-	SYM3xOaqFDOTHHEnYolg8l7TFFsYqCzxSfbqjvwwfTIPfWEtFZ0WbHICBVl2Tw==
-Date: Thu, 14 Nov 2024 11:46:10 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal
- kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
- <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Richard
- Cochran <richardcochran@gmail.com>, Radu Pirea
- <radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh <j.vosburgh@gmail.com>, Andy
- Gospodarek <andy@greyhouse.net>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, Horatiu Vultur <horatiu.vultur@microchip.com>,
- UNGLinuxDriver@microchip.com, Simon Horman <horms@kernel.org>, Vladimir
- Oltean <vladimir.oltean@nxp.com>, donald.hunter@gmail.com,
- danieller@nvidia.com, ecree.xilinx@gmail.com, Andrew Lunn
- <andrew+netdev@lunn.ch>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, Maxime Chevallier
- <maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>,
- Willem de Bruijn <willemb@google.com>, Shannon Nelson
- <shannon.nelson@amd.com>, Alexandra Winter <wintera@linux.ibm.com>, Jacob
- Keller <jacob.e.keller@intel.com>
-Subject: Re: [PATCH net-next v19 03/10] ptp: Add phc source and helpers to
- register specific PTP clock or get information
-Message-ID: <20241114114610.1eb4a5da@kmaincent-XPS-13-7390>
-In-Reply-To: <20241113163925.7b3bd3d9@kernel.org>
-References: <20241030-feature_ptp_netnext-v19-0-94f8aadc9d5c@bootlin.com>
- <20241030-feature_ptp_netnext-v19-3-94f8aadc9d5c@bootlin.com>
- <20241111150609.2b0425f6@kernel.org>
- <20241112111232.1637f814@kmaincent-XPS-13-7390>
- <20241112182226.2a6c8bab@kernel.org>
- <20241113113808.4f8c5a0b@kmaincent-XPS-13-7390>
- <20241113163925.7b3bd3d9@kernel.org>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731581191; c=relaxed/simple;
+	bh=zZNiJnsNjjXZ+vhoAnB3iwLyA2+J+udSxtQd9V+v98c=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=C2GK4y/I0hxPuHzqMBO4b0MDyt8Qkb5RBAO+GNwpkE0MZU4zLQ//TxzFpfyLLHSpsaiBYEvALnDB0T/OnOvUG4hbL+WG09KZsHnY6nXzzCYQG3c6vvLWhGRKw8FshghwKMFzSw3jx1Z/CCLKLpt0Szd728O6ZJnbcT2DL44xnNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ciprietti.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cQEPYpCi; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ciprietti.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ea8a5e83a3so9892557b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 02:46:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731581189; x=1732185989; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RS11QiE4vcJwMt7rNCiWJOnFt/WMQ+WIvcw2+q1yQTo=;
+        b=cQEPYpCiwOBPaWJjifZfPhU7Y+cvybd0MMH+2ga+ffSkxrWUt9j91TvOZI/KsFKcIA
+         t8PF3RVMmXN3iFUiEwEMzt291ucYIjnEuqynLGUOHqqevFl6uyCbsTSO2OJbyLEOIuIR
+         bBUYcBOPC/KAO2GrIGaHy7VBC0nMn0jrbxrqRjzPGgd++Y2ExLq/iHApCXKEoqs+rcSU
+         eJYISQroFDzlkN6ZUGxlsRqcShAdZjyty4yOKj9DoBKvYNrjdUgjgv8n+tjGPMGVE0zM
+         gEZ6DWmSwhMGRSVqv0ySLZVOU7MqfM5bnNDkk6laT2KYH+JEmGCUFn0ElGqGuy4zoLcN
+         TXfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731581189; x=1732185989;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RS11QiE4vcJwMt7rNCiWJOnFt/WMQ+WIvcw2+q1yQTo=;
+        b=rvxQRIioLMd45kf3Byxd44WCqURSUyV1RpiXyfmi0OvE3mZhjUvzMbWu0Mmi6eTqyp
+         4ivyTA/peiVOr+igggCQJbas6deZQuDkiYS/KG0WXqqCOKCBkjO59kxrWitnnyjHbeRy
+         laREGeuyoJVgriLn5c0+BraDR5Nc5l9+gyfsL+xeK4kSq2qZ2vilZct5eHIFtMQX/B9R
+         RVAeEa+MhjX+Kx5fGg0Ad/Dq7kDW7iaPPo91642oskbJ/f7Mr8/2CZIoh33Bt9ezlfB7
+         yAYZCEY0ofMdCeHJKqAJWAQ5+EUEwnZytqr9Yq/3qCIo3pkxQs6muDPnTtfNj+B2hNrt
+         KY/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVecHqTda7tFrXQ2O9O4oSLPEpnNBYoAiueAXBol+ry8pbecMcT3aMKAYBxLb+hZi7ArSHRyW0PbJr9nVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydzkZ+ugsKNzkdJPWWyr5cCqa7caYdRfUE+s794ct5+iIpGhq2
+	BwdUlA6WkjJ1ds9wh0sGuj3r1uHOYQuQfuMnDpEjgWhMtWnxrZ8UySRYcIaHWNKCO/IqMvOIBqH
+	LotvZj9GIg+FJdQ==
+X-Google-Smtp-Source: AGHT+IEmcoj/O+qSj/aM6T/nRKx1v42AMEh+Ha8ltSgl9RWyAIS4he+xLedfXdfnPXVnzUKys68+SrSsTmDR16s=
+X-Received: from ciprietti.c.googlers.com ([fda3:e722:ac3:cc00:ee:a3ee:ac1c:78f4])
+ (user=ciprietti job=sendgmr) by 2002:a25:3616:0:b0:e29:6e61:3daf with SMTP id
+ 3f1490d57ef6-e35dc494141mr7520276.2.1731581189358; Thu, 14 Nov 2024 02:46:29
+ -0800 (PST)
+Date: Thu, 14 Nov 2024 10:46:25 +0000
+In-Reply-To: <xhsmhy11nb8mg.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+Mime-Version: 1.0
+References: <xhsmhy11nb8mg.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Message-ID: <20241114104625.1735182-1-ciprietti@google.com>
+Subject: [PATCH v2] sched/smt: Call sched_core_cpu_deactivate() after error is handled
+From: Andrea Ciprietti <ciprietti@google.com>
+To: vschneid@redhat.com
+Cc: bsegall@google.com, ciprietti@google.com, dietmar.eggemann@arm.com, 
+	joshdon@google.com, juri.lelli@redhat.com, linux-kernel@vger.kernel.org, 
+	mgorman@suse.de, mingo@redhat.com, peterz@infradead.org, rostedt@goodmis.org, 
+	vincent.guittot@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 13 Nov 2024 16:39:25 -0800
-Jakub Kicinski <kuba@kernel.org> wrote:
+In sched_cpu_deactivate(), the error path restores most of the initial
+state before returning, but, if CONFIG_SCHED_SMT is defined, it does not
+undo the previous call to sched_core_cpu_deactivate().
 
-> On Wed, 13 Nov 2024 11:38:08 +0100 Kory Maincent wrote:
-> > > IOW I'm struggling to connect the dots how the code you're adding now
-> > > will be built _upon_ rather than _on the side_ of when socket PHC
-> > > selection is in place.   =20
-> >=20
-> > I see what you mean! It is not something easy to think of as I don't re=
-ally
-> > know how it would be implemented.
-> > Do you think adding simply the PHC source and the phydev pointer or ind=
-ex
-> > would fit?  =20
->=20
-> In net_device? Yes, I think so.
-=20
-Also as the "user" is not described in the ptp_clock structure the only way=
- to
-find it is to roll through all the PTP of the concerned net device topology.
-This find ptp loop will not be in the hotpath but only when getting the tsi=
-nfo
-of a PHC or changing the current PHC. Is it ok for you?
+There is no easy way to invert such function since it overrides some shared
+state of the leader CPU. Instead, simply move the call past the error
+handling code. This is fine since:
 
-I am at v20 so I ask for confirmation before changing the full patch series=
-! ;)
+	- sched_cpu_deactivate() is CPU hot-unplug, which doesn't happen until
+	  after sched_init_smp() in kernel_init_freeable():
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+		kernel_init_freeable()
+		`\
+		  smp_init() <- boots all secondaries
+		  sched_init_smp()
+		  do_basic_setup()
+		  `\
+			do_initcalls()
+
+	- cpuset_cpu_inactive() performs unrelated operations.
+
+Note that there's no need for #ifdef since cpuset_core_* have empty
+definitions when CONFIG_SCHED_SMT is not set (in which case this patch is a
+no-op).
+
+Fixes: 3c474b3239f1 ("sched: Fix Core-wide rq->lock for uninitialized CPUs")
+Cc: stable@kernel.org
+Suggested-by: Josh Don <joshdon@google.com>
+Signed-off-by: Andrea Ciprietti <ciprietti@google.com>
+---
+Changelog v1->v2:
+	- Added details to commit message.
+---
+ kernel/sched/core.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 719e0ed1e976..4d55bc243ae5 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -8187,10 +8187,6 @@ int sched_cpu_deactivate(unsigned int cpu)
+ 	 */
+ 	sched_smt_present_dec(cpu);
+ 
+-#ifdef CONFIG_SCHED_SMT
+-	sched_core_cpu_deactivate(cpu);
+-#endif
+-
+ 	if (!sched_smp_initialized)
+ 		return 0;
+ 
+@@ -8204,6 +8200,7 @@ int sched_cpu_deactivate(unsigned int cpu)
+ 		sched_update_numa(cpu, true);
+ 		return ret;
+ 	}
++	sched_core_cpu_deactivate(cpu);
+ 	sched_domains_numa_masks_clear(cpu);
+ 	return 0;
+ }
+-- 
+2.47.0.338.g60cca15819-goog
+
 
