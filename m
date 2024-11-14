@@ -1,105 +1,88 @@
-Return-Path: <linux-kernel+bounces-409709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 806099C9057
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:59:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC32E9C906C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:03:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4635E282BA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:58:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87AD11F218F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486CF18452C;
-	Thu, 14 Nov 2024 16:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Txv3kyeP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78EC189F39;
+	Thu, 14 Nov 2024 17:02:54 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970A318C930;
-	Thu, 14 Nov 2024 16:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118E7126C03;
+	Thu, 14 Nov 2024 17:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731603491; cv=none; b=CSKup4VSuGQDMh/P2aZ7g/BZZpLNVHlhY2qeTox+gdtMc+4NQvb1qh5E/fEmKfc/ki9b9ett8smGc7LKqif/dEFLWm0UCqb2wcLn5UlCgExNllQ+1WzpbL2qHUQ54aXH3cv75VowJqq8ryrUcq0yW3UBLarqx2oLlElFbLczkxU=
+	t=1731603774; cv=none; b=l4GlxCOB0X8dzK6SiBc+myppYKIp1VTn7jhuGDmAUBPbvZvvWMwh1OaYS/Ma0FrUQxk6EIxPA1vx4eRJN2BpEUSAE2wjhU8dLt2FQFOxhPrJluZrRA/eh+lxAeEBi358u5bYbhAvIUaMjd//0MSh/xiBF1gbugIGqPBhGfgC0ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731603491; c=relaxed/simple;
-	bh=1NYyfhvpaHaoMxKldegCUmIUdIQjsXmFWCzEU3/3wjY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ZzvGVIV64MNNW444YmNZPElFoQPV7ynBAfVV5fZTkcuJo2zurlFjb9Ncw7dw1RiXVEa3clkEdyeEWuv+iZfQgG/r41LGftIGk/GzdTGy8rB9lebIRU639wPJH6+Bnk2vr938nsRfey2xOhi9pQKTvKUUByT997g3kh3N961aKgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Txv3kyeP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4BD8C4CED0;
-	Thu, 14 Nov 2024 16:58:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731603491;
-	bh=1NYyfhvpaHaoMxKldegCUmIUdIQjsXmFWCzEU3/3wjY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Txv3kyePwuqcJtw5NY64raF6B9OwQI8iVh0PNbb+oJ0JU2vE4KZaX0Ihnr4sx2Jzq
-	 V2ApIeHtIW4oIQs8/udP7l1uZnR4q66FeTOB6xAy5HeFsbjE75KnoBvEmHhf5cdJkG
-	 9B18OBRKuqpUdzjTC5/lgqMB5KtIPN+3YiAMxlDPqkZXlCZodBbsPibMGqhroPSRpv
-	 ovS3qlDR3elMMusvMcvGv+rlRMdKIfLXxLu/GrGbS+upKlfRf98TGAOZEgj/xRl1zd
-	 GUYl4XDOw3E6ogbhWOJbPxYCPVM/Xqo2Tie7D4K1EIbpA6zFeQpaWDwco2c0tZqnWF
-	 JdG5Q3Z6MxZ3g==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Alexandre Belloni <aleandre.belloni@bootlin.com>, 
- "Hendrik v. Raven" <h.v.raven@merzmedtech.de>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org
-In-Reply-To: <20241114-simple-mux-idle-state-v2-0-a30cb37d2be2@merzmedtech.de>
-References: <20241114-simple-mux-idle-state-v2-0-a30cb37d2be2@merzmedtech.de>
-Subject: Re: [PATCH v2 0/2] ASoc: simple-mux: Allow to specify an
- idle-state
-Message-Id: <173160348868.529304.8793310575318436684.b4-ty@kernel.org>
-Date: Thu, 14 Nov 2024 16:58:08 +0000
+	s=arc-20240116; t=1731603774; c=relaxed/simple;
+	bh=36OSqPoAQyVIULHWPhuhVBJ+iSHV5/kk5o+So/6AzXs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jOEKx1njhCp0EuP66mEtEnZH17Wj2uaQEjaZDeITbB6fJjgO/3trOVgjb/mREhysx9tNIoVj+Ep0DvWnIvsEiyiPjWt0dsR4g5zabiEYmDrHTLgb7DQwpcApsoGWD8TWSYc/Q2CGWL0Dc+YZY6k/GfCddR1baEkSoxQ+aws9Hzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 51BBB68C7B; Thu, 14 Nov 2024 18:02:47 +0100 (CET)
+Date: Thu, 14 Nov 2024 18:02:47 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>,
+	Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Joerg Roedel <joro@8bytes.org>, ill Deacon <will@kernel.org>,
+	Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v3 00/17] Provide a new two step DMA mapping API
+Message-ID: <20241114170247.GA5813@lst.de>
+References: <cover.1731244445.git.leon@kernel.org> <20241112072040.GG71181@unreal> <20241114133011.GA606631@unreal> <20241114163622.GA3121@lst.de> <20241114164823.GB606631@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-355e8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241114164823.GB606631@unreal>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Thu, 14 Nov 2024 12:01:24 +0100, Hendrik v. Raven wrote:
-> This series adds support for the idle-state property from the mux
-> framework to the simple-mux audio variant. It allows to specify the state
-> of the mux when it is not in use.
+On Thu, Nov 14, 2024 at 06:48:23PM +0200, Leon Romanovsky wrote:
+> It is fine, but as a bare minimum, I would expect some sort of response,
+> so I won't sit and wait for unknown date when this API will be acknowledged/NACKed.
 > 
+> I would like to start to work on next step, e.g removing SG from RDMA,
+> and I need to know if this foundation is stable to do so.
 > 
+> > 
+> > No changs to dma-iommu.c are going to get merged without an explicit
+> > ACK from Robin, and while there is no 100% for the core dma-mapping
+> > code I will also not merge anything that hasn't been resolved with
+> > my most trusted reviewer first, not even code I wrote myself.
+> 
+> And do you know what is not resolved here? I don't.
+> All technical questions/issues were handled.
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/2] ASoc: simple-mux: add idle-state support
-      commit: 2b974284aa073d6e2936f9032e8ad7b99480b5b8
-[2/2] ASoC: dt-bindings: simple-mux: add idle-state property
-      commit: 3b7e11a0116c30848d44429650ad80f9cc3bd963
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Let's just wait a little bit, we're all overworked can't instantly
+context switch.
 
 
