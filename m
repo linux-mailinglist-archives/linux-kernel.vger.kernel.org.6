@@ -1,164 +1,97 @@
-Return-Path: <linux-kernel+bounces-409358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D44B89C8BA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:19:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45C999C8BAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:21:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44213282C5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:19:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AC6D282EED
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767CE1F8EE1;
-	Thu, 14 Nov 2024 13:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E301FAEE4;
+	Thu, 14 Nov 2024 13:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HdXDqE5y"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="O+JLA/y/"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4911F9EDA
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FD11F9EDA
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731590379; cv=none; b=OUWPfSqEKyVsC+XUZKmJYKPgxYOldIDntrWrjx2mYQLEduGbh5VzbDZaRqamsMdMPMWdBLMaXJJs9Vpk67S5eAANLqI/+mI2eew2srwhvoYyhUB9xPoQv45BeJOhWyNJe3oLiC9fdaULHtTTXvIln4ToJu+Et4yeCDr1AQCxl8c=
+	t=1731590471; cv=none; b=qkmNKdV2l+i2nbrFLg93k1NfAZS7qjgABMbZ1dTw/judUvT1BFi4z1qLtOHvHU+aCI932DJ9VpElyHYmtA2ssP2d+AD8prqupMKdfOnXkFZ60ZGguARLL+6mHSOxa0OS9x0pEM7aVW8OsKAgntqPKNFTU21Ryxkkfm+AsjvJlXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731590379; c=relaxed/simple;
-	bh=k5bdHEkHI+7qm16BcckWB6olotXkJAzzCTF6gVzaHpE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qRCkKlNQbn1Wz9ay1AMectRnamucwHh8CgjRHNpAiwrM6tAZGLWQHXD2J2vq4lZhZUyoFepiJaXk3/ez3rVmxjbZIP4bxILV1+PVikZCFG99J/x18zd+EFTwGke2gwkxwqlLpXy4c6S2gqwsnl64hP4bdAi9vbnjIiH2yJBPyTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HdXDqE5y; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4314b316495so5569945e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 05:19:37 -0800 (PST)
+	s=arc-20240116; t=1731590471; c=relaxed/simple;
+	bh=A786/WKYl8XPMPOFdqL11xIlC2GMhjjJaMsmbu3TsT0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eQlb2s4wVF7+xAMDG0PoZfqzZp1UxFTd+WcZ8TFSrzY+cehR7B/i3fPf8fnCqfzXiM5MjGvH7Eng0RZG9PADLQej8eq2DNB8WwmR7iVrvVVvafqEHXZbSEv5/fDUv1op/ss3rsGzCru8gmfLRI2VSDE+9nx2T2Lk9Y+bRT3r0pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=O+JLA/y/; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-463575c6e51so5662241cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 05:21:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731590376; x=1732195176; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=y256fO/7FLvsIPtMyIQsdIYn0IXGJMedZoA52rfCGR4=;
-        b=HdXDqE5yYAEEaP8V9Coe2/6e+YOegPXzHe3HDK1LzybPuAdAlXh77p2zQD5GMOOYm9
-         qU7mtQZZjbtQ37vZ8hYKOCgEmY9HATPt962tXaKNzWTJ9xokIvPrsdp8/JBTph68uK1P
-         ARJEwGNfohQPow59f4unbq6WPnMWi0S4ruCydFxp90QTCl/D2OPEydjvbU/4Xa5jmJP7
-         feL+9K9+ydqgVuKxK33d8JlWM+50KXNT6vT1WL6LH3SAfCf+cwJgn0FQwSU/0gH9fSA7
-         i4coYROwv6ucsrc5XaiD+csmkDccBkluKLoggXbQ6OKZVewLe95CovMKuNdHS+udFThD
-         4Zxg==
+        d=szeredi.hu; s=google; t=1731590469; x=1732195269; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=VRfbnelZeJfrngVoF9cQMEJPOYnQHW9d2DowJs6V8LU=;
+        b=O+JLA/y/7rvqOIncYm8X2dBe4uEN1yDyC9pQ2R7cvjXda/IentupLrNI5ec6+2hGxp
+         QbOroLvyFx69zbMK6IbtTR8rr/lPQzJ1Ve6agnQeSyfXLdTdL9l3FWw6WB5Yzcp8JDvh
+         KM8aiBIua7c0oxQ44+LyeF2MPezf8tVpWgLRk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731590376; x=1732195176;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y256fO/7FLvsIPtMyIQsdIYn0IXGJMedZoA52rfCGR4=;
-        b=snBOGvTgZ+f+wrdZFm/WFBGIwtfhUvY5EqUOIA/OE/UefEzTA2zIVY553+l5Lu20OL
-         OqcJNC832z3CnySTVoqkd/CpsMVlOqhGx+2zbqbABYhSPCek8YvnfVzOgmfq4J92xFky
-         cHEIlFdj++nUMsY47B9rPhnr1Cwq0j0cX8/Vr/ik/nVo9D+xLHM6psZSN/RenYtdEpYo
-         krmVm4NetKMcjB5Ni7Tj8jo1fZK6By3BA8YslquXNpiPZA+wNn9GdjOPgfSgLDqxa5Zi
-         eoyxQjmkqN9lWmpaXBV3MYgESUPOFHXwAwiE+67k1S7m36s/VQKkZK23YmoZaUYd6o0x
-         Jg9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXefIwDKhRSz5Pgv8ZugTvIivGKwKzt9bK3Gs9UtYsvmkBAN5FkpcV4gjAeTrTvd0AWeeODboEen+BlOi4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxA5KkT1jVbLWuvnYYmCKARCrV5oCGwcSVyk816iiOhr5sXF1rV
-	IvamGICgRYLwXg2lcXhVdiVb03+2OsdI8phri3fFA9wWFbhLz3MgMwV9mYEP/wIjQtNrqVf2LnV
-	a
-X-Google-Smtp-Source: AGHT+IH43n6j+63XUTW/SUFmWSG22ER/itpfF+9ApEvdxGJZx4vj55nly+HXGsJTMqFoz6cPC+IILQ==
-X-Received: by 2002:a05:600c:46c8:b0:431:51e5:22fb with SMTP id 5b1f17b1804b1-432d4aaf30fmr65184235e9.14.1731590375784;
-        Thu, 14 Nov 2024 05:19:35 -0800 (PST)
-Received: from [192.168.0.20] (nborisov.ddns.nbis.net. [85.187.217.62])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da265e16sm23740885e9.12.2024.11.14.05.19.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 05:19:35 -0800 (PST)
-Message-ID: <d5708abe-40ed-4885-919c-b491f61cceb7@suse.com>
-Date: Thu, 14 Nov 2024 15:19:33 +0200
+        d=1e100.net; s=20230601; t=1731590469; x=1732195269;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VRfbnelZeJfrngVoF9cQMEJPOYnQHW9d2DowJs6V8LU=;
+        b=v0z8z6BpxVCa4FHtWxV0v3++cAZHIigTnetdL2QK0PnOqbqWVRM2Z/boaD0NNi/xwn
+         rqUEgm0VOAsOZt4+CeNOvkhI3AImOedGPY4Zy6x9WRMhGycTYknmdk4OtkDKlYZSfGv8
+         TWNSwA0Eh63qTTCkgzqGxHtrF6evkKVLCoS5cbvxwNaStyH+Dm2fcSZPD/C00BaAZZAj
+         uN1PeGJX7/iWhdvF3ow8yWCDv8LsHzMTTSB8uyIc0anDamxfDvojz90H78GCxD32ftlx
+         Gv3QoL7h9xwuvyutzCylllqJ2q7kd6TeCxjIBqxcyMDqSeP5QjhLvCu4eXhnCu7C0y3Y
+         EU2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUCbxqMZqSn2biuhL1VZp1Q6tCRhuxctcy3cWxHv8/VxSqdvf6Zwv9PFHBCTbEwbhE/5oS4/lC/lxUm7Tk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDB/kLYXsyifEO1g6KBGRLAbuJmgnBTJ4AjTz52p7vwRRAAN3W
+	ak1royig2aJqMfS91krcof4ktlmvWCWW59QXBppxGmtecF3h/vTiGRrDBNfDPsnZ5LJrUPVoMpX
+	zw/ij3Sp2vJloqgjcpFV3akhl9CEgCr8JQAukTA==
+X-Google-Smtp-Source: AGHT+IHov9rGqtzN5oWlMJTxAP3c0s3NW8iCKhJaT2L4/b4lmENmcMVKSJd8PArNdJ46UKbpr5wbhwLZZ1ZKzkomfLY=
+X-Received: by 2002:a05:622a:5b0a:b0:462:c1c6:d8f5 with SMTP id
+ d75a77b69052e-46356b2db0fmr45431741cf.8.1731590468993; Thu, 14 Nov 2024
+ 05:21:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] x86/microcode/AMD: Make __verify_patch_size() return
- bool
-To: Borislav Petkov <bp@alien8.de>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org
-References: <20241018155151.702350-1-nik.borisov@suse.com>
- <20241018155151.702350-3-nik.borisov@suse.com>
- <20241114125818.GFZzXz6vdhwPdSa4dk@fat_crate.local>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-In-Reply-To: <20241114125818.GFZzXz6vdhwPdSa4dk@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
+ <20241112-antiseptisch-kinowelt-6634948a413e@brauner> <hss5w5in3wj3af3o2x3v3zfaj47gx6w7faeeuvnxwx2uieu3xu@zqqllubl6m4i>
+ <63f3aa4b3d69b33f1193f4740f655ce6dae06870.camel@kernel.org>
+ <20241113151848.hta3zax57z7lprxg@quack3> <83b4c065-8cb4-4851-a557-aa47b7d03b6f@themaw.net>
+ <20241114115652.so2dkvhaahl2ygvl@quack3>
+In-Reply-To: <20241114115652.so2dkvhaahl2ygvl@quack3>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 14 Nov 2024 14:20:58 +0100
+Message-ID: <CAJfpegvDOPSJn1PeXRJqex6NRPUJtWfWvZnwCRD+E9dWVhWumw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] fs: allow statmount to fetch the fs_subtype and sb_source
+To: Jan Kara <jack@suse.cz>
+Cc: Ian Kent <raven@themaw.net>, Jeff Layton <jlayton@kernel.org>, Karel Zak <kzak@redhat.com>, 
+	Christian Brauner <brauner@kernel.org>, Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 14 Nov 2024 at 12:56, Jan Kara <jack@suse.cz> wrote:
 
+>   What I'm more worried about is that watching the whole system
+> for new mounts is going to be somewhat cumbersome when all you can do is to
+> watch new mounts attached under an existing mount / filesystem.
 
-On 14.11.24 г. 14:58 ч., Borislav Petkov wrote:
-> On Fri, Oct 18, 2024 at 06:51:50PM +0300, Nikolay Borisov wrote:
->> The result of that function is in essence boolean, so simplify to return
->> the result of the relevant expression. It also makes it follow the
->> convetion used by __verify_patch_section(). No functional changes.
-> 
-> convetion used by __verify_patch_section(). No functional changes.
-> Unknown word [convetion] in commit message.
-> Suggestions: ['convection', 'convention', 'conversion', 'confection', 'conviction', 'connection', 'confession']
-> 
-> You need a spellchecker. :)
-> 
->> Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
->> ---
->>   arch/x86/kernel/cpu/microcode/amd.c | 11 +++--------
->>   1 file changed, 3 insertions(+), 8 deletions(-)
->>
->> diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
->> index 9986cb85c951..37a428b109a2 100644
->> --- a/arch/x86/kernel/cpu/microcode/amd.c
->> +++ b/arch/x86/kernel/cpu/microcode/amd.c
->> @@ -282,7 +282,7 @@ __verify_patch_section(const u8 *buf, size_t buf_size, u32 *sh_psize)
->>    * exceed the per-family maximum). @sh_psize is the size read from the section
->>    * header.
->>    */
->> -static unsigned int __verify_patch_size(u32 sh_psize, size_t buf_size)
->> +static bool __verify_patch_size(u32 sh_psize, size_t buf_size)
->>   {
->>   	u8 family = x86_family(bsp_cpuid_1_eax);
->>   	u32 max_size;
-> 
-> You missed a spot here for the >= 0x15 families. And I think this is more
-> readable and more precise what is supposed to be checked here:
-> 
-> ---
-> diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-> index 8bd79ad63437..0211c62bc4c4 100644
-> --- a/arch/x86/kernel/cpu/microcode/amd.c
-> +++ b/arch/x86/kernel/cpu/microcode/amd.c
-> @@ -289,7 +289,7 @@ static bool __verify_patch_size(u32 sh_psize, size_t buf_size)
->   	u32 max_size;
->   
->   	if (family >= 0x15)
-> -		return min_t(u32, sh_psize, buf_size);
-> +		return sh_psize == min_t(u32, sh_psize, buf_size);
+We don't even know if there's a use case for that.  I think it would
+make sense to think about it when/if such a use case emerges.  The
+inode notification interfaces went through that evolution too, no?
 
-Indee.
-
->   
->   #define F1XH_MPB_MAX_SIZE 2048
->   #define F14H_MPB_MAX_SIZE 1824
-> @@ -306,7 +306,7 @@ static bool __verify_patch_size(u32 sh_psize, size_t buf_size)
->   		return 0;
->   	}
->   
-> -	return sh_psize <= min_t(u32, buf_size, max_size);
-> +	return sh_psize == min_t(u32, buf_size, max_size);
-
-For the older families we have a hard upper bound so we want to ensure 
-that the size in the header is strictly <= than buf_size, which in turn 
-must be <= max_size .
-
-
-i.e Is it not valid to have sh_psize < buf_size rather than strictly equal ?
-
->   }
->   
->   /*
-> 
-
+Thanks,
+Miklos
 
