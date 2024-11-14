@@ -1,54 +1,74 @@
-Return-Path: <linux-kernel+bounces-409482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3A879C8D5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:54:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC979C8D62
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:55:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68B75282964
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:54:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80EC11F2151C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDDFD127E18;
-	Thu, 14 Nov 2024 14:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D838824BD;
+	Thu, 14 Nov 2024 14:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="XQvJgcUi"
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="MGB8Qhm4"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD7E3C466;
-	Thu, 14 Nov 2024 14:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93EE6F073
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 14:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731596065; cv=none; b=CMrGOpXcclJpfQkTMW6bwn56MCwuFSqKVFAY+ZyJZV22eLU0pCHZpm/w8ediQx7t5i9nq1/FEItqiqjAIqPFzbUAmL3Mxg+eyOl8TKO2axCcGiln2p6UEo1ZZ6CMj8FSOe3fRol5jgzgZQT2GO4xAwS1DwX65E6pcrVIvqvBK0o=
+	t=1731596086; cv=none; b=A0avkG0m0l916o7lAjJX2FksLRkNfnqsBrgM2y/vTufHF9E6BXrh1LOfsrzvXZcTeY7LlYOJS29vCkawUKSMVdEOQsOWUKoJQrNQg2PdIQ2WtYdm9DAb+mgE2O/aHN2YO0B9FL/veMXnEulg8MMLYqdbo5SFA6DAAnfBeuOEeIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731596065; c=relaxed/simple;
-	bh=7urnx5vu/yESHJWnIBOTy1RbM2n6RW2xZI/t8XcbpJw=;
+	s=arc-20240116; t=1731596086; c=relaxed/simple;
+	bh=bcx0humSCVFYEtSbVlRyd7JMd8XlsTkVg2Uwj3r/xTI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=joYjcOuqiPVKoSJqBPRSIvDl+dvmsXofU2BKExXeK9PtvQicylWXUECPsx5UdtJKB4yYSdEeuL6sodJQS6Kh8XHMmOI0rhdOK4XxqFkqWWVGJSLdvhSdbqwy0Dp9r7GtNrqTWOcjQdV8lHOIiyvjDE7a9+tckKPsN4af+eijN40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=XQvJgcUi; arc=none smtp.client-ip=80.12.242.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id BbEatkpiFKUdDBbEctKGl2; Thu, 14 Nov 2024 15:54:20 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731596060;
-	bh=6aybBEMH2m5gabV302QoPDrP38h4o14hvmeyTfnxSfI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=XQvJgcUiwKA0R69DkqnvYqg7v4kaDqqKJCEN8yuYn3+dIw467fIWYLjESWfyuCjIk
-	 MhuyrSYGKzE0EAo8iKZ32Xvh4N45zwr7+KeNb7BJuyFLiwEOPVi0wDBw8b2rVX97nt
-	 QS41SEmSQX5KRNUdHsj/TgTGmXlcTQmpbQHjhbZ9pWzwtFi5gY1roF/W81KWFMnNFv
-	 TmynebIVaI/xeourGNBUDY04YSACdO197A+dXEYTFsF3lkvE2pjjNL1peLRQ6aGu/P
-	 sVS1lygl5GtgGomK8HA/YXyyLw7LprLPhKZT+e/u1/h/JvhztlynF7iPLSyWKRDrV2
-	 3IjXs2hGzbvaA==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 14 Nov 2024 15:54:20 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <7841268c-c8dc-4db9-b2dd-c2c5fc366022@wanadoo.fr>
-Date: Thu, 14 Nov 2024 23:54:11 +0900
+	 In-Reply-To:Content-Type; b=Y4/jWQBWLKoQimt7RLuNUIimJzBLkhjNaBbg6B2HOM9fKXdpS0rbUCv8cl8QeQAOfnZuhWpm9O+V7mruF9BzudvHR30YYPqwreEkzTO8E/6rjVOC1kI24akq+JY92aawdy0IwKTf7CulKssshNyC6REl4GnXM1dz/rgieyl3Lk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=MGB8Qhm4; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5cb15b84544so957064a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 06:54:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1731596082; x=1732200882; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=vTJ62P8bnJDHamIaIkZp3lwFmYtPHFSpSt18FcDxjPA=;
+        b=MGB8Qhm4+wg2/5zWzau81R59aYcfTrA06mQLOM8YXl/Gvv25eCRuPR15VVgzgry78u
+         gMvDvkPGyPPgvfDd2nSxCZnqBObLjQeQzf9wnDd+Nyz2PMgiNJpwygTauCv1z1BSYQSN
+         bs7uD+bFYWpHX3qAYMPMDprYDa6awE/1/WqIuaZWdYHNi5DgZiuVayepgFImPzDcg8LP
+         C88mrliYoOu/4H3IJexp+Ucm6PAZTFMizQ9B8Qeo6Wpz9JJ+cMhIPFFoqvyypJIsqzlo
+         nKk1/YodjHN3c0I3aFyuIqjixUj9O+Z/PABVwwpZxIDC/6V7WDoJhCGqcoC0Fp2uT7SH
+         FX1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731596082; x=1732200882;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vTJ62P8bnJDHamIaIkZp3lwFmYtPHFSpSt18FcDxjPA=;
+        b=MRGKWrr6O6DIyNxZ4ngusDqdQNHhnFbEs4DtAaNh/I7NQBaKpgsxrtRXl1ZO5fc3ww
+         YKTDPgqekw6nHurKSU5aOJ4iNeiZ5H3InS0OhdNi68nPVoADkUn7PDmeZBPAuboq2GLq
+         HI47ufwWylr5SeYJ6cVa8tWTHRzWGrKCcTLccvbNQ+uNgUGA/MtFID6FXvC/sDDvxFtl
+         uenqK/gc5UMOZbJkl0kaaBswBM01lGygEdbcH4+oqEMiFABTdSbcQbcmU/EIosYrWbPK
+         Ha9gRPFPzit3gBdQJsb37m6slAxnbKcW+11zBEAsC9xrLGXv5vpGHfLyKKr8LkW8B9Sh
+         +vTg==
+X-Forwarded-Encrypted: i=1; AJvYcCU9nr/I0xcgsSqUkio5lSRljOKq2wZEUYT1L33pOCzY+NSFEcVnSJpiI+044gl4dcy1N0N52u+kS23CaxQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6+ENc4tuPji0w5TziaEUqaHJBrmMG2+2v76akfWOEjK+h5gC9
+	RNz/Hb3ei3x48xMC4tLR3UO/dqDyNMbm9cKNMvSe3SVoY7OELay57kajdXlum/A=
+X-Google-Smtp-Source: AGHT+IGHvdFsxvguyvcyT5nYpLB3OAZ2Am8crWT5azlsbInJeFOAXA6/poO159lBDv4ARSI4+dEptw==
+X-Received: by 2002:a05:6402:35c3:b0:5cf:1b53:1bf1 with SMTP id 4fb4d7f45d1cf-5cf77eab559mr2182043a12.15.1731596082207;
+        Thu, 14 Nov 2024 06:54:42 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:e7c9:910b:dd41:da18? ([2001:67c:2fbc:1:e7c9:910b:dd41:da18])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf79b9e168sm668946a12.21.2024.11.14.06.54.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Nov 2024 06:54:41 -0800 (PST)
+Message-ID: <43b09303-3a0e-4691-8335-4047bc5bfd76@openvpn.net>
+Date: Thu, 14 Nov 2024 15:55:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,91 +76,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] can: can327: fix snprintf() limit in
- can327_handle_prompt()
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, Max Staudt <max@enpas.org>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- linux-can@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <c896ba5d-7147-4978-9e25-86cfd88ff9dc@stanley.mountain>
- <6db4d783-6db2-4b86-887c-3c95d6763774@wanadoo.fr>
- <4ff913b9-93b3-4636-b0f6-6e874f813d2f@stanley.mountain>
- <9d6837c1-6fd1-4cc6-8315-c1ede8f20add@wanadoo.fr>
- <20241114-olive-petrel-of-culture-5ae519-mkl@pengutronix.de>
+Subject: Re: [PATCH net-next v11 06/23] ovpn: introduce the ovpn_peer object
+To: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, sd@queasysnail.net,
+ Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-6-de4698c73a25@openvpn.net>
+ <03c0f957-c150-47b3-805c-9a1d774af03b@gmail.com>
 Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-In-Reply-To: <20241114-olive-petrel-of-culture-5ae519-mkl@pengutronix.de>
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <03c0f957-c150-47b3-805c-9a1d774af03b@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 14/11/2024 at 22:34, Marc Kleine-Budde wrote:
-> On 14.11.2024 21:35:07, Vincent Mailhol wrote:
->> On 14/11/2024 at 18:57, Dan Carpenter wrote:
->>> On Thu, Nov 14, 2024 at 06:34:49PM +0900, Vincent Mailhol wrote:
->>>> Hi Dan,
->>>>
->>>> On 14/11/2024 at 18:03, Dan Carpenter wrote:
->>>>> This code is printing hex values to the &local_txbuf buffer and it's
->>>>> using the snprintf() function to try prevent buffer overflows.  The
->>>>> problem is that it's not passing the correct limit to the snprintf()
->>>>> function so the limit doesn't do anything.  On each iteration we print
->>>>> two digits so the remaining size should also decrease by two, but
->>>>> instead it passes the sizeof() the entire buffer each time.
->>>>>
->>>>> If the frame->len were too long it would result in a buffer overflow.
->>>>
->>>> But, can frame->len be too long? Classical CAN frame maximum length is 8
->>>> bytes. And I do not see a path for a malformed frame to reach this part of
->>>> the driver.
->>>>
->>>> If such a path exists, I think this should be explained. Else, I am just not
->>>> sure if this needs a Fixes: tag.
->>
->> I confirmed the CAN frame length is correctly checked.
->>
->> The only way to trigger that snprintf() with the wrong size is if
->> CAN327_TX_DO_CAN_DATA is set, which only occurs in can327_send_frame(). And
->> the only caller of can327_send_frame() is can327_netdev_start_xmit().
->>
->> can327_netdev_start_xmit() calls can_dev_dropped_skb() which in turn calls
->> can_dropped_invalid_skb() which goes to can_is_can_skb() which finally
->> checks that cf->len is not bigger than CAN_MAX_DLEN (i.e. 8 bytes).
->>
->> So indeed, no buffer overflow can occur here.
->>
->>> Even when bugs don't affect runtime we still assign a Fixes tag, but we don't
->>> CC stable.  There is no way that passing the wrong size was intentional.
->>
->> Got it. Thanks for the explanation, now it makes sense to keep the Fixes:
->> tag.
+On 10/11/2024 20:52, Sergey Ryazanov wrote:
+> On 29.10.2024 12:47, Antonio Quartulli wrote:
 > 
-> Should we take the patch as it is?
+> [...]
+> 
+>> +static void ovpn_peer_release(struct ovpn_peer *peer)
+>> +{
+>> +    ovpn_bind_reset(peer, NULL);
+>> +
+> 
+> nit: this empty line after ovpn_bind_reset() is removed in the 
+> 'implement basic TX path (UDP)' patch. What tricks git and it produces a 
+> sensless diff with 'ovpn_bind_reset(...)' line beeing removed and then 
+> introduced again. If you do not like this empty line then remove it 
+> here, please :)
 
-I am not keen of taking it as-is. *At least*, I think that the 
-description should be updated to say that this bug can *not* result in a 
-buffer overflow because the frame length limit of eight bytes is 
-enforced by can_dev_dropped_skb(). If we keep things as-is, I am worried 
-that we will create additional work for the CVE team.
+Thanks! will make sure it won't be introduced at all.
 
-As for the code itself, why not, but I prefer the suggestion made by 
-Max. If the length can not exceed eight bytes, why writing code to 
-handle an otherwise impossible to trigger condition?
+Regards,
 
-I also quickly looked at the hexdump helper functions and found bin2hex():
+> 
+>> +    dst_cache_destroy(&peer->dst_cache);
+>> +    netdev_put(peer->ovpn->dev, &peer->ovpn->dev_tracker);
+>> +    kfree_rcu(peer, rcu);
+>> +}
+> 
+> -- 
+> Sergey
 
-   https://elixir.bootlin.com/linux/v6.11/source/lib/hexdump.c#L87
-
-It is promissing on first sight, but it produces lower case hexadecimal. 
-And it doesn't look like the can327 would accept that.
-
-At the end, I am fine to defer to Max the final decision on what to do 
-on the code. At the end, he is the maintainer of that module.
-
-
-Yours sincerely,
-Vincent Mailhol
+-- 
+Antonio Quartulli
+OpenVPN Inc.
 
 
