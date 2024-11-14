@@ -1,322 +1,117 @@
-Return-Path: <linux-kernel+bounces-409579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6F349C8EBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:52:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF9679C8EC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:53:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 766B8287E11
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:52:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D0771F21ED7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB5A18E37D;
-	Thu, 14 Nov 2024 15:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="FF4cVJKH"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40737198A38;
+	Thu, 14 Nov 2024 15:45:47 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DFC18FDBB
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A6017084F;
+	Thu, 14 Nov 2024 15:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731599144; cv=none; b=oMVeMYgn+WQdRZzU19EUWDwtgBR0EGZOd/QSPlEQXZPwFqjnlQyMbnQ53Yt+cbGFuvsIeVfQG356QXxdklrwLI8ouoeYw9YxhurHbWtrlduAK5bd++Bs2E9isuQ2j8e7dxHIEzmBOUp/n/idWfbRrqRr+RMKhYTbtUXXapRqByM=
+	t=1731599146; cv=none; b=pIZ8G909HCLk/wGw7LAawYqc1tx4Mxv/cscZJQNpe76vf1zU4+LWkXpL8bstKe5FXPM3STqEx+devqcv4f3+aVLwh524Ke/o+eRQ9fCxULLSG3M5C03LVC4MkZb7y/SGxFkN+QwYZbpZOzryakaTz7ZqQWRG9lgiwdMR9b0oUpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731599144; c=relaxed/simple;
-	bh=C+NJkcPv7s9qGuiJ2I1jqbMGVje+MrpjNFUlGrq1fv4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NDWVFJubmPXmq9cGphApiLcaxD1aSDQTDZ9UGr9Bs+0YJJYzdl1FUJxK/A/pU3krhtwneh4BhbF3lh0d4GKAARa6zVxm4c3SriLlwXFyrswBT18JND/ETYd8rBwUbLavaLutmkelH8c2nSNfoWha4o1xxg7kNztUnLDsAFCEG0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=FF4cVJKH; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9a0ec0a94fso115016966b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:45:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1731599141; x=1732203941; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nKhWvCprXhPOjYwjhQw1HJAKTwxj5xU1ykGVF5JlDIo=;
-        b=FF4cVJKH0Pu+jY9+EOPBcL9wipK1GLPEgtedQ6nN/edCQKJTRH8Dd8yAygDgSYCFru
-         NL65jOYPy+5eDTcM8d6qfyNO2b+5AZDaucpHb/tS5OAUaQz/Xee+fKasIXOVsSVtgPyD
-         ejFdpDPZ63wwLxU1+20hiJD8pCF0nkFtZM18M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731599141; x=1732203941;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nKhWvCprXhPOjYwjhQw1HJAKTwxj5xU1ykGVF5JlDIo=;
-        b=lX3/5SR0GOzN1A4sFM3lLHmXHPG+YGMedfp6k7oFAr2Mo6VRpA3CF2O66NkLy2ZvQf
-         09KAT70blYF0Jp10EiUh0FgPYykrgfjv5byQCPkd9i2K7rdF167L+aZ/GM2vlea+HiW7
-         zdMIq+/LUVK+K6qgk9349nbtGb7K2g/kxuF3F+eReMh4z6Q9/x5olFkvJG7syVCqHf4Z
-         TzNng4uEBYHsqEgz4Wc4GykQ9cM7xi0uaE+bEHyCsZ9fbmCF163uV1nikYSeMBM33LPO
-         zJka/3CT816M33kNEFyiSG68KMmz708IgH3DRD4+WU8i3wHzLlXoHTAHjzGkZY0uI2hB
-         yxSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUuKDm59l474f3d1f1Zxt7MqDvZ68rC2htf4Nj6BUTlO6XUTBROjhMngPFZ9BmC1ijtVLSis12778662vs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEhWOGl5j3eDLDgh4heNN0M3FmVPg6Xg4eUNHh1Fj147fkwnAJ
-	NFjc+iVsfJZQ1Ye6s6v85ISdtcYeMyskPVEpDcHPcC2wEJ5/Vqf2K+qLq+yBKwTSNC8img2peeD
-	jt78Jlp49ku0B+5kEIpVw/T4+R2cJ69urd6Mc+1yx6NadfXM+sWk1eIL1vvN35lLCJxQNU2VxLi
-	4yki1IOtXg+WF1y05q5PTeyp43fw==
-X-Google-Smtp-Source: AGHT+IGd29LWPGgR9UGCBpZLeV1KN1xw7zia+tlGYRvOw3VgRosrdVlpnWlGMcVf2f8cgT32vDKorJyyGy8zpUnCyzE=
-X-Received: by 2002:a17:907:6ea5:b0:a8d:4631:83b0 with SMTP id
- a640c23a62f3a-a9eefe9bb4fmr2392506366b.5.1731599141117; Thu, 14 Nov 2024
- 07:45:41 -0800 (PST)
+	s=arc-20240116; t=1731599146; c=relaxed/simple;
+	bh=9Z4M8hzYU/w6zX+l0vhoSq1ALisl/iiI9Bc2iEjZblk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h3C1RMqIxOsDr2UUyafsCf+h2Xs7lxQAQzD9ZRZ1OuEnohC2pnjbE6IgQcYimh16I45/+tbK78WcR//OTlRiKwcKwHCret7t7F0gXDANYVg/Zbbv9Pv5/BCZiYltn+00MrJTbkLMl0VSsac8xuHhuHfOGpe4u1cWILQF/1oIoHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 6453A100FC22E;
+	Thu, 14 Nov 2024 16:45:33 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 25FC33C4907; Thu, 14 Nov 2024 16:45:33 +0100 (CET)
+Date: Thu, 14 Nov 2024 16:45:33 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Terry Bowman <terry.bowman@amd.com>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, nifan.cxl@gmail.com, ming4.li@intel.com,
+	dave@stgolabs.net, jonathan.cameron@huawei.com,
+	dave.jiang@intel.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, dan.j.williams@intel.com,
+	bhelgaas@google.com, mahesh@linux.ibm.com, ira.weiny@intel.com,
+	oohall@gmail.com, Benjamin.Cheatham@amd.com, rrichter@amd.com,
+	nathan.fontenot@amd.com, Smita.KoralahalliChannabasappa@amd.com
+Subject: Re: [PATCH v3 03/15] cxl/pci: Introduce PCIe helper functions
+ pcie_is_cxl() and pcie_is_cxl_port()
+Message-ID: <ZzYbHZvU_RFXZuk0@wunner.de>
+References: <20241113215429.3177981-1-terry.bowman@amd.com>
+ <20241113215429.3177981-4-terry.bowman@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030033514.1728937-1-zack.rusin@broadcom.com>
- <20241030033514.1728937-3-zack.rusin@broadcom.com> <CABgObfaRP6zKNhrO8_atGDLcHs=uvE0aT8cPKnt_vNHHM+8Nxg@mail.gmail.com>
- <CABQX2QMR=Nsn23zojFdhemR7tvGUz6_UM8Rgf6WLsxwDqoFtxg@mail.gmail.com>
- <Zy0__5YB9F5d0eZn@google.com> <CABQX2QNxFDhH1frsGpSQjSs3AWSdTibkxPrjq1QC7FGZC8Go-Q@mail.gmail.com>
- <e3f943a7-a40a-45cb-b0d9-e3ed58344d8b@redhat.com> <CADH9ctD1uf_yBA3NXNQu7TJa_TPhLRN=0YZ3j2gGhgmaFRdCFg@mail.gmail.com>
- <c3026876-8061-4ab2-9321-97cc05bad510@redhat.com> <CADH9ctBivnvP1tNcatLKzd8EDz8Oo6X65660j8ccxYzk3aFzCA@mail.gmail.com>
- <CABgObfZEyCQMiq6CKBOE7pAVzUDkWjqT2cgfbwjW-RseH8VkLw@mail.gmail.com>
- <CADH9ctA_C1dAOus1K+wOH_SOKTb=-X1sVawt5R=dkH1iGt8QUg@mail.gmail.com>
- <CABgObfZrTyft-3vqMz5w0ZiAhp-v6c32brgftynZGJO8OafrdA@mail.gmail.com>
- <CADH9ctBYp-LMbW4hm3+QwNoXvAc5ryVeB0L1jLY0uDWSe3vbag@mail.gmail.com> <b1ddb439-9e28-4a58-ba86-0395bfc081e0@redhat.com>
-In-Reply-To: <b1ddb439-9e28-4a58-ba86-0395bfc081e0@redhat.com>
-From: Doug Covelli <doug.covelli@broadcom.com>
-Date: Thu, 14 Nov 2024 10:45:30 -0500
-Message-ID: <CADH9ctCFYtNfhn3SSp2jp0fzxu6s_X1A+wBNnzvHZVb8qXPk=g@mail.gmail.com>
-Subject: Re: [PATCH 2/3] KVM: x86: Add support for VMware guest specific hypercalls
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Zack Rusin <zack.rusin@broadcom.com>, Sean Christopherson <seanjc@google.com>, 
-	kvm <kvm@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "the arch/x86 maintainers" <x86@kernel.org>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Shuah Khan <shuah@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Arnaldo Carvalho de Melo <acme@redhat.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Joel Stanley <joel@jms.id.au>, Linux Doc Mailing List <linux-doc@vger.kernel.org>, 
-	"Kernel Mailing List, Linux" <linux-kernel@vger.kernel.org>, 
-	linux-kselftest <linux-kselftest@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241113215429.3177981-4-terry.bowman@amd.com>
 
-On Wed, Nov 13, 2024 at 12:59=E2=80=AFPM Paolo Bonzini <pbonzini@redhat.com=
-> wrote:
->
-> On 11/13/24 17:24, Doug Covelli wrote:
-> >> No worries, you're not hijacking :) The only reason is that it would
-> >> be more code for a seldom used feature and anyway with worse performan=
-ce.
-> >> (To be clear, CR8 based accesses are allowed, but stores cause an exit
-> >> in order to check the new TPR against IRR. That's because KVM's API
-> >> does not have an equivalent of the TPR threshold as you point out belo=
-w).
-> >
-> > I have not really looked at the code but it seems like it could also
-> > simplify things as CR8 would be handled more uniformly regardless of
-> > who is virtualizing the local APIC.
->
-> Not much because CR8 basically does not exist at all (it's just a byte
-> in memory) with userspace APIC.  So it's not easy to make it simpler, eve=
-n
-> though it's less uniform.
->
-> That said, there is an optimization: you only get KVM_EXIT_SET_TPR if
-> CR8 decreases.
->
-> >>> Also I could not find these documented anywhere but with MSFT's APIC =
-our monitor
-> >>> relies on extensions for trapping certain events such as INIT/SIPI pl=
-us LINT0
-> >>> and SVR writes:
-> >>>
-> >>> UINT64 X64ApicInitSipiExitTrap    : 1; // WHvRunVpExitReasonX64ApicIn=
-itSipiTrap
-> >>> UINT64 X64ApicWriteLint0ExitTrap  : 1; // WHvRunVpExitReasonX64ApicWr=
-iteTrap
-> >>> UINT64 X64ApicWriteLint1ExitTrap  : 1; // WHvRunVpExitReasonX64ApicWr=
-iteTrap
-> >>> UINT64 X64ApicWriteSvrExitTrap    : 1; // WHvRunVpExitReasonX64ApicWr=
-iteTrap
-> >>
-> >> There's no need for this in KVM's in-kernel APIC model. INIT and
-> >> SIPI are handled in the hypervisor and you can get the current
-> >> state of APs via KVM_GET_MPSTATE. LINT0 and LINT1 are injected
-> >> with KVM_INTERRUPT and KVM_NMI respectively, and they obey IF/PPR
-> >> and NMI blocking respectively, plus the interrupt shadow; so
-> >> there's no need for userspace to know when LINT0/LINT1 themselves
-> >> change. The spurious interrupt vector register is also handled
-> >> completely in kernel.
-> >
-> > I realize that KVM can handle LINT0/SVR updates themselves but our
-> > interrupt subsystem relies on knowing the current values of these
-> > registers even when not virtualizing the local APIC.  I suppose we
-> > could use KVM_GET_LAPIC to sync things up on demand but that seems
-> > like it might nor be great from a performance point of view.
->
-> Ah no, you're right---you want to track the CPU that has ExtINT enabled
-> and send KVM_INTERRUPT to that one, I guess?  And you need the spurious
-> vector registers because writes can set the mask bit in LINTx, but
-> essentially you want to trap LINT0 changes.
->
-> Something like this (missing the KVM_ENABLE_CAP and KVM_CHECK_EXTENSION
-> code) is good, feel free to include it in your v2 (Co-developed-by
-> and Signed-off-by me):
->
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_h=
-ost.h
-> index 5fb29ca3263b..b7dd89c99613 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -122,6 +122,7 @@
->   #define KVM_REQ_HV_TLB_FLUSH \
->         KVM_ARCH_REQ_FLAGS(32, KVM_REQUEST_WAIT | KVM_REQUEST_NO_WAKEUP)
->   #define KVM_REQ_UPDATE_PROTECTED_GUEST_STATE  KVM_ARCH_REQ(34)
-> +#define KVM_REQ_REPORT_LINT0_ACCESS    KVM_ARCH_REQ(35)
->
->   #define CR0_RESERVED_BITS                                              =
- \
->         (~(unsigned long)(X86_CR0_PE | X86_CR0_MP | X86_CR0_EM | X86_CR0_=
-TS \
-> @@ -775,6 +776,7 @@ struct kvm_vcpu_arch {
->         u64 smi_count;
->         bool at_instruction_boundary;
->         bool tpr_access_reporting;
-> +       bool lint0_access_reporting;
->         bool xfd_no_write_intercept;
->         u64 ia32_xss;
->         u64 microcode_version;
-> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> index 88dc43660d23..0e070f447aa2 100644
-> --- a/arch/x86/kvm/lapic.c
-> +++ b/arch/x86/kvm/lapic.c
-> @@ -1561,6 +1561,21 @@ static u32 apic_get_tmcct(struct kvm_lapic *apic)
->                               apic->divide_count));
->   }
->
-> +static void __report_lint0_access(struct kvm_lapic *apic, u32 value)
+On Wed, Nov 13, 2024 at 03:54:17PM -0600, Terry Bowman wrote:
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -5038,6 +5038,20 @@ static u16 cxl_port_dvsec(struct pci_dev *dev)
+>  					 PCI_DVSEC_CXL_PORT);
+>  }
+>  
+> +bool pcie_is_cxl_port(struct pci_dev *dev)
 > +{
-> +       struct kvm_vcpu *vcpu =3D apic->vcpu;
-> +       struct kvm_run *run =3D vcpu->run;
+> +	if (!pcie_is_cxl(dev))
+> +		return false;
 > +
-> +       kvm_make_request(KVM_REQ_REPORT_LINT0_ACCESS, vcpu);
-> +       run->lint0_access.value =3D value;
+> +	if ((pci_pcie_type(dev) != PCI_EXP_TYPE_ROOT_PORT) &&
+> +	    (pci_pcie_type(dev) != PCI_EXP_TYPE_UPSTREAM) &&
+> +	    (pci_pcie_type(dev) != PCI_EXP_TYPE_DOWNSTREAM))
+> +		return false;
+> +
+> +	return cxl_port_dvsec(dev);
 > +}
-> +
-> +static inline void report_lint0_access(struct kvm_lapic *apic, u32 value=
-)
-> +{
-> +       if (apic->vcpu->arch.lint0_access_reporting)
-> +               __report_lint0_access(apic, value);
-> +}
-> +
->   static void __report_tpr_access(struct kvm_lapic *apic, bool write)
->   {
->         struct kvm_vcpu *vcpu =3D apic->vcpu;
-> @@ -2312,8 +2327,10 @@ static int kvm_lapic_reg_write(struct kvm_lapic *a=
-pic, u32 reg, u32 val)
->                         int i;
->
->                         for (i =3D 0; i < apic->nr_lvt_entries; i++) {
-> -                               kvm_lapic_set_reg(apic, APIC_LVTx(i),
-> -                                       kvm_lapic_get_reg(apic, APIC_LVTx=
-(i)) | APIC_LVT_MASKED);
-> +                               u32 old =3D kvm_lapic_get_reg(apic, APIC_=
-LVTx(i));
-> +                               kvm_lapic_set_reg(apic, APIC_LVTx(i), old=
- | APIC_LVT_MASKED);
-> +                               if (i =3D=3D 0 && !(old & APIC_LVT_MASKED=
-))
-> +                                       report_lint0_access(apic, old | A=
-PIC_LVT_MASKED);
->                         }
->                         apic_update_lvtt(apic);
->                         atomic_set(&apic->lapic_timer.pending, 0);
-> @@ -2352,6 +2369,8 @@ static int kvm_lapic_reg_write(struct kvm_lapic *ap=
-ic, u32 reg, u32 val)
->                 if (!kvm_apic_sw_enabled(apic))
->                         val |=3D APIC_LVT_MASKED;
->                 val &=3D apic_lvt_mask[index];
-> +               if (index =3D=3D 0 && val !=3D kvm_lapic_get_reg(apic, re=
-g))
-> +                       report_lint0_access(apic, val);
->                 kvm_lapic_set_reg(apic, reg, val);
->                 break;
->         }
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index d0d3dc3b7ef6..2b039b372c3f 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -10879,6 +10879,11 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcp=
-u)
->                         kvm_vcpu_flush_tlb_guest(vcpu);
->   #endif
->
-> +               if (kvm_check_request(KVM_REQ_REPORT_LINT0_ACCESS, vcpu))=
- {
-> +                       vcpu->run->exit_reason =3D KVM_EXIT_LINT0_ACCESS;
-> +                       r =3D 0;
-> +                       goto out;
-> +               }
->                 if (kvm_check_request(KVM_REQ_REPORT_TPR_ACCESS, vcpu)) {
->                         vcpu->run->exit_reason =3D KVM_EXIT_TPR_ACCESS;
->                         r =3D 0;
-> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-> index 637efc055145..ec97727f9de4 100644
-> --- a/include/uapi/linux/kvm.h
-> +++ b/include/uapi/linux/kvm.h
-> @@ -178,6 +178,7 @@ struct kvm_xen_exit {
->   #define KVM_EXIT_NOTIFY           37
->   #define KVM_EXIT_LOONGARCH_IOCSR  38
->   #define KVM_EXIT_MEMORY_FAULT     39
-> +#define KVM_EXIT_LINT0_ACCESS     40
->
->   /* For KVM_EXIT_INTERNAL_ERROR */
->   /* Emulate instruction failed. */
-> @@ -283,6 +284,10 @@ struct kvm_run {
->                                 __u64 flags;
->                         };
->                 } hypercall;
-> +               /* KVM_EXIT_LINT0_ACCESS */
-> +               struct {
-> +                       __u32 value;
-> +               } lint0_access;
->                 /* KVM_EXIT_TPR_ACCESS */
->                 struct {
->                         __u64 rip;
->
->
-> For LINT1, it should be less performance critical; if it's possible
-> to just go through all vCPUs, and do KVM_GET_LAPIC to check who you
-> should send a KVM_NMI to, then I'd do that.  I'd also accept a patch
-> that adds a VM-wide KVM_NMI ioctl that does the same in the hypervisor
-> if it's useful for you.
+> +EXPORT_SYMBOL_GPL(pcie_is_cxl_port);
 
-Thanks for the patch - I'll get it a try but it might not be right away.
+This doesn't need to be exported because the only caller introduced
+in this series is in drivers/pci/pcie/aer.c (in patch 05/15), which
+is dependent on CONFIG_PCIEAER, which is bool not tristate.
 
-> And since I've been proven wrong already, what do you need INIT/SIPI for?
+The "!pcie_is_cxl(dev)" check at the top of the function is identical
+to the return value "cxl_port_dvsec(dev)".  This looks redundant.
+However one cannot call pci_pcie_type() without first checking
+pci_is_pcie().  So I'm wondering if the "!pcie_is_cxl(dev)" check
+is actually erroneous and supposed to be "!pci_is_pcie(dev)"?
+That would make more sense to me.
 
-I don't think this one is as critical.  I believe the reason it was
-added was so that we can synchronize startup of the APs with execution
-of the BSP for guests that do not do a good job of that (Windows).
+Alternatively, just return true instead of "cxl_port_dvsec(dev)".
+That would probably be the simplest solution here.
 
-Doug
 
-> Paolo
->
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -443,6 +443,7 @@ struct pci_dev {
+>  	unsigned int	is_hotplug_bridge:1;
+>  	unsigned int	shpc_managed:1;		/* SHPC owned by shpchp */
+>  	unsigned int	is_thunderbolt:1;	/* Thunderbolt controller */
+> +	unsigned int	is_cxl:1;               /* CXL alternate protocol */
 
---=20
-This electronic communication and the information and any files transmitted=
-=20
-with it, or attached to it, are confidential and are intended solely for=20
-the use of the individual or entity to whom it is addressed and may contain=
-=20
-information that is confidential, legally privileged, protected by privacy=
-=20
-laws, or otherwise restricted from disclosure to anyone else. If you are=20
-not the intended recipient or the person responsible for delivering the=20
-e-mail to the intended recipient, you are hereby notified that any use,=20
-copying, distributing, dissemination, forwarding, printing, or copying of=
-=20
-this e-mail is strictly prohibited. If you received this e-mail in error,=
-=20
-please return the e-mail to the sender, delete it from your computer, and=
-=20
-destroy any printed copy of it.
+I suspect the audience consists mostly of CXL-unaware PCI developers,
+so spelling out Compute Express Link here (and omitting "alternate
+protocol" if it doesn't fit) might be more appropriate.
+
+Thanks,
+
+Lukas
 
