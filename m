@@ -1,151 +1,103 @@
-Return-Path: <linux-kernel+bounces-408678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13B7E9C820E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 05:41:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC6999C8212
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 05:41:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A069DB2583B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 04:41:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90A8C1F23C3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 04:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C362D165F01;
-	Thu, 14 Nov 2024 04:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A9F1DF73C;
+	Thu, 14 Nov 2024 04:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="NPvYCuzj"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="I7Ct5xV6"
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A42D1632E7;
-	Thu, 14 Nov 2024 04:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF681632E7;
+	Thu, 14 Nov 2024 04:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731559272; cv=none; b=q9gHfOxkvJ5+/H/mkR7sO4ZasFBSbUW0lwSvadHM92iEvBH4j+4Lyqo2obYMGwvuEJu8EIHCNzqitM+kT9TxDthC/e3mx9bNcc3uF78ox2odlyKYbD8VX7I+wnqxjdvCb49zbM+hsc8lnfyRWya56V+f1vp6j4NVLgxWwGj3nlg=
+	t=1731559288; cv=none; b=KSd3BQHwQ89oO7s3satHCQZG7u0JI27K+P/bZFt9FahadCWsYGg0Llk5m+OVI3SznHCU2PN7+0EAP1D7qPIBOMCOUwC3i24q4tM3vvt//lI0Dh2Y4wm+M3WzhsM5NtxUe2o2Qs+TY0K7q00u3HsEdPLnrwV7kJwvqbw9FAnTqGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731559272; c=relaxed/simple;
-	bh=Tmib4jjLJqIBLcCrkSlX7oaas0R9RgMKIBI6zShGvI4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gVhERToYTXoC7rAgHQOiStL4HQudGTcGFx/vYfKy+qWdRX8wX5ODrg9/3jOS5KWXMKxGp0j1j1sv9UiXb9QoFi2uQLZm1m2Dy8sx7/nFwkuNSmQe/z3jhJj4qL7EBu7Meq21pf+CbaWquXd1+RUjRLzTtSy56iE5Guw7dAMF9lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=NPvYCuzj; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1731559256;
-	bh=Tmib4jjLJqIBLcCrkSlX7oaas0R9RgMKIBI6zShGvI4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NPvYCuzj2p4SEyVkL00gdajRVwzh0v0JUjakfyta9Ai+Y4/pZVu8H1M5QV9Rrcnaa
-	 cxpJebdCz+4wum6ChuS2VUUZo+nEktXRyGJMna2ErFxcW2BnJgMW6wITY2wpD7WBy+
-	 DnqKPT5P5ioVexvN61DyNzzu0EaZ4p+VvZOqAsNY=
-Date: Thu, 14 Nov 2024 05:40:55 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (core) Avoid ifdef in C source file
-Message-ID: <b6ed8499-bf84-486c-be5f-0ef13311eb18@t-8ch.de>
-References: <20241113-hwmon-thermal-v1-1-71270be7f7a2@weissschuh.net>
- <041a52c7-ac0b-4a78-8b39-4fc4ac4d2fd2@roeck-us.net>
+	s=arc-20240116; t=1731559288; c=relaxed/simple;
+	bh=jX+oHqcV9GXf5cBXur5GkiH1t0yYrzb1Qfiq7Pr6xD8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IQF3Ar0HTWf8AC8YDDSetfAlNP1ZqtGiItCUb8/+LnI6JzayVKEazm2yi66FSaFQbhHeYLFrFlVaZ75gPiFEJkp6Yf6hqqZviaigMNd04DSX6zyJmbQR3T/f2pu/tJ7reibcue5DYthFa1OLUY/0ekGNLPP6fPZ16JeYDGF21Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=I7Ct5xV6; arc=none smtp.client-ip=80.12.242.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from mail-ed1-f41.google.com ([209.85.208.41])
+	by smtp.orange.fr with ESMTPSA
+	id BRfXt2hQ5TH7uBRfXtWQQd; Thu, 14 Nov 2024 05:41:23 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1731559283;
+	bh=36eMzRhJkNGzqdLqDAJfsSRUD4cbLO0HzfYQznpBqQ0=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To;
+	b=I7Ct5xV6J+x404uim86+fPNCftp0OK0yEYYJP0h5KQrNIyeDXIl4BQBEx0KDeLLBp
+	 B+6/eEWcFy5mwgDECPdrJYjaUMUzezj2dcv0GMs4NnYJuOcIHXHLjzWKnsvuB8XGSo
+	 RTpkZC09oYihgXvVajCzZiHYnP5RJhF3m5QiTjZQoJaENXRXlJ7VnBxdJSPbQl67dU
+	 lOH78DbGapFVrr99Q4qDo/b+JL4v3JLQGpHzHmLz0uUOo/OhBqAi+bHMAsIOXhdEAn
+	 iRqSVNX9WERBrhKa9/u+NpFM9EvlOiLGPZT/Vej0hXwsOfTXKeaEAn10YdBc/1uURd
+	 CQQh2vo3wz+jA==
+X-ME-Helo: mail-ed1-f41.google.com
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 14 Nov 2024 05:41:23 +0100
+X-ME-IP: 209.85.208.41
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cef772621eso226136a12.3;
+        Wed, 13 Nov 2024 20:41:23 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUWx4medF97y0lg9bGJhhtWDaYPlFDuVd9lHyhgGRxKkz2ed2MMWJflNBTnqKLNEgtQLdXrn87BpONuuSmm@vger.kernel.org, AJvYcCUyJj2Upg/z9/yyQ3x/4kOMKC6k6B7SzI3K4Yft3Oa9abMAy574uUnKyjIBTcexkAVv0hSD5dzrRx+Y@vger.kernel.org, AJvYcCVAGXzXcH7pXbHzIGJ+esa1Jjuz3s5KB+7WEXNkis+xLVcu1IEJG238frE+/oo4EJtjmymhB9lat0ku@vger.kernel.org, AJvYcCWzSWtTTUKvMDN6o2lSFmfj33+lYn9Xo3w2/DsVkxWtSo8tjfWUuzPfm8JWvzYDujJnQ0VZE8qq@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdyULWbcd9EKL4+Pii1qheoY+2MhgpYO0HU007Qtn28QjvxW4d
+	23yzaU+0VITJmXWiSFADl5brBPKixVgsvA7XUrlTcAbZ04/JVTCKj1+RiVtPD2d51f144AeDy92
+	JGZrY79jYY8TFIElXqQK70K+Lrc4=
+X-Google-Smtp-Source: AGHT+IEh1S0H3lpm4/coF4vpnrnq8b7gRyqB3ly18vhAASE/ydOJVcOGKvqbPfHXkda/CpH9C5ArEdkfmLKcLjLZKZI=
+X-Received: by 2002:a05:6402:5cb:b0:5c9:5665:8df5 with SMTP id
+ 4fb4d7f45d1cf-5cf6311114dmr4422144a12.34.1731559283068; Wed, 13 Nov 2024
+ 20:41:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <041a52c7-ac0b-4a78-8b39-4fc4ac4d2fd2@roeck-us.net>
+References: <20241111-tcan-wkrqv-v2-0-9763519b5252@geanix.com>
+ <20241111101011.30e04701@kernel.org> <fatpdmg5k2vlwzr3nhz47esxv7nokzdebd7ziieic55o5opzt6@axccyqm6rjts>
+ <20241112-hulking-smiling-pug-c6fd4d-mkl@pengutronix.de> <20241113193709.395c18b0@kernel.org>
+In-Reply-To: <20241113193709.395c18b0@kernel.org>
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Date: Thu, 14 Nov 2024 13:41:12 +0900
+X-Gmail-Original-Message-ID: <CAMZ6Rq+Z=UZaxbMeigWp7-=v5xgetguxOcLgsht2G56OR1jFPw@mail.gmail.com>
+Message-ID: <CAMZ6Rq+Z=UZaxbMeigWp7-=v5xgetguxOcLgsht2G56OR1jFPw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] can: tcan4x5x: add option for selecting nWKRQ voltage
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Sean Nyekjaer <sean@geanix.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Guenter,
+On Thu. 14 Nov. 2024 at 12:37, Jakub Kicinski <kuba@kernel.org> wrote:
+> My bad actually, I didn't realize we don't have an X: entries
+> on net/can/ under general networking in MAINTAINERS.
+>
+> Would you mind if I added them?
 
-On 2024-11-12 22:52:36-0800, Guenter Roeck wrote:
-> On 11/12/24 20:39, Thomas Weißschuh wrote:
-> > Using an #ifdef in a C source files to have different definitions
-> > of the same symbol makes the code harder to read and understand.
-> > Furthermore it makes it harder to test compilation of the different
-> > branches.
-> > 
-> > Replace the ifdeffery with IS_ENABLED() which is just a normal
-> > conditional.
-> > The resulting binary is still the same as before as the compiler
-> > optimizes away all the unused code and definitions.
-> > 
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > ---
-> > This confused me a bit while looking at the implementation of
-> > HWMON_C_REGISTER_TZ.
-> > ---
-> >   drivers/hwmon/hwmon.c | 21 ++++++---------------
-> >   1 file changed, 6 insertions(+), 15 deletions(-)
-> > 
-> > diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
-> > index 9c35c4d0369d7aad7ea61ccd25f4f63fc98b9e02..86fb674c85d3f54d475be014c3fd3dd74c815c57 100644
-> > --- a/drivers/hwmon/hwmon.c
-> > +++ b/drivers/hwmon/hwmon.c
-> > @@ -147,11 +147,6 @@ static DEFINE_IDA(hwmon_ida);
-> >   /* Thermal zone handling */
-> > -/*
-> > - * The complex conditional is necessary to avoid a cyclic dependency
-> > - * between hwmon and thermal_sys modules.
-> > - */
-> > -#ifdef CONFIG_THERMAL_OF
-> >   static int hwmon_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
-> >   {
-> >   	struct hwmon_thermal_data *tdata = thermal_zone_device_priv(tz);
-> > @@ -257,6 +252,9 @@ static int hwmon_thermal_register_sensors(struct device *dev)
-> >   	void *drvdata = dev_get_drvdata(dev);
-> >   	int i;
-> > +	if (!IS_ENABLED(CONFIG_THERMAL_OF))
-> > +		return 0;
-> > +
-> >   	for (i = 1; info[i]; i++) {
-> >   		int j;
-> > @@ -285,6 +283,9 @@ static void hwmon_thermal_notify(struct device *dev, int index)
-> >   	struct hwmon_device *hwdev = to_hwmon_device(dev);
-> >   	struct hwmon_thermal_data *tzdata;
-> > +	if (!IS_ENABLED(CONFIG_THERMAL_OF))
-> > +		return;
-> > +
-> >   	list_for_each_entry(tzdata, &hwdev->tzdata, node) {
-> >   		if (tzdata->index == index) {
-> >   			thermal_zone_device_update(tzdata->tzd,
-> 
-> There is no dummy function for thermal_zone_device_update().
-> I really don't want to trust the compiler/linker to remove that code
-> unless someone points me to a document explaining that it is guaranteed
-> to not cause any problems.
+OK for me. I guess you want to add the exclusion for both the
 
-I'm fairly sure that a declaration should be enough, and believe
-to remember seeing such advise somewhere.
-However there is not even a function declaration with !CONFIG_THERMAL.
-So I can add an actual stub for it for v2.
+  CAN NETWORK DRIVERS
 
-What do you think?
+and the
 
-Thomas
+  CAN NETWORK LAYER
 
-> > @@ -293,16 +294,6 @@ static void hwmon_thermal_notify(struct device *dev, int index)
-> >   	}
-> >   }
-> > -#else
-> > -static int hwmon_thermal_register_sensors(struct device *dev)
-> > -{
-> > -	return 0;
-> > -}
-> > -
-> > -static void hwmon_thermal_notify(struct device *dev, int index) { }
-> > -
-> > -#endif /* IS_REACHABLE(CONFIG_THERMAL) && ... */
-> > -
-> >   static int hwmon_attr_base(enum hwmon_sensor_types type)
-> >   {
-> >   	if (type == hwmon_in || type == hwmon_intrusion)
-> > 
-> > ---
-> > base-commit: 3022e9d00ebec31ed435ae0844e3f235dba998a9
-> > change-id: 20241113-hwmon-thermal-2d2da581c276
-> > 
-> > Best regards,
-> 
+entries in MAINTAINERS.
+
+
+Yours sincerely,
+Vincent Mailhol
 
