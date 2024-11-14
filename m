@@ -1,405 +1,328 @@
-Return-Path: <linux-kernel+bounces-408671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77A0D9C81FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 05:33:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC049C81FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 05:33:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38260284509
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 04:33:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC38C2846BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 04:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A4D1632F3;
-	Thu, 14 Nov 2024 04:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9F61632FA;
+	Thu, 14 Nov 2024 04:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YXnBkCn7"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2TgJXc2e"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2045.outbound.protection.outlook.com [40.107.243.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B053214;
-	Thu, 14 Nov 2024 04:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731558780; cv=none; b=PDOqPXyvFEUe4x32DzhzOCRmkibPeRmGMKMO0sxd8CttttcAE52F0lnhCcVNaRV95f9ABsUTbdYBpCBmnIDbQJ+GOpAeiOq40QHke9z+7T7jwQRkLDq9Ys6aJUKYRwspnLdTZwodvkexf+lhK8cAwXw3182nvmDW3BD7PZzyRHw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731558780; c=relaxed/simple;
-	bh=Q+WsITuDK1wPyUGh+qmK4hpxteOMSfbldv0ftRDiwuc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MIFwy+4pJQi8irp9fJ3vX9YaYJslRRVjGFR4UTvLcpGfIs9kf7b3iMlywAS5xsA+ZC4zhuUtklt2CPTQYKVsfGkPobhIwb08YilTKh6jY+hZCdz9A+NRwe1TnGgGnctfm/5bfjx+PnJVT0AKFCM2av60u4q1/JeQ4DZqBlOWI7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YXnBkCn7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ADH1QFH015416;
-	Thu, 14 Nov 2024 04:32:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	yBayVBUAkz7cKc986pdQx+FDAwFxvHZ/cWI5fMaVMIo=; b=YXnBkCn7pdsCyxsJ
-	xUv6F2tG6vmTQcAWhCHBq4QcQUARbIDFc+dztKSoPfw7eM+5XXuKl7EWYasxSzuO
-	FG5SRJTELpv0N6mZbRfyNGSQLFP0GSEo/B4/VTGqX66P/bu2VjLVsnA9pw9/fJZk
-	WVpIGyYXhLgz1nyjM4xMTTw9K/uncNV69lCY6AdS6y/MFI7dYbHFW2Nqoil2ZyOe
-	rc45S34xy6MEvBZU2PjOTub+t/2XHZFRTOhX+uAGEepeUEUJuKz/CX8gEBdmKVw1
-	0uC1XqCwCiUe1/BlvYNaf69+1PPkLw54qtYDR7X2oRsUJHw0rSyDra/vHW8lhdtj
-	4J3srQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vsf32q3n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Nov 2024 04:32:48 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AE4WlWl012211
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Nov 2024 04:32:47 GMT
-Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 13 Nov
- 2024 20:32:42 -0800
-Message-ID: <55fd0c34-c52c-95c5-5cd0-16fd66a4baa2@quicinc.com>
-Date: Thu, 14 Nov 2024 10:02:40 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539A48F6C;
+	Thu, 14 Nov 2024 04:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731558810; cv=fail; b=ZS6LwgWYGRwzReXXkBfuiiubviHPbDMEsckXdoseTIhsVuQyP26KanDa2EO+8L4nSjtdfZglTmq1QdAYfx1KAifnQBrLU3cOVZv4/4qCeFZlduL8aaAvJUTxgiwMYmy9t7pfvuYWK0fIfPBqBb9/sH5TBBTnWQd+Yl3Sl76Qh4k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731558810; c=relaxed/simple;
+	bh=M7tuDWyg0nX3+51t1WIJeOW3epOSJG7UUhZlLPdNjk4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=oLRR3hQ4Pw7b/DENRg8nWHJmG5IbivTQMoAhsBDf7NlyMPA0AEDfayen81Mg4K0Ju6daJVKS/A77Fqhs6ZyrYUpZ4OsX69bY1cMlbPz3zcJ8TjtTQuhG8hMepAdqf+gmZ7t3/Kiny8GLnCRhaKeaB9Nyds9k66eSowIT40HDFg8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2TgJXc2e; arc=fail smtp.client-ip=40.107.243.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HpYbUG20WQaQikzcUYXh2beFQmYlLkBH6v6MhAEPIGnMdGUx1jXcVSaL4sCoEmH0V1YQY1DPdWEJCQ3YmVcy+xj0vPGEWA6I3zDrfczS1q1Gba/aa+TYYh9lDNfhPiDnSgtxTToL6uQwcNn+taxzjGjhnTqX355QfBgkYFLyJ24TFcsdCqA/pWIk1Tze+KAyW8TvYQmge5gNy8xyYrSQDD2Su3ECaBNtvEmDVdn7Z3svyFMV5rJ+3+lsVJ1rn4gMT4jetFU2JpaA0pdGhWu3aYibecvDU6NPXuxXP5LF0Uo4BS8T4q4m4bF20U9hDurZAb8tpKYdfO4VQmptc8gYCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TBDef40rWjCr1MPksinwUdDwNEQwMztj2gvmeOVq5kw=;
+ b=n7mAhILAXwYG3R+sDa4BV/HNWhSMvUsiwz1pgy+2F/dMx/z/aOKYVHZBPFsHQrL8FCBxm9ffvNQGLODMvdFEt+vuvShzBeisRetC67NJM6dwkzkHtPSYDDc8FqNwp8FaoPcuaEOeGItqI8qACQ7et69AF9k4kluVrdwwmXSCdBkV//zFFTY5Mrz0Y2hWIuhvRw9oLcBwaAwWdosciwFwwaNKXOkfwE+i+HlGsxsUMoVmBZb1TwMMQ2f4EH3Uhh/w9CfeUF0ZkNlTfpIGKqF3KXSFa18bwEqUPqvsF6zdjwYnAf3UWI+1u+XNaZHebO1Dp3d53Y99tVgz6fYGrXgj7g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TBDef40rWjCr1MPksinwUdDwNEQwMztj2gvmeOVq5kw=;
+ b=2TgJXc2eRGGO20BvWry7wM/VB8reiXkOJwALAHD2+BEpVul7YzBKcrYlXrju7QwtMosjQ8dvMfd6xMZvnsIF7h/Dh+kW0Ckkg+0cWPm7ibpnK+XcAzpxTVyvJg2hrXVs4QqTAWJdOVYPxyfE/W9lImwigvDdIK38S4/p+fP1anM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL1PR12MB5176.namprd12.prod.outlook.com (2603:10b6:208:311::19)
+ by BL1PR12MB5899.namprd12.prod.outlook.com (2603:10b6:208:397::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.17; Thu, 14 Nov
+ 2024 04:33:23 +0000
+Received: from BL1PR12MB5176.namprd12.prod.outlook.com
+ ([fe80::ed5b:dd2f:995a:bcf4]) by BL1PR12MB5176.namprd12.prod.outlook.com
+ ([fe80::ed5b:dd2f:995a:bcf4%5]) with mapi id 15.20.8158.017; Thu, 14 Nov 2024
+ 04:33:23 +0000
+Message-ID: <079db1b6-0f95-452e-832b-7d392e130028@amd.com>
+Date: Thu, 14 Nov 2024 10:03:13 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/5] i3c: master: Add ACPI support to i3c subsystem
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Jarkko Nikula <jarkko.nikula@linux.intel.com>, Sanket.Goswami@amd.com,
+ linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org
+References: <20241108073323.523805-1-Shyam-sundar.S-k@amd.com>
+ <20241108073323.523805-3-Shyam-sundar.S-k@amd.com>
+ <ZzS1-nJMPiCp5jDi@kuha.fi.intel.com>
+Content-Language: en-US
+From: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+In-Reply-To: <ZzS1-nJMPiCp5jDi@kuha.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0142.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:6::27) To BL1PR12MB5176.namprd12.prod.outlook.com
+ (2603:10b6:208:311::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH V4 2/5] firmware: arm_scmi: Add QCOM Generic Vendor
- Protocol documentation
-Content-Language: en-US
-To: Cristian Marussi <cristian.marussi@arm.com>
-CC: <sudeep.holla@arm.com>, <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <quic_rgottimu@quicinc.com>, <quic_kshivnan@quicinc.com>,
-        <conor+dt@kernel.org>, <arm-scmi@vger.kernel.org>
-References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
- <20241007061023.1978380-3-quic_sibis@quicinc.com> <Zxd89zenQAzafGpS@pluto>
-From: Sibi Sankar <quic_sibis@quicinc.com>
-In-Reply-To: <Zxd89zenQAzafGpS@pluto>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Ko2b0q_qKKiVCz_zzQc9CXrY443DBOOD
-X-Proofpoint-GUID: Ko2b0q_qKKiVCz_zzQc9CXrY443DBOOD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- bulkscore=0 phishscore=0 malwarescore=0 suspectscore=0 priorityscore=1501
- clxscore=1015 mlxscore=0 spamscore=0 lowpriorityscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411140033
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5176:EE_|BL1PR12MB5899:EE_
+X-MS-Office365-Filtering-Correlation-Id: dffd48c0-6728-4d5d-fb49-08dd0465795c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dTJ3eDJheHJ5SWdGdy9WU29kbXFnMFM5UTZqcE9Ha1dQY29Qb0pQQ2ZIakR3?=
+ =?utf-8?B?MGVFRzI5SEtSUi9YWHAwM2JTT3dpNUpEVzJUeHNMcm9ma1ROQXdDMWlUdkhM?=
+ =?utf-8?B?dVpjN3Z3MUh3Y1d6RHhTTXpvT3o4REJGL2dTWGl6am9OaUhNVjF3dXBXRTlr?=
+ =?utf-8?B?Y3FaYUhlZGR6WVFEN25XMEVZaURUZWtSWFAxVHUrYytiSjdJcGMzVDlyVTVq?=
+ =?utf-8?B?a1NnWHpVdVVTUVdKU0t0b3UyNGIzZ0oxWmM1eWlWZklmQitISVFsR0dhVGlZ?=
+ =?utf-8?B?VGJMbk5aM21MV1JWczBPaW5XTy9TTWhqU25jL1F6LzR4cjc0VmlGUVFCQ01N?=
+ =?utf-8?B?N2NGVFVZQTFLZHBDR2dqUFB2MWdNM0ZGUjlxQS9aaldiZDRoMHpNL091WXhi?=
+ =?utf-8?B?Q0o3UGg1bVgvaDdyeEd3WjZybVVtNGNCdXVwRi90dm1rYjV4ZUlQbkRsRGg3?=
+ =?utf-8?B?WGlESzBJU3NjSzZ2eHlxMUllVTR6N29WdkF5NFpvdFcvSEJKaWZUVUdSUlVo?=
+ =?utf-8?B?SEpDUG9zYUJBSVFDNXl1bVFWZGtiUE5CQjNtWXlpTENPVTd6aGJCd0s3WDVP?=
+ =?utf-8?B?dGF3TC9wbGQ4ejFMSTA0SkVYSUsxbnlaTEphcHJWd2ZzYkZGbDlBUHVVcFk0?=
+ =?utf-8?B?QzN5bWk2M1dVM2FVd1JKVHcxTS9LV2xFaTlnMGxWejdEMlloSlZyL2c4d3JJ?=
+ =?utf-8?B?U2EwKzB0Zk91ZjlRNVRFS01vRXJjMUJFMTljSkx5anNmR1pmNnh6SHJNQnVh?=
+ =?utf-8?B?a3hka0NLQ2NXR0UyV3VQQkk2RDUyOWcrUkNKMGJEWDRQTHowTWxDbFROaysz?=
+ =?utf-8?B?YmZmMHZIVWFhQ0gzTXpVWUV3N3d0ZHg3MERiTFJKRTNGVG5TWWltemJNRFZ1?=
+ =?utf-8?B?RFFtVHFpaXhneTlxK3hRV1Vhbm5HOERZai91QjN1eFVUOUZEOTZiSkVZc2E4?=
+ =?utf-8?B?TVdWMGdBVXY3V0swNXc1YXdCRm01aGFRUHB2SXNLeFZ6SzRLS240UzNzcmRa?=
+ =?utf-8?B?ZlB5UnRJMEg3YkphYmFvZjJVK1UxR0pENmkvaEVaVWpIdjNzMk5XL05PSkl3?=
+ =?utf-8?B?ajhDVW1BczVKSitWNjVTUEp3SzhEWmdhOEVNeWVGanRRMURCbnc3L2JIZVNz?=
+ =?utf-8?B?YTJUTSs0dnY2OWM3dFVxZm8vU0pnSnF4djMrRzhlQVBpTzF3NlkyU2xiZFA5?=
+ =?utf-8?B?UnhDM1hRdS9IdDVMQ0F4aG1MY2dXdW1PcnFheHVLQ3pLMkFwUWxSVUhDeVUv?=
+ =?utf-8?B?dW16N3BRTHREeVd3RHFoMnp4RDRjMWJZUmF5dThOR2V2RENITzBWWi8zK2Vq?=
+ =?utf-8?B?dmRmV2cwRjFDZXMydDZxeHpCSVkwSnNXRFlRQ09sbzNiY0NlbHUwblp6eEhP?=
+ =?utf-8?B?c1ZxbDBCQmkya2Z3NnVFWHpadnZnNXl5cExuaXVteVF0Z2hLOU1wZ3VpeDBo?=
+ =?utf-8?B?Yzdpcnl5MHk5Ky9zUUpVS0I0VjVxQ253MW45UXQ5UFpnOWVDMm1QWDMxTHRs?=
+ =?utf-8?B?WUF3ZlJnZGl6bHZLMTA5WXNjV0hMZkIwVUY3MmROT2pZUyttdTlSSk81L09B?=
+ =?utf-8?B?ZXUrdWE1THBnWk9pUWNEcFdGNkt4WGZRYXNqTjlycWtHbmxycURIVWtmbFFl?=
+ =?utf-8?B?dFlhazU5WWVUQldNSE9uMmJJSmtwNUo4a29weEFEeE4yZ1lHWThXdEZxekxS?=
+ =?utf-8?B?S3hMRDFFbmwyOUpYSitUTkRrY1lhY2VST1c3Mzltcmp6enRLUDl2aTRGRThC?=
+ =?utf-8?Q?vD1p0tMlpJ6h4uvLi1PrWVeqvKTDF3PcrMGHCO9?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5176.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UkpHeXdidnRlZ0NlcndhemZVd1dvREtJQ0NiQUROa3FNWExqSzdCVHRPYmlU?=
+ =?utf-8?B?ZHpzK3pxTWNOTnlwZ1lraFJyWm1pR0EvSndSNjR3WjJNSWR0ME1iQVdpWWJ0?=
+ =?utf-8?B?d2IyTGRxR1l5dFVKejJndllLVTFNbWVncTBPTEZkRnpkUWZmWUpSdzNaUkpq?=
+ =?utf-8?B?RHRQRnNvQVFIWkhkUGFoMURKWVpubjVVUnBnU0k3YWlmZ1UwMHFoYjA3enFG?=
+ =?utf-8?B?RnFxZnJCK3ZGa3JxZyszUTcrL0VOQ1BjVFIvSGFyMmhaSkpzMVZlVFd2UHdt?=
+ =?utf-8?B?ck5MZFdiMTZZa29BRkg2ek04YmhCTk5Hby9idXo2b2lGMkxPc09tbmQxbmdY?=
+ =?utf-8?B?SkZSaUVIeGtwS1A0bUNZenNiUkZvVVFnYVMwZkY2NThaOXVpL2g1MFZzSjVa?=
+ =?utf-8?B?aDdSaWtSTXJzNVhiUWZGTWxwY0tpRVlSOXZ0TW9DeHhDZ1pFOHZVS1hacktI?=
+ =?utf-8?B?R05Hb3hiUGpkNFJkS0E1YUkzSVg1cG1HNlI3U2xQelpXcDdrY1lLRzc4eTMw?=
+ =?utf-8?B?bllZSDB5QzRsOEFwNnhsMXY4eEx2aE5ySW5jUnRVU2ppYU1XWGpnaUdzR3N4?=
+ =?utf-8?B?dWUwNXhLVTFRZ29nTGIyWDhyTWgwaGpEQm5nU2lwQm5vVnhHMU9nYWdmZXls?=
+ =?utf-8?B?WEFiMXM0elJoU3lDWktTalJwUTlHb2ZuMXV1U1hyMmt5RXc3U05QMUdVOHFt?=
+ =?utf-8?B?bU5NNldiVEIzTS8rUThyVGZFV0RGT0M5VEhFOVdvN1NvRVdFS1diZFgybzRO?=
+ =?utf-8?B?SjZoV0ZvM3hzUW95b0Z2TElQanAwcnViUHd1S2RSRUhGS1BOYzdZTVM3dm5u?=
+ =?utf-8?B?bjd2ckNRM1p2SnVZdzFiQnZzT1RmT09semd5WmpQUjlRY013WkwrSitxcjVw?=
+ =?utf-8?B?L2xEc29iYm5XQmJvTjBxVTM0NXlIamJSMW5SbXVVaU80bjkvR25rRnEyU1Ni?=
+ =?utf-8?B?d3pHQklhRE1pQmZIZU4vSmVLVkhucjJRTmNLMjB4MVBDZEVPSWJtUWRCK2U3?=
+ =?utf-8?B?MXM0YmJjRGpTL3BCMGp3alA3NktVZ2hzQnN2RC8raVNNeUFTWW1XRkRwVloz?=
+ =?utf-8?B?T3BGVVBhMDlGV3lvSktLZCtKU1o0TlRYcFpQK0tUQ2Fibnd6bmg3SGNyaU1x?=
+ =?utf-8?B?R2pwZWJjRkF1cHdyRi9VRUh1WEtKM1NMa2FFS2JldUFNamtnRXVKVWQyRkti?=
+ =?utf-8?B?QzJETU01ODNKeGdUazR0eFVRYXBRRkNFV2g1MEdZVk4xK2xaRjZCVnd3RFBU?=
+ =?utf-8?B?VTBiWG5EdHZQdzAvc09paUJvSVcvOXdXMGVOZE9Pd1NaVG1tS3RBOUUzTTFE?=
+ =?utf-8?B?cUV0YXlIbnJ3cFlTK2x3aGtCWUR4bTVCL1k3ZDBQeGI4dEN2VFdLR0Y3Y3Ir?=
+ =?utf-8?B?R2E5NXAyT202QlpJRHZtNnJNU29TUjJrMGpPZThIbkFPcDVJWTlqdWlYSlBq?=
+ =?utf-8?B?YVUzYVMrZTNHTWVYNXN0d1dkZERXU25qaE52UmN0MlJSV2orM1RrcjJFNFRB?=
+ =?utf-8?B?WDJkUG1Gb01mWWRUaHpXYzRvamh3VW1MV2EvV1RHbE1lUzhFUzFIcStTMWVp?=
+ =?utf-8?B?MlFxT3l6RC85dGFzcG5keEtnakllQlgrR2NTMzk1OEYvNVNzVUVGbmtmMzl3?=
+ =?utf-8?B?aUJiMzUrVVRvbG5Heng2aGJQc2NxL3AweEZFSi8yU2RxMEM3ME9WV2tqc3I2?=
+ =?utf-8?B?cUtHTjd4bjRkUkxjRG9sUzFtb2VyMnRwaDRNQ2FwdVg2SE8vdEhEUjkyNTJV?=
+ =?utf-8?B?Z1lXcFN1eEpmeEJUbDJqTFVjRkJMU3dXK3YxL1RpZ081SjMxbVhMWUZ6QzI1?=
+ =?utf-8?B?ODVzbWtjYlk3WUQrTUZPNE5ydVlXUk45UTdCV29CWUFtaDNlZURlcTJxUExl?=
+ =?utf-8?B?blZZdWxiSDlQSDl3VlluVHMrWlNSaXZWcVhsTTNMQUxpZXpBK0FubUFaakF4?=
+ =?utf-8?B?eHh0cDZkbkZqNUdGaVJuR2oxRkNZSHpvbDRUc1EyVjNmWUUxSUhkTHFUaldG?=
+ =?utf-8?B?dU1McVpzQ2VGNnNBMjQ3ZlFaK3JXelpZVktONUJCRldwdjRRZzJzWUVqb0xh?=
+ =?utf-8?B?enhOSFFqQmozUCtKSGc0eStRSzRIWVVaL05UTjdWQW9CZVlMcDZIY2FKUm1E?=
+ =?utf-8?Q?52WDggTisefoP//xtwSc6/9pU?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dffd48c0-6728-4d5d-fb49-08dd0465795c
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5176.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2024 04:33:23.4053
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NJ7wfefzKCPQIP9yNJ6ueyb9vr5V5GwYjXXa2kylOTtAkXqQ3xEpuRJAqclH4o3DB24yWiW+wAbIdgwDb5BC9A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5899
 
 
 
-On 10/22/24 15:52, Cristian Marussi wrote:
-> On Mon, Oct 07, 2024 at 11:40:20AM +0530, Sibi Sankar wrote:
->> Add QCOM System Control Management Interface (SCMI) Generic Vendor
->> Extensions Protocol documentation.
+On 11/13/2024 19:51, Heikki Krogerus wrote:
+> Hi,
+> 
+> On Fri, Nov 08, 2024 at 01:03:20PM +0530, Shyam Sundar S K wrote:
+>> As of now, the I3C subsystem only has ARM-specific initialization, and
+>> there is no corresponding ACPI plumbing present. To address this, ACPI
+>> support needs to be added to both the I3C core and DW driver.
 >>
-> 
-> Hi Sibi,
-> 
-> a few remarks down below.
-> 
->> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+>> Add support to get the ACPI handle from the _HID probed and parse the apci
+>> object to retrieve the slave information from BIOS.
+>>
+>> Based on the acpi object information propogated via BIOS, build the i3c
+>> board information so that the same information can be used across the
+>> driver to handle the slave requests.
+>>
+>> Co-developed-by: Sanket Goswami <Sanket.Goswami@amd.com>
+>> Signed-off-by: Sanket Goswami <Sanket.Goswami@amd.com>
+>> Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
 >> ---
->>   .../arm_scmi/vendors/qcom/qcom_generic.rst    | 210 ++++++++++++++++++
->>   1 file changed, 210 insertions(+)
->>   create mode 100644 drivers/firmware/arm_scmi/vendors/qcom/qcom_generic.rst
+>> Cc: linux-acpi@vger.kernel.org
 >>
->> diff --git a/drivers/firmware/arm_scmi/vendors/qcom/qcom_generic.rst b/drivers/firmware/arm_scmi/vendors/qcom/qcom_generic.rst
->> new file mode 100644
->> index 000000000000..1ee6dabaac23
->> --- /dev/null
->> +++ b/drivers/firmware/arm_scmi/vendors/qcom/qcom_generic.rst
->> @@ -0,0 +1,210 @@
->> +.. SPDX-License-Identifier: GPL-2.0
->> +.. include:: <isonum.txt>
+>>  drivers/i3c/internals.h            |  3 ++
+>>  drivers/i3c/master.c               | 84 ++++++++++++++++++++++++++++++
+>>  drivers/i3c/master/dw-i3c-master.c |  7 +++
+>>  include/linux/i3c/master.h         |  1 +
+>>  4 files changed, 95 insertions(+)
+>>
+>> diff --git a/drivers/i3c/internals.h b/drivers/i3c/internals.h
+>> index 433f6088b7ce..178bc0ebe6b6 100644
+>> --- a/drivers/i3c/internals.h
+>> +++ b/drivers/i3c/internals.h
+>> @@ -10,6 +10,9 @@
+>>  
+>>  #include <linux/i3c/master.h>
+>>  
+>> +#define I3C_GET_PID		0x08
+>> +#define I3C_GET_ADDR		0x7F
 >> +
->> +===============================================================================
->> +QCOM System Control and Management Interface(SCMI) Vendor Protocols Extension
->> +===============================================================================
+>>  void i3c_bus_normaluse_lock(struct i3c_bus *bus);
+>>  void i3c_bus_normaluse_unlock(struct i3c_bus *bus);
+>>  
+>> diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+>> index 6f3eb710a75d..0ceef2aa9161 100644
+>> --- a/drivers/i3c/master.c
+>> +++ b/drivers/i3c/master.c
+>> @@ -2251,6 +2251,84 @@ static int of_i3c_master_add_dev(struct i3c_master_controller *master,
+>>  	return ret;
+>>  }
+>>  
+>> +#if IS_ENABLED(CONFIG_ACPI)
+>> +static int i3c_acpi_configure_master(struct i3c_master_controller *master)
+>> +{
+>> +	struct acpi_buffer buf = {ACPI_ALLOCATE_BUFFER, NULL};
+>> +	enum i3c_addr_slot_status addrstatus;
+>> +	struct i3c_dev_boardinfo *boardinfo;
+>> +	struct device *dev = &master->dev;
+>> +	struct fwnode_handle *fwnode;
+>> +	struct acpi_device *adev;
+>> +	u32 slv_addr, num_dev;
+>> +	acpi_status status;
+>> +	u64 val;
 >> +
->> +:Copyright: |copy| 2024, Qualcomm Innovation Center, Inc. All rights reserved.
->> +
->> +:Author: Sibi Sankar <quic_sibis@quicinc.com>
->> +
->> +SCMI_GENERIC: System Control and Management Interface QCOM Generic Vendor Protocol
->> +==================================================================================
->> +
->> +This protocol is intended as a generic way of exposing a number of Qualcomm
->> +SoC specific features through a mixture of pre-determined algorithm string and
->> +param_id pairs hosted on the SCMI controller. It implements an interface compliant
->> +with the Arm SCMI Specification with additional vendor specific commands as
->> +detailed below.
->> +
->> +Commands:
->> +_________
->> +
->> +PROTOCOL_VERSION
->> +~~~~~~~~~~~~~~~~
->> +
->> +message_id: 0x0
->> +protocol_id: 0x80
->> +
->> ++---------------+--------------------------------------------------------------+
->> +|Return values                                                                 |
->> ++---------------+--------------------------------------------------------------+
->> +|Name           |Description                                                   |
->> ++---------------+--------------------------------------------------------------+
->> +|int32 status   |See ARM SCMI Specification for status code definitions.       |
->> ++---------------+--------------------------------------------------------------+
->> +|uint32 version |For this revision of the specification, this value must be    |
->> +|               |0x10000.                                                      |
->> ++---------------+--------------------------------------------------------------+
->> +
->> +PROTOCOL_ATTRIBUTES
->> +~~~~~~~~~~~~~~~~~~~
->> +
->> +message_id: 0x1
->> +protocol_id: 0x80
->> +
->> ++---------------+--------------------------------------------------------------+
->> +|Return values                                                                 |
->> ++------------------+-----------------------------------------------------------+
->> +|Name              |Description                                                |
->> ++------------------+-----------------------------------------------------------+
->> +|int32 status      |See ARM SCMI Specification for status code definitions.    |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 attributes |Bits[8] Set to 1.                                          |
->> +|                  |Bits[0] Set to 1.                                          |
->> ++------------------+-----------------------------------------------------------+
+>> +	status = acpi_evaluate_object_typed(master->ahandle, "_DSD", NULL, &buf, ACPI_TYPE_PACKAGE);
+>> +	if (ACPI_FAILURE(status)) {
+>> +		dev_err(&master->dev, "Error reading _DSD:%s\n", acpi_format_exception(status));
+>> +		return -ENODEV;
+>> +	}
 > 
-> Mmmm, this does not explain so much what are those bits and what values
-> they can indeed assume :P ...
+> Why do you need to do that?
+> 
+>> +	num_dev = device_get_child_node_count(dev);
+>> +	if (!num_dev) {
+>> +		dev_err(&master->dev, "Error: no child node present\n");
+>> +		return -EINVAL;
+>> +	}
+> 
+> I think Jarkko already pointed out the problem with that. The whole
+> check should be dropped.
+> 
+>> +	device_for_each_child_node(dev, fwnode) {
+>> +		adev = to_acpi_device_node(fwnode);
+>> +		if (!adev)
+>> +			return -ENODEV;
+>> +
+>> +		status = acpi_evaluate_integer(adev->handle, "_ADR", NULL, &val);
+>> +		if (ACPI_FAILURE(status)) {
+>> +			dev_err(&master->dev, "Error: eval _ADR failed\n");
+>> +			return -EINVAL;
+>> +		}
+> 
+> val = acpi_device_adr(adev);
+> 
+>> +		slv_addr = val & I3C_GET_ADDR;
+>> +
+>> +		boardinfo = devm_kzalloc(dev, sizeof(*boardinfo), GFP_KERNEL);
+>> +		if (!boardinfo)
+>> +			return -ENOMEM;
+>> +
+>> +		if (slv_addr) {
+>> +			if (slv_addr > I3C_MAX_ADDR)
+>> +				return -EINVAL;
+>> +
+>> +			addrstatus = i3c_bus_get_addr_slot_status(&master->bus, slv_addr);
+>> +			if (addrstatus != I3C_ADDR_SLOT_FREE)
+>> +				return -EINVAL;
+>> +		}
+>> +
+>> +		boardinfo->static_addr = slv_addr;
+>> +		if (boardinfo->static_addr > I3C_MAX_ADDR)
+>> +			return -EINVAL;
+>> +
+>> +		addrstatus = i3c_bus_get_addr_slot_status(&master->bus,	boardinfo->static_addr);
+>> +		if (addrstatus != I3C_ADDR_SLOT_FREE)
+>> +			return -EINVAL;
+>> +
+>> +		boardinfo->pid = val >> I3C_GET_PID;
+>> +		if ((boardinfo->pid & GENMASK_ULL(63, 48)) ||
+>> +		    I3C_PID_RND_LOWER_32BITS(boardinfo->pid))
+>> +			return -EINVAL;
+>> +
+>> +		/*
+>> +		 * According to the specification, SETDASA is not supported for DIMM slaves
+>> +		 * during device discovery. Therefore, BIOS will populate same initial
+>> +		 * dynamic address as the static address.
+>> +		 */
+>> +		boardinfo->init_dyn_addr = boardinfo->static_addr;
+>> +		list_add_tail(&boardinfo->node, &master->boardinfo.i3c);
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +#else
+>> +static int i3c_acpi_configure_master(struct i3c_master_controller *master) { return 0; }
+>> +#endif
+> 
+> I think this code should be placed into a separate file.
+> 
+> If the goal is to add ACPI support for code that is written for DT
+> only, then I think the first thing to do before that really should be
+> to convert the existing code to use the unified device property
+> interface, and move all the DT-only parts to a separate file(s).
+> 
 
-lol, after a lot of rooting around figured out they
-return the number of vendor protocols available in
-the system :/
+Thank you Jarkko and Heikki. Let me work and these remarks and come
+back with a new version.
 
-Not really sure if it's adding any useful info.
+Jarkko, will you be able to pick 1/5 and 5/5 without a separate series
+or do you want me to send one?
 
+Thanks,
+Shyam
+> thanks,
 > 
->> +
->> +PROTOCOL_MESSAGE_ATTRIBUTES
->> +~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> +
->> +message_id: 0x2
->> +protocol_id: 0x80
->> +
->> ++---------------+--------------------------------------------------------------+
->> +|Return values                                                                 |
->> ++------------------+-----------------------------------------------------------+
->> +|Name              |Description                                                |
->> ++------------------+-----------------------------------------------------------+
->> +|int32 status      |See ARM SCMI Specification for status code definitions.    |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 attributes |For all message id's the parameter has a value of 0.       |
->> ++------------------+-----------------------------------------------------------+
->> +
->> +QCOM_SCMI_SET_PARAM
->> +~~~~~~~~~~~~~~~~~~~
->> +
->> +message_id: 0x10
->> +protocol_id: 0x80
->> +
->> ++------------------+-----------------------------------------------------------+
->> +|Parameters                                                                    |
->> ++------------------+-----------------------------------------------------------+
->> +|Name              |Description                                                |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 ext_id     |Reserved, must be zero.                                    |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 algo_low   |Lower 32-bit value of the algorithm string.                |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 algo_high  |Upper 32-bit value of the algorithm string.                |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 param_id   |Serves as the token message id for the algorithm string    |
->> +|                  |and is used to set various parameters supported by it.     |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 buf[]      |Serves as the payload for the specified param_id and       |
->> +|                  |algorithm string pair.                                     |
->> ++------------------+-----------------------------------------------------------+
-> 
-> And what abot the size of this payload ? .. so you are relying on the
-> fact that the transport will add the total message length at that layer
-> and so the server can determine where the valid payload ends...
-> 
-> ...it means the server will have some expectations about the payload length
-> based on the param_id and will check against the received transport-advertised
-> message-length, am I right ?
-> 
-> ...BUT what if you end up with multiple versions of this protocol in the future,
-> with varying payload lengths for the same param_id...REMEMEBER that the server
-> cannot know which version of a protocol the client is running (while the client
-> can see what the server runs) UNLESS you implement also NEGOTIATE_PROTOCOL_VERSION
-> for this protocol...
-> 
-> ...so without an explicit length nor the NEGOTIATE_PROTOCOL_VERSION you wont be
-> able in the future, server-side, to be sure if you are assumnig the right payload
-> length for the right version that the client is speaking...so at the end you
-> wont be able to support multiple versions of the protocol even if the Kernel
-> can support all of those versions...do you see what I mean ?
-> 
-> I think that would be advisable to implement NEGOTIATE_PROTOCOL_VERSION
-> if you dont want to carry an explicit size in the message for this payload...
-> 
-> ...or am I missing something ?
-
-ack makes sense but we planned to make sure that the sub-strings
-used maintain abi for all their messages but like you said having
-way to negotiate protocol version will be nice to have. Will make
-sure something along the lines get implemented with the next major
-version upgrade.
-
--Sibi
-
-> 
->> +|Return values                                                                 |
->> ++------------------+-----------------------------------------------------------+
->> +|Name              |Description                                                |
->> ++------------------+-----------------------------------------------------------+
->> +|int32 status      |SUCCESS: if the param_id and buf[] is parsed successfully  |
->> +|                  |by the chosen algorithm string.                            |
->> +|                  |NOT_SUPPORTED: if the algorithm string does not have any   |
->> +|                  |matches.                                                   |
->> +|                  |INVALID_PARAMETERS: if the param_id and the buf[] passed   |
->> +|                  |is rejected by the algorithm string.                       |
->> ++------------------+-----------------------------------------------------------+
->> +
->> +QCOM_SCMI_GET_PARAM
->> +~~~~~~~~~~~~~~~~~~~
->> +
->> +message_id: 0x11
->> +protocol_id: 0x80
->> +
->> ++------------------+-----------------------------------------------------------+
->> +|Parameters                                                                    |
->> ++------------------+-----------------------------------------------------------+
->> +|Name              |Description                                                |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 ext_id     |Reserved, must be zero.                                    |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 algo_low   |Lower 32-bit value of the algorithm string.                |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 algo_high  |Upper 32-bit value of the algorithm string.                |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 param_id   |Serves as the token message id for the algorithm string.   |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 buf[]      |Serves as the payload and store of value for the specified |
->> +|                  |param_id and algorithm string pair.                        |
->> ++------------------+-----------------------------------------------------------+
->> +|Return values                                                                 |
->> ++------------------+-----------------------------------------------------------+
->> +|Name              |Description                                                |
->> ++------------------+-----------------------------------------------------------+
->> +|int32 status      |SUCCESS: if the param_id and buf[] is parsed successfully  |
->> +|                  |by the chosen algorithm string and the result is copied    |
->> +|                  |into buf[].                                                |
->> +|                  |NOT_SUPPORTED: if the algorithm string does not have any   |
->> +|                  |matches.                                                   |
->> +|                  |INVALID_PARAMETERS: if the param_id and the buf[] passed   |
->> +|                  |is rejected by the algorithm string.                       |
->> ++------------------+-----------------------------------------------------------+
-> 
-> Similarly, no payload length means you will have to code some builtin
-> check to verify the length of the message that you have received against
-> the specific version that the server is running...this is NOT so
-> problematic here as in the _SET above since the client/agent DOES know which
-> protocol version the server is running...
-> 
-> ...it is a bit odd, but indeed similar to other variable sized SCMI messages in
-> standard protocols that sports optional fields in the reply, for which, similarly
-> you have to check the version of the protocol to desume the size of the message
-> based on the presence or not of some fields...
-> 
->> +
->> +QCOM_SCMI_START_ACTIVITY
->> +~~~~~~~~~~~~~~~~~~~~~~~~
->> +
->> +message_id: 0x12
->> +protocol_id: 0x80
->> +
->> ++------------------+-----------------------------------------------------------+
->> +|Parameters                                                                    |
->> ++------------------+-----------------------------------------------------------+
->> +|Name              |Description                                                |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 ext_id     |Reserved, must be zero.                                    |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 algo_low   |Lower 32-bit value of the algorithm string.                |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 algo_high  |Upper 32-bit value of the algorithm string.                |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 param_id   |Serves as the token message id for the algorithm string    |
->> +|                  |and is generally used to start the activity performed by   |
->> +|                  |the algorithm string.                                      |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 buf[]      |Serves as the payload for the specified param_id and       |
->> +|                  |algorithm string pair.                                     |
->> ++------------------+-----------------------------------------------------------+
->> +|Return values                                                                 |
->> ++------------------+-----------------------------------------------------------+
->> +|Name              |Description                                                |
->> ++------------------+-----------------------------------------------------------+
->> +|int32 status      |SUCCESS: if the activity performed by the algorithm string |
->> +|                  |starts successfully.                                       |
->> +|                  |NOT_SUPPORTED: if the algorithm string does not have any.  |
->> +|                  |matches or if the activity is already running.             |
->> ++------------------+-----------------------------------------------------------+
->> +
-> 
-> Same consideration as above...being a SET-like operation with a variable
-> sized field in the request AND no explicit payload length, you will have
-> to derive the size from the message length BUT since you doint even have
-> implemented NEGOTIATE_PROTOCOL_VERSION in the future any kind of check
-> will become impossibe server side if you will have multiple protocols
-> with varying sizes for buf depending on the protocol version
-> 
->> +QCOM_SCMI_STOP_ACTIVITY
->> +~~~~~~~~~~~~~~~~~~~~~~~
->> +
->> +message_id: 0x13
->> +protocol_id: 0x80
->> +
->> ++------------------+-----------------------------------------------------------+
->> +|Parameters                                                                    |
->> ++------------------+-----------------------------------------------------------+
->> +|Name              |Description                                                |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 ext_id     |Reserved, must be zero.                                    |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 algo_low   |Lower 32-bit value of the algorithm string.                |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 algo_high  |Upper 32-bit value of the algorithm string.                |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 param_id   |Serves as the token message id for the algorithm string    |
->> +|                  |and is generally used to stop the activity performed by    |
->> +|                  |the algorithm string.                                      |
->> ++------------------+-----------------------------------------------------------+
->> +|uint32 buf[]      |Serves as the payload for the specified param_id and       |
->> +|                  |algorithm string pair.                                     |
->> ++------------------+-----------------------------------------------------------+
-> 
-> Same.
-> 
->> +|Return values                                                                 |
->> ++------------------+-----------------------------------------------------------+
->> +|Name              |Description                                                |
->> ++------------------+-----------------------------------------------------------+
->> +|int32 status      |SUCCESS: if the activity performed by the algorithm string |
->> +|                  |stops successfully.                                        |
->> +|                  |NOT_SUPPORTED: if the algorithm string does not have any   |
->> +|                  |matches or if the activity isn't running.                  |
->> ++------------------+-----------------------------------------------------------+
-> 
-> Thanks,
-> Cristian
 
