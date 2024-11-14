@@ -1,169 +1,127 @@
-Return-Path: <linux-kernel+bounces-409730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFDC89C9098
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:15:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3600A9C907F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:06:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 771C61F23264
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:15:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71091B6134B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B92A18A6AD;
-	Thu, 14 Nov 2024 17:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3177E188A15;
+	Thu, 14 Nov 2024 16:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="WZlyjAho"
-Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ei+SQWwi"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44DDB17BA6
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 17:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FF0126C03;
+	Thu, 14 Nov 2024 16:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731604531; cv=none; b=Y9CE/VBfqE1tCwvvYHU9vHMpaH+Y8tFVCUWM6WEm36NhwuurcIZ3nzBSB7ed59eFN5BfopORGnxPflMyisA9p2dp+Rq5uzTZoTJIssLZ21jWlkLk6ZBs/6JV+n0AE1W9WZj9qo1PGWLiX80xq/0EalrP+xHgkb4pkz2PEF4f1EY=
+	t=1731603366; cv=none; b=cHdTr7Mv4ahlv/QAC9WKEp6bLptstV1vLDdju/7FDAu8OFbdW/vhWdeRyw/b5DLtW/+rG/g2D7POeEyHfqguQJvycFNvzIpH7iyj/KKmF+8iH6c1ZTKC2sRH/YDNpuzSzcyAIAeHblFK3udbgSjnJJZVOGerAgdpofL5gRWt4Uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731604531; c=relaxed/simple;
-	bh=225Xg3lGtzU2suqnuMm7mLYtTLLYNlKBn9V7o6ahfHY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J2TLOnecsEd4xyoMrtd7QAyu8GxKgOiiwJHsAGhDSYerudbv0IqLflQCVRaveUmU50fx0pUOaejSdZxIbMFDKezMmNOggNTklK+deQQEZq9njKDy6ck6WyZ1sQe5OYaMHKpROJN6QWBgCkTql4I6XOpni+nWDz0M5IdkLUFnZR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=WZlyjAho; arc=none smtp.client-ip=66.163.184.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731604529; bh=225Xg3lGtzU2suqnuMm7mLYtTLLYNlKBn9V7o6ahfHY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=WZlyjAhoITTdmdFl/LoUXwK1OmKW/vQ5u0sl8ST2nEvCbZWP+Efo55ap5tSbed/hNvrAUpWc6QnIo733poixWy7L8UfYtVDbRcuxECrFlz2efuDNdf0xHzN+mrTtIkeqFvd4XvI4zR8OMLUPyFmkdwq87HisQKv9MYvfhhfpX/TiZKb1kp3ifIvAchGwGMFB8xavBTK6APjeZbAQSCAsWmZYXLNL8c3F9fuJf3qeQ+t1gLcuxCwAp4D7Y9AElbi+dbJ0U1CZMlGarGCUE5BtXPqHwkvVp8d66lYGTYK38R40JFgnHifhcFB9XbKiUuO6M2Hpdqq5d6632Wwvjlz8KA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731604529; bh=0KyxvYGlz7J+QtXsDtLwswOkfPdYdjr+HHYLXPsFAUQ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ZVD43cNqM+a+66j2/AbDwvf7/YhzI1LbcG8pM6JmIefqfPWN2FksXy+XOVR5CnQta47NN9Obzbh0Vc84GfDDmSNjipFP9rC0TqGpO4wckcbR5uMOlF0L9swIoAhyCOmVnHYbqrbpbgOVIoynUJtTZr6b+QyxEAmDGCqz2b+IkepcrEsfwPwZ21pedU4mm1pTkQI8OYetCDD8VhuOmWzaNvsITzulIAqDGBAeWFrvin5qhh68Oe347NeghKwAqi7LhKHNkTZWC4Ka17dfglk31pUt6uyUxoPLFSV/4eoYGPovt8jxlyZRFqoe2H1Q4T6h4lqnMxEl9rdrA+8gjfI93Q==
-X-YMail-OSG: F_SLC2sVM1mL8EeQF2d1knzo_cGXLETriYy.ZIgaCj.i4h2Fc..ajxb8d81yZt5
- ohHogactWDk0NJ6sMVmlgvRhq6Nnt.H_gUiqOF_ga2Gm.gPjk0BXZTV.LFRGF8K0NdrPvpadV8LP
- RvHjE3c7AM3COGDw._RmZj6YtiXZvxXsUfF3gJeU2vHx0uvAytZAdCdHEWaDeeCerosUgA0u.M9t
- D7jLRPeNYTAouzOM7hhHA0pmGAGqIVSisjjjhM1_41srcy84KFIiKzYsFcK1BYyYzLf7GpbkPWTk
- zhxgpkyIHtG9nCQm_knKdbXNNmEuTikTz02vtZpSk_BRghC2b.6e4QDxRbQBKM51JBM8MzDaGWG3
- MJeEzO7lgDfrcgXJD1AU2fiPnkG4smwMtEC13PH2Rz2ZVNtv6hPjF2LKTmiaKO0Qh_nu9FPHH95o
- MCLkv1gxyHVKJ1cfENcZ6dABrpZdrHpG8RO9ZPM2.mfftTNCdqC4LiNavrLm7zPV7.faheXnsCQW
- pXgY7dLpbesNrpreD4ekHZJaEmi8K1aqsMeCxcrJwdLxhObvqLvgtRDxmJtQZnnc9nYefistTpG6
- i.NN49pRZNaoNa0FT8fVGErJtn_4DSa.aUXAuSOIZZ4KDtj0Opm2rNZt2ga8Ub.sXUZhwVdDB_C5
- tOu38aNfTSsitIgVRaLvBFwxF.Fl8IcyZZa692AIylgTJaSIXRD7DMEJgzU1e3rtTkZ9jQhoaa4M
- jnP68V.iNEgkPhlkBj7MkpLRdxrl7C1J5SQ6gy7FEVrQZgyMagMoKudLj9ppctdXkoRPd6LZnqGZ
- LCNZA.l53tOlu.6zfZNkUKrMPiHYNk8CfjvUCkLu8s8YYBN9Vk6EgCxCi4EYIzldRQYWzV7Ui7c.
- cYJfb4QOgdRGeF1rTs52PCuqm86f0.UYBM_nXqMLsmGC5jtGxK8EpS4LZjD0HQQhegJrpjbAkR4A
- 6sI3hKm.7I2wHQ.3nRfOX1QGDFLQDd3l7LuptR90n7DN8c91BqNqPnSub7YeboYFS3e5VkaTK6oP
- DpRE8CG3vBpyImW35lmCirjeXUFXALovT9E3nUcg7quN440G_pc3.XZZDiDPFs7_UmtefjBGlj10
- sZa9CPQCFO0wHVvofP0HpfMG3cid1BhAcKMEN55ZeFUA_gdj8nJcvsKY.gpC0aydlCnwBH8j2yck
- 2BnfZsqfu5CrTIf1.YM03MsC7.QVtXtPhRKRef5TI3OnGtqwFJvnm2u0nzuRRXcSTksD6BL9iU9D
- EUjAxEDo3hyD6LUBw2gynhAKhXX7pVN1k5xV9.Zr8cekcNVHEWM9D0KqXaSe04FTIW1nK2C6BfTf
- jCFNbQCb9VySqRqTQuJMygVu6CozU3PctL1Gfu_6xcu8Nr1pAe9wKeZI.6DlxJk1g9fYiwafon2n
- 5zB4tGkB10aYGJ0TywzminM7qTVgtpbM15exNXSvXf_NIRstXpeaO8Gih0GoZevCmDJq1nZr_VR2
- 43pZe69p8WW0Zf9OMVpMYG67QaT84c9nPeDVkBeJl20dme1nUNM7MDosoh2kA.Rjm9fKA6vQsLs4
- nVgap7p8jlWR5RzRoXC7NfgHLpyg8lOIF8NQl9u6g2cXqMiR74SzosU1uKoLPx4S7umOqt1joRF.
- YdChiQHNfrbSqkQTyACEzL3UIQ9MtR1qBcJMFa.XIJinpZUTJp8LwaIh5_1_6lLiZJCUxp_g5RHP
- XYPdUr3lZ5SrK.fR7.fpB1HUbQXnY7pEPixduS0ZJdqWuq0O3g57CnN0BIMSXfUw4qW2wU5JIMVp
- 2JhUfrN6i1eUAlweQ9TOxKdqrXzCjyJGHT_suK.fnhnzKPrhKXRy_aykDvcC8WQCvR2ifwy0Te9B
- hBzXPDmrIx6HWArhWAZYSmDA2e.0wJdwn1mJdVZ8p_zK8yWqQNIDoQoE64gWQ_sXvjlfiEJhxsna
- f9IGn1izZP6vXTli0AGKAjYcPz1B23SK7sryUa4ixp.A7ogyEn.CadaBAV3iwml6OlQPMuYlWvjb
- i99vOPO.zLJrG2QW5xYCRdYavNTratonmPINnoGKa52nI7_EXy7Q.k2jjeSmIGcTjKzRFQKqhEwB
- lYw_p7wg7yVjJ53VI4DPVd3QBvqEcgNhTgyWBuQoizOQJ1GtlHKZpuMJmum2vkhTGGsY.DCDuFVo
- KpdBOt7yUS6c9UoDoHROt1ocweYcmoV_U9YGWiTcceNbVKSENmWvBPrG4NENvEoDaP7beXRhl6DU
- EJTdeKicNyLDQ59TF6tyq3f0yhkASC8P_kJ9r9FlZUmtqYw--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: dc530b32-4640-4104-a80a-76b3cc4eac0a
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Thu, 14 Nov 2024 17:15:29 +0000
-Received: by hermes--production-gq1-5dd4b47f46-mb2l9 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 62a3195ceac711131de6021a88b7222d;
-          Thu, 14 Nov 2024 16:55:09 +0000 (UTC)
-Message-ID: <c16b7517-e490-48d9-a2b6-f0077cbb0eba@schaufler-ca.com>
-Date: Thu, 14 Nov 2024 08:55:08 -0800
+	s=arc-20240116; t=1731603366; c=relaxed/simple;
+	bh=bW24Y2zDBss5OiBEfJp2RH9+LgpRreFMxa7QcBNtfEw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=X1vnkkTvAy1i8q8hDIfZpwf97bXuNZV679tBUKeRmu+RF5NbjMLqFupw1vLDikaTVZem6ZMlpdPFMrQB1poRK8jnDzhIgI8flfcWqkol0MUIHyaNnBWQoXH9s+fQbgcAIem3eu/zIPXeMi7dtZcxnAGyuliRHv635IiK/lD9Pms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ei+SQWwi; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-720c2db824eso803050b3a.0;
+        Thu, 14 Nov 2024 08:56:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731603364; x=1732208164; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dN6nOwa9jinNjS2kCCmOR1Y32+iqmTVvvvUdfcXy0mo=;
+        b=ei+SQWwi7MqhYteep8nZfs3FmnmarZdBkuSQK0idHZ5l7r1Z5Dh1H66DzaqhhT1bC9
+         X4gA7pm33GX2RIolQYYk2QTjx8/ULTdepM1lwsF2lWIFNbZebCU4QvSukYsSQdHV5UH3
+         HPPUlC5SwNOFcgAFRk7+wsLFrvyicT5Wc9IPggXrl36uEUnDDZjmuQpPKmvYpTzvee/Q
+         kSFiDzjRvbAHSwqmBn/esq8zLRpgptsvZ5QehIBvUkhagUgqdVM5zf3ThS0G7wQLSrH6
+         VrE2I0WaSwrbwNHxUrd6/wszwBnJhi1u5f6cVdkoBV/rXYO9rEhl23OCqNNDguQl4JxL
+         WTcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731603364; x=1732208164;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dN6nOwa9jinNjS2kCCmOR1Y32+iqmTVvvvUdfcXy0mo=;
+        b=ct5hcvjlT4bAS6UUvV/CpP1ly8Alpgzf1TArh3xJu8qqt/Shsniu1Ag4Mmkw05MPt6
+         X/Y8A4Dr/N4zHuPHjJYnc12ilxHD1VvhJETd0zjmT2uMMGj7AU9T0wBUIMiUDIN6Ba1V
+         xy2zaloJ6EIhTwZkzsdjpNvTUO+9tPAj5Sq8oVsR0DZtlukeCkE/VTPl4CJUlMDrFJlT
+         mZ1FZfpMPKy7VaTNoIa+oOGZ0STSQCuSRXGFf1VKiMZq7Uax23M0B9SzaQ2IvQjFc9sd
+         GXDt08cAFfgsMQOWpPgzgIxFBhef2eDIwlaUS1rwdc1ufDFUgusUhG63CuDxsURD5zZb
+         aCsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhUXaEr8OR4L48/UoQny2JzyIs20Ynm4JzZ2XXPGRM1A5NQOClfnREuoXqOf0r5w19uo6OUCPGMQfH6sqrSNnx@vger.kernel.org, AJvYcCWGVOtLwiw/UV4UjouInajOVnRypREICN9J1iQeJ8XP5eJnG2g6sGz71LhhMqFah/cHo6UGkOIu34yxgkM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfT901uvBsfIe6yCwea6/Fc9q+/XDwc6yIFzBccQLABwMhocrc
+	QMNKBOp+8IjOjp+xQoZ8DIwTbt9RqUcKJ7O1aDq6OYMvOgvKSfAac73Zug==
+X-Google-Smtp-Source: AGHT+IErdRALs2OdOjsTFhmubjjx7yNbQ/ModPzFAI5VavhfJZjOxy4H/qdb3hT8L+66zJBeHcKpaw==
+X-Received: by 2002:a17:90a:d444:b0:2e2:c40c:6e8e with SMTP id 98e67ed59e1d1-2e9b178eff2mr30608288a91.34.1731603364460;
+        Thu, 14 Nov 2024 08:56:04 -0800 (PST)
+Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9f207d65csm2166102a91.1.2024.11.14.08.56.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 08:56:03 -0800 (PST)
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: brendanhiggins@google.com,
+	davidgow@google.com
+Cc: rmoar@google.com,
+	ruanjinjie@huawei.com,
+	jserv@ccns.ncku.edu.tw,
+	linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	Kuan-Wei Chiu <visitorckw@gmail.com>
+Subject: [PATCH] kunit: debugfs: Use IS_ERR() for alloc_string_stream() error check
+Date: Fri, 15 Nov 2024 00:55:58 +0800
+Message-Id: <20241114165558.49043-1-visitorckw@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: lsm: Refactor
- `flags_overset_lsm_set_self_attr` test
-To: Shuah Khan <skhan@linuxfoundation.org>,
- Amit Vadhavana <av2082000@gmail.com>, paul@paul-moore.com,
- jmorris@namei.org, serge@hallyn.com, shuah@kernel.org
-Cc: ricardo@marliere.net, linux-kernel-mentees@lists.linux.dev,
- linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20241112182810.24761-1-av2082000@gmail.com>
- <52cc8e51-9e85-465b-8ee3-63a7a0a42951@linuxfoundation.org>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <52cc8e51-9e85-465b-8ee3-63a7a0a42951@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.22876 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
+The alloc_string_stream() function only returns ERR_PTR(-ENOMEM) on
+failure and never returns NULL. Therefore, switching the error check in
+the caller from IS_ERR_OR_NULL to IS_ERR improves clarity, indicating
+that this function will return an error pointer (not NULL) when an
+error occurs. This change avoids any ambiguity regarding the function's
+return behavior.
 
-On 11/14/2024 8:25 AM, Shuah Khan wrote:
-> On 11/12/24 11:28, Amit Vadhavana wrote:
->> - Remove unnecessary `tctx` variable, use `ctx` directly.
->> - Simplified code with no functional changes.
->>
->
-> I would rephrase the short to simply say Remove unused variable,
-> as refactor implies more extensive changes than what this patch
-> is actually doing.
->
-> Please write complete sentences instead of bullet points in the
-> change log.
->
-> How did you find this problem? Do include the details on how
-> in the change log.
->
->> Signed-off-by: Amit Vadhavana <av2082000@gmail.com>
->> ---
->>   tools/testing/selftests/lsm/lsm_set_self_attr_test.c | 7 +++----
->>   1 file changed, 3 insertions(+), 4 deletions(-)
->>
->> diff --git a/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
->> b/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
->> index 66dec47e3ca3..732e89fe99c0 100644
->> --- a/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
->> +++ b/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
->> @@ -56,16 +56,15 @@ TEST(flags_zero_lsm_set_self_attr)
->>   TEST(flags_overset_lsm_set_self_attr)
->>   {
->>       const long page_size = sysconf(_SC_PAGESIZE);
->> -    char *ctx = calloc(page_size, 1);
->> +    struct lsm_ctx *ctx = calloc(page_size, 1);
->
-> Why not name this tctx and avoid changes to the ASSERT_EQs
-> below?
+Link: https://lore.kernel.org/lkml/Zy9deU5VK3YR+r9N@visitorckw-System-Product-Name
+Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+---
+ lib/kunit/debugfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-In the realm of linux security modules ctx is short for "context".
-I used tctx here because I was lazy. It would be much better to
-drop tctx, even if it means a tiny bit more change.
+diff --git a/lib/kunit/debugfs.c b/lib/kunit/debugfs.c
+index d548750a325a..6273fa9652df 100644
+--- a/lib/kunit/debugfs.c
++++ b/lib/kunit/debugfs.c
+@@ -181,7 +181,7 @@ void kunit_debugfs_create_suite(struct kunit_suite *suite)
+ 	 * successfully.
+ 	 */
+ 	stream = alloc_string_stream(GFP_KERNEL);
+-	if (IS_ERR_OR_NULL(stream))
++	if (IS_ERR(stream))
+ 		return;
+ 
+ 	string_stream_set_append_newlines(stream, true);
+@@ -189,7 +189,7 @@ void kunit_debugfs_create_suite(struct kunit_suite *suite)
+ 
+ 	kunit_suite_for_each_test_case(suite, test_case) {
+ 		stream = alloc_string_stream(GFP_KERNEL);
+-		if (IS_ERR_OR_NULL(stream))
++		if (IS_ERR(stream))
+ 			goto err;
+ 
+ 		string_stream_set_append_newlines(stream, true);
+-- 
+2.34.1
 
->
->>       __u32 size = page_size;
->> -    struct lsm_ctx *tctx = (struct lsm_ctx *)ctx;
->>         ASSERT_NE(NULL, ctx);
->>       if (attr_lsm_count()) {
->> -        ASSERT_LE(1, lsm_get_self_attr(LSM_ATTR_CURRENT, tctx, &size,
->> +        ASSERT_LE(1, lsm_get_self_attr(LSM_ATTR_CURRENT, ctx, &size,
->>                              0));
->>       }
->> -    ASSERT_EQ(-1, lsm_set_self_attr(LSM_ATTR_CURRENT |
->> LSM_ATTR_PREV, tctx,
->> +    ASSERT_EQ(-1, lsm_set_self_attr(LSM_ATTR_CURRENT |
->> LSM_ATTR_PREV, ctx,
->>                       size, 0));
->>         free(ctx);
->
-> You have to change this tctx for sure.
->
-> With these changes:
->
-> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
->
-> Paul, James,
->
-> Please do let me know if you would me to take this through
-> kselftest tree.
->
-> thanks,
-> -- Shuah
->
->
 
