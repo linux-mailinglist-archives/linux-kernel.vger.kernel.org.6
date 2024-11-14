@@ -1,161 +1,117 @@
-Return-Path: <linux-kernel+bounces-409486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D915B9C8D6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:57:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89DE29C8D70
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:57:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAE191F21304
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:57:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40A0E1F21E3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A90136327;
-	Thu, 14 Nov 2024 14:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F30413C9A3;
+	Thu, 14 Nov 2024 14:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FN9FJE56"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="TPg2wrns"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734DD74BE1;
-	Thu, 14 Nov 2024 14:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4E21EA6F
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 14:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731596242; cv=none; b=nh9qdf6pSlodoAxvrL0wxuq8GNWhqVsfKTyiqpphJRXUcjQ5d1oxcwCBx81QJkOqLNDsq+Mdjhnt8vvnjEH67hkimzaQ5xjyhVn/QKmmQmrmc1UM/11Kdz/DtEpKAmhv27s/QHKwQKET3NCw0Bm62D8hiw+TSCsI4YTDelolxY4=
+	t=1731596242; cv=none; b=Q2N++dVPMj5dQCxptx/h4xSL1tamz/KQkMAeG4GUEvBM1AH8N/Rz/UkxGmdQX42S7opCYLFA/lYEAZ1p/cLfSXxIGE/Y3FucWRMOb4JtPyD+OhHOUFy2SEv/R7ygr4qoaFuCJr6uznLxJGjymFzW8izAleKtoZchoM5/Tb+A79M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731596242; c=relaxed/simple;
-	bh=pkJNJxoeCzInceBm8X9JQggNQG0mKV37IxeaHZdeuOQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GDK3xuLE+hcqpzfNIEG1VuQh/1TYLshU7ygHZ9+41YGj8f9V6lsKkpdd37Yw4vhq8S8aupJ644ordlXV43Mz0O3s0cl50/BlOCtyCd5StfOYFgNeN3YjYBlftaHOPfBzMDh8JImwzVFiNvGo4aLA6SApse+E7Nm3YfNJ40KEz3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FN9FJE56; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9ed49edd41so124113766b.0;
-        Thu, 14 Nov 2024 06:57:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731596239; x=1732201039; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oC1V2uPMKuCVb42okFlodDMg7VTiVJx1PFqsTRJLKbs=;
-        b=FN9FJE56Ge1iG6TNTCewC+iC6ZWABMdeHg/GHnh4qbuLh/Tm5ahfYcLvPw/EXTB5SL
-         SWXk8cRwSuG6Sfh6AAX5JXZ2miYOEyVdCKBV6qXVUVGrUvcxq+ALW5e/GAayD+0mzA82
-         5lkNpaerI46yPJ1IpDPYft0xr4LhKEAYtyeWNi+/EHNdDqt+KgGmYUmxoWN4ruDxNU+D
-         fX7Mor/y7aoZNl+XnsqQ2lrc+kgwwE39XuLYOf3dPQh3ErRh0o7ClmU6Wk1HMpK/yIyo
-         0GxPD7nMLBMWF64/NxOageMgc0VHgktonCJb7izz0TQaiOYpM1OFCicQ7fyJ1Yop26o6
-         odng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731596239; x=1732201039;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oC1V2uPMKuCVb42okFlodDMg7VTiVJx1PFqsTRJLKbs=;
-        b=SLanzxul4T524wCFXLMwhpcoRXqhyEc+0SWkQ14xMhnkboe+tEjjpHBvq3Y1O/7XOt
-         PQPQ4F7Sg9gcNGEH8RyArBFK9sd2x5BsqnAYAxOGmVuOdLeiM33zQNTL281zQg9YQ3IV
-         vBnptCeMIie/K9SwR9YcbUjclRRnQtk0IbVQJK9BCKqEfP/ctclyHs4yydzSjpPKQNOv
-         PMODqLt7VHnfHarT/3VKaSS3fatqxIeps49LKPO2O8fgRbXosTp3sW35iMXZq6nH3qKv
-         XMxvs0nVkkyemKHTyj6h+MLsOiJtCMFmWJAesIsyfJOdPIr5qttIqPFY+uHHzm+VObwn
-         rpWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUdIvkG3GKWt3fNePMuNteEfoMdF8w3DVC7l3Knd544YLnpCJ/vsyyo+B9nBXwhy20FzQ4ALgE67fItpZ5Z@vger.kernel.org, AJvYcCUv3t3ACTJMec4Dxm0jDWqreVPB0RgXSe3y9T2FVEucjNQK7vEzOum3e4TSS0D/m3qclduXnOGx@vger.kernel.org, AJvYcCVbYRxvjifNbknf/H/1mbg33NtADEjR5D7CYi8IaJC1Lg4iPjah/G5e5j3lDszUDS11i44YUMTUTfIORl8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9bqNAvByM78AmVfy9a6du7c43529cPvlVo4dyE45DK+KVyrQf
-	CqcbWwMFdCUFP1nXaI0STe7C/kTxBbVfP9g5yHZac3mYnozTwswb
-X-Google-Smtp-Source: AGHT+IHYA9lOrq2gvr+JzqUCQCoRdL6fFk7XxyfZZGn7kqPkL98O6LVB5dRztX432sAiFj9y50dNYg==
-X-Received: by 2002:a17:907:60c8:b0:a9a:46:83ee with SMTP id a640c23a62f3a-a9eefff1531mr2259415866b.48.1731596238497;
-        Thu, 14 Nov 2024 06:57:18 -0800 (PST)
-Received: from partp-nb.corp.toradex.com (31-10-206-125.static.upc.ch. [31.10.206.125])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20dffd742sm72459566b.109.2024.11.14.06.57.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 06:57:18 -0800 (PST)
-From: Parth Pancholi <parth105105@gmail.com>
-To: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Cc: Parth Pancholi <parth.pancholi@toradex.com>,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: [PATCH v2] kbuild: switch from lz4c to lz4 for compression
-Date: Thu, 14 Nov 2024 15:56:44 +0100
-Message-Id: <20241114145645.563356-1-parth105105@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	bh=dRsJqeYZfBgIesQfn/MHcP7T/a2QWpqLVvkqC7gdriE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TkCbrwMJlFJ2XZqf8bsHrprq+g+YA4nMBaLRR4oK17/MRxYjzaN88LndWxk0T3pUUqIj8wLjbMpR195Nj420OJS7tk+VDuBwod5PgmIbwUaCabmnNQyVbe4WystNPKy2p2Q2M7WtLhWQl3qrfAep/gIopFYORYaAHBC76z4761c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=TPg2wrns; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=dRsJ
+	qeYZfBgIesQfn/MHcP7T/a2QWpqLVvkqC7gdriE=; b=TPg2wrnsiZu1NYDo0UWQ
+	WWGaj67MS0s9qoeBXwcUmvL6YpuoQuDzh409d61LeLTl02dCuil29KbG0ReeCImf
+	P9vm6WmT4lHb1ArPYSJL2G4kbgTB9kaknO+ZhDjpwn1PTO0KyPQADDYyrvAxBnqb
+	eCgDHKrpqdAnkswYs4xbS6IZxfwXImZrg4MfcX8wB+JbsoDI42pK7QfUlrFX1h8r
+	cC2qFgUG3JVv2bExD0BeLSbVGmm0A4P7cuxQ6r9/s/3vAxV8gi2+aKcXCZe0OYz1
+	2Tvcv1v5UWcNuO6oMtOXOuBshikV0regki5T0UFd/WPDZ44w4u/rNN8dsjiSxqpn
+	Pw==
+Received: (qmail 3195118 invoked from network); 14 Nov 2024 15:57:08 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Nov 2024 15:57:08 +0100
+X-UD-Smtp-Session: l3s3148p1@nFYUquAmstJehhtH
+Date: Thu, 14 Nov 2024 15:57:08 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, arnd@arndb.de,
+	Linux I2C <linux-i2c@vger.kernel.org>
+Subject: Re: [RFC PATCH 09/10] i2c: Remove I2C_HYDRA
+Message-ID: <ZzYPxBvZ44pMzeJN@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	arnd@arndb.de, Linux I2C <linux-i2c@vger.kernel.org>
+References: <20241114131114.602234-1-mpe@ellerman.id.au>
+ <20241114131114.602234-9-mpe@ellerman.id.au>
+ <CAMuHMdXLM-eeAa9=YwkU6gcwmD60Wba5v=F6PU20QMqzxRbM4w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="b3oYDcQCh8M8X+Z5"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXLM-eeAa9=YwkU6gcwmD60Wba5v=F6PU20QMqzxRbM4w@mail.gmail.com>
 
-From: Parth Pancholi <parth.pancholi@toradex.com>
 
-Replace lz4c with lz4 for kernel image compression.
-Although lz4 and lz4c are functionally similar, lz4c has been deprecated
-upstream since 2018. Since as early as Ubuntu 16.04 and Fedora 25, lz4
-and lz4c have been packaged together, making it safe to update the
-requirement from lz4c to lz4.
+--b3oYDcQCh8M8X+Z5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Consequently, some distributions and build systems, such as OpenEmbedded,
-have fully transitioned to using lz4. OpenEmbedded core adopted this
-change in commit fe167e082cbd ("bitbake.conf: require lz4 instead of
-lz4c"), causing compatibility issues when building the mainline kernel
-in the latest OpenEmbedded environment, as seen in the errors below.
+On Thu, Nov 14, 2024 at 03:37:15PM +0100, Geert Uytterhoeven wrote:
+> CC linux-i2c
+>=20
+> On Thu, Nov 14, 2024 at 2:11=E2=80=AFPM Michael Ellerman <mpe@ellerman.id=
+=2Eau> wrote:
+> > The i2c-hydra driver depends on PPC_CHRP which has now been removed,
+> > remove the driver also.
+> >
+> > Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+>=20
+> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>=20
+> > ---
 
-This change also updates the LZ4 compression commands to make it backward
-compatible by replacing stdin and stdout with the '-' option, due to some
-unclear reason, the stdout keyword does not work for lz4 and '-' works for
-both. In addition, this modifies the legacy '-c1' with '-9' which is also
-compatible with both. This fixes the mainline kernel build failures with
-the latest master OpenEmbedded builds associated with the mentioned
-compatibility issues.
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-LZ4     arch/arm/boot/compressed/piggy_data
-/bin/sh: 1: lz4c: not found
-...
-...
-ERROR: oe_runmake failed
 
-Cc: stable@vger.kernel.org
-Link: https://github.com/lz4/lz4/pull/553
-Suggested-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
----
-v2: correct the compression command line to make it compatible with lz4
-v1: https://lore.kernel.org/all/20241112150006.265900-1-parth105105@gmail.com/
----
- Makefile             | 2 +-
- scripts/Makefile.lib | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+--b3oYDcQCh8M8X+Z5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/Makefile b/Makefile
-index 79192a3024bf..7630f763f5b2 100644
---- a/Makefile
-+++ b/Makefile
-@@ -508,7 +508,7 @@ KGZIP		= gzip
- KBZIP2		= bzip2
- KLZOP		= lzop
- LZMA		= lzma
--LZ4		= lz4c
-+LZ4		= lz4
- XZ		= xz
- ZSTD		= zstd
- 
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index 01a9f567d5af..fe5e132fcea8 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -371,10 +371,10 @@ quiet_cmd_lzo_with_size = LZO     $@
-       cmd_lzo_with_size = { cat $(real-prereqs) | $(KLZOP) -9; $(size_append); } > $@
- 
- quiet_cmd_lz4 = LZ4     $@
--      cmd_lz4 = cat $(real-prereqs) | $(LZ4) -l -c1 stdin stdout > $@
-+      cmd_lz4 = cat $(real-prereqs) | $(LZ4) -l -9 - - > $@
- 
- quiet_cmd_lz4_with_size = LZ4     $@
--      cmd_lz4_with_size = { cat $(real-prereqs) | $(LZ4) -l -c1 stdin stdout; \
-+      cmd_lz4_with_size = { cat $(real-prereqs) | $(LZ4) -l -9 - -; \
-                   $(size_append); } > $@
- 
- # U-Boot mkimage
--- 
-2.34.1
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmc2D8AACgkQFA3kzBSg
+KbYpqQ//cTHdKtv+OT5iUTvVPKKtfZLUlFRc3Sf4Y0Ui+JFxjueaUVzQ16CzDyy8
+VcRTIJHL2t4AjIpp1LSAVp8Tcc7xJTEiksfx6ycdnIXgnvvgk/RaCz5gwMH+1W+j
+U6QMG1b1tVoFZF69zHn7G6XU84cvqPO8JdUuZB0WGbzAKZcbsIKoagg2LykuZa5h
+BWC21WX9Ze+Vkao46dtUKvrkWA63u89a3xlv4yoFjlkEVwCd1fXYqoLMFEjiVtk+
+2ouXqCX73imUI66OWlBnoNGuhwuh+RAnuHlnu8eskko6ggILkRUZ87SZWd1WR4x2
+fkduX62y8/B+qVFuKPqmWV+2lR38fwEU2CY72Ild4XtgPaBX5wyFAAdVDGaE14er
+94saEMP2pHWJXNTa/AuH/PV4cSZcRUVzDm5kcRaEj2hQkn4u8YTPlCCIvyJ8Dnjr
+TpxKl4PxmSYaVGYlyLwbD8oM5JsTiyOcZNBshLCvJE1IHdgKsJZiIMSiBs6Itazl
+/mRksfIhshodHSS/ebydCbHQTWp1LAKTJDeqxvw2fuq2W0ZAigtkc67qisWJEQ53
+p7r0iccjMim8QrhGROyxZCE+50JxuqVoKRgsgTuG53jIYjETzGcumqrqAVhskxWR
+vZljCognLV9cSah+JDPKZ9oovcJ2pfxSjyL314DQF4hvkMgGmIQ=
+=t0n4
+-----END PGP SIGNATURE-----
+
+--b3oYDcQCh8M8X+Z5--
 
