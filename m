@@ -1,107 +1,122 @@
-Return-Path: <linux-kernel+bounces-409005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 662539C8646
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:36:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 588CE9C864C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:37:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B33E284179
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:36:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CD73285501
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A441E9092;
-	Thu, 14 Nov 2024 09:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9134A1F7577;
+	Thu, 14 Nov 2024 09:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Gx5NQb/T"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="0KKA2r4t"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11EFC1DF24B
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941AB1E47A5;
+	Thu, 14 Nov 2024 09:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731576996; cv=none; b=S12lE+YzeYpvonZruovYspsWUHSm97et8UYa6ElYjtSfD7m79t7fMmvDD0hDSv2Eh50Jxp5mmaRdoGM2hvndsiIJhOhBQ78E/9Q8rQ52Ul2PZ+oe1JO6gW8u+eqtUQmhbOmIneOFLfcAE3Avd3HepW2zb+KnlzJrlUPtfQFCwU4=
+	t=1731577015; cv=none; b=V+W97gammJa0pu7Un5KCyVBMfFfLOs3fwDvkTUntAYf4PAcadWbclXpbe9fCwoRlSvrdc5ZHbIX/SIJR6qfiTQE+ngIRgFhelcjIGLnhrKAuE9fS+onfErnqPdf8EN15aYvCPll1N/7woy/gxPEDsO8vTOODUAlFGzeBG3XPfK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731576996; c=relaxed/simple;
-	bh=csv1M4CyQEt/RntGtEVuXcsMRsZzag2MnVexJKsM2FQ=;
+	s=arc-20240116; t=1731577015; c=relaxed/simple;
+	bh=s3QnhZAO5ROD68rkKDuEW3vLNjp1mRO/dhxlIBhyvFk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hw/GvMG7+e2XeQO9xM2GizwNpaJIOnENcyw4M2B9fPrkbjSj+qmKPX3jp8ZzGw/H8/C0CGaa5Ztbym3W6CpIIDY74qtutvWQ1RRiLtiaiWpLkRp1vK3vn2AsdzczWq3WE31Zh7/cbR51zMD1lBNyAaRS8FEOGyxeE5ALvxYyqDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Gx5NQb/T; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=csv1
-	M4CyQEt/RntGtEVuXcsMRsZzag2MnVexJKsM2FQ=; b=Gx5NQb/TxsG39PJI4OhA
-	xRaUrIyqf333IARNcupnlejQk4X6MHmE3Wr7TUBRmwgFklhYfiuU88viTRZqm8/w
-	mCDoPaf88yi8w2Cxh1OTkhX1ggWpW1rIWwmm9u5ptm8YxpKvK/ePGPoAZlG39enq
-	Humfby3mdyfb3UhUl3M/omJ/NOmcK1F9ix+ucWifYHX5HuHn8Y2nLS1GvnBaEdOp
-	vPauj+/bAPpfAWmWbzdcOucRgoqAaawAauaBPkD+a/6mBZClID+zZQ+HPzfobHhx
-	Fg1QP3KU96oAZ+Z2sroeydqDpN7umWZeVHoFYRyvf4+oFeMchvcJOsQTqnV+Deqy
-	xQ==
-Received: (qmail 3106452 invoked from network); 14 Nov 2024 10:36:30 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Nov 2024 10:36:30 +0100
-X-UD-Smtp-Session: l3s3148p1@3gFpL9wmZLRehhtH
-Date: Thu, 14 Nov 2024 10:36:30 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH] Documentation: i2c: Constify struct i2c_device_id
-Message-ID: <ZzXEnp5fi01ePWnP@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-i2c@vger.kernel.org
-References: <c8e6da4adb7381ee27e8e11854c9d856382cdc93.1731445244.git.christophe.jaillet@wanadoo.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nq9slNC8Obp4eGd0yCtwSO8RwPP2x8uLoXwWXsYkCkpZRsFiKW+bPPRQzr2zA5ux0LECOs73FNje5v0ll+dy1OxKzt6iupvP+m1vFQp4+U6mNw2xsHPSWSO8eKg9t5jVjDZHBzO3x0H+WFbnnqvtnH9KapAC06H/vfmBEa27EhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=0KKA2r4t; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID; bh=06DiPo7AE62BwZCT/sxN8094QUu3fzWP1D1lacFySp0=; b=0KKA2r
+	4tfV7PGVTnyeMJMLSqJnrz5WElMZqz7UAMo7ygbMP6EP+2Xucg9l9RWHL8qhh/kWBkhjb5sVdVVwO
+	7QL82EsuwLUvGLKogS9DT6ID5hNYB8ziuC3ChMSMa0vrHBWSU3kEWEVRjhFXlf+iUu5gsXL5Ay03u
+	vCFAUByJcWmdaZjtCq/nkH1Y6MlklDC2H1x99uFx1EVtW0+z2j3el2TRCuDpnKD2QhUTcsnniwWwi
+	L5RHPk/9R4U+tRNf5OKkR1TmG2PsY/xpp6SXSJAD2UkV4OBhMBX/nvdZ8CDC1brIjiKfWu3NL4LaQ
+	jEgC5b9oRZqk82pQ7CUrQqt05ntA==;
+Received: from sslproxy06.your-server.de ([78.46.172.3])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sean@geanix.com>)
+	id 1tBWHR-000M7z-Cv; Thu, 14 Nov 2024 10:36:49 +0100
+Received: from [2a06:4004:10df:0:6905:2e05:f1e4:316f] (helo=Seans-MacBook-Pro.local)
+	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sean@geanix.com>)
+	id 1tBWHQ-000HLH-2O;
+	Thu, 14 Nov 2024 10:36:48 +0100
+Date: Thu, 14 Nov 2024 10:36:48 +0100
+From: Sean Nyekjaer <sean@geanix.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Simon Horman <horms@kernel.org>, 
+	Chandrasekar Ramakrishnan <rcsekar@samsung.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] can: m_can: add deinit callback
+Message-ID: <cjg6hv4wspgiavym5g2mwrx4ranz4payml37fnhzupp2xvqc6f@ckmweysspqto>
+References: <20241111-tcan-standby-v1-0-f9337ebaceea@geanix.com>
+ <20241111-tcan-standby-v1-1-f9337ebaceea@geanix.com>
+ <20241112144603.GR4507@kernel.org>
+ <20241114-energetic-denim-chipmunk-577438-mkl@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="x5iuvD6cL/QxHzcL"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <c8e6da4adb7381ee27e8e11854c9d856382cdc93.1731445244.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20241114-energetic-denim-chipmunk-577438-mkl@pengutronix.de>
+X-Authenticated-Sender: sean@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27457/Wed Nov 13 10:35:46 2024)
 
+On Thu, Nov 14, 2024 at 10:34:23AM +0100, Marc Kleine-Budde wrote:
+> On 12.11.2024 14:46:03, Simon Horman wrote:
+> > On Mon, Nov 11, 2024 at 11:51:23AM +0100, Sean Nyekjaer wrote:
+> > > This is added in preparation for calling standby mode in the tcan4x5x
+> > > driver or other users of m_can.
+> > > For the tcan4x5x; If Vsup is 12V, standby mode will save 7-8mA, when
+> > > the interface is down.
+> > > 
+> > > Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> > > ---
+> > >  drivers/net/can/m_can/m_can.c | 3 +++
+> > >  drivers/net/can/m_can/m_can.h | 1 +
+> > >  2 files changed, 4 insertions(+)
+> > > 
+> > > diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
+> > > index a7b3bc439ae596527493a73d62b4b7a120ae4e49..a171ff860b7c6992846ae8d615640a40b623e0cb 100644
+> > > --- a/drivers/net/can/m_can/m_can.c
+> > > +++ b/drivers/net/can/m_can/m_can.c
+> > > @@ -1756,6 +1756,9 @@ static void m_can_stop(struct net_device *dev)
+> > >  
+> > >  	/* set the state as STOPPED */
+> > >  	cdev->can.state = CAN_STATE_STOPPED;
+> > > +
+> > > +	if (cdev->ops->deinit)
+> > > +		cdev->ops->deinit(cdev);
+> > 
+> > Hi Sean,
+> > 
+> > Perhaps this implementation is in keeping with other m_can code, but
+> > I am wondering if either the return value of the callback be returned to
+> > the caller, or the return type of the callback be changed to void?
+> > 
+> > Similarly for calls to callbacks in in patch 3/3.
+> 
+> please take care of errors/return values.
+> 
 
---x5iuvD6cL/QxHzcL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Will do.
+It's also missing for the init callback. Would you like this series to
+fix that?
 
-On Tue, Nov 12, 2024 at 10:01:00PM +0100, Christophe JAILLET wrote:
-> Constify the i2c_device_id structure in the doc to give a cleaner starting
-> point.
->=20
-> Also remove an empty line which is usually not added.
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Applied to for-next, thanks!
-
-
---x5iuvD6cL/QxHzcL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmc1xJ4ACgkQFA3kzBSg
-Kba90w/9EEUbK0gVlZeKrg6mlUDTaRW6Qpve4CK7/6E0z7kTdFDGttEbequD7CZj
-PGh5hTdCxsuJ311klMedkx+tm4uGONubPVlKhKTk9UEXV2xSIb0gFm3E0f7nQvLm
-GEX5n9up9Mg0DmLYgiOjWgLqq7r2OgzN9IxgRk/BtK/zAQsMSDzVN6J1Ep5sxUNK
-1Ju461QXUFYEGcsoqZk1FLYIK7eguDxJtGnCpFI/hUjUBpCOgDvSvOT7E0ZCHArS
-kJo1E1tE8xo8Fntp2WWwSGudbWuawt+VnV/IeMJledSCywR4IHgxQgjrNu+DPj6N
-YADdB25vMv0jByzmjCc40BHixKA19Wf6cZTIZ3uo9DunKCi17/kw1cnZFlWEjz8t
-2hY1AXIebniHT2AWe6JdA+pisX6HbFqsk2gPDCWfUVfZO+1ExEcS4tZmUCqolgb9
-bPgrmUE1424aizH6zKSMyWFz1lMSJR9h02f9VW0F0hTr5nJMldmEfHuaJl8fDOKX
-Da8sAnK2Tk8u/rLeFP5A/zKNLE9DQx1AO1UJ9UpORDTw/IUyrl5VpRSl5LusbHZ9
-jLFaZPnEqMFnqCywFkDf234xLlEoq/YSM6BvMbFOExNRb9sw36o2F3U6xVZQB5ZY
-o7h4HHy9k4+g0wRg8Tnnv1tCGamJfdKplFrKayiOA3XLDb/Hjps=
-=0J7m
------END PGP SIGNATURE-----
-
---x5iuvD6cL/QxHzcL--
+/Sean
 
