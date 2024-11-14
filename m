@@ -1,300 +1,104 @@
-Return-Path: <linux-kernel+bounces-408685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7FD19C824A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:05:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E44ED9C8248
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:04:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20173B230DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 05:05:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95B9E283449
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 05:04:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E89B1EABC2;
-	Thu, 14 Nov 2024 05:04:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F8E1E882F;
+	Thu, 14 Nov 2024 05:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QsrWfrV9"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zqyh2QHO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1536E1632FE
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 05:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE89817
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 05:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731560681; cv=none; b=YkLOLY1wO7Thiw0ZEDZ4UvJjNUogrDKnur6gXONqLsVoMJd2sUWmkGhFD4MB/Vf2J/iYAXnQUpQr+VC4PBDGY25VCt7pmkIEqv9Ioqi3/9bG7oK3BKxy7+Er8fre68OlmOOXYHpwovVILbkn97lwZkDk6NfgzPEEy+jO5X5+YAM=
+	t=1731560678; cv=none; b=SMpyqnbl94LhaxCqzbch/AUb1DbvPg8MCgI9iz8nVltW9fnjcOZTivotpVTcR+daBxnNLc7Z8FePESMd8n0a9Fq3dSZiJs/TFjIgSgScN4IjcGOSN7Dkfo8hiC6/y2O52aC1ALslmL73cejwT1Btczm0eyJYBDb8YKd03xfyFiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731560681; c=relaxed/simple;
-	bh=Eorl1b/PWmz0PJHSCwv7oqTUSr78hFNEpjuAUa3SIdo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=B1DYbXinHVwt+/mMhWFx2GIcCcOXVlZNvaozacTAmiDBqjrAIS15GelFo4n8TUR46bno4i+QYWHgNp/jbNu8WyHp749LN3+osbznbpoJUvd7YYf7MYG64dxUoc5sT9G2kRLU3fFZN7d9cf5J8b0IP0i0zpHoCb1VV6b7GRux5uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QsrWfrV9; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241114050436epoutp032b0f3cf5eba1b24851f3bf3c41e01bda~HvUK6pmh_2393923939epoutp032
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 05:04:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241114050436epoutp032b0f3cf5eba1b24851f3bf3c41e01bda~HvUK6pmh_2393923939epoutp032
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1731560676;
-	bh=4YQ6uCC4OSG3NhE6RFZXfsLmmQ3G7Wkfx+ZBnC6nO6A=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=QsrWfrV9XvCgRtOSH0avNQWuO9xoShPhj1vjTQ6PE+B0k/nsNvRIdELIPE2NYSZsr
-	 ASCiaUIDgONMPlS1WBII+tNXuDDLLOJbv6jO+B7IfMOk1H+3wGw1hgT7dIJYuMKpbG
-	 kBEyILUetnjgo0fyVYj81SwWaPvfg0N/XQZZmUzI=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20241114050435epcas5p151e020e858afbcf3062c4d7a2759e58f~HvUKk8hnp1173811738epcas5p1X;
-	Thu, 14 Nov 2024 05:04:35 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.178]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Xpp3j27jDz4x9Pv; Thu, 14 Nov
-	2024 05:04:33 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	09.AD.09770.1E485376; Thu, 14 Nov 2024 14:04:33 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20241114050337epcas5p174214fb58aedefee4077447fa71b70f0~HvTUTsNHi2722427224epcas5p1x;
-	Thu, 14 Nov 2024 05:03:37 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241114050337epsmtrp1bca2e4b107ef07eb613437a8ddc923bd~HvTUS_wNY0328503285epsmtrp11;
-	Thu, 14 Nov 2024 05:03:37 +0000 (GMT)
-X-AuditID: b6c32a4a-bbfff7000000262a-40-673584e15314
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	0D.6C.18937.9A485376; Thu, 14 Nov 2024 14:03:37 +0900 (KST)
-Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241114050336epsmtip1c4ca0cf52b6e725b7e3cabf426478d64~HvTTQcxlA0406004060epsmtip1S;
-	Thu, 14 Nov 2024 05:03:36 +0000 (GMT)
-From: hexue <xue01.he@samsung.com>
-To: axboe@kernel.dk, asml.silence@gmail.com
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, hexue
-	<xue01.he@samsung.com>
-Subject: [PATCH liburing v2] test: add test cases for hybrid iopoll
-Date: Thu, 14 Nov 2024 13:03:30 +0800
-Message-ID: <20241114050330.4006367-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1731560678; c=relaxed/simple;
+	bh=EqT0RwQdSa9c1ikrX/Ykegp480cTsU4IDBL5lJni93A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Av0+XSjCThYJsO5zpv+Ic/OenLSu9dM/U/1nuSyFLtuJXX6HdRaLdRihO6jC2h6wYKhmWgBl3oQnw1CqaOGL+Tnh+aqTJ1I19TfM4ujHKLrcCGYDIVr23ZF15SZmuUpSuHN0oaR5yG9iy17tK2jKQsAsS9owPCeTiM72j1s7TnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zqyh2QHO; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731560677; x=1763096677;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EqT0RwQdSa9c1ikrX/Ykegp480cTsU4IDBL5lJni93A=;
+  b=Zqyh2QHOJ3kK2mOZg8ntfXpyw8/hyftjGvJHevBhoNYkcCP4SGvmK97u
+   KLK5hRh1gu6txA2fTSa0q5QMSjlwAXbb2/cGoH6l5lI+8ev4SH4z2Hlq3
+   6bftMZk3PfLnF2gBBykPgQ52N/Zeygor1jwxa2kYOD+RReJZj/8ATa1g8
+   OLvt0iXqHYmYAzJBsmNP1QIDT51i+k80lURzPXm+3shH6/nuuNansl6+1
+   6WYovcnEHJ7IH32GL3N2kK4Wo3tZmAf4H5KtHbFxwitgYFJYshplNhH81
+   kPx6dzs4bB2EPPFnXU0RKuoPVJPAdZ7HUbD0E9TwgnwKfyJEZDn2IcXik
+   w==;
+X-CSE-ConnectionGUID: Qj2hLk/RS7ayt0487LHnsA==
+X-CSE-MsgGUID: Gic1QMv1SV+4X24RbrQTZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11255"; a="34345332"
+X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
+   d="scan'208";a="34345332"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 21:04:36 -0800
+X-CSE-ConnectionGUID: KKKyFaBnTia6gaDMNgY9Mg==
+X-CSE-MsgGUID: LrAYBMiLT8uwbIIlM6WfEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
+   d="scan'208";a="88479317"
+Received: from beginmax-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.24])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 21:04:35 -0800
+Date: Wed, 13 Nov 2024 21:03:58 -0800
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: David Kaplan <david.kaplan@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/35] x86/bugs: Restructure mmio mitigation
+Message-ID: <20241114050142.s6gjtna2dnsevnfp@desk>
+References: <20241105215455.359471-1-david.kaplan@amd.com>
+ <20241105215455.359471-7-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHKsWRmVeSWpSXmKPExsWy7bCmpu7DFtN0g2lPeSzmrNrGaLH6bj+b
-	xbvWcywWc39GWVzeNYfN4uyED6wWXRdOsTmwe+ycdZfd4/LZUo/bBz8ze/RtWcXo8XmTXABr
-	VLZNRmpiSmqRQmpecn5KZl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtARSgpl
-	iTmlQKGAxOJiJX07m6L80pJUhYz84hJbpdSClJwCkwK94sTc4tK8dL281BIrQwMDI1OgwoTs
-	jA9PfjMV7NGp+PlwP2MD42OlLkZODgkBE4nzCxYzdTFycQgJ7GaU6Fj0lg3C+cQosfh0EzNI
-	FZjze0cQTMfyqc1QHTsZJV6dWM0I4fxglGjZsJ4RpIpNQEli/5YPYLaIgLbE68dTWboYOTiY
-	BaIkXqzlBgkLCzhLXHt7hhXEZhFQlfh17CcbiM0rYC0x68t2Nohl8hKLdyxnhogLSpyc+YQF
-	xGYGijdvnc0MUXOMXeLOTw4I20XiwcEvrBC2sMSr41vYIWwpiZf9bVB2vsTk7xBnSgjUSKzb
-	/I4FwraW+HdlD9SZmhLrd+lDhGUlpp5axwSxlk+i9/cTJog4r8SOeTC2ksSSIyugRkpI/J6w
-	iBVkjISAh8TXnWWQIIyVOPfkF8sERvlZSJ6ZheSZWQiLFzAyr2KUTC0ozk1PLTYtMMpLLYfH
-	anJ+7iZGcELU8trB+PDBB71DjEwcjIcYJTiYlUR4TzkbpwvxpiRWVqUW5ccXleakFh9iNAWG
-	8ERmKdHkfGBKziuJNzSxNDAxMzMzsTQ2M1QS533dOjdFSCA9sSQ1OzW1ILUIpo+Jg1Oqgalx
-	eTPPzUDWg7mJpre/617s5AzUapq6STu8U0K13N2ygqmt7rqfg92XWzF7FgvtlL7lMYP7/Ol4
-	m62ftKSn7XTcXbOqRNLHfvKV3+or9BefubXH70dgRxEbY07gvg1sZxfyzPw+N6vqwf3aP1Zd
-	x6ZETvi/8+6d3vbUqhVp8g2PCs5vtkoQOiQpPXuRKdvWieecAljmCx1+4cA7ubPz2FOprb7r
-	GA+2l3EWu1TVSdzT0+3aHZ558fTaQKV1TKH9t7cdfGaQ5anfv1nw5oatU008ym7Ixz06EVcz
-	80LNEXX7SVavnWfW/OGcum/brqf2lXtcVs96No3LZ6HHTubVVoVpCWHsE/eUunpfOWsyk0mJ
-	pTgj0VCLuag4EQDP5ISOEQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBLMWRmVeSWpSXmKPExsWy7bCSnO7KFtN0g+lLhSzmrNrGaLH6bj+b
-	xbvWcywWc39GWVzeNYfN4uyED6wWXRdOsTmwe+ycdZfd4/LZUo/bBz8ze/RtWcXo8XmTXABr
-	FJdNSmpOZllqkb5dAlfGhye/mQr26FT8fLifsYHxsVIXIyeHhICJxPKpzUxdjFwcQgLbGSWu
-	/VvDCJGQkNjx6A8rhC0ssfLfc3aIom+MEm1nJjOBJNgElCT2b/kA1MDBISKgK9F4VwEkzCwQ
-	I/FhzwR2EFtYwFni2tszYHNYBFQlfh37yQZi8wpYS8z6sp0NYr68xOIdy5kh4oISJ2c+YYGY
-	Iy/RvHU28wRGvllIUrOQpBYwMq1iFE0tKM5Nz00uMNQrTswtLs1L10vOz93ECA5MraAdjMvW
-	/9U7xMjEwXiIUYKDWUmE95SzcboQb0piZVVqUX58UWlOavEhRmkOFiVxXuWczhQhgfTEktTs
-	1NSC1CKYLBMHp1QDU6zMZcaJ+2yvNPUmnuV6xPuw/ezZCYyMRvFzFmdqq/XFvuj/3S39RJMv
-	WORi4Y4bTW4fzWf/LAwXPPb0jts838mG2tOmPEjdsfhxhm+zekDwqZbnM94LMj3/MG/PMU0v
-	37MSfq476zzW/G73eDY/VGBC+fXtx3m8FlwtDT1Y0LFtxscjGbJxi+KMxOz0OBesLtx1dFvb
-	rzmPPrbccfIQVwo7p7jR69oL66U8xx3LmUI5TK9Pi4nfmS+k9HThXfuqhSllzX9qlHT99vOp
-	HZkhkbXk3fOFx7YETLGutj24pij5imZQK19xt4mvo5DVJIaMdTsLG7ZNOLK7IHtWhufF7tnn
-	hX9vFYjb8ORZzha1PCWW4oxEQy3mouJEAPHGuAq7AgAA
-X-CMS-MailID: 20241114050337epcas5p174214fb58aedefee4077447fa71b70f0
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241114050337epcas5p174214fb58aedefee4077447fa71b70f0
-References: <CGME20241114050337epcas5p174214fb58aedefee4077447fa71b70f0@epcas5p1.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105215455.359471-7-david.kaplan@amd.com>
 
-Add a test file for hybrid iopoll to make sure it works safe.Test case
-include basic read/write tests, and run in normal iopoll mode and
-passthrough mode respectively.
+On Tue, Nov 05, 2024 at 03:54:26PM -0600, David Kaplan wrote:
+> +static void __init mmio_update_mitigation(void)
+> +{
+> +	if (!boot_cpu_has_bug(X86_BUG_MMIO_STALE_DATA))
+> +		return;
+> +
+> +	if (mitigate_any_verw())
+> +		mmio_mitigation = MMIO_MITIGATION_VERW;
 
---
-changes since v1:
-- remove iopoll-hybridpoll.c
-- test hybrid poll with exsiting iopoll and io_uring_passthrough
-- add a misconfiguration check
+Same as TAA, UCODE_NEEDED can't be set irrespective of microcode.
 
-Signed-off-by: hexue <xue01.he@samsung.com>
----
- man/io_uring_setup.2            | 10 +++++++++-
- src/include/liburing/io_uring.h |  3 +++
- src/setup.c                     |  4 ++++
- test/io_uring_passthrough.c     | 14 +++++++++-----
- test/iopoll.c                   | 22 +++++++++++++---------
- 5 files changed, 38 insertions(+), 15 deletions(-)
+> +
+> +	pr_info("%s\n", mmio_strings[mmio_mitigation]);
 
-diff --git a/man/io_uring_setup.2 b/man/io_uring_setup.2
-index 2f87783..fa928fa 100644
---- a/man/io_uring_setup.2
-+++ b/man/io_uring_setup.2
-@@ -78,7 +78,15 @@ in question. For NVMe devices, the nvme driver must be loaded with the
- parameter set to the desired number of polling queues. The polling queues
- will be shared appropriately between the CPUs in the system, if the number
- is less than the number of online CPU threads.
--
-+.TP
-+.B IORING_SETUP_HYBRID_IOPOLL
-+This flag must setup with
-+.B IORING_SETUP_IOPOLL
-+flag. hybrid poll is a new
-+feature baed on iopoll, this could be a suboptimal solution when running
-+on a single thread, it offers higher performance than IRQ and lower CPU
-+utilization than polling. Similarly, this feature also requires the devices
-+to support polling configuration.
- .TP
- .B IORING_SETUP_SQPOLL
- When this flag is specified, a kernel thread is created to perform
-diff --git a/src/include/liburing/io_uring.h b/src/include/liburing/io_uring.h
-index 20bc570..d16364c 100644
---- a/src/include/liburing/io_uring.h
-+++ b/src/include/liburing/io_uring.h
-@@ -200,6 +200,9 @@ enum io_uring_sqe_flags_bit {
-  */
- #define IORING_SETUP_NO_SQARRAY		(1U << 16)
- 
-+/* Use hybrid poll in iopoll process */
-+#define IORING_SETUP_HYBRID_IOPOLL      (1U << 17)
-+
- enum io_uring_op {
- 	IORING_OP_NOP,
- 	IORING_OP_READV,
-diff --git a/src/setup.c b/src/setup.c
-index 073de50..d1a87aa 100644
---- a/src/setup.c
-+++ b/src/setup.c
-@@ -320,6 +320,10 @@ int __io_uring_queue_init_params(unsigned entries, struct io_uring *ring,
- 			ring->int_flags |= INT_FLAG_APP_MEM;
- 	}
- 
-+	if ((p->flags & (IORING_SETUP_IOPOLL|IORING_SETUP_HYBRID_IOPOLL)) ==
-+			IORING_SETUP_HYBRID_IOPOLL)
-+		return -EINVAL;
-+
- 	fd = __sys_io_uring_setup(entries, p);
- 	if (fd < 0) {
- 		if ((p->flags & IORING_SETUP_NO_MMAP) &&
-diff --git a/test/io_uring_passthrough.c b/test/io_uring_passthrough.c
-index f18a186..8604c42 100644
---- a/test/io_uring_passthrough.c
-+++ b/test/io_uring_passthrough.c
-@@ -254,7 +254,7 @@ err:
- }
- 
- static int test_io(const char *file, int tc, int read, int sqthread,
--		   int fixed, int nonvec)
-+		   int fixed, int nonvec, int hybrid)
- {
- 	struct io_uring ring;
- 	int ret, ring_flags = 0;
-@@ -265,6 +265,9 @@ static int test_io(const char *file, int tc, int read, int sqthread,
- 	if (sqthread)
- 		ring_flags |= IORING_SETUP_SQPOLL;
- 
-+	if (hybrid)
-+		ring_flags |= IORING_SETUP_IOPOLL | IORING_SETUP_HYBRID_IOPOLL;
-+
- 	ret = t_create_ring(64, &ring, ring_flags);
- 	if (ret == T_SETUP_SKIP)
- 		return 0;
-@@ -449,18 +452,19 @@ int main(int argc, char *argv[])
- 
- 	vecs = t_create_buffers(BUFFERS, BS);
- 
--	for (i = 0; i < 16; i++) {
-+	for (i = 0; i < 32; i++) {
- 		int read = (i & 1) != 0;
- 		int sqthread = (i & 2) != 0;
- 		int fixed = (i & 4) != 0;
- 		int nonvec = (i & 8) != 0;
-+		int hybrid = (i & 16) != 0;
- 
--		ret = test_io(fname, i, read, sqthread, fixed, nonvec);
-+		ret = test_io(fname, i, read, sqthread, fixed, nonvec, hybrid);
- 		if (no_pt)
- 			break;
- 		if (ret) {
--			fprintf(stderr, "test_io failed %d/%d/%d/%d\n",
--				read, sqthread, fixed, nonvec);
-+			fprintf(stderr, "test_io failed %d/%d/%d/%d%d\n",
-+				read, sqthread, fixed, nonvec, hybrid);
- 			goto err;
- 		}
- 	}
-diff --git a/test/iopoll.c b/test/iopoll.c
-index 2e0f7ea..0d7bd77 100644
---- a/test/iopoll.c
-+++ b/test/iopoll.c
-@@ -351,7 +351,7 @@ ok:
- }
- 
- static int test_io(const char *file, int write, int sqthread, int fixed,
--		   int buf_select, int defer)
-+		   int hybrid, int buf_select, int defer)
- {
- 	struct io_uring ring;
- 	int ret, ring_flags = IORING_SETUP_IOPOLL;
-@@ -363,6 +363,9 @@ static int test_io(const char *file, int write, int sqthread, int fixed,
- 		ring_flags |= IORING_SETUP_SINGLE_ISSUER |
- 			      IORING_SETUP_DEFER_TASKRUN;
- 
-+	if (hybrid)
-+		ring_flags |= IORING_SETUP_HYBRID_IOPOLL;
-+
- 	ret = t_create_ring(64, &ring, ring_flags);
- 	if (ret == T_SETUP_SKIP)
- 		return 0;
-@@ -418,22 +421,23 @@ int main(int argc, char *argv[])
- 
- 	vecs = t_create_buffers(BUFFERS, BS);
- 
--	nr = 32;
-+	nr = 64;
- 	if (no_buf_select)
--		nr = 8;
--	else if (!t_probe_defer_taskrun())
- 		nr = 16;
-+	else if (!t_probe_defer_taskrun())
-+		nr = 32;
- 	for (i = 0; i < nr; i++) {
- 		int write = (i & 1) != 0;
- 		int sqthread = (i & 2) != 0;
- 		int fixed = (i & 4) != 0;
--		int buf_select = (i & 8) != 0;
--		int defer = (i & 16) != 0;
-+		int hybrid = (i & 8) != 0;
-+		int buf_select = (i & 16) != 0;
-+		int defer = (i & 32) != 0;
- 
--		ret = test_io(fname, write, sqthread, fixed, buf_select, defer);
-+		ret = test_io(fname, write, sqthread, fixed, hybrid, buf_select, defer);
- 		if (ret) {
--			fprintf(stderr, "test_io failed %d/%d/%d/%d/%d\n",
--				write, sqthread, fixed, buf_select, defer);
-+			fprintf(stderr, "test_io failed %d/%d/%d/%d/%d%d\n",
-+				write, sqthread, fixed, hybrid, buf_select, defer);
- 			goto err;
- 		}
- 		if (no_iopoll)
--- 
-2.34.1
+This should be in the 'else' part of below condition, otherwise they can
+print conflicting mitigation status.
+
+> +	if (boot_cpu_has_bug(X86_BUG_MMIO_UNKNOWN))
+> +		pr_info("Unknown: No mitigations\n");
+> +}
 
 
