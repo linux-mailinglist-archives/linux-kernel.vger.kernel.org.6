@@ -1,169 +1,119 @@
-Return-Path: <linux-kernel+bounces-409091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 084529C8804
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:48:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1433A9C87CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:39:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3068B327AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:25:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1D1EB25BED
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14EC1FB8B2;
-	Thu, 14 Nov 2024 10:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0E81FBF65;
+	Thu, 14 Nov 2024 10:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="EKdxYz4c"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="VuM1hS3b"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066011FB8A6;
-	Thu, 14 Nov 2024 10:16:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED471FBF51
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731579408; cv=none; b=LJZJFfPZnyYcZXxLVxIj01nsq7P8Zq7FKsfduso/7Z2xf6UEJTCBKE9gRGNJRHhWDjSVxCL4lXlXpGcRoAxlPJ6gBXj+MCaHeM1sD7yxZ/pFriPs+e0ne3sITvtlLDtdFMjXOhQhzEwmDOIWsFfdnkHmcbP6sGzUkyqId4HGwEg=
+	t=1731579437; cv=none; b=swHRA39hnWMdZpE8TRG+tHX5LvmRjiZETFg2asLdg48PbtvLZrUlXLUj9KxSW+SuC9+iXjrV8P8BmClSNFEult7WUJAk6qFfH2Do5SJNolzuCJqOO+7qO07CKF+MiM3z96UxmbddXn0aAADIGl2ZmjWzV3T5/7iIWdh88tn6mQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731579408; c=relaxed/simple;
-	bh=PVyNOYgX7ZJ8zY9NS0Zou8sXcvo4yd8bNUCokBcpSY8=;
+	s=arc-20240116; t=1731579437; c=relaxed/simple;
+	bh=bbRSxCXwI8x4Rlo+zAX5DpYAkJBhneKuu+Tk5Pc+c7c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QE+FXDtbpuMvl2KcN/UYWCOxwWsErsJCnQ7mSjkl2HjuakAz474Y4dos+aF2klRrRCyzuaStJFNVPpx/ibp3kIl13Bf2PW+Gl9MDSbkT4j2aJAijZZhIOuLJopRqKNxT4JNXImKkxPsrIOchFLeSPVlEFRYqmO6gvfc4sKizCME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=EKdxYz4c; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=UQeUKWqacSfgCW37cA4xUbE+Eq7a4taaKHHUWJFU+2k=; b=EKdxYz4cjDjcDbN/5Eim1cU0zF
-	m0Ab8tdmycKewlP4QFRolSJMOyGu2gyQascXJbVJQS2fjLRBP0JkVEGn4kCQWy0cvXF8BSwz6xZTL
-	aHzJ8NRFeh518NKW85GgyNAfsBH1/eW8nTyH+9Oo7BD95uFBDgeV6CipZtit3ODL2JK6G+JlzybcW
-	wBJRiIXQupbtFsYdCK9Mu1JwSkpOeFiSzHz+TxbqXLNDVMkzKO1J/mxvs9uC8Y3MtK7Cl61H21e0l
-	SAfW+CFUDJVcvZAoU8W3eOWbElGWeTAF/zNAU0jq+H0fB7qZlk83x1OrXIk+yuNu8EZ3tqqJ34O4a
-	k7zQ6aiQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46564)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tBWtw-0007oh-2N;
-	Thu, 14 Nov 2024 10:16:37 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tBWtv-00012F-0T;
-	Thu, 14 Nov 2024 10:16:35 +0000
-Date: Thu, 14 Nov 2024 10:16:34 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Choong Yong Liang <yong.liang.choong@linux.intel.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net v1 1/2] net: phy: set eee_cfg based on PHY
- configuration
-Message-ID: <ZzXOAvc__iQscSb4@shell.armlinux.org.uk>
-References: <20241114081653.3939346-1-yong.liang.choong@linux.intel.com>
- <20241114081653.3939346-2-yong.liang.choong@linux.intel.com>
- <ZzXBpEHs0y2_elqK@shell.armlinux.org.uk>
- <ZzXLgEjElnJD1445@shell.armlinux.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=omDMyVwRWh6fjFsuI55uzI+6hHGTXiGZX4w/LWqTnRsGDuaaJo9MkxLKtHCISrQ/jm43OmeMhq/apO163j0JAVBWumIKvFH4n2phmRyHeUsrIJ2GeaXv4G0FlUfZwvfPQhc1GYPxtubJJdI0jxUIuhSf6pa4+Jg/aLd7kNtWObc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=VuM1hS3b; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2B0B940E0286;
+	Thu, 14 Nov 2024 10:17:13 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id pCvRB5mzujel; Thu, 14 Nov 2024 10:17:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1731579426; bh=kx+WcAxx0Lv5K6sGx4aODBrfJEzcQuxrEL03+dqgWlE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VuM1hS3b+Sz4wNqCVdQ/Xj7WvICZJ/IG04Ml6zRORcAwWvwLvFmD0rhHZbYEwwUSD
+	 cpkWsGcrTSRX26iI1JuJJrIETYNSnuZkCcLczVOsfMS1fScko1TTtrMbcBQ/zveCUa
+	 36qggvrfpodYXA2LR3iEVNFfopJz+Gr+nXuJihdHwgqGsAOAfjL16/afmOSnhPeelR
+	 8H3PtNEydRPebJH9Loa1/mNAmPmdQwiPykdsgC79Gp/R+pMcRFC8I10ipLicKbjrCl
+	 wtoCr+JAC1u5iWLi3xJZtFt0GNBmQrfHB5Xou2L1fL7titLCEpEnzXqpjxVN+herj8
+	 osLLN5gU4uv+mlPkQM7l4H22HFgGKZzV1Yypuu+wVuIxjyyNg2OoAJ+Z70Jz3inDNy
+	 PM+3qhXoqzBIGGbsu0E9lPpYKJJKvGJ4mi2sHcowEEOLlyaLRqutiJ9vy90+npy5s7
+	 lxFo47gfKP6paYjR5g1VAKpMJWoa8OMooPzDLgxt7T/YsLdrZGAEp4xIBv+0AGiy31
+	 r/AfIbgV9Hxg3rvPAEiMLjfA4+jYH+30wAM3HTJ8sbH0mG10M1gO6yKxnK+MxECO83
+	 HxQr2FRkU2xjFbXkr8eHNdjJy7BGvplOJgycxhp/9K/QJA6ctd4DkMNgChswPLeG31
+	 /J9PlB2ESW9HpZZzO92+DCHk=
+Received: from zn.tnic (p200300ea973a31a9329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:973a:31a9:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6D5CB40E0220;
+	Thu, 14 Nov 2024 10:17:03 +0000 (UTC)
+Date: Thu, 14 Nov 2024 11:16:55 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Nikolay Borisov <nik.borisov@suse.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] x86/microcode/AMD: Return bool from
+ find_blobs_in_containers()
+Message-ID: <20241114101655.GEZzXOFwoVyizZUNx6@fat_crate.local>
+References: <20241018155151.702350-1-nik.borisov@suse.com>
+ <20241018155151.702350-2-nik.borisov@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZzXLgEjElnJD1445@shell.armlinux.org.uk>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20241018155151.702350-2-nik.borisov@suse.com>
 
-On Thu, Nov 14, 2024 at 10:05:52AM +0000, Russell King (Oracle) wrote:
-> On Thu, Nov 14, 2024 at 09:23:48AM +0000, Russell King (Oracle) wrote:
-> > On Thu, Nov 14, 2024 at 04:16:52PM +0800, Choong Yong Liang wrote:
-> > > Not all PHYs have EEE enabled by default. For example, Marvell PHYs are
-> > > designed to have EEE hardware disabled during the initial state, and it
-> > > needs to be configured to turn it on again.
-> > > 
-> > > This patch reads the PHY configuration and sets it as the initial value for
-> > > eee_cfg.tx_lpi_enabled and eee_cfg.eee_enabled instead of having them set to
-> > > true by default.
-> > 
-> > eee_cfg.tx_lpi_enabled is something phylib tracks, and it merely means
-> > that LPI needs to be enabled at the MAC if EEE was negotiated:
-> > 
-> >  * @tx_lpi_enabled: Whether the interface should assert its tx lpi, given
-> >  *      that eee was negotiated.
-> > 
-> > eee_cfg.eee_enabled means that EEE mode was enabled - which is user
-> > configuration:
-> > 
-> >  * @eee_enabled: EEE configured mode (enabled/disabled).
-> > 
-> > phy_probe() reads the initial PHY state and sets things up
-> > appropriately.
-> > 
-> > However, there is a point where the EEE configuration (advertisement,
-> > and therefore eee_enabled state) is written to the PHY, and that should
-> > be config_aneg(). Looking at the Marvell driver, it's calling
-> > genphy_config_aneg() which eventually calls
-> > genphy_c45_an_config_eee_aneg() which does this (via
-> > __genphy_config_aneg()).
-> > 
-> > Please investigate why the hardware state is going out of sync with the
-> > software state.
-> 
-> I think I've found the issue.
-> 
-> We have phydev->eee_enabled and phydev->eee_cfg.eee_enabled, which looks
-> like a bug to me. We write to phydev->eee_cfg.eee_enabled in
-> phy_support_eee(), leaving phydev->eee_enabled untouched.
-> 
-> However, most other places are using phydev->eee_enabled.
-> 
-> This is (a) confusing and (b) wrong, and having the two members leads
-> to this confusion, and makes the code more difficult to follow (unless
-> one has already clocked that there are these two different things both
-> called eee_enabled).
-> 
-> This is my untested prototype patch to fix this - it may cause breakage
-> elsewhere:
+On Fri, Oct 18, 2024 at 06:51:49PM +0300, Nikolay Borisov wrote:
+> @@ -562,6 +562,7 @@ static void __init find_blobs_in_containers(struct cpio_data *ret)
+>  		cp = find_microcode_in_initrd(ucode_path);
+>  
+>  	*ret = cp;
+> +	return cp.data && cp.size;
 
-As mentioned in the other thread:
+I guess we want this here ontop:
 
-Without a call to phy_support_eee():
-
-EEE settings for eth2:
-        EEE status: disabled
-        Tx LPI: disabled
-        Supported EEE link modes:  100baseT/Full
-                                   1000baseT/Full
-        Advertised EEE link modes:  Not reported
-        Link partner advertised EEE link modes:  100baseT/Full
-                                                 1000baseT/Full
-
-With a call to phy_support_eee():
-
-EEE settings for eth2:
-        EEE status: enabled - active
-        Tx LPI: 0 (us)
-        Supported EEE link modes:  100baseT/Full
-                                   1000baseT/Full
-        Advertised EEE link modes:  100baseT/Full
-                                    1000baseT/Full
-        Link partner advertised EEE link modes:  100baseT/Full
-                                                 1000baseT/Full
-
-So the EEE status is now behaving correctly, and the Marvell PHY is
-being programmed with the advertisement correctly.
+diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+index 41b6f8a9e7e6..dfad4b26a662 100644
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -561,12 +561,16 @@ static bool get_builtin_microcode(struct cpio_data *cp)
+ static bool __init find_blobs_in_containers(struct cpio_data *ret)
+ {
+ 	struct cpio_data cp;
++	bool found;
+ 
+ 	if (!get_builtin_microcode(&cp))
+ 		cp = find_microcode_in_initrd(ucode_path);
+ 
+-	*ret = cp;
+-	return cp.data && cp.size;
++	found = cp.data && cp.size;
++	if (found)
++		*ret = cp;
++
++	return found;
+ }
+ 
+ void __init load_ucode_amd_bsp(struct early_load_data *ed, unsigned int cpuid_1_eax)
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
