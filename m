@@ -1,75 +1,113 @@
-Return-Path: <linux-kernel+bounces-409927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70BE19C9379
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:52:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C5CE9C9381
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:54:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E44B0B26EAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:52:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 048AB1F222AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209D61AC44D;
-	Thu, 14 Nov 2024 20:51:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E971AC450;
+	Thu, 14 Nov 2024 20:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BDbQGtm0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="AYTzbS7j"
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9112905;
-	Thu, 14 Nov 2024 20:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D6318DF89;
+	Thu, 14 Nov 2024 20:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731617513; cv=none; b=rWWXS8DOjEGibM9tBe+m57B4RWoVXoikRmyziqf80nR+3RAGhwBbRUUQqUuxtFeTY+cozgHP83NFoUxrfAm3SpuA13Fc17w9JAtXGm2hrBnCry3aPKWniJpsi01l6i9zOKM4ZRACdCSLhBJilJVxmhsSuJOh/KNCfuzW2UzkBwc=
+	t=1731617633; cv=none; b=bjF6Jr9/dNlP+urT/8n/bIXh5Dtako6z+Bs8SoULXIBHVw+bEPjy5BYwQKvHYcuvXz6L/7zttF/7R14oi8paewTAZh68qtkC6d1qKL6848utaEb7lls7Lyc3cwkjs1cadGHiaqZBAqWH8Dwczc/2v0d0sUEWcTkOHfH6z+i+sgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731617513; c=relaxed/simple;
-	bh=hkKa0UC9NnJxDCNd5n0CnVfMEOJpPjjfOMw26wn6Vhw=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=b7Jnyq6Wab6PqMolZ/lw+o4rlmfIxRVwQyv1/JLgkgrXIEVy4tvsiOtb6qDL5HSnX6R3Ton8iEiC8UCpguxoS1DI3BvTgX8p06uYv94tfRQF5/4DAPaMtN5Zxg5bYtXZ9Hng3p/zR+j72848OrcTfMF7B8hrDk1twD1KApQA0Ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BDbQGtm0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B2D5C4CECD;
-	Thu, 14 Nov 2024 20:51:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731617513;
-	bh=hkKa0UC9NnJxDCNd5n0CnVfMEOJpPjjfOMw26wn6Vhw=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=BDbQGtm0WeAvVnAzLRV1Ix+gPEb5jGN7UcnFuLOTK/bTYCxRTehoH08ARVilP9jb3
-	 ueOk7RtrmEcSd2zHCbFty/RfiGwC0+gsMsF6RykmSqLaniKWDsELecF3MuQUpgmdcJ
-	 DOnWSokngHLLHbYHjqWqlK2qi/0mv9Wip2q5BC7jz0vyGis9l1ofE6/uDSDKf5HNI8
-	 Uc7CSJhlihBuFpPkpOgvUbY64h+5d4KmE2dQPmm9xdb1H7J3g+RhQ8EJcsUyM1kHHX
-	 Zk3uQ8bXLJayhLNGQwB2kkpqlNRQpIGdmLAxRe+7BsPEdqzcGkA678KTarXvA9MnTU
-	 /aeDfKdaKFULw==
-Message-ID: <6c4bdf9e5a09aa8c2c49c69a6ccdac99.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1731617633; c=relaxed/simple;
+	bh=yIev9+eLK+sa2JzXMTMbQbJapfdl56jEVK7mJi83GZo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jzEdnz4fhaQShymjW7HWvTHiKFu3vAB8vbxCQea2BfRXZwNpnPNNLo/VqrLRa+Fln8l72W8aKazBj2qjuh2CFZ7YpvKviQK1tBbjhrI2I1uxdyPWmFgb5UbBCl8tkRh939/OBB7Tr6GJCmI8hQdUFMe+I34mLCob1sg5Lb/eDSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=AYTzbS7j; arc=none smtp.client-ip=80.12.242.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id BgqYtkBtLgtkHBgqYteFma; Thu, 14 Nov 2024 21:53:47 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1731617627;
+	bh=WV2W+8UBHguE4UcWph7FErk54zqeaAz0yLvQjc7Da0Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=AYTzbS7j8pq9LMK2JycxF5DHxrolWbXbETpjMN+Cus+zaSvpg5Y2QPrQis8ajylTe
+	 +9+wJMcDiL6Wq22OsQ49r4ATL2ZGNVDCjfDp+up/6u4IZwQAjapDbnSd+/LwX+2uMv
+	 K3jcwHRrgA8Z/kb3CZx3u9UN6595ECNvols4WIefRahtKd/CxD0NtVdqBXHGWIeVyV
+	 FnCIFmydBywBz1ebEVfH3aU4RA69qpMceJrfsSxdfnY1Wk6KB86phluTtkfOOj2NHr
+	 hsdjL+S+8wpTurGvMbUHwuMKEkbdCkr9i0nBTqCvdPcKU6/J3qqMDADo95JJfEAU89
+	 xEXxzppESU//g==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Thu, 14 Nov 2024 21:53:47 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <62b1d5d1-a648-461f-8002-8373e600ef31@wanadoo.fr>
+Date: Thu, 14 Nov 2024 21:53:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <89ad840e7a484eaf4727470824acfe0fdc60fcef.1729871146.git.christophe.jaillet@wanadoo.fr>
-References: <89ad840e7a484eaf4727470824acfe0fdc60fcef.1729871146.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] clk: mediatek: mt6735-apmixedsys: Fix an error handling path in clk_mt6735_apmixed_probe()
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Yassine Oudjana <y.oudjana@protonmail.com>
-Date: Thu, 14 Nov 2024 12:51:51 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Use strscpy() instead of strcpy()
+To: Abdul Rahim <abdul.rahim@myyahoo.com>
+Cc: xiubli@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241111221037.92853-1-abdul.rahim.ref@myyahoo.com>
+ <20241111221037.92853-1-abdul.rahim@myyahoo.com>
+ <8fef8eab-cd82-4e05-ad9b-1bb8b5fe974b@wanadoo.fr>
+ <o6dz6grwkknan6er5lig6i37ocfekn6i3fljltptn7aol45sfl@n5amdhwr7wmt>
+ <e7cfb6b2-51a4-4c8e-9c43-20653bd1443f@wanadoo.fr>
+ <bigyu3u3rawsy5c5oxpe7xpmq24jhuxdrnklplaqjs2san7jxh@k3k2ypxcdspk>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <bigyu3u3rawsy5c5oxpe7xpmq24jhuxdrnklplaqjs2san7jxh@k3k2ypxcdspk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Quoting Christophe JAILLET (2024-10-25 08:46:08)
-> If an error occurs after a successful mtk_alloc_clk_data(),
-> mtk_free_clk_data() should be called, as already done in the .remove()
-> function.
->=20
-> Switch to mtk_devm_alloc_clk_data() in order to fix the memory leak in the
-> probe function, and simplify the remove function.
->=20
-> Fixes: 43c04ed79189 ("clk: mediatek: Add drivers for MediaTek MT6735 main=
- clock and reset drivers")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+Le 14/11/2024 à 10:14, Abdul Rahim a écrit :
+> On Wed, Nov 13, 2024 at 10:28:36PM +0100, Christophe JAILLET wrote:
 
-Applied to clk-next
+...
+
+> diff --git a/fs/ceph/export.c b/fs/ceph/export.c
+> index 0e5b3c7b3756..48265c879fcf 100644
+> --- a/fs/ceph/export.c
+> +++ b/fs/ceph/export.c
+> @@ -452,7 +452,12 @@ static int __get_snap_name(struct dentry *parent, char *name,
+>   		goto out;
+>   	if (ceph_snap(inode) == CEPH_SNAPDIR) {
+>   		if (ceph_snap(dir) == CEPH_NOSNAP) {
+> -			strcpy(name, fsc->mount_options->snapdir_name);
+> +			/*
+> +			 * get_name assumes that name is pointing to a
+> +			 * NAME_MAX+1 sized buffer
+> +			 */
+
+It is a matter of taste, and I'm not the maintainer, but my personal 
+feeling would go for something like:
+
+/* .get_name() from struct export_operations assumes that its 'name' 
+parameter is pointing to a NAME_MAX+1 sized buffer */
+
+CJ
+
+> +			strscpy(name, fsc->mount_options->snapdir_name,
+> +					NAME_MAX+1);
+>   			err = 0;
+>   		}
+>   		goto out;
+> 
+> 
+> Looks good?
+> 
+> 
+
 
