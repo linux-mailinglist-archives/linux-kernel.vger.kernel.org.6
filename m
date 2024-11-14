@@ -1,131 +1,97 @@
-Return-Path: <linux-kernel+bounces-408689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2575F9C8256
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:20:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3D339C8258
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:21:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5FC1B249E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 05:20:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C11B1F230E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 05:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238DE17B401;
-	Thu, 14 Nov 2024 05:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C761DF73C;
+	Thu, 14 Nov 2024 05:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="vo3JBX4S"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DyQQu8dB"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A402916EB76
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 05:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD24801;
+	Thu, 14 Nov 2024 05:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731561619; cv=none; b=nZK2yqZ3FeU2vg7KTBjlDqBq7t6Ek5tYRW/uO7U2RNkVkiOpgioc03uYQ1127p6Yo0gDuZaDcmYDtcw41c1EtV/vh4k4wnrcbZVApi0fjpk8jxD7dEFiiqELJqGPB+W4Y+yVanrYNaJSGeib/ecyJ6CxgOZ9I8egzzjYWwBAv5A=
+	t=1731561668; cv=none; b=lD43ffwRnYqJq8yV/GPrjlNNXlBrwywDYPmULxTXVYEn1c6aynbMgH3cHvBHpogetI5Rm1yddI0oebC7kCfRf70tdaFshckrrHR8HpGZ8y1PGh/aV0gSwpuNSBlNJWiJW9K3nW9IkMR/fq9b0HKEd7WRP6tJ1kngJh5wWgdYo1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731561619; c=relaxed/simple;
-	bh=H8amFsZPdnvP0Hq+MsKjVRFwvn1m2U0rZLB+EX4UTZo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KBTBIE2AdNgxfXsCM2TXnzmMH6+gaP3VqZQkh3T8bW6zQ/3osRDl7YCXq3P9CV929XjOqNqEe3eu8gKHPSG0Ft1foVJBH1k2Bi0BXamJ5FKIHT5OzuIBqfDd+NkrepEtNbKFm5bRMliyIE+yO3Vwve+3XOhI181HnqJzWj+CW9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=vo3JBX4S; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1731561607; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=LBovoTp6LXztaTEv4dhpi+GGkF4r/KEIcGS31ovBYVk=;
-	b=vo3JBX4SheDY9vy7f3aQ4zfeneiX9Kp5Zn5qh9+J2rdMLZWcK1bVc4D/C71dQqmMn7zmZSSErPYfw61ccw0SyomGPAIM54LPk41jHV9iRJKeExRXugA0I/yjbsxezAqmg9DzgL42IrdPCB7AXJP57QJEva5aScpfwkME0t/bsek=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WJNFjtS_1731561599 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 14 Nov 2024 13:20:07 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	syzbot+0b1279812c46e48bb0c1@syzkaller.appspotmail.com
-Subject: [PATCH] erofs: fix file-backed mounts over FUSE
-Date: Thu, 14 Nov 2024 13:19:57 +0800
-Message-ID: <20241114051957.419551-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1731561668; c=relaxed/simple;
+	bh=oHGls7AFam4mHGfb97rToOT6Py3SFlaBEqck0d1zEDo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ado6Ucv/Zibca4FcFxGYEdiZjcFmnPrPHNMto8Y2uzordObHQ7e0HNuswc71cp2QqdCzjpIbM2k1lLqA31i0moYxm2E9kbshs/dQfuCaHccdKfKXiEY5wnBRPeTfZByBa0xlOiHKMRCjHKpgFCswlH30xhLdleQzxF1ckqE1198=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DyQQu8dB; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7edb6879196so135511a12.3;
+        Wed, 13 Nov 2024 21:21:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731561667; x=1732166467; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NEkWqFarO5ZGDl+Zrp7Ih3f6HDMm6lKhnmGDf8HG6T0=;
+        b=DyQQu8dBt1P+ETBd5R/Llg3VQ0nMdFXvCkyUomZox1OJ0F+BvQvFs7Ij0/UQdjAK8L
+         rXb+pk39KHUwQzU1hTgD9GpTL4xd67GFbwEfX+3ocfOCu1fiZt0JeGEQtOwPFb9T+jNs
+         GzxNGFdTYT5G+dZKlvnSCxHBSIicw34LyQj6ht3ni7cgl9Q19JZ+DJASZVv2Bn0EgCcc
+         vBSUvifOTuaNHQPMkQ7VXRnYyc8u4peCKM8ADGvk5e4GjikPkEkn6rdgFW2Lp3AMiKC6
+         OhszMYf+u5KOQTB5sRQPKokxedMeqyPzQn/HO6Z/Fef2tMy5gXbvjcVL0ePSCHuwZtHA
+         p1aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731561667; x=1732166467;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NEkWqFarO5ZGDl+Zrp7Ih3f6HDMm6lKhnmGDf8HG6T0=;
+        b=tJ+qv04fCSTdrKKUcxQw2nrDuo/bkZTri2knB9lptVzBbjnUAHO9sfvID5Jd1eu3XT
+         pYMsOkRkNwmvfMxOonL4JTBVssmEe2Wx6zMlcxv7BGLRgqHZag5o7dxREF40HtC+4AWJ
+         sMaXfQlYyS7+xFaSvHdhz/IVvyjchAxX8A8e6nhkyixVr36puzOKcTVJ+Lv78D17Ldp3
+         1UhWsMQ4ZL15RGux4Dk9nHkxsHwtPnIt2cRZplOD8nlxE3T9lN9BygkGLXoPgSXRT02M
+         ttED8tRz4a/lY0TAgD1/QjVouERZqZ/uj9o8Ru7FHUXGnbHL9mgpecA+0eikiZy5ayaO
+         puig==
+X-Forwarded-Encrypted: i=1; AJvYcCWyY0EUU/Jbe6tZ/ULSnoz+E+KfZZshYKn+BQrvjbwMdcIqYpasc7+YOVoOJIk8zj9vHjcR5J3tppBoW32l@vger.kernel.org, AJvYcCX5RRgvWwGzGPnmkr7h4jI4ocb+eHyYo9MGArP2aD9mFNIO/k+q6/6zthKF0GrV1p0BkJax46ucSDis/A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg2oUeScy5/ieAfTWCFzEEsBhAwcyftD7sKpVXQHHdZ8WAytLF
+	KBuUld2gucwq7z9Jn/0euSJ/XcMA1vsdMrawQNAT0EfZbHNPiYO/
+X-Google-Smtp-Source: AGHT+IEdp1I/bu3ifbL07hCMBvjgh/TPoqDJCgLCPVuj6JFRHoE5AZJ9s//YRxuHnGj8jKhGXaJiVw==
+X-Received: by 2002:a05:6a20:43a4:b0:1d9:61:e783 with SMTP id adf61e73a8af0-1dc22b642efmr32654349637.36.1731561666586;
+        Wed, 13 Nov 2024 21:21:06 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:aaa0:6660:6a33:f019])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea06fbb549sm320869a91.52.2024.11.13.21.21.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 21:21:06 -0800 (PST)
+Date: Wed, 13 Nov 2024 21:21:03 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Shivam Chaudhary <cvam0000@gmail.com>
+Cc: wse@tuxedocomputers.com, tiwai@suse.de, hdegoede@redhat.com,
+	eshimanovich@chromium.org, szfabian@bluemarch.art,
+	tjakobi@math.uni-bielefeld.de, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: i8042: Fix typo dublicate to duplicate
+Message-ID: <ZzWIv89-BBOqQsxi@google.com>
+References: <20241107174918.78335-1-cvam0000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107174918.78335-1-cvam0000@gmail.com>
 
-syzbot reported a null-ptr-deref in fuse_read_args_fill:
- fuse_read_folio+0xb0/0x100 fs/fuse/file.c:905
- filemap_read_folio+0xc6/0x2a0 mm/filemap.c:2367
- do_read_cache_folio+0x263/0x5c0 mm/filemap.c:3825
- read_mapping_folio include/linux/pagemap.h:1011 [inline]
- erofs_bread+0x34d/0x7e0 fs/erofs/data.c:41
- erofs_read_superblock fs/erofs/super.c:281 [inline]
- erofs_fc_fill_super+0x2b9/0x2500 fs/erofs/super.c:625
+On Thu, Nov 07, 2024 at 11:19:18PM +0530, Shivam Chaudhary wrote:
+> Fix typo in i8042-acpipnpio.h dublicate -> duplicate.
+> 
+> Signed-off-by: Shivam Chaudhary <cvam0000@gmail.com>
 
-Unlike most filesystems, some network filesystems and FUSE need
-unavoidable valid `file` pointers for their read I/Os [1].
-Anyway, those use cases need to be supported too.
+Applied, thank you.
 
-[1] https://docs.kernel.org/filesystems/vfs.html
-Reported-by: syzbot+0b1279812c46e48bb0c1@syzkaller.appspotmail.com
-Fixes: fb176750266a ("erofs: add file-backed mount support")
-Closes: https://lore.kernel.org/r/6727bbdf.050a0220.3c8d68.0a7e.GAE@google.com
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
- fs/erofs/data.c     | 10 +++++++---
- fs/erofs/internal.h |  6 +++++-
- 2 files changed, 12 insertions(+), 4 deletions(-)
-
-diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-index 6355866220ff..43c89194d348 100644
---- a/fs/erofs/data.c
-+++ b/fs/erofs/data.c
-@@ -38,7 +38,10 @@ void *erofs_bread(struct erofs_buf *buf, erofs_off_t offset,
- 	}
- 	if (!folio || !folio_contains(folio, index)) {
- 		erofs_put_metabuf(buf);
--		folio = read_mapping_folio(buf->mapping, index, NULL);
-+		folio = buf->use_fp ?
-+			read_mapping_folio(file_inode(buf->filp)->i_mapping,
-+				index, buf->filp) :
-+			read_mapping_folio(buf->mapping, index, NULL);
- 		if (IS_ERR(folio))
- 			return folio;
- 	}
-@@ -61,8 +64,9 @@ void erofs_init_metabuf(struct erofs_buf *buf, struct super_block *sb)
- {
- 	struct erofs_sb_info *sbi = EROFS_SB(sb);
- 
--	if (erofs_is_fileio_mode(sbi))
--		buf->mapping = file_inode(sbi->fdev)->i_mapping;
-+	buf->use_fp = erofs_is_fileio_mode(sbi);
-+	if (buf->use_fp)	/* some fs like FUSE needs it */
-+		buf->filp = sbi->fdev;
- 	else if (erofs_is_fscache_mode(sb))
- 		buf->mapping = sbi->s_fscache->inode->i_mapping;
- 	else
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 5459d0b39415..df67a1980ada 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -208,10 +208,14 @@ enum erofs_kmap_type {
- };
- 
- struct erofs_buf {
--	struct address_space *mapping;
-+	union {
-+		struct address_space *mapping;
-+		struct file *filp;
-+	};
- 	struct page *page;
- 	void *base;
- 	enum erofs_kmap_type kmap_type;
-+	bool use_fp;
- };
- #define __EROFS_BUF_INITIALIZER	((struct erofs_buf){ .page = NULL })
- 
 -- 
-2.43.5
-
+Dmitry
 
