@@ -1,232 +1,121 @@
-Return-Path: <linux-kernel+bounces-409495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B9529C8D90
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:06:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08D2C9C8D93
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:07:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA5E32847E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:06:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A92681F24CE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA2D813D881;
-	Thu, 14 Nov 2024 15:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ik9cPkRw"
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE44139CFF;
+	Thu, 14 Nov 2024 15:07:07 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41918288DA;
-	Thu, 14 Nov 2024 15:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67AD0288DA
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731596769; cv=none; b=pOFLj0pkqV5MBd9gMc2GXz2SegZOTsa7kCTBteFH8UwqUTuZPX2CKm3F2k9JX7muGZ6iW5Iv6msyGSKVl/tj0LEL6c/CwNhAgA9YzXOND0FkIQOAbHJo7TIjUy12dm4LkPgnGj+ojaP/OKY/G4Fs2tGRWVqX8lFMz87eTeL9qDg=
+	t=1731596827; cv=none; b=NtDLTlrRGncisQZ6j0RvQoINfRHM3+kqRvA4epwVWFvHZstImm3Z7r9sFRJbVFA2VQ0gbhZk6Lh0XEKo6PVpWeqBYP5EX9M1q6urVMX/Jqo3ry3KVPgITc9n494LsYaBZJNZXlwAGqxwPdfzvRIO7a0X4P3Czu+Ms160YDBc1AY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731596769; c=relaxed/simple;
-	bh=HjEzCwjRXqPB2xZCMroQnOlgsQ8OCK/iDcOd6qKx1H8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s1kFZRSBZ+N5vMBceEECo9eFeFgol1dwdENWO9YreTHXDxNnGochR+MtZLgnCzawIWd+GyDEa3p5yMcP4sA6hK+l2z5L6sLCQrSFfjQFYu8TzsaCnYS07uS8vL3mbqQJ64OYJH9Sd8MD7WI8vsWhC0u0iYIaYEp93uvtpS1j/qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Ik9cPkRw; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 43B5D114008B;
-	Thu, 14 Nov 2024 10:06:06 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-11.internal (MEProxy); Thu, 14 Nov 2024 10:06:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731596766; x=
-	1731683166; bh=8Ggi08RdczMzZAmR00Gf0WG7OW6HQUnGbZdjLGdudk4=; b=I
-	k9cPkRwLOqV7Cgyzj/pKJFUn1DSUDdaPYFbYBHjQCSOY5/+eIs41oBBpmpqsSs2X
-	UdFGr9mDN3vBJJdtPUalHzvgE5YPf/lErCmMCGVVPrvOKP07uyX/KjLfaaPRtWso
-	gPIvYPoMuR4Nv+R9Z87aaFreyrG9K3xrBYfqPax+kUFdOkUAWCdXWncAEreqNbSf
-	JFBqtV98nTnRe1/2/T1n2b2Mx78Watt3STBRNd9kSWKFqpoXQfodNarA6KpTtyWu
-	Dl9vGaj1iE8WAJexzp+HTpQbtx84fr1E4Y4GOOw4Bi2tuoDxQWsJoigFincvIQf3
-	OMI6BN6Krre2jyFExbwMg==
-X-ME-Sender: <xms:3RE2Z7fXGfKvo8xmqeL9nI0bDFfenBi1E2shJh57ulHp-lsSnm_SFA>
-    <xme:3RE2ZxNfeSNqkPz-5guTrhKcVktmYfdMYmx0ykyHZKmsJRGpVHbwVJAGuh0Oun-0R
-    Yyf2IHLMP9BEBk>
-X-ME-Received: <xmr:3RE2Z0jl_Dwsen-b9ws5JoZ_wL0T8hGQe8b2QyMPZ007Vngh_-X4_biNV88M>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddvgdejudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtuden
-    ucfhrhhomhepkfguohcuufgthhhimhhmvghluceoihguohhstghhsehiughoshgthhdroh
-    hrgheqnecuggftrfgrthhtvghrnhepgeehkeduvdeujedvtddvgfdtvdfgvedukedttdet
-    veduvdekteevfedtveeujeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepihguohhstghhsehiughoshgthhdrohhrghdpnhgspghrtghpthht
-    ohepudejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrlhgvkhhsrghnuggvrh
-    drlhhosggrkhhinhesihhnthgvlhdrtghomhdprhgtphhtthhopegurghvvghmsegurghv
-    vghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtg
-    homhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgr
-    sggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehtohhkvgesrhgvughhrghtrd
-    gtohhmpdhrtghpthhtoheprghstheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggr
-    nhhivghlsehiohhgvggrrhgsohigrdhnvghtpdhrtghpthhtohepjhhohhhnrdhfrghsth
-    grsggvnhgusehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:3RE2Z8-770DAMcvk1bwPMWpeyj5eTQCl6juPVq--tsXP4-p5upYAvA>
-    <xmx:3RE2Z3u15ukVHp1p0G_CDVYw4UzaXSyPrtpPPwbsnI0CY_V6NVFemw>
-    <xmx:3RE2Z7FjklZDl84i643qAtdHcyfwe6ZRNizXMPwU7icv3eNX9wtBEg>
-    <xmx:3RE2Z-MJrzlsZ0BE4WWF9vcGD4uXOxCrZhlw1hX5cxSgTi9KHWMa8w>
-    <xmx:3hE2Zw9ELlWXfGg7Lsr3CtrIXIEy7K5ybFqn10JlON4PNVI8ajmZzsHY>
-Feedback-ID: i494840e7:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 14 Nov 2024 10:06:04 -0500 (EST)
-Date: Thu, 14 Nov 2024 17:06:01 +0200
-From: Ido Schimmel <idosch@idosch.org>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Magnus Karlsson <magnus.karlsson@intel.com>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v5 12/19] xdp: add generic
- xdp_build_skb_from_buff()
-Message-ID: <ZzYR2ZJ1mGRq12VL@shredder>
-References: <20241113152442.4000468-1-aleksander.lobakin@intel.com>
- <20241113152442.4000468-13-aleksander.lobakin@intel.com>
+	s=arc-20240116; t=1731596827; c=relaxed/simple;
+	bh=2O40dNeZW+Yay9cLzFK48EdhWRZWLYTXfspxltLsIFo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=IP1rIXCh5cteTpNkH0MPAzjchmnplHo9yx9TaUJHR7sfNL69+vmN+5G4VJU+4JrAJA7yTqEKcjoSRkKtzcFPp89cuSOO4j5UvgRkpIstvwmnCszlSpYRufXBqaKxw1b5TeqzjKvklf+ct4w7TQmS36Leu6/dBsKEmviWxhRobDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 468ACC4CECD;
+	Thu, 14 Nov 2024 15:07:06 +0000 (UTC)
+Date: Thu, 14 Nov 2024 10:07:27 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>
+Subject: [for-linus][PATCH] Revert: "ring-buffer: Do not have boot mapped
+ buffers hook to CPU hotplug"
+Message-ID: <20241114100727.7a518800@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241113152442.4000468-13-aleksander.lobakin@intel.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Looks good (no objections to the patch), but I have a question. See
-below.
 
-On Wed, Nov 13, 2024 at 04:24:35PM +0100, Alexander Lobakin wrote:
-> The code which builds an skb from an &xdp_buff keeps multiplying itself
-> around the drivers with almost no changes. Let's try to stop that by
-> adding a generic function.
-> Unlike __xdp_build_skb_from_frame(), always allocate an skbuff head
-> using napi_build_skb() and make use of the available xdp_rxq pointer to
-> assign the Rx queue index. In case of PP-backed buffer, mark the skb to
-> be recycled, as every PP user's been switched to recycle skbs.
-> 
-> Reviewed-by: Toke Høiland-Jørgensen <toke@redhat.com>
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+Revert: "ring-buffer: Do not have boot mapped buffers hook to CPU hotplug"
 
-Reviewed-by: Ido Schimmel <idosch@nvidia.com>
+- A crash that happened on cpu hotplug was actually caused by the incorrect
+  ref counting that was fixed by commit 2cf9733891a4 ("ring-buffer: Fix
+  refcount setting of boot mapped buffers"). The removal of calling cpu
+  hotplug callbacks on memory mapped buffers was not an issue even though
+  the tests at the time pointed toward it. But in fact, there's a check in
+  that code that tests to see if the buffers are already allocated or not,
+  and will not allocate them again if they are. Not calling the cpu hotplug
+  callbacks ended up not initializing the non boot CPU buffers.
 
-> ---
->  include/net/xdp.h |  1 +
->  net/core/xdp.c    | 55 +++++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 56 insertions(+)
-> 
-> diff --git a/include/net/xdp.h b/include/net/xdp.h
-> index 4c19042adf80..b0a25b7060ff 100644
-> --- a/include/net/xdp.h
-> +++ b/include/net/xdp.h
-> @@ -330,6 +330,7 @@ xdp_update_skb_shared_info(struct sk_buff *skb, u8 nr_frags,
->  void xdp_warn(const char *msg, const char *func, const int line);
->  #define XDP_WARN(msg) xdp_warn(msg, __func__, __LINE__)
->  
-> +struct sk_buff *xdp_build_skb_from_buff(const struct xdp_buff *xdp);
->  struct xdp_frame *xdp_convert_zc_to_xdp_frame(struct xdp_buff *xdp);
->  struct sk_buff *__xdp_build_skb_from_frame(struct xdp_frame *xdpf,
->  					   struct sk_buff *skb,
-> diff --git a/net/core/xdp.c b/net/core/xdp.c
-> index b1b426a9b146..3a9a3c14b080 100644
-> --- a/net/core/xdp.c
-> +++ b/net/core/xdp.c
-> @@ -624,6 +624,61 @@ int xdp_alloc_skb_bulk(void **skbs, int n_skb, gfp_t gfp)
->  }
->  EXPORT_SYMBOL_GPL(xdp_alloc_skb_bulk);
->  
-> +/**
-> + * xdp_build_skb_from_buff - create an skb from an &xdp_buff
-> + * @xdp: &xdp_buff to convert to an skb
-> + *
-> + * Perform common operations to create a new skb to pass up the stack from
-> + * an &xdp_buff: allocate an skb head from the NAPI percpu cache, initialize
-> + * skb data pointers and offsets, set the recycle bit if the buff is PP-backed,
-> + * Rx queue index, protocol and update frags info.
-> + *
-> + * Return: new &sk_buff on success, %NULL on error.
-> + */
-> +struct sk_buff *xdp_build_skb_from_buff(const struct xdp_buff *xdp)
-> +{
-> +	const struct xdp_rxq_info *rxq = xdp->rxq;
-> +	const struct skb_shared_info *sinfo;
-> +	struct sk_buff *skb;
-> +	u32 nr_frags = 0;
-> +	int metalen;
-> +
-> +	if (unlikely(xdp_buff_has_frags(xdp))) {
-> +		sinfo = xdp_get_shared_info_from_buff(xdp);
-> +		nr_frags = sinfo->nr_frags;
-> +	}
-> +
-> +	skb = napi_build_skb(xdp->data_hard_start, xdp->frame_sz);
-> +	if (unlikely(!skb))
-> +		return NULL;
-> +
-> +	skb_reserve(skb, xdp->data - xdp->data_hard_start);
-> +	__skb_put(skb, xdp->data_end - xdp->data);
-> +
-> +	metalen = xdp->data - xdp->data_meta;
-> +	if (metalen > 0)
-> +		skb_metadata_set(skb, metalen);
-> +
-> +	if (is_page_pool_compiled_in() && rxq->mem.type == MEM_TYPE_PAGE_POOL)
-> +		skb_mark_for_recycle(skb);
-> +
-> +	skb_record_rx_queue(skb, rxq->queue_index);
-> +
-> +	if (unlikely(nr_frags)) {
-> +		u32 tsize;
-> +
-> +		tsize = sinfo->xdp_frags_truesize ? : nr_frags * xdp->frame_sz;
-> +		xdp_update_skb_shared_info(skb, nr_frags,
-> +					   sinfo->xdp_frags_size, tsize,
-> +					   xdp_buff_is_frag_pfmemalloc(xdp));
-> +	}
-> +
-> +	skb->protocol = eth_type_trans(skb, rxq->dev);
+  Simply remove that change.
 
-The device we are working with has more ports (net devices) than Rx
-queues, so each queue can receive packets from different net devices.
-Currently, each Rx queue has its own NAPI instance and its own page
-pool. All the Rx NAPI instances are initialized using the same dummy net
-device which is allocated using alloc_netdev_dummy().
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+ring-buffer/fixes
 
-What are our options with regards to the XDP Rx queue info structure? As
-evident by this patch, it does not seem valid to register one such
-structure per Rx queue and pass the dummy net device. Would it be valid
-to register one such structure per port (net device) and pass zero for
-the queue index and NAPI ID?
+Head SHA1: 580bb355bcae7e9a6606ce9644af09b2a793f1bb
 
-To be clear, I understand it is not a common use case.
 
-Thanks
+Steven Rostedt (1):
+      Revert: "ring-buffer: Do not have boot mapped buffers hook to CPU hotplug"
 
-> +
-> +	return skb;
-> +}
-> +EXPORT_SYMBOL_GPL(xdp_build_skb_from_buff);
-> +
->  struct sk_buff *__xdp_build_skb_from_frame(struct xdp_frame *xdpf,
->  					   struct sk_buff *skb,
->  					   struct net_device *dev)
-> -- 
-> 2.47.0
-> 
-> 
+----
+ kernel/trace/ring_buffer.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+---------------------------
+commit 580bb355bcae7e9a6606ce9644af09b2a793f1bb
+Author: Steven Rostedt <rostedt@goodmis.org>
+Date:   Wed Nov 13 23:08:39 2024 -0500
+
+    Revert: "ring-buffer: Do not have boot mapped buffers hook to CPU hotplug"
+    
+    A crash happened when testing cpu hotplug with respect to the memory
+    mapped ring buffers. It was assumed that the hot plug code was adding a
+    per CPU buffer that was already created that caused the crash. The real
+    problem was due to ref counting and was fixed by commit 2cf9733891a4
+    ("ring-buffer: Fix refcount setting of boot mapped buffers").
+    
+    When a per CPU buffer is created, it will not be created again even with
+    CPU hotplug, so the fix to not use CPU hotplug was a red herring. In fact,
+    it caused only the boot CPU buffer to be created, leaving the other CPU
+    per CPU buffers disabled.
+    
+    Revert that change as it was not the culprit of the fix it was intended to
+    be.
+    
+    Cc: Masami Hiramatsu <mhiramat@kernel.org>
+    Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+    Link: https://lore.kernel.org/20241113230839.6c03640f@gandalf.local.home
+    Fixes: 912da2c384d5 ("ring-buffer: Do not have boot mapped buffers hook to CPU hotplug")
+    Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index 3ea4f7bb1837..5807116bcd0b 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -2337,12 +2337,9 @@ static struct trace_buffer *alloc_buffer(unsigned long size, unsigned flags,
+ 	if (!buffer->buffers[cpu])
+ 		goto fail_free_buffers;
+ 
+-	/* If already mapped, do not hook to CPU hotplug */
+-	if (!start) {
+-		ret = cpuhp_state_add_instance(CPUHP_TRACE_RB_PREPARE, &buffer->node);
+-		if (ret < 0)
+-			goto fail_free_buffers;
+-	}
++	ret = cpuhp_state_add_instance(CPUHP_TRACE_RB_PREPARE, &buffer->node);
++	if (ret < 0)
++		goto fail_free_buffers;
+ 
+ 	mutex_init(&buffer->mutex);
+ 
 
