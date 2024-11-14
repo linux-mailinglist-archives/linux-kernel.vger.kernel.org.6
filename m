@@ -1,254 +1,146 @@
-Return-Path: <linux-kernel+bounces-408882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5857A9C84A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:12:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 905909C84AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:13:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B52C3281D09
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:12:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14FF5B26B85
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D90E11F755B;
-	Thu, 14 Nov 2024 08:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="Jkz0aoep"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643661F7086
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E1D1F6691;
+	Thu, 14 Nov 2024 08:13:42 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 8F7FF13CA99;
+	Thu, 14 Nov 2024 08:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731571900; cv=none; b=jjEoEexxCYVPEl3Npk1OYhi6LcT/uaBYCM38rxIxpk3RycM44c/ajKjs34FILgjb9b4gwE3yzTkFk62EC93hukaJnf5YXJb1aDXlk4W6Ks2zy92v1Em8Xe25T4CKUI3uh2HUdwMI8e2uRTkAprtwyVou2ORD/wnmcklCibRfpjA=
+	t=1731572022; cv=none; b=OCH8xcfsDE5Xeyi5qmOWamWUX1jLNW7MBWcCBfhotSbf5ifTLcBVXXlc9q8MtN4CRGIrtTYqSnlfXXFiG5Ii0DRfUw1IW5fwSD5QGSqm7O6WGm1RU3egyD1GDiV6+gvA4Sml5p7+Wsaqg2GBhBRiiXFYk11YDwRftLBtu32BfI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731571900; c=relaxed/simple;
-	bh=dbIbz3t0cEpW3r7Wy8SR6AhtdgpUROKxXtAsVLqqPLY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j/6hm249WIMi1WDW9UKAdG8Qh2izmfFK3V/g6UThOF2yVUdNvrgKk3F+6JyEFufuGYiPyvufsCECbC2erxlGqq88Jr6odmvzMdWlgN5FnoHDKkqFdb66fG+T00YaM0s2qL8FkLxiugxpDgVbIYQgwSHiTufu7V2qaW5OWeNnk+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=Jkz0aoep; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa20c733e92so39601866b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 00:11:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1731571896; x=1732176696; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lhi2XcdyoNb77R//XCSb7tUnf+SSZyDwvqz+0gWmS2A=;
-        b=Jkz0aoepK2Sj+XF2zGM3m4zzdxjKczXv2SqcpKrUswJOjeurexlOFdeH5NR4KlHAcb
-         GEJ6Xwy+p4KTeD2in8Fo+ro2f/ICS8+knYwWmHXtoNkV9+8GMoe3kAVytnyaODvc15Gn
-         AVAC0183dhrLUGC7ndFvef3TXmTJ609i/ch4ddgne4Dmhtm82X+SLy+fQ6jpkcnXrIns
-         qGmCs9Vi2E6mTcBBDv9qdc1gEH4u+m//q+wNT1zeAH3WFG4MNEDxA1zNFOUooWNRn7xE
-         rKyZv1YMkhtIyeWL4AhGkqNYc9gAJl5uzTIAKuBZJ/7omyCv3WqHiFKxtQK3mbM/J3zL
-         sceA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731571896; x=1732176696;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lhi2XcdyoNb77R//XCSb7tUnf+SSZyDwvqz+0gWmS2A=;
-        b=LrOG+JPB7d5zZiaKeif3FqNAoZqz5OLHz4hUJlIRFD+ymH2WrmxzLrjOPqmMkJxZXv
-         gAGRF2Mmw6GtC4khUhpHC6piI0VKANpf2VNWNKegV/9/QU94xzkBgKX1n3gzGZwkGCsz
-         Av/yPbYx4LVTofFthkIFv445IhygCgOwe2s+XXxAYYWQTwZKpOktg3F4oIbf6zAXmHMR
-         PTWUf9VA45CUnXaflcMnDvIJ59k4rCNOWDNyS6hFa44WirZRH2O5+iHibzFdV0oybpq3
-         WwQ/mxmr05od4Rutxq62Azgt3Hj2z57beX+96RPfnYXV8YP2rdVhbV6kesnp/8KWBnCf
-         Lozg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYNSJVko4TeUFL4IgTVdH8Z2uOnu5LZ+AhsHUJoVPheN8hy5O9ymmgnFMbwBIFnIGbRTR0If67Nj7JSnU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbNxPe9EU6npvOHgVEClHZ8qMOUEPK1PWMhPcozYU1+SHxLMy9
-	pH/J+tSEfxRx585WfiF+TPQfPNFTVm1oNee4h0pORAzfoqknn8e1EEtnJ+1PrbQ=
-X-Google-Smtp-Source: AGHT+IHn8GzlUpFSwlHPxZF4Bet/aeH5Llo7f+cI3x6kBTlWSqRynAOg9Usx4t4FBNGnpyRoDEnKxA==
-X-Received: by 2002:a17:907:5cb:b0:a9a:1792:f1a with SMTP id a640c23a62f3a-aa1f8043f6amr520374466b.7.1731571895602;
-        Thu, 14 Nov 2024 00:11:35 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:3779:22d5:a322:7c13? ([2001:67c:2fbc:1:3779:22d5:a322:7c13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20dffd782sm33977466b.129.2024.11.14.00.11.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 00:11:35 -0800 (PST)
-Message-ID: <2a90f702-3061-46b6-aafa-cf8c1ba3d0de@openvpn.net>
-Date: Thu, 14 Nov 2024 09:12:01 +0100
+	s=arc-20240116; t=1731572022; c=relaxed/simple;
+	bh=iVSflHEF2KmEAYyfDJdBBLMDuX6sDNJ0CAq9FnJaI+w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type; b=giod40Bfah8nhoKnWuUOXVNcPTyLmWK/joldpcei+Go5ZGqFZ2EnolkukpsLWPezDqKRn+L4epFkoToEDgtz49gntZTyLDYMBvbsCzq+dOKGbOwDJXSBWk3Lxp1O8Tna+U3QZDDsknAm8cxs0UhgipsCDaIvLRwppwPxJ5o8SYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [172.30.20.101] (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 1ED046123B6B3;
+	Thu, 14 Nov 2024 16:13:20 +0800 (CST)
+Message-ID: <fafb6cbb-67d5-f55f-5fb3-ea159683904e@nfschina.com>
+Date: Thu, 14 Nov 2024 16:13:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v11 15/23] ovpn: implement keepalive mechanism
-To: Sabrina Dubroca <sd@queasysnail.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
- Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-15-de4698c73a25@openvpn.net> <ZypfnyfToF1b6YAZ@hog>
- <189dbeea-127a-47e8-84f8-c8cf1cc03536@openvpn.net> <ZzSBG-RPUlpgVFhA@hog>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.1
+Subject: Re: [PATCH] drm/xe/hw_engine_group: Fix bad free in
+ xe_hw_engine_setup_groups()
 Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <ZzSBG-RPUlpgVFhA@hog>
+To: "Vivekanandan, Balasubramani" <balasubramani.vivekanandan@intel.com>,
+ lucas.demarchi@intel.com, thomas.hellstrom@linux.intel.com,
+ rodrigo.vivi@intel.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ nathan@kernel.org, ndesaulniers@google.com, morbo@google.com,
+ justinstitt@google.com
+Cc: matthew.brost@intel.com, francois.dugast@intel.com,
+ intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+ kernel-janitors@vger.kernel.org
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <ZzWqnIGZEv-_-Lbc@bvivekan-mobl1>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 13/11/2024 11:36, Sabrina Dubroca wrote:
-> 2024-11-12, 14:20:45 +0100, Antonio Quartulli wrote:
->> On 05/11/2024 19:10, Sabrina Dubroca wrote:
->>> 2024-10-29, 11:47:28 +0100, Antonio Quartulli wrote:
->>>> @@ -105,6 +132,9 @@ void ovpn_decrypt_post(void *data, int ret)
->>>>    		goto drop;
->>>>    	}
->>>> +	/* keep track of last received authenticated packet for keepalive */
->>>> +	peer->last_recv = ktime_get_real_seconds();
->>>
->>> It doesn't look like we're locking the peer here so that should be a
->>> WRITE_ONCE() (and READ_ONCE(peer->last_recv) for all reads).
+On 2024/11/14 15:45, Vivekanandan, Balasubramani wrote:
+> On 14.11.2024 14:39, Su Hui wrote:
 >>
->> Is that because last_recv is 64 bit long (and might be more than one word on
->> certain architectures)?
->>
->> I don't remember having to do so for reading/writing 32 bit long integers.
-> 
-> AFAIK it's not just that. The compiler is free to do the read/write in
-> any way it wants when you don't specify _ONCE. On the read side, it
-> could read from memory a single time or multiple times (getting
-> possibly different values each time), or maybe split the load
-> (possibly reading chunks from different values being written in
-> parallel).
+>> diff --git a/drivers/gpu/drm/xe/xe_hw_engine_group.c b/drivers/gpu/drm/xe/xe_hw_engine_group.c
+>> index 82750520a90a..ee2cb32817fa 100644
+>> --- a/drivers/gpu/drm/xe/xe_hw_engine_group.c
+>> +++ b/drivers/gpu/drm/xe/xe_hw_engine_group.c
+>> @@ -51,7 +51,7 @@ static struct xe_hw_engine_group *
+>>   hw_engine_group_alloc(struct xe_device *xe)
+>>   {
+>>   	struct xe_hw_engine_group *group;
+>> -	int err;
+>> +	int err = -ENOMEM;
+>>   
+>>   	group = kzalloc(sizeof(*group), GFP_KERNEL);
+>>   	if (!group)
+>> @@ -59,7 +59,7 @@ hw_engine_group_alloc(struct xe_device *xe)
+>>   
+>>   	group->resume_wq = alloc_workqueue("xe-resume-lr-jobs-wq", 0, 0);
+>>   	if (!group->resume_wq)
+>> -		return ERR_PTR(-ENOMEM);
+>> +		goto free_group;
+> kfree can be directly called from here followed by return, instead of a
+> goto.
+Agreed.
+>>   
+>>   	init_rwsem(&group->mode_sem);
+>>   	INIT_WORK(&group->resume_work, hw_engine_group_resume_lr_jobs_func);
+>> @@ -67,9 +67,15 @@ hw_engine_group_alloc(struct xe_device *xe)
+>>   
+>>   	err = drmm_add_action_or_reset(&xe->drm, hw_engine_group_free, group);
+>>   	if (err)
+>> -		return ERR_PTR(err);
+>> +		goto destroy_wq;
+> There is no need to clear the resources on failure, because
+> drmm_add_action_or_reset takes care of freeing the resources on
+> failure.
+Oh, my fault, I missed this function.
+>>   
+>>   
+>>   /**
+>> @@ -87,21 +93,19 @@ int xe_hw_engine_setup_groups(struct xe_gt *gt)
+>>   	int err;
+>>   
+>>   	group_rcs_ccs = hw_engine_group_alloc(xe);
+>> -	if (IS_ERR(group_rcs_ccs)) {
+>> -		err = PTR_ERR(group_rcs_ccs);
+>> -		goto err_group_rcs_ccs;
+>> -	}
+>> +	if (IS_ERR(group_rcs_ccs))
+>> +		return PTR_ERR(group_rcs_ccs);
+>>   
+>>   	group_bcs = hw_engine_group_alloc(xe);
+>>   	if (IS_ERR(group_bcs)) {
+>>   		err = PTR_ERR(group_bcs);
+>> -		goto err_group_bcs;
+>> +		goto free_group_rcs_ccs;
+> No need of freeing the memory here and in the following lines as we have
+> managed it through the drmm_add_action_or_reset call in
+> hw_engine_group_alloc.
+> We can simply return the error code.
+Got it.
+>
+>>   
+>> -err_group_vcs_vecs:
+>> -	kfree(group_vcs_vecs);
+>> -err_group_bcs:
+>> +free_group_bcs:
+>> +	destroy_workqueue(group_bcs->resume_wq);
+>>   	kfree(group_bcs);
+>> -err_group_rcs_ccs:
+>> +free_group_rcs_ccs:
+>> +	destroy_workqueue(group_rcs_ccs->resume_wq);
+>>   	kfree(group_rcs_ccs);
+>> -
+> All these kfree statements are not required.
+Agreed too. Thanks for your review.
+I will send a v2 patch to remove these kfree if there are no further 
+suggestions.
 
-Ok, thanks. Will switch to WRITE/READ_ONE then.
-
-> 
->> I presume we need a WRITE_ONCE also upon initialization in
->> ovpn_peer_keepalive_set() right?
->> We still want to coordinate that with other reads/writes.
-> 
-> I think it makes sense, yes.
-
-ACK
-
-[...]
-> 
->>>> +	/* check for peer timeout */
->>>> +	expired = false;
->>>> +	timeout = peer->keepalive_timeout;
->>>> +	delta = now - peer->last_recv;
->>>
->>> I'm not sure that's always > 0 if we finish decrypting a packet just
->>> as the workqueue starts:
->>>
->>>     ovpn_peer_keepalive_work
->>>       now = ...
->>>
->>>                                          ovpn_decrypt_post
->>>                                            peer->last_recv = ...
->>>
->>>     ovpn_peer_keepalive_work_single
->>>       delta: now < peer->last_recv
->>>
->>
->> Yeah, there is nothing preventing this from happening...but is this truly a
->> problem? The math should still work, no?
-> 
-> We'll fail "delta < timeout" (which we shouldn't), so we'll end up
-> either in the "expired = true" case, or not updating
-> keepalive_recv_exp. Both of these seem not ideal.
-
-delta is signed, so it'll end up being a negative value and "delta < 
-timeout" should not fail then. Unless I am missing something.
-
-Anyway, this was just an exercise to understand what was going on.
-I already changed the code as per your suggestion (the fact that we are 
-still discussing this chunk proves that it needed to be simplified :))
-
-> 
->>
->> However:
->>
->>>
->>>
->>>> +	if (delta < timeout) {
->>>> +		peer->keepalive_recv_exp = now + timeout - delta;
->>>
->>> I'd shorten that to
->>>
->>>       peer->keepalive_recv_exp = peer->last_recv + timeout;
->>>
->>> it's a bit more readable to my eyes and avoids risks of wrapping
->>> values.
->>>
->>> So I'd probably get rid of delta and go with:
->>>
->>>       last_recv = READ_ONCE(peer->last_recv)
->>>       if (now < last_recv + timeout) {
->>>       	peer->keepalive_recv_exp = last_recv + timeout;
->>>       	next_run1 = peer->keepalive_recv_exp;
->>>       } else if ...
->>>
->>>> +		next_run1 = peer->keepalive_recv_exp;
->>>> +	} else if (peer->keepalive_recv_exp > now) {
->>>> +		next_run1 = peer->keepalive_recv_exp;
->>>> +	} else {
->>>> +		expired = true;
->>>> +	}
->>
->> I agree this is simpler to read and gets rid of some extra operations.
->>
->> [note: I took inspiration from nat_keepalive_work_single() - it could be
->> simplified as well I guess]
-> 
-> Ah, ok. I wanted to review this code when it was posted but didn't
-> have time :(
-
-It can still be fixed ;)
-
-
-Thanks.
 Regards,
+Su Hui
 
--- 
-Antonio Quartulli
-OpenVPN Inc.
 
 
