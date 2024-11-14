@@ -1,100 +1,88 @@
-Return-Path: <linux-kernel+bounces-409106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F70C9C882A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:56:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA5EE9C878E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:30:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41B14B33EC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:30:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EC352875D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C13203705;
-	Thu, 14 Nov 2024 10:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91B21F81AD;
+	Thu, 14 Nov 2024 10:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="baZf5bKc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jTI42C+s";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kDzQ3aVb"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF16420127A;
-	Thu, 14 Nov 2024 10:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F5F1DD0EF
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731579619; cv=none; b=IG6td1dv5BqthIucB9oxJ2LcQpxkYPiaFXWQDziRA1dC2vgnc9hViCLx0exrIRXXHic3iYojq4mLEXHv3DoQJgGiVaQpmPqC2jTG+kzUflGICg4UQLjNK8sRG0ddBhUAxvc7GIgiIq7Q+FR8KNynRjPR2lZy0ce2FTEOQ62KkOg=
+	t=1731579700; cv=none; b=FmsGMfTx4uTqPddME+R8AcKstTwEY5/cjH5kb+2QcbMC/rBKnCnFXnBIHuYdDHpigYfLl7QhJa80U5Uo86Z/BHOXvSiy/JRC2We8Ek5Jo48KIEEBtywqem7GXjbwkvQYpr6fUgXztK59ceUG2YwxYfMHQF648E4aCfwnVADKzH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731579619; c=relaxed/simple;
-	bh=WqoZPSZPRO3SiDo4pzhANc0aDEgAi1wQ2Z/rJ2p3oEA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ql2Y84JdlO2xyLDUdsbc1iPa/hG5YwoInJPXELf56dIW1qn22Qcn6FkM5hgFOLJfQHSgYOcxmoaIcWLIczDbaTKQePTFTor/admqh1d6SUlS2V1l5hDin9PAqoFIFV7lZn5qKdrNGCXqvBpvyRzOXPuvgETIEUIiZrQQbN03SvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=baZf5bKc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CFBAC4CECD;
-	Thu, 14 Nov 2024 10:20:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731579619;
-	bh=WqoZPSZPRO3SiDo4pzhANc0aDEgAi1wQ2Z/rJ2p3oEA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=baZf5bKccUP3axDeJh3De7q4W7MlZStYyhsWAXRHVFKpr1y7yUNXBIeF0Plrcv+iL
-	 LhkckTtFptLbqtAU5k2SySoDXldPvU/eah38HUm5mKPhTIIHZ+k9SsZZqShNKb6fEz
-	 vzQpO6WHpag+IO8dyJxzq8yhNEc7CoOEtZ1Q1Lwls3F9I+ZhJX/UMlLXLSQoTnnjNd
-	 Xp3k0IVLoxNSC2M3oY0P1dW4ni+Fl065IXaUFGMPkri+kL9K12WbfiGBQ0NRZJvqZ5
-	 ML3vQTG0G0uiQLrf+A7Psdta9hE07cEg0nziWFJt6KrAN6of7QQOFVN08McBE9kcFN
-	 swXKdeZgWIBXg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAC853809A80;
-	Thu, 14 Nov 2024 10:20:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1731579700; c=relaxed/simple;
+	bh=TEoZNOCdI7xNZCkq1Y3DANMX7RzVOnudyVhuh0ii8i0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=emESROBbjhCeAzc7L+3paYm/PmxnBiEVXvWnET9j4B1tcTIfbeAMc2DmAlaBzWjvsKfSc03oKzCZNdLUqWIbqgIBOz6mmJaJEctioJpAwDhmzmc0HeniGEfmW9OkAmpw2ubIfrcPSNH8tzDsMkZJ1h2MRioeoXKjSW56JPcAN98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jTI42C+s; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kDzQ3aVb; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 14 Nov 2024 11:21:36 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731579697;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TEoZNOCdI7xNZCkq1Y3DANMX7RzVOnudyVhuh0ii8i0=;
+	b=jTI42C+sqxH+U4RZLpRZWPExmJKPrCbbacd6rnECOG7E9Mtv4Rm0+fhep/G05wT29RRQw7
+	6msRNjut7KcEvMFvhy5zcGlnG9X226hGJSDXBgSkInqNlT9xGXtx5kvWygF9NZBeb5alk7
+	2IJdNh9+rt4ype9skt/bPyjOaHTe4WozboL+ogf/hZtNp5+4/4+TBsQeB2oy3sp0dyxnXt
+	5eimBc2LXO47r1UkX5M2AxvNSeyqCBtPq5dmRRMr+X7bTc3YrNwBPFdz1VsHg3EmlywZb4
+	x/KUEGm4pY3BX/ZVhMl/QpizcIgRcg0cmXJz9D1Tq+dgdJu6bgJMaklXz9OK+Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731579697;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TEoZNOCdI7xNZCkq1Y3DANMX7RzVOnudyVhuh0ii8i0=;
+	b=kDzQ3aVb4GVo/+ptSTPNFLn+oXo6Fi7B7F0WiQpLNDr9+CiLsgOv/oKmWv9mFRtXlxiMiq
+	ZWbi0Y0nrxu5COCQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Xuerui Wang <kernel@xen0n.name>,
+	loongarch@lists.linux.dev, Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-rt-devel@lists.linux.dev, Guo Ren <guoren@kernel.org>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] LoongArch: Reduce min_delta for the arch clockevent
+ device
+Message-ID: <20241114102136.X-knc36J@linutronix.de>
+References: <20241108091545.4182229-1-chenhuacai@loongson.cn>
+ <20241108091545.4182229-2-chenhuacai@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCHv4 net 0/2] bonding: fix ns targets not work on hardware NIC
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173157962974.1869204.16348527317957867096.git-patchwork-notify@kernel.org>
-Date: Thu, 14 Nov 2024 10:20:29 +0000
-References: <20241111101650.27685-1-liuhangbin@gmail.com>
-In-Reply-To: <20241111101650.27685-1-liuhangbin@gmail.com>
-To: Hangbin Liu <liuhangbin@gmail.com>
-Cc: netdev@vger.kernel.org, jv@jvosburgh.net, andy@greyhouse.net,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- razor@blackwall.org, horms@kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241108091545.4182229-2-chenhuacai@loongson.cn>
 
-Hello:
+On 2024-11-08 17:15:43 [+0800], Huacai Chen wrote:
+> Now the min_delta is 0x600 (1536) for LoongArch's constant clockevent
+> device. For a 100MHz hardware timer this means ~15us. This is a little
+> big, especially for PREEMPT_RT enabled kernels. So reduce it to 1000
+> (we don't want too small values to affect performance).
 
-This series was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+So this reduces it to 10us. Is anything lower than that bad performance
+wise?
 
-On Mon, 11 Nov 2024 10:16:48 +0000 you wrote:
-> The first patch fixed ns targets not work on hardware NIC when bonding
-> set arp_validate.
-> 
-> The second patch add a related selftest for bonding.
-> 
-> v4: Thanks Nikolay for the comments:
->     use bond_slave_ns_maddrs_{add/del} with clear name
->     fix comments typos
->     remove _slave_set_ns_maddrs underscore directly
->     update bond_option_arp_validate_set() change logic
-> v3: use ndisc_mc_map to convert the mcast mac address (Jay Vosburgh)
-> v2: only add/del mcast group on backup slaves when arp_validate is set (Jay Vosburgh)
->     arp_validate doesn't support 3ad, tlb, alb. So let's only do it on ab mode.
-> 
-> [...]
+> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
 
-Here is the summary with links:
-  - [PATCHv4,net,1/2] bonding: add ns target multicast address to slave device
-    https://git.kernel.org/netdev/net/c/8eb36164d1a6
-  - [PATCHv4,net,2/2] selftests: bonding: add ns multicast group testing
-    https://git.kernel.org/netdev/net/c/86fb6173d11e
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Sebastian
 
