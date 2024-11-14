@@ -1,280 +1,96 @@
-Return-Path: <linux-kernel+bounces-409083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED92F9C875E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:22:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7695E9C8764
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:23:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C5B41F218AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:22:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B22428549A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3948C1FA824;
-	Thu, 14 Nov 2024 10:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465391FA853;
+	Thu, 14 Nov 2024 10:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9LSsswK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b="kFX2Bz/D"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4081FA249;
-	Thu, 14 Nov 2024 10:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF741F8194
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731579173; cv=none; b=j7AwNyF92MME5Ibt1fC1M8BckcLjQCZ6vhqCxxt5z20GEW49bCCrKUNOy8eTciOoV9SmW4XoX2HiANQT3D1kCGYPF9K8mGNxylObzr5Pd5NthLo2DnMZ6KiyFtrxVzgSPzhhhsj9tZPyHfZsFSLfG/c6u9zVN/0oOK04ZE3b0Wg=
+	t=1731579248; cv=none; b=Hk5aAoiT5/cjf64DJHtNsfd20u0qSJ50d4prBhUpPIiZeaVdl5NyTi3w1LtycNCZ5fivR2NcqISvoOBhFGBVWmdSqo92f/PqUOj0LBDtBPRSTaTygHBat/VkVtjkaIkyUx4ORK9qFuVa+7EfredYp9esbLHA6PlDZ9mArq4C/gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731579173; c=relaxed/simple;
-	bh=mFrugR7fKV6ne6EbnxlicqzG6xL+RCQlyoGeK41Fc8E=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=gyGhpcsPv2AA2aeEniurbT172rCegt/cE0Ize2HRDJmln9WWoEuqMw+WzGRkU0kYi+cuUJiGKRVCA80iIpCtmbOVA4P6wvvQuzRgWUOuHg/nd9cn1s8MW+pclluhbhwqHGmSaQYLBkqWdjXRyVDQQWAraQ12nHBJgY9ljYAI7gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9LSsswK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04F12C4CECD;
-	Thu, 14 Nov 2024 10:12:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731579172;
-	bh=mFrugR7fKV6ne6EbnxlicqzG6xL+RCQlyoGeK41Fc8E=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=n9LSsswKM7fq5NaEKe39Za/C4P7gO4n+C7oItHJMCEKi2twHOKbu7LTqzGeMHnjK5
-	 Gjjog168di8l7/LVDE+QdDRwUKvVn8/brcuySOXuvSWizHqaaTSDs4HJfN3Lmms+sy
-	 9FIRITE2FCFGOKv5qxJq5ejm0fQCBAtoPnUHpaJVKDu11mjAeVZSoCWhsQCM7AmCEy
-	 dkcbXYf7ndS/xLhGZTeRPUFOcUDYhQul22JveUlrx0g8TquEUgCV2wvTLojMKeU+B7
-	 PwL1Irz38zbPbxBm15i3BYD+9yK1OgOjXAx7IQC/NiHs0pYdbmssb78I6WNWxL4Sim
-	 e5Zh5aECF+uAA==
-Message-ID: <8bfe8acc-9514-4ba8-9498-2427ddb0bb78@kernel.org>
-Date: Thu, 14 Nov 2024 12:12:47 +0200
+	s=arc-20240116; t=1731579248; c=relaxed/simple;
+	bh=LzXQqpEuqMmSUJxm/liNxfQnP2SfNO/MZC1JIv85GOM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lSsRid6VqPt3Tl46s1yk0iWsomuQ8FSnNUPhreZoxntdDg5DCHi1pUMKUZsO9LF0pStFMrlFFm1uSE2NYNcV1zHpRquDRYb4MWujOWV3m3obPPjlAydscsnF/p8Y9mNz9xf38f+pTEkir6Pr6KMNj+taKZq4jQKLbKiB1Jdj2xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com; spf=pass smtp.mailfrom=linbit.com; dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b=kFX2Bz/D; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linbit.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a99fa009adcso26970366b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 02:14:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linbit-com.20230601.gappssmtp.com; s=20230601; t=1731579245; x=1732184045; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GQ/zrN5sRtBVMflm7R+qmiosmx+ZNNh9BpAvkYEZgcc=;
+        b=kFX2Bz/DMOe8Jn3Kh+Oz5s3J7cRspAkJwiNiX9/hZ0O0Z9ZJfy8/8z2TJZ7b68lRCc
+         yGQ6LeOigQG63AuHOcAAHUfDFKfNuQzDpiStugL855EKzt0Z760m7PKWFM4VZ1K8Fuut
+         ESJ6Jk2Hl1Alj3rHf6OaR7reFBCZ9Dm8eQgalpYBNtfZ3zJHyDlKKNy7/pKYiTbkyqEX
+         AYlso8f2FSNcMSZC9BG4Bqz6j5jWW3ThmsadkYJ8acpgvu1TsKxLZoSXyEkSvvbqbozV
+         FaO4OA1QdNB0ucKAUR2ZrqXRwZlge70pyQEw8a5ea+dAnKjsKSv3GleMx/NW5722ulRs
+         a69w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731579245; x=1732184045;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GQ/zrN5sRtBVMflm7R+qmiosmx+ZNNh9BpAvkYEZgcc=;
+        b=lce9Dk0pb/Po2hiFLxX7PRtwnLFUisBpckvzvQ+abcdfO2dmSCFtcD62m4omj/ndfG
+         /4p5fVwlU3No0lQ+677LAStnPiUh8CGdbozGj85V6/SXO+N+mWgiyqNJ4clbfGe0i6Cd
+         pFbmQcxO+cjQ62uJOLaK+E8gsqRV8e5hUxX4NHczOulJNulh2DBEkDmz2P1zOowN6mJb
+         ICWOhlB5ccUyJqlTZotLxnYPa9Efmrj4r5Q2qgJK71G6c2kbZPfESss/ttYWRdsA+df+
+         h55LBHzUHvUtw8r0NmvAUtj4Eu0XD/dzQ/mxdlV4eAXBXso+8QGI7VxxyuZujm96zGZI
+         0UlA==
+X-Forwarded-Encrypted: i=1; AJvYcCXCFWIrnD5+p+wYqyaCrNANXSRJ26BF2s+OuZgj3Xsm7Wbqou1GZMt+PEviW/7WHUV6ZjnQJbjVCMAh9dk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkRlsCCspMxhP6Qy5Y9EWMlN0laFzon93me+6/YqooCgx5sH2M
+	Sz+EppSenp2QMQtMFBi+8KA/ZLg3XdfvTBj4+WFhMYyPv4qyMRnEwFt3Ql7PCNb6Eu7PPgV0Nce
+	thUU=
+X-Google-Smtp-Source: AGHT+IFOIdhn+CO79i3SGeWv/TK5AejMCKm/AqH6QkLNChISb6RWLQC6we/lH0D4AeOxkuY6Je35/g==
+X-Received: by 2002:a05:6402:51d0:b0:5ce:af08:a2cd with SMTP id 4fb4d7f45d1cf-5cf77ede3cfmr2170100a12.33.1731579244701;
+        Thu, 14 Nov 2024 02:14:04 -0800 (PST)
+Received: from ryzen9.home (193-154-230-113.hdsl.highway.telekom.at. [193.154.230.113])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df26c84sm46139066b.35.2024.11.14.02.14.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 02:14:03 -0800 (PST)
+From: Philipp Reisner <philipp.reisner@linbit.com>
+To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc: linux-sparse@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/1] Add missing include in compiler.h
+Date: Thu, 14 Nov 2024 11:14:01 +0100
+Message-ID: <20241114101402.156397-1-philipp.reisner@linbit.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 2/2] net: ethernet: ti: am65-cpsw: enable DSCP
- to priority map for RX
-From: Roger Quadros <rogerq@kernel.org>
-To: Guillaume Nault <gnault@redhat.com>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, linux-omap@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, srk@ti.com,
- Pekka Varis <p-varis@ti.com>
-References: <20241109-am65-cpsw-multi-rx-dscp-v3-0-1cfb76928490@kernel.org>
- <20241109-am65-cpsw-multi-rx-dscp-v3-2-1cfb76928490@kernel.org>
- <ZzVBS1zXIy31pnaf@debian> <76dd6141-5852-43ae-af98-f0edf0bc10f5@kernel.org>
-Content-Language: en-US
-In-Reply-To: <76dd6141-5852-43ae-af98-f0edf0bc10f5@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+A compilation unit that only includes linux/string.h runs into an undefined
+BUILD_BUG_ON_ZERO(). Fixing that.
 
+Philipp Reisner (1):
+  compiler.h: Add missing include statement for build_bug.h
 
-On 14/11/2024 11:41, Roger Quadros wrote:
-> 
-> 
-> On 14/11/2024 02:16, Guillaume Nault wrote:
->> On Sat, Nov 09, 2024 at 01:00:08PM +0200, Roger Quadros wrote:
->>> AM65 CPSW hardware can map the 6-bit DSCP/TOS field to
->>> appropriate priority queue via DSCP to Priority mapping registers
->>> (CPSW_PN_RX_PRI_MAP_REG).
->>>
->>> We use the upper 3 bits of the DSCP field that indicate IP Precedence
->>> to map traffic to 8 priority queues.
->>>
->>> Signed-off-by: Roger Quadros <rogerq@kernel.org>
->>> ---
->>>  drivers/net/ethernet/ti/am65-cpsw-nuss.c | 54 ++++++++++++++++++++++++++++++++
->>>  1 file changed, 54 insertions(+)
->>>
->>> diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
->>> index 0520e9f4bea7..fab35e6aac7f 100644
->>> --- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
->>> +++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
->>> @@ -71,6 +71,8 @@
->>>  #define AM65_CPSW_PORT_REG_RX_PRI_MAP		0x020
->>>  #define AM65_CPSW_PORT_REG_RX_MAXLEN		0x024
->>>  
->>> +#define AM65_CPSW_PORTN_REG_CTL			0x004
->>> +#define AM65_CPSW_PORTN_REG_DSCP_MAP		0x120
->>>  #define AM65_CPSW_PORTN_REG_SA_L		0x308
->>>  #define AM65_CPSW_PORTN_REG_SA_H		0x30c
->>>  #define AM65_CPSW_PORTN_REG_TS_CTL              0x310
->>> @@ -94,6 +96,10 @@
->>>  /* AM65_CPSW_PORT_REG_PRI_CTL */
->>>  #define AM65_CPSW_PORT_REG_PRI_CTL_RX_PTYPE_RROBIN	BIT(8)
->>>  
->>> +/* AM65_CPSW_PN_REG_CTL */
->>> +#define AM65_CPSW_PN_REG_CTL_DSCP_IPV4_EN	BIT(1)
->>> +#define AM65_CPSW_PN_REG_CTL_DSCP_IPV6_EN	BIT(2)
->>> +
->>>  /* AM65_CPSW_PN_TS_CTL register fields */
->>>  #define AM65_CPSW_PN_TS_CTL_TX_ANX_F_EN		BIT(4)
->>>  #define AM65_CPSW_PN_TS_CTL_TX_VLAN_LT1_EN	BIT(5)
->>> @@ -176,6 +182,53 @@ static void am65_cpsw_port_set_sl_mac(struct am65_cpsw_port *slave,
->>>  	writel(mac_lo, slave->port_base + AM65_CPSW_PORTN_REG_SA_L);
->>>  }
->>>  
->>> +#define AM65_CPSW_DSCP_MAX	GENMASK(5, 0)
->>> +#define AM65_CPSW_PRI_MAX	GENMASK(2, 0)
->>> +#define AM65_CPSW_DSCP_PRI_PER_REG	8
->>> +#define AM65_CPSW_DSCP_PRI_SIZE		4	/* in bits */
->>> +static int am65_cpsw_port_set_dscp_map(struct am65_cpsw_port *slave, u8 dscp, u8 pri)
->>> +{
->>> +	int reg_ofs;
->>> +	int bit_ofs;
->>> +	u32 val;
->>> +
->>> +	if (dscp > AM65_CPSW_DSCP_MAX)
->>> +		return -EINVAL;
->>> +
->>> +	if (pri > AM65_CPSW_PRI_MAX)
->>> +		return -EINVAL;
->>> +
->>> +	/* 32-bit register offset to this dscp */
->>> +	reg_ofs = (dscp / AM65_CPSW_DSCP_PRI_PER_REG) * 4;
->>> +	/* bit field offset to this dscp */
->>> +	bit_ofs = AM65_CPSW_DSCP_PRI_SIZE * (dscp % AM65_CPSW_DSCP_PRI_PER_REG);
->>> +
->>> +	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
->>> +	val &= ~(AM65_CPSW_PRI_MAX << bit_ofs);	/* clear */
->>> +	val |= pri << bit_ofs;			/* set */
->>> +	writel(val, slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static void am65_cpsw_port_enable_dscp_map(struct am65_cpsw_port *slave)
->>> +{
->>> +	int dscp, pri;
->>> +	u32 val;
->>> +
->>> +	/* Map IP Precedence field to Priority */
->>> +	for (dscp = 0; dscp <= AM65_CPSW_DSCP_MAX; dscp++) {
->>> +		pri = dscp >> 3; /* Extract IP Precedence */
->>> +		am65_cpsw_port_set_dscp_map(slave, dscp, pri);
->>> +	}
->>> +
->>> +	/* enable port IPV4 and IPV6 DSCP for this port */
->>> +	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_CTL);
->>> +	val |= AM65_CPSW_PN_REG_CTL_DSCP_IPV4_EN |
->>> +		AM65_CPSW_PN_REG_CTL_DSCP_IPV6_EN;
->>> +	writel(val, slave->port_base + AM65_CPSW_PORTN_REG_CTL);
->>> +}
->>
->> It seems that this hardware is capable of mapping all possible DSCP
-> yes.
-> 
->> values. Then why restricting the mapping to the 3 high order bits only?
-> 
-> Currently, the 64 DSCP values are mapped to 8 User Priorities (UP) based
-> on just the Class Selector Codepoint field (first 3 bits of DSCP).
-> 
-> But now looking at rfc8325#section-4.3.
-> "Note: All unused codepoints are RECOMMENDED to be mapped to UP 0"
-> 
-> So what this patch does doesn't look like a good idea.
-> 
->> According to RFC 8325 section 2.3, this seem to be a common practice,
->> which this RFC considers a problem:
->> https://datatracker.ietf.org/doc/html/rfc8325#section-2.3
-> 
-> Good to know about this.
-> 
->>
->> I know this RFC is about 802.11, not 802.1p, but as far as I know, the
->> user priority (UP) are the same for both, so that shouldn't make a
->> difference.
->>
->> So what about following the IETF mapping found in section 4.3?
->> https://datatracker.ietf.org/doc/html/rfc8325#section-4.3
-> 
-> Thanks for this tip.
-> I will update this patch to have the default DSCP to UP mapping as per
-> above link and map all unused DSCP to UP 0.
-
-How does the below code look in this regard?
-
-static void am65_cpsw_port_enable_dscp_map(struct am65_cpsw_port *slave)
-{
-	int dscp, pri;
-	u32 val;
-
-	/* Default DSCP to User Priority mapping as per:
-	 * https://datatracker.ietf.org/doc/html/rfc8325#section-4.3
-	 */
-	for (dscp = 0; dscp <= AM65_CPSW_DSCP_MAX; dscp++) {
-		switch (dscp) {
-		case 56:	/* CS7 */
-		case 48:	/* CS6 */
-			pri = 7;
-			break;
-		case 46:	/* EF */
-		case 44:	/* VA */
-			pri = 6;
-			break;
-		case 40:	/* CS5 */
-			pri = 5;
-			break;
-		case 32:	/* CS4 */
-		case 34:	/* AF41 */
-		case 36:	/* AF42 */
-		case 38:	/* AF43 */
-		case 24:	/* CS3 */
-		case 26:	/* AF31 */
-		case 28:	/* AF32 */
-		case 30:	/* AF33 */
-			pri = 4;
-			break;
-		case 17:	/* AF21 */
-		case 20:	/* AF22 */
-		case 22:	/* AF23 */
-			pri = 3;
-			break;
-		case 8:		/* CS1 */
-			pri = 1;
-			break;
-		default:
-			pri = 0;
-			break;
-		}
-
-		am65_cpsw_port_set_dscp_map(slave, dscp, pri);
-	}
-
-	/* enable port IPV4 and IPV6 DSCP for this port */
-	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_CTL);
-	val |= AM65_CPSW_PN_REG_CTL_DSCP_IPV4_EN |
-		AM65_CPSW_PN_REG_CTL_DSCP_IPV6_EN;
-	writel(val, slave->port_base + AM65_CPSW_PORTN_REG_CTL);
-}
-
-> 
-> Is there any mechanism/API for network administrator to change this
-> default mapping in the network drivers?
-> 
->>
->>>  static void am65_cpsw_sl_ctl_reset(struct am65_cpsw_port *port)
->>>  {
->>>  	cpsw_sl_reset(port->slave.mac_sl, 100);
->>> @@ -921,6 +974,7 @@ static int am65_cpsw_nuss_ndo_slave_open(struct net_device *ndev)
->>>  	common->usage_count++;
->>>  
->>>  	am65_cpsw_port_set_sl_mac(port, ndev->dev_addr);
->>> +	am65_cpsw_port_enable_dscp_map(port);
->>>  
->>>  	if (common->is_emac_mode)
->>>  		am65_cpsw_init_port_emac_ale(port);
->>>
->>> -- 
->>> 2.34.1
->>>
->>>
->>
-> 
+ include/linux/compiler.h | 1 +
+ 1 file changed, 1 insertion(+)
 
 -- 
-cheers,
--roger
+2.47.0
 
 
