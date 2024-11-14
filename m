@@ -1,82 +1,85 @@
-Return-Path: <linux-kernel+bounces-409493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22CFB9C8D8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:06:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7673D9C8D8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:03:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E989B2687C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:03:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 216F61F22FFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724921531C1;
-	Thu, 14 Nov 2024 15:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A790413D531;
+	Thu, 14 Nov 2024 15:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="l1AxMmRd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="osFdQlLd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A940AA95C;
-	Thu, 14 Nov 2024 15:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103AF1E521;
+	Thu, 14 Nov 2024 15:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731596572; cv=none; b=TtcnDttoO091BkSdtX6z14WCbVKQVCumXbgcrWJZJzi2E346uQuWDc9IGxrjlyw5y6Ta0PFPaf5N24gLfGvrTXXD/O7ztirHmbjRy+lLhIrPbN+7FTc2OB2QsenbOa3USX+7s7Xne21GrxkC2L3HVocE9imrwsdneYzqVDAgnC8=
+	t=1731596590; cv=none; b=SiiPbzznEJwgsNGoEVgdQbXroP+fSAYJujckQIBiG/lrE5elUe5VpcIj7CaMxVRsUhgkszOT+X9p7LUYFIgZ9DdrLVgfhdngPazA/bOWTRvfTeaSnSsw2g/F1scdlQxeOj9s+JHNiwdApiNuqSg97sH8/d29hb4nrrh12EISk7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731596572; c=relaxed/simple;
-	bh=qkCfLK8TN9LfCtEHifzagUv0rpLufiCXO5LjmnrKp14=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LKVQZGAfLS+kgyHMpFN0rkXXXhTlZ/xyo2CwFerp8IWpeARpIUOc0cvgeTaldQgJoVL5smdTqQJQ7t+he4+H0RL5I6bG0asuwH87X1OcRCJqlhG0HoPGy7kT53jHAns5ZYdNHCP/V0ayQ830XQxV3OrZ4MjOWJ/rpXEuICxbbTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=l1AxMmRd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 294F5C4CECD;
-	Thu, 14 Nov 2024 15:02:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731596572;
-	bh=qkCfLK8TN9LfCtEHifzagUv0rpLufiCXO5LjmnrKp14=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l1AxMmRd/9WD2D08zRN8Wff55wvB7ENnRu1mW5vroki87pay0bOjR7xMhdGjK0vfh
-	 5h/iBZqv2ljwBTAym28dAaGjARbkg15HEsCHyfh3+ATSEfv+cj7nChKALB1yrCEPo0
-	 6rXSJtsW64SGDfEG+wNZw9mJ86KqfKHoeG0DCjfw=
-Date: Thu, 14 Nov 2024 10:02:49 -0500
-From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: gregkh@linuxfoundation.org, corbet@lwn.net, workflows@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, rdunlap@infradead.org, 
-	daniel@ffwll.ch, laurent.pinchart@ideasonboard.com, broonie@kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Dan Williams <dan.j.williams@intel.com>, Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v3] Documentation/CoC: spell out enforcement for
- unacceptable behaviors
-Message-ID: <4d44dry7ypmiglysj5ovrv3zv2g6uabezosck6ae6hkf2wha4i@eculpqwugece>
-References: <20241113232557.29854-1-skhan@linuxfoundation.org>
- <5rkn65qu2i3kz72hxbmcg25mrq5ehmb4y6xia2p3k4naiogi44@rcaoz3xnqlcf>
- <2dafc0bb-4dee-4c7e-91b0-01fa66a822aa@linuxfoundation.org>
+	s=arc-20240116; t=1731596590; c=relaxed/simple;
+	bh=BsYcovQdRC1h0DdNzlfc6JaWZH38UXOZmf3UeEbmyK0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=otcbLpOzBcLde7qhGdMCOPDl9cya4SBr6t7yiojAZ8azIfisgBhcBf/K9ZCwe5VyPznUZCYhfOwfjOUN72C3yV9Ink4fxMUFVoZTi6+tgqd9NoiL52XnLwWn/wjuuthbgHpEVJcBxsId4jW/B3oH1Lc8kmDNsj/gBtIgll0xN8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=osFdQlLd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BD42C4CECD;
+	Thu, 14 Nov 2024 15:03:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731596589;
+	bh=BsYcovQdRC1h0DdNzlfc6JaWZH38UXOZmf3UeEbmyK0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=osFdQlLdTLNZDDz8qcYxE0pksuKJf+MsPBZ9dfcAB47ehzDwF/NIHeOQtIPWfsKuf
+	 6qMJfW+hjFp0R86JNn4LD4D/Nj3AaVxoTiDZpGCvMlIZ7GCRxGQuFLYIRkNFC6yiDe
+	 HllX0q44mYgUnuC2FLy4aBEEnZSA41mnUM8Wmm4hfYPoi7POINFoFiGoc7wvaX9HCq
+	 MybdfGuqzdxCK0nOgSznlmWcNYnazTr2mbGsBBeCNnvTYc6JvMMSLg4LsOIjlxax/h
+	 mKW5phHgvP+Jxpv4DvShW9Kbs29YC9AF1H6Ne/mJ6jwzaU/YHqlYZY9RRZp8L9+VRG
+	 s4QL31zLqU6aA==
+Date: Thu, 14 Nov 2024 07:03:08 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: "David S. Miller" <davem@davemloft.net>, David Ahern
+ <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, David Ahern
+ <dsahern@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-team@meta.com
+Subject: Re: [PATCH net v2] ipmr: Fix access to mfc_cache_list without lock
+ held
+Message-ID: <20241114070308.79021413@kernel.org>
+In-Reply-To: <20241114-ancient-piquant-ibex-28a70b@leitao>
+References: <20241108-ipmr_rcu-v2-1-c718998e209b@debian.org>
+	<20241113191023.401fad6b@kernel.org>
+	<20241114-ancient-piquant-ibex-28a70b@leitao>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2dafc0bb-4dee-4c7e-91b0-01fa66a822aa@linuxfoundation.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 14, 2024 at 08:01:34AM -0700, Shuah Khan wrote:
-> >      c. restricting their ability to communicate via kernel.org platforms,
-> >         such as mailing lists and social media sites
+On Thu, 14 Nov 2024 00:55:57 -0800 Breno Leitao wrote:
+> On Wed, Nov 13, 2024 at 07:10:23PM -0800, Jakub Kicinski wrote:
+> > On Fri, 08 Nov 2024 06:08:36 -0800 Breno Leitao wrote:  
+> > > Accessing `mr_table->mfc_cache_list` is protected by an RCU lock. In the
+> > > following code flow, the RCU read lock is not held, causing the
+> > > following error when `RCU_PROVE` is not held. The same problem might
+> > > show up in the IPv6 code path.  
 > > 
-> > It makes more sense to phrase it this way, because it's really the
-> > communication that is the focus of this policy, not general access like git,
-> > patchwork, etc.
-> > 
+> > good start, I hope someone can fix the gazillion warnings the CI 
+> > is hitting on the table accesses :)  
 > 
-> Thank you Konstantin. Correct. The intent is to restrict communication.
-> The way you phrased it makes perfect sense. I will make the change.
+> If you have an updated list, I'd be happy to take a look.
+> 
+> Last time, all the problems I found were being discussed upstream
+> already. I am wondering if they didn't land upstream, or, if you have
+> warnings that are not being currently fixed.
 
-Thank you!
-
-Acked-by: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-
--K
+https://netdev-3.bots.linux.dev/vmksft-forwarding-dbg/results/859762/82-router-multicast-sh/stderr
 
