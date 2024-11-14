@@ -1,296 +1,157 @@
-Return-Path: <linux-kernel+bounces-409268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BAEF9C89FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:31:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 295A59C89F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:27:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1C98B2C2D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:22:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3309285ABF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4EF01F80CC;
-	Thu, 14 Nov 2024 12:22:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A65D1F77B8
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 12:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDDC1F9EBF;
+	Thu, 14 Nov 2024 12:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="V6O1t6xR"
+Received: from mr85p00im-hyfv06021401.me.com (mr85p00im-hyfv06021401.me.com [17.58.23.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B52A1F77B8
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 12:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731586955; cv=none; b=OT5yQMNkgfeRVnc4sSMUupQUa6dtrm1UW/OB0NLUKoeKgeob7csn7U5B1UbJnV7/MZ/866AtOAbWXd+aTJY4/J9Va+RNeaqvCMJ27+TzI79OL0PkMavHuYwAZJp0KM8QRBEmmPcK7+dzcnlXvobkS46nnPNLP0eBjOWdakkRelM=
+	t=1731587178; cv=none; b=Ir0sJeSsMdezX1+Ty+CLqgETSyr5oh90dWL4Jvt75V/lP233Jzdl2isVba/3E8zLgX5GPvPXgUdIde6eNYRC+DpeamA63RhC2DpOYVoRQw3jSrS8HU7oR1P2+e6FE8oKSYa6bC8Trhf6yMyQeRzrM/4TmrpzTMTpHcQiWXJ1SM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731586955; c=relaxed/simple;
-	bh=Ho8+cbC29QWSlaoAWmumCnCfW6ZPOSRIICUJzKf24ck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZOxb88pKHVirS7Z+UM0QK5E0YXjyw3s04jreWrzfVwL3rRpg5ZfgJvZnVeCLOJRU5FQjsOUUTS3jrMOc7/xQRSNZPaAz+v3AiMsJ+ZXtX/cwJCu0feeNT/NCvUG9cgre6jbyzE97vHbWKx19PsklQcSCFfe7GUGx4w6uTbvj/SM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3ABD1480;
-	Thu, 14 Nov 2024 04:22:54 -0800 (PST)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 068313F6A8;
-	Thu, 14 Nov 2024 04:22:23 -0800 (PST)
-Date: Thu, 14 Nov 2024 12:22:21 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Paul Benoit <paul@os.amperecomputing.com>
-Cc: linux-kernel@vger.kernel.org, Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] firmware: smccc: Support optional Arm SMC SOC_ID name
-Message-ID: <ZzXrfV3uDGRkBD2L@J2N7QTR9R3>
-References: <20241114030452.10149-1-paul@os.amperecomputing.com>
+	s=arc-20240116; t=1731587178; c=relaxed/simple;
+	bh=TikPXk3LtSqVeGP56dttQXFFCzAKOiP1NSO1WuA7L4U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IvNQGyr4xrzjYvGCsPASyzz61M8uPiNIyYTQEkk4rJ493CY1xwzENbG0yGEbUrBfEIaByv6amVLajGFAOJ7bSZVMdxY30Sh5mvkHt+SppWwVs0o9ZRIFdMExQRI7IHWX5Insb8ffg4kAbKRZNWfHGwtGggA7W/kmJsojrsuv0OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=V6O1t6xR; arc=none smtp.client-ip=17.58.23.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1731587176;
+	bh=DzOhgRULWNgkZ4/fSQp3mEWP69NGu+TazISyLlS+uLA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
+	 x-icloud-hme;
+	b=V6O1t6xRsCPKRof5QmEuTjv2AUP/YFj55WjZtT/PcSd1eIJAik0pDPLLPrxiuHvQy
+	 nJdcG/2ERIY7mqEJpjOFtGutEvGOktOCKTF7mUo1Abv+/ysglSp6ZdMSKwefMqwBdP
+	 8/nwvx9C24F0TOkL1Qk2FtOb1qscegvtHHZyDtsMQgTCO57UyZo418QQzYAA2BHDls
+	 myRjWC+jojltTTMxQofnRCLAZQUJmTDX3VNVr1P+CnPNDEGuNzoo4vFiUBkYohlbll
+	 yyq+EpHuFTpAgBvmlFjTQ38FBpbW58qnSpiAfxmkXYawdmyZFTfIz5JtusEiPzfWOW
+	 B1Ncy8T9YYS7Q==
+Received: from [192.168.1.26] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
+	by mr85p00im-hyfv06021401.me.com (Postfix) with ESMTPSA id DA5763038562;
+	Thu, 14 Nov 2024 12:26:12 +0000 (UTC)
+Message-ID: <ff24d6c8-581d-4dd1-8565-916d3f429ae4@icloud.com>
+Date: Thu, 14 Nov 2024 20:25:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241114030452.10149-1-paul@os.amperecomputing.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: iio, syfs, devres: devm_kmalloc not aligned to pow2 size argument
+To: Matteo Martelli <matteomartelli3@gmail.com>
+Cc: Marc Gonzalez <marc.w.gonzalez@free.fr>, Peter Rosin <peda@axentia.se>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jonathan Cameron <jic23@kernel.org>, Joe Perches <joe@perches.com>,
+ Jens Axboe <axboe@kernel.dk>, Peter Zijlstra <peterz@infradead.org>,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-block@vger.kernel.org
+References: <c486a1cf98a8b9ad093270543e8d2007@gmail.com>
+ <c6d634d088f77abd956dbd125c26d43d@gmail.com>
+ <58d77d45-d052-4431-91de-3912a9c675b5@icloud.com>
+ <cf50fd85a836c32bbb828a832e22d2df@gmail.com>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <cf50fd85a836c32bbb828a832e22d2df@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: lU515d71RXapdvWUtPpjTWOMlMmF7qXE
+X-Proofpoint-GUID: lU515d71RXapdvWUtPpjTWOMlMmF7qXE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-14_04,2024-11-13_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 adultscore=0 spamscore=0
+ suspectscore=0 malwarescore=0 mlxlogscore=860 clxscore=1015 bulkscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2411140098
 
-Hi Paul,
+On 2024/11/14 19:29, Matteo Martelli wrote:
+>>>> The address of a chunk allocated with `kmalloc` is aligned to at least
+>>>> ARCH_KMALLOC_MINALIGN bytes. For sizes of power of two bytes, the
+>>>> alignment is also guaranteed to be at least to the respective size.
+>>>>
+>>>> To do so I was thinking to try to move the devres metadata after the
+>>>> data buffer, so that the latter would directly correspond to pointer
+>>>> returned by kmalloc. I then found out that it had been already suggested
+>>>> previously to address a memory optimization [2]. Thus I am reporting the
+>>>> issue before submitting any patch as some discussions might be helpful
+>>>> first.
+>>>>
+>> no, IMO, that is not good idea absolutely.
+> It’s now quite clear to me that the issue is a rare corner case, and the
+> potential impact of making such a change does not justify it. However,
+> for completeness and future reference, are there any additional reasons
+> why this change is a bad idea?
 
-On Wed, Nov 13, 2024 at 07:04:52PM -0800, Paul Benoit wrote:
-> Issue Number 1.6 of the Arm SMC Calling Convention introduces an
-> optional SOC_ID name string.  If available, point the 'machine' field of
-> the SoC Device Attributes at this string so that it will appear under
-> /sys/bus/soc/devices/soc0/machine.  On Arm SMC compliant SoCs, this will
-> allow things like 'lscpu' to eventually get a SoC provider model name
-> from there rather than each tool/utility needing to get a possibly
-> inconsistent, obsolete, or incorrect model/machine name from its own
-> hardcoded model/machine name table.
-> 
-> Signed-off-by: Paul Benoit <paul@os.amperecomputing.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Cc: Sudeep Holla <sudeep.holla@arm.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> ---
->  drivers/firmware/smccc/smccc.c  | 70 +++++++++++++++++++++++++++++++++
->  drivers/firmware/smccc/soc_id.c |  1 +
->  include/linux/arm-smccc.h       | 10 +++++
->  3 files changed, 81 insertions(+)
-> 
-> diff --git a/drivers/firmware/smccc/smccc.c b/drivers/firmware/smccc/smccc.c
-> index a74600d9f2d7..1c7084b0b8d7 100644
-> --- a/drivers/firmware/smccc/smccc.c
-> +++ b/drivers/firmware/smccc/smccc.c
-> @@ -18,10 +18,12 @@ static enum arm_smccc_conduit smccc_conduit = SMCCC_CONDUIT_NONE;
->  bool __ro_after_init smccc_trng_available = false;
->  s32 __ro_after_init smccc_soc_id_version = SMCCC_RET_NOT_SUPPORTED;
->  s32 __ro_after_init smccc_soc_id_revision = SMCCC_RET_NOT_SUPPORTED;
-> +char __ro_after_init smccc_soc_id_name[136] = "";
->  
->  void __init arm_smccc_version_init(u32 version, enum arm_smccc_conduit conduit)
->  {
->  	struct arm_smccc_res res;
-> +	struct arm_smccc_1_2_regs regs_1_2;
->  
->  	smccc_version = version;
->  	smccc_conduit = conduit;
-> @@ -37,6 +39,66 @@ void __init arm_smccc_version_init(u32 version, enum arm_smccc_conduit conduit)
->  			smccc_soc_id_version = (s32)res.a0;
->  			arm_smccc_1_1_invoke(ARM_SMCCC_ARCH_SOC_ID, 1, &res);
->  			smccc_soc_id_revision = (s32)res.a0;
-> +
-> +			/* Issue Number 1.6 of the Arm SMC Calling Convention
-> +			 * specification introduces an optional "name" string
-> +			 * to the ARM_SMCCC_ARCH_SOC_ID function.  Fetch it if
-> +			 * available.
-> +			 */
+1)
+as i ever commented, below existing APIs is very suitable for your
+requirements. right ?
+addr = devm_get_free_pages(dev, GFP_KERNEL|__GFP_ZERO, 0);
+devm_free_pages(dev,addr);
 
-I think the code for the SOC_ID name should live under soc_id.c, since
-it *only* matters to the sysfs interface (and will not be used by other
-code in the kernel to identify the SOC). That should be initialised
-under smccc_soc_init(), ideally factored into a smccc_soc_name_init()
-helper.
+2)
+touching existing API which have been used frequently means high risk?
 
-Nit: comments should have the leading '/*' on its own line, e.g.
+3) if you put the important metadata at the end of the memory block.
+   3.1) it is easy to be destroyed by out of memory access.
+   3.2) the API will be used to allocate memory with various sizes
+        how to seek the tail metadata ?  is it easy to seek it?
+   3.3) if you allocate one page, the size to allocate is page size
+        + meta size, it will waste memory align.
 
-	/*
-	 * Multi-line comments should be formatted like this, with a
-	 * leading and trailing line.
-	 */
+4) below simple alternative is better than your idea. it keep all
+attributes of original kmalloc(). right ?
 
-> +			regs_1_2.a0 = ARM_SMCCC_ARCH_SOC_ID;
-> +			regs_1_2.a1 = 2;	/* SOC_ID name */
-> +			arm_smccc_1_2_smc(
-> +				(const struct arm_smccc_1_2_regs *)&regs_1_2,
-> +				(struct arm_smccc_1_2_regs *)&regs_1_2);
+static int devres_raw_kmalloc_match(struct device *dev, void *res, void *p)
+{
+	void **ptr = res;
+	return *ptr == p;
+}
 
-These casts shouldn't be necessary, and they look suspicious.
+static void devres_raw_kmalloc_release(struct device *dev, void *res)
+{
+	void **ptr = res;
+	kfree(*ptr);
+}
 
-Additionally, this should be using whichever conduit SMCCC happens to be
-using rather than assuming SMC. As with the rest of this code using
-arm_smccc_1_1_invoke(), we should add a arm_smccc_1_2_invoke() wrapper
-for that, with this looking like:
-
-			arm_smccc_1_2_invoke(&regs_1_2, &regs_1_2);
-> +
-> +			if ((u32)regs_1_2.a0 == 0) {
-> +				unsigned long *destination =
-> +					(unsigned long *)smccc_soc_id_name;
-> +
-> +				/*
-> +				 * Copy regs_1_2.a1..regs_1_2.a17 to the
-> +				 * smccc_soc_id_name string with consideration
-> +				 * to the endianness of the values in a1..a17.
-
-This indicates that we have to do *something* about endianness, but
-doesn't say *what* consideration is necessary, which is rather
-unhelpful -- it would be better to describe the format of the registers,
-which would indicate what specifically we need to do.
-
-For example:
-
-	The string is packed into registers a1 to a17 such that each
-	register contains 8 successive bytes, and within each register
-	byte N of the string fragment is encoded into bits [8*N+7:8*N].
-
-> +				 * As per Issue 1.6 of the Arm SMC Calling
-> +				 * Convention, the string will be NUL terminated
-> +				 * and padded, from the end of the string to
-> +				 * the end of the 136 byte buffer, with NULs.
-> +				 */
-> +				*destination++ =
-> +				    cpu_to_le64p((const __u64 *)&regs_1_2.a1);
-
-If you used cpu_to_le64(), you wouldn't need a cast, though either way you will
-need a cast on the return value since 'destination' is not an array of __le64,
-and sparse should complain.
-
-This isn't really an endianness conversion since we're unpacking smaller
-elements out of a larger container, so I reckon it would be better to
-handle this explicitly, e.g.
-
-	void str_fragment_from_reg(char *dst, u64 reg)
-	{
-		dst[0] = (reg >> 0)  & 0xff;
-		dst[1] = (reg >> 8)  & 0xff;
-		dst[2] = (reg >> 16) & 0xff;
-		dst[3] = (reg >> 24) & 0xff;
-		dst[4] = (reg >> 32) & 0xff;
-		dst[5] = (reg >> 40) & 0xff;
-		dst[6] = (reg >> 48) & 0xff;
-		dst[7] = (reg >> 56) & 0xff;
+void *devm_raw_kmalloc(struct device *dev, size_t size, gfp_t gfp)
+{
+	void **ptr;
+	
+	ptr = devres_alloc(devres_raw_kmalloc_release, sizeof(*ptr), GFP_KERNEL);
+	f (!ptr)
+		return NULL;
+	
+	*ptr = kmalloc(size, gfp);
+	if (!*ptr) {
+		devres_free(ptr);
+		return NULL;
 	}
+	devres_add(dev, ptr);
+	return *ptr;
+}
+EXPORT(...)
 
-... and then using that:
-
-	str_fragment_from_reg(destination + 0,  regs_1_2.a1);
-	str_fragment_from_reg(destination + 8,  regs_1_2.a2);
-	str_fragment_from_reg(destination + 16, regs_1_2.a3);
-	str_fragment_from_reg(destination + 24, regs_1_2.a4);
-	...
-
-That way we avoid all the messy casting, and we can more clearly align
-this with the way the spec says this is packed.
-
-The generated code looks sane (with GCC 14.2.0, at least):
-
-	// little-endian kernel
-	0000000000000000 <str_fragment_from_reg>:
-	   0:   f9000001        str     x1, [x0]
-	   4:   d65f03c0        ret
-
-	// big-endian kernel
-	0000000000000000 <str_fragment_from_reg>:
-	   0:   dac00c21        rev     x1, x1
-	   4:   f9000001        str     x1, [x0]
-	   8:   d65f03c0        ret
-
-> +				*destination++ =
-> +				    cpu_to_le64p((const __u64 *)&regs_1_2.a2);
-> +				*destination++ =
-> +				    cpu_to_le64p((const __u64 *)&regs_1_2.a3);
-> +				*destination++ =
-> +				    cpu_to_le64p((const __u64 *)&regs_1_2.a4);
-> +				*destination++ =
-> +				    cpu_to_le64p((const __u64 *)&regs_1_2.a5);
-> +				*destination++ =
-> +				    cpu_to_le64p((const __u64 *)&regs_1_2.a6);
-> +				*destination++ =
-> +				    cpu_to_le64p((const __u64 *)&regs_1_2.a7);
-> +				*destination++ =
-> +				    cpu_to_le64p((const __u64 *)&regs_1_2.a8);
-> +				*destination++ =
-> +				    cpu_to_le64p((const __u64 *)&regs_1_2.a9);
-> +				*destination++ =
-> +				    cpu_to_le64p((const __u64 *)&regs_1_2.a10);
-> +				*destination++ =
-> +				    cpu_to_le64p((const __u64 *)&regs_1_2.a11);
-> +				*destination++ =
-> +				    cpu_to_le64p((const __u64 *)&regs_1_2.a12);
-> +				*destination++ =
-> +				    cpu_to_le64p((const __u64 *)&regs_1_2.a13);
-> +				*destination++ =
-> +				    cpu_to_le64p((const __u64 *)&regs_1_2.a14);
-> +				*destination++ =
-> +				    cpu_to_le64p((const __u64 *)&regs_1_2.a15);
-> +				*destination++ =
-> +				    cpu_to_le64p((const __u64 *)&regs_1_2.a16);
-> +				*destination++ =
-> +				    cpu_to_le64p((const __u64 *)&regs_1_2.a17);
-
-We probably want to check that the string is actually NUL terminated
-here, and log a FW BUG message if it is not.
-
-> +			}
->  		}
->  	}
->  }
-> @@ -67,6 +129,14 @@ s32 arm_smccc_get_soc_id_revision(void)
->  }
->  EXPORT_SYMBOL_GPL(arm_smccc_get_soc_id_revision);
->  
-> +char *arm_smccc_get_soc_id_name(void)
-> +{
-> +	if (strnlen(smccc_soc_id_name, sizeof(smccc_soc_id_name)))
-> +		return smccc_soc_id_name;
-> +
-> +	return NULL;
-> +}
-
-As above, I think this can be folded into the probing routine.
-
-> +
->  static int __init smccc_devices_init(void)
->  {
->  	struct platform_device *pdev;
-> diff --git a/drivers/firmware/smccc/soc_id.c b/drivers/firmware/smccc/soc_id.c
-> index 1990263fbba0..6f698c703868 100644
-> --- a/drivers/firmware/smccc/soc_id.c
-> +++ b/drivers/firmware/smccc/soc_id.c
-> @@ -72,6 +72,7 @@ static int __init smccc_soc_init(void)
->  	soc_dev_attr->soc_id = soc_id_str;
->  	soc_dev_attr->revision = soc_id_rev_str;
->  	soc_dev_attr->family = soc_id_jep106_id_str;
-> +	soc_dev_attr->machine = arm_smccc_get_soc_id_name();
->  
->  	soc_dev = soc_device_register(soc_dev_attr);
->  	if (IS_ERR(soc_dev)) {
-> diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
-> index 67f6fdf2e7cd..5935cf636135 100644
-> --- a/include/linux/arm-smccc.h
-> +++ b/include/linux/arm-smccc.h
-> @@ -333,6 +333,16 @@ s32 arm_smccc_get_soc_id_version(void);
->   */
->  s32 arm_smccc_get_soc_id_revision(void);
->  
-> +/**
-> + * arm_smccc_get_soc_id_name()
-> + *
-> + * Returns the SOC ID name.
-> + *
-> + * When ARM_SMCCC_ARCH_SOC_ID name is not present, returns NULL.
-> + */
-> +char *arm_smccc_get_soc_id_name(void);
-
-I don't think this needs to be exposed outside of the SOC ID code.
-
-Thanks,
-Mark.
+void *devm_raw_kfree(struct device *dev, void *p)
+{
+	devres_release(dev, devres_raw_kmalloc_release,
+devres_raw_kmalloc_match, p);
+}
+EXPORT(...)
 
