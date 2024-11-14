@@ -1,109 +1,71 @@
-Return-Path: <linux-kernel+bounces-408955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC6969C858D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:04:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F07B9C8593
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:05:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 834BA2837C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:04:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 130911F26852
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9941EF932;
-	Thu, 14 Nov 2024 09:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08CD1DE8A0;
+	Thu, 14 Nov 2024 09:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="xD8RPzrC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="B47WamvU"
-Received: from flow-a2-smtp.messagingengine.com (flow-a2-smtp.messagingengine.com [103.168.172.137])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="ijfhqiIa"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3F829CFB;
-	Thu, 14 Nov 2024 09:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58CA81991CD;
+	Thu, 14 Nov 2024 09:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731575047; cv=none; b=llFhWmYHCb2QENNhWdFwad/nqA+8LcfsSULw9SpNA8qj6r/XhCX76StTwrj8KPv2oPifjG9V0l3m2IimRUN3xcWBBa3QCosaXMa4r8LG87RRk2n2iP3JCRNxso5ElFCD3ZjcpYMndOHjuznsF+102mcrjPjPmsf63Ec8dg4WFws=
+	t=1731575080; cv=none; b=dic5IWTszQjYifIy56pwiEcZRPkx/UgjRaTEJcoI83CPqp2l9yItN1zjGyA28PvEnveTcCJc2zEQNlZbBbcyzA1F5kRU8/3sa1oxQYqZNBeF05MY+nups01YCLF/5sg5iUfyRzVXG12CmEMG9aa+UFX0T1FeJJ16TRoItYQUMGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731575047; c=relaxed/simple;
-	bh=7BSoh5CYIXrW3QX1oTbrz1UW2luLIHecRtvcsgMl0lY=;
+	s=arc-20240116; t=1731575080; c=relaxed/simple;
+	bh=iRPXMOyExoi/69l5RX3rJc18D1pUDb01VAexzrIlrEQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RawcZypRfqUcobQyXUx+27T9zBXZZu5nWt4SZVT0bML8HUywIfBvG1amWI8duwP+dp+mpucBEHsIDBHuu7bHH54MXymawl4BShWHiM1vdqu92Q9EUkY+DC6i5YzV9WblMvqH1t8Qaiy8nbyZecdy1ya7JlZEoERJzEvbaCqbj80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=xD8RPzrC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=B47WamvU; arc=none smtp.client-ip=103.168.172.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailflow.phl.internal (Postfix) with ESMTP id EA698200C81;
-	Thu, 14 Nov 2024 04:04:02 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Thu, 14 Nov 2024 04:04:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1731575042; x=
-	1731578642; bh=k+8HC8Ob/86QBDrUTivKmSt66P20tDmJvCeyr0tVG9w=; b=x
-	D8RPzrCztteIqD4p3M7Ba8G+dJMd6+D2LvxM0J7dpSgMht1nR4UkZ6TwQxojqa9+
-	pPIyqTnobBaddhPHPDTNf/B61QLw7xLL//l4bAJ+OOH0dtI3DLmr4HTm9HEgYxFW
-	/7PfIsQTcBcCDXHRijiXWRawu8t8lRW5nI9tUXPyS0iwnCcdWYbtpmmzK7erSyv7
-	65GVqOBdOq//9OjGGYiVmDMpb87gwaBPmlKBt25p8n+8cdKEpKVQgnZ5zxj6I/ba
-	zDUJoDBkMdAnKN9lkdf7KdHi9LXKkXASOxYoLoPDgW4b9a6iLNSbyv1Hz93SDXhM
-	Ci94OSyh6YjHzUjGO7GKg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1731575042; x=1731578642; bh=k+8HC8Ob/86QBDrUTivKmSt66P20tDmJvCe
-	yr0tVG9w=; b=B47WamvU4RG2pWk6h03rqkfKW61ad3Anab38pbhF6Mb3oXqWh7X
-	Cmc1BrUQvTCzEs11M7CBDVeX1QF+B9FWc7UU5A+ql2C4gCtTIoff3e1apj1IuG3j
-	ugl/6cugWD6oD6yZlpUN8APDJr7QNNhfitfhJmFAPNtgUekyLzYtxI1UA4oP3wtI
-	IO5y2hIoOhWhlNUH4eaTFCLIg2GX7PI4bJd5Se+IzJ7z53W4XPOpjZG0dcFcZ5cN
-	oljWvOUrAFZOX1MJG0MEzKqLrCQBsENUu0p1b51SQxehw7lz2w/AQh21u3P3gezC
-	IgPjVzfAvytfe1yQXH8gC3iEtypKp1HvVkA==
-X-ME-Sender: <xms:Ar01Z3de4E1RpvXIKIr5lQ6m0nGpP2blWzet4BT4lcIrCUnjIkgzrA>
-    <xme:Ar01Z9M-EU2zFLHei38II9Mz6ZY5Hnz6LQx9i58VXa6YgLcrURvhmAhG6VdwSNLnD
-    WZ6Lld3VFTgjepYlm4>
-X-ME-Received: <xmr:Ar01ZwiqrSqpHvx4ifxQmhF5JZ_LMvoavPEw-xoQ7jUbAdRlGcDjUs4XRQh8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddugdduvdehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtjeen
-    ucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihshhnrg
-    hilhdrnhgvtheqnecuggftrfgrthhtvghrnhepuefhhfffgfffhfefueeiudegtdefhfek
-    geetheegheeifffguedvuefffefgudffnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhnsggp
-    rhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnthhonh
-    hiohesohhpvghnvhhpnhdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhg
-    lhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhh
-    uhhnthgvrhesghhmrghilhdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtghomhdp
-    rhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehnvghtuggvvh
-    esvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:Ar01Z48B-Ca23chCb9uhiGujUw1dlCoonUO0dnbzSA3FaiBY0bIJSA>
-    <xmx:Ar01ZzvoFhcdTTi1zd4FZfZCqd7w3OkKQexIGQutTAsqJ9MS9gpOmA>
-    <xmx:Ar01Z3F_sCr8Ba2h_-SOgJThx48tyUuZI9ga21KID-cceWBkT2qSRA>
-    <xmx:Ar01Z6Nab6yQ8alFBli5ezi6J8FcJ1_bShW6Z7_3OSuj-hcNsLw_FA>
-    <xmx:Ar01Z5Aku3Ttdt_QMeuy_51B4pZmBYL2fUPmpGKmhREpQJmKFEUJlyfy>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 14 Nov 2024 04:04:02 -0500 (EST)
-Date: Thu, 14 Nov 2024 10:03:59 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
-	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next v11 15/23] ovpn: implement keepalive mechanism
-Message-ID: <ZzW8_3MzprfwPS4o@hog>
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-15-de4698c73a25@openvpn.net>
- <ZypfnyfToF1b6YAZ@hog>
- <189dbeea-127a-47e8-84f8-c8cf1cc03536@openvpn.net>
- <ZzSBG-RPUlpgVFhA@hog>
- <2a90f702-3061-46b6-aafa-cf8c1ba3d0de@openvpn.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=g0KaTteh5EeuPrxcgBZutt1ActOVHCCPyibli4ZlrWqx6a/hJZRJuIgw2N5cy38C0P8MbE+9/UeB2geNXsTfG4hlRs+4LT3z955aKB4N+5apv+or14SZFrzCbqzR035d/JCRKPksQCPWuYAdLHzYPuiPTbm70eF7EvQT7vUsYNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=ijfhqiIa; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=DTask+hWGywo0tXDj4oHwyAVi94Iui8lkNGWuJeSb0w=; b=ijfhqiIaNkSj9Vm9B64Z7ZBM2Z
+	DVmR9pHHFBojzICcvhrNdotdtePKjaqRdtGWhQJwckWac4ABDdOhFYgStaWfUG5BlUDgBbLUEBQJI
+	JA0l+MHLgu7ousiWQ3Ci70W1VgwbkBjCAaUgdWPlHZKVstKNDco4wXWN45WbYCO+x/JpKbsXvCkgx
+	Ne7Ae/THTPKcLxclBAw/DPyRdZEFCeQ6H76zBtG8yYjwwJdvnhgP4Xgnw5+jQ0imFqE3p9yW2Vsq5
+	LoixFhmuakyWixoWjfpGHpZonxJ5sDZyX7JFWuvEMMI6Xa9Tvtsbt9ZeQ+D8DJkIKNoGXtiIDxSKx
+	B4sa/ESA==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sean@geanix.com>)
+	id 1tBVmD-000EWr-6H; Thu, 14 Nov 2024 10:04:33 +0100
+Received: from [2a06:4004:10df:0:6905:2e05:f1e4:316f] (helo=Seans-MacBook-Pro.local)
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sean@geanix.com>)
+	id 1tBVmC-000H8n-1e;
+	Thu, 14 Nov 2024 10:04:32 +0100
+Date: Thu, 14 Nov 2024 10:04:31 +0100
+From: Sean Nyekjaer <sean@geanix.com>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH can-next v3 2/2] can: tcan4x5x: add option for selecting
+ nWKRQ voltage
+Message-ID: <bmuodxb7xtuwexm7rg6ijepxlyqlwdux37ye2ztwreg7kiynwy@xxt3qvgwebvw>
+References: <20241112-tcan-wkrqv-v3-0-c66423fba26d@geanix.com>
+ <20241112-tcan-wkrqv-v3-2-c66423fba26d@geanix.com>
+ <b61e19bb-58ae-42ac-9863-f1149a812261@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -112,50 +74,113 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2a90f702-3061-46b6-aafa-cf8c1ba3d0de@openvpn.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b61e19bb-58ae-42ac-9863-f1149a812261@wanadoo.fr>
+X-Authenticated-Sender: sean@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27457/Wed Nov 13 10:35:46 2024)
 
-2024-11-14, 09:12:01 +0100, Antonio Quartulli wrote:
-> On 13/11/2024 11:36, Sabrina Dubroca wrote:
-> > 2024-11-12, 14:20:45 +0100, Antonio Quartulli wrote:
-> > > On 05/11/2024 19:10, Sabrina Dubroca wrote:
-> > > > 2024-10-29, 11:47:28 +0100, Antonio Quartulli wrote:
-> > > > > +	/* check for peer timeout */
-> > > > > +	expired = false;
-> > > > > +	timeout = peer->keepalive_timeout;
-> > > > > +	delta = now - peer->last_recv;
-> > > > 
-> > > > I'm not sure that's always > 0 if we finish decrypting a packet just
-> > > > as the workqueue starts:
-> > > > 
-> > > >     ovpn_peer_keepalive_work
-> > > >       now = ...
-> > > > 
-> > > >                                          ovpn_decrypt_post
-> > > >                                            peer->last_recv = ...
-> > > > 
-> > > >     ovpn_peer_keepalive_work_single
-> > > >       delta: now < peer->last_recv
-> > > > 
-> > > 
-> > > Yeah, there is nothing preventing this from happening...but is this truly a
-> > > problem? The math should still work, no?
-> > 
-> > We'll fail "delta < timeout" (which we shouldn't), so we'll end up
-> > either in the "expired = true" case, or not updating
-> > keepalive_recv_exp. Both of these seem not ideal.
+Hi Vincent,
+
+On Thu, Nov 14, 2024 at 05:59:54PM +0100, Vincent Mailhol wrote:
+> Hi Sean,
 > 
-> delta is signed, so it'll end up being a negative value and "delta <
-> timeout" should not fail then. Unless I am missing something.
+> I found the v3. I was a bit confused because it was hidden before the v2 in
+> my mailbox: the active thread in v2 bump it to the top, thus "shadowing" the
+> v3.
+> 
+> On 12/11/2024 at 23:39, Sean Nyekjaer wrote:
+> > nWKRQ supports an output voltage of either the internal reference voltage
+> > (3.6V) or the reference voltage of the digital interface 0 - 6V (VIO).
+> > Add the devicetree option ti,nwkrq-voltage-vio to set it to VIO.
+> > Unset nWKRQ is kept at internal reference voltage.
+> > 
+> > Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> 
+> Notwithstanding of bellow nitpick:
+> 
+> Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+> 
+> > ---
+> >   drivers/net/can/m_can/tcan4x5x-core.c | 20 ++++++++++++++++++++
+> >   drivers/net/can/m_can/tcan4x5x.h      |  2 ++
+> >   2 files changed, 22 insertions(+)
+> > 
+> > diff --git a/drivers/net/can/m_can/tcan4x5x-core.c b/drivers/net/can/m_can/tcan4x5x-core.c
+> > index 2f73bf3abad889c222f15c39a3d43de1a1cf5fbb..12a375c653cbd255b5dc85faf2f76de397a644ec 100644
+> > --- a/drivers/net/can/m_can/tcan4x5x-core.c
+> > +++ b/drivers/net/can/m_can/tcan4x5x-core.c
+> > @@ -92,6 +92,8 @@
+> >   #define TCAN4X5X_MODE_STANDBY BIT(6)
+> >   #define TCAN4X5X_MODE_NORMAL BIT(7)
+> > +#define TCAN4X5X_NWKRQ_VOLTAGE_VIO BIT(19)
+> > +
+> >   #define TCAN4X5X_DISABLE_WAKE_MSK	(BIT(31) | BIT(30))
+> >   #define TCAN4X5X_DISABLE_INH_MSK	BIT(9)
+> > @@ -267,6 +269,13 @@ static int tcan4x5x_init(struct m_can_classdev *cdev)
+> >   	if (ret)
+> >   		return ret;
+> > +	if (tcan4x5x->nwkrq_voltage_vio) {
+> > +		ret = regmap_set_bits(tcan4x5x->regmap, TCAN4X5X_CONFIG,
+> > +				      TCAN4X5X_NWKRQ_VOLTAGE_VIO);
+> > +		if (ret)
+> > +			return ret;
+> > +	}
+> > +
+> >   	return ret;>   }
+> > @@ -318,6 +327,15 @@ static const struct tcan4x5x_version_info
+> >   	return &tcan4x5x_versions[TCAN4X5X];
+> >   }
+> > +static void tcan4x5x_get_dt_data(struct m_can_classdev *cdev)
+> > +{
+> > +	struct tcan4x5x_priv *tcan4x5x = cdev_to_priv(cdev);
+> > +	struct device_node *np = cdev->dev->of_node;
+> > +
+> > +	if (of_property_read_bool(np, "ti,nwkrq-voltage-vio"))
+> > +		tcan4x5x->nwkrq_voltage_vio = true;
+> 
+> Nitpick: you can directly assign the value. No need for the if.
+> 
+> 	tcan4x5x->nwkrq_voltage_vio =
+> 		of_property_read_bool(cdev->dev->of_node,
+> 				      "ti,nwkrq-voltage-vio");
+> 
+> My personal preference is to not declare the np variable because it used
+> only once but instead directly use cdev->dev->of_node. See this as a
+> suggestion. If you prefer to keep as it is, OK for me :)
 
-But timeout is "unsigned long", so the comparison will be done as
-unsigned.
+It looks a lot cleaner :)
+Just send v4, with some commit messange changens from Marc.
+I will update and sent v5
 
-> Anyway, this was just an exercise to understand what was going on.
-> I already changed the code as per your suggestion (the fact that we are
-> still discussing this chunk proves that it needed to be simplified :))
+> 
+> > +}
+> > +
+> >   static int tcan4x5x_get_gpios(struct m_can_classdev *cdev,
+> >   			      const struct tcan4x5x_version_info *version_info)
+> >   {
+> > @@ -453,6 +471,8 @@ static int tcan4x5x_can_probe(struct spi_device *spi)
+> >   		goto out_power;
+> >   	}
+> > +	tcan4x5x_get_dt_data(mcan_class);
+> > +
+> >   	tcan4x5x_check_wake(priv);
+> >   	ret = tcan4x5x_write_tcan_reg(mcan_class, TCAN4X5X_INT_EN, 0);
+> > diff --git a/drivers/net/can/m_can/tcan4x5x.h b/drivers/net/can/m_can/tcan4x5x.h
+> > index e62c030d3e1e5a713c997e7c8ecad4a44aff4e6a..203399d5e8ccf3fd7a26b54d8356fca9d398524c 100644
+> > --- a/drivers/net/can/m_can/tcan4x5x.h
+> > +++ b/drivers/net/can/m_can/tcan4x5x.h
+> > @@ -42,6 +42,8 @@ struct tcan4x5x_priv {
+> >   	struct tcan4x5x_map_buf map_buf_rx;
+> >   	struct tcan4x5x_map_buf map_buf_tx;
+> > +
+> > +	bool nwkrq_voltage_vio;
+> >   };
+> >   static inline void
+> > 
+> 
+> Yours sincerely,
+> Vincent Mailhol
+> 
 
-:)
-
--- 
-Sabrina
+/Sean
 
