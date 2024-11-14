@@ -1,71 +1,72 @@
-Return-Path: <linux-kernel+bounces-409821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A67A9C9233
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:14:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE1D09C922F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:13:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70FCEB26819
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:11:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6980AB24112
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EE81AB53A;
-	Thu, 14 Nov 2024 19:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30FD1A0AFB;
+	Thu, 14 Nov 2024 19:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Tg3svBF9"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aC7ulpuQ"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6811A76B5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF471A9B3A
 	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 19:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731611452; cv=none; b=I7cD+fwe4oZszhdbneU3mpDUjqOmmMOZsMiQICgjsQFicXiI1CmZx5f1DXUcGF4iBa3W/PwPAal1luPk3k2zWez/a6+Am2pJngi1YQGAB6vrEXmtDr14EwbwZfE7fKx1GlNSWwqx8+xjbq703ze7xu7lLIyVnUkTONTqnIouG/0=
+	t=1731611453; cv=none; b=nNz8bUgNDPXoWnFVUhWu92UYuG5TuowJWk0gNdnNijnFDfJda0o2V8ScJMXa9Cfii2AHQIS9AI8kaki5DX1hztTxh5dPGyF/m9bdkW4DebDKsvXA+NXtqLZHY1eBmtyjeJyeXUy76TQSeHDxAieyvjj7DKTIR28y07cmJeEgHdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731611452; c=relaxed/simple;
-	bh=891vgr8ZfTyBnkF2hdx6x/M+sg6ZKCMBjz6/1SYlOIY=;
+	s=arc-20240116; t=1731611453; c=relaxed/simple;
+	bh=gIGmVdezcCcJeNLxtrKhKX+oRcR324CxjSWZAh2pVoE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GW+gMUNVPw/CP1XSjqqf8o80RFQ9uaI0DDTKKAj7E/GowYTVAtSiV8XH1javLl3DSU/HI641SprintGkThWR60gSoeF3tT1gP899S/eIiSvrWnlyxvl7iV7r5kb0kN7CUAAjrKgQ+iHB4I6vXK1WcSELTCiujeLKMazd+n+DTrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Tg3svBF9; arc=none smtp.client-ip=209.85.222.182
+	 In-Reply-To:To:Cc; b=Q8/757bHnJGVP0yCg5Gr2dy+azLQhcshb6qyNpy8JcOV4yFLJsdHBgW6Z7v5J0I6btl9IqD+EYrZagMoo/2IAXOF9dN0KFdW8pS4ueIgZvisMjB7Kc4bX7jBB2WVAtF8w20TqUnqeP6pgpKkzbFbPH1FaIp0JO05NohFADhjCVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=aC7ulpuQ; arc=none smtp.client-ip=209.85.219.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7b15467f383so60531985a.3
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6d382664fadso5469806d6.2
         for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:10:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731611449; x=1732216249; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1731611450; x=1732216250; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=69mn13H1PoKT9uFw0cFCsSqSTFJ/p7+Sw2nsU0oDXCo=;
-        b=Tg3svBF9/IZyK6wj1cqMuySbmmqZm8zAft/J3IRBICwjFpKe/cNBe1tkSInM1J2fNZ
-         qoxy5iVT43v1lIipA/XOxTz4pntAEVl0ZPEFIicGtTXoGBj2p68sUhEVD3B6TI7ntibl
-         gYJXboqRQ3e6SWdGteUmqTij297V2mzqsBBYs=
+        bh=MoXFoTS1UHIpxTLyzT+33q7ydl+EE4ZnWBq8pnFccEU=;
+        b=aC7ulpuQG0XZS4qz5WFOxUwUfF4c59+hF9Cjip0ZBecegc/Rk+yQxckchI6enBAgLV
+         Kdq8gVBLvlBMQKdtqLKVsYZKCDiC+1Aks7oC5MEnpPrSS9putOClQ2VCOtmHjYXyjIeH
+         0QejeX4Bt1Y/9MNPCCg5vth/BU0WfCM1t8pH4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731611449; x=1732216249;
+        d=1e100.net; s=20230601; t=1731611450; x=1732216250;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=69mn13H1PoKT9uFw0cFCsSqSTFJ/p7+Sw2nsU0oDXCo=;
-        b=a1H/fTeEsTP530tNLfXybAE9hojgasINzhJ5l1WtFuTEHXWbcatHr7keqBKpti58GV
-         knG6N0BLVMg3qxqnCMSMtbSRCcgwGY+eCLcZMgWFuANQquxs9hi6NEDo09kAvXcSxA0U
-         qOro+aCE9kY2w3upV+WZ2VjkoLZuPjvaPddo/5eT/3seTn5AbfDr5MqtxhZOcN2sTOfU
-         7CBuKDs8/ymxkYV1HRRrkJhZiUrxyXpaDdKcntzcN8HovOP+52rAfKKyxe5sBt93y4Fq
-         iUauqM8z2gvidZ3U1rNPYvCt92MzP1ShiHJkXJIfkGV7h1SD2WH+yIyCRzBPc2zgE+dX
-         eWvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWSrFO6jkEdggh4XmAdNrxiCg3guyvp/XS3Krny4z3Vasg3EL/bPGwZ0QBOwoyccxpManfnJySWQw+Tu3E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1CtUFDdugiRwv2Pi+8rKd1RWSIHhgn2Lb4kSCM+8JySSvXi7e
-	wmyFGVr14Y+oZcQTc5TN7KUCyh1ghAM+AHMqDf2F+sqnOjQU9gnKZbpAh8xvBA==
-X-Google-Smtp-Source: AGHT+IF0l8bNoHEVEJoX/hMNb/j5aEKx9CFbpJx4t69EN9a8/Orafd02Wytr+RNNBbEhefyTuVpv4w==
-X-Received: by 2002:a05:6214:448c:b0:6cb:d376:2b27 with SMTP id 6a1803df08f44-6d3dd060784mr99646816d6.29.1731611449136;
+        bh=MoXFoTS1UHIpxTLyzT+33q7ydl+EE4ZnWBq8pnFccEU=;
+        b=JM7386FMBUPU39kJxi9wmZIB9ru8RnEKWLTjhIoTaKSme6TvcT/i5ogWJVozYuAQuE
+         3V+t8lPFav+8CEE6aCNvrAm3x/Vmd+T8dhN0mmiEgT4xrddqwztQcPhI4ZJJRzoTMkmj
+         YkRuveajakkq+TmVlGczvT2qNm4A+VcmBPUSfbq7R5yUFObh2mkaZGlHgYWigfLpWSPy
+         +F2llsh1bpWGeA6G8veVikjfnfJYbfP7ckNWTRpaTxgfVx/vT/AoNLcfWcKiQQCiNOVW
+         S5EexEzYkLyvGSW69dNc62CuU+VpHSs0T29bMJcV1AgwECZdvRf6en44fs0LLeo2R9Qe
+         v+1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWvjusJrfa27T2yIVC4YSNxGt7XVTkjfbJEFtsrgZh+DrdTUqwQkTyBkSQI9uCF3WyzQO6EHkHBBpB+GiQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDiJrmTfIz0f7APurfZMZNq1o6eDDjHi0Hj3DmK5I5XXd2tjvk
+	WX3MGXt6kshA5SB5lcxGOW7P2q+Jbi4oG+kz4AOLGmVj9WfozP9h/zbrM6fzow==
+X-Google-Smtp-Source: AGHT+IH3AHUKa3QYBAA2tT0n3IAU/U0FsAiEeXPgr/F9Ta/r6uwiQZR+OH0yIoOUcs7eU1U6UG1g4A==
+X-Received: by 2002:a05:6214:458c:b0:6cb:edd7:ac32 with SMTP id 6a1803df08f44-6d3d00be928mr154115866d6.12.1731611449903;
         Thu, 14 Nov 2024 11:10:49 -0800 (PST)
 Received: from denia.c.googlers.com (189.216.85.34.bc.googleusercontent.com. [34.85.216.189])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3ee7cc7e1sm8857766d6.53.2024.11.14.11.10.47
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3ee7cc7e1sm8857766d6.53.2024.11.14.11.10.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 11:10:48 -0800 (PST)
+        Thu, 14 Nov 2024 11:10:49 -0800 (PST)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Thu, 14 Nov 2024 19:10:33 +0000
-Subject: [PATCH v15 04/19] media: vivid: Add a rectangle control
+Date: Thu, 14 Nov 2024 19:10:34 +0000
+Subject: [PATCH v15 05/19] media: uvcvideo: Handle uvc menu translation
+ inside uvc_get_le_value
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +75,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241114-uvc-roi-v15-4-64cfeb56b6f8@chromium.org>
+Message-Id: <20241114-uvc-roi-v15-5-64cfeb56b6f8@chromium.org>
 References: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
 In-Reply-To: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
@@ -83,81 +84,152 @@ To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
  Sakari Ailus <sakari.ailus@linux.intel.com>, 
  Hans Verkuil <hverkuil@xs4all.nl>
 Cc: Yunke Cao <yunkec@chromium.org>, linux-media@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>, 
- Yunke Cao <yunkec@google.com>, Hans Verkuil <hverkuil@xs4all.nl>
+ linux-kernel@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.13.0
 
-From: Yunke Cao <yunkec@google.com>
+map->get() gets a value from an uvc_control in "UVC format" and converts
+it to a value that can be consumed by v4l2.
 
-This control represents a generic read/write rectangle.
-It supports V4L2_CTRL_WHICH_MIN/MAX_VAL.
+Instead of using a special get function for V4L2_CTRL_TYPE_MENU, we
+were converting from uvc_get_le_value in two different places.
 
-Signed-off-by: Yunke Cao <yunkec@google.com>
-Reviewed-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Move the conversion to uvc_get_le_value().
+
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/test-drivers/vivid/vivid-ctrls.c | 34 ++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ drivers/media/usb/uvc/uvc_ctrl.c | 77 +++++++++++++++++-----------------------
+ 1 file changed, 32 insertions(+), 45 deletions(-)
 
-diff --git a/drivers/media/test-drivers/vivid/vivid-ctrls.c b/drivers/media/test-drivers/vivid/vivid-ctrls.c
-index 2b5c8fbcd0a2..57346b714534 100644
---- a/drivers/media/test-drivers/vivid/vivid-ctrls.c
-+++ b/drivers/media/test-drivers/vivid/vivid-ctrls.c
-@@ -37,6 +37,7 @@
- #define VIVID_CID_U8_PIXEL_ARRAY	(VIVID_CID_CUSTOM_BASE + 14)
- #define VIVID_CID_S32_ARRAY		(VIVID_CID_CUSTOM_BASE + 15)
- #define VIVID_CID_S64_ARRAY		(VIVID_CID_CUSTOM_BASE + 16)
-+#define VIVID_CID_RECT			(VIVID_CID_CUSTOM_BASE + 17)
+diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+index bab9fdac98e6..77f7058ec966 100644
+--- a/drivers/media/usb/uvc/uvc_ctrl.c
++++ b/drivers/media/usb/uvc/uvc_ctrl.c
+@@ -862,6 +862,25 @@ static inline void uvc_clear_bit(u8 *data, int bit)
+ 	data[bit >> 3] &= ~(1 << (bit & 7));
+ }
  
- #define VIVID_CID_VIVID_BASE		(0x00f00000 | 0xf000)
- #define VIVID_CID_VIVID_CLASS		(0x00f00000 | 1)
-@@ -360,6 +361,38 @@ static const struct v4l2_ctrl_config vivid_ctrl_ro_int32 = {
- 	.step = 1,
- };
++static s32 uvc_menu_to_v4l2_menu(struct uvc_control_mapping *mapping, s32 val)
++{
++	unsigned int i;
++
++	for (i = 0; BIT(i) <= mapping->menu_mask; ++i) {
++		u32 menu_value;
++
++		if (!test_bit(i, &mapping->menu_mask))
++			continue;
++
++		menu_value = uvc_mapping_get_menu_value(mapping, i);
++
++		if (menu_value == val)
++			return i;
++	}
++
++	return val;
++}
++
+ /*
+  * Extract the bit string specified by mapping->offset and mapping->size
+  * from the little-endian data stored at 'data' and return the result as
+@@ -896,6 +915,16 @@ static s32 uvc_get_le_value(struct uvc_control_mapping *mapping,
+ 	if (mapping->data_type == UVC_CTRL_DATA_TYPE_SIGNED)
+ 		value |= -(value & (1 << (mapping->size - 1)));
  
-+static const struct v4l2_rect rect_def = {
-+	.top = 100,
-+	.left = 200,
-+	.width = 300,
-+	.height = 400,
-+};
++	/* If it is a menu, convert from uvc to v4l2. */
++	if (mapping->v4l2_type != V4L2_CTRL_TYPE_MENU)
++		return value;
 +
-+static const struct v4l2_rect rect_min = {
-+	.top = 0,
-+	.left = 0,
-+	.width = 1,
-+	.height = 1,
-+};
++	switch (query) {
++	case UVC_GET_CUR:
++	case UVC_GET_DEF:
++		return uvc_menu_to_v4l2_menu(mapping, value);
++	}
 +
-+static const struct v4l2_rect rect_max = {
-+	.top = 0,
-+	.left = 0,
-+	.width = 1000,
-+	.height = 2000,
-+};
-+
-+static const struct v4l2_ctrl_config vivid_ctrl_rect = {
-+	.ops = &vivid_user_gen_ctrl_ops,
-+	.id = VIVID_CID_RECT,
-+	.name = "Rect",
-+	.type = V4L2_CTRL_TYPE_RECT,
-+	.flags = V4L2_CTRL_FLAG_HAS_WHICH_MIN_MAX,
-+	.p_def.p_const = &rect_def,
-+	.p_min.p_const = &rect_min,
-+	.p_max.p_const = &rect_max,
-+};
-+
- /* Framebuffer Controls */
+ 	return value;
+ }
  
- static int vivid_fb_s_ctrl(struct v4l2_ctrl *ctrl)
-@@ -1685,6 +1718,7 @@ int vivid_create_controls(struct vivid_dev *dev, bool show_ccs_cap,
- 	dev->int_menu = v4l2_ctrl_new_custom(hdl_user_gen, &vivid_ctrl_int_menu, NULL);
- 	dev->ro_int32 = v4l2_ctrl_new_custom(hdl_user_gen, &vivid_ctrl_ro_int32, NULL);
- 	v4l2_ctrl_new_custom(hdl_user_gen, &vivid_ctrl_area, NULL);
-+	v4l2_ctrl_new_custom(hdl_user_gen, &vivid_ctrl_rect, NULL);
- 	v4l2_ctrl_new_custom(hdl_user_gen, &vivid_ctrl_u32_array, NULL);
- 	v4l2_ctrl_new_custom(hdl_user_gen, &vivid_ctrl_u32_dyn_array, NULL);
- 	v4l2_ctrl_new_custom(hdl_user_gen, &vivid_ctrl_u16_matrix, NULL);
+@@ -1060,32 +1089,6 @@ static int uvc_ctrl_populate_cache(struct uvc_video_chain *chain,
+ 	return 0;
+ }
+ 
+-static s32 __uvc_ctrl_get_value(struct uvc_control_mapping *mapping,
+-				const u8 *data)
+-{
+-	s32 value = mapping->get(mapping, UVC_GET_CUR, data);
+-
+-	if (mapping->v4l2_type == V4L2_CTRL_TYPE_MENU) {
+-		unsigned int i;
+-
+-		for (i = 0; BIT(i) <= mapping->menu_mask; ++i) {
+-			u32 menu_value;
+-
+-			if (!test_bit(i, &mapping->menu_mask))
+-				continue;
+-
+-			menu_value = uvc_mapping_get_menu_value(mapping, i);
+-
+-			if (menu_value == value) {
+-				value = i;
+-				break;
+-			}
+-		}
+-	}
+-
+-	return value;
+-}
+-
+ static int __uvc_ctrl_load_cur(struct uvc_video_chain *chain,
+ 			       struct uvc_control *ctrl)
+ {
+@@ -1136,8 +1139,8 @@ static int __uvc_ctrl_get(struct uvc_video_chain *chain,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	*value = __uvc_ctrl_get_value(mapping,
+-				uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
++	*value = mapping->get(mapping, UVC_GET_CUR,
++			      uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
+ 
+ 	return 0;
+ }
+@@ -1287,7 +1290,6 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+ {
+ 	struct uvc_control_mapping *master_map = NULL;
+ 	struct uvc_control *master_ctrl = NULL;
+-	unsigned int i;
+ 
+ 	memset(v4l2_ctrl, 0, sizeof(*v4l2_ctrl));
+ 	v4l2_ctrl->id = mapping->id;
+@@ -1330,21 +1332,6 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+ 		v4l2_ctrl->minimum = ffs(mapping->menu_mask) - 1;
+ 		v4l2_ctrl->maximum = fls(mapping->menu_mask) - 1;
+ 		v4l2_ctrl->step = 1;
+-
+-		for (i = 0; BIT(i) <= mapping->menu_mask; ++i) {
+-			u32 menu_value;
+-
+-			if (!test_bit(i, &mapping->menu_mask))
+-				continue;
+-
+-			menu_value = uvc_mapping_get_menu_value(mapping, i);
+-
+-			if (menu_value == v4l2_ctrl->default_value) {
+-				v4l2_ctrl->default_value = i;
+-				break;
+-			}
+-		}
+-
+ 		return 0;
+ 
+ 	case V4L2_CTRL_TYPE_BOOLEAN:
+@@ -1592,7 +1579,7 @@ void uvc_ctrl_status_event(struct uvc_video_chain *chain,
+ 	ctrl->handle = NULL;
+ 
+ 	list_for_each_entry(mapping, &ctrl->info.mappings, list) {
+-		s32 value = __uvc_ctrl_get_value(mapping, data);
++		s32 value = mapping->get(mapping, UVC_GET_CUR, data);
+ 
+ 		/*
+ 		 * handle may be NULL here if the device sends auto-update
 
 -- 
 2.47.0.338.g60cca15819-goog
