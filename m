@@ -1,213 +1,120 @@
-Return-Path: <linux-kernel+bounces-409142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBADF9C87E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:42:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 095749C8807
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:49:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AEA7286D29
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:42:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1CDC287A79
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A611F818B;
-	Thu, 14 Nov 2024 10:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063821F80DF;
+	Thu, 14 Nov 2024 10:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Evpnd0XO"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="P9w4vJbD"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757191EBFEC;
-	Thu, 14 Nov 2024 10:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922071D95A1;
+	Thu, 14 Nov 2024 10:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731580939; cv=none; b=FL4eyAhwEssvwm1R4IbvYcN5P4kZS2ul0HiOy3xLLeOPxfBHx/TihnDOc/GA7zT/7qjjIEB/MeOZgJ9X059NGLtXzNjTHKBZSIPUcVFiHNcgqN1wJhRafrWsmyfEOxqLerXcfPxAXRv05UDPBAPVj8GL07+xnH0CtceIqg1ZjAE=
+	t=1731581351; cv=none; b=b8e4Qxtq5bKUuvYHl5YSqDaB4w/2pdXxhNVbVQH84deCbwNSn7r1kLyWiwyysj9aSlR2fpcrkHs0pvwSGBuaedjV1LnNQotDxesotaU54AKDYrZyZJxgn7noeNNjfL2C4ULA2/+lM0lKLc8PVo6TgLJ9RuKhSNOtKek5ycXKE3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731580939; c=relaxed/simple;
-	bh=PGEcZZfgDPTJH8mmsQtanqM1GY+462KeUc9qNJMT5ko=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YLlclg33NVPMT6ARr6JVz85Gt8KRRstUKwf5T0WpRE1Ee4+mhUQPVHAwTxxTJF+yM4iqLbmtoqW1eEbR4Mc4sN7asg6q1exD/AM2z4SAF+CB5vvTHxM1nFlj2/XetPDjCcxIU0fFtP1TlugVGvs2UneoUPlEwFPNKsoH9lj+udA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Evpnd0XO; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43152b79d25so4311035e9.1;
-        Thu, 14 Nov 2024 02:42:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731580936; x=1732185736; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=+nPHoBUR45jMLntczbv6mDIM+cn4690kH2G9qI3WE9E=;
-        b=Evpnd0XO7UrOkY11BJmZmFE7WFLoCwiwVKiY/qpo3OShHV0mQPJ7QZb36965LGfhdw
-         6WIIPRSYZFUU3Lbxy/BqCWUsmgWJGKQRTz53NH+1zB7XruS9APT8Qkoyoc49lUAgNY8p
-         /tputXUPzIJFNm17yEEUyU7S7Ms2GlwnuHZMSPalzHrYz+rAHqF23y4L8WRmiz0Z/f5t
-         aR1cmIo+dN7F6DeRW4Lymmw2jJ/WHwGaif5vGMkabNzKQRBgeqypdVqBwRFbPLj2+55l
-         iRZ7ni80HcmSvV0bK4Sh8hQwHSoIte8kJFeB6+TU5qgGhnbjkD4QFQK2SxekmTTbdGXg
-         zSFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731580936; x=1732185736;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+nPHoBUR45jMLntczbv6mDIM+cn4690kH2G9qI3WE9E=;
-        b=J8r60EKNdC/JgHYXYwnSGJljmkcrS87dhW618A05sIUyZP+nhDV4uMBG/9aV7LfKJE
-         W8UQlUv1RiPoowxqyUBdl/jK2T4TA7fgYmCoVJ0o+y6/PhC0p2wkNY8v//3SRUN6/KR5
-         shqfuU/QEr7hpWKodd6wbSkS2/WgLbNC8Qt/Jy2EG8tbOlvs3X1oGvooI2xFs8WY1Xej
-         6gNTUdMrxQ6+6osOvkOVj4wh5BcdHzZYTcVWu4zdiHbgU7fN3tcLMUyQpxXvmxCKfuta
-         Cb+sOZ6TPG07+Uj8ZkEL3ow+UwahreD1tEa4KMySYHh0c/C5n2xSmoO+jFnxW1/FIdHf
-         voTA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8B5BYwZmVPOPryLC4Ak7ktjOoBqGmCzmlFCNURkHzWGK8Tv9p1Z/23lUs+DTRFvavo02bLkBvDHg=@vger.kernel.org, AJvYcCXSLBufrcTpNnCrPGE4gJyzknZB++SO6KzyYQvGXLAKN8Oz7yQa+Vdwc2AXZoZcfGOCCx7N42azvoJSzwBa@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuT2yjMIcbwI5KiIKR0Aq9kBiB4idIqcqC+YhnlMnpW6FWICT8
-	Rzi7LVqS9JsAf2MYPmjU5C/et5ymsQAmcXavCKTvvd7PjjjYlum4
-X-Google-Smtp-Source: AGHT+IESM8pd5qb983b1HFGZX+rwbhfIuXObXDAfrT6t6+LTqqSbG/iVNWBUoVajq463Gi4v0GY2bw==
-X-Received: by 2002:a05:600c:1e0f:b0:42c:acb0:ddbd with SMTP id 5b1f17b1804b1-432d4a98359mr54680785e9.7.1731580935574;
-        Thu, 14 Nov 2024 02:42:15 -0800 (PST)
-Received: from ?IPv6:2003:f6:ef02:f400:a23c:697f:16fb:11c5? (p200300f6ef02f400a23c697f16fb11c5.dip0.t-ipconnect.de. [2003:f6:ef02:f400:a23c:697f:16fb:11c5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab80582sm15877405e9.19.2024.11.14.02.42.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 02:42:14 -0800 (PST)
-Message-ID: <1f315c2f3eea86fe4db48f0168660ab4b0b020f1.camel@gmail.com>
-Subject: Re: [PATCH] iio: accel: kx022a: Improve reset delay
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>, Matti Vaittinen
-	 <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, 	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 14 Nov 2024 11:46:38 +0100
-In-Reply-To: <f4cf3437-87ea-4d0f-8dab-890d89f85605@gmail.com>
-References: <ZzWfXbjaDkFnu_Jg@mva-rohm>
-	 <be375e24f74997743743fadf68125e176c23e2df.camel@gmail.com>
-	 <f4cf3437-87ea-4d0f-8dab-890d89f85605@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 
+	s=arc-20240116; t=1731581351; c=relaxed/simple;
+	bh=1pVwujhlE4sgAgf8ixdm9F0aPf17G792ocRgrybwWrc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jf8NALznRN+Yw4rCsXNbYhaYI1Yo/7x7ECXqwO/AXy+kNVgmgjFAVpSd15SQxtLCBKV+zy09OJ05rb9/IgRmFIhXSkzaEWg0GbN+w0qKRN4HJjrG7/sRrmz4ULgetoyp59J+yrDxqh8yAemmPMEdvsdKiA4Sets7X2ogI/9oUCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=P9w4vJbD; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.96] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 712422FC0052;
+	Thu, 14 Nov 2024 11:49:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1731581344;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yBrUmFsxW544nHEIzJzrCra/Vi9YhwoYI0bndIs2Yo8=;
+	b=P9w4vJbDh38Tds+6qqzUbA2Swk/e6TBPiipS40T2GnSvmprF0YMeB+cHWckWiDKiEe9t51
+	ECt6nQxNMJHOHF+uF7dZoVwh9q2TKDvQrrnOEa3X4A4Nv1Vf/15jaFSsjZ80LhvFeK0Nxo
+	d1EhjauYh3mB1PoY784XsF/RGWSrk4Q=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
+Date: Thu, 14 Nov 2024 11:49:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
+ symbols
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>
+Cc: tux@tuxedocomputers.com, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
+ <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Thorsten Leemhuis <linux@leemhuis.info>
+References: <20241114103133.547032-4-ukleinek@kernel.org>
+Content-Language: en-US
+From: Werner Sembach <wse@tuxedocomputers.com>
+In-Reply-To: <20241114103133.547032-4-ukleinek@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2024-11-14 at 11:54 +0200, Matti Vaittinen wrote:
-> On 14/11/2024 11:43, Nuno S=C3=A1 wrote:
-> > On Thu, 2024-11-14 at 08:57 +0200, Matti Vaittinen wrote:
-> > > All the sensors supported by kx022a driver seemed to require some del=
-ay
-> > > after software reset to be operational again. More or less a random
-> > > msleep(1) was added to cause the driver to go to sleep so the sensor =
-has
-> > > time to become operational again.
-> > >=20
-> > > Now we have official docuumentation available:
-> > > https://fscdn.rohm.com/kionix/en/document/AN010_KX022ACR-Z_Power-on_P=
-rocedure_E.pdf
-> > > https://fscdn.rohm.com/kionix/en/document/TN027-Power-On-Procedure.pd=
-f
-> > > https://fscdn.rohm.com/kionix/en/document/AN011_KX134ACR-LBZ_Power-on=
-_Procedure_E.pdf
-> > >=20
-> > > stating the required time is 2 ms.
-> > >=20
-> > > Due to the nature of the current msleep implementation, the msleep(1)=
- is
-> > > likely to be sleeping more than 2ms already - but the value "1" is
-> > > misleading in case someone needs to optimize the start time and chang=
-e
-> > > the msleep to a more accurate delay. Hence it is better for
-> > > "documentation" purposes to use value which actually reflects the
-> > > specified 2ms wait time.
-> > >=20
-> > > Change the value of delay after software reset to match the
-> > > specifications and add links to the power-on procedure specifications=
-.
-> > >=20
-> > > Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> > > ---
-> > > Sorry for not including this to the KX134ACR-LBZ series I sent
-> > > yesterday. It was only half an hour after I had sent the KX134ACR-LBZ
-> > > support when I was notified about the existence of the KX022ACR-Z
-> > > start-up procedure specification... Hence this lone patch to code whi=
-ch
-> > > I just sent a miscallaneous series for before.
-> > >=20
-> > > =C2=A0=C2=A0drivers/iio/accel/kionix-kx022a.c | 11 ++++++++---
-> > > =C2=A0=C2=A01 file changed, 8 insertions(+), 3 deletions(-)
-> > >=20
-> > > diff --git a/drivers/iio/accel/kionix-kx022a.c b/drivers/iio/accel/ki=
-onix-
-> > > kx022a.c
-> > > index 32387819995d..ccabe2e3b130 100644
-> > > --- a/drivers/iio/accel/kionix-kx022a.c
-> > > +++ b/drivers/iio/accel/kionix-kx022a.c
-> > > @@ -1121,10 +1121,15 @@ static int kx022a_chip_init(struct kx022a_dat=
-a
-> > > *data)
-> > > =C2=A0=C2=A0		return ret;
-> > > =C2=A0=20
-> > > =C2=A0=C2=A0	/*
-> > > -	 * I've seen I2C read failures if we poll too fast after the
-> > > sensor
-> > > -	 * reset. Slight delay gives I2C block the time to recover.
-> > > +	 * According to the power-on procedure documents, there is (at
-> > > least)
-> > > +	 * 2ms delay required after the software reset. This should be
-> > > same
-> > > for
-> > > +	 * all, KX022ACR-Z, KX132-1211, KX132ACR-LBZ and KX134ACR-LBZ.
-> > > +	 *
-> > > +	 *
-> > > https://fscdn.rohm.com/kionix/en/document/AN010_KX022ACR-Z_Power-on_P=
-rocedure_E.pdf
-> > > +	 *
-> > > https://fscdn.rohm.com/kionix/en/document/TN027-Power-On-Procedure.pd=
-f
-> > > +	 *
-> > > https://fscdn.rohm.com/kionix/en/document/AN011_KX134ACR-LBZ_Power-on=
-_Procedure_E.pdf
-> > > =C2=A0=C2=A0	 */
-> > > -	msleep(1);
-> > > +	msleep(2);
-> >=20
-> > msleep() is not advisable for something lower than 20ms. Maybe take the
-> > opportunity and change it to fsleep()?
->=20
-> Thank you for the suggestion Nuno. I did originally consider using the=
-=20
-> usleep_range() since the checkpatch knows to warn about msleep with=20
-> small times.
->=20
-> However, there should be no rush to power-on the sensor at startup. It=
-=20
-> usually does not matter if the sleep is 2 or 20 milli seconds, as long=
-=20
-> as it is long enough. I wonder if interrupting the system with hrtimers=
-=20
-> for _all_ smallish delays (when the longer delay would not really hurt)
+Hello,
 
-That's why you have ranges of about 20% (I think) in usleep() so you minimi=
-ze
-hrtimers interrupts.
+Am 14.11.24 um 11:31 schrieb Uwe Kleine-König:
+> Hello,
+>
+> the kernel modules provided by Tuxedo on
+> https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers
+> are licensed under GPLv3 or later. This is incompatible with the
+> kernel's license and so makes it impossible for distributions and other
+> third parties to support these at least in pre-compiled form and so
+> limits user experience and the possibilities to work on mainlining these
+> drivers.
+>
+> This incompatibility is created on purpose to control the upstream
+> process. See https://fosstodon.org/@kernellogger/113423314337991594 for
+> a nice summary of the situation and some further links about the issue.
+>
+> Note that the pull request that fixed the MODULE_LICENSE invocations to
+> stop claiming GPL(v2) compatibility was accepted and then immediately
+> reverted "for the time being until the legal stuff is sorted out"
+> (https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/a8c09b6c2ce6393fe39d8652d133af9f06cfb427).
 
-Other thing is boot time... Sleeping 20ms instead of 2ms is a huge differen=
-ce.
-Imagine if everyone thought like this for small sleeps :)?
+As already being implied by that commit message, this is sadly not an issue that 
+can be sorted out over night.
 
-> is a the best design choice. Hence I'd rather keep the msleep when we=20
-> don't need to guarantee delay to be short instead of defaulting to=20
-> hrtimers or even busy-loop when it is not required.
->=20
-> Do you think I am mistaken?
->=20
+We ended up in this situation as MODULE_LICENSE("GPL") on its own does not hint 
+at GPL v2, if one is not aware of the license definition table in the documentation.
 
-To me this is more about correctness and do what the docs tell us to do :).
-Sure, here you know what you're doing and you don't care if you end up slee=
-ping
-more than 2ms but that's not always the case and code like this allows for =
-legit
-mistakes (if someone just copy paste this for example).
+It was and is never our intention to violate neither GPL v2 nor GPL v3 and we 
+are working on it.
 
-Not a big deal anyways...
+Kind regards,
 
-- Nuno S=C3=A1
+Werner Sembach
 
+>
+> Best regards
+> Uwe
+>
+> Uwe Kleine-König (2):
+>    module: Put known GPL offenders in an array
+>    module: Block modules by Tuxedo from accessing GPL symbols
+>
+>   kernel/module/main.c | 56 +++++++++++++++++++++++++++++++++++++-------
+>   1 file changed, 47 insertions(+), 9 deletions(-)
+>
+> base-commit: 28955f4fa2823e39f1ecfb3a37a364563527afbc
 
