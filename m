@@ -1,104 +1,156 @@
-Return-Path: <linux-kernel+bounces-409222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D12809C8952
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:56:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5CF09C894F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:55:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E1C8B24C8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:42:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82194B24D8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBBD1F9404;
-	Thu, 14 Nov 2024 11:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D48C41F9404;
+	Thu, 14 Nov 2024 11:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QQHAMNvV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="OPDAA2uf"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135AF1F8917;
-	Thu, 14 Nov 2024 11:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42EA1F77BF;
+	Thu, 14 Nov 2024 11:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731584551; cv=none; b=AXxHkK15VzSo88ao9AhdF662tMfazN98VSCdYZj8H9OxZ/tEbxXy/46gryFV0BECWMpquQYFJOtD3miNRqcOcNQjeDgHp2pwz5rIj9dIwvTUlqieXuMpZrgAm/F1rYWTF40r7fXq2j52WzQiJ85ud4B2I2OXrU6u7IODbNmYs1I=
+	t=1731584662; cv=none; b=k/YRmYvo/9D4c9WdOqYj34iUjo1+5XeS/Ige8vPOX+D6+q5e2ToMQziC+sDjp0ShW99euoMg+vsurgJ3P/UHyb3hvivit8YI9LoBSf+q+P08QNb2WF2d6vr3DMzs3IaNbcARxidHGpsqMFTUsJwiHg+Q4p0oyh9aAFQKPpAeRww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731584551; c=relaxed/simple;
-	bh=xUGHZDJyHnRsMWo5XBPmfd5sEStqMlmHUm2I238eKsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KbK+AAPK1OaVWoSudKjXCmKOqB3416QR/bbnAgKxOW+XUgrli8HR17EYKu/y61gsTznOK/1HExkaONL/3ClQQZqypiN2m7StuvVUf/Q9kTUXkB9CK5Ko+m1UHSvZcLYKzvY75drurZeA9yXBwe7xqv3TIdkjBwhAfLamfYTjioI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QQHAMNvV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33FB6C4CECD;
-	Thu, 14 Nov 2024 11:42:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731584550;
-	bh=xUGHZDJyHnRsMWo5XBPmfd5sEStqMlmHUm2I238eKsc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QQHAMNvVLThR+eMdfABSwEOUMriGZjXe4FPzfTweoSxlLyc/mp3Rls0mai/nVTjkz
-	 Nat5pHpdBh4oMXg1pofzTYQ7pDSzvaYcdJu8uuKHd35Vi409cPJKwt/+N42s7O6Q+s
-	 r4++mv/lPQRjDwckg3ojAzxLfjajp0UCO1M3Xas86WMdOuFct9F3RFEHTSViRHq6tY
-	 6neOmESV2QggywJSPaIEckIdAMlZ0Mj21A2w64iQBkKFi4C1ZqJRbL2yPhwTxABSXf
-	 TXjRcVA8jgPPhQACdKIE3OCVbljK34lcZejC+1Mj7Y7i59DH8Ziw+AQvojXT3SuQ4t
-	 PCV9H5sHNibxg==
-Date: Thu, 14 Nov 2024 11:42:28 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Christian Hewitt <christianshewitt@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Jonas Karlman <jonas@kwiboo.se>,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Matthias Reichl <hias@horus.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Jani Nikula <jani.nikula@intel.com>
-Subject: Re: [RESEND v2] ASoC: hdmi-codec: reorder channel allocation list
-Message-ID: <ZzXiJIyf8Iyb7f50@finisterre.sirena.org.uk>
-References: <7697010E-E0F2-419F-8378-FC3E491EE1E4@gmail.com>
+	s=arc-20240116; t=1731584662; c=relaxed/simple;
+	bh=36TpTDrJm3vRUum87tAmdtBGJCbKOOeB1ak12csyJqM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FbO6yShY5sIrED+cb0ilm06txPExExL2l8oQsknEsPxrg6X2R0CNNQBGbWs6EIdNk5fFlZ4bicfRS/5IevQoFsGH0XDpFtOe374nRCHRkx2DhkHfUGEQj4Bm4V4QK/ZGiv/wrlPVVNh/I9Kdhw4OmTHhFNZSO75H4m+oIRdpCA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=OPDAA2uf; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.96] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 86DDB2FC0050;
+	Thu, 14 Nov 2024 12:44:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1731584652;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kbS4/iXx9aVrajazwwhi8q7MzisqUawCI2x+4aG3FIE=;
+	b=OPDAA2ufPXXMhlINJkUEmE7gnFE7C9mUcoHrrfdafUkohBg1B0Zeom/4P6XfT9ngezIQgZ
+	fAhBrq78p2nSNiW/xRi2K/Z4aO0rBnp30kFRpxj0F8gNMRfPAJ1nj9R51DgQLMxz3A2kdM
+	fQcPUhTunvUGLq4CNWXpQ9Lr8fdV9O4=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <f7f8fa08-004b-4092-a4df-90cac8e325e2@tuxedocomputers.com>
+Date: Thu, 14 Nov 2024 12:44:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="usOhYHKopyrymRii"
-Content-Disposition: inline
-In-Reply-To: <7697010E-E0F2-419F-8378-FC3E491EE1E4@gmail.com>
-X-Cookie: We have DIFFERENT amounts of HAIR --
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
+ symbols
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>
+Cc: tux@tuxedocomputers.com, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
+ <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Thorsten Leemhuis <linux@leemhuis.info>
+References: <20241114103133.547032-4-ukleinek@kernel.org>
+ <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
+ <e7d97b3d-1880-4c89-bbf2-a742d6ac9e6b@kernel.org>
+Content-Language: en-US
+From: Werner Sembach <wse@tuxedocomputers.com>
+In-Reply-To: <e7d97b3d-1880-4c89-bbf2-a742d6ac9e6b@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Hello,
 
---usOhYHKopyrymRii
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Am 14.11.24 um 12:14 schrieb Uwe Kleine-König:
+> Hello,
+>
+> On 11/14/24 11:49, Werner Sembach wrote:
+>> Am 14.11.24 um 11:31 schrieb Uwe Kleine-König:
+>>> the kernel modules provided by Tuxedo on
+>>> https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers
+>>> are licensed under GPLv3 or later. This is incompatible with the
+>>> kernel's license and so makes it impossible for distributions and other
+>>> third parties to support these at least in pre-compiled form and so
+>>> limits user experience and the possibilities to work on mainlining these
+>>> drivers.
+>>>
+>>> This incompatibility is created on purpose to control the upstream
+>>> process. See https://fosstodon.org/@kernellogger/113423314337991594 for
+>>> a nice summary of the situation and some further links about the issue.
+>>>
+>>> Note that the pull request that fixed the MODULE_LICENSE invocations to
+>>> stop claiming GPL(v2) compatibility was accepted and then immediately
+>>> reverted "for the time being until the legal stuff is sorted out"
+>>> (https://gitlab.com/tuxedocomputers/development/packages/tuxedo- 
+>>> drivers/-/commit/a8c09b6c2ce6393fe39d8652d133af9f06cfb427).
+>>
+>> As already being implied by that commit message, this is sadly not an issue 
+>> that can be sorted out over night.
+>>
+>> We ended up in this situation as MODULE_LICENSE("GPL") on its own does not 
+>> hint at GPL v2, if one is not aware of the license definition table in the 
+>> documentation.
+>
+> That statement isn't consistent with you saying to pick GPLv3 as an explicitly 
+> incompatible license to control the mainlining process. So you knew that it's 
+> legally at least questionable to combine these licenses.
+Put in the time-dimension and you can figure out where this isn't inconsistent.
+>
+> The only thing I could accept here is that you were surprised that the 
+> incompatibility has some technical enforcement resulting in your modules to 
+> become nonfunctional. But that's like a thieve in a supermarket who asks for 
+> forgiveness because while he was aware that steeling is not allowed, wasn't 
+> aware there is video surveillance that might actually catch him.
+>
+> So I'd claim MODULE_LICENSE("GPL") not being explicit to not apply for GPLv3 
+> code is not a valid excuse. (Which doesn't mean the kernel couldn't improve 
+> here.)
 
-On Tue, Nov 12, 2024 at 09:07:00AM +0400, Christian Hewitt wrote:
-> From: Jonas Karlman <jonas@kwiboo.se>
->=20
-> The ordering in hdmi_codec_get_ch_alloc_table_idx() results in
-> wrong channel allocation for a number of cases, e.g. when ELD
-> reports FL|FR|LFE|FC|RL|RR or FL|FR|LFE|FC|RL|RR|RC|RLC|RRC:
+I can not tell anything else than I wrote above so I probably can't gain your 
+trust that it was an honest mistake.
 
-This doesn't apply against current code, please check and resend.
+Thing is we are working on rewriting the driver bit by bit directly for upstream 
+under GPL v2, e.g. 
+https://lore.kernel.org/all/20241001180658.76396-2-wse@tuxedocomputers.com/
 
-Applying: ASoC: hdmi-codec: reorder channel allocation list
-error: corrupt patch at line 6
-error: could not build fake ancestor
-Patch failed at 0004 ASoC: hdmi-codec: reorder channel allocation list
+And we don't stop anyone else from doing so and actively involve ourself in the 
+process, giving advice where we can from our experience with the devices, e.g. 
+https://github.com/Wer-Wolf/uniwill-laptop/issues/1
 
---usOhYHKopyrymRii
-Content-Type: application/pgp-signature; name="signature.asc"
+And tuxedo-drivers got code in the past from external contributors under GPL v3 
+that also weren't aware of the correct definition of MODULE_LICENSE("GPL") which 
+needs to be sorted out.
 
------BEGIN PGP SIGNATURE-----
+And no tuxedo-drivers module would get accepted upstream as is at the moment, 
+because the focus of the driver package is mainly to get support for new devices 
+out as quickly as possible, while upstream rightfully has way stricter 
+guidelines on code quality (not implying that tuxedo-drivers has bad code 
+quality, it's a spectrum after all).
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmc14iMACgkQJNaLcl1U
-h9BV4gf+LJ5mkc6iJE3lOhouUfTDTYAb0HCe2hehR3zHxG5fml6bhZRD+qZGXAUN
-Gt6MOhYkXGEBje6OzQcULFUQX8rgEOqMErf0AHylleearH4cceI126kmUxituqrz
-BRFnNP+6qdXMX6VvEJnVYOO3zgVsriCs8nJxrFP9Xx2wRmrkvtaBlF0Fpb+zK5Sk
-x4su143PQwjAstdpAPyuAfbM3yBKzuTHuc8I87dXdpRpmvFTLl3KTK9vjFmr9dQO
-L8REdphCs5400JrG8Qk8BJEL95UI50pB7srN+eY1q1SpBM47zN2Md8SahJXJQ1wt
-+++5gMzxxcbPg49N7IO6/WI7xAMzbQ==
-=KPnd
------END PGP SIGNATURE-----
+What I want to say: If the end goal is upstream support for our devices nothing 
+is speed up by the relicensing, arguably it's slowed down because someone now 
+has to sort out legal stuff. If you want to take on the actual coding work 
+yourself, please do so, I will give you advice as I did with Armins uniwill 
+laptop driver and several times on the mailing list.
 
---usOhYHKopyrymRii--
+Kind regards,
+
+Werner Sembach
+
+>
+> Best regards
+> Uwe
 
