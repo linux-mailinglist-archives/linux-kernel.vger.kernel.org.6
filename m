@@ -1,138 +1,143 @@
-Return-Path: <linux-kernel+bounces-409322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25D9F9C8B59
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:03:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DEA29C8B48
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:58:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC701B2E89D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:58:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09F041F24D14
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6371FB751;
-	Thu, 14 Nov 2024 12:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317AE1FA851;
+	Thu, 14 Nov 2024 12:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b="vrMPpY3W";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="O7aD1roi"
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="OTACQh96"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF6C1FAC5F;
-	Thu, 14 Nov 2024 12:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CE61F8900
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 12:58:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731589010; cv=none; b=hUgokPIs+J9zcyT6l5FjBNBCRIUPJKTRrXhFb+j7XOff1o7iEiW8yyQL+/6Uy3mdcxbcSlJfq2VavJqp6guPJ/qkVfxO92pFVzKDaGKIXp/YrOUc638JXwLQ7zRVpltdqgYASoZZsapmKovr0/CgXmfWlxsyU9ATkFmgt3Jfdh0=
+	t=1731589122; cv=none; b=KZvwLuTRI3qupEYgTzQnL2YUx1zQxOrFBXaG7Xk9/bUBoU4tasLdrPf9gs8KuQJId/hpLeaIvKLlGyJX6k+O7vdtDUhX7tTlX3h3TVwYyPPJQyc4G27sst1XMk2d3GdGsCSY3dsKIOsfVbXHOMoEc+LArfPnOQhFEGDTzPN/Avw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731589010; c=relaxed/simple;
-	bh=OEEPGPn+WdCzU967s/fVLhxpOUTBrHOH/Uf45/2H4RY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AP5IE2wkKWZNlK2RsaA4FF6WXwiLdrlIed+jU6Trv3Y/ho7quCWUQpjRBUxYg+ofy2TPtGZLNfEL3vaCu2XKgcWGWcUURUVxrZGYS583RI7c2xn8gzASEZFqUyjaDbIkvNv2Ibn9IEqjuwYdpSjoXcW7CDgdepjvFwjTYtCy7FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu; spf=pass smtp.mailfrom=e43.eu; dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b=vrMPpY3W; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=O7aD1roi; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=e43.eu
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 330EA11401C4;
-	Thu, 14 Nov 2024 07:56:48 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-07.internal (MEProxy); Thu, 14 Nov 2024 07:56:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=e43.eu; h=cc:cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1731589008;
-	 x=1731675408; bh=OEEPGPn+WdCzU967s/fVLhxpOUTBrHOH/Uf45/2H4RY=; b=
-	vrMPpY3WfbjUN4RvtQwBVZhzapEn9gpcUyWrLghzLiLsN+tpKv/JoEE5+MyQCkZq
-	BCjQfJl6hNP8vE6mt9vEbDTI5DeB8EyoJ3tnyBI645Qf7+fT8V48S8c4XO8q/o7X
-	9tsPMHZXA+quFRK0a4FHejLDVJZI2dw1boKoUIk9/M4ilWMJQO5rrIwDRoURoHZc
-	eBXxc9DprityaU5ra3yI2N9k09IGwFrYd8xLESq22fGEAqwMQ7cyzNE+d11JtQ3q
-	TBEtcMfoe+XZlaaHsUlzCp8/HDkr4N0wIcjkr0AbgnBOEURdolOvRdaXqjI97i1q
-	HirT2SAWG3S3PdhWIcHs2w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731589008; x=
-	1731675408; bh=OEEPGPn+WdCzU967s/fVLhxpOUTBrHOH/Uf45/2H4RY=; b=O
-	7aD1roix7Ga/z2nSKA1S88xjQ+HsufKU1WOCU7mYccMbj9Nh+Dg9T/vQSA1Q2f2m
-	/uj1hWHvZP/MNqcaKiWxFmm1BfqG+In41oIULb33fwDGdE3/dTzVGPLF07k1H8bz
-	chR8qMYaLauYi/mYW14vvTtDZM3/Uuch7uJrNaa7i1b5gV+8rWt4SRbvmng/v8Vu
-	TkfB1iLKYFtYmL2rYK+HJ+IhMf32uUlnymVpeQMPVGcHlwpPLAHlKOcCrsPXjtAw
-	zo1G066kbDPUZz1qJWbCM//Mbua4UUyws/hbd2zxhH5EZ8VoqjdiJOHv7OLzQlMs
-	tjiQqcYXLLV5dFwitImZg==
-X-ME-Sender: <xms:j_M1Z6Vi1SJ2hYyfFlfDZelpfrujAPWuu6bYYX_v32rcZ2S4tpsqrA>
-    <xme:j_M1Z2lajdkW-xYxNUoP2JTjkQqs5WVL3MfnBL78GyMQP2IttFOoizoBj_bTf7QEZ
-    ZNehT6xgdovre3cXNw>
-X-ME-Received: <xmr:j_M1Z-Yslv5Ob0KCoROlYppa1KC0c1h-Nf-iENPeXghYVAK4lBJSvcbmh2ca6JUKU2lszvCG2i7vjKYwMSL6l-T9JCZr>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddvgdeghecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeen
-    ucfhrhhomhepgfhrihhnucfuhhgvphhhvghrugcuoegvrhhinhdrshhhvghphhgvrhguse
-    gvgeefrdgvuheqnecuggftrfgrthhtvghrnhepjeeftdelheduueetjeehvdefhfefvddv
-    ieekleejfeevffdtheduheejledvfedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepvghrihhnrdhshhgvphhhvghrugesvgegfedrvghupdhn
-    sggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohephhgthh
-    esihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruh
-    hkpdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtoheptghhuhgtkhdr
-    lhgvvhgvrhesohhrrggtlhgvrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhsuggvvh
-    gvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghr
-    nhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjlhgrhihtohhnse
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtgho
-    mh
-X-ME-Proxy: <xmx:j_M1ZxUuM28GvNPPQK66AvlvVhQOq3Lw_VFrbEXfye3LRzp7rHD16Q>
-    <xmx:j_M1Z0lB0UH6C5XhSG-G9D4eAkQGJBzIkajmkl5XiCP4WnI5lZ-sKQ>
-    <xmx:j_M1Z2f-8gTCV7ESFvJGO9jhH6LCbHZojaac70k46lhtiTsgxQtVNQ>
-    <xmx:j_M1Z2FtmLdRvNT-ixQCYzGvWh8nl4qWq0xUxb31JlWMdiIDk878jQ>
-    <xmx:kPM1Z9e3Ht5NynNLPa1DpoR-ZAjGd2qzDlncHA4P9HP_kzRqdAal42Jv>
-Feedback-ID: i313944f9:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 14 Nov 2024 07:56:46 -0500 (EST)
-Message-ID: <bae72e9f-c88c-43ec-a91a-40f217ea2adc@e43.eu>
-Date: Thu, 14 Nov 2024 13:56:45 +0100
+	s=arc-20240116; t=1731589122; c=relaxed/simple;
+	bh=xWQWMy/jdFMJaTh4AOC32fDnuGBgd4vNcEibca7nWT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sKq/y2N1C/FPKY/wQKt+7gQEe7sA0cSNxtoNNij5RNecrRABSPj/YnZx29skPYE4/LnDznA/aAup5XE/CwIN1xUDK69TTpfXSiJCSRPvFOUdVIkKWVdIsOSBivCyoPFk/Qa7H736xKVRJ7g5IwVlco4tCLbySO8rIRTXb/5cacM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=OTACQh96; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B2B9F40E0286;
+	Thu, 14 Nov 2024 12:58:37 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 5BlOkF5UHrcN; Thu, 14 Nov 2024 12:58:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1731589111; bh=2/AlNgW6u7yIa6lOaXbDTi3Mq1hJf06A6eBH8f8bSJ0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OTACQh96dk8K0SEzOD21FlLumOYDkSRoHaNlEh0DZsC+nFmoHytb8pF/3f6uZBA/2
+	 itsgv3X1t/Am51VqNgsX67f5+/jnDvUCeSF2OXe3tOPlGINTo0lVHtI8h5R809tPE5
+	 VrVvBzg68G1FfZT0ldRGB4+j8dM4vy2WoVAi/a7YrZ7qzkQqctldcDiq+oU2Ymtl83
+	 J3zkHvFUmO9opxbd/12hjebwb69oW+PuZI+jWgxkne0Uq+b/k3/Sq32mrzJkh4grrH
+	 2Ih5dR1MRlTCRW+pJGorfTpYirMPTnOtL6LR4w4hT1oh37vb7JhltTw0LBdKDbK0UA
+	 DiQDwfXz6DCy6br0XZGX4jjPBAOj/OieCiIbqyvRNvlR85zI+xfTfa6iqvGo7tN3+V
+	 2cK0hNKRY+1zaRvxYdpoHmd/wXDoxkzXlyE0cjg3Dt1VmNHQKFB3ZXQx5TJb3teitn
+	 dNvvYY1WkydyEqOTRSH9Wha8S/n2ZKxQXOtZLBVMxw6oLjfnUVN81N9WKSyCHoTjNF
+	 lXNxB+qWwC1r8/AnB9cK8B6xhsskwxFWnwafJz/gUxj3xvS+QSMcZPLBb5Wpl4vlCC
+	 HDqX09pugzpP4K9G/A99zzDt/IsMPf+/t8Tuk6BTXPDeFl8CsTHnlWonPYu8XqC0g3
+	 XYueF1SAOmJalDo/bYzxH7cs=
+Received: from zn.tnic (p200300ea973a314f329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:973a:314f:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 854B540E015E;
+	Thu, 14 Nov 2024 12:58:28 +0000 (UTC)
+Date: Thu, 14 Nov 2024 13:58:18 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Nikolay Borisov <nik.borisov@suse.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] x86/microcode/AMD: Make __verify_patch_size() return
+ bool
+Message-ID: <20241114125818.GFZzXz6vdhwPdSa4dk@fat_crate.local>
+References: <20241018155151.702350-1-nik.borisov@suse.com>
+ <20241018155151.702350-3-nik.borisov@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] exportfs: allow fs to disable CAP_DAC_READ_SEARCH
- check
-Content-Language: en-GB
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
- Amir Goldstein <amir73il@gmail.com>, linux-nfs@vger.kernel.org
-References: <20241113-pidfs_fh-v2-0-9a4d28155a37@e43.eu>
- <20241113-pidfs_fh-v2-2-9a4d28155a37@e43.eu> <ZzV-oVtytT28gHz2@infradead.org>
-From: Erin Shepherd <erin.shepherd@e43.eu>
-In-Reply-To: <ZzV-oVtytT28gHz2@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241018155151.702350-3-nik.borisov@suse.com>
 
+On Fri, Oct 18, 2024 at 06:51:50PM +0300, Nikolay Borisov wrote:
+> The result of that function is in essence boolean, so simplify to return
+> the result of the relevant expression. It also makes it follow the
+> convetion used by __verify_patch_section(). No functional changes.
 
-On 14/11/2024 05:37, Christoph Hellwig wrote:
-> On Wed, Nov 13, 2024 at 05:55:24PM +0000, Erin Shepherd wrote:
->> For pidfs, there is no reason to restrict file handle decoding by
->> CAP_DAC_READ_SEARCH.
-> Why is there no reason, i.e. why do you think it is safe.
+convetion used by __verify_patch_section(). No functional changes.
+Unknown word [convetion] in commit message.
+Suggestions: ['convection', 'convention', 'conversion', 'confection', 'conviction', 'connection', 'confession']
 
-A process can use both open_by_handle_at to open the exact same set of
-pidfds as they can by pidfd_open. i.e. there is no reason to additionally
-restrict access to the former API.
+You need a spellchecker. :)
 
->> Introduce an export_ops flag that can indicate
->> this
-> Also why is is desirable?
->
-> To be this looks more than sketchy with the actual exporting hat on,
-> but I guess that's now how the cool kids use open by handle these days.
-Right - we have a bunch of API file systems where userspace wants stable
-non-reused file references for the same reasons network filesystems do.
-The first example of this was cgroupfs, but the same rationale exists for
-pidfs and process tracking.
+> Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
+> ---
+>  arch/x86/kernel/cpu/microcode/amd.c | 11 +++--------
+>  1 file changed, 3 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+> index 9986cb85c951..37a428b109a2 100644
+> --- a/arch/x86/kernel/cpu/microcode/amd.c
+> +++ b/arch/x86/kernel/cpu/microcode/amd.c
+> @@ -282,7 +282,7 @@ __verify_patch_section(const u8 *buf, size_t buf_size, u32 *sh_psize)
+>   * exceed the per-family maximum). @sh_psize is the size read from the section
+>   * header.
+>   */
+> -static unsigned int __verify_patch_size(u32 sh_psize, size_t buf_size)
+> +static bool __verify_patch_size(u32 sh_psize, size_t buf_size)
+>  {
+>  	u8 family = x86_family(bsp_cpuid_1_eax);
+>  	u32 max_size;
+
+You missed a spot here for the >= 0x15 families. And I think this is more
+readable and more precise what is supposed to be checked here:
+
+---
+diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+index 8bd79ad63437..0211c62bc4c4 100644
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -289,7 +289,7 @@ static bool __verify_patch_size(u32 sh_psize, size_t buf_size)
+ 	u32 max_size;
+ 
+ 	if (family >= 0x15)
+-		return min_t(u32, sh_psize, buf_size);
++		return sh_psize == min_t(u32, sh_psize, buf_size);
+ 
+ #define F1XH_MPB_MAX_SIZE 2048
+ #define F14H_MPB_MAX_SIZE 1824
+@@ -306,7 +306,7 @@ static bool __verify_patch_size(u32 sh_psize, size_t buf_size)
+ 		return 0;
+ 	}
+ 
+-	return sh_psize <= min_t(u32, buf_size, max_size);
++	return sh_psize == min_t(u32, buf_size, max_size);
+ }
+ 
+ /*
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
