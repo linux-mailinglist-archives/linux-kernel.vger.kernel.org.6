@@ -1,96 +1,125 @@
-Return-Path: <linux-kernel+bounces-409467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19209C8D0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:40:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5267D9C8D0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:41:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B74E9282AF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:40:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1733628277E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0262578C60;
-	Thu, 14 Nov 2024 14:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E83744375;
+	Thu, 14 Nov 2024 14:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="X7/3xCCC"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CTfpqe7d"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B083128E0F
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 14:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B070041C65
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 14:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731595221; cv=none; b=Mr5Ol5wiovv2O1tQSVNXZk9VInL0ZsxVUWpgip0BR52SFQZPkPGUEUcIU3tUhd61qFmzEcEb18+BxlG95mqlC1YzyEhu84CQ/a9ZBriPDzhi8OrBr4WRRBsCtW6Cqupp1cowmuA/vFkOsGNqzp73W4sd9pz9E4Zm+BxCxYp0dEg=
+	t=1731595255; cv=none; b=ADrviWJ8k6IKK7BuBAqE7GXGYP23LY0g061KqbmumcLcGKxWoFRjLeuWWyomffHiOsVBPqf95ZxlY1yaJpX936+HpTdMTmCKJ2vaTlXtUdddOBtksnjAGQAvk5VKyJFjPgnf286hpEas6sYkOVb5MavvCMsSeqj2FVeRiWnF1lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731595221; c=relaxed/simple;
-	bh=e7edyJtnJ4Cn5zeZha2hQbLwSsLKfWIP22qLw3+yZv4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UhUGzQQU/2U9TBxjI4ljUiaiWi6mKNsfzmQvKpflOEJLEd18GSLjV4lLishDZeCq0M4a53QSS3n44gE3WtrRM+3J8LN0R/aGo1j58ZYE0uaQFMtAtL3eRAiHJ8S5wFurLrxNd1ukbvn/Migb8kjW9A7tAUDU7ICAMT4yCm5hSgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=X7/3xCCC; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ON+yQ55DHGOGajBMdwOK6Cb6Pg8Z9gjV2I6XePDBKcU=; b=X7/3xCCCXcpOrDlQBRgudFnFwE
-	pWXgLPGoSGmBUdsduvaokBeJ0NB+DOuQ8QvFb34eImhD8fxMjKJLXfpBnaJmKPs4uGAwY5tSlL7A/
-	5JHj1KnbVjBRL3+ZWUaR3F83fhUOphzdC0os4KdeW3YNpwu+Bg/zb64N5BNALVsL/ChMf9hdwKkFZ
-	su5lcwOC9XoJB7stA3hQa1LDgCKv9/tgMChZP2KR67I3m5oxL65ARj/Tg1h0owati+So53KCU7TTt
-	ENo13Ev+5ERwpYdsculOmKL4hd9+Dc4yLBlEAaiIlMYKfLA7qRGCvlxK6GQhOC5SszA7Rg2HHJq/m
-	6gMqU9Tg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tBb0y-00000000vsp-3VXU;
-	Thu, 14 Nov 2024 14:40:08 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 0FD3A300446; Thu, 14 Nov 2024 15:40:08 +0100 (CET)
-Date: Thu, 14 Nov 2024 15:40:07 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Rik van Riel <riel@surriel.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-	linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
-	luto@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	x86@kernel.org, kernel-team@meta.com, hpa@zytor.com,
-	bigeasy@linutronix.de
-Subject: Re: [PATCh 0/3] x86,tlb: context switch optimizations
-Message-ID: <20241114144007.GB39245@noisy.programming.kicks-ass.net>
-References: <20241109003727.3958374-1-riel@surriel.com>
- <20241113095550.GBZzR3pg-RhJKPDazS@fat_crate.local>
- <20241113095557.2d60a073@imladris.surriel.com>
- <ZzXIcAi4R5yH8ZtN@gmail.com>
- <cdba614a4522307fb06615fcc3909f2f2d03f333.camel@surriel.com>
+	s=arc-20240116; t=1731595255; c=relaxed/simple;
+	bh=HcCvIB88MPRD5aeO4gf2gSK3T0xpM8aWwWko0sqwRYQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ewViat7+BVfN0/qQwWc1llIMAXVJ3fa4F08MfUvSbKLxwNsc4MDQNYeYKxCRENF+Cp0SkegkXT3fEX5GMsqmO60FtAp7WYNsjTsKaqPeS+3pIxBveYh40IfKjpY8ULNurpM/1c1lgVHn2hi0Q0sxsJfRQxbUvtbbTKmyGRFKQ2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CTfpqe7d; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43169902057so6245505e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 06:40:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1731595252; x=1732200052; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SW0qlvFLRx/f/8Y2+/4VCpRyYXhv497Qp89oJnR6EpY=;
+        b=CTfpqe7dIZamJLYDDWvjSQET46T6NHxaHAyn7plkRdUZxBHfc921rEUonFadCUU/bB
+         qO270Z4N+vXuo/DREkJ2hhDoNx1Bgecr8jhF1ZgNsB/mbnOTsfwVwnr29OdwN1foMqBO
+         hH+xPSZXFuiZbaKs4lNPvhBF0oTKav4Kn7Dq9EYtgQXEXtvDu+9fEZWKkFTlk/08Jke0
+         PLv+QeCWqiGzJWMmRm2DMeIR5dgm4w9805IL/Uh6Bpj2XYkNkFsdUzTeC0xnJ8uAOAJ1
+         Y4IuWoFJ8XDMLLX1vjE03UyY26AysC9zAY5LHhGz4rBIOw1wGZZS3R0/ooJFjKeyXYbs
+         XaRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731595252; x=1732200052;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SW0qlvFLRx/f/8Y2+/4VCpRyYXhv497Qp89oJnR6EpY=;
+        b=W2RfHl/rH/DKADbeBLHSCHqRwpSHKv1TMvZlerk50/fGyKZulrGemR2MZTtsX9XSA3
+         zx7R0b6w+m5jR+9POTEOFLxvBgKoG49Hi7BJEubL2WBc24xL3YN9L1xm0D5lSoQaqOfl
+         5BH9FTHoUcmZ7E/fY18bBKXmnzyqgRtNF/yMDxfWFEKntQrfbXHL8akEvDaTsJsjkwSP
+         vUQzulG23aVYxOjrpRBOwxC/xmm9IHRJBRnYIe65DFEUpIEHK2gaCdR5KEPKM74n7kFA
+         G/sakP5rDld/0e1szJliCbDHg9FJ+jDrxscJBPAUTKQoHssNKR5TD64QF2gqYp/eWbnm
+         xBtA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXr2Txq36NZiDs9AnH6Qsz0faS5KK3/l1cGlb3126DUHFzQHCJ42WW6puVY0nGQ1HSwQBO9I1gYK8RsGs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2QIKYOuZR89+8meRTS+yTPKBCVgHh4u9xsTk50wnGhwrgDjqG
+	WAdnMJPFvpc/Uc97rPgTmyC+iUsGZ0zPvsl4Ly37zAnaxY7YJJwjkNd2mzz5Ez8uftYzTX7cjJL
+	y
+X-Google-Smtp-Source: AGHT+IEDAS/E4NLWEB8vTaI6BfoG9Ro4zCkQN9m1WqS7H1eM2Np52auUXjObUEjjKJo4U2dN/15ezw==
+X-Received: by 2002:a05:600c:3b87:b0:431:6060:8b22 with SMTP id 5b1f17b1804b1-432cce7203fmr102474345e9.10.1731595252045;
+        Thu, 14 Nov 2024 06:40:52 -0800 (PST)
+Received: from [192.168.0.20] (nborisov.ddns.nbis.net. [85.187.217.62])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ae16113sm1664337f8f.71.2024.11.14.06.40.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Nov 2024 06:40:51 -0800 (PST)
+Message-ID: <3cc87528-e7a9-4dc0-800b-bb8f0cf279cd@suse.com>
+Date: Thu, 14 Nov 2024 16:40:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cdba614a4522307fb06615fcc3909f2f2d03f333.camel@surriel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] x86/microcode/AMD: Make __verify_patch_size() return
+ bool
+To: Borislav Petkov <bp@alien8.de>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org
+References: <20241018155151.702350-1-nik.borisov@suse.com>
+ <20241018155151.702350-3-nik.borisov@suse.com>
+ <20241114125818.GFZzXz6vdhwPdSa4dk@fat_crate.local>
+ <d5708abe-40ed-4885-919c-b491f61cceb7@suse.com>
+ <20241114140154.GFZzYC0ifEztvQ49-P@fat_crate.local>
+ <3fd8368f-fb21-452c-b9da-5382fcf4f657@suse.com>
+ <20241114142652.GGZzYIrHJUVoE18vp4@fat_crate.local>
+Content-Language: en-US
+From: Nikolay Borisov <nik.borisov@suse.com>
+In-Reply-To: <20241114142652.GGZzYIrHJUVoE18vp4@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 14, 2024 at 09:27:25AM -0500, Rik van Riel wrote:
 
-> 1) Move the interrupt re-enabling up (probably not this one?)
 
-Correct, that one is wrong for it results in IPIs that we don't want or
-need.
-
-> 2) Explicitly clear the mm_cpumask bit in unuse_temporary_mm()
+On 14.11.24 г. 16:26 ч., Borislav Petkov wrote:
+> On Thu, Nov 14, 2024 at 04:13:33PM +0200, Nikolay Borisov wrote:
+>>>           if (sh_psize != max_size)
+>>>                   return false;
+>>
+>> Isn't sh_psize < max_size valid here?
 > 
-> 3) Have unuse_temporary_mm increment the mm's tlb_gen, since that
->    is the only thing flush_tlb_mm_range really does for an MM
->    without any bits set in the mm_cpumask.
+> * sh_psize < min_t(u32, buf_size, max_size) == max_size -- ditto.
+> 
+> This is still some sort of a mismatch which we'd rather fail.
+> 
+> That max_size should probably be called patch_size or so.
+> 
+> IOW, if the patch size in the header doesn't match the per-family patch size
+> => fail.
 
-So flush_tlb_mm_range() has an 'mm == loaded_mm' case, which does a
-local flush. I *think* we're not hitting that because switch_mm() does a
-write to loaded_mm() just before this.
+Right, the important bit here is that max_size is not really max_size 
+but, as you say, patch_size so for those families it's expected to have 
+an exact size.
 
-But I don't think we want to proliferate the logic contained in
-flush_tlb_mm_range() further than we have to.
+With max_size I perceive it would imply that the current patch can be 
+_at most_ max_size, but might as well be smaller.
 
-So my preference goes to 2, as that seems to be the safest option.
-Notably text_poke() it not concerned with performance much.
+
+
+> 
+
 
