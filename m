@@ -1,254 +1,247 @@
-Return-Path: <linux-kernel+bounces-409608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BFB89C8F35
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:08:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F4D39C8F2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:07:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4B2D1F212CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:08:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60A932834BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E6417A5A4;
-	Thu, 14 Nov 2024 16:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B364A41C65;
+	Thu, 14 Nov 2024 16:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zXBqGA9Q"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="kUELYSU2"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F8D176AAF
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 16:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901861BC49;
+	Thu, 14 Nov 2024 16:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731600479; cv=none; b=d91677kZdFV/xeP12dWaezxNbRrptP+aOxyz6la1/MR1KZ88v8jxOSoN0Mct/1rkNbcQ8ng50aqnfKNc6hTAJ6rWhaTtWRCPo5cCsqxE/kZOQfQ8k7L0w/sHIN4BVcJ0xSHJRyxBbXpim6otlN3UFutkre604Kr++7Ui75AlXo4=
+	t=1731600438; cv=none; b=JT5eEkUpC9w4Yi96AH9NEeG8VxQb+z6fCjm0uTVoYODf1TqFQMPsVL8Lbb9uj6CUlMcHIyEcdgZTU+GC1tE88OsEeYZqkcy0vIp/kIYSRJ2qge/DBDeATjU/SO/LdT1bPUhr76oufu9haZsAI06dd8J4IMeHhufx3pz2YXkYKow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731600479; c=relaxed/simple;
-	bh=vox/7I9HXy64CSs6t4vNkMQC1vHy0/BtTjz+mYyu0w4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CTzSChkHhZHSENjTIC+TdDG7cfsUISQPDc4eg6EyJQEIdYnPiLk53u+dqUg0skPqnBY105eslFBW3Jm+ss6zk20ecxqG6v1YAqyaJ2Dyep1618ibmYGd07Iw/oXCSGVjubokbo9PfoIJUwc6dZjiFFKy2FJZP4qpeFguasr1GsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zXBqGA9Q; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9ec267b879so146248266b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:07:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731600476; x=1732205276; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YZIDmacdaeoxrMctjHNzYY2IWDwMQUUPmHl/BySCTPM=;
-        b=zXBqGA9QOJLZrUX7PKLi9Zt/3fDXdf+MaXH5ZzAa8X+8GbmUmW9SOzmI6PK5p2Kl/O
-         NOqOw6Cz2DPsIzQKwn9V1Z6G/jGGfkVibxNWv9YSeOQq+4vUCk0thY5GcZLme9OG5ajs
-         go2NMRW+8NCVI5o/3LYSGxSfmBk6TcMD8TjRPGp2R7NEthwj20uhx304n7cpHxa8LBrS
-         DsnD54uH37mDwwtoejq4ejkOEKbqyARmiv26aB/wpgeFN0SI6VYsIx9wdFL7UKHoSZ6D
-         5XGUd2U4j46PRHXNmtcahI2X/o+L10ySN7h2W97NIQhgZfK8t7zZkltOre9Dq7cypvau
-         GR8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731600476; x=1732205276;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YZIDmacdaeoxrMctjHNzYY2IWDwMQUUPmHl/BySCTPM=;
-        b=i9W6nrNcWyfG5F1jEtDLCbRxyges/gspBMzneT/bPBwif5RgCnjnEPwM62XxX3jp6D
-         Ap+zw9XgQl6ZSQx/od3PTEl17mvOBSB/BTqkgU7ieLU4bgQxGq69LEd4AZN5p0N3szj/
-         bfuUKVoNzPjFHQXnEltzsMVdSRL/eD5CDhDtfC0qvILA6scJF3wEJ0X6bfQhFGPBozZv
-         TsXvHwPr4WZUfl9nQjjiZERonHuBFj8rWH/vq1tufndUorWzG4T6JJBa8Aj7CWhoPRjd
-         o8g8J50ppBGor9KXwnxqOEDkgpWjQU7QT/TS5ientyk06TiIDWePFDKowPcsMN+kxsst
-         sxWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVvRO1wD6DFmOYgzGHH+6vRnqjVEYMqr7omb5r+sVenshRvi0GMTD0vMbPl+/Pp4ZLTWllwr5ERdPWAdlw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZaeejjhozamsjdRRflJMqxL6B0LUvryqlJqSL1Z2eDmN3tFs5
-	a7XUEmz6fzcPaP9U44ddkBdJEwbCtwUZnNGsmAB3/gN2WcrZgX8CifB/FHhaA8o=
-X-Google-Smtp-Source: AGHT+IEf9e1HGnaMlTOrKHVcGTf+ARYIkun1J3c+M5cnt+i+oOvgSy7pGBonSAWnf2OYE1vCdHAj9Q==
-X-Received: by 2002:a17:907:9302:b0:a9a:3f9d:62f8 with SMTP id a640c23a62f3a-aa1f805d27bmr731019566b.19.1731600475958;
-        Thu, 14 Nov 2024 08:07:55 -0800 (PST)
-Received: from pop-os.. ([145.224.90.214])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20e046d76sm77456366b.165.2024.11.14.08.07.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 08:07:54 -0800 (PST)
-From: James Clark <james.clark@linaro.org>
-To: linux-perf-users@vger.kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com,
-	thomas.falcon@intel.com
-Cc: James Clark <james.clark@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
+	s=arc-20240116; t=1731600438; c=relaxed/simple;
+	bh=jh2oRSzx6u5z+iH44W8gFAvDdTaQNNoevLV18Ll2k48=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UVajXqnqw5PQX2SJ+ErLDsPRoZHPP/MYQJA9QymA3PgMNhJCxis5mHYswhn6OAzg0IjSYXUOMRLXT/kabl8V9Lw9QYcqTaeUWLb4Yx9yRvGFQDKtgNlSC9Z6CYOoj827ha+3U2NHr4WUcvdzq+0k3wBKPhONp77D8edhUONQTl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=kUELYSU2; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1731600429;
+	bh=jh2oRSzx6u5z+iH44W8gFAvDdTaQNNoevLV18Ll2k48=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kUELYSU2r2QcM7Kshr4NdJouIK1/QTyc4xNhAXyrU3IdWqypHdzvPW9gfA6wFvpMw
+	 DVXQxTwx289k+c+ocnO1gJisCa2AaD9sk/jldI1aAm+Vlj/AuW4n0R/1RhNNhcypD9
+	 M4Vpe+LaKf1xV00QS5JnzUbcBVqey001zmW/dx0Y=
+Date: Thu, 14 Nov 2024 17:07:08 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] libperf: evlist: Keep evsel idx contiguous on removal
-Date: Thu, 14 Nov 2024 16:04:49 +0000
-Message-Id: <20241114160450.295844-3-james.clark@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241114160450.295844-1-james.clark@linaro.org>
-References: <20241114160450.295844-1-james.clark@linaro.org>
+Subject: Re: [PATCH] hwmon: (core) Avoid ifdef in C source file
+Message-ID: <2b1b5e06-062b-442d-be13-da02d3233fba@t-8ch.de>
+References: <20241113-hwmon-thermal-v1-1-71270be7f7a2@weissschuh.net>
+ <041a52c7-ac0b-4a78-8b39-4fc4ac4d2fd2@roeck-us.net>
+ <b6ed8499-bf84-486c-be5f-0ef13311eb18@t-8ch.de>
+ <3f1914da-4f94-415e-8c46-8731834e51a2@roeck-us.net>
+ <c3aaf724-a1d2-438c-851a-dedb0e9a3f34@t-8ch.de>
+ <7a01e398-c8fb-43fd-9b47-7fefb7a692cb@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <7a01e398-c8fb-43fd-9b47-7fefb7a692cb@roeck-us.net>
 
-The only two places where evsels are removed end up fixing up the index.
-Move it into libperf so that it's always done.
+On 2024-11-14 06:40:03-0800, Guenter Roeck wrote:
+> On 11/13/24 23:27, Thomas Weißschuh wrote:
+> > On 2024-11-13 22:51:37-0800, Guenter Roeck wrote:
+> > > On 11/13/24 20:40, Thomas Weißschuh wrote:
+> > > > On 2024-11-12 22:52:36-0800, Guenter Roeck wrote:
+> > > > > On 11/12/24 20:39, Thomas Weißschuh wrote:
+> > > > > > Using an #ifdef in a C source files to have different definitions
+> > > > > > of the same symbol makes the code harder to read and understand.
+> > > > > > Furthermore it makes it harder to test compilation of the different
+> > > > > > branches.
+> > > > > > 
+> > > > > > Replace the ifdeffery with IS_ENABLED() which is just a normal
+> > > > > > conditional.
+> > > > > > The resulting binary is still the same as before as the compiler
+> > > > > > optimizes away all the unused code and definitions.
+> > > > > > 
+> > > > > > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > > > > > ---
+> > > > > > This confused me a bit while looking at the implementation of
+> > > > > > HWMON_C_REGISTER_TZ.
+> > > > > > ---
+> > > > > >     drivers/hwmon/hwmon.c | 21 ++++++---------------
+> > > > > >     1 file changed, 6 insertions(+), 15 deletions(-)
+> > > > > > 
+> > > > > > diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
+> > > > > > index 9c35c4d0369d7aad7ea61ccd25f4f63fc98b9e02..86fb674c85d3f54d475be014c3fd3dd74c815c57 100644
+> > > > > > --- a/drivers/hwmon/hwmon.c
+> > > > > > +++ b/drivers/hwmon/hwmon.c
+> > > > > > @@ -147,11 +147,6 @@ static DEFINE_IDA(hwmon_ida);
+> > > > > >     /* Thermal zone handling */
+> > > > > > -/*
+> > > > > > - * The complex conditional is necessary to avoid a cyclic dependency
+> > > > > > - * between hwmon and thermal_sys modules.
+> > > > > > - */
+> > > > > > -#ifdef CONFIG_THERMAL_OF
+> > > > > >     static int hwmon_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
+> > > > > >     {
+> > > > > >     	struct hwmon_thermal_data *tdata = thermal_zone_device_priv(tz);
+> > > > > > @@ -257,6 +252,9 @@ static int hwmon_thermal_register_sensors(struct device *dev)
+> > > > > >     	void *drvdata = dev_get_drvdata(dev);
+> > > > > >     	int i;
+> > > > > > +	if (!IS_ENABLED(CONFIG_THERMAL_OF))
+> > > > > > +		return 0;
+> > > > > > +
+> > > > > >     	for (i = 1; info[i]; i++) {
+> > > > > >     		int j;
+> > > > > > @@ -285,6 +283,9 @@ static void hwmon_thermal_notify(struct device *dev, int index)
+> > > > > >     	struct hwmon_device *hwdev = to_hwmon_device(dev);
+> > > > > >     	struct hwmon_thermal_data *tzdata;
+> > > > > > +	if (!IS_ENABLED(CONFIG_THERMAL_OF))
+> > > > > > +		return;
+> > > > > > +
+> > > > > >     	list_for_each_entry(tzdata, &hwdev->tzdata, node) {
+> > > > > >     		if (tzdata->index == index) {
+> > > > > >     			thermal_zone_device_update(tzdata->tzd,
+> > > > > 
+> > > > > There is no dummy function for thermal_zone_device_update().
+> > > > > I really don't want to trust the compiler/linker to remove that code
+> > > > > unless someone points me to a document explaining that it is guaranteed
+> > > > > to not cause any problems.
+> > > > 
+> > > > I'm fairly sure that a declaration should be enough, and believe
+> > > > to remember seeing such advise somewhere.
+> > > > However there is not even a function declaration with !CONFIG_THERMAL.
+> > > > So I can add an actual stub for it for v2.
+> > > > 
+> > > > What do you think?
+> > > > 
+> > > You mean an extern declaration without the actual function ?
+> > 
+> > Stub as in empty inline function:
+> > 
+> > static inline void thermal_zone_device_update(struct thermal_zone_device *,
+> >                                               enum thermal_notify_event)
+> > { }
+> > 
+> 
+> Sure, that would work, but it would have to be declared in the thermal subsystem.
 
-Signed-off-by: James Clark <james.clark@linaro.org>
----
- tools/lib/perf/evlist.c            | 17 +++++++------
- tools/lib/perf/tests/test-evlist.c | 41 ++++++++++++++++++++++++++++++
- tools/perf/builtin-record.c        | 18 +++----------
- 3 files changed, 53 insertions(+), 23 deletions(-)
+Of course.
 
-diff --git a/tools/lib/perf/evlist.c b/tools/lib/perf/evlist.c
-index 83c43dc13313..ffa1a28fb14f 100644
---- a/tools/lib/perf/evlist.c
-+++ b/tools/lib/perf/evlist.c
-@@ -52,15 +52,8 @@ static void __perf_evlist__propagate_maps(struct perf_evlist *evlist,
- 		 * Empty cpu lists would eventually get opened as "any" so remove
- 		 * genuinely empty ones before they're opened in the wrong place.
- 		 */
--		if (perf_cpu_map__is_empty(evsel->cpus)) {
--			struct perf_evsel *next = perf_evlist__next(evlist, evsel);
--
-+		if (perf_cpu_map__is_empty(evsel->cpus))
- 			perf_evlist__remove(evlist, evsel);
--			/* Keep idx contiguous */
--			if (next)
--				list_for_each_entry_from(next, &evlist->entries, node)
--					next->idx--;
--		}
- 	} else if (!evsel->own_cpus || evlist->has_user_cpus ||
- 		(!evsel->requires_cpu && perf_cpu_map__has_any_cpu(evlist->user_requested_cpus))) {
- 		/*
-@@ -116,8 +109,16 @@ void perf_evlist__add(struct perf_evlist *evlist,
- void perf_evlist__remove(struct perf_evlist *evlist,
- 			 struct perf_evsel *evsel)
- {
-+	struct perf_evsel *next = perf_evlist__next(evlist, evsel);
-+
- 	list_del_init(&evsel->node);
- 	evlist->nr_entries -= 1;
-+
-+	/* Keep idx contiguous */
-+	if (!next)
-+		return;
-+	list_for_each_entry_from(next, &evlist->entries, node)
-+		next->idx--;
- }
- 
- struct perf_evlist *perf_evlist__new(void)
-diff --git a/tools/lib/perf/tests/test-evlist.c b/tools/lib/perf/tests/test-evlist.c
-index 10f70cb41ff1..06153820f408 100644
---- a/tools/lib/perf/tests/test-evlist.c
-+++ b/tools/lib/perf/tests/test-evlist.c
-@@ -571,6 +571,46 @@ static int test_stat_multiplexing(void)
- 	return 0;
- }
- 
-+static int test_list_remove(void)
-+{
-+	struct perf_evlist *evlist;
-+	struct perf_evsel *evsel, *evsel0, *evsel1, *evsel2;
-+	struct perf_event_attr attr = {};
-+	int idx = 0;
-+
-+	evlist = perf_evlist__new();
-+	__T("failed to create evlist", evlist);
-+
-+	evsel0 = perf_evsel__new(&attr);
-+	__T("failed to create evsel", evsel0);
-+	evsel1 = perf_evsel__new(&attr);
-+	__T("failed to create evsel", evsel1);
-+	evsel2 = perf_evsel__new(&attr);
-+	__T("failed to create evsel", evsel2);
-+
-+	perf_evlist__add(evlist, evsel0);
-+	perf_evlist__add(evlist, evsel1);
-+	perf_evlist__add(evlist, evsel2);
-+
-+	idx = 0;
-+	perf_evlist__for_each_evsel(evlist, evsel)
-+		__T("idx isn't contiguous", evsel->idx == idx++);
-+
-+	/* Test removing middle */
-+	perf_evlist__remove(evlist, evsel1);
-+	idx = 0;
-+	perf_evlist__for_each_evsel(evlist, evsel)
-+		__T("idx isn't contiguous", evsel->idx == idx++);
-+
-+	/* Test removing end */
-+	perf_evlist__remove(evlist, evsel2);
-+	idx = 0;
-+	perf_evlist__for_each_evsel(evlist, evsel)
-+		__T("idx isn't contiguous", evsel->idx == idx++);
-+
-+	return 0;
-+}
-+
- int test_evlist(int argc, char **argv)
- {
- 	__T_START;
-@@ -583,6 +623,7 @@ int test_evlist(int argc, char **argv)
- 	test_mmap_thread();
- 	test_mmap_cpus();
- 	test_stat_multiplexing();
-+	test_list_remove();
- 
- 	__T_END;
- 	return tests_failed == 0 ? 0 : -1;
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 7e99743f7e42..2ebbb0fd0064 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -1359,14 +1359,13 @@ static int record__mmap(struct record *rec)
- static int record__open(struct record *rec)
- {
- 	char msg[BUFSIZ];
--	struct evsel *pos;
-+	struct evsel *pos, *tmp;
- 	struct evlist *evlist = rec->evlist;
- 	struct perf_session *session = rec->session;
- 	struct record_opts *opts = &rec->opts;
- 	int rc = 0;
--	bool skipped = false;
- 
--	evlist__for_each_entry(evlist, pos) {
-+	evlist__for_each_entry_safe(evlist, tmp, pos) {
- try_again:
- 		if (evsel__open(pos, pos->core.cpus, pos->core.threads) < 0) {
- 			if (evsel__fallback(pos, &opts->target, errno, msg, sizeof(msg))) {
-@@ -1383,23 +1382,12 @@ static int record__open(struct record *rec)
- 			evsel__open_strerror(pos, &opts->target, errno, msg, sizeof(msg));
- 			ui__error("Failure to open event '%s' on PMU '%s' which will be removed.\n%s\n",
- 				  evsel__name(pos), evsel__pmu_name(pos), msg);
--			pos->skippable = true;
--			skipped = true;
-+			evlist__remove(evlist, pos);
- 		} else {
- 			pos->supported = true;
- 		}
- 	}
- 
--	if (skipped) {
--		struct evsel *tmp;
--		int idx = 0;
--
--		evlist__for_each_entry_safe(evlist, tmp, pos) {
--			if (pos->skippable)
--				evlist__remove(evlist, pos);
--			pos->core.idx = idx++;
--		}
--	}
- 	if (symbol_conf.kptr_restrict && !evlist__exclude_kernel(evlist)) {
- 		pr_warning(
- "WARNING: Kernel address maps (/proc/{kallsyms,modules}) are restricted,\n"
--- 
-2.34.1
+> > > I'd really want to see that documented. It would seem rather unusual.
+> > 
+> > > From Documentation/process/coding-style.rst
+> > 
+> > 	21) Conditional Compilation
+> > 	---------------------------
+> > 
+> > 	Wherever possible, don't use preprocessor conditionals (#if, #ifdef) in .c
+> > 	files; doing so makes code harder to read and logic harder to follow.  Instead,
+> > 	use such conditionals in a header file defining functions for use in those .c
+> > 	files, providing no-op stub versions in the #else case, and then call those
+> > 	functions unconditionally from .c files.  The compiler will avoid generating
+> > 	any code for the stub calls, producing identical results, but the logic will
+> > 	remain easy to follow.
+> > 
+> > 	[..]
+> > 
+> > 	Within code, where possible, use the IS_ENABLED macro to convert a Kconfig
+> > 	symbol into a C boolean expression, and use it in a normal C conditional:
+> > 
+> > 	.. code-block:: c
+> > 
+> > 		if (IS_ENABLED(CONFIG_SOMETHING)) {
+> > 			...
+> > 		}
+> > 
+> > 	The compiler will constant-fold the conditional away, and include or exclude
+> > 	the block of code just as with an #ifdef, so this will not add any runtime
+> > 	overhead.
+> > 
+> > 	[..]
+> > 
+> > While this primarily talks about stubs, the fact that
+> > "the compiler will constant-fold the conditional away" can be understood
+> > that the linker will never see those function calls and therefore the
+> > functions don't have to be present during linking.
+> 
+> Yes, I am aware of that. However, that is not a formal language definition.
 
+Formal as in ANSI/ISO? I don't think these ever say anything about
+optimizations. And also the compilers don't really write down the
+details AFAIK.
+
+> Yes, in normal builds with a modern compiler it will be optimized away.
+> However, I don't think that will happen if the kernel is built with -O0.
+
+The kernel is never built with -O0. It's either -O2 or -Os.
+It's a Kconfig choice between CC_OPTIMIZE_FOR_PERFORMANCE or
+CC_OPTIMIZE_FOR_SIZE, one is always enabled.
+This is not clear from the logic in Makefile.
+
+With -O0 more or less everything breaks.
+
+> > So a declaration would be enough. But an actual stub doesn't hurt either.
+> > 
+> 
+> I disagree. You did not point to a formal language definition saying that dead code
+> shall be optimized away and that functions called by such dead code don't have
+> to actually exist.
+> 
+> Do we really have to argue about this ? Please provide examples from elsewhere
+> in the kernel which implement what you have suggested (not just the use of
+> IS_ENABLED(), but the call to functions without stub which don't exist
+> if the code is not enabled), and we can go from there.
+
+None of the hwmon functions have stubs if !CONFIG_HWMON, only declarations.
+And there are multiple drivers that use the pattern from above.
+
+One example from drivers/net/wireless/mediatek/mt76/mt7921/init.c
+
+	static int mt7921_thermal_init(struct mt792x_phy *phy)
+	{
+		struct wiphy *wiphy = phy->mt76->hw->wiphy;
+		struct device *hwmon;
+		const char *name;
+
+		if (!IS_REACHABLE(CONFIG_HWMON))
+			return 0;
+
+		name = devm_kasprintf(&wiphy->dev, GFP_KERNEL, "mt7921_%s",
+				      wiphy_name(wiphy));
+		if (!name)
+			return -ENOMEM;
+
+		hwmon = devm_hwmon_device_register_with_groups(&wiphy->dev, name, phy,
+							       mt7921_hwmon_groups);
+		return PTR_ERR_OR_ZERO(hwmon);
+	}
+
+
+
+*But* the thermal subsystem is actually using stubs.
+So the same should be done for thermal_zone_device_update().
+As mentioned before, my original claim that declarations of the thermal
+functions are already usable when !CONFIG_THERMAL was wrong.
+And if the thermal header is to be touched, it should as well be a stub
+for consistency.
+Given that there are already stubs for all kinds of thermal functions,
+this doesn't seem like it would be an issue.
+
+
+Thomas
 
