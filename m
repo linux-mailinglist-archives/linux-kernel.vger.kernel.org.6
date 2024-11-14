@@ -1,194 +1,131 @@
-Return-Path: <linux-kernel+bounces-409541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56D789C8EE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:58:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56EF39C8FA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:23:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0732DB34800
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:36:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57A38B376C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693381B2184;
-	Thu, 14 Nov 2024 15:28:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA0B188735;
+	Thu, 14 Nov 2024 15:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="rR9DGWuk"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hfFoGmhK"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788311AF0C5
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95C115FA7B
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731598104; cv=none; b=GFruLSaxdRAUYj0zOg2pate5b02aRl0EvQZR+I+3DptQwShTmzx57nC+Vs+mmjzcQi9OjXSXx0dU5HzjXZ0auKVcrQHGSXERn2WKFCUDCzoewx9Dn9BXI9t1pcwYcYesUaJRTjal9WMxH9SChnM2oZbw/HA6FgPww5WyHafSRiY=
+	t=1731598267; cv=none; b=X/qh/A2ozhtl3PVj0BQ2ms6vMC2lYShecWGkgd2c4/alxF9Ld+hRb/gytrdWzKsfatUFL1TAPRd/5JDIsOx5MfeeTKrTi1xDiMZkb7gH8BJBhozMKKx5ETEO+IQJum9Q+u2sitFFO28WwN0hn6Gs0+nFyRHHl+7g2eX2K0ZzysM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731598104; c=relaxed/simple;
-	bh=4XXew23gq3OoMMOZOjmCtGgMeRxntUp+Fg61kUdG93Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NFGD3kocaTobHDiD1nFCM+tTH6VGI0b2McX8lCwHzR70vY8tM5peFirRJ2TlB8EtmDjkGXfQKuclNl5rBKqVqS0TqFSX18++TjFZQNfNEKkSrpnwIGW0lK6U7nfoWATgCllMvLlcoI62ly/wHhwLl3y2vD3SWiZ9M9WjApR1aNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=rR9DGWuk; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-295cee3a962so418718fac.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:28:22 -0800 (PST)
+	s=arc-20240116; t=1731598267; c=relaxed/simple;
+	bh=70gJ5zQHC0Lse0UD4fjwb/7l60pwtmkagRtu7goaz6M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ci7acGbY8vvFJjmC4GbQytWFbviJcVBVscYgFumBmYlPcGgHVJewCFUrLbqaZTlLvKue2Yo+gLUfNw4cyFIAzJqFbklXs7ctJkAZEH985kHq6u0hl6H5e3SP60vtDZOJatbJ/IZfp1aLO7w1mH388EDmnb2aV3QxwGUpxjwjt3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hfFoGmhK; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e380e4825a9so645648276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:31:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731598101; x=1732202901; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JnydZ5ahnoTDPrjopxRhuD9AlpgfRxt1ZJ34FZKhxI0=;
-        b=rR9DGWuknEzGNqxGZH8Mcf0el13yrZ8xjZUBdN2I07qYtdGuKwk4Swbs+uU4K5pFuD
-         GDj+muRTfHfnOkFG+a5VLKPByoEelfPv4ch4QaA1TOviM3IXSVId0fAd4+foDltKO9HR
-         v/izHstC3jCHfbc0gbMDAeOBCBaMaXBZ+CD987zHFcNm2f9qJxhXsNYUIizvt+oWGjxC
-         OKiJGwLBqrOfmwAPv9tDY82rPiK1HjH/PPkL45+Wl6MOPvAdxuI/rnnTGVDgtbGT2iov
-         F0fSvTrNi3gfhu44gZrTR4SRFx/a7uwtINZpmAvRau03e8esVC7cXBSPuuAahtXvS0+u
-         DCkQ==
+        d=linaro.org; s=google; t=1731598265; x=1732203065; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=70gJ5zQHC0Lse0UD4fjwb/7l60pwtmkagRtu7goaz6M=;
+        b=hfFoGmhKL91W7vDovOmnY9tdxrF+aAi75Owxppae4oxRHCdwdEiyZqISeg7qNxMPWZ
+         oyFxlhwNM1o0Xb9FBUrRxsch1ugBCD14lmVb6Nb/CQsU/AzBmAoFfVtR/w7mE2i9g3si
+         QCZ+2bwI4ziFeGNleWubtHXQT32xPFqzbfxU6n5+rCtgfuIr1E2/3mtjpmxrc5NWf6xk
+         COQnQL8pn6147fMf5mpi23da/62Y3pMr+qXckrQtxyXKunu8961+gGkQYx8HI8WD38QC
+         hL6v6N7OXo5DS/d3BLSBm+Mce5gjuMv0Q5a29dWbJi4p9j6tIx/eQLsONqHMVZIZOZjw
+         yHXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731598101; x=1732202901;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JnydZ5ahnoTDPrjopxRhuD9AlpgfRxt1ZJ34FZKhxI0=;
-        b=nicXXyy3zryQAUMbB/YutoBiiJLOCiTXc1foxIAnaizvKSBOTfNlgzUsTEiayJN3Q0
-         sEcHLveCio4KOwbn2XWZUSR6EYkc3VocNl9v+6zEWt/RYrEupxxUGPd0uSZwPEIkzgpQ
-         OTXvohZ+gGG8Z72/BdQlDd+2h7VGZAoqEmqry8O2GZIJ1KTKclfL5c963UepKUWafPny
-         /9M0ShjtzPQJVf1ZJljFNETVgfOSx/eU07bAv055uH0tvGK69s4EV+r8Fwmq5S0qXo9a
-         QqKT7DhIzkg/9ntPCvWczC5ArsLOQ08PeP+hYESy21v0aPXuk8OT04wkXnyZvDeuDeT+
-         zVUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWzGIBmyktJGtxgYkfPwDU+7/kxtvvP0cNZUtOYMb/CtSp9vXSqp9HSjBCosvh+qh9hoPnVhhxA7qttSek=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHZ9/q9zVI7uNq9gUkuAnn87PRbRanIxszrYn0F/h9RZZYm5IK
-	rvQC+akUYmpAss7zv/WOhF/mpqu0LdsZbEvQXnlCHauwSvsESj0YNBcWSF3pbbo=
-X-Google-Smtp-Source: AGHT+IGNabSsCKonQoe8b+3leqigUS1MxYLou4wkGKabmMMQ9sy0zqR8b1138Alaw/M4bLorq8cnFg==
-X-Received: by 2002:a05:6870:e2d5:b0:288:2fb6:a385 with SMTP id 586e51a60fabf-295600dc985mr21855599fac.20.1731598101550;
-        Thu, 14 Nov 2024 07:28:21 -0800 (PST)
-Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5eea026eb41sm368250eaf.39.2024.11.14.07.28.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 07:28:20 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Cc: hannes@cmpxchg.org,
-	clm@meta.com,
-	linux-kernel@vger.kernel.org,
-	willy@infradead.org,
-	kirill@shutemov.name,
-	linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	bfoster@redhat.com,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 14/17] iomap: make buffered writes work with RWF_UNCACHED
-Date: Thu, 14 Nov 2024 08:25:18 -0700
-Message-ID: <20241114152743.2381672-16-axboe@kernel.dk>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241114152743.2381672-2-axboe@kernel.dk>
-References: <20241114152743.2381672-2-axboe@kernel.dk>
+        d=1e100.net; s=20230601; t=1731598265; x=1732203065;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=70gJ5zQHC0Lse0UD4fjwb/7l60pwtmkagRtu7goaz6M=;
+        b=gKFIYZk9SUEBwVpQpDGoDux12DoaDthEkvX5DgbcJ254UjxlLkZr9oR2I41rofutci
+         WkUZBOvrjz+ET1WyD+i3R94YmnBd1f18BYVGWPK3HvKf7DLj7sT5orviFl9CnNxkg9Lt
+         LVtPir+lY7hMZwEC35Sr2OGUrjdVe73rG97I/w8ovTkBLN7US4KwZdhXiH4Aa61Hw8K9
+         5rmVqd+at9kF+dDFg6BMTY2JkwSUCBDXGeu2XvvPZWh9mKU2aciZpbA7pJNnrGbGGKHD
+         S2A6EciHaUcBvuCtNcSZ3/93Cy2UUTZ8ZDkwoGFQSzDAt3VJEcuyoDZ6qIIhldA4fLa2
+         hAdg==
+X-Forwarded-Encrypted: i=1; AJvYcCU52PWmtTtm3V2RpFGwrDYkFo93/rkwzz9yKCnbznqokWz6sQboiQhrL47/OSSFVgYQRUu3cRea6eQlQbk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxvcm/c/lpsMK9sYxXQBqI+4wA8DPEAYuxuBrbDoiajIJKAmho5
+	dOuT6Oz9t1YoqrUQtO3/kuSnobwC1S7WcE/4MswswiXupWNyOqlufj9ri8KHYSuXK54cG2rsdru
+	0OEGrkZXl99Byi9KyXcf1xkVhiAK8p7jZApiZOw==
+X-Google-Smtp-Source: AGHT+IEp1jiyHz9AVjBAYLpqzeU34jEuIl4ZH89aHk/oBWMuPpm3ufftnmd3RZZtkAwQhhPDaHc5iByLDBclaPuDYYw=
+X-Received: by 2002:a05:6902:c11:b0:e29:1def:1032 with SMTP id
+ 3f1490d57ef6-e337f8c7023mr22843700276.41.1731598264542; Thu, 14 Nov 2024
+ 07:31:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241028-topic-cpu_suspend_s2ram-v1-0-9fdd9a04b75c@oss.qualcomm.com>
+In-Reply-To: <20241028-topic-cpu_suspend_s2ram-v1-0-9fdd9a04b75c@oss.qualcomm.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 14 Nov 2024 16:30:27 +0100
+Message-ID: <CAPDyKFpGrw+vOs=-TxfChBeORjzkpaL_iVB08MtmaC4sFNKzcg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Allow specifying an S2RAM sleep on pre-SYSTEM_SUSPEND
+ PSCI impls
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Sudeep Holla <sudeep.holla@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Add iomap buffered write support for RWF_UNCACHED. If RWF_UNCACHED is
-set for a write, mark the folios being written as uncached. Then
-writeback completion will drop the pages. The write_iter handler simply
-kicks off writeback for the pages, and writeback completion will take
-care of the rest.
+On Mon, 28 Oct 2024 at 15:24, Konrad Dybcio <konradybcio@kernel.org> wrote:
+>
+> Certain firmwares expose exactly what PSCI_SYSTEM_SUSPEND does through
+> CPU_SUSPEND instead. Inform Linux about that.
+> Please see the commit messages for a more detailed explanation.
+>
+> This is effectively a more educated follow-up to [1].
+>
+> The ultimate goal is to stop making Linux think that certain states
+> only concern cores/clusters, and consequently setting
+> pm_set_suspend/resume_via_firmware(), so that client drivers (such as
+> NVMe, see related discussion over at [2]) can make informed decisions
+> about assuming the power state of the device they govern.
 
-This still needs the user of the iomap buffered write helpers to call
-iocb_uncached_write() upon successful issue of the writes.
+In my opinion, this is not really the correct way to do it. Using
+pm_set_suspend/resume_via_firmware() works fine for x86/ACPI, but not
+for PSCI like this. Let me elaborate. If the NVMe storage device is
+sharing the same power-rail as the CPU cluster, then yes we should use
+PSCI to control it. But is that really the case? If so, there are in
+principle two ways forward to deal with this correctly.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- fs/iomap/buffered-io.c | 15 +++++++++++++--
- include/linux/iomap.h  |  8 +++++++-
- 2 files changed, 20 insertions(+), 3 deletions(-)
+1) If PSCI OSI mode is being used, the corresponding NVMe storage
+device should be hooked up to the CPU PM cluster domain via genpd and
+controlled as any other devices sharing the cluster-rail. In this way,
+genpd together with the cpuidle-psci-domain can decide whether it's
+okay to turn off the cluster. I believe this is the preferred way, but
+2) would work fine too.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index ef0b68bccbb6..2f2a5db04a68 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -603,6 +603,8 @@ struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len)
- 
- 	if (iter->flags & IOMAP_NOWAIT)
- 		fgp |= FGP_NOWAIT;
-+	if (iter->flags & IOMAP_UNCACHED)
-+		fgp |= FGP_UNCACHED;
- 	fgp |= fgf_set_order(len);
- 
- 	return __filemap_get_folio(iter->inode->i_mapping, pos >> PAGE_SHIFT,
-@@ -1023,8 +1025,9 @@ ssize_t
- iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *i,
- 		const struct iomap_ops *ops, void *private)
- {
-+	struct address_space *mapping = iocb->ki_filp->f_mapping;
- 	struct iomap_iter iter = {
--		.inode		= iocb->ki_filp->f_mapping->host,
-+		.inode		= mapping->host,
- 		.pos		= iocb->ki_pos,
- 		.len		= iov_iter_count(i),
- 		.flags		= IOMAP_WRITE,
-@@ -1034,9 +1037,14 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *i,
- 
- 	if (iocb->ki_flags & IOCB_NOWAIT)
- 		iter.flags |= IOMAP_NOWAIT;
-+	if (iocb->ki_flags & IOCB_UNCACHED)
-+		iter.flags |= IOMAP_UNCACHED;
- 
--	while ((ret = iomap_iter(&iter, ops)) > 0)
-+	while ((ret = iomap_iter(&iter, ops)) > 0) {
-+		if (iocb->ki_flags & IOCB_UNCACHED)
-+			iter.iomap.flags |= IOMAP_F_UNCACHED;
- 		iter.processed = iomap_write_iter(&iter, i);
-+	}
- 
- 	if (unlikely(iter.pos == iocb->ki_pos))
- 		return ret;
-@@ -1770,6 +1778,9 @@ static int iomap_add_to_ioend(struct iomap_writepage_ctx *wpc,
- 	size_t poff = offset_in_folio(folio, pos);
- 	int error;
- 
-+	if (folio_test_uncached(folio))
-+		wpc->iomap.flags |= IOMAP_F_UNCACHED;
-+
- 	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, pos)) {
- new_ioend:
- 		error = iomap_submit_ioend(wpc, 0);
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index f61407e3b121..0a88043676f2 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -74,9 +74,14 @@ struct vm_fault;
-  * IOMAP_F_STALE indicates that the iomap is not valid any longer and the file
-  * range it covers needs to be remapped by the high level before the operation
-  * can proceed.
-+ *
-+ * IOMAP_F_UNCACHED is set to indicate that writes to the page cache (and
-+ * hence writeback) will result in folios being evicted as soon as the
-+ * updated bytes are written back to the storage.
-  */
- #define IOMAP_F_SIZE_CHANGED	(1U << 8)
- #define IOMAP_F_STALE		(1U << 9)
-+#define IOMAP_F_UNCACHED	(1U << 10)
- 
- /*
-  * Flags from 0x1000 up are for file system specific usage:
-@@ -173,8 +178,9 @@ struct iomap_folio_ops {
- #define IOMAP_NOWAIT		(1 << 5) /* do not block */
- #define IOMAP_OVERWRITE_ONLY	(1 << 6) /* only pure overwrites allowed */
- #define IOMAP_UNSHARE		(1 << 7) /* unshare_file_range */
-+#define IOMAP_UNCACHED		(1 << 8) /* uncached IO */
- #ifdef CONFIG_FS_DAX
--#define IOMAP_DAX		(1 << 8) /* DAX mapping */
-+#define IOMAP_DAX		(1 << 9) /* DAX mapping */
- #else
- #define IOMAP_DAX		0
- #endif /* CONFIG_FS_DAX */
--- 
-2.45.2
+2) If PSCI PC mode is being used, a separate channel/interface to the
+FW (like SCMI or rpmh in the QC case), should inform the FW whether
+NVMe needs the power to it. This information should then be taken into
+account by the PSCI FW when it decides what low-power-state to enter,
+which ultimately means whether the cluster-rail can be turned off or
+not.
 
+Assuming PSCI OSI mode is used here. Then if 1) doesn't work for you,
+please elaborate on why, so we can help to make it work, as it should.
+
+[...]
+
+Kind regards
+Uffe
 
