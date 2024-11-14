@@ -1,106 +1,114 @@
-Return-Path: <linux-kernel+bounces-408611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E32A79C810A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:50:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 715899C8120
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:53:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2968284F09
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:50:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF061B26776
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABE41E8829;
-	Thu, 14 Nov 2024 02:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AED1F709C;
+	Thu, 14 Nov 2024 02:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="cUQC8PNl"
-Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="A8qrc27z"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977B93D9E;
-	Thu, 14 Nov 2024 02:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3756B1E8854;
+	Thu, 14 Nov 2024 02:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731552624; cv=none; b=rt9W+ck94C1V1zcEBUzJyH2hW3gfSSJb5NaG9fiAk8B5GR5gR1YHoHtdnGPOlz5oFrHjpILh+MC/5MKrb2t/pa3q+nffi4tIeU7NE3jSdzkfz6byXGCyOBnduvxfscIXteMLGfZ2ifQP++M0R4or429oFzVf5rt+stU+T4YLGJ0=
+	t=1731552671; cv=none; b=ogdFHLK0XAXmZbDx5+Ca7mJ69iTWL+jneWkUAfPjudNCm0b16uHFAb76BIMe4IxwARD312i75Y7qnMKkvgWotcet+JyQ86GXOp4ehKSFXhWSxoMSrU9N0RF5RF7iAIVrv/PUoM3Ibwm4gbtnq8goV9gyXDMmx2490AIld9yAjWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731552624; c=relaxed/simple;
-	bh=6l5Kz1Vo9Vdfhw8FNuLIO3ykNDBGv6861t8VwWdIquk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QYxOb3VNaeEHK/YIsgcg3OvKijXRPkDUVxwsxCtoG0uynLlr9xXJ7fhoh9Rne6jE6VWR0FL2u9OxtVo87jilS+SJJ41o1cDsoznT3B8OVsAyeigshQpIywul1ECEqquLUwGLRzENbw/IcrxxV7Ki26QLy9Yy9jyacetDt2sizZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=cUQC8PNl; arc=none smtp.client-ip=207.171.188.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1731552623; x=1763088623;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=WV93mZS5kqQSypy1nAkSsyu48bHJZ86isxlJ7Z6bGP4=;
-  b=cUQC8PNl9DtVt36T4JmBhhEpjTJDdaghJMlXOY60mfsittovRnFNnv3h
-   y0SRUqzG5mccmrjJS7EtUdffLGJY8s/QC+1ajldJ9yhREsSX9220+ghU8
-   WphnYHwG57iEgpHivurFhbwF8nYXTKrSn71EDwYoADWOFKAcPjTErdvxr
-   A=;
-X-IronPort-AV: E=Sophos;i="6.12,152,1728950400"; 
-   d="scan'208";a="775497976"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 02:50:17 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.7.35:21604]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.18.85:2525] with esmtp (Farcaster)
- id 3473ada9-3da5-419a-ad22-b3ebd80d5d47; Thu, 14 Nov 2024 02:50:16 +0000 (UTC)
-X-Farcaster-Flow-ID: 3473ada9-3da5-419a-ad22-b3ebd80d5d47
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 14 Nov 2024 02:50:16 +0000
-Received: from 6c7e67c6786f.amazon.com (10.106.101.42) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Thu, 14 Nov 2024 02:50:10 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <stsp2@yandex.ru>
-CC: <almasrymina@google.com>, <asml.silence@gmail.com>, <axboe@kernel.dk>,
-	<brauner@kernel.org>, <davem@davemloft.net>, <edumazet@google.com>,
-	<gouhao@uniontech.com>, <horms@kernel.org>, <kees@kernel.org>,
-	<krisman@suse.de>, <kuba@kernel.org>, <kuniyu@amazon.com>,
-	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<mhal@rbox.co>, <netdev@vger.kernel.org>, <oleg@redhat.com>,
-	<pabeni@redhat.com>, <quic_abchauha@quicinc.com>, <shuah@kernel.org>,
-	<tandersen@netflix.com>, <viro@zeniv.linux.org.uk>, <willemb@google.com>
-Subject: Re: [PATCH] net/unix: pass pidfd flags via SCM_PIDFD cmsg
-Date: Wed, 13 Nov 2024 18:50:07 -0800
-Message-ID: <20241114025007.99331-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20241113210206.3440784-1-stsp2@yandex.ru>
-References: <20241113210206.3440784-1-stsp2@yandex.ru>
+	s=arc-20240116; t=1731552671; c=relaxed/simple;
+	bh=nH2HFpSxMZw3GJhCNMu8XpK8bYpJ8Np60qvvYQf9YEk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CH+E5LeZukLz3fIb/sPbNFlXGMdFWYRxH8qSsv00ZZJO8lshwvwE9FpNMLvYzSSQ6i/IfQHLIn71OuI5ODn672IE8UzwlJDW6zjj98hf4A7FQGCYnvW9G3U7r/BtHOXfKD18K+F4aFQzqFWa9MdpraX/oQFvpNf+ML2I2EBg72s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=A8qrc27z; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE1h1we008864;
+	Thu, 14 Nov 2024 02:51:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=CAS+L6E4lnQZemfuAKEryjyEu57X0ydbY3cOes44Lxw=; b=
+	A8qrc27zCkWf6mj2KGutiaqyHoMHvBk6Ex1kYWdm+X/mnXoA/dVTbAEi037oBJ32
+	0WDzRfnWueeewBxALs4S0yYQGUGaDzKtrLM9Byn4AIiiIrYmCL81v42IQVL6undO
+	BrZ2ErVLLbKnITvmN0fz4b7U9Y5UdU02jDAJuh440qUpZqwGxEsdyfr1ZYAgJD3H
+	b2l4pY1JIEN7ENhza8zyagqGf5dPnrOfR5zIJXwHWd0h6EhTPTlKUBYDIZBHRFuY
+	c4cq9+m+OvqGwDniLu2ZLk8lNE3J4hxyuHQJ9LYJdGzsDqFJJ8l+vUuZieYJHciC
+	E0FoFG/MeIWzBAmdHewTHg==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42t0nwr8gy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 14 Nov 2024 02:51:04 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE1AUWK022725;
+	Thu, 14 Nov 2024 02:51:03 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42vuw0p266-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 14 Nov 2024 02:51:03 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4AE2ojZC003527;
+	Thu, 14 Nov 2024 02:51:02 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 42vuw0p1vg-15;
+	Thu, 14 Nov 2024 02:51:02 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: sreekanth.reddy@broadcom.com, sathya.prakash@broadcom.com,
+        James.Bottomley@SteelEye.com, eric.moore@lsil.com,
+        suganath-prabu.subramani@broadcom.com,
+        Zeng Heng <zengheng4@huawei.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        bobo.shaobowang@huawei.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, MPT-FusionLinux.pdl@broadcom.com
+Subject: Re: [PATCH] scsi: fusion: Fix not used variable 'rc'
+Date: Wed, 13 Nov 2024 21:50:08 -0500
+Message-ID: <173155154799.970810.15502982361144591172.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.46.2
+In-Reply-To: <20241024084417.154655-1-zengheng4@huawei.com>
+References: <20241024084417.154655-1-zengheng4@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D042UWB003.ant.amazon.com (10.13.139.135) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-14_01,2024-11-13_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 spamscore=0
+ adultscore=0 phishscore=0 malwarescore=0 mlxlogscore=966 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2411140021
+X-Proofpoint-GUID: 5comLe5-PlgwW_hA-2a4qudQZynBVXCd
+X-Proofpoint-ORIG-GUID: 5comLe5-PlgwW_hA-2a4qudQZynBVXCd
 
-From: Stas Sergeev <stsp2@yandex.ru>
-Date: Thu, 14 Nov 2024 00:02:05 +0300
-> @@ -154,7 +157,12 @@ static __inline__ void scm_pidfd_recv(struct msghdr *msg, struct scm_cookie *scm
->  	if (!scm->pid)
->  		return;
->  
-> -	pidfd = pidfd_prepare(scm->pid, 0, &pidfd_file);
-> +	err = pidfd_validate_flags(scm->pidfd_flags);
+On Thu, 24 Oct 2024 16:44:17 +0800, Zeng Heng wrote:
 
-No neede to double check here, it's already checked in __scm_send().
+> Fixing exposed the fact that improperly ignore the return value of
+> scsi_device_reprobe() in _scsih_reprobe_lun(). Fixing the calling code to
+> deal with the potential error is non-trivial, so for now just WARN_ON().
+> 
+> The handling of scsi_device_reprobe()'s return value refers to
+> _scsih_reprobe_lun() and the following link:
+> https://lore.kernel.org/all/094fdbf57487af4f395238c0525b2a560c8f68f0.1469766027.git.calvinowens@fb.com/
+> 
+> [...]
 
+Applied to 6.13/scsi-queue, thanks!
 
-> +	if (err) {
-> +		msg->msg_flags |= MSG_CTRUNC;
-> +		return;
-> +	}
-> +	pidfd = pidfd_prepare(scm->pid, scm->pidfd_flags, &pidfd_file);
->  
->  	if (put_cmsg(msg, SOL_SOCKET, SCM_PIDFD, sizeof(int), &pidfd)) {
->  		if (pidfd_file) {
+[1/1] scsi: fusion: Fix not used variable 'rc'
+      https://git.kernel.org/mkp/scsi/c/bd65694223f7
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
