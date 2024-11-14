@@ -1,143 +1,250 @@
-Return-Path: <linux-kernel+bounces-408462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 330789C7F1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:02:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4772A9C7F1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:03:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CED9C1F2312B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:02:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF85E1F2294B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2932566A;
-	Thu, 14 Nov 2024 00:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0C73C38;
+	Thu, 14 Nov 2024 00:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="lrlKN1uT"
-Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hWEQKpoZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29632817;
-	Thu, 14 Nov 2024 00:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E9E163;
+	Thu, 14 Nov 2024 00:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731542537; cv=none; b=XnQfmApiEz8X4PtizISHW+ojdH251Qrh6C/GhDG67xubTkpbILONyb/eJjDOr3LtdzLLM6OZHgNufECGnFAqcWc/yaWTC8b2GuSoLTIdEmv4fD0CEVYORWZec2mCcRDOseoePfemdbgn+CFpK1pL5amsJMDlWGCfKmKshTRKakw=
+	t=1731542606; cv=none; b=iAijIQbVwuc7++iTwF1YxkrpHJDJNm3BvkGO/4JBj6I7NDoHRMjgm3db6XPbkZpGvLRfFuOJc0arVMIxJR+5QOFG8PzRB1Sy+JkGaMWtyWgoriuW1CP0HMcYSM/uIAPEJeGvoxKi7C/Whkbcz2wsGppHswumSBNiHuK6XDWUrXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731542537; c=relaxed/simple;
-	bh=OGf/ZTZKvELNBg/gjtbeiUzLpSgVjmweUm4Y9oVAEpk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z2Ii03Rt5tnnbByUWDEYLosnGLrLEBdt9dRgS738o0EXXdQuxkK83ljw7ZUaOnjTvhJf3coYouVZk0WcwiOA+tLtHLWYJ5pqde7P6VXiXH0w+SEqu/b/1NC7BKzdY5MEOfwbJuN7wF6C+HcPX03pzKDNcwMc8umNB7rKidToPmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=lrlKN1uT; arc=none smtp.client-ip=207.171.188.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1731542536; x=1763078536;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=maNdqHYuoGEBlAJl6fKzox0ktKWtaRjAxlSJ21lw9TI=;
-  b=lrlKN1uTXZD3j9V+JqjGUWnVGj7qEXrs4NzwDwg4C6NVATfIeXgHVpz5
-   N0+FJVDrMQJJWuf1UWRq6sFGufnrEWvi0JzPm88hbptkvdPtNRh393F/G
-   cndVHXdT87kC4bRaepXT8iaJLHvM9N8AYOqgkzlyFpD/sWX4lmnS4P+JJ
-   8=;
-X-IronPort-AV: E=Sophos;i="6.12,152,1728950400"; 
-   d="scan'208";a="775470449"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 00:02:10 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:1588]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.55.96:2525] with esmtp (Farcaster)
- id a9caf9d4-5a3d-445a-aadc-386611a50c1d; Thu, 14 Nov 2024 00:02:09 +0000 (UTC)
-X-Farcaster-Flow-ID: a9caf9d4-5a3d-445a-aadc-386611a50c1d
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 14 Nov 2024 00:02:09 +0000
-Received: from 6c7e67c6786f.amazon.com (10.106.101.42) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Thu, 14 Nov 2024 00:02:05 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <devnull+manas18244.iiitd.ac.in@kernel.org>
-CC: <anupnewsmail@gmail.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<horms@kernel.org>, <kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<manas18244@iiitd.ac.in>, <netdev@vger.kernel.org>, <pabeni@redhat.com>,
-	<shuah@kernel.org>, <syzbot+d4373fa8042c06cefa84@syzkaller.appspotmail.com>,
-	<kuniyu@amazon.com>
-Subject: Re: [PATCH] Add string check in netlink_ack_tlv_fill
-Date: Wed, 13 Nov 2024 16:02:02 -0800
-Message-ID: <20241114000202.82838-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20241114-fix-netlink_ack_tlv_fill-v1-1-47798af4ac96@iiitd.ac.in>
-References: <20241114-fix-netlink_ack_tlv_fill-v1-1-47798af4ac96@iiitd.ac.in>
+	s=arc-20240116; t=1731542606; c=relaxed/simple;
+	bh=6wE9w23E701SXVrE75griIgPVhRTJAA2DvIbf6ahBS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=OfoB0ZCzDnZwlqDen6Kb0dPwOnZvVtBT9/t9O8ot0iOXV4V2bL/hMXTIembEdazRBXM2ZS+n+rHe9JCSRiY9/iKgUzfMh3n18RdEItTjhMusDGkwEgSMjg4dNxxEUozUggeRkX4yItaUpLFWNyKGxt3cGUrIlw2NYlF6liljzD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hWEQKpoZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40079C4CEC3;
+	Thu, 14 Nov 2024 00:03:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731542606;
+	bh=6wE9w23E701SXVrE75griIgPVhRTJAA2DvIbf6ahBS0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=hWEQKpoZVBf20UTjgat6vFlP9N609q4Z+nI7WMZiukgkE3kCfYFcpUYWnHnuydxT+
+	 NqdxsWswL8gpG0clMECkO7VtHquvy6ScTJBRVQiyNHA3g8G12KOxMM+7YJ9yChcHAw
+	 0yOck1icEBD7uM8i7ptWHNRdzt9loqhGFxxVonBfOp4iqa/271i1qj+16JsdoE8jGy
+	 D4ENYBfqqmTdwYk9mblkCj0bfqclGvvQyZ45i5Iso6YbjewdgE/0cgZXGZjxE/TOta
+	 nWG1we/muqTgGNsivOyFVLTwF1P1Vbien35/EXHI7LAAHcEBfxKHuNq/dCXwOJXHgT
+	 iWGgJiqx7lM6g==
+Date: Wed, 13 Nov 2024 18:03:24 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Shijith Thotton <sthotton@marvell.com>
+Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
+	"ilpo.jarvinen@linux.intel.com" <ilpo.jarvinen@linux.intel.com>,
+	"Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"rafael@kernel.org" <rafael@kernel.org>,
+	"scott@os.amperecomputing.com" <scott@os.amperecomputing.com>,
+	Jerin Jacob <jerinj@marvell.com>,
+	Srujana Challa <schalla@marvell.com>,
+	Vamsi Krishna Attunuru <vattunuru@marvell.com>
+Subject: Re: [PATCH v4] PCI: hotplug: Add OCTEON PCI hotplug controller driver
+Message-ID: <20241114000324.GA1967327@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D039UWB002.ant.amazon.com (10.13.138.79) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PH0PR18MB4425C1F63EAFFA2AA3BFCBF2D95A2@PH0PR18MB4425.namprd18.prod.outlook.com>
 
-> [PATCH] Add string check in netlink_ack_tlv_fill
-
-Please specify the target tree and add prefix like
-
-  [PATCH net v2] netlink: Add string...
-
-We use net.git for fixes and net-next.git for others.
-https://www.kernel.org/doc/html/v6.11-rc6/process/maintainer-netdev.html
-
-
-From: Manas via B4 Relay <devnull+manas18244.iiitd.ac.in@kernel.org>
-Date: Thu, 14 Nov 2024 04:14:25 +0530
-> From: Manas <manas18244@iiitd.ac.in>
+On Wed, Nov 13, 2024 at 12:20:20PM +0000, Shijith Thotton wrote:
+> >> >> This patch introduces a PCI hotplug controller driver for the OCTEON
+> >> >> PCIe device. The OCTEON PCIe device is a multi-function device where the
+> >> >> first function serves as the PCI hotplug controller.
+> >> >>
+> >> >>                +--------------------------------+
+> >> >>                |           Root Port            |
+> >> >>                +--------------------------------+
+> >> >>                                |
+> >> >>                               PCIe
+> >> >>                                |
+> >> >> +---------------------------------------------------------------+
+> >> >> |              OCTEON PCIe Multifunction Device                 |
+> >> >> +---------------------------------------------------------------+
+> >> >>              |                    |              |            |
+> >> >>              |                    |              |            |
+> >> >> +---------------------+  +----------------+  +-----+  +----------------+
+> >> >> |      Function 0     |  |   Function 1   |  | ... |  |   Function 7   |
+> >> >> | (Hotplug controller)|  | (Hotplug slot) |  |     |  | (Hotplug slot) |
+> >> >> +---------------------+  +----------------+  +-----+  +----------------+
+> >> >>              |
+> >> >>              |
+> >> >> +-------------------------+
+> >> >> |   Controller Firmware   |
+> >> >> +-------------------------+
+> >> >>
+> >> >> The hotplug controller driver enables hotplugging of non-controller
+> >> >> functions within the same device. During probing, the driver removes
+> >> >> the non-controller functions and registers them as PCI hotplug slots.
+> >> >> These slots are added back by the driver, only upon request from the
+> >> >> device firmware.
+> >> >>
+> >> >> The controller uses MSI-X interrupts to notify the host of hotplug
+> >> >> events initiated by the OCTEON firmware. Additionally, the driver
+> >> >> allows users to enable or disable individual functions via sysfs slot
+> >> >> entries, as provided by the PCI hotplug framework.
+> >> >
+> >> >Can we say something here about what the benefit of this driver is?
+> >> >For example, does it save power?
+> >>
+> >> The driver enables hotplugging of non-controller functions within the device
+> >> without requiring a fully implemented switch, reducing both power
+> >consumption
+> >> and product cost.
+> >
+> >Reduced product cost is motivation for the hardware design, not for
+> >this hotplug driver.
+> >
+> >You didn't explicitly say that when function 0 hot-removes another
+> >function, it reduces overall power consumption.  But I assume that's
+> >the case?
+> >
 > 
-> netlink_ack_tlv_fill crashes when in_skb->data is an empty string. This
-> adds a check to prevent it.
->
-
-
-Fixes: tag is needed here.
-
-> Reported-by: syzbot+d4373fa8042c06cefa84@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=d4373fa8042c06cefa84
-> Signed-off-by: Manas <manas18244@iiitd.ac.in>
-> ---
-> netlink_ack_tlv_fill crashes when in_skb->data is an empty string. This
-> adds a check to prevent it.
-
-You need not duplicate commit message here.
-
-under --- you can add extra info that will not be included in the
-actual commit, e.g. changes between each version of patches.
-
-
-> ---
->  net/netlink/af_netlink.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Yes, I will explain it in detail below
 > 
-> diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
-> index 0a9287fadb47a2afaf0babe675738bc43051c5a7..ea205a4f81e9755a229d46a7e617ce0c090fe5e3 100644
-> --- a/net/netlink/af_netlink.c
-> +++ b/net/netlink/af_netlink.c
-> @@ -2205,7 +2205,7 @@ netlink_ack_tlv_fill(struct sk_buff *in_skb, struct sk_buff *skb,
->  	if (!err)
->  		return;
->  
-> -	if (extack->bad_attr &&
-> +	if (extack->bad_attr && strlen(in_skb->data) &&
->  	    !WARN_ON((u8 *)extack->bad_attr < in_skb->data ||
->  		     (u8 *)extack->bad_attr >= in_skb->data + in_skb->len))
->  		WARN_ON(nla_put_u32(skb, NLMSGERR_ATTR_OFFS,
+> >> >What causes the function 0 firmware to request a hot-add or
+> >> >hot-removal of another function?
+> >>
+> >> The firmware will enable the required number of non-controller
+> >> functions based on runtime demand, allowing control over these
+> >> functions. For example, in a vDPA scenario, each function could act
+> >> as a different type of device (such as net, crypto, or storage)
+> >> depending on the firmware configuration.
+> >
+> >What is the path for this runtime demand?  I assume function 0
+> >provides some interface to request a specific kind of functionality
+> >(net, crypo, storage, etc)?
+> >
 > 
-> ---
-> base-commit: 2d5404caa8c7bb5c4e0435f94b28834ae5456623
-> change-id: 20241114-fix-netlink_ack_tlv_fill-14db336fd515
+> Right now, it done via firmware management console.
 > 
-> Best regards,
-> -- 
-> Manas <manas18244@iiitd.ac.in>
+> >I don't know anything about vDPA, so if that's important here, it
+> >needs a little more context.
+> >
+> >> Hot removal is useful in cases of live firmware updates.
+> >
+> >So the idea is that function X is hot-removed, which forces the driver
+> >to let go of it, the firmware is updated, and X is hot-added again,
+> >and the driver binds to it again?
+> >
 > 
+> I will explain the process in detail, which should also address the questions
+> below.
+> 
+> >And somewhere in there is a reset of function X, and after the reset
+> >X is running the new firmware?
+> >
+> >Who/what initiates this whole path?  Some request to function 0,
+> >saying "please remove function X"?
+> >
+> >But I guess maybe it doesn't go through function 0, since octeon_hp
+> >claims function 0, and it doesn't provide that functionality.  Maybe
+> >the individual drivers for *other* functions know how to initiate
+> >these things, and those functions internally communicate with function
+> >0 to ask it to start a hot-remove/hot-add sequence?
+> >
+> >That wouldn't explain the power reduction plan, though.  A driver for
+> >function X could conceivably tell its device "I'm no longer needed"
+> >and function X could tell function 0 to remove it.  That might enable
+> >some power savings.  But that doesn't have a path to *re-enable*
+> >function X, since function X has been removed and there's no driver to
+> >ask for it to be hot-added again.
+> >
+> >Maybe there's some out-of-band management path that can tell function
+> >0 to do things, independent of PCIe?
+> >
+> 
+> Our implementation aims to achieve two main objectives:
+> 
+> 1. Enable changing a function's personality at runtime.
+> 2. Reduce power consumption.
+> 
+> The OCTEON PCI device has multiple ARM cores running Linux, with its firmware
+> composed of multiple components. For example, the firmware includes components
+> like Virtio-net, NVMe, and Virtio-Crypto, which can be assigned to any function
+> at runtime. The device firmware is accessible via a management console, allowing
+> components to be started or stopped. For each component, an associated function
+> is hot-added on the host to expose its functionality. Initially, after boot, only
+> Function 0 and the controller firmware are active.
+> 
+> Here's a breakdown:
+> 
+> At Time 0:
+> - Linux boots on the device, starting the controller firmware.
+> 
+> At Time 1:
+> - The hotplug driver loads on the host, temporarily removing other functions.
+> 
+> At Time 2:
+> - A network device firmware component starts on an ARM core (initiated through
+>   a console command).
+> - This component sets up the Function 1 configuration space, data, and other
+>   request handlers for network processing.
+> - The firmware issues a hot-add request to Function 0 (hotplug driver) on the
+>   host to enable Function 1.
+> 
+> At Time 3:
+> - The Function 0 hotplug driver on the host receives the hot-add request and
+>   enables Function 1 on the host.
+> - A network driver binds to Function 1 based on device class and ID.
+> 
+> At Time 4:
+> - The network device firmware component receives a stop signal.
+> - The firmware issues a hot-remove request for Function 1 on the host.
+> - The firmware component halts, reducing the device's power consumption.
+> 
+> At Time 5:
+> - The Function 0 hotplug driver on the host receives the hot-remove request and
+>   disables Function 1 on the host.
+> 
+> At Time 6:
+> - A crypto device firmware component starts on an ARM core.
+> - This component configures the Function 1 configuration space for crypto
+>   processing and sets up the required firmware handlers.
+> - The firmware issues a hot-add request to enable Function 1 on the host.
+> 
+> At Time 7:
+> - The Function 0 hotplug driver on the host receives the hot-add request and                                                                                                                                                                                                      enables Function 1 on the host.
+> - A crypto driver binds to Function 1 based on device class and ID.
+> 
+> The firmware component for each function only runs and is hot-added when
+> needed. Only Function 0 and the controller firmware remain active
+> continuously. This dynamic control reduces power usage by keeping unnecessary
+> components off. Additionally, a single function can adapt its personality based
+> on the associated firmware component, enhancing flexibility. 
+>                                                                                                                                                                                                                    
+> I hope this clarifies the implementation. Let me know if you have any
+> questions.
+
+Thanks very much!  I propose adding text like this to the commit log:
+
+  There is an out-of-band management console interface to firmware
+  running on function 0 whereby an administrator can disable functions
+  to save power or enable them with one of several personalities
+  (virtio-net, virtio-crypto, NVMe, etc) for the other functions.
+  Function 0 initiates hotplug events handled by this driver when the
+  other functions are enabled or disabled.
+
+I provisionally applied this to pci/hotplug-octeon, but will be happy
+to update the text if necessary.
+
+Bjorn
 
