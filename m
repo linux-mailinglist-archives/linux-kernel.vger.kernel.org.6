@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-409315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75CC69C8B55
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:03:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 001719C8B31
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:54:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DA17B2BCA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:54:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACAA81F21A98
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A858C1FC7F7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29AE1FCC4E;
 	Thu, 14 Nov 2024 12:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="MweNg4/K"
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="QMTGCInV"
 Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3EB81FB8A7
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 12:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074E91FB8A9
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 12:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731588693; cv=none; b=CNenVMMMUJj2hzqpOE3n4xEl/Zf22yeIdm4bdJY6LNxH4Hw4ssm/FBk/faDoDXbEXt59kpQMyacAkSH46gu77YEPnsP10hWeBqVUGmhi7n1u8IyLJbwl5lzSfF8BAUz7TUEQowNE2LaHvLq8vgcoyUO2TUO1/mmx7udE4jvpbdI=
+	t=1731588694; cv=none; b=tHIrAzFJjOLOg+lG+xxmnbB+nmuCFwQOUokqZAxRBhtI2HgpR7G41B85QZr/oi1ycE6HQHUyO14rAURO/eFIok79M19g2IcjA8iALqL3sfAVioaJgYzyW4Pztrxb1QdPJqLpBMFY6KfVuSABa3JcZkCKW9q7AvVJToVSBMBp1hA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731588693; c=relaxed/simple;
-	bh=u0yNhaeKck1mhyq2VIAd5lmVFTSwLwmmqNy+P2eTIsg=;
+	s=arc-20240116; t=1731588694; c=relaxed/simple;
+	bh=BdX8F9GYE15oH2m4KueFN1WXUWkpazHOd2IWZs953MM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lQFW3DY2XWisnQjnpofDqog8k1K4wUniiFdSg8qbWOBTdg/i3WQPh7+1Id34L2+kzrhXRdq/ntqBK3stU21ndkUNSC+YwivAc6ypuXnmztS/d72YR9Ma3VSCroLAzFPWSHte8a3N1Tf7bEKghjVgnxeGWyjgxXu6p7nbS60o3wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=MweNg4/K; arc=none smtp.client-ip=150.107.74.76
+	 MIME-Version; b=jiu3ryFeu3LjkQcSnN6LXSoW/IOXBVCZTZ/3PwstUOHUyoOXEprbOETJbwOszUcQ0w8Zpo4kAw+yrai2cLGRGHl3dF6WjUI/kTlgAOTYvz0QOUzjDLsA34QkjTdhLPrHbPhnfGkQkTDjp0HBLrRUwTuCRXeu99RqYi51nARJBYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=QMTGCInV; arc=none smtp.client-ip=150.107.74.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
 	s=201909; t=1731588686;
-	bh=wa8kkMFSI7eeE5/UlhqUXcjhe3HJUAryRv831YI9duo=;
+	bh=TVrPuN62TirQi3n8J4yEY6pFFvqH5BlXogNdJxJWTvA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MweNg4/K+DSyryUNs/7J2WK0Vt0Q1Zhaw3vU1r6ja9Yuca4yZ9TK4JXNj5Jfx8+Eq
-	 LawQYA9By0CQTPIEgU2UCgJkA2JdIpvxgoEaumCzfHNQEHoA9vzC6/ybJqV5+IT+7l
-	 aL3vF2qM6F0IELyhLnaXOlWo0ykPrBCEwRgU70q1/S4k3rJHPvquJ/e7vf7h55hbat
-	 apHY/0dstRW3JrvwZOF3TKCgV3CWBLU4N4BtvduGWoH84u+/2CoKqF5fDG+LICGmSo
-	 7jNPF/wLJG9IvzpxpgJhGDXXgHKYa8DjYbJMbinZnDdJSd4YzqBrCJhaWJnw7pyaaO
-	 UjRGz71eRYQ3w==
+	b=QMTGCInVzFrOCynOneQRsCuZJ+NfX58DNoQzN5bCOgh1cfaxP92XRMRFoV+Ojh0R4
+	 i6nnahJcJEyT0BjMQ59SpaJ47hRXEhRf2zUjC8ywhiVJxV3mbjF5wc0bOD1IO7sjfj
+	 p/MHLovo7xeT1s1VeLOQzO/IjirIa3ZACYsfNwT8NSQQE7qB35tJCeCpMBSuJ6LNeV
+	 kiohkY+5LF1D2KdkM6SSY0CVQ9UlzXp6gvvVdP9UKMWaHitj+kLnJQWrJoESU1872s
+	 AkSXqPx17mA/fx53ADrhXbqkV+5/L/cSq0/0s3uCrVZ24gTjWycfqSro36EBENTM42
+	 iTBJHfFApVAJg==
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xq0QQ0NY2z4xcY;
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xq0QQ3s3Mz4xcd;
 	Thu, 14 Nov 2024 23:51:26 +1100 (AEDT)
 From: Michael Ellerman <mpe@ellerman.id.au>
 To: <linuxppc-dev@lists.ozlabs.org>
@@ -52,9 +52,9 @@ Cc: <linux-kernel@vger.kernel.org>,
 	<jk@ozlabs.org>,
 	<arnd@arndb.de>,
 	<geoff@infradead.org>
-Subject: [RFC PATCH 19/20] docs: Remove reference to removed CBE_CPUFREQ_SPU_GOVERNOR
-Date: Thu, 14 Nov 2024 23:51:08 +1100
-Message-ID: <20241114125111.599093-19-mpe@ellerman.id.au>
+Subject: [RFC PATCH 20/20] genirq: Remove IRQ_EDGE_EOI_HANDLER
+Date: Thu, 14 Nov 2024 23:51:09 +1100
+Message-ID: <20241114125111.599093-20-mpe@ellerman.id.au>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241114125111.599093-1-mpe@ellerman.id.au>
 References: <20241114125111.599093-1-mpe@ellerman.id.au>
@@ -66,31 +66,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove a reference to CBE_CPUFREQ_SPU_GOVERNOR which has been removed.
+The powerpc Cell blade support, now removed, was the only user of
+IRQ_EDGE_EOI_HANDLER, so remove it.
 
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 ---
- Documentation/admin-guide/kernel-per-CPU-kthreads.rst | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ kernel/irq/Kconfig |  4 ----
+ kernel/irq/chip.c  | 47 ----------------------------------------------
+ 2 files changed, 51 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-per-CPU-kthreads.rst b/Documentation/admin-guide/kernel-per-CPU-kthreads.rst
-index ea7fa2a8bbf0..ee9a6c94f383 100644
---- a/Documentation/admin-guide/kernel-per-CPU-kthreads.rst
-+++ b/Documentation/admin-guide/kernel-per-CPU-kthreads.rst
-@@ -278,12 +278,7 @@ To reduce its OS jitter, do any of the following:
- 		due to the rtas_event_scan() function.
- 		WARNING:  Please check your CPU specifications to
- 		make sure that this is safe on your particular system.
--	e.	If running on Cell Processor, build your kernel with
--		CBE_CPUFREQ_SPU_GOVERNOR=n to avoid OS jitter from
--		spu_gov_work().
--		WARNING:  Please check your CPU specifications to
--		make sure that this is safe on your particular system.
--	f.	If running on PowerMAC, build your kernel with
-+	e.	If running on PowerMAC, build your kernel with
- 		CONFIG_PMAC_RACKMETER=n to disable the CPU-meter,
- 		avoiding OS jitter from rackmeter_do_timer().
+diff --git a/kernel/irq/Kconfig b/kernel/irq/Kconfig
+index 529adb1f5859..564f3d454102 100644
+--- a/kernel/irq/Kconfig
++++ b/kernel/irq/Kconfig
+@@ -47,10 +47,6 @@ config GENERIC_IRQ_INJECTION
+ config HARDIRQS_SW_RESEND
+        bool
  
+-# Edge style eoi based handler (cell)
+-config IRQ_EDGE_EOI_HANDLER
+-       bool
+-
+ # Generic configurable interrupt chip implementation
+ config GENERIC_IRQ_CHIP
+        bool
+diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+index 271e9139de77..de5866f57bd7 100644
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -838,53 +838,6 @@ void handle_edge_irq(struct irq_desc *desc)
+ }
+ EXPORT_SYMBOL(handle_edge_irq);
+ 
+-#ifdef CONFIG_IRQ_EDGE_EOI_HANDLER
+-/**
+- *	handle_edge_eoi_irq - edge eoi type IRQ handler
+- *	@desc:	the interrupt description structure for this irq
+- *
+- * Similar as the above handle_edge_irq, but using eoi and w/o the
+- * mask/unmask logic.
+- */
+-void handle_edge_eoi_irq(struct irq_desc *desc)
+-{
+-	struct irq_chip *chip = irq_desc_get_chip(desc);
+-
+-	raw_spin_lock(&desc->lock);
+-
+-	desc->istate &= ~(IRQS_REPLAY | IRQS_WAITING);
+-
+-	if (!irq_may_run(desc)) {
+-		desc->istate |= IRQS_PENDING;
+-		goto out_eoi;
+-	}
+-
+-	/*
+-	 * If its disabled or no action available then mask it and get
+-	 * out of here.
+-	 */
+-	if (irqd_irq_disabled(&desc->irq_data) || !desc->action) {
+-		desc->istate |= IRQS_PENDING;
+-		goto out_eoi;
+-	}
+-
+-	kstat_incr_irqs_this_cpu(desc);
+-
+-	do {
+-		if (unlikely(!desc->action))
+-			goto out_eoi;
+-
+-		handle_irq_event(desc);
+-
+-	} while ((desc->istate & IRQS_PENDING) &&
+-		 !irqd_irq_disabled(&desc->irq_data));
+-
+-out_eoi:
+-	chip->irq_eoi(&desc->irq_data);
+-	raw_spin_unlock(&desc->lock);
+-}
+-#endif
+-
+ /**
+  *	handle_percpu_irq - Per CPU local irq handler
+  *	@desc:	the interrupt description structure for this irq
 -- 
 2.47.0
 
