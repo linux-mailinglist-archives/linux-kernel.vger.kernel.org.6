@@ -1,192 +1,122 @@
-Return-Path: <linux-kernel+bounces-409988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 515909C950E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:11:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 762F09C950B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:10:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4FAD1F2174B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:11:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2257C1F212BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585191B3930;
-	Thu, 14 Nov 2024 22:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655A61B3924;
+	Thu, 14 Nov 2024 22:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Sv9YPr3n"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="judC/vmd"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9471B3931
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225181B0F0E;
+	Thu, 14 Nov 2024 22:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731622192; cv=none; b=X0KtjMRpcbIvJDei4zZz4b3d551UAy3wm/U+v9id2Z/bX5CPFB9zsrqN8rUXbm+lWLHi0D5+FGeve4ENOjEV6tjJtNbe7aqQ8M+0CChvaaHa24C8o6x80wOdCjnW516pTZT5ZXI6tHUltqXoiYjPUbUZ96O5QDBknsYan5cf42s=
+	t=1731622189; cv=none; b=WAYy5hrfA1oe8MhTH0DJYmpCGiJhOIWp8N7WBx9qaCA7AeNRvajFILVNKWQ5RuJjIyfTdOu80tsLhsVJveTNtCsP/E0uxDujJaVsChL/l1pF0wuE9g1eGAJJbLcmwZFQOARd/HGk6KFd7KeWOa3z4uzAz3QKBEv1JALO7MSVboE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731622192; c=relaxed/simple;
-	bh=erE7x5UyBXgceNKubyiTOJ7BXeO3c7MeYHV9axV0DZw=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Cc:Content-Type; b=FmKV2MtpKj35g0ByIannH1TUrQOKDOWOMXt0gdvb58VrrzL0sOT2FMDvlzyf8lnGgC973WGNZ0dIqJd8CgvQX3xEGOwpZZHrcctFfJr99WE68Unm9xU3N/t67m0pPi47udsp9wKMV2nvixL4+UH8kphSBI2itKsDeGlKSz7rBQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--saravanak.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Sv9YPr3n; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--saravanak.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e381d10dd2aso1327790276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 14:09:50 -0800 (PST)
+	s=arc-20240116; t=1731622189; c=relaxed/simple;
+	bh=6IQyXRC9hYx6rGoIbfTLpkvZlOUYKn8M0olw07FHBkU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qosHReXmPEAHic6Qdp56GosnuNcAaxVNPRYv7avgFhdW0xI7d0+A/pQBAcbI4w9STQf3X65OxF68QLGrvnJbgUEPafZ8ocCNZTUIpk0pWW8RA4GSo/cPieSLIoWKKgyv770ebL//lnhnSpDddGA61vqWOsUi3a7SRk8bidWhh1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=judC/vmd; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4315eac969aso6807125e9.1;
+        Thu, 14 Nov 2024 14:09:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731622190; x=1732226990; darn=vger.kernel.org;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ix2aZjNEV5v90Kyb9lVYbv1gl/XRVKcqFa1DVAk8aZ0=;
-        b=Sv9YPr3nuqoK8Mxj0uLy67ZQrYPVOEVW2/3nXGcHvyTg1E/5s3tSEuPMSbT2CEOTc9
-         esgkJJ7B31K4XcSsZbYDDYrXjz5AJbY3qhwIkoPl4aokj3mJLOw5sCfxw7sWLRjj0MKF
-         JbDSbQOZLJSJPmQS4X5F9XCg6/ISxwv0Cn0kZ+HPKxl8gzE/GkqZl1btVVQDwbRoB3Gq
-         XLfqXKFyk8eg7681tdMDpQbA2E+5L+R+1S2V0me/3DH1mQ6nukegp8uXWKMwiHFZRY8K
-         HmgDOHYLvg8ufhQJKQla302wM8T4M2rfqKFczo1+N9wVXrUO1t67KhqJu3OGeee5vJtJ
-         kGYQ==
+        d=gmail.com; s=20230601; t=1731622186; x=1732226986; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LP7Hi3Q6dgrff1lGnR4FQ8i3hpbGOOo16Puyr3RTY9M=;
+        b=judC/vmdeGm7YkTeIi5GpQ6slJYMYF4+sgsrWa6Ps5LFITQlu9pTrowKCBQvK6benT
+         NoutXvZNGHlupNiBDS6ftiLLBO0kLrTcw0WKPV93eR/FnsJ1oj+8jJ/PlSnUgDdgP+ut
+         /NkyLz+ScMGLGdp6+/IJBe3QXIDM56rcI3I4oGwtrE6MtOdN3kWBDtXhmWk8OByFNCm4
+         044o0rrLPQOb9QBNt23MHv78jeylvwOHZ5R+wXwOivVYYMe2apzWWoZC9sNEP5w8AqCM
+         iu8JfrgnvIrvccc/4h3IqAdRTajstAe74oXqWR8i9idnKNvyzW6zAJi+pX3pxU+gVhn8
+         3dxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731622190; x=1732226990;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ix2aZjNEV5v90Kyb9lVYbv1gl/XRVKcqFa1DVAk8aZ0=;
-        b=TOyxci5eWw1PJ37+o/Wkl3UjGdF9uspSj5ZXsLzhoRzH00fugmQdcHjxp3F4DdjafE
-         D1AAiCyJOT3inYpGugM1bIpNAFxAiWo7Ukgt6da4vaHL0Kr3jalIrzS3DcmsmFD/zDjI
-         30eEcfDb0zEfOcPUeIozVlEw34dF8rSevjRA4Nv6RaO/qbp5amvi8Jd6iVaeF7qHyF9G
-         plw6AuE7y33TAFblT+lzXiqANaHM0aMgTFUJkZQX+fIUb/GNfziDtJCznHcAbDqKTygM
-         tt4hq/m52T9OU272yjolHSrs43d2fyLHXqoBXhhDEpngfgpkHw6JUXC88rSVMU7dKAaF
-         MCpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVplTytPiCDAm/raxG85ncoOD8RUb+QUl3lCsKVhgs9njOORXIzp4Rs4pTGW4OlOxPoaCZ/N7eiqTlHUMg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOaZIWsD0PHk3BooDf80Dh8wg9nnR6ShprjrbVO/Ave7wLD2A+
-	MzjrAtzu4Nld8IE74JUBUmlZhNmKRzCs3h2rpC0Vy06tPvH+/p/j6o6FPENvsh9ic8XUsFLq5rC
-	CeON3PLndA2XEtQ==
-X-Google-Smtp-Source: AGHT+IF8VfOz6LQsMr/CGI8GCQ4S/zLj7Vdday2+nUG/rZc9SbBgXM0Sf7829fpe/0ZP6BT+O+UG5Ot4zG8sR2g=
-X-Received: from saravanak.san.corp.google.com ([2620:15c:2d:3:3e23:8355:c37:686e])
- (user=saravanak job=sendgmr) by 2002:a25:ce05:0:b0:e38:25b5:e33 with SMTP id
- 3f1490d57ef6-e38263d5d0dmr314276.7.1731622190059; Thu, 14 Nov 2024 14:09:50
- -0800 (PST)
-Date: Thu, 14 Nov 2024 14:09:19 -0800
-In-Reply-To: <20241114220921.2529905-1-saravanak@google.com>
-Message-Id: <20241114220921.2529905-6-saravanak@google.com>
+        d=1e100.net; s=20230601; t=1731622186; x=1732226986;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LP7Hi3Q6dgrff1lGnR4FQ8i3hpbGOOo16Puyr3RTY9M=;
+        b=esVefOW3WWU4IuEY+Eih4ZiXcLGzq0Bmv4tSUbS7pOk+CQSFbB4kx0eV8L+zwXDxR3
+         G5NpsH1yVu3a2OPct2fUbNo8kO3zblXMNYcKCw+NZVxB7NcUQsXOrr1ZawI1bBo3k01f
+         VzISrchkJCJ3Bd1elJOm1ptu/MUJNvbGmYrxS4oModWa0F5ndNFbXCWojovHWrtkVeaY
+         /raY/nKlq9Rhube4XOfgrS0jwThdYXrHHVwCUYGZt33Jj+mubFu+rDkIN1nbqGcXUxHb
+         Z3Qvk252BgqyOtqVKXm5rnUHrfkroahbIAzjTq4qx+tWxuJDur9HythNtb6m6ZYG0uW8
+         6wuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVMtaalWZlq7Ib9AkZJBiiX90o4S6aSpIw2/jbEXq+GOaw4Q4viWT3ZL6S2T3B8shSPchvpMUs7dr+KT6Xc+QoX@vger.kernel.org, AJvYcCVZGvzWq6FMLSgUkGUUNx/ev3mc+8GJwQ/BPAHKW5Yuwi+H+51BLPayQ2/D6SGYZARl6UgssSKC@vger.kernel.org, AJvYcCWpu5XmW8M6jGEQZYS9EQGW5K8G45C5pCudlUis5fKDIU9ncOxLwM56AM3ahoLsiGdaK8IFUaJSlOovDeE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrWvdqYWqbKMqdeLwAv7iVx8L33fzzQyCV4+8YRsiACVoS2y8U
+	iLL4WIIpQp12SqBsMHxl3JrglAHAbUD09WtMbTblP2zMNcrvGEU1
+X-Google-Smtp-Source: AGHT+IEggJ6DacuYcF0xDEFeIuZNohE2/vFF783XckdAnLBmD+z6MYMYdjru/EsyuHzKMnZgrtoNGQ==
+X-Received: by 2002:a05:600c:4514:b0:42c:b67b:816b with SMTP id 5b1f17b1804b1-432d97268d5mr47567085e9.1.1731622186241;
+        Thu, 14 Nov 2024 14:09:46 -0800 (PST)
+Received: from [192.168.0.2] ([69.6.8.124])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab80ad9sm33514395e9.25.2024.11.14.14.09.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Nov 2024 14:09:45 -0800 (PST)
+Message-ID: <4fa316ce-c6f7-41d8-bb47-00c15f76faba@gmail.com>
+Date: Fri, 15 Nov 2024 00:10:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241114220921.2529905-1-saravanak@google.com>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Subject: [PATCH v1 5/5] PM: sleep: Spread out async kworker threads during
- dpm_resume*() phases
-From: Saravana Kannan <saravanak@google.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>
-Cc: Saravana Kannan <saravanak@google.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Marek Vasut <marex@denx.de>, Bird@google.com, Tim <Tim.Bird@sony.com>, 
-	kernel-team@android.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v11 00/23] Introducing OpenVPN Data Channel
+ Offload
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, sd@queasysnail.net,
+ Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ steffen.klassert@secunet.com, antony.antony@secunet.com,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <2828411f-f2e5-4dfc-80ff-577eb5fd359a@gmail.com>
+ <a7009e7e-a1f9-4aa5-ad41-2befc64b5d3e@openvpn.net>
+Content-Language: en-US
+From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+In-Reply-To: <a7009e7e-a1f9-4aa5-ad41-2befc64b5d3e@openvpn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-As of today, the scheduler doesn't spread out all the kworker threads
-across all the available CPUs during suspend/resume. This causes
-significant resume latency during the dpm_resume*() phases.
+On 14.11.2024 17:33, Antonio Quartulli wrote:
+> On 06/11/2024 02:18, Sergey Ryazanov wrote:
+>> Regarding "big" topics I have only two concerns: link creation using 
+>> RTNL and a switch statement usage. In the corresponding thread, I 
+>> asked Jiri to clarify that "should" regarding .newlink implementation. 
+>> Hope he will have a chance to find a time to reply.
+> 
+> True, but to be honest at this point I am fine with sticking to RTNL, 
+> also because we will soon introduce the ability to create 'persistent' 
+> ifaces, which a user should be able to create before starting openvpn.
 
-System resume latency is a very user-visible event. Reducing the
-latency is more important than trying to be energy aware during that
-period.
+Could you share the use case for this functionality?
 
-Since there are no userspace processes running during this time and
-this is a very short time window, we can simply disable EAS during
-resume so that the parallel resume of the devices is spread across all
-the CPUs.
+> Going through RTNL for this is the best choice IMHO, therefore we have 
+> an extra use case in favour of this approach (next to what Jiri already 
+> mentioned).
 
-On a Pixel 6, averaging over 100 suspend/resume cycles, the new logic
-plus disabling EAS for resume yields significant improvements:
-+---------------------------+-----------+------------+------------------+
-| Phase			    | Old full sync | New full async | % change |
-|			    |		    | + EAS disabled |		|
-+---------------------------+-----------+------------+------------------+
-| Total dpm_suspend*() time |        107 ms |          62 ms |     -42% |
-+---------------------------+-----------+------------+------------------+
-| Total dpm_resume*() time  |         75 ms |          61 ms |     -19% |
-+---------------------------+-----------+------------+------------------+
-| Sum			    |        182 ms |         123 ms |     -32% |
-+---------------------------+-----------+------------+------------------+
+In absence of arguments it's hard to understand, what's the "best" 
+meaning. So, I'm still not sure is it worth to split uAPI between two 
+interfaces. Anyway, it's up to maintainers to decide is it mergeable in 
+this form or not. I just shared some arguments for the full management 
+interface in GENL.
 
-Signed-off-by: Saravana Kannan <saravanak@google.com>
----
- kernel/power/suspend.c  | 16 ++++++++++++++++
- kernel/sched/topology.c | 13 +++++++++++++
- 2 files changed, 29 insertions(+)
-
-diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-index 09f8397bae15..7304dc39958f 100644
---- a/kernel/power/suspend.c
-+++ b/kernel/power/suspend.c
-@@ -393,6 +393,12 @@ void __weak arch_suspend_enable_irqs(void)
- 	local_irq_enable();
- }
- 
-+/*
-+ * Intentionally not part of a header file to avoid risk of abuse by other
-+ * drivers.
-+ */
-+void sched_set_energy_aware(unsigned int enable);
-+
- /**
-  * suspend_enter - Make the system enter the given sleep state.
-  * @state: System sleep state to enter.
-@@ -468,6 +474,15 @@ static int suspend_enter(suspend_state_t state, bool *wakeup)
- 
-  Platform_wake:
- 	platform_resume_noirq(state);
-+	/*
-+	 * We do this only for resume instead of suspend and resume for these
-+	 * reasons:
-+	 * - Performance is more important than power for resume.
-+	 * - Power spent entering suspend is more important for suspend. Also,
-+	 *   stangely, disabling EAS was making suspent a few milliseconds
-+	 *   slower in my testing.
-+	 */
-+	sched_set_energy_aware(0);
- 	dpm_resume_noirq(PMSG_RESUME);
- 
-  Platform_early_resume:
-@@ -520,6 +535,7 @@ int suspend_devices_and_enter(suspend_state_t state)
-  Resume_devices:
- 	suspend_test_start();
- 	dpm_resume_end(PMSG_RESUME);
-+	sched_set_energy_aware(1);
- 	suspend_test_finish("resume devices");
- 	trace_suspend_resume(TPS("resume_console"), state, true);
- 	resume_console();
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 9748a4c8d668..c069c0b17cbf 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -284,6 +284,19 @@ void rebuild_sched_domains_energy(void)
- 	mutex_unlock(&sched_energy_mutex);
- }
- 
-+void sched_set_energy_aware(unsigned int enable)
-+{
-+	int state;
-+
-+	if (!sched_is_eas_possible(cpu_active_mask))
-+		return;
-+
-+	sysctl_sched_energy_aware = enable;
-+	state = static_branch_unlikely(&sched_energy_present);
-+	if (state != sysctl_sched_energy_aware)
-+		rebuild_sched_domains_energy();
-+}
-+
- #ifdef CONFIG_PROC_SYSCTL
- static int sched_energy_aware_handler(const struct ctl_table *table, int write,
- 		void *buffer, size_t *lenp, loff_t *ppos)
--- 
-2.47.0.338.g60cca15819-goog
-
+--
+Sergey
 
