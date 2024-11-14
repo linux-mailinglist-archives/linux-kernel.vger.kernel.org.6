@@ -1,170 +1,190 @@
-Return-Path: <linux-kernel+bounces-408842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4653C9C8435
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:49:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B189C841D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:45:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDEA0B24353
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:49:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD8F51F22DBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC3A1F5844;
-	Thu, 14 Nov 2024 07:48:13 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7C41EF09F;
+	Thu, 14 Nov 2024 07:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bJCD2+9B"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D0F1F7544;
-	Thu, 14 Nov 2024 07:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4CF81E9080
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731570493; cv=none; b=Qa3uWx7+3ge6FFNU6uPkJDDlk2Mvb0CVGiZXgQy+HQTdg2EcTB5tHbt/H8aVo4SebvSNW1mxZgaviZbRCfc/8Wo1XV3bZfoTioyDRaiD7mUU0X7xtH+sftBucPdT8pWDf3UIxWriM/AbAd7o2J9cTDBaWOPFfZTkuHeDaPNILUg=
+	t=1731570315; cv=none; b=Gtg6iJgs/qAwrAIzZ77VHfRY4CsmqxxDtbYFh7TJEyXz8LULcRPCdGkdqSqkzC8QTCj1AeawpURekQa16/dH4kw8z3kq0UL+4kXfolldcmupBomZqhgAa7G/iOqyMpFPkemnwSm1QyedCmpsjczAraUA7TaXxXv2/rPPC1tOOMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731570493; c=relaxed/simple;
-	bh=/X/lqXT5kCe1MZeScw8zFh9gO602/wZFaNkoS8k0Nt8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SSXPpLzG4sAsPfnZNy2XanYx6DYNd2qsLLMH10zz/lDVi9UJeNAlrmxFkdYPM4qleXbkO4lz9XmtcQ8+JeRFaeDDKQmSqmb6Nz/nJJOb2GrUB7nAlLSiEn2xYUw026M+RCUH1c+W0jppdDQgSy+WRIyTJC9TED74hLn6mjjw7ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Xpsgy1vmNz4f3nTX;
-	Thu, 14 Nov 2024 15:47:42 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 68B781A0194;
-	Thu, 14 Nov 2024 15:48:01 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP1 (Coremail) with SMTP id cCh0CgBH77AuqzVnoVPRBg--.6215S2;
-	Thu, 14 Nov 2024 15:47:59 +0800 (CST)
-Message-ID: <4f78d752-52ab-493d-8bf5-f12dc4f554c8@huaweicloud.com>
-Date: Thu, 14 Nov 2024 15:47:58 +0800
+	s=arc-20240116; t=1731570315; c=relaxed/simple;
+	bh=uEIiSiT6MVvfxPz2XPGu2GD0xwRCZ3nAWNCTUt1MAmk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dbluTbTWQvAox4UB/JwFGbasUyCpuQgr0OnR/Y/gDwqpEM7ZqShqCnojevsPSPv6S1nkdwqJfZU1i/7MeXRM9+LtboJlQiqRkpykJzoMkBzYD53wGJgMy3URfV7h/1/RKYFFU3jVAsIsl+1K+oLRQ4eeKAAcmoxVzNYGoH61+ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bJCD2+9B; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4314b316495so2904315e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 23:45:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731570312; x=1732175112; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=uEIiSiT6MVvfxPz2XPGu2GD0xwRCZ3nAWNCTUt1MAmk=;
+        b=bJCD2+9BZEqGkry9pefU5yJf+Erx5PePj92fduDmjWC8OhKKX4tOtwyow6sm0hEOa0
+         BE7W2Xus/o1erDNb/JvoYaKNXlAJkigZI4FMCe8otZWVcd/jpAui7WVy3/2G0SSHc0CH
+         ASbwCadq7oE7N2HHNHT/aQKd9XqgGTaCOGVnMKevxwy8giJGokQpL8VITt3ZilUfn/p7
+         JH+s6CBkEMyrHrk+GlEwUoMudcaOqRzl/zSu4Pn7SzqPf0wfmqneT1JDPlDeRoXOi7Vi
+         HVYYVro5RbCpibyj+DHITKSJodkzJCaicOOJR8ZFVuRoDyGzcGN1Fin14blKGAbjoyyU
+         1dMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731570312; x=1732175112;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uEIiSiT6MVvfxPz2XPGu2GD0xwRCZ3nAWNCTUt1MAmk=;
+        b=qibAGr14i2pd7oqUgOmLhuroPk1l5IjqzIl/V13+VX5FlQU9/Ajlk9MJuMBKi/9Qfu
+         eLxodLHAXBNFPHwP47lb9NTkkAtosccsNutnMLor25sdWpVYfLNhyGk2VdYkAyduLjbQ
+         3U4JLbCxUw3I9AbEj3PjfmA65pAsh3AKFvlKlhApaHCU4scWrTpHU8n/ij2si0hOQaA9
+         Wj3mTq6mYYKoi5mcaDO87JrCBr2bEcRZ7dl1CXuJ1hwAZ+ODf82CJx0vvfflkUQOUD3C
+         0BlB+YqJCY/gKs/yA3Ih5SvPR20Z2oGfRJzZub64jrWueE+LroAh0z9s4YPoKo8aXO84
+         BuBQ==
+X-Gm-Message-State: AOJu0YwDwnJLgNHLhjijBkrpBXdDzb66ga1229VhKc/TFUtSWdRUE8gY
+	4N1t31/Q43Opy/yQaqND6hexBkBtnGV0jUucJEwwfm5CFqiNlnU/
+X-Google-Smtp-Source: AGHT+IGPTlNHqMZqPDvm0bdoT2aFPVZEFTvnVfJQ3xOHkQwWI1e6abOVgjX1CVc7FhN97N/zH6trJg==
+X-Received: by 2002:a05:6000:1446:b0:37c:d227:d193 with SMTP id ffacd0b85a97d-3820df5c096mr5025433f8f.10.1731570311828;
+        Wed, 13 Nov 2024 23:45:11 -0800 (PST)
+Received: from ?IPv6:2003:f6:ef02:f400:a23c:697f:16fb:11c5? (p200300f6ef02f400a23c697f16fb11c5.dip0.t-ipconnect.de. [2003:f6:ef02:f400:a23c:697f:16fb:11c5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821adad945sm697889f8f.29.2024.11.13.23.45.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 23:45:11 -0800 (PST)
+Message-ID: <66beb423f48bcc0173d51783fb3c4e1b7673fa36.camel@gmail.com>
+Subject: Re: can/should a disabled irq become pending?
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Uwe
+ =?ISO-8859-1?Q?Kleine-K=F6nig?=	 <u.kleine-koenig@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>
+Date: Thu, 14 Nov 2024 08:49:34 +0100
+In-Reply-To: <87servku9h.ffs@tglx>
+References: 
+	<io53lznz3qp3jd5rohqsjhosnmdzd6d44sdbwu5jcfrs3rz2a2@orquwgflrtyc>
+	 <87r07gmej2.ffs@tglx>
+	 <nlzd7endwgf46czretmoqlck3fjp5vnvnkv2tsyql632ym5bfo@phr3ggjyx633>
+	 <87ldxnn6mp.ffs@tglx>
+	 <c12201672bf99729caada3e8c8f61ad7f4612a23.camel@gmail.com>
+	 <87servku9h.ffs@tglx>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] freezer, sched: report the frozen task stat as 'D'
-To: Valentin Schneider <vschneid@redhat.com>,
- Chen Ridong <chenridong@huaweicloud.com>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, Tejun Heo <tj@kernel.org>,
- =?UTF-8?Q?mkoutny=40suse=2Ecom_=3E=3E_Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: linux-kernel@vger.kernel.org, wangweiyang2@huawei.com,
- cgroups@vger.kernel.org
-References: <20241111135431.1813729-1-chenridong@huaweicloud.com>
- <xhsmhv7wrb3sc.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <xhsmhv7wrb3sc.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgBH77AuqzVnoVPRBg--.6215S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGFWfWFWftw43ZF48uw4kJFb_yoW5WFWkpF
-	ZxZr47Gan7Kry0krnrZw47WFyvgws2vr17Cr98WrWxKa45JFn09rn2vry5KF4UZrWFyFW7
-	Aa1Yvr97C3yqvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
+On Wed, 2024-11-13 at 16:50 +0100, Thomas Gleixner wrote:
+> On Wed, Nov 13 2024 at 11:34, Nuno S=C3=A1 wrote:
+> > On Wed, 2024-11-13 at 04:40 +0100, Thomas Gleixner wrote:
+> > > The interrupt does not get to the device handler even in the lazy
+> > > disable case. Once the driver invoked disable_irq*() the low level fl=
+ow
+> > > handlers (edge, level ...) mask the interrupt line and marks the
+> > > interrupt pending. enable_irq() retriggers the interrupt when the
+> > > pending bit is set, except when the interrupt line is level triggered=
+.
+> >=20
+> > There's something that I'm still trying to figure... For IRQ controller=
+s
+> > that=C2=A0not
+> > disable edge detection, can't we get the device handler called twice if=
+ we
+> > don't set
+> > unlazy?
+> >=20
+> > irq_enable() - > check_irq_resend()
+> >=20
+> > and then
+> >=20
+> > handle_edge_irq() raised by the controller
+>=20
+> You're right. We should have a flag which controls the replay
+> requirements of an interrupt controller. So far it only skips for level
+> triggered interrupts, but for those controllers it should skip for edge
+> too. Something like IRQCHIP_NO_RESEND ...
+>=20
+> > Or is the core handling this somehow? I thought IRQS_REPLAY could be
+> > doing the trick but I'm not seeing how...
+>=20
+> IRQS_REPLAY is just internal state to avoid double replay.
+>=20
+> > > On controllers which suffer from the #2 problem UNLAZY should indeed =
+be
+> > > ignored for edge type interrupts. That's something which the controll=
+er
+> > > should signal via a irqchip flag and the core code can act upon it an=
+d
+> > > ignore UNLAZY for edge type interrupts.
+> > >=20
+> > > But that won't fix the problem at hand. Let's take a step back and lo=
+ok
+> > > at the larger picture whether this can be reliably "fixed" at all.
+> > >=20
+> >=20
+> > Yeah, I'm still trying to figure when it's correct for a device to do
+> > UNLAZY? If I'm
+> > understanding things, devices that rely on disable_irq*() should set
+> > it?
+>=20
+> Not necessarily. In most cases devices are not re-raising interrupts
+> before the previous one has been handled and acknowledged in the device.
+>=20
+> > Because problem #2 is something that needs to be handled at the
+> > controller and core level if I got you right.
+>=20
+> Yes. We need a irqchip flag for that.
+>=20
+> > > > Ack. If there is no way to read back the line state and it's unknow=
+n if
+> > > > the irq controller suffers from problem #2, the only way to still
+> > > > benefit from the irq is to not use IRQ_DISABLE_UNLAZY and only act =
+on
+> > > > each 2nd irq; or ignore irqs based on timing. That doesn't sound ve=
+ry
+> > > > robust though, so maybe the driver has to fall back on polling the
+> > > > status register and not use irqs at all in that case.
+> > >=20
+> > > Actually ignoring the first interrupt after a SPI transfer and waitin=
+g
+> > > for the next conversion to raise the interrupt again should be robust
+> > > enough. The ADC has to be in continous conversion mode for that
+> > > obviously.
+> > >=20
+> > Might be the only sane option we have, Uwe? If we do this, we could be
+> > dropping valid samples but only with controllers that suffer from
+> > #2.
+>=20
+> No. You have the same problem with the controllers which do not disable
+> the edge detection logic.
+>=20
+> The interrupt controller raises the interrupt on unmask (enable_irq()).
+> Depending on timing the device handler might be invoked _before_ the
+> sample is ready, no?
+>=20
 
+For those controllers, I think it's almost always guaranteed that the first=
+ IRQ
+after enable is not really a valid sample. We'll always have some SPI trans=
+fer
+(that should latch an IRQ on the controller) before enable_irq().
 
-On 2024/11/13 22:34, Valentin Schneider wrote:
-> On 11/11/24 13:54, Chen Ridong wrote:
->> From: Chen Ridong <chenridong@huawei.com>
->>
->> Before the commit f5d39b020809 ("freezer,sched: Rewrite core freezer
->> logic"), the frozen task stat was reported as 'D' in cgroup v1.
->> However, after rewriting core freezer logic, the frozen task stat is
->> reported as 'R'. This is confusing, especially when a task with stat of
->> 'S' is frozen.
->>
->> This can be reproduced as bellow step:
->> cd /sys/fs/cgroup/freezer/
->> mkdir test
->> sleep 1000 &
->> [1] 739         // task whose stat is 'S'
->> echo 739 > test/cgroup.procs
->> echo FROZEN > test/freezer.state
->> ps -aux | grep 739
->> root     739  0.1  0.0   8376  1812 pts/0    R    10:56   0:00 sleep 1000
->>
->> As shown above, a task whose stat is 'S' was changed to 'R' when it was
->> frozen. To solve this issue, simply maintain the same reported state as
->> before the rewrite.
->>
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->> ---
->>  include/linux/sched.h | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/include/linux/sched.h b/include/linux/sched.h
->> index f0f23efdb245..878acce2f8d6 100644
->> --- a/include/linux/sched.h
->> +++ b/include/linux/sched.h
->> @@ -1630,8 +1630,9 @@ static inline unsigned int __task_state_index(unsigned int tsk_state,
->>  	 * We're lying here, but rather than expose a completely new task state
->>  	 * to userspace, we can make this appear as if the task has gone through
->>  	 * a regular rt_mutex_lock() call.
->> +	 * Report the frozen task uninterruptible.
->>  	 */
->> -	if (tsk_state & TASK_RTLOCK_WAIT)
->> +	if (tsk_state & TASK_RTLOCK_WAIT || tsk_state & TASK_FROZEN)
-> 
-> Hmph, for RTLOCK this was good enough since !PREEMPT_RT really would be
-> TASK_UNINTERRUPTIBLE. 
-> 
-> For the freezer AFAICT there's more variation, following your example:
-> 
-
-Thank you for your reply.
-I tried to freeze a task whose stat is 'R', the saved_state is variable.
-
-crash> task -R __state,saved_state 821
-PID: 821    TASK: ffff888101df8000  CPU: 6   COMMAND: "test.sh"
-  __state = 32768,
-  saved_state = 0,
-
-However, if a task is frozen, it will be better to show same stat in
-case of confusion. In cgroup v2, it is shown as 'S'. In cgroup v1, the
-prior stat shown was 'D'. Therefore, it might be a good choice to
-maintain the same reported state as before the rewrite.
-
-Or does anyone have a better idea?
-
-Best regards,
-Ridong
-
->   crash> task -R __state,saved_state 195
->   PID: 195      TASK: ffff888004abab80  CPU: 1    COMMAND: "sh"
->     __state = 32768    -> 0x8000 aka TASK_FROZEN
->     saved_state = 8193 -> 0x2001 aka TASK_INTERRUPTIBLE | TASK_FREEZABLE
-> 
-> so we ought to read ->saved_state, but as pointed out in [1] this is
-> racy...
-> 
-> [1]: https://lore.kernel.org/lkml/20220120162520.570782-3-valentin.schneider@arm.com/
-> 
->>  		state = TASK_UNINTERRUPTIBLE;
->>  
->>  	return fls(state);
->> -- 
->> 2.34.1
-> 
-> 
+- Nuno S=C3=A1
 
 
