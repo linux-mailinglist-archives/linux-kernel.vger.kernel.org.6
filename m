@@ -1,86 +1,95 @@
-Return-Path: <linux-kernel+bounces-408863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C847D9C846B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:58:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 183A09C846F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:00:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B6A8B25CF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:58:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84E34B23993
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959361F707B;
-	Thu, 14 Nov 2024 07:58:33 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA1A1F585B;
-	Thu, 14 Nov 2024 07:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BA51F584E;
+	Thu, 14 Nov 2024 08:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gkFJJccN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B3022611;
+	Thu, 14 Nov 2024 08:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731571113; cv=none; b=hjmJfYulnvzUquhZnnbBNrwtJNQytU+KC8RFjxZHqVAydzP2myrZz2nezP/L0mo0wC3uJoV8LQJECsopukwZG+WADuqOpBFSBoBtJw1DiiCucrACtaRRnYckZOQSleMFXf100v6+G2xmVPlcdo/nwag0EV+s0kFzLyaAgZgBd30=
+	t=1731571223; cv=none; b=ka9CBJZFLLI+3uTYsqU3lf2l9mYUmpFLVREqYnFp76uYyMjai2kWLMUNu+x1ipgjzaNPVqeqPcZI47p7a+91rafp36D2vSdHlD3IA/1YzNmYk+gWx3qkN7VbZOAPj1nC61n/0SdUO4t6clJ/tqI6dE9cCovJDM9XTm7hh4cAcBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731571113; c=relaxed/simple;
-	bh=XMp3TMytkuF37WuabIvY8hzRJfVme/+ExeXC30MjxBg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rjw0E+cVvuK98GTjVJKeDNmrWRWH/I465+ka0QIkmDWY8jqP5Qky2SRzfmQM8i1oG+5bs18xay6BlmLbW0CUw3Md1kbGtb5O+kKZaIGOyzluvNd/Dk75G76yRFzDoihECpzJvKx8p2/CT+zBO5+XJtARv/0fn+QW0Vb5e1FzGPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app04-12004 (RichMail) with SMTP id 2ee46735ad9e2a5-f1bae;
-	Thu, 14 Nov 2024 15:58:24 +0800 (CST)
-X-RM-TRANSID:2ee46735ad9e2a5-f1bae
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.101])
-	by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee96735ada06f4-b2187;
-	Thu, 14 Nov 2024 15:58:24 +0800 (CST)
-X-RM-TRANSID:2ee96735ada06f4-b2187
-From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-To: perex@perex.cz
-Cc: tiwai@suse.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhang jiao <zhangjiao2@cmss.chinamobile.com>
-Subject: [PATCH] ALSA: ump: Fix the wrong format specifier
-Date: Thu, 14 Nov 2024 15:58:22 +0800
-Message-Id: <20241114075822.41614-1-zhangjiao2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1731571223; c=relaxed/simple;
+	bh=pyJ67CP7rBFGXzeAdWnMM/ARk3xiWgaToDtifWrU47g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jIVOFrVs43G0KFnwTq8TMuk8Zdhw41Cqn9jI9gpo9nelf+E0qsj4W/J2nMwhpQ1vCSdnyhIl9Fj9QwgudU9K6w4a67632IU64hWIExZGBWLAvY6+bGAabHkPFkEB9yHs5Jz0UPQ34UzSpIBm47Vab+JI0hdEfkGHJLxvsC1p0Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gkFJJccN; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731571221; x=1763107221;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=pyJ67CP7rBFGXzeAdWnMM/ARk3xiWgaToDtifWrU47g=;
+  b=gkFJJccNtgSApemopr3RtZk2cD5GZ9VxdwlrGfvFo6bNetgQHelA3j7S
+   AcHU/Be0i3BUS8t8x2TfjZ9CF5HO4opCm2wO5Fq7iwYJqOZYBWqxIxjCf
+   fbFzNTFzWDg0uUcG0jhqbkW8gXzrqdBbnG9xp0PYhaUkdBQ/gfr+lwC6b
+   aIOY8RebDHU2Nm9BxFk6JbqqNczlD5LeodfljoQ02InbDLRTrLeDd6CIh
+   KTQyXmCey2KfSLy51Ilig8KBnpU/q/g+uCWIz77EGg5IlEkGD0BvGQpaJ
+   lHYm53989OznRL4z5AlC30oVGOkkgaPgtWCIY3ooTC9ZWcaBY6HJu+ggB
+   Q==;
+X-CSE-ConnectionGUID: fhWmVSX5RCWNDvBdgl539Q==
+X-CSE-MsgGUID: vEk5OvQgRCeg5n9MPUJk+A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11255"; a="35290887"
+X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
+   d="scan'208";a="35290887"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 00:00:21 -0800
+X-CSE-ConnectionGUID: QJPrDpFbTgCDzVauE6MRxw==
+X-CSE-MsgGUID: yxtGgvJWT1G9Sp4fPGsyEg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
+   d="scan'208";a="118942327"
+Received: from unknown (HELO [10.237.72.151]) ([10.237.72.151])
+  by orviesa002.jf.intel.com with ESMTP; 14 Nov 2024 00:00:20 -0800
+Message-ID: <bec1b482-66f8-480d-bb01-31697c5e953f@linux.intel.com>
+Date: Thu, 14 Nov 2024 10:00:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/5] i3c: master: Add ACPI support to i3c subsystem
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Sanket.Goswami@amd.com, linux-i3c@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+References: <20241108073323.523805-1-Shyam-sundar.S-k@amd.com>
+ <20241108073323.523805-3-Shyam-sundar.S-k@amd.com>
+ <ZzS1-nJMPiCp5jDi@kuha.fi.intel.com>
+ <079db1b6-0f95-452e-832b-7d392e130028@amd.com>
+Content-Language: en-US
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <079db1b6-0f95-452e-832b-7d392e130028@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+Hi
 
-The format specifier of "unsigned int" in snprintf()
-should be "%u", not "%d".
+On 11/14/24 6:33 AM, Shyam Sundar S K wrote:
+> Jarkko, will you be able to pick 1/5 and 5/5 without a separate series
+> or do you want me to send one?
+> 
+I let Alexandre answer to that since he's the I3C subsystem maintainer. 
+Some maintainers prefer a new set and others may pick individual patches.
 
-Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
----
- sound/core/ump.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/core/ump.c b/sound/core/ump.c
-index ab4932dc499f..5d4dd207e5ab 100644
---- a/sound/core/ump.c
-+++ b/sound/core/ump.c
-@@ -387,7 +387,7 @@ int snd_ump_block_new(struct snd_ump_endpoint *ump, unsigned int blk,
- 	fb->info.first_group = first_group;
- 	fb->info.num_groups = num_groups;
- 	/* fill the default name, may be overwritten to a better name */
--	snprintf(fb->info.name, sizeof(fb->info.name), "Group %d-%d",
-+	snprintf(fb->info.name, sizeof(fb->info.name), "Group %u-%u",
- 		 first_group + 1, first_group + num_groups);
- 
- 	/* put the entry in the ordered list */
--- 
-2.33.0
-
-
-
+I'll give anyway my reviewed by tags to those two patches.
 
