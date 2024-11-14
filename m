@@ -1,113 +1,232 @@
-Return-Path: <linux-kernel+bounces-409479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 324C69C8D55
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:53:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CF8F9C8D59
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:54:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E9CCB3139B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:48:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 446EDB2FC79
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:48:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4861F78C60;
-	Thu, 14 Nov 2024 14:48:07 +0000 (UTC)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7418355887;
+	Thu, 14 Nov 2024 14:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HYOWq4g+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE461EA6F
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 14:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C1641746;
+	Thu, 14 Nov 2024 14:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731595686; cv=none; b=CpntIQD12FYo/k9ly23Mj0Pu53hV3JZloELehKkirWXcC4x2eQDB16GlZvmPBx3XFWt7g+x2ZLsvxxK8Ia5qmHc8O3g5ScwENREvkzBozI89QOZIOekno/NDDmupKbxw/BY6s1RBVtFV+3Z2i6EFewJdGRSnPsm3oA8MYElMa/M=
+	t=1731595685; cv=none; b=OllP19w5cxc75C3z+rJuL6nLudZp9Avgt1z16OGxEqH07Q1iRibrgjAvorpkf/VjvA20fDwP7ii75WHwp6frfFBbJjkvLJxzUoZVeCnL4HdeHl5k+pv7as42H1qwrRddleNfCuHrszgp63Z0BkAvSF0yr6RWfIiNJ64X9uMgX5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731595686; c=relaxed/simple;
-	bh=e6/S+V1DaviwAKbHbrR/y2EiTOl1GhkmcEFCvF7rE7A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P2AXqjME1dIQtzgIV91FeFAfNY4UmRERnA9BHD9I1xP9b5G2g3+c4HeWExgjDrlNQcJISTKvljn6Bx5DfRSSMFL+uR5PpAswb0cDnJlzQ3wCF+2WRnP6yesBWgwmE8TLBi/8FrRHrOAIZ4Xbs6qj1EGfzxgkMUvZqWNIaJumvhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6ee40e83288so9042847b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 06:48:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731595684; x=1732200484;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PPExdKQ/tJobJg3y/a7AXkHlNJlN5qknfYvlBFbwJ1g=;
-        b=LXDCtxUACi8P8lSP0pF8YN4D8RYGcdNsJbv2Kk0QyoYSfyDv6V/pPd4+KxJbpIR8NA
-         t+k011lROzVS3zevyMwugEuF6yDruKhMWcLrafuoZ6s6dpsOU4Sl/cirdv7caHvtNcZk
-         /ZJ2HEWvjPKTsoHoCpwXF1oGUI92aYY6vgcgTB0YLpc7CAbEDzl0SSzXIJmQhGY4cUpn
-         zpttFTHD6zlvkxeOi+D+65WZYYq0F3q9O89ynmqy6YosBhPEUnuo5qM6rfoHstRezVmi
-         9qWcbhoHpv8gdmC5fkoArX1pu+n9gbNUcMUpO7CTfDPUr1SWOeyYA6zbxPn7tvmFwsDJ
-         hDdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVISntAUqtPWHbWzttBq1aNZoeE4TSXFSglssZNiw6tlmresoKkB9EYPoBE8D/uFbPMaeHt5f6MatdgBM8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDo/RP+q3kwMMh4fwvtuWzn/VW+L5+7cxsjJhCLFFAj/KQTNPU
-	pv6O/UtmuOVNNVDJ1EE2rMKTcd9eNsFxVPvpJmxCzv83xD5igT2Jp7rPREuN
-X-Google-Smtp-Source: AGHT+IFa6935beE3W1izD7X1tJr07o7yCE2Fqyo75vVB3tnejOlRppD+bijtPPXbhIe4C9b6OsWQrg==
-X-Received: by 2002:a05:690c:83:b0:6e6:248:37bf with SMTP id 00721157ae682-6eadddbd253mr256986127b3.22.1731595683999;
-        Thu, 14 Nov 2024 06:48:03 -0800 (PST)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ee44045794sm2687327b3.30.2024.11.14.06.48.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 06:48:03 -0800 (PST)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6ee40e83288so9042587b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 06:48:03 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX1PyBotleSzs9v63SoM9GMbnvr1WLe1c0kD6pSYkhfm6HK7ewqxvxk9K0j+EU621kOkZTB3F/DxbxUnwQ=@vger.kernel.org
-X-Received: by 2002:a05:690c:3684:b0:6e7:d974:8d05 with SMTP id
- 00721157ae682-6eaddd86fffmr247240007b3.4.1731595683535; Thu, 14 Nov 2024
- 06:48:03 -0800 (PST)
+	s=arc-20240116; t=1731595685; c=relaxed/simple;
+	bh=2ih8X+aYRj/xhF4WSA+AhhU0sQmxjNm+hB6WBW3e0Ew=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C8SZIhm2zPabfv3LbAwvKgjTcUAkVsqVa5IqfQgOQ1ZMBQovbYzqDBh0pqHFsOqCHTuK4hH//Ss+UN3PmrIu/se6uDV9XlAGMzIQX5nsgQAlOTgoX0QEixFa9xg+w2RFuqnlPLwz/bdAlFiPvjyl2Bumw9CtOYZDoFmNyfaLGSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HYOWq4g+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 526E4C4CECD;
+	Thu, 14 Nov 2024 14:48:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731595685;
+	bh=2ih8X+aYRj/xhF4WSA+AhhU0sQmxjNm+hB6WBW3e0Ew=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HYOWq4g+P1pq0Hgkj50nRy3WO1kLYKccCSKVBCWVrr2fLo4BAoxoiM848SyTVj40j
+	 hiZUVwaGwbhJy9tCpd/fMt5T2xI3aAakti/EN1QC++Kia95A+I5xvBR45GBQl69sJr
+	 ja9Nd1RLGxpB1Xyauqt/2CDjp0P2pCSRCiyJM/NkI/qbQgIBHdZu+1AmhBTcw7otVi
+	 xk2Sz+0LnyzSW1fFG3glG15D0DcwGXtzEzyOP/CJomNmK1N2F2ZtHJvL3V3Ze5ehFD
+	 rrcR5l2ScoKYbUvaBzDjisCx8OR0d7NDrvRaGIS2nrdQMuC6Nb1EjcajOrdVVd36jf
+	 OlZAvZSs3NuLA==
+Date: Thu, 14 Nov 2024 15:48:00 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jeff Layton <jlayton@kernel.org>, Karel Zak <kzak@redhat.com>, 
+	Ian Kent <raven@themaw.net>, Josef Bacik <josef@toxicpanda.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v4 0/3] fs: allow statmount to fetch the fs_subtype and
+ sb_source
+Message-ID: <20241114-oberteil-villen-419f96aad840@brauner>
+References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
+ <20241112-antiseptisch-kinowelt-6634948a413e@brauner>
+ <hss5w5in3wj3af3o2x3v3zfaj47gx6w7faeeuvnxwx2uieu3xu@zqqllubl6m4i>
+ <63f3aa4b3d69b33f1193f4740f655ce6dae06870.camel@kernel.org>
+ <20241114-umzog-garage-b1c1bb8b80f2@brauner>
+ <3e6454f8a6b9176e9e1f98523be35f8eb6457eba.camel@kernel.org>
+ <CAJfpegtZ6hiars5+JHCr6TEj=TgFFpFbk_TVM_b=YNpbLG0=ig@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114131114.602234-1-mpe@ellerman.id.au> <20241114131114.602234-9-mpe@ellerman.id.au>
-In-Reply-To: <20241114131114.602234-9-mpe@ellerman.id.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 14 Nov 2024 15:47:52 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWtqNsmO=t=OF-2R-gA+khuKiGQOrBXRigE62bNjnUxPg@mail.gmail.com>
-Message-ID: <CAMuHMdWtqNsmO=t=OF-2R-gA+khuKiGQOrBXRigE62bNjnUxPg@mail.gmail.com>
-Subject: Re: [RFC PATCH 09/10] i2c: Remove I2C_HYDRA
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, arnd@arndb.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAJfpegtZ6hiars5+JHCr6TEj=TgFFpFbk_TVM_b=YNpbLG0=ig@mail.gmail.com>
 
-Hi Michael,
+On Thu, Nov 14, 2024 at 02:16:05PM +0100, Miklos Szeredi wrote:
+> On Thu, 14 Nov 2024 at 13:29, Jeff Layton <jlayton@kernel.org> wrote:
+> 
+> > Ordinarily, I might agree, but we're now growing a new mount option
+> > field that has them separated by NULs. Will we need two extra fields
+> > for this? One comma-separated, and one NUL separated?
+> >
+> > /proc/#/mountinfo and mounts prepend these to the output of
+> > ->show_options, so the simple solution would be to just prepend those
+> > there instead of adding a new field. FWIW, only SELinux has any extra
+> > mount options to show here.
+> 
+> Compromise: tack them onto the end of the comma separated list, but
+> add a new field for the nul separated security options.
+> 
+> I think this would be logical, since the comma separated list is more
+> useful for having a /proc/$$/mountinfo compatible string than for
+> actually interpreting what's in there.
 
-On Thu, Nov 14, 2024 at 2:11=E2=80=AFPM Michael Ellerman <mpe@ellerman.id.a=
-u> wrote:
-> The i2c-hydra driver depends on PPC_CHRP which has now been removed,
-> remove the driver also.
->
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fair. Here's an incremental for the array of security options.
 
-Thanks for your patch!
-
-> --- a/drivers/i2c/busses/i2c-hydra.c
-> +++ /dev/null
-
-> -#include <asm/hydra.h>
-
-Looks like this was the last real user of arch/powerpc/include/asm/hydra.h.
-drivers/scsi/mesh.c still includes it, but I don't see why it was ever
-needed in upstream.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 4f39c4aba85d..a9065a9ab971 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -5072,13 +5072,30 @@ static int statmount_mnt_opts(struct kstatmount *s, struct seq_file *seq)
+ 	return 0;
+ }
+ 
++static inline int statmount_opt_unescape(struct seq_file *seq, char *buf_start)
++{
++	char *buf_end, *opt_start, *opt_end;
++	int count = 0;
++
++	buf_end = seq->buf + seq->count;
++	*buf_end = '\0';
++	for (opt_start = buf_start + 1; opt_start < buf_end; opt_start = opt_end + 1) {
++		opt_end = strchrnul(opt_start, ',');
++		*opt_end = '\0';
++		buf_start += string_unescape(opt_start, buf_start, 0, UNESCAPE_OCTAL) + 1;
++		if (WARN_ON_ONCE(++count == INT_MAX))
++			return -EOVERFLOW;
++	}
++	seq->count = buf_start - 1 - seq->buf;
++	return count;
++}
++
+ static int statmount_opt_array(struct kstatmount *s, struct seq_file *seq)
+ {
+ 	struct vfsmount *mnt = s->mnt;
+ 	struct super_block *sb = mnt->mnt_sb;
+ 	size_t start = seq->count;
+-	char *buf_start, *buf_end, *opt_start, *opt_end;
+-	u32 count = 0;
++	char *buf_start;
+ 	int err;
+ 
+ 	if (!sb->s_op->show_options)
+@@ -5095,17 +5112,39 @@ static int statmount_opt_array(struct kstatmount *s, struct seq_file *seq)
+ 	if (seq->count == start)
+ 		return 0;
+ 
+-	buf_end = seq->buf + seq->count;
+-	*buf_end = '\0';
+-	for (opt_start = buf_start + 1; opt_start < buf_end; opt_start = opt_end + 1) {
+-		opt_end = strchrnul(opt_start, ',');
+-		*opt_end = '\0';
+-		buf_start += string_unescape(opt_start, buf_start, 0, UNESCAPE_OCTAL) + 1;
+-		if (WARN_ON_ONCE(++count == 0))
+-			return -EOVERFLOW;
+-	}
+-	seq->count = buf_start - 1 - seq->buf;
+-	s->sm.opt_num = count;
++	err = statmount_opt_unescape(seq, buf_start);
++	if (err < 0)
++		return err;
++
++	s->sm.opt_num = err;
++	return 0;
++}
++
++static int statmount_opt_sec_array(struct kstatmount *s, struct seq_file *seq)
++{
++	struct vfsmount *mnt = s->mnt;
++	struct super_block *sb = mnt->mnt_sb;
++	size_t start = seq->count;
++	char *buf_start;
++	int err;
++
++	buf_start = seq->buf + start;
++
++	err = security_sb_show_options(seq, sb);
++	if (!err)
++		return err;
++
++	if (unlikely(seq_has_overflowed(seq)))
++		return -EAGAIN;
++
++	if (seq->count == start)
++		return 0;
++
++	err = statmount_opt_unescape(seq, buf_start);
++	if (err < 0)
++		return err;
++
++	s->sm.opt_sec_num = err;
+ 	return 0;
+ }
+ 
+@@ -5138,6 +5177,10 @@ static int statmount_string(struct kstatmount *s, u64 flag)
+ 		sm->opt_array = start;
+ 		ret = statmount_opt_array(s, seq);
+ 		break;
++	case STATMOUNT_OPT_SEC_ARRAY:
++		sm->opt_sec_array = start;
++		ret = statmount_opt_sec_array(s, seq);
++		break;
+ 	case STATMOUNT_FS_SUBTYPE:
+ 		sm->fs_subtype = start;
+ 		statmount_fs_subtype(s, seq);
+@@ -5294,6 +5337,9 @@ static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_id,
+ 	if (!err && s->mask & STATMOUNT_OPT_ARRAY)
+ 		err = statmount_string(s, STATMOUNT_OPT_ARRAY);
+ 
++	if (!err && s->mask & STATMOUNT_OPT_SEC_ARRAY)
++		err = statmount_string(s, STATMOUNT_OPT_SEC_ARRAY);
++
+ 	if (!err && s->mask & STATMOUNT_FS_SUBTYPE)
+ 		err = statmount_string(s, STATMOUNT_FS_SUBTYPE);
+ 
+@@ -5323,7 +5369,7 @@ static inline bool retry_statmount(const long ret, size_t *seq_size)
+ #define STATMOUNT_STRING_REQ (STATMOUNT_MNT_ROOT | STATMOUNT_MNT_POINT | \
+ 			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS | \
+ 			      STATMOUNT_FS_SUBTYPE | STATMOUNT_SB_SOURCE | \
+-			      STATMOUNT_OPT_ARRAY)
++			      STATMOUNT_OPT_ARRAY | STATMOUNT_OPT_SEC_ARRAY)
+ 
+ static int prepare_kstatmount(struct kstatmount *ks, struct mnt_id_req *kreq,
+ 			      struct statmount __user *buf, size_t bufsize,
+diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+index c0fda4604187..569d938a5757 100644
+--- a/include/uapi/linux/mount.h
++++ b/include/uapi/linux/mount.h
+@@ -177,7 +177,9 @@ struct statmount {
+ 	__u32 sb_source;	/* [str] Source string of the mount */
+ 	__u32 opt_num;		/* Number of fs options */
+ 	__u32 opt_array;	/* [str] Array of nul terminated fs options */
+-	__u64 __spare2[47];
++	__u32 opt_sec_num;	/* Number of security options */
++	__u32 opt_sec_array;	/* [str] Array of nul terminated security options */
++	__u64 __spare2[45];
+ 	char str[];		/* Variable size part containing strings */
+ };
+ 
+@@ -214,6 +216,7 @@ struct mnt_id_req {
+ #define STATMOUNT_FS_SUBTYPE		0x00000100U	/* Want/got fs_subtype */
+ #define STATMOUNT_SB_SOURCE		0x00000200U	/* Want/got sb_source */
+ #define STATMOUNT_OPT_ARRAY		0x00000400U	/* Want/got opt_... */
++#define STATMOUNT_OPT_SEC_ARRAY		0x00000800U	/* Want/got opt_sec... */
+ 
+ /*
+  * Special @mnt_id values that can be passed to listmount
 
