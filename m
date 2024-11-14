@@ -1,143 +1,157 @@
-Return-Path: <linux-kernel+bounces-408464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 421059C7F1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:04:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EE849C7F23
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:06:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC903B24DDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:04:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30E451F2284C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444852F41;
-	Thu, 14 Nov 2024 00:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2E08494;
+	Thu, 14 Nov 2024 00:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="izHdRU5o"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lug0RFjI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AF2A954;
-	Thu, 14 Nov 2024 00:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC5B817;
+	Thu, 14 Nov 2024 00:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731542634; cv=none; b=nd7I5COzDZsUwUoH9rZz0ut0sWdjX76zSHPrs9eQckqYMNDELnhXqNduASuO5zazrTjnogHMaXi4jeWQu/ao/1PkIZsUBkELfKsfTcdY6yq40IMG00WFwcW4UT4H2St+KbroMWKQ5zVLLkOk8VKgGO3hw9WG5Ne2NZ1ntVgtNac=
+	t=1731542762; cv=none; b=YJHfbqCPo0SmS1SqULIwWKHEO6PYKR9PC1DxcCZedw3Ho2WLor8l9Q7eQoxJwhxyUbuhUcBxiGHQRW5dbn2YoAbTsCSIY/ENQnQIbquPGJLAo4CZS5f2LkpDp6IjBvijbwDGU9BN2weXevAJi9MaiO4cRDVuIthXVkTYHGXIOU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731542634; c=relaxed/simple;
-	bh=3udQPQ52xcOuxhuLmlBL3dmra9PEBLqv/3HrWShzNeQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Mxvc5qHMwdRuP/XntKstWivP7XoJF9w/B1HnI7uCimXlE/64BzAEaSO2pFb9ii5Kn7TuR8hE//6LbzPfK5Nhw/RLMjPsTyveND885cOqqq3ZITIbJr6K4NeEn5I6HX5EnHWpm5EMTq4+Rf4PGw1gXnZQA5vJPNXmom06rfEzWwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=izHdRU5o; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1731542625;
-	bh=AtdGSSl4w88h4xNvzmnzk11iVqxcRKOjABrghFtfSh0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=izHdRU5oDtUA6SDYdOOGkzQYpW32O43Rbu6dpcHSvuSIGQEC1VxL2HxwQtojL4oHQ
-	 gG2h38oq7gx1fkmBe/O8K05yTJwUIecVzLncWfFVPr7k0zZcuKKfEKrGUgzvKlmkDB
-	 OjNB88envZtB0SvIOyyIZHKh3xGy7YRTs4wwNzC0rZD52eLVz3MvrkDcRbUJl4Qk8c
-	 wV8NTQa8qmE70EzCLo25uqRLyLu+pTS+T0Fw01raId2tVnjn0oP17HpO6TmGrTspvb
-	 C4nj3hhrgbdk5Qxy6ifiwV9jjKxXg0xqtyb1XS4tgYcQaSpUG0/9VaNbxD/0Sk1/rH
-	 UR3v1RLvjkl2A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XpgNd1dd8z4x8C;
-	Thu, 14 Nov 2024 11:03:45 +1100 (AEDT)
-Date: Thu, 14 Nov 2024 11:03:47 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>, Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
- <kw@linux.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Krishna chaitanya
- chundru <quic_krichai@quicinc.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the pci tree with Linus' tree
-Message-ID: <20241114110347.04ef829f@canb.auug.org.au>
+	s=arc-20240116; t=1731542762; c=relaxed/simple;
+	bh=QCU4sOzgkeIKbdmKlY+8wD3dNS2f394YpPWJGiZp+Bs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i+OGIePkKXVDYBTpvrfmH9wufhHi/UCHxL4E1aky8fKiaqFGjhiZ8bEmlg/QxSZ2eJM8sUyWxMo0okWgwjZe20zOBgGfuPhGqM7YpwXlP9DVnfK61nMVOF6PVnhRwtsYIrI8pwWU+UStpnP8LLQxqZo7sOlTuvk3D1DBIqKXHpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lug0RFjI; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731542761; x=1763078761;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QCU4sOzgkeIKbdmKlY+8wD3dNS2f394YpPWJGiZp+Bs=;
+  b=lug0RFjIX2ObywmTcd7rAEW9iHSsL4Ev412nUu9MTr7K2tNuF/EsnEJm
+   2C7f8E2g2fNHjMEXgL0/WzdjqljUHf0tsComZMKeWGX3QIHbA6xgvIvzc
+   MZSP3iC7khSSWFOZci96Ls2vVIzeBl+KeG2LmJZXhjHpE6lHZ3U7GLHoZ
+   LtJMSYogyk7UPyI25Idksg7r4+aTyWaULblJtm/WaMayvDom9rOYGdEZ2
+   CTLDVoPxWH2yYNeClMWHtp4woUhoKhmMOzc63ZM7fK7tU9ngtRX7rvmqx
+   gBwlZsoh7WtbiNZ75hucGodUwNpgpni983rywu+RxF9Vjq03ThAwBgjB7
+   Q==;
+X-CSE-ConnectionGUID: pCXihiLKST+VgAUUiL9cqQ==
+X-CSE-MsgGUID: iEjrxb8LT2O8pDcXRne8tQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11255"; a="42073488"
+X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
+   d="scan'208";a="42073488"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 16:05:57 -0800
+X-CSE-ConnectionGUID: KKYYy0w6RvCAL6KZ1+vJGA==
+X-CSE-MsgGUID: MXJRmlm9RzmXYn9RqXolmw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
+   d="scan'208";a="111341296"
+Received: from lkp-server01.sh.intel.com (HELO 80bd855f15b3) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 13 Nov 2024 16:05:54 -0800
+Received: from kbuild by 80bd855f15b3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tBNMt-0000uR-20;
+	Thu, 14 Nov 2024 00:05:51 +0000
+Date: Thu, 14 Nov 2024 08:05:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>, robdclark@gmail.com,
+	will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
+	jgg@ziepe.ca, jsnitsel@redhat.com, robh@kernel.org,
+	krzysztof.kozlowski@linaro.org, quic_c_gdjako@quicinc.com,
+	dmitry.baryshkov@linaro.org
+Cc: oe-kbuild-all@lists.linux.dev, iommu@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, quic_bibekkum@quicinc.com
+Subject: Re: [PATCH v17 1/5] iommu/arm-smmu: re-enable context caching in
+ smmu reset operation
+Message-ID: <202411140748.6mcFdJdO-lkp@intel.com>
+References: <20241112165454.2698269-2-quic_bibekkum@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/4wE4czMO6XTLy+kYX39Gbmo";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112165454.2698269-2-quic_bibekkum@quicinc.com>
 
---Sig_/4wE4czMO6XTLy+kYX39Gbmo
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Bibek,
 
-Hi all,
+kernel test robot noticed the following build warnings:
 
-Today's linux-next merge of the pci tree got a conflict in:
+[auto build test WARNING on linus/master]
+[also build test WARNING on joro-iommu/next v6.12-rc7 next-20241113]
+[cannot apply to arm64/for-next/core]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-  drivers/pci/probe.c
+url:    https://github.com/intel-lab-lkp/linux/commits/Bibek-Kumar-Patro/iommu-arm-smmu-re-enable-context-caching-in-smmu-reset-operation/20241113-042646
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20241112165454.2698269-2-quic_bibekkum%40quicinc.com
+patch subject: [PATCH v17 1/5] iommu/arm-smmu: re-enable context caching in smmu reset operation
+config: powerpc64-randconfig-r064-20241114 (https://download.01.org/0day-ci/archive/20241114/202411140748.6mcFdJdO-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241114/202411140748.6mcFdJdO-lkp@intel.com/reproduce)
 
-between commit:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411140748.6mcFdJdO-lkp@intel.com/
 
-  1d59d474e1cb ("PCI: Hold rescan lock while adding devices during host pro=
-be")
+All warnings (new ones prefixed by >>):
 
-from Linus' tree and commit:
+   In file included from drivers/iommu/arm/arm-smmu/arm-smmu-impl.c:10:
+   In file included from drivers/iommu/arm/arm-smmu/arm-smmu.h:18:
+   In file included from include/linux/io-64-nonatomic-hi-lo.h:5:
+   In file included from include/linux/io.h:14:
+   In file included from arch/powerpc/include/asm/io.h:24:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/iommu/arm/arm-smmu/arm-smmu-impl.c:113:6: warning: unused variable 'i' [-Wunused-variable]
+     113 |         int i;
+         |             ^
+   2 warnings generated.
 
-  dc421bb3c0db ("PCI: Enable runtime PM of the host bridge")
 
-from the pci tree.
+vim +/i +113 drivers/iommu/arm/arm-smmu/arm-smmu-impl.c
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  109  
+759aaa10c76cba drivers/iommu/arm-smmu-impl.c Vivek Gautam 2019-09-20  110  int arm_mmu500_reset(struct arm_smmu_device *smmu)
+62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  111  {
+62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  112  	u32 reg, major;
+62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15 @113  	int i;
+62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  114  	/*
+62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  115  	 * On MMU-500 r2p0 onwards we need to clear ACR.CACHE_LOCK before
+62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  116  	 * writes to the context bank ACTLRs will stick. And we just hope that
+62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  117  	 * Secure has also cleared SACR.CACHE_LOCK for this to take effect...
+62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  118  	 */
+62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  119  	reg = arm_smmu_gr0_read(smmu, ARM_SMMU_GR0_ID7);
+fba6e960772b7b drivers/iommu/arm-smmu-impl.c Will Deacon  2020-01-10  120  	major = FIELD_GET(ARM_SMMU_ID7_MAJOR, reg);
+62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  121  	reg = arm_smmu_gr0_read(smmu, ARM_SMMU_GR0_sACR);
+62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  122  	if (major >= 2)
+62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  123  		reg &= ~ARM_MMU500_ACR_CACHE_LOCK;
+62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  124  	/*
+62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  125  	 * Allow unmatched Stream IDs to allocate bypass
+62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  126  	 * TLB entries for reduced latency.
+62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  127  	 */
+62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  128  	reg |= ARM_MMU500_ACR_SMTNMB_TLBEN | ARM_MMU500_ACR_S2CRB_TLBEN;
+62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  129  	arm_smmu_gr0_write(smmu, ARM_SMMU_GR0_sACR, reg);
+62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  130  
 
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/pci/probe.c
-index f1615805f5b0,bf4c76ec8cd4..000000000000
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@@ -3105,9 -3127,18 +3127,20 @@@ int pci_host_probe(struct pci_host_brid
-  	list_for_each_entry(child, &bus->children, node)
-  		pcie_bus_configure_settings(child);
- =20
- +	pci_lock_rescan_remove();
-  	pci_bus_add_devices(bus);
- +	pci_unlock_rescan_remove();
-+=20
-+ 	/*
-+ 	 * Ensure pm_runtime_enable() is called for the controller drivers
-+ 	 * before calling pci_host_probe(). The PM framework expects that
-+ 	 * if the parent device supports runtime PM, it will be enabled
-+ 	 * before child runtime PM is enabled.
-+ 	 */
-+ 	pm_runtime_set_active(&bridge->dev);
-+ 	pm_runtime_no_callbacks(&bridge->dev);
-+ 	devm_pm_runtime_enable(&bridge->dev);
-+=20
-  	return 0;
-  }
-  EXPORT_SYMBOL_GPL(pci_host_probe);
-
---Sig_/4wE4czMO6XTLy+kYX39Gbmo
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc1PmMACgkQAVBC80lX
-0GxgPgf/bvbOMaggLI9ToPhN8E5ToXkVymhgyZwH0CARwN7Ua3o0xrn9h8Sk1gPQ
-MQGF/GaecEbplLb0fHdKMvlVSSFdv6N7szgiAEfh4t0iJPPwsUakuu8O+EreSYaT
-bSootRvx1Vz7VZ+hbnaXloSZnw0EuXk/pR6o5Ug6QyeDujEUxf8sCRrvHX82f6wq
-bFDPbya+/P4EDnLKjLSa7vCc/KhDa5Hi6JVbcoz2pK7xtoqtdIxDmYqXFUTrok+2
-gN5CXwBQzkoANuY8M0X95I/OBVRnaaw/FkYhlYQr4j6iPBg4V5DOIjj4kusZssxE
-+F69RQ+aYUOSJPcEMmrKsB+PJ5jhgg==
-=R2lA
------END PGP SIGNATURE-----
-
---Sig_/4wE4czMO6XTLy+kYX39Gbmo--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
