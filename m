@@ -1,72 +1,71 @@
-Return-Path: <linux-kernel+bounces-409832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EA5A9C924B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:18:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B939C9241
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:16:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EBA2B2B40C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:16:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9705E28322A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7261B4F3F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FEB41B6CE4;
 	Thu, 14 Nov 2024 19:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JSmZXy4k"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lMEET6M6"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F0F1B21AE
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 19:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AED1B3928
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 19:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731611463; cv=none; b=j8onCYWxO4/GVtTbnm2pcLs1yYs6WfDYGwPv7qXrv1kAPexVJ6b7iooxiX05uFlDTG47/Eh39pziscbbVRxSxz3FqTcAigP2GBy44I2uFqoxPNuQyud6T1AnJ6hdOCL0f4szZbeDs5QSNVazGOZItvhuR3+XBKKjhiDMXCrX1c8=
+	t=1731611463; cv=none; b=O/gp4WYgDkcE1/9KBOlUwHSsjVkVpqY11sIxm2tXFS/VTAurkOe8ldCWWD2oInYwu8+utUtr512OQfHRBrTHw9XKRtH2IxOgKGlTT+O84GLZZOa8qzMwqfbt6/To4ApQs8f9Pz6ccNtM754m7CmejsIJepaq6bkvpScjKFeO7aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731611463; c=relaxed/simple;
-	bh=n/4Gw/F5XfVHHXJLIJrOKVEwWJwN5RkWXSV5JexAt0E=;
+	bh=Z9uDVvItoljuKYfunavqY95I9UqlcIp6s4l6b4f5U+s=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FzccvwIn55Iz/z1OW/L/jvdOqdO2DXDjGVi1HiLfDNnLWqMgbYViWton6hZ06YkSVU2DxhvrfSFVktxR5WunhXWlpRqC8zp4sePQ4rVfdZm+443N+PyakFD7fiujIb9QqPk3+fO3/SkaQI46APNdBCtuOxVFE70Y2wctLBOPco0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JSmZXy4k; arc=none smtp.client-ip=209.85.219.51
+	 In-Reply-To:To:Cc; b=u69HjTPfKTyKzF8JPV2zEaN2sTQy2aERmUY8oW6suCSI7fDZTQoAR067WX+Fhl6/VXM7SlW+wjsDR2CqI3Q3IKXMnDv+ALIkVx/dwbZGEZUyANONzLxS1jNagrmWx6P/qYKKIQoiu4sqS1XBuGYMLNWjAEVfOKkK/2qzU6/cTBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lMEET6M6; arc=none smtp.client-ip=209.85.210.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6d3f7febc1dso3531336d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:11:00 -0800 (PST)
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-718123ec383so515907a34.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:11:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731611460; x=1732216260; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1731611461; x=1732216261; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JZTsTBSX3xSqfbyzm7VG5yBnJ19hpAWauNKzKGES8go=;
-        b=JSmZXy4kQh2zencrvQY7/jlz/S/7ZaxKpkQfuaocOeddYHz6+FpY5yiwkk7m0agnYg
-         0yOFxOEPVTxWUTrqCwoWcOFRVxyRlU1gLEda6BMLe/nU/HH1GXPwkPCQ9A939scyAwEV
-         3A8NmFeNbB+5YpLZe1avkCXCfC07i5qtrinUg=
+        bh=gBJrp7mg23fLq0H3uAUw+Zj5QMkIuMcISNIeTGg09NQ=;
+        b=lMEET6M6y6+UZil4eqnYPfySGNnG4eIaQM0VKqVp+ea34cbS2IdDtYJp97f1KanE1g
+         H2aRW94TK26jf/Soz/uM5L/RE4OqxZGoy1b3L08Qit3WDTFAh6GY22gCZz+0EfFEwg3f
+         kJlAFX1EiubEjJfe2cu5xXfyda/nAhB13v3TI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731611460; x=1732216260;
+        d=1e100.net; s=20230601; t=1731611461; x=1732216261;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JZTsTBSX3xSqfbyzm7VG5yBnJ19hpAWauNKzKGES8go=;
-        b=cPcALDQEQiGS3X14lO9l0RCl9KBaDpme72RI65LUbuCOOTmyvXW/QEBzz5tlHBh1eI
-         UT2ix8s1LbyfxBbyM1quTZ1DC4EhKlVBqhunhjLaXN4+egYM9DhZXd2Bw+bL3ybxnfnD
-         W/VbZCCoHsNjDeE9e7gMFFgMRSmyIk7azNp/NW/kRLzeTU6DYv7rQ4f6j/U3iWbbRkfo
-         IokutdhrKyKWoyEC8OiO9IG7EM2DQIJ2oX+5L8zoph8PRnlP5DSk5wxbScYw2F4czVqX
-         3QOYnAujkSV238VX0sC0rFIUIuNFpVMMhkSbH3ur0z8T+Q/U3PYeL7ejxpAkrpuYcBoX
-         8IAA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7nD0xjL2qylPzhKILb1G9yhx+1tVEMmiVapa4pt1F07ENn4gSGJ2edgT0OebTkOOTAmN+Q/f5joAamYA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM31oL3Ignf7Y82QMRodnl5gfcAoZaQI/cG1AwRECZnXR/QIcE
-	zAUz2Ri4SHPH0bEKPJpbpr3mOX6joDQ14/uQMv7pt2bZlpDuTiMwn/0uxxb3gg==
-X-Google-Smtp-Source: AGHT+IFYqBJZtMtZqxRLn7uD+s+ZXDgMbRIudST+4D8WH8SdJFFNexVMkL2sBDlUhnEMyT9YcUtkFQ==
-X-Received: by 2002:a05:6214:3bc2:b0:6d3:941a:2274 with SMTP id 6a1803df08f44-6d3edcfbae4mr40292716d6.22.1731611459925;
-        Thu, 14 Nov 2024 11:10:59 -0800 (PST)
+        bh=gBJrp7mg23fLq0H3uAUw+Zj5QMkIuMcISNIeTGg09NQ=;
+        b=w8K8sgOwYmNwqVbpChNZOA02TVObXrpj6rbkId8PjJTszWX4jCyUmAUmAGaN/ky436
+         ujvDsDYvmTOcqPsZMSa5BikxA43GwB5UOKbEBmg181U7bvcsP5Y2wxfFllxJjzM0TX7j
+         K9/D99FvLUBkLVt6IaV3/jsnlLw9UXvm2Nt3B/G+CIor+myXCJd0gszFDglUJhAHv/6o
+         LDM3iC2c2Gankwb6Ce50e5kz6YKOwqkaVim+84D3mKSALUlM7dMuWtwOYea3MP9RMP8d
+         kWdvu0xWLkBjexm4dTfDoqifKj/v9z6FM4ycvxO8D6FrczSteCBzKo9rt88t3f2Bkb+Q
+         eQkw==
+X-Forwarded-Encrypted: i=1; AJvYcCVdBrzbWMSPeANa+G1taP2D4tPNZY9yIiuPn6M1OX50ujkuqPuhMmLdxM6s0YJS6u7cVdrEY1o3fU6uUCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGejw8lVcUpzyxTAoZAAWbXtDQK7rYxZg5v8Q+47YGxW9LFMYb
+	0YN2ptDhW8C4c2O1LXEGRRipHACvha19MBx4xu+uJui0XZcLVoaAp3z4Wlhlkw==
+X-Google-Smtp-Source: AGHT+IFNVlvDBjAW1cRege8knW5DelZl6pBdMLjl5E5lB/Wc9jyTp/KkdgXqMEneu89a9XWemF/hGg==
+X-Received: by 2002:a05:6358:c83:b0:1c3:7157:2868 with SMTP id e5c5f4694b2df-1c6cd108afdmr31228355d.20.1731611460947;
+        Thu, 14 Nov 2024 11:11:00 -0800 (PST)
 Received: from denia.c.googlers.com (189.216.85.34.bc.googleusercontent.com. [34.85.216.189])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3ee7cc7e1sm8857766d6.53.2024.11.14.11.10.58
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3ee7cc7e1sm8857766d6.53.2024.11.14.11.11.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 11:10:59 -0800 (PST)
+        Thu, 14 Nov 2024 11:11:00 -0800 (PST)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Thu, 14 Nov 2024 19:10:44 +0000
-Subject: [PATCH v15 15/19] media: uvcvideo: let v4l2_query_v4l2_ctrl() work
- with v4l2_query_ext_ctrl
+Date: Thu, 14 Nov 2024 19:10:45 +0000
+Subject: [PATCH v15 16/19] media: uvcvideo: Introduce uvc_mapping_v4l2_size
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241114-uvc-roi-v15-15-64cfeb56b6f8@chromium.org>
+Message-Id: <20241114-uvc-roi-v15-16-64cfeb56b6f8@chromium.org>
 References: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
 In-Reply-To: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
@@ -87,189 +86,60 @@ Cc: Yunke Cao <yunkec@chromium.org>, linux-media@vger.kernel.org,
  linux-kernel@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.13.0
 
-v4l2_query_ext_ctrl contains information that is missing in
-v4l2_queryctrl, like elem_size and elems.
-
-With this change we can handle all the element_size information inside
-uvc_ctrl.c.
-
-Now that we are at it, remove the memset of the reserved fields, the
-v4l2 ioctl handler should do that for us.
-
-There is no functional change expected from this change.
+Centralize the calculation for the v4l2_size of a mapping.
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/usb/uvc/uvc_ctrl.c | 24 ++++++++++++++----------
- drivers/media/usb/uvc/uvc_v4l2.c | 35 +++++++++++++++--------------------
- drivers/media/usb/uvc/uvcvideo.h |  2 +-
- 3 files changed, 30 insertions(+), 31 deletions(-)
+ drivers/media/usb/uvc/uvc_ctrl.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-index 72ed7dc9cfc1..1bc019138995 100644
+index 1bc019138995..f262e05ad3a8 100644
 --- a/drivers/media/usb/uvc/uvc_ctrl.c
 +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-@@ -1252,7 +1252,8 @@ static int __uvc_query_v4l2_class(struct uvc_video_chain *chain, u32 req_id,
+@@ -1463,6 +1463,14 @@ static int __uvc_queryctrl_boundaries(struct uvc_video_chain *chain,
+ 	return 0;
  }
  
- static int uvc_query_v4l2_class(struct uvc_video_chain *chain, u32 req_id,
--				u32 found_id, struct v4l2_queryctrl *v4l2_ctrl)
-+				u32 found_id,
-+				struct v4l2_query_ext_ctrl *v4l2_ctrl)
- {
- 	int idx;
- 
-@@ -1400,7 +1401,7 @@ static u32 uvc_get_ctrl_bitmap(struct uvc_control *ctrl,
- static int __uvc_queryctrl_boundaries(struct uvc_video_chain *chain,
- 				      struct uvc_control *ctrl,
- 				      struct uvc_control_mapping *mapping,
--				      struct v4l2_queryctrl *v4l2_ctrl)
-+				      struct v4l2_query_ext_ctrl *v4l2_ctrl)
- {
- 	if (!ctrl->cached) {
- 		int ret = uvc_ctrl_populate_cache(chain, ctrl);
-@@ -1465,7 +1466,7 @@ static int __uvc_queryctrl_boundaries(struct uvc_video_chain *chain,
++static size_t uvc_mapping_v4l2_size(struct uvc_control_mapping *mapping)
++{
++	if (uvc_ctrl_mapping_is_compound(mapping))
++		return DIV_ROUND_UP(mapping->size, 8);
++
++	return sizeof(s32);
++}
++
  static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
  				 struct uvc_control *ctrl,
  				 struct uvc_control_mapping *mapping,
--				 struct v4l2_queryctrl *v4l2_ctrl)
-+				 struct v4l2_query_ext_ctrl *v4l2_ctrl)
- {
- 	struct uvc_control_mapping *master_map = NULL;
- 	struct uvc_control *master_ctrl = NULL;
-@@ -1503,6 +1504,9 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+@@ -1504,7 +1512,7 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
  			v4l2_ctrl->flags |= V4L2_CTRL_FLAG_INACTIVE;
  	}
  
-+	v4l2_ctrl->elem_size = sizeof(s32);
-+	v4l2_ctrl->elems = 1;
-+
+-	v4l2_ctrl->elem_size = sizeof(s32);
++	v4l2_ctrl->elem_size = uvc_mapping_v4l2_size(mapping);
+ 	v4l2_ctrl->elems = 1;
+ 
  	if (v4l2_ctrl->type >= V4L2_CTRL_COMPOUND_TYPES) {
- 		v4l2_ctrl->flags |= V4L2_CTRL_FLAG_HAS_PAYLOAD;
- 		v4l2_ctrl->default_value = 0;
-@@ -1516,7 +1520,7 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
- }
- 
- int uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
--	struct v4l2_queryctrl *v4l2_ctrl)
-+			struct v4l2_query_ext_ctrl *v4l2_ctrl)
- {
- 	struct uvc_control *ctrl;
- 	struct uvc_control_mapping *mapping;
-@@ -1642,7 +1646,7 @@ static void uvc_ctrl_fill_event(struct uvc_video_chain *chain,
- 	struct uvc_control_mapping *mapping,
- 	s32 value, u32 changes)
- {
--	struct v4l2_queryctrl v4l2_ctrl;
-+	struct v4l2_query_ext_ctrl v4l2_ctrl;
- 
- 	__uvc_query_v4l2_ctrl(chain, ctrl, mapping, &v4l2_ctrl);
- 
-@@ -2119,7 +2123,7 @@ static int uvc_mapping_get_xctrl_std(struct uvc_video_chain *chain,
- 				     struct uvc_control_mapping *mapping,
- 				     u32 which, struct v4l2_ext_control *xctrl)
- {
--	struct v4l2_queryctrl qc;
-+	struct v4l2_query_ext_ctrl qec;
- 	int ret;
- 
- 	switch (which) {
-@@ -2133,19 +2137,19 @@ static int uvc_mapping_get_xctrl_std(struct uvc_video_chain *chain,
+@@ -2093,7 +2101,7 @@ static int uvc_mapping_get_xctrl_compound(struct uvc_video_chain *chain,
  		return -EINVAL;
  	}
  
--	ret = __uvc_queryctrl_boundaries(chain, ctrl, mapping, &qc);
-+	ret = __uvc_queryctrl_boundaries(chain, ctrl, mapping, &qec);
- 	if (ret < 0)
- 		return ret;
- 
- 	switch (which) {
- 	case V4L2_CTRL_WHICH_DEF_VAL:
--		xctrl->value = qc.default_value;
-+		xctrl->value = qec.default_value;
- 		break;
- 	case V4L2_CTRL_WHICH_MIN_VAL:
--		xctrl->value = qc.minimum;
-+		xctrl->value = qec.minimum;
- 		break;
- 	case V4L2_CTRL_WHICH_MAX_VAL:
--		xctrl->value = qc.maximum;
-+		xctrl->value = qec.maximum;
- 		break;
- 	}
- 
-diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-index 7e284770149d..5000c74271e0 100644
---- a/drivers/media/usb/uvc/uvc_v4l2.c
-+++ b/drivers/media/usb/uvc/uvc_v4l2.c
-@@ -1014,40 +1014,35 @@ static int uvc_ioctl_s_input(struct file *file, void *fh, unsigned int input)
- 	return ret;
- }
- 
--static int uvc_ioctl_queryctrl(struct file *file, void *fh,
--			       struct v4l2_queryctrl *qc)
-+static int uvc_ioctl_query_ext_ctrl(struct file *file, void *fh,
-+				    struct v4l2_query_ext_ctrl *qec)
+-	size = DIV_ROUND_UP(mapping->size, 8);
++	size = uvc_mapping_v4l2_size(mapping);
+ 	if (xctrl->size < size) {
+ 		xctrl->size = size;
+ 		return -ENOSPC;
+@@ -2271,9 +2279,8 @@ static int uvc_mapping_set_xctrl_compound(struct uvc_control *ctrl,
+ 					  struct v4l2_ext_control *xctrl)
  {
- 	struct uvc_fh *handle = fh;
- 	struct uvc_video_chain *chain = handle->chain;
+ 	u8 *data __free(kfree) = NULL;
+-	size_t size;
++	size_t size = uvc_mapping_v4l2_size(mapping);
  
--	return uvc_query_v4l2_ctrl(chain, qc);
-+	return uvc_query_v4l2_ctrl(chain, qec);
- }
- 
--static int uvc_ioctl_query_ext_ctrl(struct file *file, void *fh,
--				    struct v4l2_query_ext_ctrl *qec)
-+static int uvc_ioctl_queryctrl(struct file *file, void *fh,
-+			       struct v4l2_queryctrl *qc)
- {
- 	struct uvc_fh *handle = fh;
- 	struct uvc_video_chain *chain = handle->chain;
--	struct v4l2_queryctrl qc = { qec->id };
-+	struct v4l2_query_ext_ctrl qec = { qc->id };
- 	int ret;
- 
--	ret = uvc_query_v4l2_ctrl(chain, &qc);
-+	ret = uvc_query_v4l2_ctrl(chain, &qec);
- 	if (ret)
- 		return ret;
- 
--	qec->id = qc.id;
--	qec->type = qc.type;
--	strscpy(qec->name, qc.name, sizeof(qec->name));
--	qec->minimum = qc.minimum;
--	qec->maximum = qc.maximum;
--	qec->step = qc.step;
--	qec->default_value = qc.default_value;
--	qec->flags = qc.flags;
--	qec->elem_size = 4;
--	qec->elems = 1;
--	qec->nr_of_dims = 0;
--	memset(qec->dims, 0, sizeof(qec->dims));
--	memset(qec->reserved, 0, sizeof(qec->reserved));
-+	qc->id = qec.id;
-+	qc->type = qec.type;
-+	strscpy(qc->name, qec.name, sizeof(qc->name));
-+	qc->minimum = qec.minimum;
-+	qc->maximum = qec.maximum;
-+	qc->step = qec.step;
-+	qc->default_value = qec.default_value;
-+	qc->flags = qec.flags;
- 
- 	return 0;
- }
-diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-index f429f325433b..8aca1a2fe587 100644
---- a/drivers/media/usb/uvc/uvcvideo.h
-+++ b/drivers/media/usb/uvc/uvcvideo.h
-@@ -766,7 +766,7 @@ void uvc_status_put(struct uvc_device *dev);
- extern const struct v4l2_subscribed_event_ops uvc_ctrl_sub_ev_ops;
- 
- int uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
--			struct v4l2_queryctrl *v4l2_ctrl);
-+			struct v4l2_query_ext_ctrl *v4l2_ctrl);
- int uvc_query_v4l2_menu(struct uvc_video_chain *chain,
- 			struct v4l2_querymenu *query_menu);
+-	size = DIV_ROUND_UP(mapping->size, 8);
+ 	if (xctrl->size != size)
+ 		return -EINVAL;
  
 
 -- 
