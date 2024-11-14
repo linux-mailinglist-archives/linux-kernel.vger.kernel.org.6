@@ -1,114 +1,174 @@
-Return-Path: <linux-kernel+bounces-410098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DEC19C967B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:55:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30C7A9C967C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:57:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E899283818
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:55:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FD2CB24BE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34D81B3937;
-	Thu, 14 Nov 2024 23:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B5F1B3935;
+	Thu, 14 Nov 2024 23:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lqrylpHT"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="c6tGHY2y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495FE1AAE33;
-	Thu, 14 Nov 2024 23:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5531AAE33;
+	Thu, 14 Nov 2024 23:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731628521; cv=none; b=HvnepDiudbw67ZP7kQ9CFCjrR4psh/UUdUBteSoDMpDA5NBcq3yqcjbGkOO2sRK9m7R6wXNMeMqXKiskzCPPEy1yVdQit7MBzalG07EAfcj8x9QAeVfNUvnewoit1dC+OPGea0sMctKavrnXH/dJe+hW3ol2xIx/Vp2Yt62EZn0=
+	t=1731628621; cv=none; b=dQ1dsBzqlC99w4xxL4/P85E60xYh4yb5w1btq2qEifyHJVYqsQwCcNHJEf+JcUbGIlEJqLSEF8DBmUV2HZpGztUwh09bof/YcICH+KCMk/Qi9eNEIkqf6nFI6vM/gUeHVohB9MqnPFdUAWWN1R+gz8t6yR1A0o1K4M8sQVVzqag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731628521; c=relaxed/simple;
-	bh=zY7KhF5ZX6coU8ApPUSZ3x9v5eBGEmYIOjd4V8VjVMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uZ3q2fVWjFKh/x6c2g1B6K1QVWe1x/TJf5KaVueCi/TxkL3DibL4SKBi7gV42BSqIwRiUxhSSo2iRhCeRSvo1DPkriFDVm8ThBGXeK5y55D6yLjReiKVMfLB1KA6Mhxkr/Wq4Auhjx4OfUs4VYEc7ewKjNMevinHJ0VrFCY2BhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lqrylpHT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F74EC4CECD;
-	Thu, 14 Nov 2024 23:55:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731628520;
-	bh=zY7KhF5ZX6coU8ApPUSZ3x9v5eBGEmYIOjd4V8VjVMQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=lqrylpHTmcapjRxzWJzvgZOkZh7UczariR30ksY+iYDhhN24qABUl0bRslUOUj2MZ
-	 Y6ypVn3YkCl5Yhcc/Xu0/pjf+Z70iyyPXiri33nQNC35wIi+eubEuV9/CRvbh+9Bnk
-	 /g28Q8YTJVqzGiCWGvo3wipqJvQjrKxe+8nFuAW6Us2s8EVcdWyzMrCE+HboP5xB7J
-	 b2Qce2D1Q5IQm0p906Ot2tKqC+IAD1iOPRE7OEQPUmIykJDR59x1gouWe4nnwrKjxr
-	 xux7pc+o+xNbDRhGFf17mcRZLbBSrdDOmJi5LgLXsL+3dzJEtWMjwNgmQYGODr1gnX
-	 +aqK10fhU3hJg==
-Date: Thu, 14 Nov 2024 17:55:16 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Yinbo Zhu <zhuyinbo@loongson.cn>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Binbin Zhou <zhoubinbin@loongson.cn>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] clk: clk-loongson2: Fix potential buffer overflow in
- flexible-array member access
-Message-ID: <ZzaN5MpmMr0hwHw9@kspp>
+	s=arc-20240116; t=1731628621; c=relaxed/simple;
+	bh=4LEMw7tFZ/I2l0o9tYXh+UZzqxJqnQPfsr1Kfeb3eLk=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=SmmZrAp/BbhZ0dFn975kS4CBRQDw0W2KdQx83BLoFbrNIoxHuGzR18PWbsFULr4kEIlGMRL+6Reo06Y47DokqtbzQ/7D80se9KwNy6MC63b2Z7hOIoPmWIoOmgRBP8QA8D5Uz7UJOZfNldn6X9YC0mc2I5Wy4LppauRIth7ER/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=c6tGHY2y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B65C4CECD;
+	Thu, 14 Nov 2024 23:56:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1731628621;
+	bh=4LEMw7tFZ/I2l0o9tYXh+UZzqxJqnQPfsr1Kfeb3eLk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=c6tGHY2yKKUHKw8OBYSweMkHUUuvnopjACx/RdLwVsviU+aQ3RYU9Oue96sB75Y0g
+	 NZQofGRg691A0PsHsb6yT90uzEYgigEcx8khpKRboxx2KYyHxlD3tfdbIG8Kf+rITz
+	 SLmrVxRfFQ5MUhjPy+ofIrr7W6rY08lqs0tful7Y=
+Date: Thu, 14 Nov 2024 15:56:56 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Qi Xi <xiqi2@huawei.com>, oe-kbuild-all@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Linux Memory Management List
+ <linux-mm@kvack.org>
+Subject: Re: fs/proc/vmcore.c:424:19: warning: 'mmap_vmcore_fault' defined
+ but not used
+Message-Id: <20241114155656.a189f0b92d5596e4cb940d82@linux-foundation.org>
+In-Reply-To: <202411140156.2o0nS4fl-lkp@intel.com>
+References: <202411140156.2o0nS4fl-lkp@intel.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Flexible-array member `hws` in `struct clk_hw_onecell_data` is annotated
-with the `counted_by()` attribute. This means that when memory is
-allocated for this array, the _counter_, which in this case is member
-`num` in the flexible structure, should be set to the maximum number of
-elements the flexible array can contain, or fewer.
+On Thu, 14 Nov 2024 01:06:42 +0800 kernel test robot <lkp@intel.com> wrote:
 
-In this case, the total number of elements for the flexible array is
-determined by variable `clks_num` when allocating heap space via
-`devm_kzalloc()`, as shown below:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   f1b785f4c7870c42330b35522c2514e39a1e28e7
+> commit: b8ee299855f08539e04d6c1a6acb3dc9e5423c00 fs/proc: fix compile warning about variable 'vmcore_mmap_ops'
+> date:   6 days ago
+> config: riscv-randconfig-r071-20241113 (https://download.01.org/0day-ci/archive/20241114/202411140156.2o0nS4fl-lkp@intel.com/config)
+> compiler: riscv32-linux-gcc (GCC) 14.2.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241114/202411140156.2o0nS4fl-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202411140156.2o0nS4fl-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+> >> fs/proc/vmcore.c:424:19: warning: 'mmap_vmcore_fault' defined but not used [-Wunused-function]
+>      424 | static vm_fault_t mmap_vmcore_fault(struct vm_fault *vmf)
+>          |                   ^~~~~~~~~~~~~~~~~
 
-289         struct loongson2_clk_provider *clp;
-	...
-296         for (p = data; p->name; p++)
-297                 clks_num++;
-298
-299         clp = devm_kzalloc(dev, struct_size(clp, clk_data.hws, clks_num),
-300                            GFP_KERNEL);
+Thanks, I did this:
 
-So, `clp->clk_data.num` should be set to `clks_num` or less, and not
-exceed `clks_num`, as is currently the case. Otherwise, if data is
-written into `clp->clk_data.hws[clks_num]`, the instrumentation
-provided by the compiler won't detect the overflow, leading to a
-memory corruption bug at runtime.
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: fs/proc/vmcore.c: fix warning when CONFIG_MMU=n
+Date: Thu Nov 14 03:44:21 PM PST 2024
 
-Fix this issue by setting `clp->clk_data.num` to `clks_num`.
+>> fs/proc/vmcore.c:424:19: warning: 'mmap_vmcore_fault' defined but not used [-Wunused-function]
+     424 | static vm_fault_t mmap_vmcore_fault(struct vm_fault *vmf)
 
-Fixes: 9796ec0bd04b ("clk: clk-loongson2: Refactor driver for adding new platforms")
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202411140156.2o0nS4fl-lkp@intel.com/
+Cc: Qi Xi <xiqi2@huawei.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 ---
- drivers/clk/clk-loongson2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
-index e99ba79feec6..7082b4309c6f 100644
---- a/drivers/clk/clk-loongson2.c
-+++ b/drivers/clk/clk-loongson2.c
-@@ -306,7 +306,7 @@ static int loongson2_clk_probe(struct platform_device *pdev)
- 		return PTR_ERR(clp->base);
+ fs/proc/vmcore.c |   56 ++++++++++++++++++++++-----------------------
+ 1 file changed, 28 insertions(+), 28 deletions(-)
+
+--- a/fs/proc/vmcore.c~fs-proc-vmcorec-fix-warning-when-config_mmu=n
++++ a/fs/proc/vmcore.c
+@@ -414,6 +414,34 @@ static ssize_t read_vmcore(struct kiocb
+ 	return __read_vmcore(iter, &iocb->ki_pos);
+ }
  
- 	spin_lock_init(&clp->clk_lock);
--	clp->clk_data.num = clks_num + 1;
-+	clp->clk_data.num = clks_num;
- 	clp->dev = dev;
++/**
++ * vmcore_alloc_buf - allocate buffer in vmalloc memory
++ * @size: size of buffer
++ *
++ * If CONFIG_MMU is defined, use vmalloc_user() to allow users to mmap
++ * the buffer to user-space by means of remap_vmalloc_range().
++ *
++ * If CONFIG_MMU is not defined, use vzalloc() since mmap_vmcore() is
++ * disabled and there's no need to allow users to mmap the buffer.
++ */
++static inline char *vmcore_alloc_buf(size_t size)
++{
++#ifdef CONFIG_MMU
++	return vmalloc_user(size);
++#else
++	return vzalloc(size);
++#endif
++}
++
++/*
++ * Disable mmap_vmcore() if CONFIG_MMU is not defined. MMU is
++ * essential for mmap_vmcore() in order to map physically
++ * non-contiguous objects (ELF header, ELF note segment and memory
++ * regions in the 1st kernel pointed to by PT_LOAD entries) into
++ * virtually contiguous user-space in ELF layout.
++ */
++#ifdef CONFIG_MMU
++
+ /*
+  * The vmcore fault handler uses the page cache and fills data using the
+  * standard __read_vmcore() function.
+@@ -457,34 +485,6 @@ static vm_fault_t mmap_vmcore_fault(stru
+ #endif
+ }
  
- 	for (i = 0; i < clks_num; i++) {
--- 
-2.43.0
+-/**
+- * vmcore_alloc_buf - allocate buffer in vmalloc memory
+- * @size: size of buffer
+- *
+- * If CONFIG_MMU is defined, use vmalloc_user() to allow users to mmap
+- * the buffer to user-space by means of remap_vmalloc_range().
+- *
+- * If CONFIG_MMU is not defined, use vzalloc() since mmap_vmcore() is
+- * disabled and there's no need to allow users to mmap the buffer.
+- */
+-static inline char *vmcore_alloc_buf(size_t size)
+-{
+-#ifdef CONFIG_MMU
+-	return vmalloc_user(size);
+-#else
+-	return vzalloc(size);
+-#endif
+-}
+-
+-/*
+- * Disable mmap_vmcore() if CONFIG_MMU is not defined. MMU is
+- * essential for mmap_vmcore() in order to map physically
+- * non-contiguous objects (ELF header, ELF note segment and memory
+- * regions in the 1st kernel pointed to by PT_LOAD entries) into
+- * virtually contiguous user-space in ELF layout.
+- */
+-#ifdef CONFIG_MMU
+-
+ static const struct vm_operations_struct vmcore_mmap_ops = {
+ 	.fault = mmap_vmcore_fault,
+ };
+_
 
 
