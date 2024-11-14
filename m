@@ -1,234 +1,203 @@
-Return-Path: <linux-kernel+bounces-408520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEF469C7FF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:25:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0803C9C8001
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:31:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33AEBB22B1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:25:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BA071F22BBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA1E1E412E;
-	Thu, 14 Nov 2024 01:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359AA1E3DCF;
+	Thu, 14 Nov 2024 01:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="kc3Pr9L4"
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KBOuvqzV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D851E379B
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD03518D64C
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731547507; cv=none; b=sdXsajm0DiuWrb5C0xFrz3ChuEM2Tq+3h/ykafZvsA1ihX2gpjLh2Q23WXJL1pnSG3q5ZY/9ehPQriO1546RG21Jg7kxCTtGjlvA5gb9lArzcXLKaC8Vwm5fSsaWCcs42/eyYPsTtF+0bS92WWzsyc8hMbBwptai18/3UHMgd9U=
+	t=1731547823; cv=none; b=BwXW1N9t5hZbf1zfOyAMgOo2AkrkeDPBznpXAqiyrdnJpIC7JScv7QFOzftC2omhIpslJIxWTGCpfbgDDsq049ANz/5RMXr3/R3Hz/hhRGaS7s9a917KecgCYFEjuGALpqJPCD0vy2HmJEzXpO7x6gC+YSQ10+5qkA9jnfNXDt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731547507; c=relaxed/simple;
-	bh=KuTm9w2zxcDezkdUUDDcRZEA8jG2I3LDnWFoZ2iSzow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F4ce1KcnqUK8jvxyJmp8R83uILELc4JxQ2nMhbt324cnfnx2jcb1OV0wB6dfx5r+PxiH/OTBzDVbdAnS/0WgBkh6wfbbiS9SVGPYyzZo1WTGMcdGI8AONxwIvVsV/rQBvjQJuphYEdj/UGnT9HgMIgZ0doq2eEDN2W/6aUy5px4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=kc3Pr9L4; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3e60d3adecbso37455b6e.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 17:25:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1731547504; x=1732152304; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7tgZBsjLXLWa/QitrFWyk7TGNAjpHhq1mYxI46BDfkY=;
-        b=kc3Pr9L4U/mCNeeKgyr1pVx7bTPwK/iiUuB3bCqSVPR8yQnGmxnNcSzGBXynbBOKJI
-         rIs2ETYzVDryfh2Vnngj+AEUu+H+TEucLsxmMWEpzw9GjdV48lOu/cxU1SDBIoUGhvzG
-         kjtS9dLIU6PslaSlg771p3hgjgGCFYXtBElCzn0OxVpzed4M8W5WgNg6Wn5x0/K9d5sW
-         Diz8zOtxP3F+Xwk3AG8YTKXk/K149yBDUO+pTa7Qv7UQ1pJtZ1ncPCkAUI/nV/oZEt4s
-         aoUcUgxvJtncGsen981ef/fzcM40I/hlTCfUOfEQPvfHI9OigpQ3h5W3cIYQEKsV95X7
-         gGvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731547504; x=1732152304;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7tgZBsjLXLWa/QitrFWyk7TGNAjpHhq1mYxI46BDfkY=;
-        b=Oo4jaymdNGKyd+NY2NxBMLnbrOAyUT6bzNEQO04Au7nMM/ZaioqGphofNfBZ1etZoF
-         eYVUzpv3I0DaCnnn7TClb58sTW4UzCFYcx3XCMbtqhhfsO7jDI4bB2J8s2vbZ0CJdIt3
-         vYatN0aNcLEM1zpDyWMf5Gtsrku/jJP0giCWYpS/2QxLFNLyWDaMtZbSHQ7uDcjehj5+
-         jxvq5oRZ22DdMI8oZ3fkJ9AgdNmnOOsyl3uTsRb6G9CzyZWpppnfsdcQh++NNaFMkqdc
-         UnG+gmfQsH1vfCZifQJdys1SKzqLRu1YAYL16DQEJ7x4BciV2oc0Vkqlrl95irpATVGG
-         O4Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCW1f5SJyhUUxajZ+bvv+VAgxOJRHHbKF2EaENPYUcIgeyNzqs4I9EuFXVeAFty6+4YxeuKKVE/13sFCt+Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/WKhAMsZBtnwyeRETojGC8bi2Q3Os3LoqaNyoOtxgoAGS6uaD
-	tlZnd793UUsZWQRQ6TcO1X4KvvRv3vppksqDDd9MyGySFGIt0zKu6ShIeSayt9k=
-X-Google-Smtp-Source: AGHT+IFYV+lyD6AUZ64wWkmaKdb2jE8s1l+YlxE25IyFaRji6Gg+al5X5KNPM0lWiRmirmHIFmzF1w==
-X-Received: by 2002:a05:6808:2222:b0:3e6:22f:ea48 with SMTP id 5614622812f47-3e7b7bdede7mr481448b6e.28.1731547504098;
-        Wed, 13 Nov 2024 17:25:04 -0800 (PST)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f5bcad0sm11125410a12.32.2024.11.13.17.25.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 17:25:03 -0800 (PST)
-Date: Wed, 13 Nov 2024 17:25:00 -0800
-From: Deepak Gupta <debug@rivosinc.com>
-To: Nick Hu <nick.hu@sifive.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Christian Brauner <brauner@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	alistair.francis@wdc.com, richard.henderson@linaro.org,
-	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
-	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
-	cleger@rivosinc.com, alexghiti@rivosinc.com,
-	samitolvanen@google.com, broonie@kernel.org,
-	rick.p.edgecombe@intel.com
-Subject: Re: [PATCH v8 24/29] riscv: enable kernel access to shadow stack
- memory via FWFT sbi call
-Message-ID: <ZzVRbCZP9N4Os8Bj@debug.ba.rivosinc.com>
-References: <20241111-v5_user_cfi_series-v8-0-dce14aa30207@rivosinc.com>
- <20241111-v5_user_cfi_series-v8-24-dce14aa30207@rivosinc.com>
- <CAKddAkCCVjNHUinPWtOiK8Ki_ZkdoUCawfv1-+0B69J_1aJv5Q@mail.gmail.com>
- <ZzVNKvCu4MOs7O5z@debug.ba.rivosinc.com>
- <CAKddAkDbGYeONaksq6fzLzx47BHZo3Ar7Sog3MOgf7Y+Birovw@mail.gmail.com>
+	s=arc-20240116; t=1731547823; c=relaxed/simple;
+	bh=QFrp+5PlX8fb74FPEYnlkQMIRuRijYaZ8+Lp/KK8PC8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CsqsAwXY1kE427sLLQbmmTQvgTPb22ujr1wVCI0jSpuPkVMmpRksxwkHmVUvdfF5F1Z3PlOTdSRNqBRg26d2U9ApWpo0poLeKR3t3fSgzlDN9hTjXpqDhiXrkbYfDsw0RugoHVsOBFCRx/x/oQ9Jx278VJ7z0PtNFUyblid5XYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KBOuvqzV; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731547821; x=1763083821;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=QFrp+5PlX8fb74FPEYnlkQMIRuRijYaZ8+Lp/KK8PC8=;
+  b=KBOuvqzV7RAgKJtzoEbm+7A8qmSQlVS13GCV7GGLBfgMHY1Dc/3IlM9Y
+   hx/G8rHq1597Q1dCg1rf8TOLUBt6Kc4YBPm6gBYMPnuLrzTGsl5KcgBdh
+   W6P4EFxf0f9GFoIytLtqpM6R7HgxRfybVg4yt2JrX1XAXHTrYG4bOgRIf
+   KqbMjvxkmG/yfI/4lH11xZmAQQcNcSEwsWgmaVmJWfMBAP176rEXke31V
+   sp+uH8gw8b2RoVDTb4dKPMYlgFg3Mqq1d4g27mC+ACE3XPhs27HOHBLoW
+   S/nnvi/UEuET4UYfpCEL4AwfYrsHnL3Uj23lN8ehWx5Ml6Iqu4BV3WdoM
+   Q==;
+X-CSE-ConnectionGUID: pGiRyQGtSra+q3ce+oDcaw==
+X-CSE-MsgGUID: ZqvMat5zT4KRuC/v5V/UPQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11255"; a="56858139"
+X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
+   d="scan'208";a="56858139"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 17:30:21 -0800
+X-CSE-ConnectionGUID: yjeNN5GHTsyCanJ3XGCbuQ==
+X-CSE-MsgGUID: 3mlL5furToK4S12b5lBMOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
+   d="scan'208";a="88029214"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 17:30:19 -0800
+Message-ID: <dceea752-db07-4455-9efd-9d82371a57ae@linux.intel.com>
+Date: Thu, 14 Nov 2024 09:29:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATH v5 2/3] iommu/vt-d: debugfs: Create/remove debugfs file per
+ {device, pasid}
+To: Kees Bakker <kees@ijzerbout.nl>, Jingqi Liu <Jingqi.liu@intel.com>,
+ iommu@lists.linux.dev, Tian Kevin <kevin.tian@intel.com>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>
+Cc: linux-kernel@vger.kernel.org
+References: <20231013135811.73953-1-Jingqi.liu@intel.com>
+ <20231013135811.73953-3-Jingqi.liu@intel.com>
+ <2590cecf-e1f9-4af9-8fbb-9b49f5e335c0@ijzerbout.nl>
+ <16b3fdb5-6f7b-4728-873c-4047ea69aef5@linux.intel.com>
+ <e17818c2-8856-47d1-95fe-036b6a4849d6@ijzerbout.nl>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <e17818c2-8856-47d1-95fe-036b6a4849d6@ijzerbout.nl>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKddAkDbGYeONaksq6fzLzx47BHZo3Ar7Sog3MOgf7Y+Birovw@mail.gmail.com>
 
-On Thu, Nov 14, 2024 at 09:20:14AM +0800, Nick Hu wrote:
->Hi Deepak
->
->On Thu, Nov 14, 2024 at 9:06 AM Deepak Gupta <debug@rivosinc.com> wrote:
+On 11/14/24 04:35, Kees Bakker wrote:
+> Op 13-11-2024 om 03:13 schreef Baolu Lu:
+>> On 11/13/24 05:22, Kees Bakker wrote:
+>>> Op 13-10-2023 om 15:58 schreef Jingqi Liu:
+>>>> Add a debugfs directory per pair of {device, pasid} if the mappings of
+>>>> its page table are created and destroyed by the iommu_map/unmap()
+>>>> interfaces. i.e. /sys/kernel/debug/iommu/intel/<device source id>/ 
+>>>> <pasid>.
+>>>> Create a debugfs file in the directory for users to dump the page
+>>>> table corresponding to {device, pasid}. e.g.
+>>>> /sys/kernel/debug/iommu/intel/0000:00:02.0/1/domain_translation_struct.
+>>>> For the default domain without pasid, it creates a debugfs file in the
+>>>> debugfs device directory for users to dump its page table. e.g.
+>>>> /sys/kernel/debug/iommu/intel/0000:00:02.0/domain_translation_struct.
+>>>>
+>>>> When setting a domain to a PASID of device, create a debugfs file in
+>>>> the pasid debugfs directory for users to dump the page table of the
+>>>> specified pasid. Remove the debugfs device directory of the device
+>>>> when releasing a device. e.g.
+>>>> /sys/kernel/debug/iommu/intel/0000:00:01.0
+>>>>
+>>>> Signed-off-by: Jingqi Liu <Jingqi.liu@intel.com>
+>>>> ---
+>>>>   drivers/iommu/intel/debugfs.c | 53 ++++++++++++++++++++++++++++++ 
+>>>> +----
+>>>>   drivers/iommu/intel/iommu.c   |  7 +++++
+>>>>   drivers/iommu/intel/iommu.h   | 14 +++++++++
+>>>>   3 files changed, 69 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/drivers/iommu/intel/debugfs.c b/drivers/iommu/intel/ 
+>>>> debugfs.c
+>>>> [...]
+>>>> +/* Remove the device pasid debugfs directory. */
+>>>> +void intel_iommu_debugfs_remove_dev_pasid(struct dev_pasid_info 
+>>>> *dev_pasid)
+>>>> +{
+>>>> +    debugfs_remove_recursive(dev_pasid->debugfs_dentry);
+>>>> +}
+>>>> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+>>>> [...]
+>>>> @@ -4710,6 +4713,7 @@ static void 
+>>>> intel_iommu_remove_dev_pasid(struct device *dev, ioasid_t pasid)
+>>>>       spin_unlock_irqrestore(&dmar_domain->lock, flags);
+>>>>       domain_detach_iommu(dmar_domain, iommu);
+>>>> +    intel_iommu_debugfs_remove_dev_pasid(dev_pasid);
+>>>>       kfree(dev_pasid);
+>>>>   out_tear_down:
+>>>>       intel_pasid_tear_down_entry(iommu, dev, pasid, false);
+>>>>
+>>>
+>>> So, a call to intel_iommu_debugfs_remove_dev_pasid() was added.
+>>> There is a potential problem that dev_pasid can be NULL.
+>>> The diff doesn't show the whole context so let me give that here.
+>>> Today that piece of the code looks like this
+>>>
+>>>          list_for_each_entry(curr, &dmar_domain->dev_pasids, 
+>>> link_domain) {
+>>>                  if (curr->dev == dev && curr->pasid == pasid) {
+>>>                          list_del(&curr->link_domain);
+>>>                          dev_pasid = curr;
+>>>                          break;
+>>>                  }
+>>>          }
+>>>          WARN_ON_ONCE(!dev_pasid);
+>>>          spin_unlock_irqrestore(&dmar_domain->lock, flags);
+>>>
+>>>          cache_tag_unassign_domain(dmar_domain, dev, pasid);
+>>>          domain_detach_iommu(dmar_domain, iommu);
+>>>          intel_iommu_debugfs_remove_dev_pasid(dev_pasid);
+>>>          kfree(dev_pasid);
+>>>
+>>> The for_each loop can exit without finding an entry.
+>>> The WARN_ON_ONCE also suggests that there can be a NULL.
+>>> After that the new function is called (see above) and it will
+>>> dereference the NULL pointer.
+>>>
+>>> Can you have a closer look?
 >>
->> On Thu, Nov 14, 2024 at 12:13:38AM +0800, Nick Hu wrote:
->> >Hi Deepak
->> >
->> >On Tue, Nov 12, 2024 at 5:08 AM Deepak Gupta <debug@rivosinc.com> wrote:
->> >>
->> >> Kernel will have to perform shadow stack operations on user shadow stack.
->> >> Like during signal delivery and sigreturn, shadow stack token must be
->> >> created and validated respectively. Thus shadow stack access for kernel
->> >> must be enabled.
->> >>
->> >> In future when kernel shadow stacks are enabled for linux kernel, it must
->> >> be enabled as early as possible for better coverage and prevent imbalance
->> >> between regular stack and shadow stack. After `relocate_enable_mmu` has
->> >> been done, this is as early as possible it can enabled.
->> >>
->> >> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
->> >> ---
->> >>  arch/riscv/kernel/asm-offsets.c |  4 ++++
->> >>  arch/riscv/kernel/head.S        | 12 ++++++++++++
->> >>  2 files changed, 16 insertions(+)
->> >>
->> >> diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offsets.c
->> >> index 766bd33f10cb..a22ab8a41672 100644
->> >> --- a/arch/riscv/kernel/asm-offsets.c
->> >> +++ b/arch/riscv/kernel/asm-offsets.c
->> >> @@ -517,4 +517,8 @@ void asm_offsets(void)
->> >>         DEFINE(FREGS_A6,            offsetof(struct ftrace_regs, a6));
->> >>         DEFINE(FREGS_A7,            offsetof(struct ftrace_regs, a7));
->> >>  #endif
->> >> +       DEFINE(SBI_EXT_FWFT, SBI_EXT_FWFT);
->> >> +       DEFINE(SBI_EXT_FWFT_SET, SBI_EXT_FWFT_SET);
->> >> +       DEFINE(SBI_FWFT_SHADOW_STACK, SBI_FWFT_SHADOW_STACK);
->> >> +       DEFINE(SBI_FWFT_SET_FLAG_LOCK, SBI_FWFT_SET_FLAG_LOCK);
->> >>  }
->> >> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
->> >> index 356d5397b2a2..6244408ca917 100644
->> >> --- a/arch/riscv/kernel/head.S
->> >> +++ b/arch/riscv/kernel/head.S
->> >> @@ -164,6 +164,12 @@ secondary_start_sbi:
->> >>         call relocate_enable_mmu
->> >>  #endif
->> >>         call .Lsetup_trap_vector
->> >> +       li a7, SBI_EXT_FWFT
->> >> +       li a6, SBI_EXT_FWFT_SET
->> >> +       li a0, SBI_FWFT_SHADOW_STACK
->> >> +       li a1, 1 /* enable supervisor to access shadow stack access */
->> >> +       li a2, SBI_FWFT_SET_FLAG_LOCK
->> >> +       ecall
->> >>         scs_load_current
->> >>         call smp_callin
->> >>  #endif /* CONFIG_SMP */
->> >> @@ -320,6 +326,12 @@ SYM_CODE_START(_start_kernel)
->> >>         la tp, init_task
->> >>         la sp, init_thread_union + THREAD_SIZE
->> >>         addi sp, sp, -PT_SIZE_ON_STACK
->> >> +       li a7, SBI_EXT_FWFT
->> >> +       li a6, SBI_EXT_FWFT_SET
->> >> +       li a0, SBI_FWFT_SHADOW_STACK
->> >> +       li a1, 1 /* enable supervisor to access shadow stack access */
->> >> +       li a2, SBI_FWFT_SET_FLAG_LOCK
->> >> +       ecall
->> >>         scs_load_current
->> >>
->> >>  #ifdef CONFIG_KASAN
->> >>
->> >> --
->> >> 2.45.0
->> >>
->> >Should we clear the SBI_FWFT_SET_FLAG_LOCK before the cpu hotplug
->> >otherwise the menvcfg.sse won't be set by the fwft set sbi call when
->> >the hotplug cpu back to kernel?
->>
->> Hmm...
->>
->> An incoming hotplug CPU has no features setup on it.
->> I see that `sbi_cpu_start` will supply `secondary_start_sbi` as start
->> up code for incoming CPU. `secondary_start_sbi` is in head.S which converges
->> in `.Lsecondary_start_common`. And thus hotplugged CPU should be
->> issuing shadow stack set FWFT sbi as well.
->>
->> Am I missing something ?
->>
->This is the correct flow. However the opensbi will deny it due to the
->SBI_FWFT_SET_FLAG_LOCK already being set.
->So the menvcfg.sse will not set by this flow.
->
->if (conf->flags & SBI_FWFT_SET_FLAG_LOCK)
->                return SBI_EDENIED;
->
+>> It's already a kernel bug if dev_pasid is NULL when it reaches here. If
+>> that happens, we should fix the bug, not avoid using the NULL pointer.
+> 
+> How about moving the WARN_ON_ONCE down a bit and use its return value?
+> Like so
+> 
+> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+> index 527f6f89d8a1..204873976ef3 100644
+> --- a/drivers/iommu/intel/iommu.c
+> +++ b/drivers/iommu/intel/iommu.c
+> @@ -4096,13 +4096,14 @@ void domain_remove_dev_pasid(struct iommu_domain 
+> *domain,
+>                          break;
+>                  }
+>          }
+> -       WARN_ON_ONCE(!dev_pasid);
+>          spin_unlock_irqrestore(&dmar_domain->lock, flags);
+> 
+>          cache_tag_unassign_domain(dmar_domain, dev, pasid);
+>          domain_detach_iommu(dmar_domain, iommu);
+> -       intel_iommu_debugfs_remove_dev_pasid(dev_pasid);
+> -       kfree(dev_pasid);
+> +       if (!WARN_ON_ONCE(!dev_pasid)) {
+> +               intel_iommu_debugfs_remove_dev_pasid(dev_pasid);
+> +               kfree(dev_pasid);
+> +       }
+>   }
+> 
+>   static void intel_iommu_remove_dev_pasid(struct device *dev, ioasid_t 
+> pasid,
+> 
+> 
+> Would you accept a patch like that? Or do you want to change it yourself?
 
-hmm... Why?
+Yes. That looks better. Please post a patch. Thanks!
 
-`conf` is pointing to per-hart state in firmware.
-
-On this incoming cpu, opensbi (or equivalent) firmware must have
-ensured that this per-hart state doesn't have lock set.
-
-Am I missing something?
-
->Regards,
->Nick
->> >
->> >Regards,
->> >Nick
->> >>
->> >> _______________________________________________
->> >> linux-riscv mailing list
->> >> linux-riscv@lists.infradead.org
->> >> http://lists.infradead.org/mailman/listinfo/linux-riscv
+--
+baolu
 
