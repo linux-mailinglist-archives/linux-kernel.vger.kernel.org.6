@@ -1,141 +1,116 @@
-Return-Path: <linux-kernel+bounces-409764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A3699C9153
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:03:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAA7D9C9118
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:48:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E92FEB34FB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:47:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 673711F2381F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3052F18C326;
-	Thu, 14 Nov 2024 17:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61EB18C343;
+	Thu, 14 Nov 2024 17:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="dGEpXD8C"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BD718B484;
-	Thu, 14 Nov 2024 17:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="uhWmnbmW"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292A8175D5D;
+	Thu, 14 Nov 2024 17:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731606433; cv=none; b=sz75DTtiVhvm3sn1g4OI7s6PaPKYmjJJREV2K033ZChTe7CgzSsVMMBJch4NpQ4QpsCJPktJcq+nTnA9F1w7gAvYFART62ZaG3Z25Ge8QUmCJWcf22x/dOd6cE+vImEdigB0BzKivIZGKjWTPHEO0Z9n8/qt+yqJY2oXV9okdb0=
+	t=1731606480; cv=none; b=VbtpG/Z75mQ5Js3fxjJ2R1LSW+YWZLuaSVQsARro+YjW8qZpuFcOVMTbYHm6aRHmh+tKKcQNIWwV5VxPgrUnHUh+Ge+BnWI9HSOw0wfXdbtGH5x0S0+rNKjPdV9101YVx87ZVrkbsjJg1KQwQ12kN9M6Hh+TFV3htFGGzfxItgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731606433; c=relaxed/simple;
-	bh=ID8ZhFiwzsT6f68DK1Sq/ms9TWIt+cLdct40zfYVDhQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=SurJl+5OPWa2duATDV9ZiEal0b2njTN5sFEMC1RjKlCT1Baq00U7rstCEGNhYT2Oq+e1MX377ONgBDvc7r1bAvj1/25A9NaXHXeGgiriLrud8Vny6ZeXIqpXBhT3d8L2iuL4u/6IWbyGHc7uDJGA0jdtSQQ6lvL3PTM65nRYhPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=dGEpXD8C; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.35.166] (c-73-118-245-227.hsd1.wa.comcast.net [73.118.245.227])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 0F7F120BEBFD;
-	Thu, 14 Nov 2024 09:47:10 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0F7F120BEBFD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1731606430;
-	bh=tv6R0dfqeJn4Gt9XYkh+9bVP07MCUYjrl1v5JAVZfsE=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=dGEpXD8C934fobk6knh2OeWKyFUtuXwN5EKsxyMqluoYdmPY9/v5yrBk/nEPeUZXJ
-	 mqNMtESikRdQQmFjTcKnLmgXRZSiy7loawioMT2eUFmTqkzmZRPnDiADBSeTyW8vzq
-	 HToL/wLvV1rq2amU+q4Dnp0m2iIMJo9C2bLiLMt0=
-Message-ID: <34a3e85d-4dbd-4550-a74b-5807d71a007e@linux.microsoft.com>
-Date: Thu, 14 Nov 2024 09:47:09 -0800
+	s=arc-20240116; t=1731606480; c=relaxed/simple;
+	bh=HMwxgerIXtybTadGF19QWB5QBDuxTsaaCs4rDMHIcWM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ME+AVHE0kLsikizjrgl9ZQ7PUk1/a4fekbVy3oH7RHQZ2f6uYL10MtTxgwXTg91xDVf25Cb2mtGQEzCkhFg+SLBsGue2Jb0iE2rD1x63T3EHySvVkTOfOVYBmnsJlM+6fMnzvEKxEIiSKIfEX8YxcfEuZtuKSDjwYxFZYZdi1qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=uhWmnbmW reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
+ id 4fd1f0bef9360896; Thu, 14 Nov 2024 18:47:56 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id ED3AF665CF6;
+	Thu, 14 Nov 2024 18:47:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1731606476;
+	bh=HMwxgerIXtybTadGF19QWB5QBDuxTsaaCs4rDMHIcWM=;
+	h=From:Subject:Date;
+	b=uhWmnbmWCZmTKvTsqsHjJXBOTzO1zOpetvCuBgpXq2V2MOghBYes9IFqr7tdc0grh
+	 vZ1O6a1rAqZCiyHYGK3Et1OzYgBOT131rQZ4JYBCYBMVGZAn/RhfULLQrDPgRuK5rM
+	 7yVoeIedyqvq0uVfefIuFysZAzpMdyxureoj1XI8FsSFMHhhi93JmKX2+xZdyUX7U5
+	 0m3p3g8MEhkkDCnomnqSsJNkgwYihwkjgqyq0ktzV8A9K3HOhNPVZWZ3RGBjb7EFKG
+	 bQH7zpvgr7/JZr4RQzc0m7NiWpAmfPwV3qdj9NeTsK+kZK2DEu6UGi14P1OkeiAZ3o
+	 UTQuwYqHKD8Jw==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, x86 Maintainers <x86@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
+ "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+ Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+ Mario Limonciello <mario.limonciello@amd.com>
+Subject:
+ [PATCH v1] ACPI: processor_idle: Use acpi_idle_play_dead() for all C-states
+Date: Thu, 14 Nov 2024 18:47:55 +0100
+Message-ID: <2373563.ElGaqSPkdT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: eahariha@linux.microsoft.com, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, John Starks <jostarks@microsoft.com>,
- jacob.pan@linux.microsoft.com, Michael Kelley <mhklinux@outlook.com>,
- Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-Subject: Re: [PATCH v3 0/2] Drivers: hv: vmbus: Wait for boot-time offers and
- log missing offers
-To: Naman Jain <namjain@linux.microsoft.com>,
- "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>
-References: <20241113084700.2940-1-namjain@linux.microsoft.com>
-Content-Language: en-US
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-In-Reply-To: <20241113084700.2940-1-namjain@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefuddrvddvgddutdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepffffffekgfehheffleetieevfeefvefhleetjedvvdeijeejledvieehueevueffnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepkedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehprghtrhihkhdrfihlrgiilhihnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthh
+X-DCC--Metrics: v370.home.net.pl 0; Body=8 Fuz1=8 Fuz2=8
 
-On 11/13/2024 12:46 AM, Naman Jain wrote:
-> After VM requests for channel offers during boot or resume from
-> hibernation, host offers the devices that the VM is configured with and
-> then sends a separate message indicating that all the boot-time channel
-> offers are delivered. Wait for this message to make this boot-time offers
-> request and receipt process synchronous.
-> 
-> Without this, user mode can race with VMBus initialization and miss
-> channel offers. User mode has no way to work around this other than
-> sleeping for a while, since there is no way to know when VMBus has
-> finished processing boot-time offers.
-> 
-> This is in analogy to a PCI bus not returning from probe until it has
-> scanned all devices on the bus.
-> 
-> As part of this implementation, some code cleanup is also done for the
-> logic which becomes redundant due to this change.
-> 
-> Second patch prints the channels which are not offered when resume
-> happens from hibernation to supply more information to the end user.
-> 
-> Changes since v2:
-> https://lore.kernel.org/all/20241029080147.52749-1-namjain@linux.microsoft.com/
-> * Incorporated Easwar's suggestion to use secs_to_jiffies() as his
->   changes are now merged.
-> * Addressed Michael's comments:
->   * Used boot-time offers/channels/devices to maintain consistency
->   * Rephrased CHANNELMSG_ALLOFFERS_DELIVERED handler function comments
->     for better explanation. Thanks for sharing the write-up.
->   * Changed commit msg and other things as per suggestions
-> * Addressed Dexuan's comments, which came up in offline discussion:
->   * Changed timeout for waiting for all offers delivered msg to 60s instead of 10s.
->     Reason being, the host can experience some servicing events or diagnostics events,
->     which may take a long time and hence may fail to offer all the devices within 10s.
->   * Minor additions in commit subject of both patches
-> * Rebased on latest linux-next master tip
-> 
-> Changes since v1:
-> https://lore.kernel.org/all/20241018115811.5530-1-namjain@linux.microsoft.com/
-> * Added Easwar's Reviewed-By tag
-> * Addressed Michael's comments:
->   * Added explanation of all offers delivered message in comments
->   * Removed infinite wait for offers logic, and changed it wait once.
->   * Removed sub channel workqueue flush logic
->   * Added comments on why MLX device offer is not expected as part of
->     this essential boot offer list. I refrained from adding too many
->     details on it as it felt like it is beyond the scope of this patch
->     series and may not be relevant to this. However, please let me know if
->     something needs to be added.
-> * Addressed Saurabh's comments:
->   * Changed timeout value to 10000 ms instead of 10*1000
->   * Changed commit msg as per suggestions
->   * Added a comment for warning case of wait_for_completion timeout
->   * Added a note for missing channel cleanup in comments and commit msg
-> 
-> John Starks (1):
->   Drivers: hv: vmbus: Log on missing offers if any
-> 
-> Naman Jain (1):
->   Drivers: hv: vmbus: Wait for boot-time offers during boot and resume
-> 
->  drivers/hv/channel_mgmt.c | 61 +++++++++++++++++++++++++++++----------
->  drivers/hv/connection.c   |  4 +--
->  drivers/hv/hyperv_vmbus.h | 14 ++-------
->  drivers/hv/vmbus_drv.c    | 31 ++++++++++----------
->  4 files changed, 67 insertions(+), 43 deletions(-)
-> 
-> 
-> base-commit: 28955f4fa2823e39f1ecfb3a37a364563527afbc
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-For the series:
+Notice that acpi_processor_setup_cstates() can set state->enter_dead to acpi_idle_play_dead() for all C-states unconditionally and remove the
+confusing C-state type check done before setting it.
 
-Reviewed-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+No intentional functional impact.
+
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/acpi/processor_idle.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+Index: linux-pm/drivers/acpi/processor_idle.c
+===================================================================
+--- linux-pm.orig/drivers/acpi/processor_idle.c
++++ linux-pm/drivers/acpi/processor_idle.c
+@@ -803,12 +803,12 @@ static int acpi_processor_setup_cstates(
+ 		state->enter = acpi_idle_enter;
+ 
+ 		state->flags = 0;
+-		if (cx->type == ACPI_STATE_C1 || cx->type == ACPI_STATE_C2 ||
+-		    cx->type == ACPI_STATE_C3) {
+-			state->enter_dead = acpi_idle_play_dead;
+-			if (cx->type != ACPI_STATE_C3)
+-				drv->safe_state_index = count;
+-		}
++
++		state->enter_dead = acpi_idle_play_dead;
++
++		if (cx->type == ACPI_STATE_C1 || cx->type == ACPI_STATE_C2)
++			drv->safe_state_index = count;
++
+ 		/*
+ 		 * Halt-induced C1 is not good for ->enter_s2idle, because it
+ 		 * re-enables interrupts on exit.  Moreover, C1 is generally not
+
+
+
 
