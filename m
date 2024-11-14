@@ -1,54 +1,96 @@
-Return-Path: <linux-kernel+bounces-409288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6651D9C8A18
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:36:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCFA79C8A39
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:42:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51F1AB275F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:35:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40BCE1F23B10
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29CF1FA258;
-	Thu, 14 Nov 2024 12:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3431FA84A;
+	Thu, 14 Nov 2024 12:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="l9Jn6FuM"
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b="FHNjT9BY";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FEPvwf9U"
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC0E1F9A8D;
-	Thu, 14 Nov 2024 12:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455601F76C0;
+	Thu, 14 Nov 2024 12:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731587727; cv=none; b=sUNRZ3yYvKO1hXhtdz/yjjEeZuUxwaowLYgbWNvY3Q8JxA0Yo8I9jFE/EcwUVGEZrxw2la3A0/FJpzkpQxpMaiUfAcEyBI8/0BhyEhufgejsLDSvF/MDaffLwtVHh8Kh7N2kXG1GiiCPsDdf+neitFgCAMkzXRdcGn1EvqS9eSA=
+	t=1731588153; cv=none; b=QVlBWRemelisFcCHKTUsOKdVLAtGahgEtPM1kcTwaGvp5V7fuN06wrKYCtX6TGkyuysQJrQxVJI5Z9LiYlQh7kwlbVrc5WyBU2iirdvc1fcudkn7CVHkDZLAEBA/w7GHy47doXk0bwmNfm02gRmIHGX6kyFjggc7nyG3TZ3AdyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731587727; c=relaxed/simple;
-	bh=0WkcxfAr+SjjzcYjh2T51top57BNY5aFPaykSjgrnC0=;
+	s=arc-20240116; t=1731588153; c=relaxed/simple;
+	bh=OBboteaVoVEj0REv8awAxGHD2xrdO890TrGuna7+otc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kg2jWAS9kgNLGAtjxAuFM3yu9Zn6HoEolmlEnD5/p8Fjv5d82ghJrr71Co/urh5RQ0e8/+vSHtekPYMRfXxuKnqJD/ZRKIaYan9SaxmsmSsW6Y6kfEtMxG0G60U0371bXTQW4s6DIFtp6yCoO1VdkloTIhmoaKpSSr3LSaNQ0vQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=l9Jn6FuM; arc=none smtp.client-ip=80.12.242.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id BZ40thIaGgtkHBZ41tUC1a; Thu, 14 Nov 2024 13:35:16 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731587716;
-	bh=BHNcnOVeaZJasUSVXJ8QJzu53w+/kj7LUAx1oq0vuHI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=l9Jn6FuMBGr93BnQyPWs2l4LR7uh6VRheNq5TKgkXecQKIJuHI1IZS/H/vDQn5SV4
-	 HaRCZr4jrNuflztCnnbIo5O497lgQwskwO7oE3Qir8RLLE5cvp7TMiE1ypnBSploF2
-	 WPPxl/O0AUARNFLr8m4yFaAWXxfDDUHPxasy4TX4eqsrdwkP/1Rk35qrSt4u6qvuOc
-	 6QMKfFvfDgQ2mVLJFa3Hu9/Rgz6qoyNg1DYQp23ZqgaBwlcxEYxc5n7K9uAACBSjiO
-	 eWxk8AzcqXmZibMAoBxEOOoDy/3ifGT6zHlQtKK3TTuoPhykJXVNxZVUX7drOADaN6
-	 Ji/mRWELRS8dg==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 14 Nov 2024 13:35:16 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <9d6837c1-6fd1-4cc6-8315-c1ede8f20add@wanadoo.fr>
-Date: Thu, 14 Nov 2024 21:35:07 +0900
+	 In-Reply-To:Content-Type; b=KE8riimx1ZathBd5Yj7VgoiwmInubK+E8aAW8EKRsZtupb9S6hnt37HA1P9OdytkriW6vu1YhCC30ghSu91DUtBgS9eLmfRgn+m+S04ulAygTO9si8p28+IWIYnH78l4PHthI225Zppp0QBA5VmeB77WWR63MOlcBIJfRjLnuYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu; spf=pass smtp.mailfrom=e43.eu; dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b=FHNjT9BY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FEPvwf9U; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=e43.eu
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 31B6F11401E3;
+	Thu, 14 Nov 2024 07:42:30 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Thu, 14 Nov 2024 07:42:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=e43.eu; h=cc:cc
+	:content-transfer-encoding:content-type:content-type:date:date
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1731588150;
+	 x=1731674550; bh=GtrzjcC7xObwp3dBNxOSTrT96UKJvRh37T7T6adZp/0=; b=
+	FHNjT9BYaVtM9w0a+1uJGrmRJhUQwmANVy8cCJG77YB003jNDo7iFZXZP1lFoNI4
+	nywvAB5j5GFRPwiVioZ4dzDGPEvV89YY9gcl7wSOAWoKMf4UNk+fIH+qAP+rrMm3
+	KLsAmMMP6gNMmppAmuJ5uez6LuP2SJfYoRGUvBiT7mW38JM7qmp1gzmpKW+XeO2q
+	Dtdm8EigndM6VbwpzzqgnIU7l75rMXlEmti0NAljmlNgRtlCw/K9AAmAg9ZWCOT0
+	uf4kU/LlGdYWbcMif5J/jP2afWKmIliZSi6ZtCpDPrHcw/KTWJJnmpXcgjmYd7RT
+	GZE7VDG/I18lKGY/SMFQuA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731588150; x=
+	1731674550; bh=GtrzjcC7xObwp3dBNxOSTrT96UKJvRh37T7T6adZp/0=; b=F
+	EPvwf9Ue5IHnb+4KGfqqsoqTlRC0xJDTtdYEOTdJoyx2LdcxC9q6g3agLgOoHIka
+	y8Oy1QAsDWFdOSU7BM7Zr4o6Axw/sgz1IrOiLAwVLnu5MzoVVGFc1n1/tXJfa3Qt
+	4adnXWCvFGHkn/tmfRQQCCsJ2DSl2gV0xKhv6hxK22BcfOZQYhVgOrdNmX2P6yy/
+	hf3QUgJ7tKdVuAGwDLc2491IUX2iSHxqnAiGqldJ6aFmNmr3wmcO9be0Fd3AOCQD
+	S4DyfIFhWHsindmxZpU+MJd93cue2vN4OhPlCHf1gtnjUrKrhu+O0K8JKq1hFujJ
+	shSWXvcL92O6beWbhU0ow==
+X-ME-Sender: <xms:NfA1Z0HybJ8KlCkdMvwafDcZ9VS6lgnlEP6YKZWOrWmlzwn9BfRj_A>
+    <xme:NfA1Z9Wn67zKGq8wAmVzESj9yauZJr-D7upiNTz-rtzY5yRFD1d4yLTkic9XIrjWy
+    yT0xyqbaONazv2L0Ug>
+X-ME-Received: <xmr:NfA1Z-Ir3I67tZTh0WACYSVRf3ujXMWOpk-jwLYXbBBxrkMkhKub2rWerqZAyfttmmlbBbjl-LTG6wUMFb2ri7a81wX8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddvgdegfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeen
+    ucfhrhhomhepgfhrihhnucfuhhgvphhhvghrugcuoegvrhhinhdrshhhvghphhgvrhguse
+    gvgeefrdgvuheqnecuggftrfgrthhtvghrnheptdeltdfhveehheekleefvddtffefgefg
+    teelkeffudehkeeitdeljedvkeefheehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrgh
+    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegvrhhi
+    nhdrshhhvghphhgvrhgusegvgeefrdgvuhdpnhgspghrtghpthhtohepledpmhhouggvpe
+    hsmhhtphhouhhtpdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhmpdhr
+    tghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhirh
+    hoseiivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehjrggtkhesshhu
+    shgvrdgtiidprhgtphhtthhopegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomh
+    dprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrd
+    horhhgpdhrtghpthhtohepjhhlrgihthhonheskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    oheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:NfA1Z2EnZ1h8MfVVPiqtkWRX5JInjX2s3HwjDgCeP-nG8P6opxfK_g>
+    <xmx:NfA1Z6Wu_Pg81gYDacYOPQN4q2gzePWLIYTbjUOoZqX7-uyK3XkDNw>
+    <xmx:NfA1Z5M2gZ_9xu6oEeE_BFGpc-kU1ULXmfvyCWZtC7iCfhWmYj0ebQ>
+    <xmx:NfA1Zx3gLT0o7p8KMRXrSwN0gSuXbC1JkeL1UEvY7vDziIr4hn-AIA>
+    <xmx:NvA1Z2TiiJVLlCo8UNtqmte39oje-yQykN7U3o39n_V7Gk4UNrysXg9Y>
+Feedback-ID: i313944f9:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 14 Nov 2024 07:42:27 -0500 (EST)
+Message-ID: <600bbf1c-5225-4e24-8c93-26fa46fd7990@e43.eu>
+Date: Thu, 14 Nov 2024 13:42:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,65 +98,158 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] can: can327: fix snprintf() limit in
- can327_handle_prompt()
-To: Dan Carpenter <dan.carpenter@linaro.org>, Max Staudt <max@enpas.org>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- linux-can@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <c896ba5d-7147-4978-9e25-86cfd88ff9dc@stanley.mountain>
- <6db4d783-6db2-4b86-887c-3c95d6763774@wanadoo.fr>
- <4ff913b9-93b3-4636-b0f6-6e874f813d2f@stanley.mountain>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-In-Reply-To: <4ff913b9-93b3-4636-b0f6-6e874f813d2f@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2 3/3] pidfs: implement file handle support
+Content-Language: en-GB
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+ linux-nfs@vger.kernel.org
+References: <20241113-pidfs_fh-v2-0-9a4d28155a37@e43.eu>
+ <20241113-pidfs_fh-v2-3-9a4d28155a37@e43.eu>
+ <CAOQ4uxh2HWkVE_aMeYSTsYRO9_sKMPH7V2uksWFSo3ucWOoJ2g@mail.gmail.com>
+From: Erin Shepherd <erin.shepherd@e43.eu>
+In-Reply-To: <CAOQ4uxh2HWkVE_aMeYSTsYRO9_sKMPH7V2uksWFSo3ucWOoJ2g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 14/11/2024 at 18:57, Dan Carpenter wrote:
-> On Thu, Nov 14, 2024 at 06:34:49PM +0900, Vincent Mailhol wrote:
->> Hi Dan,
+
+On 14/11/2024 08:07, Amir Goldstein wrote:
+> On Wed, Nov 13, 2024 at 7:11 PM Erin Shepherd <erin.shepherd@e43.eu> wrote:
+>> On 64-bit platforms, userspace can read the pidfd's inode in order to
+>> get a never-repeated PID identifier. On 32-bit platforms this identifier
+>> is not exposed, as inodes are limited to 32 bits. Instead expose the
+>> identifier via export_fh, which makes it available to userspace via
+>> name_to_handle_at
 >>
->> On 14/11/2024 at 18:03, Dan Carpenter wrote:
->>> This code is printing hex values to the &local_txbuf buffer and it's
->>> using the snprintf() function to try prevent buffer overflows.  The
->>> problem is that it's not passing the correct limit to the snprintf()
->>> function so the limit doesn't do anything.  On each iteration we print
->>> two digits so the remaining size should also decrease by two, but
->>> instead it passes the sizeof() the entire buffer each time.
->>>
->>> If the frame->len were too long it would result in a buffer overflow.
+>> In addition we implement fh_to_dentry, which allows userspace to
+>> recover a pidfd from a PID file handle.
+> "In addition" is a good indication that a separate patch was a good idea..
+>
+>> We stash the process' PID in the root pid namespace inside the handle,
+>> and use that to recover the pid (validating that pid->ino matches the
+>> value in the handle, i.e. that the pid has not been reused).
 >>
->> But, can frame->len be too long? Classical CAN frame maximum length is 8
->> bytes. And I do not see a path for a malformed frame to reach this part of
->> the driver.
+>> We use the root namespace in order to ensure that file handles can be
+>> moved across namespaces; however, we validate that the PID exists in
+>> the current namespace before returning the inode.
 >>
->> If such a path exists, I think this should be explained. Else, I am just not
->> sure if this needs a Fixes: tag.
-
-I confirmed the CAN frame length is correctly checked.
-
-The only way to trigger that snprintf() with the wrong size is if 
-CAN327_TX_DO_CAN_DATA is set, which only occurs in can327_send_frame(). 
-And the only caller of can327_send_frame() is can327_netdev_start_xmit().
-
-can327_netdev_start_xmit() calls can_dev_dropped_skb() which in turn 
-calls can_dropped_invalid_skb() which goes to can_is_can_skb() which 
-finally checks that cf->len is not bigger than CAN_MAX_DLEN (i.e. 8 bytes).
-
-So indeed, no buffer overflow can occur here.
-
-> Even when bugs don't affect runtime we still assign a Fixes tag, but we don't
-> CC stable.  There is no way that passing the wrong size was intentional.
-
-Got it. Thanks for the explanation, now it makes sense to keep the 
-Fixes: tag.
+>> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> This patch has changed enough that you should not have kept my RVB.
+>
+> BTW, please refrain from using the same subject for the cover letter and
+> a single patch. They are not the same thing, so if they get the same
+> name, one of them has an inaccurate description.
+>
+ACK to all three.
 
 
-Yours sincerely,
-Vincent Mailhol
+>> Signed-off-by: Erin Shepherd <erin.shepherd@e43.eu>
+>> ---
+>>  fs/pidfs.c | 62 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+>>  1 file changed, 61 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/pidfs.c b/fs/pidfs.c
+>> index 80675b6bf88459c22787edaa68db360bdc0d0782..0684a9b8fe71c5205fb153b2714bc9c672045fd5 100644
+>> --- a/fs/pidfs.c
+>> +++ b/fs/pidfs.c
+>> @@ -1,5 +1,6 @@
+>>  // SPDX-License-Identifier: GPL-2.0
+>>  #include <linux/anon_inodes.h>
+>> +#include <linux/exportfs.h>
+>>  #include <linux/file.h>
+>>  #include <linux/fs.h>
+>>  #include <linux/magic.h>
+>> @@ -347,11 +348,69 @@ static const struct dentry_operations pidfs_dentry_operations = {
+>>         .d_prune        = stashed_dentry_prune,
+>>  };
+>>
+>> +#define PIDFD_FID_LEN 3
+>> +
+>> +struct pidfd_fid {
+>> +       u64 ino;
+>> +       s32 pid;
+>> +} __packed;
+>> +
+>> +static int pidfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
+>> +                          struct inode *parent)
+>> +{
+>> +       struct pid *pid = inode->i_private;
+>> +       struct pidfd_fid *fid = (struct pidfd_fid *)fh;
+>> +
+>> +       if (*max_len < PIDFD_FID_LEN) {
+>> +               *max_len = PIDFD_FID_LEN;
+>> +               return FILEID_INVALID;
+>> +       }
+>> +
+>> +       fid->ino = pid->ino;
+>> +       fid->pid = pid_nr(pid);
+>> +       *max_len = PIDFD_FID_LEN;
+>> +       return FILEID_INO64_GEN;
+>> +}
+>> +
+>> +static struct dentry *pidfs_fh_to_dentry(struct super_block *sb,
+>> +                                        struct fid *gen_fid,
+>> +                                        int fh_len, int fh_type)
+>> +{
+>> +       int ret;
+>> +       struct path path;
+>> +       struct pidfd_fid *fid = (struct pidfd_fid *)gen_fid;
+>> +       struct pid *pid;
+>> +
+>> +       if (fh_type != FILEID_INO64_GEN || fh_len < PIDFD_FID_LEN)
+>> +               return NULL;
+>> +
+>> +       scoped_guard(rcu) {
+>> +               pid = find_pid_ns(fid->pid, &init_pid_ns);
+>> +               if (!pid || pid->ino != fid->ino || pid_vnr(pid) == 0)
+>> +                       return NULL;
+>> +
+>> +               pid = get_pid(pid);
+>> +       }
+>> +
+>> +       ret = path_from_stashed(&pid->stashed, pidfs_mnt, pid, &path);
+>> +       if (ret < 0)
+>> +               return ERR_PTR(ret);
+> How come no need to put_pid() in case of error?
+
+This one confused me at first too, but path_from_stashed frees it (via
+stashed_ops.put_data) on error. You can see the same pattern in
+pidfs_alloc_file.
+
+(It already needs to know how to free it for the case where a stashed
+dentry already exists)
+
+>> +
+>> +       mntput(path.mnt);
+>> +       return path.dentry;
+>> +}
+>> +
+>> +static const struct export_operations pidfs_export_operations = {
+>> +       .encode_fh = pidfs_encode_fh,
+>> +       .fh_to_dentry = pidfs_fh_to_dentry,
+>> +       .flags = EXPORT_OP_UNRESTRICTED_OPEN,
+>> +};
+>> +
+>>  static int pidfs_init_inode(struct inode *inode, void *data)
+>>  {
+>>         inode->i_private = data;
+>>         inode->i_flags |= S_PRIVATE;
+>> -       inode->i_mode |= S_IRWXU;
+>> +       inode->i_mode |= S_IRWXU | S_IRWXG | S_IRWXO;
+> This change is not explained.
+> Why is it here?
+
+open_by_handle_at eventually passes through the may_open permission check.
+The existing permissions only permits root to open them (since the owning
+uid & gid is 0). So, it was necessary to widen them to align with how
+pidfd_open works.
+
+If I stick with this approach (see [1]) I'll ensure to document this change
+better in the commit message.
+
+[1] https://lore.kernel.org/all/6a3ed633-311d-47ff-8a7e-5121d6186139@e43.eu/
+
 
 
