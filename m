@@ -1,102 +1,157 @@
-Return-Path: <linux-kernel+bounces-409206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F0F69C88E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:27:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B8169C88E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:29:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7350283FA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:27:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 291001F22A72
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69AD51F9400;
-	Thu, 14 Nov 2024 11:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D3B1F8EF8;
+	Thu, 14 Nov 2024 11:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="qv9MWOgI"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bcRA3IYU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F858192D9D;
-	Thu, 14 Nov 2024 11:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733B6192D9D
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731583601; cv=none; b=mtl+2DypR66edtjVqhba0mbCHrqriiydPcQXOa8NWf1KtzpdZT2EevHuxfG5FFApef0yys8ZAt4xxQjuV38gYqb/ofW1brddqyf6R7ZkHKVMXCgB5Lh9GmF7o1Qn6+85ucBRM7gqg0zLHH5B/ISi2nLgrybTWev32BNtoQHZ/bg=
+	t=1731583749; cv=none; b=cO0bR4e5Ok1yGpxH5aPKrY9ukG/cW3fxxnay5NnVMbn+/QHIkYpABB094/9nqm96kJbiiQxYHatgwUzMg0TQKCdFmfQ5sX8Rh9tSeO1RphY6nWn0OJQFP/DEVeoXpKl8/Txbu0pDrarfmUCFeyVBq4oiPvHIb7PiMck660iB8xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731583601; c=relaxed/simple;
-	bh=kKjgiDjn34LW7LUqNfMkPGcZHB4LMhAYI0N5yrhZZEk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gGb+JrXuedcW8RcvEkahDkWxIT5ofas74qT+a/xOzI+B/ovSGKkW8lhSIo2KuYYAjfOCRAGl1rfCzqvf/bZspmNaOvr5D6Xww0/fmlGQbFvx/U5foMNlLo+IIsM8Tsz8dj6Z0AYrM47UhCJ9O3ub9UAe0KbznlQb5NFkXAErggY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=qv9MWOgI; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4AEBQPJf82914541, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1731583585; bh=kKjgiDjn34LW7LUqNfMkPGcZHB4LMhAYI0N5yrhZZEk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=qv9MWOgItQOJTXeQNARreVCz6worTxDRNKpv5aHiD1Pd0D2ljgN+GPng/l8Y4ouxE
-	 Do2ix7DKL7fCYmMuU5/qL3GKGyeUJM6xl6mz2Z87q4MX9Tlk4wz+TmS6189g812FE/
-	 r4lAff4MzBCu74c9m3Q+eaC2vXTAUsVFa5L83sBN1n9g5e+/KA4NtjCPuNuRZYp9F+
-	 o/KYumnpBEo2tZbNO7XdaGk0+1/CjkF+nddSH/6wBjxHnrG9gyVs1PgUF1iIucvq/W
-	 IjAVdykv8lsOQxg8FuQ9idfXkuZ+NIIbG64DnEF6mtlIv1qDaIJRjaoyQwLjHRRoyn
-	 Cjr+djWHLm2Yw==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 4AEBQPJf82914541
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 14 Nov 2024 19:26:25 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 14 Nov 2024 19:26:25 +0800
-Received: from RTDOMAIN (172.21.210.74) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Thu, 14 Nov
- 2024 19:26:25 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: <kuba@kernel.org>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
-        <andrew+netdev@lunn.ch>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <horms@kernel.org>, <pkshih@realtek.com>,
-        <larry.chiu@realtek.com>, Justin Lai <justinlai0215@realtek.com>
-Subject: [PATCH net-next 2/2] rtase: Modify the content format of the enum rtase_registers
-Date: Thu, 14 Nov 2024 19:25:49 +0800
-Message-ID: <20241114112549.376101-3-justinlai0215@realtek.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241114112549.376101-1-justinlai0215@realtek.com>
-References: <20241114112549.376101-1-justinlai0215@realtek.com>
+	s=arc-20240116; t=1731583749; c=relaxed/simple;
+	bh=F29QDUHQhUOOHhy0Wso9d2I6XGuPm/CmKdobtDcaDIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A1ta3tIhkOxZk28RdxAC3ACckn+GinP+h9ta9b4ADbQHS/b/JgSC40Xb+2HyV9Hl+l5kwL4pmzhd87wyEUUf7DV5+LNAPecQw3w3sIbQ6JK+2IYvr1vhnZwkxXdNR+ylIq/ApxVfb2qzvIfkp5IQl1c9kMLqL1hgoiJEF+sYwIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bcRA3IYU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731583746;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+9pOT17k5yWZUArzCUqdxEOfNlu7sSoAqFGS7LBHDck=;
+	b=bcRA3IYUojzSRxm/dfhYZmYiEDH6sci5bC4wpGd+C+o01hJ5H6URTMvg0mkI8CJU5uvmq4
+	Tt8Ub4Z2SgXyzJL+kvjqI6KXvnXlPMeAXLOz2bnLpX/O+Xg30sDBwbFarYd1nczi7jDOcg
+	lLROPaGvIEX+agHe3K4Q4slGEJPy40A=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-617-bRvFmeXONHuyIiWnI6h_yA-1; Thu,
+ 14 Nov 2024 06:29:02 -0500
+X-MC-Unique: bRvFmeXONHuyIiWnI6h_yA-1
+X-Mimecast-MFC-AGG-ID: bRvFmeXONHuyIiWnI6h_yA
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F123E195608C;
+	Thu, 14 Nov 2024 11:29:00 +0000 (UTC)
+Received: from pauld.westford.csb (unknown [10.22.88.110])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4D7CB30000DF;
+	Thu, 14 Nov 2024 11:28:57 +0000 (UTC)
+Date: Thu, 14 Nov 2024 06:28:54 -0500
+From: Phil Auld <pauld@redhat.com>
+To: Mike Galbraith <efault@gmx.de>
+Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
+	youssefesmat@chromium.org, tglx@linutronix.de
+Subject: Re: [PATCH] sched/fair: Dequeue sched_delayed tasks when waking to a
+ busy CPU
+Message-ID: <20241114112854.GA471026@pauld.westford.csb>
+References: <982456f0abca321b874b7974bdf17d1a605c3d38.camel@gmx.de>
+ <5280774bce7343c43904ae3df4403942092f5562.camel@gmx.de>
+ <20241107140945.GA34695@noisy.programming.kicks-ass.net>
+ <750542452c4f852831e601e1b8de40df4b108d9a.camel@gmx.de>
+ <5a4cb3e4ab698fe2d8419e28d61e292dcd0c8fad.camel@gmx.de>
+ <20241112124117.GA336451@pauld.westford.csb>
+ <0befc9ed8979594d790a8d4fe7ff5c5534c61c3c.camel@gmx.de>
+ <20241112154140.GC336451@pauld.westford.csb>
+ <81de2f710d8922a47364632335ff5ba1a45625b3.camel@gmx.de>
+ <95ff75cacab4720bbbecd54e881bb94d97087b45.camel@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTEXH36506.realtek.com.tw (172.21.6.27) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
+In-Reply-To: <95ff75cacab4720bbbecd54e881bb94d97087b45.camel@gmx.de>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Remove unnecessary spaces.
+On Thu, Nov 14, 2024 at 12:07:03PM +0100 Mike Galbraith wrote:
+> On Tue, 2024-11-12 at 17:15 +0100, Mike Galbraith wrote:
+> > On Tue, 2024-11-12 at 10:41 -0500, Phil Auld wrote:
+> > > On Tue, Nov 12, 2024 at 03:23:38PM +0100 Mike Galbraith wrote:
+> > >
+> > > >
+> > > > We don't however have to let sched_delayed block SIS though.  Rendering
+> > > > them transparent in idle_cpu() did NOT wreck the progression, so
+> > > > maaaybe could help your regression.
+> > > >
+> > >
+> > > You mean something like:
+> > >
+> > > if (rq->nr_running > rq->h_nr_delayed)
+> > >        return 0;
+> > >
+> > > in idle_cpu() instead of the straight rq->nr_running check?
+> >
+> > Yeah, close enough.
+> 
+> The below is all you need.
+> 
+> Watching blockage rate during part of a netperf scaling run without, a
+> bit over 2/sec was the highest it got, but with, that drops to the same
+> zero as turning off the feature, so... relevance highly unlikely but
+> not quite impossible?
+>
 
-Signed-off-by: Justin Lai <justinlai0215@realtek.com>
----
- drivers/net/ethernet/realtek/rtase/rtase.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'll give this a try on my issue. This'll be simpler than the other way.
 
-diff --git a/drivers/net/ethernet/realtek/rtase/rtase.h b/drivers/net/ethernet/realtek/rtase/rtase.h
-index 583c33930f88..942f1e531a85 100644
---- a/drivers/net/ethernet/realtek/rtase/rtase.h
-+++ b/drivers/net/ethernet/realtek/rtase/rtase.h
-@@ -170,7 +170,7 @@ enum rtase_registers {
- 	RTASE_INT_MITI_TX = 0x0A00,
- 	RTASE_INT_MITI_RX = 0x0A80,
- 
--	RTASE_VLAN_ENTRY_0     = 0xAC80,
-+	RTASE_VLAN_ENTRY_0 = 0xAC80,
- };
- 
- enum rtase_desc_status_bit {
+Thanks!
+
+
+
+Cheers,
+Phil
+
+
+> ---
+>  kernel/sched/fair.c |    4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -9454,11 +9454,15 @@ int can_migrate_task(struct task_struct
+> 
+>  	/*
+>  	 * We do not migrate tasks that are:
+> +	 * 0) not runnable (not useful here/now, but are annoying), or
+>  	 * 1) throttled_lb_pair, or
+>  	 * 2) cannot be migrated to this CPU due to cpus_ptr, or
+>  	 * 3) running (obviously), or
+>  	 * 4) are cache-hot on their current CPU.
+>  	 */
+> +	if (p->se.sched_delayed)
+> +		return 0;
+> +
+>  	if (throttled_lb_pair(task_group(p), env->src_cpu, env->dst_cpu))
+>  		return 0;
+> 
+> 
+
 -- 
-2.34.1
 
 
