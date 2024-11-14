@@ -1,232 +1,145 @@
-Return-Path: <linux-kernel+bounces-409478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CF8F9C8D59
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:54:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 845EB9C8D38
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:51:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 446EDB2FC79
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:48:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41DE528268D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7418355887;
-	Thu, 14 Nov 2024 14:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B7544C76;
+	Thu, 14 Nov 2024 14:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HYOWq4g+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Ypy31hTp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Z6Rwc3+J"
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C1641746;
-	Thu, 14 Nov 2024 14:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4B6179BD
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 14:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731595685; cv=none; b=OllP19w5cxc75C3z+rJuL6nLudZp9Avgt1z16OGxEqH07Q1iRibrgjAvorpkf/VjvA20fDwP7ii75WHwp6frfFBbJjkvLJxzUoZVeCnL4HdeHl5k+pv7as42H1qwrRddleNfCuHrszgp63Z0BkAvSF0yr6RWfIiNJ64X9uMgX5g=
+	t=1731595861; cv=none; b=HXpCQuOEufTzuzE4RK+1B9aukHg9eEyFDjT0KhUQevcf9wVuDYbRTLbRB62g/VgGwM07/UVtotOfbSwCMI0bY/i6VWpyJHADL/38GFiNYG37pmyxUbc5uQr/hH+xVMKILl8WWUF8FOGJtAk8flh8amTXQaZEzSrD+lNY71+xetw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731595685; c=relaxed/simple;
-	bh=2ih8X+aYRj/xhF4WSA+AhhU0sQmxjNm+hB6WBW3e0Ew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C8SZIhm2zPabfv3LbAwvKgjTcUAkVsqVa5IqfQgOQ1ZMBQovbYzqDBh0pqHFsOqCHTuK4hH//Ss+UN3PmrIu/se6uDV9XlAGMzIQX5nsgQAlOTgoX0QEixFa9xg+w2RFuqnlPLwz/bdAlFiPvjyl2Bumw9CtOYZDoFmNyfaLGSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HYOWq4g+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 526E4C4CECD;
-	Thu, 14 Nov 2024 14:48:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731595685;
-	bh=2ih8X+aYRj/xhF4WSA+AhhU0sQmxjNm+hB6WBW3e0Ew=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HYOWq4g+P1pq0Hgkj50nRy3WO1kLYKccCSKVBCWVrr2fLo4BAoxoiM848SyTVj40j
-	 hiZUVwaGwbhJy9tCpd/fMt5T2xI3aAakti/EN1QC++Kia95A+I5xvBR45GBQl69sJr
-	 ja9Nd1RLGxpB1Xyauqt/2CDjp0P2pCSRCiyJM/NkI/qbQgIBHdZu+1AmhBTcw7otVi
-	 xk2Sz+0LnyzSW1fFG3glG15D0DcwGXtzEzyOP/CJomNmK1N2F2ZtHJvL3V3Ze5ehFD
-	 rrcR5l2ScoKYbUvaBzDjisCx8OR0d7NDrvRaGIS2nrdQMuC6Nb1EjcajOrdVVd36jf
-	 OlZAvZSs3NuLA==
-Date: Thu, 14 Nov 2024 15:48:00 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jeff Layton <jlayton@kernel.org>, Karel Zak <kzak@redhat.com>, 
-	Ian Kent <raven@themaw.net>, Josef Bacik <josef@toxicpanda.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v4 0/3] fs: allow statmount to fetch the fs_subtype and
- sb_source
-Message-ID: <20241114-oberteil-villen-419f96aad840@brauner>
-References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
- <20241112-antiseptisch-kinowelt-6634948a413e@brauner>
- <hss5w5in3wj3af3o2x3v3zfaj47gx6w7faeeuvnxwx2uieu3xu@zqqllubl6m4i>
- <63f3aa4b3d69b33f1193f4740f655ce6dae06870.camel@kernel.org>
- <20241114-umzog-garage-b1c1bb8b80f2@brauner>
- <3e6454f8a6b9176e9e1f98523be35f8eb6457eba.camel@kernel.org>
- <CAJfpegtZ6hiars5+JHCr6TEj=TgFFpFbk_TVM_b=YNpbLG0=ig@mail.gmail.com>
+	s=arc-20240116; t=1731595861; c=relaxed/simple;
+	bh=iRbFDIaKL4JXGLdGnOz0fpzSI5N3RfOVwSzNuqiye5E=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=NdmguwX1uVyptxNeGI8UlNsrkLqm4jVMmKkIoV4n3JrgFfaNxcBdhU2KCeJUgsYDsIWP4n5jwBQtWJKzWJd1H4UoyviThQ66av0BFQIm95yDyHn6n8r7B0EIj0FeAhkIahbYMqh7kiWzMtnQJjU2/Cc/5CcKgvq/FLlZdz+qb28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Ypy31hTp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Z6Rwc3+J; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 8E2E3114016F;
+	Thu, 14 Nov 2024 09:50:57 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Thu, 14 Nov 2024 09:50:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1731595857;
+	 x=1731682257; bh=sFWs14+PPXRYtue3bwzu1urfhLPT1BIAspfMaSIijus=; b=
+	Ypy31hTpCLKlJ5dFN8J/AMed++WeK1GcoUHCZ6PJ3pB2E1RRw4KmTSTv5WX9vYP1
+	FkTeYIXGnCu7YgCpzHz24OHLA31eY0Z3Bzv01WOkuIDuOptM01PR5vvll0xCuiv8
+	MjEjSSBS68UTU+jNuExNOhhhV50d10wHNBP1z1CCYkv+jN66Iy+Tfnk1RU233xJX
+	4Wc6yS9wERVeLFkb2mbmPUYc05BD1beamrD6sC0IgCcUIdIGfAkZrzZA0PwIomUm
+	CBVLBvBfIShumadPZRF/S+hTye06db63fRzyNSJfsA4yQXv68YMR522yitCbK9X1
+	nLLFXWXjFLcOHHZnV00Xmw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731595857; x=
+	1731682257; bh=sFWs14+PPXRYtue3bwzu1urfhLPT1BIAspfMaSIijus=; b=Z
+	6Rwc3+JuV7Rj30CPSnmRegEaDf5FgViAQY6FDGmf/dKrwwics4QzQ1rGdf5eaMkn
+	IVBhSws3C2CsdDkEcH1m9gCQusgPRmMDq3d/9kr6rI2t29ngSWdElgioTdjWXicy
+	yxPIc43KG8LXZ4+ZjyNXf4cDqwqVTIS3cgkyIaKZX0UncQeh6wAVLy8WQK4snObG
+	t7KdUiviE9svgD0AsaAw2OmfD2FCs0+w1buxNVUO49cgagwuT8vJ3VykvSEll8ZB
+	5FyQ3XyruFyyEr0m6LTyflg7+g1aKHIe+RvSSKDLGE6ztBHH7c039iGfX5/nmQ0q
+	cEmA3/aVCxqoFN1TSrAqA==
+X-ME-Sender: <xms:UQ42Z6TbDcxYd-ue_gPojRNxqfN8CaZ0Q7wBNDYBGkQHOdfv_qHgTA>
+    <xme:UQ42Z_z4YVAj9jlnM8FqCPvjX9WYjj8aO-suXCgM5_l1MjaI3-RW3QCpK43MZr_9Z
+    XcONfLFdOoGVFxK2ik>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddvgdeilecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
+    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
+    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeehpdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopehmphgvsegvlhhlvghrmhgrnhdrihgurd
+    gruhdprhgtphhtthhopehgvghofhhfsehinhhfrhgruggvrggurdhorhhgpdhrtghpthht
+    oheplhhinhhugihpphgtqdguvghvsehlihhsthhsrdhoiihlrggsshdrohhrghdprhgtph
+    htthhopehjkhesohiilhgrsghsrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
+    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:UQ42Z33DGUeHj88_CqJjIpbZtoEayoFnFOF7g_SXuldGhXlGUoKoIA>
+    <xmx:UQ42Z2D2uU3PHV-5cmtBNTCxKL3pzy613uLPmRTNIGGNda02RutPOg>
+    <xmx:UQ42ZzjrS8gvWUcenW_TNtWHvfZ1Sy_zodmYxEo7SHTvc9Zw1Hm5SA>
+    <xmx:UQ42ZyoTLmasgCXH3WLsv1t8N07_8i34c0CiT8-gtax9g8rxCW5Ptw>
+    <xmx:UQ42ZzdqHn5Bahe9AwfU-vYIM2Fcuk_0D98fPCpOT_qqjoZFeMoJ_cvk>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 3170A2220072; Thu, 14 Nov 2024 09:50:57 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJfpegtZ6hiars5+JHCr6TEj=TgFFpFbk_TVM_b=YNpbLG0=ig@mail.gmail.com>
+Date: Thu, 14 Nov 2024 15:50:36 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Michael Ellerman" <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, "Jeremy Kerr" <jk@ozlabs.org>,
+ "Geoff Levand" <geoff@infradead.org>
+Message-Id: <2938c8d8-1846-4e27-b56a-176a397f5cf6@app.fastmail.com>
+In-Reply-To: <20241114125111.599093-11-mpe@ellerman.id.au>
+References: <20241114125111.599093-1-mpe@ellerman.id.au>
+ <20241114125111.599093-11-mpe@ellerman.id.au>
+Subject: Re: [RFC PATCH 11/20] powerpc/io: Remove PCI_FIX_ADDR
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 14, 2024 at 02:16:05PM +0100, Miklos Szeredi wrote:
-> On Thu, 14 Nov 2024 at 13:29, Jeff Layton <jlayton@kernel.org> wrote:
-> 
-> > Ordinarily, I might agree, but we're now growing a new mount option
-> > field that has them separated by NULs. Will we need two extra fields
-> > for this? One comma-separated, and one NUL separated?
-> >
-> > /proc/#/mountinfo and mounts prepend these to the output of
-> > ->show_options, so the simple solution would be to just prepend those
-> > there instead of adding a new field. FWIW, only SELinux has any extra
-> > mount options to show here.
-> 
-> Compromise: tack them onto the end of the comma separated list, but
-> add a new field for the nul separated security options.
-> 
-> I think this would be logical, since the comma separated list is more
-> useful for having a /proc/$$/mountinfo compatible string than for
-> actually interpreting what's in there.
+On Thu, Nov 14, 2024, at 13:51, Michael Ellerman wrote:
+> Now that PPC_INDIRECT_MMIO is removed, PCI_FIX_ADDR does nothing, so
+> remove it.
+>
+> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 
-Fair. Here's an incremental for the array of security options.
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+ 
+>  static inline unsigned char __raw_readb(const volatile void __iomem *addr)
+>  {
+> -	return *(volatile unsigned char __force *)PCI_FIX_ADDR(addr);
+> +	return *(volatile unsigned char __force *)addr;
+>  }
+>  #define __raw_readb __raw_readb
+> 
+>  static inline unsigned short __raw_readw(const volatile void __iomem *addr)
+>  {
+> -	return *(volatile unsigned short __force *)PCI_FIX_ADDR(addr);
+> +	return *(volatile unsigned short __force *)addr;
+>  }
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 4f39c4aba85d..a9065a9ab971 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -5072,13 +5072,30 @@ static int statmount_mnt_opts(struct kstatmount *s, struct seq_file *seq)
- 	return 0;
- }
+I think the __raw_ accessors are all identical to the
+version in asm-generic and can be removed altogether.
+
+> +#define __do_writeb(val, addr)	out_8(addr, val)
+> +#define __do_writew(val, addr)	out_le16(addr, val)
+> +#define __do_writel(val, addr)	out_le32(addr, val)
+> +#define __do_writeq(val, addr)	out_le64(addr, val)
+> +#define __do_writew_be(val, addr) out_be16(addr, val)
+> +#define __do_writel_be(val, addr) out_be32(addr, val)
+> +#define __do_writeq_be(val, addr) out_be64(addr, val)
  
-+static inline int statmount_opt_unescape(struct seq_file *seq, char *buf_start)
-+{
-+	char *buf_end, *opt_start, *opt_end;
-+	int count = 0;
-+
-+	buf_end = seq->buf + seq->count;
-+	*buf_end = '\0';
-+	for (opt_start = buf_start + 1; opt_start < buf_end; opt_start = opt_end + 1) {
-+		opt_end = strchrnul(opt_start, ',');
-+		*opt_end = '\0';
-+		buf_start += string_unescape(opt_start, buf_start, 0, UNESCAPE_OCTAL) + 1;
-+		if (WARN_ON_ONCE(++count == INT_MAX))
-+			return -EOVERFLOW;
-+	}
-+	seq->count = buf_start - 1 - seq->buf;
-+	return count;
-+}
-+
- static int statmount_opt_array(struct kstatmount *s, struct seq_file *seq)
- {
- 	struct vfsmount *mnt = s->mnt;
- 	struct super_block *sb = mnt->mnt_sb;
- 	size_t start = seq->count;
--	char *buf_start, *buf_end, *opt_start, *opt_end;
--	u32 count = 0;
-+	char *buf_start;
- 	int err;
- 
- 	if (!sb->s_op->show_options)
-@@ -5095,17 +5112,39 @@ static int statmount_opt_array(struct kstatmount *s, struct seq_file *seq)
- 	if (seq->count == start)
- 		return 0;
- 
--	buf_end = seq->buf + seq->count;
--	*buf_end = '\0';
--	for (opt_start = buf_start + 1; opt_start < buf_end; opt_start = opt_end + 1) {
--		opt_end = strchrnul(opt_start, ',');
--		*opt_end = '\0';
--		buf_start += string_unescape(opt_start, buf_start, 0, UNESCAPE_OCTAL) + 1;
--		if (WARN_ON_ONCE(++count == 0))
--			return -EOVERFLOW;
--	}
--	seq->count = buf_start - 1 - seq->buf;
--	s->sm.opt_num = count;
-+	err = statmount_opt_unescape(seq, buf_start);
-+	if (err < 0)
-+		return err;
-+
-+	s->sm.opt_num = err;
-+	return 0;
-+}
-+
-+static int statmount_opt_sec_array(struct kstatmount *s, struct seq_file *seq)
-+{
-+	struct vfsmount *mnt = s->mnt;
-+	struct super_block *sb = mnt->mnt_sb;
-+	size_t start = seq->count;
-+	char *buf_start;
-+	int err;
-+
-+	buf_start = seq->buf + start;
-+
-+	err = security_sb_show_options(seq, sb);
-+	if (!err)
-+		return err;
-+
-+	if (unlikely(seq_has_overflowed(seq)))
-+		return -EAGAIN;
-+
-+	if (seq->count == start)
-+		return 0;
-+
-+	err = statmount_opt_unescape(seq, buf_start);
-+	if (err < 0)
-+		return err;
-+
-+	s->sm.opt_sec_num = err;
- 	return 0;
- }
- 
-@@ -5138,6 +5177,10 @@ static int statmount_string(struct kstatmount *s, u64 flag)
- 		sm->opt_array = start;
- 		ret = statmount_opt_array(s, seq);
- 		break;
-+	case STATMOUNT_OPT_SEC_ARRAY:
-+		sm->opt_sec_array = start;
-+		ret = statmount_opt_sec_array(s, seq);
-+		break;
- 	case STATMOUNT_FS_SUBTYPE:
- 		sm->fs_subtype = start;
- 		statmount_fs_subtype(s, seq);
-@@ -5294,6 +5337,9 @@ static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_id,
- 	if (!err && s->mask & STATMOUNT_OPT_ARRAY)
- 		err = statmount_string(s, STATMOUNT_OPT_ARRAY);
- 
-+	if (!err && s->mask & STATMOUNT_OPT_SEC_ARRAY)
-+		err = statmount_string(s, STATMOUNT_OPT_SEC_ARRAY);
-+
- 	if (!err && s->mask & STATMOUNT_FS_SUBTYPE)
- 		err = statmount_string(s, STATMOUNT_FS_SUBTYPE);
- 
-@@ -5323,7 +5369,7 @@ static inline bool retry_statmount(const long ret, size_t *seq_size)
- #define STATMOUNT_STRING_REQ (STATMOUNT_MNT_ROOT | STATMOUNT_MNT_POINT | \
- 			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS | \
- 			      STATMOUNT_FS_SUBTYPE | STATMOUNT_SB_SOURCE | \
--			      STATMOUNT_OPT_ARRAY)
-+			      STATMOUNT_OPT_ARRAY | STATMOUNT_OPT_SEC_ARRAY)
- 
- static int prepare_kstatmount(struct kstatmount *ks, struct mnt_id_req *kreq,
- 			      struct statmount __user *buf, size_t bufsize,
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index c0fda4604187..569d938a5757 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -177,7 +177,9 @@ struct statmount {
- 	__u32 sb_source;	/* [str] Source string of the mount */
- 	__u32 opt_num;		/* Number of fs options */
- 	__u32 opt_array;	/* [str] Array of nul terminated fs options */
--	__u64 __spare2[47];
-+	__u32 opt_sec_num;	/* Number of security options */
-+	__u32 opt_sec_array;	/* [str] Array of nul terminated security options */
-+	__u64 __spare2[45];
- 	char str[];		/* Variable size part containing strings */
- };
- 
-@@ -214,6 +216,7 @@ struct mnt_id_req {
- #define STATMOUNT_FS_SUBTYPE		0x00000100U	/* Want/got fs_subtype */
- #define STATMOUNT_SB_SOURCE		0x00000200U	/* Want/got sb_source */
- #define STATMOUNT_OPT_ARRAY		0x00000400U	/* Want/got opt_... */
-+#define STATMOUNT_OPT_SEC_ARRAY		0x00000800U	/* Want/got opt_sec... */
- 
- /*
-  * Special @mnt_id values that can be passed to listmount
+These should no longer be needed either since 
+arch/powerpc/include/asm/io-defs.h only needs to redirect
+the inb/outb calls but not readl/writel and the string 
+operations.
+
+      Arnd
 
