@@ -1,506 +1,113 @@
-Return-Path: <linux-kernel+bounces-409113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD049C879F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:32:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEB269C87E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:42:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E867B1F22821
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:32:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5BA9B2E05A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A181FA27B;
-	Thu, 14 Nov 2024 10:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C47C1F8918;
+	Thu, 14 Nov 2024 10:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BX0W7FAo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="aTWm2+xF"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1B21FA250
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F70014B942;
+	Thu, 14 Nov 2024 10:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731580140; cv=none; b=HmC6DyB3mBwZR7FhngG3Cg+mtL/BXGZzSI4wRCi261lAQf6viZOs7jOy/cxpVjUV7H8EVT2NUyVPZqBIgL5fiJgOY4VYsEwpKGW3iSsKgjjNx2Rri6Fc3i/PD8CqIWJhz7iY7koYPRjY84bjbIISLQJOLfS1GMV7jKSwWfynBzk=
+	t=1731580296; cv=none; b=AuCmJBlhVQxmxGQpWHTCPL4TR4GeeXa2thSWhSy3G69u8HH0gf27aVeqOzl3MrNejlXbknchCOkgOY9HTZZHmspnsECQ/cA2i3d6K8/ENC9mJKsikGtHh5/SkHswyTWAFjqU/O6Ww8jjuB67QUcpSdxV7AozYv8z5RJ+mkHk3Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731580140; c=relaxed/simple;
-	bh=mSOoFAS7GLos5np9WRDIwERBr1KMROa14E94IZsN2kc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NuxgWcdqjhokSKk605aJDIoImhmG0e3NXY8F5wYCM2vTOYa3Qxf10u83T3xYYM9P6WJ0f1wT2w3j8jMIrWV6vLbJk6RkMvNHfDNxb974+iiHjbHCzpg82/ExCLiwTBoinDnJdevcjeZymwtYFc6UzZf3vBBhrWlQd/a73nljvos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BX0W7FAo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731580136;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3j+0i9lzXsrLcMtjqqIs546kXZUBezX6NRapC01y/iA=;
-	b=BX0W7FAot3YPplv5KXd3bxM8INMZAxF7iBu/aTDNeSwoN8y0BSt+QAE02KVD+67eck3xvX
-	u2JWG+R0DGW8SHWOVCtjk03kMDL/gM+5vp86YHCkB59wldWmd36EIXXTJj+Pts12P5cnKU
-	fDR+MFqzEqwCRHhmx6zAh+09FSGWKMA=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-94-gWXzZjiRNPeHQ8CxfypKJQ-1; Thu, 14 Nov 2024 05:28:54 -0500
-X-MC-Unique: gWXzZjiRNPeHQ8CxfypKJQ-1
-X-Mimecast-MFC-AGG-ID: gWXzZjiRNPeHQ8CxfypKJQ
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a9a157d028aso43555166b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 02:28:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731580133; x=1732184933;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3j+0i9lzXsrLcMtjqqIs546kXZUBezX6NRapC01y/iA=;
-        b=f52qgNYR4ZFJr+0iwQIdxJyGIqs2au4dochBqDovsu2V3IvXwVLbj1nyUZHayzZvx4
-         JXEG+mHtb+r8LEZuQBODklStIyUvNXd4Ue89GY5J5Ny73IikcIzSjZo+9ekAHW5i8loL
-         c9XpDgJ2gA2Yyu/PZmJRMQeLTvgutv5JpdLDiECN9q5mdTG6IGBJeoA/Meks8HJsjIav
-         tFcnKLJg9TjJ6TMnMGI4dXcZvaItzqxgWRGW9345FbyfPo5kgvu2emdjNnJ+IK0gfISV
-         O+BSD/j1xTqL5pUL8WaDkQrY2B9ctEb+ARLOOy26drB9lN6hg3/7fOS1heZ+vTd5aK7Y
-         kklA==
-X-Forwarded-Encrypted: i=1; AJvYcCW4KExf0aNKSht5SENDYY2dx9jTamaIKll3NJxOPjYGMNEXQAqPHPLPaE/Zh+ZEM7GHhfeMKJXnCaaeF2Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8k1/YCQyMnZoQ5Sy2PDqWafm9Gm8hKoLnt0frlu7E0FUBgs8s
-	ylDS/1wzjyVNZs+U+Zs1Oz/mnULnMEKB/6vc0kOkSPKVjX8lHdfCPFK81++h45CHyc9OAD4QK6u
-	jb4XNPk5/N893DZFz0BW4UWhb+in7Iyk8hJ67169E8/OpVMQ//zh5q+XUMA++iA==
-X-Received: by 2002:a17:906:a2c7:b0:aa3:722c:cc8a with SMTP id a640c23a62f3a-aa3722ccf24mr79912966b.40.1731580133335;
-        Thu, 14 Nov 2024 02:28:53 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH0FlbUvth7+hOJGzh5Px8aAjrrjmMSwTLUang2GoZd+yqIhuC8OCifNB3tbq891cowKmoxkw==
-X-Received: by 2002:a17:906:a2c7:b0:aa3:722c:cc8a with SMTP id a640c23a62f3a-aa3722ccf24mr79909666b.40.1731580132577;
-        Thu, 14 Nov 2024 02:28:52 -0800 (PST)
-Received: from sgarzare-redhat (host-79-46-200-129.retail.telecomitalia.it. [79.46.200.129])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20e045270sm46991566b.146.2024.11.14.02.28.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 02:28:51 -0800 (PST)
-Date: Thu, 14 Nov 2024 11:28:44 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Konstantin Shkolnyy <kshk@linux.ibm.com>
-Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mjrosato@linux.ibm.com
-Subject: Re: [PATCH v6 3/3] vsock/test: verify socket options after setting
- them
-Message-ID: <yo2qj7psn3sqtyqgsfn6y2qtwcmyb4j7gwuffg34gwqwkrsyox@4aff3wvdrdgu>
-References: <20241113143557.1000843-1-kshk@linux.ibm.com>
- <20241113143557.1000843-4-kshk@linux.ibm.com>
+	s=arc-20240116; t=1731580296; c=relaxed/simple;
+	bh=qCoX3+VkQ38G13GdIqddjFmSup3UZnQ3D7vMWOypKBQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iakHrL3ClM5P5d8jQ1fLXVm0cLhHT6YR3jZhPh9r8DhWcpJZ++ZWbSQk66M+s/BC0lkVolH8Tv+j7Dn3pubPh9JCLig4RYy38d0nC3FB9xKOEOMTVBWHjhic9iD4AqJZTYyC+/NJD/k47ON0n+YO5jdBWBbZEZCCow4vq4/5cV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=aTWm2+xF; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE7WL5J031759;
+	Thu, 14 Nov 2024 11:30:58 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=hiPcXqx00CT+g9yrysVEHS
+	Sc0YHvwdzRVZ4uugck4gw=; b=aTWm2+xFv7l+ln9kdScdK/yDueFjIDL1xRPZHD
+	GS3/A4/V8xNXAyG/r0heQKeuNBCfGUNq57v60JLw101EXMMkdZPCl9JsgehOklXB
+	psTiPiZuopKfb6OXmQ7OSqQMYgIzG1nG00XjmQ5RVqJZjToMFk4qH1ULqPF7X1mY
+	e2XCeVGRhrTYzUZKg2Kqzkgcj7Iu7je0ph9s/6u83St8EBF4w2L4yq2ikGzRE0oA
+	OFUUtleEBycQHTbINjEaUEAMl0OoVmyd0bMtumQO66cwF6qkMjE4A0n8qVR8pDvc
+	lnvM4LFUmc6UavUW7L0GKeTmEkke+IOm1iDOj43JCzg5UVZg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42sx1kyagx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 11:30:58 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 3DC6D40047;
+	Thu, 14 Nov 2024 11:29:37 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 02C98245E7F;
+	Thu, 14 Nov 2024 11:29:01 +0100 (CET)
+Received: from localhost (10.252.20.241) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 14 Nov
+ 2024 11:29:00 +0100
+From: Olivier Moysan <olivier.moysan@foss.st.com>
+To: Olivier Moysan <olivier.moysan@foss.st.com>,
+        Arnaud Pouliquen
+	<arnaud.pouliquen@foss.st.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark
+ Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
+	<tiwai@suse.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>
+CC: <linux-sound@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] ASoC: stm32: dfsdm: change rate upper limits
+Date: Thu, 14 Nov 2024 11:28:51 +0100
+Message-ID: <20241114102851.2497942-1-olivier.moysan@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20241113143557.1000843-4-kshk@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Wed, Nov 13, 2024 at 08:35:57AM -0600, Konstantin Shkolnyy wrote:
->Replace setsockopt() calls with calls to functions that follow
->setsockopt() with getsockopt() and check that the returned value and its
->size are the same as have been set. (Except in vsock_perf.)
->
->Signed-off-by: Konstantin Shkolnyy <kshk@linux.ibm.com>
->---
-> tools/testing/vsock/control.c             |   9 +-
-> tools/testing/vsock/msg_zerocopy_common.c |  10 --
-> tools/testing/vsock/msg_zerocopy_common.h |   1 -
-> tools/testing/vsock/util.c                | 144 ++++++++++++++++++++++
-> tools/testing/vsock/util.h                |   7 ++
-> tools/testing/vsock/vsock_perf.c          |  10 ++
-> tools/testing/vsock/vsock_test.c          |  49 +++-----
-> tools/testing/vsock/vsock_test_zerocopy.c |   2 +-
-> tools/testing/vsock/vsock_uring_test.c    |   2 +-
-> 9 files changed, 181 insertions(+), 53 deletions(-)
->
->diff --git a/tools/testing/vsock/control.c b/tools/testing/vsock/control.c
->index d2deb4b15b94..875ef0cfa415 100644
->--- a/tools/testing/vsock/control.c
->+++ b/tools/testing/vsock/control.c
->@@ -27,6 +27,7 @@
->
-> #include "timeout.h"
-> #include "control.h"
->+#include "util.h"
->
-> static int control_fd = -1;
->
->@@ -50,7 +51,6 @@ void control_init(const char *control_host,
->
-> 	for (ai = result; ai; ai = ai->ai_next) {
-> 		int fd;
->-		int val = 1;
->
-> 		fd = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
-> 		if (fd < 0)
->@@ -65,11 +65,8 @@ void control_init(const char *control_host,
-> 			break;
-> 		}
->
->-		if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR,
->-			       &val, sizeof(val)) < 0) {
->-			perror("setsockopt");
->-			exit(EXIT_FAILURE);
->-		}
->+		setsockopt_int_check(fd, SOL_SOCKET, SO_REUSEADDR, 1,
->+				"setsockopt SO_REUSEADDR");
->
-> 		if (bind(fd, ai->ai_addr, ai->ai_addrlen) < 0)
-> 			goto next;
->diff --git a/tools/testing/vsock/msg_zerocopy_common.c b/tools/testing/vsock/msg_zerocopy_common.c
->index 5a4bdf7b5132..8622e5a0f8b7 100644
->--- a/tools/testing/vsock/msg_zerocopy_common.c
->+++ b/tools/testing/vsock/msg_zerocopy_common.c
->@@ -14,16 +14,6 @@
->
-> #include "msg_zerocopy_common.h"
->
->-void enable_so_zerocopy(int fd)
->-{
->-	int val = 1;
->-
->-	if (setsockopt(fd, SOL_SOCKET, SO_ZEROCOPY, &val, sizeof(val))) {
->-		perror("setsockopt");
->-		exit(EXIT_FAILURE);
->-	}
->-}
->-
+Increase rate upper limit to 192kHz to reflect the rate range actually
+supported by the STM32 DFSDM peripheral.
 
-Since the new API has a different name (i.e.
-`enable_so_zerocopy_check()`), this `enable_so_zerocopy()` could stay
-here, anyway I don't want to be too picky, I'm totally fine with this
-change since it's now only used by vsock_perf ;-)
+Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+---
+ sound/soc/stm/stm32_adfsdm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
-
-Thanks,
-Stefano
-
-> void vsock_recv_completion(int fd, const bool *zerocopied)
-> {
-> 	struct sock_extended_err *serr;
->diff --git a/tools/testing/vsock/msg_zerocopy_common.h b/tools/testing/vsock/msg_zerocopy_common.h
->index 3763c5ccedb9..ad14139e93ca 100644
->--- a/tools/testing/vsock/msg_zerocopy_common.h
->+++ b/tools/testing/vsock/msg_zerocopy_common.h
->@@ -12,7 +12,6 @@
-> #define VSOCK_RECVERR	1
-> #endif
->
->-void enable_so_zerocopy(int fd);
-> void vsock_recv_completion(int fd, const bool *zerocopied);
->
-> #endif /* MSG_ZEROCOPY_COMMON_H */
->diff --git a/tools/testing/vsock/util.c b/tools/testing/vsock/util.c
->index a3d448a075e3..e79534b52477 100644
->--- a/tools/testing/vsock/util.c
->+++ b/tools/testing/vsock/util.c
->@@ -651,3 +651,147 @@ void free_test_iovec(const struct iovec *test_iovec,
->
-> 	free(iovec);
-> }
->+
->+/* Set "unsigned long long" socket option and check that it's indeed set */
->+void setsockopt_ull_check(int fd, int level, int optname,
->+	unsigned long long val, char const *errmsg)
->+{
->+	unsigned long long chkval;
->+	socklen_t chklen;
->+	int err;
->+
->+	err = setsockopt(fd, level, optname, &val, sizeof(val));
->+	if (err) {
->+		fprintf(stderr, "setsockopt err: %s (%d)\n",
->+				strerror(errno), errno);
->+		goto fail;
->+	}
->+
->+	chkval = ~val; /* just make storage != val */
->+	chklen = sizeof(chkval);
->+
->+	err = getsockopt(fd, level, optname, &chkval, &chklen);
->+	if (err) {
->+		fprintf(stderr, "getsockopt err: %s (%d)\n",
->+				strerror(errno), errno);
->+		goto fail;
->+	}
->+
->+	if (chklen != sizeof(chkval)) {
->+		fprintf(stderr, "size mismatch: set %zu got %d\n", sizeof(val),
->+				chklen);
->+		goto fail;
->+	}
->+
->+	if (chkval != val) {
->+		fprintf(stderr, "value mismatch: set %llu got %llu\n", val,
->+				chkval);
->+		goto fail;
->+	}
->+	return;
->+fail:
->+	fprintf(stderr, "%s  val %llu\n", errmsg, val);
->+	exit(EXIT_FAILURE);
->+;
->+}
->+
->+/* Set "int" socket option and check that it's indeed set */
->+void setsockopt_int_check(int fd, int level, int optname, int val,
->+		char const *errmsg)
->+{
->+	int chkval;
->+	socklen_t chklen;
->+	int err;
->+
->+	err = setsockopt(fd, level, optname, &val, sizeof(val));
->+	if (err) {
->+		fprintf(stderr, "setsockopt err: %s (%d)\n",
->+				strerror(errno), errno);
->+		goto fail;
->+	}
->+
->+	chkval = ~val; /* just make storage != val */
->+	chklen = sizeof(chkval);
->+
->+	err = getsockopt(fd, level, optname, &chkval, &chklen);
->+	if (err) {
->+		fprintf(stderr, "getsockopt err: %s (%d)\n",
->+				strerror(errno), errno);
->+		goto fail;
->+	}
->+
->+	if (chklen != sizeof(chkval)) {
->+		fprintf(stderr, "size mismatch: set %zu got %d\n", sizeof(val),
->+				chklen);
->+		goto fail;
->+	}
->+
->+	if (chkval != val) {
->+		fprintf(stderr, "value mismatch: set %d got %d\n",
->+				val, chkval);
->+		goto fail;
->+	}
->+	return;
->+fail:
->+	fprintf(stderr, "%s val %d\n", errmsg, val);
->+	exit(EXIT_FAILURE);
->+}
->+
->+static void mem_invert(unsigned char *mem, size_t size)
->+{
->+	size_t i;
->+
->+	for (i = 0; i < size; i++)
->+		mem[i] = ~mem[i];
->+}
->+
->+/* Set "timeval" socket option and check that it's indeed set */
->+void setsockopt_timeval_check(int fd, int level, int optname,
->+		struct timeval val, char const *errmsg)
->+{
->+	struct timeval chkval;
->+	socklen_t chklen;
->+	int err;
->+
->+	err = setsockopt(fd, level, optname, &val, sizeof(val));
->+	if (err) {
->+		fprintf(stderr, "setsockopt err: %s (%d)\n",
->+				strerror(errno), errno);
->+		goto fail;
->+	}
->+
->+	 /* just make storage != val */
->+	chkval = val;
->+	mem_invert((unsigned char *) &chkval, sizeof(chkval));
->+	chklen = sizeof(chkval);
->+
->+	err = getsockopt(fd, level, optname, &chkval, &chklen);
->+	if (err) {
->+		fprintf(stderr, "getsockopt err: %s (%d)\n",
->+				strerror(errno), errno);
->+		goto fail;
->+	}
->+
->+	if (chklen != sizeof(chkval)) {
->+		fprintf(stderr, "size mismatch: set %zu got %d\n", sizeof(val),
->+				chklen);
->+		goto fail;
->+	}
->+
->+	if (memcmp(&chkval, &val, sizeof(val)) != 0) {
->+		fprintf(stderr, "value mismatch: set %ld:%ld got %ld:%ld\n",
->+				val.tv_sec, val.tv_usec,
->+				chkval.tv_sec, chkval.tv_usec);
->+		goto fail;
->+	}
->+	return;
->+fail:
->+	fprintf(stderr, "%s val %ld:%ld\n", errmsg, val.tv_sec, val.tv_usec);
->+	exit(EXIT_FAILURE);
->+}
->+
->+void enable_so_zerocopy_check(int fd)
->+{
->+	setsockopt_int_check(fd, SOL_SOCKET, SO_ZEROCOPY, 1,
->+			"setsockopt SO_ZEROCOPY");
->+}
->diff --git a/tools/testing/vsock/util.h b/tools/testing/vsock/util.h
->index fff22d4a14c0..f189334591df 100644
->--- a/tools/testing/vsock/util.h
->+++ b/tools/testing/vsock/util.h
->@@ -68,4 +68,11 @@ unsigned long iovec_hash_djb2(const struct iovec *iov, size_t iovnum);
-> struct iovec *alloc_test_iovec(const struct iovec *test_iovec, int iovnum);
-> void free_test_iovec(const struct iovec *test_iovec,
-> 		     struct iovec *iovec, int iovnum);
->+void setsockopt_ull_check(int fd, int level, int optname,
->+		unsigned long long val, char const *errmsg);
->+void setsockopt_int_check(int fd, int level, int optname, int val,
->+		char const *errmsg);
->+void setsockopt_timeval_check(int fd, int level, int optname,
->+		struct timeval val, char const *errmsg);
->+void enable_so_zerocopy_check(int fd);
-> #endif /* UTIL_H */
->diff --git a/tools/testing/vsock/vsock_perf.c b/tools/testing/vsock/vsock_perf.c
->index 8e0a6c0770d3..75971ac708c9 100644
->--- a/tools/testing/vsock/vsock_perf.c
->+++ b/tools/testing/vsock/vsock_perf.c
->@@ -251,6 +251,16 @@ static void run_receiver(int rcvlowat_bytes)
-> 	close(fd);
-> }
->
->+static void enable_so_zerocopy(int fd)
->+{
->+	int val = 1;
->+
->+	if (setsockopt(fd, SOL_SOCKET, SO_ZEROCOPY, &val, sizeof(val))) {
->+		perror("setsockopt");
->+		exit(EXIT_FAILURE);
->+	}
->+}
->+
-> static void run_sender(int peer_cid, unsigned long to_send_bytes)
-> {
-> 	time_t tx_begin_ns;
->diff --git a/tools/testing/vsock/vsock_test.c b/tools/testing/vsock/vsock_test.c
->index c7af23332e57..0b514643a9a5 100644
->--- a/tools/testing/vsock/vsock_test.c
->+++ b/tools/testing/vsock/vsock_test.c
->@@ -444,17 +444,12 @@ static void test_seqpacket_msg_bounds_server(const struct test_opts *opts)
->
-> 	sock_buf_size = SOCK_BUF_SIZE;
->
->-	if (setsockopt(fd, AF_VSOCK, SO_VM_SOCKETS_BUFFER_MAX_SIZE,
->-		       &sock_buf_size, sizeof(sock_buf_size))) {
->-		perror("setsockopt(SO_VM_SOCKETS_BUFFER_MAX_SIZE)");
->-		exit(EXIT_FAILURE);
->-	}
->+	setsockopt_ull_check(fd, AF_VSOCK, SO_VM_SOCKETS_BUFFER_MAX_SIZE,
->+			sock_buf_size,
->+			"setsockopt(SO_VM_SOCKETS_BUFFER_MAX_SIZE)");
->
->-	if (setsockopt(fd, AF_VSOCK, SO_VM_SOCKETS_BUFFER_SIZE,
->-		       &sock_buf_size, sizeof(sock_buf_size))) {
->-		perror("setsockopt(SO_VM_SOCKETS_BUFFER_SIZE)");
->-		exit(EXIT_FAILURE);
->-	}
->+	setsockopt_ull_check(fd, AF_VSOCK, SO_VM_SOCKETS_BUFFER_SIZE,
->+		       sock_buf_size, "setsockopt(SO_VM_SOCKETS_BUFFER_SIZE)");
->
-> 	/* Ready to receive data. */
-> 	control_writeln("SRVREADY");
->@@ -586,10 +581,8 @@ static void test_seqpacket_timeout_client(const struct test_opts *opts)
-> 	tv.tv_sec = RCVTIMEO_TIMEOUT_SEC;
-> 	tv.tv_usec = 0;
->
->-	if (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, (void *)&tv, sizeof(tv)) == -1) {
->-		perror("setsockopt(SO_RCVTIMEO)");
->-		exit(EXIT_FAILURE);
->-	}
->+	setsockopt_timeval_check(fd, SOL_SOCKET, SO_RCVTIMEO, tv,
->+			"setsockopt(SO_RCVTIMEO)");
->
-> 	read_enter_ns = current_nsec();
->
->@@ -855,11 +848,8 @@ static void test_stream_poll_rcvlowat_client(const struct test_opts *opts)
-> 		exit(EXIT_FAILURE);
-> 	}
->
->-	if (setsockopt(fd, SOL_SOCKET, SO_RCVLOWAT,
->-		       &lowat_val, sizeof(lowat_val))) {
->-		perror("setsockopt(SO_RCVLOWAT)");
->-		exit(EXIT_FAILURE);
->-	}
->+	setsockopt_int_check(fd, SOL_SOCKET, SO_RCVLOWAT,
->+		       lowat_val, "setsockopt(SO_RCVLOWAT)");
->
-> 	control_expectln("SRVSENT");
->
->@@ -1383,11 +1373,8 @@ static void test_stream_credit_update_test(const struct test_opts *opts,
-> 	/* size_t can be < unsigned long long */
-> 	sock_buf_size = buf_size;
->
->-	if (setsockopt(fd, AF_VSOCK, SO_VM_SOCKETS_BUFFER_SIZE,
->-		       &sock_buf_size, sizeof(sock_buf_size))) {
->-		perror("setsockopt(SO_VM_SOCKETS_BUFFER_SIZE)");
->-		exit(EXIT_FAILURE);
->-	}
->+	setsockopt_ull_check(fd, AF_VSOCK, SO_VM_SOCKETS_BUFFER_SIZE,
->+		       sock_buf_size, "setsockopt(SO_VM_SOCKETS_BUFFER_SIZE)");
->
-> 	if (low_rx_bytes_test) {
-> 		/* Set new SO_RCVLOWAT here. This enables sending credit
->@@ -1396,11 +1383,8 @@ static void test_stream_credit_update_test(const struct test_opts *opts,
-> 		 */
-> 		recv_buf_size = 1 + VIRTIO_VSOCK_MAX_PKT_BUF_SIZE;
->
->-		if (setsockopt(fd, SOL_SOCKET, SO_RCVLOWAT,
->-			       &recv_buf_size, sizeof(recv_buf_size))) {
->-			perror("setsockopt(SO_RCVLOWAT)");
->-			exit(EXIT_FAILURE);
->-		}
->+		setsockopt_int_check(fd, SOL_SOCKET, SO_RCVLOWAT,
->+			       recv_buf_size, "setsockopt(SO_RCVLOWAT)");
-> 	}
->
-> 	/* Send one dummy byte here, because 'setsockopt()' above also
->@@ -1442,11 +1426,8 @@ static void test_stream_credit_update_test(const struct test_opts *opts,
-> 		recv_buf_size++;
->
-> 		/* Updating SO_RCVLOWAT will send credit update. */
->-		if (setsockopt(fd, SOL_SOCKET, SO_RCVLOWAT,
->-			       &recv_buf_size, sizeof(recv_buf_size))) {
->-			perror("setsockopt(SO_RCVLOWAT)");
->-			exit(EXIT_FAILURE);
->-		}
->+		setsockopt_int_check(fd, SOL_SOCKET, SO_RCVLOWAT,
->+			       recv_buf_size, "setsockopt(SO_RCVLOWAT)");
-> 	}
->
-> 	fds.fd = fd;
->diff --git a/tools/testing/vsock/vsock_test_zerocopy.c b/tools/testing/vsock/vsock_test_zerocopy.c
->index 04c376b6937f..9d9a6cb9614a 100644
->--- a/tools/testing/vsock/vsock_test_zerocopy.c
->+++ b/tools/testing/vsock/vsock_test_zerocopy.c
->@@ -162,7 +162,7 @@ static void test_client(const struct test_opts *opts,
-> 	}
->
-> 	if (test_data->so_zerocopy)
->-		enable_so_zerocopy(fd);
->+		enable_so_zerocopy_check(fd);
->
-> 	iovec = alloc_test_iovec(test_data->vecs, test_data->vecs_cnt);
->
->diff --git a/tools/testing/vsock/vsock_uring_test.c b/tools/testing/vsock/vsock_uring_test.c
->index 6c3e6f70c457..5c3078969659 100644
->--- a/tools/testing/vsock/vsock_uring_test.c
->+++ b/tools/testing/vsock/vsock_uring_test.c
->@@ -73,7 +73,7 @@ static void vsock_io_uring_client(const struct test_opts *opts,
-> 	}
->
-> 	if (msg_zerocopy)
->-		enable_so_zerocopy(fd);
->+		enable_so_zerocopy_check(fd);
->
-> 	iovec = alloc_test_iovec(test_data->vecs, test_data->vecs_cnt);
->
->-- 
->2.34.1
->
+diff --git a/sound/soc/stm/stm32_adfsdm.c b/sound/soc/stm/stm32_adfsdm.c
+index 78bd817af839..c914d1c46850 100644
+--- a/sound/soc/stm/stm32_adfsdm.c
++++ b/sound/soc/stm/stm32_adfsdm.c
+@@ -142,7 +142,7 @@ static const struct snd_soc_dai_driver stm32_adfsdm_dai = {
+ 			       SNDRV_PCM_FMTBIT_S32_LE,
+ 		    .rates = SNDRV_PCM_RATE_CONTINUOUS,
+ 		    .rate_min = 8000,
+-		    .rate_max = 48000,
++		    .rate_max = 192000,
+ 		    },
+ 	.ops = &stm32_adfsdm_dai_ops,
+ };
+-- 
+2.25.1
 
 
