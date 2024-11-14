@@ -1,263 +1,156 @@
-Return-Path: <linux-kernel+bounces-409936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAAF29C9399
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:58:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 659B39C93A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:01:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AA93B28362
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:57:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA57EB28AD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0901ADFF7;
-	Thu, 14 Nov 2024 20:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E591ADFE4;
+	Thu, 14 Nov 2024 21:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="AHzvpj4D"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Eu+RVRc0"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5BC193408
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 20:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073B81AB6F1;
+	Thu, 14 Nov 2024 21:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731617858; cv=none; b=Ht9rxK4zxYWLra3wChZUPo9+9IROSv5p1XKbwumo+tC1tze80NiddK+KrMRB7y2sAYIrlBm5vq2f5C2w0fXbHbpziBkIVLUWtNLk0r4pqOghzYgVIE2YD2YIZAMZr+ela49vcxOqJgQcIOdqLp310B6Vm3kiznjCxbPbmRS5ijU=
+	t=1731618094; cv=none; b=F60Jk7a3iJS1Fqb1bbUNYJ7072PfaeMWTMC90G7NfQGFSrljjV3ExcOSWHYNpI+5VOeR4hF0JtfZzc73f+NLCUwsdyKcjneq0vFrH1SmkH3FvqtrJ7x3n2FRkpNePV4V6essHGtYB5BMrfvQmLL2/ZDlqPE++Jgkzr6PtAyM7Lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731617858; c=relaxed/simple;
-	bh=OK25xQOJtFbeKAxS8qfF80zE2Lq/LgsyAGSyZjToe9Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ARGeapXKZg1BtNQlbhTGaCyVadEXoX10wFcPDscUeRIGepMThHt/Y5PV6GMY6xO8Y1097sVLVk1N442j6iV8T1zgdVNxaMlqR2wb8fsiWQfqWifMmkAzqjNFW+3t9M0KdriOR77V8xxcoQHzaVFqlpKZHqRauOSfIfdD5IeWAFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=AHzvpj4D; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71e5130832aso833028b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 12:57:35 -0800 (PST)
+	s=arc-20240116; t=1731618094; c=relaxed/simple;
+	bh=S7tRjuXaZpHsyBV91aZWFUrd0TldunNKHIzfBKQ6OdQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q8ouG5UdZDLdXP5OuhtvIfVhuARbpE91cWVR1SeSVXbEdVHkgMJX8Uymjd6kpSzpFgFT2n5Q5d7G0gWWjxx1kLeMEivW+BH2tu2DYWDXeCPr3RXCdGCHcDd0pcEMtjMIljc7nSl2G9bZlEJw+VsSS1doI2QdmtD74EzcwwAUkCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Eu+RVRc0; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-211c1bd70f6so10007015ad.0;
+        Thu, 14 Nov 2024 13:01:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1731617854; x=1732222654; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IBy7W6q8d6SsCHUuoZjykTnFInThsbTdbvyrfywJgD8=;
-        b=AHzvpj4Dyj8RYWcX6xdoHxgyGwx6fY8oayz0CSaO00MsieQc2I8tbvs6u9qjdV8tOr
-         TYwK5F7vP0rSA5edlLz5NpoQ1YWukzniwlxdP3MDRv0RPfnXXB4sDEGABjz7sl6/sjcr
-         KTWhFyoipaJY+rW7CVpOIQ40eD1FHyxSMncWW0WSdgnxYUU8X+OPmHi1wuSEZVlUtPQb
-         ZIHWQAkZVWMe3fDSRXGph3RwVNw614cD7UwEJ7LPdbN7oyvJM7EfmC7Xc+p7SbOBxZgu
-         B7Wm37Go1DhZYVrT6GMGsQxPZ2oP3IbI4gpR7lYB40ysBF59n0e8a3X7/5d7e7q0Gc6J
-         UIwA==
+        d=gmail.com; s=20230601; t=1731618092; x=1732222892; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=B8if49p7SgY4GYN04lAfksTYRw6sC0UZKeThEbuX8Kw=;
+        b=Eu+RVRc0r4FQHLAJXuZePiQhJ4HklrVBcIreb3NcDACiUW7QFHh3yqj5/OUSa+KtY5
+         gMLhCH8rHgDXMRoNFCiO31MU1tZCncPp4EIY5VApw/LCNj9znFnNmzDBPggzI+h9QN4q
+         TSehWK2sWfV0YhlbqXK4Aw160tIhkG8XbX0jyZfRQ9vhut/f8x4wdK/znVnHL4vYE06F
+         h6i/N6K4/mnBV0w7B78RfzjVV/YJnw+b2OAIYlsgCaoZ8tt+SvgYdgJD9IQoCgbAxFed
+         iIlT1KFJiZC9Rhps3QvQ5OsWSyUNIsL0ysQjhK2WUxxFTK0V3s0uPhzLDlzNb2vbKB0m
+         0lWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731617854; x=1732222654;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IBy7W6q8d6SsCHUuoZjykTnFInThsbTdbvyrfywJgD8=;
-        b=ZW8fqtBKHxmF12+jsVBXxa9WPV+X+PD7kCPb9FH9dXpCqc6nNtIZy5EYMcpnN2AMQz
-         53okeDfv+WyGviA37qdf9Wx6vd9JaJ7x+SwfEqb6muZp9tOGp3D7IsnuECsVRATBkUmK
-         K/YQbVOdzOZbDLTMCat1lEz0ijJVDfIIOzelqnzl7POUFv6gB3ezwHKnuMvJKaxYMmYp
-         xelM8RKvQkp4YAtdlwoLZkHzjIeA5pcd0Z9qKluyGPdDE2g/CvDSXYs7a3R8SSJuIYJY
-         XgKSSEAdzLu08CgHV/W2R11DNg34HwFySM2aZgjWP/X6ZuhmIWtEOXsShTg0Vz5fQznM
-         OvkA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9HamlKE/em28NBZYAB0kFSBOhe4PoxhX2VAeRoe0j4EJ8ZUJoFSRDQ3ZjscmB3U5XmyZsFESUDI1aDMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLxfRPz13D5yAw0q91CP+WkEESuG9ylLOsAafrj3T6zFIsmhuK
-	ClsO0S7XHyYpabIgCPiFLk+1oQMCQSYir5cs/OGLJzZXQi6PU2Lkvy9LFDY6E+hA8VtORNQMvyR
-	p
-X-Google-Smtp-Source: AGHT+IFGnvWYCA15QDOkROw4CkS5RCgvkj3mwr+Q5/EEaXgB8GSi/P3YPHip5tvv+X/rsu2YBjYuoA==
-X-Received: by 2002:a05:6a00:188e:b0:71e:f14:869c with SMTP id d2e1a72fcca58-72476b96f7emr406568b3a.6.1731617854517;
-        Thu, 14 Nov 2024 12:57:34 -0800 (PST)
-Received: from ghost ([2601:647:6700:64d0:8011:b5fc:6663:cd73])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724771c04e3sm62882b3a.102.2024.11.14.12.57.33
+        d=1e100.net; s=20230601; t=1731618092; x=1732222892;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B8if49p7SgY4GYN04lAfksTYRw6sC0UZKeThEbuX8Kw=;
+        b=HotnE4/yXow6dxmUYeUqU/rT0uis/EUsDG/77ANfz90ua6ccYRnDzQwd4KBxwrEJ+I
+         eNfgqvzn7y0ehUmh+7/d5aTVBYGSqLxA2bpvLOQQapOj7OvMesqr2gmtY8Zpx1Sfo4O1
+         H//4F63OG+UnqnO2CGyX7XZfB3L1IDRxfcQJdiTn7sNKUhaR34zQoKsDIz5XeNmRnaQx
+         eID4S+ETEQr+a2LtzJAcQkYmFfb7wNs94J0b/oHMo2WE8b77BD0BJStcWFYRUSdOh83J
+         SP/HwuVb5+PJgqfa3UXYqNP2X4OrlRjolBlWvc7RMs8c8nFdyJTZkCFVuAxSar7jtE5E
+         Yg/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUdk4XctGmMS8bm9yolyaq8WsTk5ifa6MQznOGWsgZYEnK0S4dKpogHZ4ZDossbsspa4APgHjAHLlojJKg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJ9M8uFnzmk3KhtFaE+K/Tse/gupdwLbNBpHCffqv5N7/v2H7t
+	zuuZ5QgTbt/kgEjzNbnaAMxpjTB20IJTAADJbPhJ4O0VzQ8PswXL
+X-Google-Smtp-Source: AGHT+IHj4ZXgkfQxt90ivIXnn4Vke6xU9tFkg7w7hfd+e0TpPIOlSvx61B0tPtnj/U3hHjtCmfl8ug==
+X-Received: by 2002:a05:6a21:9983:b0:1d8:a322:6e with SMTP id adf61e73a8af0-1dc80691cd1mr7436048637.19.1731618091988;
+        Thu, 14 Nov 2024 13:01:31 -0800 (PST)
+Received: from localhost ([38.141.211.103])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1c3c39esm68973a12.33.2024.11.14.13.01.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 12:57:33 -0800 (PST)
-Date: Thu, 14 Nov 2024 12:57:31 -0800
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Ron Economos <re@w6rz.net>
-Cc: Nicolas Schier <nicolas@fjasle.eu>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
-	Ben Hutchings <ben@decadent.org.uk>
-Subject: Re: [PATCH 4/4] kbuild: cross-compile linux-headers package when
- possible
-Message-ID: <ZzZkO_rNHpK1uhN-@ghost>
-References: <20240727074526.1771247-1-masahiroy@kernel.org>
- <20240727074526.1771247-5-masahiroy@kernel.org>
- <b3d4f49e-7ddb-29ba-0967-689232329b53@w6rz.net>
- <ZxFkXyfs0jO2QzBv@fjasle.eu>
- <8e7802cc-7d76-6929-cb6e-cefc020dd8e2@w6rz.net>
+        Thu, 14 Nov 2024 13:01:31 -0800 (PST)
+From: Ragavendra <ragavendra.bn@gmail.com>
+To: unicorn_wang@outlook.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	inochiama@outlook.com
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ragavendra <ragavendra.bn@gmail.com>
+Subject: [PATCH v2] clk:sophgo: Remove uninitialized variable for CV1800 PLL
+Date: Thu, 14 Nov 2024 13:01:15 -0800
+Message-ID: <20241114210115.29766-1-ragavendra.bn@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8e7802cc-7d76-6929-cb6e-cefc020dd8e2@w6rz.net>
 
-On Thu, Oct 17, 2024 at 12:34:49PM -0700, Ron Economos wrote:
-> On 10/17/24 12:24 PM, Nicolas Schier wrote:
-> > On Thu, Oct 17, 2024 at 07:45:57AM -0700 Ron Economos wrote:
-> > > On 7/27/24 12:42 AM, Masahiro Yamada wrote:
-> > > > A long standing issue in the upstream kernel packaging is that the
-> > > > linux-headers package is not cross-compiled.
-> > > > 
-> > > > For example, you can cross-build Debian packages for arm64 by running
-> > > > the following command:
-> > > > 
-> > > >     $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bindeb-pkg
-> > > > 
-> > > > However, the generated linux-headers-*_arm64.deb is useless because the
-> > > > host programs in it were built for your build machine architecture
-> > > > (likely x86), not arm64.
-> > > > 
-> > > > The Debian kernel maintains its own Makefiles to cross-compile host
-> > > > tools without relying on Kbuild. [1]
-> > > > 
-> > > > Instead of adding such full custom Makefiles, this commit adds a small
-> > > > piece of code to cross-compile host programs located under the scripts/
-> > > > directory.
-> > > > 
-> > > > A straightforward solution is to pass HOSTCC=${CROSS_COMPILE}gcc, but it
-> > > > would also cross-compile scripts/basic/fixdep, which needs to be native
-> > > > to process the if_changed_dep macro. (This approach may work under some
-> > > > circumstances; you can execute foreign architecture programs with the
-> > > > help of binfmt_misc because Debian systems enable CONFIG_BINFMT_MISC,
-> > > > but it would require installing QEMU and libc for that architecture.)
-> > > > 
-> > > > A trick is to use the external module build (KBUILD_EXTMOD=), which
-> > > > does not rebuild scripts/basic/fixdep. ${CC} needs to be able to link
-> > > > userspace programs (CONFIG_CC_CAN_LINK=y).
-> > > > 
-> > > > There are known limitations:
-> > > > 
-> > > >    - GCC plugins
-> > > > 
-> > > >      It would possible to rebuild GCC plugins for the target architecture
-> > > >      by passing HOSTCXX=${CROSS_COMPILE}g++ with necessary packages
-> > > >      installed, but gcc on the installed system emits
-> > > >      "cc1: error: incompatible gcc/plugin versions". I did not find a
-> > > >      solution for this because 'gcc' on a foreign architecture is a
-> > > >      different compiler after all.
-> > > > 
-> > > >    - objtool and resolve_btfids
-> > > > 
-> > > >      These are built by the tools build system. They are not covered by
-> > > >      the current solution.
-> > > > 
-> > > > I only tested this with Debian, but it should work for other package
-> > > > systems as well.
-> > > > 
-> > > > [1]: https://salsa.debian.org/kernel-team/linux/-/blob/debian/6.9.9-1/debian/rules.real#L586
-> > > > 
-> > > > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > > > ---
-> > > > 
-> > > >    scripts/package/install-extmod-build | 34 ++++++++++++++++++++++++++++
-> > > >    1 file changed, 34 insertions(+)
-> > > > 
-> > > > diff --git a/scripts/package/install-extmod-build b/scripts/package/install-extmod-build
-> > > > index cc335945dfbc..0b56d3d7b48f 100755
-> > > > --- a/scripts/package/install-extmod-build
-> > > > +++ b/scripts/package/install-extmod-build
-> > > > @@ -43,4 +43,38 @@ mkdir -p "${destdir}"
-> > > >    	fi
-> > > >    } | tar -c -f - -T - | tar -xf - -C "${destdir}"
-> > > > +# When ${CC} and ${HOSTCC} differ, we are likely cross-compiling. Rebuild host
-> > > > +# programs using ${CC}. This assumes CC=${CROSS_COMPILE}gcc, which is usually
-> > > > +# the case for package building. It does not cross-compile when CC=clang.
-> > > > +#
-> > > > +# This caters to host programs that participate in Kbuild. objtool and
-> > > > +# resolve_btfids are out of scope.
-> > > > +if [ "${CC}" != "${HOSTCC}" ] && is_enabled CONFIG_CC_CAN_LINK; then
-> > > > +	echo "Rebuilding host programs with ${CC}..."
-> > > > +
-> > > > +	cat <<-'EOF' >  "${destdir}/Kbuild"
-> > > > +	subdir-y := scripts
-> > > > +	EOF
-> > > > +
-> > > > +	# HOSTCXX is not overridden. The C++ compiler is used to build:
-> > > > +	# - scripts/kconfig/qconf, which is unneeded for external module builds
-> > > > +	# - GCC plugins, which will not work on the installed system even with
-> > > > +	#   being rebuilt.
-> > > > +	#
-> > > > +	# Use the single-target build to avoid the modpost invocation, which
-> > > > +	# would overwrite Module.symvers.
-> > > > +	"${MAKE}" HOSTCC="${CC}" KBUILD_EXTMOD="${destdir}" scripts/
-> > > > +
-> > > > +	cat <<-'EOF' >  "${destdir}/scripts/Kbuild"
-> > > > +	subdir-y := basic
-> > > > +	hostprogs-always-y := mod/modpost
-> > > > +	mod/modpost-objs := $(addprefix mod/, modpost.o file2alias.o sumversion.o symsearch.o)
-> > > > +	EOF
-> > > > +
-> > > > +	# Run once again to rebuild scripts/basic/ and scripts/mod/modpost.
-> > > > +	"${MAKE}" HOSTCC="${CC}" KBUILD_EXTMOD="${destdir}" scripts/
-> > > > +
-> > > > +	rm -f "${destdir}/Kbuild" "${destdir}/scripts/Kbuild"
-> > > > +fi
-> > > > +
-> > > >    find "${destdir}" \( -name '.*.cmd' -o -name '*.o' \) -delete
-> > > This patch causes a build error when cross-compiling for RISC-V. I'm using
-> > > the cross-compiler from https://github.com/riscv-collab/riscv-gnu-toolchain.
-> > > When trying to build .debs with:
-> > > 
-> > > make CROSS_COMPILE=riscv64-unknown-linux-gnu- ARCH=riscv INSTALL_MOD_STRIP=1
-> > > "KCFLAGS=-mtune=sifive-7-series" LOCALVERSION= bindeb-pkg
-> > > 
-> > > I get the following error:
-> > > 
-> > > Rebuilding host programs with riscv64-unknown-linux-gnu-gcc...
-> > >    HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/genksyms.o
-> > >    YACC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/parse.tab.[ch]
-> > >    HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/parse.tab.o
-> > >    LEX debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/lex.lex.c
-> > >    HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/lex.lex.o
-> > >    HOSTLD debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/genksyms/genksyms
-> > >    HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/selinux/genheaders/genheaders
-> > >    HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/selinux/mdp/mdp
-> > >    HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/kallsyms
-> > >    HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/sorttable
-> > >    HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/asn1_compiler
-> > >    HOSTCC debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/sign-file
-> > > 
-> > > debian/linux-headers-6.12.0-rc3/usr/src/linux-headers-6.12.0-rc3/scripts/sign-file.c:25:10:
-> > > fatal error: openssl/opensslv.h: No such file or directory
-> > >     25 | #include <openssl/opensslv.h>
-> > >        |          ^~~~~~~~~~~~~~~~~~~~
-> > > compilation terminated.
-> > I guess you have openssl/opensslv.h available on your system, do you?  (In
-> > Debian/Ubuntu package libssl-dev or similar)
-> > 
-> > Can you natively build a kernel with a similar kernel config?
-> > 
-> > Kind regards,
-> > Nicolas
-> 
-> Yes, I have /usr/include/openssl/opensslv.h on my system. But that's the x86
-> version. The cross compiler can't use that.
+Updating the detected value to 0 in the ipll_find_rate and removing it
+from the method parameters as it does not depend on external input.
+Updating the calls to ipll_find_rate as well and removing the u32 val
+variable from ipll_determine_rate.
 
-You'll need to add the package for cross-compilation. If you are using
-ubuntu and the ubuntu riscv64 toolchain, you can add the riscv64
-architecture `dpkg --add-architecture riscv64`, swap out your
-sources.list file to specify the architecture `sed -i 's/^deb/deb
-[arch=amd64]/' /etc/apt/sources.list`, add the riscv64 debs to your
-sources.list:
+Fixes: 80fd61ec4612 ("clk: sophgo: Add clock support for CV1800 SoC")
+Signed-off-by: Ragavendra Nagraj <ragavendra.bn@gmail.com>
+---
+V1 -> V2: Updated commit log, title and addressed review comments
+---
+ drivers/clk/sophgo/clk-cv18xx-pll.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-deb [arch=riscv64] http://ports.ubuntu.com/ubuntu-ports jammy main restricted multiverse universe
-deb [arch=riscv64] http://ports.ubuntu.com/ubuntu-ports jammy-updates main
-deb [arch=riscv64] http://ports.ubuntu.com/ubuntu-ports jammy-security main
+diff --git a/drivers/clk/sophgo/clk-cv18xx-pll.c b/drivers/clk/sophgo/clk-cv18xx-pll.c
+index 29e24098bf5f..350195d4ac46 100644
+--- a/drivers/clk/sophgo/clk-cv18xx-pll.c
++++ b/drivers/clk/sophgo/clk-cv18xx-pll.c
+@@ -45,14 +45,13 @@ static unsigned long ipll_recalc_rate(struct clk_hw *hw,
+ }
+ 
+ static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
+-			  unsigned long prate, unsigned long *rate,
+-			  u32 *value)
++			  unsigned long prate, unsigned long *rate)
+ {
+ 	unsigned long best_rate = 0;
+ 	unsigned long trate = *rate;
+ 	unsigned long pre_div_sel = 0, div_sel = 0, post_div_sel = 0;
+ 	unsigned long pre, div, post;
+-	u32 detected = *value;
++	u32 detected = 0;
+ 	unsigned long tmp;
+ 
+ 	for_each_pll_limit_range(pre, &limit->pre_div) {
+@@ -77,7 +76,6 @@ static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
+ 		detected = PLL_SET_PRE_DIV_SEL(detected, pre_div_sel);
+ 		detected = PLL_SET_POST_DIV_SEL(detected, post_div_sel);
+ 		detected = PLL_SET_DIV_SEL(detected, div_sel);
+-		*value = detected;
+ 		*rate = best_rate;
+ 		return 0;
+ 	}
+@@ -87,11 +85,10 @@ static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
+ 
+ static int ipll_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
+ {
+-	u32 val;
+ 	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
+ 
+ 	return ipll_find_rate(pll->pll_limit, req->best_parent_rate,
+-			      &req->rate, &val);
++			      &req->rate);
+ }
+ 
+ static void pll_get_mode_ctrl(unsigned long div_sel,
+@@ -134,7 +131,7 @@ static int ipll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	unsigned long flags;
+ 	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
+ 
+-	ipll_find_rate(pll->pll_limit, parent_rate, &rate, &detected);
++	ipll_find_rate(pll->pll_limit, parent_rate, &rate);
+ 	pll_get_mode_ctrl(PLL_GET_DIV_SEL(detected),
+ 			  ipll_check_mode_ctrl_restrict,
+ 			  pll->pll_limit, &detected);
 
-Then `apt update` and `apt install libssl-dev:riscv64`. I imagine there
-is a similar procedure for other distros. If using a custom compiler,
-you'll need to copy over the installed headers to whatever location your
-compiler is looking for them.
+base-commit: 2e1b3cc9d7f790145a80cb705b168f05dab65df2
+-- 
+2.46.1
 
-- Charlie
-
-> 
-> A native build works fine.
-> 
-> Ron
-> 
-> 
 
