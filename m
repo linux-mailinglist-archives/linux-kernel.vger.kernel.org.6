@@ -1,120 +1,144 @@
-Return-Path: <linux-kernel+bounces-408586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 592E39C80C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:28:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B7E69C80C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:30:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E3851F261DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:28:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA29EB23D56
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60DE11E493F;
-	Thu, 14 Nov 2024 02:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95571E766E;
+	Thu, 14 Nov 2024 02:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i13HH6NY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d5vD2FGN"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558FF1885B4
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 02:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89B2158DB1;
+	Thu, 14 Nov 2024 02:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731551219; cv=none; b=ccTVOsK/d253S08ONgQOK5lJ78+skCLBEzj+F1g5VdGgMW/+E8RogNWirJfGMtJwnSxNDgKiGKuDDK0JN6l2Igf7rqKywmRSsjRVICRQmFgYTaerC38LpmFvwKIDna05yQimEpqkpvCq2l3ZA9oPGxc2Wr/K+5560hMRMZkhoKE=
+	t=1731551388; cv=none; b=OyFCwTCp5WTZJy4Y+B3MmvLaoUJwSM58kBggOrODCUDGLqBxkUEDR3h88yIekbhd3SAVv9GF4OG0UnOfqCutOj7QESMjx/RsGAsLl2flI6vrDjQ2J5ZhccWrvl9FfbSeQfwtPtoPCq/ARgKjDRgyBvaHqvT4BploKheJ+R+C3Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731551219; c=relaxed/simple;
-	bh=/ms4a1d2rjK5ppuE2Wzu7BQbNS9vvaZkwjcaxfoBSos=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RZ17vS8FcG92+MLzloAJNJ3QZwDlyQ27yWV5mH/Xl+yX3sEHTPj6TVT3c5FHScCOl3GNCvJW9ewvtuHb0rgiS9Ah6zjoTHLd5lfr9bhRu/sxxJfQbcq1PGyVmuCQ/o7ZR7tHbT2lAUoy2VrJwnXkVERn/qa8+/388rpi6zJrI1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i13HH6NY; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731551218; x=1763087218;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/ms4a1d2rjK5ppuE2Wzu7BQbNS9vvaZkwjcaxfoBSos=;
-  b=i13HH6NYfG+s781KiiSi/I8ATY8Nof3fJGGDgM6VdIwaCVU6XNV5dDuz
-   IzBTLDHttbO7F4TtNqJXll0+4YxHr7r+sqllupEeSdhtJ+0gOWtS7abpg
-   Uc2AKkjbHtQLpuf+oWfOcG/HXswVJmZHRJhWEPnprc/s4qHbJh/V4vEpj
-   upr3HvT7p0Zg9um9aM/y8rOJdQ71KnnJ2HOHGJf28wTqH1VEEBQhFkksX
-   6835yuakPX+upSukJ5F7Pm3rdv4/8mUi93xJ3PPdOIcyc4+5D8m6kBKdQ
-   EiSi4TnWG5Rz/xhEeCuqaHcTxZ5scaZsYZ8R+NYNaHo2E2+tFZsSRUwuy
-   w==;
-X-CSE-ConnectionGUID: SSzc2b1bRsSI4glrf9NZ9Q==
-X-CSE-MsgGUID: VtJizurvQpya1qXoPmpYmA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11255"; a="31576874"
-X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
-   d="scan'208";a="31576874"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 18:26:57 -0800
-X-CSE-ConnectionGUID: gAV9EYPzQH+z0cQ7RBIK4Q==
-X-CSE-MsgGUID: MebwxVt8Rj6kwyzmDyIIPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
-   d="scan'208";a="125563126"
-Received: from beginmax-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.24])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 18:26:57 -0800
-Date: Wed, 13 Nov 2024 18:26:54 -0800
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: David Kaplan <david.kaplan@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 03/35] x86/bugs: Add AUTO mitigations for
- mds/taa/mmio/rfds
-Message-ID: <20241114022654.qr35ebyspjh4zayj@desk>
-References: <20241105215455.359471-1-david.kaplan@amd.com>
- <20241105215455.359471-4-david.kaplan@amd.com>
+	s=arc-20240116; t=1731551388; c=relaxed/simple;
+	bh=+2uZXfETQBv6Bw+0CCidGP/zFprLF9Akv8+tPX3Abv0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nobka65DWdZ987luNUrc/UMrUSnOIOkYgS1iqWIyU0lZWoQLKgXyQWFssHjJyn15Kr6ZfzRJaL7YLZSNiqQS7sBoEBIHWJhlDiSeJ5qf0guUfK4CLkD4xJAR3+I2D0w5qH1Axx3JJEj0ZwRwbNx58OaUVIgfrWu9dYTUmMBnBFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d5vD2FGN; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ADH1ZCv025361;
+	Thu, 14 Nov 2024 02:29:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=/XFWMzXOJN0DmiAz834Zjq
+	rvrr/ljxZnbS1N4jwbPsg=; b=d5vD2FGN2l+cui/Oh3IhlPj2z2YVHWGB4aYzco
+	X2LKIa9mf//4/O06DA6vTgUOoM15KUmVmRq2/SN6BvTwmGKWe9gQMxUjAIpVoZz9
+	EViE/tn/fiSdn655wLJClQj2ushCOZRhrVLn5YpYTeVe3473/isTrJyozr2nb/th
+	jrA2NPpxyVoa2FQfCxM/tetJsINfx/JJIt/U49DVvS6bJYfkXNktHf6QdNJTYQEa
+	RYVilmDXQenxuLiOER6nnHL2G1bamA4O3Btk/wlP27ZIgyUTDuhdaymIT7NPmu7V
+	ZC3FQIwYwBDQb66GiSkTHFUFnNitb5yMartMYBzzNzCvo6bQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vgqqut3j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 02:29:35 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AE2TYK0031976
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 02:29:34 GMT
+Received: from hu-sibis-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 13 Nov 2024 18:29:30 -0800
+From: Sibi Sankar <quic_sibis@quicinc.com>
+To: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <morten.rasmussen@arm.com>,
+        <dietmar.eggemann@arm.com>, <lukasz.luba@arm.com>,
+        <pierre.gondois@arm.com>, <vincent.guittot@linaro.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_mdtipton@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>
+Subject: [PATCH V8 0/1] firmware: arm_scmi: Register and handle limits change notification
+Date: Thu, 14 Nov 2024 07:59:15 +0530
+Message-ID: <20241114022916.644899-1-quic_sibis@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105215455.359471-4-david.kaplan@amd.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 7AJqlshVTjnTHf0zBfBFHPIs_Nfqs9t5
+X-Proofpoint-GUID: 7AJqlshVTjnTHf0zBfBFHPIs_Nfqs9t5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
+ impostorscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
+ priorityscore=1501 phishscore=0 malwarescore=0 mlxlogscore=904
+ adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411140017
 
-On Tue, Nov 05, 2024 at 03:54:23PM -0600, David Kaplan wrote:
-> @@ -1995,6 +2004,7 @@ void cpu_bugs_smt_update(void)
->  		update_mds_branch_idle();
->  		break;
->  	case MDS_MITIGATION_OFF:
-> +	case MDS_MITIGATION_AUTO:
+This series registers for scmi limits change notifications to determine
+the throttled frequency and apply HW pressure.
 
-This implies AUTO and OFF are similar, which is counter intuitive.
-While mitigation selection code ...
+V8:
+* Drop patch 1 since it was picked up by Viresh
+* Leave policy->max update to the cpufreq_qos notifier [Vincent]
+* We sanitized the range_max from V3 since we dealt with
+  policy->max, now we can drop the check and policy member
+  from scmi_data.
 
-> +	if (mds_mitigation == MDS_MITIGATION_AUTO)
-> +		mds_mitigation = MDS_MITIGATION_FULL;
-> +
+V7:
+* Add a new request instead of reusing the max_freq_req [Vincent]
+* Use the non-devm versions of register/unregister of event notifier
+  since we have to remove them when the cpus get removed anyway.
+* Add new patch to fix cleanup path on boost enablement failure.
 
-... indicates that AUTO is equivalent to FULL. So, I think AUTO should be
-handled the same way as FULL in cpu_bugs_smt_update() as well.
+V6:
+* Unregister the notifier in the exit path to make sure
+  the cpus work across suspend/resume cycles.
 
-Same for TAA and MMIO below.
+V5:
+* Drop patch 1 and use pm_qos to update constraints. [Vincent]
+* Use sdev instead of cpu_dev in dev_warn. [Christian]
+* Pass sdev directly through private data. [Christian]
+* Dropping Rb's for now.
 
->  		break;
->  	}
->  
-> @@ -2006,6 +2016,7 @@ void cpu_bugs_smt_update(void) break;
->  	case TAA_MITIGATION_TSX_DISABLED:
->  	case TAA_MITIGATION_OFF:
-> +	case TAA_MITIGATION_AUTO:
->  		break;
->  	}
->  
-> @@ -2016,6 +2027,7 @@ void cpu_bugs_smt_update(void)
->  			pr_warn_once(MMIO_MSG_SMT);
->  		break;
->  	case MMIO_MITIGATION_OFF:
-> +	case MMIO_MITIGATION_AUTO:
->  		break;
->  	}
+V4:
+* Use EXPORT_SYMBOL_GPL instead. [Trilok]
+* Use a interim variable to show the khz calc. [Lukasz]
+* Use driver_data to pass on the handle and scmi_dev instead of using
+  global variables. Dropped Lukasz's Rb due to adding these minor
+  changes.
+
+V3:
+* Sanitize range_max received from the notifier. [Pierre]
+* Drop patches 1/2 from v2. [Cristian]
+* Update commit message in patch 2.
+
+V2:
+* Rename opp_xlate -> freq_xlate [Viresh]
+* Export cpufreq_update_pressure and use it directly [Lukasz]
+
+base-branch: next-20241113
+
+Sibi Sankar (1):
+  cpufreq: scmi: Register for limit change notifications
+
+ drivers/cpufreq/scmi-cpufreq.c | 45 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+
+-- 
+2.34.1
+
 
