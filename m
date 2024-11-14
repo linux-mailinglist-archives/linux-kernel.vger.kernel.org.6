@@ -1,116 +1,133 @@
-Return-Path: <linux-kernel+bounces-409115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14D159C87A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:33:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0181C9C87F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:45:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF7741F22D96
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:33:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ADD5B35068
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF99F1F8186;
-	Thu, 14 Nov 2024 10:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2310A1F818B;
+	Thu, 14 Nov 2024 10:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aYJhEral"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Wof7wmYZ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iztws1Dn"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CBB18BC10;
-	Thu, 14 Nov 2024 10:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5391DD539
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731580224; cv=none; b=l23chheQ/HH0ctljPp9hnvLJ617OBi+OHTIPGRl5KBJ5gPhKmZWnxoQDpdX5tY+Dsw5dYrqLRp6zgXSTA/EZ0cjyPrEHc+g/xiwjG8WTZu1Rpag0izKjPiJ0MH29eDpHJ6zwHIXDd2+X5HJAI1Xih0zBW1Zw1kdMBfXfUn6ED7c=
+	t=1731580276; cv=none; b=Q3OlrHv5unvC8tfgHSHck0ivT57XzlWo99ZorsW7GGcwqYDxa7tfpbVK2u/hsHsfN5i6WXJJrqBK5ZK59sF4I2XqJEZRZv3bIj0fXDbRdPNrHYGu31PWKalHOa+R0eDliD1rY2zAe80kyB1bQvkb4ayKq5VWar0G8GUfIkdmKeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731580224; c=relaxed/simple;
-	bh=CQt4uRKvF7PH6iw9VUENoNmTzQnzRcZZTAq8zpiNlyQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C7J7O0n3tlOlpG4Og4Ff1dGW6cAKG/PN989IGN1SNZqgRfdv6UNmaRQbWv77EQyzwRylskXWdPEOFDrMAegqy6jraSFV4YjcA4hQ/cW06xV53s3sE2IzkgnBIp2rinQiBygt1l778kXmqWfDpJimMBeEizs+XpYPFpTJV0M1nCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aYJhEral; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e59746062fso399923a91.2;
-        Thu, 14 Nov 2024 02:30:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731580222; x=1732185022; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SsmX5OjlUHZqgK1VFRrX2wcj4M9agmD+HJSEbNg/BSw=;
-        b=aYJhEralEKRWIBO+LsG+tYgBNSzpjLwwcgjIr42CKUSYKeZVpD0d5UeoQoIWy4tOfJ
-         /ksdWzIbd9tSl7DkgMJZh2OIZTGBNP+dJwRuF8iXM4EFg5xUKAO7kvllp1jwayv2DKVy
-         H8hMwl6DAtqZsyN5lYtOBymIm4qCRZohJeq0q6mqyCoRNr79OzOpSp2fTHbUW2BixfR8
-         7sbgehq3mpIQdMkjwpYAWvRQMuioCqS5sK6era1Q6mgEoP0aXMp59uSsXRH5oYc68V0f
-         KU+xL6HWkV3yrhT5P3OBopP0Ut1LZM4aus/1dV+QR6Z57zXx0MOHq351OR4kHmYQ0txS
-         j1LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731580222; x=1732185022;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SsmX5OjlUHZqgK1VFRrX2wcj4M9agmD+HJSEbNg/BSw=;
-        b=tXsI20JmTUnZQkp3qYOkZlpl5fwzlIhXs1htEuJrfRN+5j1ElYsef9wZ968WQxGwOT
-         rRaA9jNWfCnuiwGSUbNcf6TmIWSEztTLqf+2qP4mp4TTNmK0yOPlQ8n8ebdO2fAS/KWP
-         qDtrhMRVRIEszDlXZlXAlLh0Iis7uf1bRoBsltrVj/UnnLEUpCsWBCx/YbZdNUoT7DmL
-         CJ+m7WA3/wYsOI0EqF+EeTiQTukR5fy2E30rtyxqXqIylcj6khCQ/Nx0VP0IbwMgupSw
-         ThbpCZYf1T5/m1O2xqaJB2KRQdA6LKSuRgyTScqNilz0RbcZq0WOMDYGeZ+K3GpIDcWI
-         Y00g==
-X-Forwarded-Encrypted: i=1; AJvYcCUHaBv6I6zc1buTVxQSHND2/yDhaurtg81j+uUCdPZ0u5znp6hcrpLlc+FYNFgHs5y8/mNQhdCFKjqPKv8=@vger.kernel.org, AJvYcCWKF1ByE4NO2QvRE4fiGrMgRFCOPDNLMxE9E4K235aqzqbGB/AjAIsLzFuOq48UMJ5UBnGh4LIl@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXnYk5kxAeE0vRvWWDLdo3jN+7wN7gL7sqjtiLldr0s6X8VmNE
-	jkR9xx1fjDv/QNajJLcGhuGPa12Cb3T3LJ419ll7DSZo5mWt1lQw
-X-Google-Smtp-Source: AGHT+IHZpkchUXNpFzup3sYTufcuGWMmZX6+H1JgY+pCJWs9UNr+vLNKYAd+25zUI44mAy0CCzYLcA==
-X-Received: by 2002:a17:90b:268b:b0:2d3:c638:ec67 with SMTP id 98e67ed59e1d1-2e9f2b3e437mr8182895a91.0.1731580221993;
-        Thu, 14 Nov 2024 02:30:21 -0800 (PST)
-Received: from [192.168.6.2] ([223.104.40.218])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211c7c678d4sm7772495ad.110.2024.11.14.02.30.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 02:30:21 -0800 (PST)
-Message-ID: <2e315da5-adcf-4f04-b0b5-4b416164ba3d@gmail.com>
-Date: Thu, 14 Nov 2024 18:30:12 +0800
+	s=arc-20240116; t=1731580276; c=relaxed/simple;
+	bh=vdG5CdVmokvHRFmN4/BRHQ7HBd/JDil+MdMmUXAwryQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G2Rs1oAWxA1+VlSAUbqa8Glus83ZIjcpv9EriChpdioKYaTzsaF9VIu++MkOK6UnvpHEWylf6IzrrT7lDtDAnv5YVNh9NJoSxt7lXKM8A8JhqG13D0hyVk6gwhuSk8MSolBG6r8I+MgvN+HdBt5OK+JhASNdo+aGrc0w8uJsElg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Wof7wmYZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iztws1Dn; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 14 Nov 2024 11:31:11 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731580273;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9k7MkyhXpQ8X1mOy+ZQJnc57XAtBRbUaywuvlSv7pgU=;
+	b=Wof7wmYZ/q9Sqcq1gVnXzRWYruqhfy0SQlNLInN9L/TVFIBISZBOdHIJUJBjqr1wYRwftx
+	ZA8GK33s/npeDyUj4Q4hD3ojdFU7nvzmRNOvbpeJ3y7GhIdd6QmsNCC8kb07stbHkzVreN
+	RrFAs3QInvmL096MH0TXHH4My9iAtfcOxAoX4jIEm9UUtQpyvYGV7+7bBF3Zxqc5gFPvDI
+	fL4dP0sTcNOPA7thKUvogGagFSayffiEmqhOZkf88GnuAVp+cnw6R6l6i3DmQaonF07TBP
+	55Kgyck46nRoSzhZB4/uslTcZndhJ5JBrRnLNpJfPwi8XQSuXRKlnBHP26ps4g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731580273;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9k7MkyhXpQ8X1mOy+ZQJnc57XAtBRbUaywuvlSv7pgU=;
+	b=iztws1DnLbFwa0FPKRZhtJLchU1YUQjWSTDzgh7fYiVuSbxmVBS1ejiaZyOF5i03/QO+AO
+	XLX/pF8nFGqGFZDw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Xuerui Wang <kernel@xen0n.name>,
+	loongarch@lists.linux.dev, Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-rt-devel@lists.linux.dev, Guo Ren <guoren@kernel.org>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] LoongArch: Allow to enable PREEMPT_RT
+Message-ID: <20241114103111.5W5ZY0D4@linutronix.de>
+References: <20241108091545.4182229-1-chenhuacai@loongson.cn>
+ <20241108091545.4182229-4-chenhuacai@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] chcr_ktls: fix a possible null-pointer dereference in
- chcr_ktls_dev_add()
-To: Simon Horman <horms@kernel.org>
-Cc: ayush.sawal@chelsio.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- almasrymina@google.com, dtatulea@nvidia.com, jacob.e.keller@intel.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, baijiaju1990@gmail.com
-References: <20241030132352.154488-1-islituo@gmail.com>
- <20241104160713.GE2118587@kernel.org>
- <CADm8TemexVr3gcuhKJ9M4PLDg2bF85nhT17a8J1uf_qqj_fKiQ@mail.gmail.com>
- <20241108133425.GC4507@kernel.org>
-Content-Language: en-US
-From: Tuo Li <islituo@gmail.com>
-In-Reply-To: <20241108133425.GC4507@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241108091545.4182229-4-chenhuacai@loongson.cn>
 
-On 2024/11/8 21:34, Simon Horman wrote:
-> On Tue, Nov 05, 2024 at 07:32:31AM +0800, Tuo Li wrote:
->> Hi Simon,
->>
->> Thanks for your reply! It is very helpful.
->> Any further feedback will be appreciated.
+On 2024-11-08 17:15:45 [+0800], Huacai Chen wrote:
+> It is really time.
 > 
-> Hi Tuo Li,
+> LoongArch has all the required architecture related changes, that have
+> been identified over time, in order to enable PREEMPT_RT. With the recent
+> printk changes, the last known road block has been addressed.
 > 
-> 1. Please don't top-post on Linux mailing lists.
+> Allow to enable PREEMPT_RT on LoongArch.
+> 
+> Below are the latency data from cyclictest on a 4-core Loongson-3A5000
+> machine, with a "make -j8" kernel building workload in the background.
+> 
+> 1. PREEMPT kernel with default configuration:
+> 
+> ./cyclictest -a -t -m -i200 -d0 -p99
+> policy: fifo: loadavg: 8.78 8.96 8.64 10/296 64800
+> T: 0 ( 4592) P:99 I:200 C:14838617 Min:   3 Act:    6 Avg:    8 Max:    844
+> T: 1 ( 4593) P:99 I:200 C:14838765 Min:   3 Act:    9 Avg:    8 Max:    909
+> T: 2 ( 4594) P:99 I:200 C:14838510 Min:   3 Act:    7 Avg:    8 Max:    832
+> T: 3 ( 4595) P:99 I:200 C:14838631 Min:   3 Act:    8 Avg:    8 Max:    931
+> 
+> 2. PREEMPT_RT kernel with default configuration:
+> 
+> ./cyclictest -a -t -m -i200 -d0 -p99
+> policy: fifo: loadavg: 10.38 10.47 10.35 9/336 77788
+> T: 0 ( 3941) P:99 I:200 C:19439626 Min:   3 Act:   12 Avg:    8 Max:    227
+> T: 1 ( 3942) P:99 I:200 C:19439624 Min:   2 Act:   11 Avg:    8 Max:    184
+> T: 2 ( 3943) P:99 I:200 C:19439623 Min:   3 Act:    4 Avg:    7 Max:    223
+> T: 3 ( 3944) P:99 I:200 C:19439623 Min:   2 Act:   10 Avg:    7 Max:    226
+> 
+> 3. PREEMPT_RT kernel with tuned configuration:
+> 
+> ./cyclictest -a -t -m -i200 -d0 -p99
+> policy: fifo: loadavg: 10.52 10.66 10.62 12/334 109397
+> T: 0 ( 4765) P:99 I:200 C:29335186 Min:   3 Act:    6 Avg:    8 Max:     62
+> T: 1 ( 4766) P:99 I:200 C:29335185 Min:   3 Act:   10 Avg:    8 Max:     52
+> T: 2 ( 4767) P:99 I:200 C:29335184 Min:   3 Act:    8 Avg:    8 Max:     64
+> T: 3 ( 4768) P:99 I:200 C:29335183 Min:   3 Act:   12 Avg:    8 Max:     53
+> 
+> Main instruments of tuned configuration include: Disable the boot rom
+> space in BIOS for kernel, in order to avoid speculative access to low-
+> speed memory; Disable CPUFreq scaling; Disable RTC synchronization in
+> the ntpd/chronyd service.
 
-Apologies for the top-posting; I will avoid that in the future.
+If "rom space in BIOS for kernel" is a thing you should document it
+somewhere or issue a warning at boot. I don't know what the latency
+impact is here and if this is needed at all during runtime.
 
-> 2. I think you need to do some careful analysis to understand
->    if the condition you are concerned about can occur or not:
->    can u_ctx ever be NULL in these code paths?
+Why is ntpd/chronyd service affecting this? Is it running at prio 99?
+Otherwise it should not be noticed.
 
-I have carefully reviewed the code paths, but I could not find any instance
-where the variable u_ctx is assigned a NULL value. It might be a defensive
-check to handle potential NULL values.
+Is lockdep complaining in any workloads?
+Is CONFIG_DEBUG_ATOMIC_SLEEP leading to any complains?
 
+
+> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+
+Sebastian
 
