@@ -1,84 +1,104 @@
-Return-Path: <linux-kernel+bounces-409872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23FD69C92C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:59:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 018CD9C92A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:55:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F332B28FB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:59:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D3281F23475
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:55:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25D61ABEA8;
-	Thu, 14 Nov 2024 19:58:31 +0000 (UTC)
-Received: from irl.hu (irl.hu [95.85.9.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446851A265B;
+	Thu, 14 Nov 2024 19:55:32 +0000 (UTC)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A774198A0E;
-	Thu, 14 Nov 2024 19:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA7919CCF9
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 19:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731614311; cv=none; b=h8V95UdxWAuxxk9Hi+eaNbMQRePEDjUoFXoALLW2TAOB6PNzaxT8BFnGyakSDkYsSwIIdC/wm0DTzqkhUhkGuIl+L6HlQbrGMKTkAKarUV7cOvi50gHkcCkRejfxNGKorLNHr7dPfm9z308xZv04C7jEIVX3A2gmkOdVs4irPQ0=
+	t=1731614131; cv=none; b=Jw1mTdRWA6l4JyYytv4mFQlRg99QyT29isCQUXSX8xKATNEik529bC3VV6+IdPIhKPKluAoU7ZgJS7lqWuieJKIPOLaz9XyXQV/HXKxQc0Ufi5beC7ShSdKpzKdj9pwK4gLQGqU/GOYdoyYr50LkS1Attr2mHE51faJYB0HBtrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731614311; c=relaxed/simple;
-	bh=lLLarpXFwPPZgCIjswq7/HL3T2gVDqMXDhOFvDFJNIw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=R+AWWnb+8HO7TuCLK/FzREr4mM2bY4kISfufgjs43csl9yVozbslbiQnXhl9jokTXmOe82Iu//worIkjhiJ+c68Ov/oq9qCth35TTbgqGTy1Tk8QjHEgoM496PkC77vALcy0gd8wDUOAE4ctorUFfoZFSFG1G9XpVMphYWVz20A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
-Received: from [192.168.2.4] (51b684a3.dsl.pool.telekom.hu [::ffff:81.182.132.163])
-  (AUTH: CRAM-MD5 soyer@irl.hu, )
-  by irl.hu with ESMTPSA
-  id 0000000000074680.0000000067365530.0029838C; Thu, 14 Nov 2024 20:53:20 +0100
-Message-ID: <ac8ea4ed606cbc7dfb15057babc29e49a152ef01.camel@irl.hu>
-Subject: Re: [PATCH v15 18/19] media: uvcvideo: implement UVC v1.5 ROI
-From: Gergo Koteles <soyer@irl.hu>
-To: Ricardo Ribalda <ribalda@chromium.org>,
-  Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-  Mauro Carvalho Chehab <mchehab@kernel.org>,
-  Hans de Goede <hdegoede@redhat.com>,
-  Ricardo Ribalda <ribalda@kernel.org>,
-  Sakari Ailus <sakari.ailus@linux.intel.com>,
-  Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Yunke Cao <yunkec@chromium.org>, linux-media@vger.kernel.org,
-  linux-kernel@vger.kernel.org, Yunke Cao <yunkec@google.com>
-Date: Thu, 14 Nov 2024 20:53:19 +0100
-In-Reply-To: <20241114-uvc-roi-v15-18-64cfeb56b6f8@chromium.org>
-References: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
-	 <20241114-uvc-roi-v15-18-64cfeb56b6f8@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
+	s=arc-20240116; t=1731614131; c=relaxed/simple;
+	bh=te/nYkT7ynCICzyDhP7SSLDM6Gnt115Q3PJoUC3Ss78=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=Lp5CsNJA9JaBA714iCKmVNfcqtkL2jmBHkTObUSQhd1NbmfAhPI8ZhNwKF+R/szsX+IQhGB83fVJP4NkGIynUgOxeumdvJr4bddW6zMqJ5JW37Mi7ghPnIO0GPfUFizX5wQnDe+11ReoXNAJvEcDcA4iCzVqeowtvpxgdroDzkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43193678216so9435185e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:55:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731614128; x=1732218928;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oChurHVSkauDMO18eKSyKG4OEzF5P4DWu/eGbZgcy2U=;
+        b=i/P4b5bBH5Z33QJ0QMYnjrBnIfQluIw+HXafgqtD14jTOnU+O/Dj3h7dYlzgX3o4ht
+         YKF9RNdGQqTEOLNgo0oFXITJ+IzAA6ItwqnX9k5MFY7PpX2q4h+mFdElTsNnkGgiiCkn
+         MGkxXA8qJVK7ZbVvD9MBwsnNfFZEkf7JAo1gMVuLMSVi/fJ7S3Sla52Hq6zaMz29NbG6
+         RA/lpyVVRXAa/+q5b94+Xoe3bNqGQZV498/xOt14lvEh6qDNeVOQlGeyWC0fiGRuWHsE
+         D0QkLXP1BQkX5I4WdlpXSTgCTGPTGVOhnWEk6QjOV7pWHyeikwYIpXW4AolZ19qkQnaj
+         3ZMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjYlrCp90xl87d6utREl6zhPFkiDTA+KWCKAchOxVgI84O9s8uZ5SnJoCtjKtPFz7dWQy56T+EMLnx2Ew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjQH9i/YHrqxv2sHuGaMvMuRH5i2/7cHipGHb+I6DKg//J824V
+	jQP+CrlWMs9m7Wa5Ti28xu5CAeiylxn8jK1ViVPEYlJutzkc5ri5
+X-Google-Smtp-Source: AGHT+IFX9iJrtNDNc9J2VnCoV7MLiIvfMrGcjMNe0Hizo/taktUuM1VRV47SjZD3b3ODNvD6hrJqUQ==
+X-Received: by 2002:a05:600c:1f0b:b0:431:44f6:566f with SMTP id 5b1f17b1804b1-432df72a4f1mr408875e9.13.1731614128417;
+        Thu, 14 Nov 2024 11:55:28 -0800 (PST)
+Received: from costa-tp.redhat.com ([2a00:a041:e280:5300:9068:704e:a31a:c135])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab7878esm31296305e9.14.2024.11.14.11.55.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 11:55:27 -0800 (PST)
+From: Costa Shulyupin <costa.shul@redhat.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Costa Shulyupin <costa.shul@redhat.com>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	=?UTF-8?q?Ren=C3=A9=20Nyffenegger?= <mail@renenyffenegger.ch>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] scripts/tags.sh: Tag timer definitions
+Date: Thu, 14 Nov 2024 21:55:15 +0200
+Message-ID: <20241114195521.3073881-1-costa.shul@redhat.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Ricardo,
+Tag id, defined with DEFINE_TIMER(id, ...)
+and ignore usages of DEFINE_TIMER itself.
 
-On Thu, 2024-11-14 at 19:10 +0000, Ricardo Ribalda wrote:
->=20
-> +	},
-> +	{
-> +		.id		=3D V4L2_CID_UVC_REGION_OF_INTEREST_AUTO,
-> +		.entity		=3D UVC_GUID_UVC_CAMERA,
-> +		.selector	=3D UVC_CT_REGION_OF_INTEREST_CONTROL,
-> +		.size		=3D 16,
-> +		.offset		=3D 64,
-> +		.v4l2_type	=3D V4L2_CTRL_TYPE_BITMASK,
-> +		.data_type	=3D UVC_CTRL_DATA_TYPE_BITMASK,
-> +		.name		=3D "Region Of Interest Auto Controls",
-> +	},
->  };
-> =20
+Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
+---
+ scripts/tags.sh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Wouldn't be better to use 8 V4L2_CTRL_TYPE_BOOLEAN controls for this?
-
-Thanks,
-Gergo
+diff --git a/scripts/tags.sh b/scripts/tags.sh
+index b21236377998..7102f14fc775 100755
+--- a/scripts/tags.sh
++++ b/scripts/tags.sh
+@@ -188,6 +188,7 @@ regex_c=(
+ 	'/^PCI_OP_WRITE([[:space:]]*\(\w*\).*[1-4])/pci_bus_write_config_\1/'
+ 	'/\<DEFINE_\(RT_MUTEX\|MUTEX\|SEMAPHORE\|SPINLOCK\)([[:space:]]*\([[:alnum:]_]*\)/\2/v/'
+ 	'/\<DEFINE_\(RAW_SPINLOCK\|RWLOCK\|SEQLOCK\)([[:space:]]*\([[:alnum:]_]*\)/\2/v/'
++	'/\<DEFINE_TIMER(\([^,)]*\),/\1/'
+ 	'/\<DECLARE_\(RWSEM\|COMPLETION\)([[:space:]]*\([[:alnum:]_]\+\)/\2/v/'
+ 	'/\<DECLARE_BITMAP([[:space:]]*\([[:alnum:]_]\+\)/\1/v/'
+ 	'/\(^\|\s\)\(\|L\|H\)LIST_HEAD([[:space:]]*\([[:alnum:]_]*\)/\3/v/'
+@@ -260,7 +261,7 @@ exuberant()
+ 	# identifiers to ignore by ctags
+ 	local ign=(
+ 		ACPI_EXPORT_SYMBOL
+-		DEFINE_{TRACE,MUTEX}
++		DEFINE_{TRACE,MUTEX,TIMER}
+ 		EXPORT_SYMBOL EXPORT_SYMBOL_GPL
+ 		EXPORT_TRACEPOINT_SYMBOL EXPORT_TRACEPOINT_SYMBOL_GPL
+ 		____cacheline_aligned ____cacheline_aligned_in_smp
+-- 
+2.47.0
 
 
