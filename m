@@ -1,213 +1,213 @@
-Return-Path: <linux-kernel+bounces-409232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA9BC9C895E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:00:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C4279C895D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:59:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3C92B25065
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:55:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A9C2B23C8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CF51F9A9E;
-	Thu, 14 Nov 2024 11:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3072D1F9A82;
+	Thu, 14 Nov 2024 11:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="Rt4/nLE1"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YvekuNyV"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1E31F942F
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4205F1F8931
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731585322; cv=none; b=VFgVWBNCQIjyT9mAwcOUhxsPIS6k76MBb35a5wpkbeKl74cFKETuKjmYIbK1htZDcdRESBNsTRvb9nU39R/fS/hPbu/QczXZP6F/DtDZvrQzCUcGiUNJ+9oLJnst4cdg0vBNsVdsnnvhVCpPiOr/N7LNryjIFyVRAbzzbpUepJQ=
+	t=1731585386; cv=none; b=ulQymJdaLmEdfO0qbp+KZ5tZXFk7mz2IwwP/NNo6Aiwz6nhIAJWgk2HYOHKeUGh8oevfJmnon+5VMVgYrfOtmmB4hSB9avrh681tDQZx6sHFxe0IHJPJKEDMS5smdIQmGYO1b6mRvSZO+6fVpeVrrBQJqyxL6zar9Mvk2r+fsB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731585322; c=relaxed/simple;
-	bh=mFAbYoNztpIV+4IFZ9jTX8TLDXeEO7op1F9KNzb1l1c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=axmJoeNIrlLFUhxVRukfDz0loPEOcF5a4k2/XJNKyzVrwlcFTL3bOECXg4XbEE8r8Q8OmYAEt5jvSLq1iB6D9Xrhdq67dYbVCYb93z85jCszN/irfTxObldG4P5loK+VX5+R1hROWrMiNbkQnbznsUJW+CYxz0ugNSbazgfJcVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=Rt4/nLE1; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9a977d6cc7so37009466b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 03:55:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura.hr; s=sartura; t=1731585318; x=1732190118; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TykqvJZu7oobTkYrqspWrFCa8xwHBaWMCZeSIBVlCZw=;
-        b=Rt4/nLE1rEMwBkYzxioe6bCmT4N4ICRDMUUl4fuyaBwzXrHA2bmEo8YU/gvEvs2dEf
-         VbtCZgOHmy9qi4dcBzg8B+qA84UBkFlh1jusFm3yImJiswqRF5nWvwDCwEg2qdDRdxcr
-         tjFzZ1XlnHKRLa/gZvD2OURBIg0KT7blDjYOAU1cWp+oYdNq7yrY7wQFzYjVFbNUFHFu
-         ClObCN1mjTyW0yxd4lKE4nY1K3l7toWOrzX9d9T2I44wJ4O7xcghSZOdz1cu5LUDFn2o
-         0NhaR75mxe3wpBueB/WTPYAtHdhdtfa6HhPZzG/xPiD/nBAZdg0RC8QvOc0qgNFFcSn1
-         UHxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731585318; x=1732190118;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TykqvJZu7oobTkYrqspWrFCa8xwHBaWMCZeSIBVlCZw=;
-        b=ORo5ad1zU+4JvMvpShMLfnzSVsNV57TdGs2EkuIVxWlVjcHKz2FcMxt9h9+ICJyJPL
-         owobMDTwEBiuDoBpgl6Yimw5zMuTbzL9UfgJiSpvTOat4FabS20PWQZkjJk+1+NmlCca
-         STY1M9yxha9dxF8nWTqaDNqk3/fYSSXqlPhmGXtUcOdm0AQOuyhglBXjOKIV+PzEA6O0
-         LsH2RwL0Y7g8W2z9Q8fJ33n1tGJGRUvgLuQLZe/ZoJXY6gllYjpkz7MfwdluO70T1sF0
-         6efRs3u+6du4cRwXgwfqAeRdcAxe5WrdfqeVryBnGtBYYgyQQDx5OSLDtO8r4vK3cYIZ
-         00dA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXhYrqmEHMQdtyJ4WhEqXMm5OeP2SAulWqx3HA1T2XGMDtIYVeSGfieQCJrK+Jxkjx4RJxJd/4bpS6TWk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMZj26gVEdCXpp4eGiBt2D8edmCdfPeXNCvcLVXHFYwh5jl3Y+
-	ybjUB7CIlB5GWDHQ4LU/lh1LTTeCKGnAHGbnONSHdPC1sEvzOSwU99F0/GRI5us=
-X-Google-Smtp-Source: AGHT+IE/1TBRDr0zrGfCx62LhZdMXdC4i7gKZ6O1OikOKLIOjOf9iNHmbMOKdG/5UJAwkvlasJ5yig==
-X-Received: by 2002:a05:6402:1cc1:b0:5ce:fa33:6c9f with SMTP id 4fb4d7f45d1cf-5cf77ecc8d2mr1814721a12.27.1731585317798;
-        Thu, 14 Nov 2024 03:55:17 -0800 (PST)
-Received: from [192.168.3.32] (cpe-188-129-45-253.dynamic.amis.hr. [188.129.45.253])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf79b8a6f7sm495171a12.18.2024.11.14.03.55.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 03:55:17 -0800 (PST)
-Message-ID: <296336ea-9181-4c85-92d4-4cee1866822e@sartura.hr>
-Date: Thu, 14 Nov 2024 12:55:14 +0100
+	s=arc-20240116; t=1731585386; c=relaxed/simple;
+	bh=9O1Cc7Fz4E3w41SzCTayrWJ1BSC07hGck2ohtpLALeU=;
+	h=MIME-Version:Content-Type:Date:Message-ID:Subject:CC:To:From:
+	 In-Reply-To:References; b=fuR8KOq3NM/26rx5PUwnYsrXPE808a+bsRAGoxN0+0xq+4fnukJSvWpSKYWjP9QkeDz1nH0UQO9Sz9HnxtVxF+5IsqvMSkUcHvTFaAho9+BiMfpH+EV/LDfIzTSotT7OIKguCt8WpFFMVzW3HO6AJiNq/ZExhpIqUZOxcNtD39s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YvekuNyV; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241114115622euoutp02b71cae1a5697951f67c6ee3f61ac129d~H07slEv1C0291602916euoutp02a
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:56:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241114115622euoutp02b71cae1a5697951f67c6ee3f61ac129d~H07slEv1C0291602916euoutp02a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1731585382;
+	bh=XA7yrOwCYI+Qbk3Ulc9bKec7+IuJiUk1B3sCREYaaR8=;
+	h=Date:Subject:CC:To:From:In-Reply-To:References:From;
+	b=YvekuNyVJmh7zVMZDs476FsrLLL2iMXfBHowfS+EsKAWEf0SDmW7XyrCmiqQou/Lg
+	 w2Ei5IG6G2GGWdx+3P09rufkq8PGjt79xAN5NTTuet2y4SMlZQIt5BxUcVWM4knGDz
+	 lunjaXxA3sZu7rFhvzj/T6t4GdNxAuHH0gmw1aOs=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20241114115622eucas1p10ff05ed2890e03c1e0240f305333471f~H07sVB0C12031820318eucas1p1M;
+	Thu, 14 Nov 2024 11:56:22 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id AC.5E.20821.665E5376; Thu, 14
+	Nov 2024 11:56:22 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20241114115621eucas1p1769d552cfbba63da7cf4c4f01ddd9a2f~H07r-G2U72032920329eucas1p1b;
+	Thu, 14 Nov 2024 11:56:21 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241114115621eusmtrp1845bed0aae06916369cd3c24426677ef~H07r_hbWQ1181011810eusmtrp1O;
+	Thu, 14 Nov 2024 11:56:21 +0000 (GMT)
+X-AuditID: cbfec7f2-b11c470000005155-28-6735e5665b1d
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 3F.7F.19654.565E5376; Thu, 14
+	Nov 2024 11:56:21 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241114115621eusmtip2ad1470449f1dd496c22d03bddef74495~H07rz-YYf2619326193eusmtip2R;
+	Thu, 14 Nov 2024 11:56:21 +0000 (GMT)
+Received: from mail.scsc.local (106.110.32.87) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Thu, 14 Nov 2024 11:56:20 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 0/8] net: lan969x: add RGMII support
-To: Daniel Machon <daniel.machon@microchip.com>,
- UNGLinuxDriver@microchip.com, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Lars Povlsen <lars.povlsen@microchip.com>,
- Steen Hegelund <Steen.Hegelund@microchip.com>,
- Horatiu Vultur <horatiu.vultur@microchip.com>,
- Russell King <linux@armlinux.org.uk>, jacob.e.keller@intel.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20241113-sparx5-lan969x-switch-driver-4-v2-0-0db98ac096d1@microchip.com>
-Content-Language: en-US
-From: Robert Marko <robert.marko@sartura.hr>
-In-Reply-To: <20241113-sparx5-lan969x-switch-driver-4-v2-0-0db98ac096d1@microchip.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Date: Thu, 14 Nov 2024 12:56:20 +0100
+Message-ID: <D5LVSE2UF1MA.1TZUC95PN6Y1Q@samsung.com>
+Subject: Re: [PATCH 2/2] module: Block modules by Tuxedo from accessing GPL
+ symbols
+CC: Werner Sembach <wse@tuxedocomputers.com>, <tux@tuxedocomputers.com>,
+	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>,
+	<linux-modules@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Thorsten
+	Leemhuis <linux@leemhuis.info>
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Luis
+ Chamberlain" <mcgrof@kernel.org>
+From: Daniel Gomez <da.gomez@samsung.com>
+X-Mailer: aerc 0.18.2-67-g7f69618ac1fd
+In-Reply-To: <20241114103133.547032-6-ukleinek@kernel.org>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPKsWRmVeSWpSXmKPExsWy7djPc7ppT03TDRobuSwu75rDZtEw+zur
+	xeqd0RY3JjxltFj65R2zxdIVb4FCq+axWPycf5HV4vzSpawOnB4LNpV6bFrVyeZxqPkBk8f6
+	LVdZPP4ta2Dz+LxJLoAtissmJTUnsyy1SN8ugStj0d1LTAV7RStaPrSzNTDOEepi5OSQEDCR
+	aLm/iKmLkYtDSGAFo8TJyy2MEM4XRon3h3tYIZzPjBL/v7Www7RsmTgfqmU5UKJzDitIAqxq
+	y143CHsno8Ti/xogNq+AoMTJmU9YQGxmAW2JZQtfM0PYmhKt23+DDWURUJXo+nScEaLeRKJ1
+	5y2wemGBUIm38w6ygSxjFmhikvi0bBkTSEJEIFXi79TnYA1sQIP2ndwEdZ2axP/+iWDNnAJW
+	EucWzWaDiCtKzJi4kgXCrpU4teUW2AcSAs2cEu8Ot7NCJFwkDi9/wgxhC0u8Or4FaqiMxOnJ
+	PVDN6RJL1s2Csgsk9tyeBdTLAWRbS/SdyYEIO0os+9XHCBHmk7jxVhDiXz6JSdumM0OEeSU6
+	2oQmMKrMQgqhWUghNAsphBYwMq9iFE8tLc5NTy02zEst1ytOzC0uzUvXS87P3cQITEOn/x3/
+	tINx7quPeocYmTgYDzFKcDArifCecjZOF+JNSaysSi3Kjy8qzUktPsQozcGiJM6rmiKfKiSQ
+	nliSmp2aWpBaBJNl4uCUamBSO+yz0OMQ+8wYx4OXrQU/WIe337+okD41t3ZD6pHFmlsqUuNP
+	HY+x6GI9v+Fkdq5Qq7Pkt8qFK3Yoad7VdXkjxMvC4egvsPLbk11ugadyD+Uf9lryfIJzVM3e
+	mi36B/ds/GG38PPuu6rHd9fJPYyI4sudtu5kq/n5XL4lXDIVDB/u3/b0aFoTbXjF2NyAvdcx
+	Zv8Tx+XOy8/JG6jN+RT5b8efeWd6wh29srumBrHtMah65nQm/v8Vyat9Rtwd/6Wio6Tn6gtP
+	NfSXcegJuPL4wmrdXW133jjFXJUpltu6inGfwZt/rCuu3nTyc5d+bCXfrvL9ZU8ykzz3mvnz
+	V/DbzP+4ToopsXN27x+GCZuUWIozEg21mIuKEwHRBTI5sgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRmVeSWpSXmKPExsVy+t/xe7qpT03TDc7261tc3jWHzaJh9ndW
+	i9U7oy1uTHjKaLH0yztmi6Ur3gKFVs1jsfg5/yKrxfmlS1kdOD0WbCr12LSqk83jUPMDJo/1
+	W66yePxb1sDm8XmTXABblJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1N
+	SmpOZllqkb5dgl7GoruXmAr2ila0fGhna2CcI9TFyMkhIWAisWXifKYuRi4OIYGljBJ3fj1i
+	gkjISGz8cpUVwhaW+HOtiw2i6COjxMIVrVDOTkaJWb2/wKp4BQQlTs58wgJiMwtoSyxb+JoZ
+	wtaUaN3+mx3EZhFQlej6dJwRot5EonXnLbB6YYFQibfzDoINZRZoYpKY9nwFWLOIQKrE36nP
+	wRrYgAbtO7mJHeIkNYn//RNZIK7YzSjxYUUf2BWcAlYS5xbNZoMoUpSYMXElC4RdK/H57zPG
+	CYwis5AcOwvJsbOQHLuAkXkVo0hqaXFuem6xkV5xYm5xaV66XnJ+7iZGYLRuO/Zzyw7Gla8+
+	6h1iZOJgPMQowcGsJMJ7ytk4XYg3JbGyKrUoP76oNCe1+BCjKdDXE5mlRJPzgekiryTe0MzA
+	1NDEzNLA1NLMWEmcl+3K+TQhgfTEktTs1NSC1CKYPiYOTqkGpqaweK/5/C0VHQ8YL7ROs2b/
+	+WZiysxzxtsnLW8/UykW07JWZkXFdaGiz1+n2rnnbYubcX6iVMWFp8zxW3YlH3rwXy51f9x8
+	15UtOZ6+Pn5+h1/yiBx4NOmf6nbRhfF2ys5F5fdfLezbsLl0Y+/vGe7lDg/UIisO13UmOWwI
+	mHfz479HNfK5sjJPu31al+lHbvBY8NyqKlJov2336pvbP+45/kjonEy6pIH+46LIX/eYog+o
+	vDs4q495Qohq0dkDKyecmG7PrPtsHfMdm4Lfh3b9SHg5ke3G46MMb+7P0jn9Xe/JMbmwklei
+	b21DkzdNft2huF2p5cH+q3WrH0/+MPuEh126U/0yhZTHpT9tj+QosRRnJBpqMRcVJwIAqJSt
+	q18DAAA=
+X-CMS-MailID: 20241114115621eucas1p1769d552cfbba63da7cf4c4f01ddd9a2f
+X-Msg-Generator: CA
+X-RootMTR: 20241114103157eucas1p13c3e82272fabc2cdf5cba8ec70d2a871
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20241114103157eucas1p13c3e82272fabc2cdf5cba8ec70d2a871
+References: <20241114103133.547032-4-ukleinek@kernel.org>
+	<CGME20241114103157eucas1p13c3e82272fabc2cdf5cba8ec70d2a871@eucas1p1.samsung.com>
+	<20241114103133.547032-6-ukleinek@kernel.org>
 
-
-On 13. 11. 2024. 22:11, Daniel Machon wrote:
-> == Description:
+On Thu Nov 14, 2024 at 11:31 AM CET, Uwe Kleine-K=C3=B6nig wrote:
+> Tuxedo licenses the modules used on their hardware under GPLv3+, to
+> "keep control of the upstream pacing" =E2=80=93 and want to re-license th=
+e code
+> while upstreaming.
 >
-> This series is the fourth of a multi-part series, that prepares and adds
-> support for the new lan969x switch driver.
+> They were asked to then at least not use MODULE_LICENSE("GPL") which
+> declares compatibility to the kernel's GPLv2. They accepted the pull
+> request and shortly after reverted the change and so continue to lie
+> about the license.
 >
-> The upstreaming efforts is split into multiple series (might change a
-> bit as we go along):
+> So teach the module loader that these modules are proprietary despite
+> their declaration to be GPLv2 compatible "until the legal stuff is
+> sorted out".
 >
->          1) Prepare the Sparx5 driver for lan969x (merged)
->
->          2) Add support for lan969x (same basic features as Sparx5
->             provides excl. FDMA and VCAP, merged).
->
->          3) Add lan969x VCAP functionality (merged).
->
->      --> 4) Add RGMII support.
->
->          5) Add FDMA support.
->
-> == RGMII support:
->
-> The lan969x switch device includes two RGMII interfaces (port 28 and 29)
-> supporting data speeds of 1 Gbps, 100 Mbps and 10 Mbps.
->
-> Details are in the commit description of the patches.
->
-> == Patch breakdown:
->
-> Patch #1 does some preparation work.
->
-> Patch #2 adds new function: is_port_rgmii() to the match data ops.
->
-> Patch #3 uses the is_port_rgmii() in a number of places.
->
-> Patch #4 uses the phy_interface_mode_is_rgmii() in a number of places.
->
-> Patch #5 adds checks for RGMII PHY modes in sparx5_verify_speeds().
->
-> Patch #6 adds registers required to configure RGMII.
->
-> Patch #7 adds RGMII implementation.
->
-> Patch #8 document RGMII delays.
->
-> To: UNGLinuxDriver@microchip.com
-> To: Andrew Lunn <andrew+netdev@lunn.ch>
-> To: David S. Miller <davem@davemloft.net>
-> To: Eric Dumazet <edumazet@google.com>
-> To: Jakub Kicinski <kuba@kernel.org>
-> To: Paolo Abeni <pabeni@redhat.com>
-> To: Lars Povlsen <lars.povlsen@microchip.com>
-> To: Steen Hegelund <Steen.Hegelund@microchip.com>
-> To: Horatiu Vultur <horatiu.vultur@microchip.com>
-> To: Russell King <linux@armlinux.org.uk>
-> To: jacob.e.keller@intel.com
-> To: robh@kernel.org
-> To: krzk+dt@kernel.org
-> To: conor+dt@kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: netdev@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
->
-> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
-
-Tested-by: Robert Marko <robert.marko@sartura.hr>
-
+> Link: https://protect2.fireeye.com/v1/url?k=3D02b4686b-633f7d5d-02b5e324-=
+74fe485cbff1-8cd9af635fd1f7c7&q=3D1&e=3D5f0a08bc-f529-4e41-a7a1-5aa45c54b8d=
+9&u=3Dhttps%3A%2F%2Fgitlab.com%2Ftuxedocomputers%2Fdevelopment%2Fpackages%2=
+Ftuxedo-drivers%2F-%2Fcommit%2Fa8c09b6c2ce6393fe39d8652d133af9f06cfb427
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <ukleinek@kernel.org>
 > ---
-> Changes in v2:
+>  kernel/module/main.c | 33 +++++++++++++++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
 >
->    Most changes are in patch #7. RGMII implementation has been moved to
->    it's own file lan969x_rgmii.c.
->
->    Details:
->
->      - Use ETH_P_8021Q and ETH_P_8021AD instead of the Sparx5 provided
->        equivalents (patch #7).
->      - Configure MAC delays through "{rx,tx}-internal-delay-ps"
->        properties (patch #7).
->      - Add selectors for all the phase shifts that the hardware supports
->        (instead of only 2.0 ns, patch #7).
->      - Add selectors for all the port speeds (instead of only 1000 mbps.)
->      - Document RGMII delays in dt-bindings.
->
->    - Link to v1: https://lore.kernel.org/r/20241106-sparx5-lan969x-switch-driver-4-v1-0-f7f7316436bd@microchip.com
->
-> ---
-> Daniel Machon (8):
->        net: sparx5: do some preparation work
->        net: sparx5: add function for RGMII port check
->        net: sparx5: use is_port_rgmii() throughout
->        net: sparx5: use phy_interface_mode_is_rgmii()
->        net: sparx5: verify RGMII speeds
->        net: lan969x: add RGMII registers
->        net: lan969x: add RGMII implementation
->        dt-bindings: net: sparx5: document RGMII MAC delays
->
->   .../bindings/net/microchip,sparx5-switch.yaml      |  20 ++
->   drivers/net/ethernet/microchip/lan969x/Makefile    |   2 +-
->   drivers/net/ethernet/microchip/lan969x/lan969x.c   |   5 +
->   drivers/net/ethernet/microchip/lan969x/lan969x.h   |  10 +
->   .../net/ethernet/microchip/lan969x/lan969x_rgmii.c | 237 +++++++++++++++++++++
->   .../net/ethernet/microchip/sparx5/sparx5_main.c    |  29 ++-
->   .../net/ethernet/microchip/sparx5/sparx5_main.h    |   3 +
->   .../ethernet/microchip/sparx5/sparx5_main_regs.h   | 145 +++++++++++++
->   .../net/ethernet/microchip/sparx5/sparx5_phylink.c |   3 +
->   .../net/ethernet/microchip/sparx5/sparx5_port.c    |  57 +++--
->   .../net/ethernet/microchip/sparx5/sparx5_port.h    |   5 +
->   11 files changed, 488 insertions(+), 28 deletions(-)
-> ---
-> base-commit: 12079a59ce52e72a342c49cfacf0281213fd6f32
-> change-id: 20241104-sparx5-lan969x-switch-driver-4-d59b7820485a
->
-> Best regards,
+> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> index 878191c65efc..46badbb09d5e 100644
+> --- a/kernel/module/main.c
+> +++ b/kernel/module/main.c
+> @@ -2338,6 +2338,39 @@ static const char *module_license_offenders[] =3D =
+{
+> =20
+>  	/* lve claims to be GPL but upstream won't provide source */
+>  	"lve",
+> +
+> +	/*
+> +	 * Tuxedo distributes their kernel modules under GPLv3, but intentially
+Typo here.
+> +	 * lies in their MODULE_LICENSE() calls.
+> +	 * See https://protect2.fireeye.com/v1/url?k=3D60e8a9e4-0163bcd2-60e922=
+ab-74fe485cbff1-eff87fdcdb83953a&q=3D1&e=3D5f0a08bc-f529-4e41-a7a1-5aa45c54=
+b8d9&u=3Dhttps%3A%2F%2Fgitlab.com%2Ftuxedocomputers%2Fdevelopment%2Fpackage=
+s%2Ftuxedo-drivers%2F-%2Fcommit%2Fa8c09b6c2ce6393fe39d8652d133af9f06cfb427
+> +	 */
+> +	"gxtp7380",
+> +	"ite_8291",
+> +	"ite_8291_lb",
+> +	"ite_8297",
+> +	"ite_829x",
+> +	"stk8321",
+> +	"tuxedo_compatibility_check",
+> +	"tuxedo_io",
+> +	"tuxedo_nb02_nvidia_power_ctrl",
+> +	"tuxedo_nb04_keyboard",
+> +	"tuxedo_nb04_wmi_ab",
+> +	"tuxedo_nb04_wmi_bs",
+> +	"tuxedo_nb04_sensors",
+> +	"tuxedo_nb04_power_profiles",
+> +	"tuxedo_nb04_kbd_backlight",
+> +	"tuxedo_nb05_keyboard",
+> +	"tuxedo_nb05_kbd_backlight",
+> +	"tuxedo_nb05_power_profiles",
+> +	"tuxedo_nb05_ec",
+> +	"tuxedo_nb05_sensors",
+> +	"tuxedo_nb05_fan_control",
+> +	"tuxi_acpi",
+> +	"tuxedo_tuxi_fan_control",
+> +	"clevo_wmi",
+> +	"tuxedo_keyboard",
+> +	"clevo_acpi",
+> +	"uniwill_wmi",
+>  };
+
+This does not prevent module rename on their side and still bypass the
+module license taint check right?
+
+> =20
+>  /*
+
 
