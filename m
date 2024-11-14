@@ -1,167 +1,96 @@
-Return-Path: <linux-kernel+bounces-409807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 563579C91EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:54:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 145419C91D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:45:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C148282D6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:54:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADBE6B24996
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A1719ADA2;
-	Thu, 14 Nov 2024 18:54:21 +0000 (UTC)
-Received: from cosmicgizmosystems.com (cosgizsys.com [63.249.102.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C2B199E92;
+	Thu, 14 Nov 2024 18:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CQfmrozI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552272C190;
-	Thu, 14 Nov 2024 18:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.249.102.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59144197521;
+	Thu, 14 Nov 2024 18:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731610461; cv=none; b=U3OSAtyOJlUxdPCbJp8GCjJGYHF/L7MMbagcfhr/kIOJ8umRm0cnG+E+sCJ2XNYSJHNStiS09pqYbeqLfi1/fM6Dh1boqC0qO9VIv2BnwSvx4PHCvtO44Xjnfr3jLkEnWaJUfwbDQ+yacQ7lLO0YgIOtj4OqNIwmaf7Q0jpfKxQ=
+	t=1731609900; cv=none; b=q9z/NqfSZxu9S7MrWWEscfJNf6ORWV7Epluao0egUSVae1V1/esJOIKvyjMWr3NivDzxiFNT8KpISpbjLQ5Od9uJlCh6tDKL/z/sLq2XaP2+MuI4bYRvsYt9gJf6Cpmbz5nlenrh3j4blvfbJ1raJZGQ7L1trYduYV1Mtom3Go4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731610461; c=relaxed/simple;
-	bh=nP0/dNyuYxl/up1JgcBU4+hV/85OLUjwiQ8BfozWENQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m+r4AAi/m4UkynKI1SYxlvXuvKfdRp5dLxypzJ7a/2PjEhymGwVptlBs9/4vpUF8pda/Mb2iiwQ6UZvmKZrOebLhT04tvZ1tIzNEi31bo31VSxw8amauQ66S0i1dldJoSlWAiGRTycHdbzDDo3sj99kdvZW8HZw0WZHwZ4tNLpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cosmicgizmosystems.com; spf=pass smtp.mailfrom=cosmicgizmosystems.com; arc=none smtp.client-ip=63.249.102.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cosmicgizmosystems.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cosmicgizmosystems.com
-Received: from [10.0.0.101] (c-73-190-111-195.hsd1.wa.comcast.net [73.190.111.195])
-	by host11.cruzio.com (Postfix) with ESMTPSA id 684B629804EC;
-	Thu, 14 Nov 2024 10:44:53 -0800 (PST)
-Message-ID: <4717b9c4-8d9f-40d8-903e-68be30ac7d82@cosmicgizmosystems.com>
-Date: Thu, 14 Nov 2024 10:44:52 -0800
+	s=arc-20240116; t=1731609900; c=relaxed/simple;
+	bh=5do6qDL9TuXty6Mc70FLBHtfezLZp1QS+cVEkOlzWrM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lX05ibj6URFZpc/m84qk5uXeu3XRxpoRhViwGJJqfgfCvSyjgtqylMp0iqV4dWPflmdjhp8c/KBWjp30tSWCKhQl58uDEusXLQoyYZKk6gAvuyq3An2Hj7kkv8q+FkX50MFiUGMF+TuE4ePCrlbzNY9sUbKVJIpC4DwousHHWB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CQfmrozI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A41C9C4CECD;
+	Thu, 14 Nov 2024 18:44:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731609899;
+	bh=5do6qDL9TuXty6Mc70FLBHtfezLZp1QS+cVEkOlzWrM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CQfmrozI7s0BkLt5ojkh/j8dDWsRztEejzf3U89usoQWxYBDaxBYe0ZLwxW/ucXU/
+	 ypCq7PgnQBqxr7g8YQBJKUD6dcwUrvzR96qYhYTImXoNshmpfBw+C+hb00nSYPpDTI
+	 +1z0arezEquuMOAHfqtBOSOFB3Wu53tATjf3ul0WrQRoLkYfkkzlhnzCPDBrr8rNB+
+	 W7FkAsnGh5GsKnKd6aOAsI8oT20QfyA33QQRKUMhsMMbC//dlJsgLdwHVAOU2MavrA
+	 1LmNJXhFy+4vbapcI5zbgSuZZX5SjOvwKDZ0ROegLihcItX2JMAZvvfqj7jh1SnszP
+	 aaCAiBUigBKyA==
+Date: Thu, 14 Nov 2024 08:44:58 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>, Phil Auld <pauld@redhat.com>
+Subject: Re: [PATCH] cgroup/cpuset: Disable cpuset_cpumask_can_shrink() test
+ if not load balancing
+Message-ID: <ZzZFKpuX-edQ1GuO@slm.duckdns.org>
+References: <20241114181915.142894-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ALSA: usb-audio: Fix control names for Plantronics/Poly
- Headsets
-To: Takashi Iwai <tiwai@suse.de>, Wade Wang <wade.wang@hp.com>
-Cc: perex@perex.cz, tiwai@suse.com, kl@kl.wtf, wangdicheng@kylinos.cn,
- k.kosik@outlook.com, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20241114061553.1699264-1-wade.wang@hp.com>
- <87plmythnv.wl-tiwai@suse.de>
-Content-Language: en-US
-From: Terry Junge <linuxhid@cosmicgizmosystems.com>
-In-Reply-To: <87plmythnv.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241114181915.142894-1-longman@redhat.com>
 
-Thanks Takashi,
-
-On 11/13/24 11:10 PM, Takashi Iwai wrote:
-> On Thu, 14 Nov 2024 07:15:53 +0100,
-> Wade Wang wrote:
->>
->> Add a control name fixer for all headsets with VID 0x047F.
->>
->> Signed-off-by: Terry Junge <linuxhid@cosmicgizmosystems.com>
->> Signed-off-by: Wade Wang <wade.wang@hp.com>
+On Thu, Nov 14, 2024 at 01:19:15PM -0500, Waiman Long wrote:
+> With some recent proposed changes [1] in the deadline server code,
+> it has caused a test failure in test_cpuset_prs.sh when a change
+> is being made to an isolated partition. This is due to failing
+> the cpuset_cpumask_can_shrink() check for SCHED_DEADLINE tasks at
+> validate_change().
 > 
-> Thanks for the patch, but from the description, it's not clear what
-> this patch actually does.  What's the control name fixer and how it
-> behaves?
-
-It will be better described in the v2 patch.
-
-It modifies names like
-
-Headset Earphone Playback Volume
-Headset Microphone Capture Switch
-Receive Playback Volume
-Transmit Capture Switch
-
-to
-
-Headset Playback Volume
-Headset Capture Switch
-
-so user space will bind to the headset's audio controls.
-
+> This is actually a false positive as the failed test case involves an
+> isolated partition with load balancing disabled. The deadline check
+> is not meaningful in this case and the users should know what they
+> are doing.
 > 
-> Also, are you sure that this can be applied to all devices of
-> Plantonics & co?  Including the devices in future.  I thought they had
-> so many different models.
-
-Yes, the quirk only modifies the control names that contain certain keywords.
-Additional keywords may have to be added to the list in the future.
-
+> Fix this by doing the cpuset_cpumask_can_shrink() check only when loading
+> balanced is enabled. Also change its arguments to use effective_cpus
+> for the current cpuset and user_xcpus() as an approiximation for the
+> target effective_cpus as the real effective_cpus hasn't been fully
+> computed yet as this early stage.
 > 
-> Last but not least, __build_feature_ctl() is no right place to add the
-> vendor-specific stuff.  There is already a common place in
-> mixer_quirks.c, e.g. snd_usb_mixer_fu_apply_quirk().  Please move the
-> fix-up to the appropriate place.
+> As the check isn't comprehensive, there may be false positives or
+> negatives. We may have to revise the code to do a more thorough check
+> in the future if this becomes a concern.
+> 
+> [1] https://lore.kernel.org/lkml/82be06c1-6d6d-4651-86c9-bcc828cbcb80@redhat.com/T/#t
+> 
+> Signed-off-by: Waiman Long <longman@redhat.com>
 
-I figured as much and I am currently testing with the function updated
-and moved to mixer_quirks.c and will be triggered by snd_usb_mixer_fu_apply_quirk().
+Applied to cgroup/for-6.13.
 
-> 
-> 
-> thanks,
-> 
-> Takashi
-> 
->> ---
->>  sound/usb/mixer.c | 30 ++++++++++++++++++++++++++++++
->>  1 file changed, 30 insertions(+)
->>
->> diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
->> index bd67027c7677..110d43ace4d8 100644
->> --- a/sound/usb/mixer.c
->> +++ b/sound/usb/mixer.c
->> @@ -1664,6 +1664,33 @@ static void check_no_speaker_on_headset(struct snd_kcontrol *kctl,
->>  	snd_ctl_rename(card, kctl, "Headphone");
->>  }
->>  
->> +static void fix_plt_control_name(struct snd_kcontrol *kctl)
->> +{
->> +	static const char * const names_to_remove[] = {
->> +		"Earphone",
->> +		"Microphone",
->> +		"Receive",
->> +		"Transmit",
->> +		NULL
->> +	};
->> +	const char * const *n2r;
->> +	char *dst, *src;
->> +	size_t len;
->> +
->> +	for (n2r = names_to_remove; *n2r; ++n2r) {
->> +		dst = strstr(kctl->id.name, *n2r);
->> +		if (dst != NULL) {
->> +			src = dst + strlen(*n2r);
->> +			len = strlen(src) + 1;
->> +			if ((char *)kctl->id.name != dst && *(dst - 1) == ' ')
->> +				--dst;
->> +			memmove(dst, src, len);
->> +		}
->> +	}
->> +	if (kctl->id.name[0] == '\0')
->> +		strscpy(kctl->id.name, "Headset", SNDRV_CTL_ELEM_ID_NAME_MAXLEN);
->> +}
->> +
->>  static const struct usb_feature_control_info *get_feature_control_info(int control)
->>  {
->>  	int i;
->> @@ -1780,6 +1807,9 @@ static void __build_feature_ctl(struct usb_mixer_interface *mixer,
->>  		if (!mapped_name)
->>  			check_no_speaker_on_headset(kctl, mixer->chip->card);
->>  
->> +		if (USB_ID_VENDOR(mixer->chip->usb_id) == 0x047f)
->> +			fix_plt_control_name(kctl);
->> +
->>  		/*
->>  		 * determine the stream direction:
->>  		 * if the connected output is USB stream, then it's likely a
->> -- 
->> 2.43.0
->>
+Thanks.
 
+-- 
+tejun
 
