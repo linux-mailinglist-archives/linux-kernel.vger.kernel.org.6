@@ -1,139 +1,145 @@
-Return-Path: <linux-kernel+bounces-409881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 362B09C92D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:03:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9D589C92DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:03:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E030B1F21F55
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:03:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A14431F2362D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0661A38E3;
-	Thu, 14 Nov 2024 20:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB301A9B5D;
+	Thu, 14 Nov 2024 20:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nuz6iWm+"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mbzswBpI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A051974EA
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 20:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEA01A38E3;
+	Thu, 14 Nov 2024 20:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731614606; cv=none; b=ItQO2fk2X5r2uULoujz4fccHkQXy66BVJbIwP55wpukhEabPyeXHxlVz+qUVO/P/NvHQ22vUkNF117aL70YquxbB8+fsd3bj9Mbcwm4VHzmjI2wK32o1lIGR2VJ1kHuSMj59Ekl1sEiTQI+dNFOwkzBUo4IfOuXkr/OpKkD9GwQ=
+	t=1731614624; cv=none; b=VPi58cAomZjvmjUqi9A4riLEyLglezbBtvGCjv0rdRPRDo24dhixBi/sO+KmaljX8zNY/4e7kqWdgZLvwV/dhWfLsthLsPNCzZ6riD4Aa9c7Wq10uqyZucBjcoaKi2mS4x3EYIUweUNM06pJyQDl1vdmZGDX0oISa505P48pszU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731614606; c=relaxed/simple;
-	bh=uN4TYUcdBvZnUKjVY+38/YVjBDOaPDFntj12jx6Dl7A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JMm1LH61bLNNAPmNbGMGNhv5sjxk5ep8yU5/QPLjd0cewecAW9BfATa0zfMkmOfhntveHlEjauCt0gc85nI0DC+5G5hFFt/RLFDeWH31Jx8VM209UxYbFKBg67A9/tnneaNfWVwcLMtEEWoGRh+h/PA6GGnif5dm2vq8a0d2oVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nuz6iWm+; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7206304f93aso853899b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 12:03:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731614604; x=1732219404; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=LcJAM+PKYkMOtdwiCS7fBXkCHNwR9hFBAB9pRay23v4=;
-        b=nuz6iWm+cldhE4/vZSzwmr/fmm5taesgZWssr3BXQSfPY5PuRH0/HiJy2ns9vahVB2
-         lYrjlcxUJS4B+sa5WWuXvjJuCorhHWbeNlukp4Ryf+/mO5gN9+Amfpm2Uu6DtBLBdsRC
-         1HZN+Sj0207KjTwY623mZqvcETlGwdTsDVf9Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731614604; x=1732219404;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LcJAM+PKYkMOtdwiCS7fBXkCHNwR9hFBAB9pRay23v4=;
-        b=rKuOKlOU73NodCfVTCkqyWH8OVFIUdqZimXaV6oK39QTrwgR4TvGM+3ouit9hsRzX9
-         zvSS3rYj+TIh9qcK0/hP0h65WcWQRR3z34zz43/5pmt4/crkrscfgF9VVZjbD6LrwD6M
-         /yMzl8OhX0UgaiOn6AgxbMJ7mzM+obeIFbyDLJZAzu+2fgyNG7g4RAWu5sZLNaGlKE8Z
-         HM3swhxGDfQ5utcYVIfGzKBhVEJ+MhBcXWpYWLCfLoW+NMkaV4Vd4c/rNb8uhZT35qHj
-         Pq8GzgLQFkt9lKhUTauaEJPqDHDsFzV6ypKU3D6oRAeJ+rPXVi9viKrnPuCiCW2nqCJT
-         XQ6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUvTAeCxM3ZYTV/L88HDVtxe/YRxk64yuGljbZSTblBm85TAzI/9KFFIzChb8e9Ro4dLeNkwpwBi+RY9j8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx0gF+EcAmbmp/AGJbn4pvnKrzf/lep5ZTboDYjAl+rLOkqJpl
-	Khuxpvt4VyHyfE3uF/c0Jkc21KnYWOc9j/sq0TRkB6WYd81uNXp0BfBTKgVYe8sOae3LTXW1HXg
-	=
-X-Google-Smtp-Source: AGHT+IHg83tAONi3XMs/r7MPgdFtqgVPk/UUMkS6cvR8nv4/+YNUZmJWM8vT3CFYYUZZ+y4ZtQkKEA==
-X-Received: by 2002:a05:6a00:80b:b0:71e:4655:59ce with SMTP id d2e1a72fcca58-724769f9eb4mr234315b3a.0.1731614604178;
-        Thu, 14 Nov 2024 12:03:24 -0800 (PST)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com. [209.85.216.46])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72476c8fc47sm36196b3a.0.2024.11.14.12.03.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 12:03:21 -0800 (PST)
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e3010478e6so869346a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 12:03:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV9b6m1V2DSZRHXnGNXH7kX+HcYEgN96H4QtSmTiYScxmsxt/ZXSKxiSML7QfesgIfgPjleZN9jt57/K08=@vger.kernel.org
-X-Received: by 2002:a17:90b:3ec1:b0:2ea:1463:ee2d with SMTP id
- 98e67ed59e1d1-2ea15582c39mr209304a91.33.1731614600666; Thu, 14 Nov 2024
- 12:03:20 -0800 (PST)
+	s=arc-20240116; t=1731614624; c=relaxed/simple;
+	bh=PA0F2kpO5gQp35yrtbIO1CSen39ZwxW00f7C8QKcD70=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Um41l2I1LfGtSj9upPtjA5s4ZTWfkllBfRbOeTIlB5OVu/tF/3iKAXJ7WZ4J+jR8Qki5bMJvEMj8GGeZ7Atx0HhOLnTq1n6XbnQKBiV8fQTxt2iZRc+Gj9s1sshpgZzz9COehxQGztAVr3A/M1tRjMIjDqFdyXJU0HRYhTnMjEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mbzswBpI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1DB3C4CECD;
+	Thu, 14 Nov 2024 20:03:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731614623;
+	bh=PA0F2kpO5gQp35yrtbIO1CSen39ZwxW00f7C8QKcD70=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mbzswBpIgXd2FH7CAGIOq4YGdtO/9v6QhnpaquVHdtXLMgVX3lKVhOyWPDFeonfoC
+	 W7NilIIsyNpASdSGt6wIxS36aqphekJcuVdxkNvUWaOiChJtjmvF50kaZR43h4QDVQ
+	 +boiAUyrGK99fa9p+iS0vtOql8Tnf9zWoFuSSIohv656YSkmYiR42kNVpVAAaU1UFE
+	 gSBmxYBihkWh90/GJd3Tgb2NHYEPm8mL90ZN5E4n656r/ZmsjsNhwQkxz0MnP850cF
+	 vVm266Ung2IXShB+SqPBIRx2OC3cEF1gio9af0bWhQWymzPSQicazLKklJ7tOP+3pw
+	 P7KAyXStKbbtg==
+Date: Thu, 14 Nov 2024 17:03:40 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: peterz@infradead.org, namhyung@kernel.org, irogers@google.com,
+	mingo@redhat.com, mark.rutland@arm.com, james.clark@linaro.org,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	adrian.hunter@intel.com, kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] perf trace: Fix perf trace tracing itself, creating
+ feedback loops
+Message-ID: <ZzZXnC9wdyFfihVn@x1>
+References: <20241030052431.2220130-1-howardchu95@gmail.com>
+ <ZzOLU-9QkwGHsb3w@x1>
+ <ZzY57jorg1wScxq5@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
- <20241114-uvc-roi-v15-18-64cfeb56b6f8@chromium.org> <ac8ea4ed606cbc7dfb15057babc29e49a152ef01.camel@irl.hu>
-In-Reply-To: <ac8ea4ed606cbc7dfb15057babc29e49a152ef01.camel@irl.hu>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Thu, 14 Nov 2024 21:03:07 +0100
-X-Gmail-Original-Message-ID: <CANiDSCuZTYDsQ3yCpFV_rhbQ+vFGJnsuU-jXwOacxZVbbzEPfw@mail.gmail.com>
-Message-ID: <CANiDSCuZTYDsQ3yCpFV_rhbQ+vFGJnsuU-jXwOacxZVbbzEPfw@mail.gmail.com>
-Subject: Re: [PATCH v15 18/19] media: uvcvideo: implement UVC v1.5 ROI
-To: Gergo Koteles <soyer@irl.hu>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
-	Ricardo Ribalda <ribalda@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, Yunke Cao <yunkec@chromium.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Yunke Cao <yunkec@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZzY57jorg1wScxq5@x1>
 
-Hi Gergo
+On Thu, Nov 14, 2024 at 02:57:02PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Tue, Nov 12, 2024 at 02:07:36PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Tue, Oct 29, 2024 at 10:24:31PM -0700, Howard Chu wrote:
+> > > There exists a pids_filtered map in augmented_raw_syscalls.bpf.c that
+> > > ceases to provide functionality after the BPF skeleton migration:
+> > > commit 5e6da6be3082 ("perf trace: Migrate BPF augmentation to use a skeleton")
+> > 
+> > Thanks, applied to perf-tools-next,
+> 
+> There is a problem with this patch, I'm investigating it now:
+> 
+> root@number:~# perf trace -e syscalls:sys_enter_exit_group true
+> perf: Segmentation fault
+> Obtained 12 stack frames.
+> perf() [0x6229a1]
+> perf() [0x622a8b]
+> /lib64/libc.so.6(+0x40d00) [0x7f704364fd00]
+> perf() [0x4b5f2e]
+> perf() [0x4ba3e6]
+> perf() [0x4c03bc]
+> perf() [0x4c0663]
+> perf() [0x4c07bc]
+> perf() [0x4c0b05]
+> /lib64/libc.so.6(+0x2a088) [0x7f7043639088]
+> /lib64/libc.so.6(__libc_start_main+0x8b) [0x7f704363914b]
+> perf() [0x412265]
+> Segmentation fault (core dumped)
+> root@number:~#
+> 
+> (gdb) run trace -e syscalls:sys_enter_exit_group true
+> Starting program: /root/bin/perf trace -e syscalls:sys_enter_exit_group true
+> 
+> This GDB supports auto-downloading debuginfo from the following URLs:
+>   <https://debuginfod.fedoraproject.org/>
+> Enable debuginfod for this session? (y or [n]) y
+> Debuginfod has been enabled.
+> To make this setting permanent, add 'set debuginfod enabled on' to .gdbinit.
+> [Thread debugging using libthread_db enabled]
+> Using host libthread_db library "/lib64/libthread_db.so.1".
+> [Detaching after fork from child process 1965197]
+> 
+> Program received signal SIGSEGV, Segmentation fault.
+> trace__run (trace=0x7fffffffa5e0, argc=1, argv=0x7fffffffde90) at builtin-trace.c:4330
+> 4330		trace->filter_pids.map = trace->skel->maps.pids_filtered;
+> (gdb) bt
+> #0  trace__run (trace=0x7fffffffa5e0, argc=1, argv=0x7fffffffde90) at builtin-trace.c:4330
+> #1  0x00000000004ba3e6 in cmd_trace (argc=1, argv=0x7fffffffde90) at builtin-trace.c:5490
+> #2  0x00000000004c03bc in run_builtin (p=0xec4068 <commands+648>, argc=4, argv=0x7fffffffde90) at perf.c:351
+> #3  0x00000000004c0663 in handle_internal_command (argc=4, argv=0x7fffffffde90) at perf.c:404
+> #4  0x00000000004c07bc in run_argv (argcp=0x7fffffffdc7c, argv=0x7fffffffdc70) at perf.c:448
+> #5  0x00000000004c0b05 in main (argc=4, argv=0x7fffffffde90) at perf.c:560
+> (gdb) p trace->skel
+> $1 = (struct augmented_raw_syscalls_bpf *) 0x0
+> (gdb)
+> 
+> I.e. when we specify a syscall event tracepoint, we expect to use
+> augmentation, but are not setting it up.
 
-Sorry, I forgot to reply to your comment in v14.
+We can't assume that trace->skel will be always set, as it is only
+initialized if trace->trace_syscalls is set, so I added this patch on
+top of yours:
 
-On Thu, 14 Nov 2024 at 20:53, Gergo Koteles <soyer@irl.hu> wrote:
->
-> Hi Ricardo,
->
-> On Thu, 2024-11-14 at 19:10 +0000, Ricardo Ribalda wrote:
-> >
-> > +     },
-> > +     {
-> > +             .id             = V4L2_CID_UVC_REGION_OF_INTEREST_AUTO,
-> > +             .entity         = UVC_GUID_UVC_CAMERA,
-> > +             .selector       = UVC_CT_REGION_OF_INTEREST_CONTROL,
-> > +             .size           = 16,
-> > +             .offset         = 64,
-> > +             .v4l2_type      = V4L2_CTRL_TYPE_BITMASK,
-> > +             .data_type      = UVC_CTRL_DATA_TYPE_BITMASK,
-> > +             .name           = "Region Of Interest Auto Controls",
-> > +     },
-> >  };
-> >
->
-> Wouldn't be better to use 8 V4L2_CTRL_TYPE_BOOLEAN controls for this?
-
-If I create 8 Booleans, they will always be shown in the device. And
-the user will not have a way to know which values are available and
-which are not.
-
-We will also fail the v4l2-compliance test, because there will be up
-to 7 boolean controls that will not be able to be set to 1, eventhough
-they are writable.
-
-Thanks for the prompt review.
->
-> Thanks,
-> Gergo
->
-
-
-
---
-Ricardo Ribalda
+⬢ [acme@toolbox perf-tools-next]$ git diff
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 0f8678142fbfdbcb..14794725669d49ee 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -4327,7 +4327,8 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+                }
+        }
+ 
+-       trace->filter_pids.map = trace->skel->maps.pids_filtered;
++       if (trace->skel)
++               trace->filter_pids.map = trace->skel->maps.pids_filtered;
+ #endif
+        err = trace__set_filter_pids(trace);
+        if (err < 0)
 
