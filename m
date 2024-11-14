@@ -1,75 +1,45 @@
-Return-Path: <linux-kernel+bounces-408729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A04C9C82D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:55:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 631359C82D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:55:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AE211F23608
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 05:55:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 195A51F22D07
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 05:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9782F1E7C2A;
-	Thu, 14 Nov 2024 05:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ci4KE7OI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294B81E7C2A;
+	Thu, 14 Nov 2024 05:55:51 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E46A143744
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 05:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245AA54723
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 05:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731563712; cv=none; b=i8xKFvrEwkE9O46iqGSSPTndkZrY1c1ApfzZXkNHQIWwt10X6WZH4n/5sxVaaeovXPvlt2ktvjQ/+MhcHxtxAIhuHvV43ZXRnnksz+p4MbE7QwCUscr43Ob5cAfm8dxkMyJj334SJcc9gewDmm69kfJwsKn3Etx/cWC4Na/aYj0=
+	t=1731563750; cv=none; b=KvD2UKEK6rwhxBS4eLXmfh3LA+1/BeBgaWW8dy45vlO7Rumcb0Hu7DWe+9kNwrT9noEERpTvWsLjxfG7hwiNF2+cOqou+bS/Dn4vEWU8e0Rp2rZ3YSeiWy5qGBu/skiEswdCmzCz9QPWrTa+wbLppL0NHf4sXGQxHrz8cHUt1pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731563712; c=relaxed/simple;
-	bh=qgthtfupzA0jwag50c81Q/ScMvrFdTBeX/f7k+7uh0c=;
+	s=arc-20240116; t=1731563750; c=relaxed/simple;
+	bh=1fjbd+1ScPFuNyIKg2k7FiPC7zc2roK++6Yb3Zo0Il0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U5LLuhjC4MaP+4cPEcdlDDPjKInRT/9A49BCP6FraNbZIP6gnMY1hsDBF2bB+FitVJzZ/hAADwlSIxRbaepbM8NwGes7XW3zplNFrwlxhd6rr+kRs23tLdlJ9LPI0tiJwN0ZCgX4OVmGEmlA4s2OU3eNjW6t4t2x3OehtTxrj3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ci4KE7OI; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731563711; x=1763099711;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qgthtfupzA0jwag50c81Q/ScMvrFdTBeX/f7k+7uh0c=;
-  b=Ci4KE7OIJNHMyGm7rLoJS2bRNw5K0A4fF/sye+VFndtsY3lTTaarMkuX
-   B4Z9MQ2Bd/e0KngONP1O3Fe3Hc/ggTy27hxalZ9w0PFX9d+4XtUh6x4ZA
-   BkDR3an1tBtFHQr7D7Ul9jIASSRuFUFSOFIlFsBIJYEjeJoOOXyI2VAGj
-   7ZmLssyHWQy7Q4FDDp/4y8174zEj54W7NMuDnLqFJjF0blzC9zsMkN412
-   nG5gLtflWfDpJa+Rpz/MsneHpCLzjF5ybvfMIlvejfQsJonU4tkGAqZsF
-   9tHphzGMJsHX51omm0Q8hL1NhtaoxYA2O1/B877cWlaQBGPNOurcSXaAZ
-   A==;
-X-CSE-ConnectionGUID: KLYNXxAUQvOSkuCvQsvIHQ==
-X-CSE-MsgGUID: dOKnAljKRrCywtvKsMb7uA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="42043993"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="42043993"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 21:55:10 -0800
-X-CSE-ConnectionGUID: DGKPpZxIT5i0L04D4D+4ug==
-X-CSE-MsgGUID: 2cW0pyJ3SS6e1gPW0YMtjw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="93023095"
-Received: from beginmax-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.24])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 21:55:10 -0800
-Date: Wed, 13 Nov 2024 21:55:14 -0800
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: David Kaplan <david.kaplan@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 07/35] x86/bugs: Restructure rfds mitigation
-Message-ID: <20241114052657.b75tvi4w4cvbzfxi@desk>
-References: <20241105215455.359471-1-david.kaplan@amd.com>
- <20241105215455.359471-8-david.kaplan@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cXmfbpA9BjGt/BsCCzCbaQjmmEpQAYTa6Oy+mBxSn03xofYpholGjdSVzX/7AQ25vv7ffISyBf0j83rF3inccgmvqRsWWK0dAOkntAI5tzrROoaNXpL2TFEFQ5Rr+5KkPFhB02ydus9CyQosmohORLnAMPoN9BIyGcXReuCPspo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 0AE5068C7B; Thu, 14 Nov 2024 06:55:45 +0100 (CET)
+Date: Thu, 14 Nov 2024 06:55:44 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Keith Busch <kbusch@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, Bob Beckett <bob.beckett@collabora.com>,
+	Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>,
+	kernel@collabora.com, linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nvme-pci: 512 byte aligned dma pool segment quirk
+Message-ID: <20241114055544.GA10948@lst.de>
+References: <20241112195053.3939762-1-bob.beckett@collabora.com> <20241113043151.GA20077@lst.de> <ZzTqgXqjN4UrT392@kbusch-mbp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,19 +48,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241105215455.359471-8-david.kaplan@amd.com>
+In-Reply-To: <ZzTqgXqjN4UrT392@kbusch-mbp>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Nov 05, 2024 at 03:54:27PM -0600, David Kaplan wrote:
-> +static void __init rfds_update_mitigation(void)
-> +{
-> +	if (!boot_cpu_has_bug(X86_BUG_RFDS))
-> +		return;
-> +
-> +	if (mitigate_any_verw())
-> +		rfds_mitigation = RFDS_MITIGATION_VERW;
+On Wed, Nov 13, 2024 at 11:05:53AM -0700, Keith Busch wrote:
+> Well, he's doing what I suggested. I thought this was better because it
+> puts the decision making in the initialization path instead of the IO
+> path.
 
-Ditto as TAA and MMIO.
-
-> +	pr_info("Register File Data Sampling: %s\n", rfds_strings[rfds_mitigation]);
-> +}
+I guess it's fine in that regard.  It just usually expect patch
+authors to at least reply to reviews..
 
