@@ -1,314 +1,115 @@
-Return-Path: <linux-kernel+bounces-410031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FFE79C95C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:06:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E9C89C95C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:07:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE7BEB2372D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:06:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14678283ACC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AE41B21AC;
-	Thu, 14 Nov 2024 23:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9A81B21A2;
+	Thu, 14 Nov 2024 23:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="aaAcWMza"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YI8NIcXX"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526C21AD3F5;
-	Thu, 14 Nov 2024 23:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A151B218F
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 23:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731625603; cv=none; b=U+UIMFH9d6SLUQ8VN80iIhtWpn17kLdlZXlS/b9rBb9CYOo4+Pv4YBVsCdyGQ7WyuEZFiIShGrCfE7RKGnhivdS/hKVqzax6QE5aTLVGQEYrChg9bV4B0d9NO0XwSNubi1mGthq6OglVDnzDeSn8hDmIuqJUxd9BEnxHsrmJfLE=
+	t=1731625640; cv=none; b=a02IKg9kO7OVy5tyq7XM1/jov75kutV7dn4U+4oo1ryV/VBl0vAzBTHY+BbG9/821UItWVWNtDUQBC0kB2L/RyNL48B3tvz7a55xiH4kk7embrYpsOMMNPRQDe7ZDhxID5rXz3RX0J00uJgey5/ZWahVDCDBZE+LuF1N8WxIVF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731625603; c=relaxed/simple;
-	bh=4FWIde+znSJpYeOMBRz+5gYYidqrkam26XWTlpnwhLU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rhUxqJcWbO5AzaIwO9PJvGlvngvCVznWXET9gMUcd9QKfXA9p+RmktaNAaHJ3YHxom2KcL9nckcUs/lO9qSlqWHMOVxa/Cs3Io4ZBXQ+VMEqBDKt1bEQ2Q1a0HlKYXNGJ4TOi2HHu0oDF4n7sGFlGImkoyNwdgZCfpRy98pjEVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=aaAcWMza; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0BC0622F;
-	Fri, 15 Nov 2024 00:06:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1731625585;
-	bh=4FWIde+znSJpYeOMBRz+5gYYidqrkam26XWTlpnwhLU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aaAcWMzauH3GNWcqWKffk74gS8B28ftcVKdJPWq+ilB8bUHOiHz7d54UsuxAFNKQT
-	 Baft7fr674cv+sQlUeMGTbIAKhQGNccibVEfkeaiGptkuyNS3HYD7V32dFQVS4/mJs
-	 YmRdysxtr6w2KhnjeQUE+SypF5TOsNODo9leLfEQ=
-Date: Fri, 15 Nov 2024 01:06:30 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Armin Wolf <W_Armin@gmx.de>, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, Yunke Cao <yunkec@chromium.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>, stable@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v3 0/8] media: uvcvideo: Implement the Privacy GPIO as a
- evdev
-Message-ID: <20241114230630.GE31681@pendragon.ideasonboard.com>
-References: <20241112-uvc-subdev-v3-0-0ea573d41a18@chromium.org>
- <bd68178f-1de9-491f-8209-f67065d29283@redhat.com>
- <CANiDSCtjpPG3XzaEOEeczZWO5gL-V_sj_Fv5=w82D6zKC9hnpw@mail.gmail.com>
+	s=arc-20240116; t=1731625640; c=relaxed/simple;
+	bh=Dp15DIVEEmSIdD9NNVgWjs1O/f/At8X6WEz0SMIxKZY=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=NYlxAF0qIGo5GLA8lvDDOYxzk9Qo8tW1wY1Prn7k5nTvg99ssxNDSYmzftpHLNQt8GjZWbU+skyA5BjTjcyisN3yFa2N5b5XODXrupSQI+YD38YxpXsvoJJUeirzb1NyhMKzIbJ+C2XIq1hD5w2GjULc4FkOqG71Mhc3wqONcDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YI8NIcXX; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e35e9d36da3so2042264276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:07:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731625638; x=1732230438; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3ll/vUW8S45nGRGrDIOMcD0GkJeApUvNMCuJ2LReRko=;
+        b=YI8NIcXXRnD6H8gtDf7YKoBIMSn8+p5vvd4wSrv1z+2rE9PA3+Sr0zqkK/zlN8WjiW
+         RwmmkKnvGW3qxCE6Zel6H9Qx7L1hjp4mXwNRvOk8L/6Ue3kJsojxuwTr3T6A3OsEnmSi
+         PDRjWea5WJGb7KvSK6WG5ambN7vFn+Y1VG2D0tnxf/aK9OCNIPO1GW/kwU6UxyHcZu3S
+         w798pOBoVZ94d45AD5hGQdBafYzBwad4xevb4SM3/AszeJVZhqmLzxM3RIImh7YEJsXL
+         UNkG6BkDYaFMxV4fuOutrKIov/qRAcT0haNZ/xLMkSJk+HLUJ5BIIdBwCNFC17UgkYZk
+         MB8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731625638; x=1732230438;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3ll/vUW8S45nGRGrDIOMcD0GkJeApUvNMCuJ2LReRko=;
+        b=DiBFsmY2UMAnNbldoHLJ/xqED1r7imB5C846yTynMquiGGdV7bGGLhgmQUwaOsFwPr
+         JLtOuwqEESB1sxCM6clNoeBh/6HSfoInylIFi4urEO8TGLLcS5TtE4wSO800FaxuL45U
+         MGzqFCRXIOWFy2OoBMa1NHR6mfLX8VAbcwLodfudYO2vIVcvA6GPMhdPu04Jb1kUa94H
+         SCMGbdAlegTXe6dWrEvuL8FJSZTpfCNMacJZcgWNrI5HyEO3QAE+GuznvSLqw+7Fi6bK
+         VYoVDYhiGjbs61+yqQKStME6PgVkUed+RRLV1t5sboQBSBJfMVGhmaKswJHUBw4bpNWj
+         xQ6g==
+X-Forwarded-Encrypted: i=1; AJvYcCXFIZuHEjjA2nBcH7hwdrEyn0DLmRUPeg9lN5H6QKFrMb1y8O2LZLMZTt+buFiahvj7IWBhRTenEE/NLoo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmEVM3WeDh9/e4FCU3JYY3W8X4SZK9cRfghXKWrFi4MMbLJOQa
+	4atKEy6R0soFNxTaindICkhma1eYGkwy6MRcrpGsaYTSFbWC/6bIm3oZxDKOBimGh36tGk3ECKh
+	oMz8rMQ==
+X-Google-Smtp-Source: AGHT+IHFF9XsruTHygct2BUmMIVXMOfzIFG3QuYDLL+UaiMJSCi+DbVqlHtkgUqfQV2zEFhqf5nETeSphKtp
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:7595:be86:b969:ac41])
+ (user=irogers job=sendgmr) by 2002:a25:a28e:0:b0:e38:10a7:808e with SMTP id
+ 3f1490d57ef6-e3825bd1b6dmr10359276.0.1731625638147; Thu, 14 Nov 2024 15:07:18
+ -0800 (PST)
+Date: Thu, 14 Nov 2024 15:07:10 -0800
+Message-Id: <20241114230713.330701-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CANiDSCtjpPG3XzaEOEeczZWO5gL-V_sj_Fv5=w82D6zKC9hnpw@mail.gmail.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Subject: [PATCH v1 0/3] Prefer evsel over evsel->core.idx
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>, 
+	"=?UTF-8?q?Ahelenia=20Ziemia=C5=84ska?=" <nabijaczleweli@nabijaczleweli.xyz>, Chen Ni <nichen@iscas.ac.cn>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+James Clark's patches fixing evsel->core.idx [1] reminded me that we
+pass the int value around unnecessarily. Passing the evsel avoids
+issues if the evlist is reordered but paired with sanitizers we can
+also know when something is used when it shouldn't be. These patches
+do some initial work reducing the use of evsel->core.idx or reducing
+the API to pass evsels and not their interior index.
 
-On Thu, Nov 14, 2024 at 08:21:26PM +0100, Ricardo Ribalda wrote:
-> On Wed, 13 Nov 2024 at 18:57, Hans de Goede wrote:
-> > On 12-Nov-24 6:30 PM, Ricardo Ribalda wrote:
-> > > Some notebooks have a button to disable the camera (not to be mistaken
-> > > with the mechanical cover). This is a standard GPIO linked to the
-> > > camera via the ACPI table.
-> > >
-> > > 4 years ago we added support for this button in UVC via the Privacy control.
-> > > This has three issues:
-> > > - If the camera has its own privacy control, it will be masked.
-> > > - We need to power-up the camera to read the privacy control gpio.
-> > > - Other drivers have not followed this approach and have used evdev.
-> > >
-> > > We tried to fix the power-up issues implementing "granular power
-> > > saving" but it has been more complicated than anticipated...
-> > >
-> > > This patchset implements the Privacy GPIO as a evdev.
-> > >
-> > > The first patch of this set is already in Laurent's tree... but I
-> > > include it to get some CI coverage.
-> > >
-> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > ---
-> > > Changes in v3:
-> > > - CodeStyle (Thanks Sakari)
-> > > - Re-implement as input device
-> >
-> > Thank you for your enthusiasm for my suggestion to implement this
-> > as an input device.
-> 
-> I wanted to give it a try... and it turned out to be quite simple to
-> implement. I thought it could be a good idea to share it, so we can
-> have something tangible to talk about ;).
-> 
-> > As I mentioned in my reply in the v2 thread, the goal of my
-> > enumeration of various way camera privacy-controls are exposed to
-> > userspace today is to try and get everyone to agree on a single
-> > userspace API for this.
-> >
-> > Except for this v3 patch-set, which I take as an implied vote
-> > from you (Ricardo) for the evdev SW_CAMERA_LENS_COVER approach,
-> > we have not heard anything on this subject from Sakari or Laurent
-> > yet. So for now I would like to first focus on / circle back to
-> > the userspace API discussion and then once we have a plan for
-> > the userspace API we can implement that for uvcvideo.
-> >
-> > First lets look at the API question top down, iow what use-cases
-> > do we expect there to be for information about the camera-privacy
-> > switch state:
-> >
-> > a) Having an app which is using (trying to use) the camera show
-> > a notification to the user that the camera is turned-off by
-> > a privacy switch .
-> >
-> > Ricardo, AFAICT this is the main use-case for chrome-os, do I have
-> > this right ?
-> 
-> b) is as important as a) for us.  If you do not give instant feedback
-> to the user when they change the status of the camera they might not
-> be able to find the button later on :)
+[1] https://lore.kernel.org/lkml/20241114160450.295844-2-james.clark@linaro.org/
 
-How do you handle cameras that suffer from
-UVC_QUIRK_PRIVACY_DURING_STREAM ?
+Ian Rogers (3):
+  perf stream: Use evsel rather than evsel->idx
+  perf values: Use evsel rather than evsel->idx
+  perf annotate: Prefer passing evsel to evsel->core.idx
 
-> > b) Showing on on-screen-display (OSD) with a camera /
-> > crossed-out-camera icon when the switch is toggled, similar to how
-> > muting speakers/mic show an OSD . Laptop vendor Windows add-on
-> > software does this and I know that some users have been asking
-> > for this.
-> >
-> > Then lets look at the question bottom-up which hardware interfaces
-> > do we have exposing this information:
-> >
-> > 1. Internal UVC camera with an input privacy GPIO resource in
-> > the ACPI fwnode for the UVC camera, with the GPIO reporting
-> > the privacy-switch state. Found on some chrome-books
-
-Ricardo, is this found only in ACPI-based (x86) chromebooks, or also in
-DT-based chromebooks ?
-
-Can we assume that the UVC module will not be powered off (and therefore
-disappear from USB) when the privacy switch is toggled to disable the
-camera ?
-
-> > 2. Laptop firmware (EC/ACPI/WMI) which reports privacy-switch
-> > state, without a clear 1:1 relation between the reported state and
-> > which camera it applies to. In this case sometimes the whole UVC
-> > camera module (if it is UVC) is simply dropped of the bus when
-> > the camera is disabled through the privacy switch, removing
-> > the entire /dev/video# node for the camera. Found on many windows
-> > laptops.
-> >
-> > 3. UVC cameras which report privacy-switch status through
-> > a UVC_CT_PRIVACY_CONTROL. Found on ... ?
-> 
-> Some logitech cameras and also internal ones.
-> 
-> > Note this will only work while the camera is streaming and
-> > even then may require polling of the ctrl because not all
-> > cameras reliably send UVC status messages when it changes.
-> > This renders this hardware interface as not usable
-
-In general I agree, but maybe the situation is better with the UVC
-cameras that implement UVC_CT_PRIVACY_CONTROL ?
-
-Note that, in theory, and as far as I understand, it should be possible
-to get the UVC_CT_PRIVACY_CONTROL events when the camera is not
-streaming, if the device implement remote wakeup. In practice that's
-hardly ever the case, among the ~450 sets of USB descriptors I've
-collected over time, only 8 report support for remote wakeup in the
-configuration descriptor's bmAttributes field, and I'm not even sure we
-could trust those devices to implement this feature correctly.
-
-Ricardo, do you know if the internal UVC cameras used in chromebooks
-that implement UVC_CT_PRIVACY_CONTROL support remote wakeup to notify
-changes in the privacy control when the camera is suspended ?
-
-> > Currently there are 2 ways this info is being communicated
-> > to userspace, hw-interfaces 1. + 3. are exposed as a v4l2
-> > privacy-ctrl where as hw-if 2. uses and input evdev device.
-> >
-> > The advantage of the v4l2 privacy-ctrl is that it makes it
-> > very clear which camera is controlled by the camera
-> > privacy-switch.
-> >
-> > The disadvantage is that it will not work for hw-if 2,
-> > because the ACPI / WMI drivers have no v4l2 device to report
-> > the control on. We could try to add some magic glue code,
-> > but even then with e.g. IPU6 cameras it would still be
-> > unclear which v4l2(sub)device we should put the control on
-> > and if a UVC camera is just dropped from the bus there is
-> > no /dev/video# device at all.
-
-Is there any ACPI- or WMI-provided information that could assist with
-associating a privacy GPIO with a camera ?
-
-> > Using an input device does not has this disadvantage and
-> > it has the advantage of not requiring to power-up the camera
-> > as currently happens with a v4l2 ctrl on a UVC camera.
-
-API-wise, and with the current uvcvideo implementation, I agree. We
-could of course also try to improve the uvcvideo driver to not power the
-device unless it is streaming (depending on whether or not the known
-drawbacks are considered acceptable).
-
-Devices in the 3rd category will still need to be powered up to report
-the status of the privacy control, as well as some devices in the 1st
-category (see patch 8/8 in this series that introduces
-UVC_QUIRK_PRIVACY_DURING_STREAM).
-
-> > But using an input device makes it harder to determine
-> > which camera the privacy-switch applies to.
-
-We could include the evdev in the MC graph. That will of course only be
-possible if the kernel knows about that association in the first place.
-At least the 1st category of devices would benefit from this.
-
-> > We can specify
-> > that SW_CAMERA_LENS_COVER only applies to device internal
-> > cameras, but then it is up to userspace to determine which
-> > cameras that are.
-> 
-> I am working on wiring up this to userspace right now.. I will report
-> back if it cannot do it.
-> 
-> > Another problem with using an input device is that it will
-> > not work for "UVC cameras which report privacy-switch status
-> > through a UVC_CT_PRIVACY_CONTROL." since those need the camera
-> > on and even then need to be polled to get a reliable reading.
-> >
-> > Taking this all into account my proposal would be to go
-> > with an input device and document that SW_CAMERA_LENS_COVER
-> > only applies to device internal cameras.
-> >
-> > This should work well for both use-cases a) and b) described
-> > above and also be easy to support for both hw interfaces
-> > 1. and 2.
-> >
-> > My proposal for hw-if 3. (UVC_CT_PRIVACY_CONTROL) would be
-> > to keep reporting this as V4L2_CID_PRIVACY. This means it
-> > will not work out of the box for userspace which expects
-> > the input device method, but giving the limitations of
-> > this hw interface I think that requiring userspace to have
-> > to explicitly support this use-case (and e.g. poll the
-> > control) is a good thing rather then a bad thing.
-> >
-> > Still before moving forward with switching the hw-if 1.
-> > case to an input device as this patch-series does I would
-> > like to hear input from others.
-> >
-> > Sakari, Laurent, any comments ?
-
-Assuming the kernel could report the association between an evdev and
-camera, we would need to report which evdev SW_CAMERA_LENS_COVER
-originates from all the way from the evdev to the consumer of the event.
-How well is that supported in standard Linux system architectures ? If
-I'm not mistaken libinput will report the originating device, but how
-far up the stack is it propagated ? And which component would we expect
-to consume those events, should the camera evdev be managed by e.g.
-libcamera ?
-
-> > > - Make the code depend on UVC_INPUT_EVDEV
-> > > - Link to v2: https://lore.kernel.org/r/20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org
-> > >
-> > > Changes in v2:
-> > > - Rebase on top of https://patchwork.linuxtv.org/project/linux-media/patch/20241106-uvc-crashrmmod-v6-1-fbf9781c6e83@chromium.org/
-> > > - Create uvc_gpio_cleanup and uvc_gpio_deinit
-> > > - Refactor quirk: do not disable irq
-> > > - Change define number for MEDIA_ENT_F_GPIO
-> > > - Link to v1: https://lore.kernel.org/r/20241031-uvc-subdev-v1-0-a68331cedd72@chromium.org
-> > >
-> > > ---
-> > > Ricardo Ribalda (8):
-> > >       media: uvcvideo: Fix crash during unbind if gpio unit is in use
-> > >       media: uvcvideo: Factor out gpio functions to its own file
-> > >       media: uvcvideo: Re-implement privacy GPIO as an input device
-> > >       Revert "media: uvcvideo: Allow entity-defined get_info and get_cur"
-> > >       media: uvcvideo: Create ancillary link for GPIO subdevice
-> > >       media: v4l2-core: Add new MEDIA_ENT_F_GPIO
-> > >       media: uvcvideo: Use MEDIA_ENT_F_GPIO for the GPIO entity
-> > >       media: uvcvideo: Introduce UVC_QUIRK_PRIVACY_DURING_STREAM
-> > >
-> > >  .../userspace-api/media/mediactl/media-types.rst   |   4 +
-> > >  drivers/media/usb/uvc/Kconfig                      |   2 +-
-> > >  drivers/media/usb/uvc/Makefile                     |   3 +
-> > >  drivers/media/usb/uvc/uvc_ctrl.c                   |  40 +-----
-> > >  drivers/media/usb/uvc/uvc_driver.c                 | 112 +---------------
-> > >  drivers/media/usb/uvc/uvc_entity.c                 |  21 ++-
-> > >  drivers/media/usb/uvc/uvc_gpio.c                   | 144 +++++++++++++++++++++
-> > >  drivers/media/usb/uvc/uvc_status.c                 |  13 +-
-> > >  drivers/media/usb/uvc/uvc_video.c                  |   4 +
-> > >  drivers/media/usb/uvc/uvcvideo.h                   |  31 +++--
-> > >  drivers/media/v4l2-core/v4l2-async.c               |   3 +-
-> > >  include/uapi/linux/media.h                         |   1 +
-> > >  12 files changed, 223 insertions(+), 155 deletions(-)
-> > > ---
-> > > base-commit: 1b3bb4d69f20be5931abc18a6dbc24ff687fa780
-> > > change-id: 20241030-uvc-subdev-89f4467a00b5
+ tools/perf/builtin-diff.c         |   4 +-
+ tools/perf/builtin-report.c       |   4 +-
+ tools/perf/builtin-top.c          |   4 +-
+ tools/perf/ui/browsers/annotate.c |   2 +-
+ tools/perf/util/annotate.c        |  32 +++++----
+ tools/perf/util/annotate.h        |  20 +++---
+ tools/perf/util/stream.c          |   7 +-
+ tools/perf/util/stream.h          |  10 +--
+ tools/perf/util/values.c          | 106 +++++++++++++-----------------
+ tools/perf/util/values.h          |   9 +--
+ 10 files changed, 90 insertions(+), 108 deletions(-)
 
 -- 
-Regards,
+2.47.0.338.g60cca15819-goog
 
-Laurent Pinchart
 
