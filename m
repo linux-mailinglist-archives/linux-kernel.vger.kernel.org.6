@@ -1,137 +1,142 @@
-Return-Path: <linux-kernel+bounces-408953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D04B19C8585
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:03:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B916A9C858E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:04:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94D05281C4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:03:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8520EB2856E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A89A1E0DF0;
-	Thu, 14 Nov 2024 09:03:17 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4139F1DE885;
+	Thu, 14 Nov 2024 09:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lbvk/xIz"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C769D1DF73C
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF68E29CFB
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731574997; cv=none; b=Vrh4gbDqKb4K/swL6otTP+6+/9FyQnEpPr/8qxUYDQ4lFa4EEwr1aNPY9GmwVo8YzU7XhDbcI9T77I4DQMrMkBrIbRm+Bgo9HpAvw3g9pmAS38XR5un6soIBM9EeF+xT/N22S1D7kzPCfLJGQgnYJsRGcHJsIqzvmnT5zKVfKwQ=
+	t=1731575039; cv=none; b=cOL0qsVvVvgWN4GQzJNo9hqCRPw5KJMhSd32HtSRENYM8coECygUj031tUJqMxOHvDgiMPCaMvt4M2tzASi3bqC/GyebmDAwqS4UbCW+bTAq9W0/sjxE06KjvoH51hFL45vLkrwA+d/AyaW7V2be6AAou3UUx9D32c8fWBNLSNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731574997; c=relaxed/simple;
-	bh=yMofAg6GnSBQAObf74t5qTT94MgiyHC7E8wT+BEjOl8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=avcWeaahk7Hn+UtiGy6nujbI+WrsyrMw+1IPz3a/x9ZVxlVvkF8TODUD6p0TopZUGI6bH4ARhWPzzEQzt8J17D5RLWECIqPwKsAEzAoCX3sJpvrzQ7wbi/Pjemr8532+7AafqvA2Szx+9ugXak4g7Ahb21tiBqUjj8paPYZ5YUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tBVkk-0003PQ-CT; Thu, 14 Nov 2024 10:03:02 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tBVkk-000iJR-0X;
-	Thu, 14 Nov 2024 10:03:02 +0100
-Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id D9007372EC9;
-	Thu, 14 Nov 2024 09:03:01 +0000 (UTC)
-Date: Thu, 14 Nov 2024 10:03:01 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: Jakub Kicinski <kuba@kernel.org>, Sean Nyekjaer <sean@geanix.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] can: tcan4x5x: add option for selecting nWKRQ
- voltage
-Message-ID: <20241114-natural-ethereal-auk-46db7f-mkl@pengutronix.de>
-References: <20241111-tcan-wkrqv-v2-0-9763519b5252@geanix.com>
- <20241111101011.30e04701@kernel.org>
- <fatpdmg5k2vlwzr3nhz47esxv7nokzdebd7ziieic55o5opzt6@axccyqm6rjts>
- <20241112-hulking-smiling-pug-c6fd4d-mkl@pengutronix.de>
- <20241113193709.395c18b0@kernel.org>
- <CAMZ6Rq+Z=UZaxbMeigWp7-=v5xgetguxOcLgsht2G56OR1jFPw@mail.gmail.com>
+	s=arc-20240116; t=1731575039; c=relaxed/simple;
+	bh=zWuRiFchZrNBLXRq0j24MhQKqSTdtNiY9xXXezztt0E=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=f+d9uwXK6oFWN0xVSYQ0v6d7hF50u2Bl3NX3xJnZzXu1+6nl1M7t2E+M9JQMbZz9SC2AbCCGhN1UDOnysilC3JRpSItPir0x1s+gTn2e1CKvjXJCffZntshIkYsWTZVQPc92CSSEGax/XTNLwGtuI+GhXkwMglo/Xg34HA9vKQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lbvk/xIz; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d4c482844so252249f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:03:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731575036; x=1732179836; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8yR9tbhF0q7yv18wxqWfZSuY7tMkF/Aly2je5xrlXRw=;
+        b=lbvk/xIzFDHpYcENEsDUfX4v6vkLmdEQktMwFkPfPCkStNa5r8g9MwNcT6RmMg27k/
+         7H+L3rUf8b9Krh/OIeYSvQREm6Pkgaq4aezNsqGVTPqFRro8GI4u12gg+HvknsIUbBJk
+         lm02PXX8kZxd6cXzLMnmUBm7vV3edn90njBiiZ3o8TIShL33W3pFZOUi4kD9BI/z2KpH
+         uKPS8S4IKQ20LIS0Sr94GFIsutVA9EsAtwNaC9pA8kyp/F0IJrzJ0mgq/BAOTIpLNnjp
+         hHWwirY0Ozbp1IQBpdRqUSQhzwE8YVRkPEQD3GggCFIg+aFFJNvcaylN9xLg4AAUt4Dg
+         HRpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731575036; x=1732179836;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8yR9tbhF0q7yv18wxqWfZSuY7tMkF/Aly2je5xrlXRw=;
+        b=GEGl0VbP3lQxT76iKNdvpX6YJLA0yf8UQH84u6U6CCiWSPCsKzIeUg1M8zcrsgM31m
+         xR16FRJWIk07F+wqvEeL/RbhY+zlJd68IPKk+N9SYfrzEDmkK8xYBTS9VZDaCGrSStfE
+         TuYfY0CKbAdVhsGvp47Bj6GRfCqqHZyAYXJUAutO5QH/OBTQaOX/AgCQ9U+bujU8RkEm
+         FUfxZQg14iJsYpNmMx+N9pJc9DMcNnruPf3FAHqFlZqrbt6uNTiJPrm4gJHOe7dxGD5A
+         pmu0D6jXpv/lbxMBIyaa7GVM9VIXOWFrQzt+Fwx4iZEyGTlsIESKIElj5T5C6M6j2eb4
+         opGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/9HQ09hWSvB/zYJz47LMz5FJEzi2u2A9lwoKXDZbtIBpGQ1cQ+6wJhlYM8iPaVW9x57gldgp7EYgQ470=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPmluaynt2ohFT8Ajvm+aH0leK93StH7NwENsusC/maNpCYqBn
+	v1fD/QQL2cRpukpTUJN85bO11jET3p0vZvxsvvqzC6rJbS6AKUIoC5ZJBE0Vcjg=
+X-Google-Smtp-Source: AGHT+IF7LePleA2RVAB0zLKwWrjCZlENR6/gtLxK87oI7QxvhdPKjaNrSnuc/bm9zTG3lEGgwAT6DQ==
+X-Received: by 2002:a5d:6487:0:b0:37e:f4ae:987d with SMTP id ffacd0b85a97d-381f1872f43mr18512390f8f.29.1731575036374;
+        Thu, 14 Nov 2024 01:03:56 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-382207fd632sm82453f8f.44.2024.11.14.01.03.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 01:03:55 -0800 (PST)
+Date: Thu, 14 Nov 2024 12:03:52 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Max Staudt <max@enpas.org>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-can@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net] can: can327: fix snprintf() limit in
+ can327_handle_prompt()
+Message-ID: <c896ba5d-7147-4978-9e25-86cfd88ff9dc@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dfrlbwylwhzsoyyl"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMZ6Rq+Z=UZaxbMeigWp7-=v5xgetguxOcLgsht2G56OR1jFPw@mail.gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-Mailer: git-send-email haha only kidding
 
+This code is printing hex values to the &local_txbuf buffer and it's
+using the snprintf() function to try prevent buffer overflows.  The
+problem is that it's not passing the correct limit to the snprintf()
+function so the limit doesn't do anything.  On each iteration we print
+two digits so the remaining size should also decrease by two, but
+instead it passes the sizeof() the entire buffer each time.
 
---dfrlbwylwhzsoyyl
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 0/2] can: tcan4x5x: add option for selecting nWKRQ
- voltage
-MIME-Version: 1.0
+If the frame->len were too long it would result in a buffer overflow.
 
-On 14.11.2024 13:41:12, Vincent Mailhol wrote:
-> On Thu. 14 Nov. 2024 at 12:37, Jakub Kicinski <kuba@kernel.org> wrote:
-> > My bad actually, I didn't realize we don't have an X: entries
-> > on net/can/ under general networking in MAINTAINERS.
-                      ^^^^^^^^^^^^^^^^^^
-> >
-> > Would you mind if I added them?
->=20
-> OK for me. I guess you want to add the exclusion for both the
->=20
->   CAN NETWORK DRIVERS
->=20
-> and the
->=20
->   CAN NETWORK LAYER
->=20
-> entries in MAINTAINERS.
+I've also changed the function from snprintf() to scnprintf().  The
+difference between the two functions is that snprintf() returns the number
+of bytes which would have been printed if there were space while the
+scnprintf() function returns the number of bytes which are actually
+printed.
 
-I thinks, it's the other way round.
+Fixes: 43da2f07622f ("can: can327: CAN/ldisc driver for ELM327 based OBD-II adapters")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+---
+ drivers/net/can/can327.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-General networking gets an X: for driver/net/can and driver/can/ and the
-include files.
+diff --git a/drivers/net/can/can327.c b/drivers/net/can/can327.c
+index 24af63961030..5c05ebc72318 100644
+--- a/drivers/net/can/can327.c
++++ b/drivers/net/can/can327.c
+@@ -623,16 +623,16 @@ static void can327_handle_prompt(struct can327 *elm)
+ 			snprintf(local_txbuf, sizeof(local_txbuf), "ATRTR\r");
+ 		} else {
+ 			/* Send a regular CAN data frame */
++			int off = 0;
+ 			int i;
+ 
+ 			for (i = 0; i < frame->len; i++) {
+-				snprintf(&local_txbuf[2 * i],
+-					 sizeof(local_txbuf), "%02X",
+-					 frame->data[i]);
++				off += scnprintf(&local_txbuf[off],
++						 sizeof(local_txbuf) - off,
++						 "%02X", frame->data[i]);
+ 			}
+ 
+-			snprintf(&local_txbuf[2 * i], sizeof(local_txbuf),
+-				 "\r");
++			scnprintf(&local_txbuf[off], sizeof(local_txbuf) - off, "\r");
+ 		}
+ 
+ 		elm->drop_next_line = 1;
+-- 
+2.45.2
 
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---dfrlbwylwhzsoyyl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmc1vMIACgkQKDiiPnot
-vG8jmgf9FcKy1/rIq9vQpBZ1lOKeAtlWIbgY9hfsDz/Iml2T5CpJtjkAOV4S11RH
-kIE2WpZU5pm6AqCXEgDVehVLFjVUaz/uGQXXJhxITNEPxsp4QAeV/pz4Gml5Lh1F
-c9kzILRL9QD43YrONxMGNT2meIp+nDIS73PNG6Jf3/Kr/GSv0R8Gfkkjv6I5vlgB
-4lHC2KnLxzj7l7BBCaeXSNkZywEVj+co3IFkKRTWAHJJHtIOefiDI5YiDW8KnyBJ
-0SmXZOC/bhSja2TIjGh1dE71dZFFWcdv0xqxfUckVc+TLnWcYw+iQIhHzwRYYdy5
-BfJNZIEiE8O8Zlr7B9ui0QTCd14LPQ==
-=TMAg
------END PGP SIGNATURE-----
-
---dfrlbwylwhzsoyyl--
 
