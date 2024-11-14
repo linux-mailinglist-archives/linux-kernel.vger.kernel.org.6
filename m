@@ -1,91 +1,90 @@
-Return-Path: <linux-kernel+bounces-409203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39D669C88D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:25:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C289C8930
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:45:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDABD282B39
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:25:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59C10B262C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 896521F8EF8;
-	Thu, 14 Nov 2024 11:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9601F8F0C;
+	Thu, 14 Nov 2024 11:26:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="LX3f3b2o"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="MgECouAX"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C7418BBBD;
-	Thu, 14 Nov 2024 11:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7ED18BBBD;
+	Thu, 14 Nov 2024 11:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731583512; cv=none; b=b4TX8OwqZuT8SAsCPx2hJC00tu7uErNWwENOo8gTCiA4g1+6fw3JWVqB1XAK6VDDmJEvoExIgk6yPhKj2cmdBiUxaPJnAwsB1IAEiWkO0sKLM4wiwhFCMV7NKoR5il1Ca22X74c9ZFI24g7Q2R2Kny4lJriSTpnAokf+PK6AS3o=
+	t=1731583581; cv=none; b=ilioetuyGl+FjlLNnw5d0seNiP/gtKsysPya7LzwQErkeE/FMb0WtpP756Wt+uwu0PpPD5vChBXNiZm/KOkRCmDa7CZDZu7Vzgbqi24YVhJ7g4k3Rx998lwKZlJN/ImYkF4LNalUUNb08fqScdkWODw7nyemoTVDnNjtjfC7xrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731583512; c=relaxed/simple;
-	bh=aVIvz69luqtbRV5NCqi8GetZtaRWYDrPI881Uj4JbiY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f8Sr5jsAzL/qtF3cogv2BZS5K5zvCoeGs0ymK/PK7gLto0exNbRkYhvp4MX1+zgGchjDDPRGjpmzleGmM1XrDDfZP4THuGSMqHM2mcbVH/sEmgnlElx/xJgJ9bGNaXoEEg1103XBJxvN075hCb+2R21KoEVGqLhMOTMmCxv5lzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=LX3f3b2o; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=axqXJOEvoFA8XZXHTN+P0B8l5JDKHF60G0U41LQtzq8=; b=LX3f3b2oa2RJw6pWciddcQfhFR
-	nFQl5fJSmncz+mJXUzGVfgQhfmXZRRs8ZoCGH65k8n8+iObxRykPrh7Im1kODRPx0vP8ysx1JZjw4
-	03BOV3T4tbbRpLDZDl5Gr307GJ1CZXpvf80x/rGCS7iotrixNOeSAaxBsZ5xr/pMXHp0YjhwPLCWV
-	NX8bVRQU1Aw/WckJxHlrEGmkaDhO4wQ22UNdj817qWu06W4WAZtvL9aUWGzgRuMiMxMrMjqmn1WiZ
-	OlTJnuFgVTXk168xrEAYG7RfH3IPkbaOMh7T96sdhH6f02xqNwVVvWBA2fO02/fh/wPaeAgaFnepC
-	yUeSOsiw==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tBXy8-00GmQC-0H;
-	Thu, 14 Nov 2024 19:25:01 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 14 Nov 2024 19:25:00 +0800
-Date: Thu, 14 Nov 2024 19:25:00 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: syzbot <syzbot+listbb9cdfe92636134be785@syzkaller.appspotmail.com>
-Cc: davem@davemloft.net, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] Monthly crypto report (Nov 2024)
-Message-ID: <ZzXeDFlmeJt_npKr@gondor.apana.org.au>
-References: <6734be89.050a0220.1324f8.0049.GAE@google.com>
+	s=arc-20240116; t=1731583581; c=relaxed/simple;
+	bh=yYmcYH8qpWh05/Qw6Z3HQUiJvoECLABGTyU4XG71RlA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jEi1/NUe1RFU7qfez8gZ8O7WMWgIK9SiT+Sbe6P0sYM6yGKBPYN8PFrfjGQjv2QuwCfrDrvmczyJ2BmkLv/E3vwRJmIW3TC1KblqkraEk5c+UiyMxuzygDtp/bzsw+IQcz56fNoPiZN2Pa6jCasIuQ3sKLFV40R/LK3FYc55b8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=MgECouAX; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4AEBPxA622914424, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1731583559; bh=yYmcYH8qpWh05/Qw6Z3HQUiJvoECLABGTyU4XG71RlA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=MgECouAXueZbhUWayXPq3Vilg0m/lenQikEKxhULJfgIE2zMrnHpGT3mrP21uXpPV
+	 F6klxwuA139jOaw44nR/tT+r3DiQloWHuNhsT/VgkjgOeVmtCLv/Xn+NuE5zsm6YLx
+	 ysC8KZR0ydnkYtwIyLic4RM/iuGcu1IIhMF1pm7ab1gDaIN+2UMrtHj+uMJr33v4yr
+	 Ykf+A6zF8PfwNaOLmZJrXLpnt2CZUfZyZKfzdncJ44233TtRWHY13at2cyKgAu315L
+	 ZV5Gqcs2Mz+8HQNsfGHo8Pq/rwqZQnJ28utMDnFUpw/PRypMvMl4HPMT/PM+7uJUJ/
+	 Sj9OcUyPKu7Pg==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 4AEBPxA622914424
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 14 Nov 2024 19:25:59 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 14 Nov 2024 19:26:00 +0800
+Received: from RTDOMAIN (172.21.210.74) by RTEXMBS04.realtek.com.tw
+ (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Thu, 14 Nov
+ 2024 19:25:59 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: <kuba@kernel.org>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+        <andrew+netdev@lunn.ch>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <horms@kernel.org>, <pkshih@realtek.com>,
+        <larry.chiu@realtek.com>, Justin Lai <justinlai0215@realtek.com>
+Subject: [PATCH net-next 0/2] Modifying format and renaming goto labels
+Date: Thu, 14 Nov 2024 19:25:47 +0800
+Message-ID: <20241114112549.376101-1-justinlai0215@realtek.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6734be89.050a0220.1324f8.0049.GAE@google.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: RTEXH36505.realtek.com.tw (172.21.6.25) To
+ RTEXMBS04.realtek.com.tw (172.21.6.97)
 
-On Wed, Nov 13, 2024 at 06:58:17AM -0800, syzbot wrote:
->
-> Some of the still happening issues:
-> 
-> Ref Crashes Repro Title
-> <1> 228     Yes   BUG: unable to handle kernel paging request in crypto_skcipher_encrypt
->                   https://syzkaller.appspot.com/bug?extid=026f1857b12f5eb3f9e9
-> <2> 15      Yes   KMSAN: uninit-value in sw842_compress
->                   https://syzkaller.appspot.com/bug?extid=17cae3c0a5b0acdc327d
-> <3> 6       Yes   BUG: unable to handle kernel paging request in crypto_shash_update
->                   https://syzkaller.appspot.com/bug?extid=e46f29a4b409be681ad9
+This patch set primarily involves modifying the enum rtase_registers
+format and renaming the goto labels in rtase_init_one.
 
-None of these appear to be crypto bugs.
+Justin Lai (2):
+  rtase: Modify the name of the goto label
+  rtase: Modify the content format of the enum rtase_registers
 
-#syz set <1> subsystems: bcachefs
-#syz set <2> subsystems: mm
-#syz set <3> subsystems: bcachefs
+ drivers/net/ethernet/realtek/rtase/rtase.h      |  2 +-
+ drivers/net/ethernet/realtek/rtase/rtase_main.c | 10 +++++-----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-Thanks,
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.34.1
+
 
