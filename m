@@ -1,108 +1,95 @@
-Return-Path: <linux-kernel+bounces-409079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D73A09C8757
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:21:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17AE69C8783
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:28:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E4471F225C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:21:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CAF4B3091D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46BA41F8F14;
-	Thu, 14 Nov 2024 10:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F761F9A8D;
+	Thu, 14 Nov 2024 10:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AhL/2Gve";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ovuE8Y+m"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CHRbrM4t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B27A1F8F02;
-	Thu, 14 Nov 2024 10:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701731F9402;
+	Thu, 14 Nov 2024 10:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731578996; cv=none; b=ssBDX67WA6NwmbS9d+DHDTBpNp0oRVJD4Vf0CnFcOLWx7i6Oepcqac0NBF68ynUG82SSFvOrlYXKwT+SBhR64UrDqx8UXkHUeVkGXPtpunor0mKfLmya/GDHTHudNE0R7MWOYDlbpPnP/4rZ/XLQBVp/QKyKe6/1yncPeyuXd4Q=
+	t=1731579020; cv=none; b=hjbKE8UDXB6DFoEz+b05G4zj1e4QJJdOcwNrbiFIjKNNk8Knkh6M9s/S61k0+vTLbK2yFeOM4hfsuNJZ3xilxTe/mlemKIiMQSSOq/eaU/m2ZklINxRTubQqOuBKOjmojCe6AVr299uNLoFOuDdu6/Y3nIn+rzOej4zIajqxULc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731578996; c=relaxed/simple;
-	bh=j8/bDpeWMxzFyIBUMAW1K7Nkzc2G+SHXLJZy1z8VPtQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=foNLq6cJszixzYVL5shTsZLOGOi+Pr1NXJwFsCJeqq7tETdXNU4adDS7J0TdC/w3fi3Zu65WekX5Ie/8uF9dQGR+JgKpS2MhxmaVdwosAZsGbSCM6lM78hFdf3msFu9JbXPRuY0H5NhY5rYN9dl0oekMtxMAR70cniGOwFLTy1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AhL/2Gve; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ovuE8Y+m; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 14 Nov 2024 11:09:45 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731578987;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o4rhu1rOyXbmFKCWkfY+2TotSXX7WMQkDT9IBgiSvNc=;
-	b=AhL/2GveqCJpSpZuvQsj5ghGqrVWFhPzXwCmwe8TCBNJPMBfCV9lvZSSNa/U8aKcDRjUNq
-	VRecRC6hYkncpzi28MeBh/CjiP+cb/F0Bpr45gGkTmPeeYFfePMkoXvYLZfCS7ds6IDueO
-	+ML5pdw1UaN9wkCUq1at1m9Ld6uUfDZ/N6C2CjXTLC/WZRcFaNzBoN2rXU8dzZnl2yw+ga
-	/jvm5iA4sDar5007p38ulLQIf3wGgHvWxUjIoIuZwPgi0dBtAGep+wTNvU7W4PKs2M9e8v
-	2qQ2/EZ2vhpgYnhKr04tGLx1rjKYpTu+UgBSF/EJWcNWQmPTI5/Vk3Yx/L2ttA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731578987;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o4rhu1rOyXbmFKCWkfY+2TotSXX7WMQkDT9IBgiSvNc=;
-	b=ovuE8Y+mje/KzO5huf9Oa6KS1A0AzBvYojD/oc+fJiiqsyryH6r82+Lme2b6jNrJTiR0T8
-	bSQkonZIRA6olSBw==
-From: Sebastian Sewior <bigeasy@linutronix.de>
-To: Hou Tao <houtao@huaweicloud.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Kunwu Chan <kunwu.chan@linux.dev>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	clrkwllms@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, bpf <bpf@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, linux-rt-devel@lists.linux.dev,
-	Kunwu Chan <chentao@kylinos.cn>,
-	syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com
-Subject: Re: [PATCH] bpf: Convert lpm_trie::lock to 'raw_spinlock_t'
-Message-ID: <20241114100945.VWuTi7kg@linutronix.de>
-References: <20241108063214.578120-1-kunwu.chan@linux.dev>
- <CAADnVQJ8KzVdScXM=qhdT4jMrZLBPpgd+pf1Fqyc-9TFnfabAg@mail.gmail.com>
- <78012426-80d2-4d77-23c4-ae000148fadd@huaweicloud.com>
- <CAADnVQK_FptUD17REjtT1wnRyxZ2dx6sZuePsJQES-q27NKKLA@mail.gmail.com>
- <ab0abca0-57b3-b379-0070-4625395c6707@huaweicloud.com>
+	s=arc-20240116; t=1731579020; c=relaxed/simple;
+	bh=zIXoVPuLxS46P+2i3Z4nmPDd0XPDfcNwgdZycvncv+w=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=P767SUP+nDyGxea9Xvfk4Zc2AXnzKh0ho5fddXwZqmFryf7FUrs6EU6djMhOvcIzmYjQYQEEyVe1YWmR74pVqjGKfRCsLz3EPWtaQv+YWgL4UEuWRHH639uIuSMgbnMLY2HoSUFVw4VXI0kh1qcvxml9lY6Yxa+ZoOZJdW9n6HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CHRbrM4t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFFC3C4CECD;
+	Thu, 14 Nov 2024 10:10:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731579018;
+	bh=zIXoVPuLxS46P+2i3Z4nmPDd0XPDfcNwgdZycvncv+w=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=CHRbrM4tcguZd7l9uc7J+VttnK1I2vUOgOSwFNF7UCmjXoTOe/7CyDW0H7jFHGHDG
+	 saGQ7gTZU3zDTlbumMOmQ7Z6mMZdnFN6y763tekJ9zeSRt0dZOEFV79pKwAatLLO+F
+	 /4lipHoacF3cjwrTDqcoH/yhC8WfEZcWbY3hFb85v+8a5kroRlJeCJVbu8tqpZNSKh
+	 PUCPoaxztlV0h86DbTcvLneQuS44bF4hZMdyfVRHMqAUf/WvWZqi7wzvE3hE/xUDE2
+	 ZXgG95CC2JDgX5TBSB6f29t8C9UkYjnHnuaLeUYJuVq0Xk/Z+pGBFSKuEEzxRUU0/g
+	 VF/fsw00+lVCw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADDEC3809A80;
+	Thu, 14 Nov 2024 10:10:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ab0abca0-57b3-b379-0070-4625395c6707@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v5] net: ti: icssg-prueth: Fix 1 PPS sync
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173157902851.1866232.9016016024902028479.git-patchwork-notify@kernel.org>
+Date: Thu, 14 Nov 2024 10:10:28 +0000
+References: <20241111095842.478833-1-m-malladi@ti.com>
+In-Reply-To: <20241111095842.478833-1-m-malladi@ti.com>
+To: Meghana Malladi <m-malladi@ti.com>
+Cc: vigneshr@ti.com, horms@kernel.org, jan.kiszka@siemens.com,
+ diogo.ivo@siemens.com, pabeni@redhat.com, kuba@kernel.org,
+ edumazet@google.com, davem@davemloft.net, andrew+netdev@lunn.ch,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, srk@ti.com, rogerq@kernel.org,
+ danishanwar@ti.com, vadim.fedorenko@linux.dev
 
-On 2024-11-10 10:08:00 [+0800], Hou Tao wrote:
-> >> well. However, after changing the kmalloc and its variants to bpf memory
-> >> allocator, I think the switch to raw_spinlock_t will be safe. I have
-> >> already written a draft patch set. Will post after after polishing and
-> >> testing it. WDYT ?
-> > Switching lpm to bpf_mem_alloc would address the issue.
-> > Why do you want a switch to raw_spin_lock as well?
-> > kfree_rcu() is already done outside of the lock.
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Mon, 11 Nov 2024 15:28:42 +0530 you wrote:
+> The first PPS latch time needs to be calculated by the driver
+> (in rounded off seconds) and configured as the start time
+> offset for the cycle. After synchronizing two PTP clocks
+> running as master/slave, missing this would cause master
+> and slave to start immediately with some milliseconds
+> drift which causes the PPS signal to never synchronize with
+> the PTP master.
 > 
-> After switching to raw_spinlock_t, the lpm trie could be used under
-> interrupt context even under PREEMPT_RT.
+> [...]
 
-I would have to dig why the lock has been moved away from raw_spinlock_t
-and why we need it back and what changed since. I have some vague memory
-that there was a test case which added plenty of items and cleaning it
-up created latency spikes.
-Note that interrupts are threaded on PREEMPT_RT. Using it in "interrupt
-context" would mean you need this in the primary handler/ hardirq.
+Here is the summary with links:
+  - [net,v5] net: ti: icssg-prueth: Fix 1 PPS sync
+    https://git.kernel.org/netdev/net/c/dc065076ee77
 
-Sebastian
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
