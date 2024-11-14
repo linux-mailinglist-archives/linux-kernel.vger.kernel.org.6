@@ -1,178 +1,159 @@
-Return-Path: <linux-kernel+bounces-408779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91D429C8377
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:58:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7504A9C8370
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:58:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AC532845E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:58:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E88A0B24B4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34111F4FA1;
-	Thu, 14 Nov 2024 06:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307EE1EF0A1;
+	Thu, 14 Nov 2024 06:57:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SbtgU/Mi"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d1w0PsgQ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4AE1F26FA;
-	Thu, 14 Nov 2024 06:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CFF1EBFE2;
+	Thu, 14 Nov 2024 06:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731567482; cv=none; b=kldY39rm0HDBNw9KLnJwsUvMTOhgBJkcRplKt2gpMjmGjYcDwE9IKPvWOuw0nVmZWXo2N5Z69EyC6x50b7u8Vv8z0tuq+iiPICZLItpBdjuLEGEeoeBXV+eKrTSaKXv/aOTC5XAqCYiMDo90RXJzsmfFyYw+vDGmngjWu0pHTZI=
+	t=1731567475; cv=none; b=DjoIzXjYiF2ur5M5udeAapZxRI6OFCyI8Q9DLfwFSquDYnyh4n0NizcCRl8tF5NhLdUDzGU3Hhog7WpkzFBP/AstIQLyWDfqu/9WPZop3VNJEdDAw7P2gEEb49VvZZW3Pc1FMZqKmByC5ktlA0IF0pBUQJO+W0Yk2UT8n7ln2kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731567482; c=relaxed/simple;
-	bh=Zv9uCZDUG9YPSYSHdZchnYQgyUHvMZfsNI407pdWflA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NQ1Z3NJ4sp0OZreyH6cb0VaF10Ubp12J0hosbvuaxrSvYAviEzYOqZ+Q545KwQzlq8zexylo2E0fP1v9VF92AMppzFbAM9eG9rB0z5AJYQiE9G3mGG/pdLyHTPWT6Io1k0HfkCMXPsA3vm6l0+Xf7nk+d6WinIQqa/kR1bSZ/FY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SbtgU/Mi; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53da2140769so229652e87.3;
-        Wed, 13 Nov 2024 22:58:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731567479; x=1732172279; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HQvu8qpkTuOmaCDLs3K7wp8azv2ggugqL4tMIcW8k+0=;
-        b=SbtgU/MiKOOjgY+ShdX4bVYsD4isAnDqTe+2Dc9oe6ZE2wAyQXj0yEx56R7aGmsbs0
-         z0sV00Zh66JX7KQvghVm6P21ZVzUAptBt+IL1syB6jsbGQGdNKwpplSstyS705qRqTZb
-         sR9tzBY8oIu2Ut57TKeBWFuV55ANuFvQk19cFRnKSBzGCz6FLt+Q7FlbfN091ZT5Q+k8
-         exZ5Xek44nTbC9G/PBqRfXOrTtH/p2tbyh5sCWMogojafICRVvMXHizgvxebfYDq1Gb9
-         ZKsDBxuTxsB46dcjazA6XwsXQY4XbOzrx5gUzpLKqxk+6e/ErNTgb31pq5DM23Hs3+jH
-         FPPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731567479; x=1732172279;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HQvu8qpkTuOmaCDLs3K7wp8azv2ggugqL4tMIcW8k+0=;
-        b=i3LCW9Cw9FKufr01KGeLFLrULVSzX0bMvLjqYj72YNkn60f1u1ZogHX/BQ8ALq7l4B
-         nFvuziJ/S/mKgku1DAx+8VjtsSLoUfiEuc/CV1S9gXFAm6L9fvpZY7aDwmlo7rGWXVvd
-         J5JyVCZvXlObBfCfZaNKOdrJMnLTVX51pIAVjPuVZ9M31e9zaTaLiaDVviZKMj7FDjVj
-         QPgIrFiSPv+hTRpl15X7Xxz89YdYZSsCwjlU5lI+7/0QVjAFyHyRoytrifWaxID8D8e9
-         kIbdu4eSY/DcyRRyi3Tp5J3fC0DAi3cvOl4Ah9yE7/d1VT3gzDiSI/YdOM5JPfxClGDi
-         RAOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWcNbEFoV85iBGTQVn7d3nLcYKqsuGGrPM58iW5JBUIgKRAyFUUB76ut+Z9Q6GpomHblUVnxgWPgiToLio@vger.kernel.org, AJvYcCW8Ge6+VeW++udL9GZufanhDrY2bsxtRlZgFeBdT3bg0rD1eSqePcMrcPt2oVX+M7HZySgO7wk6gVk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvgYQB454RgH8l2qzsB5UJ5ELzB6LErNv3SKdBwAcNVBTMrwoD
-	braMTPRuxKPNZveY6FMjfkVfYI7cZmJ4lM8ZrpyRcxJdx6jOo1qb
-X-Google-Smtp-Source: AGHT+IEd+tK0d2d+aoGBzvmNBm1iUBElUQdEeHOWSbiPuZPC1DOytBUgVHs/Px+4M0rw6ss/PNJhyw==
-X-Received: by 2002:a05:6512:3082:b0:535:66ff:c681 with SMTP id 2adb3069b0e04-53da5c8253bmr431535e87.48.1731567478223;
-        Wed, 13 Nov 2024 22:57:58 -0800 (PST)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da6530f4csm82680e87.121.2024.11.13.22.57.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 22:57:56 -0800 (PST)
-Date: Thu, 14 Nov 2024 08:57:33 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: accel: kx022a: Improve reset delay
-Message-ID: <ZzWfXbjaDkFnu_Jg@mva-rohm>
+	s=arc-20240116; t=1731567475; c=relaxed/simple;
+	bh=l4H+hQPO5b4/NrVCRCWuW2U0+ftKonNXrijL/aD8d00=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aN9qbAZZEWXiFbRaFnmRmVL3KQsR3M2I3hEobzZIyzejjNjzu3S3us7lgY2/vcHkM11pj+5CISfwRMk1QpC2r41cl27w5/lcVMBHs6IzkCCoaSHoqiqPqi8HrY7JLeovzZhH4HcffuWTT+M/eDcrOlTjQ88BbXgwXUXtt9dGezs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d1w0PsgQ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE6AGWG015430;
+	Thu, 14 Nov 2024 06:57:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VEovP3YhphlNBRaWvDDlKMCS3rTWbug4MpaSe0edN0E=; b=d1w0PsgQtkSquWAS
+	zBKaKIMD8CA0G00fgPWt31DIy4wDrmMc0i4pFu3jNySp4JzyHhq1Yqahc0Diazdo
+	uZMNshwiVQH2oJO2UvKGpVslhB/vZvRjiqKFzsEmsFD3H763DUeSOZ6l2hll3iBk
+	P6QHHN/xFf8obZ469hNUZ4PxZtRgtR/rVKC4R/7MLMdBSawNj+cq6B/j7lTRd1A4
+	6HXZuvVE9Imm+X8bzf4UFpcx49eHxv45StuYcin6MjAbvjOUBUdBEGfwP1nbAy9n
+	7aAWfgCh2Rs4PIh4I7WHb/t5yxSNORsJ9RiWA/hP1KHWMTC6TCswjUIZbAmYcIKz
+	YDKlMQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vsf33dqh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 06:57:50 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AE6voVZ005550
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 06:57:50 GMT
+Received: from [10.253.78.176] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 13 Nov
+ 2024 22:57:48 -0800
+Message-ID: <5549d7e4-06cb-4305-8cec-10e93e5fbbff@quicinc.com>
+Date: Thu, 14 Nov 2024 14:57:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="sgl4xp2O5KP6tcvY"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: QCA NVM file for the X13s (WCN6855)
+To: Johan Hovold <johan@kernel.org>
+CC: Tim Jiang <quic_tjiang@quicinc.com>,
+        Janaki Ramaiah Thota
+	<quic_janathot@quicinc.com>,
+        <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <ZjNxfFJmCgIyq8J6@hovoldconsulting.com>
+ <5aea3149-ba44-400f-acc6-1a3eca8a7e72@quicinc.com>
+ <ZjOUWqor4q1Efy0W@hovoldconsulting.com>
+ <f1b45d7d-27e0-4ad7-976c-670a0e0d136b@quicinc.com>
+ <ZjOfdK41yLwkH25T@hovoldconsulting.com>
+Content-Language: en-US
+From: quic_zijuhu <quic_zijuhu@quicinc.com>
+In-Reply-To: <ZjOfdK41yLwkH25T@hovoldconsulting.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: JDmExshAwx5bB7S0aaPyjtLukzQ63iqr
+X-Proofpoint-GUID: JDmExshAwx5bB7S0aaPyjtLukzQ63iqr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ bulkscore=0 phishscore=0 malwarescore=0 suspectscore=0 priorityscore=1501
+ clxscore=1015 mlxscore=0 spamscore=0 lowpriorityscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411140051
+
+On 5/2/2024 10:13 PM, Johan Hovold wrote:
+> On Thu, May 02, 2024 at 09:46:38PM +0800, quic_zijuhu wrote:
+>> On 5/2/2024 9:25 PM, Johan Hovold wrote:
+>>> On Thu, May 02, 2024 at 08:56:12PM +0800, quic_zijuhu wrote:
+>>>> On 5/2/2024 6:57 PM, Johan Hovold wrote:
+> 
+>>> It's WCN6855 but the Linux driver currently uses the firmware you pushed
+>>> for QCA2066.
+>>>
+>>>>> The current Linux driver is using the generic NVM file (hpnv21.bin) for
+>>>>> WCN6855, but connectivity is quite bad and I only get 2-3 meters of
+>>>>> range.
+>>>
+>>>>>> Switching to the board-specific NVM configuration (hpnv21b.b8c) that
+>>>> it seems hpnv21b.b8c is a wrong NVM name.
+>>>> is it hpnv21g.b8c?
+>>>
+>> hpnv21g.b8c is the right NVM for the machine.
+> 
+> Ok, thanks. I'll try to find some time to test with this one as well.
+> 
+>>> What is the difference between those two?
+> 
+>> i am afraid that i can't answer your question due to company CCI policy
+> 
+> I understand.
+> 
+>>> Exactly. It's a Lenovo machine that comes with Windows pre-installed and
+>>> we're working on enabling Linux on it with some help from Lenovo.
+>>>
+>>>> need customer to make a request for their requirements if the answer is
+>>>> yes for above question.
+>>>
+>>> Lenovo has made requests for X13s firmware from Qualcomm and pushed it
+>>> to linux-firmware [1], but they have not yet been able to get Qualcomm
+>>> to provide an NVM configuration file for Bluetooth (I think the problem
+>>> may be finding the right person to talk to inside Qualcomm).
+>>>
+>>> So I was hoping maybe you could help us with this since the difference
+>>> between 'hpnv21.bin' that you pushed to linux-firmware and what came
+>>> with Windows appears to be really small (e.g. just a few bytes).
+>>>
+>> let me try to find out the right person who will push this task at next
+>> monday.
+>> there are some other internal procedures before we can push BT firmware
+>> into linux-firmware.
+> 
 
 
---sgl4xp2O5KP6tcvY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+have up-streamed 22 NVM files which come from WOS into linux-firmware as
+shown by below link, both hpnv21g.b8c and hpnv21.b8c are also contained.
 
-All the sensors supported by kx022a driver seemed to require some delay
-after software reset to be operational again. More or less a random
-msleep(1) was added to cause the driver to go to sleep so the sensor has
-time to become operational again.
+https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/commit/?id=77a11ffc5a0aaaadc870793d02f6c6781ee9f598
 
-Now we have official docuumentation available:
-https://fscdn.rohm.com/kionix/en/document/AN010_KX022ACR-Z_Power-on_Procedu=
-re_E.pdf
-https://fscdn.rohm.com/kionix/en/document/TN027-Power-On-Procedure.pdf
-https://fscdn.rohm.com/kionix/en/document/AN011_KX134ACR-LBZ_Power-on_Proce=
-dure_E.pdf
+(^^)(^^).
 
-stating the required time is 2 ms.
+> Much appreciated, thank you.
+> 
+> Johan
+> 
 
-Due to the nature of the current msleep implementation, the msleep(1) is
-likely to be sleeping more than 2ms already - but the value "1" is
-misleading in case someone needs to optimize the start time and change
-the msleep to a more accurate delay. Hence it is better for
-"documentation" purposes to use value which actually reflects the
-specified 2ms wait time.
-
-Change the value of delay after software reset to match the
-specifications and add links to the power-on procedure specifications.
-
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
----
-Sorry for not including this to the KX134ACR-LBZ series I sent
-yesterday. It was only half an hour after I had sent the KX134ACR-LBZ
-support when I was notified about the existence of the KX022ACR-Z
-start-up procedure specification... Hence this lone patch to code which
-I just sent a miscallaneous series for before.
-
- drivers/iio/accel/kionix-kx022a.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/iio/accel/kionix-kx022a.c b/drivers/iio/accel/kionix-k=
-x022a.c
-index 32387819995d..ccabe2e3b130 100644
---- a/drivers/iio/accel/kionix-kx022a.c
-+++ b/drivers/iio/accel/kionix-kx022a.c
-@@ -1121,10 +1121,15 @@ static int kx022a_chip_init(struct kx022a_data *dat=
-a)
- 		return ret;
-=20
- 	/*
--	 * I've seen I2C read failures if we poll too fast after the sensor
--	 * reset. Slight delay gives I2C block the time to recover.
-+	 * According to the power-on procedure documents, there is (at least)
-+	 * 2ms delay required after the software reset. This should be same for
-+	 * all, KX022ACR-Z, KX132-1211, KX132ACR-LBZ and KX134ACR-LBZ.
-+	 *
-+	 * https://fscdn.rohm.com/kionix/en/document/AN010_KX022ACR-Z_Power-on_Pr=
-ocedure_E.pdf
-+	 * https://fscdn.rohm.com/kionix/en/document/TN027-Power-On-Procedure.pdf
-+	 * https://fscdn.rohm.com/kionix/en/document/AN011_KX134ACR-LBZ_Power-on_=
-Procedure_E.pdf
- 	 */
--	msleep(1);
-+	msleep(2);
-=20
- 	ret =3D regmap_read_poll_timeout(data->regmap, data->chip_info->cntl2, va=
-l,
- 				       !(val & KX022A_MASK_SRST),
-
-base-commit: 20fd1383cd616d61b2a79967da1221dc6cfb8430
---=20
-2.47.0
-
-
---sgl4xp2O5KP6tcvY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmc1n1gACgkQeFA3/03a
-ocVbVgf/T+Zsndk2gbycuXLY8HPITdayiKuAnKym9glsbYywQ2uMLkgLRJIpOT8W
-MH4a624wHDZowhkDSx7EmrF2jqh3CJbD5ruOTVCLyNS9f47rKPp6OZwV/88TeDZo
-8cGGyuosv/QgeMGDk5blVzLaX+M7PTZnel1jGz536b+2BW8yzZ/p/Dv0IgTiHJ52
-CgKAJtOusCPvf0fzUPaZlawGYV4k6nMF7KdvfcRooZAAhwwKIBPch+ETSDhE4hsK
-Y20mG1SAmvEPxiykRvXeuGb1nmJuPWZP9ZhpYVUgsj6/ksCBoZVDwC0ohvgmNFEj
-rQsI5cKP4+/BjCS3xZJek+5Y2M8Zpg==
-=0QC0
------END PGP SIGNATURE-----
-
---sgl4xp2O5KP6tcvY--
 
