@@ -1,89 +1,142 @@
-Return-Path: <linux-kernel+bounces-409254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D15F9C89A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:15:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B43649C898B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:11:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96437B29DFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:09:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73B412822A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D02E1F9AA8;
-	Thu, 14 Nov 2024 12:09:15 +0000 (UTC)
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6DF18BC2C;
-	Thu, 14 Nov 2024 12:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6EE1F9424;
+	Thu, 14 Nov 2024 12:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="VHKm99YJ"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659831F8F09
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 12:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731586154; cv=none; b=DkNNTuNvrrfwHFUJZ0XdxzvgWLBWHv2qxHLCFsgEJ+9fFRgtfHHX6AhvAYVkQbS8W0Kqq0UD4ZxKUqtfqbViBbcrMZVoCsj8VI2Ko+aztuqAatnN1MnyrtSl2zpzZoCq+USFM1dygD5QbB17r9CMGCzSFQC7cvAaXF58MFNPRVQ=
+	t=1731586259; cv=none; b=ncZgc4vTHkF3NZTpQFnHqT/AwJJvX2WKemDvWMM2QnuzG5mv+LDEqEYuVuxTpna1iUy0KeriO67iooD6K7Qo/ztfPr4452EVcVyNBUwWjlIH9WSDqNygAQOY9X6thHUGVsTigZJPFx+TOCLGsLp7yLr6gxunmqXY20J0eyElXUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731586154; c=relaxed/simple;
-	bh=zFjM9nD1eEcwNAhJr7GI0uPQTnedXfW/j65cRd8uHaU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SVjkd4JQKLCcMLNPNCv0WmJ405AMbciNQXQc/yUhqrIfZC1FxmRXZk0/QcEezWjdj2TBm6LDNYbQVk00u+7cqwfXosojecyEqxBta8yAvJ2F9AJ9ecGrwXzJnTxYz1TvuqguA0/gtJ6gMveKlJPyyupYSYrkCO6e6H1rlie013U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
-Received: from [78.30.37.63] (port=39690 helo=gnumonks.org)
-	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <pablo@gnumonks.org>)
-	id 1tBYep-002ARd-BK; Thu, 14 Nov 2024 13:09:09 +0100
-Date: Thu, 14 Nov 2024 13:09:05 +0100
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-Cc: Paolo Abeni <pabeni@redhat.com>, Jeongjun Park <aha310510@gmail.com>,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	horms@kernel.org, kaber@trash.net, netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	syzbot+58c872f7790a4d2ac951@syzkaller.appspotmail.com
-Subject: Re: [PATCH net v2] netfilter: ipset: add missing range check in
- bitmap_ip_uadt
-Message-ID: <ZzXoYcxjSpejl9pC@calendula>
-References: <20241113130209.22376-1-aha310510@gmail.com>
- <ff1c1622-a57c-471e-b41f-8fb4cb2f233d@redhat.com>
- <ZzXfDDNSeO0vh1US@calendula>
- <759eccdd-f75b-f3a7-8686-d4c49c72df41@blackhole.kfki.hu>
+	s=arc-20240116; t=1731586259; c=relaxed/simple;
+	bh=hoLaPUq7UezT40RzyRDYrGK1qtDfx1w4HY4INq1UT8s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=JgdCQPLLDTACtMRIctUaJriTTUydmLzAoGpppnfCcQ6MGkxiLhqHh7/ea251zhl/7FM/0EfLKsmFQn32/736jzD6CRsxci5W/QEBld8LoyEdJUt6o0HObq7vxwyrffNQSNOD5OZ7OeZtRlDOFRiIe5BEXhaFGsX+ies4XDSPBzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=VHKm99YJ reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=Bb6EYl6aU3KEzi3lGqC2sXHxjw9BTd5uEpy3oRywepg=; b=V
+	HKm99YJMsHpghDR5I/5slgpNC3apTnAVgLtPJLEBGr6RQN18/uWtF/67q/XqfeIj
+	pLe8lc/UE44QEQO2i6VXCPLNRyOy+znIMHzZap8Cox7wA8Rg5n+uIN+FG/xqbxKq
+	evQvpypks41Huecwu/caO2/gFxueeqtwmUHOQCD0jU=
+Received: from 00107082$163.com ( [111.35.191.191] ) by
+ ajax-webmail-wmsvr-40-101 (Coremail) ; Thu, 14 Nov 2024 20:10:29 +0800
+ (CST)
+Date: Thu, 14 Nov 2024 20:10:29 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Thomas Gleixner" <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/13] kernel/irq/proc: use seq_put_decimal_ull_width()
+ for decimal values
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <87jzd7kl0v.ffs@tglx>
+References: <20241108160717.9547-1-00107082@163.com> <87jzd7kl0v.ffs@tglx>
+X-NTES-SC: AL_Qu2YA/mTuUop7yiYYukXn0oTju85XMCzuv8j3YJeN500syTo3CAbcm9fB3f0+s6xBgqhoAi9XQBM5O94T7hTR69UMy7nLCzsCLDIXDHDfdil
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <759eccdd-f75b-f3a7-8686-d4c49c72df41@blackhole.kfki.hu>
-X-Spam-Score: -1.9 (-)
+Message-ID: <c975578.a64f.1932a950632.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:ZSgvCgD3X0W26DVn_0YnAA--.37132W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0h+Xqmc11aB0awAEsM
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Thu, Nov 14, 2024 at 12:46:29PM +0100, Jozsef Kadlecsik wrote:
-> On Thu, 14 Nov 2024, Pablo Neira Ayuso wrote:
-> 
-> > On Thu, Nov 14, 2024 at 12:10:05PM +0100, Paolo Abeni wrote:
-> > > On 11/13/24 14:02, Jeongjun Park wrote:
-> > > > When tb[IPSET_ATTR_IP_TO] is not present but tb[IPSET_ATTR_CIDR] exists,
-> > > > the values of ip and ip_to are slightly swapped. Therefore, the range check
-> > > > for ip should be done later, but this part is missing and it seems that the
-> > > > vulnerability occurs.
-> > > > 
-> > > > So we should add missing range checks and remove unnecessary range checks.
-> > > > 
-> > > > Cc: <stable@vger.kernel.org>
-> > > > Reported-by: syzbot+58c872f7790a4d2ac951@syzkaller.appspotmail.com
-> > > > Fixes: 72205fc68bd1 ("netfilter: ipset: bitmap:ip set type support")
-> > > > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> > > 
-> > > @Pablo, @Jozsef: despite the subj prefix, I guess this should go via
-> > > your tree. Please LMK if you prefer otherwise.
-> > 
-> > Patch LGTM. I am waiting for Jozsef to acknowledge this fix.
-> 
-> Sorry for the delay at acking the patch. Please apply it to the stable 
-> branches too because those are affected as well.
-
-No problem, preparing PR. Thanks Jozsef.
+SGksCgpBdCAyMDI0LTExLTE0IDAzOjEwOjA4LCAiVGhvbWFzIEdsZWl4bmVyIiA8dGdseEBsaW51
+dHJvbml4LmRlPiB3cm90ZToKPk9uIFNhdCwgTm92IDA5IDIwMjQgYXQgMDA6MDcsIERhdmlkIFdh
+bmcgd3JvdGU6Cj4+IFRoZSBpbXByb3ZlbWVudCBoYXMgcHJhdGljYWwgc2lnbmlmaWNhbmNlLCBj
+b25zaWRlcmluZyBtYW55IG1vbml0b3JpbmcKPj4gdG9vbHMgd291bGQgcmVhZCAvcHJvYy9pbnRl
+cnJ1cHRzIHBlcmlvZGljYWxseS4KPgo+SSd2ZSBhcHBsaWVkIHRoaXMsIGJ1dCAuLi4KPgo+bG9v
+a2luZyBhdCBhIDI1NiBDUFUgbWFjaGluZS4gL3Byb2MvaW50ZXJydXB0cyBwcm92aWRlcyBkYXRh
+IGZvciA1NjAKPmludGVycnVwdHMsIHdoaWNoIGFtb3VudHMgdG8gfjEuNk1CIGRhdGEgc2l6ZS4K
+Pgo+VGhlcmUgYXJlIDU2MCAqIDI1NiA9IDE0MzM2MCBpbnRlcnJ1cHQgY291bnQgZmllbGRzLiAx
+NDA2MTUgb2YgdGhlc2UKPmZpZWxkcyBhcmUgemVybywgd2hpY2ggbWVhbnMgMTQwNjE1ICogMTEg
+Ynl0ZXMuIFRoYXQncyA5NiUgb2YgdGhlCj5vdmVyYWxsIGRhdGEgc2l6ZS4gVGhlIGFjdHVhbGx5
+IHVzZWZ1bCBpbmZvcm1hdGlvbiBpcyBsZXNzIHRoYW4KPjUwS0IgaWYgcHJvcGVybHkgY29uZGVu
+c2VkLgo+IAo+SSdtIHJlYWxseSBhbXVzZWQgdGhhdCBwZW9wbGUgc3BlbmQgYSBsb3Qgb2YgdGlt
+ZSB0byBpbXByb3ZlIHRoZQo+cGVyZm9ybWFuY2Ugb2YgL3Byb2MvaW50ZXJydXB0cyBpbnN0ZWFk
+IG9mIGFjdHVhbGx5IHNpdHRpbmcgZG93biBhbmQKPmltcGxlbWVudGluZyBhIHByb3BlciBuZXcg
+aW50ZXJmYWNlIGZvciB0aGlzIHB1cnBvc2UsIHdoaWNoIHdvdWxkIG1ha2UKPmJvdGggdGhlIGtl
+cm5lbCBhbmQgdGhlIHRvb2xzIGZhc3RlciBieSBwcm9iYWJseSBzZXZlcmFsIG9yZGVycyBvZgo+
+bWFnbml0dWRlLgoKVGhhdCdzIGEgZ3JlYXQgaWRlYX4uCkkgdHJpZWQgdG8gbWFrZSBjaGFuZ2Vz
+IGFuZCB2ZXJpZnkgdGhlIHBlcmZvcm1hbmNlLCB0aGUgcmVzdWx0IGlzIGdvb2QsCm9ubHkgdGhh
+dCBrZXJuZWwgc2lkZSBpbXByb3ZlbWVudCBpcyBub3QgdGhhdCBiaWcsIGJ1dCBzdGlsbCBzaWdu
+aWZpY2FudC4KCkhlcmUgaXMgd2hhdCBJIGRpZCwgKGRyYWZ0IGNvZGVzIGFyZSBhdCB0aGUgZW5k
+KToKQ3JlYXRlZCB0d28gbmV3IC9wcm9jIGVudHJ5IGZvciBjb21wYXJpc2lvbjoKMS4gL3Byb2Mv
+aW50ZXJydXB0c3AsICBub24temVybyB2YWx1ZSBvbmx5LCBhcmNoLWluZGVwZW5kZW50IGlycXMg
+d2l0aG91dCBkZXNjcmlwdGlvbgoJJCBjYXQgL3Byb2MvaW50ZXJydXB0c3AgCglJUlEgQ1BVIGNv
+dW50ZXIgIyBwb3NpdGl2ZSBvbmx5CgkwIDAgNDAKCTM4IDUgMjMKCTM5IDAgODEKCTQwIDEgNgoJ
+NDEgMiAxMTEKCS4uLgoJJCBjYXQgL3Byb2MvaW50ZXJydXB0c3AgIHwgd2MKCSAgICAgMTggICAg
+ICA1NyAgICAgMTgxCgoJJCBzdHJhY2UgLWUgcmVhZCAtVCBjYXQgL3Byb2MvaW50ZXJydXB0c3Ag
+PiAvZGV2L251bGwKCS4uLgoJcmVhZCgzLCAiSVJRIENQVSBjb3VudGVyICMgcG9zaXRpdmUgb25s
+eVxuIi4uLiwgMTMxMDcyKSA9IDE4MSA8MC4wMDAxNDQ+CglyZWFkKDMsICIiLCAxMzEwNzIpICAg
+ICAgICAgICAgICAgICAgICAgPSAwIDwwLjAwMDAwOT4KCgkkIHRpbWUgLi9pbnRlcnJ1cHRzcCAg
+IyAxIG1pbGxpb24gcm91bmRzIG9mIG9wZW4vcmVhZChhbGwpL2Nsb3NlOwoKCXJlYWwJMW01NC43
+MjdzCgl1c2VyCTBtMC4zNjhzCglzeXMJMW01NC4zMDlzCgoKCjIuIC9wcm9jL2ludGVycnVwdHNv
+LCBzYW1lIHdpdGggb2xkIGZvcm1hdCwgZXhjZXB0IGFyY2gtZGVwZW5kZW50IGlycXMgYXJlIHJl
+bW92ZWQKCSQgY2F0IC9wcm9jL2ludGVycnVwdHNvIHwgd2MKCSAgICAgMzIgICAgIDM4OCAgICA0
+NDM5CgkkIHN0cmFjZSAtZSByZWFkIC1UIGNhdCAvcHJvYy9pbnRlcnJ1cHRzbyA+IC9kZXYvbnVs
+bAoJLi4uCglyZWFkKDMsICIgICAgICAgICAgICBDUFUwICAgICAgIENQVTEgICAgICIuLi4sIDEz
+MTA3MikgPSA0MDA1IDwwLjAwMDA3MT4KCXJlYWQoMywgIiAgODg6ICAgICAgICAgIDAgICAgICAg
+ICAgMCAgICAgIi4uLiwgMTMxMDcyKSA9IDQzNCA8MC4wMDAxMTE+CglyZWFkKDMsICIiLCAxMzEw
+NzIpICAgICAgICAgICAgICAgICAgICAgPSAwIDwwLjAwMDAwOT4KCiAgICAgICAgJCB0aW1lIC4v
+aW50ZXJydXB0c28gIyAxIG1pbGxpb24gcm91bmRzIG9mIG9wZW4vcmVhZChhbGwpL2Nsb3NlOwoK
+CXJlYWwJMm0xOS4yODRzCgl1c2VyCTBtMC40MDBzCglzeXMJMm0xOC43NTZzCgoKVGhlIHNpemUg
+aXMgaW5kZWVkIHRlbnMgb2YgdGltZXMgc2hvcnRlciwgYW5kIHdvdWxkIGhhdmUgaHVnZSBpbXBy
+b3ZlbWVudApmb3IgdGhvc2UgYXBwbGljYXRpb25zIHBhcnNpbmcgdGhlIHdob2xlIGNvbnRlbnQ7
+IEJ1dCBhcyBmb3Iga2VybmVsIHNpZGUKaW1wcm92ZW1lbnQsIHN0cmFjZSBhbmQgc3RyZXNzIHRl
+c3QgaW5kaWNhdGVzIHRoZSBpbXByb3ZlbWVudCBpcyBub3QgCnRoYXQgaHVnZSwgd2VsbCwgYnV0
+IHN0aWxsIHNpZ25pZmljYW50IH40MCUuCgoKVGhlIGJvdHRsZW5lY2sgc2VlbXMgdG8gYmUgbXRy
+ZWVfbG9hZCBjYWxsZWQgYnkgaXJxX3RvX2Rlc2MsIGJhc2VkIG9uIGEgc2ltcGxlCnByb2ZpbGlu
+ZyAobm90IHN1cmUgd2hldGhlciB0aGlzIGlzIGV4cGVjdGVkIG9yIG5vdCk6CgoJc2hvd19pbnRl
+cnJ1cHRzcCg3NC43MjQlIDg0NTU0MS8xMTMxNTU0KQoJICAgIG10cmVlX2xvYWQoNTYuNTk2JSA0
+Nzg1NDQvODQ1NTQxKQoJICAgIF9fcmN1X3JlYWRfdW5sb2NrKDUuOTE0JSA1MDAwNC84NDU1NDEp
+CgkgICAgX19yY3VfcmVhZF9sb2NrKDMuMDU2JSAyNTg0MC84NDU1NDEpCgkgICAgaXJxX3RvX2Rl
+c2MoMi4xNTElIDE4MTg0Lzg0NTU0MSkKCSAgICBzZXFfcHV0X2RlY2ltYWxfdWxsX3dpZHRoKDEu
+MjExJSAxMDI0My84NDU1NDEpCgkJLi4uCgoKSSB0aGluayB0aGUgaW1wcm92ZW1lbnQgd29ydGgg
+cHVyc3VpbmcuIE1heWJlIGEgbmV3IGludGVyZmFjZSBmb3IgImFjdGl2ZSIKaW50ZXJydXB0cywg
+c2F5IC9wcm9jL2FjdGl2ZWludGVycnVwdHM/LCBhbmQgdGhlIG9sZCAvcHJvYy9pbnRlcnJ1cHRz
+IGNhbgpzZXJ2ZSBhcyBhIHRhYmxlIGZvciBhdmFpbGFibGUgaWRzL2NwdXMvZGVzY3JpcHRpb25z
+LgoKRG8geW91IHBsYW4gdG8gd29yayBvbiB0aGlzPyBJZiBub3QsIEkgY2FuIHRha2UgdGltZSBv
+biBpdC4KCgoKRHJhZnQgY29kZXM6CglpbnQgc2hvd19pbnRlcnJ1cHRzcChzdHJ1Y3Qgc2VxX2Zp
+bGUgKnAsIHZvaWQgKnYpCgl7CgoJCWludCBpID0gKihsb2ZmX3QgKikgdiwgajsKCQlzdHJ1Y3Qg
+aXJxX2Rlc2MgKmRlc2M7CgoJCWlmIChpID49IEFDVFVBTF9OUl9JUlFTKQoJCQlyZXR1cm4gMDsK
+CgkJLyogcHJpbnQgaGVhZGVyIGFuZCBjYWxjdWxhdGUgdGhlIHdpZHRoIG9mIHRoZSBmaXJzdCBj
+b2x1bW4gKi8KCQlpZiAoaSA9PSAwKSB7CgkJCXNlcV9wdXRzKHAsICJJUlEgQ1BVIGNvdW50ZXIg
+IyBwb3NpdGl2ZSBvbmx5XG4iKTsKCQl9CgoJCXJjdV9yZWFkX2xvY2soKTsKCQlkZXNjID0gaXJx
+X3RvX2Rlc2MoaSk7CgkJaWYgKCFkZXNjIHx8IGlycV9zZXR0aW5nc19pc19oaWRkZW4oZGVzYykp
+CgkJCWdvdG8gb3V0c3BhcnNlOwoKCQlpZiAoIWRlc2MtPmFjdGlvbiB8fCBpcnFfZGVzY19pc19j
+aGFpbmVkKGRlc2MpIHx8ICFkZXNjLT5rc3RhdF9pcnFzKQoJCQlnb3RvIG91dHNwYXJzZTsKCgkJ
+Zm9yX2VhY2hfb25saW5lX2NwdShqKSB7CgkJCXVuc2lnbmVkIGludCBjbnQgPSBkZXNjLT5rc3Rh
+dF9pcnFzID8gcGVyX2NwdShkZXNjLT5rc3RhdF9pcnFzLT5jbnQsIGopIDogMDsKCQkJaWYgKGNu
+dCA+IDApIHsKCQkJCXNlcV9wdXRfZGVjaW1hbF91bGwocCwgIiIsIGkpOwoJCQkJc2VxX3B1dF9k
+ZWNpbWFsX3VsbChwLCAiICIsIGopOwoJCQkJc2VxX3B1dF9kZWNpbWFsX3VsbChwLCAiICIsIGNu
+dCk7CgkJCQlzZXFfcHV0YyhwLCAnXG4nKTsKCQkJfQoJCX0KCglvdXRzcGFyc2U6CgkJcmN1X3Jl
+YWRfdW5sb2NrKCk7CgkJcmV0dXJuIDA7Cgl9CgoJaW50IHNob3dfaW50ZXJydXB0c28oc3RydWN0
+IHNlcV9maWxlICpwLCB2b2lkICp2KQoJewoJCXN0YXRpYyBpbnQgcHJlYzsKCgkJaW50IGkgPSAq
+KGxvZmZfdCAqKSB2LCBqOwoJCXN0cnVjdCBpcnFhY3Rpb24gKmFjdGlvbjsKCQlzdHJ1Y3QgaXJx
+X2Rlc2MgKmRlc2M7CgkJdW5zaWduZWQgbG9uZyBmbGFnczsKCgkJaWYgKGkgPj0gQUNUVUFMX05S
+X0lSUVMpIDw8LS0tcmV0dXJuIHdoZW4gYXJjaC1pbmRlcGVuZGVudCBpcnFzIGFyZSBkb25lLgoJ
+CQlyZXR1cm4gMDsgICAKCQkuLi4KCgoKVGhhbmtzfgpEYXZpZAo=
 
