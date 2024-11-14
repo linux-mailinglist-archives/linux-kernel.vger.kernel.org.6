@@ -1,114 +1,97 @@
-Return-Path: <linux-kernel+bounces-409192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDD6A9C888D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:14:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC8279C8896
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:15:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99E081F25C58
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:14:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 977B71F22117
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD661F8918;
-	Thu, 14 Nov 2024 11:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53FB1F8F09;
+	Thu, 14 Nov 2024 11:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BLwB3klD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="i2KEE3+8"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99FB1F8193;
-	Thu, 14 Nov 2024 11:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E10318BBBD;
+	Thu, 14 Nov 2024 11:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731582862; cv=none; b=Duv7d/nhqx1b6Vj3kLB4JZ17NZ7RNzt6o+zQiylrD+K4KaBDhT1ijkC6gGFsWkyT0cqGAqIGg77qlXb9YjSlBh4n/S9S/U/juFfbqXhzQjHJSz8WyxI3bJBpKppArT+9zcJ2cHwm8XvOAtVQuwUFmtRu8VQIIN/e8JEJJnQ+xQ4=
+	t=1731582921; cv=none; b=BuUot6gYVkyISFXOyWDlycwiYK7Le4NDVBl5W7Jc7qu9tv6tYdfSW/x4KiU7G2VpC24ZBUCfM1yfuzNbNzbGMCTzTMme9YM0Mg73ebfOrndqTq1mTxH4ijprkM9Hzp+YNQHCqDhFR+x5hzBbrzLzdg0yLWLHP/dWtk4FefgqTYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731582862; c=relaxed/simple;
-	bh=EH9hwU1mzPi6AlkDMNhH5/MmE32MjwtQZgX3Oap6itA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PjpCRLv41ZMDM6VU+ljA6yYZ375Wx5z413dHlPRW2GW8dC3esPxVHG3L2RYzIU7s4PmsUwA1Pt1B82FbaxAZlitw513YQfVUUoPLQC8CvK7ALiE/VKTC0PI3KKiPkwHAVKjb8ATylaAvFyRmA64qmAtMH64J13etOoKyM7sQuZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BLwB3klD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DF26C4CECD;
-	Thu, 14 Nov 2024 11:14:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731582861;
-	bh=EH9hwU1mzPi6AlkDMNhH5/MmE32MjwtQZgX3Oap6itA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BLwB3klDDzSqqnsvGctGBsR589EfntJEeqFjLUfb0svOLKZa4/stg8J7AFScvm+m5
-	 AW1MskGlFFEpGrgtMX5ClKhG0pepBycsuzNRi0gJSDwXOR+V2stTwCUpbiJtLWwvdH
-	 tHFupOA+qKMTBS12Cs5HfYsNGcUhYhkrPkanMGJlQPB3bxN/wBtTY8vg6oupq4atmd
-	 0hdZ9VKBoP43w8ZLaqDJl6eTRWkbuWgq6l1HqiLyGb4yDcZvFy1b3bnnbYQltQXRCA
-	 B/Q0DT3RtVmKWqNz/Gvfgyfbx16AjkYhkzKvtoJgjO3aoI6yREIWK750PghDBeNZRc
-	 3UtJLJBAz97vQ==
-Message-ID: <e7d97b3d-1880-4c89-bbf2-a742d6ac9e6b@kernel.org>
-Date: Thu, 14 Nov 2024 12:14:16 +0100
+	s=arc-20240116; t=1731582921; c=relaxed/simple;
+	bh=LJyia1GC6owIBA+nt+R/EcuDd2a3EyVgS+cuvHdY9dE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=D3xOpFIEf/J3vaXQDKqTwuaAcwR1WLOLoLz7PSyR+idr4tUS2k40JtPwOIcCGxeOHmZUbjWr1L1x/usdHZrCrfsd3JUjHTUEs9jL0+pRWV1Dt3ajSxWByAPLQLirH4zmftGWW2EyOIQJzrKnyBeYoXmnlgh82IQTS7LmZfEIzdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=i2KEE3+8; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4AEBEpRI22903521, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1731582891; bh=LJyia1GC6owIBA+nt+R/EcuDd2a3EyVgS+cuvHdY9dE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=i2KEE3+8PPcP8NX8d/xPeHHFbJhhlH1HJ43L1RmsCflRZAzuMhmCeaguTVaxqhZr+
+	 mqx/jto8cKRqTWm61ZMXFgwvlQGT4mQm/UMNo7h3qisSXj5jza+Bi6gUlr+od5XJbh
+	 arbGmrA84wMTtY8qP9voDfk45saCcquDiu8oqggxOL/GzN4eypUDQrzoepfa4VhnZw
+	 LSnbT4XCw2XyjCUL54+ZugaydSo6YaT/dM1F6+n+eusoj9Wa9jAVs1AzPdwMnDnIEY
+	 LkTk1WBb6Z2/FZ+ZNBmJqfcbe6fyjZSTyZ2ASLWwVAhfuJuizhNhq8vn2O7MA05/tV
+	 AMsvvFhI1jH9Q==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 4AEBEpRI22903521
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 14 Nov 2024 19:14:51 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 14 Nov 2024 19:14:51 +0800
+Received: from RTDOMAIN (172.21.210.74) by RTEXMBS04.realtek.com.tw
+ (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Thu, 14 Nov
+ 2024 19:14:50 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: <kuba@kernel.org>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+        <andrew+netdev@lunn.ch>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <horms@kernel.org>, <pkshih@realtek.com>,
+        <larry.chiu@realtek.com>, Justin Lai <justinlai0215@realtek.com>
+Subject: [PATCH net 0/4] Updating and correcting switch hardware versions and reported speeds
+Date: Thu, 14 Nov 2024 19:14:39 +0800
+Message-ID: <20241114111443.375649-1-justinlai0215@realtek.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
- symbols
-To: Werner Sembach <wse@tuxedocomputers.com>,
- Luis Chamberlain <mcgrof@kernel.org>
-Cc: tux@tuxedocomputers.com, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
- linux-kernel@vger.kernel.org, Thorsten Leemhuis <linux@leemhuis.info>
-References: <20241114103133.547032-4-ukleinek@kernel.org>
- <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
-Content-Language: en-US, de-DE
-From: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-In-Reply-To: <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: RTEXH36506.realtek.com.tw (172.21.6.27) To
+ RTEXMBS04.realtek.com.tw (172.21.6.97)
 
-Hello,
+This patch set mainly involves updating and correcting switch hardware
+versions and reported speeds.
+Details are as follows:
+1. Refactor the rtase_check_mac_version_valid() function.
+2. Correct the speed for RTL907XD-V1
+3. Add support for RTL907XD-VA PCIe port
+4. Corrects error handling of the rtase_check_mac_version_valid()
 
-On 11/14/24 11:49, Werner Sembach wrote:
-> Am 14.11.24 um 11:31 schrieb Uwe Kleine-König:
->> the kernel modules provided by Tuxedo on
->> https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers
->> are licensed under GPLv3 or later. This is incompatible with the
->> kernel's license and so makes it impossible for distributions and other
->> third parties to support these at least in pre-compiled form and so
->> limits user experience and the possibilities to work on mainlining these
->> drivers.
->>
->> This incompatibility is created on purpose to control the upstream
->> process. See https://fosstodon.org/@kernellogger/113423314337991594 for
->> a nice summary of the situation and some further links about the issue.
->>
->> Note that the pull request that fixed the MODULE_LICENSE invocations to
->> stop claiming GPL(v2) compatibility was accepted and then immediately
->> reverted "for the time being until the legal stuff is sorted out"
->> (https://gitlab.com/tuxedocomputers/development/packages/tuxedo- 
->> drivers/-/commit/a8c09b6c2ce6393fe39d8652d133af9f06cfb427).
-> 
-> As already being implied by that commit message, this is sadly not an 
-> issue that can be sorted out over night.
-> 
-> We ended up in this situation as MODULE_LICENSE("GPL") on its own does 
-> not hint at GPL v2, if one is not aware of the license definition table 
-> in the documentation.
+Justin Lai (4):
+  rtase: Refactor the rtase_check_mac_version_valid() function
+  rtase: Correct the speed for RTL907XD-V1
+  rtase: Add support for RTL907XD-VA PCIe port
+  rtase: Corrects error handling of the rtase_check_mac_version_valid()
 
-That statement isn't consistent with you saying to pick GPLv3 as an 
-explicitly incompatible license to control the mainlining process. So 
-you knew that it's legally at least questionable to combine these licenses.
+ drivers/net/ethernet/realtek/rtase/rtase.h    |  2 +
+ .../net/ethernet/realtek/rtase/rtase_main.c   | 38 ++++++++++++++-----
+ 2 files changed, 30 insertions(+), 10 deletions(-)
 
-The only thing I could accept here is that you were surprised that the 
-incompatibility has some technical enforcement resulting in your modules 
-to become nonfunctional. But that's like a thieve in a supermarket who 
-asks for forgiveness because while he was aware that steeling is not 
-allowed, wasn't aware there is video surveillance that might actually 
-catch him.
+-- 
+2.34.1
 
-So I'd claim MODULE_LICENSE("GPL") not being explicit to not apply for 
-GPLv3 code is not a valid excuse. (Which doesn't mean the kernel 
-couldn't improve here.)
-
-Best regards
-Uwe
 
