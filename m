@@ -1,246 +1,306 @@
-Return-Path: <linux-kernel+bounces-409499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C4DC9C8D9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:09:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B0159C8DA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:10:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F41991F24C6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:09:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C2501F22977
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7833213C9DE;
-	Thu, 14 Nov 2024 15:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED8C13B2A9;
+	Thu, 14 Nov 2024 15:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IGekQPjB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/1wb1nl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDEE288DA;
-	Thu, 14 Nov 2024 15:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF843FBB3;
+	Thu, 14 Nov 2024 15:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731596963; cv=none; b=gqijRd0S74IMPMkAp4kWzSAdiZegFuwgMU+jX8kM1Lubn1N0dhx+JgP6QSpyipq81fIcUL5O3/9PplNlv6wjTBYmfyur6KowOsG9Gzm4tKJqObYH6IrgspIAvo5TVEuzxpEhyRbl/rF2Yofy6CtTWOXaZj3EJ2WaVepsMF6uyZU=
+	t=1731596999; cv=none; b=uLFcDcK2LQlCUwjZsYH0JSUy858VU7X0/Z+b/qA3P/m27+vuol0TU8jXHEdtUwtDxRK/3CTdxshVK1JZyYeLM1tOWxuZhoW8aIEtmfdRezhEzocXus3ygpJF+MVyYCgGmjON0C4Y/4FafGiWcQbYsE4uSRVyLs4L+0wJN+eh08c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731596963; c=relaxed/simple;
-	bh=0NQgyLEatvr+MDl2cQ5d6X3A4fUJMj3M+eF9ZnLRWmI=;
+	s=arc-20240116; t=1731596999; c=relaxed/simple;
+	bh=ME6KIamWeSOI33s1Q/u3yOgoY7BAZ8vEfrd9GVx6Ubg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LI8JEmfMLN0+3VLOdfKyHTIf24EzVP4xP23Qo0+IaXjSQzeKc0mge149ehI7R8USsn7wFTb6F+IF1JBJlnBVruFyqKL1SkchhAGVXBVqObu6CBOpufGGU1Xje3vv3+iU91LDsGb7Mize1Ziu+O+wu6ZZsAT+mBWAzfj57ycQA2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IGekQPjB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 179F0C4CECD;
-	Thu, 14 Nov 2024 15:09:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=DoxfrhwLAR+rEk3pAmrQE/o8C/YNnHLTbFA9zUwsb1GeqHC9aD2y/pJ9jL67uG6Kd7XuAd5TlG8v1SNGKJHu1iWNXIscHADfQpdh/iF5DCqawn5DcRm/eo/DtVFj869aSrgRecoH4MD2YMWn5INSrzO5spMS9QenB93AqLv/U7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a/1wb1nl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED545C4CECD;
+	Thu, 14 Nov 2024 15:09:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731596963;
-	bh=0NQgyLEatvr+MDl2cQ5d6X3A4fUJMj3M+eF9ZnLRWmI=;
+	s=k20201202; t=1731596999;
+	bh=ME6KIamWeSOI33s1Q/u3yOgoY7BAZ8vEfrd9GVx6Ubg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IGekQPjBkE9L5SkMk57W6HLQydXLsEbHcp5+tbu6qDULIF2wF3Lazh64GlsngcJGe
-	 JA7kUAgxP7VVJctVXmQfzFxM3/F75aIpz2v9sheR5cUdz7WpTpBLtlF9XeJS3JkKt6
-	 Tbox5xXo7wSKCln+4bZsRktV5Kb7KM6TPwzSuuI5swv4ypEOxM7qpMf51Rmp1MIgFc
-	 ss/1qw4AB0CgJRaK/hJa+7r0iZJpC1HvAMdejdOQMWdI1so1zgH+zACGlpgJ9rKoDc
-	 Xj1jG/Ea6Fhi/biSiy+6TJUrJNVimWx8pz98sd/ozlWgefeFaqzPr8vfYLlzjjOc/C
-	 sr7UrbYX/8WEw==
-Date: Thu, 14 Nov 2024 16:09:18 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Karel Zak <kzak@redhat.com>, 
-	Ian Kent <raven@themaw.net>, Josef Bacik <josef@toxicpanda.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v4 0/3] fs: allow statmount to fetch the fs_subtype and
- sb_source
-Message-ID: <20241114-hammer-reinigen-045808e64b99@brauner>
-References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
- <20241112-antiseptisch-kinowelt-6634948a413e@brauner>
- <hss5w5in3wj3af3o2x3v3zfaj47gx6w7faeeuvnxwx2uieu3xu@zqqllubl6m4i>
- <63f3aa4b3d69b33f1193f4740f655ce6dae06870.camel@kernel.org>
- <20241114-umzog-garage-b1c1bb8b80f2@brauner>
- <3e6454f8a6b9176e9e1f98523be35f8eb6457eba.camel@kernel.org>
- <CAJfpegtZ6hiars5+JHCr6TEj=TgFFpFbk_TVM_b=YNpbLG0=ig@mail.gmail.com>
- <20241114-oberteil-villen-419f96aad840@brauner>
- <d65340299e27ea3f187f05002c1d30d4c9fe8bf8.camel@kernel.org>
+	b=a/1wb1nl/9lY6YzF0fepneAZtcvQkXu1q9cYzFfDJuEv9M5ZTJKPpmtJ8rafRzLd7
+	 2LvC7DvtvK795F/6KJaBT+W27vIVT0An9ovJ1EQG7+bBGX0k69bztkTHjcCzE3Y6nr
+	 p4zvmVapvs9WEFlLhUWvQatNbcNLzIZ+0H4QmcSZx9GnfSqAMFXEdmlGGUslPCsP36
+	 q5/vDqggPq0B5qV4Di3o2gZ4AE9mKqycyaM84ffvSJCHqOkPRJBtJmmp+Jl1DuuYj3
+	 ok6HU+ZqdHatdsxIs6nwPPGEfp0W0n8/8KI+P8eEY/XZu3feCXyy1RnjkZIXPRI4J+
+	 hPPwIhVQTH0cQ==
+Date: Thu, 14 Nov 2024 16:09:56 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v3 1/7] drm/display: hdmi: add generic mode_valid helper
+Message-ID: <20241114-certain-ginger-quail-cd8b5d@houat>
+References: <20241109-hdmi-mode-valid-v3-0-5348c2368076@linaro.org>
+ <20241109-hdmi-mode-valid-v3-1-5348c2368076@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="ctnbsojadrep3a62"
 Content-Disposition: inline
-In-Reply-To: <d65340299e27ea3f187f05002c1d30d4c9fe8bf8.camel@kernel.org>
+In-Reply-To: <20241109-hdmi-mode-valid-v3-1-5348c2368076@linaro.org>
 
-On Thu, Nov 14, 2024 at 09:51:42AM -0500, Jeff Layton wrote:
-> On Thu, 2024-11-14 at 15:48 +0100, Christian Brauner wrote:
-> > On Thu, Nov 14, 2024 at 02:16:05PM +0100, Miklos Szeredi wrote:
-> > > On Thu, 14 Nov 2024 at 13:29, Jeff Layton <jlayton@kernel.org> wrote:
-> > > 
-> > > > Ordinarily, I might agree, but we're now growing a new mount option
-> > > > field that has them separated by NULs. Will we need two extra fields
-> > > > for this? One comma-separated, and one NUL separated?
-> > > > 
-> > > > /proc/#/mountinfo and mounts prepend these to the output of
-> > > > ->show_options, so the simple solution would be to just prepend those
-> > > > there instead of adding a new field. FWIW, only SELinux has any extra
-> > > > mount options to show here.
-> > > 
-> > > Compromise: tack them onto the end of the comma separated list, but
-> > > add a new field for the nul separated security options.
-> > > 
-> > > I think this would be logical, since the comma separated list is more
-> > > useful for having a /proc/$$/mountinfo compatible string than for
-> > > actually interpreting what's in there.
-> > 
-> > Fair. Here's an incremental for the array of security options.
-> > 
-> > diff --git a/fs/namespace.c b/fs/namespace.c
-> > index 4f39c4aba85d..a9065a9ab971 100644
-> > --- a/fs/namespace.c
-> > +++ b/fs/namespace.c
-> > @@ -5072,13 +5072,30 @@ static int statmount_mnt_opts(struct kstatmount *s, struct seq_file *seq)
-> >  	return 0;
-> >  }
-> >  
-> > +static inline int statmount_opt_unescape(struct seq_file *seq, char *buf_start)
-> > +{
-> > +	char *buf_end, *opt_start, *opt_end;
-> > +	int count = 0;
-> > +
-> > +	buf_end = seq->buf + seq->count;
-> > +	*buf_end = '\0';
-> > +	for (opt_start = buf_start + 1; opt_start < buf_end; opt_start = opt_end + 1) {
-> > +		opt_end = strchrnul(opt_start, ',');
-> > +		*opt_end = '\0';
-> > +		buf_start += string_unescape(opt_start, buf_start, 0, UNESCAPE_OCTAL) + 1;
-> > +		if (WARN_ON_ONCE(++count == INT_MAX))
-> > +			return -EOVERFLOW;
-> > +	}
-> > +	seq->count = buf_start - 1 - seq->buf;
-> > +	return count;
-> > +}
-> > +
-> >  static int statmount_opt_array(struct kstatmount *s, struct seq_file *seq)
-> >  {
-> >  	struct vfsmount *mnt = s->mnt;
-> >  	struct super_block *sb = mnt->mnt_sb;
-> >  	size_t start = seq->count;
-> > -	char *buf_start, *buf_end, *opt_start, *opt_end;
-> > -	u32 count = 0;
-> > +	char *buf_start;
-> >  	int err;
-> >  
-> >  	if (!sb->s_op->show_options)
-> > @@ -5095,17 +5112,39 @@ static int statmount_opt_array(struct kstatmount *s, struct seq_file *seq)
-> >  	if (seq->count == start)
-> >  		return 0;
-> >  
-> > -	buf_end = seq->buf + seq->count;
-> > -	*buf_end = '\0';
-> > -	for (opt_start = buf_start + 1; opt_start < buf_end; opt_start = opt_end + 1) {
-> > -		opt_end = strchrnul(opt_start, ',');
-> > -		*opt_end = '\0';
-> > -		buf_start += string_unescape(opt_start, buf_start, 0, UNESCAPE_OCTAL) + 1;
-> > -		if (WARN_ON_ONCE(++count == 0))
-> > -			return -EOVERFLOW;
-> > -	}
-> > -	seq->count = buf_start - 1 - seq->buf;
-> > -	s->sm.opt_num = count;
-> > +	err = statmount_opt_unescape(seq, buf_start);
-> > +	if (err < 0)
-> > +		return err;
-> > +
-> > +	s->sm.opt_num = err;
-> > +	return 0;
-> > +}
-> > +
-> > +static int statmount_opt_sec_array(struct kstatmount *s, struct seq_file *seq)
-> > +{
-> > +	struct vfsmount *mnt = s->mnt;
-> > +	struct super_block *sb = mnt->mnt_sb;
-> > +	size_t start = seq->count;
-> > +	char *buf_start;
-> > +	int err;
-> > +
-> > +	buf_start = seq->buf + start;
-> > +
-> > +	err = security_sb_show_options(seq, sb);
-> > +	if (!err)
-> > +		return err;
-> > +
-> > +	if (unlikely(seq_has_overflowed(seq)))
-> > +		return -EAGAIN;
-> > +
-> > +	if (seq->count == start)
-> > +		return 0;
-> > +
-> > +	err = statmount_opt_unescape(seq, buf_start);
-> > +	if (err < 0)
-> > +		return err;
-> > +
-> > +	s->sm.opt_sec_num = err;
-> >  	return 0;
-> >  }
-> >  
-> > @@ -5138,6 +5177,10 @@ static int statmount_string(struct kstatmount *s, u64 flag)
-> >  		sm->opt_array = start;
-> >  		ret = statmount_opt_array(s, seq);
-> >  		break;
-> > +	case STATMOUNT_OPT_SEC_ARRAY:
-> > +		sm->opt_sec_array = start;
-> > +		ret = statmount_opt_sec_array(s, seq);
-> > +		break;
-> >  	case STATMOUNT_FS_SUBTYPE:
-> >  		sm->fs_subtype = start;
-> >  		statmount_fs_subtype(s, seq);
-> > @@ -5294,6 +5337,9 @@ static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_id,
-> >  	if (!err && s->mask & STATMOUNT_OPT_ARRAY)
-> >  		err = statmount_string(s, STATMOUNT_OPT_ARRAY);
-> >  
-> > +	if (!err && s->mask & STATMOUNT_OPT_SEC_ARRAY)
-> > +		err = statmount_string(s, STATMOUNT_OPT_SEC_ARRAY);
-> > +
-> >  	if (!err && s->mask & STATMOUNT_FS_SUBTYPE)
-> >  		err = statmount_string(s, STATMOUNT_FS_SUBTYPE);
-> >  
-> > @@ -5323,7 +5369,7 @@ static inline bool retry_statmount(const long ret, size_t *seq_size)
-> >  #define STATMOUNT_STRING_REQ (STATMOUNT_MNT_ROOT | STATMOUNT_MNT_POINT | \
-> >  			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS | \
-> >  			      STATMOUNT_FS_SUBTYPE | STATMOUNT_SB_SOURCE | \
-> > -			      STATMOUNT_OPT_ARRAY)
-> > +			      STATMOUNT_OPT_ARRAY | STATMOUNT_OPT_SEC_ARRAY)
-> >  
-> >  static int prepare_kstatmount(struct kstatmount *ks, struct mnt_id_req *kreq,
-> >  			      struct statmount __user *buf, size_t bufsize,
-> > diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-> > index c0fda4604187..569d938a5757 100644
-> > --- a/include/uapi/linux/mount.h
-> > +++ b/include/uapi/linux/mount.h
-> > @@ -177,7 +177,9 @@ struct statmount {
-> >  	__u32 sb_source;	/* [str] Source string of the mount */
-> >  	__u32 opt_num;		/* Number of fs options */
-> >  	__u32 opt_array;	/* [str] Array of nul terminated fs options */
-> > -	__u64 __spare2[47];
-> > +	__u32 opt_sec_num;	/* Number of security options */
-> > +	__u32 opt_sec_array;	/* [str] Array of nul terminated security options */
-> > +	__u64 __spare2[45];
-> 
-> shouldn't that be 46 ?
 
-Yes, apparently I can't count. Thanks for noticing!
+--ctnbsojadrep3a62
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 1/7] drm/display: hdmi: add generic mode_valid helper
+MIME-Version: 1.0
 
-> 
-> >  	char str[];		/* Variable size part containing strings */
-> >  };
-> >  
-> > @@ -214,6 +216,7 @@ struct mnt_id_req {
-> >  #define STATMOUNT_FS_SUBTYPE		0x00000100U	/* Want/got fs_subtype */
-> >  #define STATMOUNT_SB_SOURCE		0x00000200U	/* Want/got sb_source */
-> >  #define STATMOUNT_OPT_ARRAY		0x00000400U	/* Want/got opt_... */
-> > +#define STATMOUNT_OPT_SEC_ARRAY		0x00000800U	/* Want/got opt_sec... */
-> >  
-> >  /*
-> >   * Special @mnt_id values that can be passed to listmount
-> 
-> The rest looks good to me though!
-> -- 
-> Jeff Layton <jlayton@kernel.org>
+Hi,
+
+On Sat, Nov 09, 2024 at 02:35:05PM +0200, Dmitry Baryshkov wrote:
+> Add drm_hdmi_connector_mode_valid(), generic helper for HDMI connectors.
+> It can be either used directly or as a part of the .mode_valid callback.
+>=20
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/gpu/drm/display/drm_hdmi_state_helper.c    |  21 +++
+>  drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 181 +++++++++++++++=
++++++-
+>  include/drm/display/drm_hdmi_state_helper.h        |   4 +
+>  3 files changed, 204 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gp=
+u/drm/display/drm_hdmi_state_helper.c
+> index feb7a3a759811aed70c679be8704072093e2a79b..80bf2829ba89b5f84fed4fa9e=
+b1d6302e10a4f9e 100644
+> --- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> +++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> @@ -521,6 +521,27 @@ int drm_atomic_helper_connector_hdmi_check(struct dr=
+m_connector *connector,
+>  }
+>  EXPORT_SYMBOL(drm_atomic_helper_connector_hdmi_check);
+> =20
+> +/**
+> + * drm_hdmi_connector_mode_valid() - Check if mode is valid for HDMI con=
+nector
+> + * @connector: DRM connector to validate the mode
+> + * @mode: Display mode to validate
+> + *
+> + * Generic .mode_valid implementation for HDMI connectors.
+> + */
+> +enum drm_mode_status
+> +drm_hdmi_connector_mode_valid(struct drm_connector *connector,
+> +			      struct drm_display_mode *mode)
+> +{
+> +	unsigned long long clock;
+> +
+> +	clock =3D drm_hdmi_compute_mode_clock(mode, 8, HDMI_COLORSPACE_RGB);
+> +	if (!clock)
+> +		return MODE_ERROR;
+> +
+> +	return hdmi_clock_valid(connector, mode, clock);
+> +}
+> +EXPORT_SYMBOL(drm_hdmi_connector_mode_valid);
+> +
+>  static int clear_device_infoframe(struct drm_connector *connector,
+>  				  enum hdmi_infoframe_type type)
+>  {
+> diff --git a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c b/drivers=
+/gpu/drm/tests/drm_hdmi_state_helper_test.c
+> index 294773342e710dc56772f839c2db9c2e487bbc1e..67c3e882592b00d803d8cba5d=
+183aa90339a16b4 100644
+> --- a/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+> +++ b/drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c
+> @@ -43,10 +43,14 @@ struct drm_atomic_helper_connector_hdmi_priv {
+>  static struct drm_display_mode *find_preferred_mode(struct drm_connector=
+ *connector)
+>  {
+>  	struct drm_device *drm =3D connector->dev;
+> -	struct drm_display_mode *mode, *preferred;
+> +	struct drm_display_mode *mode, *preferred =3D NULL;
+> =20
+>  	mutex_lock(&drm->mode_config.mutex);
+> -	preferred =3D list_first_entry(&connector->modes, struct drm_display_mo=
+de, head);
+> +
+> +	/* Handle the case when all modes were rejected by mode_valid() */
+> +	if (!list_empty(&connector->modes))
+> +		preferred =3D list_first_entry(&connector->modes, struct drm_display_m=
+ode, head);
+> +
+
+Sorry if it wasn't clear in my previous review, but I would have
+expected a separate patch for that change.
+
+>  	list_for_each_entry(mode, &connector->modes, head)
+>  		if (mode->type & DRM_MODE_TYPE_PREFERRED)
+>  			preferred =3D mode;
+> @@ -125,6 +129,18 @@ static const struct drm_connector_hdmi_funcs reject_=
+connector_hdmi_funcs =3D {
+>  	.tmds_char_rate_valid	=3D reject_connector_tmds_char_rate_valid,
+>  };
+> =20
+> +static enum drm_mode_status
+> +reject_100MHz_connector_tmds_char_rate_valid(const struct drm_connector =
+*connector,
+> +					     const struct drm_display_mode *mode,
+> +					     unsigned long long tmds_rate)
+> +{
+> +	return (tmds_rate > 100ULL * 1000 * 1000) ? MODE_BAD : MODE_OK;
+> +}
+> +
+> +static const struct drm_connector_hdmi_funcs reject_100_MHz_connector_hd=
+mi_funcs =3D {
+> +	.tmds_char_rate_valid	=3D reject_100MHz_connector_tmds_char_rate_valid,
+> +};
+> +
+>  static int dummy_connector_get_modes(struct drm_connector *connector)
+>  {
+>  	struct drm_atomic_helper_connector_hdmi_priv *priv =3D
+> @@ -147,6 +163,33 @@ static int dummy_connector_get_modes(struct drm_conn=
+ector *connector)
+>  static const struct drm_connector_helper_funcs dummy_connector_helper_fu=
+ncs =3D {
+>  	.atomic_check	=3D drm_atomic_helper_connector_hdmi_check,
+>  	.get_modes	=3D dummy_connector_get_modes,
+> +	.mode_valid	=3D drm_hdmi_connector_mode_valid,
+> +};
+> +
+> +static int dummy_connector_get_modes_100MHz_max_clock(struct drm_connect=
+or *connector)
+> +{
+> +	struct drm_atomic_helper_connector_hdmi_priv *priv =3D
+> +		connector_to_priv(connector);
+> +	const struct drm_edid *edid;
+> +	unsigned int num_modes;
+> +
+> +	edid =3D drm_edid_alloc(priv->current_edid, priv->current_edid_len);
+> +	if (!edid)
+> +		return -EINVAL;
+> +
+> +	drm_edid_connector_update(connector, edid);
+> +	connector->display_info.max_tmds_clock =3D 100 * 1000;
+> +	num_modes =3D drm_edid_connector_add_modes(connector);
+> +
+> +	drm_edid_free(edid);
+> +
+> +	return num_modes;
+> +}
+
+I'd rather create a new fake edid than mess with those fields directly.
+
+> +static const struct drm_connector_helper_funcs dummy_connector_helper_fu=
+ncs_max_tmds_clock =3D {
+> +	.atomic_check	=3D drm_atomic_helper_connector_hdmi_check,
+> +	.get_modes	=3D dummy_connector_get_modes_100MHz_max_clock,
+> +	.mode_valid	=3D drm_hdmi_connector_mode_valid,
+>  };
+> =20
+>  static void dummy_hdmi_connector_reset(struct drm_connector *connector)
+> @@ -1734,9 +1777,143 @@ static struct kunit_suite drm_atomic_helper_conne=
+ctor_hdmi_reset_test_suite =3D {
+>  	.test_cases	=3D drm_atomic_helper_connector_hdmi_reset_tests,
+>  };
+> =20
+> +static void drm_test_check_mode_valid(struct kunit *test)
+> +{
+> +	struct drm_atomic_helper_connector_hdmi_priv *priv;
+> +	struct drm_connector *conn;
+> +	struct drm_display_mode *preferred;
+> +
+> +	priv =3D drm_atomic_helper_connector_hdmi_init(test,
+> +						     BIT(HDMI_COLORSPACE_RGB),
+> +						     8);
+> +	KUNIT_ASSERT_NOT_NULL(test, priv);
+> +
+> +	conn =3D &priv->connector;
+> +	preferred =3D find_preferred_mode(conn);
+> +	KUNIT_ASSERT_NOT_NULL(test, preferred);
+> +
+> +	KUNIT_EXPECT_EQ(test, preferred->hdisplay, 1920);
+> +	KUNIT_EXPECT_EQ(test, preferred->vdisplay, 1080);
+> +	KUNIT_EXPECT_EQ(test, preferred->clock, 148500);
+> +}
+
+We need a comment on what that test tests, and expects.
+
+> +/*
+> + * Verify that tmds_char_rate_valid() can reject all modes.
+> + */
+> +static void drm_test_check_mode_valid_reject(struct kunit *test)
+> +{
+> +	struct drm_atomic_helper_connector_hdmi_priv *priv;
+> +	struct drm_connector *conn;
+> +	struct drm_display_mode *preferred;
+> +	struct drm_device *drm;
+> +	int ret;
+> +
+> +	priv =3D drm_atomic_helper_connector_hdmi_init(test,
+> +						     BIT(HDMI_COLORSPACE_RGB),
+> +						     8);
+> +	KUNIT_ASSERT_NOT_NULL(test, priv);
+> +
+> +	conn =3D &priv->connector;
+> +
+> +	/* You shouldn't be doing that at home. */
+> +	conn->hdmi.funcs =3D &reject_connector_hdmi_funcs;
+
+Just make drm_atomic_helper_connector_hdmi_init take an extra pointer.
+(Also, that's a super bad name, drm_kunit_helper_connector_hdmi_init or
+something would probably be better)
+
+> +	priv->current_edid =3D test_edid_hdmi_1080p_rgb_max_200mhz;
+> +	priv->current_edid_len =3D ARRAY_SIZE(test_edid_hdmi_1080p_rgb_max_200m=
+hz);
+> +
+> +	drm =3D &priv->drm;
+> +
+> +	mutex_lock(&drm->mode_config.mutex);
+> +	ret =3D conn->funcs->fill_modes(conn, 4096, 4096);
+> +	mutex_unlock(&drm->mode_config.mutex);
+> +	KUNIT_ASSERT_EQ(test, ret, 0);
+> +
+> +	preferred =3D find_preferred_mode(conn);
+> +	KUNIT_ASSERT_NULL(test, preferred);
+> +}
+
+Ditto, I can't really say what this test is doing. That's true for all the =
+tests.
+
+Maxime
+
+--ctnbsojadrep3a62
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZzYSvwAKCRAnX84Zoj2+
+dohLAYDBGNPxjefoQZarszL7SmQHh+gcbQ1qmjnw9mdINgc/xrWo0jnG44/KRH4H
+jqxD/8oBgJL52VZMA1oI681jUMpkVkt6sXSZ/75bABFjvBkGWR7xbqe4Dd04shtl
+08eYbNmcrw==
+=VFIw
+-----END PGP SIGNATURE-----
+
+--ctnbsojadrep3a62--
 
