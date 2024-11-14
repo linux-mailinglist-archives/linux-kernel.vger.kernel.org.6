@@ -1,62 +1,76 @@
-Return-Path: <linux-kernel+bounces-409135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6666F9C87D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:40:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C5D9C87D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:41:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11AD81F245B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:40:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E2F6283576
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1135C1F8909;
-	Thu, 14 Nov 2024 10:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874831F77BA;
+	Thu, 14 Nov 2024 10:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SQ12has6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aJ9Pmaqc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67BC01F757C;
-	Thu, 14 Nov 2024 10:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21691F9407;
+	Thu, 14 Nov 2024 10:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731580773; cv=none; b=hjfN/wrrVqJOBrH7Z3nbwnZ7eU1K1Ya9ZpHhNuAFXqBlE02/uj2z9Iaq7ybMwhDo/c3B1++El87VzRDe11JToqvYKuKCBfKmm4142Fj786e603Ym+teThYAuGwndL27ceY4FvzaFpLcycv2BRWObfI2jP8Hr5HLpvF9hRCZZuPw=
+	t=1731580787; cv=none; b=LImp63nFKdqchXuSRn/C7SgwQFKIKd0rBh3sg/0P6+88tAMEPf+w9B44VMup17sS9s5SnDcQTPWYoqEKlHKTcgrfSgO2NtVKngchsMzsSuas4NsIqjKTl1rBpXr2e6sq2d+2zK/4/4PflS7uXToFjnErT2s/UeFSn0MSi8uqZIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731580773; c=relaxed/simple;
-	bh=7eVKM2u0wRuYynIMz0RGEDHl2osz/wLDV1pMKysucr0=;
+	s=arc-20240116; t=1731580787; c=relaxed/simple;
+	bh=jycoN5bhIGZugHX/gMZdoRKrrCKrOh6EBD7Obo0JSZg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jZhZ6f89PaHInhCVXlkAS0/pyPnLPz2isV2GeuqqWLJ5CphkERxb14cRcaxAL7RKN8ePjIS8tDT1I4vu/+WkxMNhfxOhdk/Q9ytlaqLN+tycr8NJ1z5cVPq3LYzA3MOOm16Kp/kBKWUPeXcWJduOS9/53xs++QUHbYtk4gTgNjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SQ12has6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69A37C4CED4;
-	Thu, 14 Nov 2024 10:39:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731580773;
-	bh=7eVKM2u0wRuYynIMz0RGEDHl2osz/wLDV1pMKysucr0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SQ12has69L4dvjjiYK8WBZRVz8rlAphhl52vmon7NoRO2tBGN/GQvOW4OsavX/doI
-	 yyAG5/i7o5/oSGR9zaSORatByq5Jl30JPxHLJ7O+WyiOSi+nAtRrjjKFIOmNI/dqzu
-	 iJ8QtJ88inezm3elNFQaxVgjCuG/rtbr+iSzu8llq3Hs9ncwGrb4V3VCSfIYxcW9RD
-	 kTxB9ps6xc74KCVWLPQl8t6jtnoA6GOjeM7G+e8IWU5blY4Baidu6Axw0lI6v8vE4P
-	 SJpUA5N2EsSWjClewtKzQQEaAiKHGv7/N5ZFBzTay7QO25/TXRyJWDHSJ3+m69v7Ih
-	 OKumpAtBFvoJA==
-Date: Thu, 14 Nov 2024 11:39:26 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Chuck Lever III <chuck.lever@oracle.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>
-Cc: Jeff Layton <jlayton@kernel.org>, Erin Shepherd <erin.shepherd@e43.eu>, 
-	Amir Goldstein <amir73il@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>, "christian@brauner.io" <christian@brauner.io>, 
-	Paul Moore <paul@paul-moore.com>, "bluca@debian.org" <bluca@debian.org>
-Subject: Re: [PATCH 0/4] pidfs: implement file handle support
-Message-ID: <20241114-dachorganisation-erloschen-4d1b903b65c9@brauner>
-References: <20241101135452.19359-1-erin.shepherd@e43.eu>
- <20241112-banknoten-ehebett-211d59cb101e@brauner>
- <05af74a9-51cc-4914-b285-b50d69758de7@e43.eu>
- <20241113004011.GG9421@frogsfrogsfrogs>
- <e280163e-357e-400c-81e1-0149fa5bfc89@e43.eu>
- <0f267de72403a3d6fb84a5d41ebf574128eb334d.camel@kernel.org>
- <78CFACCD-E2F1-4FF6-96BA-3738748A3B40@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AQK5ql2NiJG7LWzsWf+BIaETz5nTsQi8eOE01OkKvlktRDvwqgjMG/hqwYkTi7y1lLtp8wceaRf6RQZBxEY1pTP2KgzVADajBgVcV2R0PJRg97/HWBSlznsGTWATccodEupG/k5nLas89sA8RsDUpAkXd2+o6UDlTs+pcApmBDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aJ9Pmaqc; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731580785; x=1763116785;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=jycoN5bhIGZugHX/gMZdoRKrrCKrOh6EBD7Obo0JSZg=;
+  b=aJ9PmaqcAQ2rmLQpLY0tl2F+eJ0eRI62OqvaecBMUb9pBnT1wBj7rM8l
+   yiBE/zZj4SRAenh+aWM8xaF5VrYQodKAR3DD8hwn3+7oQstoxv8Q/tYBE
+   8O0RoXGE2uJtQ8TsAIljCMwpxb+Xzxl0NHqeiw6VkiojeH2VlhxR4b5fO
+   VbgTW6lJEseUFjgeaLNw/JeCYrJgJIte+toMPrj63qXzps2+PthnSag2d
+   tRtdm/CILEPFJf5b4U0tyQLG33VGiGhQzthU7416pUihP9dOrbQDNjV6B
+   OTAA1m2SVYPqPYvrs/p19qGA6XlzeXwcSluJsSXJpfZUfICYuU6nfv8l7
+   g==;
+X-CSE-ConnectionGUID: uX/GQPbhR2ugGpeMx5EgUw==
+X-CSE-MsgGUID: xcxtw+9yQKOAS2fvAOSb6A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="35224386"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="35224386"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 02:39:45 -0800
+X-CSE-ConnectionGUID: NdcVN8PHQaaDVMOacyrzpg==
+X-CSE-MsgGUID: 8WgwCMuJQcu5BXmHZfCgjg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
+   d="scan'208";a="93215970"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 02:39:43 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tBXGG-0000000EgIa-2Wyq;
+	Thu, 14 Nov 2024 12:39:40 +0200
+Date: Thu, 14 Nov 2024 12:39:40 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] gpio: Move and sort Kconfig entries as suggested
+Message-ID: <ZzXTbEcrLigXWpAu@smile.fi.intel.com>
+References: <20241113171219.2949157-1-andriy.shevchenko@linux.intel.com>
+ <CAMRc=MeaDjhxAwmTcNZ+oHniFn4EWVEmfP8MdNWitmD+Rr=scA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,65 +80,42 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <78CFACCD-E2F1-4FF6-96BA-3738748A3B40@oracle.com>
+In-Reply-To: <CAMRc=MeaDjhxAwmTcNZ+oHniFn4EWVEmfP8MdNWitmD+Rr=scA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Nov 13, 2024 at 02:41:29PM +0000, Chuck Lever III wrote:
-> 
-> 
-> > On Nov 13, 2024, at 8:29 AM, Jeff Layton <jlayton@kernel.org> wrote:
-> > 
-> > On Wed, 2024-11-13 at 11:17 +0100, Erin Shepherd wrote:
-> >> On 13/11/2024 01:40, Darrick J. Wong wrote:
-> >>>> Hmm, I guess I might have made that possible, though I'm certainly not
-> >>>> familiar enough with the internals of nfsd to be able to test if I've done
-> >>>> so.
-> >>> AFAIK check_export() in fs/nfsd/export.c spells this it out:
-> >>> 
-> >>> /* There are two requirements on a filesystem to be exportable.
-> >>> * 1:  We must be able to identify the filesystem from a number.
-> >>> *       either a device number (so FS_REQUIRES_DEV needed)
-> >>> *       or an FSID number (so NFSEXP_FSID or ->uuid is needed).
-> >>> * 2:  We must be able to find an inode from a filehandle.
-> >>> *       This means that s_export_op must be set.
-> >>> * 3: We must not currently be on an idmapped mount.
-> >>> */
-> >>> 
-> >>> Granted I've been wrong on account of stale docs before. :$
-> >>> 
-> >>> Though it would be kinda funny if you *could* mess with another
-> >>> machine's processes over NFS.
-> >>> 
-> >>> --D
-> >> 
-> >> To be clear I'm not familiar enough with the workings of nfsd to tell if
-> >> pidfs fails those requirements and therefore wouldn't become exportable as
-> >> a result of this patch, though I gather from you're message that we're in the
-> >> clear?
-> >> 
-> >> Regardless I think my question is: do we think either those requirements could
-> >> change in the future, or the properties of pidfs could change in the future,
-> >> in ways that could accidentally make the filesystem exportable?
-> >> 
-> >> I guess though that the same concern would apply to cgroupfs and it hasn't posed
-> >> an issue so far.
-> > 
-> > We have other filesystems that do this sort of thing (like cgroupfs),
-> > and we don't allow them to be exportable. We'll need to make sure that
-> > that's the case before we merge this, of course, as I forget the
-> > details of how that works.
-> 
-> It's far easier to add exportability later than it is
-> to remove it if we think it was a mistake. I would err
-> on the side of caution if there isn't an immediate
-> need/use-case for exposure via NFS.
+On Thu, Nov 14, 2024 at 09:54:50AM +0100, Bartosz Golaszewski wrote:
+> On Wed, Nov 13, 2024 at 6:12 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> >
+> > The Kconfig under drivers/gpio has a specific comment
+> >
+> >   put drivers in the right section, in alphabetical order
+> >
+> > but in time some of the entries fell unordered there.
+> > Put an order again.
+> >
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > ---
+> Could you elaborate on why you're moving drivers between categories?
+> For instance: you moved Intel LJCA to USB drivers and I'm sure you
+> have a reason for it (it's not clear if this actually is a USB driver,
 
-Tbh, the idea itself of exporting pidfs via nfs is a) crazy and b)
-pretty interesting. If we could really export pidfs over NFS cleanly
-somehow then we would have a filesystem-like representation of a remote
-machine's processes. There could be a lot of interesting things in this.
-But I would think that this requires some proper massaging of how pidfs
-works. But in principle it might be possible.
+This one is actually clear as you see that it depends on USB_LJCS which
+suggests that it's USB based.
 
-Again, I'm not saying it's a great idea and we definitely shouldn't do
-it now. But it's an interesting thought experiment at least.
+> it's not registered as such
+
+Neither one of the existing ones in that category, right?
+
+> ) but please expand on it in the commit message.
+
+Okay, I will do in v2.
+
+Thank you for the review!
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
