@@ -1,212 +1,264 @@
-Return-Path: <linux-kernel+bounces-409296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C549C8B12
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:51:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B3FB9C8ACE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:49:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0BE8B26AA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:50:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B40D2862B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506B31FAC50;
-	Thu, 14 Nov 2024 12:49:51 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E08E1FAC50;
+	Thu, 14 Nov 2024 12:49:29 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993321F8900;
-	Thu, 14 Nov 2024 12:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5381F8F1A
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 12:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731588590; cv=none; b=dSoDI/gzQ74sx3ikktAN6zST6m6a7gbv9Yt9sAox1PSImwFzEmM/8yL/PLyqHR00L5sQvX52cyuOvKC6Ow7Es9xrwwqVif/dyEpyVF2gNP1aEAW6MQ3JQu6A4rVh47YW3dbUtSz6b+6V7LOFFL2GNbr0Wulvcny48ZyRvuOP0sY=
+	t=1731588568; cv=none; b=Xn4JspSHn6YjvTQduWuhXjhXVipKllbK9h1N2+48ipnm6TxtpZxQ1hq9DqaKEI5P6YENWkQDFxLXQyaRZh0kojDW4S5XlLPwN/W5ku/aNuaEdV9ISb8gBbat+dqWUrSEeiz4k5lMiKO4mWnSy+JHzP//UP3xC9+CnywtkPrpE+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731588590; c=relaxed/simple;
-	bh=k3bq9txkWb0lZ8GyLDb0v5XOIzhc50LCc0dXpD/E+Lg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JqkCmfmHsMp0VfmOsvUfLa16qqJuh+Q7uXuBo5Ds9+uJqjhZUBRsTg8yA6MPcYwzDa9YGQavb5ZtY+Q0rjgpHhvt+oeqiZb96QnyV/c2OdvUELI4XeC2V4c6IZhnnWlRBj+CdlHkmeRgt04F8ErGLVlS3Ln2yb92X15kBCVgHZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Xq0Lt4tbQzQt1b;
-	Thu, 14 Nov 2024 20:48:22 +0800 (CST)
-Received: from dggpemf500017.china.huawei.com (unknown [7.185.36.126])
-	by mail.maildlp.com (Postfix) with ESMTPS id 98CD9140393;
-	Thu, 14 Nov 2024 20:49:38 +0800 (CST)
-Received: from localhost (10.175.112.188) by dggpemf500017.china.huawei.com
- (7.185.36.126) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 14 Nov
- 2024 20:49:38 +0800
-Date: Thu, 14 Nov 2024 20:48:21 +0800
-From: Long Li <leo.lilong@huawei.com>
-To: John Garry <john.g.garry@oracle.com>, Dave Chinner <david@fromorbit.com>
-CC: Ritesh Harjani <ritesh.list@gmail.com>, <chandan.babu@oracle.com>,
-	<djwong@kernel.org>, <dchinner@redhat.com>, <hch@lst.de>,
-	<viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
-	<linux-xfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <catherine.hoang@oracle.com>,
-	<martin.petersen@oracle.com>
-Subject: Re: [PATCH v4 00/14] forcealign for xfs
-Message-ID: <ZzXxlf6RWeX3e-3x@localhost.localdomain>
-References: <ZtjrUI+oqqABJL2j@dread.disaster.area>
- <79e22c54-04bd-4b89-b20c-3f80a9f84f6b@oracle.com>
- <Ztom6uI0L4uEmDjT@dread.disaster.area>
- <ce87e4fb-ab5f-4218-aeb8-dd60c48c67cb@oracle.com>
- <Zt4qCLL6gBQ1kOFj@dread.disaster.area>
- <84b68068-e159-4e28-bf06-767ea7858d79@oracle.com>
- <ZufBMioqpwjSFul+@dread.disaster.area>
- <0e9dc6f8-df1b-48f3-a9e0-f5f5507d92c1@oracle.com>
- <ZuoCafOAVqSN6AIK@dread.disaster.area>
- <1394ceeb-ce8c-4d0f-aec8-ba93bf1afb90@oracle.com>
+	s=arc-20240116; t=1731588568; c=relaxed/simple;
+	bh=ELRWhIT9yJfiTWT9hvWHJDjZA63+vmyLwV8YnGYlDgE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qJHwdS8bu6u6jf+HEGexTocPF84jZzJM8ake2eBGzQeb3q+Ul3uwLwiChf7Sqwslx3+ErzcZNWT9ZPJ2t9Ib5Agpo7O7Le+DnPtwjd3BtBUQI96wwb1bjAzv2piEu4+ThxCQ4DhQRJbS0M50HcojuAKEHrmZRPSAAaNxUrZ9Tyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a7447028bcso323495ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 04:49:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731588566; x=1732193366;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PWzhVNRA00+eq8Cfx0LuTS7Z8ySa+Jo0rAZR52hvz+E=;
+        b=ViCMnKk5D3vJq+xxpgoxv8Y9OOShZXnJqwXCJM91BDzlG/kS8SQp/mjkzgBklBdYbl
+         Wy2l204TwZBIv7dKw5DBNeCQ6fu+uI8pm0Oo9Vel9pwRTyF1hRVZODppI5r52JBfoo6L
+         YMtNP7iD6BDVsz7XBRvK0myf9Mg5w2SnVGDMrM7VIEjP5oNhaZtO/fmyhcJYbfQdcNnt
+         hrEkaYuoryJM9NZ+ZOLFhjijRCH32DZL3fVJMSlX9Gn7TqAdcMmm5JUz7tduKlAW45Fb
+         wfRBWWoBbmGIyhHZ2FkwzsTyLukNzyAChCsiQw5dY3y5UUDayH5TereJOEdc5aKMPDaW
+         d7BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/sOKaEebXut4MF73i/0s66X9CgA576kYUxSXhzmB4F6Cs+UdkbMzDkdZctDyeOjp68F6E/+g8RvtffJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYhIuk5qsq0nxeIY1aRSGCGbjtzpixLATxkRzze0xKmHNDZQYt
+	7kvdtjSXJ8AUNheVLXwuaSb+tdwfLhJpe2MUR/dMskDb8JqPvXj4sXCff3/oMlBM17g4EDFPkSM
+	0I2c1JRbOI0n6dpFwB0JTxD3l6Tg0aH2BMPigEy0/6F9SCgSGb8T5tkI=
+X-Google-Smtp-Source: AGHT+IEAj8qeX7GHy6DR/1S424Ov8d5tDTerDypsRu75+TTAB5IQtSgbFYZj+5aBD72i0cNv9fDZsEI2LsJEE+3JQgnOGKLqdyPw
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <1394ceeb-ce8c-4d0f-aec8-ba93bf1afb90@oracle.com>
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf500017.china.huawei.com (7.185.36.126)
+X-Received: by 2002:a05:6e02:1c86:b0:3a7:1f23:1a42 with SMTP id
+ e9e14a558f8ab-3a71fe58e4bmr20499975ab.13.1731588565723; Thu, 14 Nov 2024
+ 04:49:25 -0800 (PST)
+Date: Thu, 14 Nov 2024 04:49:25 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6735f1d5.050a0220.1324f8.0099.GAE@google.com>
+Subject: [syzbot] [net?] WARNING: suspicious RCU usage in kern
+From: syzbot <syzbot+b212dc1ab9081038fe60@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	jhs@mojatatu.com, jiri@resnulli.us, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Sep 18, 2024 at 11:12:47AM +0100, John Garry wrote:
-> On 17/09/2024 23:27, Dave Chinner wrote:
-> > > # xfs_bmap -vvp  mnt/file
-> > > mnt/file:
-> > > EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
-> > >    0: [0..15]:         384..399          0 (384..399)          16 010000
-> > >    1: [16..31]:        400..415          0 (400..415)          16 000000
-> > >    2: [32..127]:       416..511          0 (416..511)          96 010000
-> > >    3: [128..255]:      256..383          0 (256..383)         128 000000
-> > > FLAG Values:
-> > >     0010000 Unwritten preallocated extent
-> > > 
-> > > Here we have unaligned extents wrt extsize.
-> > > 
-> > > The sub-alloc unit zeroing would solve that - is that what you would still
-> > > advocate (to solve that issue)?
-> > Yes, I thought that was already implemented for force-align with the
-> > DIO code via the extsize zero-around changes in the iomap code. Why
-> > isn't that zero-around code ensuring the correct extent layout here?
-> 
-> I just have not included the extsize zero-around changes here. They were
-> just grouped with the atomic writes support, as they were added specifically
-> for the atomic writes support. Indeed - to me at least - it is strange that
-> the DIO code changes are required for XFS forcealign implementation. And,
-> even if we use extsize zero-around changes for DIO path, what about buffered
-> IO?
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    de2f378f2b77 Merge tag 'nfsd-6.12-4' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=160b94e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=20d60fe605153ebe
+dashboard link: https://syzkaller.appspot.com/bug?extid=b212dc1ab9081038fe60
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2606065a2edc/disk-de2f378f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/7e0db9d61ce1/vmlinux-de2f378f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/86c1e8ceefb5/bzImage-de2f378f.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b212dc1ab9081038fe60@syzkaller.appspotmail.com
+
+rn.info kernel: [  288.102240][ T1024] bridge_slave_0: left promiscuous mode
+[  288.052032][ [  288.109768][ T1024] bridge0: port 1(bridge_slave_0) entered disabled state
+T1024] erspan0: left promiscuous[  288.119638][ T6390] 
+ mode
+Nov 10 12[  288.122499][ T6390] =============================
+:39:03 syzkaller[  288.128669][ T6390] WARNING: suspicious RCU usage
+ kern.info kerne[  288.135316][ T6390] 6.12.0-rc6-syzkaller-00279-gde2f378f2b77 #0 Not tainted
+l: [  288.057060[  288.143732][ T6390] -----------------------------
+][ T1024] bridge[  288.149741][ T6390] net/sched/sch_generic.c:1290 suspicious rcu_dereference_protected() usage!
+0: port 3(erspan[  288.159834][ T6390] 
+0) entered disab[  288.159853][ T6390] 
+led state
+Nov 1[  288.159867][ T6390] 3 locks held by kworker/u8:11/6390:
+0 12:39:03 syzka[  288.187464][ T6390]  #0: ffff888068d0d948 ((wq_completion)bond0#2){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
+ller kern.info k[  288.199531][ T6390]  #1: ffffc9000b45fd80 ((work_completion)(&(&bond->mii_work)->work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
+ernel: [  288.07[  288.212948][ T6390]  #2: ffffffff8e1b8340 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ernel: [  288.07[  288.212948][ T6390]  #2: ffffffff8e1b8340 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ernel: [  288.07[  288.212948][ T6390]  #2: ffffffff8e1b8340 (rcu_read_lock){....}-{1:2}, at: bond_mii_monitor+0x140/0x2d90 drivers/net/bonding/bond_main.c:2937
+1253][ T1024] br[  288.224119][ T6390] 
+idge_slave_1: le[  288.231359][ T6390] CPU: 0 UID: 0 PID: 6390 Comm: kworker/u8:11 Not tainted 6.12.0-rc6-syzkaller-00279-gde2f378f2b77 #0
+ft allmulticast [  288.258910][ T6390] Call Trace:
+mode
+Nov 10 12:[  288.266487][ T6390]  __dump_stack lib/dump_stack.c:94 [inline]
+Nov 10 12:[  288.266487][ T6390]  dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
+39:03 syzkaller [  288.266591][ T6390]  dev_deactivate+0xf9/0x1c0 net/sched/sch_generic.c:1403
+kern.info kernel[  288.294016][ T6390]  ? __pfx_dev_deactivate+0x10/0x10 net/sched/sch_generic.c:1379
+: [  288.077767][  288.306524][ T6390]  linkwatch_do_dev+0x11e/0x160 net/core/link_watch.c:175
+[ T1024] bridge_[  288.317788][ T6390]  ? __pfx_ethtool_op_get_link+0x10/0x10 net/ethtool/ioctl.c:2712
+slave_1: left pr[  288.325567][ T6390]  ethtool_op_get_link+0x1d/0x70 net/ethtool/ioctl.c:62
+omiscuous mode
+Nov 10 12:39:03 [  288.343169][ T6390]  ? rcu_is_watching_curr_cpu include/linux/context_tracking.h:128 [inline]
+Nov 10 12:39:03 [  288.343169][ T6390]  ? rcu_is_watching+0x12/0xc0 kernel/rcu/tree.c:737
+syzkaller kern.i[  288.349291][ T6390]  bond_miimon_inspect drivers/net/bonding/bond_main.c:2717 [inline]
+syzkaller kern.i[  288.349291][ T6390]  bond_mii_monitor+0x3c1/0x2d90 drivers/net/bonding/bond_main.c:2939
+nfo kernel: [  2[  288.355597][ T6390]  ? __pfx_bond_mii_monitor+0x10/0x10 drivers/net/bonding/bond_main.c:2806
+88.084857][ T102[  288.362312][ T6390]  ? rcu_is_watching_curr_cpu include/linux/context_tracking.h:128 [inline]
+88.084857][ T102[  288.362312][ T6390]  ? rcu_is_watching+0x12/0xc0 kernel/rcu/tree.c:737
+4] bridge0: port[  288.368438][ T6390]  ? trace_lock_acquire+0x14a/0x1d0 include/trace/events/lock.h:24
+ 2(bridge_slave_[  288.374995][ T6390]  ? process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
+1) entered disab[  288.381473][ T6390]  ? lock_acquire+0x2f/0xb0 kernel/locking/lockdep.c:5796
+led state
+Nov 1[  288.387339][ T6390]  ? process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
+0 12:39:03 syzka[  288.393811][ T6390]  process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+ller kern.info k[  288.400191][ T6390]  ? __pfx_lock_acquire.part.0+0x10/0x10 kernel/locking/lockdep.c:122
+ernel: [  288.09[  288.407177][ T6390]  ? __pfx_process_one_work+0x10/0x10 include/linux/list.h:153
+6288][ T1024] br[  288.413903][ T6390]  ? assign_work+0x1a0/0x250 kernel/workqueue.c:1200
+idge_slave_0: le[  288.419841][ T6390]  process_scheduled_works kernel/workqueue.c:3310 [inline]
+idge_slave_0: le[  288.419841][ T6390]  worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ft allmulticast [  288.425789][ T6390]  ? __kthread_parkme+0x148/0x220 kernel/kthread.c:293
+mode
+Nov 10 12:[  288.432165][ T6390]  ? __pfx_worker_thread+0x10/0x10 include/linux/list.h:183
+39:03 syzkaller [  288.438621][ T6390]  kthread+0x2c1/0x3a0 kernel/kthread.c:389
+kern.info kernel[  288.444056][ T6390]  ? __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
+kern.info kernel[  288.444056][ T6390]  ? _raw_spin_unlock_irq+0x23/0x50 kernel/locking/spinlock.c:202
+: [  288.102240][  288.450635][ T6390]  ? __pfx_kthread+0x10/0x10 include/linux/list.h:373
+[ T1024] bridge_[  288.456575][ T6390]  ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+slave_0: left pr[  288.462342][ T6390]  ? __pfx_kthread+0x10/0x10 include/linux/list.h:373
+omiscuous mode
+Nov 10 12:39:03 [  288.474403][ T6390]  </TASK>
+syzkaller kern.info kernel: [  288.109768][ T1024] bridge0: port 1(bridge_slave_0) entered disabled state
+Nov 10 12:39:03 syzkaller kern.warn kernel: [  288.119638][ T6390] 
+Nov 10 12:39:03 syzkaller kern.warn kernel: [  288.122499][ T6390] =============================
+Nov 10 12:39:03 syzkaller kern.warn kernel: [  288.128669][ T6390] WARNING: suspicious RCU usage
+Nov 10 12:39:03 syzkaller kern.warn kernel: [  288.135316][ T6390] 6.12.0-rc6-syzkaller-00279-gde2f378f2b77 #0 Not tainted
+Nov 10 12:39:03 syzkaller kern.warn kernel: [  288.143732][ T6390] -----------------------------
+Nov 10 12:39:03 syzkaller kern.warn kernel: [  288.149741][ T6390] net/sched/sch_generic.c:1290 suspicious rcu_dereference_protected() usage!
+Nov 10 12:39:03 syzkaller kern.warn kernel: [  288.159834][ T6390] 
+Nov 10 12:39:03 syzkaller kern.warn kernel: [  288.159834][ T6390] other i[  288.554806][ T6390] 
+nfo that might h[  288.557452][ T6390] =============================
+elp us debug thi[  288.563800][ T6390] WARNING: suspicious RCU usage
+s:
+Nov 10 12:39[  288.569953][ T6390] 6.12.0-rc6-syzkaller-00279-gde2f378f2b77 #0 Not tainted
+:03 syzkaller ke[  288.578320][ T6390] -----------------------------
+rn.warn kernel: [  288.584563][ T6390] include/linux/rtnetlink.h:100 suspicious rcu_dereference_protected() usage!
+[  288.159834][ [  288.594829][ T6390] 
+T6390] 
+Nov 10 [  288.606375][ T6390] 
+12:39:03 syzkall[  288.615765][ T6390] 3 locks held by kworker/u8:11/6390:
+er kern.warn ker[  288.622477][ T6390]  #0: ffff888068d0d948 ((wq_completion)bond0#2){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
+nel: [  288.1598[  288.634359][ T6390]  #1: ffffc9000b45fd80 ((work_completion)(&(&bond->mii_work)->work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
+53][ T6390] 
+No[  288.648370][ T6390]  #2: ffffffff8e1b8340 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+No[  288.648370][ T6390]  #2: ffffffff8e1b8340 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+No[  288.648370][ T6390]  #2: ffffffff8e1b8340 (rcu_read_lock){....}-{1:2}, at: bond_mii_monitor+0x140/0x2d90 drivers/net/bonding/bond_main.c:2937
+v 10 12:39:03 sy[  288.659388][ T6390] 
+zkaller kern.war[  288.666145][ T6390] CPU: 0 UID: 0 PID: 6390 Comm: kworker/u8:11 Not tainted 6.12.0-rc6-syzkaller-00279-gde2f378f2b77 #0
+n kernel: [  288[  288.678441][ T6390] Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+.159853][ T6390][  288.689857][ T6390] Workqueue: bond0 bond_mii_monitor
+ rcu_scheduler_a[  288.696447][ T6390] Call Trace:
+ctive = 2, debug[  288.701091][ T6390]  <TASK>
+_locks = 1
+Nov [  288.705382][ T6390]  __dump_stack lib/dump_stack.c:94 [inline]
+Nov [  288.705382][ T6390]  dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
+10 12:39:03 syzk[  288.711414][ T6390]  lockdep_rcu_suspicious+0x210/0x3c0 kernel/locking/lockdep.c:6821
+aller kern.warn [  288.718162][ T6390]  dev_ingress_queue include/linux/rtnetlink.h:100 [inline]
+aller kern.warn [  288.718162][ T6390]  dev_deactivate_many+0x8af/0xb20 net/sched/sch_generic.c:1365
+kernel: [  288.1[  288.724626][ T6390]  dev_deactivate+0xf9/0x1c0 net/sched/sch_generic.c:1403
+59867][ T6390] 3[  288.730563][ T6390]  ? __pfx_dev_deactivate+0x10/0x10 net/sched/sch_generic.c:1379
+ locks held by k[  288.737110][ T6390]  ? __sanitizer_cov_trace_switch+0x54/0x90 kernel/kcov.c:351
+worker/u8:11/639[  288.744357][ T6390]  linkwatch_do_dev+0x11e/0x160 net/core/link_watch.c:175
+0:
+Nov 10 12:39[  288.750557][ T6390]  linkwatch_sync_dev+0x181/0x210 net/core/link_watch.c:263
+:03 syzkaller ke[  288.757536][ T6390]  ? __pfx_ethtool_op_get_link+0x10/0x10 net/ethtool/ioctl.c:2712
+rn.warn kernel: [  288.764514][ T6390]  ethtool_op_get_link+0x1d/0x70 net/ethtool/ioctl.c:62
+[  288.187464][ [  288.770824][ T6390]  bond_check_dev_link+0x197/0x490 drivers/net/bonding/bond_main.c:873
+T6390]  #0: ffff[  288.777300][ T6390]  ? __pfx_bond_check_dev_link+0x10/0x10 drivers/net/bonding/bond_main.c:4594
+888068d0d948 ((w[  288.784279][ T6390]  ? rcu_is_watching_curr_cpu include/linux/context_tracking.h:128 [inline]
+888068d0d948 ((w[  288.784279][ T6390]  ? rcu_is_watching+0x12/0xc0 kernel/rcu/tree.c:737
+q_completion)bon[  288.790404][ T6390]  bond_miimon_inspect drivers/net/bonding/bond_main.c:2717 [inline]
+q_completion)bon[  288.790404][ T6390]  bond_mii_monitor+0x3c1/0x2d90 drivers/net/bonding/bond_main.c:2939
+d0#2){+.+.}-{0:0[  288.796687][ T6390]  ? __pfx_bond_mii_monitor+0x10/0x10 drivers/net/bonding/bond_main.c:2806
+}, at: process_o[  288.803415][ T6390]  ? rcu_is_watching_curr_cpu include/linux/context_tracking.h:128 [inline]
+}, at: process_o[  288.803415][ T6390]  ? rcu_is_watching+0x12/0xc0 kernel/rcu/tree.c:737
+ne_work+0x129b/0[  288.809527][ T6390]  ? trace_lock_acquire+0x14a/0x1d0 include/trace/events/lock.h:24
+x1ba0
+Nov 10 12[  288.816072][ T6390]  ? process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
+:39:03 syzkaller[  288.822536][ T6390]  ? lock_acquire+0x2f/0xb0 kernel/locking/lockdep.c:5796
+ kern.warn kerne[  288.828383][ T6390]  ? process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
+l: [  288.199531[  288.834848][ T6390]  process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+][ T6390]  #1: f[  288.841142][ T6390]  ? __pfx_lock_acquire.part.0+0x10/0x10 kernel/locking/lockdep.c:122
+fffc9000b45fd80 [  288.848115][ T6390]  ? __pfx_process_one_work+0x10/0x10 include/linux/list.h:153
+((work_completio[  288.854844][ T6390]  ? assign_work+0x1a0/0x250 kernel/workqueue.c:1200
+n)(&(&bond->mii_[  288.860781][ T6390]  process_scheduled_works kernel/workqueue.c:3310 [inline]
+n)(&(&bond->mii_[  288.860781][ T6390]  worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+work)->work)){+.[  288.866722][ T6390]  ? __kthread_parkme+0x148/0x220 kernel/kthread.c:293
++.}-{0:0}, at: p[  288.873091][ T6390]  ? __pfx_worker_thread+0x10/0x10 include/linux/list.h:183
+rocess_one_work+[  288.879551][ T6390]  kthread+0x2c1/0x3a0 kernel/kthread.c:389
+0x921/0x1ba0
+No[  288.884966][ T6390]  ? __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
+No[  288.884966][ T6390]  ? _raw_spin_unlock_irq+0x23/0x50 kernel/locking/spinlock.c:202
+v 10 12:39:03 sy[  288.891513][ T6390]  ? __pfx_kthread+0x10/0x10 include/linux/list.h:373
+zkaller kern.war[  288.897454][ T6390]  ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+n kernel: [  288[  288.903232][ T6390]  ? __pfx_kthread+0x10/0x10 include/linux/list.h:373
+.212948][ T6390][  288.909177][ T6390]  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+  #2: ffffffff8e[  288.915298][ T6390]  </TASK>
+1b8340 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+1b8340 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+1b8340 (rcu_read_lock){....}-{1:2}, at: bond_mii_monitor+0x140/0x2d90 drivers/net/bonding/bond_main.c:2937
+Nov 10 12:39:03 syzkaller kern.warn kernel: [  288.224119][ T6390] 
+Nov 10 12:39:03 syzkaller kern.warn kernel: [  288.224119][ T6390] stack backtrace:
+Nov 10 12:39:03 syzkaller kern.warn kernel: [  288.231359][ T6390] CPU: 0 UID: 0 PID: 6390 Comm: kworker/u8:11 Not tainted 6.12.0-rc6-syzkaller-00279-gde2f378f2b77 #0
+Nov 10 12:39:03 syzkaller kern.warn kernel: [  288.243643][ T6390] Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Nov 10 12:39:03 syzkaller kern.warn kernel: [  288.253707][ T6390] Workqueue: bond0 bond_mii_monitor
+Nov 10 12:39:03 syzkaller kern.warn kernel: [  288.258910][ T6390] Call Trace:
+Nov 10 12:39:03 syzkaller kern.warn kernel: [  288.263550][ T6390]  <TASK>
+Nov 10 12:39:03 syzkaller kern.warn kernel: [  288.266487][ T6390]  __dump_stack lib/dump_stack.c:94 [inline]
+Nov 10 12:39:03 syzkaller kern.warn kernel: [  288.266487][ T6390]  dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
+Nov 10 12:39:03 syzkall[  289.005277][ T6390] ==================================================================
+er kern.warn ker[  289.083234][ T6390]  ? dev_deactivate_queue+0x17e/0x190 net/sched/sch_generic.c:1290
+nel: [  288.2665[  289.083252][ T6390]  dev_deactivate_queue+0x17e/0x190 net/sched/sch_generic.c:1290
+09][ T6390]  loc[  289.083269][ T6390]  netdev_for_each_tx_queue include/linux/netdevice.h:2504 [inline]
+09][ T6390]  loc[  289.083269][ T6390]  dev_deactivate_many+0xe7/0xb20 net/sched/sch_generic.c:1363
 
 
-I've been reviewing and testing the XFS atomic write patch series. Since
-there haven't been any new responses to the previous discussions on this
-issue, I'd like to inquire about the buffered IO problem with force-aligned
-files, which is a scenario we might encounter.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Consider a case where the file supports force-alignment with a 64K extent size,
-and the system page size is 4K. Take the following commands as an example:
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-xfs_io  -c "pwrite 64k 64k" mnt/file
-xfs_io  -c "pwrite 8k 8k" mnt/file
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-If unaligned unwritten extents are not permitted, we need to zero out the
-sub-allocation units for ranges [0, 8K] and [16K, 64K] to prevent stale
-data. While this can be handled relatively easily in direct I/O scenarios,
-it presents significant challenges in buffered I/O operations. The main
-difficulty arises because the extent size (64K) is larger than the page
-size (4K), and our current code base has substantial limitations in handling
-such cases.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Any thoughts on this?
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-Thanks,
-Long Li
-
-> 
-> BTW, I still have concern with this extsize zero-around change which I was
-> making:
-> 
-> xfs_iomap_write_unwritten()
-> {
-> 	unsigned int rounding;
-> 
-> 	/* when converting anything unwritten, we must be spanning an 	alloc unit,
-> so round up/down */
-> 	if (rounding > 1) {
-> 		offset_fsb = rounddown(rounding);
-> 		count_fsb = roundup(rounding);
-> 	}
-> 
-> 	...
-> 	do {
-> 		xfs_bmapi_write();
-> 		...
-> 		xfs_trans_commit();
-> 	} while ();
-> }
-> 
-> As mentioned elsewhere, it's a bit of a bodge (to do this rounding).
-> 
-> > 
-> > > > FWIW, I also understand things are different if we are doing 128kB
-> > > > atomic writes on 16kB force aligned files. However, in this
-> > > > situation we are treating the 128kB atomic IO as eight individual
-> > > > 16kB atomic IOs that are physically contiguous.
-> > > Yes, if 16kB force aligned, userspace can only issue 16KB atomic writes.
-> > Right, but the eventual goal (given the statx parameters) is to be
-> > able to do 8x16kB sequential atomic writes as a single 128kB IO, yes?
-> 
-> No, if atomic write unit max is 16KB, then userspace can only issue a single
-> 16KB atomic write.
-> 
-> However, some things to consider:
-> a. the block layer may merge those 16KB atomic writes
-> b. userspace may also merge 16KB atomic writes and issue a larger atomic
-> write (if atomic write unit max is > 16KB)
-> 
-> I had been wondering if there is any value in a lib for helping with b.
-> 
-> > 
-> > > > > > Again, this is different to the traditional RT file behaviour - it
-> > > > > > can use unwritten extents for sub-alloc-unit alignment unmaps
-> > > > > > because the RT device can align file offset to any physical offset,
-> > > > > > and issue unaligned sector sized IO without any restrictions. Forced
-> > > > > > alignment does not have this freedom, and when we extend forced
-> > > > > > alignment to RT files, it will not have the freedom to use
-> > > > > > unwritten extents for sub-alloc-unit unmapping, either.
-> > > > > > 
-> > > > > So how do you think that we should actually implement
-> > > > > xfs_itruncate_extents_flags() properly for forcealign? Would it simply be
-> > > > > like:
-> > > > > 
-> > > > > --- a/fs/xfs/xfs_inode.c
-> > > > > +++ b/fs/xfs/xfs_inode.c
-> > > > > @@ -1050,7 +1050,7 @@ xfs_itruncate_extents_flags(
-> > > > >                   WARN_ON_ONCE(first_unmap_block > XFS_MAX_FILEOFF);
-> > > > >                   return 0;
-> > > > >           }
-> > > > > +	if (xfs_inode_has_forcealign(ip))
-> > > > > +	       first_unmap_block = xfs_inode_roundup_alloc_unit(ip,
-> > > > > first_unmap_block);
-> > > > >           error = xfs_bunmapi_range(&tp, ip, flags, first_unmap_block,
-> > > > Yes, it would be something like that, except it would have to be
-> > > > done before first_unmap_block is verified.
-> > > > 
-> > > ok, and are you still of the opinion that this does not apply to rtvol?
-> > The rtvol is*not* force-aligned. It -may- have some aligned
-> > allocation requirements that are similar (i.e. sb_rextsize > 1 fsb)
-> > but it does*not* force-align extents, written or unwritten.
-> > 
-> > The moment we add force-align support to RT files (as is the plan),
-> > then the force-aligned inodes on the rtvol will need to behave as
-> > force aligned inodes, not "rtvol" inodes.
-> 
-> ok, fine
-> 
-> Thanks,
-> John
-> 
-> 
-> 
+If you want to undo deduplication, reply with:
+#syz undup
 
