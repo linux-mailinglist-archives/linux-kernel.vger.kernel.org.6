@@ -1,220 +1,191 @@
-Return-Path: <linux-kernel+bounces-409944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E35A9C93D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:11:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ABB49C9491
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:35:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 680AA2871DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:11:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 349912857CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9FC1AE001;
-	Thu, 14 Nov 2024 21:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34AA51ACDED;
+	Thu, 14 Nov 2024 21:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="CeKpmkQi";
-	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="qeSB22SA"
-Received: from mx0a-002c1b01.pphosted.com (mx0a-002c1b01.pphosted.com [148.163.151.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Z+jMj4Fh"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38AA1AD41F
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 21:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.151.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731618707; cv=fail; b=FVsoM2cXq8ZvQNuWMMuRpYukmUQD0cO5VQs1i+2CFB8wMaF0odvP4iVR18x+zGmiKmSbuw3w1sm/8w8wr5lV4RudHgxGe25XMTJ03UACfM6vHcQDJiFQDVVvWOqpkVvHdUi5R4hjS/MVpkxlKIoj02k8p77gRID92pNNvfTkwnM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731618707; c=relaxed/simple;
-	bh=2q8i1R3g29B50PRMiBlX/G7NfYpNJd+5QPPOBHHtiKE=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=G1/Ulvh0sQY9kSVtJsn3WVEkBT46MzFyWmZHsQFRFUYaZnMxuUAyP/TpDvFUVEOXma/KIBdAGU8Scl/LArdUOOzuVZe3Eg+w2OkR9Fo6b5UphU8tCc8PNGjqPePGtaB/RBUEbHoUgyncQWCTGv/rRUxbq3yJB2tzOXsUIV908jA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nutanix.com; spf=pass smtp.mailfrom=nutanix.com; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=CeKpmkQi; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=qeSB22SA; arc=fail smtp.client-ip=148.163.151.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nutanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nutanix.com
-Received: from pps.filterd (m0127840.ppops.net [127.0.0.1])
-	by mx0a-002c1b01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AECTGg4029828;
-	Thu, 14 Nov 2024 13:11:26 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=proofpoint20171006; bh=yxAR/gzB+Cq/3
-	tE4CIsGPstIoVmGka54c8MwwhwXJRs=; b=CeKpmkQiM72gcOI/GjsvOkLhQ+1UT
-	r2L1U978dL1fQnhX44PZS24/sZXvHnw/8yJNrGiLlTR++kju+mg84ybjgUwX2X15
-	z76ybTly8QCGd7K0nXQ69HStq6w0X20G0c5Iglv6RMiILONGlN/BDmrfNEMBEs8o
-	9u6p89i9I85xBY858iu/8EE0pnJI1Uk//hzkA+sJbb03PwEXxaIOq83h0Q2TWIHz
-	8vT/axAtnyLVt59GroJsKuMGNpTrVAoI5SHyO2Ab6RuS0uWQgsDFnWMrCFneWthy
-	u9Sqo2tDJ7Qsd2yCa8+sn7rNjXzLlfDU2rmS0rGWIVLT7vcc2PpvxhI5g==
-Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam04lp2173.outbound.protection.outlook.com [104.47.73.173])
-	by mx0a-002c1b01.pphosted.com (PPS) with ESMTPS id 42w6qbags7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Nov 2024 13:11:26 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Nowtps8kbP2S53YVvt+8/+Fg8lAzR5Vg5t4IqOwW33Bxtncpb2m+1V/BBjPLyzx2baPdbxMlgq6bAvtEpOa5dM8X1xEnYyL7F8CB0ieiUiwRIMOagFHRP2sgyr0iIt6St/cJ15EXU8ryNBzDFHszEl9zZTJxNKTgZcDWzb0MKCdorDxV1EHzCmVvYXLJQW0WNnSdZPsThB/ARTuoZWZi/haYyKNfFlYdWxIT4LakhnN5dBq8h5R1xatDYTX580lIZ2s1dQaCZ6iKZ/m+SF35CDkzJsQZWt8bZGqRqrHqxXKcIpqFdW/SpRSSTKVry8lGjGVnqGQ0dnNCnASQpuy84A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yxAR/gzB+Cq/3tE4CIsGPstIoVmGka54c8MwwhwXJRs=;
- b=kdkBwecL3vqXaagRzJ0g18RldzablznQEvB2qPVpc1WFh7tn3vN6cFiohpfdUl0IyY0feTF9NbJWe2JaoBfqFqrZvJYd8OstLGEGTz5OExKBF2n343cBUP0BRgSbInESX/xn0wSWz9N8qjlL1CIU5zGVs3nS7ruLEuqFra6MpCkPm6p9zZfIWQEzsr0COMhgXHrl/IMyLE92j6tLnoxL9vBUtjEPdlGWS5FFKSZ7ADhMDI5CRM7YZLZZPOec4ThA9FBRGyyMe4+BS7FvF0Dnq58tqIVV7syJpmYTodMkfS1r+KQe4paVRlM6hIH4nJTtrhj1w4PB6+PvOjznZNWdiA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nutanix.com; dmarc=pass action=none header.from=nutanix.com;
- dkim=pass header.d=nutanix.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yxAR/gzB+Cq/3tE4CIsGPstIoVmGka54c8MwwhwXJRs=;
- b=qeSB22SABDaCLvl5yZrQ9uzWl4KN5OE0Jdg4vmhrHm1rp0EztHitHdhLIS2XX0vO0pGq65NinTj24ZALtyu9rVj0SFzTaNBGiCM0xayK5iTIRJvC4DPE+6QiVFVztwujZRaKlMe9U90Dswlfs05kYtd0IV4zVk1WtYFmckEZbaZayz+xUIb74Y+nlJS7N/+TMLoiPDKXPG74lHpM4VLWPnf8paNXHib1mT6ZyVt5qaT+ncfg+oCRlpwJ+m+yo1XoGkfQsY9rXizcMKZFrPwq6vj06CAUeN+ZRyvnIvva0QjdIBPT0aOdgomk21fACpWciPZmIaxTivcv/eEqXz3KDg==
-Received: from LV8PR02MB10287.namprd02.prod.outlook.com
- (2603:10b6:408:1fa::10) by SJ2PR02MB9822.namprd02.prod.outlook.com
- (2603:10b6:a03:546::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28; Thu, 14 Nov
- 2024 21:11:23 +0000
-Received: from LV8PR02MB10287.namprd02.prod.outlook.com
- ([fe80::b769:6234:fd94:5054]) by LV8PR02MB10287.namprd02.prod.outlook.com
- ([fe80::b769:6234:fd94:5054%4]) with mapi id 15.20.8137.027; Thu, 14 Nov 2024
- 21:11:23 +0000
-From: Jon Kohler <jon@nutanix.com>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-        linux-kernel@vger.kernel.org
-Cc: Jon Kohler <jon@nutanix.com>
-Subject: [PATCH] sched/rt: use smp_wmb in rt_clear_overload
-Date: Thu, 14 Nov 2024 14:31:56 -0700
-Message-ID: <20241114213156.1839644-1-jon@nutanix.com>
-X-Mailer: git-send-email 2.43.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR13CA0017.namprd13.prod.outlook.com
- (2603:10b6:a03:2c0::22) To LV8PR02MB10287.namprd02.prod.outlook.com
- (2603:10b6:408:1fa::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE50487BF
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 21:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731620146; cv=none; b=lH6z+aPNzhUnCQq36IBCE8ra9IbBcY4//iXLzkmtaHjQPTEo9grH6cEhnSetCn6v+kRTnhOAzJZ1PAz1WMglcrQzbGhEMKDgYfiR5XmVHNYhD90dfZF0gn3YewoJGDaR47uNg90ateeNx2tR6/LQsO71fq9Rsm5+boXmBMlwDVQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731620146; c=relaxed/simple;
+	bh=v3HK4gjqtfEqSmvvY5seDYiy0YByPXQztPCyrO5QnZI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DmKSnAAvObTXHrT4Owm4KAjTi3M/ykYzXrS/uh6ZbaQoFA16BJXuG82T0CJDZzRq29NOztSPdU3kSc1P4TIBv0zG6zYiU0Q6HlTSCHk350l5j78Su+jF3VyCRG/f73bWWQylMnBKakvTTg997SlajPCAt1py6KQ6Yf90LxWnJXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Z+jMj4Fh; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ede26dc527so200232a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:35:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1731620144; x=1732224944; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5BDQkPXCXl3Qz9Ff47gk6begMR45pafFh0XIUGkRXuU=;
+        b=Z+jMj4FhO5a9ELgrThp8fW3u+rNWX6IJ5omg5EYPbAzj3jQ0EKQNeUhq9MSt6e1ogb
+         PkYfyyuCZ/s16gxmDfyHl6Y/M297TApRB5ZY6nI6ZLW/QgkWfl1hXgSDxJfbyRz+l1uE
+         52QgZU9kw0uONYkGfYedS1sjWts3ydMFsCY4znz2NyOPdKekWLyfU03me1ZPvL8CNhMt
+         69nPV928DyvrviMEQrH7GbcyVhzy8W7nLBfuhUiSlasSeceuF/jlzdQMYcxHtxosyRRj
+         /BAWOXVGI0oBphI5mfYjRF97qrlw+TnK8/mwFw21G2ATYQ8ndE/oOXB/6aTlPmBmK6wC
+         nqfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731620144; x=1732224944;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5BDQkPXCXl3Qz9Ff47gk6begMR45pafFh0XIUGkRXuU=;
+        b=BNi/CO2zZbw778Dgt45PsnRR1/KLeARTX3TCDr0HdBTAXkA09fMYmAbUMIg3wDAY51
+         nPXs/EnXl/7WyAjOngT6X+WVi3wsYHik7MhD3tsC3y5DIrdcl65ZNPtgVqWqHGLwChoJ
+         kJSXtSsPd9H8uLsN5/1iDHkLgRWt67IAZgDXOfOxbOfRl0MX/1T8HQ6sDoeffLbdoIU/
+         LFSmK2xFHv5bKFZTuOzuiEE7hGvwUqPtFO5WhOqzSRHVYCiFsQ7cIuzHdn3EkHBwT4oA
+         rIATs2JTBEHEZIHGhTqew3EU+NeW6HqQWHDh8596xR0B8KrdMyk+DlgpdiRjy1CmklBi
+         qc6w==
+X-Forwarded-Encrypted: i=1; AJvYcCWIoSuT+D+qVMepI563MFsLnfsK+DP/nDAwcfiyXjm+b2980hUZZ+lE10yHaYXSqhDuYTRlz4ufCkfHJBs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8fvoPV9NfSTfS4EXE7BH4du+Cjn52MsX7x1WNVfUmbySqdCn9
+	rhazVJYHh3j+0j8C0OjB3o6jy+FsygM/cav10SIIs+TKNgz2/+BO1bet7rdRA277Ms57jscpFDN
+	tA69HVFOIqCahgr/KQqlaTfEZm2sMPM9pnCgrZQ==
+X-Google-Smtp-Source: AGHT+IEbUPtTRqLmM/RwnibXnd8sPObJSt1RNL3w40r5RGaXQ+de1pqNjI0X/dLe5cCAaW6vg16z42Z/ecN0RBrAIJI=
+X-Received: by 2002:a05:6a00:2293:b0:71e:70fd:dac3 with SMTP id
+ d2e1a72fcca58-72476d082a6mr212875b3a.3.1731620143914; Thu, 14 Nov 2024
+ 13:35:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR02MB10287:EE_|SJ2PR02MB9822:EE_
-X-MS-Office365-Filtering-Correlation-Id: a87a9d21-14fe-4dac-301f-08dd04f0e4dc
-x-proofpoint-crosstenant: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|366016|7416014|376014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zlrfH5P4B3bpe5cowh8bqRFKNxj7/VuEID/6qors8vWbfshuvCWxyiGBsn10?=
- =?us-ascii?Q?dUmSTHRbuk1n99LH3Xr6czv24r7wtMzoYc7tg4w3SxlCx1wjcLOburKnpYNk?=
- =?us-ascii?Q?oJ44qp8taQtGfp8EZNpqD/cAuYIVAYOh2tuX7fuJfn9XbnnDonsld2ZDxQDw?=
- =?us-ascii?Q?HQYVmgiJ2ZXdFHEsvONd2C7Zk+h0m9u3LBkFkZvl9S089r73bdZIU6eaLIG/?=
- =?us-ascii?Q?bSqElWAzeWO6N44GC734K2rvKLhC1TO2BLB9IwHyEQIWXwOYnc3kuuNrzJRu?=
- =?us-ascii?Q?ryuiJyPgmbkm7Bjc8ntPzDeCpjtGpw7fLwXBxNAELjYMcFia0zmsTc9BI2FL?=
- =?us-ascii?Q?xj+JMgu4pKBSIWlT50oy5iA71awziPh+257Eyb0ie5GId0EJMNk/XxplPlEE?=
- =?us-ascii?Q?0BOcfpXL42+xFVEJzadoI0xxjrHymJZyWGmFHSGM/HRdzIz6B9ygYmDTNMkk?=
- =?us-ascii?Q?k8KjOx67PLQjCUXBs2mWwMuhc0Xpdmg2kB7PIvRAvC5qG9cAGBDgjWtes7eY?=
- =?us-ascii?Q?pCDwnIIwGtx/8D3zztHwVyvww7kDSq0lGfmDKQVmoFXwAi2QhxawmSKn1JPO?=
- =?us-ascii?Q?aAmvDCJYKqu+CCSyvrWDS8SSU4hiI5vs4uPMEfhf59CS0XMVFUXwH7GKN6AO?=
- =?us-ascii?Q?FnXcKuEB5It4Ag3dHTGSSVWVCraMAlFsdd7/J5OiuQBXB064z5y+ClHr4aAI?=
- =?us-ascii?Q?zvPvMAqYsaO4jz2nLSWD3FQkrwIqjTwbq/QWkCoIyQjRpVjFkipHKxJIuJ0M?=
- =?us-ascii?Q?4GDqQJu7bwK5DaM4asjvFL4AkvUOqu2PNn+BQR2ANG4mbPdigYse3LCJzJhD?=
- =?us-ascii?Q?cfmmxarfczPDLiggtUiYywaLe/L6CF02pprDZpi7+rUF9ZnnKtgY8WeWOy+p?=
- =?us-ascii?Q?8EuyypN9wdRFJQ7219Om+iXtQ/SvFHKUuNMQlf13PQUNmGlRuLMdL9Is86Ms?=
- =?us-ascii?Q?VPxMQW2Hl204GAMli8dCjpNb84iyIEf0AFz3Aq94xnH4g/osqwiKmjqMJtZ/?=
- =?us-ascii?Q?FRipL/tBz9pnnFr9M1w+W+0ZOLe6Grsei5bHueUrVUSVOz+3EWoD8UlBV3vr?=
- =?us-ascii?Q?YClLritfQqUu5H4i2JRNT8fceXSy8pmZ/kHpYpEVE/ayz1gF5BenXuQEVZNa?=
- =?us-ascii?Q?oVFxP1a/o2kzVOE9wigZPsX8pu73L2rPAEfSSlHKYKagKv5mX1KeJxNNWqy+?=
- =?us-ascii?Q?ltXeQQfxNWHyps9gKS0J0zuisjR8xd6kVTNuT1zQETCAsa49kMZsIZgJdl+I?=
- =?us-ascii?Q?fh6NIiM6G1vXKRriklZiIabQuChxntnUvWrtlOv6PInOf4z9zaUZX67nBpiu?=
- =?us-ascii?Q?aG8EoS4X5u/UvecF32Hn5sAKBN8fCy6WlDnFimoL+z5pbw4xiMVangN9DsJs?=
- =?us-ascii?Q?pgY6IPhQoMnkpv6sVwNSIOAomYT5?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR02MB10287.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(366016)(7416014)(376014)(38350700014)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?lFjF1SJ4SDrxC99tB3pdhjY5yDNifvUMdNmLkRYjC7Gth6psDNI45kLi+lp5?=
- =?us-ascii?Q?aC4pgtUOuKAqxauZZMo2Wb7QSBaftZydJjQldMwhZrwjtZ4dFMSXlXsajMLr?=
- =?us-ascii?Q?Pj0C8Nqk914ng8CM8nI8orr2k5sv5OH+HUaDWnWbap2pVsslA2ld2HP2vo12?=
- =?us-ascii?Q?cJLoBYYZb3VroMAYxeeMQZunt+i5/vGHweX8pug4W7Q5OeUDCgmTVHWRs9uk?=
- =?us-ascii?Q?47nzF9TibXtGTUFX5qiNCkpPg0qFKVfaOQoT+vdF1L89ffz/7pQ22Z3ogxT/?=
- =?us-ascii?Q?m6og0l2kTj+5/HHy3yeTGTYwDobo7n/+YoUEYJq3F45k+l7s+oWyTx/1+EuS?=
- =?us-ascii?Q?76QxwCzVUOkb/ziiWSwaRp9iVS/lP4scUdagzz84fGZZixy7LpiUcBAiEEKY?=
- =?us-ascii?Q?H6CkXqFfQzKHv/tqsJnC33+eH8mRWWRtj/SNi+7h1SYvK03qHYNTbzv91EHe?=
- =?us-ascii?Q?3Wj4pKOXNrQfYjrwXTWjp3GvIur8C8ihHy4Q20bBUslSMiY0Ibrwfeui7MRT?=
- =?us-ascii?Q?JtWG7PHQqIgc0G7OWpiYAzUUW9Xcw7xs19bqFOfLbzOiCIWaQND0BodQzB3W?=
- =?us-ascii?Q?TkurASd8nP4oDXAfjfmnko9sghpdwJNdDNQPiQ/7YzdREdAVouRChaw/D2H2?=
- =?us-ascii?Q?2/T5Red1rATNcLjjooUIIxOtVLmED2SwQmp6wQYV7VcFMiPdsl0KBz0lCEfo?=
- =?us-ascii?Q?TURMj16pLOz4cOzTJgs9bVdTqHh5xksWOcWCoDm8S+AwgCfyM/FhD10Ajxg6?=
- =?us-ascii?Q?UGTRcOOMe8NztjO8id6xLu51VJUPfTQzaKZP+h9MqrJBjE0PeJlASrOBkE50?=
- =?us-ascii?Q?3ytOgRecglN5hfzGY/gENT/bREmARweztNtc/8BnIHDTsr16ORNhp16LNY9z?=
- =?us-ascii?Q?gegTb0e/UyZOu4OqcQL3cnrjVaUUQNvLfTNf9wBRSDyN70xjlDhr4K94ZhcM?=
- =?us-ascii?Q?jH16fMyqMxnOf5KjNOwNDHd/1IcWmTo4HGdiSG3hUTq/AhT3SnudlyDtFWic?=
- =?us-ascii?Q?fa2swa6SPrq4D0Nc8fUEzj4a+7bCujJS5HiPWXrnY5YzyabwI9wrIkenWBEd?=
- =?us-ascii?Q?alkpG3i4joN5DE0FdRIwupcsM4+gntSjAk0981o7Kb40sKso8KDF6As78pz9?=
- =?us-ascii?Q?nUcdyK6W/OS9o5ZCVOIPcZ5rzLkNtyuldUhIuguP8fk8wBJ1gOrzYl11OdCe?=
- =?us-ascii?Q?2dV1TtQYTWYesCRsZgRuKiUz17YCl5Ffz31184vivor/dNaAFiFF8HcWCUS+?=
- =?us-ascii?Q?EIpcKvqH5aJ8prS9+5Ol3m6I7/fkX050I/PDuo4OpUCYJ7HVVKVWNq/R4lJ+?=
- =?us-ascii?Q?gknu6o2KWifzY/xU3fhF7EYR5yqIW7OI8mAzLx4Gq9ez1eTBZjlsPBCHXIK1?=
- =?us-ascii?Q?8bsKmEYkviReM8kc9OhPH2YXclBf8qzsm/aJ4js7Bk1bQ++iNxn66W+sXRJ4?=
- =?us-ascii?Q?O3Qxdm30hiVc8Zk6eGKW88SSCG3VW2JxrAgjyhKp0ltZRbHxOX5lMwdXDIPh?=
- =?us-ascii?Q?6ED9GTGq2uRoy0v7hmw5CGSyzAhx6CQH1VXhSjk9mIeiseGBRy7NUxkEcyzZ?=
- =?us-ascii?Q?GHjfZBK5Uy5HBSGVcXrisbR/E4DZ81GcYPfwuOCEka9gEpIFh1PU3NVbRShx?=
- =?us-ascii?Q?Kw=3D=3D?=
-X-OriginatorOrg: nutanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a87a9d21-14fe-4dac-301f-08dd04f0e4dc
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR02MB10287.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2024 21:11:23.7537
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bb047546-786f-4de1-bd75-24e5b6f79043
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kkXc1V21gDYVnwAXUzdarMigpswRYaMODgAGV2ByUfTExoAetg4fu5r07eCCrKjl/p+qtmMiCz6uFPdxwjQRbGtaD3iexJVAQRb/Nfpl31w=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR02MB9822
-X-Proofpoint-GUID: VfR-Wi1eYJD7BMZx7U2KgnXiThH7qeL0
-X-Authority-Analysis: v=2.4 cv=NeO01HD4 c=1 sm=1 tr=0 ts=6736677e cx=c_pps a=VzeH2YOhhDlPZ0WtbyP6yA==:117 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=VlfZXiiP6vEA:10 a=0034W8JfsZAA:10 a=0kUYKlekyDsA:10
- a=64Cc0HZtAAAA:8 a=_aYr0uzb565y12tzYnAA:9 a=14NRyaPF5x3gF6G45PvQ:22
-X-Proofpoint-ORIG-GUID: VfR-Wi1eYJD7BMZx7U2KgnXiThH7qeL0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-14_05,2024-11-13_01,2024-09-30_01
-X-Proofpoint-Spam-Reason: safe
+References: <20241029182703.2698171-1-csander@purestorage.com>
+ <CANn89iLx-4dTB9fFgfrsXQ8oA0Z+TpBWNk4b91PPS1o=oypuBQ@mail.gmail.com>
+ <CADUfDZrSUNu7nym9dC1_yFUqhC8tUPYjv-ZKHofU9Q8Uv4Jvhw@mail.gmail.com> <CANn89iKQ3g2+nSWaV3BWarpbneRCSoGSXdGP90PF7ScDu4ULEQ@mail.gmail.com>
+In-Reply-To: <CANn89iKQ3g2+nSWaV3BWarpbneRCSoGSXdGP90PF7ScDu4ULEQ@mail.gmail.com>
+From: Caleb Sander <csander@purestorage.com>
+Date: Thu, 14 Nov 2024 13:35:32 -0800
+Message-ID: <CADUfDZqEe--KodhfJLK065biSE__TQ-FZNRtyanfXTA+iPjn4Q@mail.gmail.com>
+Subject: Re: [PATCH] net: skip RPS if packet is already on target CPU
+To: Eric Dumazet <edumazet@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add smp_wmb in rt_clear_overload, which ensures that the cleared
-cpumask bit is visible to properly iterate over any remaining
-overloaded CPU(s).
+On Wed, Oct 30, 2024 at 5:55=E2=80=AFAM Eric Dumazet <edumazet@google.com> =
+wrote:
+>
+> On Tue, Oct 29, 2024 at 9:38=E2=80=AFPM Caleb Sander <csander@purestorage=
+.com> wrote:
+> >
+> > On Tue, Oct 29, 2024 at 12:02=E2=80=AFPM Eric Dumazet <edumazet@google.=
+com> wrote:
+> > >
+> > > On Tue, Oct 29, 2024 at 7:27=E2=80=AFPM Caleb Sander Mateos
+> > > <csander@purestorage.com> wrote:
+> > > >
+> > > > If RPS is enabled, all packets with a CPU flow hint are enqueued to=
+ the
+> > > > target CPU's input_pkt_queue and process_backlog() is scheduled on =
+that
+> > > > CPU to dequeue and process the packets. If ARFS has already steered=
+ the
+> > > > packets to the correct CPU, this additional queuing is unnecessary =
+and
+> > > > the spinlocks involved incur significant CPU overhead.
+> > > >
+> > > > In netif_receive_skb_internal() and netif_receive_skb_list_internal=
+(),
+> > > > check if the CPU flow hint get_rps_cpu() returns is the current CPU=
+. If
+> > > > so, bypass input_pkt_queue and immediately process the packet(s) on=
+ the
+> > > > current CPU.
+> > > >
+> > > > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> > >
+> > > Current implementation was a conscious choice. This has been discusse=
+d
+> > > several times.
+> > >
+> > > By processing packets inline, you are actually increasing latencies o=
+f
+> > > packets queued to other cpus.
+> >
+> > Sorry, I wasn't aware of these prior discussions. I take it you are
+> > referring to threads like
+> > https://lore.kernel.org/netdev/20230322072142.32751-1-xu.xin16@zte.com.=
+cn/T/
+> > ? I see what you mean about the latency penalty for packets that do
+> > require cross-CPU steering.
+> >
+> > Do you have an alternate suggestion for how to avoid the overhead of
+> > acquiring a spinlock for every packet? The atomic instruction in
+> > rps_lock_irq_disable() called from process_backlog() is consuming 5%
+> > of our CPU time. For our use case, we don't really want software RPS;
+> > we are expecting ARFS to steer all high-bandwidth traffic to the
+> > desired CPUs. We would happily turn off software RPS entirely if we
+> > could, which seems like it would avoid the concerns about higher
+> > latency for packets that need to be steering to a different CPU. But
+> > my understanding is that using ARFS requires RPS to be enabled
+> > (rps_sock_flow_entries set globally and rps_flow_cnt set on each
+> > queue), which enables these rps_needed static branches. Is that
+> > correct? If so, would you be open to adding a sysctl that disables
+> > software RPS and relies upon ARFS to do the packet steering?
+>
+> A sysctl will not avoid the fundamental issue.
+> Why not instead address the past feedback ?
+> Can you test the following ?
+>
+> diff --git a/net/core/dev.c b/net/core/dev.c
+> index c682173a76424d7dadcc8374aa5b11dff44a4b46..7a5a7f1a4b7c3cbd105ecfc07=
+6377f25929729eb
+> 100644
+> --- a/net/core/dev.c
+> +++ b/net/core/dev.c
+> @@ -5842,6 +5842,21 @@ static int generic_xdp_install(struct
+> net_device *dev, struct netdev_bpf *xdp)
+>         return ret;
+>  }
+>
+> +#ifdef CONFIG_RPS
+> +static bool net_must_use_backlog(int tcpu)
+> +{
+> +       if (tcpu < 0)
+> +               return false;
+> +       if (tcpu !=3D smp_processor_id())
+> +               return true;
+> +       /* target cpu is ourself. We must use our backlog
+> +        * if we have deferred IPI or packets.
+> +        */
+> +       return this_cpu_read(softnet_data.rps_ipi_list) !=3D NULL ||
+> +              this_cpu_read(softnet_data.input_pkt_queue.qlen) !=3D 0;
+> +}
+> +#endif
 
-The smp_wmb pairs with the smp_rmb in pull_rt_task(), ensuring that a
-thread will observe rto_count and the correct cpumask.
+Hi Eric,
+Look at this patch again, I am wondering why the tcpu < 0 case is
+treated differently from the tcpu =3D=3D smp_processor_id() case. If I
+understand correctly, packets without a CPU flow hint are allowed to
+be processed immediately on the current CPU. They will leapfrog
+packets that other CPUs have queued onto this CPU via RPS and any RPS
+IPIs waiting to be issued to other CPUs. I see this is the behavior in
+the current code too, but why don't the same concerns about higher
+latency for packets steered cross-CPU apply?
 
-This visibility is important for NO_RT_PUSH_IPI use cases where a
-thread may iterate over an outdated view of rto_mask where target CPUs
-are no longer overloaded.
-
-Signed-off-by: Jon Kohler <jon@nutanix.com>
----
- kernel/sched/rt.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 172c588de542..f68a454bb0e3 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -354,9 +354,13 @@ static inline void rt_clear_overload(struct rq *rq)
- 	if (!rq->online)
- 		return;
- 
--	/* the order here really doesn't matter */
- 	atomic_dec(&rq->rd->rto_count);
- 	cpumask_clear_cpu(rq->cpu, rq->rd->rto_mask);
-+	/*
-+	 * Barrier pairs with pull_rt_task(), such that threads will
-+	 * observe the correct cpu mask for any remaining overloaded CPU(s).
-+	 */
-+	smp_wmb();
- }
- 
- static inline int has_pushable_tasks(struct rq *rq)
--- 
-2.43.0
-
+Thanks,
+Caleb
 
