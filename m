@@ -1,109 +1,68 @@
-Return-Path: <linux-kernel+bounces-409234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD6339C895B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:58:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E839C8959
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:58:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13F71B22413
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:57:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2ECA1F23125
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BAA1F9A99;
-	Thu, 14 Nov 2024 11:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E021F9A8D;
+	Thu, 14 Nov 2024 11:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YgDc3n2N";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/kEXn93K";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YgDc3n2N";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/kEXn93K"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mtOgP2S0"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F101F942D;
-	Thu, 14 Nov 2024 11:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63951F8931;
+	Thu, 14 Nov 2024 11:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731585417; cv=none; b=cPP1sYICEbgJkeUbDLNfD89iYaKvyw8IbzrLa5yyQdAK9xWtXvu0miN2e1FJIiERITZiRnU5qhkwPOarbJY6j9FGsJMTSE9jCL17JnsJyQDfU2BokDe2IJwEwrfxCxYHbUQdjHxlpk9HrxN1z9gjbv66g6cYUdEg/Sb9R0OHcus=
+	t=1731585519; cv=none; b=fmEDIlrxDne4CzDPPWldAjpOUs2jotmRgpUUAFFLG6Ptp4zpHpVi3M6PeldsGENQZWvdMS3HGqiR3aN6T8w7+RF6Uf3KmKqvrSH/LBayUfyfiVvtTkvMCfIZV4YUHUF3RdazPhHAQ0LK1rVxUZPBTzkzANFBm8F5Bl+cqKzsg/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731585417; c=relaxed/simple;
-	bh=41qE8t6o6YQ0easPh1gOgIVr9GyTkvJBEtzlbMFAn3M=;
+	s=arc-20240116; t=1731585519; c=relaxed/simple;
+	bh=opbrCb2+/EFIFD1/+ST5yY9PAJrHhAjniteJAzszCS8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UGup3RJYZ7F3Ecr0y0S+0wh2psk4irGqxZ48hmiDFxdrVy26RSxiQULvxZj/RkTw1U+2B1AaCYs7rb2KgND0Yw18p3I/FkSuNsWKmZVAT035QeoBm5bI9XLOP257nNFD5JrC8ZxuoWBo1afjUUzDspOKmf6jT1Vbw16ybBKDhA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YgDc3n2N; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/kEXn93K; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YgDc3n2N; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/kEXn93K; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 60BA51F7D0;
-	Thu, 14 Nov 2024 11:56:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731585413; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fjpil1imwzVAhJx8ZIKAodHef4Qt88vZjAlATvjPlts=;
-	b=YgDc3n2Nj6MTZ5EWnqWi16y8dr3OyaxTUUdHLhmcA5hKdh7FoodNPuA+0V62QuIjEGFJ64
-	/GihJvobezuN22voclwFF98WzURO/gHANrkMJD0CjG4j847WEwncOHQD7M0RE0t6SLIb5c
-	t8W3h89nGtYjtdnbgJ8x7iimEzR3n1I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731585413;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fjpil1imwzVAhJx8ZIKAodHef4Qt88vZjAlATvjPlts=;
-	b=/kEXn93KXHicymwm0Uy8MnifPr0VTdMtKAAngTVsZUWZK+XrOzeOoanxU7X9Q9YhkOQKRq
-	oxBlbAjzH3Fa7NBQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=YgDc3n2N;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="/kEXn93K"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731585413; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fjpil1imwzVAhJx8ZIKAodHef4Qt88vZjAlATvjPlts=;
-	b=YgDc3n2Nj6MTZ5EWnqWi16y8dr3OyaxTUUdHLhmcA5hKdh7FoodNPuA+0V62QuIjEGFJ64
-	/GihJvobezuN22voclwFF98WzURO/gHANrkMJD0CjG4j847WEwncOHQD7M0RE0t6SLIb5c
-	t8W3h89nGtYjtdnbgJ8x7iimEzR3n1I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731585413;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fjpil1imwzVAhJx8ZIKAodHef4Qt88vZjAlATvjPlts=;
-	b=/kEXn93KXHicymwm0Uy8MnifPr0VTdMtKAAngTVsZUWZK+XrOzeOoanxU7X9Q9YhkOQKRq
-	oxBlbAjzH3Fa7NBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5074113794;
-	Thu, 14 Nov 2024 11:56:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id jK9OE4XlNWeHPwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 14 Nov 2024 11:56:53 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id F0122A0962; Thu, 14 Nov 2024 12:56:52 +0100 (CET)
-Date: Thu, 14 Nov 2024 12:56:52 +0100
-From: Jan Kara <jack@suse.cz>
-To: Ian Kent <raven@themaw.net>
-Cc: Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
-	Karel Zak <kzak@redhat.com>, Christian Brauner <brauner@kernel.org>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v4 0/3] fs: allow statmount to fetch the fs_subtype and
- sb_source
-Message-ID: <20241114115652.so2dkvhaahl2ygvl@quack3>
-References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
- <20241112-antiseptisch-kinowelt-6634948a413e@brauner>
- <hss5w5in3wj3af3o2x3v3zfaj47gx6w7faeeuvnxwx2uieu3xu@zqqllubl6m4i>
- <63f3aa4b3d69b33f1193f4740f655ce6dae06870.camel@kernel.org>
- <20241113151848.hta3zax57z7lprxg@quack3>
- <83b4c065-8cb4-4851-a557-aa47b7d03b6f@themaw.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mjMyoFtPXEqFfClYMyJhlo+GQL3SRMNv/TYFD49LXfWxmhVSAurOu7Jx7ZbC//QlBBocOOv1O+Pfq7sFRenSnBg79zfZ05WfFX5kAVQxTbqhwvu4VLAHEYsoix1iwPcYVbyh7v+SudqIucmSWcowLN+PVJ+PEqeFONDaAqY7mGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mtOgP2S0; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=4kaHGJ5S7sZTzNrqIdngW3WAgdJKt+QVgXkqBlwP7j8=; b=mtOgP2S0lpX130zqNUPnPIrcfo
+	nFA7r6l3WhBBD2baemhkaUw7KwGsQYTqG1UvmelOqtsZFQC48GUZSDpZk332CdzkTUsRV/2taUZRN
+	dadoU/gfs1DPBeaK6T8klVovyRJtTYQtQFKBI9EyXlzcnlI9Gs53jcYBORV8l4BQhI9DSQbKvqIZc
+	ewgW4q+Y0jlTykLi1foUHeSjIxrukVnmv8hqcUdp5bpoL15r5KG8GcPo7vTBIIx3RLIUiuq3ejgdA
+	7hTYOncthUisi+4LUDiuW2KLWLa0BEgYO7aufCnadHxTz/ie4KjGcpL7kq3DB0+Cw86jAO+lhmwDF
+	ZK6EzoyQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tBYUa-00000000gVY-1c7W;
+	Thu, 14 Nov 2024 11:58:32 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 08B30300472; Thu, 14 Nov 2024 12:58:32 +0100 (CET)
+Date: Thu, 14 Nov 2024 12:58:31 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	rafael.j.wysocki@intel.com, len.brown@intel.com,
+	artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com
+Subject: Re: [PATCH v3 2/3] x86/smp native_play_dead: Prefer
+ cpuidle_play_dead() over mwait_play_dead()
+Message-ID: <20241114115831.GQ6497@noisy.programming.kicks-ass.net>
+References: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
+ <20241108122909.763663-3-patryk.wlazlyn@linux.intel.com>
+ <20241112114743.GQ22801@noisy.programming.kicks-ass.net>
+ <CAJZ5v0hJ8NoFgjtnYce99+qjCZc3_ihBojyK1gRrcyU5Fp6inw@mail.gmail.com>
+ <20241112145618.GR22801@noisy.programming.kicks-ass.net>
+ <ZzSQcq5JxGgKVh5Z@BLRRASHENOY1.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -112,76 +71,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <83b4c065-8cb4-4851-a557-aa47b7d03b6f@themaw.net>
-X-Rspamd-Queue-Id: 60BA51F7D0
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <ZzSQcq5JxGgKVh5Z@BLRRASHENOY1.amd.com>
 
-On Thu 14-11-24 09:45:23, Ian Kent wrote:
-> On 13/11/24 23:18, Jan Kara wrote:
-> > On Wed 13-11-24 08:45:06, Jeff Layton wrote:
-> > > On Wed, 2024-11-13 at 12:27 +0100, Karel Zak wrote:
-> > > > On Tue, Nov 12, 2024 at 02:39:21PM GMT, Christian Brauner wrote:
-> > > > Next on the wish list is a notification (a file descriptor that can be
-> > > > used in epoll) that returns a 64-bit ID when there is a change in the
-> > > > mount node. This will enable us to enhance systemd so that it does not
-> > > > have to read the entire mount table after every change.
-> > > > 
-> > > New fanotify events for mount table changes, perhaps?
-> > Now that I'm looking at it I'm not sure fanotify is a great fit for this
-> > usecase. A lot of fanotify functionality does not really work for virtual
-> > filesystems such as proc and hence we generally try to discourage use of
-> > fanotify for them. So just supporting one type of event (like FAN_MODIFY)
-> > on one file inside proc looks as rather inconsistent interface. But I
-> > vaguely remember we were discussing some kind of mount event, weren't we?
-> > Or was that for something else?
+On Wed, Nov 13, 2024 at 05:11:38PM +0530, Gautham R. Shenoy wrote:
+
+> AMD platforms won't be using FFH based states for offlined CPUs. We
+> prefer IO based states when available, and HLT otherwise.
 > 
-> I still need to have a look at the existing notifications sub-systems but,
-> tbh, I also don't think they offer the needed functionality.
+> > 
+> > Robustly we'd teach the ACPI driver about FFh and set enter_dead on
+> > every state -- but we'd have to double check that with AMD.
 > 
-> The thing that was most useful with David's notifications when I was trying
-> to improve the mounts handling was the queuing interface. It allowed me to
-> batch notifications up to around a couple of hundred and grab them in one go
-> for processing. This significantly lowered the overhead of rapid fire event
-> processing. The ability to go directly to an individual mount and get it's
-> information only got about half the improvement I saw, the rest come from
-> the notifications improvement.
+> Works for us as long as those FFh states aren't used for play_dead on
+> AMD platforms.
 
-Well, if we implemented the mount notification events in fanotify, then the
-mount events get queued in the notification group queue and you can process
-the whole batch of events in one go if you want. So I don't see batching as
-an issue. What I'm more worried about is that watching the whole system
-for new mounts is going to be somewhat cumbersome when all you can do is to
-watch new mounts attached under an existing mount / filesystem.
+AFAIU AMD doesn't want to use MWAIT -- ever, not only for offline.
+Confirm?
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+But if it were to use MWAIT for regular idle, then surely it's OK for
+offline too, right?
 
