@@ -1,154 +1,139 @@
-Return-Path: <linux-kernel+bounces-408512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3E9B9C7FBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:09:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 055019C7FC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:10:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A441D2837E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:09:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D50321F22546
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213EB1CCEFC;
-	Thu, 14 Nov 2024 01:09:35 +0000 (UTC)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB411CCEF5;
+	Thu, 14 Nov 2024 01:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="InB1Xjjt"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAEBE1CCEE0;
-	Thu, 14 Nov 2024 01:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D233216DEB4;
+	Thu, 14 Nov 2024 01:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731546574; cv=none; b=TVYFaI2DF9j9lDTdyihAFjAwBjEQuxfct8r6I95hexcvs0LP3paUab3ZUF27qMkC0pOOEruyqbaBbQagkpXHgRRwelyqHy/47bZTpxoF5EH/ZvS8I/RPXQAC/3yjp7ULxRGMkJVkh+XG7fvsL3h011YkaHHADHmrDPFLTXNsC5s=
+	t=1731546642; cv=none; b=SOzleXCZdJrl3NRwYWP0Lo9TfqeqcdKXBJaqDKPp8QMmWHtAXfzPunpBkbFirvqJj6dnf5RsBIX72NXnm58B6Gb9JICI5yIV738Sc9BCq0GzkHPbagf5O6M1u30+C3RMbcvuJfwOFuYofXVVtxbidbflXv+5KYZRSOpEz3dTyew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731546574; c=relaxed/simple;
-	bh=4dBnu6yXq+K0Mi0c+uAajHja4UE4d0nABKzZl+smMfw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QPNEsXjWwBu2Vc5xynxXTZeUXugtINfx5XCD8swTErFotskcZIouLlS8GYNtJJfe2IHBfIuaRviNxOpNynSOhRmgXZyBf0tMkIoiIvzm+JoA5IaVQFcDcBTcMiTMNZg0dhDlfLJx0POahMEA7sP0Gj61fw9p3SpeLyiC2oxfeBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539fb49c64aso73334e87.0;
-        Wed, 13 Nov 2024 17:09:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731546570; x=1732151370;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=poZXREh8ime1SzzkUl+eZQKKgwvGXn8BXWEpCPeefZg=;
-        b=mU86A2N49MlMdzEHaaz5SmN7IgUU4u6Ks46VUc6D4rEFwbFBroInT53mTCHN4AqmFB
-         s6e1mkT8FJdV3JhE/a9Mld+EhlbOVW5UUBHV3YoNEjSNqjbrxTf2Kmp4UTj+SDGXBYTQ
-         VHC9CnKEL3AKWXJMUthe5xTVsPJLewCXjsFRrofeuI3OzSTQMn9UzCn+jWaYftYSwsZP
-         eus0kT3rYjOCThUf3fXqIKylBvkgvfrh2G8dB7gSPaX5N8uFPHWjvReV2aCWRPhFtIQT
-         kSczfdeP1cMVeCG0c0oBprgeiHaCNhVbUXTKW3RUCRqJlPjXz4BEVkmdHCxgqigt+bIS
-         mRMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKRQchfiDb6bdz/V50uon9/BKQqOeLuADB+w2lAsZmy6Mz+4mfZIGLHll2XKS4t0zNdpjMLGO9dUaX6rF1ROo=@vger.kernel.org, AJvYcCVu6M/7T6Tv8qZLb/QOULSSyDoooBYDid8S4TMvcY6D7QgxItSf5L+voK7cTO5+lTIHpNzDwiFqJYo7G95XgQ==@vger.kernel.org, AJvYcCXcRHiIUq54GcD79eoLEjE9mMU5rRFi1IkQeTk8gWzPxBZlO0dZi28nIgjABrSWkv5uyTH4VBlSAcLa9S2P@vger.kernel.org, AJvYcCXiE8NxH/la0wylfGcsyintCWZkRvt0+HPEXMCSUGlge8zWXAp+iJDSOym+bOZ1L1axlUIfc3IDzO2A/v8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ2LVBFOSoD6aDsUzZcQ7au/kwMJee6TG9a+y+JWN3azY+dRIZ
-	77C1W+CKAnxfMMEqNpOoQ3FxJX8innYDXPCVBeOMxCSIifr7hXXGwOIY3sM3aQ4GqQ==
-X-Google-Smtp-Source: AGHT+IFg2ulbEahV6fcZy9QQvfeb2d4TR4fvLjExiGL18iXsp/dreHuH87gojPMBSaV4e49oENcR0g==
-X-Received: by 2002:a05:6512:114c:b0:53d:a2da:d396 with SMTP id 2adb3069b0e04-53da5c3eb3amr231136e87.23.1731546570341;
-        Wed, 13 Nov 2024 17:09:30 -0800 (PST)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da6500ed8sm9564e87.90.2024.11.13.17.09.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2024 17:09:28 -0800 (PST)
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb51e00c05so1146921fa.0;
-        Wed, 13 Nov 2024 17:09:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWBXNIEL/mIT4eKJZ6sOJJK4W003238SM+AF3bJo1b/kEisGVDslJbtaEZtKsTI7Z/1/AmjHt966RFP5SS0eQ==@vger.kernel.org, AJvYcCWLN5P2VVKU8IKR4/SKGdi+rdVI1WfHN9SGerY2L7SzH39+ALsiqkjl/weHdtGzYeer7IE5O3IoJh7xXJvV9jI=@vger.kernel.org, AJvYcCXEWYvLeh5mZS497AyD4y67ZwShY9Vqai8tXSU5GUB2DvUEa1oNusGMQ6cr6lB4oOOGOB+OYCCJ1XdDcJs=@vger.kernel.org, AJvYcCXuWLtT9gtkiI17CAp/HwKTBea2sT+829erSCgl/d7Ivh/1AzdCXM7A4DMNnaZqVKjoQFRxvjti4x//Yi5c@vger.kernel.org
-X-Received: by 2002:a05:651c:503:b0:2fb:3960:9667 with SMTP id
- 38308e7fff4ca-2ff59027c97mr1506281fa.14.1731546568430; Wed, 13 Nov 2024
- 17:09:28 -0800 (PST)
+	s=arc-20240116; t=1731546642; c=relaxed/simple;
+	bh=O2zq1glSZr9LPjsRIQxa61fxxsHgRs0Nh/0fNCe6oRI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O58QRYX5xWeUFkLrm6+00fqAEhjSowehuqUfVCuo5M+bWPw4CSGkof0cXINKU6BiEBb0guAY6LsjI4tPSwLk3OvEYkZdYfhhSB8z+sDeadqlbJjREGLqayYiCtkNlzVuGMqUYhE4oCBjpN3+PpCvwnddV9vQV+sl8PF3n30r3Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=InB1Xjjt; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ADH1QHt015403;
+	Thu, 14 Nov 2024 01:10:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=obuIBdB2NoaG6KPGEovIWmvn
+	S4F0qNHmuyEWMF7tCV0=; b=InB1XjjteKgpdjXLYnvUB21rnx0QXPw+XxlDbETw
+	14igKMWkZcgDrzUXVDCJh5nZWiQmJ35R1hqsDjaridlIC1Wkk/f7W/7L53uVDmJb
+	ewICNqtUp1UKLvD1neHsK7n3d79dLCNfCi+oitFx3zk5+Sym75BCaUCUKn4mfTa0
+	z4QZVXzi4ZKamabKtzQvDqtR3ko7ruX+6fko0BroqkSisPzxjkNj4ckVqZC8PucH
+	ogvyS1yEfkMHU2qdG3jT5jXdP6hX9+f1vzAOaPFlu0ipBDySQ9nFIjIWM8asOket
+	0tBe5AnTi4J+qOsHZTTfux6fMVxN9yWynoNBkCzfAd0C9g==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vsf329ja-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 01:10:25 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AE1APhQ026065
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 01:10:25 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 13 Nov 2024 17:10:24 -0800
+Date: Wed, 13 Nov 2024 17:10:24 -0800
+From: Elliot Berman <quic_eberman@quicinc.com>
+To: Konrad Dybcio <konradybcio@kernel.org>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        "Bjorn Andersson" <bjorn.andersson@oss.qualcomm.com>,
+        Konrad Dybcio
+	<konrad.dybcio@oss.qualcomm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH 0/3] Allow specifying an S2RAM sleep on
+ pre-SYSTEM_SUSPEND PSCI impls
+Message-ID: <20241113165329590-0800.eberman@hu-eberman-lv.qualcomm.com>
+References: <20241028-topic-cpu_suspend_s2ram-v1-0-9fdd9a04b75c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030170106.1501763-21-samitolvanen@google.com>
- <20241030170106.1501763-22-samitolvanen@google.com> <CAK7LNAShVzrE6uhXxZ7HepKhmOJYsZeigq6w19jRN3OH-T_Jyg@mail.gmail.com>
- <CAEg-Je_o-e3Sc0vNJpF+3eG3sZvV-f2zrCdubRAvPSLzVdyd5Q@mail.gmail.com> <ZzT_ZSNAmeloDjLT@bombadil.infradead.org>
-In-Reply-To: <ZzT_ZSNAmeloDjLT@bombadil.infradead.org>
-From: Neal Gompa <neal@gompa.dev>
-Date: Wed, 13 Nov 2024 20:08:51 -0500
-X-Gmail-Original-Message-ID: <CAEg-Je9yJh4teQeix4N9BF85JhkQMPHLAz2dnBrM1MLbBjO1iA@mail.gmail.com>
-Message-ID: <CAEg-Je9yJh4teQeix4N9BF85JhkQMPHLAz2dnBrM1MLbBjO1iA@mail.gmail.com>
-Subject: Re: [PATCH v5 01/19] scripts: move genksyms crc32 implementation to a
- common include
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
-	Asahi Linux <asahi@lists.linux.dev>, Sedat Dilek <sedat.dilek@gmail.com>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241028-topic-cpu_suspend_s2ram-v1-0-9fdd9a04b75c@oss.qualcomm.com>
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: UgSLmlzclwyVXv8aYsOX0I0nUglVNwrA
+X-Proofpoint-GUID: UgSLmlzclwyVXv8aYsOX0I0nUglVNwrA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ bulkscore=0 phishscore=0 malwarescore=0 suspectscore=0 priorityscore=1501
+ clxscore=1011 mlxscore=0 spamscore=0 lowpriorityscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411140006
 
-On Wed, Nov 13, 2024 at 2:35=E2=80=AFPM Luis Chamberlain <mcgrof@kernel.org=
-> wrote:
->
-> On Wed, Nov 13, 2024 at 09:04:51AM -0500, Neal Gompa wrote:
-> > On Mon, Nov 11, 2024 at 11:06=E2=80=AFPM Masahiro Yamada <masahiroy@ker=
-nel.org> wrote:
-> > >
-> > > On Thu, Oct 31, 2024 at 2:01=E2=80=AFAM Sami Tolvanen <samitolvanen@g=
-oogle.com> wrote:
-> > > >
-> > > > Suggested-by: Petr Pavlu <petr.pavlu@suse.com>
-> > > > Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> > > > Acked-by: Neal Gompa <neal@gompa.dev>
-> > >
-> > > Does this Ack add any value?
-> > >
-> > > Acked-by is meaningful only when it is given by someone who
-> > > maintains the relevant area or has established a reputation.
-> > >
-> > > $ git grep "Neal Gompa"
-> > > $ git shortlog -n -s | grep "Neal Gompa"
-> > >      2 Neal Gompa
-> > >
-> > > His Ack feels more like "I like it" rather than a qualified endorseme=
-nt.
-> > >
-> >
-> > I have tested and looked over the patches from that lens.
->
-> The tests you did, what exaclty was tested?
->
-> If it was to just ensure no regressions, then that information is
-> useful too, and with that you can just provide: Tested-by.
->
-> But actual details of what you test are useful. We now also have
-> automation of tests for modules, and expanding test coverage on that is
-> always welcomed too [0] [1] [2], so far we have 0 Rust coverage.
->
+On Mon, Oct 28, 2024 at 03:22:56PM +0100, Konrad Dybcio wrote:
+> Certain firmwares expose exactly what PSCI_SYSTEM_SUSPEND does through
+> CPU_SUSPEND instead. Inform Linux about that.
+> Please see the commit messages for a more detailed explanation.
+> 
+> This is effectively a more educated follow-up to [1].
+> 
+> The ultimate goal is to stop making Linux think that certain states
+> only concern cores/clusters, and consequently setting
+> pm_set_suspend/resume_via_firmware(), so that client drivers (such as
+> NVMe, see related discussion over at [2]) can make informed decisions
+> about assuming the power state of the device they govern.
+> 
+> If this series gets green light, I'll push a follow-up one that wires
+> up said sleep state on Qualcomm SoCs across the board.
+> 
+> [1] https://lore.kernel.org/linux-arm-kernel/20231227-topic-psci_fw_sus-v1-0-6910add70bf3@linaro.org/
+> [2] https://lore.kernel.org/linux-nvme/20241024-topic-nvmequirk-v1-1-51249999d409@oss.qualcomm.com/
+> 
 
-I tested that I could turn on MODVERSIONS with the relevant patch
-series, and get symbol expressions out of it. I didn't go very far
-into it, because I didn't want to invest in reworking the kernel
-symbol dependency generator for RPM packaged kernels to leverage this
-until after it is finally merged. But it worked as described, even if
-none of our kernel packaging infrastructure is adapted for it yet.
+I got a bit confused, but I think I might've pieced it together. Konrad
+wants to support s2ram (not clear why) on Qualcomm SoCs from 2015-2023.
+On these SoCs, PSCI_SYSTEM_SUSPEND (s2ram) isn't supported but doing
+s2idle gets you the same effect. You'd like s2ram to work, so you
+provide a way to replace the PSCI_SYSTEM_SUSPEND param with
+(effectively) the CPU_SUSPEND command. If this is the wrong
+understanding, please correct me.
 
-To be honest, I considered sending both Acked-by and Tested-by, but I
-figured Acked-by would be sufficient given that I have also looked
-over the code as well and thought it was reasonable.
+Could patch 2 be sent separately? I think it seems fine without the
+rest of the series.
 
-Strictly speaking, we don't really use MODVERSIONS in Fedora, it's a
-CentOS/RHEL thing. But, pushing this forward helps make Rust
-enablement for Fedora easier because the Fedora kernel is managed
-through the ARK project, which is mostly oriented around the needs of
-the RHEL kernel team. And CentOS Hyperscale (which I am also part of
-and maintain a kernel for) does have MODVERSIONS on and I would like
-to be able to start enabling Rust stuff there (particularly Asahi
-code, as that's currently the main interesting thing in Rust to use).
+I'm not sure why you'd like to support s2ram. Is it *only* that you'd
+like to be able to set pm_set_supend/resume_via_firmware()? I hope this
+doesn't sound silly: what if you register a platform_s2idle_ops for the
+relevant SoCs which calls pm_set_suspend/resume_via_firwmare()?
 
+- Elliot
 
-
-
---
-=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
-=BC=81/ Always, there's only one truth!
 
