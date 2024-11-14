@@ -1,201 +1,117 @@
-Return-Path: <linux-kernel+bounces-409990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A9D69C951C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:17:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F9559C94FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:09:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E933C281307
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:17:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFB5B1F24370
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FC31AF0C9;
-	Thu, 14 Nov 2024 22:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950611AF0C9;
+	Thu, 14 Nov 2024 22:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b="C6PylkxI"
-Received: from sonic302-21.consmr.mail.ir2.yahoo.com (sonic302-21.consmr.mail.ir2.yahoo.com [87.248.110.84])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="TbnDu8Oi"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836331AC45F
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=87.248.110.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DFB19CC02
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731622664; cv=none; b=tAtniP4menJr3tgOxT6QpCpGnQ4gF3fNPIPqfb5IVRdohaGjRu/oHJUj1ucxxDjN6X/6/mUFBpLtL8Im31D31VZrFuGox4XK2p6TCUgE8IqkXjAsmNZrYUg2oOOKWwSChYPvp2D4zL+kfCEXJK41swMfK+qSR/v7WSX8LynZFiI=
+	t=1731622133; cv=none; b=cUByCxM7X5IY2Y/bakoARbtcGzU9m2DL6SS8RNbIkZt0PFb/smhUKd7oiqEbBNIQ0V/JfmcpXFgR+G2zDPunEFU7u1b47oA1bG5ZU2AZB2rArNPM4O7dWP1ZU5MHqD6mU4bZJES8tskQsG5JKPIPH1UK5taXapkO1PATuTgDWY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731622664; c=relaxed/simple;
-	bh=8JzMaKrWlHH5Cvl6LgJr+4ysWctwILSWMc8f7gCR6pI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:References; b=lmKJxfOAWiEXBlXEGpIKwR++JlISQQAXmmupf6Wj6pkGOijDuObgZ9sXsAW30zeRisF3I4rDfB7t2XwZbefQmGFoCT4YHf4ZSn/OqIOpfro7EKZpP6R7g6DQQvTmOMyJTt95x3Oj38QqzVgmDvFXxAxQfl6EB7ReFZGWNU/nGWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com; spf=pass smtp.mailfrom=rocketmail.com; dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b=C6PylkxI; arc=none smtp.client-ip=87.248.110.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rocketmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rocketmail.com; s=s2048; t=1731622659; bh=VUBlByHueXDmXb9r+9Fa/bqlDMIi1BWz7KWtmRZf9Fs=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=C6PylkxIsDaAZEqXMpBBKLBF7n8fPVINgk8KUdv5Tps2ltr9mJY3KfP5Mb+RHMMlQqJYS12UtzfUfjRaEFDfazRYJ7qKxpai42R6loXpp6W0v4TM39kj4QubdBAg6P3xx6J6xOjmaOR6Ze/9rBJsC6gb4R1AEKutF96Yo7IiaD8bvK5LgMMfO9dpyvPPesfjWtVFHYPPSY/ilCDQ/8eeebVTzT0iwaSQGu3udcrrpNxfSm+nohXo20ytaXQjebFe0jDIol25vgFHDOxe+scUNdGCSeN+GL7hza6l9MtI4djkY6o6XWGWHE5pAFH6KH33FV3yrEZaCOgkT2pRZI5bFA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731622659; bh=Ze8pOL9sEoVJR2O8Vt6GILy+zWfqGq2unalvG2RttF9=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=C7eImqjpQPJi3y+1oFNNpQXhnOXWUU98Kh//x1bi+lBqBaCLNG8GooHhU+IS7KjS2YS4Cp97flzzktzYManSChpRw8fVTwg2rnZmOzdCsaMR8HGITM7c0O3zKrbQstxlU8Y+sbGJPMPIo4ZSX98ut03BGNWrXnHY+A1/8UaFOdWg6x8HlGB6hdPaOIAfvC32aMuFD0+MQEZlS3vRfhnfv/OHyoxeDKUQ8NbcX2nVWChamEVZX+YZOqRp7bdFGVNz2wtiVUn3ci7Y0bfOiQGmaBuqZlWL2AAu0SMj0g1EIRdOL853XUvQN1bCkzPU2sBr5poPez6olcc7cTG2qwAoEw==
-X-YMail-OSG: Q5hDKeAVM1kIdEWwfSbfZU5EqLlTt7208ibXW4yWSK6P8CnODAtAQ3rBrxBT.9m
- 5L8xwbK6XDV5fyAYQHrs38e0PG63Ye0iR2M4L0vau8V1316kIqFqULxJ87LlPQZKROGAMkJICaz1
- o5iNZm_5AKhxPHR9_ED9l.YExtYFSCJEfFMgNsPdoZ71ADc67U.TLIXiCMykeW.fDLuTCuuRs9vd
- k0bF5cL3SP7Wf.qMpScuYKBSVfgsu4V5tkN1MUJTrf2a9AujJJWIDPG96p_oZXC9vakm7WBisFKL
- Ym9pxyvySkk1drMx_B79Dun0gRr3A5ypQX5ktrUdviCrrnS.Ez_lEZlfZ64EUqXoYgywoQC6lYs5
- esRab8Ljz3oFIm_fB8dd22dYLfktjVtJFUgsem2u50vTamqwnI2_96M4GJN.xONy_eAZkfPyzUpv
- JfUIUR08KVZ7E4Moh8JZTRMSI9gLO8YLvtuHMN2i777uwyppVm4LUADxdjF6LbsmomFJqVzw9o0u
- yFoE2xCJWHW5smKPhfWkXdZyMIdFXhtxF2KSK1bxoJUkR5RQaRO3EA3kNIi9B7n_qqDeNKpgv4lT
- lH_p0eIk227_1TQXtzaHdbiKeD5eNdzyTXfSrMtYWKb5Klh_TwkwVbmYpJptuBhaPbmwTFpZ3hvM
- RrrHP6RnzR2D8BWMVRvmeVse4_EvL2AYWPHLpvElIUhHBZJIdUJE3.xgxww.m120bgxUf.b4dfVy
- YcGTEGlwEkZ1GahHOKLqUaOwNIPM6AGpk23VVzXokYnJcydLhWVl3VnjiPOZt6zZesq9JGOvfI.1
- ZtoNqdkHYNB8aqD8ogu5RzZA.wJ.tBIbAZiZmjAKL5i8OLuE0qmlhDy2b9TTahs6Eef.4hJWGngv
- Q8IplUrMAlHFlq3_.H80TuQtvtvkj6CaH_iApTlhgek99DygXyGFgOfkdbZg7URsxwGoTeY61.j_
- x6Q2f_9jpNCnRKftkrLl4FkeLb4o2skI9tTqKXbkhE9NF9XL_cMSt4uEKVwiyr0MSGPm.Q.D8.Tj
- eD7V_cSnngbTUbS7WQX4Bp3rTfHW11K9IdO5ECzvFXxf.k81Mv2jO1N87cW7mrlyBi3RqupL.P00
- RCLN.C62AKxJX_YjYdVo1Qd3it_NjNuFU3BxQgqeyAHvssM2I2yp5HsxtTSJwr85_ZZeRL.7AA_P
- 8UrnH8CaW2sjckjEOOXcK96YqsaxS.dHMdukkbC1CqUky3tHlQMdK9OVIDgZTSUxGSniBGnl_Tb6
- REm6nkNGJ0ikvpH8mxBj5D5xrGHc4.hficfLDXnI7hUUVD4A.bCKabHliEaZ9fvSg9Jjef7LrZzD
- GD76xBAKSlA_p67et7XFqTyaNum4bjsD7U0OyUNJuGOFDHGhS5A_r99iiakhtk_59kN8H2aGmZ.b
- 3Y.TeEcGeJkyhuYYg4lZ2ANgGvrwV.J_TpnsQZ66SPPHPmbW3G3pMS0HuVZcJrKbIwG7hfsU2JVw
- ZMVjQlSo0S9Wbx5Xu3h1t20jObAvlTplU8Xe49GXdDS1q8GR1xNit6h2v4eGRlvKd1QUN3DrSstJ
- vg_GU_do_hyqr6emz5DScy28YTUT..PpbLI0dlmIHRBnfhAOhfgfv2j9JsLacrQ3Yb4yzq83lpdT
- cedTSJdtWoHIBBvwSTuqQpmmBvoq4Ooef6KPg04V_BVGh1JRksam4iEo64PzGU2lAhV7OW9XBYst
- klS.6S8hl7.S9QIrHK0kKn1rpej_1PnC0UWz1XMLOd0TRftL7t8h8Q0XU2xmVpkzb.hGoA7ZZpbQ
- GL6vLgLL1g7iFfg2pLuNqt9HlB9CJTTp9M_hI_ctoybQCXl8HxGzjotrXxeGY5rF1NnbBDL8dd5S
- KSNubgqsGhOw9md6XJoQCdq4j1QDHr.YKc_8ROkxk7x9uZFuPRhQ259jJPWVcJo4IQcSe8cXsRVi
- YymSiuEFYzzVHz7Ip_sPoMRIMcfZ4zm2JPurrOph2wl52fzgl4bwIhjJquOrGJidH3gc0yxbOugh
- SOlpqTxDm8Nf012Dm6TTUg.1kEzIV77S4A8DEo.MeMMM05DP1DlfOEJCLGprrLP7Rh81u1.h2xtD
- lefhal02VEmW.1Cd_qTqY6uAXggKKnQheCWw_HEyw00eSZSdNaAp98zzn6Rszv.cOxAyJbRNCKtp
- xD35gidCwJ5vH7XUGfoM.PRY7vpy2vp44CuA0PqjqoPKKRGIrQuZNziyEW8uqFZSAvcgm4XScwbj
- 3xGptjnV8tOlW2WdeLyGg7oe3Bd.hzYbSmtlNF27omIsfYjuqltZUNKfms0VVVI7iUNvChYNPAMa
- lXz5tsL4sj04mYE9un1XTEBZyGfmZH9_FwewnLCw-
-X-Sonic-MF: <jahau@rocketmail.com>
-X-Sonic-ID: cd958c09-780b-4501-906f-d67165ec7c2a
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ir2.yahoo.com with HTTP; Thu, 14 Nov 2024 22:17:39 +0000
-Received: by hermes--production-ir2-c694d79d9-mr45v (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 60a5376110f1aceebb11253fa288c199;
-          Thu, 14 Nov 2024 22:07:30 +0000 (UTC)
-From: Jakob Hauser <jahau@rocketmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: Stephan Gerhold <stephan@gerhold.net>,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	phone-devel@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht,
-	Jakob Hauser <jahau@rocketmail.com>
-Subject: [PATCH] arm64: dts: qcom: msm8916-samsung-serranove: Add display panel
-Date: Thu, 14 Nov 2024 23:07:18 +0100
-Message-Id: <20241114220718.12248-1-jahau@rocketmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1731622133; c=relaxed/simple;
+	bh=vVZ58YuCZtPn8RYOhRdV/xwFYmV3BU+6axehBcNN07o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EUdbVAUSRr7j29vq25MgnM+gTAg93V6ueF2sIqSxKG4lId1C0HUTPbjVmsu6KvKudxKDAgEEaT8imTLouuV2WiU6JEnpt11fNAU6Dp/DGRABywjsfVK+62Zni1LpJtncMlrWueKLhIlfNyaSi/CRBMjKT0cdNAmXRh7QkWXFGXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=TbnDu8Oi; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71e61b47c6cso965693b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 14:08:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1731622131; x=1732226931; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xUDNvzxgF3VndexH2nVKPNcxZzxJAzZDJlThFbFobgE=;
+        b=TbnDu8OiyMks5sFVHvgaNsA+qArMAQE5N8ndIrBlrr1Gh45ObBhBcwTOp0dnF/s1yi
+         x+S8L+vQPxsNkwLt0EdZ7GKjtbGVdHPwdEpc4pxWX7CEofZVUNfqtAQJ0up3Wfhl0z+Q
+         ruWAMHvAkn3EEJNhVkSecukMGS9elssnn3xTeG+i1p444K8cX2FyXWcD/BWBhPPlqc80
+         musAeXTELNEktIHP+eSB8NVBuqgRd8RYyvEXcqGK3iPfA3nSRqp3791N/TaLJBZ6KsmG
+         RgQo2j0+x2BuhRCyQ52sDi6lczWKYCUH5xTmEmIoCTbaGPXLtwibL5Uhj9IgwHC1gJoY
+         d+sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731622131; x=1732226931;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xUDNvzxgF3VndexH2nVKPNcxZzxJAzZDJlThFbFobgE=;
+        b=GfdwTSvjLTcFSNr5/5/W+8kO2DoQWaslqaZT01aJjaSogkHjcbcQkK2GYRK/Vjrag/
+         /cNp77YjUaGhjzwJXbdSvIneqD7+K2NY2HiANB4ddzV2ArgZwebZsyiS6ihup8uip+8m
+         23gqUnUa8WYB0lVgkvmZJgGvJfQaYzcAotwmPdaZP+Ak5zZR1/UIrLAi83LqxthQAaC0
+         VLlxyQGX52v/E6v3rT56YUUHoxHQOTsVv1vfz5UiG9inbuEFpOtFEYAbAvixud1gToIf
+         fVlqxBp9lA4NnaXPztCT7I/6ycXPhHVgvUMCRVIXUN4H2M3FESILBvzlX4ExFWMsRkzA
+         creg==
+X-Forwarded-Encrypted: i=1; AJvYcCXR9Q3yxklrWx3y7WI4bWBcEyENZtMPHwjdSW1Uh41j+RUkuLPA5LQ+fSpCBVfEXx8cDbkp18Qkp4T0LwY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3U4mH5w+QdCxVhVJBVnImy6VqqB9tWNrifiQ2JUsesafFA1VR
+	FxTY6IH2DXe6BzjIdzm9qVp/rkOSRh6/y1TKSo6NgFiygy8W6TB3NLXzkQYFJdY=
+X-Google-Smtp-Source: AGHT+IFYyHyPSValRNfz1mg6pjq8qNxWBVPCofM9xYXccK+5syKbhxhGgqPtxHsSDUH+ph5ZigbeKg==
+X-Received: by 2002:a05:6a00:3905:b0:71e:5a1d:ecdc with SMTP id d2e1a72fcca58-72476d17636mr525035b3a.17.1731622130787;
+        Thu, 14 Nov 2024 14:08:50 -0800 (PST)
+Received: from ghost ([2601:647:6700:64d0:8011:b5fc:6663:cd73])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7247711cdfbsm132024b3a.58.2024.11.14.14.08.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 14:08:50 -0800 (PST)
+Date: Thu, 14 Nov 2024 14:08:47 -0800
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Chin Yik Ming <yikming2222@gmail.com>
+Cc: palmer@dabbelt.com, paul.walmsley@sifive.com, aou@eecs.berkeley.edu,
+	alexghiti@rivosinc.com, samuel.holland@sifive.com,
+	parri.andrea@gmail.com, atishp@rivosinc.com,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] riscv: Fix a comment typo in set_mm_asid()
+Message-ID: <ZzZ072CMku0fsW2x@ghost>
+References: <20241114212725.4172401-1-yikming2222@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-References: <20241114220718.12248-1-jahau.ref@rocketmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241114212725.4172401-1-yikming2222@gmail.com>
 
-From: Stephan Gerhold <stephan@gerhold.net>
+On Fri, Nov 15, 2024 at 05:27:25AM +0800, Chin Yik Ming wrote:
+> s/verion/version
+> 
+> Signed-off-by: Chin Yik Ming <yikming2222@gmail.com>
+> ---
+>  arch/riscv/mm/context.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/riscv/mm/context.c b/arch/riscv/mm/context.c
+> index 4abe3de23225..55c20ad1f744 100644
+> --- a/arch/riscv/mm/context.c
+> +++ b/arch/riscv/mm/context.c
+> @@ -158,7 +158,7 @@ static void set_mm_asid(struct mm_struct *mm, unsigned int cpu)
+>  	 *
+>  	 * - We get a zero back from the cmpxchg and end up waiting on the
+>  	 *   lock. Taking the lock synchronises with the rollover and so
+> -	 *   we are forced to see the updated verion.
+> +	 *   we are forced to see the updated version.
+>  	 *
+>  	 * - We get a valid context back from the cmpxchg then we continue
+>  	 *   using old ASID because __flush_context() would have marked ASID
+> -- 
+> 2.34.1
+> 
 
-Add the Samsung S6E88A0-AMS427AP24 panel to the device tree for the
-Samsung Galaxy S4 Mini Value Edition. By default the panel displays
-everything horizontally flipped, so add "flip-horizontal" to the panel
-node to correct that.
+Thanks,
 
-Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
-Co-developed-by: Jakob Hauser <jahau@rocketmail.com>
-Signed-off-by: Jakob Hauser <jahau@rocketmail.com>
----
-Patch base is kernel/git/qcom/linux.git current branch "arm64-for-6.13".
-
-The panel driver was recently added to linux-next:
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/log/drivers/gpu/drm/panel/panel-samsung-s6e88a0-ams427ap24.c?h=next-20241101
-
-The associated dt-binding in linux-next is:
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/display/panel/samsung,s6e88a0-ams427ap24.yaml?h=next-20241101
----
- .../dts/qcom/msm8916-samsung-serranove.dts    | 58 +++++++++++++++++++
- 1 file changed, 58 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/msm8916-samsung-serranove.dts b/arch/arm64/boot/dts/qcom/msm8916-samsung-serranove.dts
-index 5ce8f1350abc..caad1dead2e0 100644
---- a/arch/arm64/boot/dts/qcom/msm8916-samsung-serranove.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8916-samsung-serranove.dts
-@@ -321,6 +321,41 @@ &blsp_uart2 {
- 	status = "okay";
- };
- 
-+&gpu {
-+	status = "okay";
-+};
-+
-+&mdss {
-+	status = "okay";
-+};
-+
-+&mdss_dsi0 {
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&mdss_default>;
-+	pinctrl-1 = <&mdss_sleep>;
-+
-+	panel@0 {
-+		compatible = "samsung,s6e88a0-ams427ap24";
-+		reg = <0>;
-+
-+		vdd3-supply = <&pm8916_l17>;
-+		vci-supply = <&pm8916_l6>;
-+		reset-gpios = <&tlmm 25 GPIO_ACTIVE_LOW>;
-+		flip-horizontal;
-+
-+		port {
-+			panel_in: endpoint {
-+				remote-endpoint = <&mdss_dsi0_out>;
-+			};
-+		};
-+	};
-+};
-+
-+&mdss_dsi0_out {
-+	data-lanes = <0 1>;
-+	remote-endpoint = <&panel_in>;
-+};
-+
- &mpss_mem {
- 	reg = <0x0 0x86800000 0x0 0x5a00000>;
- };
-@@ -330,6 +365,13 @@ &pm8916_resin {
- 	linux,code = <KEY_VOLUMEDOWN>;
- };
- 
-+&pm8916_rpm_regulators {
-+	pm8916_l17: l17 {
-+		regulator-min-microvolt = <2850000>;
-+		regulator-max-microvolt = <2850000>;
-+	};
-+};
-+
- &pm8916_vib {
- 	status = "okay";
- };
-@@ -425,6 +467,22 @@ imu_irq_default: imu-irq-default-state {
- 		bias-disable;
- 	};
- 
-+	mdss_default: mdss-default-state {
-+		pins = "gpio25";
-+		function = "gpio";
-+
-+		drive-strength = <8>;
-+		bias-disable;
-+	};
-+
-+	mdss_sleep: mdss-sleep-state {
-+		pins = "gpio25";
-+		function = "gpio";
-+
-+		drive-strength = <2>;
-+		bias-pull-down;
-+	};
-+
- 	muic_i2c_default: muic-i2c-default-state {
- 		pins = "gpio105", "gpio106";
- 		function = "gpio";
--- 
-2.39.5
+Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
 
 
