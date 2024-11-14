@@ -1,86 +1,82 @@
-Return-Path: <linux-kernel+bounces-409492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA1149C8D87
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:02:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22CFB9C8D8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:06:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADCEA283A8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:02:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E989B2687C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C21F3FBB3;
-	Thu, 14 Nov 2024 15:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724921531C1;
+	Thu, 14 Nov 2024 15:02:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WOVs1XoT"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="l1AxMmRd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11F23C466;
-	Thu, 14 Nov 2024 15:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A940AA95C;
+	Thu, 14 Nov 2024 15:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731596556; cv=none; b=Q73jbEdNguIkkTspYd13/+sPB9xlpOli5GBlaGtrIcsIt7lZQNCjRrgpNFh2DJCKFIyL+bZsP6r35QtXu+Xh0AO5ZX8GxmkQ6casn22K2jHfZa97/PSZK/0TrRuDMC5XNBrygD+c4oB7KFyD15k/fLzI+9pM3aP0OVXqUMEIvGE=
+	t=1731596572; cv=none; b=TtcnDttoO091BkSdtX6z14WCbVKQVCumXbgcrWJZJzi2E346uQuWDc9IGxrjlyw5y6Ta0PFPaf5N24gLfGvrTXXD/O7ztirHmbjRy+lLhIrPbN+7FTc2OB2QsenbOa3USX+7s7Xne21GrxkC2L3HVocE9imrwsdneYzqVDAgnC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731596556; c=relaxed/simple;
-	bh=dN4tvL3q9pcjFqSpwP8uKkrWWNaEeL9R+qbXlxvJ5G8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ni4JPW9KBwbpQfZKSAHCt/+FJlgNTELhJ5cCfihUIrlVa4vwPQJramQ/zKEw6RffCnRhBGtm4LRbjkmR8brXssfrWB2jwNj4H26N+21iDdtzkVdhYHAeVKUbGAhpIkm60sNeUkuMD3NiROIlMNyF+Qyy//CBnWYTkCcOCOnyPc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WOVs1XoT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A2D3C4CECD;
-	Thu, 14 Nov 2024 15:02:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731596556;
-	bh=dN4tvL3q9pcjFqSpwP8uKkrWWNaEeL9R+qbXlxvJ5G8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WOVs1XoTZNNbTwcON3ExJl0NUWwZHgdMAROCIprysZMcxVLF215tsGcnP13WdCHxx
-	 +2f+9wr+kfk5dYY/V1gIGg7Db6voSlLXymnJ0YkUtFoo6OIOzph/hO4HNjHswqksBK
-	 xYg88qZHfVFVxv758KXVCys0hIsRuq4Q18inblgZqFixbNx7hD4h+OOntrpvUvdnab
-	 WJRYGmkcKrBbF/iTfd5XpEgrZJqFtvxR6t+nDg3KxTSTXEBJ/nCGhTwkhoMcKy+azo
-	 Rpo/65vWkT2H3qpJD8krVr6LESHH3NTB+NkGYmlw5RojqOXtenhaPjQIVbjC2VACoX
-	 o71rNQakFzwTg==
-Date: Thu, 14 Nov 2024 07:02:35 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Jeremy Kerr <jk@codeconstruct.com.au>, Jian Zhang
- <zhangjian.3032@bytedance.com>, netdev@vger.kernel.org,
- openbmc@lists.ozlabs.org, Matt Johnston <matt@codeconstruct.com.au>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] mctp i2c: notify user space on TX failure
-Message-ID: <20241114070235.79f9a429@kernel.org>
-In-Reply-To: <42761fa6276dcfc64f961d25ff7a46b764d35851.camel@codeconstruct.com.au>
-References: <20241108094206.2808293-1-zhangjian.3032@bytedance.com>
-	<20241113190920.0ceaddf2@kernel.org>
-	<da9b94909dcda3f0f7e48865e63d118c3be09a8d.camel@codeconstruct.com.au>
-	<20241113191909.10cf495e@kernel.org>
-	<42761fa6276dcfc64f961d25ff7a46b764d35851.camel@codeconstruct.com.au>
+	s=arc-20240116; t=1731596572; c=relaxed/simple;
+	bh=qkCfLK8TN9LfCtEHifzagUv0rpLufiCXO5LjmnrKp14=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LKVQZGAfLS+kgyHMpFN0rkXXXhTlZ/xyo2CwFerp8IWpeARpIUOc0cvgeTaldQgJoVL5smdTqQJQ7t+he4+H0RL5I6bG0asuwH87X1OcRCJqlhG0HoPGy7kT53jHAns5ZYdNHCP/V0ayQ830XQxV3OrZ4MjOWJ/rpXEuICxbbTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=l1AxMmRd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 294F5C4CECD;
+	Thu, 14 Nov 2024 15:02:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1731596572;
+	bh=qkCfLK8TN9LfCtEHifzagUv0rpLufiCXO5LjmnrKp14=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l1AxMmRd/9WD2D08zRN8Wff55wvB7ENnRu1mW5vroki87pay0bOjR7xMhdGjK0vfh
+	 5h/iBZqv2ljwBTAym28dAaGjARbkg15HEsCHyfh3+ATSEfv+cj7nChKALB1yrCEPo0
+	 6rXSJtsW64SGDfEG+wNZw9mJ86KqfKHoeG0DCjfw=
+Date: Thu, 14 Nov 2024 10:02:49 -0500
+From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: gregkh@linuxfoundation.org, corbet@lwn.net, workflows@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, rdunlap@infradead.org, 
+	daniel@ffwll.ch, laurent.pinchart@ideasonboard.com, broonie@kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Dan Williams <dan.j.williams@intel.com>, Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [PATCH v3] Documentation/CoC: spell out enforcement for
+ unacceptable behaviors
+Message-ID: <4d44dry7ypmiglysj5ovrv3zv2g6uabezosck6ae6hkf2wha4i@eculpqwugece>
+References: <20241113232557.29854-1-skhan@linuxfoundation.org>
+ <5rkn65qu2i3kz72hxbmcg25mrq5ehmb4y6xia2p3k4naiogi44@rcaoz3xnqlcf>
+ <2dafc0bb-4dee-4c7e-91b0-01fa66a822aa@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2dafc0bb-4dee-4c7e-91b0-01fa66a822aa@linuxfoundation.org>
 
-On Thu, 14 Nov 2024 14:48:57 +0800 Jeremy Kerr wrote:
-> > routing isn't really my forte, TBH, what eats the error so that it
-> > doesn't come out of mctp_local_output() ? Do you use qdiscs on top
-> > of the MCTP devices?  
+On Thu, Nov 14, 2024 at 08:01:34AM -0700, Shuah Khan wrote:
+> >      c. restricting their ability to communicate via kernel.org platforms,
+> >         such as mailing lists and social media sites
+> > 
+> > It makes more sense to phrase it this way, because it's really the
+> > communication that is the focus of this policy, not general access like git,
+> > patchwork, etc.
+> > 
 > 
-> There are no qdiscs involved at this stage, as we need to preserve
-> packet ordering in most cases. The route output functions will end up
-> in a dev_queue_xmit, so any tx error would have been decoupled from the
-> route output at that stage.
+> Thank you Konstantin. Correct. The intent is to restrict communication.
+> The way you phrased it makes perfect sense. I will make the change.
 
-Ah, it's the driver eating the errors, it puts the packet on a local
-queue and returns OK no matter what. The I2C transfer happens from 
-a thread.
+Thank you!
 
-I wonder if there is precedent, let's ask CAN experts.
+Acked-by: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
 
-Mark, MCTP would like to report errors from the drivers all the way 
-to the socket. Do CAN drivers do something along these lines?
+-K
 
