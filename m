@@ -1,130 +1,272 @@
-Return-Path: <linux-kernel+bounces-409390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46F109C8C28
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:52:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BF499C8C22
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:49:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D185B2A9D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:48:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C94E284EA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D31C22331;
-	Thu, 14 Nov 2024 13:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56CEC28E0F;
+	Thu, 14 Nov 2024 13:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AfNzjjun"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cfYGU6BX"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5A51DA4E
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB654A95C;
+	Thu, 14 Nov 2024 13:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731592103; cv=none; b=RlPWI0LKwt24xmIPUZnmldLgRCqojnCHyMAJr6jZxnMlFT6ofugiYHIb+jtzHfi8P9hOchMyAQvd99rR/rBO6qwmCNKEq02+82L7ralFuI44VXsGVbb3iM1N2+KGZepJqKxuKzNkHhMP68xufAx9GbxPPS2uP/l9sECdIaA1m5Q=
+	t=1731592187; cv=none; b=oWPa/fRA86Nz9VJcBfA4NWeGO/C22rId01xM2opF6xeJicUA5cd1JqDCe03JmxeC5PiasZ5kYUHbyW4iJW/hA/z6Tjwx5dfHg8QkjjBw40+4olbcGh+Zer1CEMp2Az67TCb8qqhQaLTISaAg0PtVihojAQ8LWjrmUDdTrK9UVHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731592103; c=relaxed/simple;
-	bh=T1a/sDkY/OlZnEgzsaEHTLSkecp3oZdp43NwdguyHyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NiTYh6hQJwFhTaHH1pNMHGEc51d/Tro/Yni2Dg+lZeCyVncWR9B2pFwDlLlXsVWrEGY0yO7/odMi4DUUTysXgmEfqTzKxqcFRhHiMrtaxqDwM7pNNMo4aH3PUwb86Af7Y03q7H5VZJNV+VKvg1I0Ku1ty6a8GoTowfreMaH0VcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AfNzjjun; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43159c9f617so5600945e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 05:48:19 -0800 (PST)
+	s=arc-20240116; t=1731592187; c=relaxed/simple;
+	bh=qTo7CKolt1E4uoCLpV2VbWUachLChgD6RdUPRWDDkos=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=SYVseSstTmx1fja0BsvTdzhHtpV8ujJULmvc9nkTTWDQSSiHA6DnnkHT2wjLOblxxSdOzRqzblBXLKfyq9o7c4sMWQvdCmE2AywTE2/DkzPPDvi4jcS4y1pBhLArnTbhXmdhn5VmTxnJqV+2INrRiTQ+gTqo5gx8fodLVU/GGms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cfYGU6BX; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5cb6ca2a776so1082338a12.0;
+        Thu, 14 Nov 2024 05:49:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731592098; x=1732196898; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=k3iI6z7EX5qN/uT2xeFCyBltkCm8ugpopxlLsbix8AQ=;
-        b=AfNzjjunscM9xI/O8s8KynORPfVe2kjXTdrYdxiMZin9L0ixnU0NlDC7ahPBBv7ALV
-         VRR00hPjCpv1O+1LK1+AeYV1/oiE9RUhvJ7aQZEF6kXVPQdKjoeAEwk2gHo6BcjG8bcX
-         ASsJreIT8rYyw2Hy0Z3bXBB4al4CnPNJAvW/av0KuySsl8KY0jEuihjIYQo3xD3JCvbP
-         qXSo5AkO/7XNq1qO7hIkrKioXOq7/TzbCElTdQvLLc+s8Hhys8UDjgQj3RtkWvZfg08t
-         yeA44JecAsj3gBvXnJZGQzh4wnC1JUAyFN+ApbDxoF7hV9AD3ZIwtTH3m+khTeq7Iawp
-         UVMw==
+        d=gmail.com; s=20230601; t=1731592184; x=1732196984; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=cgeG6n1ozGjtCnGyPOQPPbX46cvHrRUzjtSnNcbz9o4=;
+        b=cfYGU6BXELAzQ99sUrZC1hC7a5UDllAsv36IGppAyAvqTz3u1t0EhmgThgvZMWAoI2
+         LhyyVsKRuwOqQrTsLP4ScDwevG6Oc0+qQF1WTy2Iqe/e77wOHx8UW6KspRAgEbFPoUfO
+         Fbufopyhrq4UmiyLUllcYkrsIjIakeZeFYzxe0Dj1mY7rHSUsGGFGXQIf/t5fcMxC8J8
+         bhOMc58kzCxuu3NwE3oI6Vtpre/HMe4abmLy66G/TZdHAWUP/8x4NLouJOSR2qFglDdv
+         Ow441Agvqdq+kXn6hXJeePRLO5CtC0Gb0iDFSMR5rP585C5Xw+kyIASLX22Ov68PyCYK
+         bv4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731592098; x=1732196898;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k3iI6z7EX5qN/uT2xeFCyBltkCm8ugpopxlLsbix8AQ=;
-        b=u9mosd4kq50yKbuIuvr6EKsrhIYCni2tQivZ54AKNQOX+IKEAth9CCfZJx+dp06fRc
-         dmXg8QhvcFXW64ixKsD9wjtBz8XtIuAqgmNMILUG9Rl8EZJzzlv9PGUugdWysr915Vw/
-         RLJnMc1gV4h3qwtPVaeKV49QtVLGTIkGoNQuSh1TZ7xrNtuybrewtgKmDZeTdlx1QAxb
-         bD8rSKPkYaEyvR4779DrJVeS3CJTC3V7F5dbExBMLjRUjXwHqp0aePBvyC21zck3UYoF
-         qLyEBBaJTbAWU6PhPjneJ42v50AgQARlFGfPVG2wRbbeXp0R+XQW6GlsSYU95zTWgCxn
-         forQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUNTsmruWCGQONEZX9tloGa2jNNBsIKv3M/038Jta+xuZ4D/Kg0u8gpmxtROz4r8nRdU6vFOZwkIw5VdY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyi7YKBCBFVQK4ie8zQtYCEzc34oV5qbHIJO69ziSmxYMXpYOIa
-	Qgxu+eIUtdZg6S3gKO/9xDC2jz6aKpr22/KfhcjVZbixW3j1N6dgcTv/xiyu+Rw=
-X-Google-Smtp-Source: AGHT+IGGcMNBArGb2EFcueVweYqcCQ0hv1EJYIXaTlhXn/0KPQEWNTLNBE/sWmoFqVloVAnsZU0mbw==
-X-Received: by 2002:a05:600c:1d09:b0:430:54a4:5b03 with SMTP id 5b1f17b1804b1-432b74fde24mr196893505e9.6.1731592098311;
-        Thu, 14 Nov 2024 05:48:18 -0800 (PST)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da29ffe9sm24750375e9.44.2024.11.14.05.48.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 05:48:17 -0800 (PST)
-Date: Thu, 14 Nov 2024 14:48:16 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hillf Danton <hdanton@sina.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Marco Elver <elver@google.com>, Tejun Heo <tj@kernel.org>, 
-	Zefan Li <lizefan.x@bytedance.com>, tglx@linutronix.de
-Subject: Re: [PATCH v2 1/2] kernfs: Make it possible to use RCU for
- kernfs_node::name lookup.
-Message-ID: <u7h5zfjxz7yo6e2ukrlnznj4ug66pgu2cel4jqejjji4lzphv7@2b4ntlfl7q2g>
-References: <20241112155713.269214-1-bigeasy@linutronix.de>
- <20241112155713.269214-2-bigeasy@linutronix.de>
+        d=1e100.net; s=20230601; t=1731592184; x=1732196984;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cgeG6n1ozGjtCnGyPOQPPbX46cvHrRUzjtSnNcbz9o4=;
+        b=WG0HPSS4pN+7uE9C9Pascr5OKDYsy3bsO+f4La7EAu2uZAllMxZqQvtPL/vpL5fXq+
+         8veGEdA6SnXwgNI3KTglgHdfIqbLFyY1Jk/WWFWm+LsCmYNZ/GaU1204Evg6siA7eMUX
+         yGp5joCcMEl/yfMs4ReS/WMxgHJr7S6qzpJK0FziWef8QUk1kN9HQSryLBWWpLKv7ol0
+         EgLriH/m+4TMWt/rUOMd0hkb3S5/c4GmKx/GofwD11RW1giq2LPsbk1sV3IwflmJ/Rog
+         zY+E/na4/AT4ylOS6HWgw+ezHtHIxdRKKx/RBFH7zaq3RYEIwc4JLKtcjDBmUV/k9tKY
+         TX1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVIyEo/t15ITStn6Bhg1aPXWjPV5AUneKKVWRH73WDAIKlz9xseKogEsyvEZcgTnzyUaOq9i2ygB5im@vger.kernel.org, AJvYcCWC8+iuXpUaQTTrcpNs78LnZavYeYkw475XLmh+mtZQk4L3U8B2QodlDS2z69IFcv3S34OXMLcy8xfN@vger.kernel.org, AJvYcCWGrhxyFtcXyneYRp5utVt9pjz2/HVLsgFS/+d1EfFZ+Qbohyd7h6HTUvld67IYNfS8psguOOkrppGebUXD@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk1R+moeDiqmhu6Tfw3Pg9KW+zn5Y/06IjQfQHc21vXMyqe7z9
+	aGssai41SXbXsgTYYo0mN7UUerDw8BqhciOhyBGLQHUZshXs0X2xgy143A==
+X-Google-Smtp-Source: AGHT+IFiffkdkgwmQq/XTUWNHqnv90zEwXnpGUeF218xEUTOqrccqRc0R4HbF4cKEeIdkK4w9YvfMw==
+X-Received: by 2002:a05:6402:3509:b0:5cf:3d1b:5ebd with SMTP id 4fb4d7f45d1cf-5cf4f33693fmr8074284a12.3.1731592183814;
+        Thu, 14 Nov 2024 05:49:43 -0800 (PST)
+Received: from [10.10.40.97] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf79b9fabdsm620106a12.30.2024.11.14.05.49.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Nov 2024 05:49:43 -0800 (PST)
+Message-ID: <adbcacda-c3c6-452e-9dfe-22d55bfb293e@gmail.com>
+Date: Thu, 14 Nov 2024 14:49:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2ibhqnvx46ox4edy"
-Content-Disposition: inline
-In-Reply-To: <20241112155713.269214-2-bigeasy@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: iio: frequency: Add ADF4382
+To: Ciprian Hegbeli <ciprian.hegbeli@analog.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kim Seer Paller <kimseer.paller@analog.com>,
+ Antoniu Miclaus <antoniu.miclaus@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241114130340.7354-1-ciprian.hegbeli@analog.com>
+ <20241114130340.7354-2-ciprian.hegbeli@analog.com>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <20241114130340.7354-2-ciprian.hegbeli@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
---2ibhqnvx46ox4edy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Nov 12, 2024 at 04:52:38PM GMT, Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
-> --- a/include/linux/kernfs.h
-> +++ b/include/linux/kernfs.h
-> @@ -147,6 +147,11 @@ enum kernfs_root_flag {
->  	 * Support user xattrs to be written to nodes rooted at this root.
->  	 */
->  	KERNFS_ROOT_SUPPORT_USER_XATTR		= 0x0008,
+On 14/11/2024 14:03, Ciprian Hegbeli wrote:
+> The ADF4382A is a high performance, ultralow jitter, Frac-N PLL
+> with integrated VCO ideally suited for LO generation for 5G applications
+> or data converter clock applications. The high performance
+> PLL has a figure of merit of -239 dBc/Hz, low 1/f Noise and
+> high PFD frequency of 625MHz in integer mode that can achieve
+> ultralow in-band noise and integrated jitter. The ADF4382A can
+> generate frequencies in a fundamental octave range of 11.5 GHz to
+> 21 GHz, thereby eliminating the need for sub-harmonic filters. The
+> divide by 2 and 4 output dividers on the part allow frequencies to
+> be generated from 5.75GHz to 10.5GHz and 2.875GHz to 5.25GHz
+> respectively.
+> 
+> Signed-off-by: Ciprian Hegbeli <ciprian.hegbeli@analog.com>
+> ---
+>  .../bindings/iio/frequency/adi,adf4382.yaml   | 141 ++++++++++++++++++
+>  1 file changed, 141 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/frequency/adi,adf4382.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/frequency/adi,adf4382.yaml b/Documentation/devicetree/bindings/iio/frequency/adi,adf4382.yaml
+> new file mode 100644
+> index 000000000000..44a29ac7a2e8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/frequency/adi,adf4382.yaml
+> @@ -0,0 +1,141 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/frequency/adi,adf4382.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +	/*
-> +	 * Renames must not change the parent node.
-> +	 */
-> +	KERNFS_ROOT_SAME_PARENT			= 0x0010,
+> +title: ADF4382 Microwave Wideband Synthesizer with Integrated VCO
+> +
+> +maintainers:
+> +  - Antoniu Miclaus <antoniu.miclaus@analog.com>
+> +  - Ciprian Hegbeli <ciprian.hegbeli@analog.com>
+> +
+> +description: The ADF4382 is a high performance, ultralow jitter, Frac-N PLL with
+> +   integrated VCO ideally suited for LO generation for 5G applications
+> +   or data converter clock applications.
+> +
+> +   https://www.analog.com/en/products/adf4382a.html
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - adi,adf4382
+> +      - adi,adf4382a
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  spi-max-frequency:
+> +    maximum: 75000000
+> +
+> +  clocks:
+> +    description: Clock to provide CLKIN reference clock signal.
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    description:
+> +      External clock that provides reference input frequency.
+> +    items:
+> +      - const: ref_clk
+> +
+> +  '#clock-cells':
+> +    const: 0
+> +
+> +  clock-output-names:
+> +    maxItems: 1
+> +
+> +  adi,charge-pump-microamp:
+> +    description:
 
-FTR, cgroup v2 doesn't even define renames and the full rename
-(different parent) is only used by resctrl filesystem AFAICS.
-I'm only mentioning it in the case you wanted to replace the flag with
-two different rename methods in kernfs_syscall_ops.
+These lines are a bit over 80 chars, maybe you could rearrange them.
 
-Thanks for fixing this locking situation in general,
-Michal
+> +      The charge pump current that the external loop filter was designed for.
+> +      If this property is not specified, then the charge pump current is set to the
+> +      default 11100uA. The valid values are listed below. However, if the set value is
+> +      not supported, the driver will look for the closest valid charge pump current.
+> +    anyOf:
+> +      - enum: [790, 990, 1190, 1380, 1590, 1980, 2390, 2790, 3180, 3970, 4770, 5570, 6330, 7910, 9510, 11100]
+> +
+> +  adi,ref-divider:
+> +    description:
+> +      Input divider of the reference frequency, cannot be lower then 1 or
+> +      higher then 63.
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +      - minimum: 1
+> +      - maximum: 63
+> +      - default: 1
+> +    maxItems: 1
+> +
+> +  adi,ref-doubler-enable:
+> +    description:
+> +      Enables the doubling of the reference clock.
+> +    type: boolean
+> +    maxItems: 1
+> +
+> +  adi,bleed-word:
+> +    description:
+> +      A small programmable constant charge pump current, known as bleed current,
+> +      can be used to optimize the phase noise and fractional spurious signals
+> +      in fractional mode.
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +      - minimum: 0
+> +      - maximum: 4095
+> +      - default: 0
+> +    maxItems: 1
+> +
+> +  adi,power-up-frequency:
+> +    description:
+> +      PLL tunes to the set frequency on probe or defaults to 2,305 GHz.
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint64
+> +      - minimum: 687500000
+> +      - maximum: 22000000000
+> +      - default: 2305000000
+> +    maxItems: 1
+> +
+> +  adi,output-power-value:
+> +    description:
+> +      The output power amplitude level which will be applied for both channels
+> +      at startup.
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +      - minimum: 0
+> +      - maximum: 15
+> +      - default: 11
+> +    maxItems: 1
+> +
+> +  adi,spi-3wire-enable:
+> +    description:
+> +      Uses SPI in 3 wire mode, by default is uses 4 wire mode.
+> +    type: boolean
+> +    maxItems: 1
+> +
+> +  adi,cmos-3v3:
+> +    description:
+> +      Sets the SPI logic to 3.3V, by defautl it uses 1,8V.
+> +    type: boolean
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    spi {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        frequency@0 {
+> +          compatible = "adi,adf4382";
+> +          reg = <0>;
+> +          spi-max-frequency = <1000000>;
+> +          clocks = <&adf4382_clkin>;
+> +          clock-names = "ref_clk";
 
---2ibhqnvx46ox4edy
-Content-Type: application/pgp-signature; name="signature.asc"
+Should it not be adi,charge-pump-microamp instead? dt_binding_check
+complains about this.
 
------BEGIN PGP SIGNATURE-----
+> +          adi,charge-pump-current = <15>;
+> +          adi,ref-divider = <1>;
+> +        };
+> +    };
+> +...
 
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZzX/kwAKCRAt3Wney77B
-SXsGAP9mq6zo6fojmMK07y5xwOF6JXw+3vwNoZiAO+/IlcLbRgEAtC0Uf4cFzaN2
-ws//a7MG0InXqAuDxBK8m5y9HR5Tjw8=
-=5SdX
------END PGP SIGNATURE-----
 
---2ibhqnvx46ox4edy--
+Best regards,
+Javier Carrasco
 
