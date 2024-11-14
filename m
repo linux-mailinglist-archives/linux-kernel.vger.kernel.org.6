@@ -1,280 +1,105 @@
-Return-Path: <linux-kernel+bounces-409562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6396C9C8F80
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:17:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E5869C8FC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:30:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A902B33317
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:46:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96287B38F3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E1E1B6D07;
-	Thu, 14 Nov 2024 15:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BCE319B3E2;
+	Thu, 14 Nov 2024 15:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jyhMgyjQ"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CDHpDHl4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D3C19CC0F;
-	Thu, 14 Nov 2024 15:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8049819995B;
+	Thu, 14 Nov 2024 15:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731598578; cv=none; b=A/8sL28cAbn8BJ0Vhv+1Aed3hJAfjDkS9gJ/nb9z1oLJSR4wV3MpFYP/jnbN9IUjDW89pGa7UWBGi02SsaEDTMd6g2QD5zRi4KjhVa3Cgwxil9TMudK0TydsxLcMk6WJ+vu1ey99asSHFiXSS/zNtN+yZjTdPCc4MeTPMvftqho=
+	t=1731598562; cv=none; b=FJjTu4xq5s7ai1VQrj22pN+eLffJOXNWZXH2T3Gy9g7+9wolcKwpm4ehjFea+Ods2fpI8z6ETFWJylpIKYd0ygwywAzaurgl4iK5n05F6Q0ExPX0iBQoiVUqetvRrTUxBRGNd4vnPkDAiV3NfvUi5io+jeHn0Fz0wftjb9NVyNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731598578; c=relaxed/simple;
-	bh=891f4ChfUy9ld15ZISZhA05VjzAsC22sOsxxWTgB5Wc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ostaMsULgSmHxCoFBMpUy0bjSrp/cpivmmVbkCQoS7NISs1QLVUmX12X21PaME89WwN2GRWalv8UW4aw9YiNUYe3+PDGXqvLCf7WI66ahCABiMJDc9g9L3Mrm2ldCXxIExbR0EGVEobe+UMdfjIlSxa+PD26pulfdFMqd4wqO2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jyhMgyjQ; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DCCF41BF20F;
-	Thu, 14 Nov 2024 15:36:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731598568;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kW6y+es3PhkNN7oGJsip9taWxcOyK0imTW0mpB6Vpt4=;
-	b=jyhMgyjQNphFcbuLgQ6JC1+lbRGUxfdG4uDocbUbLs17d7Ri+vicdK2NWyAeH5ocBKOeoA
-	JnzTJmcXNkr+r04mVeBO1rpKs48cpUyBnctnmpp05hqZl+VDLz5MnFzrcP7PaRHtSV0EvG
-	dcQN0mBSUB7offJ2AcNuCryTChJ/6/ASYFwZ5ObKIaTYcMfMg1QrjnMo6rizwcNxljTWWB
-	yDLDHTxai7n2A1BUO0PZUoV60C5+slZPC43E5ZdgDGYmOiHcRGLBw9Y5Z6b5Jc0sdoZrTJ
-	Ka2d6qSd8BUT7LFZym0IwS4VAT9vxbJu1B1UPgf4tkTgAfoZrzmcJ3DQAXgibA==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net,
-	Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com,
-	Herve Codina <herve.codina@bootlin.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH net-next v2 03/10] net: freescale: ucc_geth: Use netdev->phydev to access the PHY
-Date: Thu, 14 Nov 2024 16:35:54 +0100
-Message-ID: <20241114153603.307872-4-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241114153603.307872-1-maxime.chevallier@bootlin.com>
-References: <20241114153603.307872-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1731598562; c=relaxed/simple;
+	bh=rl828hm4qtTphXo1J5TgvuQCvwyvHSgptG9spLTDiAo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=cfzyNE2TIScBCcd+jTpJkjKabJSzCWL1d+xYXdnCO157k9rQbhEJ5eBy5VjpJUSCSCdkXqhVyQ3nXcBjNJMf/cZoi1q0lctfTs0tEXzlVeF6D6aeWhrq50pWylzB2eZKhAg1/Jfv4tRK85T1lHqA8v7edZmTJV1ZfWRW+w5Nn+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CDHpDHl4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 424F9C4CED6;
+	Thu, 14 Nov 2024 15:36:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731598562;
+	bh=rl828hm4qtTphXo1J5TgvuQCvwyvHSgptG9spLTDiAo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=CDHpDHl4Owvnccl7T4oODjqPSC10ZDDWJLvjdOn+zg0vqYpfl47ENw/poHtTWguMv
+	 gvxXQkeLdpmgYneyP1gJvR2KeOtrHJBtVZU7Dk7fXkiGcDq1cfIzOcZVCfaQ4euRbN
+	 7W459wAPRiOhsg6XCvT5EPUcYi/uAul250nTKTY8KZCabsQCPtT75h97JZeTAtU4qo
+	 CMUm/IfQ9lP961LtKBxLh4QxAy8F+4B3bXKY3bB2yo1Be4wCU+mva4eAAnd2jPznKC
+	 /AdwldVh9ax+5NvES9PjZxDabTA0bDLspecNqGd2hSOyAgTxCH7bf69kJ4ZCvNhcDm
+	 hPU1pRWPp5IzQ==
+From: Mark Brown <broonie@kernel.org>
+To: Kiseok Jo <kiseok.jo@irondevice.com>, Arnd Bergmann <arnd@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Tang Bin <tangbin@cmss.chinamobile.com>, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241113175734.2443315-1-arnd@kernel.org>
+References: <20241113175734.2443315-1-arnd@kernel.org>
+Subject: Re: [PATCH] [v2] ASoC: sma1307: fix uninitialized variable refence
+Message-Id: <173159855986.505512.7552118028382530741.b4-ty@kernel.org>
+Date: Thu, 14 Nov 2024 15:35:59 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-355e8
 
-As this driver pre-dates phylib, it uses a private pointer to get a
-reference to the attached phy_device. Drop that pointer and use the
-netdev's pointer instead.
+On Wed, 13 Nov 2024 18:57:13 +0100, Arnd Bergmann wrote:
+> When firmware loading is disabled, gcc warns that the local
+> 'fw' variable fails to get initialized:
+> 
+> sound/soc/codecs/sma1307.c: In function 'sma1307_setting_loaded.isra':
+> sound/soc/codecs/sma1307.c:1717:12: error: 'fw' is used uninitialized [-Werror=uninitialized]
+>  1717 |         if (!fw) {
+>       |            ^
+> sound/soc/codecs/sma1307.c:1712:32: note: 'fw' was declared here
+>  1712 |         const struct firmware *fw;
+> 
+> [...]
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
-V2: No changes
+Applied to
 
- drivers/net/ethernet/freescale/ucc_geth.c     | 27 ++++++++-----------
- drivers/net/ethernet/freescale/ucc_geth.h     |  1 -
- .../net/ethernet/freescale/ucc_geth_ethtool.c | 17 ++++++------
- 3 files changed, 20 insertions(+), 25 deletions(-)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-diff --git a/drivers/net/ethernet/freescale/ucc_geth.c b/drivers/net/ethernet/freescale/ucc_geth.c
-index 6286cd185a35..13b8f8401c81 100644
---- a/drivers/net/ethernet/freescale/ucc_geth.c
-+++ b/drivers/net/ethernet/freescale/ucc_geth.c
-@@ -1646,7 +1646,7 @@ static void ugeth_link_down(struct ucc_geth_private *ugeth)
- static void adjust_link(struct net_device *dev)
- {
- 	struct ucc_geth_private *ugeth = netdev_priv(dev);
--	struct phy_device *phydev = ugeth->phydev;
-+	struct phy_device *phydev = dev->phydev;
- 
- 	if (phydev->link)
- 		ugeth_link_up(ugeth, phydev, phydev->interface,
-@@ -1727,8 +1727,6 @@ static int init_phy(struct net_device *dev)
- 
- 	phy_set_max_speed(phydev, priv->max_speed);
- 
--	priv->phydev = phydev;
--
- 	return 0;
- }
- 
-@@ -2001,7 +1999,7 @@ static void ucc_geth_set_multi(struct net_device *dev)
- static void ucc_geth_stop(struct ucc_geth_private *ugeth)
- {
- 	struct ucc_geth __iomem *ug_regs = ugeth->ug_regs;
--	struct phy_device *phydev = ugeth->phydev;
-+	struct phy_device *phydev = ugeth->ndev->phydev;
- 
- 	ugeth_vdbg("%s: IN", __func__);
- 
-@@ -3316,13 +3314,13 @@ static int ucc_geth_open(struct net_device *dev)
- 		goto err;
- 	}
- 
--	phy_start(ugeth->phydev);
-+	phy_start(dev->phydev);
- 	napi_enable(&ugeth->napi);
- 	netdev_reset_queue(dev);
- 	netif_start_queue(dev);
- 
- 	device_set_wakeup_capable(&dev->dev,
--			qe_alive_during_sleep() || ugeth->phydev->irq);
-+			qe_alive_during_sleep() || dev->phydev->irq);
- 	device_set_wakeup_enable(&dev->dev, ugeth->wol_en);
- 
- 	return err;
-@@ -3343,8 +3341,7 @@ static int ucc_geth_close(struct net_device *dev)
- 
- 	cancel_work_sync(&ugeth->timeout_work);
- 	ucc_geth_stop(ugeth);
--	phy_disconnect(ugeth->phydev);
--	ugeth->phydev = NULL;
-+	phy_disconnect(dev->phydev);
- 
- 	free_irq(ugeth->ug_info->uf_info.irq, ugeth->ndev);
- 
-@@ -3378,7 +3375,7 @@ static void ucc_geth_timeout_work(struct work_struct *work)
- 		ucc_geth_stop(ugeth);
- 		ucc_geth_init_mac(ugeth);
- 		/* Must start PHY here */
--		phy_start(ugeth->phydev);
-+		phy_start(dev->phydev);
- 		netif_tx_start_all_queues(dev);
- 	}
- 
-@@ -3421,7 +3418,7 @@ static int ucc_geth_suspend(struct platform_device *ofdev, pm_message_t state)
- 		setbits32(&ugeth->ug_regs->maccfg2, MACCFG2_MPE);
- 		ucc_fast_enable(ugeth->uccf, COMM_DIR_RX_AND_TX);
- 	} else if (!(ugeth->wol_en & WAKE_PHY)) {
--		phy_stop(ugeth->phydev);
-+		phy_stop(ndev->phydev);
- 	}
- 
- 	return 0;
-@@ -3461,8 +3458,8 @@ static int ucc_geth_resume(struct platform_device *ofdev)
- 	ugeth->oldspeed = 0;
- 	ugeth->oldduplex = -1;
- 
--	phy_stop(ugeth->phydev);
--	phy_start(ugeth->phydev);
-+	phy_stop(ndev->phydev);
-+	phy_start(ndev->phydev);
- 
- 	napi_enable(&ugeth->napi);
- 	netif_device_attach(ndev);
-@@ -3477,15 +3474,13 @@ static int ucc_geth_resume(struct platform_device *ofdev)
- 
- static int ucc_geth_ioctl(struct net_device *dev, struct ifreq *rq, int cmd)
- {
--	struct ucc_geth_private *ugeth = netdev_priv(dev);
--
- 	if (!netif_running(dev))
- 		return -EINVAL;
- 
--	if (!ugeth->phydev)
-+	if (!dev->phydev)
- 		return -ENODEV;
- 
--	return phy_mii_ioctl(ugeth->phydev, rq, cmd);
-+	return phy_mii_ioctl(dev->phydev, rq, cmd);
- }
- 
- static const struct net_device_ops ucc_geth_netdev_ops = {
-diff --git a/drivers/net/ethernet/freescale/ucc_geth.h b/drivers/net/ethernet/freescale/ucc_geth.h
-index 4294ed096ebb..c08a56b7c9fe 100644
---- a/drivers/net/ethernet/freescale/ucc_geth.h
-+++ b/drivers/net/ethernet/freescale/ucc_geth.h
-@@ -1210,7 +1210,6 @@ struct ucc_geth_private {
- 	u16 skb_dirtytx[NUM_TX_QUEUES];
- 
- 	struct ugeth_mii_info *mii_info;
--	struct phy_device *phydev;
- 	phy_interface_t phy_interface;
- 	int max_speed;
- 	uint32_t msg_enable;
-diff --git a/drivers/net/ethernet/freescale/ucc_geth_ethtool.c b/drivers/net/ethernet/freescale/ucc_geth_ethtool.c
-index 699f346faf5c..fb5254d7d1ba 100644
---- a/drivers/net/ethernet/freescale/ucc_geth_ethtool.c
-+++ b/drivers/net/ethernet/freescale/ucc_geth_ethtool.c
-@@ -103,8 +103,7 @@ static const char rx_fw_stat_gstrings[][ETH_GSTRING_LEN] = {
- static int
- uec_get_ksettings(struct net_device *netdev, struct ethtool_link_ksettings *cmd)
- {
--	struct ucc_geth_private *ugeth = netdev_priv(netdev);
--	struct phy_device *phydev = ugeth->phydev;
-+	struct phy_device *phydev = netdev->phydev;
- 
- 	if (!phydev)
- 		return -ENODEV;
-@@ -118,8 +117,7 @@ static int
- uec_set_ksettings(struct net_device *netdev,
- 		  const struct ethtool_link_ksettings *cmd)
- {
--	struct ucc_geth_private *ugeth = netdev_priv(netdev);
--	struct phy_device *phydev = ugeth->phydev;
-+	struct phy_device *phydev = netdev->phydev;
- 
- 	if (!phydev)
- 		return -ENODEV;
-@@ -132,8 +130,10 @@ uec_get_pauseparam(struct net_device *netdev,
-                      struct ethtool_pauseparam *pause)
- {
- 	struct ucc_geth_private *ugeth = netdev_priv(netdev);
-+	struct phy_device *phydev = netdev->phydev;
- 
--	pause->autoneg = ugeth->phydev->autoneg;
-+	if (phydev)
-+		pause->autoneg = phydev->autoneg;
- 
- 	if (ugeth->ug_info->receiveFlowControl)
- 		pause->rx_pause = 1;
-@@ -146,12 +146,13 @@ uec_set_pauseparam(struct net_device *netdev,
-                      struct ethtool_pauseparam *pause)
- {
- 	struct ucc_geth_private *ugeth = netdev_priv(netdev);
-+	struct phy_device *phydev = netdev->phydev;
- 	int ret = 0;
- 
- 	ugeth->ug_info->receiveFlowControl = pause->rx_pause;
- 	ugeth->ug_info->transmitFlowControl = pause->tx_pause;
- 
--	if (ugeth->phydev->autoneg) {
-+	if (phydev && phydev->autoneg) {
- 		if (netif_running(netdev)) {
- 			/* FIXME: automatically restart */
- 			netdev_info(netdev, "Please re-open the interface\n");
-@@ -343,7 +344,7 @@ uec_get_drvinfo(struct net_device *netdev,
- static void uec_get_wol(struct net_device *netdev, struct ethtool_wolinfo *wol)
- {
- 	struct ucc_geth_private *ugeth = netdev_priv(netdev);
--	struct phy_device *phydev = ugeth->phydev;
-+	struct phy_device *phydev = netdev->phydev;
- 
- 	if (phydev && phydev->irq)
- 		wol->supported |= WAKE_PHY;
-@@ -356,7 +357,7 @@ static void uec_get_wol(struct net_device *netdev, struct ethtool_wolinfo *wol)
- static int uec_set_wol(struct net_device *netdev, struct ethtool_wolinfo *wol)
- {
- 	struct ucc_geth_private *ugeth = netdev_priv(netdev);
--	struct phy_device *phydev = ugeth->phydev;
-+	struct phy_device *phydev = netdev->phydev;
- 
- 	if (wol->wolopts & ~(WAKE_PHY | WAKE_MAGIC))
- 		return -EINVAL;
--- 
-2.47.0
+Thanks!
+
+[1/1] ASoC: sma1307: fix uninitialized variable refence
+      commit: c48a4497356f701f94f1951626637ae240af909e
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
