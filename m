@@ -1,170 +1,124 @@
-Return-Path: <linux-kernel+bounces-409522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3CA59C8E40
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:35:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 495A19C8DF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:28:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5A8BB2EF28
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:27:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06CB0286E0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F111547CF;
-	Thu, 14 Nov 2024 15:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A2114E2D6;
+	Thu, 14 Nov 2024 15:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QLaNurCU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xmxKhmBg"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F76B1547CC
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB393B784
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731598052; cv=none; b=kDh8svQ24I5XD5UoVPWPEUtKlKWdCNCWyIs0iVN29fYwniqEhGjL1nXlEEZIi1mw8lLh5VnDjnGDYeQE2zQBkDCDUfUHWVlAAWsIKxjBMiZDQypgsHNfXe6doFQh7y4nMrrY/+8z2fDxzR6BzOfCZV8MduDDN0YfepKzb4hmy2Y=
+	t=1731598067; cv=none; b=G1QK7pxczAqpZBkcvfd4BB5YCGEnFHfNCX7ofSpghtljRUOC419+2jQHP/7evVmy2OVes6FsPDI1qQj9tyluVcAW8FjGpoBqfV+13wNY1T/k6MvaZlN5UbMR+7Snx+F0tjse75QoWkKcQQ5Vi9qAx06dgaajopjNj6xYn8IE/h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731598052; c=relaxed/simple;
-	bh=pJeivAMUePV1CFYdUIv6PQhv4/I3V647DulnwjsCZLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cykmTVmgSLPdd7gluQ/WfPWaKXZJMYMz2Q4kKdrp7GUa2O7kW+qXKtclKs/GSG2ZEi7eqDzq4HiU4QN1UEp0bIwOrmSmRxWawM4pPbnrqNQZgOEQVA57xH9c7WOn22ZxWl9FbkvUdKd5Jrt5ZmWOZdQuEKwyWceL6yOdftXVT7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QLaNurCU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AEEh4UR026715
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:27:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mqwK68QV7anZkYzbtQsmbmF65JaW6sNQSHhAt7zMFpk=; b=QLaNurCUlcur9Jdd
-	kfj4Le3TFv3IHYqfS+72nDuDb0Vn8O7uf9HCC4ZUEwQ0lWXe80Y/k5JTWYMbxl4b
-	7WH/6Sn4DZchxSNXPN06oEub2M2kTfSR5QRhc/BGNpcCrZlVR4OxYbAbMB3dIjqr
-	Da088Qb2fHc129+yi2OSA2WZLPRWcqb4IwU7eq1gas/NvylcQTdFdMKpU2fcwyoY
-	aZN6AW8pZli2VIBe0MHYN7GqvBXqjQFIhAvKpdAU/gyvsYw8nv1tpHDgL821dz/U
-	/6DfmslTL1w0FgnmhC9ldRAsayfR9+wCIcJz1rPKyzyFlc8GL/sUG32Hn/2CUWEh
-	D6yZZA==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vt735a3t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:27:30 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-460abcbba38so420691cf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:27:30 -0800 (PST)
+	s=arc-20240116; t=1731598067; c=relaxed/simple;
+	bh=+sEmkHc/gqLQvISFoccR4dMFAmG47Net4ZXwSAJbm4Q=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=p+IuVdBWr87vmNx2uhlQFpENG66WFpIfNbD1C6X7rWKAlYqa7ix0FsOn7o9FqVCqeqEs8ugo+wMrw9fh7Lgx5bq0Njt4nWPJ1kszDul1qgfF2DNFIPlqeytgRgt1RlMuOfwvY20YnKJS1VTTF2wuhANXKglNoVBdy3XZn7jA4k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xmxKhmBg; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e30cf121024so1024220276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:27:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731598065; x=1732202865; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=r9Xf/8xQttXv6s1otjnUDSrcU0au/N/ujN3TYRfLjxk=;
+        b=xmxKhmBgJ2W2AlqyLUPMOLWjJOH50GSs0N6RUjG/liOgs7dhmcY42OgZJuI/4F2lRL
+         oOlVdZZ0uYvnDjuDyjNd+tUcxzjYhxauLsDOW5otbdaqBnRHA7T/1n44Un/htj3jpi7E
+         eyeFEGzZL9dl0itAqFWYGjCz/hXN2jOpFZd5cD858CD3UfQtm4FlkqAnHC0KP+DBYp1q
+         IRlT/kGGbKA3XBDeyTdStmtCjqzACtkVrG0fnIDOY9Ndj1TRb0GaPiR/7MMKxBhS4D2v
+         GUOIe8XNzz/SWDlBOpZypP2qqtua8KsvTZEG42j1Xs1zxn0s5CJtf2r3ms8bKdQ7gHQL
+         T0Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731598049; x=1732202849;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mqwK68QV7anZkYzbtQsmbmF65JaW6sNQSHhAt7zMFpk=;
-        b=JJ7eyYAefMntns7SfgTyi4fkrJ8blgjefhGKz3PDxTH3feVVA+wL+nwQJRqVbMbHJT
-         s2tNsb/cfBv08UzUneY526DHSJuhOE58vUjPf4rNRdBjtM+sgaCeeeinKZzwY3+JpH9D
-         9lZemIEyi2JD1In1z5yIzVMisz4yfDOPqkrEJSnrXVqlYC6XQQcIkYK9bQOsk39eGXUB
-         vESF0bFI/DwxM+QPHvFvPChzHpmatURLa9dju4DdFCsU3YS6UN+WnYF7JLFvckl93OsU
-         E7wbUNrssSiD3uqzmZqe5uFWl5vb2uQqilv6MHTaLVEWlvADdf0PAYuX0PMUDi5htcis
-         GeKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX1h0NbIpwQbzE3eNGriqqvtaB1KZPq3vTulqvUnUtzC8hIpLvrUiyDgAXcd7yOeP05uX4NKjj6KeJOG08=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv5fpXyULvcCHjNLNrdr2trqk8ryYMY05KiRr/Nwm+tU2fPYY7
-	jdzO1RJaTLbR3KisxCqHia78s6OnjrgTllTkINbj+bhjIoRDtlHSSyPIXOS3zcgy9EcZPo9WAHm
-	KLQpOJKYyxR63gUSuPjvjHC+zQ15L+VRCWSJIXi7S5ewMqy0wvqxM1BW6dr7rJP8=
-X-Received: by 2002:ac8:58ce:0:b0:460:bb96:dd02 with SMTP id d75a77b69052e-46309316034mr164398621cf.2.1731598049393;
-        Thu, 14 Nov 2024 07:27:29 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHSfzrBG+lhdGHrTTXrH4knwlu1OmK8TQfwcDQEvioxl9razUvy4nRX1r6cZkneejShWoIBYQ==
-X-Received: by 2002:ac8:58ce:0:b0:460:bb96:dd02 with SMTP id d75a77b69052e-46309316034mr164397861cf.2.1731598047583;
-        Thu, 14 Nov 2024 07:27:27 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf79c1e3d1sm656722a12.89.2024.11.14.07.27.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 07:27:27 -0800 (PST)
-Message-ID: <9d690e39-2bda-4f5a-b7a5-2c9cf90a8065@oss.qualcomm.com>
-Date: Thu, 14 Nov 2024 16:27:24 +0100
+        d=1e100.net; s=20230601; t=1731598065; x=1732202865;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r9Xf/8xQttXv6s1otjnUDSrcU0au/N/ujN3TYRfLjxk=;
+        b=uc57QppVo4JGk6ilpcAFgUE8anOKfjMuSFz7/sUvQxHU6/XYCGZRTkyQaTeVOI6VKF
+         zSaeAN8pyK5gCHcj5QcXo3ROu4H2/RHQLEpVvWXXtA2cQUxmQkW51I+gTnr/lZWQh4xl
+         XW69kllqT6isLqOUXUfTJKBpQni/716cDbXU4//rQiPy1QALoIufnfbzJIhX71GbGwBf
+         6zImV7YRX9zJAAinlts78Qek/CcSmiSe/iGBfSpH7RSCZFrq4VKAbzijNGHNwfZFeyVS
+         TamGLfV+1rJnKtMTytYeedDJeSUM3y/cyQnfA7dlR4KQyevhuiMtC0xJGdCLb7xrdcqS
+         PH/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXKpJnVbO1lXDk27C66CZRb5k4LQuLrLlge9cEto43p2+5jgi8CqPcPAFo1utXd5HwV/tWRhmMNEsJz42A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRtq2PdZPssBhBmktxsKoDoXqTQOEu2WLTdN5/NizYWsxYPhdg
+	5ibIiIsRnoWAEg5dsi8dKrV9mKWMf0aCrTRrJqfwtiKFdzS2JawGXvEaGk5vi0BA7vNtMXIeGaL
+	/+g==
+X-Google-Smtp-Source: AGHT+IEJo8nhGMfASjDL+OnfXK4TsEyvl3lVzMG2j+jkJrNX/kWWBy5xmaToI/BTiIj+gtovk3WW0O25DXA=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a25:c4c3:0:b0:e38:c43:3002 with SMTP id
+ 3f1490d57ef6-e380c4331a5mr80697276.10.1731598064751; Thu, 14 Nov 2024
+ 07:27:44 -0800 (PST)
+Date: Thu, 14 Nov 2024 07:27:43 -0800
+In-Reply-To: <ZzMaCzDNJAOCMFl6@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] drm/msm/adreno: Setup SMMU aparture for
- per-process page table
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>,
-        Rob Clark
- <robdclark@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Sean Paul <sean@poorly.run>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org
-References: <20241110-adreno-smmu-aparture-v2-0-9b1fb2ee41d4@oss.qualcomm.com>
- <20241110-adreno-smmu-aparture-v2-2-9b1fb2ee41d4@oss.qualcomm.com>
- <CAF6AEGvD95RyUXDBjgmoefgO6QyeRw3tpa7EG1MLFKdxcoZ-4g@mail.gmail.com>
- <5a959c08-cc90-4a05-88b2-e1ee666561e2@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <5a959c08-cc90-4a05-88b2-e1ee666561e2@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: GHs1Tt5yp5Y282x49G5oMfND6aKnOM1P
-X-Proofpoint-GUID: GHs1Tt5yp5Y282x49G5oMfND6aKnOM1P
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 lowpriorityscore=0 impostorscore=0 adultscore=0
- clxscore=1015 mlxlogscore=999 mlxscore=0 phishscore=0 bulkscore=0
- malwarescore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411140121
+Mime-Version: 1.0
+References: <20241101191447.1807602-1-seanjc@google.com> <20241101191447.1807602-6-seanjc@google.com>
+ <ZzMaCzDNJAOCMFl6@intel.com>
+Message-ID: <ZzYW7zVd47ctDfM8@google.com>
+Subject: Re: [PATCH 5/5] KVM: nVMX: Honor event priority when emulating PI
+ delivery during VM-Enter
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On 12.11.2024 10:15 PM, Akhil P Oommen wrote:
-> On 11/11/2024 8:38 PM, Rob Clark wrote:
->> On Sun, Nov 10, 2024 at 9:31 AM Bjorn Andersson
->> <bjorn.andersson@oss.qualcomm.com> wrote:
->>>
->>> Support for per-process page tables requires the SMMU aparture to be
->>> setup such that the GPU can make updates with the SMMU. On some targets
->>> this is done statically in firmware, on others it's expected to be
->>> requested in runtime by the driver, through a SCM call.
->>>
->>> One place where configuration is expected to be done dynamically is the
->>> QCS6490 rb3gen2.
->>>
->>> The downstream driver does this unconditioanlly on any A6xx and newer,
->>
->> nit, s/unconditioanlly/unconditionally/
->>
->>> so follow suite and make the call.
->>>
->>> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
->>
->> Reviewed-by: Rob Clark <robdclark@gmail.com>
->>
->>
->>> ---
->>>  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 11 +++++++++++
->>>  1 file changed, 11 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
->>> index 076be0473eb5..75f5367e73ca 100644
->>> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
->>> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
->>> @@ -572,8 +572,19 @@ struct drm_gem_object *adreno_fw_create_bo(struct msm_gpu *gpu,
->>>
->>>  int adreno_hw_init(struct msm_gpu *gpu)
->>>  {
+On Tue, Nov 12, 2024, Chao Gao wrote:
+> On Fri, Nov 01, 2024 at 12:14:47PM -0700, Sean Christopherson wrote:
+> >Move the handling of a nested posted interrupt notification that is
+> >unblocked by nested VM-Enter (unblocks L1 IRQs when ack-on-exit is enabled
+> >by L1) from VM-Enter emulation to vmx_check_nested_events().  To avoid a
+> >pointless forced immediate exit, i.e. to not regress IRQ delivery latency
+> >when a nested posted interrupt is pending at VM-Enter, block processing of
+> >the notification IRQ if and only if KVM must block _all_ events.  Unlike
+> >injected events, KVM doesn't need to actually enter L2 before updating the
+> >vIRR and vmcs02.GUEST_INTR_STATUS, as the resulting L2 IRQ will be blocked
+> >by hardware itself, until VM-Enter to L2 completes.
+> >
+> >Note, very strictly speaking, moving the IRQ from L2's PIR to IRR before
+> >entering L2 is still technically wrong.  But, practically speaking, only a
+> >userspace that is deliberately checking KVM_STATE_NESTED_RUN_PENDING
+> >against PIR and IRR can even notice; L2 will see architecturally correct
+> >behavior, as KVM ensure the VM-Enter is finished before doing anything
+> >that would effectively preempt the PIR=>IRR movement.
 > 
-> SCM calls into TZ can block for a very long time (seconds). It depends
-> on concurrent activities from other drivers like crypto for eg:. So we
-> should not do this in the gpu wake up path.
-> 
-> Practically, gpu probe is the better place to do this.
+> In my understanding, L1 can notice some priority issue in some cases. e.g.,
+> L1 enables NMI window VM-exit and enters L2 with a nested posted interrupt
+> notification. Assuming L2 doesn't block NMIs, then NMI window VM-exit should
+> happen immediately after nested VM-enter even before the nested posted
+> interrupt processing.
+>
+> Another case is the nested VM-enter may inject some events (i.e.,
+> vmcs12->vm_entry_intr_info_field has a valid event). Event injection has
+> higher priority over external interrupt VM-exit. The event injection may
+> encounter EPT_VIOLATION which needs to be reflected to L1. In this case,
+> L1 is supposed to observe the EPT VIOLATION before the nested posted interrupt
+> processing.
 
-Do we only have to do this once?
+Hmm, right, L1 could also observe the PIR=>IRR movement.  How about this?
 
-Do we have to redo it after CXPC?
-
-Konrad
+  Note, very strictly speaking, moving the IRQ from L2's PIR to IRR before
+  entering L2 is still technically wrong.  But, practically speaking, only
+  an L1 hypervisor or an L0 userspace that is deliberately checking event
+  priority against PIR=>IRR processing can even notice; L2 will see
+  architecturally correct behavior, as KVM ensures the VM-Enter is finished
+  before doing anything that would effectively preempt the PIR=>IRR movement.
 
