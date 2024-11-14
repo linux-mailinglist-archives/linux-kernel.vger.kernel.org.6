@@ -1,213 +1,284 @@
-Return-Path: <linux-kernel+bounces-409248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CB959C8974
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:05:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 872999C8965
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:02:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13E9B1F22A54
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:05:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC340B23419
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069631FAC2F;
-	Thu, 14 Nov 2024 12:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A6D1F8925;
+	Thu, 14 Nov 2024 12:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="UQuRkmQT"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hH1DkfDv"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E7E1F9ED2;
-	Thu, 14 Nov 2024 12:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBAF1F8918
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 12:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731585855; cv=none; b=d0XNwhy10yiDnpmO1jWPfkKER0ivOog294h8+hCYr2I5CoeQbflsBI+E3gbduPm7726JzK33jQs67uGnw/s/E4nLp+5NWzKmErh1+/Mgxk+F8P/21ZXgBas9Up9neblPZkMmA/ZxXd9q6Tw9CLqykvggWCkr7r64sP3yY6u+9OQ=
+	t=1731585639; cv=none; b=EvRj/RIZzr7RIFYOseJmy+P37WFE2IwJizmcKx50NFKwdkg/O3/uONvHPetDS5eFbNsuZFeggO9Shht+X6hN7H0vli0MRgqKaYo0NuRIStVilP0eY9fHj17hKRTses1y2BQXz9bToUInX4okOcXqKstww70IzZ4mqw9BJ9Bpn5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731585855; c=relaxed/simple;
-	bh=zyvTATOes1oJ4O3rFDEC1Le9ufFGz/kRN6JXtfVb9nc=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Veazrv6jOvt1qTl4bUE0F6n1wGmutJn7A9BFEnM6OHBz/0ML8ImcoKV8mH7PGlyB0Eju75ZS5zonOOnFnCtrC/Np/QLX+9jlauXMZ/Jao7EQb1WStOxshFVZswRuAN277Vat0gDph4ytlBJZkv/5Pz10jRgvj+0TMY8UlTK3dCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=UQuRkmQT; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1731585854; x=1763121854;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version;
-  bh=zyvTATOes1oJ4O3rFDEC1Le9ufFGz/kRN6JXtfVb9nc=;
-  b=UQuRkmQT4YSLBtBjm57LXCqLCTjcPM3qUw0rt35Vb5YkoEpob01RpqQj
-   C9RXZVqr2zj2aeWSg3LyoXt3CXMRLIailbQikqXL+yxgJgCgjaLKyORPi
-   emaQ5+/xiNp67AWpdnw4cJv1NdUzx2C5+iskX+i5aL9Aqy7wiuH6UBeKt
-   HygYQ2z2TgiW5QJ1KCuVeIHJ5pw7tmxdYfASf5ydBuKzaotywpTkqGDrU
-   poEEpJfWHIuVsVcrwvW9QwuEHNOyo7EZAAPomsEevhzIn429SC/C6lkmV
-   d+bg0aBCHxZve51TJfng3f3kIM1mZUhALCqOX29IeiOdZsfIL+vhsG9Nq
-   g==;
-X-CSE-ConnectionGUID: R1m+lyWhTgaRIjoFVkjDnA==
-X-CSE-MsgGUID: oNvrhw+GSryv5cgLGL5xnw==
-X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
-   d="scan'208";a="34821618"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Nov 2024 05:04:04 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 14 Nov 2024 05:04:01 -0700
-Received: from training-HP-280-G1-MT-PC.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Thu, 14 Nov 2024 05:03:57 -0700
-From: Divya Koppera <divya.koppera@microchip.com>
-To: <andrew@lunn.ch>, <arun.ramadoss@microchip.com>,
-	<UNGLinuxDriver@microchip.com>, <hkallweit1@gmail.com>,
-	<linux@armlinux.org.uk>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <richardcochran@gmail.com>,
-	<vadim.fedorenko@linux.dev>
-Subject: [PATCH net-next v4 5/5] net: phy: microchip_t1 : Add initialization of ptp for lan887x
-Date: Thu, 14 Nov 2024 17:34:55 +0530
-Message-ID: <20241114120455.5413-6-divya.koppera@microchip.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241114120455.5413-1-divya.koppera@microchip.com>
-References: <20241114120455.5413-1-divya.koppera@microchip.com>
+	s=arc-20240116; t=1731585639; c=relaxed/simple;
+	bh=0t8JspNtTGci/w7XdfCsqbu4+RHVXRNvJH5Wk4xJIzU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dyfBjDrej5BJTaOhbxju3rKgU3S7W1e9JR9+dD+LjrW/0lK5J+L6UOpWPUW7ds/d4wKff4dt/DGZjX3PU5MPJcEhUhrlQaOPQ8BrOeJyTa+oORwWM/06/qcXcLfnl4GQnIQ3wwZtd87g7pjT1yaHV1mt/Nq3+an4Z5r8+/77z5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hH1DkfDv; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4315c1c7392so5205805e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 04:00:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731585636; x=1732190436; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0t8JspNtTGci/w7XdfCsqbu4+RHVXRNvJH5Wk4xJIzU=;
+        b=hH1DkfDvsXB1sh0S/FTonONj4TIOsMDIsg+NWT1LLqzc6Z7ni9TcO22fCbTgZ/kjB5
+         2Ppebh/1LTw4+nSknBwbZpEB5D3tPi1ZrU2IL3/Swbxw8W8n4p5i9Lq1gPqM0VAukYpC
+         mZ0iwGSe+cPB4EDOH+fdd4VxwXTgCU5jCOVJITyKBgkz5PSfHgGGGDke8DG37/Hhf45+
+         cxJWRG/nx53vcZw9dcCuBbo9FKocJ4l0XCkdEX4Z2WTtLPdh8vXL3VXov19IaKg/PUVT
+         QxtDmpRPPgTLAkW1La9sFm8l9qSgScHYWY0KOsQlxSYc4Ejc+fjZiSlsaoDK3KwgievU
+         tNMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731585636; x=1732190436;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0t8JspNtTGci/w7XdfCsqbu4+RHVXRNvJH5Wk4xJIzU=;
+        b=ORcGWsJyxeXCrIykgwiNdoCsXjTen0S+CnkOFCpIsyWNTjWSmwCyVGwdQOtugRK/Jf
+         1jIaGjWmQsfB1I2V1S4OYVS0IlFTqW0roriUxHLOuFI+5rC6hMJbzsJZShuPsffhPTgO
+         WnsOewlVIVkf4trtp5/KeF0nlsI2aHJUO3CrxDe9jZ6y0OBKPgNenqvbA8wvoyZdR8M8
+         mxSTF+BjYYMWngSfYQVu9B20uHX7p5aqPpJ3kyhdkOp7lM3EXXtv3vdLiQDpEpYN3O+9
+         6epe+SxwYQz4wWBp3deHka2kAR8AsMi7L1VcRPESglBX5Vz7PKLuAzh3GfOh9oG6rXY/
+         4bww==
+X-Forwarded-Encrypted: i=1; AJvYcCVPq7+HwY00coBg1IRgM4ucwZRPhAl499XgQT0iKvVV5GULizRcIh61RGjHj+GVof6RqJIoXIRQrpmBYko=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA0m/Q72t9i0Lwe4CNzfO61xKffVmPy4GQD1H2xmLM4smme4iu
+	EwzhUGlvWvOvyMFKZaMmzYEMiC2vOzLq9slmP96iULMPPBdq25O13CDDqpwgiC3fxAPg
+X-Google-Smtp-Source: AGHT+IHcmAcGnf17rQxzaoj51n8L/wWdzghjGjIgqW+R9+UvfdjzO2LxDceW6yk9UbZPfs/kVIaqag==
+X-Received: by 2002:a05:600c:1c81:b0:431:518a:683b with SMTP id 5b1f17b1804b1-432da791401mr16257615e9.18.1731585635931;
+        Thu, 14 Nov 2024 04:00:35 -0800 (PST)
+Received: from ?IPv6:2003:f6:ef02:f400:a23c:697f:16fb:11c5? (p200300f6ef02f400a23c697f16fb11c5.dip0.t-ipconnect.de. [2003:f6:ef02:f400:a23c:697f:16fb:11c5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da28cad9sm21428345e9.32.2024.11.14.04.00.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 04:00:35 -0800 (PST)
+Message-ID: <3793d7e573d57e895f179d7ba90f2b395e1ac135.camel@gmail.com>
+Subject: Re: can/should a disabled irq become pending?
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
+ Jonathan Cameron
+	 <jic23@kernel.org>
+Date: Thu, 14 Nov 2024 13:04:58 +0100
+In-Reply-To: <5pcuve6oz7z5fammiu44e7nldu45gcupjh7vlape4k4ctzrvsf@lpaz2owcag7f>
+References: 
+	<io53lznz3qp3jd5rohqsjhosnmdzd6d44sdbwu5jcfrs3rz2a2@orquwgflrtyc>
+	 <87r07gmej2.ffs@tglx>
+	 <nlzd7endwgf46czretmoqlck3fjp5vnvnkv2tsyql632ym5bfo@phr3ggjyx633>
+	 <87ldxnn6mp.ffs@tglx>
+	 <c12201672bf99729caada3e8c8f61ad7f4612a23.camel@gmail.com>
+	 <87servku9h.ffs@tglx>
+	 <66beb423f48bcc0173d51783fb3c4e1b7673fa36.camel@gmail.com>
+	 <5pcuve6oz7z5fammiu44e7nldu45gcupjh7vlape4k4ctzrvsf@lpaz2owcag7f>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
 
-Add initialization of ptp for lan887x.
+On Thu, 2024-11-14 at 11:59 +0100, Uwe Kleine-K=C3=B6nig wrote:
+> Hello,
+>=20
+> On Thu, Nov 14, 2024 at 08:49:34AM +0100, Nuno S=C3=A1 wrote:
+> > On Wed, 2024-11-13 at 16:50 +0100, Thomas Gleixner wrote:
+> > > On Wed, Nov 13 2024 at 11:34, Nuno S=C3=A1 wrote:
+> > > > On Wed, 2024-11-13 at 04:40 +0100, Thomas Gleixner wrote:
+> > > > > The interrupt does not get to the device handler even in the lazy
+> > > > > disable case. Once the driver invoked disable_irq*() the low leve=
+l
+> > > > > flow
+> > > > > handlers (edge, level ...) mask the interrupt line and marks the
+> > > > > interrupt pending. enable_irq() retriggers the interrupt when the
+> > > > > pending bit is set, except when the interrupt line is level trigg=
+ered.
+> > > >=20
+> > > > There's something that I'm still trying to figure... For IRQ contro=
+llers
+> > > > that=C2=A0not
+> > > > disable edge detection, can't we get the device handler called twic=
+e if
+> > > > we
+> > > > don't set
+> > > > unlazy?
+> > > >=20
+> > > > irq_enable() - > check_irq_resend()
+> > > >=20
+> > > > and then
+> > > >=20
+> > > > handle_edge_irq() raised by the controller
+> > >=20
+> > > You're right. We should have a flag which controls the replay
+> > > requirements of an interrupt controller. So far it only skips for lev=
+el
+> > > triggered interrupts, but for those controllers it should skip for ed=
+ge
+> > > too. Something like IRQCHIP_NO_RESEND ...
+>=20
+> Agreed, if the irq gets pending while disabled in both hardware and
+> software, that shouldn't result in two invokations. Is this an issue for
+> level irqs only? For edge irqs this only happens with lazy disable and
 
-Signed-off-by: Divya Koppera <divya.koppera@microchip.com>
----
-v2 -> v3 -> v4
-- No changes
+Resending is already ignore for level...
 
-v1 -> v2
-Fixed below review comment
-  Added ptp support only if interrupts are supported as interrupts are mandatory
-  for ptp.
----
- drivers/net/phy/microchip_t1.c | 40 +++++++++++++++++++++++++++++++---
- 1 file changed, 37 insertions(+), 3 deletions(-)
+> if two events happen. Hm, I guess in that case we still only want a singl=
+e
+> invokation of the irq handler?
+>=20
+> > > > Or is the core handling this somehow? I thought IRQS_REPLAY could b=
+e
+> > > > doing the trick but I'm not seeing how...
+> > >=20
+> > > IRQS_REPLAY is just internal state to avoid double replay.
+> > >=20
+> > > > > On controllers which suffer from the #2 problem UNLAZY should ind=
+eed
+> > > > > be
+> > > > > ignored for edge type interrupts. That's something which the
+> > > > > controller
+> > > > > should signal via a irqchip flag and the core code can act upon i=
+t and
+> > > > > ignore UNLAZY for edge type interrupts.
+> > > > >=20
+> > > > > But that won't fix the problem at hand. Let's take a step back an=
+d
+> > > > > look
+> > > > > at the larger picture whether this can be reliably "fixed" at all=
+.
+> > > > >=20
+> > > >=20
+> > > > Yeah, I'm still trying to figure when it's correct for a device to =
+do
+> > > > UNLAZY? If I'm
+> > > > understanding things, devices that rely on disable_irq*() should se=
+t
+> > > > it?
+> > >=20
+> > > Not necessarily. In most cases devices are not re-raising interrupts
+> > > before the previous one has been handled and acknowledged in the devi=
+ce.
+>=20
+> Usage of UNLAZY should never affect correctness. It's "only" a
+> performance optimisation which has a positive effect if it's expected
+> that an irq event happens while it's masked.
+>=20
+> > > > Because problem #2 is something that needs to be handled at the
+> > > > controller and core level if I got you right.
+> > >=20
+> > > Yes. We need a irqchip flag for that.
+> > >=20
+> > > > > > Ack. If there is no way to read back the line state and it's un=
+known
+> > > > > > if
+> > > > > > the irq controller suffers from problem #2, the only way to sti=
+ll
+> > > > > > benefit from the irq is to not use IRQ_DISABLE_UNLAZY and only =
+act
+> > > > > > on
+> > > > > > each 2nd irq; or ignore irqs based on timing. That doesn't soun=
+d
+> > > > > > very
+> > > > > > robust though, so maybe the driver has to fall back on polling =
+the
+> > > > > > status register and not use irqs at all in that case.
+> > > > >=20
+> > > > > Actually ignoring the first interrupt after a SPI transfer and wa=
+iting
+> > > > > for the next conversion to raise the interrupt again should be ro=
+bust
+> > > > > enough. The ADC has to be in continous conversion mode for that
+> > > > > obviously.
+> > > > >=20
+> > > > Might be the only sane option we have, Uwe? If we do this, we could=
+ be
+> > > > dropping valid samples but only with controllers that suffer from
+> > > > #2.
+> > >=20
+> > > No. You have the same problem with the controllers which do not disab=
+le
+> > > the edge detection logic.
+> > >=20
+> > > The interrupt controller raises the interrupt on unmask (enable_irq()=
+).
+> > > Depending on timing the device handler might be invoked _before_ the
+> > > sample is ready, no?
+> >=20
+> > For those controllers, I think it's almost always guaranteed that the f=
+irst
+> > IRQ
+> > after enable is not really a valid sample. We'll always have some SPI
+> > transfer
+> > (that should latch an IRQ on the controller) before enable_irq().
+>=20
+> The first irq isn't a valid sample unless the driver is preempted
+> between the spi transfer and the following enable_irq() such that the
+> irq event triggered by the SPI transfer doesn't result in calling the
+> irq handler before the sample is ready. I guess that's what you ruled
 
-diff --git a/drivers/net/phy/microchip_t1.c b/drivers/net/phy/microchip_t1.c
-index 71d6050b2833..63206ae8075d 100644
---- a/drivers/net/phy/microchip_t1.c
-+++ b/drivers/net/phy/microchip_t1.c
-@@ -10,11 +10,15 @@
- #include <linux/ethtool.h>
- #include <linux/ethtool_netlink.h>
- #include <linux/bitfield.h>
-+#include "microchip_ptp.h"
- 
- #define PHY_ID_LAN87XX				0x0007c150
- #define PHY_ID_LAN937X				0x0007c180
- #define PHY_ID_LAN887X				0x0007c1f0
- 
-+#define MCHP_PTP_LTC_BASE_ADDR			0xe000
-+#define MCHP_PTP_PORT_BASE_ADDR			(MCHP_PTP_LTC_BASE_ADDR + 0x800)
-+
- /* External Register Control Register */
- #define LAN87XX_EXT_REG_CTL                     (0x14)
- #define LAN87XX_EXT_REG_CTL_RD_CTL              (0x1000)
-@@ -229,6 +233,7 @@
- 
- #define LAN887X_INT_STS				0xf000
- #define LAN887X_INT_MSK				0xf001
-+#define LAN887X_INT_MSK_P1588_MOD_INT_MSK	BIT(3)
- #define LAN887X_INT_MSK_T1_PHY_INT_MSK		BIT(2)
- #define LAN887X_INT_MSK_LINK_UP_MSK		BIT(1)
- #define LAN887X_INT_MSK_LINK_DOWN_MSK		BIT(0)
-@@ -319,6 +324,8 @@ struct lan887x_regwr_map {
- 
- struct lan887x_priv {
- 	u64 stats[ARRAY_SIZE(lan887x_hw_stats)];
-+	struct mchp_ptp_clock *clock;
-+	bool init_done;
- };
- 
- static int lan937x_dsp_workaround(struct phy_device *phydev, u16 ereg, u8 bank)
-@@ -1269,8 +1276,19 @@ static int lan887x_get_features(struct phy_device *phydev)
- 
- static int lan887x_phy_init(struct phy_device *phydev)
- {
-+	struct lan887x_priv *priv = phydev->priv;
- 	int ret;
- 
-+	if (!priv->init_done && phy_interrupt_is_valid(phydev)) {
-+		priv->clock = mchp_ptp_probe(phydev, MDIO_MMD_VEND1,
-+					     MCHP_PTP_LTC_BASE_ADDR,
-+					     MCHP_PTP_PORT_BASE_ADDR);
-+		if (IS_ERR(priv->clock))
-+			return PTR_ERR(priv->clock);
-+
-+		priv->init_done = true;
-+	}
-+
- 	/* Clear loopback */
- 	ret = phy_clear_bits_mmd(phydev, MDIO_MMD_VEND1,
- 				 LAN887X_MIS_CFG_REG2,
-@@ -1470,6 +1488,7 @@ static int lan887x_probe(struct phy_device *phydev)
- 	if (!priv)
- 		return -ENOMEM;
- 
-+	priv->init_done = false;
- 	phydev->priv = priv;
- 
- 	return lan887x_phy_setup(phydev);
-@@ -1518,6 +1537,7 @@ static void lan887x_get_strings(struct phy_device *phydev, u8 *data)
- 
- static int lan887x_config_intr(struct phy_device *phydev)
- {
-+	struct lan887x_priv *priv = phydev->priv;
- 	int rc;
- 
- 	if (phydev->interrupts == PHY_INTERRUPT_ENABLED) {
-@@ -1537,12 +1557,23 @@ static int lan887x_config_intr(struct phy_device *phydev)
- 
- 		rc = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT_STS);
- 	}
-+	if (rc < 0)
-+		return rc;
- 
--	return rc < 0 ? rc : 0;
-+	if (phy_is_default_hwtstamp(phydev)) {
-+		return mchp_config_ptp_intr(priv->clock, LAN887X_INT_MSK,
-+					    LAN887X_INT_MSK_P1588_MOD_INT_MSK,
-+					    (phydev->interrupts ==
-+					     PHY_INTERRUPT_ENABLED));
-+	}
-+
-+	return 0;
- }
- 
- static irqreturn_t lan887x_handle_interrupt(struct phy_device *phydev)
- {
-+	struct lan887x_priv *priv = phydev->priv;
-+	int rc = IRQ_NONE;
- 	int irq_status;
- 
- 	irq_status = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT_STS);
-@@ -1553,10 +1584,13 @@ static irqreturn_t lan887x_handle_interrupt(struct phy_device *phydev)
- 
- 	if (irq_status & LAN887X_MX_CHIP_TOP_LINK_MSK) {
- 		phy_trigger_machine(phydev);
--		return IRQ_HANDLED;
-+		rc = IRQ_HANDLED;
- 	}
- 
--	return IRQ_NONE;
-+	if (irq_status & LAN887X_INT_MSK_P1588_MOD_INT_MSK)
-+		rc = mchp_ptp_handle_interrupt(priv->clock);
-+
-+	return rc;
- }
- 
- static int lan887x_cd_reset(struct phy_device *phydev,
--- 
-2.17.1
+I guess that race we could prevent by disabling IRQs...
+
+> out by saying "almost always"? I'd recommend to not rely on that. Chips
+> become faster (and so conversion time shorter) which widens the race
+> window and if you become unsynchronized and ignore every wrong second
+> irq all samples become bogous.
+
+Right now we set UNLAZY and that brings this difference in behavior dependi=
+ng on
+the IRQ controller we have. But if we remove that change and make sure ther=
+e can
+be no race between enable_irq() and the last spi_transfer, it should be saf=
+e to
+assume the first time we get in the handler is not for a valid sample. Not =
+sure
+synchronization could be an issue to the point where you ignore all samples=
+. If
+you ignore one IRQ, then the next one needs to be a valid sample (as there
+should be no spi_transfer in between).=C2=A0But not sure if it can affect
+performance...
+
+I think right now, unless the IRQ controller suffers from #2, every time we=
+ get
+in the device handler after enable_irq() is not because of DRDY and having =
+a
+valid sample or not is pure luck.=20
+
+>=20
+> So I still think the extra GPIO read should be implemented (as I
+> proposed in
+> https://lore.kernel.org/linux-iio/20241028160748.489596-9-u.kleine-koenig=
+@baylibre.com/
+> )
+> to guarantee reliable operation. If that isn't possible the only really
+> robust way to operate is using polling.
+
+My only issue with the gpio approach and your conversation with Thomas seem=
+s to
+prove it is that we're not guaranteed to be able to read the line. I guess =
+your
+reasoning is that if we can't do that for a platform, then don't give the g=
+pio
+in DT? But in that case, are we left with a device that might or might not =
+work?
+
+"Funny stuff"...
+
+- Nuno S=C3=A1
 
 
