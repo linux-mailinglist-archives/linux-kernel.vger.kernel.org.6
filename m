@@ -1,149 +1,198 @@
-Return-Path: <linux-kernel+bounces-409149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 802209C87FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:47:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6BE19C87D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:40:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B2961F23DC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:47:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7481F1F21147
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92051F9A90;
-	Thu, 14 Nov 2024 10:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F971F8932;
+	Thu, 14 Nov 2024 10:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=merzmedtech.de header.i=@merzmedtech.de header.b="V/o9xvwC";
-	dkim=pass (1024-bit key) header.d=merzmedtech.de header.i=@merzmedtech.de header.b="hstPvBvq"
-Received: from mailout03.agenturserver.de (mailout03.agenturserver.de [153.92.196.166])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="IWFyIWAm"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DED1F80CC;
-	Thu, 14 Nov 2024 10:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=153.92.196.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020B21F81A7
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731581194; cv=none; b=gtgpMjuMXbfTv0t9rnKt6Yan41zAaTS1L3fiQUwMzVzBI5jRjTmtDCWfOgTCb/YKBfRHb46Lg1bvY8dsQ2Z5CPgKZxKi4c9Yzu0MfMR2YQ4Cgdt1yfD4ROjgemWw9/eniOAl0PG1uIQh0Vn0ua0+oaX8c4ukEEmfn/+ejiPYOP8=
+	t=1731580711; cv=none; b=hGdCTC65Dto0TM/qjAcOu1ASIZRGUl1T0WVz8F7ZfB53j+YBNLmuRQUxXvZFsDo/WV7+dPBoT2M2EJzkRczoi6tYN5GZ6jtliJ9918/J90p3zwX7CDYSTlhLdqc+3R3uC4JnjWGxpSzV5e7Cwy2vq6LViIWR/CTjl1gj4Nkbys8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731581194; c=relaxed/simple;
-	bh=1yKZBsrmbsF6kF5B9YtEPnmfTYTaYvIykPUY7tTIHpA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ptuz75ycjEkUSb4dktc832jin5I1VpYle2ir3XqbgNEp+/dyBt3bRpIXQR3T7JBXBhfTCWipj1FWYROqI+GBVdrcq80GWH2GQ8NrN/4zyB8tF9uU3LMT2XzsUZkE7Anlq5LV/h5fNAMg8AFNxSkOaFE1rcyZYuyUqKieNcUx+Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=merzmedtech.de; spf=pass smtp.mailfrom=merzmedtech.de; dkim=pass (2048-bit key) header.d=merzmedtech.de header.i=@merzmedtech.de header.b=V/o9xvwC; dkim=pass (1024-bit key) header.d=merzmedtech.de header.i=@merzmedtech.de header.b=hstPvBvq; arc=none smtp.client-ip=153.92.196.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=merzmedtech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=merzmedtech.de
-Received: from mail02.agenturserver.de (mail02.internal [192.168.51.35])
-	by mailout03.agenturserver.de (Postfix) with ESMTP id 622685C0D;
-	Thu, 14 Nov 2024 11:38:59 +0100 (CET)
-Received: from XXX.XXX.XXX.XXX (XXXXX.XX [XXX.XXX.XXX.XXX])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	(Authenticated sender: h.v.raven@merzmedtech.de)
-	by mail.agenturserver.de (Postfix) with ESMTPSA id D8562A11D2;
-	Thu, 14 Nov 2024 11:38:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=merzmedtech.de;
-	s=agenturserver2048; t=1731580739;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hfv3j2YG3Vwz9KlYvvd33JzAfbZu2GDlSoP2XF8fHuk=;
-	b=V/o9xvwCWbSpoMH3b1BbX1wcybIcLlh+9OSYlPI9ldwlMI7ua88m6fzvjx0/B2YEXkFIrr
-	MCFEbHA0z0HU13sgU+47Ndk/TJzUCfdgNq5bRuNqEMAl1lySzdTPGTThV4gabdvoV7VaoJ
-	74CVzJuL2H8uCWjs7gzCrba6Gue3wzM6ZICDdqSNgbQJYKwlNMkAEyBxUVnYkE/0tux5ig
-	aWXBUKugd5nuLYex2t8l00Fjf+cjLLSw/R6AN17EK9xpmElbmFNa5/Tsg6A+t1h6kMGR9M
-	Dj5ki7P8PYGjn/9ZbaLW9I5+8zBE53Dy36/5nI3OeiTcsu7oGRnWBn/YFePCwQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=merzmedtech.de;
-	s=agenturserver; t=1731580739;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hfv3j2YG3Vwz9KlYvvd33JzAfbZu2GDlSoP2XF8fHuk=;
-	b=hstPvBvq4LwyHOexcMBhX2Gp+3jY+NRfJLHI7nMyHoctnEqNRwi6A91LiAn+uqIWXQj+8f
-	NAwES2jwonOpP1ZMwg+Fzi6muFXGteC/W4PfsVYkq4HMpSSasZXnxZQOnnCSe4NlspN8vj
-	FHmxn8LQJhXoFwil7sBnOX0RAfWlZ5s=
-From: "Hendrik v. Raven" <h.v.raven@merzmedtech.de>
-Date: Thu, 14 Nov 2024 11:38:39 +0100
-Subject: [PATCH 2/2] ASoC: dt-bindings: simple-mux: add idle-state property
+	s=arc-20240116; t=1731580711; c=relaxed/simple;
+	bh=H8AMRd4OBFqRbsOnvi0AvnmgwACZ0gjGpRyfXNyeUm4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jX8RaMsEqcJEhbEdyuYvAWgOYmNT2fSvzoTPC0caODNRz5aQzJyHBBJrWzt1aw23Fnv0QHEHAs73PnsLPY+dMwqWxnKa4sek9ALgT90mRrj4TO5Kct49WQsZnHkPDNv4C2VHYL8tJLYLIabF2e44EJO6JLtqXdZKpkYN8yRq6cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=IWFyIWAm; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb51f39394so4177491fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 02:38:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1731580707; x=1732185507; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=llExbBPE8bseY/8rXUzLPVclRCezstKecmmbZCxnRek=;
+        b=IWFyIWAmma/CTG0GGR4eZkfKmKGCxOCxVuYKs5AZh6sPzNL6uSprOW1qEPjFcwxb41
+         piC573ewqJnqG7qa2+KvE2QvtOfQwrPhwcMoHHOWZRPoS7zviqzKSX5c12ljZriMvXbP
+         h8Zd6xn6P4ZePr4bzu6VY8AR4GkzT4a7fFQ+r2vtF1nkwqH2tMaaSixLmPCjRHzsKlgN
+         vuhD6NXU1Uwv81qCsyvkIz4L4fPS3WzAkwwGkCsbkEmpUeu9LUgHl6UxDGzl0j2LbQ7D
+         oRA6QecqmG6mqTvWc0/8GQR8pZe5UcpbmezQpPS7Vs6tKr03dTfzM2AiOLCp3WLnik0T
+         HeEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731580707; x=1732185507;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=llExbBPE8bseY/8rXUzLPVclRCezstKecmmbZCxnRek=;
+        b=u94NJVnevXTq4MwVv+B+Xq09pmC2Ss0Z/cFFVnQsmDGEQsHXik2+oxMnaNMBh7puVU
+         HTfsNaomkCNVMStJE1gTU61WDxwMU3CpqKihyR6gFK47zbRNqf9DJuSQW/cyJBYv5b7w
+         23xtJpuKpWilrRRkKcUsRH62ibbOYlEl2Dv0VM8kEkUxcFofxsbHinil7/JGS4eoootu
+         FIXWRftQGk255udrRqzOmiSxFSX9c4biEEtmhzPgf0Oe+zvtK2XXCPox6DVIkNIettpQ
+         RYAuU1jjp3+SZNzpz45DEpFIK0UYzVV+wzRyrwtjas7ezYX2c9tZNMcde3QpWmPtLY5+
+         /CwA==
+X-Forwarded-Encrypted: i=1; AJvYcCX3zrLdhDKWHulEa8ym+EjR87SPQ+c8SE0UTulvZnpNr/wKVPxwUagyCFzcwHcRtUPaG9Lmnir90jkyGWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6st6tHSCcX2IBYIR/Mon9UnpRGlg0lwLHhJB/AgUIeJPy/8au
+	vb61Sz/7DLVcPkEnUZ+ppWHXc7sq617VZ6tlRxXIUJ1TpJC8vVCLIfR99orHzeH39ASKJ2CsF3Q
+	4
+X-Google-Smtp-Source: AGHT+IHuE+m1ft9nvo0ChCkY75Dans03o8VIGRdHionQ5aAL0n+JbDtdNcasgZRSrJ/+XnptxyLq2A==
+X-Received: by 2002:a2e:a90a:0:b0:2ef:17f7:6e1d with SMTP id 38308e7fff4ca-2ff201e74b6mr115969721fa.4.1731580706256;
+        Thu, 14 Nov 2024 02:38:26 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:3779:22d5:a322:7c13? ([2001:67c:2fbc:1:3779:22d5:a322:7c13])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dac1fbf9sm15761505e9.41.2024.11.14.02.38.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Nov 2024 02:38:25 -0800 (PST)
+Message-ID: <21330449-fab6-4c0b-a155-84c7419adbcb@openvpn.net>
+Date: Thu, 14 Nov 2024 11:38:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v11 20/23] ovpn: kill key and notify userspace in
+ case of IV exhaustion
+To: Sabrina Dubroca <sd@queasysnail.net>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+ Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-20-de4698c73a25@openvpn.net> <Zyn0aYyPVaaQJg3r@hog>
+ <816d8b43-8c19-4a4c-9e37-98a3415848b5@openvpn.net> <ZzS3jgNQoDH_0TvK@hog>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <ZzS3jgNQoDH_0TvK@hog>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241114-simple-mux-idle-state-v1-2-0b082dd6549b@merzmedtech.de>
-References: <20241114-simple-mux-idle-state-v1-0-0b082dd6549b@merzmedtech.de>
-In-Reply-To: <20241114-simple-mux-idle-state-v1-0-0b082dd6549b@merzmedtech.de>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Alexandre Belloni <aleandre.belloni@bootlin.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, "Hendrik v. Raven" <h.v.raven@merzmedtech.de>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1366;
- i=h.v.raven@merzmedtech.de; h=from:subject:message-id;
- bh=1yKZBsrmbsF6kF5B9YtEPnmfTYTaYvIykPUY7tTIHpA=;
- b=owEBzQIy/ZANAwAKAQP8mG1lSaY7AcsmYgBnNdNBa86yUOPT9tJFc0YnHgTRBA9wJzjnihiYu
- WtGpP4yKgGJApMEAAEKAH0WIQRfy2xFNGjRY609IOcD/JhtZUmmOwUCZzXTQV8UgAAAAAAuAChp
- c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0NUZDQjZDNDUzNDY
- 4RDE2M0FEM0QyMEU3MDNGQzk4NkQ2NTQ5QTYzQgAKCRAD/JhtZUmmO9vRD/93OSQzK0gDCjcQas
- gQcO7FeibYKWBTT214napppTj2KEf7q2H+f1dycgkYNQQcCkMi35Wrm34DOO2ydl1j0XDJUcFGn
- NFUmPBjoFvsHjGMec+hHiS/Qk8CQPvsVpiTjAajNn/ihXgLxHq30iIdpA3FA73IHJmRbH/9zYpE
- XmxpVapogYQDwg+mCQK30RO5MJv9WXlOn0JDFLm6Eu0rs3GDmUDxkPMfWfWJX3uZXrkV5parPdy
- 7HeH3m641jRpOW6GnUUp4WYq2mUzHvGn0RDT1AgueUgS01m5GQRL4f79Af1rl/8Jz7YxWSw6ssA
- E2s6u9CaA8NBXPE1DJI7/fiWF9p1FgN4D4aGkpjTp30CT5dMJ+BBevxVVlAz1EHvOL2YARhdSGz
- OrH/4GmUdG6Yg2d+CiWQL0wSJKuInZMiAGDV+aGDDl1g0v02OiYtRVnO8xIAfSWX0/nmS0xgmFW
- o5mpb+EjYlcUTRx0UPH6A60HEWd3lcJOkYeG+liQUjSYPkgRjh8+rI1XRUEQrskVYZqJh3R47g+
- PJ9gAIEQ+cVKpbPygmr80fg/OE0ZoEFTWjU66HbBinlcSgm6NxjKS9PuBX3/YZAATZwlliickpu
- aPJpeIloTQD6UctOPkqaudKPQKHw/a3UKLNYa7d88LjzBJRt3BmpphVsI0deIzx6axfg==
-X-Developer-Key: i=h.v.raven@merzmedtech.de; a=openpgp;
- fpr=7A67B9A9F57B4F324AB6B8EB045B81F5FB5BA3AE
-X-purgate-original-type: clean
-X-purgate-type: clean
-X-purgate-Ad: Categorized by eleven eXpurgate (R) https://www.eleven.de
-X-purgate: This mail is considered clean (visit https://www.eleven.de for further information)
-X-purgate: clean
-X-purgate-size: 1368
-X-purgate-ID: 155922::1731580739-D8CA1432-45DBD76D/0/0
 
-simple-mux immediately activates the new output, even when it is powered
-down. This can be undesirable in some cases, for example when a
-mechanical relais is used.
-Adds "idle-state" property from the mux controller to select the output
-state to be used when the mux is powered down.
+On 13/11/2024 15:28, Sabrina Dubroca wrote:
+> 2024-11-12, 16:44:09 +0100, Antonio Quartulli wrote:
+>> On 05/11/2024 11:33, Sabrina Dubroca wrote:
+>>> 2024-10-29, 11:47:33 +0100, Antonio Quartulli wrote:
+>>>> +int ovpn_nl_key_swap_notify(struct ovpn_peer *peer, u8 key_id)
+>>>> +{
+>>> [...]
+>>>> +
+>>>> +	nla_nest_end(msg, k_attr);
+>>>> +	genlmsg_end(msg, hdr);
+>>>> +
+>>>> +	genlmsg_multicast_netns(&ovpn_nl_family, dev_net(peer->ovpn->dev), msg,
+>>>> +				0, OVPN_NLGRP_PEERS, GFP_ATOMIC);
+>>>> +
+>>>
+>>> Is openvpn meant to support moving the device to a different netns? In
+>>> that case I'm not sure the netns the ovpn netdevice is in is the right
+>>> one, the userspace client will be in the encap socket's netns instead
+>>> of the netdevice's?
+>>>
+>>> (same thing in the next patch)
+>>
+>> Well, moving between netns's may not be among the most common use cases, but
+>> I can see people doing all kind of weird things, if not forbidden.
+> 
+> The idea would be that only the ovpn device is in one particular
+> netns, so that no packets can make it out of that netns unencrypted. I
+> don't know if anybody actually does that.
 
-Signed-off-by: Hendrik v. Raven <h.v.raven@merzmedtech.de>
----
- Documentation/devicetree/bindings/sound/simple-audio-mux.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+Well I can imagine starting openvpn in the main netns and moving the 
+device afterwards to something more restrictive (i.e. even a docker 
+specific netns).
 
-diff --git a/Documentation/devicetree/bindings/sound/simple-audio-mux.yaml b/Documentation/devicetree/bindings/sound/simple-audio-mux.yaml
-index 194ac1d4f4f5f40a9bc44e8cd0acbf2eab708365..9b1bda4852e160618ffd349d2f7c90645d5b3e03 100644
---- a/Documentation/devicetree/bindings/sound/simple-audio-mux.yaml
-+++ b/Documentation/devicetree/bindings/sound/simple-audio-mux.yaml
-@@ -29,6 +29,10 @@ properties:
-     $ref: /schemas/types.yaml#/definitions/string-array
-     maxItems: 2
- 
-+  idle-state:
-+    description: If present specifies the state when the mux is powered down
-+    $ref: /schemas/mux/mux-controller.yaml#/properties/idle-state
-+
-   sound-name-prefix: true
- 
- required:
-@@ -43,4 +47,5 @@ examples:
-         compatible = "simple-audio-mux";
-         mux-gpios = <&gpio 3 0>;
-         state-labels = "Label_A", "Label_B";
-+        idle-state = <0>;
-     };
+> 
+>> Hence, I would not assume the netdevice to always stay in the same netns all
+>> time long.
+>>
+>> This said, what you say assumes that the userspace process won't change
+>> netns after having added the peer.
+> 
+> That shouldn't matter as long as it's still listening to multicast
+> messages in the original netns.
+
+Oky.
+
+> 
+> Around that same "which netns" question, ovpn_udp{4,6}_output uses the
+> socket's, but ovpn_nexthop_from_rt{4,6} uses the netdev's.
+
+I think this is ok, because routing related decision should be taken in 
+the netns where the device is, but the transport layer should make 
+decisions based on where the socket lives.
+
+Regards,
+
+> 
 
 -- 
-2.47.0
+Antonio Quartulli
+OpenVPN Inc.
 
 
