@@ -1,154 +1,203 @@
-Return-Path: <linux-kernel+bounces-409316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 001719C8B31
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:54:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60E4C9C8B39
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:56:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACAA81F21A98
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:54:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F556286F7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29AE1FCC4E;
-	Thu, 14 Nov 2024 12:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8504D1FAC5C;
+	Thu, 14 Nov 2024 12:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="QMTGCInV"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="gMmh6ctk"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074E91FB8A9
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 12:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4421FE0F5
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 12:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731588694; cv=none; b=tHIrAzFJjOLOg+lG+xxmnbB+nmuCFwQOUokqZAxRBhtI2HgpR7G41B85QZr/oi1ycE6HQHUyO14rAURO/eFIok79M19g2IcjA8iALqL3sfAVioaJgYzyW4Pztrxb1QdPJqLpBMFY6KfVuSABa3JcZkCKW9q7AvVJToVSBMBp1hA=
+	t=1731588699; cv=none; b=Dv4C/PG3eEUMuYAixmCwXhJ67/qkfpe8eWai+6MR9xdZn3ilLQdXc6ONrHt43lWzc35uSbGPCFQRCTTcier3TOy/xAJCdBVSUkfY145Z5/TcBRisZdfF55hCOBAnL8jYnKvGEbDOG/sh3osJVMpPJkU8hLEvd8tS9mYUfRFMcko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731588694; c=relaxed/simple;
-	bh=BdX8F9GYE15oH2m4KueFN1WXUWkpazHOd2IWZs953MM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jiu3ryFeu3LjkQcSnN6LXSoW/IOXBVCZTZ/3PwstUOHUyoOXEprbOETJbwOszUcQ0w8Zpo4kAw+yrai2cLGRGHl3dF6WjUI/kTlgAOTYvz0QOUzjDLsA34QkjTdhLPrHbPhnfGkQkTDjp0HBLrRUwTuCRXeu99RqYi51nARJBYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=QMTGCInV; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1731588686;
-	bh=TVrPuN62TirQi3n8J4yEY6pFFvqH5BlXogNdJxJWTvA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QMTGCInVzFrOCynOneQRsCuZJ+NfX58DNoQzN5bCOgh1cfaxP92XRMRFoV+Ojh0R4
-	 i6nnahJcJEyT0BjMQ59SpaJ47hRXEhRf2zUjC8ywhiVJxV3mbjF5wc0bOD1IO7sjfj
-	 p/MHLovo7xeT1s1VeLOQzO/IjirIa3ZACYsfNwT8NSQQE7qB35tJCeCpMBSuJ6LNeV
-	 kiohkY+5LF1D2KdkM6SSY0CVQ9UlzXp6gvvVdP9UKMWaHitj+kLnJQWrJoESU1872s
-	 AkSXqPx17mA/fx53ADrhXbqkV+5/L/cSq0/0s3uCrVZ24gTjWycfqSro36EBENTM42
-	 iTBJHfFApVAJg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xq0QQ3s3Mz4xcd;
-	Thu, 14 Nov 2024 23:51:26 +1100 (AEDT)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: <linuxppc-dev@lists.ozlabs.org>
-Cc: <linux-kernel@vger.kernel.org>,
-	<jk@ozlabs.org>,
-	<arnd@arndb.de>,
-	<geoff@infradead.org>
-Subject: [RFC PATCH 20/20] genirq: Remove IRQ_EDGE_EOI_HANDLER
-Date: Thu, 14 Nov 2024 23:51:09 +1100
-Message-ID: <20241114125111.599093-20-mpe@ellerman.id.au>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241114125111.599093-1-mpe@ellerman.id.au>
-References: <20241114125111.599093-1-mpe@ellerman.id.au>
+	s=arc-20240116; t=1731588699; c=relaxed/simple;
+	bh=Dxfm1+UquUijGX5/OGQQhtSstZ6KeE83Y7Oiq3eYRe4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IPZ10JvYJOA4GLzuvvph2GvRJLm8zbCsv2e+bQHMCfh91K/6FTQG08vyowY0eHONFW6SXGCk36FyvuzUF90bADlu/0+RSTtVpVX80Exjt345IGhA+E/zZeGpNtWqsUjul6oQQKvra6zFtNaTE6OSIL9sK0hXF2mzmQewMGQv/Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=gMmh6ctk; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-71e4244fdc6so416172b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 04:51:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1731588697; x=1732193497; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZC5INDeabHnT71NmEDIa3Mv0iVBAAHNk77rjOFhIaNw=;
+        b=gMmh6ctkeFVb9zh+Nhz+I9rksRAmz/USMMiKwcaBMVwu0UPebZzhaecz7NE1HR09BO
+         MhcYg3pUmlPJMtQvuBTbk3im98pD/dHEZEJ8lfKz5xW8xE6Ye4mUYTJJLjuuDo8a9My9
+         t2eZ79BlJ9Mu6DOwZ+0cf3U/2aExCne5z5uCowxvqDeRkP069Al7IbGaNdPFgUbftkWd
+         2QbKp6qtI97ApIrWukycoRvj68gCEXTBHK9s2lzX5850RxPX1NBGQ1bAI8hRndMFvSC+
+         yDBmPy4zoyaKYI4vnGTxQCJ8vtu8FQrTvzwurZvOoxVNx610QABM9Sj7SVziuk2W5DSV
+         /s6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731588697; x=1732193497;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZC5INDeabHnT71NmEDIa3Mv0iVBAAHNk77rjOFhIaNw=;
+        b=TCP7BF/sHA+cFvweIPFxdX8iHHifTBe5HwRg7fwNO7Oo0PxtKCjea0ZnqJQfOdurs7
+         oSs5YZItAVVUrbs1w1gvDCwQdYZ+N+4okzr/xpZ8SO0tlo/kLIRB5eBJW6+ZMrq8RDR4
+         X4KY3jEoECzpZkH29v8IIb3Hf1XLgIZXjW/5l1CbbfdhTMzDExAxdNTnfFlC+ZkS6wlt
+         H6Wva3a9C9zEqidbxIWj+13GEwVsJGVhMoz7eh++zOsHJc2I2f9cRPJmC0UWkJB4lUIX
+         8KcSnJYVPRwo/wQq6m/5DVApMHTiXQymQQVcEP1TwPNMcNMY0p0OaIFuJmyD6DTR9KN/
+         72xw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6hZ3s+3Yb9gG5Sz5WVasFpFUO5fZ2M9tkpYW+2tHMgp6OfHOyQw/2KC+STg0JYm1h83yqlXoxRtcZN90=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcwebOCzFGsXKdWReS1cN9jtv0Rs1BKXpfcqPz6JKnL7pB7FoP
+	AJAgx8jmRhELnm0Iow2ZNQF3r7vY1ufDhgplftD8zfeWa6VyRzZxGKrQtvdxrBQ=
+X-Google-Smtp-Source: AGHT+IE6YNcQajPHmUZtx2yiT0fJOw3M/4hiatkcBJRSA6HMdKocYS46njw84M/KfuTqyRFvYDdTaw==
+X-Received: by 2002:a05:6a00:3d52:b0:71e:3b51:e850 with SMTP id d2e1a72fcca58-72469c5e105mr2873394b3a.2.1731588696726;
+        Thu, 14 Nov 2024 04:51:36 -0800 (PST)
+Received: from [10.84.149.95] ([63.216.146.178])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7246a9bf773sm1155490b3a.159.2024.11.14.04.51.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Nov 2024 04:51:36 -0800 (PST)
+Message-ID: <b524a568-fa3b-4618-80cc-e8c31ea4eeac@bytedance.com>
+Date: Thu, 14 Nov 2024 20:51:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/9] mm: introduce skip_none_ptes()
+Content-Language: en-US
+To: David Hildenbrand <david@redhat.com>
+Cc: jannh@google.com, hughd@google.com, willy@infradead.org,
+ muchun.song@linux.dev, vbabka@kernel.org, akpm@linux-foundation.org,
+ peterx@redhat.com, mgorman@suse.de, catalin.marinas@arm.com,
+ will@kernel.org, dave.hansen@linux.intel.com, luto@kernel.org,
+ peterz@infradead.org, x86@kernel.org, lorenzo.stoakes@oracle.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, zokeefe@google.com,
+ rientjes@google.com
+References: <cover.1731566457.git.zhengqi.arch@bytedance.com>
+ <574bc9b646c87d878a5048edb63698a1f8483e10.1731566457.git.zhengqi.arch@bytedance.com>
+ <c7eeac93-3619-4443-896f-ef2e02f0bef0@redhat.com>
+ <617a063e-bd84-4da5-acf4-6ff516512055@bytedance.com>
+ <fa3fc933-cd51-4be5-944e-250da9289eda@redhat.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <fa3fc933-cd51-4be5-944e-250da9289eda@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-The powerpc Cell blade support, now removed, was the only user of
-IRQ_EDGE_EOI_HANDLER, so remove it.
 
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
----
- kernel/irq/Kconfig |  4 ----
- kernel/irq/chip.c  | 47 ----------------------------------------------
- 2 files changed, 51 deletions(-)
 
-diff --git a/kernel/irq/Kconfig b/kernel/irq/Kconfig
-index 529adb1f5859..564f3d454102 100644
---- a/kernel/irq/Kconfig
-+++ b/kernel/irq/Kconfig
-@@ -47,10 +47,6 @@ config GENERIC_IRQ_INJECTION
- config HARDIRQS_SW_RESEND
-        bool
- 
--# Edge style eoi based handler (cell)
--config IRQ_EDGE_EOI_HANDLER
--       bool
--
- # Generic configurable interrupt chip implementation
- config GENERIC_IRQ_CHIP
-        bool
-diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index 271e9139de77..de5866f57bd7 100644
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -838,53 +838,6 @@ void handle_edge_irq(struct irq_desc *desc)
- }
- EXPORT_SYMBOL(handle_edge_irq);
- 
--#ifdef CONFIG_IRQ_EDGE_EOI_HANDLER
--/**
-- *	handle_edge_eoi_irq - edge eoi type IRQ handler
-- *	@desc:	the interrupt description structure for this irq
-- *
-- * Similar as the above handle_edge_irq, but using eoi and w/o the
-- * mask/unmask logic.
-- */
--void handle_edge_eoi_irq(struct irq_desc *desc)
--{
--	struct irq_chip *chip = irq_desc_get_chip(desc);
--
--	raw_spin_lock(&desc->lock);
--
--	desc->istate &= ~(IRQS_REPLAY | IRQS_WAITING);
--
--	if (!irq_may_run(desc)) {
--		desc->istate |= IRQS_PENDING;
--		goto out_eoi;
--	}
--
--	/*
--	 * If its disabled or no action available then mask it and get
--	 * out of here.
--	 */
--	if (irqd_irq_disabled(&desc->irq_data) || !desc->action) {
--		desc->istate |= IRQS_PENDING;
--		goto out_eoi;
--	}
--
--	kstat_incr_irqs_this_cpu(desc);
--
--	do {
--		if (unlikely(!desc->action))
--			goto out_eoi;
--
--		handle_irq_event(desc);
--
--	} while ((desc->istate & IRQS_PENDING) &&
--		 !irqd_irq_disabled(&desc->irq_data));
--
--out_eoi:
--	chip->irq_eoi(&desc->irq_data);
--	raw_spin_unlock(&desc->lock);
--}
--#endif
--
- /**
-  *	handle_percpu_irq - Per CPU local irq handler
-  *	@desc:	the interrupt description structure for this irq
--- 
-2.47.0
+On 2024/11/14 20:32, David Hildenbrand wrote:
+> On 14.11.24 10:20, Qi Zheng wrote:
+>>
+>>
+>> On 2024/11/14 16:04, David Hildenbrand wrote:
+>>>
+>>>>    static unsigned long zap_pte_range(struct mmu_gather *tlb,
+>>>>                    struct vm_area_struct *vma, pmd_t *pmd,
+>>>>                    unsigned long addr, unsigned long end,
+>>>> @@ -1682,13 +1704,17 @@ static unsigned long zap_pte_range(struct
+>>>> mmu_gather *tlb,
+>>>>            pte_t ptent = ptep_get(pte);
+>>>>            int max_nr;
+>>>> -        nr = 1;
+>>>> -        if (pte_none(ptent))
+>>>> -            continue;
+>>>> -
+>>>>            if (need_resched())
+>>>>                break;
+>>>> +        nr = skip_none_ptes(pte, addr, end);
+>>>> +        if (nr) {
+>>>> +            addr += PAGE_SIZE * nr;
+>>>> +            if (addr == end)
+>>>> +                break;
+>>>> +            pte += nr;
+>>>> +        }
+>>>> +
+>>>>            max_nr = (end - addr) / PAGE_SIZE;
+>>>
+>>> I dislike calculating max_nr twice, once here and once in skip_non_ptes.
+>>>
+>>> Further, you're missing to update ptent here.
+>>
+>> Oh, my bad. However, with [PATCH v3 5/9], there will be no problem, but
+>> there are still two ptep_get() and max_nr calculation.
+>>
+>> If you inline it you can
+>>> avoid another ptep_get().
+>>
+>> Do you mean to inline the skip_none_ptes() into do_zap_pte_range()?
+> 
+> Effectively moving this patch after #5, and have it be something like:
+> 
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 1949f5e0fece5..4f5d1e4c6688e 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -1667,8 +1667,21 @@ static inline int do_zap_pte_range(struct 
+> mmu_gather *tlb,
+>          pte_t ptent = ptep_get(pte);
+>          int max_nr = (end - addr) / PAGE_SIZE;
+> 
+> -       if (pte_none(ptent))
+> -               return 1;
+> +       /* Skip all consecutive pte_none(). */
+> +       if (pte_none(ptent)) {
+> +               int nr;
+> +
+> +               for (nr = 1; nr < max_nr; nr++) {
+> +                       ptent = ptep_get(pte + nr);
+> +                       if (!pte_none(ptent))
+> +                               break;
+> +               }
+> +               max_nr -= nr;
+> +               if (!max_nr)
+> +                       return nr;
+> +               pte += nr;
+> +               addr += nr * PAGE_SIZE;
+> +       }
+> 
+>          if (pte_present(ptent))
+>                  return zap_present_ptes(tlb, vma, pte, ptent, max_nr,
+> 
+> 
+> In the context of this patch this makes most sense.
+> 
+> Regarding "count_pte_none" comment, I assume you talk about patch #7.
 
+Yes.
+
+> 
+> Can't you simply return the number of pte_none that you skipped here 
+> using another
+> input variable, if really required?
+
+Suppose we add an input variable nr_skip to do_zap_pte_range(), you mean
+to return the above nr to zap_pte_range() through:
+
+*nr_skip = nr;
+
+and then:
+
+zap_pte_range
+--> nr = do_zap_pte_range(tlb, vma, pte, addr, end, details, &skip_nr,
+  				      rss, &force_flush, &force_break);
+     if (can_reclaim_pt) {
+         none_nr += count_pte_none(pte, nr);
+         none_nr += nr_skip;
+     }
+
+Right?
+
+> 
 
