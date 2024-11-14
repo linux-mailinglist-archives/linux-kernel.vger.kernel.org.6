@@ -1,154 +1,284 @@
-Return-Path: <linux-kernel+bounces-408553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6BC99C805E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:07:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3223F9C8064
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:08:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B395283C10
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:06:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87E14B25E32
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118951E571E;
-	Thu, 14 Nov 2024 02:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C8A1E572C;
+	Thu, 14 Nov 2024 02:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="JG31iwGc"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iFOu+M5t"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F7518641;
-	Thu, 14 Nov 2024 02:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72DB11E47B3
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 02:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731550011; cv=none; b=ohmKaP0TOXN8hU2DMeRbSpjCiez4Ma4nqkkmPlyQSTRRvXnjq12FXREnhnUJ25JWgXLe6JBQGxi4JIW62DXZVcMYlVO/kfOKWtWWFDZgws1QERQ9cikzcEc2qlw2nxuXFxtcoJF8JoVh6jCAxNFPICAov3sdqk5tdapQ1/BXtLU=
+	t=1731550114; cv=none; b=PI3vB1SegEVk05qYZxGMTX/ONT0AVTuEbeA4Z+KbvK94fSaRTIN6xDZfvU6pxnQH85OgFhdN3EJhWnB17Mr467wJPJa/4VGF/LCVNNB5BR7NhvAtDLWaSD2vGrDJ6qRIWC72F1Z30pXIRbmLSwBq5b4HdGkx3xWPAXFbtgOzepE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731550011; c=relaxed/simple;
-	bh=6huMnpSgqP+wEFrua2jjupo85dRw+e1pKg5dGzs3rhA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HI9B+kt4zE0MBFnoMfxs6EuyIy6jADX0Kw+9UPILaeQx72pGiZOuTXR5tozsmrE3bj6PRNHgOn+TiXW8qw5H4znHymo+SeIxF301AzwtxZbU8CKXJfsiqnuA+hOrHmRH662PMc2VYOH7+cA6isrs+imbXJ83Amqm3ua4ysbdTng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=JG31iwGc; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=aYqNAbWwHtAitjMXdVYel/iWD1XTqhUa6HvabsCGd/k=; b=JG31iwGcyQi/3SPn
-	OM/Ws7GNwysi8gMn29UNdVe8T+9OL+h7nTH9JN940fnUPnfmB4nmRChm51DFZY7orueHtj+/bvlK9
-	FFS/LdhcEpW1O/urnPfTNGpXYDILAZGoLCmv5qPKHflc9sh4AMrjuQ62MG2y8UIv8tUHsYfiMi5f5
-	VaCuwfoGfCHilhKrn2Ik/ANiLEi6iVuEDwqJWJdsgb36tNVEhYGcX8uoVhruo9+8bjdO+V2HVcISf
-	IZRDhmoDIkyMgbJ1dyvEz3Zj/RaQEjtvcNIYwM2WXPDaJoXJDfgpSTkgnnR+9Fgyg/RLqp9zS3mDD
-	pRWiOvG85nzZNVk68g==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tBPFo-00HPhu-2R;
-	Thu, 14 Nov 2024 02:06:40 +0000
-From: linux@treblig.org
-To: mchehab@kernel.org,
-	linux-media@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] media: b2c2: Remove unused functions
-Date: Thu, 14 Nov 2024 02:06:36 +0000
-Message-ID: <20241114020636.299783-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731550114; c=relaxed/simple;
+	bh=rBQiG53XS9nyGWQZCVRE1lkHgGnJwtQernChsuQJGZE=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=f77hDal05FJWrRRAD+oO9urNmtSr1k9IrkfKoSfdMLB0sCD8sQAhy8iwjFDR0wooK5u1Bj0kJxBdRsYIMjUnTqABVHMFOXMXAyGN2SMspou5V2hwwFFjBvZFRH1qRjJqdWnPe0kKDBzexSNc+H6iTqk4m9wGOy1zvYhaX4S1KG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iFOu+M5t; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731550113; x=1763086113;
+  h=date:from:to:cc:subject:message-id;
+  bh=rBQiG53XS9nyGWQZCVRE1lkHgGnJwtQernChsuQJGZE=;
+  b=iFOu+M5tXX545gsLbL8BfvMzRl+dZwQWGMTxgWjqypn4ZmPRD2GMYZQE
+   9KvBCr8AIve5Hz/jYSROYiYI1kfBBhxhOBYAUHoeJT8LJkUd3rXwes5h4
+   LlbtgA2V5FglOmglgaH24dEzcFWcFKYo+uGmHPDkkEAU0C1eNajS1zBlN
+   W20PId4FtZb8RGFPkS6doldoy8Hyjq3s/fIHHx/JL2QTfGT2wQIQiK4Ki
+   NA2zejvn4T/Wo0/clhgWmShaON5xDL66WfPpY/5a3g/3GeJdeNJHXG2cZ
+   qxnSOoxtUYHghjHms8+VhXzi5XHfFW4KkOOciIWcaEKAWWYTBbXhHDrVb
+   Q==;
+X-CSE-ConnectionGUID: qGvSxjr5QAmj19Z9VQ+oyw==
+X-CSE-MsgGUID: YYgmynEBT8WFO58ITvHeQw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="48922567"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="48922567"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 18:08:32 -0800
+X-CSE-ConnectionGUID: Z9FHBsonTqi95sH7PZQjZw==
+X-CSE-MsgGUID: AJ3AC62NSCqcNIejAdni7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
+   d="scan'208";a="88471734"
+Received: from lkp-server01.sh.intel.com (HELO b014a344d658) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 13 Nov 2024 18:08:30 -0800
+Received: from kbuild by b014a344d658 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tBPHY-00002T-0n;
+	Thu, 14 Nov 2024 02:08:28 +0000
+Date: Thu, 14 Nov 2024 10:07:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:locking/core] BUILD SUCCESS
+ 3b49a347d751553b1d1be69c8619ae2e85fdc28d
+Message-ID: <202411141021.BqWgPM3J-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/core
+branch HEAD: 3b49a347d751553b1d1be69c8619ae2e85fdc28d  locking/Documentation: Fix grammar in percpu-rw-semaphore.rst
 
-flexcop_dma_control_size_irq() last use was removed in 2005 by
-commit 64221be7b900 ("[PATCH] dvb: flexcop: woraround irq stop problem")
+elapsed time: 923m
 
-flexcop_dump_reg() last use was removed in 2009 by
-commit 382c5546d618 ("V4L/DVB (10694): [PATCH] software IRQ watchdog for
-Flexcop B2C2 DVB PCI cards")
+configs tested: 192
+configs skipped: 5
 
-Remove them.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/media/common/b2c2/flexcop-common.h |  4 ----
- drivers/media/common/b2c2/flexcop-misc.c   | 13 -------------
- drivers/media/pci/b2c2/flexcop-dma.c       | 17 -----------------
- 3 files changed, 34 deletions(-)
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    clang-20
+alpha                            allyesconfig    gcc-14.2.0
+alpha                               defconfig    gcc-14.2.0
+arc                              allmodconfig    clang-20
+arc                              allmodconfig    gcc-13.2.0
+arc                               allnoconfig    gcc-14.2.0
+arc                              allyesconfig    clang-20
+arc                              allyesconfig    gcc-13.2.0
+arc                      axs103_smp_defconfig    gcc-13.2.0
+arc                                 defconfig    gcc-14.2.0
+arc                            hsdk_defconfig    gcc-13.2.0
+arc                   randconfig-001-20241114    clang-14
+arc                   randconfig-002-20241114    clang-14
+arc                        vdk_hs38_defconfig    gcc-14.2.0
+arm                              alldefconfig    gcc-13.2.0
+arm                              alldefconfig    gcc-14.2.0
+arm                              allmodconfig    clang-20
+arm                              allmodconfig    gcc-14.2.0
+arm                               allnoconfig    gcc-14.2.0
+arm                              allyesconfig    clang-20
+arm                              allyesconfig    gcc-14.2.0
+arm                                 defconfig    gcc-14.2.0
+arm                            dove_defconfig    gcc-14.2.0
+arm                          gemini_defconfig    gcc-13.2.0
+arm                   randconfig-001-20241114    clang-14
+arm                   randconfig-002-20241114    clang-14
+arm                   randconfig-003-20241114    clang-14
+arm                   randconfig-004-20241114    clang-14
+arm                           sama5_defconfig    gcc-13.2.0
+arm                         socfpga_defconfig    gcc-14.2.0
+arm                        spear6xx_defconfig    gcc-13.2.0
+arm                           sunxi_defconfig    gcc-13.2.0
+arm64                            allmodconfig    clang-20
+arm64                             allnoconfig    gcc-14.2.0
+arm64                               defconfig    gcc-14.2.0
+arm64                 randconfig-001-20241114    clang-14
+arm64                 randconfig-002-20241114    clang-14
+arm64                 randconfig-003-20241114    clang-14
+arm64                 randconfig-004-20241114    clang-14
+csky                              allnoconfig    gcc-14.2.0
+csky                                defconfig    gcc-14.2.0
+csky                  randconfig-001-20241114    clang-14
+csky                  randconfig-002-20241114    clang-14
+hexagon                          allmodconfig    clang-20
+hexagon                           allnoconfig    gcc-14.2.0
+hexagon                          allyesconfig    clang-20
+hexagon                             defconfig    gcc-14.2.0
+hexagon               randconfig-001-20241114    clang-14
+hexagon               randconfig-002-20241114    clang-14
+i386                             allmodconfig    clang-19
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    clang-19
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    clang-19
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20241114    clang-19
+i386        buildonly-randconfig-002-20241114    clang-19
+i386        buildonly-randconfig-002-20241114    gcc-11
+i386        buildonly-randconfig-003-20241114    clang-19
+i386        buildonly-randconfig-003-20241114    gcc-12
+i386        buildonly-randconfig-004-20241114    clang-19
+i386        buildonly-randconfig-004-20241114    gcc-12
+i386        buildonly-randconfig-005-20241114    clang-19
+i386        buildonly-randconfig-005-20241114    gcc-12
+i386        buildonly-randconfig-006-20241114    clang-19
+i386                                defconfig    clang-19
+i386                  randconfig-001-20241114    clang-19
+i386                  randconfig-001-20241114    gcc-12
+i386                  randconfig-002-20241114    clang-19
+i386                  randconfig-002-20241114    gcc-12
+i386                  randconfig-003-20241114    clang-19
+i386                  randconfig-004-20241114    clang-19
+i386                  randconfig-004-20241114    gcc-12
+i386                  randconfig-005-20241114    clang-19
+i386                  randconfig-006-20241114    clang-19
+i386                  randconfig-011-20241114    clang-19
+i386                  randconfig-012-20241114    clang-19
+i386                  randconfig-012-20241114    gcc-12
+i386                  randconfig-013-20241114    clang-19
+i386                  randconfig-014-20241114    clang-19
+i386                  randconfig-015-20241114    clang-19
+i386                  randconfig-015-20241114    gcc-12
+i386                  randconfig-016-20241114    clang-19
+loongarch                        allmodconfig    gcc-14.2.0
+loongarch                         allnoconfig    gcc-14.2.0
+loongarch                           defconfig    gcc-14.2.0
+loongarch             randconfig-001-20241114    clang-14
+loongarch             randconfig-002-20241114    clang-14
+m68k                             allmodconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                             allyesconfig    gcc-14.2.0
+m68k                                defconfig    gcc-14.2.0
+m68k                        m5272c3_defconfig    gcc-14.2.0
+m68k                        m5307c3_defconfig    gcc-14.2.0
+m68k                            q40_defconfig    gcc-14.2.0
+m68k                           virt_defconfig    gcc-13.2.0
+microblaze                       allmodconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+microblaze                       allyesconfig    gcc-14.2.0
+microblaze                          defconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+mips                      bmips_stb_defconfig    gcc-14.2.0
+mips                           ip27_defconfig    gcc-13.2.0
+mips                     loongson1b_defconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                               defconfig    gcc-14.2.0
+nios2                 randconfig-001-20241114    clang-14
+nios2                 randconfig-002-20241114    clang-14
+openrisc                          allnoconfig    clang-20
+openrisc                          allnoconfig    gcc-14.2.0
+openrisc                         allyesconfig    gcc-14.2.0
+openrisc                            defconfig    gcc-12
+openrisc                  or1klitex_defconfig    gcc-14.2.0
+parisc                           allmodconfig    gcc-14.2.0
+parisc                            allnoconfig    clang-20
+parisc                            allnoconfig    gcc-14.2.0
+parisc                           allyesconfig    gcc-14.2.0
+parisc                              defconfig    gcc-12
+parisc                randconfig-001-20241114    clang-14
+parisc                randconfig-002-20241114    clang-14
+parisc64                            defconfig    gcc-14.2.0
+powerpc                          allmodconfig    gcc-14.2.0
+powerpc                           allnoconfig    clang-20
+powerpc                           allnoconfig    gcc-14.2.0
+powerpc                          allyesconfig    clang-20
+powerpc                          allyesconfig    gcc-14.2.0
+powerpc                      bamboo_defconfig    gcc-13.2.0
+powerpc                        cell_defconfig    gcc-14.2.0
+powerpc                       ebony_defconfig    gcc-14.2.0
+powerpc                 linkstation_defconfig    gcc-13.2.0
+powerpc                   lite5200b_defconfig    gcc-13.2.0
+powerpc                 mpc832x_rdb_defconfig    gcc-13.2.0
+powerpc               mpc834x_itxgp_defconfig    gcc-13.2.0
+powerpc                     mpc83xx_defconfig    gcc-14.2.0
+powerpc               randconfig-001-20241114    clang-14
+powerpc               randconfig-002-20241114    clang-14
+powerpc               randconfig-003-20241114    clang-14
+powerpc                    socrates_defconfig    gcc-14.2.0
+powerpc64             randconfig-001-20241114    clang-14
+powerpc64             randconfig-002-20241114    clang-14
+riscv                            allmodconfig    clang-20
+riscv                            allmodconfig    gcc-14.2.0
+riscv                             allnoconfig    clang-20
+riscv                             allnoconfig    gcc-14.2.0
+riscv                            allyesconfig    clang-20
+riscv                            allyesconfig    gcc-14.2.0
+riscv                               defconfig    gcc-12
+riscv                 randconfig-001-20241114    clang-14
+riscv                 randconfig-002-20241114    clang-14
+s390                             allmodconfig    clang-20
+s390                             allmodconfig    gcc-14.2.0
+s390                              allnoconfig    clang-20
+s390                             allyesconfig    gcc-14.2.0
+s390                                defconfig    gcc-12
+s390                  randconfig-001-20241114    clang-14
+s390                  randconfig-002-20241114    clang-14
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                                  defconfig    gcc-12
+sh                    randconfig-001-20241114    clang-14
+sh                    randconfig-002-20241114    clang-14
+sh                           se7343_defconfig    gcc-13.2.0
+sh                           se7721_defconfig    gcc-14.2.0
+sh                     sh7710voipgw_defconfig    gcc-13.2.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc64                             defconfig    gcc-12
+sparc64               randconfig-001-20241114    clang-14
+sparc64               randconfig-002-20241114    clang-14
+um                               allmodconfig    clang-20
+um                                allnoconfig    clang-17
+um                                allnoconfig    clang-20
+um                               allyesconfig    clang-20
+um                               allyesconfig    gcc-12
+um                                  defconfig    gcc-12
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20241114    clang-14
+um                    randconfig-002-20241114    clang-14
+um                           x86_64_defconfig    gcc-12
+x86_64                            allnoconfig    clang-19
+x86_64                           allyesconfig    clang-19
+x86_64                              defconfig    clang-19
+x86_64                              defconfig    gcc-11
+x86_64                                  kexec    clang-19
+x86_64                                  kexec    gcc-12
+x86_64                               rhel-8.3    gcc-12
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                generic_kc705_defconfig    gcc-13.2.0
+xtensa                          iss_defconfig    gcc-14.2.0
+xtensa                randconfig-001-20241114    clang-14
+xtensa                randconfig-002-20241114    clang-14
 
-diff --git a/drivers/media/common/b2c2/flexcop-common.h b/drivers/media/common/b2c2/flexcop-common.h
-index f944c59cf495..a468ea7e77a1 100644
---- a/drivers/media/common/b2c2/flexcop-common.h
-+++ b/drivers/media/common/b2c2/flexcop-common.h
-@@ -125,8 +125,6 @@ void flexcop_dma_free(struct flexcop_dma *dma);
- 
- int flexcop_dma_control_timer_irq(struct flexcop_device *fc,
- 		flexcop_dma_index_t no, int onoff);
--int flexcop_dma_control_size_irq(struct flexcop_device *fc,
--		flexcop_dma_index_t no, int onoff);
- int flexcop_dma_config(struct flexcop_device *fc, struct flexcop_dma *dma,
- 		flexcop_dma_index_t dma_idx);
- int flexcop_dma_xfer_control(struct flexcop_device *fc,
-@@ -170,8 +168,6 @@ int flexcop_sram_init(struct flexcop_device *fc);
- void flexcop_determine_revision(struct flexcop_device *fc);
- void flexcop_device_name(struct flexcop_device *fc,
- 		const char *prefix, const char *suffix);
--void flexcop_dump_reg(struct flexcop_device *fc,
--		flexcop_ibi_register reg, int num);
- 
- /* from flexcop-hw-filter.c */
- int flexcop_pid_feed_control(struct flexcop_device *fc,
-diff --git a/drivers/media/common/b2c2/flexcop-misc.c b/drivers/media/common/b2c2/flexcop-misc.c
-index 83d01d3a81cc..251c4f731ed1 100644
---- a/drivers/media/common/b2c2/flexcop-misc.c
-+++ b/drivers/media/common/b2c2/flexcop-misc.c
-@@ -70,16 +70,3 @@ void flexcop_device_name(struct flexcop_device *fc,
- 			flexcop_bus_names[fc->bus_type],
- 			flexcop_revision_names[fc->rev], suffix);
- }
--
--void flexcop_dump_reg(struct flexcop_device *fc,
--		flexcop_ibi_register reg, int num)
--{
--	flexcop_ibi_value v;
--	int i;
--	for (i = 0; i < num; i++) {
--		v = fc->read_ibi_reg(fc, reg+4*i);
--		deb_rdump("0x%03x: %08x, ", reg+4*i, v.raw);
--	}
--	deb_rdump("\n");
--}
--EXPORT_SYMBOL(flexcop_dump_reg);
-diff --git a/drivers/media/pci/b2c2/flexcop-dma.c b/drivers/media/pci/b2c2/flexcop-dma.c
-index ff8058568240..2ef97be4dc54 100644
---- a/drivers/media/pci/b2c2/flexcop-dma.c
-+++ b/drivers/media/pci/b2c2/flexcop-dma.c
-@@ -123,23 +123,6 @@ static int flexcop_dma_remap(struct flexcop_device *fc,
- 	return 0;
- }
- 
--int flexcop_dma_control_size_irq(struct flexcop_device *fc,
--		flexcop_dma_index_t no,
--		int onoff)
--{
--	flexcop_ibi_value v = fc->read_ibi_reg(fc, ctrl_208);
--
--	if (no & FC_DMA_1)
--		v.ctrl_208.DMA1_IRQ_Enable_sig = onoff;
--
--	if (no & FC_DMA_2)
--		v.ctrl_208.DMA2_IRQ_Enable_sig = onoff;
--
--	fc->write_ibi_reg(fc, ctrl_208, v);
--	return 0;
--}
--EXPORT_SYMBOL(flexcop_dma_control_size_irq);
--
- int flexcop_dma_control_timer_irq(struct flexcop_device *fc,
- 		flexcop_dma_index_t no,
- 		int onoff)
--- 
-2.47.0
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
