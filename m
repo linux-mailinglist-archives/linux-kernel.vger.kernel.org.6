@@ -1,182 +1,116 @@
-Return-Path: <linux-kernel+bounces-409735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D359C90AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:20:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB7D9C90AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:21:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40CB51F23522
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:20:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8225D284CAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDBA189916;
-	Thu, 14 Nov 2024 17:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A46A189F2A;
+	Thu, 14 Nov 2024 17:21:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OoW6108+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="I2iJl4kv"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6F8126C03;
-	Thu, 14 Nov 2024 17:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D194262A3;
+	Thu, 14 Nov 2024 17:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731604824; cv=none; b=ECb1pGCwP1r5cq+kl8TE8YIIiyoDSNQkcQGIiGRw2DA3wiGCXWinFVSQO7WUIOTp1uv5BFccxoK+3GhXwmKKNHHf5ObCZ1U4gWrprVFmxtK8jPOikkIUdLC/kAjeX3RvlIWiuNyus+t67X3VxeUg/aj/U/VDjLwXi+LZBWasYLY=
+	t=1731604892; cv=none; b=cz3CHchN9vHkDH2DDkC5lzecaU6VVIeyfu/9lr+9z0DShCDrUkTkdHRr1mh/89t7nlaixhXBN2Uo9/XVFO0q/0O6B7gmOlaNwWnkacY6LhS7mDIIaAB2YWzpGilZeZP6J/7Mv31z7sMto2AiarY/EfUtEsKA9m6JgPisB7nEXNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731604824; c=relaxed/simple;
-	bh=VqRxKvfwYM+lk3sS6fthdC2m4HT9EX34z0YML3BsgT0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MsXKusxK6WufzspZjhr4OTF8c//zOLCn38Hu1nN9BUC1oEZSrbj+4IbUmEldZaUVTB127oUH8ElDafYiqVxcAHTvYt68bLpQFC4fokZIefndSAcajyXA8GXh9zeiyd9PZs36QJR+IENvF89IAyZorDAPgJM0xdzJKzNP2c2yGlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OoW6108+; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731604822; x=1763140822;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VqRxKvfwYM+lk3sS6fthdC2m4HT9EX34z0YML3BsgT0=;
-  b=OoW6108+cu6uTY48DYDnuYvlvJOvUosIZhdGKTkLQQhSHBNPXO2iQP+Y
-   D7R9Q3lJn2cz31awHUKbipyZfzAC0oRIHeKaaGh1RoGBkBQiH4b6Gf+6N
-   0rmqCc8jLYTfhsKOt0DooZ4ldN+aDvVF2ArVNaFrBD5Bt2/ZT00rzXA+P
-   yGJ+FKxQdentv/UbkRxpM5PjZbYuzFZs9V7gBsyASgCZelzLl7cB41gfY
-   /M3bho+TtUIOjy86kVkLfbFr7NlvpNebq33XRT5IRzO8h8vRMVdhFUcHU
-   SFck8rWaDYc6+dIVA63LpyUC/tEFHZ+Xb5PFuIZKgWaoYbrS8e5O56mR0
-   w==;
-X-CSE-ConnectionGUID: SUPG04U5SUuGmgNeYg3tWw==
-X-CSE-MsgGUID: qMh8BOGcS1WX1taNGXqPew==
-X-IronPort-AV: E=McAfee;i="6700,10204,11256"; a="31473880"
-X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
-   d="scan'208";a="31473880"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 09:20:21 -0800
-X-CSE-ConnectionGUID: 0bFQ7wIlSq2k3eFPQHjKaQ==
-X-CSE-MsgGUID: Y27T1/QMS/OrePR64tjsmQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
-   d="scan'208";a="87844306"
-Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.70])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 09:20:21 -0800
-Date: Thu, 14 Nov 2024 09:20:19 -0800
-From: Tony Luck <tony.luck@intel.com>
-To: Peter Newman <peternewman@google.com>
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
-	Fenghua Yu <fenghua.yu@intel.com>, Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>, x86@kernel.org,
-	James Morse <james.morse@arm.com>,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: Re: [PATCH v8 3/7] x86/resctrl: Refactor mbm_update()
-Message-ID: <ZzYxUwwEEIOGdmT6@agluck-desk3>
-References: <20241029172832.93963-1-tony.luck@intel.com>
- <20241029172832.93963-4-tony.luck@intel.com>
- <f4845fee-3f91-4e78-a186-a7bdc58f7873@intel.com>
- <ZzUvA2XE01U25A38@agluck-desk3>
- <CALPaoCi94amaO4ALGhLPn=zWEJ3STJWyYid4L+kMjXYf9wKqAQ@mail.gmail.com>
+	s=arc-20240116; t=1731604892; c=relaxed/simple;
+	bh=XgMMy+4oHqhQAIKt3y7EZ0tmTJ2euqZWHA2y3veCa1g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pnzxg0sg774X6XDV1qXCn8+aniQQ+//IlVCf/TfCqBMYewhoDuBKmW3z8iVHFrUQAvp1iuaLosqkCZNi4Em1TmwRHkciZ+RdyFXXwl1Z4rmYV5JDgjcGBDaZgUaBuczXLJ+OqLh9W/eg4d5S/JKaYdtFP8LapAm/IhCLHftUhZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=I2iJl4kv; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1731604873; x=1732209673; i=wahrenst@gmx.net;
+	bh=XgMMy+4oHqhQAIKt3y7EZ0tmTJ2euqZWHA2y3veCa1g=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=I2iJl4kv/k11IlACiHS3oKguS2fcLQ/k9CFWc7L1gwIQ4o/iT2Q46cW9aiqms1YJ
+	 qLM4uOfYefXR06wpO/iIAgF8cwUFKDcT2uoJ9+ue/4zgELPGMQeVFKfNM8AqvYuTW
+	 gw1IGqXywMpe9cT3GdqB3QXNpq9ymtLt7aPYheCUHenWTAVQnkMihZo25atj7AJdb
+	 ihlt8GyUUzNXrBO17pmOenbnwYRPmbu8K8NlGALajiyoug8cCiQZAtU97Y+y/JtCx
+	 g41dE5ijqGRFWBgM6CnEIMo9ad7TYPqRZIEBqbWuryJIvp7QcvD6OIHPxCvtlOOQH
+	 gb8VpvNy2g2eGamo3g==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.105] ([37.4.248.43]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MAfUo-1t50lM41Lk-0063ZB; Thu, 14
+ Nov 2024 18:21:13 +0100
+Message-ID: <f9b27f78-2829-43b5-853e-55f87223b256@gmx.net>
+Date: Thu, 14 Nov 2024 18:21:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALPaoCi94amaO4ALGhLPn=zWEJ3STJWyYid4L+kMjXYf9wKqAQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: =?UTF-8?B?UmU6IOWbnuWkjTogW0VYVF0gUmU6IFtQQVRDSCB2NV0gc29jOiBpbXg6?=
+ =?UTF-8?Q?_Add_SoC_device_register_for_i=2EMX9?=
+To: "Alice Guo (OSS)" <alice.guo@oss.nxp.com>
+Cc: "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+ "festevam@gmail.com" <festevam@gmail.com>,
+ "shawnguo@kernel.org" <shawnguo@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Alice Guo <alice.guo@nxp.com>,
+ "alexander.stein@ew.tq-group.com" <alexander.stein@ew.tq-group.com>,
+ "kernel@pengutronix.de" <kernel@pengutronix.de>, Peng Fan <peng.fan@nxp.com>
+References: <20241111032307.144733-1-alice.guo@oss.nxp.com>
+ <eed25785-7972-43ce-9903-d8350e51ff7e@gmx.net>
+ <PAXPR04MB9644C81E428A2AD90F7E5E6EE25B2@PAXPR04MB9644.eurprd04.prod.outlook.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <PAXPR04MB9644C81E428A2AD90F7E5E6EE25B2@PAXPR04MB9644.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:KUmWu2rfel4DoRQNr3ppUnphw8MqIgFflIQCRmYcqL3vFXuNjPB
+ 2GZ4gLya/pILw+6fpSMDRK3vQiJSQqOmEW6KJOVpl1HZSuyEUNV15HxLHSs8v4vrjGuH0eb
+ z5d6yEBF8bt0D+8q//de/Si1xtEcXvJJ+NhhFrOVgKe87gsghS9Ow3MLQviMZZCzBl89pPv
+ IMYPn+dxDiif65UErLazw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:M/YUmZxmemo=;8llD2nlaWqHmow9ukLbXBKykNYf
+ kI2+l2mERSidDltwBgwT8zqcKUhX3bcnVaUOdd24sYvDi5MjJ08fKgnDdGQ3f3K59h0Yqr2Jz
+ Mao9WspPeTDTPTNe3fRahH+YA+5vhQrgrjuu9z+kLaSOUZKuJVQtHTEyXdp2cMfPVxu917bNb
+ D4mVXZMa/tR6m9TkmxYXvwnefyJ4PF52qUB/6UTJL2F0/BrWST797Y80KNFc4MZykZrOQkzsh
+ 4IJ+DRkX74TkdSgbe5/yILw1rHZphpmNjqDXtBNI5mHdkZZoIU2S0QUbHDLpwb1aqd6YFymcn
+ DCDAaASqGuI50nn3j8oRnHxiS5Oe6FY8YCVQYRNkJyKNG8H9/PPyBI8fw7kAa4jBRDtZ/4l77
+ VkXteFKUrn3yZEZ+CNOUOJckBlVjuYTvGgJp1bnhgM/dzmVGLqqFGOTt8lpoWwACyG5tfA/FA
+ HOgENg/grMEO3ivqvvMO09nsPRgHYBdFZqwlQTjOgUi120SYdwjednYlQBwhbDLplPIdbcwit
+ sVeoKK+itpaPZ18ccx4xhrGl29apq8ds0sdqGPQBTCMT6TZcF3DpBF2zUUmGSNwaT5PrV2rwu
+ fehIZ0x+7lHJ/XnGokjWCDH8dakldcb749KD7qw7pIPIZDLbUoJHp8bpuZY+fVMWj3+ihYVGv
+ JACw/SY6ih9JptbTv8uEUc+e8E3z0DjyPY1aOkaIOVJRHBjENO8r6qe+X9I0WpBRA8U25bHJB
+ f2EVD1bxkXDxKRIwCqpc8I12bCtzVHpbJIAkfA+yGiltbviCNJ3t+42P0vKk1+yN4KbNp3GHk
+ z39gu1ZFXXdBLvA46HCgTGawTY2ypgyJDw+SCPFbod9AMFug3QCQPloOvVmgHmkxYKfwpy/Yw
+ PprV1xgovrCK8nNIvpNCf1lD9jCdvK2EPXwGNFYSpt1ytKl+5QHw6Sw+D
 
-On Thu, Nov 14, 2024 at 11:31:25AM +0100, Peter Newman wrote:
-> At least for the purposes of reporting the mbps rate to userspace, my
-> users will record from the files one per second, so it would be fine
-> to just report Unavailable (or Unassigned when it's clear that the
-> error is because counter wasn't unassigned) whenever either the
-> current or previous reading was not successful. Then they can assume
-> the value or error reported always refers to the most
-> recently-completed one-second window.
+Hello Alice,
 
-First hack at keeping status for memory bandwidth values. Simple
-state machine.  Compile tested.
+Am 14.11.24 um 08:58 schrieb Alice Guo (OSS):
+> Hi Stefan,
+>
+> There is no device node which is bound to this driver in DTS file so tha=
+t I did not use module_platform_driver. This method is the same with drive=
+rs/soc/imx/soc-imx8m.c.
+sorry, I wasn't aware that this must handled in this special way. Please
+ignore the last comments. I will send new ones.
 
-
-diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index 6345ab3e0890..80de5c6b0754 100644
---- a/arch/x86/kernel/cpu/resctrl/internal.h
-+++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -359,14 +359,22 @@ struct rftype {
- 			 char *buf, size_t nbytes, loff_t off);
- };
- 
-+enum mbm_state_status {
-+	MBM_INVALID,
-+	MBM_ONE_VALUE,
-+	MBM_VALID
-+};
-+
- /**
-  * struct mbm_state - status for each MBM counter in each domain
-  * @prev_bw_bytes: Previous bytes value read for bandwidth calculation
-  * @prev_bw:	The most recent bandwidth in MBps
-+ * @status:	Validity of @prev_bw
-  */
- struct mbm_state {
--	u64	prev_bw_bytes;
--	u32	prev_bw;
-+	u64			prev_bw_bytes;
-+	u32			prev_bw;
-+	enum mbm_state_status	status;
- };
- 
- /**
-diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-index da4ae21350c8..767a526af2f5 100644
---- a/arch/x86/kernel/cpu/resctrl/monitor.c
-+++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-@@ -670,6 +670,17 @@ static void mbm_bw_count(u32 closid, u32 rmid, struct rmid_read *rr)
- 	if (WARN_ON_ONCE(!m))
- 		return;
- 
-+	if (rr->err || !rr->val) {
-+		m->status = MBM_INVALID;
-+		return;
-+	}
-+
-+	if (m->status == MBM_INVALID) {
-+		m->status = MBM_ONE_VALUE;
-+		m->prev_bw_bytes = rr->val;
-+		return;
-+	}
-+
- 	cur_bytes = rr->val;
- 	bytes = cur_bytes - m->prev_bw_bytes;
- 	m->prev_bw_bytes = cur_bytes;
-@@ -677,6 +688,7 @@ static void mbm_bw_count(u32 closid, u32 rmid, struct rmid_read *rr)
- 	cur_bw = bytes / SZ_1M;
- 
- 	m->prev_bw = cur_bw;
-+	m->status = MBM_VALID;
- }
- 
- /*
-@@ -781,6 +793,9 @@ static void update_mba_bw(struct rdtgroup *rgrp, struct rdt_mon_domain *dom_mbm)
- 	if (WARN_ON_ONCE(!pmbm_data))
- 		return;
- 
-+	if (pmbm_data->status != MBM_VALID)
-+		return;
-+
- 	dom_mba = get_ctrl_domain_from_cpu(smp_processor_id(), r_mba);
- 	if (!dom_mba) {
- 		pr_warn_once("Failure to get domain for MBA update\n");
-@@ -801,6 +816,9 @@ static void update_mba_bw(struct rdtgroup *rgrp, struct rdt_mon_domain *dom_mbm)
- 		cmbm_data = get_mbm_state(dom_mbm, entry->closid, entry->mon.rmid, evt_id);
- 		if (WARN_ON_ONCE(!cmbm_data))
- 			return;
-+		if (cmbm_data->status != MBM_VALID)
-+			return;
-+
- 		cur_bw += cmbm_data->prev_bw;
- 	}
- 
+Best regards
+>
+> Best Regards,
+> Alice Guo
 
