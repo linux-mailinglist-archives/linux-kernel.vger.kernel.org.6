@@ -1,253 +1,232 @@
-Return-Path: <linux-kernel+bounces-408851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 356789C8450
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:52:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEF219C8452
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:52:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E93A928238E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:52:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32C771F23955
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF6E1F7541;
-	Thu, 14 Nov 2024 07:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C255B1EF09F;
+	Thu, 14 Nov 2024 07:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JIcvsFDz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="V9gHOWmE";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qZgF7dN7";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="V9gHOWmE";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qZgF7dN7"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA4F1E9080;
-	Thu, 14 Nov 2024 07:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95211EABAB
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731570645; cv=none; b=YCzQL9aKrpWASLeWp5QWSuFxj5OzCmVLFDpWq3Pb462huXSSb3KOntM/frffpGcqpntKxv/D4pwImjqrVt0CqZx1WYf91ia5gtCnWoesh5dV7wGkHmiGYZl4N10VxHOX+dNLcJnbKepOykoOoxyytmJDX3RWiywqKWt21cDx2T8=
+	t=1731570745; cv=none; b=IiRe8NFUYULzOUXV1bdbn1eEPrxbL2QaQqMsaJ4GLBFJ36WzNcoJOcbab7UtnGASxpCVVcoKQSSPWCLiIp8m5H7/k977GI0Fsd6GbK5iDR8nYBmt5xEVGKNXSqKsVkMCMaQM1SmfiYHfXnkXsIeqqmWT46lHKpXWYS029w0zkzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731570645; c=relaxed/simple;
-	bh=VEEdV2j4NTseykCPPGLuk4dbGlTHdNyaisNPkK2RWmc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g6JM+cvjpwbp2qLVd5TMorRF/VJmgtpj4F9vjmGeBFj6XTf0Oo7shlnAUP+rSRuX7HOXR9SbTpdi3W6RgZB5otdxAV6RjiuYzK3BzbDNf5lHyX5u4I7m1L5DumNZybFhZUuYZlHq7RLa1LpaaQBpAQHTDBmVXN61KHsz+1dh9LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JIcvsFDz; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731570643; x=1763106643;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VEEdV2j4NTseykCPPGLuk4dbGlTHdNyaisNPkK2RWmc=;
-  b=JIcvsFDzMg6zEuS5BN5tOD1REKxUOzZT/+PJjID616EGUgL4O5GPOFAm
-   vAa7g0z9VVTpLEqoj0/TjL06/J/lfUq7coSSL10ENv56HPMwAPyxIFhqy
-   ub8yKBgzwLFQVdnyRXQsq3U/njNfzR/6OHOntVB+/k5flX6Z72WHUKCX9
-   pZtZ3TDVMjg41o1/wzU0P3dp/EoIKZgPX6L7/rJodqXcBpLv2jibHms5u
-   kWpztNAA0DJQl/2mc8/iP1N9az7uED6UChsEeDgLJ2orsYOXFb3RawFuT
-   tWL6v79Rx2JLf3hNb/B7AZYKeYTRFtvRlucEeMZGTLs3Z0zQMWGr8nHUM
-   A==;
-X-CSE-ConnectionGUID: 0TRftLKCQyaCmISb9h6G7w==
-X-CSE-MsgGUID: cYmvHQvBRLKCRmZO1n/XVQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31469695"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="31469695"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 23:50:42 -0800
-X-CSE-ConnectionGUID: gmLL/F8nR6OHb4eKqSuS0w==
-X-CSE-MsgGUID: 6OtMX8/LQWCyFoj1fP5Tbg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
-   d="scan'208";a="93171172"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 23:50:39 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tBUce-0000000EdWX-1pu3;
-	Thu, 14 Nov 2024 09:50:36 +0200
-Date: Thu, 14 Nov 2024 09:50:36 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Leonardo Bras <leobras@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Tony Lindgren <tony@atomide.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [RFC PATCH v2 3/4] irq: Introduce IRQ_HANDLED_MANY
-Message-ID: <ZzWrzC1QhhlNqLpl@smile.fi.intel.com>
-References: <20240216075948.131372-2-leobras@redhat.com>
- <20240216075948.131372-5-leobras@redhat.com>
- <87zfvwai62.ffs@tglx>
- <87v86kaf84.ffs@tglx>
- <ZdWMja3BfCZsbF_q@LeoBras>
- <87edd5hljz.ffs@tglx>
- <ZdghE6TNHgZ_bi19@LeoBras>
- <ZzVxIfb5KpL97P4Q@LeoBras>
+	s=arc-20240116; t=1731570745; c=relaxed/simple;
+	bh=YvIPzQ4ESV2et8xD4F+yHEJAVV77Z3dmui/A1sUlMok=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=f9kB7CfWqu9DTT/BrP9QIl2RflXwLLyWXK2MsISC3Yk4XSpvVLrd3M+fqDAzwlj4ucMSimgNWNARg+Ok1OpH2JsiLGVfBfqi4mxPideshiC0qwejYXb49khHfq1Z5OCjTR7RV+gOitspmg//wzzg4RG1t9/TyehBBXKTEKd2Z2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=V9gHOWmE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qZgF7dN7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=V9gHOWmE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qZgF7dN7; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0364121979;
+	Thu, 14 Nov 2024 07:52:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731570741; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WQ4uIaR8EC9zCCXZjp5UewO6FD29d7j31WBEEqB9OUE=;
+	b=V9gHOWmEwuYU+gnLWkvmJaIW/JmbOZwdhPDN5DBf46No1EWIL2/j6h41yunv+VN6dohw1M
+	nBLPI631VJwHupvkdkOpS+9P/CJIk/QmPRDUP4zFOg993eqlq/lv3D90WpFiqE70Gi7IfH
+	SZ2dWu69Nh8A+2WGs8Zt5JDqtHbe0ig=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731570741;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WQ4uIaR8EC9zCCXZjp5UewO6FD29d7j31WBEEqB9OUE=;
+	b=qZgF7dN7+fjEBlLo4+PFJSqGil1iQivj/EqGBNB3qpQW6g+Pg88wHOKO2/Pjq/gjEk4sE4
+	JYjb5AD8Y/FJEDAg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731570741; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WQ4uIaR8EC9zCCXZjp5UewO6FD29d7j31WBEEqB9OUE=;
+	b=V9gHOWmEwuYU+gnLWkvmJaIW/JmbOZwdhPDN5DBf46No1EWIL2/j6h41yunv+VN6dohw1M
+	nBLPI631VJwHupvkdkOpS+9P/CJIk/QmPRDUP4zFOg993eqlq/lv3D90WpFiqE70Gi7IfH
+	SZ2dWu69Nh8A+2WGs8Zt5JDqtHbe0ig=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731570741;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WQ4uIaR8EC9zCCXZjp5UewO6FD29d7j31WBEEqB9OUE=;
+	b=qZgF7dN7+fjEBlLo4+PFJSqGil1iQivj/EqGBNB3qpQW6g+Pg88wHOKO2/Pjq/gjEk4sE4
+	JYjb5AD8Y/FJEDAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E336F13794;
+	Thu, 14 Nov 2024 07:52:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id g3nYNjSsNWf+agAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 14 Nov 2024 07:52:20 +0000
+Message-ID: <f1cdc0e0-6704-4dc4-a3cf-158fc867db56@suse.cz>
+Date: Thu, 14 Nov 2024 08:52:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZzVxIfb5KpL97P4Q@LeoBras>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm/compaction: remove unnecessary detection code.
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+To: Qiang Liu <liuq131@chinatelecom.cn>, baolin.wang@linux.alibaba.com,
+ Kemeng Shi <shikemeng@huaweicloud.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20241114065720.3665-1-liuq131@chinatelecom.cn>
+ <2b6ca5b1-f421-4dda-a2a2-865af97b2db8@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <2b6ca5b1-f421-4dda-a2a2-865af97b2db8@suse.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Thu, Nov 14, 2024 at 12:40:17AM -0300, Leonardo Bras wrote:
-> On Fri, Feb 23, 2024 at 01:37:39AM -0300, Leonardo Bras wrote:
-> > On Wed, Feb 21, 2024 at 04:41:20PM +0100, Thomas Gleixner wrote:
-> > > On Wed, Feb 21 2024 at 02:39, Leonardo Bras wrote:
-> > > > On Mon, Feb 19, 2024 at 12:03:07PM +0100, Thomas Gleixner wrote:
-> > > >> >> Is scenarios where there is no need to keep track of IRQ handled, convert
-> > > >> >> it back to IRQ_HANDLED.
-> > > >> >
-> > > >> > That's not really workable as you'd have to update tons of drivers just
-> > > >> > to deal with that corner case. That's error prone and just extra
-> > > >> > complexity all over the place.
-> > > >
-> > > > I agree, that's a downside of this implementation. 
-> > > 
-> > > A serious one which is not really workable. See below.
-> > > 
-> > > > I agree the above may be able to solve the issue, but it would make 2 extra 
-> > > > atomic ops necessary in the thread handling the IRQ, as well as one extra 
-> > > > atomic operation in note_interrupt(), which could increase latency on this 
-> > > > IRQ deferring the handler to a thread.
-> > > >
-> > > > I mean, yes, the cpu running note_interrupt() would probably already have 
-> > > > exclusiveness for this cacheline, but it further increases cacheline 
-> > > > bouncing and also adds the mem barriers that incur on atomic operations, 
-> > > > even if we use an extra bit from threads_handled instead of allocate a new 
-> > > > field for threads_running.
-> > > 
-> > > I think that's a strawman. Atomic operations can of course be more
-> > > expensive than non-atomic ones, but they only start to make a difference
-> > > when the cache line is contended. That's not the case here for the
-> > > normal operations.
-> > > 
-> > > Interrupts and their threads are strictly targeted to a single CPU and
-> > > the cache line is already hot and had to be made exclusive because of
-> > > other write operations to it.
-> > > 
-> > > There is usually no concurrency at all, except for administrative
-> > > operations like enable/disable or affinity changes. Those administrative
-> > > operations are not high frequency and the resulting cache line bouncing
-> > > is unavoidable even without that change. But does it matter in the
-> > > larger picture? I don't think so.
-> > 
-> > That's a fair point, but there are some use cases that use CPU Isolation on 
-> > top of PREEMPT_RT in order to reduce interference on a CPU running an RT 
-> > workload.
-> > 
-> > For those cases, IIRC the handler will run on a different (housekeeping) 
-> > CPU when those IRQs originate on an Isolated CPU, meaning the above 
-> > described cacheline bouncing is expected.
-> > 
-> > 
-> > > 
-> > > > On top of that, let's think on a scenario where the threaded handler will 
-> > > > solve a lot of requests, but not necessarily spend a lot of time doing so.
-> > > > This allows the thread to run for little time while solving a lot of 
-> > > > requests.
-> > > >
-> > > > In this scenario, note_interrupt() could return without incrementing 
-> > > > irqs_unhandled for those IRQ that happen while the brief thread is running, 
-> > > > but every other IRQ would cause note_interrupt() to increase 
-> > > > irqs_unhandled, which would cause the bug to still reproduce.
-> > > 
-> > > In theory yes. Does it happen in practice?
-> > > 
-> > > But that exposes a flaw in the actual detection code. The code is
-> > > unconditionally accumulating if there is an unhandled interrupt within
-> > > 100ms after the last unhandled one. IOW, if there is a periodic
-> > > unhandled one every 50ms, the interrupt will be shut down after 100000 *
-> > > 50ms = 5000s ~= 83.3m ~= 1.4h. And it neither cares about the number of
-> > > actually handled interrupts.
-> > > 
-> > > The spurious detector is really about runaway interrupts which hog a CPU
-> > > completely, but the above is not what we want to protect against.
-> > 
-> > Now it makes a lot more sense to me.
-> > Thanks!
+On 11/14/24 08:44, Vlastimil Babka wrote:
+> On 11/14/24 07:57, Qiang Liu wrote:
+>> It is impossible for the situation where blockpfn > end_pfn to arise,
+>> The if statement here is not only unnecessary, but may also lead to
+>> a misunderstanding that blockpfn > end_pfn could potentially happen.
+>> so these unnecessary checking code should be removed.
+>> 
+>> Signed-off-by: Qiang Liu <liuq131@chinatelecom.cn>
 > 
-> Hi Thomas,
+> I see that's since 3da0272a4c7d ("mm/compaction: correctly return failure
+> with bogus compound_order in strict mode")
+
+Hm but we still have:
+
+for (; blockpfn < end_pfn; blockpfn += stride, page += stride) {
+
+and this advance by stride can mix up with advance by isolated, initial pfn
+might not be aligned... I don't see any guarantee that the for loop will
+exit with exactly blockpfn == end_pfn, it may easily advance beyond end_pfn
+so we shouldn't remove the check?
+
+> I think that commit introduced a risk of overflow due to a bogus order
+> (which we read in a racy way), and once blockpfn overflows it will satisfy
+> <= end_pfn and might e.g. end up scanning a completely different zone?
 > 
-> I would like to go back to this discussion :)
-> From what I could understand, and read back the thread:
+>                         if (blockpfn + (1UL << order) <= end_pfn) {
 > 
-> - The spurious detector is used to avoid cpu hog when a lots of IRQs are 
->   hitting a cpu, but few ( < 100 / 100k) are being handled. It works by
->   disabling that interruption.
+>                                 blockpfn += (1UL << order) - 1;
+>                                 page += (1UL << order) - 1;
+>                                 nr_scanned += (1UL << order) - 1;
+>                         }
 > 
-> - The bug I am dealing with (on serial8250), happens to fit exactly at
->   above case: lots of requests, but few are handled.
->   The reason: threaded handler, many requests, and they are dealt with in 
->   batch: multiple requests are handled at once, but a single IRQ_HANDLED 
->   returned.
+> We should better add back the MAX_ORDER sanity check?
 > 
-> - My proposed solution: Find a way of accounting the requests handled.
-> 
->   - Implementation: add an option for drivers voluntarily report how 
->     many requests they handled. Current drivers need no change.
-
->   - Limitation: If this issue is found on another driver, we need to 
->     implement accounting there as well. This may only happen on drivers
->     which handle over 1k requests at once.
-
-> What was left for me TODO:
-> Think on a generic solution for this issue, to avoid dealing with that 
-> in a per-driver basis. 
-> 
-> That's what I was able to think about:
-
-> - Only the driver code knows how many requests it handled, so without  
->   touching them we can't know how many requests were properly handled.
-
-Hmm... But do I understand correctly the following:
-
-- the IRQ core knows the amount of generated IRQs for the device (so it's kinda
-obvious that IRQ number maps to the driver);
-
-- the IRQ core disables IRQ while handling an IRQ number in question;
-
-- the driver is supposed to handle all IRQs that were reported at the beginning
-o.f its handler;
-
-- taking the above the amount of handled IRQs is what came till the disabling
-IRQ. IRQs that came after should be replayed when IRQ gets enabled.
-
-?
-
-> - I could try thinking a different solution, which involves changing only
->   the spurious detector.
-> 
->   - For that I would need to find a particular characteristic we would want 
->     to avoid spurious detection against, and make sure it won't miss an
->     actual case we want to be protected about.
-> 
-> Generic solutions(?) proposed:
-> - Zero irqs_unhandled if threaded & handles a single request in 100k
->   - Problem: A regular issue with the interruption would not be detected 
->     in the driver. 
-> 
-> - Skip detection if threaded & the handling thread is running
->   - Problem 1: the thread may run shortly and batch handle a lot of stuff, 
->   not being detected by the spurious detector. 
->   - Problem 2: the thread may get stuck, not handle the IRQs and also not
->   being detected by the spurious handler. (IIUC)
+>> ---
+>>  mm/compaction.c | 6 ------
+>>  1 file changed, 6 deletions(-)
+>> 
+>> diff --git a/mm/compaction.c b/mm/compaction.c
+>> index a2b16b08cbbf..baeda7132252 100644
+>> --- a/mm/compaction.c
+>> +++ b/mm/compaction.c
+>> @@ -682,12 +682,6 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
+>>  	if (locked)
+>>  		spin_unlock_irqrestore(&cc->zone->lock, flags);
+>>  
+>> -	/*
+>> -	 * Be careful to not go outside of the pageblock.
+>> -	 */
+>> -	if (unlikely(blockpfn > end_pfn))
+>> -		blockpfn = end_pfn;
+>> -
+>>  	trace_mm_compaction_isolate_freepages(*start_pfn, blockpfn,
+>>  					nr_scanned, total_isolated);
+>>  
 > 
 > 
-> In the end, I could not find a proper way of telling apart
-> a - "this is a real spurious IRQ behavior, which needs to be disabled", and 
-> b - "this is just a handler that batch-handles it's requests",
-> without touching the drivers' code.
-> 
-> Do you have any suggestion on how to do that?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
 
 
