@@ -1,240 +1,139 @@
-Return-Path: <linux-kernel+bounces-408979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 634EF9C85F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:21:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67B6F9C85F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:22:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22115281896
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:21:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 139C21F22022
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE261DD529;
-	Thu, 14 Nov 2024 09:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q9QoGo+/"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F161F6660;
+	Thu, 14 Nov 2024 09:21:56 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4334C85
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDE81E9092
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731576107; cv=none; b=CBi/BdZ8VjooUlwLIC9G5g4IqXFquKLqTIVcmXv/X0oBGzJzYNN8vJkebO4eXq7KjMffJm2ouenyjzXogZbpS0XwdXtuSXdfzv0CmQTvzqZkYDlgSRVoME395FqbnKKn3MJLhyXd7+E2VOXAESssVyEZA7LFPkGX5ryGa+azrKw=
+	t=1731576115; cv=none; b=Nln3tJtrD4QZ5dR1UevduEOyUVOCzHvdrrgt6suEdzeDnqdCVdzEl4zxLTbMmiCDNNM0n0PXlcdVGmSXOgP1s76qjLmJR2a2OwPYaBEUdT11n6U0sKyUjRoclaISxqp/F7ZxCEmqut4wkd86Ibb9L4wTJwWNW6+b8pyNO4VBf+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731576107; c=relaxed/simple;
-	bh=pfQ1EsxFuQyYpQVbYK9aExgCanpy9u/AbGrn6mzrxAM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SUGmSqgxaX899vdD5R2cJyyxBDBjISetN0x1pkn79atssKvqfZmrqjqY3A51yZ9V6A8fS8kaOR4dRA5ygwOqGWI3+vJDOx1Uf70RwkFz49MkCxhYA6QZ71138LgkYEXdo89MIK6RKQc0QvIVPH319FeXb0PoOELl5CeZVqQs35c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q9QoGo+/; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-432d9b8558aso2970905e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:21:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731576104; x=1732180904; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JNbRU7FU8XNSE+dI3k8p5qd8iE3w171o5k5wliBXgFc=;
-        b=Q9QoGo+/c9T+OIi80u8FISDlCOBxt3O/OVIOfFGI04lSY9ntJa6z0IDE9BFdaListN
-         Lk932VOxpPbih70kLghNJ5zR05UNXN2OPONYbn/F1L/e96eMP25ZMV1g5KVQ7ZGw00zi
-         /jHi6lywjMG5i81Au1qdf70aTGZMIxGiFCPXWY8M+zZm1T6o+1nTIGQAysGjVvpm3VSc
-         Ap83vLx5bjX8N7ZAwULZqqlSwD55g7eENz/m7SjW9FT8hMMKKA2gfchA9ch1DuToA+ek
-         ncmlL8w17fTDfpJVXxl3qjdeAGUYc3o8ZcJeNtghDRZwtyigo2y8udzT/+OSE4JNV0o7
-         GUFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731576104; x=1732180904;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JNbRU7FU8XNSE+dI3k8p5qd8iE3w171o5k5wliBXgFc=;
-        b=nkPy55O8NG3z6x7XDawoKM0BNX4kIp55q9qOzRh3CVq2X3FFeIx4lPqmJ0TsIC24Az
-         5oKd+uBj2g/QZ6LP8jd2FD7uFffo+6nmtk3hG1rQhAzl90omTO0MrgUbCmo+tGl6r7sc
-         ra2c2REtCNFuutw9kfkoV71Wz+Zulm6+4eTbLxJNvERc/jztwue52CP77gOhQ1q2CJw3
-         yH0n1sKw7aHsCE6DU5ZuZ3X4R85uijSCCDX1d7FguVtJlY12N3z2TFHEo7EZKJAbykbN
-         Z1oTFpGEzuCNGBLzB2/4O/ostva88Iu8xAxxzugv6WYrbPP7xFcq0YrZsfABgkknCOXa
-         Q7XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ8cUqWqR3kC24NMCktL3ciMep5cMr2G/auOcNhNy+5Ei0VTxECEqRXsYvYwFZmuWxX9JJ/LzPsOUhbkI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+Fir/YKNwoXqA8pIFTfDs7Jz60YvsX8WCBrT1NSO2Jo9v14O4
-	5sS7wrxG783XE3yhIJpsWf4MOFOok6c9tDYyCeYaPAS7FT2NrSbC+k1CjH3+Vek=
-X-Google-Smtp-Source: AGHT+IGM57ayVcNIkg/6jNzPlgjqqAGpWcaIJPQpCV0fYV9Ae2IGCnZ+nme2wZAoiNPas+AMtq+mKw==
-X-Received: by 2002:a5d:598c:0:b0:371:8685:84c with SMTP id ffacd0b85a97d-382140394cdmr1793139f8f.15.1731576103705;
-        Thu, 14 Nov 2024 01:21:43 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:a62a:6bba:b737:406e? ([2a01:e0a:982:cbb0:a62a:6bba:b737:406e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821adada24sm936148f8f.40.2024.11.14.01.21.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 01:21:43 -0800 (PST)
-Message-ID: <1764b1b4-336d-4ca5-ab21-8213691a9622@linaro.org>
-Date: Thu, 14 Nov 2024 10:21:42 +0100
+	s=arc-20240116; t=1731576115; c=relaxed/simple;
+	bh=3J1ZUIYKNQfn1onJrV/8ejMXLJdoGHhJt31hk08ta6Q=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=bNZYpajq/3TNdi6QsFVJkE6CuFL9Zx3Gd4Y1vJ4eqC4GNGyzO1kdwooHQ2iRKg9zn7u0r3/WmdcNiRG2JU2Sc7zyCy0ZxscsxNDMcEa7idL94sVIIn6LEZUed4a3ZSRkcbasTU822bgXAct9mEIGICr/9rmPgtX2oQQ8Kog73hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Xpvm94gl5z4f3nZp
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 17:21:29 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id CB01C1A0568
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 17:21:48 +0800 (CST)
+Received: from [10.174.178.129] (unknown [10.174.178.129])
+	by APP2 (Coremail) with SMTP id Syh0CgA3l+MrwTVn9jH2Bg--.34094S2;
+	Thu, 14 Nov 2024 17:21:48 +0800 (CST)
+Subject: Re: [PATCH v2] mm/compaction: remove unnecessary detection code.
+To: Vlastimil Babka <vbabka@suse.cz>, Qiang Liu <liuq131@chinatelecom.cn>,
+ baolin.wang@linux.alibaba.com
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20241114065720.3665-1-liuq131@chinatelecom.cn>
+ <2b6ca5b1-f421-4dda-a2a2-865af97b2db8@suse.cz>
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+Message-ID: <56ee8988-fd25-76bf-08a8-b84732fd2170@huaweicloud.com>
+Date: Thu, 14 Nov 2024 17:21:47 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v6 4/5] pinctrl: meson: Add driver support for Amlogic A4
- SoCs
-To: Rob Herring <robh@kernel.org>, Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241113-a4_pinctrl-v6-0-35ba2401ee35@amlogic.com>
- <20241113-a4_pinctrl-v6-4-35ba2401ee35@amlogic.com>
- <20241113180405.GA653353-robh@kernel.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241113180405.GA653353-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <2b6ca5b1-f421-4dda-a2a2-865af97b2db8@suse.cz>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgA3l+MrwTVn9jH2Bg--.34094S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CFy3XFy8Ww4kGF4fXw4kXrb_yoW8ZF4Dpa
+	4DKa4xWF18u34j9FnFyw45ZF47Z392yF47Jws8KFy8AFnYyas7tr90yry8ZryqqrnxArWq
+	vrsrKFZxCan0vaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
+	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jjVb
+	kUUUUU=
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-On 13/11/2024 19:04, Rob Herring wrote:
-> On Wed, Nov 13, 2024 at 03:29:42PM +0800, Xianwei Zhao wrote:
->> Add a new pinctrl driver for Amlogic A4 SoCs which share
->> the same register layout as the previous Amlogic S4.
+
+Hello
+on 11/14/2024 3:44 PM, Vlastimil Babka wrote:
+> On 11/14/24 07:57, Qiang Liu wrote:
+>> It is impossible for the situation where blockpfn > end_pfn to arise,
+>> The if statement here is not only unnecessary, but may also lead to
+>> a misunderstanding that blockpfn > end_pfn could potentially happen.
+>> so these unnecessary checking code should be removed.
 >>
->> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+>> Signed-off-by: Qiang Liu <liuq131@chinatelecom.cn>
+> 
+As stride could 32, if isolate_freepages_range() is called with start_pfn not
+aligned with 32, we could bail out look with blockpfn > end_pfn in
+isolate_freepages_block(). Please correct if I miss something.
+> I see that's since 3da0272a4c7d ("mm/compaction: correctly return failure
+> with bogus compound_order in strict mode")
+> 
+> I think that commit introduced a risk of overflow due to a bogus order
+> (which we read in a racy way), and once blockpfn overflows it will satisfy
+> <= end_pfn and might e.g. end up scanning a completely different zone?
+> 
+>                         if (blockpfn + (1UL << order) <= end_pfn) {
+> 
+>                                 blockpfn += (1UL << order) - 1;
+>                                 page += (1UL << order) - 1;
+>                                 nr_scanned += (1UL << order) - 1;
+>                         }
+> 
+> We should better add back the MAX_ORDER sanity check?
+As order of pageblock is <= MAX_ORDER, if bogus order is > MAX_ORDER, then
+blockpfn + (1UL << order) must be > end_pfn, I think the sanity check is
+not needed.
+
+Thanks.
+Kemeng
+> 
 >> ---
->>   drivers/pinctrl/meson/Kconfig              |    6 +
->>   drivers/pinctrl/meson/Makefile             |    1 +
->>   drivers/pinctrl/meson/pinctrl-amlogic-a4.c | 1324 ++++++++++++++++++++++++++++
->>   3 files changed, 1331 insertions(+)
+>>  mm/compaction.c | 6 ------
+>>  1 file changed, 6 deletions(-)
 >>
->> diff --git a/drivers/pinctrl/meson/Kconfig b/drivers/pinctrl/meson/Kconfig
->> index cc397896762c..3e90bb5ec442 100644
->> --- a/drivers/pinctrl/meson/Kconfig
->> +++ b/drivers/pinctrl/meson/Kconfig
->> @@ -67,6 +67,12 @@ config PINCTRL_MESON_S4
->>   	select PINCTRL_MESON_AXG_PMX
->>   	default y
->>   
->> +config PINCTRL_AMLOGIC_A4
->> +	tristate "Amlogic A4 SoC pinctrl driver"
->> +	depends on ARM64
->> +	select PINCTRL_MESON_AXG_PMX
->> +	default y
->> +
->>   config PINCTRL_AMLOGIC_C3
->>   	tristate "Amlogic C3 SoC pinctrl driver"
->>   	depends on ARM64
->> diff --git a/drivers/pinctrl/meson/Makefile b/drivers/pinctrl/meson/Makefile
->> index 9e538b9ffb9b..c92a65a83344 100644
->> --- a/drivers/pinctrl/meson/Makefile
->> +++ b/drivers/pinctrl/meson/Makefile
->> @@ -10,5 +10,6 @@ obj-$(CONFIG_PINCTRL_MESON_AXG) += pinctrl-meson-axg.o
->>   obj-$(CONFIG_PINCTRL_MESON_G12A) += pinctrl-meson-g12a.o
->>   obj-$(CONFIG_PINCTRL_MESON_A1) += pinctrl-meson-a1.o
->>   obj-$(CONFIG_PINCTRL_MESON_S4) += pinctrl-meson-s4.o
->> +obj-$(CONFIG_PINCTRL_AMLOGIC_A4) += pinctrl-amlogic-a4.o
->>   obj-$(CONFIG_PINCTRL_AMLOGIC_C3) += pinctrl-amlogic-c3.o
->>   obj-$(CONFIG_PINCTRL_AMLOGIC_T7) += pinctrl-amlogic-t7.o
->> diff --git a/drivers/pinctrl/meson/pinctrl-amlogic-a4.c b/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
->> new file mode 100644
->> index 000000000000..edc5f2ba2c8a
->> --- /dev/null
->> +++ b/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
->> @@ -0,0 +1,1324 @@
->> +// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
->> +/*
->> + * Pin controller and GPIO driver for Amlogic A4 SoC.
->> + *
->> + * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
->> + * Author: Xianwei Zhao <xianwei.zhao@amlogic.com>
->> + *         Huqiang Qin <huqiang.qin@amlogic.com>
->> + */
->> +
->> +#include "pinctrl-meson.h"
->> +#include "pinctrl-meson-axg-pmx.h"
->> +#include <dt-bindings/gpio/amlogic-gpio.h>
->> +
->> +/* Standard port */
->> +
->> +#define GPIOE_0				0
->> +#define GPIOE_1				1
->> +
->> +#define GPIOD_0				2
->> +#define GPIOD_1				3
->> +#define GPIOD_2				4
->> +#define GPIOD_3				5
->> +#define GPIOD_4				6
->> +#define GPIOD_5				7
->> +#define GPIOD_6				8
->> +#define GPIOD_7				9
->> +#define GPIOD_8				10
->> +#define GPIOD_9				11
->> +#define GPIOD_10			12
->> +#define GPIOD_11			13
->> +#define GPIOD_12			14
->> +#define GPIOD_13			15
->> +#define GPIOD_14			16
->> +#define GPIOD_15			17
+>> diff --git a/mm/compaction.c b/mm/compaction.c
+>> index a2b16b08cbbf..baeda7132252 100644
+>> --- a/mm/compaction.c
+>> +++ b/mm/compaction.c
+>> @@ -682,12 +682,6 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
+>>  	if (locked)
+>>  		spin_unlock_irqrestore(&cc->zone->lock, flags);
+>>  
+>> -	/*
+>> -	 * Be careful to not go outside of the pageblock.
+>> -	 */
+>> -	if (unlikely(blockpfn > end_pfn))
+>> -		blockpfn = end_pfn;
+>> -
+>>  	trace_mm_compaction_isolate_freepages(*start_pfn, blockpfn,
+>>  					nr_scanned, total_isolated);
+>>  
 > 
-> The conversion from bank+index to a single index space seems less than
-> ideal, and looks like a work-around to fit into the existing driver from
-> a brief look at it.
-
-Not really, it simply adds a custom xlate per SoC, nothing particulary hacky.
-
-I was relunctant at first, but since Xianwei added the plumbing for a per-SoC
-xlate, then it was easy to add 3-cells support.
-
-> 
-> If there's not really banks of GPIOs here, then DT shouldn't have them
-> either. The question is does anything need to know the bank number
-> and/or index? If it's only for human readability (and matching to
-> datasheet), then just something like this can be done:
-> 
-> #define GPIOD(n) (2 + (n))
-
-There's no linear mapping possible, each set of gpios is grouped into logical
-"banks" per group of functions, and this grouping is also in the gpio controller
-register space.
-
-So it makes sense to split this in 2 with banks and offset, it maps the architecture
-of the SoC, and with this scheme we only need to add the bindings for the
-"banks" once since all the SoCs shares the same names.
-
-It simplifies bindings, has minimal cost due to the 3 cells, and only requires slightly
-more larger xlate function per SoC family.
-
-Neil
-
-> 
-> Rob
 
 
