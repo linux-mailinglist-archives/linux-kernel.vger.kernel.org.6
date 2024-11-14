@@ -1,111 +1,158 @@
-Return-Path: <linux-kernel+bounces-409018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D62769C866D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:47:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C82A9C8673
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:49:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8E03B24667
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:47:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC57B1F223B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A721F6669;
-	Thu, 14 Nov 2024 09:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DOQfL1Tn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41841F708C;
+	Thu, 14 Nov 2024 09:49:41 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092EA1632F2;
-	Thu, 14 Nov 2024 09:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246F51D86CB;
+	Thu, 14 Nov 2024 09:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731577653; cv=none; b=HxBuCNdD+CoRtV6ubI6qHo3DJJQGqK3lahNMZjMy1UQz41MFxHpx6MqWXnOCV1fNCo0368VnZST7FoRptbeq0AulZd6b0x3uJsmvsbJCOfknxM8G5VUAFKE1nwce+tDJY3JN+0p4zL0VgKinW27v3vG6xH9EAceQQjxcmOu9Z34=
+	t=1731577781; cv=none; b=pHDYpc+ai17APAe00Q8qEb6mihwSKVzmgC7QT/nXFca70IZYRl/uzY4EXJMOupu1fIfHqaFHrUaeI4anS5WNSmW3A6ntL4Z9od79ONDrzlHfG1bukGBcGnEtHjnaiuRbG3X7boawg3Rn+p+eXR1tsV/kkK3E/iFHAY/26hns1mQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731577653; c=relaxed/simple;
-	bh=jGIxwE9bbYBj8San2bjvt6eXM5MNiT9cmXr1rAfLAAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aoH+oNHHNmnZLDUfQc5XcmOFPnfkIFvuy8njanNToa3etu2L4XtqN1vCTosaFYckVsuUSnvlhQyESdQYJW+rWIZfex10ldYppyEE8G6AfFPz54Z/omyLLJwBhbsNUAdcazibfnCIMvKat/Yy1G6/11kExdDJ10ct+TsBgdFAbSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DOQfL1Tn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D47D7C4CECD;
-	Thu, 14 Nov 2024 09:47:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731577652;
-	bh=jGIxwE9bbYBj8San2bjvt6eXM5MNiT9cmXr1rAfLAAY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DOQfL1TnZYVAdUjpohgvIdr+VpMU+dB87EYR12Pf30D1DXmtchMZplhvSvbp7zMtW
-	 itzBsdFHV6EUVhO5DhHkGVnaLLpO9seoHiHokqTTUQ5lrTbOXiFJsj3cnzxrIIbFkJ
-	 ozpu8RzcEX1a7D7gTnH1aZAxedbvpXssPfMc+2E4Y9nEJGThpsPaN56xYewARr6caB
-	 yBsLypi2RtxLlni/U2+BPMglXC6qY9G1ikU48DtvbFvEpcvNZ5wfnYGMm16mIN3cj7
-	 LLo1BiSv+UPKFuk+s0SMoxCKX2A8sYGLnpZHtoDgrMZWmSQDVZ5XvsIZ7+0/ZV0t5O
-	 8njUNrn0lrmEw==
-Date: Thu, 14 Nov 2024 10:47:23 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Amit Shah <amit@kernel.org>, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, x86@kernel.org, linux-doc@vger.kernel.org,
-	amit.shah@amd.com, thomas.lendacky@amd.com, tglx@linutronix.de,
-	peterz@infradead.org, pawan.kumar.gupta@linux.intel.com,
-	corbet@lwn.net, mingo@redhat.com, dave.hansen@linux.intel.com,
-	hpa@zytor.com, seanjc@google.com, pbonzini@redhat.com,
-	daniel.sneddon@linux.intel.com, kai.huang@intel.com,
-	sandipan.das@amd.com, boris.ostrovsky@oracle.com,
-	Babu.Moger@amd.com, david.kaplan@amd.com, dwmw@amazon.co.uk
-Subject: Re: [RFC PATCH v2 1/3] x86: cpu/bugs: update SpectreRSB comments for
- AMD
-Message-ID: <ZzXHK1O9E1sQ8mBt@gmail.com>
-References: <20241111163913.36139-1-amit@kernel.org>
- <20241111163913.36139-2-amit@kernel.org>
- <20241111193304.fjysuttl6lypb6ng@jpoimboe>
- <564a19e6-963d-4cd5-9144-2323bdb4f4e8@citrix.com>
- <20241112014644.3p2a6te3sbh5x55c@jpoimboe>
- <20241112115811.GAZzNC08WU5h8bLFcf@fat_crate.local>
- <20241113212440.slbdllbdvbnk37hu@jpoimboe>
- <20241113213724.GJZzUcFKUHCiqGLRqp@fat_crate.local>
- <20241114004358.3l7jxymrtykuryyd@jpoimboe>
- <20241114074733.GAZzWrFTZM7HZxMXP5@fat_crate.local>
+	s=arc-20240116; t=1731577781; c=relaxed/simple;
+	bh=ay4FsFVDTkCF1UTnaiaMDigRwTDvh81WbxFK1vwsbnA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fx7slUfwF0w2stZi8c7b0CNoe6m3LH2LcPF1aTSoP3vuPwI49zHHVQcxgs6V1uw/LyrfHkjiaDCcpuCrpGbMemKzGnueNeb3pjOK0ind3CV+dyc/sZSVIaAXuvy8TQsVmZgOnhITqnn+/Z2/ydBWfHbbdyI75swiWxXSRPB0dig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.220.45] (g45.guest.molgen.mpg.de [141.14.220.45])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 0250061E5FE05;
+	Thu, 14 Nov 2024 10:49:06 +0100 (CET)
+Message-ID: <4d973d61-27be-4830-880a-a3d74c4bbbc7@molgen.mpg.de>
+Date: Thu, 14 Nov 2024 10:49:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241114074733.GAZzWrFTZM7HZxMXP5@fat_crate.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Bluetooth: qca: Support downloading board id specific NVM
+ for WCN6855
+To: Zijun Hu <quic_zijuhu@quicinc.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Zijun Hu
+ <zijun_hu@icloud.com>, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Bjorn Andersson <bjorande@quicinc.com>,
+ Aiqun Yu <quic_aiquny@quicinc.com>, Cheng Jiang <quic_chejiang@quicinc.com>,
+ Johan Hovold <johan@kernel.org>,
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
+ Steev Klimaszewski <steev@kali.org>
+References: <20241113-x13s_wcn6855_fix-v1-1-15af0aa2549c@quicinc.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20241113-x13s_wcn6855_fix-v1-1-15af0aa2549c@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Dear Zijun,
 
 
-* Borislav Petkov <bp@alien8.de> wrote:
+Thank you for your patch.
 
-> On Wed, Nov 13, 2024 at 04:43:58PM -0800, Josh Poimboeuf wrote:
-> > This comment relates to the "why" for the code itself (and its poor
-> > confused developers), taking all the RSB-related vulnerabilities into
-> > account.
+Am 14.11.24 um 07:26 schrieb Zijun Hu:
+> Download board id specific NVM instead of default for WCN6855 if board
+> id is available, and that is required by Lenovo ThinkPad X13s.
+
+Could you please start by describing the problem/motivation. What does 
+not work with the Lenovo ThinkPad X13s before your pacth.
+
+What is variant *g*?
+
+Maybe also describe the file naming convention in the commit message.
+
+> Cc: Bjorn Andersson <bjorande@quicinc.com>
+> Cc: Aiqun Yu (Maria) <quic_aiquny@quicinc.com>
+> Cc: Cheng Jiang <quic_chejiang@quicinc.com>
+> Cc: Johan Hovold <johan@kernel.org>
+> Cc: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> Cc: Steev Klimaszewski <steev@kali.org>
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+>   drivers/bluetooth/btqca.c | 35 ++++++++++++++++++++++++++++++++---
+>   1 file changed, 32 insertions(+), 3 deletions(-)
 > 
-> So use Documentation/arch/x86/.
-> 
-> This is exactly the reason why we need more "why" documentation - because
-> everytime we have to swap the whole bugs.c horror back in, we're poor confused
-> developers. And we have the "why" spread out across commit messages and other
-> folklore which means everytime we have to change stuff, the git archeology
-> starts. :-\ "err, do you remember why we're doing this?!" And so on
-> converstaions on IRC.
-> 
-> So having an implementation document explaining clearly why we did things is
-> long overdue.
-> 
-> But it's fine - I can move it later when the dust settles here.
+> diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+> index dfbbac92242a..4f8576cbbab9 100644
+> --- a/drivers/bluetooth/btqca.c
+> +++ b/drivers/bluetooth/btqca.c
+> @@ -717,6 +717,29 @@ static void qca_generate_hsp_nvm_name(char *fwname, size_t max_size,
+>   		snprintf(fwname, max_size, "qca/hpnv%02x%s.%x", rom_ver, variant, bid);
+>   }
+>   
+> +static void qca_get_hsp_nvm_name_generic(struct qca_fw_config *cfg,
+> +					 struct qca_btsoc_version ver,
+> +					 u8 rom_ver, u16 bid)
+> +{
+> +	const char *variant;
+> +
+> +	/* hsp gf chip */
+> +	if ((le32_to_cpu(ver.soc_id) & QCA_HSP_GF_SOC_MASK) == QCA_HSP_GF_SOC_ID)
+> +		variant = "g";
+> +	else
+> +		variant = "";
+> +
+> +	if (bid == 0x0)
+> +		snprintf(cfg->fwname, sizeof(cfg->fwname), "qca/hpnv%02x%s.bin",
+> +			 rom_ver, variant);
+> +	else if (bid & 0xff00)
+> +		snprintf(cfg->fwname, sizeof(cfg->fwname), "qca/hpnv%02x%s.b%x",
+> +			 rom_ver, variant, bid);
+> +	else
+> +		snprintf(cfg->fwname, sizeof(cfg->fwname), "qca/hpnv%02x%s.b%02x",
+> +			 rom_ver, variant, bid);
+> +}
+> +
+>   static inline void qca_get_nvm_name_generic(struct qca_fw_config *cfg,
+>   					    const char *stem, u8 rom_ver, u16 bid)
+>   {
+> @@ -810,8 +833,15 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+>   	/* Give the controller some time to get ready to receive the NVM */
+>   	msleep(10);
+>   
+> -	if (soc_type == QCA_QCA2066 || soc_type == QCA_WCN7850)
+> +	switch (soc_type) {
+> +	case QCA_QCA2066:
+> +	case QCA_WCN6855:
+> +	case QCA_WCN7850:
+>   		qca_read_fw_board_id(hdev, &boardid);
+> +		break;
+> +	default:
+> +		break;
+> +	}
+>   
+>   	/* Download NVM configuration */
+>   	config.type = TLV_TYPE_NVM;
+> @@ -848,8 +878,7 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+>   				 "qca/msnv%02x.bin", rom_ver);
+>   			break;
+>   		case QCA_WCN6855:
+> -			snprintf(config.fwname, sizeof(config.fwname),
+> -				 "qca/hpnv%02x.bin", rom_ver);
+> +			qca_get_hsp_nvm_name_generic(&config, ver, rom_ver, boardid);
+>   			break;
+>   		case QCA_WCN7850:
+>   			qca_get_nvm_name_generic(&config, "hmt", rom_ver, boardid);
 
-I think in-line documentation is better in this case: the primary defense
-against mistakes and misunderstandings is in the source code itself.
 
-And "it's too long" is an argument *against* moving it out into some obscure
-place 99% of developers aren't even aware of...
+Kind regards,
 
-Thanks,
-
-	Ingo
+Paul
 
