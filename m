@@ -1,83 +1,84 @@
-Return-Path: <linux-kernel+bounces-408548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 872069C8052
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:59:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A03319C8057
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:00:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 150381F24408
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:59:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FAACB23643
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC6B1E47B3;
-	Thu, 14 Nov 2024 01:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 293CA1E47A4;
+	Thu, 14 Nov 2024 02:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="arJS9o64"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B60rTcsb"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6F11EEE6
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C1B1DD0D2;
+	Thu, 14 Nov 2024 02:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731549534; cv=none; b=FSzAeD+obLyvIGbkY2iOjkQcNYokXHrsRpDR9SLoMKRgK+wJvUOldEezxXEJ2Izh9LTUz49d4+cbCYvPtSrS3oGQYGzb2yBoFhewRGQX25ixB3AT2HLU9958+23ETVj00WtdUao4oT04eOAzuTWetRMYVZ1udkrlcCvfgqRZJaE=
+	t=1731549611; cv=none; b=bUKq4jirFhdNnj5lHOduNgu+aGJZPWbOT2jwZ91WyGF8DJPI0baJa8cpn3ty71DD6FmTvDUqApMmfTdqdBUFx+8OijK3/fnvykYF+p5CWuoALjvSn6snO9buk50OyWzQHtUG4eaQZag0ljlNS9KmrvbSB5evQguXh2+a+k0AXVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731549534; c=relaxed/simple;
-	bh=hoqhmg6FlBDvQeuzOBErYwmk/yRj4iVunK80ABEHnIw=;
+	s=arc-20240116; t=1731549611; c=relaxed/simple;
+	bh=Ve4X7IVO3nl79v11fD2EXNLyIU8oSwD2O6Sym1SrLQE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ujVTvot0/v27Pycj7KiEUhsX0eiwJ9bw2INIMJ/uyH9AOJ/1zFjtxGlMVOk4o08fa5h7mHlRHpS3RZMjwxyMGLNYS/A4gttWlTjD8jVa0sbXFtLGh2bZHfXwK1qp09X7j98DU3qinszvB9Hz/oOLnyNbkaLXRrOrOW4k9zlQEqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=arJS9o64; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731549532;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tyzVW+Gg+8+sWP/luqrPCOiZgo6AGIcYlgpgrY3sdVI=;
-	b=arJS9o64uGBDIpmXv1JZDULTbNqDXXL+G94JV0/30kSknPj3WLpuqaFX6SpGeqDcWnKKRh
-	byl8PTUZgWibaLVb/psug0BE0ITC2XixRX5FqpmMowJVj9mA6tTKks49b/Kk/thArZJfgD
-	3R848ueavNL2i2dO7uI7M4pIR5vTBBk=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-216-yJb2Vii1Mz2KxoD1rp3zfw-1; Wed,
- 13 Nov 2024 20:58:47 -0500
-X-MC-Unique: yJb2Vii1Mz2KxoD1rp3zfw-1
-X-Mimecast-MFC-AGG-ID: yJb2Vii1Mz2KxoD1rp3zfw
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5967C1956096;
-	Thu, 14 Nov 2024 01:58:44 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.113])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DD60819560A3;
-	Thu, 14 Nov 2024 01:58:30 +0000 (UTC)
-Date: Thu, 14 Nov 2024 09:58:25 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Daniel Wagner <wagi@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	John Garry <john.g.garry@oracle.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hannes Reinecke <hare@suse.de>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	virtualization@lists.linux.dev, linux-scsi@vger.kernel.org,
-	megaraidlinux.pdl@broadcom.com, mpi3mr-linuxdrv.pdl@broadcom.com,
-	MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com,
-	linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v4 05/10] blk-mq: introduce blk_mq_hctx_map_queues
-Message-ID: <ZzVZQbZOYhNF08LX@fedora>
-References: <20241113-refactor-blk-affinity-helpers-v4-0-dd3baa1e267f@kernel.org>
- <20241113-refactor-blk-affinity-helpers-v4-5-dd3baa1e267f@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PohI0dALht1uBYwlNY+syDJneAdRHNm0YyR85v/y9wiHxr4SPWrgYc93YM1sntAprl97lpBZJEGA0XJRy4+Ax1Dc56RSzv8c3e/xV69ITy008tUbNFR0PFuKzK5nTwZzP0VR5FljOUXaEdbwd67Ln3HteXqvkuYmwhGPQ491r7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B60rTcsb; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20cdb889222so600085ad.3;
+        Wed, 13 Nov 2024 18:00:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731549609; x=1732154409; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iF5yxHjvqla20B2piIyBykr361yQhNR78eoBjQwFpE0=;
+        b=B60rTcsbNQqx/y5w7b1qfBxTqTAkv3Be0tMJSBYvcvizjF/sQ+Qs98EeiFaexcUY76
+         VACQkdYDerJFqvwaTmPapbXDlc2aUrzapIDMzKIJhH8GoPjVCTsSFCvPexniPzkgCrWw
+         MHdtH/lCYOVtJmPats42sQWZ+EKOUQ8jt6wUEjzTIbI9orQsSWAh2Da5XxQDqYeSyUwZ
+         346ajE8K+gLq4Imf2SKsgK+FoLO9XvDDisMLNeh9Qwg0Ph5CXdCweV66ySYOdgZv/TdL
+         GB21mCDDGG5b0KMVTuOw+XN6aZSwQqyKs+mHV9cY1cBtn+YlIgw2nhQ7yPlmsptATNrz
+         K9Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731549609; x=1732154409;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iF5yxHjvqla20B2piIyBykr361yQhNR78eoBjQwFpE0=;
+        b=Bzl/aw0J6vmxYOmK2Os2zT2qQmHLKpV9MRkMbH4Zy5GnUXFnT3nFYP0tOT4EM9tpxm
+         ZB9oa9M9xClLtVBerPpD8sQrM4Oj7gZMysgfeXgPZsm3Zj89+5jW/nJHzbNngoX5Zbza
+         0LqE9Ld8ovZzMZiIRoV5B3vOweO0MdZkLKHDVbeSmoapTFeCstNhB80jIKwO370+Doht
+         ew9H7Lu6MA8hV/t0k222fQgDUeEsDdEpOr3eC8gI4DmXXjKBgc3U7RfTvtp+hUxHp3nV
+         dGvEaLhAsvh24YR/U6Qpfr03h6Cwzit0V5AbKQ+EuzKbJ2il4Z4mH9UiKAeDoBsQd6hK
+         MAMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRRBsyVAQ5rKcBGUogSNFRS9UcoeTUoe2lzbTl6PpDxfVPyL5jJO8kbcl1Wn2brMQt9tDat5HUD7p9EUk=@vger.kernel.org, AJvYcCVl53qt1yzvZ+N9cKNONygojNxONmku8hjtK7TmIwDP55g3sA/PNaKoZRDtCImhDV6IJg4bj+g5zF29T8rWV72w@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkZmRcgxP4WBnbxykzM3E8WPU101oTwPnXg9klrXyNJ9QBp1jV
+	hnvmSLmN9na4RMDQYcl0que1+GOswR/yO6GhoaCMNBrWZzfmLWzP
+X-Google-Smtp-Source: AGHT+IEfvB99QbORwPWIIC7wiKtWynIxgL2tFyHQBfCuM5lvLEToXrb84qeQ3YAKcymztx8re44DUg==
+X-Received: by 2002:a05:6a21:6d99:b0:1d9:4837:ada2 with SMTP id adf61e73a8af0-1dc70450ee0mr8163121637.35.1731549609591;
+        Wed, 13 Nov 2024 18:00:09 -0800 (PST)
+Received: from fedora ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7246a9d67c6sm98764b3a.192.2024.11.13.18.00.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 18:00:08 -0800 (PST)
+Date: Thu, 14 Nov 2024 02:00:01 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	Sam Edwards <cfsworks@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net 2/2] selftests/rtnetlink.sh: add mngtempaddr test
+Message-ID: <ZzVZoe_N4_h4qWVP@fedora>
+References: <20241113125152.752778-1-liuhangbin@gmail.com>
+ <20241113125152.752778-3-liuhangbin@gmail.com>
+ <20241113115612.1717575a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,76 +87,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241113-refactor-blk-affinity-helpers-v4-5-dd3baa1e267f@kernel.org>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+In-Reply-To: <20241113115612.1717575a@kernel.org>
 
-On Wed, Nov 13, 2024 at 03:26:19PM +0100, Daniel Wagner wrote:
-> blk_mq_pci_map_queues and blk_mq_virtio_map_queues will create a CPU to
-> hardware queue mapping based on affinity information. These two function
-> share common code and only differ on how the affinity information is
-> retrieved. Also, those functions are located in the block subsystem
-> where it doesn't really fit in. They are virtio and pci subsystem
-> specific.
+On Wed, Nov 13, 2024 at 11:56:12AM -0800, Jakub Kicinski wrote:
+> On Wed, 13 Nov 2024 12:51:52 +0000 Hangbin Liu wrote:
+> > Add a test to check the temporary address could be added/removed
+> > correctly when mngtempaddr is set or removed/unmanaged.
 > 
-> Thus introduce provide a generic mapping function which uses the
-> irq_get_affinity callback from bus_type.
+> Doesn't seem to work for us:
 > 
-> Originally idea from Ming Lei <ming.lei@redhat.com>
-> 
-> Signed-off-by: Daniel Wagner <wagi@kernel.org>
-> ---
->  block/blk-mq-cpumap.c  | 43 +++++++++++++++++++++++++++++++++++++++++++
->  include/linux/blk-mq.h |  2 ++
->  2 files changed, 45 insertions(+)
-> 
-> diff --git a/block/blk-mq-cpumap.c b/block/blk-mq-cpumap.c
-> index 9638b25fd52124f0173e968ebdca5f1fe0b42ad9..3506f1c25a02d331d28212a2a97fb269cb21e738 100644
-> --- a/block/blk-mq-cpumap.c
-> +++ b/block/blk-mq-cpumap.c
-> @@ -11,6 +11,7 @@
->  #include <linux/smp.h>
->  #include <linux/cpu.h>
->  #include <linux/group_cpus.h>
-> +#include <linux/device/bus.h>
->  
->  #include "blk.h"
->  #include "blk-mq.h"
-> @@ -54,3 +55,45 @@ int blk_mq_hw_queue_to_node(struct blk_mq_queue_map *qmap, unsigned int index)
->  
->  	return NUMA_NO_NODE;
->  }
-> +
-> +/**
-> + * blk_mq_hctx_map_queues - Create CPU to hardware queue mapping
-> + * @qmap:	CPU to hardware queue map.
-> + * @dev:	The device to map queues.
-> + * @offset:	Queue offset to use for the device.
-> + *
-> + * Create a CPU to hardware queue mapping in @qmap. The struct bus_type
-> + * irq_get_affinity callback will be used to retrieve the affinity.
-> + */
-> +void blk_mq_hctx_map_queues(struct blk_mq_queue_map *qmap,
+> # [+300.25] tempaddr not deleted for 2001:db8::1
+> # [+0.16] tempaddr not deleted for 2003:db8::1
+> # [+0.07] FAIL: mngtmpaddr add/remove incorrect
+> not ok 1 selftests: net: rtnetlink.sh # exit=1
 
-Some drivers may not know hctx at all, maybe blk_mq_map_hw_queues()?
+Is this tested with patched kernel or unpatched kernel. On my local side I got
 
-> +			    struct device *dev, unsigned int offset)
-> +
-> +{
-> +	const struct cpumask *(*irq_get_affinity)(struct device *dev,
-> +						  unsigned int irq_vec);
-> +	const struct cpumask *mask;
-> +	unsigned int queue, cpu;
-> +
-> +	if (dev->driver->irq_get_affinity)
-> +		irq_get_affinity = dev->driver->irq_get_affinity;
-> +	else if (dev->bus->irq_get_affinity)
-> +		irq_get_affinity = dev->bus->irq_get_affinity;
+# ./rtnetlink.sh -t kci_test_mngtmpaddr
+PASS: mngtmpaddr add/remove correctly
 
-It is one generic API, I think both 'dev->driver' and
-'dev->bus' should be validated here.
-
-
-Thanks, 
-Ming
-
+Thanks
+Hangbin
 
