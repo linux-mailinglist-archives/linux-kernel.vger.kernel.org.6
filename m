@@ -1,151 +1,137 @@
-Return-Path: <linux-kernel+bounces-408597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C297A9C80E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:39:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 860DB9C80E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:41:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6ED0B1F21BAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:39:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36B291F2227D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA751E3DEF;
-	Thu, 14 Nov 2024 02:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087FE1E632D;
+	Thu, 14 Nov 2024 02:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jXHox3br"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qNZ3yF5J"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF681F95E
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 02:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6321CCEE7;
+	Thu, 14 Nov 2024 02:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731551978; cv=none; b=CjH/N9TXUsq90X7GbO/yHJbECm6FatQe0H4mOW2DMniaDHdQ/WRknfJX5W/Cuz/8MvbJKurF8jJS2PkHfjKqe083AwU8qS4HhDa8U89Qm7wRKaeCpcHrl3gaOb9t4d8c2v9A1WuZ+lBBHc/SlznavXhypFUIeb8Hrcweb3WryvU=
+	t=1731552051; cv=none; b=nJy6RKi+4JbyB5JyHB0AIubLrBoI07NLL/f+Ha0XvYhl7pBH6psvJSTPifpB2TEFst+BMJH3F5ka0+b6OC/UILk4H9jA0F4qj7ZRgtYZfuN7Zui+Jnl8sjtGqetSzcJ0iJDbzt32SEXjIYCDIOsievGZN3CJJzh5FetOaRtuX0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731551978; c=relaxed/simple;
-	bh=HtwMRICIohc7Hsrenws2SjvHyz038JQTwRgDobdkBtQ=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=hZ1D5s8hpEZvs+eMjAKbQEq5Axtcr5N+xL8WIAiM+RUqlw0dzSdF0YbL9CiIfDuxT+o7FF/YsQpCvbjPdTU/8uWJxVAHumKzoqEur9KrRDBgRj+ftNpXp5elDpbzs3ABl1DdycmAV1zcng8ohliOJWReOP0WhNei7wT39nKGT1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jXHox3br; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731551977; x=1763087977;
-  h=date:from:to:cc:subject:message-id;
-  bh=HtwMRICIohc7Hsrenws2SjvHyz038JQTwRgDobdkBtQ=;
-  b=jXHox3brcBAodOGUycg0dYADTHh+jAQ8N+crrEI4CdH6Tlnqj9PG78vi
-   moIaiZbUgCDScpp3DzC5Tn6WlKvIBjmRChAzybCR775Rsx7Q+vqiPYt7v
-   PfixdsJfZqkA9YNPBjc//3mGiRtS5eKcTG589AI2P5TgqFzkhYcpr/VPG
-   Ynw45N0znxOBBkE11RUqYBrltVbUdpmme0JLTceMn4wtd7Jx7+keKFaVo
-   MzS8nqPaBeFLqgRYEVfeESg31R8awUAAqSzUyfK7amc/QYIG4w13gRQ9L
-   JGvcH2wzjs+tDWpHYFm3QFoODNQQ99vMqan09JcxaatCup/L+bP+5no5G
-   g==;
-X-CSE-ConnectionGUID: ch2ST4MMScO02AU1cyRNaw==
-X-CSE-MsgGUID: YoO/I2t9TGWwbc9zJXVwBg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11255"; a="35269634"
-X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
-   d="scan'208";a="35269634"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 18:39:35 -0800
-X-CSE-ConnectionGUID: Bsbyc8GaSrSv/bQv0j658w==
-X-CSE-MsgGUID: J4YArSAaShOvFqvy2dfPRw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
-   d="scan'208";a="87941376"
-Received: from lkp-server01.sh.intel.com (HELO b014a344d658) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 13 Nov 2024 18:39:34 -0800
-Received: from kbuild by b014a344d658 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tBPlb-00003V-2i;
-	Thu, 14 Nov 2024 02:39:31 +0000
-Date: Thu, 14 Nov 2024 10:39:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/urgent] BUILD SUCCESS
- 8d9ffb2fe65a6c4ef114e8d4f947958a12751bbe
-Message-ID: <202411141012.3XsZzm5m-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1731552051; c=relaxed/simple;
+	bh=KafjAakylY3J8FJsVVaTP3z+NQbszhR/D/z3tsI5ZcM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pmUCVRrmRr73GAuqjji538pEeIVboVJW6yWvmRRmoY+q9yBlpjI4bmGXPKmK0htxPxCHE2UTt/6YukoBFSsIXV9sGxw1erBmKLhUv39jMgvXQkj9Eb5N38Qbp6S60UWFaT8olp46qY9Uj5y7sm3LJhLbZ9YvCCshEvREPAlnK/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qNZ3yF5J; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1731552039; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=3INPqlJYk2MKmai6id/n+AD4qOthwVqEzY7l/dg9Gls=;
+	b=qNZ3yF5J8G6wJx63dIGaHqAoxVK5e1BSOKwg9qRpuP8xB7y8OKYoEvHdp/B7XvFQS8HAuxVuMYr01N4BeLXVI9dAdJkhfwlXGfJy1hQCgmTlEeL4FJf5vuB4COs53Fmp1p+VVY41gEcHl08Nqfae3uOKBxTqR1nxQqnn2satCnE=
+Received: from 30.221.128.214(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WJMgPnT_1731552038 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 14 Nov 2024 10:40:39 +0800
+Message-ID: <388badcf-a27e-4a24-b10a-1e43b701e93e@linux.alibaba.com>
+Date: Thu, 14 Nov 2024 10:40:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fuse: check file before running readpage
+To: Lizhi Xu <lizhi.xu@windriver.com>,
+ syzbot+0b1279812c46e48bb0c1@syzkaller.appspotmail.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
+References: <6727bbdf.050a0220.3c8d68.0a7e.GAE@google.com>
+ <20241114020417.3524632-1-lizhi.xu@windriver.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20241114020417.3524632-1-lizhi.xu@windriver.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
-branch HEAD: 8d9ffb2fe65a6c4ef114e8d4f947958a12751bbe  x86/mm: Fix a kdump kernel failure on SME system when CONFIG_IMA_KEXEC=y
 
-elapsed time: 737m
 
-configs tested: 59
-configs skipped: 129
+On 2024/11/14 10:04, Lizhi Xu wrote:
+> syzbot reported a null-ptr-deref in fuse_read_args_fill. [1]
+> 
+> About this case, calltrace is:
+> erofs_read_superblock()->
+>    erofs_read_metabuf()->
+>      erofs_bread()->
+>        read_mapping_folio()->
+>          do_read_cache_folio()->
+>            filemap_read_folio()->
+>              fuse_read_folio()->
+>                fuse_do_readpage()->
+>                  fuse_read_args_fill()
+> 
+> erofs_bread() calls read_mapping_folio() passing NULL file, which causes a
+> NULL pointer dereference in fuse_read_args_fill.
+> To avoid this issue, need to add a check for file in fuse_read_folio().
+> 
+> [1]
+> KASAN: null-ptr-deref in range [0x0000000000000060-0x0000000000000067]
+> CPU: 3 UID: 0 PID: 5947 Comm: syz-executor314 Not tainted 6.12.0-rc5-syzkaller-00044-gc1e939a21eb1 #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> RIP: 0010:fuse_read_args_fill fs/fuse/file.c:631 [inline]
+> RIP: 0010:fuse_do_readpage+0x276/0x640 fs/fuse/file.c:880
+> Code: e8 9f c7 91 fe 8b 44 24 10 89 44 24 78 41 89 c4 e8 8f c7 91 fe 48 8d 7b 60 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 1d 03 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b
+> RSP: 0018:ffffc90006a0f820 EFLAGS: 00010206
+> RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff82fbb4c9
+> RDX: 000000000000000c RSI: ffffffff82fbb4f1 RDI: 0000000000000060
+> RBP: 0000000000000000 R08: 0000000000000007 R09: 7fffffffffffffff
+> R10: 0000000000000fff R11: ffffffff961d4b88 R12: 0000000000001000
+> R13: ffff8880382b8000 R14: ffff888025153780 R15: ffffc90006a0f8b8
+> FS:  00007f7583f3d6c0(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000020000240 CR3: 0000000030d30000 CR4: 0000000000352ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   <TASK>
+>   fuse_read_folio+0xb0/0x100 fs/fuse/file.c:905
+>   filemap_read_folio+0xc6/0x2a0 mm/filemap.c:2367
+>   do_read_cache_folio+0x263/0x5c0 mm/filemap.c:3825
+>   read_mapping_folio include/linux/pagemap.h:1011 [inline]
+>   erofs_bread+0x34d/0x7e0 fs/erofs/data.c:41
+>   erofs_read_superblock fs/erofs/super.c:281 [inline]
+>   erofs_fc_fill_super+0x2b9/0x2500 fs/erofs/super.c:625
+>   vfs_get_super fs/super.c:1280 [inline]
+>   get_tree_nodev+0xda/0x190 fs/super.c:1299
+>   erofs_fc_get_tree+0x1fe/0x2e0 fs/erofs/super.c:723
+>   vfs_get_tree+0x8f/0x380 fs/super.c:1800
+>   do_new_mount fs/namespace.c:3507 [inline]
+>   path_mount+0x14e6/0x1f20 fs/namespace.c:3834
+>   do_mount fs/namespace.c:3847 [inline]
+>   __do_sys_mount fs/namespace.c:4057 [inline]
+>   __se_sys_mount fs/namespace.c:4034 [inline]
+>   __x64_sys_mount+0x294/0x320 fs/namespace.c:4034
+>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>   do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> Reported-and-tested-by: syzbot+0b1279812c46e48bb0c1@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=0b1279812c46e48bb0c1
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Most filesystems (except for some network fses and FUSE)
+won't use `file` at all and as documented in
+https://docs.kernel.org/filesystems/vfs.html
 
-tested configs:
-alpha               allyesconfig    clang-20
-arc                 allmodconfig    clang-20
-arc                 allyesconfig    clang-20
-arc           vdk_hs38_defconfig    gcc-14.2.0
-arm                 alldefconfig    gcc-14.2.0
-arm                 allmodconfig    clang-20
-arm                 allyesconfig    clang-20
-arm               dove_defconfig    gcc-14.2.0
-arm            socfpga_defconfig    gcc-14.2.0
-arm64               allmodconfig    clang-20
-hexagon             allmodconfig    clang-20
-hexagon             allyesconfig    clang-20
-i386                allmodconfig    clang-19
-i386                 allnoconfig    clang-19
-i386                allyesconfig    clang-19
-i386                   defconfig    clang-19
-loongarch           allmodconfig    gcc-14.2.0
-m68k                allmodconfig    gcc-14.2.0
-m68k                allyesconfig    gcc-14.2.0
-m68k           m5272c3_defconfig    gcc-14.2.0
-m68k           m5307c3_defconfig    gcc-14.2.0
-m68k               q40_defconfig    gcc-14.2.0
-microblaze          allmodconfig    gcc-14.2.0
-microblaze          allyesconfig    gcc-14.2.0
-mips         bmips_stb_defconfig    gcc-14.2.0
-mips        loongson1b_defconfig    gcc-14.2.0
-openrisc             allnoconfig    clang-20
-openrisc            allyesconfig    gcc-14.2.0
-openrisc     or1klitex_defconfig    gcc-14.2.0
-parisc              allmodconfig    gcc-14.2.0
-parisc               allnoconfig    clang-20
-parisc              allyesconfig    gcc-14.2.0
-powerpc             allmodconfig    gcc-14.2.0
-powerpc              allnoconfig    clang-20
-powerpc             allyesconfig    gcc-14.2.0
-powerpc           cell_defconfig    gcc-14.2.0
-powerpc          ebony_defconfig    gcc-14.2.0
-powerpc        mpc83xx_defconfig    gcc-14.2.0
-powerpc       socrates_defconfig    gcc-14.2.0
-riscv               allmodconfig    gcc-14.2.0
-riscv                allnoconfig    clang-20
-riscv               allyesconfig    gcc-14.2.0
-s390                allmodconfig    gcc-14.2.0
-s390                 allnoconfig    clang-20
-s390                allyesconfig    gcc-14.2.0
-sh                  allmodconfig    gcc-14.2.0
-sh                  allyesconfig    gcc-14.2.0
-sh              se7721_defconfig    gcc-14.2.0
-sparc               allmodconfig    gcc-14.2.0
-um                  allmodconfig    clang-20
-um                   allnoconfig    clang-20
-um                  allyesconfig    clang-20
-x86_64               allnoconfig    clang-19
-x86_64              allyesconfig    clang-19
-x86_64                 defconfig    clang-19
-x86_64                     kexec    clang-19
-x86_64                     kexec    gcc-12
-x86_64                  rhel-8.3    gcc-12
-xtensa             iss_defconfig    gcc-14.2.0
+But I will pass in `file` for this issue instead in order
+to support use cases over FUSE, other than just bail out
+like this.
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Gao Xiang
 
