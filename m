@@ -1,148 +1,130 @@
-Return-Path: <linux-kernel+bounces-408998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B879A9C862D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:31:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E59539C8633
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:32:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D96DC1F22A5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:31:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 743711F2267C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EBDF1F7552;
-	Thu, 14 Nov 2024 09:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700AE1F583E;
+	Thu, 14 Nov 2024 09:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OBcQA2bD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="izBHJ0Eo"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1757B1D9A5F
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C96E1DA0ED
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731576642; cv=none; b=havxmTh1c8F4S6jW7FosBNTLTrBLN89KjvxwHsGHYtqCvF+iIKdlI7kZO6KR/ToxER2EZkqPJvTdoQYiC21qYFvVje/+F+JU40yBS9op/ZT01qso+WnvmKKsGLOhorwp3Fwl97K+DLMj4RBB6mbyNYme5UGfd5DqDUkKUFyjlqI=
+	t=1731576767; cv=none; b=gZmUwsV9Mda0+ZB6dID6q5eBXvx2qMeSAmDbXI3ked9qgbud8Gxa56ZWmiIfp9cUw8Py2CX7mYoVkUfndkS5bORuBLCW/YEb87XGagz917w4h0CvCW28OnpxtcWcBQzqApoGjAKdOzeC8FwbYCO2+KcaeJDtJSZl31Qra9qbjMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731576642; c=relaxed/simple;
-	bh=7+vl68/jvb9rfrFLy3IGUNyaEvNIRJWriCxG3wtIK1g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ez3P5kQMuHJviAmbG4c6jCO41oSOYch4nO85TVG68RnzinTHwNvhAQOyhwTTpjOdwKLuFziZpgpcJtPHm+iHnJLLYRHDzk3TGwfNrVrhg1NfRhxFM4q8o8/HCBMOFzw1EHyLK508ebTzdNDyXnhYQ/UN5zVboyBT/gc2zVOGpDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OBcQA2bD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731576639;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IrSFgeuHYNgrrJXNzgxPo0ocsurFifsc7fqMwk3A2C0=;
-	b=OBcQA2bDseIkLzzs/CoXj98/dLGv38tY4M0wPM1C1zEdjKOVg5A+ERSZT0487rFh5D8791
-	DH0V0yRUi/mTwyMVzz14IEPZ+mZO5oCTmDsCLinE7PU45gB3LJIIED4LKJQQmrgkijfyeu
-	R9BS5WRYAvkjy1UcF24c0IlRGeJvC/A=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-308-5uTgPtFaOXOMoZDcDajqqA-1; Thu, 14 Nov 2024 04:30:38 -0500
-X-MC-Unique: 5uTgPtFaOXOMoZDcDajqqA-1
-X-Mimecast-MFC-AGG-ID: 5uTgPtFaOXOMoZDcDajqqA
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7b155e23851so43539885a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:30:38 -0800 (PST)
+	s=arc-20240116; t=1731576767; c=relaxed/simple;
+	bh=Jh4aeGj1mdpsM+U51RQ804W2aDR09aeRFKAhDZHQocE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZC12nc5jD0LJUOS7r/X3V4mF9lk1yipvixF4mc5jrlT9leVsFP2nK/yC0QkMwYuIRX9nxt2saa7f+E6y6mGwDFKMPhRaTfMSJ3YBGxB5YlQKp8MObGlFQizPTDcXBk2tw9SvNukq9WR2OB2iHXXwDSrr4/shgQOHcWBJGaGFORI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=izBHJ0Eo; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20ca4877690so92595ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:32:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731576766; x=1732181566; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jh4aeGj1mdpsM+U51RQ804W2aDR09aeRFKAhDZHQocE=;
+        b=izBHJ0Eo6lhoFRjg7N8KUA4JilhBChBuzTDIDumQg02le9uWRMP0e7eFIwz75+/3P7
+         +QSwv1Za7szI0Sbmexlq8bdoWb23Nj0VR5CmFEeTI0SxH3DxyWhXlUUVEPFWjbUv+s06
+         VcBIsbjhT2/wE8Ix5j29SsrxJlzGNH7C3wEszLIBy+c5POBs4ccraVBpe1Fwewbq0rmj
+         2DLiUrHGq6qq1ctGHCiMCXuIF6jkhxroAXMdND/Pbz+A2YxI3i4GniGJjcfEg+24iX2g
+         8TSBDxg2r/RrsC12iFR9EsQk+bgovYIRFtKHsiw/Ji3O5UHcUYX616dnZtU7SdboOrpW
+         OdXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731576638; x=1732181438;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IrSFgeuHYNgrrJXNzgxPo0ocsurFifsc7fqMwk3A2C0=;
-        b=fMmJNHBL/Js1eaDVNXR6AGws9cLUDBWd5rFWpZp3ahoxmHfm6WzK7OW5K6HugrsIIE
-         diz7IQumtM/bf1RCTxGwjDyNYrpxv5RNY8sEcSO7I673VaFKvbU3zachm2m3845sh7dC
-         ymdUsn+WlHyKlOsgcnF95Q1o+uJuJNfP4ZVgtWeEJ1e0tEQciNpBDpsCMAKNH9WtNwv4
-         Zibn0P7kKc4T/z3ZH4ox/IHmzcdtdA9cvfe3TdhHzfeCghcj/BDNwIGCpDofZuIVfjce
-         ohPyXC+NaSWMJIn127WSCiTsAKi0W1MyyJh2N4C9T/kZS0eo46kwSvjQwO+gOMnjsbXo
-         vN+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ8h+h8AeJVUYzKkQMBXhdPAkxQaLtVMubOusB01Vl4ePjluovJr5dCLdWsnuG3aryeM0pijuSdkTBC/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxh8QxfgB88MDN7mcntc5jn5kTTSHB0msIWuiamYaejUkgWikjJ
-	2RoGYQ69D+Pc/tPUkoTTtvmjbxkjdsx5d2ralh5EAII7VNgYt6S9kHJ6qDi3GVay/D/bfjimxiA
-	e059uBzZNPdZYRhIvdfj5fWLq1+riILKWrtx5FdwZUtAdIBPdT2V2E4vdE52haQ==
-X-Received: by 2002:a05:620a:4103:b0:79f:67b:4ffc with SMTP id af79cd13be357-7b3528ab62cmr730524485a.5.1731576638034;
-        Thu, 14 Nov 2024 01:30:38 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFzvl1pJ94zqWs2bFy6g7EW6hsQmcWFqdigUoUrXGkvTzN3HRoBCNsXW3fPATzXvcaenhKuOw==
-X-Received: by 2002:a05:620a:4103:b0:79f:67b:4ffc with SMTP id af79cd13be357-7b3528ab62cmr730522185a.5.1731576637666;
-        Thu, 14 Nov 2024 01:30:37 -0800 (PST)
-Received: from [192.168.88.24] (146-241-44-112.dyn.eolo.it. [146.241.44.112])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b35ca643b6sm29091785a.118.2024.11.14.01.30.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 01:30:36 -0800 (PST)
-Message-ID: <406c545e-8c00-406a-98f0-0e545c427b25@redhat.com>
-Date: Thu, 14 Nov 2024 10:30:34 +0100
+        d=1e100.net; s=20230601; t=1731576766; x=1732181566;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Jh4aeGj1mdpsM+U51RQ804W2aDR09aeRFKAhDZHQocE=;
+        b=pR37Qo78LFLocUMWYld23ux3NtWPRsFzgbay4vlHxinvRMg4YqpUXjzPEtGlYUWt8C
+         veDZNf61YPKJi0c5J4VEi43QpZDzLi4n6S7/ZmbEpo27XzGDAMwFZec5rnmPT+CAu7PW
+         UR6j3RYfFMPqUNmW63tvQq3IP9wKYFrAVq7rvf+hvxhj7eVrDi+OWdq0V61FyJqLOvOS
+         yVrY+2OgDzs4GA48xQg3DOozicM6zsSKZi88xfoWw9rYBcUsflVeKnzTLlIGxzcpc4dK
+         ayYyTM0gKLbdVnPc9ABCVSkUlLVp2+24KtX42MbeE1Y3YA6EbF1iQdsMHqHd82xy2prw
+         93cw==
+X-Forwarded-Encrypted: i=1; AJvYcCWD4ANSbNokjutQuw3FHKYyCPFYxm2xoqtPu3Yb1nh2zegfQIA1cVjPWER2T7ghxYCgIv8/5swrNs/lw58=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywq2WrIW45W7SpU2dwkfWZRKu6+nvDM2ZfYd//fs/Hz0ZvFlB34
+	prr//Fc1OCR9855qYRfwUpIvxXvwU061BXOtrHZBrQTKRa1UYr96RZ8YoD/yedkuWw0xL/aluvA
+	In5Nayh8bjKfadqtvRIWSnwkBFbI9tmb/mRE5s5Q6+Fg7ptMFz2oe3Xo=
+X-Gm-Gg: ASbGncvf5YCrsjVg/Kj18+AKiCF3YcAfyci/xMJMaj50/tQmsMK8ThfT3clQqwaJCMo
+	bRsBOn2wZZSD3lqpg6ngUh+Bk1q0Wcm3/hA00f+pH+lzrUxEFMxTAWyS5QoSsGw==
+X-Google-Smtp-Source: AGHT+IEp0F0CxSb11Po8XxOkYL2eegQtvdopsCd3kf/YWhI3mqamWjuiSv81lZa5FW2Fv+yeTa0dHcqDt2riKuyuHYI=
+X-Received: by 2002:a17:903:244a:b0:20c:eb70:6a5b with SMTP id
+ d9443c01a7336-211c18c08f4mr2627305ad.14.1731576765472; Thu, 14 Nov 2024
+ 01:32:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/ipv4/proc: Avoid usage for seq_printf() when reading
- /proc/net/snmp
-To: David Wang <00107082@163.com>, davem@davemloft.net, dsahern@kernel.org,
- edumazet@google.com, kuba@kernel.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241111045623.10229-1-00107082@163.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241111045623.10229-1-00107082@163.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <LV3PR12MB92658EA6CCF18F90DAAA168394532@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <f3ddabdc-39fa-45fa-97fd-d8508c2229c9@amazon.com> <CA+i-1C1zN_GcLagTRgfJqT6uFoZaMZj1NUfxkvP7eG=VGQ0GGQ@mail.gmail.com>
+ <LV3PR12MB926503BA63C616562E508D8C945A2@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <CA+i-1C2JXYUBnE7fn6df0=KR4KeD0VgwO5Cc2xRhO8rBqC_p+Q@mail.gmail.com>
+ <LV3PR12MB92653337C2377D640BF81F84945A2@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <CA+i-1C2mJYwQYF9WrCjBTO0rfyNtDW=r8ZTpMwySrKSniVtXSg@mail.gmail.com>
+In-Reply-To: <CA+i-1C2mJYwQYF9WrCjBTO0rfyNtDW=r8ZTpMwySrKSniVtXSg@mail.gmail.com>
+From: Brendan Jackman <jackmanb@google.com>
+Date: Thu, 14 Nov 2024 10:32:34 +0100
+Message-ID: <CA+i-1C3R=56CAMiDwuzrtxmQN+CN14hUeMfbv4k4WqyQfexZ1g@mail.gmail.com>
+Subject: Re: [PATCH v2 19/35] Documentation/x86: Document the new attack
+ vector controls
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: "Manwaring, Derek" <derekmn@amazon.com>, "bp@alien8.de" <bp@alien8.de>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "hpa@zytor.com" <hpa@zytor.com>, 
+	"jpoimboe@kernel.org" <jpoimboe@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "mingo@redhat.com" <mingo@redhat.com>, 
+	"pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>, 
+	"peterz@infradead.org" <peterz@infradead.org>, "tglx@linutronix.de" <tglx@linutronix.de>, 
+	"x86@kernel.org" <x86@kernel.org>, "mlipp@amazon.at" <mlipp@amazon.at>, 
+	"canellac@amazon.at" <canellac@amazon.at>
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/11/24 05:56, David Wang wrote:
-> seq_printf() is costy, when reading /proc/net/snmp, profiling indicates
-> seq_printf() takes more than 50% samples of snmp_seq_show():
-> 	snmp_seq_show(97.751% 158722/162373)
-> 	    snmp_seq_show_tcp_udp.isra.0(40.017% 63515/158722)
-> 		seq_printf(83.451% 53004/63515)
-> 		seq_write(1.170% 743/63515)
-> 		_find_next_bit(0.727% 462/63515)
-> 		...
-> 	    seq_printf(24.762% 39303/158722)
-> 	    snmp_seq_show_ipstats.isra.0(21.487% 34104/158722)
-> 		seq_printf(85.788% 29257/34104)
-> 		_find_next_bit(0.331% 113/34104)
-> 		seq_write(0.235% 80/34104)
-> 		...
-> 	    icmpmsg_put(7.235% 11483/158722)
-> 		seq_printf(41.714% 4790/11483)
-> 		seq_write(2.630% 302/11483)
-> 		...
-> Time for a million rounds of stress reading /proc/net/snmp:
-> 	real	0m24.323s
-> 	user	0m0.293s
-> 	sys	0m23.679s
-> On average, reading /proc/net/snmp takes 0.023ms.
-> With this patch, extra costs of seq_printf() is avoided, and a million
-> rounds of reading /proc/net/snmp now takes only ~15.853s:
-> 	real	0m16.386s
-> 	user	0m0.280s
-> 	sys	0m15.853s
-> On average, one read takes 0.015ms, a ~40% improvement.
-> 
-> Signed-off-by: David Wang <00107082@163.com>
+On Wed, 13 Nov 2024 at 17:19, Brendan Jackman <jackmanb@google.com> wrote:
+>
+> On Wed, 13 Nov 2024 at 17:00, Kaplan, David <David.Kaplan@amd.com> wrote:
+> > I wonder what would happen if there was a mitigation that was required when switching to another guest, but not to the broader host address space.
+>
+> This is already the case for the mitigations that "go the other way":
+> IBPB protects the incoming domain from the outgoing one, but L1D flush
+> protects the outgoing from the incoming. So when you exit to the
+> unrestricted address space it never makes sense to flush L1D (everyone
+> trusts the kernel) but e.g. guest->guest still needs one.
 
-If the user space is really concerned with snmp access performances, I
-think such information should be exposed via netlink.
+I'm straying quite far from the actual topic now but to avoid
+confusion for anyone reading later:
 
-Still the goal of the optimization looks doubtful. The total number of
-mibs domain is constant and limited (differently from the network
-devices number that in specific setup can grow a lot). Stats polling
-should be a low frequency operation. Why you need to optimize it?
+A discussion off-list led me to realise that the specifics of this
+comment are nonsensical, I had L1TF in mind but I don't think you can
+exploit L1TF in a direct guest->guest attack (I'm probably still
+missing some nuance there). We wouldn't need to flush L1D there unless
+there's a new vuln.
 
-I don't think we should accept this change, too. And a solid explanation
-should be need to introduce a netlink MIB interface.
+I made a similar mistake in [1] where I had forgotten that you can't
+really do direct user->user L1TF attacks either. I was thinking of
+"Foreshadow-OS" [2] which is not really user->user.
 
-> ---
->  net/ipv4/proc.c | 116 ++++++++++++++++++++++++++++--------------------
+[1] https://lore.kernel.org/linux-kernel/CA+i-1C38hxnCGC=Zr=hNFzJBceYoOHfixhpL3xiXEg3hcdgWUg@mail.gmail.com/
 
-FTR you missed mptcp.
+[2] https://foreshadowattack.eu/foreshadow-NG.pdf
 
-/P
-
+Anyway, the underlying point I'm making is still valid I think. In
+RFCv1 ASI has flushes on both transitions. In the RFCv2 as well as the
+two transitions into & out of the restricted address space there are
+transitions between different restricted address spaces and we can do
+flushes there too.
 
