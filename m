@@ -1,174 +1,149 @@
-Return-Path: <linux-kernel+bounces-409952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 747399C9406
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:19:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B23079C9424
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:21:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BED61F22FC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:19:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77395284563
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DDE1AE01C;
-	Thu, 14 Nov 2024 21:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62351AF0AC;
+	Thu, 14 Nov 2024 21:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a0X1Rmv3"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHIg/DEC"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7603819E7FA;
-	Thu, 14 Nov 2024 21:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C920E1AF0A9
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 21:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731619173; cv=none; b=NLRCv7Y+Nbnd8s0R1EhnViYyEvczAi8dKIbH/RUIzTK9KOt/jsQ52Vi3w+NSgG5iCyudLvPYEcGkDq01e9DXuEO5jl6XLq7RCo9UJPhFbJmL3t52PBOutikFz/PxTeS1fvkY+elFyECCc+/BzHM4aH9wm9HAUuMSslykk6blFBw=
+	t=1731619273; cv=none; b=kwsYWgscpAZ00YuwrAtmpg28siqiB6IglLCihuG6wNNJ8TjuWgXWWi730vxLrAMZCDTvdiZeuOlfAid/GCx52iG4sSlwI+pcog5PK2IjqaspXHp+lBvnc0kZdF4N6WC2YFkVBMDtdCu4UPg1C19fBZCeZoo3L4SxkqI1VlyO4L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731619173; c=relaxed/simple;
-	bh=kHLqa/Cx6RVfy8mdFeRqSbn6D5NW9Lp53z8PaU35d8A=;
-	h=From:Date:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cB7TOyAk1PaqDPFU4s5AWFrHEMgBmydyEkSTzSikscnuEU4XeD6bxA6ahd7EUvUAzmdlpbWlQD+YbupvjFQVA3WNHp5sJSiWyCWVYnwEpKKdbDRtYGhvmsZ7EVBW1oYdPGsQkQEoXn/CqIr/DKHsDMBHWTj0GiN7xEjzlCSju3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a0X1Rmv3; arc=none smtp.client-ip=209.85.210.180
+	s=arc-20240116; t=1731619273; c=relaxed/simple;
+	bh=pBLBe0pmz/V3NrbYeQFwIPiQTbcbpVswc5O0bEqGKTk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IY2Cp5uNqjkq/+2z6+/I3rPSlNJDri/lT+D7ynTZo4C14UHw4hZCqSoELDwlRg6duXKewyY90P5goSiPhnw8XTu/yr0DnEYKvWyt8nAsOVFlCTT1lyosMLybDaIiqoqSIAv8F/Dojy7NLD1Ojgl1WjPF5fau52FYt1eYHTNWZQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nHIg/DEC; arc=none smtp.client-ip=209.85.216.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7240d93fffdso60950b3a.2;
-        Thu, 14 Nov 2024 13:19:32 -0800 (PST)
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2ea1218604fso63466a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:21:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731619171; x=1732223971; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TO5ZQGzBbv1u/y921AyibJwoL8Fnkl/A45hiTfl+ZEU=;
-        b=a0X1Rmv3GQ5AHx0W0hybfbB4SBG28o7DH9KkVTKT5tx5uFahfBGVo2/JMh3Q43Ubff
-         SOP3KJ/CWq7FdnBQy/JdLjmREnz1ZD/oEiyk1hN0AJKO4U8K2+K2ypJ6V5TmMIR1W8iX
-         Zo/h0xFDvC4xRQiRWVNf8uZmOpUQ5QBfkyXonmryuj0zaPUBigJDCSfn5SWa4hILShc0
-         +6UZFNBuO0bx153Xnq3ErsPw4c+ipmXUfshGILYujjgsRCYsjDbFjAITbGwkJg2xYIGs
-         b13tlJVQqX51YXt3u3T7cKE0FGiEDY0AR/L6J2vTJuXRkPgQeIHyDeqonBEs6GsxwP0G
-         +w/w==
+        d=gmail.com; s=20230601; t=1731619271; x=1732224071; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ehv9+ANQ0CX7cBCrQKPwSvObASpaH6zmEsFRtLhvwIU=;
+        b=nHIg/DECAf3WJ0YOFk2L/Tg22rbhydvXpV8jkHtPYKUG+qG4y88RNeft74yYkOeLdv
+         LMap2doRQrRB9FYnxnzUegPpfsbQ1HUeZ4IbwCxYS/srXf4e6NyLG1v7Mt3AzglKejSv
+         txJrERM/OiKCz9u98vaxuSmnyPqs6Az4ID+MvzbzcHcFymP9iZjsd0Vgk+X8Ldz9GK8G
+         JuWA0R/C8ijCIma69xtNky3kK3WuCdCOFK/ZYsAbcaaxbgugXOQvUHLjo88x5q9v7pN2
+         VbyuArlgH60nYmO20tY59DywiYkqp88U0AlSLH4iOgN3CIvV/240M4tJ72QOlQp9fbkO
+         KnOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731619171; x=1732223971;
-        h=content-disposition:mime-version:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TO5ZQGzBbv1u/y921AyibJwoL8Fnkl/A45hiTfl+ZEU=;
-        b=QZKMFL48Rv7K+FvdEXYSG1zxDuFIFIXfmIFFW240REWB0KDSAgEGXzOEBHhG+Nqqt9
-         gyWXGOS6i0CiU/3ElQMoUa1GMhJQxy1SAqrm2qs+IXu3d6LHND5JK/D+He5v+pvN77tY
-         GM5eP4TajAj1i7IMBy+71qjm9iPJU3aBUND0FcpWX/oGmu3JSyd2IjYfcKWVQ0o2QFk6
-         nw3KRYSv1robI/Us3IL/vVSpHWnPOiv2Dj/k7qS9ylNlIsOMk6nNm4YlMKXiVxEqB9/l
-         x8JZuZJB1R1pvmMvk5m+DxZXq4KDYNW6b53kqKm8Do4qfCZ0EAVnmzHUJc8j+dZBBLJ/
-         n76A==
-X-Forwarded-Encrypted: i=1; AJvYcCUB/taxRb6t/IwVnu5dlQNRhHO9aqVVM91S+Q/UAH7CmvWTcbsKgXum7u2WohIAq5iBlx52ccrOFUvENcJlii/GiA==@vger.kernel.org, AJvYcCXa/WDidW3ztgFjmbjD9dEk3w79bMXrOs0nsS6VXu0mvye7cMb76cN0loQ8+5n7V0R15RE/OEPiOr/OP2Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybvGC06ZorpCdSSfSRsK/O3bbNWFJmij5onKcNY82CtXxLg6Pv
-	pcbnrr6/3M9LJy3o6bvHbGkX/epkxl36lQ8E2G6UDWo3r2Qw+TOg
-X-Google-Smtp-Source: AGHT+IEvbqDE5Yxi5kCm1JMoV9uvOJQS8YTA5qVJAMNHTm2nGv5LjhMdvvm9k+7wPKpRXfIYlm/U9g==
-X-Received: by 2002:a17:90b:5282:b0:2da:7536:2b8c with SMTP id 98e67ed59e1d1-2ea1559d064mr372974a91.36.1731619171439;
-        Thu, 14 Nov 2024 13:19:31 -0800 (PST)
-Received: from localhost ([187.19.172.213])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea024b82aasm1745322a91.33.2024.11.14.13.19.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 13:19:30 -0800 (PST)
-From: arnaldo.melo@gmail.com
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>
-Date: Thu, 14 Nov 2024 18:19:27 -0300
-To: Benjamin Peterson <benjamin@engflow.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Howard Chu <howardchu95@gmail.com>, Ian Rogers <irogers@google.com>,
-	Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH 1/1] perf tests shell trace_exit_race: Show what went wrong
- in verbose mode
-Message-ID: <ZzZpX5O053UsHmsV@x1>
+        d=1e100.net; s=20230601; t=1731619271; x=1732224071;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ehv9+ANQ0CX7cBCrQKPwSvObASpaH6zmEsFRtLhvwIU=;
+        b=ZEYLgJqc6kAv6SNhXGc7EtXovaeAV9yV62EApkVFWNGUDRXNY8hqO0exc69AEkfFda
+         XUaESs00EYV4Lru2UM43+XGWX3/kXL2NTr6k57Hbs3hIHClUMmIPwbL2f+akLhMB+Mja
+         otw3M15cOY0oFEZtARzHF5ddg9P+gYpVQcfzUVygduUVJyBcou9iKbysHQfHQY+vmsR0
+         BbVPlkTMkBc22jhvyNtm8gOH8TVU/z2yoGgtujDsxpzDI4XTb3sYHzPQc9ka1dN7FOCh
+         3aYM2BG43eKFC9AhPX15CeZ9ZrDi4/UwwxibIRqaW1WRK2e4wjoGEpFHVEot9LQlz/js
+         irYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTkV2tKjZqPJOnIbFeIruTBN46Rk60A6PC9kCQb4PMr4sZFTNuPoHYFI8S9VqlX04crdOus++msuqaXqk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yye73f2EUijp5k6Hj0M8oO9zkRoc6fkqjkQokmNq5LZs5Wdt2FX
+	vakzQ1OEQi+RySfyPnyAa6QJcZRNXt481TSc/Ias4OwuV2wwJnJ+Uhiqtzx+QC8hecL6qjK4fmz
+	s4ybhplPkQ21kLWIDnhlq7D++ZGQ=
+X-Google-Smtp-Source: AGHT+IHDIpTlD9Hg0BD/QZgrCLws+o4es7hQuErrVlLnU6RrTSYgLmuXZPYuQ2EJoVeAT7M0UfqpLaHszXenEXyI9f0=
+X-Received: by 2002:a17:90b:17c2:b0:2db:60b:eec with SMTP id
+ 98e67ed59e1d1-2ea15591de6mr185724a91.7.1731619270954; Thu, 14 Nov 2024
+ 13:21:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241114151150.19576-1-bhavin.sharma@siliconsignals.io>
+ <20241114151150.19576-2-bhavin.sharma@siliconsignals.io> <511539bb-bc1d-459e-bfd1-10ad8e9d1435@amd.com>
+In-Reply-To: <511539bb-bc1d-459e-bfd1-10ad8e9d1435@amd.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 14 Nov 2024 16:20:59 -0500
+Message-ID: <CADnq5_MXiOYYLKii4UiziDoKhefiPFy28++NxY5Ss_jp9ob9BA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] drm/amd/display: remove redundant is_dsc_possible check
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: Bhavin Sharma <bhavin.sharma@siliconsignals.io>, alexander.deucher@amd.com, 
+	alex.hung@amd.com, Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Kenneth Feng <kenneth.feng@amd.com>, 
+	Wenjing Liu <wenjing.liu@amd.com>, Chris Park <chris.park@amd.com>, Roman Li <roman.li@amd.com>, 
+	Leo Ma <hanghong.ma@amd.com>, Ryan Seto <ryanseto@amd.com>, 
+	Jose Fernandez <josef@netflix.com>, Ilya Bakoulin <ilya.bakoulin@amd.com>, 
+	Aurabindo Pillai <aurabindo.pillai@amd.com>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This is in the tmp.perf-tools-next  branch at:
+On Thu, Nov 14, 2024 at 10:21=E2=80=AFAM Christian K=C3=B6nig
+<christian.koenig@amd.com> wrote:
+>
+> Am 14.11.24 um 16:11 schrieb Bhavin Sharma:
+> > Since is_dsc_possible is already checked just above, there's no need to
+> > check it again before filling out the DSC settings.
+> >
+> > Signed-off-by: Bhavin Sharma <bhavin.sharma@siliconsignals.io>
+> > ---
+> >   drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c | 13 +++++--------
+> >   1 file changed, 5 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c b/drivers/gpu/=
+drm/amd/display/dc/dsc/dc_dsc.c
+> > index ebd5df1a36e8..85f6f8e43947 100644
+> > --- a/drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c
+> > +++ b/drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c
+> > @@ -1093,14 +1093,11 @@ static bool setup_dsc_config(
+> >       if (!is_dsc_possible)
+> >               goto done;
+> >
+> > -     // Final decission: can we do DSC or not?
+> > -     if (is_dsc_possible) {
+> > -             // Fill out the rest of DSC settings
+> > -             dsc_cfg->block_pred_enable =3D dsc_common_caps.is_block_p=
+red_supported;
+> > -             dsc_cfg->linebuf_depth =3D dsc_common_caps.lb_bit_depth;
+> > -             dsc_cfg->version_minor =3D (dsc_common_caps.dsc_version &=
+ 0xf0) >> 4;
+> > -             dsc_cfg->is_dp =3D dsc_sink_caps->is_dp;
+> > -     }
+> > +     // Fill out the rest of DSC settings
+>
+> While at it you should probably replace the // style comment with /* */.
+>
+> Apart from that looks good to me.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git
+Fixed up locally and applied.
 
-I'll later add another patch adding the --no-comm to the 'perf trace'
-command line and will adjust the regexp.
+Thanks,
 
-- Arnaldo
+Alex
 
----
-
-If it fails we need to check what was the reason, what were the lines
-that didn't match the expected format, so:
-
-  root@number:~# perf test -v "trace exit race"
-  --- start ---
-  test child forked, pid 2028724
-  Lines not matching the expected regexp: ' +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$':
-       0.000 :2028750/2028750 syscalls:sys_enter_exit_group()
-  ---- end(-1) ----
-  110: perf trace exit race                                            : FAILED!
-  root@number:~#
-
-In this case we're not resolving the process COMM for some reason and
-fallback to printing just the pid/tid, this will be fixed in a followup
-patch.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Howard Chu <howardchu95@gmail.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-To: Benjamin Peterson <benjamin@engflow.com>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/tests/shell/trace_exit_race.sh | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/tests/shell/trace_exit_race.sh b/tools/perf/tests/shell/trace_exit_race.sh
-index 3cf2d71a5c3b9278..ce05d4e6e7133cd1 100755
---- a/tools/perf/tests/shell/trace_exit_race.sh
-+++ b/tools/perf/tests/shell/trace_exit_race.sh
-@@ -11,11 +11,17 @@
- 
- skip_if_no_perf_trace || exit 2
- 
-+if [ "$1" = "-v" ]; then
-+	verbose="1"
-+fi
-+
-+regexp=" +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$"
-+
- trace_shutdown_race() {
- 	for _ in $(seq 10); do
- 		perf trace -e syscalls:sys_enter_exit_group true 2>>$file
- 	done
--	[ "$(grep -c -E ' +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$' $file)" = "10" ]
-+	[ "$(grep -c -E '$regexp' $file)" = "10" ]
- }
- 
- 
-@@ -27,5 +33,11 @@ export PERF_CONFIG=/dev/null
- 
- trace_shutdown_race
- err=$?
-+
-+if [ $err != 0 ] && [ "${verbose}" = "1" ]; then
-+	echo "Lines not matching the expected regexp: '$regexp':"
-+	grep -v -E "$regexp" $file
-+fi
-+
- rm -f ${file}
- exit $err
--- 
-2.47.0
-
+>
+> Christian.
+>
+> > +     dsc_cfg->block_pred_enable =3D dsc_common_caps.is_block_pred_supp=
+orted;
+> > +     dsc_cfg->linebuf_depth =3D dsc_common_caps.lb_bit_depth;
+> > +     dsc_cfg->version_minor =3D (dsc_common_caps.dsc_version & 0xf0) >=
+> 4;
+> > +     dsc_cfg->is_dp =3D dsc_sink_caps->is_dp;
+> >
+> >   done:
+> >       if (!is_dsc_possible)
+>
 
