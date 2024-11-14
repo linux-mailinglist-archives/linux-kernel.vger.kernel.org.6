@@ -1,180 +1,179 @@
-Return-Path: <linux-kernel+bounces-409946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B82789C93D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:13:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A18549C93D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:13:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DAECB25205
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:13:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C2011F22B49
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98E81AE01D;
-	Thu, 14 Nov 2024 21:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214811AF0BD;
+	Thu, 14 Nov 2024 21:13:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="24Hr4otx"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e+VDQjHP"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620481AB53A
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 21:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDAC11AE00C;
+	Thu, 14 Nov 2024 21:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731618773; cv=none; b=bfq+dTeUxbO5w6Qc1MD3iU52bMS4rjucoUnw/KQMHYw2nbGeFybza1ql1ZmCEanVN3bUuTguZxxfyjbG26yuPzleGpbeIscb1NxJSN3TEDJ8uWGoa/aaRP+9enOzKrPfyVsPteNXtoVT2x7veMp5xLP1wLMNi8RCqfQ4G4PFWKM=
+	t=1731618780; cv=none; b=q2vxvoew8cWTs/pmT6CfZxnYZUqPncTJKkzQkj2dUlFEuDjM7T0Ic8GEWhViRh69vkF0Fs6aSRbI6fzzzYM6rUjMCiJalAULFMC2n4SgzN64x1w58bo6lSzSL65UA//LschffQq4wHAfttDhHOtCIh6E58rDSILat/Dqx34ektk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731618773; c=relaxed/simple;
-	bh=rjKvFVzezYepUMqBsrgyRnxEy+YeuC3YPo8a88Ns+xs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=N/9MdzCuj9ANumqQ4tb/4J4ruLlUgJGd/nXMEzkR2vG1jpQyUcpH/TmISltSa8HaSVoGLpO9gj8uomqA01TLp+rW/Lhvcj4fJq20XmK3P2BilqaYmQBDxJBsCUwuNUw0SVR6MQjcoNnXnzD5Tf/9CHYgx0mwXHgKgRn0JoRSfsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=24Hr4otx; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4315ee633dcso13845e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:12:50 -0800 (PST)
+	s=arc-20240116; t=1731618780; c=relaxed/simple;
+	bh=7IfugFnQn+CKrMF2cBVGqs04H4THF3zDs9euY7HJyZk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g4RRjktt2c+6nbGfyyz5oliLbHnhf8gaoyneHwPNRcAXImumg0JFCLN115ywiJZVh9sXhe3XqiU0UzvOjpYiWESexTXXtDFe3geYXSOe1HfpcQYsJsvwCP0/MDd43BTZsZeNARB38xIZ8I+X696pXQYYDpMndGSqhuaVoGJJo+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e+VDQjHP; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7b1511697a5so60518985a.2;
+        Thu, 14 Nov 2024 13:12:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731618769; x=1732223569; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rIZtYchTaSQMndO2ePTqJcpy4qTHfh94M480QB+cOJ0=;
-        b=24Hr4otxImCCCV6UL66MqwSDkYaIFFdGAbX/T0WttOEC8XRpxoWw5IK/Y+Jg1on3yg
-         lZxde2DOPQRHgbIfuVoLkzgX97H+M1jcbR06xM709kbK06PrbLeRmotaZR5XG3ZCYGrR
-         HI6DOaAgVMox+2riVsxDig5S4hqEpXq4j+TAIRhwP8GW+Z/gXhJNgGa1hiy5sPZBsJUE
-         e2CqPGJJ5+MFS6YiJzHgKdjqpqjgAvIhqPSu0uKWlrHRq/bhTXNAD9Yd98LeOZxvqJwe
-         iBPkHdoHv0HBt98x8rz6rQpaI03NiGlCku6+X6FeugynqpMkj6tGXQnsgcstlEmyMcGY
-         CMLA==
+        d=gmail.com; s=20230601; t=1731618777; x=1732223577; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xfz0P8jsq3TcqwcN9EH79/QdWXmvC8vSfU+3QkiqMrw=;
+        b=e+VDQjHPodvvCy1/ZJ8WZcZXVo6sNNqOKMf/CDlXOfxXmWGyeXhsabg15rt7frb7qm
+         VAEtoF3xhICV2b5jzc8DyVGKJpneOTaY4AzAR5ZJkv/nM6Ohl1U5lj9XBTXKStFRaDJZ
+         /F4BD9K6LwgHmupUflTDSv+qTx0fdsSo04SZK+xDYziqVPlvlAhAiYXTyqjMS03qlHKp
+         lFFHpZAsRMZHxmwuD31xyrWgvMNVsV7FUz3QxugC1PoLXpGQnx+15+8sphPLOaInPyVr
+         LcnMpYDW+S6JbSmsr1LaISwTFZK/Jz7cB/yNoYCUfUirC+CTwRKEvr4gP0BXcRSwAErl
+         j+Qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731618769; x=1732223569;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rIZtYchTaSQMndO2ePTqJcpy4qTHfh94M480QB+cOJ0=;
-        b=WwfZrvukXiPs4bRQHhc3sbtRuOQCePn2ZGGZPOS2MHGnJkOgf8JMybg9efYhCnSMjW
-         9H4s0rdzt7thU5mAqHG73ztLauNgGB6sIYS4xofjrt7DOhLH2GllpgBH+KwN+YhMzSAM
-         h1O9hprNMm4lc4gYeJtaZopdnw5XF952VcGn8ICSkUehD70sV34soTxcRhN9s+doeUqz
-         ixj/SHXMAN5Zz29R4AULrgCtFyRzsE4xHkdVAm/9NgIbVFb32zRh0LQTAkXq5S/b4TCb
-         VfDknlDPfrJGPIN52JH0633kZOwgjGoa5w5YO9/tjI0IRFp7X0b8zf4Or8PL2OCx/wx9
-         tYOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV65U8SB8IgauXn4oUEqyBA6b42GcI5yzs+3ehzaAOC8qhgzCNYXJtx6hl1bIoGrUHZxxeijs0ys/Bz/qw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYlUwfPWf+Uxs2zZUd/DbyDpM/rVd36wANpFseEif6ahmmOC2R
-	u0irUcYLpPR9cGw4r4FVDuls0lI1cgIAbSkbNUKDQXoFhD1Bg7XfLfM6FAeOEw==
-X-Gm-Gg: ASbGncucatgUoyouvdHqNcVAk9Ud8ZLiqtYi3EvuBv54Gzu+KeYsj3NgWzt0PnLmTzv
-	kK7nCLc3Vx5mKmsndNNDjV7uirbkQuC8X5bLkg7/iUJxSQplKvLo5UxTBvHNpqlDklLAVkms0t+
-	4HdxY7v5s3/HT37rM4L2HdQdjVF84siwvEPMF9Od7fPb5NymVHmhgxCX8ISuWEnDEHJvKb4vO0y
-	/2uz26CCacAmdlThtWR6b4rKx+SEAIEr3xNmoM=
-X-Google-Smtp-Source: AGHT+IGST0bOj1r190JJJgGSMv6FxZ8grtKUGVs3XjXSDeF3CSW+8Y3q4Vex/qRtfWljzlpkG5hiWQ==
-X-Received: by 2002:a05:600c:5491:b0:431:43a1:4cac with SMTP id 5b1f17b1804b1-432df4a10e3mr168045e9.3.1731618768334;
-        Thu, 14 Nov 2024 13:12:48 -0800 (PST)
-Received: from localhost ([2a00:79e0:9d:4:1e15:9767:4741:f790])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ae15d95sm2500636f8f.85.2024.11.14.13.12.47
+        d=1e100.net; s=20230601; t=1731618777; x=1732223577;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xfz0P8jsq3TcqwcN9EH79/QdWXmvC8vSfU+3QkiqMrw=;
+        b=JOqXKDBh7rjKuUa0ZTuZJCCOrI9BxlGTAcp4lLFxJ1IWWF+UDd2abH45/VrliGBGyH
+         kjqRJEzk5OJ31skSMsemDhDQa+6cxrGAU45+JUVvL+QYS2SgILyFmKVEt3i/rKU4tI7E
+         rCHFptx5KcmUo7UtU2EEsjukU70AZybAS6u5cZOh84zgp8mPUYc7Hb8nR/TIGIkFe5Lm
+         mKE81RSguGNX8dZnnrZinzWSRcbq/SKBo2utm+GTMjaToA5S4SnnTRJ2u+HMalT8MBa8
+         Z5cREicUJwTeq2nK4eWob72SCfEluPHRbN7TLZpqGuYRs6pEzw8ipR6Gh/30dlwbbmiQ
+         In3g==
+X-Forwarded-Encrypted: i=1; AJvYcCUa+YiHrzKeM+Pr4TkaYvUp6PbKSKkdcZtiJ2lZVdeZYozhboEe8zJ3aYPji44LyJUkSUbYUg6i/nY1RVM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH+YaPk6sCW+LDi9AgXKmIbU1ukFsMtFgU6UwPBoxeh5WzzPth
+	rZCwCKy0QFfyEu3yaVVAHvNHlFdPcOq9kEfHEQR3rVr7YcmC8r/9x1ht3w==
+X-Google-Smtp-Source: AGHT+IHEfmjXB8P6diOGd7arllqpXsp0vAR42DSW6tdeMMdXzSLOYika2RsasFspPq/+WPVyAiQohA==
+X-Received: by 2002:a05:620a:4049:b0:7a9:bc46:2d13 with SMTP id af79cd13be357-7b36229f120mr50830885a.7.1731618776857;
+        Thu, 14 Nov 2024 13:12:56 -0800 (PST)
+Received: from fionn.redhat.com ([142.189.102.234])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b35c9abc23sm90455285a.54.2024.11.14.13.12.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 13:12:47 -0800 (PST)
-From: Jann Horn <jannh@google.com>
-Date: Thu, 14 Nov 2024 22:12:00 +0100
-Subject: [PATCH] docs/mm: add more warnings around page table access
+        Thu, 14 Nov 2024 13:12:55 -0800 (PST)
+Sender: John Kacur <jkacur@gmail.com>
+From: John Kacur <jkacur@redhat.com>
+To: RT <linux-rt-users@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>,
+	Clark Williams <williams@redhat.com>
+Cc: Crystal Wood <crwood@redhat.com>,
+	Chris White <chwhite@redhat.com>,
+	Tomas Glozar <tglozar@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: [ANNOUNCE] rteval-v3.9
+Date: Thu, 14 Nov 2024 16:12:48 -0500
+Message-ID: <20241114211248.256377-1-jkacur@redhat.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241114-vma-docs-addition1-onv3-v1-1-ff177a0a2994@google.com>
-X-B4-Tracking: v=1; b=H4sIAJ9nNmcC/x2MMQrDMAwAv2I0V1A5JkO/UjIYS2o1xC52MAWTv
- 8dkPLi7AU2qSYOXG1ClW7OSJ9DDQfrG/BE0ngz+6QMRBex7RC6pYWS2Y9qEJfcFF88aZGXVpDD
- rXxW1/31+b+d5AQDUXKZpAAAA
-X-Change-ID: 20241114-vma-docs-addition1-onv3-32df4e6dffcf
-To: Andrew Morton <akpm@linux-foundation.org>, 
- Jonathan Corbet <corbet@lwn.net>, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
- Vlastimil Babka <vbabka@suse.cz>
-Cc: Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Matthew Wilcox <willy@infradead.org>, Mike Rapoport <rppt@kernel.org>, 
- Suren Baghdasaryan <surenb@google.com>, Hillf Danton <hdanton@sina.com>, 
- Qi Zheng <zhengqi.arch@bytedance.com>, SeongJae Park <sj@kernel.org>, 
- Bagas Sanjaya <bagasdotme@gmail.com>, linux-mm@kvack.org, 
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Matteo Rizzo <matteorizzo@google.com>, Jann Horn <jannh@google.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731618721; l=3159;
- i=jannh@google.com; s=20240730; h=from:subject:message-id;
- bh=rjKvFVzezYepUMqBsrgyRnxEy+YeuC3YPo8a88Ns+xs=;
- b=TwUQmmgfdu9Jzp5V6NkkZvOoWYGpMCSwmvDP6/56zXTXJGJkvpkMW/wo0jPBS6oKq1XQImG8V
- 6rwLw94tuwOCbSfaKKCS0nbwNRd9jEXEkQdHEy9w+U/Eo5ApzkGQ/Ce
-X-Developer-Key: i=jannh@google.com; a=ed25519;
- pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
+Content-Transfer-Encoding: 8bit
 
-Make it clearer that holding the mmap lock in read mode is not enough
-to traverse page tables, and that just having a stable VMA is not enough
-to read PTEs.
+We are pleased to announce version 3.9 of rteval
 
-Suggested-by: Matteo Rizzo <matteorizzo@google.com>
-Signed-off-by: Jann Horn <jannh@google.com>
----
-@akpm: Please don't put this in your tree before Lorenzo has replied.
+This version runs rtla timerlat as the default measurement module.
+You can still run cyclictest as the measurement module by editing
+rteval.conf
 
-@Lorenzo:
-This is intended to go on top of your documentation patch.
-If you think this is a sensible change, do you prefer to squash it into
-your patch or do you prefer having akpm take this as a separate patch?
-IDK what works better...
----
- Documentation/mm/process_addrs.rst | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+John Kacur
 
-diff --git a/Documentation/mm/process_addrs.rst b/Documentation/mm/process_addrs.rst
-index 1bf7ad010fc063d003bb857bb3b695a3eafa0b55..9bdf073d0c3ebea1707812508a309aa4a6163660 100644
---- a/Documentation/mm/process_addrs.rst
-+++ b/Documentation/mm/process_addrs.rst
-@@ -339,6 +339,16 @@ When **installing** page table entries, the mmap or VMA lock must be held to
- keep the VMA stable. We explore why this is in the page table locking details
- section below.
- 
-+.. warning:: Taking the mmap lock in read mode **is not sufficient** for
-+             traversing page tables; you must also ensure that a VMA exists that
-+             covers the range being accessed.
-+             This ensures you can't race with concurrent page table removal
-+             which happens with the mmap lock in read mode, in regions whose
-+             VMAs are no longer present in the VMA tree.
-+
-+             (Alternatively, the mmap lock can be taken in write mode, but that
-+             is heavy-handed and almost never the right choice.)
-+
- **Freeing** page tables is an entirely internal memory management operation and
- has special requirements (see the page freeing section below for more details).
- 
-@@ -450,6 +460,9 @@ the time of writing of this document.
- Locking Implementation Details
- ------------------------------
- 
-+.. warning:: Locking rules for PTE-level page tables are very different from
-+             locking rules for page tables at other levels.
-+
- Page table locking details
- --------------------------
- 
-@@ -470,8 +483,12 @@ additional locks dedicated to page tables:
- These locks represent the minimum required to interact with each page table
- level, but there are further requirements.
- 
--Importantly, note that on a **traversal** of page tables, no such locks are
--taken. Whether care is taken on reading the page table entries depends on the
-+Importantly, note that on a **traversal** of page tables, sometimes no such
-+locks are taken. However, at the PTE level, at least concurrent page table
-+deletion must be prevented (using RCU) and the page table must be mapped into
-+high memory, see below.
-+
-+Whether care is taken on reading the page table entries depends on the
- architecture, see the section on atomicity below.
- 
- Locking rules
+To fetch
 
----
-base-commit: 1e96a63d3022403e06cdda0213c7849b05973cd5
-change-id: 20241114-vma-docs-addition1-onv3-32df4e6dffcf
+Clone
+git://git.kernel.org/pub/scm/utils/rteval/rteval.git
+
+Branch: main
+Tag: v3.9
+
+Tarballs available here:
+https://kernel.org/pub/linux/utils/rteval
+
+Older version tarballs are available here:
+https://kernel.org/pub/linux/utils/rteval/older
+
+
+Anubhav Shelat (4):
+  Updated rteval man page
+  rteval: fixed manpage to include stress-ng header
+  rteval: Added functionality to allow user to set the cstate of
+    specified cpus when running rteval
+  rteval: run cyclictest using '--default-system' when setting idle
+    states
+
+Crystal Wood (9):
+  rteval: sysstat: Convert base64 data to text before wrapping
+  rteval: measurement: Remove ModuleInfo()
+  rteval: Remove MeasurementProfile
+  rteval: RtEvalModules: Remove unused methods
+  rteval: Enforce only one latency measurement module at a time
+  rteval: Add --noload option
+  rteval: Fix default measurement config
+  rteval: measurement: Change latency flag to latency_test
+  rteval: Print useful exception info and exit on missing measurement
+    tool
+
+John Kacur (12):
+  rteval: timerlat: Add timerlat tracing to rteval
+  rteval: Fix sysreport traceback when utility sos not found
+  rteval: timerlat tracing clean-up
+  rteval: restore all load module options
+  rteval: Upgrade load kernel to linux-6.10.5
+  rteval: Fix parsing in kcompile of the kernel to compile
+  rteval: Change constant name to uppercase
+  rteval: Update the kcompile kernel to linux-6.12-rc4
+  rteval: timerlat: Add --timerlat-interval
+  rteval: preface idle-set IDLESTATE with --measurement
+  rteval: Make rtla timerlat the default measurement module
+  Create rteval-3.9
+
+Tomas Glozar (3):
+  rteval: Fix -aNone being passed to cyclictest
+  rteval: Add module for tuned state
+  rteval: Add tuned state to rteval text report
+
+ Dockerfile                               |   2 +-
+ Makefile                                 |   2 +-
+ README                                   |   2 +-
+ doc/rteval.8                             |  54 +++--
+ rteval-cmd                               |  31 ++-
+ rteval.conf                              |   4 +-
+ rteval/__init__.py                       |  97 ++++-----
+ rteval/cpupower.py                       | 125 ++++++++++++
+ rteval/modules/__init__.py               |  99 ++++-----
+ rteval/modules/loads/kcompile.py         |  34 ++--
+ rteval/modules/measurement/__init__.py   | 189 ++---------------
+ rteval/modules/measurement/cyclictest.py |  23 +--
+ rteval/modules/measurement/sysstat.py    |   9 +-
+ rteval/modules/measurement/timerlat.py   | 212 +++++++++++++++++--
+ rteval/rteval.conf                       |   2 +-
+ rteval/rtevalReport.py                   |   3 +-
+ rteval/rteval_histogram_raw.xsl          |  24 +--
+ rteval/rteval_text.xsl                   | 247 ++++++++++++++++++++---
+ rteval/sysinfo/__init__.py               |   5 +-
+ rteval/sysinfo/osinfo.py                 |   6 +
+ rteval/sysinfo/tuned.py                  | 191 ++++++++++++++++++
+ rteval/version.py                        |   3 +-
+ 22 files changed, 968 insertions(+), 396 deletions(-)
+ create mode 100644 rteval/cpupower.py
+ create mode 100644 rteval/sysinfo/tuned.py
 
 -- 
-Jann Horn <jannh@google.com>
+2.47.0
 
 
