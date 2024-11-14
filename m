@@ -1,109 +1,99 @@
-Return-Path: <linux-kernel+bounces-409905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A52029C931B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:17:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 050DF9C931F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:18:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DD361F22BBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:17:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4BFA1F23258
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56841AC450;
-	Thu, 14 Nov 2024 20:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9EF1AB6ED;
+	Thu, 14 Nov 2024 20:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kh8On7gq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZnqFLEdH"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226381A9B4F;
-	Thu, 14 Nov 2024 20:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2BD19D088;
+	Thu, 14 Nov 2024 20:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731615434; cv=none; b=Ri3/ro+d4s9WIHNTj3oiFHUnWVv8hiXFGweDt12jp86RDCPfj9+GzDXAfxRc+eKqDSs1qBQzdaMSLSjyjljT1r2x7Q07OWEvvJquOHGT86ATcZXsHZKmvBaO6f7RubmtzdZm/E26/YDxL75/1Uy5AxmXqrynC1qR3OktPwIVl6k=
+	t=1731615520; cv=none; b=gKYsQnDMjjI9NqPEUt4X/YYjzM9QeHrF/9LxcX0BF4dXwFhAu5t5ZYfLeUWYumNjmsSb045LJgMtC9HwoO3q+jF7dEW1a1ei977OTIkjhJk7yl9Q6Nk1wBp1KU55G84gY+D0oINgfyrOVH5kMAgmB9wWH1B5KuVjL+mJ8cZMf+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731615434; c=relaxed/simple;
-	bh=yYJ83seyTbIkEkldRnTO7y9avHpL1XS7XndSlHwyg88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kLrmqxIHzEPcwnoO9+itBvI+2qjPZDdAQgThZWHTdCYjDh0x30oRCKtveqRtB7zIgRMGKdjww69LOlRR7moOcEGrPljZX8b55hE1V6AMctmThKLiO0D7PQOvjIxh+8jLBlyPMX2g7yAfVP5RiQehVbWxwu4taTJL/6DGwxXAKtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kh8On7gq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B425EC4CECD;
-	Thu, 14 Nov 2024 20:17:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731615433;
-	bh=yYJ83seyTbIkEkldRnTO7y9avHpL1XS7XndSlHwyg88=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Kh8On7gq7Rv+KsOPVPqUnCk5EQfy1Ka+Qrp2jgMzkGNy8pmumvZ7SHxiPua9sDEpi
-	 8Nhp0Zr+mJL9ABhDxKR3/W9gZ5LSP7wfwNrOAl29v2F13c7c2bQXOwnzXs/KabIrOm
-	 E+nSRjMFSg3E0itVNxh9JZ2R9V/jem0QYGS/as9V0JRN2PEVFtcILBqR8XHRdjy+z+
-	 eW+jgFfdvDROttYAHtBz6495OZY3n1xo4cB3ia9Xb6qaHiyf82kvgiPKOtopsx/5Xf
-	 J8GaH+08m9kG0zrl+fu+C+vlsFXSjmcM7O7g3QqREEyCP7ChBPR1lIzECMOPEm3YO2
-	 1Q7HV9/R3rzGw==
-Date: Thu, 14 Nov 2024 20:17:08 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
-Cc: linux-rtc@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>,
-	Olof Johansson <olof@lixom.net>, linux-amlogic@lists.infradead.org,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-kernel@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH 0/5] Merge RTC Haoyu HYM8563 into RTC PCF8563
-Message-ID: <20241114-pebbly-bondless-a3e1ded70840@spud>
-References: <20241113085355.1972607-1-iwamatsu@nigauri.org>
+	s=arc-20240116; t=1731615520; c=relaxed/simple;
+	bh=EboaDVUcLyZYEShXKCV0PBGa7A9hiirKn+DHh0fT2zE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LRgZMiEUFOeIQgbJwxiMYE5T4mvl+pmqfuT5nYd693H+alfTukAqnX1WDRFGEfrFkgE3K3jRBWWejlGjNOrZLfeKsZotp+9TidM14xneX9cBgFA3JxBMBztFB8mTE5qORTXt4lHRCUFhHub+70bKIj1HqBzmBiNnDz1j0hYW4+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZnqFLEdH; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2feeb1e8edfso15411201fa.1;
+        Thu, 14 Nov 2024 12:18:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731615517; x=1732220317; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EboaDVUcLyZYEShXKCV0PBGa7A9hiirKn+DHh0fT2zE=;
+        b=ZnqFLEdHM7h3BuzAZ202jRV+MGFXdlTkVkBfDzPLn1FG/X9aSrkxDwJMLxThAoPiyV
+         kJn3oK8ZZm0eSmvlUd/2cQZ6S/PWdzCK6ubAprvIL0F6LA2mo4AO3gf4TwDwbTw5RW/I
+         cjt3bWOfqG34LDTwFPo+GqAtuF1C1/nGTcpiGPqqBYvERJuvMQ4qIR2h3bqc4s2A9ghP
+         Q4RMgyvPP6TKwfBgEzGJDCVnW9Bvx+wWONwhtwM/53uRDUgUSHjB9iHQhE9CfUxJo2Je
+         fU7xVhqGPacbyplSRX9uQu/n6w6xt/mNYYPZDE7fedsDgJC27rwovSuT7Qk8VqhepUOV
+         bBjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731615517; x=1732220317;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EboaDVUcLyZYEShXKCV0PBGa7A9hiirKn+DHh0fT2zE=;
+        b=rZu/lGqdhohg6+xX1XqJPeoKOEZdGSAibmv6t1OA81InaDCMhc2rHyQho1E72gJVZv
+         iBrlzETzfQC4A6ndqCWkV4eOLS5DMvPURGFHz3t7Pbs794pUWf3OfBN5WvQJbg9HysSy
+         ThEYdZRSl+C5SDcSN512wq/4RHlVIjtHry6CwkHj74uVpivgal0hr48fXJ6praLpDFGn
+         GTI9orszB0He3Z+nzIVRGHY4xNDLrjDBj2DIAcTsDm3ptc2WHH0ihJUAN1jfXmJLXQAv
+         bkkVBsjXMBN/BKMDQFE4k/LBNjwChEkqHkDtRLqf8j0zqtBCw0yzHGIhJ3+pVGlSfR0/
+         oUYg==
+X-Forwarded-Encrypted: i=1; AJvYcCWo1yWZfNvrAQImJgy90vqOd9Med9B+BCBaCqMQQvE4d7aK172RFNYEMuxmTsvUz5gBQ0Aa5W5H1VcP1gRbMeCl7N7mbA==@vger.kernel.org, AJvYcCX/d6I9xwUuoIXiRmzJb+ktc21qcue8TG2jwqJKEVqmirmbjCEbMLG8COGgefGB3Ydqy8HCkT82Bv5Cz+0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAmF9ez0HS609pF/dgAMAoK8vndaLEvpOQk0/zTwXHnu7Q8X+l
+	Ae3WUgIRsPuf0UwyPEAyW9XJAm4/WWHJDU0tgtIuThMuFDepeNvluVfE3JO8NoJIFGUyi/ppqyk
+	/vDbSdeu1R2lEgbSLeWWWelt9bFhisp45
+X-Google-Smtp-Source: AGHT+IGBe5R03bFj5XNdztQdu4dZVOmaG50L1laMpLAcM2+s8biNcUW6/kOhR29g8eDtQR9l+/pjD8HHqlJasMwvFRs=
+X-Received: by 2002:a2e:a80f:0:b0:2fb:5c84:929b with SMTP id
+ 38308e7fff4ca-2ff606fa5admr3254541fa.36.1731615516644; Thu, 14 Nov 2024
+ 12:18:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="T0BKHKFsJ6ROrSX+"
-Content-Disposition: inline
-In-Reply-To: <20241113085355.1972607-1-iwamatsu@nigauri.org>
-
-
---T0BKHKFsJ6ROrSX+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241114193808.110132-1-hdegoede@redhat.com>
+In-Reply-To: <20241114193808.110132-1-hdegoede@redhat.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 14 Nov 2024 22:18:00 +0200
+Message-ID: <CAHp75Vcbz2o91qTucCw0BKQ8tR2Tzy68wanczOsVVooROxTyvA@mail.gmail.com>
+Subject: Re: [PATCH] mfd: lpc_ich: Add another Gemini Lake ISA bridge PCI device-id
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Andy Shevchenko <andy@kernel.org>, Peter Tyser <ptyser@xes-inc.com>, Lee Jones <lee@kernel.org>, 
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 13, 2024 at 05:53:50PM +0900, Nobuhiro Iwamatsu wrote:
-> RTC Haoyu HYM8563 has the same hardware structure as RTC PCF8563, and
-> operates with the same device driver. Therefore, since we do not need
-> two drivers with the same function, this merges HYM8563 into PCF8563.
->=20
-> This series was tested with PCF8563 and HYM8563 on khadas vim3 board.
->=20
-> Nobuhiro Iwamatsu (5):
->   ARM: multi_v7_defconfig: Add RTC PCF8563 support
->   rtc: pcf8563: Add support Haoyu HYM8563
->   dt-bindings: rtc: pcf8563: Add Haoyu HYM8563 compatibility
->   rtc: Remove HYM8563 RTC driver
->   dt-bindings: rtc: hym8563: Remove hym8563 binding
+On Thu, Nov 14, 2024 at 9:38=E2=80=AFPM Hans de Goede <hdegoede@redhat.com>=
+ wrote:
+>
+> On N4100 / N4120 Gemini Lake SoCs the ISA bridge PCI device-id is 31e8
+> rather the 3197 found on e.g. the N4000 / N4020.
+>
+> While at fix the existing GLK PCI-id table entry breaking the table
+> being sorted by device-id.
 
-Both binding patches here should be squashed.
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
 
-Cheers,
-Conor.
-
---T0BKHKFsJ6ROrSX+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzZaxAAKCRB4tDGHoIJi
-0nVXAP9lP5qvW+8yZjRI90llmK9YqGs4I+F1C9FeQe+YF1am1AD/eExxghR4h7K7
-OWfTsMUzGLSk2PrYAbFvMP5tnsseKQw=
-=dkSo
------END PGP SIGNATURE-----
-
---T0BKHKFsJ6ROrSX+--
+--=20
+With Best Regards,
+Andy Shevchenko
 
