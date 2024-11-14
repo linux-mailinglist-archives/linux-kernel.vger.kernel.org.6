@@ -1,124 +1,102 @@
-Return-Path: <linux-kernel+bounces-408655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBC649C8193
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 04:52:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AF9A9C81A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 05:00:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C30EB245D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:52:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FD59284824
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 04:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1171E8835;
-	Thu, 14 Nov 2024 03:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF811E7C16;
+	Thu, 14 Nov 2024 04:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YAPgBiTk"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mzlhoKEX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC5A14B06C
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 03:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50361386B4;
+	Thu, 14 Nov 2024 04:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731556347; cv=none; b=R7D9Fr2lIqI0jWbN2hcQtui8Rqih6QDgaE8eRQppoeZlhpJj+P4BpK5qi/75cWI28BLq0EyZRWJYpuXpmKvWkl205IRcSBKcSbqaoOMmpvbE6AAN1Jmrxj45dakR5KdGxz7xwegiv5nXZaYHFNxAO4QquTp+09cmX4w2xqNpShc=
+	t=1731556817; cv=none; b=LKPk8v8ueLBUz66YgjOVXREAm5ghW9vDSkTmOgfUWOav7X6ebs6NpnUMr2GYPCasnjTh4YLwDsTip3Z9z226JTPbCRPJYx2oC3qlN5cVDncdMpqPi2GVm/ZTx8JFxMBHPecNcBqf0P6f8s9YTlroiV4pjPRtMar8D1yKKxFTyoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731556347; c=relaxed/simple;
-	bh=/S42EZqqN0W2UO4Bsk+y11k9ARPosuqRf0PctlLNXNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PWakVT9zYUxyyqMRH3UPKDY+40aN936V9f+jD+uvnn6A3hUN7yp2vV1DVFvc+VcfBfIpdjsqvPcpjimLMKeFtZGO49Tbm1wqdoX5UaEyAmMwMEHXeSfFUXmYZ3GCGHri/2DoDBlG75DDsBdTT6DF5b2fvbWS4pHkZH1pNHW+EKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YAPgBiTk; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 13 Nov 2024 22:52:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1731556338;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=ET4lcoEGwBhlJY/4rJSYc2MjLbqKun/Nl/7JWraGcvg=;
-	b=YAPgBiTk20vENViW+T2NY/0DimIb1GTMlKlxgvUYiP8jwixK5dW6bBrql5apisrzh4XEW8
-	F4UXfmDUdZOlzWktlYdA+QWdBbTVmAqbVKBYV0Ih7gH0kh85ut30DZ8V1VVk9taLIhiSBJ
-	WxildPXeCuY8p7DHyjdKKNxjAs4W5DA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for 6.12
-Message-ID: <seaiutwvlv35bllqy55ajospsaiynelevpcmov7kax4txomo3c@uam4pyhzmzuu>
+	s=arc-20240116; t=1731556817; c=relaxed/simple;
+	bh=oFyEqg+Wi3bg6Jd+vWNtNIrKr6QAtBEfuLjYAZvCcL4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=E9aEe4ABGFKSz5AR2DjcfMiAaBR404d5JHnowefEyrNOP0oe0usTmS3954umBKLLt0RVng+18YYEOI9yBvtV0MJXrwOewrd8EjGYKkXubW9pUp8E+abQV01DbvtORCAmvgcGTervN3tfBkLmnRFbz3TNOAGtU6YV2x+2oJu4DCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mzlhoKEX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45061C4CED0;
+	Thu, 14 Nov 2024 04:00:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731556817;
+	bh=oFyEqg+Wi3bg6Jd+vWNtNIrKr6QAtBEfuLjYAZvCcL4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=mzlhoKEX4I76OAJB7pvtu5Ze2fcts8G9x8h3GSAoyP+KzoIy6C5/xzXwvJ9Ep05u8
+	 HGGXkG+jktDO8LFOvUNZU/ddThiPLLQDlOVwAYralL/jhT9CqiImtgl2iTHIo+V70c
+	 fzxkZwtkr2kIMratdRlGfnI66ekfT7VwI7UE9vqUig6MPC0qG++QT32oISGBRJFjAd
+	 pDKVCff+API3hcYNfNkJLWMGrQFtWcOYRbtB+u2toKx8cF5z1QdUFBARoLRVWMtYsH
+	 6zm+HjIMidPwri3aAOWhkZSvfP98AJ3cUysWAaaKz1N5NgtQioSJ7tQs7ry+U6kp7u
+	 3y6Nj1UQ1PI7Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEBF3809A80;
+	Thu, 14 Nov 2024 04:00:28 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 0/2] net: stmmac: dwmac-mediatek: Fix inverted logic for
+ mediatek,mac-wol
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173155682775.1476954.16636894744432122406.git-patchwork-notify@kernel.org>
+Date: Thu, 14 Nov 2024 04:00:27 +0000
+References: <20241109-mediatek-mac-wol-noninverted-v2-0-0e264e213878@collabora.com>
+In-Reply-To: <20241109-mediatek-mac-wol-noninverted-v2-0-0e264e213878@collabora.com>
+To: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado_=3Cnfraprado=40collabora=2Ecom?=@codeaurora.org,
+	=?utf-8?q?=3E?=@codeaurora.org
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com, biao.huang@mediatek.com,
+ alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+ mcoquelin.stm32@gmail.com, bartosz.golaszewski@linaro.org,
+ ahalaney@redhat.com, horms@kernel.org, kernel@collabora.com,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com
 
-test dashboard is looking good, rebasing to rc6 fixed the crazy hangs we
-were seeing on rc1...
+Hello:
 
-(and they were crazy; processes were getting stuck on inode lock when
-lockdep said nothing was holding it).
+This series was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-this fixes one minor regression from the btree cache fixes in the last
-pull request (in the scan_for_btree_nodes repair path) - and the
-shutdown path fix is the big one here, in terms of bugs closed.
+On Sat, 09 Nov 2024 10:16:31 -0500 you wrote:
+> This series fixes the inverted handling of the mediatek,mac-wol DT
+> property. This was done with backwards compatibility in v1, but based on
+> the feedback received, all boards should be using MAC WOL, so many of
+> them were incorrectly described and didn't have working WOL tested
+> anyway. So for v2, the approach is simpler: just fix the driver handling
+> and update the DTs to enable MAC WOL everywhere.
+> 
+> [...]
 
-so I would say things are slowing down here, except now that I've got an
-easy way to run syzbot reproducers I'm noticing that we're losing a lot
-of coverage because mainly we're mostly bailing out when we see
-something corrupt. When self healing is flipped on for more stuff
-there's probably going to be another flood of syzbot stuff...
+Here is the summary with links:
+  - [v2,1/2] net: stmmac: dwmac-mediatek: Fix inverted handling of mediatek,mac-wol
+    https://git.kernel.org/netdev/net/c/a03b18a71c12
+  - [v2,2/2] arm64: dts: mediatek: Set mediatek,mac-wol on DWMAC node for all boards
+    (no matching commit)
 
-The following changes since commit 8440da933127fc5330c3d1090cdd612fddbc40eb:
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-  bcachefs: Fix UAF in __promote_alloc() error path (2024-11-07 16:48:21 -0500)
 
-are available in the Git repository at:
-
-  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-11-13
-
-for you to fetch changes up to 840c2fbcc5cd33ba8fab180f09da0bb7f354ea71:
-
-  bcachefs: Fix assertion pop in bch2_ptr_swab() (2024-11-12 03:46:57 -0500)
-
-----------------------------------------------------------------
-bcachefs fixes for 6.12
-
-- Assorted tiny syzbot fixes
-- Shutdown path fix: "bch2_btree_write_buffer_flush_going_ro()"
-
-  The shutdown path wasn't flushing the btree write buffer, leading to
-  shutting down while we still had operations in flight. This fixes a
-  whole slew of syzbot bugs, and undoubtedly other strange heisenbugs.
-
-----------------------------------------------------------------
-Kent Overstreet (9):
-      bcachefs: bch2_btree_write_buffer_flush_going_ro()
-      bcachefs: Fix bch_member.btree_bitmap_shift validation
-      bcachefs: Fix missing validation for bch_backpointer.level
-      bcachefs: Fix validate_bset() repair path
-      bcachefs: Fix hidden btree errors when reading roots
-      bcachefs: Fix assertion pop in topology repair
-      bcachefs: Allow for unknown key types in backpointers fsck
-      bcachefs: Fix journal_entry_dev_usage_to_text() overrun
-      bcachefs: Fix assertion pop in bch2_ptr_swab()
-
- fs/bcachefs/backpointers.c          | 17 ++++++++++++-----
- fs/bcachefs/btree_gc.c              |  2 +-
- fs/bcachefs/btree_io.c              |  6 +-----
- fs/bcachefs/btree_update_interior.c |  3 ++-
- fs/bcachefs/btree_write_buffer.c    | 30 +++++++++++++++++++++++++++---
- fs/bcachefs/btree_write_buffer.h    |  1 +
- fs/bcachefs/extents.c               |  5 ++++-
- fs/bcachefs/journal_io.c            |  3 +++
- fs/bcachefs/recovery_passes.c       |  6 ++++++
- fs/bcachefs/recovery_passes_types.h |  1 +
- fs/bcachefs/sb-errors_format.h      |  6 +++++-
- fs/bcachefs/sb-members.c            |  4 ++--
- fs/bcachefs/sb-members_format.h     |  6 ++++++
- fs/bcachefs/super.c                 |  1 +
- 14 files changed, 72 insertions(+), 19 deletions(-)
 
