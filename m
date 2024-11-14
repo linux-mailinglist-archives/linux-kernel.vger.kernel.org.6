@@ -1,88 +1,134 @@
-Return-Path: <linux-kernel+bounces-409650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B2659C8FB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:27:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC8979C8FB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:28:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 119E91F214C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:27:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42D571F21780
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71EF18FDBB;
-	Thu, 14 Nov 2024 16:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC5719939E;
+	Thu, 14 Nov 2024 16:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="j6NCY/KT"
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="lDxfjffK"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5642918E362
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 16:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC7E1990CE;
+	Thu, 14 Nov 2024 16:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731601365; cv=none; b=tBF1vlGbXXFBu/NT2Hfj9vbofPxVlLOZtcg0fZS8dJGttqFvqyTwUmfqHfp4/BRtD94iZRfwZ1uQzG7xmMYpwNVbRg6HruczwUKynXDYbf8g2ACLBMMMngJ/OVdHdTm0yQkiyyBGvd5TFkjjmeIKOYsSgN5wOg0RpRxJxyWaUkw=
+	t=1731601520; cv=none; b=OHyaIXy/Ac6NtMMfUl5iWd1qfVSPH/xRuQwRRl++9XPqETPSlkFz/7MIdtmcRD0en240mDYwOsECB8RujY3j1XoTxlALe1z5+JIhyaw+VptTqO+lqhXThyW2fODYHvbl61Xdf9lc9r+40/6U0tq7xLli6TJtqF7j1kF3Y8UcyaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731601365; c=relaxed/simple;
-	bh=4IaftXbYv4ECqmAKi3NVHvW3JcYdgjCYd1WWAg7JXGo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eiuIHTQqSc1nd412UOYg9fVF/AfSK9aRxqXqKUq/coGAtEVjjtozz6eTKTcXjQ6z6sL6yUoCSCF8y6kZrInCf1qWhi+1fj3vEMB48Ru98iUSJoHaTrNM/sfAoTYjlGE+TUWJDLhbqiR561dbjd6A512HF/3vZLbNkSMyyX1XIfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=j6NCY/KT; arc=none smtp.client-ip=91.218.175.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <ff83386c-2102-4497-be0a-772bd7e6c30c@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1731601361;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DqdEH8rro5M5kS6x2oldYslYOefPTgI3z8afbFzgGqg=;
-	b=j6NCY/KTIIvjFZzsmBe0iAVHfZphGsXie23Yjxxs3grnNzaVvrX23xtllfC3CDIKHs5+Nb
-	koxTPVuxjMOyXW0mRue8N7tzOyuIRC7DOvS0w11uo8Z1YQDzToi7QNhcyAqJ1OZYym3DAi
-	WQvgxbk/tWpmup2bdGu9LumeEdsqe/8=
-Date: Thu, 14 Nov 2024 16:22:37 +0000
+	s=arc-20240116; t=1731601520; c=relaxed/simple;
+	bh=HIhFtVC67XZTLBR55y/ol83UpV/3VL2tA6VCAsKRWgk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GNXPZIIOnRvQFio5Ry1RU523Nsss2r7ZtUCPGx00d8q1x3U6xszDQiy5+2ZlhH69uqqOV98kD76cC9CykkAfx2U03Dt/yWWHhxI/ggstT8SdlScXca6ZVY1MWWvWsrvNdwsmh4K52SK8Scytco41TXxsk5eyL3ZnzoP/25sIIfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=lDxfjffK reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
+ id 0351580d4d3771fb; Thu, 14 Nov 2024 17:25:10 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 20180665CF6;
+	Thu, 14 Nov 2024 17:25:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1731601510;
+	bh=HIhFtVC67XZTLBR55y/ol83UpV/3VL2tA6VCAsKRWgk=;
+	h=From:Subject:Date;
+	b=lDxfjffKTX3F0iZ1GW80YF8W1HwRKAEQ3EGziBA2fdMBw+Y5+8c5AKHd0Pm0wvwhD
+	 KtZPUi1ZpkI4QPoPNNZ6At5E4OuVCYU2xRKOJhZu3sqKVK3dtywH7kqrOXuXpNPBvw
+	 NIdhr11CuorfiKFaUY0CdOUZDREkvb+FgKN1B7rFRA2Vc2IB2fPnkVglCgbLAOF1lC
+	 S6m07EcHTgUlY5dLDe7/pX2xvUVKWgxjc5MEfX+ZoWF7l5VbVtLp7BydRdtkNza5I7
+	 V4gERccc7+mua9yMJ9Ri/XmFLR7Onr+r/AdzarqU+I/eyxhS6MPGTKr1EeHuqCKzqC
+	 cQFGm/4Bbm31A==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+Subject:
+ [PATCH v1] thermal: testing: Initialize some variables annoteded with _free()
+Date: Thu, 14 Nov 2024 17:25:09 +0100
+Message-ID: <12576267.O9o76ZdvQC@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v4 2/7] enic: Make MSI-X I/O interrupts come
- after the other required ones
-To: Nelson Escobar <neescoba@cisco.com>, John Daley <johndale@cisco.com>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Christian Benvenuti <benve@cisco.com>,
- Satish Kharat <satishkh@cisco.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Simon Horman <horms@kernel.org>
-References: <20241113-remove_vic_resource_limits-v4-0-a34cf8570c67@cisco.com>
- <20241113-remove_vic_resource_limits-v4-2-a34cf8570c67@cisco.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20241113-remove_vic_resource_limits-v4-2-a34cf8570c67@cisco.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefuddrvddvgdekjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeffffffkefgheehffelteeiveeffeevhfelteejvddvieejjeelvdeiheeuveeuffenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeehpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtohepuggrnhdrtggrrhhpvghnthgvrheslhhinhgrrhhordhorhhg
+X-DCC--Metrics: v370.home.net.pl 0; Body=5 Fuz1=5 Fuz2=5
 
-On 13/11/2024 23:56, Nelson Escobar wrote:
-> The VIC hardware has a constraint that the MSIX interrupt used for errors
-> be specified as a 7 bit number.  Before this patch, it was allocated after
-> the I/O interrupts, which would cause a problem if 128 or more I/O
-> interrupts are in use.
-> 
-> So make the required interrupts come before the I/O interrupts to
-> guarantee the error interrupt offset never exceeds 7 bits.
-> 
-> Co-developed-by: John Daley <johndale@cisco.com>
-> Signed-off-by: John Daley <johndale@cisco.com>
-> Co-developed-by: Satish Kharat <satishkh@cisco.com>
-> Signed-off-by: Satish Kharat <satishkh@cisco.com>
-> Reviewed-by: Simon Horman <horms@kernel.org>
-> Signed-off-by: Nelson Escobar <neescoba@cisco.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Variables annotated with __free() need to be initialized if the function
+can return before they get updated for the first time or the attempt to
+free the memory pointed to by them upon function return may crash the
+kernel.
+
+Fix this issue in some places in the thermal testing code.
+
+Fixes: f6a034f2df42 ("thermal: Introduce a debugfs-based testing facility")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/thermal/testing/zone.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+Index: linux-pm/drivers/thermal/testing/zone.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/testing/zone.c
++++ linux-pm/drivers/thermal/testing/zone.c
+@@ -185,7 +185,7 @@ static void tt_add_tz_work_fn(struct wor
+ int tt_add_tz(void)
+ {
+ 	struct tt_thermal_zone *tt_zone __free(kfree);
+-	struct tt_work *tt_work __free(kfree);
++	struct tt_work *tt_work __free(kfree) = NULL;
+ 	int ret;
+ 
+ 	tt_zone = kzalloc(sizeof(*tt_zone), GFP_KERNEL);
+@@ -237,7 +237,7 @@ static void tt_zone_unregister_tz(struct
+ 
+ int tt_del_tz(const char *arg)
+ {
+-	struct tt_work *tt_work __free(kfree);
++	struct tt_work *tt_work __free(kfree) = NULL;
+ 	struct tt_thermal_zone *tt_zone, *aux;
+ 	int ret;
+ 	int id;
+@@ -331,8 +331,8 @@ static void tt_zone_add_trip_work_fn(str
+ int tt_zone_add_trip(const char *arg)
+ {
+ 	struct tt_thermal_zone *tt_zone __free(put_tt_zone) = NULL;
++	struct tt_trip *tt_trip __free(kfree) = NULL;
+ 	struct tt_work *tt_work __free(kfree);
+-	struct tt_trip *tt_trip __free(kfree);
+ 	int id;
+ 
+ 	tt_work = kzalloc(sizeof(*tt_work), GFP_KERNEL);
+@@ -387,7 +387,7 @@ static struct thermal_zone_device_ops tt
+ 
+ static int tt_zone_register_tz(struct tt_thermal_zone *tt_zone)
+ {
+-	struct thermal_trip *trips __free(kfree);
++	struct thermal_trip *trips __free(kfree) = NULL;
+ 	struct thermal_zone_device *tz;
+ 	struct tt_trip *tt_trip;
+ 	int i;
+
+
 
 
