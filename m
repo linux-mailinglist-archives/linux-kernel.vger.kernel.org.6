@@ -1,237 +1,125 @@
-Return-Path: <linux-kernel+bounces-408931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8143F9C8545
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:52:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C0779C854C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:53:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07B831F22E22
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:52:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 088341F21441
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:53:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C661F7552;
-	Thu, 14 Nov 2024 08:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576661F76AC;
+	Thu, 14 Nov 2024 08:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ebfc/jk3"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="Ee9N5MDM"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6EE198E84;
-	Thu, 14 Nov 2024 08:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9F71E8822;
+	Thu, 14 Nov 2024 08:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731574318; cv=none; b=pVPrXl8xwKEPlzEdKOYsQIkXxcVLBLjRQR/3Iv/X4kiuPpF0gWIomRt8sXxm8zzZWiLGK1dXjhJL6wMgS+A0QK7WtVu/ZTBpVVxCfE4O3MvZZM/ZFMs+9oS1hzSfCmL64WAocE3umT01RaNPmbSyYbH8x9NJ/Ykms9cN93DRE9I=
+	t=1731574376; cv=none; b=MtNqlH18SwHYgK4EpTUWnx8n51qRWhtahj8cmpK5BUDPE+hXipUg8MImPfTtnxCFhlHhXvX5MegjokTYaZjx7FqdwSQSrvqa9wL6JTRvRstOWaKsgkROuoxkeWT6FpJlFpk54Iktv5RJFKjEf8m9CbZ/N8hEC4cMatAaQXTtbR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731574318; c=relaxed/simple;
-	bh=LcBAxAZAX37uBPCEepx0YxjDpWR0wCPmVubA/HyGtUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c9jdaoZY7A6i4Anjf+dnIUpiwrI4CZFlQJmG50MyyzOrBMWPBK4+s2+zP6iDWA844z2qsnArUb1ap8JCIeejyPeHIncK4Up3U6VCfak7hewqHNoBFUhINRFNOVCQYL6c4OJFkG1guLgjOF6h1w7x5IXv5yv90EHaN5HkdFRUvq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ebfc/jk3; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DDE941BF20C;
-	Thu, 14 Nov 2024 08:51:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731574314;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1HiNHG2D/g4kWwQyOFwdXskLa10Ajy4fAeLl0rHlWQg=;
-	b=Ebfc/jk3kQpDApG7oMCN1lYf9XP+E+p/16H79+rUME1nmHzVZZIqMY4Wr6g2Hwd35yaCa8
-	A3i53EJpyOXj3ELVHAwHYi+/LjnJBviH3Kv81HB2olb+NR7GBWFAEhCNaX4GyG5i/tgE7j
-	q1H6FgqO+l5eR7csXFhSutjDl/mMTdnINKI7DECYslEgI8pR0G5SS2Kr76jQ+WbSGFJC1T
-	VJIaOV2IVmsH7IgZNuBuomb/T08Jg8QYzz5KT6wyHiTbdbQj7aE/eblxqK/mjBeUs0uKlI
-	/Fx7PUuK9FTGhVKUZ2TRxvtZ+pJw4eX2YS/JvpfDe4APapKHISfo1rEmqT0XYw==
-Date: Thu, 14 Nov 2024 09:51:53 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Philipp Rosenberger <p.rosenberger@kunbus.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
-	Thomas =?iso-8859-1?Q?B=F6hler?= <t.boehler@kunbus.com>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>
-Subject: Re: [PATCH v3 0/2] rtc: pcf2127: make battery switch-over
- configurable
-Message-ID: <20241114085153e4e23a7f@mail.local>
-References: <20241111154144.163604-1-p.rosenberger@kunbus.com>
+	s=arc-20240116; t=1731574376; c=relaxed/simple;
+	bh=mV6wCDQQ98rR/ujdsfhSfcUAcivczFca5OV8rGM7sSo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iImph95/WxJKiY/BUP2wQhIHpIJ5ey/eSx5ZYUU0UcPrJ3mhGHSQ3xcXdQaMN7cOxMPMuxO/q3TXvvNBmGMLOEF07FMV0Bxcd5q96gnzQ//wQRI7JjVQc4jxxgFRuc6kVG9HEW78PCP/vYRKAVkTf+OtyP7fbdswtywiJ14opnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=Ee9N5MDM; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References; bh=o42UFSPZ8M6NDF4IfNFLvd4R2qtAoiiJCVYA2hpMZhA=; b=Ee
+	9N5MDMiJjA2OJ7yI4vMvDWpiCcDBRHY0pc2aQyUsZ6Ql/I3CmTR1oE/yftk4utQYzXuD0a8qbsxaM
+	gxmFXtSv5kjnImoVgS4gJvG8Ub9CXcC+8DC3lZu7uRTamcPhzMHR67oAEjNnreOK3AOPm8Itdp9bW
+	u6Ew1WafMxF/jptC+feL7qfgGGpJj3cGa+x8DqqOK58x++YSOTftu6lNGqzeY8JDIznpVFillkeXz
+	vp5Wv1gO5lAwh35RbtUmp/W9UHs5xlW2VPLZKk6MyNkr+WgfRxWNOBYOz6CXe1OZtVU3Nx68hoUZy
+	+0Ugph65G2vwwrQ1hNUrw+VwwIzM+V4Q==;
+Received: from sslproxy01.your-server.de ([78.46.139.224])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sean@geanix.com>)
+	id 1tBVan-000CeT-8c; Thu, 14 Nov 2024 09:52:45 +0100
+Received: from [185.17.218.86] (helo=zen.localdomain)
+	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sean@geanix.com>)
+	id 1tBVam-000CcT-1g;
+	Thu, 14 Nov 2024 09:52:44 +0100
+From: Sean Nyekjaer <sean@geanix.com>
+Subject: [PATCH can-next v4 0/2] can: tcan4x5x: add option for selecting
+ nWKRQ voltage
+Date: Thu, 14 Nov 2024 09:52:20 +0100
+Message-Id: <20241114-tcan-wkrqv-v4-0-f22589d67fb1@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241111154144.163604-1-p.rosenberger@kunbus.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEW6NWcC/2WQ207DMAyGX6XKNUGJc1jbK94DcZGDs0Wo7ZaWU
+ jTt3TEtE6vInWV/X+z/ykYsGUfWVldWcM5jHnoq9FPFwsn1R+Q5Us1AgJZCCT4F1/PP93KZebD
+ gG2GFMNExAs4FU15W2Sv7GetxmdgbdU55nIbytf4yy7X/K5SPwllywWtQ0UcJCbV7OaLr8/Ich
+ m71zPDH0tuxQGxzsMrIxhsw8I9VjyzsWEVssFaDSt6BjTv2tp1W8PJB8Uz3++7ptNWmFIaHoZ+
+ xTJtaeyPJqDEk29LiZPFuRBrqujwR5cE1TtSpToJi1OjAByujV+qgNUgvUqO1s7TA7Rt7INyNp
+ wEAAA==
+X-Change-ID: 20241030-tcan-wkrqv-c62b906005da
+To: Marc Kleine-Budde <mkl@pengutronix.de>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Sean Nyekjaer <sean@geanix.com>
+X-Mailer: b4 0.14.2
+X-Authenticated-Sender: sean@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27457/Wed Nov 13 10:35:46 2024)
 
-Hello,
+This series adds support for setting the nWKRQ voltage.
 
-On 11/11/2024 16:41:42+0100, Philipp Rosenberger wrote:
-> Hello,
-> 
-> This patch series adds the nxp,battery-backed device tree property to the
-> PCF2127 RTC driver. This flag indicates if the RTC is battery-backed, allowing
-> the driver to enable the battery switchover function if necessary.
-> 
-> Background
-> ----------
-> The PCF2127 RTC driver currently supports the PCF2127, PCA2129, PCF2129, and
-> PCF2131 devices. Among these, only the newer PCF2131 has a different default
-> behavior for battery switchover: it is disabled by default, whereas it is
-> enabled on the other devices. If there is no firmware or bootloader setting
-> to enable battery switchover on the PCF2131, it will not automatically switch
-> to battery power, even if a battery is attached.
-> 
-> An alternative approach would be to enable battery switchover by default on
-> the PCF2131 without requiring a device tree property. However, this could be
-> undesirable, as it would make it impossible to disable battery
-> switchover.
-> 
-
-This has been discussed multiple times in the past, we can't have a DT
-property for this as we need to be able to change it at runtime. There
-is already a userspace interface to do this.
-
-Below is my current patch for this that has been tested on pcf2127. I
-didn't send it yet because we are losing information when switching from
-standard or direct mode to disabled because when BSM is disabled, there
-is no configuration where battery low detection function is enabled so
-going from disabled to standard or direct will keep BLD disabled.
-
-8<--------------------------------------------------------------------
-
-From 7db70b33c3939a0ebe147c32f406b34a2f5f1be8 Mon Sep 17 00:00:00 2001
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date: Sat, 24 Feb 2024 19:58:20 +0100
-Subject: [PATCH] rtc: pcf2127: add BSM support
-
-The pcf2127 encodes BSM, BLD and power fail detection in the same set of
-bits so it is necessary to do some calculation when changing BSM to keep
-the rest of the configuration as-is. However, when BSM is disabled, there
-is no configuration with BLD enabled so this will be lost when coming back
-to a mode with BSM enabled.
-
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Sean Nyekjaer <sean@geanix.com>
 ---
- drivers/rtc/rtc-pcf2127.c | 81 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 81 insertions(+)
+Changes in v4:
+- Fixed commit msg, as pr. Marc's comments
+- Added Reviewed-By tag to 2/2
+- Link to v3: https://lore.kernel.org/r/20241112-tcan-wkrqv-v3-0-c66423fba26d@geanix.com
 
-diff --git a/drivers/rtc/rtc-pcf2127.c b/drivers/rtc/rtc-pcf2127.c
-index 9c04c4e1a49c..a7f73192d53d 100644
---- a/drivers/rtc/rtc-pcf2127.c
-+++ b/drivers/rtc/rtc-pcf2127.c
-@@ -48,6 +48,7 @@
- #define PCF2127_BIT_CTRL3_BLF			BIT(2)
- #define PCF2127_BIT_CTRL3_BF			BIT(3)
- #define PCF2127_BIT_CTRL3_BTSE			BIT(4)
-+#define PCF2127_CTRL3_PM			GENMASK(7, 5)
- /* Time and date registers */
- #define PCF2127_REG_TIME_BASE		0x03
- #define PCF2127_BIT_SC_OSF			BIT(7)
-@@ -331,6 +332,84 @@ static int pcf2127_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 	return 0;
- }
- 
-+static int pcf2127_param_get(struct device *dev, struct rtc_param *param)
-+{
-+	struct pcf2127 *pcf2127 = dev_get_drvdata(dev);
-+	u32 value;
-+	int ret;
-+
-+	switch (param->param) {
-+	case RTC_PARAM_BACKUP_SWITCH_MODE:
-+		ret = regmap_read(pcf2127->regmap, PCF2127_REG_CTRL3, &value);
-+		if (ret < 0)
-+			return ret;
-+
-+		value = FIELD_GET(PCF2127_CTRL3_PM, value);
-+
-+		if (value < 0x3)
-+			param->uvalue = RTC_BSM_LEVEL;
-+		else if (value < 0x6)
-+			param->uvalue = RTC_BSM_DIRECT;
-+		else
-+			param->uvalue = RTC_BSM_DISABLED;
-+
-+		break;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int pcf2127_param_set(struct device *dev, struct rtc_param *param)
-+{
-+	struct pcf2127 *pcf2127 = dev_get_drvdata(dev);
-+	u8 mode = 0;
-+	u32 value;
-+	int ret;
-+
-+	switch (param->param) {
-+	case RTC_PARAM_BACKUP_SWITCH_MODE:
-+		ret = regmap_read(pcf2127->regmap, PCF2127_REG_CTRL3, &value);
-+		if (ret < 0)
-+			return ret;
-+
-+		value = FIELD_GET(PCF2127_CTRL3_PM, value);
-+
-+		if (value > 5)
-+			value -= 5;
-+		else if (value > 2)
-+			value -= 3;
-+
-+		switch (param->uvalue) {
-+		case RTC_BSM_LEVEL:
-+			break;
-+		case RTC_BSM_DIRECT:
-+			mode = 3;
-+			break;
-+		case RTC_BSM_DISABLED:
-+			if (value == 0)
-+				value = 1;
-+			mode = 5;
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+
-+		return regmap_update_bits(pcf2127->regmap, PCF2127_REG_CTRL3,
-+					  PCF2127_CTRL3_PM,
-+					  FIELD_PREP(PCF2127_CTRL3_PM, mode + value));
-+
-+		break;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- static int pcf2127_rtc_ioctl(struct device *dev,
- 				unsigned int cmd, unsigned long arg)
- {
-@@ -741,6 +820,8 @@ static const struct rtc_class_ops pcf2127_rtc_ops = {
- 	.read_alarm       = pcf2127_rtc_read_alarm,
- 	.set_alarm        = pcf2127_rtc_set_alarm,
- 	.alarm_irq_enable = pcf2127_rtc_alarm_irq_enable,
-+	.param_get        = pcf2127_param_get,
-+	.param_set        = pcf2127_param_set,
- };
- 
- /* sysfs interface */
+Changes in v3:
+- Switched the order of patches, yaml patch first and then code change.
+- Switched to a boolean ti,nwkrq-voltage-vio.
+- Switched internal variable to a bool.
+- Link to v2: https://lore.kernel.org/r/20241111-tcan-wkrqv-v2-0-9763519b5252@geanix.com
+
+Changes in v2:
+- Converted tcan4x5x.txt to DT schema. In
+  https://lore.kernel.org/linux-can/20241105-convert-tcan-v2-1-4b320f3fcf99@geanix.com/
+- Reworked ti,nwkrq-voltage-sel, to DH schema style.
+- Link to v1: https://lore.kernel.org/r/20241031-tcan-wkrqv-v1-0-823dbd12fe4a@geanix.com
+
+---
+Sean Nyekjaer (2):
+      dt-bindings: can: tcan4x5x: Document the ti,nwkrq-voltage-vio option
+      can: tcan4x5x: add option for selecting nWKRQ voltage
+
+ .../devicetree/bindings/net/can/ti,tcan4x5x.yaml     |  8 ++++++++
+ drivers/net/can/m_can/tcan4x5x-core.c                | 20 ++++++++++++++++++++
+ drivers/net/can/m_can/tcan4x5x.h                     |  2 ++
+ 3 files changed, 30 insertions(+)
+---
+base-commit: 2b2a9a08f8f0b904ea2bc61db3374421b0f944a6
+change-id: 20241030-tcan-wkrqv-c62b906005da
+prerequisite-change-id: 20241105-convert-tcan-4b516424ecf6:v2
+prerequisite-patch-id: a652b1a16dadd5ff525d0b58fec56f605a976aa3
+
+Best regards,
 -- 
-2.47.0
+Sean Nyekjaer <sean@geanix.com>
 
-
-
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
