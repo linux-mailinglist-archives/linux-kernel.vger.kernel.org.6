@@ -1,171 +1,124 @@
-Return-Path: <linux-kernel+bounces-409031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 737F29C86A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:58:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8B139C86A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:58:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 746A7B28941
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:57:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C590283133
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FC91F80A5;
-	Thu, 14 Nov 2024 09:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6171F81A6;
+	Thu, 14 Nov 2024 09:55:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f93QS6cM"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="cO/m/WtF"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BE71F943F;
-	Thu, 14 Nov 2024 09:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EB91F7552;
+	Thu, 14 Nov 2024 09:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731578081; cv=none; b=WuXYcjvFCAqBuH8bb2dlyJzLwWE8Fgf0obwwHQmxojHEj8v3D1ypaS6/D9/pllUoVNVGIXFh0/S+FS53C3Bb8U/D/Chj2eUzpr9s6LIIhZxUR76XH6mlvNLnJmp76tM7sb04SP2k3+wwclg0NqY1gfstQWdoVAISZed5CyssAEU=
+	t=1731578132; cv=none; b=pZ1/M+Sq90ZK3tbKbK0TwOxQ10cnBTQcvEgjjN4i6iynOPjcnL/D7Ekdk4aK79P+1S6hUnfN5oQuay1Jx3DvXGMgmHAN/F/AFR0CrKiAii1k9Larsd8Nn+yVDDYTURsuKm8SN/Me4Hw1+0AKiu31zoe9Wl4fTRvAotR1m662ols=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731578081; c=relaxed/simple;
-	bh=IPpQBdmprs58cfaC6Ih1JMqBBM85BFaBkp/bsB43ZyI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QAiixdEQpR8jU0ZCtApadDp+u9XKwX+mcSMROPXiIDnnYkThexX28E4yeCkjlsmLoxebtkCgX/9lhym6dfnfgdqKMFdGTXdb+NUDbp/+sR+sc6CF8GdihevYyXDWBhQdGUQ4X2S6jQ55W83OVYX94y6QCz2nyT7l4ins3kfm/l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f93QS6cM; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539f6e1f756so353578e87.0;
-        Thu, 14 Nov 2024 01:54:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731578078; x=1732182878; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WbjwQvSI09oTn8d8bmV+CXjrqfJSg3x056AtcnIu3IY=;
-        b=f93QS6cMVs05wgJVS66j8fKqXTv6V9JoOkqmQ7SASXA8LdOKXZU0/5y9OZRXRGX2Iy
-         KlvTactwLJJWTr1rsI8Qipn47JJ/PVMoOIrl/lFBa6/cktoyBU3MukYvL9Xuv6zlShcZ
-         lGoCj37WgSdfm/5+kKdY4UVfRgt2Vn4YeP8PWezQz8gMsMWQo5saBypqHR+fQLgMmbel
-         jNVarK85c/y6ZbLnKWYihd8alOaz9qthHT/ga00fIkqA2aq9Jkdg92WwbBKNdjckWUQ3
-         s+TJn/xW00aIT9kst/osuXmhZCmrUfyqu60StZvCa7zgkauc9Ltkx036S4kf2V6GHlAF
-         bztw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731578078; x=1732182878;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WbjwQvSI09oTn8d8bmV+CXjrqfJSg3x056AtcnIu3IY=;
-        b=j+rqj8dJly7pZwWIudTjzkvdIbyAEwokfrbqJyxkJgGSfiAD9CY/kTB8EKuHmg/LlJ
-         eQoHStEGlrY4Vz6Bihytl3f7I89w3DAsWxRqo/Lu8Ybg6BfcHIxHFFE33gh8H0fXBd5c
-         s6JjzxonOA1HU7jKZ3kWLg3ciKc62HY6Wg26YK5PfyN4GxxOIf6ywWGbq5gMG98DRc/x
-         xP8kysUSIlTBRHQGqpbuuHaRHjWYX2n6/qj7o5zHlo/1/LcUV1AtwuSO7GWSXGV4nua7
-         byW9MMtWkDYiYOLYEIUK5CvWPoMJFC3afcQpGeqllpuQtICdwUX/sOY0UME0VuMuFdhM
-         t0WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWBqiF78/R5F8MFXSQW4hlei4UwRyP1QImeImuy3zMENBCoKVP2DymVlnfqkHlt2eui5/8+z1GThKM=@vger.kernel.org, AJvYcCXPAfLjpeLtH1YmVs8B4zot96WdyBuF88Qyk4XheSMo6F1Egj2ibzdr3j0qylbMeFxGU8AxYZJef++o2ZBJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPR6fOYzN/G+tPDQ6qunNVHOLFDMHRQXvW9qOWBaJffK96Mm62
-	R/p9YgyHdLCz/PSjtPzEkqQabs9dBXrz2J9YXz7EhOW7AGTdy0Fn5VIb2xq7
-X-Google-Smtp-Source: AGHT+IHMdywmHI/GwsItlI9NB0/xI9K8gaW1U1K4dwX3pO+CHnZH9c5vhIhfADM+Rn9IB8K3vwjDBg==
-X-Received: by 2002:a05:6512:3b83:b0:53d:a86e:42d7 with SMTP id 2adb3069b0e04-53da86e430cmr439825e87.49.1731578077362;
-        Thu, 14 Nov 2024 01:54:37 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da6531042sm126472e87.153.2024.11.14.01.54.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 01:54:35 -0800 (PST)
-Message-ID: <f4cf3437-87ea-4d0f-8dab-890d89f85605@gmail.com>
-Date: Thu, 14 Nov 2024 11:54:33 +0200
+	s=arc-20240116; t=1731578132; c=relaxed/simple;
+	bh=+HWak88Ehw4C3GkW1MzZbhh/Cfp+jj9+xNEBtIU+veI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EBno3JEvS+uMt1Hv7ZsNLYUhrznpK2Tzfj2y+PfGDw+rhnterm8yLpn2sWtTnU/zYvp07KYuqT92y142WVBJjNQcLyNfJJMnhSnDha9DjNVvcFt0RwAazeW+G/1bDtAAXuHY/gXF4AdRHsGeQkn85cwJ4TpoK5IBJFzuHNotDEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=cO/m/WtF; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9E99F40E015E;
+	Thu, 14 Nov 2024 09:55:27 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 2h1FGJGz5C49; Thu, 14 Nov 2024 09:55:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1731578122; bh=3UbCZxfhVYy6kTAHF2vSeHP8crTqfM8XNr9sTd6/eVI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cO/m/WtFjo/Sh9MlAgWGwC1BzUHJencXvBIDgBmjn5CyaCSgJi4QXuxLwYi6oEHn2
+	 mN4G2MJasrqKEEJztkIlT6Ydxxi80uWu7igASB0V9DbdqAUNEt//ZoEE1ptCqVfK7M
+	 nchT/sXkDMOg1ImKiy40o2+JOnAqn3p57NwpP6pfKMHR6J8GzsQzgBTWD0O62g+bgg
+	 BvkZBvJsKbOl4ww4BishlygL5Y1FI97NExuM0FF26oq2OZMnQfb+r3oOTy5/BHtBJl
+	 HZmBqbs8UMtGmyVMOxQUgunZO7djANxWDfQiNChcA542aelACiV1YrJZ0GuzKXVRwd
+	 LF8rEbrNdal9wRSaqbSzJGq2k0zTECCQN6UCNxRSGqxfeO8r4XzajaA8/rS10S1JWL
+	 35GLvcURzZ7BBFahU2IO9dMK1Cx3FvYzgsmA0QqLWCvrufpPd8apECbo1Z/D0ZYNoT
+	 EECdLenaZ4o9MV2cpocZP9b1obb2h6H3t4eJfPbnd6ihEQaz1oTIfdVa0BC8LKQxk5
+	 XDNI0aIv/1Q1Lk2MHPc+4dC0Xlgn2YgpXp0cBn9z4U+TCfrv53C/SNwMW6ShQmZK5P
+	 Cvq/tS3XCUfK2ybr6WmS7oTbKq6oYMDSgdI8CMXmTSSGTakyrVroJBJPBR+mP3XsRK
+	 bLZ8bwV4CccYZyAnwnHDaeA4=
+Received: from zn.tnic (p200300ea973a31a9329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:973a:31a9:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A8BAC40E0220;
+	Thu, 14 Nov 2024 09:54:55 +0000 (UTC)
+Date: Thu, 14 Nov 2024 10:54:50 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Amit Shah <amit@kernel.org>, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, x86@kernel.org, linux-doc@vger.kernel.org,
+	amit.shah@amd.com, thomas.lendacky@amd.com, tglx@linutronix.de,
+	peterz@infradead.org, pawan.kumar.gupta@linux.intel.com,
+	corbet@lwn.net, mingo@redhat.com, dave.hansen@linux.intel.com,
+	hpa@zytor.com, seanjc@google.com, pbonzini@redhat.com,
+	daniel.sneddon@linux.intel.com, kai.huang@intel.com,
+	sandipan.das@amd.com, boris.ostrovsky@oracle.com,
+	Babu.Moger@amd.com, david.kaplan@amd.com, dwmw@amazon.co.uk
+Subject: Re: [RFC PATCH v2 1/3] x86: cpu/bugs: update SpectreRSB comments for
+ AMD
+Message-ID: <20241114095450.GCZzXI6rY0s-OWJ6X1@fat_crate.local>
+References: <20241111163913.36139-2-amit@kernel.org>
+ <20241111193304.fjysuttl6lypb6ng@jpoimboe>
+ <564a19e6-963d-4cd5-9144-2323bdb4f4e8@citrix.com>
+ <20241112014644.3p2a6te3sbh5x55c@jpoimboe>
+ <20241112115811.GAZzNC08WU5h8bLFcf@fat_crate.local>
+ <20241113212440.slbdllbdvbnk37hu@jpoimboe>
+ <20241113213724.GJZzUcFKUHCiqGLRqp@fat_crate.local>
+ <20241114004358.3l7jxymrtykuryyd@jpoimboe>
+ <20241114074733.GAZzWrFTZM7HZxMXP5@fat_crate.local>
+ <ZzXHK1O9E1sQ8mBt@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: accel: kx022a: Improve reset delay
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <ZzWfXbjaDkFnu_Jg@mva-rohm>
- <be375e24f74997743743fadf68125e176c23e2df.camel@gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <be375e24f74997743743fadf68125e176c23e2df.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZzXHK1O9E1sQ8mBt@gmail.com>
 
-On 14/11/2024 11:43, Nuno Sá wrote:
-> On Thu, 2024-11-14 at 08:57 +0200, Matti Vaittinen wrote:
->> All the sensors supported by kx022a driver seemed to require some delay
->> after software reset to be operational again. More or less a random
->> msleep(1) was added to cause the driver to go to sleep so the sensor has
->> time to become operational again.
->>
->> Now we have official docuumentation available:
->> https://fscdn.rohm.com/kionix/en/document/AN010_KX022ACR-Z_Power-on_Procedure_E.pdf
->> https://fscdn.rohm.com/kionix/en/document/TN027-Power-On-Procedure.pdf
->> https://fscdn.rohm.com/kionix/en/document/AN011_KX134ACR-LBZ_Power-on_Procedure_E.pdf
->>
->> stating the required time is 2 ms.
->>
->> Due to the nature of the current msleep implementation, the msleep(1) is
->> likely to be sleeping more than 2ms already - but the value "1" is
->> misleading in case someone needs to optimize the start time and change
->> the msleep to a more accurate delay. Hence it is better for
->> "documentation" purposes to use value which actually reflects the
->> specified 2ms wait time.
->>
->> Change the value of delay after software reset to match the
->> specifications and add links to the power-on procedure specifications.
->>
->> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->> ---
->> Sorry for not including this to the KX134ACR-LBZ series I sent
->> yesterday. It was only half an hour after I had sent the KX134ACR-LBZ
->> support when I was notified about the existence of the KX022ACR-Z
->> start-up procedure specification... Hence this lone patch to code which
->> I just sent a miscallaneous series for before.
->>
->>   drivers/iio/accel/kionix-kx022a.c | 11 ++++++++---
->>   1 file changed, 8 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/iio/accel/kionix-kx022a.c b/drivers/iio/accel/kionix-
->> kx022a.c
->> index 32387819995d..ccabe2e3b130 100644
->> --- a/drivers/iio/accel/kionix-kx022a.c
->> +++ b/drivers/iio/accel/kionix-kx022a.c
->> @@ -1121,10 +1121,15 @@ static int kx022a_chip_init(struct kx022a_data *data)
->>   		return ret;
->>   
->>   	/*
->> -	 * I've seen I2C read failures if we poll too fast after the sensor
->> -	 * reset. Slight delay gives I2C block the time to recover.
->> +	 * According to the power-on procedure documents, there is (at least)
->> +	 * 2ms delay required after the software reset. This should be same
->> for
->> +	 * all, KX022ACR-Z, KX132-1211, KX132ACR-LBZ and KX134ACR-LBZ.
->> +	 *
->> +	 *
->> https://fscdn.rohm.com/kionix/en/document/AN010_KX022ACR-Z_Power-on_Procedure_E.pdf
->> +	 *
->> https://fscdn.rohm.com/kionix/en/document/TN027-Power-On-Procedure.pdf
->> +	 *
->> https://fscdn.rohm.com/kionix/en/document/AN011_KX134ACR-LBZ_Power-on_Procedure_E.pdf
->>   	 */
->> -	msleep(1);
->> +	msleep(2);
+On Thu, Nov 14, 2024 at 10:47:23AM +0100, Ingo Molnar wrote:
+> I think in-line documentation is better in this case: the primary defense
+> against mistakes and misunderstandings is in the source code itself.
 > 
-> msleep() is not advisable for something lower than 20ms. Maybe take the
-> opportunity and change it to fsleep()?
+> And "it's too long" is an argument *against* moving it out into some obscure
+> place 99% of developers aren't even aware of...
 
-Thank you for the suggestion Nuno. I did originally consider using the 
-usleep_range() since the checkpatch knows to warn about msleep with 
-small times.
+You mean developers can't even read?
 
-However, there should be no rush to power-on the sensor at startup. It 
-usually does not matter if the sleep is 2 or 20 milli seconds, as long 
-as it is long enough. I wonder if interrupting the system with hrtimers 
-for _all_ smallish delays (when the longer delay would not really hurt) 
-is a the best design choice. Hence I'd rather keep the msleep when we 
-don't need to guarantee delay to be short instead of defaulting to 
-hrtimers or even busy-loop when it is not required.
+	/* 
+	 * See Documentation/arch/x86/ for details on this mitigation
+	 * implementation.
+	 */
 
-Do you think I am mistaken?
+And if we want to expand the "why" and do proper documentation on the
+implementation decisions of each mitigation, we still keep it there in the
+code?
 
-Yours,
-	-- Matti
+Or we do one part in Documentation/ and another part in the code?
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
