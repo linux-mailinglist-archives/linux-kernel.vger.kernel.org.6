@@ -1,119 +1,96 @@
-Return-Path: <linux-kernel+bounces-408589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A3279C80CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:31:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65B239C80CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:32:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A98FBB24EF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:31:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3E721F21B72
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B931E25F7;
-	Thu, 14 Nov 2024 02:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EDF19DF53;
+	Thu, 14 Nov 2024 02:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Det6Mgmh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s82XxPzH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F79182C5;
-	Thu, 14 Nov 2024 02:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0491E6AAD;
+	Thu, 14 Nov 2024 02:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731551504; cv=none; b=Q26rChrfBFTEvYUguUpGnoNVKA7SWeA0oHAgDtwJyMiRCiMZ9rlCiWqYa8shnl0+lsJANs0E8Iu5HSKzV6CLBcSQnrDiQ2iRxw12exzsfXy2mFHFwL23K+fJOAedtdZWRgDWw0pYqPq1dW8sP3c3/vwgje1s7S9G2CaVMTam8tk=
+	t=1731551552; cv=none; b=UB633rksODBkKxsdUpS5x5KXpjVs2iYokc8x0kkhAJDgdHJbemoahKeOnNRry+W+/UbaBYdzenTQGcgeHAntpeCzDfjy8BT9M26PsS3RWiUyspldk5Lyoa6cBrBO/2WCRdj/L7kIHu5zYUElWWcT8NIw/TqMHv0FPNYjc7rUYY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731551504; c=relaxed/simple;
-	bh=ZXlkiAu/T3aJ2qHWeASAGx84yAnWg2sjO+0ha25J8Ms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jfHrzr4VzP0vyBXbBVW58pCFG1VPQ7W88b3lV2i34yVTXxVkYCm6XA43IugQEP7H2oDcRymwKp+Yze8/bFlugP3RIX2oGlflsYeGCCs1NN7JQEcCA1gYbNce0NpY1mo4a0hkzLcqcdmdVXML6olKOX8LNTOadk8psufRGhsykKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Det6Mgmh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46AD1C4CEC3;
-	Thu, 14 Nov 2024 02:31:43 +0000 (UTC)
+	s=arc-20240116; t=1731551552; c=relaxed/simple;
+	bh=4Rku6bOBc/6Yr7D06nrlI7xsDc5AOTONG9jeSHQxHgY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NtLOdMjL82gqDX7ywyBqDLuYElZhhrATsHYO0WnSykoia9T8QrDJfK0m+ygru7p2AurQONSTS2UZm9DCARgQUQe408JYLgmTA5/KpbVDMDxreopLb5ZfEyLA/BSWNLvtQFaUceXqAo1Ic9snc5ixwh5uD8bNZFQjZQJAtE7nxZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s82XxPzH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0206FC4CEC3;
+	Thu, 14 Nov 2024 02:32:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731551504;
-	bh=ZXlkiAu/T3aJ2qHWeASAGx84yAnWg2sjO+0ha25J8Ms=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Det6MgmhQjVbbEdyroCfzXhJDhajlshlqAxJ9nl1/q7wInpgFYu5zG93tqhT1DJrq
-	 LEkoJqZRVE3QlBbpOwwnsBtQ2xAyo5XN/xSIE1v8Bm+I+/kLkULjnDxDemrn3i2237
-	 peAd/17m/l0LFm3Q4UuUIBKSHwSFROpCjJ0vw/TPwr6Xkh8T2+/zdCxH2gCaFT4zv7
-	 Dze6XaS4UhGYx1Bf1mwTfb4cmVTUTKLUeHIch8hoAIH5TMIMkWy7scXjTr7Ht0pEsq
-	 XAl5j61HazXUItW77dE6SnNUUM1GdswzY8Fv0BsqfgnLQqHXAvQ5php4jQOi0clAmi
-	 gu9PI5MTH+T2A==
-Date: Wed, 13 Nov 2024 18:31:41 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>, Amit Shah <amit@kernel.org>,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
-	linux-doc@vger.kernel.org, amit.shah@amd.com,
-	thomas.lendacky@amd.com, bp@alien8.de, tglx@linutronix.de,
-	peterz@infradead.org, corbet@lwn.net, mingo@redhat.com,
-	dave.hansen@linux.intel.com, hpa@zytor.com, seanjc@google.com,
-	pbonzini@redhat.com, daniel.sneddon@linux.intel.com,
-	kai.huang@intel.com, sandipan.das@amd.com,
-	boris.ostrovsky@oracle.com, Babu.Moger@amd.com,
-	david.kaplan@amd.com, dwmw@amazon.co.uk
-Subject: Re: [RFC PATCH v2 1/3] x86: cpu/bugs: update SpectreRSB comments for
- AMD
-Message-ID: <20241114023141.n4n3zl7622gzsf75@jpoimboe>
-References: <20241111163913.36139-1-amit@kernel.org>
- <20241111163913.36139-2-amit@kernel.org>
- <20241111193304.fjysuttl6lypb6ng@jpoimboe>
- <564a19e6-963d-4cd5-9144-2323bdb4f4e8@citrix.com>
- <20241112014644.3p2a6te3sbh5x55c@jpoimboe>
- <20241112214241.fzqq6sqszqd454ei@desk>
- <20241113202105.py5imjdy7pctccqi@jpoimboe>
- <20241114015505.6kghgq33i4m6jrm4@desk>
+	s=k20201202; t=1731551551;
+	bh=4Rku6bOBc/6Yr7D06nrlI7xsDc5AOTONG9jeSHQxHgY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=s82XxPzH/lhOiB+zeBvUzVGt0JrO+4HflzIyBdMeg9owlWiMO6KGreANrU9V+dXLl
+	 8Js3m55lzrE9cVUlA47v2TXA6btimKMXgvinRD5E+xP9vJTbn023cwj5LVINgqFazW
+	 Gjos1h0iAKRS59AoEgJlc+dgw1vX7bChgKH3Y6PU3Euh9zrIaiv+SWJ5f+9Yahpe6+
+	 +uyD8tLufrmSSUeHO94SllzYK52mj0wKN07EQlx7RyVRa/HLJ+kwnV1ihgJBEFJfil
+	 fjjOIsAijPlvFzeDXzH2pMUH6y/ia5p0DNDe+BUUw2/To7wmpeC1x6YS46f17yePBI
+	 OIB+6IOUlOYnQ==
+Date: Wed, 13 Nov 2024 18:32:29 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ linux-kernel@vger.kernel.org, horms@kernel.org, donald.hunter@gmail.com,
+ andrew+netdev@lunn.ch, kory.maincent@bootlin.com, nicolas.dichtel@6wind.com
+Subject: Re: [PATCH net-next 3/7] ynl: support directional specs in
+ ynl-gen-c.py
+Message-ID: <20241113183230.4d908a54@kernel.org>
+In-Reply-To: <ZzU6ET2KV-D9Av0a@mini-arch>
+References: <20241113181023.2030098-1-sdf@fomichev.me>
+	<20241113181023.2030098-4-sdf@fomichev.me>
+	<20241113121256.506c6100@kernel.org>
+	<ZzU6ET2KV-D9Av0a@mini-arch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241114015505.6kghgq33i4m6jrm4@desk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 13, 2024 at 05:55:05PM -0800, Pawan Gupta wrote:
-> > > user->user SpectreRSB is also mitigated by IBPB, so RSB filling is
-> > > unnecessary when IBPB is issued. Also, when an appication does not opted-in
-> > > for IBPB at context switch, spectre-v2 for that app is not mitigated,
-> > > filling RSB is only a half measure in that case.
-> > > 
-> > > Is RSB filling really serving any purpose for userspace?
+On Wed, 13 Nov 2024 15:45:21 -0800 Stanislav Fomichev wrote:
+> On 11/13, Jakub Kicinski wrote:
+> > On Wed, 13 Nov 2024 10:10:19 -0800 Stanislav Fomichev wrote:  
+> > > -    supported_models = ['unified']
+> > > -    if args.mode in ['user', 'kernel']:
+> > > -        supported_models += ['directional']
+> > > -    if parsed.msg_id_model not in supported_models:
+> > > -        print(f'Message enum-model {parsed.msg_id_model} not supported for {args.mode} generation')
+> > > -        os.sys.exit(1)  
 > > 
-> > Indeed...
-> > 
-> > If we don't need to flush RSB for user->user, we'd only need to worry
-> > about protecting the kernel.  Something like so?
-> > 
-> >   - eIBRS+!PBRSB:	no flush
-> >   - eIBRS+PBRSB:	lite flush
+> > Don't we still need to validate that it's one of the two options?  
 > 
-> Yes for VMexit, but not at kernel entry. PBRSB requires an unbalanced RET,
-> and it is only a problem until the first retired CALL. At VMexit we do have
-> unbalanced RET but not at kernel entry.
-> 
-> >   - everything else:	full flush
-> 
-> > i.e., same logic as spectre_v2_determine_rsb_fill_type_at_vmexit(), but
-> > also for context switches.
-> 
-> Yes, assuming you mean user->kernel switch, and not process context switch.
+> I removed it because I'm assuming only two modes exist (and we support
+> them both now). Are you suggesting it's better to future-proof it and
+> still keep the check in case we add some new modes in the future? (or
+> running against some rogue specs?)
 
-Actually I did mean context switch.  AFAIK we don't need to flush RSB at
-kernel entry.
+TBH I don't remember how much precedent there is for C codegen
+depending on jsonschema for spec input validation. My gut tells
+me to do:
 
-If user->user RSB is already mitigated by IBPB, then at context switch
-we only have to worry about user->kernel.  e.g., if 'next' has more (in
-kernel) RETs then 'prev' had (in kernel) CALLs, the user could trigger
-RSB underflow or corruption inside the kernel after the context switch.
++    if family.msg_id_model == 'unified':
++        render_uapi_unified(family, cw, max_by_define, separate_ntf)
++    elif family.msg_id_model == 'directional':
++        render_uapi_directional(family, cw, max_by_define)
++    else:
++        raise ..
 
-Doesn't eIBRS already protect against that?
-
-For PBRSB, I guess we don't need to worry about that since there would
-be at least one kernel CALL before context switch.
-
--- 
-Josh
+and then we can indeed drop the validation of the arg directly
 
