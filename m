@@ -1,145 +1,95 @@
-Return-Path: <linux-kernel+bounces-409749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48F939C90E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:38:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B73A19C90F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:40:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06C5F281427
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:38:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A585286E63
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A2618C028;
-	Thu, 14 Nov 2024 17:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8858217BA6;
+	Thu, 14 Nov 2024 17:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uCqPVwyF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yshyn.com header.i=@yshyn.com header.b="UNgJHJqS"
+Received: from mailgate02.uberspace.is (mailgate02.uberspace.is [185.26.156.114])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E3C262A3;
-	Thu, 14 Nov 2024 17:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6DB18BC28
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 17:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.26.156.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731605872; cv=none; b=Hz+KlmVOcH3hZGnRZ9Ue+2dbsI+3jQhlcKvL0OUswhAWSLY9d9XOcObNTpZGHn+i0lt1lrlBhhFEFjwxrxkQABxXJ7klhfwZAiOKSm+T6Gu8uR1fpOmFICkXsyOS4brdFZnADo4P1NCTXvJrnhXSrRiIPQeB8vmucVZJ/fboRS0=
+	t=1731606027; cv=none; b=gsZxe+FWjXNsWZYUAlZsSuegGXHHK9u+HYGHp61MxVB2YHQzamlwkaEV5z8+FfSwdItFZEaHEiSR9PFKLsLWgy4aliiFpkZQLVwTutCF2BlmlaHcg8tlOlH7kXQbwZb1VM+JpOe2QH3vZRxF5vASN7bhUI54hPzGXnikBil3JPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731605872; c=relaxed/simple;
-	bh=nHqkn9rS6E8aBB1UDCP9+/7t8mwF55M9pcIYHwzPAUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X7ZIo+j7f6roYnEBGMeaxvWgaFTjQ1iGIVpJsz8cF6X8MWGeNbQeUmXeDubb4JjAUzVQS5U7hZE/YJ+gn5ayWeFyI1P6GEt2095Q7vHtv3K8mHGwo+KcvuUX3ulpoDcmv1SrHrC2l09xiM0RPXzETm0sJObip44KOnpvPJosxyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uCqPVwyF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CD37C4CECD;
-	Thu, 14 Nov 2024 17:37:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731605871;
-	bh=nHqkn9rS6E8aBB1UDCP9+/7t8mwF55M9pcIYHwzPAUY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uCqPVwyF42KJvLd9Q3G1dS1h65c8sjcbHnTN05uEortvnQCMDtOC4meOF60zvxwIr
-	 iIjR4AVjV+jUSft1AK7MNay8peJPomI8nqpmT+d0guL+PS391c0d2p6CS8BG7cY2uA
-	 sxoAOcio933DvfBs5sub0GATengqFncNqc10ekpOmw0zQOTPABw+v11x6J7iKfepk6
-	 GyMsCgdpQqbcRRLpjo+esYrH+cSFjUIzEi14Shm3R62S0f3+JIRwTgbSwhkyeAuscy
-	 G+DRQ298VIq08ojYgPRUlvulBV1Qw6mzQEu8Qj4vsVc7lAUq45wxNU+1bxtDypQPxF
-	 wwgA/x/Jpb4Ig==
-Date: Thu, 14 Nov 2024 14:37:48 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Benjamin Peterson <benjamin@engflow.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>
-Subject: Re: [PATCH 2/2] perf tests: add test for trace output loss
-Message-ID: <ZzY1bPtoyRH-nRIV@x1>
-References: <20241106234518.115234-1-benjamin@engflow.com>
- <20241106234518.115234-2-benjamin@engflow.com>
+	s=arc-20240116; t=1731606027; c=relaxed/simple;
+	bh=ql6Zl4ZhHVLOcGVutVLY+NFDnNAYKWddAwx/rh9wBH4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j2yLZwzMMACTNJFg7SA923eIHJwMw7sgvcUqkHiktijE3x8R5uP+WnVvAN53tpF3SSdBPofhC2oHMhfozJuFGdWE1WRFktwJSNfkr6CJv4Zuky2dUY2vF34UvN66FWTMau1513Eju2RmZTQKnkFvYQwiozq5E067rSfgzgD3GIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yshyn.com; spf=pass smtp.mailfrom=yshyn.com; dkim=pass (2048-bit key) header.d=yshyn.com header.i=@yshyn.com header.b=UNgJHJqS; arc=none smtp.client-ip=185.26.156.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yshyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yshyn.com
+Received: from phoenix.uberspace.de (phoenix.uberspace.de [95.143.172.135])
+	by mailgate02.uberspace.is (Postfix) with ESMTPS id 20DC3181176
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 18:40:16 +0100 (CET)
+Received: (qmail 14370 invoked by uid 988); 14 Nov 2024 17:40:16 -0000
+Authentication-Results: phoenix.uberspace.de;
+	auth=pass (plain)
+Received: from unknown (HELO unkown) (::1)
+	by phoenix.uberspace.de (Haraka/3.0.1) with ESMTPSA; Thu, 14 Nov 2024 18:40:15 +0100
+From: Illia Ostapyshyn <illia@yshyn.com>
+To: linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	ibm-acpi-devel@lists.sourceforge.net
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+	Illia Ostapyshyn <illia@yshyn.com>
+Subject: [PATCH 0/2] Add support for the new phone link hotkey on ThinkPads
+Date: Thu, 14 Nov 2024 18:39:28 +0100
+Message-ID: <20241114173930.44983-1-illia@yshyn.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241106234518.115234-2-benjamin@engflow.com>
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Bar: ++
+X-Rspamd-Report: SUSPICIOUS_RECIPS(1.5) BAYES_HAM(-0.084833) MID_CONTAINS_FROM(1) MIME_GOOD(-0.1) R_MISSING_CHARSET(0.5)
+X-Rspamd-Score: 2.815166
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=yshyn.com; s=uberspace;
+	h=from:to:cc:subject:date;
+	bh=ql6Zl4ZhHVLOcGVutVLY+NFDnNAYKWddAwx/rh9wBH4=;
+	b=UNgJHJqSARuyuyQpzD1NTBM4K71MFUbOERtVhC87TI5MAkexZ6DsJAWjI3pSRKsx9GlBZwDlU2
+	6auOsHmLl+NmdvlMCKz6GJelgk3mHnJaZ30zDkB7NuOmixBOZbANCo/AZH+PVdkbWBU+Araw3VpP
+	/TzIiZpZi+5y7PDaGT+tXXBJnFhrC8RQQby3bL5h5ZYvwmf9xCWkyiiJFOO0/ZfJQojeYCu4EE9J
+	CdTeFm9hHD0OmE5WrEr7JR9/W3iqkJtGgixteaHl/o54nr4oJQGDpguUDYXDOg9+YPzDcZpj2Vvw
+	danxIDChcxwl1Br5F47aoIyGNRnN7UxVRCQcaEqg==
 
-On Wed, Nov 06, 2024 at 11:45:18PM +0000, Benjamin Peterson wrote:
-> Add a test that checks that trace output is not lost to races. This is
-> accomplished by tracing the exit_group syscall of "true" multiple times and
-> checking for correct output.
-> 
-> Conveniently, this test also serves as a regression test for 5fb8e56542a3 ("perf
-> trace: avoid garbage when not printing a trace event's arguments") because
-> exit_group triggers the previously buggy printing behavior.
-> 
-> Signed-off-by: Benjamin Peterson <benjamin@engflow.com>
-> ---
->  tools/perf/tests/shell/trace_exit_race.sh | 31 +++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
->  create mode 100755 tools/perf/tests/shell/trace_exit_race.sh
-> 
-> diff --git a/tools/perf/tests/shell/trace_exit_race.sh b/tools/perf/tests/shell/trace_exit_race.sh
-> new file mode 100755
-> index 000000000000..8b70324bc5b4
-> --- /dev/null
-> +++ b/tools/perf/tests/shell/trace_exit_race.sh
-> @@ -0,0 +1,31 @@
-> +#!/bin/sh
-> +# perf trace exit race
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +# Check that the last events of a perf trace'd subprocess are not
-> +# lost. Specifically, trace the exiting syscall of "true" 100 times and ensure
-> +# the output contains 100 correct lines.
-> +
-> +# shellcheck source=lib/probe.sh
-> +. "$(dirname $0)"/lib/probe.sh
-> +
-> +skip_if_no_perf_trace || exit 2
-> +
-> +trace_shutdown_race() {
-> +	for i in $(seq 100); do
-> +		perf trace -e syscalls:sys_enter_exit_group true 2>>$file
-> +	done
-> +	[ $(grep -c -E " +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$" $file) = "100" ]
-> +}
-> +
-> +
-> +file=$(mktemp /tmp/temporary_file.XXXXX)
-> +
-> +# Do not use whatever ~/.perfconfig file, it may change the output
-> +# via trace.{show_timestamp,show_prefix,etc}
-> +export PERF_CONFIG=/dev/null
-> +
-> +trace_shutdown_race
-> +err=$?
-> +rm -f ${file}
-> +exit $err
-> -- 
+The Lenovo Thinkpad T14 Gen 5, T16 Gen 3, and P14s Gen 5 laptops feature a new
+hotkey on F11 showing a smartphone and a laptop chained together.  According to
+the user manual [1], it launches the Microsoft Phone Link software used to
+connect to Android/iOS devices and relay messages/calls or sync data.
 
-Its failing with shellcheck, I'm trying to fix it:
+This new keycode can be interpreted by desktop environments to lauch free Phone
+Link alternatives like KDE Connect or GSConnect.
 
-  CC      /tmp/build/perf-tools-next/builtin-trace.o
-  TEST    /tmp/build/perf-tools-next/tests/shell/trace_exit_race.sh.shellcheck_log
+[1] https://download.lenovo.com/pccbbs/mobiles_pdf/t14g5_t16g3_p14sg5_ug_en.pdf
 
-In tests/shell/trace_exit_race.sh line 15:
-	for i in $(seq 100); do
-        ^-^ SC2034 (warning): i appears unused. Verify use (or export if used externally).
+Illia Ostapyshyn (2):
+  Input: allocate keycode for phone linking
+  platform/x86: thinkpad_acpi: Add support for new phone link hotkey
 
+ drivers/platform/x86/thinkpad_acpi.c   | 1 +
+ include/uapi/linux/input-event-codes.h | 1 +
+ 2 files changed, 2 insertions(+)
 
-In tests/shell/trace_exit_race.sh line 18:
-	[ $(grep -c -E " +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$" $file) = "100" ]
-          ^-- SC2046 (warning): Quote this to prevent word splitting.
-
-For more information:
-  https://www.shellcheck.net/wiki/SC2034 -- i appears unused. Verify use (or ...
-  https://www.shellcheck.net/wiki/SC2046 -- Quote this to prevent word splitt...
-make[4]: *** [tests/Build:91: /tmp/build/perf-tools-next/tests/shell/trace_exit_race.sh.shellcheck_log] Error 1
-make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:158: tests] Error 2
-make[2]: *** [Makefile.perf:777: /tmp/build/perf-tools-next/perf-test-in.o] Error 2
-make[2]: *** Waiting for unfinished jobs....
+-- 
+2.47.0
 
 
