@@ -1,177 +1,151 @@
-Return-Path: <linux-kernel+bounces-409576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AF9D9C902D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:51:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 414FD9C9030
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:52:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2840B3DF29
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:51:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03212B2D559
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C9A18CBFB;
-	Thu, 14 Nov 2024 15:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F45318E044;
+	Thu, 14 Nov 2024 15:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hk2RmyJi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="NYdB1QUf";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="T8N/2fmM"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484EC18C93B
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F83433C4
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731599008; cv=none; b=bKT1DLCTkR7Qg/TLWQBaRsa3puqQtAdaw/3q7M4CqeOQtffdm0OTNTMx8EZZQ6WIxLkl8XjqBtsjo6cvDoBsodPmvcWz5M1rFZwk2YAsqczR2Jcu4sTusnfCPuQxb5MbUs/dq/NSVuUciywt6q9Hey6lu7SgssT332F3b9Nz398=
+	t=1731599136; cv=none; b=fzl/ahriv/ezi32zJjKPEoovPfBqFWdjPmkCnmnViFl2L91vsLUA7uLw+sYgTm4QePlSJRBUHza++/kYya4LnbZcs8r4Ded0LYyMDcwuje29Z0/BtvZP2LR7fs80AJT+Rzkj9NWz2lF/IRmRm7eaLrnN+6XJySH63116rZW+T+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731599008; c=relaxed/simple;
-	bh=cpkpvcI4nnZ6IoTG09tDrpa0CY5qnKUuAFVyTovamKw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m5Hq7jI8f6rjMLzG7L1GX0V/Pw6pys8BroMzsrjUJUIfaqSOOrVSQB2VJGGQeqphtyyv03GbcwTvlBTI2HzS8NYaonX5MDf7uzxMV4smfi47dLbexivDLtB+UzVJegdeM6t4hePnQW5R4J3CXH/4ZC0H/Z1lxiWaysXbzeGXyUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hk2RmyJi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731599005;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KXhPhd6T64qopenKzDTr2VAsOd523bKkU/nV0+x9Uek=;
-	b=hk2RmyJieVoXxBUN/MHMCH3CE+uJGtyjk7MJbvHjhY3Ao12y2yx+hW25cR80ceBtISPdlo
-	j57s2qvHuk656ej4WsfvPU0c2TPx90ihequNau5sOWWPkuMFTFQVNCYWZVAhyn4bTpDOr9
-	BeMhN6URCBjtVgvxTRJh7sdV52hImrE=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-354-_uDreFciNMi67oky-dwXPQ-1; Thu, 14 Nov 2024 10:43:23 -0500
-X-MC-Unique: _uDreFciNMi67oky-dwXPQ-1
-X-Mimecast-MFC-AGG-ID: _uDreFciNMi67oky-dwXPQ
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-38218576e86so469174f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:43:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731598998; x=1732203798;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KXhPhd6T64qopenKzDTr2VAsOd523bKkU/nV0+x9Uek=;
-        b=HiwvpDYl88ViIYpVgO5aULSRqaA6K11PNRhhw4xiBqlIMR/x6wb8VMmMSC6+Zm/e8Q
-         qUBOrNODfGPTINJ0iGZzBlMNAaqSRH/Kcf5+GGeFa/wE+cGjTG8JcoNDjiISV7Oh7Gr+
-         XUhcozsmPQFfCwTewAabtTsHGFGcNVyvnfxVOfctLAF0vW6WhUp4b1+Q5rGKfpufDs9l
-         4WfObvkCsn8Uvc1qN+RfpHSzQXmHKsQiR2jYpCKfi7BoC7J1Vyyn3HTwv3wsqf9a9l2u
-         aNy6PMoOiBS+KBnNUm+Zrlz/ndhNu1p09JN6JpSzi0zQLc8B8o/hlBx6HGij+7S/qhC0
-         hQOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyeQVniXjGNWCABv90e3+qqCBF75ntiYntCopbZQZZqopY0wnPsPo9mW06g9o0ieeHvTF8dNEV7q6SuIc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZfxCgvPVqA6blPjs5oEBPdhRL3w1cXuPZ0ywPo4ZMv6eI6CY5
-	WHp8ZVb4JSN4/JlUpgLels6MFGr2e2Lo0KvAvSciJzH4TOS0RcD2xvaBFvb0ESn8EaV1KBvjAQD
-	qhIVvOKO71Dk+1f/xdI5ZTzAyZpRlHIrH8j27u4QEUfsAeYEJKBm1HYV1DNRbaw==
-X-Received: by 2002:a05:6000:184f:b0:381:e771:e6dc with SMTP id ffacd0b85a97d-382140752femr3138946f8f.28.1731598998152;
-        Thu, 14 Nov 2024 07:43:18 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHoMlXHEHIIIf/8vuBedCySo4LpdsmnKwwPgZlfZJLBlokpUPY1g/zGswFuAox/GMsDltKRSg==
-X-Received: by 2002:a05:6000:184f:b0:381:e771:e6dc with SMTP id ffacd0b85a97d-382140752femr3138917f8f.28.1731598997736;
-        Thu, 14 Nov 2024 07:43:17 -0800 (PST)
-Received: from debian (2a01cb058d23d600b637ad91a758ba3f.ipv6.abo.wanadoo.fr. [2a01:cb05:8d23:d600:b637:ad91:a758:ba3f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab7206csm24235755e9.7.2024.11.14.07.43.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 07:43:17 -0800 (PST)
-Date: Thu, 14 Nov 2024 16:43:15 +0100
-From: Guillaume Nault <gnault@redhat.com>
-To: Roger Quadros <rogerq@kernel.org>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, linux-omap@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, srk@ti.com,
-	Pekka Varis <p-varis@ti.com>
-Subject: Re: [PATCH net-next v4 1/2] net: ethernet: ti: am65-cpsw: update
- pri_thread_map as per IEEE802.1Q-2014
-Message-ID: <ZzYak49k8fQC76/+@debian>
-References: <20241114-am65-cpsw-multi-rx-dscp-v4-0-93eaf6760759@kernel.org>
- <20241114-am65-cpsw-multi-rx-dscp-v4-1-93eaf6760759@kernel.org>
+	s=arc-20240116; t=1731599136; c=relaxed/simple;
+	bh=dZZpctvg4cXmi7QP+x1Z7D9U2+hXXw/04WokTnCvB+4=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=OB7HY6CsTkoMaIqd2NqgKzPa302aa/Dwz7cpH+bWK1optul14TmfqJigxa3k20PGapxSb+/b5aK3kaL6X9vmdwG85lab6f3txZ5LHlDDDQru09sD9g5R2Rk48GzeBeVZM1VkB1QEyubw84RzUwJHFHfXWHWhgWn2MD8Fx0EPXQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=NYdB1QUf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=T8N/2fmM; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 40C28138052E;
+	Thu, 14 Nov 2024 10:45:34 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Thu, 14 Nov 2024 10:45:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1731599134;
+	 x=1731685534; bh=dZZpctvg4cXmi7QP+x1Z7D9U2+hXXw/04WokTnCvB+4=; b=
+	NYdB1QUftjiu8yfKZSVsZA7OM6nGKB5Mled5FHNvEo98Ou6uwaHmqDn5nveL0sk6
+	ApXUvEZRvwoSPyEerdMQJvLvAD/GHx5hpT1j9BP0AGELp32NlpPElBXwUJT4Rob6
+	Myvsy8+4gKw2LPbYMqT6aUrLAO/Jq/t59+SNUN5HXS92wpSvc5WFDVaT/LUgaoJD
+	yolnzy1Vlg5G1qNEOW7cF9djA5cfOmv0t+oYEBaB11S8uSXV0pP9jYJdqJeBluRu
+	KJ0dodE6njkX22gLtGsL0OGchkKd4ARDtLc8/EbvX4wxh8SNFw9uxQ0fuAljt2Fr
+	1YWKNrMpxpaRByBAEeaugA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731599134; x=
+	1731685534; bh=dZZpctvg4cXmi7QP+x1Z7D9U2+hXXw/04WokTnCvB+4=; b=T
+	8N/2fmMfngFGh2rrTJ2h3Zmc6TZ4rIFZprR54GDAjjo1OHgnmTA+I0C+kw5OkD2T
+	5nxgTeohz5bhPQ9OfGCdsVKzXoaTDl3g3PX1z08KSR7+l75rNP1pkDNOn8EPX630
+	NpCZe8sK9P4mJjfLcJJKj0RYg3ohLEAWG0r6w9dhDZh48PrMdzi5CtLLL0Jp97y2
+	Vib+5Nm5EByCWZuzg1nrQuwu94/FUMF0sNNVxT7OxAnV4vbAMUiP47PchQKHpuQR
+	n+s/yNGVmdzIEjDiUwfJtqnTta5+R8I9qv+VRcSxyezMffE4dJRRkXKzEfsbNEYo
+	C3B9kR1yv+URO3uQtJA1A==
+X-ME-Sender: <xms:Hhs2Z8rSh6Q8mt9z6de7FBXWRuzEsG8qnnhAX4DDJ9d8lvihUiaGdA>
+    <xme:Hhs2ZypYZNvP9hZ9G_DShkyxiQVgihEG0yn0NxGHm77q4nbdncOkMaPIxBqie1uGq
+    y7cvwHbh_EZTCNUn2M>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddvgdejlecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeen
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
+    gvqeenucggtffrrghtthgvrhhnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeej
+    vdefhedtgeegveehfeeljeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeegpdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopehmphgvsegvlhhlvghrmhgrnhdrihgurd
+    gruhdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphht
+    thhopehlihhnuhigphhptgdquggvvheslhhishhtshdrohiilhgrsghsrdhorhhgpdhrtg
+    hpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:Hhs2ZxOeBzumBig847DmLOftFZN_o2HFA-13jIpyznx2XYe3V9aOdA>
+    <xmx:Hhs2Zz7MqnJUWCq5xP5HVv6gjlTjWoczs4e2a6lm_2LTM3eN_9FAGA>
+    <xmx:Hhs2Z75upI_PvdXUQ2VeKvL-i_C6zaMEaUhdCw8hmHWN-3THoHl0hw>
+    <xmx:Hhs2Zzh3kECjJhxfTRbPt_5jBhw0hdAHHhBN_DIJRLbFhJzen93n8Q>
+    <xmx:Hhs2Z9mLa_WxExSrbcQYpZ4-eSAjyIDa2GEYP_BeTJfAjB8O0AoM9pUb>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id EDFEA2220071; Thu, 14 Nov 2024 10:45:33 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241114-am65-cpsw-multi-rx-dscp-v4-1-93eaf6760759@kernel.org>
+Date: Thu, 14 Nov 2024 16:43:28 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Geert Uytterhoeven" <geert@linux-m68k.org>,
+ "Michael Ellerman" <mpe@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Message-Id: <acec6edb-59a0-4c9e-91ca-b152381a6542@app.fastmail.com>
+In-Reply-To: 
+ <CAMuHMdWBZJvVaKiWk_VaHY0ZQiaezn9Kqa0XpTXKzf0gh_rG+g@mail.gmail.com>
+References: <20241114131114.602234-1-mpe@ellerman.id.au>
+ <CAMuHMdWBZJvVaKiWk_VaHY0ZQiaezn9Kqa0XpTXKzf0gh_rG+g@mail.gmail.com>
+Subject: Re: [RFC PATCH 01/10] powerpc/chrp: Remove CHRP support
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 14, 2024 at 03:36:52PM +0200, Roger Quadros wrote:
-> IEEE802.1Q-2014 supersedes IEEE802.1D-2004. Now Priority Code Point (PCP)
-> 2 is no longer at a lower priority than PCP 0. PCP 1 (Background) is still
-> at a lower priority than PCP 0 (Best Effort).
+On Thu, Nov 14, 2024, at 15:31, Geert Uytterhoeven wrote:
+> On Thu, Nov 14, 2024 at 2:11=E2=80=AFPM Michael Ellerman <mpe@ellerman=
+.id.au> wrote:
+>> CHRP (Common Hardware Reference Platform) was a standard developed by
+>> IBM & Apple for PowerPC-based systems.
+>>
+>> The standard was used in the development of some machines but never
+>> gained wide spread adoption.
+>>
+>> The Linux CHRP code only supports a handful of machines, all 32-bit, =
+eg.
+>> IBM B50, bplan/Genesi Pegasos/Pegasos2, Total Impact briQ, and possib=
+ly
+>> some from Motorola? No Apple machines should be affected.
+>>
+>> All of those mentioned above are over or nearing 20 years old, and se=
+em
+>> to have no active users.
+>>
+>> So remove the CHRP support. If there's interest in still supporting s=
+ome
+>> of the machines that can be brought back from the git history.
+>>
+>> Note there are still some references to CHRP/chrp in various comments
+>> and some in the code, because later standards (eg. RPA, PAPR) used so=
+me
+>> elements of CHRP or copied the CHRP behaviour. These will need to be
+>> cleaned up on a case-by-case basis to either refer to newer standards=
+ or
+>> left as-is when that's correct.
+>>
+>> The CHRP code was copied from arch/ppc, and before that it mostly
+>> predates git, so the original authorship is largely lost. If anyone
+>> wrote any of this code and would like a CREDITS entry just let me kno=
+w.
+>>
+>> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+>
+> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>
 
-Reviewed-by: Guillaume Nault <gnault@redhat.com>
+Whole series
 
-> Reference:
-> IEEE802.1Q-2014, Standard for Local and metropolitan area networks
->   Table I-2 - Traffic type acronyms
->   Table I-3 - Defining traffic types
-> 
-> Signed-off-by: Roger Quadros <rogerq@kernel.org>
-> Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> ---
->  drivers/net/ethernet/ti/cpsw_ale.c | 36 ++++++++++++++++++++++--------------
->  1 file changed, 22 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/ti/cpsw_ale.c b/drivers/net/ethernet/ti/cpsw_ale.c
-> index 8d02d2b21429..9f79056b3f48 100644
-> --- a/drivers/net/ethernet/ti/cpsw_ale.c
-> +++ b/drivers/net/ethernet/ti/cpsw_ale.c
-> @@ -1692,26 +1692,34 @@ static void cpsw_ale_policer_reset(struct cpsw_ale *ale)
->  void cpsw_ale_classifier_setup_default(struct cpsw_ale *ale, int num_rx_ch)
->  {
->  	int pri, idx;
-> -	/* IEEE802.1D-2004, Standard for Local and metropolitan area networks
-> -	 *    Table G-2 - Traffic type acronyms
-> -	 *    Table G-3 - Defining traffic types
-> -	 * User priority values 1 and 2 effectively communicate a lower
-> -	 * priority than 0. In the below table 0 is assigned to higher priority
-> -	 * thread than 1 and 2 wherever possible.
-> -	 * The below table maps which thread the user priority needs to be
-> +
-> +	/* Reference:
-> +	 * IEEE802.1Q-2014, Standard for Local and metropolitan area networks
-> +	 *    Table I-2 - Traffic type acronyms
-> +	 *    Table I-3 - Defining traffic types
-> +	 * Section I.4 Traffic types and priority values, states:
-> +	 * "0 is thus used both for default priority and for Best Effort, and
-> +	 *  Background is associated with a priority value of 1. This means
-> +	 * that the value 1 effectively communicates a lower priority than 0."
-> +	 *
-> +	 * In the table below, Priority Code Point (PCP) 0 is assigned
-> +	 * to a higher priority thread than PCP 1 wherever possible.
-> +	 * The table maps which thread the PCP traffic needs to be
->  	 * sent to for a given number of threads (RX channels). Upper threads
->  	 * have higher priority.
->  	 * e.g. if number of threads is 8 then user priority 0 will map to
-> -	 * pri_thread_map[8-1][0] i.e. thread 2
-> +	 * pri_thread_map[8-1][0] i.e. thread 1
->  	 */
-> -	int pri_thread_map[8][8] = {	{ 0, 0, 0, 0, 0, 0, 0, 0, },
-> +
-> +	int pri_thread_map[8][8] = {   /* BK,BE,EE,CA,VI,VO,IC,NC */
-> +					{ 0, 0, 0, 0, 0, 0, 0, 0, },
->  					{ 0, 0, 0, 0, 1, 1, 1, 1, },
->  					{ 0, 0, 0, 0, 1, 1, 2, 2, },
-> -					{ 1, 0, 0, 1, 2, 2, 3, 3, },
-> -					{ 1, 0, 0, 1, 2, 3, 4, 4, },
-> -					{ 1, 0, 0, 2, 3, 4, 5, 5, },
-> -					{ 1, 0, 0, 2, 3, 4, 5, 6, },
-> -					{ 2, 0, 1, 3, 4, 5, 6, 7, } };
-> +					{ 0, 0, 1, 1, 2, 2, 3, 3, },
-> +					{ 0, 0, 1, 1, 2, 2, 3, 4, },
-> +					{ 1, 0, 2, 2, 3, 3, 4, 5, },
-> +					{ 1, 0, 2, 3, 4, 4, 5, 6, },
-> +					{ 1, 0, 2, 3, 4, 5, 6, 7 } };
->  
->  	cpsw_ale_policer_reset(ale);
->  
-> 
-> -- 
-> 2.34.1
-> 
-
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
