@@ -1,91 +1,83 @@
-Return-Path: <linux-kernel+bounces-408487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD0F19C7F67
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:37:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 688549C7F69
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:37:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C12A1F23376
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:37:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E23B41F22AD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05BC6F9EC;
-	Thu, 14 Nov 2024 00:37:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70347DDDC;
+	Thu, 14 Nov 2024 00:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KiDYa6Lw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="CHNubFvf"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F415AD39;
-	Thu, 14 Nov 2024 00:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432F2BA53
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 00:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731544626; cv=none; b=fMm2yzfEcZaQmToc5bSLmsCyJS23t1xXLMeXn3hRtFw/orvD+/Qqedxu8cW0APIFgSOIDNz/8F6MMPaoB8JGBtoUplcN0LPMMUn4pLEddNpqd+6t8mzf2idcfDz3urTTnYntSn0qy858OcG+Gi4BTjw4xLXPbktYjeCP8dvOZlE=
+	t=1731544637; cv=none; b=OmuTEll4kQqMinh8RWv8qA2O7Bo4+RYWgdZfT54eOC73/h3AVW53818PUqTM5lrSf9aCysdoD7Ph3MhORuLDOrfi7Bzpj+foJEGhL6bDttGTzNLCDKUHvBTGm8xw6aRbLUd1UKsUe4ZteWrMwO9ZvBZzMawOVxhevTTMLT8nUeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731544626; c=relaxed/simple;
-	bh=wB+qdsF1zvcupnZAmiFUD2WPtTMEGPHMhe/Wu8Kaqzs=;
+	s=arc-20240116; t=1731544637; c=relaxed/simple;
+	bh=QPrG53eiGGqVOY8cqda1uKvaeMNMMQSz5E31mtFgkTY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mE5D60fUG+G8dv5iszzdtUuUh7gzdoBZDNtUaMb5sNYeqAm5o5aMYZWVIF53mUzaZ4nSgXs8h6aWAuQAEE2na1eO8E0FVHSTtutMQu0A5jFKAjkDniuV9dL+hDVntKH6BCDMdgJNxN4SyQ1X6FzcJGdefDTYMGGXMUyj/Wys+nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KiDYa6Lw; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731544624; x=1763080624;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wB+qdsF1zvcupnZAmiFUD2WPtTMEGPHMhe/Wu8Kaqzs=;
-  b=KiDYa6LwVrplojAgs+h90h1VSYiMt05Lvnzn2RDiwRVqMNMsgLtg2NSj
-   iyGyCgswkbih5zJRV3qFd2tSIpMuuDPUg4vCuqN7Pi0OSQb4s91JI0K8J
-   8jSVWtOiZQ+dFRn9WgLLXN8Ow/2oHWDk06dHfu4YQQLLDzEpm0YfijvAr
-   /+8woazjpl3B0zolaxRvQ6x1AU18xG1ZOSAPY2fdzA/6lrZdw4jNrKzmj
-   nU3bD9VGY6Q0B71GJ+CRrnEh3/p2KZRMAP4Qpjb9+knY1MMBr792X/dhL
-   EUqtQQVXbtSfjF3NtQMtlCjKGo1aZdy9pN15DwbaWYeZ25ckWPNXyAoJL
-   w==;
-X-CSE-ConnectionGUID: u1j9/LLZTgCAgwigXjhp/g==
-X-CSE-MsgGUID: cL4auaU9SCmEEvicfsJ6Lw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11255"; a="56854495"
-X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
-   d="scan'208";a="56854495"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 16:37:03 -0800
-X-CSE-ConnectionGUID: 81TFp5NzQkm+LjalFbFfOQ==
-X-CSE-MsgGUID: evH2ReHqT962TEV9Fkg/eg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
-   d="scan'208";a="87791094"
-Received: from lkp-server01.sh.intel.com (HELO 80bd855f15b3) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 13 Nov 2024 16:36:58 -0800
-Received: from kbuild by 80bd855f15b3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tBNqy-0000yP-07;
-	Thu, 14 Nov 2024 00:36:56 +0000
-Date: Thu, 14 Nov 2024 08:36:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	John Garry <john.g.garry@oracle.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hannes Reinecke <hare@suse.de>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, virtualization@lists.linux.dev,
-	linux-scsi@vger.kernel.org, megaraidlinux.pdl@broadcom.com,
-	mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com,
-	storagedev@microchip.com, linux-nvme@lists.infradead.org,
-	Daniel Wagner <wagi@kernel.org>
-Subject: Re: [PATCH v4 07/10] scsi: hisi_sas: use blk_mq_hctx_map_queues to
- map queues
-Message-ID: <202411140822.ZRutrwWP-lkp@intel.com>
-References: <20241113-refactor-blk-affinity-helpers-v4-7-dd3baa1e267f@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QR2hQSpWBfla/zgkgEfujX9OQdUlNEvmKzWNuBk6t7dewAeDTQUmqsZLirNIWGbngBr8pPt9AaY4jML3ZJcCJ5S3OZNT6SUAgWenA1hIQ3dGvGLVFqlJiOTgCsbtgPQRcYKeNvxPB7FDg5ryhHmVSvrYc4RACeZRPGOLin8jifY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=CHNubFvf; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c803787abso197105ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:37:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1731544635; x=1732149435; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jL1bq/cs3DwHGudCjECuU0svhY9jIgo9sOD6hc9Njrw=;
+        b=CHNubFvfxNi8ZllZMxVMh+kA2TR3/pxcfbRzXihouDIjx6DJUe4SI7KL3tV3M4SSkS
+         ZaT2axF8zizwWKEx+vZGwVJ7JOf5PW28uMErXhANVNAPuEsakWK3AF7nZanyIAeK1rOF
+         D+cNYHlKhb1EzbZgxtUOUSjxYCA+05mHOoZMy5Gw/ECguqYJsKI3whLG8F/94pRwYDLK
+         HudHSBxQSChA0vD8Lnn++vnYyO2M6RN89erodHrdpsVVMn2Ho2ga2vN0NIKXuha/d+ng
+         yn1GcbHu9dZH7oHbpNnPfDlY3jW5TsWXktlc5FeACuRXNzmDTMhgGOumud9Ubb/7S8BJ
+         nyZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731544635; x=1732149435;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jL1bq/cs3DwHGudCjECuU0svhY9jIgo9sOD6hc9Njrw=;
+        b=q9VEmY7LYrXr0h5Dy9/jyE6UV0ZQoiX9xENM8fjKOtjN1i8SfBfhTH08XNk4EPznDg
+         LUYoB+Tzerjr4EvjR/+OJyn/3cgYpxmR2Lm1fzgnt5cHZcLgC0BNNjtFCNakLi15L04V
+         1kAV0amiJV8LYZ5cNdU2pd+tjIF1KEvodJZignYjmjp6Wc5Wsh17PgdYgEhHGZh26QRW
+         /LS+XZxLJpXEJAz8VHuIZUKwPOJD4+epx1/Dxj43TyEOJ7tZuxO19OhZu1hWvciknXk6
+         Lyljsmm2mnKD+KHS8R5TEJFfehCIaQss13BQpauBGYP4wCIHgqWjmI7Joyu+6OX5aig7
+         WHow==
+X-Forwarded-Encrypted: i=1; AJvYcCXUjUDfvpzpANCUvnzQo547zmiCSIBsAK5ilL2juXZm9Rm22/wpqC920wmxmWUX6H/RcHDqaDYbxRAV8oc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1wlqHHYoTV4HaRXqBVpctCiVf3BoZkSfnsSJO8HmI3vDa1g+Z
+	y/2nwH7GlQ6VQ2L+7SCj9fNTa+UcVPb19udmqWGw9dAmrsnMSUeNHHzP1E0ClJk=
+X-Google-Smtp-Source: AGHT+IEbvuImRnO77YgC/dY5K85BskHZNK65tOmH0Zaa7ILqfZYPsHP613mLFhEWCU0U/8qr0ttT/g==
+X-Received: by 2002:a17:903:244b:b0:20c:c18f:c39e with SMTP id d9443c01a7336-211c0fab017mr20154665ad.21.1731544635527;
+        Wed, 13 Nov 2024 16:37:15 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-86-168.pa.vic.optusnet.com.au. [49.186.86.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dc7d1csm116754865ad.51.2024.11.13.16.37.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 16:37:15 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1tBNrE-00EJXl-00;
+	Thu, 14 Nov 2024 11:37:12 +1100
+Date: Thu, 14 Nov 2024 11:37:11 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: syzbot <syzbot+3c653ce382d9a9b6fbc3@syzkaller.appspotmail.com>
+Cc: cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [xfs?] WARNING in mod_delayed_work_on (2)
+Message-ID: <ZzVGN3gvt4Pw2pwG@dread.disaster.area>
+References: <67342365.050a0220.1324f8.0003.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,122 +86,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241113-refactor-blk-affinity-helpers-v4-7-dd3baa1e267f@kernel.org>
+In-Reply-To: <67342365.050a0220.1324f8.0003.GAE@google.com>
 
-Hi Daniel,
+On Tue, Nov 12, 2024 at 07:56:21PM -0800, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    f1dce1f09380 Merge tag 'slab-for-6.12-rc7' of git://git.ke..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=143eaea7980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=347f0ef7656eeb41
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3c653ce382d9a9b6fbc3
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/290169b0e6d0/disk-f1dce1f0.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/e26fb82ee406/vmlinux-f1dce1f0.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/d26ba056ed6b/bzImage-f1dce1f0.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+3c653ce382d9a9b6fbc3@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 8571 at kernel/workqueue.c:2498 __queue_delayed_work+0x212/0x250 kernel/workqueue.c:2498
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 8571 Comm: syz-executor Not tainted 6.12.0-rc6-syzkaller-00192-gf1dce1f09380 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+> RIP: 0010:__queue_delayed_work+0x212/0x250 kernel/workqueue.c:2498
 
-kernel test robot noticed the following build errors:
+WARN_ON_ONCE(!list_empty(&work->entry));
 
-[auto build test ERROR on c9af98a7e8af266bae73e9d662b8341da1ec5824]
+> Code: 0f 0b 90 e9 39 fe ff ff e8 8b 9f 37 00 90 0f 0b 90 e9 65 fe ff ff e8 7d 9f 37 00 90 0f 0b 90 e9 81 fe ff ff e8 6f 9f 37 00 90 <0f> 0b 90 e9 9f fe ff ff e8 61 9f 37 00 48 89 df 44 89 f6 eb ac 89
+> RSP: 0018:ffffc90002d5fac8 EFLAGS: 00010093
+> RAX: ffffffff815d3a91 RBX: ffffe8ffffc43440 RCX: ffff888028098000
+> RDX: 0000000000000000 RSI: ffff88805a2f1800 RDI: 0000000000000000
+> RBP: ffffe8ffffc43448 R08: ffffffff815d3c06 R09: 0000000000000000
+> R10: ffffc90002d5fb40 R11: fffff520005abf69 R12: 0000000000000001
+> R13: dffffc0000000000 R14: 0000000000000000 R15: ffff88805a2f1800
+> FS:  000055556c4f5500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fdcb605fe07 CR3: 000000005d732000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  mod_delayed_work_on+0x153/0x370 kernel/workqueue.c:2588
+>  xfs_inodegc_queue fs/xfs/xfs_icache.c:2158 [inline]
+>  xfs_inode_mark_reclaimable+0x7a6/0xf60 fs/xfs/xfs_icache.c:2194
+>  destroy_inode fs/inode.c:315 [inline]
+>  evict+0x7b5/0x9b0 fs/inode.c:756
+>  do_unlinkat+0x512/0x830 fs/namei.c:4540
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Daniel-Wagner/driver-core-bus-add-irq_get_affinity-callback-to-bus_type/20241113-223232
-base:   c9af98a7e8af266bae73e9d662b8341da1ec5824
-patch link:    https://lore.kernel.org/r/20241113-refactor-blk-affinity-helpers-v4-7-dd3baa1e267f%40kernel.org
-patch subject: [PATCH v4 07/10] scsi: hisi_sas: use blk_mq_hctx_map_queues to map queues
-config: i386-buildonly-randconfig-006-20241114 (https://download.01.org/0day-ci/archive/20241114/202411140822.ZRutrwWP-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241114/202411140822.ZRutrwWP-lkp@intel.com/reproduce)
+AFAICT there is nothing wrong with the way XFS is using
+mod_delayed_work_on() here - the internal work entry state that the
+workqueue infrastructure manages appears to be in an incorrect
+state.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411140822.ZRutrwWP-lkp@intel.com/
+This is not obviously an XFS issue.
 
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/scsi/hisi_sas/hisi_sas_v2_hw.c:7:
-   In file included from drivers/scsi/hisi_sas/hisi_sas.h:11:
-   In file included from include/linux/blk-mq.h:5:
-   In file included from include/linux/blkdev.h:9:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:8:
-   In file included from include/linux/cacheflush.h:5:
-   In file included from arch/x86/include/asm/cacheflush.h:5:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/scsi/hisi_sas/hisi_sas_v2_hw.c:3375:45: error: use of undeclared identifier 'COQ_IRQ_INDEX'
-    3375 |                 cq->irq_no = hisi_hba->irq_map[queue_no + COQ_IRQ_INDEX];
-         |                                                           ^
-   1 warning and 1 error generated.
-
-
-vim +/COQ_IRQ_INDEX +3375 drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-
-  3322	
-  3323	/*
-  3324	 * There is a limitation in the hip06 chipset that we need
-  3325	 * to map in all mbigen interrupts, even if they are not used.
-  3326	 */
-  3327	static int interrupt_init_v2_hw(struct hisi_hba *hisi_hba)
-  3328	{
-  3329		struct platform_device *pdev = hisi_hba->platform_dev;
-  3330		struct device *dev = &pdev->dev;
-  3331		int irq, rc = 0;
-  3332		int i, phy_no, fatal_no, queue_no;
-  3333	
-  3334		for (i = 0; i < HISI_SAS_PHY_INT_NR; i++) {
-  3335			irq = hisi_hba->irq_map[i + 1]; /* Phy up/down is irq1 */
-  3336			rc = devm_request_irq(dev, irq, phy_interrupts[i], 0,
-  3337					      DRV_NAME " phy", hisi_hba);
-  3338			if (rc) {
-  3339				dev_err(dev, "irq init: could not request phy interrupt %d, rc=%d\n",
-  3340					irq, rc);
-  3341				rc = -ENOENT;
-  3342				goto err_out;
-  3343			}
-  3344		}
-  3345	
-  3346		for (phy_no = 0; phy_no < hisi_hba->n_phy; phy_no++) {
-  3347			struct hisi_sas_phy *phy = &hisi_hba->phy[phy_no];
-  3348	
-  3349			irq = hisi_hba->irq_map[phy_no + 72];
-  3350			rc = devm_request_irq(dev, irq, sata_int_v2_hw, 0,
-  3351					      DRV_NAME " sata", phy);
-  3352			if (rc) {
-  3353				dev_err(dev, "irq init: could not request sata interrupt %d, rc=%d\n",
-  3354					irq, rc);
-  3355				rc = -ENOENT;
-  3356				goto err_out;
-  3357			}
-  3358		}
-  3359	
-  3360		for (fatal_no = 0; fatal_no < HISI_SAS_FATAL_INT_NR; fatal_no++) {
-  3361			irq = hisi_hba->irq_map[fatal_no + 81];
-  3362			rc = devm_request_irq(dev, irq, fatal_interrupts[fatal_no], 0,
-  3363					      DRV_NAME " fatal", hisi_hba);
-  3364			if (rc) {
-  3365				dev_err(dev, "irq init: could not request fatal interrupt %d, rc=%d\n",
-  3366					irq, rc);
-  3367				rc = -ENOENT;
-  3368				goto err_out;
-  3369			}
-  3370		}
-  3371	
-  3372		for (queue_no = 0; queue_no < hisi_hba->cq_nvecs; queue_no++) {
-  3373			struct hisi_sas_cq *cq = &hisi_hba->cq[queue_no];
-  3374	
-> 3375			cq->irq_no = hisi_hba->irq_map[queue_no + COQ_IRQ_INDEX];
-  3376			rc = devm_request_threaded_irq(dev, cq->irq_no,
-  3377						       cq_interrupt_v2_hw,
-  3378						       cq_thread_v2_hw, IRQF_ONESHOT,
-  3379						       DRV_NAME " cq", cq);
-  3380			if (rc) {
-  3381				dev_err(dev, "irq init: could not request cq interrupt %d, rc=%d\n",
-  3382						cq->irq_no, rc);
-  3383				rc = -ENOENT;
-  3384				goto err_out;
-  3385			}
-  3386			cq->irq_mask = irq_get_affinity_mask(cq->irq_no);
-  3387		}
-  3388	err_out:
-  3389		return rc;
-  3390	}
-  3391	
+-Dave.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Dave Chinner
+david@fromorbit.com
 
