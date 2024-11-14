@@ -1,112 +1,127 @@
-Return-Path: <linux-kernel+bounces-408944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E316A9C8568
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:59:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08F059C856B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:59:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A760228412D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:59:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8EC91F22D02
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCF21F757F;
-	Thu, 14 Nov 2024 08:59:25 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D097F1F76D1;
+	Thu, 14 Nov 2024 08:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jNbFXWb7"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9EF1EB9FD
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820141F7573
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731574765; cv=none; b=uF+YuPuNFes/1pHMBKGll5qiMPe5amF2B3RzbInm1jT9FUXFbiVwrJf+KoRdrJGayD3QvO7mZcnDO6eaE5XOABhCMWgWVIXAQf1BTuR+dxbVT6oIFl6J7d4ln1o7b1Iw8MH3Vj1qov5GUOvZwkyZO2QuyIaH3VkPdZdNruVNGGA=
+	t=1731574779; cv=none; b=r94v5ov987DIgp1NYDApsOB4bhOpFnF/4pXjIcoi1v69JYJK1LzHrnLFtopBE3gnZ0ubiHDbJd+gBHtdWSIOtTv+l5ptqD6bTmFaBugvUkm/bGl0PEAjxT9j2JTW6dtaqt6JXaBpayNHr9rFzn5pR0fRKSAJpfVb8zD0IOKTx2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731574765; c=relaxed/simple;
-	bh=gYDuRZ7ArX0jwUK07o3HSTIuBbTk2z7r5joz3LW3tCo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bmCjpnM0syi0CEYDm4e5H/HP1bfFthLPXg3472prZDWeMvKrrPdp/bQZ5JZEPfrGivOodNMK447nbsqktl1WdOlqoSTvFsDfH1DDmdaSRhRStXaykd5U1JAljXwWBJteH5Soos56R3EbiiJD3XJhTBYiMc0VvsxPYVopbEzmm0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a715ac91f6so4227365ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 00:59:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731574762; x=1732179562;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1731574779; c=relaxed/simple;
+	bh=XycamBY/nYOgqAvwbffcnYn4/Yabq7JhXqCOkrXC1xo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kqikarhztBVZE4+rQSh/8nJINcf6c1hTIK8JJHSV8n6OsEUYP0k0n4dEANM6Yk46uZY7SVYDp1DhjG4I2QHMeR4EgsUR9rYDUN1W5vBgVp1IiMpRethkhQbb4ZlQSr0Kygz5LbPy3RBvjiROsHgTd3PNGgQWrkfwGU8BYYlBwhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jNbFXWb7; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5cf7aadc8b7so239638a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 00:59:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731574776; x=1732179576; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=5zssj3quVVymKSXh7PyrXcZgz1qXWIQjEuhOq5pZc/Y=;
-        b=walzYpYNWBtFFhTtG6ajRXx0H8h2UCEWW/xeU2qvTrNKhzNq/C9gQgbsgxpucU+omr
-         /AeVsWBZo0ZqNvZ79RopcI0uRR4d8WWAU9XQTldD1j1qT07nuHHmB3rZnWWJ+SeXDJxB
-         xcDWySmJdrqjdz78KM3uX2WFbMPNbf7hnoR+0XV3JGuLjXdom1TrmeI+z570PJeUCWQq
-         RpZBNu0Y1Ed3Dmjs/ucAmh3ltU6sRylRFaf+Y2t79AHjWntbtrizNAsnk//N6OkZ2YDu
-         4KtTneXdKh5Okwx0DkL1E/eXn1pUU5ut/Ci79vtlEHABCbX8R+W7GWeQD5hqMqjr+5ZQ
-         ar8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWHQfG97zurUrASXreaUV6gJhkg+qc6bNMVeNmhYvuWLy/UM5y3l1J5v5gNRSv3OzmMH3h2C+pItWS3S2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySp9d9evHAFPLpGiJiKlVo4/qwA5lvr3+N8Agn0eLYuCaKMzqb
-	FlG5PsFODh8G4gWfkgwig1LV7kHReG6P8SSHzEZggjb2hnrQGnR+Wg4kNWqncqXPM98ygLVJhQN
-	P4DVD+Jq+c/55GdAYWCsNa99jHTS3ae66umZponUxrseqNBttWGS9iok=
-X-Google-Smtp-Source: AGHT+IGLqFcQ2N114zaO5uZSvOpK4WNf3i7F922a3Pi+SDIsMrogj0l6hi3tzJPiqLwa/hL2lYKh7nuceo3OEb2uWfJ7RLcqSm1V
+        bh=RFvv3LbF9Kdg9CtKKlONGsxCX12ovGg602Za7rDJdl8=;
+        b=jNbFXWb7jcm+CDw7YVEZz23nl4UM1utKC5g3fqOHWPXKBMO0zc9aZ89LoDGSm9se1r
+         cK2tPrK5YvrJJ6nFOSMXEamgQTC7+6HczQZOAvkwO5O4+dn+tKblhZJtiaKiVOazbgEX
+         xadz47PXFUddSC/bEQWU/uR3dekqmuqZLEpxTgAsZwXdDbXLnYWOJ24DgrVm6+To9Myu
+         y4I3y7TwIkULbdQQRRhtYpExJtqtc8brkAI+NdbgXPHPTyqqUKt9LhfqqWlR2RHKig/x
+         0Ts2fEP2bKzcTRYZ/0Ist/ixEJR1vw30RHzkbjDq4sqXE9SZ7VimomJpiFIyUUW86IKl
+         grJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731574776; x=1732179576;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RFvv3LbF9Kdg9CtKKlONGsxCX12ovGg602Za7rDJdl8=;
+        b=KTG3oMBuVIlSMk81wNl3dl14PmIiMexnU9bazI4ZWn8Y7yYX+q7xvgfEqLjwGmNqXx
+         zhiLGseohkUVTj8B0fqJVK97nHjCWT0UBzjfzJGabayn/ZE4Sr8bk1t3T+CQpz2vsBOj
+         mglouMN4bHBZcl20hAIk9IdJjV/VM9gBpE9ht91u1QVYLTfWWWcxUguD8ninuOGVKUsh
+         rGsQxDIK3/IOExzE6lA26S3adi5StQAorp3Wi2wCk8/aUNcCRAoO0Ot1FtkTZTsEBlTM
+         O+uSRi9aIo5Y/aau6XSxwl/YTG5pLPGZMtDreCRC5NUzXuz9TkDLPXH5vblDHAyeu4hl
+         JhNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUXtcDTMNh65EyhMt+p6zygZ6/qtIGVx5qzykv0+I3+RPFlZKC/hXZsumjQ6k8d8hHVMviO2dxvBb3YAEk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+Xo3SaP8XO64H0R3d0y1B/KjAwe238NB0WuFXPrDIVeBjQ1HA
+	ZIT8kGbMYHauQMJJPJ2SZtV9kZIuJtSbxT6TliuYgBWoLE5Q1b7/+ZcEEqTWi7o=
+X-Google-Smtp-Source: AGHT+IERWfaAqNKqw9yYfROoHVQjEmjB8jy1fnYHJoHTg2lYc4YgdDb9SwWLsbU0fU1K76xN3CY0pw==
+X-Received: by 2002:a05:6402:40d0:b0:5ca:da2:b2ca with SMTP id 4fb4d7f45d1cf-5cf630c4fc0mr5133838a12.19.1731574775753;
+        Thu, 14 Nov 2024 00:59:35 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df56b13sm38701066b.76.2024.11.14.00.59.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 00:59:35 -0800 (PST)
+Date: Thu, 14 Nov 2024 11:59:32 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Oscar Salvador <osalvador@suse.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>, Peter Xu <peterx@redhat.com>,
+	=?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+	Andrei Vagin <avagin@google.com>, Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] fs/proc/task_mmu: prevent integer overflow in
+ pagemap_scan_get_args()
+Message-ID: <39d41335-dd4d-48ed-8a7f-402c57d8ea84@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:154b:b0:3a0:4d1f:519c with SMTP id
- e9e14a558f8ab-3a7156d7c91mr73999395ab.3.1731574762607; Thu, 14 Nov 2024
- 00:59:22 -0800 (PST)
-Date: Thu, 14 Nov 2024 00:59:22 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6735bbea.050a0220.2a2fcc.0065.GAE@google.com>
-Subject: [syzbot] Monthly dri report (Nov 2024)
-From: syzbot <syzbot+lista02f0bac45ff1b3f6031@syzkaller.appspotmail.com>
-To: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Hello dri maintainers/developers,
+The "arg->vec_len" variable is a u64 that comes from the user at the
+start of the function.  The "arg->vec_len * sizeof(struct page_region))"
+multiplication can lead to integer wrapping.  Use size_mul() to avoid
+that.
 
-This is a 31-day syzbot report for the dri subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/dri
+Also the size_add/mul() functions work on unsigned long so for 32bit
+systems we need to ensure that "arg->vec_len" fits in an unsigned long.
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 16 issues are still open and 31 have already been fixed.
-
-Some of the still happening issues:
-
-Ref  Crashes Repro Title
-<1>  841     Yes   WARNING in drm_syncobj_array_find
-                   https://syzkaller.appspot.com/bug?extid=95416f957d84e858b377
-<2>  318     Yes   WARNING in vkms_get_vblank_timestamp (2)
-                   https://syzkaller.appspot.com/bug?extid=93bd128a383695391534
-<3>  68      Yes   WARNING in drm_mode_create_lease_ioctl
-                   https://syzkaller.appspot.com/bug?extid=6754751ad05524dae739
-<4>  62      No    INFO: task hung in drm_atomic_get_plane_state
-                   https://syzkaller.appspot.com/bug?extid=eee643fdccb7c015b3a6
-<5>  28      Yes   WARNING in drm_wait_one_vblank (2)
-                   https://syzkaller.appspot.com/bug?extid=147ba789658184f0ce04
-<6>  18      Yes   WARNING in drm_gem_prime_fd_to_handle
-                   https://syzkaller.appspot.com/bug?extid=268d319a7bfd92f4ae01
-<7>  12      Yes   divide error in drm_mode_vrefresh
-                   https://syzkaller.appspot.com/bug?extid=622bba18029bcde672e1
-<8>  4       Yes   KASAN: slab-use-after-free Read in drm_atomic_helper_wait_for_vblanks (2)
-                   https://syzkaller.appspot.com/bug?extid=0f999d26a4fd79c3a23b
-<9>  4       Yes   WARNING in drm_gem_object_handle_put_unlocked
-                   https://syzkaller.appspot.com/bug?extid=ef3256a360c02207a4cb
-<10> 3       Yes   WARNING in drm_prime_fd_to_handle_ioctl
-                   https://syzkaller.appspot.com/bug?extid=0da81ccba2345eeb7f48
-
+Fixes: 52526ca7fdb9 ("fs/proc/task_mmu: implement IOCTL to get and optionally clear info about PTEs")
+Cc: stable@vger.kernel.org
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/proc/task_mmu.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index f57ea9b308bb..38a5a3e9cba2 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -2665,8 +2665,10 @@ static int pagemap_scan_get_args(struct pm_scan_arg *arg,
+ 		return -EFAULT;
+ 	if (!arg->vec && arg->vec_len)
+ 		return -EINVAL;
++	if (UINT_MAX == SIZE_MAX && arg->vec_len > SIZE_MAX)
++		return -EINVAL;
+ 	if (arg->vec && !access_ok((void __user *)(long)arg->vec,
+-			      arg->vec_len * sizeof(struct page_region)))
++				   size_mul(arg->vec_len, sizeof(struct page_region))))
+ 		return -EFAULT;
+ 
+ 	/* Fixup default values */
+-- 
+2.45.2
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
 
