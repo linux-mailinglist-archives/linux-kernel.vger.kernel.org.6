@@ -1,228 +1,219 @@
-Return-Path: <linux-kernel+bounces-409010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B63799C8653
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:39:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FE289C865D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:43:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76F662829FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:39:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E292B2458D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146B11E9092;
-	Thu, 14 Nov 2024 09:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85BA41F7540;
+	Thu, 14 Nov 2024 09:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="MIuvpyDq"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2043.outbound.protection.outlook.com [40.107.249.43])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPdEYXkZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE0D1DB95D
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731577145; cv=fail; b=nbiCygfFPSrS44UQxwtgoasLA/XWyGDl1qjVhdeFvv9q5aCRympSh9tsonffb4aelwORcq8Vorx5Di0C3P0hpP39JMrtURQScK3OGGgRMr6+l9wMewnXn03KExxJcY81GLYI02BWN10w0PJ4fDQ8VCo6vV3IGCGnkJp/T6llSe0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731577145; c=relaxed/simple;
-	bh=cQ0WywEKirW3vcRXcHaqEM0S7h0KGxUnq4Is/xp17VA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=BuwZDC+p0SujBGPB8FNqqWAh08FspWqp13pi0UiElgADHFt6eg1uE1WmhZH7CmChACXVZHqETZPwmhuiZHaqbUK8V4SaOAlkrNV9oAJtYi9GlWkhgjro4BZPit3f+GlLp02webTjw8QNhZUniO/8np91syV61y5oeCakGt5H44s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=MIuvpyDq; arc=fail smtp.client-ip=40.107.249.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=geP6ciJtVSCsI1tjklGJqTVOCaObdP4ZGfqgdA6Q2dq/k3I7BhH1Nk5Ov7zpyOS0gk9xoHYHsvVZLiHm2HeIin4zoy3dokOaSWPzR1ETf1EtpyPRidcxEvd3E/n/mECrbuWlRdlNAPHrezBBLNudlUDwPp93lPI6JKoTPlBvlPMvkoXe5uBSbvjmk6uLMMpaAKWZPMAntqqGjs4lgMIx0xKEzac6USX3x25AQmKbj63MscYT7Oe5swBgBcKofSDQ8mADWO+o9Q2OR97WFaVat4enYxxLNv6acCopmaY1ocktGx0cyYtwuDL1D2AJQ/ViDqEhMpjGlMEBmLvelks65A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/8EvWtEao6d6hMqRqEtX62bvgP6Blu47T3zMYNngkTk=;
- b=ruReq9nDaANDYCJNCR9Xwlsblfbj9XfoGQG6w228AP5SDuG61JqpqK4HpaeCq4G6go2WuyqiT3Wn3Xn9J8hm+Crf6HZSNLUagoBvBei5VN1KtbdEsDSAd+iGCG12MY4WpeMh0QKZeBrgmK+YWhby+NHiYFI2/By+hUaOAaSD43bTVL+YFOA2jC3g/VZwRkDy1j1xafuOLTMraGqZTSPD2+8hdo+/tBoOS2Qtc/z0Jyw8OOVi5Ovzpg4dxHLFDGn794jxSyig/AyvnUIAaN3bKmlvddZQ16Kabzh32Ot8kP2yKeU8zRhBpGHG+RwhIHbdHq62q0pREoP/W90FE7m9Og==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/8EvWtEao6d6hMqRqEtX62bvgP6Blu47T3zMYNngkTk=;
- b=MIuvpyDqxDD8+U+U7GRz084E4ZpQ+EGCsUiXMex3qlYsehA2UAEUUZPCRvsCD8x39N1K99aKFrviVUgl+G5YE/8MmSWkUypZjZpVeycWI2AlSJrnmpiLE/GFMtB1IetjvrmQSqvK2+0QsI4Gzv/1joOC1KoXarUSMiGHcquBx/8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by DBBPR04MB7627.eurprd04.prod.outlook.com (2603:10a6:10:208::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.18; Thu, 14 Nov
- 2024 09:38:58 +0000
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a%7]) with mapi id 15.20.8158.013; Thu, 14 Nov 2024
- 09:38:58 +0000
-Message-ID: <030c3b0f-9396-4fbb-af4e-cf2cb58ffac1@cherry.de>
-Date: Thu, 14 Nov 2024 10:38:56 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] drm/rockchip: vop2: fix rk3588 dp+dsi maxclk
- verification
-To: Andy Yan <andyshrk@163.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, hjc@rock-chips.com,
- andy.yan@rock-chips.com, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Heiko Stuebner <heiko.stuebner@cherry.de>
-References: <20240425195506.2935955-1-heiko@sntech.de>
- <20240425195506.2935955-2-heiko@sntech.de>
- <cb73853e-4201-4cc9-9e8a-f977e66241f6@cherry.de>
- <72672888.8f9.1932826549b.Coremail.andyshrk@163.com>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <72672888.8f9.1932826549b.Coremail.andyshrk@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0155.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:ba::9) To AS8PR04MB8897.eurprd04.prod.outlook.com
- (2603:10a6:20b:42c::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7F77C0BE;
+	Thu, 14 Nov 2024 09:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731577272; cv=none; b=moc1qLgqHakAdrg3ZBsIpPdy/JNbliB7kFPO0jok7nEzvvDoI7/vVtuky5XkYOs5FNu6VdZqlnLjXxXdtzQIerlF94hbduax1gKh5/BalfixITHfg+YyVAZSqFYuL1A4IZP0uOf8EryzUtbtmxK5/eGVJeOL3Aj1VxmByRhiPOU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731577272; c=relaxed/simple;
+	bh=5q3RktbUZXvf6M0hRM6HB/aJlJafYbTdCmLCZcHHYRM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i0COk4VvmmblIHpXcQyUPCTozHQkt49dw3X5lw+GRGCPBVWdDxbCp6TNLiUVDXfw5keCAp78cpJsLCC7SvkpaaGkdoh0gfogW0ct38X5cJDAft++E5Vq5jBtbWH3UONDIH+Tn5qGS18etTK0AIqMSfjMMPn4d9g1+Jp2tJ4JouY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IPdEYXkZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60C56C4CECD;
+	Thu, 14 Nov 2024 09:41:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731577272;
+	bh=5q3RktbUZXvf6M0hRM6HB/aJlJafYbTdCmLCZcHHYRM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IPdEYXkZsrnbsNA/amFr6z9+SaYXUFEEn5OGID34chnxsJmNyfI3ULyGkejnFEgxV
+	 +rIeZC7SCUBgT9L2KsA84kPhdSfWCnUP4A2Ldg6Dc+CMCLB9Nk8ljPXtr6Zamql35j
+	 8i6vRWmKuw4oazJ4jsbxUBRmc71AxrDwV/aIVlWfmhyrN7NHCBiHmHuENEvl8RYNw7
+	 OrW9qYHIwRlCIU3JXAnmCM/sFUj3VLY7ju0+cwBtKPYxzsmQKPluiwnvA7Yml4+zo3
+	 qcVGvv2zojvmC43lcEfVqx32JY69z60Z2WLAlGRUsGQD+h+yAXYI+Cb7imS6pNPJPl
+	 M6gF/uMoJX9qQ==
+Message-ID: <76dd6141-5852-43ae-af98-f0edf0bc10f5@kernel.org>
+Date: Thu, 14 Nov 2024 11:41:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|DBBPR04MB7627:EE_
-X-MS-Office365-Filtering-Correlation-Id: 450ae1bc-8f00-41d4-3030-08dd0490299b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NktUaGtZeGNWQ3VmUEk1TEEzR3BURndOYWE4WG9OaFpwcGhVbURCTHMvK1hy?=
- =?utf-8?B?VDBIVHpHeXQrNy8ySzJhYUJUWWVtQm5YdGFxUk0zRkZIQzh1SE5aaFF3d2RJ?=
- =?utf-8?B?V2FxTlc5U1ZINzJ2Q1V2UUM5YjNPN3RQN2toVzE3eSsrcmhGaUx3Znkxai9Y?=
- =?utf-8?B?dmJPZm0rZm5qWkpSb3hTOGZ2YUNDWTQ5MVNvT3BBdjgvc0xINERscUpRK3lW?=
- =?utf-8?B?TldRbm10TUU0bTUxcDVLeFhncTZ5aTR4SzRoYkJ6amhpZlZnWGhrUmZ3aUI1?=
- =?utf-8?B?YXFKL1RiNXpEcGhMaTJVdTUrWURiMHlqWG1xTkhqalUzejRFNXA1dEl2cVJ4?=
- =?utf-8?B?akk1cjVWbVpyMDRFZ2lteFRLNnRTZW5EV3Y4Zk0yWWxoaW1tY0c5LzBLN1l3?=
- =?utf-8?B?cks5OTRTOWtRR0tXVFdjakJGc3FFcHljYnN1aTZWYW1VeFhLUGUwUVFaYm1y?=
- =?utf-8?B?OHBwYUJXZ0JWb0V6OXFVUnhvRjYrejJ2RmxQQ0VkbExsR01XVTlIT0RSanBy?=
- =?utf-8?B?MXQwclJaYVp2NlVtcWxuMDNDS2l2UncxbW1oYVRBVjYyM0o2K3FCZDRuY3Jr?=
- =?utf-8?B?UVhpc3I2czJLcnliZ0hQYTZVbnMvN0lSUHFNcG9RWGhjTG43a0s1VENpMkVq?=
- =?utf-8?B?UFJuWFVaN2lxV3RDR3lSczJ4cTNCQUpOS3IvZG5hcExteUx1TE00aVk4Nzlx?=
- =?utf-8?B?UDNpWUlYdCt6c0JBb3MzNkZMb3RnTGp0WllxdVI4TlJrSEVSWlBBWjJHNW9S?=
- =?utf-8?B?OEVkUm4xa3A2ZXlNWlQwdmhBS0NpMmZnbjNVbXNuazUyZ3duT0RsM251V20v?=
- =?utf-8?B?cmtrL3JkVHFuK3ZOS3p0NGVyNXZ0QTJBaDkrV3dZSi9Tb0M0a3FJZ3ZqYXA5?=
- =?utf-8?B?Y3ltU0hkTG9HRVZ4Y0I3R2JxdXVMSW9LdWxlL1ZxU1BwcGZ5a3EwcHEyL0Fs?=
- =?utf-8?B?VVZHVHdVei8zdTRDS1ZBa2tHM1FMQ3NaUnJ3OFUrRm1lODVnWU5WRHdMaFds?=
- =?utf-8?B?dlBOR2RyY1RSRHVwTXI4ZG1TSTVBZWxpY0xvUGxUUjlEdGhqMmVvRmpPVzFY?=
- =?utf-8?B?ME5IYklxTkdsWFVwZXVHVWpjZ0hDWG1mM0FrcHRhRXFJdE5MT2tvUCtaWlV2?=
- =?utf-8?B?QkhUUnIxS2hTeVVWdzFZYXgwUVJnaHVXeFU0WjdVSVhxWncxWGJ4YU1tcHJL?=
- =?utf-8?B?c05QcGsweEZjOVhEK21pOElZZERHZnNxWG11K2RULzh4SUhPWnc2NXVPODFX?=
- =?utf-8?B?U0pTd2V6azBHbk1VVk9KT3dra3NaRGNUYnRDampvSVVpUkV2YXEwOEEyRlhU?=
- =?utf-8?B?YmFSeWJVUjBvcU9OQ3ZYUTFBUDFHUU5KbG9JT3JzdWlLdllkNURHYkNWcC9C?=
- =?utf-8?B?Y2hEZmlXNkxQdE1zYkN2QzRNTTNtUWNKd0o2cGExSEEzQ3pEd1BRa05GcTZm?=
- =?utf-8?B?RHR4M0hZMHVBVm5VL0NLQmY0MGlDbEg1ZnNoa3VNcXlJTGpuRE5kdG9PWlN4?=
- =?utf-8?B?WnAzbXRiTTVzOU12WjBkcGxON01xRVRCeW9rb1dHS3RHTFFlQ2h4amxBSHdS?=
- =?utf-8?B?ZFdZQVpYZ0FSOFJGdHVGaElyQ0RTcWZlY3NtZk43V296TDJmK3Z5MXN0Z1VV?=
- =?utf-8?B?SVFxRktsZ3pJUlFOQ3Vrd0JWeldhV1A4MjAzNjNaeWJsY2NtQytId3lEdG9h?=
- =?utf-8?B?K3g5bGd3V1NyUkY3anR4QnZJaUVsSVpwSXZFZHYzUVp5dlVmVzVyU0hCUlFT?=
- =?utf-8?Q?cASxPu0o35U1Q7wiuAUnNn41ClRypRrd2QbRFfV?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?M3dvSFVFY3J1STZ2QnZCTWJhaDhsYXlnYXNJVlViYUlDU2ZuSUVZL0NMUTNR?=
- =?utf-8?B?TVRuZG5BUTdLYXBBMndoT3RmS3NCWU9RR2R4R3A3NnQ0MVFNNEhRc281WEhE?=
- =?utf-8?B?TGNZUDE5cmpWa2pTSGhTSW1nZ3lXMTd1U2dNSkVCTEZBV01nZU9uZ01Rd0ZW?=
- =?utf-8?B?NE1TR2F6bjVoc0orMjBCOEpUdGNTWU5ZVDFxVFA4NDdId3lFa21tbGwvSi9P?=
- =?utf-8?B?ZmdnZ1VqUjh3L2czWWxYdkZydkdueDAyYjVlVzZ4Qm9vZnp1VDZpTHQ0K1dI?=
- =?utf-8?B?b0lKWi8yM0hKM1NFTElndEozcTROd2FqK3ZEQlA3QVg5b1ZaU2RxTUlMTWRi?=
- =?utf-8?B?amZaZk1rL2J4Nk5ubTVRVHBGM3VTZzlOdTNTUklwMURWMm51MEJ1eXV0Q0sw?=
- =?utf-8?B?ZUtYRWdva0t3OUs3eEtVMzMzUzRsK1czR3pBdllobmtJSzhlbG9nck9JK2gv?=
- =?utf-8?B?U3pGbGF0U1MxajNhdTZDeDBiZHRGcGMwb0g2M01MNFhlcFJjL0I4cHR3aTVG?=
- =?utf-8?B?YTB4OUJIaG1LRlBwRTFXV2lFMXUybmlJRGFnSVBCRG9IOXNoaGY0VklmNFFV?=
- =?utf-8?B?aWtGVU5wRXVZaFFnZWhvQW1xN3dJeUw2QlpHY0l1WGlEMWlrbW1UV2V1L0to?=
- =?utf-8?B?eWRGT0o4U3lzOStMOU4zY2hldGwyZDFvNVJIOElYaXNjK2tFcTV6YkRiaUxR?=
- =?utf-8?B?Qkt0M1RKZDlHS0VzNjJnZkVhSWo5eVVDRWpZYTBQV2puMVA3MlVnVTl4bEtE?=
- =?utf-8?B?US9Mb2poOElpM2F6bUdrTnJCTHMrZ3BXMUI0VUxUdmxuQ3J2WEtFMmhNVjU5?=
- =?utf-8?B?T3MzMVM5LzJaZTBtdWl5eXNXVVpmZE9adS96d0lHQ24rRnZHVmt2ZDl3bHpw?=
- =?utf-8?B?dW1nRVBwY2QwRHdiNkl5VytLeTJ5UWRKdUhUQ2UrbEJjR1JKUlRjbnlteG5u?=
- =?utf-8?B?QWFWLzlqZ3IyYmptRDZaUDl2VEtjTHFVc3Azb3o0alBKaFo1N0crUXI2cit3?=
- =?utf-8?B?dVVoOUgxOE16ditadkNydSt5UHFQdW1NOFpnbUs4N2lvamFvNnEvelRDUFl5?=
- =?utf-8?B?L2tYbnZaSXRXcFhJNG1TcDRyZjN4SEZwL2psd2RzdmZBbTltMDNlQUZ2dHBy?=
- =?utf-8?B?Zi8zMkZCS1RKMVZ1UEE0SGk1aTRUcHk4aXJNMFpEeDI4WkpPeGlHMktpcGdu?=
- =?utf-8?B?TGNtMktTVmxsT3ZEUXdPcEdSY2FNckZSQnliV25NMmlwR1N3bVg5ck9OdGxP?=
- =?utf-8?B?bVU5akdHZ0k5eVJSSVF6aDA3R2IvdjJDYUpTZTl6akFEQlR5L05OZmFsVWgy?=
- =?utf-8?B?WDVHWURmMDZFS25LQm9ZOFRLMDBNYnZNQUczWW10R2FJcE5QZVlHeUZwUm9y?=
- =?utf-8?B?SWg5VEkzZGJyUXBXMjYxQkFHTTBpQWJuT01jd3ZlRmMvN2hRQ0xIVEtudk52?=
- =?utf-8?B?THEwSXhKdHg4ZzcrQVllYTVhSk14RGVYNkpOeVBHbTV5bmZ4QVV2UjJQZDF1?=
- =?utf-8?B?UmpNT0hadUdhUnJERllQdzhqVnA1Q09rZjJ4N1ExOW9NSFh2WkpQTnRvKzEz?=
- =?utf-8?B?TUU3Sjd2b0RQbkdTZ3NzYTJ6a0QvSm1hL3hORnpwM1pZZFFjRElhbWhnNUNz?=
- =?utf-8?B?QmFUNWlVTXQyVmtueGhUMHo2Y3Y4Sm1kRFBCazJCaDlXY2ZVQnZVVTJNUllG?=
- =?utf-8?B?cVFVTzQ1dEgxQkdnRDlXZkNFdk1GVUFWZHhPSlZwMDRaNVpIRGRDOFZNbEhC?=
- =?utf-8?B?NTlFb0VJNWJsVG16bmRVN0tvNFQxaWpWYzZ0ZkJqNVU4WHZpZW54MWZkbjVG?=
- =?utf-8?B?dU8xZjN6Q3R1a1BlMEJCZDJPNDJZaWpOWnJpd1NWLzNveE8wKzJVajlNQ3ZM?=
- =?utf-8?B?bllGbkZqeEFTNVd3cFZBMXUxVnVEamludjFjUFlxZ2gybE1mNWd1cXZVZXpi?=
- =?utf-8?B?YlJlelkxUUtqSjdtaS9tM1VKOGxheHVVTjFza1JRcWlUZ1lJMnF5dzIxc3ZU?=
- =?utf-8?B?Wmk3UU01RE9nQzBHZ1NjMEpzUmZxUEpTUXdYeDdYNk1iUmpHdzFubTZKS2lV?=
- =?utf-8?B?M1ZzVElCSjRDTGxwTm03NTI1dHpMcmU3cVY0NHlQaDg3Q2U0NTRNUGwvSkZj?=
- =?utf-8?B?bEpxeXpPNWpZRVVxaXhhWHRCaWRZaDNYV0RTc1FVd0tWaDZ2TDU0K1FWdVg5?=
- =?utf-8?B?Wnc9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 450ae1bc-8f00-41d4-3030-08dd0490299b
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2024 09:38:57.9229
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3/Q59u+mrcwrdkFFW5OZIKK4CfMADPPziABtV/vjk9bG+Xj1K97wWaQGzzrsu4F1YVquz3DuHRP3dfNdHnJhrQ6YzqM4Y13pj5XNbt5YwQ4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7627
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 2/2] net: ethernet: ti: am65-cpsw: enable DSCP
+ to priority map for RX
+To: Guillaume Nault <gnault@redhat.com>
+Cc: Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, linux-omap@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, srk@ti.com,
+ Pekka Varis <p-varis@ti.com>
+References: <20241109-am65-cpsw-multi-rx-dscp-v3-0-1cfb76928490@kernel.org>
+ <20241109-am65-cpsw-multi-rx-dscp-v3-2-1cfb76928490@kernel.org>
+ <ZzVBS1zXIy31pnaf@debian>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <ZzVBS1zXIy31pnaf@debian>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Andy,
 
-On 11/14/24 1:50 AM, Andy Yan wrote:
-> 
-> Hi,
-> 
-> At 2024-05-06 15:44:36, "Quentin Schulz" <quentin.schulz@cherry.de> wrote:
->> Hi Heiko,
+
+On 14/11/2024 02:16, Guillaume Nault wrote:
+> On Sat, Nov 09, 2024 at 01:00:08PM +0200, Roger Quadros wrote:
+>> AM65 CPSW hardware can map the 6-bit DSCP/TOS field to
+>> appropriate priority queue via DSCP to Priority mapping registers
+>> (CPSW_PN_RX_PRI_MAP_REG).
 >>
->> On 4/25/24 9:55 PM, Heiko Stuebner wrote:
->>> From: Heiko Stuebner <heiko.stuebner@cherry.de>
->>>
->>> The clock is in Hz while the value checked against is in kHz, so
->>> actual frequencies will never be able to be below to max value.
->>> Fix this by specifying the max-value in Hz too.
->>>
->>> Fixes: 5a028e8f062f ("drm/rockchip: vop2: Add support for rk3588")
->>> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
->>> ---
->>>    drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 4 ++--
->>>    1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
->>> index 9bee1fd88e6a2..523880a4e8e74 100644
->>> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
->>> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
->>> @@ -1719,7 +1719,7 @@ static unsigned long rk3588_calc_cru_cfg(struct vop2_video_port *vp, int id,
->>>    		else
->>>    			dclk_out_rate = v_pixclk >> 2;
->>>    
->>> -		dclk_rate = rk3588_calc_dclk(dclk_out_rate, 600000);
->>> +		dclk_rate = rk3588_calc_dclk(dclk_out_rate, 600000000);
->>>    		if (!dclk_rate) {
->>>    			drm_err(vop2->drm, "DP dclk_out_rate out of range, dclk_out_rate: %ld KHZ\n",
+>> We use the upper 3 bits of the DSCP field that indicate IP Precedence
+>> to map traffic to 8 priority queues.
 >>
->> It seems the error message is incorrect as well and should be saying Hz
->> instead of KHz. (note also the lowercase z).
+>> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+>> ---
+>>  drivers/net/ethernet/ti/am65-cpsw-nuss.c | 54 ++++++++++++++++++++++++++++++++
+>>  1 file changed, 54 insertions(+)
+>>
+>> diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+>> index 0520e9f4bea7..fab35e6aac7f 100644
+>> --- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+>> +++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+>> @@ -71,6 +71,8 @@
+>>  #define AM65_CPSW_PORT_REG_RX_PRI_MAP		0x020
+>>  #define AM65_CPSW_PORT_REG_RX_MAXLEN		0x024
+>>  
+>> +#define AM65_CPSW_PORTN_REG_CTL			0x004
+>> +#define AM65_CPSW_PORTN_REG_DSCP_MAP		0x120
+>>  #define AM65_CPSW_PORTN_REG_SA_L		0x308
+>>  #define AM65_CPSW_PORTN_REG_SA_H		0x30c
+>>  #define AM65_CPSW_PORTN_REG_TS_CTL              0x310
+>> @@ -94,6 +96,10 @@
+>>  /* AM65_CPSW_PORT_REG_PRI_CTL */
+>>  #define AM65_CPSW_PORT_REG_PRI_CTL_RX_PTYPE_RROBIN	BIT(8)
+>>  
+>> +/* AM65_CPSW_PN_REG_CTL */
+>> +#define AM65_CPSW_PN_REG_CTL_DSCP_IPV4_EN	BIT(1)
+>> +#define AM65_CPSW_PN_REG_CTL_DSCP_IPV6_EN	BIT(2)
+>> +
+>>  /* AM65_CPSW_PN_TS_CTL register fields */
+>>  #define AM65_CPSW_PN_TS_CTL_TX_ANX_F_EN		BIT(4)
+>>  #define AM65_CPSW_PN_TS_CTL_TX_VLAN_LT1_EN	BIT(5)
+>> @@ -176,6 +182,53 @@ static void am65_cpsw_port_set_sl_mac(struct am65_cpsw_port *slave,
+>>  	writel(mac_lo, slave->port_base + AM65_CPSW_PORTN_REG_SA_L);
+>>  }
+>>  
+>> +#define AM65_CPSW_DSCP_MAX	GENMASK(5, 0)
+>> +#define AM65_CPSW_PRI_MAX	GENMASK(2, 0)
+>> +#define AM65_CPSW_DSCP_PRI_PER_REG	8
+>> +#define AM65_CPSW_DSCP_PRI_SIZE		4	/* in bits */
+>> +static int am65_cpsw_port_set_dscp_map(struct am65_cpsw_port *slave, u8 dscp, u8 pri)
+>> +{
+>> +	int reg_ofs;
+>> +	int bit_ofs;
+>> +	u32 val;
+>> +
+>> +	if (dscp > AM65_CPSW_DSCP_MAX)
+>> +		return -EINVAL;
+>> +
+>> +	if (pri > AM65_CPSW_PRI_MAX)
+>> +		return -EINVAL;
+>> +
+>> +	/* 32-bit register offset to this dscp */
+>> +	reg_ofs = (dscp / AM65_CPSW_DSCP_PRI_PER_REG) * 4;
+>> +	/* bit field offset to this dscp */
+>> +	bit_ofs = AM65_CPSW_DSCP_PRI_SIZE * (dscp % AM65_CPSW_DSCP_PRI_PER_REG);
+>> +
+>> +	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
+>> +	val &= ~(AM65_CPSW_PRI_MAX << bit_ofs);	/* clear */
+>> +	val |= pri << bit_ofs;			/* set */
+>> +	writel(val, slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void am65_cpsw_port_enable_dscp_map(struct am65_cpsw_port *slave)
+>> +{
+>> +	int dscp, pri;
+>> +	u32 val;
+>> +
+>> +	/* Map IP Precedence field to Priority */
+>> +	for (dscp = 0; dscp <= AM65_CPSW_DSCP_MAX; dscp++) {
+>> +		pri = dscp >> 3; /* Extract IP Precedence */
+>> +		am65_cpsw_port_set_dscp_map(slave, dscp, pri);
+>> +	}
+>> +
+>> +	/* enable port IPV4 and IPV6 DSCP for this port */
+>> +	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_CTL);
+>> +	val |= AM65_CPSW_PN_REG_CTL_DSCP_IPV4_EN |
+>> +		AM65_CPSW_PN_REG_CTL_DSCP_IPV6_EN;
+>> +	writel(val, slave->port_base + AM65_CPSW_PORTN_REG_CTL);
+>> +}
 > 
-> I think kHz is fine, we can find many siminary usage in drm:
+> It seems that this hardware is capable of mapping all possible DSCP
+yes.
+
+> values. Then why restricting the mapping to the 3 high order bits only?
+
+Currently, the 64 DSCP values are mapped to 8 User Priorities (UP) based
+on just the Class Selector Codepoint field (first 3 bits of DSCP).
+
+But now looking at rfc8325#section-4.3.
+"Note: All unused codepoints are RECOMMENDED to be mapped to UP 0"
+
+So what this patch does doesn't look like a good idea.
+
+> According to RFC 8325 section 2.3, this seem to be a common practice,
+> which this RFC considers a problem:
+> https://datatracker.ietf.org/doc/html/rfc8325#section-2.3
+
+Good to know about this.
+
 > 
-> drivers/gpu/drm/drm_vblank.c
-> 656:    drm_dbg_core(dev, "crtc %u: clock %d kHz framedur %d linedur %d\n",
+> I know this RFC is about 802.11, not 802.1p, but as far as I know, the
+> user priority (UP) are the same for both, so that shouldn't make a
+> difference.
+> 
+> So what about following the IETF mapping found in section 4.3?
+> https://datatracker.ietf.org/doc/html/rfc8325#section-4.3
 
-The issue is that we print kHz for something that is in Hz, not that we 
-print a value in kHz.
+Thanks for this tip.
+I will update this patch to have the default DSCP to UP mapping as per
+above link and map all unused DSCP to UP 0.
 
-The former is incorrect, the latter is fine. We are in the former 
-scenario here I believe, so it needs to be fixed.
+Is there any mechanism/API for network administrator to change this
+default mapping in the network drivers?
 
-Cheers,
-Quentin
+> 
+>>  static void am65_cpsw_sl_ctl_reset(struct am65_cpsw_port *port)
+>>  {
+>>  	cpsw_sl_reset(port->slave.mac_sl, 100);
+>> @@ -921,6 +974,7 @@ static int am65_cpsw_nuss_ndo_slave_open(struct net_device *ndev)
+>>  	common->usage_count++;
+>>  
+>>  	am65_cpsw_port_set_sl_mac(port, ndev->dev_addr);
+>> +	am65_cpsw_port_enable_dscp_map(port);
+>>  
+>>  	if (common->is_emac_mode)
+>>  		am65_cpsw_init_port_emac_ale(port);
+>>
+>> -- 
+>> 2.34.1
+>>
+>>
+> 
+
+-- 
+cheers,
+-roger
+
 
