@@ -1,100 +1,114 @@
-Return-Path: <linux-kernel+bounces-409191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAFD59C888C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:14:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD6A9C888D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:14:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F6371F25C7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:14:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99E081F25C58
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7111DE4EF;
-	Thu, 14 Nov 2024 11:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD661F8918;
+	Thu, 14 Nov 2024 11:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jOQTk0eC";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zpFWdLfk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BLwB3klD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A8818C33C
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99FB1F8193;
+	Thu, 14 Nov 2024 11:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731582854; cv=none; b=ZmbCtTXdMwvzxC73GWCiNiqSgH8Oyq2OSwRdmpWMh/fpXS+ch/D4TIDoNDOfB7OrIDRnHqR3cBBR6s3jYdY/22M98kBVbv/WA2m/JE7NqQ8zZcBNJviud9L8Z7+CTtEs22UKZIQm9Ymezjwmxub3X+DhrIR/OaX0ljK5IX7qbO0=
+	t=1731582862; cv=none; b=Duv7d/nhqx1b6Vj3kLB4JZ17NZ7RNzt6o+zQiylrD+K4KaBDhT1ijkC6gGFsWkyT0cqGAqIGg77qlXb9YjSlBh4n/S9S/U/juFfbqXhzQjHJSz8WyxI3bJBpKppArT+9zcJ2cHwm8XvOAtVQuwUFmtRu8VQIIN/e8JEJJnQ+xQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731582854; c=relaxed/simple;
-	bh=gRR40SndAUINQpZzoaGb+C823qJAH75RLefirXL5ndI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PDaHIQgF+Oqx9MnVcsdnX5/UFNe8MYe9H4dGu5l90JeuoyIhajR3tQ11oaJIg7ACnVtdB/KIh0XIhN8uHXU6Uayq3mmGs8GWxNk/0d9L/tOKSw5ued0C9I0HcWRuIz6Lj2Eyfb8M5EHzPM7C9cI9W15i6tCuEMJdb/oCBNjxsEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jOQTk0eC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zpFWdLfk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 14 Nov 2024 12:14:09 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731582851;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gRR40SndAUINQpZzoaGb+C823qJAH75RLefirXL5ndI=;
-	b=jOQTk0eCAw6EuTBILsaJACYPzwJLzUNz06TxVfaS/Amv/V/P5ndH6B8NH5jVklVOuRjdF/
-	LIIL8Kazvr0d/vX56+9IvaU2mDhFCsTljanS8cMaqHpbc7fVpuFq4a3Ty3raoBJCew7I1z
-	hxY1/d9ePwiWw++GHR4qvWto2sh6eb8e0O3pbZWWvyfKyRypRTbjQIj6gY7FXrHOuHd+5M
-	hMINm9loI9ruUz6MXpFQQtq/4PlelZtpfVK32YyCVRcu6B9RQxz1H2lo7YaeYdneflsdkY
-	+nOvtEU3BYrjabhDkBIUVczzOsggnmuRSm5+O0VipuTb688z2rLWJ3ZKa2qdYA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731582851;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gRR40SndAUINQpZzoaGb+C823qJAH75RLefirXL5ndI=;
-	b=zpFWdLfk6FuIP+24DjWeCi0w/vvbSjtCvDiGblalF2T60f88dnxszD9/oB586FW9lDhgK6
-	iBXPAtaztEGwmWDg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Huacai Chen <chenhuacai@loongson.cn>, Xuerui Wang <kernel@xen0n.name>,
-	loongarch@lists.linux.dev, Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-rt-devel@lists.linux.dev, Guo Ren <guoren@kernel.org>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] LoongArch: Allow to enable PREEMPT_RT
-Message-ID: <20241114111409.LWKp5YEg@linutronix.de>
-References: <20241108091545.4182229-1-chenhuacai@loongson.cn>
- <20241108091545.4182229-4-chenhuacai@loongson.cn>
- <20241114103111.5W5ZY0D4@linutronix.de>
- <CAAhV-H72YSNBGutYPOVi=S7nwLb6YOiQOFqnimAp=9D0wAJc3g@mail.gmail.com>
+	s=arc-20240116; t=1731582862; c=relaxed/simple;
+	bh=EH9hwU1mzPi6AlkDMNhH5/MmE32MjwtQZgX3Oap6itA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PjpCRLv41ZMDM6VU+ljA6yYZ375Wx5z413dHlPRW2GW8dC3esPxVHG3L2RYzIU7s4PmsUwA1Pt1B82FbaxAZlitw513YQfVUUoPLQC8CvK7ALiE/VKTC0PI3KKiPkwHAVKjb8ATylaAvFyRmA64qmAtMH64J13etOoKyM7sQuZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BLwB3klD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DF26C4CECD;
+	Thu, 14 Nov 2024 11:14:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731582861;
+	bh=EH9hwU1mzPi6AlkDMNhH5/MmE32MjwtQZgX3Oap6itA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BLwB3klDDzSqqnsvGctGBsR589EfntJEeqFjLUfb0svOLKZa4/stg8J7AFScvm+m5
+	 AW1MskGlFFEpGrgtMX5ClKhG0pepBycsuzNRi0gJSDwXOR+V2stTwCUpbiJtLWwvdH
+	 tHFupOA+qKMTBS12Cs5HfYsNGcUhYhkrPkanMGJlQPB3bxN/wBtTY8vg6oupq4atmd
+	 0hdZ9VKBoP43w8ZLaqDJl6eTRWkbuWgq6l1HqiLyGb4yDcZvFy1b3bnnbYQltQXRCA
+	 B/Q0DT3RtVmKWqNz/Gvfgyfbx16AjkYhkzKvtoJgjO3aoI6yREIWK750PghDBeNZRc
+	 3UtJLJBAz97vQ==
+Message-ID: <e7d97b3d-1880-4c89-bbf2-a742d6ac9e6b@kernel.org>
+Date: Thu, 14 Nov 2024 12:14:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAAhV-H72YSNBGutYPOVi=S7nwLb6YOiQOFqnimAp=9D0wAJc3g@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
+ symbols
+To: Werner Sembach <wse@tuxedocomputers.com>,
+ Luis Chamberlain <mcgrof@kernel.org>
+Cc: tux@tuxedocomputers.com, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
+ <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Thorsten Leemhuis <linux@leemhuis.info>
+References: <20241114103133.547032-4-ukleinek@kernel.org>
+ <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
+Content-Language: en-US, de-DE
+From: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+In-Reply-To: <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2024-11-14 19:07:37 [+0800], Huacai Chen wrote:
-> Hi, Sebastian,
-Hi,
+Hello,
 
-> > Why is ntpd/chronyd service affecting this? Is it running at prio 99?
-> > Otherwise it should not be noticed.
-> No, ntpd/chronyd doesn't affect latency. But they may trigger RTC
-> synchronization every 11 minutes, and RTC synchronization affects
-> latency. We can keep ntpd/chronyd running but disable RTC
-> synchronization by configuration, this is the least aggressive method.
+On 11/14/24 11:49, Werner Sembach wrote:
+> Am 14.11.24 um 11:31 schrieb Uwe Kleine-König:
+>> the kernel modules provided by Tuxedo on
+>> https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers
+>> are licensed under GPLv3 or later. This is incompatible with the
+>> kernel's license and so makes it impossible for distributions and other
+>> third parties to support these at least in pre-compiled form and so
+>> limits user experience and the possibilities to work on mainlining these
+>> drivers.
+>>
+>> This incompatibility is created on purpose to control the upstream
+>> process. See https://fosstodon.org/@kernellogger/113423314337991594 for
+>> a nice summary of the situation and some further links about the issue.
+>>
+>> Note that the pull request that fixed the MODULE_LICENSE invocations to
+>> stop claiming GPL(v2) compatibility was accepted and then immediately
+>> reverted "for the time being until the legal stuff is sorted out"
+>> (https://gitlab.com/tuxedocomputers/development/packages/tuxedo- 
+>> drivers/-/commit/a8c09b6c2ce6393fe39d8652d133af9f06cfb427).
+> 
+> As already being implied by that commit message, this is sadly not an 
+> issue that can be sorted out over night.
+> 
+> We ended up in this situation as MODULE_LICENSE("GPL") on its own does 
+> not hint at GPL v2, if one is not aware of the license definition table 
+> in the documentation.
 
-What is "RTC synchronization" in this context?
+That statement isn't consistent with you saying to pick GPLv3 as an 
+explicitly incompatible license to control the mainlining process. So 
+you knew that it's legally at least questionable to combine these licenses.
 
-> > Is lockdep complaining in any workloads?
-> > Is CONFIG_DEBUG_ATOMIC_SLEEP leading to any complains?
-> This needs more tests because I haven't enabled them.
+The only thing I could accept here is that you were surprised that the 
+incompatibility has some technical enforcement resulting in your modules 
+to become nonfunctional. But that's like a thieve in a supermarket who 
+asks for forgiveness because while he was aware that steeling is not 
+allowed, wasn't aware there is video surveillance that might actually 
+catch him.
 
-That would be good. It would show if there is anything that has not yet
-been noticed.
+So I'd claim MODULE_LICENSE("GPL") not being explicit to not apply for 
+GPLv3 code is not a valid excuse. (Which doesn't mean the kernel 
+couldn't improve here.)
 
-> Huacai
-
-Sebastian
+Best regards
+Uwe
 
