@@ -1,175 +1,131 @@
-Return-Path: <linux-kernel+bounces-409653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 662799C9058
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:59:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB73C9C8FF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:40:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF93CB33EF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:28:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9F5CB37CB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C2E185923;
-	Thu, 14 Nov 2024 16:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50AF198856;
+	Thu, 14 Nov 2024 16:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GNqBNj4O"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=bob.beckett@collabora.com header.b="NSet1NUl"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63AC15573F
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 16:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731601560; cv=none; b=liPB0pFFR1OnaW65ulnCNEDI9Id1hnTSNsPAruIotJwYWpniPDs8x4sctABnwMiKeYdpF8UOFZcMklUfid+4rGjQPJ3kqdLOOx/OrxQ21Oi6z6DfgGhhPn7S43AJkwyBJlu2efdRvoz9gTbWFMAWiSMo2r+IEssoeR/ex8P62Kw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731601560; c=relaxed/simple;
-	bh=2azEyOOIZxWLX+rEYvWlTcO3ezizSL/hvIbb6FpDcpY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oLiTCfiyRuox2n/YYxaJkpNYc9iiD8hUJpAzQrM1jtn/gsKKBP6ET8fY9ii7nuCElwY8aYHL5uwH/3vse9KmoFoCTUQKRuXRXFlLkEz9OMpK6o/z4AjH1s2pRiOkqGUd8t/nxF39mlM0KEihNTd+D8dpo5zxSTYq1QQ+/7Sqd5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GNqBNj4O; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4315abed18aso7101995e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:25:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731601556; x=1732206356; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7BE6I/9hvASyou65NVg1AR4ngJ2iceiPqDij9FkZy+k=;
-        b=GNqBNj4OfhGblH0DVADhWfoYGy/IYicJgfnHVfMLMiFEJGpDWbFyP6KUNj84OPX3mh
-         RRS+gUe6QcbhkSf6PPbhSVqwIlfpp/soG1/TlS+iidB5GKneExbV91wzOnQPccJXf+KO
-         eyCJjhbv27AQsFA94zh1klaTCcBMmhq2iVwcfHmryBWqJNj7PSRpCMhA+/dRDtxJEGTU
-         z8gpu4OoGvegmr8JoIoXWN0VK/m0Ys4Hjb2LMWAzb++wWKysS9WUfapfsxm2OhB69MMJ
-         uokXo3THYariwr0CUhoIudHmPuwZ+xxfPZCX41rHrsexIJJMuheJcazThdrDhHSZSB04
-         qtZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731601556; x=1732206356;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7BE6I/9hvASyou65NVg1AR4ngJ2iceiPqDij9FkZy+k=;
-        b=AI7ztlfZtQh0QdaUm7E3hZp7KHrNrPxgpvT7lWeV5pr+pOwoswnvfnZNkYdwAv+8eN
-         N1AEuiyqGOnkiXS7SytrSXmYQPZIx0sXva5AY99+2qJWRu8MPENI8ulfSK12B4ZVMs9u
-         V/VJc6/J5UKfAAfOMs2fx+q/fj9xsXr4n1f1hkb1ft1K7uBr6f2QX9GGQm6/+xSYioVN
-         WE6uAd9PSMGYGXdiKnVW/L9pp68xr4BJ0ZmIPspfMcxTgy9xmfFMVz08u2jiok7iqp2h
-         TbDAOxigswp/7W9iJcMSphdiuooMh7IYx6tTzNd3zF+r4Hy7Jau/NvW7GyRDDlZDJwNv
-         R6eg==
-X-Gm-Message-State: AOJu0YybnVr+Tjq7iNQsdFAoeJLZXplbmElbsPTUhfsS4WJfOz+5XHWv
-	J9sjHtMKwn/UosRV6bM+Og/pqzFpFaSgJMmMFqNaKM6PG7gjg/4DsB1CIEf37Bw=
-X-Google-Smtp-Source: AGHT+IHAnY0K/EIVanBDErUG4RzaQT7euR3moULobLera/Okal5DgpXT0gPZLbOHB1Q4UJE+oStA5Q==
-X-Received: by 2002:a05:600c:384e:b0:431:3a6d:b84a with SMTP id 5b1f17b1804b1-432da767a27mr26544845e9.4.1731601556157;
-        Thu, 14 Nov 2024 08:25:56 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da265ca8sm28895635e9.14.2024.11.14.08.25.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 08:25:55 -0800 (PST)
-Date: Thu, 14 Nov 2024 17:25:53 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Chris Down <chris@chrisdown.name>
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Tony Lindgren <tony.lindgren@linux.intel.com>, kernel-team@fb.com
-Subject: Re: [PATCH v6 10/11] printk: Deprecate the kernel.printk sysctl
- interface
-Message-ID: <ZzYkkTHJFNnvJBh0@pathway.suse.cz>
-References: <cover.1730133890.git.chris@chrisdown.name>
- <993d978d4a59dd370ac39c6c24c9b72c11f4dc74.1730133890.git.chris@chrisdown.name>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4EA18BC28
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 16:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731601780; cv=pass; b=K7gxsoIw/MKQnwZFls2JcJPIoi/+XiZcLls7eA3clOlSwlmnW0INNVN/ISAhmCCcEA42HU2M9rzxhjPpU/WkM9SglPk7R4IdeA/bRcGhpEnKnjoUDyGjGUtWiP2m/hj2HUsaubzyLaONs3YfXGhhMYBNkUR/rV3l7XSaTlcuHnY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731601780; c=relaxed/simple;
+	bh=f24Vt4LatTOq01AGLPGizx+jZiPnzQU3NiYqJW56W9s=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=QR0QBx9TUZQlssTjcvFheLzIj4kSVwky00xSbHIfxpeb4udNt38HDLyc4ZVm2c9freMutHNh73NXlP2xyyzz20asahD5ZDG+mG9eGuclGNpiHXbOYhnaVsVzlNL9f3sAj/rvpoXU3kGMJBsb6fMq/xXYmQiCJU0ZPOr1X6hfRxA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=bob.beckett@collabora.com header.b=NSet1NUl; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1731601761; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=EiH/yIcICioce9zkgSAHj/SkSb/irerjPe7SHMsaSLsBwZQGMbyXJXFwS1na94Ndhbyd0223LaH3lyVMJ9ZlerM4XpMLIygu3DevQyKKCAXPixxZ+SbfVxy6sNraaXyBdk6gelrKGqkDv3OL0kLE4SJbcPU/8VMleyTJw/bHz4s=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1731601761; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=jux1/7Oq5sSkRciDkevQ8m08gKvHuH9OPN15mEl8DU4=; 
+	b=NJwf4eexMx6RXkqECTZaR2vW9JriGqvIGXSqguBr0iHhx0gMk0efPg3gq5DCuEIAp9j02LKcVRuSPDeQxzZAlnR/nMzT81MUC30e/ZKWBcifoQZe7RQheKYB/tKLkGt/jnd6JMZnz0qFyJn1g6QEYmItFFEr5nSeBR/4rjrLxss=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=bob.beckett@collabora.com;
+	dmarc=pass header.from=<bob.beckett@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1731601761;
+	s=zohomail; d=collabora.com; i=bob.beckett@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=jux1/7Oq5sSkRciDkevQ8m08gKvHuH9OPN15mEl8DU4=;
+	b=NSet1NUlM1MOcekLKZ8Qs/5gf59RfLPhLO7mFEbPmLS+pyxOd+mamtB8Nt1TbYDv
+	opjtRo/TjjPJ/wBa7VGUylrEd2DLFnniXiIKIVkB5byT55OAw7EPSQjnm2vPJuE0UB+
+	5pVudpd/3vyeQ4t3lvS8VOg+qg4eIcA3nfiaoTR8=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 17316017283191001.8873990884078; Thu, 14 Nov 2024 08:28:48 -0800 (PST)
+Date: Thu, 14 Nov 2024 16:28:48 +0000
+From: Robert Beckett <bob.beckett@collabora.com>
+To: =?UTF-8?Q?=22Pawe=C5=82_Anikiel=22?= <panikiel@google.com>
+Cc: "axboe" <axboe@kernel.dk>, "hch" <hch@lst.de>,
+	"kbusch" <kbusch@kernel.org>, "kernel" <kernel@collabora.com>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"linux-nvme" <linux-nvme@lists.infradead.org>,
+	"sagi" <sagi@grimberg.me>
+Message-ID: <1932b818328.ad02576784895.6204301822664878956@collabora.com>
+In-Reply-To: <CAM5zL5rKsEd1EhOx1AGj9Au7-FQnJ5fUX2hLPEDQvmcrJXFFBg@mail.gmail.com>
+References: <20241112195053.3939762-1-bob.beckett@collabora.com>
+ <20241114113803.3571128-1-panikiel@google.com> <1932ad8722a.102613bdb3737.769617317074446742@collabora.com> <CAM5zL5rKsEd1EhOx1AGj9Au7-FQnJ5fUX2hLPEDQvmcrJXFFBg@mail.gmail.com>
+Subject: Re: [PATCH] nvme-pci: 512 byte aligned dma pool segment quirk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <993d978d4a59dd370ac39c6c24c9b72c11f4dc74.1730133890.git.chris@chrisdown.name>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 
-On Mon 2024-10-28 16:45:59, Chris Down wrote:
-> The kernel.printk sysctl interface is deprecated in favour of more
-> granular and clearer sysctl interfaces for controlling loglevels, namely
-> kernel.console_loglevel and kernel.default_message_loglevel.
-> 
-> kernel.printk has a number of fairly significant usability problems:
-> 
-> - It takes four values in a specific order, which is not intuitive.
->   Speaking from personal experience, even people working on printk
->   sometimes need to look up the order of these values, which doesn't
->   suggest much in the way of perspicuity.
-> - There is no validation on the input values, so users can set them to
->   invalid or nonsensical values without receiving any errors or
->   warnings. This can lead to unpredictable behaviour.
-> - One of the four values, default_console_loglevel, is not used in the
->   kernel (see below), making it redundant and potentially confusing.
-> - Overall, the interface is complex, hard to understand, and combines
->   multiple controls into a single sysctl, which is not ideal. It should
->   be separated into distinct controls for clarity.
-> 
-> Setting kernel.printk now calls printk_sysctl_deprecated, which emits a
-> pr_warn. The warning informs users about the deprecation and suggests
-> using the new sysctl interfaces instead.
-> 
-> By deprecating kernel.printk, we aim to:
-> 
-> - Encourage users to adopt the new, dedicated sysctl interfaces
->   (kernel.console_loglevel and kernel.default_message_loglevel), which
->   are more straightforward and easier to understand.
-> - Improve input validation and error handling, ensuring that users
->   receive appropriate feedback when setting invalid values.
-> - Simplify the configuration of loglevels by exposing only the controls
->   that are necessary and relevant.
-> 
-> --- a/kernel/printk/sysctl.c
-> +++ b/kernel/printk/sysctl.c
-> @@ -7,6 +7,7 @@
->  #include <linux/printk.h>
->  #include <linux/capability.h>
->  #include <linux/ratelimit.h>
-> +#include <linux/console.h>
->  #include "internal.h"
->  
->  static const int ten_thousand = 10000;
-> @@ -46,13 +47,24 @@ static int printk_console_loglevel(const struct ctl_table *table, int write,
->  	return 0;
->  }
->  
-> +static int printk_sysctl_deprecated(const struct ctl_table *table, int write,
-> +				    void *buffer, size_t *lenp, loff_t *ppos)
-> +{
-> +	int res = proc_dointvec(table, write, buffer, lenp, ppos);
-> +
-> +	if (write)
-> +		pr_warn_once("printk: The kernel.printk sysctl is deprecated. Consider using kernel.console_loglevel or kernel.default_message_loglevel instead.\n");
-> +
-> +	return res;
-> +}
-> +
->  static struct ctl_table printk_sysctls[] = {
->  	{
->  		.procname	= "printk",
->  		.data		= &console_loglevel,
->  		.maxlen		= 4*sizeof(int),
->  		.mode		= 0644,
-> -		.proc_handler	= proc_dointvec,
-> +		.proc_handler	= printk_sysctl_deprecated,
 
-I would prefer to follow the existing naming scheme for
-custom modifications of proc_dointvec() and call it
-"proc_dointvec_printk_deprecated".
 
->  	},
->  	{
->  		.procname	= "printk_ratelimit",
-
-With this cosmetic change:
-
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-
-Best Regards,
-Petr
+ ---- On Thu, 14 Nov 2024 14:13:52 +0000  Pawe=C5=82 Anikiel  wrote ---=20
+ > On Thu, Nov 14, 2024 at 2:24=E2=80=AFPM Robert Beckett
+ > bob.beckett@collabora.com> wrote:
+ > > This is interesting.
+ > > I had the same idea previously. I initially just changed the hard code=
+d 256 / 8 to use 31 instead, which should have ensured the last entry of ea=
+ch segment never gets used.
+ > > When I tested that, it not longer failed, which was a good sign. So th=
+en I modified it to only do that on the last 256 byte segment of a page, bu=
+t then is started failing again.
+ >=20
+ > Could you elaborate the "only do that on the last 256 byte segment of
+ > a page" part? How did you check which chunk of the page would be
+ > allocated before choosing the dma pool?
+ >=20
+ > > I never saw any bus error during my testing, just wrong data read, whi=
+ch then fails image verification. I was expecting iommu error logs if it wa=
+s trying to access a chain in to nowhere if it always interpreted last entr=
+y in page as a link. I never saw any iommu errors.
+ >=20
+ > Maybe I misspoke, the "bus error" part was just my speculation, I
+ > didn't look at the IOMMU logs or anything like that.
+ >=20
+ > > I'd be glad to if you could share your testing method.
+ >=20
+ > I dumped all the nvme transfers before the crash happened (using
+ > tracefs), and I saw a read of size 264 =3D 8 + 256, which led me to the
+ > chaining theory. To test this claim, I wrote a simple pci device
+ > driver which creates one IO queue and submits a read command where the
+ > PRP list is set up in a way that tests if the controller treats it as
+ > a chained list or not. I ran it, and it indeed treated the last PRP
+ > entry as a chained pointer.
+hmm, I guess a simple debugfs trigger file could be used to construct speci=
+ally formulated requests. Would work as a debug tool.
+Though at this point, the simple dmapool alignment param usage fixes both o=
+f these scenarios, so it will be kind of academic to continue putting effor=
+t in to understand this. I am trying to get answers out of the vendor to co=
+nfirm any of these theories, which I hope will be more conclusive than our =
+combined inference from testing.
+ >=20
+ > It is possible that this is not the only thing that's wrong. Could you
+ > share your patch that checks your "only do that on the last 256 byte
+ > segment of a page" idea?
+ >=20
+Unfortunately I have already rebased away that change with the new one.
+I can go hunting in my reflog to see if I can find it again, but probably e=
+asier to just implement it again.
+I just hacked in a threshold parameter to the dmapool allocator that told i=
+t to allocate a different segment if it was the last in a page and the size=
+ was over the threshold.
 
 
