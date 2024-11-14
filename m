@@ -1,109 +1,124 @@
-Return-Path: <linux-kernel+bounces-409219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 074EA9C8916
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:37:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D827F9C891B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:38:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB7D52839C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:37:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F9181F25830
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83ED41F940A;
-	Thu, 14 Nov 2024 11:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74DE51F8F09;
+	Thu, 14 Nov 2024 11:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F72f1g0A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X2yJ8ipz"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E400F1F8F02
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422901F8917
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731584211; cv=none; b=f8Rs1SHzZjIlgpeSU2UorvdVJWgKWwF55ATvxZUwAGZXE+ryg3VgJ64BUj2F1ujW812s+OyadAm3D0r6la409M0pRkQjsvO8RpEAay+6SHdSJOL/j/5WSKm+R5JONzF0kWmpQtwkkpGvhN8eDH8vYglH5d6aJhMQEau0Lqf21UU=
+	t=1731584288; cv=none; b=a/I5HJL7eIA76W4hrr/iIEsUXO/U9P41KiYlY+ks5wDESxOr+BKccBd13JTc7Aa9W0/7OklsY7QpwnyA6YbHqTR15iZXTvO3pvPsMSQHLJrwRc61/ch8LiSAPa/LVbvYRAqvX090OKSfbzvxiOD60oQC5QIC1j1q16Th6mYeoYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731584211; c=relaxed/simple;
-	bh=2XLV7xqIZ+/aSQ7I3R7xYx69y86EEpnqqBcMYOUPhrI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PW9DPJS46ecip0tZP7cJEDMroBYdwRlsnrTmI6NfGDjCCI/C7rVFNvjtmTQvm1CN9ccLHotP+kmD9pQr+5c2lRWPJQZ1ifhUeaU34UVbZufmDSJMZwZZKu8S6/7cuN7GxMfOrNW5TMTIhYK1NK5Sef6UV/fdQzqt2noUYPP7/UE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F72f1g0A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DA22C4CED4
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:36:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731584210;
-	bh=2XLV7xqIZ+/aSQ7I3R7xYx69y86EEpnqqBcMYOUPhrI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=F72f1g0A9KjZwriQXlG4GnG8rPKlRS/cSVHyOpooOSaXTevPxyElJWBJXrcnyOGum
-	 cwvykHsvtMGlPJ7gZd8PJbyGiyw7n98em9wW0JCwPHBlBw0SLkBafZ/HBB8zZh6F1c
-	 tWEu2NfzpVS9sZgKSg0bGZIvV4fN6Q9pfcBmBwRcDb37sqwdpflR1JC68WvmyIWTfT
-	 8XqAL6eh1Rc3fe5q9PXGP6SEctDF5wphQajiW9uOwN2hpL0nBZy2G37OTv/lVaeqoh
-	 aAwxRmVnnK5579G6fwvNAUYUVAC8zstRGdV6qUwHpGrMIuAj4dzYPOalYY2jfXasXZ
-	 ZQ1C5A6LKYrYA==
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9e44654ae3so74047966b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 03:36:50 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWVSi8N7ibpH6vyUJHevBXPJKxmActxZIq+/6DReKxqy6NsqnM4mDmue+a69yijql0r7OtcHY5QM50MvVM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpkkPDxBQpgWLK9Axt5er8Hmc0atg/VDg8Ae3ls15fUGqeckpP
-	C9u3EaNDNYLTvLPXeC17e6Iuh39BsUE3lcz3Zs8D+NWClLg0crvB4eecuYUCRnhD5910ZxQT0CP
-	diKNf+7jLWV0INPdKRuHzPDu0oYI=
-X-Google-Smtp-Source: AGHT+IEVjBJAdOEkjL8C0OM7eIPERUREE6SUOwX6AI7Zmg05mjU9nqzY30S3fyHXOIMX5OD6A9wIXSiaqR7EOrCjpNE=
-X-Received: by 2002:a17:907:1c0f:b0:a9e:51b6:2bab with SMTP id
- a640c23a62f3a-aa1f7e26851mr540468266b.0.1731584208975; Thu, 14 Nov 2024
- 03:36:48 -0800 (PST)
+	s=arc-20240116; t=1731584288; c=relaxed/simple;
+	bh=cUSRBOtRtEATzCnokE3CJBbNGuBru4dkIeFH9zNcMc0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=pFlltJ1sy9Sq+2h7KHYnFs1qpMN2bgY7hix1FcpoWSfA4+IaTnpRExEP73YiXyylgnOEjFlJxa0bq3ShnaLHuiexXVDJfr/n2LfMB1HzHV5QncwRduoTTcLIfOzGta0/8dS4t2PJjYsf3sLCfG1Pf1OxF4mQnKnJGnEkaIhdXzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--panikiel.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X2yJ8ipz; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--panikiel.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4314a22ed8bso4129855e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 03:38:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731584285; x=1732189085; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7UOuG5Zwz3TO8LLif2nDNcChNKIJvAuTVAxlwC2o73I=;
+        b=X2yJ8ipzd+LdQBAw0a3Imhsbf3LtpxGhkpxEb+g145Q1zD6V6efxkqmIwymeZolbCU
+         rmK2DrZ2RL9C/Wu7wlnVaWZfWDwnFJtaOT/N5suLhorImVOUvzambQddEnSp5xolDHP6
+         3sEnvTZmewPfySFX3h99NqztSiOv952RckfYx0YKWB350pA4i2HBlLYOFEgak6aWXFpk
+         /ZQbZWmRc4aNKw+Jm1juJcZe6ydrbvQKEUj3v12RwSC/Cnv8qk1CUsTkIR1bCsB1UxyD
+         3lsBWLsH+wlEM81q1EU3C+7z0twEVjz3hbqkiKJgMPiKoJeL37qdhh4JGhmxGdIY0rTt
+         2L2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731584285; x=1732189085;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7UOuG5Zwz3TO8LLif2nDNcChNKIJvAuTVAxlwC2o73I=;
+        b=wwLGQyM7f8MeZp/yP5qcTnM4L9We3sGF0/IDoK1RMjLkavSd4EpBdiAn4Qxbicj34u
+         wdCH8o2mS1fsmkb+ZNSpB+M8lLFpIqDri1dPhoHl8PZIYTBAAtkJmlKCyH3TtBDRGWMw
+         A6ducY92b6pYi6d6XOZa+Pt6Osm6hP9C43qOHOjul9jmH1Xz+PrcuoBV+CXcl7C2xhAP
+         5JtlLS+2bmdd3uqkqrHAfIBZsjKALiB+JsM3OPdyhW4Oi1qWCEDWSX/2G1XwREawgTvL
+         0LuTYAlkcCIzJgCxyONSV35o52mFZLhM9ezpDFpgmwRUbUhuaVPeIWgwt+Uz7rT4xpBJ
+         olsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWiPAZAO7qx4d7EUjkIcGj8U2nGwErtL4+AH1xmSFEsTpY7FncfwxOyD+UIUIHsPab9+64PnAufticFcQk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlyR0pwHl47s1mJyduOg+8G4Nn2FJYmEKtmJN2Rj/OJxBdA+Ek
+	x6HzT/00dSBRw0lTR8cHonV5R6C2zYL+KhzasjRaNssC/4QA7vdu5AoCk6gb23UqOov9Bwh/M8f
+	aQOrEnYqmmQ==
+X-Google-Smtp-Source: AGHT+IFFuS3vadEpxbm9rE3t6WRaBQwyUrb+92pbfldDrubUMoJSwgzEUU8T5UR1u6/5/h9itok/LJf9zGPJ7w==
+X-Received: from szatan.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:2d83])
+ (user=panikiel job=sendgmr) by 2002:a05:600c:3ca0:b0:430:57f2:5b0c with SMTP
+ id 5b1f17b1804b1-432d4a98b02mr347995e9.2.1731584285504; Thu, 14 Nov 2024
+ 03:38:05 -0800 (PST)
+Date: Thu, 14 Nov 2024 11:38:03 +0000
+In-Reply-To: <20241112195053.3939762-1-bob.beckett@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241108091545.4182229-1-chenhuacai@loongson.cn>
- <20241108091545.4182229-4-chenhuacai@loongson.cn> <20241114103111.5W5ZY0D4@linutronix.de>
- <CAAhV-H72YSNBGutYPOVi=S7nwLb6YOiQOFqnimAp=9D0wAJc3g@mail.gmail.com>
- <20241114111409.LWKp5YEg@linutronix.de> <CAAhV-H4ecBZsV+9SxLZ-JFiUK=b3tMqkLZe0djac0_390==MMw@mail.gmail.com>
- <20241114113018.Ilo9ZsQo@linutronix.de>
-In-Reply-To: <20241114113018.Ilo9ZsQo@linutronix.de>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Thu, 14 Nov 2024 19:36:38 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4jDNG8nsW30U9zE1-c6dHwy2fSjy5hkZhpWWu3=og64A@mail.gmail.com>
-Message-ID: <CAAhV-H4jDNG8nsW30U9zE1-c6dHwy2fSjy5hkZhpWWu3=og64A@mail.gmail.com>
-Subject: Re: [PATCH 3/3] LoongArch: Allow to enable PREEMPT_RT
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Huacai Chen <chenhuacai@loongson.cn>, Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev, 
-	Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	linux-rt-devel@lists.linux.dev, Guo Ren <guoren@kernel.org>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+References: <20241112195053.3939762-1-bob.beckett@collabora.com>
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Message-ID: <20241114113803.3571128-1-panikiel@google.com>
+Subject: Re: [PATCH] nvme-pci: 512 byte aligned dma pool segment quirk
+From: "=?UTF-8?q?Pawe=C5=82=20Anikiel?=" <panikiel@google.com>
+To: bob.beckett@collabora.com
+Cc: axboe@kernel.dk, hch@lst.de, kbusch@kernel.org, kernel@collabora.com, 
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, 
+	sagi@grimberg.me
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 14, 2024 at 7:30=E2=80=AFPM Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
->
-> On 2024-11-14 19:19:26 [+0800], Huacai Chen wrote:
-> > > > > Why is ntpd/chronyd service affecting this? Is it running at prio=
- 99?
-> > > > > Otherwise it should not be noticed.
-> > > > No, ntpd/chronyd doesn't affect latency. But they may trigger RTC
-> > > > synchronization every 11 minutes, and RTC synchronization affects
-> > > > latency. We can keep ntpd/chronyd running but disable RTC
-> > > > synchronization by configuration, this is the least aggressive meth=
-od.
-> > >
-> > > What is "RTC synchronization" in this context?
-> > Means the sync_hw_clock() function in kernel/time/ntp.c, it can be
-> > enabled/disabled by chronyd configuration:
->
-> But what exactly is sync_hw_clock() doing that is causing a problem
-> here? The clock on HW is updated. The access to the RTC clock is
-> preemptible.
-This is a platform-specific problem, our RTC driver is
-drivers/rtc/rtc-loongson.c, the write operation to RTC register is
-slow.
+Hi all,
 
-Huacai
+I've been tracking down an issue that seems to be related (identical?) to
+this one, and I would like to propose a different fix.
 
->
-> > Huacai
->
-> Sebastian
->
+I have a device with the aforementioned NVMe-eMMC bridge, and I was
+experiencing nvme read timeouts after updating the kernel from 5.15 to
+6.6. Doing a kernel bisect, I arrived at the same dma pool commit as
+Robert in the original thread.
+
+After trying out some changes in the nvme-pci driver, I came up with the
+same fix as in this thread: change the alignment of the small pool to
+512. However, I wanted to get a deeper understanding of what's going on.
+
+After a lot of analysis, I found out why the nvme timeouts were happening:
+The bridge incorrectly implements PRP list chaining.
+
+When doing a read of exactly 264 sectors, and allocating a PRP list with
+offset 0xf00, the last PRP entry in that list lies right before a page
+boundary.  The bridge incorrectly (?) assumes that it's a pointer to a
+chained PRP list, tries to do a DMA to address 0x0, gets a bus error,
+and crashes.
+
+When doing a write of 264 sectors with PRP list offset of 0xf00,
+the bridge treats data as a pointer, and writes incorrect data to
+the drive. This might be why Robert is experiencing fs corruption.
+
+So if my findings are right, the correct quirk would be "don't make PRP
+lists ending on a page boundary".
+
+Changing the small dma pool alignment to 512 happens to fix the issue
+because it never allocates a PRP list with offset 0xf00. Theoretically,
+the issue could still happen with the page pool, but this bridge has
+a max transfer size of 64 pages, which is not enough to fill an entire
+page-sized PRP list.
+
+Robert, could you check that the fs corruption happens only after
+transfers of size 257-264 and PRP list offset of 0xf00? This would
+confirm my theory.
 
