@@ -1,61 +1,67 @@
-Return-Path: <linux-kernel+bounces-408816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D0B99C83DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:14:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C09549C83E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:15:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FB4E28796A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:14:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 776561F22DA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D903B1EBA11;
-	Thu, 14 Nov 2024 07:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D08A192D87;
+	Thu, 14 Nov 2024 07:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GxyE51Eu"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="odBwl5pE"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D39E17ADE8
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EE270818;
+	Thu, 14 Nov 2024 07:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731568479; cv=none; b=dUDf/T5REXJ2DVsdlV7w6uiFOU89mAfp1uuq0KRGFHW0Y7A9u32zYkuqlg8gHNIXmZa53MgBb/fsuWJVliSYwjwT6WqEemCGDaEzpOt5i+/PauyR03c7BfD7m6HnbrU3WdgNY74TI/5R8eAY63A7kGBle8b2bml8JNaeuC0HuDQ=
+	t=1731568515; cv=none; b=FLRVoRQG2qVvVan/3UIsdGky0o7Qwfd4mFjXWcxddFlu28ePoysDzuUEwzRqhef+kIpaNpsgcxwsWnzDAk6qPXpMrBpChLD/KP0u9/MoyvRv/4/hfyWylYfFBcHyzruCaB6h31gNHPwQ8vuj91RmgV8mWiHR/ysguX67GggomW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731568479; c=relaxed/simple;
-	bh=WFjLSN0uEoXDoHWxklIpVNGsnMVkNGqmIjBH5NXkjEU=;
+	s=arc-20240116; t=1731568515; c=relaxed/simple;
+	bh=WpXr/RM7L+0l9LR7VF/wPK+QoQZyKQDk8ICJEympyiI=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bm+Ilxv0KsvAauvpeg64c3T+yKQn0rj9HvStdKAOAPllIfFLJ1ymAmikxYyElBOf8De07RzVEfZpRlG1Sjtp+PSwykITGxDb/dRFjlqGd26eV10KvAEU3vWTTe379RTRTPeaRzVipcD6UpqYauJUPGjnY5wiQJ7BHTREKIN6MSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GxyE51Eu; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 76132FF804;
-	Thu, 14 Nov 2024 07:14:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731568474;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jsDnUfrZgRFjY0UmHDUk9SJkSWvJeDPxPrYP69lT6wc=;
-	b=GxyE51EuidCqn2Pdn8OFA7Sg+ji/0pvC1ymekdKgHVmZfvPCiqsiUouuyUi4tsY/fS7vN6
-	cVDFaSLazT5yVHbAmh0kHHzGhgyZcEB4FtrRBrO50Fslm44scJDHFVdAfA+ykhXCnptg9j
-	BGr7XT76RNrPgGZKZktJDuVVlLeZfPV9QvLhKZ97obQKy+0JyWMvazYCmv61ReV1WRLX7P
-	QTvvr4vMHA3k0kdQB/TFuOTzi3YwDEiaWXn8QwzNOqF/026N6sFNf8+jg15XoAuw3nyLS1
-	zmtwYNHyvI3M6JektsUL7TL/MBA5fdzQG9MG6bTqVvUZLJwZFijnTmGTeAYtbw==
-Date: Thu, 14 Nov 2024 08:14:31 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Qiang Zhao <qiang.zhao@nxp.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, linuxppc-dev@lists.ozlabs.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] soc: fsl: cpm1: tsa: switch to
- for_each_available_child_of_node_scoped()
-Message-ID: <20241114081431.23296fd9@bootlin.com>
-In-Reply-To: <20241002-tsa-scoped-v1-1-ba6a6d657f82@gmail.com>
-References: <20241002-tsa-scoped-v1-1-ba6a6d657f82@gmail.com>
-Organization: Bootlin
+	 MIME-Version:Content-Type; b=KgylZt+y0C5rXaLf2Gm2lmP7kMardGX5TKHd8fqoDSrKU8vlCjrX751rY9nHgv9vKMfEFeM6CoYXyAqz462fb/Hf7CYyUyTWiFngPw5uIt08+kF+GIvDIzl96xDLflJR/yNC0PRweJzW5lTMbE44FVupiTm81hHGYS1arR7nJks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=odBwl5pE; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1731568511;
+	bh=WpXr/RM7L+0l9LR7VF/wPK+QoQZyKQDk8ICJEympyiI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=odBwl5pE1ksHcTbutVvsh6vqThMdXPFYOaF5cHe90k/0JdWQt4EreYKxTET3HimSc
+	 nN5H7Vx/FzYoyaaIT8L1wrj5XxELCfgEJpN1AluNSE1TPi2tRFmShsal1FpxurUptt
+	 GNHbpjNH3uNig0HR1bK8sWSkspfL63WrNmwBDGR0WPw4wYz9OkquEAaGUr65aplzd0
+	 Ith8YeiKsfXTBX2a6aSRKQpCdsp17zCnHEs7ai5Lj62gMt/FtrdScKOGgfluNznWZQ
+	 4VqXhkcK2fTvp9ZmESpZ7qNrgBqL1ZPsECPr5M28U/SqIKdBaIDC5ND8fTd0hwjdn1
+	 a5mm3joc4XfjQ==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id BBDC917E120F;
+	Thu, 14 Nov 2024 08:15:10 +0100 (CET)
+Date: Thu, 14 Nov 2024 08:15:07 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Jann Horn <jannh@google.com>
+Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Mary Guillemard
+ <mary.guillemard@collabora.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] drm/panthor: Fix memory leak in
+ panthor_ioctl_group_create()
+Message-ID: <20241114081507.6ac6b5f9@collabora.com>
+In-Reply-To: <20241113-panthor-fix-gcq-bailout-v1-1-654307254d68@google.com>
+References: <20241113-panthor-fix-gcq-bailout-v1-1-654307254d68@google.com>
+Organization: Collabora
 X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -63,35 +69,102 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Javier,
+On Wed, 13 Nov 2024 22:03:39 +0100
+Jann Horn <jannh@google.com> wrote:
 
-On Wed, 02 Oct 2024 22:21:51 +0200
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+> When bailing out due to group_priority_permit() failure, the queue_args
+> need to be freed. Fix it by rearranging the function to use the
+> goto-on-error pattern, such that the success case flows straight without
+> indentation while error cases jump forward to cleanup.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 5f7762042f8a ("drm/panthor: Restrict high priorities on group_create")
+> Signed-off-by: Jann Horn <jannh@google.com>
 
-> The non-scoped variant of this macro turns error-prone as soon as error
-> paths are included, because explicit calls to of_node_put() are required
-> to avoid leaking memory.
-> 
-> Using its scoped counterpart simplifies the code by removing the need of
-> explicit calls to of_node_put(), as they are automatically triggered as
-> soon as the child node goes out of scope. Moreover, it is more robust as
-> it accounts for new error paths without having to worry about
-> decrementing the object's refcount.
-> 
-> Note that the device_node is declared within the macro, and its explicit
-> declaration can be dropped as well if it is not used anywhere else.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+
 > ---
->  drivers/soc/fsl/qe/tsa.c | 28 ++++------------------------
->  1 file changed, 4 insertions(+), 24 deletions(-)
+> testcase:
+> ```
+> #include <err.h>
+> #include <fcntl.h>
+> #include <stddef.h>
+> #include <sys/ioctl.h>
+> #include <drm/panthor_drm.h>
+> 
+> #define SYSCHK(x) ({          \
+>   typeof(x) __res = (x);      \
+>   if (__res == (typeof(x))-1) \
+>     err(1, "SYSCHK(" #x ")"); \
+>   __res;                      \
+> })
+> 
+> #define GPU_PATH "/dev/dri/by-path/platform-fb000000.gpu-card"
+> 
+> int main(void) {
+>   int fd = SYSCHK(open(GPU_PATH, O_RDWR));
+> 
+>   while (1) {
+>     struct drm_panthor_queue_create qc[16] = {};
+>     struct drm_panthor_group_create gc = {
+>       .queues = {
+>         .stride = sizeof(struct drm_panthor_queue_create),
+>         .count = 16,
+>         .array = (unsigned long)qc
+>       },
+>       .priority = PANTHOR_GROUP_PRIORITY_HIGH+1/*invalid*/
+>     };
+>     ioctl(fd, DRM_IOCTL_PANTHOR_GROUP_CREATE, &gc);
+>   }
+> }
+> ```
+> 
+> I have tested that without this patch, after running the testcase for a
+> few seconds and then manually killing it, 2G of RAM in kmalloc-128 have
+> been leaked. With the patch applied, the memory leak is gone.
+> 
+> (By the way, get_maintainer.pl suggests that I also send this patch to
+> the general DRM maintainers and the DRM-misc maintainers; looking at
+> MAINTAINERS, it looks like it is normal that the general DRM maintainers
+> are listed for everything under drivers/gpu/, but DRM-misc has exclusion
+> rules for a bunch of drivers but not panthor. I don't know if that is
+> intentional.)
+> ---
+>  drivers/gpu/drm/panthor/panthor_drv.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+> index c520f156e2d73f7e735f8bf2d6d8e8efacec9362..815c23cff25f305d884e8e3e263fa22888f7d5ce 100644
+> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+> @@ -1032,14 +1032,15 @@ static int panthor_ioctl_group_create(struct drm_device *ddev, void *data,
+>  
+>  	ret = group_priority_permit(file, args->priority);
+>  	if (ret)
+> -		return ret;
+> +		goto out;
+>  
+>  	ret = panthor_group_create(pfile, args, queue_args);
+> -	if (ret >= 0) {
+> -		args->group_handle = ret;
+> -		ret = 0;
+> -	}
+> +	if (ret < 0)
+> +		goto out;
+> +	args->group_handle = ret;
+> +	ret = 0;
+>  
+> +out:
+>  	kvfree(queue_args);
+>  	return ret;
+>  }
+> 
+> ---
+> base-commit: 9f8e716d46c68112484a23d1742d9ec725e082fc
+> change-id: 20241113-panthor-fix-gcq-bailout-2d9ac36590ed
+> 
 
-Acked-by: Herve Codina <herve.codina@bootlin.com>
-
-Best regards,
-Hervé
 
