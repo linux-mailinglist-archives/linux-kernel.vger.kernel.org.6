@@ -1,63 +1,57 @@
-Return-Path: <linux-kernel+bounces-408515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D6CA9C7FD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:17:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE5E59C7FDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:20:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89B10B23007
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:17:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 999BB1F22621
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA981D5CDD;
-	Thu, 14 Nov 2024 01:17:40 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BA61D54FE;
-	Thu, 14 Nov 2024 01:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7801E3792;
+	Thu, 14 Nov 2024 01:20:14 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB9AC225A8
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731547060; cv=none; b=FUgO9B3/HrvH53Z2UyrSZnaYdwLiOvZOuU2pbLk9SGVkJQHj5E99zK/bS3C42wx5pRhNw/Qvv3gs0vW15O5z1uRycuT+fDAesBn7uYBj5zb9ABRrJPn2Kf/7esT2T968L4yqHSUhbdzt72DMpR/cRUPfMeCC8aWlUWGtCvSnSG8=
+	t=1731547214; cv=none; b=Hkd/Ok6hhVrDcAvzrLUNZIEkxEvLJCzVMZRJws23TZZ1wg0awemt2VhXJCafWgbfLmA7iiBGyKcxex0KiR2nuuiglovab9OKxaJnaJSEhr1tHWQXjuqHeclgi02l6GbOWbC46AUvYJ8sVQ59xLnr9VLFweK4PVh7S/qT6mqDod4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731547060; c=relaxed/simple;
-	bh=o4npxX6gfTKYDKFakWYLsF0YGp/i5nXfFpX5sGLtVPU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DMbde0OdBpKdgaEcAekwXTS17hvYBATWgJ3TdG/zN7gdSsMSv1joeg34Z119tT9wjuM0LPDphbuKLcB2nhT1S4CQmt87cJzvHPRN83gtof0hTAr0xVBVQbYJYlHYrz+IrqoR8YsCHwkgPWiLYbVRKtOCW/LagUTJZmEQ2NeibMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE0dgSs018597;
-	Wed, 13 Nov 2024 17:17:13 -0800
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 42uwpmjtb9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Wed, 13 Nov 2024 17:17:13 -0800 (PST)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Wed, 13 Nov 2024 17:17:12 -0800
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Wed, 13 Nov 2024 17:17:08 -0800
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <lizhi.xu@windriver.com>
-CC: <alex.aring@gmail.com>, <davem@davemloft.net>, <dmantipov@yandex.ru>,
-        <edumazet@google.com>, <horms@kernel.org>, <kuba@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-wpan@vger.kernel.org>, <miquel.raynal@bootlin.com>,
-        <netdev@vger.kernel.org>, <pabeni@redhat.com>,
-        <stefan@datenfreihafen.org>,
-        <syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: Re: [PATCH] mac802154: add a check for slave data list before delete
-Date: Thu, 14 Nov 2024 09:17:08 +0800
-Message-ID: <20241114011708.3420819-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241114010025.3390836-1-lizhi.xu@windriver.com>
-References: <20241114010025.3390836-1-lizhi.xu@windriver.com>
+	s=arc-20240116; t=1731547214; c=relaxed/simple;
+	bh=fk+5egIR3JVH8QatI0uOV5bbmhySbrgZhyxOflMEIrM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=NwduqHjj/xVT6IgE/YteBA5M9IcB+tKdJ7JtqKIFoHh2ChePUFK+FwfcPmenJRG0a9LS5NY2IhZyc3HQbYO4i09slDa5T2MVr8lgybtGwa8TuWyqY3SBuqFHMFqnz6odrobXYAMSjqGA7wrbK0aceXL9lFfPH7bfAxQFs6vKDd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee1673550416e2-ecff7;
+	Thu, 14 Nov 2024 09:20:02 +0800 (CST)
+X-RM-TRANSID:2ee1673550416e2-ecff7
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.103])
+	by rmsmtp-syy-appsvr04-12004 (RichMail) with SMTP id 2ee467355041d0f-8b5be;
+	Thu, 14 Nov 2024 09:20:02 +0800 (CST)
+X-RM-TRANSID:2ee467355041d0f-8b5be
+From: Luo Yifan <luoyifan@cmss.chinamobile.com>
+To: linus.walleij@linaro.org,
+	linux@armlinux.org.uk
+Cc: ardb@kernel.org,
+	arnd@arndb.de,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Luo Yifan <luoyifan@cmss.chinamobile.com>
+Subject: [PATCH v2] ARM: vfp: Fix typographical errors in vfpmodule.c
+Date: Thu, 14 Nov 2024 09:19:39 +0800
+Message-Id: <20241114011939.296230-1-luoyifan@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <CACRpkdb6T5dqgmcVi5m_52uQ4F_wESv4K95Fk1hsZcSaUsY8xA@mail.gmail.com>
+References: <CACRpkdb6T5dqgmcVi5m_52uQ4F_wESv4K95Fk1hsZcSaUsY8xA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,41 +59,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: qUHfnZFI8ih3WUYLQIHO0ADb1963tMNQ
-X-Authority-Analysis: v=2.4 cv=ZdlPNdVA c=1 sm=1 tr=0 ts=67354f99 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=VlfZXiiP6vEA:10 a=edf1wS77AAAA:8 a=1qqy2SNDD57gUU2HqXEA:9 a=DcSpbTIhAlouE1Uv7lRv:22
-X-Proofpoint-ORIG-GUID: qUHfnZFI8ih3WUYLQIHO0ADb1963tMNQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-13_17,2024-11-13_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- adultscore=0 mlxlogscore=550 clxscore=1015 impostorscore=0
- lowpriorityscore=0 phishscore=0 mlxscore=0 priorityscore=1501 spamscore=0
- suspectscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
- engine=8.21.0-2409260000 definitions=main-2411140007
 
-On Thu, 14 Nov 2024 09:00:25 +0800, Lizhi Xu wrote:
-> On Wed, 13 Nov 2024 13:29:55 +0300, Dmitry Antipov wrote:
-> > On 11/12/24 4:41 PM, Lizhi Xu wrote:
-> >
-> > >   	mutex_lock(&sdata->local->iflist_mtx);
-> > > +	if (list_empty(&sdata->local->interfaces)) {
-> > > +		mutex_unlock(&sdata->local->iflist_mtx);
-> > > +		return;
-> > > +	}
-> > >   	list_del_rcu(&sdata->list);
-> > >   	mutex_unlock(&sdata->local->iflist_mtx);
-> >
-> > Note https://syzkaller.appspot.com/text?tag=ReproC&x=12a9f740580000 makes an
-> > attempt to connect the only device. How this is expected to work if there are
-> > more than one device?
-> There are two locks (rtnl and iflist_mtx) to protection and synchronization
-> local->interfaces, so no need to worry about multiple devices.
-In other words, this case is a race between removing the 802154 master
-and the user sendmsg actively deleting the slave.
-Then when the master is removed, there is no need to execute the latter to
-remove the slave, because all the slave devices have been deleted when the
-master device is removed..
+Correct the misspellings of "noftify" (should be "notify") and "swtich"
+(should be "switch").
 
-Lizhi
+Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
+---
+ arch/arm/vfp/vfpmodule.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/vfp/vfpmodule.c b/arch/arm/vfp/vfpmodule.c
+index b68efe643..409165077 100644
+--- a/arch/arm/vfp/vfpmodule.c
++++ b/arch/arm/vfp/vfpmodule.c
+@@ -140,7 +140,7 @@ static void vfp_thread_copy(struct thread_info *thread)
+ /*
+  * When this function is called with the following 'cmd's, the following
+  * is true while this function is being run:
+- *  THREAD_NOFTIFY_SWTICH:
++ *  THREAD_NOTIFY_SWITCH:
+  *   - the previously running thread will not be scheduled onto another CPU.
+  *   - the next thread to be run (v) will not be running on another CPU.
+  *   - thread->cpu is the local CPU number
+-- 
+2.27.0
+
+
+
 
