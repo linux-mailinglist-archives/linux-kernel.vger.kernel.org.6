@@ -1,238 +1,135 @@
-Return-Path: <linux-kernel+bounces-409752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60E099C90F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:40:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B147E9C90DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:34:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E407E1F228B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:40:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40F3F1F23D19
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D087418D642;
-	Thu, 14 Nov 2024 17:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="TmUYOHke"
-Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A09B189F3C;
+	Thu, 14 Nov 2024 17:34:23 +0000 (UTC)
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287A418C343
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 17:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58697262A3
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 17:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731605995; cv=none; b=ZmhsIrwokkNwQ+FI7xSpePIQyrCpjRKjMIw5NVYJt31LMDbcCe4UToADfZKjbkjfFSMDlRHHDM/s3+zyNZHHieci4dyFpoauQlyL5W3GWqljEa0Ud3Z670M1yHs7Qgkz5s/0vCZpz7Mgim3DzgqX2iacdhZzcy8kUYEWZMuhPSw=
+	t=1731605663; cv=none; b=I6EIxQuMv/weUbLr+n3sV2Ztuapd3WCEbUe874WfStFSATChAIoL+RXW7cvktYI0BsYR/DeFDM7gFxae55flUb63aDdXBpvEmt6SJMJcDi94Kckq/loe9JJEpS9TsFn8hyFVOxBnU7C3UV4Ic0bNkfGuIUm6qJui5H+cyMVjdRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731605995; c=relaxed/simple;
-	bh=0Ri26y6BNd727u8kMVaoNzmyXUjeTT1xZXrJxlQ7Tls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mKsS1agUOwbd2x/IfBe+GwMTbMxWRq5ShTm6C0JUaVsUE71HaebSlBllTiBP58hllWxCEt0BOPNLcMkmvBKhx6482gKCWcD76R6Wh9PE1QBEIDnFZGjL8uYAZjwnIvHPl0uoRnwbxquyX7YLMrxTU8+p4RmVskT6F5jCzPH65uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=TmUYOHke; arc=none smtp.client-ip=66.163.184.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731605992; bh=263+m7XTl10hNqcF/0th/BSfkHJbQiC6Xwiw+AsLuFk=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=TmUYOHkeH0yYuMyMxji65Z4pI8IroL+otfWphrilXrck9S//cv8BuY1jmGyOc+XvY51Ef+hhiWX8shcF3q2gbE3s8AsQkSaR8MNsbYDJ0wGqA2L/A73LPZqekzYKHfpvHtOq9GvrRAtTqlx7BRbbGGwjTkAlSrxkwwFMZbgNqPMnuWcxWHHUa1VXXlG1HlUZoSALPFfv0DIRYFH/psbhuJSFyd46/WO35Zl6iF2RqcvOLKyN+lFKswWW+5iy2psmAiZOY6s/fKMZQkORf1rexp2LZ2Sbexz5KI2PHnbkYhTiQ6wIexO1yHpzygUynWjK8lMOjjpXVi6sg94FIPHNMQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731605992; bh=XmiUrRwF6lJx+Oty/gHfl3NpCBcXRVLrjm9ZVEhxgKr=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=HaSFlaX2mJkf+P2NBxLXXB8gVoa6jJiGu3dylVf0G4rjYbtHapdsxL4jtRW1bI8M0T8XJ+1N4RWIMiGq6rq1AJuOKWV4Me+B1m6bncDjW6JgVqalH6gVbs8qKnf/vnu95+cJ9qYZ8J+kf9VS9MWGuP3zLmw70zEgEo9Jpk5aS9baVgEwehMFwgnOZnx9nXRX7dE21CzBgU/AOKoGYEStkMLFp99OsZTFKksaGiMHntpt1Md/kdcWxDhxsLoB1UPraaCQA9gsjqd3RR5DRkN7hnJ0trx5USXKLrUePuDlaU6+VDGvtfjnWOdPZRQpgx+gA2YRFMOJn+aFnahJ70LhfQ==
-X-YMail-OSG: HeXyeTUVM1l145AB5nS_R73jMvyo1oKHYgE0ffzWIgs8pErH4mxLa6iSCn.o9HB
- _62O4EqDuxAvZaVN0Ls2vCRSYTjb5ea3FBe4oTjOBp_Ynak3wENXPEQ6L3ZSMXMzz2EdGayke6iy
- yuvm5PI1XEAUVuMzBlBrdvPKeWouAA3I4lkevvDO19Y9JpixgZ2sqjvyihZdkwmZqT2QDKChv..h
- 63GyqoQQbeLcsONDXkQRdfk90vQFHHAiRn.9jBB0GFj2fCuueS3sNZ4Zg5iYAQGMBM8EoIw.jUrA
- eaKPm5QDvZjdUg00aDHmyABrVdjpTDMrQt6cwv_20vwlZgmF7sKr_pMVy3sSTffblb7BGZ59w.xZ
- FPRHXQbJdhj2kbA6vMofpdptNnIN5V1u4wYueT8BhkswqLLwf_1sKeqBTZ1yp0FEbC3rU91wMAVd
- CJqlqEUfWw78aXa39RNke32qFf3C05TLxmtz7ydFdN61Y7HPj6.myUByH4n_HcAldepqybW3Vtwn
- raAoGe8AzZYSicPn3Acg1MBqSkQXok.b6X89YGVCZB1GPntQhm0G3RwpLpHB4FByE4uXjTC9NvJm
- ORGfsX6y7b3mNE57dxCcVXvBf61pbkqPIoWMApSabDY0jqN7a8m5N16K8eENmjJjgNGE1YB2G7Gd
- t6JZAjB__qATXlpEYDxcF.wzx5HGQRFa.03vm2WONpfzL0KZMS.fKbRQlHXfjy8K4CVjUSfUvRze
- dFre8UfnQRIfc80d0JZUUlHXfwashIgvtCeHPVMvK7BIaoywXphB9BivXsWaJDPp3c6qji1SSv3V
- 9pKOqyZJ0bYNEFSRpFIcoIhxx3SdpWBpkCpWhYQuloPVd.L1JPUvk5GrTePcepubdA4cnlkqfIXJ
- KpGJWyUX6uKl7EjYSY0S23AccKm5DCWBr21FCXh4kghR0Ly65nN4.G9XrCEPDhLV8x9Q.dTlXYFd
- I_CvBh3g1Qnv_YT4aYjNrL824TfWRdE22Or7kQrKwlP.B0vSiwSCJ0XjnWmtooqBWtbusMSw.szK
- F8lTxzVDNBGX9hW1ORzqLhM0Gd6ASK2cHTk7SdmhylRYmCwig05jt0IMFQ8FZVutuHJELUAW5Ulg
- Uvw8b524F4XRVSPmf0O6i.lC42hpXZzB076FAs_.Eszu5Az7Jde2tReW4iAh6CYOYPUJbYaXDsbI
- dUnQvdQaXfLhEb_Rf_wQtkOIT4mxFJAIwkLI_a9LnpiNQk1Fe0bsl0FQEHsWVP5455AjQLLSBvar
- uOKi_FcI_lVt0hXApRuCdsZvdfOh.zHumvaCeCwxsCty2OTBsSFZu4INOpvqqNN4rMcnQH8_BDHC
- RzJOQ1mLkul6ofhoEC8jhBLGFKbqPQMt_35VET9.znns6bPP47NIAgNMKakRQK3Aqvn4qo4KK7py
- NiZxmWMsacY3bwPayHSENEFmrT6ZLlqM1bJMNE5OH8IlDJ3wCSGt8_LgR2OFrhjFS.O8M5CIffsD
- 8cks25e9BOVlwZSWWeOBtY09_F2biy8vDjl4VunPJvMKInA388k9VB4Vhf42NQ1jXunS.NM6QLGB
- SM3Aj7vvF0rol8WooiB8TZfALioEGZiy6ARV4F359fRJkflPVGhcVC1xCtLGpbJeVQ9B7eEhW6sF
- 4TL75cZ.iiJ6DchYjGe6JrMMTSR08PtMAz8gbcqPSgvPZQU0orxsFvMcIisaIeShGk3PB5BxKjF6
- Ss5ugUd4yRnUiaI_YrOutnvobpA0ptMqtTX5HHM5Qls0V48f_2j5BzMeEpFVTuiB62Cn0s_8LVC_
- uR8cZQ.UIDDMMqZpV08rne.isV1F3H2BaOZyqlLEWu_6ZL2dIU_VAzbM95wQVp5HRB6cOObqLX98
- wYdp8HLM4KBO6BoZGl8oFCKjiwPyzbUNg97Glr4gvzjUz0tq5PhHtNunSiac9R7bZNrBtFVGsaiT
- MmNdAiSwvTI732oFOeVgZzb6zdGiYQL7o.UpgkWOP6SbnN.J1ER5OlUfpB4Eq26U.HnYtMypxiKg
- 3RFJkZI1h__G7MXsgZumRfNQICYB94XKzxItbBDaNr_Oxguy5VIV5xpJXavAXtFpcgn3V72cxx7y
- nXq0dOw9j.sznePAmPUu8lEJAamyiIVAcMRBgVyxgVbvLrtefhObrjX8QcWF2nQ7BdpcEViVz3EM
- 0iWWC9G7me6esynGFjuuZSdpgWXfUTQPS2J12QJos5adC5xMrK6b48XSoY9QrP.BQOMZx9VM5x_B
- Qae4RVmJeuKYdFKWfryEe6iDQP_9Nn7XtY4caGJkQr6VrgExhnVryKgLANl2r2f2x_gsWMI0FhMV
- jxNEM.FE-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 81d03b63-939c-4e86-a69f-4777cd396e25
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Thu, 14 Nov 2024 17:39:52 +0000
-Received: by hermes--production-gq1-5dd4b47f46-9j75b (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID debdf0be1d06a72001b6043acb052466;
-          Thu, 14 Nov 2024 17:29:40 +0000 (UTC)
-Message-ID: <53a3601e-0999-4603-b69f-7bed39d4d89a@schaufler-ca.com>
-Date: Thu, 14 Nov 2024 09:29:39 -0800
+	s=arc-20240116; t=1731605663; c=relaxed/simple;
+	bh=w3Kgi6NMQefSt7FMZmFoT7F48bNhTskbbxGecsSokzI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c9GzR46pjV+LbR4KKBvZfudVG3nJUmEY5dvU5je/+OSNMlcmTFImei8u+liMwO0EHwmEMCI5UHhWF5/5ObdkbZdoj6rx4URLnRA6jcoqBzmS3PAB1r1v7zYwfAOV6htxl4Iu/I8PHpGU0NJvyjO8SfGaLk1NM4M0SId8ErJ/MM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a4d1633df9so2729745ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:34:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731605660; x=1732210460;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7DJUKrvhRKu5cg87uHKK2PRa/3maDazrpIE2gT9RJ4I=;
+        b=xMkOiFXTq6FvioolgZWVIZXQlAFYltn+0k/5lto2DHtrnmfHhRtFxOXyd9i14CUzlM
+         OSAgKXmPyFP1OasHGBx76IvnwVpO3QQuwYWLEudqMQ84a/CbyK39fmO9p4HNDAH/t/w2
+         5aB5ViLOng+NgjGds2GHb44powKOIrVZaR+LqyGRXVqDTh7zjG6LM31bnuEbugGiPanb
+         gOkuev3NpD3ysp7Bw++yIRSzCa757gA/DfoBIp6YnPPj4kiV8nfeOBU4XjXkzAth4vYt
+         L72B11C6iK2hUF3W+V7tsDui4+Z0ij2pS/Ugo+kwpiTjWkIbk9P4K+vg2bL62qPCBvAF
+         DLow==
+X-Forwarded-Encrypted: i=1; AJvYcCXvG/SxTMoU6g5LBkF/9MdDgQTBBznRuKwlT2Vvzq9PnwhDQMTNa30xiKJbEl2TnS0sipcqzILiG/s/q6A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTcvbU7/00N3yfiV34X4+SAqMKFDt04rRXDljhc0ouum+oarLc
+	r+/Rwm1elYwo/SlG1Yx6aHnLC/eESuSHiip1HFPSo0ZJHjVQBsZQ
+X-Google-Smtp-Source: AGHT+IHXmGAQDxMeA+kS5h9Cz3SB14qa7ht1GOFFAlHeNUrwAxWgEMUhnhazLiQDSPEpzX+af4Zr5w==
+X-Received: by 2002:a05:6e02:1541:b0:3a6:af20:944c with SMTP id e9e14a558f8ab-3a7156f9c8dmr78881405ab.9.1731605660500;
+        Thu, 14 Nov 2024 09:34:20 -0800 (PST)
+Received: from maniforge (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e02fd167a7sm359968173.106.2024.11.14.09.34.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 09:34:19 -0800 (PST)
+Date: Thu, 14 Nov 2024 11:34:18 -0600
+From: David Vernet <void@manifault.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: Zhao Mengmeng <zhaomzhao@126.com>, zhaomengmeng@kylinos.cn,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] sched_ext: Replace hardcoding with macro and minor
+ typo fix
+Message-ID: <20241114173418.GA4643@maniforge>
+References: <20241113025908.306936-1-zhaomzhao@126.com>
+ <ZzYvf2L3rlmjuKzh@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
-To: "Dr. Greg" <greg@enjellic.com>, Song Liu <song@kernel.org>
-Cc: Song Liu <songliubraving@meta.com>,
- "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>,
- "andrii@kernel.org" <andrii@kernel.org>,
- "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>,
- "daniel@iogearbox.net" <daniel@iogearbox.net>,
- "martin.lau@linux.dev" <martin.lau@linux.dev>,
- "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
- "brauner@kernel.org" <brauner@kernel.org>, "jack@suse.cz" <jack@suse.cz>,
- "kpsingh@kernel.org" <kpsingh@kernel.org>,
- "mattbobrowski@google.com" <mattbobrowski@google.com>,
- "amir73il@gmail.com" <amir73il@gmail.com>,
- "repnop@google.com" <repnop@google.com>,
- "jlayton@kernel.org" <jlayton@kernel.org>, Josef Bacik
- <josef@toxicpanda.com>, "mic@digikod.net" <mic@digikod.net>,
- "gnoack@google.com" <gnoack@google.com>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20241112082600.298035-1-song@kernel.org>
- <d3e82f51-d381-4aaf-a6aa-917d5ec08150@schaufler-ca.com>
- <ACCC67D1-E206-4D9B-98F7-B24A2A44A532@fb.com>
- <d7d23675-88e6-4f63-b04d-c732165133ba@schaufler-ca.com>
- <332BDB30-BCDC-4F24-BB8C-DD29D5003426@fb.com>
- <8c86c2b4-cd23-42e0-9eb6-2c8f7a4cbcd4@schaufler-ca.com>
- <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com>
- <20241114163641.GA8697@wind.enjellic.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20241114163641.GA8697@wind.enjellic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22876 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="YNjSbQfq0mdQkgeI"
+Content-Disposition: inline
+In-Reply-To: <ZzYvf2L3rlmjuKzh@slm.duckdns.org>
+User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
 
-On 11/14/2024 8:36 AM, Dr. Greg wrote:
-> On Wed, Nov 13, 2024 at 10:57:05AM -0800, Song Liu wrote:
->
-> Good morning, I hope the week is going well for everyone.
->
->> On Wed, Nov 13, 2024 at 10:06???AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->>> On 11/12/2024 5:37 PM, Song Liu wrote:
->> [...]
->>>> Could you provide more information on the definition of "more
->>>> consistent" LSM infrastructure?
->>> We're doing several things. The management of security blobs
->>> (e.g. inode->i_security) has been moved out of the individual
->>> modules and into the infrastructure. The use of a u32 secid is
->>> being replaced with a more general lsm_prop structure, except
->>> where networking code won't allow it. A good deal of work has
->>> gone into making the return values of LSM hooks consistent.
->> Thanks for the information. Unifying per-object memory usage of
->> different LSMs makes sense. However, I don't think we are limiting
->> any LSM to only use memory from the lsm_blobs. The LSMs still
->> have the freedom to use other memory allocators. BPF inode
->> local storage, just like other BPF maps, is a way to manage
->> memory. BPF LSM programs have full access to BPF maps. So
->> I don't think it makes sense to say this BPF map is used by tracing,
->> so we should not allow LSM to use it.
->>
->> Does this make sense?
-> As involved bystanders, some questions and thoughts that may help
-> further the discussion.
->
-> With respect to inode specific storage, the currently accepted pattern
-> in the LSM world is roughly as follows:
->
-> The LSM initialization code, at boot, computes the total amount of
-> storage needed by all of the LSM's that are requesting inode specific
-> storage.  A single pointer to that 'blob' of storage is included in
-> the inode structure.
->
-> In an include file, an inline function similar to the following is
-> declared, whose purpose is to return the location inside of the
-> allocated storage or 'LSM inode blob' where a particular LSM's inode
-> specific data structure is located:
->
-> static inline struct tsem_inode *tsem_inode(struct inode *inode)
-> {
-> 	return inode->i_security + tsem_blob_sizes.lbs_inode;
-> }
->
-> In an LSM's implementation code, the function gets used in something
-> like the following manner:
->
-> static int tsem_inode_alloc_security(struct inode *inode)
-> {
-> 	struct tsem_inode *tsip = tsem_inode(inode);
->
-> 	/* Do something with the structure pointed to by tsip. */
-> }
->
-> Christian appears to have already chimed in and indicated that there
-> is no appetite to add another pointer member to the inode structure.
->
-> So, if this were to proceed forward, is it proposed that there will be
-> a 'flag day' requirement to have each LSM that uses inode specific
-> storage implement a security_inode_alloc() event handler that creates
-> an LSM specific BPF map key/value pair for that inode?
->
-> Which, in turn, would require that the accessor functions be converted
-> to use a bpf key request to return the LSM specific information for
-> that inode?
->
-> A flag day event is always somewhat of a concern, but the larger
-> concern may be the substitution of simple pointer arithmetic for a
-> body of more complex code.  One would assume with something like this,
-> that there may be a need for a shake-out period to determine what type
-> of potential regressions the more complex implementation may generate,
-> with regressions in security sensitive code always a concern.
->
-> In a larger context.  Given that the current implementation works on
-> simple pointer arithmetic over a common block of storage, there is not
-> much of a safety guarantee that one LSM couldn't interfere with the
-> inode storage of another LSM.  However, using a generic BPF construct
-> such as a map, would presumably open the level of influence over LSM
-> specific inode storage to a much larger audience, presumably any BPF
-> program that would be loaded.
->
-> The LSM inode information is obviously security sensitive, which I
-> presume would be be the motivation for Casey's concern that a 'mistake
-> by a BPF programmer could cause the whole system to blow up', which in
-> full disclosure is only a rough approximation of his statement.
->
-> We obviously can't speak directly to Casey's concerns.  Casey, any
-> specific technical comments on the challenges of using a common inode
-> specific storage architecture?
 
-My objection to using a union for the BPF and LSM pointer is based
-on the observation that a lot of modern programmers don't know what
-a union does. The BPF programmer would see that there are two ways
-to accomplish their task, one for CONFIG_SECURITY=y and the other
-for when it isn't. The second is much simpler. Not understanding
-how kernel configuration works, nor being "real" C language savvy,
-the programmer installs code using the simpler interfaces on a
-Redhat system. The SELinux inode data is compromised by the BPF
-code, which thinks the data is its own. Hilarity ensues.
+--YNjSbQfq0mdQkgeI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
-> Song, FWIW going forward.  I don't know how closely you follow LSM
-> development, but we believe an unbiased observer would conclude that
-> there is some degree of reticence about BPF's involvement with the LSM
-> infrastructure by some of the core LSM maintainers, that in turn makes
-> these types of conversations technically sensitive.
->
->> Song
-> We will look forward to your thoughts on the above.
->
-> Have a good week.
->
-> As always,
-> Dr. Greg
->
-> The Quixote Project - Flailing at the Travails of Cybersecurity
->               https://github.com/Quixote-Project
+On Thu, Nov 14, 2024 at 07:12:31AM -1000, Tejun Heo wrote:
+> Hello,
+>=20
+> On Wed, Nov 13, 2024 at 10:59:08AM +0800, Zhao Mengmeng wrote:
+> > From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
+> >=20
+> > 1. replace hardcoding with SCX_KF_UNLOCKED.
+> > 2. scx_next_task_picked() has been replaced with siwtch_class().
+> > 3. minor typo fixes.
+> >=20
+> > Signed-off-by: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
+> > ---
+> >  kernel/sched/ext.c             | 6 +++---
+> >  tools/sched_ext/scx_qmap.bpf.c | 2 +-
+> >  2 files changed, 4 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> > index 1b1c33f12dd7..832f77d1d318 100644
+> > --- a/kernel/sched/ext.c
+> > +++ b/kernel/sched/ext.c
+> > @@ -2759,10 +2759,10 @@ static int balance_one(struct rq *rq, struct ta=
+sk_struct *prev)
+> >  		 * If the previous sched_class for the current CPU was not SCX,
+> >  		 * notify the BPF scheduler that it again has control of the
+> >  		 * core. This callback complements ->cpu_release(), which is
+> > -		 * emitted in scx_next_task_picked().
+> > +		 * emitted in switch_class().
+> >  		 */
+> >  		if (SCX_HAS_OP(cpu_acquire))
+> > -			SCX_CALL_OP(0, cpu_acquire, cpu_of(rq), NULL);
+> > +			SCX_CALL_OP(SCX_KF_UNLOCKED, cpu_acquire, cpu_of(rq), NULL);
+>=20
+> I think this is actually a bug. David, shouldn't this be SCX_KF_REST?
+
+Yes, good catch. We're holding the rq lock so SCX_KF_UNLOCKED isn't safe. I
+agree this should be SCX_KF_REST.
+
+Thanks,
+David
+
+--YNjSbQfq0mdQkgeI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQRBxU1So5MTLwphjdFZ5LhpZcTzZAUCZzY0mQAKCRBZ5LhpZcTz
+ZEh8AQD+1FddaiaxpJqLHSodYb04lpcjZ6jehqY5VF/X9LavYwEAlqaWK62A9djF
+Nr3FuP/JtAg786w4RkbLZCjGkWiBig8=
+=nCac
+-----END PGP SIGNATURE-----
+
+--YNjSbQfq0mdQkgeI--
 
