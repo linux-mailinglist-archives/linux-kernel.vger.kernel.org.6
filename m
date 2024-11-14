@@ -1,280 +1,91 @@
-Return-Path: <linux-kernel+bounces-409337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DF459C8B75
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:09:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D7B19C8BD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:29:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 325E7286FE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:09:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFB64B31716
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A161FAEEC;
-	Thu, 14 Nov 2024 13:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C0F1FAF0C;
+	Thu, 14 Nov 2024 13:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Gpbx8oTg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=bob.beckett@collabora.com header.b="Mv/RAIVA"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4ABE1F76AB
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731589754; cv=none; b=YagOMeWCIHmKAYzJYcy9HJKbuW3O5Somi08SKL7rO7QvIP1CMjwCBnCBBNwKswHZLlGmEjtR8gc1yDfcc5432qgdi3Ycc8dnOGiS760YXsp/G8d424hR0pry8dXGBPD/HhvueLsbd+HP2fOCqsb9zbh2h6MWjETmydfL4QM9MmM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731589754; c=relaxed/simple;
-	bh=aZYjXmoZfp2HAOnzz7bgqnX8Ynj7sG9uIkMetOKcoB4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kFQJQkTT18W/MdYkphXfwVbhkvQrq8UcoRnQ08r0iwQM5QXsRGnB0Br4ID/GOiY1Gc2oSMONEpKoIIteam0DdSes8ptwSQb2aBF6dlsaEd12jlq1qfgUqHuIMPeJ+PTcYZZvhu+P6N6pVfIFgl9+CHSpsGwz3rYI7+qJZB2IoLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Gpbx8oTg; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731589751;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=RnN6qfrNHf3p41oLspRaSVbFnU2zYVZg7YbyYzfMlzM=;
-	b=Gpbx8oTgevhznxrzrug0Ek/i4jWBpW++hrc+XhfJq591mubqgnBaIsnkWlG+SO9IaustPI
-	UnFuRMplcJ7bu/yB6RG7g0utDfTVYWW/qB+CX6kGtqOPNR6LdyX5XqwVHQmZKCCFRTuBnO
-	3iPvl1L8+0qhS5UeSL9ZQN1JOdem9Bc=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-644-HuKPNk6mOCKjuQwBOvFkJA-1; Thu,
- 14 Nov 2024 08:09:10 -0500
-X-MC-Unique: HuKPNk6mOCKjuQwBOvFkJA-1
-X-Mimecast-MFC-AGG-ID: HuKPNk6mOCKjuQwBOvFkJA
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F15351945112;
-	Thu, 14 Nov 2024 13:09:08 +0000 (UTC)
-Received: from gerbillo.redhat.com (unknown [10.39.194.140])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2061D1955F3C;
-	Thu, 14 Nov 2024 13:09:06 +0000 (UTC)
-From: Paolo Abeni <pabeni@redhat.com>
-To: torvalds@linux-foundation.org
-Cc: kuba@kernel.org,
-	davem@davemloft.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Networking for v6.12-rc8
-Date: Thu, 14 Nov 2024 14:08:46 +0100
-Message-ID: <20241114130846.94852-1-pabeni@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92AA3383A5
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731589862; cv=pass; b=XA4bB8DdZx/A/RT+SZFnJB4azue9YgDs7vVONu36w/PryMI/fOGCt6yhopcPmTDqYK8DeeNbdA8CA1G3uel5hxsH/Bq5Y/YbFJnBiMShAiY7+zcDnU6kEAXMlWnEfLV9ACHBeJitZz5abS6NV+wprA71boxl8hjPtwsHKlk8JGU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731589862; c=relaxed/simple;
+	bh=OBJ7FsSPBCSllV/PAFc0yUDQ+HcT+kWurnsgeTHKbug=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=q1P9pRGpv742J2AsZ8dYEx6wR2NrFmvtihZm1jJgBXvrFn7ENByDdLfB6ZCvFyQbllN71/dFv8dcdkmO6uU51+BEFsQa5quR6swO39U8EASFq5DEPrFFv0PurgDV7rRpuMd0czMbr1GpvuuRMZkSDUeCPKf9Tg1O/9N2oj89yU4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=bob.beckett@collabora.com header.b=Mv/RAIVA; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1731589845; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=k/f+pTC01kz6e9kpLAwUe16ixePuBxkStoUqmQDBQOYbRvhaMN+sZKKi/s9OuTAUqDCflU0U+Rn0AfhwOw6By2MlhUcavrI5YhtrbofSWTWFzyKIhWuUqZpN2VHz58Hnou38+HBe6bgESHTXJfGZQ/UfjA8H2ZcklAIS9lOZ2X0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1731589845; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=FSWhUoxAhdB6lSMDwjSVTKLi5Zip+jPlJqZckIZHULk=; 
+	b=cQhBwp14IR1lzSWQ39Son/gacJp4fRMDpaDdowZQDSlvGl2elWwh659QJfrWbbIy+Lgww7/an4hr67depTsyOt+nx8Abvby2cKIG05wb5N4s6mkJwq8UwzjLzqIh70616oohmMbc9a2HA7UaFTFj4CXJM6XaWTGn31rXl0cy/L8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=bob.beckett@collabora.com;
+	dmarc=pass header.from=<bob.beckett@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1731589845;
+	s=zohomail; d=collabora.com; i=bob.beckett@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=FSWhUoxAhdB6lSMDwjSVTKLi5Zip+jPlJqZckIZHULk=;
+	b=Mv/RAIVAnhD+zZ9lFK5Ms33Zg1em/70x4MmVVPM7iheG3kdqFyPKxkSgerrcp8fV
+	2YE4ZsTVZkD6tiDuF0JeTd/3q8/1R+2czkJELKqp+JLXf/QV9xpD0n/R1URuXx/tKui
+	7MRwV9Ji3MMDQeCPhm2c9efYAERQtWa2GpT47y9g=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1731589813271173.51718259903373; Thu, 14 Nov 2024 05:10:13 -0800 (PST)
+Date: Thu, 14 Nov 2024 13:10:13 +0000
+From: Robert Beckett <bob.beckett@collabora.com>
+To: "Christoph Hellwig" <hch@lst.de>
+Cc: "Keith Busch" <kbusch@kernel.org>, "Jens Axboe" <axboe@kernel.dk>,
+	"Sagi Grimberg" <sagi@grimberg.me>, "kernel" <kernel@collabora.com>,
+	"linux-nvme" <linux-nvme@lists.infradead.org>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>
+Message-ID: <1932acbb3d1.10d91b9c8590854.6159524670771006351@collabora.com>
+In-Reply-To: <20241114055544.GA10948@lst.de>
+References: <20241112195053.3939762-1-bob.beckett@collabora.com> <20241113043151.GA20077@lst.de> <ZzTqgXqjN4UrT392@kbusch-mbp> <20241114055544.GA10948@lst.de>
+Subject: Re: [PATCH] nvme-pci: 512 byte aligned dma pool segment quirk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 
-Hi Linus!
 
-The following changes since commit bfc64d9b7e8cac82be6b8629865e137d962578f8:
 
-  Merge tag 'net-6.12-rc7' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2024-11-07 11:07:57 -1000)
 
-are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.12-rc8
 
-for you to fetch changes up to ca34aceb322bfcd6ab498884f1805ee12f983259:
-
-  net: sched: u32: Add test case for systematic hnode IDR leaks (2024-11-14 11:39:17 +0100)
-
-----------------------------------------------------------------
-Including fixes from bluetooth.
-
-Quite calm week. No new regression under investigation.
-
-Current release - regressions:
-
-  - eth: revert "igb: Disable threaded IRQ for igb_msix_other"
-
-Current release - new code bugs:
-
-  - bluetooth: btintel: direct exception event to bluetooth stack
-
-Previous releases - regressions:
-
-  - core: fix data-races around sk->sk_forward_alloc
-
-  - netlink: terminate outstanding dump on socket close
-
-  - mptcp: error out earlier on disconnect
-
-  - vsock: fix accept_queue memory leak
-
-  - phylink: ensure PHY momentary link-fails are handled
-
-  - eth: mlx5:
-    - fix null-ptr-deref in add rule err flow
-    - lock FTE when checking if active
-
-  - eth: dwmac-mediatek: fix inverted handling of mediatek,mac-wol
-
-Previous releases - always broken:
-
-  - sched: fix u32's systematic failure to free IDR entries for hnodes.
-
-  - sctp: fix possible UAF in sctp_v6_available()
-
-  - eth: bonding: add ns target multicast address to slave device
-
-  - eth: mlx5: fix msix vectors to respect platform limit
-
-  - eth: icssg-prueth: fix 1 PPS sync
-
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-
-----------------------------------------------------------------
-Alexandre Ferrieux (2):
-      net: sched: cls_u32: Fix u32's systematic failure to free IDR entries for hnodes.
-      net: sched: u32: Add test case for systematic hnode IDR leaks
-
-Breno Leitao (1):
-      ipmr: Fix access to mfc_cache_list without lock held
-
-Carolina Jubran (1):
-      net/mlx5e: Disable loopback self-test on multi-PF netdev
-
-Chiara Meiohas (1):
-      net/mlx5: E-switch, unload IB representors when unloading ETH representors
-
-Dragos Tatulea (1):
-      net/mlx5e: kTLS, Fix incorrect page refcounting
-
-Eric Dumazet (1):
-      sctp: fix possible UAF in sctp_v6_available()
-
-Geert Uytterhoeven (1):
-      MAINTAINERS: Re-add cancelled Renesas driver sections
-
-Geliang Tang (2):
-      mptcp: update local address flags when setting it
-      mptcp: hold pm lock when deleting entry
-
-Hangbin Liu (2):
-      bonding: add ns target multicast address to slave device
-      selftests: bonding: add ns multicast group testing
-
-Jakub Kicinski (7):
-      netlink: terminate outstanding dump on socket close
-      selftests: net: add a test for closing a netlink socket ith dump in progress
-      selftests: net: add netlink-dumps to .gitignore
-      Merge branch 'mptcp-fix-a-couple-of-races'
-      Merge branch 'mlx5-misc-fixes-2024-11-07'
-      Merge tag 'for-net-2024-11-12' of git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth
-      Merge branch 'mptcp-pm-a-few-more-fixes'
-
-Kiran K (1):
-      Bluetooth: btintel: Direct exception event to bluetooth stack
-
-Luiz Augusto von Dentz (1):
-      Bluetooth: hci_core: Fix calling mgmt_device_connected
-
-Mark Bloch (1):
-      net/mlx5: fs, lock FTE when checking if active
-
-Matthieu Baerts (NGI0) (1):
-      mptcp: pm: use _rcu variant under rcu_read_lock
-
-Meghana Malladi (1):
-      net: ti: icssg-prueth: Fix 1 PPS sync
-
-Michal Luczaj (4):
-      virtio/vsock: Fix accept_queue memory leak
-      vsock: Fix sk_error_queue memory leak
-      virtio/vsock: Improve MSG_ZEROCOPY error handling
-      net: Make copy_safe_from_sockptr() match documentation
-
-Mina Almasry (2):
-      net: fix SO_DEVMEM_DONTNEED looping too long
-      net: clarify SO_DEVMEM_DONTNEED behavior in documentation
-
-Moshe Shemesh (1):
-      net/mlx5e: CT: Fix null-ptr-deref in add rule err flow
-
-Nícolas F. R. A. Prado (1):
-      net: stmmac: dwmac-mediatek: Fix inverted handling of mediatek,mac-wol
-
-Paolo Abeni (4):
-      mptcp: error out earlier on disconnect
-      mptcp: cope racing subflow creation in mptcp_rcv_space_adjust
-      Merge branch 'virtio-vsock-fix-memory-leaks'
-      Merge branch 'bonding-fix-ns-targets-not-work-on-hardware-nic'
-
-Parav Pandit (1):
-      net/mlx5: Fix msix vectors to respect platform limit
-
-Russell King (Oracle) (1):
-      net: phylink: ensure PHY momentary link-fails are handled
-
-Stefan Wahren (1):
-      net: vertexcom: mse102x: Fix tx_bytes calculation
-
-Vitalii Mordan (1):
-      stmmac: dwmac-intel-plat: fix call balance of tx_clk handling routines
-
-Wander Lairson Costa (1):
-      Revert "igb: Disable threaded IRQ for igb_msix_other"
-
-Wang Liang (1):
-      net: fix data-races around sk->sk_forward_alloc
-
-Wei Fang (1):
-      samples: pktgen: correct dev to DEV
-
-William Tu (1):
-      net/mlx5e: clear xdp features on non-uplink representors
-
- Documentation/networking/devmem.rst                |   9 ++
- MAINTAINERS                                        |  30 ++++++
- drivers/bluetooth/btintel.c                        |   5 +-
- drivers/net/bonding/bond_main.c                    |  16 ++-
- drivers/net/bonding/bond_options.c                 |  82 ++++++++++++++-
- drivers/net/ethernet/intel/igb/igb_main.c          |   2 +-
- drivers/net/ethernet/mellanox/mlx5/core/en/tc_ct.c |   2 +-
- .../ethernet/mellanox/mlx5/core/en_accel/ktls_tx.c |   8 +-
- drivers/net/ethernet/mellanox/mlx5/core/en_main.c  |   3 +-
- .../net/ethernet/mellanox/mlx5/core/en_selftest.c  |   4 +
- .../ethernet/mellanox/mlx5/core/eswitch_offloads.c |   5 +-
- drivers/net/ethernet/mellanox/mlx5/core/fs_core.c  |  15 ++-
- drivers/net/ethernet/mellanox/mlx5/core/pci_irq.c  |  32 +++++-
- .../net/ethernet/stmicro/stmmac/dwmac-intel-plat.c |  25 +++--
- .../net/ethernet/stmicro/stmmac/dwmac-mediatek.c   |   4 +-
- drivers/net/ethernet/ti/icssg/icssg_prueth.c       |  13 ++-
- drivers/net/ethernet/ti/icssg/icssg_prueth.h       |  12 +++
- drivers/net/ethernet/vertexcom/mse102x.c           |   4 +-
- drivers/net/phy/phylink.c                          |  14 +--
- include/linux/sockptr.h                            |   4 +-
- include/net/bond_options.h                         |   2 +
- net/bluetooth/hci_core.c                           |   2 -
- net/core/sock.c                                    |  42 ++++----
- net/dccp/ipv6.c                                    |   2 +-
- net/ipv4/ipmr_base.c                               |   3 +-
- net/ipv6/tcp_ipv6.c                                |   4 +-
- net/mptcp/pm_netlink.c                             |   3 +-
- net/mptcp/pm_userspace.c                           |  15 +++
- net/mptcp/protocol.c                               |  16 ++-
- net/netlink/af_netlink.c                           |  31 ++----
- net/netlink/af_netlink.h                           |   2 -
- net/sched/cls_u32.c                                |  18 +++-
- net/sctp/ipv6.c                                    |  19 ++--
- net/vmw_vsock/af_vsock.c                           |   3 +
- net/vmw_vsock/virtio_transport_common.c            |   9 ++
- samples/pktgen/pktgen_sample01_simple.sh           |   2 +-
- .../selftests/drivers/net/bonding/bond_options.sh  |  54 +++++++++-
- tools/testing/selftests/net/.gitignore             |   1 +
- tools/testing/selftests/net/Makefile               |   1 +
- tools/testing/selftests/net/netlink-dumps.c        | 110 +++++++++++++++++++++
- .../selftests/tc-testing/tc-tests/filters/u32.json |  24 +++++
- 41 files changed, 543 insertions(+), 109 deletions(-)
- create mode 100644 tools/testing/selftests/net/netlink-dumps.c
-
+ ---- On Thu, 14 Nov 2024 05:55:44 +0000  Christoph Hellwig  wrote --- 
+ > On Wed, Nov 13, 2024 at 11:05:53AM -0700, Keith Busch wrote:
+ > > Well, he's doing what I suggested. I thought this was better because it
+ > > puts the decision making in the initialization path instead of the IO
+ > > path.
+ > 
+ > I guess it's fine in that regard.  It just usually expect patch
+ > authors to at least reply to reviews..
+ > 
+apologies for not replying directly. I assumed a new patch would suffice.
 
