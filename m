@@ -1,90 +1,123 @@
-Return-Path: <linux-kernel+bounces-409861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA2D59C929E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:48:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F64A9C92A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:51:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E676281D00
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:48:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B69742845E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9101AB511;
-	Thu, 14 Nov 2024 19:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1438F1A76A4;
+	Thu, 14 Nov 2024 19:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOrCiny+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amundsen.org header.i=@amundsen.org header.b="aE83gcD8"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47D21AA786
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 19:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C0019340B
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 19:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731613622; cv=none; b=EFKgL7tU6E+GhTQYi4zjnMJWne1QQbpi8YCo0lWcG8zLGrfDzRkVUf5JVljPtJ9RIeF/PENrJlWDBx/rnPo4wDZUJ9O/Ghn2+j1mQGGt0Re0CAfBAzqstRaA2pwT3ndzYv1AQXkpIjWGsd5hp0x8ZiVoRkMe/ftaqwJKIrS46og=
+	t=1731613877; cv=none; b=rAxHmQfSPLjrvQNYMCqQR5URqN047kpZoSsTYN4ELUaKTQ8ZP7lt42x4vTegVosg5PWVreCesYkzNiUyjYiTJrpjooPopkG9V8KTZeIGMd5ghX5fN2WBA1Zi1Ad4sgLrVuXXwmWuI5ppUjCGba/kzbZjnLTezAh4nPHSzlTm/xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731613622; c=relaxed/simple;
-	bh=Gjzox5SW0ZBFMCoYYELBBxTIQIhByOTrD2ZJcxcGlOM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tz7IpEspexpAN22zQm3SnGkdtnn9BlR2K1lcJ7u9rgveCk32H04JwkYnhCcb0U2IRapo+d7e84MkiRnTDV7ITjnv79SqgTq0LrwFbHYo/X1ZHAtNmvr0R5t5jMUqSUuAqj0Y3rcZ9g0bkjzvfPgfy6Bo/l3Vp09X9YP0A8FJ56o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOrCiny+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA76CC4CECD;
-	Thu, 14 Nov 2024 19:47:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731613622;
-	bh=Gjzox5SW0ZBFMCoYYELBBxTIQIhByOTrD2ZJcxcGlOM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JOrCiny+S5/iDqvnzEts3OjdvmummSirSW4WebBrubi6/8clwxpwxZUEKm9+0Odce
-	 yC2inWKyb0shenbQh/pSZSR64L24xkxvnq+yx+I3ZUq3kqpoaAmXA6m7qEefzXmDsu
-	 scu/gVSyUhExHh4YqMQ+6pDqd0EZ6vZ+Nurvm7eyfLIKXMjS1Tty0YUvsMCepe9ywS
-	 5UXZjhON41gipFxjuU3Rnrk2gtPAfmR+y6k8kupOeDLl1J+uWZcDHv1dpAVKwmvxoC
-	 wX4uheIik4vDKNsBJwqQ7mLVBGSmDGSbSNYwuiYrORA1K1Jk6o+dRt1iSJSpapQ4IJ
-	 GShANoTzos9XA==
-Date: Thu, 14 Nov 2024 19:46:58 +0000
-From: Conor Dooley <conor@kernel.org>
-To: CL Wang <cl634@andestech.com>
-Cc: alexandre.belloni@bootlin.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-kernel@vger.kernel.org,
-	tim609@andestech.com
-Subject: Re: [PATCH V4 RESEND 2/3] dt-bindings: rtc: Add support for
- ATCRTC100 RTC
-Message-ID: <20241114-slam-observer-61f978d2063f@spud>
-References: <20241114140023.3534980-1-cl634@andestech.com>
- <20241114140023.3534980-3-cl634@andestech.com>
+	s=arc-20240116; t=1731613877; c=relaxed/simple;
+	bh=6Jiy1XQtVz3ggjpXB78+B5kVI9PN3UAJnrOhRftuiXc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=eR9pJrhdCmkChSY3pGznR+EHdaeAjfu3CCWU/saYcjzvuEFYpUQvYy0/GHUxbub3Wo+DXyQqXOqfYla9L7CRtxs0tceMNXEW+XvVPAtBsLeR8FnXtXDEmxYRoSYpXpaTZ9gqVytTrMpuj4IzOq1WHpCc2ke3W4hK84XOzaSIFqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amundsen.org; spf=pass smtp.mailfrom=amundsen.org; dkim=pass (1024-bit key) header.d=amundsen.org header.i=@amundsen.org header.b=aE83gcD8; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amundsen.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amundsen.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539e5c15fd3so1034247e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:51:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amundsen.org; s=google; t=1731613872; x=1732218672; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X+WUtALkjSye65cOuODIzVIJuEmqRgNvoIJj5DWFwQU=;
+        b=aE83gcD8CchvJe48ngkmnIKcJV0/Jjm7rZv7IaSB45eNRr7388CGC+YkcQXOq466px
+         Rmbum6ds5NDtBwJW3mZcmLf2884IaKngXOIF2JuAsXPqZsZ7jxmZVOBbcSm2WDvdDKFE
+         gR7EF6CsT5jMrBncc+FCWpXUFpPUqoVuyY7kc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731613872; x=1732218672;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X+WUtALkjSye65cOuODIzVIJuEmqRgNvoIJj5DWFwQU=;
+        b=EismZyokph0gDhakqDKt88iX37nRrGY/o2DkQN/t9mjIFrPINQVn2JsRi/az3GUnWG
+         5ZQV2c/iGwgtK74v7T4VWfhzLcISHKV3v+KEDFPFDqay9AK5nyXEvFYJuxofKFv3PqgG
+         GuXWnf/4DfyHc8rXuWFLF7z/MavV70ts3xHexvHXX7wz7EoQNFGu5+FU/lRGnGJmNoX8
+         qy8r4HqxqN0MBp6Xf8kFSCJpmbfY9iScYEml8w/UirAl34xacLrSMazz1T3H88CKQsf+
+         dcdpPr3XMKbKYPRuV5VV3Hti79lFiNj07DKNEBD8t39u4zfshoscM9YVVqnmzlvrDJO2
+         c0yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWAFVm/TFSwS11HlcLNuZn94zxVn4ppYpQ+XAkNBCzPbIQML5aosx3BWCHi/1wpw6Q4HNvNXlNb65f256k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI4G2epLazMAelFdBy/XW10yP1D7LSC/mIDqFFiCYKmLBqU/3Q
+	tACyc3YzOp8sypCQH4vS4/0ExBlhK/U92fMfpjcVjQF4aVWKdfUvc0FI6vvn6tA=
+X-Google-Smtp-Source: AGHT+IFJYFAKSN4vXxLSb2DTOieOWfQk536o625a5AAAchNjruC3YUkGAlycamJngjPvHpRkjvBljA==
+X-Received: by 2002:a19:914b:0:b0:53d:a4ff:317c with SMTP id 2adb3069b0e04-53da4ff3214mr1588261e87.43.1731613872230;
+        Thu, 14 Nov 2024 11:51:12 -0800 (PST)
+Received: from localhost.localdomain (77-95-74-246.bb.cust.hknett.no. [77.95.74.246])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da6530d81sm288780e87.160.2024.11.14.11.51.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 11:51:11 -0800 (PST)
+From: Tore Amundsen <tore@amundsen.org>
+To: pmenzel@molgen.mpg.de
+Cc: andrew+netdev@lunn.ch,
+	anthony.l.nguyen@intel.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	ernesto@castellotti.net,
+	intel-wired-lan@lists.osuosl.org,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	przemyslaw.kitszel@intel.com,
+	tore@amundsen.org
+Subject: [Intel-wired-lan] [PATCH v2 0/1] ixgbe: Correct BASE-BX10 compliance code
+Date: Thu, 14 Nov 2024 19:50:46 +0000
+Message-ID: <20241114195047.533083-1-tore@amundsen.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <ec66b579-90b7-42cc-b4d4-f4c2e906aeb9@molgen.mpg.de>
+References: <ec66b579-90b7-42cc-b4d4-f4c2e906aeb9@molgen.mpg.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6i0rY8wHQ7vTr45b"
-Content-Disposition: inline
-In-Reply-To: <20241114140023.3534980-3-cl634@andestech.com>
+Content-Transfer-Encoding: 8bit
 
+The current code in ixgbe_82599 checks the SFP Ethernet compliance code
+against IXGBE_SFF_BASEBX10_CAPABLE to determine if an SFP module supports
+1GB BASE-BX. According to SFF-8472 (section 5.4 Transceiver Compliance
+Codes), the BASE-BX10 bit is defined as bit 6, which corresponds to a
+value of 0x40 (binary 01000000).
 
---6i0rY8wHQ7vTr45b
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+However, the current value of IXGBE_SFF_BASEBX10_CAPABLE is 0x64 (binary
+01100100), which incorrectly sets bits for 1000BASE-CX (bit 2) and
+100BASE-FX (bit 5) in addition to BASE-BX10 (bit 6). This mix-up causes
+the driver to incorrectly configure for BASE-BX when encountering
+1000BASE-CX modules. Although 100BASE-FX does not pass the nominal
+signaling rate check, this error could lead to future bugs if other
+codes start to depend on the incorrect value of
+IXGBE_SFF_BASEBX10_CAPABLE.
 
-On Thu, Nov 14, 2024 at 10:00:22PM +0800, CL Wang wrote:
-> Document Device Tree bindings for the Andes ATCRTC100 Real-Time Clock.
->=20
-> Signed-off-by: CL Wang <cl634@andestech.com>
+This patch corrects the value of IXGBE_SFF_BASEBX10_CAPABLE to 0x40.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Changelog for v2:
+- Added Fixes tag as requested by Paul Menzel.
 
---6i0rY8wHQ7vTr45b
-Content-Type: application/pgp-signature; name="signature.asc"
+Tore Amundsen (1):
+  ixgbe: Correct BASE-BX10 compliance code
 
------BEGIN PGP SIGNATURE-----
+ drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzZTsgAKCRB4tDGHoIJi
-0qR4AP9phbB0JhUoS2WDrZPBv/XLAkYfDbswhw1xknXnzvg30wD+PsfMc0zVohKl
-/33av5aZPpL0Mf51WSl425idQqjBMgU=
-=uI+O
------END PGP SIGNATURE-----
+-- 
+2.43.0
 
---6i0rY8wHQ7vTr45b--
 
