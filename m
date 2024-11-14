@@ -1,108 +1,142 @@
-Return-Path: <linux-kernel+bounces-408722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6CE79C82BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:46:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B47F99C82C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:48:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FF841F22568
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 05:46:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24984B26ED0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 05:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126851E7C2D;
-	Thu, 14 Nov 2024 05:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113441E9074;
+	Thu, 14 Nov 2024 05:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qNGgxBxU"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BsYHpOIO"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C12915575D;
-	Thu, 14 Nov 2024 05:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B5654723;
+	Thu, 14 Nov 2024 05:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731563152; cv=none; b=VKyUclLzkdW+Ms+mOujzl1D/okQNjyEepEOAkQbyvaMw+zV/DJkKgCE6+yJbFahSehLoyp6cwyvV/PlbdaOgxC2h7oCN9bkDntgPtlW1mi27nuOsiZ1AVruOBgzmAIi0dZ5FIU/BBKwXSFRuUhZtWzME7dpoUtM7NlEuyF0k/2k=
+	t=1731563289; cv=none; b=b7KSD0usYw3voXZ4F2IJzebYne506GBZhWxAosJSOJPrjj32xbkRWHkg8g+dfsOv4RPfeDD3rWt2Ml/nZNW3vwK8yDxRIeX3joz1W33ehCSENP368rXvASo4RbnCHjY0DBsj8TpDJK57E1lAXrLjws2qsPWEABStxHx3W9sVfCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731563152; c=relaxed/simple;
-	bh=YpYZ4XQNaecIGTkQbob24vX7yqLqOb2Gg12hJ5EP1Wk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TbxKiNkpmb1QzftHo4AO03tu4eqZoluBw+LYjuWhRoN5LNVEmJxkwYWY5QCK1zf/RU2S2HcB1smu5AeaUloA4HkSCIQ5cwZ3IRKcSSfgTltHEqumpRaFk1+GvGjYGFIDsREwnGyIvCqTC3fZFp+J/ENoi7JMzMItrwB9fXM5FaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qNGgxBxU; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=fbpwtEaKHoqSv+7NpsTPm7xh/LRBD66D2U2t5wW/fqU=; b=qNGgxBxUC4g8FeHsyUppVqNjRI
-	qTFDkMIw/QHWlyetGkTXJNA+ENFfEPJJ1N+uLowTxjtue7xRRSWARyfRJQyW7lZLKNsjndsvqh/dP
-	6ZMKAVHQci11JixDuu8W5STmMm0uq1KEIgm7ciSA9fiMWxMs6Q5yh+e4nq2RyslSr7Hnf4nVcxShr
-	QIOIWAp8JWBTgM7fdfPkQOSc0VPYnMr502yuucz1uzx6NINa4bDMrOKXDvZPFarkRy+oRFtrIgRWu
-	6czVBmtnKpx5aHn8AzHPPbZz+biL17Ie8CCVBCxGwuHJ4qkcb1fgQyYQ3YbY+RoeQTEETTYK/pWLL
-	fa+mWI4Q==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tBSfr-0000000DSIT-1RLM;
-	Thu, 14 Nov 2024 05:45:47 +0000
-Message-ID: <f78a4c4f-1efa-4aad-87e9-14c90d6e437f@infradead.org>
-Date: Wed, 13 Nov 2024 21:45:42 -0800
+	s=arc-20240116; t=1731563289; c=relaxed/simple;
+	bh=UUVZ+s2eWTJ6wFBSTgTKNpdW/n+MH5XoZgb7GGA1Aik=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Mg4hEzoc7YvhVylPU2tqER5X4Gdl8LaEaDmGpD3qBMgmMQIkmNWAIpGw9Kjw6ZpF2pb2mXSnP/2DGroQVw3OQgN9kM5uBtMHOAOg0NoavnyDJ/7EAFHjze1XNN3OpQc0DvXpsUE6VdgYC8mkywN9t/SVhX/PYwssG9HRk+/OSkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BsYHpOIO; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ADH1OGh021963;
+	Thu, 14 Nov 2024 05:47:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4IMgdQNRR4Zb4R3bPlJdvqkt3knnF08Yoqh+v3Bhu1c=; b=BsYHpOIOJoXcSts8
+	sVe/nAhbp5RDsBLiwImqDBBPK/o5GXynvN33N0AsfxlAI9uyx16p4Ar5i7k9XcRH
+	wtYCcCBtMTCiApD8wnEpzLGRtSVc63ehvv2Y6O0ZhMIJV7u23fLV9KVXp6lJXpkM
+	XdOwAKSAhaOMCin1xGGRpQCZNAWEgpJC8uArK5T354pqOZ8jOZ1YECBjgbBszQy4
+	geOqwMY5Z7rutDa1elQP0LLUQGLwm75iDgRwtsIMDsvOwxwbS05dVedOZYubKrpc
+	btsXdMcVgkhO/fpqxfnvRYDvxrTa1lHenZQJ+nz7q3WvVawX04WaumTkK6iwUoK2
+	zdNUxg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vsg52ukg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 05:47:43 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AE5lga9030126
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 05:47:42 GMT
+Received: from [10.204.101.50] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 13 Nov
+ 2024 21:47:37 -0800
+Message-ID: <1e88f7d3-7823-d550-f0d1-5f50cfee79ac@quicinc.com>
+Date: Thu, 14 Nov 2024 11:17:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 17/22] HID: intel-thc-hid: intel-quicki2c: Add THC
- QuickI2C driver skeleton
-To: Even Xu <even.xu@intel.com>, jikos@kernel.org, bentiss@kernel.org,
- corbet@lwn.net, bagasdotme@gmail.com, aaron.ma@canonical.com
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, Xinpeng Sun <xinpeng.sun@intel.com>,
- Rui Zhang <rui1.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-References: <20241114053416.4085715-1-even.xu@intel.com>
- <20241114053416.4085715-18-even.xu@intel.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v5 05/28] media: iris: implement video firmware
+ load/unload
 Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20241114053416.4085715-18-even.xu@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Vikash Garodia
+	<quic_vgarodia@quicinc.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: Hans Verkuil <hverkuil@xs4all.nl>,
+        Sebastian Fricke
+	<sebastian.fricke@collabora.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Nicolas Dufresne <nicolas@ndufresne.ca>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?=
+	<u.kleine-koenig@baylibre.com>,
+        Jianhua Lu <lujianhua000@gmail.com>, <linux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241105-qcom-video-iris-v5-0-a88e7c220f78@quicinc.com>
+ <20241105-qcom-video-iris-v5-5-a88e7c220f78@quicinc.com>
+ <537ee97b-97d9-4ed8-9e11-eb3489eeff26@linaro.org>
+ <f16dac0e-aa0f-5984-2cee-3e4e684e93db@quicinc.com>
+ <be7b67ce-f601-4c93-a8b6-b5660f0e753e@linaro.org>
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <be7b67ce-f601-4c93-a8b6-b5660f0e753e@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: UZtjmgRLpOc45CpiWXNB-V2VRFt_GfPV
+X-Proofpoint-ORIG-GUID: UZtjmgRLpOc45CpiWXNB-V2VRFt_GfPV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 phishscore=0 malwarescore=0 lowpriorityscore=0
+ mlxscore=0 mlxlogscore=828 impostorscore=0 bulkscore=0 adultscore=0
+ suspectscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411140043
 
 
 
-On 11/13/24 9:34 PM, Even Xu wrote:
-> diff --git a/drivers/hid/intel-thc-hid/Kconfig b/drivers/hid/intel-thc-hid/Kconfig
-> index 0d0a3877eeb0..275e42a4f7a1 100644
-> --- a/drivers/hid/intel-thc-hid/Kconfig
-> +++ b/drivers/hid/intel-thc-hid/Kconfig
-> @@ -28,4 +28,15 @@ config INTEL_QUICKSPI
->  
->  	  Say Y/M here if you want to support Intel QuickSPI. If unsure, say N.
->  
-> +config INTEL_QUICKI2C
-> +	tristate "Intel QuickI2C driver based on Intel Touch Host Controller"
-> +	depends on INTEL_THC_HID
-> +	help
-> +	  Intel QuickI2C, uses Touch Host Controller (THC) hardware, implements
+On 11/13/2024 9:26 PM, Bryan O'Donoghue wrote:
+> On 13/11/2024 05:20, Dikshita Agarwal wrote:
+>>>> +err_put_node:
+>>>> +    of_node_put(node);
+>>> remove
+>> Sure, Will make the change.
+>> but are we just trying to avoid using "goto" here?
+>>
+>> Thanks,
+>> Dikshita
+> 
+> Currently you'd be leaking because you only do the put on the error path.
+> 
+>> +    rmem = of_reserved_mem_lookup(node);
+> 
+> of_node_put(node);
+> 
+Ah, Right!
+Will fix this
 
-	        QuickI2C uses
-
-> +	  HIDI2C (HID over I2C) protocol. It configures THC to work at I2C
-
-	                                                            in I2C
-
-> +	  mode, and controls THC HW sequencer to accelerate HIDI2C transcation
-
-	                         hardware                          transaction
-
-> +	  flow.
-> +
-> +	  Say Y/M here if you want to support Intel QuickI2C. If unsure, say N.
-> +
->  endmenu
-
--- 
-~Randy
-
+Thanks,
+Dikshita
+> ---
+> bod
 
