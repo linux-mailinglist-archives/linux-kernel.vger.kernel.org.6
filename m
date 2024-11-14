@@ -1,148 +1,129 @@
-Return-Path: <linux-kernel+bounces-409360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEEE39C8BB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:25:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 792DB9C8BC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:26:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8583B1F25567
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:25:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25BCD282E8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3321FAC5B;
-	Thu, 14 Nov 2024 13:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A001FAF05;
+	Thu, 14 Nov 2024 13:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=bob.beckett@collabora.com header.b="lZLferIz"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h7cUMFOS"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19681F9EC0
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731590697; cv=pass; b=RspJoXt85ppxzVzAfrEIYU7wJeFgeefzeH5mOfKOvl6LbtyM2MbBghVBJgBnyiN/FYMwV4up8cq8u6nQRusn6oR/Rj2toYqnVYsCWSoB35Wwo/MBupL2NY+ZPx0p/Xi8R5UbPxWI86yLaYMGHmBlqqF3oHicjRebXfYrZ0DkTgU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731590697; c=relaxed/simple;
-	bh=Y56n23nIYrukdKIHEdX6cFZdepEE2orakRTzVbRAag0=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=LlxJWrTDdTQe9mpEDNlyBkPjaeJCTN3x/XP1Je0U+qw+j754QuqLbuhM3K2BQ17QKWzCJGf45EQFolLsdoXJaUqKW1dlQ+808JJnV6HHw4ylvyjFae4DVz4mwg++1aO6k4W9k4DOS2ItxUUqPMvSxZOcY5gdClnvd+r7X/0cQjw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=bob.beckett@collabora.com header.b=lZLferIz; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1731590679; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=dExcrHdI4NLng30EjTasoZWqecc0YZU02PEJaX/N0PYWfsCOQ9ayZLHsqvPAcqp/CE/yRWRv4OWgUUhlS0WpLi6VTmVksGrhZQy9nhOXI20cze96kSHmFJQEFOinPgR9fBvOIKHf76z9XJDEhIvgkEkr7+DXcgyip9JISyIQVMg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1731590679; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=LOLHAUJhptSneCwD15uTXeURWvGOUY0U2+/TzxvTOCA=; 
-	b=KxRh7YzCezAMVh9HRq/UJNwFhYhFBWnhS30Q9koDfP9VRhvsAgC5yfhkqYIz6i7ta5cUfQ7he8gLxjaF9nbnNo1+QEMeCvDIk1yoTg30IGrbemZdCrN2I10ZqG519ZCnSZCPRjMaqocd5ofGWNUgW1U6AeIpj+nYv30Qn8iAgxw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=bob.beckett@collabora.com;
-	dmarc=pass header.from=<bob.beckett@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1731590679;
-	s=zohomail; d=collabora.com; i=bob.beckett@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=LOLHAUJhptSneCwD15uTXeURWvGOUY0U2+/TzxvTOCA=;
-	b=lZLferIzClsWcdjwTXRpftqe8X2iKjiOOFof9B69o418/NUtoi5emPQxcCcF0oha
-	P6BLbeBqRsoZPP4EaurChRXOLwLglaCEh9xmP7mrJ+uNoDANNsW1KlcCzG0/4duu1sJ
-	N0EGhD27wTjVTV8tzjArw4/e5v4Z4Yem2pTI7yZE=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1731590648390658.8815358439043; Thu, 14 Nov 2024 05:24:08 -0800 (PST)
-Date: Thu, 14 Nov 2024 13:24:08 +0000
-From: Robert Beckett <bob.beckett@collabora.com>
-To: =?UTF-8?Q?=22Pawe=C5=82_Anikiel=22?= <panikiel@google.com>
-Cc: "axboe" <axboe@kernel.dk>, "hch" <hch@lst.de>,
-	"kbusch" <kbusch@kernel.org>, "kernel" <kernel@collabora.com>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"linux-nvme" <linux-nvme@lists.infradead.org>,
-	"sagi" <sagi@grimberg.me>
-Message-ID: <1932ad8722a.102613bdb3737.769617317074446742@collabora.com>
-In-Reply-To: <20241114113803.3571128-1-panikiel@google.com>
-References: <20241112195053.3939762-1-bob.beckett@collabora.com> <20241114113803.3571128-1-panikiel@google.com>
-Subject: Re: [PATCH] nvme-pci: 512 byte aligned dma pool segment quirk
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C581FAC5B
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731590805; cv=none; b=TRnxKzpZAcAWTRBqCFFI8L/08pZqlaNuW5rDOJB9jqvMvujbvIEcr0dtMilOB9dbwBJ/YpHndVweJMVwmr3nAMz4bzqJCCzkkpNfSaRWMHincoUZPhvH9ZXO6Uwi239Nn5r+Qlfht/iEp1LC5gu/L6yRLYHmGqlOUYHkvNqfPnc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731590805; c=relaxed/simple;
+	bh=HC8zIVJhmZGBaTgVFGCULFt5nrR2kYgDBpJlRO/4s24=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MBVQAdppsYypLCW029J0qhDCPlUfeDa93QDUEVazeczIYGwh87IuZAdoaHTELFHc+pgWJDJp1zt31Xyll1P2/lkOo23fty6BmnsgPN0Ev3x+ZCux2ie75mCRyk7ZFxeYXSNtx5QaG59IjTaLAE1qaD1EuhVumFvjyU/syiJlzGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h7cUMFOS; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e381676ab50so493618276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 05:26:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731590803; x=1732195603; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=44Uknm2sw9kBbdVK3KPiUzPorxfNwDSfI3ZnmRNP3ac=;
+        b=h7cUMFOSzOMwGjm7rgA8orgvarcVteVUJ4CkUj4NRaU59IYac7yOM2SiiOQ0MESCe2
+         /we5kxWZUkWuqxTUemeMhH2RE7V5wMrYqri9IzafZr6y3EorMywjv3AzVIDcoldl0vcH
+         8om2WME2s7tA+NUcVCXLfq7Hdg7OF5WGH6VqJ5FrvQXvCamuDIyqmlvDatGnK/UFnICG
+         JP6/rt/8eC5xWvL4L8zm1nNsyRv2IBJHQFLjbMmMhW7ObHaV731Sh6Z0h5UdrJEDNv/A
+         RotY5uqhilS8A1pkWkyV3nx+37K7ktNFtkdDErUSQeB7Z6yHS9s9dMypdlM/k+QccPzs
+         jFSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731590803; x=1732195603;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=44Uknm2sw9kBbdVK3KPiUzPorxfNwDSfI3ZnmRNP3ac=;
+        b=ViWpGgDxjKv6i46uWYnYQT94Ll/klOX+Dh0GjKXPIsZWI36vEM6F0ySfF5QCI3pe6G
+         4C+6pNPP713EYXvOMtushJAZFAqhzzu2eEOU+G3/6D4PDmum/rzANJ1boqb8cHDVpEfn
+         6WT325QqguYE21U+WDacVnvLBgshQIxRzib3aeNkw+OQDLQitkSMvvx3gUJOF/2QW7jO
+         EJhL9N8TA7PLc6i8GtvwRxmEPOi3BQERb9yxa1bmC3lT9IX/epXMIrQqXwbKtJMut08z
+         UymmqaiktrPK8nMNUI12q8BxWbUjpvQEmekgAeo7NCF3qHboKCEQ9hBHP7UiT9t87Mdi
+         X70Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXrXT85g5gBoNaP/sWslmlM8Rv0Mob/jp5WVjohwiBp+bfMKlt4nlXGWzgTWmmUO8mHpXGZ+Dli+erKnIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5b4OhwvrTkbE4r4Rs2EVMtOBRpz94/Nq0FuGwztROeDSTpxtB
+	Na5WwqtSx4SQH9VRIUZQzWSQqYwyKuSVc56sZ9nCrM5cdiPVnrOIGE5cTo6uBABg+m7XgHk81g3
+	9I81Z/TklsMPkkZOb356J1iJO+M4ovu+NVj0EBw==
+X-Google-Smtp-Source: AGHT+IFwf8z1mFNYgsE8PD3lTDBZomFAHFwSNm4/O3SWdpkSZXwgnQCoA5dTaVPjasFbh6e4N903GF7+1g2FDtRLHK4=
+X-Received: by 2002:a05:690c:4482:b0:6ee:3f5e:1c18 with SMTP id
+ 00721157ae682-6ee3f5e2b1amr33209767b3.4.1731590802836; Thu, 14 Nov 2024
+ 05:26:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241114074722.4085319-1-quic_varada@quicinc.com>
+ <20241114074722.4085319-5-quic_varada@quicinc.com> <7e293d68-73c1-425d-ae52-e0893c8e0a61@oss.qualcomm.com>
+In-Reply-To: <7e293d68-73c1-425d-ae52-e0893c8e0a61@oss.qualcomm.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 14 Nov 2024 15:26:32 +0200
+Message-ID: <CAA8EJprqOxcm9NPdNZkA0XzCbv1E+MXicTcqx72sgCpZoE2sUg@mail.gmail.com>
+Subject: Re: [PATCH v3 4/6] phy: qcom: qmp: Enable IPQ5424 support
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Varadarajan Narayanan <quic_varada@quicinc.com>, vkoul@kernel.org, kishon@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	gregkh@linuxfoundation.org, andersson@kernel.org, konradybcio@kernel.org, 
+	mantas@8devices.com, quic_kbajaj@quicinc.com, quic_kriskura@quicinc.com, 
+	quic_rohiagar@quicinc.com, abel.vesa@linaro.org, quic_wcheng@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
 
+On Thu, 14 Nov 2024 at 14:47, Konrad Dybcio
+<konrad.dybcio@oss.qualcomm.com> wrote:
+>
+> On 14.11.2024 8:47 AM, Varadarajan Narayanan wrote:
+> > Enable QMP USB3 phy support for IPQ5424 SoC.
+> >
+> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > ---
+> > v2: Add 'Reviewed-by: Dmitry Baryshkov'
+> > ---
+> >  drivers/phy/qualcomm/phy-qcom-qmp-usb.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-usb.c b/drivers/phy/qualcomm/phy-qcom-qmp-usb.c
+> > index acd6075bf6d9..f43823539a3b 100644
+> > --- a/drivers/phy/qualcomm/phy-qcom-qmp-usb.c
+> > +++ b/drivers/phy/qualcomm/phy-qcom-qmp-usb.c
+> > @@ -2298,6 +2298,9 @@ static int qmp_usb_probe(struct platform_device *pdev)
+> >
+> >  static const struct of_device_id qmp_usb_of_match_table[] = {
+> >       {
+> > +             .compatible = "qcom,ipq5424-qmp-usb3-phy",
+> > +             .data = &ipq9574_usb3phy_cfg,
+> > +     }, {
+>
+> If the software interface is the same, can this just use ipq9574 as a
+> fallback compatible?
 
+Generally I'd agree here, but as PHY tables include not just setup
+values, but also platform and chip-specific tunes, I think it's better
+to have multiple entries rather than having to cope with the possible
+issues. The only "fallback" compatibles that we have are qcs615-ufs ->
+sm6115-ufs and qcs8300-ufs -> sa8775p-ufs. Thus I think it's better to
+stay within the single-compat model.
 
-
-
-
- ---- On Thu, 14 Nov 2024 11:38:03 +0000  Pawe=C5=82 Anikiel  wrote ---=20
- > Hi all,
- >=20
- > I've been tracking down an issue that seems to be related (identical?) t=
-o
- > this one, and I would like to propose a different fix.
- >=20
- > I have a device with the aforementioned NVMe-eMMC bridge, and I was
- > experiencing nvme read timeouts after updating the kernel from 5.15 to
- > 6.6. Doing a kernel bisect, I arrived at the same dma pool commit as
- > Robert in the original thread.
- >=20
- > After trying out some changes in the nvme-pci driver, I came up with the
- > same fix as in this thread: change the alignment of the small pool to
- > 512. However, I wanted to get a deeper understanding of what's going on.
- >=20
- > After a lot of analysis, I found out why the nvme timeouts were happenin=
-g:
- > The bridge incorrectly implements PRP list chaining.
- >=20
- > When doing a read of exactly 264 sectors, and allocating a PRP list with
- > offset 0xf00, the last PRP entry in that list lies right before a page
- > boundary.  The bridge incorrectly (?) assumes that it's a pointer to a
- > chained PRP list, tries to do a DMA to address 0x0, gets a bus error,
- > and crashes.
- >=20
- > When doing a write of 264 sectors with PRP list offset of 0xf00,
- > the bridge treats data as a pointer, and writes incorrect data to
- > the drive. This might be why Robert is experiencing fs corruption.
- >=20
- > So if my findings are right, the correct quirk would be "don't make PRP
- > lists ending on a page boundary".
-
-This is interesting.
-I had the same idea previously. I initially just changed the hard coded 256=
- / 8 to use 31 instead, which should have ensured the last entry of each se=
-gment never gets used.
-When I tested that, it not longer failed, which was a good sign. So then I =
-modified it to only do that on the last 256 byte segment of a page, but the=
-n is started failing again.
-This lead me to believe it was not a chaining issue specifically, so I went=
- looking for other hypotheses, eventually setting on 512 byte alignment.
-I never saw any bus error during my testing, just wrong data read, which th=
-en fails image verification. I was expecting iommu error logs if it was try=
-ing to access a chain in to nowhere if it always interpreted last entry in =
-page as a link. I never saw any iommu errors.
-
- >=20
- > Changing the small dma pool alignment to 512 happens to fix the issue
- > because it never allocates a PRP list with offset 0xf00. Theoretically,
- > the issue could still happen with the page pool, but this bridge has
- > a max transfer size of 64 pages, which is not enough to fill an entire
- > page-sized PRP list.
- >=20
- > Robert, could you check that the fs corruption happens only after
- > transfers of size 257-264 and PRP list offset of 0xf00? This would
- > confirm my theory.
-
-I'd be glad to if you could share your testing method.
-Currently I use a desync image verification which does lots of reads in par=
-allel and is the only method I've found so far that can repro in a reasonab=
-le amount of time.
-
- >=20
-
-
+-- 
+With best wishes
+Dmitry
 
