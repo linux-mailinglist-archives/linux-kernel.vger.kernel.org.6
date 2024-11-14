@@ -1,122 +1,152 @@
-Return-Path: <linux-kernel+bounces-409110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63EE99C87A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:33:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8BD9C879A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:32:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C611B2D053
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:31:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9061B28592C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916291F7099;
-	Thu, 14 Nov 2024 10:28:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AF81F9A9F;
+	Thu, 14 Nov 2024 10:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ZJukTb2O"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="KmBePFOb"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205A11DFE28;
-	Thu, 14 Nov 2024 10:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E741F76D5;
+	Thu, 14 Nov 2024 10:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731580081; cv=none; b=Ls1vmbP0TtyDpoOjq+hImBS/xIoULjIRb+0yPJFt8I47cF23JtY8xh70SnvOlRs+Kyv8zekhv7ffqvNcJJ/ArqpoWXFmD2KfywMAAnb3UWrnOtqlRl0Tl0iSn4hTU5++vKNxWm9loYP074pezBcyRNHtp7HMJ494Zpa+agf7LUA=
+	t=1731580115; cv=none; b=uhGd6zr0EcWsXfUDcvSSk0GLu+guIaHUH+CPsp0HuQXPKRTCRmcbE3cRZ593S9No8RsRZ67Jlmwet5an4EeQP6PQW6NF66UqkS+y/l8AWTtQn28/DWshFejfiwuiELDX19cTXZ21tNHVsVniQTK2g2kg5O/qY3elweGaKEC+OJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731580081; c=relaxed/simple;
-	bh=jLJs8CwQOwELsO9XTQy5DE6dRpuwI0PxDLdNbN2siyg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QreCC4+CA11+FaazXNQk52+w1Nuli8PAKwUde8u7pNIHjmIbLLHpt6kqqHi0DOiVjwOfrEB6yqbXX/RybHou1f603B8vt8up1X8+aJ1ub9C2jK/04tr126051cFpuUNe5wjYOpHcG5Uye+ZBKM6rgGos+UyBoKKzhPp/1vBBx94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ZJukTb2O; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE5jwNC016652;
-	Thu, 14 Nov 2024 11:27:06 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=7MbnE8ms6zYSIbpQhA3TMj
-	1iM72Lewm6wm7M7VcisaY=; b=ZJukTb2OEWCMoCvRWZwh75QtRm1O0SCRqkwOzW
-	9wFlBALJ3Zx4vYu+qf+vAh80ujPAak9qvnEr/4MmKVYQbrWrhkktFCPX7rdkQI9i
-	ZQaXem7W53Gu4TWHS1J5feYoCYetyvKo0BZRiEbDPO74ax20dW1Fz1FE3vq1rhFP
-	8Hd4YYSCAJgj+BqoA6oCAN6Gf6gRsf7HcSBg73JEJpY5WD1s6ruz+396KIWjIzzg
-	meWbxokrGYOYZBDyOkSpc24hW3tKi95HEqk2iIM9eK50x0wiDSqfgtbACbbFcyva
-	P8pyjR1pDxsIlXOduJG7szNapmeqpn2FyyF8/z9M3GKMdCAw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42syggxh32-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Nov 2024 11:27:06 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D9E5A4002D;
-	Thu, 14 Nov 2024 11:26:00 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 60E1F23F998;
-	Thu, 14 Nov 2024 11:25:16 +0100 (CET)
-Received: from localhost (10.252.20.241) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 14 Nov
- 2024 11:25:16 +0100
-From: Olivier Moysan <olivier.moysan@foss.st.com>
-To: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Olivier Moysan <olivier.moysan@foss.st.com>
-CC: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        <linux-iio@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] iio: adc: stm32-dfsdm: handle label as an optional property
-Date: Thu, 14 Nov 2024 11:24:59 +0100
-Message-ID: <20241114102459.2497178-1-olivier.moysan@foss.st.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1731580115; c=relaxed/simple;
+	bh=jwgoRarckGp4IApZV/vwQhGXTbYx/T8btKhE/KN4R5c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EaJGIIFpK4yHYErltgaZoUxJMKkM1sS7vAEpiEoQFtHmrBs8O7l+HbrloyG0n8BfiG4PUsU5tB8nD+U2ZiJUNwNb9X2fxGZ/KTR5t6POZvdh7JnTVw6p2tq3DoDSquWrCxX4A3pP5CL3Q38c09Ntb8wybfVe6K4CL9imlXZiNmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=KmBePFOb; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1731580111;
+	bh=jwgoRarckGp4IApZV/vwQhGXTbYx/T8btKhE/KN4R5c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KmBePFObGzJgBODqO4RvBUcOJ3Ht5iDtLOxqgfoEDG5hoURFynp5E3MajsZ2TC7ps
+	 rN03pIh0Ij7fD/1jernHXeJUZdHyjrc7zVGnvzrfw/TSxtYZEjvlhpKxJPgS+1J9Xq
+	 4ILH3JweUJkbhrTeWaYhubsFiiIssUIEbrVzEr3EqRW5oBoftdrhDyBAisqQt3QwD+
+	 rR18lOY1T3VHCa7B0H2qLA52bDaNm556QDJJqfQEVjb9n2gdTjjtXaPztTqYbDq0jv
+	 tTEFuz0oUf1kqUc1KEKdOnN12bsFKS1WoRsTNeiczLV00cjjIR3VHZB6qEGD/X98A1
+	 KlS0yuWkQtyBw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B1A1F17E35E0;
+	Thu, 14 Nov 2024 11:28:30 +0100 (CET)
+Message-ID: <6583e7a8-f4dd-4670-83dc-73ad4c5f208f@collabora.com>
+Date: Thu, 14 Nov 2024 11:28:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] thermal/drivers/mediatek/lvts_thermal: Switch to
+ IMMEDIATE_MODE
+To: Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Hsin-Te Yuan <yuanhsinte@chromium.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>, =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?=
+ <nfraprado@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20241108-lvts-v1-1-eee339c6ca20@chromium.org>
+ <02bbfb8c-817c-447a-92b9-bd03d76b66b1@linaro.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <02bbfb8c-817c-447a-92b9-bd03d76b66b1@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-The label property is defined as optional in the DFSDM binding.
-Parse the label property only when it is defined in the device tree.
+Il 14/11/24 09:13, Daniel Lezcano ha scritto:
+> On 08/11/2024 07:46, Hsin-Te Yuan wrote:
+>> Currently, MT8192 cannot suspend with FILTERED_MODE. Switch to
+>> IMMEDIATE_MODE will fix this.
+> 
+> Given the comments and the different changes related to the filtered and immediate 
+> modes, I won't apply the patch until this is clearly sorted out.
+> 
 
-Fixes: 3208fa0cd919 ("iio: adc: stm32-dfsdm: adopt generic channels bindings")
-Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
----
- drivers/iio/adc/stm32-dfsdm-adc.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+Thanks - indeed do not apply this for now.
 
-diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-dfsdm-adc.c
-index 2037f73426d4..e304e3714020 100644
---- a/drivers/iio/adc/stm32-dfsdm-adc.c
-+++ b/drivers/iio/adc/stm32-dfsdm-adc.c
-@@ -691,11 +691,14 @@ static int stm32_dfsdm_generic_channel_parse_of(struct stm32_dfsdm *dfsdm,
- 		return -EINVAL;
- 	}
- 
--	ret = fwnode_property_read_string(node, "label", &ch->datasheet_name);
--	if (ret < 0) {
--		dev_err(&indio_dev->dev,
--			" Error parsing 'label' for idx %d\n", ch->channel);
--		return ret;
-+	if (fwnode_property_present(node, "label")) {
-+		/* label is optional */
-+		ret = fwnode_property_read_string(node, "label", &ch->datasheet_name);
-+		if (ret < 0) {
-+			dev_err(&indio_dev->dev,
-+				" Error parsing 'label' for idx %d\n", ch->channel);
-+			return ret;
-+		}
- 	}
- 
- 	df_ch =  &dfsdm->ch_list[ch->channel];
--- 
-2.25.1
+If this has been broken for a year, one or two more weeks ain't gonna be a
+show stopper, as long as we can come to a proper fix during that time, instead
+of yet another compromise.
+
+Anyway....
+
+We discussed about that internally and we do suspect that there might be some
+interrupt that is getting erroneously enabled, never handled, and constantly
+firing because.. well, it was never handled, so... :-)
+
+Nicolas is looking into this issue, and I really hope that we can come to a
+conclusion that will make us switch back all of the SoCs to filtered mode
+instead, as there indeed are some advantages in using that.
+
+Cheers,
+Angelo
+
+>> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+>> ---
+>>   drivers/thermal/mediatek/lvts_thermal.c | 3 ---
+>>   1 file changed, 3 deletions(-)
+>>
+>> diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/ 
+>> lvts_thermal.c
+>> index 
+>> 1997e91bb3be94a3059db619238aa5787edc7675..daad52f14fc03d0c4131f2ffdf3eb6b49a4a43d0 100644
+>> --- a/drivers/thermal/mediatek/lvts_thermal.c
+>> +++ b/drivers/thermal/mediatek/lvts_thermal.c
+>> @@ -1541,7 +1541,6 @@ static const struct lvts_ctrl_data 
+>> mt8192_lvts_mcu_data_ctrl[] = {
+>>           },
+>>           VALID_SENSOR_MAP(1, 1, 0, 0),
+>>           .offset = 0x0,
+>> -        .mode = LVTS_MSR_FILTERED_MODE,
+>>       },
+>>       {
+>>           .lvts_sensor = {
+>> @@ -1552,7 +1551,6 @@ static const struct lvts_ctrl_data 
+>> mt8192_lvts_mcu_data_ctrl[] = {
+>>           },
+>>           VALID_SENSOR_MAP(1, 1, 0, 0),
+>>           .offset = 0x100,
+>> -        .mode = LVTS_MSR_FILTERED_MODE,
+>>       },
+>>       {
+>>           .lvts_sensor = {
+>> @@ -1567,7 +1565,6 @@ static const struct lvts_ctrl_data 
+>> mt8192_lvts_mcu_data_ctrl[] = {
+>>           },
+>>           VALID_SENSOR_MAP(1, 1, 1, 1),
+>>           .offset = 0x200,
+>> -        .mode = LVTS_MSR_FILTERED_MODE,
+>>       }
+>>   };
+>>
+>> ---
+>> base-commit: 906bd684e4b1e517dd424a354744c5b0aebef8af
+>> change-id: 20241108-lvts-f7beb36efc59
+>>
+>> Best regards,
+> 
+> 
+
 
 
