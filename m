@@ -1,400 +1,205 @@
-Return-Path: <linux-kernel+bounces-408578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 382509C80B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:25:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF229C80B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:26:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E85172804E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:25:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 948161F248C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A891D1F779B;
-	Thu, 14 Nov 2024 02:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF45C1E9097;
+	Thu, 14 Nov 2024 02:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="b9C77gCi"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="PgsSq8i1"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2115.outbound.protection.outlook.com [40.107.215.115])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061901F76DF
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 02:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731550922; cv=none; b=l9QbgGNtfDR92lJOUZLRpQYQZMpReaGT0SxMxYaYnT1Ko+s+kSwWVTM0xRKt6e8moh7q1dF6HNs8CPssiE+W6JO1JTlOMouBLZVoBwZeN+nZv7s3Ha5H5P87aewqSJZQcnPjmbHZaozwjYJ6k+Zd1NqxLYG0BcK0b2QICsQ0l1Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731550922; c=relaxed/simple;
-	bh=BY2FoLzwMbBSsrfXRPTuTs27Trdz1nuAyU8/yyy3MsA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oVTe0eX7sF01UtVo0ew0aX5psP6t/mawHNeQOogGU7y0QSHApWK38Su1DQPVPM+DpqF2JbheM799kwXhWz11AGJinWXDZBWCGXlzaicLq+Qf6870w3fWI6XPGgisVfxpoyVenmwLd0ecqWHzvbDooK9odtvkShit+97u+MnqOPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=b9C77gCi; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20c70abba48so798285ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 18:22:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1731550920; x=1732155720; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EMH58FpqyzdhLZILUhxhOSywe1at4r2KNe+4dzmkYAk=;
-        b=b9C77gCiIWrn+8oIiwx8ZvRFEUWBumYWMSgwNq3wPHxxKOfIo974WCWPlkrzWpmpUP
-         +VVZHzE+LpPIvV+f31aKt9E+xQF+z4MWWweeyZqpxQfStmi/fHnOBYxiKrrEobX+aiyX
-         FDk0cf+VQExLzX5O4Eu4CzSQntbF0FipHc9z9MbbKCwOa7sxRFJ1tyCYqcj/7/aiLbw+
-         nyGEcvP2uoLbrmb06rHTw4/Wy6ztSxe33LyveJFui4RgV+Xnl7cAXOoIKzbU7PPNJO3N
-         D5Vn22F1OC3bOQ57BJ1+ZxFez5n/ShMYqvoc2n9HnOOtGhoumUoHay9LDIeeKBlXNJGq
-         Xv/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731550920; x=1732155720;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EMH58FpqyzdhLZILUhxhOSywe1at4r2KNe+4dzmkYAk=;
-        b=LNyhxstxcSC0nwB5JEVCalu0gsi0rHa/ABE5mk1oUQRqlfWkK6+qkFljVpgJReebm4
-         7ZyZGI/DUtSgVfIW1tmm+1Ivsl12J/8HY8yE9J14yId5lQyZEvUlnzee5DOEFJB4uEny
-         6RY6w3eCLsmxlRNxd9vbcS4PlUwTgc6u/Wkr+3pG4eee13kKaugVp2cQbCWjGTONUCQ5
-         3v28zOYb0eoFsoh0J3N7izgKhRG/yETHtY1nT6r4e2hB94SlGBKVuBFMKkv1l0Y4+mBa
-         7xmVTiUuHgkfksUq12Jsq4vCr+Xlee3ox49z1OknDDhm3pKFBfgdFTwS2YnBNep1V0qH
-         7GcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMPEdMo5T3vjEI+5Msvz8KEujA5gwaZeeHQEwuu79YXe5Fjud4S89zi6/Y8zROCflUsF3f9MH7JTa5UW8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUo0VZYa7HNSHw8fWdFWSSP+f8Giy7RiigPK2mJNbTqy0olAEb
-	g6lMA8PV13izj66YBLFbqYh9PfME2/KNhc1BKmSryIHexFZzm2lOnZIYkTcd/co=
-X-Google-Smtp-Source: AGHT+IEJkRgDEivbHjM/3Y8vGKrIVF1pBxKtVmYVTbNOcQ/ob1JEOiwkSnnJJCbZZKN7IErnqxc12w==
-X-Received: by 2002:a17:902:e5c5:b0:208:d856:dbb7 with SMTP id d9443c01a7336-211c50b0c46mr8006185ad.39.1731550920201;
-        Wed, 13 Nov 2024 18:22:00 -0800 (PST)
-Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211c7c499c9sm406875ad.68.2024.11.13.18.21.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 18:21:59 -0800 (PST)
-From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Wed, 13 Nov 2024 18:21:20 -0800
-Subject: [PATCH v11 14/14] riscv: Add ghostwrite vulnerability
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E841E9070;
+	Thu, 14 Nov 2024 02:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.115
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731550941; cv=fail; b=EJaa4tD7Z46NIehNRZ4hYrABDla1Rzon7FEse4gNLX7o9rPNJmxwnJraPwF7LoFBDJR3lLCCJY8/Xw0OERQgcbZhWfgetizBhQXCZmYcqenmyMea6khM7u7rnjFbeOf35FXdfmTO2uo+Kk6oF0FYOo8FK8so1prPoUpL3A0jE0U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731550941; c=relaxed/simple;
+	bh=TDsNAMmj95X9e0eyTx4ADPzSG8UUocLmWSY3elKP1UQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=CqzU8wVm5l93D5U1U3IrxBEF4QWn5kVYz2SAk0b//tIBWaF1naDa0q+2lqmLuunfXrHW0qkvTYxWrKlqTr8VhzP/U+F8sE14UNQKPC7evcdCA+uSpS9KNHWKgsd+hH5TXnPA7KPhUGPDusuROzs7vZqCOB/x9uUBhH/Mu1t95Mc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=PgsSq8i1; arc=fail smtp.client-ip=40.107.215.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Lz8ze91zEqN/nLz7mkYaGOnB2MVK1z7/GsXxx5MRpuRcgpDJy53p2JLZSOgQksRTMx1P9NhqOj5wBt/C/MG0w1Jt8GZck0DvbM21VMDyuZ5KSA3Q250wS+6QfCh9Fs0yFaeGgtk/sDxrCzY42Hdd3utRi7rdic14/NEltv8Wygzk1H2ywPYz484mp8mQ4EfU/ai8Z0/ZPqiUqLRbEA+aphT1bibLQUzg4t9ZK5Srng8oe8BlzsujI5tzC9sA3upHIIut3mYtAIs3OBlmb7TnEgZDvhXQThESOsJw2bx2TDGsAVPeQ9YTAzI5bnVL1VWmNPQIpI6Qf6SBV+BZp12jrQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TDsNAMmj95X9e0eyTx4ADPzSG8UUocLmWSY3elKP1UQ=;
+ b=IAIWRzuFqQbWBEHpJkSxcra3/lHtCU4AStm9a+UYREeW6jZBqwzkyMmxnWK9Hx1RccCwUpOPs50GP7hT4Iplun/e7HX9z3bprSGU01ZwSkShWC7OWVwn45uMF5BYw3TvNnuUByKNi0A+xJd1at700bMUyIxU7XhvTW4a7a5LnTZIELS/9nxxqpDddDddkOoKpyKJTaaMTedBIi5tusMiyXf492XwKs1qmjG698CrAV+lUxOFq9Ie5LYHQ1IC3acJsbr+3rcZxNlde2nmzbNsEsF6qO63J+frd2iFIegYqvekKTEk0qldv/olRBF3B9doGsb1Mmgul0jRCflIDRXYTg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TDsNAMmj95X9e0eyTx4ADPzSG8UUocLmWSY3elKP1UQ=;
+ b=PgsSq8i1LxIFliIoNbIY+ELXTNMnpJIQcy12JQHEiM9JyqFyGh4nenqf2TcjfQZ11Uw0V1a6iMzVGzQHT6bk66egbwGPZuTMO/F4bzgB1mAD5mj0dk+YgbI6GFP/pAJyBjJHGrtPgB6LQziuPGLcSV4bIirnTM2dV5tshu6kaigPCUWBYc9kx3sawQdWsoHGtNS+TKwBQEsidVIC4NNJ/X/ixjMbVwMhnc2dR0TcrncwlM7QVwreWdQC6d2iCcCTmUJ7AxgYhDb4g5NDm9WJ0o2KZJ/ubkQqq3L1RiUMcnpTPmK23YhpPy8i5hUqTYs2k70k5jlAmHmSL1vCyepjng==
+Received: from SEYPR06MB5134.apcprd06.prod.outlook.com (2603:1096:101:5a::12)
+ by PUZPR06MB5904.apcprd06.prod.outlook.com (2603:1096:301:113::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.18; Thu, 14 Nov
+ 2024 02:22:16 +0000
+Received: from SEYPR06MB5134.apcprd06.prod.outlook.com
+ ([fe80::6b58:6014:be6e:2f28]) by SEYPR06MB5134.apcprd06.prod.outlook.com
+ ([fe80::6b58:6014:be6e:2f28%4]) with mapi id 15.20.8137.011; Thu, 14 Nov 2024
+ 02:22:16 +0000
+From: Jacky Chou <jacky_chou@aspeedtech.com>
+To: Simon Horman <horms@kernel.org>
+CC: "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>, "davem@davemloft.net"
+	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
+	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, "ratbert@faraday-tech.com"
+	<ratbert@faraday-tech.com>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject:
+ =?big5?B?pl7C0DogW25ldC1uZXh0IDMvM10gbmV0OiBmdGdtYWMxMDA6IFN1cHBvcnQgZm9y?=
+ =?big5?Q?_AST2700?=
+Thread-Topic: [net-next 3/3] net: ftgmac100: Support for AST2700
+Thread-Index: AQHbMQZSanPeA3sdNU6SnHF6uEd5/rKyClEAgAQLA8A=
+Date: Thu, 14 Nov 2024 02:22:16 +0000
+Message-ID:
+ <SEYPR06MB51343BB70CD66E547D637FE79D5B2@SEYPR06MB5134.apcprd06.prod.outlook.com>
+References: <20241107111500.4066517-1-jacky_chou@aspeedtech.com>
+ <20241107111500.4066517-4-jacky_chou@aspeedtech.com>
+ <20241111123526.GC4507@kernel.org>
+In-Reply-To: <20241111123526.GC4507@kernel.org>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SEYPR06MB5134:EE_|PUZPR06MB5904:EE_
+x-ms-office365-filtering-correlation-id: d45f5988-7688-4f26-e187-08dd0453285c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?big5?B?UXRlS3Nrc1NqZWZTaHhOem0xbmNHYklBWXQ3ekNNSDdOR3dlaW53djF5S0pYVFU1?=
+ =?big5?B?OWtvRjRzU0dJcTVNdjZTdm4vZzJKOVlxTFlWdHd2ZE5tNG4vcGpsejZTUSs3UU1S?=
+ =?big5?B?ZE5waWtjQ0QvYnlacnRCUkJER3BPWkhZdS9ZTnU1QmVIZEo1dUFhc3JhMWFKVHpO?=
+ =?big5?B?WXkvK3JEZXRLeFBzL0h4UXVVSHNON0dKc1JaUFFFTVU2cWp5bHpuWjErQysrVDc2?=
+ =?big5?B?QWUvcTAyRGZuYzd6RWg0M2ptd2JVenkxREJJR1RseTdFUE81U2xNYVEvemhycVg1?=
+ =?big5?B?aEhLaUUrM1ZYM01TNENqYnFHTitJUkx4MzhnTVJFM21rcmt0TEVpRXlKb3BuL1lP?=
+ =?big5?B?OUZ2UVJVRVZmcW0rQ203aDF2dlREK2M4Q0tnNUwwd0czVHlzSXdxNzVTcDNRS2pq?=
+ =?big5?B?YzY3azJVaUpZdjdFSWRvL3djQU8rUVhYcEpJV3JPTE9oWldOb2o0YkliL0lrU1dY?=
+ =?big5?B?Q0E2TjBwRzUxVEVIaVgxNWdBelcvSXVBN3ZVL2JyZDdMSVJ4dGM2a1JNYVZ3djRq?=
+ =?big5?B?V0RJZWdObzRnbk85YUtGdE9ldllySVlwUElPYko3S2pvb3o1THB5ZE1MMWE3TmFJ?=
+ =?big5?B?STYzS0Z6L2IyaUdrajlBWlhpbFhFTmZUckpEdGNHQnFEZTVVRFhnMjUxM25SM2JQ?=
+ =?big5?B?VGFXU3NCdGdReWNuTUpnN1lUZ2lnOGFyei9GUlhEanJRNC91dTNabkVicnlPSzlC?=
+ =?big5?B?V3NIRytxdWZBK1o4MTZXOGYyN0Yvd1ZRNUdSTDUzL0gvMW4vTW5vMnpNVE80REp1?=
+ =?big5?B?dlZ4WXpqTXlaaUZxSXpOSDFsN25CN3lqWTVlM1Ntd0tQbC9tdjI1QURDZzB6ME5M?=
+ =?big5?B?K0Vrd1VoN2N3RGh6MUIwM2UyR3RQRzZISGVvMXdXSXJkelFSNzcyb1JKOFFBREtP?=
+ =?big5?B?QU9TR3oycjMrS3YwQWVQS2JGMk1ocGdUTmxIc2hVeGpBYmtXSEJXR3UyNXpKQ3g1?=
+ =?big5?B?TUNLSzJVU0dGclh1SVdWbnNrODlrSldPWFZCL01qbytsMU5vWjBybS9EUzlkQzhp?=
+ =?big5?B?M2NMVExDN2lNVGRtVEpzNDYwbll0SDBUYTR3VVNjdU0xWC9MYmNZUTF4djkrR1VM?=
+ =?big5?B?S3hYeWI2U2VJQTBBekI1UFpuc01LUExGRGN2Q0xiNHNuSXZmbS9DUG9LWm82Z0ZT?=
+ =?big5?B?UVpCK0NoRnlmSXJsNFlycjdlV0hPTVkyb3h1Zis0WlRWQW12dWQ5NFZGQStMTjQz?=
+ =?big5?B?VUppUWhqT09ONmRWZ2I2TW9VZWIyQnA2bFA1WTBVenNXaHFEWVE1UFRoMG04VTdF?=
+ =?big5?B?dUsvRDFQQkZMcFc3eEVBc1ErcHF3cEs1akNXdUFFbVNCUllNcEpsTk9yemJFNk9W?=
+ =?big5?B?Ry9GdUR1RVptVGk5Lyt5MzY4S3gweFVkMDBLTlh5dnB1cmVmTU5iOHhtSzJpVEpo?=
+ =?big5?B?SmFUcG0rMzV1MHdFQUlkL2NUT0gwNlV3U1plNXFSS3o4U1dUeW5hUFlOTzRXOEF0?=
+ =?big5?B?Z3Q4dUxabHZ6Nk5hQ0VXNlVFamFFUHNZV21iMGMwN01qMXhpelFTbk83UHNMQXhu?=
+ =?big5?B?T0grVjVQenRlNURUWDdCdGhmelp0WXNnbzIrdjVzd3AzcS81elZVbllvOEYySTdw?=
+ =?big5?B?Wlg0NlZwdUJlR2tiOWthUFBoUEgxTy9yUFZHanZnalh1YTZFZVo1bDhGZjN5K082?=
+ =?big5?B?Z1A5VXVZdktlWVJtRzJYd0RYTzduUnNqVVA0V2lINDRJUjRjSXFySk9KUFBqNmJW?=
+ =?big5?Q?L+hAN6xHPl5w1iPxbd21SX+vAEB3ziG/Vc3+iA0GhAs=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB5134.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?big5?B?WWo5UGthalBEbnhGSmpza3hNMk5LWXRWUGRYc0VJTmorbGtMTHVYMXBHNjYxRWhq?=
+ =?big5?B?WUJybTl1VnVyN2h1bXdFQW5kUnhtVklmSjhaZEEvdWpCSWFIOHRDYU9Xbjh4OTA4?=
+ =?big5?B?c1NzRXFRYkxOQmhIamZmZktZT0hFWldKNTNvWFpOUXJxSk15bjhpY3pQZnJyS3Y5?=
+ =?big5?B?S3IzdC9VTktOa01US0VtbjdSYXB5SWFUNFVpSlhtTnVKb09QdDVqN3pvQlpBZDVT?=
+ =?big5?B?S0ZqaUFwcHNFbE1sQ29Lay9PYTI3eCt5Nk1lK09zM3hTLzlweWhnTWppNHJCNWo4?=
+ =?big5?B?RmozdnZMMDBMeGNnckphUjM5clJNV1dQZEhncUgwSHJpcVpzVjQzd2tjcGdValdk?=
+ =?big5?B?c3dOOVA0SE9KMVJ4Vm1kYUp2NVQyc0tUU2sydktTTnJ0Y1FZM2NadW1nV1pwWjdB?=
+ =?big5?B?azQvaFlYcS83N3g3L01BWlhmSS9QWDgyaUtLN2Y2NUsrQklmU0V2UjUwRlU4dTFL?=
+ =?big5?B?RmRjbzg2OUM4cVBFd2d1MzJRWm5lZGhnN3Zxc0RVM09zUC9yOGw0RzNlOFB1eGp0?=
+ =?big5?B?ZFcwdlRyRk9OMXZ0TnhBUkxBeDFDcVBKbW9DeGpZcmdUQ0VkUUgvdTYyRDB3NVU4?=
+ =?big5?B?elgxMWdNMXFNU2ZmaGkvOHJIQUtsS3V6TkhnRHBNV1ZRY09mN0lvaHVoVGliOWpC?=
+ =?big5?B?aDE0WFhHaWUvVytkTjdQVlNlKzU3NGl6eU9BRzBlRkV4ZE5JMlpianU3WXRBTTRS?=
+ =?big5?B?ZDVkMk9XeG05U2x2ZUhxUENzdncxUndWVCtra1ZQNkdoWGdGd0xmamZMTUtGWlln?=
+ =?big5?B?VEVxMWIyKzljTmlmT2VuMDhJWkVTNHVDd3Q4MnZmeXhQT3ZzM1lvL2FOZ0hRalU3?=
+ =?big5?B?R05PblNQdjB4UHdLeDR5VUhMZzlTNnQ4d2FtRGk5ajZQbHE5aWZjTGFpWWY0ZUdB?=
+ =?big5?B?eHN1TWNSaDM2ZlZxcEZ1RXlabmZDSU5HeVRjTUZCOEx2TkM3U0lHZGdibVoxS1Bu?=
+ =?big5?B?eFhIL1RxR0wybXdwVjdOUytaK3lBSkxES1czOG94b2tSNm80UEtTMktmejZQU2dT?=
+ =?big5?B?cXUrN0lVSm44ZVUwcExIcUZvTjdiRFVFbmZNVkpSYjhVOSs5aEhVcmdjSmxpVUts?=
+ =?big5?B?dlZOa0I2UHlHcnJnRU5lRlljWlhqd2p0WEdpa1pha055dXNOejFDby9hNDhhTXZF?=
+ =?big5?B?R2ZuY2M2NXZUSUVHZy85UlVCbTE0ZlNqRnprZmZjNDUwZGNTVGtqSkY1OEs0YXhz?=
+ =?big5?B?YXpKVjE0OHdpRzJvUkY2MGhWR2oyMTlDeUNaZndJSUwwS1VkbXdNSDJXdVZyNzBs?=
+ =?big5?B?ZzRtc0VtckhqQXROM3FhUlE4MFYxUnhuM3NPakVmWGJmUTExMmxqeXErSld2TjlG?=
+ =?big5?B?ODIyaGZSRE9Nb3lXUFpNd1c1c1dSVi9RdHNuSEhwYnkzYk4yMDNad1JDblVXYnlh?=
+ =?big5?B?RlhRNzZJck9MSUtybDdFOTNJdDlpd2JBV2JraG42MzVEcG1wa3YvL2g5TGRQQmsw?=
+ =?big5?B?ajlKYjZzd2MyZ3B1b281Nk8xdUJVdXdETTN5Q0NzcjZJNGhFOWtNY2UyYU5Qa0s0?=
+ =?big5?B?WlY5WFdHVDQxYjhKWUVsVWRLc1h3SFl1N1VHOHFnU1dtOWNySlFwTy9oeDg2SUcy?=
+ =?big5?B?UGd1TWJtMUZycFlTWHJ2L3o4OHZ2SFlMQURHTHh0bW5vdWl5Y3Fidkg0S1pwRnV3?=
+ =?big5?B?eUUweXBuMnN2QTFnTTlqZ3hlWmxRWmVScGFnS09QdUJsSUdjdE5GYmlzby85RUEw?=
+ =?big5?B?ZCtudFc2cjFZak1tUzhZbVZRMkxqOWFLV3F0WVhhZkNtTTZvdjZqV2ltUzB3ZjZl?=
+ =?big5?B?SE4xWUJGL0x6UWZYZEtVZlBXSHNpbDhIYlZqTUZhemh1aDY4RE1CQWpPR1FFM1Vz?=
+ =?big5?B?WFZsbWRtY0g1Y09FTWNRZGc0SldjcHFIYUszQ0xxbDRKeStYVTdpbmFlVk5qMjdR?=
+ =?big5?B?YUc5TXJlK1ZYaFRXNjVkZ3F4Y0pTY291MjN3alprNS9wdXB6blY3U1ZnYTdWUkxq?=
+ =?big5?B?SHMwTXBISXJpczA2ZTlOTFErTXdycDhRaGRaWGYyV1JaZXhRSjRnaW81TEEzSEUw?=
+ =?big5?Q?T+mrNOgnImLLwMeq?=
+Content-Type: text/plain; charset="big5"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241113-xtheadvector-v11-14-236c22791ef9@rivosinc.com>
-References: <20241113-xtheadvector-v11-0-236c22791ef9@rivosinc.com>
-In-Reply-To: <20241113-xtheadvector-v11-0-236c22791ef9@rivosinc.com>
-To: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, 
- Samuel Holland <samuel.holland@sifive.com>, 
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
- Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>, 
- Jessica Clarke <jrtc27@jrtc27.com>, Andrew Jones <ajones@ventanamicro.com>, 
- Yangyu Chen <cyy@cyyself.name>, Andy Chiu <andybnac@gmail.com>
-Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev, 
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- Charlie Jenkins <charlie@rivosinc.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9693; i=charlie@rivosinc.com;
- h=from:subject:message-id; bh=BY2FoLzwMbBSsrfXRPTuTs27Trdz1nuAyU8/yyy3MsA=;
- b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ7pp3OL1Kn+/tTdEtO1gePZT8sqps5/kLy9rs1h1xUq19
- IDFotycjlIWBjEOBlkxRRaeaw3MrXf0y46Klk2AmcPKBDKEgYtTACbSm8Pwm33H74vHNrxOi5j4
- z6L/yLW9P5n1dSepdB6fUnzkDfN6305GhndHgmonKkY/+Cp/mXPJjD2BMqHuly/dyrkwc4oiY+T
- dAEYA
-X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
- fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB5134.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d45f5988-7688-4f26-e187-08dd0453285c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2024 02:22:16.2189
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zgMlmxpOutbsii3YjEO/vQoBzkevfsNGqqTwMmzU9sU7bVdOCI679McabDv1/mjzyyeObtuOc9wnEvEcjNUrLtnHleIgUlE2WRvOPfwC+to=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5904
 
-Follow the patterns of the other architectures that use
-GENERIC_CPU_VULNERABILITIES for riscv to introduce the ghostwrite
-vulnerability and mitigation. The mitigation is to disable all vector
-which is accomplished by clearing the bit from the cpufeature field.
-
-Ghostwrite only affects thead c9xx CPUs that impelment xtheadvector, so
-the vulerability will only be mitigated on these CPUs.
-
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
----
- arch/riscv/Kconfig.errata            | 11 +++++++
- arch/riscv/errata/thead/errata.c     | 28 +++++++++++++++++
- arch/riscv/include/asm/bugs.h        | 22 +++++++++++++
- arch/riscv/include/asm/errata_list.h |  3 +-
- arch/riscv/kernel/Makefile           |  2 ++
- arch/riscv/kernel/bugs.c             | 60 ++++++++++++++++++++++++++++++++++++
- arch/riscv/kernel/cpufeature.c       | 10 +++++-
- drivers/base/cpu.c                   |  3 ++
- include/linux/cpu.h                  |  1 +
- 9 files changed, 138 insertions(+), 2 deletions(-)
-
-diff --git a/arch/riscv/Kconfig.errata b/arch/riscv/Kconfig.errata
-index 2acc7d876e1f..e318119d570d 100644
---- a/arch/riscv/Kconfig.errata
-+++ b/arch/riscv/Kconfig.errata
-@@ -119,4 +119,15 @@ config ERRATA_THEAD_PMU
- 
- 	  If you don't know what to do here, say "Y".
- 
-+config ERRATA_THEAD_GHOSTWRITE
-+	bool "Apply T-Head Ghostwrite errata"
-+	depends on ERRATA_THEAD && RISCV_ISA_XTHEADVECTOR
-+	default y
-+	help
-+	  The T-Head C9xx cores have a vulnerability in the xtheadvector
-+	  instruction set. When this errata is enabled, the CPUs will be probed
-+	  to determine if they are vulnerable and disable xtheadvector.
-+
-+	  If you don't know what to do here, say "Y".
-+
- endmenu # "CPU errata selection"
-diff --git a/arch/riscv/errata/thead/errata.c b/arch/riscv/errata/thead/errata.c
-index f5120e07c318..5cc008ab41a8 100644
---- a/arch/riscv/errata/thead/errata.c
-+++ b/arch/riscv/errata/thead/errata.c
-@@ -10,6 +10,7 @@
- #include <linux/string.h>
- #include <linux/uaccess.h>
- #include <asm/alternative.h>
-+#include <asm/bugs.h>
- #include <asm/cacheflush.h>
- #include <asm/cpufeature.h>
- #include <asm/dma-noncoherent.h>
-@@ -142,6 +143,31 @@ static bool errata_probe_pmu(unsigned int stage,
- 	return true;
- }
- 
-+static bool errata_probe_ghostwrite(unsigned int stage,
-+				    unsigned long arch_id, unsigned long impid)
-+{
-+	if (!IS_ENABLED(CONFIG_ERRATA_THEAD_GHOSTWRITE))
-+		return false;
-+
-+	/*
-+	 * target-c9xx cores report arch_id and impid as 0
-+	 *
-+	 * While ghostwrite may not affect all c9xx cores that implement
-+	 * xtheadvector, there is no futher granularity than c9xx. Assume
-+	 * vulnerable for this entire class of processors when xtheadvector is
-+	 * enabled.
-+	 */
-+	if (arch_id != 0 || impid != 0)
-+		return false;
-+
-+	if (stage != RISCV_ALTERNATIVES_EARLY_BOOT)
-+		return false;
-+
-+	ghostwrite_set_vulnerable();
-+
-+	return true;
-+}
-+
- static u32 thead_errata_probe(unsigned int stage,
- 			      unsigned long archid, unsigned long impid)
- {
-@@ -155,6 +181,8 @@ static u32 thead_errata_probe(unsigned int stage,
- 	if (errata_probe_pmu(stage, archid, impid))
- 		cpu_req_errata |= BIT(ERRATA_THEAD_PMU);
- 
-+	errata_probe_ghostwrite(stage, archid, impid);
-+
- 	return cpu_req_errata;
- }
- 
-diff --git a/arch/riscv/include/asm/bugs.h b/arch/riscv/include/asm/bugs.h
-new file mode 100644
-index 000000000000..17ca0a947730
---- /dev/null
-+++ b/arch/riscv/include/asm/bugs.h
-@@ -0,0 +1,22 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Interface for managing mitigations for riscv vulnerabilities.
-+ *
-+ * Copyright (C) 2024 Rivos Inc.
-+ */
-+
-+#ifndef __ASM_BUGS_H
-+#define __ASM_BUGS_H
-+
-+/* Watch out, ordering is important here. */
-+enum mitigation_state {
-+	UNAFFECTED,
-+	MITIGATED,
-+	VULNERABLE,
-+};
-+
-+void ghostwrite_set_vulnerable(void);
-+bool ghostwrite_enable_mitigation(void);
-+enum mitigation_state ghostwrite_get_state(void);
-+
-+#endif /* __ASM_BUGS_H */
-diff --git a/arch/riscv/include/asm/errata_list.h b/arch/riscv/include/asm/errata_list.h
-index 7c8a71a526a3..6e426ed7919a 100644
---- a/arch/riscv/include/asm/errata_list.h
-+++ b/arch/riscv/include/asm/errata_list.h
-@@ -25,7 +25,8 @@
- #ifdef CONFIG_ERRATA_THEAD
- #define	ERRATA_THEAD_MAE 0
- #define	ERRATA_THEAD_PMU 1
--#define	ERRATA_THEAD_NUMBER 2
-+#define	ERRATA_THEAD_GHOSTWRITE 2
-+#define	ERRATA_THEAD_NUMBER 3
- #endif
- 
- #ifdef __ASSEMBLY__
-diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
-index 30db92672ada..d73f04c6c563 100644
---- a/arch/riscv/kernel/Makefile
-+++ b/arch/riscv/kernel/Makefile
-@@ -118,3 +118,5 @@ obj-$(CONFIG_COMPAT)		+= compat_vdso/
- obj-$(CONFIG_64BIT)		+= pi/
- obj-$(CONFIG_ACPI)		+= acpi.o
- obj-$(CONFIG_ACPI_NUMA)	+= acpi_numa.o
-+
-+obj-$(CONFIG_GENERIC_CPU_VULNERABILITIES) += bugs.o
-diff --git a/arch/riscv/kernel/bugs.c b/arch/riscv/kernel/bugs.c
-new file mode 100644
-index 000000000000..3655fe7d678c
---- /dev/null
-+++ b/arch/riscv/kernel/bugs.c
-@@ -0,0 +1,60 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2024 Rivos Inc.
-+ */
-+
-+#include <linux/cpu.h>
-+#include <linux/device.h>
-+#include <linux/sprintf.h>
-+
-+#include <asm/bugs.h>
-+#include <asm/vendor_extensions/thead.h>
-+
-+static enum mitigation_state ghostwrite_state;
-+
-+void ghostwrite_set_vulnerable(void)
-+{
-+	ghostwrite_state = VULNERABLE;
-+}
-+
-+/*
-+ * Vendor extension alternatives will use the value set at the time of boot
-+ * alternative patching, thus this must be called before boot alternatives are
-+ * patched (and after extension probing) to be effective.
-+ *
-+ * Returns true if mitgated, false otherwise.
-+ */
-+bool ghostwrite_enable_mitigation(void)
-+{
-+	if (IS_ENABLED(CONFIG_RISCV_ISA_XTHEADVECTOR) &&
-+	    ghostwrite_state == VULNERABLE && !cpu_mitigations_off()) {
-+		disable_xtheadvector();
-+		ghostwrite_state = MITIGATED;
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
-+enum mitigation_state ghostwrite_get_state(void)
-+{
-+	return ghostwrite_state;
-+}
-+
-+ssize_t cpu_show_ghostwrite(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	if (IS_ENABLED(CONFIG_RISCV_ISA_XTHEADVECTOR)) {
-+		switch (ghostwrite_state) {
-+		case UNAFFECTED:
-+			return sprintf(buf, "Not affected\n");
-+		case MITIGATED:
-+			return sprintf(buf, "Mitigation: xtheadvector disabled\n");
-+		case VULNERABLE:
-+			fallthrough;
-+		default:
-+			return sprintf(buf, "Vulnerable\n");
-+		}
-+	} else {
-+		return sprintf(buf, "Not affected\n");
-+	}
-+}
-diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-index ba6976132638..35670c96b383 100644
---- a/arch/riscv/kernel/cpufeature.c
-+++ b/arch/riscv/kernel/cpufeature.c
-@@ -17,6 +17,7 @@
- #include <linux/of.h>
- #include <asm/acpi.h>
- #include <asm/alternative.h>
-+#include <asm/bugs.h>
- #include <asm/cacheflush.h>
- #include <asm/cpufeature.h>
- #include <asm/hwcap.h>
-@@ -824,6 +825,7 @@ static int has_thead_homogeneous_vlenb(void)
- static int __init riscv_fill_hwcap_from_ext_list(unsigned long *isa2hwcap)
- {
- 	unsigned int cpu;
-+	bool mitigated;
- 
- 	for_each_possible_cpu(cpu) {
- 		unsigned long this_hwcap = 0;
-@@ -874,7 +876,13 @@ static int __init riscv_fill_hwcap_from_ext_list(unsigned long *isa2hwcap)
- 		riscv_fill_vendor_ext_list(cpu);
- 	}
- 
--	if (has_xtheadvector_no_alternatives() && has_thead_homogeneous_vlenb() < 0) {
-+	/*
-+	 * Execute ghostwrite mitigation immediately after detecting extensions
-+	 * to disable xtheadvector if necessary.
-+	 */
-+	mitigated = ghostwrite_enable_mitigation();
-+
-+	if (!mitigated && has_xtheadvector_no_alternatives() && has_thead_homogeneous_vlenb() < 0) {
- 		pr_warn("Unsupported heterogeneous vlenb detected, vector extension disabled.\n");
- 		disable_xtheadvector();
- 	}
-diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
-index fdaa24bb641a..a7e511849875 100644
---- a/drivers/base/cpu.c
-+++ b/drivers/base/cpu.c
-@@ -599,6 +599,7 @@ CPU_SHOW_VULN_FALLBACK(retbleed);
- CPU_SHOW_VULN_FALLBACK(spec_rstack_overflow);
- CPU_SHOW_VULN_FALLBACK(gds);
- CPU_SHOW_VULN_FALLBACK(reg_file_data_sampling);
-+CPU_SHOW_VULN_FALLBACK(ghostwrite);
- 
- static DEVICE_ATTR(meltdown, 0444, cpu_show_meltdown, NULL);
- static DEVICE_ATTR(spectre_v1, 0444, cpu_show_spectre_v1, NULL);
-@@ -614,6 +615,7 @@ static DEVICE_ATTR(retbleed, 0444, cpu_show_retbleed, NULL);
- static DEVICE_ATTR(spec_rstack_overflow, 0444, cpu_show_spec_rstack_overflow, NULL);
- static DEVICE_ATTR(gather_data_sampling, 0444, cpu_show_gds, NULL);
- static DEVICE_ATTR(reg_file_data_sampling, 0444, cpu_show_reg_file_data_sampling, NULL);
-+static DEVICE_ATTR(ghostwrite, 0444, cpu_show_ghostwrite, NULL);
- 
- static struct attribute *cpu_root_vulnerabilities_attrs[] = {
- 	&dev_attr_meltdown.attr,
-@@ -630,6 +632,7 @@ static struct attribute *cpu_root_vulnerabilities_attrs[] = {
- 	&dev_attr_spec_rstack_overflow.attr,
- 	&dev_attr_gather_data_sampling.attr,
- 	&dev_attr_reg_file_data_sampling.attr,
-+	&dev_attr_ghostwrite.attr,
- 	NULL
- };
- 
-diff --git a/include/linux/cpu.h b/include/linux/cpu.h
-index bdcec1732445..6a0a8f1c7c90 100644
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -77,6 +77,7 @@ extern ssize_t cpu_show_gds(struct device *dev,
- 			    struct device_attribute *attr, char *buf);
- extern ssize_t cpu_show_reg_file_data_sampling(struct device *dev,
- 					       struct device_attribute *attr, char *buf);
-+extern ssize_t cpu_show_ghostwrite(struct device *dev, struct device_attribute *attr, char *buf);
- 
- extern __printf(4, 5)
- struct device *cpu_device_create(struct device *parent, void *drvdata,
-
--- 
-2.34.1
-
+SGkgU2ltb24sDQoNClRoYW5rIHlvdSBmb3IgeW91ciByZXBseS4NCg0KPiA+IEBAIC0xOTY1LDE2
+ICsxOTgwLDI3IEBAIHN0YXRpYyBpbnQgZnRnbWFjMTAwX3Byb2JlKHN0cnVjdA0KPiBwbGF0Zm9y
+bV9kZXZpY2UgKnBkZXYpDQo+ID4gIAkJCWRldl9lcnIocHJpdi0+ZGV2LCAiTUlJIHByb2JlIGZh
+aWxlZCFcbiIpOw0KPiA+ICAJCQlnb3RvIGVycl9uY3NpX2RldjsNCj4gPiAgCQl9DQo+ID4gLQ0K
+PiA+ICAJfQ0KPiA+DQo+ID4gIAlpZiAocHJpdi0+aXNfYXNwZWVkKSB7DQo+ID4gKwkJc3RydWN0
+IHJlc2V0X2NvbnRyb2wgKnJzdDsNCj4gPiArDQo+ID4gIAkJZXJyID0gZnRnbWFjMTAwX3NldHVw
+X2Nsayhwcml2KTsNCj4gPiAgCQlpZiAoZXJyKQ0KPiA+ICAJCQlnb3RvIGVycl9waHlfY29ubmVj
+dDsNCj4gPg0KPiA+IC0JCS8qIERpc2FibGUgYXN0MjYwMCBwcm9ibGVtYXRpYyBIVyBhcmJpdHJh
+dGlvbiAqLw0KPiA+IC0JCWlmIChvZl9kZXZpY2VfaXNfY29tcGF0aWJsZShucCwgImFzcGVlZCxh
+c3QyNjAwLW1hYyIpKQ0KPiA+ICsJCXJzdCA9IGRldm1fcmVzZXRfY29udHJvbF9nZXRfb3B0aW9u
+YWwocHJpdi0+ZGV2LCBOVUxMKTsNCj4gPiArCQlpZiAoSVNfRVJSKHJzdCkpDQo+IA0KPiBIaSBK
+YWNreSwNCj4gDQo+IFNob3VsZCBlcnIgYmUgc2V0IHRvIEVSUl9QVFIocnN0KSBoZXJlIHNvIHRo
+YXQgdmFsdWUgaXMgcmV0dXJuZWQgYnkgdGhlDQo+IGZ1bmN0aW9uPw0KDQpZZXMuIEkgd2lsbCBh
+ZGQgY2hlY2tpbmcgdGhlIHJldHVybiB2YWx1ZSBpbiB0aGUgbmV4dCB2ZXJzaW9uLg0KDQo+IA0K
+PiA+ICsJCQlnb3RvIGVycl9yZWdpc3Rlcl9uZXRkZXY7DQo+ID4gKw0KPiA+ICsJCXByaXYtPnJz
+dCA9IHJzdDsNCj4gPiArCQllcnIgPSByZXNldF9jb250cm9sX2Fzc2VydChwcml2LT5yc3QpOw0K
+PiA+ICsJCW1kZWxheSgxMCk7DQo+ID4gKwkJZXJyID0gcmVzZXRfY29udHJvbF9kZWFzc2VydChw
+cml2LT5yc3QpOw0KPiA+ICsNCj4gPiArCQkvKiBEaXNhYmxlIHNvbWUgYXNwZWVkIHBsYXRmb3Jt
+IHByb2JsZW1hdGljIEhXIGFyYml0cmF0aW9uICovDQo+ID4gKwkJaWYgKG9mX2RldmljZV9pc19j
+b21wYXRpYmxlKG5wLCAiYXNwZWVkLGFzdDI2MDAtbWFjIikgfHwNCj4gPiArCQkgICAgb2ZfZGV2
+aWNlX2lzX2NvbXBhdGlibGUobnAsICJhc3BlZWQsYXN0MjcwMC1tYWMiKSkNCj4gPiAgCQkJaW93
+cml0ZTMyKEZUR01BQzEwMF9UTV9ERUZBVUxULA0KPiA+ICAJCQkJICBwcml2LT5iYXNlICsgRlRH
+TUFDMTAwX09GRlNFVF9UTSk7DQo+ID4gIAl9DQoNClRoYW5rcywNCkphY2t5DQo=
 
