@@ -1,119 +1,110 @@
-Return-Path: <linux-kernel+bounces-410059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17E229C95FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:16:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3A899C9603
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:17:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D16A3283FB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:16:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90AE91F2141A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688C01B0F20;
-	Thu, 14 Nov 2024 23:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720A21B21B5;
+	Thu, 14 Nov 2024 23:17:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="AKc1qltn"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cie8v75h"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F51F1AED3F
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 23:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C631E1AA785
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 23:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731626146; cv=none; b=lGodlpldBPMjrGBjbaAm/e14zQlIier4YYq8cBrC05gO0mU+E1ldXSMLiSX/Ifxj8rEYqYghfAxFD1XXh26Mxx1rJ9qGxGWKJhxRpbC6wCryFLiYx9wqWYYHIDXQGTjlEXZOm2tYhR8+iPNdR1R6j0JHmaUGsv3RCaDPjuDnqfM=
+	t=1731626233; cv=none; b=giH6D27K6bPh9QBieUYV1XWbPgrHQNszGjavNMrtm5kQFG8iqefb5JREdqUvwbhXJYd1fYZYG2E+9mONprBWP5kGUejKMjQ5eigOvVUQF9S0WaR0fXYuWqFK/QhYJFp5Nb46fRKTfYhC+FlFGz3kPh5n6dK/3FzLwuamfGNIZjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731626146; c=relaxed/simple;
-	bh=lVsLA+ch5pK0Ivhr1CMOYtJ6HXoVJIzTUjCvpU4nqRo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jLu11LwR8djshnqauESJy0JotisJza+Pa1Ch+tzyGeqR/NTiFUTC0OBSG/yhtWv4NtUnnau+tPrUHyQiIK6M3B45j81qVEwtRW9uLQskOvoZSIRkVBnwufZ3Etpn2gvKGij/DMpBDxVsXHTMeTJTI0c5Gj0hw/cB9BlpsWHWuOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=AKc1qltn; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2113da91b53so9112425ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:15:45 -0800 (PST)
+	s=arc-20240116; t=1731626233; c=relaxed/simple;
+	bh=CI1r12nNHRwypDsUYC8xY9fzjewA2c/mrZsbdnAEyB8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=OjoBTo+OKji9y0R+WvVjJmXLSKNlj2nRvl0bHXKbfqwe+ZQTg5Idgg04X7KWF3TYbTEAxbGyCGga4PapPKJ/3IoaDVcwZci76Sc34GYSH/5QIQ0+PudIUhSA2I1uDE99Iq9/3WFLnge6auFVQfNuOoKk2Q96WvC5Rc/Od0Kolbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cie8v75h; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e30b8fd4ca1so1717521276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:17:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1731626144; x=1732230944; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lVsLA+ch5pK0Ivhr1CMOYtJ6HXoVJIzTUjCvpU4nqRo=;
-        b=AKc1qltnrvqJ3RV1sciU/yD9J/2xmLdJdE4E9a8TMND9eYd70jSxy8NWG8ak6vj8aN
-         tEJiKVfUI7APwommSlGZVarC5FYD1KhMdITwQfBsOrWkAVG86SlLcH57lt0zhwyDXP/x
-         6iRngkI13Nd6W9NbMpiypfukkQNFcJ60W7plw2VTGch43yS/ZFKyrqUbtmFOTXZu7hGl
-         FlKBHYepfLpGtgx9WCIoGiQbIx1zSbg7s2bqQbRMxK3n7AcDlkHe46MX0e/nZrLOpPGP
-         Pku8LmvgcOvYiNo1uL9GJJzCCbVOP+FLc48mdJLfZpazc0xAvLZ40vQ1UqxHIKlcjqsn
-         7/0A==
+        d=google.com; s=20230601; t=1731626231; x=1732231031; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vwAzg/sQCaKfbfUxYjkIW4dK4mXFdPygldw0DR81bXI=;
+        b=cie8v75h4JigBi3C9ayjkHTv1bcGaPALHy4DUS9KhfM+MJgpMavda4mB3jLzUDkXv7
+         qRdyOWKgMc24sTK1gH/GWzmL3SSUHe/TEQlUhb42EUe///VOIW3hXvylnaMkwn8BB8tl
+         37W0ePhSDYbJHX8NBCgX9BVK7XYxY2czsMMwe7TIjbHMMJKqOvLf+1kfD3uY0w1fvZDG
+         0Mss+KFHOKqueFy9yoP/p/TGwjoxC5VXQf7yDYNcGXRfsRMc1KXOqfcOFKFojeAm/byJ
+         phzV+1IrrGVIhVZylYua8kEF7pc11Qjl7ub/3DNRE1D/h4dseATKp0JAdbgKest74s5z
+         7v7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731626144; x=1732230944;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lVsLA+ch5pK0Ivhr1CMOYtJ6HXoVJIzTUjCvpU4nqRo=;
-        b=GhddGSrKh8qKbuqFkGqi0126Er5oQuswyenU+ca28cXm39ID2J/tOWwB20OecZpKnY
-         cLtsCmtm1Ci1hODEhii3wbLoWtKodTfEggg30t2FWW/yskNOKSQHUMBroW2XbxVMEl5p
-         ORSLwRmNDqIk7sNRwNPk9iR5JzlLaeIISxsheLZxV1AltCk0bhOou92Tm5ukjaelBFv/
-         MwClbCaTHYpSi1tXdra2iAxrtOqptbrxrSCoHNp2Egpd9zDeXJn+Wjia+lu+5CqPafk7
-         ffAdXHnKlnVEqalRgkKiVJMhhtUU6EaVV9gFq11MzypGjZuogQXFvJic/nNQBCT0d/1a
-         b8rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWBfhDCHmO2EKsDD/r/gC5mRw1LNcDU2p44BhmM+Rng1UTMESoFjTXcybOA4ooFabUBonP5+iavojVcQKA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVSYMI8sbN7UF1YQs7LML9zM9ZF/X61dRAmPn9Q/loWO/DKcKZ
-	ypy4CORYTTizDqxxhHHWzR2oaVAPKwcoriWtfZatLk/jYbvLr+S59oJhrM5b1R4=
-X-Google-Smtp-Source: AGHT+IHndwCh8OZviLWwqtdRGD5ZEaLmwdtieo9Vt9MWEDHtv0+lyZ2wfaF39f+wWy1RScC9FPlXYg==
-X-Received: by 2002:a17:902:c407:b0:20c:9e9b:9614 with SMTP id d9443c01a7336-211d0d725c2mr7977755ad.15.1731626144617;
-        Thu, 14 Nov 2024 15:15:44 -0800 (PST)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0dc30a9sm1690215ad.47.2024.11.14.15.15.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 15:15:44 -0800 (PST)
-Date: Thu, 14 Nov 2024 15:15:41 -0800
-From: Deepak Gupta <debug@rivosinc.com>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"vbabka@suse.cz" <vbabka@suse.cz>, "arnd@arndb.de" <arnd@arndb.de>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"broonie@kernel.org" <broonie@kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH RFC/RFT v2 0/2] Converge common flows for cpu assisted
- shadow stack
-Message-ID: <ZzaEnVpBUhZsp7qB@debug.ba.rivosinc.com>
-References: <20241016-shstk_converge-v2-0-c41536eb5c3b@rivosinc.com>
- <964caf1797be61001901b92e3b71259443d3196f.camel@intel.com>
+        d=1e100.net; s=20230601; t=1731626231; x=1732231031;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vwAzg/sQCaKfbfUxYjkIW4dK4mXFdPygldw0DR81bXI=;
+        b=HyWvD8+uoJWagvv/qvzcK3uvNJ+4lBDaJZu925genhm5OhBQfLFrOLJy3O9ccza7wm
+         GUTAsN1aF9mVhlNcGWrZ8PC/TZTcG4i1GgzTRKuDWL9DUOS4CBl5eZgFf4idzRYEznK7
+         gXUVvFHtsZHGlvHD1lWzPK7sExKjYv88v4yFC5N9IljuwfZvhgshSbq9vUMAV4tz/hLc
+         UTrRwtMKojkKA4J3JuIeS7+P7tmh3soeTyBLr3Er/o5NjKqwkH21/CRZxzJlerbX21I5
+         9t86lcEV8yVhRUlWZ5miDaYRPLKAqJiC+AvExc2ex2SmRvsMI9rXlp7S13Dlqu3qOcLs
+         NBYw==
+X-Forwarded-Encrypted: i=1; AJvYcCWojtMFYiFv2Eh2nA9DkRKBvxl3RiFAucOgRNsbpq822ivw6kZ/olDHix2xjzaeEysM0rhY9FOxX3h8e48=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoFbyG+yRDnLP9wG7HmoZQYDKKj9vrlqTKKjhBao/LNj6qlDga
+	pYIAPT3uv19gQZF5SVORWKNJrQUjKcemQOdWtCgwZAXGHq+8LjeT5gC89QGztwGLOK7P6Q7I3Um
+	8IA==
+X-Google-Smtp-Source: AGHT+IGFlgWX0KKA/ZGZ5IsWUoPGyuuB/g3OCmrsFVhtApZPgZzMWdFLLtgmd2LXV8EXavHvLHIIovN59Bs=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a25:9e0a:0:b0:e38:e8d:2c02 with SMTP id
+ 3f1490d57ef6-e38263a8b74mr588276.5.1731626230833; Thu, 14 Nov 2024 15:17:10
+ -0800 (PST)
+Date: Thu, 14 Nov 2024 15:17:09 -0800
+In-Reply-To: <20241114223738.290924-3-gianf.trad@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <964caf1797be61001901b92e3b71259443d3196f.camel@intel.com>
+Mime-Version: 1.0
+References: <20241114223738.290924-3-gianf.trad@gmail.com>
+Message-ID: <ZzaE9dYmSqg3U33y@google.com>
+Subject: Re: [PATCH] Documentation: kvm: fix tipo in api.rst
+From: Sean Christopherson <seanjc@google.com>
+To: Gianfranco Trad <gianf.trad@gmail.com>
+Cc: corbet@lwn.net, pbonzini@redhat.com, kvm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, Nov 01, 2024 at 09:47:31PM +0000, Edgecombe, Rick P wrote:
->On Wed, 2024-10-16 at 14:57 -0700, Deepak Gupta wrote:
->> ---
->> base-commit: 4e0105ad0161b4262b51f034a757c4899c647487
->> change-id: 20241010-shstk_converge-aefbcbef5d71
->
->Where can I find this base commit?
+I must know.  Is the "tipo" in the shortlog intentional? :-)
 
-I am sorry. I picked up Mark's "mm: Introduce ARCH_HAS_USER_SHADOW_STACK"
-locally and then created patches.
-
-Should have rebased with arm64/for-next.
-But for that as well base commit will be on arm64/for-next.
-
-You can apply "mm: Introduce ARCH_HAS_USER_SHADOW_STACK" on "v6.12-rc1"
-and then these patches.
-
-Alternatively I can send a v3 with above patch.
+On Thu, Nov 14, 2024, Gianfranco Trad wrote:
+> Fix minor typo in api.rst where the word physical was misspelled
+> as physcial.
+> 
+> Signed-off-by: Gianfranco Trad <gianf.trad@gmail.com>
+> ---
+>  Documentation/virt/kvm/api.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+> index edc070c6e19b..4ed8f222478a 100644
+> --- a/Documentation/virt/kvm/api.rst
+> +++ b/Documentation/virt/kvm/api.rst
+> @@ -5574,7 +5574,7 @@ KVM_XEN_ATTR_TYPE_SHARED_INFO_HVA
+>    in guest physical address space. This attribute should be used in
+>    preference to KVM_XEN_ATTR_TYPE_SHARED_INFO as it avoids
+>    unnecessary invalidation of an internal cache when the page is
+> -  re-mapped in guest physcial address space.
+> +  re-mapped in guest physical address space.
+>  
+>    Setting the hva to zero will disable the shared_info page.
+>  
+> -- 
+> 2.43.0
+> 
 
