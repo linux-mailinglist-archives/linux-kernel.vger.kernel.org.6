@@ -1,115 +1,102 @@
-Return-Path: <linux-kernel+bounces-409793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F2F49C91B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:33:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3905F9C91B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:33:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9557D283B48
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:33:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E454A1F228B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCA51991A9;
-	Thu, 14 Nov 2024 18:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC2519597F;
+	Thu, 14 Nov 2024 18:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZHVGK9Hr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="jZ/ZyQLp"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0AA3FBB3
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 18:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AB91714B4;
+	Thu, 14 Nov 2024 18:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731609173; cv=none; b=BgBDlG3sSVdyK7L/pPkcS1LUm9LhTRJqaxfVkLaUtQk3ZpUh6FoTh8NW1i3XVHaQtGdUowmE+0Cmja1s4rvs+eAsu2OzT4xMg+oYUyitloQ9RU+fDSWzkMu1++naLuIQQ4ZWxcV/ZB9jfHaHBIzXgsAlV2mRd6a222oSQ2vPWtA=
+	t=1731609196; cv=none; b=c2DpMzp5U6/Lof7fGQUURik/MkUOvg/dQaSAHhJlnKcnf9VXVeYuXsvdfW+285sUZYwGYNMrly9g9nZbNTxlpvOYY61pXotNpGKJ+5TVDsdRKsWjtrWwFXmqEJ75FbNskcPCKOCBePlEcNvXaHTf6TtpCvLGtzVd8U3hVHbXGn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731609173; c=relaxed/simple;
-	bh=GtoUocYxOO43x1jcxHW5REFrvehfdiJltsSWjcPgIRk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=W2EWB4UobZlIGQlGUwMVUCBgeQFQvbTJGsV/1ry+Kdhr/silw4GmyQ2sf5LhDpyT5sudy3Xv2wBMAarYgEheYf1UOgVCYBJe3vgstEIMWKgtE3qMVh4/5Su8kzw8VN2p47E/aUZEc6Wqu1XoK5dXQ3DJSi4jX0abb/eEP1JcEqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZHVGK9Hr; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731609171;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jFI7tbBYGiEseQ7bvAyFPEuhxaHn8dv5eXukTVUQJvk=;
-	b=ZHVGK9HrHIXoy76KAWSNxiAqjrT3sZx4XLSO7LssUETCVaj4E0E3DChx2rt3j3IijkHTR8
-	9nI/ocRYfESyxEpoS6ej9KmJZTosEvzcDLc3eM2iX8UJ+1yva2uZsxZr7589FK+wnMUSVC
-	Ng3l2WcECqbqCqtwyu1YUH1qhXwASYw=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-623-NKyz8478OsqT2uajVelhoQ-1; Thu, 14 Nov 2024 13:32:50 -0500
-X-MC-Unique: NKyz8478OsqT2uajVelhoQ-1
-X-Mimecast-MFC-AGG-ID: NKyz8478OsqT2uajVelhoQ
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4635760799dso21193531cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:32:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731609169; x=1732213969;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jFI7tbBYGiEseQ7bvAyFPEuhxaHn8dv5eXukTVUQJvk=;
-        b=ZmwRS2bhA0PLrX8brMFP5V6Ewg90KVctDeEowSvPaIfLZU8ygw9CVQMcNZtbqp8hwo
-         /7pIm3aG8Ay1PyBhM1xODvKZgD2/m8bf+oC/VyghvsLPA9ynp1x59RR4RjYvXXgSCtDh
-         JY66vj1Vb5eIMCYrt//Q6gMM7PFcibCEwf7vsUsrFXhjqyKKnLpBXz4Kqn9Xwqndd48h
-         1hUtRolpfmNJa0Bquzghj7nKQUaJYiOxNLDsd3/MiURQQaw1ZAyjEDi1cxHO0UHpXE07
-         E2VbPKs4ogoQDS//rAX3fOA0+2nljEheoLu99Qc859hyddz4U2i93zjyHQOtw3oSA9QL
-         knZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXaQyAeu8rzN0ERvK++1Wl/poPJe82x/CbKej3Dnp73bmRuvmQZv5666ZO/yCsSKoNByjyepwlMenSVFO8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8j0FXMcv8ajl+A6KdlkQfNrMxSXt1xYY58ZlnG8Me0BKcUWZ4
-	CA/H309ZiH/rOqh7v8BcWsnaivujJO8d5KoMHa14VEEE0wapKlmLIwnFnVDD2c82c/50EBhD2lm
-	tTDgrJAdMP/eb2bxZDTKt4UrmC7tJFNyJVrVmTGvIcPJcIpai0wJ5stiZ5u3OXw==
-X-Received: by 2002:ac8:58ca:0:b0:458:1e37:f82 with SMTP id d75a77b69052e-46356b78d6amr69904281cf.18.1731609168780;
-        Thu, 14 Nov 2024 10:32:48 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH0QtIZNLBykcxZpLOh80DvJJPMPMAFpJAL1kQs1vq2h6v1QgZ6rz33PSsG16J+HF/4i/gWqQ==
-X-Received: by 2002:ac8:58ca:0:b0:458:1e37:f82 with SMTP id d75a77b69052e-46356b78d6amr69903921cf.18.1731609168445;
-        Thu, 14 Nov 2024 10:32:48 -0800 (PST)
-Received: from [192.168.88.24] (146-241-44-112.dyn.eolo.it. [146.241.44.112])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4635ab24e39sm8729521cf.63.2024.11.14.10.32.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 10:32:48 -0800 (PST)
-Message-ID: <3f967373-32b8-4e43-a180-80c94fc091d1@redhat.com>
-Date: Thu, 14 Nov 2024 19:32:44 +0100
+	s=arc-20240116; t=1731609196; c=relaxed/simple;
+	bh=eG2qmjWNcxUCAG5MDlFmfLnO1Mw2SxC7yXRvuaEBYfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HWdTY0ZJ9C2ykw0i4MQEv+MXWNoTXPq/Jg/Rg9A7tfbSB6BMCgkIYr+smC/BOFwbrYFvG9uHKCS4mxQKUob039ZeEfpIhf5wTNsrS5ZWLdef8I9nYFB0Ya+DKsDRK0bnz6Ju1VP+JuyMHgCpVdT44dHHmCmhqOu4llTW9SuDWoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=jZ/ZyQLp; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=JtKnks9DzDC3hPxhz35TtP4N/YQTUQpjlTCfulkDlaE=; b=jZ/ZyQLpy5y5yGP+Y/QjdP4zgz
+	kXn9YAQjxGCOnQsRnCnpUB/j+XrSVnvIe0+1fhrRbqdFXoTEezZTLVf26YnLS/AqxSJ2g4J6KvpkK
+	dy5WSFUBjRKzSed+iN6Nd/JKL75ou7t84+a2uvw57LcrcCPxyzfmdc6lWDYFNSg/CPjgsYvzpNvsg
+	a2z9dRgEH+JkCrbJ2P5MIlvtDi3j1Yun0uP+dMWerw2WLeOMj9U+i5oEkhgxVBA6z/loJhshC3YCR
+	PTM242qtRlduHwgO8diZlGIwafFQCYqkNcRAuDx9iMuIfm1qmJ0r+Bhedyt+K6EfKVH0BJ77hP4c/
+	YzPfxsTw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46176)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tBeeN-00005k-1E;
+	Thu, 14 Nov 2024 18:33:03 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tBeeK-0001Ij-2B;
+	Thu, 14 Nov 2024 18:33:00 +0000
+Date: Thu, 14 Nov 2024 18:33:00 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Tristram Ha <tristram.ha@microchip.com>
+Subject: Re: [PATCH net-next] net: phylink: improve phylink_sfp_config_phy()
+ error message with empty supported
+Message-ID: <ZzZCXMFRP5ulI1AD@shell.armlinux.org.uk>
+References: <20241114165348.2445021-1-vladimir.oltean@nxp.com>
+ <54332f43-7811-426a-a756-61d63b54c725@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net v2 0/2] Fix rcu_read_lock issues in netdev-genl
-To: Joe Damato <jdamato@fastly.com>, Jakub Kicinski <kuba@kernel.org>,
- netdev@vger.kernel.org, edumazet@google.com, amritha.nambiar@intel.com,
- sridhar.samudrala@intel.com, mkarsten@uwaterloo.ca,
- "David S. Miller" <davem@davemloft.net>,
- open list <linux-kernel@vger.kernel.org>,
- Mina Almasry <almasrymina@google.com>, Simon Horman <horms@kernel.org>
-References: <20241113021755.11125-1-jdamato@fastly.com>
- <20241113184735.28416e41@kernel.org> <ZzWY3iAbgWEDcQzV@LQ3V64L9R2>
- <bf14b6d4-5e95-4e53-805b-7cc3cd7e83e3@redhat.com>
- <ZzY6M_je4RODUYOP@LQ3V64L9R2>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <ZzY6M_je4RODUYOP@LQ3V64L9R2>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <54332f43-7811-426a-a756-61d63b54c725@lunn.ch>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 11/14/24 18:58, Joe Damato wrote:
-> On Thu, Nov 14, 2024 at 10:06:02AM +0100, Paolo Abeni wrote:
->> Please send the two patch separately, patch 1 targeting (and rebased on)
->> net and patch 2 targeting (and based on) net-next.
+On Thu, Nov 14, 2024 at 06:38:13PM +0100, Andrew Lunn wrote:
+> > [   64.738270] mv88e6085 d0032004.mdio-mii:12 sfp: PHY i2c:sfp:16 (id 0x01410cc2) supports no link modes. Maybe its specific PHY driver not loaded?
+> > [   64.769731] sfp sfp: sfp_add_phy failed: -EINVAL
+> > 
+> > Of course, there may be other reasons due to which phydev->supported is
+> > empty, thus the use of the word "maybe", but I think the lack of a
+> > driver would be the most common.
 > 
-> OK, I've done that. I left the fixes tag on patch 2 despite it
-> targeting net-next, but didn't CC stable since the code doesn't need
-> to be backported.
+> I think this is useful.
+> 
+> I only have a minor nitpick, maybe in the commit message mention which
+> PHY drivers are typically used by SFPs, to point somebody who gets
+> this message in the right direction. The Marvell driver is one. at803x
+> i think is also used. Are then any others?
 
-Thanks! FTR the above was the right thing to do.
+bcm84881 too. Not sure about at803x - the only SFP I know that uses
+that PHY doesn't make the PHY available to the host.
 
-/P
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
