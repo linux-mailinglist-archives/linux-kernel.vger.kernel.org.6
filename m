@@ -1,157 +1,137 @@
-Return-Path: <linux-kernel+bounces-409909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE97B9C932E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:25:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 103179C9331
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:26:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF4F628529A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:25:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C88D328311A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:26:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45BD21AB6ED;
-	Thu, 14 Nov 2024 20:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB861A265B;
+	Thu, 14 Nov 2024 20:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UI2bZWvg"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KnUMRqjl"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DD81AA7B4
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 20:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC1B198A0E;
+	Thu, 14 Nov 2024 20:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731615914; cv=none; b=fNYFv7UewZz2cKhAv4XJBryJ4Fyo9OiWRJTj0OLGOiHttJ2KKEDoOQqaQGac5LU5v+toNH82bIotoZ2ItJetTDnAqxNLYJu48XNAZO9tlVsPrQ6unetn5YxQnIW9PBtYSU158SmUK7Aj8IhMcxwxTCZlEROx9f7qq3m84NIfxG8=
+	t=1731615956; cv=none; b=VbPnKMzg73BIT0682WWzL/RqiG6PAHj9od7L7QSKUsYjsvQSthmgkjN/7LivbjkNIoeEPy5V3wkapCbcAE7knR5YOtA8fqEdm20DHwZ4xnF8sIcIUji33TAOmDXocqDy0er8F0xYyzaAGpuHpIAzpEs9w14TjefCKSiJ5vNVEiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731615914; c=relaxed/simple;
-	bh=HbNWwSN2HYVfMqwLHWHDAYGuQJXGlO6/e8ox1aUj7JA=;
+	s=arc-20240116; t=1731615956; c=relaxed/simple;
+	bh=s9+DOv2AjlxLBve8BLWtmOlA90MbZgj1yWjSHsv5y0Q=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FknVMbf2rmoaITQnJMlkgXTwFPX8CdrRWJ5dBvuji7Acsreckz/Bgd9xVFVA+5eXlJ3+kZke2WcgKby6TX1zyaXFOjqCZKuviqGJjhAdVRyMpnVUBtnib0lGvxTN7MIDGlmJaLmaenkZbs3DzpuVGh+ynHijB7+WAmG1aElvIf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UI2bZWvg; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71ec997ad06so819098b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 12:25:12 -0800 (PST)
+	 To:Cc:Content-Type; b=R/OZN/fIuONhaF69sS5VCqdAdDQdf5QC7x3y8qOYobgNU3AvQio4Fr/3X9R1hl4GT+xLgpoy6gJ05INFkNeUA1lYoBU2lHBaimAvBljxTJxtnAZdunNFJclinp4EEO0zlC6CYgImEDLg9tctLLKCSh8lI/2zTppv01iAHzVbltc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KnUMRqjl; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb5111747cso10525751fa.2;
+        Thu, 14 Nov 2024 12:25:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731615912; x=1732220712; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731615952; x=1732220752; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=u5iBO4dT/lhV+birZRBoe/g+Rhn+x/t+6ZledOJLwKQ=;
-        b=UI2bZWvgg+p1n/INm/KA3eKZveCS8EeLixG9RCm9dZewURKleo3zFVINFSyKVyIZdZ
-         p8Dp7lrfRuHjShc76cO0iPIB8P3nrIczx/9mvdgZYThhuK9g+fF6UAn8LuPJXX3pM7fR
-         eEzW6w4OQtUwh8NpdvejWdO+i5G8v3vHge4vBpWK2NqR9vyJdKsshiFkDmeNJAZ3Y9mM
-         bhSbv61vgLsJ/bOxc3czLgUu9afUv1Oq4ceJiOGuG9Yi+t60LiUVUsdHKZ/rQ6Rh+ZPa
-         jTRGAV/0lO0Scy/7MBsWfWWlzk0NDKSRkNMmmIH8gruD2g5z6bn1WYZOfcL1b3D3VMX9
-         hR9w==
+        bh=I/1SqCDSlERm/dM81G1InJgqAP4pfbcNYeB1lcKaPOY=;
+        b=KnUMRqjlp2A+nStO3yXcLu+oU7H/mlPoZ8fPEHzKjAFIU3Nv+NULGCpimDqO0hlSw8
+         imkDvrbOapRiwZzQFJBpfuv5nVN1LT/EYdy9lspX9/CgYf/fcgNAliyOmMghQT31Ij8x
+         YSVVgk9/DavKzxIoJ11qxbhnmkMRtB/wGw+/Xfb3gCzQJUR9Z06pyno4V13duNX4xXPi
+         v3/RHFMxLUM78180UkJmd0KccXUACwGIFPmAt5VoH6lE+oF1awB5EAbxlxtjo7EbLWVO
+         DG3YK6xaA7IYg0c2LWgqLeet4uOR+I2cG+LKavKr/fM+VPyDZxjOsc1vWOmXJpNdaqtV
+         TcLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731615912; x=1732220712;
+        d=1e100.net; s=20230601; t=1731615952; x=1732220752;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=u5iBO4dT/lhV+birZRBoe/g+Rhn+x/t+6ZledOJLwKQ=;
-        b=Lw6qw2qvTzGHKwNuGGQ/yvYwWj0vr9yexOZcYvFwEjoGI0lnjjZZ9xbztIyEK6WwIK
-         voYsAhlxtwcKS2GUjLXXJWHmftcjxqKApzx2TZGpdxbmYNY6vjVEobz/YetZA8H5Ck90
-         mXSy/zfPygf87g2J8m99vVsxhUqdZNLJyRczlnE3HtGdesjq2FeY3Z9ui8DoErSBpzEo
-         davKTJ31neI94LbIFxEp9+28iHHR05GEyGg6kqAqgBF4YNsnDnmUbjMQKgWcWyEVqGpW
-         sHMXzwcScktt2pB1PYqqjU45FgRhgtnYIqx/jC8CH4EYVz74PpZQ61SpWP2Oy+xa+UTB
-         DgOg==
-X-Forwarded-Encrypted: i=1; AJvYcCX29Guey4LGDUluELNOUhYni3Mj1heLV/4c9hYibj+f2N2Xzi34AfaCBUwIFSeyZWTFj44l6NoXbNhxnTI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2kRDR2oqdtwp4LdX36cdz+rwykCvc1Dk639oQoMHy1bUZJOHw
-	ZcFcnVBCRQwkBrkek7cugOUIKxDFaNO/4/zJh2NvlKH6nuPZr5UZhzMyA+lbhgxXcJygLe26Drg
-	QwQfM+FiAG71VU3wd3EONB7jiHRLSw6DyjHbN
-X-Google-Smtp-Source: AGHT+IEQYYyGqieX2ZSmE3AoDpo5biU07zkfh04TMzpWDK3tBk7ShrhdDDi7lJyqTNHx9S4MtIh/1gM926Gl8cwVlJM=
-X-Received: by 2002:a05:6a00:4fc9:b0:71e:6489:d06 with SMTP id
- d2e1a72fcca58-72476a0075fmr271809b3a.0.1731615911642; Thu, 14 Nov 2024
- 12:25:11 -0800 (PST)
+        bh=I/1SqCDSlERm/dM81G1InJgqAP4pfbcNYeB1lcKaPOY=;
+        b=rVo9LBZPQGUXZA292BJpLAI5aQOYenhVOAxyGb52N8/YNCuBGZ6ann+UBffmYVqA2A
+         U/ttEX61ukBHZ60dVbw4nuU2Q6pSWAMTeezdDJvxM6u8+GtMVZ/JYPSSVILYiLSMJL/8
+         bFpvLk0gKQ76alU3sa/zZRoFqtFhNLsnlKRbvlKUcL/7WZ57Vuusxpx4NpV/mNySJjP0
+         mREU1TAyscXxmmDKjRjHOFU4vSCZ59JW9sFCaq0kridf7yh+YIn7rJVcPgDquouADffp
+         FabsfxRHJmAhlxrIPOgvWHRLpGlfUy8PKBjKA5cwLD/z7mSpL5Fq+3V49yTE1mbS0t/H
+         ZPEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUkFKiHD++E1f+ByepjukVZs21z6QykUy3EG7+xGc80iLy1hUiJ9cXkDi1bl1PzpLuTwcJUvrY+HAi+ZKsA@vger.kernel.org, AJvYcCXQCHMbHDEiz1xlMtibqht3nsKzjrPpyihvca77KgJTdLIvhIMaIaHOvDdFJfdX/PsNSV3d9EzxC4in@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeEVadf9gHidbECzc3iVKfLviFTo2z90Hqlod26ZOGFmK9KTgf
+	knYvCvN69mk3/YPH1lXmtHb4nTaSoI7dPoH4yTTXU06SKo1nq4GfCj/H/6AHVMDGZeZN/CSurUb
+	yahn7lVYC0b/76+FwhffR4Y0n0AI=
+X-Google-Smtp-Source: AGHT+IEC7pGtVCBnwD9Pmf6WBeFocaB36f7h4OFa6oSTdO9vrJqzdqO25X0vd4M5p43hqMl/b3Hpjbv1qFYMhwhwTpM=
+X-Received: by 2002:a2e:a9a4:0:b0:2ff:566e:b583 with SMTP id
+ 38308e7fff4ca-2ff60665fb5mr2479901fa.11.1731615952392; Thu, 14 Nov 2024
+ 12:25:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114195652.3068725-1-samuel.holland@sifive.com>
-In-Reply-To: <20241114195652.3068725-1-samuel.holland@sifive.com>
-From: Saravana Kannan <saravanak@google.com>
-Date: Thu, 14 Nov 2024 12:24:34 -0800
-Message-ID: <CAGETcx9hLPxtE94cKiM==+Ep8k=d+HP4q3FCMKMbeFAjt7XW7Q@mail.gmail.com>
-Subject: Re: [PATCH] of: property: fw_devlink: Do not use interrupt-parent directly
-To: Samuel Holland <samuel.holland@sifive.com>, Marc Zyngier <maz@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20241113120327.5239-6-suravee.suthikulpanit@amd.com>
+ <cac1ccd3-4b81-4374-a49d-9afad755b19c@app.fastmail.com> <20241113132031.GF35230@nvidia.com>
+ <CAFULd4a1PHREX6ws9Gyu=TaaZvdgLfh6peoE5Tt010uGyY9Hgw@mail.gmail.com>
+ <20241113140914.GI35230@nvidia.com> <CAFULd4aGDM5ySO-PeOH0+_U89mnqYqQ7v+U0ZsMode3bxs_X7w@mail.gmail.com>
+ <20241113142807.GJ35230@nvidia.com> <CAFULd4aFvGj=kz5Si9WpAr33KFtJDO5+sdNO=NBB+boS=E-E_Q@mail.gmail.com>
+ <20241113163451.GK35230@nvidia.com> <CAFULd4bvDhfSprPEyirvX9VmKK_fpxaVNRO02oqT_KQAdLFhfg@mail.gmail.com>
+ <20241114162918.GS35230@nvidia.com>
+In-Reply-To: <20241114162918.GS35230@nvidia.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Thu, 14 Nov 2024 21:25:40 +0100
+Message-ID: <CAFULd4Zi-ua=G-JR2JytwkDtghJSaV-Q_dAPFswkKiUB0rX5oA@mail.gmail.com>
+Subject: Re: [PATCH v10 05/10] iommu/amd: Introduce helper function to update
+ 256-bit DTE
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
+	Joerg Roedel <joro@8bytes.org>, Robin Murphy <robin.murphy@arm.com>, vasant.hegde@amd.com, 
+	Linux-Arch <linux-arch@vger.kernel.org>, Kevin Tian <kevin.tian@intel.com>, jon.grimm@amd.com, 
+	santosh.shukla@amd.com, pandoh@google.com, kumaranand@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 14, 2024 at 11:56=E2=80=AFAM Samuel Holland
-<samuel.holland@sifive.com> wrote:
+On Thu, Nov 14, 2024 at 5:29=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com> wr=
+ote:
 >
-> commit 7f00be96f125 ("of: property: Add device link support for
-> interrupt-parent, dmas and -gpio(s)") started adding device links for
-> the interrupt-parent property. Later, commit f265f06af194 ("of:
-> property: Fix fw_devlink handling of interrupts/interrupts-extended")
-> added full support for parsing the interrupts and interrupts-extended
-> properties, which includes looking up the node of the parent domain.
-> This made the handler for the interrupt-parent property redundant.
+> On Wed, Nov 13, 2024 at 08:50:08PM +0100, Uros Bizjak wrote:
 >
-> In fact, creating device links based solely on interrupt-parent is
-> problematic, because it can create spurious cycles. A node may have
-> this property without itself being an interrupt controller or consumer.
-> For example, this property is often present in the root node or a /soc
-> bus node to set the default interrupt parent for child nodes. However,
-> it is incorrect for the bus to depend on the interrupt controller, as
-> some of the bus's childre may not be interrupt consumers at all or may
-> have a different interrupt parent.
+> > Then write_dte_upper128() would look like:
+> >
+> > static void write_dte_upper128(struct dev_table_entry *ptr, struct
+> > dev_table_entry *new)
+> > {
+> >     struct dev_table_entry old =3D {}; <--- do we need to initialize st=
+ruct here?
+> >
+> >     old.data128[1] =3D ptr->data128[1];
+> >
+> >     /*
+> >      * Preserve DTE_DATA2_INTR_MASK. This needs to be
+> >      * done here since it requires to be inside
+> >      * spin_lock(&dev_data->dte_lock) context.
+> >      */
+> >     new->data[2] &=3D ~DTE_DATA2_INTR_MASK;
+> >     new->data[2] |=3D old.data[2] & DTE_DATA2_INTR_MASK;
+> >
+> >     iommu_atomic128_set(&ptr->data128[1], new->data128[1]);
+> > }
+> >
+> > and in a similar way implement write_dte_lower128().
 >
-> Resolving these spurious dependency cycles can cause an incorrect probe
-> order for interrupt controller drivers. This was observed on a RISC-V
-> system with both an APLIC and IMSIC under /soc, where interrupt-parent
-> in /soc points to the APLIC, and the APLIC msi-parent points to the
-> IMSIC. fw_devlink found three dependency cycles and attempted to probe
-> the APLIC before the IMSIC. After applying this patch, there were no
-> dependency cycles and the probe order was correct.
+> That makes sense to me, but also we have drifted really far from the
+> purpose of this series and missed this merge window because of this :\
+>
+> Let's conclude something please
 
-Rob/Marc,
+The most important fact here is that data won't change (I was not
+aware of that), and that we would like to exercise only the 128bit
+atomic write property of the cmpxchg16b. So, we actually don't need a
+"lockless" approach, where we would need __READ_ONCE() and cmpxchg
+loop. The atomic write can be a simple arch_cmpxchg128(ptr, *ptr,
+new), and because *ptr won't change between preload and compare, the
+xchg will always succeed.
 
-If the claim about the interrupt parent interpretation is correct
-across the board, I'm ok with this patch.
-
-I remember the RISC-V DT for interrupts being a mess. So, want to make
-sure you agree with these claims before I Ack it.
-
-Thanks,
-Saravana
-
->
-> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
-> ---
->
->  drivers/of/property.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/drivers/of/property.c b/drivers/of/property.c
-> index 11b922fde7af..7bd8390f2fba 100644
-> --- a/drivers/of/property.c
-> +++ b/drivers/of/property.c
-> @@ -1213,7 +1213,6 @@ DEFINE_SIMPLE_PROP(iommus, "iommus", "#iommu-cells"=
-)
->  DEFINE_SIMPLE_PROP(mboxes, "mboxes", "#mbox-cells")
->  DEFINE_SIMPLE_PROP(io_channels, "io-channels", "#io-channel-cells")
->  DEFINE_SIMPLE_PROP(io_backends, "io-backends", "#io-backend-cells")
-> -DEFINE_SIMPLE_PROP(interrupt_parent, "interrupt-parent", NULL)
->  DEFINE_SIMPLE_PROP(dmas, "dmas", "#dma-cells")
->  DEFINE_SIMPLE_PROP(power_domains, "power-domains", "#power-domain-cells"=
-)
->  DEFINE_SIMPLE_PROP(hwlocks, "hwlocks", "#hwlock-cells")
-> @@ -1359,7 +1358,6 @@ static const struct supplier_bindings of_supplier_b=
-indings[] =3D {
->         { .parse_prop =3D parse_mboxes, },
->         { .parse_prop =3D parse_io_channels, },
->         { .parse_prop =3D parse_io_backends, },
-> -       { .parse_prop =3D parse_interrupt_parent, },
->         { .parse_prop =3D parse_dmas, .optional =3D true, },
->         { .parse_prop =3D parse_power_domains, },
->         { .parse_prop =3D parse_hwlocks, },
-> --
-> 2.45.1
->
+Uros.
 
