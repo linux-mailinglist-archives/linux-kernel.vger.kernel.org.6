@@ -1,205 +1,389 @@
-Return-Path: <linux-kernel+bounces-408579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECF229C80B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:26:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 290F69C80B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:26:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 948161F248C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:26:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A15A41F24C65
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF45C1E9097;
-	Thu, 14 Nov 2024 02:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A1C1EABAB;
+	Thu, 14 Nov 2024 02:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="PgsSq8i1"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2115.outbound.protection.outlook.com [40.107.215.115])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1qfzaAoO"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E841E9070;
-	Thu, 14 Nov 2024 02:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.115
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731550941; cv=fail; b=EJaa4tD7Z46NIehNRZ4hYrABDla1Rzon7FEse4gNLX7o9rPNJmxwnJraPwF7LoFBDJR3lLCCJY8/Xw0OERQgcbZhWfgetizBhQXCZmYcqenmyMea6khM7u7rnjFbeOf35FXdfmTO2uo+Kk6oF0FYOo8FK8so1prPoUpL3A0jE0U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731550941; c=relaxed/simple;
-	bh=TDsNAMmj95X9e0eyTx4ADPzSG8UUocLmWSY3elKP1UQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=CqzU8wVm5l93D5U1U3IrxBEF4QWn5kVYz2SAk0b//tIBWaF1naDa0q+2lqmLuunfXrHW0qkvTYxWrKlqTr8VhzP/U+F8sE14UNQKPC7evcdCA+uSpS9KNHWKgsd+hH5TXnPA7KPhUGPDusuROzs7vZqCOB/x9uUBhH/Mu1t95Mc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=PgsSq8i1; arc=fail smtp.client-ip=40.107.215.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Lz8ze91zEqN/nLz7mkYaGOnB2MVK1z7/GsXxx5MRpuRcgpDJy53p2JLZSOgQksRTMx1P9NhqOj5wBt/C/MG0w1Jt8GZck0DvbM21VMDyuZ5KSA3Q250wS+6QfCh9Fs0yFaeGgtk/sDxrCzY42Hdd3utRi7rdic14/NEltv8Wygzk1H2ywPYz484mp8mQ4EfU/ai8Z0/ZPqiUqLRbEA+aphT1bibLQUzg4t9ZK5Srng8oe8BlzsujI5tzC9sA3upHIIut3mYtAIs3OBlmb7TnEgZDvhXQThESOsJw2bx2TDGsAVPeQ9YTAzI5bnVL1VWmNPQIpI6Qf6SBV+BZp12jrQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TDsNAMmj95X9e0eyTx4ADPzSG8UUocLmWSY3elKP1UQ=;
- b=IAIWRzuFqQbWBEHpJkSxcra3/lHtCU4AStm9a+UYREeW6jZBqwzkyMmxnWK9Hx1RccCwUpOPs50GP7hT4Iplun/e7HX9z3bprSGU01ZwSkShWC7OWVwn45uMF5BYw3TvNnuUByKNi0A+xJd1at700bMUyIxU7XhvTW4a7a5LnTZIELS/9nxxqpDddDddkOoKpyKJTaaMTedBIi5tusMiyXf492XwKs1qmjG698CrAV+lUxOFq9Ie5LYHQ1IC3acJsbr+3rcZxNlde2nmzbNsEsF6qO63J+frd2iFIegYqvekKTEk0qldv/olRBF3B9doGsb1Mmgul0jRCflIDRXYTg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
- header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TDsNAMmj95X9e0eyTx4ADPzSG8UUocLmWSY3elKP1UQ=;
- b=PgsSq8i1LxIFliIoNbIY+ELXTNMnpJIQcy12JQHEiM9JyqFyGh4nenqf2TcjfQZ11Uw0V1a6iMzVGzQHT6bk66egbwGPZuTMO/F4bzgB1mAD5mj0dk+YgbI6GFP/pAJyBjJHGrtPgB6LQziuPGLcSV4bIirnTM2dV5tshu6kaigPCUWBYc9kx3sawQdWsoHGtNS+TKwBQEsidVIC4NNJ/X/ixjMbVwMhnc2dR0TcrncwlM7QVwreWdQC6d2iCcCTmUJ7AxgYhDb4g5NDm9WJ0o2KZJ/ubkQqq3L1RiUMcnpTPmK23YhpPy8i5hUqTYs2k70k5jlAmHmSL1vCyepjng==
-Received: from SEYPR06MB5134.apcprd06.prod.outlook.com (2603:1096:101:5a::12)
- by PUZPR06MB5904.apcprd06.prod.outlook.com (2603:1096:301:113::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.18; Thu, 14 Nov
- 2024 02:22:16 +0000
-Received: from SEYPR06MB5134.apcprd06.prod.outlook.com
- ([fe80::6b58:6014:be6e:2f28]) by SEYPR06MB5134.apcprd06.prod.outlook.com
- ([fe80::6b58:6014:be6e:2f28%4]) with mapi id 15.20.8137.011; Thu, 14 Nov 2024
- 02:22:16 +0000
-From: Jacky Chou <jacky_chou@aspeedtech.com>
-To: Simon Horman <horms@kernel.org>
-CC: "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>, "davem@davemloft.net"
-	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, "ratbert@faraday-tech.com"
-	<ratbert@faraday-tech.com>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject:
- =?big5?B?pl7C0DogW25ldC1uZXh0IDMvM10gbmV0OiBmdGdtYWMxMDA6IFN1cHBvcnQgZm9y?=
- =?big5?Q?_AST2700?=
-Thread-Topic: [net-next 3/3] net: ftgmac100: Support for AST2700
-Thread-Index: AQHbMQZSanPeA3sdNU6SnHF6uEd5/rKyClEAgAQLA8A=
-Date: Thu, 14 Nov 2024 02:22:16 +0000
-Message-ID:
- <SEYPR06MB51343BB70CD66E547D637FE79D5B2@SEYPR06MB5134.apcprd06.prod.outlook.com>
-References: <20241107111500.4066517-1-jacky_chou@aspeedtech.com>
- <20241107111500.4066517-4-jacky_chou@aspeedtech.com>
- <20241111123526.GC4507@kernel.org>
-In-Reply-To: <20241111123526.GC4507@kernel.org>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=aspeedtech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SEYPR06MB5134:EE_|PUZPR06MB5904:EE_
-x-ms-office365-filtering-correlation-id: d45f5988-7688-4f26-e187-08dd0453285c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?big5?B?UXRlS3Nrc1NqZWZTaHhOem0xbmNHYklBWXQ3ekNNSDdOR3dlaW53djF5S0pYVFU1?=
- =?big5?B?OWtvRjRzU0dJcTVNdjZTdm4vZzJKOVlxTFlWdHd2ZE5tNG4vcGpsejZTUSs3UU1S?=
- =?big5?B?ZE5waWtjQ0QvYnlacnRCUkJER3BPWkhZdS9ZTnU1QmVIZEo1dUFhc3JhMWFKVHpO?=
- =?big5?B?WXkvK3JEZXRLeFBzL0h4UXVVSHNON0dKc1JaUFFFTVU2cWp5bHpuWjErQysrVDc2?=
- =?big5?B?QWUvcTAyRGZuYzd6RWg0M2ptd2JVenkxREJJR1RseTdFUE81U2xNYVEvemhycVg1?=
- =?big5?B?aEhLaUUrM1ZYM01TNENqYnFHTitJUkx4MzhnTVJFM21rcmt0TEVpRXlKb3BuL1lP?=
- =?big5?B?OUZ2UVJVRVZmcW0rQ203aDF2dlREK2M4Q0tnNUwwd0czVHlzSXdxNzVTcDNRS2pq?=
- =?big5?B?YzY3azJVaUpZdjdFSWRvL3djQU8rUVhYcEpJV3JPTE9oWldOb2o0YkliL0lrU1dY?=
- =?big5?B?Q0E2TjBwRzUxVEVIaVgxNWdBelcvSXVBN3ZVL2JyZDdMSVJ4dGM2a1JNYVZ3djRq?=
- =?big5?B?V0RJZWdObzRnbk85YUtGdE9ldllySVlwUElPYko3S2pvb3o1THB5ZE1MMWE3TmFJ?=
- =?big5?B?STYzS0Z6L2IyaUdrajlBWlhpbFhFTmZUckpEdGNHQnFEZTVVRFhnMjUxM25SM2JQ?=
- =?big5?B?VGFXU3NCdGdReWNuTUpnN1lUZ2lnOGFyei9GUlhEanJRNC91dTNabkVicnlPSzlC?=
- =?big5?B?V3NIRytxdWZBK1o4MTZXOGYyN0Yvd1ZRNUdSTDUzL0gvMW4vTW5vMnpNVE80REp1?=
- =?big5?B?dlZ4WXpqTXlaaUZxSXpOSDFsN25CN3lqWTVlM1Ntd0tQbC9tdjI1QURDZzB6ME5M?=
- =?big5?B?K0Vrd1VoN2N3RGh6MUIwM2UyR3RQRzZISGVvMXdXSXJkelFSNzcyb1JKOFFBREtP?=
- =?big5?B?QU9TR3oycjMrS3YwQWVQS2JGMk1ocGdUTmxIc2hVeGpBYmtXSEJXR3UyNXpKQ3g1?=
- =?big5?B?TUNLSzJVU0dGclh1SVdWbnNrODlrSldPWFZCL01qbytsMU5vWjBybS9EUzlkQzhp?=
- =?big5?B?M2NMVExDN2lNVGRtVEpzNDYwbll0SDBUYTR3VVNjdU0xWC9MYmNZUTF4djkrR1VM?=
- =?big5?B?S3hYeWI2U2VJQTBBekI1UFpuc01LUExGRGN2Q0xiNHNuSXZmbS9DUG9LWm82Z0ZT?=
- =?big5?B?UVpCK0NoRnlmSXJsNFlycjdlV0hPTVkyb3h1Zis0WlRWQW12dWQ5NFZGQStMTjQz?=
- =?big5?B?VUppUWhqT09ONmRWZ2I2TW9VZWIyQnA2bFA1WTBVenNXaHFEWVE1UFRoMG04VTdF?=
- =?big5?B?dUsvRDFQQkZMcFc3eEVBc1ErcHF3cEs1akNXdUFFbVNCUllNcEpsTk9yemJFNk9W?=
- =?big5?B?Ry9GdUR1RVptVGk5Lyt5MzY4S3gweFVkMDBLTlh5dnB1cmVmTU5iOHhtSzJpVEpo?=
- =?big5?B?SmFUcG0rMzV1MHdFQUlkL2NUT0gwNlV3U1plNXFSS3o4U1dUeW5hUFlOTzRXOEF0?=
- =?big5?B?Z3Q4dUxabHZ6Nk5hQ0VXNlVFamFFUHNZV21iMGMwN01qMXhpelFTbk83UHNMQXhu?=
- =?big5?B?T0grVjVQenRlNURUWDdCdGhmelp0WXNnbzIrdjVzd3AzcS81elZVbllvOEYySTdw?=
- =?big5?B?Wlg0NlZwdUJlR2tiOWthUFBoUEgxTy9yUFZHanZnalh1YTZFZVo1bDhGZjN5K082?=
- =?big5?B?Z1A5VXVZdktlWVJtRzJYd0RYTzduUnNqVVA0V2lINDRJUjRjSXFySk9KUFBqNmJW?=
- =?big5?Q?L+hAN6xHPl5w1iPxbd21SX+vAEB3ziG/Vc3+iA0GhAs=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB5134.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?big5?B?WWo5UGthalBEbnhGSmpza3hNMk5LWXRWUGRYc0VJTmorbGtMTHVYMXBHNjYxRWhq?=
- =?big5?B?WUJybTl1VnVyN2h1bXdFQW5kUnhtVklmSjhaZEEvdWpCSWFIOHRDYU9Xbjh4OTA4?=
- =?big5?B?c1NzRXFRYkxOQmhIamZmZktZT0hFWldKNTNvWFpOUXJxSk15bjhpY3pQZnJyS3Y5?=
- =?big5?B?S3IzdC9VTktOa01US0VtbjdSYXB5SWFUNFVpSlhtTnVKb09QdDVqN3pvQlpBZDVT?=
- =?big5?B?S0ZqaUFwcHNFbE1sQ29Lay9PYTI3eCt5Nk1lK09zM3hTLzlweWhnTWppNHJCNWo4?=
- =?big5?B?RmozdnZMMDBMeGNnckphUjM5clJNV1dQZEhncUgwSHJpcVpzVjQzd2tjcGdValdk?=
- =?big5?B?c3dOOVA0SE9KMVJ4Vm1kYUp2NVQyc0tUU2sydktTTnJ0Y1FZM2NadW1nV1pwWjdB?=
- =?big5?B?azQvaFlYcS83N3g3L01BWlhmSS9QWDgyaUtLN2Y2NUsrQklmU0V2UjUwRlU4dTFL?=
- =?big5?B?RmRjbzg2OUM4cVBFd2d1MzJRWm5lZGhnN3Zxc0RVM09zUC9yOGw0RzNlOFB1eGp0?=
- =?big5?B?ZFcwdlRyRk9OMXZ0TnhBUkxBeDFDcVBKbW9DeGpZcmdUQ0VkUUgvdTYyRDB3NVU4?=
- =?big5?B?elgxMWdNMXFNU2ZmaGkvOHJIQUtsS3V6TkhnRHBNV1ZRY09mN0lvaHVoVGliOWpC?=
- =?big5?B?aDE0WFhHaWUvVytkTjdQVlNlKzU3NGl6eU9BRzBlRkV4ZE5JMlpianU3WXRBTTRS?=
- =?big5?B?ZDVkMk9XeG05U2x2ZUhxUENzdncxUndWVCtra1ZQNkdoWGdGd0xmamZMTUtGWlln?=
- =?big5?B?VEVxMWIyKzljTmlmT2VuMDhJWkVTNHVDd3Q4MnZmeXhQT3ZzM1lvL2FOZ0hRalU3?=
- =?big5?B?R05PblNQdjB4UHdLeDR5VUhMZzlTNnQ4d2FtRGk5ajZQbHE5aWZjTGFpWWY0ZUdB?=
- =?big5?B?eHN1TWNSaDM2ZlZxcEZ1RXlabmZDSU5HeVRjTUZCOEx2TkM3U0lHZGdibVoxS1Bu?=
- =?big5?B?eFhIL1RxR0wybXdwVjdOUytaK3lBSkxES1czOG94b2tSNm80UEtTMktmejZQU2dT?=
- =?big5?B?cXUrN0lVSm44ZVUwcExIcUZvTjdiRFVFbmZNVkpSYjhVOSs5aEhVcmdjSmxpVUts?=
- =?big5?B?dlZOa0I2UHlHcnJnRU5lRlljWlhqd2p0WEdpa1pha055dXNOejFDby9hNDhhTXZF?=
- =?big5?B?R2ZuY2M2NXZUSUVHZy85UlVCbTE0ZlNqRnprZmZjNDUwZGNTVGtqSkY1OEs0YXhz?=
- =?big5?B?YXpKVjE0OHdpRzJvUkY2MGhWR2oyMTlDeUNaZndJSUwwS1VkbXdNSDJXdVZyNzBs?=
- =?big5?B?ZzRtc0VtckhqQXROM3FhUlE4MFYxUnhuM3NPakVmWGJmUTExMmxqeXErSld2TjlG?=
- =?big5?B?ODIyaGZSRE9Nb3lXUFpNd1c1c1dSVi9RdHNuSEhwYnkzYk4yMDNad1JDblVXYnlh?=
- =?big5?B?RlhRNzZJck9MSUtybDdFOTNJdDlpd2JBV2JraG42MzVEcG1wa3YvL2g5TGRQQmsw?=
- =?big5?B?ajlKYjZzd2MyZ3B1b281Nk8xdUJVdXdETTN5Q0NzcjZJNGhFOWtNY2UyYU5Qa0s0?=
- =?big5?B?WlY5WFdHVDQxYjhKWUVsVWRLc1h3SFl1N1VHOHFnU1dtOWNySlFwTy9oeDg2SUcy?=
- =?big5?B?UGd1TWJtMUZycFlTWHJ2L3o4OHZ2SFlMQURHTHh0bW5vdWl5Y3Fidkg0S1pwRnV3?=
- =?big5?B?eUUweXBuMnN2QTFnTTlqZ3hlWmxRWmVScGFnS09QdUJsSUdjdE5GYmlzby85RUEw?=
- =?big5?B?ZCtudFc2cjFZak1tUzhZbVZRMkxqOWFLV3F0WVhhZkNtTTZvdjZqV2ltUzB3ZjZl?=
- =?big5?B?SE4xWUJGL0x6UWZYZEtVZlBXSHNpbDhIYlZqTUZhemh1aDY4RE1CQWpPR1FFM1Vz?=
- =?big5?B?WFZsbWRtY0g1Y09FTWNRZGc0SldjcHFIYUszQ0xxbDRKeStYVTdpbmFlVk5qMjdR?=
- =?big5?B?YUc5TXJlK1ZYaFRXNjVkZ3F4Y0pTY291MjN3alprNS9wdXB6blY3U1ZnYTdWUkxq?=
- =?big5?B?SHMwTXBISXJpczA2ZTlOTFErTXdycDhRaGRaWGYyV1JaZXhRSjRnaW81TEEzSEUw?=
- =?big5?Q?T+mrNOgnImLLwMeq?=
-Content-Type: text/plain; charset="big5"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB5A1EABA5
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 02:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731550967; cv=none; b=O4d4cmnG24P2CFi7UO95bIR2wY6/9Gxbh8CM8f0Yq/NUkdhTS6IhboVq6RWm/7XpCi5Ijb8edUTIESAKtcvY0WYBZeRnrODs5OEi9e9JaBLBG63I3IBeedLn7NFzOsRv7QCGm587bX1TG89MXXh0zSiLnvfcvoTYqKazJ31MVHE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731550967; c=relaxed/simple;
+	bh=EMkD5x/rX8Jv1ujpZkN7/y7bzHD+vr4hOvuQfDFFFmo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qnysfVQv68XKZqO+ITtJ0ekK7fPdwldX1FkRlq1bBSeyPsWljtxXmS20v5pR0ytFjn8JH415/kuRBjBStHWd/mHDZbodOevZ+Eak8i8eW/W1CwrjRap6OiSN8Or7+0hMPooMDJVVhWMytUjQVl0l8bSn8TNUjtsxoyB/b2Il2cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1qfzaAoO; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20ca4877690so38155ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 18:22:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731550965; x=1732155765; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DFjbyEhB6YlvQdLcxCY78EUF4TC4mFNmvglTPgbd4h0=;
+        b=1qfzaAoO3lR/P8iWL16Dtch7tMRNql+qI2ZRTBCK04VFdm4PuvfhjTo6J5QCTb3zjA
+         ctcDaTG8+bQ4FZ4e3HwDi7zBc9TTd7GzaffI/FMZHxA9G/XbgY7sPxbnqsmIbP2Jdb0t
+         pEluD8IXf+UQAY8JAFJxZ1v9IUMsR4M1uJoQgg/esS2W6BfIKgo8hznqscWrU1XO9+2f
+         /KeIohIpzjAcFkMT/i2Qu5Z2uQHhExAP7mrgFm9c2lrw54u1tFH+gXdI4iBxgyzjyCGN
+         zWWklAZq5094BcJ6LVsiUTmNupHRsmrbVe1nETNHCLJWgCkXN+ic+25hcflFnwxvx6lS
+         Skjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731550965; x=1732155765;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DFjbyEhB6YlvQdLcxCY78EUF4TC4mFNmvglTPgbd4h0=;
+        b=XNXh8p4/GsU1DOi5h3rDrcTlkZST0/ztsmChTb7dGfSEUNT01cho1Q/Utf+fYHfMOl
+         vnVR1ULMJ4926E8NrGa808AkqWCs6tA7FYk9Z4q7nryGsIHoFZGhn/nsm+R7rdKLvapw
+         4/5E9aVdVVVUmK1R7obWXyORmk/u+hItb1+iHlmunmw9ROrFao9MrX6GMGqTbgFQovNT
+         Oj2Y5JuJn4or6gzQ7I8lBvBGvmlfIIZ4b2Gi2SWsPjnJBN+Pz0mFF3lW7gkcLSa2nHYo
+         z2CXO1nfPuk/LtxCQDHw3ElZdukd+ht34KcoDFI29kfb28UbDmCVwhUH+3RluC9FHY+/
+         3dZg==
+X-Forwarded-Encrypted: i=1; AJvYcCXWFvmufF6zLq6riBJ82OWZsYG89CbwyTGEcDVvr9DwAiEDO2z/b93M2i6XwZH98DOUGrgEAkl66TCiDHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVlobo29qUi+yrjX9Pw5xoCFABSRKtzEnh4UwcIao4xJhd775T
+	YJunle0o7sDEdwjey11ytARFEp3hwrT7a7g+9ia7YSsTmjQnddxgce7rIIM1Aal4vuGkqeN1ZpZ
+	w9fGNIgS8Z3FDuESynVdzdx4pCoyZK899WXBl
+X-Gm-Gg: ASbGnctlEsGPKmArHLs/IdmLF9SU1udbMkJhXKfNyeSLgbXfDDeTVQrCKi6QQm6FkHe
+	qjGzDApxEv6u2BKdvt1vFn6yeRZ4NuBBV
+X-Google-Smtp-Source: AGHT+IEkHAxuNUMrQfjgKIWdSsYc7V/QUk6N1one1DotrFR+zPLsyGLzHOhroHdOV2Gkm0PwtDPFe6/yqGWMOs6bXdU=
+X-Received: by 2002:a17:902:fa4f:b0:20b:13a8:9f86 with SMTP id
+ d9443c01a7336-211c193f425mr1508925ad.28.1731550964983; Wed, 13 Nov 2024
+ 18:22:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: aspeedtech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB5134.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d45f5988-7688-4f26-e187-08dd0453285c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2024 02:22:16.2189
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zgMlmxpOutbsii3YjEO/vQoBzkevfsNGqqTwMmzU9sU7bVdOCI679McabDv1/mjzyyeObtuOc9wnEvEcjNUrLtnHleIgUlE2WRvOPfwC+to=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5904
+References: <20241107160721.1401614-1-deepak.surti@arm.com>
+In-Reply-To: <20241107160721.1401614-1-deepak.surti@arm.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 13 Nov 2024 18:22:33 -0800
+Message-ID: <CAP-5=fU83dr8XR0_bO8ZHD2-K+YXmK7H-1evs9ERKJ3EiGLiFQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/4] A mechanism for efficient support for per-function metrics
+To: Deepak Surti <deepak.surti@arm.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
+	namhyung@kernel.org, mark.barnett@arm.com, ben.gainey@arm.com, 
+	ak@linux.intel.com, will@kernel.org, james.clark@arm.com, 
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
+	adrian.hunter@intel.com, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgU2ltb24sDQoNClRoYW5rIHlvdSBmb3IgeW91ciByZXBseS4NCg0KPiA+IEBAIC0xOTY1LDE2
-ICsxOTgwLDI3IEBAIHN0YXRpYyBpbnQgZnRnbWFjMTAwX3Byb2JlKHN0cnVjdA0KPiBwbGF0Zm9y
-bV9kZXZpY2UgKnBkZXYpDQo+ID4gIAkJCWRldl9lcnIocHJpdi0+ZGV2LCAiTUlJIHByb2JlIGZh
-aWxlZCFcbiIpOw0KPiA+ICAJCQlnb3RvIGVycl9uY3NpX2RldjsNCj4gPiAgCQl9DQo+ID4gLQ0K
-PiA+ICAJfQ0KPiA+DQo+ID4gIAlpZiAocHJpdi0+aXNfYXNwZWVkKSB7DQo+ID4gKwkJc3RydWN0
-IHJlc2V0X2NvbnRyb2wgKnJzdDsNCj4gPiArDQo+ID4gIAkJZXJyID0gZnRnbWFjMTAwX3NldHVw
-X2Nsayhwcml2KTsNCj4gPiAgCQlpZiAoZXJyKQ0KPiA+ICAJCQlnb3RvIGVycl9waHlfY29ubmVj
-dDsNCj4gPg0KPiA+IC0JCS8qIERpc2FibGUgYXN0MjYwMCBwcm9ibGVtYXRpYyBIVyBhcmJpdHJh
-dGlvbiAqLw0KPiA+IC0JCWlmIChvZl9kZXZpY2VfaXNfY29tcGF0aWJsZShucCwgImFzcGVlZCxh
-c3QyNjAwLW1hYyIpKQ0KPiA+ICsJCXJzdCA9IGRldm1fcmVzZXRfY29udHJvbF9nZXRfb3B0aW9u
-YWwocHJpdi0+ZGV2LCBOVUxMKTsNCj4gPiArCQlpZiAoSVNfRVJSKHJzdCkpDQo+IA0KPiBIaSBK
-YWNreSwNCj4gDQo+IFNob3VsZCBlcnIgYmUgc2V0IHRvIEVSUl9QVFIocnN0KSBoZXJlIHNvIHRo
-YXQgdmFsdWUgaXMgcmV0dXJuZWQgYnkgdGhlDQo+IGZ1bmN0aW9uPw0KDQpZZXMuIEkgd2lsbCBh
-ZGQgY2hlY2tpbmcgdGhlIHJldHVybiB2YWx1ZSBpbiB0aGUgbmV4dCB2ZXJzaW9uLg0KDQo+IA0K
-PiA+ICsJCQlnb3RvIGVycl9yZWdpc3Rlcl9uZXRkZXY7DQo+ID4gKw0KPiA+ICsJCXByaXYtPnJz
-dCA9IHJzdDsNCj4gPiArCQllcnIgPSByZXNldF9jb250cm9sX2Fzc2VydChwcml2LT5yc3QpOw0K
-PiA+ICsJCW1kZWxheSgxMCk7DQo+ID4gKwkJZXJyID0gcmVzZXRfY29udHJvbF9kZWFzc2VydChw
-cml2LT5yc3QpOw0KPiA+ICsNCj4gPiArCQkvKiBEaXNhYmxlIHNvbWUgYXNwZWVkIHBsYXRmb3Jt
-IHByb2JsZW1hdGljIEhXIGFyYml0cmF0aW9uICovDQo+ID4gKwkJaWYgKG9mX2RldmljZV9pc19j
-b21wYXRpYmxlKG5wLCAiYXNwZWVkLGFzdDI2MDAtbWFjIikgfHwNCj4gPiArCQkgICAgb2ZfZGV2
-aWNlX2lzX2NvbXBhdGlibGUobnAsICJhc3BlZWQsYXN0MjcwMC1tYWMiKSkNCj4gPiAgCQkJaW93
-cml0ZTMyKEZUR01BQzEwMF9UTV9ERUZBVUxULA0KPiA+ICAJCQkJICBwcml2LT5iYXNlICsgRlRH
-TUFDMTAwX09GRlNFVF9UTSk7DQo+ID4gIAl9DQoNClRoYW5rcywNCkphY2t5DQo=
+On Thu, Nov 7, 2024 at 8:08=E2=80=AFAM Deepak Surti <deepak.surti@arm.com> =
+wrote:
+>
+> This patch introduces the concept on an alternating sample rate to perf
+> core and provides the necessary basic changes in the tools to activate
+> that option.
+>
+> This patchset was original posted by Ben Gainey out for RFC back in April=
+,
+> the latest version of which can be found at
+> https://lore.kernel.org/linux-perf-users/20240422104929.264241-1-ben.gain=
+ey@arm.com/.
+> Going forward, I will be owning this.
+>
+> The primary use case for this change is to be able to enable collecting
+> per-function performance metrics using the Arm PMU, as per the following
+> approach:
+>
+>  * Starting with a simple periodic sampling (hotspot) profile,
+>    augment each sample with PMU counters accumulated over a short window
+>    up to the point the sample was take.
+>  * For each sample, perform some filtering to improve attribution of
+>    the accumulated PMU counters (ensure they are attributed to a single
+>    function)
+>  * For each function accumulate a total for each PMU counter so that
+>    metrics may be derived.
+>
+> Without modification, and sampling at a typical rate associated
+> with hotspot profiling (~1mS) leads to poor results. Such an
+> approach gives you a reasonable estimation of where the profiled
+> application is spending time for relatively low overhead, but the
+> PMU counters cannot easily be attributed to a single function as the
+> window over which they are collected is too large. A modern CPU may
+> execute many millions of instructions over many thousands of functions
+> within 1mS window. With this approach, the per-function metrics tend
+> to trend to some average value across the top N functions in the
+> profile.
+>
+> In order to ensure a reasonable likelihood that the counters are
+> attributed to a single function, the sampling window must be rather
+> short; typically something in the order of a few hundred cycles proves
+> well as tested on a range of aarch64 Cortex and Neoverse cores.
+>
+> As it stands, it is possible to achieve this with perf using a very high
+> sampling rate (e.g ~300cy), but there are at least three major concerns
+> with this approach:
+>
+>  * For speculatively executing, out of order cores, can the results be
+>    accurately attributed to a give function or the given sample window?
+>  * A short sample window is not guaranteed to cover a single function.
+>  * The overhead of sampling every few hundred cycles is very high and
+>    is highly likely to cause throttling which is undesirable as it leads
+>    to patchy results; i.e. the profile alternates between periods of
+>    high frequency samples followed by longer periods of no samples.
+>
+> This patch does not address the first two points directly. Some means
+> to address those are discussed on the RFC v2 cover letter. The patch
+> focuses on addressing the final point, though happily this approach
+> gives us a way to perform basic filtering on the second point.
+>
+> The alternating sample period allows us to do two things:
+>
+>  * We can control the risk of throttling and reduce overhead by
+>    alternating between a long and short period. This allows us to
+>    decouple the "periodic" sampling rate (as might be used for hotspot
+>    profiling) from the short sampling window needed for collecting
+>    the PMU counters.
+>  * The sample taken at the end of the long period can be otherwise
+>    discarded (as the PMU data is not useful), but the
+>    PERF_RECORD_CALLCHAIN information can be used to identify the current
+>    function at the start of the short sample window. This is useful
+>    for filtering samples where the PMU counter data cannot be attributed
+>    to a single function.
+
+I think this is interesting. I'm a little concerned on the approach as
+I wonder if a more flexible mechanism could be had.
+
+One approach that wouldn't work would be to open high and low
+frequency events, or groups of events, then use BPF filters to try to
+replicate this approach by dropping most of the high frequency events.
+I don't think it would work as the high frequency sampling is likely
+going to trigger during the BPF filter execution, and the BPF filter
+would be too much overhead.
+
+Perhaps another approach is to change the perf event period with a new
+BPF helper function that's called where we do the perf event
+filtering. There's the overhead of running the BPF code, but the BPF
+code could allow you to instead of alternating between two periods
+allow you to alternate between an arbitrary number of them.
+
+Thanks,
+Ian
+
+> There are several reasons why it is desirable to reduce the overhead and
+> risk of throttling:
+>
+>   * PMU counter overflow typically causes an interrupt into the kernel;
+>     this affects program runtime, and can affect things like branch
+>     prediction, cache locality and so on which can skew the metrics.
+>   * The very high sample rate produces significant amounts of data.
+>     Depending on the configuration of the profiling session and machine,
+>     it is easily possible to produce many orders of magnitude more data
+>     which is costly for tools to post-process and increases the chance
+>     of data loss. This is especially relevant on larger core count
+>     systems where it is very easy to produce massive recordings.
+>     Whilst the kernel will throttle such a configuration,
+>     which helps to mitigate a large portion of the bandwidth and capture
+>     overhead, it is not something that can be controlled for on a per
+>     event basis, or for non-root users, and because throttling is
+>     controlled as a percentage of time its affects vary from machine to
+>     machine. AIUI throttling may also produce an uneven temporal
+>     distribution of samples. Finally, whilst throttling does a good job
+>     at reducing the overall amount of data produced, it still leads to
+>     much larger captures than with this method; typically we have
+>     observed 1-2 orders of magnitude larger captures.
+>
+> This patch set modifies perf core to support alternating between two
+> sample_period values, providing a simple and inexpensive way for tools
+> to separate out the sample window (time over which events are
+> counted) from the sample period (time between interesting samples).
+>
+> It is expected to be used with the cycle counter event, alternating
+> between a long and short period and subsequently discarding the counter
+> data for samples with the long period. The combined long and short
+> period gives the overall sampling period, and the short sample period
+> gives the sample window. The symbol taken from the sample at the end of
+> the long period can be used by tools to ensure correct attribution as
+> described previously. The cycle counter is recommended as it provides
+> fair temporal distribution of samples as would be required for the
+> per-symbol sample count mentioned previously, and because the PMU can
+> be programmed to overflow after a sufficiently short window (which may
+> not be possible with software timer, for example). This patch does not
+> restrict to only the cycle counter, it is possible there could be other
+> novel uses based on different events, or more appropriate counters on
+> other architectures. This patch set does not modify or otherwise disable
+> the kernel's existing throttling behaviour; if a configuration is given
+> that would lead high CPU usage, then throttling still occurs.
+>
+>
+> To test this a simple `perf script` based python script was developed.
+> For a limited set of Arm PMU events it will post process a
+> `perf record`-ing and generate a table of metrics. Along side this a
+> benchmark application was developed that rotates through a sequence
+> of different classes of behaviour that can be detected by the Arm PMU
+> (eg. mispredicts, cache misses, different instruction mixes). The path
+> through the benchmark can be rotated after each iteration so as to
+> ensure the results don't land on some lucky harmonic with the sample
+> period. The script can be used with and without this patch allowing
+> comparison of the results. Testing was on Juno (A53+A57), N1SDP,
+> Gravaton 2 and 3. In addition this approach has been applied to a few
+> of Arm's tools projects and has correctly identified improvements and
+> regressions.
+>
+> Headline results from testing indicate that ~300 cycles sample window
+> gives good results with or without this patch. Typical output on N1SDP (N=
+eoverse-N1)
+> for the provided benchmark when run as:
+>
+>     perf record -T --sample-cpu --call-graph fp,4 --user-callchains \
+>         -k CLOCK_MONOTONIC_RAW \
+>         -e '{cycles/period=3D999700,alt-period=3D300/,instructions,branch=
+-misses,cache-references,cache-misses}:uS' \
+>         benchmark 0 1
+>
+>     perf script -s generate-function-metrics.py -- -s discard
+>
+> Looks like (reformatted for email brevity):
+>
+>     Symbol              #     CPI   BM/KI  CM/KI  %CM   %CY   %I    %BM  =
+ %L1DA  %L1DM
+>     fp_divider_stalls   6553   4.9   0.0     0.0   0.0  41.8  22.9   0.1 =
+  0.6    0.0
+>     int_divider_stalls  4741   3.5   0.0     0.0   1.1  28.3  21.5   0.1 =
+  1.9    0.2
+>     isb                 3414  20.1   0.2     0.0   0.4  17.6   2.3   0.1 =
+  0.8    0.0
+>     branch_mispredicts  1234   1.1  33.0     0.0   0.0   6.1  15.2  99.0 =
+ 71.6    0.1
+>     double_to_int        694   0.5   0.0     0.0   0.6   3.4  19.1   0.1 =
+  1.2    0.1
+>     nops                 417   0.3   0.2     0.0   2.8   1.9  18.3   0.6 =
+  0.4    0.1
+>     dcache_miss          185   3.6   0.4   184.7  53.8   0.7   0.5   0.0 =
+ 18.4   99.1
+>
+> (CPI =3D Cycles/Instruction, BM/KI =3D Branch Misses per 1000 Instruction=
+,
+>  CM/KI =3D Cache Misses per 1000 Instruction, %CM =3D Percent of Cache
+>  accesses that miss, %CY =3D Percentage of total cycles, %I =3D Percentag=
+e
+>  of total instructions, %BM =3D Percentage of total branch mispredicts,
+>  %L1DA =3D Percentage of total cache accesses, %L1DM =3D Percentage of to=
+tal
+>  cache misses)
+>
+> When the patch is used, the resulting `perf.data` files are typically
+> between 25-50x smaller than without, and take ~25x less time for the
+> python script to post-process. For example, running the following:
+>
+>     perf record -i -vvv -e '{cycles/period=3D1000000/,instructions}:uS' b=
+enchmark 0 1
+>     perf record -i -vvv -e '{cycles/period=3D1000/,instructions}:uS' benc=
+hmark 0 1
+>     perf record -i -vvv -e '{cycles/period=3D300/,instructions}:uS' bench=
+mark 0 1
+>
+> produces captures on N1SDP (Neoverse-N1) of the following sizes:
+>
+>     * period=3D1000000: 2.601 MB perf.data (55780 samples), script time =
+=3D 0m0.362s
+>     * period=3D1000: 283.749 MB perf.data (6162932 samples), script time =
+=3D 0m33.100s
+>     * period=3D300: 304.281 MB perf.data (6614182 samples), script time =
+=3D 0m35.826s
+>
+> The "script time" is the user time from running "time perf script -s gene=
+rate-function-metrics.py"
+> on the recording. Similar processing times were observed for "time perf r=
+eport --stdio|cat"
+> as well.
+>
+> By comparison, with the patch active:
+>
+>     perf record -i -vvv -e '{cycles/period=3D999700,alt-period=3D300/,ins=
+tructions}:uS' benchmark 0 1
+>
+> produces 4.923 MB perf.data (107512 samples), and script time =3D 0m0.578=
+s.
+> Which is as expected ~2x the size and ~2x the number of samples as per
+> the period=3D1000000 recording. When compared to the period=3D300 recordi=
+ng,
+> the results from the provided post-processing script are (within margin
+> of error) the same, but the data file is ~62x smaller. The same affect
+> is seen for the post-processing script runtime.
+>
+> Notably, without the patch enable, L1D cache miss rates are often higher
+> than with, which we attribute to increased impact on the cache that
+> trapping into the kernel every 300 cycles has.
+>
+> These results are given with `perf_cpu_time_max_percent=3D25`. When teste=
+d
+> with `perf_cpu_time_max_percent=3D100` the size and time comparisons are
+> more significant. Disabling throttling did not lead to obvious
+> improvements in the collected metrics, suggesting that the sampling
+> approach is sufficient to collect representative metrics.
+>
+> Cursory testing on a Xeon(R) W-2145 with a 300 *instruction* sample
+> window (with and without the patch) suggests this approach might work
+> for some counters. Using the same test script, it was possible to identif=
+y
+> branch mispredicts correctly. However, whilst the patch is functionally
+> correct, differences in the architectures may mean that this approach it
+> enables does not apply as a means to collect per-function metrics on x86.
+>
+> Changes since RFC v2:
+>  - Rebased on v6.12-rc6.
+>
+> Changes since RFC v1:
+>  - Rebased on v6.9-rc1.
+>  - Refactored from arm_pmu based extension to core feature
+>  - Added the ability to jitter the sample window based on feedback
+>    from Andi Kleen.
+>  - Modified perf tool to parse the "alt-period" and "alt-period-jitter"
+>    terms in the event specification.
+>
+> Ben Gainey (4):
+>   perf: Allow periodic events to alternate between two sample periods
+>   perf: Allow adding fixed random jitter to the alternate sampling
+>     period
+>   tools/perf: Modify event parser to support alt-period term
+>   tools/perf: Modify event parser to support alt-period-jitter term
+>
+>  include/linux/perf_event.h                    |  5 ++
+>  include/uapi/linux/perf_event.h               | 13 ++++-
+>  kernel/events/core.c                          | 47 +++++++++++++++++++
+>  tools/include/uapi/linux/perf_event.h         | 13 ++++-
+>  tools/perf/tests/attr.c                       |  2 +
+>  tools/perf/tests/attr.py                      |  2 +
+>  tools/perf/tests/attr/base-record             |  4 +-
+>  tools/perf/tests/attr/base-record-spe         |  2 +
+>  tools/perf/tests/attr/base-stat               |  4 +-
+>  tools/perf/tests/attr/system-wide-dummy       |  4 +-
+>  .../attr/test-record-alt-period-jitter-term   | 13 +++++
+>  .../tests/attr/test-record-alt-period-term    | 12 +++++
+>  tools/perf/tests/attr/test-record-dummy-C0    |  4 +-
+>  tools/perf/util/parse-events.c                | 30 ++++++++++++
+>  tools/perf/util/parse-events.h                |  4 +-
+>  tools/perf/util/parse-events.l                |  2 +
+>  tools/perf/util/perf_event_attr_fprintf.c     |  1 +
+>  tools/perf/util/pmu.c                         |  2 +
+>  18 files changed, 157 insertions(+), 7 deletions(-)
+>  create mode 100644 tools/perf/tests/attr/test-record-alt-period-jitter-t=
+erm
+>  create mode 100644 tools/perf/tests/attr/test-record-alt-period-term
+>
+> --
+> 2.43.0
+>
 
