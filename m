@@ -1,143 +1,228 @@
-Return-Path: <linux-kernel+bounces-409008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E069C8650
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:37:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B63799C8653
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:39:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55DD22841D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:37:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76F662829FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E901F7080;
-	Thu, 14 Nov 2024 09:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146B11E9092;
+	Thu, 14 Nov 2024 09:39:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RZS94gMd"
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="MIuvpyDq"
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2043.outbound.protection.outlook.com [40.107.249.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F051DF24B
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731577069; cv=none; b=Dp9srHdYcW5LpozIPhRpzG1hdjnGo+LEmCYqhfqVe3HH/a6QUnplixYzXOMpv8ttAWL2NQzxPJq+pO9CCp4jiPVBQnlkYciuxTsitn+BrHozaOpFsWGWDR/z6sVN3xzlMSiPP+nCZFVoSO+BFK6rzYA5KORvlpZHi8Nmf6H21Lg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731577069; c=relaxed/simple;
-	bh=cv0g3AgKJuElra233uFKtUzzTjTFK6obx5ix2SzvJQA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lsasfHySGDDxQ4/RJEL6y82bWBt33bOM6XV5GZKo9G6KunWBB6Jk+MWqcg+YFFIJHgRu8fMCXCdXaIqtnB8rWiIf5/Qhncb4SyRUpPJtoBeL4iDORpvIL4ICZLvvkTOSBuPlsDKP9PwC4Q5w57NbXM7gksK4dns4Sl6sF2LqWuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RZS94gMd; arc=none smtp.client-ip=209.85.222.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-85019a60523so187416241.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:37:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731577067; x=1732181867; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ehGB6dTMf4LXNmabx+6xsT2G4N4oRc0A26QJig4YDNQ=;
-        b=RZS94gMdx1S5yc5xXWQTK12pq6zkK/t2RRkcsRIx3zffn/ougDRB04hMnK/bBIcHgn
-         zB6H0ABlpVl8u7bu+phwbVhEWddawKJwHPHUvSwlOIfUSvMxxpstkeDx4T/IorHfXxRx
-         RduN78rIYrjnI+nvGlsUm2D+wYPC85iNYSpif512sJElhdtgtQa/Qti6KXhAUnJENhYM
-         zmGGqT9lRLEVIQF1zMNvB7yUyOnPfT0D1Hj4xsrifX6H16TCpNdG2Le9qY5S5teLy6Q+
-         Vi98q165RzG2kf+kN/VbtDRLhKSZ9W3p9N98FiTThSm8elfIUYy+eJWLPRQEW0OuEbNC
-         u5Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731577067; x=1732181867;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ehGB6dTMf4LXNmabx+6xsT2G4N4oRc0A26QJig4YDNQ=;
-        b=Hj9mKiYFQKCSkcBxdmAF3a2iu0f6t1K0EZIlXuZ7RXp8qS2gkuiFc+f6EmdluMYYO1
-         x2t0PfjB5DuL1QKfK2coJ6YtZFOYKoOfjzhgEpTlwtaeDigz2POzrJ0ftkDWOTM7kfH+
-         KFsezhmo/2UK1nSEufr5SinII8Noz46ZCEjMdEkctAe7b8ZIlQGazJezasnfUyP4zsCG
-         mJZ+JciqQGxneXeQD8AVdkK5GtEj1p3VkMcG8hChEouFpgC10EsiMdSBJlUSutD/dakm
-         gm0zY2PujctvAok8tOYR1oslKZ83jBjS/OlwQKvJe9ASDK3467oQVUCAVoCbctCb+YqR
-         hvlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjfk6No5KqJSpstaHvWi0AAAhN/5EZY3Un5mXImNq5J08g/c46AooTCY5TkBJTQbxY1yRDNjVqPQLZ36Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBU+sekRqBBM7VYdYyXFzGrswIiW9iTQrjJh4eNrr39kl6KWhZ
-	cdDJayu1/wMhwCgzKRvlcIA/GllkqQT2zvmFJGr0SsAapUQunsKnFrNgxtR+YiCnq7cxvr9FP56
-	+aVztfj9GgeqoNJcQGDSjOUfgY+W4ICUm
-X-Google-Smtp-Source: AGHT+IHI15hqHssAzfGGtyXPf31+1ZqoEAtir3h7D+FOXfOCfYcI4E+WZhvgG1S5uTZEAKfrOixmorXSlStST/rghQ8=
-X-Received: by 2002:a05:6102:32cf:b0:4a3:c6f3:89c9 with SMTP id
- ada2fe7eead31-4aae138dcccmr23911356137.11.1731577066793; Thu, 14 Nov 2024
- 01:37:46 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE0D1DB95D
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731577145; cv=fail; b=nbiCygfFPSrS44UQxwtgoasLA/XWyGDl1qjVhdeFvv9q5aCRympSh9tsonffb4aelwORcq8Vorx5Di0C3P0hpP39JMrtURQScK3OGGgRMr6+l9wMewnXn03KExxJcY81GLYI02BWN10w0PJ4fDQ8VCo6vV3IGCGnkJp/T6llSe0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731577145; c=relaxed/simple;
+	bh=cQ0WywEKirW3vcRXcHaqEM0S7h0KGxUnq4Is/xp17VA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=BuwZDC+p0SujBGPB8FNqqWAh08FspWqp13pi0UiElgADHFt6eg1uE1WmhZH7CmChACXVZHqETZPwmhuiZHaqbUK8V4SaOAlkrNV9oAJtYi9GlWkhgjro4BZPit3f+GlLp02webTjw8QNhZUniO/8np91syV61y5oeCakGt5H44s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=MIuvpyDq; arc=fail smtp.client-ip=40.107.249.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=geP6ciJtVSCsI1tjklGJqTVOCaObdP4ZGfqgdA6Q2dq/k3I7BhH1Nk5Ov7zpyOS0gk9xoHYHsvVZLiHm2HeIin4zoy3dokOaSWPzR1ETf1EtpyPRidcxEvd3E/n/mECrbuWlRdlNAPHrezBBLNudlUDwPp93lPI6JKoTPlBvlPMvkoXe5uBSbvjmk6uLMMpaAKWZPMAntqqGjs4lgMIx0xKEzac6USX3x25AQmKbj63MscYT7Oe5swBgBcKofSDQ8mADWO+o9Q2OR97WFaVat4enYxxLNv6acCopmaY1ocktGx0cyYtwuDL1D2AJQ/ViDqEhMpjGlMEBmLvelks65A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/8EvWtEao6d6hMqRqEtX62bvgP6Blu47T3zMYNngkTk=;
+ b=ruReq9nDaANDYCJNCR9Xwlsblfbj9XfoGQG6w228AP5SDuG61JqpqK4HpaeCq4G6go2WuyqiT3Wn3Xn9J8hm+Crf6HZSNLUagoBvBei5VN1KtbdEsDSAd+iGCG12MY4WpeMh0QKZeBrgmK+YWhby+NHiYFI2/By+hUaOAaSD43bTVL+YFOA2jC3g/VZwRkDy1j1xafuOLTMraGqZTSPD2+8hdo+/tBoOS2Qtc/z0Jyw8OOVi5Ovzpg4dxHLFDGn794jxSyig/AyvnUIAaN3bKmlvddZQ16Kabzh32Ot8kP2yKeU8zRhBpGHG+RwhIHbdHq62q0pREoP/W90FE7m9Og==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
+ dkim=pass header.d=cherry.de; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/8EvWtEao6d6hMqRqEtX62bvgP6Blu47T3zMYNngkTk=;
+ b=MIuvpyDqxDD8+U+U7GRz084E4ZpQ+EGCsUiXMex3qlYsehA2UAEUUZPCRvsCD8x39N1K99aKFrviVUgl+G5YE/8MmSWkUypZjZpVeycWI2AlSJrnmpiLE/GFMtB1IetjvrmQSqvK2+0QsI4Gzv/1joOC1KoXarUSMiGHcquBx/8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cherry.de;
+Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
+ by DBBPR04MB7627.eurprd04.prod.outlook.com (2603:10a6:10:208::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.18; Thu, 14 Nov
+ 2024 09:38:58 +0000
+Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
+ ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
+ ([fe80::35f6:bc7d:633:369a%7]) with mapi id 15.20.8158.013; Thu, 14 Nov 2024
+ 09:38:58 +0000
+Message-ID: <030c3b0f-9396-4fbb-af4e-cf2cb58ffac1@cherry.de>
+Date: Thu, 14 Nov 2024 10:38:56 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] drm/rockchip: vop2: fix rk3588 dp+dsi maxclk
+ verification
+To: Andy Yan <andyshrk@163.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, hjc@rock-chips.com,
+ andy.yan@rock-chips.com, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Heiko Stuebner <heiko.stuebner@cherry.de>
+References: <20240425195506.2935955-1-heiko@sntech.de>
+ <20240425195506.2935955-2-heiko@sntech.de>
+ <cb73853e-4201-4cc9-9e8a-f977e66241f6@cherry.de>
+ <72672888.8f9.1932826549b.Coremail.andyshrk@163.com>
+Content-Language: en-US
+From: Quentin Schulz <quentin.schulz@cherry.de>
+In-Reply-To: <72672888.8f9.1932826549b.Coremail.andyshrk@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0155.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:ba::9) To AS8PR04MB8897.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42c::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <f8cef6845a6141f0277e31a71fe153612daae776.1731436631.git.geert+renesas@glider.be>
-In-Reply-To: <f8cef6845a6141f0277e31a71fe153612daae776.1731436631.git.geert+renesas@glider.be>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 14 Nov 2024 09:37:20 +0000
-Message-ID: <CA+V-a8sdSBFin=edpj+p5k4KZU4aen+k0acJVTD35YxTbE1qYQ@mail.gmail.com>
-Subject: Re: [PATCH] dma-mapping: Save base/size instead of pointer to shared
- DMA pool
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Oreoluwa Babatunde <quic_obabatun@quicinc.com>, Rob Herring <robh@kernel.org>, 
-	Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev, 
-	linux-renesas-soc@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|DBBPR04MB7627:EE_
+X-MS-Office365-Filtering-Correlation-Id: 450ae1bc-8f00-41d4-3030-08dd0490299b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NktUaGtZeGNWQ3VmUEk1TEEzR3BURndOYWE4WG9OaFpwcGhVbURCTHMvK1hy?=
+ =?utf-8?B?VDBIVHpHeXQrNy8ySzJhYUJUWWVtQm5YdGFxUk0zRkZIQzh1SE5aaFF3d2RJ?=
+ =?utf-8?B?V2FxTlc5U1ZINzJ2Q1V2UUM5YjNPN3RQN2toVzE3eSsrcmhGaUx3Znkxai9Y?=
+ =?utf-8?B?dmJPZm0rZm5qWkpSb3hTOGZ2YUNDWTQ5MVNvT3BBdjgvc0xINERscUpRK3lW?=
+ =?utf-8?B?TldRbm10TUU0bTUxcDVLeFhncTZ5aTR4SzRoYkJ6amhpZlZnWGhrUmZ3aUI1?=
+ =?utf-8?B?YXFKL1RiNXpEcGhMaTJVdTUrWURiMHlqWG1xTkhqalUzejRFNXA1dEl2cVJ4?=
+ =?utf-8?B?akk1cjVWbVpyMDRFZ2lteFRLNnRTZW5EV3Y4Zk0yWWxoaW1tY0c5LzBLN1l3?=
+ =?utf-8?B?cks5OTRTOWtRR0tXVFdjakJGc3FFcHljYnN1aTZWYW1VeFhLUGUwUVFaYm1y?=
+ =?utf-8?B?OHBwYUJXZ0JWb0V6OXFVUnhvRjYrejJ2RmxQQ0VkbExsR01XVTlIT0RSanBy?=
+ =?utf-8?B?MXQwclJaYVp2NlVtcWxuMDNDS2l2UncxbW1oYVRBVjYyM0o2K3FCZDRuY3Jr?=
+ =?utf-8?B?UVhpc3I2czJLcnliZ0hQYTZVbnMvN0lSUHFNcG9RWGhjTG43a0s1VENpMkVq?=
+ =?utf-8?B?UFJuWFVaN2lxV3RDR3lSczJ4cTNCQUpOS3IvZG5hcExteUx1TE00aVk4Nzlx?=
+ =?utf-8?B?UDNpWUlYdCt6c0JBb3MzNkZMb3RnTGp0WllxdVI4TlJrSEVSWlBBWjJHNW9S?=
+ =?utf-8?B?OEVkUm4xa3A2ZXlNWlQwdmhBS0NpMmZnbjNVbXNuazUyZ3duT0RsM251V20v?=
+ =?utf-8?B?cmtrL3JkVHFuK3ZOS3p0NGVyNXZ0QTJBaDkrV3dZSi9Tb0M0a3FJZ3ZqYXA5?=
+ =?utf-8?B?Y3ltU0hkTG9HRVZ4Y0I3R2JxdXVMSW9LdWxlL1ZxU1BwcGZ5a3EwcHEyL0Fs?=
+ =?utf-8?B?VVZHVHdVei8zdTRDS1ZBa2tHM1FMQ3NaUnJ3OFUrRm1lODVnWU5WRHdMaFds?=
+ =?utf-8?B?dlBOR2RyY1RSRHVwTXI4ZG1TSTVBZWxpY0xvUGxUUjlEdGhqMmVvRmpPVzFY?=
+ =?utf-8?B?ME5IYklxTkdsWFVwZXVHVWpjZ0hDWG1mM0FrcHRhRXFJdE5MT2tvUCtaWlV2?=
+ =?utf-8?B?QkhUUnIxS2hTeVVWdzFZYXgwUVJnaHVXeFU0WjdVSVhxWncxWGJ4YU1tcHJL?=
+ =?utf-8?B?c05QcGsweEZjOVhEK21pOElZZERHZnNxWG11K2RULzh4SUhPWnc2NXVPODFX?=
+ =?utf-8?B?U0pTd2V6azBHbk1VVk9KT3dra3NaRGNUYnRDampvSVVpUkV2YXEwOEEyRlhU?=
+ =?utf-8?B?YmFSeWJVUjBvcU9OQ3ZYUTFBUDFHUU5KbG9JT3JzdWlLdllkNURHYkNWcC9C?=
+ =?utf-8?B?Y2hEZmlXNkxQdE1zYkN2QzRNTTNtUWNKd0o2cGExSEEzQ3pEd1BRa05GcTZm?=
+ =?utf-8?B?RHR4M0hZMHVBVm5VL0NLQmY0MGlDbEg1ZnNoa3VNcXlJTGpuRE5kdG9PWlN4?=
+ =?utf-8?B?WnAzbXRiTTVzOU12WjBkcGxON01xRVRCeW9rb1dHS3RHTFFlQ2h4amxBSHdS?=
+ =?utf-8?B?ZFdZQVpYZ0FSOFJGdHVGaElyQ0RTcWZlY3NtZk43V296TDJmK3Z5MXN0Z1VV?=
+ =?utf-8?B?SVFxRktsZ3pJUlFOQ3Vrd0JWeldhV1A4MjAzNjNaeWJsY2NtQytId3lEdG9h?=
+ =?utf-8?B?K3g5bGd3V1NyUkY3anR4QnZJaUVsSVpwSXZFZHYzUVp5dlVmVzVyU0hCUlFT?=
+ =?utf-8?Q?cASxPu0o35U1Q7wiuAUnNn41ClRypRrd2QbRFfV?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?M3dvSFVFY3J1STZ2QnZCTWJhaDhsYXlnYXNJVlViYUlDU2ZuSUVZL0NMUTNR?=
+ =?utf-8?B?TVRuZG5BUTdLYXBBMndoT3RmS3NCWU9RR2R4R3A3NnQ0MVFNNEhRc281WEhE?=
+ =?utf-8?B?TGNZUDE5cmpWa2pTSGhTSW1nZ3lXMTd1U2dNSkVCTEZBV01nZU9uZ01Rd0ZW?=
+ =?utf-8?B?NE1TR2F6bjVoc0orMjBCOEpUdGNTWU5ZVDFxVFA4NDdId3lFa21tbGwvSi9P?=
+ =?utf-8?B?ZmdnZ1VqUjh3L2czWWxYdkZydkdueDAyYjVlVzZ4Qm9vZnp1VDZpTHQ0K1dI?=
+ =?utf-8?B?b0lKWi8yM0hKM1NFTElndEozcTROd2FqK3ZEQlA3QVg5b1ZaU2RxTUlMTWRi?=
+ =?utf-8?B?amZaZk1rL2J4Nk5ubTVRVHBGM3VTZzlOdTNTUklwMURWMm51MEJ1eXV0Q0sw?=
+ =?utf-8?B?ZUtYRWdva0t3OUs3eEtVMzMzUzRsK1czR3pBdllobmtJSzhlbG9nck9JK2gv?=
+ =?utf-8?B?U3pGbGF0U1MxajNhdTZDeDBiZHRGcGMwb0g2M01MNFhlcFJjL0I4cHR3aTVG?=
+ =?utf-8?B?YTB4OUJIaG1LRlBwRTFXV2lFMXUybmlJRGFnSVBCRG9IOXNoaGY0VklmNFFV?=
+ =?utf-8?B?aWtGVU5wRXVZaFFnZWhvQW1xN3dJeUw2QlpHY0l1WGlEMWlrbW1UV2V1L0to?=
+ =?utf-8?B?eWRGT0o4U3lzOStMOU4zY2hldGwyZDFvNVJIOElYaXNjK2tFcTV6YkRiaUxR?=
+ =?utf-8?B?Qkt0M1RKZDlHS0VzNjJnZkVhSWo5eVVDRWpZYTBQV2puMVA3MlVnVTl4bEtE?=
+ =?utf-8?B?US9Mb2poOElpM2F6bUdrTnJCTHMrZ3BXMUI0VUxUdmxuQ3J2WEtFMmhNVjU5?=
+ =?utf-8?B?T3MzMVM5LzJaZTBtdWl5eXNXVVpmZE9adS96d0lHQ24rRnZHVmt2ZDl3bHpw?=
+ =?utf-8?B?dW1nRVBwY2QwRHdiNkl5VytLeTJ5UWRKdUhUQ2UrbEJjR1JKUlRjbnlteG5u?=
+ =?utf-8?B?QWFWLzlqZ3IyYmptRDZaUDl2VEtjTHFVc3Azb3o0alBKaFo1N0crUXI2cit3?=
+ =?utf-8?B?dVVoOUgxOE16ditadkNydSt5UHFQdW1NOFpnbUs4N2lvamFvNnEvelRDUFl5?=
+ =?utf-8?B?L2tYbnZaSXRXcFhJNG1TcDRyZjN4SEZwL2psd2RzdmZBbTltMDNlQUZ2dHBy?=
+ =?utf-8?B?Zi8zMkZCS1RKMVZ1UEE0SGk1aTRUcHk4aXJNMFpEeDI4WkpPeGlHMktpcGdu?=
+ =?utf-8?B?TGNtMktTVmxsT3ZEUXdPcEdSY2FNckZSQnliV25NMmlwR1N3bVg5ck9OdGxP?=
+ =?utf-8?B?bVU5akdHZ0k5eVJSSVF6aDA3R2IvdjJDYUpTZTl6akFEQlR5L05OZmFsVWgy?=
+ =?utf-8?B?WDVHWURmMDZFS25LQm9ZOFRLMDBNYnZNQUczWW10R2FJcE5QZVlHeUZwUm9y?=
+ =?utf-8?B?SWg5VEkzZGJyUXBXMjYxQkFHTTBpQWJuT01jd3ZlRmMvN2hRQ0xIVEtudk52?=
+ =?utf-8?B?THEwSXhKdHg4ZzcrQVllYTVhSk14RGVYNkpOeVBHbTV5bmZ4QVV2UjJQZDF1?=
+ =?utf-8?B?UmpNT0hadUdhUnJERllQdzhqVnA1Q09rZjJ4N1ExOW9NSFh2WkpQTnRvKzEz?=
+ =?utf-8?B?TUU3Sjd2b0RQbkdTZ3NzYTJ6a0QvSm1hL3hORnpwM1pZZFFjRElhbWhnNUNz?=
+ =?utf-8?B?QmFUNWlVTXQyVmtueGhUMHo2Y3Y4Sm1kRFBCazJCaDlXY2ZVQnZVVTJNUllG?=
+ =?utf-8?B?cVFVTzQ1dEgxQkdnRDlXZkNFdk1GVUFWZHhPSlZwMDRaNVpIRGRDOFZNbEhC?=
+ =?utf-8?B?NTlFb0VJNWJsVG16bmRVN0tvNFQxaWpWYzZ0ZkJqNVU4WHZpZW54MWZkbjVG?=
+ =?utf-8?B?dU8xZjN6Q3R1a1BlMEJCZDJPNDJZaWpOWnJpd1NWLzNveE8wKzJVajlNQ3ZM?=
+ =?utf-8?B?bllGbkZqeEFTNVd3cFZBMXUxVnVEamludjFjUFlxZ2gybE1mNWd1cXZVZXpi?=
+ =?utf-8?B?YlJlelkxUUtqSjdtaS9tM1VKOGxheHVVTjFza1JRcWlUZ1lJMnF5dzIxc3ZU?=
+ =?utf-8?B?Wmk3UU01RE9nQzBHZ1NjMEpzUmZxUEpTUXdYeDdYNk1iUmpHdzFubTZKS2lV?=
+ =?utf-8?B?M1ZzVElCSjRDTGxwTm03NTI1dHpMcmU3cVY0NHlQaDg3Q2U0NTRNUGwvSkZj?=
+ =?utf-8?B?bEpxeXpPNWpZRVVxaXhhWHRCaWRZaDNYV0RTc1FVd0tWaDZ2TDU0K1FWdVg5?=
+ =?utf-8?B?Wnc9PQ==?=
+X-OriginatorOrg: cherry.de
+X-MS-Exchange-CrossTenant-Network-Message-Id: 450ae1bc-8f00-41d4-3030-08dd0490299b
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2024 09:38:57.9229
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3/Q59u+mrcwrdkFFW5OZIKK4CfMADPPziABtV/vjk9bG+Xj1K97wWaQGzzrsu4F1YVquz3DuHRP3dfNdHnJhrQ6YzqM4Y13pj5XNbt5YwQ4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7627
 
-On Tue, Nov 12, 2024 at 6:41=E2=80=AFPM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->
-> On RZ/Five, which is non-coherent, and uses CONFIG_DMA_GLOBAL_POOL=3Dy:
->
->     Oops - store (or AMO) access fault [#1]
->     CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted 6.12.0-rc1-00015-g8a6e=
-02d0c00e #201
->     Hardware name: Renesas SMARC EVK based on r9a07g043f01 (DT)
->     epc : __memset+0x60/0x100
->      ra : __dma_alloc_from_coherent+0x150/0x17a
->     epc : ffffffff8062d2bc ra : ffffffff80053a94 sp : ffffffc60000ba20
->      gp : ffffffff812e9938 tp : ffffffd601920000 t0 : ffffffc6000d0000
->      t1 : 0000000000000000 t2 : ffffffffe9600000 s0 : ffffffc60000baa0
->      s1 : ffffffc6000d0000 a0 : ffffffc6000d0000 a1 : 0000000000000000
->      a2 : 0000000000001000 a3 : ffffffc6000d1000 a4 : 0000000000000000
->      a5 : 0000000000000000 a6 : ffffffd601adacc0 a7 : ffffffd601a841a8
->      s2 : ffffffd6018573c0 s3 : 0000000000001000 s4 : ffffffd6019541e0
->      s5 : 0000000200000022 s6 : ffffffd6018f8410 s7 : ffffffd6018573e8
->      s8 : 0000000000000001 s9 : 0000000000000001 s10: 0000000000000010
->      s11: 0000000000000000 t3 : 0000000000000000 t4 : ffffffffdefe62d1
->      t5 : 000000001cd6a3a9 t6 : ffffffd601b2aad6
->     status: 0000000200000120 badaddr: ffffffc6000d0000 cause: 00000000000=
-00007
->     [<ffffffff8062d2bc>] __memset+0x60/0x100
->     [<ffffffff80053e1a>] dma_alloc_from_global_coherent+0x1c/0x28
->     [<ffffffff80053056>] dma_direct_alloc+0x98/0x112
->     [<ffffffff8005238c>] dma_alloc_attrs+0x78/0x86
->     [<ffffffff8035fdb4>] rz_dmac_probe+0x3f6/0x50a
->     [<ffffffff803a0694>] platform_probe+0x4c/0x8a
->
-> If CONFIG_DMA_GLOBAL_POOL=3Dy, the reserved_mem structure passed to
-> rmem_dma_setup() is saved for later use, by saving the passed pointer.
-> However, when dma_init_reserved_memory() is called later, the pointer
-> has become stale, causing a crash.
->
-> E.g. in the RZ/Five case, the referenced memory now contains the
-> reserved_mem structure for the "mmode_resv0@30000" node (with base
-> 0x30000 and size 0x10000), instead of the correct "pma_resv0@58000000"
-> node (with base 0x58000000 and size 0x8000000).
->
-> Fix this by saving the needed reserved_mem structure's contents instead.
->
-> Fixes: 8a6e02d0c00e7b62 ("of: reserved_mem: Restructure how the reserved =
-memory regions are processed")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  kernel/dma/coherent.c | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
->
-Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi Andy,
+
+On 11/14/24 1:50 AM, Andy Yan wrote:
+> 
+> Hi,
+> 
+> At 2024-05-06 15:44:36, "Quentin Schulz" <quentin.schulz@cherry.de> wrote:
+>> Hi Heiko,
+>>
+>> On 4/25/24 9:55 PM, Heiko Stuebner wrote:
+>>> From: Heiko Stuebner <heiko.stuebner@cherry.de>
+>>>
+>>> The clock is in Hz while the value checked against is in kHz, so
+>>> actual frequencies will never be able to be below to max value.
+>>> Fix this by specifying the max-value in Hz too.
+>>>
+>>> Fixes: 5a028e8f062f ("drm/rockchip: vop2: Add support for rk3588")
+>>> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+>>> ---
+>>>    drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 4 ++--
+>>>    1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+>>> index 9bee1fd88e6a2..523880a4e8e74 100644
+>>> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+>>> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+>>> @@ -1719,7 +1719,7 @@ static unsigned long rk3588_calc_cru_cfg(struct vop2_video_port *vp, int id,
+>>>    		else
+>>>    			dclk_out_rate = v_pixclk >> 2;
+>>>    
+>>> -		dclk_rate = rk3588_calc_dclk(dclk_out_rate, 600000);
+>>> +		dclk_rate = rk3588_calc_dclk(dclk_out_rate, 600000000);
+>>>    		if (!dclk_rate) {
+>>>    			drm_err(vop2->drm, "DP dclk_out_rate out of range, dclk_out_rate: %ld KHZ\n",
+>>
+>> It seems the error message is incorrect as well and should be saying Hz
+>> instead of KHz. (note also the lowercase z).
+> 
+> I think kHz is fine, we can find many siminary usage in drm:
+> 
+> drivers/gpu/drm/drm_vblank.c
+> 656:    drm_dbg_core(dev, "crtc %u: clock %d kHz framedur %d linedur %d\n",
+
+The issue is that we print kHz for something that is in Hz, not that we 
+print a value in kHz.
+
+The former is incorrect, the latter is fine. We are in the former 
+scenario here I believe, so it needs to be fixed.
 
 Cheers,
-Prabhakar
+Quentin
 
