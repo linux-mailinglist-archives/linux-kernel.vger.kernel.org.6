@@ -1,261 +1,198 @@
-Return-Path: <linux-kernel+bounces-408922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9885F9C8529
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:48:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7B619C852B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:48:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 198311F217F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:48:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 786781F219C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488061F890A;
-	Thu, 14 Nov 2024 08:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7952F1F77A1;
+	Thu, 14 Nov 2024 08:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XtUCf4CU"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RfIsElKR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDDA21C303E;
-	Thu, 14 Nov 2024 08:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06751F757C
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731574003; cv=none; b=YoXEo/ZRSRy2IdD6fxpbydby4Jm+Mzbv5ZvUaIRu6l2o72U4x1PnbZx6X32IJkc290F5kCuFMVOMjHslwbDUpT4mNVUqlq08WivbKF5IkuNTG6oZlPZ8jT/obV1Ji4hNSeM8cT4fimN5oGC+vIc9ad05laRSlu6MXF1wZ9b+/34=
+	t=1731574033; cv=none; b=mUiCHNeRQmVd+E5d9rC2d0vrz5ijmLdUJDYhKHePae4Jb32lbFY3jYDgH0s8WIYWV0o1kQGBkCq6UCADx5NXYzqhoiDYvlsbk8xCN3IfYB7YdxUO1jD3WZ9sLO0covCYEGbtv1meT3VbWCZYyaBXtsg6wwNCKZYnio1Bmr+GRA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731574003; c=relaxed/simple;
-	bh=01gRTn9fiNLg1hmzyThgU+LHjR43FRnaYWfPSkS8JQU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t4i+XmO9LORbPxVVeyCVbHUKCZ7RwcL7PcE9VpUEq5KdtlbJAQpmw0BqfbLqQgt2egVEKGyD4GNHA+np+x0SeCyPK5iqcqJQvH8fUK9EjuSx8YA7100ks/h8vMkLdJlo91/XpXWzd67dyfa3hWg5x//Vvq/8qGfcJ8uXTPtRbqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XtUCf4CU; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7ea9739647bso235722a12.0;
-        Thu, 14 Nov 2024 00:46:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731574001; x=1732178801; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bnhYZjIX+OB3WvtAgUJqUgdzGomZn2VvERIAOaUixdo=;
-        b=XtUCf4CUWUO98EOLxSA1q/X9XD8k4q8ZUPh78xMQU3WX+kbIGoAS017aYygGL9A1XR
-         zaCruz4LeV2IPd/2xFaLtajshCOJQGrQhPHzkQ9G6fvn8zF+yiZmy4PEKAyGobEpic/3
-         BilnEQMWkL+fekWIZAQIymrWDmslWWLyBRzKBF9Md57YTWHVFrwRSqJ09VucIdMwt10n
-         7oARtFCDKIGskuXC6AKoL112bhry16GI4p9tbbdqduVQBZhbsMYj6yk3NN+y4MgT8Qw5
-         2WjO7BXgDXHdl4ljHs5LUFEucY5Q9fQ3GnhmzazyZpbEGt55AjCMeyFsn4vAtox31anJ
-         RDzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731574001; x=1732178801;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bnhYZjIX+OB3WvtAgUJqUgdzGomZn2VvERIAOaUixdo=;
-        b=b63YAwi1J9cfHsXx9Y7cNdHQ2CuV3pfkVFBh4IsKS2/YfUaPhel+Q2Aux6WRlDPDsq
-         G2BTSNU+pHUId35NIYEEzKXlOg0P9Uw+dVfcxa+GBsT2A4sKkK8/6LMhZ3PBIrPzsouX
-         YxK+gzzWGiQqVx+nQ9i8l4sRZLziUCTz8kDqgnYx7YfwiYtn1pJg+plLAYIuYTzdD/d5
-         IHJ2fP48nbzy56NNlYN+hTfaTbI48nAtJ8c4MZK28fOf3BlyeTN1cSfhv8Q2Eq+q5jsa
-         F9hfbtEmU0yzZzTE1PEabSBSGq/jYMN1m46h4eZ8BG36uNpO1IeOOWFGK+AccrtwHfmj
-         zYqg==
-X-Forwarded-Encrypted: i=1; AJvYcCW829JRAeFhgjuUmgIDnIF+UNIy2g8FnLIYEz6Tzzs46PY6n/xnKHq45+2jpixOWd+2LcEISPoVBcv/QiOXTANR@vger.kernel.org, AJvYcCWKaTLgJXizC/XhVxFRa3l16RCS7rqy+9lA1cHqqsG5w7zAKyHap167AnQunpYoK7ClYHlQPlaurHHCo1Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJuv7XTRtPy2O7W+qhxAcg4aBeoBOrepWJyU+izM0Zuo+uhMkr
-	RF1QYfVZjEqLvw/E8ytfVAQ/LEcmlXcZi6QdCOYW1CkC7BiPmD9fm1DZKf58QDI=
-X-Google-Smtp-Source: AGHT+IHE7bQEixh43pnqUrgfsA4EdNzypvVOpSy8Z39EpybK+orYgYK9g9iH/pYyoM6GdSWHLNlgdg==
-X-Received: by 2002:a05:6a21:205:b0:1db:f7dc:f10c with SMTP id adf61e73a8af0-1dc22b150f4mr18532111637.28.1731574000995;
-        Thu, 14 Nov 2024 00:46:40 -0800 (PST)
-Received: from fedora ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea06e0654esm703365a91.0.2024.11.14.00.46.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 00:46:40 -0800 (PST)
-Date: Thu, 14 Nov 2024 08:46:33 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Sam Edwards <cfsworks@gmail.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net 2/2] selftests/rtnetlink.sh: add mngtempaddr test
-Message-ID: <ZzW46QZf5rzj4tMp@fedora>
-References: <20241113125152.752778-1-liuhangbin@gmail.com>
- <20241113125152.752778-3-liuhangbin@gmail.com>
- <CAH5Ym4iVP0XYrb1=7QhDqhEO54vpSJGFGHaBnuM1qpua1p5-tg@mail.gmail.com>
+	s=arc-20240116; t=1731574033; c=relaxed/simple;
+	bh=VjsgxQMBaRvhG6xDfqCGMeZjFn5Ah1/PKP10OUcSxcQ=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=LdZ7Kpzg2Z2JrBbdI5fNNFMw80qw/YMnD0BnPOZ69vq6N3WPjUom/ByxB0bMGZGcqQzrItAXgSJW/KI7V784tsNqq2DA+qXq4QCm3eqyg7hBsEt+tZpfTg58dQCeHnb4gze/pLaJuUrrO55BdQ00u4ZPDY9dW9A7hZivtgGGMek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RfIsElKR; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731574032; x=1763110032;
+  h=date:from:to:cc:subject:message-id;
+  bh=VjsgxQMBaRvhG6xDfqCGMeZjFn5Ah1/PKP10OUcSxcQ=;
+  b=RfIsElKRuE+7vXuCeD7OUFZmmjmlfDb3whU+ndq/LMgViWeTZBi3EGRz
+   dFWy4Y+ebpEwGYN6JB7S5+RlonZ+2gxvKw9VrPkGrvXq5yYlElwGk/xpe
+   h8wSEx2nAlmYXmxvCO+yUsUiYBOoJbsny0K0FPEssRDu9dw3380t5G7y8
+   InVWCyIw2FMZlIDjH6zuY8VnhgFY0y+Oj+sxTu7QkmJldcMESS0fdQtVx
+   hoZmTr8cgINAIzcYKXDzd63AA2mJvsDqjbag4QnttKATfejxYfy39MUSv
+   ptg0sy14NVPJ31LdDE8+JT+7Ev6JwgTvycDTs3RuZMkuG3fm34IOtQuG2
+   Q==;
+X-CSE-ConnectionGUID: /ZwD+NdPR/uJAyiifUIOOw==
+X-CSE-MsgGUID: yp9aIhuESJKcRCmeQX3Q2Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31659165"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="31659165"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 00:47:12 -0800
+X-CSE-ConnectionGUID: DxKZGM5NTSGSYE1gX38r6Q==
+X-CSE-MsgGUID: THd2Jl1RRYemAXze4ps5JQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
+   d="scan'208";a="119066042"
+Received: from lkp-server01.sh.intel.com (HELO 8eed2ac03994) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 14 Nov 2024 00:47:09 -0800
+Received: from kbuild by 8eed2ac03994 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tBVVK-00007n-1z;
+	Thu, 14 Nov 2024 08:47:06 +0000
+Date: Thu, 14 Nov 2024 16:46:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:timers/core] BUILD SUCCESS
+ 228ad72e7660e99821fd430a04ac31d7f8fe9fc4
+Message-ID: <202411141635.xsh0lE1w-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAH5Ym4iVP0XYrb1=7QhDqhEO54vpSJGFGHaBnuM1qpua1p5-tg@mail.gmail.com>
 
-Hi Sam,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
+branch HEAD: 228ad72e7660e99821fd430a04ac31d7f8fe9fc4  Merge tag 'timers-v6.13-rc1' of https://git.linaro.org/people/daniel.lezcano/linux into timers/core
 
-On Wed, Nov 13, 2024 at 12:43:00PM -0800, Sam Edwards wrote:
-> > +# If the mngtmpaddr or tempaddr missing, return 0 and stop waiting
-> > +check_tempaddr_exists()
-> > +{
-> > +       local start=${1-"1"}
-> > +       addr_list=$(ip -j -n $testns addr show dev ${devdummy})
-> > +       for i in $(seq $start 4); do
-> > +               if ! echo ${addr_list} | \
-> > +                    jq -r '.[].addr_info[] | select(.mngtmpaddr == true) | .local' | \
-> > +                    grep -q "200${i}"; then
-> > +                       check_err $? "No mngtmpaddr 200${i}:db8::1"
-> > +                       return 0
-> > +               fi
-> > +
-> > +               if ! echo ${addr_list} | \
-> > +                    jq -r '.[].addr_info[] | select(.temporary == true) | .local' | \
-> > +                    grep -q "200${i}"; then
-> > +                       check_err $? "No tempaddr for 200${i}:db8::1"
-> > +                       return 0
-> > +               fi
-> > +       done
-> > +       return 1
-> > +}
-> 
-> The variant of this function that I implemented is a lot less "fixed"
-> and gathers all IPv6 prefixes (by /64) into one of 3 sets:
-> 1. mngtmpaddr
-> 2. temporary, not deprecated
-> 3. temporary (whether deprecated or not)
-> 
-> It then ensures that set 3 is a subset of set 1, and set 1 is a subset
-> of set 2. (And if it's easy: it should also ensure that no 'temporary'
-> has a *_lft in excess of its parent's.)
+Warning ids grouped by kconfigs:
 
-I'm not totally get your explanation here. e.g. with preferred_lft 10,
-valid_lft 30. I got the following result.
+recent_errors
+`-- x86_64-allnoconfig
+    `-- Warning:drivers-regulator-core.c-references-a-file-that-doesn-t-exist:Documentation-timers-timers-howto.rst
 
-# ip addr show dummy0
-3: dummy0: <BROADCAST,NOARP> mtu 1500 qdisc noop state DOWN group default qlen 1000
-    link/ether 2e:f7:df:87:44:64 brd ff:ff:ff:ff:ff:ff
-    inet6 2001::743:ec1e:5c19:404f/64 scope global temporary dynamic
-       valid_lft 25sec preferred_lft 5sec
-    inet6 2001::938f:432:f32d:602f/64 scope global temporary dynamic
-       valid_lft 19sec preferred_lft 0sec
-    inet6 2001::5b65:c0a3:cd8c:edf8/64 scope global temporary deprecated dynamic
-       valid_lft 3sec preferred_lft 0sec
-    inet6 2001::8a7e:6e8d:83f1:9ea0/64 scope global temporary deprecated dynamic
-       valid_lft 0sec preferred_lft 0sec
-    inet6 2001::1/64 scope global mngtmpaddr
-       valid_lft forever preferred_lft forever
+elapsed time: 739m
 
-So there are 1 mngtmpaddr, 2 temporary address (not deprecated). 4 total
-temporary address. Based on your rule. It should be set 1 is a subset of
-set 2. Set 2 is a subset of 3.
+configs tested: 100
+configs skipped: 20
 
-And how do we ensure that no 'temporary' has a *_lft in excess of its parent's.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-> Doing it this way allows the test case to create, modify, and delete
-> mngtmpaddrs according to the needs of the test, and the check()
-> function only ensures that the rules are being obeyed, it doesn't make
-> assumptions about the expected state of the addresses.
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    gcc-14.2.0
+arc                              allmodconfig    gcc-13.2.0
+arc                               allnoconfig    gcc-13.2.0
+arc                              allyesconfig    gcc-13.2.0
+arc                   randconfig-001-20241114    gcc-13.2.0
+arc                   randconfig-002-20241114    gcc-13.2.0
+arm                              allmodconfig    gcc-14.2.0
+arm                               allnoconfig    clang-20
+arm                              allyesconfig    gcc-14.2.0
+arm                   randconfig-001-20241114    gcc-14.2.0
+arm                   randconfig-002-20241114    gcc-14.2.0
+arm                   randconfig-003-20241114    gcc-14.2.0
+arm                   randconfig-004-20241114    clang-14
+arm64                            allmodconfig    clang-20
+arm64                             allnoconfig    gcc-14.2.0
+arm64                 randconfig-001-20241114    clang-20
+arm64                 randconfig-002-20241114    gcc-14.2.0
+arm64                 randconfig-003-20241114    gcc-14.2.0
+arm64                 randconfig-004-20241114    gcc-14.2.0
+csky                              allnoconfig    gcc-14.2.0
+csky                  randconfig-001-20241114    gcc-14.2.0
+csky                  randconfig-002-20241114    gcc-14.2.0
+hexagon                          allmodconfig    clang-20
+hexagon                           allnoconfig    clang-20
+hexagon                          allyesconfig    clang-20
+hexagon               randconfig-001-20241114    clang-20
+hexagon               randconfig-002-20241114    clang-20
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20241114    clang-19
+i386        buildonly-randconfig-002-20241114    gcc-11
+i386        buildonly-randconfig-003-20241114    gcc-12
+i386        buildonly-randconfig-004-20241114    gcc-12
+i386                                defconfig    clang-19
+loongarch                        allmodconfig    gcc-14.2.0
+loongarch                         allnoconfig    gcc-14.2.0
+loongarch             randconfig-001-20241114    gcc-14.2.0
+loongarch             randconfig-002-20241114    gcc-14.2.0
+m68k                             allmodconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                             allyesconfig    gcc-14.2.0
+microblaze                       allmodconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+microblaze                       allyesconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                 randconfig-001-20241114    gcc-14.2.0
+nios2                 randconfig-002-20241114    gcc-14.2.0
+openrisc                          allnoconfig    gcc-14.2.0
+openrisc                         allyesconfig    gcc-14.2.0
+openrisc                            defconfig    gcc-14.2.0
+parisc                           allmodconfig    gcc-14.2.0
+parisc                            allnoconfig    gcc-14.2.0
+parisc                           allyesconfig    gcc-14.2.0
+parisc                              defconfig    gcc-14.2.0
+parisc                randconfig-001-20241114    gcc-14.2.0
+parisc                randconfig-002-20241114    gcc-14.2.0
+powerpc                          allmodconfig    gcc-14.2.0
+powerpc                           allnoconfig    gcc-14.2.0
+powerpc                          allyesconfig    clang-20
+powerpc               randconfig-001-20241114    gcc-14.2.0
+powerpc               randconfig-002-20241114    clang-14
+powerpc               randconfig-003-20241114    gcc-14.2.0
+powerpc64             randconfig-001-20241114    gcc-14.2.0
+powerpc64             randconfig-002-20241114    clang-20
+riscv                            allmodconfig    clang-20
+riscv                             allnoconfig    gcc-14.2.0
+riscv                            allyesconfig    clang-20
+riscv                               defconfig    clang-20
+riscv                 randconfig-001-20241114    gcc-14.2.0
+riscv                 randconfig-002-20241114    clang-14
+s390                             allmodconfig    clang-20
+s390                              allnoconfig    clang-20
+s390                             allyesconfig    gcc-14.2.0
+s390                                defconfig    clang-20
+s390                  randconfig-001-20241114    gcc-14.2.0
+s390                  randconfig-002-20241114    clang-20
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                                  defconfig    gcc-14.2.0
+sh                    randconfig-001-20241114    gcc-14.2.0
+sh                    randconfig-002-20241114    gcc-14.2.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc64                             defconfig    gcc-14.2.0
+sparc64               randconfig-002-20241114    gcc-14.2.0
+um                               allmodconfig    clang-20
+um                                allnoconfig    clang-17
+um                               allyesconfig    gcc-12
+um                                  defconfig    clang-20
+um                             i386_defconfig    gcc-12
+um                           x86_64_defconfig    clang-15
+x86_64                            allnoconfig    clang-19
+x86_64                           allyesconfig    clang-19
+x86_64                              defconfig    gcc-11
+x86_64                                  kexec    clang-19
+x86_64                               rhel-8.3    gcc-12
+xtensa                            allnoconfig    gcc-14.2.0
 
-I'm not sure if this is totally enough. What if there are 3 mngtmpaddrs
-and 4 temporary address. But actually 1 mngtmpaddrs doesn't have temporary
-address. Maybe check() needs to check only 1 prefix each time.
- 
-> > +
-> > +kci_test_mngtmpaddr()
-> > +{
-> > +       local ret=0
-> > +
-> > +       setup_ns testns
-> > +       if [ $? -ne 0 ]; then
-> > +               end_test "SKIP mngtmpaddr tests: cannot add net namespace $testns"
-> > +               return $ksft_skip
-> > +       fi
-> > +
-> > +       # 1. Create a dummy Ethernet interface
-> > +       run_cmd ip -n $testns link add ${devdummy} type dummy
-> > +       run_cmd ip -n $testns link set ${devdummy} up
-> > +       run_cmd ip netns exec $testns sysctl -w net.ipv6.conf.${devdummy}.use_tempaddr=1
-> 
-> Test should also set .temp_prefered_lft and .temp_valid_lft here.
-> 
-> I also set .max_desync_factor=0 because this is a dummy interface that
-> doesn't have any latency, which allows the prefer lifetime to be
-> pretty short. (See below.)
-
-Thanks, I will fix the test.
-> 
-> > +       # 2. Create several (3-4) mngtmpaddr addresses on that interface.
-> > +       # with temp_*_lft configured to be pretty short (10 and 35 seconds
-> > +       # for prefer/valid respectively)
-> > +       for i in $(seq 1 4); do
-> > +               run_cmd ip -n $testns addr add 200${i}:db8::1/64 dev ${devdummy} mngtmpaddr
-> 
-> I don't really like using 200X:db8::1 as the test addresses.
-> 2001:db8::/32 is the IANA designated prefix for examples/documentation
-> (and, by extension, unit tests) so we should really try to remain
-> inside that.
-> 
-> Personally, I tend to use 2001:db8:7e57:X::/64 ("test" in leetspeak)
-> just to minimize the chances of conflicting with something else in the
-> system. Though, with the test happening in its own netns, *that* level
-> of caution may not be necessary.
-> 
-> Still, 2001:db8::/32 is what IPv6 folks expect, so I'd want to stay in there.
-
-OK, I will use 2001:db8::/32 for testing.
-
-> 
-> > +               tempaddr=$(ip -j -n $testns addr show dev ${devdummy} | \
-> > +                          jq -r '.[].addr_info[] | select(.temporary == true) | .local' | \
-> > +                          grep 200${i})
-> > +               #3. Confirm that temporary addresses are created immediately.
-> 
-> This could simply be a call to the above genericized check() function.
-> 
-> > +               if [ -z $tempaddr ]; then
-> > +                       check_err 1 "no tempaddr created for 200${i}:db8::1"
-> > +               else
-> > +                       run_cmd ip -n $testns addr change $tempaddr dev ${devdummy} \
-> > +                               preferred_lft 10 valid_lft 35
-> 
-> While Linux is (apparently) happy to let userspace modify the
-> tempaddr's remaining lifetime like this, I don't think this is a
-> common or recommended practice. Rather, the test should be letting
-> Linux manage the tempaddr lifetimes and rotate the addresses itself.
-
-OK
-
-> 
-> > +               fi
-> > +       done
-> 
-> Here is a good place to create an address that *isn't* mngtmpaddr,
-> confirm there is no temporary (via call to check() function), then add
-> the `mngtmpaddr` flag after the fact.
-
-OK, I will
-> 
-> > +
-> > +       #4. Confirm that a preferred temporary address exists for each mngtmpaddr
-> > +       #   address at all times, polling once per second for at least 5 minutes.
-> > +       slowwait 300 check_tempaddr_exists
-> 
-> So I previously said "wait 5 minutes" but I later saw in the
-> documentation for the selftest suite that maintainers really don't
-> like it when a test takes more than ~45 seconds to run. We might want
-> to drop this wait to 30 by default and accelerate the timetable on
-> prefer/valid lifetimes to something like 10/25.
-
-Yes, 5m is too long for a single test.
-
-> > +
-> > +       end_test "PASS: mngtmpaddr add/remove correctly"
-> > +       ip netns del "$testns"
-> 
-> Do we need to make sure the netns gets cleaned up via `trap ... EXIT`
-> so that it doesn't leak if the user interrupts the test? Or does the
-> greater test fixture take care of that for us?
-
-No, rtnetlink.sh doesn't have a trap function. I plan to add the trap
-function separately.
-
-Thanks
-Hangbin
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
