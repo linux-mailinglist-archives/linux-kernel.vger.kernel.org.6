@@ -1,105 +1,198 @@
-Return-Path: <linux-kernel+bounces-409281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C17389C89F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:28:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A809C89FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:29:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D6161F24A53
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:28:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E31DE1F24A27
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF721FA258;
-	Thu, 14 Nov 2024 12:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DE91F9ABF;
+	Thu, 14 Nov 2024 12:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FXT3lsz/"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m7UQpcrN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90D81F9EDA;
-	Thu, 14 Nov 2024 12:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CD61F8900;
+	Thu, 14 Nov 2024 12:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731587221; cv=none; b=cVgSXt5Ij8gJ2v4EqpjJvIfx4birNSUyCw0wwda+TqPLyKDc7GuJ7MpIMn+oLm/gPGqbP+L5OwI2+vtoS5ZWOwtjTNlHrKTX2wQIgdY42SLrtQAtckTiv7WJFzqAWRsKQOZAJ9UTh4U++/KvMYMA6RKgV0S5MMvVU3amDzvWe58=
+	t=1731587360; cv=none; b=S4cPhv5Cmnq0t1VSFAH5FMYv13vA4MpOZa0nYWpp39CNiTwaE1M8/i7E3HBgABQIvFjb2LS0Hd91JLHJ6hKNUJmZ6UwnnodBUQQ9hSskcIcqJqmrGV7YPopbdhcFpyFrVqhkWU8kMNc89fpuibaU4dS9JAVn0vAxE0NX8z5+YdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731587221; c=relaxed/simple;
-	bh=KqlIOx89Q/h1+1tvHJWgZpQWh11p9h3EP1DVFjwfdpg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K1+M2TrYLfzUhOjdpWMKBVxZNjYqZ8FPxHfZ8zy3AqRa9tkcGzI0KVFO4L2aKpYf3Cno5rRJ/8lQIjnWYhwxF0Yp9d1QskvwJxP+tY8ODFy2DuqmC7SHzQQN7sLpzb+2DQxpDPH7pDxod7jCRTy4t5zCGTOLmjlPF8aAy9wNct8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FXT3lsz/; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1731587174; x=1732191974; i=markus.elfring@web.de;
-	bh=KqlIOx89Q/h1+1tvHJWgZpQWh11p9h3EP1DVFjwfdpg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=FXT3lsz/e+HCOZRkWM/q10zhgO7gxb3KCAY3/JMs/EaCue+eLUv3myyQ9uMWlUiT
-	 598nHhUzdo1CO1Azi6HpI87po4Kxg5pxc7PMgaTQMTS516vhYhsvipywccpy3piWs
-	 aH9ufFkBrI2H28qJO665QAmugDzL46kzt4+kURvJFhVa8j6D3iZcF/KUSfiBSYBq9
-	 sg1zi2TkwV/bYGSLgASbz0NBsJxlI5KqGAFmeA3I1La0PqUGfj15BtuD8Dq2lU65o
-	 oqnhBPQWyZVgXBIEjca8mDNeMI6lkM+Sx3JkbI36HV6XOlIpLEomu1q2PTOQonDNw
-	 ddYWVok+lb1Xuc731Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N3GgY-1tts4V3Ppy-00vcoH; Thu, 14
- Nov 2024 13:26:13 +0100
-Message-ID: <7f5b2359-c549-4de2-b4c3-977e66a1c1fa@web.de>
-Date: Thu, 14 Nov 2024 13:26:03 +0100
+	s=arc-20240116; t=1731587360; c=relaxed/simple;
+	bh=eR7Cc+q3VjeCTwC9ZHx2PuAEPm5ZAYqfcJ39/f25V2o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=J0lUCIjMEATsz7nP90C7QijcghmkjwNssKSUeVDyowvN27KY0WP4rn0JT73Roh7iGdwjCnPWFpPAw0zVSHliSqiKxcikVRo/fo0GXSOVpz9XZI4HionWjGimOfusbOJAHEiIvc1/BxXKZSY/uCHbST6L4jNdMqO5JbUowydzez4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m7UQpcrN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88E5BC4CECD;
+	Thu, 14 Nov 2024 12:29:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731587360;
+	bh=eR7Cc+q3VjeCTwC9ZHx2PuAEPm5ZAYqfcJ39/f25V2o=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=m7UQpcrNlGY+Xx4svS1YYlGw54qXgBakXJ7nmCqvV+KzU0Hf0cDSgndDMpxi32U8t
+	 YSLNHXOTRN5YaExxYgG6fE3w36/I0AaetzBskva8wzKLYAqz1BOYjZLkE3I1k6up+f
+	 Q+D3LDr1LAAjdHZ9oRZZl5sQiuBEAlOfLG+aP7Vm5Ae9Wo2o1j+Yl0QCoQgxoVXpbT
+	 0X+cIgGDzdjY7Curm/fg6vo3pOEV+RM9N3vD+wsR92x5S+Uf+QRKpLaEuGVsPVMmtV
+	 M03I2Df10zrOw5hsOrI1W/rSzimo6BpJmoVHnjE3iw41DHGb0P4UgzEirqHkd64CC2
+	 PYt7SmOHcFu7g==
+Message-ID: <3e6454f8a6b9176e9e1f98523be35f8eb6457eba.camel@kernel.org>
+Subject: Re: [PATCH v4 0/3] fs: allow statmount to fetch the fs_subtype and
+ sb_source
+From: Jeff Layton <jlayton@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Karel Zak <kzak@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>, Ian
+ Kent <raven@themaw.net>, Josef Bacik <josef@toxicpanda.com>, 
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+Date: Thu, 14 Nov 2024 07:29:18 -0500
+In-Reply-To: <20241114-umzog-garage-b1c1bb8b80f2@brauner>
+References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
+	 <20241112-antiseptisch-kinowelt-6634948a413e@brauner>
+	 <hss5w5in3wj3af3o2x3v3zfaj47gx6w7faeeuvnxwx2uieu3xu@zqqllubl6m4i>
+	 <63f3aa4b3d69b33f1193f4740f655ce6dae06870.camel@kernel.org>
+	 <20241114-umzog-garage-b1c1bb8b80f2@brauner>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: chcr_ktls: fix a possible null-pointer dereference in
- chcr_ktls_dev_add()
-To: Tuo Li <islituo@gmail.com>, netdev@vger.kernel.org,
- Andrew Lunn <andrew@lunn.ch>, Ayush Sawal <ayush.sawal@chelsio.com>,
- "David S. Miller" <davem@davemloft.net>, Dragos Tatulea
- <dtatulea@nvidia.com>, Eric Dumazet <edumazet@google.com>,
- Jacob Keller <jacob.e.keller@intel.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Mina Almasry <almasrymina@google.com>,
- Simon Horman <horms@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Jia-Ju Bai <baijiaju1990@gmail.com>
-References: <20241030132352.154488-1-islituo@gmail.com>
- <55a08c90-df62-41cd-8ab9-89dc8199fbfb@web.de>
- <1fcd2645-e280-4505-aa75-f5a6510b5940@gmail.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <1fcd2645-e280-4505-aa75-f5a6510b5940@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:mm3L9ob3uPy6LSLfWOFRo2GiRq1ElIKATbVt4U8R8ed8LI1ldnb
- 55PjUzdTMl/3oeStXodsGvk0wJTGTm5/anMi11ghK6IwPByJVd0da8abq78W5XiJE348ST+
- /IqiAeJm/FpykncAT43PxSP10DxSf6Qrg9To9+ebTSuDhO/OYO7D3PjP18+c6xnxPCBnlVx
- C0A6hDDXewYn8k6R4GuIw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:hnw83Nteg4g=;GiDt/RZS1UTOAdYHeK+APYIeSOH
- z8hcaBbyz167+VCUjS5AZFtuujdJ1oQLioETME6liLcZiAJ8CDX5V9C+iFAZ/LBljRoja61UJ
- ++g6sOIzkHPxbLjKF0XoLddOuAqhkNZ2NMmMP1tyRgciZOOs1tqr/U5BQOhMyjGjJ6Oqzx1vL
- WCLEO2EaK2Tphtc6S1I/INcaWIircdJAbZDcP35wUQH/th83ibJortiJxT4rkrmtY22EkIu1p
- YIHMb/wha2gqAg+fMbJElXgrB2FGlStsCT1k9KYDz1v5okgMFC17ZS2xjcckwl4hYao/NGJ+E
- DR8ln+QNGuFT9exTl9DELry8ED8MZlUT+86fuVXAApPispqMPvr3VODA8Q+NDlTLe/8ySAEyV
- htJM7KS0F3X/Xiv25RZdHKgG7qSaYLBCpXSq6gPh0JmJNMY0+uQkk0i09ocDnP4WA4orQ2vxo
- 2jNynj+NVSlXuvAdrvLFh644qIDFYGbXCIAeKtvWilbNd+yyGUMF7PMHvsQrTSCY+dKtpzmF2
- K1thbs4ufKKOq0dR0w3A2Xr39BaWwtckbwZuZr/VOFBuQigCH9Obro5PHpkR9Mw45x/eAIEro
- jZA4MpDhbdQ+WDnZKcOd2ZX/ARTGryQmhApVh9AeEVPzzxq5smzBhbPSTrxPk8+VOi3n+z8o5
- PzuwHxEN8rs4jABC+ysK4Z8cUcoNlJ31alvs/VxgIYHqcSNabIa0RbfuPW5LgNB2XDD7B/9Fs
- pwvH1u4ni19MD4XE2FaaOHTNsVUfrB9cYMtQ8l7DvZ8y3RAvmu3VTtHUGwz0SIKhqMyU+T8gt
- naaoJMpVpJMuAFX3/X0sBOUNrCfGOpWmB5HLUgpkePJI12KfCbNUmqw+XrUPmHldWLCzTEXXX
- p+iQCMFke1uiUxdNXVplnx00k95FbAyPSPhsOVd8/OzLU+RLqVe6Vwlvk
 
-> We have run our tool on Linux 6.11, and the line numbers correspond to the
-> code in that version.
+On Thu, 2024-11-14 at 12:29 +0100, Christian Brauner wrote:
+> On Wed, Nov 13, 2024 at 08:45:06AM -0500, Jeff Layton wrote:
+> > On Wed, 2024-11-13 at 12:27 +0100, Karel Zak wrote:
+> > > On Tue, Nov 12, 2024 at 02:39:21PM GMT, Christian Brauner wrote:
+> > > > On Mon, 11 Nov 2024 10:09:54 -0500, Jeff Layton wrote:
+> > > > > Meta has some internal logging that scrapes /proc/self/mountinfo =
+today.
+> > > > > I'd like to convert it to use listmount()/statmount(), so we can =
+do a
+> > > > > better job of monitoring with containers. We're missing some fiel=
+ds
+> > > > > though. This patchset adds them.
+> > > > >=20
+> > > > >=20
+> > > >=20
+> > > > Applied to the vfs.misc branch of the vfs/vfs.git tree.
+> > > > Patches in the vfs.misc branch should appear in linux-next soon.
+> > >=20
+> > > Jeff, thank you for this!
+> > >=20
+> > > I have already implemented support for statmount() and listmount() in
+> > > libmount (PR: https://github.com/util-linux/util-linux/pull/3092). Th=
+e
+> > > only remaining issue was the mount source and incomplete file system
+> > > type.
+> > >=20
+> >=20
+> > Unfortunately, I think we might be missing something else:
+> >=20
+> > The mountinfo (and "mounts") file generator calls show_sb_opts() which
+> > generates some strings from the sb->s_flags field and then calls
+> > security_sb_show_options(). statmount() will give you the s_flags field
+> > (or an equivalent), but it doesn't give you the security options
+> > string. So, those aren't currently visible from statmount().
+> >=20
+> > How should we expose those? Should we create a new statmount string
+> > field and populate it, or is it better to just tack them onto the end
+> > of the statmount.mnt_opts string?
+>=20
+> I'm leaning towards using a separate field because mnt_opts/opts_array
+> is about filesystem specific mount options whereas the security mount
+> options are somewhat generic. So it's easy to tell them apart.
 
-Would you like to share any source code analysis results for more recent software versions?
+Ordinarily, I might agree, but we're now growing a new mount option
+field that has them separated by NULs. Will we need two extra fields
+for this? One comma-separated, and one NUL separated?
 
-Regards,
-Markus
+/proc/#/mountinfo and mounts prepend these to the output of=C2=A0
+->show_options, so the simple solution would be to just prepend those
+there instead of adding a new field. FWIW, only SELinux has any extra
+mount options to show here.
+
+Tough call -- anyone else have opinions?
+--=20
+Jeff Layton <jlayton@kernel.org>
 
