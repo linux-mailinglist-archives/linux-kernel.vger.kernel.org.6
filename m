@@ -1,102 +1,122 @@
-Return-Path: <linux-kernel+bounces-409794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3905F9C91B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:33:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D34749C91C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:41:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E454A1F228B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:33:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B10FB23DA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC2519597F;
-	Thu, 14 Nov 2024 18:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C630D19993E;
+	Thu, 14 Nov 2024 18:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="jZ/ZyQLp"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IxcF9nUw"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AB91714B4;
-	Thu, 14 Nov 2024 18:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335B8198E81
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 18:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731609196; cv=none; b=c2DpMzp5U6/Lof7fGQUURik/MkUOvg/dQaSAHhJlnKcnf9VXVeYuXsvdfW+285sUZYwGYNMrly9g9nZbNTxlpvOYY61pXotNpGKJ+5TVDsdRKsWjtrWwFXmqEJ75FbNskcPCKOCBePlEcNvXaHTf6TtpCvLGtzVd8U3hVHbXGn8=
+	t=1731609651; cv=none; b=IGHtoMb1Fitrr8W2jG7nee0ezA06VhiXe2PvI5dJmhEEcLRY/onv8VGJSoPlG8Y5c1ZP7w4VKuFlD4CK6vCjux8m/Bgn7ph1QmXkcrlgLAJKvllDWW8YEUtGlNxm5T+HeVUcKC5G/zfCvUAXdlW2dT2tylrQlbzS+R47r3Vo8us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731609196; c=relaxed/simple;
-	bh=eG2qmjWNcxUCAG5MDlFmfLnO1Mw2SxC7yXRvuaEBYfo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HWdTY0ZJ9C2ykw0i4MQEv+MXWNoTXPq/Jg/Rg9A7tfbSB6BMCgkIYr+smC/BOFwbrYFvG9uHKCS4mxQKUob039ZeEfpIhf5wTNsrS5ZWLdef8I9nYFB0Ya+DKsDRK0bnz6Ju1VP+JuyMHgCpVdT44dHHmCmhqOu4llTW9SuDWoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=jZ/ZyQLp; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=JtKnks9DzDC3hPxhz35TtP4N/YQTUQpjlTCfulkDlaE=; b=jZ/ZyQLpy5y5yGP+Y/QjdP4zgz
-	kXn9YAQjxGCOnQsRnCnpUB/j+XrSVnvIe0+1fhrRbqdFXoTEezZTLVf26YnLS/AqxSJ2g4J6KvpkK
-	dy5WSFUBjRKzSed+iN6Nd/JKL75ou7t84+a2uvw57LcrcCPxyzfmdc6lWDYFNSg/CPjgsYvzpNvsg
-	a2z9dRgEH+JkCrbJ2P5MIlvtDi3j1Yun0uP+dMWerw2WLeOMj9U+i5oEkhgxVBA6z/loJhshC3YCR
-	PTM242qtRlduHwgO8diZlGIwafFQCYqkNcRAuDx9iMuIfm1qmJ0r+Bhedyt+K6EfKVH0BJ77hP4c/
-	YzPfxsTw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46176)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tBeeN-00005k-1E;
-	Thu, 14 Nov 2024 18:33:03 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tBeeK-0001Ij-2B;
-	Thu, 14 Nov 2024 18:33:00 +0000
-Date: Thu, 14 Nov 2024 18:33:00 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Tristram Ha <tristram.ha@microchip.com>
-Subject: Re: [PATCH net-next] net: phylink: improve phylink_sfp_config_phy()
- error message with empty supported
-Message-ID: <ZzZCXMFRP5ulI1AD@shell.armlinux.org.uk>
-References: <20241114165348.2445021-1-vladimir.oltean@nxp.com>
- <54332f43-7811-426a-a756-61d63b54c725@lunn.ch>
+	s=arc-20240116; t=1731609651; c=relaxed/simple;
+	bh=yQga4oATU7BAhTeiJXrO0GYPE/pnGSUj4/FtYK7YdnU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HnZ3GFbPT+yuTudRiPmjuIy74aV63ggTRiwcqYuu3GrbxrdtjE/EBLDZqET2jJBnG2KYcpFCPv/JMhTuacXR9SjRuDS7+ylVhKdLSdFPa7Q42+gyTFD/pQrbXf+n1glxdxyZv/I4d/M6DZXczGMST2dV+EWZrXbP+kAfifJZFPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IxcF9nUw; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9e71401844so121029366b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:40:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1731609647; x=1732214447; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=IVKKcMuTV29ZR/6oylMMphkdu4mxNTAVjAxFHNzjeW0=;
+        b=IxcF9nUwEFeOu/2p3TqxhuYekPKKQvlFMtrHhkaEBXbwL5utnrTqJUGLdeldrxpoqq
+         EN60B9p0D3L8o0UmPQ1Q6214DPu8i4FAObSzIbIlc6244vYMzWTtviQPuEIE0LsokeWy
+         G3OvbK38ItmNAFuG4dr5RR1HRb1qqPrsaav7s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731609647; x=1732214447;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IVKKcMuTV29ZR/6oylMMphkdu4mxNTAVjAxFHNzjeW0=;
+        b=j/oBLw2I5fACBku7LhM1xDXUkmkUCD3rlsM27ITHbH0lYaO1WDwGgMGCtpiy7dLY3c
+         kv/jDduTSxmX+QQtRejMZX9UJmvoAU7v2NgaJB2uy4LT5qrRPkCOUmgedOy83sXbRvwU
+         F8COazjnhc0+SuA9mjfkihkKBdX2dKjgWaelcEamSqzaZ7/MzLHpTIffHoimfaOzJiEA
+         6y0OCBlA5EiJRotGSXyVX+0It5X2l/z20QkF0hAXDqdyaKHVqhvhSFJ5Tad8FMeXqsvu
+         h583BfPA4/MQccYwmf1t+w1jOdeE/AQxLRlK9281E+WYHQ7RKYF6yQG+/9Keahf3MQe3
+         R1jg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCIMw7XnhY9B7gDASaU6BFcTJNRZBW6H8UfsSCWridksT4Ri0WAyfIAWzMtap0HT6HJVvUwx7UsSqxIMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbU+TqRLPKlnQAgm9+P/ZzZI1gE6/gPIvyyvKk9lZXErl3wFTQ
+	4DHY+Zto43PA/urLhInFFupdsUDPZqf+uRwj+ToSSkxB2/mdcdMG/6epOmm4s+XsMiyLlhrzIYN
+	CN8Mprw==
+X-Google-Smtp-Source: AGHT+IGu2RuI8U/tBdTuNzdfXDbsXInZ/lcd+R+mSs/ZYT0ygVJYfxQoEP2qcjgYew3ZaAOIuTA8iA==
+X-Received: by 2002:a17:907:9808:b0:a9a:c03:ebc8 with SMTP id a640c23a62f3a-aa1f8105bb8mr662398766b.37.1731609647230;
+        Thu, 14 Nov 2024 10:40:47 -0800 (PST)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20dffd695sm89998966b.114.2024.11.14.10.40.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Nov 2024 10:40:46 -0800 (PST)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9ef275b980so165799466b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:40:46 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX+5RaFMBiwqlSEwGMQRvMRhs7JyFnaJnEw5n0uWKB9TSIbuKnU8zdZj2UerDr4DDob8IWIUkGFBCfZirI=@vger.kernel.org
+X-Received: by 2002:a17:907:368d:b0:a99:f861:ebd with SMTP id
+ a640c23a62f3a-aa1f8055032mr767816766b.14.1731609646162; Thu, 14 Nov 2024
+ 10:40:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <54332f43-7811-426a-a756-61d63b54c725@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20241114101402.156397-1-philipp.reisner@linbit.com>
+ <20241114101402.156397-2-philipp.reisner@linbit.com> <CAHk-=wgn=e3gD=tty+p1o8HBy7qxBCgCHiDEd5+FMtn9jdwd2g@mail.gmail.com>
+ <CAHk-=wjLSEcZ5LdW+3C+9rtjvNPHZT6zdk0POj67T5k2ZpDbgA@mail.gmail.com>
+In-Reply-To: <CAHk-=wjLSEcZ5LdW+3C+9rtjvNPHZT6zdk0POj67T5k2ZpDbgA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 14 Nov 2024 10:40:29 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiPZmd1hrsUoP+9vPg2=E0Jj6Li77_BZcV9GocbJg8fag@mail.gmail.com>
+Message-ID: <CAHk-=wiPZmd1hrsUoP+9vPg2=E0Jj6Li77_BZcV9GocbJg8fag@mail.gmail.com>
+Subject: Re: [PATCH 1/1] compiler.h: Add missing include statement for build_bug.h
+To: Philipp Reisner <philipp.reisner@linbit.com>, Kees Cook <keescook@chromium.org>
+Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, linux-sparse@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 14, 2024 at 06:38:13PM +0100, Andrew Lunn wrote:
-> > [   64.738270] mv88e6085 d0032004.mdio-mii:12 sfp: PHY i2c:sfp:16 (id 0x01410cc2) supports no link modes. Maybe its specific PHY driver not loaded?
-> > [   64.769731] sfp sfp: sfp_add_phy failed: -EINVAL
-> > 
-> > Of course, there may be other reasons due to which phydev->supported is
-> > empty, thus the use of the word "maybe", but I think the lack of a
-> > driver would be the most common.
-> 
-> I think this is useful.
-> 
-> I only have a minor nitpick, maybe in the commit message mention which
-> PHY drivers are typically used by SFPs, to point somebody who gets
-> this message in the right direction. The Marvell driver is one. at803x
-> i think is also used. Are then any others?
+On Thu, 14 Nov 2024 at 10:28, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> There's probably some trick I'm missing, but yeah, it looks like we
+> need our BUILD_BUG_ON_ZERO() thing with that crazy bitfield hack.
 
-bcm84881 too. Not sure about at803x - the only SFP I know that uses
-that PHY doesn't make the PHY available to the host.
+.. and right after sending that, I figured out the trick.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+You can use 'static_assert()' inside a type definition.
+
+So the way to turn it into an expression is to just use the same
+'sizeof(empty struct)' trick that we use for BUILD_BUG_ON_ZERO:
+
+    #define Static_assert(a,msg) \
+        sizeof(struct{_Static_assert(a,msg);})
+
+works as a way to make _Static_assert() be an expression. What a horrid hack.
+
+I don't know if this is worth it, but it does at least have the
+advantage of having a message, so that the error case can explain
+itself rather than get that odd
+
+ "negative width in bit-field"
+
+error message.
+
+I dunno.
+
+                Linus
 
