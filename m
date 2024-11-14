@@ -1,100 +1,125 @@
-Return-Path: <linux-kernel+bounces-409603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD2BD9C8F14
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:03:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AEF59C8F19
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:03:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55CD21F25B85
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:03:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB1D21F25DCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FDA15FA7B;
-	Thu, 14 Nov 2024 16:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3D118C038;
+	Thu, 14 Nov 2024 16:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Yp7/Xb1k"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VDl0yqS3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CD71420A8;
-	Thu, 14 Nov 2024 16:02:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6220133987;
+	Thu, 14 Nov 2024 16:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731600126; cv=none; b=tj7tkm2A2/XbXEpZySnrGHdGnOoQnzbXYkDNwOoijbl29TuK7Af3TKixFHnl8PRXdWk4Dsmaxf33/ZIwyw7hBTnJGYlCBa/ZbCVYisu+rQGFmqJVcbfzbzfJ7lynH7hT78Dk2f5QOiwohseLGMru0Ad1grC46jqAY7arxgE5ftM=
+	t=1731600137; cv=none; b=V0Vc0ZrEEc/TsFaRVtdiuV2FqVWYubn4NXKlPku7XYYMeGmTqiTcA/meFEIk5O7kc8QAtpK4toOmu7zqYbehDArPQTwvQ3QXfaA8L188uq5XmzTmqs2YJZH0Bf5fyaYIAj3piU9uyGDLScpcp7Mk84giV4iWGAaASchZ05XaKu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731600126; c=relaxed/simple;
-	bh=VS84OE5xbCbtoGjEJe86AXMDZcLjjyOCrFf5UJkPv5k=;
+	s=arc-20240116; t=1731600137; c=relaxed/simple;
+	bh=CLE+gdbwkUGWxgVL/DfhT8L9omEJZAlZq2aorhrIAow=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GB0MV1pd2kZ/NjyQK5sQ1K1G7I5FHqhk2HLPVSNYjoI5Rl3xYnDygTV2CODn/MJS2hKu8KEkj1o9B55kwur/0YnIDibXGOgTZ+LVppB0ha61G2ikmf2zAFb11NbP1chn2afTTY4iOlWkj5S/HWs7N+4m0dN8KnJidhgWaxPW/GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Yp7/Xb1k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC512C4CED0;
-	Thu, 14 Nov 2024 16:02:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731600125;
-	bh=VS84OE5xbCbtoGjEJe86AXMDZcLjjyOCrFf5UJkPv5k=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=WCw92uAqMMxAeQjVl7ZwDSElJ4Y4L27dkhcxL2TT4msyHKnTUWDa5EXHLO7OZtQPRNeBGggQnl6Ju2msH0kl58DyWkH9LHzsXNVU0S6c9f+YjgQISgSd49GuQh+57f1ykdguk0OaIEDd37A4k/A9jjRteBpEAWSmGWZpE1Iop6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VDl0yqS3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBFA7C4CECD;
+	Thu, 14 Nov 2024 16:02:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731600137;
+	bh=CLE+gdbwkUGWxgVL/DfhT8L9omEJZAlZq2aorhrIAow=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Yp7/Xb1kBh3F3QX4NTiTbx2Msm3PiCERUJGapnyxDghcRefRHmTXs/+fVfygWp4xI
-	 HjwAC/RQsmOF7BOdHwuWWZ7ocvnD428Bvf7VgC7FAD3YFk/14EoCtCjSq2F9Mb0WuV
-	 M7iMfm6SesUEvnX5sj/g/m5kAsBo+Tsbjow6yHY4=
-Date: Thu, 14 Nov 2024 17:02:01 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Parth Pancholi <parth105105@gmail.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Parth Pancholi <parth.pancholi@toradex.com>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v2] kbuild: switch from lz4c to lz4 for compression
-Message-ID: <2024111442-yeast-flail-fcea@gregkh>
-References: <20241114145645.563356-1-parth105105@gmail.com>
+	b=VDl0yqS3yS2D3oGna4mh6TH6YC/T+22WILn0j6PiK4E7vghIzflz4uhXyAxYY5MdO
+	 LepEXXmlDxd/tK5YiwY7HdF4AyACk96C4NUIejRVytBSvbjAgT5S3CQfiW0F8Kn53X
+	 nhQyOFRN8pDPhsPLIGw+6GlBua7KrYfVpn2BvTc6NtLXBBzQWOxPrZXYik8pGYJ8PA
+	 Phv6GsuBnRJ/37Z4T+oec6kp6EZnrOg0XfN1b1sMvPkgz3QYNKpAk9ygqJDqw4ioyB
+	 DKOex+tJkIkeH0PENmcrUV6H20f3ukmgesA+H18Td0NpeTTV7LdkZ2qsksxiC6hi53
+	 4jgMoE1+vSIlg==
+Date: Thu, 14 Nov 2024 16:02:14 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Duyck <alexander.duyck@gmail.com>,
+	Linux-MM <linux-mm@kvack.org>,
+	Alexander Duyck <alexanderduyck@fb.com>,
+	Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+	Aishwarya.TCV@arm.com
+Subject: Re: [PATCH net-next v23 1/7] mm: page_frag: add a test module for
+ page_frag
+Message-ID: <ZzYfBp0IO1WW6Cao@finisterre.sirena.org.uk>
+References: <20241028115343.3405838-1-linyunsheng@huawei.com>
+ <20241028115343.3405838-2-linyunsheng@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="0MyQI+clfZpBVvMG"
+Content-Disposition: inline
+In-Reply-To: <20241028115343.3405838-2-linyunsheng@huawei.com>
+X-Cookie: System checkpoint complete.
+
+
+--0MyQI+clfZpBVvMG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241114145645.563356-1-parth105105@gmail.com>
 
-On Thu, Nov 14, 2024 at 03:56:44PM +0100, Parth Pancholi wrote:
-> From: Parth Pancholi <parth.pancholi@toradex.com>
-> 
-> Replace lz4c with lz4 for kernel image compression.
-> Although lz4 and lz4c are functionally similar, lz4c has been deprecated
-> upstream since 2018. Since as early as Ubuntu 16.04 and Fedora 25, lz4
-> and lz4c have been packaged together, making it safe to update the
-> requirement from lz4c to lz4.
-> 
-> Consequently, some distributions and build systems, such as OpenEmbedded,
-> have fully transitioned to using lz4. OpenEmbedded core adopted this
-> change in commit fe167e082cbd ("bitbake.conf: require lz4 instead of
-> lz4c"), causing compatibility issues when building the mainline kernel
-> in the latest OpenEmbedded environment, as seen in the errors below.
-> 
-> This change also updates the LZ4 compression commands to make it backward
-> compatible by replacing stdin and stdout with the '-' option, due to some
-> unclear reason, the stdout keyword does not work for lz4 and '-' works for
-> both. In addition, this modifies the legacy '-c1' with '-9' which is also
-> compatible with both. This fixes the mainline kernel build failures with
-> the latest master OpenEmbedded builds associated with the mentioned
-> compatibility issues.
-> 
-> LZ4     arch/arm/boot/compressed/piggy_data
-> /bin/sh: 1: lz4c: not found
-> ...
-> ...
-> ERROR: oe_runmake failed
-> 
-> Cc: stable@vger.kernel.org
+On Mon, Oct 28, 2024 at 07:53:36PM +0800, Yunsheng Lin wrote:
+> The testing is done by ensuring that the fragment allocated
+> from a frag_frag_cache instance is pushed into a ptr_ring
+> instance in a kthread binded to a specified cpu, and a kthread
+> binded to a specified cpu will pop the fragment from the
+> ptr_ring and free the fragment.
 
-What bug does this resolve that it needs to be backported to stable
-kernels?
+This is breaking the build in -next on at least arm64 and x86_64 since
+it's trying to build an out of tree kernel module which is included in
+the selftests directory, the kselftest build system just isn't set up to
+do that in a sensible and robust fashion.  The module should probably be
+in the main kernel tree and enabled by the config file for the mm tests.
 
-thanks,
+KernelCI sees:
 
-greg k-h
+***
+*** Configuration file ".config" not found!
+***
+*** Please run some configurator (e.g. "make oldconfig" or
+*** "make menuconfig" or "make xconfig").
+***
+Makefile:810: include/config/auto.conf.cmd: No such file or directory
+
+(see https://storage.kernelci.org/next/master/next-20241114/x86_64/x86_64_defconfig%2Bkselftest/gcc-12/logs/kselftest.log)
+
+and I've seen:
+
+  ERROR: Kernel configuration is invalid.
+         include/generated/autoconf.h or include/config/auto.conf are missing.
+         Run 'make oldconfig && make prepare' on kernel src to fix it.
+
+make[3]: *** [Makefile:788: include/config/auto.conf] Error 1
+
+--0MyQI+clfZpBVvMG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmc2HwUACgkQJNaLcl1U
+h9Db9gf8Cr2HGJXLOLGXW8Noo9DxYlVt3elXI60b8tNmifJUKessfHXguQp3P1N4
+zOEibYMbPJb1psJo7B0xpb50i4BML30rUBm2vH4ZILQX8IMafE/y2L0vfJ4+kbhz
+HMMaZtkYMlePGIK25hApP53VfsEPDwdqOkTBJTksOxf0xLG3ZIQcguwnlZldxrZu
+5YfGkL85wLRoiOrNdqUR5lhl7hrV1YpLsrSeKfFs3fhAMgTrcmHLEpTYHtjo/caz
++V2b6+5SlF46vd0d0h8hz92i26LSTt/14K4ZXGQHGCVd2NmO7rmu6Bd6YbwGPVLA
+e17YBlDrGC1jnnuLNiDpZtBtN6VdJA==
+=MZrU
+-----END PGP SIGNATURE-----
+
+--0MyQI+clfZpBVvMG--
 
