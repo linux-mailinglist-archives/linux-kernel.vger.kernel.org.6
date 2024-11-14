@@ -1,64 +1,60 @@
-Return-Path: <linux-kernel+bounces-409886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ADF29C92E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:06:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46CD19C92E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:07:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BF2C283848
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:06:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CFEE283560
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D2901AAE28;
-	Thu, 14 Nov 2024 20:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E291AAE2E;
+	Thu, 14 Nov 2024 20:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PDxJHMbh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KAtYBi4y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E2FEEDE;
-	Thu, 14 Nov 2024 20:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAA0EEDE;
+	Thu, 14 Nov 2024 20:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731614781; cv=none; b=IS/oPUIX7HtlMWJID0YSGZcIUY2v3oIecZXojk+IPiL2WV6Es/qmoQjWX45tIdpu/GhQAVHQ9IrEZQD66caXkiDzGUQtbky/h8/Svq0tYXF6yEe2OYRE2v85mFTtKV06hRe51HvePQdm9rmGyuiNbH0SpjXx0V9Q6EDDciTaoPY=
+	t=1731614856; cv=none; b=nqO+IjZoZgCKnaOmohFERzA4qFVUn4j3u75zFlw5nGAwSDfGxzhYoSnh1I9cBDuOqKjx1kJ8ho1lOgbbGtd1D8XHvmP8qyF5qpOMcapZkpk9GYwA3MtY9Ybvq7GwFMHriDFbUBzUmCpGW2RCiv0YKMcLHAcAXPnJcp6jANRgUJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731614781; c=relaxed/simple;
-	bh=+qErtJSAtXbxwYe6icG0dLk6au77bP2XR4LohEja7Ec=;
+	s=arc-20240116; t=1731614856; c=relaxed/simple;
+	bh=nqJiNu8v2ujQkfJAmU9C5VR3//m4linYKmRisSXR+OY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qukZFJLLVqamR30b3saq7e799G4OIRea7clcQuQ7IrYjZCH9MCr5h+MiD57FGG3KX3pZHL7z6R2MPVQ+eirTGjWguf+LN1S/4Hv/DqTiLf4v/I9txWtMEFzuIUq3ihulmynBPKhZl6HlBEP6rbiH9zwQ6dut8oK6eH2RXQDpLe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PDxJHMbh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6ACBC4CECD;
-	Thu, 14 Nov 2024 20:06:17 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cok/VhV5oEXKMjbHv15KrbdLekuVzv6wgTiwk7rO9UKySph7+cqIzVkDNv0SuPXiJF+6er2bDK4c5QWmGDN7xV3Elb/T6x4RzkR1ctE5qmaMNnss+BuuQX28oYJDN/ybLgJnUErLOrLNc+RNHQcjc8QkUWln7tDCfd9OXdPMDcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KAtYBi4y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D583C4CED5;
+	Thu, 14 Nov 2024 20:07:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731614781;
-	bh=+qErtJSAtXbxwYe6icG0dLk6au77bP2XR4LohEja7Ec=;
+	s=k20201202; t=1731614855;
+	bh=nqJiNu8v2ujQkfJAmU9C5VR3//m4linYKmRisSXR+OY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PDxJHMbhx68G8JfrXELVLvUwb2oPsOD5P423u74SIvbwZ4LnpJNiBD2f6Eio70YTc
-	 4gJ4+KHh5ZhwmMvCnPIr00MukmusQKmx3XIplqN3GaW6/Zgj0iADc59D/VJt6E2Fpa
-	 rwqwow/QLOjr627VYQSSmoo70MEYaTnaiLngpls5ZMA7ZtohH/YROhEmrpLbgBYIBX
-	 M2Bm7UHx+onpc4PwnON55gjKsIAL4JMC+fOAshMBVWttr881a+QVz/LkSflY7lrZwO
-	 wTiv3mL+rV4+/sctWfWA+EueB8SgWd4x+Q8rVlq+Qc+oBBkoP0sONT04qf0PpvmIBf
-	 v31dNt2XqA9WQ==
-Date: Thu, 14 Nov 2024 20:06:15 +0000
+	b=KAtYBi4yJAjPz/PEMA36PsQw9r/rpNGJ7Lqm4OZfk6SoeAUyEso7XPg8UDgPzXRjk
+	 bkVYnm5caKILvncDhVBDdUoZ1FOzSwd3IqA4FoEJy1l/REaSKjGoVUV92f+IbFnHVs
+	 OIAoOvk5V1yvYRXFXV8AHX7d9dMZruDx6ts6xwgIJG5/FvOgy7qHBeS12Fvy6caNNP
+	 gs+67FJgpjm99NHhgYl9C4YrvKK1qhhtxo4VdifQ8V4+7nRDQ5jxFU3i+wxwpkYM+m
+	 7gQK9U5sKLsOaXmmYhVLY24M7O2dJ4FQgGAeDhnkmNQZ0VgGXf22Nr7sSrU9BsyX2l
+	 LwOV4jlpkwD8A==
+Date: Thu, 14 Nov 2024 20:07:30 +0000
 From: Conor Dooley <conor@kernel.org>
-To: Daniel Machon <daniel.machon@microchip.com>
-Cc: UNGLinuxDriver@microchip.com, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lars Povlsen <lars.povlsen@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Russell King <linux@armlinux.org.uk>, jacob.e.keller@intel.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net-next v2 8/8] dt-bindings: net: sparx5: document RGMII
- MAC delays
-Message-ID: <20241114-liquefy-chasing-a85e284f14b9@spud>
-References: <20241113-sparx5-lan969x-switch-driver-4-v2-0-0db98ac096d1@microchip.com>
- <20241113-sparx5-lan969x-switch-driver-4-v2-8-0db98ac096d1@microchip.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Sean Nyekjaer <sean@geanix.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	Han Xu <han.xu@nxp.com>
+Subject: Re: [PATCH 1/4] dt-bindings: iio: accel: fxls8962af: add compatible
+ string 'nxp,fxls8967af'
+Message-ID: <20241114-showing-aspirin-8ca12f0b2e50@spud>
+References: <20241113-fxls-v1-0-5e48ff1b1fb8@nxp.com>
+ <20241113-fxls-v1-1-5e48ff1b1fb8@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,87 +62,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="eNDowPgtkxFgCrJx"
+	protocol="application/pgp-signature"; boundary="BLm+PiydXSQuPslL"
 Content-Disposition: inline
-In-Reply-To: <20241113-sparx5-lan969x-switch-driver-4-v2-8-0db98ac096d1@microchip.com>
+In-Reply-To: <20241113-fxls-v1-1-5e48ff1b1fb8@nxp.com>
 
 
---eNDowPgtkxFgCrJx
+--BLm+PiydXSQuPslL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 13, 2024 at 10:11:16PM +0100, Daniel Machon wrote:
-> The lan969x switch device supports two RGMII port interfaces that can be
-> configured for MAC level rx and tx delays.
+On Wed, Nov 13, 2024 at 12:54:39PM -0500, Frank Li wrote:
+> From: Han Xu <han.xu@nxp.com>
 >=20
-> Document two new properties {rx,tx}-internal-delay-ps. Make them
-> required properties, if the phy-mode is one of: rgmii, rgmii_id,
-> rgmii-rxid or rgmii-txid. Also specify accepted values.
+> Add compatible string 'nxp,fxls8967af' for the NXP FXLS8967AF acceleromet=
+er
+> sensor.
 >=20
-> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+> Signed-off-by: Han Xu <han.xu@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
->  .../bindings/net/microchip,sparx5-switch.yaml        | 20 ++++++++++++++=
-++++++
->  1 file changed, 20 insertions(+)
+>  Documentation/devicetree/bindings/iio/accel/nxp,fxls8962af.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
 >=20
-> diff --git a/Documentation/devicetree/bindings/net/microchip,sparx5-switc=
-h.yaml b/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml
-> index dedfad526666..a3f2b70c5c77 100644
-> --- a/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml
-> +++ b/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml
-> @@ -129,6 +129,26 @@ properties:
->              minimum: 0
->              maximum: 383
+> diff --git a/Documentation/devicetree/bindings/iio/accel/nxp,fxls8962af.y=
+aml b/Documentation/devicetree/bindings/iio/accel/nxp,fxls8962af.yaml
+> index 783c7ddfcd90a..c375ef1bd083f 100644
+> --- a/Documentation/devicetree/bindings/iio/accel/nxp,fxls8962af.yaml
+> +++ b/Documentation/devicetree/bindings/iio/accel/nxp,fxls8962af.yaml
+> @@ -14,12 +14,16 @@ description: |
+>    SPI and I2C interface.
+>      https://www.nxp.com/docs/en/data-sheet/FXLS8962AF.pdf
+>      https://www.nxp.com/docs/en/data-sheet/FXLS8964AF.pdf
+> +    https://www.nxp.com/docs/en/data-sheet/FXLS8967AF.pdf
 > =20
-> +        allOf:
-> +          - if:
-> +              properties:
-> +                phy-mode:
-> +                  contains:
-> +                    enum:
-> +                      - rgmii
-> +                      - rgmii-rxid
-> +                      - rgmii-txid
-> +                      - rgmii-id
-> +            then:
-> +              properties:
-> +                rx-internal-delay-ps:
-> +                  enum: [0, 1000, 1700, 2000, 2500, 3000, 3300]
-> +                tx-internal-delay-ps:
-> +                  enum: [0, 1000, 1700, 2000, 2500, 3000, 3300]
+>  properties:
+>    compatible:
+> +    description:
+> +      These chips are compatible with each other, just have different ID=
+s.
 
-Properties should be define at the top level and constrained in the
-if/then parts. Please move the property definitions out, and just leave
-the required: bit here.
+Then there should be a fallback. Please remove this description and add
+the new device with a fallback to an existing one.
 
-> +              required:
-> +                - rx-internal-delay-ps
-> +                - tx-internal-delay-ps
+>      enum:
+>        - nxp,fxls8962af
+>        - nxp,fxls8964af
+> +      - nxp,fxls8967af
+> =20
+>    reg:
+>      maxItems: 1
+>=20
+> --=20
+> 2.34.1
+>=20
 
-You've got no else, so these properties are valid even for !rgmii?
-
-> +
->          required:
->            - reg
->            - phys
-
-Additionally, please move the conditional bits below the required
-property list.
-
-Cheers,
-Conor.
-
---eNDowPgtkxFgCrJx
+--BLm+PiydXSQuPslL
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzZYNwAKCRB4tDGHoIJi
-0tseAQDj+4EzZBz0Olii65irqWB4dSvXcjEhBM44bZwOPV01VQD/VdnzMjewFP1O
-G21peKsEaCjo/s/xbOGZESYTlDp/mw0=
-=RG0u
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzZYggAKCRB4tDGHoIJi
+0qctAQDHl3DPf7LwU7fxaBdmPPX2qhiGz8tA8KDft9OZS+25AAD/YHIdFD71J05r
+0YRD5CgsZp+OvlL6M1mUzfcHKfiqmwc=
+=UnPl
 -----END PGP SIGNATURE-----
 
---eNDowPgtkxFgCrJx--
+--BLm+PiydXSQuPslL--
 
