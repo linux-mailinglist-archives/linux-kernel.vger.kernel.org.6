@@ -1,216 +1,153 @@
-Return-Path: <linux-kernel+bounces-408588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F599C80CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:30:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA699C80D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:36:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B90D81F21283
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:30:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65D31B21FF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD361E884A;
-	Thu, 14 Nov 2024 02:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VRqUb8rX"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0361E7663;
-	Thu, 14 Nov 2024 02:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73DC51E3DEF;
+	Thu, 14 Nov 2024 02:36:08 +0000 (UTC)
+Received: from chinatelecom.cn (smtpnm6-01.21cn.com [182.42.159.233])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2A32F5A
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 02:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=182.42.159.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731551390; cv=none; b=SIjjuHAgoYFrc6m47X90CAgt07NN+gPEdqSYwApUoXkbY2g+CGb7jObUkSGlbI4ac0VSMMhQZVxmz/To0/xo/Nqq0nrvNtBgfGXKA27gVyVyBGh2HCp30w7yzqn+a3TiBI+YoEuNCif24g+OX3Wj3CZ+K24yAQFTOvArTnv0vYE=
+	t=1731551768; cv=none; b=jbV65FfVcyZWxlq0vkzykC/upt+/6rTf9QcpBkJ5cIK94sItTbqWs/LBWE4fwAwKjRpRHIVfvdw5PYVTUcfZhz5X09lSdCIiAKPJ4Kxyq7CnrvKf3+VhHc9FBs+QkDeDqzVUeFTzKxgH5G6rRPMKs5Kh6qlxWVGOGKJA4LMoZ7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731551390; c=relaxed/simple;
-	bh=giPc/kImraaOj3inDnO2hOUlyhXSOz6rT5Fiy2weFpA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dT119omagiznKHCgxx53Ag2rZLhhQ93ls+brbc+zzKC6V3pH8YGWjFBKd4vLC/wDp14MM6Ju4NeNJJKvB+QL2g0GihZogzqZdMrzW2pAFlSZXDxrFO9nJHTrikk2OZMu7JGbibwHGRMUphMXx4cwnPatyOiVIO3SzG6tw4v8Rzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VRqUb8rX; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ADMkOPP025933;
-	Thu, 14 Nov 2024 02:29:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	r7Po/FwQThiBsQWRxYcauOHGQZjpnBIU7A93c7fpQdY=; b=VRqUb8rXcHkBS5XX
-	MTOaF+PtySELj6nNPWDwbbXASdL+JO2wfONwTYHJa6LauTQ23mbLZO9BVe2vpiJ1
-	LVAlRzvd9UixrQ0hoT6Qa1L4Jk6adrDGVmueCEwJ0vxcCglvorq1UN0OC3sV32TC
-	e4OpKORpooGq+yQhBscGfhI5qiIKTc/Is/xoLnThcy8++gBeSHSuWph6Ii5vZto+
-	V0qXNd4jo3IKko7nW83HYtBIjzwohzO94kcCeFbT+JSHDwLR2sfR4N7p5zJVvasp
-	GtRDyA97V7z12LsWPhseOjXubw5Ka6D+DM5SyYd2o4nAZ19+0qS69z8YgsIAjtZK
-	GbnyNw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vkvrb9kv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Nov 2024 02:29:40 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AE2TdNj026874
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Nov 2024 02:29:39 GMT
-Received: from hu-sibis-blr.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 13 Nov 2024 18:29:35 -0800
-From: Sibi Sankar <quic_sibis@quicinc.com>
-To: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>, <rafael@kernel.org>,
-        <viresh.kumar@linaro.org>, <morten.rasmussen@arm.com>,
-        <dietmar.eggemann@arm.com>, <lukasz.luba@arm.com>,
-        <pierre.gondois@arm.com>, <vincent.guittot@linaro.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_mdtipton@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>
-Subject: [PATCH V8 1/1] cpufreq: scmi: Register for limit change notifications
-Date: Thu, 14 Nov 2024 07:59:16 +0530
-Message-ID: <20241114022916.644899-2-quic_sibis@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241114022916.644899-1-quic_sibis@quicinc.com>
-References: <20241114022916.644899-1-quic_sibis@quicinc.com>
+	s=arc-20240116; t=1731551768; c=relaxed/simple;
+	bh=lWFR0tiU/5BAS1L7F/sh16Mx3kDtfSth2eQNIp1NpGU=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=AjXRoFyaZz6eKVCJySHnoe6OVnTk30CGmB7dDBOUr3Fa1GA8pvJBkz/zn7MHKY8qlPKpMDPMa0Xwtykb2ttoulx68TRToiHlPXuxKb9bWrZaEtazfe+sgo1o28hQbwsUWNRj6cOcIe1lyL5Z6gNV68OQvJwi4r5wDqATdSjWrTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chinatelecom.cn; spf=pass smtp.mailfrom=chinatelecom.cn; arc=none smtp.client-ip=182.42.159.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chinatelecom.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chinatelecom.cn
+HMM_SOURCE_IP:192.168.139.44:0.1557565417
+HMM_ATTACHE_NUM:0000
+HMM_SOURCE_TYPE:SMTP
+Received: from clientip-40.99.74.53 (unknown [192.168.139.44])
+	by chinatelecom.cn (HERMES) with SMTP id 5473D100112C0;
+	Thu, 14 Nov 2024 10:29:27 +0800 (CST)
+X-189-SAVE-TO-SEND: +liuq131@chinatelecom.cn
+Received: from  ([40.99.74.53])
+	by gateway-ssl-dep-6977f57994-mvlbg with ESMTP id f84cc24f0c0d4249be433d436875358f for baolin.wang@linux.alibaba.com;
+	Thu, 14 Nov 2024 10:29:30 CST
+X-Transaction-ID: f84cc24f0c0d4249be433d436875358f
+X-Real-From: liuq131@chinatelecom.cn
+X-Receive-IP: 40.99.74.53
+X-MEDUSA-Status: 0
+Sender: liuq131@chinatelecom.cn
+From: "liuq131@chinatelecom.cn" <liuq131@chinatelecom.cn>
+To: "baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>
+CC: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "liuq131@chinatelecom.cn"
+	<liuq131@chinatelecom.cn>
+Subject: Re: [PATCH] mm/compaction: fix the total_isolated in strict mode
+Thread-Topic: [PATCH] mm/compaction: fix the total_isolated in strict mode
+Thread-Index: AQHbNjzPixRVO6Ot3kKopSfFalJ1dg==
+X-MS-Exchange-MessageSentRepresentingType: 1
+Date: Thu, 14 Nov 2024 02:29:24 +0000
+Message-ID:
+	<TYSPR01MB570235A0139F17DE8371CA4FF05B2@TYSPR01MB5702.apcprd01.prod.exchangelabs.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-Exchange-Organization-SCL: -1
+X-MS-TNEF-Correlator:
+X-MS-Exchange-Organization-RecordReviewCfmType: 0
+msip_labels:
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: l5ZyfhjEhTE5y1n7Shqs0WijiK8vafjL
-X-Proofpoint-GUID: l5ZyfhjEhTE5y1n7Shqs0WijiK8vafjL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- phishscore=0 suspectscore=0 spamscore=0 mlxlogscore=999 priorityscore=1501
- bulkscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411140017
 
-Register for limit change notifications if supported and use the throttled
-frequency from the notification to apply HW pressure.
-
-Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-Tested-by: Mike Tipton <quic_mdtipton@quicinc.com>
-Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
----
-
-v8:
-* Drop patch 1 since it was picked up by Viresh
-* Leave policy->max update to the cpufreq_qos notifier [Vincent]
-* We sanitized the range_max from V3 since we dealt with
-  policy->max, now we can drop the check and policy member
-  from scmi_data.
-
- drivers/cpufreq/scmi-cpufreq.c | 45 ++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
-
-diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
-index 07d6f9a9b7c8..b8fe758aeb01 100644
---- a/drivers/cpufreq/scmi-cpufreq.c
-+++ b/drivers/cpufreq/scmi-cpufreq.c
-@@ -16,6 +16,7 @@
- #include <linux/export.h>
- #include <linux/module.h>
- #include <linux/pm_opp.h>
-+#include <linux/pm_qos.h>
- #include <linux/slab.h>
- #include <linux/scmi_protocol.h>
- #include <linux/types.h>
-@@ -26,6 +27,8 @@ struct scmi_data {
- 	int nr_opp;
- 	struct device *cpu_dev;
- 	cpumask_var_t opp_shared_cpus;
-+	struct notifier_block limit_notify_nb;
-+	struct freq_qos_request	limits_freq_req;
- };
- 
- static struct scmi_protocol_handle *ph;
-@@ -174,6 +177,22 @@ static struct freq_attr *scmi_cpufreq_hw_attr[] = {
- 	NULL,
- };
- 
-+static int scmi_limit_notify_cb(struct notifier_block *nb, unsigned long event, void *data)
-+{
-+	struct scmi_data *priv = container_of(nb, struct scmi_data, limit_notify_nb);
-+	struct scmi_perf_limits_report *limit_notify = data;
-+	unsigned int limit_freq_khz;
-+	int ret;
-+
-+	limit_freq_khz = limit_notify->range_max_freq / HZ_PER_KHZ;
-+
-+	ret = freq_qos_update_request(&priv->limits_freq_req, limit_freq_khz);
-+	if (ret < 0)
-+		pr_warn("failed to update freq constraint: %d\n", ret);
-+
-+	return NOTIFY_OK;
-+}
-+
- static int scmi_cpufreq_init(struct cpufreq_policy *policy)
- {
- 	int ret, nr_opp, domain;
-@@ -181,6 +200,7 @@ static int scmi_cpufreq_init(struct cpufreq_policy *policy)
- 	struct device *cpu_dev;
- 	struct scmi_data *priv;
- 	struct cpufreq_frequency_table *freq_table;
-+	struct scmi_device *sdev = cpufreq_get_driver_data();
- 
- 	cpu_dev = get_cpu_device(policy->cpu);
- 	if (!cpu_dev) {
-@@ -294,6 +314,23 @@ static int scmi_cpufreq_init(struct cpufreq_policy *policy)
- 		}
- 	}
- 
-+	ret = freq_qos_add_request(&policy->constraints, &priv->limits_freq_req, FREQ_QOS_MAX,
-+				   FREQ_QOS_MAX_DEFAULT_VALUE);
-+	if (ret < 0) {
-+		dev_err(cpu_dev, "failed to add qos limits request: %d\n", ret);
-+		goto out_free_table;
-+	}
-+
-+	priv->limit_notify_nb.notifier_call = scmi_limit_notify_cb;
-+	ret = sdev->handle->notify_ops->event_notifier_register(sdev->handle, SCMI_PROTOCOL_PERF,
-+							SCMI_EVENT_PERFORMANCE_LIMITS_CHANGED,
-+							&priv->domain_id,
-+							&priv->limit_notify_nb);
-+	if (ret)
-+		dev_warn(&sdev->dev,
-+			 "failed to register for limits change notifier for domain %d\n",
-+			 priv->domain_id);
-+
- 	return 0;
- 
- out_free_table:
-@@ -313,7 +350,13 @@ static int scmi_cpufreq_init(struct cpufreq_policy *policy)
- static void scmi_cpufreq_exit(struct cpufreq_policy *policy)
- {
- 	struct scmi_data *priv = policy->driver_data;
-+	struct scmi_device *sdev = cpufreq_get_driver_data();
- 
-+	sdev->handle->notify_ops->event_notifier_unregister(sdev->handle, SCMI_PROTOCOL_PERF,
-+							    SCMI_EVENT_PERFORMANCE_LIMITS_CHANGED,
-+							    &priv->domain_id,
-+							    &priv->limit_notify_nb);
-+	freq_qos_remove_request(&priv->limits_freq_req);
- 	dev_pm_opp_free_cpufreq_table(priv->cpu_dev, &policy->freq_table);
- 	dev_pm_opp_remove_all_dynamic(priv->cpu_dev);
- 	free_cpumask_var(priv->opp_shared_cpus);
-@@ -372,6 +415,8 @@ static int scmi_cpufreq_probe(struct scmi_device *sdev)
- 	if (!handle)
- 		return -ENODEV;
- 
-+	scmi_cpufreq_driver.driver_data = sdev;
-+
- 	perf_ops = handle->devm_protocol_get(sdev, SCMI_PROTOCOL_PERF, &ph);
- 	if (IS_ERR(perf_ops))
- 		return PTR_ERR(perf_ops);
--- 
-2.34.1
-
+On 2024/11/12  17:47, baolin.wang@linux.alibaba.com wrote:=0A=
+>On 2024/11/12 10:16, liuq131@chinatelecom.cn wrote:=0A=
+>> "We assume that the block we are currently processing is distributed as =
+follows:=0A=
+>> 0   1   2                                                            511=
+=0A=
+>> --------------------------------------------------=0A=
+>> |    |    |                                                             =
+ |=0A=
+>> ---------------------------------------------------=0A=
+>> Index 0 and 1 are both pages with an order of 0.=0A=
+>> Index 2 has a bogus order (let's assume the order is 9).=0A=
+>> When the for loop reaches index 2, it will enter the following code:=0A=
+>> /*=0A=
+>>   * For compound pages such as THP and hugetlbfs, we can save=0A=
+>>   * potentially a lot of iterations if we skip them at once.=0A=
+>>   * The check is racy, but we can consider only valid values=0A=
+>>   * and the only danger is skipping too much.=0A=
+>>   */=0A=
+>> if (PageCompound(page)) {=0A=
+>>      const unsigned int order =3D compound_order(page);=0A=
+>>      if (blockpfn + (1UL << order) <=3D end_pfn) {=0A=
+>>          blockpfn +=3D (1UL << order) - 1;=0A=
+>>          page +=3D (1UL << order) - 1;=0A=
+>>          nr_scanned +=3D (1UL << order) - 1;=0A=
+>>      }=0A=
+>>      goto isolate_fail;=0A=
+>> }=0A=
+>> =0A=
+>> After exiting the for loop:=0A=
+>> blockpfn =3Dbasepfn+ 2+2^9 =3D basepfn+514=0A=
+>> endpfn  =3D basepfn +512=0A=
+>> total_isolated =3D 2=0A=
+>> nr_scanned =3D 514=0A=
+>=0A=
+>In your case, the 'blockpfn' will not be updated to 'basepfn+514', =0A=
+>because 'blockpfn + (1UL << order) > end_pfn', right? And remember the =0A=
+>'end_pfn' is the end of the pageblock.=0A=
+>=0A=
+>So I'm still confused about your case. Is this from code inspection?=0A=
+You're right, the situation where blockpfn > end_pfn would not actually occ=
+ur here.=0A=
+I encountered this issue in the 4.19 kernel, which did not have this check.=
+=0A=
+I didn't carefully examine this scenario later. Sorry about that.=0A=
+=0A=
+However, when blockpfn =3D=3D end_pfn, I believe the patch is still applica=
+ble,=0A=
+but the git log needs to be updated. Is there still an opportunity to submi=
+t=0A=
+a revised version of the patch?=0A=
+>> /*=0A=
+>> * Be careful to not go outside of the pageblock.=0A=
+>> */=0A=
+>> if (unlikely(blockpfn > end_pfn))=0A=
+>> blockpfn =3D end_pfn;=0A=
+>>   =0A=
+>> So this can happen=0A=
+>> =0A=
+>> /*=0A=
+>>   * If strict isolation is requested by CMA then check that all the=0A=
+>>   * pages requested were isolated. If there were any failures, 0 is=0A=
+>>   * returned and CMA will fail.=0A=
+>>   */=0A=
+>> if (strict && blockpfn < end_pfn)=0A=
+>> total_isolated =3D 0;=0A=
+>> =0A=
+>> If processed according to the old code, it will not enter the if stateme=
+nt to reset total_isolated, but the correct handling is to reset total_isol=
+ated to 0.=0A=
+>=0A=
+>Please do not top-posting:=0A=
+>=0A=
+>"=0A=
+>- Use interleaved ("inline") replies, which makes your response easier =0A=
+>to read. (i.e. avoid top-posting -- the practice of putting your answer =
+=0A=
+>above the quoted text you are responding to.) For more details, see=0A=
+>   :ref:`Documentation/process/submitting-patches.rst =0A=
+><interleaved_replies>`.=0A=
+>"=0A=
 
