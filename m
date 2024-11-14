@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-409558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F41B29C8E87
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:44:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ABE89C8E94
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:45:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B453428AA4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:44:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C824228AC63
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87FB41AB507;
-	Thu, 14 Nov 2024 15:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF251AE01E;
+	Thu, 14 Nov 2024 15:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Yf5SpRpd"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FM20FU5O"
 Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6387C193061;
-	Thu, 14 Nov 2024 15:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D8D1A0B07;
+	Thu, 14 Nov 2024 15:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731598576; cv=none; b=pYV4JiwNWRz8pxWcJhc6BkGLYlTPf0zypNI8aQOL3XgPzUdfM4bTNsG2xkAnDgXnfArKPxEr4MKovcruMgPMxpQVF7uwapn/seXjtvgWYBSPmTqh3aRlWj1nHHr/256vopE5Jk9B/AlnrLyEEW/jy8ZuNGWxT0BfBwHbUgcVrEQ=
+	t=1731598578; cv=none; b=HUj4eT9mAhRSy/Ej5amk7yj3LXhWb//Q6uk5G8MxGXqKPRYBjBH5th+Vc7BUDXrhjpUdZZw/dasl5SN9zuQMHV3IG+TjoNiFMJMg87BnHKRqMjYYZUzolSgFRnZV50iP1qJTTi5HYc/CHMD76SnYujEw9X/X2oJDKWqi01faXvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731598576; c=relaxed/simple;
-	bh=aXDa6WXqAsGTp271cwDJq8clhE7AZLg1W7agSE8IHpY=;
+	s=arc-20240116; t=1731598578; c=relaxed/simple;
+	bh=neKwiyC1PY4eT+QTZ5DnIjsnkk1H1GkhHLBu60Fe5fc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FAV+sTbwuUXGKYKZ9RA5Vc9zeZl/YOxt94h7aS2kmk7tRR7F83tTS0XrAnhhAa1bnmUznDqyeMUH8OiNfzSCIR6TiIc4II3snQ2QNNCCORPvdQgSZ4C500Avcyo2uhbBMVJs04p+tmj6u4/9zLGlQ9W9Uu82VijdncVu2vjy8rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Yf5SpRpd; arc=none smtp.client-ip=217.70.183.201
+	 MIME-Version; b=aWMZ6HdAfcoNct7F+AFImozrbi1mi9DGFYlFXPy9G7fVw4l2n94pLy5ZtvOCgxutC7PqnZkVg6SCgtVl6rMovlqvuvtA/4tnd1whqv101OiIpjX4iplUz2fpIXxSroAnRh6rJMTOqzEWIZYMcDBm/CsHimb/Sc78kin0Ot/LBF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FM20FU5O; arc=none smtp.client-ip=217.70.183.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5858D1BF208;
-	Thu, 14 Nov 2024 15:36:06 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 22B781BF206;
+	Thu, 14 Nov 2024 15:36:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
 	t=1731598567;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=RxGGhBtDTqWK4tM+QLuLJgRdIcL+yhd5ZKBES7qfk0g=;
-	b=Yf5SpRpdOyGccdaHG+TnVqEQWpp7+EpWmrtK8GJLmtxo2XRVCTcpLofML0eq2SxrBg52dc
-	M7ZleiUG0N3oT66unHuzKYWKBgThv0ZxCA36QyCpbmC+7xGTMHDNET4MeaD4h0eTy2RUa0
-	034pahCjrw+pbF33x4izemJUKBV7yP28rklVo3A+D9VVu3KPnLWIN1ZSrKJrVxXzROe0u1
-	c63jL6w8+z+sg1EAmcWGzpmkCE++1qVJwqYfEisiZcnqVRKcyHIi6YYPMezpeEouctPNpU
-	M3XpwLKltOpNQMsXjUNozPSv0cCgsJEsuFc0kr0+84/Lubv1n1Zds1zfCadK7A==
+	bh=2J76VxJOFhE7W3G57sG/Tt9BM1TPg186/HkI44UmxWw=;
+	b=FM20FU5O6wYlTQaNiSx3v+cWLn+KxSgejmicoCY8EaaA1B8McXZ3qoyZSoJolg7UbHj/oQ
+	+plmJWfGN2DpT5QuM2uWkuJUy0Bl1JSkDrZFdUih2IBboNbZxK4kNYQ5rFUl82aiPxD3S4
+	0qOpjBQazmJXXqpbvf2po2CniM0QpcZiTnrwnkGMJlZHRmiXIK5Qut7/aTvrNxyBhnOb89
+	SKQ/OynqEwv+uCZO10RXQp6de+5OupKK3wsNNmK/ii64r8gu3tJyKdIF3lZziTvT9c26lr
+	ONP689zqjr8MOxGXyW8c136/+sNMvNDl+MrXQulod085Ok8/3pRdHyPTfpfybg==
 From: Maxime Chevallier <maxime.chevallier@bootlin.com>
 To: davem@davemloft.net,
 	Andrew Lunn <andrew@lunn.ch>,
@@ -60,9 +60,9 @@ Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
 	Herve Codina <herve.codina@bootlin.com>,
 	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
 	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH net-next v2 01/10] net: freescale: ucc_geth: Drop support for the "interface" DT property
-Date: Thu, 14 Nov 2024 16:35:52 +0100
-Message-ID: <20241114153603.307872-2-maxime.chevallier@bootlin.com>
+Subject: [PATCH net-next v2 02/10] net: freescale: ucc_geth: split adjust_link for phylink conversion
+Date: Thu, 14 Nov 2024 16:35:53 +0100
+Message-ID: <20241114153603.307872-3-maxime.chevallier@bootlin.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241114153603.307872-1-maxime.chevallier@bootlin.com>
 References: <20241114153603.307872-1-maxime.chevallier@bootlin.com>
@@ -75,133 +75,224 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: maxime.chevallier@bootlin.com
 
-In april 2007, ucc_geth was converted to phylib with :
-
-commit 728de4c927a3 ("ucc_geth: migrate ucc_geth to phylib").
-
-In that commit, the device-tree property "interface", that could be used to
-retrieve the PHY interface mode was deprecated.
-
-DTS files that still used that property were converted along the way, in
-the following commit, also dating from april 2007 :
-
-commit 0fd8c47cccb1 ("[POWERPC] Replace undocumented interface properties in dts files")
-
-17 years later, there's no users of that property left and I hope it's
-safe to say we can remove support from that in the ucc_geth driver,
-making the probe() function a bit simpler.
-
-Should there be any users that have a DT that was generated when 2.6.21 was
-cutting-edge, print an error message with hints on how to convert the
-devicetree if the 'interface' property is found.
-
-With that property gone, we can greatly simplify the parsing of the
-phy-interface-mode from the devicetree by using of_get_phy_mode(),
-allowing the removal of the open-coded parsing in the driver.
+Preparing the phylink conversion, split the adjust_link callbaclk, by
+clearly separating the mac configuration, link_up and link_down phases.
 
 Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 ---
-V2: No changes
+V2: No changes.
 
- drivers/net/ethernet/freescale/ucc_geth.c | 63 +++++------------------
- 1 file changed, 12 insertions(+), 51 deletions(-)
+Russell, I did see your comment with regards to the overall usefulness
+of this patch, hopefully now patch 10 is a easier to digest now, but if
+now I'll just merge that one with the actual phylink switch in patch 10.
+
+ drivers/net/ethernet/freescale/ucc_geth.c | 180 +++++++++++-----------
+ 1 file changed, 93 insertions(+), 87 deletions(-)
 
 diff --git a/drivers/net/ethernet/freescale/ucc_geth.c b/drivers/net/ethernet/freescale/ucc_geth.c
-index 6663c1768089..80540c817c4e 100644
+index 80540c817c4e..6286cd185a35 100644
 --- a/drivers/net/ethernet/freescale/ucc_geth.c
 +++ b/drivers/net/ethernet/freescale/ucc_geth.c
-@@ -3469,32 +3469,6 @@ static int ucc_geth_resume(struct platform_device *ofdev)
- #define ucc_geth_resume NULL
- #endif
+@@ -1548,105 +1548,111 @@ static void ugeth_activate(struct ucc_geth_private *ugeth)
+ 	__netdev_watchdog_up(ugeth->ndev);
+ }
  
--static phy_interface_t to_phy_interface(const char *phy_connection_type)
--{
--	if (strcasecmp(phy_connection_type, "mii") == 0)
--		return PHY_INTERFACE_MODE_MII;
--	if (strcasecmp(phy_connection_type, "gmii") == 0)
--		return PHY_INTERFACE_MODE_GMII;
--	if (strcasecmp(phy_connection_type, "tbi") == 0)
--		return PHY_INTERFACE_MODE_TBI;
--	if (strcasecmp(phy_connection_type, "rmii") == 0)
--		return PHY_INTERFACE_MODE_RMII;
--	if (strcasecmp(phy_connection_type, "rgmii") == 0)
--		return PHY_INTERFACE_MODE_RGMII;
--	if (strcasecmp(phy_connection_type, "rgmii-id") == 0)
--		return PHY_INTERFACE_MODE_RGMII_ID;
--	if (strcasecmp(phy_connection_type, "rgmii-txid") == 0)
--		return PHY_INTERFACE_MODE_RGMII_TXID;
--	if (strcasecmp(phy_connection_type, "rgmii-rxid") == 0)
--		return PHY_INTERFACE_MODE_RGMII_RXID;
--	if (strcasecmp(phy_connection_type, "rtbi") == 0)
--		return PHY_INTERFACE_MODE_RTBI;
--	if (strcasecmp(phy_connection_type, "sgmii") == 0)
--		return PHY_INTERFACE_MODE_SGMII;
+-/* Called every time the controller might need to be made
+- * aware of new link state.  The PHY code conveys this
+- * information through variables in the ugeth structure, and this
+- * function converts those variables into the appropriate
+- * register values, and can bring down the device if needed.
+- */
 -
--	return PHY_INTERFACE_MODE_MII;
--}
--
- static int ucc_geth_ioctl(struct net_device *dev, struct ifreq *rq, int cmd)
+-static void adjust_link(struct net_device *dev)
++static void ugeth_link_up(struct ucc_geth_private *ugeth,
++			  struct phy_device *phy,
++			  phy_interface_t interface, int speed, int duplex)
  {
- 	struct ucc_geth_private *ugeth = netdev_priv(dev);
-@@ -3564,19 +3538,6 @@ static int ucc_geth_probe(struct platform_device* ofdev)
- 	int err, ucc_num, max_speed = 0;
- 	const unsigned int *prop;
- 	phy_interface_t phy_interface;
--	static const int enet_to_speed[] = {
--		SPEED_10, SPEED_10, SPEED_10,
--		SPEED_100, SPEED_100, SPEED_100,
--		SPEED_1000, SPEED_1000, SPEED_1000, SPEED_1000,
--	};
--	static const phy_interface_t enet_to_phy_interface[] = {
--		PHY_INTERFACE_MODE_MII, PHY_INTERFACE_MODE_RMII,
--		PHY_INTERFACE_MODE_RGMII, PHY_INTERFACE_MODE_MII,
--		PHY_INTERFACE_MODE_RMII, PHY_INTERFACE_MODE_RGMII,
--		PHY_INTERFACE_MODE_GMII, PHY_INTERFACE_MODE_RGMII,
--		PHY_INTERFACE_MODE_TBI, PHY_INTERFACE_MODE_RTBI,
--		PHY_INTERFACE_MODE_SGMII,
--	};
+-	struct ucc_geth_private *ugeth = netdev_priv(dev);
+-	struct ucc_geth __iomem *ug_regs;
+-	struct ucc_fast __iomem *uf_regs;
+-	struct phy_device *phydev = ugeth->phydev;
++	struct ucc_geth __iomem *ug_regs = ugeth->ug_regs;
++	struct ucc_fast __iomem *uf_regs = ugeth->uccf->uf_regs;
++	u32 tempval = in_be32(&ug_regs->maccfg2);
++	u32 upsmr = in_be32(&uf_regs->upsmr);
+ 	int new_state = 0;
  
- 	ugeth_vdbg("%s: IN", __func__);
- 
-@@ -3627,18 +3588,17 @@ static int ucc_geth_probe(struct platform_device* ofdev)
- 	/* Find the TBI PHY node.  If it's not there, we don't support SGMII */
- 	ug_info->tbi_node = of_parse_phandle(np, "tbi-handle", 0);
- 
--	/* get the phy interface type, or default to MII */
--	prop = of_get_property(np, "phy-connection-type", NULL);
--	if (!prop) {
--		/* handle interface property present in old trees */
--		prop = of_get_property(ug_info->phy_node, "interface", NULL);
--		if (prop != NULL) {
--			phy_interface = enet_to_phy_interface[*prop];
--			max_speed = enet_to_speed[*prop];
--		} else
--			phy_interface = PHY_INTERFACE_MODE_MII;
--	} else {
--		phy_interface = to_phy_interface((const char *)prop);
-+	prop = of_get_property(ug_info->phy_node, "interface", NULL);
-+	if (prop) {
-+		dev_err(&ofdev->dev,
-+			"Device-tree property 'interface' is no longer supported. Please use 'phy-connection-type' instead.");
-+		goto err_put_tbi;
+-	ug_regs = ugeth->ug_regs;
+-	uf_regs = ugeth->uccf->uf_regs;
+-
+-	if (phydev->link) {
+-		u32 tempval = in_be32(&ug_regs->maccfg2);
+-		u32 upsmr = in_be32(&uf_regs->upsmr);
+-		/* Now we make sure that we can be in full duplex mode.
+-		 * If not, we operate in half-duplex mode. */
+-		if (phydev->duplex != ugeth->oldduplex) {
+-			new_state = 1;
+-			if (!(phydev->duplex))
+-				tempval &= ~(MACCFG2_FDX);
+-			else
+-				tempval |= MACCFG2_FDX;
+-			ugeth->oldduplex = phydev->duplex;
+-		}
++	/* Now we make sure that we can be in full duplex mode.
++	 * If not, we operate in half-duplex mode.
++	 */
++	if (duplex != ugeth->oldduplex) {
++		new_state = 1;
++		if (duplex == DUPLEX_HALF)
++			tempval &= ~(MACCFG2_FDX);
++		else
++			tempval |= MACCFG2_FDX;
++		ugeth->oldduplex = duplex;
 +	}
-+
-+	err = of_get_phy_mode(np, &phy_interface);
-+	if (err) {
-+		dev_err(&ofdev->dev, "Invalid phy-connection-type");
-+		goto err_put_tbi;
+ 
+-		if (phydev->speed != ugeth->oldspeed) {
+-			new_state = 1;
+-			switch (phydev->speed) {
+-			case SPEED_1000:
+-				tempval = ((tempval &
+-					    ~(MACCFG2_INTERFACE_MODE_MASK)) |
+-					    MACCFG2_INTERFACE_MODE_BYTE);
+-				break;
+-			case SPEED_100:
+-			case SPEED_10:
+-				tempval = ((tempval &
+-					    ~(MACCFG2_INTERFACE_MODE_MASK)) |
+-					    MACCFG2_INTERFACE_MODE_NIBBLE);
+-				/* if reduced mode, re-set UPSMR.R10M */
+-				if ((ugeth->phy_interface == PHY_INTERFACE_MODE_RMII) ||
+-				    (ugeth->phy_interface == PHY_INTERFACE_MODE_RGMII) ||
+-				    (ugeth->phy_interface == PHY_INTERFACE_MODE_RGMII_ID) ||
+-				    (ugeth->phy_interface == PHY_INTERFACE_MODE_RGMII_RXID) ||
+-				    (ugeth->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID) ||
+-				    (ugeth->phy_interface == PHY_INTERFACE_MODE_RTBI)) {
+-					if (phydev->speed == SPEED_10)
+-						upsmr |= UCC_GETH_UPSMR_R10M;
+-					else
+-						upsmr &= ~UCC_GETH_UPSMR_R10M;
+-				}
+-				break;
+-			default:
+-				if (netif_msg_link(ugeth))
+-					pr_warn(
+-						"%s: Ack!  Speed (%d) is not 10/100/1000!",
+-						dev->name, phydev->speed);
+-				break;
++	if (speed != ugeth->oldspeed) {
++		new_state = 1;
++		switch (speed) {
++		case SPEED_1000:
++			tempval = ((tempval &
++				    ~(MACCFG2_INTERFACE_MODE_MASK)) |
++				    MACCFG2_INTERFACE_MODE_BYTE);
++			break;
++		case SPEED_100:
++		case SPEED_10:
++			tempval = ((tempval &
++				    ~(MACCFG2_INTERFACE_MODE_MASK)) |
++				    MACCFG2_INTERFACE_MODE_NIBBLE);
++			/* if reduced mode, re-set UPSMR.R10M */
++			if (interface == PHY_INTERFACE_MODE_RMII ||
++			    phy_interface_mode_is_rgmii(interface) ||
++			    interface == PHY_INTERFACE_MODE_RTBI) {
++				if (speed == SPEED_10)
++					upsmr |= UCC_GETH_UPSMR_R10M;
++				else
++					upsmr &= ~UCC_GETH_UPSMR_R10M;
+ 			}
+-			ugeth->oldspeed = phydev->speed;
++			break;
++		default:
++			if (netif_msg_link(ugeth))
++				pr_warn("%s:  Speed (%d) is not 10/100/1000!",
++					netdev_name(ugeth->ndev), speed);
++			break;
+ 		}
++		ugeth->oldspeed = speed;
++	}
+ 
+-		if (!ugeth->oldlink) {
+-			new_state = 1;
+-			ugeth->oldlink = 1;
+-		}
++	if (!ugeth->oldlink) {
++		new_state = 1;
++		ugeth->oldlink = 1;
++	}
+ 
+-		if (new_state) {
+-			/*
+-			 * To change the MAC configuration we need to disable
+-			 * the controller. To do so, we have to either grab
+-			 * ugeth->lock, which is a bad idea since 'graceful
+-			 * stop' commands might take quite a while, or we can
+-			 * quiesce driver's activity.
+-			 */
+-			ugeth_quiesce(ugeth);
+-			ugeth_disable(ugeth, COMM_DIR_RX_AND_TX);
++	if (new_state) {
++		/*
++		 * To change the MAC configuration we need to disable
++		 * the controller. To do so, we have to either grab
++		 * ugeth->lock, which is a bad idea since 'graceful
++		 * stop' commands might take quite a while, or we can
++		 * quiesce driver's activity.
++		 */
++		ugeth_quiesce(ugeth);
++		ugeth_disable(ugeth, COMM_DIR_RX_AND_TX);
+ 
+-			out_be32(&ug_regs->maccfg2, tempval);
+-			out_be32(&uf_regs->upsmr, upsmr);
++		out_be32(&ug_regs->maccfg2, tempval);
++		out_be32(&uf_regs->upsmr, upsmr);
+ 
+-			ugeth_enable(ugeth, COMM_DIR_RX_AND_TX);
+-			ugeth_activate(ugeth);
+-		}
+-	} else if (ugeth->oldlink) {
+-			new_state = 1;
+-			ugeth->oldlink = 0;
+-			ugeth->oldspeed = 0;
+-			ugeth->oldduplex = -1;
++		ugeth_enable(ugeth, COMM_DIR_RX_AND_TX);
++		ugeth_activate(ugeth);
  	}
  
- 	/* get speed, or derive from PHY interface */
-@@ -3746,6 +3706,7 @@ static int ucc_geth_probe(struct platform_device* ofdev)
- err_deregister_fixed_link:
- 	if (of_phy_is_fixed_link(np))
- 		of_phy_deregister_fixed_link(np);
-+err_put_tbi:
- 	of_node_put(ug_info->tbi_node);
- 	of_node_put(ug_info->phy_node);
- 	return err;
+-	if (new_state && netif_msg_link(ugeth))
+-		phy_print_status(phydev);
++	if (netif_msg_link(ugeth))
++		phy_print_status(phy);
++}
++
++static void ugeth_link_down(struct ucc_geth_private *ugeth)
++{
++	ugeth->oldlink = 0;
++	ugeth->oldspeed = 0;
++	ugeth->oldduplex = -1;
++}
++
++/* Called every time the controller might need to be made
++ * aware of new link state.  The PHY code conveys this
++ * information through variables in the ugeth structure, and this
++ * function converts those variables into the appropriate
++ * register values, and can bring down the device if needed.
++ */
++
++static void adjust_link(struct net_device *dev)
++{
++	struct ucc_geth_private *ugeth = netdev_priv(dev);
++	struct phy_device *phydev = ugeth->phydev;
++
++	if (phydev->link)
++		ugeth_link_up(ugeth, phydev, phydev->interface,
++			      phydev->speed, phydev->duplex);
++	else
++		ugeth_link_down(ugeth);
+ }
+ 
+ /* Initialize TBI PHY interface for communicating with the
 -- 
 2.47.0
 
