@@ -1,200 +1,232 @@
-Return-Path: <linux-kernel+bounces-408761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F3689C833D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:38:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 861D59C833B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:38:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A73F21F22FEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:38:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBD4EB257EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3621F26ED;
-	Thu, 14 Nov 2024 06:37:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46591EABB7;
+	Thu, 14 Nov 2024 06:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LEttJNDx"
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AU3oic3U"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2821EBA13;
-	Thu, 14 Nov 2024 06:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2A51E25F7
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 06:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731566253; cv=none; b=BVRtdzLouscKmYNKyRty2ZEkLmshh3JIa/MoFCzy/+vFnxAt8cXPEvf8zNtfVUlYxTLsFl7rLCyWQrb/VRC4tL6s24tg1lkwoQiTi2dXFZJHymhygk3j2myW0wwT3AvA/Fxvl4oznhEkbNlQtDojNUgaFxXouXcNPcc+Pn1PWgw=
+	t=1731566247; cv=none; b=rvkPWebBVkHxpWmLbI/7Q+vECozfcYTfOevgAWe1Y2RXq1F/xPAtHRlt0ae9hN9JzAQ25UVZiRVpdAVzkE4mqPvdMKCbvfFLp7K36Tpfn6DXyJejhPC4UL74zCQ9ish+f0qxdogLuEJltGaEDLJlAlH0AKMdjS720kx+WR5XGzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731566253; c=relaxed/simple;
-	bh=t0fAVzOYyF5qw89A/dIpuz1Zzf7e7o3ntxpTY6PixW0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C3whceerDfb4iXYY2ZLkaHutz3tl8JZhsz1K1rhUZRvM0Dq/sI4Ws+mZUMzWr8zXPpjWsoa00FGG3Gdr4ly4r8quzYLwwiAwFPHJCPEvUlPHoM8M4WbndMmxu6jNWZuyd7Yjf98VTN4OjtiewBlCnJb42vDCQEvlrr2j6bc1nP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LEttJNDx; arc=none smtp.client-ip=209.85.222.54
+	s=arc-20240116; t=1731566247; c=relaxed/simple;
+	bh=D7eafpNvziDosCf4eV8sdCGrPsd+nnKz0xCbmS5UA88=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
+	 MIME-Version:Content-Type; b=qb09hitsqo3hxT9tYHOoP7jUIsUHX1nr4+U94wO1SxOW40V2NGdN6i68b0cVhllekJFnwcEHKETodKN58lxu3J1FcTusCpWY6LkyBH1KRhfi6xvY/erGzsNvJCr7Cpx8hh8uaZp6jo7/EgVvBcc+FOZZH9E8rFRMv7UkeMzZCV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AU3oic3U; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-84fc21ac668so110540241.1;
-        Wed, 13 Nov 2024 22:37:31 -0800 (PST)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43169902057so2549675e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 22:37:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731566251; x=1732171051; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=txC1n0omKiC4TZQQxbVecT/EBICb8M4xgYoqoUnU1Mg=;
-        b=LEttJNDx/G/gPaoQGuMd/YktT0ZvOVfClixcFLjHNVYZTvK3lZTJ04eLBEFlxjAIg+
-         /5Qe+sx41YIKmAJOQjuTcemjQVNMZ2Hqs5qhtoFzI/sjSFRXcIy3vV7HiIRt+Ly5sxBt
-         vUzR2rBChZR/f4GIIXvCY0MYsbBUeg16pDIVFcTlnOcIxIGN/RMsQwyNeRfA3ODLjvn+
-         lr5YHqBixewoVJPEDnBNrNIE8aDOGr3QpfrL8CXwas8PNuASSfT5omsdtNkamfeaKh+/
-         uMB0hI0o1IYmI9CzSRTJ62rYs+e7zyT1Faf81NKyA72xNdYQguT9nWDBmzmgtXF+m7Sr
-         RS8Q==
+        d=gmail.com; s=20230601; t=1731566243; x=1732171043; darn=vger.kernel.org;
+        h=mime-version:date:user-agent:references:organization:in-reply-to
+         :subject:cc:to:from:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OzA2oQZMAdaKXqd5iiIFp8MvCWhHHpRVX4RNggE14po=;
+        b=AU3oic3UkDNqVHw+QwaQ3onOObqXv0x0OmxH2oqx+Z5hkhfarevUr19M+ZXaGmNb7m
+         HaRZyHq411SAn5ZPhFte2J8wAW8Md9RvLE9HJOu69Lh6VdO/dOoyxsF82rUr4RjjaFdn
+         d5cFMs9KBlxGdFmKk46npnXShN5wu+pCrC2RDSLWAGN/2HbZHCq10Ww5f2O883iYgWvX
+         JjgS1hIEt8ld4T3nYgXlc/hlLp0dmHRd9SmIaRGK7VzDFd79iq/IPzMtgaE6+0RcgFT9
+         kQa/weO3KXNI56TOwIecraofilCdgPHUZnewcPVQugn0TtxGz1oXAueM1DLqTjanE9jv
+         rtXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731566251; x=1732171051;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=txC1n0omKiC4TZQQxbVecT/EBICb8M4xgYoqoUnU1Mg=;
-        b=TKWgHskmg0LBtdBz8KVidEWsDl6VvgoswqTaZ5Xq9WC4yvyn9BWZzRPeiOVpO87LTu
-         U3pnzjovQjq29GgMKRowTLbQYTmnphUz17+oeKA8Tf7qh/erOSE6tIS8UK4kNCgjz/PG
-         wCrRIGQHsoxtVzqnjvhrVwn0+DTXE+uPjqOrmh4pE4qlinJoif4aasH6qkTyCRm4nXvY
-         +/3AbD089+fXIScAxscADynQznzsGDJb6prLqGbh/wk+cbC1UaWe3FsW+VpYF3Lp57mi
-         6qmTeAfdCzHeWprN6HHuYLTtMjQcCOIgcUN5pg2kkyOht6EyEv9gc99YstZHASv6TVTQ
-         /5ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUz+yOc2opKOebZluGtACBPIjotg3AWtqbObZunyEqOyXCDZ5G0rWVRKQKWUO5pQaWbQubUnBCnHlMQvVZc@vger.kernel.org, AJvYcCVQifhG2GXBCf4pVFUCNnUHyqA7vYNy2huZ95u1C87o1XBd4VByE+DWLzBg1Z3Ck+zL1baGL1aHGDR2@vger.kernel.org, AJvYcCWwGIWCm0hxzKya/HNTJC+rmFmC1C+Du2XT0fmbHl3PxLvDEXoqsEYdF+CSDgd7HwgDxEIYHbXET6f77BlD@vger.kernel.org
-X-Gm-Message-State: AOJu0YzE02utyn6uv7+nqwl1q87hOlcBYC0DHOAUTtsT1l4b56Go5lyx
-	R7wVgVLPaVVLEmT/5ro7kanedfnzeZDJ6B4tlKDniG3aHZhBNkO4VNm57dlN2hvQtFuYbJWMQ3N
-	UN0Rs6x7EXjZJ0tJAbpsTQjSSOaU=
-X-Google-Smtp-Source: AGHT+IEkeFjbjONhEwNPEZyUsptP7QvNoOjs9BpAGNrb8Y/Eyr40baQALWAfEmTfjMIUTgrNqTUirj1PGigU3Ik4Y7U=
-X-Received: by 2002:a05:6102:38d0:b0:498:f38a:2c80 with SMTP id
- ada2fe7eead31-4aae13cf756mr23396170137.10.1731566250589; Wed, 13 Nov 2024
- 22:37:30 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731566243; x=1732171043;
+        h=mime-version:date:user-agent:references:organization:in-reply-to
+         :subject:cc:to:from:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OzA2oQZMAdaKXqd5iiIFp8MvCWhHHpRVX4RNggE14po=;
+        b=Uw7sY/3gvjM/XgfGGNySzqOeLhPeBbGgILYaTGleaWo+GvknbkMk1RD5S83b4cmZi0
+         P3ZBO2uFV0rW5mDbf/LJcPtecnLeX4fL5DhcYPRSUPk84kmnfPvjwKA3m8EQyutnHoH9
+         MGOWdaOQe+jTNonvb5icEvf48zQcYe69iP/vuCt2MtTf4vYXnQmdJkTVxHhLFnJPbyWi
+         YXo9fFC0oncLC0OFz9k23B32Cxk5bAyJSGK34KNz5uKt5ndd+bjrngTq1WIbJ5aKzIwl
+         bP/FVcpKVbRLzau2Ddmo97WQD5oWc0HjAd6mPoRDWP0qFAHSxxv8CORssPsGRXnm6pi7
+         FgYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNrzB0y61Z+0vhBqi3TjhbyTY9j/oF2986whUgVgH+6X6T3vnP4p1ycKWaq4+JlxfDUx3gv69igeWoO7s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+qcgR+Q7G3SR/3B1LoALRKMM63SUpI/P6EpvkyZ3ClknOI2dQ
+	41Snxznw91lfO6cUOIvuuJzUf/sZDgGFV43+0isBtITpguyRmi1w
+X-Google-Smtp-Source: AGHT+IF2q3VqNO6Ts4z+fwKPab8GgAycbFF5/LX6gjOIErWMjr82/KJwaZJbaL4+i+amj2qWDxcl7Q==
+X-Received: by 2002:a05:600c:3b93:b0:431:2460:5574 with SMTP id 5b1f17b1804b1-432cd47d785mr74090465e9.27.1731566243334;
+        Wed, 13 Nov 2024 22:37:23 -0800 (PST)
+Received: from localhost ([37.72.3.43])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da28b76fsm12031765e9.28.2024.11.13.22.37.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 22:37:22 -0800 (PST)
+Message-ID: <67359aa2.050a0220.cc412.2c60@mx.google.com>
+X-Google-Original-Message-ID: <87y11m5nj3.fsf@>
+From: =?utf-8?Q?Miquel_Sabat=C3=A9_Sol=C3=A0?= <mikisabate@gmail.com>
+To: paul.walmsley@sifive.com
+Cc: palmer@dabbelt.com,  aou@eecs.berkeley.edu,
+  linux-riscv@lists.infradead.org,  linux-kernel@vger.kernel.org,  Jesse
+ Taube <jesse@rivosinc.com>,  Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [RESEND PATCH v2] riscv: hwprobe: export Zicntr and Zihpm
+ extensions
+In-Reply-To: <66f1cc93.050a0220.bf7a0.30f3@mx.google.com> ("Miquel
+ =?utf-8?Q?Sabat=C3=A9=09Sol=C3=A0=22's?= message of "Mon, 23 Sep 2024
+ 22:16:17 +0200")
+Organization: Linux Private Site
+References: <20240913051324.8176-1-mikisabate@gmail.com>
+	<66f1cc93.050a0220.bf7a0.30f3@mx.google.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Thu, 14 Nov 2024 07:37:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113-pidfs_fh-v2-0-9a4d28155a37@e43.eu> <20241113-pidfs_fh-v2-2-9a4d28155a37@e43.eu>
-In-Reply-To: <20241113-pidfs_fh-v2-2-9a4d28155a37@e43.eu>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 14 Nov 2024 07:37:19 +0100
-Message-ID: <CAOQ4uxgoT34WXFYncvPCZHwd2y3viaXjR=j08jM9c3x20Ar8Tg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] exportfs: allow fs to disable CAP_DAC_READ_SEARCH check
-To: Erin Shepherd <erin.shepherd@e43.eu>
-Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
-	linux-nfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
+
+--=-=-=
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 13, 2024 at 8:11=E2=80=AFPM Erin Shepherd <erin.shepherd@e43.eu=
-> wrote:
->
-> For pidfs, there is no reason to restrict file handle decoding by
-> CAP_DAC_READ_SEARCH. Introduce an export_ops flag that can indicate
-> this
->
-> Signed-off-by: Erin Shepherd <erin.shepherd@e43.eu>
-> ---
->  fs/fhandle.c             | 36 +++++++++++++++++++++---------------
->  include/linux/exportfs.h |  3 +++
->  2 files changed, 24 insertions(+), 15 deletions(-)
->
-> diff --git a/fs/fhandle.c b/fs/fhandle.c
-> index 82df28d45cd70a7df525f50bbb398d646110cd99..056116e58f43983bc7bb86da1=
-70fb554c7a2fac7 100644
-> --- a/fs/fhandle.c
-> +++ b/fs/fhandle.c
-> @@ -235,26 +235,32 @@ static int do_handle_to_path(struct file_handle *ha=
-ndle, struct path *path,
->         return 0;
->  }
->
-> -/*
-> - * Allow relaxed permissions of file handles if the caller has the
-> - * ability to mount the filesystem or create a bind-mount of the
-> - * provided @mountdirfd.
-> - *
-> - * In both cases the caller may be able to get an unobstructed way to
-> - * the encoded file handle. If the caller is only able to create a
-> - * bind-mount we need to verify that there are no locked mounts on top
-> - * of it that could prevent us from getting to the encoded file.
-> - *
-> - * In principle, locked mounts can prevent the caller from mounting the
-> - * filesystem but that only applies to procfs and sysfs neither of which
-> - * support decoding file handles.
-> - */
->  static inline bool may_decode_fh(struct handle_to_path_ctx *ctx,
->                                  unsigned int o_flags)
->  {
->         struct path *root =3D &ctx->root;
-> +       struct export_operations *nop =3D root->mnt->mnt_sb->s_export_op;
-> +
-> +       if (nop && nop->flags & EXPORT_OP_UNRESTRICTED_OPEN)
-> +               return true;
-> +
-> +       if (capable(CAP_DAC_READ_SEARCH))
-> +               return true;
->
->         /*
-> +        * Allow relaxed permissions of file handles if the caller has th=
-e
-> +        * ability to mount the filesystem or create a bind-mount of the
-> +        * provided @mountdirfd.
-> +        *
-> +        * In both cases the caller may be able to get an unobstructed wa=
-y to
-> +        * the encoded file handle. If the caller is only able to create =
-a
-> +        * bind-mount we need to verify that there are no locked mounts o=
-n top
-> +        * of it that could prevent us from getting to the encoded file.
-> +        *
-> +        * In principle, locked mounts can prevent the caller from mounti=
-ng the
-> +        * filesystem but that only applies to procfs and sysfs neither o=
-f which
-> +        * support decoding file handles.
-> +        *
->          * Restrict to O_DIRECTORY to provide a deterministic API that av=
-oids a
->          * confusing api in the face of disconnected non-dir dentries.
->          *
-> @@ -293,7 +299,7 @@ static int handle_to_path(int mountdirfd, struct file=
-_handle __user *ufh,
->         if (retval)
->                 goto out_err;
->
-> -       if (!capable(CAP_DAC_READ_SEARCH) && !may_decode_fh(&ctx, o_flags=
-)) {
-> +       if (!may_decode_fh(&ctx, o_flags)) {
->                 retval =3D -EPERM;
->                 goto out_path;
->         }
-> diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
-> index 893a1d21dc1c4abc7e52325d7a4cf0adb407f039..459508b53e77ed0597cee217f=
-fe3d82cc7cc11a4 100644
-> --- a/include/linux/exportfs.h
-> +++ b/include/linux/exportfs.h
-> @@ -247,6 +247,9 @@ struct export_operations {
->                                                 */
->  #define EXPORT_OP_FLUSH_ON_CLOSE       (0x20) /* fs flushes file data on=
- close */
->  #define EXPORT_OP_ASYNC_LOCK           (0x40) /* fs can do async lock re=
-quest */
-> +#define EXPORT_OP_UNRESTRICTED_OPEN    (0x80) /* FS allows open_by_handl=
-e_at
-> +                                                 without CAP_DAC_READ_SE=
-ARCH
-> +                                               */
+On dl., de set. 23 2024, Miquel Sabat=C3=A9 Sol=C3=A0 wrote:
 
-Don't love the name, but I wonder, isn't SB_NOUSER already a good
-enough indication that CAP_DAC_READ_SEARCH is irrelevant?
+> On dv., de set. 13 2024, Miquel Sabat=C3=A9 Sol=C3=A0 wrote:
+>
+>> Export Zicntr and Zihpm ISA extensions through the hwprobe syscall.
+>>
+>> Signed-off-by: Miquel Sabat=C3=A9 Sol=C3=A0 <mikisabate@gmail.com>
+>> Acked-by: Jesse Taube <jesse@rivosinc.com>
+>> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+>> ---
+>> This is a resend because I sent v2 as a reply to the original thread and
+>> it most probably was lost by most people. Fortunately Conor picked it up
+>> and gave it a review.
+>>
+>> I am resending this so it can be properly applied. Thank you for your ti=
+me and
+>> sorry for the inconvenience.
+>>
+>> Changes since v1 [1]: the EXT_KEY instructions have been written in orde=
+r.
+>>
+>> [1] https://lore.kernel.org/linux-riscv/20240817075629.262318-1-mikisaba=
+te@gmail.com/
+>>
+>>  Documentation/arch/riscv/hwprobe.rst  | 6 ++++++
+>>  arch/riscv/include/uapi/asm/hwprobe.h | 2 ++
+>>  arch/riscv/kernel/sys_hwprobe.c       | 2 ++
+>>  3 files changed, 10 insertions(+)
+>>
+>> diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/r=
+iscv/hwprobe.rst
+>> index 3db60a0911df..cfd2929d0562 100644
+>> --- a/Documentation/arch/riscv/hwprobe.rst
+>> +++ b/Documentation/arch/riscv/hwprobe.rst
+>> @@ -183,6 +183,9 @@ The following keys are defined:
+>>         defined in the Atomic Compare-and-Swap (CAS) instructions manual=
+ starting
+>>         from commit 5059e0ca641c ("update to ratified").
+>>
+>> +  * :c:macro:`RISCV_HWPROBE_EXT_ZICNTR`: The Zicntr extension version 2=
+.0
+>> +       is supported as defined in the RISC-V ISA manual.
+>> +
+>>    * :c:macro:`RISCV_HWPROBE_EXT_ZICOND`: The Zicond extension is suppor=
+ted as
+>>         defined in the RISC-V Integer Conditional (Zicond) operations ex=
+tension
+>>         manual starting from commit 95cf1f9 ("Add changes requested by V=
+ed
+>> @@ -192,6 +195,9 @@ The following keys are defined:
+>>         supported as defined in the RISC-V ISA manual starting from comm=
+it
+>>         d8ab5c78c207 ("Zihintpause is ratified").
+>>
+>> +  * :c:macro:`RISCV_HWPROBE_EXT_ZIHPM`: The Zihpm extension version 2.0
+>> +       is supported as defined in the RISC-V ISA manual.
+>> +
+>>    * :c:macro:`RISCV_HWPROBE_EXT_ZVE32X`: The Vector sub-extension Zve32=
+x is
+>>      supported, as defined by version 1.0 of the RISC-V Vector extension=
+ manual.
+>>
+>> diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/=
+uapi/asm/hwprobe.h
+>> index b706c8e47b02..098a815b3fd4 100644
+>> --- a/arch/riscv/include/uapi/asm/hwprobe.h
+>> +++ b/arch/riscv/include/uapi/asm/hwprobe.h
+>> @@ -72,6 +72,8 @@ struct riscv_hwprobe {
+>>  #define		RISCV_HWPROBE_EXT_ZCF		(1ULL << 46)
+>>  #define		RISCV_HWPROBE_EXT_ZCMOP		(1ULL << 47)
+>>  #define		RISCV_HWPROBE_EXT_ZAWRS		(1ULL << 48)
+>> +#define		RISCV_HWPROBE_EXT_ZICNTR	(1ULL << 49)
+>> +#define		RISCV_HWPROBE_EXT_ZIHPM		(1ULL << 50)
+>>  #define RISCV_HWPROBE_KEY_CPUPERF_0	5
+>>  #define		RISCV_HWPROBE_MISALIGNED_UNKNOWN	(0 << 0)
+>>  #define		RISCV_HWPROBE_MISALIGNED_EMULATED	(1 << 0)
+>> diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwp=
+robe.c
+>> index 8d1b5c35d2a7..910b41b6a7ab 100644
+>> --- a/arch/riscv/kernel/sys_hwprobe.c
+>> +++ b/arch/riscv/kernel/sys_hwprobe.c
+>> @@ -107,9 +107,11 @@ static void hwprobe_isa_ext0(struct riscv_hwprobe *=
+pair,
+>>  		EXT_KEY(ZCB);
+>>  		EXT_KEY(ZCMOP);
+>>  		EXT_KEY(ZICBOZ);
+>> +		EXT_KEY(ZICNTR);
+>>  		EXT_KEY(ZICOND);
+>>  		EXT_KEY(ZIHINTNTL);
+>>  		EXT_KEY(ZIHINTPAUSE);
+>> +		EXT_KEY(ZIHPM);
+>>  		EXT_KEY(ZIMOP);
+>>  		EXT_KEY(ZKND);
+>>  		EXT_KEY(ZKNE);
+>
+> Hello,
+>
+> Gently ping :) Can we get this merged for 6.12?
+>
+> Thanks!
+> Miquel
 
-Essentially, mnt_fd is the user's proof that they can access the mount
-and CAP_DAC_READ_SEARCH is the legacy "proof" that the user can
-reach from mount the inode by path lookup.
+Hello,
 
-Which reminds me, what is the mnt_fd expected for opening a pidfd
-file by handle?
+Gently ping :)
+
+This will certainly not be included for 6.12, but is there a chance to
+get it for 6.13?
 
 Thanks,
-Amir.
+Miquel
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJJBAEBCgAzFiEEG6U8esk9yirP39qXlr6Mb9idZWUFAmc1mqAVHG1pa2lzYWJh
+dGVAZ21haWwuY29tAAoJEJa+jG/YnWVlV4wP/j4y+PeqDrmHtMXHGYzlooujiz2X
+JtyKFhrkaPEhQMfTtA8DCoCWIVEsM66UL/waok64NO0/K8fCRRXzAcfJCiweSj4r
+mb5T0YqqFdUEKmaxJBPnEW7yTcTspBI+zj1A4iE7MMqR+3OKTnI0bhSKBjobLyTj
+HYSZj5RiLcdl/hAxiQ7j3L32l2OrIO32aXzte3zy5IRmt/y875OJgThdrlG8fFC7
+AcyyxatezTcmcZW3j2xybWlkEh6/uOqUJeVbYT1XEa+gkUTNJyqrw/jVo3GYzmYL
+OZP5BiWqdt93eAs55r7uCTQf1lO8dWUOEdx1Ebti33vjj2LSfRHq6XYSmdtTFgSU
+qlz6UTSSrYepyHf5N9KzEXbBdZKzUFxq+Nql3tgIh2r1H0q/Un6F33Xfjjyuu/21
+cTyD/wRSHt0D6za+/7heAZTOMVFD2OhpcUhONmxZ8l8RB3a1JYiLXiZkJ2PebKVb
+Ls6ZG4XSVYeqMiQhjdYsT9Y0fnTuO2bSu2rYHHwjXSI9rx9w2CHT9b/tKrb6/o9G
+FV9qj7rPZd2NBeRiOtTxqEXrcfKaB4tm7OnUcXWhoEgtuEgowKGyo+rMHjgcPBQv
+shdBDyp07hm459wWGOV/Xza38P/QROfvwhrGZU++smBruoMQT4ZlNMcduXs72tej
+/uQblIPKbMoQuaBE
+=s9HY
+-----END PGP SIGNATURE-----
+--=-=-=--
 
