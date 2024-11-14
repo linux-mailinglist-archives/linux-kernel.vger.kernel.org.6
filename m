@@ -1,114 +1,126 @@
-Return-Path: <linux-kernel+bounces-409144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BB419C882B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:56:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC9EA9C87FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:47:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECBCCB26B57
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:46:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70E8E287A67
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4C41F80CC;
-	Thu, 14 Nov 2024 10:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8F51F8F07;
+	Thu, 14 Nov 2024 10:46:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="cPir3y6O"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jxDE5vdp"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9CC18991E
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703301F80CC;
+	Thu, 14 Nov 2024 10:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731581154; cv=none; b=qmRrMVWqbqdxSXgtylZ4DngTU0Q3/nnQns9CbmfV/ybBPZ8p8EHothXq6d4fluC8cq4nnA2uFFVn8XVz666Zhce93zq1bOzekt2PH40zKH2Xy2aAXE9a49YocUbJXNk0/dQp9HivCK01DpEIGRyqlztamHv4qRt2g5HL+KerDh4=
+	t=1731581185; cv=none; b=agVouWp4ZJdAqRJ86Xk+7X72p3kmUeOq/xOh5+37LTdHMVZAmL/TvfErfDdPV/AVU9JgBszo7ObBVPJrRHEodZRzQJidHvxVbQ54XpZRoti+Ev+vjr6EkDixmSIl+htZQnX7bjUVXycPbzK7zRf6/kTdOMishBZKHAiOTfNTaN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731581154; c=relaxed/simple;
-	bh=UqXji8DLuh/n+9ZPHIZvmcQZjCFCManzLYVJgmcgByU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=diS4KhH2k1r+8K3qHLHCqCs0MSwW4lQ/LluIhmpFfTSDWpQBaAIKS8mUZhEgEvMOho/TTvP4LAO4x+R/c142KnHSXd/bq15sRFv+s+GPZRKkyvmUx3XMF6jLqFjBzrTQFdfTCs7SOP5ydX8WcgblNPv72nLdvSFeqq1VOsh2mIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=cPir3y6O; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=MsaL
-	xfjnEA/TYEwSTlVA4NzyE4Mnk31leGIDXgqyOMc=; b=cPir3y6OF9r4PFU7Qw5V
-	jJYBfRZSfCeIkghEyUqPGxUNUX7eF5zmfYimn7GES+2tkAtYexkpA7y3dJ497arR
-	TmvqqWat0qO/0+Ewwau6CuYaTEbtQkkTcYf5F9n4WaN8p4arpnAfH3gToB7GitWq
-	HnMj8+cKFM5xbZ7bX8+UvauyUmJBWKCc7lzQOVEJoc/Csxsl9mwJ60gtRHB6DV7L
-	LMlY/jFgAoyn5xYF23LV23QNmI4fWj/7rAqA8vDiVppexxRkUnPR0xe2d7/QGg0H
-	ZJrsg1GMoexpG6trNUPSSwlhbK9+rUFfelmIOc9hvFMJnzHC2YwM1OV2LO5/ScmK
-	iA==
-Received: (qmail 3126172 invoked from network); 14 Nov 2024 11:45:46 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Nov 2024 11:45:46 +0100
-X-UD-Smtp-Session: l3s3148p1@A/wZJ90m7rJehhtH
-Date: Thu, 14 Nov 2024 11:45:45 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Igor Pylypiv <ipylypiv@google.com>
-Cc: Jean Delvare <jdelvare@suse.de>, Andi Shyti <andi.shyti@kernel.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] i2c: dev: Fix memory leak when underlying adapter
- does not support I2C
-Message-ID: <ZzXU2YSK56C8bqp4@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Igor Pylypiv <ipylypiv@google.com>, Jean Delvare <jdelvare@suse.de>,
-	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-References: <20241108001542.255155-1-ipylypiv@google.com>
+	s=arc-20240116; t=1731581185; c=relaxed/simple;
+	bh=6GmTVh0328DG3z1UVIJJzkv4fJ3qqsmJH7jtABAW+Mw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FK22sqOzOAEg6T9eRk53hBHg8wjzP3Ul7/RT0J4vL5iMNmjtoUYXqxHwn91WM4VYCo7EB2JctNyz0Vby85HUPLzM32VfqZjlMECfjqPHM55Sfx70l01F6MnhiLMSFQoR4YcWG48D9XD7HvApBsyPYIqSJot7f7N4qh9FrfyQmtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jxDE5vdp; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 628354000C;
+	Thu, 14 Nov 2024 10:46:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731581174;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZXjkCtqX7WBxDao3IE3a8VvAAIvFEnT0KiRXJWPUYP8=;
+	b=jxDE5vdpag5h+2dL8KSGTV+QohJenpgiJERIiclWddgnRxschtdWzrEFI1tPPTw8mG7fOU
+	6LXy4C15Ci7lbsnfUipqFT5amaRmK+jEMin7ZIDL1+XQQdaChBqOqDnd2vGGikRnSrBQTA
+	p1nq+tTh4fj68pJnKY9ZvIVgOi52FmSuf6MbhybW8DOUSKjvRhf7HHHPYxxBzD56d4S+F7
+	z3jCQmkbfvQfB2qgj2se+8ftLTW2rU8LOMoDvV4oVfiBcRlRV9jvdrZQW9GMracvfMFaFD
+	SYM3xOaqFDOTHHEnYolg8l7TFFsYqCzxSfbqjvwwfTIPfWEtFZ0WbHICBVl2Tw==
+Date: Thu, 14 Nov 2024 11:46:10 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal
+ kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
+ <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Richard
+ Cochran <richardcochran@gmail.com>, Radu Pirea
+ <radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh <j.vosburgh@gmail.com>, Andy
+ Gospodarek <andy@greyhouse.net>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
+ <corbet@lwn.net>, Horatiu Vultur <horatiu.vultur@microchip.com>,
+ UNGLinuxDriver@microchip.com, Simon Horman <horms@kernel.org>, Vladimir
+ Oltean <vladimir.oltean@nxp.com>, donald.hunter@gmail.com,
+ danieller@nvidia.com, ecree.xilinx@gmail.com, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>,
+ Willem de Bruijn <willemb@google.com>, Shannon Nelson
+ <shannon.nelson@amd.com>, Alexandra Winter <wintera@linux.ibm.com>, Jacob
+ Keller <jacob.e.keller@intel.com>
+Subject: Re: [PATCH net-next v19 03/10] ptp: Add phc source and helpers to
+ register specific PTP clock or get information
+Message-ID: <20241114114610.1eb4a5da@kmaincent-XPS-13-7390>
+In-Reply-To: <20241113163925.7b3bd3d9@kernel.org>
+References: <20241030-feature_ptp_netnext-v19-0-94f8aadc9d5c@bootlin.com>
+ <20241030-feature_ptp_netnext-v19-3-94f8aadc9d5c@bootlin.com>
+ <20241111150609.2b0425f6@kernel.org>
+ <20241112111232.1637f814@kmaincent-XPS-13-7390>
+ <20241112182226.2a6c8bab@kernel.org>
+ <20241113113808.4f8c5a0b@kmaincent-XPS-13-7390>
+ <20241113163925.7b3bd3d9@kernel.org>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="U1oT9AxPTg5ss/I7"
-Content-Disposition: inline
-In-Reply-To: <20241108001542.255155-1-ipylypiv@google.com>
-
-
---U1oT9AxPTg5ss/I7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Fri, Nov 08, 2024 at 12:15:42AM +0000, Igor Pylypiv wrote:
-> Early return in i2cdev_ioctl_rdwr() failed to free the memory allocated
-> by the caller. Move freeing the memory to the function where it has been
-> allocated to prevent similar leaks in the future.
+On Wed, 13 Nov 2024 16:39:25 -0800
+Jakub Kicinski <kuba@kernel.org> wrote:
+
+> On Wed, 13 Nov 2024 11:38:08 +0100 Kory Maincent wrote:
+> > > IOW I'm struggling to connect the dots how the code you're adding now
+> > > will be built _upon_ rather than _on the side_ of when socket PHC
+> > > selection is in place.   =20
+> >=20
+> > I see what you mean! It is not something easy to think of as I don't re=
+ally
+> > know how it would be implemented.
+> > Do you think adding simply the PHC source and the phydev pointer or ind=
+ex
+> > would fit?  =20
 >=20
-> Fixes: 97ca843f6ad3 ("i2c: dev: Check for I2C_FUNC_I2C before calling i2c=
-_transfer")
-> Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+> In net_device? Yes, I think so.
+=20
+Also as the "user" is not described in the ptp_clock structure the only way=
+ to
+find it is to roll through all the PTP of the concerned net device topology.
+This find ptp loop will not be in the hotpath but only when getting the tsi=
+nfo
+of a PHC or changing the current PHC. Is it ok for you?
 
-Applied to for-next, thanks!
+I am at v20 so I ask for confirmation before changing the full patch series=
+! ;)
 
-> +	if (data_ptrs =3D=3D NULL)
-
-I changed this to '!data_ptrs' while here because most of the file does
-it like this. And checkpatch and I prefer it, too.
-
-
---U1oT9AxPTg5ss/I7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmc11NUACgkQFA3kzBSg
-KbauihAAmvGka+kv120xNlyx5V3p/3GfjOtBdgr3EtvLPt0YStE65YOWYLgn0xck
-FoLuenX6FsL61UEuTjWnrZqibHddkLWvx8YlUVF0/QO+8P88fwguPjaq5sEeLiCn
-MzrLLT6ef6AyYxQHvaUO10B6DQIb7Yjc9QFL997o+T/eUeYC8qzPgIDVFVNW6Fbr
-5GYQf2OMeWwA7qiKZYO1Djk434yNMd1EFp3XNZK9NtnsZEpoyiW8UE8eXLX9DPkp
-WxLZ/yuddfKduVaPk/AmiyIfVCvJEZHM1/l3BZHo55CnkwD6D7MCdcFfNIXxN1Lc
-GvQLftTbk+GGYmpavh7PLlmAlUub5XVyskEAXsYLKUimf5ZPkcb4/83ZINbtHOA7
-cFUNeBL8F8DSh/mRxiVjwuGkHQvjBg631Em/cM3MGK/MYtv7Mz0WTL4WoDfb2WZO
-HNY2ZgwZCGgdCUJe2Bo1iFzsMREl2bTpsr3pgfP66eEqRoPFyzFU6r3BFHT6Ndgx
-tJnpmVzO5dS+qqibz4XV/xQKdUgQAE+9LPXg6ZG4uJXKnZ7tVan07w++SNIjHssA
-uKwkT7ffllKXj8CB6xkEDNouKqWitVh5IYNXZ8+DkSYGzneScMie/gynGZLQcu+B
-+ZQj2JosSsD423KwQLTZD5Hte3gbYYjddD/vb+ZWA2xM38gXDG0=
-=LKzC
------END PGP SIGNATURE-----
-
---U1oT9AxPTg5ss/I7--
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
