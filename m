@@ -1,125 +1,111 @@
-Return-Path: <linux-kernel+bounces-408492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 874A69C7F74
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:45:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D863C9C7F88
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:51:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C2D02843C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:45:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4488F284363
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A48DDF5C;
-	Thu, 14 Nov 2024 00:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F96F9C0;
+	Thu, 14 Nov 2024 00:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZY2gLPOc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2AF2290F;
-	Thu, 14 Nov 2024 00:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="k8lCXi3/"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C5C1FC3
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 00:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731545120; cv=none; b=poFVlaJUX2mUmwBQfQ9F1AB1PDOev+ZNUCbJM1Y2X+5Y8XkT76b1s2uUsMyCbHsqo5wPtaPXDqN78mxdJVwEchERJblRsbuDA1E/tiecCfB2gzfpkDREDmyIBaVqUuZ0v7c9DRRbOjNweXoTWVJ88awJu+WhLbn9f1ufWhVWmZ0=
+	t=1731545476; cv=none; b=Mb+apPlbHXAOC4aQAnOSc3sWvAnnpULTaxIx0aEL+CvMxq519klZ/IxtS6wWwBoCXkczexaBe1WwhcSeNL+AkU/jfXWdcMQP5oq6ECAC0MgavObO1Yg7XGsLfSjDYgd4A9//a3TsmV5AjbbFc2NDJwuVgsNdAVw7CM2N1Rn8xg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731545120; c=relaxed/simple;
-	bh=V+XXfhEkvHfR6e89cFcF1vtYbOUwNwxHLg1uy1YL46w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=AGSd9v/BLUSuqKJFemuMOKNZXLl22QNyECen0CEMGENKa0+WgSXlRmiALspkif8jqKbEGAPY+SNQdczrLI4PG93aSVCJPCpwSfXnizV6C8BJhYW2QC5bSdPu2xqI9jF+CBW/O12WNhFK2I/Vx1AAkSVLg9CmAxUwpPg4lR+EFnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZY2gLPOc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2359AC4CECD;
-	Thu, 14 Nov 2024 00:45:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731545120;
-	bh=V+XXfhEkvHfR6e89cFcF1vtYbOUwNwxHLg1uy1YL46w=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=ZY2gLPOck9c6v4f1uALRq9nAl7hKtupr74YwzwGBnRiza1NqWvzixIqMHU/nrsN0g
-	 0qbAY2PqsGi5EEDKM5pltT8MC1UF091TFn7P2RHF8igLRphWJWX/CWZuX9Lz1frYLg
-	 6iKaAwx9ZT9ugCwrpeV/OHowYjr7NUDI9L/d3obz7zXvBN+hKiQha/JJgL4NlzN4CE
-	 zUEvnmxobkiY+MyXlI4WlV3Z4WIfgZdOpmXX4n40oD84/3oK/DGz0/TXm9svNAdV9p
-	 UvVL6CVzS9pLKPR933GlZAhSsFn/FZYmueLkQZ1BE2fzuDXZ2T2ATs4snyThOK7K9h
-	 AjpqFjJ1BWojA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 136CAD637CF;
-	Thu, 14 Nov 2024 00:45:20 +0000 (UTC)
-From: Manas via B4 Relay <devnull+manas18244.iiitd.ac.in@kernel.org>
-Date: Thu, 14 Nov 2024 06:15:15 +0530
-Subject: [PATCH net v2] netlink: Add string check in netlink_ack_tlv_fill
+	s=arc-20240116; t=1731545476; c=relaxed/simple;
+	bh=TmDfRQRoYFZLCGu3Rq9F9sj/Ju1LhQcD1pV7vBMNJS8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=QH4Yj/B7WWtqwr8vnZGGEpUxq89KFRoSGViE/jRf5+adrLWeDWeuhI3lihTH6svC1bykHFDVMMKeykAt2/wpdbV9Sa1jmyUXxtTP409tf0BmE7ydMnQ32O8prtsNk0ftxtm7wcUiV+9cUAOA8YrDOn+ZqFD+yN/bJ3a5xZ3/9EA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=k8lCXi3/ reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=HxStjIbqCkHIGsb5YkLzMTsySu2+FeJnPPzLOOGhizw=; b=k
+	8lCXi3/VVMZA7GmT/BivtNVcY43y+238j3Csx+YKmsAdK7gRrJnZrMm++OVJs6cE
+	eNFzB9PWcKHuTP/dk78GzfKKXSF5FHo9597UVfze6R6X2cs8lD9avI9IGAgUbm7P
+	yLZOobo+5xtZhOCOGbCObTIgRlYt/Zf+Cvrwqkv3KQ=
+Received: from andyshrk$163.com ( [58.22.7.114] ) by
+ ajax-webmail-wmsvr-40-129 (Coremail) ; Thu, 14 Nov 2024 08:50:20 +0800
+ (CST)
+Date: Thu, 14 Nov 2024 08:50:20 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: "Quentin Schulz" <quentin.schulz@cherry.de>
+Cc: "Heiko Stuebner" <heiko@sntech.de>, hjc@rock-chips.com, 
+	andy.yan@rock-chips.com, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	"Heiko Stuebner" <heiko.stuebner@cherry.de>
+Subject: Re:Re: [PATCH 1/2] drm/rockchip: vop2: fix rk3588 dp+dsi maxclk
+ verification
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <cb73853e-4201-4cc9-9e8a-f977e66241f6@cherry.de>
+References: <20240425195506.2935955-1-heiko@sntech.de>
+ <20240425195506.2935955-2-heiko@sntech.de>
+ <cb73853e-4201-4cc9-9e8a-f977e66241f6@cherry.de>
+X-NTES-SC: AL_Qu2YA/mfukwp5imdZekZnEobh+Y5UcK2s/ki2YFXN5k0mCTmyg4+bG5cLH7q9fmiKiCmoQmLURl14P5jTa5KbpjPaX03fUneRyBcUR0WBzmI
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241114-fix-netlink_ack_tlv_fill-v2-1-affdfb5f4c6f@iiitd.ac.in>
-X-B4-Tracking: v=1; b=H4sIABpINWcC/4WNWwqDMBBFtyLz3UgnRq1+dR9FJM2jDoZYkhBax
- L03uIF+3te5O0QTyEQYqx2CyRRp80XwSwVqkf5lGOmigV+5QETBLH2YN8mRX2ep1jm5PFtyjqH
- Qz6bprG6xhTJ/B1O6J/oBZQFTMReKaQvf8y7jGf0nZ2TIRN8PN2mFVEN3J6Kka6lq8jAdx/ED+
- MjqGccAAAA=
-X-Change-ID: 20241114-fix-netlink_ack_tlv_fill-14db336fd515
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: Shuah Khan <shuah@kernel.org>, Anup Sharma <anupnewsmail@gmail.com>, 
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- syzbot+d4373fa8042c06cefa84@syzkaller.appspotmail.com, 
- Manas <manas18244@iiitd.ac.in>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731545118; l=1451;
- i=manas18244@iiitd.ac.in; s=20240813; h=from:subject:message-id;
- bh=NtyokQuE+L7LfwkDaBwq3Oyce2jW67JcMuZbTIVPJTg=;
- b=Aa9G7PxjtwSy3lJ8NJDyNdVyeYBEc1b4xSaFHymXyNF9Dk5P3D7APXdA6KEZxnrriq5Uosx+8
- n6w8FhIucjYCBapw5g//T8cnQMaV6Fyy0APxrS0kJW4wnLsXNuVEsKA
-X-Developer-Key: i=manas18244@iiitd.ac.in; a=ed25519;
- pk=pXNEDKd3qTkQe9vsJtBGT9hrfOR7Dph1rfX5ig2AAoM=
-X-Endpoint-Received: by B4 Relay for manas18244@iiitd.ac.in/20240813 with
- auth_id=196
-X-Original-From: Manas <manas18244@iiitd.ac.in>
-Reply-To: manas18244@iiitd.ac.in
+Message-ID: <72672888.8f9.1932826549b.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:gSgvCgD3_+JNSTVnfU8mAA--.60608W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0hKXXmc1QEikyQABs-
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-From: Manas <manas18244@iiitd.ac.in>
-
-netlink_ack_tlv_fill crashes when in_skb->data is an empty string. This
-adds a check to prevent it.
-
-Reported-by: syzbot+d4373fa8042c06cefa84@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=d4373fa8042c06cefa84
-Fixes: 652332e3f1d6 ("netlink: move extack writing helpers")
-Signed-off-by: Manas <manas18244@iiitd.ac.in>
----
-Changes in v2:
-- Add target tree and prefix in commit message
-- Add Fixes tag
-- Remove duplicate commit message from cover letter
-- Link to v1: https://lore.kernel.org/r/20241114-fix-netlink_ack_tlv_fill-v1-1-47798af4ac96@iiitd.ac.in
----
- net/netlink/af_netlink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
-index 0a9287fadb47a2afaf0babe675738bc43051c5a7..ea205a4f81e9755a229d46a7e617ce0c090fe5e3 100644
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -2205,7 +2205,7 @@ netlink_ack_tlv_fill(struct sk_buff *in_skb, struct sk_buff *skb,
- 	if (!err)
- 		return;
- 
--	if (extack->bad_attr &&
-+	if (extack->bad_attr && strlen(in_skb->data) &&
- 	    !WARN_ON((u8 *)extack->bad_attr < in_skb->data ||
- 		     (u8 *)extack->bad_attr >= in_skb->data + in_skb->len))
- 		WARN_ON(nla_put_u32(skb, NLMSGERR_ATTR_OFFS,
-
----
-base-commit: 2d5404caa8c7bb5c4e0435f94b28834ae5456623
-change-id: 20241114-fix-netlink_ack_tlv_fill-14db336fd515
-
-Best regards,
--- 
-Manas <manas18244@iiitd.ac.in>
-
-
+CkhpLAoKQXQgMjAyNC0wNS0wNiAxNTo0NDozNiwgIlF1ZW50aW4gU2NodWx6IiA8cXVlbnRpbi5z
+Y2h1bHpAY2hlcnJ5LmRlPiB3cm90ZToKPkhpIEhlaWtvLAo+Cj5PbiA0LzI1LzI0IDk6NTUgUE0s
+IEhlaWtvIFN0dWVibmVyIHdyb3RlOgo+PiBGcm9tOiBIZWlrbyBTdHVlYm5lciA8aGVpa28uc3R1
+ZWJuZXJAY2hlcnJ5LmRlPgo+PiAKPj4gVGhlIGNsb2NrIGlzIGluIEh6IHdoaWxlIHRoZSB2YWx1
+ZSBjaGVja2VkIGFnYWluc3QgaXMgaW4ga0h6LCBzbwo+PiBhY3R1YWwgZnJlcXVlbmNpZXMgd2ls
+bCBuZXZlciBiZSBhYmxlIHRvIGJlIGJlbG93IHRvIG1heCB2YWx1ZS4KPj4gRml4IHRoaXMgYnkg
+c3BlY2lmeWluZyB0aGUgbWF4LXZhbHVlIGluIEh6IHRvby4KPj4gCj4+IEZpeGVzOiA1YTAyOGU4
+ZjA2MmYgKCJkcm0vcm9ja2NoaXA6IHZvcDI6IEFkZCBzdXBwb3J0IGZvciByazM1ODgiKQo+PiBT
+aWduZWQtb2ZmLWJ5OiBIZWlrbyBTdHVlYm5lciA8aGVpa28uc3R1ZWJuZXJAY2hlcnJ5LmRlPgo+
+PiAtLS0KPj4gICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3ZvcDIuYyB8
+IDQgKystLQo+PiAgIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25z
+KC0pCj4+IAo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlw
+X2RybV92b3AyLmMgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3ZvcDIu
+Ywo+PiBpbmRleCA5YmVlMWZkODhlNmEyLi41MjM4ODBhNGU4ZTc0IDEwMDY0NAo+PiAtLS0gYS9k
+cml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3ZvcDIuYwo+PiArKysgYi9kcml2
+ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3ZvcDIuYwo+PiBAQCAtMTcxOSw3ICsx
+NzE5LDcgQEAgc3RhdGljIHVuc2lnbmVkIGxvbmcgcmszNTg4X2NhbGNfY3J1X2NmZyhzdHJ1Y3Qg
+dm9wMl92aWRlb19wb3J0ICp2cCwgaW50IGlkLAo+PiAgIAkJZWxzZQo+PiAgIAkJCWRjbGtfb3V0
+X3JhdGUgPSB2X3BpeGNsayA+PiAyOwo+PiAgIAo+PiAtCQlkY2xrX3JhdGUgPSByazM1ODhfY2Fs
+Y19kY2xrKGRjbGtfb3V0X3JhdGUsIDYwMDAwMCk7Cj4+ICsJCWRjbGtfcmF0ZSA9IHJrMzU4OF9j
+YWxjX2RjbGsoZGNsa19vdXRfcmF0ZSwgNjAwMDAwMDAwKTsKPj4gICAJCWlmICghZGNsa19yYXRl
+KSB7Cj4+ICAgCQkJZHJtX2Vycih2b3AyLT5kcm0sICJEUCBkY2xrX291dF9yYXRlIG91dCBvZiBy
+YW5nZSwgZGNsa19vdXRfcmF0ZTogJWxkIEtIWlxuIiwKPgo+SXQgc2VlbXMgdGhlIGVycm9yIG1l
+c3NhZ2UgaXMgaW5jb3JyZWN0IGFzIHdlbGwgYW5kIHNob3VsZCBiZSBzYXlpbmcgSHogCj5pbnN0
+ZWFkIG9mIEtIei4gKG5vdGUgYWxzbyB0aGUgbG93ZXJjYXNlIHopLgoKSSB0aGluayBrSHogaXMg
+ZmluZSwgd2UgY2FuIGZpbmQgbWFueSBzaW1pbmFyeSB1c2FnZSBpbiBkcm06Cgpkcml2ZXJzL2dw
+dS9kcm0vZHJtX3ZibGFuay5jCjY1NjogICAgZHJtX2RiZ19jb3JlKGRldiwgImNydGMgJXU6IGNs
+b2NrICVkIGtIeiBmcmFtZWR1ciAlZCBsaW5lZHVyICVkXG4iLAo+Cj4+ICAgCQkJCWRjbGtfb3V0
+X3JhdGUpOwo+PiBAQCAtMTczNiw3ICsxNzM2LDcgQEAgc3RhdGljIHVuc2lnbmVkIGxvbmcgcmsz
+NTg4X2NhbGNfY3J1X2NmZyhzdHJ1Y3Qgdm9wMl92aWRlb19wb3J0ICp2cCwgaW50IGlkLAo+PiAg
+IAkJICogZGNsa19yYXRlID0gTiAqIGRjbGtfY29yZV9yYXRlIE4gPSAoMSwyLDQgKSwKPj4gICAJ
+CSAqIHdlIGdldCBhIGxpdHRsZSBmYWN0b3IgaGVyZQo+PiAgIAkJICovCj4+IC0JCWRjbGtfcmF0
+ZSA9IHJrMzU4OF9jYWxjX2RjbGsoZGNsa19vdXRfcmF0ZSwgNjAwMDAwKTsKPj4gKwkJZGNsa19y
+YXRlID0gcmszNTg4X2NhbGNfZGNsayhkY2xrX291dF9yYXRlLCA2MDAwMDAwMDApOwo+PiAgIAkJ
+aWYgKCFkY2xrX3JhdGUpIHsKPj4gICAJCQlkcm1fZXJyKHZvcDItPmRybSwgIk1JUEkgZGNsayBv
+dXQgb2YgcmFuZ2UsIGRjbGtfb3V0X3JhdGU6ICVsZCBLSFpcbiIsCj4KPkRpdHRvLgo+Cj5PdGhl
+cndpc2UsCj4KPlJldmlld2VkLWJ5OiBRdWVudGluIFNjaHVseiA8cXVlbnRpbi5zY2h1bHpAY2hl
+cnJ5LmRlPgoKQWNrZWQtYnk6IEFuZHkgWWFuPGFuZHlzaHJrQDE2My5jb20+Cgo+Cj5UaGFua3Mh
+Cj5RdWVudGluCg==
 
