@@ -1,129 +1,176 @@
-Return-Path: <linux-kernel+bounces-408909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63BCF9C84F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:42:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 483399C84FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:44:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E62DAB21649
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:42:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 078CC28329A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73BE71F76AD;
-	Thu, 14 Nov 2024 08:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B59A1F76AB;
+	Thu, 14 Nov 2024 08:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hbzdve8/"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxWo43cw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1838C1F757C
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44512E573;
+	Thu, 14 Nov 2024 08:44:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731573693; cv=none; b=VvrjGSTlUkPdoxae4/6V4r4ckcwKYxEOa1MlZU4SsJiO8z6HbSg5al5Wyqhz2j9pAGQGluq+dy7Jyi2SYhvmqD3FVfs/Z/mtWDqx9MiNzlBOVFmZI/bGqIeKR7/gndWbbOdK1SheuwiVSaCkWCVBqrGBSAhZJODmCjrOio8aUBk=
+	t=1731573842; cv=none; b=GmiA535N1E9gphgh+LZ3mM84paSBia0Pw7/oCB9vKFdDBhmnAxgoQ7LPE8s+GgTlqeTSGPhokfPOcO0R0L/3UB5ZLF3d9bqDITW5ktPVsgtfE87/bW4pXv9CNp6bjK3MwRjWHoORfZbvsV6LdLJBVJ2tNIsXQRsZuZU1wJQjkvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731573693; c=relaxed/simple;
-	bh=UdXM30Eaq47W0+zS0vBYvZ66OxLpHawzDlCEIhx6fk4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OMfabKMJRJNzZ17BeQF6+cZmJHYUxw72R7tQOpqmFJsQno21TKzyl6BQegVsUjyeRy4zf9qAjP49xJX8cG/FMhS3aj/FYbYODgkl2HkUxWSFrde1i+Xo8NgdsyNMmYlcal4s3jHup6tCNJQ56YjyGIEJWR7qCpjBFqJA4GcXWqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hbzdve8/; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb5740a03bso3077951fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 00:41:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731573690; x=1732178490; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0hbYbXTm77yMushKGHFUWiNBHnfNqWh3DD0ZOtWocto=;
-        b=hbzdve8/cOLfCW4gKtyen/pbGP8j/umachrb/ndFjCE7Jc34ZJhPhwoX94IpJw0BS7
-         1sMuUd7V5k4uWs9RE7bEzwJS6fln3GkcdZ7UuzHPJ7wCYzDStH33LBvqqEEu8GwpNbOL
-         vSY8/mUt7krgoVkQRdXWkE3SXL7NJGC9B8jGBlzemRZXcFn/XJgwBer6deuP34ip17oN
-         uwxXc0p5chcabgpyV64Zufeo1ABvTEF/gHs1qYwuTY7ZIshTqfRjV9dMcOP5Ho+XlXNy
-         iS6ebLd+d/48NFzzyxax4VdX+Bs7fYvidpENOk5ARr+Wpaboyji7bKpNTwsQqocwIurM
-         XeYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731573690; x=1732178490;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0hbYbXTm77yMushKGHFUWiNBHnfNqWh3DD0ZOtWocto=;
-        b=CencYzF17QLkIyvy9M84Q0z09zXJLqsyvyz3z3f3qCxQgvOEoH328UpLWbbLtE1K+d
-         Nfjt6AMyFUlqnmadlLcJiXPHjKsXWfKodK450ubTMxfI/xY0nl1bokHQTMNKsw2nJASV
-         0v4Mx37kBVperGHHTTdvJNh/8PcENn+7MOs3zrQdJ6jVMlG+9GXXTGabPflAswKHYIDt
-         oHDt4XrZKfIvRktpkzfRrq0ni7CgFs9UsO0Q0dgqktHbpZLW9aLaHzlGpYTHjnHWHIph
-         ex+SITDeA1fiujRjRvCB6Z5nAFqJstw7gY5UErTfsCe9WUUsQG3k+mfbA+fr2xVc7Dty
-         n+pA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0dAOES2FiBFfYO7UaCdkGLf5L6+ScTqXVLf/mwdQxyNpugdswnpAzn4iobBsi1Kkw2RUdCBFWa8anMhg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEH7+M0lQADT9inHvNUDHmadr8ufPzsjCegxs9XkgiaMV+CBbu
-	isq7+Vhvv2/U/bq1us3FmjVMdqJheOcQD5OuguEzD3Vqhr7Q5AFqlHTxxTKflb8=
-X-Google-Smtp-Source: AGHT+IEIEh/chz16dTEQOl7Jx49f/jl7YA5ju0+fFElhPUVjfo2OXSdETIz0u/SWTsOZWJ4tr4IEZg==
-X-Received: by 2002:a2e:be1b:0:b0:2fb:6465:3183 with SMTP id 38308e7fff4ca-2ff426970bdmr53783081fa.3.1731573689125;
-        Thu, 14 Nov 2024 00:41:29 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da280018sm15655525e9.26.2024.11.14.00.41.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 00:41:28 -0800 (PST)
-Date: Thu, 14 Nov 2024 11:41:25 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Su Hui <suhui@nfschina.com>
-Cc: stuyoder@gmail.com, laurentiu.tudor@nxp.com, nathan@kernel.org,
-	ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] bus: fsl-mc:  Fix the double free in fsl_mc_device_add()
-Message-ID: <656ca826-cb81-4b46-8e15-ec0b1044db8d@stanley.mountain>
-References: <20241114082751.3475110-1-suhui@nfschina.com>
+	s=arc-20240116; t=1731573842; c=relaxed/simple;
+	bh=yueFnat0srpXokXZ3xaTaiktYxAAHlj69Ro0EkqDHQc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N0DdGgZLfV/CuciWWntyalgVDlXCCbTCXuWhCIJPLJ9AJy/rUIn/RTXTzYiwRaKwVMg5yeMSgTmJNQ5VjK8QYwG69CpYx0Qvhz/9tjAsUdL7bxHdqwPwW5mPaL3ROSXqjP/3aCg3vgr0DSxgkiGfotW2C5u8Tc0rvaPtQeQPCt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxWo43cw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27C69C4CECD;
+	Thu, 14 Nov 2024 08:43:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731573841;
+	bh=yueFnat0srpXokXZ3xaTaiktYxAAHlj69Ro0EkqDHQc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rxWo43cwFb5eeMp2KXc2N3dRMTdeL6xpJsO1nhH/4es6mrWCDapd1Th1yhMVFYecr
+	 xjyMz2r+jvTIunUhItNs4QVx7Pd3dvyx7dzJN+7YwyHuDarUNG6DCPqg0GCH8t4wnL
+	 ObvZ5dd0rhi6wT4ygczUDXCTCaXG7F2nv38k3qPm8BttKEuY4CmO6V9zBuKRHk3qSh
+	 nLSb/JAM9AErHCIbR7Hneue+0mU3BCI0PWmPCK+CAfC39SGirkLMj168MP2OA0tPGf
+	 gEIGjG3WagIM1c+FVMCYnzOsSkQ7an8DaXuocsAQYKfFMaCEAKS1Lt+fC+Y+FVnLHQ
+	 fE5453mu2Z7RA==
+From: Song Liu <song@kernel.org>
+To: bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: kernel-team@meta.com,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	kpsingh@kernel.org,
+	mattbobrowski@google.com,
+	amir73il@gmail.com,
+	repnop@google.com,
+	jlayton@kernel.org,
+	josef@toxicpanda.com,
+	mic@digikod.net,
+	gnoack@google.com,
+	Song Liu <song@kernel.org>
+Subject: [RFC/PATCH v2 bpf-next fanotify 0/7] Fanotify fastpath handler
+Date: Thu, 14 Nov 2024 00:43:38 -0800
+Message-ID: <20241114084345.1564165-1-song@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241114082751.3475110-1-suhui@nfschina.com>
 
-On Thu, Nov 14, 2024 at 04:27:52PM +0800, Su Hui wrote:
-> Clang static checker(scan-build) warning：
-> drivers/bus/fsl-mc/fsl-mc-bus.c: line 909, column 2
-> Attempt to free released memory.
-> 
-> When 'obj_desc->type' == "dprc" and begin to free 'mc_bus' and 'mc_dev',
-> there is a double free problem because of 'mc_dev = &mc_bus->mc_dev'.
-> Add a judgment to fix this problem.
-> 
-> Fixes: a042fbed0290 ("staging: fsl-mc: simplify couple of deallocations")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
->  drivers/bus/fsl-mc/fsl-mc-bus.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bus.c
-> index 930d8a3ba722..8d2d5d3cc782 100644
-> --- a/drivers/bus/fsl-mc/fsl-mc-bus.c
-> +++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
-> @@ -905,8 +905,10 @@ int fsl_mc_device_add(struct fsl_mc_obj_desc *obj_desc,
->  
->  error_cleanup_dev:
->  	kfree(mc_dev->regions);
-> -	kfree(mc_bus);
-> -	kfree(mc_dev);
-> +	if (strcmp(mc_dev->obj_desc.type, "dprc") == 0)
+Overview of v2:
 
-This works, but it would probably be nicer to write this as:
+Patch 1/7 adds logic to write fastpath handlers in kernel modules.
+Patch 2/7 adds a sample of a fastpath handler in a kernel module.
+Patch 3/7 to 5/7 are preparation work on BPF side.
+Patch 6/7 adds logic to write fastpath handlers in bpf programs.
+Patch 7/7 is a selftest and example of bpf based fastpath handler.
 
-	if (is_fsl_mc_bus_dprc(mc_dev))
-		kfree(mc_bus);
-	else
-		kfree(mc_dev);
+Changes v1 => v2:
+1. Add sysfs entries for fastpath handler.
+2. Rewrite the sample and bpf selftest to handle subtree monitoring.
+   This requires quite some work from BPF side to properly handle
+   inode, dentry, etc.
+3. Add CONFIG_FANOTIFY_FASTPATH.
+4. Add more documents.
 
-That way it would match the release function.
+TODO of v2:
+1. Enable prviate (not added to global list) bpf based fastpath handlers.
+4. Man pages.
 
-regards,
-dan carpenter
- 
+From v1 RFC:
+
+This RFC set introduces in-kernel fastpath handler for fanotify. The
+fastpath handler can be used to handle/filter some events without going
+through userspace.
+
+In LPC 2024, multiple talks covered use cases of monitoring a subtree in
+the VFS (fanotify: [1], bpf/lsm: [2]). This work is inspired by these
+discussions. Reliably monitoring of a subtree with low overhead is a hard
+problem. We do not claim this set fully solves problem. But we think this
+work can be a very useful building block of the solution to this problem.
+
+The fastpath handler can be implemented with built-in logic, in a kernel
+module, or a bpf program. The fastpath handler is attached to a fsnotify
+group. With current implementation, the multiple fastpath handlers are
+maintained in a global list. Only users with CAP_SYS_ADMIN can add
+fastpath handlers to the list by loading a kernel module. User without
+CAP_SYS_ADMIN can attach a loaded fastpath handler to fanotify instances.
+During the attach operation, the fastpath handler can take an argument.
+This enables non-CAP_SYSADMIN users to customize/configure the fastpath
+handler, for example, with a specific allowlist/denylist.
+
+As the patchset grows to 1000+ lines (including samples and tests), I
+would like some feedback before pushing it further.
+
+[1] https://lpc.events/event/18/contributions/1717/
+[2] https://lpc.events/event/18/contributions/1940/
+
+
+Song Liu (7):
+  fanotify: Introduce fanotify fastpath handler
+  samples/fanotify: Add a sample fanotify fastpath handler
+  bpf: Make bpf inode storage available to tracing programs
+  bpf: fs: Add three kfuncs
+  bpf: Allow bpf map hold reference on dentry
+  fanotify: Enable bpf based fanotify fastpath handler
+  selftests/bpf: Add test for BPF based fanotify fastpath handler
+
+ MAINTAINERS                                   |   1 +
+ fs/Makefile                                   |   2 +-
+ fs/bpf_fs_kfuncs.c                            |  51 +-
+ fs/inode.c                                    |   2 +
+ fs/notify/fanotify/Kconfig                    |  13 +
+ fs/notify/fanotify/Makefile                   |   1 +
+ fs/notify/fanotify/fanotify.c                 |  29 ++
+ fs/notify/fanotify/fanotify_fastpath.c        | 448 ++++++++++++++++++
+ fs/notify/fanotify/fanotify_user.c            |   7 +
+ include/linux/bpf.h                           |   9 +
+ include/linux/bpf_lsm.h                       |  29 --
+ include/linux/fanotify.h                      | 131 +++++
+ include/linux/fs.h                            |   4 +
+ include/linux/fsnotify_backend.h              |   4 +
+ include/uapi/linux/fanotify.h                 |  25 +
+ kernel/bpf/Makefile                           |   3 +-
+ kernel/bpf/bpf_inode_storage.c                | 176 +++++--
+ kernel/bpf/bpf_lsm.c                          |   4 -
+ kernel/bpf/helpers.c                          |  14 +-
+ kernel/bpf/verifier.c                         |   6 +
+ kernel/trace/bpf_trace.c                      |   8 +
+ samples/Kconfig                               |  20 +-
+ samples/Makefile                              |   2 +-
+ samples/fanotify/.gitignore                   |   1 +
+ samples/fanotify/Makefile                     |   5 +-
+ samples/fanotify/fastpath-mod.c               |  82 ++++
+ samples/fanotify/fastpath-user.c              | 111 +++++
+ security/bpf/hooks.c                          |   7 -
+ tools/testing/selftests/bpf/bpf_kfuncs.h      |   5 +
+ tools/testing/selftests/bpf/config            |   2 +
+ .../testing/selftests/bpf/prog_tests/fan_fp.c | 264 +++++++++++
+ tools/testing/selftests/bpf/progs/fan_fp.c    | 154 ++++++
+ 32 files changed, 1530 insertions(+), 90 deletions(-)
+ create mode 100644 fs/notify/fanotify/fanotify_fastpath.c
+ create mode 100644 samples/fanotify/fastpath-mod.c
+ create mode 100644 samples/fanotify/fastpath-user.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/fan_fp.c
+ create mode 100644 tools/testing/selftests/bpf/progs/fan_fp.c
+
+--
+2.43.5
 
