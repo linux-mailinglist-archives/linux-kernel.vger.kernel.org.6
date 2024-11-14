@@ -1,77 +1,176 @@
-Return-Path: <linux-kernel+bounces-408641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58BDA9C816A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 04:19:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30EA19C816D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 04:20:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D5FD2836DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:19:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6E8F283926
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993B41E7C35;
-	Thu, 14 Nov 2024 03:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB3C3D9E;
+	Thu, 14 Nov 2024 03:20:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MYTYmt0Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EYkLc+gh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JMCzRO6t";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SEDQAw0y";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rfihD9BM"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C156AAD;
-	Thu, 14 Nov 2024 03:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CEC92E634;
+	Thu, 14 Nov 2024 03:20:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731554351; cv=none; b=XBXR/5CLF8Q6/YqNvONqXd8kOG8yRpnoUKnerlpPzHqyRr1pc91UbQwbMF/dKyWDWdHUjGtfC/WH5vKY+2Z9xboM1aNfaU1INTvoKm2fMzRbOAhzsj/u1yVWbtMw9zuWG3i6enE+2GrDfBEqXk036iWHbVkdFwYlQxwLMvYkaLs=
+	t=1731554408; cv=none; b=ZzEPBGq+YKWN07etghDmFM3/RYw8+AgKzQ6tzpMaHVTdnLd0fzihNidJR5BbmPwoK5SO4t/+06r7rQwllyckO+nn9QYoTFtC16PKAfvxXYNGfj9ZjND8tqJNa+HZkVWTvk03t+sDgUvwHNyH30OLaTwXugMik+8MIhuAKiTU/Z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731554351; c=relaxed/simple;
-	bh=Yq1+6nK+LxMRxpgCo00ZoaEvjLTfqSrkJRDCOrj8YJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Hoe7zaOgcmyCGVtmy6UNEjOEcXEBWhpJt2SLScoXHb6tFKFAO9LBLSo4ppEOrx+2aHuPr+fX8YrQBZ7yhd9WKYQmy17qoDbECZPEgZDQa+twIQOjpRpxiCJvZVPRXoy8JlS1WEQjW66f+8jnvT5lUtnbx4xIVd/w+b3MUEl2J78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MYTYmt0Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37128C4CEC3;
-	Thu, 14 Nov 2024 03:19:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731554350;
-	bh=Yq1+6nK+LxMRxpgCo00ZoaEvjLTfqSrkJRDCOrj8YJk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MYTYmt0Zeb+GLahunFyo7ba2qGhn6Ao2p7cOMvd3FG6jwMdUrE9Lsmk0syPpvRaSM
-	 A6UkDKgAg1u+/zP/+mbanWyOlaTn8ZDaLMcfS8+z97s4nGMsbDxq2DtllrRWTK58Qu
-	 ZVA13UA6XjH1ObJdhzfXAbHhvoaP87AEfNyfHsUnbjXr0YD6Sr2XOf5cbTJYxJXEoI
-	 9/A3ZFn0lXzV2eOods0xFCEjLVxh9tYo6XpkTWS/si+GwNfV54MIqBUIIvBeiw7HPD
-	 qHXLxNVgPW9LVgl2HXUh45wa54m0SwmyvIU+DMOnDb+vke2YdQ2cCSuZuPN4ewRZ1J
-	 DGZ3G3Pl5ErQw==
-Date: Wed, 13 Nov 2024 19:19:09 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jeremy Kerr <jk@codeconstruct.com.au>
-Cc: Jian Zhang <zhangjian.3032@bytedance.com>, netdev@vger.kernel.org,
- openbmc@lists.ozlabs.org, Matt Johnston  <matt@codeconstruct.com.au>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, open list 
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] mctp i2c: notify user space on TX failure
-Message-ID: <20241113191909.10cf495e@kernel.org>
-In-Reply-To: <da9b94909dcda3f0f7e48865e63d118c3be09a8d.camel@codeconstruct.com.au>
-References: <20241108094206.2808293-1-zhangjian.3032@bytedance.com>
-	<20241113190920.0ceaddf2@kernel.org>
-	<da9b94909dcda3f0f7e48865e63d118c3be09a8d.camel@codeconstruct.com.au>
+	s=arc-20240116; t=1731554408; c=relaxed/simple;
+	bh=3sQdte3d2GmSTKI2e1MXGW+iL+19HEgnHdz/TVvD+D0=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=UGzohbl2gD8ANxo425yumRe1VfuEWBJLhKa1pA6UEQ/9sheEGzMm8x4skY/wAgEu0CSZEgxWUUM3aTe1yxfKHQvXLLFfmH8HbWI+zuVTouH9NG1hb5rpVhF2pGL4jRmOWeXMuoB7rfCoT2HtM7ylRY1yOYXwaSdToY5MGAgL2WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EYkLc+gh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JMCzRO6t; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SEDQAw0y; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rfihD9BM; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 274B621257;
+	Thu, 14 Nov 2024 03:20:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731554404; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y9Nj8DbtCBCQfkb845l7xWbwGT1PBU9w7HPNymN787I=;
+	b=EYkLc+ghv2rrcG3ItYXadA+lN/ortySd5cvhEGAcPByQG427GC8hlgtnk/6vJcN5DahnPr
+	sMqUYuLnOKOKYCAj9YpIFzs+SqRYTkibpt943d1YEu9ynN/vqZw/8SrROeRa3hZYPfmC2L
+	PxIrDMy56gAo2iWyR9mV3A9+ib6JV/8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731554404;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y9Nj8DbtCBCQfkb845l7xWbwGT1PBU9w7HPNymN787I=;
+	b=JMCzRO6tHG/r9uq+ptbWtPulbNe2xlJzT4DJ1ndm28ZOhgAoxsiUXBenQ2xbIsy7jeiwps
+	0JSoaArtQM5lMMCA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=SEDQAw0y;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=rfihD9BM
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731554403; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y9Nj8DbtCBCQfkb845l7xWbwGT1PBU9w7HPNymN787I=;
+	b=SEDQAw0yfBiIXFK9BhLd6M03NgBabSTqEwJ5Jp/fKvDrM0DvzLPwJ4JFv82135wlRb5XSw
+	Vm86TtEWEdqu8UZl8ih5678XNaB1ffqhj6Xlrcd+fOomAlfpCa1ScnHQJhgm+z3LvfJtl+
+	crfrWDbfarTeXJbLQl9H8ApkXW2VCvo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731554403;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y9Nj8DbtCBCQfkb845l7xWbwGT1PBU9w7HPNymN787I=;
+	b=rfihD9BMnkuTCPbh86g4FIAqq8Oq1wf3+NiYez2ZxNzDrNu3iDZrCBUEpVykwkyTZPXud6
+	d4mODfcB4atWVSCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C122913301;
+	Thu, 14 Nov 2024 03:20:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id F0o2HWBsNWe7EgAAD6G6ig
+	(envelope-from <neilb@suse.de>); Thu, 14 Nov 2024 03:20:00 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: "NeilBrown" <neilb@suse.de>
+To: "Jeff Layton" <jlayton@kernel.org>
+Cc: "Chuck Lever" <chuck.lever@oracle.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
+ "Tom Talpey" <tom@talpey.com>, "Olga Kornievskaia" <okorniev@redhat.com>,
+ linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] nfsd: allow for up to 32 callback session slots
+In-reply-to: <acf8d86338c881b6837d85399bfca406f1e1c0a3.camel@kernel.org>
+References: <>, <acf8d86338c881b6837d85399bfca406f1e1c0a3.camel@kernel.org>
+Date: Thu, 14 Nov 2024 14:19:56 +1100
+Message-id: <173155439694.1734440.14845420245634385370@noble.neil.brown.name>
+X-Rspamd-Queue-Id: 274B621257
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,noble.neil.brown.name:mid];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Thu, 14 Nov 2024 11:13:33 +0800 Jeremy Kerr wrote:
-> > notifying socket in the xmit handler of a netdev is a bit strange,
-> > could you do it somewhere higher in the MCTP stack?  
+On Thu, 14 Nov 2024, Jeff Layton wrote:
+> On Wed, 2024-11-13 at 12:31 +1100, NeilBrown wrote:
+> > 
+> > So initialising them all to 1 when the session is created, as you do in
+> > init_session(), is clearly correct.  Reinitialising them after
+> > target_highest_slot_id has been reduced and then increased is not
+> > justified by the above.
+> > 
 > 
-> Sounds like that would be useful in general for MCTP, but we don't have
-> a facility for that at present.  Any existing implementation you would
-> suggest modelling this on?
+> But, once the client and server have forgotten about those slots after
+> shrinking the slot table, aren't they effectively new? IOW, once you've
+> shrunk the slot table, the slots are effectively "freed". Growing it
+> means that you have to allocate new ones. The fact that this patch just
+> keeps them around is an implementation detail.
 
-routing isn't really my forte, TBH, what eats the error so that it
-doesn't come out of mctp_local_output() ? Do you use qdiscs on top
-of the MCTP devices?
+
+There is no text in the RFC about shrinking or growing or forgetting.
+The only meaning given to numbers like ca_maxreqs is that the client
+shouldn't use a larger slot number than the given one.
+
+I think the slot table is conceptually infinite and exists in its
+entirety from the moment CREATE_SESSION completes to the moment
+DESTROY_SESSION completes (or a lease expires or similar).  The client
+can limit how much of that infinitude that it will choose to use, and
+the server can limit how much of it it will allow to be used so neither
+need to store the full infinity.  But it never changes size.
+Implementations can choose how much to store in real memory and can
+discard every except (I think) the last sequence number seen on any slot
+for which a request was sent (client) or accepted (server).
+
+I agree that this seems less that ideal and it would be good if the
+protocol has a mechanism for the client and server to agree to reset
+the seqid for some slots.  But I cannot find any such mechanism.
+
+Thanks,
+NeilBrown
 
