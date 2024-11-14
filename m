@@ -1,56 +1,88 @@
-Return-Path: <linux-kernel+bounces-408927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE03C9C8538
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:50:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB059C8542
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:51:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DC06B24158
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:50:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C030B221C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D451F8EEA;
-	Thu, 14 Nov 2024 08:48:31 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB09D1F709E;
+	Thu, 14 Nov 2024 08:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sz99PODo"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12F51F81B0;
-	Thu, 14 Nov 2024 08:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A838213B5A1
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731574110; cv=none; b=pcN5oSOuPCkdc6l/58/+yvr7a2sjprcki5nkNilKPdEpZEW3h36p6IsxXIZa67HeBtlnswDMsSx2x8/qYzyeRxw8HopjxUiljW3k00AEAmMWTlaTL7gPS4kJNgg4/gB+aod6LlPgFWHQ+droPQxiDxnK9yCi/q6Dsv3HDFKl/fk=
+	t=1731574255; cv=none; b=COCdwYfj422T9ihxdJJR3j+NiJ6wQqo1TeIGEcVyCkgL8qxj6iqPo6kEC9SyAFPrplKDvPbvOcozc7toYzInFv0eNzHkjR5pT/P/YT2R412nR32mAwWp9YyRTV44bqbfTV8Bmx4EBEk0vEBe5iYMvAqhW3KEedKDd2WCmXR0NWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731574110; c=relaxed/simple;
-	bh=DmkFSJ0Dc908RKzofhscowO6CKihQtsKpAiW71CIkdE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SRHYEXhOUId1IT5eYTRIk/H85UkHtNp2i7RUFPH1AoVoB5gfSzEMfKa2vUkiqMG0iDVaWYpzDh8bljZIwsYpnuiCmjxJeP15mhqEdQhwvBASI9RaMvcoZjjI8rGhDue0Sd7KrtxBiSiUo2n1vyGJc3MpEna7qaZK+FLl9Ixgenw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Xptz14HY7z1V3r2;
-	Thu, 14 Nov 2024 16:45:49 +0800 (CST)
-Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id DF4F31800DE;
-	Thu, 14 Nov 2024 16:48:19 +0800 (CST)
-Received: from localhost.huawei.com (10.50.165.33) by
- kwepemh100008.china.huawei.com (7.202.181.93) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 14 Nov 2024 16:48:19 +0800
-From: Lifeng Zheng <zhenglifeng1@huawei.com>
-To: <rafael@kernel.org>, <lenb@kernel.org>, <robert.moore@intel.com>,
-	<viresh.kumar@linaro.org>
-CC: <acpica-devel@lists.linux.dev>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<zhanjie9@hisilicon.com>, <lihuisong@huawei.com>, <fanghao11@huawei.com>,
-	<zhenglifeng1@huawei.com>
-Subject: [PATCH 3/3] cpufreq: CPPC: Support for autonomous selection in cppc_cpufreq
-Date: Thu, 14 Nov 2024 16:48:16 +0800
-Message-ID: <20241114084816.1128647-4-zhenglifeng1@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20241114084816.1128647-1-zhenglifeng1@huawei.com>
-References: <20241114084816.1128647-1-zhenglifeng1@huawei.com>
+	s=arc-20240116; t=1731574255; c=relaxed/simple;
+	bh=jZVUWNFS0ya95qtBjQMQZvF9jzgWerBIuARLBrYfRdo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NEM6ExAgxOEFv8+qYXLK+j64yBbavBzNEKpcyD8YeUiNA3O5RBn7542wS3SvAdQZl9KIIPyf+9LVX3hf8NK7CSwoH6ZZwS9gGw8OcSvP85YuPRK6o0RzWw5Y6Y5GJ5zTPvwCOV/YvZ+RBHphX+zVSjmJaCzwjXpGmGI1I+MWB9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sz99PODo; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE6e2PN002177;
+	Thu, 14 Nov 2024 08:50:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=ELkof2PiSVln1EcDwzuMJK2QV+4Zo2YPwe//gRAwQ
+	yw=; b=sz99PODoyVvp7pQ+dRIbqxvdy67/EE/hJmNBvL1FM/mq/X98XRW4fk2BY
+	6KUne+fpSkXS+WwH0GSgtWy2QyMWdbUzIiK16U6yeiGoR0aOcorJugB02eRc5o7M
+	22NGSFHxGZGoQ0770sCY1TAR8ZlkhflJGdLGGPKnjonbOtqw/KD1WTX51OKKTzZt
+	U7rYS+sci3ukG3bkbjRMI2JlVRjR0AlHHiXVsxsLn5WfbbK6HxCM4d4Nj6C6EcTz
+	dh28ddvhi4Dg1dJNxNkeFLWFYntjXJjg7ctOJbln+3GiBdDaG9jLnPkGPsovy+FI
+	GpeQAKMbqaGuNjKetNo1CynPDxtkg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42wc4s90dm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 08:50:43 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AE8oKOL020216;
+	Thu, 14 Nov 2024 08:50:42 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42wc4s90de-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 08:50:42 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4ADNBcI8010514;
+	Thu, 14 Nov 2024 08:50:41 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 42tj2s81pd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 08:50:41 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AE8obKb51184116
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 14 Nov 2024 08:50:37 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id ED7902004B;
+	Thu, 14 Nov 2024 08:50:36 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 24A1420043;
+	Thu, 14 Nov 2024 08:50:34 +0000 (GMT)
+Received: from li-e8dccbcc-2adc-11b2-a85c-bc1f33b9b810.ibm.com.com (unknown [9.43.39.126])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 14 Nov 2024 08:50:33 +0000 (GMT)
+From: Kajol Jain <kjain@linux.ibm.com>
+To: mpe@ellerman.id.au, maddy@linux.ibm.com
+Cc: atrajeev@linux.vnet.ibm.com, kjain@linux.ibm.com, disgoel@linux.ibm.com,
+        hbathini@linux.ibm.com, adubey@linux.ibm.com, gautam@linux.ibm.com,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Ritesh Harjani <ritesh.list@gmail.com>,
+        Amit Machhiwal <amachhiw@linux.ibm.com>
+Subject: [PATCH v2] powerpc/kvm: Fix typo in the kvm functions
+Date: Thu, 14 Nov 2024 14:20:20 +0530
+Message-ID: <20241114085020.1147912-1-kjain@linux.ibm.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,241 +90,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemh100008.china.huawei.com (7.202.181.93)
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: yqhisDeqyWFdh94OjWDw3CTCOvnS5d6x
+X-Proofpoint-ORIG-GUID: FploZy_ECxRphi9DMk_n4xyg2xFdWnvl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ suspectscore=0 impostorscore=0 malwarescore=0 mlxlogscore=999
+ clxscore=1015 lowpriorityscore=0 adultscore=0 bulkscore=0
+ priorityscore=1501 spamscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2411140065
 
-Add sysfs interfaces for CPPC autonomous selection in the cppc_cpufreq
-driver.
+Fix typo in the following kvm function names from:
 
-Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
+kmvhv_counters_tracepoint_regfunc -> kvmhv_counters_tracepoint_regfunc
+kmvhv_counters_tracepoint_unregfunc -> kvmhv_counters_tracepoint_unregfunc
+
+Fixes: e1f288d2f9c6 ("KVM: PPC: Book3S HV nestedv2: Add support for reading VPA counters for pseries guests")
+Reported-by: Madhavan Srinivasan <maddy@linux.ibm.com>
+Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+Reviewed-by: Amit Machhiwal <amachhiw@linux.ibm.com>
+Signed-off-by: Kajol Jain <kjain@linux.ibm.com>
 ---
- .../ABI/testing/sysfs-devices-system-cpu      |  54 +++++++
- drivers/cpufreq/cppc_cpufreq.c                | 141 ++++++++++++++++++
- 2 files changed, 195 insertions(+)
+Changelog:
 
-diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
-index 206079d3bd5b..ba7b8ea613e5 100644
---- a/Documentation/ABI/testing/sysfs-devices-system-cpu
-+++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
-@@ -268,6 +268,60 @@ Description:	Discover CPUs in the same CPU frequency coordination domain
- 		This file is only present if the acpi-cpufreq or the cppc-cpufreq
- 		drivers are in use.
+v1 -> v2
+- Added Reviewed-by tag from Ritesh and Amit.
+
+ arch/powerpc/include/asm/kvm_book3s_64.h | 4 ++--
+ arch/powerpc/kvm/book3s_hv.c             | 4 ++--
+ arch/powerpc/kvm/trace_hv.h              | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/arch/powerpc/include/asm/kvm_book3s_64.h b/arch/powerpc/include/asm/kvm_book3s_64.h
+index 2ef9a5f4e5d1..11065313d4c1 100644
+--- a/arch/powerpc/include/asm/kvm_book3s_64.h
++++ b/arch/powerpc/include/asm/kvm_book3s_64.h
+@@ -684,8 +684,8 @@ int kvmhv_nestedv2_set_ptbl_entry(unsigned long lpid, u64 dw0, u64 dw1);
+ int kvmhv_nestedv2_parse_output(struct kvm_vcpu *vcpu);
+ int kvmhv_nestedv2_set_vpa(struct kvm_vcpu *vcpu, unsigned long vpa);
  
-+What:		/sys/devices/system/cpu/cpuX/cpufreq/auto_select
-+Date:		October 2024
-+Contact:	linux-pm@vger.kernel.org
-+Description:	Autonomous selection enable
-+
-+		Read/write interface to control autonomous selection enable
-+			Read returns autonomous selection status:
-+				0: autonomous selection is disabled
-+				1: autonomous selection is enabled
-+
-+			Write '1' to enable autonomous selection.
-+			Write '0' to disable autonomous selection.
-+
-+		This file only presents if the cppc-cpufreq driver is in use.
-+
-+What:		/sys/devices/system/cpu/cpuX/cpufreq/auto_act_window
-+Date:		October 2024
-+Contact:	linux-pm@vger.kernel.org
-+Description:	Autonomous activity window
-+
-+		This file indicates a moving utilization sensitivity window to
-+		the platform's autonomous selection policy.
-+
-+		Read/write an integer represents autonomous activity window (in
-+		microseconds) from/to this file. The max value to write is
-+		1270000000 but the max significand is 127. This means that if 128
-+		is written to this file, 127 will be stored. If the value is
-+		greater than 130, only the first two digits will be saved as
-+		significand.
-+
-+		Writing a zero value to this file enable the platform to
-+		determine an appropriate Activity Window depending on the workload.
-+
-+		Writing to this file only has meaning when Autonomous Selection is
-+		enabled.
-+
-+		This file only presents if the cppc-cpufreq driver is in use.
-+
-+What:		/sys/devices/system/cpu/cpuX/cpufreq/energy_perf
-+Date:		October 2024
-+Contact:	linux-pm@vger.kernel.org
-+Description:	Energy performance preference
-+
-+		Read/write an 8-bit integer from/to this file. This file
-+		represents a range of values from 0 (performance preference) to
-+		0xFF (energy efficiency preference) that influences the rate of
-+		performance increase/decrease and the result of the hardware's
-+		energy efficiency and performance optimization policies.
-+
-+		Writing to this file only has meaning when Autonomous Selection is
-+		enabled.
-+
-+		This file only presents if the cppc-cpufreq driver is in use.
-+
+-int kmvhv_counters_tracepoint_regfunc(void);
+-void kmvhv_counters_tracepoint_unregfunc(void);
++int kvmhv_counters_tracepoint_regfunc(void);
++void kvmhv_counters_tracepoint_unregfunc(void);
+ int kvmhv_get_l2_counters_status(void);
+ void kvmhv_set_l2_counters_status(int cpu, bool status);
  
- What:		/sys/devices/system/cpu/cpu*/cache/index3/cache_disable_{0,1}
- Date:		August 2008
-diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-index 2b8708475ac7..b435e1751d0d 100644
---- a/drivers/cpufreq/cppc_cpufreq.c
-+++ b/drivers/cpufreq/cppc_cpufreq.c
-@@ -792,10 +792,151 @@ static ssize_t show_freqdomain_cpus(struct cpufreq_policy *policy, char *buf)
- 
- 	return cpufreq_show_cpus(cpu_data->shared_cpu_map, buf);
+diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
+index ba0492f9de65..c36d036d7155 100644
+--- a/arch/powerpc/kvm/book3s_hv.c
++++ b/arch/powerpc/kvm/book3s_hv.c
+@@ -4154,7 +4154,7 @@ void kvmhv_set_l2_counters_status(int cpu, bool status)
+ 		lppaca_of(cpu).l2_counters_enable = 0;
  }
-+
-+static ssize_t show_auto_select(struct cpufreq_policy *policy, char *buf)
-+{
-+	u64 val;
-+	int ret;
-+
-+	ret = cppc_get_auto_sel(policy->cpu, &val);
-+
-+	/* show "<unsupported>" when this register is not supported by cpc */
-+	if (ret == -EOPNOTSUPP)
-+		return sysfs_emit(buf, "%s\n", "<unsupported>");
-+
-+	if (ret)
-+		return ret;
-+
-+	return sysfs_emit(buf, "%lld\n", val);
-+}
-+
-+static ssize_t store_auto_select(struct cpufreq_policy *policy,
-+				 const char *buf, size_t count)
-+{
-+	unsigned long val;
-+	int ret;
-+
-+	ret = kstrtoul(buf, 0, &val);
-+	if (ret)
-+		return ret;
-+
-+	if (val > 1)
-+		return -EINVAL;
-+
-+	ret = cppc_set_auto_sel(policy->cpu, val);
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+}
-+
-+#define AUTO_ACT_WINDOW_SIG_BIT_SIZE	(7)
-+#define AUTO_ACT_WINDOW_EXP_BIT_SIZE	(3)
-+#define AUTO_ACT_WINDOW_MAX_SIG	((1 << AUTO_ACT_WINDOW_SIG_BIT_SIZE) - 1)
-+#define AUTO_ACT_WINDOW_MAX_EXP	((1 << AUTO_ACT_WINDOW_EXP_BIT_SIZE) - 1)
-+/* AUTO_ACT_WINDOW_MAX_SIG is 127, so 128 and 129 will decay to 127 when writing */
-+#define AUTO_ACT_WINDOW_SIG_CARRY_THRESH 129
-+
-+static ssize_t show_auto_act_window(struct cpufreq_policy *policy, char *buf)
-+{
-+	int sig, exp;
-+	u64 val;
-+	int ret;
-+
-+	ret = cppc_get_auto_act_window(policy->cpu, &val);
-+
-+	/* show "<unsupported>" when this register is not supported by cpc */
-+	if (ret == -EOPNOTSUPP)
-+		return sysfs_emit(buf, "%s\n", "<unsupported>");
-+
-+	if (ret)
-+		return ret;
-+
-+	sig = val & AUTO_ACT_WINDOW_MAX_SIG;
-+	exp = (val >> AUTO_ACT_WINDOW_SIG_BIT_SIZE) & AUTO_ACT_WINDOW_MAX_EXP;
-+
-+	return sysfs_emit(buf, "%lld\n", sig * int_pow(10, exp));
-+}
-+
-+static ssize_t store_auto_act_window(struct cpufreq_policy *policy,
-+				     const char *buf, size_t count)
-+{
-+	unsigned long usec;
-+	int digits = 0;
-+	int ret;
-+
-+	ret = kstrtoul(buf, 0, &usec);
-+	if (ret)
-+		return ret;
-+
-+	if (usec > AUTO_ACT_WINDOW_MAX_SIG * int_pow(10, AUTO_ACT_WINDOW_MAX_EXP))
-+		return -EINVAL;
-+
-+	while (usec > AUTO_ACT_WINDOW_SIG_CARRY_THRESH) {
-+		usec /= 10;
-+		digits += 1;
-+	}
-+
-+	if (usec > AUTO_ACT_WINDOW_MAX_SIG)
-+		usec = AUTO_ACT_WINDOW_MAX_SIG;
-+
-+	ret = cppc_set_auto_act_window(policy->cpu,
-+				       (digits << AUTO_ACT_WINDOW_SIG_BIT_SIZE) + usec);
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+}
-+
-+static ssize_t show_energy_perf(struct cpufreq_policy *policy, char *buf)
-+{
-+	u64 val;
-+	int ret;
-+
-+	ret = cppc_get_epp_perf(policy->cpu, &val);
-+
-+	/* show "<unsupported>" when this register is not supported by cpc */
-+	if (ret == -EOPNOTSUPP)
-+		return sysfs_emit(buf, "%s\n", "<unsupported>");
-+
-+	if (ret)
-+		return ret;
-+
-+	return sysfs_emit(buf, "%lld\n", val);
-+}
-+
-+#define ENERGY_PERF_MAX	(0xFF)
-+
-+static ssize_t store_energy_perf(struct cpufreq_policy *policy,
-+				 const char *buf, size_t count)
-+{
-+	unsigned long val;
-+	int ret;
-+
-+	ret = kstrtoul(buf, 0, &val);
-+	if (ret)
-+		return ret;
-+
-+	if (val > ENERGY_PERF_MAX)
-+		return -EINVAL;
-+
-+	ret = cppc_set_epp(policy->cpu, val);
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+}
-+
- cpufreq_freq_attr_ro(freqdomain_cpus);
-+cpufreq_freq_attr_rw(auto_select);
-+cpufreq_freq_attr_rw(auto_act_window);
-+cpufreq_freq_attr_rw(energy_perf);
  
- static struct freq_attr *cppc_cpufreq_attr[] = {
- 	&freqdomain_cpus,
-+	&auto_select,
-+	&auto_act_window,
-+	&energy_perf,
- 	NULL,
- };
+-int kmvhv_counters_tracepoint_regfunc(void)
++int kvmhv_counters_tracepoint_regfunc(void)
+ {
+ 	int cpu;
  
+@@ -4164,7 +4164,7 @@ int kmvhv_counters_tracepoint_regfunc(void)
+ 	return 0;
+ }
+ 
+-void kmvhv_counters_tracepoint_unregfunc(void)
++void kvmhv_counters_tracepoint_unregfunc(void)
+ {
+ 	int cpu;
+ 
+diff --git a/arch/powerpc/kvm/trace_hv.h b/arch/powerpc/kvm/trace_hv.h
+index 77ebc724e6cd..35fccaa575cc 100644
+--- a/arch/powerpc/kvm/trace_hv.h
++++ b/arch/powerpc/kvm/trace_hv.h
+@@ -538,7 +538,7 @@ TRACE_EVENT_FN_COND(kvmppc_vcpu_stats,
+ 	TP_printk("VCPU %d: l1_to_l2_cs_time=%llu ns l2_to_l1_cs_time=%llu ns l2_runtime=%llu ns",
+ 		__entry->vcpu_id,  __entry->l1_to_l2_cs,
+ 		__entry->l2_to_l1_cs, __entry->l2_runtime),
+-	kmvhv_counters_tracepoint_regfunc, kmvhv_counters_tracepoint_unregfunc
++	kvmhv_counters_tracepoint_regfunc, kvmhv_counters_tracepoint_unregfunc
+ );
+ #endif
+ #endif /* _TRACE_KVM_HV_H */
 -- 
-2.33.0
+2.43.5
 
 
