@@ -1,407 +1,154 @@
-Return-Path: <linux-kernel+bounces-409285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 880EE9C8A05
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:33:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD9179C8A0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:33:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E9E21F234B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:33:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84F7F1F23BC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC791FA25E;
-	Thu, 14 Nov 2024 12:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474151FA846;
+	Thu, 14 Nov 2024 12:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u3k9BPvR"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NGeURtVd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4BF1F9A8D
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 12:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108D11F9A8D;
+	Thu, 14 Nov 2024 12:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731587580; cv=none; b=i3AUlqI9oqQgVv8TfC10pA2v5pTGYvlEzSHG+aB1z1LxCU9Klnb99D9dIPPeAFmEDjGIADF3ghFrjAdRL2NKkOUn8rTfKGI+IUZJQwKTlubgOlRuPDl1z5u4kXLuWdEVDSa3Xo/iBpVi2QOrXWlqIwTeZIlIWbbuWhUwZd4PDG4=
+	t=1731587591; cv=none; b=Pnlu7Y+Bf3YKNl1BzlU+rIsby4EY9NQ76gureV/xARo9VFIMFnO9f0T4xYW+XV0n8m8XULKpLaj0tQ3W4y/z4S1atK08sfr/Cv2ojW49KWF+L03SQfhOqtayji9rNHL0gy7dbBEaJy+B1ZCUJowHeKpT3KuZooqyJ81nxaqymIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731587580; c=relaxed/simple;
-	bh=7/tIU9o2uD+rnTUcrXFWle2j2spADixTljHDU6DhZm4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Saquk5e/IxOxAyAsrBsOMFu8bzMKPiSJIWp5Nx0rTwrY+A/cKQn0OfuX3JOGxfy2d/nmR3445FRmgNhVbM2X596oPzRHEbw0K1vrXfQJR1y19BpOEzYkF+SI0R0T67ruvrzbq66NzG1LjSrIyPpjGJ7/Vkia9ytsW/K/EupVRec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u3k9BPvR; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb57f97d75so5461001fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 04:32:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731587577; x=1732192377; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZVLoP9XVBjH5taL4TpmDze9j1Zqat4TO/x8cVB0wKTk=;
-        b=u3k9BPvRyoy/1EBjyTrvz7ozpoz9qlSXWwhQVb+72GDcd4mQYx7vKXxiOZ6hB67X3R
-         dzSPjOZWXYAxh9vFtO6X9GHXTjmWJY203LNjKXxLILWWTrzABSp3QyXpZLPuv40VSUGc
-         RqksJTRs4vrjpi3q39ymQ+Ws5iRcW4Hndte1OAooS1geZBVw4gasGKZeVawhy0SHPraK
-         UTO1Aft+lru9mjRqAqHuEqYXYqOF6HbPLUHpNqJndh8tcawzyZs5lJglZRz9slk6doHJ
-         5xK2DX4Y90g1Wa6Wat5xNONrLhTReC4EFgK+jaiZ1b8yUxxlKtVeuQMMetyqr1mAsLgI
-         09Tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731587577; x=1732192377;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZVLoP9XVBjH5taL4TpmDze9j1Zqat4TO/x8cVB0wKTk=;
-        b=VW5BBz0Yzctd6lwBSVpMg+u1J8Ux6bsZiCFGkk1dkryFR5zAuAzjo8wFsvTOkEyESg
-         iFsDobfbOWXdemRt1MJwcIy3ANY/q9lYY2DfRjfkobd1+nVUCkwRY11xg/UrkEEtZhd3
-         1vopugVHJVlq5dYTZBQkAedTdVtAWUnN3b58/Z1Iq0ohH3tjPzGbwJmu+SANc3xMyZ1y
-         wBjVFZbJmyNrvcF+uyGO1PTZUyB0tbvgI6IofqhXYM1VxnTXkayVRuxYYEO69sj0vhxu
-         z1cFnEX8crLasrlpDdodWxCG7kcOG5MbgZUz+vYnZSzNuiVOn/qF11cP10Ogly88WqYy
-         c/2g==
-X-Forwarded-Encrypted: i=1; AJvYcCUIKeOyXKKZQGp9eetVHFwiT9iSEIth/nx10Gl+LZTXJQPGE13/VTn9mJ3nplRvHVcGneXIHjiNZCKnVjs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ3jM3YpM37GoB9Kwgt+VquuM48u/nGY7VSdtZFHM9vJ8Yppt4
-	R0Nr9zJp/Ez8LEE1Iz9Th7MkFP8iDuLbFCyrgiu2MJ0mzNOEhZgMtTjzm7lfR5g=
-X-Google-Smtp-Source: AGHT+IH7G+Tz/0L4sqitxAHMiB7SEIXBc17jR80P2FR2ol6AYyOcDIRTQh+Yj4FOWT3Pv1+2j5CZ9A==
-X-Received: by 2002:a05:651c:1589:b0:2fb:5bb8:7c24 with SMTP id 38308e7fff4ca-2ff20152825mr121200501fa.8.1731587576703;
-        Thu, 14 Nov 2024 04:32:56 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff59764207sm1621871fa.13.2024.11.14.04.32.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 04:32:55 -0800 (PST)
-Date: Thu, 14 Nov 2024 14:32:52 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: myungjoo.ham@samsung.com, Kyungmin.park@samsung.com, 
-	cw00.choi@samsung.com, Viresh Kumar <viresh.kumar@linaro.org>, sudeep.holla@arm.com, 
-	cristian.marussi@arm.com, andersson@kernel.org, konrad.dybcio@linaro.org, 
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com, conor+dt@kernel.org, 
-	arm-scmi@vger.kernel.org, Amir Vajid <avajid@quicinc.com>
-Subject: Re: [PATCH V4 4/5] soc: qcom: Introduce SCMI based Memlat (Memory
- Latency) governor
-Message-ID: <34p27za5hcpubaxjuddsir2vqnqrvwyesnclu2cocvm3yhbv3r@ak7rcnp67gyd>
-References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
- <20241007061023.1978380-5-quic_sibis@quicinc.com>
- <2aycrvnvivcrqctqmweadcgenwugafdr6ub3bzkscterpenz32@bzabln2hkral>
- <29eef87e-96f6-5105-6f7a-a8e01efcb4a3@quicinc.com>
- <k4lpzxtrq3x6riyv6etxiobn7nbpczf2bp3m4oc752nhjknlit@uo53kbppzim7>
- <ac655bdc-5ccf-c6c6-3203-659f1916c53c@quicinc.com>
+	s=arc-20240116; t=1731587591; c=relaxed/simple;
+	bh=3kQXH45Idd5+JbJ5Ak0RLE0/ggWU/RBEVLi1j3lyd1Y=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ldD8ff4CdP2YFP/KAKs3PpW2+ihxV4/dwWtIrH6dQw7NarfTCPD7o6XWA04zQQYuspJ+UT+Fi5aFHXdRhgC9CGvyC7XOOFbtV6IAG0c/+tNeK/2zQFNuMv73k52hDmzC/Lq2bwkMg3QR9lX85VBNnJ61gHgXYrxIZwIP2kVfies=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NGeURtVd; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731587590; x=1763123590;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=3kQXH45Idd5+JbJ5Ak0RLE0/ggWU/RBEVLi1j3lyd1Y=;
+  b=NGeURtVdfcDQWCMh6ffMTeqv/BZIUJDfkAvOh+aKurh+kKcvvfo5faBE
+   SXQR+DG2s+218RCHKKig3vO+v9rh0HzSI7do6FDRpkEDQ38fRgnpKCJtx
+   mudFdPiTDx0qa+iYjP+XlYf3zqDOE+8/g7tFwfa9dsdvcVImKQxi2Z/HJ
+   4IjlEliCq0yYGW296vQcFyW3Ob/6DME8aUzaEVsi3U7yMg8HXrt6pIMIz
+   oBG2TOkuIN2tidS//wqSIuKJtBUtS6hpteRLC7E3NoPpcqs8nG33IvWdj
+   BQMJ9doJZWVUqFXPfon1c+AIEdmErfaUrHeT/+eQ7Cqev6BuH+/Rb/d7m
+   A==;
+X-CSE-ConnectionGUID: sv4qmrZ0Siu7lvU4apokRQ==
+X-CSE-MsgGUID: h/KeglIvQIK+kMxbNh+UCQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11255"; a="42149100"
+X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
+   d="scan'208";a="42149100"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 04:33:07 -0800
+X-CSE-ConnectionGUID: u6Su2D4VTTSwaRflvzFO/Q==
+X-CSE-MsgGUID: RxPJOsDQS0yrxIdVh89iTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
+   d="scan'208";a="92999718"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.54])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 04:32:59 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 14 Nov 2024 14:32:56 +0200 (EET)
+To: Bjorn Helgaas <helgaas@kernel.org>
+cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
+    Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
+    Rob Herring <robh@kernel.org>, 
+    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
+    "Maciej W . Rozycki" <macro@orcam.me.uk>, 
+    Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+    Lukas Wunner <lukas@wunner.de>, Alexandru Gagniuc <mr.nuke.me@gmail.com>, 
+    Krishna chaitanya chundru <quic_krichai@quicinc.com>, 
+    Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+    "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
+    Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    Daniel Lezcano <daniel.lezcano@linaro.org>, 
+    Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+    Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
+    Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+    Amit Pundir <amit.pundir@linaro.org>, 
+    Neil Armstrong <neil.armstrong@linaro.org>, 
+    Caleb Connolly <caleb.connolly@linaro.org>
+Subject: Re: [PATCH v9 0/9] PCI: Add PCIe bandwidth controller
+In-Reply-To: <20241113214850.GA1912974@bhelgaas>
+Message-ID: <a5d7afb0-be64-78fd-24fa-b374647c1d8c@linux.intel.com>
+References: <20241113214850.GA1912974@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ac655bdc-5ccf-c6c6-3203-659f1916c53c@quicinc.com>
+Content-Type: multipart/mixed; BOUNDARY="8323328-533261549-1731581789=:939"
+Content-ID: <ddf631d2-2345-0064-55e1-b6856dcd4a0a@linux.intel.com>
 
-On Thu, Nov 14, 2024 at 09:43:53AM +0530, Sibi Sankar wrote:
-> 
-> 
-> On 10/26/24 23:46, Dmitry Baryshkov wrote:
-> > On Tue, Oct 22, 2024 at 01:48:25PM +0530, Sibi Sankar wrote:
-> > > 
-> > > 
-> > > On 10/7/24 23:27, Dmitry Baryshkov wrote:
-> > > > On Mon, Oct 07, 2024 at 11:40:22AM GMT, Sibi Sankar wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> > > > 
-> > > > > +};
-> > > > > +
-> > > > > +struct map_param_msg {
-> > > > > +	u32 hw_type;
-> > > > > +	u32 mon_idx;
-> > > > > +	u32 nr_rows;
-> > > > > +	struct map_table tbl[MAX_MAP_ENTRIES];
-> > > > > +} __packed;
-> > > > > +
-> > > > > +struct node_msg {
-> > > > > +	u32 cpumask;
-> > > > > +	u32 hw_type;
-> > > > > +	u32 mon_type;
-> > > > > +	u32 mon_idx;
-> > > > > +	char mon_name[MAX_NAME_LEN];
-> > > > > +};
-> > > > > +
-> > > > > +struct scalar_param_msg {
-> > > > > +	u32 hw_type;
-> > > > > +	u32 mon_idx;
-> > > > > +	u32 val;
-> > > > > +};
-> > > > > +
-> > > > > +enum common_ev_idx {
-> > > > > +	INST_IDX,
-> > > > > +	CYC_IDX,
-> > > > > +	CONST_CYC_IDX,
-> > > > > +	FE_STALL_IDX,
-> > > > > +	BE_STALL_IDX,
-> > > > > +	NUM_COMMON_EVS
-> > > > > +};
-> > > > > +
-> > > > > +enum grp_ev_idx {
-> > > > > +	MISS_IDX,
-> > > > > +	WB_IDX,
-> > > > > +	ACC_IDX,
-> > > > > +	NUM_GRP_EVS
-> > > > > +};
-> > > > > +
-> > > > > +#define EV_CPU_CYCLES		0
-> > > > > +#define EV_INST_RETIRED		2
-> > > > > +#define EV_L2_D_RFILL		5
-> > > > > +
-> > > > > +struct ev_map_msg {
-> > > > > +	u32 num_evs;
-> > > > > +	u32 hw_type;
-> > > > > +	u32 cid[NUM_COMMON_EVS];
-> > > > > +};
-> > > > > +
-> > > > > +struct cpufreq_memfreq_map {
-> > > > > +	unsigned int cpufreq_mhz;
-> > > > > +	unsigned int memfreq_khz;
-> > > > > +};
-> > > > > +
-> > > > > +struct scmi_monitor_info {
-> > > > > +	struct cpufreq_memfreq_map *freq_map;
-> > > > > +	char mon_name[MAX_NAME_LEN];
-> > > > > +	u32 mon_idx;
-> > > > > +	u32 mon_type;
-> > > > > +	u32 ipm_ceil;
-> > > > > +	u32 mask;
-> > > > > +	u32 freq_map_len;
-> > > > > +};
-> > > > > +
-> > > > > +struct scmi_memory_info {
-> > > > > +	struct scmi_monitor_info *monitor[MAX_MONITOR_CNT];
-> > > > > +	u32 hw_type;
-> > > > > +	int monitor_cnt;
-> > > > > +	u32 min_freq;
-> > > > > +	u32 max_freq;
-> > > > > +};
-> > > > > +
-> > > > > +struct scmi_memlat_info {
-> > > > > +	struct scmi_protocol_handle *ph;
-> > > > > +	const struct qcom_generic_ext_ops *ops;
-> > > > > +	struct scmi_memory_info *memory[MAX_MEMORY_TYPES];
-> > > > > +	u32 cluster_info[NR_CPUS];
-> > > > > +	int memory_cnt;
-> > > > > +};
-> > > > > +
-> > > > > +static int populate_cluster_info(u32 *cluster_info)
-> > > > > +{
-> > > > > +	char name[MAX_NAME_LEN];
-> > > > > +	int i = 0;
-> > > > > +
-> > > > > +	struct device_node *cn __free(device_node) = of_find_node_by_path("/cpus");
-> > > > > +	if (!cn)
-> > > > > +		return -ENODEV;
-> > > > > +
-> > > > > +	struct device_node *map __free(device_node) = of_get_child_by_name(cn, "cpu-map");
-> > > > > +	if (!map)
-> > > > > +		return -ENODEV;
-> > > > > +
-> > > > > +	do {
-> > > > > +		snprintf(name, sizeof(name), "cluster%d", i);
-> > > > > +		struct device_node *c __free(device_node) = of_get_child_by_name(map, name);
-> > > > > +		if (!c)
-> > > > > +			break;
-> > > > > +
-> > > > > +		*(cluster_info + i) = of_get_child_count(c);
-> > > > > +		i++;
-> > > > > +	} while (1);
-> > > > 
-> > > > Can you use existing API from drivers/base/arch_topology.c? If not, can
-> > > > it be extended to support your usecase?
-> > > 
-> > > ack. But I'm pretty sure it's going to take a while for reaching such
-> > > an agreement so I'll drop this feature during the next re-spin.
-> > 
-> > Why? What kind of API do you actually need? The arch_topology.c simply
-> > exports a table of struct cpu_topology. Is it somehow different from
-> > what you are parsing manually?
-> 
-> yup, we had to figure out the physical id of the cpu
-> since cpus can be disabled by the bootloader using
-> status = "failed" property and we have to pass this
-> onto the cpucp memlat algorithm.
+--8323328-533261549-1731581789=:939
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <24c044f9-6a09-1f98-9c0b-5ebe7e7d745b@linux.intel.com>
 
-Isn't it equal to the index in the cpu_topology table?
+On Wed, 13 Nov 2024, Bjorn Helgaas wrote:
 
-> 
-> > 
-> > > 
-> > > > 
-> > > > > +
-> > > > > +	return 0;
-> > > > > +}
-> > > > > +
-> > > > > +static void populate_physical_mask(struct device_node *np, u32 *mask, u32 *cluster_info)
-> > > > > +{
-> > > > > +	struct device_node *dev_phandle __free(device_node);
-> > > > > +	int cpu, i = 0, physical_id;
-> > > > > +
-> > > > > +	do {
-> > > > > +		dev_phandle = of_parse_phandle(np, "cpus", i++);
-> > > > > +		cpu = of_cpu_node_to_id(dev_phandle);
-> > > > > +		if (cpu != -ENODEV) {
-> > > > > +			physical_id = topology_core_id(cpu);
-> > > > > +			for (int j = 0; j < topology_cluster_id(cpu); j++)
-> > > > > +				physical_id += *(cluster_info + j);
-> > > > > +			*mask |= BIT(physical_id);
-> > > > > +		}
-> > > > > +	} while (dev_phandle);
-> > > > > +}
-> > > > > +
-> > > > > +static struct cpufreq_memfreq_map *init_cpufreq_memfreq_map(struct device *dev,
-> > > > > +							    struct scmi_memory_info *memory,
-> > > > > +							    struct device_node *of_node,
-> > > > > +							    u32 *cnt)
-> > > > > +{
-> > > > > +	struct device_node *tbl_np __free(device_node), *opp_np __free(device_node);
-> > > > > +	struct cpufreq_memfreq_map *tbl;
-> > > > > +	int ret, i = 0;
-> > > > > +	u32 level, len;
-> > > > > +	u64 rate;
-> > > > > +
-> > > > > +	tbl_np = of_parse_phandle(of_node, "operating-points-v2", 0);
-> > > > 
-> > > > Please use existing API to parse OPP tables or document a reason why it
-> > > > can't be used.
-> > > 
-> > > Thanks, I had them documented as opens in the coverletter. Dropped them
-> > > since no one had any comments on it during V3. Will add them as comments
-> > > to this driver instead.
-> > > 
-> > > https://lore.kernel.org/lkml/20240702191440.2161623-1-quic_sibis@quicinc.com/
-> > > 
-> > > re-copying things again:
-> > > opp-tables are used but they don't get to be added to the scmi device
-> > > (thus we rely on a lot of manual parsing) because the memlat client driver
-> > > doesn't vote on these resources clocks/interconnects/power-domain
-> > > from the kernel and some of the resources aren't modeled in the first
-> > > place like DDR_QOS.
-> > 
-> > As discussed offline, please consider extending the OPP to be able to
-> > get the struct opp_table for the particular phandle. Another option
-> > might be to change the memlat driver by having a separate device for
-> > each monitor. This way you can use existing API to parse OPP tables and
-> > to get necessary data from those tables.
-> 
-> + Viresh
-> 
-> Spoke with Viresh offline and he had stricter requirements
-> than what you proposed. He definitely wanted the opp-tables
-> to be assoiciated with devices at the very least and have
-> all opp parsing logic within the opp-framework. Given that
-> we have to model all these dummy devices just to add the
-> tables I'll re-check the feasibility of movign the tables
-> into the driver itself. Will move the patch series back
-> into RFC and re-post just the vendor protocol since that's
-> close to merge
+> [+cc Bart, Amit, Neil, Caleb]
+>=20
+> On Wed, Oct 23, 2024 at 05:19:04PM -0500, Bjorn Helgaas wrote:
+> > On Fri, Oct 18, 2024 at 05:47:46PM +0300, Ilpo J=E4rvinen wrote:
+> > > This series adds PCIe bandwidth controller (bwctrl) and associated PC=
+Ie
+> > > cooling driver to the thermal core side for limiting PCIe Link Speed
+> > > due to thermal reasons. PCIe bandwidth controller is a PCI express bu=
+s
+> > > port service driver. A cooling device is created for each port the
+> > > service driver finds to support changing speeds.
+>=20
+> > >  drivers/pci/pcie/bwctrl.c                     | 366 ++++++++++++++++=
+++
+> > >  include/linux/pci-bwctrl.h                    |  28 ++
+> > >  tools/testing/selftests/pcie_bwctrl/Makefile  |   2 +
+> > >  .../pcie_bwctrl/set_pcie_cooling_state.sh     | 122 ++++++
+> > >  .../selftests/pcie_bwctrl/set_pcie_speed.sh   |  67 ++++
+>=20
+> > Applied to pci/bwctrl for v6.13, thanks Ilpo (and Alexandru, for the
+> > bandwidth notification interrupt support)!
+>=20
+> How attached are we to "bwctrl" and "pwrctl" as the names?
+>
+> I just noticed that we have "ctrl" for bandwidth control but "ctl" for
+> power control, which is slightly annoying to keep straight.
+>=20
+> "ctrl" is more common in the tree:
+>=20
+>   $ find -name \*ctrl\*[ch] | wc -l
+>   691
+>   $ find -name \*ctl\*[ch] | wc -l
+>   291
+>=20
+> so I would prefer that, although "pwrctl" is already in the tree (as
+> of v6.11), so it would be more disruptive to change it than to rename
+> "bwctrl".
 
-I don't think it's sensible to move the tables to the driver. Instead
-adding a device per monitor sounds like a better idea.
+I personally don't mind what the name is.
 
-> > > > > +	if (!tbl_np)
-> > > > > +		return ERR_PTR(-ENODEV);
-> > > > > +
-> > > > > +	len = min(of_get_available_child_count(tbl_np), MAX_MAP_ENTRIES);
-> > > > > +	if (len == 0)
-> > > > > +		return ERR_PTR(-ENODEV);
-> > > > > +
-> > > > > +	tbl = devm_kzalloc(dev, (len + 1) * sizeof(struct cpufreq_memfreq_map),
-> > > > > +			   GFP_KERNEL);
-> > > > > +	if (!tbl)
-> > > > > +		return ERR_PTR(-ENOMEM);
-> > > > > +
-> > > > > +	for_each_available_child_of_node(tbl_np, opp_np) {
-> > > > > +		ret = of_property_read_u64_index(opp_np, "opp-hz", 0, &rate);
-> > > > > +		if (ret < 0)
-> > > > > +			return ERR_PTR(ret);
-> > > > > +
-> > > > > +		tbl[i].cpufreq_mhz = rate / HZ_PER_MHZ;
-> > > > > +
-> > > > > +		if (memory->hw_type != QCOM_MEM_TYPE_DDR_QOS) {
-> > > > > +			ret = of_property_read_u64_index(opp_np, "opp-hz", 1, &rate);
-> > > > > +			if (ret < 0)
-> > > > > +				return ERR_PTR(ret);
-> > > > > +
-> > > > > +			tbl[i].memfreq_khz = rate / HZ_PER_KHZ;
-> > > > > +		} else {
-> > > > > +			ret = of_property_read_u32(opp_np, "opp-level", &level);
-> > > > > +			if (ret < 0)
-> > > > > +				return ERR_PTR(ret);
-> > > > > +
-> > > > > +			tbl[i].memfreq_khz = level;
-> > > > > +		}
-> > > > > +
-> > > > > +		dev_dbg(dev, "Entry%d CPU:%u, Mem:%u\n", i, tbl[i].cpufreq_mhz, tbl[i].memfreq_khz);
-> > > > > +		i++;
-> > > > > +	}
-> > > > > +	*cnt = len;
-> > > > > +
-> > > > > +	return tbl;
-> > > > > +}
-> > > > > +
-> > > > > +static int process_scmi_memlat_of_node(struct scmi_device *sdev, struct scmi_memlat_info *info)
-> > > > > +{
-> > > > > +	struct scmi_monitor_info *monitor;
-> > > > > +	struct scmi_memory_info *memory;
-> > > > > +	char name[MAX_NAME_LEN];
-> > > > > +	u64 memfreq[2];
-> > > > > +	int ret;
-> > > > > +
-> > > > > +	ret = populate_cluster_info(info->cluster_info);
-> > > > > +	if (ret < 0) {
-> > > > > +		dev_err_probe(&sdev->dev, ret, "failed to populate cluster info\n");
-> > > > > +		goto err;
-> > > > > +	}
-> > > > > +
-> > > > > +	of_node_get(sdev->dev.of_node);
-> > > > > +	do {
-> > > > > +		snprintf(name, sizeof(name), "memory-%d", info->memory_cnt);
-> > > > > +		struct device_node *memory_np __free(device_node) =
-> > > > > +			of_find_node_by_name(sdev->dev.of_node, name);
-> > > > > +
-> > > > > +		if (!memory_np)
-> > > > > +			break;
-> > > > > +
-> > > > > +		if (info->memory_cnt >= MAX_MEMORY_TYPES)
-> > > > > +			return dev_err_probe(&sdev->dev, -EINVAL,
-> > > > > +					     "failed to parse unsupported memory type\n");
-> > > > > +
-> > > > > +		memory = devm_kzalloc(&sdev->dev, sizeof(*memory), GFP_KERNEL);
-> > > > > +		if (!memory) {
-> > > > > +			ret = -ENOMEM;
-> > > > > +			goto err;
-> > > > > +		}
-> > > > > +
-> > > > > +		ret = of_property_read_u32(memory_np, "qcom,memory-type", &memory->hw_type);
-> > > > > +		if (ret) {
-> > > > > +			dev_err_probe(&sdev->dev, ret, "failed to read memory type\n");
-> > > > > +			goto err;
-> > > > > +		}
-> > > > > +
-> > > > > +		ret = of_property_read_u64_array(memory_np, "freq-table-hz", memfreq, 2);
-> > > > > +		if (ret && (ret != -EINVAL)) {
-> > > > > +			dev_err_probe(&sdev->dev, ret, "failed to read min/max freq\n");
-> > > > > +			goto err;
-> > > > > +		}
-> > > > 
-> > > > Can we get this information from the OPP table instead?
-> > > 
-> > > we don't list all the available ddr/llcc freqs in the opp-table
-> > > so that we can keep the table constant across platforms.
-> > 
-> > NO. Use opp-supported-hw to limit data to a particular platform. There
-> > is no reason to keep min/max out of the OPP table.
-> 
-> if we are movign the opp-tables into driver data for the reasons
-> described above, this can probably stay?
+However, what I've noted is that visually those two are so similar that my=
+=20
+brains will mix them on a glance anyway. Maybe the length difference would=
+=20
+help on that confusion too, remains to be seen.
 
-No. They duplicate the information that can be a part of the tables. It
-doesn't matter if the tables are in the driver or in DT.
-
-
--- 
-With best wishes
-Dmitry
+--=20
+ i.
+--8323328-533261549-1731581789=:939--
 
