@@ -1,268 +1,138 @@
-Return-Path: <linux-kernel+bounces-409593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D245E9C8EEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:59:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F5F09C8FAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:27:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 556901F20FE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:59:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46441B4452F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:59:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD6518C35C;
-	Thu, 14 Nov 2024 15:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3511D18E044;
+	Thu, 14 Nov 2024 15:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n/uIc2Pu"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YNJ42KWi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493F518C018
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B8718DF85
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731599535; cv=none; b=L2eCTuY95qXtf7lE+/3v6V+LLUGx1zPd8LTVppMFZMCiuaZh4sGiX0x+ZcqgcMVF4gQUq0Om/pP7Uowdvkf5LJ9MiY1/tnNzxB0YzDONJx5VwMZ9PFHzjEtBGsioo+K1Y3KkdsdG95iER5EkjIpe8f4mw1tpO7U0ATXzTeE795I=
+	t=1731599640; cv=none; b=hGdrr9ob1PiISHF3K6l3CZH0CIpdKw3z2FaOW06NrxEsamh3OzeVXVpQl+aNGtQhLNiLCePMIYznONUXKzUHxHqw2nlyx6YupMZIoZ4hU1+ZwpE17dHPV28hgye4oSnkW8271cw8J4+hyBDNxWNMRMea7u17Y+yo2kRBD/HBF+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731599535; c=relaxed/simple;
-	bh=v1RiomMiWVqeQ0xSIyrfA4rsENMHKQjxihGO/VInIns=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y2gVW7qztQI7H1zabgtVN6CcTt1woROlLwmWWxa6FRhxlqek9G9/swVUUpxxET53ZEehCc7RcaUX16uVUQZunGOoO1kKRyTjfgroqgAwjBeZJkqR+Z7bZHfKGS9zRmZgpOg6YwCLUG44LerA4A9jSyeRifoxr7E3tSkL+BSxss4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n/uIc2Pu; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3a4e54d3cefso170225ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:52:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731599532; x=1732204332; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ktgKdwX1j+4Opkivi2DSjE8sDLzSzC2KukaMkHYqosU=;
-        b=n/uIc2Pu6r/An4+qHX9t3Epor5bPFhvMcohHxnZf3E9AJ2Rg+QHyVSx7LCbhrwtB+x
-         r1A5fH2Te7jHlnodjykwyoOoaRet/i+jC+K8DHBKmAD0Hi6C9xpCLaWRGVqAhS5/lfHT
-         8tc4EF/2iA5GVcZYc+RpPj/u8+P+WVoxtoYHFW3ygrCtYdt0q+q184OdY1ijc7QQrvrN
-         t8xdnuz0ZR2bvjh7Q9yVZyhslQ8irTkolG0v/aDZtfOSrrPNpou8ilMJMOXMD4Cd5UGR
-         s6r60LdS8I1jZ4tdBK1B7AL97aBbRP0Tqb/jFHfcWcPYoMG5GTPR28YJqKvTQkiEAsXi
-         aASA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731599532; x=1732204332;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ktgKdwX1j+4Opkivi2DSjE8sDLzSzC2KukaMkHYqosU=;
-        b=a4rzg5QHX3dPmnhxe63jxJx9NOQw1pclfhO8d4sT+AGK42ctVJ9O6KWGQgo9aWV85a
-         hAtz1EFwxUoiVNkEucYY5aIs1KNKeXedUqnVeOZK/vhAhsgBVg36fFz2d6gBgLTjzCcm
-         +cyqZLzhGVaiRuW8+q0Ql0RyTEX+MwEI5+7ebXu4RK5ZquCIdyl60//6kjF9Dpzw3Ef7
-         VEO7CPXy1Y2gVBSDtIXakTZBSQKkuNPMixPzmEeFA+xgFm512dr0xkDjtoO0qIFE0wlM
-         OxMmpQjx2q6TskdJSns1Rb3DF2X46E2Nlg70ceN4rIRHVx/90dK98V9d8YAubKfmUn8H
-         o9DQ==
-X-Gm-Message-State: AOJu0YzYz7kOnO1ZYW8YSfiPbZBLsWvvWHZVXyRYZi8SColUqRaUDLKx
-	4UFU37WyLvCzZFPcZt598K4E7Do8IX9RWC80Mr4cv4icZlDac7zMusDONQLEaArYgIsKi59sJPY
-	qFgrZtE50RB4qPF5Lf0/4UF+Q0CI4ZqepSDGPIr9S0YnM4v0K1xhA
-X-Gm-Gg: ASbGncsusVLFN/RnKN+/GrQ97Jfbpu/EY++H5Xs/hS4fHzQGM6WzrTJpdaSmVFN3ADp
-	GErknqBNRDvbb07X+VupE4LwojNOA8yEKnhF31m7rMocRhA324vD2ozYgdE2Z/GQ=
-X-Google-Smtp-Source: AGHT+IE8ou8Ygo56/ExTa5P+XtsMh75yKL6Jwd6AM/SdzEaQiK9oNtsAvUaqrHkm2YT+XDF+hFAsSS+8xs5Ra6Kd4hA=
-X-Received: by 2002:a05:6e02:219b:b0:3a6:f43d:a24e with SMTP id
- e9e14a558f8ab-3a71e6e2cb2mr4141345ab.10.1731599532040; Thu, 14 Nov 2024
- 07:52:12 -0800 (PST)
+	s=arc-20240116; t=1731599640; c=relaxed/simple;
+	bh=/+SRlLPVSoEcqhnEB8irN9IMlpg5pF84WuBgpr4BvI4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OLzUfg2L18k/M9fO+dWvKxRGqiFZ+Of4uHKvEiP8F0C23hmWBi8ibNg95ldwDfi9v+QNqq67BoP1m4rppdGi6BLu6klBy2Rkld0UGSzhjEDa1bWy4PaYJFJRS1SROeKcHcfsMVnmIX4kE8eWuVzUVxdgJUip3o/qOmVd8jMDCtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YNJ42KWi; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731599639; x=1763135639;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=/+SRlLPVSoEcqhnEB8irN9IMlpg5pF84WuBgpr4BvI4=;
+  b=YNJ42KWim8XhS8jrDJdLjjksdI5DZ1htI2SkIj38uiJ/o9v2TNb9qLN0
+   8xYyK7fsZezRb9djj2DJ3DbL7TBuhVj2eo/B5HKy+VBtpRk80oZ5Xj+Pt
+   RBeG0hl7h5pj9+aAUrtub1AqUZ/bO5/oajyj8HbS8/mJblQ/H6xf+Eyt5
+   q4kMTVOTIjhu0D/5YXIHmvxBpZqbpIG4bpvO616TNYc5457b0Mkr9RrZW
+   tP36q9rFLJP1dImunZSNZ1Qhnii0h5mRnHjaqXZIu8utm9pgQbo242Idr
+   vzEp0mYQXrjl56+in7O3hu+PuGoVHZg/yKe6z6/DEsHtI3DUmwmcOo3w7
+   A==;
+X-CSE-ConnectionGUID: swcnqAkSScuSUzTgqGNeaw==
+X-CSE-MsgGUID: pf8Zq+btTlqibZLbO5yXyA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31420261"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="31420261"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 07:53:58 -0800
+X-CSE-ConnectionGUID: ca6lHrFMTKih0NmqmX/crA==
+X-CSE-MsgGUID: ikoNUm1aRsKw6pFS4HukvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
+   d="scan'208";a="93324440"
+Received: from unknown (HELO localhost) ([10.237.66.160])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 07:53:51 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>, Sergey Senozhatsky
+ <senozhatsky@chromium.org>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+ intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ ville.syrjala@linux.intel.com
+Subject: Re: [RFC][PATCH] drm: i915: do not NULL deref hdmi attached_connector
+In-Reply-To: <87msi3bidr.fsf@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20241031105145.2140590-1-senozhatsky@chromium.org>
+ <20241113083920.GH1458936@google.com> <87msi3bidr.fsf@intel.com>
+Date: Thu, 14 Nov 2024 17:53:46 +0200
+Message-ID: <87cyix6cc5.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106003007.2112584-1-ctshao@google.com> <20241106003007.2112584-3-ctshao@google.com>
-In-Reply-To: <20241106003007.2112584-3-ctshao@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 14 Nov 2024 07:51:59 -0800
-Message-ID: <CAP-5=fUk7ZSpHwwN98_YVFbKxGQSSbe+kLsCTiuS6mKkS+c3tA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] perf evsel: Find process with busy PMUs for EBUSY
-To: Chun-Tse Shao <ctshao@google.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Nov 5, 2024 at 4:30=E2=80=AFPM Chun-Tse Shao <ctshao@google.com> wr=
-ote:
+On Wed, 13 Nov 2024, Jani Nikula <jani.nikula@linux.intel.com> wrote:
+> On Wed, 13 Nov 2024, Sergey Senozhatsky <senozhatsky@chromium.org> wrote:
+>> On (24/10/31 19:51), Sergey Senozhatsky wrote:
+>>> intel_ddi_init() may skip connector initialization, for instance,
+>>> both intel_ddi_init_dp_connector() and intel_ddi_init_hdmi_connector()
+>>> are optional.  This leads to situation that ->attached_connector may
+>>> be NULL for some connectors.  For instance, on my setup 'DDI A/PHY A'
+>>> and 'DDI TC1/PHY TC1' are not initialized.
+>>> 
+>>> However, functions like intel_dp_dual_mode_set_tmds_output() and
+>>> friends don't take this into consideration.  This leads to NULL
+>>> ptr-derefs:
+>>> 
+>>> KASAN: null-ptr-deref in range [0x0000000000000848-0x000000000000084f]
+>>> RIP: 0010:intel_hdmi_encoder_shutdown+0x105/0x230
+>>> Call Trace:
+>>> <TASK>
+>>> i915_driver_shutdown+0x2d8/0x490
+>>> pci_device_shutdown+0x83/0x150
+>>> device_shutdown+0x4ad/0x660
+>>> __se_sys_reboot+0x29c/0x4d0
+>>> do_syscall_64+0x60/0x90
+>>> 
+>>> Add a new helper to avoid NULL ->attached_connector derefs and
+>>> switch some intel_hdmi function to it.  I'm not sure if we need
+>>> to switch all or just intel_dp_dual_mode_set_tmds_output() (I
+>>> have only seen this one doing NULL derefs so far).
+>>
+>> Folks, any more comments / opinions on this?
+>> What should be the way forward?
 >
-> It parses fdinfo with PMU type, comparing with the event which failed to
-> open, and report the processes causing EBUSY error.
+> Ville, we handle intel_ddi_init_dp_connector() failures but not
+> intel_ddi_init_hdmi_connector() failures. Do you recall if there's a
+> reason for that? Something like a dual-mode port where DP works but HDMI
+> gets rejected because of bogus VBT info?
 >
-> Testing cycles and intel_pt//
+> My gut feeling is to propagate errors from intel_hdmi_init_connector()
+> and handle them properly in g4x_hdmi_init() and
+> intel_ddi_init_hdmi_connector().
 >
->   $ ./perf stat -e cycles &
->   [1] 55569
->   $ ./perf stat -e intel_pt// &
->   [2] 55683
->   $ ./perf stat -e intel_pt//
->   Error:
->   The PMU intel_pt counters are busy and in use by another process.
->   Possible processes:
->   55683 ./perf stat -e intel_pt//
->
-> Only perf with intel_pt was reported.
+> Of course, we have cases where hdmi is just not initialized on DDI, and
+> those should be handled. But I don't think hdmi->attached_connector !=
+> NULL is really the right check for that.
 
-I think this looks really nice!
+I'm hoping [1] would solve the issue.
 
-> Signed-off-by: Chun-Tse Shao <ctshao@google.com>
+BR,
+Jani.
 
-Reviewed-by: Ian Rogers <irogers@google.com>
+[1] https://lore.kernel.org/r/cover.1731599468.git.jani.nikula@intel.com
 
-Thanks,
-Ian
 
-> Change-Id: Ic51a36ea3b2fd245663d7db78f35496bb4199d73
-> ---
->  tools/perf/util/evsel.c | 79 +++++++++++++++++++++++++++++------------
->  1 file changed, 57 insertions(+), 22 deletions(-)
->
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index d001ecfa26bf7..5400b795d9233 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -3286,7 +3286,8 @@ static bool find_process(const char *name)
->         return ret ? false : true;
->  }
->
-> -static int dump_perf_event_processes(char *msg, size_t size)
-> +static int dump_perf_event_processes(const struct perf_event_attr *faile=
-d_attr,
-> +                                    char *msg, size_t size)
->  {
->         DIR *proc_dir;
->         struct dirent *proc_entry;
-> @@ -3327,29 +3328,61 @@ static int dump_perf_event_processes(char *msg, s=
-ize_t size)
->                                 continue;
->                         /* Take care as readlink doesn't null terminate t=
-he string. */
->                         if (!strncmp(buf, "anon_inode:[perf_event]", link=
-_size)) {
-> -                               int cmdline_fd;
-> -                               ssize_t cmdline_size;
-> -
-> -                               scnprintf(buf, sizeof(buf), "%s/cmdline",=
- proc_entry->d_name);
-> -                               cmdline_fd =3D openat(dirfd(proc_dir), bu=
-f, O_RDONLY);
-> -                               if (cmdline_fd =3D=3D -1)
-> -                                       continue;
-> -                               cmdline_size =3D read(cmdline_fd, buf, si=
-zeof(buf) - 1);
-> -                               close(cmdline_fd);
-> -                               if (cmdline_size < 0)
-> +                               int fdinfo_fd;
-> +                               ssize_t fdinfo_size;
-> +                               char *line;
-> +                               u32 perf_event_type =3D UINT32_MAX;
-> +
-> +                               /* Let's check the PMU type reserved by t=
-his process */
-> +                               scnprintf(buf, sizeof(buf), "%s/fdinfo/%s=
-",
-> +                                         proc_entry->d_name, fd_entry->d=
-_name);
-> +                               fdinfo_fd =3D openat(dirfd(proc_dir), buf=
-, O_RDONLY);
-> +                               fdinfo_size =3D read(fdinfo_fd, buf, size=
-of(buf) - 1);
-> +                               if (fdinfo_size < 0)
->                                         continue;
-> -                               buf[cmdline_size] =3D '\0';
-> -                               for (ssize_t i =3D 0; i < cmdline_size; i=
-++) {
-> -                                       if (buf[i] =3D=3D '\0')
-> -                                               buf[i] =3D ' ';
-> +                               buf[fdinfo_size] =3D '\0';
-> +
-> +                               line =3D strtok(buf, "\n");
-> +                               while (line !=3D NULL) {
-> +                                       if (sscanf(line,
-> +                                                  "perf_event_attr.type:=
-\t%u",
-> +                                                  &perf_event_type) =3D=
-=3D 1)
-> +                                               break;
-> +                                       line =3D strtok(NULL, "\n");
->                                 }
->
-> -                               if (printed =3D=3D 0)
-> -                                       printed +=3D scnprintf(msg, size,=
- "Possible processes:\n");
-> -
-> -                               printed +=3D scnprintf(msg + printed, siz=
-e - printed,
-> -                                               "%s %s\n", proc_entry->d_=
-name, buf);
-> -                               break;
-> +                               /* Report the process which reserves the =
-conflicted PMU. */
-> +                               /* If fdinfo does not contain PMU type, r=
-eport it too. */
-> +                               if (perf_event_type =3D=3D failed_attr->t=
-ype ||
-> +                                   perf_event_type =3D=3D UINT32_MAX) {
-> +                                       int cmdline_fd;
-> +                                       ssize_t cmdline_size;
-> +
-> +                                       scnprintf(buf, sizeof(buf),
-> +                                                 "%s/cmdline",
-> +                                                 proc_entry->d_name);
-> +                                       cmdline_fd =3D openat(dirfd(proc_=
-dir), buf, O_RDONLY);
-> +                                       if (cmdline_fd =3D=3D -1)
-> +                                               continue;
-> +                                       cmdline_size =3D read(cmdline_fd,=
- buf, sizeof(buf) - 1);
-> +                                       close(cmdline_fd);
-> +                                       if (cmdline_size < 0)
-> +                                               continue;
-> +                                       buf[cmdline_size] =3D '\0';
-> +                                       for (ssize_t i =3D 0; i < cmdline=
-_size; i++) {
-> +                                               if (buf[i] =3D=3D '\0')
-> +                                                       buf[i] =3D ' ';
-> +                                       }
-> +
-> +                                       if (printed =3D=3D 0)
-> +                                               printed +=3D scnprintf(
-> +                                                       msg, size,
-> +                                                       "Possible process=
-es:\n");
-> +
-> +                                       printed +=3D scnprintf(msg + prin=
-ted, size - printed,
-> +                                                       "%s %s\n", proc_e=
-ntry->d_name, buf);
-> +                                       break;
-> +                               }
->                         }
->                 }
->                 closedir(fd_dir);
-> @@ -3458,7 +3491,9 @@ int evsel__open_strerror(struct evsel *evsel, struc=
-t target *target,
->                         msg, size,
->                         "The PMU %s counters are busy and in use by anoth=
-er process.\n",
->                         evsel->pmu ? evsel->pmu->name : "");
-> -               return printed + dump_perf_event_processes(msg + printed,=
- size - printed);
-> +               return printed + dump_perf_event_processes(&evsel->core.a=
-ttr,
-> +                                                          msg + printed,
-> +                                                          size - printed=
-);
->                 break;
->         case EINVAL:
->                 if (evsel->core.attr.sample_type & PERF_SAMPLE_CODE_PAGE_=
-SIZE && perf_missing_features.code_page_size)
-> --
-> 2.47.0.199.ga7371fff76-goog
->
+-- 
+Jani Nikula, Intel
 
