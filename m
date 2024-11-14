@@ -1,239 +1,255 @@
-Return-Path: <linux-kernel+bounces-408829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF4BD9C8410
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:37:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A61369C8414
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:38:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83A6E1F22E8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:37:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0ED93B22865
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A0B21F5829;
-	Thu, 14 Nov 2024 07:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136A61F4FD5;
+	Thu, 14 Nov 2024 07:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FWzq816e"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LfUCpb85"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E7B163;
-	Thu, 14 Nov 2024 07:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57E6163;
+	Thu, 14 Nov 2024 07:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731569828; cv=none; b=dNyNSkC8PytPWDUQ28/FPfCWIrNWhNE+NCVykPnE18n2YwQEZnlRnJSmD+9YmDe0WUm+x7QYvRivDIhjkrGeVFhLfRfsYJ3OnXqlxWRjZDkGHL5NLSWkJKCryvdY/Ir7j2MWM5lFFZl6MNeTDSILXHXl5MwQ0vwnlYRsBcmaKrQ=
+	t=1731569903; cv=none; b=RkZKoqRR+vhBVmjyJo5K7Y9M22vuXV+xS1pd7IuaS8XbjAX+4s1ait+OTEKplPPUDiSCW7epBoYtfSswz4PlBDIhQGJ9Z5AY6ISr/od/RwEtOdnAAuZfDNfEWJcnkDp9WWnZ4dhsqBcokt7Bljb6THV3kPtKGSC7TEcF2fz5n4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731569828; c=relaxed/simple;
-	bh=kOb2ZYhLdcrt1/fmMbUCYgTRegwUoDmTiVsCsnAKezo=;
+	s=arc-20240116; t=1731569903; c=relaxed/simple;
+	bh=DoaG7L2tJks6Eu49kxFyzHbl4qBvm8TIYvOkYdGwA3c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eguN2m533fkQ4imrohO9iP7rpecBaIUC8ztgqU2bf7RTBAelr9JRkYGZVG0hO2FzOGuwV1s+PHmqiLTY4kypTTuq4NS3aZ7mzPpC++tkDvlF4woReYYczwfPI22HuBh4BflehH+HvStjuunJbhB03LiEfHNaPPz2LQJRGllDkO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FWzq816e; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731569826; x=1763105826;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kOb2ZYhLdcrt1/fmMbUCYgTRegwUoDmTiVsCsnAKezo=;
-  b=FWzq816eE5WIoF9nDNlP6i949aeydRXCin3+B6Q2Y5YKMaZ/sMCSQQLW
-   6PrX3nhLmFJqRqiUSE22yoOwKyeMz4lAR9voB7w208Sifqo5dop9K022A
-   fCWiQY36Gj5SKZJ2Pi9F3EUCzklz00KGBN+h9e8Px3i+5l7ypXh9Thwba
-   fzhg9UYqddLgMDIQJ9htDJGm+3f/u7cosN+KvnF+V9A+Q1jVdmxcFihnV
-   PUfxmbr00sWxjtFr9jdae9A9CFcC5aSDawgnFSiHswItsD73LgIaXcMb4
-   aekQH0gR/l23J3pVWcZQcgb639t1ibmCd0feuOS4d/Ym5HWwCtTVoYp/z
-   w==;
-X-CSE-ConnectionGUID: aOVBqoU4QOmmoiIGaMsVzg==
-X-CSE-MsgGUID: bbTByMGwSnCYUXMHhthH7g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11255"; a="30901576"
-X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
-   d="scan'208";a="30901576"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 23:37:05 -0800
-X-CSE-ConnectionGUID: x7vsDg8DR/+0mjqnT6TiPg==
-X-CSE-MsgGUID: jfLzm6z/S9yFSOX6eaLqkA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
-   d="scan'208";a="93059751"
-Received: from lkp-server01.sh.intel.com (HELO 8eed2ac03994) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 13 Nov 2024 23:37:01 -0800
-Received: from kbuild by 8eed2ac03994 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tBUPS-00005j-30;
-	Thu, 14 Nov 2024 07:36:58 +0000
-Date: Thu, 14 Nov 2024 15:36:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>
-Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-hwmon@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH v3 4/5] hwmon: tmp108: Add support for I3C device
-Message-ID: <202411141530.qTxjCzf7-lkp@intel.com>
-References: <20241111-p3t1085-v3-4-bff511550aad@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lrjaKW+e6/F7Sblm5HIcTKiKkOob6YEYs/7+n2cvrw/4SPFZtyx+vzs0gQH6NlsS/CXSopdou5fkxWIHFQ9jMGuWHPBhQYbGXBy+9y+n6nsE0Z2//D64C3fhgtCoEQL5PlQit07rTRy9p4UPnDhgQxkes1aQEU2guBRTJIKw50I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LfUCpb85; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20ca388d242so2496595ad.2;
+        Wed, 13 Nov 2024 23:38:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731569901; x=1732174701; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=rtwKh/oKxpbxO979Vri1eoXyrM0hY6TaMOPO6XEnukY=;
+        b=LfUCpb859mjUbVnRWWFPI4F09Y5bV8Bms+oJAWWc8IAg1UHnG6Yu7VZ/hRG1RYSsXt
+         p54AyJqQ7XfbwXAVThCv+VYhUGevrVlQLeuGr3G57DBy6cHQC4VXtMbG4+vbFOeZWcQJ
+         u3pz2c1VabUT4YVf0JJ3B8G1Y/Lo92+E8rGL3El0wVEULHrGy+wsUPgykQ3QqZIGYRVD
+         uIsolhSgFovflRpWTeT4vcdj7NYpYQ0cSR+RV8VTo2Fv8ViSLC06TbAzCdqPb7J/6ghv
+         i8cPb36E9fPY+WyBabVPZ0VzvzomjIuHSNRMn2uPjHC+5c8zSAj6lN2PZ8h0i5VRLCIr
+         boRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731569901; x=1732174701;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rtwKh/oKxpbxO979Vri1eoXyrM0hY6TaMOPO6XEnukY=;
+        b=JBNeQHWR0KagXczMleBPLLvNES1qZV/cS49FH9Z1w1IITZWZJv9T3C+VDqfoRiN5LG
+         45hHm0r7a/c7f1VFVXL3RkUjskTTl+hoMT+gL9SoC+SdmrpeOJWClgdSElPVOF0iL5Lg
+         tNqwItdxgTm0/VOuxXbxJGrC1dk3gtU76dd6bDOOig+gr5duH7uUiEKCV+xp64WO9CSy
+         kwqba6jl3zf9CQvTQQZYX+RNKnL9zkoKlvMq1EMPzeuX6LUIks1K+WZ5nY/UEWG58LEn
+         vxljVAt7rIgmZOD5e1kC0t43Omupv51RaALtb4Pz6g6Co7kNqwayJgf31pfVqLVgPz9O
+         jaHw==
+X-Forwarded-Encrypted: i=1; AJvYcCW12o0Z+4VQfOPf2QFDBwxDtNx3E7O3Rufu+WVZVg6S5UwmSrnE3sOihOoRUWNGB4o5JXfjpQBQ1HHfctU=@vger.kernel.org, AJvYcCXWkuI3OPAlIFdv/YtFDnuRNEHzPBMxmoYwnW8B7V3D3vJIIogpoD+8mrBhIw3SO1+YTsJ7Q7V5PzJ+558/eIwE@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyVUz4EVzHTo1tZVkgvN4RWjYB3mwhF7xHBt2n8qtQ4RHUU63w
+	ycaaGZmn1tWk7n0/fmXzRGTa17b86YsFeSY1YAs/fAiUvsWhkb30
+X-Google-Smtp-Source: AGHT+IG1IdEuC/GDTlNvaVbmL9PdYgvIxvU86DIwT94igjJf3YtMEemSAX2PHNQ+ganrhLQMn6lZwQ==
+X-Received: by 2002:a17:902:d50c:b0:20f:aee9:d8b8 with SMTP id d9443c01a7336-211c4fcd8eemr13599605ad.20.1731569900863;
+        Wed, 13 Nov 2024 23:38:20 -0800 (PST)
+Received: from fedora ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211c7c52643sm4823595ad.87.2024.11.13.23.38.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 23:38:20 -0800 (PST)
+Date: Thu, 14 Nov 2024 07:38:13 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: Sam Edwards <cfsworks@gmail.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	Maciej =?utf-8?Q?=C5=BBenczykowski?= <maze@google.com>,
+	Xiao Ma <xiaom@google.com>
+Subject: Re: [PATCH net 1/2] net/ipv6: delete temporary address if mngtmpaddr
+ is removed or un-mngtmpaddr
+Message-ID: <ZzWo5fJcraaDDLm_@fedora>
+References: <20241113125152.752778-1-liuhangbin@gmail.com>
+ <20241113125152.752778-2-liuhangbin@gmail.com>
+ <CAH5Ym4jjVFofG5J7QW=EsD00siDXtNWKt4ZDNbbUmP+Y4Jb-DQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241111-p3t1085-v3-4-bff511550aad@nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5Ym4jjVFofG5J7QW=EsD00siDXtNWKt4ZDNbbUmP+Y4Jb-DQ@mail.gmail.com>
 
-Hi Frank,
+On Wed, Nov 13, 2024 at 01:03:13PM -0800, Sam Edwards wrote:
+> On Wed, Nov 13, 2024 at 4:52 AM Hangbin Liu <liuhangbin@gmail.com> wrote:
+> >
+> > RFC8981 section 3.4 says that existing temporary addresses must have their
+> > lifetimes adjusted so that no temporary addresses should ever remain "valid"
+> > or "preferred" longer than the incoming SLAAC Prefix Information. This would
+> > strongly imply in Linux's case that if the "mngtmpaddr" address is deleted or
+> > un-flagged as such, its corresponding temporary addresses must be cleared out
+> > right away.
+> >
+> > But now the temporary address is renewed even after ‘mngtmpaddr’ is removed
+> > or becomes unmanaged. Fix this by deleting the temporary address with this
+> > situation.
+> 
+> Hi Hangbin,
+> 
+> Is it actually a new temporary, or is it just failing to purge the old
+> temporaries? While trying to understand this bug on my own, I learned
 
-kernel test robot noticed the following build errors:
+1. If delete the mngtmpaddr with the mngtmpaddr flag. e.g.
+`ip addr del 2001::1/64 mngtmpaddr dev dummy0`. The following code in
+inet6_addr_del()
 
-[auto build test ERROR on 74741a050b79d31d8d2eeee12c77736596d0a6b2]
+    if (!(ifp->flags & IFA_F_TEMPORARY) &&
+        (ifa_flags & IFA_F_MANAGETEMPADDR))
+            manage_tempaddrs(idev, ifp, 0, 0, false,
+                             jiffies);
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Frank-Li/dt-bindings-hwmon-ti-tmp108-Add-nxp-p3t1085-compatible-string/20241112-013721
-base:   74741a050b79d31d8d2eeee12c77736596d0a6b2
-patch link:    https://lore.kernel.org/r/20241111-p3t1085-v3-4-bff511550aad%40nxp.com
-patch subject: [PATCH v3 4/5] hwmon: tmp108: Add support for I3C device
-config: arc-randconfig-001-20241114 (https://download.01.org/0day-ci/archive/20241114/202411141530.qTxjCzf7-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241114/202411141530.qTxjCzf7-lkp@intel.com/reproduce)
+will be called and the valid_lft/prefered_lft of tempaddres will be set to 0.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411141530.qTxjCzf7-lkp@intel.com/
+2. If we using cmd `ip addr change 2001::1/64 dev dummy0`, the following code in
+inet6_addr_modify():
 
-All errors (new ones prefixed by >>):
+    if (was_managetempaddr || ifp->flags & IFA_F_MANAGETEMPADDR) {
+            if (was_managetempaddr &&
+                !(ifp->flags & IFA_F_MANAGETEMPADDR)) {
+                    cfg->valid_lft = 0;
+                    cfg->preferred_lft = 0;
+            }
+            manage_tempaddrs(ifp->idev, ifp, cfg->valid_lft,
+                             cfg->preferred_lft, !was_managetempaddr,
+                             jiffies);
+    }
+will be called and valid_lft/prefered_lft of tempaddres will be set to 0.
 
-   In file included from include/linux/device/driver.h:21,
-                    from include/linux/device.h:32,
-                    from drivers/hwmon/tmp108.c:8:
->> include/linux/module.h:131:49: error: redefinition of '__inittest'
-     131 |         static inline initcall_t __maybe_unused __inittest(void)                \
-         |                                                 ^~~~~~~~~~
-   include/linux/device/driver.h:262:1: note: in expansion of macro 'module_init'
-     262 | module_init(__driver##_init); \
-         | ^~~~~~~~~~~
-   include/linux/i3c/device.h:233:9: note: in expansion of macro 'module_driver'
-     233 |         module_driver(__drv, i3c_driver_register, i3c_driver_unregister)
-         |         ^~~~~~~~~~~~~
-   drivers/hwmon/tmp108.c:473:1: note: in expansion of macro 'module_i3c_driver'
-     473 | module_i3c_driver(p3t1085_driver);
-         | ^~~~~~~~~~~~~~~~~
-   include/linux/module.h:131:49: note: previous definition of '__inittest' with type 'int (*(void))(void)'
-     131 |         static inline initcall_t __maybe_unused __inittest(void)                \
-         |                                                 ^~~~~~~~~~
-   include/linux/device/driver.h:262:1: note: in expansion of macro 'module_init'
-     262 | module_init(__driver##_init); \
-         | ^~~~~~~~~~~
-   include/linux/i2c.h:965:9: note: in expansion of macro 'module_driver'
-     965 |         module_driver(__i2c_driver, i2c_add_driver, \
-         |         ^~~~~~~~~~~~~
-   drivers/hwmon/tmp108.c:444:1: note: in expansion of macro 'module_i2c_driver'
-     444 | module_i2c_driver(tmp108_driver);
-         | ^~~~~~~~~~~~~~~~~
->> include/linux/module.h:133:13: error: redefinition of 'init_module'
-     133 |         int init_module(void) __copy(initfn)                    \
-         |             ^~~~~~~~~~~
-   include/linux/device/driver.h:262:1: note: in expansion of macro 'module_init'
-     262 | module_init(__driver##_init); \
-         | ^~~~~~~~~~~
-   include/linux/i3c/device.h:233:9: note: in expansion of macro 'module_driver'
-     233 |         module_driver(__drv, i3c_driver_register, i3c_driver_unregister)
-         |         ^~~~~~~~~~~~~
-   drivers/hwmon/tmp108.c:473:1: note: in expansion of macro 'module_i3c_driver'
-     473 | module_i3c_driver(p3t1085_driver);
-         | ^~~~~~~~~~~~~~~~~
-   include/linux/module.h:133:13: note: previous definition of 'init_module' with type 'int(void)'
-     133 |         int init_module(void) __copy(initfn)                    \
-         |             ^~~~~~~~~~~
-   include/linux/device/driver.h:262:1: note: in expansion of macro 'module_init'
-     262 | module_init(__driver##_init); \
-         | ^~~~~~~~~~~
-   include/linux/i2c.h:965:9: note: in expansion of macro 'module_driver'
-     965 |         module_driver(__i2c_driver, i2c_add_driver, \
-         |         ^~~~~~~~~~~~~
-   drivers/hwmon/tmp108.c:444:1: note: in expansion of macro 'module_i2c_driver'
-     444 | module_i2c_driver(tmp108_driver);
-         | ^~~~~~~~~~~~~~~~~
->> include/linux/module.h:139:49: error: redefinition of '__exittest'
-     139 |         static inline exitcall_t __maybe_unused __exittest(void)                \
-         |                                                 ^~~~~~~~~~
-   include/linux/device/driver.h:267:1: note: in expansion of macro 'module_exit'
-     267 | module_exit(__driver##_exit);
-         | ^~~~~~~~~~~
-   include/linux/i3c/device.h:233:9: note: in expansion of macro 'module_driver'
-     233 |         module_driver(__drv, i3c_driver_register, i3c_driver_unregister)
-         |         ^~~~~~~~~~~~~
-   drivers/hwmon/tmp108.c:473:1: note: in expansion of macro 'module_i3c_driver'
-     473 | module_i3c_driver(p3t1085_driver);
-         | ^~~~~~~~~~~~~~~~~
-   include/linux/module.h:139:49: note: previous definition of '__exittest' with type 'void (*(void))(void)'
-     139 |         static inline exitcall_t __maybe_unused __exittest(void)                \
-         |                                                 ^~~~~~~~~~
-   include/linux/device/driver.h:267:1: note: in expansion of macro 'module_exit'
-     267 | module_exit(__driver##_exit);
-         | ^~~~~~~~~~~
-   include/linux/i2c.h:965:9: note: in expansion of macro 'module_driver'
-     965 |         module_driver(__i2c_driver, i2c_add_driver, \
-         |         ^~~~~~~~~~~~~
-   drivers/hwmon/tmp108.c:444:1: note: in expansion of macro 'module_i2c_driver'
-     444 | module_i2c_driver(tmp108_driver);
-         | ^~~~~~~~~~~~~~~~~
->> include/linux/module.h:141:14: error: redefinition of 'cleanup_module'
-     141 |         void cleanup_module(void) __copy(exitfn)                \
-         |              ^~~~~~~~~~~~~~
-   include/linux/device/driver.h:267:1: note: in expansion of macro 'module_exit'
-     267 | module_exit(__driver##_exit);
-         | ^~~~~~~~~~~
-   include/linux/i3c/device.h:233:9: note: in expansion of macro 'module_driver'
-     233 |         module_driver(__drv, i3c_driver_register, i3c_driver_unregister)
-         |         ^~~~~~~~~~~~~
-   drivers/hwmon/tmp108.c:473:1: note: in expansion of macro 'module_i3c_driver'
-     473 | module_i3c_driver(p3t1085_driver);
-         | ^~~~~~~~~~~~~~~~~
-   include/linux/module.h:141:14: note: previous definition of 'cleanup_module' with type 'void(void)'
-     141 |         void cleanup_module(void) __copy(exitfn)                \
-         |              ^~~~~~~~~~~~~~
-   include/linux/device/driver.h:267:1: note: in expansion of macro 'module_exit'
-     267 | module_exit(__driver##_exit);
-         | ^~~~~~~~~~~
-   include/linux/i2c.h:965:9: note: in expansion of macro 'module_driver'
-     965 |         module_driver(__i2c_driver, i2c_add_driver, \
-         |         ^~~~~~~~~~~~~
-   drivers/hwmon/tmp108.c:444:1: note: in expansion of macro 'module_i2c_driver'
-     444 | module_i2c_driver(tmp108_driver);
-         | ^~~~~~~~~~~~~~~~~
+But these 2 setting actually not work as in addrconf_verify_rtnl():
 
+    if ((ifp->flags&IFA_F_TEMPORARY) &&
+        !(ifp->flags&IFA_F_TENTATIVE) &&
+        ifp->prefered_lft != INFINITY_LIFE_TIME &&
+        !ifp->regen_count && ifp->ifpub) {
+            /* This is a non-regenerated temporary addr. */
 
-vim +/__inittest +131 include/linux/module.h
+            unsigned long regen_advance = ipv6_get_regen_advance(ifp->idev);
 
-0fd972a7d91d6e1 Paul Gortmaker 2015-05-01  128  
-0fd972a7d91d6e1 Paul Gortmaker 2015-05-01  129  /* Each module must use one module_init(). */
-0fd972a7d91d6e1 Paul Gortmaker 2015-05-01  130  #define module_init(initfn)					\
-1f318a8bafcfba9 Arnd Bergmann  2017-02-01 @131  	static inline initcall_t __maybe_unused __inittest(void)		\
-0fd972a7d91d6e1 Paul Gortmaker 2015-05-01  132  	{ return initfn; }					\
-cf68fffb66d60d9 Sami Tolvanen  2021-04-08 @133  	int init_module(void) __copy(initfn)			\
-cf68fffb66d60d9 Sami Tolvanen  2021-04-08  134  		__attribute__((alias(#initfn)));		\
-92efda8eb15295a Sami Tolvanen  2022-09-08  135  	___ADDRESSABLE(init_module, __initdata);
-0fd972a7d91d6e1 Paul Gortmaker 2015-05-01  136  
-0fd972a7d91d6e1 Paul Gortmaker 2015-05-01  137  /* This is only required if you want to be unloadable. */
-0fd972a7d91d6e1 Paul Gortmaker 2015-05-01  138  #define module_exit(exitfn)					\
-1f318a8bafcfba9 Arnd Bergmann  2017-02-01 @139  	static inline exitcall_t __maybe_unused __exittest(void)		\
-0fd972a7d91d6e1 Paul Gortmaker 2015-05-01  140  	{ return exitfn; }					\
-cf68fffb66d60d9 Sami Tolvanen  2021-04-08 @141  	void cleanup_module(void) __copy(exitfn)		\
-cf68fffb66d60d9 Sami Tolvanen  2021-04-08  142  		__attribute__((alias(#exitfn)));		\
-92efda8eb15295a Sami Tolvanen  2022-09-08  143  	___ADDRESSABLE(cleanup_module, __exitdata);
-0fd972a7d91d6e1 Paul Gortmaker 2015-05-01  144  
+            if (age + regen_advance >= ifp->prefered_lft) {
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+                 ^^ this will always true since prefered_lft is 0
+
+So later we will call ipv6_create_tempaddr(ifpub, true) to create a new
+tempaddr.
+
+3. If we delete the mngtmpaddr without the mngtmpaddr flag. e.g.
+`ip addr del 2001::1/64 dev dummy0` The following code in inet6_addr_del()
+
+    if (!(ifp->flags & IFA_F_TEMPORARY) &&
+        (ifa_flags & IFA_F_MANAGETEMPADDR))
+            manage_tempaddrs(idev, ifp, 0, 0, false,
+                             jiffies);
+
+Will *not* be called as ifa_flags doesn't have IFA_F_MANAGETEMPADDR.
+So in addrconf_verify_rtnl(), the (age + regen_advance >= ifp->prefered_lft)
+checking will be false, no new tempaddr will be created. But the later
+(ifp->valid_lft != INFINITY_LIFE_TIME && age >= ifp->valid_lft) checking is
+also false unless the valid_lft is just timeout. So the tempaddr will be keep
+until it's life timeout.
+
+> about a commit [1] that tried to address the former problem, and it's
+> possible that the approach in that commit needs to be tightened up
+> instead.
+> 
+> [1]: 69172f0bcb6a09 ("ipv6 addrconf: fix bug where deleting a
+> mngtmpaddr can create a new temporary address")
+
+The situation in this patch is that the user removed the temporary address
+first. The temporary address is not in the addr list anymore and
+addrconf_verify_rtnl() won't create a new one. But later when delete the
+mngtmpaddr, the manage_tempaddrs() is called again (because the mngtmpaddr
+flag in delete cmd) and a new tempaddr is created.
+
+> 
+> >
+> > Fixes: 778964f2fdf0 ("ipv6/addrconf: fix timing bug in tempaddr regen")
+> > Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+> > ---
+> >  net/ipv6/addrconf.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/net/ipv6/addrconf.c b/net/ipv6/addrconf.c
+> > index 94dceac52884..6852dbce5a7d 100644
+> > --- a/net/ipv6/addrconf.c
+> > +++ b/net/ipv6/addrconf.c
+> > @@ -4644,6 +4644,10 @@ static void addrconf_verify_rtnl(struct net *net)
+> >                             !ifp->regen_count && ifp->ifpub) {
+> >                                 /* This is a non-regenerated temporary addr. */
+> >
+> > +                               if ((!ifp->valid_lft && !ifp->prefered_lft) ||
+> > +                                   ifp->ifpub->state == INET6_IFADDR_STATE_DEAD)
+> > +                                       goto delete_ifp;
+> > +
+> 
+> My understanding is that the kernel already calls
+> `manage_tempaddrs(dev, ifp, 0, 0, false, now);` when some `ifp` needs
+> its temporaries flushed out. That zeroes out the lifetimes of every
+> temporary, which allows the "destructive" if/elseif/elseif/... block
+> below to delete it. I believe fixing this bug properly will involve
+> first understanding why *that* mechanism isn't working as designed.
+
+Please see the up comment.
+
+> 
+> In any case, this 'if' block is for temporary addresses /which haven't
+> yet begun their regeneration process/, so this won't work to purge out
+> addresses that have already started trying to create their
+> replacement. That'll be a rare and frustrating race for someone in the
+> future to debug indeed. As well, I broke this 'if' out from the below
+> if/elseif/elseif/... to establish a clear separation between the
+> "constructive" parts of an address's lifecycle (currently, only
+> temporary addresses needing to regenerate) and the "destructive" parts
+> (the address gradually becoming less prominent as its lifetime runs
+> out), so destructive/delete logic doesn't belong up here anyway.
+
+Currently my fix is checking the tempaddr valid_lft and ifp->ifpub->state.
+Maybe we can delete the tempaddr direcly in ipv6_del_addr() and
+inet6_addr_modify()?
+
+Thanks
+Hangbin
+> 
+> What are your thoughts?
+> 
+> Happy Wednesday,
+> Sam
+> 
+> >                                 unsigned long regen_advance = ipv6_get_regen_advance(ifp->idev);
+> >
+> >                                 if (age + regen_advance >= ifp->prefered_lft) {
+> > @@ -4671,6 +4675,7 @@ static void addrconf_verify_rtnl(struct net *net)
+> >
+> >                         if (ifp->valid_lft != INFINITY_LIFE_TIME &&
+> >                             age >= ifp->valid_lft) {
+> > +delete_ifp:
+> >                                 spin_unlock(&ifp->lock);
+> >                                 in6_ifa_hold(ifp);
+> >                                 rcu_read_unlock_bh();
+> > --
+> > 2.46.0
+> >
 
