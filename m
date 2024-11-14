@@ -1,89 +1,167 @@
-Return-Path: <linux-kernel+bounces-408844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAF5E9C843A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:49:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 563AE9C844D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:51:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 384B0B248F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:49:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D344B25FD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601981F584D;
-	Thu, 14 Nov 2024 07:48:17 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267DB1F708B;
+	Thu, 14 Nov 2024 07:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eFbxWeK8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C221F7544
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF0F1E9080;
+	Thu, 14 Nov 2024 07:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731570497; cv=none; b=Wt051GAMurt9+LgT3NETmTN8OlJ7gGVmycIhO0HyxL63tADaiacJSr85ose5L+fsRw7dbvwP33g51qTdJAbnzmPkCJtfYxHCfl9X/LK3vpHgHpqlea+rZ5pHfot+Hy9i6HB9LETy89UnyEl0GiDZFfzINBm/OsqmAswHmfRnV0w=
+	t=1731570534; cv=none; b=R/n6Rxuzi8ZZ/TjRMByBv2QxTRkYSJl4AIsZ/PU4GDl6KRB2pw5yH+IzwYSAyrfdOPHmK+Gd7k0S8GXXMYxZgaVD9NOJ4u6oPs7lvRdHYzHNbZhE4QT1Qdl/BVuvCmWOUz3C8nIgdarFLL5p1r18oRFFrLMC7WqxButWp0N5Wp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731570497; c=relaxed/simple;
-	bh=7vO5VppK8mbJzogWj4XWKvUgXVA0mHLTXmLcvJlyqpk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=XZN/EyBfEFH8fbXgPGZxUlGw7vlLOqgIXbiijGUxAmaSAYtwXbzM+AxmY1AuFtqa4t1SPBlnDJKz8JKxQNnVz47U6WBWOLI9AUTIES3sK+zrPZkChxKuEDMMrIIaaF3f7bQnsa38pvEQ0XiyU/790YC9t7SILS+tCgwoD/TylZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a71ea159acso5198095ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 23:48:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731570495; x=1732175295;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7vO5VppK8mbJzogWj4XWKvUgXVA0mHLTXmLcvJlyqpk=;
-        b=bM/IoskKqj7IqCdGPfUE3pwl+ZMiPYt3RnY/OGPMzJf6/WjCISJfe7v0vsVaFsB5rq
-         hlWN4DCjku6quA1nLBFQiL9amBe0ZQeWdTkcSAcGpioJnxOpIaARczd4T1/y7qScK8Y0
-         lZvvnAXlSRFsI0NxAbck3Orh1kpObf9K/Oz/s447SA37jaLPXYuQowmlB8K0haoyrZm1
-         fzRD6Z3Og5ZgxQvTR56dwkIAIc9fcTc196qxkT8UPxJJZhA0+t59M0oEL8iIDeExR+up
-         Op2T37CzqfUEI3/4WzJXc8OKca2PVp2e1aiYhQwG59EPDhznXsEodfGD688guXp3WVl0
-         ub3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUftBdPUA26HL7ueApcC6GRa2Rm/a+nvenORoL13i93t6mpBiVFlp1j5nf/VuKbW4nkp/03sa0uOkwZtMQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPsyhPj78jXkFr024biroHnfGt3fpMEpo/SIpn4ldIs856Ezgo
-	K1xbXKiItxQWqjUOcFdk6j4UU2JBuP16VRXcA3XVS+cXm+vTnTE6sTdqwmKWgayNZVEbCKwQYyd
-	LxHEYjvC0qXyFELzWjprcJS1lWpr3skzdGZSH42YT6LkPMxCe3cKiuYU=
-X-Google-Smtp-Source: AGHT+IE2j7G4fe6UYc4sGoZ8nsKR64vTwa5GIHuM1BD8LElZpFh4qb/q/SZfqP80IeOcwM51DO65AY94Tz0bdJMRFKBpH1QCHrRK
+	s=arc-20240116; t=1731570534; c=relaxed/simple;
+	bh=4E6aC6oB1+4iQaw6tyR7GxnJWzRZncxwonrwiY4dn0Y=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iTAHbfRRQIU5fip/fUJSGxVwu6sPh2QajNzbYeRCY9Wz3zStUyrIA08isIqwt15CjDNZ4KKTZ2rMgSyaF53PTdSGvhShqSXGXL8wz1G53GMGW1mP5+FGYj3mbzvdZsxZfILvWdEBTU3LKqIsXk5QdAnho3jszahoP0Q5fsiKL3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eFbxWeK8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE1KEpF008599;
+	Thu, 14 Nov 2024 07:48:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=7cHbwg17okigZyqvJWR0iibZ
+	TFH7NMVRqRcMdUm+sHw=; b=eFbxWeK8zROsnO5X9Rhd9FeyRmTa/NGla3Imd7kY
+	MR8jKmjmwbaY4jbr38ylMGtAkwojSDeJKkuXpUHF6HCE6v1ZZP3C4bQwW2PvOC1W
+	av244K31iug5c/8EDhX7qWrNb0VcmIayCcniTC7wT35iakL61m1elLpUspxn2Oti
+	w1DjQa0qohpRhag+gwhajAJ21dCbxbqAX1T6PHxsSZRKJJaCVztmphYiCIg6gyuO
+	pYEI8Y7Y0CE5h7Dvb4G8mqotJtMQBAldomHbPeIh2Usz4iNIIkwThMxxibMQH4Pk
+	XqmdWrOttAJPrZiCuWm6dgsLnEDt1nm189czePf0fQ08jg==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42w7ekhhu5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 07:48:46 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AE7mjHS014444
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 07:48:46 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 13 Nov 2024 23:48:39 -0800
+Date: Thu, 14 Nov 2024 13:18:35 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Johan Hovold <johan@kernel.org>
+CC: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <gregkh@linuxfoundation.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <dmitry.baryshkov@linaro.org>,
+        <mantas@8devices.com>, <quic_rohiagar@quicinc.com>,
+        <quic_kriskura@quicinc.com>, <manivannan.sadhasivam@linaro.org>,
+        <abel.vesa@linaro.org>, <quic_kbajaj@quicinc.com>,
+        <quic_wcheng@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>
+Subject: Re: [PATCH v2 6/6] arm64: dts: qcom: Add USB controller and phy
+ nodes for IPQ5424
+Message-ID: <ZzWrU/6+KPOy5ugi@hu-varada-blr.qualcomm.com>
+References: <20241113072316.2829050-1-quic_varada@quicinc.com>
+ <20241113072316.2829050-7-quic_varada@quicinc.com>
+ <ZzSYU61pmFTcPf5_@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:de10:0:b0:3a6:bafd:5650 with SMTP id
- e9e14a558f8ab-3a71dec4245mr28819435ab.10.1731570494795; Wed, 13 Nov 2024
- 23:48:14 -0800 (PST)
-Date: Wed, 13 Nov 2024 23:48:14 -0800
-In-Reply-To: <CABuj9FfS3VA8m4QPwsJmECYZqumHY3H8_GcVdGa9UG1SEBY6Lw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6735ab3e.050a0220.1324f8.0091.GAE@google.com>
-Subject: Re: mm/slub: fix a memory leak in sysfs_slab_add()
-From: syzbot <syzbot+d0bd96b4696c1ef67991@syzkaller.appspotmail.com>
-To: sudhirdumbhare@gmail.com
-Cc: sudhirdumbhare@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZzSYU61pmFTcPf5_@hovoldconsulting.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 0vm_7CVbi4RNzzvExcVw8E-CzDBhj-pf
+X-Proofpoint-GUID: 0vm_7CVbi4RNzzvExcVw8E-CzDBhj-pf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
+ impostorscore=0 phishscore=0 lowpriorityscore=0 suspectscore=0
+ clxscore=1011 bulkscore=0 malwarescore=0 adultscore=0 priorityscore=1501
+ mlxlogscore=619 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411140058
 
-> #syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-
-want either no args or 2 args (repo, branch), got 1
-
-> master
+On Wed, Nov 13, 2024 at 01:15:15PM +0100, Johan Hovold wrote:
+> On Wed, Nov 13, 2024 at 12:53:16PM +0530, Varadarajan Narayanan wrote:
 >
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 4148235ba554..d10c4fbf8c84 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -5653,7 +5653,7 @@ static int sysfs_slab_add(struct kmem_cache *s)
-> s->kobj.kset = kset;
-> err = kobject_init_and_add(&s->kobj, &slab_ktype, NULL, "%s",
-> name);
-> if (err) {
-> - kobject_put(&s->kobj);
-> + kfree_const(&s->kobj.name);
-> goto out;
-> }
+> > --- a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+> > +++ b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+> > @@ -16,12 +16,71 @@ / {
+> >  	aliases {
+> >  		serial0 = &uart1;
+> >  	};
+> > +
+> > +	regulator_fixed_3p3: s3300 {
+>
+> Fixed regulator nodes should have a "regulator-" prefix in their name.
+>
+> And please use a shorter label, look at the existing DTs for
+> inspiration (e.g. "vreg_misc_3p3").
+
+Ok.
+
+> > +		compatible = "regulator-fixed";
+> > +		regulator-min-microvolt = <3300000>;
+> > +		regulator-max-microvolt = <3300000>;
+> > +		regulator-boot-on;
+> > +		regulator-always-on;
+> > +		regulator-name = "fixed_3p3";
+> > +	};
+>
+> But is this really an accurate description of these regulators? Are
+> they not part of some PMIC? Can they really not be turned off?
+
+These supplies are coming from internal LDOs and are turned ON at
+power up itself. Software (i.e. boot loaders or the kernel)
+doesn't turn them ON. Checked with the board designers and they
+too don't recommend turning these OFF as some other i/o lines
+also depend on these voltages.
+
+> Also please use the names from the schematics for these. I doubt they
+> are named "fixed_3p3".
+
+Ok.
+
+> > +
+> > +	regulator_fixed_1p8: s1800 {
+> > +		compatible = "regulator-fixed";
+> > +		regulator-min-microvolt = <1800000>;
+> > +		regulator-max-microvolt = <1800000>;
+> > +		regulator-boot-on;
+> > +		regulator-always-on;
+> > +		regulator-name = "fixed_1p8";
+> > +	};
+> > +
+> > +	regulator_fixed_0p925: s0925 {
+> > +		compatible = "regulator-fixed";
+> > +		regulator-min-microvolt = <925000>;
+> > +		regulator-max-microvolt = <925000>;
+> > +		regulator-boot-on;
+> > +		regulator-always-on;
+> > +		regulator-name = "fixed_0p925";
+> > +	};
+> > +
+>
+> Stray newline.
+
+Have addressed these and posted v3. Please review.
+
+Thanks
+Varada
 
