@@ -1,218 +1,158 @@
-Return-Path: <linux-kernel+bounces-409784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F373F9C9184
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:16:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 189D19C91A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:30:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 843561F23B4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:16:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 326EAB32BD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC188198A38;
-	Thu, 14 Nov 2024 18:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051C319939D;
+	Thu, 14 Nov 2024 18:16:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yh6gkSeN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tvBB1N8s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E0319597F
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 18:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D83199E92;
+	Thu, 14 Nov 2024 18:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731608171; cv=none; b=lz4jK4Y6mnN/R9izcJVcwrysYdYCpE25YYd6/UwmqXvhbSd3FT3v3ypr4mFDcXicGVTrO6CrhMeznPHh/lXUQQ6v6y7G+jVjOAYhTXEXZRGG+Xzeu7gSybziZKLQ3eo0gG8+2pash5DNVi9/qBJZ2C6m75ei04XYB62IaYiS5dw=
+	t=1731608173; cv=none; b=AITjp12qT6UAzKY7ok8hPME+RIaStYcyzdw5aiPpOSXpnPqmXoKnMYELozDzFevkgfl6TSJCdygjwcW4/WqEBzUA6SOGnltj/4yaFURj8j4ELxxeDqovvcA0KMbExXv+juOoMLS1rgI+sAFJH4LpNiiOKOIHKNB8178XnU0A/9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731608171; c=relaxed/simple;
-	bh=VctM/IPnH2yyy/sS2iJxA5jUc9OrwP0FIVpQMhQBgEc=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=P6AEnVzlz8SDoqtzePWvTIB423rXHrJ1h5HxdJ9vjPuYFSDaw1kXdMe4mHMIxuMVesOSm3eqkzzXlFkJYyvQWMB1v3GI2JmCy1z25hLYgSbjK/GXrpYVF/0j2vrRyTPERvCoSFSEaBOGtFjC7cxsvq3CqGF19Mc0S9dGjTJw1/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yh6gkSeN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731608168;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=seKR5b1uIR8hf1jRDmf9nGHCTSqoveoZspsqd8LxLYQ=;
-	b=Yh6gkSeNTuAGSkrnjcJibJkfeelM1SkOLYzHhsErvi8Xum/KDzUoYX5AwMZ3MeQOeqgziL
-	km+cQPj2VANueU4G3AmNtFnV80RU/kmxJT6UMHxaRQjJVvCmBQKm1eluaI27AcnRAojH6W
-	mjnEfaOEcYaRM+Bd19pjzMjMicux6TI=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-433-ZoxuS7gKOyypMmVYDQchXA-1; Thu, 14 Nov 2024 13:16:06 -0500
-X-MC-Unique: ZoxuS7gKOyypMmVYDQchXA-1
-X-Mimecast-MFC-AGG-ID: ZoxuS7gKOyypMmVYDQchXA
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-461011bd338so12177731cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:16:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731608166; x=1732212966;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=seKR5b1uIR8hf1jRDmf9nGHCTSqoveoZspsqd8LxLYQ=;
-        b=e+sfpO7MaIJjkWQZNwJVp/T2l0rWhxoAn5+ke4DlnharIyiTcTYrCork4nzLhQ0OCB
-         X2rBIHAb7QAXI3UEiOHVWF5K1qYrF0L91l8JiPJvf30ZWuWc9vpyOBtWH92QJJGe31Ac
-         efmkUNodXkfUOAwCxx3oOws53fjEuYAbrRij2ZXQXjDjnkK/w3cRJkWfUtf9GT8GvUdq
-         tYJAOzucwGHHrvHD2kPHZ5PLMj2hBYtTK3cXXxeJ1liM0+PnRPLWrzz3ET17QmJirHt0
-         sxnrZoLfoY6fvWs7hP7ws9AgmjeCZOIgNn7yDK76YsFh6RAk0wpcKZMOSgWMOg1T3W63
-         D4ww==
-X-Forwarded-Encrypted: i=1; AJvYcCWUUGH6qx+yFXUGKgrnMyRspcrFkZpOlFYvzWqJjvK5MeLcqxcnRlxHoVGnQjl64NX3OXuFk0xOderzcIE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvPdQ+XhCblvbkuZxc0hqVdc6LufbzP5L1QszVbibqEVNALNGP
-	XVYG0qHx0fAe19m7eb4dXs9gAhVYdlCekF2zUYTNaa4vNy/J1wm5iG6u+m8btJBB+/8gaL1anO7
-	WzaSAFxWRuIL1cisBIYfXfq2IuxUW2jhwwJ1upekIayATZ0CzO3iYqMofKFhWlQ==
-X-Received: by 2002:a05:622a:5b86:b0:461:4372:f2cc with SMTP id d75a77b69052e-4634033c0f3mr127426141cf.46.1731608166144;
-        Thu, 14 Nov 2024 10:16:06 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH/DX0EahUDJNOxNsZyPhii4fQlkiDqgJ2dY0smClbKQDaRxRQBK/iqwH8c+tONfyisPsLXTQ==
-X-Received: by 2002:a05:622a:5b86:b0:461:4372:f2cc with SMTP id d75a77b69052e-4634033c0f3mr127425741cf.46.1731608165736;
-        Thu, 14 Nov 2024 10:16:05 -0800 (PST)
-Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4635aa35dadsm8454501cf.52.2024.11.14.10.16.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 10:16:05 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <768d0363-d83e-42ac-aa44-18dbc6018a72@redhat.com>
-Date: Thu, 14 Nov 2024 13:16:03 -0500
+	s=arc-20240116; t=1731608173; c=relaxed/simple;
+	bh=LKiC482/mkSPjMpYS7rVLUPrc3QBSwoQJqPmsr2UmZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Er6xO8WKo0vmozcydA0ogkRL4nGgwuXQ1PNQr2y+L/caMN6RKqmE3d7uz1TQkqKrE4t6IQaJX2z5A5t2ATQZ8wqnbAPAkuhQHRUHRh6a4D+fV4YM5Bhbc7x1KDoHMAYUwANpr9O0Sbk2wVrRGr4BtFiMUKlOSF5Low/9yypdWac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tvBB1N8s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3403EC4CED5;
+	Thu, 14 Nov 2024 18:16:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731608173;
+	bh=LKiC482/mkSPjMpYS7rVLUPrc3QBSwoQJqPmsr2UmZ4=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=tvBB1N8sAHR/h5Qo6H/hw7kxDuIi978WkfnA/s7JaDrNgt4Q5oGmo1r+v6ZdLZeRN
+	 MEqWqV/32KS+w++02Pxv+LkAkimwC5cyFBOJwzRh3ietoH+SwLfs590/Pc+s8k6P4c
+	 qC9NYHQUbxGTiWaOPeEcbnEyNqmFIgnL6cnkCFeNTl1m4LmCYqt5jHM9wSW6ytUHvo
+	 wkvqoZ2a9DESkFCSS/Mu8d0bRNy5+gLRfQaVb7YRd/KCzDNShrpKBU6vZGUV5ur37S
+	 0cOh5XB77I9OTXUeGqISsZFNGBF4jGi0VwWKKxz3fHykbvF1TdlZ42HJwJ5bT4WlXW
+	 so7io7bzkXu2w==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id C18AFCE0717; Thu, 14 Nov 2024 10:16:12 -0800 (PST)
+Date: Thu, 14 Nov 2024 10:16:12 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Tomas Glozar <tglozar@redhat.com>
+Cc: Valentin Schneider <vschneid@redhat.com>, Chen Yu <yu.c.chen@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
+Message-ID: <6e3fce44-1072-4720-bf91-33bb22ebbd21@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <xhsmhed50vplj.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <d6033378-d716-4848-b7a5-dcf1a6b14669@paulmck-laptop>
+ <xhsmhbk04ugru.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <64e92332-09c7-4cae-ac63-e1701b3f3814@paulmck-laptop>
+ <CAP4=nvTtOB+0LVPQ=nA3=XdGLhDiwLjcLAb8YmQ+YqR9L+050Q@mail.gmail.com>
+ <CAP4=nvTeawTjhWR0jKNGweeQFvcTr8S=bNiLsSbaKiz=od+EOA@mail.gmail.com>
+ <35e44f60-0a2f-49a7-b44b-c6537544a888@paulmck-laptop>
+ <fe2262ff-2c3d-495a-8ebb-c34485cb62a2@paulmck-laptop>
+ <b9064ed8-387d-47ce-ad0a-7642ad180fc3@paulmck-laptop>
+ <7cdc0f04-819d-429c-9a2c-9ad25d85db55@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] Fix DEADLINE bandwidth accounting in root domain
- changes and hotplug
-To: Juri Lelli <juri.lelli@redhat.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Koutny <mkoutny@suse.com>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Phil Auld <pauld@redhat.com>
-Cc: Qais Yousef <qyousef@layalina.io>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Joel Fernandes (Google)" <joel@joelfernandes.org>,
- Suleiman Souhlal <suleiman@google.com>, Aashish Sharma <shraash@google.com>,
- Shin Kawamura <kawasin@google.com>,
- Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-References: <20241114142810.794657-1-juri.lelli@redhat.com>
- <ZzYhyOQh3OAsrPo9@jlelli-thinkpadt14gen4.remote.csb>
-Content-Language: en-US
-In-Reply-To: <ZzYhyOQh3OAsrPo9@jlelli-thinkpadt14gen4.remote.csb>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7cdc0f04-819d-429c-9a2c-9ad25d85db55@paulmck-laptop>
 
-On 11/14/24 11:14 AM, Juri Lelli wrote:
-> Thanks Waiman and Phil for the super quick review/test of this v2!
->
-> On 14/11/24 14:28, Juri Lelli wrote:
->
-> ...
->
->> In all honesty, I still see intermittent issues that seems to however be
->> related to the dance we do in sched_cpu_deactivate(), where we first
->> turn everything related to a cpu/rq off and revert that if
->> cpuset_cpu_inactive() reveals failing DEADLINE checks. But, since these
->> seem to be orthogonal to the original discussion we started from, I
->> wanted to send this out as an hopefully meaningful update/improvement
->> since yesterday. Will continue looking into this.
-> About this that I mentioned, it looks like the below cures it (and
-> hopefully doesn't regress wrt the other 2 patches).
->
-> What do everybody think?
->
-> ---
-> Subject: [PATCH] sched/deadline: Check bandwidth overflow earlier for hotplug
->
-> Currently we check for bandwidth overflow potentially due to hotplug
-> operations at the end of sched_cpu_deactivate(), after the cpu going
-> offline has already been removed from scheduling, active_mask, etc.
-> This can create issues for DEADLINE tasks, as there is a substantial
-> race window between the start of sched_cpu_deactivate() and the moment
-> we possibly decide to roll-back the operation if dl_bw_deactivate()
-> returns failure in cpuset_cpu_inactive(). An example is a throttled
-> task that sees its replenishment timer firing while the cpu it was
-> previously running on is considered offline, but before
-> dl_bw_deactivate() had a chance to say no and roll-back happened.
->
-> Fix this by directly calling dl_bw_deactivate() first thing in
-> sched_cpu_deactivate() and do the required calculation in the former
-> function considering the cpu passed as an argument as offline already.
->
-> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-> ---
->   kernel/sched/core.c     |  9 +++++----
->   kernel/sched/deadline.c | 12 ++++++++++--
->   2 files changed, 15 insertions(+), 6 deletions(-)
->
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index d1049e784510..43dfb3968eb8 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -8057,10 +8057,6 @@ static void cpuset_cpu_active(void)
->   static int cpuset_cpu_inactive(unsigned int cpu)
->   {
->   	if (!cpuhp_tasks_frozen) {
-> -		int ret = dl_bw_deactivate(cpu);
-> -
-> -		if (ret)
-> -			return ret;
->   		cpuset_update_active_cpus();
->   	} else {
->   		num_cpus_frozen++;
-> @@ -8128,6 +8124,11 @@ int sched_cpu_deactivate(unsigned int cpu)
->   	struct rq *rq = cpu_rq(cpu);
->   	int ret;
->   
-> +	ret = dl_bw_deactivate(cpu);
-> +
-> +	if (ret)
-> +		return ret;
-> +
->   	/*
->   	 * Remove CPU from nohz.idle_cpus_mask to prevent participating in
->   	 * load balancing when not active
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index 267ea8bacaf6..6e988d4cd787 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -3505,6 +3505,13 @@ static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
->   		}
->   		break;
->   	case dl_bw_req_deactivate:
-> +		/*
-> +		 * cpu is not off yet, but we need to do the math by
-> +		 * considering it off already (i.e., what would happen if we
-> +		 * turn cpu off?).
-> +		 */
-> +		cap -= arch_scale_cpu_capacity(cpu);
-> +
->   		/*
->   		 * cpu is going offline and NORMAL tasks will be moved away
->   		 * from it. We can thus discount dl_server bandwidth
-> @@ -3522,9 +3529,10 @@ static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
->   		if (dl_b->total_bw - fair_server_bw > 0) {
->   			/*
->   			 * Leaving at least one CPU for DEADLINE tasks seems a
-> -			 * wise thing to do.
-> +			 * wise thing to do. As said above, cpu is not offline
-> +			 * yet, so account for that.
->   			 */
-> -			if (dl_bw_cpus(cpu))
-> +			if (dl_bw_cpus(cpu) - 1)
->   				overflow = __dl_overflow(dl_b, cap, fair_server_bw, 0);
->   			else
->   				overflow = 1;
->
-I have applied this new patch to my test system and there was no 
-regression to the test_cpuet_prs.sh test.
+On Mon, Oct 21, 2024 at 12:25:41PM -0700, Paul E. McKenney wrote:
+> On Mon, Oct 14, 2024 at 11:55:05AM -0700, Paul E. McKenney wrote:
 
-Tested-by: Waiman Long <longman@redhat.com>
+[ . . . ]
 
+> > But no big wins thus far, so this will be a slow process.  My current test
+> > disables CPU hotplug.  I will be disabling other things in the hope of
+> > better identifying the code paths that should be placed under suspicion.
+
+The "this will be a slow process" was no joke...
+
+> Disabling CPU hotplug seems to make the problem go away (though
+> all I can really say is that I am 99% confident that it reduces the
+> problem's incidence by at least a factor of two).  This problem affects
+> non-preemptible kernels and non-preemptible RCU, though it is possible
+> that use of the latter reduces the failure rate (which is of course *not*
+> what you want for testing).
+> 
+> A number of experiments failed to significantly/usefully increase the
+> failure rate.
+> 
+> The problem does not seem to happen on straight normal call_rcu()
+> grace periods (rcutorture.gp_normal=1), synchronize_rcu() grace periods
+> (rcutorture.gp_sync=1), or synchronize_rcu_expedited() grace periods.
+> Of course, my reproduction rate is still low enough that I might be
+> fooled here.
+> 
+> However, the problem does occur reasonably often on polled grace periods
+> (rcutorture.gp_poll=1 rcutorture.gp_poll_exp=1 rcutorture.gp_poll_full=1
+> rcutorture.gp_poll_exp_full=1).  This might be a bug in the polling
+> code itself, or it might be because polling grace periods do not incur
+> callback and/or wakeup delays (as in the bug might still be in the
+> underlying grace-period computation and polling makes it more apparent).
+> This also appears to have made the problem happen more frequently,
+> but not enough data to be sure yet.
+> 
+> Currently, rcutorture does millisecond-scale waits of duration randomly
+> chosen between zero and 15 milliseconds.  I have started a run with
+> microsecond-scale waits of duration randomly chosen between zero and
+> 128 microseconds.  Here is hoping that this will cause the problem to
+> reproduce more quickly, and I will know more this evening, Pacific Time.
+
+Well, that evening was a long time ago, but here finally is an update.
+
+After some time, varying the wait duration between zero and 16
+microseconds with nanosecond granularity pushed the rate up to between
+10 and 20 per hour.  This allowed me to find one entertaining bug,
+whose fix may be found here in my -rcu tree:
+
+9dfca26bcbc8 ("rcu: Make expedited grace periods wait for initialization")
+
+The fix ensures that an expedited grace period is fully initialized before
+honoring any quiescent-state reports, thus avoiding a failure scenario
+in which one of a pair of quiescent-state reports could "leak" into
+the next expedited grace period.  But only if a concurrent CPU-hotplug
+operation shows up at just the wrong time.
+
+There are also a couple of other minor fixes of things like needless
+lockless accesses:
+
+6142841a2389 ("rcu: Make rcu_report_exp_cpu_mult() caller acquire lock")
+dd8104928722 ("rcu: Move rcu_report_exp_rdp() setting of ->cpu_no_qs.b.exp under lock")
+
+Plus quite a few additional debug checks.
+
+So problem solved, right?
+
+Wrong!!!
+
+Those changes at best reduced the bug rate by about 10%.  So I am still
+beating on this thing.  But you will be happy (or more likely not)
+to learn that the enqueue_dl_entity() splats that I was chasing when
+starting on this bug still occasionally make their presence known.  ;-)
+
+Added diagnostics pushed the bug rate down to about four per hours,
+which isn't quite as nice as between 10 and 20 per hour, but is still
+something I can work with.
+
+Back to beating on it.  More info than anyone needs is available here:
+
+https://docs.google.com/document/d/1-JQ4QYF1qid0TWSLa76O1kusdhER2wgm0dYdwFRUzU8/edit?usp=sharing
+
+							Thanx, Paul
 
