@@ -1,148 +1,209 @@
-Return-Path: <linux-kernel+bounces-408884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C450A9C84AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:14:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7C5D9C84B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:16:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5047F1F23592
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:14:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A33D283D44
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639171F5846;
-	Thu, 14 Nov 2024 08:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B921D1F26E7;
+	Thu, 14 Nov 2024 08:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zI13vuEY"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="KHUa0sv3"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2059.outbound.protection.outlook.com [40.107.244.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C4F1F5858
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731572033; cv=none; b=C8RUp3iIq8gicw+GVM+hlVD5x2/IBeG/rHryBKC97iFjuHhj3zLfRYwb7Cw6RIR3blyot0jCYucx2VfUdTOVHmA1siCtjX+WMhEbXAQo06rtGIZlLMpzWDPoyMJfPz3JKTiu3fdNt5i5vv91iPxBAonpPUNwE+6wXx+FgND8cnY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731572033; c=relaxed/simple;
-	bh=MadLihmtT+/tw3ljmGzSM/wiUVn3wKnphVnIrCjKz8A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bICRqzEwFNfIWsk8Dqjml3ewawBaow1UnLud+ZYht3AELsHUIiUXZsDXG7AGfMsSCeEqAuAOa80YPalK66JcliBMmcDPDIk1Nf3mZMYKx+2Yhm2HcFzF9zoSI5QvugeV3gcXf/vwK3l2JIE/RkHgZGyx5hb5/BfpZpsfwKOg9XM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zI13vuEY; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d6a2aa748so210979f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 00:13:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731572030; x=1732176830; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hbnV33FhcFC7/cGoyMMFFLq5a4Zv2Ee9N0Kjjcgq5eo=;
-        b=zI13vuEYkW5Y0duUTfRzY7FrhGcRF9edmis2m+qXYF10nQIuHpNkOT0vEYkXZm6yiF
-         OXX09vdwo7oDo7p7OYjPI8DRRBSGS4oq9MqVkNUOlDjTZQ63AozTS+ssQWH2KzO8SGLI
-         Y6u7/x3d94CwzqeioH0HiRf97BHpeVA4+7rrSFYVXE9O674yLiUJcjCw6nJsjDEzrKug
-         de3bOYuqa0Tbm+wmNJDk159F9uPWMhNSGGClyb+WRRndpmXa3Qm5gw3A4FVJf9mcpUUA
-         OFBFTs6H4xXRUmGU5/8EFkOOmaN2pDvIiDm+8+0TZzWhF1HlAO5iz/w+mI4C8WIxYwUl
-         RkhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731572030; x=1732176830;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hbnV33FhcFC7/cGoyMMFFLq5a4Zv2Ee9N0Kjjcgq5eo=;
-        b=Zxc+0RghYSjW5jZf3QjPi0F4Qr4BAiJVb/2ohbFeyFxV0hjYb5ECfgR92kCPHxXDNh
-         01dGENwegGvVmhgu4fhOVB7kMiD9c1iBcu6B614f47qu4Y1W0o2AnvALgdvgrogzevX1
-         mrOdkIyaTzOQPw/50BZUFldZk82eR+D2e/aguPT4oGiLU/nPTyzm6pUg0FXtru8K5Xin
-         I2pDziCG7W6a5pfGBR9tEwG+3Xw9f/OLLI4H/+qqKUDR4aUcqCKRecNO4yGuogGonfck
-         ZhxTIkoPLq2Dzp7XYg97kB+tMWQUmionMfngmqqX2my7NLvfqVnWhxtEOEDnfh1uS2Jq
-         /tOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHbrMcqumbVMv6fM+4xlZqhDVlpdLeADmsNI/pAYNw7kR0Ga0cHAmuC91zVz3dDUDSHErjosyEgujW4vw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2RXvCgam6NnCwsPxFVu/Q957rat/HBCmEy7FAfIFg7wAaTfUn
-	G+u7mPXo95SWMHOKIlv/qQLb8kVtcDyBFSfEZN8vc7Ye2RjWNwcNO55m0UH+VpA=
-X-Google-Smtp-Source: AGHT+IFFoxrNuaonAlRHjVX4wkH6xAAN6jsZ9Y/Av/d6Vo1BPZjRFjen1gyTOIm6baYSxW8QIjmFGQ==
-X-Received: by 2002:a5d:5f46:0:b0:382:d79:842c with SMTP id ffacd0b85a97d-38218502c87mr829097f8f.13.1731572030308;
-        Thu, 14 Nov 2024 00:13:50 -0800 (PST)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3821ada3e7bsm788452f8f.7.2024.11.14.00.13.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 00:13:49 -0800 (PST)
-Message-ID: <02bbfb8c-817c-447a-92b9-bd03d76b66b1@linaro.org>
-Date: Thu, 14 Nov 2024 09:13:49 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191D51EBA1C
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731572182; cv=fail; b=VEu+P83zD84I6ueXCpBEwDoNOaQKMbei9dwkdU1Tofrm3LTzt1zqmGtWjhm7Qpo04RSfEPDcq8co0hlQzKutrxioNAZZzfKcWAPvMEsym6Ow1ESt4PZ8Al+hGXc0s55Q45yi3M57b/pn4Qj95cBQDwUYQeHe5Fa6P3e50Y4RkXk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731572182; c=relaxed/simple;
+	bh=NZN56oeP7mzcsK90Cm+BBukTzPQWFWhZQK3kMatMXcQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=WGOBcnBY8I1wWWJ7lVQqWbERBeJ7ffe6aDwWCO09/LVbXizeU+FyMF3OvNAWpFzNc1HBsqKoUjJZnW20nIOk3cT6C2AOb8EILlWTQRORMS/Af5vrLEs7KAC6G+tsDUqNd/yQM1J3q/mAX3VZ/i73Ujbda8ujSeOWskWrhBRukno=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=KHUa0sv3; arc=fail smtp.client-ip=40.107.244.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JdtvwNlwqeAq3BknFcvH85tAusXQBHEPCrj8R5YGMBRemPw81VlAQ5p2pM9uF6vQnKB/U/E6+mqDyGN5bpAYyWuKIRJD0N56IUJ/B8LzvdNKLHjDetcOtHJNZIV7vuPv3cECB5jx/LofGwL5b4kmII3ZVc8vRLYEjYBydKZc6EkKKvpBaQNZp+n11CKNoQt3nTxqQENb2X6LluO2xlKwRsNkVtHrZzY97wgCwht5/St4pLgmTN3oz0wQT3lPDEddgsynl3klCfqOcYBQEGDw+dINjv7qw+wNu4dVaDBFqb66o/E+nrFNA8WyzrtAvntzLa3D1WQzJ/j+PA9jvenfOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/HwhHup+UAFy43kVaqzLA5oRv2v4S16LXMwM04UpkwM=;
+ b=LpYGLSmZD+er9vQDPZunhLkcUPZ6X0qlyHQOitmrkztsZDwDuavdlh0YDtNQMV3dIGBALoXH4N2mgR7QWj4qU4OQcsrmWvcxOrkZj0hXDgV8LsSSdEL8ThQwjbfhKE7yMJ68nQf4i7QK98xmn+jmTa/td8kxCQj1lgnxfwEQSdCNUdVQZWuZ0EA7rIFLRgCEU6v7shEzFwF+XtvIp2GYIujvc0yhPXNe21SWUUHVpru4qhC611avK3IbXRSikgRSM+ofsyVQCaAlRw/kmV7CC/6/6PfqEY6/P2JLS8aFd0Ymj69rvrTxt+t/Y0awmVWuSL8dDktvam1gFJa8QH0I7w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/HwhHup+UAFy43kVaqzLA5oRv2v4S16LXMwM04UpkwM=;
+ b=KHUa0sv3/ErSTw1thbRVkVdSWEY8XKMiascJ+sr898xuAxke1YFRr6t47d0sqADnormRO9AbzRqAGjsxZ89hBoPahF/tue+TCJwYNYe8Vkv+TZHNIRJ7yI87Xs101Puf53Cc5Flzcw1uoYxc7R+gxcSmY1hnCeZg7c5NSQ06xqY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from IA1PR12MB6604.namprd12.prod.outlook.com (2603:10b6:208:3a0::7)
+ by LV3PR12MB9236.namprd12.prod.outlook.com (2603:10b6:408:1a5::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.29; Thu, 14 Nov
+ 2024 08:16:17 +0000
+Received: from IA1PR12MB6604.namprd12.prod.outlook.com
+ ([fe80::d4cd:4112:1ce8:7f3d]) by IA1PR12MB6604.namprd12.prod.outlook.com
+ ([fe80::d4cd:4112:1ce8:7f3d%5]) with mapi id 15.20.8158.017; Thu, 14 Nov 2024
+ 08:16:17 +0000
+Message-ID: <93788edc-541e-4f7e-afe1-02a2526be684@amd.com>
+Date: Thu, 14 Nov 2024 16:16:05 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] drm/amd/display: Fix null check for
+ pipe_ctx->plane_state in hwss_setup_dpp
+Content-Language: en-US
+To: Zicheng Qu <quzicheng@huawei.com>, harry.wentland@amd.com,
+ sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com, alexander.deucher@amd.com,
+ christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com,
+ simona@ffwll.ch, Dillon.Varone@amd.com, Alvin.Lee2@amd.com,
+ nicholas.kazlauskas@amd.com, alex.hung@amd.com, aurabindo.pillai@amd.com,
+ relja.vojvodic@amd.com, wenjing.liu@amd.com, george.shen@amd.com,
+ mwen@igalia.com, yi-lchen@amd.com, martin.leung@amd.com,
+ srinivasan.shanmugam@amd.com, stylon.wang@amd.com, jun.lei@amd.com,
+ amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Cc: tanghui20@huawei.com, zhangqiao22@huawei.com, judy.chenhui@huawei.com
+References: <20241105140137.2465572-1-quzicheng@huawei.com>
+ <20241105140137.2465572-3-quzicheng@huawei.com>
+From: "Chung, ChiaHsuan (Tom)" <chiahsuan.chung@amd.com>
+In-Reply-To: <20241105140137.2465572-3-quzicheng@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TPYP295CA0050.TWNP295.PROD.OUTLOOK.COM
+ (2603:1096:7d0:8::12) To IA1PR12MB6604.namprd12.prod.outlook.com
+ (2603:10b6:208:3a0::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] thermal/drivers/mediatek/lvts_thermal: Switch to
- IMMEDIATE_MODE
-To: Hsin-Te Yuan <yuanhsinte@chromium.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20241108-lvts-v1-1-eee339c6ca20@chromium.org>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20241108-lvts-v1-1-eee339c6ca20@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR12MB6604:EE_|LV3PR12MB9236:EE_
+X-MS-Office365-Filtering-Correlation-Id: dc6fbfe7-9e58-43b1-9a0f-08dd04849cd2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Uks0Z282d0paL1krRDBBNmFsbU16OTQydzM1SjBlTEoxYzNDY0NWMlF4YitN?=
+ =?utf-8?B?T3JoSzdhU09nNXkxaEwyTlZiaEdXQm5WbFlRL05iMnRMRTNBNzhSN1ZVR0FC?=
+ =?utf-8?B?L013NGRHQUt6OVlzVjh0bTJkRjBORVBGa3p0dEg2UmEvT1cySzE5NG9BVWl1?=
+ =?utf-8?B?N1NZU0V0Skp3SVVWREZWZ3E1SXFsSThPZm1YUGNzZWM1UXNWR0l5Yzg1ZDlT?=
+ =?utf-8?B?dFhvaWxaQjd0Z0JaZ0RoQnJYQTV3Q29iVVJ0bnB4NWxvTG5pYVU3c2hvRzc2?=
+ =?utf-8?B?a1BWR2Jsc0NTdmlXVlV4TnB4bEpmTFMvZXlubjdRUm5FaGFqOW95K3d5cjZw?=
+ =?utf-8?B?TEtyMStUbFVvTUZBTnZ1Ymk3Vmd2ZFkrSjc4SFlRM29uZW1UaXRya1ArUTZS?=
+ =?utf-8?B?VUp3MGpDbTJ4Ky85SmhhaW45MDF5aEtJclJKUVFIT0N2T24yY3NnWG5FWXZr?=
+ =?utf-8?B?RFhCeDF2a09IVHZMYjRmK0pYUFcwZ1h5Tmd5SWc4aWwraTlvY0tFblE0bkg5?=
+ =?utf-8?B?S1VLNldrWHhMSkxCY04xeEpKRm1xVDNpN3UxdUNMWFNHRGNFZ05pWjR2VDZs?=
+ =?utf-8?B?SEVvcDJRQkI2elZIczU3bndWaVN0NnZCd005d0kycnpWOXBkVFBEU3RtNUl4?=
+ =?utf-8?B?dVplaDRPUHNTdHAwdGRrY3RndHMxM000Q0JDNGRVZTFGU3N0RGNoa2toOHBG?=
+ =?utf-8?B?VG9iWVpnV01KWk1LY0Rrc1d2ME5QQWNxTWx2MTBWeVZhbG5yZExFOG0yL1R0?=
+ =?utf-8?B?TjNjb1VEQnRndnA5ZS90aUlvYVVyN3hieWEzL0RZRURKOWwxUmpRQXZSUkF2?=
+ =?utf-8?B?RzVPcG1oUjFzWFRUeDZyeElPclc5OWRyUVVFNjUzZ1FQNzJoNmRPOXVkc3JY?=
+ =?utf-8?B?Z0ppdkRPT01ZTXRleFNjYURORFByMGFpRDJzNlJkVEZXYXRkVGN4c254Sk5m?=
+ =?utf-8?B?alhxUUpSR3licnd4Y1ZJVjkrT3R3eFZKa3BONm9iV0xsdG12aUlBTHdtRzgr?=
+ =?utf-8?B?NXF5b1ROWHBucFdpVnNZMENiZFFqSHYxaGtQK3BxMnI3N1JtLzJLK0ZQV3JB?=
+ =?utf-8?B?Z3ZBSlpRWkJORDNGc3h0aHFjYVRDY09JN1ZhNVRqYmRhaDR3NGJRTXEyQllS?=
+ =?utf-8?B?Y3N2ZFVKVWx6T1lPRHJxSTcrR2k2WithNmtGa3VBMHdKbjFGcExFTjlLYUpM?=
+ =?utf-8?B?eVJ2Vy9iRnNpWWNEMFhZTHVaWU42ekVNQXJ2RTg4N3NuNzlmU2NRck9kUW9G?=
+ =?utf-8?B?ZG9FYVJOejl3cHFvZGNMa1dCWnZkVUIvVjVIUFYzd1p1b0tHemZHU1plaXRP?=
+ =?utf-8?B?Z24raHJyTWJUbHRiMnRPbnVONkxWbVpiNnJvcVk1bnFRazVaQ2d3Q3liVGdC?=
+ =?utf-8?B?OGpFWS83aUZkNnJBMGJhN2svNU5qSWVVbm5sNmgwQ0FDZys1MTNlK0NOTkxa?=
+ =?utf-8?B?WTh5a1FLRUR3cDFuSHJXdTdwcmNKSjhrbjMrYjBhSnJYK3gyL3p4QldLbE9l?=
+ =?utf-8?B?L2lVMEJPMDJQOU9lc013NHFzM3hnWVk1aEt4RlJoSUhydVJHNkxlcXFEdlB1?=
+ =?utf-8?B?RGR5MWVzdFNVR3lCU3FvT2Zyb3dRUktUdlo4ajRiRXl5eTJhYWw5TWpiWkR1?=
+ =?utf-8?B?Z3pmbGdMOWZhZE9Bb0NxU3R1bi8vVXYwSDZ3UmMybnB4aGMxcG9pWEpVRDlh?=
+ =?utf-8?B?Q2piNXdxODJ3QmxOaG9EcGs1aXd6ZjNOUEE3T2lxK0pOWHFxaHhneVN5amVQ?=
+ =?utf-8?B?dUFrdTRyZTN5WGk1enhWS3dCVTExUVF0cWtqRXo5c1JzV0h1RGpZWFI2eFBn?=
+ =?utf-8?B?eFcwSFFBM3FUbFl3RnA0dz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6604.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OHB4aTJaZHdtOHlqa1JMUVQ4NTJIM2E2YWl6b1Q1aTJxUU03WWE2V3I5cTJG?=
+ =?utf-8?B?a0tSS1U0czJvNGZhVy9LVCtUQWk4YW9KV1hIdS9rRDYxeWxITGR3Mm1WV09t?=
+ =?utf-8?B?ZVpXUm5uelhOWlhqRUJjQzRXLzR0NDJVblgyMEpXREFHTU5UbElGMDgyUDBn?=
+ =?utf-8?B?MG8rdjFkazArbGIvNEpCcUJBT29CTnA0NFZGTk9YQjNrdGZFdHFwNEUwQkpa?=
+ =?utf-8?B?ejhrTVcxVXV2UXZZcFZ2RmlrRDNqakpDSXc2ZTFNSzE1bE54dkhOU1VHR3Z6?=
+ =?utf-8?B?ZEtzZ2J6VzRua0RpOUdRUGR5ZUZYck5HNU5NR1NFR3Ryc2l6eUVzQVY2R3E2?=
+ =?utf-8?B?dDNGRXYweCtBVzRaS0ZwTm9SbFlFNkovb1EvbUJWd0h4blBBemxtQnRrRDdJ?=
+ =?utf-8?B?TWpBNUd6WjA3T2NtZnE2dDRUMmd4cVFsZlAyVjNWREpOOEJFaHpLQ3F1QVlK?=
+ =?utf-8?B?cDdnV285d082Y0JFV1hFdDEyOHRyOVNZZVNUNCtUK0NqK1JPSjh5b0JKMkg5?=
+ =?utf-8?B?TGdKbXYwZ2RaZmREMzllaXk1eWdXa1JFeStaR0FIREZGR0U3Unp1TlovK1hz?=
+ =?utf-8?B?d0w5RCt3emY1VWJFTUIwbWkvb012S0FFRktiWmhvRGt2ZUZFTlRqQkhFN2RK?=
+ =?utf-8?B?QmhzQzlxa2VIRDVTL2h1MDc4MEdya2lEYlF0N1czNzBRWFc1YjM0VGVCYWtC?=
+ =?utf-8?B?Z00zSG0xUkdGeXhhdlVOSzU0WnpuQlpjcVhUYzFXZHRZUFRiY2NSYzFoWU12?=
+ =?utf-8?B?czNKbU9OY2J4bzVxeDBCWW52NU83dTYrQWpXdjhpUURHRm1vVlhrNW90NmRB?=
+ =?utf-8?B?bTNYNDVRcTBWcnNWeHJ3ZTZ6QlpCcVdoMkQySnEwYjBUWW1jRVAzNmF2NmZ3?=
+ =?utf-8?B?dWJmTFVZb3lna3VZaG5OcGUwKzlTWXhKT2lXTkwzZWlWMWdsald4eU9raFdI?=
+ =?utf-8?B?SlUxdStrL3lrMTU1bmpZMFhtZTdtbFVKYSs3OE1MS1ZNbXdNK0ZVWVhiUkpn?=
+ =?utf-8?B?TWF6bjVDaUhVV3g2NEF4c2FXRFVwYlpZbXJSajZUb2pMK21XKzNTMWlsR2F0?=
+ =?utf-8?B?WGtKeXp4MUhmMGxnaEVaVXl6UjFSNEkvcmhFdTR1ZXFBaVBCd0VlRFB5Z3Ex?=
+ =?utf-8?B?SXFWK3U4V0JXNlpuc2QyMTZId1ZITmlVV1UyUml1STZaYzcvTnRhOXVsQUoz?=
+ =?utf-8?B?ZXNYYVlvdkpOdER0TkZGNFB2TUFnQ0tCWmh4bHMrUVJoaWFEV05XeUIrai9u?=
+ =?utf-8?B?RmZuSnpZaHpUWXI0MGs0UUFid25oaW9Kbnp0ajhlL3FHS3preXZSVy9sdHM2?=
+ =?utf-8?B?R29KU0h1NHlBYTBhdGw0MVNGMWV5clNkaHcrM2ZXUUpvUFdsODBzUE1OOHEw?=
+ =?utf-8?B?T2xGb0JXZ3gwVnl4SFhCRER6M0I1N1Z4M3V5UGxwZ1lSQ0dXU1EycExMSWxh?=
+ =?utf-8?B?eURadmRsRDRKMFNaS1ZLYkp6RzhKQld1K0Q2eE1EcUZmMk5lZ05sV2hlVEp2?=
+ =?utf-8?B?dVBGWWxvS25pRGtRdUV0aVFuTHluT2RCekZHaHFhSmQ1TGdEdEhENVVsbUNU?=
+ =?utf-8?B?VkRUSGtubFIrWUFPRUJmZ0hNRHVpeXJ0VTVQaDA1T3NvZGdqS1Nac3VuUFk2?=
+ =?utf-8?B?YVQwa2xqaDJWUmc2Wldpb0FpaURjQm5EbXh6RmJ6Tk9JRzlqcmhYSGM0cEY1?=
+ =?utf-8?B?Q1MxZCt4OHJaQzZMY2NKMXZ4c1VEL0pJYU9UQmYwWW1UdXo5bFlFZ3U3WUtB?=
+ =?utf-8?B?QUVmd1BrTU5OZm8wWEdqVEVRbllLUHZVZWRNN09tc1lFa1cyUHJrQUJRbTZV?=
+ =?utf-8?B?NjNoTlVNMm1ybThhZ1pHZmZEZVdISmdCUFBEaE40QndRSFVBNXJPL2pZSWxp?=
+ =?utf-8?B?YXdCNlBWVHVtMG1JNDhhaWh5dmFXeEl5cXZtUE54Y1Vjb1NsZE5CMk5SNVlC?=
+ =?utf-8?B?d01JbUswcnIvazRJV1Qwd2RKbi9LeDBuWE82TFFJczVEd2FrMEQvd0dKdlhL?=
+ =?utf-8?B?R3p6TWlTNllLQ1QvQXlPZlE1dktNUzdCWVRjc1NlOWZleGhvNC9lTTNOdTFi?=
+ =?utf-8?B?aWoyaFk4RHd6cTZLSFZ5SjdOSXJYdXlqQ29UVTRvTStybWp2NEduMUpUc210?=
+ =?utf-8?Q?iYL2JgnQRAgNrn3S3PDxf+tnS?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc6fbfe7-9e58-43b1-9a0f-08dd04849cd2
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6604.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2024 08:16:17.3043
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nkp6WwYgUZxjX44gUlRUdADStDe64GnjEfLuuqL+IOHPYNJAFlTk+YEKvsnZ8mcxOeR1Wxs/Vfe86bHkbuN6mQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9236
 
-On 08/11/2024 07:46, Hsin-Te Yuan wrote:
-> Currently, MT8192 cannot suspend with FILTERED_MODE. Switch to
-> IMMEDIATE_MODE will fix this.
+Reviewed-by: Tom Chung <chiahsuan.chung@amd.com>
 
-Given the comments and the different changes related to the filtered and 
-immediate modes, I won't apply the patch until this is clearly sorted out.
-
-> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+On 11/5/2024 10:01 PM, Zicheng Qu wrote:
+> This commit addresses a null pointer dereference issue in
+> hwss_setup_dpp(). The issue could occur when pipe_ctx->plane_state is
+> null. The fix adds a check to ensure `pipe_ctx->plane_state` is not null
+> before accessing. This prevents a null pointer dereference.
+>
+> Fixes: 0baae6246307 ("drm/amd/display: Refactor fast update to use new HWSS build sequence")
+> Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
 > ---
->   drivers/thermal/mediatek/lvts_thermal.c | 3 ---
->   1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
-> index 1997e91bb3be94a3059db619238aa5787edc7675..daad52f14fc03d0c4131f2ffdf3eb6b49a4a43d0 100644
-> --- a/drivers/thermal/mediatek/lvts_thermal.c
-> +++ b/drivers/thermal/mediatek/lvts_thermal.c
-> @@ -1541,7 +1541,6 @@ static const struct lvts_ctrl_data mt8192_lvts_mcu_data_ctrl[] = {
->   		},
->   		VALID_SENSOR_MAP(1, 1, 0, 0),
->   		.offset = 0x0,
-> -		.mode = LVTS_MSR_FILTERED_MODE,
->   	},
->   	{
->   		.lvts_sensor = {
-> @@ -1552,7 +1551,6 @@ static const struct lvts_ctrl_data mt8192_lvts_mcu_data_ctrl[] = {
->   		},
->   		VALID_SENSOR_MAP(1, 1, 0, 0),
->   		.offset = 0x100,
-> -		.mode = LVTS_MSR_FILTERED_MODE,
->   	},
->   	{
->   		.lvts_sensor = {
-> @@ -1567,7 +1565,6 @@ static const struct lvts_ctrl_data mt8192_lvts_mcu_data_ctrl[] = {
->   		},
->   		VALID_SENSOR_MAP(1, 1, 1, 1),
->   		.offset = 0x200,
-> -		.mode = LVTS_MSR_FILTERED_MODE,
->   	}
->   };
+>   drivers/gpu/drm/amd/display/dc/core/dc_hw_sequencer.c | 3 +++
+>   1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/core/dc_hw_sequencer.c
+> index 7ee2be8f82c4..bb766c2a7417 100644
+> --- a/drivers/gpu/drm/amd/display/dc/core/dc_hw_sequencer.c
+> +++ b/drivers/gpu/drm/amd/display/dc/core/dc_hw_sequencer.c
+> @@ -881,6 +881,9 @@ void hwss_setup_dpp(union block_sequence_params *params)
+>   	struct dpp *dpp = pipe_ctx->plane_res.dpp;
+>   	struct dc_plane_state *plane_state = pipe_ctx->plane_state;
 >   
-> 
-> ---
-> base-commit: 906bd684e4b1e517dd424a354744c5b0aebef8af
-> change-id: 20241108-lvts-f7beb36efc59
-> 
-> Best regards,
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+> +	if (!plane_state)
+> +		return;
+> +
+>   	if (dpp && dpp->funcs->dpp_setup) {
+>   		// program the input csc
+>   		dpp->funcs->dpp_setup(dpp,
 
