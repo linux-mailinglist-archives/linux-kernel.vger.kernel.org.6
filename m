@@ -1,59 +1,71 @@
-Return-Path: <linux-kernel+bounces-409209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19DD59C88EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:30:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1AC69C8929
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:43:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D281C283F6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:30:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7BC6B244E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:30:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93091F8F02;
-	Thu, 14 Nov 2024 11:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073501F8F1C;
+	Thu, 14 Nov 2024 11:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QgPUROV8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uzLybEb0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KbWdbrm3"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2205E192D9D;
-	Thu, 14 Nov 2024 11:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0011F8937
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731583800; cv=none; b=R4AGmqASvR7O1QeNUWX5HgqCMq7fM9BMtYcPKUcxrbxLDjHQC2KTByyYpU+7Gu1inietl1zwgStg5yQuvJK6MzOHmdwi6aF3RGWCCRWYIhHE84GQpWvceZ6zw7y2BBLnNIjpfOpS3LFc7GNPaGUASTVeKfSJhegqkmpKpF0/l14=
+	t=1731583822; cv=none; b=qLRpybuTjnsANddbCM3QqNzR2LyFR5W2m22/F8gF0s91Oct5jstV7QESjbOWUutBoYdkJli86v3WypFdCCsOKOj2zj9OjKu6EkENSHsBhcF0zXJG+fZPjQuNpvusrUAFAANQQ1q4be1syVQmRsQkUn1tiLOqAfLc6YVyP2IFdwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731583800; c=relaxed/simple;
-	bh=U/N0EuUWbT7pPql+U1/0JgFFTZ8SFYvbZ5fG9zsUaSY=;
+	s=arc-20240116; t=1731583822; c=relaxed/simple;
+	bh=wNcFrtWrs3hAo9466ybp1NI2dm6XDdO7sIRLxrmRhQ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u4lNebGF6XalZBh7takLyw1mbkcehStyoc6Ew0DcoR6ptYlLJj5xFF3/LOQ9RrwN6x/QNjvb5ZUzgs5d/C1x0dmuRNbLPAYiH6ZRK7LzmUs/4ZFrLFivA/X+fe5iua1XTlsRnzR33265xL/TnGsAQe8/Je8H4oKm7kSnftLSsDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QgPUROV8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5677AC4CECD;
-	Thu, 14 Nov 2024 11:29:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731583799;
-	bh=U/N0EuUWbT7pPql+U1/0JgFFTZ8SFYvbZ5fG9zsUaSY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QgPUROV8SBbR4BmTAOvxVDKKawNc/iXURwmgI4jRRxgqIOmt3ou/RCPaBFvte8RTw
-	 KdVWINQATghuNp5qQL/ekFmKugN6FG5NAfkUpzrq0RR2uq40XWdlMzeOzN7IPrUqSI
-	 7Z47od/ioF1BEzijTLGScAQgKH9sXviOUj1ZJpo5d+1xqBK0kK5Oi7n5ULOsxw2qpv
-	 JN71i8E9a0tMD2sA5PpD2wLkAuhOu1j6DEPpn0Zlyp1BFtJIc0gpTAWCbfbGij22mg
-	 14z60sVhWvX/gkVndAu8QQ4l9yCnI84um5N7NF6gEbkNAMlhyXs1SiJ6tBX6NxL9oV
-	 VsiKQu7cA58Eg==
-Date: Thu, 14 Nov 2024 12:29:54 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Karel Zak <kzak@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Ian Kent <raven@themaw.net>, Josef Bacik <josef@toxicpanda.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v4 0/3] fs: allow statmount to fetch the fs_subtype and
- sb_source
-Message-ID: <20241114-umzog-garage-b1c1bb8b80f2@brauner>
-References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
- <20241112-antiseptisch-kinowelt-6634948a413e@brauner>
- <hss5w5in3wj3af3o2x3v3zfaj47gx6w7faeeuvnxwx2uieu3xu@zqqllubl6m4i>
- <63f3aa4b3d69b33f1193f4740f655ce6dae06870.camel@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iJfM/mffgp064suKBtVhEHqZR0Vz50l9WxGL9NOMwqB1G/3yLeo6F8hAQLee5AVAju3RsMugKlN1BKikUkuoqPf2D5FM8cO+KT7WH72JeGayOKy6VkSmLEP5vGDXwVEXmiHMSjfdmHtd1Mqv8fySxa91tZ6CBAQ3PlbJ0ilrcGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uzLybEb0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KbWdbrm3; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 14 Nov 2024 12:30:18 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731583819;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wNcFrtWrs3hAo9466ybp1NI2dm6XDdO7sIRLxrmRhQ8=;
+	b=uzLybEb0/J0Q50gOadLxS0TFDyETxOo1l/Qnl8pSOIz9LDLC9MO8rgTImOiRb0bfqNV6DC
+	pPY42XKbq0WEL4rpjeNAQdyO4fzx6SE79TsBC+0mTaFuNb6J0GmKoB/bg4lYD9oWHSjwzT
+	GWBepx58jij2EM2zd3P2jGf/sb3Xm3jpU6xq4kJuIpwRIcN63AATIL8liPPtVEUt2uMuaC
+	o7EvYrEp0GRSwLrb7oUNCzIT4bLFwaS5xq/gODKVUtfuFtC8a/eybMLEh3l/GUGbVEMxVq
+	EGj27qlkpUIpNiH58QuOkGFToPGpOsdGYPDL5/xf9qGUQY4T4ruBBTBX/JWZ3A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731583819;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wNcFrtWrs3hAo9466ybp1NI2dm6XDdO7sIRLxrmRhQ8=;
+	b=KbWdbrm3iVK0iog/B1klb+IWMfrSPBqO5wV5Pg5ecJQD0os5J93Euu/yFJ5IMbEmqumNvs
+	wfJ1orHn1EMYqsDQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Huacai Chen <chenhuacai@loongson.cn>, Xuerui Wang <kernel@xen0n.name>,
+	loongarch@lists.linux.dev, Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-rt-devel@lists.linux.dev, Guo Ren <guoren@kernel.org>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] LoongArch: Allow to enable PREEMPT_RT
+Message-ID: <20241114113018.Ilo9ZsQo@linutronix.de>
+References: <20241108091545.4182229-1-chenhuacai@loongson.cn>
+ <20241108091545.4182229-4-chenhuacai@loongson.cn>
+ <20241114103111.5W5ZY0D4@linutronix.de>
+ <CAAhV-H72YSNBGutYPOVi=S7nwLb6YOiQOFqnimAp=9D0wAJc3g@mail.gmail.com>
+ <20241114111409.LWKp5YEg@linutronix.de>
+ <CAAhV-H4ecBZsV+9SxLZ-JFiUK=b3tMqkLZe0djac0_390==MMw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,43 +74,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <63f3aa4b3d69b33f1193f4740f655ce6dae06870.camel@kernel.org>
+In-Reply-To: <CAAhV-H4ecBZsV+9SxLZ-JFiUK=b3tMqkLZe0djac0_390==MMw@mail.gmail.com>
 
-On Wed, Nov 13, 2024 at 08:45:06AM -0500, Jeff Layton wrote:
-> On Wed, 2024-11-13 at 12:27 +0100, Karel Zak wrote:
-> > On Tue, Nov 12, 2024 at 02:39:21PM GMT, Christian Brauner wrote:
-> > > On Mon, 11 Nov 2024 10:09:54 -0500, Jeff Layton wrote:
-> > > > Meta has some internal logging that scrapes /proc/self/mountinfo today.
-> > > > I'd like to convert it to use listmount()/statmount(), so we can do a
-> > > > better job of monitoring with containers. We're missing some fields
-> > > > though. This patchset adds them.
-> > > > 
-> > > > 
-> > > 
-> > > Applied to the vfs.misc branch of the vfs/vfs.git tree.
-> > > Patches in the vfs.misc branch should appear in linux-next soon.
-> > 
-> > Jeff, thank you for this!
-> > 
-> > I have already implemented support for statmount() and listmount() in
-> > libmount (PR: https://github.com/util-linux/util-linux/pull/3092). The
-> > only remaining issue was the mount source and incomplete file system
-> > type.
-> > 
-> 
-> Unfortunately, I think we might be missing something else:
-> 
-> The mountinfo (and "mounts") file generator calls show_sb_opts() which
-> generates some strings from the sb->s_flags field and then calls
-> security_sb_show_options(). statmount() will give you the s_flags field
-> (or an equivalent), but it doesn't give you the security options
-> string. So, those aren't currently visible from statmount().
-> 
-> How should we expose those? Should we create a new statmount string
-> field and populate it, or is it better to just tack them onto the end
-> of the statmount.mnt_opts string?
+On 2024-11-14 19:19:26 [+0800], Huacai Chen wrote:
+> > > > Why is ntpd/chronyd service affecting this? Is it running at prio 99?
+> > > > Otherwise it should not be noticed.
+> > > No, ntpd/chronyd doesn't affect latency. But they may trigger RTC
+> > > synchronization every 11 minutes, and RTC synchronization affects
+> > > latency. We can keep ntpd/chronyd running but disable RTC
+> > > synchronization by configuration, this is the least aggressive method.
+> >
+> > What is "RTC synchronization" in this context?
+> Means the sync_hw_clock() function in kernel/time/ntp.c, it can be
+> enabled/disabled by chronyd configuration:
 
-I'm leaning towards using a separate field because mnt_opts/opts_array
-is about filesystem specific mount options whereas the security mount
-options are somewhat generic. So it's easy to tell them apart.
+But what exactly is sync_hw_clock() doing that is causing a problem
+here? The clock on HW is updated. The access to the RTC clock is
+preemptible.
+
+> Huacai
+
+Sebastian
 
