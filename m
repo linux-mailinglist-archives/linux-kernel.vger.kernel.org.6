@@ -1,113 +1,136 @@
-Return-Path: <linux-kernel+bounces-409694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE869C902A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:50:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6F929C902E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:52:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F1DE1F2855B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:50:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D2D2281138
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E36EE186284;
-	Thu, 14 Nov 2024 16:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F83117D358;
+	Thu, 14 Nov 2024 16:51:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EFTdvLwO"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XuSh+hJ3"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF39E189F3C;
-	Thu, 14 Nov 2024 16:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4085674E
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 16:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731603012; cv=none; b=rV5fGxJ5/zUd3DNwuPybOY7k1s3ggV8Uk1ouC3ughoTl3+lUc6/DGgcaYADxPlpNYpDEmJhZx/tA3rHsEzkO49va8OpMj3z14IsiPgNVzGhmGeyo5umKlqF2dDbWQffH3EHfaLUKx2WQuDyP2NSuIS5LdNyT2XbdxDIJhk3k/Ig=
+	t=1731603116; cv=none; b=gr2apg2qM1cUfV0kjrCsMiEa+6DghWAce9mRgwnkvhcueKTkF6ulps+tPLml12z1aqgfoB37yrA/mPHDDRZAKgBTqbkgi5xY53IPBfNCD2KY3ANGaiM8Ojo1McZ7QjKULgrkSo/nmtgJiC/ZWR5xzNMBJO75KlQxzmf0rk4xBeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731603012; c=relaxed/simple;
-	bh=Ub1te92EUjR3KKO91jYzVthuH+ro/ejxDQT2LL/DeoQ=;
-	h=From:Message-ID:Subject:To:Cc:Date:Content-Type:MIME-Version; b=rGZCn9wPB7CSfTLc9yxMTEszdSBv1bhrBqRtEQXWho3JloshHiIulO8+BgarkRubxSB4NGfnT1Dd2VIAjbTBKaR8gyseaRz0W2sbPp5ipgnssUiacfHpUdA3fyPr0eB+b9eUwJxbi3SNZXGUIq1e9K6HQx2s/r1H4WnFQ/R2BxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EFTdvLwO; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cf8593ca4bso570173a12.1;
-        Thu, 14 Nov 2024 08:50:10 -0800 (PST)
+	s=arc-20240116; t=1731603116; c=relaxed/simple;
+	bh=NszP7TXqWj2S/e1y5AGoZZXxdUD7VRLHgXHhDIJdk/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ty914fEV+mTz1MpQVQD6gTuBpMyseyXYL8KISQOL0zCNDBc/X8srL3gO+a5uW/kn7qj6QzUxGreNtC2MhKtSrzD3G0JeynEHXpQqHMBTQOND+PWx7nCcj58sW39xB9tyNdchD20CZX6vW1sbe3Vka8Z9XAvpEEMhVCd0JsKKkzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XuSh+hJ3; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53da5a27771so916639e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:51:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731603009; x=1732207809; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:date:cc:to
-         :subject:message-id:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ILtapZECsvODEytONKExRHUU53rGzXL43ZOeVl85mJc=;
-        b=EFTdvLwOUXk0C3etC1uPsg/upmtXzxyvQ1LV9L1+7DQhUFGL5mJ53dKF9V/tQesgE6
-         j3HF66utn3KEk+i/MmmvX655UONfwMQmJGAWfTdC5qmOFDf75kZUvzBmQeZH4ecitMcN
-         JlW2dXclfpLF1Xq9k1RIADW2Ow3wer96vhMsPzs94zdsaQPqg8h4PGop30nN01p/cExu
-         4DEuO8FJTax07SrJzgqVXLVMc5wXWlUrhi13NNt1OZmL6zexMq6TOO0EzRwYkDhWGYvg
-         ikWrdFKgdvrboKVLqyurKpcUypQ+s53nM08YdsJBjCniZn68Gi2h3lQUXqk2V5O5vG9B
-         bPyQ==
+        d=suse.com; s=google; t=1731603112; x=1732207912; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=r4wPxzflWKzXhO1nuki36dNsr0Nxtgqzfwxp448aaNk=;
+        b=XuSh+hJ3BGbYUeccL2/nKRSJ1Adx7uZJDUUGV0wE4hFTIaN/VGzdG2rBxs7i7eNFLd
+         XThv9YlTTgm3NkT4ArrSvMb7hBwy2kctE9X6BxT9bdlGfZkszXYfw7+f/uWVBvpW8Xua
+         BFP/8aDsUpVUpUcdf2t2gxwsp5/QmT4jgOgY8M14eOc65dt8/GfE8mq1JT8XA89+Ravc
+         Rq43UiEB9Ry+UtVw/RQucEkVjplQ133D4tXgRsJ5kH9y9SClTSvSAKj1hq99uS1U+J3O
+         HA/G0lPqTup3wFQxGEXoewfOuciKD941JnJC4hk0VDuC8wkK1m1Sr1HxJQeM+837PnBO
+         6Gtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731603009; x=1732207809;
-        h=mime-version:user-agent:content-transfer-encoding:date:cc:to
-         :subject:message-id:from:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1731603112; x=1732207912;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ILtapZECsvODEytONKExRHUU53rGzXL43ZOeVl85mJc=;
-        b=diDy9RKsW6WxfGHIZFQJliS3D/cfmZvosFQlgJcJKunkRZYszw/Vsm2IW7DOZOE2LM
-         q4wQ3at7bovgUML9FvpmQmsmRXwHtSEw03FoohI71FGKs4ZuNgi+zMLxssFiDO7jc0Sf
-         xhqmrnRQewYfAnPgtGXhLiSt2XDeVaPDs1jRNwf0JdjRawpiOmqavMKJVlgQxQ4a88wW
-         2olXieEK+BOSm2VmHVChQxu+MKURm/T/f9FMZOYiP595nVKg7kpfHvQr+jXCjjKuqocD
-         IkrSabIDylNZhcPnP+OsBsB44buHI6HwFBcLexTu8w6cinc5uQgVfKXwzyLg0g4SLZmc
-         gnIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKtuAyt2NsWKpRwj5rMyYiKfIueAgPcc2chtF/lT/YaUgrcYXB3JNL7en1nBhoxZT3pVZ70oNO5CRBsj0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF9TBkpo/Du+kIo7orJxllalFN3juOUX+sD6XlT+9kbM5UHkbU
-	l+BJNmxjJabpKjqMpBxtqYNFP6ui3VpRPvKSl4vABcbfnu65MOKajCBn9QrCJ+Y=
-X-Google-Smtp-Source: AGHT+IFjXtHbzJ4huqBidQnrOtxCNVNIDJqBKNtDTw1ffM4pLAYGpURs5/jw+75nUZtQENK1095tKw==
-X-Received: by 2002:a05:6402:d06:b0:5ce:d028:e11 with SMTP id 4fb4d7f45d1cf-5cf77ea3808mr2308434a12.17.1731603008752;
-        Thu, 14 Nov 2024 08:50:08 -0800 (PST)
-Received: from [10.0.2.15] (23-152-178-143.ftth.glasoperator.nl. [143.178.152.23])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf79bb3579sm729724a12.37.2024.11.14.08.50.08
+        bh=r4wPxzflWKzXhO1nuki36dNsr0Nxtgqzfwxp448aaNk=;
+        b=Os9d9S0hhNrjmx+pxSEr9bVZjSPXqoPJB2e54nfXhejMdo/dB/OPlCN68yLpSDZmwL
+         BuB9fLA31CbS6/eREf8PkFNgJLIOWQWqM1MuT1tsKYakuGaZ5LlRhLYtnDCayXczVm9Y
+         vUWm7DBE4M+nSAL4iwrumVa9wE/VT5T0j9AGrNNePwijZqhLDSFhneAaIjawMFEIurDt
+         IuLiY1gIo/sfiDdbiqeMFyOavgWTiJjOt8nCGOF5pmdUrinkUPQ5B8aKu31wxgIb0JaS
+         YbeJ5nG5GHJmJnltR/nD2Di06fGBJNMmaM6e5LtMNlJTHuQzlckkhqBfPRACOywbg9Na
+         +4+g==
+X-Gm-Message-State: AOJu0Yx5GY42ZFUuBmXsCtwV9Y6Bs3/+GTHYnBpPwl8JAa5csif4E1G2
+	hZNKsH5Ifit5iQT/mnOjjAcQjKLsAKDEwN55sNjlkYn8GPRC1oN0Sk6CmXxyvgE=
+X-Google-Smtp-Source: AGHT+IEMRk4K0IqzRtS7aXdMxOPTIt1tDe0rMCW0UzLZAOSPvPDT+yjHwx6FIDbxBGBgADbKY/PlSQ==
+X-Received: by 2002:a05:6512:224e:b0:53d:a2e2:5877 with SMTP id 2adb3069b0e04-53da5c28cabmr1499944e87.5.1731603112347;
+        Thu, 14 Nov 2024 08:51:52 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab806e1sm26954855e9.20.2024.11.14.08.51.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 08:50:08 -0800 (PST)
-From: Liam Zuiderhoek <zuiderhoekl@gmail.com>
-X-Google-Original-From: Liam Zuiderhoek <Zuiderhoekl@gmail.com>
-Message-ID: <2494788d943ed75741e6671e615f9e3c31cdc2ea.camel@gmail.com>
-Subject: [PATCH] i2c: i2c-core-smbus: fixed a whitespace style issue
-To: wsa+renesas@sang-engineering.com
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 14 Nov 2024 17:50:06 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+        Thu, 14 Nov 2024 08:51:51 -0800 (PST)
+Date: Thu, 14 Nov 2024 17:51:49 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Chris Down <chris@chrisdown.name>
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Tony Lindgren <tony.lindgren@linux.intel.com>, kernel-team@fb.com
+Subject: Re: [PATCH v6 03/11] printk: console: Implement core per-console
+ loglevel infrastructure
+Message-ID: <ZzYqpTwVnB61kXuM@pathway.suse.cz>
+References: <cover.1730133890.git.chris@chrisdown.name>
+ <28d8dff56bc15b2a41f0d2035701ccb11df22610.1730133890.git.chris@chrisdown.name>
+ <Zy4368zf-sJyyzja@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zy4368zf-sJyyzja@pathway.suse.cz>
 
-From 214adebf7cf37be941f208124fac9ea6bec0f1d2 Mon Sep 17 00:00:00 2001
-From: Liam Zuiderhoek <zuiderhoekl@gmail.com>
-Date: Tue, 22 Oct 2024 20:46:59 +0200
-Subject: [PATCH] i2c: i2c-core-smbus: fixed a whitespace style issue
+On Fri 2024-11-08 17:10:31, Petr Mladek wrote:
+> On Mon 2024-10-28 16:45:37, Chris Down wrote:
+> > Consoles can have vastly different latencies and throughputs. For
+> > example, writing a message to the serial console can take on the order
+> > of tens of milliseconds to get the UART to successfully write a message.
+> > While this might be fine for a single, one-off message, this can cause
+> > significant application-level stalls in situations where the kernel
+> > writes large amounts of information to the console.
+> > 
+> > --- a/drivers/tty/sysrq.c
+> > +++ b/drivers/tty/sysrq.c
+> > @@ -101,11 +102,25 @@ __setup("sysrq_always_enabled", sysrq_always_enabled_setup);
+> >  static void sysrq_handle_loglevel(u8 key)
+> >  {
+> >  	u8 loglevel = key - '0';
+> > +	int cookie;
+> > +	int warned = 0;
+> > +	struct console *con;
+> >  
+> >  	console_loglevel = CONSOLE_LOGLEVEL_DEFAULT;
+> >  	pr_info("Loglevel set to %u\n", loglevel);
+> >  	console_loglevel = loglevel;
+> > +
+> > +	cookie = console_srcu_read_lock();
+> > +	for_each_console_srcu(con) {
+> > +		if (!warned && per_console_loglevel_is_set(con)) {
+> > +			warned = 1;
+> > +			pr_warn("Overriding per-console loglevel from sysrq\n");
 
-Fixing a coding style issue.
+It just came to my mind. We could use pr_warn_once() and get rid
+of the @warned variable. It is slightly less optimal. But this
+is a slow path and the code would be easier.
 
-Signed-off-by: Liam Zuiderhoek <zuiderhoekl@gmail.com>
----
- drivers/i2c/i2c-core-smbus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > +		}
+> > +		WRITE_ONCE(con->level, -1);
+> > +	}
+> > +	console_srcu_read_unlock(cookie);
+> >  }
+> > +
+> 
 
-diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
-index e3b96fc53b5c..6829def15933 100644
---- a/drivers/i2c/i2c-core-smbus.c
-+++ b/drivers/i2c/i2c-core-smbus.c
-@@ -122,7 +122,7 @@ EXPORT_SYMBOL(i2c_smbus_read_byte);
- s32 i2c_smbus_write_byte(const struct i2c_client *client, u8 value)
- {
- 	return i2c_smbus_xfer(client->adapter, client->addr, client->flags,
--	                      I2C_SMBUS_WRITE, value, I2C_SMBUS_BYTE, NULL);
-+				I2C_SMBUS_WRITE, value, I2C_SMBUS_BYTE, NULL);
- }
- EXPORT_SYMBOL(i2c_smbus_write_byte);
-=20
---=20
-2.43.0
-
-
+Best Regards,
+Petr
 
