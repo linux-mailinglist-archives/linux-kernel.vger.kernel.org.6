@@ -1,219 +1,178 @@
-Return-Path: <linux-kernel+bounces-408467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7130E9C7F2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:16:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0508C9C7F30
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:17:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D4FD282C98
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:16:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB3A61F2296D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C968494;
-	Thu, 14 Nov 2024 00:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A544C148;
+	Thu, 14 Nov 2024 00:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hV5UYlwy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f9UU1Bbj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDD98489
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 00:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316F42F46;
+	Thu, 14 Nov 2024 00:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731543380; cv=none; b=aC4jbjrukz6j5JH6aC2/OKoprBAzLvCzlEt0Zl8ivUw8OBdOR+T8opTWN4vkWPAg6FrPFCpABDG94xafr4ATYVIESQeMy7MzbsRZb3qTZ1IkdA4qLCqkFlTUqapbP4Vey3copZUtVzT6nVF1bOUjcF6+GY2HYVTNVNPGuZ8n/zY=
+	t=1731543441; cv=none; b=b/daP/PZMd2uaTaUEOEUbx77jra8l5xrsNQJFRHTrlpo0Tw+nsqPqChnovXXu4RVtlPrstR7f3L0WroT8jeDtCohF63ot/TQfR8YzO4miHTuI3BXzmt96qA8G7rkM9vVdUv7PYWq8pde8SK20k/9IEq5bQDaUqkl2i0FyhyLk20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731543380; c=relaxed/simple;
-	bh=SmM9lzE/xl0lhfhPg38MnZXVu+NoZr8qcZF6hb9xj4c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JLCCO0tQv425wj9LjslVoVhSAyF0lntj7dn0JPJKJF2tYddxa2AYfjAxa6g18BoWRfUDE5+AOOqixYUgpk9WCGKUOEI3+yc2SHEGFKYkhHKM32wl7lCy2LXIc+wA9JOj6zE79IQwDxAvLRjGxBq8pnI8N6vHslyGwwIoEUive50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hV5UYlwy; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731543378;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WGiWMkbbZ4wXd653FrpAzPkRyzlyuoN6kxu5JsuvJxE=;
-	b=hV5UYlwyN6pVzi9luWZr18luPVdKjxU4v+Uh1hoUaPoJnryAVCVWqvs3l1uqcgXM4ns42e
-	Rc0exU/ufav6fgFj0mpNt0wA8dnmHnulxnMRnGdPRCGInrdN1D9Rx/x0C0xiyrfV0Q5eGY
-	b0N32svVGhjBYq69MfbQoVfJfc79An8=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-582-NPvdiz76M8WjllVvIvHYDw-1; Wed, 13 Nov 2024 19:16:16 -0500
-X-MC-Unique: NPvdiz76M8WjllVvIvHYDw-1
-X-Mimecast-MFC-AGG-ID: NPvdiz76M8WjllVvIvHYDw
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4315c1b5befso506605e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:16:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731543375; x=1732148175;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WGiWMkbbZ4wXd653FrpAzPkRyzlyuoN6kxu5JsuvJxE=;
-        b=I1oswnT4+vChiBTMC4ygyx7QNKnllKKpOrosvx6E+WkOEX/LxPf2bZ7RsIf5xzfk+P
-         mZQnAay8dKhVorZytIXGzycu1KMKzikY0A1VK08IGwNtykMENKFWwZiPdQhhRF9vqaY4
-         4gCSe7Iq3lRMQvM95mScU1Yj0dKAa+Uq5QhcXrtjjjR21KyJ57/ErJIF7EnurX7y+pMh
-         UzO1NJcqBqqMQGnPekssbpoFz1mw46mVEcVLHQTvQaOTDdPUfikX2bi1T8f6qo7X8FcT
-         KLOBTePv9ssS9N1FEixMvgBRKl1fbV+XjHMIOEKAWzkjhY863ouPV8XVVZSxbWeSMO61
-         KdZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVRdC/5OkEa0nH6gtzeKMfBx9fLdfu/Sah+sSwnl8NDH3vClFPDDmHd/TpMkYll3XW/2m9RfpPy6ondgQQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqLn0KLODczcsvZI/sVSBXTbBB4phaolaGt31uLaHV756QzVhm
-	ocHSjZK86lvBVO8PFBuPSbydpV4dJyvzbCR6R6aBSZ+dPD1pznYC0eSOjdBRHT9gxitL3IghrAW
-	Wf+vrEgCZMKYKQgKO/rhIkDh0L5woyK1Sep2Afk7O6ROxADnCQUZ2QTynT4hAPQ==
-X-Received: by 2002:a05:600c:510a:b0:42f:7c9e:1f96 with SMTP id 5b1f17b1804b1-432b74fdee3mr182191975e9.1.1731543375365;
-        Wed, 13 Nov 2024 16:16:15 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGxsk6041ZO1egyOz9QrsKPVB7t17ecHSk68BX7Uss/fbbhsCJduun+tQJJFQH/rQUGXuDMAg==
-X-Received: by 2002:a05:600c:510a:b0:42f:7c9e:1f96 with SMTP id 5b1f17b1804b1-432b74fdee3mr182191775e9.1.1731543374982;
-        Wed, 13 Nov 2024 16:16:14 -0800 (PST)
-Received: from debian (2a01cb058d23d600736cb2b04c893998.ipv6.abo.wanadoo.fr. [2a01:cb05:8d23:d600:736c:b2b0:4c89:3998])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed997313sm19532952f8f.53.2024.11.13.16.16.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 16:16:13 -0800 (PST)
-Date: Thu, 14 Nov 2024 01:16:11 +0100
-From: Guillaume Nault <gnault@redhat.com>
-To: Roger Quadros <rogerq@kernel.org>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, linux-omap@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, srk@ti.com,
-	Pekka Varis <p-varis@ti.com>
-Subject: Re: [PATCH net-next v3 2/2] net: ethernet: ti: am65-cpsw: enable
- DSCP to priority map for RX
-Message-ID: <ZzVBS1zXIy31pnaf@debian>
-References: <20241109-am65-cpsw-multi-rx-dscp-v3-0-1cfb76928490@kernel.org>
- <20241109-am65-cpsw-multi-rx-dscp-v3-2-1cfb76928490@kernel.org>
+	s=arc-20240116; t=1731543441; c=relaxed/simple;
+	bh=wG+C2i7AjVhz6G1Ml7Nh9i0jXeC0kh+g8h7fbiBN2b4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t8+jD0oSBuqb9WD1ooJMTPhug1SgRBkLt2LwNDruRqNdFdpqaatdqw5ysmnQag/AKq/3OLpesCQOx89olOnlqWU2rTwjk41A20e9q+rEx9YUYBbpx9aMZRlayN+zxRDcGiIb/ZF+OKUnnG9Hjq702H740/DTEUx+J3rOfFm4y0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f9UU1Bbj; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731543439; x=1763079439;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=wG+C2i7AjVhz6G1Ml7Nh9i0jXeC0kh+g8h7fbiBN2b4=;
+  b=f9UU1Bbjvjo4sfDUIV0/Ycx6ccW9gE+wFl0pj982FGPLHb2kJnjuJBiG
+   gK09VEka1gYsZel/aD8KJkfw9NoT5ruxqehS8E1erXC/SnqqbEcL6Fda9
+   QOf4IpBhQJT2dJBq1UGoAae4/slPwhdy64U4SEUuk7n1+nU4+k9DnjhgE
+   iLq0tRw0ywNQzvtH1nahBVEzdhA8IwhPGvIA7Eexlvn7KU++sHOCc5MFz
+   vfBzP8L1uKPhCifiZ6YQyf88PrfoFRBbALSEXyO4WJg+WerOukSGL6D/5
+   Wmr4/dV2YO4XhCq/92LCHhvkxF9qj6mXGFJ9o1lteeYYA7vmJbnR3JZlu
+   g==;
+X-CSE-ConnectionGUID: Isy5FPV4SsOKLFgQnVuq5A==
+X-CSE-MsgGUID: GeCLgkVVQZmrZ3wnBxoUFQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11255"; a="30869450"
+X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
+   d="scan'208";a="30869450"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 16:17:18 -0800
+X-CSE-ConnectionGUID: DVud6nHeQ3yJseNgLLT7KQ==
+X-CSE-MsgGUID: UcZ83RHdSgetHfbO973ARA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
+   d="scan'208";a="92081148"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 16:17:18 -0800
+From: Tony Luck <tony.luck@intel.com>
+To: Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	x86@kernel.org
+Cc: James Morse <james.morse@arm.com>,
+	Jamie Iles <quic_jiles@quicinc.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	patches@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH v9 0/9] x86/resctrl: mba_MBps enhancement
+Date: Wed, 13 Nov 2024 16:17:02 -0800
+Message-ID: <20241114001712.80315-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241109-am65-cpsw-multi-rx-dscp-v3-2-1cfb76928490@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 09, 2024 at 01:00:08PM +0200, Roger Quadros wrote:
-> AM65 CPSW hardware can map the 6-bit DSCP/TOS field to
-> appropriate priority queue via DSCP to Priority mapping registers
-> (CPSW_PN_RX_PRI_MAP_REG).
-> 
-> We use the upper 3 bits of the DSCP field that indicate IP Precedence
-> to map traffic to 8 priority queues.
-> 
-> Signed-off-by: Roger Quadros <rogerq@kernel.org>
-> ---
->  drivers/net/ethernet/ti/am65-cpsw-nuss.c | 54 ++++++++++++++++++++++++++++++++
->  1 file changed, 54 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-> index 0520e9f4bea7..fab35e6aac7f 100644
-> --- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-> +++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-> @@ -71,6 +71,8 @@
->  #define AM65_CPSW_PORT_REG_RX_PRI_MAP		0x020
->  #define AM65_CPSW_PORT_REG_RX_MAXLEN		0x024
->  
-> +#define AM65_CPSW_PORTN_REG_CTL			0x004
-> +#define AM65_CPSW_PORTN_REG_DSCP_MAP		0x120
->  #define AM65_CPSW_PORTN_REG_SA_L		0x308
->  #define AM65_CPSW_PORTN_REG_SA_H		0x30c
->  #define AM65_CPSW_PORTN_REG_TS_CTL              0x310
-> @@ -94,6 +96,10 @@
->  /* AM65_CPSW_PORT_REG_PRI_CTL */
->  #define AM65_CPSW_PORT_REG_PRI_CTL_RX_PTYPE_RROBIN	BIT(8)
->  
-> +/* AM65_CPSW_PN_REG_CTL */
-> +#define AM65_CPSW_PN_REG_CTL_DSCP_IPV4_EN	BIT(1)
-> +#define AM65_CPSW_PN_REG_CTL_DSCP_IPV6_EN	BIT(2)
-> +
->  /* AM65_CPSW_PN_TS_CTL register fields */
->  #define AM65_CPSW_PN_TS_CTL_TX_ANX_F_EN		BIT(4)
->  #define AM65_CPSW_PN_TS_CTL_TX_VLAN_LT1_EN	BIT(5)
-> @@ -176,6 +182,53 @@ static void am65_cpsw_port_set_sl_mac(struct am65_cpsw_port *slave,
->  	writel(mac_lo, slave->port_base + AM65_CPSW_PORTN_REG_SA_L);
->  }
->  
-> +#define AM65_CPSW_DSCP_MAX	GENMASK(5, 0)
-> +#define AM65_CPSW_PRI_MAX	GENMASK(2, 0)
-> +#define AM65_CPSW_DSCP_PRI_PER_REG	8
-> +#define AM65_CPSW_DSCP_PRI_SIZE		4	/* in bits */
-> +static int am65_cpsw_port_set_dscp_map(struct am65_cpsw_port *slave, u8 dscp, u8 pri)
-> +{
-> +	int reg_ofs;
-> +	int bit_ofs;
-> +	u32 val;
-> +
-> +	if (dscp > AM65_CPSW_DSCP_MAX)
-> +		return -EINVAL;
-> +
-> +	if (pri > AM65_CPSW_PRI_MAX)
-> +		return -EINVAL;
-> +
-> +	/* 32-bit register offset to this dscp */
-> +	reg_ofs = (dscp / AM65_CPSW_DSCP_PRI_PER_REG) * 4;
-> +	/* bit field offset to this dscp */
-> +	bit_ofs = AM65_CPSW_DSCP_PRI_SIZE * (dscp % AM65_CPSW_DSCP_PRI_PER_REG);
-> +
-> +	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
-> +	val &= ~(AM65_CPSW_PRI_MAX << bit_ofs);	/* clear */
-> +	val |= pri << bit_ofs;			/* set */
-> +	writel(val, slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
-> +
-> +	return 0;
-> +}
-> +
-> +static void am65_cpsw_port_enable_dscp_map(struct am65_cpsw_port *slave)
-> +{
-> +	int dscp, pri;
-> +	u32 val;
-> +
-> +	/* Map IP Precedence field to Priority */
-> +	for (dscp = 0; dscp <= AM65_CPSW_DSCP_MAX; dscp++) {
-> +		pri = dscp >> 3; /* Extract IP Precedence */
-> +		am65_cpsw_port_set_dscp_map(slave, dscp, pri);
-> +	}
-> +
-> +	/* enable port IPV4 and IPV6 DSCP for this port */
-> +	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_CTL);
-> +	val |= AM65_CPSW_PN_REG_CTL_DSCP_IPV4_EN |
-> +		AM65_CPSW_PN_REG_CTL_DSCP_IPV6_EN;
-> +	writel(val, slave->port_base + AM65_CPSW_PORTN_REG_CTL);
-> +}
+Add support to choose the memory monitor bandwidth event independently
+for each ctrl_mon group when resctrl is mounted with the mba_MBps
+option. Users may want this for applications that are not localized to
+NUMA boundaries.  Default behavior still uses local memory bandwidth
+when that event is supported by the platform.
 
-It seems that this hardware is capable of mapping all possible DSCP
-values. Then why restricting the mapping to the 3 high order bits only?
-According to RFC 8325 section 2.3, this seem to be a common practice,
-which this RFC considers a problem:
-https://datatracker.ietf.org/doc/html/rfc8325#section-2.3
+Side benefit[0]: Systems that do not support the local bandwidth monitor
+event but do support the total bandwidth event can now use the mba_MBps
+mount option.
 
-I know this RFC is about 802.11, not 802.1p, but as far as I know, the
-user priority (UP) are the same for both, so that shouldn't make a
-difference.
+Changes since v8:
+Link: https://lore.kernel.org/all/20241029172832.93963-1-tony.luck@intel.com
 
-So what about following the IETF mapping found in section 4.3?
-https://datatracker.ietf.org/doc/html/rfc8325#section-4.3
+Patch(es):	Change
+1:		New to this series. Almost direct copy from Babu's patch6
+		in the ABMC series. Only change is to drop the __init
+		from resctrl_file_fflags_init() because I need to use it
+		at runtime for mount/unmount.
 
->  static void am65_cpsw_sl_ctl_reset(struct am65_cpsw_port *port)
->  {
->  	cpsw_sl_reset(port->slave.mac_sl, 100);
-> @@ -921,6 +974,7 @@ static int am65_cpsw_nuss_ndo_slave_open(struct net_device *ndev)
->  	common->usage_count++;
->  
->  	am65_cpsw_port_set_sl_mac(port, ndev->dev_addr);
-> +	am65_cpsw_port_enable_dscp_map(port);
->  
->  	if (common->is_emac_mode)
->  		am65_cpsw_init_port_emac_ale(port);
-> 
-> -- 
-> 2.34.1
-> 
-> 
+2:		Was patch 1
+		Fenghua: Use is_mbm_local_enabled() instead of open
+			 coded bit check.
+		Reinette: Fix comment for @mba_mbps_event
+			  Move check for local event after check for any event
+			  Move initialization of rdtgroup_default.mba_mbps_event
+			  into rdtgroup_setup_default() and make it conditional
+			  on is_mbm_local_enabled().
+			  Move initialization of rdtgrp->mba_mbps_event inside
+			  "if (resctrl_arch_mon_capable())" and make it
+			  conditional on is_mba_sc(NULL).
+		Tony: Moved the fallback to total bandwidth to later in
+		      series until all code is changed to cope with total.
+
+3-4:		Was 2-3
+		Reinette: Shuffled the pieces of these two patches to
+			  flow better.
+		Fenghue: Don't drop the comment when refactoring, but do
+			 update a little.
+
+5:		Was 4. No change.
+
+6:		Was 5.
+		Reinette: Expand commit change log
+			  Fix rdtgroup_mba_mbps_event_show() to return -ENOENT
+			  if rdtgrp isn't found.
+			  Add pr_warn_once() to cover default case in switch.
+			  File mode of mba_MBps_event 0444 in this patch.
+			  Initialize .fflags to "RFTYPE_CTRL_BASE | RFTYPE_MON_BASE"
+			  using Babu's resctrl_file_fflags_init() helper
+			  instead of adding mba_mbps_event_init() function.
+
+7:		Was 6.
+		Reinette: Expand commit change log
+			  Just use "Unsupported event" event for all invalid
+			  user input instead of separate messages for
+			  different problems.
+			  Use this patch to switch mode from 0444 to 0644
+
+8:		New. Moved the fallback to total bandwidth to this patch.
+
+9:		No change. I punted on trying to explain the perils of
+		users rapidly switching between mba_sc events.
+
+[0] My original objective!
+
+Babu Moger (1):
+  x86/resctrl: Introduce resctrl_file_fflags_init() to initialize fflags
+
+Tony Luck (8):
+  x86/resctrl: Prepare for per-ctrl_mon group mba_MBps control
+  x86/resctrl: Modify update_mba_bw() to use per ctrl_mon group event
+  x86/resctrl: Compute memory bandwidth for all supported events
+  x86/resctrl: Relax checks for mba_MBps mount option
+  x86/resctrl: Add "mba_MBps_event" file to ctrl_mon directories
+  x86/resctrl: Add write option to "mba_MBps_event" file
+  x86/resctrl: Make mba_sc use total bandwidth if local is not supported
+  x86/resctrl: Document the new "mba_MBps_event" file
+
+ Documentation/arch/x86/resctrl.rst        |  10 +++
+ include/linux/resctrl.h                   |   2 +
+ arch/x86/kernel/cpu/resctrl/internal.h    |   9 +-
+ arch/x86/kernel/cpu/resctrl/core.c        |   9 +-
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c |  70 +++++++++++++++
+ arch/x86/kernel/cpu/resctrl/monitor.c     | 101 ++++++++++++----------
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c    |  36 ++++----
+ 7 files changed, 173 insertions(+), 64 deletions(-)
+
+
+base-commit: 2d5404caa8c7bb5c4e0435f94b28834ae5456623
+-- 
+2.47.0
 
 
