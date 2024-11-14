@@ -1,142 +1,94 @@
-Return-Path: <linux-kernel+bounces-409940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7142B9C93BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:03:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 826CD9C93CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:07:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CBAA286713
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:03:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47B46286C32
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935601ADFFD;
-	Thu, 14 Nov 2024 21:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nVLV72CZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0851AB6F1;
-	Thu, 14 Nov 2024 21:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12681AE001;
+	Thu, 14 Nov 2024 21:07:47 +0000 (UTC)
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7E518B484
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 21:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731618218; cv=none; b=M+9dLX7FZPAGAkrRT63fpGWeCoC3nqOJnS7VtuoCWkgdu036EkYxdj98ve6ICmlv8nAgC0pb/ij/t4eqZG60wk0x1PAoCIkrUm6nclsYX/YuckZdfsLJqf/tCTr754XjWC/SCmGhpYtPHGx3vKWbUnWB56NT/m2j3mcfHPbfYEg=
+	t=1731618467; cv=none; b=sobPVqfo6IlphH1qpwlsg3az+b4dk26FoNcPKQIM5nj0+nOCjxWentzT3zepDgk+pQVfmeP6fxICER1IDU0lttbZaJs2dtI+nM/rNxZV2OL8vKesY4RbP228hCDLZ17W3Zl0iqKHT95ttDY5ljsdhGCw0pyU30GautXrTkOOpPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731618218; c=relaxed/simple;
-	bh=h6Ab78gAB0LmRRiWpEtwGJHwFKOOZ3XIieV5FxUsQIw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UDyyMOyyB3GPnRPk8iEGEKsak7tsRqVWCHjOjXYGHj05DJNH9Q49QEWom1gLjPZIeDJ4JfSzhj3p/W0aFEUHh/4MsH6/yTLmgih04pEgnPCHHO/xL5eObsSkT5ex+OUa1PH2rkmpfamOBfrMdFoAmDsbMJ5TrpgbOO05v96RFBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nVLV72CZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79295C4CECD;
-	Thu, 14 Nov 2024 21:03:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731618217;
-	bh=h6Ab78gAB0LmRRiWpEtwGJHwFKOOZ3XIieV5FxUsQIw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nVLV72CZYwZL5SSZBYfmQyD786QqOXvqALMVWo4kAljMWo4bGP9L9mt1qWlnVayYu
-	 XFyZmASnhW/XdZOdmomDuDvhjHuenPI6S6byKLiEvA7vAErR/B6fakZec17c7gSMjm
-	 94PZkIwMwmSnOO0QVLMtC1RLzZwgYBfviei9qtlCF9N6EbB/K7nIXRDTNF5sKcT3OV
-	 OQKOMzIQ/fU06XHqMVY20O8nR5FANrGe3p7VJigvd0Rl6eXrwF/9yMXrtWyUIHR5U/
-	 SHaUJQLOM4S81PEdHfIIt1/gDIP4jFNPVqlMzCYlxHB/lW6A8uI8Plz2Y4m0E1J3Oe
-	 Gmbe36EA7gvew==
-Date: Thu, 14 Nov 2024 18:03:35 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: Benjamin Peterson <benjamin@engflow.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>
-Subject: Re: [PATCH 2/2] perf tests: add test for trace output loss
-Message-ID: <ZzZlpwTy_nXKE8LF@x1>
-References: <20241106234518.115234-1-benjamin@engflow.com>
- <20241106234518.115234-2-benjamin@engflow.com>
- <ZzY1bPtoyRH-nRIV@x1>
- <ZzY20vZluj44w1Gt@x1>
- <CAEmfU+v8KR3Bd8w7kOX6ScGig106zh5gW9P5fwAw-BF3tmAp7A@mail.gmail.com>
- <ZzZY7U0AFk3245vy@x1>
- <CAH0uvojcZMVzDyNkWCSHMdwn59T2fgn6iGoqrh9NhaaQ5H2DOw@mail.gmail.com>
+	s=arc-20240116; t=1731618467; c=relaxed/simple;
+	bh=6cWTY2xZeaBn0xyYK8rPTQmYWh9b+pJJO6cj/yyOYFM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XbWQVnl0Sy5/3pL687UgTTqw/ttxGZOK1/gaTUPjTo+WEEAvfh8/EHRHjT6TeZlqbRyOA2gGjK7WQ+b/0ozBMlN9wv/hhzqFG2bOuE2GCSxH3dqsOYvjNMMG60WZsaWdHwENXHynE0tVx0xcH7MyeaztSJ3/pZ3k1Korb5Axa/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 4AEL4KlI000954;
+	Thu, 14 Nov 2024 15:04:20 -0600
+Received: (from segher@localhost)
+	by gate.crashing.org (8.14.1/8.14.1/Submit) id 4AEL4Ief000942;
+	Thu, 14 Nov 2024 15:04:18 -0600
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date: Thu, 14 Nov 2024 15:04:18 -0600
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        geert@linux-m68k.org, arnd@arndb.de
+Subject: Re: [RFC PATCH 01/10] powerpc/chrp: Remove CHRP support
+Message-ID: <20241114210418.GM29862@gate.crashing.org>
+References: <20241114131114.602234-1-mpe@ellerman.id.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH0uvojcZMVzDyNkWCSHMdwn59T2fgn6iGoqrh9NhaaQ5H2DOw@mail.gmail.com>
+In-Reply-To: <20241114131114.602234-1-mpe@ellerman.id.au>
+User-Agent: Mutt/1.4.2.3i
 
-On Thu, Nov 14, 2024 at 12:16:46PM -0800, Howard Chu wrote:
-> Hello,
+On Fri, Nov 15, 2024 at 12:11:04AM +1100, Michael Ellerman wrote:
+> CHRP (Common Hardware Reference Platform) was a standard developed by
+> IBM & Apple for PowerPC-based systems.
 > 
-> On Thu, Nov 14, 2024 at 12:09 PM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> > On Thu, Nov 14, 2024 at 09:44:56AM -0800, Benjamin Peterson wrote:
-> > > > On Thu, Nov 14, 2024 at 02:37:52PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > > diff --git a/tools/perf/tests/shell/trace_exit_race.sh b/tools/perf/tests/shell/trace_exit_race.sh
-> > > > index 8b70324bc5b4fb4c..c37ed6bb9f7e8fab 100755
-> > > > --- a/tools/perf/tests/shell/trace_exit_race.sh
-> > > > +++ b/tools/perf/tests/shell/trace_exit_race.sh
-> > > > @@ -12,10 +12,10 @@
-> > > >  skip_if_no_perf_trace || exit 2
-> >
-> > > >  trace_shutdown_race() {
-> > > > -       for i in $(seq 100); do
-> > > > +       for _ in $(seq 100); do
-> > > >                 perf trace -e syscalls:sys_enter_exit_group true 2>>$file
-> > > >         done
-> > > > -       [ $(grep -c -E " +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$" $file) = "100" ]
-> > > > +       [ "$(grep -c -E ' +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$' $file)" = "100" ]
-> > > >  }
-> >
-> > > This all looks okay.
-> >
-> > The test is failing for me as there is garbage in the output of perf
-> > trace even with Namhyung having already applied your previous patch:
-> >
-> > ⬢ [acme@toolbox perf-tools-next]$ git log --oneline --author benjamin@engflow.com
-> > 12bd434f68ea45c7 (HEAD -> perf-tools-next) perf tests: Add test for 'perf trace' output loss
-> > efbcd2cd7eac10a9 perf trace: Do not lose last events in a race
-> > 5fb8e56542a3cf46 (perf-tools-next/tmp.perf-tools-next) perf trace: avoid garbage when not printing a trace event's arguments
-> > ⬢ [acme@toolbox perf-tools-next]$
-> >
-> > root@number:~# perf trace -e syscalls:sys_enter_exit_group true
-> >      0.000 true/1982428 syscalls:sys_enter_exit_group( k?m)
-> > root@number:~# perf trace -e syscalls:sys_enter_exit_group true
-> >      0.000 true/1982430 syscalls:sys_enter_exit_group()
-> > root@number:~# perf trace -e syscalls:sys_enter_exit_group true
-> >      0.000 true/1982432 syscalls:sys_enter_exit_group()
-> > root@number:~# perf trace -e syscalls:sys_enter_exit_group true
-> >      0.000 true/1982434 syscalls:sys_enter_exit_group()
-> > root@number:~# perf trace -e syscalls:sys_enter_exit_group true
-> >      0.000 true/1982437 syscalls:sys_enter_exit_group( k�)
-> > root@number:~# perf trace -e syscalls:sys_enter_exit_group true
-> >      0.000 true/1982439 syscalls:sys_enter_exit_group(, loads 8��1)
-> > root@number:~#
-> >
-> > So we don't _miss_ the events, which I was noticing and brought me to
-> > test your latest 2 patches, which I applied and added a Tested-by, now
-> > tryint to figure out this garbage...
+> The standard was used in the development of some machines but never
+> gained wide spread adoption.
 > 
-> Benjamin has already sent v2 to fix this:
-> https://lore.kernel.org/linux-perf-users/20241107232128.108981-2-benjamin@engflow.com/
+> The Linux CHRP code only supports a handful of machines, all 32-bit, eg.
+> IBM B50, bplan/Genesi Pegasos/Pegasos2, Total Impact briQ, and possibly
+> some from Motorola? No Apple machines should be affected.
+> 
+> All of those mentioned above are over or nearing 20 years old, and seem
+> to have no active users.
 
-Interesting, I wonder why b4 didn't pick the v2 :-\
+This was used by all non-IBM 970 systems as well.  The last was SLOF on
+JS20 and JS21, about 20 years ago yes, and I doubt anyone uses it still
+(I don't).
 
-I'll try it, but see my other message, maybe the way I fixed is simpler?
-Its a two liner that could be turned into a one liner by right at the
-start of the function setting bf[0] = '\0', that way we wouldn't need
-even to check if printed == 0 at the end.
+> So remove the CHRP support. If there's interest in still supporting some
+> of the machines that can be brought back from the git history.
 
-Anyway, will test the newer version.
+Sorry to see it go, but that's the way of the world :-)
 
-- Arnaldo
+> Note there are still some references to CHRP/chrp in various comments
+> and some in the code, because later standards (eg. RPA, PAPR) used some
+> elements of CHRP or copied the CHRP behaviour. These will need to be
+> cleaned up on a case-by-case basis to either refer to newer standards or
+> left as-is when that's correct.
+> 
+> The CHRP code was copied from arch/ppc, and before that it mostly
+> predates git, so the original authorship is largely lost. If anyone
+> wrote any of this code and would like a CREDITS entry just let me know.
+> 
+> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+
+Acked-by: Segher Boessenkool <segher@kernel.crashing.org>
+
+
+Segher
 
