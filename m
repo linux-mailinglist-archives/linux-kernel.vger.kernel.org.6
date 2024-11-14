@@ -1,106 +1,141 @@
-Return-Path: <linux-kernel+bounces-408543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18FBC9C8040
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:54:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A0B49C8059
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:04:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B5C1B231FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:54:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DBBEB21FF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F310C1E47A0;
-	Thu, 14 Nov 2024 01:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PNYj6Bbd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FCF1CCEF0
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF481DD0D2;
+	Thu, 14 Nov 2024 02:04:08 +0000 (UTC)
+Received: from chinatelecom.cn (smtpnm6-03.21cn.com [182.42.153.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A7128382
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 02:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=182.42.153.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731549266; cv=none; b=rscrahg/3egotvnm+vEB28CNtnnOJPzeXw2PFoYrGMC+6Hes9qX6Fu9a7wFZTy2YOamYLBD4L+kZ2RoeZ8XSA8KkhNMo1r/8HH0DrV/+2f5ml6p7UZDZ8WsbdAa1AnYh81YskMLCa7jGOEfsRntEjhorKYk7XjaA8zvw3oX3WC0=
+	t=1731549847; cv=none; b=JryO4Ioof/BLqxwjj+RNufKQlBGyPIe4tnv2icYGJzQ61H3GmS/tBphng8pVBRt+9hwzpY3wlAzdx9ZVcff0DD7v0fH0EVPju9PuFS/xsha9mh0yigmRG4dtaE+QoFwke9Nfxg+TKo/9Hc0G0t2GYy52FDx2PB7z6FzNd6tij1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731549266; c=relaxed/simple;
-	bh=vmFtAgYAC3ih8oQubzav6OADI0tAlUMd9HfmGqdzdBs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sm9ra6JFo0VwdO4GP6+egxc6a+6p6V9FJYOKrxUJaIorLhSmGi/2rkOtbPycb3Fj8Q6fZJ7jEeXsDiCpHfFurMtGiWIqh3ncLSbffM133y+m7qLMeThIgEKFVBVzuXs6utyEXlfKFrLIpyPcw2R3fGnKbfjNjLFBu9gQKVyufao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PNYj6Bbd; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731549263;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iPEBI9PDOju2MBvGQMSSVZLa6nuW9DvNY9/cM/alX4c=;
-	b=PNYj6BbdcOpyOms8btXN7DAQvG/X9lXyKHJBv3q0cnWv4s0Rtv+HdhYjc9llug7pGFA4a7
-	S27x15VrQ2Xum2XPoXtu600YOFSN9bwjl1EBlwRLjDDKRfUOVD+bjMumP9QDeQacIf5mXc
-	EwuSYdQ3qZO2ZNSoonYemDt8wxO0NIk=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-587-fL807C5WPemKmCPt940ZEg-1; Wed,
- 13 Nov 2024 20:54:20 -0500
-X-MC-Unique: fL807C5WPemKmCPt940ZEg-1
-X-Mimecast-MFC-AGG-ID: fL807C5WPemKmCPt940ZEg
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 39C271956057;
-	Thu, 14 Nov 2024 01:54:16 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.113])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E4EDF19560A3;
-	Thu, 14 Nov 2024 01:54:02 +0000 (UTC)
-Date: Thu, 14 Nov 2024 09:53:57 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Daniel Wagner <wagi@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	John Garry <john.g.garry@oracle.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hannes Reinecke <hare@suse.de>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	virtualization@lists.linux.dev, linux-scsi@vger.kernel.org,
-	megaraidlinux.pdl@broadcom.com, mpi3mr-linuxdrv.pdl@broadcom.com,
-	MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com,
-	linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v4 03/10] PCI: hookup irq_get_affinity callback
-Message-ID: <ZzVYNf3BTGyYGz8k@fedora>
-References: <20241113-refactor-blk-affinity-helpers-v4-0-dd3baa1e267f@kernel.org>
- <20241113-refactor-blk-affinity-helpers-v4-3-dd3baa1e267f@kernel.org>
+	s=arc-20240116; t=1731549847; c=relaxed/simple;
+	bh=1U7OT1nOQriNFpHjTmuc93sTspRdTnD6m4uhj7X3oh0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mxxj3uLrk7Z17I3lJXzzczwERPvuhOS2+STPA9A4XUXqAwhcWWWv/7XzO4tX4D3f3d91jjel9svwOxmgnKNM6+PnrCZc3BcoJuJ1w64JTTednqU0M4TDKM4SWhnsiyc7+VHBx41416hnSVujmU0nuiST/3a6F0Oad20vmx9dAVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chinatelecom.cn; spf=pass smtp.mailfrom=chinatelecom.cn; arc=none smtp.client-ip=115.124.30.133; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; arc=none smtp.client-ip=182.42.153.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chinatelecom.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chinatelecom.cn
+HMM_SOURCE_IP:192.168.137.232:0.1224025033
+HMM_ATTACHE_NUM:0000
+HMM_SOURCE_TYPE:SMTP
+Received: from clientip-36.111.64.85 (unknown [192.168.137.232])
+	by chinatelecom.cn (HERMES) with SMTP id 34AEA8F74B;
+	Thu, 14 Nov 2024 09:55:02 +0800 (CST)
+X-189-SAVE-TO-SEND: +liuq131@chinatelecom.cn
+Received: from  ([36.111.64.85])
+	by gateway-ssl-dep-6977f57994-b9pvf with ESMTP id a272156b52fe421896f1c0ae88ca446c for liuq131@chinatelecom.cn;
+	Thu, 14 Nov 2024 09:55:10 CST
+X-Transaction-ID: a272156b52fe421896f1c0ae88ca446c
+X-Real-From: liuq131@chinatelecom.cn
+X-Receive-IP: 36.111.64.85
+X-MEDUSA-Status: 0
+Sender: liuq131@chinatelecom.cn
+From: Qiang Liu <liuq131@chinatelecom.cn>
+To: liuq131@chinatelecom.cn,
+	akpm <akpm@linux-foundation.org>
+Cc: linux-mm <linux-mm@kvack.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>
+Subject: Re: [PATCH] mm/compaction: fix the total_isolated in strict mode
+Date: Thu, 14 Nov 2024 09:54:46 +0800
+Message-Id: <2503b955-79a9-4d21-9a25-34a6c33e688d@linux.alibaba.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <2024111210165296529720@chinatelecom.cn>
+References: <20241102201621.95291-1-liuq131@chinatelecom.cn> <055703d7-1434-42fb-8048-add21a9bd44c@linux.alibaba.com> <2024111210165296529720@chinatelecom.cn>
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133]) (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits)) (No client certificate requested) by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8835B20CCDC for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+Received: from 30.74.144.120(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WJGy4ng_1731404822 cluster:ay36) by smtp.aliyun-inc.com; Tue, 12 Nov 2024 17:47:03 +0800
+Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241113-refactor-blk-affinity-helpers-v4-3-dd3baa1e267f@kernel.org>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+User-Agent: Mozilla Thunderbird
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 13, 2024 at 03:26:17PM +0100, Daniel Wagner wrote:
-> struct bus_type has a new callback for retrieving the IRQ affinity for a
-> device. Hook this callback up for PCI based devices.
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+
+
+
+On 2024/11/12 10:16, liuq131@chinatelecom.cn wrote:
+> "We assume that the block we are currently processing is distributed as follows:
+> 0   1   2                                                            511
+> --------------------------------------------------
+> |    |    |                                                              |
+> ---------------------------------------------------
+> Index 0 and 1 are both pages with an order of 0.
+> Index 2 has a bogus order (let's assume the order is 9).
+> When the for loop reaches index 2, it will enter the following code:
+> /*
+>   * For compound pages such as THP and hugetlbfs, we can save
+>   * potentially a lot of iterations if we skip them at once.
+>   * The check is racy, but we can consider only valid values
+>   * and the only danger is skipping too much.
+>   */
+> if (PageCompound(page)) {
+>      const unsigned int order = compound_order(page);
+>      if (blockpfn + (1UL << order) <= end_pfn) {
+>          blockpfn += (1UL << order) - 1;
+>          page += (1UL << order) - 1;
+>          nr_scanned += (1UL << order) - 1;
+>      }
+>      goto isolate_fail;
+> }
 > 
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Hannes Reinecke <hare@suse.de>
-> Signed-off-by: Daniel Wagner <wagi@kernel.org>
+> After exiting the for loop:
+> blockpfn =basepfn+ 2+2^9 = basepfn+514
+> endpfn  = basepfn +512
+> total_isolated = 2
+> nr_scanned = 514
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com> 
+In your case, the 'blockpfn' will not be updated to 'basepfn+514', 
+because 'blockpfn + (1UL << order) > end_pfn', right? And remember the 
+'end_pfn' is the end of the pageblock.
 
--- 
-Ming
+So I'm still confused about your case. Is this from code inspection?
+
+> /*
+> * Be careful to not go outside of the pageblock.
+> */
+> if (unlikely(blockpfn > end_pfn))
+> blockpfn = end_pfn;
+>   
+> So this can happen
+> 
+> /*
+>   * If strict isolation is requested by CMA then check that all the
+>   * pages requested were isolated. If there were any failures, 0 is
+>   * returned and CMA will fail.
+>   */
+> if (strict && blockpfn < end_pfn)
+> total_isolated = 0;
+> 
+> If processed according to the old code, it will not enter the if statement to reset total_isolated, but the correct handling is to reset total_isolated to 0.
+
+Please do not top-posting:
+
+"
+- Use interleaved ("inline") replies, which makes your response easier 
+to read. (i.e. avoid top-posting -- the practice of putting your answer 
+above the quoted text you are responding to.) For more details, see
+   :ref:`Documentation/process/submitting-patches.rst 
+<interleaved_replies>`.
+"
 
 
