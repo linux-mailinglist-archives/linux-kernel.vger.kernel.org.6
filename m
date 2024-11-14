@@ -1,89 +1,217 @@
-Return-Path: <linux-kernel+bounces-408516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE5E59C7FDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:20:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C16699C7FE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:20:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 999BB1F22621
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:20:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BCEAB229CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7801E3792;
-	Thu, 14 Nov 2024 01:20:14 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB9AC225A8
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E71F1E47A5;
+	Thu, 14 Nov 2024 01:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Pb+djdOC"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693071E379B
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731547214; cv=none; b=Hkd/Ok6hhVrDcAvzrLUNZIEkxEvLJCzVMZRJws23TZZ1wg0awemt2VhXJCafWgbfLmA7iiBGyKcxex0KiR2nuuiglovab9OKxaJnaJSEhr1tHWQXjuqHeclgi02l6GbOWbC46AUvYJ8sVQ59xLnr9VLFweK4PVh7S/qT6mqDod4=
+	t=1731547230; cv=none; b=nZpbxZ7LPsJwGvGHKVuUJcsy/gDnuLXD+RcO1KDPGCKiKRk1mvv9LVhiiKV4rX+nNmA4JjrrgEi/teIoNadDOMBb2TRxqWtXbNPLbGxw7r6cqeCLlVddkphQFDBVilFIDuQBUylpRzFJXvaR1mDQCJkWHbbnlDywjpypdCRT9Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731547214; c=relaxed/simple;
-	bh=fk+5egIR3JVH8QatI0uOV5bbmhySbrgZhyxOflMEIrM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NwduqHjj/xVT6IgE/YteBA5M9IcB+tKdJ7JtqKIFoHh2ChePUFK+FwfcPmenJRG0a9LS5NY2IhZyc3HQbYO4i09slDa5T2MVr8lgybtGwa8TuWyqY3SBuqFHMFqnz6odrobXYAMSjqGA7wrbK0aceXL9lFfPH7bfAxQFs6vKDd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee1673550416e2-ecff7;
-	Thu, 14 Nov 2024 09:20:02 +0800 (CST)
-X-RM-TRANSID:2ee1673550416e2-ecff7
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.103])
-	by rmsmtp-syy-appsvr04-12004 (RichMail) with SMTP id 2ee467355041d0f-8b5be;
-	Thu, 14 Nov 2024 09:20:02 +0800 (CST)
-X-RM-TRANSID:2ee467355041d0f-8b5be
-From: Luo Yifan <luoyifan@cmss.chinamobile.com>
-To: linus.walleij@linaro.org,
-	linux@armlinux.org.uk
-Cc: ardb@kernel.org,
-	arnd@arndb.de,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Luo Yifan <luoyifan@cmss.chinamobile.com>
-Subject: [PATCH v2] ARM: vfp: Fix typographical errors in vfpmodule.c
-Date: Thu, 14 Nov 2024 09:19:39 +0800
-Message-Id: <20241114011939.296230-1-luoyifan@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <CACRpkdb6T5dqgmcVi5m_52uQ4F_wESv4K95Fk1hsZcSaUsY8xA@mail.gmail.com>
-References: <CACRpkdb6T5dqgmcVi5m_52uQ4F_wESv4K95Fk1hsZcSaUsY8xA@mail.gmail.com>
+	s=arc-20240116; t=1731547230; c=relaxed/simple;
+	bh=xSvom9lskxNK0UF5iZb6SncOtreR76x57qIy79NHHvA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OSzLel5J4X4HP711ARK9K0BMFB3D4xJx4aWqv8RA2LbfxnOCc1S0rbgGTrywVPzJWJttoIv+zWET1ytvJsSDFZ8qS6xoBMUc1gv2c8aVXLaDyMaMhotiT4SO6gyvsaWIfGYnqdM9/emSPZ+NHMhKRrrU8wPBjeL8YUOstysohc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Pb+djdOC; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-295eb32566dso49484fac.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 17:20:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1731547226; x=1732152026; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mEwME0rw8Umq6ByU2WCdJWTmv3KeHZlgw9873wiLpdQ=;
+        b=Pb+djdOC8ubPNcQF6UlYVgL8+cG8xSjZKorhsLjmvqOaSPkiUVQ9+btmYUmX5jRUQx
+         LrqmZxZhh8iRi9GJ9sOBVElfln9VTN2FIK55XE0exQgaFHSTgXKuougMMgCeK5d5MHjY
+         FGSLd0dVbpYZAlJFYq7DV/ZIBuZXxvEewz28x9/rYsuquYJjpaH4ER+bF9up5CgEVEdm
+         fW1Jakt4kJPZeRAQH3Lvpnsadau/F8hX/WR7ZSBXGSsqBcJIY+2s6xXmg6sHOxb82U8Q
+         b4aBYjZfhkxVAtalOaVhDaF+IQv9Jvh5s8Xbn+f35KVQyr/9qSRpRD1ZZORFWdjHkIif
+         sQog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731547226; x=1732152026;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mEwME0rw8Umq6ByU2WCdJWTmv3KeHZlgw9873wiLpdQ=;
+        b=ar0VLFMzuasfPoCite81qmzFu1MjZUWR2WWt5P1XsvzAO/DLaguz/7C8j+ASFV4LwP
+         7ZRrJQzGtl/Wsno+AY/iEeTQH8AQ+VfEF6CObcReBwjxxoa2eJRZwUAq2ccPR3hvFxsf
+         OlzuKFOhJwLHSmfBJRLwRMF5b7Ayqnqm5Zd3l3TUpuy7xaw+yxOOIwKMbROcT0gKYlto
+         /MknBqsSCkuBgENs7KvVJcRDGiosKoh1dWyhjWDuZfQH9nnnswpfj6Zpbl929Bklog6L
+         /uPQL5cTZM+rcrb821mqPVOUpY2LAZt86+XZrOzURJdbGqePSgBI6KVv7NvajkkrCfJR
+         iIxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVmYn3so9oJwV+zfJ/+4Wc1Au18cG3A9xTNukJJ99jrv2p85OK1pguQkATMhMZ9HuE3c9CaaJCP3bqexCg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOP6EoM77XrmoPGCVmyZDmmVeqFddODSh6YkAiGAbLw+GGgQxE
+	N+anW+6FyVVqqXAyQ4aIQ/SQBlImVkBiLOY27peq0hSuRu1DyDP+Nsw8ZuZATJ/DdKtzuz66+Fy
+	E+uqPTpnmTtVkO9pg23SYSlvJ71tu7V/9q3R1SA==
+X-Google-Smtp-Source: AGHT+IEA0jv4B7iCg3zwq7SuzwM249FvuvavDHpayC9Iml6orm79ui/r12Xx7CfDO8cyCb2ZZ1C/3tpsPtuzZFHDjDU=
+X-Received: by 2002:a05:6870:469e:b0:287:8706:ae3 with SMTP id
+ 586e51a60fabf-29560059eafmr20528628fac.11.1731547226302; Wed, 13 Nov 2024
+ 17:20:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241111-v5_user_cfi_series-v8-0-dce14aa30207@rivosinc.com>
+ <20241111-v5_user_cfi_series-v8-24-dce14aa30207@rivosinc.com>
+ <CAKddAkCCVjNHUinPWtOiK8Ki_ZkdoUCawfv1-+0B69J_1aJv5Q@mail.gmail.com> <ZzVNKvCu4MOs7O5z@debug.ba.rivosinc.com>
+In-Reply-To: <ZzVNKvCu4MOs7O5z@debug.ba.rivosinc.com>
+From: Nick Hu <nick.hu@sifive.com>
+Date: Thu, 14 Nov 2024 09:20:14 +0800
+Message-ID: <CAKddAkDbGYeONaksq6fzLzx47BHZo3Ar7Sog3MOgf7Y+Birovw@mail.gmail.com>
+Subject: Re: [PATCH v8 24/29] riscv: enable kernel access to shadow stack
+ memory via FWFT sbi call
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
+	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
+	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
+	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
+	samitolvanen@google.com, broonie@kernel.org, rick.p.edgecombe@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Correct the misspellings of "noftify" (should be "notify") and "swtich"
-(should be "switch").
+Hi Deepak
 
-Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
----
- arch/arm/vfp/vfpmodule.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Nov 14, 2024 at 9:06=E2=80=AFAM Deepak Gupta <debug@rivosinc.com> w=
+rote:
+>
+> On Thu, Nov 14, 2024 at 12:13:38AM +0800, Nick Hu wrote:
+> >Hi Deepak
+> >
+> >On Tue, Nov 12, 2024 at 5:08=E2=80=AFAM Deepak Gupta <debug@rivosinc.com=
+> wrote:
+> >>
+> >> Kernel will have to perform shadow stack operations on user shadow sta=
+ck.
+> >> Like during signal delivery and sigreturn, shadow stack token must be
+> >> created and validated respectively. Thus shadow stack access for kerne=
+l
+> >> must be enabled.
+> >>
+> >> In future when kernel shadow stacks are enabled for linux kernel, it m=
+ust
+> >> be enabled as early as possible for better coverage and prevent imbala=
+nce
+> >> between regular stack and shadow stack. After `relocate_enable_mmu` ha=
+s
+> >> been done, this is as early as possible it can enabled.
+> >>
+> >> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> >> ---
+> >>  arch/riscv/kernel/asm-offsets.c |  4 ++++
+> >>  arch/riscv/kernel/head.S        | 12 ++++++++++++
+> >>  2 files changed, 16 insertions(+)
+> >>
+> >> diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-o=
+ffsets.c
+> >> index 766bd33f10cb..a22ab8a41672 100644
+> >> --- a/arch/riscv/kernel/asm-offsets.c
+> >> +++ b/arch/riscv/kernel/asm-offsets.c
+> >> @@ -517,4 +517,8 @@ void asm_offsets(void)
+> >>         DEFINE(FREGS_A6,            offsetof(struct ftrace_regs, a6));
+> >>         DEFINE(FREGS_A7,            offsetof(struct ftrace_regs, a7));
+> >>  #endif
+> >> +       DEFINE(SBI_EXT_FWFT, SBI_EXT_FWFT);
+> >> +       DEFINE(SBI_EXT_FWFT_SET, SBI_EXT_FWFT_SET);
+> >> +       DEFINE(SBI_FWFT_SHADOW_STACK, SBI_FWFT_SHADOW_STACK);
+> >> +       DEFINE(SBI_FWFT_SET_FLAG_LOCK, SBI_FWFT_SET_FLAG_LOCK);
+> >>  }
+> >> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
+> >> index 356d5397b2a2..6244408ca917 100644
+> >> --- a/arch/riscv/kernel/head.S
+> >> +++ b/arch/riscv/kernel/head.S
+> >> @@ -164,6 +164,12 @@ secondary_start_sbi:
+> >>         call relocate_enable_mmu
+> >>  #endif
+> >>         call .Lsetup_trap_vector
+> >> +       li a7, SBI_EXT_FWFT
+> >> +       li a6, SBI_EXT_FWFT_SET
+> >> +       li a0, SBI_FWFT_SHADOW_STACK
+> >> +       li a1, 1 /* enable supervisor to access shadow stack access */
+> >> +       li a2, SBI_FWFT_SET_FLAG_LOCK
+> >> +       ecall
+> >>         scs_load_current
+> >>         call smp_callin
+> >>  #endif /* CONFIG_SMP */
+> >> @@ -320,6 +326,12 @@ SYM_CODE_START(_start_kernel)
+> >>         la tp, init_task
+> >>         la sp, init_thread_union + THREAD_SIZE
+> >>         addi sp, sp, -PT_SIZE_ON_STACK
+> >> +       li a7, SBI_EXT_FWFT
+> >> +       li a6, SBI_EXT_FWFT_SET
+> >> +       li a0, SBI_FWFT_SHADOW_STACK
+> >> +       li a1, 1 /* enable supervisor to access shadow stack access */
+> >> +       li a2, SBI_FWFT_SET_FLAG_LOCK
+> >> +       ecall
+> >>         scs_load_current
+> >>
+> >>  #ifdef CONFIG_KASAN
+> >>
+> >> --
+> >> 2.45.0
+> >>
+> >Should we clear the SBI_FWFT_SET_FLAG_LOCK before the cpu hotplug
+> >otherwise the menvcfg.sse won't be set by the fwft set sbi call when
+> >the hotplug cpu back to kernel?
+>
+> Hmm...
+>
+> An incoming hotplug CPU has no features setup on it.
+> I see that `sbi_cpu_start` will supply `secondary_start_sbi` as start
+> up code for incoming CPU. `secondary_start_sbi` is in head.S which conver=
+ges
+> in `.Lsecondary_start_common`. And thus hotplugged CPU should be
+> issuing shadow stack set FWFT sbi as well.
+>
+> Am I missing something ?
+>
+This is the correct flow. However the opensbi will deny it due to the
+SBI_FWFT_SET_FLAG_LOCK already being set.
+So the menvcfg.sse will not set by this flow.
 
-diff --git a/arch/arm/vfp/vfpmodule.c b/arch/arm/vfp/vfpmodule.c
-index b68efe643..409165077 100644
---- a/arch/arm/vfp/vfpmodule.c
-+++ b/arch/arm/vfp/vfpmodule.c
-@@ -140,7 +140,7 @@ static void vfp_thread_copy(struct thread_info *thread)
- /*
-  * When this function is called with the following 'cmd's, the following
-  * is true while this function is being run:
-- *  THREAD_NOFTIFY_SWTICH:
-+ *  THREAD_NOTIFY_SWITCH:
-  *   - the previously running thread will not be scheduled onto another CPU.
-  *   - the next thread to be run (v) will not be running on another CPU.
-  *   - thread->cpu is the local CPU number
--- 
-2.27.0
+if (conf->flags & SBI_FWFT_SET_FLAG_LOCK)
+                return SBI_EDENIED;
 
-
-
+Regards,
+Nick
+> >
+> >Regards,
+> >Nick
+> >>
+> >> _______________________________________________
+> >> linux-riscv mailing list
+> >> linux-riscv@lists.infradead.org
+> >> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
