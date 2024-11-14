@@ -1,121 +1,182 @@
-Return-Path: <linux-kernel+bounces-409573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C69B89C8EAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:50:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62BFB9C8EB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:51:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85C4F281693
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:50:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2380F28449D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7873115C144;
-	Thu, 14 Nov 2024 15:42:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588CA18B499;
+	Thu, 14 Nov 2024 15:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="YQETem0K";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GjaPlz4Z"
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dao/fzUG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7258813B288
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E161B18A6DD;
+	Thu, 14 Nov 2024 15:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731598959; cv=none; b=uTda8+dX6jgvrxAAmgPFfWjNLrFpIF6vhL89qkd0bB8AGpJ6+7hVW0rGoV5OPKtd3qS7GJgo/yt3c7Rx4aPQNo7XyB5xsP2yDXLjgGbq+BbUHc0dRpMkld/ZKbH41cazbts6Zd7A0AgIll1a6/fAQCqodrozpzRSc6/OAhdMqEk=
+	t=1731598977; cv=none; b=twELnMIEqJmVsZsXSVDYSbNoYLDH99/JrFy8fBL5dD/CO7fdxxCALf/Ba2AIi5GO/36F3GsoqHsZ6v2xF+SN5jQ4pneDEbfkRI/PY8Y0KmEMQPQ6ip5Ysiy5GIjEQhjDuKSkvRFdfxWfS4hfhPudXYXnAS8OXTO9TDCnk+oUxO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731598959; c=relaxed/simple;
-	bh=DIOlaexXWBpXt5ZOxzCBof5ZqDcQG3H+YoruoWb52YA=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=aklopP4vojFZqU6Rc9TjkiH9NyLsXktPtyOd/UeGpUrRvo5lJG1C+HO4IsMjcgKV2xbzGyCL/JYJtyiXXsIsYddmTOX5Z+2iYgnpGJEFaqGRm7HCXmURg/5edGfiYf460MJhRbG60ITf2okEtqfMVdXwCiN6h/y4rI0vNcxJ6s4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=YQETem0K; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GjaPlz4Z; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 5D9E2138026B;
-	Thu, 14 Nov 2024 10:42:36 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Thu, 14 Nov 2024 10:42:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1731598956;
-	 x=1731685356; bh=AbcZDy48H7U/Pt6qnMvR1gC8GiMBry3sfz5Sp6m/oeY=; b=
-	YQETem0KYVVXgGMNpr9rjjv4q+HpRSneAByExeTrKrhrJa9/8QPGkZCVwaDeXqWr
-	7LL2u7rIt9S+u7juI1aXq25sU3dgiyXb43mf4sQ3mwgRM5tFtbCGtsh8Nam/nK/1
-	dHD4Pd2v3csSTI316imswRaP0aoxzr4clrP15GaiAAFH476gDMYaDCpm5MofrSW4
-	6S54UBA+N10WGBy/HcFI6tcyHM1yroPtbh4pRn9SZO3HIhsDSNsg2s+OnfZtA9fC
-	9aDk3qz5KdiKljLCDTHSABdXyBsHb0RSY9O2RNLOdnxBsdFmmNTETWP/LsDHA+RQ
-	afAAX9uFZqLr63FiU/xlFg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731598956; x=
-	1731685356; bh=AbcZDy48H7U/Pt6qnMvR1gC8GiMBry3sfz5Sp6m/oeY=; b=G
-	jaPlz4ZY5d2ywyPSduy+xZR9YbzSYQp5wJlKAVpp+ph/nEylVZI9lNm1RzG2CRMy
-	S2Ie1qqz6sxRrf8esjHaPfeb7UQlfJSZQcey0Hhd7gwFtA7rOUz3oj64s3rOiV4B
-	sFn6KyAHxvBCP+JXUeCEH4AOkDi1VMw2lk1Ij+Kl/TvLmjTj5XUnvGrbfiAjQb76
-	ARZPHXt/05Q7Y8GzpSMIffW4HebT+8z0bnFiLbWrmQoHNSllpcOefV81bGL3RLpX
-	1JyLb5Bjav0trKl+ECVqgvrIpytdD4BcaI/EmcPYCDPNoW21izsH/wz8++ffC7ls
-	gy+PclURJ5TdmJMCWIMtg==
-X-ME-Sender: <xms:axo2Z0DRIqKtIAPOyOs8U-TUbCrYzH2-doyA-d_9wuy3sU9lCNhRyA>
-    <xme:axo2Z2i0yP-gJP-IC-euBFn-yyQGk3VnmWh8UF69SVxoo7zDDP9z5x249ELC4S4_U
-    enX4y-HHjHo2m0ZbV0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddvgdejlecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpeeiffetvedutdeufeetkedtieffhffftdfgkeetudet
-    teetvdfgfeefjeehffduueenucffohhmrghinhephihouhhtuhgsvgdrtghomhenucevlh
-    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghr
-    nhgusgdruggvpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtph
-    htthhopehmphgvsegvlhhlvghrmhgrnhdrihgurdgruhdprhgtphhtthhopehgvggvrhht
-    sehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlihhnuhigphhptgdquggvvh
-    eslhhishhtshdrohiilhgrsghsrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
-    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:axo2Z3mYyrFdkTit_pHCoxS9H0leduW8mQj944RXPaD4zORmHd5SQg>
-    <xmx:axo2Z6wNr3qxy8KnoPCD5XubldZzLdnZqoCTZ_Xb4DiAnDbhhPeBOg>
-    <xmx:axo2Z5QepYFmFcfZGEAWgfrZ13KZmShfNLtt5fX62-1xpCKDIF8oFQ>
-    <xmx:axo2Z1aZHZZvk0Fv36neu1STufAamh9q5lwZ_tdhngRaHrhS7xVTxg>
-    <xmx:bBo2Z7eTIzXILtaHEBCIZNLtPsbhF-o4P3arZu_GspVv2bAqOHH1mjsA>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 784512220071; Thu, 14 Nov 2024 10:42:35 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1731598977; c=relaxed/simple;
+	bh=jk4S6Bk4Q0fqz/lxF2uzaH+S7bSOgCsQ5hk+2n65F3s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VlTeihdkYBDbyOoy943ox/1lmQvrEwpMXjfc+Mx62fwEOVvLRllkXzUfvktFIyBTpI9BbNuSyKsFaefp1qll6CXTd1W+tifuU4s5c8J8ENsrGcloDONoR6lBxAkvt9wx5MUkVVZXtRH2+YDK5PSM1tqQuXicgMOXbMbO/bIyog8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dao/fzUG; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731598976; x=1763134976;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=jk4S6Bk4Q0fqz/lxF2uzaH+S7bSOgCsQ5hk+2n65F3s=;
+  b=dao/fzUGXZjSPhLJ2cilhYux5eHM2rlOyZYHt3AHeKMdKEHPKcHcbt2X
+   dC9YaqRFJxs0nCrgOjqtyJykTGKSgBCRNU69LcjfEYEQzFTFw+AhhUJmp
+   ylO5XEUc+Uff9JXGwrZHBDY1ogjPkFZ/ZXOT7SxVYHUsANoLHyS2Z+CAp
+   Aq92NyiLXwj8ifrHQJmBzSMNSn3YE3qSGXPxP0dopjxc4YZ6ZWLJ+MYy5
+   cMB5EA4tNjM/uda9Bmpb8ib+z2KusNVvfHgK/o04dOFL+obiAlsjTTIn6
+   SDoCttyvXute2dKXp84+d583nxa60N2jgn3GxqrfTRCFItOWvd7pZY3Je
+   Q==;
+X-CSE-ConnectionGUID: 4Aq3UIgXR46OV/ny78fuCg==
+X-CSE-MsgGUID: lPsdtd3ZTWuosvNRFSUuwQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31731222"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="31731222"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 07:42:56 -0800
+X-CSE-ConnectionGUID: H8PO0C5zRemi7dbFBenCpA==
+X-CSE-MsgGUID: /jsnB3PbSyyUcQ1c166UmQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
+   d="scan'208";a="89021628"
+Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.108.62]) ([10.125.108.62])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 07:42:54 -0800
+Message-ID: <f13b285d-cf5b-4edf-a7d5-933ccd20556a@intel.com>
+Date: Thu, 14 Nov 2024 08:42:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 14 Nov 2024 16:42:15 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Michael Ellerman" <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, "Geert Uytterhoeven" <geert@linux-m68k.org>
-Message-Id: <ecb9d449-85dd-4ca5-a58b-43244b7c0765@app.fastmail.com>
-In-Reply-To: <20241114131114.602234-8-mpe@ellerman.id.au>
-References: <20241114131114.602234-1-mpe@ellerman.id.au>
- <20241114131114.602234-8-mpe@ellerman.id.au>
-Subject: Re: [RFC PATCH 08/10] macintosh: Remove ADB_MACIO
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] acpi: nfit: vmalloc-out-of-bounds Read in
+ acpi_nfit_ctl
+To: Suraj Sonawane <surajsonawane0215@gmail.com>, dan.j.williams@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com
+Cc: rafael@kernel.org, lenb@kernel.org, nvdimm@lists.linux.dev,
+ linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
+References: <20241113125157.14390-1-surajsonawane0215@gmail.com>
+ <c69d74f7-4484-4fc6-9b95-d2ae86ead794@intel.com>
+ <1cab2343-8d74-4477-9046-7940917fa7be@gmail.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <1cab2343-8d74-4477-9046-7940917fa7be@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 14, 2024, at 14:11, Michael Ellerman wrote:
+
+
+On 11/14/24 2:19 AM, Suraj Sonawane wrote:
+> On 13/11/24 22:32, Dave Jiang wrote:
+>>
+>>
+>> On 11/13/24 5:51 AM, Suraj Sonawane wrote:
+>>> Fix an issue detected by syzbot with KASAN:
+>>>
+>>> BUG: KASAN: vmalloc-out-of-bounds in cmd_to_func drivers/acpi/nfit/
+>>> core.c:416 [inline]
+>>> BUG: KASAN: vmalloc-out-of-bounds in acpi_nfit_ctl+0x20e8/0x24a0
+>>> drivers/acpi/nfit/core.c:459
+>>>
+>>> The issue occurs in cmd_to_func when the call_pkg->nd_reserved2
+>>> array is accessed without verifying that call_pkg points to a buffer
+>>> that is appropriately sized as a struct nd_cmd_pkg. This can lead
+>>> to out-of-bounds access and undefined behavior if the buffer does not
+>>> have sufficient space.
+>>>
+>>> To address this, a check was added in acpi_nfit_ctl() to ensure that
+>>> buf is not NULL and that buf_len is greater than sizeof(*call_pkg)
+>>> before casting buf to struct nd_cmd_pkg *. This ensures safe access
+>>> to the members of call_pkg, including the nd_reserved2 array.
+>>>
+>>> Reported-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
+>>> Closes: https://syzkaller.appspot.com/bug?extid=7534f060ebda6b8b51b3
+>>> Tested-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
+>>> Fixes: ebe9f6f19d80 ("acpi/nfit: Fix bus command validation")
+>>> Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+>>> ---
+>>> V1: https://lore.kernel.org/lkml/20241111080429.9861-1-surajsonawane0215@gmail.com/
+>>> V2: Initialized `out_obj` to `NULL` in `acpi_nfit_ctl()` to prevent
+>>> potential uninitialized variable usage if condition is true.
+>>> V3: Changed the condition to if (!buf || buf_len < sizeof(*call_pkg))
+>>> and updated the Fixes tag to reference the correct commit.
+>>>
+>>>   drivers/acpi/nfit/core.c | 12 +++++++++---
+>>>   1 file changed, 9 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+>>> index 5429ec9ef..eb5349606 100644
+>>> --- a/drivers/acpi/nfit/core.c
+>>> +++ b/drivers/acpi/nfit/core.c
+>>> @@ -439,7 +439,7 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
+>>>   {
+>>>       struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
+>>>       struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
+>>> -    union acpi_object in_obj, in_buf, *out_obj;
+>>> +    union acpi_object in_obj, in_buf, *out_obj = NULL;
+>>
+>> Looking at the code later, out_obj is always assigned before access. I'm not seeing a path where out_obj would be accessed unitialized...
 > 
-> -config ADB_MACIO
-> -	bool "Include MacIO (CHRP) ADB driver"
-> -	depends on ADB && PPC_CHRP && !PPC_PMAC64
+> I initialized out_obj to NULL to prevent potential issues where goto out might access an uninitialized pointer, ensuring ACPI_FREE(out_obj) handles NULL safely in the cleanup section. This covers cases where the condition !buf || buf_len < sizeof(*call_pkg) triggers an early exit, preventing unintended behavior.
 
-The dependency looked weird to me, so I had to look up
-what that thing is. Apparently this originally had a PPC_PMAC
-dependency instead of PPC_CHRP, which explains the !PPC_PMAC64
-part.
+ok
 
-I also found the promotional video from 1996 at
-https://www.youtube.com/watch?v=NrvrIEPeSNA .
+> 
+>>
+>> https://elixir.bootlin.com/linux/v6.12-rc7/source/drivers/acpi/nfit/core.c#L538
+>>  
+>>>       const struct nd_cmd_desc *desc = NULL;
+>>>       struct device *dev = acpi_desc->dev;
+>>>       struct nd_cmd_pkg *call_pkg = NULL;
+>>> @@ -454,8 +454,14 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
+>>>       if (cmd_rc)
+>>>           *cmd_rc = -EINVAL;
+>>>   -    if (cmd == ND_CMD_CALL)
+>>> -        call_pkg = buf;
+>>> +    if (cmd == ND_CMD_CALL) {
+>>> +        if (!buf || buf_len < sizeof(*call_pkg)) {
+>>> +            rc = -EINVAL;
+>>> +            goto out;
+>>> +        }
+>>> +        call_pkg = (struct nd_cmd_pkg *)buf;
+>>
+>> Is the casting needed? It wasn't in the old code
+>>
+> 
+> I tested the code both with and without the cast using syzbot, and it didn't result in any errors in either case. Since the buffer (buf) is being used as a pointer to struct nd_cmd_pkg, and the casting works in both scenarios, it appears that the cast may not be strictly necessary for this particular case.
+> 
+> I can remove the cast and retain the original code structure, as it does not seem to affect functionality. However, the cast was added for clarity and type safety to ensure that buf is explicitly treated as a struct nd_cmd_pkg *.
+> 
+> Would you prefer to remove the cast, or should I keep it as is for type safety and clarity?
 
-     Arnd
+I would just leave it as it was.
+
+> 
+>>> +    }
+>>> +
+>>>       func = cmd_to_func(nfit_mem, cmd, call_pkg, &family);
+>>>       if (func < 0)
+>>>           return func;
+>>
+> 
+> Thank you for your feedback and your time.
+
 
