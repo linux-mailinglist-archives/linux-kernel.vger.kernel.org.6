@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-408793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8737E9C8396
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:02:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5450F9C8397
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:02:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D00242831F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:02:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14106283450
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2F01F472D;
-	Thu, 14 Nov 2024 07:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5EDB1F4FD5;
+	Thu, 14 Nov 2024 07:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ChZ8+bP9"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="UNIHQwMY"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1751EE01E
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AD01F6681
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731567684; cv=none; b=jZu8QhfzIoZgLcSw/+Uuj+R5tX2ynFTcjbu/Nj6LL5LEf83mCqwYad41uXUKtsna+dpWfQvPN/S1CBxZKVoCK3X2cNWvaIMwJnnnvYQZuGhN7OWdX8PcVV93DfAyoM1eVc3DGycLFxuzgcn5VRWoIfBVRkrbLy0hMQPLoEL/rcY=
+	t=1731567692; cv=none; b=MdRPFyZcQKzAEQHgqNAkvRu4V6Z6T1bBE5V81sDzMivhauvmTtTIz2hbc/s7C9/fhxsN4uGF1LWN/MyNlvUvv7fcs+XAjH94fpo8sn+ClmgePgBCa/9iMC6bFdx1Qy6DZ3YWsq/oMkj4MN3keUutN6A4R505yx/nMyFh51xSKv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731567684; c=relaxed/simple;
-	bh=lbosdsiQeVFGrA4rAtzINXGrCPnihfDpcv5YshmmcJU=;
+	s=arc-20240116; t=1731567692; c=relaxed/simple;
+	bh=20qtQZ/mJDfwp0RQIdzo2NcEVODmaojrZtA17kfYSDs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WJgk45Yg7Ed93P6bdbCfgA6sMFmUUCWS6vLV/zVi3kL2YLVfoAgGCiIN8GaQXmzrSflGvBU3lVzFPy85zctY3Y+Yv6efUw57jlsQvtmX7paUxR+53j9xp615wUvpWEbkHBw/mk1iok5dI/pS2UO/itpQ/UM43Q8cXg6oicmh6nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ChZ8+bP9; arc=none smtp.client-ip=209.85.214.182
+	 MIME-Version; b=Dem1wDDdo6EUV8sUS2Ca8sVWTpfmoFt7UFLS2xZQ+joesxFvbFC2viqjSBgAs/HONIus45x0TNcdl7ucRIUph2jw+Tz+KZkncHLo4VSm2YBWV49sVz0Z0BPGlH5Uzhqb05ADjy+TrTJSp2qvxp2WEqhuSERd24R6PegfcLTQcTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=UNIHQwMY; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-210e5369b7dso2348805ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 23:01:22 -0800 (PST)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20c803787abso2012595ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 23:01:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1731567682; x=1732172482; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1731567690; x=1732172490; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ao15XNwWqfhJRpavPj5UJluLHg99Tu4ljFLM7T2kOsA=;
-        b=ChZ8+bP9v97XCFPXrCpMQLalnI3c7cFWfi4JoZDWAw26KSLmTp9w0AKRxAYuLv/NEX
-         ZIpPEBPi9XoKuxEc0v2hVF3LdPuxuCkC+rOeQPSP+hg7E3BCx3MDOl+4eQyK7jEeKAN9
-         NucUgMZY9e6szZnaosTHP5/ndfq4/dBebdd/620ho+0a4n9OpSDKPYn7aIyYJj5X2HQG
-         CLJ+Jsy/lJN6XeYxsFgtJps7mCPHpk/tKeAEgNM9bUcH2c4F5hDwMCXHSUgCpps7cDjk
-         Rjo4mQD/rQGPy4HbwJWnuCrreKy1mMY4frpPXO0A5wEo9mgkYyC/6eIHJTSIujSsIZVw
-         10UQ==
+        bh=EIspmjr7fEoQ+01q6Xqvp9udSZQrZ5Y5COB53v8W124=;
+        b=UNIHQwMY72wMd5M7iz4AyD7VC3S5JBNoKS1LSHLiP9f/BHdGrixdjdrzqJM1rrsE61
+         3xw5g/w9Ccc6RA0I5SMedDfcavUTdbJbWOOC9ZD4XMHaNstUq6gPbz4YuGV8RbWP5YbV
+         9esr8A/Cq4vfs0j12CUI2nOSwM+7AYi19c8xX7DSF46I2l3H3HOVQjwa4JZ4SvmfFA0a
+         NOsGqbri31NA7yecFrTuEwDPqoUlRSnXp6vTQT8O2RtUHXCOw85EpTob9fPwHEEaDUZ/
+         3gGVvQ6N/jqTvu2356tqRJfhxxvF/AdJLIwmEzVBKbPS8Im0BMdtaZbIM8tDFNpWKS0U
+         6dDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731567682; x=1732172482;
+        d=1e100.net; s=20230601; t=1731567690; x=1732172490;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ao15XNwWqfhJRpavPj5UJluLHg99Tu4ljFLM7T2kOsA=;
-        b=Cby0jf41kLGUEaMUfFhC6AFNUlH6V0EVFVZKMpgyzukVmjJdopgcagqurBXvLlsGTt
-         SerapWUVQ31lmQhq+uGxcWBMwQpw7AeNGftpCu68YpsY19XxRTNXnI86fGhoOq1IWM9r
-         GguTrglaHQn6+vEWMIzAjJtumc6EwTy+RY7LeIFosXezoiAthU7T1FAubZttUq4GL+o7
-         qfkLSxDzlok4SkvJ3PIbeb37kvG28gjcoCCzeMMkUSt32h09Ru7+84h4/ZBWWws40Iff
-         zxXcPmAv5Huk1R6cDD5VX6Q25V9s+vvk9xJac7eCh66m7Vjn6MqswXjYUcm13S0xleRf
-         KOpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHlJzhews2kN9Abz5+xLfbkt85op9q+GdwEj1Gwhkaep85kMTxOXtWGNgTl3ZytzNy81Fw/XscK0j4NIc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdADzetFCYAQvSPzlKAJvXzam+0dHmTtqGZnrdJNhyesuKKghU
-	JTQspmmlnKX4hSolhLuTdYCx8JdSBeIasiQ7aCE8/VQcrjeZXqAdI4E8Gthht0I=
-X-Google-Smtp-Source: AGHT+IHw+F+4TmogLhrbU8N9wTkF2jmE4YHNJryvizmOe98BZRuryF1Qlfv8KxZRs6BXORJTlrQqRA==
-X-Received: by 2002:a17:902:e892:b0:20b:7210:5859 with SMTP id d9443c01a7336-211c50b0c51mr15181305ad.38.1731567681854;
-        Wed, 13 Nov 2024 23:01:21 -0800 (PST)
+        bh=EIspmjr7fEoQ+01q6Xqvp9udSZQrZ5Y5COB53v8W124=;
+        b=WKzLzBjBURk5j7NeDuWgJtnux9rJRccJUV2SV9uZvNAZmUsuN0E/EZdeZhheKim2GC
+         slk0NykYfCscE0kbv1XinngwD8kUvFNIZcV6r6F021bKluj2f8b+MPDaRC+lq5yyncWh
+         Ctol4MhZdfS9rTvKHepArfqqg4zkNyDVwqEwvNLKWjoLOdiKsgsYB1GOZNOpXCH/+tPd
+         2dxteGPTGtFVTpJULJVKIO4TRL7pjPXWQjgFCS92T1oUz3TeK5qNO1pKGjy39ZM9odEV
+         N3WvSnnlVvJDubqkXgmB76J8ajnNQYBUbTLn/PHJUIRAojyJnXHaXrARUSM9xC8yw2wD
+         doUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWFD9/OEIAaVyXzUTTXJIU8hJBspqDNUSTMOmJt7kWGBq+dv2415niUfF9ILm7+HD9QMXOdnfrjcHoLHaA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznX6kpi9To2FgCtxTYghYsHu3hbzeSAjzyelqxu4wTAZgmNm9a
+	C8UirUaQpk9pj4nobKDTjkxzqTIHM2IZOPYvAbontEGS/2wP9B+Sbdx570lmcrE=
+X-Google-Smtp-Source: AGHT+IGZZsMk4C1Gc1YiyqnQ/Vm69/2CldCbtvO7gKrKwJI6uPz/y6t4qr23UntpDUqpfJ9OLSSGjA==
+X-Received: by 2002:a17:902:cf11:b0:211:2fb2:6a6 with SMTP id d9443c01a7336-211c0fa7399mr34336085ad.24.1731567689701;
+        Wed, 13 Nov 2024 23:01:29 -0800 (PST)
 Received: from C02DW0BEMD6R.bytedance.net ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211c7d389c2sm4119065ad.268.2024.11.13.23.01.14
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211c7d389c2sm4119065ad.268.2024.11.13.23.01.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 23:01:21 -0800 (PST)
+        Wed, 13 Nov 2024 23:01:28 -0800 (PST)
 From: Qi Zheng <zhengqi.arch@bytedance.com>
 To: david@redhat.com,
 	jannh@google.com,
@@ -88,9 +88,9 @@ Cc: mgorman@suse.de,
 	zokeefe@google.com,
 	rientjes@google.com,
 	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH v3 7/9] mm: pgtable: try to reclaim empty PTE page in madvise(MADV_DONTNEED)
-Date: Thu, 14 Nov 2024 14:59:58 +0800
-Message-Id: <9e6f0cff7ae29cd8bd1812d3a0e3513de3f42f42.1731566457.git.zhengqi.arch@bytedance.com>
+Subject: [PATCH v3 8/9] x86: mm: free page table pages by RCU instead of semi RCU
+Date: Thu, 14 Nov 2024 14:59:59 +0800
+Message-Id: <d7bb84a0ae61c6c1fbcef395d9110529feca9b41.1731566457.git.zhengqi.arch@bytedance.com>
 X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 In-Reply-To: <cover.1731566457.git.zhengqi.arch@bytedance.com>
 References: <cover.1731566457.git.zhengqi.arch@bytedance.com>
@@ -102,333 +102,179 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Now in order to pursue high performance, applications mostly use some
-high-performance user-mode memory allocators, such as jemalloc or
-tcmalloc. These memory allocators use madvise(MADV_DONTNEED or MADV_FREE)
-to release physical memory, but neither MADV_DONTNEED nor MADV_FREE will
-release page table memory, which may cause huge page table memory usage.
+Now, if CONFIG_MMU_GATHER_RCU_TABLE_FREE is selected, the page table pages
+will be freed by semi RCU, that is:
 
-The following are a memory usage snapshot of one process which actually
-happened on our server:
+ - batch table freeing: asynchronous free by RCU
+ - single table freeing: IPI + synchronous free
 
-        VIRT:  55t
-        RES:   590g
-        VmPTE: 110g
+In this way, the page table can be lockless traversed by disabling IRQ in
+paths such as fast GUP. But this is not enough to free the empty PTE page
+table pages in paths other that munmap and exit_mmap path, because IPI
+cannot be synchronized with rcu_read_lock() in pte_offset_map{_lock}().
 
-In this case, most of the page table entries are empty. For such a PTE
-page where all entries are empty, we can actually free it back to the
-system for others to use.
+In preparation for supporting empty PTE page table pages reclaimation,
+let single table also be freed by RCU like batch table freeing. Then we
+can also use pte_offset_map() etc to prevent PTE page from being freed.
 
-As a first step, this commit aims to synchronously free the empty PTE
-pages in madvise(MADV_DONTNEED) case. We will detect and free empty PTE
-pages in zap_pte_range(), and will add zap_details.reclaim_pt to exclude
-cases other than madvise(MADV_DONTNEED).
+Like pte_free_defer(), we can also safely use ptdesc->pt_rcu_head to free
+the page table pages:
 
-Once an empty PTE is detected, we first try to hold the pmd lock within
-the pte lock. If successful, we clear the pmd entry directly (fast path).
-Otherwise, we wait until the pte lock is released, then re-hold the pmd
-and pte locks and loop PTRS_PER_PTE times to check pte_none() to re-detect
-whether the PTE page is empty and free it (slow path).
+ - The pt_rcu_head is unioned with pt_list and pmd_huge_pte.
 
-For other cases such as madvise(MADV_FREE), consider scanning and freeing
-empty PTE pages asynchronously in the future.
+ - For pt_list, it is used to manage the PGD page in x86. Fortunately
+   tlb_remove_table() will not be used for free PGD pages, so it is safe
+   to use pt_rcu_head.
 
-The following code snippet can show the effect of optimization:
+ - For pmd_huge_pte, it is used for THPs, so it is safe.
 
-        mmap 50G
-        while (1) {
-                for (; i < 1024 * 25; i++) {
-                        touch 2M memory
-                        madvise MADV_DONTNEED 2M
-                }
-        }
+After applying this patch, if CONFIG_PT_RECLAIM is enabled, the function
+call of free_pte() is as follows:
 
-As we can see, the memory usage of VmPTE is reduced:
-
-                        before                          after
-VIRT                   50.0 GB                        50.0 GB
-RES                     3.1 MB                         3.1 MB
-VmPTE                102640 KB                         240 KB
+free_pte
+  pte_free_tlb
+    __pte_free_tlb
+      ___pte_free_tlb
+        paravirt_tlb_remove_table
+          tlb_remove_table [!CONFIG_PARAVIRT, Xen PV, Hyper-V, KVM]
+            [no-free-memory slowpath:]
+              tlb_table_invalidate
+              tlb_remove_table_one
+                __tlb_remove_table_one [frees via RCU]
+            [fastpath:]
+              tlb_table_flush
+                tlb_remove_table_free [frees via RCU]
+          native_tlb_remove_table [CONFIG_PARAVIRT on native]
+            tlb_remove_table [see above]
 
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+Cc: x86@kernel.org
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
 ---
- include/linux/mm.h |  1 +
- mm/Kconfig         | 15 ++++++++++
- mm/Makefile        |  1 +
- mm/internal.h      | 19 +++++++++++++
- mm/madvise.c       |  7 ++++-
- mm/memory.c        | 45 ++++++++++++++++++++++++++++-
- mm/pt_reclaim.c    | 71 ++++++++++++++++++++++++++++++++++++++++++++++
- 7 files changed, 157 insertions(+), 2 deletions(-)
- create mode 100644 mm/pt_reclaim.c
+ arch/x86/include/asm/tlb.h | 19 +++++++++++++++++++
+ arch/x86/kernel/paravirt.c |  7 +++++++
+ arch/x86/mm/pgtable.c      | 10 +++++++++-
+ include/linux/mm_types.h   |  4 +++-
+ mm/mmu_gather.c            |  9 ++++++++-
+ 5 files changed, 46 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index ca59d165f1f2e..1fcd4172d2c03 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2319,6 +2319,7 @@ extern void pagefault_out_of_memory(void);
- struct zap_details {
- 	struct folio *single_folio;	/* Locked folio to be unmapped */
- 	bool even_cows;			/* Zap COWed private pages too? */
-+	bool reclaim_pt;		/* Need reclaim page tables? */
- 	zap_flags_t zap_flags;		/* Extra flags for zapping */
- };
+diff --git a/arch/x86/include/asm/tlb.h b/arch/x86/include/asm/tlb.h
+index 580636cdc257b..d134ecf1ada06 100644
+--- a/arch/x86/include/asm/tlb.h
++++ b/arch/x86/include/asm/tlb.h
+@@ -34,4 +34,23 @@ static inline void __tlb_remove_table(void *table)
+ 	free_page_and_swap_cache(table);
+ }
  
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 84000b0168086..7949ab121070f 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -1301,6 +1301,21 @@ config ARCH_HAS_USER_SHADOW_STACK
- 	  The architecture has hardware support for userspace shadow call
-           stacks (eg, x86 CET, arm64 GCS or RISC-V Zicfiss).
- 
-+config ARCH_SUPPORTS_PT_RECLAIM
-+	def_bool n
-+
-+config PT_RECLAIM
-+	bool "reclaim empty user page table pages"
-+	default y
-+	depends on ARCH_SUPPORTS_PT_RECLAIM && MMU && SMP
-+	select MMU_GATHER_RCU_TABLE_FREE
-+	help
-+	  Try to reclaim empty user page table pages in paths other than munmap
-+	  and exit_mmap path.
-+
-+	  Note: now only empty user PTE page table pages will be reclaimed.
-+
-+
- source "mm/damon/Kconfig"
- 
- endmenu
-diff --git a/mm/Makefile b/mm/Makefile
-index dba52bb0da8ab..850386a67b3e0 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -146,3 +146,4 @@ obj-$(CONFIG_GENERIC_IOREMAP) += ioremap.o
- obj-$(CONFIG_SHRINKER_DEBUG) += shrinker_debug.o
- obj-$(CONFIG_EXECMEM) += execmem.o
- obj-$(CONFIG_TMPFS_QUOTA) += shmem_quota.o
-+obj-$(CONFIG_PT_RECLAIM) += pt_reclaim.o
-diff --git a/mm/internal.h b/mm/internal.h
-index 5a7302baeed7c..5b2aef61073f1 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -1530,4 +1530,23 @@ int walk_page_range_mm(struct mm_struct *mm, unsigned long start,
- 		unsigned long end, const struct mm_walk_ops *ops,
- 		void *private);
- 
-+/* pt_reclaim.c */
-+bool try_get_and_clear_pmd(struct mm_struct *mm, pmd_t *pmd, pmd_t *pmdval);
-+void free_pte(struct mm_struct *mm, unsigned long addr, struct mmu_gather *tlb,
-+	      pmd_t pmdval);
-+void try_to_free_pte(struct mm_struct *mm, pmd_t *pmd, unsigned long addr,
-+		     struct mmu_gather *tlb);
-+
 +#ifdef CONFIG_PT_RECLAIM
-+bool reclaim_pt_is_enabled(unsigned long start, unsigned long end,
-+			   struct zap_details *details);
-+#else
-+static inline bool reclaim_pt_is_enabled(unsigned long start, unsigned long end,
-+					 struct zap_details *details)
++static inline void __tlb_remove_table_one_rcu(struct rcu_head *head)
 +{
-+	return false;
++	struct page *page;
++
++	page = container_of(head, struct page, rcu_head);
++	put_page(page);
 +}
++
++static inline void __tlb_remove_table_one(void *table)
++{
++	struct page *page;
++
++	page = table;
++	call_rcu(&page->rcu_head, __tlb_remove_table_one_rcu);
++}
++#define __tlb_remove_table_one __tlb_remove_table_one
 +#endif /* CONFIG_PT_RECLAIM */
 +
-+
- #endif	/* __MM_INTERNAL_H */
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 0ceae57da7dad..49f3a75046f63 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -851,7 +851,12 @@ static int madvise_free_single_vma(struct vm_area_struct *vma,
- static long madvise_dontneed_single_vma(struct vm_area_struct *vma,
- 					unsigned long start, unsigned long end)
- {
--	zap_page_range_single(vma, start, end - start, NULL);
-+	struct zap_details details = {
-+		.reclaim_pt = true,
-+		.even_cows = true,
-+	};
-+
-+	zap_page_range_single(vma, start, end - start, &details);
- 	return 0;
+ #endif /* _ASM_X86_TLB_H */
+diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+index fec3815335558..89688921ea62e 100644
+--- a/arch/x86/kernel/paravirt.c
++++ b/arch/x86/kernel/paravirt.c
+@@ -59,10 +59,17 @@ void __init native_pv_lock_init(void)
+ 		static_branch_enable(&virt_spin_lock_key);
  }
  
-diff --git a/mm/memory.c b/mm/memory.c
-index 8b3348ff374ff..fe93b0648c430 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1436,7 +1436,7 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
- static inline bool should_zap_cows(struct zap_details *details)
++#ifndef CONFIG_PT_RECLAIM
+ static void native_tlb_remove_table(struct mmu_gather *tlb, void *table)
  {
- 	/* By default, zap all pages */
--	if (!details)
-+	if (!details || details->reclaim_pt)
- 		return true;
- 
- 	/* Or, we zap COWed pages only if the caller wants to */
-@@ -1698,6 +1698,30 @@ static inline int do_zap_pte_range(struct mmu_gather *tlb,
- 					 details, rss);
+ 	tlb_remove_page(tlb, table);
  }
- 
-+static inline int count_pte_none(pte_t *pte, int nr)
-+{
-+	int none_nr = 0;
-+
-+	/*
-+	 * If PTE_MARKER_UFFD_WP is enabled, the uffd-wp PTEs may be
-+	 * re-installed, so we need to check pte_none() one by one.
-+	 * Otherwise, checking a single PTE in a batch is sufficient.
-+	 */
-+#ifdef CONFIG_PTE_MARKER_UFFD_WP
-+	for (;;) {
-+		if (pte_none(ptep_get(pte)))
-+			none_nr++;
-+		if (--nr == 0)
-+			break;
-+		pte++;
-+	}
 +#else
-+	if (pte_none(ptep_get(pte)))
-+		none_nr = nr;
-+#endif
-+	return none_nr;
++static void native_tlb_remove_table(struct mmu_gather *tlb, void *table)
++{
++	tlb_remove_table(tlb, table);
 +}
-+
- static unsigned long zap_pte_range(struct mmu_gather *tlb,
- 				struct vm_area_struct *vma, pmd_t *pmd,
- 				unsigned long addr, unsigned long end,
-@@ -1709,6 +1733,11 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
- 	spinlock_t *ptl;
- 	pte_t *start_pte;
- 	pte_t *pte;
-+	pmd_t pmdval;
-+	unsigned long start = addr;
-+	bool can_reclaim_pt = reclaim_pt_is_enabled(start, end, details);
-+	bool direct_reclaim = false;
-+	int none_nr = 0;
- 	int nr;
++#endif
  
- retry:
-@@ -1726,6 +1755,8 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
+ struct static_key paravirt_steal_enabled;
+ struct static_key paravirt_steal_rq_enabled;
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index 5745a354a241c..69a357b15974a 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -19,12 +19,20 @@ EXPORT_SYMBOL(physical_mask);
+ #endif
  
- 		nr = skip_none_ptes(pte, addr, end);
- 		if (nr) {
-+			if (can_reclaim_pt)
-+				none_nr += nr;
- 			addr += PAGE_SIZE * nr;
- 			if (addr == end)
- 				break;
-@@ -1734,12 +1765,17 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
+ #ifndef CONFIG_PARAVIRT
++#ifndef CONFIG_PT_RECLAIM
+ static inline
+ void paravirt_tlb_remove_table(struct mmu_gather *tlb, void *table)
+ {
+ 	tlb_remove_page(tlb, table);
+ }
+-#endif
++#else
++static inline
++void paravirt_tlb_remove_table(struct mmu_gather *tlb, void *table)
++{
++	tlb_remove_table(tlb, table);
++}
++#endif /* !CONFIG_PT_RECLAIM */
++#endif /* !CONFIG_PARAVIRT */
  
- 		nr = do_zap_pte_range(tlb, vma, pte, addr, end, details,
- 				      rss, &force_flush, &force_break);
-+		if (can_reclaim_pt)
-+			none_nr += count_pte_none(pte, nr);
- 		if (unlikely(force_break)) {
- 			addr += nr * PAGE_SIZE;
- 			break;
- 		}
- 	} while (pte += nr, addr += PAGE_SIZE * nr, addr != end);
+ gfp_t __userpte_alloc_gfp = GFP_PGTABLE_USER | PGTABLE_HIGHMEM;
  
-+	if (can_reclaim_pt && addr == end && (none_nr == PTRS_PER_PTE))
-+		direct_reclaim = try_get_and_clear_pmd(mm, pmd, &pmdval);
-+
- 	add_mm_rss_vec(mm, rss);
- 	arch_leave_lazy_mmu_mode();
- 
-@@ -1766,6 +1802,13 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
- 		goto retry;
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 97e2f4fe1d6c4..266f53b2bb497 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -438,7 +438,9 @@ FOLIO_MATCH(compound_head, _head_2a);
+  * struct ptdesc -    Memory descriptor for page tables.
+  * @__page_flags:     Same as page flags. Powerpc only.
+  * @pt_rcu_head:      For freeing page table pages.
+- * @pt_list:          List of used page tables. Used for s390 and x86.
++ * @pt_list:          List of used page tables. Used for s390 gmap shadow pages
++ *                    (which are not linked into the user page tables) and x86
++ *                    pgds.
+  * @_pt_pad_1:        Padding that aliases with page's compound head.
+  * @pmd_huge_pte:     Protected by ptdesc->ptl, used for THPs.
+  * @__page_mapping:   Aliases with page->mapping. Unused for page tables.
+diff --git a/mm/mmu_gather.c b/mm/mmu_gather.c
+index 99b3e9408aa0f..1e21022bcf339 100644
+--- a/mm/mmu_gather.c
++++ b/mm/mmu_gather.c
+@@ -311,11 +311,18 @@ static inline void tlb_table_invalidate(struct mmu_gather *tlb)
  	}
- 
-+	if (can_reclaim_pt) {
-+		if (direct_reclaim)
-+			free_pte(mm, start, tlb, pmdval);
-+		else
-+			try_to_free_pte(mm, pmd, start, tlb);
-+	}
-+
- 	return addr;
  }
  
-diff --git a/mm/pt_reclaim.c b/mm/pt_reclaim.c
-new file mode 100644
-index 0000000000000..6540a3115dde8
---- /dev/null
-+++ b/mm/pt_reclaim.c
-@@ -0,0 +1,71 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/hugetlb.h>
-+#include <asm-generic/tlb.h>
-+#include <asm/pgalloc.h>
+-static void tlb_remove_table_one(void *table)
++#ifndef __tlb_remove_table_one
++static inline void __tlb_remove_table_one(void *table)
+ {
+ 	tlb_remove_table_sync_one();
+ 	__tlb_remove_table(table);
+ }
++#endif
 +
-+#include "internal.h"
-+
-+bool reclaim_pt_is_enabled(unsigned long start, unsigned long end,
-+			   struct zap_details *details)
++static void tlb_remove_table_one(void *table)
 +{
-+	return details && details->reclaim_pt && (end - start >= PMD_SIZE);
++	__tlb_remove_table_one(table);
 +}
-+
-+bool try_get_and_clear_pmd(struct mm_struct *mm, pmd_t *pmd, pmd_t *pmdval)
-+{
-+	spinlock_t *pml = pmd_lockptr(mm, pmd);
-+
-+	if (!spin_trylock(pml))
-+		return false;
-+
-+	*pmdval = pmdp_get_lockless(pmd);
-+	pmd_clear(pmd);
-+	spin_unlock(pml);
-+
-+	return true;
-+}
-+
-+void free_pte(struct mm_struct *mm, unsigned long addr, struct mmu_gather *tlb,
-+	      pmd_t pmdval)
-+{
-+	pte_free_tlb(tlb, pmd_pgtable(pmdval), addr);
-+	mm_dec_nr_ptes(mm);
-+}
-+
-+void try_to_free_pte(struct mm_struct *mm, pmd_t *pmd, unsigned long addr,
-+		     struct mmu_gather *tlb)
-+{
-+	pmd_t pmdval;
-+	spinlock_t *pml, *ptl;
-+	pte_t *start_pte, *pte;
-+	int i;
-+
-+	pml = pmd_lock(mm, pmd);
-+	start_pte = pte_offset_map_rw_nolock(mm, pmd, addr, &pmdval, &ptl);
-+	if (!start_pte)
-+		goto out_ptl;
-+	if (ptl != pml)
-+		spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
-+
-+	/* Check if it is empty PTE page */
-+	for (i = 0, pte = start_pte; i < PTRS_PER_PTE; i++, pte++) {
-+		if (!pte_none(ptep_get(pte)))
-+			goto out_ptl;
-+	}
-+	pte_unmap(start_pte);
-+
-+	pmd_clear(pmd);
-+
-+	if (ptl != pml)
-+		spin_unlock(ptl);
-+	spin_unlock(pml);
-+
-+	free_pte(mm, addr, tlb, pmdval);
-+
-+	return;
-+out_ptl:
-+	if (start_pte)
-+		pte_unmap_unlock(start_pte, ptl);
-+	if (ptl != pml)
-+		spin_unlock(pml);
-+}
+ 
+ static void tlb_table_flush(struct mmu_gather *tlb)
+ {
 -- 
 2.20.1
 
