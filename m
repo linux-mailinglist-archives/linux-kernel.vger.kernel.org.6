@@ -1,275 +1,193 @@
-Return-Path: <linux-kernel+bounces-409471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42EED9C8D1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:43:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17FD69C8D22
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:44:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02A7B2829B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:43:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC1CA2818CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B1C133987;
-	Thu, 14 Nov 2024 14:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A455D82488;
+	Thu, 14 Nov 2024 14:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LInbU1YC"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2067.outbound.protection.outlook.com [40.107.243.67])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="Xd/zibOs"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9487DA8C;
-	Thu, 14 Nov 2024 14:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731595371; cv=fail; b=OKxQfqj0oJf2IGkcCChGeVb9m2p3DWOKo2rEMjHbblfjrf3diEV2iaVGRvI+zDyp4BPFEddWjLiM7BqK7Mo5OATPdDS0hLXfUaQco4k5hGymufu18i5V1bpqwlD+zG0H+vLOJne1QmhVXYGGhm6qUHzJt8VxLbjDieCIgOfTreY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731595371; c=relaxed/simple;
-	bh=Jn0PnGjri8mI4r7y0nfJAH6AHaDvJeFjh2611JYn8xY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=t6tLR9u7A/w51IQNW7h8fI4J6y9ZQRV/9YbBosPKgTwvPSgtaJoVbnSXKejX7O1XnaCgWZx7Kx8EGa1b70K5OQYeJAEyfjifOM8dRyuglztfI9OP9trYE/B5aJvVC6J+qj06fuitOVGLChSJnF+Pfv2MdTDqjackSZcF7xmG0Po=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LInbU1YC; arc=fail smtp.client-ip=40.107.243.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=q8SNufW/RfGw+llL+N9BjXc67RNBbi6w8W/LZrIYATBFIDBKJTxwNz7ULREnSgC6nSP9ay2lFwGHWOo9fpl+XDjSR0ERfQ9qVA71ko7KEAuQTAvvI+9gtHyPyTpeNFAioUX9pmEaBu265mlbT+vleLMnkMMHrh9BOHbkln/MvZOBDpFOlDnRrVcvMWTIafllaWVobKWQVzQDHrGAHbErY5KBdgMbHFW1NfmwUXcgfhD5WULAFLNrcxnyfFuAMS6UsK7mICOdaGJBroak+9687mE5TjtLYCrIDEAZzIVNw7vKmsJ72Jalf9ENhUjE76eg5pYGVlNm9Kn9/7gO47tStw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=66+LzW7guz3jzish49Pux+SEMtFABCg/CeWxvGiKzOg=;
- b=kmt710L/FV8JRMPRMeQF6OxnGg89yAeihP8nltPy+Rswdt9aDuEKQcO5jyeyW91Oj76TBvVGS/TaFKStlupem4FkzmDONNqF+lD0opmxbLU1p8c/Kl1g5XFhysGn+GBZWKJx1hMvJa2j1Oq2NX1kZkd2nSYo4EtvUdKlmM7kR5pmV2YV9XlqC0WKsix9YgnHXpKJdG/rk+UKhkwqAb8fXOS3N/Lg/YkGiDbizCFkqaljt2wOQogCRxP5w3aIR4vZdhKAZyqd7xbBOvVTsiOkZofaImxgemy2l1FHZtKClPSujVNvf7UGMR6Rj3WiB4G4AHnNQKEMDhzkxqlOai5kMw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=66+LzW7guz3jzish49Pux+SEMtFABCg/CeWxvGiKzOg=;
- b=LInbU1YCcJW4C0XLdND8qAG3TMVQad0Z15mdOros/I4poRpX8jKpRY1cgHlY6ri/FlV40wsARBtlJro541KIa+gfNMrlyP8GsieMDNPkd2yY7RADeKDGrrXsgDDCZwtxdoQu3QPIqwDTqn0Q92S0HfgDZOSXT1sHoiqGMOLQ0qk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
- by MN6PR12MB8567.namprd12.prod.outlook.com (2603:10b6:208:478::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.17; Thu, 14 Nov
- 2024 14:42:43 +0000
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.8158.017; Thu, 14 Nov 2024
- 14:42:43 +0000
-Message-ID: <feba9eb6-d034-2a1a-3705-cb14f125adec@amd.com>
-Date: Thu, 14 Nov 2024 08:42:41 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] KVM: SVM: Convert plain error code numbers to defines
-To: Melody Wang <huibo.wang@amd.com>, linux-kernel@vger.kernel.org
-Cc: x86@kernel.org, Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
-References: <20241113204425.889854-1-huibo.wang@amd.com>
-Content-Language: en-US
-From: Tom Lendacky <thomas.lendacky@amd.com>
-In-Reply-To: <20241113204425.889854-1-huibo.wang@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1PR05CA0008.namprd05.prod.outlook.com
- (2603:10b6:806:2d2::15) To DM4PR12MB5070.namprd12.prod.outlook.com
- (2603:10b6:5:389::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506F76F06D;
+	Thu, 14 Nov 2024 14:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731595406; cv=none; b=YPEfeRk6UjlmpjQBSHLhxyfn5IbJmBg1P6lHIQZ2zEjNz11/w14f4Uh9h6xLj2b9GZx8/q0RW1vycU1CReYY/dlLABS8Mysx0+MR2S0kXSFA63fs7NHS+4+J1h9NQPTqkC41JM9yQhuer+r3k6AE+STfCIExUtqKB8c2wZEhvgs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731595406; c=relaxed/simple;
+	bh=ly6/94JqLzwnFcXXt17RF2Fe9Q74GBvP07psUUKnSyw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N+PXr3ivUeKvLUehtvc7AqFZhsHHhvIcdiqQ64iwn/1ehQ27K6z7CBTQyc0/rHw4LTHIsXioCySNbqWLquamUimGgUUIuY/rX6MhQrvsIujezKhLOgYpBBqUxs4wBEXJK/ThFDeL9Qj2YnTSjzoxR3CMFtvSdbdNIh2ZfOMbISQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=Xd/zibOs; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1731595399; x=1732200199; i=deller@gmx.de;
+	bh=j0/U7fGx4AWdUOvyzN9wyAywgOtJ4EATV3Q/uND2mRc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Xd/zibOsVehU3bk7RrgE2XOHCTWXZVWno3uyGE2h8//yhDb2oo0URsAM5pBx+TRp
+	 anjfnuA0c6LDrz/aE355IBXoK5kbV8yp6Y8R4R5pfXyoYr7PJliSby4hriPvgG3Qk
+	 dCRTFtrezHO0O/Jo4b6dLErk8UNDO9TMJaCO2woOQOPs6HmWg8GzwaKBZnA0BRs6h
+	 Am7fAzx4WuBDRZKKHvWUzmdtZjEueknhmtIYGf4nrvXU1q2IpjHqT1QYAhdwjiAoa
+	 ZGA8fkRGfYtxTL/pNgZgWVRxrmFdDwupCoQN4TlOOgw3kMPCWdIF+6EuhIVnWsVYJ
+	 7UjRwlF5feQ6y0BMcQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [10.8.0.6] ([78.94.87.245]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N8XPn-1tpjCY2QZV-00rk05; Thu, 14
+ Nov 2024 15:43:19 +0100
+Message-ID: <7de29a8c-3325-4654-8afd-81f3f9a8d113@gmx.de>
+Date: Thu, 14 Nov 2024 15:43:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|MN6PR12MB8567:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2af941c4-768f-4402-69d3-08dd04ba98ec
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SzdZTFNqRTdwTlVCR21qMkFpREUyeWtPaEhVMi96UFlSRFNuV2s5UFVxUjMx?=
- =?utf-8?B?azhNRnF3Wi80S3liSDU4eDJET1JISXdxTjFNdWg5bFlKMDFRREFuZ1MyK2tS?=
- =?utf-8?B?Q1hKVTZmc0tFWkJSS2E1ejlvenRpZGJJRE9sOVFMakJyU20rTTVraVA2T01W?=
- =?utf-8?B?bVB3YksyRHBHRkNwSGxxU0RPY2FrOVhIcWZZYkh6NDA5N1kxTnNXeURPclRE?=
- =?utf-8?B?MHpTdEQvc09ITDNOQ3kzM1NRYTZNaW5tRGg4dUpiMk04V3V2dlp3ZVJYYTlC?=
- =?utf-8?B?TTg1Z1RYS2VUZ0ErTERTK0JKQzAyT1FZQXp5akxjZzkrZDNGM2ZhaTJxeTdj?=
- =?utf-8?B?NTJMeUFlQ3VWVm9tT0FQTVpvZDJNUWJiNzFHdFU0Wk44cnlKekYzd3gvUWYv?=
- =?utf-8?B?M2VaMFF3eFl5S0ZGUFNuYUlZN055aUxIRFg0UHhhQ0g3REx1aVJMQU5HZ1Bn?=
- =?utf-8?B?Q0FuajBMbGJpU2FTY05sdXRYeW1oQldBOXBIWkZYRGNDSmdscXZTTExqeUVY?=
- =?utf-8?B?MVJjNGxuQkJDL0NRWFFaRi83TXY2enMyWVNGSmQ0M25HaDFYa0ZiQkJtSy9P?=
- =?utf-8?B?UlZVbVNSVWdVdWtNN0NtTjhHR3BmbkNHdWxJT240b3k4RXNIQkw3N1d5SWEv?=
- =?utf-8?B?Njh2Qk9NOTY1Y21iTnR3ZitBbDFmZUdVZXlWdHI4bFMxVi9GT2M5Q1ZvcGw3?=
- =?utf-8?B?RyswSlE0MUdGTkZYaWZHRWViZlY4OW52c09jdUZFUXJyZHpmYWZJRGMzeHEz?=
- =?utf-8?B?emtSeTR1SFQwNVhxOWFQSkZ1V0ZOQXpSZGhjaVpiTHpBRDgxbTZzOEhoZzFs?=
- =?utf-8?B?MjEyRjFjUzZhemxlcE5zSGZWb3JFaGxjamFPb2ZGN21OVmF3YTZLU1pKbCth?=
- =?utf-8?B?QWVpQ2h4Zm9qVlRocDdDQzV0UlVBVjVsVjlQZ1NmakJ4Y0hIejN2aVMzT3Mz?=
- =?utf-8?B?dG5VdFdwYy9GNTRyNnhwanBNMzd4MzZCUEdQMy9OMVQvclk3N1lRc3hFUFdv?=
- =?utf-8?B?VlVmL2pkU3FtZDlGemFYb1JTdlY2ME15NFFlRVZMbHB6ZVlpWXVuSk02Zm41?=
- =?utf-8?B?a0F5YjIybERndWRXRU5ITVpZM29qaUFtSkcreGNNbEU2Ylk0T2hCYU5JOTRm?=
- =?utf-8?B?Y3ZDblFHNVh3SE83U2FWYXFMc3NYVnh5QkVhbUZEcVRadHlnNUo5WlYwMGNF?=
- =?utf-8?B?OFVwczlNaTlxTlJSOWpXVjhGK1NxL1lYYXJYZlk2bmFlbnFmclIyZnBkZVRH?=
- =?utf-8?B?VUtwY3lFM0ZQVFBHSEU2VklHcDlaVU5YNkc4OGpsQnE3cjBYUVhYMXFNcVUw?=
- =?utf-8?B?c2ZzVzc4a0JOVFVsb09kTlFHOEFPV2tBRC9DbzBnRXY2aFg1K1RMK28zNHBh?=
- =?utf-8?B?ZUc2ekZGTWw1c2FXTnNiSzhROXRUVkFTc1VXTTdYeENQWlI1TGZyMkFrM0VW?=
- =?utf-8?B?K1ovaElOZkpDdFhtZzRRNHBiZEdRcUdzZDI5V2VrQ29rbUxlcS92aHh4a1ZL?=
- =?utf-8?B?K3V0QXlmdXF1M3dpR0ZjaUVmMjlEOG11SXhncEFzaWRHZlAyK2JQTmp0cVhN?=
- =?utf-8?B?UkVzc3pzT1FIV3g3RXArZmdKUmJKdTlWS05ITmFWVXV6QWtGZWNFWHZ6ZXJF?=
- =?utf-8?B?bXdOZzRkcXdtdFdlUG4xc3pSRkx1dk40VHNKektsME91aWVCQWhKUFZZUVdH?=
- =?utf-8?B?ekloeGJCTERKSzdORktKelZDc0c5d1EzemZ4WnNKdHBUOENqTjZyd2t4TThj?=
- =?utf-8?Q?EE4kAU2L9xPF77h52azKZD9TcWeUuO+4WirR2cj?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Ym5uc3JTWmd1b0FRcTFkZkRpOW1wOVRxVmFXcTdEenVOcys1SEc5UVF2Vkpr?=
- =?utf-8?B?Sk5DUXVEYlo2QVdNSGd3SldiazZtWitFbTU4aS9NUUhYL1RKWTZPUndNMWs4?=
- =?utf-8?B?dTlPTGp1L3NoSllveDRUMlVsQlRUTVJGbjkza2lTSTAzeXJCcjRBR0x2Z3U5?=
- =?utf-8?B?WjdEbm1rSURwZ3NnT3l4QWtRbkJiSDVXeFpNcUlmcXZDVXl0WDVjd0xjT3dV?=
- =?utf-8?B?M1kzYlFGUDkyUXBHaFFrVzNSNGVPcW5BU0RMQkZNRmNlckJYUWdoL25Kbnpl?=
- =?utf-8?B?dDM1VzJXajg4bE5pTzNsTndtWUtQWkN2Y3JPWDVVM1ZydTRuTWpLb3hoN2VZ?=
- =?utf-8?B?bklWaFBBVHgzVGg1NU1FVTRyQVJEZnNpWjB6VjFYaEo0VDZqU05KeFdaMkk1?=
- =?utf-8?B?MlVRT1Y5MUhUbDg3UzArMmQxSDFockNLTlNsVURhRjRNcmNGVHg5dFExYU91?=
- =?utf-8?B?MUNsMlVTcjIwRzdnOHJVUU9EU1I4a3ExNkI5RHFLYW45M2E1eHJiUHB0ME84?=
- =?utf-8?B?UjZRNG9VN0lhTlRTTTFDTVNiOGw5Sk5iUG9ueHViZnFhbXFPejAzWFp0L0Iv?=
- =?utf-8?B?dzl5Y0FtYW5nVHNGTjAwNXcwM3NCbHlwSW1FT2RNL043Qy9HZmRPTHdOK0lL?=
- =?utf-8?B?OXlUSUVidFhhbFE3ZDhYZ2Vqc0srRVhQU2g3ZlpjS3VhQ09tM2UreXg5eVRN?=
- =?utf-8?B?eXZ0WGtOdTFpK1h1WEhwNzFmWTN6a1FVRFUvTGJTQU9SWU5aamxtajJ6c1BS?=
- =?utf-8?B?QmdacnpHdkU0Mmdsbm1nRmRwM2xXNVpRT1Q5U1MxUlJoVmdYemhMdTlyMjRx?=
- =?utf-8?B?Szh0ZDdDT0ovcUtpUjhHZUhUbmJ4aVVTK0x2a3hYNHE0Y3JBaS9maXk0MXBX?=
- =?utf-8?B?OVFDNzBXYUlINXB3TjdEeDhtaGdzUElXeExxdmFCekQ5L0hVNjYwVFVGNFBi?=
- =?utf-8?B?ZTVobzkrMG4zQk56Z295NklwbCtxaW1uc1c2NExBcjRZTmc1OTFNdTJ6OHpU?=
- =?utf-8?B?aU05OFg4NkpBRFhKVXZrNm1xalQrTy9CMk5PNllrcXEvcFVOemtCTDdjV2ls?=
- =?utf-8?B?ekl0THlOMUxmVkw1ZHN1cy9SRTJpbWZ4U0xZVGQrbEluTEhIVllka0s4bFh4?=
- =?utf-8?B?L0JJaGhuUzVoc2FuMThDOWw5N3lJQzNzNlZsNi95NjZkdjlXKzBDdGV5RmR5?=
- =?utf-8?B?dGNFeklMVHhSOTZLVy9kRTlpbHRjZW9tOWRMMVFiQVROSDRvV2lOZU1GYzNS?=
- =?utf-8?B?ZzdaY2xQRUxpMm84Z1VxbkZXYm1xeFBBamJOcmEzdCt4UXVleGtDeVVGV1oz?=
- =?utf-8?B?c0hnemwwZkRwUUoyWllSUVM0MEExSEowTlE5cStvYndFOGpaVitVc2l4WGFu?=
- =?utf-8?B?QXVaQXZQVGs5Z2dmQ2ZqQ0o0MkF1bjJMQUJad3lGRldOWWJKZndlSzlaVXl0?=
- =?utf-8?B?ZVdEOTNsRTdPOEJOaWpyRC9DQXRnZjlVRWlPeWhOVFBlVTlnckJsTTVwTys2?=
- =?utf-8?B?U3RFWExOaFVVT00yWTRRVklCeldtcUU0cEw0UHJJNFFhU0p1cjZvOFJqRjJv?=
- =?utf-8?B?SnJsU01KekhLdUo2Vi9OQWhaWjNtNXVYSG5tYWdsVGpXREdjNWtHd3Y3bWlt?=
- =?utf-8?B?Sy9hVHRxTHNBbHVBK3hXZ3lGaWlBZ3Y2cnl2SmtLTi9lWlZmVE9idUd6NFpC?=
- =?utf-8?B?cnFXQ0lVWS8wV1dmcTlLT1htN2l0Z21RN3BMRG5rLy9nSnJyaldla0h6SkJW?=
- =?utf-8?B?eEZUL0dtWXFHVG5DSnV3OEJSSGRZdDFlbmtHM0t0NytOMVVPVy94bFRwVkpw?=
- =?utf-8?B?ZzJVSjFXMmxBakxVOHNrZkNzM24rUUFmSnBKYmJVV0taanJScVNBcFU5UUtk?=
- =?utf-8?B?a2wxNjJtVHFDOXo5QVNDUVlvTTV5NnVISCs5czRqVVY2YTNSMEhPbW90QWJV?=
- =?utf-8?B?ZWF5QWVZYmcrVE8xKzJldlpocWlOaUxBWEtSTG9rWU9BdUVSVldiSlpBdGMz?=
- =?utf-8?B?LzNNZzFuK3VWM0hCR3ZnNlQwZVBvZ0dZS3RPUDljcXp6MG40SjRyTFFrQzN1?=
- =?utf-8?B?eE0xYkl2Zjk3TW9LWm9LbmRONndOdVhycmRMSUFVeUpaYkVEZ1Vvdk1NdHJE?=
- =?utf-8?Q?KrwBCiwehPCjzsZGtxpExn0Ev?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2af941c4-768f-4402-69d3-08dd04ba98ec
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2024 14:42:43.3990
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Fm1Z61a1q9UsuEw8SQHgXrJumM/dStzRVkQmW1VekwZmy+S9bw38aYeFbdbqb/yAAGnlTIXQsJoS5AOMM4jNkw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8567
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] video: fbdev: metronomefb: Fix buffer overflow in
+ load_waveform()
+To: Suraj Sonawane <surajsonawane0215@gmail.com>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20241112202825.17322-1-surajsonawane0215@gmail.com>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <20241112202825.17322-1-surajsonawane0215@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:CpZZ7+sY9weMlAcS8bdOnALQCqtP2C4cCsagR8BOKv7FDMGr/nQ
+ 5DN0aKfdL4vHxwHxJ3OjnT14mut6WwaYb7PRILAWXXT2hbmh39wRPZ2x6UE4Am19vxAUqmy
+ lsuTefmM1pTqLybg/yRomfMf+OKmUGWaqmU7eD520uX92EOHuGRR0DQRhuIz0rer1Hol62I
+ zJSDDtxpqcXWzkT+QgB0g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:HQYJcQp67OY=;XXbklpG+i27GgexmUgLdyfRZaLJ
+ 0t3uUcglFkLXYrPQ/8fVJSwwKfcwFvxMdsyTjl2Plf6wzs9AbPzHS3bMAd29VL+GwA6CG2gXp
+ hq8aL7AQTHYJ2PfdB5tHffwRDiFamwLiGL5ZeN0U2nivCDgMQCUqEOD6QKPZApnPoAkXpddyc
+ O5o3F/IcAlvWgX3l53KF6lm3rV8y07aqsQDTLKlKx+Blt8O1v9mMU2QqajE/jOd56jXfXoLFa
+ hAaoYf55ZSSgPehU742DGq46W/OfTWekZ9ODipkLGMHy+w22erPqwUfwvIIBpJWF+SKukVyJk
+ kynn8AvAywWx9PXfDU3PQGZ/6+3fmAVBcbJXmVP8DLPHmOXHUs+WM0jglHxBi/DHUUdjlB1Qf
+ XrFF4vZfxUJ1WRjEk4DSYAhZPMLeAxjW5NYKxCVP4NZBK2su9PzG6ButyibyQL4VwDRnngNmi
+ PTD4QiOM3SJ/5LQy5LI3aY1H9Iix7z8EdKGXuIaObze/EeAwjfy5HC1ckzNwtPo2X9JImMiWT
+ ZhnKZRfRxHKJnA1uxaAEvi7dAhu5D1gG5bKCjYWc1OJWyrhdIc38gaCLAkG4wbrUt7N4tlV2C
+ G5e7X1iChMNpOjSlGJo6iYrU9hHQi4bAYxQn9CZQZ7sfFnk2+K1e/ZnmRhEZcmhwaItAG6jkC
+ 2yQLdsvHacWa42tRuPNFaTDOyjROSKKITNL0MSoKb6D5ZygMasDCtGbgoR717oOPye2uvgVVq
+ MwrOI8CyLaTQH0nORE9y9RBWUzcIufzn/tUNwClNyXJVOolrxQIQ0wtuLu+671yO6nQBbQzg3
+ PsKPFlg5NhFaEHZGJ7b3+/HeXFo25g8iA7fAjlMbbiJpRrNe5u7wU/TbVjzXF9BH3iQ2fS2Ft
+ tDJGaC7vl2kzfEmaaz6V7CNwVZHoKpNvB/w8E18e31Oh+/yyW/gZlkL/I
 
-On 11/13/24 14:44, Melody Wang wrote:
-> Convert VMGEXIT SW_EXITINFO1 codes from plain numbers to proper defines.
-> 
-> No functionality changed.
-> 
-> Signed-off-by: Melody Wang <huibo.wang@amd.com>
-
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-
+On 11/12/24 21:28, Suraj Sonawane wrote:
+> Fix an error detected by the Smatch tool:
+>
+> drivers/video/fbdev/metronomefb.c:220 load_waveform() error:
+> buffer overflow 'wfm_hdr->stuff2a' 2 <=3D 4
+> drivers/video/fbdev/metronomefb.c:220 load_waveform() error:
+> buffer overflow 'wfm_hdr->stuff2a' 2 <=3D 4
+>
+> The access to wfm_hdr->stuff2a in the loop can lead to a buffer
+> overflow if stuff2a is not large enough. To fix this, a check was
+> added to ensure that stuff2a has sufficient space before accessing
+> it. This prevents the overflow and improves the safety of the code.
+>
+> Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
 > ---
->  arch/x86/include/asm/sev-common.h |  8 ++++++++
->  arch/x86/kvm/svm/sev.c            | 12 ++++++------
->  arch/x86/kvm/svm/svm.c            |  2 +-
->  3 files changed, 15 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/sev-common.h b/arch/x86/include/asm/sev-common.h
-> index 98726c2b04f8..01d4744e880a 100644
-> --- a/arch/x86/include/asm/sev-common.h
-> +++ b/arch/x86/include/asm/sev-common.h
-> @@ -209,6 +209,14 @@ struct snp_psc_desc {
->  
->  #define GHCB_RESP_CODE(v)		((v) & GHCB_MSR_INFO_MASK)
->  
-> +/*
-> + * Error codes of the GHCB SW_EXITINFO1 related to GHCB input that can be
-> + * communicated back to the guest
-> + */
-> +#define GHCB_HV_RESP_SUCCESS		0
-> +#define GHCB_HV_RESP_ISSUE_EXCEPTION	1
-> +#define GHCB_HV_RESP_MALFORMED_INPUT	2
+>   drivers/video/fbdev/metronomefb.c | 6 ++++++
+>   1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/video/fbdev/metronomefb.c b/drivers/video/fbdev/met=
+ronomefb.c
+> index 6f0942c6e..9da55cef2 100644
+> --- a/drivers/video/fbdev/metronomefb.c
+> +++ b/drivers/video/fbdev/metronomefb.c
+> @@ -210,6 +210,12 @@ static int load_waveform(u8 *mem, size_t size, int =
+m, int t,
+>   	}
+>   	wfm_hdr->mc +=3D 1;
+>   	wfm_hdr->trc +=3D 1;
 > +
->  /*
->   * Error codes related to GHCB input that can be communicated back to the guest
->   * by setting the lower 32-bits of the GHCB SW_EXITINFO1 field to 2.
-> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> index c6c852485900..c78d18ba179c 100644
-> --- a/arch/x86/kvm/svm/sev.c
-> +++ b/arch/x86/kvm/svm/sev.c
-> @@ -3430,7 +3430,7 @@ static int sev_es_validate_vmgexit(struct vcpu_svm *svm)
->  		dump_ghcb(svm);
->  	}
->  
-> -	ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, 2);
-> +	ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, GHCB_HV_RESP_MALFORMED_INPUT);
->  	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, reason);
->  
->  	/* Resume the guest to "return" the error code. */
-> @@ -3574,7 +3574,7 @@ static int setup_vmgexit_scratch(struct vcpu_svm *svm, bool sync, u64 len)
->  	return 0;
->  
->  e_scratch:
-> -	ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, 2);
-> +	ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, GHCB_HV_RESP_MALFORMED_INPUT);
->  	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, GHCB_ERR_INVALID_SCRATCH_AREA);
->  
->  	return 1;
-> @@ -4121,7 +4121,7 @@ static int snp_handle_ext_guest_req(struct vcpu_svm *svm, gpa_t req_gpa, gpa_t r
->  	return snp_handle_guest_req(svm, req_gpa, resp_gpa);
->  
->  request_invalid:
-> -	ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, 2);
-> +	ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, GHCB_HV_RESP_MALFORMED_INPUT);
->  	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, GHCB_ERR_INVALID_INPUT);
->  	return 1; /* resume guest */
->  }
-> @@ -4314,7 +4314,7 @@ int sev_handle_vmgexit(struct kvm_vcpu *vcpu)
->  	if (ret)
->  		return ret;
->  
-> -	ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, 0);
-> +	ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, GHCB_HV_RESP_SUCCESS);
->  	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, 0);
->  
->  	exit_code = kvm_ghcb_get_sw_exit_code(control);
-> @@ -4364,7 +4364,7 @@ int sev_handle_vmgexit(struct kvm_vcpu *vcpu)
->  		default:
->  			pr_err("svm: vmgexit: unsupported AP jump table request - exit_info_1=%#llx\n",
->  			       control->exit_info_1);
-> -			ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, 2);
-> +			ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, GHCB_HV_RESP_MALFORMED_INPUT);
->  			ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, GHCB_ERR_INVALID_INPUT);
->  		}
->  
-> @@ -4394,7 +4394,7 @@ int sev_handle_vmgexit(struct kvm_vcpu *vcpu)
->  	case SVM_VMGEXIT_AP_CREATION:
->  		ret = sev_snp_ap_creation(svm);
->  		if (ret) {
-> -			ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, 2);
-> +			ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, GHCB_HV_RESP_MALFORMED_INPUT);
->  			ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, GHCB_ERR_INVALID_INPUT);
->  		}
->  
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index c1e29307826b..5ebe8177d2c6 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -2975,7 +2975,7 @@ static int svm_complete_emulated_msr(struct kvm_vcpu *vcpu, int err)
->  	if (!err || !sev_es_guest(vcpu->kvm) || WARN_ON_ONCE(!svm->sev_es.ghcb))
->  		return kvm_complete_insn_gp(vcpu, err);
->  
-> -	ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, 1);
-> +	ghcb_set_sw_exit_info_1(svm->sev_es.ghcb, GHCB_HV_RESP_ISSUE_EXCEPTION);
->  	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb,
->  				X86_TRAP_GP |
->  				SVM_EVTINJ_TYPE_EXEPT |
+> +	if (sizeof(wfm_hdr->stuff2a) < 5) {
+> +		dev_err(dev, "Error: insufficient space in stuff2a\n");
+> +		return -EINVAL;
+> +	}
+> +
+>   	for (i =3D 0; i < 5; i++) {
+>   		if (*(wfm_hdr->stuff2a + i) !=3D 0) {
+>   			dev_err(dev, "Error: unexpected value in padding\n");
+
+That patch is completely wrong.
+There is
+/* the waveform structure that is coming from userspace firmware */
+struct waveform_hdr {
+         ....
+         u8 stuff2a[2];
+         u8 stuff2b[3];
+
+So, I *believe* the for-next loop wants to walk acrosss stuff2a and stuff2=
+b,
+which have 5 entries together. So, basically the original code isn't nice
+but still correct.
+Your "sizeof()" check will always be false and is the wrong patch.
+
+If at all, I think the stuff2a and stuff 2b arrays should be joined.
+Something like
+         u8 stuff2[5]; /* this is actually 2-entry stuff2a and 3-entry stu=
+ff2b */
+But again, I don't know much about this driver.
+
+Helge
 
