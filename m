@@ -1,101 +1,104 @@
-Return-Path: <linux-kernel+bounces-408745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26B3B9C8303
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:21:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DECB9C8305
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:23:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9F6E284A2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:21:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9ABAB240D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8651AF0DC;
-	Thu, 14 Nov 2024 06:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40FC1E884C;
+	Thu, 14 Nov 2024 06:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jAXMGXxD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KeznJqzz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A803C2905
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 06:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C5D1DFD8;
+	Thu, 14 Nov 2024 06:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731565268; cv=none; b=LAeFc7QytafN79twWb4awDzjKwiyfUlGUl+B+Pt8kaWsnM6urkFmySnqt0FBIxEghRXCMPhiiDgl1Uu4LY9otZF9+ES/yf+yb9plxWUhHWiGKsEx3MuDwZt7d0CO8I6edGAcSINPktKG/8jFd9CY3C1kww8UjEEGnPozWqS1P4o=
+	t=1731565411; cv=none; b=YChHSK2r1mRMVZKscpKpV2EJUMj8xGkkqtZZwvzHpS+6GYVvQQs1xlzqDVDOB/1Q/2Hinmy9WZgWJE0Cchlwwh3hzVytK41k2OSKBHM1tD9ggWCzYLAZ+qhXPl3YUUC1Hw+coKA+8Va3Soy/Xg9tAmEJ+JFWMDDgy0ObQATV63Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731565268; c=relaxed/simple;
-	bh=VHjtEvSiOX4/hU4hFklOdr8XcJRkPgv1Flyua07SLLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cr0PYpAuBhBT+HzitOX53qFKY1ido6HnPcR6F6jz7Ul5EWO90aMta4EOnSZy3Ms4PAWAS9T1qBp4DjbC20ibumfXPVcEdwQjyULJwzFDNoEglRP70s2NFfATnkwF+dUdEOTf+zcEFSDzSe+BhAKhIGuk8g7alMn2foEZxKp4UGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jAXMGXxD; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731565263; x=1763101263;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VHjtEvSiOX4/hU4hFklOdr8XcJRkPgv1Flyua07SLLY=;
-  b=jAXMGXxDheU0I+/i40cOtKh6qe154jM06T61s800Jqm/ZK+LlaHdvCow
-   ec22e0D84YYltwq2Ukd2LhoQqQu8OMXjUfJkaUekbdGdInbCUMYsVRz7A
-   aV2eCerpET1kVfaYrqfyH83PusCGQhIO/+A8SP9MvTTpOZfWpPAfVitDD
-   Szpewal6b5VoSL8MqdM/ctL3a7F5lG4PGjEpqFvzfHRrv74MkoOOaFfVO
-   TrMz7nJkVdI4+m94h9nW4DqouQxmpzEIQGoa2nLtelUTx3gHzB4dfteLL
-   Byp+CnbVna4WFzDR15fSt08cQ9xhPZlyBNDjRdBDh9Bn8WcY+wJiwxxgF
-   A==;
-X-CSE-ConnectionGUID: 7HHc4TMOQjaGiVCDinbH7Q==
-X-CSE-MsgGUID: OaGub8HNRWGD/ZEw++ROIw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="35196953"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="35196953"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 22:21:02 -0800
-X-CSE-ConnectionGUID: NJJvDORQTO2yKktJG0vyMQ==
-X-CSE-MsgGUID: Cn2aY7yyToOwDhivsETEiQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
-   d="scan'208";a="93153480"
-Received: from beginmax-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.24])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 22:21:02 -0800
-Date: Wed, 13 Nov 2024 22:21:06 -0800
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: David Kaplan <david.kaplan@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 10/35] x86/bugs: Restructure gds mitigation
-Message-ID: <20241114061527.efcdp47xuqc4vmjo@desk>
-References: <20241105215455.359471-1-david.kaplan@amd.com>
- <20241105215455.359471-11-david.kaplan@amd.com>
+	s=arc-20240116; t=1731565411; c=relaxed/simple;
+	bh=s7Mfdv4GRYa2OR5o4x+wbZZfKOfHszZQimqrnUlWVhQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qoiBVOIFlUqZmGk+0kJ1mIlqECgT1SJkA6xOp79CJnwwbmKw2MRb+cy+onRdGYqdZOWCLPYJe2V5hAcV2L+KNhSmVsfQ03n+DE/LUo0nA47D+d1JDjW5b1a5sY5cPhiWZshuSLB5Ivw1doJuq1hg9mns/JQ8OnsCtP1eTNaWitk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KeznJqzz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6C0AC4CED8;
+	Thu, 14 Nov 2024 06:23:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731565410;
+	bh=s7Mfdv4GRYa2OR5o4x+wbZZfKOfHszZQimqrnUlWVhQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=KeznJqzzU5jKxFDlGu5NtCxM3WFCgRqWb2XnrIFX2ORpth2eruoL7j5D+ulEPFdcd
+	 j98B12VGtab1OElYE84BNknpqYwFCNzoIATJqs3sZk/CESiB8o1MaoINnxsXgPZBIv
+	 JCP1zkBypluGW8dRKq1lh69Xwm+uThF0qKi4weCnH4wqvFR9W2WEU+cruKRj3KmH5y
+	 0PniR2v4OT8OCC8jwuet9WCW2mVtT5N0/f4YwmMSqmwS05cDr01BgMviDAzN7VOFT5
+	 LqmGT/FZHockIMrnHH7I4pDI8iFBlw7tF0bKXPP+AHELMdk9iyV0b+OSZawaysbBvT
+	 LCB98fjjbMPHw==
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a99eb8b607aso28862766b.2;
+        Wed, 13 Nov 2024 22:23:30 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUMrjNbI8rChPuBrlqBlcSQ4d09t4pKnjv7F6pEWf4eVKpscG0hLdXcujNFB5B33maNZQ6SvGhEMQdd@vger.kernel.org, AJvYcCX5SDnfYyImSf3hOrl3H9Xh8PAlE2tjlS/wKhPrp7MNAk/ArbBP4TVcYynqDIRIo+lvDFadoMHPaa78QhD+@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWHqhKZ9Rav8UMXEUBFTBB+/v3p9vkSFDgxuw3N748EaIgwwi7
+	Ygj8VsxKxNpzAVAx59MLE6pjkkjfzgX6tr+qXCXvn1X+wOr7Qa9NMfsYdIpYEraokMeW9eJVBXo
+	5GTh6b13uXKKqtH0NwQZdtvQReVA=
+X-Google-Smtp-Source: AGHT+IG+g5gwmqrc+hBmet+m5InXK/ExhZqLxMNhRWbxlJVd2mb6LgxKGdsrgfoA3NRDPjlFKU3UtGWk1LCYXTiCZVg=
+X-Received: by 2002:a17:907:728d:b0:a99:eb94:3e37 with SMTP id
+ a640c23a62f3a-a9ef002177amr2359460566b.58.1731565409312; Wed, 13 Nov 2024
+ 22:23:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105215455.359471-11-david.kaplan@amd.com>
+References: <20241113124857.1959435-1-chenhuacai@loongson.cn> <CAADWXX9-LY7aaMax6KdtDV+vOkm_WKE76Qmy4n3UHN61O=-2Lg@mail.gmail.com>
+In-Reply-To: <CAADWXX9-LY7aaMax6KdtDV+vOkm_WKE76Qmy4n3UHN61O=-2Lg@mail.gmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 14 Nov 2024 14:23:17 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H6=_Nv0N-zXNad2TgOzTgG_BU6TPhN+U4u=+SMQ98BPJw@mail.gmail.com>
+Message-ID: <CAAhV-H6=_Nv0N-zXNad2TgOzTgG_BU6TPhN+U4u=+SMQ98BPJw@mail.gmail.com>
+Subject: Re: [GIT PULL] LoongArch fixes for v6.12-final
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Huacai Chen <chenhuacai@loongson.cn>, Arnd Bergmann <arnd@arndb.de>, loongarch@lists.linux.dev, 
+	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Guo Ren <guoren@kernel.org>, Xuerui Wang <kernel@xen0n.name>, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 05, 2024 at 03:54:30PM -0600, David Kaplan wrote:
-> @@ -892,7 +899,7 @@ static void __init gds_select_mitigation(void)
->  		} else {
->  			gds_mitigation = GDS_MITIGATION_UCODE_NEEDED;
->  		}
-> -		goto out;
-> +		return;
->  	}
->  
->  	/* Microcode has mitigation, use it */
-> @@ -914,8 +921,14 @@ static void __init gds_select_mitigation(void)
->  		gds_mitigation = GDS_MITIGATION_FULL_LOCKED;
->  	}
->  
+Hi, Linus,
 
-Nit, extra newline.
+On Thu, Nov 14, 2024 at 1:06=E2=80=AFAM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Wed, Nov 13, 2024 at 4:49=E2=80=AFAM Huacai Chen <chenhuacai@loongson.=
+cn> wrote:
+> >
+> > LoongArch fixes for v6.12-final
+>
+> Hmm. This email was in my spam folder. I'm not seeing anything
+> horribly wrong with it, but I do note that loongson.cn does not seem
+> to enable DKIM, and that does tend to make gmail (understandably) more
+> nervous. Yes, you do have proper SPF, but in this day and age SPF+DKIM
+> (and a proper DMARC policy to enable strict enforcement) really is a
+> good idea.
+Maybe the root cause is that "From" in my patch is loongson.cn but I
+use kernel.org's SMTP server?
 
-> +}
+>
+> Maybe you can talk to your MIS people about setting up DKIM and DMARC too=
+?
+OK, I will try my best to do this.
+
+Huacai
+
+>
+> Yes, it's a bother. But spam is a scourge.
+>
+>                       Linus
 
