@@ -1,250 +1,143 @@
-Return-Path: <linux-kernel+bounces-408463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4772A9C7F1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:03:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 421059C7F1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:04:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF85E1F2294B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:03:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC903B24DDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0C73C38;
-	Thu, 14 Nov 2024 00:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444852F41;
+	Thu, 14 Nov 2024 00:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hWEQKpoZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="izHdRU5o"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E9E163;
-	Thu, 14 Nov 2024 00:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AF2A954;
+	Thu, 14 Nov 2024 00:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731542606; cv=none; b=iAijIQbVwuc7++iTwF1YxkrpHJDJNm3BvkGO/4JBj6I7NDoHRMjgm3db6XPbkZpGvLRfFuOJc0arVMIxJR+5QOFG8PzRB1Sy+JkGaMWtyWgoriuW1CP0HMcYSM/uIAPEJeGvoxKi7C/Whkbcz2wsGppHswumSBNiHuK6XDWUrXc=
+	t=1731542634; cv=none; b=nd7I5COzDZsUwUoH9rZz0ut0sWdjX76zSHPrs9eQckqYMNDELnhXqNduASuO5zazrTjnogHMaXi4jeWQu/ao/1PkIZsUBkELfKsfTcdY6yq40IMG00WFwcW4UT4H2St+KbroMWKQ5zVLLkOk8VKgGO3hw9WG5Ne2NZ1ntVgtNac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731542606; c=relaxed/simple;
-	bh=6wE9w23E701SXVrE75griIgPVhRTJAA2DvIbf6ahBS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=OfoB0ZCzDnZwlqDen6Kb0dPwOnZvVtBT9/t9O8ot0iOXV4V2bL/hMXTIembEdazRBXM2ZS+n+rHe9JCSRiY9/iKgUzfMh3n18RdEItTjhMusDGkwEgSMjg4dNxxEUozUggeRkX4yItaUpLFWNyKGxt3cGUrIlw2NYlF6liljzD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hWEQKpoZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40079C4CEC3;
-	Thu, 14 Nov 2024 00:03:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731542606;
-	bh=6wE9w23E701SXVrE75griIgPVhRTJAA2DvIbf6ahBS0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=hWEQKpoZVBf20UTjgat6vFlP9N609q4Z+nI7WMZiukgkE3kCfYFcpUYWnHnuydxT+
-	 NqdxsWswL8gpG0clMECkO7VtHquvy6ScTJBRVQiyNHA3g8G12KOxMM+7YJ9yChcHAw
-	 0yOck1icEBD7uM8i7ptWHNRdzt9loqhGFxxVonBfOp4iqa/271i1qj+16JsdoE8jGy
-	 D4ENYBfqqmTdwYk9mblkCj0bfqclGvvQyZ45i5Iso6YbjewdgE/0cgZXGZjxE/TOta
-	 nWG1we/muqTgGNsivOyFVLTwF1P1Vbien35/EXHI7LAAHcEBfxKHuNq/dCXwOJXHgT
-	 iWGgJiqx7lM6g==
-Date: Wed, 13 Nov 2024 18:03:24 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Shijith Thotton <sthotton@marvell.com>
-Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
-	"ilpo.jarvinen@linux.intel.com" <ilpo.jarvinen@linux.intel.com>,
-	"Jonathan.Cameron@huawei.com" <Jonathan.Cameron@huawei.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"rafael@kernel.org" <rafael@kernel.org>,
-	"scott@os.amperecomputing.com" <scott@os.amperecomputing.com>,
-	Jerin Jacob <jerinj@marvell.com>,
-	Srujana Challa <schalla@marvell.com>,
-	Vamsi Krishna Attunuru <vattunuru@marvell.com>
-Subject: Re: [PATCH v4] PCI: hotplug: Add OCTEON PCI hotplug controller driver
-Message-ID: <20241114000324.GA1967327@bhelgaas>
+	s=arc-20240116; t=1731542634; c=relaxed/simple;
+	bh=3udQPQ52xcOuxhuLmlBL3dmra9PEBLqv/3HrWShzNeQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Mxvc5qHMwdRuP/XntKstWivP7XoJF9w/B1HnI7uCimXlE/64BzAEaSO2pFb9ii5Kn7TuR8hE//6LbzPfK5Nhw/RLMjPsTyveND885cOqqq3ZITIbJr6K4NeEn5I6HX5EnHWpm5EMTq4+Rf4PGw1gXnZQA5vJPNXmom06rfEzWwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=izHdRU5o; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1731542625;
+	bh=AtdGSSl4w88h4xNvzmnzk11iVqxcRKOjABrghFtfSh0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=izHdRU5oDtUA6SDYdOOGkzQYpW32O43Rbu6dpcHSvuSIGQEC1VxL2HxwQtojL4oHQ
+	 gG2h38oq7gx1fkmBe/O8K05yTJwUIecVzLncWfFVPr7k0zZcuKKfEKrGUgzvKlmkDB
+	 OjNB88envZtB0SvIOyyIZHKh3xGy7YRTs4wwNzC0rZD52eLVz3MvrkDcRbUJl4Qk8c
+	 wV8NTQa8qmE70EzCLo25uqRLyLu+pTS+T0Fw01raId2tVnjn0oP17HpO6TmGrTspvb
+	 C4nj3hhrgbdk5Qxy6ifiwV9jjKxXg0xqtyb1XS4tgYcQaSpUG0/9VaNbxD/0Sk1/rH
+	 UR3v1RLvjkl2A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XpgNd1dd8z4x8C;
+	Thu, 14 Nov 2024 11:03:45 +1100 (AEDT)
+Date: Thu, 14 Nov 2024 11:03:47 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi
+ <lpieralisi@kernel.org>, Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
+ <kw@linux.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Krishna chaitanya
+ chundru <quic_krichai@quicinc.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the pci tree with Linus' tree
+Message-ID: <20241114110347.04ef829f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PH0PR18MB4425C1F63EAFFA2AA3BFCBF2D95A2@PH0PR18MB4425.namprd18.prod.outlook.com>
+Content-Type: multipart/signed; boundary="Sig_/4wE4czMO6XTLy+kYX39Gbmo";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, Nov 13, 2024 at 12:20:20PM +0000, Shijith Thotton wrote:
-> >> >> This patch introduces a PCI hotplug controller driver for the OCTEON
-> >> >> PCIe device. The OCTEON PCIe device is a multi-function device where the
-> >> >> first function serves as the PCI hotplug controller.
-> >> >>
-> >> >>                +--------------------------------+
-> >> >>                |           Root Port            |
-> >> >>                +--------------------------------+
-> >> >>                                |
-> >> >>                               PCIe
-> >> >>                                |
-> >> >> +---------------------------------------------------------------+
-> >> >> |              OCTEON PCIe Multifunction Device                 |
-> >> >> +---------------------------------------------------------------+
-> >> >>              |                    |              |            |
-> >> >>              |                    |              |            |
-> >> >> +---------------------+  +----------------+  +-----+  +----------------+
-> >> >> |      Function 0     |  |   Function 1   |  | ... |  |   Function 7   |
-> >> >> | (Hotplug controller)|  | (Hotplug slot) |  |     |  | (Hotplug slot) |
-> >> >> +---------------------+  +----------------+  +-----+  +----------------+
-> >> >>              |
-> >> >>              |
-> >> >> +-------------------------+
-> >> >> |   Controller Firmware   |
-> >> >> +-------------------------+
-> >> >>
-> >> >> The hotplug controller driver enables hotplugging of non-controller
-> >> >> functions within the same device. During probing, the driver removes
-> >> >> the non-controller functions and registers them as PCI hotplug slots.
-> >> >> These slots are added back by the driver, only upon request from the
-> >> >> device firmware.
-> >> >>
-> >> >> The controller uses MSI-X interrupts to notify the host of hotplug
-> >> >> events initiated by the OCTEON firmware. Additionally, the driver
-> >> >> allows users to enable or disable individual functions via sysfs slot
-> >> >> entries, as provided by the PCI hotplug framework.
-> >> >
-> >> >Can we say something here about what the benefit of this driver is?
-> >> >For example, does it save power?
-> >>
-> >> The driver enables hotplugging of non-controller functions within the device
-> >> without requiring a fully implemented switch, reducing both power
-> >consumption
-> >> and product cost.
-> >
-> >Reduced product cost is motivation for the hardware design, not for
-> >this hotplug driver.
-> >
-> >You didn't explicitly say that when function 0 hot-removes another
-> >function, it reduces overall power consumption.  But I assume that's
-> >the case?
-> >
-> 
-> Yes, I will explain it in detail below
-> 
-> >> >What causes the function 0 firmware to request a hot-add or
-> >> >hot-removal of another function?
-> >>
-> >> The firmware will enable the required number of non-controller
-> >> functions based on runtime demand, allowing control over these
-> >> functions. For example, in a vDPA scenario, each function could act
-> >> as a different type of device (such as net, crypto, or storage)
-> >> depending on the firmware configuration.
-> >
-> >What is the path for this runtime demand?  I assume function 0
-> >provides some interface to request a specific kind of functionality
-> >(net, crypo, storage, etc)?
-> >
-> 
-> Right now, it done via firmware management console.
-> 
-> >I don't know anything about vDPA, so if that's important here, it
-> >needs a little more context.
-> >
-> >> Hot removal is useful in cases of live firmware updates.
-> >
-> >So the idea is that function X is hot-removed, which forces the driver
-> >to let go of it, the firmware is updated, and X is hot-added again,
-> >and the driver binds to it again?
-> >
-> 
-> I will explain the process in detail, which should also address the questions
-> below.
-> 
-> >And somewhere in there is a reset of function X, and after the reset
-> >X is running the new firmware?
-> >
-> >Who/what initiates this whole path?  Some request to function 0,
-> >saying "please remove function X"?
-> >
-> >But I guess maybe it doesn't go through function 0, since octeon_hp
-> >claims function 0, and it doesn't provide that functionality.  Maybe
-> >the individual drivers for *other* functions know how to initiate
-> >these things, and those functions internally communicate with function
-> >0 to ask it to start a hot-remove/hot-add sequence?
-> >
-> >That wouldn't explain the power reduction plan, though.  A driver for
-> >function X could conceivably tell its device "I'm no longer needed"
-> >and function X could tell function 0 to remove it.  That might enable
-> >some power savings.  But that doesn't have a path to *re-enable*
-> >function X, since function X has been removed and there's no driver to
-> >ask for it to be hot-added again.
-> >
-> >Maybe there's some out-of-band management path that can tell function
-> >0 to do things, independent of PCIe?
-> >
-> 
-> Our implementation aims to achieve two main objectives:
-> 
-> 1. Enable changing a function's personality at runtime.
-> 2. Reduce power consumption.
-> 
-> The OCTEON PCI device has multiple ARM cores running Linux, with its firmware
-> composed of multiple components. For example, the firmware includes components
-> like Virtio-net, NVMe, and Virtio-Crypto, which can be assigned to any function
-> at runtime. The device firmware is accessible via a management console, allowing
-> components to be started or stopped. For each component, an associated function
-> is hot-added on the host to expose its functionality. Initially, after boot, only
-> Function 0 and the controller firmware are active.
-> 
-> Here's a breakdown:
-> 
-> At Time 0:
-> - Linux boots on the device, starting the controller firmware.
-> 
-> At Time 1:
-> - The hotplug driver loads on the host, temporarily removing other functions.
-> 
-> At Time 2:
-> - A network device firmware component starts on an ARM core (initiated through
->   a console command).
-> - This component sets up the Function 1 configuration space, data, and other
->   request handlers for network processing.
-> - The firmware issues a hot-add request to Function 0 (hotplug driver) on the
->   host to enable Function 1.
-> 
-> At Time 3:
-> - The Function 0 hotplug driver on the host receives the hot-add request and
->   enables Function 1 on the host.
-> - A network driver binds to Function 1 based on device class and ID.
-> 
-> At Time 4:
-> - The network device firmware component receives a stop signal.
-> - The firmware issues a hot-remove request for Function 1 on the host.
-> - The firmware component halts, reducing the device's power consumption.
-> 
-> At Time 5:
-> - The Function 0 hotplug driver on the host receives the hot-remove request and
->   disables Function 1 on the host.
-> 
-> At Time 6:
-> - A crypto device firmware component starts on an ARM core.
-> - This component configures the Function 1 configuration space for crypto
->   processing and sets up the required firmware handlers.
-> - The firmware issues a hot-add request to enable Function 1 on the host.
-> 
-> At Time 7:
-> - The Function 0 hotplug driver on the host receives the hot-add request and                                                                                                                                                                                                      enables Function 1 on the host.
-> - A crypto driver binds to Function 1 based on device class and ID.
-> 
-> The firmware component for each function only runs and is hot-added when
-> needed. Only Function 0 and the controller firmware remain active
-> continuously. This dynamic control reduces power usage by keeping unnecessary
-> components off. Additionally, a single function can adapt its personality based
-> on the associated firmware component, enhancing flexibility. 
->                                                                                                                                                                                                                    
-> I hope this clarifies the implementation. Let me know if you have any
-> questions.
+--Sig_/4wE4czMO6XTLy+kYX39Gbmo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks very much!  I propose adding text like this to the commit log:
+Hi all,
 
-  There is an out-of-band management console interface to firmware
-  running on function 0 whereby an administrator can disable functions
-  to save power or enable them with one of several personalities
-  (virtio-net, virtio-crypto, NVMe, etc) for the other functions.
-  Function 0 initiates hotplug events handled by this driver when the
-  other functions are enabled or disabled.
+Today's linux-next merge of the pci tree got a conflict in:
 
-I provisionally applied this to pci/hotplug-octeon, but will be happy
-to update the text if necessary.
+  drivers/pci/probe.c
 
-Bjorn
+between commit:
+
+  1d59d474e1cb ("PCI: Hold rescan lock while adding devices during host pro=
+be")
+
+from Linus' tree and commit:
+
+  dc421bb3c0db ("PCI: Enable runtime PM of the host bridge")
+
+from the pci tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/pci/probe.c
+index f1615805f5b0,bf4c76ec8cd4..000000000000
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@@ -3105,9 -3127,18 +3127,20 @@@ int pci_host_probe(struct pci_host_brid
+  	list_for_each_entry(child, &bus->children, node)
+  		pcie_bus_configure_settings(child);
+ =20
+ +	pci_lock_rescan_remove();
+  	pci_bus_add_devices(bus);
+ +	pci_unlock_rescan_remove();
++=20
++ 	/*
++ 	 * Ensure pm_runtime_enable() is called for the controller drivers
++ 	 * before calling pci_host_probe(). The PM framework expects that
++ 	 * if the parent device supports runtime PM, it will be enabled
++ 	 * before child runtime PM is enabled.
++ 	 */
++ 	pm_runtime_set_active(&bridge->dev);
++ 	pm_runtime_no_callbacks(&bridge->dev);
++ 	devm_pm_runtime_enable(&bridge->dev);
++=20
+  	return 0;
+  }
+  EXPORT_SYMBOL_GPL(pci_host_probe);
+
+--Sig_/4wE4czMO6XTLy+kYX39Gbmo
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc1PmMACgkQAVBC80lX
+0GxgPgf/bvbOMaggLI9ToPhN8E5ToXkVymhgyZwH0CARwN7Ua3o0xrn9h8Sk1gPQ
+MQGF/GaecEbplLb0fHdKMvlVSSFdv6N7szgiAEfh4t0iJPPwsUakuu8O+EreSYaT
+bSootRvx1Vz7VZ+hbnaXloSZnw0EuXk/pR6o5Ug6QyeDujEUxf8sCRrvHX82f6wq
+bFDPbya+/P4EDnLKjLSa7vCc/KhDa5Hi6JVbcoz2pK7xtoqtdIxDmYqXFUTrok+2
+gN5CXwBQzkoANuY8M0X95I/OBVRnaaw/FkYhlYQr4j6iPBg4V5DOIjj4kusZssxE
++F69RQ+aYUOSJPcEMmrKsB+PJ5jhgg==
+=R2lA
+-----END PGP SIGNATURE-----
+
+--Sig_/4wE4czMO6XTLy+kYX39Gbmo--
 
