@@ -1,129 +1,117 @@
-Return-Path: <linux-kernel+bounces-409361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 792DB9C8BC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:26:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CCBD9C8BCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:27:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25BCD282E8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:26:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8012281EBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A001FAF05;
-	Thu, 14 Nov 2024 13:26:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6BD1FAEF0;
+	Thu, 14 Nov 2024 13:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h7cUMFOS"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KjspVQsU";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qAmReEM+"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C581FAC5B
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A0F1F9EC0
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731590805; cv=none; b=TRnxKzpZAcAWTRBqCFFI8L/08pZqlaNuW5rDOJB9jqvMvujbvIEcr0dtMilOB9dbwBJ/YpHndVweJMVwmr3nAMz4bzqJCCzkkpNfSaRWMHincoUZPhvH9ZXO6Uwi239Nn5r+Qlfht/iEp1LC5gu/L6yRLYHmGqlOUYHkvNqfPnc=
+	t=1731590865; cv=none; b=Z0E5ycbyGTcI4TbvvJi84O2NPSb8GN1gp4BAfejDDqiaOXSzEei9la3zVWiN2+gbJoVLzLJO1BpwF2bal59Xt2FE3zVOjKQ15LoDb+7tiTrHgVFnauK27ViafWUzVukHnoDTQdbq5ybgc4Z9Xs9kyoHF+ZikEQzOxpjkhhvUzV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731590805; c=relaxed/simple;
-	bh=HC8zIVJhmZGBaTgVFGCULFt5nrR2kYgDBpJlRO/4s24=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MBVQAdppsYypLCW029J0qhDCPlUfeDa93QDUEVazeczIYGwh87IuZAdoaHTELFHc+pgWJDJp1zt31Xyll1P2/lkOo23fty6BmnsgPN0Ev3x+ZCux2ie75mCRyk7ZFxeYXSNtx5QaG59IjTaLAE1qaD1EuhVumFvjyU/syiJlzGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h7cUMFOS; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e381676ab50so493618276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 05:26:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731590803; x=1732195603; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=44Uknm2sw9kBbdVK3KPiUzPorxfNwDSfI3ZnmRNP3ac=;
-        b=h7cUMFOSzOMwGjm7rgA8orgvarcVteVUJ4CkUj4NRaU59IYac7yOM2SiiOQ0MESCe2
-         /we5kxWZUkWuqxTUemeMhH2RE7V5wMrYqri9IzafZr6y3EorMywjv3AzVIDcoldl0vcH
-         8om2WME2s7tA+NUcVCXLfq7Hdg7OF5WGH6VqJ5FrvQXvCamuDIyqmlvDatGnK/UFnICG
-         JP6/rt/8eC5xWvL4L8zm1nNsyRv2IBJHQFLjbMmMhW7ObHaV731Sh6Z0h5UdrJEDNv/A
-         RotY5uqhilS8A1pkWkyV3nx+37K7ktNFtkdDErUSQeB7Z6yHS9s9dMypdlM/k+QccPzs
-         jFSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731590803; x=1732195603;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=44Uknm2sw9kBbdVK3KPiUzPorxfNwDSfI3ZnmRNP3ac=;
-        b=ViWpGgDxjKv6i46uWYnYQT94Ll/klOX+Dh0GjKXPIsZWI36vEM6F0ySfF5QCI3pe6G
-         4C+6pNPP713EYXvOMtushJAZFAqhzzu2eEOU+G3/6D4PDmum/rzANJ1boqb8cHDVpEfn
-         6WT325QqguYE21U+WDacVnvLBgshQIxRzib3aeNkw+OQDLQitkSMvvx3gUJOF/2QW7jO
-         EJhL9N8TA7PLc6i8GtvwRxmEPOi3BQERb9yxa1bmC3lT9IX/epXMIrQqXwbKtJMut08z
-         UymmqaiktrPK8nMNUI12q8BxWbUjpvQEmekgAeo7NCF3qHboKCEQ9hBHP7UiT9t87Mdi
-         X70Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXrXT85g5gBoNaP/sWslmlM8Rv0Mob/jp5WVjohwiBp+bfMKlt4nlXGWzgTWmmUO8mHpXGZ+Dli+erKnIs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5b4OhwvrTkbE4r4Rs2EVMtOBRpz94/Nq0FuGwztROeDSTpxtB
-	Na5WwqtSx4SQH9VRIUZQzWSQqYwyKuSVc56sZ9nCrM5cdiPVnrOIGE5cTo6uBABg+m7XgHk81g3
-	9I81Z/TklsMPkkZOb356J1iJO+M4ovu+NVj0EBw==
-X-Google-Smtp-Source: AGHT+IFwf8z1mFNYgsE8PD3lTDBZomFAHFwSNm4/O3SWdpkSZXwgnQCoA5dTaVPjasFbh6e4N903GF7+1g2FDtRLHK4=
-X-Received: by 2002:a05:690c:4482:b0:6ee:3f5e:1c18 with SMTP id
- 00721157ae682-6ee3f5e2b1amr33209767b3.4.1731590802836; Thu, 14 Nov 2024
- 05:26:42 -0800 (PST)
+	s=arc-20240116; t=1731590865; c=relaxed/simple;
+	bh=n7lN0pS4JeN5d5Vaqc+BLriS9COn68OXZc9ZlhR9iTs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xps4yBBaQODlFMuT6pKQpOgqh8LaoVpjqsMLyWAtZzEsdSGzwQIH5Cg4xxJhL04CuCg21p/M7y7gcy1b+tAPBNmQTmQjUqTmAkrXk2o9M6RaWG3TCqeahxqEFaSp75XIagyDqd39/4rodTtBXwk90QgNJKbFIKwduBQ0/iP8Sr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KjspVQsU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qAmReEM+; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 14 Nov 2024 14:27:40 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731590861;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=n7lN0pS4JeN5d5Vaqc+BLriS9COn68OXZc9ZlhR9iTs=;
+	b=KjspVQsUP9RL/qKitAbPPbffNuORdIj4ESNOj78pOQdd/OCLYBNo/NsVkWYGu2ZK5S/qJp
+	wYWZdw9lVGiM1VTlR8xNhIL0YoN5FMnHGCbcDxhAKaWQyMT9ITAd0C9dQtb+IlymwE8rId
+	qb1vLUNbgqjdcgzp0g0oAJMqTmuPuKhE4SkdYFq0HwRkz596EWuVh5ffYzvtUQY187lIw7
+	34NS48jG19Axr8c3O2hfj/d6Noe6z0MC6m2RQFr8QYnb6Q6QPfR4G2OkI7eBzSTnT1sNq5
+	+8SIQCpZw5AlaIiPqqBErtq1XjMKT4ucpMecLIa22+eLGROvc0zq5LLFx9TKaA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731590861;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=n7lN0pS4JeN5d5Vaqc+BLriS9COn68OXZc9ZlhR9iTs=;
+	b=qAmReEM+lYjvoK5JNzrlEE0+T1u3NVa2LOV3WlZ+xe9ro/CF/ZJ2e1GKDt6E3qpGlU2MVs
+	Vf12GutSzl/VF4CA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Huacai Chen <chenhuacai@loongson.cn>, Xuerui Wang <kernel@xen0n.name>,
+	loongarch@lists.linux.dev, Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-rt-devel@lists.linux.dev, Guo Ren <guoren@kernel.org>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] LoongArch: Reduce min_delta for the arch clockevent
+ device
+Message-ID: <20241114132740.NuomQBEN@linutronix.de>
+References: <20241108091545.4182229-1-chenhuacai@loongson.cn>
+ <20241108091545.4182229-2-chenhuacai@loongson.cn>
+ <20241114102136.X-knc36J@linutronix.de>
+ <CAAhV-H6vTBwi+t8cPKSo44KZKYj8ubwv2vV4FHrNH+nG=_ZXnw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114074722.4085319-1-quic_varada@quicinc.com>
- <20241114074722.4085319-5-quic_varada@quicinc.com> <7e293d68-73c1-425d-ae52-e0893c8e0a61@oss.qualcomm.com>
-In-Reply-To: <7e293d68-73c1-425d-ae52-e0893c8e0a61@oss.qualcomm.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 14 Nov 2024 15:26:32 +0200
-Message-ID: <CAA8EJprqOxcm9NPdNZkA0XzCbv1E+MXicTcqx72sgCpZoE2sUg@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] phy: qcom: qmp: Enable IPQ5424 support
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Varadarajan Narayanan <quic_varada@quicinc.com>, vkoul@kernel.org, kishon@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	gregkh@linuxfoundation.org, andersson@kernel.org, konradybcio@kernel.org, 
-	mantas@8devices.com, quic_kbajaj@quicinc.com, quic_kriskura@quicinc.com, 
-	quic_rohiagar@quicinc.com, abel.vesa@linaro.org, quic_wcheng@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAAhV-H6vTBwi+t8cPKSo44KZKYj8ubwv2vV4FHrNH+nG=_ZXnw@mail.gmail.com>
 
-On Thu, 14 Nov 2024 at 14:47, Konrad Dybcio
-<konrad.dybcio@oss.qualcomm.com> wrote:
->
-> On 14.11.2024 8:47 AM, Varadarajan Narayanan wrote:
-> > Enable QMP USB3 phy support for IPQ5424 SoC.
-> >
-> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > ---
-> > v2: Add 'Reviewed-by: Dmitry Baryshkov'
-> > ---
-> >  drivers/phy/qualcomm/phy-qcom-qmp-usb.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-usb.c b/drivers/phy/qualcomm/phy-qcom-qmp-usb.c
-> > index acd6075bf6d9..f43823539a3b 100644
-> > --- a/drivers/phy/qualcomm/phy-qcom-qmp-usb.c
-> > +++ b/drivers/phy/qualcomm/phy-qcom-qmp-usb.c
-> > @@ -2298,6 +2298,9 @@ static int qmp_usb_probe(struct platform_device *pdev)
-> >
-> >  static const struct of_device_id qmp_usb_of_match_table[] = {
-> >       {
-> > +             .compatible = "qcom,ipq5424-qmp-usb3-phy",
-> > +             .data = &ipq9574_usb3phy_cfg,
-> > +     }, {
->
-> If the software interface is the same, can this just use ipq9574 as a
-> fallback compatible?
+On 2024-11-14 19:46:39 [+0800], Huacai Chen wrote:
+> Hi, Sebastian,
+Hi,
 
-Generally I'd agree here, but as PHY tables include not just setup
-values, but also platform and chip-specific tunes, I think it's better
-to have multiple entries rather than having to cope with the possible
-issues. The only "fallback" compatibles that we have are qcs615-ufs ->
-sm6115-ufs and qcs8300-ufs -> sa8775p-ufs. Thus I think it's better to
-stay within the single-compat model.
+> On Thu, Nov 14, 2024 at 6:21=E2=80=AFPM Sebastian Andrzej Siewior
+> <bigeasy@linutronix.de> wrote:
+> >
+> > On 2024-11-08 17:15:43 [+0800], Huacai Chen wrote:
+> > > Now the min_delta is 0x600 (1536) for LoongArch's constant clockevent
+> > > device. For a 100MHz hardware timer this means ~15us. This is a little
+> > > big, especially for PREEMPT_RT enabled kernels. So reduce it to 1000
+> > > (we don't want too small values to affect performance).
+> >
+> > So this reduces it to 10us. Is anything lower than that bad performance
+> > wise?
+> Maybe I misunderstood the meaning of min_delta, but if I'm correct,
+> small min_delta may cause more timers to be triggered, because timers
+> are aligned by the granularity (min_delta). So I think min_delta
+> affects performance.
 
--- 
-With best wishes
-Dmitry
+They are not aligned. Well they get aligned due to the consequences.
+
+In one-shot mode you program the device for the next timer to expire. It
+computes the delta between expire-time and now. This delta is then
+clamped between min & max delta. See clockevents_program_event().
+
+This means if your timer is supposed to expire in 5us (from now) but
+your min delta is set to 15us then the timer device will be programmed
+to 15us from now. This is 10us after the expire time of your first
+timer. Once the timer devices fires, it will expire all hrtimers which
+expired at this point. This includes that timer, that should have fired
+10us ago, plus everything else following in the 10us window.
+
+> Huacai
+
+Sebastian
 
