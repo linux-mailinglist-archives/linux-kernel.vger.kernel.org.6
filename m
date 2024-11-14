@@ -1,127 +1,155 @@
-Return-Path: <linux-kernel+bounces-409723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFAEC9C9128
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:53:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC6A19C910F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:45:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BBC5B2A28A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:11:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4361EB33D2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A32188708;
-	Thu, 14 Nov 2024 17:11:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B905B6F307;
-	Thu, 14 Nov 2024 17:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF0218A930;
+	Thu, 14 Nov 2024 17:13:23 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3E017F505
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 17:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731604279; cv=none; b=m7J36oBulRPz3QlIS8yU+ix07N3KtLclSSYbShs5d1Yoj+7Lj3FP/vnRLLcCknpLltTif4Q7lJW4Depg6YIItIGAxiqgY7qTz1MtXFJqQgaDQI3JrwZwPd+RwsVrxouiGAgFO5utne3tWJDBz4uLlrRZPitwNjetLUbXzVUq48A=
+	t=1731604402; cv=none; b=OD5fjQ870U7W/bQC8ViHkeULrN2deDLuGjkyKHprauNdmDzMEyiNXQyfMTJGNRl37RUZCY44vRtO0QQtX57H4IpJZI0o58c/7bLh+9/wDRfObylxgtnAE9WeRpSeHzPAr52OyrP6hHydQc14hyZRZHfpZLylXZ1K9gqcS7isWAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731604279; c=relaxed/simple;
-	bh=CeDDin3Oyaoqz6NCTA0YQmQXis0jvldAADGnlBUP2So=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Xt5ap/q0H47vd/Mxf4cF7/NE71cXRdRewIewhljTSb+Z5Yg3Ldo1wQTnAoJ3L5S7K8QnLuFJs94waVr1uf87htytCl8hp/8HRgot4a1MpGaI6oY/6b/x5UNubsq+7mPa8j5P6b/0JDquO0fxQl0Xi1LGlqLjDDbGnaBwWbiU2pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 902831474;
-	Thu, 14 Nov 2024 09:11:45 -0800 (PST)
-Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0DA043F6A8;
-	Thu, 14 Nov 2024 09:11:13 -0800 (PST)
-From: Leo Yan <leo.yan@arm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH] perf: buildid: Print error for creating folder failure
-Date: Thu, 14 Nov 2024 17:10:52 +0000
-Message-Id: <20241114171053.3112521-1-leo.yan@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731604402; c=relaxed/simple;
+	bh=HAVfaokq31EDmvBU3UOQJ16kSyH0NWYsRTHGqy5xD28=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kFa3GGVrw7LWW81GtJee973lEPULxoGSgQ0kkRhrrrluJQa2rSGpqV257ubDQEv8/NowlFeHnx1Bro4WC7u3iF6m97shgCMncpQ3H7sUqzVmQPAzDG2h3vUrD9v/PJnRdjXFOb2sAU1o7WsueK9dZFXGBzw7d+d6NHpUEY5/NFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83ab4cadf05so88454539f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:13:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731604400; x=1732209200;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XHCekDVCgD4RwyXBhXgygfh4NVWosPvWXuyoL1Z0q1c=;
+        b=fEctFJq8zjAwb+dqjDYpAtGPGWJuHked7iaMrFWVqT8hoICvKTPoeblWNafxn1w2Kq
+         3DzRHxU/WTr26aPoKpcY+xD2Vhmc5vWr3I7iKUxRZFkNxDvlQ+rfWUg6uC1sSv/qwQfw
+         MKTAx3uOm1CnEjMA64ywZ4SoGuudviPWYletLarLS+CqO/cEaUhM686dS28FV/pxxX83
+         8u3PEkJGp7CbaPzO5YyMxIjMXQZIwaMLkTL8hOFb6bvM22AW60fGedi9k9i/hPSIifor
+         NIbMqmQyRKawJ8Hpmv9dax003csUg+NVhvybOZiCmwSk8GKfAXVoTRM85c2+rgb2JscP
+         +osQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8PoAC3OkKnR7anjnJpXJR/r+kz/EGSsby63eEU94zXwwZs+7rckgTa6wQa9YJA8t9XORNsoEJnbHRn5c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLvP97e6SE+0h5CkPZZFrz6kZbCq3uzcZZzzcgRORrqu7yiXpM
+	KJWDLCkoK7JqGoqpmj+tCGuuo9W51gEkz3FQl9tThb5BBwpBPTZ3/6ds5UXce6tuSJoboDNSpT4
+	rAQQel0vOKh4t27I2yt5QuO+XgLyG88TnYJSATf0jRrRzxoDzhX04/go=
+X-Google-Smtp-Source: AGHT+IFlgc4WM9GbXMHDFI1iTJH9qLmAz3mqZJ/8Wna8zSJgrU+ASwghtd7vdaqyhPLNRrBJ1mVRAi8HsVTICGXmEyDWteMX7162
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:2181:b0:3a6:f349:71e6 with SMTP id
+ e9e14a558f8ab-3a71fec44f3mr30404625ab.22.1731604400222; Thu, 14 Nov 2024
+ 09:13:20 -0800 (PST)
+Date: Thu, 14 Nov 2024 09:13:20 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67362fb0.050a0220.2a2fcc.0069.GAE@google.com>
+Subject: [syzbot] [net?] WARNING in rcu_note_context_switch (3)
+From: syzbot <syzbot+094799fb39e31554d5ee@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	jhs@mojatatu.com, jiri@resnulli.us, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-The mkdir_p() function will fail to create a buildid cache folder if the
-folder name is not an absolute path.  As a result, the cache folder is
-empty after recording.
+Hello,
 
-Print an error to remind users to use an absolute path name or check
-permissions.  Update the documentation to reflect the requirement of
-using an absolute path name.
+syzbot found the following issue on:
 
-After:
+HEAD commit:    de2f378f2b77 Merge tag 'nfsd-6.12-4' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11d654e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=34db67f35f954904
+dashboard link: https://syzkaller.appspot.com/bug?extid=094799fb39e31554d5ee
+compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
 
-  # perf --buildid-dir debug_dir record -- test_program
-    ...
-    Failed to create build_id cache folder: debug_dir/[kernel.kallsyms]/5c81911cab18f69bab96f8a1fae64a9f1d83b104.
-      Use an absolute path name or check permissions.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Signed-off-by: Leo Yan <leo.yan@arm.com>
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/384ffdcca292/non_bootable_disk-de2f378f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/7f87c581ec66/vmlinux-de2f378f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/93ad0017ba33/Image-de2f378f.gz.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+094799fb39e31554d5ee@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+Voluntary context switch within RCU read-side critical section!
+WARNING: CPU: 1 PID: 62 at kernel/rcu/tree_plugin.h:331 rcu_note_context_switch+0x354/0x49c kernel/rcu/tree_plugin.h:331
+Modules linked in:
+CPU: 1 UID: 0 PID: 62 Comm: kworker/u8:3 Not tainted 6.12.0-rc6-syzkaller-00279-gde2f378f2b77 #0
+Hardware name: linux,dummy-virt (DT)
+Workqueue: bond0 bond_mii_monitor
+pstate: 614000c9 (nZCv daIF +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+pc : rcu_note_context_switch+0x354/0x49c kernel/rcu/tree_plugin.h:331
+lr : rcu_note_context_switch+0x354/0x49c kernel/rcu/tree_plugin.h:331
+sp : ffff800082f7ba00
+x29: ffff800082f7ba00 x28: 0000000000000003 x27: f3f0000004214900
+x26: 0000000000000000 x25: fff000007f8ee800 x24: 0000000000000000
+x23: 0000000000000000 x22: f3f0000004214900 x21: 0000000000000000
+x20: ffff8000827006c0 x19: fff000007f8ef6c0 x18: fffffffffffdbe58
+x17: fff07ffffd1ef000 x16: ffff800080008000 x15: 0000000000000048
+x14: fffffffffffdbea0 x13: ffff80008274e5d0 x12: 00000000000012cc
+x11: 0000000000000644 x10: ffff800082807c30 x9 : ffff80008274e5d0
+x8 : 00000000ffffdfff x7 : ffff8000827fe5d0 x6 : 0000000000000644
+x5 : fff000007f8e43c8 x4 : 40000000ffffe644 x3 : fff07ffffd1ef000
+x2 : 0000000000000000 x1 : 0000000000000000 x0 : f3f0000004214900
+Call trace:
+ rcu_note_context_switch+0x354/0x49c kernel/rcu/tree_plugin.h:331
+ __schedule+0xb8/0x8fc kernel/sched/core.c:6570
+ __schedule_loop kernel/sched/core.c:6767 [inline]
+ schedule+0x34/0x104 kernel/sched/core.c:6782
+ synchronize_rcu_expedited+0x17c/0x1f0 kernel/rcu/tree_exp.h:991
+ synchronize_net+0x18/0x34 net/core/dev.c:11286
+ dev_deactivate_many+0x120/0x278 net/sched/sch_generic.c:1377
+ dev_deactivate+0x60/0xac net/sched/sch_generic.c:1403
+ linkwatch_do_dev+0x78/0xec net/core/link_watch.c:175
+ linkwatch_sync_dev+0x8c/0xc8 net/core/link_watch.c:263
+ ethtool_op_get_link+0x18/0x34 net/ethtool/ioctl.c:62
+ bond_check_dev_link+0x68/0x154 drivers/net/bonding/bond_main.c:873
+ bond_miimon_inspect drivers/net/bonding/bond_main.c:2717 [inline]
+ bond_mii_monitor+0x110/0x91c drivers/net/bonding/bond_main.c:2939
+ process_one_work+0x15c/0x29c kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x24c/0x354 kernel/workqueue.c:3391
+ kthread+0x114/0x118 kernel/kthread.c:389
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+---[ end trace 0000000000000000 ]---
+
+
 ---
- tools/perf/Documentation/perf-config.txt | 2 ++
- tools/perf/Documentation/perf.txt        | 4 ++--
- tools/perf/util/build-id.c               | 6 +++++-
- 3 files changed, 9 insertions(+), 3 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/tools/perf/Documentation/perf-config.txt b/tools/perf/Documentation/perf-config.txt
-index 379f9d7a8ab1..26d9b1dd2e8c 100644
---- a/tools/perf/Documentation/perf-config.txt
-+++ b/tools/perf/Documentation/perf-config.txt
-@@ -236,6 +236,8 @@ buildid.*::
- 		cache location, or to disable it altogether. If you want to disable it,
- 		set buildid.dir to /dev/null. The default is $HOME/.debug
- 
-+		This option must be an absolute path name.
-+
- buildid-cache.*::
- 	buildid-cache.debuginfod=URLs
- 		Specify debuginfod URLs to be used when retrieving perf.data binaries,
-diff --git a/tools/perf/Documentation/perf.txt b/tools/perf/Documentation/perf.txt
-index cbcc2e4d557e..14c79bd7820a 100644
---- a/tools/perf/Documentation/perf.txt
-+++ b/tools/perf/Documentation/perf.txt
-@@ -37,8 +37,8 @@ OPTIONS
-         Do not set pager.
- 
- --buildid-dir::
--        Setup buildid cache directory. It has higher priority
--        than buildid.dir config file option.
-+        Setup buildid cache directory with an absolute path name.
-+        It has higher priority than buildid.dir config file option.
- 
- --list-cmds::
-         List the most commonly used perf commands.
-diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
-index 8982f68e7230..a05d45ac1c87 100644
---- a/tools/perf/util/build-id.c
-+++ b/tools/perf/util/build-id.c
-@@ -637,8 +637,12 @@ build_id_cache__add(const char *sbuild_id, const char *name, const char *realnam
- 		if (unlink(dir_name))
- 			goto out_free;
- 
--	if (mkdir_p(dir_name, 0755))
-+	if (mkdir_p(dir_name, 0755)) {
-+		pr_err("Failed to create build_id cache folder: %s.\n"
-+		       "  Use an absolute path name or check permissions.\n",
-+		       dir_name);
- 		goto out_free;
-+	}
- 
- 	/* Save the allocated buildid dirname */
- 	if (asprintf(&filename, "%s/%s", dir_name,
--- 
-2.25.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
