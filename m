@@ -1,153 +1,170 @@
-Return-Path: <linux-kernel+bounces-409757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 337959C9125
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:52:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E86189C9107
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:44:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E9B1B32263
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:42:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6FCB283574
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D57518C91D;
-	Thu, 14 Nov 2024 17:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914EC18C039;
+	Thu, 14 Nov 2024 17:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lcJ4Ks3v"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nBHQC1UX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858E918BC28
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 17:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A1F1862B5;
+	Thu, 14 Nov 2024 17:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731606157; cv=none; b=WFZGhdQA+JEfysoNBtvA99unEoNWmG+0LgRYyKDQ6/Ms3IoYikDP/+N2npIxnu9VqWIcckzSEz0ZDbaHRzlg+ddC4SrW0yiQHsB/TF8CHM7KJso4GYWO7sZmboritJmyfAHOlmd/XUm8AZxaBXdm53J9Y/0kCxR90/1R988roXI=
+	t=1731606231; cv=none; b=Gai9CuPQAezo/4QxZqJaAesRbOFLhWKqkaPYmSsmQ4Y91UODA2Q94HqF3qfzfOY5wUcWHd4awbmRKStGBdFfA6Cp7oohjsohkmnn9bohDHv86a11bFgnOW8k3nhRfB+xxaDRpMjKOuSU49QXeggqOWlsuClXAzJuPbivKXTtSlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731606157; c=relaxed/simple;
-	bh=5uog7s88Vdjn9LrHFqVJ7H6JRAqfaj//EHJnHT0pKe0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=C1ekhy4qT6TxSb1xk1RBB2WJmOHh9CIBIgEzTPW25MmtDAd8qsexZ9aBBMop6mVbE1pqL4NAr2V0siZUt4JeKV/3qHb9HTpyHuJDuCUIcE5TLPgY6h3a8nFfIkxoMqaFtkIpdO9nLPDoS/eDHMhGIMvQ3AiTl2m4utd1I86YHDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lcJ4Ks3v; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-71e6241c002so810853b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:42:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731606155; x=1732210955; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0jxstw+HdDkmUNCxSNezg+z3DZ+qdKf7DbKMcdrw87E=;
-        b=lcJ4Ks3vn57vagENL6KpLY4KdsY++5na8cw55/Zio+ZJr8oan+SLexf3L1Ne3RBsyW
-         1nZThlqcXnVgX8fjplY6z6Rnu7LFJ8lCRh+0onL1pn5vRIf5kPCZ9ts+oqqNtjVMwLti
-         HpldyLb7upKYSz6DlxLyVsGirooKMr2ahZNyPAm/AJRFneAi/JbLr2dDNmTV7dIiVOv4
-         pHq8Bt4aTA+hWVCSvhqMASpXzEKPmIaBxjbMH2w6GTZOtiMUCtDfsPCD9e2CDuPgegmY
-         9bwSR0P6JIKxpahsbWE5LeHjve3oq+8UBWMujf0HUdCDYtc0WfSk3IJS1SGbFMfb8HzW
-         +SRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731606155; x=1732210955;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0jxstw+HdDkmUNCxSNezg+z3DZ+qdKf7DbKMcdrw87E=;
-        b=aqj+wuZorTgfPxiOW7rm3U+QfeCIFsTMu92YjX1InkuA58efJigRskpT2grrZBsPP+
-         G3rrZTJkAXdJOY5Q3BGGSvn6rCStilIih7NC3RmEofnC/9+tHOYjA5QLK+Ojpcf2qIos
-         LFRRfLVQhpcIqlko9bcEMeszR/jyZ41tOji2Hidxpwr3rTqJfdxSc2CWn7VkCFuGv23f
-         zVb5b0Idg/yJnIWszuI/Ia9M/x8zXn4Jk0Zuxjqzwz9/fOYbs0I0FlPTlilkP6pwOz3q
-         aFwShpjbaEa7prtr3AerJXnWCUPmKUSWsEgnXcZExqnV/Qz8k0fOWdQXlGzNFSrnQfKb
-         Hnsw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAwJ5n8BFdlW3+rDaJnoIlQi4mehl3jJU2D3ddHl4+Nb10+zCl1aNYYzfzsOgJdxVEGiGHOe3Wm05AGVM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8MSisUCy6x89T7yek7IkoA7kKml4Cd5TRDDx/YbsngcJxL7Sf
-	su1Io8Ih3uvOVqt6RVJO9+zM/KB9vNRAqxkGuT3o5rpUtNfBFUtjDutTdsxYzMz7wk6qlXJOLCy
-	AVg==
-X-Google-Smtp-Source: AGHT+IE2t7/BQUDGvQdq1WU4OfDCD4pafvlstYkabCEfeZEIVCwo/4m39wonrcrGj/V1SHEHETmIrMp08OA=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:2167:b0:724:67d7:17b2 with SMTP id
- d2e1a72fcca58-72467d71a19mr35667b3a.0.1731606154070; Thu, 14 Nov 2024
- 09:42:34 -0800 (PST)
-Date: Thu, 14 Nov 2024 09:42:32 -0800
-In-Reply-To: <20241108-eaacad12f1eef31481cf0c6c@orel>
+	s=arc-20240116; t=1731606231; c=relaxed/simple;
+	bh=hUbHRaYoAJFom79L/F3grgrXxrJbqSHEcrh/UTN0r3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lqydvm/vzpGQnIURF9++j+6olWrV3QtNFv+rewOQM7zhyUhIKzHDmv02+9RsAybWfRiojwHqkY4Su56t8cBvyuRpNk9rPje9lxXqCos33u/zDl3WtPCKv2YKi1ZmB5hcqBJSVqCgNuRD7MaPqhZRsUn4Un29X7F87+RPI66sv04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nBHQC1UX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B847C4CECD;
+	Thu, 14 Nov 2024 17:43:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731606230;
+	bh=hUbHRaYoAJFom79L/F3grgrXxrJbqSHEcrh/UTN0r3E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nBHQC1UXmCVc+2945Uy9bbzTyib39ztmyiFjDJJfzEOCHc4GW2nC0k53wDLt6c3xV
+	 hVbtxhCf2i/m9XT0Fvwtj/UQaLXTqLuocE6fXbzbuRyutMu80NpS1OKDqqfoZTWcY4
+	 O/YEjOZjxxi9Nwa5jzNb/cQHigp5r8iQKhZw4bS71suOmIr2aHWx+TSE/uZfFWo5RS
+	 MfhGKiV+KP7twMSq5xINze7AZezV6ztgyW6KMv5y+ybL/x3Je5yVdCYl6cGKfMhoFI
+	 6lN76A4NLGxQQ7EJvnZ938JjIbL+UsjP6i6r6OictGQOMlCzgc5v00mHEH7FetmI0o
+	 eebggfbZZ4kug==
+Date: Thu, 14 Nov 2024 14:43:46 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Benjamin Peterson <benjamin@engflow.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>
+Subject: Re: [PATCH 2/2] perf tests: add test for trace output loss
+Message-ID: <ZzY20vZluj44w1Gt@x1>
+References: <20241106234518.115234-1-benjamin@engflow.com>
+ <20241106234518.115234-2-benjamin@engflow.com>
+ <ZzY1bPtoyRH-nRIV@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240821223012.3757828-1-vipinsh@google.com> <CAHVum0eSxCTAme8=oV9a=cVaJ9Jzu3-W-3vgbubVZ2qAWVjfJA@mail.gmail.com>
- <CAHVum0fWJW7V5ijtPcXQAtPSdoQSKjzYwMJ-XCRH2_sKs=Kg7g@mail.gmail.com>
- <ZyuiH_CVQqJUoSB-@google.com> <20241108-eaacad12f1eef31481cf0c6c@orel>
-Message-ID: <ZzY2iAqNfeiiIGys@google.com>
-Subject: Re: [RFC PATCH 0/1] KVM selftests runner for running more than just default
-From: Sean Christopherson <seanjc@google.com>
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Vipin Sharma <vipinsh@google.com>, kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
-	kvm-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Anup Patel <anup@brainfault.org>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZzY1bPtoyRH-nRIV@x1>
 
-On Fri, Nov 08, 2024, Andrew Jones wrote:
-> On Wed, Nov 06, 2024 at 09:06:39AM -0800, Sean Christopherson wrote:
-> > On Fri, Nov 01, 2024, Vipin Sharma wrote:
-> > > Phase 3: Provide collection of interesting configurations
-> > > 
-> > > Specific individual constructs can be combined in a meaningful way to
-> > > provide interesting configurations to run on a platform. For example,
-> > > user doesn't need to specify each individual configuration instead,
-> > > some prebuilt configurations can be exposed like
-> > > --stress_test_shadow_mmu, --test_basic_nested
+On Thu, Nov 14, 2024 at 02:37:52PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Wed, Nov 06, 2024 at 11:45:18PM +0000, Benjamin Peterson wrote:
+> > Add a test that checks that trace output is not lost to races. This is
+> > accomplished by tracing the exit_group syscall of "true" multiple times and
+> > checking for correct output.
 > > 
-> > IMO, this shouldn't be baked into the runner, i.e. should not surface as dedicated
-> > command line options.  Users shouldn't need to modify the runner just to bring
-> > their own configuration.  I also think configurations should be discoverable,
-> > e.g. not hardcoded like KUT's unittest.cfg.  A very real problem with KUT's
-> > approach is that testing different combinations is frustratingly difficult,
-> > because running a testcase with different configuration requires modifying a file
-> > that is tracked by git.
-> 
-> We have support in KUT for environment variables (which are stored in an
-> initrd). The feature hasn't been used too much, but x86 applies it to
-> configuration parameters needed to execute tests from grub, arm uses it
-> for an errata framework allowing tests to run on kernels which may not
-> include fixes to host-crashing bugs, and riscv is using them quite a bit
-> for providing test parameters and test expected results in order to allow
-> SBI tests to be run on a variety of SBI implementations. The environment
-> variables are provided in a text file which is not tracked by git. kvm
-> selftests can obviously also use environment variables by simply sourcing
-> them first in wrapper scripts for the tests.
-
-Oh hell no! :-)
-
-For reproducibility, transparency, determinism, environment variables are pure
-evil.  I don't want to discover that I wasn't actually testing what I thought I
-was testing because I forgot to set/purge an environment variable.  Ditto for
-trying to reproduce a failure reported by someone.
-
-KUT's usage to adjust to the *system* environment is somewhat understandable
-But for KVM selftests, there should be absolutely zero reason to need to fall
-back to environment variables.  Unlike KUT, which can run in a fairly large variety
-of environments, e.g. bare metal vs. virtual, different VMMs, different firmware,
-etc., KVM selftests effectively support exactly one environment.
-
-And unlike KUT, KVM selftests are tightly coupled to the kernel.  Yes, it's very
-possible to run selftests against different kernels, but I don't think we should
-go out of our way to support such usage.  And if an environment needs to skip a
-test, it should be super easy to do so if we decouple the test configuration
-inputs from the test runner.
-
-> > There are underlying issues with KUT that essentially necessitate that approach,
-> > e.g. x86 has several testcases that fail if run without the exact right config.
-> > But that's just another reason to NOT follow KUT's pattern, e.g. to force us to
-> > write robust tests.
+> > Conveniently, this test also serves as a regression test for 5fb8e56542a3 ("perf
+> > trace: avoid garbage when not printing a trace event's arguments") because
+> > exit_group triggers the previously buggy printing behavior.
 > > 
-> > E.g. instead of per-config command line options, let the user specify a file,
-> > and/or a directory (using a well known filename pattern to detect configs).
+> > Signed-off-by: Benjamin Peterson <benjamin@engflow.com>
+> > ---
+> >  tools/perf/tests/shell/trace_exit_race.sh | 31 +++++++++++++++++++++++
+> >  1 file changed, 31 insertions(+)
+> >  create mode 100755 tools/perf/tests/shell/trace_exit_race.sh
+> > 
+> > diff --git a/tools/perf/tests/shell/trace_exit_race.sh b/tools/perf/tests/shell/trace_exit_race.sh
+> > new file mode 100755
+> > index 000000000000..8b70324bc5b4
+> > --- /dev/null
+> > +++ b/tools/perf/tests/shell/trace_exit_race.sh
+> > @@ -0,0 +1,31 @@
+> > +#!/bin/sh
+> > +# perf trace exit race
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +
+> > +# Check that the last events of a perf trace'd subprocess are not
+> > +# lost. Specifically, trace the exiting syscall of "true" 100 times and ensure
+> > +# the output contains 100 correct lines.
+> > +
+> > +# shellcheck source=lib/probe.sh
+> > +. "$(dirname $0)"/lib/probe.sh
+> > +
+> > +skip_if_no_perf_trace || exit 2
+> > +
+> > +trace_shutdown_race() {
+> > +	for i in $(seq 100); do
+> > +		perf trace -e syscalls:sys_enter_exit_group true 2>>$file
+> > +	done
+> > +	[ $(grep -c -E " +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$" $file) = "100" ]
+> > +}
+> > +
+> > +
+> > +file=$(mktemp /tmp/temporary_file.XXXXX)
+> > +
+> > +# Do not use whatever ~/.perfconfig file, it may change the output
+> > +# via trace.{show_timestamp,show_prefix,etc}
+> > +export PERF_CONFIG=/dev/null
+> > +
+> > +trace_shutdown_race
+> > +err=$?
+> > +rm -f ${file}
+> > +exit $err
+> > -- 
 > 
-> Could also use an environment variable to specify a file which contains
-> a config in a test-specific format if parsing environment variables is
-> insufficient or awkward for configuring a test.
+> Its failing with shellcheck, I'm trying to fix it:
+> 
+>   CC      /tmp/build/perf-tools-next/builtin-trace.o
+>   TEST    /tmp/build/perf-tools-next/tests/shell/trace_exit_race.sh.shellcheck_log
+> 
+> In tests/shell/trace_exit_race.sh line 15:
+> 	for i in $(seq 100); do
+>         ^-^ SC2034 (warning): i appears unused. Verify use (or export if used externally).
+> 
+> 
+> In tests/shell/trace_exit_race.sh line 18:
+> 	[ $(grep -c -E " +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$" $file) = "100" ]
+>           ^-- SC2046 (warning): Quote this to prevent word splitting.
+> 
+> For more information:
+>   https://www.shellcheck.net/wiki/SC2034 -- i appears unused. Verify use (or ...
+>   https://www.shellcheck.net/wiki/SC2046 -- Quote this to prevent word splitt...
+> make[4]: *** [tests/Build:91: /tmp/build/perf-tools-next/tests/shell/trace_exit_race.sh.shellcheck_log] Error 1
+> make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:158: tests] Error 2
+> make[2]: *** [Makefile.perf:777: /tmp/build/perf-tools-next/perf-test-in.o] Error 2
+> make[2]: *** Waiting for unfinished jobs....
 
-There's no reason to use a environment variable for this.  If we want to support
-"advanced" setup via a test configuration, then that can simply go in configuration
-file that's passed to the runner.
+I've read the links provided by ShellCheck and folded this to satisfy
+it, please consider installing ShellCheck, the perf build process will
+use it when avaiable.
+
+- Arnaldo
+
+diff --git a/tools/perf/tests/shell/trace_exit_race.sh b/tools/perf/tests/shell/trace_exit_race.sh
+index 8b70324bc5b4fb4c..c37ed6bb9f7e8fab 100755
+--- a/tools/perf/tests/shell/trace_exit_race.sh
++++ b/tools/perf/tests/shell/trace_exit_race.sh
+@@ -12,10 +12,10 @@
+ skip_if_no_perf_trace || exit 2
+ 
+ trace_shutdown_race() {
+-	for i in $(seq 100); do
++	for _ in $(seq 100); do
+ 		perf trace -e syscalls:sys_enter_exit_group true 2>>$file
+ 	done
+-	[ $(grep -c -E " +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$" $file) = "100" ]
++	[ "$(grep -c -E ' +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$' $file)" = "100" ]
+ }
+ 
+ 
 
