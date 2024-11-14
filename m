@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-409678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E5B9C8FFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:42:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 420059C9000
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:42:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 777AF2813C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:42:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 068732816A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4FC18BB82;
-	Thu, 14 Nov 2024 16:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C76218C014;
+	Thu, 14 Nov 2024 16:41:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AeLfH4t7"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WI0/s8i+"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CBC189F33;
-	Thu, 14 Nov 2024 16:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A521918C018;
+	Thu, 14 Nov 2024 16:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731602497; cv=none; b=EbhXLSxBwTAmDLKUQVCUyUDMGoj2amGHJw3o3fH2yo70CbUKTG8m0MPCoeR0ip8cluceG/qYkk4cc38xnWSG4y3U6W9GsaCwEZu43a/lGETIcqfIPXNlME4o7DvqIYjKLA5PQRPUe52i6EIZcCZQxsIkGwLBIR03ySVVxGZ6bH0=
+	t=1731602501; cv=none; b=S6vZ31q0W1kSYll+1RNDlvMEf8XgJp6l7zEkuU9Rr/X9VnbVBsz44f6JQ1wi9lpTfSzqMDZtOLyPNPWKRuFlo8UMD8ru+H8vF1AHpT3g/r06Jj4XhkZc8yyRRDV5psY4JwRKU6RqY4/jkjxZEbipuZh775HR8Uznr7eOqsvH6zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731602497; c=relaxed/simple;
-	bh=mHvtfKy1lK4BhXuOOFOB5y1G3OSXiADG3fJ4EbMP8ec=;
+	s=arc-20240116; t=1731602501; c=relaxed/simple;
+	bh=SCZ4T2AfHHXGBsZcQiCQq4xP+L73Rs0+AkjDB2k/9eE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WUXr5+85obs26O5f3nb3KdoQc+EAuI4gMZSyAggAkXj6F7qPbXQ2pJxKnpDn+dR4GjBCUmbexJHtdW4acYA89X6po2Yfp3cEuhpofD8tx1N6MLmmbqJIQAVXV6gGVqp0m8nNQiG44r/cTTm4Al0HWE+CqP/QMlqae6Gp7DfXSU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AeLfH4t7; arc=none smtp.client-ip=209.85.214.175
+	 In-Reply-To:To:Cc; b=Df4jAeM0zhQZ1u3/6R8660TRpdu4Zm2bnGXYg7XSBPgB4QCUasdBKIWgQ/+L0KL0OSuXFCDxJ+/1VZN3zS75t0c5bGXkuMGwOWuHjQ7cbjx5UUdokg/K6bvul78oDvZi6ZPl4IIde+fTn+lMZ6lt0lUDBk4tsSwKcD+5xmMa1NE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WI0/s8i+; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2113da91b53so6766135ad.3;
-        Thu, 14 Nov 2024 08:41:35 -0800 (PST)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20cbca51687so9486985ad.1;
+        Thu, 14 Nov 2024 08:41:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731602495; x=1732207295; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731602499; x=1732207299; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=SmIzy3tYV80/AAee8ixcAK6cOxGUld61Bp/4NhXM94Q=;
-        b=AeLfH4t7mx6lwSu6piCzijN5qm32fvz5JLhRBcow6kZiR/WWHp/ICG0vZXgyLZPawA
-         2d1ddIK+Bf9o545viFCqc4gqR3pM8kwm7IFBczCREx9fgiqLU+Ktv4QCn/9U+Xtp8lpF
-         BweIewqAoooxzqAz9qX6p1E4YnluKtYinYr+dU/LwIVhQytsb+DlvwMgjpHR+2nHJpMI
-         Hu3GGbvAJUF4CFxX134Yq79UlHaJ33rI4eqI9GCGv5R94V4txm6PnPWZG9xdioIh7fh+
-         amv9YqY8pSsFBcjrtzFMtMFuiSCn9C4ncCaXnoigzZC2HDd9lj2FEdFFnYCY1GIXsRvK
-         LISw==
+        bh=YeaPvBcLvGGmvAXJtSbsLGjLypbsz77pojwpJkECM2A=;
+        b=WI0/s8i+0EbHfGfH5fRwq7s4ByOFQY5wg8MT3S2iOXyH6jH7EYJiy9Ou2XSEGd1rjt
+         iH6WjJ9olod7resV0Umuh1LUaxmAzRReFtnWrRhR70TE4NnW+94MnzL1HJTMa1jjK9TS
+         z1BmC5tit9xI3KfZxgblcN+yv/VQj1jTl6Eh5L+//P7Odl1YCz6Uqao8YbnCBwmfVRDE
+         vcXPXGbS004te44kjzoncylcoZjiLgpTNB7hxUeiID37rZK4UOcto+MbPhorxBK/heuC
+         k8Fi29Zf60qR4M69nFs4IF8OHDId4tG2hRo6V5ATq/eTUNUAS0DOsNUq5BCixS81u55E
+         ZJrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731602495; x=1732207295;
+        d=1e100.net; s=20230601; t=1731602499; x=1732207299;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SmIzy3tYV80/AAee8ixcAK6cOxGUld61Bp/4NhXM94Q=;
-        b=J6gknyhY0+fi4JUHJMRDvhrsprul+HAAwJagGuvu6OxD5+FfcTeif+ursnsVFisOcr
-         0c30kX89YBMeQoDxmN3czpajKChTLiYnilkzYgKeMRJFZ4wjrHMk6iKSYGWi4WfnNkaj
-         /yexYGlXx1yetNsh4LF97IK3OS3vO5pp0cONUPl657tbj2Py7yR7bxxnUpXBrXrVdERZ
-         Ni5T/hQ2EfVOPWCd441q7f1lWA3liN+tVuzg+d/dZz1E94eHK6daLnCEQ574DsI/qbaa
-         JLZtyeVPAI2UOR1hWtnjQeEgEOwPyCV2+72DNWtXcapKDMN+L4HloaKN41fX+W03luFN
-         fraA==
-X-Forwarded-Encrypted: i=1; AJvYcCVL3BnuWUedh9VNtQODGII3f4H8aUgwm+WZcZq+33I/4H+0toGFfIbmr4j+Hj3VhJaumFK9jhAo2q0=@vger.kernel.org, AJvYcCXbF+6lNULZ3z7uzL8HzVy/Yda5b3+/fWnTW31iIVAQBZa8g+vdgPzH2/x81lRdB99XOi92N/5m6/JwIaUz@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHN2JoJqnhpqyR5vYPuB7gwNjgSVwrIXbZ1XyF6xghXXaN4yrg
-	4FCi+s9QxS2JTskc/4tF62mlx8UQ60WfnIggcdTTL2fujQpMEBi1
-X-Google-Smtp-Source: AGHT+IGnooZ6MrXxfVzmJq1rxjV/3UioBbrSnmqau+biyq7rekOh0ecfxksZEJpkO1mhL3pSwY/ayg==
-X-Received: by 2002:a17:903:11c9:b0:20d:2804:bcde with SMTP id d9443c01a7336-21183e0ce16mr324856285ad.35.1731602494879;
-        Thu, 14 Nov 2024 08:41:34 -0800 (PST)
+        bh=YeaPvBcLvGGmvAXJtSbsLGjLypbsz77pojwpJkECM2A=;
+        b=a+Q5VSto8yB7wdPBgtjb+f8nOM1CD6p9zexPxkPcsZVsKTu5O3W9jBVBhusZRRB83F
+         pWgjaL3TlfjhjcNCxA/8sjL/RA89HFhoypIht0ZjOs+g9Cc3FsoEz9BPks+fJto1T5eX
+         fOlRqGbbzVjw81Y+B0MViffn9r5S6sQAsmbeUBo2YnsjWoU6bUzR7a4ndzPoYWodT71h
+         fpjZH+RHy5fiiXezguSLpL3Sne3M3HwdYcR5Nnbmqj91uTPrZVRODE7RmjfIy5QOYaKU
+         xnDvqU5TeSC7z+mUecyJQKCoS0brV7mAbpIAzblngRw2vb2EX2kR+nZZETbNZfE755Fj
+         kUmw==
+X-Forwarded-Encrypted: i=1; AJvYcCUYGYzA/dUa/BhHz8lEAH9XXE+F+AJst94zexuafJ+phkw4/pqlu4oaDCWfrgimt46WPM08MYcBhiFK57UD@vger.kernel.org, AJvYcCWq/C/VmRrxXVQbYKk9dD7LbokUssic5zwUbWbigTL9KrWEWjPjojhvcRyfos0sEuhZu/T15XtJul8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMY0dIv0CezZmUFEhEUg04xuFsar9YoNtCvHqkAbKiRE80oJ4L
+	97hZd9hne3rIjO7SFb/DQrRTNs1jKET50G0qeUdbhqYtY5OEKkVQ
+X-Google-Smtp-Source: AGHT+IHJ1jE4dtrGk55++OXutHyktpDIdqvP/vOplWNrTQzNSe5mEzU5gmTQQqFKZz3bSVyIHRJL/g==
+X-Received: by 2002:a17:902:dacf:b0:205:6a9b:7e3e with SMTP id d9443c01a7336-211c50c7e1fmr38508725ad.56.1731602498889;
+        Thu, 14 Nov 2024 08:41:38 -0800 (PST)
 Received: from [10.113.16.67] ([123.63.2.2])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211c7d24a00sm12844915ad.244.2024.11.14.08.41.31
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211c7d24a00sm12844915ad.244.2024.11.14.08.41.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 08:41:34 -0800 (PST)
+        Thu, 14 Nov 2024 08:41:38 -0800 (PST)
 From: Hridesh MG <hridesh699@gmail.com>
-Date: Thu, 14 Nov 2024 22:11:19 +0530
-Subject: [PATCH 1/2] ALSA: hda/realtek: Fix headset mic on Acer Nitro 5
+Date: Thu, 14 Nov 2024 22:11:20 +0530
+Subject: [PATCH 2/2] docs: sound: Add a new hd-audio fixup model
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241114-alc287-nitro5-v1-1-72e5bf2275c3@gmail.com>
+Message-Id: <20241114-alc287-nitro5-v1-2-72e5bf2275c3@gmail.com>
 References: <20241114-alc287-nitro5-v1-0-72e5bf2275c3@gmail.com>
 In-Reply-To: <20241114-alc287-nitro5-v1-0-72e5bf2275c3@gmail.com>
 To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
@@ -90,78 +90,35 @@ To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
 Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-doc@vger.kernel.org, Hridesh MG <hridesh699@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731602485; l=2867;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731602485; l=801;
  i=hridesh699@gmail.com; s=20241114; h=from:subject:message-id;
- bh=mHvtfKy1lK4BhXuOOFOB5y1G3OSXiADG3fJ4EbMP8ec=;
- b=ZG2dfbnNXITv4SKWd1Ke9RtEB+Vb2l70GJfM7151MUO7IIhpq6a5MRAOHVOPWdP1UwiRyASUm
- SrhRETn6IUlCothJ10nlTmx+FeY05XBd4m/N7OvTzstHtvR5MWB1i8q
+ bh=SCZ4T2AfHHXGBsZcQiCQq4xP+L73Rs0+AkjDB2k/9eE=;
+ b=VkrW/BoJxCz2RgXsBcHi0H4NhwXo3jER3x9oXKKhylKYL30N9DysdKfCA0UfuI8CWlDAnIXvo
+ SormJ/VlWF7DpojkfcNi1aMpFwpHpygDsx+8FylHasH+HNnrGmXBMoH
 X-Developer-Key: i=hridesh699@gmail.com; a=ed25519;
  pk=otVQutD5ZTsEpajsGv/haM3pQj0yofkuYrdNcaX5AUE=
 
-The headset jack on the realtek ALC287 codec for the Acer Nitro 5
-AN515-58 laptop requires a fixup to detect microphone input.
-
-The required pin config and verbs were obtained by reverse engineering
-the windows driver using RtHD dump.
+Update the HD-Audio model documentation to add a new ALC287 fixup which
+enables microphone input.
 
 Signed-off-by: Hridesh MG <hridesh699@gmail.com>
 ---
- sound/pci/hda/patch_realtek.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ Documentation/sound/hd-audio/models.rst | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 571fa8a6c9e1204892a93ffb24acce65400ce4b2..0204ed80791db87153dad80d6a25466985ce5784 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -7780,6 +7780,8 @@ enum {
- 	ALC287_FIXUP_LENOVO_SSID_17AA3820,
- 	ALC245_FIXUP_CLEVO_NOISY_MIC,
- 	ALC269_FIXUP_VAIO_VJFH52_MIC_NO_PRESENCE,
-+	ALC_287_FIXUP_ACER_NITRO_HEADSET_MIC_PIN,
-+	ALC_287_FIXUP_ACER_NITRO_HEADSET_MIC_VERBS,
- };
+diff --git a/Documentation/sound/hd-audio/models.rst b/Documentation/sound/hd-audio/models.rst
+index 1204304500147637407240907078f17029999614..d59d359c4638a19a371f965e116e87b66a72f5a9 100644
+--- a/Documentation/sound/hd-audio/models.rst
++++ b/Documentation/sound/hd-audio/models.rst
+@@ -265,6 +265,8 @@ alc298-samsung-headphone
+     Samsung laptops with ALC298
+ alc256-samsung-headphone
+     Samsung laptops with ALC256
++alc287-fixup-acer-nitro-headset-mic
++    Headset mic fixup for Acer Nitro 5
  
- /* A special fixup for Lenovo C940 and Yoga Duet 7;
-@@ -10154,6 +10156,23 @@ static const struct hda_fixup alc269_fixups[] = {
- 		.chained = true,
- 		.chain_id = ALC269_FIXUP_LIMIT_INT_MIC_BOOST
- 	},
-+	[ALC_287_FIXUP_ACER_NITRO_HEADSET_MIC_PIN] = {
-+		.type = HDA_FIXUP_PINS,
-+		.chained = true,
-+		.chain_id = ALC_287_FIXUP_ACER_NITRO_HEADSET_MIC_VERBS,
-+		.v.pins = (const struct hda_pintbl[]) {
-+			{ 0x19, 0x03a19020 }, /* missing pin for headphone jack mic */
-+			{ }
-+		}
-+	},
-+	[ALC_287_FIXUP_ACER_NITRO_HEADSET_MIC_VERBS] = {
-+		.type = HDA_FIXUP_VERBS,
-+		.v.verbs = (const struct hda_verb[]) {
-+			{ 0x20, AC_VERB_SET_COEF_INDEX, 0x45 },
-+			{ 0x20, AC_VERB_SET_PROC_COEF, 0xD689 },
-+			{ }
-+		}
-+	}
- };
- 
- static const struct snd_pci_quirk alc269_fixup_tbl[] = {
-@@ -10201,6 +10220,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x1025, 0x1466, "Acer Aspire A515-56", ALC255_FIXUP_ACER_HEADPHONE_AND_MIC),
- 	SND_PCI_QUIRK(0x1025, 0x1534, "Acer Predator PH315-54", ALC255_FIXUP_ACER_MIC_NO_PRESENCE),
- 	SND_PCI_QUIRK(0x1025, 0x169a, "Acer Swift SFG16", ALC256_FIXUP_ACER_SFG16_MICMUTE_LED),
-+	SND_PCI_QUIRK(0x1025, 0x159c, "Acer Nitro 5 AN515-58", ALC_287_FIXUP_ACER_NITRO_HEADSET_MIC_PIN),
- 	SND_PCI_QUIRK(0x1028, 0x0470, "Dell M101z", ALC269_FIXUP_DELL_M101Z),
- 	SND_PCI_QUIRK(0x1028, 0x053c, "Dell Latitude E5430", ALC292_FIXUP_DELL_E7X),
- 	SND_PCI_QUIRK(0x1028, 0x054b, "Dell XPS one 2710", ALC275_FIXUP_DELL_XPS),
-@@ -11217,6 +11237,7 @@ static const struct hda_model_fixup alc269_fixup_models[] = {
- 	{.id = ALC255_FIXUP_ACER_HEADPHONE_AND_MIC, .name = "alc255-acer-headphone-and-mic"},
- 	{.id = ALC285_FIXUP_HP_GPIO_AMP_INIT, .name = "alc285-hp-amp-init"},
- 	{.id = ALC236_FIXUP_LENOVO_INV_DMIC, .name = "alc236-fixup-lenovo-inv-mic"},
-+	{.id = ALC_287_FIXUP_ACER_NITRO_HEADSET_MIC_PIN, .name = "alc287-fixup-acer-nitro-headset-mic"},
- 	{}
- };
- #define ALC225_STANDARD_PINS \
+ ALC66x/67x/892
+ ==============
 
 -- 
 2.47.0
