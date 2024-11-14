@@ -1,93 +1,173 @@
-Return-Path: <linux-kernel+bounces-409290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A729C8A54
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:44:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B5509C8A8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:47:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BF36B2444D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:44:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3B5F2852EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F651FAC45;
-	Thu, 14 Nov 2024 12:44:44 +0000 (UTC)
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30181FAC44;
+	Thu, 14 Nov 2024 12:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QPc2tnyk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB921FAC3B
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 12:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA731E883F;
+	Thu, 14 Nov 2024 12:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731588284; cv=none; b=EnRyv4d6Cgv7N3OT6RsTte7/P0W0TZNlIm14hCFf4YhmQQK4N4EtYhw9dkXOWPUrl3OnL3+mAJws1k5YZVGm5qocgwC/6njPwoxzAyROclEtjiVk/LeAx/gfA0JgLHF932M16qR43hbHt/zRndrQttY3yBfspdG9WPqd1bGexeQ=
+	t=1731588433; cv=none; b=UH9oob2tQIpKPJeAmzC3GWt1F7FLdbKJQ/R4945WCZeobqxVnbQ8kpO6ip/GQ3jnfH2dRxbqJq+iniEkIA+ovtfgMFovvbqIPxuI54Migkt4wxcUGHkpS2+nq1KFYRv/d1NNFg2lYdgjJ9GNFnENTdgbb7g3IKaHJEEMO/AG5ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731588284; c=relaxed/simple;
-	bh=s/PM/VQ9hwh6iiReNHCWYFkLslOMojWhBx/aZXlmtaA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PZPcUdkXGYNjDyocrDrN5CO6X6Q5+f6Bu0WoYArxGbtE9xdqg+4eteGgUYcjY64QxANqUaXd43LGdP/yBSfl1VCtIO5+p1Imfq7VmACgZW4hWAWBCFRERaE1qdI+gffrGslHnRtmRzTgczRP+xav8FumleSkPICG8QLunXgooPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:ab77:b6e5:88e8:df20])
-	by laurent.telenet-ops.be with cmsmtp
-	id cckW2D00C0Ss59E01ckWid; Thu, 14 Nov 2024 13:44:33 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tBZCi-0070f8-0n;
-	Thu, 14 Nov 2024 13:44:30 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tBZD4-004LPc-6M;
-	Thu, 14 Nov 2024 13:44:30 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Davis <afd@ti.com>,
-	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
-	Dan Murphy <dmurphy@ti.com>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dt-bindings: leds: class-multicolor: Fix path to color definitions
-Date: Thu, 14 Nov 2024 13:44:29 +0100
-Message-Id: <a3c7ea92e90b77032f2e480d46418b087709286d.1731588129.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731588433; c=relaxed/simple;
+	bh=LM2UJ++XVFcdQxrEHjPndh+FibA3jWXJI7JXihkurqE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jh5MbxOGH7Y+c9mNxOu6OZo7iQZfjhg/cWu8tiV3ZhmHV8UPdiUwuwfJOA6P6m08G8HznIlReGvtMf232nARzzVAU2hvUBiJG/KYw7eVX1Qx8D5b8SKN9joY19UUapXVDblnnEjcfrmj6wlM5YFUyZj3XIU9YmzCTJGUhqcSPXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QPc2tnyk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDA07C4CECD;
+	Thu, 14 Nov 2024 12:47:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731588432;
+	bh=LM2UJ++XVFcdQxrEHjPndh+FibA3jWXJI7JXihkurqE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QPc2tnykPn/pZ7kmhZ4WbSfG617lzNmuAjNDOh0YHwi2oMeY3GfWDYDjAgs4lJLB3
+	 ObFpuQg1vVhCSVvxgOZQ6vOqMvrVIGun62oTpxFYvZaygvQEgEx77NjxQTifX+ClnZ
+	 wzx7b2sLGsApXR9hvMBDrUak4MoAs7vBrscooyCvb7oLdi4/8QeC5IiffNdcRRsdLS
+	 h1igR/PFOJYTn+Tc+2Fk+sXREjUilbHBpYMmMcaBQyXWgf567cqzOFq3CIAv3qdxuS
+	 LuIBX+sjI6WgO8JQez3xH1/lNww+Bl9bTEQpQIjvUOjiDBhnRd3vTcuestBjD3MJLL
+	 ow2H9jfQWt3ZQ==
+Message-ID: <e9d3a6c8-fb12-4926-8c2b-414017681f03@kernel.org>
+Date: Thu, 14 Nov 2024 14:47:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 2/2] net: ethernet: ti: am65-cpsw: enable DSCP
+ to priority map for RX
+To: Guillaume Nault <gnault@redhat.com>
+Cc: Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, linux-omap@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, srk@ti.com,
+ Pekka Varis <p-varis@ti.com>
+References: <20241109-am65-cpsw-multi-rx-dscp-v3-0-1cfb76928490@kernel.org>
+ <20241109-am65-cpsw-multi-rx-dscp-v3-2-1cfb76928490@kernel.org>
+ <ZzVBS1zXIy31pnaf@debian> <76dd6141-5852-43ae-af98-f0edf0bc10f5@kernel.org>
+ <8bfe8acc-9514-4ba8-9498-2427ddb0bb78@kernel.org> <ZzXm6SHjRfbaOX14@debian>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <ZzXm6SHjRfbaOX14@debian>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The LED color definitions have always been in
-include/dt-bindings/leds/common.h in upstream.
 
-Fixes: 5c7f8ffe741daae7 ("dt: bindings: Add multicolor class dt bindings documention")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- .../devicetree/bindings/leds/leds-class-multicolor.yaml         | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml b/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
-index e850a8894758df1b..bb40bb9e036ee00e 100644
---- a/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
-+++ b/Documentation/devicetree/bindings/leds/leds-class-multicolor.yaml
-@@ -27,7 +27,7 @@ properties:
-     description: |
-       For multicolor LED support this property should be defined as either
-       LED_COLOR_ID_RGB or LED_COLOR_ID_MULTI which can be found in
--      include/linux/leds/common.h.
-+      include/dt-bindings/leds/common.h.
-     enum: [ 8, 9 ]
- 
- required:
+On 14/11/2024 14:02, Guillaume Nault wrote:
+> On Thu, Nov 14, 2024 at 12:12:47PM +0200, Roger Quadros wrote:
+>> On 14/11/2024 11:41, Roger Quadros wrote:
+>>> On 14/11/2024 02:16, Guillaume Nault wrote:
+>>>> So what about following the IETF mapping found in section 4.3?
+>>>> https://datatracker.ietf.org/doc/html/rfc8325#section-4.3
+>>>
+>>> Thanks for this tip.
+>>> I will update this patch to have the default DSCP to UP mapping as per
+>>> above link and map all unused DSCP to UP 0.
+>>
+>> How does the below code look in this regard?
+> 
+> Looks generally good to me. A few comments inline though.
+> 
+>> static void am65_cpsw_port_enable_dscp_map(struct am65_cpsw_port *slave)
+>> {
+>> 	int dscp, pri;
+>> 	u32 val;
+>>
+>> 	/* Default DSCP to User Priority mapping as per:
+>> 	 * https://datatracker.ietf.org/doc/html/rfc8325#section-4.3
+> 
+> Maybe also add a link to
+> https://datatracker.ietf.org/doc/html/rfc8622#section-11
+> which defines the LE PHB (Low Effort) and updates RFC 8325 accordingly.
+> 
+>> 	 */
+>> 	for (dscp = 0; dscp <= AM65_CPSW_DSCP_MAX; dscp++) {
+>> 		switch (dscp) {
+>> 		case 56:	/* CS7 */
+>> 		case 48:	/* CS6 */
+>> 			pri = 7;
+>> 			break;
+>> 		case 46:	/* EF */
+>> 		case 44:	/* VA */
+>> 			pri = 6;
+>> 			break;
+>> 		case 40:	/* CS5 */
+>> 			pri = 5;
+>> 			break;
+>> 		case 32:	/* CS4 */
+>> 		case 34:	/* AF41 */
+>> 		case 36:	/* AF42 */
+>> 		case 38:	/* AF43 */
+>> 		case 24:	/* CS3 */
+>> 		case 26:	/* AF31 */
+>> 		case 28:	/* AF32 */
+>> 		case 30:	/* AF33 */
+> 
+> Until case 32 (CS4) you've kept the order of RFC 8325, table 1.
+> It'd make life easier for reviewers if you could keep this order
+> here. That is, moving CS4 after AF43 and CS3 after AF33.
+> 
+>> 			pri = 4;
+>> 			break;
+>> 		case 17:	/* AF21 */
+> 
+> AF21 is 18, not 17.
+> 
+>> 		case 20:	/* AF22 */
+>> 		case 22:	/* AF23 */
+>> 			pri = 3;
+>> 			break;
+>> 		case 8:		/* CS1 */
+> 
+> Let's be complete and add the case for LE (RFC 8622), which also
+> maps to 1.
+
+All comments are valid. I will fix and send v4 for this series.
+
+> 
+>> 			pri = 1;
+>> 			break;
+
+For sake of completeness I will mention CS2, AF11, AF12, AF13
+here that can fallback to default case.
+
+>> 		default:
+>> 			pri = 0;
+>> 			break;
+>> 		}
+>>
+>> 		am65_cpsw_port_set_dscp_map(slave, dscp, pri);
+>> 	}
+>>
+>> 	/* enable port IPV4 and IPV6 DSCP for this port */
+>> 	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_CTL);
+>> 	val |= AM65_CPSW_PN_REG_CTL_DSCP_IPV4_EN |
+>> 		AM65_CPSW_PN_REG_CTL_DSCP_IPV6_EN;
+>> 	writel(val, slave->port_base + AM65_CPSW_PORTN_REG_CTL);
+>> }
+>>
+>>>
+
 -- 
-2.34.1
+cheers,
+-roger
 
 
