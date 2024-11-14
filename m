@@ -1,189 +1,124 @@
-Return-Path: <linux-kernel+bounces-409790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39F419C91B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:33:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9D4C9C91A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:31:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DD58B28C0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:30:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F2881F21170
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C721718C930;
-	Thu, 14 Nov 2024 18:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D5818132A;
+	Thu, 14 Nov 2024 18:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2X2nm4ZX"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D/abG7aR"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849E613A265
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 18:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6887013A265
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 18:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731609016; cv=none; b=YqNJYPYMewPwbLAVEGi0ZDGXEitT2tL+hgDVQGNTs6+FXbF3kIcsmCxwnXAqVxxXps9pfZIfoSXOfH9asbe97Bc5GsDsttpe8KlJcW0AVkk55uiPu+9E04ayAyg+FrNUV32JAwoDKrbLwDFqjRQOcvX0AgH1xW9iL7xD4VAxyo0=
+	t=1731609077; cv=none; b=QeBQGXuEzG5a2r6JtBJxyNaWelcDkIYGTUpN2/DR1W1MA7KIx8l2fg7Z+aZO/7haiT6I0HnKm1ZoSvbIIbuTbXoexq/6REUw79L9CgZlR5H9hhlPbYukyeJoF6DC33hyPfeF/jNJcZv3uMIrlBQefwInMIoGFAm7afL18d4ry/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731609016; c=relaxed/simple;
-	bh=Kr0hE3k5FC/KnAkCH3REPq2yTw28oTp2Mjo1YenTWvA=;
+	s=arc-20240116; t=1731609077; c=relaxed/simple;
+	bh=qPgttRKqIwbel5Escl1oq0suAUqJ6hGmn2l42WFD7Wk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VMI7CqBpV5CGb94Y4Q5iPEevQTayu74M2pBFjhp/zqz+DyqBWOPq9LIoYYg0vhLZDppWu+WjXbx/dUMLQZrDBgXJQwK290ah2dlrRt5ZbxsgXd5NqxGsSjdg4F5ZDyrIvDsvbjorW0GtzcFTmqeEaqQ+WvDsJ+44LXExPNnotxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2X2nm4ZX; arc=none smtp.client-ip=209.85.128.48
+	 To:Cc:Content-Type; b=DT3zEhCrHyBH4plFUg5/RSsiXwgOokr+/1dwbJRSszz0vUyEhXmoFVf8P3CUFVZC1Rvish9lQ2S8YiL4hXXOJxg1w1nwTsce4WDvM7WbhAPjE7Fu9jI82cASUMps72c8f5T/pNH9KPH7hy4mB/Rh5vKfE4iVNJpUh46ZgQ+CtRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D/abG7aR; arc=none smtp.client-ip=209.85.166.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43168d9c6c9so8404475e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:30:14 -0800 (PST)
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a745f61654so10825ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:31:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731609013; x=1732213813; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1731609075; x=1732213875; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sVUW+fryu8sjk7dvvS0Y/dTeXAbZLIJBIGf+5Rp7Ou0=;
-        b=2X2nm4ZX90tyRa/xgRX+2blIEpMM09V6vxrPzRfc/zId8rNstxX5RQrRwtmKUNa/QS
-         yQ7rW6pR/lE6Je6w7FVACGwMjtCWLUnNE/GYPEhju6PXZg2SrswQK9tXM1UpXR2SKhbs
-         hBoiP339rxy78lLErJBLDZGdvfeB3Nsk4gAtcXP7UIUAjK7s4H6GKiHErFKg2qE5d1V9
-         0hvSVtQoIUOOEW3tcHKAWhFFoZ+R4CULosEh+8z4I5eMeegHOdN9yrMomC4mwoO8cqrN
-         M/5r6+TaJsna1/sU/d0ptYgXkxyqR2lP9oulvUtZK6XkMikWcz8W4IvLcai49tqKxoPr
-         Z3xQ==
+        bh=qPgttRKqIwbel5Escl1oq0suAUqJ6hGmn2l42WFD7Wk=;
+        b=D/abG7aRzBAxHMtc6QhJ2JbWytpASw9PO/iS+5NxVsBvcWRce8xndB5GgGDsd26L90
+         jht5feyGXxbsq9NNeVFusDyIA3viWyT0oNPK1JOtFPG5P2x98N5IrWihzseEyOXO+WT3
+         ZtrGeBjG4Rfc24u1xofXl/GpcUMghRHZkdKbT/J0B2xzc90tnZrDkh2VdKdXnAqHf+id
+         ORTFQgAUJZA4Mu3OqeDEOm5EfJdEN2Ed+qvzyPooylGXqZWrNx8jIV5CqjdoCSHdv7aB
+         ruZCvbkTHCCGIMOTABjZnGsb6bmZSlXESc+I1fIUMRlZmIZzDxSY+zvfK1mCzAVmb1Ty
+         414A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731609013; x=1732213813;
+        d=1e100.net; s=20230601; t=1731609075; x=1732213875;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sVUW+fryu8sjk7dvvS0Y/dTeXAbZLIJBIGf+5Rp7Ou0=;
-        b=ij1pENGuLQo+OuMv5nJVVPdMl31mpkhZwFLa/MGoemkxnI1nyarSvFgd6qofxqo2IT
-         ISHwkffZjiqTYzd65dFFU26lXurlwKzKOJ7YFgHMUs6kyMfn6VjidwF6qUt2ln7bDmb+
-         gN+QxVn/S+BjMzFfakSWxEHUzB+dqrUveSYcnnAdITU+zMGRvId2LcnjwaszoDbFQA87
-         6MsJlxJy/CcgJjVxa84USAPZVp2h2UXzHMdS9WJq1319cE+JgTnwwWLR7aeECbu7aFTj
-         GZcPIADJA6Nc1/0GT4UojZYnwqwZrTBCWShDdqVorEgWyDK/sqRMX3qFd+qNVY6dw8iY
-         c+mA==
-X-Gm-Message-State: AOJu0YztkcY5854dDJrrtLQsH2hZRZV7rKkUuprtpoFMAGZawJZWK4+7
-	/LUxZ7gD7kRx4oGENZlw2ylUKnQV7dLYjAB3YYBctjA1DU0BpFkDf1VgL5g2HL3kLPv6839IMZB
-	Cdbh80eoNW5y7cRFc/3k7KTy/MMat9y7Nsxal
-X-Google-Smtp-Source: AGHT+IGH8NF9fj4Zodyu94TAlU6ALUhFoOCiA49oPNUuyhMkDakBJFCxl5trdgO+xI2wWUR48WmA5d9kU1memP3RdQM=
-X-Received: by 2002:a05:6000:1445:b0:37d:446a:9e60 with SMTP id
- ffacd0b85a97d-381f1839803mr22161366f8f.0.1731609012720; Thu, 14 Nov 2024
- 10:30:12 -0800 (PST)
+        bh=qPgttRKqIwbel5Escl1oq0suAUqJ6hGmn2l42WFD7Wk=;
+        b=eBB1XkM6zBUPYoiZAUpDntly2sN1CqSzGtAJAfNxZM2yx2RGYPmd5R6JBoztu+cHz9
+         YneGpPJlZX5TUNSyEzTdokOXpRmpXIYpLTXCA7nedrv1eAmGYyY52o/RRyj8SoiXrwEa
+         0swxfK27PWTEBu780MSGcQJDyPVD6zEBhJ7AAQWP5t9pGj/WeVuhOCsmYa87Ikhm+V3Z
+         tDRFQVblkNSc3Ww5khUVy8bbKy4tIasw0mCnKol/BHWUPOmYPxMBd7/CsHpShoYNyM1r
+         Fjd//5IoCgzGY9auXVNyc1QcT1jfJE+kIdQujUDVZ+wti+ln/pH9vgAPh03nBxcOSupY
+         EnUw==
+X-Forwarded-Encrypted: i=1; AJvYcCXdzFUqbxr4yWnAooY64TQrk9nAJy+s3Yh5/u0tSY1+JMB51lHogdMYCtL30gG4GKMdIijg6yht20ZJc7E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiWb/WfAj55WUeChQoiwQr/d1YIutFHZ/1jZ5MntnSHnKzG+mS
+	Fd6wMKCAdC2+UNy8Haxf+b4YYuTRB1+j1xurZg3ELYgkhKcYEak8PrjVCUO3x2yKnNmxwu/iL8S
+	FJgcwu6eFoVtqc8tfmYkAwIos5nu5yULfhCkG
+X-Gm-Gg: ASbGncus8SA5yNOjw15hQuejeD6YtHdgzcjc+EltrA8ALNHnzGv0ZKJ2xSYLZPmtCkM
+	u8JAyw1P0NHqOUaQvt6762OJwqveDNTP89U8w+YfEPN3tbXhOM9SqsV+3+Z5YO94=
+X-Google-Smtp-Source: AGHT+IHbt2clAsvEm2GCWE3HZL8c9XYanWoYZmP6qTNs/eamsLOQaZgatLIMPvRuQ3+hmYVnmRaUTEoaA8PTfGw6NT4=
+X-Received: by 2002:a05:6e02:1a4e:b0:3a6:af68:668a with SMTP id
+ e9e14a558f8ab-3a71e7a2d67mr5483705ab.18.1731609075190; Thu, 14 Nov 2024
+ 10:31:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106003007.2112584-1-ctshao@google.com> <20241106003007.2112584-2-ctshao@google.com>
- <CAP-5=fUc0YttVUMB9oAit3u5hzVGuK5rTLnP_dXD0kqt7QcO5g@mail.gmail.com>
-In-Reply-To: <CAP-5=fUc0YttVUMB9oAit3u5hzVGuK5rTLnP_dXD0kqt7QcO5g@mail.gmail.com>
-From: Chun-Tse Shao <ctshao@google.com>
-Date: Thu, 14 Nov 2024 10:30:01 -0800
-Message-ID: <CAJpZYjW0evv8SmPMwymjcFQExy+zVHe_6XW79bB_ErRXCwgzfA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] perf: Reveal PMU type in fdinfo
-To: Ian Rogers <irogers@google.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+References: <20241107162035.52206-1-irogers@google.com> <20241108025535.wfhke3btch5af4fu@hippo>
+In-Reply-To: <20241108025535.wfhke3btch5af4fu@hippo>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 14 Nov 2024 10:31:04 -0800
+Message-ID: <CAP-5=fW=RXz-A=xndhs8wkXaKCz-qXB=PemAMvbZpUagvObUoA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/8] Refactor cpuid and metric table lookup code
+To: Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>
+Cc: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
+	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Mark Rutland <mark.rutland@arm.com>, 
 	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
 	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
-	linux-perf-users@vger.kernel.org
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Huacai Chen <chenhuacai@kernel.org>, 
+	Bibo Mao <maobibo@loongson.cn>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Ben Zong-You Xie <ben717@andestech.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
+	Sandipan Das <sandipan.das@amd.com>, Benjamin Gray <bgray@linux.ibm.com>, 
+	Ravi Bangoria <ravi.bangoria@amd.com>, =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, 
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Dima Kogan <dima@secretsauce.net>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ian,
+On Thu, Nov 7, 2024 at 6:57=E2=80=AFPM Xu Yang <xu.yang_2@nxp.com> wrote:
+>
+> On Thu, Nov 07, 2024 at 08:20:27AM -0800, Ian Rogers wrote:
+> > Xu Yang <xu.yang_2@nxp.com> reported issues with the system metric
+> > lookup:
+> > https://lore.kernel.org/linux-perf-users/20241106085441.3945502-1-xu.ya=
+ng_2@nxp.com/
+> > These patches remove a lot of the logic relating CPUIDs to PMUs so
+> > that the PMU isn't part of the question when finding a metric table.
+> > For time reasons, it doesn't go as far as allowing system metrics
+> > without a metric table as a metric table is needed for metrics to
+> > refer to other metrics, and the refactoring of that resolution is a
+> > hassle.
+>
+> For this patchset:
+> Tested-by: Xu Yang <xu.yang_2@nxp.com>
 
-On Thu, Nov 14, 2024 at 7:49=E2=80=AFAM Ian Rogers <irogers@google.com> wro=
-te:
->
-> On Tue, Nov 5, 2024 at 4:30=E2=80=AFPM Chun-Tse Shao <ctshao@google.com> =
-wrote:
-> >
-> > It gives useful info on knowing which PMUs are reserved by this procesz=
-s.
-> > Also add config which would be useful.
-> > Testing cycles:
-> >
-> >   $ ./perf stat -e cycles &
-> >   $ cat /proc/`pidof perf`/fdinfo/3
-> >   pos:    0
-> >   flags:  02000002
-> >   mnt_id: 16
-> >   ino:    3081
-> >   perf_event_attr.type:   0
-> >   perf_event_attr.config: 0
-> >
-> > Testing L1-dcache-load-misses:
-> >
-> >   $ ./perf stat -e L1-dcache-load-misses &
-> >   $ cat /proc/`pidof perf`/fdinfo/3
-> >   pos:    0
-> >   flags:  02000002
-> >   mnt_id: 16
-> >   ino:    1072
-> >   perf_event_attr.type:   3
-> >   perf_event_attr.config: 65536
-> >
-> > Signed-off-by: Chun-Tse Shao <ctshao@google.com>
->
-> Reviewed-by: Ian Rogers <irogers@google.com>
->
-> > Change-Id: Ibea5618aaf00bae6f48a9b2a6e7798ab2b7f23ce
-> > ---
-> >  kernel/events/core.c | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> >
-> > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > index cdd09769e6c56..398cac8b208b9 100644
-> > --- a/kernel/events/core.c
-> > +++ b/kernel/events/core.c
-> > @@ -55,6 +55,7 @@
-> >  #include <linux/pgtable.h>
-> >  #include <linux/buildid.h>
-> >  #include <linux/task_work.h>
-> > +#include <linux/seq_file.h>
-> >
-> >  #include "internal.h"
-> >
-> > @@ -6820,6 +6821,14 @@ static int perf_fasync(int fd, struct file *filp=
-, int on)
-> >         return 0;
-> >  }
-> >
-> > +static void perf_show_fdinfo(struct seq_file *m, struct file *f)
-> > +{
-> > +       struct perf_event *event =3D f->private_data;
-> > +
-> > +       seq_printf(m, "perf_event_attr.type:\t%u\n", event->orig_type);
-> > +       seq_printf(m, "perf_event_attr.config:\t%llu\n", (unsigned long=
- long)event->attr.config);
->
-> nit: is the cast necessary? I don't see __u64 listed on:
-> https://www.kernel.org/doc/Documentation/printk-formats.txt
-> so I'm unsure.
->
-
-In this case I think it is safer to cast it to `unsigned long long`,
-since I don't know if any architecture would have an exception on
-__u64.
+Ping. Would be nice for this to land given the ARM fix and general cleanup.
 
 Thanks,
-CT
-
-> Thanks,
-> Ian
->
-> > +}
-> > +
-> >  static const struct file_operations perf_fops =3D {
-> >         .release                =3D perf_release,
-> >         .read                   =3D perf_read,
-> > @@ -6828,6 +6837,7 @@ static const struct file_operations perf_fops =3D=
- {
-> >         .compat_ioctl           =3D perf_compat_ioctl,
-> >         .mmap                   =3D perf_mmap,
-> >         .fasync                 =3D perf_fasync,
-> > +       .show_fdinfo            =3D perf_show_fdinfo,
-> >  };
-> >
-> >  /*
-> > --
-> > 2.47.0.199.ga7371fff76-goog
-> >
+Ian
 
