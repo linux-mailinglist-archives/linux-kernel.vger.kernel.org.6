@@ -1,182 +1,191 @@
-Return-Path: <linux-kernel+bounces-409229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 085769C8941
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:50:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A6B59C8946
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:51:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC808284A3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:50:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0871028407B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99571F9433;
-	Thu, 14 Nov 2024 11:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0911F943F;
+	Thu, 14 Nov 2024 11:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IRUvV5bR"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="leKxIlsX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABE91F891E
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B708B18C32C;
+	Thu, 14 Nov 2024 11:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731585028; cv=none; b=K6EAkU0fZFlvLVXwFJ79WrNSE9sNBRm5ypROPSQ29Jwsfy1iDf4scDGKShYLPbSXX+CXAN+e+uYTvr8Ymefw9Vle+gwq0eEWXQlGy96npuWdqnzhfVeY/ff1924NtnrcMC18san9wPxjT33mi52rme3YXcoCsptjr9bZK+ljqsI=
+	t=1731585103; cv=none; b=ssjb1kS8OoALB1hhZa/CQTZEiMeO5yYFLpkZ+aTURY7NpRGSCtMSCFOoHI3LHMyorxm2zytjhy60orN99x4RYdiDT0atxXpwNqt5wwx8yDUzPuDrrlPAhxiDxxl+5sCBVtptSzTzGUoYtlmGux9XeKdUVCgha280O6tymh5Uhf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731585028; c=relaxed/simple;
-	bh=VMNOHBw5gBBtp43tH02IaMDcjlxPJ1NdFLla12jbm1U=;
-	h=MIME-Version:Content-Type:Date:Message-ID:From:Subject:CC:To:
-	 In-Reply-To:References; b=DixxbTheTQLjVSD/X3Yeu7h+vW8ZCXr/BXzK4RBh33HQmesKHKre5vJl0xYN6gQlTTKixHFJQYfyvroKvhZ4BvwOgIZOeIzikfi8AjHmUlbkJITKUKnYVlVcxIYYr+KCa7eVuug/GwvLO49ZWlvqgH0qxPH5ejP8LLy+3c9ceGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=IRUvV5bR; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241114115017euoutp0257bc986adf437793f89664b9cb43ae90~H02Y4-V8o0050800508euoutp02e
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:50:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241114115017euoutp0257bc986adf437793f89664b9cb43ae90~H02Y4-V8o0050800508euoutp02e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1731585017;
-	bh=aSnFwn3fyWLWfZWTjEoWx9q1NNGL8GR1CfTtxNKRsSE=;
-	h=Date:From:Subject:CC:To:In-Reply-To:References:From;
-	b=IRUvV5bRooMIV9FTy4IG4YzQrRPtebVFioKerh1rqO4KYQbG6dCZ8Tbro80p4kjlT
-	 C/U7AXBgpN0EvdGWJugF9Cxrrfqk/vu4FaYzmZL6J0zJFq/XI3XnhTvvvjE7ESTCx8
-	 AILDDI1wm8PzRwNZSixJBrfsAOXY1P7co0+RCCYQ=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20241114115017eucas1p1e8cdb0561b668b4715b67d1c0bbac162~H02Ys0Lo12345323453eucas1p1R;
-	Thu, 14 Nov 2024 11:50:17 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id 3E.15.20409.9F3E5376; Thu, 14
-	Nov 2024 11:50:17 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241114115017eucas1p2862331fc47bf0f1a44035cc7e422a6c7~H02YYStlw0875708757eucas1p2O;
-	Thu, 14 Nov 2024 11:50:17 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241114115017eusmtrp1bd4dc11952f9293c6e1a39c45e7fbdbf~H02YXvXmX0888608886eusmtrp1I;
-	Thu, 14 Nov 2024 11:50:17 +0000 (GMT)
-X-AuditID: cbfec7f4-c0df970000004fb9-9a-6735e3f92001
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id B8.83.19920.9F3E5376; Thu, 14
-	Nov 2024 11:50:17 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241114115016eusmtip228356855edd0f55ee7d9ad03cba9a07d~H02YLyBx11445114451eusmtip25;
-	Thu, 14 Nov 2024 11:50:16 +0000 (GMT)
-Received: from mail.scsc.local (106.110.32.87) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Thu, 14 Nov 2024 11:50:16 +0000
+	s=arc-20240116; t=1731585103; c=relaxed/simple;
+	bh=yWNvnoXRvIL5L9rGGJxlutE5msSoXsLBNxKXbB6Wh/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K4PDQ13HsmX/+J52hySfMkAM9P5xr718DIhy04x/y6mT1oobrUgVk0f8jJVK2OesIV80Tm+cjEOWy0EXxu6o4kX4ZWLAvE3NMjhHBHy/vgwItxqAY1FI3mi7CvUzvp8i1K1AuHOXcwdGCXI0a9NsHSqcC4CIADl946cPhbUYIHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=leKxIlsX; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731585102; x=1763121102;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yWNvnoXRvIL5L9rGGJxlutE5msSoXsLBNxKXbB6Wh/E=;
+  b=leKxIlsXDXVteHoN95vF/yrJo3fDYIyC+ti/2apFrTsN1ZQEXwOVS21R
+   Q4VmwBdO3nd9Ywn2iY7JKE0NAzM6DRZPS2wFp0+6AxeUQY0uLwvZkFehJ
+   EOouUIoCsevztsYe91bqH7TTh6wpq8H1S5/GBrAE97Hz60DL7J10iAYna
+   FsuraYPs6kHkBYhZjdjYUEyEJlOYEe6soYKKdGk6GyKSfS3rfeNCp3j4e
+   6OA2JoZZI9jxaTCHAj+f198WawC8oohEUWwKUlXIIJSrsSTQOx0BuxgAB
+   ZKXcmdmEYwYKDtQ26CLerjTbjCuv3sum7G9DYk7m89VtATthmAsWXwgkP
+   A==;
+X-CSE-ConnectionGUID: FIDMsMqBRuG0xPQ3tbj7FQ==
+X-CSE-MsgGUID: qta/+0xmSUC8pj6vzdOnJg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="48967242"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="48967242"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 03:51:40 -0800
+X-CSE-ConnectionGUID: /MDWVJEoQ+WWpAGpWVdRHg==
+X-CSE-MsgGUID: xopzvJh5T8KRM1q87e7zJA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
+   d="scan'208";a="119114485"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa001.fm.intel.com with ESMTP; 14 Nov 2024 03:51:38 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 223C2193; Thu, 14 Nov 2024 13:51:37 +0200 (EET)
+Date: Thu, 14 Nov 2024 13:51:36 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Aaron Rainbolt <arainbolt@kfocus.org>
+Cc: YehezkelShB@gmail.com, michael.jamet@intel.com,
+	andreas.noever@gmail.com, linux-usb@vger.kernel.org,
+	mmikowski@kfocus.org, linux-kernel@vger.kernel.org,
+	Gil Fine <gil.fine@linux.intel.com>
+Subject: Re: USB-C DisplayPort display failing to stay active with Intel
+ Barlow Ridge USB4 controller, power-management related issue?
+Message-ID: <20241114115136.GB3187799@black.fi.intel.com>
+References: <20241031095542.587e8aa6@kf-ir16>
+ <20241101072155.GW275077@black.fi.intel.com>
+ <20241101181334.25724aff@kf-ir16>
+ <20241104060159.GY275077@black.fi.intel.com>
+ <20241105141627.5e5199b3@kf-ir16>
+ <20241106060635.GJ275077@black.fi.intel.com>
+ <20241106110134.1871a7f6@kf-ir16>
+ <20241107094543.GL275077@black.fi.intel.com>
+ <20241111082223.GP275077@black.fi.intel.com>
+ <20241112164447.4d81dc3a@kfocus.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-Date: Thu, 14 Nov 2024 12:50:15 +0100
-Message-ID: <D5LVNQFINITS.13C3C5UV89XRR@samsung.com>
-From: Daniel Gomez <da.gomez@samsung.com>
-Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
- symbols
-CC: Werner Sembach <wse@tuxedocomputers.com>, <tux@tuxedocomputers.com>,
-	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>,
-	<linux-modules@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Thorsten
-	Leemhuis <linux@leemhuis.info>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Luis
- Chamberlain" <mcgrof@kernel.org>
-X-Mailer: aerc 0.18.2-67-g7f69618ac1fd
-In-Reply-To: <20241114103133.547032-4-ukleinek@kernel.org>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIKsWRmVeSWpSXmKPExsWy7djPc7o/H5umG5yeIGtxedccNouG2d9Z
-	LVbvjLa4MeEpo8XSL++YLZaueAsUWjWPxeLn/IusFueXLmV14PRYsKnUY9OqTjaPQ80PmDzW
-	b7nK4vFvWQObx+dNcgFsUVw2Kak5mWWpRfp2CVwZs37cZCxYIljRNX8+ewPjP74uRk4OCQET
-	idu9txi7GLk4hARWMErMPfMIyvnCKLF59382COczkDNzJxtMy+IFHewQieWMEg9Pf0eo+vV9
-	EROEs5NR4tnSThaQFl4BQYmTM5+A2cwC2hLLFr5mhrA1JVq3/2YHsVkEVCU+NRxkh6g3kfj4
-	eAaYzQZUs+/kJjBbWCBUYuadPcwgC5gFmpgkPi1bxgSSEBFIlfg79TkjxH1qEv/7J4It4xSw
-	kujf+5sJIq4oMWPiShYIu1bi1JZbYJdKCPznkPjV0AOVcJFY8r2FGcIWlnh1fAs7hC0jcXoy
-	TE26xJJ1s6DsAok9t2exdjFyANnWEn1nciDCjhJrD9xjgwjzSdx4KwjxL5/EpG3TmSHCvBId
-	bUITGFVmIYXQLKQQmoUUQgsYmVcxiqeWFuempxYb5aWW6xUn5haX5qXrJefnbmIEpqLT/45/
-	2cG4/NVHvUOMTByMhxglOJiVRHhPORunC/GmJFZWpRblxxeV5qQWH2KU5mBREudVTZFPFRJI
-	TyxJzU5NLUgtgskycXBKNTC1JNgs+Rk8X4f/faaOiG7cNfVC3xVBBh5s6Xs0nYzbbH/qOEie
-	7rSYHiy92WPaKRmlM8Gp8gb2YoFcr/oL1WYorao6krXvzX7eBEYthqVLvs7UfV0l9lznh8AE
-	N9/oMLvv21xuGij1rUlZtJKt4/s+731yl3QWst6/6pHY0Lt3pbdss2TQgQ/WO5l6uq+Xfazv
-	+37eu827/kpKRGPCH4UVW0LDhWol74WFeEd/9nx+yFKb5xF/a+kbRhNpPpbMGwI/kkT8+L6c
-	XvX3DvfirweOBrk9V2+fO3vGZ4E8MU7rV30V6VY380Jf/q4SC5k/MSy7m8/Q6Vxcomaj97p6
-	Q17L32Ylzu+3WTpIOjxTYinOSDTUYi4qTgQAhmJtj7QDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRmVeSWpSXmKPExsVy+t/xe7o/H5umG3T+Y7e4vGsOm0XD7O+s
-	Fqt3RlvcmPCU0WLpl3fMFktXvAUKrZrHYvFz/kVWi/NLl7I6cHos2FTqsWlVJ5vHoeYHTB7r
-	t1xl8fi3rIHN4/MmuQC2KD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTub
-	lNSczLLUIn27BL2MWT9uMhYsEazomj+fvYHxH18XIyeHhICJxOIFHexdjFwcQgJLGSVOPT7F
-	ApGQkdj45SorhC0s8edaFxtE0UdGiU+/5rFCODsZJfZ9WgLWwSsgKHFy5hMwm1lAW2LZwtfM
-	ELamROv23+wgNouAqsSnhoPsEPUmEh8fzwCz2YBq9p3cBGYLC4RKzLyzhxlkAbNAE5PEtOcr
-	wAaJCKRK/J36nBHiJDWJ//0TWSCu6AY56QnYrZwCVhL9e38zQRQpSsyYuBLqn1qJz3+fMU5g
-	FJmF5NhZSI6dheTYBYzMqxhFUkuLc9Nziw31ihNzi0vz0vWS83M3MQKjdduxn5t3MM579VHv
-	ECMTB+MhRgkOZiUR3lPOxulCvCmJlVWpRfnxRaU5qcWHGE2Bvp7ILCWanA9MF3kl8YZmBqaG
-	JmaWBqaWZsZK4rxul8+nCQmkJ5akZqemFqQWwfQxcXBKNTDl7roecqNw7kZnq/Ldeo+enYhJ
-	eD9t5bbPv+OEJpq3eroKq3RI+MjcniUhpPjKdu9CUcGVAXPdlvz6Np/nf4DK/6uXhSX9Hr1N
-	fH79yolFZl+bRTfN6lu4hOevuQIrp+P6JM6y7kffLq283Lot8uPpwpWcCTvV/IO+/vzLeSDc
-	y/lcqN6lD30L0+bJZJw6lFScc0voQ8TSih+X74ZwPN+pLxq6/q5TcoL5tq/ppd9CujfLnHrq
-	fsVh3r7FIeW5bL+epO6fnH7o72sne43QX4e2KH1WbX5stEnvh1voRhen37t+Hzoidzh7h9lT
-	oWVHVz6PMxEpvsL7W7Em4cophiM39fZf3NRap3LC08msWvHiFiWW4oxEQy3mouJEAHyRychf
-	AwAA
-X-CMS-MailID: 20241114115017eucas1p2862331fc47bf0f1a44035cc7e422a6c7
-X-Msg-Generator: CA
-X-RootMTR: 20241114103151eucas1p133de0b231bf06bf8cd42621347a0ed17
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20241114103151eucas1p133de0b231bf06bf8cd42621347a0ed17
-References: <CGME20241114103151eucas1p133de0b231bf06bf8cd42621347a0ed17@eucas1p1.samsung.com>
-	<20241114103133.547032-4-ukleinek@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241112164447.4d81dc3a@kfocus.org>
 
-On Thu Nov 14, 2024 at 11:31 AM CET, Uwe Kleine-K=C3=B6nig wrote:
-> Hello,
->
-> the kernel modules provided by Tuxedo on
-> https://protect2.fireeye.com/v1/url?k=3D2f239e82-70bfb7a8-2f2215cd-000bab=
-e598f7-32952349600b722d&q=3D1&e=3D9535a8fa-5a9d-4d94-a12d-ff39b9d3b9cf&u=3D=
-https%3A%2F%2Fgitlab.com%2Ftuxedocomputers%2Fdevelopment%2Fpackages%2Ftuxed=
-o-drivers
-> are licensed under GPLv3 or later. This is incompatible with the
-> kernel's license and so makes it impossible for distributions and other
-> third parties to support these at least in pre-compiled form and so
-> limits user experience and the possibilities to work on mainlining these
-> drivers.
->
-> This incompatibility is created on purpose to control the upstream
-> process. See https://protect2.fireeye.com/v1/url?k=3D12fa0a06-4d66232c-12=
-fb8149-000babe598f7-5be6d19feac11441&q=3D1&e=3D9535a8fa-5a9d-4d94-a12d-ff39=
-b9d3b9cf&u=3Dhttps%3A%2F%2Ffosstodon.org%2F%40kernellogger%2F11342331433799=
-1594 for
-> a nice summary of the situation and some further links about the issue.
->
-> Note that the pull request that fixed the MODULE_LICENSE invocations to
-> stop claiming GPL(v2) compatibility was accepted and then immediately
-> reverted "for the time being until the legal stuff is sorted out"
-> (https://protect2.fireeye.com/v1/url?k=3D80a9845b-df35ad71-80a80f14-000ba=
-be598f7-b5ddbbaedbccb553&q=3D1&e=3D9535a8fa-5a9d-4d94-a12d-ff39b9d3b9cf&u=
-=3Dhttps%3A%2F%2Fgitlab.com%2Ftuxedocomputers%2Fdevelopment%2Fpackages%2Ftu=
-xedo-drivers%2F-%2Fcommit%2Fa8c09b6c2ce6393fe39d8652d133af9f06cfb427).
+Hi Aaron,
 
-This commit did not remove the license boilerplate as this other one [1]
-upstream did. So I think the license was still inconsistent.
+On Tue, Nov 12, 2024 at 04:44:47PM -0500, Aaron Rainbolt wrote:
+> On Mon, 11 Nov 2024 10:22:23 +0200
+> Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
+> 
+> > Hi,
+> > 
+> > On Thu, Nov 07, 2024 at 11:45:44AM +0200, Mika Westerberg wrote:
+> > > Hi,
+> > > 
+> > > On Wed, Nov 06, 2024 at 11:01:34AM -0600, Aaron Rainbolt wrote:  
+> > > > > Unfortunately that does not help here. I need to figure
+> > > > > something else how to detect the redrive case with this
+> > > > > firmware but first, does this work in Windows? I mean if you
+> > > > > install Windows to this same system does it work as expected?  
+> > > > 
+> > > > It does work as expected under Windows 11, with one major caveat.
+> > > > We used a Windows 11 ISO with a setup.exe created on April 05
+> > > > 2023 for installing the test system, and after initial
+> > > > installation it behaved exactly the same way as Linux behaves now
+> > > > (displays going blank soon after being plugged in). However,
+> > > > after installing all available Windows updates, the issue
+> > > > resolved, and the displays worked exactly as intended (the
+> > > > screens are recognized when attached and do not end up
+> > > > disconnecting after a timeout).
+> > > > 
+> > > > Would it be helpful to test on Windows 11, and provide a report
+> > > > and system logs?  
+> > > 
+> > > Unfortunately, I don't know anything about Windows ;-)
+> > > 
+> > > However, I asked our Thunderbolt hardware/firmware team about this,
+> > > if they have any idea how it was solved in Windows side. Might take
+> > > a couple of days though.  
+> > 
+> > While waiting for this, I wonder if you guys could do one more
+> > experiment? I would like to get the traces what is happening there
+> > (hoping something pops out there). Following steps:
+> > 
+> >   1. Download and install tbtools [1].
+> >   2. Build and install the kernel with my "redrive" patch.
+> >   3. Boot the system up, nothing connected.
+> >   4. Wait until the Barlow Ridge is in runtime suspend (so wait for
+> >      ~30s or so)
+> >   5. Enable tracing:
+> > 
+> >     # tbtrace enable
+> > 
+> >   6. Plug in USB-C monitor to the USB-C port of the Barlow Ridge. Do
+> > not run 'lspci -k'. Expectation here is that there is no picture on
+> >      the monitor (in other words the issue reproduces).
+> > 
+> >   7. Stop tracing and take full dump:
+> > 
+> >     # tbtrace disable
+> >     # tbtrace dump -vv > trace.out
+> > 
+> >   8. Send trace.out along with full dmesg to me.
+> > 
+> > Thanks!
+> > 
+> > [1] https://github.com/intel/tbtools
+> 
+> Testing done as requested. Notes from tester:
 
-[1] 1a59d1b8e05ea6ab45f7e18897de1ef0e6bc3da6 ("treewide: Replace GPLv2
-boilerplate/reference with SPDX - rule 15").
+Thanks!
 
->
-> Best regards
-> Uwe
->
-> Uwe Kleine-K=C3=B6nig (2):
->   module: Put known GPL offenders in an array
->   module: Block modules by Tuxedo from accessing GPL symbols
->
->  kernel/module/main.c | 56 +++++++++++++++++++++++++++++++++++++-------
->  1 file changed, 47 insertions(+), 9 deletions(-)
->
-> base-commit: 28955f4fa2823e39f1ecfb3a37a364563527afbc
+> * I verified lsmod |grep thunderbolt which showed module.
+> * When running sudo ./tbtrace enable, output was Thunderbolt/USB4
+>   tracing: Enabled.
+> * When plugging in monitor, it wakes the backlight, but there is no
+>   image. syslog shows it as LG monitor controls. The monitor reports
+>   "no signal" and eventually turns off the backlight to save power.
+> * When running sudo ./tbtrace disable, output was Thunderbolt/USB4
+>   tracing: Disabled.
+> * Output was save using tbtrace dump -vv > trace.out and sudo dmesg >
+>   trace.dmesg. trace.out is an empty file.
+> 
+> ---
+> 
+> (Yes, that's correct, trace.out is empty. I attached it nonetheless,
+> but it's a 0-byte file. I'm guessing the Thunderbolt chip probably
+> didn't come out of suspend?)
 
+Yes, that's possible and this could explain the Linux behaviour but it
+does not explain why it works in Windows. Also the dmesg is full of
+stacktraces, not much else.
+
+I got reply from our experts. They say that we are expected to get the
+DP IN unplugs every single time we enter redrive mode. There is nothing
+"special" added to the Windows side for this either so there is no real
+explanation why it works in Windows and why we see this in Linux. What
+they also wanted to check is that with the "production quality" Barlow
+Ridge firmwares this is not expected to happen and yours is in 14.x so
+is this some pre-production hardware that you are dealing with or this
+can be purchased from somewhere? Where did you get the firmware?
+
+Thanks!
 
