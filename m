@@ -1,234 +1,407 @@
-Return-Path: <linux-kernel+bounces-409284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 999119C8A01
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:32:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880EE9C8A05
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:33:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28F051F225F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:32:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E9E21F234B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D672E1F9EDA;
-	Thu, 14 Nov 2024 12:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC791FA25E;
+	Thu, 14 Nov 2024 12:33:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IZ/7QgNw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u3k9BPvR"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B241F9402
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 12:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4BF1F9A8D
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 12:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731587550; cv=none; b=gTX0B8fdSyhbDL4Il7Rwp5V08/kWpYLcM+evjtc4SrvsIziZPCeWONts8Dygrnwg24tq6Ra6p+tj+erH61CF24kvrI/TwDugfooXf+JcjJ7PWgJxjYFXOaEEeIF69sweyn8+y4onsHhOSnRlvpQwzm4q4qtrhYRl1sXrtmClnqc=
+	t=1731587580; cv=none; b=i3AUlqI9oqQgVv8TfC10pA2v5pTGYvlEzSHG+aB1z1LxCU9Klnb99D9dIPPeAFmEDjGIADF3ghFrjAdRL2NKkOUn8rTfKGI+IUZJQwKTlubgOlRuPDl1z5u4kXLuWdEVDSa3Xo/iBpVi2QOrXWlqIwTeZIlIWbbuWhUwZd4PDG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731587550; c=relaxed/simple;
-	bh=v+mB0Em3G2SgQM7YzQ1tRh1SrtceZclT2Ny+GkyfruI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kAzyFiFVJGWoJfFnbPBmJ20RHrdKNRdmUnXPxEPVxQS4/kVKaaZLRq8xButVxi/mOVkF/faoa/mD2modDVQt13F/jSUuwFOn9YjkvFeLRDxmzirj4qupoWEPSE2t6xFoP1hvNO/LYRna3mfVtcQ4GS0zx2UogY343tfwgvqG9kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IZ/7QgNw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731587547;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8pF/zHNWZ4PMwC1AR7XfdcmDdlhA8diJTJA9QYg9vKM=;
-	b=IZ/7QgNwtd5oRYuiXdCBgWMvIa4rb1JhRQqofTIUpxMWQ9trIdpbHJVdj/zEsRDOQwxsxw
-	DV9P0TCjPS+0YdgVHSf/gobQujuiXxOcJ6YmUTrTUfB6G4Ey6zmKR3PwLonWov7DxMQXtS
-	cuwTvMsdiqhMyiZVgnCA+ArrHqP1eSE=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-27-TjNOlH44MkGvAgk47qPjBA-1; Thu, 14 Nov 2024 07:32:26 -0500
-X-MC-Unique: TjNOlH44MkGvAgk47qPjBA-1
-X-Mimecast-MFC-AGG-ID: TjNOlH44MkGvAgk47qPjBA
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43159603c92so4220665e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 04:32:25 -0800 (PST)
+	s=arc-20240116; t=1731587580; c=relaxed/simple;
+	bh=7/tIU9o2uD+rnTUcrXFWle2j2spADixTljHDU6DhZm4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Saquk5e/IxOxAyAsrBsOMFu8bzMKPiSJIWp5Nx0rTwrY+A/cKQn0OfuX3JOGxfy2d/nmR3445FRmgNhVbM2X596oPzRHEbw0K1vrXfQJR1y19BpOEzYkF+SI0R0T67ruvrzbq66NzG1LjSrIyPpjGJ7/Vkia9ytsW/K/EupVRec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u3k9BPvR; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb57f97d75so5461001fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 04:32:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731587577; x=1732192377; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZVLoP9XVBjH5taL4TpmDze9j1Zqat4TO/x8cVB0wKTk=;
+        b=u3k9BPvRyoy/1EBjyTrvz7ozpoz9qlSXWwhQVb+72GDcd4mQYx7vKXxiOZ6hB67X3R
+         dzSPjOZWXYAxh9vFtO6X9GHXTjmWJY203LNjKXxLILWWTrzABSp3QyXpZLPuv40VSUGc
+         RqksJTRs4vrjpi3q39ymQ+Ws5iRcW4Hndte1OAooS1geZBVw4gasGKZeVawhy0SHPraK
+         UTO1Aft+lru9mjRqAqHuEqYXYqOF6HbPLUHpNqJndh8tcawzyZs5lJglZRz9slk6doHJ
+         5xK2DX4Y90g1Wa6Wat5xNONrLhTReC4EFgK+jaiZ1b8yUxxlKtVeuQMMetyqr1mAsLgI
+         09Tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731587545; x=1732192345;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8pF/zHNWZ4PMwC1AR7XfdcmDdlhA8diJTJA9QYg9vKM=;
-        b=kB4nxGqAlsLFqGl7WmUixKGe7UxWAl9MNwa3blHFA/ExQTxPo8w9zPp+jhZ90BFoJd
-         ZjZb/wRTcUb5U+iHMFhj04LYMQsmRZcriwUSGSo7CeZt7Rh5cOtYzqvSn6zk9+qiW2R4
-         1Z6wozSSqm7VZS0YAs8flsBKKnsEcjlVdIDJZVAamVGSkuElV3kb+MAu4s+6JitdnXsY
-         XmBoovjsnxcI6SwixJr4BikdeA4G6gNaHFwcC85ugjRGvg8DjZGedA4lulgY/H3vcNSe
-         O+kIn2yft3ZoJ4jY8zJDc01/2zfsdAEb3q9MFiypELmU8FyjH/ASFIi5PU33D/g+mdLh
-         41ww==
-X-Forwarded-Encrypted: i=1; AJvYcCVZzxhX0oYLs74uWYPfJmhIn+ixE/2r1v11NLPqQc4Gsue6z0Gjzwp5zHQROQr/vNhHMTtADMgw3GDIwII=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwogR1cLwon2sKi0x3MkwYhtyNOnbgjU0UhwxMSjCXDt2BMNwm+
-	dpigaOlH0hypfpcQ2vQzZIvYIQpuG59uYHdta1RXz1JcgLPMUdRYCA4KpKlIT1fcl0WFBZ5SYZe
-	c1zbxNTCV0iTGQTg1SLnlMr3n8swmJJL0jYtrdd9MsgqVARAz4PEnTpg23GV7Ig==
-X-Received: by 2002:a05:600c:4f06:b0:42b:a7c7:5667 with SMTP id 5b1f17b1804b1-432da7cbb72mr17910215e9.25.1731587544776;
-        Thu, 14 Nov 2024 04:32:24 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF5H2Uxth5DHVclFFMRZh4KFHdC6qJuBCu3xB2C4GpzDAwBhcmiHVcQJ5I1+EbuHQ2c5nULTw==
-X-Received: by 2002:a05:600c:4f06:b0:42b:a7c7:5667 with SMTP id 5b1f17b1804b1-432da7cbb72mr17910035e9.25.1731587544383;
-        Thu, 14 Nov 2024 04:32:24 -0800 (PST)
-Received: from ?IPV6:2003:cb:c715:6600:a077:c7da:3362:6896? (p200300cbc7156600a077c7da33626896.dip0.t-ipconnect.de. [2003:cb:c715:6600:a077:c7da:3362:6896])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab80582sm19043785e9.19.2024.11.14.04.32.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 04:32:23 -0800 (PST)
-Message-ID: <fa3fc933-cd51-4be5-944e-250da9289eda@redhat.com>
-Date: Thu, 14 Nov 2024 13:32:21 +0100
+        d=1e100.net; s=20230601; t=1731587577; x=1732192377;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZVLoP9XVBjH5taL4TpmDze9j1Zqat4TO/x8cVB0wKTk=;
+        b=VW5BBz0Yzctd6lwBSVpMg+u1J8Ux6bsZiCFGkk1dkryFR5zAuAzjo8wFsvTOkEyESg
+         iFsDobfbOWXdemRt1MJwcIy3ANY/q9lYY2DfRjfkobd1+nVUCkwRY11xg/UrkEEtZhd3
+         1vopugVHJVlq5dYTZBQkAedTdVtAWUnN3b58/Z1Iq0ohH3tjPzGbwJmu+SANc3xMyZ1y
+         wBjVFZbJmyNrvcF+uyGO1PTZUyB0tbvgI6IofqhXYM1VxnTXkayVRuxYYEO69sj0vhxu
+         z1cFnEX8crLasrlpDdodWxCG7kcOG5MbgZUz+vYnZSzNuiVOn/qF11cP10Ogly88WqYy
+         c/2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUIKeOyXKKZQGp9eetVHFwiT9iSEIth/nx10Gl+LZTXJQPGE13/VTn9mJ3nplRvHVcGneXIHjiNZCKnVjs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ3jM3YpM37GoB9Kwgt+VquuM48u/nGY7VSdtZFHM9vJ8Yppt4
+	R0Nr9zJp/Ez8LEE1Iz9Th7MkFP8iDuLbFCyrgiu2MJ0mzNOEhZgMtTjzm7lfR5g=
+X-Google-Smtp-Source: AGHT+IH7G+Tz/0L4sqitxAHMiB7SEIXBc17jR80P2FR2ol6AYyOcDIRTQh+Yj4FOWT3Pv1+2j5CZ9A==
+X-Received: by 2002:a05:651c:1589:b0:2fb:5bb8:7c24 with SMTP id 38308e7fff4ca-2ff20152825mr121200501fa.8.1731587576703;
+        Thu, 14 Nov 2024 04:32:56 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff59764207sm1621871fa.13.2024.11.14.04.32.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 04:32:55 -0800 (PST)
+Date: Thu, 14 Nov 2024 14:32:52 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: myungjoo.ham@samsung.com, Kyungmin.park@samsung.com, 
+	cw00.choi@samsung.com, Viresh Kumar <viresh.kumar@linaro.org>, sudeep.holla@arm.com, 
+	cristian.marussi@arm.com, andersson@kernel.org, konrad.dybcio@linaro.org, 
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com, conor+dt@kernel.org, 
+	arm-scmi@vger.kernel.org, Amir Vajid <avajid@quicinc.com>
+Subject: Re: [PATCH V4 4/5] soc: qcom: Introduce SCMI based Memlat (Memory
+ Latency) governor
+Message-ID: <34p27za5hcpubaxjuddsir2vqnqrvwyesnclu2cocvm3yhbv3r@ak7rcnp67gyd>
+References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
+ <20241007061023.1978380-5-quic_sibis@quicinc.com>
+ <2aycrvnvivcrqctqmweadcgenwugafdr6ub3bzkscterpenz32@bzabln2hkral>
+ <29eef87e-96f6-5105-6f7a-a8e01efcb4a3@quicinc.com>
+ <k4lpzxtrq3x6riyv6etxiobn7nbpczf2bp3m4oc752nhjknlit@uo53kbppzim7>
+ <ac655bdc-5ccf-c6c6-3203-659f1916c53c@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/9] mm: introduce skip_none_ptes()
-To: Qi Zheng <zhengqi.arch@bytedance.com>
-Cc: jannh@google.com, hughd@google.com, willy@infradead.org,
- muchun.song@linux.dev, vbabka@kernel.org, akpm@linux-foundation.org,
- peterx@redhat.com, mgorman@suse.de, catalin.marinas@arm.com,
- will@kernel.org, dave.hansen@linux.intel.com, luto@kernel.org,
- peterz@infradead.org, x86@kernel.org, lorenzo.stoakes@oracle.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, zokeefe@google.com,
- rientjes@google.com
-References: <cover.1731566457.git.zhengqi.arch@bytedance.com>
- <574bc9b646c87d878a5048edb63698a1f8483e10.1731566457.git.zhengqi.arch@bytedance.com>
- <c7eeac93-3619-4443-896f-ef2e02f0bef0@redhat.com>
- <617a063e-bd84-4da5-acf4-6ff516512055@bytedance.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <617a063e-bd84-4da5-acf4-6ff516512055@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ac655bdc-5ccf-c6c6-3203-659f1916c53c@quicinc.com>
 
-On 14.11.24 10:20, Qi Zheng wrote:
+On Thu, Nov 14, 2024 at 09:43:53AM +0530, Sibi Sankar wrote:
 > 
 > 
-> On 2024/11/14 16:04, David Hildenbrand wrote:
->>
->>>    static unsigned long zap_pte_range(struct mmu_gather *tlb,
->>>                    struct vm_area_struct *vma, pmd_t *pmd,
->>>                    unsigned long addr, unsigned long end,
->>> @@ -1682,13 +1704,17 @@ static unsigned long zap_pte_range(struct
->>> mmu_gather *tlb,
->>>            pte_t ptent = ptep_get(pte);
->>>            int max_nr;
->>> -        nr = 1;
->>> -        if (pte_none(ptent))
->>> -            continue;
->>> -
->>>            if (need_resched())
->>>                break;
->>> +        nr = skip_none_ptes(pte, addr, end);
->>> +        if (nr) {
->>> +            addr += PAGE_SIZE * nr;
->>> +            if (addr == end)
->>> +                break;
->>> +            pte += nr;
->>> +        }
->>> +
->>>            max_nr = (end - addr) / PAGE_SIZE;
->>
->> I dislike calculating max_nr twice, once here and once in skip_non_ptes.
->>
->> Further, you're missing to update ptent here.
+> On 10/26/24 23:46, Dmitry Baryshkov wrote:
+> > On Tue, Oct 22, 2024 at 01:48:25PM +0530, Sibi Sankar wrote:
+> > > 
+> > > 
+> > > On 10/7/24 23:27, Dmitry Baryshkov wrote:
+> > > > On Mon, Oct 07, 2024 at 11:40:22AM GMT, Sibi Sankar wrote:
+
+> > > > 
+> > > > > +};
+> > > > > +
+> > > > > +struct map_param_msg {
+> > > > > +	u32 hw_type;
+> > > > > +	u32 mon_idx;
+> > > > > +	u32 nr_rows;
+> > > > > +	struct map_table tbl[MAX_MAP_ENTRIES];
+> > > > > +} __packed;
+> > > > > +
+> > > > > +struct node_msg {
+> > > > > +	u32 cpumask;
+> > > > > +	u32 hw_type;
+> > > > > +	u32 mon_type;
+> > > > > +	u32 mon_idx;
+> > > > > +	char mon_name[MAX_NAME_LEN];
+> > > > > +};
+> > > > > +
+> > > > > +struct scalar_param_msg {
+> > > > > +	u32 hw_type;
+> > > > > +	u32 mon_idx;
+> > > > > +	u32 val;
+> > > > > +};
+> > > > > +
+> > > > > +enum common_ev_idx {
+> > > > > +	INST_IDX,
+> > > > > +	CYC_IDX,
+> > > > > +	CONST_CYC_IDX,
+> > > > > +	FE_STALL_IDX,
+> > > > > +	BE_STALL_IDX,
+> > > > > +	NUM_COMMON_EVS
+> > > > > +};
+> > > > > +
+> > > > > +enum grp_ev_idx {
+> > > > > +	MISS_IDX,
+> > > > > +	WB_IDX,
+> > > > > +	ACC_IDX,
+> > > > > +	NUM_GRP_EVS
+> > > > > +};
+> > > > > +
+> > > > > +#define EV_CPU_CYCLES		0
+> > > > > +#define EV_INST_RETIRED		2
+> > > > > +#define EV_L2_D_RFILL		5
+> > > > > +
+> > > > > +struct ev_map_msg {
+> > > > > +	u32 num_evs;
+> > > > > +	u32 hw_type;
+> > > > > +	u32 cid[NUM_COMMON_EVS];
+> > > > > +};
+> > > > > +
+> > > > > +struct cpufreq_memfreq_map {
+> > > > > +	unsigned int cpufreq_mhz;
+> > > > > +	unsigned int memfreq_khz;
+> > > > > +};
+> > > > > +
+> > > > > +struct scmi_monitor_info {
+> > > > > +	struct cpufreq_memfreq_map *freq_map;
+> > > > > +	char mon_name[MAX_NAME_LEN];
+> > > > > +	u32 mon_idx;
+> > > > > +	u32 mon_type;
+> > > > > +	u32 ipm_ceil;
+> > > > > +	u32 mask;
+> > > > > +	u32 freq_map_len;
+> > > > > +};
+> > > > > +
+> > > > > +struct scmi_memory_info {
+> > > > > +	struct scmi_monitor_info *monitor[MAX_MONITOR_CNT];
+> > > > > +	u32 hw_type;
+> > > > > +	int monitor_cnt;
+> > > > > +	u32 min_freq;
+> > > > > +	u32 max_freq;
+> > > > > +};
+> > > > > +
+> > > > > +struct scmi_memlat_info {
+> > > > > +	struct scmi_protocol_handle *ph;
+> > > > > +	const struct qcom_generic_ext_ops *ops;
+> > > > > +	struct scmi_memory_info *memory[MAX_MEMORY_TYPES];
+> > > > > +	u32 cluster_info[NR_CPUS];
+> > > > > +	int memory_cnt;
+> > > > > +};
+> > > > > +
+> > > > > +static int populate_cluster_info(u32 *cluster_info)
+> > > > > +{
+> > > > > +	char name[MAX_NAME_LEN];
+> > > > > +	int i = 0;
+> > > > > +
+> > > > > +	struct device_node *cn __free(device_node) = of_find_node_by_path("/cpus");
+> > > > > +	if (!cn)
+> > > > > +		return -ENODEV;
+> > > > > +
+> > > > > +	struct device_node *map __free(device_node) = of_get_child_by_name(cn, "cpu-map");
+> > > > > +	if (!map)
+> > > > > +		return -ENODEV;
+> > > > > +
+> > > > > +	do {
+> > > > > +		snprintf(name, sizeof(name), "cluster%d", i);
+> > > > > +		struct device_node *c __free(device_node) = of_get_child_by_name(map, name);
+> > > > > +		if (!c)
+> > > > > +			break;
+> > > > > +
+> > > > > +		*(cluster_info + i) = of_get_child_count(c);
+> > > > > +		i++;
+> > > > > +	} while (1);
+> > > > 
+> > > > Can you use existing API from drivers/base/arch_topology.c? If not, can
+> > > > it be extended to support your usecase?
+> > > 
+> > > ack. But I'm pretty sure it's going to take a while for reaching such
+> > > an agreement so I'll drop this feature during the next re-spin.
+> > 
+> > Why? What kind of API do you actually need? The arch_topology.c simply
+> > exports a table of struct cpu_topology. Is it somehow different from
+> > what you are parsing manually?
 > 
-> Oh, my bad. However, with [PATCH v3 5/9], there will be no problem, but
-> there are still two ptep_get() and max_nr calculation.
+> yup, we had to figure out the physical id of the cpu
+> since cpus can be disabled by the bootloader using
+> status = "failed" property and we have to pass this
+> onto the cpucp memlat algorithm.
+
+Isn't it equal to the index in the cpu_topology table?
+
 > 
-> If you inline it you can
->> avoid another ptep_get().
+> > 
+> > > 
+> > > > 
+> > > > > +
+> > > > > +	return 0;
+> > > > > +}
+> > > > > +
+> > > > > +static void populate_physical_mask(struct device_node *np, u32 *mask, u32 *cluster_info)
+> > > > > +{
+> > > > > +	struct device_node *dev_phandle __free(device_node);
+> > > > > +	int cpu, i = 0, physical_id;
+> > > > > +
+> > > > > +	do {
+> > > > > +		dev_phandle = of_parse_phandle(np, "cpus", i++);
+> > > > > +		cpu = of_cpu_node_to_id(dev_phandle);
+> > > > > +		if (cpu != -ENODEV) {
+> > > > > +			physical_id = topology_core_id(cpu);
+> > > > > +			for (int j = 0; j < topology_cluster_id(cpu); j++)
+> > > > > +				physical_id += *(cluster_info + j);
+> > > > > +			*mask |= BIT(physical_id);
+> > > > > +		}
+> > > > > +	} while (dev_phandle);
+> > > > > +}
+> > > > > +
+> > > > > +static struct cpufreq_memfreq_map *init_cpufreq_memfreq_map(struct device *dev,
+> > > > > +							    struct scmi_memory_info *memory,
+> > > > > +							    struct device_node *of_node,
+> > > > > +							    u32 *cnt)
+> > > > > +{
+> > > > > +	struct device_node *tbl_np __free(device_node), *opp_np __free(device_node);
+> > > > > +	struct cpufreq_memfreq_map *tbl;
+> > > > > +	int ret, i = 0;
+> > > > > +	u32 level, len;
+> > > > > +	u64 rate;
+> > > > > +
+> > > > > +	tbl_np = of_parse_phandle(of_node, "operating-points-v2", 0);
+> > > > 
+> > > > Please use existing API to parse OPP tables or document a reason why it
+> > > > can't be used.
+> > > 
+> > > Thanks, I had them documented as opens in the coverletter. Dropped them
+> > > since no one had any comments on it during V3. Will add them as comments
+> > > to this driver instead.
+> > > 
+> > > https://lore.kernel.org/lkml/20240702191440.2161623-1-quic_sibis@quicinc.com/
+> > > 
+> > > re-copying things again:
+> > > opp-tables are used but they don't get to be added to the scmi device
+> > > (thus we rely on a lot of manual parsing) because the memlat client driver
+> > > doesn't vote on these resources clocks/interconnects/power-domain
+> > > from the kernel and some of the resources aren't modeled in the first
+> > > place like DDR_QOS.
+> > 
+> > As discussed offline, please consider extending the OPP to be able to
+> > get the struct opp_table for the particular phandle. Another option
+> > might be to change the memlat driver by having a separate device for
+> > each monitor. This way you can use existing API to parse OPP tables and
+> > to get necessary data from those tables.
 > 
-> Do you mean to inline the skip_none_ptes() into do_zap_pte_range()?
+> + Viresh
+> 
+> Spoke with Viresh offline and he had stricter requirements
+> than what you proposed. He definitely wanted the opp-tables
+> to be assoiciated with devices at the very least and have
+> all opp parsing logic within the opp-framework. Given that
+> we have to model all these dummy devices just to add the
+> tables I'll re-check the feasibility of movign the tables
+> into the driver itself. Will move the patch series back
+> into RFC and re-post just the vendor protocol since that's
+> close to merge
 
-Effectively moving this patch after #5, and have it be something like:
+I don't think it's sensible to move the tables to the driver. Instead
+adding a device per monitor sounds like a better idea.
 
-diff --git a/mm/memory.c b/mm/memory.c
-index 1949f5e0fece5..4f5d1e4c6688e 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1667,8 +1667,21 @@ static inline int do_zap_pte_range(struct mmu_gather *tlb,
-         pte_t ptent = ptep_get(pte);
-         int max_nr = (end - addr) / PAGE_SIZE;
-  
--       if (pte_none(ptent))
--               return 1;
-+       /* Skip all consecutive pte_none(). */
-+       if (pte_none(ptent)) {
-+               int nr;
-+
-+               for (nr = 1; nr < max_nr; nr++) {
-+                       ptent = ptep_get(pte + nr);
-+                       if (!pte_none(ptent))
-+                               break;
-+               }
-+               max_nr -= nr;
-+               if (!max_nr)
-+                       return nr;
-+               pte += nr;
-+               addr += nr * PAGE_SIZE;
-+       }
-  
-         if (pte_present(ptent))
-                 return zap_present_ptes(tlb, vma, pte, ptent, max_nr,
+> > > > > +	if (!tbl_np)
+> > > > > +		return ERR_PTR(-ENODEV);
+> > > > > +
+> > > > > +	len = min(of_get_available_child_count(tbl_np), MAX_MAP_ENTRIES);
+> > > > > +	if (len == 0)
+> > > > > +		return ERR_PTR(-ENODEV);
+> > > > > +
+> > > > > +	tbl = devm_kzalloc(dev, (len + 1) * sizeof(struct cpufreq_memfreq_map),
+> > > > > +			   GFP_KERNEL);
+> > > > > +	if (!tbl)
+> > > > > +		return ERR_PTR(-ENOMEM);
+> > > > > +
+> > > > > +	for_each_available_child_of_node(tbl_np, opp_np) {
+> > > > > +		ret = of_property_read_u64_index(opp_np, "opp-hz", 0, &rate);
+> > > > > +		if (ret < 0)
+> > > > > +			return ERR_PTR(ret);
+> > > > > +
+> > > > > +		tbl[i].cpufreq_mhz = rate / HZ_PER_MHZ;
+> > > > > +
+> > > > > +		if (memory->hw_type != QCOM_MEM_TYPE_DDR_QOS) {
+> > > > > +			ret = of_property_read_u64_index(opp_np, "opp-hz", 1, &rate);
+> > > > > +			if (ret < 0)
+> > > > > +				return ERR_PTR(ret);
+> > > > > +
+> > > > > +			tbl[i].memfreq_khz = rate / HZ_PER_KHZ;
+> > > > > +		} else {
+> > > > > +			ret = of_property_read_u32(opp_np, "opp-level", &level);
+> > > > > +			if (ret < 0)
+> > > > > +				return ERR_PTR(ret);
+> > > > > +
+> > > > > +			tbl[i].memfreq_khz = level;
+> > > > > +		}
+> > > > > +
+> > > > > +		dev_dbg(dev, "Entry%d CPU:%u, Mem:%u\n", i, tbl[i].cpufreq_mhz, tbl[i].memfreq_khz);
+> > > > > +		i++;
+> > > > > +	}
+> > > > > +	*cnt = len;
+> > > > > +
+> > > > > +	return tbl;
+> > > > > +}
+> > > > > +
+> > > > > +static int process_scmi_memlat_of_node(struct scmi_device *sdev, struct scmi_memlat_info *info)
+> > > > > +{
+> > > > > +	struct scmi_monitor_info *monitor;
+> > > > > +	struct scmi_memory_info *memory;
+> > > > > +	char name[MAX_NAME_LEN];
+> > > > > +	u64 memfreq[2];
+> > > > > +	int ret;
+> > > > > +
+> > > > > +	ret = populate_cluster_info(info->cluster_info);
+> > > > > +	if (ret < 0) {
+> > > > > +		dev_err_probe(&sdev->dev, ret, "failed to populate cluster info\n");
+> > > > > +		goto err;
+> > > > > +	}
+> > > > > +
+> > > > > +	of_node_get(sdev->dev.of_node);
+> > > > > +	do {
+> > > > > +		snprintf(name, sizeof(name), "memory-%d", info->memory_cnt);
+> > > > > +		struct device_node *memory_np __free(device_node) =
+> > > > > +			of_find_node_by_name(sdev->dev.of_node, name);
+> > > > > +
+> > > > > +		if (!memory_np)
+> > > > > +			break;
+> > > > > +
+> > > > > +		if (info->memory_cnt >= MAX_MEMORY_TYPES)
+> > > > > +			return dev_err_probe(&sdev->dev, -EINVAL,
+> > > > > +					     "failed to parse unsupported memory type\n");
+> > > > > +
+> > > > > +		memory = devm_kzalloc(&sdev->dev, sizeof(*memory), GFP_KERNEL);
+> > > > > +		if (!memory) {
+> > > > > +			ret = -ENOMEM;
+> > > > > +			goto err;
+> > > > > +		}
+> > > > > +
+> > > > > +		ret = of_property_read_u32(memory_np, "qcom,memory-type", &memory->hw_type);
+> > > > > +		if (ret) {
+> > > > > +			dev_err_probe(&sdev->dev, ret, "failed to read memory type\n");
+> > > > > +			goto err;
+> > > > > +		}
+> > > > > +
+> > > > > +		ret = of_property_read_u64_array(memory_np, "freq-table-hz", memfreq, 2);
+> > > > > +		if (ret && (ret != -EINVAL)) {
+> > > > > +			dev_err_probe(&sdev->dev, ret, "failed to read min/max freq\n");
+> > > > > +			goto err;
+> > > > > +		}
+> > > > 
+> > > > Can we get this information from the OPP table instead?
+> > > 
+> > > we don't list all the available ddr/llcc freqs in the opp-table
+> > > so that we can keep the table constant across platforms.
+> > 
+> > NO. Use opp-supported-hw to limit data to a particular platform. There
+> > is no reason to keep min/max out of the OPP table.
+> 
+> if we are movign the opp-tables into driver data for the reasons
+> described above, this can probably stay?
 
+No. They duplicate the information that can be a part of the tables. It
+doesn't matter if the tables are in the driver or in DT.
 
-In the context of this patch this makes most sense.
-
-Regarding "count_pte_none" comment, I assume you talk about patch #7.
-
-Can't you simply return the number of pte_none that you skipped here using another
-input variable, if really required?
 
 -- 
-Cheers,
-
-David / dhildenb
-
+With best wishes
+Dmitry
 
