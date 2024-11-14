@@ -1,120 +1,144 @@
-Return-Path: <linux-kernel+bounces-409489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F1D99C8D88
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:03:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C88F99C8D84
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:02:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6604FB2BFE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:02:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 880F3282AEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6049148827;
-	Thu, 14 Nov 2024 15:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7405F149C7D;
+	Thu, 14 Nov 2024 15:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Re6wsiJp"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n2xkHdT1"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3301487CD
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13DEC7DA93;
+	Thu, 14 Nov 2024 15:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731596499; cv=none; b=HGOFtARlaMMJDfpLSo8mT/TpjqhSxjTBqHGuj83ypIkf2VvNIr0ZhMT6C9SESG4Ba9z3tPGZ1jHA7QCy8J02bz/mLpydeX9RS6Odl/mUmtGclZQDbSSqmlnn1cvGDOimLInbxjbybsvGUfCj1a7J6bFOTAYHDHiNHbaY2fIJNoQ=
+	t=1731596526; cv=none; b=kcHim58z8vGPAVaz8xqzARnTMm4pdsUWyohVQEU8Q/NcsTXiYNDgyYwpb/xJhAytF9l6e+9SQBT5zXo+B+dVEywoIxESny1XeaAr4FNAl5W+WAokSy9al7vMMXzhFMf3Z6HaZeDvL2Hu+bPG6uJ/Bwi5eb9wgDR2r7XjmRqgJ/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731596499; c=relaxed/simple;
-	bh=4UUkiKmzly0OeVpf0QiuK3sDrCQWBp1r1pQik5CtFf4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q38DU/JUOJeRAsDOZWSPruLh0IMxv53T3OYV5xgx27DFVaGeFs9jPxvLeMPBleyok/tMUgLS5P8C/RSFHGrL8fSDw2GpT6Ouf/LDbumSJqtNcWESFpIcT8nGCECarKvVuGKx+Vev25h0P+2Gnb4/6A7Ry+mYOP1Yo6BKfuwXO2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Re6wsiJp; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-83ab694ebe5so24556639f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:01:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1731596497; x=1732201297; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EAlff9bmpTU+UEhgxHo5EEloRRnZ7M6S5z4oitiZMxo=;
-        b=Re6wsiJpi+daUSUR+VN5E5QIEZC+roDV382qaJ7+hVvn3gXTqiq6MAhrpbK3daGcJH
-         l9mAy3hS1WfNFecb8oQcaDO2Rj42RhH1whRr/ejZL5Xl229D3na7NPzs5FfITyKYRcm2
-         P9EXGorA9cqzEJQ3P3qxnmBumtg0Rya7fJc4c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731596497; x=1732201297;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EAlff9bmpTU+UEhgxHo5EEloRRnZ7M6S5z4oitiZMxo=;
-        b=RDI48Uihhk+7OyPeyVtxDkVN10Fom94cVEm6YXYjxYpf6e7C5CcmpKH1thM+jUFjyU
-         g/6mndt70jy+c65KNMEj72AEese83q7Ig1Mp092R+bzHcG5K8yPi1v4xTy7nzgd0O0qt
-         Q+BDt6hYE1HW1C356+/LK855FCU3Kr1V2nEfEoXSEtF1lheVKDHAUQ7JWjKfKsPL/KzZ
-         4SsaktEaTvQW66jonIrj8L/n5xuGpf5gliWmkmqLnn2PUVhOS/92iq3CUpvQNMxRlEdR
-         TRyF1zKVDCpkxnP7ayF5RokBui0FIfrhcqheosw9WhGMl6NK5C/8HOwTW7plUTdMei+E
-         9A6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUWl1x2vya7spkBqU2Nek2Y86FsbiuR3hCDg0Hr2dFXn3lRa1Kh4EkCKyiYbFYEY5UGwH3y1Xbaqew/78M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFQK5S55TDj5g6G+ikwz3961HVSw8IQYNE4vSkQmC/eTMbvIPl
-	NA+UXmcmUimm6Cce62LLZUlNCXNyTcfmZ+CF/lAStwO5XycZ0ljf6QlkhBtVQgJwAO9YUX2J27r
-	u
-X-Google-Smtp-Source: AGHT+IF6veRv5ZTb4rF/6xullZcNRh/vz8AAUc5kClqwB0uhF1UaGwjqPrPpEBqCto1g6VtSb44D0w==
-X-Received: by 2002:a05:6602:641d:b0:83a:931a:13a0 with SMTP id ca18e2360f4ac-83e032e0050mr2695903639f.8.1731596496579;
-        Thu, 14 Nov 2024 07:01:36 -0800 (PST)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e02fc667fcsm302006173.62.2024.11.14.07.01.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 07:01:35 -0800 (PST)
-Message-ID: <2dafc0bb-4dee-4c7e-91b0-01fa66a822aa@linuxfoundation.org>
-Date: Thu, 14 Nov 2024 08:01:34 -0700
+	s=arc-20240116; t=1731596526; c=relaxed/simple;
+	bh=BrpgHeZZUBGGE/4npmemVXo9LQmjuTH144fIxM1YZAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EDRHqKARbtSOiKNFL/RuEMvAupacNTaRaQZHrrT2Uo4x4/NG5AGTo3OLprdqBFcijIu90/LDVE1u4scwYXYalLlNk+wGrI8aNhu6wpP5aHyTd4SLJqYKY9DnRREEaelBRgHSBe3HiCzR7y55pW8VytGtRWLOmf9i5vDxw9j8pIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=n2xkHdT1; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=KVl4h5R6rnhw6YUf9IrDWsXYnzegGCj/KhuQEleNVkg=; b=n2xkHdT1HWMG3UPYX8L66GnioC
+	9sZRphIee2ajkU+LPtbpX5CE9MIOoSsqtUh1uDWgEAwLlU+a0yJG/qf55YVfVYuz3ac1thP+B/8ww
+	e8wtORX2Dyew/ckDq8nvfhXoayao12i1iinsE+R7gTy9ynsQwbCY+JmzkgWPG5BqQv7QqmD1Sx8Zb
+	4nNqABqm9+73dAdbJVBmWYYNcKgnTg/BSSGuH477e5jkruwIIDfrGH/hLcbTCON2wvBYz0Pb0LKWK
+	u1qA/SGgiq9rIOy8VIRRfSJ5KSQrGyps7gipayt101UsD7HxuN1Z0JkbjsP5ui2/VdmQyWrv2iBeQ
+	Bd/6zqBg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tBbM1-0000000033t-3CHr;
+	Thu, 14 Nov 2024 15:01:54 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1FB58300446; Thu, 14 Nov 2024 16:01:53 +0100 (CET)
+Date: Thu, 14 Nov 2024 16:01:52 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Deepak Surti <deepak.surti@arm.com>
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+	mark.barnett@arm.com, ben.gainey@arm.com, ak@linux.intel.com,
+	will@kernel.org, james.clark@arm.com, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 1/4] perf: Allow periodic events to alternate between
+ two sample periods
+Message-ID: <20241114150152.GC39245@noisy.programming.kicks-ass.net>
+References: <20241107160721.1401614-1-deepak.surti@arm.com>
+ <20241107160721.1401614-2-deepak.surti@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] Documentation/CoC: spell out enforcement for
- unacceptable behaviors
-To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: gregkh@linuxfoundation.org, corbet@lwn.net, workflows@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- rdunlap@infradead.org, daniel@ffwll.ch, laurent.pinchart@ideasonboard.com,
- broonie@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
- Miguel Ojeda <ojeda@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
- Steven Rostedt <rostedt@goodmis.org>, Dan Williams
- <dan.j.williams@intel.com>, Theodore Ts'o <tytso@mit.edu>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241113232557.29854-1-skhan@linuxfoundation.org>
- <5rkn65qu2i3kz72hxbmcg25mrq5ehmb4y6xia2p3k4naiogi44@rcaoz3xnqlcf>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <5rkn65qu2i3kz72hxbmcg25mrq5ehmb4y6xia2p3k4naiogi44@rcaoz3xnqlcf>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107160721.1401614-2-deepak.surti@arm.com>
 
-On 11/14/24 07:38, Konstantin Ryabitsev wrote:
-> On Wed, Nov 13, 2024 at 04:25:57PM -0700, Shuah Khan wrote:
->> +The scope of the ban for a period of time could include:
->> +
->> +    a. denying patch contributions and pull requests
->> +    b. pausing collaboration with the violator by ignoring their
->> +       contributions and/or blocking their email account(s)
->> +    c. blocking their access to kernel.org accounts and mailing lists
+On Thu, Nov 07, 2024 at 04:07:18PM +0000, Deepak Surti wrote:
+> From: Ben Gainey <ben.gainey@arm.com>
 > 
-> Can we change this to:
+> This change modifies perf_event_attr to add a second, alternative
+> sample period field, and modifies the core perf overflow handling
+> such that when specified an event will alternate between two sample
+> periods.
 > 
->      c. restricting their ability to communicate via kernel.org platforms,
->         such as mailing lists and social media sites
+> Currently, perf does not provide a  mechanism for decoupling the period
+> over which counters are counted from the period between samples. This is
+> problematic for building a tool to measure per-function metrics derived
+> from a sampled counter group. Ideally such a tool wants a very small
+> sample window in order to correctly attribute the metrics to a given
+> function, but prefers a larger sample period that provides representative
+> coverage without excessive probe effect, triggering throttling, or
+> generating excessive amounts of data.
 > 
-> It makes more sense to phrase it this way, because it's really the
-> communication that is the focus of this policy, not general access like git,
-> patchwork, etc.
-> 
+> By alternating between a long and short sample_period and subsequently
+> discarding the long samples, tools may decouple the period between
+> samples that the tool cares about from the window of time over which
+> interesting counts are collected.
 
-Thank you Konstantin. Correct. The intent is to restrict communication.
-The way you phrased it makes perfect sense. I will make the change.
+Do you have a link to a paper or something that explains this method?
 
-thanks,
--- Shuah
+
+> +	/*
+> +	 * Indicates that the alternative_sample_period is used
+> +	 */
+> +	bool				using_alternative_sample_period;
+
+I typically prefer variables names that are shorter.
+
+
+> @@ -9822,6 +9825,26 @@ static int __perf_event_overflow(struct perf_event *event,
+>  	    !bpf_overflow_handler(event, data, regs))
+>  		return ret;
+>  
+> +	/*
+> +	 * Swap the sample period to the alternative period
+> +	 */
+> +	if (event->attr.alternative_sample_period) {
+> +		bool using_alt = hwc->using_alternative_sample_period;
+> +		u64 sample_period = (using_alt ? event->attr.sample_period
+> +					       : event->attr.alternative_sample_period);
+> +
+> +		hwc->sample_period = sample_period;
+> +		hwc->using_alternative_sample_period = !using_alt;
+> +
+> +		if (local64_read(&hwc->period_left) > 0) {
+> +			event->pmu->stop(event, PERF_EF_UPDATE);
+> +
+> +			local64_set(&hwc->period_left, 0);
+> +
+> +			event->pmu->start(event, PERF_EF_RELOAD);
+> +		}
+
+This is quite terrible :-(
+
+Getting here means we just went through the effort of programming the
+period and you'll pretty much always hit that 'period_left > 0' case.
+
+Why do we need this case at all? If you don't do this, then the next
+overflow will pick the period you just wrote to hwc->sample_period
+(although you might want to audit all arch implementations).
+
+Looking at it again, that truncation to 0 is just plain wrong -- always.
+Why are you doing this?
+
+
 
 
