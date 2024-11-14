@@ -1,158 +1,154 @@
-Return-Path: <linux-kernel+bounces-409181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEEFA9C8867
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:07:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79CE79C886D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:08:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 333221F21225
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:07:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11951281DFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21181F81AD;
-	Thu, 14 Nov 2024 11:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206251F8931;
+	Thu, 14 Nov 2024 11:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="NhZsYQrO"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="QSgJSCE6"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893131F6688;
-	Thu, 14 Nov 2024 11:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E131F80DF
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731582436; cv=none; b=cJbCqHNMm9OUOkospWZUbXwNSHHkp2HLZI64IqSaU0bl2cB9bPbuG1FrHYoH/2Kozw+96gImTzjQJlWKWVWeVbR65wo8EMYjGEHsHxiLVtBKJAVPtr0Pn8OamQbm5Kf0Rl9a3RW7wbwz/9j+ETEBBhz8gnWd8H3CrtbjHwoUgnA=
+	t=1731582471; cv=none; b=tPseBeiP9iTY1IdeeM/MQ2lYaqBd4jVs6lhrabNCpFvdb9Zh3Pwa8G3cf7UTj6XFQ8Jnl6xdVz5z/SuXlbD0H1N/VwWH7Zfikm62aU0SgmobG9UgWJSUzOCzrpk2bX9GglE4krwhxW9ArK9RNxmuaAA98WR8f4opvasTcwEgplY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731582436; c=relaxed/simple;
-	bh=MC0qAnKUOKRMjKCytDn/FhqZ625PpC6tf3/omYyZ3h0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D6dGEa0GjVGWxhGIPG/KTVDtWRtyxA5vfHbXq1xVoNu0Vqb9Fa6zI5N4kW5BN4eMzs+ZkHdMP3cWPR2tQ5d4VQks2o3nBH0LQBMpUNq0qYuoq/Lir2rhnQZfghdMNjp75QDBxSnwuIK9jB5ckWUeyDoLziXcTxVlYYKysR27Z6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=NhZsYQrO; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1CDC6827;
-	Thu, 14 Nov 2024 12:06:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1731582412;
-	bh=MC0qAnKUOKRMjKCytDn/FhqZ625PpC6tf3/omYyZ3h0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NhZsYQrORAxxFCoHmARsziNnA7Nr/4PueBSPyshQGdet6rqyDUnJ4EPeFylQs6yG+
-	 9RYPlbmmeEzrEc2MlpZ+DKF1YkTiBE5pnEfFFhDiQ/jskYh/3un3/LKtESTE34Xse5
-	 Tk7NpZ5B0LdtMmUVCXNUzhPZlvncfw9twvAgwmOs=
-Date: Thu, 14 Nov 2024 13:06:58 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Jagan Teki <jagan@amarulasolutions.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Douglas Anderson <dianders@chromium.org>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/bridge: Constify struct i2c_device_id
-Message-ID: <20241114110658.GF26171@pendragon.ideasonboard.com>
-References: <bdba1f49b4b48e22628482b49ce81f8e1f0d97b1.1731445901.git.christophe.jaillet@wanadoo.fr>
- <20241112224335.GA29944@pendragon.ideasonboard.com>
- <71348ac9-07bf-460f-a200-653f57ed4061@wanadoo.fr>
+	s=arc-20240116; t=1731582471; c=relaxed/simple;
+	bh=qA8zkd1+vrbVXKr/bpaFiGyX5M8eITuzHSOafFXGmSY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nMRhgFviTY8VgwNdhr1xFnXh1/uQxdnTkxOcFX7myQ3xWniJ7VAu/7gADmC6Bms3SKm2C7fHAZg5Bce0MtJHYAJlZE9yfispQQ5ZUrjwpN1RZxJZtr9Ou99y1G8UA4tDvHJM+myatt6chMj2+jKew4H1df7/X2JYtT9lkkzYBSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=QSgJSCE6; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1731582427; x=1732187227; i=efault@gmx.de;
+	bh=j3ult6DVVN70fu7qdOCxtutfm73BPRCatXhV6WQhcJ8=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=QSgJSCE6oBO5sLyvsTuBlW8TNdidWOKQxBJ91N1Z2pKJe3tBzExjbPfqdbBbJMKh
+	 D13SYaeQdstf1mdF3jUfziCdAWqrsAA9XHuaqGWj+GTTFomaOPaURbF00Le7B/cle
+	 nkc0+vxdK4vw4OQYrBMO9YBXwzsEGOWBP7eowBKmfeUhgPQ2Ff0dGXaJoIculyLhC
+	 U+86LkdXvPFVyNnNbG5cQN3bZsYz44KRmkfhBQlcAGu+vRIThZzGc4jD2bkwNsU3I
+	 ovw+2oxym5gx6Cw/GQD+r+0dYE934gijMtkf4ymhGhwCmwiqTAumes88pYRALmz3z
+	 LJUlFtqcL8fPcqb8uw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from homer.fritz.box ([91.212.106.202]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1M1Hdw-1tEHmD1YhW-00FWUT; Thu, 14
+ Nov 2024 12:07:07 +0100
+Message-ID: <95ff75cacab4720bbbecd54e881bb94d97087b45.camel@gmx.de>
+Subject: Re: [PATCH] sched/fair: Dequeue sched_delayed tasks when waking to
+ a busy CPU
+From: Mike Galbraith <efault@gmx.de>
+To: Phil Auld <pauld@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com, 
+ juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com,  rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com,  linux-kernel@vger.kernel.org,
+ kprateek.nayak@amd.com, wuyun.abel@bytedance.com, 
+ youssefesmat@chromium.org, tglx@linutronix.de
+Date: Thu, 14 Nov 2024 12:07:03 +0100
+In-Reply-To: <81de2f710d8922a47364632335ff5ba1a45625b3.camel@gmx.de>
+References: <20241106141420.GZ33184@noisy.programming.kicks-ass.net>
+	 <d2b90fa283d1655d73576eb392949d9b1539070d.camel@gmx.de>
+	 <bd737a9a498638b253d6e273cbbea108b6c5a4b0.camel@gmx.de>
+	 <982456f0abca321b874b7974bdf17d1a605c3d38.camel@gmx.de>
+	 <5280774bce7343c43904ae3df4403942092f5562.camel@gmx.de>
+	 <20241107140945.GA34695@noisy.programming.kicks-ass.net>
+	 <750542452c4f852831e601e1b8de40df4b108d9a.camel@gmx.de>
+	 <5a4cb3e4ab698fe2d8419e28d61e292dcd0c8fad.camel@gmx.de>
+	 <20241112124117.GA336451@pauld.westford.csb>
+	 <0befc9ed8979594d790a8d4fe7ff5c5534c61c3c.camel@gmx.de>
+	 <20241112154140.GC336451@pauld.westford.csb>
+	 <81de2f710d8922a47364632335ff5ba1a45625b3.camel@gmx.de>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <71348ac9-07bf-460f-a200-653f57ed4061@wanadoo.fr>
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:uYVbsA7vvyAEviHQiubJQBxvNgiOYrhCQ3FxKNuwmUaMTz5gNro
+ saRSPK6cyH9FtDrz72vYE6etAciAPWCgC9xH5EY+jkD/+3Ugpge2PRG6wQ/ARN8PWDmGh3b
+ XVoq0Y4Xh/+budpaOZiPvv7HJoU8w2p48BrcuCV2yW2uCoiRvR7w+Msr9lYO16Yov92NmRv
+ PPO34jk0xzB6hbwoh7ZJA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:xcYyS/F4+i8=;ua+EqFXQngJA5FaE0xOegFts8uB
+ lDaNY78lMFaSvxBIc45mbga0LRRLsfqOZlwL+cQ0D1LbXcfra1c8Ac8ZxKjMfa67gTfBbZpdZ
+ M+NTjxzDw6Pzi9zWhsXE02CR+/gaii/t4oLZbkDCkhKAvMir6FRrMgwpbSvV6F2WZHfYGo6sO
+ Ghr793dqGCUBP4IlRj4VKz2lckq7c1vEyV1u79Z+DZlcemHAJRDwtBSLtjUguqLDdnzS/sxGS
+ 3geGF/Cui1CLZ4MuaIE+duWj7i9vskbEDoqo+gVWn/UMzoZ6jVpRI+OPIBNmbb7j6bqC4DJk7
+ beD/PdkCTMNh1Dz1iSJB7bEa5RIbApD2H76XPPPAaR7EEFfz62JGU0JSNtCUlWkQcmkiCZVaa
+ hwecJuo+1r3Yuu7KxxVUiai5OuQ8N5YopjbowPrtOMxlo8ou9ArJJhGiecJ7YGVQqroCGA3Z3
+ rD9RCDDf/arnLBSo8Zd44JEYz85rMDBmJ6k+TvMKgw+cD52b+CmRTgsN7fR6ofvrxruXqi680
+ 1prumKtmkLibB16YKWIjuFqDgBq0+QByWwbaEglCp74q6CTez8KGiT6XolZY1fpbuJ+JBef8R
+ +WkVY5wJF/b7Evcn6zDsffeF1tpMk8ea3NFlONVcFRth66LFEXUU0iObHDeBELGXt0nFLGMuW
+ PcWXGwswn8XvSCMEsK6xxeGh4Dm+n8zo43qKWQIWOcMlTPlLFq9LSaSQUh0fDGO+Nb/JQmGFJ
+ Z9GJj4z7YVT44xx/4nKCZ6xXvzh9RDwIEv92exIKrlQBlvNPVHQMY77KUfhOjXygF9rzl2VWR
+ 7WLAVYEaRsb9CkiB5rXvrC/a8mtN7D0zfYwt4eskF2/O4VzE908urOJwsKM1fTVbkmStjw5Ri
+ Ic8NSfEQhkpsRpADf3tbEReosLWiKmQT14v102mHXOf2uTHREraxIyqjp
 
-Hi Christophe,
+On Tue, 2024-11-12 at 17:15 +0100, Mike Galbraith wrote:
+> On Tue, 2024-11-12 at 10:41 -0500, Phil Auld wrote:
+> > On Tue, Nov 12, 2024 at 03:23:38PM +0100 Mike Galbraith wrote:
+> >
+> > >
+> > > We don't however have to let sched_delayed block SIS though.=C2=A0 R=
+endering
+> > > them transparent in idle_cpu() did NOT wreck the progression, so
+> > > maaaybe could help your regression.
+> > >
+> >
+> > You mean something like:
+> >
+> > if (rq->nr_running > rq->h_nr_delayed)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+> >
+> > in idle_cpu() instead of the straight rq->nr_running check?
+>
+> Yeah, close enough.
 
-On Wed, Nov 13, 2024 at 10:19:24PM +0100, Christophe JAILLET wrote:
-> Le 12/11/2024 à 23:43, Laurent Pinchart a écrit :
-> > On Tue, Nov 12, 2024 at 10:12:25PM +0100, Christophe JAILLET wrote:
-> >> 'struct i2c_device_id' is not modified in these drivers.
-> >>
-> >> Constifying this structure moves some data to a read-only section, so
-> >> increase overall security.
-> >>
-> >> On a x86_64, with allmodconfig, as an example:
-> >> Before:
-> >> ======
-> >>     text	   data	    bss	    dec	    hex	filename
-> >>    15566	    987	     32	  16585	   40c9	drivers/gpu/drm/bridge/chipone-icn6211.o
-> >>
-> >> After:
-> >> =====
-> >>     text	   data	    bss	    dec	    hex	filename
-> >>    15630	    923	     32	  16585	   40c9	drivers/gpu/drm/bridge/chipone-icn6211.o
-> >>
-> >> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> >> ---
-> >> Compile tested-only.
-> >> ---
-> >>   drivers/gpu/drm/bridge/chipone-icn6211.c   | 2 +-
-> >>   drivers/gpu/drm/bridge/lontium-lt9211.c    | 2 +-
-> >>   drivers/gpu/drm/bridge/lontium-lt9611.c    | 2 +-
-> >>   drivers/gpu/drm/bridge/lontium-lt9611uxc.c | 2 +-
-> >>   drivers/gpu/drm/bridge/ti-sn65dsi83.c      | 2 +-
-> >>   drivers/gpu/drm/bridge/ti-sn65dsi86.c      | 2 +-
-> > 
-> > While at it, could you address drivers/gpu/drm/i2c/tda9950.c too ? If I
-> > were to push a tad more, there are only two other drivers in the kernel
-> > with the same issues outside of drivers/gpu/ according to
-> 
-> Hi Laurent,
-> 
-> this is in my todo list. I wanted to send it separately because all 
-> these files are in gpu/drm/bridge/ and tda9950.c is in gpu/drm/.
-> 
-> Most of the times, maintainers ask for separate patches when several 
-> drivers are patched. For such clean-ups, I try at least to group them by 
-> directory.
+The below is all you need.
 
-I would probably have included tda9950.c in this patch, but I'm also
-fine handling it separately.
+Watching blockage rate during part of a netperf scaling run without, a
+bit over 2/sec was the highest it got, but with, that drops to the same
+zero as turning off the feature, so... relevance highly unlikely but
+not quite impossible?
 
-> Same answer the other files in input and sound. Patches will be sent in 
-> a few days.
+=2D--
+ kernel/sched/fair.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-Thank you. If you have extra time, there are also a handful of similar
-issues with of_device_id :-)
+=2D-- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9454,11 +9454,15 @@ int can_migrate_task(struct task_struct
 
-> I've also sent one for the documentation [1] and will send one for 
-> const_structs.checkpatch as well.
+ 	/*
+ 	 * We do not migrate tasks that are:
++	 * 0) not runnable (not useful here/now, but are annoying), or
+ 	 * 1) throttled_lb_pair, or
+ 	 * 2) cannot be migrated to this CPU due to cpus_ptr, or
+ 	 * 3) running (obviously), or
+ 	 * 4) are cache-hot on their current CPU.
+ 	 */
++	if (p->se.sched_delayed)
++		return 0;
++
+ 	if (throttled_lb_pair(task_group(p), env->src_cpu, env->dst_cpu))
+ 		return 0;
 
-Thank you for that.
 
-> CJ
-> 
-> [1]: https://lore.kernel.org/linux-kernel/c8e6da4adb7381ee27e8e11854c9d856382cdc93.1731445244.git.christophe.jaillet@wanadoo.fr/
-> 
-> > $ git grep '^static struct i2c_device_id'
-> > drivers/gpu/drm/bridge/chipone-icn6211.c:static struct i2c_device_id chipone_i2c_id[] = {
-> > drivers/gpu/drm/bridge/lontium-lt9211.c:static struct i2c_device_id lt9211_id[] = {
-> > drivers/gpu/drm/bridge/lontium-lt9611.c:static struct i2c_device_id lt9611_id[] = {
-> > drivers/gpu/drm/bridge/lontium-lt9611uxc.c:static struct i2c_device_id lt9611uxc_id[] = {
-> > drivers/gpu/drm/bridge/ti-sn65dsi83.c:static struct i2c_device_id sn65dsi83_id[] = {
-> > drivers/gpu/drm/bridge/ti-sn65dsi86.c:static struct i2c_device_id ti_sn65dsi86_id[] = {
-> > drivers/gpu/drm/i2c/tda9950.c:static struct i2c_device_id tda9950_ids[] = {
-> > drivers/input/keyboard/cypress-sf.c:static struct i2c_device_id cypress_sf_id_table[] = {
-> > sound/soc/codecs/cs42l51-i2c.c:static struct i2c_device_id cs42l51_i2c_id[] = {
-> > 
-> > :-)
-> > 
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > 
-> >>   6 files changed, 6 insertions(+), 6 deletions(-)
-
--- 
-Regards,
-
-Laurent Pinchart
 
