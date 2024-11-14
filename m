@@ -1,87 +1,58 @@
-Return-Path: <linux-kernel+bounces-410005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B2A79C955A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:49:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A9C99C955D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:49:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73275B240C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:49:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7A401F231D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F871AF0AB;
-	Thu, 14 Nov 2024 22:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5B81B0F2C;
+	Thu, 14 Nov 2024 22:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r3Mkiw4D"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jo1cRGUN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E611AC8A6
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BF618B464;
+	Thu, 14 Nov 2024 22:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731624543; cv=none; b=CxW/DMNgs2hizJhZuR1uDIA7+8+JjqPhLeXOwu8WWC/9n05irBiiFG7OsH6uFeg9ufoD9yhMqHr8oynJ032KofftG54gYHx5BJXshEGzbvHCk9lxP9wyhCs0qsAG7xaxxk/EPKO8d9X7JjguO9m69Fx+HSUTsa7S23ZBgTMFZDY=
+	t=1731624567; cv=none; b=AgtuL1xZy1flucbDvo+YRyH8FQ8XMjiJnbJoPDspqh6xpiiBUaxB2j5FWIhmJ/79PgCyTX87x+6K2El3VqU4hzG9HOSSd3ILq4iFFRz+L8P/vSrAGNo7wiyjVOvEmEm+mw4xgjuXwDCW9Zm4tuTmWsdTMK6OUZCq+J39igwGyDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731624543; c=relaxed/simple;
-	bh=nw6VoUZvZNkdUACTTIdXm7iGFjKeQXD96Z3wjmO7E0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E/35lWaKvaW88pUCQdJ/CwLz6271d9UxHSzpqDvT9y1/m4JNrhAzQgTb0LMcpHeole/wWksAR6nsT7Cgov6F1fimvkSnwI/IZcMzC1GvAaGxC54D33UmzE33buu31qPW3wSSB/aKi0HPrfjpxEtJ3RE9zuYz1g+fvg/LVsjgV5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r3Mkiw4D; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53da07b78dfso112261e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 14:49:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731624540; x=1732229340; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y+li1obQZDvHKH1dQ4Z+Cz98Hc0DiodhU7YwjL0CPgQ=;
-        b=r3Mkiw4DfNsvSchnyij6eK9tzqSgXetX8yAZa5otp2hWljvJ9iBbw59RhVAh+ts5uP
-         7+ERMi6FCxDhdmisJ1bYP3vtD8/5DGsi/bRIGwvg6+ivarwVC0c2R5zxLCJFDd5/O/V5
-         8R7UlEyeFsLifdc2iIn5qIBIIBVZ4ICiURXkoj0Z6J7PaM/S5p+ifNiG0MGjGdvMgNF/
-         Prj+HAfSbP4YQRlTuyQNoE3yW8E5kFCx9ib2Be+4xIr6R329MF0xedYv98BwWOjKofil
-         NrX+uv3uyXJm9Fkdv8qOS1qSZnhUFR9AUv9Z3p656YPU7twbQ1BgDuRNlok678S0rqyk
-         WzoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731624540; x=1732229340;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y+li1obQZDvHKH1dQ4Z+Cz98Hc0DiodhU7YwjL0CPgQ=;
-        b=nJpJuYU5sTKArsO9oTOOasNkNktscl8DARnHRg+wE28UQNwYyfi4/ybwFvk9Nrn0Mb
-         q41UOtFCMqNvBEf2C5FTPdnwZjZa2Oq0aUz6GAu/nP8rtgWUJ7jqxMlWrpUZfRHrjwM5
-         6FgDtXsjk9iddCDkFyixaD1rVjf74xGhSh9RXGJs/4vaySoOUarVu5lKdEJIg9k4FKrb
-         jP0GJBwnKZDBRFlSQEFgGHSTbvRWsATdzte99iibMcC4acDjOrLHAcq95cXASJRX4hu/
-         U4VHH96Jupu+SY/7XvDiT97qi1mLe/bfAeEBjowWog+ZL9dZvXWjiTGyD28SDdKzjYBG
-         fr3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVchcvHz4a/duoWBlksOrrJr3lVtIhIypc1oP596br+bXJk71FJ9iLr85gFp3AU+Oh5cAEFixtUgbCQb9I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy32D9xR7rJhQbLjnjbfif6qt2r/sfJdj9ivDJhuE/6dtsI7Ji2
-	ZoSU5djq9c6JFcmfMaNSXojAGv++fZUVk0ZaDiFRD0eCerssnERdrwPvUpmCIX0=
-X-Google-Smtp-Source: AGHT+IEciwhn6WNJsfswVN08/jxN2a5HA4mqW9TSwasMhjNmEK4pBMTbGoHEAgA+zAKx/x+31BOCNw==
-X-Received: by 2002:a05:6512:e95:b0:53c:761c:2a14 with SMTP id 2adb3069b0e04-53dab2a9191mr155211e87.29.1731624539902;
-        Thu, 14 Nov 2024 14:48:59 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da65000a7sm332985e87.76.2024.11.14.14.48.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 14:48:58 -0800 (PST)
-Date: Fri, 15 Nov 2024 00:48:55 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jagadeesh Kona <quic_jkona@quicinc.com>
-Cc: Brian Masney <bmasney@redhat.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Shivnandan Kumar <quic_kshivnan@quicinc.com>
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8775p: Add CPU OPP tables to
- scale DDR/L3
-Message-ID: <daqa3krsp6emdha6h7tlcelsggb6qeilnojgtfxjbp5zw4n6ow@xzwdmu55ygjf>
-References: <20241017-sa8775p-cpufreq-l3-ddr-scaling-v1-0-074e0fb80b33@quicinc.com>
- <20241017-sa8775p-cpufreq-l3-ddr-scaling-v1-2-074e0fb80b33@quicinc.com>
- <ZxEwVShJuMH4J1Hp@x1>
- <9179759d-7af1-409f-8130-1136c9ae4ecd@quicinc.com>
+	s=arc-20240116; t=1731624567; c=relaxed/simple;
+	bh=lACSCrdzRLG5x1E+njLfHcgssYzowjsw+9YGqqUEk5I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=JlyYFZNZfFDE4LB2SE5ESVovnN5KApf49rP8ejE6eadN5Ox9OgvoqV/4TUy4RSXJ4NAPLe3X/sHDmt8Nh+ES9++zGB5CIBQsjULIX3qJl16cxDMI7lLRP/Ab3DluM+KUqibfpHS5nGDOskrLzDPZ0+3BkScXZ4Oc1HzYZu+63Ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jo1cRGUN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01D9AC4CECD;
+	Thu, 14 Nov 2024 22:49:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731624565;
+	bh=lACSCrdzRLG5x1E+njLfHcgssYzowjsw+9YGqqUEk5I=;
+	h=Date:From:To:Cc:Subject:From;
+	b=jo1cRGUNxfABfeEOZv9PLK4KjN69C/Kdsq3mfouhwGEWZuVFooQhG7JYRAKWI4txE
+	 Yz9jO0fFHl8ey2nqakGiyjnD8ynEsjMrvyBRw3nfGXjhtw8wb0VK2ZzLLHaogEQHUk
+	 SGD5WvzhU0xhmTTYl6JJ1yk21eXZ86bkJzw4Hm+Ebecb+XRrdgFkarvxcKq49myWPU
+	 nTA1Gu4RyMYBSb4Yn0VeKugjBCD5LUk7adNx+bMsst5C9YYNAa9VO15wCLLSzPCb6d
+	 +ARAQxl1WudwwxmejfVwgxRDWh4cDJI94LJ8fVaMw6JfFdJOV6/PAYBg1D/lTbwX37
+	 kEGJHmcyZufqQ==
+Date: Thu, 14 Nov 2024 16:49:21 -0600
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Yinbo Zhu <zhuyinbo@loongson.cn>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Binbin Zhou <zhoubinbin@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] clk: clk-loongson2: Fix memory corruption bug in struct
+ loongson2_clk_provider
+Message-ID: <ZzZ-cd_EFXs6qFaH@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,73 +61,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9179759d-7af1-409f-8130-1136c9ae4ecd@quicinc.com>
 
-On Mon, Nov 11, 2024 at 06:39:48PM +0530, Jagadeesh Kona wrote:
-> 
-> 
-> On 10/17/2024 9:12 PM, Brian Masney wrote:
-> > On Thu, Oct 17, 2024 at 02:58:31PM +0530, Jagadeesh Kona wrote:
-> >> +	cpu0_opp_table: opp-table-cpu0 {
-> >> +		compatible = "operating-points-v2";
-> >> +		opp-shared;
-> >> +
-> >> +		cpu0_opp_1267mhz: opp-1267200000 {
-> >> +			opp-hz = /bits/ 64 <1267200000>;
-> >> +			opp-peak-kBps = <6220800 29491200>;
-> >> +		};
-> >> +
-> >> +		cpu0_opp_1363mhz: opp-1363200000 {
-> >> +			opp-hz = /bits/ 64 <1363200000>;
-> >> +			opp-peak-kBps = <6220800 29491200>;
-> >> +		};
-> > 
-> > [snip]
-> > 
-> >> +	cpu4_opp_table: opp-table-cpu4 {
-> >> +		compatible = "operating-points-v2";
-> >> +		opp-shared;
-> >> +
-> >> +		cpu4_opp_1267mhz: opp-1267200000 {
-> >> +			opp-hz = /bits/ 64 <1267200000>;
-> >> +			opp-peak-kBps = <6220800 29491200>;
-> >> +		};
-> >> +
-> >> +		cpu4_opp_1363mhz: opp-1363200000 {
-> >> +			opp-hz = /bits/ 64 <1363200000>;
-> >> +			opp-peak-kBps = <6220800 29491200>;
-> >> +		};
-> > 
-> > There's no functional differences in the cpu0 and cpu4 opp tables. Can
-> > a single table be used?
-> > 
-> > This aligns with my recollection that this particular SoC only has the
-> > gold cores.
-> > 
-> > Brian
-> > 
-> 
-> Thanks Brian for your review. Sorry for the delayed response.
-> 
-> We require separate OPP tables for CPU0 and CPU4 to allow independent
-> scaling of DDR and L3 frequencies for each CPU domain, with the final
-> DDR and L3 frequencies being an aggregate of both.
-> 
-> If we use a single OPP table for both CPU domains, then _allocate_opp_table() [1]
-> won't be invoked for CPU4. As a result both CPU devices will end up in sharing
-> the same ICC path handle, which could lead to one CPU device overwriting the bandwidth
-> votes of other.
+Some heap space is allocated for the flexible structure `struct
+clk_hw_onecell_data` and its flexible-array member `hws` through
+the composite structure `struct loongson2_clk_provider` in function
+`loongson2_clk_probe()`, as shown below:
 
-All of this should be a part of the commit message.
+289         struct loongson2_clk_provider *clp;
+	...
+296         for (p = data; p->name; p++)
+297                 clks_num++;
+298
+299         clp = devm_kzalloc(dev, struct_size(clp, clk_data.hws, clks_num),
+300                            GFP_KERNEL);
 
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/opp/core.c#n1588
-> 
-> Thanks,
-> Jagadeesh
->  
+Then some data is written into the flexible array:
 
+350                 clp->clk_data.hws[p->id] = hw;
+
+This corrupts `clk_lock`, which is the spinlock variable immediately
+following the `clk_data` member in `struct loongson2_clk_provider`:
+
+struct loongson2_clk_provider {
+	void __iomem *base;
+	struct device *dev;
+	struct clk_hw_onecell_data clk_data;
+	spinlock_t clk_lock;	/* protect access to DIV registers */
+};
+
+The problem is that the flexible structure is currently placed in the
+middle of `struct loongson2_clk_provider` instead of at the end.
+
+Fix this by moving `struct clk_hw_onecell_data clk_data;` to the end of
+`struct loongson2_clk_provider`. Also, add a code comment to help
+prevent this from happening again in case new members are added to the
+structure in the future.
+
+This change also fixes the following -Wflex-array-member-not-at-end
+warning:
+
+drivers/clk/clk-loongson2.c:32:36: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+
+Fixes: 9796ec0bd04b ("clk: clk-loongson2: Refactor driver for adding new platforms")
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ drivers/clk/clk-loongson2.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
+index 820bb1e9e3b7..e99ba79feec6 100644
+--- a/drivers/clk/clk-loongson2.c
++++ b/drivers/clk/clk-loongson2.c
+@@ -29,8 +29,10 @@ enum loongson2_clk_type {
+ struct loongson2_clk_provider {
+ 	void __iomem *base;
+ 	struct device *dev;
+-	struct clk_hw_onecell_data clk_data;
+ 	spinlock_t clk_lock;	/* protect access to DIV registers */
++
++	/* Must be last --ends in a flexible-array member. */
++	struct clk_hw_onecell_data clk_data;
+ };
+ 
+ struct loongson2_clk_data {
 -- 
-With best wishes
-Dmitry
+2.43.0
+
 
