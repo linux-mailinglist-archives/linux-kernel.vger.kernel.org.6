@@ -1,100 +1,97 @@
-Return-Path: <linux-kernel+bounces-408490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5EC09C7F6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:39:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA9549C7F71
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:44:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E2B41F2310F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:39:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31E63B21BD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3E9F9C0;
-	Thu, 14 Nov 2024 00:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC00E573;
+	Thu, 14 Nov 2024 00:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="urMKE+0p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="arX30a25"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F40A95C;
-	Thu, 14 Nov 2024 00:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D6223BE;
+	Thu, 14 Nov 2024 00:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731544767; cv=none; b=MakPVUhPT3wGcLedZXotzVUua3mDkj+uVXbendzR+O6CW1rof794TwOix/EA4lEFsfJs8lcykfcPV6Sk78aovE9hRF8rDd6Zh0a7l5TOU5OLgf/toNO5xaRcUBLO8rpvjoDzdi6I/a0CjORTQsXj+dQzGZQZOIfhARKd6HslcVo=
+	t=1731545041; cv=none; b=oszIR2Xd6DD/Ne/ZZyUAxfEJGsS9xVQt4XPHZ0b70GpPDTA8mgWqsjatGgi/VSKsa0m6cgmjKjB2dzrW/9/rVfoz00URTcxpHXCIA/Y6Ju3LgeotifP9TGLSl1a+a61Rvg2xNmL+gpl3ocl8QV9DU+HxphwLyqZndjuvcTbu13w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731544767; c=relaxed/simple;
-	bh=M6ItR/lDbn7nuwHceUHxG8faR8R5lWBgt5KuTnUDLpk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tvwYtehO+j+tdOzHLa1V7WGRQzSK6cliMtPRkFckVxlLC8Io1JPJ9mLd3MoJu2aXIu9gPeJR7Vp2F+WBzBfxznmvToyGeEmcZhMEnWOZSbQXf+Y6fwJrfdUCdG0/StiVIwlxbMEu60r5hcspKJcsQPWAAs+47m5D9TTCv7kmYsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=urMKE+0p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DFE2C4CECD;
-	Thu, 14 Nov 2024 00:39:26 +0000 (UTC)
+	s=arc-20240116; t=1731545041; c=relaxed/simple;
+	bh=8IaEo0YJd0KfTU3+MR/SWm8SxKZ/uphzeYSqSdmUWyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m9A3SBbIGAfZx2Q1SheoNBJVJZY6sgnpTMO6liRDcGi3GxQVFU/a8ojKgCq9xi0IAVK81WhB4EPxq9eeO3QA5uqFHtxEUpXom5Ot7tUXek8givjayXjs/99BXerd4ci42kBOjui5tn+027DlBo+eoye5G5684lJTPZtyl0fSnmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=arX30a25; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 502E1C4CEC3;
+	Thu, 14 Nov 2024 00:44:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731544767;
-	bh=M6ItR/lDbn7nuwHceUHxG8faR8R5lWBgt5KuTnUDLpk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=urMKE+0pIJbAqqWBaMVXUQwRD09oPxnn+n8UWVEHTvixXrLHbjrsGZ7KggONqUP87
-	 i/P3mc2dlSbl2JaqgFHNUX2NQLx7oOC8uI2Ow5CXdLOg+IvHcYOQuDn/FIb+JhTn6Q
-	 QJOtPH1NVqffOVpDZKJmSPjdbW9QB0Dfu6WnPtWLHT+S+MH/QTCjrpJN4B5Imjb21w
-	 O0B7ojUKn1Ai+rnyApv/3ZMV8+qPd2h3LmMu9S1zFolKtwkG8T8A8crISe6nEXRmGR
-	 j8PNmjbT/IegykTrgpXv1Lu1++9t6fVkUCYuIOaAi0BgdnDHZJvGOOHJ/hGPWBTj/N
-	 uaMVPHRgOSypw==
-Date: Wed, 13 Nov 2024 16:39:25 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal
- kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
- <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Richard
- Cochran <richardcochran@gmail.com>, Radu Pirea
- <radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh <j.vosburgh@gmail.com>, Andy
- Gospodarek <andy@greyhouse.net>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, Horatiu Vultur <horatiu.vultur@microchip.com>,
- UNGLinuxDriver@microchip.com, Simon Horman <horms@kernel.org>, Vladimir
- Oltean <vladimir.oltean@nxp.com>, donald.hunter@gmail.com,
- danieller@nvidia.com, ecree.xilinx@gmail.com, Andrew Lunn
- <andrew+netdev@lunn.ch>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, Maxime Chevallier
- <maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>,
- Willem de Bruijn <willemb@google.com>, Shannon Nelson
- <shannon.nelson@amd.com>, Alexandra Winter <wintera@linux.ibm.com>, Jacob
- Keller <jacob.e.keller@intel.com>
-Subject: Re: [PATCH net-next v19 03/10] ptp: Add phc source and helpers to
- register specific PTP clock or get information
-Message-ID: <20241113163925.7b3bd3d9@kernel.org>
-In-Reply-To: <20241113113808.4f8c5a0b@kmaincent-XPS-13-7390>
-References: <20241030-feature_ptp_netnext-v19-0-94f8aadc9d5c@bootlin.com>
-	<20241030-feature_ptp_netnext-v19-3-94f8aadc9d5c@bootlin.com>
-	<20241111150609.2b0425f6@kernel.org>
-	<20241112111232.1637f814@kmaincent-XPS-13-7390>
-	<20241112182226.2a6c8bab@kernel.org>
-	<20241113113808.4f8c5a0b@kmaincent-XPS-13-7390>
+	s=k20201202; t=1731545041;
+	bh=8IaEo0YJd0KfTU3+MR/SWm8SxKZ/uphzeYSqSdmUWyU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=arX30a25jj6EIPSUrZ88Ebun2igjpJwHwGtakbmkw/Tf1CSq9GcHYsqQwBzqE7LdK
+	 FD3eUtv/0/JV4Lj6FIxE2MPKJvjMdjIwvCQ5zZO9Vg4VDznEZnwUkYdlnfsTBmkrCR
+	 nRLW4JeifjTWd3+GGIv5PEErjgtHfxY4rgqDBSmotFJSrdHKkQLvGxxIDnmLdgzWoZ
+	 wfdcQp7iOdBeH4oTvJPg7uLQp21jtydi4+qe3mMfOE/OYTKIirM6NqbfnngM2dwCdP
+	 adhO7VwQq5gNmva6CVcDDLGjtLSI8gbmWQMCrwQR6SoXrt0Ji1R92IO7VA4cicDVmr
+	 RNVoVceGoP4pg==
+Date: Wed, 13 Nov 2024 16:43:58 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>, Amit Shah <amit@kernel.org>,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+	linux-doc@vger.kernel.org, amit.shah@amd.com,
+	thomas.lendacky@amd.com, tglx@linutronix.de, peterz@infradead.org,
+	pawan.kumar.gupta@linux.intel.com, corbet@lwn.net, mingo@redhat.com,
+	dave.hansen@linux.intel.com, hpa@zytor.com, seanjc@google.com,
+	pbonzini@redhat.com, daniel.sneddon@linux.intel.com,
+	kai.huang@intel.com, sandipan.das@amd.com,
+	boris.ostrovsky@oracle.com, Babu.Moger@amd.com,
+	david.kaplan@amd.com, dwmw@amazon.co.uk
+Subject: Re: [RFC PATCH v2 1/3] x86: cpu/bugs: update SpectreRSB comments for
+ AMD
+Message-ID: <20241114004358.3l7jxymrtykuryyd@jpoimboe>
+References: <20241111163913.36139-1-amit@kernel.org>
+ <20241111163913.36139-2-amit@kernel.org>
+ <20241111193304.fjysuttl6lypb6ng@jpoimboe>
+ <564a19e6-963d-4cd5-9144-2323bdb4f4e8@citrix.com>
+ <20241112014644.3p2a6te3sbh5x55c@jpoimboe>
+ <20241112115811.GAZzNC08WU5h8bLFcf@fat_crate.local>
+ <20241113212440.slbdllbdvbnk37hu@jpoimboe>
+ <20241113213724.GJZzUcFKUHCiqGLRqp@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241113213724.GJZzUcFKUHCiqGLRqp@fat_crate.local>
 
-On Wed, 13 Nov 2024 11:38:08 +0100 Kory Maincent wrote:
-> > IOW I'm struggling to connect the dots how the code you're adding now
-> > will be built _upon_ rather than _on the side_ of when socket PHC
-> > selection is in place.  
+On Wed, Nov 13, 2024 at 10:37:24PM +0100, Borislav Petkov wrote:
+> On Wed, Nov 13, 2024 at 01:24:40PM -0800, Josh Poimboeuf wrote:
+> > There are a lot of subtle details to this $#!tstorm, and IMO we probably
+> > wouldn't be having these discussions in the first place if the comment
+> > lived in the docs, as most people seem to ignore them...
 > 
-> I see what you mean! It is not something easy to think of as I don't really
-> know how it would be implemented.
-> Do you think adding simply the PHC source and the phydev pointer or index would
-> fit? 
+> That's why I'm saying point to the docs from the code. You can't have a big
+> fat comment in the code about this but everything else in the hw-vuln docs.
 
-In net_device? Yes, I think so.
+But those docs are user facing, describing the "what" for each
+vulnerability individually.  They're basically historical documents
+which don't evolve over time unless we tweak an interface or add a new
+mitigation.
 
-> This could be removed from netdev core when we move to socket PHC as it
-> won't be necessary to save the current PHC.
+This comment relates to the "why" for the code itself (and its poor
+confused developers), taking all the RSB-related vulnerabilities into
+account.
+
+-- 
+Josh
 
