@@ -1,93 +1,130 @@
-Return-Path: <linux-kernel+bounces-408661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D829D9C81B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 05:08:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82A919C81B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 05:10:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 815501F25189
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 04:08:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9316B240A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 04:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0571E3DFE;
-	Thu, 14 Nov 2024 04:08:19 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0B61E764D;
+	Thu, 14 Nov 2024 04:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="wsNZ6xUI"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0DBECC;
-	Thu, 14 Nov 2024 04:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB8413D53E;
+	Thu, 14 Nov 2024 04:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731557299; cv=none; b=HIHO1GxK2uyZLmFVwJAUCWCCC8tPP3bqmm43XJL19VNoA8kYv+UoHvTAxbh7zF96tbPUHcxWnxvbaB1P5u34LIVJAll281dvS7H7cd3rNxA/A3OsSmlupUQ/fZAkSQYAF5wbbbbGuVeK1r32c6OndAwsfY4jx+mDd6Oti6zJojc=
+	t=1731557393; cv=none; b=loW8uN1ydohos/JfEikDK+LQ2CodR/6UUJaQYp0zJ4A+6q8fz7PjakPUc8FlqHa4qdYD/mLGk7BZf8SsKWr6HrVM19EAq5JMf2ZNflQf28+cg0UvARUWujwnCKdCdQrrxqnJ7rO3/Cx2Bdf/LhZbqi890GboNdDhMjggOlgulJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731557299; c=relaxed/simple;
-	bh=OvOTzO8f57FmoPKejOIMqjs+MzfgJB4W8bsZ8b/PN74=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=tXGNXfuuDJQlybBQRw4JC47WaU7N09WkBhaKIR3yi84DcVIqB0eLSLwNiGBj7DtJkybGUPjVz01o2kcOr0lbnxsjFgB2DUQlKaH+jpWAurGK6zxlCjOG+JiLZM5qwLCuqQx1oyK6Vi80+DY/XUYEpVhMFw7fp7ZSjekiebu6vqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA2A4C4CED0;
-	Thu, 14 Nov 2024 04:08:18 +0000 (UTC)
-Date: Wed, 13 Nov 2024 23:08:39 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Subject: [PATCH] Revert: "ring-buffer: Do not have boot mapped buffers hook
- to CPU hotplug"
-Message-ID: <20241113230839.6c03640f@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731557393; c=relaxed/simple;
+	bh=5I4vNI7ezrDm6Sctj4+VCmNzhsOtZTrWrECDkKxcRmQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jTgBGjcsUjcY4I1hlQL1fmNrfTzmwECwx3RrYN3h73SAuzbAkyneqeZqW9Frt5TGa2wjXp7LmfNEJAsGzhhONViw8ZaYMMqEW6GpHazJwvd4Tn6ETgiwL0ULday0/vBhPpjhPkhBxAQyVjirRYSAYasflUvrJ2uiPSLPb78AdNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=wsNZ6xUI; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=S1GxM8IiUiT5x4KujkgQywaLGjoplrnynAOlm4LVcMQ=; b=wsNZ6xUISD4zg5yocAqKayCyq+
+	7OZrsmQreaT+OZbzq5/o2alQSZZGv7c6XdjScI9tzS4wtR8sARmcexCojXUMJe6neBkSH3L+DzLpq
+	hZeP2OQmwXDJ6VtaRY0XFnmtKzlYjulCNbHTFuYmZ63m0EBR5MMGiokGN3x52xgCWw1nOVzX72QJ+
+	wjDZkp77JOWUoz/03GjPAiZxY0FMc7AD0NlvtmCXgf2F3XCMAxKSKzvUboNpNm8z8E33DEycqv7yw
+	2WdlvNlyQZf8S8xVLd7s4OcUeom6oVMNPxqZ+m7mu1fYkGvMs34M5tQFBPb9jXraIZxY4Api/Cx5Y
+	rdCwgF5A==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tBRAy-0000000Elgd-0UHI;
+	Thu, 14 Nov 2024 04:09:48 +0000
+Date: Thu, 14 Nov 2024 04:09:48 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Ricardo Robaina <rrobaina@redhat.com>, audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org, eparis@redhat.com, rgb@redhat.com
+Subject: Re: [PATCH v1] audit: fix suffixed '/' filename matching in
+ __audit_inode_child()
+Message-ID: <20241114040948.GK3387508@ZenIV>
+References: <20241105123807.1257948-1-rrobaina@redhat.com>
+ <2d9292c28df34c50c1c0d1cbf6ce3b52@paul-moore.com>
+ <20241113230425.GJ3387508@ZenIV>
+ <19328b27f98.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <19328b27f98.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Wed, Nov 13, 2024 at 10:23:55PM -0500, Paul Moore wrote:
 
-A crash happened when testing cpu hotplug with respect to the memory
-mapped ring buffers. It was assumed that the hot plug code was adding a
-per CPU buffer that was already created that caused the crash. The real
-problem was due to ref counting and was fixed by commit 2cf9733891a4
-("ring-buffer: Fix refcount setting of boot mapped buffers").
+> > And while we are at it,
+> > parentlen = parentlen == AUDIT_NAME_FULL ? parent_len(path) : parentlen;
+> > is a bloody awful way to spell
+> > if (parentlen == AUDIT_NAME_FULL)
+> >  parentlen = parent_len(path);
+> > What's more, parent_len(path) starts with *yet* *another* strlen(path),
+> > followed by really awful crap - we trim the trailing slashes (if any),
+> > then search for the last slash before that...  is that really worth
+> > the chance to skip that strncmp()?
+> 
+> Pretty much all of the audit code is awkward at best Al, you should know
+> that.
 
-When a per CPU buffer is created, it will not be created again even with
-CPU hotplug, so the fix to not use CPU hotplug was a red herring. In fact,
-it caused only the boot buffer to be created.
+Do I ever...
 
-Revert that change as it was not the culprit of the fix it was intended to
-be.
+> We're not going to fix it all in one patch, and considering the nature
+> of this patch effort, I think there is going to be a lot of value in keeping
+> the initial fix patch to a minimum to ease backporting.  We can improve on
+> some of those other issues in a second patch or at a later time.
+> 
+> As a reminder to everyone, patches are always welcome.  Fixing things is a
+> great way to channel disgust into something much more useful.
 
-Fixes: 912da2c384d5 ("ring-buffer: Do not have boot mapped buffers hook to CPU hotplug")
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/ring_buffer.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+> > 
+> > > +       if (p[pathlen - 1] == '/')
+> > > +               pathlen--;
+> > > +
+> > > +       if (pathlen != dlen)
+> > > +               return 1;
+> > > 
+> > > return strncmp(p, dname->name, dlen);
+> > 
+> > ... which really should've been memcmp(), at that.
+> 
+> Agreed. See above.
 
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 3ea4f7bb1837..5807116bcd0b 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -2337,12 +2337,9 @@ static struct trace_buffer *alloc_buffer(unsigned long size, unsigned flags,
- 	if (!buffer->buffers[cpu])
- 		goto fail_free_buffers;
- 
--	/* If already mapped, do not hook to CPU hotplug */
--	if (!start) {
--		ret = cpuhp_state_add_instance(CPUHP_TRACE_RB_PREPARE, &buffer->node);
--		if (ret < 0)
--			goto fail_free_buffers;
--	}
-+	ret = cpuhp_state_add_instance(CPUHP_TRACE_RB_PREPARE, &buffer->node);
-+	if (ret < 0)
-+		goto fail_free_buffers;
- 
- 	mutex_init(&buffer->mutex);
- 
--- 
-2.45.2
+OK, my primary interest here is to separate struct filename from that stuff
+as much as possible.  So we will end up stomping on the same ground for
+a while here.  FWIW, my current filename-related pile is in #next.filename;
+there will be a lot more on the VFS side, but one of the obvious targets is
+->aname, so __audit_inode() and its vicinity will get affected.  We'll need
+to coordinate that stuff.
 
+Anyway, regarding audit_compare_dname_path(), handling just the last '/' is
+not enough - there might be any number of trailing slashes, not just one.
+
+Another fun issue with looking for matches is this:
+
+mkdir /tmp/foo
+mkdir /tmp/foo/bar
+mkdir /tmp/blah
+ln -s ../foo/bar/baz /tmp/blah/barf
+echo crap > /tmp/blah/barf
+
+The last one will create a regular file "baz" in /tmp/foo/bar and write
+"crap\n" into it.  With the only pathname passed to open(2) being
+"/tmp/blah/barf".  And there may be a longer chain of symlinks like that.
+
+What do you want to see reported in such case?
 
