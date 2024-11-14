@@ -1,104 +1,116 @@
-Return-Path: <linux-kernel+bounces-409901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 992379C9311
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:15:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C3269C9314
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:16:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01C6CB27747
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:15:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33EB91F230ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35D51ABED9;
-	Thu, 14 Nov 2024 20:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YpwIZ3x6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91EA1AC43E;
+	Thu, 14 Nov 2024 20:16:17 +0000 (UTC)
+Received: from irl.hu (irl.hu [95.85.9.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B31BEEDE;
-	Thu, 14 Nov 2024 20:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01779198A0E;
+	Thu, 14 Nov 2024 20:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731615285; cv=none; b=Ay3UMQPO0ZV5W9dIU/ujAAV0N4fAEpCvfG0cJEBuaJSMChGwVD2gYSoQ9o2oo8uYRyFgo998tGChTS+PCCv6aKDgkR4IwFqqyHKikltvQJEM8wKGrkByGM455l0ZfQVlkhQ7WQLeUsm+ku8po8R9K2m7i/Saba8OETD5sF1xfDw=
+	t=1731615377; cv=none; b=Z+/OmOn75v0W6YKHN7fxg3zhguBo5RhHeAJYeLTMYRTbp5PX9C3RmFM6iLWZTf3/wpCDl5PifiJaII30WjlQBgKPiaarnXUoH4uFmipT6pCd8U89hXoD4K1uqOtChYkz9Yfmngn3+CeEEa+kHaydMGdv84/nsNgd6Z+MeHPmUpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731615285; c=relaxed/simple;
-	bh=vQfNlFJn5un5Q7X63S53AeFCdYUq2T/YlhPFk4SHDeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a6KBecurgfVJIyUNzv0yDG/IMp0qTneIU7qCAMxUpy/WheUXLvNvm/iLD7Csxa6RROqhIxFiXHR5OdVKnT9xLKW3lXiM+UZMdaT1+wA9Pr9lzUQiPQovQele9W4Fjc2xBJsbzX66FcYeeWP43EdbGj0FqSVJD1OPwVILMt2kW4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YpwIZ3x6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7857EC4CECD;
-	Thu, 14 Nov 2024 20:14:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731615284;
-	bh=vQfNlFJn5un5Q7X63S53AeFCdYUq2T/YlhPFk4SHDeM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YpwIZ3x65A2GjtdN4fI4XuWZ4VN9KgC/Po8vXkxyDnAGXTYA6DUgZLtJY5jXuE6Ll
-	 4cAQD2IUaShtP18Bj/Z2/c861gmClb7vO4qZjKdrgxameRVWpqMjlrAf5dsNaJdOYM
-	 hX5Y82gEP24LjZTxQe7EQ52vQi4JIDM2aQxvlXjQSBj5rmZRTp+32jmM9+4tdDTub5
-	 xdh6NTmAeRZYFZfaeDeCc3Blzw0oTFiXTqEdDF9KjjUfT4pQq7ShQ0H6mya/Tqg0uP
-	 kx+kNALxt0j0fr4WOvheVaAEGDg4Vxc5/n+8xJ1G8D0XUjNBOmSGnjqRVjnVmIl2Eq
-	 OmPuUsW8FYHcg==
-Date: Thu, 14 Nov 2024 20:14:40 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: reset: add bindings for A1 SoC audio
- reset controller
-Message-ID: <20241114-latticed-freight-859a3d78d413@spud>
-References: <20241112230056.1406222-1-jan.dakinevich@salutedevices.com>
- <20241112230056.1406222-2-jan.dakinevich@salutedevices.com>
+	s=arc-20240116; t=1731615377; c=relaxed/simple;
+	bh=M+cCxyed7FKeBFbhC6afQsE3Uk3o30Av9gvG/PgXleU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=OqMCQmBepp6v3koV03exPqlkY95/eAqM4BIUH/g118qtCJritI770l9jG0N3g6rIrT2GD0UsSpHV0xD+HhjJdxsr7yfN2J/p6ky3wXDar/zfWKku17RazY1pF/0h+Fz+/ESms72SWPv60MEM2574O4LirPQUo0nP6jLG9YntsBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
+Received: from [192.168.2.4] (51b684a3.dsl.pool.telekom.hu [::ffff:81.182.132.163])
+  (AUTH: CRAM-MD5 soyer@irl.hu, )
+  by irl.hu with ESMTPSA
+  id 0000000000074686.0000000067365A8E.0029846F; Thu, 14 Nov 2024 21:16:14 +0100
+Message-ID: <5ffafb0d059f09c814692e7c33a7ce35ce9b0169.camel@irl.hu>
+Subject: Re: [PATCH v15 18/19] media: uvcvideo: implement UVC v1.5 ROI
+From: Gergo Koteles <soyer@irl.hu>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+  Mauro Carvalho Chehab <mchehab@kernel.org>,
+  Hans de Goede <hdegoede@redhat.com>,
+  Ricardo Ribalda <ribalda@kernel.org>,
+  Sakari Ailus <sakari.ailus@linux.intel.com>,
+  Hans Verkuil <hverkuil@xs4all.nl>, Yunke Cao <yunkec@chromium.org>,
+  linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+  Yunke Cao <yunkec@google.com>
+Date: Thu, 14 Nov 2024 21:16:13 +0100
+In-Reply-To: <CANiDSCuZTYDsQ3yCpFV_rhbQ+vFGJnsuU-jXwOacxZVbbzEPfw@mail.gmail.com>
+References: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
+	 <20241114-uvc-roi-v15-18-64cfeb56b6f8@chromium.org>
+	 <ac8ea4ed606cbc7dfb15057babc29e49a152ef01.camel@irl.hu>
+	 <CANiDSCuZTYDsQ3yCpFV_rhbQ+vFGJnsuU-jXwOacxZVbbzEPfw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="iRBwY+Ocuqf4OHYD"
-Content-Disposition: inline
-In-Reply-To: <20241112230056.1406222-2-jan.dakinevich@salutedevices.com>
 
+Hi Ricardo,
 
---iRBwY+Ocuqf4OHYD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Nov 13, 2024 at 02:00:55AM +0300, Jan Dakinevich wrote:
-> This reset controller is part of audio clock controller and handled by
-> auxiliary reset driver.
-
-I appreciate this, saved me looking up why there was no compatible
-added.
-
-> Introduced defines supposed to be used together
-> with upcoming device tree nodes for audio clock controller fo A1 SoC.
+On Thu, 2024-11-14 at 21:03 +0100, Ricardo Ribalda wrote:
+> Hi Gergo
 >=20
-> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+> Sorry, I forgot to reply to your comment in v14.
+>=20
+> On Thu, 14 Nov 2024 at 20:53, Gergo Koteles <soyer@irl.hu> wrote:
+> >=20
+> > Hi Ricardo,
+> >=20
+> > On Thu, 2024-11-14 at 19:10 +0000, Ricardo Ribalda wrote:
+> > >=20
+> > > +     },
+> > > +     {
+> > > +             .id             =3D V4L2_CID_UVC_REGION_OF_INTEREST_AUT=
+O,
+> > > +             .entity         =3D UVC_GUID_UVC_CAMERA,
+> > > +             .selector       =3D UVC_CT_REGION_OF_INTEREST_CONTROL,
+> > > +             .size           =3D 16,
+> > > +             .offset         =3D 64,
+> > > +             .v4l2_type      =3D V4L2_CTRL_TYPE_BITMASK,
+> > > +             .data_type      =3D UVC_CTRL_DATA_TYPE_BITMASK,
+> > > +             .name           =3D "Region Of Interest Auto Controls",
+> > > +     },
+> > >  };
+> > >=20
+> >=20
+> > Wouldn't be better to use 8 V4L2_CTRL_TYPE_BOOLEAN controls for this?
+>=20
+> If I create 8 Booleans, they will always be shown in the device. And
+> the user will not have a way to know which values are available and
+> which are not.
+>=20
+> We will also fail the v4l2-compliance test, because there will be up
+> to 7 boolean controls that will not be able to be set to 1, eventhough
+> they are writable.
+>=20
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+And can't it be that only those returned by GET_MAX be added?
 
---iRBwY+Ocuqf4OHYD
-Content-Type: application/pgp-signature; name="signature.asc"
+```
+The bmAutoControls bitmask determines which, if any, on board features
+should track to the region of interest. To detect if a device supports
+a particular Auto Control, use GET_MAX which returns a mask indicating
+all supported Auto Controls.
+```
 
------BEGIN PGP SIGNATURE-----
+Sorry for the misunderstanding, I just don't quite understand.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzZaMAAKCRB4tDGHoIJi
-0vR0AP9g44FK5dhvfvAcPhPRREYySybWuiZ3/AVaNTszx4fjgwD9Ft38CPHPa0Qt
-TCoNfx7EwoObzzGKwSNH8WbQEaM33ws=
-=Psao
------END PGP SIGNATURE-----
+Thanks,
 
---iRBwY+Ocuqf4OHYD--
+Gergo
 
