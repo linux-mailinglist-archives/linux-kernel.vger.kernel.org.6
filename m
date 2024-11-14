@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-409601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E246C9C8F05
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:02:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 778499C8F0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:03:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A676C28BAD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:02:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 059871F2584C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:03:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D0217C9F1;
-	Thu, 14 Nov 2024 16:01:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8DE1862B5;
+	Thu, 14 Nov 2024 16:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="MOlUHzwh"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="R/Z7jLgw"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45EB414E2D6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD01173336
 	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 16:01:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731600109; cv=none; b=IKHuijCyj2ZW8sj9zVnsfCdpbUrBxWcGRI9Me3OkJm6BM3kjw9hIBv7oAmRRwGvCjW7ubOKutAjOvoZKSTDKeofCWW2OfvjHzM4zdh+I0h6piGjxDm0E6HNkxt2O5SXLznUB5AQZoRo7G1UfqIFkwsQq0nhbbAocHr16DYSgCAY=
+	t=1731600111; cv=none; b=D50aR4qTgHWra+6/YjQ+hIuC7IXEQHs8Gwz6IuhEXQJ0RQZz/6DGkFsb7IsbY/iKwxaeT27C2a2k7DFpabDYaXLePHYzDOQ4WYxj4VPoPMw17vriQdUDesjcwpS9Rj5VNFxZUdKXFjbTvudlzInnRqnKNMC1ZXbVuFV9PMEGEwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731600109; c=relaxed/simple;
-	bh=LLKUlHSRdQo0ASKheAI2lktC1qkTUKqGMf38rCFKTT4=;
+	s=arc-20240116; t=1731600111; c=relaxed/simple;
+	bh=2p5+br6JIn+rJJ5IqmSnGy2w4CU6wjDoK+kbpSR+fYo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=F+W0qimWpErlxhJz1FdSY32PtsgP4JRTnFTCxBJA7jwFU94SRTIkOmGaLYQ4axwRpVabk9k7fVerpqZjwB8i47fR9BQX5p7H8o42kdjmPZ6x0Q+7jhQWrvjjd8qtPbXtnh3MRbeZd3rj3WcvRdyoVQK5JZo95tAkz7fvt1lkaf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=MOlUHzwh; arc=none smtp.client-ip=209.85.221.44
+	 In-Reply-To:To:Cc; b=ZmjpiMyFXI1PJuH67mccH4MRg8N8dq5Ne4aCgyF2FoggUDSVOoggyQ5cooeCxZNmaxVCxq04pHKZi1bxRScIAJFb8nhYBAzu08oLRlhlrQ9/z2iJoURvF1CfCG27oNlxc7axn8ksc0Xd8Ej4Ax8Od/e10u0DChGxRo7ncWWxyUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=R/Z7jLgw; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3821c5f6eb1so473864f8f.3
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d50fad249so593716f8f.1
         for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:01:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1731600106; x=1732204906; darn=vger.kernel.org;
+        d=raspberrypi.com; s=google; t=1731600107; x=1732204907; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6sBEsvd+dgZ/xP6/kn7wo3kVN9KTyz4HVn9G9Q/OIqs=;
-        b=MOlUHzwhE2C4MFFZ+6rO/zWHBsZQZN7iwJSzGYyeVQ+zyZFkZG4FmcpTY/v7Lpqet7
-         izpyynOLpnZft6U3tp9Owhqq38EM8XU7WDsA0l19bGMmDgXmzAj+aqCudN5O3LngsLia
-         KEKoNkP13bLo6mC0ipx3nls6sZEqIpZH8JMM4JoUNq/s/0qiksAtb7DuG4xnA3YUNQfv
-         t15Ob0XMZH9br4Kmb8fDMKSBtPz7xLkfZKbTM1yA9T5Pt1eS/jZ28+DrO/ybMDKBctsQ
-         1cJS2W+Ql1Ey6x8JQGi+CAtimBVco6TcSeQk3p3Vq0aBJRMt6FhJlf5IbBQxKSbdOTO3
-         DQzg==
+        bh=v2eGZqhXUh+UAPCtYMe67IF8Tywre6OlhMFZoVB/+W0=;
+        b=R/Z7jLgw6GjwTOKavaGh7PU/Li+/1L4Pj3r7vB9UkTHeVixHqP3Lk4vqANUkoh98Fu
+         cvTODdyAD6XzC/pgftgoXaS3MXLxmhhvtbq8jyTyGXCX3e/oSmy+A6ioJzuGkuqucFSZ
+         8QsqjJmq/6rSQsu3HmrI2gv+IwrNpzkRaJlg156dBjQWhfW+Aj+Bzh/zTouNW4wjQSOH
+         idu8/Mt0ZtwwPIUeGF4WhLtmJK0FfCbljX/1Jj0ZwXqzKGvrfxmCNm93g0asuByjHFUv
+         M16N3qyoWTV2/yCf3FmPNgUfWrz4AE4h/bbgI2skRkj4Kp2Dbp+PPzr/Vq8lxfNbSrT3
+         bqNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1731600107; x=1732204907;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6sBEsvd+dgZ/xP6/kn7wo3kVN9KTyz4HVn9G9Q/OIqs=;
-        b=MRggFAJyb/o1G3kaBGgti+CYgBCrwkG5rERdYC2y7KwCGsvcP3u3zgrDtwJCSeZcx0
-         I14jhJXma0KuaHyyNqaujC2rGLRaAde07ZqwAjgZMvHmCRSQEMJIl75/43rYu2YkJVA+
-         Ttd9RsUQKdSbOamiOHmi2aajOC2X0ssKq3XOiqD928fWv3/myX/1Ce5CkOew2lfz8fGD
-         bGqgYIfAryh0+c6PmubniHZnh0WQOnj8pQlzOPnLaKwGJIqpM7N3P5/xe5YIg6OXO8VZ
-         XYnlaa/GkZtTPIMwPrQJF8wE0TIbIDOj/+qt1neom/ACYd8dJGB8ofpmptz/Klj9uNnO
-         Smig==
-X-Forwarded-Encrypted: i=1; AJvYcCWnfiZW86EMZIrSEXdVZcaZayW2fJ+1tns8dD/HZdfFTc0TCB67uk1rgQL2HQNj/2FuLdG7yAMP1gSTRIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEHcjwxUepfCmTX5Myi6kadShydG8EV+GhPNul2CCY5YqgUZC0
-	57y596lDjuRMu9aLQjR4FM5aGt7Wx48JbTWbHIlqgFnQTMbOAFW76bU1AIyILHY=
-X-Google-Smtp-Source: AGHT+IG4Sy0eRFWGgQ022WtiTP8SuksgBmcBl+ihey6/w0qCP+GyJB1dxeBjLookfEv7e1llkV/zYw==
-X-Received: by 2002:a05:6000:18a9:b0:37d:4ebe:164f with SMTP id ffacd0b85a97d-381f1883d96mr22287017f8f.46.1731600104522;
-        Thu, 14 Nov 2024 08:01:44 -0800 (PST)
+        bh=v2eGZqhXUh+UAPCtYMe67IF8Tywre6OlhMFZoVB/+W0=;
+        b=U8Ps2E6O2QcHKDHsOwNLLl7I4oiIXkVTW7/KchZ+tleh3hWfTWvUVOoSBBl3Ugzsqo
+         5SDzPuWs5IqZu+ucwiv8AUq75jt61Ij4As3Fp11Z+x74wQRtVlMDqLO4SNBUXqrvrbMU
+         s9AdCwELRHfxODSEkdfnnm2wCHjMP8iBteDXHpU2Q8VhLtb0uitFbnRIX7JtcRMgW6u+
+         Fs1N0HdW0mUb6AVIZ2F+fqDSwppnw9mpGpfsb3mX+N4GbUwr/IiykTmUEKDHggXr89zL
+         j8+ByOnL1gzjIaCBXeZXpCBlFAtKhlVodMEszZ2ZY22GaAq6ZM52QnRT8TxkLZ9J7VXD
+         n2ig==
+X-Forwarded-Encrypted: i=1; AJvYcCUXz3mqGoGlJll2eCJNnBzduLzrY/zLXhTK/nHXGItdj4pUHGf7X28o1LKabgMlOdWCUpggl3dxDg72sVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxsu9LP5Z1necUYDuQnzwfzTpOPlJeo95O5ilQ06tRLu45BQSt3
+	GMQfMTun7CIFI+zFh85ggljmfZkIrx+7ukcsxze8zPHA5bzoZZCLSq3xIaIrsC0=
+X-Google-Smtp-Source: AGHT+IE41nl/kifwf5C3HD2lfOIE9l4CR33KFQ7CwfYgwG7tlg4gz09KKD06z7z6kibfjOlL9Rmy5w==
+X-Received: by 2002:a05:6000:1f82:b0:382:222b:1320 with SMTP id ffacd0b85a97d-382222b168dmr586958f8f.22.1731600105381;
+        Thu, 14 Nov 2024 08:01:45 -0800 (PST)
 Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-382200fe00esm1139024f8f.42.2024.11.14.08.01.43
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-382200fe00esm1139024f8f.42.2024.11.14.08.01.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 08:01:44 -0800 (PST)
+        Thu, 14 Nov 2024 08:01:45 -0800 (PST)
 From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Thu, 14 Nov 2024 16:01:14 +0000
-Subject: [PATCH 2/3] media: dt-bindings: media: i2c: Add IMX462 to the
- IMX290 binding
+Date: Thu, 14 Nov 2024 16:01:15 +0000
+Subject: [PATCH 3/3] media: i2c: imx290: Add configuration for IMX462
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241114-media-imx290-imx462-v1-2-c538a2e24786@raspberrypi.com>
+Message-Id: <20241114-media-imx290-imx462-v1-3-c538a2e24786@raspberrypi.com>
 References: <20241114-media-imx290-imx462-v1-0-c538a2e24786@raspberrypi.com>
 In-Reply-To: <20241114-media-imx290-imx462-v1-0-c538a2e24786@raspberrypi.com>
 To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
@@ -96,27 +95,114 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  Dave Stevenson <dave.stevenson@raspberrypi.com>
 X-Mailer: b4 0.14.1
 
-IMX462 is the successor to IMX290, which is supportable by
-the existing IMX290 driver via a new compatible string.
+IMX462 is the successor to IMX290, and wants very minor
+changes to the register setup.
+
+Add the relevant configuration to support it.
 
 Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 ---
- Documentation/devicetree/bindings/media/i2c/sony,imx290.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/i2c/imx290.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 66 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/sony,imx290.yaml b/Documentation/devicetree/bindings/media/i2c/sony,imx290.yaml
-index bf05ca48601a..fa69bd21c8da 100644
---- a/Documentation/devicetree/bindings/media/i2c/sony,imx290.yaml
-+++ b/Documentation/devicetree/bindings/media/i2c/sony,imx290.yaml
-@@ -33,6 +33,8 @@ properties:
-           - sony,imx290lqr # Colour
-           - sony,imx290llr # Monochrome
-           - sony,imx327lqr # Colour
-+          - sony,imx462lqr # Colour
-+          - sony,imx462llr # Monochrome
-       - const: sony,imx290
-         deprecated: true
+diff --git a/drivers/media/i2c/imx290.c b/drivers/media/i2c/imx290.c
+index da654deb444a..f1780cc5d7cc 100644
+--- a/drivers/media/i2c/imx290.c
++++ b/drivers/media/i2c/imx290.c
+@@ -170,6 +170,8 @@ enum imx290_model {
+ 	IMX290_MODEL_IMX290LQR,
+ 	IMX290_MODEL_IMX290LLR,
+ 	IMX290_MODEL_IMX327LQR,
++	IMX290_MODEL_IMX462LQR,
++	IMX290_MODEL_IMX462LLR,
+ };
  
+ struct imx290_model_info {
+@@ -316,6 +318,50 @@ static const struct cci_reg_sequence imx290_global_init_settings_290[] = {
+ 	{ CCI_REG8(0x33b3), 0x04 },
+ };
+ 
++static const struct cci_reg_sequence imx290_global_init_settings_462[] = {
++	{ CCI_REG8(0x300f), 0x00 },
++	{ CCI_REG8(0x3010), 0x21 },
++	{ CCI_REG8(0x3011), 0x02 },
++	{ CCI_REG8(0x3016), 0x09 },
++	{ CCI_REG8(0x3070), 0x02 },
++	{ CCI_REG8(0x3071), 0x11 },
++	{ CCI_REG8(0x309b), 0x10 },
++	{ CCI_REG8(0x309c), 0x22 },
++	{ CCI_REG8(0x30a2), 0x02 },
++	{ CCI_REG8(0x30a6), 0x20 },
++	{ CCI_REG8(0x30a8), 0x20 },
++	{ CCI_REG8(0x30aa), 0x20 },
++	{ CCI_REG8(0x30ac), 0x20 },
++	{ CCI_REG8(0x30b0), 0x43 },
++	{ CCI_REG8(0x3119), 0x9e },
++	{ CCI_REG8(0x311c), 0x1e },
++	{ CCI_REG8(0x311e), 0x08 },
++	{ CCI_REG8(0x3128), 0x05 },
++	{ CCI_REG8(0x313d), 0x83 },
++	{ CCI_REG8(0x3150), 0x03 },
++	{ CCI_REG8(0x317e), 0x00 },
++	{ CCI_REG8(0x32b8), 0x50 },
++	{ CCI_REG8(0x32b9), 0x10 },
++	{ CCI_REG8(0x32ba), 0x00 },
++	{ CCI_REG8(0x32bb), 0x04 },
++	{ CCI_REG8(0x32c8), 0x50 },
++	{ CCI_REG8(0x32c9), 0x10 },
++	{ CCI_REG8(0x32ca), 0x00 },
++	{ CCI_REG8(0x32cb), 0x04 },
++	{ CCI_REG8(0x332c), 0xd3 },
++	{ CCI_REG8(0x332d), 0x10 },
++	{ CCI_REG8(0x332e), 0x0d },
++	{ CCI_REG8(0x3358), 0x06 },
++	{ CCI_REG8(0x3359), 0xe1 },
++	{ CCI_REG8(0x335a), 0x11 },
++	{ CCI_REG8(0x3360), 0x1e },
++	{ CCI_REG8(0x3361), 0x61 },
++	{ CCI_REG8(0x3362), 0x10 },
++	{ CCI_REG8(0x33b0), 0x50 },
++	{ CCI_REG8(0x33b2), 0x1a },
++	{ CCI_REG8(0x33b3), 0x04 },
++};
++
+ #define IMX290_NUM_CLK_REGS	2
+ static const struct cci_reg_sequence xclk_regs[][IMX290_NUM_CLK_REGS] = {
+ 	[IMX290_CLK_37_125] = {
+@@ -1455,6 +1501,20 @@ static const struct imx290_model_info imx290_models[] = {
+ 		.max_analog_gain = 98,
+ 		.name = "imx327",
+ 	},
++	[IMX290_MODEL_IMX462LQR] = {
++		.colour_variant = IMX290_VARIANT_COLOUR,
++		.init_regs = imx290_global_init_settings_462,
++		.init_regs_num = ARRAY_SIZE(imx290_global_init_settings_462),
++		.max_analog_gain = 98,
++		.name = "imx462",
++	},
++	[IMX290_MODEL_IMX462LLR] = {
++		.colour_variant = IMX290_VARIANT_MONO,
++		.init_regs = imx290_global_init_settings_462,
++		.init_regs_num = ARRAY_SIZE(imx290_global_init_settings_462),
++		.max_analog_gain = 98,
++		.name = "imx462",
++	},
+ };
+ 
+ static int imx290_parse_dt(struct imx290 *imx290)
+@@ -1653,6 +1713,12 @@ static const struct of_device_id imx290_of_match[] = {
+ 	}, {
+ 		.compatible = "sony,imx327lqr",
+ 		.data = &imx290_models[IMX290_MODEL_IMX327LQR],
++	}, {
++		.compatible = "sony,imx462lqr",
++		.data = &imx290_models[IMX290_MODEL_IMX462LQR],
++	}, {
++		.compatible = "sony,imx462llr",
++		.data = &imx290_models[IMX290_MODEL_IMX462LLR],
+ 	},
+ 	{ /* sentinel */ },
+ };
 
 -- 
 2.34.1
