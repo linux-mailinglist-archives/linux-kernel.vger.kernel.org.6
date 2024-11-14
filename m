@@ -1,73 +1,46 @@
-Return-Path: <linux-kernel+bounces-409763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F5FD9C9115
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:46:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A3699C9153
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:03:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 582021F23668
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:46:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E92FEB34FB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F194A18C907;
-	Thu, 14 Nov 2024 17:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3052F18C326;
+	Thu, 14 Nov 2024 17:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vltc1sae"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C37189916
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 17:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="dGEpXD8C"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BD718B484;
+	Thu, 14 Nov 2024 17:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731606398; cv=none; b=HumjYe9UTZaiea+AxP+F6VgzmoKwdBz7wl5I5B201YwiW7lahDiGAdPJkxiwN6hehedC2UTBtNvKnCkXL8bZ9FCXlL1Oi5k1iJHLtrc0nPJmlO20XvjjPTKfFmHeymrqNr0U0XtDvOvGYGeCis53ZjDGSR/kgYfS9XAxsm7y+CU=
+	t=1731606433; cv=none; b=sz75DTtiVhvm3sn1g4OI7s6PaPKYmjJJREV2K033ZChTe7CgzSsVMMBJch4NpQ4QpsCJPktJcq+nTnA9F1w7gAvYFART62ZaG3Z25Ge8QUmCJWcf22x/dOd6cE+vImEdigB0BzKivIZGKjWTPHEO0Z9n8/qt+yqJY2oXV9okdb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731606398; c=relaxed/simple;
-	bh=NA58fS6XQUw8rJ0uXmi3pOsMcJtgXs+JY7KMogQcHgY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cNKQvNWfRUb+BGaRIEfes2JQ4a/TQWFUpANcTEfWoyfb7ah9ym6KK5vgnS0RuPxoNp/vG9DktbKVHEo0SNO832/P2/L/8Of6y/gMegTbnUFMzwtVmP8Vu0cKBclYhvoJ966J0GlG5iKzP2bOkiYFeHhyEcvFupeZ2APoVCK6wLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Vltc1sae; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53d9ff8ef3aso974014e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:46:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731606395; x=1732211195; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ydOqmQuZhEKXboyqXYbz+toDadk8akjp3SATfp/BUmo=;
-        b=Vltc1saeUSrpfn5e8nht4n2o3bLYELL4pq3xfym1qsl4FZHkJT3NOuWGWEVRh9T1lY
-         3IFQ8hgSMJWbI++5crOE41cdhDonFcMc9l7AAEnnKbXzoJ2BS6wxoM0XPFERycuMdu3f
-         PR4Vi/9PLV3AUIwBCWDdbYMTyWNZdvFX3a5ndW+2q+3os2LtfrPYVQD/Bq+UjNz3DQ3l
-         jNQ6c1EI9nEA2/u7SITOloV3rNn5xD084Qe2T+8qXcKUVJquOC8HaZCdKCa7m+Y7hieF
-         MYwL6+SUI+Evez/idnmUSqIdMzSFdqsCsqaWvtqgurhSEWlfUbxela4x74gH8gvPOSjP
-         mzLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731606395; x=1732211195;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ydOqmQuZhEKXboyqXYbz+toDadk8akjp3SATfp/BUmo=;
-        b=HiXmgpmGbm1lsvFWjmwV9DEQhIJPyC/u8gYR0+BRKMQHaQK6Q19HlEr/dafHIyC1ba
-         WtiJGW/ovOMTJrVUhNVL19EVyu/oeKqKUegQWZKbNy+Md8pBzpPUPrinCAEjHSgw+6nl
-         pVnNDdvc5SAXtZ33h3vpzTudFitLwHU/DUFOH29E4CLlEx14rzQXIb/chKPCCDGFpNvX
-         YOVEPhhVJhq1Gz2nJn9HFMhE9YAhhfsvVYh6PDPxeev5lTom+d266Co2ht6HdKsEAR3Y
-         51SnP4SWRBaBNcWDzfyqFSSMFKnh9b4+AfbYnyKry4RLmVTUD/LVqqMfIC6uxC84ZR5c
-         fzBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVWgQi2durnxs3qmLdZDIwqMCH0XlaBxo6G03jWDFopKD5YOEsHbwpNRmpEsYX9opsosn/44QiPP2C/m6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy1I3pYbWSEgaQvZKRz0YHk9gpVFrzxdM2mfEq26vidsWXOLpD
-	TcJJbNrB4SObHtT0QCku23RI3H2Xem0LVg+dIlpDWEYRV+/GcutibWtQaL+3Ab8=
-X-Google-Smtp-Source: AGHT+IHgHYVE/h0+RXbygc5S4IcTDZXFm8VE/7Twx1yEeqJNVircTeGt6suoOYGUYTN6B7LNlvX5Qg==
-X-Received: by 2002:a05:6512:220c:b0:539:fb56:7790 with SMTP id 2adb3069b0e04-53d862bd3f7mr12847708e87.6.1731606394599;
-        Thu, 14 Nov 2024 09:46:34 -0800 (PST)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-432dac0aef0sm27975175e9.28.2024.11.14.09.46.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 09:46:33 -0800 (PST)
-Message-ID: <1bc55c9c-f5ff-46c7-b2f3-65c275c52bcb@linaro.org>
-Date: Thu, 14 Nov 2024 18:46:33 +0100
+	s=arc-20240116; t=1731606433; c=relaxed/simple;
+	bh=ID8ZhFiwzsT6f68DK1Sq/ms9TWIt+cLdct40zfYVDhQ=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=SurJl+5OPWa2duATDV9ZiEal0b2njTN5sFEMC1RjKlCT1Baq00U7rstCEGNhYT2Oq+e1MX377ONgBDvc7r1bAvj1/25A9NaXHXeGgiriLrud8Vny6ZeXIqpXBhT3d8L2iuL4u/6IWbyGHc7uDJGA0jdtSQQ6lvL3PTM65nRYhPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=dGEpXD8C; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.35.166] (c-73-118-245-227.hsd1.wa.comcast.net [73.118.245.227])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 0F7F120BEBFD;
+	Thu, 14 Nov 2024 09:47:10 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0F7F120BEBFD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1731606430;
+	bh=tv6R0dfqeJn4Gt9XYkh+9bVP07MCUYjrl1v5JAVZfsE=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=dGEpXD8C934fobk6knh2OeWKyFUtuXwN5EKsxyMqluoYdmPY9/v5yrBk/nEPeUZXJ
+	 mqNMtESikRdQQmFjTcKnLmgXRZSiy7loawioMT2eUFmTqkzmZRPnDiADBSeTyW8vzq
+	 HToL/wLvV1rq2amU+q4Dnp0m2iIMJo9C2bLiLMt0=
+Message-ID: <34a3e85d-4dbd-4550-a74b-5807d71a007e@linux.microsoft.com>
+Date: Thu, 14 Nov 2024 09:47:09 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,33 +48,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] tools/thermal: Fix common realloc mistake
-To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-Cc: rafael@kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241114084039.42149-1-zhangjiao2@cmss.chinamobile.com>
+Cc: eahariha@linux.microsoft.com, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, John Starks <jostarks@microsoft.com>,
+ jacob.pan@linux.microsoft.com, Michael Kelley <mhklinux@outlook.com>,
+ Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+Subject: Re: [PATCH v3 0/2] Drivers: hv: vmbus: Wait for boot-time offers and
+ log missing offers
+To: Naman Jain <namjain@linux.microsoft.com>,
+ "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>
+References: <20241113084700.2940-1-namjain@linux.microsoft.com>
 Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20241114084039.42149-1-zhangjiao2@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+In-Reply-To: <20241113084700.2940-1-namjain@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 14/11/2024 09:40, zhangjiao2 wrote:
-> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+On 11/13/2024 12:46 AM, Naman Jain wrote:
+> After VM requests for channel offers during boot or resume from
+> hibernation, host offers the devices that the VM is configured with and
+> then sends a separate message indicating that all the boot-time channel
+> offers are delivered. Wait for this message to make this boot-time offers
+> request and receipt process synchronous.
 > 
-> If the 'realloc' fails, the thermal zones pointer is set to NULL. This
-> makes all thermal zones references which were previously successfully
-> initialized to be lost.
+> Without this, user mode can race with VMBus initialization and miss
+> channel offers. User mode has no way to work around this other than
+> sleeping for a while, since there is no way to know when VMBus has
+> finished processing boot-time offers.
 > 
-> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-> ---
+> This is in analogy to a PCI bus not returning from probe until it has
+> scanned all devices on the bus.
+> 
+> As part of this implementation, some code cleanup is also done for the
+> logic which becomes redundant due to this change.
+> 
+> Second patch prints the channels which are not offered when resume
+> happens from hibernation to supply more information to the end user.
+> 
+> Changes since v2:
+> https://lore.kernel.org/all/20241029080147.52749-1-namjain@linux.microsoft.com/
+> * Incorporated Easwar's suggestion to use secs_to_jiffies() as his
+>   changes are now merged.
+> * Addressed Michael's comments:
+>   * Used boot-time offers/channels/devices to maintain consistency
+>   * Rephrased CHANNELMSG_ALLOFFERS_DELIVERED handler function comments
+>     for better explanation. Thanks for sharing the write-up.
+>   * Changed commit msg and other things as per suggestions
+> * Addressed Dexuan's comments, which came up in offline discussion:
+>   * Changed timeout for waiting for all offers delivered msg to 60s instead of 10s.
+>     Reason being, the host can experience some servicing events or diagnostics events,
+>     which may take a long time and hence may fail to offer all the devices within 10s.
+>   * Minor additions in commit subject of both patches
+> * Rebased on latest linux-next master tip
+> 
+> Changes since v1:
+> https://lore.kernel.org/all/20241018115811.5530-1-namjain@linux.microsoft.com/
+> * Added Easwar's Reviewed-By tag
+> * Addressed Michael's comments:
+>   * Added explanation of all offers delivered message in comments
+>   * Removed infinite wait for offers logic, and changed it wait once.
+>   * Removed sub channel workqueue flush logic
+>   * Added comments on why MLX device offer is not expected as part of
+>     this essential boot offer list. I refrained from adding too many
+>     details on it as it felt like it is beyond the scope of this patch
+>     series and may not be relevant to this. However, please let me know if
+>     something needs to be added.
+> * Addressed Saurabh's comments:
+>   * Changed timeout value to 10000 ms instead of 10*1000
+>   * Changed commit msg as per suggestions
+>   * Added a comment for warning case of wait_for_completion timeout
+>   * Added a note for missing channel cleanup in comments and commit msg
+> 
+> John Starks (1):
+>   Drivers: hv: vmbus: Log on missing offers if any
+> 
+> Naman Jain (1):
+>   Drivers: hv: vmbus: Wait for boot-time offers during boot and resume
+> 
+>  drivers/hv/channel_mgmt.c | 61 +++++++++++++++++++++++++++++----------
+>  drivers/hv/connection.c   |  4 +--
+>  drivers/hv/hyperv_vmbus.h | 14 ++-------
+>  drivers/hv/vmbus_drv.c    | 31 ++++++++++----------
+>  4 files changed, 67 insertions(+), 43 deletions(-)
+> 
+> 
+> base-commit: 28955f4fa2823e39f1ecfb3a37a364563527afbc
 
-Applied, thanks !
+For the series:
 
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Reviewed-by: Easwar Hariharan <eahariha@linux.microsoft.com>
 
