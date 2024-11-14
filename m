@@ -1,166 +1,136 @@
-Return-Path: <linux-kernel+bounces-409182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 430EE9C886C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:07:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 968F39C8880
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:10:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 072C9281C3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:07:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 425041F25271
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9461F8900;
-	Thu, 14 Nov 2024 11:07:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579341F8938;
+	Thu, 14 Nov 2024 11:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XA2HcVc6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ua63s7Ns"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63051F8185
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441211F81A7;
+	Thu, 14 Nov 2024 11:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731582470; cv=none; b=Boc8aCBTq2rguztqZH4QeQl3P5UDMd6P4G2LMOijDOZYwSMg61enPP2mef5E//dmfAUoPbkpprqBHe6sUCsoTFTddDOQsxnpiQwosXPBLa8hTyUFK9jfOHUyq0YLnSiCZFPnIqcvbuG9x8+hDJTlgNU+BGJ9rNIv90P9FqjRzbg=
+	t=1731582612; cv=none; b=GP9CzTZQHkaNl3Gg90syb/ZBtPOnAez012CDqH4wYy1WekSfoPy46FXUcIZc5xMtDYzZB1erMLojqgxMv9nH8F135VSvgPpnBRh6hZzrDOKhS1qJCkX3WrcO7bW0q3wDT7ZJJdz4vrmvJtW62ncxEDCccnL5R9NHRJV9i+v4KNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731582470; c=relaxed/simple;
-	bh=OofcrezGVEU5ao0iZ9H6FT3uGNr6VLrJ6gqtSnY6rDk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bIHiCW4ChXfWzaFduAIb6OMzIJFS5IO6TOEYi5DgASK6doKwWR2fIeuRnvN2g/ELPTNJHDVa9HjVzOgtw7OXuxdmAVOwnVJL7p/+Is1nBbGvIEiWjOVI6bespoJvsvDzbA3bmBn+LOD4OtTDEunQWXuZhMQDh2gUVJemjwusQLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XA2HcVc6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 467E8C4CED6
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:07:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731582470;
-	bh=OofcrezGVEU5ao0iZ9H6FT3uGNr6VLrJ6gqtSnY6rDk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XA2HcVc6FKMMG0IOhL6IHkkoUSw8jgdMiUBdI1O5NYZfCkYOALH1qqw7PTjCw8saA
-	 dJhl4ePRIAQhLGuGU738gKzUTeCrQg1nVTqId2y47A4c9xGJQZiY4hG06far0wf2GL
-	 /gx6ajg9m4YmezJvhuhvNTDSWPDpaS2AxXuapfvWG2e+U2WgJuKoySr8nWZGq+4Gcj
-	 k73e66sFtBRjKyhYLSupU8GIx06uSsObtJ5/DDgA8ar3WbWi3YZjdSgq9Jkz7hz5Ab
-	 OX/6pkCUtmZxSdOEecY8t6/ecrH87V1Vt5tL+dFo04cauGrsUnHoXCwxteD4d+kkAu
-	 JETTXysHrP/gQ==
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa2099efdc3so120720566b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 03:07:50 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVACBENd0FHzGqjnJ9fM2mZ2urPxSpHE0Yz6RKOnzoY9o6DKZeQ3hm+cEuEiQTeWaVLOM6Tm56ETPe+dwY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyUDefVVmmO9mbWCneepJce7uYPN9Mz/n04PVj01kJbmj2P2Oy
-	ohZSXa7K/ajnV6+535VuqgUL5v92dFquuiEvBxNHLboLIN1k/SqcpT1QTzRGuCdPksP4WENvCNF
-	83sFpnYenUYlynoxEUpze8TBa0ao=
-X-Google-Smtp-Source: AGHT+IGb42yBdA5MQOMLHfWvvDDqX7GdkwDfAGkPZuQ/dihTqhBtNFjCWuM/cFznucyrdPNhEsFD9drB4Nwo1OJ4rk4=
-X-Received: by 2002:a17:907:d20:b0:a9a:7b3d:705 with SMTP id
- a640c23a62f3a-aa207818590mr274982066b.30.1731582468777; Thu, 14 Nov 2024
- 03:07:48 -0800 (PST)
+	s=arc-20240116; t=1731582612; c=relaxed/simple;
+	bh=tkzHrrJXOXS7vOUYq3tWDArhR/nWqxSRsKMsB3s0zw4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uXoNVKXKvg9udUpcqiWK/RiEskFfcdjZ96f+J6gv3pB+MGBieyIuAEheIMvE9ckEGHaeQgkVOOCUXVSnaVN+nvoqsZpMkDycBxjNTwCEJUm5pIV1+yQhyhXr7qFSaeDK7+VKubd6swOt+Ms7nB/MxPWneItenItetc0qd0duWvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ua63s7Ns; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1731582610; x=1763118610;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tkzHrrJXOXS7vOUYq3tWDArhR/nWqxSRsKMsB3s0zw4=;
+  b=ua63s7NslMf4M2K98kN+TCvZjLAUb119+pcsp7o18ZPmEvowXy88W9uj
+   z0Hv7Izk5Hfr2RLQpE6/bvIXIPdhnXevawFMACSPJKyIU0QbFVlQo3tQa
+   YquAXZPSLoZ/9sg/wJFhta52z8W2JxF01ia/vZVinLOsKydtkQYKQNxUq
+   ZTj1cDIdMBXV6CBFyvPMXweXEzxWbyzAhjVOLQHCSTO20cncHYsuKJX3y
+   jDXktTZeaHSXpGsqemKzwJZnk5uVqdKY3SHD1BlBfp8EZ/7GT2gyczork
+   ex+R15BmnWrsMDYo9Kq7cBejuHqsBCwQzhbyzm5SvKMV3O20xhh7VKqvl
+   Q==;
+X-CSE-ConnectionGUID: p4ZQJMZoSBKRif35c8c9jg==
+X-CSE-MsgGUID: mfgf0lngSeqcO77umlAhyg==
+X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
+   d="scan'208";a="34308229"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Nov 2024 04:10:09 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 14 Nov 2024 04:09:28 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Thu, 14 Nov 2024 04:09:28 -0700
+Date: Thu, 14 Nov 2024 12:07:45 +0100
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: Rosen Penev <rosenp@gmail.com>
+CC: <netdev@vger.kernel.org>, Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
+	Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol
+	<mailhol.vincent@wanadoo.fr>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Kurt Kanzenbach
+	<kurt@linutronix.de>, Vladimir Oltean <olteanv@gmail.com>, Chris Snook
+	<chris.snook@gmail.com>, Marcin Wojtas <marcin.s.wojtas@gmail.com>, "Russell
+ King" <linux@armlinux.org.uk>, "maintainer:MICROCHIP LAN966X ETHERNET DRIVER"
+	<UNGLinuxDriver@microchip.com>, Yoshihiro Shimoda
+	<yoshihiro.shimoda.uh@renesas.com>, Niklas =?utf-8?Q?S=C3=B6derlund?=
+	<niklas.soderlund@ragnatech.se>, Doug Berger <opendmb@gmail.com>, "Florian
+ Fainelli" <florian.fainelli@broadcom.com>, "Broadcom internal kernel review
+ list" <bcm-kernel-feedback-list@broadcom.com>, Heiner Kallweit
+	<hkallweit1@gmail.com>, Richard Cochran <richardcochran@gmail.com>, "open
+ list:MCAN MMIO DEVICE DRIVER" <linux-can@vger.kernel.org>, open list
+	<linux-kernel@vger.kernel.org>, "open list:RENESAS ETHERNET SWITCH DRIVER"
+	<linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCHv2 net-next] net: modernize ioremap in probe
+Message-ID: <20241114110745.h6luzb72zkahyr5j@DEN-DL-M31836.microchip.com>
+References: <20241111200212.5907-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108091545.4182229-1-chenhuacai@loongson.cn>
- <20241108091545.4182229-4-chenhuacai@loongson.cn> <20241114103111.5W5ZY0D4@linutronix.de>
-In-Reply-To: <20241114103111.5W5ZY0D4@linutronix.de>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Thu, 14 Nov 2024 19:07:37 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H72YSNBGutYPOVi=S7nwLb6YOiQOFqnimAp=9D0wAJc3g@mail.gmail.com>
-Message-ID: <CAAhV-H72YSNBGutYPOVi=S7nwLb6YOiQOFqnimAp=9D0wAJc3g@mail.gmail.com>
-Subject: Re: [PATCH 3/3] LoongArch: Allow to enable PREEMPT_RT
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Huacai Chen <chenhuacai@loongson.cn>, Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev, 
-	Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	linux-rt-devel@lists.linux.dev, Guo Ren <guoren@kernel.org>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <20241111200212.5907-1-rosenp@gmail.com>
 
-Hi, Sebastian,
+The 11/11/2024 12:02, Rosen Penev wrote:
 
-On Thu, Nov 14, 2024 at 6:31=E2=80=AFPM Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
->
-> On 2024-11-08 17:15:45 [+0800], Huacai Chen wrote:
-> > It is really time.
-> >
-> > LoongArch has all the required architecture related changes, that have
-> > been identified over time, in order to enable PREEMPT_RT. With the rece=
-nt
-> > printk changes, the last known road block has been addressed.
-> >
-> > Allow to enable PREEMPT_RT on LoongArch.
-> >
-> > Below are the latency data from cyclictest on a 4-core Loongson-3A5000
-> > machine, with a "make -j8" kernel building workload in the background.
-> >
-> > 1. PREEMPT kernel with default configuration:
-> >
-> > ./cyclictest -a -t -m -i200 -d0 -p99
-> > policy: fifo: loadavg: 8.78 8.96 8.64 10/296 64800
-> > T: 0 ( 4592) P:99 I:200 C:14838617 Min:   3 Act:    6 Avg:    8 Max:   =
- 844
-> > T: 1 ( 4593) P:99 I:200 C:14838765 Min:   3 Act:    9 Avg:    8 Max:   =
- 909
-> > T: 2 ( 4594) P:99 I:200 C:14838510 Min:   3 Act:    7 Avg:    8 Max:   =
- 832
-> > T: 3 ( 4595) P:99 I:200 C:14838631 Min:   3 Act:    8 Avg:    8 Max:   =
- 931
-> >
-> > 2. PREEMPT_RT kernel with default configuration:
-> >
-> > ./cyclictest -a -t -m -i200 -d0 -p99
-> > policy: fifo: loadavg: 10.38 10.47 10.35 9/336 77788
-> > T: 0 ( 3941) P:99 I:200 C:19439626 Min:   3 Act:   12 Avg:    8 Max:   =
- 227
-> > T: 1 ( 3942) P:99 I:200 C:19439624 Min:   2 Act:   11 Avg:    8 Max:   =
- 184
-> > T: 2 ( 3943) P:99 I:200 C:19439623 Min:   3 Act:    4 Avg:    7 Max:   =
- 223
-> > T: 3 ( 3944) P:99 I:200 C:19439623 Min:   2 Act:   10 Avg:    7 Max:   =
- 226
-> >
-> > 3. PREEMPT_RT kernel with tuned configuration:
-> >
-> > ./cyclictest -a -t -m -i200 -d0 -p99
-> > policy: fifo: loadavg: 10.52 10.66 10.62 12/334 109397
-> > T: 0 ( 4765) P:99 I:200 C:29335186 Min:   3 Act:    6 Avg:    8 Max:   =
-  62
-> > T: 1 ( 4766) P:99 I:200 C:29335185 Min:   3 Act:   10 Avg:    8 Max:   =
-  52
-> > T: 2 ( 4767) P:99 I:200 C:29335184 Min:   3 Act:    8 Avg:    8 Max:   =
-  64
-> > T: 3 ( 4768) P:99 I:200 C:29335183 Min:   3 Act:   12 Avg:    8 Max:   =
-  53
-> >
-> > Main instruments of tuned configuration include: Disable the boot rom
-> > space in BIOS for kernel, in order to avoid speculative access to low-
-> > speed memory; Disable CPUFreq scaling; Disable RTC synchronization in
-> > the ntpd/chronyd service.
->
-> If "rom space in BIOS for kernel" is a thing you should document it
-> somewhere or issue a warning at boot. I don't know what the latency
-> impact is here and if this is needed at all during runtime.
-I'm sorry to confuse you. This sentence should be reworded. The real
-meaning is: we should disable something in BIOS configuration, the
-goal is avoid kernel code's speculative access to boot rom (low speed
-memory).
+Hi Rosen,
 
->
-> Why is ntpd/chronyd service affecting this? Is it running at prio 99?
-> Otherwise it should not be noticed.
-No, ntpd/chronyd doesn't affect latency. But they may trigger RTC
-synchronization every 11 minutes, and RTC synchronization affects
-latency. We can keep ntpd/chronyd running but disable RTC
-synchronization by configuration, this is the least aggressive method.
+> diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
+> index 3234a960fcc3..375e9a68b9a9 100644
+> --- a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
+> +++ b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
+> @@ -77,20 +77,12 @@ static int lan966x_create_targets(struct platform_device *pdev,
+>          * this.
+>          */
+>         for (idx = 0; idx < IO_RANGES; idx++) {
+> -               iores[idx] = platform_get_resource(pdev, IORESOURCE_MEM,
+> -                                                  idx);
+> -               if (!iores[idx]) {
+> -                       dev_err(&pdev->dev, "Invalid resource\n");
+> -                       return -EINVAL;
+> -               }
+> -
+> -               begin[idx] = devm_ioremap(&pdev->dev,
+> -                                         iores[idx]->start,
+> -                                         resource_size(iores[idx]));
+> -               if (!begin[idx]) {
+> +               begin[idx] = devm_platform_get_and_ioremap_resource(
+> +                       pdev, idx, &iores[idx]);
+> +               if (IS_ERR(begin[idx])) {
+>                         dev_err(&pdev->dev, "Unable to get registers: %s\n",
+>                                 iores[idx]->name);
+> -                       return -ENOMEM;
+> +                       return PTR_ERR(begin[idx]);
+>                 }
+>         }
+> 
 
->
-> Is lockdep complaining in any workloads?
-> Is CONFIG_DEBUG_ATOMIC_SLEEP leading to any complains?
-This needs more tests because I haven't enabled them.
+Unfortunately, this breaks the lan966x probe. With this change I get the
+following errors:
+[    1.705315] lan966x-switch e0000000.switch: can't request region for resource [mem 0xe0000000-0xe00fffff]
+[    1.714911] lan966x-switch e0000000.switch: Unable to get registers: cpu
+[    1.721607] lan966x-switch e0000000.switch: error -EBUSY: Failed to create targets
+[    1.729173] lan966x-switch: probe of e0000000.switch failed with error -16
 
-Huacai
-
->
->
-> > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
->
-> Sebastian
->
+-- 
+/Horatiu
 
