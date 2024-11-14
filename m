@@ -1,160 +1,259 @@
-Return-Path: <linux-kernel+bounces-408900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8AF09C84E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:37:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02ED49C84E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:38:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BC58284882
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:37:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A286B23D64
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567721F7577;
-	Thu, 14 Nov 2024 08:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="rY67IInr"
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4301F76CD;
+	Thu, 14 Nov 2024 08:37:44 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCBCFE573;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9721F7096;
 	Thu, 14 Nov 2024 08:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731573461; cv=none; b=YaV8mprSACOAZenNPyBxpNHzHw7zjC0zXvrxMcwFrwT0LjwsZsBVQYHrWeDKcSpR8f0bX+XE3pB4UI/WtozN8PxkoPbyIEWSkz84LKCshV/LnAiGSYjQpUvKvau2hGodrqa1FD51sLbOyrnm9tk+Xqhomc8Edcu9Du5Da8z3bmc=
+	t=1731573464; cv=none; b=fgRkgVGO5/aQKjaaiGICXMsvrUXy5QVmS2w0ioXuDIW27P7hIIa/ATAanEtBo7+AW434YHZ7rSj2KjFqia6K8/VkZs6Q/TLh31U5eMZ+ans3CYkkg4cD7y2sqQdJMZHG+zQmRbqztloWBvBjklkcWytEVIAXSgbtmkm9OffRy94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731573461; c=relaxed/simple;
-	bh=U3qmdgcH6MMkMelPnEG3r8KizQ6+9vcmJmFZuVHxiJ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=slMKIi2xm1zj/C7N5/fqW9IyGvdwnZ6gTc5CBA3VWj/kC+gKxVOebstbb5hRJ9LOag4fm4guE+d7tiQGZVLJrsdMfmQaEx30Y2q8etVe62Eg2uKRiiVrnjFzM7iimmZLVrMFTlzZ9xBV7nRwklqkVeLKTRCiNGK/m5+NCP5iFCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=rY67IInr; arc=none smtp.client-ip=80.12.242.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from mail-ed1-f45.google.com ([209.85.208.45])
-	by smtp.orange.fr with ESMTPSA
-	id BVL2tzHaL3yyBBVL2tOKmr; Thu, 14 Nov 2024 09:36:28 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731573388;
-	bh=gXAcLSWilqPFLEu11EWRGdVfTFC2/7ErD7HP3mFVwXQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To;
-	b=rY67IInr0mBBP0OiqVyUn9P7Gl/AYlY1bbEpKCHeQnel+U11jeglkrEZZAuPoNVoU
-	 XJ4uQc9jL2+bZdloxiNy5FP53bHdu2HxpEy3UHs8/KVarB3hKANtnTQc96+Be063eD
-	 VPPgmFn3YWWp/Qb+fgWjycXYzsqvOaRkcmNZnv6dsfIhCs9d6dq4PhPe2d/k2nNzbo
-	 MwjiZ2in08qDqjqTbc2SpMPVgwVDq6I52ZNJGM4MwQOah8S6dTk+N2BasY9kKvJnfd
-	 5Z7CaV/sfLQlSAIgvGLPM88nl6qY9Cw8BT3L0dxzI4CVbAzdumC4fbwldNciobj6Gt
-	 XNM/XuMuBD2tQ==
-X-ME-Helo: mail-ed1-f45.google.com
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 14 Nov 2024 09:36:28 +0100
-X-ME-IP: 209.85.208.45
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5ceb75f9631so454413a12.0;
-        Thu, 14 Nov 2024 00:36:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU5OphQJgA8iPNQxJznnwjcSimC3YKj2rarIdru/aFRFLiCrKtCHFkzsDIrPrxhjyX1Aq881LDremX+@vger.kernel.org, AJvYcCUNDVZ/VSDymco9pEQOl2IzwEnSoNnoXAZ4MLeMWxNwRUeUQPm+bmpBDOjA61cTr9gjjpL2DDxcdjUFz1uh@vger.kernel.org, AJvYcCWvkGWcdu2+f08+dWBu6dNTmQ+cI38s73w5H2M31HPM54epwNp2KhFc6lKoWZq+o9Qq4li4N+NbV/hC@vger.kernel.org, AJvYcCXr0DULzgS4NwJ4yk5bL7JvFFDuFfN5OdfJ7Hu9E+dAfzPp8L9FzGusaOGfM722mVBwaw7Me2ix@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyil8pNgd73j07v41vx9O8m0lrhm4bKk90wAhA4iUGiXlrgqe3F
-	Urs3zUYifp4rfsI31TTxqeB5wgsfNbwL197Q2OGRFgHjVHY2FUUt4rWn32ys5/S2AWc5D+TB/Wz
-	2r92AbQyz2S2F/HFYaFXjpQMeTic=
-X-Google-Smtp-Source: AGHT+IEstSibTpytnkaLQd2f49BeKoBVqOwbRbmmb2UHX5x8V4EZg3n6d4T2cSfTwfjKsIE0fatwfTowT9iTIr1JnSQ=
-X-Received: by 2002:a05:6402:2550:b0:5cf:466f:d474 with SMTP id
- 4fb4d7f45d1cf-5cf4670c998mr11066042a12.16.1731573388036; Thu, 14 Nov 2024
- 00:36:28 -0800 (PST)
+	s=arc-20240116; t=1731573464; c=relaxed/simple;
+	bh=ReXgCifW5MoQ48kigz0W0MN7ky05dHbOLIGeiAXB7J0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VxVZB3U3z3KYJhbDfFNsajRT8TcTKbIHZCQ8g0odtN3SbZek9LFfjFNXZiovcu/VtL7Sa/x/fiuR3Qbbe8HnZVEjQe2pfNjtv67/3U7ZLuy8TqxNNMeB6mqoSicCqMnrXiYYutMH9vtNr2Urb4wrii3zz9VNAM+W8YLBR10IbGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XptlN386Qz2HYn9;
+	Thu, 14 Nov 2024 16:35:44 +0800 (CST)
+Received: from dggemv704-chm.china.huawei.com (unknown [10.3.19.47])
+	by mail.maildlp.com (Postfix) with ESMTPS id A05AA140257;
+	Thu, 14 Nov 2024 16:37:35 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 14 Nov 2024 16:37:35 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 14 Nov
+ 2024 16:37:34 +0800
+Message-ID: <52539572-6128-8c87-84e6-3f539d887b34@huawei.com>
+Date: Thu, 14 Nov 2024 16:37:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111-tcan-wkrqv-v2-0-9763519b5252@geanix.com>
- <20241111-tcan-wkrqv-v2-1-9763519b5252@geanix.com> <CAMZ6Rq++_yecNY-nNL7NK48ZsNPqH0KDRuqvCCGhUur24+7KGA@mail.gmail.com>
- <zgyd3zghhwivsr3b4pcipt2wfc26ypavjygd6lu5tg3k6ztwbr@t52w4p5kyvaa>
-In-Reply-To: <zgyd3zghhwivsr3b4pcipt2wfc26ypavjygd6lu5tg3k6ztwbr@t52w4p5kyvaa>
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Date: Thu, 14 Nov 2024 17:36:16 +0900
-X-Gmail-Original-Message-ID: <CAMZ6RqJ0SMojXS5sbZBxeA9t6Q_=ns_dV5DCyyZJu2DjNzMsFg@mail.gmail.com>
-Message-ID: <CAMZ6RqJ0SMojXS5sbZBxeA9t6Q_=ns_dV5DCyyZJu2DjNzMsFg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] can: tcan4x5x: add option for selecting nWKRQ voltage
-To: Sean Nyekjaer <sean@geanix.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v2] ACPI: thermal: Support for linking devices associated
+ with the thermal zone
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: <linux-pm@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <rui.zhang@intel.com>,
+	<liuyonglong@huawei.com>, <zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>
+References: <20241113085634.7657-1-lihuisong@huawei.com>
+ <CAJZ5v0jTMg=Wipt2VPU1DDnnO7Rh5pu0VYvUjHRW5Nada--O8A@mail.gmail.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <CAJZ5v0jTMg=Wipt2VPU1DDnnO7Rh5pu0VYvUjHRW5Nada--O8A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-On Thu. 14 Nov. 2024 at 16:33, Sean Nyekjaer <sean@geanix.com> wrote:
-> Hi Vincent,
-> On Thu, Nov 14, 2024 at 01:53:34PM +0100, Vincent Mailhol wrote:
-> > On Mon. 11 Nov. 2024 at 17:55, Sean Nyekjaer <sean@geanix.com> wrote:
-> > > nWKRQ supports an output voltage of either the internal reference voltage
-> > > (3.6V) or the reference voltage of the digital interface 0 - 6V.
-> > > Add the devicetree option ti,nwkrq-voltage-sel to be able to select
-> > > between them.
-> > > Default is kept as the internal reference voltage.
-> > >
-> > > Signed-off-by: Sean Nyekjaer <sean@geanix.com>
-> > > ---
-> > >  drivers/net/can/m_can/tcan4x5x-core.c | 35 +++++++++++++++++++++++++++++++++++
-> > >  drivers/net/can/m_can/tcan4x5x.h      |  2 ++
-> > >  2 files changed, 37 insertions(+)
-> > >
->
-> [...]
->
-> > >
-> > > +static int tcan4x5x_get_dt_data(struct m_can_classdev *cdev)
-> > > +{
-> > > +       struct tcan4x5x_priv *tcan4x5x = cdev_to_priv(cdev);
-> > > +       struct device_node *np = cdev->dev->of_node;
-> > > +       u8 prop;
-> > > +       int ret;
-> > > +
-> > > +       ret = of_property_read_u8(np, "ti,nwkrq-voltage-sel", &prop);
-> > > +       if (!ret) {
-> > > +               if (prop <= 1)
-> > > +                       tcan4x5x->nwkrq_voltage = prop;
-> > > +               else
-> > > +                       dev_warn(cdev->dev,
-> > > +                                "nwkrq-voltage-sel have invalid option: %u\n",
-> > > +                                prop);
-> > > +       } else {
-> > > +               tcan4x5x->nwkrq_voltage = 0;
-> > > +       }
-> >
-> > If the
-> >
-> >   if (prop <= 1)
-> >
-> > condition fails, you print a warning, but you are not assigning a
-> > value to tcan4x5x->nwkrq_voltage. Is this intentional?
-> >
-> > What about:
-> >
-> >         tcan4x5x->nwkrq_voltage = 0;
-> >         ret = of_property_read_u8(np, "ti,nwkrq-voltage-sel", &prop);
-> >         if (!ret) {
-> >                 if (prop <= 1)
-> >                         tcan4x5x->nwkrq_voltage = prop;
-> >                 else
-> >                         dev_warn(cdev->dev,
-> >                                  "nwkrq-voltage-sel have invalid option: %u\n",
-> >                                  prop);
-> >         }
-> >
-> > so that you make sure that tcan4x5x->nwkrq_voltage always gets a
-> > default zero value? Else, if you can make sure that tcan4x5x is always
-> > zero initialized, you can just drop the
-> >
-> >         tcan4x5x->nwkrq_voltage = 0;
-> >
-> > thing.
->
-> Thanks for the review.
-> You are right, so I reworked this for v3:
-> https://lore.kernel.org/r/20241112-tcan-wkrqv-v3-0-c66423fba26d@geanix.com
+Hi Rafael,
 
-I see. So this v2 was already outdated at the time of my review. Well,
-glad to hear that this was proactively fixed in the v3 and sorry for
-missing that.
+在 2024/11/13 17:26, Rafael J. Wysocki 写道:
+> On Wed, Nov 13, 2024 at 10:07 AM Huisong Li <lihuisong@huawei.com> wrote:
+>> There are many 'cdevX' files which link cooling devices under
+>> '/sys/class/thermal/thermal_zoneX/'. These devices contain active cooling
+>> devices and passive cooling devices. And user cann't directly know which
+>> devices temperature is represented by the thermal zone.
+>>
+>> However, ACPI spec provides a '_TZD' object which evaluates to a package
+>> of device names. Each name corresponds to a device in the ACPI namespace
+>> that is associated with the thermal zone. The temperature reported by the
+>> thermal zone is roughly correspondent to that of each of the devices.
+>>
+>> User can get all devices a thermal zone measured by the 'measures'
+>> directory under the thermal zone device.
+> Well, that's kind of clear, but what exactly is the use case?  Why
+> does the user need to know that?
+IMO, this makes thermal zone information more friendly.
+For instance, user can directly know the temperature of CPUs or other 
+devices is roughly represented by which thermal zone.
+This may offer the convenience for further usersapce application.
 
-Yours sincerely,
-Vincent Mailhol
+BTW, the '_TZD' method is similar to the '_PMD' in acpi power meter.
+Since ACPI spec provides them, they should also have a role in their 
+existence.
+
+
+>
+>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+>> ---
+>> v2: fix commitlog based on Rafael's comment.
+>> ---
+>>   drivers/acpi/thermal.c | 114 ++++++++++++++++++++++++++++++++++++++++-
+>>   1 file changed, 113 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/acpi/thermal.c b/drivers/acpi/thermal.c
+>> index 78db38c7076e..398195a5d42f 100644
+>> --- a/drivers/acpi/thermal.c
+>> +++ b/drivers/acpi/thermal.c
+>> @@ -119,6 +119,9 @@ struct acpi_thermal {
+>>          struct work_struct thermal_check_work;
+>>          struct mutex thermal_check_lock;
+>>          refcount_t thermal_check_count;
+>> +       int num_domain_devices;
+>> +       struct acpi_device **domain_devices;
+>> +       struct kobject *holders_dir;
+>>   };
+>>
+>>   /* --------------------------------------------------------------------------
+>> @@ -589,6 +592,103 @@ static const struct thermal_zone_device_ops acpi_thermal_zone_ops = {
+>>          .critical = acpi_thermal_zone_device_critical,
+>>   };
+>>
+>> +static void acpi_thermal_remove_domain_devices(struct acpi_thermal *tz)
+>> +{
+>> +       int i;
+>> +
+>> +       if (!tz->num_domain_devices)
+>> +               return;
+>> +
+>> +       for (i = 0; i < tz->num_domain_devices; i++) {
+>> +               struct acpi_device *obj = tz->domain_devices[i];
+>> +
+>> +               if (!obj)
+>> +                       continue;
+>> +
+>> +               sysfs_remove_link(tz->holders_dir,
+>> +                                 kobject_name(&obj->dev.kobj));
+>> +               acpi_dev_put(obj);
+>> +       }
+>> +
+>> +       kfree(tz->domain_devices);
+>> +       kobject_put(tz->holders_dir);
+>> +       tz->num_domain_devices = 0;
+>> +}
+>> +
+>> +static int acpi_thermal_read_domain_devices(struct acpi_thermal *tz)
+>> +{
+>> +       struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
+>> +       union acpi_object *pss;
+>> +       acpi_status status;
+>> +       int ret = 0;
+>> +       int i;
+>> +
+>> +       status = acpi_evaluate_object(tz->device->handle, "_TZD", NULL,
+>> +                                     &buffer);
+>> +       if (ACPI_FAILURE(status)) {
+>> +               acpi_evaluation_failure_warn(tz->device->handle, "_TZD",
+>> +                                            status);
+>> +               return -ENODEV;
+>> +       }
+>> +
+>> +       pss = buffer.pointer;
+>> +       if (!pss ||
+>> +           pss->type != ACPI_TYPE_PACKAGE) {
+>> +               dev_err(&tz->device->dev, "Thermal zone invalid _TZD data\n");
+>> +               ret = -EFAULT;
+>> +               goto end;
+>> +       }
+>> +
+>> +       if (!pss->package.count)
+>> +               goto end;
+>> +
+>> +       tz->domain_devices = kcalloc(pss->package.count,
+>> +                                    sizeof(struct acpi_device *), GFP_KERNEL);
+>> +       if (!tz->domain_devices) {
+>> +               ret = -ENOMEM;
+>> +               goto end;
+>> +       }
+>> +
+>> +       tz->holders_dir = kobject_create_and_add("measures",
+>> +                                                &tz->device->dev.kobj);
+>> +       if (!tz->holders_dir) {
+>> +               ret = -ENOMEM;
+>> +               goto exit_free;
+>> +       }
+>> +
+>> +       tz->num_domain_devices = pss->package.count;
+>> +       for (i = 0; i < pss->package.count; i++) {
+>> +               struct acpi_device *obj;
+>> +               union acpi_object *element = &pss->package.elements[i];
+>> +
+>> +               /* Refuse non-references */
+>> +               if (element->type != ACPI_TYPE_LOCAL_REFERENCE)
+>> +                       continue;
+>> +
+>> +               /* Create a symlink to domain objects */
+>> +               obj = acpi_get_acpi_dev(element->reference.handle);
+>> +               tz->domain_devices[i] = obj;
+>> +               if (!obj)
+>> +                       continue;
+>> +
+>> +               ret = sysfs_create_link(tz->holders_dir, &obj->dev.kobj,
+>> +                                       kobject_name(&obj->dev.kobj));
+>> +               if (ret) {
+>> +                       acpi_dev_put(obj);
+>> +                       tz->domain_devices[i] = NULL;
+>> +               }
+>> +       }
+>> +
+>> +       ret = 0;
+>> +       goto end;
+>> +
+>> +exit_free:
+>> +       kfree(tz->domain_devices);
+>> +end:
+>> +       kfree(buffer.pointer);
+>> +       return ret;
+>> +}
+>> +
+>>   static int acpi_thermal_zone_sysfs_add(struct acpi_thermal *tz)
+>>   {
+>>          struct device *tzdev = thermal_zone_device(tz->thermal_zone);
+>> @@ -602,8 +702,19 @@ static int acpi_thermal_zone_sysfs_add(struct acpi_thermal *tz)
+>>          ret = sysfs_create_link(&tzdev->kobj,
+>>                                     &tz->device->dev.kobj, "device");
+>>          if (ret)
+>> -               sysfs_remove_link(&tz->device->dev.kobj, "thermal_zone");
+>> +               goto remove_thermal_zone;
+>>
+>> +       /* _TZD method is optional. */
+>> +       ret = acpi_thermal_read_domain_devices(tz);
+>> +       if (ret != -ENODEV)
+>> +               goto remove_device;
+>> +
+>> +       return 0;
+>> +
+>> +remove_device:
+>> +       sysfs_remove_link(&tz->device->dev.kobj, "device");
+>> +remove_thermal_zone:
+>> +       sysfs_remove_link(&tz->device->dev.kobj, "thermal_zone");
+>>          return ret;
+>>   }
+>>
+>> @@ -611,6 +722,7 @@ static void acpi_thermal_zone_sysfs_remove(struct acpi_thermal *tz)
+>>   {
+>>          struct device *tzdev = thermal_zone_device(tz->thermal_zone);
+>>
+>> +       acpi_thermal_remove_domain_devices(tz);
+>>          sysfs_remove_link(&tz->device->dev.kobj, "thermal_zone");
+>>          sysfs_remove_link(&tzdev->kobj, "device");
+>>   }
+>> --
+>> 2.22.0
+>>
+>>
+>
+> .
 
