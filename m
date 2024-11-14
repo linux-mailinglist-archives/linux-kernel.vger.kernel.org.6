@@ -1,124 +1,142 @@
-Return-Path: <linux-kernel+bounces-409220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D827F9C891B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:38:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62F8F9C8922
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:39:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F9181F25830
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:38:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E660A283E9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74DE51F8F09;
-	Thu, 14 Nov 2024 11:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130641F8F15;
+	Thu, 14 Nov 2024 11:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X2yJ8ipz"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="basJ6Qpo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422901F8917
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061251DB52A;
+	Thu, 14 Nov 2024 11:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731584288; cv=none; b=a/I5HJL7eIA76W4hrr/iIEsUXO/U9P41KiYlY+ks5wDESxOr+BKccBd13JTc7Aa9W0/7OklsY7QpwnyA6YbHqTR15iZXTvO3pvPsMSQHLJrwRc61/ch8LiSAPa/LVbvYRAqvX090OKSfbzvxiOD60oQC5QIC1j1q16Th6mYeoYc=
+	t=1731584389; cv=none; b=PuZgowxUcG9LS0N0IqsA0hpr9KzbdpTRIL4YLZeO2y3HwPcuK7FC5w43rljTBBLQ8xGpeqAZpbgNpuub+aSgsgSH88CFYiwnavqI+Pqus0eL/DmFPmOrZhpGcsuBVsqCgl1p0/L8pce1K2WLLw3nCpp2L6w9G61DcpaENH0f0po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731584288; c=relaxed/simple;
-	bh=cUSRBOtRtEATzCnokE3CJBbNGuBru4dkIeFH9zNcMc0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=pFlltJ1sy9Sq+2h7KHYnFs1qpMN2bgY7hix1FcpoWSfA4+IaTnpRExEP73YiXyylgnOEjFlJxa0bq3ShnaLHuiexXVDJfr/n2LfMB1HzHV5QncwRduoTTcLIfOzGta0/8dS4t2PJjYsf3sLCfG1Pf1OxF4mQnKnJGnEkaIhdXzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--panikiel.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X2yJ8ipz; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--panikiel.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4314a22ed8bso4129855e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 03:38:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731584285; x=1732189085; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7UOuG5Zwz3TO8LLif2nDNcChNKIJvAuTVAxlwC2o73I=;
-        b=X2yJ8ipzd+LdQBAw0a3Imhsbf3LtpxGhkpxEb+g145Q1zD6V6efxkqmIwymeZolbCU
-         rmK2DrZ2RL9C/Wu7wlnVaWZfWDwnFJtaOT/N5suLhorImVOUvzambQddEnSp5xolDHP6
-         3sEnvTZmewPfySFX3h99NqztSiOv952RckfYx0YKWB350pA4i2HBlLYOFEgak6aWXFpk
-         /ZQbZWmRc4aNKw+Jm1juJcZe6ydrbvQKEUj3v12RwSC/Cnv8qk1CUsTkIR1bCsB1UxyD
-         3lsBWLsH+wlEM81q1EU3C+7z0twEVjz3hbqkiKJgMPiKoJeL37qdhh4JGhmxGdIY0rTt
-         2L2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731584285; x=1732189085;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7UOuG5Zwz3TO8LLif2nDNcChNKIJvAuTVAxlwC2o73I=;
-        b=wwLGQyM7f8MeZp/yP5qcTnM4L9We3sGF0/IDoK1RMjLkavSd4EpBdiAn4Qxbicj34u
-         wdCH8o2mS1fsmkb+ZNSpB+M8lLFpIqDri1dPhoHl8PZIYTBAAtkJmlKCyH3TtBDRGWMw
-         A6ducY92b6pYi6d6XOZa+Pt6Osm6hP9C43qOHOjul9jmH1Xz+PrcuoBV+CXcl7C2xhAP
-         5JtlLS+2bmdd3uqkqrHAfIBZsjKALiB+JsM3OPdyhW4Oi1qWCEDWSX/2G1XwREawgTvL
-         0LuTYAlkcCIzJgCxyONSV35o52mFZLhM9ezpDFpgmwRUbUhuaVPeIWgwt+Uz7rT4xpBJ
-         olsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWiPAZAO7qx4d7EUjkIcGj8U2nGwErtL4+AH1xmSFEsTpY7FncfwxOyD+UIUIHsPab9+64PnAufticFcQk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlyR0pwHl47s1mJyduOg+8G4Nn2FJYmEKtmJN2Rj/OJxBdA+Ek
-	x6HzT/00dSBRw0lTR8cHonV5R6C2zYL+KhzasjRaNssC/4QA7vdu5AoCk6gb23UqOov9Bwh/M8f
-	aQOrEnYqmmQ==
-X-Google-Smtp-Source: AGHT+IFFuS3vadEpxbm9rE3t6WRaBQwyUrb+92pbfldDrubUMoJSwgzEUU8T5UR1u6/5/h9itok/LJf9zGPJ7w==
-X-Received: from szatan.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:2d83])
- (user=panikiel job=sendgmr) by 2002:a05:600c:3ca0:b0:430:57f2:5b0c with SMTP
- id 5b1f17b1804b1-432d4a98b02mr347995e9.2.1731584285504; Thu, 14 Nov 2024
- 03:38:05 -0800 (PST)
-Date: Thu, 14 Nov 2024 11:38:03 +0000
-In-Reply-To: <20241112195053.3939762-1-bob.beckett@collabora.com>
+	s=arc-20240116; t=1731584389; c=relaxed/simple;
+	bh=ssj4QN2ssANxuRJs3rhOmn3BjPTn+f/nHeu4LH/TzUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PaBXk8FffDkllqmeReTy3RpiigFf3vL6lOGW9uVgJyxlfNYCYJ8UqSi9W37uozTyNrqh92qHCBVw99SoFvFzLiGkeyYnhcR+MlledQvYufz4rCN9ivM4tDAE3cwRd1jlFpJ8JbgRndwXR41ubs5XP5EgfSCDinXXzu5rHOblE+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=basJ6Qpo; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731584388; x=1763120388;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=ssj4QN2ssANxuRJs3rhOmn3BjPTn+f/nHeu4LH/TzUw=;
+  b=basJ6Qpo3xqyQpURSTDyOxWpKFwA1n3LpoUNgyi2TNa1vYSBBpx953wd
+   0B+osbvcH+o5BFMFWVgFzZ2C+hZh+OD6JV9mTgRG2LOvnVLPSTHiWO7/a
+   BBJeB0pAZK6rrxkDzVKlGdEzAIlTmzGZuAZ6oSYh3jtAPlwHEkC+VpVqz
+   QZ1wMGQUaqPwH7grjG1CJjtyK9tWw0w4iae2aB8/AZa/emALDrNt1cLhG
+   L6On38DdQBndmKFssADqRkx73mtkkVcrEqEcQIQWgo+ckw5Gi/QZLq4gu
+   ts8hdWWNqMuU3DNk1++sygrAxEgM4hFsYO8br8rrKnq5ntm4PaipBFJyY
+   Q==;
+X-CSE-ConnectionGUID: arnmtLEkQneS1751cBZUrw==
+X-CSE-MsgGUID: JD7Ax9UiQ4K3UyvNfLxHjw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="48966412"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="48966412"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 03:39:47 -0800
+X-CSE-ConnectionGUID: ywBz4QCASki0MCNOWGd3aA==
+X-CSE-MsgGUID: RBYMWs4jS9m3VK4TMBs3iA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
+   d="scan'208";a="92240620"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 03:39:46 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tBYCN-0000000EhMA-3lND;
+	Thu, 14 Nov 2024 13:39:43 +0200
+Date: Thu, 14 Nov 2024 13:39:43 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] gpio: Move and sort Kconfig entries as suggested
+Message-ID: <ZzXhf2zM9IisvZhs@smile.fi.intel.com>
+References: <20241113171219.2949157-1-andriy.shevchenko@linux.intel.com>
+ <CAMRc=MeaDjhxAwmTcNZ+oHniFn4EWVEmfP8MdNWitmD+Rr=scA@mail.gmail.com>
+ <ZzXTbEcrLigXWpAu@smile.fi.intel.com>
+ <CAMRc=MeEtyTXr6A4gXbbN=ZY1tzAQnbVMF0NYA2_6Xm3=jfS6Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241112195053.3939762-1-bob.beckett@collabora.com>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241114113803.3571128-1-panikiel@google.com>
-Subject: Re: [PATCH] nvme-pci: 512 byte aligned dma pool segment quirk
-From: "=?UTF-8?q?Pawe=C5=82=20Anikiel?=" <panikiel@google.com>
-To: bob.beckett@collabora.com
-Cc: axboe@kernel.dk, hch@lst.de, kbusch@kernel.org, kernel@collabora.com, 
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, 
-	sagi@grimberg.me
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MeEtyTXr6A4gXbbN=ZY1tzAQnbVMF0NYA2_6Xm3=jfS6Q@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi all,
+On Thu, Nov 14, 2024 at 12:15:46PM +0100, Bartosz Golaszewski wrote:
+> On Thu, Nov 14, 2024 at 11:39 AM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Thu, Nov 14, 2024 at 09:54:50AM +0100, Bartosz Golaszewski wrote:
+> > > On Wed, Nov 13, 2024 at 6:12 PM Andy Shevchenko
+> > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > >
+> > > > The Kconfig under drivers/gpio has a specific comment
+> > > >
+> > > >   put drivers in the right section, in alphabetical order
+> > > >
+> > > > but in time some of the entries fell unordered there.
+> > > > Put an order again.
+> > > >
+> > > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > > ---
+> > > Could you elaborate on why you're moving drivers between categories?
+> > > For instance: you moved Intel LJCA to USB drivers and I'm sure you
+> > > have a reason for it (it's not clear if this actually is a USB driver,
+> >
+> > This one is actually clear as you see that it depends on USB_LJCS which
+> > suggests that it's USB based.
+> >
+> > > it's not registered as such
+> >
+> > Neither one of the existing ones in that category, right?
+> >
+> 
+> Well if you really want to open that can of worms...
+> 
+> Only gpio-mpsse is really a stand-alone USB GPIO expander. Others in
+> this section are actually MFD devices and would probably better fit in
+> there.
+> 
+> I don't have a strong opinion but we should at least be consistent.
 
-I've been tracking down an issue that seems to be related (identical?) to
-this one, and I would like to propose a different fix.
+So, as far as I can read the whole picture the categories are based on the HW
+(and this is how it should be) and these what I moved _are_ true USB devices.
+Linux abstraction is just a Linux abstraction.
 
-I have a device with the aforementioned NVMe-eMMC bridge, and I was
-experiencing nvme read timeouts after updating the kernel from 5.15 to
-6.6. Doing a kernel bisect, I arrived at the same dma pool commit as
-Robert in the original thread.
+If you want consistency, drop these categories for good, just have plain list
+of the all GPIO drivers. No room for any speculations :-)
 
-After trying out some changes in the nvme-pci driver, I came up with the
-same fix as in this thread: change the alignment of the small pool to
-512. However, I wanted to get a deeper understanding of what's going on.
+> > > ) but please expand on it in the commit message.
+> >
+> > Okay, I will do in v2.
+> >
+> > Thank you for the review!
 
-After a lot of analysis, I found out why the nvme timeouts were happening:
-The bridge incorrectly implements PRP list chaining.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-When doing a read of exactly 264 sectors, and allocating a PRP list with
-offset 0xf00, the last PRP entry in that list lies right before a page
-boundary.  The bridge incorrectly (?) assumes that it's a pointer to a
-chained PRP list, tries to do a DMA to address 0x0, gets a bus error,
-and crashes.
 
-When doing a write of 264 sectors with PRP list offset of 0xf00,
-the bridge treats data as a pointer, and writes incorrect data to
-the drive. This might be why Robert is experiencing fs corruption.
-
-So if my findings are right, the correct quirk would be "don't make PRP
-lists ending on a page boundary".
-
-Changing the small dma pool alignment to 512 happens to fix the issue
-because it never allocates a PRP list with offset 0xf00. Theoretically,
-the issue could still happen with the page pool, but this bridge has
-a max transfer size of 64 pages, which is not enough to fill an entire
-page-sized PRP list.
-
-Robert, could you check that the fs corruption happens only after
-transfers of size 257-264 and PRP list offset of 0xf00? This would
-confirm my theory.
 
