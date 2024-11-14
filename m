@@ -1,73 +1,135 @@
-Return-Path: <linux-kernel+bounces-409440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AD6D9C8CBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:21:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FEAC9C8CC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:21:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 430501F21D99
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:21:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB92D1F229B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0DC14885E;
-	Thu, 14 Nov 2024 14:20:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE561CABA;
+	Thu, 14 Nov 2024 14:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="swKFX+8k"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X8rxRcd5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFA413C8F9;
-	Thu, 14 Nov 2024 14:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AAF11D6AA;
+	Thu, 14 Nov 2024 14:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731594004; cv=none; b=PXgA+l0KvSZtWxB0Q9BJYqvxYgxKIiFS3/LfDtVXr/FLnTbr1o+5Gv+6So/X0kM/AzND9LYfVaLFuNGlASRM8ptRPzsw1fSEmeGhmGsU475ce7ZStYojetog2RF4nTiumLyk4v+TwMUx2nAZ3R3hskdHYNEsEz6Io7re0Z45tOA=
+	t=1731594057; cv=none; b=J7T9JtAQfpRRBwyf1wI/diwdINaCEBJHEs0pTIEPeLAumhzhDps1kjfu6uW78UagNdCjSG9qDLT+t+W5ROwlNDR2vpZMJGgyFzwfLUQRfbYuAw9Veu7UC1/Y31tbz53zBz91vHvJGf0et3pvqTANwjHjemoDsSRdc/crjVIuFkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731594004; c=relaxed/simple;
-	bh=vccQyOB+xJuk2g1am4l4Ua5xhFBGG/H9+Jm2u5oNkaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CjIFxdaO2GbFsod8yLk+e/gPaa2iTvjkPI4f6Bk9RLVWYd/5CTp87riaN2lgI82MPeyRrn/n1yLrAsShTkrlnVeNR2t71uAqGOMrxN+bbduFIY3gcAcQGj0CE8rFCs35OHjGu350ciaDdn2A8dOSGNV6QvfchTiCyju+NABFMvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=swKFX+8k; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=/Gd4wGVdlE5PEIYAfxbgfk13v84l2R6kUx9v7exrd90=; b=swKFX+8k/URpFhlJqJYu3eOSyQ
-	ui5OVTqE/vqWG/rm3L66F/mdJb7SYQAIFmfUs9rV/vnj8ZnAFw1M6jDXi6N3iX/KmrGrfYS/Zm9eX
-	OJ230ap0imbagTUlJFI21o5V0kh9+sj3IGQ/Fzflbagb+76Mx4EceRdrNXTN6H7ye5fk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tBahO-00DJ0U-0K; Thu, 14 Nov 2024 15:19:54 +0100
-Date: Thu, 14 Nov 2024 15:19:53 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Tarun Alle <Tarun.Alle@microchip.com>
-Cc: arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
-	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: microchip_t1: Clause-45 PHY loopback
- support for LAN887x
-Message-ID: <9e9d5d35-b66e-4c0e-ad11-1c927225cc85@lunn.ch>
-References: <20241114101951.382996-1-Tarun.Alle@microchip.com>
+	s=arc-20240116; t=1731594057; c=relaxed/simple;
+	bh=6yIvZ0pCo5aclXx1uWNQvdqp1zKxk9m+lFaAMtMPHFU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=rvmJcywyW5yF2jmRRntDsjzdSKcHQ+7av5wsOqKoIqXrKXqrWpevmqiytbifTnpUFIABTwnbz2xT/zSHKDAl3Q3vdXNwMZuQlqpOXjKLszgrummtCebEXImfHDE9UqTuxEetb5mOc7q5cob1kUZ1ZItSS7WBDbYmJHvulVj+Z7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X8rxRcd5; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731594051; x=1763130051;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=6yIvZ0pCo5aclXx1uWNQvdqp1zKxk9m+lFaAMtMPHFU=;
+  b=X8rxRcd5psfKNlMV87FRVhisOiH97aYF3itADOvxHxvWfl3o+CJ2kdSx
+   yDVKmuhqAgQkWG/3g4Aj9TzUQP4hBLFMSkT4s3aWFxirQkg/ZpbQS1vTH
+   aB+GVD4ReL4yYAzYv6it4k4N3OkivfcCm5QZB6c+XIhyuYd24sddaAzTq
+   QGO7nY5gwOWl+0+VAu4NOXL7tpY34dwqlUqNF4XyG9WCpJkVOY+lCcRpm
+   cOPYe8t41vNDlySnNSnmP1D7ebSUSwZQLBHiGyiBRb54LGfs3FKwtzhIy
+   ss1xj+XQsQGJ3yv11dd46m+CP2R3Uy3yLjNqDxeR5pbE0AGDANYi+1sUz
+   A==;
+X-CSE-ConnectionGUID: 8PSWhxnbTQGRK5qsl2UOzw==
+X-CSE-MsgGUID: +utuqENSRVuvzXVAbM/f9A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11256"; a="42921023"
+X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
+   d="scan'208";a="42921023"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 06:20:49 -0800
+X-CSE-ConnectionGUID: pzrmDZIVSL25KYVnv+9KxQ==
+X-CSE-MsgGUID: CJcl3d2pR3qwVVEtwRMkZA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
+   d="scan'208";a="92279339"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.54])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 06:20:46 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Stefan Wahren <wahrenst@gmx.net>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH 1/1] PCI/PME+pciehp: Request IRQF_ONESHOT because bwctrl shares IRQ
+Date: Thu, 14 Nov 2024 16:20:34 +0200
+Message-Id: <20241114142034.4388-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241114101951.382996-1-Tarun.Alle@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 14, 2024 at 03:49:51PM +0530, Tarun Alle wrote:
-> Adds support for clause-45 PHY loopback for the Microchip LAN887x driver.
-> 
-> Signed-off-by: Tarun Alle <Tarun.Alle@microchip.com>
+PCIe BW controller uses IRQF_ONESHOT to solve the problem fixed by the
+commit 3e82a7f9031f ("PCI/LINK: Supply IRQ handler so level-triggered
+IRQs are acked"). The IRQ is shared with PME and PCIe hotplug. Due to
+probe order, PME and hotplug can request IRQ first without IRQF_ONESHOT
+and when BW controller requests IRQ later with IRQF_ONESHOT, the IRQ
+request fails. The problem is seen at least on Rasperry Pi 4:
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+pcieport 0000:00:00.0: PME: Signaling with IRQ 39
+pcieport 0000:00:00.0: AER: enabled with IRQ 39
+genirq: Flags mismatch irq 39. 00002084 (PCIe bwctrl) vs.00200084 (PCIe PME)
+pcie_bwctrl 0000:00:00.0:pcie010: probe with driver pcie_bwctrl failed with error -16
 
-    Andrew
+BW controller is always enabled so change PME and pciehp too to use
+IRQF_ONESHOT.
+
+Fixes: 470b218c2bdf ("PCI/bwctrl: Re-add BW notification portdrv as PCIe BW controller")
+Reported-by: Stefan Wahren <wahrenst@gmx.net>
+Link: https://lore.kernel.org/linux-pci/dcd660fd-a265-4f47-8696-776a85e097a0@gmx.net/
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+---
+ drivers/pci/hotplug/pciehp_hpc.c | 3 ++-
+ drivers/pci/pcie/pme.c           | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+index 736ad8baa2a5..0778305cff9d 100644
+--- a/drivers/pci/hotplug/pciehp_hpc.c
++++ b/drivers/pci/hotplug/pciehp_hpc.c
+@@ -68,7 +68,8 @@ static inline int pciehp_request_irq(struct controller *ctrl)
+ 
+ 	/* Installs the interrupt handler */
+ 	retval = request_threaded_irq(irq, pciehp_isr, pciehp_ist,
+-				      IRQF_SHARED, "pciehp", ctrl);
++				      IRQF_SHARED | IRQF_ONESHOT,
++				      "pciehp", ctrl);
+ 	if (retval)
+ 		ctrl_err(ctrl, "Cannot get irq %d for the hotplug controller\n",
+ 			 irq);
+diff --git a/drivers/pci/pcie/pme.c b/drivers/pci/pcie/pme.c
+index a2daebd9806c..04f0e5a7b74c 100644
+--- a/drivers/pci/pcie/pme.c
++++ b/drivers/pci/pcie/pme.c
+@@ -347,7 +347,8 @@ static int pcie_pme_probe(struct pcie_device *srv)
+ 	pcie_pme_interrupt_enable(port, false);
+ 	pcie_clear_root_pme_status(port);
+ 
+-	ret = request_irq(srv->irq, pcie_pme_irq, IRQF_SHARED, "PCIe PME", srv);
++	ret = request_irq(srv->irq, pcie_pme_irq, IRQF_SHARED | IRQF_ONESHOT,
++			  "PCIe PME", srv);
+ 	if (ret) {
+ 		kfree(data);
+ 		return ret;
+-- 
+2.39.5
+
 
