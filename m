@@ -1,104 +1,122 @@
-Return-Path: <linux-kernel+bounces-409669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11CEA9C8FE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:35:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 132599C8FE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:36:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B13E281102
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:35:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBBE0282155
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DCE8166F25;
-	Thu, 14 Nov 2024 16:35:50 +0000 (UTC)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5909916BE3A;
+	Thu, 14 Nov 2024 16:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Fe0AcpUt"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459F58F62
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 16:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0900E1EA6F
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 16:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731602149; cv=none; b=M5p8A+CD4JH58XqRSzaSJZXR9qKbDGChZBf6+4+Fhxz4C63NeY+yGDRJR7UjfJBs4K4sxAhRiHzvGHEQNxE8exulUu8e9XRpfJaUPT12brHphYqhRgUfjhG20EU8h1+Hg/WNTM1NfIRqXvtjinOxKjb7ME3pkwcB49CzpVf//eg=
+	t=1731602162; cv=none; b=OKOYSos93NzCjS7+wsTZt0+dUtRkFzxAruNX1GKBuDl+i2Wuolj4Rs1ajDwq0FaXPjhR9JTsRZjabfXmxYmN4Y7uZGMPK8vYGs6txDS0LHiVjgRXSmqaOgIjUkas9WtIqTwwPibLOjltyMmuW7zCVAGL1YTfhnvyzgey4CfbkrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731602149; c=relaxed/simple;
-	bh=JeOGZyNYheVXtcf54L3xzI7R8X0oLwAMyN0n3X67Qys=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p4VrodlE/HrkUnc0vu3xA7L4AVs4Gef/HxzdCth/C8qFdnUHVFzpODVwKepAQf6tbX94KQEyqoenYIOCjT/aqfB9dgn1g9z/hvgqqWNikXmeFhxXrsobRUG8Hp3skCPf1g6vcsQlUr8LJhiTwzx/87BPoaTEA7FWRoR9NmB7Hcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e0875f1e9edso972384276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:35:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731602147; x=1732206947;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IkTsD4p17KtYX2Naw41InyqJWAq7hOuOapsF7fXl/og=;
-        b=hhDyA03McjVteAFUBY1xsqsA2knqEgRsdZOEeemoMciY72Ue3tB+T9a1U8IFFmRDF0
-         quZ0NKlMgN/9ffIv4mmsGPEOiPRpTIs0SoHpe+H49EgdY92wNwQ1nKp8BXOq+6ayWjy1
-         d9OklaY1XAXjYtQtjkI2HMiS2ndCBC4bc1+ltwCC2/A+xVQadYZ1ENpTMZRJg06cuC2J
-         dpubtKgSTgGZwF+cGAWmr3o9glYcOD22nUGKiJTXZK8OSf74JKriPwsnyRMzvg0WBABQ
-         1XyBFkZzz5hVWNtlx2IN0bdnBnh6qoXmTEy8ZFLgo+FWl+6XH4KyVnWpB4MkZI9pl8lU
-         AKWw==
-X-Forwarded-Encrypted: i=1; AJvYcCU98NAU5Esf4E5N5DcPYF2Es1Aa7KYdgVJyBmH1KCc0YQGPxIiu1jJmFpiT54BmVNTLR4AZJ9+uAvlFUW0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi6NsO0lOGZQSuwGe37cRWBWyLVeBAP0aaTOzUb4+WrJswF1lN
-	2PSoZ0ctwDEBGfbtq1IXt6jpf7kGGu2Ymm8pDkqcGbDhKNym3GUQ4gQqIoO2
-X-Google-Smtp-Source: AGHT+IF4+MmBnEpSXy0nnSq8Rwbc65d38iMpq9sDuxZ7G+eOUkUHntMrEqYqUqIIBE1JGC73CxMhSw==
-X-Received: by 2002:a05:6902:102b:b0:e2e:46e5:c2ca with SMTP id 3f1490d57ef6-e337f861a10mr25514511276.14.1731602145799;
-        Thu, 14 Nov 2024 08:35:45 -0800 (PST)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e381545b964sm387190276.42.2024.11.14.08.35.45
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 08:35:45 -0800 (PST)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6ee4fcfd92dso2727667b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:35:45 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWxkzFBOXlXAIEi4nNuf2jm7paIFF2620hHtukKjvugzpyVvJ23fRnatzKy+l9MJo8rz5gUzqeiGxDfSxI=@vger.kernel.org
-X-Received: by 2002:a05:690c:7487:b0:6ea:bfbd:5511 with SMTP id
- 00721157ae682-6eaddf9703fmr271941207b3.33.1731602145354; Thu, 14 Nov 2024
- 08:35:45 -0800 (PST)
+	s=arc-20240116; t=1731602162; c=relaxed/simple;
+	bh=M5BnZB1kJ7cQtkKYzt7rwZX9F+U1UeZ/mLgvO5CK9Ks=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FqGe/OHF6oZ3v3VdF0MUvUDOAz7tWUXO+ChPF/5jdVqivceoXs5amSZnJqFROr9ZzrKbA1lgJWJ++8AGaKgdIgonkH8BRcqvNtbMoIHBNROAXW49xeib5HBPTai0UMgK+VMMcMyCLA84+GLYLMwBvFqOtu/MhlvWNM/+VDYQEKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Fe0AcpUt; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 14 Nov 2024 08:35:46 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731602159;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A4W3MD+2+H34NJko5UUHRsSLZXY5AfOPI5DGoExeqoI=;
+	b=Fe0AcpUtSS8r4YqpfxDAgC1LJa03Ra7Hs0/ZOSNVEU/6LFdsJ/oeq6du6vCXVmw8oEEFav
+	4AtM4/nQa135DCcXzH9PtqyORzaZbEndePQ/PkViMWq2HxOpyOszzH3zYwRcmPkFXd5o/L
+	va8+AVdhdkQmwcIsIYOZNQmFGqlFt60=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Russ Weight <russ.weight@linux.dev>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Dionna Glaze <dionnaglaze@google.com>, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
+	Danilo Krummrich <dakr@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Tianfei zhang <tianfei.zhang@intel.com>, linux-coco@lists.linux.dev,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ashish Kalra <ashish.kalra@amd.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	John Allen <john.allen@amd.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Michael Roth <michael.roth@amd.com>,
+	Alexey Kardashevskiy <aik@amd.com>,
+	Russ Weight <russell.h.weight@intel.com>
+Subject: Re: [PATCH v6 3/8] firmware_loader: Move module refcounts to allow
+ unloading
+Message-ID: <20241114163546.ermxem4bgjzeaxzc@4VRSMR2-DT.corp.robot.car>
+References: <20241112232253.3379178-1-dionnaglaze@google.com>
+ <20241112232253.3379178-4-dionnaglaze@google.com>
+ <6734119c1c9a7_10bb729471@dwillia2-xfh.jf.intel.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114131114.602234-1-mpe@ellerman.id.au> <20241114131114.602234-8-mpe@ellerman.id.au>
- <ecb9d449-85dd-4ca5-a58b-43244b7c0765@app.fastmail.com>
-In-Reply-To: <ecb9d449-85dd-4ca5-a58b-43244b7c0765@app.fastmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 14 Nov 2024 17:35:33 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUxY7YErDa8OzxemnwJ=j+tcoXGs-Gma+eD0i7bPWYB9w@mail.gmail.com>
-Message-ID: <CAMuHMdUxY7YErDa8OzxemnwJ=j+tcoXGs-Gma+eD0i7bPWYB9w@mail.gmail.com>
-Subject: Re: [RFC PATCH 08/10] macintosh: Remove ADB_MACIO
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6734119c1c9a7_10bb729471@dwillia2-xfh.jf.intel.com.notmuch>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Arnd,
 
-On Thu, Nov 14, 2024 at 4:42=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote=
-:
-> I also found the promotional video from 1996 at
-> https://www.youtube.com/watch?v=3DNrvrIEPeSNA .
+On Tue, Nov 12, 2024 at 06:40:28PM -0800, Dan Williams wrote:
+> Dionna Glaze wrote:
+> > If a kernel module registers a firmware upload API ops set, then it's
+> > unable to be moved due to effectively a cyclic reference that the module
+> > depends on the upload which depends on the module.
+> > 
+> > Instead, only require the try_module_get when an upload is requested to
+> > disallow unloading a module only while the upload is in progress.
+> 
+> Oh, interesting, I wondered why CXL did not uncover this loop in its
+> usage only to realize that CXL calls firmware registration from the
+> cxl_pci module, but the @module paramter passed to
+> firmware_upload_register() is the cxl_core module. I.e. we are
+> accidentally avoiding the problem. I assume other CONFIG_FW_UPLOAD users
+> simply do not test module removal.
+> 
+> However, I think the fix is simply to remove all module reference taking
+> by the firmware_loader core. It is the consumer's responsibility to call
+> firmware_upload_unregister() in its module removal path and that should
+> flush any and all future usage of the passed in ops structure.
 
-Amazing to finally see this, 20y after mine died...
+As I understand it, if a module directly references symbols in another 
+module, then the reference count is automatically incremented to ensure
+that the dependent symbols are available to the consumer.
 
-Gr{oetje,eeting}s,
+In this case, the firmware_loader does not directly reference symbol
+names in the device driver that registered it. The call-back function
+pointers are provided during registration. Without explicitly
+incrementing the module reference count, it is possible to remove the
+device driver while leaving the firmware loader instance (and sysfs
+entries) intact. Accessing those sysfs nodes would result in
+references to pointers that are no longer valid.
 
-                        Geert
+Clearly this would be an unexpected/unusual case. Someone with root
+access would have to remove the device driver. I'm not sure how much
+effort should be expended in preventing it - but this is the reasoning
+behind the incrementing/decrementing of the module reference counts.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+- Russ
 
