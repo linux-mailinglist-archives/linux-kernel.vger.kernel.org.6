@@ -1,162 +1,131 @@
-Return-Path: <linux-kernel+bounces-408820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D051A9C83EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:24:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 980719C83EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:24:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B4431F24006
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:24:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D9182819BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC3E1F26D2;
-	Thu, 14 Nov 2024 07:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F327B1EC00B;
+	Thu, 14 Nov 2024 07:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="OUyyjhUm"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OmhenwFx"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD4F1E9074;
-	Thu, 14 Nov 2024 07:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69831EBA17
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731569048; cv=none; b=KGrpwOODJ8fCF8dZBteEpt+vOgr3ma3+1yNwsSkmd94VOw88RsekqRec/zXyDH/uu9sZTdTArBIln6gF0AQkESIv4FWpsI7P18zQYr928les3z5aMNaxWVqtNrC6QWoCs2lbT4UZLpolNNMHMfdysooKf914PNvWUHnzDFAiY/o=
+	t=1731569081; cv=none; b=Tvlg06Bt1/34yoB2a38RosstbVJumOlKTfZrrWQScABThSZl4qnsDsmuSm3fZ1DzpI51HmVN8/e+zCnMXi4S3xzeneggifSR2QQliGN5MC3UMQ4cLWpJSXTQlDFkSYSWRNxbeBZbHY00FcwdT+IJ7gMPSMoReDhED5v+E16skIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731569048; c=relaxed/simple;
-	bh=0oXXTZpSK42zNfnhHer/3yWYHM0V0XsCs6PD8wB8Ygg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fYW6vCAE2fGuabYx0O0W+rK6ZpJrqyY7ey+Mv5G+PkN/oSSgjQIz6AhJqPC2k9pqH8xQHyhcw4imHnUBtVI+rrDjFj+mrik3bbSacebsSsj8iPMFSdfxV13sg9xRhmD049Sd/+SspEzBx0mdPNwXv4wP3LM1hXm/Bf9WeNcCq8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=OUyyjhUm; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID; bh=jxs8DLr5gwCV7tb13zFSz59Zio5j0Y8gul9bONvYc40=; b=OUyyjh
-	Umf48FrsduFe9j/8aPoDaApLPSB9Qs2GyboLT/hxB3YFmD/m+uJh3si3FzJ6wfRDiEjC4QgdpPpKd
-	Wkf4JhfQBOh33XIhOG7b6zPdFv7F8uOUaKWxJdexe7yMYcOztC/5lshu5pZ7mcgb7FQJF+NwsF3ad
-	16ltB9ZVBbN/nHO6ojN8LoBgBHe8K95kpnoQaQvRJsGKuituOJjMPrtwbeQhw3msc/81dKyw/A2Af
-	/vUNZY+oS74mjfOcJB+WRHbXf4g6dQsRpao8S7sJFAX1KjHoShGmzMH16T2bwQEVuOH3VYEFu1CdH
-	RNGDmwkj8jsUjkmX9IYhahScKnDg==;
-Received: from sslproxy07.your-server.de ([78.47.199.104])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sean@geanix.com>)
-	id 1tBUCp-000ODi-Kj; Thu, 14 Nov 2024 08:23:55 +0100
-Received: from [2a06:4004:10df:0:6905:2e05:f1e4:316f] (helo=Seans-MBP.snzone.dk)
-	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sean@geanix.com>)
-	id 1tBUCo-000JT3-34;
-	Thu, 14 Nov 2024 08:23:55 +0100
-Date: Thu, 14 Nov 2024 08:23:54 +0100
-From: Sean Nyekjaer <sean@geanix.com>
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] can: tcan4x5x: add option for selecting nWKRQ
- voltage
-Message-ID: <zgyd3zghhwivsr3b4pcipt2wfc26ypavjygd6lu5tg3k6ztwbr@t52w4p5kyvaa>
-References: <20241111-tcan-wkrqv-v2-0-9763519b5252@geanix.com>
- <20241111-tcan-wkrqv-v2-1-9763519b5252@geanix.com>
- <CAMZ6Rq++_yecNY-nNL7NK48ZsNPqH0KDRuqvCCGhUur24+7KGA@mail.gmail.com>
+	s=arc-20240116; t=1731569081; c=relaxed/simple;
+	bh=pxBF18LLrtzw0rOlim/7KrTwEZd/62KHOfarfNNr/4g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q4Q/CVT4PrE9fmxfxllgDvVJbXomBpj2WRIsBVfZ7bZp1W0bVdQbttyevUQq2YooVCdppP9s3en5cX/k4u802JnzLY/5aHfjY1+QtrMK6chguAwgFV+4cGxe5pO1jYpce+EiyOmmtx8T4rZ+Z+Cr1yvNjwU8o9O8Yike8+zE/X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OmhenwFx; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <9a807484-6693-4e2a-a087-97bbc5ee4ed9@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731569074;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3JpPiLXj9tOb+MaLA4ZmbYFoZeOfrmnX3jkfIXiyJdA=;
+	b=OmhenwFx3IE/B8liNUfMehNSM08DpoAYCy1ypNJ9YnfwfgtgKKApC8fsPw8QdUBhjbFIVx
+	x+TdTtkvRYyaRyxwNHTmcP5L16BA07b5RvOhcChqWB9DkNLx8dRKQ8gKL6ScJkRRf25t6C
+	ql32e4Wn4IZllpCG1Aav5rASztsuRyY=
+Date: Thu, 14 Nov 2024 15:24:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMZ6Rq++_yecNY-nNL7NK48ZsNPqH0KDRuqvCCGhUur24+7KGA@mail.gmail.com>
-X-Authenticated-Sender: sean@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27457/Wed Nov 13 10:35:46 2024)
+Subject: Re: [PATCH v1] mm: zswap: Fix a potential memory leak in
+ zswap_decompress().
+To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>,
+ Johannes Weiner <hannes@cmpxchg.org>
+Cc: Nhat Pham <nphamcs@gmail.com>, Yosry Ahmed <yosryahmed@google.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "usamaarif642@gmail.com" <usamaarif642@gmail.com>,
+ "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+ "Huang, Ying" <ying.huang@intel.com>, "21cnbao@gmail.com"
+ <21cnbao@gmail.com>, "akpm@linux-foundation.org"
+ <akpm@linux-foundation.org>, "Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
+ "Gopal, Vinodh" <vinodh.gopal@intel.com>
+References: <20241113052413.157039-1-kanchana.p.sridhar@intel.com>
+ <CAJD7tkZWDhOXyyZnEYFiS7F4tSV+z6TYXUYiEcrZrRuy_3R=ZA@mail.gmail.com>
+ <DM8PR11MB567179534CEE154369CCA174C95A2@DM8PR11MB5671.namprd11.prod.outlook.com>
+ <CAJD7tkbLtjQqR-uf8EBoFCWbkYOLHsVh6vJoMZUj+z4eN0GKAQ@mail.gmail.com>
+ <SJ0PR11MB56781940E69ABE93FF9076F6C95A2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <20241113213007.GB1564047@cmpxchg.org>
+ <SJ0PR11MB5678C24CDF6AA4FED306FC71C95A2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <CAKEwX=P6mxZ+-5UcunRHeoAVwtZD=UMfKqCGUeun-krJeT8ekg@mail.gmail.com>
+ <SJ0PR11MB56785F052557B685054AF74AC95B2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <20241114051149.GC1564047@cmpxchg.org>
+ <SJ0PR11MB56780DD2A8EB343627FE94FCC95B2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+In-Reply-To: <SJ0PR11MB56780DD2A8EB343627FE94FCC95B2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Vincent,
+Hello,
 
-On Thu, Nov 14, 2024 at 01:53:34PM +0100, Vincent Mailhol wrote:
-> On Mon. 11 Nov. 2024 at 17:55, Sean Nyekjaer <sean@geanix.com> wrote:
-> > nWKRQ supports an output voltage of either the internal reference voltage
-> > (3.6V) or the reference voltage of the digital interface 0 - 6V.
-> > Add the devicetree option ti,nwkrq-voltage-sel to be able to select
-> > between them.
-> > Default is kept as the internal reference voltage.
-> >
-> > Signed-off-by: Sean Nyekjaer <sean@geanix.com>
-> > ---
-> >  drivers/net/can/m_can/tcan4x5x-core.c | 35 +++++++++++++++++++++++++++++++++++
-> >  drivers/net/can/m_can/tcan4x5x.h      |  2 ++
-> >  2 files changed, 37 insertions(+)
-> >
+On 2024/11/14 14:37, Sridhar, Kanchana P wrote:
+> 
+>> -----Original Message-----
+>> From: Johannes Weiner <hannes@cmpxchg.org>
+>> Sent: Wednesday, November 13, 2024 9:12 PM
+>> To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
+>> Cc: Nhat Pham <nphamcs@gmail.com>; Yosry Ahmed
+>> <yosryahmed@google.com>; linux-kernel@vger.kernel.org; linux-
+>> mm@kvack.org; chengming.zhou@linux.dev; usamaarif642@gmail.com;
+>> ryan.roberts@arm.com; Huang, Ying <ying.huang@intel.com>;
+>> 21cnbao@gmail.com; akpm@linux-foundation.org; Feghali, Wajdi K
+>> <wajdi.k.feghali@intel.com>; Gopal, Vinodh <vinodh.gopal@intel.com>
+>> Subject: Re: [PATCH v1] mm: zswap: Fix a potential memory leak in
+>> zswap_decompress().
+>>
+>> On Thu, Nov 14, 2024 at 01:56:16AM +0000, Sridhar, Kanchana P wrote:
+>>> So my question was, can we prevent the migration to a different cpu
+>>> by relinquishing the mutex lock after this conditional
+>>
+>> Holding the mutex doesn't prevent preemption/migration.
+> 
+> Sure, however, is this also applicable to holding the mutex of a per-cpu
+> structure obtained via raw_cpu_ptr()?
 
-[...]
-
-> >
-> > +static int tcan4x5x_get_dt_data(struct m_can_classdev *cdev)
-> > +{
-> > +       struct tcan4x5x_priv *tcan4x5x = cdev_to_priv(cdev);
-> > +       struct device_node *np = cdev->dev->of_node;
-> > +       u8 prop;
-> > +       int ret;
-> > +
-> > +       ret = of_property_read_u8(np, "ti,nwkrq-voltage-sel", &prop);
-> > +       if (!ret) {
-> > +               if (prop <= 1)
-> > +                       tcan4x5x->nwkrq_voltage = prop;
-> > +               else
-> > +                       dev_warn(cdev->dev,
-> > +                                "nwkrq-voltage-sel have invalid option: %u\n",
-> > +                                prop);
-> > +       } else {
-> > +               tcan4x5x->nwkrq_voltage = 0;
-> > +       }
-> 
-> If the
-> 
->   if (prop <= 1)
-> 
-> condition fails, you print a warning, but you are not assigning a
-> value to tcan4x5x->nwkrq_voltage. Is this intentional?
-> 
-> What about:
-> 
->         tcan4x5x->nwkrq_voltage = 0;
->         ret = of_property_read_u8(np, "ti,nwkrq-voltage-sel", &prop);
->         if (!ret) {
->                 if (prop <= 1)
->                         tcan4x5x->nwkrq_voltage = prop;
->                 else
->                         dev_warn(cdev->dev,
->                                  "nwkrq-voltage-sel have invalid option: %u\n",
->                                  prop);
->         }
-> 
-> so that you make sure that tcan4x5x->nwkrq_voltage always gets a
-> default zero value? Else, if you can make sure that tcan4x5x is always
-> zero initialized, you can just drop the
-> 
->         tcan4x5x->nwkrq_voltage = 0;
-> 
-> thing.
-
-Thanks for the review.
-You are right, so I reworked this for v3:
-https://lore.kernel.org/r/20241112-tcan-wkrqv-v3-0-c66423fba26d@geanix.com
+Yes, unless you use migration_disable() or cpus_read_lock() to protect
+this section.
 
 > 
-> > +       return 0;
-> > +}
-> > +
+> Would holding the mutex prevent the acomp_ctx of the cpu prior to
+> the migration (in the UAF scenario you described) from being deleted?
 
-[...]
+No, cpu offline can kick in anytime to free the acomp_ctx->buffer.
 
-> >
-> >
+> 
+> If holding the per-cpu acomp_ctx's mutex isn't sufficient to prevent the
+> UAF, I agree, we might need a way to prevent the acomp_ctx from being
+> deleted, e.g. with refcounts as you've suggested, or to not use the
 
-/Sean
+Right, refcount solution from Johannes is very good IMHO.
+
+> acomp_ctx at all for the check, instead use a boolean.
+
+But this is not enough to just avoid using acomp_ctx for the check,
+the usage of acomp_ctx inside the mutex is also UAF, since cpu offline
+can kick in anytime to free the acomp_ctx->buffer.
+
+Thanks.
 
