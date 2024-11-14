@@ -1,108 +1,112 @@
-Return-Path: <linux-kernel+bounces-409897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A4389C9306
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:13:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD4669C9392
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:57:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0B0328452B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:13:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 844431F21DCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957431AB533;
-	Thu, 14 Nov 2024 20:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="SNy2v0ay"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5CC1AD3E0;
+	Thu, 14 Nov 2024 20:57:03 +0000 (UTC)
+Received: from freeshell.de (freeshell.de [116.202.128.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6B11AA7B4
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 20:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3A2193408;
+	Thu, 14 Nov 2024 20:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731615225; cv=none; b=BP1kc+ClKZcRG6a79LxLCbFZaMt2wWJdgY/UtKsn+MzsmHVt0ulIVCcr/CDlc2SUsVuY3GgqHhPs3t+wrQ0ZlY/RfUPJbTU5IOI4KOWO++YS8GtEeyJbdmMPj30opdAM045Ez9WRdOYzXUS84Aqzu9KyDKrJSYs5I30t3NAdLLo=
+	t=1731617822; cv=none; b=AzJC6oJ4QhVOe5B0DzyKvi3ffPdBGF6zAJh4U/Yvi5ZW8GdlDHWwFg5rBIqsgj95Lq9rSBAm7ruFzBiB8rap8eHjvRNu10mmm0zwzfiv4KhPVkiCRn8bgWDCgQBfEvsS5un/e74r7fUrXyExiZv3DMWHPk9e4yFZBp3quWBrOsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731615225; c=relaxed/simple;
-	bh=pCKYJj71wA06N6bc10/er2DhbontUDxAdn6wLTdlpc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DB6fCqGRfKnWbtN0MpuIABF1PsITqpJxvSHgoDBJNqoiJZHlkcYw16qgv2rK/f2bWt32DDKg25a0/kKYIl9RByv3teoiGXXXXXAVtf9OLm/PukMOGnWdB3FmYA65owRYC++X8PF1rBZ8wE2DKbGOT9uDpKHyqSA3iP9DeYD3+JE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=SNy2v0ay; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7240d93fffdso18161b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 12:13:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1731615223; x=1732220023; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=otowYy7OdNtGuwhI4NBl1VzW4OrjPRlTRwbtUvhfdIc=;
-        b=SNy2v0ay+qQNr+QEft0IoSuDfkbI9Ro6UGYl7V4xSaEgtWujQkMgpCTST9yN7HfpC3
-         uHfOTW8WPizQ+ORXTj+sG2eVsr4rgKsDpGlYzkxAdCq6B6fanMnFJXEGgQ3gHoC6jW0B
-         1ikXeGgWYjnI2p6VplHkGxJJYyW1StHGjuvtc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731615223; x=1732220023;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=otowYy7OdNtGuwhI4NBl1VzW4OrjPRlTRwbtUvhfdIc=;
-        b=PnEtcth9ZtH8aUt2iwyoJ0uAsa5LU0nNkhVJpeGbECWaxxw0BdobLI7XrwXhbx7rem
-         tqi9fKrEnYiRvwgTwvnuuYAkkvtdTJGEyltLmUCBhc1vSO1l/JXQHXa7gmSeaVgKChQ9
-         Zux0OXR8t5kF0iSOcx5wdSeHuHadbmXGFrbASYDRUqhX+j1GWBCEHu+zNPY/l+8JEKS5
-         duQz5ZvvBIpMonRn3YLI7o685wSqNvRXLpkv8ymYC9lNdK9XE8rfTWvzVI6Ga+TaBqbL
-         bYXfNYYjIZLv2TImtofUvojXS6DuOjTL1yk01y0yAlJHP18j9YS+nQmhzgNOc7ZfBJoL
-         0jNg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0dz73GsNzIONkXjuNJC03gLzia3MVKVXBgc3gh7f6uIVqo68yemkRqCCWvjLxMLkJ786T+ad/4OrJM9s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXxriQ6BsRjbr5M0nptalHF614tgqQd4SBIGp62hQzmyGXsnow
-	hzqhKA5KnvoMc3dfMGCn59RsXsVIwnsyvjBuxswSdy2k7QRtIV9wV3qWl/LUxzo=
-X-Google-Smtp-Source: AGHT+IGzgiCgx6YZ4l4cVmh/B6atw7K/LtNrtk/3mukGWleTD3P6jRL/9E898TPH9UCk8E1KLkgQHg==
-X-Received: by 2002:a05:6a00:23cb:b0:71e:4fe4:354d with SMTP id d2e1a72fcca58-72476cccb37mr184064b3a.18.1731615222806;
-        Thu, 14 Nov 2024 12:13:42 -0800 (PST)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724771c0baesm26423b3a.92.2024.11.14.12.13.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 12:13:42 -0800 (PST)
-Date: Thu, 14 Nov 2024 12:13:39 -0800
-From: Joe Damato <jdamato@fastly.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, pabeni@redhat.com, edumazet@google.com,
-	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
-	mkarsten@uwaterloo.ca, "David S. Miller" <davem@davemloft.net>,
-	open list <linux-kernel@vger.kernel.org>,
-	Mina Almasry <almasrymina@google.com>,
-	Simon Horman <horms@kernel.org>
-Subject: Re: [net v2 0/2] Fix rcu_read_lock issues in netdev-genl
-Message-ID: <ZzZZ85ONoGd8fF7Y@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	pabeni@redhat.com, edumazet@google.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, mkarsten@uwaterloo.ca,
-	"David S. Miller" <davem@davemloft.net>,
-	open list <linux-kernel@vger.kernel.org>,
-	Mina Almasry <almasrymina@google.com>,
-	Simon Horman <horms@kernel.org>
-References: <20241113021755.11125-1-jdamato@fastly.com>
- <20241113184735.28416e41@kernel.org>
- <ZzWY3iAbgWEDcQzV@LQ3V64L9R2>
- <20241114113144.1d1cc139@kernel.org>
+	s=arc-20240116; t=1731617822; c=relaxed/simple;
+	bh=pedqJ4BxQwOi8OPwa+rQY5eP/9OAFJSpgb4K4mDfl/s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qy2p8jjaMk0K9A9GNce89yBMuJhhmYlwLuF7sYL4n/6kdokdqpD34T6J4GHGzHgcDqLhMZWi9eS8hFM4fm/Qh8MZ41L8KW2mcdzEYNL7Uz55cw8YMUkE6+nIT+eXtSSLKza5eNzQyK0peOzoUNuAtqkLvrW2Qh2yUT8pBWPS4mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
+Received: from hay.lan. (unknown [IPv6:2605:59c8:31de:bf00:6ecf:39ff:fe00:8375])
+	(Authenticated sender: e)
+	by freeshell.de (Postfix) with ESMTPSA id CC025B2283B7;
+	Thu, 14 Nov 2024 21:47:10 +0100 (CET)
+From: E Shattow <e@freeshell.de>
+To: Jisheng Zhang <jszhang@kernel.org>
+Cc: E Shattow <e@freeshell.de>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] riscv: dts: starfive: jh7110-milkv-mars: set host mode and vbus pin for on-chip USB 2.0
+Date: Thu, 14 Nov 2024 12:13:40 -0800
+Message-ID: <20241114201805.24143-2-e@freeshell.de>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241114113144.1d1cc139@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 14, 2024 at 11:31:44AM -0800, Jakub Kicinski wrote:
-> On Wed, 13 Nov 2024 22:29:50 -0800 Joe Damato wrote:
-> > - Rebase patch 1 on net (it applies as is) and send it on its own
-> > - Send patch 2 on its own against net-next
-> 
-> My bad, I thought patch 2 is also needed in net, but not in stable.
+Enable host mode USB for Milk-V Mars by setting host mode and connect vbus 
+pinctrl.
 
-No problem; sorry for the noob confusing on my side. Hopefully, I
-got it right for the v3.
+Note that testing this functionality depends on two features:
+
+1.  commit e10c52e7e064038d9bd67b20bf4ce92077d7d84e "phy: starfive: 
+jh7110-usb: Fix link configuration to controller"
+
+2. Setting the USB over-current register to disable. This is done at 
+bootloader phase, for example U-Boot: 
+https://patchwork.ozlabs.org/project/uboot/patch/20241012031328.4268-6-minda.chen@starfivetech.com/
+
+If the over-current register is not prepared for us then the result is no 
+change in functional outcome with this patch applied; there is an error 
+visible to the user and usb configuration fails (same as it is now).
+
+Signed-off-by: E Shattow <e@freeshell.de>
+---
+ .../boot/dts/starfive/jh7110-milkv-mars.dts    | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts b/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
+index 0d248b671d4b..bddfc7c6b00f 100644
+--- a/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
++++ b/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
+@@ -53,7 +53,23 @@ &spi0 {
+ 	status = "okay";
+ };
+ 
++&sysgpio {
++	usb_pins: usb0-0 {
++		driver-vbus-pin {
++			pinmux = <GPIOMUX(25, GPOUT_SYS_USB_DRIVE_VBUS,
++					      GPOEN_ENABLE,
++					      GPI_NONE)>;
++			bias-disable;
++			input-disable;
++			input-schmitt-disable;
++			slew-rate = <0>;
++		};
++	};
++};
++
+ &usb0 {
+-	dr_mode = "peripheral";
++	dr_mode = "host";
++	pinctrl-names = "default";
++	pinctrl-0 = <&usb_pins>;
+ 	status = "okay";
+ };
+-- 
+2.45.2
+
 
