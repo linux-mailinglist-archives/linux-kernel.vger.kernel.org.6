@@ -1,354 +1,310 @@
-Return-Path: <linux-kernel+bounces-409688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F71E9C9019
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:48:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D04599C9022
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:49:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4FE61F270D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:48:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 052211F27AA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76572188735;
-	Thu, 14 Nov 2024 16:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04D6918D633;
+	Thu, 14 Nov 2024 16:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tbB7khVa"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="jOiUdxfR"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2048.outbound.protection.outlook.com [40.107.21.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710DD13CA8D
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 16:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731602899; cv=none; b=X5oSTensVEIDqtpr5r1+GPpSj5WpuD27ILyNuxzrpgoW3HtpFsfzdXh5Vms2LDLPCZhzndMq2jD0Rr9/qJomv7zVAIugCtwC9f7I30/8MtQmrrwE7Usd2rfYOdYDOb2cBsEMgmOGht/bFyvUq4jSXISE2LUho9q9h+bp+CB8aJI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731602899; c=relaxed/simple;
-	bh=UVzoHI+wabD4U8U9PM+ChMCkwvnkr3CGkvqkrbqMG8o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nN+o/eiFoPnDE9ZQ3m3Tcf/Gm22IM2emIyKNk4EvO3kEe2dtvU8tKLie3yGAtUoWVAgW4Yz5H2ljdUJQWdU0owot6I+6r94IaqtY4Q5KBY1DIcLioIecxETVB2ytSLY64jReTr6cIVj349E5tKnX6QTveM7o7Vno8NY0KB6reqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tbB7khVa; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-432d866f70fso7576855e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:48:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731602895; x=1732207695; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ealwXs685A+zK5u5kLK86p59/a8hIners/cLaM399gU=;
-        b=tbB7khVaCNQXf34Aa8ZNI+wvonmdyuFr2562+H3E+IW8Ahqwh89L7FBz8n730tbG8l
-         I95syRFtyhua5a78WGGcsDarogD8Fsd8UkiUd6w5I+W1P8z2XRGpYT+IohzZTI4B/DDC
-         QOjqWnzKuwnCABUUza3ouzHO6tsvRL9paLH+7l2sQsm3zruowZ6N1EaZSLES2jfxyW4U
-         5/CH27w6/qw4NMBb6qgZbxo9817VmAWfFoOdh67PVbxGQpq0gqlkNuzBjGYXeYRVTpwc
-         RZBlMWvxH5Mw4MJYNUokCFJ5l4nQf5UfHdsDzR/jZNfA+A8Cxou92lJiKqVY3K9XTJ9S
-         CaHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731602895; x=1732207695;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ealwXs685A+zK5u5kLK86p59/a8hIners/cLaM399gU=;
-        b=bk3ZkWljDHdliuVm9M5tkAlLFH5RNH4TNZEt8RAIPUZGWXhP8yxBpEG8gsE1zlsc59
-         gZzW8kez04qt2+npqmbkWrG1lqg24dflpHrtuqtAkiXAMp0M9hAqFYcqlUy+t/limhZ+
-         6wX1kAQXzYneW8Le9YWiAf302imnI4IeIv04LmlfzwecCF8PZTiyRT60z96C2cKOBR4C
-         bxE0Cp0w1lLllmkZwsSYo08nCj5MKos7LeRtB9voyAHmQaLQHVtxY0fDqkaeiMm5kMIP
-         dX2NZf4TP6HKthGRzbd++eLMGf8c1xx8rRlGqSyK382uAiFXwWEKmVo75PquKxfI38x9
-         MKnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWTL+zggKRm4Th5gLSSjZp23skJNzcGbjOsbRsTyzOEBnZEud4GaiyjKA3g2jsIUqv8DvN3XdtpszCvaAM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywmivux6Zv3GfjDAbf1T08xKhCwq4LE98BaxhyrLACvP6DzKwEf
-	jlxkDXA8IqrYCQc3k4qZkPjxHxZPigGt0D9fHSoD248DWwxBtKPBSiGCVMzogIw=
-X-Google-Smtp-Source: AGHT+IFY8H5SgkG88VtbSy4kDvEfqE/tRQqcxDt4UhQNvLRP81KqjYrY5H5jsgGdVrIr0/hEpuWb/Q==
-X-Received: by 2002:a05:6000:2c2:b0:37d:633a:b361 with SMTP id ffacd0b85a97d-381f188c996mr20281965f8f.51.1731602894641;
-        Thu, 14 Nov 2024 08:48:14 -0800 (PST)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-382221845c7sm734913f8f.107.2024.11.14.08.48.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 08:48:14 -0800 (PST)
-Message-ID: <5dd2d2a3-6eff-45fb-8af8-593945235dd3@linaro.org>
-Date: Thu, 14 Nov 2024 17:48:13 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5EC18C907;
+	Thu, 14 Nov 2024 16:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731602916; cv=fail; b=A0V5f70JxtSnN8aO7kEU1sb7UJy/lnSdZdOZmkKhi+88RH5wDrycUm0L4mi3SU77teZxKhfqPkJ2uqz5XVW30FkonoDU12dmskQKW640P53wZvbBD4GwWyqx8CLkwB/AF52caHbHWTeBDwICCmR9XbgmiSWJ+hVb7zCiECtY6qM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731602916; c=relaxed/simple;
+	bh=/ywDMbDzzxDUqtY2Ck3rc3ljoVMNiZpAt14nK6jQxJk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=d5jk/2zPVXmSVxChFq449iN5hndY4uHRtyapJpjGZmWWssQEDPicS5INdMe6AWGLh/l7fm6zkiZw/wZE1R676LJE8AbWgtJHNQqo0l2AgTP5P3gPtYTN3aNTMmHQUC3BtXGM5WI7bj/SxrLl992H2uxirHxBk9ZdBCjU/GS0LCA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=jOiUdxfR; arc=fail smtp.client-ip=40.107.21.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WyqsScC6LEgoerzmur2LeaFU2DxcDcun99mCAG9Y8WCE3ZtFBor7pIwDjtC8dzTdcJrQNLDmZQyuwQRHDYJiSFevQQV4Du0054/qRzVC37Fe9FM7eNcGgE6D/BrhRsLV41u9r4WAWHUZxgoRLqKthPI/ebLkKkMvcyKcQhxDsIla9MI5RB42eND1PdnJLkj857XVCUxuux7g0cvDHjj2KBH0mMWRWZxYEkHaXcm7VcCPIth6rJtalSgdVzG0NJVmo7a1uLpasO7W/UwarPDgbkdtHYFSQecNTv8oUNI1053YoKQufOmrJZcog4ix2tatQ8RJoDJjiiTHr2b5DprB9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Jbao3XRKimQAZ/FWQ/Z64keA/6Hqw8lZBwbXcKCusF0=;
+ b=aTZZHyxuTO2bEz2+i7eL60Y2by7/N2AlTt0AFAOsHzL9lE3pqtzzO5EXKqBaP2k2tG+fp+V1LjIvajocEyMMG/shfoUL8qOVfMfpr/tQFmz6avm8tXVWX4iIuEU5z3GIWH0IPzyacAWWBMq2IHpEco3IehI4zOiYLL4wXq4F5Q7bAofI+AupbnDbRpFi1yY5bDOfLqRTUHzCAF55FG8fG10I5on87ekU2ktD8Kfi4knQlFFEdgm7JZ9CdHTekj9XMAUHHCC0vMm4vs1Fv9rHneD5Krv96mSvSX14eHs6GhFVg1sQ+uU2icqZP1ITS99HdKa5Xi2rlf6T30PA8USnoA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Jbao3XRKimQAZ/FWQ/Z64keA/6Hqw8lZBwbXcKCusF0=;
+ b=jOiUdxfR/GEEK3MdZ/dZ1zPSKMrXLUin0lQnzfqwyhVoj54vd2ikHDJxMzXfgJJrQCBKJ2tbg4N+06O116Z/FiwJxB+scscw+bapl9fv7pRm7Jkiadq98k8daFjecl8RrjdYr/qUaDqeW6Aa1yRaS+FlE4dPmDMT3VCQuj4LC9i0x91u61BdOgYu38JeLMbg4PSFN4LM4eIaqsvoU+vfzBnHF58dpKl6c5Q0J+uAKhRDmPY32atEZYaL7cgmwpnAHa6wp64Xr8ilS4T7NcG6JujmbcyLkOpa3kpR3AaqmZ+2F+UQ0lW+fYxBZ2LakKxemW9RWbdxmrEEm3xZI+cnvA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by VI2PR04MB10594.eurprd04.prod.outlook.com (2603:10a6:800:26f::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28; Thu, 14 Nov
+ 2024 16:48:30 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8137.027; Thu, 14 Nov 2024
+ 16:48:30 +0000
+Date: Thu, 14 Nov 2024 11:48:20 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Bjorn Helgaas <bhelgaas@google.com>, Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	alyssa@rosenzweig.io, bpf@vger.kernel.org, broonie@kernel.org,
+	jgg@ziepe.ca, joro@8bytes.org, lgirdwood@gmail.com, maz@kernel.org,
+	p.zabel@pengutronix.de, robin.murphy@arm.com, will@kernel.org
+Subject: Re: [PATCH v5 0/2] PCI: add enabe(disable)_device() hook for bridge
+Message-ID: <ZzYp1G+cVlzPvBXb@lizhi-Precision-Tower-5810>
+References: <20241104-imx95_lut-v5-0-feb972f3f13b@nxp.com>
+ <ZzTL/b4BEAGvSa1Q@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZzTL/b4BEAGvSa1Q@lizhi-Precision-Tower-5810>
+X-ClientProxiedBy: SJ0PR03CA0122.namprd03.prod.outlook.com
+ (2603:10b6:a03:33c::7) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14] thermal/drivers/mediatek/auxadc_thermal: expose all
- thermal sensors
-To: Hsin-Te Yuan <yuanhsinte@chromium.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- James Lo <james.lo@mediatek.com>, Michael Kao <michael.kao@mediatek.com>,
- Hsin-Yi Wang <hsinyi@chromium.org>, Ben Tseng <ben.tseng@mediatek.com>
-References: <20241025-auxadc_thermal-v14-1-96ab5b60c02e@chromium.org>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20241025-auxadc_thermal-v14-1-96ab5b60c02e@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI2PR04MB10594:EE_
+X-MS-Office365-Filtering-Correlation-Id: 22cc8402-4082-4ccf-1b48-08dd04cc2b3e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|52116014|376014|1800799024|366016|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d3R0NVlJenVTMkdwcG01L2NJTUZLek4yRjk3MlZLQTE3T2lYbjhYeW1Sczcz?=
+ =?utf-8?B?VUM4V3FLUUl5SWJmc3Mwd3cyMmlGb2FVSFdKaDdvRDRObjVYR09nVXlaQXNv?=
+ =?utf-8?B?SEdFT1NycENXVnc3NmpCdUkxT2t3YTNWblMzN3Q1RjlzaTNOeUdQUkh0Unlt?=
+ =?utf-8?B?UmxQMVJqbUJ4LzZvK3Y4UjBoYWZGb01lUHdMNkZ6NlBwUzJIZWJ4d2YrT1k5?=
+ =?utf-8?B?UjgvUUFHNHhUWU1VSlZVRzFvVjJBQ2xhSmpVOEs1SERab1hXZFpSY1VUa0J6?=
+ =?utf-8?B?bktMQlo3K0JtNG1hZUxkNzNKVmdqa3A0YmVjZCtUdDhpWXVKdzJma1dFb3RE?=
+ =?utf-8?B?Q1ZIMWJaWkVtWmE2bERLdDdyUk82dTBKL2VWcW5zRmYxQWg0a3dLMzRSMUZu?=
+ =?utf-8?B?Q0xIV2tDaTRhTkxVV0NEcittWVhNMXRwK24xYkpWT1d1UnJnQURvOE9LRHlr?=
+ =?utf-8?B?Lzk3K3hLVS9zbDg4c1FYOFlnZStMUG9STTE2YXY0eGtLZkxxTk5aeUVaMkJr?=
+ =?utf-8?B?SFM3TGw2dHNKOU1ZQmRxb01BRndqRFlIMnZIaFNvbkNNUHptZ0RhQ3F6Q2dP?=
+ =?utf-8?B?RXNQbnVvWHM2NG9MVkxBOXR4aFNkSlNPb3owNDVKNGE2bzloNjBVcGh6M0tq?=
+ =?utf-8?B?UkROZnhiSSs0QTZLL3hETkwxaTN3c2hmQnFUWW1WQ2szWU9OclkwRTI2eHhJ?=
+ =?utf-8?B?VjdKNkdXS0ZjNkI0QkRjSnJQSzlqM2N4clRkV1o2dUE5OHNTbGNHM2gva2hr?=
+ =?utf-8?B?bm1uTktCTTMzems2S2hETUx0cG9SNDgwbXpHY1pIS216bTB2VEFTMnVUeGtB?=
+ =?utf-8?B?TTE3ajBTT3hJRzhyQjBzN05VWnp6Q3ArTnc2Yzl5OUZ0U0VRTkdiQ2dkYjVG?=
+ =?utf-8?B?bEpiM3Uzd0xhUC9QUTNub1BDRkhVQU9GL3Q0MENhUjhGbFdSc28xUnRySEpu?=
+ =?utf-8?B?UDNPbmc3bHdVMTJiL0NOYXlNTC9HeUh1enluRmE5ZmVJZE9oVHcrS0tNblNu?=
+ =?utf-8?B?Yk9xS0o0bGhqM0lXVVBiRUtubDhadGtialMzM0xrTE5USUIxUjBmYVZJeDZJ?=
+ =?utf-8?B?VU9NK3V0MXZRbGJiNzNWSUN3MmkvZXBJdEFuYUQvRzR0QWU3TE0rM2paaHZD?=
+ =?utf-8?B?SEdZcVNDMlZiOEtQbnVEcnU3dnQ1bWVQR241TUwvTFVSN3MwTFBabjl6UGlz?=
+ =?utf-8?B?MDJLSUdQOGVYbGtzRHB1L2NhRUdDQXFnTEQvYzRJWlB4QUtFdzVTV2dJZm0w?=
+ =?utf-8?B?dTVoOUFZQmF3RWZzQkRibzJpMTB6WFRqYmZXQXROSHFPWHl1cWVoUElJbmtL?=
+ =?utf-8?B?OXNDb2ZvSlk5YWhzTjI0c3A2dWN5SmI4anplQkw2UWwvZEFQMEJ5WUJXU0tC?=
+ =?utf-8?B?UzhRY1M3QnYxYmR6L29qRm1ycmZ0VkRLOWpuMXpMTVVTNys3US9TWE5mUTFz?=
+ =?utf-8?B?ZEJ2bzNoUDVabllqVnZJMTlVNDRQM1FkYnBrT2FrR3hwdEdIVk9tQTZ0RzlL?=
+ =?utf-8?B?bzBXeHVscVgwMFRoS2dnTWlKRHp0anM5VndOaFhQZ0pnWE5WWEEzdzV3UjF3?=
+ =?utf-8?B?SDlpbHhmQWU3eUxDSmxqaWI5T0ZsMWY2cURaUS90d09sNmxWU0FWMlpsY05x?=
+ =?utf-8?B?NndpcUpMMFpzWFNZWnhoT3ZKbmZqLzQzQ00ybVpqa1Z4b1F4akNjME5qckE4?=
+ =?utf-8?B?bWU3NnpVcnVibzF6MUduMjNPVHZyUkpUbGJjc1h4bmJZbk52T1VGOHF0VTFy?=
+ =?utf-8?B?UWFmUVdWWUZBbGRuN3lUb29BRXoybm1uZ1dkSmllUGZBWHRTUWd4OHZDWkZD?=
+ =?utf-8?B?eGtQS0h4aENES3ZEV0cwOGZXQzBtNmM5STE5c3ozT1lIb3BZTE00RGI3bHhk?=
+ =?utf-8?B?YXA3dVMycEJMa3pIV1NObFhiNzRNWHd1RVExdlVjVTZEamc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(1800799024)(366016)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZjhDNmFwcTh5cmtGZFkvYWVqUGNjMlZJWEtuUlhIcmZJQ3JBcmttWkc4S2I5?=
+ =?utf-8?B?RitDV1M2Q2pjcEF0UnZsQVRjellGbmhkY0NRTHdSKzg1Zng4OTdzUE5PQytp?=
+ =?utf-8?B?U2YyLyt3WCtXU0MrRFAyZkRaS2ZuZktyY2VJZTIxWTRtUlRNckFhM083RUZH?=
+ =?utf-8?B?Q1Zsb2VMWG93QjlZc3pxZDQrRzY1bFVsaW93NU5HcXQ1TXVEZVNFcmNrUzRP?=
+ =?utf-8?B?WHVhQ0I4bVJTTk9CTGV1WjZtQlZORkU1S3NPKzlOQW1RNmVCcnphTEhDOU9J?=
+ =?utf-8?B?R1haZUtpbXkrckpXc2NDV2dYVmNTSDZtNThwWWdwNng4Q09yY0t5RGhUbmQv?=
+ =?utf-8?B?OER6emREMkxDWnNUQTBZOEM2NldMVlFhZVYwejhjLy93WkZ4WXdKOFdoQ0xu?=
+ =?utf-8?B?WGlaOFExdld0ZHR1eEhTSi82Zy9jTElYMFRuMHJBNWRabFZSZDJwN0I1Y0w0?=
+ =?utf-8?B?RlBlRTFSRW95ZTlXc0cyZFhmTjRSRTJCNURUeUtMK0pTV3I3L3IxOEdhb1ZE?=
+ =?utf-8?B?STJsMHExSlpyMFJUeGVwaWNhL3hlcldxVmgvMC9zNWl4bVNxZkt5bGNRNGVU?=
+ =?utf-8?B?cmt5OGtvRnF4dkNqR1JyNVpqQUJOUUtpMjRoL3NYbHJBOGhXbDRrQWdVNENN?=
+ =?utf-8?B?QVFyWVhZR1Zwbk9ZR2puYkFkZ1VHZFJsU3pWaWNVMm10OVBQenBPVXVvOFNK?=
+ =?utf-8?B?a0FLVVpIQldRdGhBbEp5WlMvU3NsNzlYUWJxb1ljTjI1dHdTVlovT0hWYWNY?=
+ =?utf-8?B?aTdlZlZaUGsyUHNGRWp0UnplMk4zZ2VvUjBJMGlKQm1nVDQ1aEx5WGhXS0ho?=
+ =?utf-8?B?VXI4bFh6MVlFSmUvVXFFRWlIMDBSRVlCbTFBWW1ZeUdnVGVhakMvZEdhSXR0?=
+ =?utf-8?B?Qys2cnE1MWdmOXM4R3RiUmgyS3U2R1NMa21KKzRFZDJDTWV1Wlc4ZnNQU1hW?=
+ =?utf-8?B?OGxvOUZOV3d6Y3hhRXRrRzdHdTcvTkRzMm5Ma1JLUG9UWUtiZGFWQWUwU0VD?=
+ =?utf-8?B?KzVjOTFRWjlzVGdPbm8zVjl4aGZjeE41UllubWI3bFhEdE9TY0VQNnFlVWJs?=
+ =?utf-8?B?b3N1WUdBMXlpYU5kNWg3UnZqTk5jWmlESm83aEhFVkhmVDBxN2kxTFNiUGk3?=
+ =?utf-8?B?UWJmajBLZDVXbmlZbjhRb2hOQ2M4cnJ5VjltcmtCeDRtSXZVeThnNzRtS2RK?=
+ =?utf-8?B?UUNYK3ZzNlRTWVcrVml3T1h2RFVjSTRBWEJVaDZ2LzNHak9GU0M2QndzMURP?=
+ =?utf-8?B?UjF5djNKcFZQcmNsdGp4Qzk0YzNrQWZuYSt3U21OaVd3OXJGcS9UYU5vL2Fr?=
+ =?utf-8?B?OEdmSTZqVVoyUDVmS2FQZ2hNTDVTcUpvQmVPbFZLejBHalVNd3FQZkF1Qmoy?=
+ =?utf-8?B?b3h5MjdpRlBKOEFsQk1lUDYxc0dDV0dOZzdVYXpaTFFFSWJOVGtMRWxxQlN4?=
+ =?utf-8?B?UkZyYUZaN2c0dlJnZndOMGRYRzZTbXV3UXo3OVZnQ1FodmllcFU2ZmwzN2Fl?=
+ =?utf-8?B?SzBvRWxjRjY0VWpIK284VXJnTDZWYml4aGNTUU9LdTNxUWhWUmtYbHZ1R083?=
+ =?utf-8?B?Zy9uZjVINWJ0OEpJR1ZSYnFBR0duN21qVy9rclhsN3VJb2ptd1prMmlFODJ2?=
+ =?utf-8?B?dk1oT05VdnJWMnRqc0Nma1NyU2M2R1FqeVpBSnk1QUlYRFVVRm1OV1laUnZO?=
+ =?utf-8?B?YkQrYnVjd1p3bWxJR0tDRml6eUJxNjJvcktyalJnVEdhSWg5WTdBSUN2aTAz?=
+ =?utf-8?B?SXFqb1hoMnpTNWJrMmNaUjc5clZ5RlNGTGF1ekE0c2lQd3JIandIbGh1Wmhv?=
+ =?utf-8?B?R1F1amhiSlhYaFNqZlNvRFBFeTlRa1g0NE15QzBsUGhqYndaR3k5UzlVM3ZF?=
+ =?utf-8?B?bWppR1BlT25PL1lqK28zVkc4OW5KaFNKVU85YUFyS2xRd0ZUdHF1VlBsYUlC?=
+ =?utf-8?B?R2QxY0cxalRKbEhDUjNDbkMyenVaVVhhb3UrYmNBRHZ2UmZjRWVsNHlvanh3?=
+ =?utf-8?B?SHVnZXo0aURCNE4yTjU3MTJXb3h3R2NLeVhnVG5lUkc2WXZzbHcxSDNBZ0NL?=
+ =?utf-8?B?enFleVd6WVRLZXdHa3ROQ1FmOXd1ZDBTQjd6U0thWG5Nd3R5UG9sVGNvQ08y?=
+ =?utf-8?Q?SenjAKHwMM7tEW7klbU+nAlaa?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 22cc8402-4082-4ccf-1b48-08dd04cc2b3e
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2024 16:48:30.3464
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hPPrQngCqcODNBclzldA1ldkti5GYGmYNCo4ow/YSr83tM8RYK0QDbhIcQICft0Sftom4z96RaBygKZrSpiEhA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10594
 
+On Wed, Nov 13, 2024 at 10:55:41AM -0500, Frank Li wrote:
+> On Mon, Nov 04, 2024 at 02:22:58PM -0500, Frank Li wrote:
+>
+> Any comments for this patches?
+>
+> Bjorn and give ack at v4 and Marc Zyngier give test/review tag at v4. I
+> just drop these because change to use helper function and funtionality is
+> the same.
+>
+> After this patch merge, I think apply's bus notification can convert to
+> this way.
 
-Hi,
+Bjorn:
+	Can I keep your ack tag in next version? you give ack tag at v4,
+but I change to helper function at v5. I plan send v6 soon to fix mani's
+comment about patch2.
 
-On 25/10/2024 14:05, Hsin-Te Yuan wrote:
-> From: James Lo <james.lo@mediatek.com>
-> 
-> Previously, the driver only supported reading the temperature from all
-> sensors and returning the maximum value. This update adds another
-> get_temp ops to support reading the temperature from each sensor
-> separately.
-> 
-> Especially, some thermal zones registered by this patch are needed by
-> MT8183 since those thermal zones are necessary for mtk-svs driver.
+Frank
 
-The DT for the mt8183 describes the sensor id = 0 as the CPU. On this, 
-there is a cooling device with trip points.
-
-The driver registers the id=0 as an aggregator for the sensors which 
-overloads the CPU thermal zone above.
-
-Why do you need to aggregate all the sensors to retrieve the max value ?
-
-They are all contributing differently to the heat and they should be 
-tied with their proper cooling device.
-
-I don't think the thermal configuration is correct and I suggest to fix 
-this aggregator by removing it.
-
-
-
-> Signed-off-by: Michael Kao <michael.kao@mediatek.com>
-> Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
-> Signed-off-by: Ben Tseng <ben.tseng@mediatek.com>
-> Signed-off-by: James Lo <james.lo@mediatek.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
-> ---
-> Changes in v14:
-> - Remove redundant error message.
-> - Link to v13: https://lore.kernel.org/r/20241025-auxadc_thermal-v13-1-a5231c52dccb@chromium.org
-> 
-> Changes in v13:
-> - Make subject and commit message more clear.
-> - Make error message more clear.
-> - Link to v12: https://lore.kernel.org/r/20241016-auxadc_thermal-v12-1-c0433e9f61af@chromium.org
-> 
-> Changes in v12:
-> - Remove unnecessary check and unused variable assignment in mtk_read_sensor_temp.
-> - Add more about what this patch achieves in the commit message.
-> - Link to v11: https://lore.kernel.org/r/20240809-auxadc_thermal-v11-1-af36cc74f3a3@chromium.org
-> 
-> Changes in V11:
->      - Rebase on kernel v6.11-rc2
->      - Use mtk_thermal_temp_is_valid in mtk_read_sensor_temp just like
->        mtk_thermal_bank_temperature
->      - Change the error handling of devm_thermal_of_zone_register return
->        value
->      - link to V10: https://lore.kernel.org/lkml/20220519101044.16765-1-james.lo@mediatek.com/
-> 
-> Changes in V10:
->      - Rebase to kernel-v5.18-rc7
->      - Resend
-> 
-> Changes in V9:
->      - Rebase to kernel-v5.14-rc1
->      - Bind raw_to_mcelsius_v1 or raw_to_mcelsius_v2 to compatible
->        data of struct mtk_thermal_data
->      - Remove duplicate struct 'mtk_thermal_bank'
->      - Remove unnecessary if condition check
->      - Return error if any thermal zone fail to register
-> 
-> Changes in V8:
->      - Rebase to kernel-v5.13-rc1
->      - Resend
-> 
-> Changes in v7:
->      - Fix build error in v6.
-> 
-> Changes in v6:
->      - Rebase to kernel-5.11-rc1.
->      - [1/3]
->          - add interrupts property.
->      - [2/3]
->          - add the Tested-by in the commit message.
->      - [3/3]
->          - use the mt->conf->msr[id] instead of conf->msr[id] in the
->            _get_sensor_temp and mtk_thermal_bank_temperature.
->          - remove the redundant space in _get_sensor_temp and
->            mtk_read_sensor_temp.
->          - change kmalloc to dev_kmalloc in mtk_thermal_probe.
-> 
-> Changes in v5:
->      - Rebase to kernel-5.9-rc1.
->      - Revise the title of cover letter.
->      - Drop "[v4,7/7] thermal: mediatek: use spinlock to protect PTPCORESEL"
->      - [2/2]
->          -  Add the judgement to the version of raw_to_mcelsius.
-> 
-> Changes in v4:
->      - Rebase to kernel-5.6-rc1.
->      - [1/7]
->          - Squash thermal zone settings in the dtsi from [v3,5/8]
->            arm64: dts: mt8183: Increase polling frequency for CPU thermal zone.
->          - Remove the property of interrupts and mediatek,hw-reset-temp.
->      - [2/7]
->          - Correct commit message.
->      - [4/7]
->          - Change the target temperature to the 80C and change the commit message.
->      - [6/7]
->          - Adjust newline alignment.
->          - Fix the judgement on the return value of registering thermal zone.
-> 
-> Changes in v3:
->      - Rebase to kernel-5.5-rc1.
->      - [1/8]
->          - Update sustainable power of cpu, tzts1~5 and tztsABB.
->      - [7/8]
->          - Bypass the failure that non cpu_thermal sensor is not find in thermal-zones
->            in dts, which is normal for mt8173, so prompt a warning here instead of
->            failing.
-> 
->      Return -EAGAIN instead of -EACCESS on the first read of sensor that
->          often are bogus values. This can avoid following warning on boot:
-> 
->            thermal thermal_zone6: failed to read out thermal zone (-13)
-> 
-> Changes in v2:
->      - [1/8]
->          - Add the sustainable-power,trips,cooling-maps to the tzts1~tztsABB.
->      - [4/8]
->          - Add the min opp of cpu throttle.
-> ---
-> 
-> ---
->   drivers/thermal/mediatek/auxadc_thermal.c | 70 +++++++++++++++++++++++++++----
->   1 file changed, 62 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/thermal/mediatek/auxadc_thermal.c b/drivers/thermal/mediatek/auxadc_thermal.c
-> index 9ee2e7283435acfcbb1a956303b6122a08affecc..9a9079d559a3abe9e3823f744d4c9a159a8666bd 100644
-> --- a/drivers/thermal/mediatek/auxadc_thermal.c
-> +++ b/drivers/thermal/mediatek/auxadc_thermal.c
-> @@ -847,7 +847,8 @@ static int mtk_thermal_bank_temperature(struct mtk_thermal_bank *bank)
->   
->   static int mtk_read_temp(struct thermal_zone_device *tz, int *temperature)
->   {
-> -	struct mtk_thermal *mt = thermal_zone_device_priv(tz);
-> +	struct mtk_thermal_bank *bank = thermal_zone_device_priv(tz);
-> +	struct mtk_thermal *mt = bank->mt;
->   	int i;
->   	int tempmax = INT_MIN;
->   
-> @@ -866,10 +867,41 @@ static int mtk_read_temp(struct thermal_zone_device *tz, int *temperature)
->   	return 0;
->   }
->   
-> +static int mtk_read_sensor_temp(struct thermal_zone_device *tz, int *temperature)
-> +{
-> +	struct mtk_thermal_bank *bank = thermal_zone_device_priv(tz);
-> +	struct mtk_thermal *mt = bank->mt;
-> +	const struct mtk_thermal_data *conf = mt->conf;
-> +	int id = bank->id - 1;
-> +	int temp = INT_MIN;
-> +	u32 raw;
-> +
-> +	raw = readl(mt->thermal_base + conf->msr[id]);
-> +
-> +	temp = mt->raw_to_mcelsius(mt, id, raw);
-> +
-> +	/*
-> +	 * The first read of a sensor often contains very high bogus
-> +	 * temperature value. Filter these out so that the system does
-> +	 * not immediately shut down.
-> +	 */
-> +
-> +	if (unlikely(!mtk_thermal_temp_is_valid(temp)))
-> +		return -EAGAIN;
-> +
-> +	*temperature = temp;
-> +
-> +	return 0;
-> +}
-> +
->   static const struct thermal_zone_device_ops mtk_thermal_ops = {
->   	.get_temp = mtk_read_temp,
->   };
->   
-> +static const struct thermal_zone_device_ops mtk_thermal_sensor_ops = {
-> +	.get_temp = mtk_read_sensor_temp,
-> +};
-> +
->   static void mtk_thermal_init_bank(struct mtk_thermal *mt, int num,
->   				  u32 apmixed_phys_base, u32 auxadc_phys_base,
->   				  int ctrl_id)
-> @@ -1199,6 +1231,7 @@ static int mtk_thermal_probe(struct platform_device *pdev)
->   	u64 auxadc_phys_base, apmixed_phys_base;
->   	struct thermal_zone_device *tzdev;
->   	void __iomem *apmixed_base, *auxadc_base;
-> +	struct mtk_thermal_bank *tz;
->   
->   	mt = devm_kzalloc(&pdev->dev, sizeof(*mt), GFP_KERNEL);
->   	if (!mt)
-> @@ -1285,14 +1318,35 @@ static int mtk_thermal_probe(struct platform_device *pdev)
->   			mtk_thermal_init_bank(mt, i, apmixed_phys_base,
->   					      auxadc_phys_base, ctrl_id);
->   
-> -	tzdev = devm_thermal_of_zone_register(&pdev->dev, 0, mt,
-> -					      &mtk_thermal_ops);
-> -	if (IS_ERR(tzdev))
-> -		return PTR_ERR(tzdev);
-> +	for (i = 0; i <= mt->conf->num_sensors; i++) {
-> +		tz = devm_kmalloc(&pdev->dev, sizeof(*tz), GFP_KERNEL);
-> +		if (!tz)
-> +			return -ENOMEM;
-> +
-> +		tz->mt = mt;
-> +		tz->id = i;
-> +
-> +		tzdev = devm_thermal_of_zone_register(&pdev->dev, i,
-> +						      tz, (i == 0) ?
-> +						      &mtk_thermal_ops
-> +						      : &mtk_thermal_sensor_ops);
-> +
-> +		if (IS_ERR(tzdev)) {
-> +			ret = PTR_ERR(tzdev);
-> +			if (ret == -ENODEV) {
-> +				dev_warn(&pdev->dev,
-> +					 "Can't find thermal zone for sensor %d; sensor skipped.\n", i);
-> +				continue;
-> +			}
-> +			return dev_err_probe(&pdev->dev, ret,
-> +					     "Failed to register thermal zone %d.\n", i);
-> +		}
->   
-> -	ret = devm_thermal_add_hwmon_sysfs(&pdev->dev, tzdev);
-> -	if (ret)
-> -		dev_warn(&pdev->dev, "error in thermal_add_hwmon_sysfs");
-> +		ret = devm_thermal_add_hwmon_sysfs(&pdev->dev, tzdev);
-> +		if (ret)
-> +			dev_warn(&pdev->dev,
-> +				 "Sensor %d: Error in thermal_add_hwmon_sysfs: %d\n", i, ret);
-> +	}
->   
->   	return 0;
->   }
-> 
-> ---
-> base-commit: b589839414be04b2b37e4bf6f84af576c99faf64
-> change-id: 20240809-auxadc_thermal-9be338ec8b1c
-> 
-> Best regards,
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+>
+> Frank
+>
+> > Some system's IOMMU stream(master) ID bits(such as 6bits) less than
+> > pci_device_id (16bit). It needs add hardware configuration to enable
+> > pci_device_id to stream ID convert.
+> >
+> > https://lore.kernel.org/imx/20240622173849.GA1432357@bhelgaas/
+> > This ways use pcie bus notifier (like apple pci controller), when new PCIe
+> > device added, bus notifier will call register specific callback to handle
+> > look up table (LUT) configuration.
+> >
+> > https://lore.kernel.org/imx/20240429150842.GC1709920-robh@kernel.org/
+> > which parse dt's 'msi-map' and 'iommu-map' property to static config LUT
+> > table (qcom use this way). This way is rejected by DT maintainer Rob.
+> >
+> > Above ways can resolve LUT take or stream id out of usage the problem. If
+> > there are not enough stream id resource, not error return, EP hardware
+> > still issue DMA to do transfer, which may transfer to wrong possition.
+> >
+> > Add enable(disable)_device() hook for bridge can return error when not
+> > enough resource, and PCI device can't enabled.
+> >
+> > Basicallly this version can match Bjorn's requirement:
+> > 1: simple, because it is rare that there are no LUT resource.
+> > 2: EP driver probe failure when no LUT, but lspci can see such device.
+> >
+> > [    2.164415] nvme nvme0: pci function 0000:01:00.0
+> > [    2.169142] pci 0000:00:00.0: Error enabling bridge (-1), continuing
+> > [    2.175654] nvme 0000:01:00.0: probe with driver nvme failed with error -12
+> >
+> > > lspci
+> > 0000:00:00.0 PCI bridge: Philips Semiconductors Device 0000
+> > 0000:01:00.0 Non-Volatile memory controller: Micron Technology Inc 2100AI NVMe SSD [Nitro] (rev 03)
+> >
+> > To: Bjorn Helgaas <bhelgaas@google.com>
+> > To: Richard Zhu <hongxing.zhu@nxp.com>
+> > To: Lucas Stach <l.stach@pengutronix.de>
+> > To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> > To: Krzysztof Wilczyński <kw@linux.com>
+> > To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > To: Rob Herring <robh@kernel.org>
+> > To: Shawn Guo <shawnguo@kernel.org>
+> > To: Sascha Hauer <s.hauer@pengutronix.de>
+> > To: Pengutronix Kernel Team <kernel@pengutronix.de>
+> > To: Fabio Estevam <festevam@gmail.com>
+> > Cc: linux-pci@vger.kernel.org
+> > Cc: linux-kernel@vger.kernel.org
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Cc: imx@lists.linux.dev
+> > Cc: Frank.li@nxp.com \
+> > Cc: alyssa@rosenzweig.io \
+> > Cc: bpf@vger.kernel.org \
+> > Cc: broonie@kernel.org \
+> > Cc: jgg@ziepe.ca \
+> > Cc: joro@8bytes.org \
+> > Cc: l.stach@pengutronix.de \
+> > Cc: lgirdwood@gmail.com \
+> > Cc: maz@kernel.org \
+> > Cc: p.zabel@pengutronix.de \
+> > Cc: robin.murphy@arm.com \
+> > Cc: will@kernel.org \
+> > Cc: Robin Murphy <robin.murphy@arm.com>
+> > Cc: Marc Zyngier <maz@kernel.org>
+> >
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> > Changes in v5:
+> > - Add help function of pci_bridge_enable(disable)_device
+> > - Because big change, removed Bjorn's review tags and have not
+> > added
+> > Marc Zyngier't review and test tags
+> > - Fix pci-imx6.c according to Mani's feedback
+> > - Link to v4: https://lore.kernel.org/r/20241101-imx95_lut-v4-0-0fdf9a2fe754@nxp.com
+> >
+> > Changes in v4:
+> > - Add Bjorn Helgaas review tag for patch1
+> > - check 'target' value for patch2
+> > - detail see each patches
+> > - Link to v3: https://lore.kernel.org/r/20241024-imx95_lut-v3-0-7509c9bbab86@nxp.com
+> >
+> > Changes in v3:
+> > - disable_device when error happen
+> > - use target for of_map_id
+> > - Check if rid already in lut table when enable deviced
+> > - Link to v2: https://lore.kernel.org/r/20240930-imx95_lut-v2-0-3b6467ba539a@nxp.com
+> >
+> > Changes in v2:
+> > - see each patch
+> > - Link to v1: https://lore.kernel.org/r/20240926-imx95_lut-v1-0-d0c62087dbab@nxp.com
+> >
+> > ---
+> > Frank Li (2):
+> >       PCI: Add enable_device() and disable_device() callbacks for bridges
+> >       PCI: imx6: Add IOMMU and ITS MSI support for i.MX95
+> >
+> >  drivers/pci/controller/dwc/pci-imx6.c | 176 +++++++++++++++++++++++++++++++++-
+> >  drivers/pci/pci.c                     |  36 ++++++-
+> >  include/linux/pci.h                   |   2 +
+> >  3 files changed, 212 insertions(+), 2 deletions(-)
+> > ---
+> > base-commit: 06fb071a1aefbe4c6cc8fd41aacd0b9422361721
+> > change-id: 20240926-imx95_lut-1c68222e0944
+> >
+> > Best regards,
+> > ---
+> > Frank Li <Frank.Li@nxp.com>
+> >
 
