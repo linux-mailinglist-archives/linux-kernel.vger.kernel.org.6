@@ -1,128 +1,194 @@
-Return-Path: <linux-kernel+bounces-409042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA4C29C86D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:07:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80C169C86CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:03:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04757B29811
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:01:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B795B2A1E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B131EE021;
-	Thu, 14 Nov 2024 09:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932FF1F8187;
+	Thu, 14 Nov 2024 10:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KpRusZw8"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="csPxeLC8";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qJcH82Sk"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1928B1F8193
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451381F708C;
+	Thu, 14 Nov 2024 10:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731578313; cv=none; b=KXu1iz5OrKmacjvujrXwNNGQW4qdHwdGb2R1bKMl21uLjjJdv8LTy/9LT2sLQF70CPU/ojbRPKDXB3YLMc46CiSwBq4xrD/NQ866/RwO+/t7LEN9U4znOTcMCjV0LDbRnV5LlwBy6LuVnL2lQfP85BCijICLLFIi0ydfW9sTGp0=
+	t=1731578473; cv=none; b=T9YSbYPsKpbLrHHG8sqW5CphkqHrEt74+22ktBEXhjkOj8MssvvGSxAOjD+Cgl1JumOTFCKNJl2W10Sgm0IvhoeXtEwCfLMMXgpfWgC6Y1Vh185seK/l99u9S2oN/XIfa0s9br5/wn2K7C4XydYJen62jIXeQWUygLE3SDPXEg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731578313; c=relaxed/simple;
-	bh=xFitK+p3VEWF5h7d9YeEunnQOnLNuf2k+qR26kBJZUY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b0YyVo4yoCPdWNPuKoD6giNAq3BmNvO/vZM6ozNUv9Em+wS3jvCXP7wDd3FYl4FATXD+hFAiKqDMe/Rp8p27UEinyQFzgCe7NAaACMOycscMqviaWCX3f/1xI5FoM+5VyNJYouANDgms5XMQ8EWWmhB20dq++wYG9EKTPAYtSxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KpRusZw8; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1731578303; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=Cfoxrf7A2stl6riO4W8iN9G+2yj/ESltvt7CchpB2oM=;
-	b=KpRusZw8CNYkxqww6yqQJ7Jmm4t9MTidpYjcp1EXia4Limn0gBd2Lyfe9DR+Omw+YK/+JS3zj2MGSP3JC0G0cj+ntuzsGmEYF9UtsGpUFoDfmSS9LSXO3Tr4Td8cAurRD1/G+XQ1r2CQ0wJU3YKfZHnY9fA8xIAnbGSsPuV5fQY=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WJONkQz_1731578295 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 14 Nov 2024 17:58:23 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH] erofs: get rid of `buf->kmap_type`
-Date: Thu, 14 Nov 2024 17:58:13 +0800
-Message-ID: <20241114095813.839866-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1731578473; c=relaxed/simple;
+	bh=8EGnY8hpgrmrXQh2w3RyxjyQB/KZYZNMVs9KXdgu2oQ=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=pZoNlvYMVI9geghpFc9EkQ0Zyy4R/7APCosgbKjxdf8XedlwzVPJ34T94mdK1ZR9EQkU1oWIb1hcyoeSK4Io2bQjpgippFnXZUhDCS50kQTaYG6IUn9hKZP/9tVvyIuywqNhBARAW0s5ToltlivdRxg3GHgPeqcxBGTjHPUfYLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=csPxeLC8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qJcH82Sk; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 14 Nov 2024 10:01:09 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731578470;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EH2PFKRcpByzZSBLYczrDQWuF+7dQcj6qz1vfLj17T0=;
+	b=csPxeLC8c/RUzR/t7oF5GmL6ZH/fUoT1Ge4lTfOhHw0EmFoOpcNWr5tV+Net7ecc8g89ti
+	Y+ImGDucFKcbFM1qSLXBsyC5IqPkPc3YgwrQSy3uRZREyGac3jKmbYDNaetR4RMtXdnfaR
+	Twmux7aN5G8b8WXJBVrhbfwGGkg2V6vDc7GR8Zy/SA8QhMD2u9sDe6TJYFoqVKzhLswmvH
+	r8FDcmKbBKTH5Iz8djOACT7Ayf32/GBH3IpvJLLRbeq9OHQv8gN3KWwdvmxIdE2TdQ0viR
+	Yzoc+rZFUpeyloe3rq+Vqepqo/A9abocPcZaZ1WMi9OSdCQdl/ZOMH7F3J0JaA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731578470;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EH2PFKRcpByzZSBLYczrDQWuF+7dQcj6qz1vfLj17T0=;
+	b=qJcH82SkGxGPvAXPfAKaQ9I2yLmyOsOuy4VW/GVtsrpF6W/GjcYYUM+ZqlmzPs8hvRPt2Z
+	C88j0VvsMPYpWcDg==
+From: "tip-bot2 for Colton Lewis" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/core] perf/x86: Refactor misc flag assignments
+Cc: Colton Lewis <coltonlewis@google.com>, Ingo Molnar <mingo@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>, Kan Liang <kan.liang@linux.intel.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241113190156.2145593-5-coltonlewis@google.com>
+References: <20241113190156.2145593-5-coltonlewis@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <173157846913.32228.2469044903650545034.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-After commit 927e5010ff5b ("erofs: use kmap_local_page() only for
-erofs_bread()"), `buf->kmap_type` actually has no use at all.
+The following commit has been merged into the perf/core branch of tip:
 
-Let's get rid of `buf->kmap_type` now.
+Commit-ID:     baff01f3d75ff3948a0465853dcaa71c394c5c46
+Gitweb:        https://git.kernel.org/tip/baff01f3d75ff3948a0465853dcaa71c394c5c46
+Author:        Colton Lewis <coltonlewis@google.com>
+AuthorDate:    Wed, 13 Nov 2024 19:01:54 
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 14 Nov 2024 10:40:01 +01:00
 
-Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+perf/x86: Refactor misc flag assignments
+
+Break the assignment logic for misc flags into their own respective
+functions to reduce the complexity of the nested logic.
+
+Signed-off-by: Colton Lewis <coltonlewis@google.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Oliver Upton <oliver.upton@linux.dev>
+Acked-by: Kan Liang <kan.liang@linux.intel.com>
+Link: https://lore.kernel.org/r/20241113190156.2145593-5-coltonlewis@google.com
 ---
- fs/erofs/data.c     | 18 +++++-------------
- fs/erofs/internal.h |  1 -
- 2 files changed, 5 insertions(+), 14 deletions(-)
+ arch/x86/events/core.c            | 59 +++++++++++++++++++++---------
+ arch/x86/include/asm/perf_event.h |  2 +-
+ 2 files changed, 44 insertions(+), 17 deletions(-)
 
-diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-index f741c3847ff2..d53979174aff 100644
---- a/fs/erofs/data.c
-+++ b/fs/erofs/data.c
-@@ -10,10 +10,10 @@
- 
- void erofs_unmap_metabuf(struct erofs_buf *buf)
- {
--	if (buf->kmap_type == EROFS_KMAP)
--		kunmap_local(buf->base);
-+	if (!buf->base)
-+		return;
-+	kunmap_local(buf->base);
- 	buf->base = NULL;
--	buf->kmap_type = EROFS_NO_KMAP;
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index d19e939..bfc0a35 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -3011,27 +3011,52 @@ unsigned long perf_arch_instruction_pointer(struct pt_regs *regs)
+ 	return regs->ip + code_segment_base(regs);
  }
  
- void erofs_put_metabuf(struct erofs_buf *buf)
-@@ -45,15 +45,8 @@ void *erofs_bread(struct erofs_buf *buf, erofs_off_t offset,
- 			return folio;
- 	}
- 	buf->page = folio_file_page(folio, index);
--
--	if (buf->kmap_type == EROFS_NO_KMAP) {
--		if (type == EROFS_KMAP)
--			buf->base = kmap_local_page(buf->page);
--		buf->kmap_type = type;
--	} else if (buf->kmap_type != type) {
--		DBG_BUGON(1);
--		return ERR_PTR(-EFAULT);
+-unsigned long perf_arch_misc_flags(struct pt_regs *regs)
++static unsigned long common_misc_flags(struct pt_regs *regs)
+ {
+-	unsigned int guest_state = perf_guest_state();
+-	int misc = 0;
++	if (regs->flags & PERF_EFLAGS_EXACT)
++		return PERF_RECORD_MISC_EXACT_IP;
+ 
+-	if (guest_state) {
+-		if (guest_state & PERF_GUEST_USER)
+-			misc |= PERF_RECORD_MISC_GUEST_USER;
+-		else
+-			misc |= PERF_RECORD_MISC_GUEST_KERNEL;
+-	} else {
+-		if (user_mode(regs))
+-			misc |= PERF_RECORD_MISC_USER;
+-		else
+-			misc |= PERF_RECORD_MISC_KERNEL;
 -	}
-+	if (!buf->base && type == EROFS_KMAP)
-+		buf->base = kmap_local_page(buf->page);
- 	if (type == EROFS_NO_KMAP)
- 		return NULL;
- 	return buf->base + (offset & ~PAGE_MASK);
-@@ -352,7 +345,6 @@ static int erofs_iomap_end(struct inode *inode, loff_t pos, loff_t length,
- 		struct erofs_buf buf = {
- 			.page = kmap_to_page(ptr),
- 			.base = ptr,
--			.kmap_type = EROFS_KMAP,
- 		};
++	return 0;
++}
  
- 		DBG_BUGON(iomap->type != IOMAP_INLINE);
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 9844ee8a07e5..01bbbd32b6b9 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -212,7 +212,6 @@ struct erofs_buf {
- 	struct file *file;
- 	struct page *page;
- 	void *base;
--	enum erofs_kmap_type kmap_type;
- };
- #define __EROFS_BUF_INITIALIZER	((struct erofs_buf){ .page = NULL })
+-	if (regs->flags & PERF_EFLAGS_EXACT)
+-		misc |= PERF_RECORD_MISC_EXACT_IP;
++static unsigned long guest_misc_flags(struct pt_regs *regs)
++{
++	unsigned long guest_state = perf_guest_state();
++
++	if (!(guest_state & PERF_GUEST_ACTIVE))
++		return 0;
++
++	if (guest_state & PERF_GUEST_USER)
++		return PERF_RECORD_MISC_GUEST_USER;
++	else
++		return PERF_RECORD_MISC_GUEST_KERNEL;
++
++}
++
++static unsigned long host_misc_flags(struct pt_regs *regs)
++{
++	if (user_mode(regs))
++		return PERF_RECORD_MISC_USER;
++	else
++		return PERF_RECORD_MISC_KERNEL;
++}
++
++unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs)
++{
++	unsigned long flags = common_misc_flags(regs);
++
++	flags |= guest_misc_flags(regs);
++
++	return flags;
++}
++
++unsigned long perf_arch_misc_flags(struct pt_regs *regs)
++{
++	unsigned long flags = common_misc_flags(regs);
++
++	flags |= host_misc_flags(regs);
  
--- 
-2.43.5
-
+-	return misc;
++	return flags;
+ }
+ 
+ void perf_get_x86_pmu_capability(struct x86_pmu_capability *cap)
+diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
+index feb87bf..d95f902 100644
+--- a/arch/x86/include/asm/perf_event.h
++++ b/arch/x86/include/asm/perf_event.h
+@@ -538,7 +538,9 @@ struct x86_perf_regs {
+ 
+ extern unsigned long perf_arch_instruction_pointer(struct pt_regs *regs);
+ extern unsigned long perf_arch_misc_flags(struct pt_regs *regs);
++extern unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs);
+ #define perf_arch_misc_flags(regs)	perf_arch_misc_flags(regs)
++#define perf_arch_guest_misc_flags(regs)	perf_arch_guest_misc_flags(regs)
+ 
+ #include <asm/stacktrace.h>
+ 
 
