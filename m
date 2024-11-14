@@ -1,182 +1,164 @@
-Return-Path: <linux-kernel+bounces-409575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62BFB9C8EB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:51:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14B789C8EB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:52:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2380F28449D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:51:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B10ED1F21AA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588CA18B499;
-	Thu, 14 Nov 2024 15:42:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B732C18C93B;
+	Thu, 14 Nov 2024 15:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dao/fzUG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IJqN0dOY";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AhN6g7by";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IJqN0dOY";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AhN6g7by"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E161B18A6DD;
-	Thu, 14 Nov 2024 15:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E8741C65
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731598977; cv=none; b=twELnMIEqJmVsZsXSVDYSbNoYLDH99/JrFy8fBL5dD/CO7fdxxCALf/Ba2AIi5GO/36F3GsoqHsZ6v2xF+SN5jQ4pneDEbfkRI/PY8Y0KmEMQPQ6ip5Ysiy5GIjEQhjDuKSkvRFdfxWfS4hfhPudXYXnAS8OXTO9TDCnk+oUxO4=
+	t=1731599100; cv=none; b=bkEg8vHDQ55Tgpcks9GsGSBtQ/PmK4qQCetYQ0gv73pa/1y5aqB0rf8SlSxUajbz7O/9KqPoIwutE/SUnRYVHXsNr+K74N3tlax5V+1fWdIJuaru/ghNWKBG1eKybzvluYyMH3vaF42qaybV1yneidnNG9bpb++cXJU5fOV5lL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731598977; c=relaxed/simple;
-	bh=jk4S6Bk4Q0fqz/lxF2uzaH+S7bSOgCsQ5hk+2n65F3s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VlTeihdkYBDbyOoy943ox/1lmQvrEwpMXjfc+Mx62fwEOVvLRllkXzUfvktFIyBTpI9BbNuSyKsFaefp1qll6CXTd1W+tifuU4s5c8J8ENsrGcloDONoR6lBxAkvt9wx5MUkVVZXtRH2+YDK5PSM1tqQuXicgMOXbMbO/bIyog8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dao/fzUG; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731598976; x=1763134976;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=jk4S6Bk4Q0fqz/lxF2uzaH+S7bSOgCsQ5hk+2n65F3s=;
-  b=dao/fzUGXZjSPhLJ2cilhYux5eHM2rlOyZYHt3AHeKMdKEHPKcHcbt2X
-   dC9YaqRFJxs0nCrgOjqtyJykTGKSgBCRNU69LcjfEYEQzFTFw+AhhUJmp
-   ylO5XEUc+Uff9JXGwrZHBDY1ogjPkFZ/ZXOT7SxVYHUsANoLHyS2Z+CAp
-   Aq92NyiLXwj8ifrHQJmBzSMNSn3YE3qSGXPxP0dopjxc4YZ6ZWLJ+MYy5
-   cMB5EA4tNjM/uda9Bmpb8ib+z2KusNVvfHgK/o04dOFL+obiAlsjTTIn6
-   SDoCttyvXute2dKXp84+d583nxa60N2jgn3GxqrfTRCFItOWvd7pZY3Je
-   Q==;
-X-CSE-ConnectionGUID: 4Aq3UIgXR46OV/ny78fuCg==
-X-CSE-MsgGUID: lPsdtd3ZTWuosvNRFSUuwQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31731222"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="31731222"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 07:42:56 -0800
-X-CSE-ConnectionGUID: H8PO0C5zRemi7dbFBenCpA==
-X-CSE-MsgGUID: /jsnB3PbSyyUcQ1c166UmQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
-   d="scan'208";a="89021628"
-Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.108.62]) ([10.125.108.62])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 07:42:54 -0800
-Message-ID: <f13b285d-cf5b-4edf-a7d5-933ccd20556a@intel.com>
-Date: Thu, 14 Nov 2024 08:42:53 -0700
+	s=arc-20240116; t=1731599100; c=relaxed/simple;
+	bh=306d1NwteLBvyZE5wGW5gSWmyV7hlGKWGZVrlQHpEAA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eqpajApHa0+HlGgF7CqQ6hN3+7bl0KQCA2j5/IllrUqlC2vbpWpdzIR+ffK1cvKj5hS03O37QDMNM4bCqP+/Pwgb4INz42yMhA2mSeMV91EKLMOOy63X/pa2XvCSDawKpe45o3V6Q/885+Hjl/J6ZpboUPccGOVLNCxLKfqJvd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IJqN0dOY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AhN6g7by; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IJqN0dOY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AhN6g7by; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9A9541F395;
+	Thu, 14 Nov 2024 15:44:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731599096; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=hEaTFTPS7VTSPviuCZqEa/J5zdrMvi33ihFfVdd06hQ=;
+	b=IJqN0dOYfQV/LHIndmzBQPkDJ1oA8TpQ9AVUIRjTCmSgLboQl3Ew9XUdZ3Ws9ae9tKIl74
+	gjLLgDpaH41Tl28zghBKv9ZgzgvPnCyssQvST17qxuik2ZN82T3sop1zJ9TXmsp85DOT4D
+	FcZSoPjtLI0UsUbjXybYgImvbc+C6N8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731599096;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=hEaTFTPS7VTSPviuCZqEa/J5zdrMvi33ihFfVdd06hQ=;
+	b=AhN6g7byLAzrYgH9f4jjBoa1ox2B3k3FPS1PAE/FiL3wcnf4Qmqt1jXn7Ltmciiq+RPxOr
+	3WmsJhjwumxIfiBw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731599096; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=hEaTFTPS7VTSPviuCZqEa/J5zdrMvi33ihFfVdd06hQ=;
+	b=IJqN0dOYfQV/LHIndmzBQPkDJ1oA8TpQ9AVUIRjTCmSgLboQl3Ew9XUdZ3Ws9ae9tKIl74
+	gjLLgDpaH41Tl28zghBKv9ZgzgvPnCyssQvST17qxuik2ZN82T3sop1zJ9TXmsp85DOT4D
+	FcZSoPjtLI0UsUbjXybYgImvbc+C6N8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731599096;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=hEaTFTPS7VTSPviuCZqEa/J5zdrMvi33ihFfVdd06hQ=;
+	b=AhN6g7byLAzrYgH9f4jjBoa1ox2B3k3FPS1PAE/FiL3wcnf4Qmqt1jXn7Ltmciiq+RPxOr
+	3WmsJhjwumxIfiBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 60DBA13794;
+	Thu, 14 Nov 2024 15:44:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id aR5MFvgaNmdhDwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 14 Nov 2024 15:44:56 +0000
+From: Takashi Iwai <tiwai@suse.de>
+To: linux-mtd@lists.infradead.org
+Cc: Joern Engel <joern@lazybastard.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	linux-kernel@vger.kernel.org,
+	Fabian Vogt <fvogt@suse.com>
+Subject: [PATCH] mtd: phram: Add the kernel lock down check
+Date: Thu, 14 Nov 2024 16:44:41 +0100
+Message-ID: <20241114154442.25920-1-tiwai@suse.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] acpi: nfit: vmalloc-out-of-bounds Read in
- acpi_nfit_ctl
-To: Suraj Sonawane <surajsonawane0215@gmail.com>, dan.j.williams@intel.com,
- vishal.l.verma@intel.com, ira.weiny@intel.com
-Cc: rafael@kernel.org, lenb@kernel.org, nvdimm@lists.linux.dev,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
-References: <20241113125157.14390-1-surajsonawane0215@gmail.com>
- <c69d74f7-4484-4fc6-9b95-d2ae86ead794@intel.com>
- <1cab2343-8d74-4477-9046-7940917fa7be@gmail.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <1cab2343-8d74-4477-9046-7940917fa7be@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.de:mid,suse.de:email];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
+The phram MTD driver may map any memory pages no matter whether it's
+reserved or whatever used for systems, which basically allows user
+bypassing the lock down.
 
+Add the check and abort the probe if the kernel is locked down for
+LOCKDOWN_DEV_MEM.
 
-On 11/14/24 2:19 AM, Suraj Sonawane wrote:
-> On 13/11/24 22:32, Dave Jiang wrote:
->>
->>
->> On 11/13/24 5:51 AM, Suraj Sonawane wrote:
->>> Fix an issue detected by syzbot with KASAN:
->>>
->>> BUG: KASAN: vmalloc-out-of-bounds in cmd_to_func drivers/acpi/nfit/
->>> core.c:416 [inline]
->>> BUG: KASAN: vmalloc-out-of-bounds in acpi_nfit_ctl+0x20e8/0x24a0
->>> drivers/acpi/nfit/core.c:459
->>>
->>> The issue occurs in cmd_to_func when the call_pkg->nd_reserved2
->>> array is accessed without verifying that call_pkg points to a buffer
->>> that is appropriately sized as a struct nd_cmd_pkg. This can lead
->>> to out-of-bounds access and undefined behavior if the buffer does not
->>> have sufficient space.
->>>
->>> To address this, a check was added in acpi_nfit_ctl() to ensure that
->>> buf is not NULL and that buf_len is greater than sizeof(*call_pkg)
->>> before casting buf to struct nd_cmd_pkg *. This ensures safe access
->>> to the members of call_pkg, including the nd_reserved2 array.
->>>
->>> Reported-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
->>> Closes: https://syzkaller.appspot.com/bug?extid=7534f060ebda6b8b51b3
->>> Tested-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
->>> Fixes: ebe9f6f19d80 ("acpi/nfit: Fix bus command validation")
->>> Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
->>> ---
->>> V1: https://lore.kernel.org/lkml/20241111080429.9861-1-surajsonawane0215@gmail.com/
->>> V2: Initialized `out_obj` to `NULL` in `acpi_nfit_ctl()` to prevent
->>> potential uninitialized variable usage if condition is true.
->>> V3: Changed the condition to if (!buf || buf_len < sizeof(*call_pkg))
->>> and updated the Fixes tag to reference the correct commit.
->>>
->>>   drivers/acpi/nfit/core.c | 12 +++++++++---
->>>   1 file changed, 9 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
->>> index 5429ec9ef..eb5349606 100644
->>> --- a/drivers/acpi/nfit/core.c
->>> +++ b/drivers/acpi/nfit/core.c
->>> @@ -439,7 +439,7 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
->>>   {
->>>       struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
->>>       struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
->>> -    union acpi_object in_obj, in_buf, *out_obj;
->>> +    union acpi_object in_obj, in_buf, *out_obj = NULL;
->>
->> Looking at the code later, out_obj is always assigned before access. I'm not seeing a path where out_obj would be accessed unitialized...
-> 
-> I initialized out_obj to NULL to prevent potential issues where goto out might access an uninitialized pointer, ensuring ACPI_FREE(out_obj) handles NULL safely in the cleanup section. This covers cases where the condition !buf || buf_len < sizeof(*call_pkg) triggers an early exit, preventing unintended behavior.
+Reported-by: Fabian Vogt <fvogt@suse.com>
+Suggested-by: Fabian Vogt <fvogt@suse.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+---
+ drivers/mtd/devices/phram.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-ok
-
-> 
->>
->> https://elixir.bootlin.com/linux/v6.12-rc7/source/drivers/acpi/nfit/core.c#L538
->>  
->>>       const struct nd_cmd_desc *desc = NULL;
->>>       struct device *dev = acpi_desc->dev;
->>>       struct nd_cmd_pkg *call_pkg = NULL;
->>> @@ -454,8 +454,14 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
->>>       if (cmd_rc)
->>>           *cmd_rc = -EINVAL;
->>>   -    if (cmd == ND_CMD_CALL)
->>> -        call_pkg = buf;
->>> +    if (cmd == ND_CMD_CALL) {
->>> +        if (!buf || buf_len < sizeof(*call_pkg)) {
->>> +            rc = -EINVAL;
->>> +            goto out;
->>> +        }
->>> +        call_pkg = (struct nd_cmd_pkg *)buf;
->>
->> Is the casting needed? It wasn't in the old code
->>
-> 
-> I tested the code both with and without the cast using syzbot, and it didn't result in any errors in either case. Since the buffer (buf) is being used as a pointer to struct nd_cmd_pkg, and the casting works in both scenarios, it appears that the cast may not be strictly necessary for this particular case.
-> 
-> I can remove the cast and retain the original code structure, as it does not seem to affect functionality. However, the cast was added for clarity and type safety to ensure that buf is explicitly treated as a struct nd_cmd_pkg *.
-> 
-> Would you prefer to remove the cast, or should I keep it as is for type safety and clarity?
-
-I would just leave it as it was.
-
-> 
->>> +    }
->>> +
->>>       func = cmd_to_func(nfit_mem, cmd, call_pkg, &family);
->>>       if (func < 0)
->>>           return func;
->>
-> 
-> Thank you for your feedback and your time.
+diff --git a/drivers/mtd/devices/phram.c b/drivers/mtd/devices/phram.c
+index 1bf192f229d7..48abfb81ef66 100644
+--- a/drivers/mtd/devices/phram.c
++++ b/drivers/mtd/devices/phram.c
+@@ -30,6 +30,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/of_address.h>
+ #include <linux/of.h>
++#include <linux/security.h>
+ 
+ struct phram_mtd_list {
+ 	struct mtd_info mtd;
+@@ -410,6 +411,10 @@ static int __init init_phram(void)
+ {
+ 	int ret;
+ 
++	ret = security_locked_down(LOCKDOWN_DEV_MEM);
++	if (ret)
++		return ret;
++
+ 	ret = platform_driver_register(&phram_driver);
+ 	if (ret)
+ 		return ret;
+-- 
+2.43.0
 
 
