@@ -1,177 +1,120 @@
-Return-Path: <linux-kernel+bounces-409040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B4799C86DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:08:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B7C79C86CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:02:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 647CBB24D94
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:00:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EBD7B2AF02
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABEAB1F76C2;
-	Thu, 14 Nov 2024 09:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4441F8F1D;
+	Thu, 14 Nov 2024 09:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mFWsnrD2"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QngmeC78"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBA21F9414;
-	Thu, 14 Nov 2024 09:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959741F76C2
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731578259; cv=none; b=dnWFQ6YV1w2I/+S6g03hM6SmIQ6A0hSTE3GvI11RxIt2VVmZUCo+cID1/MeTb8/Lq7gY84cO6waV0KViYPwiEitrpEoUc80XD6pJMr+HLiPHRQA9c+f2iyRfEflZkxPPQ1Ta0z621OYkh5aJBibaiohwNuCAgh57ZoMive5eowM=
+	t=1731578256; cv=none; b=OOzX3ILifI1hZ0EmAD/jL/FHmLKXcnNRBcwKCwSPx/fNs7eg8W3GGIKbdZFZoyMxM4baNs36DwlrXa9yT17jbS6BcvorhfzVlqf/wZikbjyYc1vl7W7cLkthwN4EXyIBf5nERpaN5gWjuJl9GMEg/oqrckozwCXJ/Ain9VqFf8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731578259; c=relaxed/simple;
-	bh=LuJ9RFxfvwF9poxtJ6oisMDfJ6bol6LPs82/2DnPlrg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=KdVZt5Zr/3736G4Wh8Us4ofolptUu6YnHbbJs53YlCUQpqsUZO9NgPpRldMHaXWKTu1GcEnbJrp4W3neTFe/3pGpMOMCyNbJcGbjv1pYMKj2vFm+v1HGcDKFaSBsazShWKKIqTDU2IH3YATo3SagtH8rV5vNKY1t5zR/y0Xk8XA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mFWsnrD2; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE8ALVO021771;
-	Thu, 14 Nov 2024 09:57:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=7az27h
-	/CNlQ8K2lsBhNTnLMlP/cCbq3ALIRSFw5uDZI=; b=mFWsnrD2wBFKSP19XZbjD+
-	ndBUaxkBLcRH26Vid/E59y4RoIdnwsxdxJBfLZs/mvc89wPniKZFgLxwn2M6HQBz
-	GgI/+IJUlKldEI+V0UAFKDZLfUXpyvqJUb3jl4t2ZE3Spl09eDvwewuSipLnN/Es
-	sLDLYhtS+xbfWMeTZtEeGwVOV0UCF1uP1pITUe7lCVVevqgKnyzi+5I3iGC32bz/
-	+0G7uVZhYA9s6HhYReu+dLlBwDI5Gq5MVTxZIU2eamGwBJPK1pfQ+Afnuh2OMxFM
-	TvnWtUy/WBwGfa7lqUaR2mYXOEhWhqaXuocogCHVDPDVzplFkIWZwPJhEF5L1IqQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42wdf00mu6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Nov 2024 09:57:09 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AE9v8J1016643;
-	Thu, 14 Nov 2024 09:57:08 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42wdf00mu2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Nov 2024 09:57:08 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE0FehL017519;
-	Thu, 14 Nov 2024 09:57:07 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42tk2n03ch-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Nov 2024 09:57:07 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AE9v3rH16318764
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 14 Nov 2024 09:57:03 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9281A20115;
-	Thu, 14 Nov 2024 09:57:03 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 15D302010F;
-	Thu, 14 Nov 2024 09:57:03 +0000 (GMT)
-Received: from [9.152.222.93] (unknown [9.152.222.93])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 14 Nov 2024 09:57:03 +0000 (GMT)
-Message-ID: <8f5f5278-bad2-42e0-862d-55f285f5bd67@linux.ibm.com>
-Date: Thu, 14 Nov 2024 10:57:02 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
-To: Steven Rostedt <rostedt@goodmis.org>, Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-        Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Florian Weimer <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
- <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
- <1f83be89-b816-48a3-a7ee-9b72f07b558e@linux.ibm.com>
- <20241113155040.6a9a1bed@gandalf.local.home>
- <20241113211535.ghnw52wkgudkjvgv@jpoimboe>
- <20241113171326.6d1ddc83@gandalf.local.home>
-From: Jens Remus <jremus@linux.ibm.com>
-Content-Language: en-US
-Organization: IBM Deutschland Research & Development GmbH
-In-Reply-To: <20241113171326.6d1ddc83@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: _xcw2Sm9TRgD4Bgx1V7y4IKtB4jiTYyL
-X-Proofpoint-ORIG-GUID: PNE2pZeHvfUBfc6fAQGZvjQLaqf9Bi3V
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1731578256; c=relaxed/simple;
+	bh=ZkZhMBuYEetRs8RLxyGo7ZfE2c9wP9owZXBO19EWV1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VLcxJ2+IRKbXoyLJbZMtPuUZutSLg6MZMcQXuwTYs7wok3I15kKUWul0vXbTPL98pm6kBdK/Ae1wxiAtF8PZps6nPQIXTXvVQAcL6aqNdU3PKYe2tRcczn96ytzbFw2SS+O47gEXFXhCOyVxdCR6hWFnTIvirSvAPLyuub46j3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QngmeC78; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-431688d5127so3892645e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:57:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731578253; x=1732183053; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/MzeUno5ssgaxfmpObuz1vMLdWwk1h1FEXNkZI55Ovw=;
+        b=QngmeC78/e3RSOyQ9AxrLGU/phNx350HU8LF8H2bIjzoFaiOnSmli6Z7WEZufcPNNE
+         KWRKk8fmrsZtnvv7HstLYAorfx5LCgd9CU/KVHHO1IxYp0ATyIXQ6bLjeInzZaR1LCKm
+         1/JLNiaKhnuyQN48FVKV4QHKOUlCKogiA2iQ10WnBFX3cWDYxAb8RD+YFgmH+k5/dxXY
+         Myrf2nbWp9V49YE0d59YOMtBShgdAxQ7+W/q/HSNND2n8YeDaKXGG/er9juTBMiZ90J9
+         ylKElteUHxu5lJrqU5EtgKDC3fv6Jo8Ne6nEVV1vFNzuexWw2Ztlb31TGj5f/qc/eOJ+
+         Qu8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731578253; x=1732183053;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/MzeUno5ssgaxfmpObuz1vMLdWwk1h1FEXNkZI55Ovw=;
+        b=AXN5+UOPHgugMMA5Rjb+D4ykHlOOtSl99+Iwxdp7wAp2fM6+Qz6J/y08WbQSWwzzoJ
+         jd2e2XaIaJL1sJFGE8+w8c0fTtwcj6YWydxP+1fHBEymlHPlZVJhAFlb0nGTERhbRran
+         EV01tMVyQbrobBe+fjL0XdMzhPRjQdLmL7G9vMTMy6vc/4lrEcwvnaV4E80Epzu7uvDs
+         FGCPBcG6/VbhCLdMyUEj99e8kBr1OxtpurNgb3LjG9G5BnxV5HFPfh1PuAUayyFxHleY
+         R8z/7Nlab8zXtUwCmrB0OVh6y6uiTsk1LFmmf1I8J/bQv1AnhmsWDLWoMxxOMq2DHc34
+         Xx+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV3Ud+7OxNuAK+Ci55z1JWTywRmpLKkvFgJzDYL2uNOLQKKn7F7NRpcWvEW4Gm30AqmPG072JNOn2cG4ww=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjCEl5hMjZCwgWhV/Bmb7/19l1FFBGUAdmfF+xX4mSCNLOtKy2
+	ysgfsg+rbkosagE1T1GVf3Qobak4PcnzWDxIm2JcSHrUccXREDOjSXLLpC6diRM=
+X-Google-Smtp-Source: AGHT+IG7x6fyvPJ2miRZp7ZOwhGxaCAKWIfgA45HLnQT8w8JmbciTFyDzjsHotb1zRcVAPKjbtwtBg==
+X-Received: by 2002:a05:600c:4f04:b0:42f:310f:de9 with SMTP id 5b1f17b1804b1-432b75099c1mr188268385e9.15.1731578252912;
+        Thu, 14 Nov 2024 01:57:32 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821adbd6d6sm1001814f8f.55.2024.11.14.01.57.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 01:57:32 -0800 (PST)
+Date: Thu, 14 Nov 2024 12:57:29 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: Max Staudt <max@enpas.org>, Marc Kleine-Budde <mkl@pengutronix.de>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-can@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] can: can327: fix snprintf() limit in
+ can327_handle_prompt()
+Message-ID: <4ff913b9-93b3-4636-b0f6-6e874f813d2f@stanley.mountain>
+References: <c896ba5d-7147-4978-9e25-86cfd88ff9dc@stanley.mountain>
+ <6db4d783-6db2-4b86-887c-3c95d6763774@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 lowpriorityscore=0 malwarescore=0 phishscore=0
- suspectscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 mlxscore=0
- impostorscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411140073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6db4d783-6db2-4b86-887c-3c95d6763774@wanadoo.fr>
 
-On 13.11.2024 23:13, Steven Rostedt wrote:
-> On Wed, 13 Nov 2024 13:15:35 -0800
+On Thu, Nov 14, 2024 at 06:34:49PM +0900, Vincent Mailhol wrote:
+> Hi Dan,
+> 
+> On 14/11/2024 at 18:03, Dan Carpenter wrote:
+> > This code is printing hex values to the &local_txbuf buffer and it's
+> > using the snprintf() function to try prevent buffer overflows.  The
+> > problem is that it's not passing the correct limit to the snprintf()
+> > function so the limit doesn't do anything.  On each iteration we print
+> > two digits so the remaining size should also decrease by two, but
+> > instead it passes the sizeof() the entire buffer each time.
+> > 
+> > If the frame->len were too long it would result in a buffer overflow.
+> 
+> But, can frame->len be too long? Classical CAN frame maximum length is 8
+> bytes. And I do not see a path for a malformed frame to reach this part of
+> the driver.
+> 
+> If such a path exists, I think this should be explained. Else, I am just not
+> sure if this needs a Fixes: tag.
+> 
 
-> BTW, the following changes were needed to make it work for me:
+Even when bugs don't affect runtime we still assign a Fixes tag, but we don't
+CC stable.  There is no way that passing the wrong size was intentional.
 
-> diff --git a/kernel/unwind/sframe.c b/kernel/unwind/sframe.c
-> index 933e47696e29..ca4ef0b72772 100644
-> --- a/kernel/unwind/sframe.c
-> +++ b/kernel/unwind/sframe.c
-> @@ -73,15 +73,15 @@ static int find_fde(struct sframe_section *sec, unsigned long ip,
->   		    struct sframe_fde *fde)
->   {
->   	struct sframe_fde __user *first, *last, *found = NULL;
-> -	u32 ip_off, func_off_low = 0, func_off_high = -1;
-> +	s32 ip_off, func_off_low = INT_MIN, func_off_high = INT_MAX;
-
-Coincidentally I was experimenting with exactly the same changes, except 
-that I used S32_MIN and S32_MAX.  Any preference?
-
->   
->   	ip_off = ip - sec->sframe_addr;
->   
->   	first = (void __user *)sec->fdes_addr;
-> -	last = first + sec->fdes_nr;
-> +	last = first + sec->fdes_nr - 1;
->   	while (first <= last) {
->   		struct sframe_fde __user *mid;
-> -		u32 func_off;
-> +		s32 func_off;
->   
->   		mid = first + ((last - first) / 2);
->   
-
-Thanks and regards,
-Jens
--- 
-Jens Remus
-Linux on Z Development (D3303) and z/VSE Support
-+49-7031-16-1128 Office
-jremus@de.ibm.com
-
-IBM
-
-IBM Deutschland Research & Development GmbH; Vorsitzender des 
-Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der 
-Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
-IBM Data Privacy Statement: https://www.ibm.com/privacy/
+regards,
+dan carpenter
 
 
