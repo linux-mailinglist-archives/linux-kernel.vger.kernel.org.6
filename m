@@ -1,117 +1,161 @@
-Return-Path: <linux-kernel+bounces-409485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5A979C8D69
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:56:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D915B9C8D6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:57:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 684801F244A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:56:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAE191F21304
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A73A136341;
-	Thu, 14 Nov 2024 14:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A90136327;
+	Thu, 14 Nov 2024 14:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kVSIF4JE"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FN9FJE56"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5A6770FE;
-	Thu, 14 Nov 2024 14:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734DD74BE1;
+	Thu, 14 Nov 2024 14:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731596177; cv=none; b=dw4va7IRXUDYPhQSq5sIa5ZNw4VQW5gV1fiN3Y0rnUXilJYSIxjA44KlQpvr6oQVB16BaCB4qioH5/a/K5MTegAX95wEzmET+7NC/dJYR1O27aGk0nF7332bPLJUIqxWJULBrQ5uKXhbnlFP4TNWt5R2u+4jFRTslmjRq1z0ufs=
+	t=1731596242; cv=none; b=nh9qdf6pSlodoAxvrL0wxuq8GNWhqVsfKTyiqpphJRXUcjQ5d1oxcwCBx81QJkOqLNDsq+Mdjhnt8vvnjEH67hkimzaQ5xjyhVn/QKmmQmrmc1UM/11Kdz/DtEpKAmhv27s/QHKwQKET3NCw0Bm62D8hiw+TSCsI4YTDelolxY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731596177; c=relaxed/simple;
-	bh=5sOe9ripCxbSEVyi9HSWTx+dlYBbi2HF+KFmFLJmqIY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ct3l1RsafEQWMATyzmHSwVDR+AgmbqvmJFroqV3JZDZr2rjUOh4DTY96M5i/6PJ1pnjBiXg1qgbt0HhcyO/+HuwL4gvT+DmX1GXmmvtP/hD5zFl9n2tEu8ybFi2TqFJnjfeqmAXQeUR4fbXgaY11bApltDrP6mJZ8dR6JZGYe7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kVSIF4JE; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1731596242; c=relaxed/simple;
+	bh=pkJNJxoeCzInceBm8X9JQggNQG0mKV37IxeaHZdeuOQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GDK3xuLE+hcqpzfNIEG1VuQh/1TYLshU7ygHZ9+41YGj8f9V6lsKkpdd37Yw4vhq8S8aupJ644ordlXV43Mz0O3s0cl50/BlOCtyCd5StfOYFgNeN3YjYBlftaHOPfBzMDh8JImwzVFiNvGo4aLA6SApse+E7Nm3YfNJ40KEz3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FN9FJE56; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43193678216so6957125e9.0;
-        Thu, 14 Nov 2024 06:56:15 -0800 (PST)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9ed49edd41so124113766b.0;
+        Thu, 14 Nov 2024 06:57:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731596174; x=1732200974; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ypIe2x5wqkPNzyRl0qrW7xKxln38d/rreWFO8HGI778=;
-        b=kVSIF4JE4UKJyHl8ZYMzhKxkofQ8bWgd8BrIxqftmFDiqB2F6JLkovGrcjywbXcC+M
-         kDmf4QRD7t7DjvjTBMg6WAmjW1TyhdYlYA2fHE/BHAtb6dj5p7L3tZ/YESygT/+XSc1Y
-         YGH1Tl/KIus7JNxhzW5rtH5/vuwfp+nrRb6OuT6caZ1bI3ycwmFiUTgU1dcPdynoZiEx
-         29yrtxuANeLnYRs7XTJra7Tr4jIGHZkzuVtjWz6YK/ixclt7zvJIDRh74wi5z02LAhYM
-         grGJELPxs9803D6y5MyKNm2U7OkaNsVdCrcCdQd0SLw7I4uaj6Gnlj4xM6Fv4f0ttR8c
-         ghHQ==
+        d=gmail.com; s=20230601; t=1731596239; x=1732201039; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oC1V2uPMKuCVb42okFlodDMg7VTiVJx1PFqsTRJLKbs=;
+        b=FN9FJE56Ge1iG6TNTCewC+iC6ZWABMdeHg/GHnh4qbuLh/Tm5ahfYcLvPw/EXTB5SL
+         SWXk8cRwSuG6Sfh6AAX5JXZ2miYOEyVdCKBV6qXVUVGrUvcxq+ALW5e/GAayD+0mzA82
+         5lkNpaerI46yPJ1IpDPYft0xr4LhKEAYtyeWNi+/EHNdDqt+KgGmYUmxoWN4ruDxNU+D
+         fX7Mor/y7aoZNl+XnsqQ2lrc+kgwwE39XuLYOf3dPQh3ErRh0o7ClmU6Wk1HMpK/yIyo
+         0GxPD7nMLBMWF64/NxOageMgc0VHgktonCJb7izz0TQaiOYpM1OFCicQ7fyJ1Yop26o6
+         odng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731596174; x=1732200974;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ypIe2x5wqkPNzyRl0qrW7xKxln38d/rreWFO8HGI778=;
-        b=fCf2uch7E/Y6E1uatyYnO7UDeCScQJ9OPd4KubjjSXRLsqHIWU89gI3/93tHnX7bK9
-         vVrcngt7jjIEBckQ2cZ+4sD1SKn4RYQsovnwFYGeY6vYPLX77Rx21n3wkNcYNaq677Zr
-         u20Ri9dwILMMqkCu1zFKt4xDR9BsigunJUIQ5gZvgwcB50whmGJseWRCg1+/a5dbRsWc
-         Q7zFYBKa1IHJlZkK/hux5jUvnnmtOggTjcFWN5x1C0EDx+10f1WAMTO0uUGRleK/nwJi
-         DZlFfY1Jsfz8NkBOp6mdfV3ERaYTDFV2h0SPgxCs2zJhvt6Ux0D9VpTD6cRYXjJTVHkL
-         ZYfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWkYnS7a2PhFOVwnUoYcabSZp+ta9Em2vXZRTfz8dCjvHi9OKDA1sZluHo0WXUctndjqlSqLTbTWRecCP1P@vger.kernel.org, AJvYcCXzQcdIsRcrUzBmWNntu7qtF9QP49fOnnwUve3Ip+SscVrmY2Vpq+fkati/JZcENrIqSBc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSXCpO8kMO9XWAyTvc/xBTPc9AtuRwIXQaZi40z1iTwZ0c9dqU
-	zRy25KBPDxkSaMZGXQ0uG4VFlnqyxcIQBeUfrQeQSmjbx+pfPCCt
-X-Google-Smtp-Source: AGHT+IGfT3/q3KJg0BmJv0M3JSpyylmNbOkhP3+kI1SDAPayxBKjFLi0azP6rHT0HtymqiHBO+xoLg==
-X-Received: by 2002:a05:6000:1787:b0:37d:5026:f787 with SMTP id ffacd0b85a97d-381f1885612mr21224023f8f.38.1731596173714;
-        Thu, 14 Nov 2024 06:56:13 -0800 (PST)
-Received: from andrea ([149.62.244.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ada3e7bsm1730816f8f.7.2024.11.14.06.56.12
+        d=1e100.net; s=20230601; t=1731596239; x=1732201039;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oC1V2uPMKuCVb42okFlodDMg7VTiVJx1PFqsTRJLKbs=;
+        b=SLanzxul4T524wCFXLMwhpcoRXqhyEc+0SWkQ14xMhnkboe+tEjjpHBvq3Y1O/7XOt
+         PQPQ4F7Sg9gcNGEH8RyArBFK9sd2x5BsqnAYAxOGmVuOdLeiM33zQNTL281zQg9YQ3IV
+         vBnptCeMIie/K9SwR9YcbUjclRRnQtk0IbVQJK9BCKqEfP/ctclyHs4yydzSjpPKQNOv
+         PMODqLt7VHnfHarT/3VKaSS3fatqxIeps49LKPO2O8fgRbXosTp3sW35iMXZq6nH3qKv
+         XMxvs0nVkkyemKHTyj6h+MLsOiJtCMFmWJAesIsyfJOdPIr5qttIqPFY+uHHzm+VObwn
+         rpWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdIvkG3GKWt3fNePMuNteEfoMdF8w3DVC7l3Knd544YLnpCJ/vsyyo+B9nBXwhy20FzQ4ALgE67fItpZ5Z@vger.kernel.org, AJvYcCUv3t3ACTJMec4Dxm0jDWqreVPB0RgXSe3y9T2FVEucjNQK7vEzOum3e4TSS0D/m3qclduXnOGx@vger.kernel.org, AJvYcCVbYRxvjifNbknf/H/1mbg33NtADEjR5D7CYi8IaJC1Lg4iPjah/G5e5j3lDszUDS11i44YUMTUTfIORl8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9bqNAvByM78AmVfy9a6du7c43529cPvlVo4dyE45DK+KVyrQf
+	CqcbWwMFdCUFP1nXaI0STe7C/kTxBbVfP9g5yHZac3mYnozTwswb
+X-Google-Smtp-Source: AGHT+IHYA9lOrq2gvr+JzqUCQCoRdL6fFk7XxyfZZGn7kqPkL98O6LVB5dRztX432sAiFj9y50dNYg==
+X-Received: by 2002:a17:907:60c8:b0:a9a:46:83ee with SMTP id a640c23a62f3a-a9eefff1531mr2259415866b.48.1731596238497;
+        Thu, 14 Nov 2024 06:57:18 -0800 (PST)
+Received: from partp-nb.corp.toradex.com (31-10-206-125.static.upc.ch. [31.10.206.125])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20dffd742sm72459566b.109.2024.11.14.06.57.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 06:56:12 -0800 (PST)
-Date: Thu, 14 Nov 2024 16:56:01 +0200
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Puranjay Mohan <puranjay12@gmail.com>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, puranjay@kernel.org,
-	bpf@vger.kernel.org, lkmm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: Some observations (results) on BPF acquire and release
-Message-ID: <ZzYPgd8rJDG9p6WQ@andrea>
-References: <Zxk2wNs4sxEIg-4d@andrea>
- <13f60db0-b334-4638-a768-d828ecf7c8d0@paulmck-laptop>
- <Zxor8xosL-XSxnwr@andrea>
- <ZxujgUwRWLCp6kxF@andrea>
- <ZzT9NR7mlSZQHzpD@andrea>
- <CANk7y0gdNGM36Er9vq42-YouoGVVQ4gp0yvgVHarm0-NFC2i1w@mail.gmail.com>
+        Thu, 14 Nov 2024 06:57:18 -0800 (PST)
+From: Parth Pancholi <parth105105@gmail.com>
+To: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>
+Cc: Parth Pancholi <parth.pancholi@toradex.com>,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: [PATCH v2] kbuild: switch from lz4c to lz4 for compression
+Date: Thu, 14 Nov 2024 15:56:44 +0100
+Message-Id: <20241114145645.563356-1-parth105105@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANk7y0gdNGM36Er9vq42-YouoGVVQ4gp0yvgVHarm0-NFC2i1w@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-> I have applied your patches and modified them to add the new tests to
-> kinds.txt and shelf.py
-> now these tests will run with all other tests using 'make cata-bpf-test'
-> 
-> All 175 tests, including new tests added by you, pass :D
-> 
-> make cata-bpf-test
-> 
-> _build/default/internal/herd_catalogue_regression_test.exe \
->         -j 32 \
->         -herd-timeout 16.0 \
->         -herd-path _build/install/default/bin/herd7 \
->         -libdir-path ./herd/libdir \
->         -kinds-path catalogue/bpf/tests/kinds.txt \
->         -shelf-path catalogue/bpf/shelf.py \
->         test
-> herd7 catalogue bpf tests: OK
-> 
-> 
-> I have pushed it and sent a PR so we can get all this merged to master.
-> https://github.com/herd/herdtools7/pull/1050
+From: Parth Pancholi <parth.pancholi@toradex.com>
 
-Cool!  Thank you for the follow-up.
+Replace lz4c with lz4 for kernel image compression.
+Although lz4 and lz4c are functionally similar, lz4c has been deprecated
+upstream since 2018. Since as early as Ubuntu 16.04 and Fedora 25, lz4
+and lz4c have been packaged together, making it safe to update the
+requirement from lz4c to lz4.
 
-  Andrea
+Consequently, some distributions and build systems, such as OpenEmbedded,
+have fully transitioned to using lz4. OpenEmbedded core adopted this
+change in commit fe167e082cbd ("bitbake.conf: require lz4 instead of
+lz4c"), causing compatibility issues when building the mainline kernel
+in the latest OpenEmbedded environment, as seen in the errors below.
+
+This change also updates the LZ4 compression commands to make it backward
+compatible by replacing stdin and stdout with the '-' option, due to some
+unclear reason, the stdout keyword does not work for lz4 and '-' works for
+both. In addition, this modifies the legacy '-c1' with '-9' which is also
+compatible with both. This fixes the mainline kernel build failures with
+the latest master OpenEmbedded builds associated with the mentioned
+compatibility issues.
+
+LZ4     arch/arm/boot/compressed/piggy_data
+/bin/sh: 1: lz4c: not found
+...
+...
+ERROR: oe_runmake failed
+
+Cc: stable@vger.kernel.org
+Link: https://github.com/lz4/lz4/pull/553
+Suggested-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
+---
+v2: correct the compression command line to make it compatible with lz4
+v1: https://lore.kernel.org/all/20241112150006.265900-1-parth105105@gmail.com/
+---
+ Makefile             | 2 +-
+ scripts/Makefile.lib | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 79192a3024bf..7630f763f5b2 100644
+--- a/Makefile
++++ b/Makefile
+@@ -508,7 +508,7 @@ KGZIP		= gzip
+ KBZIP2		= bzip2
+ KLZOP		= lzop
+ LZMA		= lzma
+-LZ4		= lz4c
++LZ4		= lz4
+ XZ		= xz
+ ZSTD		= zstd
+ 
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index 01a9f567d5af..fe5e132fcea8 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -371,10 +371,10 @@ quiet_cmd_lzo_with_size = LZO     $@
+       cmd_lzo_with_size = { cat $(real-prereqs) | $(KLZOP) -9; $(size_append); } > $@
+ 
+ quiet_cmd_lz4 = LZ4     $@
+-      cmd_lz4 = cat $(real-prereqs) | $(LZ4) -l -c1 stdin stdout > $@
++      cmd_lz4 = cat $(real-prereqs) | $(LZ4) -l -9 - - > $@
+ 
+ quiet_cmd_lz4_with_size = LZ4     $@
+-      cmd_lz4_with_size = { cat $(real-prereqs) | $(LZ4) -l -c1 stdin stdout; \
++      cmd_lz4_with_size = { cat $(real-prereqs) | $(LZ4) -l -9 - -; \
+                   $(size_append); } > $@
+ 
+ # U-Boot mkimage
+-- 
+2.34.1
+
 
