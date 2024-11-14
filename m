@@ -1,153 +1,119 @@
-Return-Path: <linux-kernel+bounces-408592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA699C80D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:36:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A3279C80CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:31:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65D31B21FF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:36:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A98FBB24EF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73DC51E3DEF;
-	Thu, 14 Nov 2024 02:36:08 +0000 (UTC)
-Received: from chinatelecom.cn (smtpnm6-01.21cn.com [182.42.159.233])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2A32F5A
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 02:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=182.42.159.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B931E25F7;
+	Thu, 14 Nov 2024 02:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Det6Mgmh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F79182C5;
+	Thu, 14 Nov 2024 02:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731551768; cv=none; b=jbV65FfVcyZWxlq0vkzykC/upt+/6rTf9QcpBkJ5cIK94sItTbqWs/LBWE4fwAwKjRpRHIVfvdw5PYVTUcfZhz5X09lSdCIiAKPJ4Kxyq7CnrvKf3+VhHc9FBs+QkDeDqzVUeFTzKxgH5G6rRPMKs5Kh6qlxWVGOGKJA4LMoZ7E=
+	t=1731551504; cv=none; b=Q26rChrfBFTEvYUguUpGnoNVKA7SWeA0oHAgDtwJyMiRCiMZ9rlCiWqYa8shnl0+lsJANs0E8Iu5HSKzV6CLBcSQnrDiQ2iRxw12exzsfXy2mFHFwL23K+fJOAedtdZWRgDWw0pYqPq1dW8sP3c3/vwgje1s7S9G2CaVMTam8tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731551768; c=relaxed/simple;
-	bh=lWFR0tiU/5BAS1L7F/sh16Mx3kDtfSth2eQNIp1NpGU=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=AjXRoFyaZz6eKVCJySHnoe6OVnTk30CGmB7dDBOUr3Fa1GA8pvJBkz/zn7MHKY8qlPKpMDPMa0Xwtykb2ttoulx68TRToiHlPXuxKb9bWrZaEtazfe+sgo1o28hQbwsUWNRj6cOcIe1lyL5Z6gNV68OQvJwi4r5wDqATdSjWrTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chinatelecom.cn; spf=pass smtp.mailfrom=chinatelecom.cn; arc=none smtp.client-ip=182.42.159.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chinatelecom.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chinatelecom.cn
-HMM_SOURCE_IP:192.168.139.44:0.1557565417
-HMM_ATTACHE_NUM:0000
-HMM_SOURCE_TYPE:SMTP
-Received: from clientip-40.99.74.53 (unknown [192.168.139.44])
-	by chinatelecom.cn (HERMES) with SMTP id 5473D100112C0;
-	Thu, 14 Nov 2024 10:29:27 +0800 (CST)
-X-189-SAVE-TO-SEND: +liuq131@chinatelecom.cn
-Received: from  ([40.99.74.53])
-	by gateway-ssl-dep-6977f57994-mvlbg with ESMTP id f84cc24f0c0d4249be433d436875358f for baolin.wang@linux.alibaba.com;
-	Thu, 14 Nov 2024 10:29:30 CST
-X-Transaction-ID: f84cc24f0c0d4249be433d436875358f
-X-Real-From: liuq131@chinatelecom.cn
-X-Receive-IP: 40.99.74.53
-X-MEDUSA-Status: 0
-Sender: liuq131@chinatelecom.cn
-From: "liuq131@chinatelecom.cn" <liuq131@chinatelecom.cn>
-To: "baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>
-CC: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "liuq131@chinatelecom.cn"
-	<liuq131@chinatelecom.cn>
-Subject: Re: [PATCH] mm/compaction: fix the total_isolated in strict mode
-Thread-Topic: [PATCH] mm/compaction: fix the total_isolated in strict mode
-Thread-Index: AQHbNjzPixRVO6Ot3kKopSfFalJ1dg==
-X-MS-Exchange-MessageSentRepresentingType: 1
-Date: Thu, 14 Nov 2024 02:29:24 +0000
-Message-ID:
-	<TYSPR01MB570235A0139F17DE8371CA4FF05B2@TYSPR01MB5702.apcprd01.prod.exchangelabs.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-Exchange-Organization-SCL: -1
-X-MS-TNEF-Correlator:
-X-MS-Exchange-Organization-RecordReviewCfmType: 0
-msip_labels:
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1731551504; c=relaxed/simple;
+	bh=ZXlkiAu/T3aJ2qHWeASAGx84yAnWg2sjO+0ha25J8Ms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jfHrzr4VzP0vyBXbBVW58pCFG1VPQ7W88b3lV2i34yVTXxVkYCm6XA43IugQEP7H2oDcRymwKp+Yze8/bFlugP3RIX2oGlflsYeGCCs1NN7JQEcCA1gYbNce0NpY1mo4a0hkzLcqcdmdVXML6olKOX8LNTOadk8psufRGhsykKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Det6Mgmh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46AD1C4CEC3;
+	Thu, 14 Nov 2024 02:31:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731551504;
+	bh=ZXlkiAu/T3aJ2qHWeASAGx84yAnWg2sjO+0ha25J8Ms=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Det6MgmhQjVbbEdyroCfzXhJDhajlshlqAxJ9nl1/q7wInpgFYu5zG93tqhT1DJrq
+	 LEkoJqZRVE3QlBbpOwwnsBtQ2xAyo5XN/xSIE1v8Bm+I+/kLkULjnDxDemrn3i2237
+	 peAd/17m/l0LFm3Q4UuUIBKSHwSFROpCjJ0vw/TPwr6Xkh8T2+/zdCxH2gCaFT4zv7
+	 Dze6XaS4UhGYx1Bf1mwTfb4cmVTUTKLUeHIch8hoAIH5TMIMkWy7scXjTr7Ht0pEsq
+	 XAl5j61HazXUItW77dE6SnNUUM1GdswzY8Fv0BsqfgnLQqHXAvQ5php4jQOi0clAmi
+	 gu9PI5MTH+T2A==
+Date: Wed, 13 Nov 2024 18:31:41 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>, Amit Shah <amit@kernel.org>,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+	linux-doc@vger.kernel.org, amit.shah@amd.com,
+	thomas.lendacky@amd.com, bp@alien8.de, tglx@linutronix.de,
+	peterz@infradead.org, corbet@lwn.net, mingo@redhat.com,
+	dave.hansen@linux.intel.com, hpa@zytor.com, seanjc@google.com,
+	pbonzini@redhat.com, daniel.sneddon@linux.intel.com,
+	kai.huang@intel.com, sandipan.das@amd.com,
+	boris.ostrovsky@oracle.com, Babu.Moger@amd.com,
+	david.kaplan@amd.com, dwmw@amazon.co.uk
+Subject: Re: [RFC PATCH v2 1/3] x86: cpu/bugs: update SpectreRSB comments for
+ AMD
+Message-ID: <20241114023141.n4n3zl7622gzsf75@jpoimboe>
+References: <20241111163913.36139-1-amit@kernel.org>
+ <20241111163913.36139-2-amit@kernel.org>
+ <20241111193304.fjysuttl6lypb6ng@jpoimboe>
+ <564a19e6-963d-4cd5-9144-2323bdb4f4e8@citrix.com>
+ <20241112014644.3p2a6te3sbh5x55c@jpoimboe>
+ <20241112214241.fzqq6sqszqd454ei@desk>
+ <20241113202105.py5imjdy7pctccqi@jpoimboe>
+ <20241114015505.6kghgq33i4m6jrm4@desk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241114015505.6kghgq33i4m6jrm4@desk>
 
-On 2024/11/12  17:47, baolin.wang@linux.alibaba.com wrote:=0A=
->On 2024/11/12 10:16, liuq131@chinatelecom.cn wrote:=0A=
->> "We assume that the block we are currently processing is distributed as =
-follows:=0A=
->> 0   1   2                                                            511=
-=0A=
->> --------------------------------------------------=0A=
->> |    |    |                                                             =
- |=0A=
->> ---------------------------------------------------=0A=
->> Index 0 and 1 are both pages with an order of 0.=0A=
->> Index 2 has a bogus order (let's assume the order is 9).=0A=
->> When the for loop reaches index 2, it will enter the following code:=0A=
->> /*=0A=
->>   * For compound pages such as THP and hugetlbfs, we can save=0A=
->>   * potentially a lot of iterations if we skip them at once.=0A=
->>   * The check is racy, but we can consider only valid values=0A=
->>   * and the only danger is skipping too much.=0A=
->>   */=0A=
->> if (PageCompound(page)) {=0A=
->>      const unsigned int order =3D compound_order(page);=0A=
->>      if (blockpfn + (1UL << order) <=3D end_pfn) {=0A=
->>          blockpfn +=3D (1UL << order) - 1;=0A=
->>          page +=3D (1UL << order) - 1;=0A=
->>          nr_scanned +=3D (1UL << order) - 1;=0A=
->>      }=0A=
->>      goto isolate_fail;=0A=
->> }=0A=
->> =0A=
->> After exiting the for loop:=0A=
->> blockpfn =3Dbasepfn+ 2+2^9 =3D basepfn+514=0A=
->> endpfn  =3D basepfn +512=0A=
->> total_isolated =3D 2=0A=
->> nr_scanned =3D 514=0A=
->=0A=
->In your case, the 'blockpfn' will not be updated to 'basepfn+514', =0A=
->because 'blockpfn + (1UL << order) > end_pfn', right? And remember the =0A=
->'end_pfn' is the end of the pageblock.=0A=
->=0A=
->So I'm still confused about your case. Is this from code inspection?=0A=
-You're right, the situation where blockpfn > end_pfn would not actually occ=
-ur here.=0A=
-I encountered this issue in the 4.19 kernel, which did not have this check.=
-=0A=
-I didn't carefully examine this scenario later. Sorry about that.=0A=
-=0A=
-However, when blockpfn =3D=3D end_pfn, I believe the patch is still applica=
-ble,=0A=
-but the git log needs to be updated. Is there still an opportunity to submi=
-t=0A=
-a revised version of the patch?=0A=
->> /*=0A=
->> * Be careful to not go outside of the pageblock.=0A=
->> */=0A=
->> if (unlikely(blockpfn > end_pfn))=0A=
->> blockpfn =3D end_pfn;=0A=
->>   =0A=
->> So this can happen=0A=
->> =0A=
->> /*=0A=
->>   * If strict isolation is requested by CMA then check that all the=0A=
->>   * pages requested were isolated. If there were any failures, 0 is=0A=
->>   * returned and CMA will fail.=0A=
->>   */=0A=
->> if (strict && blockpfn < end_pfn)=0A=
->> total_isolated =3D 0;=0A=
->> =0A=
->> If processed according to the old code, it will not enter the if stateme=
-nt to reset total_isolated, but the correct handling is to reset total_isol=
-ated to 0.=0A=
->=0A=
->Please do not top-posting:=0A=
->=0A=
->"=0A=
->- Use interleaved ("inline") replies, which makes your response easier =0A=
->to read. (i.e. avoid top-posting -- the practice of putting your answer =
-=0A=
->above the quoted text you are responding to.) For more details, see=0A=
->   :ref:`Documentation/process/submitting-patches.rst =0A=
-><interleaved_replies>`.=0A=
->"=0A=
+On Wed, Nov 13, 2024 at 05:55:05PM -0800, Pawan Gupta wrote:
+> > > user->user SpectreRSB is also mitigated by IBPB, so RSB filling is
+> > > unnecessary when IBPB is issued. Also, when an appication does not opted-in
+> > > for IBPB at context switch, spectre-v2 for that app is not mitigated,
+> > > filling RSB is only a half measure in that case.
+> > > 
+> > > Is RSB filling really serving any purpose for userspace?
+> > 
+> > Indeed...
+> > 
+> > If we don't need to flush RSB for user->user, we'd only need to worry
+> > about protecting the kernel.  Something like so?
+> > 
+> >   - eIBRS+!PBRSB:	no flush
+> >   - eIBRS+PBRSB:	lite flush
+> 
+> Yes for VMexit, but not at kernel entry. PBRSB requires an unbalanced RET,
+> and it is only a problem until the first retired CALL. At VMexit we do have
+> unbalanced RET but not at kernel entry.
+> 
+> >   - everything else:	full flush
+> 
+> > i.e., same logic as spectre_v2_determine_rsb_fill_type_at_vmexit(), but
+> > also for context switches.
+> 
+> Yes, assuming you mean user->kernel switch, and not process context switch.
+
+Actually I did mean context switch.  AFAIK we don't need to flush RSB at
+kernel entry.
+
+If user->user RSB is already mitigated by IBPB, then at context switch
+we only have to worry about user->kernel.  e.g., if 'next' has more (in
+kernel) RETs then 'prev' had (in kernel) CALLs, the user could trigger
+RSB underflow or corruption inside the kernel after the context switch.
+
+Doesn't eIBRS already protect against that?
+
+For PBRSB, I guess we don't need to worry about that since there would
+be at least one kernel CALL before context switch.
+
+-- 
+Josh
 
