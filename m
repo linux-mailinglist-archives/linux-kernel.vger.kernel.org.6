@@ -1,64 +1,90 @@
-Return-Path: <linux-kernel+bounces-408767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C5479C8352
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:44:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32D599C8356
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:49:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 019131F23949
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:44:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C63051F23E2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200DE1EABAE;
-	Thu, 14 Nov 2024 06:44:28 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF791EB9E2;
+	Thu, 14 Nov 2024 06:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="hXKtTdUZ"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D9570818;
-	Thu, 14 Nov 2024 06:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4A542A9B;
+	Thu, 14 Nov 2024 06:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731566667; cv=none; b=KBunjAtFhL5wwDkdMPRA3981BqoJVVqmqZEa901k7Z5ISfU5gTzgYsOu7lFfpEXhw9YlG+3UJ2KICEwJQixwrJIQeyYzJi4ary018Vsl7qMDexn6IdYSI98C3qiiFsZXAEHkA+j6AfjDFsGwo44vEBA3TsbpRFKBD0KUMkT+qfo=
+	t=1731566944; cv=none; b=P8eg9TT8zyOv97KLj5MfPcHmKo0hrUpUVbieOEqvlDhWEWoUOY4h0HS1nwR5mHGPo9AVSJVMOSYQ3KSqkT5b8FjvocSUefR4B5d5czD7Q5l7bK3TOeZ8BTCFCePuZ/WfSlAk/5gGMNsDgZxTh5JZGkj24yOFkoCYjepnj/rYvdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731566667; c=relaxed/simple;
-	bh=YjDmkfo3uWgsed5qa47MdRirdGFwFZ001EwPfWKSeOQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mhQLSBrUnAMgWXm+gjdGDwlmnrfG9vaQI3imCikymvjkybDkMHp3rPLP+IDv5E4y6UwyLg/8Yfp+1uSbXIiTY/LeJEBXTQTLiUw6odaJn4BcIB693BHr8do1hHGs1QRcYZqVnNx8/tcbF6Hl2j8HtRb4zte//7LcYlXjWiroYZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 9CF7C68C7B; Thu, 14 Nov 2024 07:44:21 +0100 (CET)
-Date: Thu, 14 Nov 2024 07:44:21 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the configfs
- tree
-Message-ID: <20241114064421.GA11939@lst.de>
-References: <20241114173958.6cce33ce@canb.auug.org.au>
+	s=arc-20240116; t=1731566944; c=relaxed/simple;
+	bh=l3pxRJEbk5I8ElPJ0O4bm9PCHLIuDvWhbnu7via+PTg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bIrCQHosNRRP6YZkXBzyf0Sm1Znlm9rX3hz10G+xHEi4jm9mdqke5hdzpBElAab+uPtbe8hBQ9zP7lWsgfruebyKwBnfgDmK8sQMma6yOJks7tM+dwFbL6znfIQxhMT9glz7npeQlglxcTriDk73lzoSKocNK3aocoHw/f7d7mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=hXKtTdUZ; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1731566939;
+	bh=l3pxRJEbk5I8ElPJ0O4bm9PCHLIuDvWhbnu7via+PTg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=hXKtTdUZWdtvVoARYGY0z4X5BhBaa1m7gSu2BuHL/YfXE4mAZNPHgi68MQPTgU+n4
+	 EIAJzb49mfBOZSz99mpl7lq8iMrSFfF7WH7BeVmV5kwoKNNHHSWP6iMN1mLM8E69jW
+	 6cLZ4rL60jmO+UBllKClkXZHKf9Vtn+EJ4Kroz5lK7+A/QIxjG79q+3ROgE5cgd4g+
+	 WzqEvBOXy1JDUaYbvnhZxyed/IOsfnc2YhQ8qlly0Q8mjWPdQ24L1W6a1d1Ao+Y2/b
+	 /+TmptzT1Qla3wbdIsTpimhBxyAJz2WquN809zvCiLNNdPOuP7zttYaFXzUKglA5kY
+	 /TImNCLqxcafA==
+Received: from [172.16.160.229] (static-98.141.255.49.in-addr.VOCUS.net.au [49.255.141.98])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 9A08966801;
+	Thu, 14 Nov 2024 14:48:57 +0800 (AWST)
+Message-ID: <42761fa6276dcfc64f961d25ff7a46b764d35851.camel@codeconstruct.com.au>
+Subject: Re: [PATCH net-next] mctp i2c: notify user space on TX failure
+From: Jeremy Kerr <jk@codeconstruct.com.au>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Jian Zhang <zhangjian.3032@bytedance.com>, netdev@vger.kernel.org, 
+ openbmc@lists.ozlabs.org, Matt Johnston <matt@codeconstruct.com.au>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>,  open list <linux-kernel@vger.kernel.org>
+Date: Thu, 14 Nov 2024 14:48:57 +0800
+In-Reply-To: <20241113191909.10cf495e@kernel.org>
+References: <20241108094206.2808293-1-zhangjian.3032@bytedance.com>
+	 <20241113190920.0ceaddf2@kernel.org>
+	 <da9b94909dcda3f0f7e48865e63d118c3be09a8d.camel@codeconstruct.com.au>
+	 <20241113191909.10cf495e@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241114173958.6cce33ce@canb.auug.org.au>
-User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Thu, Nov 14, 2024 at 05:39:58PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Commit
-> 
->   a591497f6b3d ("cpufreq: intel_pstate: Rearrange locking in hybrid_init_cpu_capacity_scaling()")
+Hi Jakub,
 
-Hmm, there should be no such commit in the configfs tree. Let me check
-what I messed up and fix it.
+
+> routing isn't really my forte, TBH, what eats the error so that it
+> doesn't come out of mctp_local_output() ? Do you use qdiscs on top
+> of the MCTP devices?
+
+There are no qdiscs involved at this stage, as we need to preserve
+packet ordering in most cases. The route output functions will end up
+in a dev_queue_xmit, so any tx error would have been decoupled from the
+route output at that stage.
+
+I'm happy to do the exploring myself if you don't have strong opinions
+on an implementation.
+
+Cheers,
+
+
+Jeremy
 
 
