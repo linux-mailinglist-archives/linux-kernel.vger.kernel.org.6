@@ -1,65 +1,74 @@
-Return-Path: <linux-kernel+bounces-409158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CBDF9C88D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:25:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0920A9C8824
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:54:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78C75B31E4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:53:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD2E42811F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8AD1F9AAA;
-	Thu, 14 Nov 2024 10:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 245781F8194;
+	Thu, 14 Nov 2024 10:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="le10QRS8"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K3ZyL5uy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66AE1F80D9;
-	Thu, 14 Nov 2024 10:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B45E1F80CF;
+	Thu, 14 Nov 2024 10:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731581544; cv=none; b=AHpTLmN45vA21KyP6qaSuAxnPl4ewFII+9F9fYhHaZc9azuXOkBdPOto1wa5onfPtynC4fOj4ISypXySS8aSf8hAZ+Z7aGkUH9NeSEvCUEWYFGwGUkCGFI/mwp9JSrjBiXfdzgJuFARCpPJ3435Gb76UdbmoPmoy/p2gjxlh+Cs=
+	t=1731581651; cv=none; b=ol1aGyYfelw3HhaBf1RdDu5F1GKBBVTynyb2+RS3e7trLU9FLa1jWWTYlp9aNRUAClyvqNBqnUd2TWnLkrZjEbWTIApHFChuGVBXBfBD6KV2d9Lrv7+B24p/dGHR9kGAmCQgXS+/dkDPkccHzhXv39bNxCMjCRObjHYW3nWUKIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731581544; c=relaxed/simple;
-	bh=z/p/eaCVV5C/WkQgpWNnNC2jH9CtDmwenZWe8kewcbE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WnNEB1avbvJNSLXZE68wQ0Y3fH9YOEmijOC1BT9fgqkmAO0RkL72mBLWiPmLeh1qJpCn9dCp70A4k6MdiauhWWaKyKTpc7e+uuShpMhEYlbnQS+J/fcJqqkMKjUZluDvVjw1fAD3dA6lnXRcax4wiSCQqNRkDmdEqeK6cuqKPTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=le10QRS8; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1731581533; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=ldS/y3NY/7g2RWEJFB3EcIA192QL1XT5lXXWYGJuVZU=;
-	b=le10QRS86b4+Ilu4NEt8Q3GmxEHGIV+flQhuS/xfEWfvCrLoy8uo+AJTULpg/mZmTqAXleOgDeI03fsEtDP3txbZTkzTJ4WWOnF4GupoNR2SGfrS2TUEFsiFE4vULUnKKCCd9CfaPhkUCHf5d3Mdc85HYQASSbdAA9HHogaJVSw=
-Received: from localhost(mailfrom:lulie@linux.alibaba.com fp:SMTPD_---0WJOMu5Z_1731581531 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 14 Nov 2024 18:52:12 +0800
-From: Philo Lu <lulie@linux.alibaba.com>
-To: netdev@vger.kernel.org
-Cc: willemdebruijn.kernel@gmail.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	dsahern@kernel.org,
-	horms@kernel.org,
-	antony.antony@secunet.com,
-	steffen.klassert@secunet.com,
-	linux-kernel@vger.kernel.org,
-	dust.li@linux.alibaba.com,
-	jakub@cloudflare.com,
-	fred.cc@alibaba-inc.com,
-	yubing.qiuyubing@alibaba-inc.com
-Subject: [PATCH v9 net-next 4/4] ipv6/udp: Add 4-tuple hash for connected socket
-Date: Thu, 14 Nov 2024 18:52:07 +0800
-Message-Id: <20241114105207.30185-5-lulie@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
-In-Reply-To: <20241114105207.30185-1-lulie@linux.alibaba.com>
-References: <20241114105207.30185-1-lulie@linux.alibaba.com>
+	s=arc-20240116; t=1731581651; c=relaxed/simple;
+	bh=Z7xzcNg7ngDDXshWzZs8YnTnnFXSzke5vXr2S7fWPps=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tUTO2rTuqrvIBjxPgizJIN13tUVm8sO1PPFVkSjJ/SyjaCk8ldCeHimtdNbvsBZX4trShFFrI81QcNhf94hKRh1H09sYDTf29WSDiCMVpP8Ato/mK/WaGXRdM+s753CGcuXg3qZV1gqmDpdIXqIKBEa+mljNwsjwQCqmSPy/Tzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K3ZyL5uy; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731581649; x=1763117649;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Z7xzcNg7ngDDXshWzZs8YnTnnFXSzke5vXr2S7fWPps=;
+  b=K3ZyL5uysup7Vpp2c2tRS9H9ZOvKS1+XmPUBWz+Pxz52qsfeqiPavfAx
+   NItwZRwBc0FxSKy1cJlAxohBErMyQwhDl2douX+XUnJHxPOP2fnf+dbDP
+   JOQnQ1RpJDSPbAJ41ayQKGZIkf5Xv5KvB3YQ58gFO1EI023qpMI7jozRT
+   C9bEtCJs4fM92h1YWw7JBwxNyxcvlGlSNthIGsqNLJ9dTfxadhYDGfi8D
+   ASnFaKsl0A87caUk/ilxSYbEi8BA776Ns0+B/lbv7MyPiteEvXW+6U1vx
+   g2II883FyklfXxTRQpgMTVGZKFEo4zNCt4k4y1CiBJ7x1eRv3kAaBFHuH
+   Q==;
+X-CSE-ConnectionGUID: mGy7sFeGRNuFr2quQZhhfw==
+X-CSE-MsgGUID: 9aQ2mBr+QJyCztntWHwcEw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11255"; a="31616842"
+X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
+   d="scan'208";a="31616842"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 02:54:08 -0800
+X-CSE-ConnectionGUID: 2Bm/ecWFTb6G76BEOrZmrA==
+X-CSE-MsgGUID: QAuMRI45SDOS3uTZcdqFyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
+   d="scan'208";a="92621628"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP; 14 Nov 2024 02:54:06 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 53039233; Thu, 14 Nov 2024 12:54:05 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 1/1] gpio: Move and sort Kconfig entries as suggested
+Date: Thu, 14 Nov 2024 12:52:42 +0200
+Message-ID: <20241114105403.3186966-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,206 +77,428 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Implement ipv6 udp hash4 like that in ipv4. The major difference is that
-the hash value should be calculated with udp6_ehashfn(). Besides,
-ipv4-mapped ipv6 address is handled before hash() and rehash(). Export
-udp_ehashfn because now we use it in udpv6 rehash.
+The Kconfig under drivers/gpio has a specific comment
 
-Core procedures of hash/unhash/rehash are same as ipv4, and udpv4 and
-udpv6 share the same udptable, so some functions in ipv4 hash4 can also
-be shared.
+  put drivers in the right section, in alphabetical order
 
-Co-developed-by: Cambda Zhu <cambda@linux.alibaba.com>
-Signed-off-by: Cambda Zhu <cambda@linux.alibaba.com>
-Co-developed-by: Fred Chen <fred.cc@alibaba-inc.com>
-Signed-off-by: Fred Chen <fred.cc@alibaba-inc.com>
-Co-developed-by: Yubing Qiu <yubing.qiuyubing@alibaba-inc.com>
-Signed-off-by: Yubing Qiu <yubing.qiuyubing@alibaba-inc.com>
-Signed-off-by: Philo Lu <lulie@linux.alibaba.com>
-Acked-by: Willem de Bruijn <willemb@google.com>
-Acked-by: Paolo Abeni <pabeni@redhat.com>
+but in time some of the entries fell unordered there.
+Put an order again, i.e. do the following:
+
+- move USB GPIO drivers to the respective section
+  (the hardware is multi-functional USB device in such cases)
+
+- make the order of each group to be alphabetical
+
+- move GPIO_MAX730X closer to its first user
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- include/net/udp.h |   2 +
- net/ipv4/udp.c    |   2 +-
- net/ipv6/udp.c    | 102 +++++++++++++++++++++++++++++++++++++++++++++-
- 3 files changed, 103 insertions(+), 3 deletions(-)
+v2:
+- elaborated what has been done (and why) in the commit message (Bart)
+- added tag (Linus)
+ drivers/gpio/Kconfig | 258 +++++++++++++++++++++----------------------
+ 1 file changed, 129 insertions(+), 129 deletions(-)
 
-diff --git a/include/net/udp.h b/include/net/udp.h
-index feb06c0e48fb..6e89520e100d 100644
---- a/include/net/udp.h
-+++ b/include/net/udp.h
-@@ -303,6 +303,8 @@ static inline int udp_lib_hash(struct sock *sk)
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 28b19390c9b4..7ca5314ec51e 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -113,10 +113,6 @@ config GPIO_SWNODE_UNDEFINED
  
- void udp_lib_unhash(struct sock *sk);
- void udp_lib_rehash(struct sock *sk, u16 new_hash, u16 new_hash4);
-+u32 udp_ehashfn(const struct net *net, const __be32 laddr, const __u16 lport,
-+		const __be32 faddr, const __be16 fport);
+ # put drivers in the right section, in alphabetical order
  
- static inline void udp_lib_close(struct sock *sk, long timeout)
- {
-diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
-index b6c5edd7ff48..6a01905d379f 100644
---- a/net/ipv4/udp.c
-+++ b/net/ipv4/udp.c
-@@ -410,7 +410,6 @@ static int compute_score(struct sock *sk, const struct net *net,
- 	return score;
- }
+-# This symbol is selected by both I2C and SPI expanders
+-config GPIO_MAX730X
+-	tristate
+-
+ config GPIO_IDIO_16
+ 	tristate
+ 	select REGMAP_IRQ
+@@ -162,6 +158,16 @@ config GPIO_AMDPT
+ 	  Driver for GPIO functionality on Promontory IOHub.
+ 	  Requires ACPI ASL code to enumerate as a platform device.
  
--INDIRECT_CALLABLE_SCOPE
- u32 udp_ehashfn(const struct net *net, const __be32 laddr, const __u16 lport,
- 		const __be32 faddr, const __be16 fport)
- {
-@@ -419,6 +418,7 @@ u32 udp_ehashfn(const struct net *net, const __be32 laddr, const __u16 lport,
- 	return __inet_ehashfn(laddr, lport, faddr, fport,
- 			      udp_ehash_secret + net_hash_mix(net));
- }
-+EXPORT_SYMBOL(udp_ehashfn);
++config GPIO_AMD_FCH
++	tristate "GPIO support for AMD Fusion Controller Hub (G-series SOCs)"
++	help
++	  This option enables driver for GPIO on AMD's Fusion Controller Hub,
++	  as found on G-series SOCs (e.g. GX-412TC).
++
++	  Note: This driver doesn't register itself automatically, as it
++	  needs to be provided with platform-specific configuration.
++	  (See e.g. CONFIG_PCENGINES_APU2.)
++
+ config GPIO_ASPEED
+ 	tristate "Aspeed GPIO support"
+ 	depends on (ARCH_ASPEED || COMPILE_TEST) && OF_GPIO
+@@ -187,17 +193,6 @@ config GPIO_ATH79
+ 	  Select this option to enable GPIO driver for
+ 	  Atheros AR71XX/AR724X/AR913X SoC devices.
  
- /* called with rcu_read_lock() */
- static struct sock *udp4_lib_lookup2(const struct net *net,
-diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
-index 1ea99d704e31..d766fd798ecf 100644
---- a/net/ipv6/udp.c
-+++ b/net/ipv6/udp.c
-@@ -110,8 +110,19 @@ void udp_v6_rehash(struct sock *sk)
- 	u16 new_hash = ipv6_portaddr_hash(sock_net(sk),
- 					  &sk->sk_v6_rcv_saddr,
- 					  inet_sk(sk)->inet_num);
-+	u16 new_hash4;
+-config GPIO_RASPBERRYPI_EXP
+-	tristate "Raspberry Pi 3 GPIO Expander"
+-	default RASPBERRYPI_FIRMWARE
+-	depends on OF_GPIO
+-	# Make sure not 'y' when RASPBERRYPI_FIRMWARE is 'm'. This can only
+-	# happen when COMPILE_TEST=y, hence the added !RASPBERRYPI_FIRMWARE.
+-	depends on (ARCH_BCM2835 && RASPBERRYPI_FIRMWARE) || (COMPILE_TEST && !RASPBERRYPI_FIRMWARE)
+-	help
+-	  Turn on GPIO support for the expander on Raspberry Pi 3 boards, using
+-	  the firmware mailbox to communicate with VideoCore on BCM283x chips.
+-
+ config GPIO_BCM_KONA
+ 	bool "Broadcom Kona GPIO"
+ 	depends on ARCH_BCM_MOBILE || COMPILE_TEST
+@@ -377,6 +372,18 @@ config GPIO_ICH
  
--	udp_lib_rehash(sk, new_hash, 0); /* 4-tuple hash not implemented */
-+	if (ipv6_addr_v4mapped(&sk->sk_v6_rcv_saddr)) {
-+		new_hash4 = udp_ehashfn(sock_net(sk),
-+					sk->sk_rcv_saddr, sk->sk_num,
-+					sk->sk_daddr, sk->sk_dport);
-+	} else {
-+		new_hash4 = udp6_ehashfn(sock_net(sk),
-+					 &sk->sk_v6_rcv_saddr, sk->sk_num,
-+					 &sk->sk_v6_daddr, sk->sk_dport);
-+	}
-+
-+	udp_lib_rehash(sk, new_hash, new_hash4);
- }
+ 	  If unsure, say N.
  
- static int compute_score(struct sock *sk, const struct net *net,
-@@ -216,6 +227,74 @@ static struct sock *udp6_lib_lookup2(const struct net *net,
- 	return result;
- }
++config GPIO_IDT3243X
++	tristate "IDT 79RC3243X GPIO support"
++	depends on MIKROTIK_RB532 || COMPILE_TEST
++	select GPIO_GENERIC
++	select GPIOLIB_IRQCHIP
++	help
++	  Select this option to enable GPIO driver for
++	  IDT 79RC3243X-based devices like Mikrotik RB532.
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called gpio-idt3243x.
++
+ config GPIO_IMX_SCU
+        def_bool y
+        depends on IMX_SCU
+@@ -401,6 +408,13 @@ config GPIO_LOGICVC
+ 	  Say yes here to support GPIO functionality of the Xylon LogiCVC
+ 	  programmable logic block.
  
-+#if IS_ENABLED(CONFIG_BASE_SMALL)
-+static struct sock *udp6_lib_lookup4(const struct net *net,
-+				     const struct in6_addr *saddr, __be16 sport,
-+				     const struct in6_addr *daddr,
-+				     unsigned int hnum, int dif, int sdif,
-+				     struct udp_table *udptable)
-+{
-+	return NULL;
-+}
++config GPIO_LOONGSON1
++	tristate "Loongson1 GPIO support"
++	depends on MACH_LOONGSON32
++	select GPIO_GENERIC
++	help
++	  Say Y or M here to support GPIO on Loongson1 SoCs.
 +
-+static void udp6_hash4(struct sock *sk)
-+{
-+}
-+#else /* !CONFIG_BASE_SMALL */
-+static struct sock *udp6_lib_lookup4(const struct net *net,
-+				     const struct in6_addr *saddr, __be16 sport,
-+				     const struct in6_addr *daddr,
-+				     unsigned int hnum, int dif, int sdif,
-+				     struct udp_table *udptable)
-+{
-+	const __portpair ports = INET_COMBINED_PORTS(sport, hnum);
-+	const struct hlist_nulls_node *node;
-+	struct udp_hslot *hslot4;
-+	unsigned int hash4, slot;
-+	struct udp_sock *up;
-+	struct sock *sk;
-+
-+	hash4 = udp6_ehashfn(net, daddr, hnum, saddr, sport);
-+	slot = hash4 & udptable->mask;
-+	hslot4 = &udptable->hash4[slot];
-+
-+begin:
-+	udp_lrpa_for_each_entry_rcu(up, node, &hslot4->nulls_head) {
-+		sk = (struct sock *)up;
-+		if (inet6_match(net, sk, saddr, daddr, ports, dif, sdif))
-+			return sk;
-+	}
-+
-+	/* if the nulls value we got at the end of this lookup is not the
-+	 * expected one, we must restart lookup. We probably met an item that
-+	 * was moved to another chain due to rehash.
-+	 */
-+	if (get_nulls_value(node) != slot)
-+		goto begin;
-+
-+	return NULL;
-+}
-+
-+static void udp6_hash4(struct sock *sk)
-+{
-+	struct net *net = sock_net(sk);
-+	unsigned int hash;
-+
-+	if (ipv6_addr_v4mapped(&sk->sk_v6_rcv_saddr)) {
-+		udp4_hash4(sk);
-+		return;
-+	}
-+
-+	if (sk_unhashed(sk) || ipv6_addr_any(&sk->sk_v6_rcv_saddr))
-+		return;
-+
-+	hash = udp6_ehashfn(net, &sk->sk_v6_rcv_saddr, sk->sk_num,
-+			    &sk->sk_v6_daddr, sk->sk_dport);
-+
-+	udp_lib_hash4(sk, hash);
-+}
-+#endif /* CONFIG_BASE_SMALL */
-+
- /* rcu_read_lock() must be held */
- struct sock *__udp6_lib_lookup(const struct net *net,
- 			       const struct in6_addr *saddr, __be16 sport,
-@@ -231,6 +310,13 @@ struct sock *__udp6_lib_lookup(const struct net *net,
- 	hash2 = ipv6_portaddr_hash(net, daddr, hnum);
- 	hslot2 = udp_hashslot2(udptable, hash2);
+ config GPIO_LOONGSON
+ 	bool "Loongson-2/3 GPIO support"
+ 	depends on CPU_LOONGSON2EF || CPU_LOONGSON64
+@@ -472,6 +486,16 @@ config GPIO_MPC8XXX
+ 	  Say Y here if you're going to use hardware that connects to the
+ 	  MPC512x/831x/834x/837x/8572/8610/QorIQ GPIOs.
  
-+	if (udp_has_hash4(hslot2)) {
-+		result = udp6_lib_lookup4(net, saddr, sport, daddr, hnum,
-+					  dif, sdif, udptable);
-+		if (result) /* udp6_lib_lookup4 return sk or NULL */
-+			return result;
-+	}
++config GPIO_MSC313
++	bool "MStar MSC313 GPIO support"
++	depends on ARCH_MSTARV7
++	default ARCH_MSTARV7
++	select GPIOLIB_IRQCHIP
++	select IRQ_DOMAIN_HIERARCHY
++	help
++	  Say Y here to support the main GPIO block on MStar/SigmaStar
++	  ARMv7-based SoCs.
 +
- 	/* Lookup connected or non-wildcard sockets */
- 	result = udp6_lib_lookup2(net, saddr, sport,
- 				  daddr, hnum, dif, sdif,
-@@ -1166,6 +1252,18 @@ static int udpv6_pre_connect(struct sock *sk, struct sockaddr *uaddr,
- 	return BPF_CGROUP_RUN_PROG_INET6_CONNECT_LOCK(sk, uaddr, &addr_len);
- }
+ config GPIO_MT7621
+ 	bool "Mediatek MT7621 GPIO Support"
+ 	depends on SOC_MT7620 || SOC_MT7621 || COMPILE_TEST
+@@ -556,6 +580,17 @@ config GPIO_PXA
+ 	help
+ 	  Say yes here to support the PXA GPIO device.
  
-+static int udpv6_connect(struct sock *sk, struct sockaddr *uaddr, int addr_len)
-+{
-+	int res;
++config GPIO_RASPBERRYPI_EXP
++	tristate "Raspberry Pi 3 GPIO Expander"
++	default RASPBERRYPI_FIRMWARE
++	depends on OF_GPIO
++	# Make sure not 'y' when RASPBERRYPI_FIRMWARE is 'm'. This can only
++	# happen when COMPILE_TEST=y, hence the added !RASPBERRYPI_FIRMWARE.
++	depends on (ARCH_BCM2835 && RASPBERRYPI_FIRMWARE) || (COMPILE_TEST && !RASPBERRYPI_FIRMWARE)
++	help
++	  Turn on GPIO support for the expander on Raspberry Pi 3 boards, using
++	  the firmware mailbox to communicate with VideoCore on BCM283x chips.
 +
-+	lock_sock(sk);
-+	res = __ip6_datagram_connect(sk, uaddr, addr_len);
-+	if (!res)
-+		udp6_hash4(sk);
-+	release_sock(sk);
-+	return res;
-+}
+ config GPIO_RCAR
+ 	tristate "Renesas R-Car and RZ/G GPIO support"
+ 	depends on ARCH_RENESAS || COMPILE_TEST
+@@ -844,75 +879,11 @@ config GPIO_ZYNQMP_MODEPIN
+ 	  is 4-bits boot mode pins. It sets and gets the status of
+ 	  the ps-mode pin. Every pin can be configured as input/output.
+ 
+-config GPIO_LOONGSON1
+-	tristate "Loongson1 GPIO support"
+-	depends on MACH_LOONGSON32
+-	select GPIO_GENERIC
+-	help
+-	  Say Y or M here to support GPIO on Loongson1 SoCs.
+-
+-config GPIO_AMD_FCH
+-	tristate "GPIO support for AMD Fusion Controller Hub (G-series SOCs)"
+-	help
+-	  This option enables driver for GPIO on AMD's Fusion Controller Hub,
+-	  as found on G-series SOCs (e.g. GX-412TC).
+-
+-	  Note: This driver doesn't register itself automatically, as it
+-	  needs to be provided with platform-specific configuration.
+-	  (See e.g. CONFIG_PCENGINES_APU2.)
+-
+-config GPIO_MSC313
+-	bool "MStar MSC313 GPIO support"
+-	depends on ARCH_MSTARV7
+-	default ARCH_MSTARV7
+-	select GPIOLIB_IRQCHIP
+-	select IRQ_DOMAIN_HIERARCHY
+-	help
+-	  Say Y here to support the main GPIO block on MStar/SigmaStar
+-	  ARMv7-based SoCs.
+-
+-config GPIO_IDT3243X
+-	tristate "IDT 79RC3243X GPIO support"
+-	depends on MIKROTIK_RB532 || COMPILE_TEST
+-	select GPIO_GENERIC
+-	select GPIOLIB_IRQCHIP
+-	help
+-	  Select this option to enable GPIO driver for
+-	  IDT 79RC3243X-based devices like Mikrotik RB532.
+-
+-	  To compile this driver as a module, choose M here: the module will
+-	  be called gpio-idt3243x.
+-
+ endmenu
+ 
+ menu "Port-mapped I/O GPIO drivers"
+ 	depends on X86 && HAS_IOPORT # I/O space access
+ 
+-config GPIO_VX855
+-	tristate "VIA VX855/VX875 GPIO"
+-	depends on PCI
+-	select MFD_CORE
+-	select MFD_VX855
+-	help
+-	  Support access to the VX855/VX875 GPIO lines through the GPIO library.
+-
+-	  This driver provides common support for accessing the device.
+-	  Additional drivers must be enabled in order to use the
+-	  functionality of the device.
+-
+-config GPIO_I8255
+-	tristate
+-	select GPIO_REGMAP
+-	help
+-	  Enables support for the i8255 interface library functions. The i8255
+-	  interface library provides functions to facilitate communication with
+-	  interfaces compatible with the venerable Intel 8255 Programmable
+-	  Peripheral Interface (PPI). The Intel 8255 PPI chip was first released
+-	  in the early 1970s but compatible interfaces are nowadays typically
+-	  found embedded in larger VLSI processing chips and FPGA components.
+-
+-	  If built as a module its name will be gpio-i8255.
+-
+ config GPIO_104_DIO_48E
+ 	tristate "ACCES 104-DIO-48E GPIO support"
+ 	depends on PC104
+@@ -982,6 +953,19 @@ config GPIO_GPIO_MM
+ 	  The base port addresses for the devices may be configured via the base
+ 	  array module parameter.
+ 
++config GPIO_I8255
++	tristate
++	select GPIO_REGMAP
++	help
++	  Enables support for the i8255 interface library functions. The i8255
++	  interface library provides functions to facilitate communication with
++	  interfaces compatible with the venerable Intel 8255 Programmable
++	  Peripheral Interface (PPI). The Intel 8255 PPI chip was first released
++	  in the early 1970s but compatible interfaces are nowadays typically
++	  found embedded in larger VLSI processing chips and FPGA components.
 +
- /**
-  *	udp6_hwcsum_outgoing  -  handle outgoing HW checksumming
-  *	@sk:	socket we are sending on
-@@ -1761,7 +1859,7 @@ struct proto udpv6_prot = {
- 	.owner			= THIS_MODULE,
- 	.close			= udp_lib_close,
- 	.pre_connect		= udpv6_pre_connect,
--	.connect		= ip6_datagram_connect,
-+	.connect		= udpv6_connect,
- 	.disconnect		= udp_disconnect,
- 	.ioctl			= udp_ioctl,
- 	.init			= udpv6_init_sock,
++	  If built as a module its name will be gpio-i8255.
++
+ config GPIO_IT87
+ 	tristate "IT87xx GPIO support"
+ 	help
+@@ -1039,6 +1023,18 @@ config GPIO_TS5500
+ 	  blocks of the TS-5500: DIO1, DIO2 and the LCD port, and the TS-5600
+ 	  LCD port.
+ 
++config GPIO_VX855
++	tristate "VIA VX855/VX875 GPIO"
++	depends on PCI
++	select MFD_CORE
++	select MFD_VX855
++	help
++	  Support access to the VX855/VX875 GPIO lines through the GPIO library.
++
++	  This driver provides common support for accessing the device.
++	  Additional drivers must be enabled in order to use the
++	  functionality of the device.
++
+ config GPIO_WINBOND
+ 	tristate "Winbond Super I/O GPIO support"
+ 	select ISA_BUS_API
+@@ -1070,6 +1066,10 @@ config GPIO_WS16C48
+ 
+ endmenu
+ 
++# This symbol is selected by both I2C and SPI expanders
++config GPIO_MAX730X
++	tristate
++
+ menu "I2C GPIO expanders"
+ 	depends on I2C
+ 
+@@ -1085,16 +1085,6 @@ config GPIO_ADNP
+ 	  enough to represent all pins, but the driver will assume a
+ 	  register layout for 64 pins (8 registers).
+ 
+-config GPIO_FXL6408
+-	tristate "FXL6408 I2C GPIO expander"
+-	select GPIO_REGMAP
+-	select REGMAP_I2C
+-	help
+-	  GPIO driver for Fairchild Semiconductor FXL6408 GPIO expander.
+-
+-	  To compile this driver as a module, choose M here: the module will
+-	  be called gpio-fxl6408.
+-
+ config GPIO_DS4520
+ 	tristate "DS4520 I2C GPIO expander"
+ 	select REGMAP_I2C
+@@ -1106,6 +1096,16 @@ config GPIO_DS4520
+ 	  To compile this driver as a module, choose M here: the module will
+ 	  be called gpio-ds4520.
+ 
++config GPIO_FXL6408
++	tristate "FXL6408 I2C GPIO expander"
++	select GPIO_REGMAP
++	select REGMAP_I2C
++	help
++	  GPIO driver for Fairchild Semiconductor FXL6408 GPIO expander.
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called gpio-fxl6408.
++
+ config GPIO_GW_PLD
+ 	tristate "Gateworks PLD GPIO Expander"
+ 	depends on OF_GPIO
+@@ -1348,18 +1348,6 @@ config GPIO_DA9055
+ 
+ 	  If driver is built as a module it will be called gpio-da9055.
+ 
+-config GPIO_DLN2
+-	tristate "Diolan DLN2 GPIO support"
+-	depends on MFD_DLN2
+-	select GPIOLIB_IRQCHIP
+-
+-	help
+-	  Select this option to enable GPIO driver for the Diolan DLN2
+-	  board.
+-
+-	  This driver can also be built as a module. If so, the module
+-	  will be called gpio-dln2.
+-
+ config HTC_EGPIO
+ 	bool "HTC EGPIO support"
+ 	depends on ARM
+@@ -1397,18 +1385,6 @@ config GPIO_KEMPLD
+ 	  This driver can also be built as a module. If so, the module will be
+ 	  called gpio-kempld.
+ 
+-config GPIO_LJCA
+-	tristate "INTEL La Jolla Cove Adapter GPIO support"
+-	depends on USB_LJCA
+-	select GPIOLIB_IRQCHIP
+-	default USB_LJCA
+-	help
+-	  Select this option to enable GPIO driver for the INTEL
+-	  La Jolla Cove Adapter (LJCA) board.
+-
+-	  This driver can also be built as a module. If so, the module
+-	  will be called gpio-ljca.
+-
+ config GPIO_LP3943
+ 	tristate "TI/National Semiconductor LP3943 GPIO expander"
+ 	depends on MFD_LP3943
+@@ -1817,6 +1793,15 @@ config GPIO_MC33880
+ 	  SPI driver for Freescale MC33880 high-side/low-side switch.
+ 	  This provides GPIO interface supporting inputs and outputs.
+ 
++config GPIO_MOXTET
++	tristate "Turris Mox Moxtet bus GPIO expander"
++	depends on MOXTET
++	help
++	  Say yes here if you are building for the Turris Mox router.
++	  This is the driver needed for configuring the GPIOs via the Moxtet
++	  bus. For example the Mox module with SFP cage needs this driver
++	  so that phylink can use corresponding GPIOs.
++
+ config GPIO_PISOSR
+ 	tristate "Generic parallel-in/serial-out shift register"
+ 	help
+@@ -1829,20 +1814,42 @@ config GPIO_XRA1403
+ 	help
+ 	  GPIO driver for EXAR XRA1403 16-bit SPI-based GPIO expander.
+ 
+-config GPIO_MOXTET
+-	tristate "Turris Mox Moxtet bus GPIO expander"
+-	depends on MOXTET
+-	help
+-	  Say yes here if you are building for the Turris Mox router.
+-	  This is the driver needed for configuring the GPIOs via the Moxtet
+-	  bus. For example the Mox module with SFP cage needs this driver
+-	  so that phylink can use corresponding GPIOs.
+-
+ endmenu
+ 
+ menu "USB GPIO expanders"
+ 	depends on USB
+ 
++config GPIO_DLN2
++	tristate "Diolan DLN2 GPIO support"
++	depends on MFD_DLN2
++	select GPIOLIB_IRQCHIP
++
++	help
++	  Select this option to enable GPIO driver for the Diolan DLN2
++	  board.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called gpio-dln2.
++
++config GPIO_LJCA
++	tristate "INTEL La Jolla Cove Adapter GPIO support"
++	depends on USB_LJCA
++	select GPIOLIB_IRQCHIP
++	default USB_LJCA
++	help
++	  Select this option to enable GPIO driver for the INTEL
++	  La Jolla Cove Adapter (LJCA) board.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called gpio-ljca.
++
++config GPIO_MPSSE
++	tristate "FTDI MPSSE GPIO support"
++	select GPIOLIB_IRQCHIP
++	help
++	  GPIO driver for FTDI's MPSSE interface. These can do input and
++	  output. Each MPSSE provides 16 IO pins.
++
+ config GPIO_VIPERBOARD
+ 	tristate "Viperboard GPIO a & b support"
+ 	depends on MFD_VIPERBOARD
+@@ -1854,13 +1861,6 @@ config GPIO_VIPERBOARD
+ 	  River Tech's viperboard.h for detailed meaning
+ 	  of the module parameters.
+ 
+-config GPIO_MPSSE
+-	tristate "FTDI MPSSE GPIO support"
+-	select GPIOLIB_IRQCHIP
+-	help
+-	  GPIO driver for FTDI's MPSSE interface. These can do input and
+-	  output. Each MPSSE provides 16 IO pins.
+-
+ endmenu
+ 
+ menu "Virtual GPIO drivers"
 -- 
-2.32.0.3.g01195cf9f
+2.43.0.rc1.1336.g36b5255a03ac
 
 
