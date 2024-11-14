@@ -1,263 +1,162 @@
-Return-Path: <linux-kernel+bounces-408819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AB6B9C83EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:23:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D051A9C83EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:24:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9FD8B23567
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:23:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B4431F24006
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCBB41F12FD;
-	Thu, 14 Nov 2024 07:23:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC3E1F26D2;
+	Thu, 14 Nov 2024 07:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="TF643W9Q"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="OUyyjhUm"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84291E50B
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD4F1E9074;
+	Thu, 14 Nov 2024 07:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731569011; cv=none; b=pBz7fEFXg4cDqGgqxxivKGhPulWOngCBSfnFAy2SFaIeSK60azqfD3BE+kaMcn7qHW2yRtHfoG0pGwevCZjBe/YL3iNn9nt4qe/enM7gRAdyEirLF0lowBBTTYQCkWWQgp6hwM/nfX3PpCAbUFFYJAqBq5/WtDJNp/83M4qaUjU=
+	t=1731569048; cv=none; b=KGrpwOODJ8fCF8dZBteEpt+vOgr3ma3+1yNwsSkmd94VOw88RsekqRec/zXyDH/uu9sZTdTArBIln6gF0AQkESIv4FWpsI7P18zQYr928les3z5aMNaxWVqtNrC6QWoCs2lbT4UZLpolNNMHMfdysooKf914PNvWUHnzDFAiY/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731569011; c=relaxed/simple;
-	bh=FznkquujoVc4AGXvNQNSehVr0GYW7+fmlomCQC7lcDQ=;
+	s=arc-20240116; t=1731569048; c=relaxed/simple;
+	bh=0oXXTZpSK42zNfnhHer/3yWYHM0V0XsCs6PD8wB8Ygg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qKnvR55bMzqbW72SbYPTmCL3UnTEfBRtWnoa/0Tls7NyxQ2oQuWDXvJAX/vnF9zmBOabRS/A6ZZp4sBz1MaefCl1lZ7HXFo/fF9F72tbyBJRqfcwffSaanJSlnwhDsex+CHY9v0jnSJcpBi66i+O1GlVx7kU2ATZRXTfN5kJJwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=TF643W9Q; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20cbca51687so2594515ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 23:23:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1731569008; x=1732173808; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jcVdx/PDcosiuJvg6s7470mt1Sbg0MJ8nbwkpgIFfDI=;
-        b=TF643W9QHlE7qhqr5uRfTcxpUsp30RKA4BqyyBwDQVbgmabZpfzeeIRi3R+pMeqyT+
-         Z8046g9nfbrjxVzKZ9lGqFlIBah5D9N1xKRN9ZYEIzn/s9HjW1wymT3N3X4wsSdPuQzq
-         bZN8r0CwlC7hwnc4pD1AqtPz4Hi1yBl7BuQhLNsEDZqFSnQIWAlG/CF9DjV/20i4ebD6
-         Yl30lNpxEHVjE1dIYCbTg0MlIBxeSDsZBM6nxIexYp5FBEkCJmKWh9Dhe/EKSe7aYxnu
-         g2uCAbprZdhnLez0WrXtlFamw5dGWnA0FDC53mqAbGGAx7grJ/1VN9kis9yc1t50wvGm
-         8kIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731569008; x=1732173808;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jcVdx/PDcosiuJvg6s7470mt1Sbg0MJ8nbwkpgIFfDI=;
-        b=XYv9JOrhkVqtICNXV4q9kkJnZ0E89pZXcZ25qo1yjN9ok+WLU6au3hhPUkuYkmUQN2
-         hMEtjslX/S9rVao/VikH2cXVViMs+S5rV405PYkkacc5VdXsk+W0Pwmp+iu9UdmiIlZZ
-         /FvX8TFImDu+l/S5MqitwJD0eunzbX5LCgXWCqyL+yme7sg8XNoAcJZjMTbdqW+MCm04
-         KV6Kd+7pkVei1phHTOWvJW1S2YP+fGBco5IP4HiQL9BIe9DMP5I6n7/R7a7nuIMCXOSt
-         HdZ01o6TOF65cjdagoMoqvjVcrdfZfSnUWMJd7VlH8VkpjnjSSdJ3nZS2q96LiSKZC2B
-         LBng==
-X-Forwarded-Encrypted: i=1; AJvYcCWpfDSPL3JuXr1WR+hzOL3O7H9lG3a26VH+hZpCIpCMQ+gi/Ran4Z4hIgGIOwX00tShtDQiTGB/AzG9kpA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMo9pL/bHDLwgI5WitlQ6uOVw8KQRKAnIbOncTAhoNzIdczmdl
-	ymbaKEhbB7t4zG6qCv2RcTTI5tzKMKQZPgcpNWlP8xVsRmfU6/tPntTAIdFifDs=
-X-Google-Smtp-Source: AGHT+IEqIiAMaMvRr6traVqlETDXrksYLlEnbTBwgNuybxklLmBA23F6Bg0v7Zkwsdh3ki0S14Ja2g==
-X-Received: by 2002:a17:902:d4d2:b0:20b:5aff:dd50 with SMTP id d9443c01a7336-211c4ffd29emr15882815ad.31.1731569008105;
-        Wed, 13 Nov 2024 23:23:28 -0800 (PST)
-Received: from ghost ([2601:647:6700:64d0:4ece:7c14:cc18:73af])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211c7c290b1sm4623065ad.10.2024.11.13.23.23.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 23:23:27 -0800 (PST)
-Date: Wed, 13 Nov 2024 23:23:24 -0800
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Yangyu Chen <cyy@cyyself.name>
-Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>,
-	Jessica Clarke <jrtc27@jrtc27.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Andy Chiu <andybnac@gmail.com>, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v11 10/14] riscv: hwprobe: Add thead vendor extension
- probing
-Message-ID: <ZzWlbCiRuDKzilms@ghost>
-References: <20241113-xtheadvector-v11-0-236c22791ef9@rivosinc.com>
- <20241113-xtheadvector-v11-10-236c22791ef9@rivosinc.com>
- <tencent_5B500856E30E1FB920B6B68D6315EE70CC06@qq.com>
- <ZzVoQi6D0U30p9sg@ghost>
- <tencent_6A95637042401AD5F8BE05C7B4F11CAD7009@qq.com>
- <ZzWAlJm1ShgsZr4m@ghost>
- <tencent_9BB243901B8FF9FC0457B51D1CFF714B6209@qq.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fYW6vCAE2fGuabYx0O0W+rK6ZpJrqyY7ey+Mv5G+PkN/oSSgjQIz6AhJqPC2k9pqH8xQHyhcw4imHnUBtVI+rrDjFj+mrik3bbSacebsSsj8iPMFSdfxV13sg9xRhmD049Sd/+SspEzBx0mdPNwXv4wP3LM1hXm/Bf9WeNcCq8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=OUyyjhUm; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID; bh=jxs8DLr5gwCV7tb13zFSz59Zio5j0Y8gul9bONvYc40=; b=OUyyjh
+	Umf48FrsduFe9j/8aPoDaApLPSB9Qs2GyboLT/hxB3YFmD/m+uJh3si3FzJ6wfRDiEjC4QgdpPpKd
+	Wkf4JhfQBOh33XIhOG7b6zPdFv7F8uOUaKWxJdexe7yMYcOztC/5lshu5pZ7mcgb7FQJF+NwsF3ad
+	16ltB9ZVBbN/nHO6ojN8LoBgBHe8K95kpnoQaQvRJsGKuituOJjMPrtwbeQhw3msc/81dKyw/A2Af
+	/vUNZY+oS74mjfOcJB+WRHbXf4g6dQsRpao8S7sJFAX1KjHoShGmzMH16T2bwQEVuOH3VYEFu1CdH
+	RNGDmwkj8jsUjkmX9IYhahScKnDg==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sean@geanix.com>)
+	id 1tBUCp-000ODi-Kj; Thu, 14 Nov 2024 08:23:55 +0100
+Received: from [2a06:4004:10df:0:6905:2e05:f1e4:316f] (helo=Seans-MBP.snzone.dk)
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sean@geanix.com>)
+	id 1tBUCo-000JT3-34;
+	Thu, 14 Nov 2024 08:23:55 +0100
+Date: Thu, 14 Nov 2024 08:23:54 +0100
+From: Sean Nyekjaer <sean@geanix.com>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] can: tcan4x5x: add option for selecting nWKRQ
+ voltage
+Message-ID: <zgyd3zghhwivsr3b4pcipt2wfc26ypavjygd6lu5tg3k6ztwbr@t52w4p5kyvaa>
+References: <20241111-tcan-wkrqv-v2-0-9763519b5252@geanix.com>
+ <20241111-tcan-wkrqv-v2-1-9763519b5252@geanix.com>
+ <CAMZ6Rq++_yecNY-nNL7NK48ZsNPqH0KDRuqvCCGhUur24+7KGA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <tencent_9BB243901B8FF9FC0457B51D1CFF714B6209@qq.com>
+In-Reply-To: <CAMZ6Rq++_yecNY-nNL7NK48ZsNPqH0KDRuqvCCGhUur24+7KGA@mail.gmail.com>
+X-Authenticated-Sender: sean@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27457/Wed Nov 13 10:35:46 2024)
 
-On Thu, Nov 14, 2024 at 02:54:17PM +0800, Yangyu Chen wrote:
-> 
-> 
-> On 11/14/24 12:46, Charlie Jenkins wrote:
-> > On Thu, Nov 14, 2024 at 11:26:47AM +0800, Yangyu Chen wrote:
-> > > 
-> > > 
-> > > On 11/14/24 11:02, Charlie Jenkins wrote:
-> > > > On Thu, Nov 14, 2024 at 10:44:37AM +0800, Yangyu Chen wrote:
-> > > > > 
-> > > > > 
-> > > > > On 11/14/24 10:21, Charlie Jenkins wrote:
-> > > > > > Add a new hwprobe key "RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0" which
-> > > > > > allows userspace to probe for the new RISCV_ISA_VENDOR_EXT_XTHEADVECTOR
-> > > > > > vendor extension.
-> > > > > > 
-> > > > > 
-> > > > > Hi Charlie,
-> > > > > 
-> > > > > How about changing the name of the key from
-> > > > > "RISCV_ISA_VENDOR_EXT_XTHEADVECTOR" to "RISCV_HWPROBE_KEY_VENDOR_EXT_0" and
-> > > > > use marchid to identify what the vendor is, each vendor will have its own
-> > > > > bit definition in this value. So we can avoid adding so many hwprobe keys
-> > > > > for each vendor in the future.
-> > > > > 
-> > > > > I proposed a commit here: https://github.com/cyyself/linux/commit/36390645d85d1ac75dd71172f167719df4297f59
-> > > > 
-> > > > I actually originally had this in one of my first versions of this
-> > > > series but was convinced by Conor to change it. The problem with it was
-> > > > that tying vendor extensions to mvendorid means that it is enforced by
-> > > > the kernel that vendors cannot share vendor extensions. It is possible
-> > > > for vendor A to purchase IP that contains a vendor extension from vendor
-> > > > B. This vendor extension should work on platforms created by vendor A
-> > > > and vendor B. However, vendor A and vendor B have different mvendorids,
-> > > > so the kernel can't support this if it is tied to mvendorid.  It could
-> > > > be solved by duplicating every extension that vendors have, but then
-> > > > userspace software would have to keep in mind the mvendorid they are
-> > > > running on and check the different extensions for the different vendors
-> > > > even though the implementation of the extension is the same.
-> > > > 
-> > > > The original conversation where Conor and I agreed that it was better to
-> > > > have vendor extensions not rely on mvendorid:
-> > > > 
-> > > > https://lore.kernel.org/linux-riscv/20240416-husband-flavored-96c1dad58b6e@wendy/
-> > > > 
-> > > 
-> > > Thanks for your explanation. I will strongly agree with Conor's opinion if
-> > > the feature bitmask does not exist in RISC-V C-ABI.
-> > > 
-> > > However, as the feature mask defined in RISC-V C-ABI[1] uses the design
-> > > depending on marchid currently, should we reconsider this key for its use
-> > > case? The current target_clones and taget_version implemented in GCC[2] and
-> > > LLVM[3] also use the bitmask defined in C-ABI. I think if we use this key
-> > > depending on marchid, to make a key shared with all vendors will make this
-> > > cleaner.
-> > 
-> > Changing this will break linux userspace API. It is a non-workable
-> > solution for the kernel to associate extensions with marchid/mvendorid
-> > for the reasons provided. I fail to see why this ABI would require the
-> > kernel to behave in this manner. The ABI provides the marchid to be used
-> > by function multi-versioning and applications are free to use the
-> > marchid to change which function they want to compile. However, if they
-> > want to know if an extension is supported, then they need to use
-> > hwprobe. If they want to check if xtheadvector is supported, then they> call hwprobe with the xtheadvector key. This is true no matter what the
-> > mvendorid of the system is.
-> 
-> A userspace software can use either c-api defined feature masks or directly
-> use hwprobe syscall. If they use c-api defined feature masks as GCC or LLVM
-> did for compiler generated IFUNC resolver, the bitmask is guarded by
-> mvendorid. So my point at that time was that if the C-API defined way became
-> mainstream, why should we keep this key only for T-Head to increase the
-> maintenance overhead?
+Hi Vincent,
 
-Yes that makes sense. I was thinking that the Andes PMU extension had a
-hwprobe key, but I realized that it does not. This patch has been on the
-lists for so long I lost track! I was trying to design this to be
-forward-thinking, I believe that it makes more sense this way, but I am
-interested in the opinion of the c-api maintainers.
+On Thu, Nov 14, 2024 at 01:53:34PM +0100, Vincent Mailhol wrote:
+> On Mon. 11 Nov. 2024 at 17:55, Sean Nyekjaer <sean@geanix.com> wrote:
+> > nWKRQ supports an output voltage of either the internal reference voltage
+> > (3.6V) or the reference voltage of the digital interface 0 - 6V.
+> > Add the devicetree option ti,nwkrq-voltage-sel to be able to select
+> > between them.
+> > Default is kept as the internal reference voltage.
+> >
+> > Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> > ---
+> >  drivers/net/can/m_can/tcan4x5x-core.c | 35 +++++++++++++++++++++++++++++++++++
+> >  drivers/net/can/m_can/tcan4x5x.h      |  2 ++
+> >  2 files changed, 37 insertions(+)
+> >
+
+[...]
+
+> >
+> > +static int tcan4x5x_get_dt_data(struct m_can_classdev *cdev)
+> > +{
+> > +       struct tcan4x5x_priv *tcan4x5x = cdev_to_priv(cdev);
+> > +       struct device_node *np = cdev->dev->of_node;
+> > +       u8 prop;
+> > +       int ret;
+> > +
+> > +       ret = of_property_read_u8(np, "ti,nwkrq-voltage-sel", &prop);
+> > +       if (!ret) {
+> > +               if (prop <= 1)
+> > +                       tcan4x5x->nwkrq_voltage = prop;
+> > +               else
+> > +                       dev_warn(cdev->dev,
+> > +                                "nwkrq-voltage-sel have invalid option: %u\n",
+> > +                                prop);
+> > +       } else {
+> > +               tcan4x5x->nwkrq_voltage = 0;
+> > +       }
+> 
+> If the
+> 
+>   if (prop <= 1)
+> 
+> condition fails, you print a warning, but you are not assigning a
+> value to tcan4x5x->nwkrq_voltage. Is this intentional?
+> 
+> What about:
+> 
+>         tcan4x5x->nwkrq_voltage = 0;
+>         ret = of_property_read_u8(np, "ti,nwkrq-voltage-sel", &prop);
+>         if (!ret) {
+>                 if (prop <= 1)
+>                         tcan4x5x->nwkrq_voltage = prop;
+>                 else
+>                         dev_warn(cdev->dev,
+>                                  "nwkrq-voltage-sel have invalid option: %u\n",
+>                                  prop);
+>         }
+> 
+> so that you make sure that tcan4x5x->nwkrq_voltage always gets a
+> default zero value? Else, if you can make sure that tcan4x5x is always
+> zero initialized, you can just drop the
+> 
+>         tcan4x5x->nwkrq_voltage = 0;
+> 
+> thing.
+
+Thanks for the review.
+You are right, so I reworked this for v3:
+https://lore.kernel.org/r/20241112-tcan-wkrqv-v3-0-c66423fba26d@geanix.com
 
 > 
-> This has been discussed here before in RISC-V C-API: https://github.com/riscv-non-isa/riscv-c-api-doc/pull/74#issuecomment-2128844747
-> 
-> But now (from the last email), you convinced me. So, I would like to make
-> the c-api change: https://github.com/riscv-non-isa/riscv-c-api-doc/issues/96
-> 
+> > +       return 0;
+> > +}
+> > +
 
-Thank you for opening that!
+[...]
 
-> > This does not add any complexity, "clean"
-> > code can equally be written following this scheme or following a scheme
-> > that relies on mvendorid. Ditching the reliance on mvendorid in the
-> > kernel allows the kernel to be as generic as possible, and allow
-> > whatever ABIs or hardware that exist to have a resiliant way of
-> > communicating with the kernel.
-> > 
-> 
-> OK. I'm just concerned about when these vendors will add the hwprobe key for
-> their own extension, which may introduce a potential merge conflict in the
-> kernel tree. It can also be a disaster if the hardware vendor ships their
-> kernel with these under-review patches for their products with hwprobe key
-> conflict with mainline kernel.
-> 
-> But we can avoid this now by adding each key for each vendor to avoid
-> potential conflict in the future. This can be a separate patch for future
-> work, so there is nothing to change here.
+> >
+> >
 
-Yes that is unfortunately the downside of hwprobe that it is a
-centralized source of these keys, and that can be exacerbated by this
-scheme were vendor keys are not completely isolated from each other.
-That would be very unfortunate if a vendor ships a kernel and binaries
-that has different keys than the mainline kernel. Hopefully vendors
-don't do that, but it should be manageable for vendors to submit their own
-keys.
-
-Thank you for bringing this up, it is an important issue! A main goal of
-this series was to get vendor extensions in a state that would be able
-to grow into a future when there are lots of vendors.
-
-> 
-> Thanks,
-> Yangyu Chen
-> 
-> > - CHarlie
-> > 
-> > > 
-> > > [1] https://github.com/riscv-non-isa/riscv-c-api-doc/blob/main/src/c-api.adoc#function-multi-version
-> > > [2] https://github.com/gcc-mirror/gcc/blob/8564d0948c72df0a66d7eb47e15c6ab43e9b25ce/gcc/config/riscv/riscv.cc#L13016
-> > > [3] https://github.com/llvm/llvm-project/blob/f407dff50cdcbcfee9dd92397d3792627c3ac708/clang/lib/CodeGen/CGBuiltin.cpp#L14627
-> > > 
-> > > > > 
-> > > > > > This new key will allow userspace code to probe for which thead vendor
-> > > > > > extensions are supported. This API is modeled to be consistent with
-> > > > > > RISCV_HWPROBE_KEY_IMA_EXT_0. The bitmask returned will have each bit
-> > > > > > corresponding to a supported thead vendor extension of the cpumask set.
-> > > > > > Just like RISCV_HWPROBE_KEY_IMA_EXT_0, this allows a userspace program
-> > > > > > to determine all of the supported thead vendor extensions in one call.
-> > > > > > 
-> > > > > > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> > > > > > Reviewed-by: Evan Green <evan@rivosinc.com>
-> > > > > > ---
-> > > > > >     arch/riscv/include/asm/hwprobe.h                   |  3 +-
-> > > > > >     .../include/asm/vendor_extensions/thead_hwprobe.h  | 19 +++++++++++
-> > > > > >     .../include/asm/vendor_extensions/vendor_hwprobe.h | 37 ++++++++++++++++++++++
-> > > > > >     arch/riscv/include/uapi/asm/hwprobe.h              |  3 +-
-> > > > > >     arch/riscv/include/uapi/asm/vendor/thead.h         |  3 ++
-> > > > > >     arch/riscv/kernel/sys_hwprobe.c                    |  5 +++
-> > > > > >     arch/riscv/kernel/vendor_extensions/Makefile       |  1 +
-> > > > > >     .../riscv/kernel/vendor_extensions/thead_hwprobe.c | 19 +++++++++++
-> > > > > >     8 files changed, 88 insertions(+), 2 deletions(-)
-> > > > > > 
-> > > > > 
-> > > 
-> > > 
-> 
-> 
+/Sean
 
