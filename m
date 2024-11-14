@@ -1,108 +1,82 @@
-Return-Path: <linux-kernel+bounces-409250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF8899C897F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:07:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D0289C8984
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:07:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EA3628159E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:07:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D31D281CF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87DBC1F9AA8;
-	Thu, 14 Nov 2024 12:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026BF1F80A2;
+	Thu, 14 Nov 2024 12:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0VIAq/Z1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XzbcY6XL";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0VIAq/Z1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XzbcY6XL"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="neEWCY0I"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B68018BC2C;
-	Thu, 14 Nov 2024 12:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365BE1F9AB8
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 12:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731586013; cv=none; b=PIr3+L3FUV2KgbBBjcrFWcmiXcS4NpPM3fpD/iaiI3FHAAUHeie81I0/SRfk0ZcZoOtQo4W6pry2+S7hYHqGSFvwJR2TxnMghXVRk5lFS/S1zMVQgklUkwRdhmEqrMYLT1C/5zdRbW+VZCHWFPtVfFr2r8Dzmw0HxeoelUlmPZQ=
+	t=1731586050; cv=none; b=OLBUDN4s7zTnbuoGY/EsK6BQserKzwqF2+vEJGTRYR2GIdgrd4c/Gqcf5eTgfQjveBcEHS3QCeFOPOlqVMd8oTKYZTEoYCDLn+4ToOOKK7uzYKhQ58mCgqp+nFQ1d4ZIzFk/lkwbl3ShAfv872vhVT06nP4YER1pwxC+cQRfx9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731586013; c=relaxed/simple;
-	bh=FNcTQoUmRoStCmk8rcMy5T71OIia2xR3uqGNl1es7G4=;
+	s=arc-20240116; t=1731586050; c=relaxed/simple;
+	bh=ybE2Vm3Ul0YfyxoQcc0nTLxCP9A+g9Fq7ap8qIS5mp8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=thDXmyIbkzAx1rn4/b5v84ZSQM5K5EUd0qdgWW9FjNRL46bUCixVG0IQBxIQzVFkge24rG7HgX8pjp5ZYW1Sn6p/eGw6CXzD7/DbviVutXH2wN2kWHvOrCR5nMpWKSJ4vDFwtWW2T54GrcSJ0sWYEq3jvndxNpyxTbxLU0GI2H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0VIAq/Z1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XzbcY6XL; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0VIAq/Z1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XzbcY6XL; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A0D551F7D3;
-	Thu, 14 Nov 2024 12:06:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731586010; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=02YKYpUDeKJg3ky6Nqo0pfIc/VYHigZfmBxiRwYrn9U=;
-	b=0VIAq/Z1zWsxunVwtmQk8eFXwQ3Wk7OxJVvVmLKA0qLE5Df6BnOCpERT2Ndxrsz5b7cs05
-	L1Wpt98+DLywcAIM/G3y2sgPNFLq+U0v0QfS3sRcOG1n9jckxFXaTNQtgoUa/kO5b8oykm
-	iLKShhT3wjy0JpRU2PixX45cEu+kbUc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731586010;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=02YKYpUDeKJg3ky6Nqo0pfIc/VYHigZfmBxiRwYrn9U=;
-	b=XzbcY6XLq/bVltPYJ6+zyOzgJiO0RvkBcUV23UCxFGniMN43TmHPgN8rfjsQ8bAGTM7syQ
-	808ssY14QUCvEyBQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731586010; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=02YKYpUDeKJg3ky6Nqo0pfIc/VYHigZfmBxiRwYrn9U=;
-	b=0VIAq/Z1zWsxunVwtmQk8eFXwQ3Wk7OxJVvVmLKA0qLE5Df6BnOCpERT2Ndxrsz5b7cs05
-	L1Wpt98+DLywcAIM/G3y2sgPNFLq+U0v0QfS3sRcOG1n9jckxFXaTNQtgoUa/kO5b8oykm
-	iLKShhT3wjy0JpRU2PixX45cEu+kbUc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731586010;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=02YKYpUDeKJg3ky6Nqo0pfIc/VYHigZfmBxiRwYrn9U=;
-	b=XzbcY6XLq/bVltPYJ6+zyOzgJiO0RvkBcUV23UCxFGniMN43TmHPgN8rfjsQ8bAGTM7syQ
-	808ssY14QUCvEyBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 79CE713721;
-	Thu, 14 Nov 2024 12:06:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id YoW0HdrnNWfrQgAAD6G6ig
-	(envelope-from <dwagner@suse.de>); Thu, 14 Nov 2024 12:06:50 +0000
-Date: Thu, 14 Nov 2024 13:06:49 +0100
-From: Daniel Wagner <dwagner@suse.de>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	Bjorn Helgaas <bhelgaas@google.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
-	John Garry <john.g.garry@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Hannes Reinecke <hare@suse.de>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, virtualization@lists.linux.dev, linux-scsi@vger.kernel.org, 
-	megaraidlinux.pdl@broadcom.com, mpi3mr-linuxdrv.pdl@broadcom.com, 
-	MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v4 05/10] blk-mq: introduce blk_mq_hctx_map_queues
-Message-ID: <4bd491e5-fab5-4e94-8719-560b5a4de01e@flourine.local>
-References: <20241113-refactor-blk-affinity-helpers-v4-0-dd3baa1e267f@kernel.org>
- <20241113-refactor-blk-affinity-helpers-v4-5-dd3baa1e267f@kernel.org>
- <ZzVZQbZOYhNF08LX@fedora>
- <9fa26099-1922-4b99-883e-bd5f6c58162a@flourine.local>
- <ZzW-9rWvKBxFZU1E@fedora>
+	 Content-Type:Content-Disposition:In-Reply-To; b=owVTpn8a6BhejEeKVhv2+ZN1g9JzNGpPiWPHr2+ot0Mte2rxsT4cCflHDKEOKcrmj++qrKDhrP/uxtvWwq3lKQmTtddLZkBRTWd5gw+i8pw1joBHOvZEhm/Jjo5sOD0VtMe+XamLJlHtOs2L7Gyb12IZxkIl4OA8av6bTC05EQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=neEWCY0I; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb51e00c05so8508261fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 04:07:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731586044; x=1732190844; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uY73lnBxf9AAvGyaOgeZigladmCevpD/jSTKQAcfeVU=;
+        b=neEWCY0IUUnX31O/KnCvHprvt3i0igGKI2hO7CTSAX/d3SEQ30M0Gw06VDZJgLlIxg
+         QMATdj5z6mmDjH81oTmjUweRMbZDK5bTnZTabrAe/AXWfkmj8V+1Ts6F0NxfzuAb1aij
+         4kdkrv+cEzWdcS7ch4bZRvs+VESn1T9L78g4eyP6Aml45u0VFd7Jq5fXGgUY0PZ2LsgS
+         D40ralovxcy4Zo75itMSoiDvC3Hm8fdWT6yPEEocG5cpXMpwIx0fP1cqKA0juyrPGrbR
+         hblK+R0Ldx2Z6kKbNKqot0dkSHNUcegOxKcidsS+m72B28jGPKfvp2M2UG2E0IVzZHdd
+         HAcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731586044; x=1732190844;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uY73lnBxf9AAvGyaOgeZigladmCevpD/jSTKQAcfeVU=;
+        b=n2GeuyscC/doAP6cJuXSHKyoY70Lh7OG7cd0dmH1jXYWoqXIRlexlHzmgAZNa5whgy
+         Zx3UCQD/QbiqDUc+GOCavw8SLonFN3gH9WK4B09ushvg2xyoSTQmrje3g5RLMXZDnw5A
+         qv0f+s8uO+IseYUH6HarUkCwobBKHxNLUK9TiFl8EnoaiK38qp3d6+8G0arxrZvVOeMN
+         /AL7rz2VrkPvHC8KboW/jc4d8L0BefvzT1WqytK+BT4Bb/jL+9Dqpfn1PKrKjHIC7Jlh
+         JWQY6yzdPg3vXrvcCki/t16g8zldW2wUVhcyMszcTaxru5lH8sc3b5jpyrx6IIZDku5A
+         JTGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIVr3v5nD34y4bCeHAw3aDX4gWIvnr+UQ8n1/CGhhPG+bA+OSqmAvHmMFEdlgW7VotFf3URIHEwccNnzE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr0a4xi6Ei9vntPILjQ5Gk/6LXJWbHZj96ar17Ul3ZfW6+LHKR
+	Ff+hcYcx7rOjKQTlles/bFXw7u9ysBjeE4U4Ul5U7g2H0BD6a+cn/TxaiLBOjBo=
+X-Google-Smtp-Source: AGHT+IH/JTUQEaNDZDc8WC1feqnb3GyvPSamQUrpsQIAYrLesWb0nl0adSLb8ahd/mCbCnLvRsGOTA==
+X-Received: by 2002:a05:6512:2243:b0:53d:a025:1142 with SMTP id 2adb3069b0e04-53da5c86530mr1553420e87.54.1731586044053;
+        Thu, 14 Nov 2024 04:07:24 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da6548e9bsm161597e87.262.2024.11.14.04.07.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 04:07:23 -0800 (PST)
+Date: Thu, 14 Nov 2024 14:07:20 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, quic_riteshk@quicinc.com, 
+	quic_vproddut@quicinc.com, quic_abhinavk@quicinc.com
+Subject: Re: [PATCH v3 1/2] arm64: dts: qcom: sa8775p: add DisplayPort device
+ nodes
+Message-ID: <pcubmgfl2afe5qt5jkvmym5j7o2qabablaqckviu4buneph745@b3s574jztqcb>
+References: <20241114095500.18616-1-quic_mukhopad@quicinc.com>
+ <20241114095500.18616-2-quic_mukhopad@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -111,63 +85,270 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZzW-9rWvKBxFZU1E@fedora>
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <20241114095500.18616-2-quic_mukhopad@quicinc.com>
 
-On Thu, Nov 14, 2024 at 05:12:22PM +0800, Ming Lei wrote:
-> I feel driver should get higher priority, but in the probe() example,
-> call_driver_probe() actually tries bus->probe() first.
+On Thu, Nov 14, 2024 at 03:24:59PM +0530, Soutrik Mukhopadhyay wrote:
+> Add device tree nodes for the DPTX0 and DPTX1 controllers
+> with their corresponding PHYs found on Qualcomm SA8775P SoC.
 > 
-> But looks not an issue for this patchset since only hisi_sas_v2_driver(platform_driver)
-> defines ->irq_get_affinity(), but the platform_bus_type doesn't have
-> the callback.
+> Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
 
-Oh, I was not aware of this ordering. And after digging this up here:
+This most likely wasn't validated against DT schema. Please don't send
+unvalidated DT patches.
 
-https://lore.kernel.org/all/20060105142951.13.01@flint.arm.linux.org.uk/
-
-I don't think we it's worthwhile to add the callback to device_driver
-just for hisi_sas_v2. So I am going to drop this part again.
-
-> > This brings up another topic I left out in this series.
-> > blk_mq_map_queues does almost the same thing except it starts with the
-> > mask returned by group_cpus_evenely. If we figure out how this could be
-> > combined in a sane way it's possible to cleanup even a bit more. A bunch
-> > of drivers do
-> > 
-> > 		if (i != HCTX_TYPE_POLL && offset)
-> > 			blk_mq_hctx_map_queues(map, dev->dev, offset);
-> > 		else
-> > 			blk_mq_map_queues(map);
-> > 
-> > IMO it would be nice just to have one blk_mq_map_queues() which handles
-> > this correctly for both cases.
+> ---
+>  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 216 +++++++++++++++++++++++++-
+>  1 file changed, 215 insertions(+), 1 deletion(-)
 > 
-> I guess it is doable, and the driver just setup the tag_set->map[], then call
-> one generic map_queues API to do everything?
+> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> index f7a9d1684a79..b272feae8da1 100644
+> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> @@ -3343,6 +3343,25 @@
+>  				interrupt-parent = <&mdss0>;
+>  				interrupts = <0>;
+>  
+> +				ports {
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +
+> +					port@0 {
+> +						reg = <0>;
+> +						dpu_intf0_out: endpoint {
+> +							remote-endpoint = <&mdss0_dp0_in>;
+> +						};
+> +					};
+> +
+> +					port@1 {
+> +						reg = <1>;
+> +						dpu_intf4_out: endpoint {
+> +							remote-endpoint = <&mdss0_dp1_in>;
+> +						};
+> +					};
+> +				};
+> +
+>  				mdss0_mdp_opp_table: opp-table {
+>  					compatible = "operating-points-v2";
+>  
+> @@ -3367,6 +3386,200 @@
+>  					};
+>  				};
+>  			};
+> +
+> +			mdss0_dp0_phy: phy@aec2a00 {
+> +				compatible = "qcom,sa8775p-edp-phy";
+> +
+> +				reg = <0x0 0xaec2a00 0x0 0x200>,
+> +				      <0x0 0xaec2200 0x0 0xd0>,
+> +				      <0x0 0xaec2600 0x0 0xd0>,
+> +				      <0x0 0xaec2000 0x0 0x1c8>;
+> +
+> +				clocks =<&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_AUX_CLK>,
+> +					<&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>;
+> +				clock-names = "aux",
+> +					      "cfg_ahb";
+> +
+> +				#clock-cells = <1>;
+> +				#phy-cells = <0>;
+> +
+> +				status = "disabled";
+> +			};
+> +
+> +			mdss0_dp1_phy: phy@aec5a00 {
+> +				compatible = "qcom,sa8775p-edp-phy";
+> +
+> +				reg = <0x0 0xaec5a00 0x0 0x200>,
+> +				      <0x0 0xaec5200 0x0 0xd0>,
+> +				      <0x0 0xaec5600 0x0 0xd0>,
+> +				      <0x0 0xaec5000 0x0 0x1c8>;
+> +
+> +				clocks =<&dispcc0 MDSS_DISP_CC_MDSS_DPTX1_AUX_CLK>,
+> +					<&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>;
+> +				clock-names = "aux",
+> +					      "cfg_ahb";
+> +
+> +				#clock-cells = <1>;
+> +				#phy-cells = <0>;
+> +
+> +				status = "disabled";
+> +			};
+> +
+> +			mdss0_dp0: displayport-controller@af54000 {
+> +				compatible = "qcom,sa8775p-dp";
+> +
+> +				reg = <0x0 0xaf54000 0x0 0x104>,
+> +				      <0x0 0xaf54200 0x0 0x0c0>,
+> +				      <0x0 0xaf55000 0x0 0x770>,
+> +				      <0x0 0xaf56000 0x0 0x09c>;
 
-Yes, that is my idea. Just having one function which handles what
-blk_mq_map_queues and blk_mq_hctx_map_queues/blk_mq_map_hw_queues
-currently do.
+No p1 region?
+
+> +
+> +				interrupt-parent = <&mdss0>;
+> +				interrupts = <12>;
+> +
+> +				clocks = <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>,
+> +					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_AUX_CLK>,
+> +					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_LINK_CLK>,
+> +					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_LINK_INTF_CLK>,
+> +					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL0_CLK>;
+> +				clock-names = "core_iface",
+> +					      "core_aux",
+> +					      "ctrl_link",
+> +					      "ctrl_link_iface",
+> +					      "stream_pixel";
+> +				assigned-clocks = <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_LINK_CLK_SRC>,
+> +						  <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>;
+> +				assigned-clock-parents = <&mdss0_dp0_phy 0>, <&mdss0_dp0_phy 1>;
+> +				phys = <&mdss0_dp0_phy>;
+> +				phy-names = "dp";
+> +
+> +				operating-points-v2 = <&dp_opp_table>;
+> +				power-domains = <&rpmhpd SA8775P_MMCX>;
+> +
+> +				#sound-dai-cells = <0>;
+> +
+> +				status = "disabled";
+> +
+> +				ports {
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +
+> +					port@0 {
+> +						reg = <0>;
+> +
+> +						mdss0_dp0_in: endpoint {
+> +							remote-endpoint = <&dpu_intf0_out>;
+> +						};
+> +					};
+> +
+> +					port@1 {
+> +						reg = <1>;
+> +
+> +						mdss0_dp0_out: endpoint { };
+> +					};
+> +				};
+> +
+> +				dp_opp_table: opp-table {
+> +					compatible = "operating-points-v2";
+> +
+> +					opp-160000000 {
+> +						opp-hz = /bits/ 64 <160000000>;
+> +						required-opps = <&rpmhpd_opp_low_svs>;
+> +					};
+> +
+> +					opp-270000000 {
+> +						opp-hz = /bits/ 64 <270000000>;
+> +						required-opps = <&rpmhpd_opp_svs>;
+> +					};
+> +
+> +					opp-540000000 {
+> +						opp-hz = /bits/ 64 <540000000>;
+> +						required-opps = <&rpmhpd_opp_svs_l1>;
+> +					};
+> +
+> +					opp-810000000 {
+> +						opp-hz = /bits/ 64 <810000000>;
+> +						required-opps = <&rpmhpd_opp_nom>;
+> +					};
+> +				};
+> +			};
+> +
+> +			mdss0_dp1: displayport-controller@af5c000 {
+> +				compatible = "qcom,sa8775p-dp";
+> +
+> +				reg = <0x0 0xaf5c000 0x0 0x104>,
+> +				      <0x0 0xaf5c200 0x0 0x0c0>,
+> +				      <0x0 0xaf5d000 0x0 0x770>,
+> +				      <0x0 0xaf5e000 0x0 0x09c>;
+> +
+> +				interrupt-parent = <&mdss0>;
+> +				interrupts = <13>;
+> +
+> +				clocks = <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>,
+> +					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX1_AUX_CLK>,
+> +					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX1_LINK_CLK>,
+> +					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX1_LINK_INTF_CLK>,
+> +					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX1_PIXEL0_CLK>;
+> +				clock-names = "core_iface",
+> +					      "core_aux",
+> +					      "ctrl_link",
+> +					      "ctrl_link_iface",
+> +					      "stream_pixel";
+> +				assigned-clocks = <&dispcc0 MDSS_DISP_CC_MDSS_DPTX1_LINK_CLK_SRC>,
+> +						  <&dispcc0 MDSS_DISP_CC_MDSS_DPTX1_PIXEL0_CLK_SRC>;
+> +				assigned-clock-parents = <&mdss0_dp1_phy 0>, <&mdss0_dp1_phy 1>;
+> +				phys = <&mdss0_dp1_phy>;
+> +				phy-names = "dp";
+> +
+> +				operating-points-v2 = <&dp1_opp_table>;
+> +				power-domains = <&rpmhpd SA8775P_MMCX>;
+> +
+> +				#sound-dai-cells = <0>;
+> +
+> +				status = "disabled";
+> +
+> +				ports {
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +
+> +					port@0 {
+> +						reg = <0>;
+> +
+> +						mdss0_dp1_in: endpoint {
+> +							remote-endpoint = <&dpu_intf4_out>;
+> +						};
+> +					};
+> +
+> +					port@1 {
+> +						reg = <1>;
+> +
+> +						mdss0_dp1_out: endpoint { };
+> +					};
+> +				};
+> +
+> +				dp1_opp_table: opp-table {
+> +					compatible = "operating-points-v2";
+> +
+> +					opp-160000000 {
+> +						opp-hz = /bits/ 64 <160000000>;
+> +						required-opps = <&rpmhpd_opp_low_svs>;
+> +					};
+> +
+> +					opp-270000000 {
+> +						opp-hz = /bits/ 64 <270000000>;
+> +						required-opps = <&rpmhpd_opp_svs>;
+> +					};
+> +
+> +					opp-540000000 {
+> +						opp-hz = /bits/ 64 <540000000>;
+> +						required-opps = <&rpmhpd_opp_svs_l1>;
+> +					};
+> +
+> +					opp-810000000 {
+> +						opp-hz = /bits/ 64 <810000000>;
+> +						required-opps = <&rpmhpd_opp_nom>;
+> +					};
+> +				};
+> +			};
+>  		};
+>  
+>  		dispcc0: clock-controller@af00000 {
+> @@ -3376,7 +3589,8 @@
+>  				 <&rpmhcc RPMH_CXO_CLK>,
+>  				 <&rpmhcc RPMH_CXO_CLK_A>,
+>  				 <&sleep_clk>,
+> -				 <0>, <0>, <0>, <0>,
+> +				 <&mdss0_dp0_phy 0>, <&mdss0_dp0_phy 1>,
+> +				 <&mdss0_dp1_phy 0>, <&mdss0_dp1_phy 1>,
+>  				 <0>, <0>, <0>, <0>;
+>  			power-domains = <&rpmhpd SA8775P_MMCX>;
+>  			#clock-cells = <1>;
+> -- 
+> 2.17.1
+> 
+
+-- 
+With best wishes
+Dmitry
 
