@@ -1,79 +1,86 @@
-Return-Path: <linux-kernel+bounces-408963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE59A9C85BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:13:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF409C85BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:13:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A8B0B29B33
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:12:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03EAC1F21080
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84511DF24B;
-	Thu, 14 Nov 2024 09:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA901DFD89;
+	Thu, 14 Nov 2024 09:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="RDkKWExw"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OQzH16+3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC8D1DE3B7;
-	Thu, 14 Nov 2024 09:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D191DE4DF
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731575544; cv=none; b=lc2QRzl8+4JEgQQXhBEvpclXyulKCkAlY02IGKN2HE/PveHuShyoRN1uqsoRD8wNHA8JpiNUkMrpk3XG7wlhfC8aLj12Ur6ij0Vfs/N+BTIGRcBfvxPIO6Zom2/59qXYFziWcKT0FHQrmguMl8o8u2pgT+2Af41SC9Sd6qQuQiM=
+	t=1731575571; cv=none; b=Nul51hqZPjx02c00/WNzSRWYKOyUquwyMfUUNyfisgWhuLZCogfUnzARn9ffkXE2459vFG3m7g08SLVa5cGSVXph0e/AVFUl0S5s5i1FVe/FSDMNePCUTEe0inVAn+YA05moAG+wysJ7OQp2pPl2bqY+BsXXuYkJ0JTR12OSxTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731575544; c=relaxed/simple;
-	bh=/FNXeBtwBLZaRaEpTbvM/HoWlTPqr8De8F0vVcJ4AEE=;
+	s=arc-20240116; t=1731575571; c=relaxed/simple;
+	bh=N0g9gDjfqfeeGTpqurtN6ckhCy5ueudC6uPPkK5E3lg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k6XhudZ9qm724i2rGA5UfzjePZhhjJgLNVbBVM9hEZZ4WcO1XgHoo6ypP2U4uWtDpx1+6oHlmG1aWzMEGKuIArDGY3SN3ybQ5ETbPTQhMrDkLEMPJEbnTNVeuRKsCyoK04SY1dU4ft8oB0PbjNkHuPOj3bOY5vDiMxGYHbZtHio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=RDkKWExw; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=hUnkAXCEYyWhwqu2Ap7JAT2p1h1b8+9Y1xqlGsEdk38=; b=RDkKWExwPhrgX3aYe5B32yxGK8
-	IqIHixh0BHo4a8oa8eEAdCICIsPU+UkMN3XX9rrKT6jdgWPJFqyoZQWhWL9dpreSjHM8twJPG7q3A
-	V6UtO1JmkfqE4sDoOTdAD1vD4op74dN2g6Tir/DMWbesEEMznSgYsiDRpR8J9AqGuTRTAMRKvTHPc
-	nU2I8OP3TNbiX0FJBe6wM2skax5S9rUPC8ySxgCfpfEr5gxJOTtMjViUEQFg7sqKsU2yaput+XC0Q
-	dschMRkuOyhkvzrB21aZYqq0OrtCREcUYhcaLm89J1aJYAwi/avmiUYW2a6GbxxdGN3rbfSoWGcSs
-	zbfoZMuA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:50080)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tBVtZ-0007he-0J;
-	Thu, 14 Nov 2024 09:12:09 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tBVtW-0000zI-2c;
-	Thu, 14 Nov 2024 09:12:06 +0000
-Date: Thu, 14 Nov 2024 09:12:06 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Choong Yong Liang <yong.liang.choong@linux.intel.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net v1 1/2] net: phy: Introduce phy_update_eee() to
- update eee_cfg values
-Message-ID: <ZzW-5gj0cdbwdwZv@shell.armlinux.org.uk>
-References: <20241112072447.3238892-1-yong.liang.choong@linux.intel.com>
- <20241112072447.3238892-2-yong.liang.choong@linux.intel.com>
- <f8ec2c77-33fa-45a8-9b6b-4be15e5f3658@gmail.com>
- <71b6be0e-426f-4fb4-9d28-27c55d5afa51@lunn.ch>
- <eb937669-d4ce-4b72-bcae-0660e1345b76@linux.intel.com>
- <ZzW8t2bCTXJCP7-_@shell.armlinux.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nSPe87gLNYLQRMVz/n8fb3XznyjxpNeNtd/MBl/YKkbH0lfbcX5xZHIEtTrT35xMZgj9qRXLdx2yNVZIh5cqoQ2IjblfhO39BY6/1CXUiS95Muf6oL3xmw06PElOzJ5mwzTTSbOO5EjCJWayTCRrcuzzl5PbCrW/1pycMRtzimg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OQzH16+3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731575569;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uoMm+2i8TmKTGQpX50eO3uTG52uiWMzmm9/S5ypTMAw=;
+	b=OQzH16+3taTfBWTRo33aCI/Xkte1z8Uq5PkOAoc2j0vRGXZn/H5FZD5LglteCdzocXcAVi
+	V7rWUWgUWBly4LeCJcqbxRM75URawMW9WB5UD83KjyzSUkj5LMoCHjKJ9DyVhc52lkKISu
+	3DHDVYMhOChNzIj+KupCZdarKKM3upA=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-117-hb4nU_FsNbGn6R7vUyU_-Q-1; Thu,
+ 14 Nov 2024 04:12:46 -0500
+X-MC-Unique: hb4nU_FsNbGn6R7vUyU_-Q-1
+X-Mimecast-MFC-AGG-ID: hb4nU_FsNbGn6R7vUyU_-Q
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7EA53195609E;
+	Thu, 14 Nov 2024 09:12:42 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.86])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 09DDA19560A3;
+	Thu, 14 Nov 2024 09:12:27 +0000 (UTC)
+Date: Thu, 14 Nov 2024 17:12:22 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Daniel Wagner <dwagner@suse.de>
+Cc: Daniel Wagner <wagi@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	John Garry <john.g.garry@oracle.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hannes Reinecke <hare@suse.de>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	virtualization@lists.linux.dev, linux-scsi@vger.kernel.org,
+	megaraidlinux.pdl@broadcom.com, mpi3mr-linuxdrv.pdl@broadcom.com,
+	MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com,
+	linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v4 05/10] blk-mq: introduce blk_mq_hctx_map_queues
+Message-ID: <ZzW-9rWvKBxFZU1E@fedora>
+References: <20241113-refactor-blk-affinity-helpers-v4-0-dd3baa1e267f@kernel.org>
+ <20241113-refactor-blk-affinity-helpers-v4-5-dd3baa1e267f@kernel.org>
+ <ZzVZQbZOYhNF08LX@fedora>
+ <9fa26099-1922-4b99-883e-bd5f6c58162a@flourine.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,79 +89,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZzW8t2bCTXJCP7-_@shell.armlinux.org.uk>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <9fa26099-1922-4b99-883e-bd5f6c58162a@flourine.local>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Thu, Nov 14, 2024 at 09:02:47AM +0000, Russell King (Oracle) wrote:
-> On Wed, Nov 13, 2024 at 06:10:55PM +0800, Choong Yong Liang wrote:
-> > On 12/11/2024 9:04 pm, Andrew Lunn wrote:
-> > > On Tue, Nov 12, 2024 at 12:03:15PM +0100, Heiner Kallweit wrote:
-> > > > In stmmac_ethtool_op_get_eee() you have the following:
-> > > > 
-> > > > edata->tx_lpi_timer = priv->tx_lpi_timer;
-> > > > edata->tx_lpi_enabled = priv->tx_lpi_enabled;
-> > > > return phylink_ethtool_get_eee(priv->phylink, edata);
-> > > > 
-> > > > You have to call phylink_ethtool_get_eee() first, otherwise the manually
-> > > > set values will be overridden. However setting tx_lpi_enabled shouldn't
-> > > > be needed if you respect phydev->enable_tx_lpi.
-> > > 
-> > > I agree with Heiner here, this sounds like a bug somewhere, not
-> > > something which needs new code in phylib. Lets understand why it gives
-> > > the wrong results.
-> > > 
-> > > 	Andrew
-> > Hi Russell, Andrew, and Heiner, thanks a lot for your valuable feedback.
+On Thu, Nov 14, 2024 at 08:54:46AM +0100, Daniel Wagner wrote:
+> On Thu, Nov 14, 2024 at 09:58:25AM +0800, Ming Lei wrote:
+> > > +void blk_mq_hctx_map_queues(struct blk_mq_queue_map *qmap,
 > > 
-> > The current implementation of the 'ethtool --show-eee' command heavily
-> > relies on the phy_ethtool_get_eee() in phy.c. The eeecfg values are set by
-> > the 'ethtool --set-eee' command and the phy_support_eee() during the initial
-> > state. The phy_ethtool_get_eee() calls eeecfg_to_eee(), which returns the
-> > eeecfg containing tx_lpi_timer, tx_lpi_enabled, and eee_enable for the
-> > 'ethtool --show-eee' command.
+> > Some drivers may not know hctx at all, maybe blk_mq_map_hw_queues()?
 > 
-> These three members you mention are user configuration members.
+> I am not really attach to the name, I am fine with renaming it to
+> blk_mq_map_hw_queues.
 > 
-> > The tx_lpi_timer and tx_lpi_enabled values stored in the MAC or PHY driver
-> > are not retrieved by the 'ethtool --show-eee' command.
+> > > +	if (dev->driver->irq_get_affinity)
+> > > +		irq_get_affinity = dev->driver->irq_get_affinity;
+> > > +	else if (dev->bus->irq_get_affinity)
+> > > +		irq_get_affinity = dev->bus->irq_get_affinity;
+> > 
+> > It is one generic API, I think both 'dev->driver' and
+> > 'dev->bus' should be validated here.
 > 
-> tx_lpi_timer is the only thing that the MAC driver should be concerned
-> with - it needs to program the MAC according to the timer value
-> specified. Whether LPI is enabled or not is determined by
-> phydev->enable_tx_lpi. The MAC should be using nothing else.
-> 
-> > Currently, we are facing 3 issues:
-> > 1. When we boot up our system and do not issue the 'ethtool --set-eee'
-> > command, and then directly issue the 'ethtool --show-eee' command, it always
-> > shows that EEE is disabled due to the eeecfg values not being set. However,
-> > in the Maxliner GPY PHY, the driver EEE is enabled.
-> 
-> So the software state is out of sync with the hardware state. This is a
-> bug in the GPY PHY driver.
-> 
-> If we look at the generic code, we can see that genphy_config_aneg()
-> calls __genphy_config_aneg() which then goes on to call
-> genphy_c45_an_config_eee_aneg(). genphy_c45_an_config_eee_aneg()
-> writes the current EEE configuration to the PHY.
-> 
-> Now if we look at gpy_config_aneg(), it doesn't do this. Therefore,
-> the GPY PHY is retaining its hardware state which is different from
-> the software state. This is wrong.
+> What do you have in mind here if we get two masks? What should the
+> operation be: AND, OR?
 
-Also note that phy_probe() reads the current configuration from the
-PHY. The supported mask is set via phydev->drv->get_features,
-which calls genphy_c45_pma_read_abilities() via the GPY driver and
-genphy_c45_read_eee_abilities().
+IMO you just need one callback to return the mask.
 
-phy_probe() then moved on to genphy_c45_read_eee_adv(), which reads
-the advertisement mask. If the advertising mask is non-zero, then
-EEE is set as enabled.
+I feel driver should get higher priority, but in the probe() example,
+call_driver_probe() actually tries bus->probe() first.
 
-From your description, it sounds like this isn't working right, and
-needs to be debugged. For example, is the PHY changing its EEE
-advertisement between phy_probe() and when it is up and running?
+But looks not an issue for this patchset since only hisi_sas_v2_driver(platform_driver)
+defines ->irq_get_affinity(), but the platform_bus_type doesn't have the callback.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> 
+> This brings up another topic I left out in this series.
+> blk_mq_map_queues does almost the same thing except it starts with the
+> mask returned by group_cpus_evenely. If we figure out how this could be
+> combined in a sane way it's possible to cleanup even a bit more. A bunch
+> of drivers do
+> 
+> 		if (i != HCTX_TYPE_POLL && offset)
+> 			blk_mq_hctx_map_queues(map, dev->dev, offset);
+> 		else
+> 			blk_mq_map_queues(map);
+> 
+> IMO it would be nice just to have one blk_mq_map_queues() which handles
+> this correctly for both cases.
+
+I guess it is doable, and the driver just setup the tag_set->map[], then call
+one generic map_queues API to do everything?
+
+
+Thanks,
+Ming
+
 
