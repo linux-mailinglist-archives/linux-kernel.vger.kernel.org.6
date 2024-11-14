@@ -1,175 +1,98 @@
-Return-Path: <linux-kernel+bounces-408764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68E249C8345
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:40:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C399C8347
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:40:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E38CCB22D0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:40:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69A31283701
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398F31EABB8;
-	Thu, 14 Nov 2024 06:40:04 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 572BD1CCEE0;
-	Thu, 14 Nov 2024 06:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B261EBA17;
+	Thu, 14 Nov 2024 06:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Yg+AqnXx"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279101E0E13;
+	Thu, 14 Nov 2024 06:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731566403; cv=none; b=jpqe7xclzOD+GvJ+y/EeHVWg+gvC5sjud7Lr39AY91D3xD4Kx8cDq8Uh+DhhBKgXlIcu10tbsj/aGMmOfuKG1X9/NDHSLCIaEQzdfPNTkfZATFULBEQacj58eHprCg6w86G9GdjvNDzbDqAkQjxA4MoHEcmDQZftx6Wozt0GaBo=
+	t=1731566405; cv=none; b=l9Q+JBd51pUH04K0QpfA2FTZg55dvCzXnHochBXjq2mZ8iL+u7h+8FVOawWkIcdtqwgiBq0lAfgXHwSUkmeB64Ccb0EAHX46emQQx2RLrel0IdpP+qn0C+mW5XfpqixXRp8CMbN/KaCU6/yaaWoaNo08RA1ecvLoll+D+u6QjK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731566403; c=relaxed/simple;
-	bh=hpBO1M0VcIImyLo4FrA1nKJzLz/Xz+zv3f5mi+3OoIc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=f3KzIm+fz17wExEhHWojPIQiX15muVr93Ubz06MOtS7rwMMDUBvtQWfLIsIiHIAYAeiJsKCVrkNMonRFPwDvpKiVOJLB0EovSw9HlTgTJNufY4KW7/0WtwAzhjkdFqQ9LHLn0xgyzKo1FCtYzqzg25rYCuxMJQ54oTOkHWckUpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id E0C01610C36C1;
-	Thu, 14 Nov 2024 14:39:47 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: lucas.demarchi@intel.com,
-	thomas.hellstrom@linux.intel.com,
-	rodrigo.vivi@intel.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	nathan@kernel.org,
-	ndesaulniers@google.com,
-	morbo@google.com,
-	justinstitt@google.com
-Cc: Su Hui <suhui@nfschina.com>,
-	matthew.brost@intel.com,
-	francois.dugast@intel.com,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/xe/hw_engine_group: Fix bad free in xe_hw_engine_setup_groups()
-Date: Thu, 14 Nov 2024 14:39:43 +0800
-Message-Id: <20241114063942.3448607-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1731566405; c=relaxed/simple;
+	bh=dOUCaWPK1D+zorbowizKIDt566IMDdrWJOcPF3XCiws=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Qw8VQG2lstk85b/0js4vPJVQmORDDwIe7F2X+xACsWuASfbYNfKeqV0ttWK1BqSg9QsCVY34Z4ueUEBQk2UOMxmXkFuBNwoMJmZKapyh4af++lqTWB5D0CplsXdsOuhC92KQCr9TYsCo3MS8qVuUSAKjXfivBuzeEaCj5VZMCAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Yg+AqnXx; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1731566396;
+	bh=YleiJNYL5eXW+jEREvFEwpoCjupq1xMfDclSi4Ksdkg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Yg+AqnXxXOpMjI5KqHt8WP2JgfUQ/LYRZxSZDsxZxUJwt/WEC4krnsdZfxovrNJqj
+	 lvAiDx/Cs5/y63+os1aieZn3fZ0HSbmlxm976cQd1gaZuR9KsOjrObvfv6y5lBwnRl
+	 NxuTjcR5oWfFSjvda7vjOMQzsQNi4yc9A7do/wrcYF8XMNhwTY09atV0ubZzMXoBlj
+	 RUeV4vlTlb34eOznJc2JQ3Gpu/NlRWPQWxLKf09RFgdRxklu79Jx945sHAOzlt6cEK
+	 8PcwFLCxJcE9/cga6UxjHQHAzRIEnSYcEfdI3uQXesPGez2qK8t4wGanNcJYuMLb/V
+	 5zuD8TtjTeYZA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xpr9m2qfZz4wb1;
+	Thu, 14 Nov 2024 17:39:56 +1100 (AEDT)
+Date: Thu, 14 Nov 2024 17:39:58 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the configfs tree
+Message-ID: <20241114173958.6cce33ce@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/D+PmA0WGjZf5..qFSCqD3kZ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Clang static checker(scan-build) warning：
-drivers/gpu/drm/xe/xe_hw_engine_group.c: line 134, column 2
-Argument to kfree() is a constant address (18446744073709551604), which
-is not memory allocated by malloc().
+--Sig_/D+PmA0WGjZf5..qFSCqD3kZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-There are some problems in hw_engine_group_alloc() and
-xe_hw_engine_setup_groups(). First, kfree() can only handle NULL
-pointers instead of negitave error codes. When hw_engine_group_alloc()
-failed, there is a bad kfree call for negitave error codes in
-xe_hw_engine_setup_groups(). Second, when drmm_add_action_or_reset()
-failed, destroy_workqueue() should be called to free 'group->resume_wq'.
+Hi all,
 
-Free 'group' and destroy 'group->resume_wq' when hw_engine_group_alloc()
-failed to fix these problems.
+Commit
 
-Fixes: d16ef1a18e39 ("drm/xe/exec: Switch hw engine group execution mode upon job submission")
-Fixes: f784750c670f ("drm/xe/hw_engine_group: Introduce xe_hw_engine_group")
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
- drivers/gpu/drm/xe/xe_hw_engine_group.c | 31 ++++++++++++++-----------
- 1 file changed, 17 insertions(+), 14 deletions(-)
+  a591497f6b3d ("cpufreq: intel_pstate: Rearrange locking in hybrid_init_cp=
+u_capacity_scaling()")
 
-diff --git a/drivers/gpu/drm/xe/xe_hw_engine_group.c b/drivers/gpu/drm/xe/xe_hw_engine_group.c
-index 82750520a90a..ee2cb32817fa 100644
---- a/drivers/gpu/drm/xe/xe_hw_engine_group.c
-+++ b/drivers/gpu/drm/xe/xe_hw_engine_group.c
-@@ -51,7 +51,7 @@ static struct xe_hw_engine_group *
- hw_engine_group_alloc(struct xe_device *xe)
- {
- 	struct xe_hw_engine_group *group;
--	int err;
-+	int err = -ENOMEM;
- 
- 	group = kzalloc(sizeof(*group), GFP_KERNEL);
- 	if (!group)
-@@ -59,7 +59,7 @@ hw_engine_group_alloc(struct xe_device *xe)
- 
- 	group->resume_wq = alloc_workqueue("xe-resume-lr-jobs-wq", 0, 0);
- 	if (!group->resume_wq)
--		return ERR_PTR(-ENOMEM);
-+		goto free_group;
- 
- 	init_rwsem(&group->mode_sem);
- 	INIT_WORK(&group->resume_work, hw_engine_group_resume_lr_jobs_func);
-@@ -67,9 +67,15 @@ hw_engine_group_alloc(struct xe_device *xe)
- 
- 	err = drmm_add_action_or_reset(&xe->drm, hw_engine_group_free, group);
- 	if (err)
--		return ERR_PTR(err);
-+		goto destroy_wq;
- 
- 	return group;
-+
-+destroy_wq:
-+	destroy_workqueue(group->resume_wq);
-+free_group:
-+	kfree(group);
-+	return ERR_PTR(err);
- }
- 
- /**
-@@ -87,21 +93,19 @@ int xe_hw_engine_setup_groups(struct xe_gt *gt)
- 	int err;
- 
- 	group_rcs_ccs = hw_engine_group_alloc(xe);
--	if (IS_ERR(group_rcs_ccs)) {
--		err = PTR_ERR(group_rcs_ccs);
--		goto err_group_rcs_ccs;
--	}
-+	if (IS_ERR(group_rcs_ccs))
-+		return PTR_ERR(group_rcs_ccs);
- 
- 	group_bcs = hw_engine_group_alloc(xe);
- 	if (IS_ERR(group_bcs)) {
- 		err = PTR_ERR(group_bcs);
--		goto err_group_bcs;
-+		goto free_group_rcs_ccs;
- 	}
- 
- 	group_vcs_vecs = hw_engine_group_alloc(xe);
- 	if (IS_ERR(group_vcs_vecs)) {
- 		err = PTR_ERR(group_vcs_vecs);
--		goto err_group_vcs_vecs;
-+		goto free_group_bcs;
- 	}
- 
- 	for_each_hw_engine(hwe, gt, id) {
-@@ -126,13 +130,12 @@ int xe_hw_engine_setup_groups(struct xe_gt *gt)
- 
- 	return 0;
- 
--err_group_vcs_vecs:
--	kfree(group_vcs_vecs);
--err_group_bcs:
-+free_group_bcs:
-+	destroy_workqueue(group_bcs->resume_wq);
- 	kfree(group_bcs);
--err_group_rcs_ccs:
-+free_group_rcs_ccs:
-+	destroy_workqueue(group_rcs_ccs->resume_wq);
- 	kfree(group_rcs_ccs);
--
- 	return err;
- }
- 
--- 
-2.30.2
+is missing a Signed-off-by from its committer.
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/D+PmA0WGjZf5..qFSCqD3kZ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc1mz4ACgkQAVBC80lX
+0GyGDgf7BZIZWqWSO+HS3h0Hr01i7ewEnZeKrvDQSVPecbcPiXLtbozI4cEWpShn
+VsOfb1PLkJHT/oc8Kc07EQceFCqRBUFLk5Kd8LryDYhVV41xfQPSR+X+Mfvjjedg
+CaTPrbOOhEU4hngGyNDop12ijQlgAOxgykkjwPeyoUupp7MmpTUl38lwDkC1pK1f
+kO85vlSedUahX1A3QeP5+Tpxld/vSmH684W9GLYzHijS2rreny7AVA0GRL/WmIuQ
+3pLIYy4Tg8qkvmKi7EzAwiIuQji60DKnWWqDt4hoqcPNg5KjhuQzx98vU2+53WGm
+eE3tEJYZAp2QKbBxrZfp0PuuUYwLPw==
+=DaRF
+-----END PGP SIGNATURE-----
+
+--Sig_/D+PmA0WGjZf5..qFSCqD3kZ--
 
