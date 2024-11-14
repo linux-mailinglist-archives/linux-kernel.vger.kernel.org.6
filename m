@@ -1,127 +1,168 @@
-Return-Path: <linux-kernel+bounces-409330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17AAC9C8B5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:04:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A6479C8BA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:18:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C33371F24F10
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:04:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F31FB3088A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0052D1FAEE3;
-	Thu, 14 Nov 2024 13:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26691FB3C0;
+	Thu, 14 Nov 2024 13:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pUK75waX"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tz3wIEkQ"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF201F76C9
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CADD18C32C
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731589434; cv=none; b=ggWGCDPuVKfkIflcecs8JR8IgdzBZ34rX5MhbzkX/WUVNK5ddW2VkaHk5YdJePg+zo9pPwCGbg3dXJsg+ek9LFYrPxuc1xwl8tHS8OfQ2S+YqUyhZG5EjRGybMa/8QTMvdqYF2jN8kPDFasGAla/5oiyn5Tyh3iXChST1gxfAvo=
+	t=1731589610; cv=none; b=X70KrXaLtJUEkBbT+MjC2rcWWsXTxdSsrHv8FLnVrS3hn8MWGsby7r4hJy5LXbN1fEeTZn6ciQxjvkIRCSYRVxjB6fk7LzyLsMhzhYA0lbOYyoy1OY/0PUT9UXy/W5EXNwWbuCJs5NPOb2rDImYkh5kHG0fXb1atXg3dMpxNFi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731589434; c=relaxed/simple;
-	bh=2G6eM658ZFvz8hDEvgoZG78f6jBsleiI6GiFLOinTmw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DfouzluxSQ4r1UbQuaqZ2u+gfxtjWvN2XcxRqiSRAhzOLH/1RBk9l7VvsL9N272dmiJXioXFK83w4dQYhTS4WVuzOQFNtyekloL+fa/jT72+y88CHtWDvAE+2YZyHNrsjJzAKbylNMxk0erRhgBBrcMI+a2elRzT7NwTMqCH23g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pUK75waX; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE6MrVi015461
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:03:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3ZZcWhAmp0MwkK8bK9XV2sb1z1aD0pNV4AZR5fU3yro=; b=pUK75waX+UOkWlhU
-	JvLfW/zTEDxs2oUt4liFkL9LPh78Jm9smXkn2uSzeErZ8dpTZvwhbSO3ff2BLI0m
-	eP7/smIQNqJfnr1uO5jNvoWjNwWdtFQXylUoMP0194F1IgAyThwoP2DWhCgmQLpJ
-	s2Oq/bCkLAzCtgKmrLN9GN4beL6K5QdHOP1tOTwu6ufx463Ud6lkOac3KpdfdhqE
-	U2QrLMh47x7B7FOW/SsjJGKAFgrJz/LnHK0VI0LfL0HN8OdW8ExmaywYibJpkl86
-	caIVBZt0LIHsI3aDLmmZPH7VqcIuft9TU4vLD2+g/HPyEliupKfNFL8jlL/EJFNx
-	F4Nnfg==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vsf3526t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:03:52 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-460903fc1a1so733181cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 05:03:51 -0800 (PST)
+	s=arc-20240116; t=1731589610; c=relaxed/simple;
+	bh=WwOImXDBX80gfUH0lg8uuNJ7CUogMKlF1SFzS1Tux7U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ex26dGQEWu4L/RzFU/djAnlaohpbrmnX83tFS74sAityfBzB3w37IxBSJJgrbA3cSALmctYPSgs9yqlmKEv6QA9nmX6E+R28ZO8w4Cla9HrvUjsHxWj2YNeyenKmS61I+RUFhwvfW+eIZVeffQ+IdP2wv98MMyLObhnwfsPFLYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Tz3wIEkQ; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7f46d5d1ad5so415408a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 05:06:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731589608; x=1732194408; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WwOImXDBX80gfUH0lg8uuNJ7CUogMKlF1SFzS1Tux7U=;
+        b=Tz3wIEkQre320Ln0t92NnIZ1HOjLLykqtyVKTB7Bbu1840L9/f4tVbZ0F2XaXZcV10
+         CQQYit5qQydy1t5dghMmY9n137LkVpgKgcjsZHCQjFmBxydun2F9iBvr7hGi8mfpd20x
+         iC7gu6FThz9gkQe/nOfZgzZP6NVHPvzZiNMjoHJr748N2taSh2UitxAvmHMK7/KNRnya
+         iVIn/nh/NYTEqGXVFV6AG02FOeNO7sZdkQ8CiwtU61v4HZAo8TsZzPiSFzLe05LErGEn
+         QCRX34xXZrPpKOIRvOYjPYNI6KF0s4fTSvYIapa9UFDhKOmmKGAq86LuvGC28PDFTUUQ
+         0FqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731589431; x=1732194231;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3ZZcWhAmp0MwkK8bK9XV2sb1z1aD0pNV4AZR5fU3yro=;
-        b=ZRtqap9ePAkvn5122qYGpcAMoxbJzEY1gTDHaBlrT3NDZfos09P9yrH+WfbUnZVtwF
-         IfliS3eb7LHBFV/vsmAUYBBRLkNcsYZScC6nj0GRf9h6iPoIowUeem0TpGOxB6mk0Wmh
-         F2sL84eB7biLwC+jgY5CJ1uDEQUoHkUSVAVXafLb4TO4tDWhb7E47zWhqznwrRMmWqVo
-         8rJTflbw0Xn+CoDEpbhn+d7QG7iGaBxHegMZXVDOFipBZosSookdnwT5xcuxivuJ1rxI
-         6IsTjaRrRcySeugs+1f+ExJhZreDGIFUTi50EPCnlz9bPhxBy9PJ4ohuaWkEutVAdjHj
-         POEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEhLlN8jLBECWVHI8eWqStt4RA2WV7VHet/KLprjwq3fjjQkx0KhnstzWF6Rfs5OPg7CmjO69nA/1P4hk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyS3XyaJEj0WbSo/pHfMfv9B5n4Ddu7FSY8QH5irxakhBXg7Mc7
-	7zzSF2PGluNvlQxT16lvd46xfHNQOcyCn9UjlU7T5Xkhf3L/hHpgB+ou+W0e5Ggi8KKHawhE+v+
-	kB8rHKJIaQzZ6ZecxGhud5TLAt9eyUhuPU0H/YXx8KwJiliYVP6Q+Te0n7iu5ql8=
-X-Received: by 2002:a05:622a:2d5:b0:460:e4a7:a5cc with SMTP id d75a77b69052e-4630932138fmr142890171cf.3.1731589430701;
-        Thu, 14 Nov 2024 05:03:50 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEP3QaPpWVWBZ3W8LyJufqB+7ivCzeohYgjPf36PLkK5kVzR9ipztbc4QUkkkBD2kaZQk5ryQ==
-X-Received: by 2002:a05:622a:2d5:b0:460:e4a7:a5cc with SMTP id d75a77b69052e-4630932138fmr142889771cf.3.1731589430119;
-        Thu, 14 Nov 2024 05:03:50 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20dfffcbasm61006866b.111.2024.11.14.05.03.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 05:03:49 -0800 (PST)
-Message-ID: <0509452b-586b-4e06-b344-6f68af4593f0@oss.qualcomm.com>
-Date: Thu, 14 Nov 2024 14:03:47 +0100
+        d=1e100.net; s=20230601; t=1731589608; x=1732194408;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WwOImXDBX80gfUH0lg8uuNJ7CUogMKlF1SFzS1Tux7U=;
+        b=bXJF3+AyJzLmsXQsztJGLgCNXGQpWgoWXq6h175L6Ui2w9D/z2HfuslMJsn60VJ/k+
+         itZxZMMF+Tpyn3Iq/2GW2e1AIn5we+RNkL+2G40na16Baujke+1rh/hC0MOUxIZlcMcI
+         ZH4GM83G4uE4R4wbBtPjA+rz5miDKUUBGiapUUiOZsE2hulBbrhw/7J9KxC56D81gr7/
+         ng/OlvMlZsYr943GhDdaare3iQno55dZZ88hGJAdTTIMOMvsyXoh6Lp3v/LoebudjtOc
+         0XednP1+tnwb1dJACcNfusKT6naCyTjYpVyrhRxmEAF08P/x240R3WKryJewDbiJO59x
+         akTA==
+X-Forwarded-Encrypted: i=1; AJvYcCWB4MROaBxMIyPGx64Er66dcaNN4C11ZBwxXC8Mk2MYvWKsX58XPR1du7zfpDX/4PKplK+Ve85tZeuxKuA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwS6ziS8s6OWKoaqdMpigmqqhRHdK9TEo7UBZ4WgICc0VC/vtiw
+	58Ve9W/Hpb7YYm7BuLyBFsbEwyZtVcgvp7sm6fJoXaRTZG/RHet89qT75HpTGiC0WT0vQAX7vBc
+	mo20WAovHinOL5bxB8l93eTLvoGn8wqzjQ59DvQ==
+X-Google-Smtp-Source: AGHT+IEntshl4SB5YU4JDzZqZ3du/7RF116gDifZ30LeEUeAPvBKjq5NqPBftK7yWq+pIvoZxXIGBDtgLXcyVJ8uoxE=
+X-Received: by 2002:a17:90b:5111:b0:2e2:d87f:3cc with SMTP id
+ 98e67ed59e1d1-2ea0639f6b9mr1929113a91.23.1731589607809; Thu, 14 Nov 2024
+ 05:06:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] arm64: dts: qcom: qcs8300: enable pcie1 for QCS8300
-To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>, vkoul@kernel.org,
-        kishon@kernel.org, robh+dt@kernel.org,
-        manivannan.sadhasivam@linaro.org, bhelgaas@google.com, kw@linux.com,
-        lpieralisi@kernel.org, quic_qianyu@quicinc.com, conor+dt@kernel.org,
-        neil.armstrong@linaro.org, andersson@kernel.org,
-        konradybcio@kernel.org
-Cc: quic_shashim@quicinc.com, quic_kaushalk@quicinc.com, quic_tdas@quicinc.com,
-        quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com, kernel@quicinc.com,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-        Krishna chaitanya chundru <quic_krichai@quicinc.com>
-References: <20241114095409.2682558-1-quic_ziyuzhan@quicinc.com>
- <20241114095409.2682558-6-quic_ziyuzhan@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241114095409.2682558-6-quic_ziyuzhan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: hMXoaMG39_SFZkAS1LcBnbMeOIar80PX
-X-Proofpoint-GUID: hMXoaMG39_SFZkAS1LcBnbMeOIar80PX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- bulkscore=0 phishscore=0 malwarescore=0 suspectscore=0 priorityscore=1501
- clxscore=1015 mlxscore=0 spamscore=0 lowpriorityscore=0 mlxlogscore=543
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411140102
+References: <CAGETcx830PZyr_oZAkghR=CLsThLUX1hZRxrNK_FNSLuF2TBAw@mail.gmail.com>
+ <CAKfTPtCjax48zq3dzuupfrz52Q5TVF=kYSm0t35kT=E4QJGQ7w@mail.gmail.com> <CAGETcx_nVKYMhCmC6BPNVxLfDaz=uoSsk1WOs-aX=M03Ew2qTA@mail.gmail.com>
+In-Reply-To: <CAGETcx_nVKYMhCmC6BPNVxLfDaz=uoSsk1WOs-aX=M03Ew2qTA@mail.gmail.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Thu, 14 Nov 2024 14:06:36 +0100
+Message-ID: <CAKfTPtDtmtW7EKte9vwPUxYKfCGJuTDGudnz342p6sTDsk1qUg@mail.gmail.com>
+Subject: Re: Very high scheduling delay with plenty of idle CPUs
+To: Saravana Kannan <saravanak@google.com>
+Cc: Ingo Molnar <mingo@redhat.com>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Benjamin Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
+	wuyun.abel@bytedance.com, youssefesmat@chromium.org, 
+	Thomas Gleixner <tglx@linutronix.de>, efault@gmx.de, 
+	K Prateek Nayak <kprateek.nayak@amd.com>, John Stultz <jstultz@google.com>, 
+	Vincent Palomares <paillon@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 14.11.2024 10:54 AM, Ziyue Zhang wrote:
-> Add configurations in devicetree for PCIe1, including registers, clocks,
-> interrupts and phy setting sequence.
-> 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-> ---
+On Thu, 14 Nov 2024 at 07:37, Saravana Kannan <saravanak@google.com> wrote:
+>
+> Ugh... just realized that for a few of the emails I've been replying
+> directly to one person instead of reply-all.
+>
+> On Fri, Nov 8, 2024 at 1:02=E2=80=AFAM Vincent Guittot
+> <vincent.guittot@linaro.org> wrote:
+> >
+> > On Fri, 8 Nov 2024 at 08:28, Saravana Kannan <saravanak@google.com> wro=
+te:
+> > >
+> > > Hi scheduler folks,
+> > >
+> > > I'm running into some weird scheduling issues when testing non-sched
+> > > changes on a Pixel 6 that's running close to 6.12-rc5. I'm not sure i=
+f
+> > > this is an issue in earlier kernel versions or not.
+> > >
+> > > The async suspend/resume code calls async_schedule_dev_nocall() to
+> > > queue up a bunch of work. These queued up work seem to be running in
+> > > kworker threads.
+> > >
+> > > However, there have been many times where I see scheduling latency
+> > > (runnable, but not running) of 4.5 ms or higher for a kworker thread
+> > > when there are plenty of idle CPUs.
+> >
+> > You are using EAS, aren't you ?
+> > so the energy impact drive the cpu selection not cpu idleness
+> >
+> > There is a proposal to change feec to also take into account such case
+> > in addition to the energy impact
+> > https://lore.kernel.org/lkml/64ed0fb8-12ea-4452-9ec2-7ad127b65529@arm.c=
+om/T/
+> >
+> > I still have to finalize v2
+>
+> Anyway, I tried this series (got it from
+> https://git.linaro.org/people/vincent.guittot/kernel.git/log/?h=3Dsched/r=
+ework-eas)
+> and:
+> 1. The timing hasn't improved at all compared to not having the series.
 
-Pretty much identical comments as for patch 4
+Surprising As I can see improvements on rb5 with unbounded kworker
+spreads on little cpus unlike current implementation but the use of
+med and big cores waitq for little to be filled 1st which is not not
+case when disable eas
 
-Konrad
+> 2. There's still a lot of preemption of runnable tasks with some empty CP=
+Us.
+
+Yes, little are fully filled but med and big are used later when
+utilization of little have increased
+
+>
+> For example:
+> https://ui.perfetto.dev/#!/?s=3D955ff7e73edf32dab27501025211fa2ce322f725
+>
+> Thanks,
+> Saravana
+>
+>
+> >
+> > >
+> > > Does async_schedule_dev_nocall() have some weird limitations on where
+> > > they can be run? I know it has some NUMA related stuff, but the Pixel
+> > > 6 doesn't have NUMA. This oddity unnecessarily increases
+> > > suspend/resume latency as it adds up across kworker threads. So, I'd
+> > > appreciate any insights on what might be happening?
+> > >
+> > > If you know how to use perfetto (it's really pretty simple, all you
+> > > need to know is WASD and clicking), here's an example:
+> > > https://ui.perfetto.dev/#!/?s=3De20045736e7dfa1e897db6489710061d2495b=
+e92
+> > >
+> > > Thanks,
+> > > Saravana
 
