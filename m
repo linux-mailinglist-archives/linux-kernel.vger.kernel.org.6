@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-408978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 151E79C85F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:21:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 634EF9C85F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:21:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8C1B2835A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:21:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22115281896
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B416B4C85;
-	Thu, 14 Nov 2024 09:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE261DD529;
+	Thu, 14 Nov 2024 09:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="QkoQhFBs"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q9QoGo+/"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96ADD1DD529
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4334C85
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731576056; cv=none; b=KOcp1MVd8BpAUAKq3yFPIPLT3lg4YLteMDsX1X7Hu7WYrgouJQvwWjtQ4aDYNGm3YMLT4jl0R0uMgNfX5dUxRcW1oe2rS7qHl+C6NCBhAMg68HOYWO2JF3VdwmGLSHT7kntnxcaVpWru9KrDdcqIqR7Nm79VWFcDkXTB/zCIBHc=
+	t=1731576107; cv=none; b=CBi/BdZ8VjooUlwLIC9G5g4IqXFquKLqTIVcmXv/X0oBGzJzYNN8vJkebO4eXq7KjMffJm2ouenyjzXogZbpS0XwdXtuSXdfzv0CmQTvzqZkYDlgSRVoME395FqbnKKn3MJLhyXd7+E2VOXAESssVyEZA7LFPkGX5ryGa+azrKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731576056; c=relaxed/simple;
-	bh=UGkkrw6D20oDdBbfGGY08X9vRxOYR7cCmr1XIxFiWMo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mBLXU0W2AYjgZg02Asri6wbSeK/zGmktWY3NSUoj/m3JqPJH86er4i9fRdmjA4f0IHGKrmEhEGGMmL7hfHZ+4Eo6MCAB1zr66SESBP9+n1rUillQI2Oo+iS8ohmaOP8I9q62uhlwPqJUZKsXMbrEYxRfSCDYPu0NhXfiAg6JJ6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=QkoQhFBs; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9e8522c10bso48822066b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:20:54 -0800 (PST)
+	s=arc-20240116; t=1731576107; c=relaxed/simple;
+	bh=pfQ1EsxFuQyYpQVbYK9aExgCanpy9u/AbGrn6mzrxAM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=SUGmSqgxaX899vdD5R2cJyyxBDBjISetN0x1pkn79atssKvqfZmrqjqY3A51yZ9V6A8fS8kaOR4dRA5ygwOqGWI3+vJDOx1Uf70RwkFz49MkCxhYA6QZ71138LgkYEXdo89MIK6RKQc0QvIVPH319FeXb0PoOELl5CeZVqQs35c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q9QoGo+/; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-432d9b8558aso2970905e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:21:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1731576053; x=1732180853; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=DtjkgA4Paslvtb3pQhMOxnpQn7bCQ8t0ao/oNEpfP04=;
-        b=QkoQhFBsz9QxxNwAcOR3rMPoE2748ahfYtACQyfl46hisGkWwjsjdchGa/LwLZClQI
-         LKb6TCaYZCFAT2X4voFCk2jT9MT8lnI4GwpaYyK4xwlhKhGUFiNlzK4bgNK1RODrMXIT
-         kNObPLZUr0/HF1lBLLnzU0uni1Pz2qVH5qoO6bdGBUBVqL8CxPG6d1iXp0MQ6G/9Xc33
-         xnEB0cPn+KMmdNd8Hun3pu5U7lu1zVrdbQPkt/ant1iAdte9eCrngU0CqiYou3vgyWWv
-         PQAVZEcmjWaL7ZJerWdJIAIwUsTiNHU88lgHjOV9ekkAc3ogIuIvJU+2BqrtbkWp+s2f
-         3G2g==
+        d=linaro.org; s=google; t=1731576104; x=1732180904; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JNbRU7FU8XNSE+dI3k8p5qd8iE3w171o5k5wliBXgFc=;
+        b=Q9QoGo+/c9T+OIi80u8FISDlCOBxt3O/OVIOfFGI04lSY9ntJa6z0IDE9BFdaListN
+         Lk932VOxpPbih70kLghNJ5zR05UNXN2OPONYbn/F1L/e96eMP25ZMV1g5KVQ7ZGw00zi
+         /jHi6lywjMG5i81Au1qdf70aTGZMIxGiFCPXWY8M+zZm1T6o+1nTIGQAysGjVvpm3VSc
+         Ap83vLx5bjX8N7ZAwULZqqlSwD55g7eENz/m7SjW9FT8hMMKKA2gfchA9ch1DuToA+ek
+         ncmlL8w17fTDfpJVXxl3qjdeAGUYc3o8ZcJeNtghDRZwtyigo2y8udzT/+OSE4JNV0o7
+         GUFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731576053; x=1732180853;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DtjkgA4Paslvtb3pQhMOxnpQn7bCQ8t0ao/oNEpfP04=;
-        b=XMxELnAu20JoXhv2xD9kbflUhLoxfBqREhy0bmY43iqsNZXqX5lOzySMt++zAVY+JY
-         h4mUM61+RJBM12WTc/PIUTzyKPwa8spWX3rLxMYsprEKZOYYxzY9ivR9QUeVDjwnMnuq
-         zcwrroe7/7sPDgGHlVHrMmKoQDPPSzgCjFb5I79emWB5Jyyk8fXfOSvpcvA9DbL3fCpH
-         iNmvqF4mM+AkQvc6IcKp64Ts8Tin93PupbtX/UvB3XHpcNLtU7zIw84adQi/zwzXLKxj
-         eZjTyNogHiltucRMQKAX4lNuZmr16+9DGZJQW+TEl/arX4yD2e3rfxiyd0DI8Y/L0zBs
-         67VA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvz0VS5AGxbh6PnlE0oaSXEBPmrJdRvqOwB+CT5N6UD4jXJJRzOjeRqWk20xooIFNv+eZ8OFBCVZOGFro=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUFGoUvaJFBGjlNfbpmKQ9SOXBiD6KQt8iSYRdRswdMMdlv7Qc
-	qscar4U9XdoqmGGBt/2D12xU4bie8qJNxUVelndYZ5fI1t7g6lld4d/Bj29VOyU=
-X-Google-Smtp-Source: AGHT+IFAgwmobPOc3o/TArjevN2Pjs1UoT66R3rgWU2zfc0tznnZvufSvE9otBQ8Px0O6ppPdGiTLQ==
-X-Received: by 2002:a17:907:6e92:b0:a9e:eee8:4947 with SMTP id a640c23a62f3a-aa2076cc2f9mr242560566b.9.1731576052924;
-        Thu, 14 Nov 2024 01:20:52 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:3779:22d5:a322:7c13? ([2001:67c:2fbc:1:3779:22d5:a322:7c13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df27068sm40373066b.8.2024.11.14.01.20.51
+        d=1e100.net; s=20230601; t=1731576104; x=1732180904;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JNbRU7FU8XNSE+dI3k8p5qd8iE3w171o5k5wliBXgFc=;
+        b=nkPy55O8NG3z6x7XDawoKM0BNX4kIp55q9qOzRh3CVq2X3FFeIx4lPqmJ0TsIC24Az
+         5oKd+uBj2g/QZ6LP8jd2FD7uFffo+6nmtk3hG1rQhAzl90omTO0MrgUbCmo+tGl6r7sc
+         ra2c2REtCNFuutw9kfkoV71Wz+Zulm6+4eTbLxJNvERc/jztwue52CP77gOhQ1q2CJw3
+         yH0n1sKw7aHsCE6DU5ZuZ3X4R85uijSCCDX1d7FguVtJlY12N3z2TFHEo7EZKJAbykbN
+         Z1oTFpGEzuCNGBLzB2/4O/ostva88Iu8xAxxzugv6WYrbPP7xFcq0YrZsfABgkknCOXa
+         Q7XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ8cUqWqR3kC24NMCktL3ciMep5cMr2G/auOcNhNy+5Ei0VTxECEqRXsYvYwFZmuWxX9JJ/LzPsOUhbkI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+Fir/YKNwoXqA8pIFTfDs7Jz60YvsX8WCBrT1NSO2Jo9v14O4
+	5sS7wrxG783XE3yhIJpsWf4MOFOok6c9tDYyCeYaPAS7FT2NrSbC+k1CjH3+Vek=
+X-Google-Smtp-Source: AGHT+IGM57ayVcNIkg/6jNzPlgjqqAGpWcaIJPQpCV0fYV9Ae2IGCnZ+nme2wZAoiNPas+AMtq+mKw==
+X-Received: by 2002:a5d:598c:0:b0:371:8685:84c with SMTP id ffacd0b85a97d-382140394cdmr1793139f8f.15.1731576103705;
+        Thu, 14 Nov 2024 01:21:43 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:a62a:6bba:b737:406e? ([2a01:e0a:982:cbb0:a62a:6bba:b737:406e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821adada24sm936148f8f.40.2024.11.14.01.21.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 01:20:52 -0800 (PST)
-Message-ID: <e11c5f81-cbc8-43a3-b275-7004efdcb358@openvpn.net>
-Date: Thu, 14 Nov 2024 10:21:18 +0100
+        Thu, 14 Nov 2024 01:21:43 -0800 (PST)
+Message-ID: <1764b1b4-336d-4ca5-ab21-8213691a9622@linaro.org>
+Date: Thu, 14 Nov 2024 10:21:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,224 +77,164 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v11 18/23] ovpn: implement peer
- add/get/dump/delete via netlink
-To: Sabrina Dubroca <sd@queasysnail.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
- Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-18-de4698c73a25@openvpn.net> <Zyjk781vOqV4kXhJ@hog>
- <76191b85-6844-4a85-bb9c-ad19aa5110c5@openvpn.net> <ZzTaRNeZjo48ArsR@hog>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <ZzTaRNeZjo48ArsR@hog>
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v6 4/5] pinctrl: meson: Add driver support for Amlogic A4
+ SoCs
+To: Rob Herring <robh@kernel.org>, Xianwei Zhao <xianwei.zhao@amlogic.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241113-a4_pinctrl-v6-0-35ba2401ee35@amlogic.com>
+ <20241113-a4_pinctrl-v6-4-35ba2401ee35@amlogic.com>
+ <20241113180405.GA653353-robh@kernel.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241113180405.GA653353-robh@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 13/11/2024 17:56, Sabrina Dubroca wrote:
-> 2024-11-12, 15:19:50 +0100, Antonio Quartulli wrote:
->> On 04/11/2024 16:14, Sabrina Dubroca wrote:
->>> 2024-10-29, 11:47:31 +0100, Antonio Quartulli wrote:
->>>> +static int ovpn_nl_peer_precheck(struct ovpn_struct *ovpn,
->>>> +				 struct genl_info *info,
->>>> +				 struct nlattr **attrs)
->>>> +{
->>>> +	if (NL_REQ_ATTR_CHECK(info->extack, info->attrs[OVPN_A_PEER], attrs,
->>>> +			      OVPN_A_PEER_ID))
->>>> +		return -EINVAL;
->>>> +
->>>> +	if (attrs[OVPN_A_PEER_REMOTE_IPV4] && attrs[OVPN_A_PEER_REMOTE_IPV6]) {
->>>> +		NL_SET_ERR_MSG_MOD(info->extack,
->>>> +				   "cannot specify both remote IPv4 or IPv6 address");
->>>> +		return -EINVAL;
->>>> +	}
->>>> +
->>>> +	if (!attrs[OVPN_A_PEER_REMOTE_IPV4] &&
->>>> +	    !attrs[OVPN_A_PEER_REMOTE_IPV6] && attrs[OVPN_A_PEER_REMOTE_PORT]) {
->>>> +		NL_SET_ERR_MSG_MOD(info->extack,
->>>> +				   "cannot specify remote port without IP address");
->>>> +		return -EINVAL;
->>>> +	}
->>>> +
->>>> +	if (!attrs[OVPN_A_PEER_REMOTE_IPV4] &&
->>>> +	    attrs[OVPN_A_PEER_LOCAL_IPV4]) {
->>>> +		NL_SET_ERR_MSG_MOD(info->extack,
->>>> +				   "cannot specify local IPv4 address without remote");
->>>> +		return -EINVAL;
->>>> +	}
->>>> +
->>>> +	if (!attrs[OVPN_A_PEER_REMOTE_IPV6] &&
->>>> +	    attrs[OVPN_A_PEER_LOCAL_IPV6]) {
->>>
->>> I think these consistency checks should account for v4mapped
->>> addresses. With remote=v4mapped and local=v6 we'll end up with an
->>> incorrect ipv4 "local" address (taken out of the ipv6 address's first
->>> 4B by ovpn_peer_reset_sockaddr). With remote=ipv6 and local=v4mapped,
->>> we'll pass the last 4B of OVPN_A_PEER_LOCAL_IPV6 to
->>> ovpn_peer_reset_sockaddr and try to read 16B (the full ipv6 address)
->>> out of that.
+On 13/11/2024 19:04, Rob Herring wrote:
+> On Wed, Nov 13, 2024 at 03:29:42PM +0800, Xianwei Zhao wrote:
+>> Add a new pinctrl driver for Amlogic A4 SoCs which share
+>> the same register layout as the previous Amlogic S4.
 >>
->> Right, a v4mapped address would fool this check.
->> How about checking if both or none addresses are v4mapped? This way we
->> should prevent such cases.
-> 
-> I don't know when userspace would use v4mapped addresses, 
-
-It happens when listening on [::] with a v6 socket that has no 
-"IPV6_V6ONLY" set to true (you can check ipv6(7) for more details).
-This socket can receive IPv4 connections, which are implemented using 
-v4mapped addresses. In this case both remote and local are going to be 
-v4mapped.
-However, the sanity check should make sure nobody can inject bogus 
-combinations.
-
-> but treating
-> a v4mapped address as a "proper" ipv4 address should work with the
-> rest of the code, since you already have the conversion in
-> ovpn_nl_attr_local_ip and ovpn_nl_attr_sockaddr_remote. So maybe you
-> could do something like (rough idea and completely untested):
-> 
->      static int get_family(attr_v4, attr_v6)
->      {
->         if (attr_v4)
->             return AF_INET;
->         if (attr_v6) {
->             if (ipv6_addr_v4mapped(attr_v6)
->                 return AF_INET;
->             return AF_INET6;
->         }
->         return AF_UNSPEC;
->      }
-> 
-> 
->      // in _precheck:
->      // keep the   attrs[OVPN_A_PEER_REMOTE_IPV4] && attrs[OVPN_A_PEER_REMOTE_IPV6]  check
->      // maybe add a similar one for   LOCAL_IPV4 && LOCAL_IPV6
-
-the latter is already covered by:
-
-  192         if (!attrs[OVPN_A_PEER_REMOTE_IPV4] &&
-  193             attrs[OVPN_A_PEER_LOCAL_IPV4]) {
-  194                 NL_SET_ERR_MSG_MOD(info->extack,
-  195                                    "cannot specify local IPv4 
-address without remote");
-  196                 return -EINVAL;
-  197         }
-  198
-  199         if (!attrs[OVPN_A_PEER_REMOTE_IPV6] &&
-  200             attrs[OVPN_A_PEER_LOCAL_IPV6]) {
-  201                 NL_SET_ERR_MSG_MOD(info->extack,
-  202                                    "cannot specify local IPV6 
-address without remote");
-  203                 return -EINVAL;
-  204         }
-
-
-> 
->      remote_family = get_family(attrs[OVPN_A_PEER_REMOTE_IPV4], attrs[OVPN_A_PEER_REMOTE_IPV6]);
->      local_family = get_family(attrs[OVPN_A_PEER_LOCAL_IPV4], attrs[OVPN_A_PEER_LOCAL_IPV6]);
->      if (remote_family != local_family) {
->          extack "incompatible address families";
->          return -EINVAL;
->      }
-> 
-> That would mirror the conversion that
-> ovpn_nl_attr_local_ip/ovpn_nl_attr_sockaddr_remote do.
-
-Yeah, pretty much what I was suggested, but in a more explicit manner.
-I like it.
-
-> 
->>>>    int ovpn_nl_peer_get_dumpit(struct sk_buff *skb, struct netlink_callback *cb)
->>>>    {
->>> [...]
->>>> +	} else {
->>>> +		rcu_read_lock();
->>>> +		hash_for_each_rcu(ovpn->peers->by_id, bkt, peer,
->>>> +				  hash_entry_id) {
->>>> +			/* skip already dumped peers that were dumped by
->>>> +			 * previous invocations
->>>> +			 */
->>>> +			if (last_idx > 0) {
->>>> +				last_idx--;
->>>> +				continue;
->>>> +			}
->>>
->>> If a peer that was dumped during a previous invocation is removed in
->>> between, we'll miss one that's still present in the overall dump. I
->>> don't know how much it matters (I guses it depends on how the results
->>> of this dump are used by userspace), so I'll let you decide if this
->>> needs to be fixed immediately or if it can be ignored for now.
+>> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+>> ---
+>>   drivers/pinctrl/meson/Kconfig              |    6 +
+>>   drivers/pinctrl/meson/Makefile             |    1 +
+>>   drivers/pinctrl/meson/pinctrl-amlogic-a4.c | 1324 ++++++++++++++++++++++++++++
+>>   3 files changed, 1331 insertions(+)
 >>
->> True, this is a risk I assumed.
->> Not extremely important if you ask me, but do you have any suggestion how to
->> avoid this in an elegant and lockless way?
+>> diff --git a/drivers/pinctrl/meson/Kconfig b/drivers/pinctrl/meson/Kconfig
+>> index cc397896762c..3e90bb5ec442 100644
+>> --- a/drivers/pinctrl/meson/Kconfig
+>> +++ b/drivers/pinctrl/meson/Kconfig
+>> @@ -67,6 +67,12 @@ config PINCTRL_MESON_S4
+>>   	select PINCTRL_MESON_AXG_PMX
+>>   	default y
+>>   
+>> +config PINCTRL_AMLOGIC_A4
+>> +	tristate "Amlogic A4 SoC pinctrl driver"
+>> +	depends on ARM64
+>> +	select PINCTRL_MESON_AXG_PMX
+>> +	default y
+>> +
+>>   config PINCTRL_AMLOGIC_C3
+>>   	tristate "Amlogic C3 SoC pinctrl driver"
+>>   	depends on ARM64
+>> diff --git a/drivers/pinctrl/meson/Makefile b/drivers/pinctrl/meson/Makefile
+>> index 9e538b9ffb9b..c92a65a83344 100644
+>> --- a/drivers/pinctrl/meson/Makefile
+>> +++ b/drivers/pinctrl/meson/Makefile
+>> @@ -10,5 +10,6 @@ obj-$(CONFIG_PINCTRL_MESON_AXG) += pinctrl-meson-axg.o
+>>   obj-$(CONFIG_PINCTRL_MESON_G12A) += pinctrl-meson-g12a.o
+>>   obj-$(CONFIG_PINCTRL_MESON_A1) += pinctrl-meson-a1.o
+>>   obj-$(CONFIG_PINCTRL_MESON_S4) += pinctrl-meson-s4.o
+>> +obj-$(CONFIG_PINCTRL_AMLOGIC_A4) += pinctrl-amlogic-a4.o
+>>   obj-$(CONFIG_PINCTRL_AMLOGIC_C3) += pinctrl-amlogic-c3.o
+>>   obj-$(CONFIG_PINCTRL_AMLOGIC_T7) += pinctrl-amlogic-t7.o
+>> diff --git a/drivers/pinctrl/meson/pinctrl-amlogic-a4.c b/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
+>> new file mode 100644
+>> index 000000000000..edc5f2ba2c8a
+>> --- /dev/null
+>> +++ b/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
+>> @@ -0,0 +1,1324 @@
+>> +// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
+>> +/*
+>> + * Pin controller and GPIO driver for Amlogic A4 SoC.
+>> + *
+>> + * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
+>> + * Author: Xianwei Zhao <xianwei.zhao@amlogic.com>
+>> + *         Huqiang Qin <huqiang.qin@amlogic.com>
+>> + */
+>> +
+>> +#include "pinctrl-meson.h"
+>> +#include "pinctrl-meson-axg-pmx.h"
+>> +#include <dt-bindings/gpio/amlogic-gpio.h>
+>> +
+>> +/* Standard port */
+>> +
+>> +#define GPIOE_0				0
+>> +#define GPIOE_1				1
+>> +
+>> +#define GPIOD_0				2
+>> +#define GPIOD_1				3
+>> +#define GPIOD_2				4
+>> +#define GPIOD_3				5
+>> +#define GPIOD_4				6
+>> +#define GPIOD_5				7
+>> +#define GPIOD_6				8
+>> +#define GPIOD_7				9
+>> +#define GPIOD_8				10
+>> +#define GPIOD_9				11
+>> +#define GPIOD_10			12
+>> +#define GPIOD_11			13
+>> +#define GPIOD_12			14
+>> +#define GPIOD_13			15
+>> +#define GPIOD_14			16
+>> +#define GPIOD_15			17
 > 
-> No, inconsistent dumps are an old problem with netlink, so I'm just
-> mentioning it as something to be aware of. You can add
-> genl_dump_check_consistent to let userspace know that it may have
-> gotten incorrect information (you'll need to keep a counter and
-> increment it when a peer is added/removed). On a very busy server you
-> may never manage to get a consistent dump, if peers are going up and
-> down very fast.
-> 
-> There's been some progress for dumping netdevices in commit
-> 759ab1edb56c ("net: store netdevs in an xarray"), but that can still
-> return incorrect data.
+> The conversion from bank+index to a single index space seems less than
+> ideal, and looks like a work-around to fit into the existing driver from
+> a brief look at it.
 
-Got it. I'll keep it as it is for now, since this is not critical.
+Not really, it simply adds a custom xlate per SoC, nothing particulary hacky.
 
-Thanks a lot.
-
-Regards,
+I was relunctant at first, but since Xianwei added the plumbing for a per-SoC
+xlate, then it was easy to add 3-cells support.
 
 > 
+> If there's not really banks of GPIOs here, then DT shouldn't have them
+> either. The question is does anything need to know the bank number
+> and/or index? If it's only for human readability (and matching to
+> datasheet), then just something like this can be done:
+> 
+> #define GPIOD(n) (2 + (n))
 
--- 
-Antonio Quartulli
-OpenVPN Inc.
+There's no linear mapping possible, each set of gpios is grouped into logical
+"banks" per group of functions, and this grouping is also in the gpio controller
+register space.
+
+So it makes sense to split this in 2 with banks and offset, it maps the architecture
+of the SoC, and with this scheme we only need to add the bindings for the
+"banks" once since all the SoCs shares the same names.
+
+It simplifies bindings, has minimal cost due to the 3 cells, and only requires slightly
+more larger xlate function per SoC family.
+
+Neil
+
+> 
+> Rob
 
 
