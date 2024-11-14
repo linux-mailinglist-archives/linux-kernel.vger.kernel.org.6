@@ -1,85 +1,60 @@
-Return-Path: <linux-kernel+bounces-409695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F929C902E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:52:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DD4C9C9031
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:52:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D2D2281138
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:51:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27F77281225
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F83117D358;
-	Thu, 14 Nov 2024 16:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XuSh+hJ3"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A319D18756A;
+	Thu, 14 Nov 2024 16:52:47 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4085674E
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 16:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8421E433C4;
+	Thu, 14 Nov 2024 16:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731603116; cv=none; b=gr2apg2qM1cUfV0kjrCsMiEa+6DghWAce9mRgwnkvhcueKTkF6ulps+tPLml12z1aqgfoB37yrA/mPHDDRZAKgBTqbkgi5xY53IPBfNCD2KY3ANGaiM8Ojo1McZ7QjKULgrkSo/nmtgJiC/ZWR5xzNMBJO75KlQxzmf0rk4xBeY=
+	t=1731603167; cv=none; b=G+1lWligXN+vc++/JsEDcrjzmzPVO1FWjF/L+nFklmlUfrtpdLRf0quQEolVVCcUYe3yGbWVrh1lJzRmBAIgy7AhxShMfs2Bfw8fg3HDFmGbbhHwxVqVHwPqjiW+fh5DUXRiWPWecvx1hVkL1bA/zzizI0Xm5vjphW8yQBqaI3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731603116; c=relaxed/simple;
-	bh=NszP7TXqWj2S/e1y5AGoZZXxdUD7VRLHgXHhDIJdk/g=;
+	s=arc-20240116; t=1731603167; c=relaxed/simple;
+	bh=bsuMuwD42+4FRialWnLB2AnsZc+bTh1ZxNGzuNKBLeM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ty914fEV+mTz1MpQVQD6gTuBpMyseyXYL8KISQOL0zCNDBc/X8srL3gO+a5uW/kn7qj6QzUxGreNtC2MhKtSrzD3G0JeynEHXpQqHMBTQOND+PWx7nCcj58sW39xB9tyNdchD20CZX6vW1sbe3Vka8Z9XAvpEEMhVCd0JsKKkzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XuSh+hJ3; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53da5a27771so916639e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:51:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731603112; x=1732207912; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=r4wPxzflWKzXhO1nuki36dNsr0Nxtgqzfwxp448aaNk=;
-        b=XuSh+hJ3BGbYUeccL2/nKRSJ1Adx7uZJDUUGV0wE4hFTIaN/VGzdG2rBxs7i7eNFLd
-         XThv9YlTTgm3NkT4ArrSvMb7hBwy2kctE9X6BxT9bdlGfZkszXYfw7+f/uWVBvpW8Xua
-         BFP/8aDsUpVUpUcdf2t2gxwsp5/QmT4jgOgY8M14eOc65dt8/GfE8mq1JT8XA89+Ravc
-         Rq43UiEB9Ry+UtVw/RQucEkVjplQ133D4tXgRsJ5kH9y9SClTSvSAKj1hq99uS1U+J3O
-         HA/G0lPqTup3wFQxGEXoewfOuciKD941JnJC4hk0VDuC8wkK1m1Sr1HxJQeM+837PnBO
-         6Gtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731603112; x=1732207912;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r4wPxzflWKzXhO1nuki36dNsr0Nxtgqzfwxp448aaNk=;
-        b=Os9d9S0hhNrjmx+pxSEr9bVZjSPXqoPJB2e54nfXhejMdo/dB/OPlCN68yLpSDZmwL
-         BuB9fLA31CbS6/eREf8PkFNgJLIOWQWqM1MuT1tsKYakuGaZ5LlRhLYtnDCayXczVm9Y
-         vUWm7DBE4M+nSAL4iwrumVa9wE/VT5T0j9AGrNNePwijZqhLDSFhneAaIjawMFEIurDt
-         IuLiY1gIo/sfiDdbiqeMFyOavgWTiJjOt8nCGOF5pmdUrinkUPQ5B8aKu31wxgIb0JaS
-         YbeJ5nG5GHJmJnltR/nD2Di06fGBJNMmaM6e5LtMNlJTHuQzlckkhqBfPRACOywbg9Na
-         +4+g==
-X-Gm-Message-State: AOJu0Yx5GY42ZFUuBmXsCtwV9Y6Bs3/+GTHYnBpPwl8JAa5csif4E1G2
-	hZNKsH5Ifit5iQT/mnOjjAcQjKLsAKDEwN55sNjlkYn8GPRC1oN0Sk6CmXxyvgE=
-X-Google-Smtp-Source: AGHT+IEMRk4K0IqzRtS7aXdMxOPTIt1tDe0rMCW0UzLZAOSPvPDT+yjHwx6FIDbxBGBgADbKY/PlSQ==
-X-Received: by 2002:a05:6512:224e:b0:53d:a2e2:5877 with SMTP id 2adb3069b0e04-53da5c28cabmr1499944e87.5.1731603112347;
-        Thu, 14 Nov 2024 08:51:52 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab806e1sm26954855e9.20.2024.11.14.08.51.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 08:51:51 -0800 (PST)
-Date: Thu, 14 Nov 2024 17:51:49 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Chris Down <chris@chrisdown.name>
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Tony Lindgren <tony.lindgren@linux.intel.com>, kernel-team@fb.com
-Subject: Re: [PATCH v6 03/11] printk: console: Implement core per-console
- loglevel infrastructure
-Message-ID: <ZzYqpTwVnB61kXuM@pathway.suse.cz>
-References: <cover.1730133890.git.chris@chrisdown.name>
- <28d8dff56bc15b2a41f0d2035701ccb11df22610.1730133890.git.chris@chrisdown.name>
- <Zy4368zf-sJyyzja@pathway.suse.cz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wig6LNjgVHvMHuV8UbZMo2BNgZRaZMEvcjPZk+HYALHK4WnbJCiRk4EB9Od2AKNhutYlh60Tq/kOnMxcUg4wm+LLYm7tFOMcwF3uwBhzrHXyzCv2mYMbe1sf0mX3Hmod1aQYuohT0Ji8MvaL3q3tAFq7PiwZpoLp6DII3QvZV0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 82F5F100DECB0;
+	Thu, 14 Nov 2024 17:52:40 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 59F652F7900; Thu, 14 Nov 2024 17:52:40 +0100 (CET)
+Date: Thu, 14 Nov 2024 17:52:40 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: "Bowman, Terry" <terry.bowman@amd.com>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, nifan.cxl@gmail.com, ming4.li@intel.com,
+	dave@stgolabs.net, jonathan.cameron@huawei.com,
+	dave.jiang@intel.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, dan.j.williams@intel.com,
+	bhelgaas@google.com, mahesh@linux.ibm.com, ira.weiny@intel.com,
+	oohall@gmail.com, Benjamin.Cheatham@amd.com, rrichter@amd.com,
+	nathan.fontenot@amd.com, Smita.KoralahalliChannabasappa@amd.com
+Subject: Re: [PATCH v3 03/15] cxl/pci: Introduce PCIe helper functions
+ pcie_is_cxl() and pcie_is_cxl_port()
+Message-ID: <ZzYq2GIUoD2kkUyK@wunner.de>
+References: <20241113215429.3177981-1-terry.bowman@amd.com>
+ <20241113215429.3177981-4-terry.bowman@amd.com>
+ <ZzYbHZvU_RFXZuk0@wunner.de>
+ <ffd740e5-235a-4b74-8bf9-91331b619a7f@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,49 +63,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zy4368zf-sJyyzja@pathway.suse.cz>
+In-Reply-To: <ffd740e5-235a-4b74-8bf9-91331b619a7f@amd.com>
 
-On Fri 2024-11-08 17:10:31, Petr Mladek wrote:
-> On Mon 2024-10-28 16:45:37, Chris Down wrote:
-> > Consoles can have vastly different latencies and throughputs. For
-> > example, writing a message to the serial console can take on the order
-> > of tens of milliseconds to get the UART to successfully write a message.
-> > While this might be fine for a single, one-off message, this can cause
-> > significant application-level stalls in situations where the kernel
-> > writes large amounts of information to the console.
+On Thu, Nov 14, 2024 at 10:45:39AM -0600, Bowman, Terry wrote:
+> On 11/14/2024 9:45 AM, Lukas Wunner wrote:
+> > On Wed, Nov 13, 2024 at 03:54:17PM -0600, Terry Bowman wrote:
+> > > --- a/drivers/pci/pci.c
+> > > +++ b/drivers/pci/pci.c
+> > > @@ -5038,6 +5038,20 @@ static u16 cxl_port_dvsec(struct pci_dev *dev)
+> > >  					 PCI_DVSEC_CXL_PORT);
+> > >  }
+> > >  
+> > > +bool pcie_is_cxl_port(struct pci_dev *dev)
+> > > +{
+> > > +	if (!pcie_is_cxl(dev))
+> > > +		return false;
+> > > +
+> > > +	if ((pci_pcie_type(dev) != PCI_EXP_TYPE_ROOT_PORT) &&
+> > > +	    (pci_pcie_type(dev) != PCI_EXP_TYPE_UPSTREAM) &&
+> > > +	    (pci_pcie_type(dev) != PCI_EXP_TYPE_DOWNSTREAM))
+> > > +		return false;
+> > > +
+> > > +	return cxl_port_dvsec(dev);
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(pcie_is_cxl_port);
 > > 
-> > --- a/drivers/tty/sysrq.c
-> > +++ b/drivers/tty/sysrq.c
-> > @@ -101,11 +102,25 @@ __setup("sysrq_always_enabled", sysrq_always_enabled_setup);
-> >  static void sysrq_handle_loglevel(u8 key)
-> >  {
-> >  	u8 loglevel = key - '0';
-> > +	int cookie;
-> > +	int warned = 0;
-> > +	struct console *con;
-> >  
-> >  	console_loglevel = CONSOLE_LOGLEVEL_DEFAULT;
-> >  	pr_info("Loglevel set to %u\n", loglevel);
-> >  	console_loglevel = loglevel;
-> > +
-> > +	cookie = console_srcu_read_lock();
-> > +	for_each_console_srcu(con) {
-> > +		if (!warned && per_console_loglevel_is_set(con)) {
-> > +			warned = 1;
-> > +			pr_warn("Overriding per-console loglevel from sysrq\n");
-
-It just came to my mind. We could use pr_warn_once() and get rid
-of the @warned variable. It is slightly less optimal. But this
-is a slow path and the code would be easier.
-
-> > +		}
-> > +		WRITE_ONCE(con->level, -1);
-> > +	}
-> > +	console_srcu_read_unlock(cookie);
-> >  }
-> > +
+> > The "!pcie_is_cxl(dev)" check at the top of the function is identical
+> > to the return value "cxl_port_dvsec(dev)".  This looks redundant.
+> > However one cannot call pci_pcie_type() without first checking
+> > pci_is_pcie().  So I'm wondering if the "!pcie_is_cxl(dev)" check
+> > is actually erroneous and supposed to be "!pci_is_pcie(dev)"?
+> > That would make more sense to me.
 > 
+> I see pcie_is_cxl(dev) is different than cxl_port_dvsec(dev).
+> They check different DVSECs.
 
-Best Regards,
-Petr
+Ah, sorry, I missed that.
+
+> CXL flexbus DVSEC presence is cached in pci_dev::is_cxl and returned by
+> pcie_is_cxl(). This is used for indicating CXL device.
+> 
+> cxl_port_dvsec(dev) returns boolean based on presence of CXL port DVSEC to 
+> indicate a CXL port device.
+> 
+> I don't believe they are redundant if you consider you can have a CXL
+> device that 
+> is not a CXL port device.
+
+Can you have a CXL port that is not a CXL device?
+
+If not, it would seem to me that checking for Flexbus DVSEC presence
+*is* redundant.  Or do you anticipate broken devices which lack the
+Flexbus DVSEC and that you explicitly want to exclude?
+
+Thanks,
+
+Lukas
 
