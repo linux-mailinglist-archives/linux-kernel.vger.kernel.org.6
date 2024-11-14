@@ -1,111 +1,144 @@
-Return-Path: <linux-kernel+bounces-408856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA25F9C845D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:55:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7197A9C8475
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:01:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EB4C2837D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:55:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB1B3B2665E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D26E1F583F;
-	Thu, 14 Nov 2024 07:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6631F6663;
+	Thu, 14 Nov 2024 08:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m2bM8jB4"
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I8iepwEM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246621CAAC;
-	Thu, 14 Nov 2024 07:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0746B1EBFF2;
+	Thu, 14 Nov 2024 08:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731570945; cv=none; b=Eqcfz3l/qX9aIuoLkZsuLHEm+voomJQlmpOtBuA+1PI0H4KUhR00Kxiy+4THG+eSEsPnWlLBeHCyWjh3zQTZ/7QbZ27K1Oi1sWOL1ilX/5fD2IC6co6S5H60sGL9U4lnez5EroN4bW7MxipFTVUZ+Jnb5JxF20i8hoaqtSZa/no=
+	t=1731571282; cv=none; b=q8n1Hn3EXYe55cjXPJI8Ao2JDqFf3ur1oM6T8DmLg0PP4+VGrtD5fHMbe97oHmApXM6IPPJ1Ub5e0FkU8ctSPFlpODJDH2OoWm/VCWZ/SmelZkeeOzx+2n3sP5gLVPatM5FsCYOkWaEwCl+wBNpyhPjkCPcbUbv8zEgPD4A2+S8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731570945; c=relaxed/simple;
-	bh=KIYoFbDin3lcVwyLqDPbArwgFa9vOBowKdR5I0YRv3g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SKZfagBqWNVtBQNzCjljfvBsR7F4E25BTO/SlX3alzWk5SgHHOdAzEHwZc0OCut8Z6Px2Vn4ntRH8KgTRGdKZT/E5gaM4OHE8ypU8fcLVXGihiqRMRtzkfa7pXdCOm1A8IiLuL6TpNTelzOIqGCtph+9lndhnn4hfqtE+Pepckw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m2bM8jB4; arc=none smtp.client-ip=209.85.222.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-856cd075b3aso160597241.0;
-        Wed, 13 Nov 2024 23:55:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731570943; x=1732175743; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KIYoFbDin3lcVwyLqDPbArwgFa9vOBowKdR5I0YRv3g=;
-        b=m2bM8jB4NS4mOP/A5ScnAGSOo+mqinGQwEcvXoabXViSsaGOdnsl076bC3aZzgJE5N
-         JtfsWHB1lKd8GSXr3y3ewlRBgoOmVCfJKl+LoajwRtvRqaD65LUAMvwaSP4+370tOrHq
-         flofZyWxyWTDZ1eV+KC8xQ5dlWZ+zuNVM4CLId6E4THfnTBfJSUdUeN3tn4z16vTWiD+
-         ik5XCSbcdV5fA3E/+vIhZZ+M4OGuyDdY4qVHT6Az0FbjRCz4A4XZfu5dA6dUwzWwBzh/
-         Sr2M0+e/gHUZ4Q3ahA5OK9p6CGcc5kTNDgG0NuPsfoYYZPd+kYhAVdCZRBYs3L9lDpL5
-         gzeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731570943; x=1732175743;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KIYoFbDin3lcVwyLqDPbArwgFa9vOBowKdR5I0YRv3g=;
-        b=KzXLXV+YlT7kViUW0sae8Z06i3UX2DDEp8UQujAc6MPw5Mko/7UYooj2g3kyeaL0Bj
-         I2+Jygz+HcMTm7kD6uJsRm7mLyjD44ykAFLIuErqzAVrVB0lz1GrexyAai3ul9tzyT3G
-         zjhhbfGmRv8EqKtUejTTN2rol28qZLjbafQsaIzlEoVd3COXkyxOtSWy48EqRMKp4uNR
-         6UnC/3IZD7WyZPTsrujZ94TdrJuwzc8dRCibvbKz+DU+xChyzOvtLMCrAAA0qMRFz2VA
-         goLiIgw/Ua9v9ENGS4olA5aFw7E9PS7hat2eYCP1Xzq5LDrUyHpTR6Ue8cAWFJu/rt1r
-         8ENA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMy2BMXaM+9G2I2p6ueg5bylg+IE8/9lr1zITBH0o7o25oujni6A8nUOvRI5dpzDO0Fmb3CokoPZU=@vger.kernel.org, AJvYcCX7+b3xFT7EW1VSgWCmKYyNR+e5EQiiga6GzyU883daE5Ys1kKIuHyJI+BWNOXpaMYIugvJ3f/yYq8I8TOZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywh8TEkhJBhXebkH/XTr8yJtnB8HBvLWpn8VSmN71jUraXYyraB
-	kNbKshYfnydyBg8E6JdHzMr98TdF94IuMnMc/V3UmBvmzH9JSN8wEOxoIPgon1pUjkET8Q9YQky
-	zDOq7iJGin/Yo67eKcCvA+ZExFmo=
-X-Google-Smtp-Source: AGHT+IHeZimHONI8F5rMiQ6QwqJiUgYh9DKo8BSaqPnO7gDfdQOdApPukZRFOjdYUp6VoHapqHsR7oQv7EKAfFqlLkA=
-X-Received: by 2002:a67:eb96:0:b0:4ad:48cf:c855 with SMTP id
- ada2fe7eead31-4ad48cfd251mr4937798137.15.1731570942930; Wed, 13 Nov 2024
- 23:55:42 -0800 (PST)
+	s=arc-20240116; t=1731571282; c=relaxed/simple;
+	bh=9rI4sdRn+Ppp70uZBrM1rPa1ZmMTrZpqNCDttih3ltY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g7vSIxl6jzHFJR7t9EBydPjGYbcp4w0/DR7DHfkppRtn5qGiva5/AnRZK8y0JNwwicHWuuEhA1ojNR2uR1ccVZ6MI6ugf4LwXbnFQHT19nA5/ZQgo5DKZQnYj3FANJNhXdFPBkUOW9rIlZgS6cP5BGHwodUMrViIvXMRmebs2ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I8iepwEM; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731571282; x=1763107282;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9rI4sdRn+Ppp70uZBrM1rPa1ZmMTrZpqNCDttih3ltY=;
+  b=I8iepwEMyBES4ssTYI8bvhZDHZcQcp3rIIp/c5D1VUgWtvrjhnzIbvYh
+   4Dv6k9raIHeTN82Bt/tQHYL/suWBDFIq9XdD7Q9/ExGeEenrILrfBYFo3
+   iCuHErs/hPB175sg2HlC5MoNQZSLt+y/EXd/pDZVPLWR3rvkfIgGXmzyq
+   l7Te3N9BfktFrNtdMXDcyiebKGBnP9uRJvVziRw0nMM0bomtkZn7GMIE7
+   EpVlJ3+MIaddrdLzttsr624jBSNE5QWvLOzbIaV6O5ghsrpHIyhM6Shc9
+   Z6nqtSJVVDohStx3cUzIYYulZOvs3QM+hhrpvOhe/XXSiKye4rc6KZT07
+   g==;
+X-CSE-ConnectionGUID: bVmjvFdISHGTpWYrJow5Fg==
+X-CSE-MsgGUID: DIo60f5eQFauMXfRt2Oh9A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="54035678"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="54035678"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 00:01:17 -0800
+X-CSE-ConnectionGUID: QfC/dlgRTdSOre6kYgo2gQ==
+X-CSE-MsgGUID: t/azFh5WTbWggIEy4Yu3wA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
+   d="scan'208";a="92176869"
+Received: from beginmax-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.24])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 00:01:15 -0800
+Date: Thu, 14 Nov 2024 00:01:16 -0800
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>, Amit Shah <amit@kernel.org>,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+	linux-doc@vger.kernel.org, amit.shah@amd.com,
+	thomas.lendacky@amd.com, bp@alien8.de, tglx@linutronix.de,
+	peterz@infradead.org, corbet@lwn.net, mingo@redhat.com,
+	dave.hansen@linux.intel.com, hpa@zytor.com, seanjc@google.com,
+	pbonzini@redhat.com, daniel.sneddon@linux.intel.com,
+	kai.huang@intel.com, sandipan.das@amd.com,
+	boris.ostrovsky@oracle.com, Babu.Moger@amd.com,
+	david.kaplan@amd.com, dwmw@amazon.co.uk
+Subject: Re: [RFC PATCH v2 1/3] x86: cpu/bugs: update SpectreRSB comments for
+ AMD
+Message-ID: <20241114075403.7wxou7g5udaljprv@desk>
+References: <20241111163913.36139-1-amit@kernel.org>
+ <20241111163913.36139-2-amit@kernel.org>
+ <20241111193304.fjysuttl6lypb6ng@jpoimboe>
+ <564a19e6-963d-4cd5-9144-2323bdb4f4e8@citrix.com>
+ <20241112014644.3p2a6te3sbh5x55c@jpoimboe>
+ <20241112214241.fzqq6sqszqd454ei@desk>
+ <20241113202105.py5imjdy7pctccqi@jpoimboe>
+ <20241114015505.6kghgq33i4m6jrm4@desk>
+ <20241114023141.n4n3zl7622gzsf75@jpoimboe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZzH-KeSavsPkldLU@smile.fi.intel.com> <20241111140231.15198-1-aladyshev22@gmail.com>
- <fnjhtnnwuktkqj7ck7psc3e7potptogz2ioxw2lghkncd2ct7k@pmrk7angjkwd>
-In-Reply-To: <fnjhtnnwuktkqj7ck7psc3e7potptogz2ioxw2lghkncd2ct7k@pmrk7angjkwd>
-From: Konstantin Aladyshev <aladyshev22@gmail.com>
-Date: Thu, 14 Nov 2024 11:01:02 +0300
-Message-ID: <CACSj6VVp14RJ2WTvB93SbwC0Lh7x2DiQpjf18VrVNCpXTU5s_A@mail.gmail.com>
-Subject: Re: [PATCH v2] docs: i2c: piix4: Add ACPI section
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: andriy.shevchenko@linux.intel.com, Jean Delvare <jdelvare@suse.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241114023141.n4n3zl7622gzsf75@jpoimboe>
 
-Hi Andi!
+On Wed, Nov 13, 2024 at 06:31:41PM -0800, Josh Poimboeuf wrote:
+> On Wed, Nov 13, 2024 at 05:55:05PM -0800, Pawan Gupta wrote:
+> > > > user->user SpectreRSB is also mitigated by IBPB, so RSB filling is
+> > > > unnecessary when IBPB is issued. Also, when an appication does not opted-in
+> > > > for IBPB at context switch, spectre-v2 for that app is not mitigated,
+> > > > filling RSB is only a half measure in that case.
+> > > > 
+> > > > Is RSB filling really serving any purpose for userspace?
+> > > 
+> > > Indeed...
+> > > 
+> > > If we don't need to flush RSB for user->user, we'd only need to worry
+> > > about protecting the kernel.  Something like so?
+> > > 
+> > >   - eIBRS+!PBRSB:	no flush
+> > >   - eIBRS+PBRSB:	lite flush
+> > 
+> > Yes for VMexit, but not at kernel entry. PBRSB requires an unbalanced RET,
+> > and it is only a problem until the first retired CALL. At VMexit we do have
+> > unbalanced RET but not at kernel entry.
+> > 
+> > >   - everything else:	full flush
+> > 
+> > > i.e., same logic as spectre_v2_determine_rsb_fill_type_at_vmexit(), but
+> > > also for context switches.
+> > 
+> > Yes, assuming you mean user->kernel switch, and not process context switch.
+> 
+> Actually I did mean context switch.  AFAIK we don't need to flush RSB at
+> kernel entry.
+> 
+> If user->user RSB is already mitigated by IBPB, then at context switch
+> we only have to worry about user->kernel.  e.g., if 'next' has more (in
+> kernel) RETs then 'prev' had (in kernel) CALLs, the user could trigger
+> RSB underflow or corruption inside the kernel after the context switch.
 
-Sorry, I just didn't have time to fix it yesterday. Of course I don't
-mind your changes. Thanks for the help!
+Yes, this condition can cause RSB underflow, but that is not enough. More
+importantly an attacker also needs to control the target of RET.
 
-Best regards,
-Konstantin Aladyshev
+> Doesn't eIBRS already protect against that?
 
-On Thu, Nov 14, 2024 at 1:50=E2=80=AFAM Andi Shyti <andi.shyti@kernel.org> =
-wrote:
->
-> Hi Konstantin,
->
-> On Mon, Nov 11, 2024 at 05:02:31PM +0300, Konstantin Aladyshev wrote:
-> > Provide information how to reference I2C busses created by the PIIX4
-> > chip driver from the ACPI code.
-> >
-> > Signed-off-by: Konstantin Aladyshev <aladyshev22@gmail.com>
->
-> I merged the patch into i2c/i2c-host with the changes I
-> suggested and I also wrapped the lines to 80 characters to keep a
-> uniform style throughout the doc file.
->
-> Andi
+Yes, eIBRS does protect against that, because the alternate predictor (TA)
+is isolated by eIBRS from user influence.
+
+> For PBRSB, I guess we don't need to worry about that since there would
+> be at least one kernel CALL before context switch.
+
+Right. So the case where we need RSB filling at context switch is
+retpoline+CDT mitigation.
 
