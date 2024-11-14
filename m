@@ -1,116 +1,117 @@
-Return-Path: <linux-kernel+bounces-409743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBC689C90FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:42:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59F1F9C9147
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:02:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6866B2DB9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:26:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D23E8B3314E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3559F189F2A;
-	Thu, 14 Nov 2024 17:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HrVSuCId"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E1C17A583;
+	Thu, 14 Nov 2024 17:36:21 +0000 (UTC)
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971B6262A3
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 17:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E0B17557C;
+	Thu, 14 Nov 2024 17:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731605183; cv=none; b=mGJHPI5YPXD+TJEb3DlCfqyoR1W3WwmVl+NJiOVHV7ksgP1cWfSg/z8Kqo9SM+jAOCwiCuzUllRGQRwb+jig7EcARcGav03NPx23M+1vr/JETFqpBh7mq8SjnsAvKnk5I0GyqANKg7TZpXPs1kmhB+BSxjCKT1GuPE8HhLEblHw=
+	t=1731605781; cv=none; b=HIOjHLwjN15Y9L9cyNK8BGuaVqaYMkv63DwS/b7Xemdr305nsC9XXX8oOT8UWgM4zY0378IvnJFFWsyd/uKYSI2Ry8VRiM6DOEVIl7JWTMpD+KIxW311vI5wAYqs37r7U1MRlNvQN8Jfgmj/mhluNdazQJI/4GB4elQSFOwLZTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731605183; c=relaxed/simple;
-	bh=5hGCd31SN5Qi9dUD4wIjwIZmmp0Tgn2wooM79cTvkkE=;
+	s=arc-20240116; t=1731605781; c=relaxed/simple;
+	bh=lmsX52l/1IXL6pVGf4OXq5b7cQpR1LL56F3YaTmwRUg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CrNqwy6sEr4MDzDCC/FKBPqSPQDRknAmT13inQM6k6pQ0J+QBosDSRAy4Q8dsUd6r6Pr4xhhbPL/Sn7sc7ozfIljorClIlcuxqZ7yighU5I76KlWPhZpcLDzUJG2d7t7NjxLtHxEuwEeSH7zFIcuc8jA3IB7pWaX6S2H2UM1gHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HrVSuCId; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A43D6C4CECD;
-	Thu, 14 Nov 2024 17:26:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731605183;
-	bh=5hGCd31SN5Qi9dUD4wIjwIZmmp0Tgn2wooM79cTvkkE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HrVSuCIdoc2bqcq85EJcvcGlN5X7lugCIb0IjxcSyO81aVK7jdUU40jHs7kQGsrMB
-	 Fdkv+S1UcG8Iqs2Ut4uvlq+/7zwiMhr+YhoW8muameFzVwKTgWAV4S/PGpiZDERLBw
-	 g5E4aMfeRMBd/Q17eP2CyNdiOQRU4wZjbVtS9QXJzaepLGgbWIvkC3xWbBaMJ4Axnc
-	 DdIau+To5rCntmO5vtM+23MASpnMwjpW1M04Ov9hy7MD290z23jGgW8Q4sUj/6MM1e
-	 2zZpVr3NEkdLkkCpssXaqUU3qSvDlCB+dGTvtJAuKmoAeD5x2C9ZIxoIpDw1IL/Y8T
-	 2VDWvXTaiDLtw==
-Date: Thu, 14 Nov 2024 17:26:19 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Frank Li <Frank.Li@nxp.com>
-Subject: Re: regmap I3C support
-Message-ID: <ZzYyu4ptPtYT6vJC@finisterre.sirena.org.uk>
-References: <67d549d0-64c6-4d62-add6-0958ef24910f@roeck-us.net>
- <ZzSxKctLlLZexdF5@finisterre.sirena.org.uk>
- <feda265f-f7ba-4017-a08d-b35916aafe96@roeck-us.net>
- <ZzS6ph8KulEITt5C@finisterre.sirena.org.uk>
- <88f34137-b215-4bee-b117-3ff00402ba6c@roeck-us.net>
- <ZzXfmonkRB-KaBhi@finisterre.sirena.org.uk>
- <85584c2e-2c45-4ec4-89a0-111fa5ad1080@roeck-us.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LX2oqUQn3O/TZcRzSxCieA9h8lrUnZTPYdrKAFpfUCav8Ttq337gOLI65fmnhjASDIsm2VFOJubpC0kZOjtwzaA1gXECBrC5TmByetyPCQKkcFB5WoddyUkfRxEOYhTilGuAWaPCyuUNMEPCirJP5WvrWgDSMayjrNpvY1zpcdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20c9978a221so10667245ad.1;
+        Thu, 14 Nov 2024 09:36:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731605779; x=1732210579;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1kROUsWvWvV36Fo4a1GNoVZXpL3CbrLmIcvXu4sqcNw=;
+        b=f6Iy0GbWUcZsSv8uxxU/Iov/VYAbSulK5eRvEMme4bj4pI+BBLnM/TXr2sM4FL+dqT
+         ky9Ow7YVSpaDMMNa40qqXmeRmPooMGB9upCBfQxFXx6tsb+Z49xWe3NMs3xbu2N9cuxG
+         yAB7uwujmGwnXfFsQkafpM9imohJRPgi0ZXXypisW08ozErfDqHoCWg0vbQk7ALx6lBh
+         pncHQ32J7ZUUeJRezUT7gtc2SFz0BU/Q9YAjBbiQyE6sYpsqZrjbjOCya77FF9BPcy/G
+         nnAr94V8ZFte+1WuDqJxhiozuik90NHRLdghRpSFsn92ghvHfs+27+ie5rxY/oaO46PP
+         z6AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjQL/QmekrwMb9oS2VQPHsaItsw5H97xIODd54AII60IgXWSwXSJ1ECNPsk8T2bU4lGX8CXxebzfg=@vger.kernel.org, AJvYcCXZ0uAVZ4LJwVKl2VOImsIH3d6OjgB8f5iP+0zyoj93/d8/UVh1RRQmXViQKEvuhrrn3OfMDyDyW5p5@vger.kernel.org, AJvYcCXoT69FnSQ9hSeDTqGW2XGCCt8d8k7vqSly6ifQiGjOcDgurWw9ccSgAsI8oaNcClpgxm4iHqivlrqT3wI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxiw5qVfKRgo4YtLPyCcFyGpoZ6MBNswuwXQHBJQDh3ETrQrtBi
+	nnS7n8XJGQI/Ro2Hwfq6c6LPEkQODpUIr/9brSs0cLDzNcpLClTW
+X-Google-Smtp-Source: AGHT+IGjSKX8cn5jJR3CqDGzczAzuH5z+anCuroYAbhOAQpGkEuGTNFls7mnC61Ygcn+ZFL/FmnIvw==
+X-Received: by 2002:a17:902:f541:b0:20c:d072:c899 with SMTP id d9443c01a7336-21183cea4b2mr341784765ad.24.1731605779115;
+        Thu, 14 Nov 2024 09:36:19 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211c7d1ac30sm13218615ad.213.2024.11.14.09.36.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 09:36:18 -0800 (PST)
+Date: Fri, 15 Nov 2024 02:36:17 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	"Maciej W . Rozycki" <macro@orcam.me.uk>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+	Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
+	linux-kernel@vger.kernel.org,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Amit Pundir <amit.pundir@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Caleb Connolly <caleb.connolly@linaro.org>
+Subject: Re: [PATCH v9 0/9] PCI: Add PCIe bandwidth controller
+Message-ID: <20241114173617.GC1489806@rocinante>
+References: <20241023221904.GA941054@bhelgaas>
+ <20241113214850.GA1912974@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9vTZSd0LYpocvE/C"
-Content-Disposition: inline
-In-Reply-To: <85584c2e-2c45-4ec4-89a0-111fa5ad1080@roeck-us.net>
-X-Cookie: Editing is a rewording activity.
-
-
---9vTZSd0LYpocvE/C
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241113214850.GA1912974@bhelgaas>
 
-On Thu, Nov 14, 2024 at 06:45:52AM -0800, Guenter Roeck wrote:
+Hello,
 
-> We now use
+[...]
+> How attached are we to "bwctrl" and "pwrctl" as the names?
+> 
+> I just noticed that we have "ctrl" for bandwidth control but "ctl" for
+> power control, which is slightly annoying to keep straight.
+> 
+> "ctrl" is more common in the tree:
+> 
+>   $ find -name \*ctrl\*[ch] | wc -l
+>   691
+>   $ find -name \*ctl\*[ch] | wc -l
+>   291
+> 
+> so I would prefer that, although "pwrctl" is already in the tree (as
+> of v6.11), so it would be more disruptive to change it than to rename
+> "bwctrl".
 
-> config SENSORS_TMP108
->         tristate "Texas Instruments TMP108"
->         depends on I2C
->         depends on I3C || !I3C
->         select REGMAP_I2C
->         select REGMAP_I3C if I3C
+If I may, I would also lean towards the "pwrctrl" name.  The "ctl" suffix
+makes me think of a command-line utility, a CLI, so to speak, where such
+suffix is commonly used e.g., sysctl, etcdctl, kubectl; also, all the
+systemd binaries, etc.
 
-> and in the i3c_probe function
-
-> #ifdef CONFIG_REGMAP_I3C
->         regmap = devm_regmap_init_i3c(i3cdev, &tmp108_regmap_config);
-> #else
->         regmap = ERR_PTR(-ENODEV);
-> #endif
->         if (IS_ERR(regmap))
-
-> Clumsy, and not my preferred solution, but it works.
-
-Right, so the fact that I3C depends on I2C deals with a lot of the
-problems that plague the I2C/SPI combination.  Ugh.  I guess the helper
-should be OK and there's not much doing for I2C/SPI.
-
---9vTZSd0LYpocvE/C
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmc2MrsACgkQJNaLcl1U
-h9CRFgf/TnpLYBtfHxPthpqAfQNa9j9PgYni+zZZWgwi128PbH0D9yuc4qzm6kwZ
-ClKFNu9VPrNS/4RCQsks6C3XA1Qxb+J1XtLlAMUoIf8qVFt2xjA/Y3MsIyCGHoJk
-lExUpeq3SvFW2h/MZhQYbotxcZEvdzn84QlcGpcUO9fxuMtwDoP0qu30LYNvMEUz
-GHX8s7TwshjfGCAp1K5ugl9mB1yYmhhgrdK+cl5E68z3wkMWG8hfNAofVh7nYQ2T
-nqbsby/RvUyGnYRXsnZ/24gtqy/JxD8FQaJIkNOnOUeyUIot4CWkwOt4n4GSTXFU
-AonmcGm5m4Z1rlfafKAxjw4wHC14zQ==
-=3uu4
------END PGP SIGNATURE-----
-
---9vTZSd0LYpocvE/C--
+	Krzysztof
 
