@@ -1,126 +1,163 @@
-Return-Path: <linux-kernel+bounces-409902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EFF89C9313
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:16:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C3409C9317
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:17:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9A1C1F23AAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:16:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1AA5283D60
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936191AAE0B;
-	Thu, 14 Nov 2024 20:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 619451AB503;
+	Thu, 14 Nov 2024 20:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AhzaGdXD"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U6etKnJ8"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5EC148827;
-	Thu, 14 Nov 2024 20:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4747F1AA7B4;
+	Thu, 14 Nov 2024 20:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731615376; cv=none; b=O/Ldw97rCQE4fhDx/9PETp2aftZ+M2BF6FUQgSvmGQg4vZBcLzLW3RcQNJBg9BsLMuLGkuNa4tK2Kq48SgMQrrudw6fcnz+sBLVjtj9WnfKr7WhW0Hv1ZUZ6jR2Rt9rvDybk+Hbl8CawvZStpVfPwrq4x/T+9RvzwrOWDUI0/Fc=
+	t=1731615421; cv=none; b=rQuidoM2RbAWztmVTNwqCshbG8mrJ4Kyfe7ulPAjkbjRTLvPks8jwMsVEGmgCRPbfLBeeCqBCaYp1HI3S0ktPQGw8doYrJexC/cqAhNotb+Uvop71xBs3lZYj+CIp9s2/PGbM5MRzcTulHyMQb11TV0KxX/xJM+2eoDIJ3gksNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731615376; c=relaxed/simple;
-	bh=qezj+4iRFTa5uw7ZJVpA+h8jatTkWdVZnDzucmXJiD0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=elgHBlZ2g/Foijf/nuuWNyKTzP84WPSPaBZwadsAiawKCaBq9CGdqKYoihxU2xvDN2amaPHLSoVj2YxNw/+HN5bHH8YwG2LvY9qeeJFyMPnDuq8nuN0xB0SxtK7LWak5cvsyN1CxUO45PfdSdtMdCPAqd9aBIcQ++ZhMFuyzF2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AhzaGdXD; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1731615421; c=relaxed/simple;
+	bh=m/RBqIj+4nCPjcKplLus7PXg59Oic1Jtd9R9rlN3rRs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QEqunwYaxUlA7k6SVot46wlyTu0QV3Rdp8QtrpK2rnPULpKkfRxBEpIAA8dMfb89KTbzk60pj4lZEtqE+w2DHvxlcjlbGuakK3ydRfkWxKBSdXNwngQPuHKTzUrQxOh1QUsfeKMsHYCJaN21cv5DDiLFC7pCk99F5r8/6E5eoTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U6etKnJ8; arc=none smtp.client-ip=209.85.128.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43162cf1eaaso11925925e9.0;
-        Thu, 14 Nov 2024 12:16:14 -0800 (PST)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6ee4beee4d1so7713497b3.2;
+        Thu, 14 Nov 2024 12:17:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731615373; x=1732220173; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VF8vYJ/nyoA/hRfc/5vPhgLG0Ij1q7aNxIm6EqBVvgs=;
-        b=AhzaGdXDpOsMd9tNJe8SLOPKlL9I9zBGhMUzp6bgUTXPrVqMxZGvclmIxpk3LZ860m
-         kSQtp8zTdujnPgIQyZqDntNlSSDdowqdmWmhOQ2DvtqVRDuRvZIPkDG6FKnD6JiyRUud
-         zeuQMnkxhD68TZ5CKcYmxcxz38U6wk0ZXITzDUPTOJ8KZgpQaQUeTy1rhe3Bzazl6s66
-         xEB373DsfPfIXkd9rvEq0kWEyT+uBHsk2sB0AWkGJnSRJ8Y9SzlsfMSbs6t/T0JtMMFz
-         5X9XEC2BV8XfhAbM5kx7f2LTYYs9aYwmmMaihkNjHd4xfwvF4cbBRDGtUbu+d35huxwb
-         MiIA==
+        d=gmail.com; s=20230601; t=1731615419; x=1732220219; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HSIgain3dy+QHcg+dbjr1CfDn9sK0gKN6LW/FDcze7o=;
+        b=U6etKnJ8YW3CpY0Wn/oWqyRjmJ2r5eO32NiLaI7u3NOaNTGBZW8Vw9UttLZtkSvqCW
+         mpfDp/CM2/uJ/VIgHf1ks2A313wUWuslfjgYBAnWVcaDKcZ3W0EZuczsADAvC7qGsbyT
+         kr1HjJ54533S5dkWbkf3hdMt8Do8Ui1OlOnhuAhQT+ztV9dPcRhVwdlDxm2CR8W3+Pw1
+         ZkDXQjK6Nog04B+R9kr5G44sfqho9Z+757EU9cJ+wrEMtWydZNEwzS9HT7Wcap94yevV
+         xFilf3yU0AqxPKbNRECYHNx5gusnWb2J4+P3npR8wrwZ9hX15J21PBQK0HzgV7+72Svt
+         QKjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731615373; x=1732220173;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VF8vYJ/nyoA/hRfc/5vPhgLG0Ij1q7aNxIm6EqBVvgs=;
-        b=tVmh+jlz9d62oXAbpJohjY+CxET627cS2Aap6TZtrbEVmzN6IOxlXp85efHZPxN+xN
-         oeYAqXQH8IJea7l16hC5z9aKg8fYA8zFEOSeHTNRaR54e8vZ3RYgsCCi46GLg35LjC/L
-         QHvYJih0Ib1kd9Tj75o691tG9+WLhFOr4wrWFIhpYrtngtdwFytt4KoLQfbrb9WzQqw1
-         In8duGxBS6yiqWwbpHMTnjzBHhnf6ZjMgICo1vC92B54xC3LsubjdoCApZdz/UqZbLyQ
-         tRk65evKYQi2SZJpU2JunVQBvmnFePWA2PfUaOa89z3qxz0vE1nP+80mK6b9ne1DwggX
-         LhZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUY/JHC7OrLmS08YAi5n87ltBztPWn4o+PBJcSNumCCYwKKlLF2xpNujegZDQBLYugfDqgdNsl3@vger.kernel.org, AJvYcCWNldl2TXP2HEcVkPISXeB378bvAXqTy1VQslYG2MOARN0ogRv+07MchJ7IoR0bujxx3V0pFIqaHQ57XiY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbZgxucKkJr1H/O3aJjJ7pJINK4+QeF15tbNPbKDiU9RQDZG20
-	R2dxSsNvLqX7LkXiOyS2SVMn3gEJ5XvQA5944TlfrcCA03kTtlUHoWYij6Ao
-X-Google-Smtp-Source: AGHT+IFfrFebZdXPIuwVPcS63wedzxK/tK2B+2J+cZeEizh6Hpb8NbPH3BGx2/JDucWDdutCcki2mw==
-X-Received: by 2002:a5d:584f:0:b0:381:f5a7:9a56 with SMTP id ffacd0b85a97d-38225a21bcbmr99296f8f.10.1731615372400;
-        Thu, 14 Nov 2024 12:16:12 -0800 (PST)
-Received: from [192.168.0.2] ([69.6.8.124])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ae160f2sm2424016f8f.75.2024.11.14.12.16.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 12:16:12 -0800 (PST)
-Message-ID: <60875bc8-bc45-4168-8568-38ec73499d1b@gmail.com>
-Date: Thu, 14 Nov 2024 22:16:44 +0200
+        d=1e100.net; s=20230601; t=1731615419; x=1732220219;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HSIgain3dy+QHcg+dbjr1CfDn9sK0gKN6LW/FDcze7o=;
+        b=wGA/D7k1AoT9qLpzPrrJfxpBbfH0R6WJgCcIn9T89DTYUQDktQyuaWH+bSxl5WpEKY
+         QmDYigoLREx/J6JAcUge29occNSTFDzChrlHmEc1DhJoQMJ/D/MR0b5SshJselpOqGEy
+         tLoT4x3C6//epQ68z/kKhqc73+eZIYQgotBBlu/AKAxR4krIx8cfdgYnc3+5xK1yWaSb
+         GXZS3SxqXw3M0ZxAxoFczErI2lU7YyFhBR5OJP6Uqhp+usdyNEd0RP0xmT2vu27uN8ce
+         MB+eb+z4jmRH6uIsEqwWrQb+M4O/th6IbcKCT6peGOvNXsioPM2gal4AuLsZqlNqX2LS
+         11Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZwiWjRwVIKailXIyIMwA7kfr9qs1ErsoHraOggQGcDM2V5Rbkw4SANFYKXqQReY9PsNkBE1Holybuxls=@vger.kernel.org, AJvYcCWtiHH/akxNLsi82S88TqNFKwDyqzX5PqZU9x0rD6DCFXoUnruitjqZG1oe7Y6Lqoj/m6gwXuy8QYcqVCc/szJScA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YykvrONxiDLxZfoao9el5uMoeVs31UkoK8opv37XJO0nRZoowjn
+	mvnFC7Je54oc9KsdRg8/IsLld3IAlg3cuISs7yuSL9odavOpftZp2E573IZRIeSXwliRfsTDqzE
+	Km3pEmR7OOZKA2A5SkbeIcnI964k=
+X-Google-Smtp-Source: AGHT+IEelXxhJhr5P3Nxmm/DhkplTdE9CkTwp1xoRFlAsaDRDBaEJA+XrVSBQYL/YiXTA7gNxNObyvM3KuqFxelAyCs=
+X-Received: by 2002:a05:690c:46c4:b0:6e2:ad08:4905 with SMTP id
+ 00721157ae682-6ee55a2b090mr3650347b3.1.1731615417649; Thu, 14 Nov 2024
+ 12:16:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: wwan: Add WWAN sahara port type
-To: =?UTF-8?B?SmVycnkgTWVuZyjokpnmnbAp?= <jerry.meng@quectel.com>
-Cc: "loic.poulain@linaro.org" <loic.poulain@linaro.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <KL1PR06MB6133B5403AA55BC79C13FF3B935B2@KL1PR06MB6133.apcprd06.prod.outlook.com>
-Content-Language: en-US
-From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-In-Reply-To: <KL1PR06MB6133B5403AA55BC79C13FF3B935B2@KL1PR06MB6133.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241106234518.115234-1-benjamin@engflow.com> <20241106234518.115234-2-benjamin@engflow.com>
+ <ZzY1bPtoyRH-nRIV@x1> <ZzY20vZluj44w1Gt@x1> <CAEmfU+v8KR3Bd8w7kOX6ScGig106zh5gW9P5fwAw-BF3tmAp7A@mail.gmail.com>
+ <ZzZY7U0AFk3245vy@x1>
+In-Reply-To: <ZzZY7U0AFk3245vy@x1>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Thu, 14 Nov 2024 12:16:46 -0800
+Message-ID: <CAH0uvojcZMVzDyNkWCSHMdwn59T2fgn6iGoqrh9NhaaQ5H2DOw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] perf tests: add test for trace output loss
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Benjamin Peterson <benjamin@engflow.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	"Liang, Kan" <kan.liang@linux.intel.com>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Jerry,
+Hello,
 
-On 14.11.2024 10:45, Jerry Meng(蒙杰) wrote:
-> Add a Sahara protocol-based interface for downloading ramdump
-> from Qualcomm modems in SBL ramdump mode.
-> 
-> Signed-off-by: Jerry Meng <jerry.meng@quectel.com>
-> ---
->   drivers/net/wwan/mhi_wwan_ctrl.c | 3 ++-
->   drivers/net/wwan/wwan_core.c     | 4 ++++
->   include/linux/wwan.h             | 2 ++
->   3 files changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wwan/mhi_wwan_ctrl.c b/drivers/net/wwan/mhi_wwan_ctrl.c
-> index e9f979d2d..2c6a754af 100644
-> --- a/drivers/net/wwan/mhi_wwan_ctrl.c
-> +++ b/drivers/net/wwan/mhi_wwan_ctrl.c
-> @@ -263,7 +263,8 @@ static const struct mhi_device_id mhi_wwan_ctrl_match_table[] = {
->   	{ .chan = "QMI", .driver_data = WWAN_PORT_QMI },
->   	{ .chan = "DIAG", .driver_data = WWAN_PORT_QCDM },
->   	{ .chan = "FIREHOSE", .driver_data = WWAN_PORT_FIREHOSE },
-> -	{},
-> +        { .chan = "SAHARA", .driver_data = WWAN_PORT_SAHARA},
-                                                               ^
-          White space is missed between the port type and '}' -'
+On Thu, Nov 14, 2024 at 12:09=E2=80=AFPM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Thu, Nov 14, 2024 at 09:44:56AM -0800, Benjamin Peterson wrote:
+> > > On Thu, Nov 14, 2024 at 02:37:52PM -0300, Arnaldo Carvalho de Melo wr=
+ote:
+> > > diff --git a/tools/perf/tests/shell/trace_exit_race.sh b/tools/perf/t=
+ests/shell/trace_exit_race.sh
+> > > index 8b70324bc5b4fb4c..c37ed6bb9f7e8fab 100755
+> > > --- a/tools/perf/tests/shell/trace_exit_race.sh
+> > > +++ b/tools/perf/tests/shell/trace_exit_race.sh
+> > > @@ -12,10 +12,10 @@
+> > >  skip_if_no_perf_trace || exit 2
+>
+> > >  trace_shutdown_race() {
+> > > -       for i in $(seq 100); do
+> > > +       for _ in $(seq 100); do
+> > >                 perf trace -e syscalls:sys_enter_exit_group true 2>>$=
+file
+> > >         done
+> > > -       [ $(grep -c -E " +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_en=
+ter_exit_group\(\)$" $file) =3D "100" ]
+> > > +       [ "$(grep -c -E ' +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_e=
+nter_exit_group\(\)$' $file)" =3D "100" ]
+> > >  }
+>
+> > This all looks okay.
+>
+> The test is failing for me as there is garbage in the output of perf
+> trace even with Namhyung having already applied your previous patch:
+>
+> =E2=AC=A2 [acme@toolbox perf-tools-next]$ git log --oneline --author benj=
+amin@engflow.com
+> 12bd434f68ea45c7 (HEAD -> perf-tools-next) perf tests: Add test for 'perf=
+ trace' output loss
+> efbcd2cd7eac10a9 perf trace: Do not lose last events in a race
+> 5fb8e56542a3cf46 (perf-tools-next/tmp.perf-tools-next) perf trace: avoid =
+garbage when not printing a trace event's arguments
+> =E2=AC=A2 [acme@toolbox perf-tools-next]$
+>
+> root@number:~# perf trace -e syscalls:sys_enter_exit_group true
+>      0.000 true/1982428 syscalls:sys_enter_exit_group( k?m)
+> root@number:~# perf trace -e syscalls:sys_enter_exit_group true
+>      0.000 true/1982430 syscalls:sys_enter_exit_group()
+> root@number:~# perf trace -e syscalls:sys_enter_exit_group true
+>      0.000 true/1982432 syscalls:sys_enter_exit_group()
+> root@number:~# perf trace -e syscalls:sys_enter_exit_group true
+>      0.000 true/1982434 syscalls:sys_enter_exit_group()
+> root@number:~# perf trace -e syscalls:sys_enter_exit_group true
+>      0.000 true/1982437 syscalls:sys_enter_exit_group( k=EF=BF=BD)
+> root@number:~# perf trace -e syscalls:sys_enter_exit_group true
+>      0.000 true/1982439 syscalls:sys_enter_exit_group(, loads 8=EF=BF=BD=
+=EF=BF=BD1)
+> root@number:~#
+>
+> So we don't _miss_ the events, which I was noticing and brought me to
+> test your latest 2 patches, which I applied and added a Tested-by, now
+> tryint to figure out this garbage...
 
-Please run the checkpatch.pl before submission, and use 
-git-send-email(1) when it is possible.
+Benjamin has already sent v2 to fix this:
+https://lore.kernel.org/linux-perf-users/20241107232128.108981-2-benjamin@e=
+ngflow.com/
 
+Thanks,
+Howard
 
-$ ./scripts/checkpatch.pl net-wwan-Add-WWAN-sahara-port-type.patch
-...
-total: 6 errors, 6 warnings, 33 lines check
-
---
-Sergey
+>
+> - Arnaldo
+>
 
