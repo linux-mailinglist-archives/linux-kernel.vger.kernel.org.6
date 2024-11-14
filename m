@@ -1,149 +1,134 @@
-Return-Path: <linux-kernel+bounces-409123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF2699C87B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:36:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC4589C8882
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:10:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4160282353
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:36:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F8E8B2B4CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F0C1F8922;
-	Thu, 14 Nov 2024 10:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA5C1F81B1;
+	Thu, 14 Nov 2024 10:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AAs8zC3U"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iQ6flye1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68B21DC05F
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370631F7566
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731580430; cv=none; b=avHYKkNdai8rmTqtuiyNpvtciFA9oXsVdNiZudDZukdHQGnRq5ARbg7W/fUq8QMVZAzYig+LpjQrr66G5RkJMBLHxY6/oOVrM0Z/P+cVRpUIyE0wZ9x8OQO9N5XHt+XHDuEfjSR0Iql8aG3jUWGmBmrWutwuds8y5MI6aKNQa+M=
+	t=1731580474; cv=none; b=dSPW1U0KAU/vVNVzmsyQ+l/oMzvEwUKOJvDiXDKOtx+nuo1QhmJ5vbU6LU2txITTPXInXm4Jqaskae2H5PZrXXK8tiBYzaA9YvEm4FzcdN8Q8FYR453csLmawznkl0WBOtRAWhLqaDELaxsI1KKAEkjHyojl9jMmPCvTPnHt1Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731580430; c=relaxed/simple;
-	bh=X2NeQPMnpek12M1llh7mAvPwsYyUlv1ectRkJWKV740=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ghW8Szwn2jzB1Q8P/esuc9GYUmYConbIrNZ4iNqHM/PDAZrY7mRzSPfOzTZYZE4KPLTAsZCW6EoT+N7dcTsmcm+dF1SbbETgoDLj0Ou+UjhULl7HKtBB561CcdVQFiKTbqbnc/vEa3ro0fRFccjVXwjkyb6BY2+oqXLGKu4jieA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AAs8zC3U; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa20c733e92so56407766b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 02:33:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731580427; x=1732185227; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VBPApLFtlaOK3f4z4ZSIcdYWTPe1i7pEMSXlEit2OcA=;
-        b=AAs8zC3U9/6SbpbpwBiWKyWmA5quBsvv3R21SQIVM4IqoNuUexPs4u6B+7GWgEgm1s
-         IPKRkiEqmTudD03Vfnjmqwvmn/c+HHa80J3/QtFabELuV7aEc0B33M89PTG7fVSFoSBf
-         +xaNMgyJwhtH+dVTMJs5zJSVyAuwdl+6XZvzQQXYn8BPi7u0vOZ98JeIfFo05zLRe5T8
-         hynahSv32BiDGxPlWMJohbRhUMXSZAwmEGL/eBp0cFrtwBVBhpZwhv1SC1UDyZ1ML3rD
-         CrIHr0NRYBeK3nazVLE44MssbDKWpUFtxMmU7pRaR8Sa0QuJCX+MsJ9apn1CcFRB0ACM
-         tn2w==
+	s=arc-20240116; t=1731580474; c=relaxed/simple;
+	bh=9NSyV8J37zkgSfT8SSmvC9IvYLYLgSb5DtAfbz6Q0DE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=J6rYu1Bjmo844QXRN6fVgHlLXzbyEWuLsfONMh7Oo7/qZJc7LseGFUu0yjG4yHu5SAOkYTQvXOCTGsFZBC1aQC2WGGYiX1O/VlZ9JWXDvcA4VYZMBa6pgoMtp6MVL5MUkPfTVtBxUqwMya4aHC/eUE7zoYhRuT6Oz+ZKCQNPbk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iQ6flye1; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731580472;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bL1TDm7rZCPU5Kay9rqCq9qcbgcAxYuCQTRJOnYP6n4=;
+	b=iQ6flye19UEAkXWgvf5L1mYlyfdOpItdLEFy45m3bwlghAmhu1Obh0BMWizU2vyceahTEC
+	fTNgqaGAQ6LTey5y1RxSJpzapJfDRBKPEm3laOCcki4SowQFFBiLbIq9eGMZdViVI7ZGin
+	3WyjMtRAkfqXEAn5iVgiuVO455RjTrI=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-501-hdRFRAVpPX2kPCFANef5Mg-1; Thu, 14 Nov 2024 05:34:28 -0500
+X-MC-Unique: hdRFRAVpPX2kPCFANef5Mg-1
+X-Mimecast-MFC-AGG-ID: hdRFRAVpPX2kPCFANef5Mg
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4316655b2f1so3809705e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 02:34:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731580427; x=1732185227;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VBPApLFtlaOK3f4z4ZSIcdYWTPe1i7pEMSXlEit2OcA=;
-        b=awmoXhTl8hNXD/IMy9Fqvw5Rgbr1Odamu+QXPgYVCDjbgQqHm1yKOoCualX9m6iWHu
-         QxNW8kV7RINuNFh92Q12elG2qVHE8usjS0HFERO7QM+mn+RjpFS3yXfBkOYCjGQ5O1Tl
-         5cV65hMJmDUvQiIRqq+LxO+KpDjUAVQQgChjf1LWJwTz9HP80Aovm5JD2swgiu3yPj74
-         5h24fsixLh/5X4NTkGcOwb3sFOC0VzkSd19lmo8/191+16HkI+DPBAimf1+I+yBp1+mc
-         LN9gF5y9604i1sNUDxw1IinAO2KWx3goz2sFwuOa1TJn9m/JdxrYRuB+gbKMnw8YEKp+
-         qiEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNZJm673LJEX6f9JxPKg9JZLgwyhZA3LKnfJu1Jvx2whjFUeA//CnsPBOeho2IBw+veeb9NiJ1jFGfQSs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdwS5yEe/w2VgPBabsPhNKTFzRnyeXxDVmV4OeLTp8e8nN4W5E
-	LzL90zG6R/O3pbb1vSMc9m3riUu+aWYbextz8SD96EKLcpIk0yGjSrOyZ7DXqjM=
-X-Google-Smtp-Source: AGHT+IEmLsdovsIKeaEEvZwYSPZlHx1HJdNmxwuq2BlsvFnUk5lcIWWhA0cQDnKQAWDSm08XlzLyuw==
-X-Received: by 2002:a17:906:c150:b0:a9a:f0e:cd4 with SMTP id a640c23a62f3a-aa1f813b746mr585216666b.55.1731580426995;
-        Thu, 14 Nov 2024 02:33:46 -0800 (PST)
-Received: from localhost (109-81-88-120.rct.o2.cz. [109.81.88.120])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df1b642sm47126766b.40.2024.11.14.02.33.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 02:33:46 -0800 (PST)
-Date: Thu, 14 Nov 2024 11:33:45 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: David Rientjes <rientjes@google.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>, akpm@linux-foundation.org,
-	nphamcs@gmail.com, shakeel.butt@linux.dev, roman.gushchin@linux.dev,
-	muchun.song@linux.dev, chris@chrisdown.name, tj@kernel.org,
-	lizefan.x@bytedance.com, mkoutny@suse.com, corbet@lwn.net,
-	lnyng@meta.com, cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH v4 1/1] memcg/hugetlb: Add hugeTLB counters to memcg
-Message-ID: <ZzXSCSBcPobCpmG8@tiehlicka>
-References: <20241101204402.1885383-1-joshua.hahnjy@gmail.com>
- <72688d81-24db-70ba-e260-bd5c74066d27@google.com>
- <CAN+CAwPSCiAuyO2o7z20NmVUeAUHsNQacV1JvdoLeyNB4LADsw@mail.gmail.com>
- <eb4aada0-f519-02b5-c3c2-e6c26d468d7d@google.com>
- <c41adcce-473d-c1a7-57a1-0c44ea572679@google.com>
- <20241114052624.GD1564047@cmpxchg.org>
+        d=1e100.net; s=20230601; t=1731580468; x=1732185268;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bL1TDm7rZCPU5Kay9rqCq9qcbgcAxYuCQTRJOnYP6n4=;
+        b=mhU8hwk3MkQrqqm+GDhCl0A0Oi+Ef2ozIL3AYBMQWfzcN40mFBOXg5LdDSv8Hdd1O5
+         U0Bqx6MeP3w9GhOmaRpMm0tLsiIaFXGx52nzzljYQjrnuOHuzjixfBuQe8wdgQea7Dud
+         +B4jTtJCO3aI64doKf9du1I7DjqPS6pO5aQTfWvoRpayep1vA2BcKQX6ozZ0ImUTSB3E
+         wXd7u8B9HcOslJlU/QxjljwbqvehsSVUZ3uvtp0QYMi/lF4sj5lKIA5LtHQSqY7GN74Y
+         /IlunHm5S/+/ckvQs9d+yE5MRpi09G787VO2ai8HSkg1NX5eTmS8gedxT6ZQa6Y9Kxrn
+         gqAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9Qz10/TtHZNNmJqAq5GlAhZk/wfiX2vqs/BuiZiyhp7XzCoImXVsODk3qMko6oqdjX3i9z1hWaAi5TQQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIycZn+ppu8v5+8dJj3KdxNCyPrzR5xwm1WnT3ImucOy8ga5Bp
+	G+cVJjHcJJwhZ9zdyvAKvIuL+UL4mHRCVr93cYd/PDZvdb1bQYCbsd/zfa5hReYirGNMYzSFu9O
+	Bwjux3TeGUotWxZpl+v2PldQz6joSape6RIFOulSIRXGoUHmqz2APaSxnps2h7g==
+X-Received: by 2002:a05:600c:3114:b0:42c:bd4d:e8ba with SMTP id 5b1f17b1804b1-432d4aae479mr58575515e9.8.1731580467704;
+        Thu, 14 Nov 2024 02:34:27 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH7QUd4COsmqD7s0A3KVqaPte+ZWjxjNIuWILigzUy4UQb3+ONujlZta3QocdY4DXgTqnCCCg==
+X-Received: by 2002:a05:600c:3114:b0:42c:bd4d:e8ba with SMTP id 5b1f17b1804b1-432d4aae479mr58575275e9.8.1731580467295;
+        Thu, 14 Nov 2024 02:34:27 -0800 (PST)
+Received: from [192.168.88.24] (146-241-44-112.dyn.eolo.it. [146.241.44.112])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dac0ae25sm15396975e9.35.2024.11.14.02.34.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Nov 2024 02:34:26 -0800 (PST)
+Message-ID: <7914fb1b-8e9d-4c02-b970-b6eaaf468d05@redhat.com>
+Date: Thu, 14 Nov 2024 11:34:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241114052624.GD1564047@cmpxchg.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] xfrm: replace deprecated strncpy with strscpy_pad
+To: Daniel Yang <danielyangkang@gmail.com>,
+ Steffen Klassert <steffen.klassert@secunet.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
+ "open list:NETWORKING [IPSEC]" <netdev@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20241113092058.189142-1-danielyangkang@gmail.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241113092058.189142-1-danielyangkang@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu 14-11-24 00:26:24, Johannes Weiner wrote:
-> On Wed, Nov 13, 2024 at 02:42:29PM -0800, David Rientjes wrote:
-> > On Mon, 11 Nov 2024, David Rientjes wrote:
-> > 
-> > > > The reason that I opted not to include a breakdown of each hugetlb
-> > > > size in memory.stat is only because I wanted to keep the addition that
-> > > > this patch makes as minimal as possible, while still addressing
-> > > > the goal of bridging the gap between memory.stat and memory.current.
-> > > > Users who are curious about this breakdown can see how much memory
-> > > > is used by each hugetlb size by enabling the hugetlb controller as well.
-> > > > 
-> > > 
-> > > While the patch may be minimal, this is solidifying a kernel API that 
-> > > users will start to count on.  Users who may be interested in their 
-> > > hugetlb usage may not have control over the configuration of their kernel?
-> > > 
-> > > Does it make sense to provide a breakdown in memory.stat so that users can 
-> > > differentiate between mapping one 1GB hugetlb page and 512 2MB hugetlb 
-> > > pages, which are different global resources?
-> > > 
-> > > > It's true that this is the case as well for total hugeltb usage, but
-> > > > I felt that not including hugetlb memory usage in memory.stat when it
-> > > > is accounted by memory.current would cause confusion for the users
-> > > > not being able to see that memory.current = sum of memory.stat. On the
-> > > > other hand, seeing the breakdown of how much each hugetlb size felt more
-> > > > like an optimization, and not a solution that bridges a confusion.
-> > > > 
-> > > 
-> > > If broken down into hugetlb_2048kB and hugetlb_1048576kB on x86, for 
-> > > example, users could still do sum of memory.stat, no?>
-> > > 
-> > 
-> > Friendly ping on this, would there be any objections to splitting the 
-> > memory.stat metrics out to be per hugepage size?
+On 11/13/24 10:20, Daniel Yang wrote:
+> The function strncpy is deprecated since it does not guarantee the
+> destination buffer is NULL terminated. Recommended replacement is
+> strscpy. The padded version was used to remain consistent with the other
+> strscpy_pad usage in the modified function.
 > 
-> I don't think it has to be either/or. We can add the total here, and a
-> per-size breakdown in a separate patch (with its own changelog)?
+> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
+> ---
+>  net/xfrm/xfrm_user.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> That said, a per-size breakdown might make more sense in the hugetlb
-> cgroup controller. You're mentioning separate global resources, which
-> suggests this is about more explicitly controlled hugetlb use.
-> 
-> >From a memcg POV, all hugetlb is the same. It's just (non-swappable)
-> memory consumed by the cgroup.
+> diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
+> index e3b8ce898..085f68e35 100644
+> --- a/net/xfrm/xfrm_user.c
+> +++ b/net/xfrm/xfrm_user.c
+> @@ -1089,7 +1089,7 @@ static int copy_to_user_auth(struct xfrm_algo_auth *auth, struct sk_buff *skb)
+>  	if (!nla)
+>  		return -EMSGSIZE;
+>  	algo = nla_data(nla);
+> -	strncpy(algo->alg_name, auth->alg_name, sizeof(algo->alg_name));
+> +	strscpy_pad(algo->alg_name, auth->alg_name, sizeof(algo->alg_name));
+>  
+>  	if (redact_secret && auth->alg_key_len)
+>  		memset(algo->alg_key, 0, (auth->alg_key_len + 7) / 8);
 
-Completely agreed. From the memcg POV there is no way to control hugetlb
-pages or manage per size charging/pools. In a sense this is not much
-different from slab accounting. We do print overall SLAB accounted
-memory and do not break down each slab consumer in the stat file.
--- 
-Michal Hocko
-SUSE Labs
+@Steffen, @Herbert: I think this should go via your tree despite the
+prefix tag.
+
+Please LMK otherwise!
+
+Thanks,
+
+Paolo
+
 
