@@ -1,136 +1,158 @@
-Return-Path: <linux-kernel+bounces-409188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 968F39C8880
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:10:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87FEC9C8870
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:08:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 425041F25271
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:10:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EF7D1F244B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579341F8938;
-	Thu, 14 Nov 2024 11:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ua63s7Ns"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441211F81A7;
-	Thu, 14 Nov 2024 11:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E541F8908;
+	Thu, 14 Nov 2024 11:08:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9AE1F6688;
+	Thu, 14 Nov 2024 11:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731582612; cv=none; b=GP9CzTZQHkaNl3Gg90syb/ZBtPOnAez012CDqH4wYy1WekSfoPy46FXUcIZc5xMtDYzZB1erMLojqgxMv9nH8F135VSvgPpnBRh6hZzrDOKhS1qJCkX3WrcO7bW0q3wDT7ZJJdz4vrmvJtW62ncxEDCccnL5R9NHRJV9i+v4KNw=
+	t=1731582496; cv=none; b=nI1LaDVtYhYKqG94lp6AYDC9IF4t4Vq+yJLsWNxdbnw7WmX1vKs/we4PWSc7bB8eFPuoSdrPoXuLso0+vqyAI8exO2g5lHjuTKIAmBrHFlFPihTdoJe9t1wYWPBKCaXL9rfqBiL5ekKDxy49Ub5UaowwGRA2X/AQgtNh5wWYOQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731582612; c=relaxed/simple;
-	bh=tkzHrrJXOXS7vOUYq3tWDArhR/nWqxSRsKMsB3s0zw4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uXoNVKXKvg9udUpcqiWK/RiEskFfcdjZ96f+J6gv3pB+MGBieyIuAEheIMvE9ckEGHaeQgkVOOCUXVSnaVN+nvoqsZpMkDycBxjNTwCEJUm5pIV1+yQhyhXr7qFSaeDK7+VKubd6swOt+Ms7nB/MxPWneItenItetc0qd0duWvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ua63s7Ns; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1731582610; x=1763118610;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tkzHrrJXOXS7vOUYq3tWDArhR/nWqxSRsKMsB3s0zw4=;
-  b=ua63s7NslMf4M2K98kN+TCvZjLAUb119+pcsp7o18ZPmEvowXy88W9uj
-   z0Hv7Izk5Hfr2RLQpE6/bvIXIPdhnXevawFMACSPJKyIU0QbFVlQo3tQa
-   YquAXZPSLoZ/9sg/wJFhta52z8W2JxF01ia/vZVinLOsKydtkQYKQNxUq
-   ZTj1cDIdMBXV6CBFyvPMXweXEzxWbyzAhjVOLQHCSTO20cncHYsuKJX3y
-   jDXktTZeaHSXpGsqemKzwJZnk5uVqdKY3SHD1BlBfp8EZ/7GT2gyczork
-   ex+R15BmnWrsMDYo9Kq7cBejuHqsBCwQzhbyzm5SvKMV3O20xhh7VKqvl
-   Q==;
-X-CSE-ConnectionGUID: p4ZQJMZoSBKRif35c8c9jg==
-X-CSE-MsgGUID: mfgf0lngSeqcO77umlAhyg==
-X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
-   d="scan'208";a="34308229"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Nov 2024 04:10:09 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 14 Nov 2024 04:09:28 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Thu, 14 Nov 2024 04:09:28 -0700
-Date: Thu, 14 Nov 2024 12:07:45 +0100
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: Rosen Penev <rosenp@gmail.com>
-CC: <netdev@vger.kernel.org>, Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
-	Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol
-	<mailhol.vincent@wanadoo.fr>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Kurt Kanzenbach
-	<kurt@linutronix.de>, Vladimir Oltean <olteanv@gmail.com>, Chris Snook
-	<chris.snook@gmail.com>, Marcin Wojtas <marcin.s.wojtas@gmail.com>, "Russell
- King" <linux@armlinux.org.uk>, "maintainer:MICROCHIP LAN966X ETHERNET DRIVER"
-	<UNGLinuxDriver@microchip.com>, Yoshihiro Shimoda
-	<yoshihiro.shimoda.uh@renesas.com>, Niklas =?utf-8?Q?S=C3=B6derlund?=
-	<niklas.soderlund@ragnatech.se>, Doug Berger <opendmb@gmail.com>, "Florian
- Fainelli" <florian.fainelli@broadcom.com>, "Broadcom internal kernel review
- list" <bcm-kernel-feedback-list@broadcom.com>, Heiner Kallweit
-	<hkallweit1@gmail.com>, Richard Cochran <richardcochran@gmail.com>, "open
- list:MCAN MMIO DEVICE DRIVER" <linux-can@vger.kernel.org>, open list
-	<linux-kernel@vger.kernel.org>, "open list:RENESAS ETHERNET SWITCH DRIVER"
-	<linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCHv2 net-next] net: modernize ioremap in probe
-Message-ID: <20241114110745.h6luzb72zkahyr5j@DEN-DL-M31836.microchip.com>
-References: <20241111200212.5907-1-rosenp@gmail.com>
+	s=arc-20240116; t=1731582496; c=relaxed/simple;
+	bh=tb+DE/3FFVpWcHlT5GqU34l2C45HcATrVfwwmIhWgBs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OC3IbYxZs324xhUOgpYSYfJGN0ngFFXM8wnH3Gr6dyylTqCHSDqHZrx/p33WPq0RO56S5pyw1U5/2owB6I2SpvCxPy0UE/Au0J04BiekP8fkLo6qae27ZeQp/VBJH63wXn2Hfmxn22cI5JufP1wNvGk+3o7hSYk91iWZnFrXqVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C29F81480;
+	Thu, 14 Nov 2024 03:08:42 -0800 (PST)
+Received: from [10.1.26.55] (e122027.cambridge.arm.com [10.1.26.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 155EE3F6A8;
+	Thu, 14 Nov 2024 03:08:09 -0800 (PST)
+Message-ID: <e661a2e2-9a6a-40f4-843b-3c7285ca2172@arm.com>
+Date: Thu, 14 Nov 2024 11:08:07 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <20241111200212.5907-1-rosenp@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/panthor: Fix memory leak in
+ panthor_ioctl_group_create()
+To: Jann Horn <jannh@google.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Liviu Dudau <liviu.dudau@arm.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Mary Guillemard <mary.guillemard@collabora.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20241113-panthor-fix-gcq-bailout-v1-1-654307254d68@google.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20241113-panthor-fix-gcq-bailout-v1-1-654307254d68@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The 11/11/2024 12:02, Rosen Penev wrote:
+On 13/11/2024 21:03, Jann Horn wrote:
+> When bailing out due to group_priority_permit() failure, the queue_args
+> need to be freed. Fix it by rearranging the function to use the
+> goto-on-error pattern, such that the success case flows straight without
+> indentation while error cases jump forward to cleanup.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 5f7762042f8a ("drm/panthor: Restrict high priorities on group_create")
+> Signed-off-by: Jann Horn <jannh@google.com>
 
-Hi Rosen,
+Reviewed-by: Steven Price <steven.price@arm.com>
 
-> diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-> index 3234a960fcc3..375e9a68b9a9 100644
-> --- a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-> +++ b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
-> @@ -77,20 +77,12 @@ static int lan966x_create_targets(struct platform_device *pdev,
->          * this.
->          */
->         for (idx = 0; idx < IO_RANGES; idx++) {
-> -               iores[idx] = platform_get_resource(pdev, IORESOURCE_MEM,
-> -                                                  idx);
-> -               if (!iores[idx]) {
-> -                       dev_err(&pdev->dev, "Invalid resource\n");
-> -                       return -EINVAL;
-> -               }
-> -
-> -               begin[idx] = devm_ioremap(&pdev->dev,
-> -                                         iores[idx]->start,
-> -                                         resource_size(iores[idx]));
-> -               if (!begin[idx]) {
-> +               begin[idx] = devm_platform_get_and_ioremap_resource(
-> +                       pdev, idx, &iores[idx]);
-> +               if (IS_ERR(begin[idx])) {
->                         dev_err(&pdev->dev, "Unable to get registers: %s\n",
->                                 iores[idx]->name);
-> -                       return -ENOMEM;
-> +                       return PTR_ERR(begin[idx]);
->                 }
->         }
+Thanks,
+Steve
+
+> ---
+> testcase:
+> ```
+> #include <err.h>
+> #include <fcntl.h>
+> #include <stddef.h>
+> #include <sys/ioctl.h>
+> #include <drm/panthor_drm.h>
+> 
+> #define SYSCHK(x) ({          \
+>   typeof(x) __res = (x);      \
+>   if (__res == (typeof(x))-1) \
+>     err(1, "SYSCHK(" #x ")"); \
+>   __res;                      \
+> })
+> 
+> #define GPU_PATH "/dev/dri/by-path/platform-fb000000.gpu-card"
+> 
+> int main(void) {
+>   int fd = SYSCHK(open(GPU_PATH, O_RDWR));
+> 
+>   while (1) {
+>     struct drm_panthor_queue_create qc[16] = {};
+>     struct drm_panthor_group_create gc = {
+>       .queues = {
+>         .stride = sizeof(struct drm_panthor_queue_create),
+>         .count = 16,
+>         .array = (unsigned long)qc
+>       },
+>       .priority = PANTHOR_GROUP_PRIORITY_HIGH+1/*invalid*/
+>     };
+>     ioctl(fd, DRM_IOCTL_PANTHOR_GROUP_CREATE, &gc);
+>   }
+> }
+> ```
+> 
+> I have tested that without this patch, after running the testcase for a
+> few seconds and then manually killing it, 2G of RAM in kmalloc-128 have
+> been leaked. With the patch applied, the memory leak is gone.
+> 
+> (By the way, get_maintainer.pl suggests that I also send this patch to
+> the general DRM maintainers and the DRM-misc maintainers; looking at
+> MAINTAINERS, it looks like it is normal that the general DRM maintainers
+> are listed for everything under drivers/gpu/, but DRM-misc has exclusion
+> rules for a bunch of drivers but not panthor. I don't know if that is
+> intentional.)
+> ---
+>  drivers/gpu/drm/panthor/panthor_drv.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+> index c520f156e2d73f7e735f8bf2d6d8e8efacec9362..815c23cff25f305d884e8e3e263fa22888f7d5ce 100644
+> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+> @@ -1032,14 +1032,15 @@ static int panthor_ioctl_group_create(struct drm_device *ddev, void *data,
+>  
+>  	ret = group_priority_permit(file, args->priority);
+>  	if (ret)
+> -		return ret;
+> +		goto out;
+>  
+>  	ret = panthor_group_create(pfile, args, queue_args);
+> -	if (ret >= 0) {
+> -		args->group_handle = ret;
+> -		ret = 0;
+> -	}
+> +	if (ret < 0)
+> +		goto out;
+> +	args->group_handle = ret;
+> +	ret = 0;
+>  
+> +out:
+>  	kvfree(queue_args);
+>  	return ret;
+>  }
+> 
+> ---
+> base-commit: 9f8e716d46c68112484a23d1742d9ec725e082fc
+> change-id: 20241113-panthor-fix-gcq-bailout-2d9ac36590ed
 > 
 
-Unfortunately, this breaks the lan966x probe. With this change I get the
-following errors:
-[    1.705315] lan966x-switch e0000000.switch: can't request region for resource [mem 0xe0000000-0xe00fffff]
-[    1.714911] lan966x-switch e0000000.switch: Unable to get registers: cpu
-[    1.721607] lan966x-switch e0000000.switch: error -EBUSY: Failed to create targets
-[    1.729173] lan966x-switch: probe of e0000000.switch failed with error -16
-
--- 
-/Horatiu
 
