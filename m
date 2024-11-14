@@ -1,201 +1,149 @@
-Return-Path: <linux-kernel+bounces-409122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F1DC9C87AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:35:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF2699C87B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:36:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C8F628252C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:35:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4160282353
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D891F76C2;
-	Thu, 14 Nov 2024 10:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F0C1F8922;
+	Thu, 14 Nov 2024 10:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="MBQFC/GF"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AAs8zC3U"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136AE1F7540
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68B21DC05F
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731580335; cv=none; b=jiM7C/vdxeYZTzcrgKgRzz/bOv37Y//EWqkcKVl1qsoITg9Oad5xn4P36t7ijkteKvmFf9qspQ1ElXxsGJrVjluC7Gaz50eCkfkDYvxCnTdqGoFx7fqaAHXSIo4Pq8R2wMOHwMYT1VBDCxX3VFdnCKALZilBVaMuLBVxIPFhh04=
+	t=1731580430; cv=none; b=avHYKkNdai8rmTqtuiyNpvtciFA9oXsVdNiZudDZukdHQGnRq5ARbg7W/fUq8QMVZAzYig+LpjQrr66G5RkJMBLHxY6/oOVrM0Z/P+cVRpUIyE0wZ9x8OQO9N5XHt+XHDuEfjSR0Iql8aG3jUWGmBmrWutwuds8y5MI6aKNQa+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731580335; c=relaxed/simple;
-	bh=DTeHUQizHgGM0F2W5Jcw8OsYgIMucRypUAcng0CuKAc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r9x86OIde2IwyccMOmGqOt0gnBstAbyL931PNfhdJrEK8DdFA2nEojD3k/LJ2YUoJGfXDF7m+2dcbTeqIJC9Y3Tb5PfyFoYH6bEN02GYIAJUIdQiB5nIdlz7Sz0+JC1TfHv2UsA/WDTOJqdWqTDdJXi6mTbOGfrV6KpbzXywqNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=MBQFC/GF; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539fb49c64aso636549e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 02:32:12 -0800 (PST)
+	s=arc-20240116; t=1731580430; c=relaxed/simple;
+	bh=X2NeQPMnpek12M1llh7mAvPwsYyUlv1ectRkJWKV740=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ghW8Szwn2jzB1Q8P/esuc9GYUmYConbIrNZ4iNqHM/PDAZrY7mRzSPfOzTZYZE4KPLTAsZCW6EoT+N7dcTsmcm+dF1SbbETgoDLj0Ou+UjhULl7HKtBB561CcdVQFiKTbqbnc/vEa3ro0fRFccjVXwjkyb6BY2+oqXLGKu4jieA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AAs8zC3U; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa20c733e92so56407766b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 02:33:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1731580331; x=1732185131; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=a0d1qrLF27Vwr69NZjn0r/8jpEAVBzVx/HFYFyUQblQ=;
-        b=MBQFC/GFVIH0ZourwRmIFWGPAg5BgmrNQK74vIPy6WMfuSCvDgR/Zr5aZEGc9JJcjV
-         57BH4RJLiZzuZ6n0BzJxRAcyDwcN5kL+/9Tfwk0XzQ7luPBapfEfd+DoFOLU0EDNldKy
-         oowtcCfIzsjLAP3m7C0fhcCXzBMfe8jKfUNRrotxUj2rStPQZVHB2Vzjy3T28tphxL5x
-         47XoK3rUt0JQibNEMVko/CGigM3VDg+49xfKQK2UkuFpvb3wyrtWWzxD5MKe7NyMRS5s
-         W7TLVzizhSj1K9sxgRqHNtstdg5mI4YTSC0xiLwPdapL1MtGvNLmBrLsBgnARrWUgcCX
-         Tt6A==
+        d=suse.com; s=google; t=1731580427; x=1732185227; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VBPApLFtlaOK3f4z4ZSIcdYWTPe1i7pEMSXlEit2OcA=;
+        b=AAs8zC3U9/6SbpbpwBiWKyWmA5quBsvv3R21SQIVM4IqoNuUexPs4u6B+7GWgEgm1s
+         IPKRkiEqmTudD03Vfnjmqwvmn/c+HHa80J3/QtFabELuV7aEc0B33M89PTG7fVSFoSBf
+         +xaNMgyJwhtH+dVTMJs5zJSVyAuwdl+6XZvzQQXYn8BPi7u0vOZ98JeIfFo05zLRe5T8
+         hynahSv32BiDGxPlWMJohbRhUMXSZAwmEGL/eBp0cFrtwBVBhpZwhv1SC1UDyZ1ML3rD
+         CrIHr0NRYBeK3nazVLE44MssbDKWpUFtxMmU7pRaR8Sa0QuJCX+MsJ9apn1CcFRB0ACM
+         tn2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731580331; x=1732185131;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1731580427; x=1732185227;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=a0d1qrLF27Vwr69NZjn0r/8jpEAVBzVx/HFYFyUQblQ=;
-        b=oGwHo8GZxvL+saPMIFT5qy1ncmYNvuU3bOYUiR/wKwc7HSIQGl8UUWzW0aM3KklcXh
-         M5ldFa3FIvS5+7L/pZwcE/vCSM29C4cKX6yweUJNO3bqyIY2PokrWgrJn3KCr+qqKqnT
-         IAQIfnK82JplpGGrFtFDH2tNZWRCCC2GFWZ1mOLMRZwUoYUjRIVYOllftZNyAUVNVUx8
-         dot+wWM9qEQNVGTQJbrjD3wptwsP0zmR4/fTNLvRXWYyPVwkyeb56m6yjRn7iRgwtul/
-         zmTftTHSmn03h6QvSVmQk9C68R/m4DYiYxYcFPiOj5KGWNJtoOLmrDe3Pi7amZlVhAKC
-         DYMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV3uJF2DgpTOwMB/wYSiAtBUmwtx7Ovu7rR4cmNk1BvQgQ46tWbXHbLZ0O9xjztvH9eWLs9b/A7VRZgrhA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBTN87YYn3QTUm1Mr3QCs0LozEf2otzLRYPTN6yJ2izyL78aDk
-	HyfmExa5aP1RK31lCCA/G5TuimXIzuU8ljlwvpWAwkeqrxbkcdW7pNf6nzstzPlFA3zmUTLOg7M
-	N
-X-Google-Smtp-Source: AGHT+IHd3oX3ni8cKLi44zCwkXhxdVFX9wScw/eOu0QOo7ZH+CwIThCw+6H/EIMe9KjR6h1HuTbOxw==
-X-Received: by 2002:a05:6512:3b82:b0:539:936c:9845 with SMTP id 2adb3069b0e04-53da5c7b691mr1371068e87.37.1731580331106;
-        Thu, 14 Nov 2024 02:32:11 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:3779:22d5:a322:7c13? ([2001:67c:2fbc:1:3779:22d5:a322:7c13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df51632sm47447466b.49.2024.11.14.02.32.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 02:32:10 -0800 (PST)
-Message-ID: <5ae6f624-5196-42f7-a0b8-85e2847b3fdf@openvpn.net>
-Date: Thu, 14 Nov 2024 11:32:36 +0100
+        bh=VBPApLFtlaOK3f4z4ZSIcdYWTPe1i7pEMSXlEit2OcA=;
+        b=awmoXhTl8hNXD/IMy9Fqvw5Rgbr1Odamu+QXPgYVCDjbgQqHm1yKOoCualX9m6iWHu
+         QxNW8kV7RINuNFh92Q12elG2qVHE8usjS0HFERO7QM+mn+RjpFS3yXfBkOYCjGQ5O1Tl
+         5cV65hMJmDUvQiIRqq+LxO+KpDjUAVQQgChjf1LWJwTz9HP80Aovm5JD2swgiu3yPj74
+         5h24fsixLh/5X4NTkGcOwb3sFOC0VzkSd19lmo8/191+16HkI+DPBAimf1+I+yBp1+mc
+         LN9gF5y9604i1sNUDxw1IinAO2KWx3goz2sFwuOa1TJn9m/JdxrYRuB+gbKMnw8YEKp+
+         qiEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNZJm673LJEX6f9JxPKg9JZLgwyhZA3LKnfJu1Jvx2whjFUeA//CnsPBOeho2IBw+veeb9NiJ1jFGfQSs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdwS5yEe/w2VgPBabsPhNKTFzRnyeXxDVmV4OeLTp8e8nN4W5E
+	LzL90zG6R/O3pbb1vSMc9m3riUu+aWYbextz8SD96EKLcpIk0yGjSrOyZ7DXqjM=
+X-Google-Smtp-Source: AGHT+IEmLsdovsIKeaEEvZwYSPZlHx1HJdNmxwuq2BlsvFnUk5lcIWWhA0cQDnKQAWDSm08XlzLyuw==
+X-Received: by 2002:a17:906:c150:b0:a9a:f0e:cd4 with SMTP id a640c23a62f3a-aa1f813b746mr585216666b.55.1731580426995;
+        Thu, 14 Nov 2024 02:33:46 -0800 (PST)
+Received: from localhost (109-81-88-120.rct.o2.cz. [109.81.88.120])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df1b642sm47126766b.40.2024.11.14.02.33.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 02:33:46 -0800 (PST)
+Date: Thu, 14 Nov 2024 11:33:45 +0100
+From: Michal Hocko <mhocko@suse.com>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: David Rientjes <rientjes@google.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, akpm@linux-foundation.org,
+	nphamcs@gmail.com, shakeel.butt@linux.dev, roman.gushchin@linux.dev,
+	muchun.song@linux.dev, chris@chrisdown.name, tj@kernel.org,
+	lizefan.x@bytedance.com, mkoutny@suse.com, corbet@lwn.net,
+	lnyng@meta.com, cgroups@vger.kernel.org, linux-mm@kvack.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH v4 1/1] memcg/hugetlb: Add hugeTLB counters to memcg
+Message-ID: <ZzXSCSBcPobCpmG8@tiehlicka>
+References: <20241101204402.1885383-1-joshua.hahnjy@gmail.com>
+ <72688d81-24db-70ba-e260-bd5c74066d27@google.com>
+ <CAN+CAwPSCiAuyO2o7z20NmVUeAUHsNQacV1JvdoLeyNB4LADsw@mail.gmail.com>
+ <eb4aada0-f519-02b5-c3c2-e6c26d468d7d@google.com>
+ <c41adcce-473d-c1a7-57a1-0c44ea572679@google.com>
+ <20241114052624.GD1564047@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v11 18/23] ovpn: implement peer
- add/get/dump/delete via netlink
-To: Sabrina Dubroca <sd@queasysnail.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
- Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-18-de4698c73a25@openvpn.net> <ZzIlxRbic7qLVD4F@hog>
- <136282ad-77d9-4799-bd2d-f3c3c9df99c0@openvpn.net> <ZzSH-Ke4wuJcis0q@hog>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <ZzSH-Ke4wuJcis0q@hog>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241114052624.GD1564047@cmpxchg.org>
 
-On 13/11/2024 12:05, Sabrina Dubroca wrote:
-> 2024-11-12, 15:26:59 +0100, Antonio Quartulli wrote:
->> On 11/11/2024 16:41, Sabrina Dubroca wrote:
->>> 2024-10-29, 11:47:31 +0100, Antonio Quartulli wrote:
->>>> +void ovpn_peer_hash_vpn_ip(struct ovpn_peer *peer)
->>>> +	__must_hold(&peer->ovpn->peers->lock)
->>>
->>> Changes to peer->vpn_addrs are not protected by peers->lock, so those
->>> could be getting updated while we're rehashing (and taking peer->lock
->>> in ovpn_nl_peer_modify as I'm suggesting above also wouldn't prevent
->>> that).
->>>
->>
->> /me screams :-D
+On Thu 14-11-24 00:26:24, Johannes Weiner wrote:
+> On Wed, Nov 13, 2024 at 02:42:29PM -0800, David Rientjes wrote:
+> > On Mon, 11 Nov 2024, David Rientjes wrote:
+> > 
+> > > > The reason that I opted not to include a breakdown of each hugetlb
+> > > > size in memory.stat is only because I wanted to keep the addition that
+> > > > this patch makes as minimal as possible, while still addressing
+> > > > the goal of bridging the gap between memory.stat and memory.current.
+> > > > Users who are curious about this breakdown can see how much memory
+> > > > is used by each hugetlb size by enabling the hugetlb controller as well.
+> > > > 
+> > > 
+> > > While the patch may be minimal, this is solidifying a kernel API that 
+> > > users will start to count on.  Users who may be interested in their 
+> > > hugetlb usage may not have control over the configuration of their kernel?
+> > > 
+> > > Does it make sense to provide a breakdown in memory.stat so that users can 
+> > > differentiate between mapping one 1GB hugetlb page and 512 2MB hugetlb 
+> > > pages, which are different global resources?
+> > > 
+> > > > It's true that this is the case as well for total hugeltb usage, but
+> > > > I felt that not including hugetlb memory usage in memory.stat when it
+> > > > is accounted by memory.current would cause confusion for the users
+> > > > not being able to see that memory.current = sum of memory.stat. On the
+> > > > other hand, seeing the breakdown of how much each hugetlb size felt more
+> > > > like an optimization, and not a solution that bridges a confusion.
+> > > > 
+> > > 
+> > > If broken down into hugetlb_2048kB and hugetlb_1048576kB on x86, for 
+> > > example, users could still do sum of memory.stat, no?>
+> > > 
+> > 
+> > Friendly ping on this, would there be any objections to splitting the 
+> > memory.stat metrics out to be per hugepage size?
 > 
-> Sorry :)
+> I don't think it has to be either/or. We can add the total here, and a
+> per-size breakdown in a separate patch (with its own changelog)?
 > 
->> Indeed peers->lock is only about protecting the lists, not the content of
->> the listed objects.
->>
->> How about acquiring the peers->lock before calling ovpn_nl_peer_modify()?
+> That said, a per-size breakdown might make more sense in the hugetlb
+> cgroup controller. You're mentioning separate global resources, which
+> suggests this is about more explicitly controlled hugetlb use.
 > 
-> It seems like it would work. Maybe a bit weird to have conditional
-> locking (MP mode only), but ok. You already have this lock ordering
-> (hold peers->lock before taking peer->lock) in
-> ovpn_peer_keepalive_work_mp, so there should be no deadlock from doing
-> the same thing in the netlink code.
+> >From a memcg POV, all hugetlb is the same. It's just (non-swappable)
+> memory consumed by the cgroup.
 
-Yeah.
-
-> 
-> Then I would also do that in ovpn_peer_float to protect that rehash.
-
-I am not extremely comfortable with this, because it means acquiring 
-peers->lock on every packet (right now we do so only on peer->lock) and 
-it may defeat the advantage of the RCU locking on the hashtables.
-Wouldn't you agree?
-
-An alternative would be to hold peer->lock for the entire function, but 
-this will lead to dead locks...no go either.
-
-> 
-> It feels like peers->lock is turning into a duplicate of
-> ovpn->lock. ovpn->lock used for P2P mode, peers->lock used
-> equivalently for MP mode. You might consider merging them (but I
-> wouldn't see it as necessary for merging the series unless there's a
-> locking issue with the current proposal).
-
-I agree: ovpn->lock was introduced to protect ovpn's fields, but 
-actually the only one e protect is peer.
-
-They are truly the same and I could therefore get rid of 
-ovpn->peers->lock and always use ovpn->lock.
-
-Will see how invasive this is and decide whether to commit it to v12 or not.
-
-Thanks!
-
-Regards,
-
+Completely agreed. From the memcg POV there is no way to control hugetlb
+pages or manage per size charging/pools. In a sense this is not much
+different from slab accounting. We do print overall SLAB accounted
+memory and do not break down each slab consumer in the stat file.
 -- 
-Antonio Quartulli
-OpenVPN Inc.
-
+Michal Hocko
+SUSE Labs
 
