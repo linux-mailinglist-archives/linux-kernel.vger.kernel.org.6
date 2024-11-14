@@ -1,117 +1,206 @@
-Return-Path: <linux-kernel+bounces-409569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C40799C9023
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:49:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4B2D9C8F87
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:19:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24156B2BB37
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:49:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D93D4B2AFC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A8E1B21AF;
-	Thu, 14 Nov 2024 15:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D57168C3F;
+	Thu, 14 Nov 2024 15:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BK4SWUBu"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="J+gOGN7m"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8AF31B21A4
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3737C133987
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731598699; cv=none; b=Xbak+g3ZUvUjAWO8O2nZOqYST5jjsx2YkKA5ME4m0Hre4teFfvfPyBOfpCHgYVxqpBIEN/wDPRwavlLB0wWM38ohTf/Xose/URCgFpXlCpZqOiYvMnUM/kp/y5TAm7HgA7Ldo5WUIzo7+SJTiItYcBr7zxoIqkGLeW0g7v8QqYw=
+	t=1731598885; cv=none; b=gObYw3K/ZOA0t0JhtjLkzaUOqB9AJXmqiYx1WBGHYCZ7ZRUsIHplDjTevAjng/jV1pWFWqvhb7l3YEbGgRQpI0/xFNfBgwaQnr58nqtxB9YPBlFFPh8P1MG2NoUiMKwmKDt1bcN17+wPO3H5HX1Q/z1TLolpdMpEMbt6kQFI9AI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731598699; c=relaxed/simple;
-	bh=8uAKE4ueNMd0aSGsxS2kQiRNaOcMtz5ZCAAuLV4T9+c=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=FIL5E3TmI6aV3yNglSEFcXrhC7aijNx2oPNKGTWYmjH/KcJpbok5COTzaZygvuY3ivqSbqVITdREY8XDmmgIXaoVx+LUlclKHQpJbieeeb+COtWHPSQ671qLN/cQ3NvpXSclTTkC4X3Erb2mJXPJcl8GgZ6Cs1vwGSQFr+Gt1dA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BK4SWUBu; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2e2bd9a523bso873016a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:38:17 -0800 (PST)
+	s=arc-20240116; t=1731598885; c=relaxed/simple;
+	bh=1jU+6FRiK8iU2xVcgYuGMa7M+TUxh7iPXDHVCdFmJPA=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=khDFwK4EfA9xA8rVwVKHXssk9QbVEWXhyYpfXr9MaI/kFQA53lYYXgTAyquDBy5hYccM36RgzgF0UIycSgVgahhYO1p90MtTTCJIKAZw9l1W/dDiViOCDZ/gUEE1Jy0FRRqL2sNuNUFV4VqU2Q7AOI04u0zDmwt7y4FZ2jzG9Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=J+gOGN7m; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb6110c8faso7186411fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:41:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731598697; x=1732203497; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nrghbEI+TsYbtMq/izvt1GHrUUl0ZnJFsIi7cn6pUdA=;
-        b=BK4SWUBueAtOtlT1Ir5u97O8rdsKZM4HfxczgTwryffhm9yzxYfD4Yc4Xlbom1wXsp
-         OAxZ4lLoRx8aEHqICPwGsWnMBz50HRdVnAOWVuxkH0S7z8b07HeHEzdKP7+pA1Ex6qSG
-         dyFYHGKNnaie5J6hvBC/u9lRwtg0nKW9wl0Fp8YRDxfipHV26YY5WlFzGZn+9DwwFFHP
-         tWsIECYp29yO63AVKzErnvtcyD5TeNhwfoyTGPlSj7Xcz7ufxiXzM0A64OtkiKvQT1iN
-         5+5Tpstbrg5KTADvF06sk6cS7ejRAvjArzBHu4jP4c/aHwU+dzjrUf5REZ2/6hV+AhHf
-         j0pA==
+        d=suse.com; s=google; t=1731598881; x=1732203681; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7NBFMQhIIT6ymbEv39KxcdDxNSIvYaJrZK6T6Q4vz58=;
+        b=J+gOGN7mVonLscJpOo7jYiH0g9Js1oieDBuECXafhK04t2kaDbUXKxajX54kq7kp7d
+         xHaITZ/Ni6LP9RtZVlB7zMq3BC0zY0ebA3ocCmeY1BRLKCvIBIc9q2mLe0I9pg0oprsA
+         blq/7tSmgOgrxcJGWs2Pn8ehG3YiF6lWopSjWb814DI0n0/VFvFpaywJwt+FBM+4tp/o
+         XOJiK0fKKCs3pedHZEGDUVTaKNxDaUjfOVd0jcLPBVimpLqaOG4NNJsAV7J4VFFR1pwo
+         vuGWpJXTVcVs5rfBN75b5aMnQbWv74yKklVAlM6ozlZ+PNkzLQ9OtrsESAsWk4j/vpg0
+         GNOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731598697; x=1732203497;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nrghbEI+TsYbtMq/izvt1GHrUUl0ZnJFsIi7cn6pUdA=;
-        b=mZJ23WJJFYq4XCXugV2wopGXHU7imSC9Nww+6uHQT60bMaGIWNHwSkgSxSPVUArrfp
-         KNR6BMCGt1vOnt07DFW09SCa0fXIAxgz8Y5ApO1HU4P2vl9uVlToU2FWgwncPZ/YHcF0
-         roN+ZjaXRzl1zgxEIGyvpju2IyiHFtfIuWI4jxQR2i5uTBf236sKMjSKMZKjGQFs8H5o
-         MYtrzDi5yo0zAoEsjmGxAoxQSICpbpgfOLD7OwN1xHM7LA8ORuDhK4f67ncRktBIZPuZ
-         fZntDbQIgLX15CdObwYsbiwUsk3eMhcFCWEo9L5dTUdHxcvz/AvYJEiUN8s5d6LvRETI
-         ucig==
-X-Gm-Message-State: AOJu0YxIZwDz/E0llxCoJ+qWlvvyuaBDO3IGSSSYMaYx5ix5GkywHL0B
-	D/vSwHO15V4V47QgpLri2E6bZ1VJJ/BQludQbY9af2ztAWo4PuHX81Yr0F/rjEGWfczB93qA2s6
-	NUA==
-X-Google-Smtp-Source: AGHT+IFZkSoZg3ul1mmW5lhfWd9c1u9W2ZDRyrepFRM02g+D3CvPh2OtOXG2/DORJfcwlC16RJHonxT9FHs=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a17:90b:8ca:b0:2ea:b9a:f6bb with SMTP id
- 98e67ed59e1d1-2ea0b9af9d4mr2901a91.7.1731598697039; Thu, 14 Nov 2024 07:38:17
- -0800 (PST)
-Date: Thu, 14 Nov 2024 07:38:15 -0800
-In-Reply-To: <70ee319f-b9ec-448a-a068-8165c8e38e6d@redhat.com>
+        d=1e100.net; s=20230601; t=1731598881; x=1732203681;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7NBFMQhIIT6ymbEv39KxcdDxNSIvYaJrZK6T6Q4vz58=;
+        b=A4XGhnxY+YC6AEV9smUVY8eHW1PE5GCIhewW8axNY03YfQHgE+r+lSM0JcBDWSd0Mg
+         nnrDYM07J7m26cCfTIIU+joAcd8Glz7M/x0TkbVriEC8y2P77Ced9Ei3IpjsM5x4QKWK
+         MypmwWwiCyak1lKXqSgoeYB/xBWAxFm/uaPCMntCJZHUMvyM9l8V0QLkhLtvEiuETkif
+         hD3jelm3nhc2KzdvF2GgHokAUZS9DkCYLsuEAEBMWLG7KdELrhWkqboc0PkfXILaQ8gC
+         YCwOI/3F7gKbM247By4C/2/4j2ms+kc3uOfaxVVuXatqEFJsFRJntpGKyIZyayHG+nhO
+         T7Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCXC70ZA5o++SjajAsX67r/EVLhat4+TJECTGPjyaVilmjHtf8a11cTYR6vXonZyNeeO9J/g+1JoFSzbigI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0Y+CPhoY7OAfnY8wcApzFeUar5PGxsHoP3a0LGB/FaFDoARWF
+	SbOwlkFPq+SNC58XzloOJvKS5mxGQPb2QL7z4zA7kzz2B/kh6ehhXDDf35gjpco=
+X-Google-Smtp-Source: AGHT+IE3AJId58tpidJfEutc3uS9bz9dQSqU2NqlB5syKnjI4F1dHTAie1yyXTx7nGeaNXqvKGaGyw==
+X-Received: by 2002:a05:651c:2122:b0:2fa:de52:f03c with SMTP id 38308e7fff4ca-2ff2015249fmr130795541fa.5.1731598881346;
+        Thu, 14 Nov 2024 07:41:21 -0800 (PST)
+Received: from localhost (host-79-19-144-50.retail.telecomitalia.it. [79.19.144.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf79bb3579sm679369a12.37.2024.11.14.07.41.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 07:41:20 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Thu, 14 Nov 2024 16:41:49 +0100
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	St efan Wahren <wahrenst@gmx.net>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 08/14] clk: rp1: Add support for clocks provided by RP1
+Message-ID: <ZzYaPZcohzMma84A@apocalypse>
+References: <cover.1728300189.git.andrea.porta@suse.com>
+ <022cf4920f8147cc720eaf02fd52c0fa56f565c5.1728300189.git.andrea.porta@suse.com>
+ <611de50b5f083ea4c260f920ccc0e300.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241108130737.126567-1-pbonzini@redhat.com> <ZzU8qY92Q2QNtuyg@google.com>
- <70ee319f-b9ec-448a-a068-8165c8e38e6d@redhat.com>
-Message-ID: <ZzYZZ4MgMhavYDM2@google.com>
-Subject: Re: [PATCH] KVM: x86: switch hugepage recovery thread to vhost_task
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	michael.christie@oracle.com, Tejun Heo <tj@kernel.org>, 
-	Luca Boccassi <bluca@debian.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <611de50b5f083ea4c260f920ccc0e300.sboyd@kernel.org>
 
-On Thu, Nov 14, 2024, Paolo Bonzini wrote:
-> On 11/14/24 00:56, Sean Christopherson wrote:
-> > > +static bool kvm_nx_huge_page_recovery_worker(void *data)
-> > > +{
-> > > +	struct kvm *kvm = data;
-> > >   	long remaining_time;
-> > > -	while (true) {
-> > > -		start_time = get_jiffies_64();
-> > > -		remaining_time = get_nx_huge_page_recovery_timeout(start_time);
-> > > +	if (kvm->arch.nx_huge_page_next == NX_HUGE_PAGE_DISABLED)
-> > > +		return false;
-> > 
-> > The "next" concept is broken.  Once KVM sees NX_HUGE_PAGE_DISABLED for a given VM,
-> > KVM will never re-evaluate nx_huge_page_next.  Similarly, if the recovery period
-> > and/or ratio changes, KVM won't recompute the "next" time until the current timeout
-> > has expired.
-> > 
-> > I fiddled around with various ideas, but I don't see a better solution that something
-> > along the lines of KVM's request system, e.g. set a bool to indicate the params
-> > changed, and sprinkle smp_{r,w}mb() barriers to ensure the vhost task sees the
-> > new params.
+Hi Stephen,
+
+On 15:08 Wed 09 Oct     , Stephen Boyd wrote:
+> Quoting Andrea della Porta (2024-10-07 05:39:51)
+> > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> > index 299bc678ed1b..537019987f0c 100644
+
+Here's below the kind response from RaspberryPi guys...
+...
+
+> > +       clockman_write(clockman, data->pwr_reg, fbdiv_frac ? 0 : PLL_PWR_DSMPD);
+> > +       clockman_write(clockman, data->fbdiv_int_reg, fbdiv_int);
+> > +       clockman_write(clockman, data->fbdiv_frac_reg, fbdiv_frac);
+> > +       spin_unlock(&clockman->regs_lock);
+> > +
+> > +       /* Check that reference frequency is no greater than VCO / 16. */
 > 
-> "next" is broken, but there is a much better way to fix it.  You just
-> track the *last* time that the recovery ran.  This is also better
-> behaved when you flip recovery back and forth to disabled and back
-> to enabled: if your recovery period is 1 minute, it will run the
-> next recovery after 1 minute independent of how many times you flipped
-> the parameter.
+> Why is '16' special?
 
-Heh, I my brain was trying to get there last night, but I couldn't quite piece
-things together.
+16 is a hardware requirement.
+The lowest feedback divisor in the PLL is 16, so the minimum output
+frequency is ref_freq * 16.
 
-Reviewed-by: Sean Christopherson <seanjc@google.com>
+...
+
+> > +static unsigned long rp1_pll_core_recalc_rate(struct clk_hw *hw,
+> > +                                             unsigned long parent_rate)
+> > +{
+> > +       struct rp1_pll_core *pll_core = container_of(hw, struct rp1_pll_core, hw);
+> > +       struct rp1_clockman *clockman = pll_core->clockman;
+> > +       const struct rp1_pll_core_data *data = pll_core->data;
+> > +       u32 fbdiv_int, fbdiv_frac;
+> > +       unsigned long calc_rate;
+> > +
+> > +       fbdiv_int = clockman_read(clockman, data->fbdiv_int_reg);
+> > +       fbdiv_frac = clockman_read(clockman, data->fbdiv_frac_reg);
+> > +       calc_rate =
+> > +               ((u64)parent_rate * (((u64)fbdiv_int << 24) + fbdiv_frac) + (1 << 23)) >> 24;
+> 
+> Where does '24' come from? Can you simplify this line somehow? Maybe
+> break it up into multiple lines?
+
+The dividers have an 8 bit integer and (optional) 24 bit fractional
+part to the divider value.
+The two parts are split across two registers (int_reg and frac_reg),
+with the value stored in the bottom bits of both.
+
+...
+
+> > +static int rp1_clock_determine_rate(struct clk_hw *hw,
+> > +                                   struct clk_rate_request *req)
+> > +{
+> > +       struct clk_hw *parent, *best_parent = NULL;
+> > +       unsigned long best_rate = 0;
+> > +       unsigned long best_prate = 0;
+> > +       unsigned long best_rate_diff = ULONG_MAX;
+> > +       unsigned long prate, calc_rate;
+> > +       size_t i;
+> > +
+> > +       /*
+> > +        * If the NO_REPARENT flag is set, try to use existing parent.
+> > +        */
+> > +       if ((clk_hw_get_flags(hw) & CLK_SET_RATE_NO_REPARENT)) {
+> 
+> Is this flag ever set?
+
+In future patches more clocks will be added (namely DPI, DSI (x2) and VEC).
+All have the CLK_SET_RATE_NO_REPARENT flag set.
+As those peripherals are sensitive to the accuracy of the clocks, the intent
+is that the driver will have set the parent, and it isn't expected to change.
+
+...
+
+> > +       divider->div.reg = clockman->regs + divider_data->ctrl_reg;
+> > +       divider->div.shift = PLL_SEC_DIV_SHIFT;
+> > +       divider->div.width = PLL_SEC_DIV_WIDTH;
+> > +       divider->div.flags = CLK_DIVIDER_ROUND_CLOSEST;
+> > +       divider->div.flags |= CLK_IS_CRITICAL;
+> 
+> Is everything critical? The usage of this flag and CLK_IGNORE_UNUSED is
+> suspicious and likely working around some problems elsewhere.
+
+the next patchset revision will drop as many of those CRITICAL flags as possible,
+and all of the IGNORE_UNUSED flags. That was legacy code needed on bcm-clk2835
+since some clocks were enabled by the firmware, and therefore disabling them
+had the potential for locking the firmware up. This does no longer apply to RP1.
+
+...
+
+Many thanks,
+Andrea
 
