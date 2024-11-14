@@ -1,99 +1,117 @@
-Return-Path: <linux-kernel+bounces-409109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 925809C8794
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:31:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C39099C878B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:29:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56B1D285127
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:31:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A5291F22DC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C8F1F8F15;
-	Thu, 14 Nov 2024 10:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F252003C3;
+	Thu, 14 Nov 2024 10:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="FeNAW1OA"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mLDgXFIN"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C381F76AC;
-	Thu, 14 Nov 2024 10:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF59E1F80D2;
+	Thu, 14 Nov 2024 10:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731579936; cv=none; b=O2m+nArGx8nJAuvdw1NVmxZB+TWqd23wh9lfBW3ENYRg6iAx0enARQL8FXcUt+ynbYLM9hm9VEw1oPPOMvwGvbU0Sm5vqU/eVuYVyvxsS0yc84C4YX+TWlUfaNn3+P3PTo4Ef+S6s0Uk1z0Hric+eY+YBX5vHyKyMIwYbVaysWQ=
+	t=1731579617; cv=none; b=WSaorosuwCvn1LMSJwnIxAtmd8yExX77qvErMfLsthenb2SQrdphsk69YIG2nyl4sM/ml2XBCOekxwjazKzS82/u5JZ3FLmzp6fjuDrMiFSBqLcaQpPkfdsIBDrbPJuji+FxYIWs8mfaSOQQz2/yqF3urRQqtkDGhljMdvQzBVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731579936; c=relaxed/simple;
-	bh=PVZt50xKgkDZqujM6gY9ARLbzF4hPBVFADkPWTbzV6M=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YKbBwHwCCsJXnmYnNkhL9esBbgGLrJbqwPjX598RhuTUYgVIlIUYbd6KScHXIvoETeK3oClKovqhRC35KxqzQH3/OZx70ea63kF85+N0hEX0gVCZvdMO8mGUgAbJLpnxFsIc2Yzva24XKq6oGGbYHHE2sfiKXWO4QfiVAKUM4PQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=FeNAW1OA; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1731579934; x=1763115934;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=PVZt50xKgkDZqujM6gY9ARLbzF4hPBVFADkPWTbzV6M=;
-  b=FeNAW1OAV7ZCbBxrqwd1p3reBpZ9YXDInlqD4a1sa1eSdwfrnUWpZpK4
-   ssFePh0xAenCHPzjtIOKwGRxLENlai5GMRkXqaDzD1G35/IDxjBsdlJlo
-   L+vuGPHJaPdPiuQkiAV7/PGDXbTi6WM4j/muQbmdbJZb+/Q4IKN9kWpKh
-   z5fdY9uvFYJ+ue+GWkIHIFGUnYnlS4OMJoD8pU2y2TN7eL1hvTctjggK7
-   si0tCXPX5Zac3vFzQgdGNNQZJpwET4w7OqSdDf+M9XEBgqXejpFQ7x1SW
-   61g9DcMoOLhYxurdFn4giT8r5oxV5S2mYl+4DVsHJB1RebZaMrt84yBGh
-   w==;
-X-CSE-ConnectionGUID: HPV/YlKXRl6rsyfNkaR4NA==
-X-CSE-MsgGUID: Hug4GU7DTUmSW5iGn49sdw==
-X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
-   d="scan'208";a="37840105"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Nov 2024 03:25:33 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 14 Nov 2024 03:25:11 -0700
-Received: from HYD-DK-UNGSW20.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Thu, 14 Nov 2024 03:25:06 -0700
-From: Tarun Alle <Tarun.Alle@microchip.com>
-To: <arun.ramadoss@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next] net: phy: microchip_t1: Clause-45 PHY loopback support for LAN887x
-Date: Thu, 14 Nov 2024 15:49:51 +0530
-Message-ID: <20241114101951.382996-1-Tarun.Alle@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731579617; c=relaxed/simple;
+	bh=Zj/1hkrQNcNwCq+kQCz6JEFTpDafV/64BToL/HZE2OY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=FAb8j66pmMCs2ruiUjdtj+Awfxn9/YimUiwp9NVc9AwUiX6PZ+99Rc9N/YDYGuI4QOxX0H6eW+6Wu1HRLv/mQaNAoQe5ZSsVnRWWMmY7IrbgPzJ4mEW7whNPsYDtaNBiq7inQHwto8SNELB8QRoHSs/yjdMggAO77u3IKzqRyF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mLDgXFIN; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53da209492cso449866e87.3;
+        Thu, 14 Nov 2024 02:20:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731579614; x=1732184414; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BXs2D21LwohnP+U2rvw/liEYSUVRSTi/JkMTk288k0I=;
+        b=mLDgXFINIDN/tbysgIEnblnyP4PTCe/us+wVcRvCwjvvpUAulcQGvDfkgZqx7ASe+2
+         EmHuA2tRXOPtpmqJPVP22pyDvUD/yHYcgabNoFYePUVsfWJUHdmb8lZfnImEt1bRb+ee
+         S4Qkk6dSenNGtXEGddkpJpPsEfwSODHRuc7dq69n9pOZQZLM804lotcrzV2HMs7P1GrS
+         QtegBb/4mmvBbRE9zq/dRbg5KVI9diWy9qwpiDvrfIJ58c6tl61AYnQ6NMaEmdRJuzrF
+         Fi7wq+oWNsiijtQm3EqhwS15aGewYGrYAsWNyG22WeEAlaNbYJv51Iv6Nslg2DeqwnKT
+         D9gQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731579614; x=1732184414;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BXs2D21LwohnP+U2rvw/liEYSUVRSTi/JkMTk288k0I=;
+        b=dwwLIijzkTNjMtIW91zn6UtHKdlKWJlp3fzwGWH0XVcaFmhmaMhiPqHWlmhxB0wVw4
+         8VhVBepTiT8XnvkTnioigokEnKqueaLPuEbV9uuV5ea60sxplwUwQuEaNQa8ogDrqeql
+         1xsq1eRVFxzHvvmxclMdlsZB9CEFCX2gf3+78591Niw0OkdX3kMmK0mgUZsJhnIqVo9/
+         OhbjozAErobAqp/IVmjFap+Q60UVg64T9PPEvWOTAqvYHDhfvxYBy5sG+ALIJt2nKyZG
+         lpIkm0giY1+OreOwe561k7L7sBmlwC2hvh7abwxbPZWfNgzTn8AuG/bWmPHp1aatLNPB
+         yaGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUt2j0uD5m7Zv8MRfMdqtlTX80QpmFpwy4khNfNHJD5tzmo/f6IthRPZoHZihC8xyJSBREsl9XE@vger.kernel.org, AJvYcCVCoOcQ8VvA7E9U+ZwJezOt2PFVYnJxTOrw9SXmCmYbZLIo9eWGwehaOtD49GkiBjOcGDHEdt0txUPI5uw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFgMdbBn7g3bvXgSqymapesAQXgJPUaGNCwv3C2N88xNGREjf1
+	QKeJirK0q3YL2/lVc6SKBMiFOW0XxPW/j8ahD/p67PtvoPP3vNaN
+X-Google-Smtp-Source: AGHT+IEijiW0XUP3xPsUKgtPzcn5M+JO4pbrgaMa4MN3iDTGrZpnMwHsGrkyC6K3HgljtvtI7HrCPw==
+X-Received: by 2002:ac2:4f02:0:b0:53b:4bc0:72aa with SMTP id 2adb3069b0e04-53d9fe8b1c7mr3288842e87.34.1731579613557;
+        Thu, 14 Nov 2024 02:20:13 -0800 (PST)
+Received: from localhost ([194.120.133.65])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ada4076sm1048920f8f.16.2024.11.14.02.20.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 02:20:13 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Sunil Goutham <sgoutham@marvell.com>,
+	Geetha sowjanya <gakula@marvell.com>,
+	Subbaraya Sundeep <sbhatta@marvell.com>,
+	hariprasad <hkelam@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] octeontx2-pf: Fix spelling mistake "reprentator" -> "representor"
+Date: Thu, 14 Nov 2024 10:20:12 +0000
+Message-Id: <20241114102012.1868514-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-Adds support for clause-45 PHY loopback for the Microchip LAN887x driver.
+There is a spelling mistake in a NL_SET_ERR_MSG_MOD error message.
+Fix it.
 
-Signed-off-by: Tarun Alle <Tarun.Alle@microchip.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/net/phy/microchip_t1.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/marvell/octeontx2/nic/rep.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/phy/microchip_t1.c b/drivers/net/phy/microchip_t1.c
-index 71d6050b2833..b17bf6708003 100644
---- a/drivers/net/phy/microchip_t1.c
-+++ b/drivers/net/phy/microchip_t1.c
-@@ -2113,6 +2113,7 @@ static struct phy_driver microchip_t1_phy_driver[] = {
- 		.handle_interrupt = lan887x_handle_interrupt,
- 		.get_sqi	= lan887x_get_sqi,
- 		.get_sqi_max	= lan87xx_get_sqi_max,
-+		.set_loopback	= genphy_c45_loopback,
- 	}
- };
- 
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+index ae58d0601b45..232b10740c13 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+@@ -687,7 +687,7 @@ int rvu_rep_create(struct otx2_nic *priv, struct netlink_ext_ack *extack)
+ 		err = register_netdev(ndev);
+ 		if (err) {
+ 			NL_SET_ERR_MSG_MOD(extack,
+-					   "PFVF reprentator registration failed");
++					   "PFVF representor registration failed");
+ 			free_netdev(ndev);
+ 			goto exit;
+ 		}
 -- 
-2.34.1
+2.39.5
 
 
