@@ -1,129 +1,142 @@
-Return-Path: <linux-kernel+bounces-409023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C65719C8683
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:54:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A836B9C8690
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:55:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E27E1F22C47
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:54:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FDC11F21282
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB361F779B;
-	Thu, 14 Nov 2024 09:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768A31F890E;
+	Thu, 14 Nov 2024 09:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="csIyX3Jq"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Kigiq40W"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B498F1F7566
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5861F7540;
+	Thu, 14 Nov 2024 09:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731578047; cv=none; b=LCRStQlJ3kKrDFDx77S2ToQvnQ1KjZHQBq82UpAk7UZQ38fkXuYwRReGJMTJnhDCcb9qaFPU9y1j20a/YHIkS9E/rlb76tSYJ4P6WujzCJfOzfiBTfs9zjIXiVh7KSGzsCSzxjOh46Kx79o6Qmbv1hHsc9h1qefJppvWq/7EIH4=
+	t=1731578069; cv=none; b=rgx/4SIv6L5hu3Dm3QNXG+qqYeLVsnSeuZb6CRQzsz7+rj1dt1W8lR1s9Ylsh8kswrT0AlK37NZW6CvfqTMOodAChM8jyaTTRX8UrFSEY1ZzcSPXfQftxj/Q4FhGVnMffXlVAmOTlSCPn9UUKqH5749EN72wQq/SDLOuui46oX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731578047; c=relaxed/simple;
-	bh=Q/GTTGPYb1m0sh/Mq/dH+KNlAR4VxZQ091w3NplHxcU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UVfqpe82dBopvbzAwg+4EYqoN88Ye1g4+riZK5zzMm8l5BulLJQka7Z2MRCG9uENiWgBRj51B6iNFq43UYaf6qaN8/NYikqWXwoB4QLBqRiNohV6pR+0HAJr4VYwmRAi2mnIFjhX+W7vWtrJjrN6/Xdvb63Vc3M78ddtOBiE+gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=csIyX3Jq; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=ucIt
-	3NYVecjegCWNd6yqlVVS31Amd1yqB9dRdqeZ2Mo=; b=csIyX3JqtNxpV2Y0okvI
-	R+9MPoHeg/hytQKKLRKFc3dbh7qVIe3TZ1aJqPBOvVChDQyE2cNnxBlHsi6JQDL0
-	3LDT8Gku2F/zM9dSRbi0y4DOB04laqFARxGddjNGtAPFqt3j94K2qzbPAP+j/x2d
-	xMNoj7cv6rt1ze2R3dJROLvwalTQgnhbVYuZMO153pxtcjI6K7un+w1RTLqZo7bj
-	0aMguhYSGe8Gjy18xrOHOThUHZFgjj05I43Yk3HTBPnx3+OSlbX9nh2h0ThgkOWw
-	DEgxI357rvR/ty61roy9SppI6M7SmtE46vYHBvtncHzt351UfjfPe7ZL9ddZgjoq
-	Tw==
-Received: (qmail 3111350 invoked from network); 14 Nov 2024 10:54:02 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Nov 2024 10:54:02 +0100
-X-UD-Smtp-Session: l3s3148p1@uwAfbtwmyK5ehhtH
-Date: Thu, 14 Nov 2024 10:54:02 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Liam Zuiderhoek <zuiderhoekl@gmail.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: i2c-core-smbus: fixed a whitespace style issue
-Message-ID: <ZzXIuidycjx8JsiU@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Liam Zuiderhoek <zuiderhoekl@gmail.com>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-References: <ad659d817d2003d7e6309203c5982bf645f9c25c.camel@gmail.com>
+	s=arc-20240116; t=1731578069; c=relaxed/simple;
+	bh=YgbZ4gKbMb8qlLteM1HMPjw+0Lw2ZNYWJQCKQkSr3Ik=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LT+SRn8z8QsYvGdPojGjKytq3Ni0GVHUjl9DnEXUSmm3irNmfd49NQO3CVW/Jv9UsveNbQXUJ6TxaAqLAzO/q0/KwZC0SXI7KnaVuI7AgZVThzF2b7u+ibS2NcbkbE/pdUt/McYQo8B99E9H3hMJvQWPHSSbE0WHorz6CurJlYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Kigiq40W; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE62Mar021072;
+	Thu, 14 Nov 2024 09:54:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=VChT8L5m620aHTiBRgrqhGnswnOpnFsN35L
+	Wr8AjioY=; b=Kigiq40W01rgy3yluUOARAYoDWxEMOL0pvr4OuRYLC6/c5H/g5h
+	PGjPQGUC/LG2SdOkuRmu16epQ9qxs6uPsl683QaSfEp3JTHJ9ostLKmy9MQLZU/H
+	Qxh+dbxSCNCGT2bADMagUBX+Gv6MW1H6mJSfN5zF1tILStjvz6sEEJVGOfkcbyRZ
+	e4OIGntjM5V4byxTEEh+DmiJ5aY4sP2sof7O4ODvEg4G9ElVst7Mt9dttVdSo/ZJ
+	rQ9wN4uzk3HV0ARQnkjMiLL6hRuYtc7GvTTMxYo4Wvoeu5vEO5fQHWQvahbvJGYr
+	a+2IBcXteo5oJnNNgcHPe8JEw0ZfI0SHSYA==
+Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42v4kqyy80-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 09:54:15 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE9sDHr007468;
+	Thu, 14 Nov 2024 09:54:13 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 42t0tkyudb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 09:54:13 +0000
+Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4AE9sD3i007462;
+	Thu, 14 Nov 2024 09:54:13 GMT
+Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 4AE9sCRc007459
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 09:54:13 +0000
+Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
+	id 7F0B716C5; Thu, 14 Nov 2024 17:54:11 +0800 (CST)
+From: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+To: vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org,
+        manivannan.sadhasivam@linaro.org, bhelgaas@google.com, kw@linux.com,
+        lpieralisi@kernel.org, quic_qianyu@quicinc.com, conor+dt@kernel.org,
+        neil.armstrong@linaro.org, andersson@kernel.org,
+        konradybcio@kernel.org
+Cc: quic_shashim@quicinc.com, quic_kaushalk@quicinc.com, quic_tdas@quicinc.com,
+        quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com, kernel@quicinc.com,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+        Ziyue Zhang <quic_ziyuzhan@quicinc.com>,
+        Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Subject: [PATCH 0/5] pci: qcom: Add QCS8300 PCIe support
+Date: Thu, 14 Nov 2024 17:54:04 +0800
+Message-Id: <20241114095409.2682558-1-quic_ziyuzhan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uES+0unqC75D4Z1t"
-Content-Disposition: inline
-In-Reply-To: <ad659d817d2003d7e6309203c5982bf645f9c25c.camel@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: JDrnGlgUV_uGAjm22tVvRbagA8cZ5USV
+X-Proofpoint-GUID: JDrnGlgUV_uGAjm22tVvRbagA8cZ5USV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ adultscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
+ malwarescore=0 spamscore=0 clxscore=1011 mlxscore=0 mlxlogscore=999
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411140076
+
+Update the relavent DT bindings for PCIe, add new config to the phy
+driver add pcie and phy nodes to the .dtsi file and enable then in 
+board .dts file for the qcs8300-ride platform.
+
+build dependencies:
+-devicetree: https://lore.kernel.org/all/20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com/
+- tlmm: https://lore.kernel.org/linux-arm-msm/20240819064933.1778204-1-quic_jingyw@quicinc.com/
+- gcc: https://lore.kernel.org/all/20240822-qcs8300-gcc-v2-0-b310dfa70ad8@quicinc.com/
+- interconnect: https://lore.kernel.org/linux-arm-msm/20240910101013.3020-1-quic_rlaggysh@quicinc.com/
+
+Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+---
+Have follwing changes:
+	- Document the QMP PCIe PHY on the QCS8300 platform.
+	- Add dedicated schema for the PCIe controllers found on QCS8300.
+	- Add compatible for qcs8300 platform.
+	- Add configurations in devicetree for PCIe0, including registers, clocks, interrupts and phy setting sequence.
+	- Add configurations in devicetree for PCIe1, including registers, clocks, interrupts and phy setting sequence.
+
+Ziyue Zhang (5):
+  dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Document the QCS8300 QMP
+    PCIe PHY Gen4 x2
+  phy: qcom-qmp-pcie: add dual lane PHY support for QCS8300
+  dt-bindings: PCI: qcom,pcie-sa8775p: document qcs8300
+  arm64: dts: qcom: qcs8300: enable pcie0 for QCS8300
+  arm64: dts: qcom: qcs8300: enable pcie1 for QCS8300
+
+ .../bindings/pci/qcom,pcie-sa8775p.yaml       |   7 +-
+ .../phy/qcom,sc8280xp-qmp-pcie-phy.yaml       |   2 +
+ arch/arm64/boot/dts/qcom/qcs8300-ride.dts     |  86 ++++-
+ arch/arm64/boot/dts/qcom/qcs8300.dtsi         | 355 ++++++++++++++++++
+ drivers/phy/qualcomm/phy-qcom-qmp-pcie.c      |  89 +++++
+ 5 files changed, 536 insertions(+), 3 deletions(-)
 
 
---uES+0unqC75D4Z1t
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+base-commit: eb6a0b56032c62351a59a12915a89428bce68d1d
+-- 
+2.34.1
 
-On Tue, Oct 29, 2024 at 12:14:54PM +0100, Liam Zuiderhoek wrote:
-> From 214adebf7cf37be941f208124fac9ea6bec0f1d2 Mon Sep 17 00:00:00 2001
-> From: Liam Zuiderhoek <zuiderhoekl@gmail.com>
-> Date: Tue, 22 Oct 2024 20:46:59 +0200
-> Subject: [PATCH] i2c: i2c-core-smbus: fixed a whitespace style issue
->=20
-> Fixing a coding style issue.
->=20
-> Signed-off-by: Liam Zuiderhoek <zuiderhoekl@gmail.com>
-> ---
->  drivers/i2c/i2c-core-smbus.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-
-> smbus.c
-> index e3b96fc53b5c..6829def15933 100644
-> --- a/drivers/i2c/i2c-core-smbus.c
-> +++ b/drivers/i2c/i2c-core-smbus.c
-> @@ -122,7 +122,7 @@ EXPORT_SYMBOL(i2c_smbus_read_byte);
->  s32 i2c_smbus_write_byte(const struct i2c_client *client, u8 value)
->  {
->  	return i2c_smbus_xfer(client->adapter, client->addr, client-
-> >flags,
-> -	                      I2C_SMBUS_WRITE, value, I2C_SMBUS_BYTE,
-> NULL);
-> +				I2C_SMBUS_WRITE, value,
-> I2C_SMBUS_BYTE, NULL);
->  }
->  EXPORT_SYMBOL(i2c_smbus_write_byte);
-
-The patch got broken while sending. I assume you sent it via gmail
-webmail? Please read Documentation/process/email-clients.rst to make
-sure it arrives correctly.
-
-
---uES+0unqC75D4Z1t
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmc1yLoACgkQFA3kzBSg
-KbaY+w//UmB6aME+iJN2+YbCjL9U3670ROP32F3001YfuTPhitI9QH2Ugkuvi4vo
-ZPHfHq1xLlZQ9aSXEApHMYMH+D/dXUvdFpaXPr1Vqi4FAYlOSTSdnT5nbVZknCww
-8kcvDBC/rm87iGroQFAvTOsJ+jddexinPoyB9KscXZDKXfm2jV7q+7PYeOrMLK6h
-SSbumEuQydmEX3f/E7eo4iVaxeMRp2YejWwxM0HPR2UjUPBC5E864be1lobJD7zU
-1RUA+zQdu1tlXGp9Bv7WqaG6jtnztEPUptGYaUG42ZDQzEoq3dCNzNV1skAoSf2x
-WsvD1c1DT7Y+UN4F0pcNonaslSt9p2xi1I6ApfH4sRy8cmPuHEvMnPaFmUXYhD/+
-wr85XEJ9MsfL6bRY20VKl4gci7mPBekWWYgjx83mbH9BA9dKsziJITrXbXVywvvp
-hCOAaWiqdd+8+7r6tuM3t+V9OBeV+2j3f5NZSqn+eNaQwqqzGt8G6rCoPmsQsFLw
-mVjIys8BSEo31MJCpnlJHR5oiwY4yPwU1y4Nx5u8XDIsw3dzjU5q6LVJNeADU300
-Dp+ZxAoVI5DpQmlZitYB5jn5pKwidwZyPp9XwG+GurWVXcL/aZL8NNMgO+Jjv1dF
-8wG7TqWYQJPV64OgfswcFWukZhOaevoKcs37KoFYYnhEwpfU16s=
-=Btu6
------END PGP SIGNATURE-----
-
---uES+0unqC75D4Z1t--
 
