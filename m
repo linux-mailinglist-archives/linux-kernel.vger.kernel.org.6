@@ -1,207 +1,187 @@
-Return-Path: <linux-kernel+bounces-408682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC0689C8242
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 05:55:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D84D39C8246
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:01:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 577191F23C3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 04:55:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B032283449
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 05:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476B21E9074;
-	Thu, 14 Nov 2024 04:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A291E7C16;
+	Thu, 14 Nov 2024 05:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="EOFOgcL8"
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P4OZD4+6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566BF1553AA;
-	Thu, 14 Nov 2024 04:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26074137932
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 05:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731560103; cv=none; b=WySvPPeX678nWIV7YF7xyjbYvtWAgq2MAUDGuTOm7dotQJs3AhCm4/w/+PYxmizQERNVbW0PDA6wTWdbkQsynNO31NJyUYxwSG27VYqjz3i/BsTWmVKVRcCOTHqi9/l5sgiVygdMVku05OlGV/ecs9KteQSuYZp5praDS+IoEbA=
+	t=1731560452; cv=none; b=kpHzqrrtoPdoHQtQlOckogUl7ohxWG0NDJFGbk8RnPHNREp9vs6Qg9TRzeEKT14wjVt+vFBM/V+OLlTu01Oj38M6pq9RM4yE7PjDJ8xYet9FmC2894MewC/NjIHnL5zVmrxZNq5Ii7VdFg02XXLIb2S6g6ZElSdUz6RUd7ZWJv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731560103; c=relaxed/simple;
-	bh=o/5emXLfx9w6iWylWGCKAI4AJ2vE+YqEyXCPtzvueeo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u0nXcBeKrLYTy3Qsa9luXCfe+/7yamsHJnUuLKeerY4UDsHp1B4dMhQJm3jb8HwRtdi7Sri4a2Hz2c9wFFJvd+1MYUb6fv7O2INCqqaFsCyvBgUgtOS+abtxaaKhpb8Ln6IcNrLfSc4h947G/pyCbwXm+A7A5HSBRifFj95hUsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=EOFOgcL8; arc=none smtp.client-ip=80.12.242.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from mail-ej1-f44.google.com ([209.85.218.44])
-	by smtp.orange.fr with ESMTPSA
-	id BRrVt6lmrmvx4BRrVt9AwL; Thu, 14 Nov 2024 05:53:45 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731560025;
-	bh=1EDa0vg4ZBXnx63Iz6EA6oPRRRo42Elpu8PdgGbLErU=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To;
-	b=EOFOgcL80OMUStwlt1/cSXRToGXQWb7t2ydd73hhXtbKz1asFu5olRod6MPs4aVtm
-	 zTs9FLZYzoHox0xuodbWWFIIC3S08LgpEzoYYtkLgrctF6Ryo81cl2hG8R8kbKHbn3
-	 VCyksgenrLkKRAF3zZSRad49MKoJMwCJeTKJYJpVkscjTkBJ0t+owvKXPh5AqVYAnY
-	 CQdlNk2JNtx0dX8orq4s1fDqOdTwbsnoEOx6GIpy7iiQ3e+9wajU6sitlE83+5fZrf
-	 wHFWEmqsiF0tsvgjm+dmvyJmEQzrhgmqLcN18RmH+HQmQOuXUfQ+0+8mGoko2mcpx0
-	 F6alpS1vgw0ug==
-X-ME-Helo: mail-ej1-f44.google.com
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 14 Nov 2024 05:53:45 +0100
-X-ME-IP: 209.85.218.44
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9a850270e2so31057066b.0;
-        Wed, 13 Nov 2024 20:53:45 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUHt7zHxQwAk3Az9wWMG+6/mDLIlSclNLegYtPkyGOiJqrvKQWZ9qKS0R9XkaQDl4v0EoHk1Brp@vger.kernel.org, AJvYcCVYVQQlv52vZeGSPF4IYJiPqkLtRu+xgdgRt4entCMzYVoU1vNc+xMTXEdlNv3NuZLRqWhMrPwyPvaS@vger.kernel.org, AJvYcCW0h7AfTQASSqOuLzVAH5MZSUAiWMaEvWLgjK2WBGFNJ78XX1fWrkqmX7ckKz3uaO+H632jYzw94WbW@vger.kernel.org, AJvYcCXBMHa8+S+LbneygsNLfeEAVYdGr56cNiB6N7naIx1EhyC9bSL5bLYH9VavngBdaq/tXfRjTbTigy2R0Bhu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyx8pxJwxcHFZLV7HTB/YXUAEj2+evs5ru2x3zdZxbP6FhboMih
-	jWb2ypR1+Nkur0mQqjAe8JRLn2DpVb//o0cwCyVyHBGeH438TuSJrfrYH6xTDCH/X4iSvBHn4nw
-	Ps3SXQYfodx+AJEyCvfb1oU/PzPA=
-X-Google-Smtp-Source: AGHT+IESI/Fks52+BoNd/GzjvshhIgxdlgulbfGGZFgoEKu8CbVbivjecQTI3En+lKEI4jB/Yi3PiBNAvLfDB2XRils=
-X-Received: by 2002:a17:907:7fa9:b0:aa2:c79:c940 with SMTP id
- a640c23a62f3a-aa20ccdb8b4mr63959766b.1.1731560024972; Wed, 13 Nov 2024
- 20:53:44 -0800 (PST)
+	s=arc-20240116; t=1731560452; c=relaxed/simple;
+	bh=mfOtjGr2s/azK+Iv/LVOoRXjhB7ygtNEeOSfJUVLRws=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=cRM1Wu2Lwp3pBBGdsTfzFMqSVPFBVVAFbXTnZXWEh0kCV2MxkAw5fpoAQf+Vb9+ZOJAMGyBANuHY653IGDbqgaj547Tvq75wxqTohmv43DKqT7gve1auq8qhqosYXU7TufYGsuvQLqko9R0nJcClYo/F9S2Qa8Ujx95uJjm7+tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P4OZD4+6; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731560450; x=1763096450;
+  h=date:from:to:cc:subject:message-id;
+  bh=mfOtjGr2s/azK+Iv/LVOoRXjhB7ygtNEeOSfJUVLRws=;
+  b=P4OZD4+6tEP9rbpshKll7A18nVqx43rvM3USr6ipNycHnZxRojcLrZSz
+   gSaw4WjSsya4u+S56OcHUm9Af1rRCH6XqUTAmF+EgK3ECT5l8VBTVu6i6
+   QULP9r0sFq3Z5XDYunzWfW2os6P8YdxOJXnXzvu0lQ0IgVn4c9wiecSq5
+   nGngzr0asg/uT8OgRhXrcZeA4208FNOjveumgt8c3X4SQ03SOb7q1lncL
+   NwX30KruzmVM6KtjimrC2e0nR0emsjlHQrQRbdQHqfcnr6nOIwBQyzAow
+   jq2YS36jfS4EWrF4aluGTGEiSW5bT15vs+bayMOeALtJKz5bDVIaD7GTP
+   w==;
+X-CSE-ConnectionGUID: zRV5ACn/T9qu6IbzJAjRKg==
+X-CSE-MsgGUID: 37VsF3s9TYqorapv3yd5ZQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11255"; a="48987011"
+X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
+   d="scan'208";a="48987011"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 21:00:49 -0800
+X-CSE-ConnectionGUID: eTeSt1pdSfabU9Ir6VQqjA==
+X-CSE-MsgGUID: wktN/8QRQaS/KZ1m5e35zw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
+   d="scan'208";a="88067600"
+Received: from lkp-server01.sh.intel.com (HELO b014a344d658) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 13 Nov 2024 21:00:48 -0800
+Received: from kbuild by b014a344d658 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tBRyI-00008r-0e;
+	Thu, 14 Nov 2024 05:00:46 +0000
+Date: Thu, 14 Nov 2024 13:00:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:irq/core] BUILD SUCCESS
+ f9ed1f7c2e26fcd19781774e310a6236d7525c11
+Message-ID: <202411141251.9lNhBzrW-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241111-tcan-wkrqv-v2-0-9763519b5252@geanix.com> <20241111-tcan-wkrqv-v2-1-9763519b5252@geanix.com>
-In-Reply-To: <20241111-tcan-wkrqv-v2-1-9763519b5252@geanix.com>
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Date: Thu, 14 Nov 2024 13:53:34 +0900
-X-Gmail-Original-Message-ID: <CAMZ6Rq++_yecNY-nNL7NK48ZsNPqH0KDRuqvCCGhUur24+7KGA@mail.gmail.com>
-Message-ID: <CAMZ6Rq++_yecNY-nNL7NK48ZsNPqH0KDRuqvCCGhUur24+7KGA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] can: tcan4x5x: add option for selecting nWKRQ voltage
-To: Sean Nyekjaer <sean@geanix.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-On Mon. 11 Nov. 2024 at 17:55, Sean Nyekjaer <sean@geanix.com> wrote:
-> nWKRQ supports an output voltage of either the internal reference voltage
-> (3.6V) or the reference voltage of the digital interface 0 - 6V.
-> Add the devicetree option ti,nwkrq-voltage-sel to be able to select
-> between them.
-> Default is kept as the internal reference voltage.
->
-> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
-> ---
->  drivers/net/can/m_can/tcan4x5x-core.c | 35 +++++++++++++++++++++++++++++++++++
->  drivers/net/can/m_can/tcan4x5x.h      |  2 ++
->  2 files changed, 37 insertions(+)
->
-> diff --git a/drivers/net/can/m_can/tcan4x5x-core.c b/drivers/net/can/m_can/tcan4x5x-core.c
-> index 2f73bf3abad889c222f15c39a3d43de1a1cf5fbb..264bba830be50033347056da994102f8b614e51b 100644
-> --- a/drivers/net/can/m_can/tcan4x5x-core.c
-> +++ b/drivers/net/can/m_can/tcan4x5x-core.c
-> @@ -92,6 +92,8 @@
->  #define TCAN4X5X_MODE_STANDBY BIT(6)
->  #define TCAN4X5X_MODE_NORMAL BIT(7)
->
-> +#define TCAN4X5X_NWKRQ_VOLTAGE_MASK BIT(19)
-> +
->  #define TCAN4X5X_DISABLE_WAKE_MSK      (BIT(31) | BIT(30))
->  #define TCAN4X5X_DISABLE_INH_MSK       BIT(9)
->
-> @@ -267,6 +269,11 @@ static int tcan4x5x_init(struct m_can_classdev *cdev)
->         if (ret)
->                 return ret;
->
-> +       ret = regmap_update_bits(tcan4x5x->regmap, TCAN4X5X_CONFIG,
-> +                                TCAN4X5X_NWKRQ_VOLTAGE_MASK, tcan4x5x->nwkrq_voltage);
-> +       if (ret)
-> +               return ret;
-> +
->         return ret;
->  }
->
-> @@ -318,6 +325,28 @@ static const struct tcan4x5x_version_info
->         return &tcan4x5x_versions[TCAN4X5X];
->  }
->
-> +static int tcan4x5x_get_dt_data(struct m_can_classdev *cdev)
-> +{
-> +       struct tcan4x5x_priv *tcan4x5x = cdev_to_priv(cdev);
-> +       struct device_node *np = cdev->dev->of_node;
-> +       u8 prop;
-> +       int ret;
-> +
-> +       ret = of_property_read_u8(np, "ti,nwkrq-voltage-sel", &prop);
-> +       if (!ret) {
-> +               if (prop <= 1)
-> +                       tcan4x5x->nwkrq_voltage = prop;
-> +               else
-> +                       dev_warn(cdev->dev,
-> +                                "nwkrq-voltage-sel have invalid option: %u\n",
-> +                                prop);
-> +       } else {
-> +               tcan4x5x->nwkrq_voltage = 0;
-> +       }
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
+branch HEAD: f9ed1f7c2e26fcd19781774e310a6236d7525c11  genirq/proc: Use seq_put_decimal_ull_width() for decimal values
 
-If the
+elapsed time: 733m
 
-  if (prop <= 1)
+configs tested: 95
+configs skipped: 4
 
-condition fails, you print a warning, but you are not assigning a
-value to tcan4x5x->nwkrq_voltage. Is this intentional?
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-What about:
+tested configs:
+alpha                allnoconfig    gcc-14.2.0
+alpha               allyesconfig    clang-20
+alpha               allyesconfig    gcc-14.2.0
+alpha                  defconfig    gcc-14.2.0
+arc                 allmodconfig    clang-20
+arc                  allnoconfig    gcc-14.2.0
+arc                 allyesconfig    clang-20
+arc                    defconfig    gcc-14.2.0
+arc           vdk_hs38_defconfig    gcc-14.2.0
+arm                 alldefconfig    gcc-14.2.0
+arm                 allmodconfig    clang-20
+arm                  allnoconfig    gcc-14.2.0
+arm                 allyesconfig    clang-20
+arm                    defconfig    gcc-14.2.0
+arm               dove_defconfig    gcc-14.2.0
+arm            socfpga_defconfig    gcc-14.2.0
+arm64               allmodconfig    clang-20
+arm64                allnoconfig    gcc-14.2.0
+arm64                  defconfig    gcc-14.2.0
+csky                 allnoconfig    gcc-14.2.0
+csky                   defconfig    gcc-14.2.0
+hexagon             allmodconfig    clang-20
+hexagon              allnoconfig    gcc-14.2.0
+hexagon             allyesconfig    clang-20
+hexagon                defconfig    gcc-14.2.0
+i386                allmodconfig    clang-19
+i386                 allnoconfig    clang-19
+i386                allyesconfig    clang-19
+i386                   defconfig    clang-19
+loongarch           allmodconfig    gcc-14.2.0
+loongarch            allnoconfig    gcc-14.2.0
+loongarch              defconfig    gcc-14.2.0
+m68k                allmodconfig    gcc-14.2.0
+m68k                 allnoconfig    gcc-14.2.0
+m68k                allyesconfig    gcc-14.2.0
+m68k                   defconfig    gcc-14.2.0
+m68k           m5272c3_defconfig    gcc-14.2.0
+m68k           m5307c3_defconfig    gcc-14.2.0
+m68k               q40_defconfig    gcc-14.2.0
+microblaze          allmodconfig    gcc-14.2.0
+microblaze           allnoconfig    gcc-14.2.0
+microblaze          allyesconfig    gcc-14.2.0
+microblaze             defconfig    gcc-14.2.0
+mips                 allnoconfig    gcc-14.2.0
+mips         bmips_stb_defconfig    gcc-14.2.0
+mips        loongson1b_defconfig    gcc-14.2.0
+nios2                allnoconfig    gcc-14.2.0
+nios2                  defconfig    gcc-14.2.0
+openrisc             allnoconfig    clang-20
+openrisc            allyesconfig    gcc-14.2.0
+openrisc               defconfig    gcc-12
+openrisc     or1klitex_defconfig    gcc-14.2.0
+parisc              allmodconfig    gcc-14.2.0
+parisc               allnoconfig    clang-20
+parisc              allyesconfig    gcc-14.2.0
+parisc                 defconfig    gcc-12
+parisc64               defconfig    gcc-14.2.0
+powerpc             allmodconfig    gcc-14.2.0
+powerpc              allnoconfig    clang-20
+powerpc             allyesconfig    gcc-14.2.0
+powerpc           cell_defconfig    gcc-14.2.0
+powerpc          ebony_defconfig    gcc-14.2.0
+powerpc        mpc83xx_defconfig    gcc-14.2.0
+powerpc       socrates_defconfig    gcc-14.2.0
+riscv               allmodconfig    gcc-14.2.0
+riscv                allnoconfig    clang-20
+riscv               allyesconfig    gcc-14.2.0
+riscv                  defconfig    gcc-12
+s390                allmodconfig    clang-20
+s390                allmodconfig    gcc-14.2.0
+s390                 allnoconfig    clang-20
+s390                allyesconfig    gcc-14.2.0
+s390                   defconfig    gcc-12
+sh                  allmodconfig    gcc-14.2.0
+sh                   allnoconfig    gcc-14.2.0
+sh                  allyesconfig    gcc-14.2.0
+sh                     defconfig    gcc-12
+sh              se7721_defconfig    gcc-14.2.0
+sparc               allmodconfig    gcc-14.2.0
+sparc64                defconfig    gcc-12
+um                  allmodconfig    clang-20
+um                   allnoconfig    clang-20
+um                  allyesconfig    clang-20
+um                  allyesconfig    gcc-12
+um                     defconfig    gcc-12
+um                i386_defconfig    gcc-12
+um              x86_64_defconfig    gcc-12
+x86_64               allnoconfig    clang-19
+x86_64              allyesconfig    clang-19
+x86_64                 defconfig    clang-19
+x86_64                     kexec    clang-19
+x86_64                     kexec    gcc-12
+x86_64                  rhel-8.3    gcc-12
+xtensa               allnoconfig    gcc-14.2.0
+xtensa             iss_defconfig    gcc-14.2.0
 
-        tcan4x5x->nwkrq_voltage = 0;
-        ret = of_property_read_u8(np, "ti,nwkrq-voltage-sel", &prop);
-        if (!ret) {
-                if (prop <= 1)
-                        tcan4x5x->nwkrq_voltage = prop;
-                else
-                        dev_warn(cdev->dev,
-                                 "nwkrq-voltage-sel have invalid option: %u\n",
-                                 prop);
-        }
-
-so that you make sure that tcan4x5x->nwkrq_voltage always gets a
-default zero value? Else, if you can make sure that tcan4x5x is always
-zero initialized, you can just drop the
-
-        tcan4x5x->nwkrq_voltage = 0;
-
-thing.
-
-> +       return 0;
-> +}
-> +
->  static int tcan4x5x_get_gpios(struct m_can_classdev *cdev,
->                               const struct tcan4x5x_version_info *version_info)
->  {
-> @@ -453,6 +482,12 @@ static int tcan4x5x_can_probe(struct spi_device *spi)
->                 goto out_power;
->         }
->
-> +       ret = tcan4x5x_get_dt_data(mcan_class);
-> +       if (ret) {
-> +               dev_err(&spi->dev, "Getting dt data failed %pe\n", ERR_PTR(ret));
-> +               goto out_power;
-> +       }
-> +
->         tcan4x5x_check_wake(priv);
->
->         ret = tcan4x5x_write_tcan_reg(mcan_class, TCAN4X5X_INT_EN, 0);
-> diff --git a/drivers/net/can/m_can/tcan4x5x.h b/drivers/net/can/m_can/tcan4x5x.h
-> index e62c030d3e1e5a713c997e7c8ecad4a44aff4e6a..04ebe5c64f4f7056a62e72e717cb85dd3817ab9c 100644
-> --- a/drivers/net/can/m_can/tcan4x5x.h
-> +++ b/drivers/net/can/m_can/tcan4x5x.h
-> @@ -42,6 +42,8 @@ struct tcan4x5x_priv {
->
->         struct tcan4x5x_map_buf map_buf_rx;
->         struct tcan4x5x_map_buf map_buf_tx;
-> +
-> +       u8 nwkrq_voltage;
->  };
->
->  static inline void
->
-> --
-> 2.46.2
->
->
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
