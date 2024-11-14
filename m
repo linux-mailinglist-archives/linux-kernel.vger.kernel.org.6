@@ -1,120 +1,79 @@
-Return-Path: <linux-kernel+bounces-409150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 095749C8807
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:49:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5937C9C880A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:50:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1CDC287A79
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:49:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E3101F226CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063821F80DF;
-	Thu, 14 Nov 2024 10:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191A61F80D9;
+	Thu, 14 Nov 2024 10:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="P9w4vJbD"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922071D95A1;
-	Thu, 14 Nov 2024 10:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="kwEyfk90"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4136B1F80D2;
+	Thu, 14 Nov 2024 10:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731581351; cv=none; b=b8e4Qxtq5bKUuvYHl5YSqDaB4w/2pdXxhNVbVQH84deCbwNSn7r1kLyWiwyysj9aSlR2fpcrkHs0pvwSGBuaedjV1LnNQotDxesotaU54AKDYrZyZJxgn7noeNNjfL2C4ULA2/+lM0lKLc8PVo6TgLJ9RuKhSNOtKek5ycXKE3E=
+	t=1731581399; cv=none; b=rMqB8sid6P+3JypVePltzQXInukAj/VAjCykxmRZnN2WLGw2vq1cnvtGP0NUD3UtIwO19nvAo0cg898B4lCksg8gyTm2WLR8DPKetEpFu4xqAsLIV3ujVC7MkfQJ6kvzgMu1YEpOUfAmKsqiNgtoROmnjpcgRMNVTqstYJu+HdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731581351; c=relaxed/simple;
-	bh=1pVwujhlE4sgAgf8ixdm9F0aPf17G792ocRgrybwWrc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jf8NALznRN+Yw4rCsXNbYhaYI1Yo/7x7ECXqwO/AXy+kNVgmgjFAVpSd15SQxtLCBKV+zy09OJ05rb9/IgRmFIhXSkzaEWg0GbN+w0qKRN4HJjrG7/sRrmz4ULgetoyp59J+yrDxqh8yAemmPMEdvsdKiA4Sets7X2ogI/9oUCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=P9w4vJbD; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.96] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 712422FC0052;
-	Thu, 14 Nov 2024 11:49:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1731581344;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yBrUmFsxW544nHEIzJzrCra/Vi9YhwoYI0bndIs2Yo8=;
-	b=P9w4vJbDh38Tds+6qqzUbA2Swk/e6TBPiipS40T2GnSvmprF0YMeB+cHWckWiDKiEe9t51
-	ECt6nQxNMJHOHF+uF7dZoVwh9q2TKDvQrrnOEa3X4A4Nv1Vf/15jaFSsjZ80LhvFeK0Nxo
-	d1EhjauYh3mB1PoY784XsF/RGWSrk4Q=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
-Date: Thu, 14 Nov 2024 11:49:04 +0100
+	s=arc-20240116; t=1731581399; c=relaxed/simple;
+	bh=H5yKHa85K/kN38MCbIEu0HaXLqb/id9+omWJt6O4sx0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=WxuyupMkFreKH0IC2aIHH+rCgLMbCWWtQTZwEevrCkieFzWMaFbK7pSgJBOtFlreyJwB0uTvQNUx6h07fTDd/fKhOZcVamBChSdIHjSxS6/KvTvNVP+wyXP7Qb9NKtHN7Nfj8d8fvG/S8GNNgthK5Av1uuYYDbbaXHexrpz5vTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=kwEyfk90; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1158)
+	id 901D320BEBF2; Thu, 14 Nov 2024 02:49:52 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 901D320BEBF2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1731581392;
+	bh=H5yKHa85K/kN38MCbIEu0HaXLqb/id9+omWJt6O4sx0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=kwEyfk90B8OGiyH8bPqwDaHvHb60BrJDMqxkzG7uysEcuTjU8N12X/0/IV6IN3qCj
+	 OQYfkEw8/rgnCZhVkC20yi5ZzXYdEVogvNrnnLWVIp5QBnnvOIsIKlFMzFmCDCm25k
+	 PI0nTFJDUYrl/QaLkvP5gS+pC8Pn8hTSrSVHugdQ=
+From: Hardik Garg <hargar@linux.microsoft.com>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	hargar@microsoft.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	srw@sladewatkins.net,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH 5.15] 5.15.172-rc1 review
+Date: Thu, 14 Nov 2024 02:49:52 -0800
+Message-Id: <1731581392-10064-1-git-send-email-hargar@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <20241112101839.777512218@linuxfoundation.org>
+References: <20241112101839.777512218@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
- symbols
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>
-Cc: tux@tuxedocomputers.com, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
- linux-kernel@vger.kernel.org, Thorsten Leemhuis <linux@leemhuis.info>
-References: <20241114103133.547032-4-ukleinek@kernel.org>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <20241114103133.547032-4-ukleinek@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-Hello,
+Tested-by: Hardik Garg <hargar@linux.microsoft.com>
 
-Am 14.11.24 um 11:31 schrieb Uwe Kleine-König:
-> Hello,
->
-> the kernel modules provided by Tuxedo on
-> https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers
-> are licensed under GPLv3 or later. This is incompatible with the
-> kernel's license and so makes it impossible for distributions and other
-> third parties to support these at least in pre-compiled form and so
-> limits user experience and the possibilities to work on mainlining these
-> drivers.
->
-> This incompatibility is created on purpose to control the upstream
-> process. See https://fosstodon.org/@kernellogger/113423314337991594 for
-> a nice summary of the situation and some further links about the issue.
->
-> Note that the pull request that fixed the MODULE_LICENSE invocations to
-> stop claiming GPL(v2) compatibility was accepted and then immediately
-> reverted "for the time being until the legal stuff is sorted out"
-> (https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/a8c09b6c2ce6393fe39d8652d133af9f06cfb427).
 
-As already being implied by that commit message, this is sadly not an issue that 
-can be sorted out over night.
 
-We ended up in this situation as MODULE_LICENSE("GPL") on its own does not hint 
-at GPL v2, if one is not aware of the license definition table in the documentation.
 
-It was and is never our intention to violate neither GPL v2 nor GPL v3 and we 
-are working on it.
-
-Kind regards,
-
-Werner Sembach
-
->
-> Best regards
-> Uwe
->
-> Uwe Kleine-König (2):
->    module: Put known GPL offenders in an array
->    module: Block modules by Tuxedo from accessing GPL symbols
->
->   kernel/module/main.c | 56 +++++++++++++++++++++++++++++++++++++-------
->   1 file changed, 47 insertions(+), 9 deletions(-)
->
-> base-commit: 28955f4fa2823e39f1ecfb3a37a364563527afbc
+Thanks,
+Hardik
 
