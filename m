@@ -1,79 +1,120 @@
-Return-Path: <linux-kernel+bounces-408585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACD459C80D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:35:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 592E39C80C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:28:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA346284E77
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:28:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E3851F261DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E051F584A;
-	Thu, 14 Nov 2024 02:25:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60DE11E493F;
+	Thu, 14 Nov 2024 02:27:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ohtOKEZ0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i13HH6NY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084F91E7C35;
-	Thu, 14 Nov 2024 02:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558FF1885B4
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 02:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731551116; cv=none; b=tQqKOvf21cZHTglZ3rxEqPfMDgEniMGisLMh6BteykGj8LpiqoNASIYXQqpZQAa+3gTw1CjkScizwqOnyoDIeKPMYRyznKQpno3oQ5a1urPkj49chfw8nYrk+kBZLx0jNzsrMT6JA5bQWZmewwBuSNB7KAw5NNYhJMZAMR4wblY=
+	t=1731551219; cv=none; b=ccTVOsK/d253S08ONgQOK5lJ78+skCLBEzj+F1g5VdGgMW/+E8RogNWirJfGMtJwnSxNDgKiGKuDDK0JN6l2Igf7rqKywmRSsjRVICRQmFgYTaerC38LpmFvwKIDna05yQimEpqkpvCq2l3ZA9oPGxc2Wr/K+5560hMRMZkhoKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731551116; c=relaxed/simple;
-	bh=qB25+Dbf9WY7WBvFohrWN4vsJ1OR1bLr9G+yZVNMHXQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R2QQqxyQrKatFoKOclK/Vby10QO5vMgJbqTNmXehw5biI+jV2VRzuiYSDsn++gGx+Nb7IHqVwG8QlUElhQ5rkbbK4j0U2ttcwX3MMkuPjrKMJ3dg0nJdSGGY48dzuBAbO5+AJoDplIoHHJsY7pSoBLGkXt2TYVS9kTUYVEAdrps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ohtOKEZ0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20D36C4CEC3;
-	Thu, 14 Nov 2024 02:25:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731551113;
-	bh=qB25+Dbf9WY7WBvFohrWN4vsJ1OR1bLr9G+yZVNMHXQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ohtOKEZ0wXGQgeiOKJUhw0BrCzqqexbut/k3RQIElP0qBVgZr8/FDyCqzkHRzLPbe
-	 eEmjaSy4pXBipFL8hPSVulgM9nHzmJTpgFEh18NkZxy6AJIdIvn2O6jD6l6E8uTynm
-	 WLyB9UtC1riuQWL07zyRN3XFPqQaQwSTTwidLL7KlfVRQ1DhGIJu7sUMgPMJldgKZZ
-	 APEs7EQPdW9bFK/wXH28shzzG/286/lajC96O0PmDvtwcFFtOypXR3rW57cdM4cU3p
-	 8lhF0sBsGY9iMvExOllpp85H36MJEKra0RmH1aOYFCAcSb7/2NUuoynGqjEAgi4PCe
-	 KBHFbupanJMsA==
-Date: Wed, 13 Nov 2024 18:25:11 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Manas via B4 Relay <devnull+manas18244.iiitd.ac.in@kernel.org>
-Cc: manas18244@iiitd.ac.in, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, Kuniyuki Iwashima <kuniyu@amazon.com>, Shuah
- Khan <shuah@kernel.org>, Anup Sharma <anupnewsmail@gmail.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzbot+d4373fa8042c06cefa84@syzkaller.appspotmail.com
-Subject: Re: [PATCH net v2] netlink: Add string check in
- netlink_ack_tlv_fill
-Message-ID: <20241113182511.41960cc0@kernel.org>
-In-Reply-To: <20241114-fix-netlink_ack_tlv_fill-v2-1-affdfb5f4c6f@iiitd.ac.in>
-References: <20241114-fix-netlink_ack_tlv_fill-v2-1-affdfb5f4c6f@iiitd.ac.in>
+	s=arc-20240116; t=1731551219; c=relaxed/simple;
+	bh=/ms4a1d2rjK5ppuE2Wzu7BQbNS9vvaZkwjcaxfoBSos=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RZ17vS8FcG92+MLzloAJNJ3QZwDlyQ27yWV5mH/Xl+yX3sEHTPj6TVT3c5FHScCOl3GNCvJW9ewvtuHb0rgiS9Ah6zjoTHLd5lfr9bhRu/sxxJfQbcq1PGyVmuCQ/o7ZR7tHbT2lAUoy2VrJwnXkVERn/qa8+/388rpi6zJrI1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i13HH6NY; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731551218; x=1763087218;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/ms4a1d2rjK5ppuE2Wzu7BQbNS9vvaZkwjcaxfoBSos=;
+  b=i13HH6NYfG+s781KiiSi/I8ATY8Nof3fJGGDgM6VdIwaCVU6XNV5dDuz
+   IzBTLDHttbO7F4TtNqJXll0+4YxHr7r+sqllupEeSdhtJ+0gOWtS7abpg
+   Uc2AKkjbHtQLpuf+oWfOcG/HXswVJmZHRJhWEPnprc/s4qHbJh/V4vEpj
+   upr3HvT7p0Zg9um9aM/y8rOJdQ71KnnJ2HOHGJf28wTqH1VEEBQhFkksX
+   6835yuakPX+upSukJ5F7Pm3rdv4/8mUi93xJ3PPdOIcyc4+5D8m6kBKdQ
+   EiSi4TnWG5Rz/xhEeCuqaHcTxZ5scaZsYZ8R+NYNaHo2E2+tFZsSRUwuy
+   w==;
+X-CSE-ConnectionGUID: SSzc2b1bRsSI4glrf9NZ9Q==
+X-CSE-MsgGUID: VtJizurvQpya1qXoPmpYmA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11255"; a="31576874"
+X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
+   d="scan'208";a="31576874"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 18:26:57 -0800
+X-CSE-ConnectionGUID: gAV9EYPzQH+z0cQ7RBIK4Q==
+X-CSE-MsgGUID: MebwxVt8Rj6kwyzmDyIIPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
+   d="scan'208";a="125563126"
+Received: from beginmax-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.24])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 18:26:57 -0800
+Date: Wed, 13 Nov 2024 18:26:54 -0800
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: David Kaplan <david.kaplan@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 03/35] x86/bugs: Add AUTO mitigations for
+ mds/taa/mmio/rfds
+Message-ID: <20241114022654.qr35ebyspjh4zayj@desk>
+References: <20241105215455.359471-1-david.kaplan@amd.com>
+ <20241105215455.359471-4-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105215455.359471-4-david.kaplan@amd.com>
 
-On Thu, 14 Nov 2024 06:15:15 +0530 Manas via B4 Relay wrote:
-> -	if (extack->bad_attr &&
-> +	if (extack->bad_attr && strlen(in_skb->data) &&
->  	    !WARN_ON((u8 *)extack->bad_attr < in_skb->data ||
->  		     (u8 *)extack->bad_attr >= in_skb->data + in_skb->len))
+On Tue, Nov 05, 2024 at 03:54:23PM -0600, David Kaplan wrote:
+> @@ -1995,6 +2004,7 @@ void cpu_bugs_smt_update(void)
+>  		update_mds_branch_idle();
+>  		break;
+>  	case MDS_MITIGATION_OFF:
+> +	case MDS_MITIGATION_AUTO:
 
-that's most definitely not the right fix.
-in_skb->data points to binary data.
+This implies AUTO and OFF are similar, which is counter intuitive.
+While mitigation selection code ...
 
-my best idea so far is to rework this check to use nlh, because in_skb
-will be pulled at this stage for dumps
-if that makes sense to you please give it a go, otherwise I'll work on
-the fix tomorrow
+> +	if (mds_mitigation == MDS_MITIGATION_AUTO)
+> +		mds_mitigation = MDS_MITIGATION_FULL;
+> +
+
+... indicates that AUTO is equivalent to FULL. So, I think AUTO should be
+handled the same way as FULL in cpu_bugs_smt_update() as well.
+
+Same for TAA and MMIO below.
+
+>  		break;
+>  	}
+>  
+> @@ -2006,6 +2016,7 @@ void cpu_bugs_smt_update(void) break;
+>  	case TAA_MITIGATION_TSX_DISABLED:
+>  	case TAA_MITIGATION_OFF:
+> +	case TAA_MITIGATION_AUTO:
+>  		break;
+>  	}
+>  
+> @@ -2016,6 +2027,7 @@ void cpu_bugs_smt_update(void)
+>  			pr_warn_once(MMIO_MSG_SMT);
+>  		break;
+>  	case MMIO_MITIGATION_OFF:
+> +	case MMIO_MITIGATION_AUTO:
+>  		break;
+>  	}
 
