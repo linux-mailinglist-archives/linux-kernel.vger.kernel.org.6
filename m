@@ -1,46 +1,56 @@
-Return-Path: <linux-kernel+bounces-409625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95C459C909D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:16:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13B589C9046
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:57:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 923BDB2DF6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:17:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4151B2E04D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA4E16BE3A;
-	Thu, 14 Nov 2024 16:17:50 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF13D15573F;
+	Thu, 14 Nov 2024 16:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ng2HbV9o"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2DB8F62;
-	Thu, 14 Nov 2024 16:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDDE1262A3
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 16:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731601070; cv=none; b=n+VzuEj0J+HI5JQ6kXbCwjhC1EM8klpqJjpIUnyVi2Vf983mt7uG08NSMFQtInw7odgDKMtCA4y5jCk7HJlU1CTM8WBwHrOVDSqHDxxjM3dg7I6A9V/H6YjD7AZoRNlPrjvIb+o84kjX4+RNDW8rtyUbVTsoTDkMlLiHrcYDNjo=
+	t=1731601111; cv=none; b=Nv2Oizkgt9xcRdb8ZvkFzkAYOWTggjHv8TPRjHvSBBddr4vSVbZwPfx3vnKUiw2tBoersgnRfU4AcEoRxWRz61ldqrAOJGf9w74y7QyvxwcRTHPwSm0zFsLrjtC1qo0Xojf84SC8HjSPmHIpgKI8XJUfGXdQECO1YfzXGj8eSTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731601070; c=relaxed/simple;
-	bh=nUKrRMu6CcbBi+AMOmL7j4x3/rE3yGGOQCRBTH468IY=;
+	s=arc-20240116; t=1731601111; c=relaxed/simple;
+	bh=IXa20kPovf1Y/0KCLUo928WvlTZb0nwEJ37O8TBNUqc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cPvfLrmVzOZaUPDrQgp40E7ATao+uTTIWiuUCT2wwIwCAfhc0wI09tNaX2WFKRxHWy/u4ZHk6AZIHjyUkwpuPD/GKQoXO7Rynmgi2T5w1LjnYoYBUnLUfIhIzwtW7LpwhsiusquxkNscrNesadulExYixzFHQBRq6PidsbcIpSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 94F7068C7B; Thu, 14 Nov 2024 17:17:44 +0100 (CET)
-Date: Thu, 14 Nov 2024 17:17:44 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Chinmay Gameti <c.gameti@samsung.com>
-Cc: axboe@kernel.dk, hch@lst.de, kbusch@kernel.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	joshi.k@samsung.com, anuj20.g@samsung.com, nj.shetty@samsung.com,
-	kundan.kumar@samsung.com, gost.dev@samsung.com
-Subject: Re: [PATCH] block: add larger order folio instead of pages for
- passthrough I/O
-Message-ID: <20241114161744.GA2078@lst.de>
-References: <CGME20241114140134epcas5p3474e82266c4c117919a920d1dd4ed410@epcas5p3.samsung.com> <20241114135335.21327-1-c.gameti@samsung.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ELEJpC5aRPfSHFHaI2212/rQpw4plMxKnZQK14rNFHMPjxjvNt1Ow5QETKxnnMS94jVoAj+2H2uDi9wo+9nzli1ZJhvEpq3VOV45OYP5Iw3b88azkjGdav0TX3YCEgO91+ot0NS6Yqv/0jBAV7U0CNG7iF/MoAWMZQFWt8FshRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ng2HbV9o; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=60CpvTS8y28+G06qyIsEsZ2zgscU9EQI3R4bXZJMd3E=; b=ng2HbV9oGrlnpiOiJSupabDi5/
+	qyvBEzqieb2GvNdM6bQfELzVedcCFzxu+e+4TjR7gBMTsyy8zrQouFSxnhmmWOgcVnmqCvzkAaKbW
+	9YcRE5TP6m3D/O2Q5IJf9APa/t8ng5NfYVocKgRm0b9JZnP9uzi6MUlqur64tH3SytDkRbhK6CFkZ
+	fP+N/zdnpHdGaaM48K4sal05CLu+fGxxhtZW/4jdKGanzziKYApxs1frumXPj/rzRJEeGfUV12soh
+	A2miRyUy8wQW0GLm4sBqnGUuaLR7gxFy0YdWMl1ac/ihwCLIVlGHmaMUwqiAET+GhwP00kRoXWLOk
+	UkcJcTVg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tBcY4-0000000Eyhp-03AE;
+	Thu, 14 Nov 2024 16:18:24 +0000
+Date: Thu, 14 Nov 2024 16:18:23 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
+	syzbot+0b1279812c46e48bb0c1@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2] erofs: fix file-backed mounts over FUSE
+Message-ID: <20241114161823.GN3387508@ZenIV>
+References: <20241114090109.757690-1-hsiangkao@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,58 +59,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241114135335.21327-1-c.gameti@samsung.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20241114090109.757690-1-hsiangkao@linux.alibaba.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, Nov 14, 2024 at 07:23:35PM +0530, Chinmay Gameti wrote:
-> +unsigned int get_contig_folio_len(unsigned int *num_pages,
-> +				  struct page **pages, unsigned int i,
-> +				  struct folio *folio, size_t left,
-> +				  size_t offset)
-
-Not a good name for a non-static function (not even for a stic
-one to be honest).
-
-> @@ -313,21 +314,35 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
->  		if (unlikely(offs & queue_dma_alignment(rq->q)))
->  			j = 0;
->  		else {
-> -			for (j = 0; j < npages; j++) {
-> +			for (j = 0; j < npages; j += num_pages) {
->  				struct page *page = pages[j];
-> -				unsigned int n = PAGE_SIZE - offs;
-> +				struct folio *folio = page_folio(page);
->  				bool same_page = false;
+On Thu, Nov 14, 2024 at 05:01:09PM +0800, Gao Xiang wrote:
+> --- a/fs/erofs/data.c
+> +++ b/fs/erofs/data.c
+> @@ -38,7 +38,9 @@ void *erofs_bread(struct erofs_buf *buf, erofs_off_t offset,
+>  	}
+>  	if (!folio || !folio_contains(folio, index)) {
+>  		erofs_put_metabuf(buf);
+> -		folio = read_mapping_folio(buf->mapping, index, NULL);
+> +		folio = buf->file ? read_mapping_folio(buf->file->f_mapping,
+> +					index, buf->file) :
+> +			read_mapping_folio(buf->mapping, index, NULL);
+>  		if (IS_ERR(folio))
+>  			return folio;
+>  	}
+> @@ -61,8 +63,8 @@ void erofs_init_metabuf(struct erofs_buf *buf, struct super_block *sb)
+>  {
+>  	struct erofs_sb_info *sbi = EROFS_SB(sb);
 >  
-> -				if (n > bytes)
-> -					n = bytes;
->  
-> -				if (!bio_add_hw_page(rq->q, bio, page, n, offs,
-> -						     max_sectors, &same_page))
-> +				folio_offset = ((size_t)folio_page_idx(folio,
-> +						page) << PAGE_SHIFT) + offs;
+> -	if (erofs_is_fileio_mode(sbi))
+> -		buf->mapping = file_inode(sbi->fdev)->i_mapping;
+> +	if (erofs_is_fileio_mode(sbi))	/* some fs like FUSE needs it */
+> +		buf->file = sbi->fdev;
 
-I'm not sure if Jens want to rush something like this in for 6.13, but if
-we're aiming for the next merge window I actually have a 3/4 done series
-that rips out bio_add_hw_page and all the passthrough special casing by
-simply running the 'do we need to split the bio' helper on the free-form
-bio and return an error if we do.  That means all this code will go away,
-and you'll automatically get all the work done for the normal path for
-passthrough as well.
-
-> diff --git a/include/linux/bio.h b/include/linux/bio.h
-> index 60830a6a5939..1e5fbc875ecc 100644
-> --- a/include/linux/bio.h
-> +++ b/include/linux/bio.h
-> @@ -422,6 +422,10 @@ void __bio_add_page(struct bio *bio, struct page *page,
->  		unsigned int len, unsigned int off);
->  void bio_add_folio_nofail(struct bio *bio, struct folio *folio, size_t len,
->  			  size_t off);
-> +unsigned int get_contig_folio_len(unsigned int *num_pages,
-> +				  struct page **pages, unsigned int i,
-> +				  struct folio *folio, size_t left,
-> +				  size_t offset);
-
-And this really should bot be in a public header.
-
+Would be easier to set *both* ->mapping and ->file at that point, so that
+erofs_bread() would just have read_mapping_folio(buf->mapping, index, buf->file),
+unconditionally...
 
