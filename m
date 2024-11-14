@@ -1,198 +1,75 @@
-Return-Path: <linux-kernel+bounces-409926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72E389C9376
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:51:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70BE19C9379
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:52:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13BF2B26544
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:51:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E44B0B26EAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31C51ABED7;
-	Thu, 14 Nov 2024 20:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209D61AC44D;
+	Thu, 14 Nov 2024 20:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lm2O/Ybe"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BDbQGtm0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370C01ABED9;
-	Thu, 14 Nov 2024 20:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9112905;
+	Thu, 14 Nov 2024 20:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731617458; cv=none; b=E6dq2SWStJrb5Lhd/F7yWHvg0h41bpqTfejxOHWR70fgkh0y7hsNWuSnjudl4skbyusf1rI2NZXbqd+ieow00kCMcgot+vJc++wcqEADWUoLPQnPMSE8S/cXxgoQQtXG6CRaufPjCFFtOm0yZqjH8gTccQ+BLsSvWb7ette2KMU=
+	t=1731617513; cv=none; b=rWWXS8DOjEGibM9tBe+m57B4RWoVXoikRmyziqf80nR+3RAGhwBbRUUQqUuxtFeTY+cozgHP83NFoUxrfAm3SpuA13Fc17w9JAtXGm2hrBnCry3aPKWniJpsi01l6i9zOKM4ZRACdCSLhBJilJVxmhsSuJOh/KNCfuzW2UzkBwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731617458; c=relaxed/simple;
-	bh=FaMr7tIRWXDZ6ad3xtZlphSFUCsG4u9u+xXqtA7b6kQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QAgrN6dHSLfW5V9MVKpqEGAudrOP8BWhG+Vv8PCZvvImJ33RnJkBqfNd5ljw9v9iXmnfDcs9Hdlsz7Qqg6m8nXgfDu/YosuRpdQhMdC/gua4KzIuHU99eCQR9BQyh91F/B2sLrApGv3nqD05WooyIy/cFIF6HnPjTra83UYnmVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lm2O/Ybe; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731617456; x=1763153456;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=FaMr7tIRWXDZ6ad3xtZlphSFUCsG4u9u+xXqtA7b6kQ=;
-  b=Lm2O/YbeB3tzhPM7AQjXorc9icEumM4ByorhSRk7W024/fFP8VzPJ8NP
-   xTRJxGoYfslYRrs7G6h3TYRFpRs1YSk4z5KK4r86rXMl60cgSGR8kO2LB
-   SzTdTdIFq2W+UsC27SagYNatHyFzMUnwIMJBy+WyYQFXEyq+V4BWBK1nO
-   QUUBEgkDJMioFaFeWGHy/MqzbaEpcC2Y6dRU3zU/CsttPVzEie5QSDquY
-   BWnye3bl6E9LGB8SDZBGD6i0VpmdaPWGRAvBvnRmBo92Djq8tLFCge8gI
-   vayruRyw+zfosjCFRUwiTshQVI0dPf47niX5WO7OvZp64VtF6b4zQ5eo/
-   Q==;
-X-CSE-ConnectionGUID: Jc/b5speRUCaPOZfgHtcvA==
-X-CSE-MsgGUID: pzwlX8lnTcGOoMbiKkxspg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11256"; a="42981041"
-X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
-   d="scan'208";a="42981041"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 12:50:55 -0800
-X-CSE-ConnectionGUID: 1DMG7JpXQAa95Fox4xXQUg==
-X-CSE-MsgGUID: DWR2Ow4ZQDe6dEMKqKk43A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
-   d="scan'208";a="92402975"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa003.fm.intel.com with ESMTP; 14 Nov 2024 12:50:54 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id C8BA6380; Thu, 14 Nov 2024 22:50:52 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>
-Subject: [PATCH v1 1/1] spi: sc18is602: Switch to generic firmware properties and drop of_match_ptr()
-Date: Thu, 14 Nov 2024 22:50:51 +0200
-Message-ID: <20241114205051.3747458-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1731617513; c=relaxed/simple;
+	bh=hkKa0UC9NnJxDCNd5n0CnVfMEOJpPjjfOMw26wn6Vhw=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=b7Jnyq6Wab6PqMolZ/lw+o4rlmfIxRVwQyv1/JLgkgrXIEVy4tvsiOtb6qDL5HSnX6R3Ton8iEiC8UCpguxoS1DI3BvTgX8p06uYv94tfRQF5/4DAPaMtN5Zxg5bYtXZ9Hng3p/zR+j72848OrcTfMF7B8hrDk1twD1KApQA0Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BDbQGtm0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B2D5C4CECD;
+	Thu, 14 Nov 2024 20:51:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731617513;
+	bh=hkKa0UC9NnJxDCNd5n0CnVfMEOJpPjjfOMw26wn6Vhw=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=BDbQGtm0WeAvVnAzLRV1Ix+gPEb5jGN7UcnFuLOTK/bTYCxRTehoH08ARVilP9jb3
+	 ueOk7RtrmEcSd2zHCbFty/RfiGwC0+gsMsF6RykmSqLaniKWDsELecF3MuQUpgmdcJ
+	 DOnWSokngHLLHbYHjqWqlK2qi/0mv9Wip2q5BC7jz0vyGis9l1ofE6/uDSDKf5HNI8
+	 Uc7CSJhlihBuFpPkpOgvUbY64h+5d4KmE2dQPmm9xdb1H7J3g+RhQ8EJcsUyM1kHHX
+	 Zk3uQ8bXLJayhLNGQwB2kkpqlNRQpIGdmLAxRe+7BsPEdqzcGkA678KTarXvA9MnTU
+	 /aeDfKdaKFULw==
+Message-ID: <6c4bdf9e5a09aa8c2c49c69a6ccdac99.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <89ad840e7a484eaf4727470824acfe0fdc60fcef.1729871146.git.christophe.jaillet@wanadoo.fr>
+References: <89ad840e7a484eaf4727470824acfe0fdc60fcef.1729871146.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] clk: mediatek: mt6735-apmixedsys: Fix an error handling path in clk_mt6735_apmixed_probe()
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Yassine Oudjana <y.oudjana@protonmail.com>
+Date: Thu, 14 Nov 2024 12:51:51 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-This enables using the driver with other firmware types such as ACPI
-via PRP0001.
+Quoting Christophe JAILLET (2024-10-25 08:46:08)
+> If an error occurs after a successful mtk_alloc_clk_data(),
+> mtk_free_clk_data() should be called, as already done in the .remove()
+> function.
+>=20
+> Switch to mtk_devm_alloc_clk_data() in order to fix the memory leak in the
+> probe function, and simplify the remove function.
+>=20
+> Fixes: 43c04ed79189 ("clk: mediatek: Add drivers for MediaTek MT6735 main=
+ clock and reset drivers")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
-Also part of a general attempt to move drivers over to generic properties
-to avoid opportunities for cut and paste.
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/spi/spi-sc18is602.c | 34 ++++++++++++----------------------
- 1 file changed, 12 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/spi/spi-sc18is602.c b/drivers/spi/spi-sc18is602.c
-index eecf9ea95ae3..1627aa66c965 100644
---- a/drivers/spi/spi-sc18is602.c
-+++ b/drivers/spi/spi-sc18is602.c
-@@ -7,13 +7,15 @@
- 
- #include <linux/kernel.h>
- #include <linux/err.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/spi/spi.h>
- #include <linux/i2c.h>
- #include <linux/delay.h>
- #include <linux/pm_runtime.h>
--#include <linux/of.h>
- #include <linux/platform_data/sc18is602.h>
-+#include <linux/property.h>
-+
- #include <linux/gpio/consumer.h>
- 
- enum chips { sc18is602, sc18is602b, sc18is603 };
-@@ -236,9 +238,7 @@ static int sc18is602_setup(struct spi_device *spi)
- 
- static int sc18is602_probe(struct i2c_client *client)
- {
--	const struct i2c_device_id *id = i2c_client_get_device_id(client);
- 	struct device *dev = &client->dev;
--	struct device_node *np = dev->of_node;
- 	struct sc18is602_platform_data *pdata = dev_get_platdata(dev);
- 	struct sc18is602 *hw;
- 	struct spi_controller *host;
-@@ -251,8 +251,9 @@ static int sc18is602_probe(struct i2c_client *client)
- 	if (!host)
- 		return -ENOMEM;
- 
-+	device_set_node(&host->dev, dev_fwnode(dev));
-+
- 	hw = spi_controller_get_devdata(host);
--	i2c_set_clientdata(client, hw);
- 
- 	/* assert reset and then release */
- 	hw->reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-@@ -265,11 +266,7 @@ static int sc18is602_probe(struct i2c_client *client)
- 	hw->dev = dev;
- 	hw->ctrl = 0xff;
- 
--	if (client->dev.of_node)
--		hw->id = (uintptr_t)of_device_get_match_data(&client->dev);
--	else
--		hw->id = id->driver_data;
--
-+	hw->id = (uintptr_t)i2c_get_match_data(client);
- 	switch (hw->id) {
- 	case sc18is602:
- 	case sc18is602b:
-@@ -278,28 +275,21 @@ static int sc18is602_probe(struct i2c_client *client)
- 		break;
- 	case sc18is603:
- 		host->num_chipselect = 2;
--		if (pdata) {
-+		if (pdata)
- 			hw->freq = pdata->clock_frequency;
--		} else {
--			const __be32 *val;
--			int len;
--
--			val = of_get_property(np, "clock-frequency", &len);
--			if (val && len >= sizeof(__be32))
--				hw->freq = be32_to_cpup(val);
--		}
-+		else
-+			device_property_read_u32(dev, "clock-frequency", &hw->freq);
- 		if (!hw->freq)
- 			hw->freq = SC18IS602_CLOCK;
- 		break;
- 	}
--	host->bus_num = np ? -1 : client->adapter->nr;
-+	host->bus_num = dev_fwnode(dev) ? -1 : client->adapter->nr;
- 	host->mode_bits = SPI_CPHA | SPI_CPOL | SPI_LSB_FIRST;
- 	host->bits_per_word_mask = SPI_BPW_MASK(8);
- 	host->setup = sc18is602_setup;
- 	host->transfer_one_message = sc18is602_transfer_one;
- 	host->max_transfer_size = sc18is602_max_transfer_size;
- 	host->max_message_size = sc18is602_max_transfer_size;
--	host->dev.of_node = np;
- 	host->min_speed_hz = hw->freq / 128;
- 	host->max_speed_hz = hw->freq / 4;
- 
-@@ -314,7 +304,7 @@ static const struct i2c_device_id sc18is602_id[] = {
- };
- MODULE_DEVICE_TABLE(i2c, sc18is602_id);
- 
--static const struct of_device_id sc18is602_of_match[] __maybe_unused = {
-+static const struct of_device_id sc18is602_of_match[] = {
- 	{
- 		.compatible = "nxp,sc18is602",
- 		.data = (void *)sc18is602
-@@ -334,7 +324,7 @@ MODULE_DEVICE_TABLE(of, sc18is602_of_match);
- static struct i2c_driver sc18is602_driver = {
- 	.driver = {
- 		.name = "sc18is602",
--		.of_match_table = of_match_ptr(sc18is602_of_match),
-+		.of_match_table = sc18is602_of_match,
- 	},
- 	.probe = sc18is602_probe,
- 	.id_table = sc18is602_id,
--- 
-2.43.0.rc1.1336.g36b5255a03ac
-
+Applied to clk-next
 
