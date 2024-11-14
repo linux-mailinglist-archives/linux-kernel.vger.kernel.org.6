@@ -1,162 +1,149 @@
-Return-Path: <linux-kernel+bounces-409711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B70369C9072
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:04:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D2909C9081
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:07:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46B021F21AB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:04:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFDF72852E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BEFE188708;
-	Thu, 14 Nov 2024 17:04:29 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29FA119259E;
+	Thu, 14 Nov 2024 17:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FuybvMBm"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0306F307
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 17:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8ED191F83
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 17:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731603868; cv=none; b=Lgm4DKbBBqldHoo1Teo2puCfSioPIMzdZLNHy5umZptep8vRaS6LL87E3/8JdXR8QbzKNwGiPaWjDF50MURwKrdogJUM75ddVvhMc0R8iVJgsJuSuZwqfIQ4aLlR2DmNCiju0+kWqP00NxVbkDkEFv4bBeIJp+IEOcLiHTZ0hvs=
+	t=1731603949; cv=none; b=GPuC3LSltxbT6OAdehpks8N/JpKGDwLSKjBcid9GnsrZFhVxY1eSrSIEzYxD09Nf5452KT1TxL3ArPiATY1iRDxedVxpszF6JaBMYnuzp5zT6tqHgCuSp6I7nzy2elO5eOdVEaOLPVpyIHU3xVQ+qQ36KqQgggDEwGbvtN0YcGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731603868; c=relaxed/simple;
-	bh=E4Gu0GdLFo1+Zezjda792lmrck7dWGTLGV696hio58c=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=pDASbgzUK0FbyUAgiuLPAC0d/9I81bb6wdc+dJXEqDCqOeLCHzrpCdW/77SzhkmP1lsI2FjNYIvQaSQNkphxtilZm8or0TDHLq0iOs3CDuZD/ZOAoFwok7maV6vDBvXsruflNHnKtnoFXGBXs8T6H4oCtGH3fsX8Fv08i5ehE1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a7191aa79cso8700525ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:04:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731603866; x=1732208666;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YCO4+P4QVyx+tLjBloCWsv4xEmws5gF5C66XONteBtI=;
-        b=eWbqUtrNfQbhTH0Tz5cdu/J8kBfOJV4j6F6o6APxF9BMQ1T/Cz5cFXBX1qV3TVd9ld
-         F2MvRtAgi98ITa2+3/IBxkhQI9WtzSJ/+L/slEiV8SP3NVoWk+B/bmsKQCEwbw0vLFwE
-         gzS6IXDR8FgUHg7tRMlTeY9ywUWawZwrLwTxO8RoY8ym1lGLTOvvT8EYaxPJ7sjyiHa+
-         O6mJ2nCk8u8eRW3OlX9I91i+GANb/m5wG+NDyqRlAo1n/lHcvF93XMOqlrdNx4SuzmSr
-         43HsaTaL652fAcuPOOmnFq3TJyw8ONkd/NHWy78uAMFmiVfExYNrH95A5E7ez4C/b/G9
-         V7FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXRCvkAwr9XXZ4CvqFUCyyErhb/0tasXWSc2JOUDd/67fDVY4Du1fNntY63+lFa2WPOEy3pUEC/g00qwOY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWWN+aeT8OJSeEs6iuB+NGuIKUuUHax4G8ChUFswbIqtgWvszE
-	CFrH9ZOPuPweI64TEV5CBUzEQ2p7Bc2pad2ynkA4LKDqACeC9T3uNXySTcbkMit4OLrFQfwNa3S
-	ryJHuFv8qcei80vJMxe+XBQ4V+wfVaZI5xej6Vn8oRUAOlYg//YRBJ/c=
-X-Google-Smtp-Source: AGHT+IEveP6B+40mgim/WP2jcRpUflbQMLB11+F7Oy3bRcN61GF0UEhTArjg5chJIWyuJ3OTcLUK892eo8qxI6pagbbIZLaK8pYT
+	s=arc-20240116; t=1731603949; c=relaxed/simple;
+	bh=14DKtAy5eJK96PAvjqVZ7KtGyTX5x8J9GCCe8HBRysY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tLFo7AwpoqhJAmArFKoWw8kUuAdrmJ5cPd50E2mgAS2MEJ7yrLHZ6BMK2wwHHkb2qE+AsU5hdn4Si2yVquSCk+ugb9tHvZ0V9UCbdR2nR5zCCPlSNdg+VLtSrZr+wcPuee0+v4rLi6xJIOsBZTsbRuERc4VipxquLjrdQCjpjXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=FuybvMBm; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AEDHSw8025082;
+	Thu, 14 Nov 2024 17:05:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2023-11-20; bh=FFFolayj59SPa6a5ry3K7EO1JG669
+	hS35arha73WQKk=; b=FuybvMBmpFPq00BscZSPyuGk9NUKocxQwJoY+Hw4FAjIP
+	b/rdZcQGCeqQAFlnY3kjWeRrtGse3jbZ5Sm7Mebv+y7EQIA497Cx4vQDfTupp5bj
+	eEND/wtll4rTqI6w2XKb69hfg6N9bbDSFnaUnvOmM164xvGMK8Xo+A8LshcoOnzS
+	VMr3vrKOnU7dGCEulF3q7YxzcfqzkttTTr+u1XWdDJAh9GlOYpitEtYad7H4UpaQ
+	QidTRx4bwSA2aLApYKVV7GVLATKid0FjLmukHk1MGJXtEH4zhLS+/GGxPwKApOYx
+	KBqJyJSPEZU9zd1hc1KBbGyd0IarolvXK8uf2w5lQ==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42t0heskys-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 14 Nov 2024 17:05:28 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4AEH3ROU022745;
+	Thu, 14 Nov 2024 17:05:27 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42vuw1jy6k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 14 Nov 2024 17:05:27 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4AEH5QmH032739;
+	Thu, 14 Nov 2024 17:05:26 GMT
+Received: from sidkumar-mac.us.oracle.com (dhcp-10-39-201-66.vpn.oracle.com [10.39.201.66])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 42vuw1jy5w-1;
+	Thu, 14 Nov 2024 17:05:26 +0000
+From: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+To: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, liam.howlett@oracle.com,
+        Sidhartha Kumar <sidhartha.kumar@oracle.com>
+Subject: [PATCH 0/5] Track node vacancy to reduce worst case allocation counts
+Date: Thu, 14 Nov 2024 12:05:19 -0500
+Message-ID: <20241114170524.64391-1-sidhartha.kumar@oracle.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13a6:b0:3a4:e4d0:9051 with SMTP id
- e9e14a558f8ab-3a71578e2d8mr81031775ab.24.1731603864857; Thu, 14 Nov 2024
- 09:04:24 -0800 (PST)
-Date: Thu, 14 Nov 2024 09:04:24 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67362d98.050a0220.1324f8.009b.GAE@google.com>
-Subject: [syzbot] [net?] BUG: corrupted list in nsim_bpf_destroy_prog
-From: syzbot <syzbot+f57a59b585e797d8c9b8@syzkaller.appspotmail.com>
-To: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-14_05,2024-11-13_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 spamscore=0
+ adultscore=0 phishscore=0 malwarescore=0 mlxlogscore=999 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2411140134
+X-Proofpoint-ORIG-GUID: MtKCEM8yZv4wXPA5BALxi4JO3Ct--jlZ
+X-Proofpoint-GUID: MtKCEM8yZv4wXPA5BALxi4JO3Ct--jlZ
 
-Hello,
+================ overview ========================
+Currently, the maple tree preallocates the worst case number of nodes for
+given store type by taking into account the whole height of the tree. This
+comes from a worst case scenario of every node in the tree being full and
+having to propagate node allocation upwards until we reach the root of the
+tree. This can be optimized if there are vacancies in nodes that are at a
+lower depth than the root node. This series implements tracking the level
+at which there is a vacant node so we only need to allocate until this
+level is reached, rather than always using the full height of the tree.
+The ma_wr_state struct is modified to add a field which keeps track of the
+vacant height and is updated during walks of the tree. This value is then
+read in mas_prealloc_calc() when we decide how many nodes to allocate.
 
-syzbot found the following issue on:
+For rebalancing stores, we also need to track the lowest height at which
+a node has 1 more entry than the minimum sufficient number of entries.
+This is because rebalancing can cause a parent node to become insufficient
+which results in further node allocations. In this case, we need to use
+the sufficient height as the worst case rather than the vacant height.
 
-HEAD commit:    252e01e68241 selftests: net: add netlink-dumps to .gitignore
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=157ce35f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=64aa0d9945bd5c1
-dashboard link: https://syzkaller.appspot.com/bug?extid=f57a59b585e797d8c9b8
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch 1-2: preparatory patches
+patch 3: implement vacant height tracking + update the tests
+patch 4: support vacant height tracking for rebalacning writes
+patch 5: implement sufficient height tracking
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/2459f940e3b8/disk-252e01e6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6b3823596aaa/vmlinux-252e01e6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/bf011fb97648/bzImage-252e01e6.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f57a59b585e797d8c9b8@syzkaller.appspotmail.com
-
-list_del corruption. prev->next should be ffff8880334808a8, but was ffff88805f2f43c0. (prev=ffff88805f2f43c0)
-------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:64!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 UID: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.12.0-rc6-syzkaller-00169-g252e01e68241 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Workqueue: events bpf_prog_free_deferred
-RIP: 0010:__list_del_entry_valid_or_report+0x11b/0x140 lib/list_debug.c:62
-Code: 00 07 90 0f 0b 48 c7 c7 a0 0d 61 8c 4c 89 fe e8 0b 8f 00 07 90 0f 0b 48 c7 c7 00 0e 61 8c 4c 89 fe 48 89 d9 e8 f6 8e 00 07 90 <0f> 0b 48 c7 c7 80 0e 61 8c 4c 89 fe 4c 89 f1 e8 e1 8e 00 07 90 0f
-RSP: 0018:ffffc900000d7a00 EFLAGS: 00010246
-RAX: 000000000000006d RBX: ffff88805f2f43c0 RCX: 67b0c67390e66700
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: ffffc900000d7b38 R08: ffffffff8174a18c R09: fffffbfff1cf9fd0
-R10: dffffc0000000000 R11: fffffbfff1cf9fd0 R12: dffffc0000000000
-R13: dffffc0000000000 R14: ffff88805f2f43c0 R15: ffff8880334808a8
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000110c38e396 CR3: 000000006435a000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __list_del_entry_valid include/linux/list.h:124 [inline]
- __list_del_entry include/linux/list.h:215 [inline]
- list_del include/linux/list.h:229 [inline]
- nsim_bpf_destroy_prog+0xd9/0x1f0 drivers/net/netdevsim/bpf.c:281
- __bpf_prog_offload_destroy kernel/bpf/offload.c:113 [inline]
- bpf_prog_dev_bound_destroy+0x2aa/0x590 kernel/bpf/offload.c:392
- bpf_prog_free_deferred+0x3c5/0x710 kernel/bpf/core.c:2796
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__list_del_entry_valid_or_report+0x11b/0x140 lib/list_debug.c:62
-Code: 00 07 90 0f 0b 48 c7 c7 a0 0d 61 8c 4c 89 fe e8 0b 8f 00 07 90 0f 0b 48 c7 c7 00 0e 61 8c 4c 89 fe 48 89 d9 e8 f6 8e 00 07 90 <0f> 0b 48 c7 c7 80 0e 61 8c 4c 89 fe 4c 89 f1 e8 e1 8e 00 07 90 0f
-RSP: 0018:ffffc900000d7a00 EFLAGS: 00010246
-RAX: 000000000000006d RBX: ffff88805f2f43c0 RCX: 67b0c67390e66700
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: ffffc900000d7b38 R08: ffffffff8174a18c R09: fffffbfff1cf9fd0
-R10: dffffc0000000000 R11: fffffbfff1cf9fd0 R12: dffffc0000000000
-R13: dffffc0000000000 R14: ffff88805f2f43c0 R15: ffff8880334808a8
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f8c75d062d8 CR3: 0000000064358000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+================ results =========================
+Bpftrace was used to profile the allocation path for requesting new maple
+nodes while running the ./mmap1_processes test from mmtests. The two paths
+for allocation are requests for a single node and the bulk allocation path.
+The histogram represents the number of calls to these paths and a shows the
+distribution of the number of nodes requested for the bulk allocation path.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+mm-unstable 11/13/24
+@bulk_alloc_req:
+[2, 4)                10 |@@@@@@@@@@@@@                                       |
+[4, 8)                38 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+[8, 16)               19 |@@@@@@@@@@@@@@@@@@@@@@@@@@                          |
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+mm-unstable 11/13/24 + this series
+@bulk_alloc_req:
+[2, 4)                 9 |@@@@@@@@@@                                          |
+[4, 8)                43 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+[8, 16)               15 |@@@@@@@@@@@@@@@@@@                                  |
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+We can see the worst case bulk allocations of [8,16) nodes are reduced after
+this series.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
 
-If you want to undo deduplication, reply with:
-#syz undup
+Sidhartha Kumar (5):
+  maple_tree: convert mas_prealloc_calc() to take in a maple write state
+  maple_tree: use height and depth consistently
+  maple_tree: use vacant nodes to reduce worst case allocations
+  maple_tree: break on convergence in mas_spanning_rebalance()
+  maple_tree: add sufficient height
+
+ include/linux/maple_tree.h       |   4 +
+ lib/maple_tree.c                 |  89 +++++++++++++---------
+ tools/testing/radix-tree/maple.c | 125 +++++++++++++++++++++++++++++--
+ 3 files changed, 176 insertions(+), 42 deletions(-)
+
+-- 
+2.43.0
 
