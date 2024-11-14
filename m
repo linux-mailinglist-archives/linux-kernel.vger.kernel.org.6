@@ -1,157 +1,347 @@
-Return-Path: <linux-kernel+bounces-408465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE849C7F23
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:06:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 306089C7F26
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:14:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30E451F2284C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:06:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D869028114B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2E08494;
-	Thu, 14 Nov 2024 00:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C087F3D9E;
+	Thu, 14 Nov 2024 00:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lug0RFjI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Uuap7bAX"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC5B817;
-	Thu, 14 Nov 2024 00:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688076FC3
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 00:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731542762; cv=none; b=YJHfbqCPo0SmS1SqULIwWKHEO6PYKR9PC1DxcCZedw3Ho2WLor8l9Q7eQoxJwhxyUbuhUcBxiGHQRW5dbn2YoAbTsCSIY/ENQnQIbquPGJLAo4CZS5f2LkpDp6IjBvijbwDGU9BN2weXevAJi9MaiO4cRDVuIthXVkTYHGXIOU0=
+	t=1731543250; cv=none; b=tuzXxssFhmnaoDzaZHqS9iZGAun+TXA8uvCjGSGmgaNUTMu3qwYgGNBLqkGh/Jxq6ih/KJaEIEpNTD63o1k0JkbktHNujO3jpFNSdb4Gsesie5mYsbk2yHgUzHVrahkz98aZ26oWpLMfQ3nGUp1TnWeaDxlL7180aeHR701a52k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731542762; c=relaxed/simple;
-	bh=QCU4sOzgkeIKbdmKlY+8wD3dNS2f394YpPWJGiZp+Bs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i+OGIePkKXVDYBTpvrfmH9wufhHi/UCHxL4E1aky8fKiaqFGjhiZ8bEmlg/QxSZ2eJM8sUyWxMo0okWgwjZe20zOBgGfuPhGqM7YpwXlP9DVnfK61nMVOF6PVnhRwtsYIrI8pwWU+UStpnP8LLQxqZo7sOlTuvk3D1DBIqKXHpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lug0RFjI; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731542761; x=1763078761;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QCU4sOzgkeIKbdmKlY+8wD3dNS2f394YpPWJGiZp+Bs=;
-  b=lug0RFjIX2ObywmTcd7rAEW9iHSsL4Ev412nUu9MTr7K2tNuF/EsnEJm
-   2C7f8E2g2fNHjMEXgL0/WzdjqljUHf0tsComZMKeWGX3QIHbA6xgvIvzc
-   MZSP3iC7khSSWFOZci96Ls2vVIzeBl+KeG2LmJZXhjHpE6lHZ3U7GLHoZ
-   LtJMSYogyk7UPyI25Idksg7r4+aTyWaULblJtm/WaMayvDom9rOYGdEZ2
-   CTLDVoPxWH2yYNeClMWHtp4woUhoKhmMOzc63ZM7fK7tU9ngtRX7rvmqx
-   gBwlZsoh7WtbiNZ75hucGodUwNpgpni983rywu+RxF9Vjq03ThAwBgjB7
-   Q==;
-X-CSE-ConnectionGUID: pCXihiLKST+VgAUUiL9cqQ==
-X-CSE-MsgGUID: iEjrxb8LT2O8pDcXRne8tQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11255"; a="42073488"
-X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
-   d="scan'208";a="42073488"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 16:05:57 -0800
-X-CSE-ConnectionGUID: KKYYy0w6RvCAL6KZ1+vJGA==
-X-CSE-MsgGUID: MXJRmlm9RzmXYn9RqXolmw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,152,1728975600"; 
-   d="scan'208";a="111341296"
-Received: from lkp-server01.sh.intel.com (HELO 80bd855f15b3) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 13 Nov 2024 16:05:54 -0800
-Received: from kbuild by 80bd855f15b3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tBNMt-0000uR-20;
-	Thu, 14 Nov 2024 00:05:51 +0000
-Date: Thu, 14 Nov 2024 08:05:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>, robdclark@gmail.com,
-	will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
-	jgg@ziepe.ca, jsnitsel@redhat.com, robh@kernel.org,
-	krzysztof.kozlowski@linaro.org, quic_c_gdjako@quicinc.com,
-	dmitry.baryshkov@linaro.org
-Cc: oe-kbuild-all@lists.linux.dev, iommu@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, quic_bibekkum@quicinc.com
-Subject: Re: [PATCH v17 1/5] iommu/arm-smmu: re-enable context caching in
- smmu reset operation
-Message-ID: <202411140748.6mcFdJdO-lkp@intel.com>
-References: <20241112165454.2698269-2-quic_bibekkum@quicinc.com>
+	s=arc-20240116; t=1731543250; c=relaxed/simple;
+	bh=Fjs8VpEmXUt6iO23GOaHv975z0fKszxrrhrkRyYsWZM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Pc6v/lK8+1qsb4Xt3YaRwodbNUFI5OPsUn0EQwfJ3gwXMlbeGtWVNEMpLjzKpxEaUMLuinuBO+vdpVTzap9Qd2RqbF4RhHoepesXYXDx00lnrjL4XpkgAn7EAJkg1b8awX1VSNiMSBEdSblzxOrG+gdt+qDB/RkDBa5T/otDc5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Uuap7bAX; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-20c8b23167fso73039815ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:14:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731543248; x=1732148048; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YG6vDBku7kMpeHZSi1IzY0q9n0Nu+10g7LnoUPeeLH8=;
+        b=Uuap7bAXnOoRLIC99apdLtOwUdvI7RFqDCIdNozbQrbz1SrFPfWzRLuUGtG8gupC1q
+         0wv/nmYBeulUgmwRkU4Mkauh+vxPZiJbgKvhzWZ4cJwJgL5xrWbHVGs7p0Ik99fKhxus
+         JH4pPFtMrISOnSAhRuIFs5O74ia1Ok0reii/2nXG+GL6TUD+NDI5BYYBNV0mUr4XNBs6
+         ToDNYYaItAmMGfO5NTElLSLL6Lg1ToePtTzzg47GqANqx3M8s3dG5BGZZ4ImSro5R31W
+         iRWbZkcGX1dGsOQEAsbVLgUQ5bscbMRdLym3jiWQloNIK1PTE3BDhUA62n/jIHawn3Wx
+         8RKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731543248; x=1732148048;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YG6vDBku7kMpeHZSi1IzY0q9n0Nu+10g7LnoUPeeLH8=;
+        b=vd9fz8SgaobaNTJK6d3v1gBr59lvfj2Nf+BAaJvZKLuTGo5VsfPgkuSgqp/5Uqg9uj
+         xTKp4Vy0bo3bFbDPloxVsvAMhs64zHUV/KJmCDugD3kuJWfDh+CGS99xan8fwaMDgr0K
+         /6sOoqS1PSZ+yPUMjTMk12bu5gFTKPxDW03N8J/z5q9WDNz1PYoSiq21mbbNvxD11QwU
+         ZpMKnPJ64X5CLRAJtz988ey4VnGxaKKzIKZSbpWzNOXwOUJSiV+TS0rzaxMWD9euC8J9
+         gjBVg7H7NdtnpexINlMWaVtIhdnJrMSCVhu60SFK8ofIM6wPc3ZVaOy1/nQLZRvUypCH
+         6FIA==
+X-Gm-Message-State: AOJu0YwuHkZQtOIZWmJao7BNvT4fQoTsdOqS/gob7itbxBIuaKNt1u6k
+	MvIHaJhKdOcRYINjcLJbJaPaibDuvV0U5IFNWreUppPGUcPHQL/yIc+bR8ItNBIJJxCVJqeJ1sp
+	Hig==
+X-Google-Smtp-Source: AGHT+IGZMQ7d8FpvW2bgMLdn/MljHJen2J/r3edwH0bkQQHKdtX1wOgkU5/8fa6SpxEOLLapwoaKKz8/jy8=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a17:902:c602:b0:20c:bb19:d2ce with SMTP id
+ d9443c01a7336-21183586702mr507345ad.8.1731543247464; Wed, 13 Nov 2024
+ 16:14:07 -0800 (PST)
+Date: Wed, 13 Nov 2024 16:14:05 -0800
+In-Reply-To: <20241108155056.332412-2-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112165454.2698269-2-quic_bibekkum@quicinc.com>
+Mime-Version: 1.0
+References: <20241108155056.332412-1-pbonzini@redhat.com> <20241108155056.332412-2-pbonzini@redhat.com>
+Message-ID: <ZzVAzc3rVTW9OCJP@google.com>
+Subject: Re: [PATCH 1/3] KVM: gmem: allocate private data for the gmem inode
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, michael.roth@amd.com
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Bibek,
++Ackerley, who's also working on resurrecting the file system[*].  At a glance,
+there appear to be non-trivial differences, e.g. Ackerley's version has a call
+to security_inode_init_security_anon().  I've paged out much of the inode stuff,
+so I trust Ackerley's judgment far, far more than my own :-)
 
-kernel test robot noticed the following build warnings:
+[*] https://lore.kernel.org/all/d1940d466fc69472c8b6dda95df2e0522b2d8744.1726009989.git.ackerleytng@google.com
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on joro-iommu/next v6.12-rc7 next-20241113]
-[cannot apply to arm64/for-next/core]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Bibek-Kumar-Patro/iommu-arm-smmu-re-enable-context-caching-in-smmu-reset-operation/20241113-042646
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20241112165454.2698269-2-quic_bibekkum%40quicinc.com
-patch subject: [PATCH v17 1/5] iommu/arm-smmu: re-enable context caching in smmu reset operation
-config: powerpc64-randconfig-r064-20241114 (https://download.01.org/0day-ci/archive/20241114/202411140748.6mcFdJdO-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241114/202411140748.6mcFdJdO-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411140748.6mcFdJdO-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/iommu/arm/arm-smmu/arm-smmu-impl.c:10:
-   In file included from drivers/iommu/arm/arm-smmu/arm-smmu.h:18:
-   In file included from include/linux/io-64-nonatomic-hi-lo.h:5:
-   In file included from include/linux/io.h:14:
-   In file included from arch/powerpc/include/asm/io.h:24:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/iommu/arm/arm-smmu/arm-smmu-impl.c:113:6: warning: unused variable 'i' [-Wunused-variable]
-     113 |         int i;
-         |             ^
-   2 warnings generated.
-
-
-vim +/i +113 drivers/iommu/arm/arm-smmu/arm-smmu-impl.c
-
-62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  109  
-759aaa10c76cba drivers/iommu/arm-smmu-impl.c Vivek Gautam 2019-09-20  110  int arm_mmu500_reset(struct arm_smmu_device *smmu)
-62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  111  {
-62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  112  	u32 reg, major;
-62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15 @113  	int i;
-62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  114  	/*
-62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  115  	 * On MMU-500 r2p0 onwards we need to clear ACR.CACHE_LOCK before
-62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  116  	 * writes to the context bank ACTLRs will stick. And we just hope that
-62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  117  	 * Secure has also cleared SACR.CACHE_LOCK for this to take effect...
-62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  118  	 */
-62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  119  	reg = arm_smmu_gr0_read(smmu, ARM_SMMU_GR0_ID7);
-fba6e960772b7b drivers/iommu/arm-smmu-impl.c Will Deacon  2020-01-10  120  	major = FIELD_GET(ARM_SMMU_ID7_MAJOR, reg);
-62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  121  	reg = arm_smmu_gr0_read(smmu, ARM_SMMU_GR0_sACR);
-62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  122  	if (major >= 2)
-62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  123  		reg &= ~ARM_MMU500_ACR_CACHE_LOCK;
-62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  124  	/*
-62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  125  	 * Allow unmatched Stream IDs to allocate bypass
-62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  126  	 * TLB entries for reduced latency.
-62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  127  	 */
-62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  128  	reg |= ARM_MMU500_ACR_SMTNMB_TLBEN | ARM_MMU500_ACR_S2CRB_TLBEN;
-62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  129  	arm_smmu_gr0_write(smmu, ARM_SMMU_GR0_sACR, reg);
-62b993a36e4c2d drivers/iommu/arm-smmu-impl.c Robin Murphy 2019-08-15  130  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On Fri, Nov 08, 2024, Paolo Bonzini wrote:
+> In preparation for removing the usage of the uptodate flag,
+> reintroduce the gmem filesystem type.  We need it in order to
+> free the private inode information.
+> 
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> ---
+>  include/uapi/linux/magic.h |   1 +
+>  virt/kvm/guest_memfd.c     | 117 +++++++++++++++++++++++++++++++++----
+>  virt/kvm/kvm_main.c        |   7 ++-
+>  virt/kvm/kvm_mm.h          |   8 ++-
+>  4 files changed, 119 insertions(+), 14 deletions(-)
+> 
+> diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+> index bb575f3ab45e..d856dd6a7ed9 100644
+> --- a/include/uapi/linux/magic.h
+> +++ b/include/uapi/linux/magic.h
+> @@ -103,5 +103,6 @@
+>  #define DEVMEM_MAGIC		0x454d444d	/* "DMEM" */
+>  #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
+>  #define PID_FS_MAGIC		0x50494446	/* "PIDF" */
+> +#define KVM_GUEST_MEM_MAGIC	0x474d454d	/* "GMEM" */
+>  
+>  #endif /* __LINUX_MAGIC_H__ */
+> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+> index 8f079a61a56d..3ea5a7597fd4 100644
+> --- a/virt/kvm/guest_memfd.c
+> +++ b/virt/kvm/guest_memfd.c
+> @@ -4,9 +4,74 @@
+>  #include <linux/kvm_host.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/anon_inodes.h>
+> +#include <linux/pseudo_fs.h>
+>  
+>  #include "kvm_mm.h"
+>  
+> +/* Do all the filesystem crap just for evict_inode... */
+> +
+> +static struct vfsmount *kvm_gmem_mnt __read_mostly;
+> +
+> +static void gmem_evict_inode(struct inode *inode)
+> +{
+> +	kvfree(inode->i_private);
+> +	truncate_inode_pages_final(&inode->i_data);
+> +	clear_inode(inode);
+> +}
+> +
+> +static const struct super_operations gmem_super_operations = {
+> +	.drop_inode	= generic_delete_inode,
+> +	.evict_inode    = gmem_evict_inode,
+> +	.statfs         = simple_statfs,
+> +};
+> +
+> +static int gmem_init_fs_context(struct fs_context *fc)
+> +{
+> +	struct pseudo_fs_context *ctx = init_pseudo(fc, KVM_GUEST_MEM_MAGIC);
+> +	if (!ctx)
+> +		return -ENOMEM;
+> +
+> +	ctx->ops = &gmem_super_operations;
+> +	return 0;
+> +}
+> +
+> +static struct file_system_type kvm_gmem_fs_type = {
+> +	.name           = "kvm_gmemfs",
+> +	.init_fs_context = gmem_init_fs_context,
+> +	.kill_sb        = kill_anon_super,
+> +};
+> +
+> +static struct file *kvm_gmem_create_file(const char *name, const struct file_operations *fops)
+> +{
+> +	struct inode *inode;
+> +	struct file *file;
+> +
+> +	if (fops->owner && !try_module_get(fops->owner))
+> +		return ERR_PTR(-ENOENT);
+> +
+> +	inode = alloc_anon_inode(kvm_gmem_mnt->mnt_sb);
+> +	if (IS_ERR(inode)) {
+> +		file = ERR_CAST(inode);
+> +		goto err;
+> +	}
+> +	file = alloc_file_pseudo(inode, kvm_gmem_mnt, name, O_RDWR, fops);
+> +	if (IS_ERR(file))
+> +		goto err_iput;
+> +
+> +	return file;
+> +
+> +err_iput:
+> +	iput(inode);
+> +err:
+> +	module_put(fops->owner);
+> +	return file;
+> +}
+> +
+> +
+> +struct kvm_gmem_inode {
+> +	unsigned long flags;
+> +};
+> +
+>  struct kvm_gmem {
+>  	struct kvm *kvm;
+>  	struct xarray bindings;
+> @@ -308,9 +373,31 @@ static struct file_operations kvm_gmem_fops = {
+>  	.fallocate	= kvm_gmem_fallocate,
+>  };
+>  
+> -void kvm_gmem_init(struct module *module)
+> +int kvm_gmem_init(struct module *module)
+>  {
+> +	int ret;
+> +
+> +	ret = register_filesystem(&kvm_gmem_fs_type);
+> +	if (ret) {
+> +		pr_err("kvm-gmem: cannot register file system (%d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	kvm_gmem_mnt = kern_mount(&kvm_gmem_fs_type);
+> +	if (IS_ERR(kvm_gmem_mnt)) {
+> +		pr_err("kvm-gmem: kernel mount failed (%ld)\n", PTR_ERR(kvm_gmem_mnt));
+> +		return PTR_ERR(kvm_gmem_mnt);
+> +	}
+> +
+>  	kvm_gmem_fops.owner = module;
+> +
+> +	return 0;
+> +}
+> +
+> +void kvm_gmem_exit(void)
+> +{
+> +	kern_unmount(kvm_gmem_mnt);
+> +	unregister_filesystem(&kvm_gmem_fs_type);
+>  }
+>  
+>  static int kvm_gmem_migrate_folio(struct address_space *mapping,
+> @@ -394,15 +481,23 @@ static const struct inode_operations kvm_gmem_iops = {
+>  
+>  static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+>  {
+> -	const char *anon_name = "[kvm-gmem]";
+> +	const char *gmem_name = "[kvm-gmem]";
+> +	struct kvm_gmem_inode *i_gmem;
+>  	struct kvm_gmem *gmem;
+>  	struct inode *inode;
+>  	struct file *file;
+>  	int fd, err;
+>  
+> +	i_gmem = kvzalloc(sizeof(struct kvm_gmem_inode), GFP_KERNEL);
+> +	if (!i_gmem)
+> +		return -ENOMEM;
+> +	i_gmem->flags = flags;
+> +
+>  	fd = get_unused_fd_flags(0);
+> -	if (fd < 0)
+> -		return fd;
+> +	if (fd < 0) {
+> +		err = fd;
+> +		goto err_i_gmem;
+> +	}
+>  
+>  	gmem = kzalloc(sizeof(*gmem), GFP_KERNEL);
+>  	if (!gmem) {
+> @@ -410,19 +505,19 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+>  		goto err_fd;
+>  	}
+>  
+> -	file = anon_inode_create_getfile(anon_name, &kvm_gmem_fops, gmem,
+> -					 O_RDWR, NULL);
+> +	file = kvm_gmem_create_file(gmem_name, &kvm_gmem_fops);
+>  	if (IS_ERR(file)) {
+>  		err = PTR_ERR(file);
+>  		goto err_gmem;
+>  	}
+>  
+> +	inode = file->f_inode;
+> +
+> +	file->f_mapping = inode->i_mapping;
+> +	file->private_data = gmem;
+>  	file->f_flags |= O_LARGEFILE;
+>  
+> -	inode = file->f_inode;
+> -	WARN_ON(file->f_mapping != inode->i_mapping);
+> -
+> -	inode->i_private = (void *)(unsigned long)flags;
+> +	inode->i_private = i_gmem;
+>  	inode->i_op = &kvm_gmem_iops;
+>  	inode->i_mapping->a_ops = &kvm_gmem_aops;
+>  	inode->i_mode |= S_IFREG;
+> @@ -444,6 +539,8 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+>  	kfree(gmem);
+>  err_fd:
+>  	put_unused_fd(fd);
+> +err_i_gmem:
+> +	kvfree(i_gmem);
+>  	return err;
+>  }
+>  
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 279e03029ce1..8b7b4e0eb639 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -6504,7 +6504,9 @@ int kvm_init(unsigned vcpu_size, unsigned vcpu_align, struct module *module)
+>  	if (WARN_ON_ONCE(r))
+>  		goto err_vfio;
+>  
+> -	kvm_gmem_init(module);
+> +	r = kvm_gmem_init(module);
+> +	if (r)
+> +		goto err_gmem;
+>  
+>  	r = kvm_init_virtualization();
+>  	if (r)
+> @@ -6525,6 +6527,8 @@ int kvm_init(unsigned vcpu_size, unsigned vcpu_align, struct module *module)
+>  err_register:
+>  	kvm_uninit_virtualization();
+>  err_virt:
+> +	kvm_gmem_exit();
+> +err_gmem:
+>  	kvm_vfio_ops_exit();
+>  err_vfio:
+>  	kvm_async_pf_deinit();
+> @@ -6556,6 +6560,7 @@ void kvm_exit(void)
+>  	for_each_possible_cpu(cpu)
+>  		free_cpumask_var(per_cpu(cpu_kick_mask, cpu));
+>  	kmem_cache_destroy(kvm_vcpu_cache);
+> +	kvm_gmem_exit();
+>  	kvm_vfio_ops_exit();
+>  	kvm_async_pf_deinit();
+>  	kvm_irqfd_exit();
+> diff --git a/virt/kvm/kvm_mm.h b/virt/kvm/kvm_mm.h
+> index 715f19669d01..91e4202574a8 100644
+> --- a/virt/kvm/kvm_mm.h
+> +++ b/virt/kvm/kvm_mm.h
+> @@ -36,15 +36,17 @@ static inline void gfn_to_pfn_cache_invalidate_start(struct kvm *kvm,
+>  #endif /* HAVE_KVM_PFNCACHE */
+>  
+>  #ifdef CONFIG_KVM_PRIVATE_MEM
+> -void kvm_gmem_init(struct module *module);
+> +int kvm_gmem_init(struct module *module);
+> +void kvm_gmem_exit(void);
+>  int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args);
+>  int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
+>  		  unsigned int fd, loff_t offset);
+>  void kvm_gmem_unbind(struct kvm_memory_slot *slot);
+>  #else
+> -static inline void kvm_gmem_init(struct module *module)
+> +static inline void kvm_gmem_exit(void) {}
+> +static inline int kvm_gmem_init(struct module *module)
+>  {
+> -
+> +	return 0;
+>  }
+>  
+>  static inline int kvm_gmem_bind(struct kvm *kvm,
+> -- 
+> 2.43.5
+> 
+> 
 
