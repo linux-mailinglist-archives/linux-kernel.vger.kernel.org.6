@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-409449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CDC69C8D0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:40:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EB9E9C8CDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:29:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80E6FB303CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:29:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B91101F23063
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F7C76C61;
-	Thu, 14 Nov 2024 14:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7A013BC26;
+	Thu, 14 Nov 2024 14:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bmMUHUEW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eRz2CA8u"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DF4762EB
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 14:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5796A13C9A3
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 14:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731594511; cv=none; b=BmINNmOmOqz+4kkzhM+VVcAfGS87nqLrP9Zq7n4F/KHjwX7r1IuTYHIGEdhL5ZFb4q8xz3DqR1w+prFpilX2rLCEg2eRbqjusDEN9Lq/hB9CV4TpBnR3h7jAQ20uH6PTvuHqYzsdKZvQPNuuVu2DWR/eKp4cJ4kAX7eQ3HQp7Sk=
+	t=1731594516; cv=none; b=tXLWo1KDHRDDVvTVQ4tILPgZ3/kHWMtwEQlMYstNFKbga9jc6NbSfQ/oC9JGRzXH70Al18wAxZqGQWQlx9y9D19r+j2UFY5TOY3RZTnMMO/9d93m4qQCV3u4fMYk0qpE4PzvVVbaDEp4QhJuAP/NbdV9JDGPbC6SvJ5SxCDz1r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731594511; c=relaxed/simple;
-	bh=lSow07/Kr5HZ3FFHHBUM39UBwM8/bfL+yg1mPjBwL2E=;
+	s=arc-20240116; t=1731594516; c=relaxed/simple;
+	bh=UiCzCEVKSisB0ZWNuCYSdhK6YcxXJHJ5x6Li45J8UlQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k4QKG7SacNI8jan1EpdBquxelBJpojEO+Vtou77HAYYhrxDz0HYI13Uf742RVQ1R9B4w/fKJWuaqj8g62LH3OnE5fNn9Hdhw0pQwF04dtKfLlobtGfx8tU3228rYJWgjaoRT/fN84KakaBLKlluafbm0KGQuqZ9Ln88nwz8yC0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bmMUHUEW; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=LT3eaHkqKvyVS/qxHaYWe8hxiHHd65qwKtCGw4Bs1IEYHOqGtXUVTicF7yn3rI4T4yDxU4LjWHQGsV1SALD8Sh7oLUjwcQ80fIS7xHgkZB7Mrb2O2VRJjoSaPwRGpg3srPYeW75+XJeliRpTkwlvpU9/LscD3JW2P8K659V9upc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eRz2CA8u; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731594509;
+	s=mimecast20190719; t=1731594513;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=rYX1M87GENqgHT7DQ1pmqocVV2CQv6P6u65y9xqj4r8=;
-	b=bmMUHUEWk+P4DM4oPZdfphQAkwW3q2AeAs59yWPA/d82zNEBUwooPamuItJ5cnStHNVHDt
-	N2DFw8bossJA5BqtWtMZdo8Rj33UGmYec6HlKcvWNkmWc4oTTK4QIEapo87K0g5kvs2STd
-	zNW4kjBsC7iocLR/i98qearSHeQRaiE=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=4Wu0O/IV5FSWLxTneVq+fA0iAC4oYeWy3hed+ynIa4I=;
+	b=eRz2CA8usc32Veu9wfkyshSCePrNejpV/QfiCVklEiawajKcAB4BX9ADFBab62+y/HIrsi
+	Ha2vjnLFTWIoggvrqmVeJpNJx3KqlTmijid3zwnEpEwKzHCtmDoGx2Iv5Sdv45O3cjNWlL
+	JvfdqZt6AVUxe0MAHVk3EYeNso12Kko=
+Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com
+ [209.85.161.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-130-1sSiYdsaPAGTYgBSWI6TkQ-1; Thu, 14 Nov 2024 09:28:28 -0500
-X-MC-Unique: 1sSiYdsaPAGTYgBSWI6TkQ-1
-X-Mimecast-MFC-AGG-ID: 1sSiYdsaPAGTYgBSWI6TkQ
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-460aca6cd0bso8913491cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 06:28:28 -0800 (PST)
+ us-mta-663-a81wtlGAPfK0DpIhZNNhfw-1; Thu, 14 Nov 2024 09:28:32 -0500
+X-MC-Unique: a81wtlGAPfK0DpIhZNNhfw-1
+X-Mimecast-MFC-AGG-ID: a81wtlGAPfK0DpIhZNNhfw
+Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-5eb742a18ebso466679eaf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 06:28:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731594507; x=1732199307;
+        d=1e100.net; s=20230601; t=1731594511; x=1732199311;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rYX1M87GENqgHT7DQ1pmqocVV2CQv6P6u65y9xqj4r8=;
-        b=ap/UsvNmMjiw4KO+ZQiZqML1kymVtlf2Muw6imhcOFWAvEKK/7kL6p3FFEcuqE9i39
-         71IGRZhbfuje0YHN4BJybrdaI0BOV2QzNY2AfB0aFLYoiSODlZGX3Y3sGZ+PilNcyGNo
-         MjfFyi6CFH/YqhrLbTyvLD3g3KNpm41gUpPHC89SWNr/geoRj+VUtHvP2jn+nlwXnV+l
-         gkrpV2hM/GhhxrjJKHE/lYaicaJZDP1R+Fz8BMKeK8lT9Iq05WvSpD1K7OcJaWTj7yxf
-         YOzCCBfqfDAy3JZXN4grZ9tu9t/Sf5TXV/vCAEJclsIuBjwkGlMK8HLzS5dcjsMwJAW7
-         SNNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHkn+knbPwZkBYZTXTCZ3iuFOwDzpJjg53ZJ+VvNwE9iF0ES2+SaXGSx1n43nesLnKJPDqXV2fVts2V2Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKPO3+fjcdVXotFQOc1rXwDqyWByuJnPHn8Am54U8zglskI6HG
-	esjuv8NvUOQ/eBakKR0Q3PYGpcIPk7QNIx2EzQdHLD61FdgYgGa7C9an8EYoeB2La4EwE18K4RU
-	LkNVtRW+9QGvLZgIoc/EVLn3s9bn77+Ge9zXbo/thFmEDMj4OTiA4A+gPtCRkSQ==
-X-Received: by 2002:ac8:59c7:0:b0:461:6157:99d0 with SMTP id d75a77b69052e-463093f2082mr329327251cf.41.1731594507522;
-        Thu, 14 Nov 2024 06:28:27 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEWJg+aYSnVi03KcGgXI5uWcHil7Jzy82MCwjxAfH8vdfQY5bVa8bXIa2RN030Agrcf6P1dBg==
-X-Received: by 2002:ac8:59c7:0:b0:461:6157:99d0 with SMTP id d75a77b69052e-463093f2082mr329326791cf.41.1731594507041;
-        Thu, 14 Nov 2024 06:28:27 -0800 (PST)
+        bh=4Wu0O/IV5FSWLxTneVq+fA0iAC4oYeWy3hed+ynIa4I=;
+        b=Jp3HtlhLLlbmzk7tXXklUf3UYB8a8HjuAVaeag6xcg5mR0DoRMZfduWzM/pUR3utkA
+         lSePQkamNalBVP7hs/f9ZglTgZr7wudYX4giM0Y3t4Wi9yAKja2Rp0f3sokQnRqfj4RJ
+         M5EQdID2S30TTtyV96+Qn0Gb6QS9GO4cYlbsI/3o1PLmbFnT2HRZ3O+5jTbuTzWX/iYI
+         zDEZ9/w/5yLlcgylSwLepZlcbJQN6NoOLyY6WAYvL5yY0z4ZwF+snxo7YCJBA5bECSg5
+         1sP/LgP+Gz0eTazH++aZk6t48dMSQo31dPr2WjhA71CK9FtpyH8blX6hV51ILKDFvRGJ
+         NdrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwC+zjdspi/2cH7EuQPqJ872OK+Y6PUhMOf0p41AuD7suSyHmTzSRNJK9rnAYZa+HcHVBqdLvjzw/ho20=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySFXC7nTwp3GyZ1cKbteMWPmJks0guHtF93wIANayICpZyTUH1
+	cs5L3ClJBiUHo+N20gXWgwzEJUVrM5C0vp4dBUqW1IXMttqyAL437lH+3fEFkq3jlRRKs8ToFez
+	XRoIyaTn/p8UQtqX6TBkP23kVtO+uiya12jk+SQZXwAiXBm9gkr3yVH5hWiS/Wg==
+X-Received: by 2002:a05:6359:4d09:b0:1ac:f7ac:e302 with SMTP id e5c5f4694b2df-1c66f235a86mr632516955d.18.1731594511366;
+        Thu, 14 Nov 2024 06:28:31 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFcj+J1hQbqvcwXRZ2BZ8q1EL+mAKWdvpM8kRrxL7q/E504BpvzMDS1gACKQRZp8UTh4mIGLQ==
+X-Received: by 2002:a05:6359:4d09:b0:1ac:f7ac:e302 with SMTP id e5c5f4694b2df-1c66f235a86mr632512455d.18.1731594511029;
+        Thu, 14 Nov 2024 06:28:31 -0800 (PST)
 Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-47-4-194.as13285.net. [80.47.4.194])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4635ab25bc8sm6068211cf.69.2024.11.14.06.28.19
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4635ab25bc8sm6068211cf.69.2024.11.14.06.28.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 06:28:23 -0800 (PST)
+        Thu, 14 Nov 2024 06:28:30 -0800 (PST)
 From: Juri Lelli <juri.lelli@redhat.com>
 To: Waiman Long <longman@redhat.com>,
 	Tejun Heo <tj@kernel.org>,
@@ -97,9 +97,9 @@ Cc: Qais Yousef <qyousef@layalina.io>,
 	linux-kernel@vger.kernel.org,
 	cgroups@vger.kernel.org,
 	Juri Lelli <juri.lelli@redhat.com>
-Subject: [PATCH v2 1/2] sched/deadline: Restore dl_server bandwidth on non-destructive root domain changes
-Date: Thu, 14 Nov 2024 14:28:09 +0000
-Message-ID: <20241114142810.794657-2-juri.lelli@redhat.com>
+Subject: [PATCH v2 2/2] sched/deadline: Correctly account for allocated bandwidth during hotplug
+Date: Thu, 14 Nov 2024 14:28:10 +0000
+Message-ID: <20241114142810.794657-3-juri.lelli@redhat.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241114142810.794657-1-juri.lelli@redhat.com>
 References: <20241114142810.794657-1-juri.lelli@redhat.com>
@@ -111,78 +111,142 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When root domain non-destructive changes (e.g., only modifying one of
-the existing root domains while the rest is not touched) happen we still
-need to clear DEADLINE bandwidth accounting so that it's then properly
-restored, taking into account DEADLINE tasks associated to each cpuset
-(associated to each root domain). After the introduction of dl_servers,
-we fail to restore such servers contribution after non-destructive
-changes (as they are only considered on destructive changes when
-runqueues are attached to the new domains).
+For hotplug operations, DEADLINE needs to check that there is still enough
+bandwidth left after removing the CPU that is going offline. We however
+fail to do so currently.
 
-Fix this by making sure we iterate over the dl_servers attached to
-domains that have not been destroyed and add their bandwidth
-contribution back correctly.
+Restore the correct behavior by restructuring dl_bw_manage() a bit, so
+that overflow conditions (not enough bandwidth left) are properly
+checked. Also account for dl_server bandwidth, i.e. discount such
+bandwidth in the calculation since NORMAL tasks will be anyway moved
+away from the CPU as a result of the hotplug operation.
 
 Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
 
 ---
-v1->v2: always restore, considering a root domain span (and check for
-        active cpus)
+v1->v2: special case when total_bw = 0 (discounting dl_servers)
 ---
- kernel/sched/deadline.c | 17 ++++++++++++++---
- kernel/sched/topology.c |  8 +++++---
- 2 files changed, 19 insertions(+), 6 deletions(-)
+ kernel/sched/core.c     |  2 +-
+ kernel/sched/deadline.c | 48 +++++++++++++++++++++++++++++++++--------
+ kernel/sched/sched.h    |  2 +-
+ 3 files changed, 41 insertions(+), 11 deletions(-)
 
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 43e453ab7e20..d1049e784510 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -8057,7 +8057,7 @@ static void cpuset_cpu_active(void)
+ static int cpuset_cpu_inactive(unsigned int cpu)
+ {
+ 	if (!cpuhp_tasks_frozen) {
+-		int ret = dl_bw_check_overflow(cpu);
++		int ret = dl_bw_deactivate(cpu);
+ 
+ 		if (ret)
+ 			return ret;
 diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 9ce93d0bf452..a9cdbf058871 100644
+index a9cdbf058871..267ea8bacaf6 100644
 --- a/kernel/sched/deadline.c
 +++ b/kernel/sched/deadline.c
-@@ -2970,11 +2970,22 @@ void dl_add_task_root_domain(struct task_struct *p)
- 
- void dl_clear_root_domain(struct root_domain *rd)
- {
--	unsigned long flags;
-+	int i;
- 
--	raw_spin_lock_irqsave(&rd->dl_bw.lock, flags);
-+	guard(raw_spinlock_irqsave)(&rd->dl_bw.lock);
- 	rd->dl_bw.total_bw = 0;
--	raw_spin_unlock_irqrestore(&rd->dl_bw.lock, flags);
-+
-+	/*
-+	 * dl_server bandwidth is only restored when CPUs are attached to root
-+	 * domains (after domains are created or CPUs moved back to the
-+	 * default root doamin).
-+	 */
-+	for_each_cpu(i, rd->span) {
-+		struct sched_dl_entity *dl_se = &cpu_rq(i)->fair_server;
-+
-+		if (dl_server(dl_se) && cpu_active(i))
-+			rd->dl_bw.total_bw += dl_se->dl_bw;
-+	}
+@@ -3470,29 +3470,31 @@ int dl_cpuset_cpumask_can_shrink(const struct cpumask *cur,
  }
  
- #endif /* CONFIG_SMP */
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 9748a4c8d668..9c405f0e7b26 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -2721,9 +2721,11 @@ void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
+ enum dl_bw_request {
+-	dl_bw_req_check_overflow = 0,
++	dl_bw_req_deactivate = 0,
+ 	dl_bw_req_alloc,
+ 	dl_bw_req_free
+ };
  
- 				/*
- 				 * This domain won't be destroyed and as such
--				 * its dl_bw->total_bw needs to be cleared.  It
--				 * will be recomputed in function
--				 * update_tasks_root_domain().
-+				 * its dl_bw->total_bw needs to be cleared.
-+				 * Tasks contribution will be then recomputed
-+				 * in function dl_update_tasks_root_domain(),
-+				 * dl_servers contribution in function
-+				 * dl_restore_server_root_domain().
- 				 */
- 				rd = cpu_rq(cpumask_any(doms_cur[i]))->rd;
- 				dl_clear_root_domain(rd);
+ static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
+ {
+-	unsigned long flags;
++	unsigned long flags, cap;
+ 	struct dl_bw *dl_b;
+ 	bool overflow = 0;
++	u64 fair_server_bw = 0;
+ 
+ 	rcu_read_lock_sched();
+ 	dl_b = dl_bw_of(cpu);
+ 	raw_spin_lock_irqsave(&dl_b->lock, flags);
+ 
+-	if (req == dl_bw_req_free) {
++	cap = dl_bw_capacity(cpu);
++	switch (req) {
++	case dl_bw_req_free:
+ 		__dl_sub(dl_b, dl_bw, dl_bw_cpus(cpu));
+-	} else {
+-		unsigned long cap = dl_bw_capacity(cpu);
+-
++		break;
++	case dl_bw_req_alloc:
+ 		overflow = __dl_overflow(dl_b, cap, 0, dl_bw);
+ 
+-		if (req == dl_bw_req_alloc && !overflow) {
++		if (!overflow) {
+ 			/*
+ 			 * We reserve space in the destination
+ 			 * root_domain, as we can't fail after this point.
+@@ -3501,6 +3503,34 @@ static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
+ 			 */
+ 			__dl_add(dl_b, dl_bw, dl_bw_cpus(cpu));
+ 		}
++		break;
++	case dl_bw_req_deactivate:
++		/*
++		 * cpu is going offline and NORMAL tasks will be moved away
++		 * from it. We can thus discount dl_server bandwidth
++		 * contribution as it won't need to be servicing tasks after
++		 * the cpu is off.
++		 */
++		if (cpu_rq(cpu)->fair_server.dl_server)
++			fair_server_bw = cpu_rq(cpu)->fair_server.dl_bw;
++
++		/*
++		 * Not much to check if no DEADLINE bandwidth is present.
++		 * dl_servers we can discount, as tasks will be moved out the
++		 * offlined CPUs anyway.
++		 */
++		if (dl_b->total_bw - fair_server_bw > 0) {
++			/*
++			 * Leaving at least one CPU for DEADLINE tasks seems a
++			 * wise thing to do.
++			 */
++			if (dl_bw_cpus(cpu))
++				overflow = __dl_overflow(dl_b, cap, fair_server_bw, 0);
++			else
++				overflow = 1;
++		}
++
++		break;
+ 	}
+ 
+ 	raw_spin_unlock_irqrestore(&dl_b->lock, flags);
+@@ -3509,9 +3539,9 @@ static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
+ 	return overflow ? -EBUSY : 0;
+ }
+ 
+-int dl_bw_check_overflow(int cpu)
++int dl_bw_deactivate(int cpu)
+ {
+-	return dl_bw_manage(dl_bw_req_check_overflow, cpu, 0);
++	return dl_bw_manage(dl_bw_req_deactivate, cpu, 0);
+ }
+ 
+ int dl_bw_alloc(int cpu, u64 dl_bw)
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index b1c3588a8f00..1fee840f1bab 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -362,7 +362,7 @@ extern void __getparam_dl(struct task_struct *p, struct sched_attr *attr);
+ extern bool __checkparam_dl(const struct sched_attr *attr);
+ extern bool dl_param_changed(struct task_struct *p, const struct sched_attr *attr);
+ extern int  dl_cpuset_cpumask_can_shrink(const struct cpumask *cur, const struct cpumask *trial);
+-extern int  dl_bw_check_overflow(int cpu);
++extern int  dl_bw_deactivate(int cpu);
+ extern s64 dl_scaled_delta_exec(struct rq *rq, struct sched_dl_entity *dl_se, s64 delta_exec);
+ /*
+  * SCHED_DEADLINE supports servers (nested scheduling) with the following
 -- 
 2.47.0
 
