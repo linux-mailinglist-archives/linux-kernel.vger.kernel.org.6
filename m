@@ -1,127 +1,178 @@
-Return-Path: <linux-kernel+bounces-408945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F059C856B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:59:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B99279C8572
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:01:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8EC91F22D02
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:59:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7413FB26C05
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D097F1F76D1;
-	Thu, 14 Nov 2024 08:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A457B1DE3C6;
+	Thu, 14 Nov 2024 09:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jNbFXWb7"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="PbWOKbBF"
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820141F7573
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718591DD88E;
+	Thu, 14 Nov 2024 09:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731574779; cv=none; b=r94v5ov987DIgp1NYDApsOB4bhOpFnF/4pXjIcoi1v69JYJK1LzHrnLFtopBE3gnZ0ubiHDbJd+gBHtdWSIOtTv+l5ptqD6bTmFaBugvUkm/bGl0PEAjxT9j2JTW6dtaqt6JXaBpayNHr9rFzn5pR0fRKSAJpfVb8zD0IOKTx2E=
+	t=1731574807; cv=none; b=tiIgpN/tuMb/DUTCt2+9x9XY8HRHZ72jN6hA8+zIfeStW+Lr2Y0rxAby2U/4G4HbijvgTY2vJtlOktiE14jDfeOstpCkBX1jp9vTRzhIM1Z5PC7r7Ys/KjLDPBkaP5Es9sfMplqBXNUagV8+mzrg1HgOm+msT/4ALF70rdEm1PQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731574779; c=relaxed/simple;
-	bh=XycamBY/nYOgqAvwbffcnYn4/Yabq7JhXqCOkrXC1xo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kqikarhztBVZE4+rQSh/8nJINcf6c1hTIK8JJHSV8n6OsEUYP0k0n4dEANM6Yk46uZY7SVYDp1DhjG4I2QHMeR4EgsUR9rYDUN1W5vBgVp1IiMpRethkhQbb4ZlQSr0Kygz5LbPy3RBvjiROsHgTd3PNGgQWrkfwGU8BYYlBwhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jNbFXWb7; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5cf7aadc8b7so239638a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 00:59:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731574776; x=1732179576; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RFvv3LbF9Kdg9CtKKlONGsxCX12ovGg602Za7rDJdl8=;
-        b=jNbFXWb7jcm+CDw7YVEZz23nl4UM1utKC5g3fqOHWPXKBMO0zc9aZ89LoDGSm9se1r
-         cK2tPrK5YvrJJ6nFOSMXEamgQTC7+6HczQZOAvkwO5O4+dn+tKblhZJtiaKiVOazbgEX
-         xadz47PXFUddSC/bEQWU/uR3dekqmuqZLEpxTgAsZwXdDbXLnYWOJ24DgrVm6+To9Myu
-         y4I3y7TwIkULbdQQRRhtYpExJtqtc8brkAI+NdbgXPHPTyqqUKt9LhfqqWlR2RHKig/x
-         0Ts2fEP2bKzcTRYZ/0Ist/ixEJR1vw30RHzkbjDq4sqXE9SZ7VimomJpiFIyUUW86IKl
-         grJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731574776; x=1732179576;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RFvv3LbF9Kdg9CtKKlONGsxCX12ovGg602Za7rDJdl8=;
-        b=KTG3oMBuVIlSMk81wNl3dl14PmIiMexnU9bazI4ZWn8Y7yYX+q7xvgfEqLjwGmNqXx
-         zhiLGseohkUVTj8B0fqJVK97nHjCWT0UBzjfzJGabayn/ZE4Sr8bk1t3T+CQpz2vsBOj
-         mglouMN4bHBZcl20hAIk9IdJjV/VM9gBpE9ht91u1QVYLTfWWWcxUguD8ninuOGVKUsh
-         rGsQxDIK3/IOExzE6lA26S3adi5StQAorp3Wi2wCk8/aUNcCRAoO0Ot1FtkTZTsEBlTM
-         O+uSRi9aIo5Y/aau6XSxwl/YTG5pLPGZMtDreCRC5NUzXuz9TkDLPXH5vblDHAyeu4hl
-         JhNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXtcDTMNh65EyhMt+p6zygZ6/qtIGVx5qzykv0+I3+RPFlZKC/hXZsumjQ6k8d8hHVMviO2dxvBb3YAEk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+Xo3SaP8XO64H0R3d0y1B/KjAwe238NB0WuFXPrDIVeBjQ1HA
-	ZIT8kGbMYHauQMJJPJ2SZtV9kZIuJtSbxT6TliuYgBWoLE5Q1b7/+ZcEEqTWi7o=
-X-Google-Smtp-Source: AGHT+IERWfaAqNKqw9yYfROoHVQjEmjB8jy1fnYHJoHTg2lYc4YgdDb9SwWLsbU0fU1K76xN3CY0pw==
-X-Received: by 2002:a05:6402:40d0:b0:5ca:da2:b2ca with SMTP id 4fb4d7f45d1cf-5cf630c4fc0mr5133838a12.19.1731574775753;
-        Thu, 14 Nov 2024 00:59:35 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df56b13sm38701066b.76.2024.11.14.00.59.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 00:59:35 -0800 (PST)
-Date: Thu, 14 Nov 2024 11:59:32 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Oscar Salvador <osalvador@suse.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>, Peter Xu <peterx@redhat.com>,
-	=?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
-	Andrei Vagin <avagin@google.com>, Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] fs/proc/task_mmu: prevent integer overflow in
- pagemap_scan_get_args()
-Message-ID: <39d41335-dd4d-48ed-8a7f-402c57d8ea84@stanley.mountain>
+	s=arc-20240116; t=1731574807; c=relaxed/simple;
+	bh=tHgETJh6q0a6RwLWb3N/BAFGOGfYysZHUouWClPmIVA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ib6nvAtUvB3QrrNJ4We/L+pUuaJ2lrNJlrn4QUw+fdLrzbFvYMeeLRbMm7sruPM7Yl6mfdsGMgx+kzSKlyI8gMfDhtGcloqXfXe/4ehP+UGM+8imaDyDwbfftZmrISu8xRvFXZxmEGFQeMr8iIIX2HhwnKSLEQ7UihzKWR7mqMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=PbWOKbBF; arc=none smtp.client-ip=80.12.242.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id BVhkt4BxOTH7uBVhltbT91; Thu, 14 Nov 2024 10:00:02 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1731574802;
+	bh=qfAPja5nxmvS/eNQ5AEWGMFtdocK7/uYPepg1UWiENo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=PbWOKbBFBw06WyKPov8uVaqYo9k6wCqHbAajOfkXPSu+dLmroh9E1XZ2UOM8ApCNL
+	 cdt4yLD4c2DaYX0do9NW9TTY+Y9/H44rXI0jouSkCoc+1mOxFz4WBlT6U+VNWmVWNm
+	 H33OEMEpwP7tJml1/rAwEt+/KdXiwdt2ZTzFe2CZoNwstvp3X1rLaDKvGqQ4fVxC7s
+	 RJvIN4EVZSEGOFEGLhiO805C/47QdLq2/u/lOE3wpWnbojHk+naAq0YcQ7eQnctfpX
+	 m51eOdDvG8CbvY8Oeh7FibG/z4qNi5nDhne1BUM8LmxNLkkkTHWJ1yt2hMB4Dzomj2
+	 fQOupxlZlUNAA==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 14 Nov 2024 10:00:02 +0100
+X-ME-IP: 124.33.176.97
+Message-ID: <b61e19bb-58ae-42ac-9863-f1149a812261@wanadoo.fr>
+Date: Thu, 14 Nov 2024 17:59:54 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH can-next v3 2/2] can: tcan4x5x: add option for selecting
+ nWKRQ voltage
+To: Sean Nyekjaer <sean@geanix.com>, Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+References: <20241112-tcan-wkrqv-v3-0-c66423fba26d@geanix.com>
+ <20241112-tcan-wkrqv-v3-2-c66423fba26d@geanix.com>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+In-Reply-To: <20241112-tcan-wkrqv-v3-2-c66423fba26d@geanix.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The "arg->vec_len" variable is a u64 that comes from the user at the
-start of the function.  The "arg->vec_len * sizeof(struct page_region))"
-multiplication can lead to integer wrapping.  Use size_mul() to avoid
-that.
+Hi Sean,
 
-Also the size_add/mul() functions work on unsigned long so for 32bit
-systems we need to ensure that "arg->vec_len" fits in an unsigned long.
+I found the v3. I was a bit confused because it was hidden before the v2 
+in my mailbox: the active thread in v2 bump it to the top, thus 
+"shadowing" the v3.
 
-Fixes: 52526ca7fdb9 ("fs/proc/task_mmu: implement IOCTL to get and optionally clear info about PTEs")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- fs/proc/task_mmu.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On 12/11/2024 at 23:39, Sean Nyekjaer wrote:
+> nWKRQ supports an output voltage of either the internal reference voltage
+> (3.6V) or the reference voltage of the digital interface 0 - 6V (VIO).
+> Add the devicetree option ti,nwkrq-voltage-vio to set it to VIO.
+> Unset nWKRQ is kept at internal reference voltage.
+> 
+> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index f57ea9b308bb..38a5a3e9cba2 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -2665,8 +2665,10 @@ static int pagemap_scan_get_args(struct pm_scan_arg *arg,
- 		return -EFAULT;
- 	if (!arg->vec && arg->vec_len)
- 		return -EINVAL;
-+	if (UINT_MAX == SIZE_MAX && arg->vec_len > SIZE_MAX)
-+		return -EINVAL;
- 	if (arg->vec && !access_ok((void __user *)(long)arg->vec,
--			      arg->vec_len * sizeof(struct page_region)))
-+				   size_mul(arg->vec_len, sizeof(struct page_region))))
- 		return -EFAULT;
- 
- 	/* Fixup default values */
--- 
-2.45.2
+Notwithstanding of bellow nitpick:
+
+Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+
+> ---
+>   drivers/net/can/m_can/tcan4x5x-core.c | 20 ++++++++++++++++++++
+>   drivers/net/can/m_can/tcan4x5x.h      |  2 ++
+>   2 files changed, 22 insertions(+)
+> 
+> diff --git a/drivers/net/can/m_can/tcan4x5x-core.c b/drivers/net/can/m_can/tcan4x5x-core.c
+> index 2f73bf3abad889c222f15c39a3d43de1a1cf5fbb..12a375c653cbd255b5dc85faf2f76de397a644ec 100644
+> --- a/drivers/net/can/m_can/tcan4x5x-core.c
+> +++ b/drivers/net/can/m_can/tcan4x5x-core.c
+> @@ -92,6 +92,8 @@
+>   #define TCAN4X5X_MODE_STANDBY BIT(6)
+>   #define TCAN4X5X_MODE_NORMAL BIT(7)
+>   
+> +#define TCAN4X5X_NWKRQ_VOLTAGE_VIO BIT(19)
+> +
+>   #define TCAN4X5X_DISABLE_WAKE_MSK	(BIT(31) | BIT(30))
+>   #define TCAN4X5X_DISABLE_INH_MSK	BIT(9)
+>   
+> @@ -267,6 +269,13 @@ static int tcan4x5x_init(struct m_can_classdev *cdev)
+>   	if (ret)
+>   		return ret;
+>   
+> +	if (tcan4x5x->nwkrq_voltage_vio) {
+> +		ret = regmap_set_bits(tcan4x5x->regmap, TCAN4X5X_CONFIG,
+> +				      TCAN4X5X_NWKRQ_VOLTAGE_VIO);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+>   	return ret;>   }
+>   
+> @@ -318,6 +327,15 @@ static const struct tcan4x5x_version_info
+>   	return &tcan4x5x_versions[TCAN4X5X];
+>   }
+>   
+> +static void tcan4x5x_get_dt_data(struct m_can_classdev *cdev)
+> +{
+> +	struct tcan4x5x_priv *tcan4x5x = cdev_to_priv(cdev);
+> +	struct device_node *np = cdev->dev->of_node;
+> +
+> +	if (of_property_read_bool(np, "ti,nwkrq-voltage-vio"))
+> +		tcan4x5x->nwkrq_voltage_vio = true;
+
+Nitpick: you can directly assign the value. No need for the if.
+
+	tcan4x5x->nwkrq_voltage_vio =
+		of_property_read_bool(cdev->dev->of_node,
+				      "ti,nwkrq-voltage-vio");
+
+My personal preference is to not declare the np variable because it used 
+only once but instead directly use cdev->dev->of_node. See this as a 
+suggestion. If you prefer to keep as it is, OK for me :)
+
+> +}
+> +
+>   static int tcan4x5x_get_gpios(struct m_can_classdev *cdev,
+>   			      const struct tcan4x5x_version_info *version_info)
+>   {
+> @@ -453,6 +471,8 @@ static int tcan4x5x_can_probe(struct spi_device *spi)
+>   		goto out_power;
+>   	}
+>   
+> +	tcan4x5x_get_dt_data(mcan_class);
+> +
+>   	tcan4x5x_check_wake(priv);
+>   
+>   	ret = tcan4x5x_write_tcan_reg(mcan_class, TCAN4X5X_INT_EN, 0);
+> diff --git a/drivers/net/can/m_can/tcan4x5x.h b/drivers/net/can/m_can/tcan4x5x.h
+> index e62c030d3e1e5a713c997e7c8ecad4a44aff4e6a..203399d5e8ccf3fd7a26b54d8356fca9d398524c 100644
+> --- a/drivers/net/can/m_can/tcan4x5x.h
+> +++ b/drivers/net/can/m_can/tcan4x5x.h
+> @@ -42,6 +42,8 @@ struct tcan4x5x_priv {
+>   
+>   	struct tcan4x5x_map_buf map_buf_rx;
+>   	struct tcan4x5x_map_buf map_buf_tx;
+> +
+> +	bool nwkrq_voltage_vio;
+>   };
+>   
+>   static inline void
+> 
+
+Yours sincerely,
+Vincent Mailhol
 
 
