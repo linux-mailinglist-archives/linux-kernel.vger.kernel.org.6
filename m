@@ -1,136 +1,197 @@
-Return-Path: <linux-kernel+bounces-408797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E8EE9C839F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:03:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BA699C83AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:07:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 002F61F217C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:03:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A2511F23371
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1C21EE025;
-	Thu, 14 Nov 2024 07:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4221F26E5;
+	Thu, 14 Nov 2024 07:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="esufXvow"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aGfZBl91"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58589163A97;
-	Thu, 14 Nov 2024 07:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A222AD04;
+	Thu, 14 Nov 2024 07:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731567760; cv=none; b=QnKGCXPmXvif5CX4su89RRH8BV45lGb5ZXAaj3nvS8n4M6O1+gb2Dn+xPOz56ppPHOTy+MUV465Xadf7hcQkxAA9zSLfuyctHaeSPMsu0roTqhSKaGYutf01x23Lo1ImggTvJFqM4ZfA3E3VCVVDgRp5Xl+MuDhMz3tI7yChLdY=
+	t=1731568004; cv=none; b=OHWVhi5APFHFsxLAOQT0yxgr505cRFy7KRYK8YLWRQugpez7mpS3Ka++PWW9Ib8ys/Q+OkMXRBpMRxdsgev6RC93SSTnC+fmFzyW1442AebvG6mB5bRRlsw8N61walFb7oKrMYIe63lzxX+CNN9m//gdEtSromcPBX1V5gAcjaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731567760; c=relaxed/simple;
-	bh=5k87BJrsuqGfoYky9N4Z8TwX+i8nHpnJX4NyHG1Ze2Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FgX2/JfSs+i26NGBoB12fgyNqTGfZgHDa59DmOP0t/efdaNgHUUjc8NNG4NVJeqHaieiSYG/LZpu5fdk5Bcbc9EDvL3Oy+Q829VbpopOfSDN9h7WRudOVPVxZU1JIdl9ApUv0E36ohF+TJ+cjEAC2vn9/YF5CpIZwG7vUYt7y2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=esufXvow; arc=none smtp.client-ip=209.85.219.49
+	s=arc-20240116; t=1731568004; c=relaxed/simple;
+	bh=rkLeVP2v1PhK5/nY4hC8k1tKYfbRWqjfrFSywgHJF1o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qb4kki98PthdfaD1PGVkOBkky+nN51AY1WvoCgYOlQ+4fLP2vWNkx07nGi/vSafeTAW287nm8+Nw5Qw1AZSmDkR+sbgka67DC4+5B/CbMC6y+/cj/PmyEkpV+vBZkdc8MpZJQ8xJuoy0Kz/ZdYfu+P5H92hSUsEDmTClPRcybWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aGfZBl91; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6d3f3925f57so617786d6.2;
-        Wed, 13 Nov 2024 23:02:39 -0800 (PST)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20cf3e36a76so2503485ad.0;
+        Wed, 13 Nov 2024 23:06:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731567758; x=1732172558; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LaQLOyvMlaZPfOmJIeYskTzRF5rdE6NW7wBfpWJVfco=;
-        b=esufXvowouO8CYVEQS7l+6Tjnsf8lZ6iNbNNAkVyjcuQQtcOsNz2qK7oEwEkdNTAM3
-         YCj8j1W+30Lwx8SXDFHN3FNC3EgKogiGcEv5b7Iycdc1uRA8tsaA/nTxISidUqt37lDJ
-         xGY7N+WshRLJkrkrNTEdggGnaSR1aS5S4xONzXWCZuBp3+eA94dNPa+Vo7gL1JRdSEBR
-         T2BfY1SQKYnYMH5f3vo9hgTw/w5V/xngVAzovSu7xpMw8f1yVnO3IuBZbi8fTHcxZHQ6
-         O4skLlvlphj5zcCcoDLvmJ06vAqqCMksjrbI/hNUtYaq2l6ZJL0Jv+fV8DLBCS0rOEKI
-         btBg==
+        d=gmail.com; s=20230601; t=1731568001; x=1732172801; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BzJGg58BHDait89DXQLWDgs3es/g6e2HVB9OFr5+hQg=;
+        b=aGfZBl91sz2d+ccLX3QABKkm9p+aETCyqdKGvRcFXvkDXOemq0HcwtQjhkQE8yYj//
+         9IZ+3EEHQeK2SVwH8l5B4AXofO62cUVQqRSEHKYCWmoHX1YGlcJFCIU55fECBigUbJim
+         F6Tq6YhrK6zBa63exIW+arc2Z11i6IHNlFtrcWR93A3qVvvSwF5jTsRwofzl9SShyZ9k
+         MyvYYusJHn1CmcnhfwasKeepHaehqVMchhX8PPq4aNNYMcEp+90AR1cto1WjSxE47wsd
+         ilMg2Ek86FU+OkfkjzVxe/m/CoZT4KOSdAF+f1VMyzT/iVc6HzRDZOYSDGc2EP7wNo4K
+         5joA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731567758; x=1732172558;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LaQLOyvMlaZPfOmJIeYskTzRF5rdE6NW7wBfpWJVfco=;
-        b=Te9guG0gO6w822PDx+Kcl61UgQZMSZdR+l/UTMh9nCDRhQquZj8hLL6gPw5DQXCHIj
-         tGG9FBiyMI6djwKHJB+K9+r928ayilMxRJpeM3p/iCCka9qyuRIV+bVeSIXC40u0qpiU
-         n5b7EGSpYB/UThFWGbzXujfuCRyHuJfz2BpisMdf6/bdF14mPVfkMgMFeiJTO47eMfu6
-         g/IlKngUH91A3k6huyaBPsZKRdB5PM8YAVn5eHCbEPzziwqwdSnZ0cX5TugJIHblCd69
-         DN7JN3FwkFEKO0Sma7TqhPncthg7TkV55uwICv2idZn24AAZ6xTy6/vce9aDvL0mZuTa
-         8zRg==
-X-Forwarded-Encrypted: i=1; AJvYcCWf3tCqBNFT40kfgHjt6cTCPvl8TOzQUoIbgoTZnU4ft2yJeKcqlLdgFsIB6tpHP/pDZbn3992Sp/s1@vger.kernel.org, AJvYcCXCmNOwFxpNritNRj9E6hjvjgtRn9pMAJSkadZ4YhwYAb6cQ7HZwpbkCO1KzekyJB8rXBfTujDQajkCe2KV@vger.kernel.org, AJvYcCXebGOoFXdL8H84PmcPYIxgCtQXWsro9aKjfDH2e7IBQMKYhpNFObhwi8Oi8gOAQGEHrgJpIM+jhMSUCS6q@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6CcE0mN1TF3F7qzgeMJD9nrZtfCvql/aevIrlBYnOaxWtQc6J
-	QPfpLKNDPgErbjeJHjQFuZVQXbxS8PUI0TFYIi9u2JtTYMk8zycyL03mfFiSAZBKfhZuPAcwtkZ
-	E5hlRe939kcY4Hi3mXFZ3P3iYkLKckUav
-X-Google-Smtp-Source: AGHT+IEqWEblVL7jQPRJEvw5AOInXXrSLmcl0RUUq+mtq19C5T5Ege1Jc7JnaJpPfxvnq3Ms+c4X0B9uX1Qtg/t1/dI=
-X-Received: by 2002:a05:6214:3d89:b0:6cb:c9d0:df32 with SMTP id
- 6a1803df08f44-6d39e17c2b6mr327856426d6.11.1731567758276; Wed, 13 Nov 2024
- 23:02:38 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731568001; x=1732172801;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BzJGg58BHDait89DXQLWDgs3es/g6e2HVB9OFr5+hQg=;
+        b=UsoipqczLOER6SfQl8wk89wDSFur11PBpj/fFY3xZfQndfJ7kVKML8iut1nhsXdegG
+         b+AsmwmiUeV0Rxhig0891F+4SHYgHw/pRWW5Zg7Q52V4wbllMfcSd0YgYYeEX91Yyf3s
+         O3ZF8XoUexh9UVpswZoUgM41mKh4DpXaVF7U/X8u2m5moJlZQnBUzMZqux4nvR8sGgep
+         aU1m8LFUe/IGu9oVtqKGvN9RBlBL/q0XrNA+YFOzZbB8k6bYWYRyEyoB8oDvgm1AABsy
+         Z/PQDO2158BRKPCVcZVB3Uq0xmJn2WGjRePyckVkZb6kkHTUsdDI0I5tSwR/dG48RTAj
+         Qr6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUUkI0OaoY+9WQ2IQd3IJDEod+GsjsDR3qiRYKQKiLpZjkikMDASvLbJ2MlC5YsfygMqi7e5zGxxemUEdt4Gg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkaDt5CuCIfCdqZRQA2flaIOqnFVrqf2jJltPpNQKk/I3yann6
+	pMClL8L5EdjpK15/qvnpnspVPHmO18YwM3lpLtkdUd0gOMhKA2CiyaXnQd15
+X-Google-Smtp-Source: AGHT+IEXIJ2VvFgy+l2V8aOnbKdeX7Q41bVsn239JP4oarHZloygQQ78uT9sxqPjex2zLAGOqHDehA==
+X-Received: by 2002:a17:903:2282:b0:20e:552c:53ee with SMTP id d9443c01a7336-211b5c884acmr74514595ad.24.1731568001271;
+        Wed, 13 Nov 2024 23:06:41 -0800 (PST)
+Received: from mew.. (p4007189-ipxg22601hodogaya.kanagawa.ocn.ne.jp. [180.53.81.189])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211c7d24a00sm4260315ad.244.2024.11.13.23.06.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 23:06:40 -0800 (PST)
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: netdev@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	andrew@lunn.ch,
+	hkallweit1@gmail.com,
+	tmgross@umich.edu,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@samsung.com,
+	aliceryhl@google.com,
+	anna-maria@linutronix.de,
+	frederic@kernel.org,
+	tglx@linutronix.de,
+	arnd@arndb.de,
+	jstultz@google.com,
+	sboyd@kernel.org,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com
+Subject: [PATCH v6 0/7] rust: Add IO polling
+Date: Thu, 14 Nov 2024 16:02:27 +0900
+Message-ID: <20241114070234.116329-1-fujita.tomonori@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2aa94713-c12a-4344-a45c-a01f26e16a0d@e43.eu> <20241113-pidfs_fh-v2-0-9a4d28155a37@e43.eu>
-In-Reply-To: <20241113-pidfs_fh-v2-0-9a4d28155a37@e43.eu>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 14 Nov 2024 08:02:27 +0100
-Message-ID: <CAOQ4uxg4Gu2CWM0O2bs93h_9jS+nm6x=P2yu4fZSL_ahaSqHSQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] pidfs: implement file handle support
-To: Erin Shepherd <erin.shepherd@e43.eu>
-Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
-	linux-nfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 13, 2024 at 7:01=E2=80=AFPM Erin Shepherd <erin.shepherd@e43.eu=
-> wrote:
->
-> Since the introduction of pidfs, we have had 64-bit process identifiers
-> that will not be reused for the entire uptime of the system. This greatly
-> facilitates process tracking in userspace.
->
-> There are two limitations at present:
->
->  * These identifiers are currently only exposed to processes on 64-bit
->    systems. On 32-bit systems, inode space is also limited to 32 bits and
->    therefore is subject to the same reuse issues.
->  * There is no way to go from one of these unique identifiers to a pid or
->    pidfd.
->
-> This patch implements fh_export and fh_to_dentry which enables userspace =
-to
-> convert PIDs to and from PID file handles. A process can convert a pidfd =
-into
-> a file handle using name_to_handle_at, store it (in memory, on disk, or
-> elsewhere) and then convert it back into a pidfd suing open_by_handle_at.
->
-> To support us going from a file handle to a pidfd, we have to store a pid
-> inside the file handle. To ensure file handles are invariant and can move
-> between pid namespaces, we stash a pid from the initial namespace inside
-> the file handle.
->
->   (There has been some discussion as to whether or not it is OK to includ=
-e
->   the PID in the initial pid namespace, but so far there hasn't been any
->   conclusive reason given as to why this would be a bad idea)
+Add a helper function to poll periodically until a condition is met or
+a timeout is reached. By using the function, the 7th patch fixes
+QT2025 PHY driver to sleep until the hardware becomes ready.
 
-IIUC, this is already exposed as st_ino on a 64bit arch?
-If that is the case, then there is certainly no new info leak in this patch=
-.
+As a result of the past discussion, this introduces two new types,
+Instant and Delta, which represent a specific point in time and a span
+of time, respectively.
 
->
-> Signed-off-by: Erin Shepherd <erin.shepherd@e43.eu>
-> ---
-> Changes in v2:
-> - Permit filesystems to opt out of CAP_DAC_READ_SEARCH
-> - Inline find_pid_ns/get_pid logic; remove unnecessary put_pid
-> - Squash fh_export & fh_to_dentry into one commit
+Unlike the old rust branch, This adds a wrapper for fsleep() instead
+of msleep(). fsleep() automatically chooses the best sleep method
+based on a duration.
 
-Not sure why you did that.
-It was pretty nice as separate commits if you ask me. Whatever.
+Add __might_sleep_precision(), rust friendly version of
+__might_sleep(), which takes a pointer to a string with the length.
+core::panic::Location::file() doesn't provide a null-terminated string
+so a work around is necessary to use __might_sleep(). Providing a
+null-terminated string for better C interoperability is under
+discussion [1].
 
-Thanks,
-Amir.
+[1]: https://github.com/rust-lang/libs-team/issues/466
+
+v6:
+- use super::Delta in delay.rs
+- improve the comments
+- add Delta's is_negative() method
+- rename processor.rs to cpu.rs for cpu_relax()
+- add __might_sleep_precision() taking pointer to a string with the length
+- implement read_poll_timeout as normal function instead of macro
+v5: https://lore.kernel.org/netdev/20241101010121.69221-1-fujita.tomonori@gmail.com/
+- set the range of Delta for fsleep function
+- update comments
+v4: https://lore.kernel.org/lkml/20241025033118.44452-1-fujita.tomonori@gmail.com/
+- rebase on the tip tree's timers/core
+- add Instant instead of using Ktime
+- remove unused basic methods
+- add Delta as_micros_ceil method
+- use const fn for Delta from_* methods
+- add more comments based on the feedback
+- add a safe wrapper for cpu_relax()
+- add __might_sleep() macro
+v3: https://lore.kernel.org/lkml/20241016035214.2229-1-fujita.tomonori@gmail.com/
+- Update time::Delta methods (use i64 for everything)
+- Fix read_poll_timeout to show the proper debug info (file and line)
+- Move fsleep to rust/kernel/time/delay.rs
+- Round up delta for fsleep
+- Access directly ktime_t instead of using ktime APIs
+- Add Eq and Ord with PartialEq and PartialOrd
+v2: https://lore.kernel.org/lkml/20241005122531.20298-1-fujita.tomonori@gmail.com/
+- Introduce time::Delta instead of core::time::Duration
+- Add some trait to Ktime for calculating timeout
+- Use read_poll_timeout in QT2025 driver instead of using fsleep directly
+v1: https://lore.kernel.org/netdev/20241001112512.4861-1-fujita.tomonori@gmail.com/
+
+FUJITA Tomonori (7):
+  rust: time: Add PartialEq/Eq/PartialOrd/Ord trait to Ktime
+  rust: time: Introduce Delta type
+  rust: time: Introduce Instant type
+  rust: time: Add wrapper for fsleep function
+  MAINTAINERS: rust: Add TIMEKEEPING and TIMER abstractions
+  rust: Add read_poll_timeout functions
+  net: phy: qt2025: Wait until PHY becomes ready
+
+ MAINTAINERS               |   2 +
+ drivers/net/phy/qt2025.rs |  10 +++-
+ include/linux/kernel.h    |   2 +
+ kernel/sched/core.c       |  27 ++++++++--
+ rust/helpers/helpers.c    |   2 +
+ rust/helpers/kernel.c     |  13 +++++
+ rust/helpers/time.c       |   8 +++
+ rust/kernel/cpu.rs        |  13 +++++
+ rust/kernel/error.rs      |   1 +
+ rust/kernel/io.rs         |   5 ++
+ rust/kernel/io/poll.rs    |  84 +++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs        |   2 +
+ rust/kernel/time.rs       | 103 ++++++++++++++++++++++++++++----------
+ rust/kernel/time/delay.rs |  43 ++++++++++++++++
+ 14 files changed, 282 insertions(+), 33 deletions(-)
+ create mode 100644 rust/helpers/kernel.c
+ create mode 100644 rust/helpers/time.c
+ create mode 100644 rust/kernel/cpu.rs
+ create mode 100644 rust/kernel/io.rs
+ create mode 100644 rust/kernel/io/poll.rs
+ create mode 100644 rust/kernel/time/delay.rs
+
+
+base-commit: 228ad72e7660e99821fd430a04ac31d7f8fe9fc4
+-- 
+2.43.0
+
 
