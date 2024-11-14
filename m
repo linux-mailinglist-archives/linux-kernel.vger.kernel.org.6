@@ -1,128 +1,153 @@
-Return-Path: <linux-kernel+bounces-409758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92F0C9C9102
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:42:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 337959C9125
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:52:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55BA6283DE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:42:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E9B1B32263
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0EBA18C933;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D57518C91D;
 	Thu, 14 Nov 2024 17:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="YqDbf8RF"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lcJ4Ks3v"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF5D18BB9F
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 17:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858E918BC28
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 17:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731606157; cv=none; b=ruP/e5gKky1g9Mls1vbfTMz17Wf16vVQ5fDcIUWZqLxjzykwySzIzwZSX/iBoUl3/FV17C3Vshau6HdU/lb0DXM1HGe4pz5PdVdz8zbugjr/xhZvVetTucr0yOu5MNLlZ7v54nql87sAj6Qr+4EU/rBdiG4vxYxx76+7Poud8Xc=
+	t=1731606157; cv=none; b=WFZGhdQA+JEfysoNBtvA99unEoNWmG+0LgRYyKDQ6/Ms3IoYikDP/+N2npIxnu9VqWIcckzSEz0ZDbaHRzlg+ddC4SrW0yiQHsB/TF8CHM7KJso4GYWO7sZmboritJmyfAHOlmd/XUm8AZxaBXdm53J9Y/0kCxR90/1R988roXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731606157; c=relaxed/simple;
-	bh=mSaU8+k6H5UsTO/zFUXIvfBdXgPPqBH46d5GSShwijo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WkLEFsq03PKpwelFU+SaiIP4rF/i5/7dS/xdFMuxE1Zpp6UB7Z2uFPjsoEh9ISWYi5QTTKFxI0k3KHGipZo3tY1EmXNxeav1m5vA7vb5moD4QU1S/Ht9Qg2RYc2gxItS/f+UP1c6XUtL47IeX+eRBOo+x5mmX7fbyuFgs0IxGcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=YqDbf8RF; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9e8522445dso170665766b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:42:34 -0800 (PST)
+	bh=5uog7s88Vdjn9LrHFqVJ7H6JRAqfaj//EHJnHT0pKe0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=C1ekhy4qT6TxSb1xk1RBB2WJmOHh9CIBIgEzTPW25MmtDAd8qsexZ9aBBMop6mVbE1pqL4NAr2V0siZUt4JeKV/3qHb9HTpyHuJDuCUIcE5TLPgY6h3a8nFfIkxoMqaFtkIpdO9nLPDoS/eDHMhGIMvQ3AiTl2m4utd1I86YHDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lcJ4Ks3v; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-71e6241c002so810853b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:42:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1731606153; x=1732210953; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qnfu4AuFc7Ir4mUZPIm/dFK37daLn9XyJCKqN5KNnKU=;
-        b=YqDbf8RFCwGfmwhwm1lAEuO3aFRnM1PNnXX/7VPUNC8Yu/BZcLqj2ja5ONW7xVpdD+
-         xyVBl4dbdmLW7c/kMqQ2vPYFT4YWS9vUYooDo/tLnhPn0NivRQQujGc6VPvhtbss/DQC
-         HfIBqoafz3ej/40KmTsh5JwjgC446ANBJW3OQ=
+        d=google.com; s=20230601; t=1731606155; x=1732210955; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0jxstw+HdDkmUNCxSNezg+z3DZ+qdKf7DbKMcdrw87E=;
+        b=lcJ4Ks3vn57vagENL6KpLY4KdsY++5na8cw55/Zio+ZJr8oan+SLexf3L1Ne3RBsyW
+         1nZThlqcXnVgX8fjplY6z6Rnu7LFJ8lCRh+0onL1pn5vRIf5kPCZ9ts+oqqNtjVMwLti
+         HpldyLb7upKYSz6DlxLyVsGirooKMr2ahZNyPAm/AJRFneAi/JbLr2dDNmTV7dIiVOv4
+         pHq8Bt4aTA+hWVCSvhqMASpXzEKPmIaBxjbMH2w6GTZOtiMUCtDfsPCD9e2CDuPgegmY
+         9bwSR0P6JIKxpahsbWE5LeHjve3oq+8UBWMujf0HUdCDYtc0WfSk3IJS1SGbFMfb8HzW
+         +SRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731606153; x=1732210953;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Qnfu4AuFc7Ir4mUZPIm/dFK37daLn9XyJCKqN5KNnKU=;
-        b=UmmsBQAaRV8bUDDeOwxrFtgDAAxoBD8iWpDg3PVOKqiujU4Ch7KmQv8QatVvDmxNI0
-         m5HweW6ed3LQZnCFVlhmDiMCVrZLxC+LBuyd5yh8TcuVTh0ZXd8sEu454k5iQM1ezXkj
-         HqM19dsujYlwt0NyfVKbfRh9fkDGVkPT51w8bPLKrzXgYjTqi2hLSRv9bwN4jOs2wfIY
-         sMY5UHt3nsNPJGDTK2w0PoR2gXvSKeyWOfhMvHGEHz4FfdkAcU0M4MAnulhVzIlYSM/u
-         oyC8Ps1OjlKVr91oHpeJOEhB7YkPoGRI5GT7+dPpVB/v1zrDTIZrKlp3iO4Rd67HD2P6
-         yWug==
-X-Forwarded-Encrypted: i=1; AJvYcCVhJW5tJGEXjXTg/oudpvN+CbmcbrHAqitgLIYtbMBlwnpJUbMKxcuPhliL30OBFttZJaSBkof2RB1CHdQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA301xN7WvpaXqunSalJaBc8adv4velXKGQVN24lXPIXOdANXa
-	6vUxiIYtO2tX9d1fbvSwNW6ZgFGNXpSmaFBACtIAVXB5qvh59qaNz7po65SZp+j/PEdalaLO0pA
-	VIsLkXA==
-X-Google-Smtp-Source: AGHT+IEv0inTWR56iUq5Cbe8QFFr/VhhWPXxaOqwiMjM+UmVRN3Gvuf3dTW+HIctJpGs9AokJz28Xw==
-X-Received: by 2002:a17:907:26ca:b0:a9e:1fa0:d2f0 with SMTP id a640c23a62f3a-aa20cd0594fmr328666266b.19.1731606153110;
-        Thu, 14 Nov 2024 09:42:33 -0800 (PST)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20e086063sm87649866b.189.2024.11.14.09.42.32
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 09:42:32 -0800 (PST)
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c9454f3bfaso1234710a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:42:32 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWfUaFqMg9qSrdDWPHD2d6HrQT8NyO4baYqFN7z8E4Fm8bnFvyzKLlQk53hjzEgX7mJBbcYMZWiPfBRnk0=@vger.kernel.org
-X-Received: by 2002:a17:907:9307:b0:a9e:b5d0:de6 with SMTP id
- a640c23a62f3a-aa20cded0b0mr291909366b.50.1731606152058; Thu, 14 Nov 2024
- 09:42:32 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731606155; x=1732210955;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0jxstw+HdDkmUNCxSNezg+z3DZ+qdKf7DbKMcdrw87E=;
+        b=aqj+wuZorTgfPxiOW7rm3U+QfeCIFsTMu92YjX1InkuA58efJigRskpT2grrZBsPP+
+         G3rrZTJkAXdJOY5Q3BGGSvn6rCStilIih7NC3RmEofnC/9+tHOYjA5QLK+Ojpcf2qIos
+         LFRRfLVQhpcIqlko9bcEMeszR/jyZ41tOji2Hidxpwr3rTqJfdxSc2CWn7VkCFuGv23f
+         zVb5b0Idg/yJnIWszuI/Ia9M/x8zXn4Jk0Zuxjqzwz9/fOYbs0I0FlPTlilkP6pwOz3q
+         aFwShpjbaEa7prtr3AerJXnWCUPmKUSWsEgnXcZExqnV/Qz8k0fOWdQXlGzNFSrnQfKb
+         Hnsw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAwJ5n8BFdlW3+rDaJnoIlQi4mehl3jJU2D3ddHl4+Nb10+zCl1aNYYzfzsOgJdxVEGiGHOe3Wm05AGVM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8MSisUCy6x89T7yek7IkoA7kKml4Cd5TRDDx/YbsngcJxL7Sf
+	su1Io8Ih3uvOVqt6RVJO9+zM/KB9vNRAqxkGuT3o5rpUtNfBFUtjDutTdsxYzMz7wk6qlXJOLCy
+	AVg==
+X-Google-Smtp-Source: AGHT+IE2t7/BQUDGvQdq1WU4OfDCD4pafvlstYkabCEfeZEIVCwo/4m39wonrcrGj/V1SHEHETmIrMp08OA=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:2167:b0:724:67d7:17b2 with SMTP id
+ d2e1a72fcca58-72467d71a19mr35667b3a.0.1731606154070; Thu, 14 Nov 2024
+ 09:42:34 -0800 (PST)
+Date: Thu, 14 Nov 2024 09:42:32 -0800
+In-Reply-To: <20241108-eaacad12f1eef31481cf0c6c@orel>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241114101402.156397-1-philipp.reisner@linbit.com> <20241114101402.156397-2-philipp.reisner@linbit.com>
-In-Reply-To: <20241114101402.156397-2-philipp.reisner@linbit.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 14 Nov 2024 09:42:15 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgn=e3gD=tty+p1o8HBy7qxBCgCHiDEd5+FMtn9jdwd2g@mail.gmail.com>
-Message-ID: <CAHk-=wgn=e3gD=tty+p1o8HBy7qxBCgCHiDEd5+FMtn9jdwd2g@mail.gmail.com>
-Subject: Re: [PATCH 1/1] compiler.h: Add missing include statement for build_bug.h
-To: Philipp Reisner <philipp.reisner@linbit.com>, Kees Cook <keescook@chromium.org>
-Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, linux-sparse@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20240821223012.3757828-1-vipinsh@google.com> <CAHVum0eSxCTAme8=oV9a=cVaJ9Jzu3-W-3vgbubVZ2qAWVjfJA@mail.gmail.com>
+ <CAHVum0fWJW7V5ijtPcXQAtPSdoQSKjzYwMJ-XCRH2_sKs=Kg7g@mail.gmail.com>
+ <ZyuiH_CVQqJUoSB-@google.com> <20241108-eaacad12f1eef31481cf0c6c@orel>
+Message-ID: <ZzY2iAqNfeiiIGys@google.com>
+Subject: Re: [RFC PATCH 0/1] KVM selftests runner for running more than just default
+From: Sean Christopherson <seanjc@google.com>
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: Vipin Sharma <vipinsh@google.com>, kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
+	kvm-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Anup Patel <anup@brainfault.org>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, 14 Nov 2024 at 02:23, Philipp Reisner
-<philipp.reisner@linbit.com> wrote:
->
-> compiler.h defines __must_be_array() and __must_be_cstr() and both
-> expand to BUILD_BUG_ON_ZERO(). build_bug.h defines BUILD_BUG_ON_ZERO().
-> So far compiler.h lacks to include build_bug.h.
+On Fri, Nov 08, 2024, Andrew Jones wrote:
+> On Wed, Nov 06, 2024 at 09:06:39AM -0800, Sean Christopherson wrote:
+> > On Fri, Nov 01, 2024, Vipin Sharma wrote:
+> > > Phase 3: Provide collection of interesting configurations
+> > > 
+> > > Specific individual constructs can be combined in a meaningful way to
+> > > provide interesting configurations to run on a platform. For example,
+> > > user doesn't need to specify each individual configuration instead,
+> > > some prebuilt configurations can be exposed like
+> > > --stress_test_shadow_mmu, --test_basic_nested
+> > 
+> > IMO, this shouldn't be baked into the runner, i.e. should not surface as dedicated
+> > command line options.  Users shouldn't need to modify the runner just to bring
+> > their own configuration.  I also think configurations should be discoverable,
+> > e.g. not hardcoded like KUT's unittest.cfg.  A very real problem with KUT's
+> > approach is that testing different combinations is frustratingly difficult,
+> > because running a testcase with different configuration requires modifying a file
+> > that is tracked by git.
+> 
+> We have support in KUT for environment variables (which are stored in an
+> initrd). The feature hasn't been used too much, but x86 applies it to
+> configuration parameters needed to execute tests from grub, arm uses it
+> for an errata framework allowing tests to run on kernels which may not
+> include fixes to host-crashing bugs, and riscv is using them quite a bit
+> for providing test parameters and test expected results in order to allow
+> SBI tests to be run on a variety of SBI implementations. The environment
+> variables are provided in a text file which is not tracked by git. kvm
+> selftests can obviously also use environment variables by simply sourcing
+> them first in wrapper scripts for the tests.
 
-The bug is real, but..
+Oh hell no! :-)
 
-> Fix compiler.h by including build_bug.h. With that compiler.h and
-> build_bug.h depend on each other.
+For reproducibility, transparency, determinism, environment variables are pure
+evil.  I don't want to discover that I wasn't actually testing what I thought I
+was testing because I forgot to set/purge an environment variable.  Ditto for
+trying to reproduce a failure reported by someone.
 
-I hate how compiler.h would include build_bug.h, which - on the very
-first line - then in turn includes compiler.h.
+KUT's usage to adjust to the *system* environment is somewhat understandable
+But for KVM selftests, there should be absolutely zero reason to need to fall
+back to environment variables.  Unlike KUT, which can run in a fairly large variety
+of environments, e.g. bare metal vs. virtual, different VMMs, different firmware,
+etc., KVM selftests effectively support exactly one environment.
 
-Does it *work*? Yes. The standard include guards stop the thing from
-recursing, and both headers only do create pre-processor defines, so
-the dependencies aren't ordered, but it's really really ugly to have
-these kinds of circular includes.
+And unlike KUT, KVM selftests are tightly coupled to the kernel.  Yes, it's very
+possible to run selftests against different kernels, but I don't think we should
+go out of our way to support such usage.  And if an environment needs to skip a
+test, it should be super easy to do so if we decouple the test configuration
+inputs from the test runner.
 
-I think a better fix would be to not use BUILD_BUG_ON_ZERO() at all,
-but just use _Static_assert() directly here, to make
-<linux/compiler.h> be more self-sufficient.
+> > There are underlying issues with KUT that essentially necessitate that approach,
+> > e.g. x86 has several testcases that fail if run without the exact right config.
+> > But that's just another reason to NOT follow KUT's pattern, e.g. to force us to
+> > write robust tests.
+> > 
+> > E.g. instead of per-config command line options, let the user specify a file,
+> > and/or a directory (using a well known filename pattern to detect configs).
+> 
+> Could also use an environment variable to specify a file which contains
+> a config in a test-specific format if parsing environment variables is
+> insufficient or awkward for configuring a test.
 
-The gcc docs say that __builtin_types_compatible_p() and
-__builtin_has_attribute() both return an integer constant expression,
-so that should be fine (the advantage of BUILD_BUG_ON_ZERO() is that
-it works in some contexts that aren't necessarily technically integer
-constant expressions - as long as they just evaluate to a constant).
-
-We historically used to avoid _Static_assert(), but that was for
-historical reasons (ie it's one of those things that didn't exist back
-in the day..)
-
-Hmm?
-
-              Linus
+There's no reason to use a environment variable for this.  If we want to support
+"advanced" setup via a test configuration, then that can simply go in configuration
+file that's passed to the runner.
 
