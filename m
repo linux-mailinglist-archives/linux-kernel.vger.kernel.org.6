@@ -1,102 +1,91 @@
-Return-Path: <linux-kernel+bounces-408775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D15BA9C8366
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:57:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78F319C83B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:09:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 971DB2844AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:57:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C94F2847E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D7C1EABAE;
-	Thu, 14 Nov 2024 06:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aK4WKTpN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8E1139D1B
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 06:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A3F1F76B8;
+	Thu, 14 Nov 2024 07:07:10 +0000 (UTC)
+Received: from chinatelecom.cn (smtpnm6-04.21cn.com [182.42.158.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9A71EE018
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=182.42.158.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731567438; cv=none; b=RfrG+lXDGyuGf7pSPBzqK/dyiMMpout1AUufJCYD7tj14Kn4GTvIMXwgfMO0Sv44prFrxCfJbuVjAzPRZXpZoaUSAzzKzqGohgeu/eknMLO++XvS4rlxt5br8UIdrabvtAERZMETGouP+3LbKaITXpKzkwNVi9KWkKJdADI5hV8=
+	t=1731568030; cv=none; b=aOZCxMTrbarbx4xe9cvQZ1tRiZtpqP4Io5dvS10LhsNo+JyfjScXRhfm7mCxh3s+QBQKDSkgpa5+XYoFZB3U1yRoz5/G9Phr16f5ESIiUS0KTovERfK3W7h6rhq/ByZRFENZ+tQDrI9xe1hNOm9OCpv6Jl0XhnISNx4tck++L7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731567438; c=relaxed/simple;
-	bh=F07BC/e4GITfj/eUVyXaRbIz+2T+mMFDxabhE93hmy0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TmERqzldntTz4u49w5bl4+tcFzYL3c4KCawkZVMr6SaNKd8AGt92l7kqhpl3xcVz+gFsxeAEocd54KAl5L68H/RZGTu3BKOdDFPUaCqVy7lVlp2k1bDBfdAgWjhAPMN3U0tbywbgSDzkmqCsj++MjvqnHjTe4x+Y0SocpDzESfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aK4WKTpN; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731567437; x=1763103437;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=F07BC/e4GITfj/eUVyXaRbIz+2T+mMFDxabhE93hmy0=;
-  b=aK4WKTpNRyFKRfo8bWqQhzwBdLL3uv+HLXXW9dZ39ic8GyijX7upu5OB
-   2AuHw30QS9jeom2N2qDAcb3b2CjH+Mga5J957LbDUZbXK6+ZQel+Qpl9/
-   GLhPsuUi12cBI4FYnwZCtIMnNzuRU2Hb82M09ghgM6OvltOBCR8glHGM7
-   Mwx0ksdpGW8E2FLzBP1zJils33CmngKym1lU4amGkitSbM7DfztPShNkf
-   flLqVKMcdkCcXrCcW5hiixKVcGpI/wq8S31vML3pW9joViNeHeCwGzdnE
-   ibR47Bjvh2X43E37EhXsOhrTzTD7kLtsieoEoXTl7ulNU48b7T1QoUR7X
-   w==;
-X-CSE-ConnectionGUID: kjZ+jveBTsKptAXAHx3eAQ==
-X-CSE-MsgGUID: 4HrXOW8ZSIGSYMMQt768mQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31360769"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="31360769"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 22:57:16 -0800
-X-CSE-ConnectionGUID: FkS3sUyFTFSkACUS8hA7dA==
-X-CSE-MsgGUID: kxpqT/18SISpJuxfOaGpPw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
-   d="scan'208";a="88504135"
-Received: from beginmax-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.24])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 22:57:15 -0800
-Date: Wed, 13 Nov 2024 22:57:19 -0800
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: David Kaplan <david.kaplan@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 11/35] x86/bugs: Restructure spectre_v1 mitigation
-Message-ID: <20241114064001.v6ogsiaptrh6oixc@desk>
-References: <20241105215455.359471-1-david.kaplan@amd.com>
- <20241105215455.359471-12-david.kaplan@amd.com>
+	s=arc-20240116; t=1731568030; c=relaxed/simple;
+	bh=ESrCvpea853I8B6ZTdRbTsRPr6kBJdJr5LPOoid2TeE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rhfZORoLgLIwG19/wRWcuucpzZhAmR4KEY0ExO/r8DFaWPec/JAN36YXHKQrAooCaO1XzuNdinmISFycmKlbCa80esJR64Qk3cRADnzHm+8sTP8f3qSrqEwzQoeXbg/6zMom4nzxtMFhKGf3+Q4x30JwBiPi4WCShvb03VHMVCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chinatelecom.cn; spf=pass smtp.mailfrom=chinatelecom.cn; arc=none smtp.client-ip=182.42.158.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chinatelecom.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chinatelecom.cn
+HMM_SOURCE_IP:192.168.137.232:0.184899675
+HMM_ATTACHE_NUM:0000
+HMM_SOURCE_TYPE:SMTP
+Received: from clientip-36.111.64.85 (unknown [192.168.137.232])
+	by chinatelecom.cn (HERMES) with SMTP id 04725A04D;
+	Thu, 14 Nov 2024 14:57:24 +0800 (CST)
+X-189-SAVE-TO-SEND: +liuq131@chinatelecom.cn
+Received: from  ([36.111.64.85])
+	by gateway-ssl-dep-6977f57994-b9pvf with ESMTP id af35d07d8d6244b58a90bd5fd21cc166 for baolin.wang@linux.alibaba.com;
+	Thu, 14 Nov 2024 14:57:28 CST
+X-Transaction-ID: af35d07d8d6244b58a90bd5fd21cc166
+X-Real-From: liuq131@chinatelecom.cn
+X-Receive-IP: 36.111.64.85
+X-MEDUSA-Status: 0
+Sender: liuq131@chinatelecom.cn
+From: Qiang Liu <liuq131@chinatelecom.cn>
+To: baolin.wang@linux.alibaba.com
+Cc: akpm@linux-foundation.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Qiang Liu <liuq131@chinatelecom.cn>
+Subject: [PATCH v2] mm/compaction: remove unnecessary detection code.
+Date: Thu, 14 Nov 2024 14:57:20 +0800
+Message-Id: <20241114065720.3665-1-liuq131@chinatelecom.cn>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105215455.359471-12-david.kaplan@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 05, 2024 at 03:54:31PM -0600, David Kaplan wrote:
->  static void __init spectre_v1_select_mitigation(void)
->  {
-> -	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V1) || cpu_mitigations_off()) {
-> +	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V1) || cpu_mitigations_off())
->  		spectre_v1_mitigation = SPECTRE_V1_MITIGATION_NONE;
-> +}
-> +
-> +static void __init spectre_v1_apply_mitigation(void)
-> +{
-> +	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V1) || cpu_mitigations_off())
+It is impossible for the situation where blockpfn > end_pfn to arise,
+The if statement here is not only unnecessary, but may also lead to
+a misunderstanding that blockpfn > end_pfn could potentially happen.
+so these unnecessary checking code should be removed.
 
-We probably don't need to repeat this check, is this okay:
+Signed-off-by: Qiang Liu <liuq131@chinatelecom.cn>
+---
+ mm/compaction.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-	if (spectre_v1_mitigation == SPECTRE_V1_MITIGATION_NONE)
->  		return;
-> -	}
->  
->  	if (spectre_v1_mitigation == SPECTRE_V1_MITIGATION_AUTO) {
+diff --git a/mm/compaction.c b/mm/compaction.c
+index a2b16b08cbbf..baeda7132252 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -682,12 +682,6 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
+ 	if (locked)
+ 		spin_unlock_irqrestore(&cc->zone->lock, flags);
+ 
+-	/*
+-	 * Be careful to not go outside of the pageblock.
+-	 */
+-	if (unlikely(blockpfn > end_pfn))
+-		blockpfn = end_pfn;
+-
+ 	trace_mm_compaction_isolate_freepages(*start_pfn, blockpfn,
+ 					nr_scanned, total_isolated);
+ 
+-- 
+2.27.0
+
 
