@@ -1,86 +1,64 @@
-Return-Path: <linux-kernel+bounces-409511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0518C9C8DCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:22:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1314A9C8DD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:23:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E2E01F24641
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:22:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBA49286417
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E28166F25;
-	Thu, 14 Nov 2024 15:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BA4770FE;
+	Thu, 14 Nov 2024 15:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dBpPpixa"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Aj9/uTDQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C14014F136
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADCB413AD39
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731597726; cv=none; b=OGnAj4OOjpyvdGyMJ8pLTWDc5fLzcOmWQO07gxiuhisjalCxa5emVIfjL1vJaUPk/ff1nPyfduw6ZKj9gpKfexhksCJRRNZkttW0eor4Bnwpd6pXYEb+WhfG1gb1XcICldJIuVcuJlOwmVfYsNSh5/3ltGCqwxuEFnY4TK1FQks=
+	t=1731597767; cv=none; b=YrqHeGAYg9eYCC+8ITnYGdXdgjft4iDHsM/1zmoyhThc5EN95W66QHxLrnEGj/xO47Rn/zAN6ygYQcPKMsZYJqkwfyRY0hKyqCcaZVZIDASUS66iYB8iTZGlR2i74hk/6hlrzwlLGLCwz+zGzWR59YUmUNqYeoM668iAK0v0pd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731597726; c=relaxed/simple;
-	bh=VOeL1LHJj4CvlcHfJAl3EqutCbGarb1Yfp1+RrNPg2A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PVbdHlHASaJQysI30cf6wfcAdFukWPvA73pJvuML/j7/adyVJbutYbBUXKHco1/eP/5vq6Qx2uqMbe1zHEDJ3tX6IQAiS6vGF2FBZEe/PGuRcdZLHwkSuW/L9y3gRhIXIZXuWJVX3U3EHsfU6jrxYPF1IxwbjMI7KacoXhbs6uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dBpPpixa; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AEE8lmF014879
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:22:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YxIxF5hLq4iWtxlLGn/AClHN0cke6/bTjCz83ShCJhM=; b=dBpPpixaORjHXdne
-	FhM/5LByOOD48ay/NrzQnuZz1NTmI9HXNMn9QQRbQlmGvyRvJsDmhXvLM6g8RBFm
-	PIWIpEo3Xm10Rq/jKOM+Mgiio+6p9iZ+GY9/TSCGy9fGzYJs096Mj4g0Ec/AxJkm
-	4gcdwXUZlxbd5RyXbZOncclyHwBdee9x+UpidfyPLayRoIUqUcaYo7/Sbx3zJhpH
-	SdXVpRvkNZkETLHuol1dl3GAtcL6ZOrhOdqqb+4OHbwCzwryIXDYxMrQN6UjfMw8
-	Zzw1qu8LteVxfjDtNBUKTfETax3KNZYzAG+O7CiF4qgEnEXTl3T5P1tikTfBQ+be
-	rSChpw==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42wjqag5q9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:22:04 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-460f924d8bcso1313801cf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:22:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731597723; x=1732202523;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YxIxF5hLq4iWtxlLGn/AClHN0cke6/bTjCz83ShCJhM=;
-        b=m7+wOEB4yzo7j/YXeCRvKOXvKzIhdrb6jFd//dGtpVS1LFoKVG2tU2fNyURIqFWRTZ
-         MSTBOZPHRLrA7UjM/xbDxBlXxRc294uDRw0LZmGviwbLSTTsjjlOjmKBompH1gfHQLig
-         fRVXgmxckAAPJZezQa5Ji+CJ0ISHjvLNzQf/C4BmQRukEFYzPZaqJ+WqWIBGRCflp4Vu
-         iMfLx0s1O/r55istFysA7yX+HuhVSfIXLh9RqqXiDFMDYwqMxDdCftR79UaUB7hNI6K6
-         PlKjBPTElVOxlSjHNmc42bXoiRAaDk7lw3iaeA6f3GrneOzrkYdHg0q04maxVMc1b0bt
-         ir2g==
-X-Forwarded-Encrypted: i=1; AJvYcCXv8ELTaAjoTOsL9C8dP2gZeV1kNKLO1YEESrM6kWktLsNg9k21iayROSJNuXBhPcS29Anl4mvgek7FxiY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz29XT+LKF9X/WmrL8Par8B+CJXSQTsY4qeb/2KOsG8fOAFLVsk
-	r7ZkZZE+Z+6cB7+dv3jLo8Z/1K82kexmBzCTOXOj15IZkFL88eWMQ3FArEVP5oUFMqmSWzRGfzw
-	JVCcDXR/GqSZrjhpi4wPunD52AGODY4g9a5cfjL4t58yL8uxRRYl1OfKD923hWcQ=
-X-Gm-Gg: ASbGncscRF+5L4Orl6AZTItYjUtNdwe0k5SQJWVZSG+4QGCKPGNBDzbsk06TgOgldRS
-	zqfxkDzk096qoFDZwWjVewFHsn15MgVM6/2dFcc/1dwDngSRG/EzRNqp9jfbVQCK96iK/vEFAwo
-	ZKR+8Y8M3YpxhBv6FCcKBiKBVQ29cuyk1fA0aWG6VpakFwk0tHgYqnfPLhEsEeJC6Dx84qsX+ay
-	1IUryFiPc5Ze2dpb0v3Ogj0zL77ydt0kmP0weJ6TP8RMwUhyNc1sJgfesJnfgjuLXJFMASHd8FJ
-	IKg2STWuuM8AtKrJNo88C4GvJ+LQ098=
-X-Received: by 2002:a05:622a:1183:b0:460:787f:f51f with SMTP id d75a77b69052e-4630941ab7fmr141068351cf.13.1731597723551;
-        Thu, 14 Nov 2024 07:22:03 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH9U14TALS4SGOL99dlTJ9kdKVasrprn7rCmbpPBy5qi53TR2NVmA6bM59U5xTlcuiHukHjsQ==
-X-Received: by 2002:a05:622a:1183:b0:460:787f:f51f with SMTP id d75a77b69052e-4630941ab7fmr141068101cf.13.1731597723213;
-        Thu, 14 Nov 2024 07:22:03 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20e045385sm73577866b.144.2024.11.14.07.22.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 07:22:02 -0800 (PST)
-Message-ID: <0344465e-89b9-4867-85fa-670060fa1761@oss.qualcomm.com>
-Date: Thu, 14 Nov 2024 16:22:00 +0100
+	s=arc-20240116; t=1731597767; c=relaxed/simple;
+	bh=1eouGy5RKoAbzPTJ1zNM2q2ty+aHjR6VzTEMr9jWGZA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=HGZ8VIRyaFsCQapGvzASyIpH21HgpgcLlzhDqfqQ0oVr+obONMWuP+97UlPNDIPLPG+H1W1Tt916E4XZAsoHdaDnCWtijpN46s9h3Lw0rmGLqaZpxC772iEEcWUbI5iJIoahxo//5N+/u+UTPeiF+PXoHaoGOSzsEDmQKl48tkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Aj9/uTDQ; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731597766; x=1763133766;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=1eouGy5RKoAbzPTJ1zNM2q2ty+aHjR6VzTEMr9jWGZA=;
+  b=Aj9/uTDQSQVFyJdd7mzXSdsjx2nVHFEjK4xe3gj8jJkbNNsKsBX50R/+
+   b9vMFccP9HuxAD/T/RmefsC/ngfNljB1IBYvIecxeY+n3+ihJh9j1BTwb
+   sp0NPRPp7e4aFLoRBe8pFder9xiiHb1SYcfuKd92EuA1TTMOR7v6Q2OUR
+   ILhoKsuK8c46Wn+FwXuc+qT8b42VCmpjl96ttREnwGszghD4ASlnqzTf1
+   B08ySBX27mC2+F7pjwBfdznlROhDSc7cU4GB+tNFeIvcJdiqBibs+oodB
+   YdZSrlqJA4r9dEKA1Ovg/knP2Qt3z5S+ZiTrkInja8q9L8hWkgjLja4n6
+   w==;
+X-CSE-ConnectionGUID: LimCJNVyTriT4Wd6EWjPUg==
+X-CSE-MsgGUID: vranqDuMSAOlZtEWdZfnVw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31332870"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="31332870"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 07:22:44 -0800
+X-CSE-ConnectionGUID: 0MPyeRKHTWuxZ8G52Ft6jw==
+X-CSE-MsgGUID: x9Zo2Z8mTJWEwNEs9ZalzA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
+   d="scan'208";a="87786355"
+Received: from mylly.fi.intel.com (HELO [10.237.72.151]) ([10.237.72.151])
+  by fmviesa006.fm.intel.com with ESMTP; 14 Nov 2024 07:22:41 -0800
+Message-ID: <ad5375b6-5a1b-4c04-a4d9-c99fb0afaeb8@linux.intel.com>
+Date: Thu, 14 Nov 2024 17:22:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,76 +66,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: qcs8300: add QCrypto nodes
-To: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Bhupesh Sharma <bhupesh.sharma@linaro.org>
-Cc: linux-crypto@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241113055830.2918347-1-quic_yrangana@quicinc.com>
- <20241113055830.2918347-3-quic_yrangana@quicinc.com>
+Subject: Re: [PATCH v1] i3c: mipi-i3c-hci: Support SETDASA CCC
+To: Billy Tsai <billy_tsai@aspeedtech.com>, alexandre.belloni@bootlin.com,
+ Shyam-sundar.S-k@amd.com, Guruvendra.Punugupati@amd.com,
+ krishnamoorthi.m@amd.com, linux-i3c@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241113035826.923918-1-billy_tsai@aspeedtech.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241113055830.2918347-3-quic_yrangana@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <20241113035826.923918-1-billy_tsai@aspeedtech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: iUF6RV_ojEDo4aI5iXqarbNlwQu2igCA
-X-Proofpoint-ORIG-GUID: iUF6RV_ojEDo4aI5iXqarbNlwQu2igCA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- adultscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501
- spamscore=0 mlxscore=0 mlxlogscore=909 bulkscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411140120
 
-On 13.11.2024 6:58 AM, Yuvaraj Ranganathan wrote:
-> Add the QCE and Crypto BAM DMA nodes.
+On 11/13/24 5:58 AM, Billy Tsai wrote:
+> When the I3C subsystem wants to assign a dynamic address using the SETDASA
+> CCC, it needs to attach the I3C device with device info that includes only
+> the static address. In the HCI, if the driver want to send this SETDASA
+> CCC, a DAT entry is required to temporarily fill the device's static
+> address into the dynamic address field. Afterward, the reattach API will
+> be executed to update the DAT with the correct dynamic addrees value.
 > 
-> Signed-off-by: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
+> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
 > ---
->  arch/arm64/boot/dts/qcom/qcs8300.dtsi | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
+>   drivers/i3c/master/mipi-i3c-hci/core.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> index 2c35f96c3f28..d7007e175c15 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> @@ -710,6 +710,30 @@ ufs_mem_phy: phy@1d87000 {
->  			status = "disabled";
->  		};
->  
-> +		cryptobam: dma-controller@1dc4000 {
-> +			compatible = "qcom,bam-v1.7.4", "qcom,bam-v1.7.0";
-> +			reg = <0x0 0x01dc4000 0x0 0x28000>;
-> +			interrupts = <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>;
-> +			#dma-cells = <1>;
-> +			qcom,ee = <0>;
-> +			qcom,controlled-remotely;
-> +			num-channels = <20>;
-> +			qcom,num-ees = <4>;
-> +			iommus = <&apps_smmu 0x480 0x00>,
-> +				 <&apps_smmu 0x481 0x00>;
-> +		};
-> +
-> +		crypto: crypto@1dfa000 {
-> +			compatible = "qcom,qcs8300-qce", "qcom,qce";
-> +			reg = <0x0 0x01dfa000 0x0 0x6000>;
-> +			dmas = <&cryptobam 4>, <&cryptobam 5>;
-> +			dma-names = "rx", "tx";
-> +			iommus = <&apps_smmu 0x480 0x00>,
-> +				 <&apps_smmu 0x481 0x00>;
-> +			interconnects = <&aggre2_noc MASTER_CRYPTO_CORE0 0 &mc_virt SLAVE_EBI1 0>;
+(Minor comment to the subject. Is this rather fix than support SETDASA?)
 
-QCOM_ICC_TAG_ALWAYS
-
-Konrad
+Reviewed-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
