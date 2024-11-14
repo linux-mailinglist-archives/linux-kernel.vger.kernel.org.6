@@ -1,135 +1,128 @@
-Return-Path: <linux-kernel+bounces-409441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FEAC9C8CC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:21:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C59CC9C8CC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:22:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB92D1F229B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:21:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C36F2837AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:22:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE561CABA;
-	Thu, 14 Nov 2024 14:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A663D0C5;
+	Thu, 14 Nov 2024 14:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X8rxRcd5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kxpQSlqp"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AAF11D6AA;
-	Thu, 14 Nov 2024 14:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BC11C6BE;
+	Thu, 14 Nov 2024 14:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731594057; cv=none; b=J7T9JtAQfpRRBwyf1wI/diwdINaCEBJHEs0pTIEPeLAumhzhDps1kjfu6uW78UagNdCjSG9qDLT+t+W5ROwlNDR2vpZMJGgyFzwfLUQRfbYuAw9Veu7UC1/Y31tbz53zBz91vHvJGf0et3pvqTANwjHjemoDsSRdc/crjVIuFkI=
+	t=1731594139; cv=none; b=lPmlmxinW5dka4co3A50zmn7cyF7NzXHDXkczyMeQ6bMYXueKIgwAJPOoXWo6tD50d/pTXm+2j1RcQCijJMegZu+4ZlmKbcB/2bSGMxi5J6WvGUfh200auvvvQM1BYEXMpm+2PCuC5SHYRkv5sqRxImyVK5D1KMbEGW5zgzhKMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731594057; c=relaxed/simple;
-	bh=6yIvZ0pCo5aclXx1uWNQvdqp1zKxk9m+lFaAMtMPHFU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=rvmJcywyW5yF2jmRRntDsjzdSKcHQ+7av5wsOqKoIqXrKXqrWpevmqiytbifTnpUFIABTwnbz2xT/zSHKDAl3Q3vdXNwMZuQlqpOXjKLszgrummtCebEXImfHDE9UqTuxEetb5mOc7q5cob1kUZ1ZItSS7WBDbYmJHvulVj+Z7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X8rxRcd5; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731594051; x=1763130051;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=6yIvZ0pCo5aclXx1uWNQvdqp1zKxk9m+lFaAMtMPHFU=;
-  b=X8rxRcd5psfKNlMV87FRVhisOiH97aYF3itADOvxHxvWfl3o+CJ2kdSx
-   yDVKmuhqAgQkWG/3g4Aj9TzUQP4hBLFMSkT4s3aWFxirQkg/ZpbQS1vTH
-   aB+GVD4ReL4yYAzYv6it4k4N3OkivfcCm5QZB6c+XIhyuYd24sddaAzTq
-   QGO7nY5gwOWl+0+VAu4NOXL7tpY34dwqlUqNF4XyG9WCpJkVOY+lCcRpm
-   cOPYe8t41vNDlySnNSnmP1D7ebSUSwZQLBHiGyiBRb54LGfs3FKwtzhIy
-   ss1xj+XQsQGJ3yv11dd46m+CP2R3Uy3yLjNqDxeR5pbE0AGDANYi+1sUz
-   A==;
-X-CSE-ConnectionGUID: 8PSWhxnbTQGRK5qsl2UOzw==
-X-CSE-MsgGUID: +utuqENSRVuvzXVAbM/f9A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11256"; a="42921023"
-X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
-   d="scan'208";a="42921023"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 06:20:49 -0800
-X-CSE-ConnectionGUID: pzrmDZIVSL25KYVnv+9KxQ==
-X-CSE-MsgGUID: CJcl3d2pR3qwVVEtwRMkZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
-   d="scan'208";a="92279339"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.54])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 06:20:46 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Stefan Wahren <wahrenst@gmx.net>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH 1/1] PCI/PME+pciehp: Request IRQF_ONESHOT because bwctrl shares IRQ
-Date: Thu, 14 Nov 2024 16:20:34 +0200
-Message-Id: <20241114142034.4388-1-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1731594139; c=relaxed/simple;
+	bh=woW4Dbr79nNaGTSt2wV1jo+nBLcBDKnKm3vhJmk7v4o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FcyIUBoU88VfYTZBdBzoMXKFHSeao9IVB74wQXCvvTEUpvHKmY5curBDkVStGAOY3eMj84tZNWybrIV8qGtilSziWupg/aQN1EtN1UdCKpHHuE71rnvTqROLy0r6fHcy6TlscGkFvHmz1rdrlpON79ELQXGoiTeyCRmuFTPrlag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kxpQSlqp; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20c8b557f91so7093335ad.2;
+        Thu, 14 Nov 2024 06:22:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731594137; x=1732198937; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rcCCps3bA0DT5Vig5v3Q+cOzEWKwyoNxFgVPNNONgVA=;
+        b=kxpQSlqpgQWVGJIGRoxHUHlqEencziowKhEuZunr204jycE3/kIIZJQRhLhjqzphMF
+         X709Y0QwpIqD/bkI/uoivMiVY2bjyc9LAPl1tI3JXyCKfjGTEHscjQed+rH424FJm7MF
+         m6zFjk6EH8vwAVwMy8HjOVlGyBo6OdlS4jC295ZNhuZM1hz9GbN3jaAQrYGrkvA/5RTV
+         dJdlM5PQcTdoZqCkccEXd4VYT21LevQFrsaOsQsYD+aJV9b52aL8R4eKNNu4GuTUmL6Z
+         q8K/Q+eeiUdwQodsgmL8z97OVnJ0f5o8vHa7dFQ9wFuM1QrQtKVftJEOeNQrUOC07ImC
+         tYQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731594137; x=1732198937;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rcCCps3bA0DT5Vig5v3Q+cOzEWKwyoNxFgVPNNONgVA=;
+        b=bJF8KUGiaxIfOGo+83qj0eCgmSNs5jy+miA5SgRMJoaDXXleVQBUBryYhiHVOVEaCE
+         YZdFxcQjV6v8zgbus4mgN2ZOLZcuXBeZdDcSQTS+xAuzAv30uj2IqzqBn/fTnuvSiK16
+         ia6yWSsyauYjdBT1QGhJK2reWc5jBB4NzWQqUwTyjRPLKULesQmhWjhqr9otKRLsKgkD
+         YiBn8lHqPNjFzO/6/rSzPLdTDYCcvv2lfUMPIrFNzz8BXtoqGfhBacf5Xb/A+Ch7uoKV
+         9rpL9lklLV74rsPuy5J4Wg502n3VVvjWAFWZdAxiviLWi5KiC1nSfXoLQTzjVjCREaPK
+         Yl6g==
+X-Forwarded-Encrypted: i=1; AJvYcCWPVTT6y1La/xnZmY/wW2m0Lg50Eal+lQdwwtgj37atsrqEmglcgY6PQIyyeRutZr+aB1BanmA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQPITpA2Qgavs7dImARH3TBUFvrwzp/YqWCCmSFcw7c3UFQp8H
+	LR/87L3hF0GnWdiYj2F7dn8urWATUc4/KTii6TnrIlv2EL/LitIm
+X-Google-Smtp-Source: AGHT+IGdNC026LNcUMicDzqTvZcNB8zfVKvkb6Hdu7BwOtmmO2FSU037zQZdQAhxv1dA13Kf6UjwAg==
+X-Received: by 2002:a17:903:2451:b0:20c:7409:bd00 with SMTP id d9443c01a7336-21183c4268dmr353165635ad.5.1731594137360;
+        Thu, 14 Nov 2024 06:22:17 -0800 (PST)
+Received: from ?IPV6:2402:f000:3:800:19f0:968c:fe6e:97bf? ([2402:f000:3:800:19f0:968c:fe6e:97bf])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211c7c28f64sm11341595ad.31.2024.11.14.06.22.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Nov 2024 06:22:16 -0800 (PST)
+Message-ID: <a33a3a58-ae24-464e-874b-bb924fa32f69@gmail.com>
+Date: Thu, 14 Nov 2024 22:22:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: chcr_ktls: fix a possible null-pointer dereference in
+ chcr_ktls_dev_add()
+To: Markus Elfring <Markus.Elfring@web.de>, netdev@vger.kernel.org,
+ Andrew Lunn <andrew@lunn.ch>, Ayush Sawal <ayush.sawal@chelsio.com>,
+ "David S. Miller" <davem@davemloft.net>, Dragos Tatulea
+ <dtatulea@nvidia.com>, Eric Dumazet <edumazet@google.com>,
+ Jacob Keller <jacob.e.keller@intel.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Mina Almasry <almasrymina@google.com>,
+ Simon Horman <horms@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Jia-Ju Bai <baijiaju1990@gmail.com>
+References: <20241030132352.154488-1-islituo@gmail.com>
+ <55a08c90-df62-41cd-8ab9-89dc8199fbfb@web.de>
+ <1fcd2645-e280-4505-aa75-f5a6510b5940@gmail.com>
+ <7f5b2359-c549-4de2-b4c3-977e66a1c1fa@web.de>
+Content-Language: en-US
+From: Tuo Li <islituo@gmail.com>
+In-Reply-To: <7f5b2359-c549-4de2-b4c3-977e66a1c1fa@web.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-PCIe BW controller uses IRQF_ONESHOT to solve the problem fixed by the
-commit 3e82a7f9031f ("PCI/LINK: Supply IRQ handler so level-triggered
-IRQs are acked"). The IRQ is shared with PME and PCIe hotplug. Due to
-probe order, PME and hotplug can request IRQ first without IRQF_ONESHOT
-and when BW controller requests IRQ later with IRQF_ONESHOT, the IRQ
-request fails. The problem is seen at least on Rasperry Pi 4:
 
-pcieport 0000:00:00.0: PME: Signaling with IRQ 39
-pcieport 0000:00:00.0: AER: enabled with IRQ 39
-genirq: Flags mismatch irq 39. 00002084 (PCIe bwctrl) vs.00200084 (PCIe PME)
-pcie_bwctrl 0000:00:00.0:pcie010: probe with driver pcie_bwctrl failed with error -16
 
-BW controller is always enabled so change PME and pciehp too to use
-IRQF_ONESHOT.
+On 2024/11/14 20:26, Markus Elfring wrote:
+>> We have run our tool on Linux 6.11, and the line numbers correspond to the
+>> code in that version.
+> 
+> Would you like to share any source code analysis results for more recent software versions?
 
-Fixes: 470b218c2bdf ("PCI/bwctrl: Re-add BW notification portdrv as PCIe BW controller")
-Reported-by: Stefan Wahren <wahrenst@gmx.net>
-Link: https://lore.kernel.org/linux-pci/dcd660fd-a265-4f47-8696-776a85e097a0@gmx.net/
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/pci/hotplug/pciehp_hpc.c | 3 ++-
- drivers/pci/pcie/pme.c           | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+Hi Elfring,
 
-diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-index 736ad8baa2a5..0778305cff9d 100644
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -68,7 +68,8 @@ static inline int pciehp_request_irq(struct controller *ctrl)
- 
- 	/* Installs the interrupt handler */
- 	retval = request_threaded_irq(irq, pciehp_isr, pciehp_ist,
--				      IRQF_SHARED, "pciehp", ctrl);
-+				      IRQF_SHARED | IRQF_ONESHOT,
-+				      "pciehp", ctrl);
- 	if (retval)
- 		ctrl_err(ctrl, "Cannot get irq %d for the hotplug controller\n",
- 			 irq);
-diff --git a/drivers/pci/pcie/pme.c b/drivers/pci/pcie/pme.c
-index a2daebd9806c..04f0e5a7b74c 100644
---- a/drivers/pci/pcie/pme.c
-+++ b/drivers/pci/pcie/pme.c
-@@ -347,7 +347,8 @@ static int pcie_pme_probe(struct pcie_device *srv)
- 	pcie_pme_interrupt_enable(port, false);
- 	pcie_clear_root_pme_status(port);
- 
--	ret = request_irq(srv->irq, pcie_pme_irq, IRQF_SHARED, "PCIe PME", srv);
-+	ret = request_irq(srv->irq, pcie_pme_irq, IRQF_SHARED | IRQF_ONESHOT,
-+			  "PCIe PME", srv);
- 	if (ret) {
- 		kfree(data);
- 		return ret;
--- 
-2.39.5
+Thanks for your reply.
 
+I ran our tool on Linux 6.12-rc7
+(https://elixir.bootlin.com/linux/v6.12-rc7/source), and the same issue
+persists. The line number is identical to that on Linux 6.11.
+
+  chcr_ktls_cpl_act_open_rpl()   //641
+    u_ctx = adap->uld[CXGB4_ULD_KTLS].handle;   //686
+    if (u_ctx) {  //687
+    complete(&tx_info->completion);  //704
+
+  chcr_ktls_dev_add()  //412
+    u_ctx = adap->uld[CXGB4_ULD_KTLS].handle;  //432
+    wait_for_completion_timeout(&tx_info->completion, 30 * HZ); //551
+    xa_erase(&u_ctx->tid_list, tx_info->tid);  //580
+
+Any further feedback would be appreciated!
+
+Sincerely,
+Tuo Li
 
