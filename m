@@ -1,132 +1,155 @@
-Return-Path: <linux-kernel+bounces-409887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46CD19C92E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:07:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 344289C92E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:08:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CFEE283560
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:07:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D10A31F22F1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E291AAE2E;
-	Thu, 14 Nov 2024 20:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55591AAE2E;
+	Thu, 14 Nov 2024 20:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KAtYBi4y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MToaNIwH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAA0EEDE;
-	Thu, 14 Nov 2024 20:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0BBEEDE
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 20:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731614856; cv=none; b=nqO+IjZoZgCKnaOmohFERzA4qFVUn4j3u75zFlw5nGAwSDfGxzhYoSnh1I9cBDuOqKjx1kJ8ho1lOgbbGtd1D8XHvmP8qyF5qpOMcapZkpk9GYwA3MtY9Ybvq7GwFMHriDFbUBzUmCpGW2RCiv0YKMcLHAcAXPnJcp6jANRgUJQ=
+	t=1731614892; cv=none; b=bCt0xcWMZn4hYfx+da96ZkDLzThsvZIdz/zBwuuUSd5ONNl16KiEj8/5xPwg4UPhOuITHGyM5ugOCU6bqWFRZcGPksKUOoGvywi/rdjgxRhemUPGmW/5mHMNOobkBNWvVzNQUNjJHrr6UzxUcQy1mtHaWPpUllbo8hOLnytI3v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731614856; c=relaxed/simple;
-	bh=nqJiNu8v2ujQkfJAmU9C5VR3//m4linYKmRisSXR+OY=;
+	s=arc-20240116; t=1731614892; c=relaxed/simple;
+	bh=BNP6Erz1GZnIHdSIFkt5kahGRartdA7o1PMQyYbCMa8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cok/VhV5oEXKMjbHv15KrbdLekuVzv6wgTiwk7rO9UKySph7+cqIzVkDNv0SuPXiJF+6er2bDK4c5QWmGDN7xV3Elb/T6x4RzkR1ctE5qmaMNnss+BuuQX28oYJDN/ybLgJnUErLOrLNc+RNHQcjc8QkUWln7tDCfd9OXdPMDcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KAtYBi4y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D583C4CED5;
-	Thu, 14 Nov 2024 20:07:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731614855;
-	bh=nqJiNu8v2ujQkfJAmU9C5VR3//m4linYKmRisSXR+OY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KAtYBi4yJAjPz/PEMA36PsQw9r/rpNGJ7Lqm4OZfk6SoeAUyEso7XPg8UDgPzXRjk
-	 bkVYnm5caKILvncDhVBDdUoZ1FOzSwd3IqA4FoEJy1l/REaSKjGoVUV92f+IbFnHVs
-	 OIAoOvk5V1yvYRXFXV8AHX7d9dMZruDx6ts6xwgIJG5/FvOgy7qHBeS12Fvy6caNNP
-	 gs+67FJgpjm99NHhgYl9C4YrvKK1qhhtxo4VdifQ8V4+7nRDQ5jxFU3i+wxwpkYM+m
-	 7gQK9U5sKLsOaXmmYhVLY24M7O2dJ4FQgGAeDhnkmNQZ0VgGXf22Nr7sSrU9BsyX2l
-	 LwOV4jlpkwD8A==
-Date: Thu, 14 Nov 2024 20:07:30 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Sean Nyekjaer <sean@geanix.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	Han Xu <han.xu@nxp.com>
-Subject: Re: [PATCH 1/4] dt-bindings: iio: accel: fxls8962af: add compatible
- string 'nxp,fxls8967af'
-Message-ID: <20241114-showing-aspirin-8ca12f0b2e50@spud>
-References: <20241113-fxls-v1-0-5e48ff1b1fb8@nxp.com>
- <20241113-fxls-v1-1-5e48ff1b1fb8@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=btJ+2eJ0LxD31Ta59IYBmwLPZ1SuT1AZ/aoyG6zLGB4K5ulGfNw+q5iuHdgmv7ur54GEB+BZeozUZXEsRf4OzMespDlzLtry8SNg+hOxFOddBQvWlJ8tVS1UtegnO/f2700H6MjgyfSpJN62LnKpAo+HZNHhM6nFxWO+CDAV/YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MToaNIwH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731614889;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yOQfcgwhrW1JHcUt1mkxeR2HzNswqmadBnglMvkxsD4=;
+	b=MToaNIwH/ZG6RDKqAdFcQSeVrzge2Z9uZ4EO8pPvKWRviCxSBaHpcozfSTaa1F7BUE6Zfc
+	VVRfE1/ST8fhb6XBh8VFH1UXzjquOrJPnWEwqqo3A9aDjvFXV5b19lKfdBdAjk46jiVhbv
+	g5KJ0+BkKRTj0Cs8y1b5tV+YjKAOwBA=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-63-tybY3d_8OZClyCFyv3CyhA-1; Thu,
+ 14 Nov 2024 15:08:06 -0500
+X-MC-Unique: tybY3d_8OZClyCFyv3CyhA-1
+X-Mimecast-MFC-AGG-ID: tybY3d_8OZClyCFyv3CyhA
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E3E2119560AB;
+	Thu, 14 Nov 2024 20:08:01 +0000 (UTC)
+Received: from rh (unknown [10.64.138.2])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A6BF61955F3E;
+	Thu, 14 Nov 2024 20:08:00 +0000 (UTC)
+Received: from localhost ([::1] helo=rh)
+	by rh with esmtps  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <dchinner@redhat.com>)
+	id 1tBg8B-00000006in9-2XUs;
+	Fri, 15 Nov 2024 07:07:55 +1100
+Date: Fri, 15 Nov 2024 07:07:53 +1100
+From: Dave Chinner <dchinner@redhat.com>
+To: Long Li <leo.lilong@huawei.com>
+Cc: John Garry <john.g.garry@oracle.com>,
+	Dave Chinner <david@fromorbit.com>,
+	Ritesh Harjani <ritesh.list@gmail.com>, chandan.babu@oracle.com,
+	djwong@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	catherine.hoang@oracle.com, martin.petersen@oracle.com
+Subject: Re: [PATCH v4 00/14] forcealign for xfs
+Message-ID: <ZzZYmTuSsHN-M0Of@rh>
+References: <79e22c54-04bd-4b89-b20c-3f80a9f84f6b@oracle.com>
+ <Ztom6uI0L4uEmDjT@dread.disaster.area>
+ <ce87e4fb-ab5f-4218-aeb8-dd60c48c67cb@oracle.com>
+ <Zt4qCLL6gBQ1kOFj@dread.disaster.area>
+ <84b68068-e159-4e28-bf06-767ea7858d79@oracle.com>
+ <ZufBMioqpwjSFul+@dread.disaster.area>
+ <0e9dc6f8-df1b-48f3-a9e0-f5f5507d92c1@oracle.com>
+ <ZuoCafOAVqSN6AIK@dread.disaster.area>
+ <1394ceeb-ce8c-4d0f-aec8-ba93bf1afb90@oracle.com>
+ <ZzXxlf6RWeX3e-3x@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="BLm+PiydXSQuPslL"
-Content-Disposition: inline
-In-Reply-To: <20241113-fxls-v1-1-5e48ff1b1fb8@nxp.com>
-
-
---BLm+PiydXSQuPslL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ZzXxlf6RWeX3e-3x@localhost.localdomain>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Wed, Nov 13, 2024 at 12:54:39PM -0500, Frank Li wrote:
-> From: Han Xu <han.xu@nxp.com>
->=20
-> Add compatible string 'nxp,fxls8967af' for the NXP FXLS8967AF acceleromet=
-er
-> sensor.
->=20
-> Signed-off-by: Han Xu <han.xu@nxp.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  Documentation/devicetree/bindings/iio/accel/nxp,fxls8962af.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/accel/nxp,fxls8962af.y=
-aml b/Documentation/devicetree/bindings/iio/accel/nxp,fxls8962af.yaml
-> index 783c7ddfcd90a..c375ef1bd083f 100644
-> --- a/Documentation/devicetree/bindings/iio/accel/nxp,fxls8962af.yaml
-> +++ b/Documentation/devicetree/bindings/iio/accel/nxp,fxls8962af.yaml
-> @@ -14,12 +14,16 @@ description: |
->    SPI and I2C interface.
->      https://www.nxp.com/docs/en/data-sheet/FXLS8962AF.pdf
->      https://www.nxp.com/docs/en/data-sheet/FXLS8964AF.pdf
-> +    https://www.nxp.com/docs/en/data-sheet/FXLS8967AF.pdf
-> =20
->  properties:
->    compatible:
-> +    description:
-> +      These chips are compatible with each other, just have different ID=
-s.
+On Thu, Nov 14, 2024 at 08:48:21PM +0800, Long Li wrote:
+> On Wed, Sep 18, 2024 at 11:12:47AM +0100, John Garry wrote:
+> > On 17/09/2024 23:27, Dave Chinner wrote:
+> > > > # xfs_bmap -vvp  mnt/file
+> > > > mnt/file:
+> > > > EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
+> > > >    0: [0..15]:         384..399          0 (384..399)          16 010000
+> > > >    1: [16..31]:        400..415          0 (400..415)          16 000000
+> > > >    2: [32..127]:       416..511          0 (416..511)          96 010000
+> > > >    3: [128..255]:      256..383          0 (256..383)         128 000000
+> > > > FLAG Values:
+> > > >     0010000 Unwritten preallocated extent
+> > > > 
+> > > > Here we have unaligned extents wrt extsize.
+> > > > 
+> > > > The sub-alloc unit zeroing would solve that - is that what you would still
+> > > > advocate (to solve that issue)?
+> > > Yes, I thought that was already implemented for force-align with the
+> > > DIO code via the extsize zero-around changes in the iomap code. Why
+> > > isn't that zero-around code ensuring the correct extent layout here?
+> > 
+> > I just have not included the extsize zero-around changes here. They were
+> > just grouped with the atomic writes support, as they were added specifically
+> > for the atomic writes support. Indeed - to me at least - it is strange that
+> > the DIO code changes are required for XFS forcealign implementation. And,
+> > even if we use extsize zero-around changes for DIO path, what about buffered
+> > IO?
+> 
+> 
+> I've been reviewing and testing the XFS atomic write patch series. Since
+> there haven't been any new responses to the previous discussions on this
+> issue, I'd like to inquire about the buffered IO problem with force-aligned
+> files, which is a scenario we might encounter.
+> 
+> Consider a case where the file supports force-alignment with a 64K extent size,
+> and the system page size is 4K. Take the following commands as an example:
+> 
+> xfs_io  -c "pwrite 64k 64k" mnt/file
+> xfs_io  -c "pwrite 8k 8k" mnt/file
+> 
+> If unaligned unwritten extents are not permitted, we need to zero out the
+> sub-allocation units for ranges [0, 8K] and [16K, 64K] to prevent stale
+> data. While this can be handled relatively easily in direct I/O scenarios,
+> it presents significant challenges in buffered I/O operations. The main
+> difficulty arises because the extent size (64K) is larger than the page
+> size (4K), and our current code base has substantial limitations in handling
+> such cases.
+> 
+> Any thoughts on this?
 
-Then there should be a fallback. Please remove this description and add
-the new device with a fallback to an existing one.
+Large folios in the page cache solve this problem. i.e. it's the
+same problem that block size > page size support had to solve.
 
->      enum:
->        - nxp,fxls8962af
->        - nxp,fxls8964af
-> +      - nxp,fxls8967af
-> =20
->    reg:
->      maxItems: 1
->=20
-> --=20
-> 2.34.1
->=20
+-Dave.
+-- 
+Dave Chinner
+dchinner@redhat.com
 
---BLm+PiydXSQuPslL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzZYggAKCRB4tDGHoIJi
-0qctAQDHl3DPf7LwU7fxaBdmPPX2qhiGz8tA8KDft9OZS+25AAD/YHIdFD71J05r
-0YRD5CgsZp+OvlL6M1mUzfcHKfiqmwc=
-=UnPl
------END PGP SIGNATURE-----
-
---BLm+PiydXSQuPslL--
 
