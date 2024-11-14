@@ -1,377 +1,123 @@
-Return-Path: <linux-kernel+bounces-408848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E2C19C8449
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:51:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F9899C8440
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:50:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E75E282ACE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:51:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44823282F07
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F05A1F893D;
-	Thu, 14 Nov 2024 07:48:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FCD1F818D;
+	Thu, 14 Nov 2024 07:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="K6rx9AHa"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="OZvxdGjc"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02CE1F6693;
-	Thu, 14 Nov 2024 07:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDCA1F756D;
+	Thu, 14 Nov 2024 07:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731570514; cv=none; b=BH4jycgaOX2cuZG6/AwuQ1HrX/Gu2xnxqDdqEnclkEVMVk1eAzXLgMLpg0WfhS+hBmsULagfDcpai2dtcIG4X2ApuOFpD3H7pycMU0U/zArWMIvj4ewgvX9TSg126o3JV6/euN7wi3niTgrHSvRR2ZOwmB/aTqBXA0j6celbKGs=
+	t=1731570503; cv=none; b=mV4APyPPXtxjUzePlmB7MXRwIkUQo1jyVeq7Lz3DpiMU0BCL4URjHUDhPhymrcn8S9TDKBSUDmie9Y+uZmbRO1DR1AU7uhqcY6hZ68MCfWSY5fketx50gPhqp7n/aVR+ovVsrWM18JJ/hKF6uYo+DlPcY0MAetnVgHXLhX8iED8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731570514; c=relaxed/simple;
-	bh=zOwE2PG2Q6rBjGJtqWVXrNthWh/sGNlWDTKeBo78zf0=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qZ4mF+5OFxXAT1CrDYKIdiBqBd9Z/5oEDSjgqg+NNI9Z5ZlEKahd1wCTTttCht03Cqq9I4JsuvmwV2sKGzFNtXrBYs47jrZ4Y/5a13RFfjONCwQVF8Vdl6PPrLJa9FV2x5IyFw3aNsXf7szjG0557id++cf9zN0Rsq3gXmM84lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=K6rx9AHa; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE6G8jR025433;
-	Thu, 14 Nov 2024 07:48:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	eHWBqHNQuIo4z4xUq/Ne2MjZJj1TYO/iR7G+2EOiq4Y=; b=K6rx9AHa4946Es/s
-	cWAfm9zgsZlrNtNX4MHg62mbCMD/bez6h4pAggzHpQoXywRZbEmOy+YGKkZz4roL
-	6cd3DWJzIIirwK/Nt5lpqeDoPF6RD6Eqy48QEt764xtfFvTcYtCys5NN6Zwg6hlE
-	3qQV4mMFqF+Mb/SYDJfKQQjwb363bwX7J6OUXiZ0SeFLZaLV2ZFtfL/EGyLYzObw
-	VTx+iFEZP0aff0uqG/gFYo2Nyj2nYbNiWJf/Wt/XBCnHhv8ARGufI5Hjnp9Vae06
-	BPCt8qi6vLz5waoGtzPwq3lxzIwGCt+pkaTb5+ktFuS7owJN29xgW3haUE7ZmxaT
-	+i9Fgw==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vgqqw8a7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Nov 2024 07:48:26 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AE7mPMq013463
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Nov 2024 07:48:25 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 13 Nov 2024 23:48:18 -0800
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <gregkh@linuxfoundation.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <dmitry.baryshkov@linaro.org>,
-        <mantas@8devices.com>, <quic_kbajaj@quicinc.com>,
-        <quic_kriskura@quicinc.com>, <quic_rohiagar@quicinc.com>,
-        <abel.vesa@linaro.org>, <quic_varada@quicinc.com>,
-        <quic_wcheng@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>
-Subject: [PATCH v3 6/6] arm64: dts: qcom: Add USB controller and phy nodes for IPQ5424
-Date: Thu, 14 Nov 2024 13:17:22 +0530
-Message-ID: <20241114074722.4085319-7-quic_varada@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241114074722.4085319-1-quic_varada@quicinc.com>
-References: <20241114074722.4085319-1-quic_varada@quicinc.com>
+	s=arc-20240116; t=1731570503; c=relaxed/simple;
+	bh=VhIVxSf64TL+RKk03i17FNYbWe9fqXELqvWOEg63o4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RLN2+nX71VGee1loRhDfKuXqXsu2Tl9M3Ec7i0xwZGfKUOE+Mwn1wPyLD+vxunyDtRtLpS1V5l1RwgMxgl/X95lUXgVqZG/PJQd52LfdLKulhrDBNd4bTWmxqIVDALz/4e92Vup370uNKFO+tyOc+OPoj6pYoSudqoi8+Yud6dA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=OZvxdGjc; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B31E840E015E;
+	Thu, 14 Nov 2024 07:48:13 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id KcqmbqV9IE8D; Thu, 14 Nov 2024 07:48:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1731570488; bh=SAvtplwexqx24144/4H/qXv46ZRBhLOF+FmBUrb1yYc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OZvxdGjcJGbVQeLaHVR9CVmEPCqvoLs39vQ1JIxoTK4EVhJk0+TK4jnwZesyxPydF
+	 MrfuhNrV/JBzbUF/hvY+Zf3UGcCQF7DDHhdsv71702MaRcS7x65mU5GsOOuQOrw3tO
+	 kmmpIMGCQInT9lu6eODYYSffaAejrgeEFzn+JawhNFRlmv0HgaY4w+vNIIDbtEQ/t4
+	 fWYroy+L93Nuv7tENcWAlJMnlTyWVbbE0P0FndwLb+0lUexoGZEGa1CaWFzjCoU6Qd
+	 hkO/hBdbPATsUtG167X3vQoqMpaQJSGsFZ7cHuZX9ddD48Q+dW+dGbt73DcL7GcNUR
+	 cczu/hus1uaR8rtxL84Vs6br9LmoKetx3GyjaG44Y2SvyvqRHgGcBW8Tqe+tleU4Zr
+	 jE9rQBszTdlOIUToEWpuxxyWqvLABqiMINBBiZlk6y3MNyYIUM6iiowG0odPNKWrHR
+	 TeS8lDRXn6f43gCAPonHzL1biCgSXwRIs8YtNHnCJ325TyxQcxZTAXLZwtG3QtTxdi
+	 Bmwb3OHIpQfFo520NFER2Xmjs9GHH56+SCgouTrMP/h5u0XhlbmNYISqif9oDYiZ5L
+	 chQxY5x7hd/hFKS26a7hzdc7Gs6Pn//ApTPpbFXd+AX+Mi95CDHJhw6avQCrDCIkJJ
+	 A/JfkNZINXnSWjOsEItxfTIA=
+Received: from zn.tnic (p200300ea973a31a9329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:973a:31a9:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DDAF940E0163;
+	Thu, 14 Nov 2024 07:47:42 +0000 (UTC)
+Date: Thu, 14 Nov 2024 08:47:33 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>, Amit Shah <amit@kernel.org>,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+	linux-doc@vger.kernel.org, amit.shah@amd.com,
+	thomas.lendacky@amd.com, tglx@linutronix.de, peterz@infradead.org,
+	pawan.kumar.gupta@linux.intel.com, corbet@lwn.net, mingo@redhat.com,
+	dave.hansen@linux.intel.com, hpa@zytor.com, seanjc@google.com,
+	pbonzini@redhat.com, daniel.sneddon@linux.intel.com,
+	kai.huang@intel.com, sandipan.das@amd.com,
+	boris.ostrovsky@oracle.com, Babu.Moger@amd.com,
+	david.kaplan@amd.com, dwmw@amazon.co.uk
+Subject: Re: [RFC PATCH v2 1/3] x86: cpu/bugs: update SpectreRSB comments for
+ AMD
+Message-ID: <20241114074733.GAZzWrFTZM7HZxMXP5@fat_crate.local>
+References: <20241111163913.36139-1-amit@kernel.org>
+ <20241111163913.36139-2-amit@kernel.org>
+ <20241111193304.fjysuttl6lypb6ng@jpoimboe>
+ <564a19e6-963d-4cd5-9144-2323bdb4f4e8@citrix.com>
+ <20241112014644.3p2a6te3sbh5x55c@jpoimboe>
+ <20241112115811.GAZzNC08WU5h8bLFcf@fat_crate.local>
+ <20241113212440.slbdllbdvbnk37hu@jpoimboe>
+ <20241113213724.GJZzUcFKUHCiqGLRqp@fat_crate.local>
+ <20241114004358.3l7jxymrtykuryyd@jpoimboe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 80nk0U-zLTlIjwn6N0VFiZ65rDWt_f1T
-X-Proofpoint-GUID: 80nk0U-zLTlIjwn6N0VFiZ65rDWt_f1T
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
- impostorscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
- priorityscore=1501 phishscore=0 malwarescore=0 mlxlogscore=999
- adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411140057
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241114004358.3l7jxymrtykuryyd@jpoimboe>
 
-The IPQ5424 SoC has both USB2.0 and USB3.0 controllers. The USB3.0
-can connect to either of USB2.0 or USB3.0 phy and operate in the
-respective mode.
+On Wed, Nov 13, 2024 at 04:43:58PM -0800, Josh Poimboeuf wrote:
+> This comment relates to the "why" for the code itself (and its poor
+> confused developers), taking all the RSB-related vulnerabilities into
+> account.
 
-Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
----
-v3: Regulator node names, labels and 'regulator-name' changed per review suggestions
-    Stray newline removed
+So use Documentation/arch/x86/.
 
-v2: Add dm/dp_hs_phy_irq to usb3@8a00000 node
-    Add u1/u2-entry quirks to usb@8a00000 node
----
- arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts |  66 ++++++++
- arch/arm64/boot/dts/qcom/ipq5424.dtsi       | 159 ++++++++++++++++++++
- 2 files changed, 225 insertions(+)
+This is exactly the reason why we need more "why" documentation - because
+everytime we have to swap the whole bugs.c horror back in, we're poor confused
+developers. And we have the "why" spread out across commit messages and other
+folklore which means everytime we have to change stuff, the git archeology
+starts. :-\ "err, do you remember why we're doing this?!" And so on
+converstaions on IRC.
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-index d4d31026a026..859e15befb3f 100644
---- a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-@@ -16,12 +16,70 @@ / {
- 	aliases {
- 		serial0 = &uart1;
- 	};
-+
-+	vreg_misc_3p3: regulator-3300000 {
-+		compatible = "regulator-fixed";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+		regulator-name = "usb_hs_vdda_3p3";
-+	};
-+
-+	vreg_misc_1p8: regulator-1800000 {
-+		compatible = "regulator-fixed";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+		regulator-name = "vdda_1p8_usb";
-+	};
-+
-+	vreg_misc_0p925: regulator-0925000 {
-+		compatible = "regulator-fixed";
-+		regulator-min-microvolt = <925000>;
-+		regulator-max-microvolt = <925000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+		regulator-name = "vdd_core_usb";
-+	};
-+};
-+
-+&dwc_0 {
-+	dr_mode = "host";
-+};
-+
-+&dwc_1 {
-+	dr_mode = "host";
-+};
-+
-+&qusb_phy_0 {
-+	vdd-supply = <&vreg_misc_0p925>;
-+	vdda-pll-supply = <&vreg_misc_1p8>;
-+	vdda-phy-dpdm-supply = <&vreg_misc_3p3>;
-+
-+	status = "okay";
-+};
-+
-+&qusb_phy_1 {
-+	vdd-supply = <&vreg_misc_0p925>;
-+	vdda-pll-supply = <&vreg_misc_1p8>;
-+	vdda-phy-dpdm-supply = <&vreg_misc_3p3>;
-+
-+	status = "okay";
- };
- 
- &sleep_clk {
- 	clock-frequency = <32000>;
- };
- 
-+&ssphy_0 {
-+	vdda-pll-supply = <&vreg_misc_1p8>;
-+	vdda-phy-supply = <&vreg_misc_0p925>;
-+
-+	status = "okay";
-+};
-+
- &tlmm {
- 	sdc_default_state: sdc-default-state {
- 		clk-pins {
-@@ -53,6 +111,14 @@ &uart1 {
- 	status = "okay";
- };
- 
-+&usb2 {
-+	status = "okay";
-+};
-+
-+&usb3 {
-+	status = "okay";
-+};
-+
- &xo_board {
- 	clock-frequency = <24000000>;
- };
-diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-index 5e219f900412..f8afd6f0412d 100644
---- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-@@ -233,6 +233,165 @@ intc: interrupt-controller@f200000 {
- 			msi-controller;
- 		};
- 
-+		qusb_phy_1: phy@71000 {
-+			compatible = "qcom,ipq5424-qusb2-phy";
-+			reg = <0 0x00071000 0 0x180>;
-+			#phy-cells = <0>;
-+
-+			clocks = <&gcc GCC_USB1_PHY_CFG_AHB_CLK>,
-+				<&xo_board>;
-+			clock-names = "cfg_ahb", "ref";
-+
-+			resets = <&gcc GCC_QUSB2_1_PHY_BCR>;
-+			status = "disabled";
-+		};
-+
-+		usb2: usb2@1e00000 {
-+			compatible = "qcom,ipq5424-dwc3", "qcom,dwc3";
-+			reg = <0 0x01ef8800 0 0x400>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges;
-+
-+			clocks = <&gcc GCC_USB1_MASTER_CLK>,
-+				 <&gcc GCC_USB1_SLEEP_CLK>,
-+				 <&gcc GCC_USB1_MOCK_UTMI_CLK>,
-+				 <&gcc GCC_USB1_PHY_CFG_AHB_CLK>,
-+				 <&gcc GCC_CNOC_USB_CLK>;
-+
-+			clock-names = "core",
-+				      "sleep",
-+				      "mock_utmi",
-+				      "iface",
-+				      "cfg_noc";
-+
-+			assigned-clocks = <&gcc GCC_USB1_MASTER_CLK>,
-+					  <&gcc GCC_USB1_MOCK_UTMI_CLK>;
-+			assigned-clock-rates = <200000000>,
-+					       <24000000>;
-+
-+			interrupts-extended = <&intc GIC_SPI 395 IRQ_TYPE_LEVEL_HIGH>,
-+					      <&intc GIC_SPI 397 IRQ_TYPE_LEVEL_HIGH>,
-+					      <&intc GIC_SPI 387 IRQ_TYPE_LEVEL_HIGH>,
-+					      <&intc GIC_SPI 388 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "pwr_event",
-+					  "qusb2_phy",
-+					  "dm_hs_phy_irq",
-+					  "dp_hs_phy_irq";
-+
-+			resets = <&gcc GCC_USB1_BCR>;
-+			qcom,select-utmi-as-pipe-clk;
-+			status = "disabled";
-+
-+			dwc_1: usb@1e00000 {
-+				compatible = "snps,dwc3";
-+				reg = <0 0x01e00000 0 0xe000>;
-+				clocks = <&gcc GCC_USB1_MOCK_UTMI_CLK>;
-+				clock-names = "ref";
-+				interrupts = <GIC_SPI 396 IRQ_TYPE_LEVEL_HIGH>;
-+				phys = <&qusb_phy_1>;
-+				phy-names = "usb2-phy";
-+				tx-fifo-resize;
-+				snps,is-utmi-l1-suspend;
-+				snps,hird-threshold = /bits/ 8 <0x0>;
-+				snps,dis_u2_susphy_quirk;
-+				snps,dis_u3_susphy_quirk;
-+			};
-+		};
-+
-+		qusb_phy_0: phy@7b000 {
-+			compatible = "qcom,ipq5424-qusb2-phy";
-+			reg = <0 0x0007b000 0 0x180>;
-+			#phy-cells = <0>;
-+
-+			clocks = <&gcc GCC_USB0_PHY_CFG_AHB_CLK>,
-+				<&xo_board>;
-+			clock-names = "cfg_ahb", "ref";
-+
-+			resets = <&gcc GCC_QUSB2_0_PHY_BCR>;
-+			status = "disabled";
-+		};
-+
-+		ssphy_0: phy@7d000 {
-+			compatible = "qcom,ipq5424-qmp-usb3-phy";
-+			reg = <0 0x0007d000 0 0xa00>;
-+			#phy-cells = <0>;
-+
-+			clocks = <&gcc GCC_USB0_AUX_CLK>,
-+				 <&xo_board>,
-+				 <&gcc GCC_USB0_PHY_CFG_AHB_CLK>,
-+				 <&gcc GCC_USB0_PIPE_CLK>;
-+			clock-names = "aux",
-+				      "ref",
-+				      "cfg_ahb",
-+				      "pipe";
-+
-+			resets = <&gcc GCC_USB0_PHY_BCR>,
-+				 <&gcc GCC_USB3PHY_0_PHY_BCR>;
-+			reset-names = "phy",
-+				      "phy_phy";
-+
-+			#clock-cells = <0>;
-+			clock-output-names = "usb0_pipe_clk";
-+
-+			status = "disabled";
-+		};
-+
-+		usb3: usb3@8a00000 {
-+			compatible = "qcom,ipq5424-dwc3", "qcom,dwc3";
-+			reg = <0 0x08af8800 0 0x400>;
-+
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges;
-+
-+			clocks = <&gcc GCC_USB0_MASTER_CLK>,
-+				 <&gcc GCC_USB0_SLEEP_CLK>,
-+				 <&gcc GCC_USB0_MOCK_UTMI_CLK>,
-+				 <&gcc GCC_USB0_PHY_CFG_AHB_CLK>,
-+				 <&gcc GCC_CNOC_USB_CLK>;
-+
-+			clock-names = "core",
-+				      "sleep",
-+				      "mock_utmi",
-+				      "iface",
-+				      "cfg_noc";
-+
-+			assigned-clocks = <&gcc GCC_USB0_MASTER_CLK>,
-+					  <&gcc GCC_USB0_MOCK_UTMI_CLK>;
-+			assigned-clock-rates = <200000000>,
-+					       <24000000>;
-+
-+			interrupts-extended = <&intc GIC_SPI 412 IRQ_TYPE_LEVEL_HIGH>,
-+					      <&intc GIC_SPI 414 IRQ_TYPE_LEVEL_HIGH>,
-+					      <&intc GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>,
-+					      <&intc GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "pwr_event",
-+					  "qusb2_phy",
-+					  "dm_hs_phy_irq",
-+					  "dp_hs_phy_irq";
-+
-+			resets = <&gcc GCC_USB_BCR>;
-+			status = "disabled";
-+
-+			dwc_0: usb@8a00000 {
-+				compatible = "snps,dwc3";
-+				reg = <0 0x08a00000 0 0xcd00>;
-+				clocks = <&gcc GCC_USB0_MOCK_UTMI_CLK>;
-+				clock-names = "ref";
-+				interrupts = <GIC_SPI 409 IRQ_TYPE_LEVEL_HIGH>;
-+				phys = <&qusb_phy_0>, <&ssphy_0>;
-+				phy-names = "usb2-phy", "usb3-phy";
-+				tx-fifo-resize;
-+				snps,is-utmi-l1-suspend;
-+				snps,hird-threshold = /bits/ 8 <0x0>;
-+				snps,dis_u2_susphy_quirk;
-+				snps,dis_u3_susphy_quirk;
-+				snps,dis-u1-entry-quirk;
-+				snps,dis-u2-entry-quirk;
-+			};
-+		};
-+
- 		timer@f420000 {
- 			compatible = "arm,armv7-timer-mem";
- 			reg = <0 0xf420000 0 0x1000>;
+So having an implementation document explaining clearly why we did things is
+long overdue.
+
+But it's fine - I can move it later when the dust settles here.
+
+Thx.
+
 -- 
-2.34.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
