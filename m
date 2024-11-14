@@ -1,190 +1,114 @@
-Return-Path: <linux-kernel+bounces-409836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C9D49C9267
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:27:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A3449C924A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:18:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38280B2C29F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:17:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E87CE282C60
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F228E1B983F;
-	Thu, 14 Nov 2024 19:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D1F1AA78E;
+	Thu, 14 Nov 2024 19:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="R/z23kPf"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VwhiHQoA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387011B5EA4
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 19:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D7419CCF9
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 19:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731611466; cv=none; b=WVp6AHyQFb3VwXRIvv9ekyMiOsBVZ5uTMsLZ7d+yF1sz69yLRDGdM0RG6QaK551cBEEq/m/1I9bK5d7cRoUZsid2UUez6HsA+DRNgyDmn7pcUztbflIO4bkeRihhddG93JdbU2hnixJznA0JGYKTQv7fBAKYCzeQ16DppUIN+ds=
+	t=1731611555; cv=none; b=LqeD9fnSoLCIlEMWE38mUwVL0TRR4ZX9DdRXoSINMx95lRiNPsrZ9SgS8pGEUy7kDYhY8O3UZ0SmiTdA9nzKXQlFDzml0pwyxn665aCcd+SlR3b9X3h3lbdHbSAJvwmV6yBnPjq4ewxbPVjBtLxi/xY1Q2SUH+Zfdyib9eH2E2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731611466; c=relaxed/simple;
-	bh=PhTJre4pPGmMPPsN/T9S6uvenShngpY+QklJsyJGE5g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PByNDvywMIk91Eb7NP3OftiOPJ43kqu7F5ZwBAhXSyYANoqfhtrMfKiiHnAOKCU5SP5wqj5FdAyp8BOAoUrS7SaaDMVVI4z3dz6IBUSxqnf1DtdS2Wj3sEu3Qf7vcpvKwn2m4+m6sVZAKkKFjTd/jUXbsqqZdZwPr3HC8ZBWGJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=R/z23kPf; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6cbcc2bd800so8431896d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:11:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731611463; x=1732216263; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FBavzk6Bw3Trxv3crngVWykxkJCeHnNA55ffm7Fp7P0=;
-        b=R/z23kPf0JUQl/xmFpzO8ohew7Ldo6lxXE5EYQY4LuLA/4Xq+AIJxGOMqDnMAt/0Ru
-         RSTQghh7Q+dyA09g4ETaziFV4CuVmHcz34IWIdVgeLymPuFWMTKba2IU+XiqhhJMoDU7
-         z3keOHAGn2xIqBvxqdRDPmbR0vBAUE9xqA/J4=
+	s=arc-20240116; t=1731611555; c=relaxed/simple;
+	bh=8NIsFh9HjLOsPUCctkUZ0OQoop3hB0APVZblVw+P4MU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n7NMDt0Zz7PHcPN9ftoBe+qAhoLSQyzx84NP1+6LKGT5eY/MVcWjvjxwbiEMYRdpOFb/FwJ8IN+XQ/Qpg2q1rSZE12nIxcI9/vv/q9Ta1VZjOHbg9SKObDVcPYZmUadvMWFmjVjk5QbG7whPqj5v0GQV4YkDlH7gx51U81G9WcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VwhiHQoA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731611553;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fRAysetKQ3mmbtVIPe2O8tbisqHkftH8tQ6gNwLYHtY=;
+	b=VwhiHQoAAQ50k3nnr0DgmGkRYyARbFm/dSg8cSjmqX/zysGc7IMdgOqRgMgbnnJJKvzAxM
+	Q/9Wxtj+Aj5fyIETzf7rRT0FBAIY3IRCW7GRJyVByC5sApFq1GBe2RVKhI8hY2592FaT3u
+	8EoaUHEQeyjgqhK5TEK0Yp1uM8xdEH8=
+Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com
+ [209.85.161.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-457-PG_T6cMzOA6CcLAtN809sw-1; Thu, 14 Nov 2024 14:12:31 -0500
+X-MC-Unique: PG_T6cMzOA6CcLAtN809sw-1
+X-Mimecast-MFC-AGG-ID: PG_T6cMzOA6CcLAtN809sw
+Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-5ee9de26831so103353eaf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:12:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731611463; x=1732216263;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1731611550; x=1732216350;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FBavzk6Bw3Trxv3crngVWykxkJCeHnNA55ffm7Fp7P0=;
-        b=JSBON2aSQCliAEe74dbUh6473wA/LVoiSbiTI1QuKjBXN07u+exwe0AcwzZCywNG6w
-         E1k7D+4norwbLpiVqJMYuvfuExlOvJkS4XLY+OLUXuig+T5qOckPYEeD6l0YxFfz2bd9
-         tFXira4vx8x/VFJboHtG+L5HkT5Vv6Wq5q7Qk0i0XegA1/EkLhXtpr2F9biODZEQmvH3
-         5d/eWgoVFu4xZFnDbArZTn2i83F3GBv5udaCt9iC1PrjT0Q7Oi6Ctw/CilI++kQQaJN9
-         WhVulsuemv8mt98USDqLkZFGOB2nVmNOcUtecsKEL3h0+efxC5bTWer9nBZNgF6AbcUV
-         s/mg==
-X-Forwarded-Encrypted: i=1; AJvYcCXCvRzgsWlLrm/j8EDkOlUp5VM3UDY74RnOaCkbz5rrCCSJxhoh3IDpZM9dxoI3TaeT64Uh5DnJm7k/vmw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbjGDBBrAlvrpczJvK/kILBT8TBEfiMt7KNKwJpRpQSEOfRAHx
-	kPOeK75GkWIXbAd8xc6qnDvMmQ72kWhLsjAFb/dySJNLvYwpZ5AqrgOV7Nguqg==
-X-Google-Smtp-Source: AGHT+IFgscBZYIINazB1el1lgvgswMvG66EcNip964hXIqQxn60chcRbTUwj3BXMFDmkJzGj5Aze5A==
-X-Received: by 2002:a05:6214:5d8d:b0:6cb:f72e:4eb9 with SMTP id 6a1803df08f44-6d3fac30859mr3276576d6.11.1731611463343;
-        Thu, 14 Nov 2024 11:11:03 -0800 (PST)
-Received: from denia.c.googlers.com (189.216.85.34.bc.googleusercontent.com. [34.85.216.189])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3ee7cc7e1sm8857766d6.53.2024.11.14.11.11.02
+        bh=fRAysetKQ3mmbtVIPe2O8tbisqHkftH8tQ6gNwLYHtY=;
+        b=dvtlxhalk54eXI3/ZNMp23g2Jnq6kXpt8a9eR6fHz5yvyjD3z249i/LzCC8ufYLj/5
+         AgYSTWKzP4tx8culkml33hT7QbmBo0G93HlPlrcXUy61YJ6c11os3UmZttuESgMwedmb
+         vuZ5DpXtLSMW7g0IC2Gw878Px20sECvNH8o7XjYOXvieBcYbdbDe0E5KILne3dZjhCv6
+         2txrl8B9JWOToYGAmWZW6jVSVg2LSjNd53xGjwXUcpRXgDThqMvezAWr5fpq9C9NcvDJ
+         1BxbveSAzeAjl1sGfgEZmD4Im8Xq/1eS9uFw8iq8T0csFyOdEjVsGJyGpzmKzvls79Dx
+         ojYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoJXcIbDNYAfxGOkwWN6oEYPqwH1GlR9Hixv5Cyifr4tgT6IPtHhZEyPKhOIZPyhRgGrleQkLPKY45JoQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrpoyqiFpmZVpkBBYyVsJSTLqaLBGgExG6Bz/6XWu9G+R6Yihf
+	+pcuvWRXlwblTmXXqtWTEZO+X4gYlWSv7CQpsGWkvdtSjKE0mnIYnK341ev+9G+Rhd+ob9LxU5c
+	n6AL/2HFKM8EKlwK3cIgdZEO6ZyW5uj87CWE8ABdPM7hY5a+afjhsvzX9xBV22Mf/o54eDg==
+X-Received: by 2002:a05:6808:1794:b0:3e0:4133:99a0 with SMTP id 5614622812f47-3e7bc7bc66amr16382b6e.4.1731611549096;
+        Thu, 14 Nov 2024 11:12:29 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH/UJ9X2WjL5AFyWAPl6EYQVm4D+EAWr9fpOXs+H30M0xXdRkYbHQnvY0S8JdsEfPoxb3t5uQ==
+X-Received: by 2002:a05:6808:1794:b0:3e0:4133:99a0 with SMTP id 5614622812f47-3e7bc7bc66amr16361b6e.4.1731611547330;
+        Thu, 14 Nov 2024 11:12:27 -0800 (PST)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e7b8599703sm561728b6e.1.2024.11.14.11.12.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 11:11:02 -0800 (PST)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Thu, 14 Nov 2024 19:10:48 +0000
-Subject: [PATCH v15 19/19] media: uvcvideo: document UVC v1.5 ROI
+        Thu, 14 Nov 2024 11:12:26 -0800 (PST)
+Date: Thu, 14 Nov 2024 12:12:25 -0700
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Longfang Liu <liulongfang@huawei.com>
+Cc: <jgg@nvidia.com>, <shameerali.kolothum.thodi@huawei.com>,
+ <jonathan.cameron@huawei.com>, <kvm@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linuxarm@openeuler.org>
+Subject: Re: [PATCH v15 0/4] debugfs to hisilicon migration driver
+Message-ID: <20241114121225.3ab59ce6.alex.williamson@redhat.com>
+In-Reply-To: <20241112073322.54550-1-liulongfang@huawei.com>
+References: <20241112073322.54550-1-liulongfang@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241114-uvc-roi-v15-19-64cfeb56b6f8@chromium.org>
-References: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
-In-Reply-To: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Hans de Goede <hdegoede@redhat.com>, Ricardo Ribalda <ribalda@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Yunke Cao <yunkec@chromium.org>, linux-media@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>, 
- Yunke Cao <yunkec@google.com>, 
- Sergey Senozhatsky <senozhatsky@chromium.org>
-X-Mailer: b4 0.13.0
 
-From: Yunke Cao <yunkec@google.com>
+On Tue, 12 Nov 2024 15:33:18 +0800
+Longfang Liu <liulongfang@huawei.com> wrote:
 
-Added documentation of V4L2_CID_UVC_REGION_OF_INTEREST_RECT and
-V4L2_CID_UVC_REGION_OF_INTEREST_AUTO.
+> Add a debugfs function to the hisilicon migration driver in VFIO to
+> provide intermediate state values and data during device migration.
+> 
+> When the execution of live migration fails, the user can view the
+> status and data during the migration process separately from the
+> source and the destination, which is convenient for users to analyze
+> and locate problems.
+> 
+> Changes v14 -> v15
+> 	Correct variable declaration type
 
-An example of a userspace implementing this feature can be found at:
-https://chromium.googlesource.com/chromiumos/platform2/+/refs/heads/release-R121-15699.B/camera/hal/usb/
+Applied to vfio next branch for v6.13.  Thanks,
 
-Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
-Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-Signed-off-by: Yunke Cao <yunkec@google.com>
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- .../userspace-api/media/drivers/uvcvideo.rst       | 64 ++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
-
-diff --git a/Documentation/userspace-api/media/drivers/uvcvideo.rst b/Documentation/userspace-api/media/drivers/uvcvideo.rst
-index a290f9fadae9..1cdcd45907a3 100644
---- a/Documentation/userspace-api/media/drivers/uvcvideo.rst
-+++ b/Documentation/userspace-api/media/drivers/uvcvideo.rst
-@@ -181,6 +181,7 @@ Argument: struct uvc_xu_control_mapping
- 	UVC_CTRL_DATA_TYPE_BOOLEAN	Boolean
- 	UVC_CTRL_DATA_TYPE_ENUM		Enumeration
- 	UVC_CTRL_DATA_TYPE_BITMASK	Bitmask
-+	UVC_CTRL_DATA_TYPE_RECT		Rectangular area
- 
- 
- UVCIOC_CTRL_QUERY - Query a UVC XU control
-@@ -255,3 +256,66 @@ Argument: struct uvc_xu_control_query
- 	__u8	query		Request code to send to the device
- 	__u16	size		Control data size (in bytes)
- 	__u8	*data		Control value
-+
-+
-+Driver-specific V4L2 controls
-+-----------------------------
-+
-+The uvcvideo driver implements the following UVC-specific controls:
-+
-+``V4L2_CID_UVC_REGION_OF_INTEREST_RECT (struct)``
-+	This control determines the region of interest (ROI). ROI is a
-+	rectangular area represented by a struct :c:type:`v4l2_rect`. The
-+	rectangle is in global sensor coordinates and pixel units. It is
-+	independent of the field of view, not impacted by any cropping or
-+	scaling.
-+
-+	Use ``V4L2_CTRL_WHICH_MIN_VAL`` and ``V4L2_CTRL_WHICH_MAX_VAL`` to query
-+	the range of rectangle sizes.
-+
-+	Setting a ROI allows the camera to optimize the capture for the region.
-+	The value of ``V4L2_CID_REGION_OF_INTEREST_AUTO`` control determines
-+	the detailed behavior.
-+
-+	An example of use of this control, can be found in the:
-+	`Chrome OS USB camera HAL.
-+	<https://chromium.googlesource.com/chromiumos/platform2/+/refs/heads/release-R121-15699.B/camera/hal/usb/>`
-+
-+
-+``V4L2_CID_UVC_REGION_OF_INTEREST_AUTO (bitmask)``
-+	This determines which, if any, on-board features should track to the
-+	Region of Interest specified by the current value of
-+	``V4L2_CID_UVD__REGION_OF_INTEREST_RECT``.
-+
-+	Max value is a mask indicating all supported Auto Controls.
-+
-+.. flat-table::
-+    :header-rows:  0
-+    :stub-columns: 0
-+
-+    * - ``V4L2_UVC_REGION_OF_INTEREST_AUTO_EXPOSURE``
-+      - Setting this bit causes automatic exposure to track the region of
-+	interest instead of the whole image.
-+    * - ``V4L2_UVC_REGION_OF_INTEREST_AUTO_IRIS``
-+      - Setting this bit causes automatic iris to track the region of interest
-+        instead of the whole image.
-+    * - ``V4L2_UVC_REGION_OF_INTEREST_AUTO_WHITE_BALANCE``
-+      - Setting this bit causes automatic white balance to track the region
-+	of interest instead of the whole image.
-+    * - ``V4L2_UVC_REGION_OF_INTEREST_AUTO_FOCUS``
-+      - Setting this bit causes automatic focus adjustment to track the region
-+        of interest instead of the whole image.
-+    * - ``V4L2_UVC_REGION_OF_INTEREST_AUTO_FACE_DETECT``
-+      - Setting this bit causes automatic face detection to track the region of
-+        interest instead of the whole image.
-+    * - ``V4L2_UVC_REGION_OF_INTEREST_AUTO_DETECT_AND_TRACK``
-+      - Setting this bit enables automatic face detection and tracking. The
-+	current value of ``V4L2_CID_REGION_OF_INTEREST_RECT`` may be updated by
-+	the driver.
-+    * - ``V4L2_UVC_REGION_OF_INTEREST_AUTO_IMAGE_STABILIZATION``
-+      - Setting this bit enables automatic image stabilization. The
-+	current value of ``V4L2_CID_REGION_OF_INTEREST_RECT`` may be updated by
-+	the driver.
-+    * - ``V4L2_UVC_REGION_OF_INTEREST_AUTO_HIGHER_QUALITY``
-+      - Setting this bit enables automatically capture the specified region
-+        with higher quality if possible.
-
--- 
-2.47.0.338.g60cca15819-goog
+Alex
 
 
