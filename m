@@ -1,125 +1,81 @@
-Return-Path: <linux-kernel+bounces-409411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 643429C8C59
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:01:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83EF19C8C74
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:08:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D3661F23099
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:01:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C467B35BAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6EC13B59B;
-	Thu, 14 Nov 2024 13:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PH3EBi4V"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CED2C859;
+	Thu, 14 Nov 2024 14:00:50 +0000 (UTC)
+Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191AF3BB24;
-	Thu, 14 Nov 2024 13:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C0B29429
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 14:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731592786; cv=none; b=hkjZTW4/0W7TjzQu/byvOuWH0i5HAEvh88dMtn/qOtITsSLgREg+Jwq9NCs/Ot6cJgvrSdlNs97//fM2Rhf5s40kWHj5Nxj4hlqOO+0kSEt1vioY0lNGwhuRD5M2O5kvoWOJ8N0vYMiyFy4a2ufkvBDidDL2eTFz+LoeayPLNUs=
+	t=1731592850; cv=none; b=gCDVmsha3IZAaNRRjxJpZTgz7Qw5m5tLYF4APjabGGmibdZ71wNkE2s8W3BoNeTJATGAVNQpAJY9UL1vcHwANdKbDX+YvrzhA/wUhR1fEfpJLkSmrroHpijKs+kzFGqqgdE/LOnFvP1GdrUIKNE0FbKLuPB+H5pVzHvaEdkSeBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731592786; c=relaxed/simple;
-	bh=st3ZJaTgzg0Q7HS9Zd/0/LvKr8GBoyzIyfkT1MeMkQY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ca/zj31mWoa/a38AcOMvFpLwNCM3GoYBPA+g3/ZXHZU0TYBY/azs3qWMG6VoE81lAi0KswRSgRvx96rHqMPDxRst35BD9vaVi1AiDTECxIW+gEvu1wCzwJXxHJHM2/cTXGeV35QDy12DOZQ/oGUgzlLmSHcRQbwBamV3jHbSFpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PH3EBi4V; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5cec93719ccso754160a12.2;
-        Thu, 14 Nov 2024 05:59:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731592783; x=1732197583; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=X6eLuWYyfigYmEkgfeOfnEFTkRCPuPKOBVwDODGgCHQ=;
-        b=PH3EBi4VcEXkXtc4TpnaAWS/pxip0SLY6V7JRNFkgERpm70XdXpfAWxpT0b0Q+3xXh
-         oPW7fswQOIRzTkb0u3ToKp5VfMqSeIad9It0VjOR43QrKwUiJTPSISWWOfFFL6HV32wq
-         O/C7o42KoShbpy20Fc76JRqz5R2XQEZc2LXY79yiHP4Koolu/j9a3jHVZrYzUEDKw9+y
-         eFwa71Di54eYyINOsV8nwVgtFdUSCVTwuq84BWXH6HmZbxmig91Y2xiIqI+dX6eakhmJ
-         TQAjh1lLeGelv1yqO0tqh5Igxh0A82zUionhwzbj4D2c1wcSeYf9vx9dvVDHk5m6u4pA
-         rPTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731592783; x=1732197583;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X6eLuWYyfigYmEkgfeOfnEFTkRCPuPKOBVwDODGgCHQ=;
-        b=KyGrk07dqmkRp5ZASLI7Dapw0pQ9fEgOnuwIt/ogabN6e1i1pVQtl6uyi/J1755IAr
-         h+BJhFbRk7OrYzHlZmRf2+KMegRP9O67XVhl/NW+vMEw/EUZ4tmDeOKo32axtzIKgfsu
-         /E+h928JVnXp9WdQOwlh8D3ykYtYZYYSm3cYcmY06/OxHVT6WNjNSLE+hfaqTXMbWSug
-         /XPNUc0oWIez1Lt2fOcObH8HXOZjhBD+B5VeGW/4FdeBGc/DNr+jSzDW9s17CHmHmjcx
-         ppOEphrk2aaDtePCLQ2MT7mX1nRpvBSR9JoNRbRX72F7b3aQCmRxU5XPnhWdcBz6aBlH
-         8c1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUd9NpOOH2kHw0oC7eVuKzXZ+fLt9yhvN+wE84kmXWsUzKXXfSvnRL8ByhX3dnGwjQMIgFFV2vWPHvNJp6L@vger.kernel.org, AJvYcCVfGNzmDNKPcsnJtnSoRlJQriRjO5IxctWouNZm1+Qff4P3batD/THkt0LJy0q+HhW2Bl3lslhJ4JIk@vger.kernel.org, AJvYcCWsDBOEDLAHuCkfasu+q8pPENIijZDuwcobSVwdpPkbBau9k7HQIxOHTNxFpa32LCWh/vnwFEhRNsyI@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlQuJgv3doQrMbJao347hUE4BhBukREUFoPerNg3250JHa+7Tw
-	uwFq//TUghJQ1yih+CAVCmRnb2BFKcVUQAktNCktldcLzw5zlXxU
-X-Google-Smtp-Source: AGHT+IHwYGIEKERhQFxmc9MhQHw4vw4OF1GEeUoqtJTrXpRyP41UFT1nafl6A2SUeeliOrskvr1WXQ==
-X-Received: by 2002:a17:907:2d91:b0:a9a:3dc0:8911 with SMTP id a640c23a62f3a-aa1b1057243mr1006541966b.16.1731592783172;
-        Thu, 14 Nov 2024 05:59:43 -0800 (PST)
-Received: from [10.10.40.97] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df1c53asm66915966b.15.2024.11.14.05.59.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 05:59:42 -0800 (PST)
-Message-ID: <68f41c2f-3fbe-40bc-a4ec-a6c0ae6862e0@gmail.com>
-Date: Thu, 14 Nov 2024 14:59:41 +0100
+	s=arc-20240116; t=1731592850; c=relaxed/simple;
+	bh=fBExKkfXjIOLlZH6DejtfOKoFw4BgWgmxhVwPFcEdBA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fjDtRNtNBwOiHKBNHr0Wmv1zU0kfGmSwgU1q8Hx5JfjAiXLw78/EF9KXc0w22GClM/V5O7Optun/xoPdD5zNc3OKgX4u+BcXmKCu7sYfm4XIN842HmTC1sBreQl93b6e8HWV0Zvsrcm3NQomy6Ml+hZmz5nTTfDDpRENAdZ+Z9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from mail.andestech.com (ATCPCS34.andestech.com [10.0.1.134])
+	by Atcsqr.andestech.com with ESMTPS id 4AEE0WtL034856
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK);
+	Thu, 14 Nov 2024 22:00:32 +0800 (+08)
+	(envelope-from cl634@andestech.com)
+Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS34.andestech.com
+ (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 14 Nov
+ 2024 22:00:32 +0800
+From: CL Wang <cl634@andestech.com>
+To: <cl634@andestech.com>, <alexandre.belloni@bootlin.com>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <tim609@andestech.com>
+Subject: [PATCH V4 RESEND 0/3] rtc: atcrtc100: Add Andes ATCRTC100 RTC driver
+Date: Thu, 14 Nov 2024 22:00:20 +0800
+Message-ID: <20241114140023.3534980-1-cl634@andestech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: iio: frequency: Add ADF4382
-To: Ciprian Hegbeli <ciprian.hegbeli@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kim Seer Paller <kimseer.paller@analog.com>,
- Antoniu Miclaus <antoniu.miclaus@analog.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241114130340.7354-1-ciprian.hegbeli@analog.com>
- <20241114130340.7354-2-ciprian.hegbeli@analog.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <20241114130340.7354-2-ciprian.hegbeli@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
+ ATCPCS34.andestech.com (10.0.1.134)
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 4AEE0WtL034856
 
-On 14/11/2024 14:03, Ciprian Hegbeli wrote:
-> The ADF4382A is a high performance, ultralow jitter, Frac-N PLL
-> with integrated VCO ideally suited for LO generation for 5G applications
-> or data converter clock applications. The high performance
-> PLL has a figure of merit of -239 dBc/Hz, low 1/f Noise and
-> high PFD frequency of 625MHz in integer mode that can achieve
-> ultralow in-band noise and integrated jitter. The ADF4382A can
-> generate frequencies in a fundamental octave range of 11.5 GHz to
-> 21 GHz, thereby eliminating the need for sub-harmonic filters. The
-> divide by 2 and 4 output dividers on the part allow frequencies to
-> be generated from 5.75GHz to 10.5GHz and 2.875GHz to 5.25GHz
-> respectively.
-> 
-> Signed-off-by: Ciprian Hegbeli <ciprian.hegbeli@analog.com>
-> ---
+The Andes ATCRTC100 module includes a real time counter with alarm.
+Add a RTC driver for this module.
 
-...
+CL Wang (3):
+  rtc: atcrtc100: Add ATCRTC100 RTC driver
+  dt-bindings: rtc: Add support for ATCRTC100 RTC
+  MAINTAINERS: Add entry for ATCRTC100 RTC driver
 
-> +
-> +  adi,cmos-3v3:
-> +    description:
+ .../bindings/rtc/andestech,atcrtc100.yaml     |  43 ++
+ MAINTAINERS                                   |   6 +
+ drivers/rtc/Kconfig                           |  15 +
+ drivers/rtc/Makefile                          |   1 +
+ drivers/rtc/rtc-atcrtc100.c                   | 524 ++++++++++++++++++
+ 5 files changed, 589 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rtc/andestech,atcrtc100.yaml
+ create mode 100644 drivers/rtc/rtc-atcrtc100.c
 
-A nitpick I overlooked: default.
-
-> +      Sets the SPI logic to 3.3V, by defautl it uses 1,8V.
-> +    type: boolean
-> +    maxItems: 1
-> +
-
+-- 
+2.34.1
 
 
