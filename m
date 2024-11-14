@@ -1,142 +1,118 @@
-Return-Path: <linux-kernel+bounces-409221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62F8F9C8922
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:39:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BBD779C8928
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:43:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E660A283E9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:39:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 811ED284766
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130641F8F15;
-	Thu, 14 Nov 2024 11:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9691F9400;
+	Thu, 14 Nov 2024 11:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="basJ6Qpo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DJ4Ssf5B"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061251DB52A;
-	Thu, 14 Nov 2024 11:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964861F8185
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731584389; cv=none; b=PuZgowxUcG9LS0N0IqsA0hpr9KzbdpTRIL4YLZeO2y3HwPcuK7FC5w43rljTBBLQ8xGpeqAZpbgNpuub+aSgsgSH88CFYiwnavqI+Pqus0eL/DmFPmOrZhpGcsuBVsqCgl1p0/L8pce1K2WLLw3nCpp2L6w9G61DcpaENH0f0po=
+	t=1731584596; cv=none; b=PdT9scrmxTnweCXR6z1klp2JyznAdYR/b86GCAJ2/TlxtAAhfGvhsMQ7sU6HBW+y3ZoOTLxdXjTYkL4YIxHMRslFEeF82vy5VONkEC7uacGzE2GUyjmG/9b79ALsKU8cX9U88dLV4qtUcgUsB+35VTW6AYNkztV7fWLfR/pmCuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731584389; c=relaxed/simple;
-	bh=ssj4QN2ssANxuRJs3rhOmn3BjPTn+f/nHeu4LH/TzUw=;
+	s=arc-20240116; t=1731584596; c=relaxed/simple;
+	bh=c7GXOwm87U/RMLNgN05PsYW204x5lYucKz/+G29oHIs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PaBXk8FffDkllqmeReTy3RpiigFf3vL6lOGW9uVgJyxlfNYCYJ8UqSi9W37uozTyNrqh92qHCBVw99SoFvFzLiGkeyYnhcR+MlledQvYufz4rCN9ivM4tDAE3cwRd1jlFpJ8JbgRndwXR41ubs5XP5EgfSCDinXXzu5rHOblE+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=basJ6Qpo; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731584388; x=1763120388;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ssj4QN2ssANxuRJs3rhOmn3BjPTn+f/nHeu4LH/TzUw=;
-  b=basJ6Qpo3xqyQpURSTDyOxWpKFwA1n3LpoUNgyi2TNa1vYSBBpx953wd
-   0B+osbvcH+o5BFMFWVgFzZ2C+hZh+OD6JV9mTgRG2LOvnVLPSTHiWO7/a
-   BBJeB0pAZK6rrxkDzVKlGdEzAIlTmzGZuAZ6oSYh3jtAPlwHEkC+VpVqz
-   QZ1wMGQUaqPwH7grjG1CJjtyK9tWw0w4iae2aB8/AZa/emALDrNt1cLhG
-   L6On38DdQBndmKFssADqRkx73mtkkVcrEqEcQIQWgo+ckw5Gi/QZLq4gu
-   ts8hdWWNqMuU3DNk1++sygrAxEgM4hFsYO8br8rrKnq5ntm4PaipBFJyY
-   Q==;
-X-CSE-ConnectionGUID: arnmtLEkQneS1751cBZUrw==
-X-CSE-MsgGUID: JD7Ax9UiQ4K3UyvNfLxHjw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="48966412"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="48966412"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 03:39:47 -0800
-X-CSE-ConnectionGUID: ywBz4QCASki0MCNOWGd3aA==
-X-CSE-MsgGUID: RBYMWs4jS9m3VK4TMBs3iA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
-   d="scan'208";a="92240620"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 03:39:46 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tBYCN-0000000EhMA-3lND;
-	Thu, 14 Nov 2024 13:39:43 +0200
-Date: Thu, 14 Nov 2024 13:39:43 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] gpio: Move and sort Kconfig entries as suggested
-Message-ID: <ZzXhf2zM9IisvZhs@smile.fi.intel.com>
-References: <20241113171219.2949157-1-andriy.shevchenko@linux.intel.com>
- <CAMRc=MeaDjhxAwmTcNZ+oHniFn4EWVEmfP8MdNWitmD+Rr=scA@mail.gmail.com>
- <ZzXTbEcrLigXWpAu@smile.fi.intel.com>
- <CAMRc=MeEtyTXr6A4gXbbN=ZY1tzAQnbVMF0NYA2_6Xm3=jfS6Q@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nvNEQ/s2Qv/KJfc+kL9sJyvhylzEmRA4yVZBIMO5T4OXyloxVwZVSelVn4qaL9lmOYu+WlPeLmnE+3Ou9jpUDdvkxcTp3JywxsKfMDxiEOmxfJoTM6lQSKtwNc5fDTuX2yaCXtwSkP9Ddrc2KKsA4rgOKs8Zxr6Kyqdh+ZHpzZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DJ4Ssf5B; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=KTGkrkiAlgVGT3mBdVTPJiuKbHOp6dm+tc/6MjUAEr0=; b=DJ4Ssf5B34n8C3rJ9KhSUbmu2N
+	HWU9Sh3WliCmHefC2EiFxat0Q+rAcA4ChLDo2QpPXnpXIAv9jj5n8GdSxEWGZHCvQ7pGbllQbP1cu
+	zi+n5wZ3RM/0lgVp/xA4bGdSfzJbnWkfOOrPoGwPuNAQdBmBn0cUBHVOSGS/9Ea7ugMN2zVetzVVO
+	ksJzlAXNB94zYhHArG2DOZpyZNgdR3pvBqETwq91pAp1valBjdeZ1D70e2vWIKXuNF6kRoFPBuKEJ
+	V9VfUDDAWAmzMNUB5HeeW5z4EbmHsZpsTq12oYXAtuCVaYHFxyCiwh6+C5Ffj6By2tHwi/2t+cqvJ
+	FaTus+7g==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tBYFh-00000000fFd-2uhE;
+	Thu, 14 Nov 2024 11:43:09 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 5BAAE300472; Thu, 14 Nov 2024 12:43:09 +0100 (CET)
+Date: Thu, 14 Nov 2024 12:43:09 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Rik van Riel <riel@surriel.com>
+Cc: Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
+	dave.hansen@linux.intel.com, luto@kernel.org, tglx@linutronix.de,
+	mingo@redhat.com, x86@kernel.org, kernel-team@meta.com,
+	hpa@zytor.com, bigeasy@linutronix.de
+Subject: Re: [PATCh 0/3] x86,tlb: context switch optimizations
+Message-ID: <20241114114309.GF38972@noisy.programming.kicks-ass.net>
+References: <20241109003727.3958374-1-riel@surriel.com>
+ <20241113095550.GBZzR3pg-RhJKPDazS@fat_crate.local>
+ <20241113095557.2d60a073@imladris.surriel.com>
+ <20241114113617.GO6497@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MeEtyTXr6A4gXbbN=ZY1tzAQnbVMF0NYA2_6Xm3=jfS6Q@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20241114113617.GO6497@noisy.programming.kicks-ass.net>
 
-On Thu, Nov 14, 2024 at 12:15:46PM +0100, Bartosz Golaszewski wrote:
-> On Thu, Nov 14, 2024 at 11:39 AM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Thu, Nov 14, 2024 at 09:54:50AM +0100, Bartosz Golaszewski wrote:
-> > > On Wed, Nov 13, 2024 at 6:12 PM Andy Shevchenko
-> > > <andriy.shevchenko@linux.intel.com> wrote:
-> > > >
-> > > > The Kconfig under drivers/gpio has a specific comment
-> > > >
-> > > >   put drivers in the right section, in alphabetical order
-> > > >
-> > > > but in time some of the entries fell unordered there.
-> > > > Put an order again.
-> > > >
-> > > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > > > ---
-> > > Could you elaborate on why you're moving drivers between categories?
-> > > For instance: you moved Intel LJCA to USB drivers and I'm sure you
-> > > have a reason for it (it's not clear if this actually is a USB driver,
-> >
-> > This one is actually clear as you see that it depends on USB_LJCS which
-> > suggests that it's USB based.
-> >
-> > > it's not registered as such
-> >
-> > Neither one of the existing ones in that category, right?
-> >
+On Thu, Nov 14, 2024 at 12:36:17PM +0100, Peter Zijlstra wrote:
+> On Wed, Nov 13, 2024 at 09:55:57AM -0500, Rik van Riel wrote:
+> >  arch/x86/kernel/alternative.c | 11 +++--------
+> >  1 file changed, 3 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+> > index d17518ca19b8..f3caf5bc4df9 100644
+> > --- a/arch/x86/kernel/alternative.c
+> > +++ b/arch/x86/kernel/alternative.c
+> > @@ -1830,6 +1830,9 @@ static inline void unuse_temporary_mm(temp_mm_state_t prev_state)
+> >  	lockdep_assert_irqs_disabled();
+> >  	switch_mm_irqs_off(NULL, prev_state.mm, current);
+> >  
+> > +	/* Force a TLB flush next time poking_mm is used. */
+> > +	inc_mm_tlb_gen(poking_mm);
+> > +
+> >  	/*
+> >  	 * Restore the breakpoints if they were disabled before the temporary mm
+> >  	 * was loaded.
+> > @@ -1940,14 +1943,6 @@ static void *__text_poke(text_poke_f func, void *addr, const void *src, size_t l
+> >  	 */
+> >  	unuse_temporary_mm(prev);
+> >  
+> > -	/*
+> > -	 * Flushing the TLB might involve IPIs, which would require enabled
+> > -	 * IRQs, but not if the mm is not used, as it is in this point.
+> > -	 */
+> > -	flush_tlb_mm_range(poking_mm, poking_addr, poking_addr +
+> > -			   (cross_page_boundary ? 2 : 1) * PAGE_SIZE,
+> > -			   PAGE_SHIFT, false);
+> > -
+> >  	if (func == text_poke_memcpy) {
+> >  		/*
+> >  		 * If the text does not match what we just wrote then something is
 > 
-> Well if you really want to open that can of worms...
+> So I really don't like this.
 > 
-> Only gpio-mpsse is really a stand-alone USB GPIO expander. Others in
-> this section are actually MFD devices and would probably better fit in
-> there.
+> Yes it avoids the immediate problem, but we're now sending IPIs where we
+> shoulnd't be.
 > 
-> I don't have a strong opinion but we should at least be consistent.
+> Fundamentally this whole text_poke thing is set up such that only a
+> single CPU will have this magical mapping with the aliasses. Having it
+> send IPIs is crazy.
 
-So, as far as I can read the whole picture the categories are based on the HW
-(and this is how it should be) and these what I moved _are_ true USB devices.
-Linux abstraction is just a Linux abstraction.
-
-If you want consistency, drop these categories for good, just have plain list
-of the all GPIO drivers. No room for any speculations :-)
-
-> > > ) but please expand on it in the commit message.
-> >
-> > Okay, I will do in v2.
-> >
-> > Thank you for the review!
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+I'm thinking the better fix is to make unuse_temporary_mm() explicitly
+clear the bit if we don't want switch_mm() to do it.
 
