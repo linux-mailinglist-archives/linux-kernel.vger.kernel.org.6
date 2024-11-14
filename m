@@ -1,328 +1,156 @@
-Return-Path: <linux-kernel+bounces-408672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC049C81FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 05:33:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D92569C8203
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 05:35:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC38C2846BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 04:33:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E8C72846DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 04:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9F61632FA;
-	Thu, 14 Nov 2024 04:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF25165F01;
+	Thu, 14 Nov 2024 04:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2TgJXc2e"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2045.outbound.protection.outlook.com [40.107.243.45])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="avneL4k5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539A48F6C;
-	Thu, 14 Nov 2024 04:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731558810; cv=fail; b=ZS6LwgWYGRwzReXXkBfuiiubviHPbDMEsckXdoseTIhsVuQyP26KanDa2EO+8L4nSjtdfZglTmq1QdAYfx1KAifnQBrLU3cOVZv4/4qCeFZlduL8aaAvJUTxgiwMYmy9t7pfvuYWK0fIfPBqBb9/sH5TBBTnWQd+Yl3Sl76Qh4k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731558810; c=relaxed/simple;
-	bh=M7tuDWyg0nX3+51t1WIJeOW3epOSJG7UUhZlLPdNjk4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=oLRR3hQ4Pw7b/DENRg8nWHJmG5IbivTQMoAhsBDf7NlyMPA0AEDfayen81Mg4K0Ju6daJVKS/A77Fqhs6ZyrYUpZ4OsX69bY1cMlbPz3zcJ8TjtTQuhG8hMepAdqf+gmZ7t3/Kiny8GLnCRhaKeaB9Nyds9k66eSowIT40HDFg8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2TgJXc2e; arc=fail smtp.client-ip=40.107.243.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HpYbUG20WQaQikzcUYXh2beFQmYlLkBH6v6MhAEPIGnMdGUx1jXcVSaL4sCoEmH0V1YQY1DPdWEJCQ3YmVcy+xj0vPGEWA6I3zDrfczS1q1Gba/aa+TYYh9lDNfhPiDnSgtxTToL6uQwcNn+taxzjGjhnTqX355QfBgkYFLyJ24TFcsdCqA/pWIk1Tze+KAyW8TvYQmge5gNy8xyYrSQDD2Su3ECaBNtvEmDVdn7Z3svyFMV5rJ+3+lsVJ1rn4gMT4jetFU2JpaA0pdGhWu3aYibecvDU6NPXuxXP5LF0Uo4BS8T4q4m4bF20U9hDurZAb8tpKYdfO4VQmptc8gYCA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TBDef40rWjCr1MPksinwUdDwNEQwMztj2gvmeOVq5kw=;
- b=n7mAhILAXwYG3R+sDa4BV/HNWhSMvUsiwz1pgy+2F/dMx/z/aOKYVHZBPFsHQrL8FCBxm9ffvNQGLODMvdFEt+vuvShzBeisRetC67NJM6dwkzkHtPSYDDc8FqNwp8FaoPcuaEOeGItqI8qACQ7et69AF9k4kluVrdwwmXSCdBkV//zFFTY5Mrz0Y2hWIuhvRw9oLcBwaAwWdosciwFwwaNKXOkfwE+i+HlGsxsUMoVmBZb1TwMMQ2f4EH3Uhh/w9CfeUF0ZkNlTfpIGKqF3KXSFa18bwEqUPqvsF6zdjwYnAf3UWI+1u+XNaZHebO1Dp3d53Y99tVgz6fYGrXgj7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TBDef40rWjCr1MPksinwUdDwNEQwMztj2gvmeOVq5kw=;
- b=2TgJXc2eRGGO20BvWry7wM/VB8reiXkOJwALAHD2+BEpVul7YzBKcrYlXrju7QwtMosjQ8dvMfd6xMZvnsIF7h/Dh+kW0Ckkg+0cWPm7ibpnK+XcAzpxTVyvJg2hrXVs4QqTAWJdOVYPxyfE/W9lImwigvDdIK38S4/p+fP1anM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5176.namprd12.prod.outlook.com (2603:10b6:208:311::19)
- by BL1PR12MB5899.namprd12.prod.outlook.com (2603:10b6:208:397::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.17; Thu, 14 Nov
- 2024 04:33:23 +0000
-Received: from BL1PR12MB5176.namprd12.prod.outlook.com
- ([fe80::ed5b:dd2f:995a:bcf4]) by BL1PR12MB5176.namprd12.prod.outlook.com
- ([fe80::ed5b:dd2f:995a:bcf4%5]) with mapi id 15.20.8158.017; Thu, 14 Nov 2024
- 04:33:23 +0000
-Message-ID: <079db1b6-0f95-452e-832b-7d392e130028@amd.com>
-Date: Thu, 14 Nov 2024 10:03:13 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/5] i3c: master: Add ACPI support to i3c subsystem
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Jarkko Nikula <jarkko.nikula@linux.intel.com>, Sanket.Goswami@amd.com,
- linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-acpi@vger.kernel.org
-References: <20241108073323.523805-1-Shyam-sundar.S-k@amd.com>
- <20241108073323.523805-3-Shyam-sundar.S-k@amd.com>
- <ZzS1-nJMPiCp5jDi@kuha.fi.intel.com>
-Content-Language: en-US
-From: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-In-Reply-To: <ZzS1-nJMPiCp5jDi@kuha.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0142.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:6::27) To BL1PR12MB5176.namprd12.prod.outlook.com
- (2603:10b6:208:311::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5351D46BF;
+	Thu, 14 Nov 2024 04:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731558945; cv=none; b=AQWA1VK/SCbPemMKYcJC1Yn1H8zZ0bucp/U5r+zElRK7CHZJLzlFnWgru9JTxLc+hna5AtxjACSRjYCHlLoSjO/eb7s1utoao/t30HCxwPnDXwuBKlU2groVYqwYyxi8i5w3VwILqNf1nSq12XdX9v1b+quTD/TR3Y8sgWJjUzk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731558945; c=relaxed/simple;
+	bh=qD1IW+f1kR09edDspe+k6r67xtRpNtIiv+xj7UhMIfU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RcT+u32jSUqoPF6B+wUwScXwA/Jc6aGjRsD2gMmmCJOQqbmx4Tu8UQ6wip3T00MXveSoDRegYMvfaOYIXwVU//by79RuDPCWVLFet8QpJppkgRiNdM+AouNqKRqmaCefknf2E6JHQQgWNot+bYOJj7isnQAoWqlMKuljq5sWdgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=avneL4k5; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731558943; x=1763094943;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=qD1IW+f1kR09edDspe+k6r67xtRpNtIiv+xj7UhMIfU=;
+  b=avneL4k5RXaNJGJhdePKJTqVHcEHE0wscEzFMRvl6ug76jAVn1YOIZ6I
+   9T96zlkQND26FxNemq3RHXYjBXO8JczVidpDosKLVpkXjVbDfxQHF0j9c
+   4ewDHNhtZEQZF3FexgrvsrVXO8mUn/twYMepOdapkg27sFAeky5e0Tw3t
+   Ik56RLHuaH3bkHadqwwmxGFUdItNYKOToV46IiZW78WtdKcgoFHK8kbqj
+   jXSQIcH7vM7++Z3yfrXfw6ixvgSnCOO7BfilbO4ZEZMwklUJCG9ArhqFk
+   YYabHlFUBOH3yvyOCVL1eowyt/RNo0biqavooSry92tz+9yxbq8+/aZSq
+   w==;
+X-CSE-ConnectionGUID: Ty64akOHRi2F/qFLGpKUYw==
+X-CSE-MsgGUID: euj2YxK9Ro+v9rKAcXePZw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11255"; a="42864385"
+X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
+   d="scan'208";a="42864385"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 20:35:42 -0800
+X-CSE-ConnectionGUID: llR+QJXdTuucDK8/8v7CBA==
+X-CSE-MsgGUID: UTS55jWTSVK1r8iz+qNE1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
+   d="scan'208";a="88260930"
+Received: from choongyo-mobl.gar.corp.intel.com (HELO [10.247.16.168]) ([10.247.16.168])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 20:35:39 -0800
+Message-ID: <5401b791-3c69-4603-ba14-7d430df25667@linux.intel.com>
+Date: Thu, 14 Nov 2024 12:35:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5176:EE_|BL1PR12MB5899:EE_
-X-MS-Office365-Filtering-Correlation-Id: dffd48c0-6728-4d5d-fb49-08dd0465795c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dTJ3eDJheHJ5SWdGdy9WU29kbXFnMFM5UTZqcE9Ha1dQY29Qb0pQQ2ZIakR3?=
- =?utf-8?B?MGVFRzI5SEtSUi9YWHAwM2JTT3dpNUpEVzJUeHNMcm9ma1ROQXdDMWlUdkhM?=
- =?utf-8?B?dVpjN3Z3MUh3Y1d6RHhTTXpvT3o4REJGL2dTWGl6am9OaUhNVjF3dXBXRTlr?=
- =?utf-8?B?Y3FaYUhlZGR6WVFEN25XMEVZaURUZWtSWFAxVHUrYytiSjdJcGMzVDlyVTVq?=
- =?utf-8?B?a1NnWHpVdVVTUVdKU0t0b3UyNGIzZ0oxWmM1eWlWZklmQitISVFsR0dhVGlZ?=
- =?utf-8?B?VGJMbk5aM21MV1JWczBPaW5XTy9TTWhqU25jL1F6LzR4cjc0VmlGUVFCQ01N?=
- =?utf-8?B?N2NGVFVZQTFLZHBDR2dqUFB2MWdNM0ZGUjlxQS9aaldiZDRoMHpNL091WXhi?=
- =?utf-8?B?Q0o3UGg1bVgvaDdyeEd3WjZybVVtNGNCdXVwRi90dm1rYjV4ZUlQbkRsRGg3?=
- =?utf-8?B?WGlESzBJU3NjSzZ2eHlxMUllVTR6N29WdkF5NFpvdFcvSEJKaWZUVUdSUlVo?=
- =?utf-8?B?SEpDUG9zYUJBSVFDNXl1bVFWZGtiUE5CQjNtWXlpTENPVTd6aGJCd0s3WDVP?=
- =?utf-8?B?dGF3TC9wbGQ4ejFMSTA0SkVYSUsxbnlaTEphcHJWd2ZzYkZGbDlBUHVVcFk0?=
- =?utf-8?B?QzN5bWk2M1dVM2FVd1JKVHcxTS9LV2xFaTlnMGxWejdEMlloSlZyL2c4d3JJ?=
- =?utf-8?B?U2EwKzB0Zk91ZjlRNVRFS01vRXJjMUJFMTljSkx5anNmR1pmNnh6SHJNQnVh?=
- =?utf-8?B?a3hka0NLQ2NXR0UyV3VQQkk2RDUyOWcrUkNKMGJEWDRQTHowTWxDbFROaysz?=
- =?utf-8?B?YmZmMHZIVWFhQ0gzTXpVWUV3N3d0ZHg3MERiTFJKRTNGVG5TWWltemJNRFZ1?=
- =?utf-8?B?RFFtVHFpaXhneTlxK3hRV1Vhbm5HOERZai91QjN1eFVUOUZEOTZiSkVZc2E4?=
- =?utf-8?B?TVdWMGdBVXY3V0swNXc1YXdCRm01aGFRUHB2SXNLeFZ6SzRLS240UzNzcmRa?=
- =?utf-8?B?ZlB5UnRJMEg3YkphYmFvZjJVK1UxR0pENmkvaEVaVWpIdjNzMk5XL05PSkl3?=
- =?utf-8?B?ajhDVW1BczVKSitWNjVTUEp3SzhEWmdhOEVNeWVGanRRMURCbnc3L2JIZVNz?=
- =?utf-8?B?YTJUTSs0dnY2OWM3dFVxZm8vU0pnSnF4djMrRzhlQVBpTzF3NlkyU2xiZFA5?=
- =?utf-8?B?UnhDM1hRdS9IdDVMQ0F4aG1MY2dXdW1PcnFheHVLQ3pLMkFwUWxSVUhDeVUv?=
- =?utf-8?B?dW16N3BRTHREeVd3RHFoMnp4RDRjMWJZUmF5dThOR2V2RENITzBWWi8zK2Vq?=
- =?utf-8?B?dmRmV2cwRjFDZXMydDZxeHpCSVkwSnNXRFlRQ09sbzNiY0NlbHUwblp6eEhP?=
- =?utf-8?B?c1ZxbDBCQmkya2Z3NnVFWHpadnZnNXl5cExuaXVteVF0Z2hLOU1wZ3VpeDBo?=
- =?utf-8?B?Yzdpcnl5MHk5Ky9zUUpVS0I0VjVxQ253MW45UXQ5UFpnOWVDMm1QWDMxTHRs?=
- =?utf-8?B?WUF3ZlJnZGl6bHZLMTA5WXNjV0hMZkIwVUY3MmROT2pZUyttdTlSSk81L09B?=
- =?utf-8?B?ZXUrdWE1THBnWk9pUWNEcFdGNkt4WGZRYXNqTjlycWtHbmxycURIVWtmbFFl?=
- =?utf-8?B?dFlhazU5WWVUQldNSE9uMmJJSmtwNUo4a29weEFEeE4yZ1lHWThXdEZxekxS?=
- =?utf-8?B?S3hMRDFFbmwyOUpYSitUTkRrY1lhY2VST1c3Mzltcmp6enRLUDl2aTRGRThC?=
- =?utf-8?Q?vD1p0tMlpJ6h4uvLi1PrWVeqvKTDF3PcrMGHCO9?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5176.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UkpHeXdidnRlZ0NlcndhemZVd1dvREtJQ0NiQUROa3FNWExqSzdCVHRPYmlU?=
- =?utf-8?B?ZHpzK3pxTWNOTnlwZ1lraFJyWm1pR0EvSndSNjR3WjJNSWR0ME1iQVdpWWJ0?=
- =?utf-8?B?d2IyTGRxR1l5dFVKejJndllLVTFNbWVncTBPTEZkRnpkUWZmWUpSdzNaUkpq?=
- =?utf-8?B?RHRQRnNvQVFIWkhkUGFoMURKWVpubjVVUnBnU0k3YWlmZ1UwMHFoYjA3enFG?=
- =?utf-8?B?RnFxZnJCK3ZGa3JxZyszUTcrL0VOQ1BjVFIvSGFyMmhaSkpzMVZlVFd2UHdt?=
- =?utf-8?B?ck5MZFdiMTZZa29BRkg2ek04YmhCTk5Hby9idXo2b2lGMkxPc09tbmQxbmdY?=
- =?utf-8?B?SkZSaUVIeGtwS1A0bUNZenNiUkZvVVFnYVMwZkY2NThaOXVpL2g1MFZzSjVa?=
- =?utf-8?B?aDdSaWtSTXJzNVhiUWZGTWxwY0tpRVlSOXZ0TW9DeHhDZ1pFOHZVS1hacktI?=
- =?utf-8?B?R05Hb3hiUGpkNFJkS0E1YUkzSVg1cG1HNlI3U2xQelpXcDdrY1lLRzc4eTMw?=
- =?utf-8?B?bllZSDB5QzRsOEFwNnhsMXY4eEx2aE5ySW5jUnRVU2ppYU1XWGpnaUdzR3N4?=
- =?utf-8?B?dWUwNXhLVTFRZ29nTGIyWDhyTWgwaGpEQm5nU2lwQm5vVnhHMU9nYWdmZXls?=
- =?utf-8?B?WEFiMXM0elJoU3lDWktTalJwUTlHb2ZuMXV1U1hyMmt5RXc3U05QMUdVOHFt?=
- =?utf-8?B?bU5NNldiVEIzTS8rUThyVGZFV0RGT0M5VEhFOVdvN1NvRVdFS1diZFgybzRO?=
- =?utf-8?B?SjZoV0ZvM3hzUW95b0Z2TElQanAwcnViUHd1S2RSRUhGS1BOYzdZTVM3dm5u?=
- =?utf-8?B?bjd2ckNRM1p2SnVZdzFiQnZzT1RmT09semd5WmpQUjlRY013WkwrSitxcjVw?=
- =?utf-8?B?L2xEc29iYm5XQmJvTjBxVTM0NXlIamJSMW5SbXVVaU80bjkvR25rRnEyU1Ni?=
- =?utf-8?B?d3pHQklhRE1pQmZIZU4vSmVLVkhucjJRTmNLMjB4MVBDZEVPSWJtUWRCK2U3?=
- =?utf-8?B?MXM0YmJjRGpTL3BCMGp3alA3NktVZ2hzQnN2RC8raVNNeUFTWW1XRkRwVloz?=
- =?utf-8?B?T3BGVVBhMDlGV3lvSktLZCtKU1o0TlRYcFpQK0tUQ2Fibnd6bmg3SGNyaU1x?=
- =?utf-8?B?R2pwZWJjRkF1cHdyRi9VRUh1WEtKM1NMa2FFS2JldUFNamtnRXVKVWQyRkti?=
- =?utf-8?B?QzJETU01ODNKeGdUazR0eFVRYXBRRkNFV2g1MEdZVk4xK2xaRjZCVnd3RFBU?=
- =?utf-8?B?VTBiWG5EdHZQdzAvc09paUJvSVcvOXdXMGVOZE9Pd1NaVG1tS3RBOUUzTTFE?=
- =?utf-8?B?cUV0YXlIbnJ3cFlTK2x3aGtCWUR4bTVCL1k3ZDBQeGI4dEN2VFdLR0Y3Y3Ir?=
- =?utf-8?B?R2E5NXAyT202QlpJRHZtNnJNU29TUjJrMGpPZThIbkFPcDVJWTlqdWlYSlBq?=
- =?utf-8?B?YVUzYVMrZTNHTWVYNXN0d1dkZERXU25qaE52UmN0MlJSV2orM1RrcjJFNFRB?=
- =?utf-8?B?WDJkUG1Gb01mWWRUaHpXYzRvamh3VW1MV2EvV1RHbE1lUzhFUzFIcStTMWVp?=
- =?utf-8?B?MlFxT3l6RC85dGFzcG5keEtnakllQlgrR2NTMzk1OEYvNVNzVUVGbmtmMzl3?=
- =?utf-8?B?aUJiMzUrVVRvbG5Heng2aGJQc2NxL3AweEZFSi8yU2RxMEM3ME9WV2tqc3I2?=
- =?utf-8?B?cUtHTjd4bjRkUkxjRG9sUzFtb2VyMnRwaDRNQ2FwdVg2SE8vdEhEUjkyNTJV?=
- =?utf-8?B?Z1lXcFN1eEpmeEJUbDJqTFVjRkJMU3dXK3YxL1RpZ081SjMxbVhMWUZ6QzI1?=
- =?utf-8?B?ODVzbWtjYlk3WUQrTUZPNE5ydVlXUk45UTdCV29CWUFtaDNlZURlcTJxUExl?=
- =?utf-8?B?blZZdWxiSDlQSDl3VlluVHMrWlNSaXZWcVhsTTNMQUxpZXpBK0FubUFaakF4?=
- =?utf-8?B?eHh0cDZkbkZqNUdGaVJuR2oxRkNZSHpvbDRUc1EyVjNmWUUxSUhkTHFUaldG?=
- =?utf-8?B?dU1McVpzQ2VGNnNBMjQ3ZlFaK3JXelpZVktONUJCRldwdjRRZzJzWUVqb0xh?=
- =?utf-8?B?enhOSFFqQmozUCtKSGc0eStRSzRIWVVaL05UTjdWQW9CZVlMcDZIY2FKUm1E?=
- =?utf-8?Q?52WDggTisefoP//xtwSc6/9pU?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dffd48c0-6728-4d5d-fb49-08dd0465795c
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5176.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2024 04:33:23.4053
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NJ7wfefzKCPQIP9yNJ6ueyb9vr5V5GwYjXXa2kylOTtAkXqQ3xEpuRJAqclH4o3DB24yWiW+wAbIdgwDb5BC9A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5899
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v1 1/2] net: phy: Introduce phy_update_eee() to update
+ eee_cfg values
+To: Heiner Kallweit <hkallweit1@gmail.com>, Andrew Lunn <andrew@lunn.ch>
+Cc: Russell King <linux@armlinux.org.uk>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+References: <20241112072447.3238892-1-yong.liang.choong@linux.intel.com>
+ <20241112072447.3238892-2-yong.liang.choong@linux.intel.com>
+ <f8ec2c77-33fa-45a8-9b6b-4be15e5f3658@gmail.com>
+ <71b6be0e-426f-4fb4-9d28-27c55d5afa51@lunn.ch>
+ <eb937669-d4ce-4b72-bcae-0660e1345b76@linux.intel.com>
+ <392105cb-3f73-4765-a702-7cce0c6ac62c@gmail.com>
+Content-Language: en-US
+From: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+In-Reply-To: <392105cb-3f73-4765-a702-7cce0c6ac62c@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
-On 11/13/2024 19:51, Heikki Krogerus wrote:
-> Hi,
+On 14/11/2024 5:48 am, Heiner Kallweit wrote:
+> "relies on" may be the wrong term here. There's an API definition,
+> and phy_ethtool_get_eee() takes care of the PHY-related kernel part,
+> provided that the MAC driver uses phylib.
+> I say "PHY-related part", because tx_lpi_timer is something relevant
+> for the MAC only. Therefore phylib stores the master config timer value
+> only, not the actual value.
+> The MAC driver should populate tx_lpi_timer in the get_eee() callback,
+> in addition to what phy_ethtool_get_eee() populates.
+> This may result in the master config value being overwritten with actual
+> value in cases where the MAC doesn't support the master config value.
 > 
-> On Fri, Nov 08, 2024 at 01:03:20PM +0530, Shyam Sundar S K wrote:
->> As of now, the I3C subsystem only has ARM-specific initialization, and
->> there is no corresponding ACPI plumbing present. To address this, ACPI
->> support needs to be added to both the I3C core and DW driver.
->>
->> Add support to get the ACPI handle from the _HID probed and parse the apci
->> object to retrieve the slave information from BIOS.
->>
->> Based on the acpi object information propogated via BIOS, build the i3c
->> board information so that the same information can be used across the
->> driver to handle the slave requests.
->>
->> Co-developed-by: Sanket Goswami <Sanket.Goswami@amd.com>
->> Signed-off-by: Sanket Goswami <Sanket.Goswami@amd.com>
->> Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
->> ---
->> Cc: linux-acpi@vger.kernel.org
->>
->>  drivers/i3c/internals.h            |  3 ++
->>  drivers/i3c/master.c               | 84 ++++++++++++++++++++++++++++++
->>  drivers/i3c/master/dw-i3c-master.c |  7 +++
->>  include/linux/i3c/master.h         |  1 +
->>  4 files changed, 95 insertions(+)
->>
->> diff --git a/drivers/i3c/internals.h b/drivers/i3c/internals.h
->> index 433f6088b7ce..178bc0ebe6b6 100644
->> --- a/drivers/i3c/internals.h
->> +++ b/drivers/i3c/internals.h
->> @@ -10,6 +10,9 @@
->>  
->>  #include <linux/i3c/master.h>
->>  
->> +#define I3C_GET_PID		0x08
->> +#define I3C_GET_ADDR		0x7F
->> +
->>  void i3c_bus_normaluse_lock(struct i3c_bus *bus);
->>  void i3c_bus_normaluse_unlock(struct i3c_bus *bus);
->>  
->> diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
->> index 6f3eb710a75d..0ceef2aa9161 100644
->> --- a/drivers/i3c/master.c
->> +++ b/drivers/i3c/master.c
->> @@ -2251,6 +2251,84 @@ static int of_i3c_master_add_dev(struct i3c_master_controller *master,
->>  	return ret;
->>  }
->>  
->> +#if IS_ENABLED(CONFIG_ACPI)
->> +static int i3c_acpi_configure_master(struct i3c_master_controller *master)
->> +{
->> +	struct acpi_buffer buf = {ACPI_ALLOCATE_BUFFER, NULL};
->> +	enum i3c_addr_slot_status addrstatus;
->> +	struct i3c_dev_boardinfo *boardinfo;
->> +	struct device *dev = &master->dev;
->> +	struct fwnode_handle *fwnode;
->> +	struct acpi_device *adev;
->> +	u32 slv_addr, num_dev;
->> +	acpi_status status;
->> +	u64 val;
->> +
->> +	status = acpi_evaluate_object_typed(master->ahandle, "_DSD", NULL, &buf, ACPI_TYPE_PACKAGE);
->> +	if (ACPI_FAILURE(status)) {
->> +		dev_err(&master->dev, "Error reading _DSD:%s\n", acpi_format_exception(status));
->> +		return -ENODEV;
->> +	}
+> One (maybe there are more) special case of tx_lpi_timer handling is
+> Realtek chips, as they store the LPI timer in bytes. Means whenever
+> the link speed changes, the actual timer value also changes implicitly.
 > 
-> Why do you need to do that?
+> Few values exist twice: As a master config value, and as status.
+> struct phy_device has the status values:
+> @eee_enabled: Flag indicating whether the EEE feature is enabled
+> @enable_tx_lpi: When True, MAC should transmit LPI to PHY
 > 
->> +	num_dev = device_get_child_node_count(dev);
->> +	if (!num_dev) {
->> +		dev_err(&master->dev, "Error: no child node present\n");
->> +		return -EINVAL;
->> +	}
+> And master config values are in struct eee_cfg:
 > 
-> I think Jarkko already pointed out the problem with that. The whole
-> check should be dropped.
+> struct eee_config {
+> 	u32 tx_lpi_timer;
+> 	bool tx_lpi_enabled;
+> 	bool eee_enabled;
+> };
 > 
->> +	device_for_each_child_node(dev, fwnode) {
->> +		adev = to_acpi_device_node(fwnode);
->> +		if (!adev)
->> +			return -ENODEV;
->> +
->> +		status = acpi_evaluate_integer(adev->handle, "_ADR", NULL, &val);
->> +		if (ACPI_FAILURE(status)) {
->> +			dev_err(&master->dev, "Error: eval _ADR failed\n");
->> +			return -EINVAL;
->> +		}
+> And yes, it may be a little misleading that eee_enabled exists twice,
+> you have to be careful which one you're referring to.
 > 
-> val = acpi_device_adr(adev);
+> ethtool handles the master config values, only "active" is a status
+> information.
 > 
->> +		slv_addr = val & I3C_GET_ADDR;
->> +
->> +		boardinfo = devm_kzalloc(dev, sizeof(*boardinfo), GFP_KERNEL);
->> +		if (!boardinfo)
->> +			return -ENOMEM;
->> +
->> +		if (slv_addr) {
->> +			if (slv_addr > I3C_MAX_ADDR)
->> +				return -EINVAL;
->> +
->> +			addrstatus = i3c_bus_get_addr_slot_status(&master->bus, slv_addr);
->> +			if (addrstatus != I3C_ADDR_SLOT_FREE)
->> +				return -EINVAL;
->> +		}
->> +
->> +		boardinfo->static_addr = slv_addr;
->> +		if (boardinfo->static_addr > I3C_MAX_ADDR)
->> +			return -EINVAL;
->> +
->> +		addrstatus = i3c_bus_get_addr_slot_status(&master->bus,	boardinfo->static_addr);
->> +		if (addrstatus != I3C_ADDR_SLOT_FREE)
->> +			return -EINVAL;
->> +
->> +		boardinfo->pid = val >> I3C_GET_PID;
->> +		if ((boardinfo->pid & GENMASK_ULL(63, 48)) ||
->> +		    I3C_PID_RND_LOWER_32BITS(boardinfo->pid))
->> +			return -EINVAL;
->> +
->> +		/*
->> +		 * According to the specification, SETDASA is not supported for DIMM slaves
->> +		 * during device discovery. Therefore, BIOS will populate same initial
->> +		 * dynamic address as the static address.
->> +		 */
->> +		boardinfo->init_dyn_addr = boardinfo->static_addr;
->> +		list_add_tail(&boardinfo->node, &master->boardinfo.i3c);
->> +	}
->> +
->> +	return 0;
->> +}
->> +#else
->> +static int i3c_acpi_configure_master(struct i3c_master_controller *master) { return 0; }
->> +#endif
+> So the MAC driver should:
+> - provide a link change handler in e.g. phy_connect_direct()
+> - this handler should:
+>    - use phydev->enable_tx_lpi to set whether MAC transmits LPI or not
+>    - use phydev->eee_cfg.tx_lpi_timer to set the timer (if the config
+>      value is set)
 > 
-> I think this code should be placed into a separate file.
+> Important note:
+> This describes how MAC drivers *should* behave. Some don't get it right.
+> So part of your confusion may be caused by misbehaving MAC drivers.
+> One example of a MAC driver bug is what I wrote earlier about
+> stmmac_ethtool_op_get_eee().
 > 
-> If the goal is to add ACPI support for code that is written for DT
-> only, then I think the first thing to do before that really should be
-> to convert the existing code to use the unified device property
-> interface, and move all the DT-only parts to a separate file(s).
+> And what I write here refers to plain phylib, I don't cover phylink as
+> additional layer.
 > 
 
-Thank you Jarkko and Heikki. Let me work and these remarks and come
-back with a new version.
+Thank you for your detailed explanation. It has been very helpful and has 
+clarified how the code behaves.
 
-Jarkko, will you be able to pick 1/5 and 5/5 without a separate series
-or do you want me to send one?
+Based on your and Andrew's input, I agree that phy_update_eee() is not needed.
 
-Thanks,
-Shyam
-> thanks,
-> 
+I will ensure that our implementation follows these guidelines and will 
+address any potential issues with misbehaving MAC drivers.
+
+Thank you again for your valuable insights.
 
