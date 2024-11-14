@@ -1,247 +1,344 @@
-Return-Path: <linux-kernel+bounces-409605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F4D39C8F2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:07:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 063D69C8FEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:38:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60A932834BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:07:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28A0AB3C7CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B364A41C65;
-	Thu, 14 Nov 2024 16:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18AD176AC5;
+	Thu, 14 Nov 2024 16:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="kUELYSU2"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Rk9Nt09U"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901861BC49;
-	Thu, 14 Nov 2024 16:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D877173336;
+	Thu, 14 Nov 2024 16:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731600438; cv=none; b=JT5eEkUpC9w4Yi96AH9NEeG8VxQb+z6fCjm0uTVoYODf1TqFQMPsVL8Lbb9uj6CUlMcHIyEcdgZTU+GC1tE88OsEeYZqkcy0vIp/kIYSRJ2qge/DBDeATjU/SO/LdT1bPUhr76oufu9haZsAI06dd8J4IMeHhufx3pz2YXkYKow=
+	t=1731600608; cv=none; b=PLOT2gteeX+xzaKF2rfVKF4tg2BWTcodSnSTOgTVGNMqowQLRlu91Wtk39MX0njMWPv6tRjyrfEqLyOu1yDD3n+mJ1phfjswrC/QNuVaiAI4zz/9rEr4AccZXOHkIibViMQ2kP1YEPx/fE2PkdNluYN/BLSz9hX/b+tC3l1hfUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731600438; c=relaxed/simple;
-	bh=jh2oRSzx6u5z+iH44W8gFAvDdTaQNNoevLV18Ll2k48=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UVajXqnqw5PQX2SJ+ErLDsPRoZHPP/MYQJA9QymA3PgMNhJCxis5mHYswhn6OAzg0IjSYXUOMRLXT/kabl8V9Lw9QYcqTaeUWLb4Yx9yRvGFQDKtgNlSC9Z6CYOoj827ha+3U2NHr4WUcvdzq+0k3wBKPhONp77D8edhUONQTl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=kUELYSU2; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1731600429;
-	bh=jh2oRSzx6u5z+iH44W8gFAvDdTaQNNoevLV18Ll2k48=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kUELYSU2r2QcM7Kshr4NdJouIK1/QTyc4xNhAXyrU3IdWqypHdzvPW9gfA6wFvpMw
-	 DVXQxTwx289k+c+ocnO1gJisCa2AaD9sk/jldI1aAm+Vlj/AuW4n0R/1RhNNhcypD9
-	 M4Vpe+LaKf1xV00QS5JnzUbcBVqey001zmW/dx0Y=
-Date: Thu, 14 Nov 2024 17:07:08 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (core) Avoid ifdef in C source file
-Message-ID: <2b1b5e06-062b-442d-be13-da02d3233fba@t-8ch.de>
-References: <20241113-hwmon-thermal-v1-1-71270be7f7a2@weissschuh.net>
- <041a52c7-ac0b-4a78-8b39-4fc4ac4d2fd2@roeck-us.net>
- <b6ed8499-bf84-486c-be5f-0ef13311eb18@t-8ch.de>
- <3f1914da-4f94-415e-8c46-8731834e51a2@roeck-us.net>
- <c3aaf724-a1d2-438c-851a-dedb0e9a3f34@t-8ch.de>
- <7a01e398-c8fb-43fd-9b47-7fefb7a692cb@roeck-us.net>
+	s=arc-20240116; t=1731600608; c=relaxed/simple;
+	bh=6fhYYa6Hw3gs8Q5OUv564GNBxryLOYJVQraQBXXqI7o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AE7sXgEjNIK8TJ5tewhLEwuF3F0b8znSdFcWMfEqBpIUC4zHtCDcM3UbGrtmV2abCo3ua00pyJ4UbgzByaNr25d8tSx+71QazoDYKaBa/LLc/7JLrtnbX7HiSNE24ctX9/fHsO2ON5zfMBUT5U/1yp0LsNYved46Up8SvyiJNCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Rk9Nt09U; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AEEP0xM021058;
+	Thu, 14 Nov 2024 16:09:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=gUWbwiPkIUFAgPLic/9ejX
+	3WDTJjIaE9EtHZDo1+qbY=; b=Rk9Nt09UPMM9Twxo8TYxzvx65ElMiIAlMoirx4
+	8QSOB4xN9KjCrVGmCueQ34K+GKmCQrC6ajxS6E+DDSdH/ejWXF4fqtHj+IQdKdsB
+	4WB7WcdqHKhq3fZtzwKXHV5ADtig1atC2rqLl70cwmhDsDZD2iEV1VImjDOyy/yq
+	Lg0lQgo8zJmmh+s1OESETKyteP81pbm1Fx9qeOFaJesA/mKE076fHX9zMtH9rqww
+	7/hN/wEIivzti4ceSyOkoTN9Ls7e3KxdohwDf7HoZNXipv68j9o46cp3L2sDeOr2
+	gulhV3bUFltKToWjxGWerluIPHf2UXUQygE1cpF18tU1qC+g==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42v4kr100w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 16:09:44 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AEG9is8018118
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 16:09:44 GMT
+Received: from hu-bibekkum-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 14 Nov 2024 08:09:39 -0800
+From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+To: <robdclark@gmail.com>, <will@kernel.org>, <robin.murphy@arm.com>,
+        <joro@8bytes.org>, <jgg@ziepe.ca>, <jsnitsel@redhat.com>,
+        <robh@kernel.org>, <krzysztof.kozlowski@linaro.org>,
+        <quic_c_gdjako@quicinc.com>, <dmitry.baryshkov@linaro.org>
+CC: <iommu@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <quic_bibekkum@quicinc.com>
+Subject: [PATCH RESEND v17 0/5] iommu/arm-smmu: introduction of ACTLR implementation for Qualcomm SoCs
+Date: Thu, 14 Nov 2024 21:37:16 +0530
+Message-ID: <20241114160721.1527934-1-quic_bibekkum@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7a01e398-c8fb-43fd-9b47-7fefb7a692cb@roeck-us.net>
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Du7mzdpIGUDjfgdEHou1hI_wNJwuqxag
+X-Proofpoint-GUID: Du7mzdpIGUDjfgdEHou1hI_wNJwuqxag
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ adultscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
+ malwarescore=0 spamscore=0 clxscore=1015 mlxscore=0 mlxlogscore=999
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411140126
 
-On 2024-11-14 06:40:03-0800, Guenter Roeck wrote:
-> On 11/13/24 23:27, Thomas Weißschuh wrote:
-> > On 2024-11-13 22:51:37-0800, Guenter Roeck wrote:
-> > > On 11/13/24 20:40, Thomas Weißschuh wrote:
-> > > > On 2024-11-12 22:52:36-0800, Guenter Roeck wrote:
-> > > > > On 11/12/24 20:39, Thomas Weißschuh wrote:
-> > > > > > Using an #ifdef in a C source files to have different definitions
-> > > > > > of the same symbol makes the code harder to read and understand.
-> > > > > > Furthermore it makes it harder to test compilation of the different
-> > > > > > branches.
-> > > > > > 
-> > > > > > Replace the ifdeffery with IS_ENABLED() which is just a normal
-> > > > > > conditional.
-> > > > > > The resulting binary is still the same as before as the compiler
-> > > > > > optimizes away all the unused code and definitions.
-> > > > > > 
-> > > > > > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > > > > > ---
-> > > > > > This confused me a bit while looking at the implementation of
-> > > > > > HWMON_C_REGISTER_TZ.
-> > > > > > ---
-> > > > > >     drivers/hwmon/hwmon.c | 21 ++++++---------------
-> > > > > >     1 file changed, 6 insertions(+), 15 deletions(-)
-> > > > > > 
-> > > > > > diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
-> > > > > > index 9c35c4d0369d7aad7ea61ccd25f4f63fc98b9e02..86fb674c85d3f54d475be014c3fd3dd74c815c57 100644
-> > > > > > --- a/drivers/hwmon/hwmon.c
-> > > > > > +++ b/drivers/hwmon/hwmon.c
-> > > > > > @@ -147,11 +147,6 @@ static DEFINE_IDA(hwmon_ida);
-> > > > > >     /* Thermal zone handling */
-> > > > > > -/*
-> > > > > > - * The complex conditional is necessary to avoid a cyclic dependency
-> > > > > > - * between hwmon and thermal_sys modules.
-> > > > > > - */
-> > > > > > -#ifdef CONFIG_THERMAL_OF
-> > > > > >     static int hwmon_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
-> > > > > >     {
-> > > > > >     	struct hwmon_thermal_data *tdata = thermal_zone_device_priv(tz);
-> > > > > > @@ -257,6 +252,9 @@ static int hwmon_thermal_register_sensors(struct device *dev)
-> > > > > >     	void *drvdata = dev_get_drvdata(dev);
-> > > > > >     	int i;
-> > > > > > +	if (!IS_ENABLED(CONFIG_THERMAL_OF))
-> > > > > > +		return 0;
-> > > > > > +
-> > > > > >     	for (i = 1; info[i]; i++) {
-> > > > > >     		int j;
-> > > > > > @@ -285,6 +283,9 @@ static void hwmon_thermal_notify(struct device *dev, int index)
-> > > > > >     	struct hwmon_device *hwdev = to_hwmon_device(dev);
-> > > > > >     	struct hwmon_thermal_data *tzdata;
-> > > > > > +	if (!IS_ENABLED(CONFIG_THERMAL_OF))
-> > > > > > +		return;
-> > > > > > +
-> > > > > >     	list_for_each_entry(tzdata, &hwdev->tzdata, node) {
-> > > > > >     		if (tzdata->index == index) {
-> > > > > >     			thermal_zone_device_update(tzdata->tzd,
-> > > > > 
-> > > > > There is no dummy function for thermal_zone_device_update().
-> > > > > I really don't want to trust the compiler/linker to remove that code
-> > > > > unless someone points me to a document explaining that it is guaranteed
-> > > > > to not cause any problems.
-> > > > 
-> > > > I'm fairly sure that a declaration should be enough, and believe
-> > > > to remember seeing such advise somewhere.
-> > > > However there is not even a function declaration with !CONFIG_THERMAL.
-> > > > So I can add an actual stub for it for v2.
-> > > > 
-> > > > What do you think?
-> > > > 
-> > > You mean an extern declaration without the actual function ?
-> > 
-> > Stub as in empty inline function:
-> > 
-> > static inline void thermal_zone_device_update(struct thermal_zone_device *,
-> >                                               enum thermal_notify_event)
-> > { }
-> > 
-> 
-> Sure, that would work, but it would have to be declared in the thermal subsystem.
+This patch series consist of six parts and covers the following:
 
-Of course.
+1. Provide option to re-enable context caching to retain prefetcher
+   settings during reset and runtime suspend.
 
-> > > I'd really want to see that documented. It would seem rather unusual.
-> > 
-> > > From Documentation/process/coding-style.rst
-> > 
-> > 	21) Conditional Compilation
-> > 	---------------------------
-> > 
-> > 	Wherever possible, don't use preprocessor conditionals (#if, #ifdef) in .c
-> > 	files; doing so makes code harder to read and logic harder to follow.  Instead,
-> > 	use such conditionals in a header file defining functions for use in those .c
-> > 	files, providing no-op stub versions in the #else case, and then call those
-> > 	functions unconditionally from .c files.  The compiler will avoid generating
-> > 	any code for the stub calls, producing identical results, but the logic will
-> > 	remain easy to follow.
-> > 
-> > 	[..]
-> > 
-> > 	Within code, where possible, use the IS_ENABLED macro to convert a Kconfig
-> > 	symbol into a C boolean expression, and use it in a normal C conditional:
-> > 
-> > 	.. code-block:: c
-> > 
-> > 		if (IS_ENABLED(CONFIG_SOMETHING)) {
-> > 			...
-> > 		}
-> > 
-> > 	The compiler will constant-fold the conditional away, and include or exclude
-> > 	the block of code just as with an #ifdef, so this will not add any runtime
-> > 	overhead.
-> > 
-> > 	[..]
-> > 
-> > While this primarily talks about stubs, the fact that
-> > "the compiler will constant-fold the conditional away" can be understood
-> > that the linker will never see those function calls and therefore the
-> > functions don't have to be present during linking.
-> 
-> Yes, I am aware of that. However, that is not a formal language definition.
+2. Remove cfg inside qcom_smmu structure and replace it with single
+   pointer to qcom_smmu_match_data avoiding replication of multiple
+   members from same.
 
-Formal as in ANSI/ISO? I don't think these ever say anything about
-optimizations. And also the compilers don't really write down the
-details AFAIK.
+3. Add support for ACTLR PRR bit setup via adreno-smmu-priv interface.
 
-> Yes, in normal builds with a modern compiler it will be optimized away.
-> However, I don't think that will happen if the kernel is built with -O0.
+4. Introduce intital set of driver changes to implement ACTLR register
+   for custom prefetcher settings in Qualcomm SoCs.
 
-The kernel is never built with -O0. It's either -O2 or -Os.
-It's a Kconfig choice between CC_OPTIMIZE_FOR_PERFORMANCE or
-CC_OPTIMIZE_FOR_SIZE, one is always enabled.
-This is not clear from the logic in Makefile.
+5. Add ACTLR data and support for qcom_smmu_500.
 
-With -O0 more or less everything breaks.
+Resend of v17:
+ Addition of minor fix of the build warning reported by kernel test robot [1] by powerpc_random config [2].
+ [1]:https://lore.kernel.org/all/202411140748.6mcFdJdO-lkp@intel.com/#t
+ [2]:https://download.01.org/0day-ci/archive/20241114/202411140748.6mcFdJdO-lkp@intel.com/config
+ 
+Changes in v17 from v16:
+ Tags provided earlier not collected yet on patch 1/5, 3/5, 4/5, 5/5
+ due to the following revisions:
+ - 1/5 : Move the CPRE workaround out of qualcomm specific logic and gate with config
+         , update the silicon-errata.rst file
+ - 2/5 : No changes - reviewed-by tags collected
+ - 3/5 : Move the compatible check before assignment of callback as suggested.
+ - 4/5 : Add the actlr setting for *adreno variant* of MMU-500 as well.
+ - 5/5 : Due to changes in 1/5, minor refactoring had to be done before adding table.
+ Link to v16:
+ https://lore.kernel.org/all/20241008125410.3422512-1-quic_bibekkum@quicinc.com/
 
-> > So a declaration would be enough. But an actual stub doesn't hurt either.
-> > 
-> 
-> I disagree. You did not point to a formal language definition saying that dead code
-> shall be optimized away and that functions called by such dead code don't have
-> to actually exist.
-> 
-> Do we really have to argue about this ? Please provide examples from elsewhere
-> in the kernel which implement what you have suggested (not just the use of
-> IS_ENABLED(), but the call to functions without stub which don't exist
-> if the code is not enabled), and we can go from there.
+Changes in v16 from v15:
+ - Incorporate Dimitry's suggestion on patch 4/5 to use dev_dbg instead of dev_notice.
+ - Fix kernel test robot warning [1] coming for 32bit architecture configuration.
+ - Updatingthe tags
+ [1]: https://lore.kernel.org/all/202409230343.Q8KnYl2w-lkp@intel.com/
+ Link to v15:
+ https://lore.kernel.org/all/20240920155813.3434021-1-quic_bibekkum@quicinc.com/
 
-None of the hwmon functions have stubs if !CONFIG_HWMON, only declarations.
-And there are multiple drivers that use the pattern from above.
+Changes in v15 from v14:
+ - As discussed with Robin and Dmitry modify the actlr table and logic to use
+   compatible string instead of sid, mask for device matching which is
+   similar to qcom_smmu_client_of_match mechanism.
+ - Expand the comment in qcom_smmu500_reset to document reason why CPRE bit is re-enabled again
+   after arm_mmu500_reset resets the bit.
+ - Rearrange the series in order to keep prefetch setting patches in the end.
+ Link to v14:
+ https://lore.kernel.org/all/20240816174259.2056829-1-quic_bibekkum@quicinc.com/
 
-One example from drivers/net/wireless/mediatek/mt76/mt7921/init.c
+Changes in v14 from v13:
+ Patch 6/6:
+ - As discussed incorprate changes to carry out PRR implementation only for
+   targets based on MMU-500 by using compat string based SMMU version detection.
+ - Split the set_actlr interface into two separate interface namely set_prr_bit
+   and set_prr_addr to set the prr enable bit and prr page address resepectively.
+ Patch 3/6:
+  - Fix a bug in gfx actlr_config which is uncovered while testing the gfx actlr setting in sc7280
+    during PRR experiment which prevented clients on certain sids of gfx smmmu to be skipped during
+    setting up of the ACTLR values : Fix involves swapping the arguments passed in smr_is_subset to make
+     device smr <from devicetree> a subset of actlr_config table entries < defined in the driver>.
+ Patch 4/6, 5/6:
+  - Sort the actlr table values in increasing order of the SIDs.
+ Link to v13:
+ https://lore.kernel.org/all/20240628140435.1652374-1-quic_bibekkum@quicinc.com/
 
-	static int mt7921_thermal_init(struct mt792x_phy *phy)
-	{
-		struct wiphy *wiphy = phy->mt76->hw->wiphy;
-		struct device *hwmon;
-		const char *name;
+Changes in v13 from v12:
+ - Fix the compilation issues reported by kernel test robot [1].
+ [1]: https://lore.kernel.org/all/202406281241.xEX0TWjt-lkp@intel.com/#t
+ Link to v12:
+ https://lore.kernel.org/all/20240626143020.3682243-1-quic_bibekkum@quicinc.com/
 
-		if (!IS_REACHABLE(CONFIG_HWMON))
-			return 0;
+Changes in v12 from v11:
+ Changes to incorporate suggestion from Rob:
+ - Fix the set and reset logic for prr bit as pointed out in v11-6/6.
+ - Rename set_actlr_bit function name to set_prr.
+ - Add extension for PRR name as Partially-Resident-Region in comments
+   for set_prr function.
+ - Add few missing sids for sc7280 in patch-5/6.
+ Link to v11:
+ https://lore.kernel.org/all/20240605121713.3596499-1-quic_bibekkum@quicinc.com/
 
-		name = devm_kasprintf(&wiphy->dev, GFP_KERNEL, "mt7921_%s",
-				      wiphy_name(wiphy));
-		if (!name)
-			return -ENOMEM;
+Changes in v11 from v10:
+ - Include a new patch 6/6 to add support for ACTLR PRR bit
+   through adreno-smmu-priv interface as suggested by Rob and Dmitry.
+ Link to v10:
+ https://lore.kernel.org/all/20240524131800.2288259-1-quic_bibekkum@quicinc.com/
 
-		hwmon = devm_hwmon_device_register_with_groups(&wiphy->dev, name, phy,
-							       mt7921_hwmon_groups);
-		return PTR_ERR_OR_ZERO(hwmon);
-	}
+Changes in v10 from v9:
+ - Added reviewed-by tags 1/5,2/5,3/5.
+ Changes incorporated:
+ - Remove redundant PRR bit setting from gfx actlr table(patch 4/5,5/5)
+   as this bit needs special handling in the gfx driver along with
+   the associated register settings.
+ Link to discussion on PRR bit:
+ https://lore.kernel.org/all/f2222714-1e00-424e-946d-c314d55541b8@quicinc.com/
+ Link to v9:
+ https://lore.kernel.org/all/20240123144543.9405-1-quic_bibekkum@quicinc.com/
 
+Changes in v9 from v8:
+ Changes to incorporate suggestions from Konrad as follows:
+ - Re-wrap struct members of actlr_variant in patch 4/5,5/5
+   in a cleaner way.
+ - Move actlr_config members to the header.
+ Link to v8:
+ https://lore.kernel.org/all/20240116150411.23876-1-quic_bibekkum@quicinc.com/
 
+Changes in v8 from v7:
+ - Added reviewed-by tags on patch 1/5, 2/5.
+ Changes to incorporate suggestions from Pavan and Konrad:
+ - Remove non necessary extra lines.
+ - Use num_smmu and num_actlrcfg to store the array size and use the
+   same to traverse the table and save on sentinel space along with
+   indentation levels.
+ - Refactor blocks containing qcom_smmu_set_actlr to remove block
+   repetition in patch 3/5.
+ - Change copyright year from 2023 to 2022-2023 in patch 3/5.
+ - Modify qcom_smmu_match_data.actlrvar and actlr_variant.actlrcfg to
+   const pointer to a const resource.
+ - use C99 designated initializers and put the address first.
+ Link to v7:
+ https://lore.kernel.org/all/20240109114220.30243-1-quic_bibekkum@quicinc.com/
 
-*But* the thermal subsystem is actually using stubs.
-So the same should be done for thermal_zone_device_update().
-As mentioned before, my original claim that declarations of the thermal
-functions are already usable when !CONFIG_THERMAL was wrong.
-And if the thermal header is to be touched, it should as well be a stub
-for consistency.
-Given that there are already stubs for all kinds of thermal functions,
-this doesn't seem like it would be an issue.
+Changes in v7 from v6:
+ Changes to incorporate suggestions from Dmitry as follows:
+ - Use io_start address instead of compatible string to identify the
+   correct instance by comparing with smmu start address and check for
+   which smmu the corresponding actlr table is to be picked.
+Link to v6:
+https://lore.kernel.org/all/20231220133808.5654-1-quic_bibekkum@quicinc.com/
 
+Changes in v6 from v5:
+ - Remove extra Suggested-by tags.
+ - Add return check for arm_mmu500_reset in 1/5 as discussed.
+Link to v5:
+https://lore.kernel.org/all/20231219135947.1623-1-quic_bibekkum@quicinc.com/
 
-Thomas
+Changes in v5 from v4:
+ New addition:
+ - Modify copyright year in arm-smmu-qcom.h to 2023 from 2022.
+ Changes to incorporate suggestions from Dmitry as follows:
+ - Modify the defines for prefetch in (foo << bar) format
+   as suggested.(FIELD_PREP could not be used in defines
+   is not inside any block/function)
+ Changes to incorporate suggestions from Konrad as follows:
+ - Shift context caching enablement patch as 1/5 instead of 5/5 to
+   be picked up as independent patch.
+ - Fix the codestyle to orient variables in reverse xmas tree format
+   for patch 1/5.
+ - Fix variable name in patch 1/5 as suggested.
+ Link to v4:
+https://lore.kernel.org/all/20231215101827.30549-1-quic_bibekkum@quicinc.com/
+
+Changes in v4 from v3:
+ New addition:
+ - Remove actlrcfg_size and use NULL end element instead to traverse
+   the actlr table, as this would be a cleaner approach by removing
+   redundancy of actlrcfg_size.
+ - Renaming of actlr set function to arm_smmu_qcom based proprietary
+   convention.
+ - break from loop once sid is found and ACTLR value is initialized
+   in qcom_smmu_set_actlr.
+ - Modify the GFX prefetch value separating into 2 sensible defines.
+ - Modify comments for prefetch defines as per SMMU-500 TRM.
+ Changes to incorporate suggestions from Konrad as follows:
+ - Use Reverse-Christmas-tree sorting wherever applicable.
+ - Pass arguments directly to arm_smmu_set_actlr instead of creating
+   duplicate variables.
+ - Use array indexing instead of direct pointer addressed by new
+   addition of eliminating actlrcfg_size.
+ - Switch the HEX value's case from upper to lower case in SC7280
+   actlrcfg table.
+ Changes to incorporate suggestions from Dmitry as follows:
+ - Separate changes not related to ACTLR support to different commit
+   with patch 5/5.
+ - Using pointer to struct for arguments in smr_is_subset().
+ Changes to incorporate suggestions from Bjorn as follows:
+ - fix the commit message for patch 2/5 to properly document the
+   value space to avoid confusion.
+ Fixed build issues reported by kernel test robot [1] for
+ arm64-allyesconfig [2].
+ [1]: https://lore.kernel.org/all/202312011750.Pwca3TWE-lkp@intel.com/
+ [2]:
+https://download.01.org/0day-ci/archive/20231201/202312011750.Pwca3TWE-lkp@intel.com/config
+ Link to v3:
+https://lore.kernel.org/all/20231127145412.3981-1-quic_bibekkum@quicinc.com/
+
+Changes in v3 from v2:
+ New addition:
+ - Include patch 3/4 for adding ACTLR support and data for SC7280.
+ - Add driver changes for actlr support in gpu smmu.
+ - Add target wise actlr data and implementation ops for gpu smmu.
+ Changes to incorporate suggestions from Robin as follows:
+ - Match the ACTLR values with individual corresponding SID instead
+   of assuming that any SMR will be programmed to match a superset of
+   the data.
+ - Instead of replicating each elements from qcom_smmu_match_data to
+   qcom_smmu structre during smmu device creation, replace the
+   replicated members with qcom_smmu_match_data structure inside
+   qcom_smmu structre and handle the dereference in places that
+   requires them.
+ Changes to incorporate suggestions from Dmitry and Konrad as follows:
+ - Maintain actlr table inside a single structure instead of
+   nested structure.
+ - Rename prefetch defines to more appropriately describe their
+   behavior.
+ - Remove SM8550 specific implementation ops and roll back to default
+   qcom_smmu_500_impl implementation ops.
+ - Add back the removed comments which are NAK.
+ - Fix commit description for patch 4/4.
+ Link to v2:
+https://lore.kernel.org/all/20231114135654.30475-1-quic_bibekkum@quicinc.com/
+
+Changes in v2 from v1:
+ - Incorporated suggestions on v1 from Dmitry,Konrad,Pratyush.
+ - Added defines for ACTLR values.
+ - Linked sm8550 implementation structure to corresponding
+   compatible string.
+ - Repackaged actlr value set implementation to separate function.
+ - Fixed indentation errors.
+ - Link to v1:
+https://lore.kernel.org/all/20231103215124.1095-1-quic_bibekkum@quicinc.com/
+
+Changes in v1 from RFC:
+ - Incorporated suggestion form Robin on RFC
+ - Moved the actlr data table into driver, instead of maintaining
+   it inside soc specific DT and piggybacking on exisiting iommus
+   property (iommu = <SID, MASK, ACTLR>) to set this value during
+   smmu probe.
+ - Link to RFC:
+https://lore.kernel.org/all/a01e7e60-6ead-4a9e-ba90-22a8a6bbd03f@quicinc.com/
+
+Bibek Kumar Patro (5):
+  iommu/arm-smmu: re-enable context caching in smmu reset operation
+  iommu/arm-smmu: refactor qcom_smmu structure to include single pointer
+  iommu/arm-smmu: add support for PRR bit setup
+  iommu/arm-smmu: introduction of ACTLR for custom prefetcher settings
+  iommu/arm-smmu: add ACTLR data and support for qcom_smmu_500
+
+ Documentation/arch/arm64/silicon-errata.rst   |   3 +-
+ drivers/iommu/Kconfig                         |  12 ++
+ drivers/iommu/arm/arm-smmu/arm-smmu-impl.c    |   5 +-
+ .../iommu/arm/arm-smmu/arm-smmu-qcom-debug.c  |   2 +-
+ drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c    | 105 +++++++++++++++++-
+ drivers/iommu/arm/arm-smmu/arm-smmu-qcom.h    |   3 +-
+ drivers/iommu/arm/arm-smmu/arm-smmu.h         |   2 +
+ include/linux/adreno-smmu-priv.h              |  14 +++
+ 8 files changed, 140 insertions(+), 6 deletions(-)
+
+--
+2.34.1
+
 
