@@ -1,84 +1,79 @@
-Return-Path: <linux-kernel+bounces-408962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F24C99C85B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:12:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE59A9C85BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:13:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F45DB23163
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:12:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A8B0B29B33
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0701DE4EF;
-	Thu, 14 Nov 2024 09:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84511DF24B;
+	Thu, 14 Nov 2024 09:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ak0msa9g"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="RDkKWExw"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329064C85
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC8D1DE3B7;
+	Thu, 14 Nov 2024 09:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731575523; cv=none; b=DqvSNmgIqhkBlN7SrSyWtHqoFEs16qRGSipkMr1ExUXsi6uK9oJFYiiZuxgEBj3AJT/hM/Ti2RxDnFzMPP9dtRpVVwNZfZaXDIwZG6KAmO2zHKPXxClxIiESm2o8FnfencfZznmS805K2QeY1gxc1IXDC1kmv/nxMr7kXLlNkH8=
+	t=1731575544; cv=none; b=lc2QRzl8+4JEgQQXhBEvpclXyulKCkAlY02IGKN2HE/PveHuShyoRN1uqsoRD8wNHA8JpiNUkMrpk3XG7wlhfC8aLj12Ur6ij0Vfs/N+BTIGRcBfvxPIO6Zom2/59qXYFziWcKT0FHQrmguMl8o8u2pgT+2Af41SC9Sd6qQuQiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731575523; c=relaxed/simple;
-	bh=E5qLWgGadC/4cmduClICekKgmWP5di9pvq3gpUXC+kM=;
+	s=arc-20240116; t=1731575544; c=relaxed/simple;
+	bh=/FNXeBtwBLZaRaEpTbvM/HoWlTPqr8De8F0vVcJ4AEE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dNNXfaPYICQq8uj8KTeOPo1kycNqvnBws1BiwFdeo/7jS0IiYXRwxgurnFIAdeEsh33WDCq3wON2AeatBwuhtZ2DN1rk62ClhEraIp3u6yH64/P9hSLMf+K7BsiHCMXZexDklPDnLt8M4lZLDlnCkDHPHGSxWrF8u1FqYKml91s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ak0msa9g; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-431688d5127so3556435e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:12:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731575519; x=1732180319; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=23qaSgTinAWEPKVIwnVcokwLva3pZPBLI8dTYLfXjwI=;
-        b=ak0msa9g4Q4gPJ10/Ni7omf/TpmWak70ifCfRu2XawsT/Ah9brhWrRk9BoffU88Ql9
-         gTcaO6XkgtfibAEWELTkZum9CRPMK8ovhNjeKec8DITvnEwgvLUHR3NCmvXYhVxOLpnu
-         9mxbDMZleL3Q1NnpgkPeOTHbBxRkne8Y1ZxJDn+iJBt19OC8/V2olB7+h+6xGT+/oxsa
-         Mcl8RGK4usaGxHmUNqcLWr1TKGBYTlPyOdyKC2APKmcw571wQjey7ilcFAafMZVF2TMb
-         lN/LeE/eUI83/rYs3GutFqZPSnKaSfMg0nmtJk8Oy6r05jiEF5u0PWvq3qf7rUTpl+Hr
-         Zd4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731575519; x=1732180319;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=23qaSgTinAWEPKVIwnVcokwLva3pZPBLI8dTYLfXjwI=;
-        b=Sw399Uy3vd1948tNYRP7t2+GXP87rLN6GZn6+vaN69jweRXFRAiErCPJS1DW+NZRfI
-         +u1dq7eZ+f4sXKXfq7IwG9zqzKTI/Ex3tP4XiUtsG+BdNaEsyZ9Be/uAdw4SNZ6X+mXY
-         bnK4ejUw4j08xkeOAtCua1FV6YPIhThgIc4snrLD1LxDvINhOtB/+FSjR+6sQ9wJJebh
-         6KjUMtDU3PyMr4HoVKCWmbM28wP9NK2An55xy62TVRoXKJguXh0h12I551Mi0UlAiNHP
-         3Be5TmLIxeCmw64T/mmuCJkJOqGjV9AoAqGsiox1IZENIkf4IQnZaAZfOlic7s/ljysb
-         0Mag==
-X-Gm-Message-State: AOJu0Ywv5vFy6D/hx8vNlq5GVh2ZNVi0DXB9xZ6jjcj1Bg6Ke4BVn2Sm
-	UB4p28rR0YR1d9bN6m29S8V6GM2GADVFOh3kNblpEqYHDVLGAM7dfvu7je98YPM=
-X-Google-Smtp-Source: AGHT+IFX/+2+Cm/zLwqCFEcrW2YrM8X63an8ZMikGr3PLV5GSKXIUKClMGibFRmHGNfufaVAlDFPnA==
-X-Received: by 2002:a05:600c:35d5:b0:431:547e:81d0 with SMTP id 5b1f17b1804b1-432b7503749mr191158685e9.11.1731575519496;
-        Thu, 14 Nov 2024 01:11:59 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da298a41sm16604705e9.38.2024.11.14.01.11.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 01:11:59 -0800 (PST)
-Date: Thu, 14 Nov 2024 10:11:56 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Chris Down <chris@chrisdown.name>
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Tony Lindgren <tony.lindgren@linux.intel.com>, kernel-team@fb.com
-Subject: Re: [PATCH v6 08/11] printk: Support setting initial console
- loglevel via console= on cmdline
-Message-ID: <ZzW-3LIF8pdnrLe-@pathway.suse.cz>
-References: <cover.1730133890.git.chris@chrisdown.name>
- <fe2d066784a1b9e1c3fc3ba22cb7c113830caca2.1730133890.git.chris@chrisdown.name>
+	 Content-Type:Content-Disposition:In-Reply-To; b=k6XhudZ9qm724i2rGA5UfzjePZhhjJgLNVbBVM9hEZZ4WcO1XgHoo6ypP2U4uWtDpx1+6oHlmG1aWzMEGKuIArDGY3SN3ybQ5ETbPTQhMrDkLEMPJEbnTNVeuRKsCyoK04SY1dU4ft8oB0PbjNkHuPOj3bOY5vDiMxGYHbZtHio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=RDkKWExw; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=hUnkAXCEYyWhwqu2Ap7JAT2p1h1b8+9Y1xqlGsEdk38=; b=RDkKWExwPhrgX3aYe5B32yxGK8
+	IqIHixh0BHo4a8oa8eEAdCICIsPU+UkMN3XX9rrKT6jdgWPJFqyoZQWhWL9dpreSjHM8twJPG7q3A
+	V6UtO1JmkfqE4sDoOTdAD1vD4op74dN2g6Tir/DMWbesEEMznSgYsiDRpR8J9AqGuTRTAMRKvTHPc
+	nU2I8OP3TNbiX0FJBe6wM2skax5S9rUPC8ySxgCfpfEr5gxJOTtMjViUEQFg7sqKsU2yaput+XC0Q
+	dschMRkuOyhkvzrB21aZYqq0OrtCREcUYhcaLm89J1aJYAwi/avmiUYW2a6GbxxdGN3rbfSoWGcSs
+	zbfoZMuA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:50080)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tBVtZ-0007he-0J;
+	Thu, 14 Nov 2024 09:12:09 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tBVtW-0000zI-2c;
+	Thu, 14 Nov 2024 09:12:06 +0000
+Date: Thu, 14 Nov 2024 09:12:06 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net v1 1/2] net: phy: Introduce phy_update_eee() to
+ update eee_cfg values
+Message-ID: <ZzW-5gj0cdbwdwZv@shell.armlinux.org.uk>
+References: <20241112072447.3238892-1-yong.liang.choong@linux.intel.com>
+ <20241112072447.3238892-2-yong.liang.choong@linux.intel.com>
+ <f8ec2c77-33fa-45a8-9b6b-4be15e5f3658@gmail.com>
+ <71b6be0e-426f-4fb4-9d28-27c55d5afa51@lunn.ch>
+ <eb937669-d4ce-4b72-bcae-0660e1345b76@linux.intel.com>
+ <ZzW8t2bCTXJCP7-_@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,63 +82,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fe2d066784a1b9e1c3fc3ba22cb7c113830caca2.1730133890.git.chris@chrisdown.name>
+In-Reply-To: <ZzW8t2bCTXJCP7-_@shell.armlinux.org.uk>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Mon 2024-10-28 16:45:52, Chris Down wrote:
-> Extend the console= kernel command line parameter to support specifying
-> per-console loglevels at boot time. This is achieved by introducing a
-> new loglevel option that can be passed as a loglevel option within a
-> console= stanza.
+On Thu, Nov 14, 2024 at 09:02:47AM +0000, Russell King (Oracle) wrote:
+> On Wed, Nov 13, 2024 at 06:10:55PM +0800, Choong Yong Liang wrote:
+> > On 12/11/2024 9:04 pm, Andrew Lunn wrote:
+> > > On Tue, Nov 12, 2024 at 12:03:15PM +0100, Heiner Kallweit wrote:
+> > > > In stmmac_ethtool_op_get_eee() you have the following:
+> > > > 
+> > > > edata->tx_lpi_timer = priv->tx_lpi_timer;
+> > > > edata->tx_lpi_enabled = priv->tx_lpi_enabled;
+> > > > return phylink_ethtool_get_eee(priv->phylink, edata);
+> > > > 
+> > > > You have to call phylink_ethtool_get_eee() first, otherwise the manually
+> > > > set values will be overridden. However setting tx_lpi_enabled shouldn't
+> > > > be needed if you respect phydev->enable_tx_lpi.
+> > > 
+> > > I agree with Heiner here, this sounds like a bug somewhere, not
+> > > something which needs new code in phylib. Lets understand why it gives
+> > > the wrong results.
+> > > 
+> > > 	Andrew
+> > Hi Russell, Andrew, and Heiner, thanks a lot for your valuable feedback.
+> > 
+> > The current implementation of the 'ethtool --show-eee' command heavily
+> > relies on the phy_ethtool_get_eee() in phy.c. The eeecfg values are set by
+> > the 'ethtool --set-eee' command and the phy_support_eee() during the initial
+> > state. The phy_ethtool_get_eee() calls eeecfg_to_eee(), which returns the
+> > eeecfg containing tx_lpi_timer, tx_lpi_enabled, and eee_enable for the
+> > 'ethtool --show-eee' command.
 > 
-> For example, this is an example of how one might configure netconsole
-> devices to print messages with a higher priority than loglevel 3
-> (KERN_ERR) at startup:
+> These three members you mention are user configuration members.
 > 
->     console=netcon0,loglevel:3
+> > The tx_lpi_timer and tx_lpi_enabled values stored in the MAC or PHY driver
+> > are not retrieved by the 'ethtool --show-eee' command.
 > 
-> --- a/Documentation/admin-guide/serial-console.rst
-> +++ b/Documentation/admin-guide/serial-console.rst
-> @@ -32,6 +32,33 @@ The format of this option is::
->  			and F is flow control ('r' for RTS). Default is
->  			9600n8. The maximum baudrate is 115200.
->  
-> +			One can also specify the per-console loglevel for this
-> +			console by providing a loglevel parameter, for example
-> +			"loglevel:4" to set this console's loglevel to 4. The
-> +			value provided can be from 0 (LOGLEVEL_EMERG) to 8
+> tx_lpi_timer is the only thing that the MAC driver should be concerned
+> with - it needs to program the MAC according to the timer value
+> specified. Whether LPI is enabled or not is determined by
+> phydev->enable_tx_lpi. The MAC should be using nothing else.
+> 
+> > Currently, we are facing 3 issues:
+> > 1. When we boot up our system and do not issue the 'ethtool --set-eee'
+> > command, and then directly issue the 'ethtool --show-eee' command, it always
+> > shows that EEE is disabled due to the eeecfg values not being set. However,
+> > in the Maxliner GPY PHY, the driver EEE is enabled.
+> 
+> So the software state is out of sync with the hardware state. This is a
+> bug in the GPY PHY driver.
+> 
+> If we look at the generic code, we can see that genphy_config_aneg()
+> calls __genphy_config_aneg() which then goes on to call
+> genphy_c45_an_config_eee_aneg(). genphy_c45_an_config_eee_aneg()
+> writes the current EEE configuration to the PHY.
+> 
+> Now if we look at gpy_config_aneg(), it doesn't do this. Therefore,
+> the GPY PHY is retaining its hardware state which is different from
+> the software state. This is wrong.
 
-The real lower limit, enforced by clamp_loglevel(), is 1.
+Also note that phy_probe() reads the current configuration from the
+PHY. The supported mask is set via phydev->drv->get_features,
+which calls genphy_c45_pma_read_abilities() via the GPY driver and
+genphy_c45_read_eee_abilities().
 
-> +			(LOGLEVEL_DEBUG + 1), and messages below that will be
-> +			emitted onto the console as they become available.
-> +
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -3903,8 +3982,10 @@ static int try_enable_preferred_console(struct console *newcon,
->  			if (newcon->index < 0)
->  				newcon->index = c->index;
->  
-> -			// TODO: Will be configurable in a later patch
-> -			newcon->level = -1;
-> +			if (c->level > 0)
-> +				newcon->level = c->level;
-> +			else
-> +				newcon->level = -1;
+phy_probe() then moved on to genphy_c45_read_eee_adv(), which reads
+the advertisement mask. If the advertising mask is non-zero, then
+EEE is set as enabled.
 
-It seems that c->level is already set to -1 when it is not defined on
-the command line. I think that that we could simply do:
+From your description, it sounds like this isn't working right, and
+needs to be debugged. For example, is the PHY changing its EEE
+advertisement between phy_probe() and when it is up and running?
 
-			newcon->level = c->level;
-
-Just for record. We need to explicitely set newcon->level to -1 in
-try_enable_default_console().
-
-
->  			newcon->classdev = NULL;
->  
-
-Otherwise, it looks good.
-
-Best Regards,
-Petr
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
