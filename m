@@ -1,81 +1,85 @@
-Return-Path: <linux-kernel+bounces-410025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B7119C95A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:01:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 886939C95B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:02:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40D66281984
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:01:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB16CB22963
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740401B0F1A;
-	Thu, 14 Nov 2024 23:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C601B1D61;
+	Thu, 14 Nov 2024 23:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qFODirNe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Au6fWA35"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C052E1B0F2C;
-	Thu, 14 Nov 2024 23:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834DD1AF0DD
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 23:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731625228; cv=none; b=jLHMGDvvHPzMWRTCJ2r8CrVS9xn1pPbAxzuwgBX0HEbpekOdcTRjxlw1aQFhkKYgfOlsQa0B75MivsoF5vlL3V8nMbeLZUbs0QJarGHdUEA3Jo/gzvc/W5P4DTX8bzREm1TNVkSuDIcdTR8ZotmfMyvhw9Fon1hQWWiLzwkkijU=
+	t=1731625317; cv=none; b=FQLYPGV9QJgybZhccaWjOVHOPz0gzc/PKgb4uFsISBwv0dGrM9by1jsMJP+XIH0EAyDfiWJeGLmwxnH22U2kPCZ4SAOYa6AaooK9tr4rapOXnKQi47uHh5FiSaFb7JfjJ0LDOF8ajRPVYPLsBvVZy6st+fpFbuZ6N7S7ekUMbos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731625228; c=relaxed/simple;
-	bh=P3pGFrH3PlYITETbqoz7DkjsQU+gJZMsHg6JDBJfnDU=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=NYapsEBNc5d+g8hGRwvenP9t8wM61caWeWVhDYS28Ta0jVOjcbSsc3FiQJMU388uVGz6JR67zjt5hnNow8SdTQSo6EVzqRwT0Dbbi0IBfkLUt5RgsoQqg8AfEEtiTr+lRPTDv0c3HNT7ZJpIy2Xl85aYrMkA4D0Z1KfB3ycyadU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qFODirNe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CECFC4CECD;
-	Thu, 14 Nov 2024 23:00:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731625228;
-	bh=P3pGFrH3PlYITETbqoz7DkjsQU+gJZMsHg6JDBJfnDU=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=qFODirNe3t4HDmp8XzsdFIhCtRwAEieRllrPXhyZajN4KzIl+yztLpqbjPw/f/3w2
-	 AcU8zsffEVHEZLFUow1CARcWYRz1uvrTwWh2L9LcyRnoGc5Tc9ehF+xeeOsr7j7DzZ
-	 dYqUVOEE5xVnC6e0fHKQlfB+Jld2GsnOgL62T57/VaBQ8/fKfswPpev4kwtB6zfEKk
-	 mw56X5uhoEl7kc9Y6AOk4CPphp1fFESO1+QMxwSNAkIuy+HpM3xSo5iFdUpVM6W973
-	 ixkP16ffU9oOfdep5U4JdF1a93003u/M7Ot/1CNfhOrhYcVmcrx7NrFdwPBTwyeywF
-	 Ybeoe5tLjchMw==
-Message-ID: <2e82fec5209d888f934af796bb9a7ceb.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1731625317; c=relaxed/simple;
+	bh=MK2DhBLnwbG5e5ZmBE1yNvN+Cf6QzUUoBav5TZVEAPc=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=UX5imw2qmjG1kjiXxjyeEkMGDhLiWWNmDdywHPSmBX0poc2++ygfBl82InCt9Z875c673HlV/U5H9QShNZqL6aQtkeCuyPSx2XT+6opUDXYOKciF1Sz9sNcUoNkHp46ghp3CwZ85Lk3h8ISpoaKAp6xlFaL+oOqZDo9UhgyDozg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Au6fWA35; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731625313;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CO7x25wgzcGlKTf0gfOze2m5krBMIGAGOp6OTv9hDaA=;
+	b=Au6fWA35pD3FvvLpQaWGqq+FNgVJUAHQR4c3DtYegOTqI+CHx2z7Bvew4lFNAk7gi5lWMG
+	pQ+ZUrj4Fd+q8oEElPClgU3XFEn26rq5LqaaC0hNeGCXnM8Y9roKguQS0F8rooRvLvRfnL
+	oo9U/x5FeeuyCqSR++/CzIzrhbRiq5Y=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241106-mbly-clk-v2-8-84cfefb3f485@bootlin.com>
-References: <20241106-mbly-clk-v2-0-84cfefb3f485@bootlin.com> <20241106-mbly-clk-v2-8-84cfefb3f485@bootlin.com>
-Subject: Re: [PATCH v2 08/10] clk: eyeq: add EyeQ6H west fixed factor clocks
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
-To: Conor Dooley <conor+dt@kernel.org>, =?utf-8?q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-Date: Thu, 14 Nov 2024 15:00:26 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
+Subject: Re: [PATCH v2] ext4: Annotate struct fname with __counted_by()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <173159220757.521904.13348650494002839092.b4-ty@mit.edu>
+Date: Fri, 15 Nov 2024 00:01:39 +0100
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>,
+ Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Jan Kara <jack@suse.cz>,
+ linux-ext4@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <67B144E1-F6E4-402F-B6E7-95159815542C@linux.dev>
+References: <20241105101813.10864-2-thorsten.blum@linux.dev>
+ <173159220757.521904.13348650494002839092.b4-ty@mit.edu>
+To: Theodore Ts'o <tytso@mit.edu>
+X-Migadu-Flow: FLOW_OUT
 
-Quoting Th=C3=A9o Lebrun (2024-11-06 08:03:59)
-> Previous setup was:
->  - pll-west clock registered from driver at of_clk_init();
->  - Both OCC and UART clocks registered from DT using fixed-factor-clock
->    compatible.
->=20
-> Now that drivers/clk/clk-eyeq.c supports registering fixed factors, use
-> that capability to register west-per-occ and west-per-uart (giving them
-> proper names at the same time).
->=20
-> Also switch from hard-coded index 0 for pll-west to using the
-> EQ6HC_WEST_PLL_PER constant by exposed dt-bindings headers.
->=20
-> All get exposed at of_clk_init() because they get used by the AMBA PL011
-> serial ports. Those are instantiated before platform bus infrastructure.
->=20
-> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
-> ---
+On 14. Nov 2024, at 14:53, Theodore Ts'o wrote:
+> By the way, in general, you don't need to resend patches unless you
+> need to rebase them to fix patch conflicts; I track requested patches
+> using patchwork, and I tend to process and review patches in batches.
+> 
+> If you are concerned that I might have missed a patch, feel free to
+> reply to the original patch with a ping.  I'll see it in my inbox, and
+> even if it had gotten lost in my inbox, I can find the original patch
+> using lore.kernel.org or patchwork.
 
-Applied to clk-next
+Thanks for letting me know.
+
+Best regards,
+Thorsten
+
 
