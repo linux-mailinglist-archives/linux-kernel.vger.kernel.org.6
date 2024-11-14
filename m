@@ -1,60 +1,58 @@
-Return-Path: <linux-kernel+bounces-409682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B52599C90DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:34:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A98A99C9008
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:44:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FBEDB30465
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:44:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 676C028164B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13DF6183088;
-	Thu, 14 Nov 2024 16:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ADyLQgF/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4160286A1;
+	Thu, 14 Nov 2024 16:44:34 +0000 (UTC)
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7386913CA8D;
-	Thu, 14 Nov 2024 16:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D1F126C03;
+	Thu, 14 Nov 2024 16:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731602649; cv=none; b=dsfkDRvDbNEhtfOqF3pCfEN5vHJPcjjjKy5NnBmbJn9yhwvQXMj9YEggL8roiPbYxit4DxPc8Bfhjx7RugT6JKGppg7oO3sx5fdWvHzJc06ah51asleZpggpAYldXYoFaNFklq/5An1E2/9xctWEdESMDThOjNuKUh2esEp46i4=
+	t=1731602674; cv=none; b=QTVyCnvEitj5i8Bi7eGkUEoO1v74mKrhDWLlHMlqpllUUARwUvIktaPCtT94ESwW+l56Y4WG80rcoy6ygF/7qQRufTq46gL3TDIonfmKpjjzFOr+iuv5VrO6sa/Vuqk0/0r7oEr/UE4grg0xqyYyfCjdbZ3xrpscVXImifP+Ch0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731602649; c=relaxed/simple;
-	bh=AbCn1+Yg8W8qTHgWuQBTbKu9X8SgyI1xSbTqtUUWY5o=;
+	s=arc-20240116; t=1731602674; c=relaxed/simple;
+	bh=yTTebUgilUcScFJvsEz7xDxnwIE2WJs/ED3QOn9Z1oI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M/4Il4tmwRUrxa4akrFPpiw007XpBuqCOTFQfmlA0QBznUsWcXfdGNzndj/N4cu4bj3r3Tx1k8LKcZc7xrIDbiQpZs7aM8f7We3l3yBouCA5VoIKuN8W+lnSkGsdXiWhllDvQUw2h2GFFTF3Nt9W7N994frxltHRgf2adjjQiuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ADyLQgF/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2931C4CECD;
-	Thu, 14 Nov 2024 16:44:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731602649;
-	bh=AbCn1+Yg8W8qTHgWuQBTbKu9X8SgyI1xSbTqtUUWY5o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ADyLQgF/4/uCjUXv6lUAAcS7vJmeGuMBIRtcbJLEimaJl+nBqy4K9Xw9Ju6Hh6GqM
-	 T+8dqL9aT9ynaEx5uVwsUjb4t9223TX1hHUSBqqb+S8Ci4XJSVHYcJBphH5TUOvyJX
-	 dgjpoppNJrz0hVQVZT4HShwV88JLR5GgPcJzeUtMcy5pppbO+ensknrWXIWAsvCPZn
-	 1vN77UTuUH74bd3BAb72XJm12+/Zs1OYg6DjIBLQPEYAYGj9w0Sl4ibZFPLoOKIqKU
-	 PxXSBIRp1sH6eWtAOyz6hBng9DWyyYTf8r7LUk/G4saHWtzaCQSoeKhvsFtKMyg1ls
-	 cndUWdBqWeBkg==
-Date: Thu, 14 Nov 2024 06:44:07 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: Valentin Schneider <vschneid@redhat.com>, mingo@redhat.com,
-	peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	=?iso-8859-1?Q?mkoutny=40suse=2Ecom_=3E=3E_Michal_Koutn=FD?= <mkoutny@suse.com>,
-	linux-kernel@vger.kernel.org, wangweiyang2@huawei.com,
-	cgroups@vger.kernel.org
-Subject: Re: [PATCH] freezer, sched: report the frozen task stat as 'D'
-Message-ID: <ZzYo19k9ZvkC7V-1@slm.duckdns.org>
-References: <20241111135431.1813729-1-chenridong@huaweicloud.com>
- <xhsmhv7wrb3sc.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <4f78d752-52ab-493d-8bf5-f12dc4f554c8@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y7I+n0Tlhn+VX5H4yqm5Qax1lAnDMz7r2lEAHUsPbj05lgsikniUzccyP+AZrdb0xdzazxSPcCoxLP327AD58R72jBqv24S4shn9xdQgELZg7uLYoWGM7UeHiHPIDet6FBaYF9fw3PQUhfw4/jw1iGaky7OP0O9hkErLdMLmUGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout2.hostsharing.net (Postfix) with ESMTPS id EBAA82800A273;
+	Thu, 14 Nov 2024 17:44:22 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id D2A893C3D3B; Thu, 14 Nov 2024 17:44:22 +0100 (CET)
+Date: Thu, 14 Nov 2024 17:44:22 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Terry Bowman <terry.bowman@amd.com>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, nifan.cxl@gmail.com, ming4.li@intel.com,
+	dave@stgolabs.net, jonathan.cameron@huawei.com,
+	dave.jiang@intel.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, dan.j.williams@intel.com,
+	bhelgaas@google.com, mahesh@linux.ibm.com, ira.weiny@intel.com,
+	oohall@gmail.com, Benjamin.Cheatham@amd.com, rrichter@amd.com,
+	nathan.fontenot@amd.com, Smita.KoralahalliChannabasappa@amd.com
+Subject: Re: [PATCH v3 05/15] PCI/AER: Add CXL PCIe port correctable error
+ support in AER service driver
+Message-ID: <ZzYo5hNkcIjKAZ4i@wunner.de>
+References: <20241113215429.3177981-1-terry.bowman@amd.com>
+ <20241113215429.3177981-6-terry.bowman@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,43 +61,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4f78d752-52ab-493d-8bf5-f12dc4f554c8@huaweicloud.com>
+In-Reply-To: <20241113215429.3177981-6-terry.bowman@amd.com>
 
-Hello,
+On Wed, Nov 13, 2024 at 03:54:19PM -0600, Terry Bowman wrote:
+> @@ -1115,8 +1131,11 @@ static void pci_aer_handle_error(struct pci_dev *dev, struct aer_err_info *info)
+>  
+>  static void handle_error_source(struct pci_dev *dev, struct aer_err_info *info)
+>  {
+> -	cxl_handle_error(dev, info);
+> -	pci_aer_handle_error(dev, info);
+> +	if (is_internal_error(info) && handles_cxl_errors(dev))
+> +		cxl_handle_error(dev, info);
+> +	else
+> +		pci_aer_handle_error(dev, info);
+> +
+>  	pci_dev_put(dev);
+>  }
 
-On Thu, Nov 14, 2024 at 03:47:58PM +0800, Chen Ridong wrote:
-> On 2024/11/13 22:34, Valentin Schneider wrote:
-> > On 11/11/24 13:54, Chen Ridong wrote:
-> >> From: Chen Ridong <chenridong@huawei.com>
-> >>
-> >> Before the commit f5d39b020809 ("freezer,sched: Rewrite core freezer
-> >> logic"), the frozen task stat was reported as 'D' in cgroup v1.
-> >> However, after rewriting core freezer logic, the frozen task stat is
-> >> reported as 'R'. This is confusing, especially when a task with stat of
-> >> 'S' is frozen.
-> >>
-> >> This can be reproduced as bellow step:
-> >> cd /sys/fs/cgroup/freezer/
-> >> mkdir test
-> >> sleep 1000 &
-> >> [1] 739         // task whose stat is 'S'
-> >> echo 739 > test/cgroup.procs
-> >> echo FROZEN > test/freezer.state
-> >> ps -aux | grep 739
-> >> root     739  0.1  0.0   8376  1812 pts/0    R    10:56   0:00 sleep 1000
-> >>
-> >> As shown above, a task whose stat is 'S' was changed to 'R' when it was
-> >> frozen. To solve this issue, simply maintain the same reported state as
-> >> before the rewrite.
+If you just do this at the top of cxl_handle_error()...
 
-The whole point of the freezer rewrite was preventing userspace from causing
-arbitrary and indefinite D states which leads to all sorts of problems. The
-tasks in cgroup2 freezer are *not* in uninterruptible sleeps. They are in
-task stop loops and thus can be killed, ptraced and so on. It *should*
-report S.
+	if (!is_internal_error(info))
+		return;
 
-Thanks.
+...you avoid the need to move is_internal_error() around and the
+patch becomes simpler and easier to review.
 
--- 
-tejun
+
+> The AER service driver supports handling downstream port protocol errors in
+> restricted CXL host (RCH) mode also known as CXL1.1. It needs the same
+> functionality for CXL PCIe ports operating in virtual hierarchy (VH)
+> mode.[1]
+
+This is somewhat minor but by convention, patches in the PCI subsystem
+adhere to spec language and capitalization, e.g. "Downstream Port"
+instead of "downstream port".  Makes it easier to connect the commit
+message or code comments to the spec.  So maybe you want to consider
+that if/when respinning.
+
+Thanks,
+
+Lukas
 
