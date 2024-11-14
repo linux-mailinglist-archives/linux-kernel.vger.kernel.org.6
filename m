@@ -1,123 +1,133 @@
-Return-Path: <linux-kernel+bounces-409133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 013C09C87CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:39:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D9659C87F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:46:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB442281EC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:39:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62958287975
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD871F80A3;
-	Thu, 14 Nov 2024 10:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114351F818E;
+	Thu, 14 Nov 2024 10:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b="JC63zjcw"
-Received: from a.mx.secunet.com (a.mx.secunet.com [62.96.220.36])
+	dkim=pass (2048-bit key) header.d=merzmedtech.de header.i=@merzmedtech.de header.b="pg+4hoHH";
+	dkim=pass (1024-bit key) header.d=merzmedtech.de header.i=@merzmedtech.de header.b="ELIXin6W"
+Received: from mailout01.agenturserver.de (mailout01.agenturserver.de [185.15.192.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A601DC18F;
-	Thu, 14 Nov 2024 10:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.96.220.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C5D1F77B8;
+	Thu, 14 Nov 2024 10:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.15.192.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731580681; cv=none; b=b2ge8I8BVoHzPI/iXvUI5/r/awy5nBDOGnIn9PUHTNfdgK7zPCDO3hL27LIBzHd8gN2GD5RQ5oWOfBqOZ6wOmLy0+d4xg0mEMic8tDX6yuRdwMrnDoGhLOp/ZjTGMITFGQFx76BpgTyC8MKNd+miSqPDl/80fQ/AlwRC3oImRog=
+	t=1731581181; cv=none; b=GOwNqBlUd/1VrLDMMU7WfhbOdMsGRN68YSf6SXk6TrIEKEWNGO0dnCsPtsZIpNC3QQD+Kcap+6wwWzUkjKNgFsp4vJzZ4vMGDGJ9SG575ylRi0P4mc7qpuUONbnUNoJNzwrAZOIlqlkpPf0dkXGdm80xRA70v8ueU6WO7xW2iWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731580681; c=relaxed/simple;
-	bh=U3INflKoTFEQHi4GMTG+NQUhORDGMAc7qj5V5pHHikY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CDxDefigM/d92CdK+hG8s/LZk8qO3tAacUQcceHz+YWkykk283x4u5AQLh8M39UNUVY3hJQiYLsYrWHzZQXWMJ75B/CIc1GiP8rvwl+2XxYTfzg3SqWVUfo4a4eXwTM8dgcdnQmzPMQB4WbLnyf+5cMSURZ4Zyxc2dSIdP2xYIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com; spf=pass smtp.mailfrom=secunet.com; dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b=JC63zjcw; arc=none smtp.client-ip=62.96.220.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=secunet.com
-Received: from localhost (localhost [127.0.0.1])
-	by a.mx.secunet.com (Postfix) with ESMTP id 2096A20839;
-	Thu, 14 Nov 2024 11:37:50 +0100 (CET)
-X-Virus-Scanned: by secunet
-Received: from a.mx.secunet.com ([127.0.0.1])
-	by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id VR7HPC-Gcqfq; Thu, 14 Nov 2024 11:37:49 +0100 (CET)
-Received: from cas-essen-02.secunet.de (rl2.secunet.de [10.53.40.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	s=arc-20240116; t=1731581181; c=relaxed/simple;
+	bh=ytTP33QWUvhpFf/61F4EPneExfKnvwV/PgFhtrUMW8Q=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=o0s2icC8dt5bZEBWjEZyFcataV5ffIS0UkT4BAf8cTEnaxE+QyuTV2jwn/4qEwF7ziK/iJpnVBAx8Mz3TYv7M127rA1UMPnnz7C2psetQWJFn9GKQZm4nck7mUndf9jxhEHXYlU6vh7dWqlhQAQ7HfzhGE8LiP5Loo2MEi5W6y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=merzmedtech.de; spf=pass smtp.mailfrom=merzmedtech.de; dkim=pass (2048-bit key) header.d=merzmedtech.de header.i=@merzmedtech.de header.b=pg+4hoHH; dkim=pass (1024-bit key) header.d=merzmedtech.de header.i=@merzmedtech.de header.b=ELIXin6W; arc=none smtp.client-ip=185.15.192.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=merzmedtech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=merzmedtech.de
+Received: from mail02.agenturserver.de (mail02.internal [192.168.51.35])
+	by mailout01.agenturserver.de (Postfix) with ESMTP id 5BBA66CBF;
+	Thu, 14 Nov 2024 11:38:58 +0100 (CET)
+Received: from XXX.XXX.XXX.XXX (XXXXX.XX [XXX.XXX.XXX.XXX])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
 	(No client certificate requested)
-	by a.mx.secunet.com (Postfix) with ESMTPS id 88BA520826;
-	Thu, 14 Nov 2024 11:37:49 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 a.mx.secunet.com 88BA520826
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=secunet.com;
-	s=202301; t=1731580669;
-	bh=xWF2G4aqdtqtRIXe18oGJKxH7vHq+f3PUospaf9le7M=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To:From;
-	b=JC63zjcwq87b8+Cypy+KQUrZn4DWMyJFNT7/WeNuq4zXupGPWDCR1eo6WwiYCgOkJ
-	 bkNGQp9MOV1GrVI6MHCCPeazqAK0HY4ue12OUSrJkiSarcrFJqERu7ScMgAOherMVu
-	 tpUwx3VM7yfxTXib7SClhXv/XjJgknCIcB+vjyi7kj2bVEMx63mvsc/CdOG0eueOZm
-	 iIOqtBdyr1ycmu3em8QEvd8eMzao7YRt+tjz0ffYNjZmDRE2XFUEQJP5Ep3ltUvae3
-	 Q4uNvVlXyndFCJ/HkiWUBVykhnhu5sMkrcWhepH5fyl3O5TnsmWMXZaxrDQcd+ltO3
-	 PgY5Yi1sFOj2A==
-Received: from mbx-essen-02.secunet.de (10.53.40.198) by
- cas-essen-02.secunet.de (10.53.40.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 14 Nov 2024 11:37:49 +0100
-Received: from gauss2.secunet.de (10.182.7.193) by mbx-essen-02.secunet.de
- (10.53.40.198) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 14 Nov
- 2024 11:37:48 +0100
-Received: by gauss2.secunet.de (Postfix, from userid 1000)
-	id 7518F31815A0; Thu, 14 Nov 2024 11:37:48 +0100 (CET)
-Date: Thu, 14 Nov 2024 11:37:48 +0100
-From: Steffen Klassert <steffen.klassert@secunet.com>
-To: Paolo Abeni <pabeni@redhat.com>
-CC: Daniel Yang <danielyangkang@gmail.com>, Herbert Xu
-	<herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Simon
- Horman <horms@kernel.org>, "open list:NETWORKING [IPSEC]"
-	<netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net] xfrm: replace deprecated strncpy with strscpy_pad
-Message-ID: <ZzXS/A/LcKCCDYRp@gauss3.secunet.de>
-References: <20241113092058.189142-1-danielyangkang@gmail.com>
- <7914fb1b-8e9d-4c02-b970-b6eaaf468d05@redhat.com>
+	(Authenticated sender: h.v.raven@merzmedtech.de)
+	by mail.agenturserver.de (Postfix) with ESMTPSA id AB5B6A11DD;
+	Thu, 14 Nov 2024 11:38:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=merzmedtech.de;
+	s=agenturserver2048; t=1731580738;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gh+s1njB+eHDBkuhm8NNHW0/KkfuruIfemdW9Ilrtq8=;
+	b=pg+4hoHH/VpBX7zCPf+YHbcZ0TnDR9q9ygGljgwmqqWqqS1JJEHr2dUBMYBGmAYLlcZW5M
+	whN6OVd4+lpL5b4jkg6maKKLZG5puHqhQ1FO3FvqZoIArFel8NvICgazpg2p8eQZ6c7Pe0
+	JAYM+9TWmiYIaGibmsDJ6MisLEX57zBea3mNYDFqBx52zMRoppc7T4i/b3oIqO5bTREFZ+
+	4i+Ur96FX2/BOZbyQG/dr1I7jeMdvobKb7wSeQB+dIcSXF8rB+1nXLnoGbZg+UihkSamqv
+	UegBx6FqtaAx1KT2sSDZ69wponO5FpU79qK0S69nI/JljqpaH1Rva9y1c/I3wg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=merzmedtech.de;
+	s=agenturserver; t=1731580738;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gh+s1njB+eHDBkuhm8NNHW0/KkfuruIfemdW9Ilrtq8=;
+	b=ELIXin6Wb0Dq3JtRaPVRVFgoHeNn5RK42OTX+b65+/+woljPvMCcSuft3YUaMKR+RD+iEP
+	QzijwnVnM499HXuusnfRxdhn/XmSdc4toYdxrc2BUdT2bIXzR7i3dgaksgZjXD2Errl2TB
+	9EyqI7DPfELrYfL6QkQcrouqlP9AODQ=
+From: "Hendrik v. Raven" <h.v.raven@merzmedtech.de>
+Subject: [PATCH 0/2] ASoc: simple-mux: Allow to specify an idle-state
+Date: Thu, 14 Nov 2024 11:38:37 +0100
+Message-Id: <20241114-simple-mux-idle-state-v1-0-0b082dd6549b@merzmedtech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <7914fb1b-8e9d-4c02-b970-b6eaaf468d05@redhat.com>
-X-ClientProxiedBy: cas-essen-02.secunet.de (10.53.40.202) To
- mbx-essen-02.secunet.de (10.53.40.198)
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAC3TNWcC/x2MQQqAMAwEvyI5WzC1B/Ur4kFs1IBVaVSE0r8bv
+ M0w7CYQikwCXZEg0sPCx66CZQHTOu4LGfbqYCvrENEZ4XBuZML9alGQa7zIVI331ruWarSg2zP
+ SzO//2w85fy5KvG1nAAAA
+X-Change-ID: 20241114-simple-mux-idle-state-08dd2d49e312
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Alexandre Belloni <aleandre.belloni@bootlin.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, "Hendrik v. Raven" <h.v.raven@merzmedtech.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=756;
+ i=h.v.raven@merzmedtech.de; h=from:subject:message-id;
+ bh=ytTP33QWUvhpFf/61F4EPneExfKnvwV/PgFhtrUMW8Q=;
+ b=owEBzQIy/ZANAwAKAQP8mG1lSaY7AcsmYgBnNdNBEIU2bPbRE+WCBqh7/k3XABkEds52xtA1B
+ +IO8pfEDC6JApMEAAEKAH0WIQRfy2xFNGjRY609IOcD/JhtZUmmOwUCZzXTQV8UgAAAAAAuAChp
+ c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0NUZDQjZDNDUzNDY
+ 4RDE2M0FEM0QyMEU3MDNGQzk4NkQ2NTQ5QTYzQgAKCRAD/JhtZUmmO579D/9ih61DPqfLM6seiD
+ qFilUyuEXKoTnXFXLg2xhxGaDTG6g3aS5GnFWz35pWnQYYoPQ5o9loF99duOvvITLptIO9zM2lC
+ sV67/GLFDPmMUZKbJTlTj6ZqDU8EECV3nODiW9zzsIaWhO4n71AYA6mu57L/oeyko0T2eQPTbk5
+ QScS1ugGHfva+ghLfH3JiNEUDS9u7KG3DvU/sK/yZXeB04qAw9nxduVWiJmmD5OtJFQWkPJES3W
+ QPNtpgGvJ+f+o4KkEH6AQpWpgsXSpgib1VqkothgXmeMnMA87fgJpoRYiDcJcOU2y/zu/c/iY6H
+ puCczP7EQSMXAITnrKw4mi/PP475PezyDHDC/snlR2sIKNsKN01GisuHQQeAJhkoFeOBU0wNeOh
+ yGpZldFR7jj9RdhYk8oSnMCZzG8m+DYZHmDH1CLoGXxbYQF/8kYAhTeJhE4oPielX4Huds/Fhks
+ oR7k3ZrxDV4YxUyWeoH9ptRaRHJVra1Iq70Fpvj1TPlxR4eroE2dTYvWEynRr3wDYOkgV6PPwD7
+ HITD+/gf4uhSeBUrs9WSmfrsUn5NfPeb7Hd35JxnUIQfmgd/t3mIcMNKMTXi8KnrQF+o3mRjaSk
+ ATkYuySC8S68+mZYEbfNyWGWFknLg1+cHuU5zHYmy7L4hIBpPllV9ZKGU1fF8f07cloA==
+X-Developer-Key: i=h.v.raven@merzmedtech.de; a=openpgp;
+ fpr=7A67B9A9F57B4F324AB6B8EB045B81F5FB5BA3AE
+X-purgate-original-type: clean
+X-purgate-type: clean
+X-purgate-Ad: Categorized by eleven eXpurgate (R) https://www.eleven.de
+X-purgate: This mail is considered clean (visit https://www.eleven.de for further information)
+X-purgate: clean
+X-purgate-size: 758
+X-purgate-ID: 155922::1731580738-D8CA1432-BE9004F6/0/0
 
-On Thu, Nov 14, 2024 at 11:34:25AM +0100, Paolo Abeni wrote:
-> On 11/13/24 10:20, Daniel Yang wrote:
-> > The function strncpy is deprecated since it does not guarantee the
-> > destination buffer is NULL terminated. Recommended replacement is
-> > strscpy. The padded version was used to remain consistent with the other
-> > strscpy_pad usage in the modified function.
-> > 
-> > Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
-> > ---
-> >  net/xfrm/xfrm_user.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-> > index e3b8ce898..085f68e35 100644
-> > --- a/net/xfrm/xfrm_user.c
-> > +++ b/net/xfrm/xfrm_user.c
-> > @@ -1089,7 +1089,7 @@ static int copy_to_user_auth(struct xfrm_algo_auth *auth, struct sk_buff *skb)
-> >  	if (!nla)
-> >  		return -EMSGSIZE;
-> >  	algo = nla_data(nla);
-> > -	strncpy(algo->alg_name, auth->alg_name, sizeof(algo->alg_name));
-> > +	strscpy_pad(algo->alg_name, auth->alg_name, sizeof(algo->alg_name));
-> >  
-> >  	if (redact_secret && auth->alg_key_len)
-> >  		memset(algo->alg_key, 0, (auth->alg_key_len + 7) / 8);
-> 
-> @Steffen, @Herbert: I think this should go via your tree despite the
-> prefix tag.
+This series adds support for the idle-state property from the mux
+framework to the simple-mux audio variant. It allows to specify the state
+of the mux when it is not in use.
 
-I'll take it into ipsec-next.
+Signed-off-by: Hendrik v. Raven <h.v.raven@merzmedtech.de>
+---
+Hendrik v. Raven (2):
+      ASoc: simple-mux: add idle-state support
+      ASoC: dt-bindings: simple-mux: add idle-state property
 
-Thanks!
+ .../bindings/sound/simple-audio-mux.yaml           |  5 +++
+ sound/soc/codecs/simple-mux.c                      | 40 +++++++++++++++++++++-
+ 2 files changed, 44 insertions(+), 1 deletion(-)
+---
+base-commit: 2d5404caa8c7bb5c4e0435f94b28834ae5456623
+change-id: 20241114-simple-mux-idle-state-08dd2d49e312
+
+Best regards,
+-- 
+Hendrik v. Raven <h.v.raven@merzmedtech.de>
+
 
