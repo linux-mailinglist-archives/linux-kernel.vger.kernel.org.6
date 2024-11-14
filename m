@@ -1,259 +1,117 @@
-Return-Path: <linux-kernel+bounces-408901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02ED49C84E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:38:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96EFA9C84EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:39:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A286B23D64
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:38:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D61D5B2402B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4301F76CD;
-	Thu, 14 Nov 2024 08:37:44 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225791F7576;
+	Thu, 14 Nov 2024 08:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dmwqnYs2"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9721F7096;
-	Thu, 14 Nov 2024 08:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22AADE573;
+	Thu, 14 Nov 2024 08:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731573464; cv=none; b=fgRkgVGO5/aQKjaaiGICXMsvrUXy5QVmS2w0ioXuDIW27P7hIIa/ATAanEtBo7+AW434YHZ7rSj2KjFqia6K8/VkZs6Q/TLh31U5eMZ+ans3CYkkg4cD7y2sqQdJMZHG+zQmRbqztloWBvBjklkcWytEVIAXSgbtmkm9OffRy94=
+	t=1731573563; cv=none; b=OFAglT7lWkMSK22efYLFm92zOs5mhc6GOKwyVbIwciHM5tf+o3fbp2C/Jcn20fYsJXHzeXld2fxcG/DZxLp2nePhFSjKdqc5lJnYAfErSbamvxxoQM1OyClJfafqnb8lXZOWeBWqYe9F5OwVwtHpUsX+RSqAiUUxreAIZERYxAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731573464; c=relaxed/simple;
-	bh=ReXgCifW5MoQ48kigz0W0MN7ky05dHbOLIGeiAXB7J0=;
+	s=arc-20240116; t=1731573563; c=relaxed/simple;
+	bh=EBwtDwOsKCH6CTYObYd2v+L0jvmdAmZGhmhGmfNULGc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VxVZB3U3z3KYJhbDfFNsajRT8TcTKbIHZCQ8g0odtN3SbZek9LFfjFNXZiovcu/VtL7Sa/x/fiuR3Qbbe8HnZVEjQe2pfNjtv67/3U7ZLuy8TqxNNMeB6mqoSicCqMnrXiYYutMH9vtNr2Urb4wrii3zz9VNAM+W8YLBR10IbGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XptlN386Qz2HYn9;
-	Thu, 14 Nov 2024 16:35:44 +0800 (CST)
-Received: from dggemv704-chm.china.huawei.com (unknown [10.3.19.47])
-	by mail.maildlp.com (Postfix) with ESMTPS id A05AA140257;
-	Thu, 14 Nov 2024 16:37:35 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 14 Nov 2024 16:37:35 +0800
-Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
- (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 14 Nov
- 2024 16:37:34 +0800
-Message-ID: <52539572-6128-8c87-84e6-3f539d887b34@huawei.com>
-Date: Thu, 14 Nov 2024 16:37:34 +0800
+	 In-Reply-To:Content-Type; b=K/HEJSaEESF82XV2H3QTbA/ZXbDQjHoEtKOKuHEMxqF0Brf806M8WB0hqaEk8Z+4AU7zpUqrgqZ74DoD0yNYWmA5trO9koZYFdPDA3XMyfx67Qc6P+As0XcO9R9cqsePLtRs+uGpLjSgOl9C+2/Uz8KzH2fGUvLqGUswNxe9jY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dmwqnYs2; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE6YaaY021963;
+	Thu, 14 Nov 2024 08:39:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FyY8ubka/aZn6sXZqqVpJQXMCCbOKwtKPci4X6ZG1wo=; b=dmwqnYs2vpPR9EaO
+	62eUMM3YlTjh/JfmIL+wKGEpIFLVk1gn2uMdBXCBi6gSBqGuEI+u7EFiSVlV6it9
+	2SFW2JTREUMLCUZfuLoMzCtbsvvNPARyjprMPlDlLa4/L2rlsvRkkqKcaY9nS0a4
+	iAa0oyZFw0aXHXlGVVH3Jdy/7ytF3d2ZF0z5nkid9SStK7jjEe1uSKPBN/yyo6jU
+	fFH2MJW/uft0rmKMNUjFaNXIzawKshH14Loda0u+QhRMgXoMzVyUivN7sBXiFpoV
+	H4933aMVU9N2DySL3b73kW+dm3zij7i0Vcvddb53XHN5Hbfbj5idapQMS53u3pQt
+	2ZHANw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vsg545b1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 08:39:07 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AE8d7Lo016197
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 08:39:07 GMT
+Received: from [10.253.78.176] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 14 Nov
+ 2024 00:39:05 -0800
+Message-ID: <8b04138e-c03d-4058-8663-2d3a0c48749b@quicinc.com>
+Date: Thu, 14 Nov 2024 16:39:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v2] ACPI: thermal: Support for linking devices associated
- with the thermal zone
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: <linux-pm@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <rui.zhang@intel.com>,
-	<liuyonglong@huawei.com>, <zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>
-References: <20241113085634.7657-1-lihuisong@huawei.com>
- <CAJZ5v0jTMg=Wipt2VPU1DDnnO7Rh5pu0VYvUjHRW5Nada--O8A@mail.gmail.com>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <CAJZ5v0jTMg=Wipt2VPU1DDnnO7Rh5pu0VYvUjHRW5Nada--O8A@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+User-Agent: Mozilla Thunderbird
+Subject: Re: QCA NVM file for the X13s (WCN6855)
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+CC: Johan Hovold <johan@kernel.org>, Tim Jiang <quic_tjiang@quicinc.com>,
+        Janaki Ramaiah Thota <quic_janathot@quicinc.com>,
+        <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <ZjNxfFJmCgIyq8J6@hovoldconsulting.com>
+ <5aea3149-ba44-400f-acc6-1a3eca8a7e72@quicinc.com>
+ <ZjOUWqor4q1Efy0W@hovoldconsulting.com>
+ <f1b45d7d-27e0-4ad7-976c-670a0e0d136b@quicinc.com>
+ <ZjOfdK41yLwkH25T@hovoldconsulting.com>
+ <5549d7e4-06cb-4305-8cec-10e93e5fbbff@quicinc.com>
+ <c23fe4b8-04ae-41fb-a166-0b8a84e2ef70@molgen.mpg.de>
+Content-Language: en-US
+From: quic_zijuhu <quic_zijuhu@quicinc.com>
+In-Reply-To: <c23fe4b8-04ae-41fb-a166-0b8a84e2ef70@molgen.mpg.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Om8kNtR7hOMzsRB7qOk8dczwz7olGvJV
+X-Proofpoint-ORIG-GUID: Om8kNtR7hOMzsRB7qOk8dczwz7olGvJV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=1 clxscore=1011
+ priorityscore=1501 phishscore=0 malwarescore=0 lowpriorityscore=0
+ mlxscore=1 mlxlogscore=208 impostorscore=0 bulkscore=0 adultscore=0
+ suspectscore=0 spamscore=1 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411140065
 
-Hi Rafael,
+On 11/14/2024 4:27 PM, Paul Menzel wrote:
+>>>> let me try to find out the right person who will push this task at
+>>>> next monday.
+>>>> there are some other internal procedures before we can push BT firmware
+>>>> into linux-firmware.
+>>
+>> have up-streamed 22 NVM files which come from WOS into linux-firmware as
+>> shown by below link, both hpnv21g.b8c and hpnv21.b8c are also contained.
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-
+>> firmware.git/commit/?id=77a11ffc5a0aaaadc870793d02f6c6781ee9f598
+>>
+>> (^^)(^^).
+> 
+> Thank you. Could you please enlighten me, what WOS is?
 
-在 2024/11/13 17:26, Rafael J. Wysocki 写道:
-> On Wed, Nov 13, 2024 at 10:07 AM Huisong Li <lihuisong@huawei.com> wrote:
->> There are many 'cdevX' files which link cooling devices under
->> '/sys/class/thermal/thermal_zoneX/'. These devices contain active cooling
->> devices and passive cooling devices. And user cann't directly know which
->> devices temperature is represented by the thermal zone.
->>
->> However, ACPI spec provides a '_TZD' object which evaluates to a package
->> of device names. Each name corresponds to a device in the ACPI namespace
->> that is associated with the thermal zone. The temperature reported by the
->> thermal zone is roughly correspondent to that of each of the devices.
->>
->> User can get all devices a thermal zone measured by the 'measures'
->> directory under the thermal zone device.
-> Well, that's kind of clear, but what exactly is the use case?  Why
-> does the user need to know that?
-IMO, this makes thermal zone information more friendly.
-For instance, user can directly know the temperature of CPUs or other 
-devices is roughly represented by which thermal zone.
-This may offer the convenience for further usersapce application.
+WoS is Windows on Snapdragon, and which is preinstalled with windows OS.
 
-BTW, the '_TZD' method is similar to the '_PMD' in acpi power meter.
-Since ACPI spec provides them, they should also have a role in their 
-existence.
-
-
->
->> Signed-off-by: Huisong Li <lihuisong@huawei.com>
->> ---
->> v2: fix commitlog based on Rafael's comment.
->> ---
->>   drivers/acpi/thermal.c | 114 ++++++++++++++++++++++++++++++++++++++++-
->>   1 file changed, 113 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/acpi/thermal.c b/drivers/acpi/thermal.c
->> index 78db38c7076e..398195a5d42f 100644
->> --- a/drivers/acpi/thermal.c
->> +++ b/drivers/acpi/thermal.c
->> @@ -119,6 +119,9 @@ struct acpi_thermal {
->>          struct work_struct thermal_check_work;
->>          struct mutex thermal_check_lock;
->>          refcount_t thermal_check_count;
->> +       int num_domain_devices;
->> +       struct acpi_device **domain_devices;
->> +       struct kobject *holders_dir;
->>   };
->>
->>   /* --------------------------------------------------------------------------
->> @@ -589,6 +592,103 @@ static const struct thermal_zone_device_ops acpi_thermal_zone_ops = {
->>          .critical = acpi_thermal_zone_device_critical,
->>   };
->>
->> +static void acpi_thermal_remove_domain_devices(struct acpi_thermal *tz)
->> +{
->> +       int i;
->> +
->> +       if (!tz->num_domain_devices)
->> +               return;
->> +
->> +       for (i = 0; i < tz->num_domain_devices; i++) {
->> +               struct acpi_device *obj = tz->domain_devices[i];
->> +
->> +               if (!obj)
->> +                       continue;
->> +
->> +               sysfs_remove_link(tz->holders_dir,
->> +                                 kobject_name(&obj->dev.kobj));
->> +               acpi_dev_put(obj);
->> +       }
->> +
->> +       kfree(tz->domain_devices);
->> +       kobject_put(tz->holders_dir);
->> +       tz->num_domain_devices = 0;
->> +}
->> +
->> +static int acpi_thermal_read_domain_devices(struct acpi_thermal *tz)
->> +{
->> +       struct acpi_buffer buffer = { ACPI_ALLOCATE_BUFFER, NULL };
->> +       union acpi_object *pss;
->> +       acpi_status status;
->> +       int ret = 0;
->> +       int i;
->> +
->> +       status = acpi_evaluate_object(tz->device->handle, "_TZD", NULL,
->> +                                     &buffer);
->> +       if (ACPI_FAILURE(status)) {
->> +               acpi_evaluation_failure_warn(tz->device->handle, "_TZD",
->> +                                            status);
->> +               return -ENODEV;
->> +       }
->> +
->> +       pss = buffer.pointer;
->> +       if (!pss ||
->> +           pss->type != ACPI_TYPE_PACKAGE) {
->> +               dev_err(&tz->device->dev, "Thermal zone invalid _TZD data\n");
->> +               ret = -EFAULT;
->> +               goto end;
->> +       }
->> +
->> +       if (!pss->package.count)
->> +               goto end;
->> +
->> +       tz->domain_devices = kcalloc(pss->package.count,
->> +                                    sizeof(struct acpi_device *), GFP_KERNEL);
->> +       if (!tz->domain_devices) {
->> +               ret = -ENOMEM;
->> +               goto end;
->> +       }
->> +
->> +       tz->holders_dir = kobject_create_and_add("measures",
->> +                                                &tz->device->dev.kobj);
->> +       if (!tz->holders_dir) {
->> +               ret = -ENOMEM;
->> +               goto exit_free;
->> +       }
->> +
->> +       tz->num_domain_devices = pss->package.count;
->> +       for (i = 0; i < pss->package.count; i++) {
->> +               struct acpi_device *obj;
->> +               union acpi_object *element = &pss->package.elements[i];
->> +
->> +               /* Refuse non-references */
->> +               if (element->type != ACPI_TYPE_LOCAL_REFERENCE)
->> +                       continue;
->> +
->> +               /* Create a symlink to domain objects */
->> +               obj = acpi_get_acpi_dev(element->reference.handle);
->> +               tz->domain_devices[i] = obj;
->> +               if (!obj)
->> +                       continue;
->> +
->> +               ret = sysfs_create_link(tz->holders_dir, &obj->dev.kobj,
->> +                                       kobject_name(&obj->dev.kobj));
->> +               if (ret) {
->> +                       acpi_dev_put(obj);
->> +                       tz->domain_devices[i] = NULL;
->> +               }
->> +       }
->> +
->> +       ret = 0;
->> +       goto end;
->> +
->> +exit_free:
->> +       kfree(tz->domain_devices);
->> +end:
->> +       kfree(buffer.pointer);
->> +       return ret;
->> +}
->> +
->>   static int acpi_thermal_zone_sysfs_add(struct acpi_thermal *tz)
->>   {
->>          struct device *tzdev = thermal_zone_device(tz->thermal_zone);
->> @@ -602,8 +702,19 @@ static int acpi_thermal_zone_sysfs_add(struct acpi_thermal *tz)
->>          ret = sysfs_create_link(&tzdev->kobj,
->>                                     &tz->device->dev.kobj, "device");
->>          if (ret)
->> -               sysfs_remove_link(&tz->device->dev.kobj, "thermal_zone");
->> +               goto remove_thermal_zone;
->>
->> +       /* _TZD method is optional. */
->> +       ret = acpi_thermal_read_domain_devices(tz);
->> +       if (ret != -ENODEV)
->> +               goto remove_device;
->> +
->> +       return 0;
->> +
->> +remove_device:
->> +       sysfs_remove_link(&tz->device->dev.kobj, "device");
->> +remove_thermal_zone:
->> +       sysfs_remove_link(&tz->device->dev.kobj, "thermal_zone");
->>          return ret;
->>   }
->>
->> @@ -611,6 +722,7 @@ static void acpi_thermal_zone_sysfs_remove(struct acpi_thermal *tz)
->>   {
->>          struct device *tzdev = thermal_zone_device(tz->thermal_zone);
->>
->> +       acpi_thermal_remove_domain_devices(tz);
->>          sysfs_remove_link(&tz->device->dev.kobj, "thermal_zone");
->>          sysfs_remove_link(&tzdev->kobj, "device");
->>   }
->> --
->> 2.22.0
->>
->>
->
-> .
 
