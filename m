@@ -1,94 +1,104 @@
-Return-Path: <linux-kernel+bounces-409942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 826CD9C93CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:07:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FE4F9C93E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:15:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47B46286C32
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:07:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05B68287366
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12681AE001;
-	Thu, 14 Nov 2024 21:07:47 +0000 (UTC)
-Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7E518B484
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 21:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0721F1AF0BE;
+	Thu, 14 Nov 2024 21:14:57 +0000 (UTC)
+Received: from zulu.geekplace.eu (zulu.geekplace.eu [5.45.100.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1316218A6C5
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 21:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.45.100.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731618467; cv=none; b=sobPVqfo6IlphH1qpwlsg3az+b4dk26FoNcPKQIM5nj0+nOCjxWentzT3zepDgk+pQVfmeP6fxICER1IDU0lttbZaJs2dtI+nM/rNxZV2OL8vKesY4RbP228hCDLZ17W3Zl0iqKHT95ttDY5ljsdhGCw0pyU30GautXrTkOOpPc=
+	t=1731618896; cv=none; b=k0sggCaXzOILp1JyhzqPK8e3Y+cikKQ+QIE249nN4H1eArcoheUudc0MwFfU5q2zoJrBbBJs9yrD7+gVPe9UDOv25nH48RslmHz0aRZ/kR3TN507u/eXm55elVngtzVw0ODWGA5+hTE9sQae03YWfhjZ1fk4ZAI10xb7UAa4yO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731618467; c=relaxed/simple;
-	bh=6cWTY2xZeaBn0xyYK8rPTQmYWh9b+pJJO6cj/yyOYFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XbWQVnl0Sy5/3pL687UgTTqw/ttxGZOK1/gaTUPjTo+WEEAvfh8/EHRHjT6TeZlqbRyOA2gGjK7WQ+b/0ozBMlN9wv/hhzqFG2bOuE2GCSxH3dqsOYvjNMMG60WZsaWdHwENXHynE0tVx0xcH7MyeaztSJ3/pZ3k1Korb5Axa/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 4AEL4KlI000954;
-	Thu, 14 Nov 2024 15:04:20 -0600
-Received: (from segher@localhost)
-	by gate.crashing.org (8.14.1/8.14.1/Submit) id 4AEL4Ief000942;
-	Thu, 14 Nov 2024 15:04:18 -0600
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date: Thu, 14 Nov 2024 15:04:18 -0600
-From: Segher Boessenkool <segher@kernel.crashing.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        geert@linux-m68k.org, arnd@arndb.de
-Subject: Re: [RFC PATCH 01/10] powerpc/chrp: Remove CHRP support
-Message-ID: <20241114210418.GM29862@gate.crashing.org>
-References: <20241114131114.602234-1-mpe@ellerman.id.au>
+	s=arc-20240116; t=1731618896; c=relaxed/simple;
+	bh=gbgAuwsznoi2Ocb2QQFB0XRAAb8REgfIyFsAfc3Isl4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L10o18GRB6GAowVnO/pbCwI93R3iZtxFKwqSPB91mGa26m+OaVe8S9ls5+RjSu4AJ1/FBmUu7GKz7oXrGr6UEeOZYBqza2JdMTMIMgeCn7TKnCih7BOD5GnP/Kcglp3v13oHdvpPmPm1mPZdAbQDvcg4tSStH2VD8huL6/ACGzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=geekplace.eu; spf=pass smtp.mailfrom=geekplace.eu; arc=none smtp.client-ip=5.45.100.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=geekplace.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geekplace.eu
+Received: from neo-pc.sch (unknown [IPv6:2001:4090:a240:80f6:34fb:50ff:feac:591b])
+	by zulu.geekplace.eu (Postfix) with ESMTPA id A99654A01C7;
+	Thu, 14 Nov 2024 22:07:32 +0100 (CET)
+From: Florian Schmaus <flo@geekplace.eu>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Cc: Florian Schmaus <flo@geekplace.eu>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] sched: Provide sched_set_batch()
+Date: Thu, 14 Nov 2024 22:06:47 +0100
+Message-ID: <20241114210649.71377-1-flo@geekplace.eu>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241114131114.602234-1-mpe@ellerman.id.au>
-User-Agent: Mutt/1.4.2.3i
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 15, 2024 at 12:11:04AM +1100, Michael Ellerman wrote:
-> CHRP (Common Hardware Reference Platform) was a standard developed by
-> IBM & Apple for PowerPC-based systems.
-> 
-> The standard was used in the development of some machines but never
-> gained wide spread adoption.
-> 
-> The Linux CHRP code only supports a handful of machines, all 32-bit, eg.
-> IBM B50, bplan/Genesi Pegasos/Pegasos2, Total Impact briQ, and possibly
-> some from Motorola? No Apple machines should be affected.
-> 
-> All of those mentioned above are over or nearing 20 years old, and seem
-> to have no active users.
+This function allows kernel threads created by modules to run under
+SCHED_BATCH. Its usage may be a good option if the kernel thread is
+not sensitive to scheduling latency; for example bcachefs' rebalancing
+thread.
 
-This was used by all non-IBM 970 systems as well.  The last was SLOF on
-JS20 and JS21, about 20 years ago yes, and I doubt anyone uses it still
-(I don't).
+Signed-off-by: Florian Schmaus <flo@geekplace.eu>
+---
+ include/linux/sched.h   |  1 +
+ kernel/sched/syscalls.c | 10 ++++++++++
+ 2 files changed, 11 insertions(+)
 
-> So remove the CHRP support. If there's interest in still supporting some
-> of the machines that can be brought back from the git history.
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index bb343136ddd0..100e6923fe39 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1862,6 +1862,7 @@ extern int sched_setscheduler_nocheck(struct task_struct *, int, const struct sc
+ extern void sched_set_fifo(struct task_struct *p);
+ extern void sched_set_fifo_low(struct task_struct *p);
+ extern void sched_set_normal(struct task_struct *p, int nice);
++extern void sched_set_batch(struct task_struct *p, int nice);
+ extern int sched_setattr(struct task_struct *, const struct sched_attr *);
+ extern int sched_setattr_nocheck(struct task_struct *, const struct sched_attr *);
+ extern struct task_struct *idle_task(int cpu);
+diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+index 24f9f90b6574..d272c0e0c508 100644
+--- a/kernel/sched/syscalls.c
++++ b/kernel/sched/syscalls.c
+@@ -880,6 +880,16 @@ void sched_set_normal(struct task_struct *p, int nice)
+ }
+ EXPORT_SYMBOL_GPL(sched_set_normal);
+ 
++void sched_set_batch(struct task_struct *p, int nice)
++{
++	struct sched_attr attr = {
++		.sched_policy = SCHED_BATCH,
++		.sched_nice = nice,
++	};
++	WARN_ON_ONCE(sched_setattr_nocheck(p, &attr) != 0);
++}
++EXPORT_SYMBOL_GPL(sched_set_batch);
++
+ static int
+ do_sched_setscheduler(pid_t pid, int policy, struct sched_param __user *param)
+ {
+-- 
+2.45.2
 
-Sorry to see it go, but that's the way of the world :-)
-
-> Note there are still some references to CHRP/chrp in various comments
-> and some in the code, because later standards (eg. RPA, PAPR) used some
-> elements of CHRP or copied the CHRP behaviour. These will need to be
-> cleaned up on a case-by-case basis to either refer to newer standards or
-> left as-is when that's correct.
-> 
-> The CHRP code was copied from arch/ppc, and before that it mostly
-> predates git, so the original authorship is largely lost. If anyone
-> wrote any of this code and would like a CREDITS entry just let me know.
-> 
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-
-Acked-by: Segher Boessenkool <segher@kernel.crashing.org>
-
-
-Segher
 
