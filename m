@@ -1,91 +1,127 @@
-Return-Path: <linux-kernel+bounces-408838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E005D9C8424
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:47:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B67929C842B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:48:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80FB91F2120D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:47:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CB00B22884
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317141EBFF9;
-	Thu, 14 Nov 2024 07:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B6B1F5844;
+	Thu, 14 Nov 2024 07:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="o87d1ict"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="n5ojcF45"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B3033CA
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557A533CA;
+	Thu, 14 Nov 2024 07:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731570436; cv=none; b=TMrItVobS/qSGftghP7F3Y35oiDueaLrp4z+uLQJYPUz2Ltt937yA4NouFgpGKFi+Ubxydm7VOQ4STffwr8rHpguOWvD51tNwg+PFJOeNQUu3zvffDt5Bcrvt05MWaCcAIF/zDCW35mG3oAfIeP7rdThcw6ds/qFZYYCzgVH6Kk=
+	t=1731570479; cv=none; b=tijM38zOb+8NuFQtQZE8BEZmvr91oCB3XaMB+RxSPrtEjzsAT2/w+SctGWHwozmfmrqPK41rQtfSiVcUVXEzS7PZcaS0iB4OJuDNRsuFbGuYM0t9YLqdo30y5igUxJochQL0CJ5eJrD/D7Re29NoYNfF6UP8t+EtYkJPlslMzQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731570436; c=relaxed/simple;
-	bh=RtCLtwC7P03ol1dmUwrxf+F2OSpDZAAvIDxTgX9ICdU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YpuKRSvfgfN8U+67JId8QLNBAKmhINeqGoR+eH4FIqONEZ6FNRbNioG48BO/f3+eTeF7grUQAx/ZevIgBiztR/8ac6EseRIW+lQE9p/oLoXiNw67jcR+O9J2A/Z8rOIBPhzUJie8hajT232zow4SDWKvcaY182pH6m01lma6rK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=o87d1ict; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1731570431; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=Rv+9oFq6sE3dFxVOCJUt/7Fkb0yiXB0UVjn4Zmv5PR0=;
-	b=o87d1ictL2f0xQQDC7jywsHvXO7/qfY5DC71THFmiGEbt3hQbV/Z1N9L8pWx74LyHdIZH3+WfvafhvglTEtgg4zQR8lpEgD1YQT8GfpaZjpfXOd+DTZt9yYqrFMTJ+DlPStD9q8zofz2ZvRqlT+oWz/0uRW9xGaw3QPuHIbTZGE=
-Received: from 30.74.129.177(mailfrom:dtcccc@linux.alibaba.com fp:SMTPD_---0WJNns1t_1731570429 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 14 Nov 2024 15:47:10 +0800
-Message-ID: <1d2ad284-c887-4377-9512-a74dc418efa1@linux.alibaba.com>
-Date: Thu, 14 Nov 2024 15:47:09 +0800
+	s=arc-20240116; t=1731570479; c=relaxed/simple;
+	bh=irj4ImSZhIion7Z5JPQfU/mEzBgBkLCISDCpwV4fDyo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H4g00Q0s4uKnMyioBZll8K4a5nmcipAjsZIqTeD/DSwjAcoijfms1eCaWMym8cqPewWA120cTYB2Dszda4Y8pVs2vT4aruoWkVT6aqmgnDRPzuZhVN6n4Gy6wpJsB7AZEY24Vt3eUuQIRgyn++OmUI2rIgYUEIvsMZ6xW5h1qNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=n5ojcF45; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE6l07m028186;
+	Thu, 14 Nov 2024 07:47:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=38K9nBITMijp41NngptL//
+	/a/AQlhrt44KQIiSWz4HU=; b=n5ojcF45s9FTv+GWcuW6Ukis47vUMvgY3kM/5l
+	2RlHO0l21+QuKpEe6PNT7ZiEmtHtlkPC0D5T/Bq6Z0dz9fkTvjHEBKF87ApVd005
+	ubGfqLYcc+CjZ2OcCHaH/aSaKTCEI7MTOS/ov+rRtSTAPHz4IghpLnOdwqTK3loE
+	oWeuAn3GbOk3M5VBPkaQ/vQeg+D9RxVaLModna95p83PwC9zhpICr7sCerQD1j3N
+	q9a75I4Whzr3EOIXBt99rSv/HzWLwOKTqDOySK/5VtQqcS79wFM0TBmHKzQcS/Ar
+	B3JAKTuDal0ykn4SCbI0hyadx6C0kzZ2coYp1cD1Muz9RKNw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42w10jtf94-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 07:47:48 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AE7llhO027156
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 07:47:47 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 13 Nov 2024 23:47:41 -0800
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <gregkh@linuxfoundation.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <dmitry.baryshkov@linaro.org>,
+        <mantas@8devices.com>, <quic_kbajaj@quicinc.com>,
+        <quic_kriskura@quicinc.com>, <quic_rohiagar@quicinc.com>,
+        <abel.vesa@linaro.org>, <quic_varada@quicinc.com>,
+        <quic_wcheng@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>
+Subject: [PATCH v3 0/6] Enable IPQ5424 USB support
+Date: Thu, 14 Nov 2024 13:17:16 +0530
+Message-ID: <20241114074722.4085319-1-quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] sched/eevdf: Force propagating min_slice of cfs_rq
- when a task changing slice
-To: =?UTF-8?B?6KejIOWSj+aihQ==?= <xieym_ict@hotmail.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20241028063313.8039-2-dtcccc@linux.alibaba.com>
- <20241031094822.30531-1-dtcccc@linux.alibaba.com>
- <2c4654d1-f212-43ac-abf9-de6d08c85387@linux.alibaba.com>
- <ME0P300MB04148C8F736D90AC822CE3678E5A2@ME0P300MB0414.AUSP300.PROD.OUTLOOK.COM>
- <d83e1631-237e-4743-b067-6cc54771eee7@linux.alibaba.com>
- <ME0P300MB04142599FB1D9BBF8AFECE7F8E5B2@ME0P300MB0414.AUSP300.PROD.OUTLOOK.COM>
- <a903d0dc-1d88-4ae7-ac81-3eed0445654d@linux.alibaba.com>
- <ME0P300MB041447EBB0A17918745695898E5B2@ME0P300MB0414.AUSP300.PROD.OUTLOOK.COM>
-Content-Language: en-US
-From: Tianchen Ding <dtcccc@linux.alibaba.com>
-In-Reply-To: <ME0P300MB041447EBB0A17918745695898E5B2@ME0P300MB0414.AUSP300.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: WToL0mJjIcg9z2jn3qR4P1JUbQdutFuI
+X-Proofpoint-GUID: WToL0mJjIcg9z2jn3qR4P1JUbQdutFuI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ suspectscore=0 spamscore=0 priorityscore=1501 bulkscore=0 mlxlogscore=651
+ impostorscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411140058
 
-On 2024/11/14 15:33, 解 咏梅 wrote:
-> delayed dequeue is nessary for eevdf to maintain lag. Paw’s relative vruntime is 
-> not necessary any more in migration path.
-> 
-> 
-> it is not a tuning option.
-> 
-> regards,
-> Yongmei
+The IPQ5424 SoC has both USB2.0 and USB3.0 controllers. The USB3.0
+can connect to either of USB2.0 or USB3.0 phy and operate in the
+respective mode.
 
-I don't know why you so focus on DELAY_DEQUEUE, it is not related to the case I 
-explained.
+v3: Added reviewed-by to one of the patches
+    dts: regulator node names changed
 
-The case is about cgroup hierarchy. And the task_A in my case is already blocked 
-and *out of rq*
+v2: Added acked-by and reviewed-by to few of the patches
+    Changed uppercase hex digits to lowercase
+    dts: add more interrupts & quirks as suggested in the review
 
-I'm talking about its enqueue path when woken up.
+Varadarajan Narayanan (6):
+  dt-bindings: phy: qcom,qusb2: Document IPQ5424 compatible
+  phy: qcom-qusb2: add QUSB2 support for IPQ5424
+  dt-bindings: phy: qcom,qmp-usb: Add IPQ5424 USB3 PHY
+  phy: qcom: qmp: Enable IPQ5424 support
+  dt-bindings: usb: qcom,dwc3: Add IPQ5424 to USB DWC3 bindings
+  arm64: dts: qcom: Add USB controller and phy nodes for IPQ5424
+
+ .../bindings/phy/qcom,qusb2-phy.yaml          |   1 +
+ .../phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml   |   2 +
+ .../devicetree/bindings/usb/qcom,dwc3.yaml    |   1 +
+ arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts   |  66 ++++++++
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi         | 159 ++++++++++++++++++
+ drivers/phy/qualcomm/phy-qcom-qmp-usb.c       |   3 +
+ drivers/phy/qualcomm/phy-qcom-qusb2.c         |  28 +++
+ 7 files changed, 260 insertions(+)
+
+
+base-commit: 28955f4fa2823e39f1ecfb3a37a364563527afbc
+-- 
+2.34.1
+
 
