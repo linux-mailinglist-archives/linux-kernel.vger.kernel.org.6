@@ -1,98 +1,87 @@
-Return-Path: <linux-kernel+bounces-408869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57BD29C8478
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:02:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2216A9C847A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:02:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13CAD284FF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:02:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAD7828521F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B29A1F7551;
-	Thu, 14 Nov 2024 08:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R7MJA6qU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2B01F5858;
+	Thu, 14 Nov 2024 08:02:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE5F1F472D
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30CB22611
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731571299; cv=none; b=V9NHs6ftdOI0hVGkhw8aeHBm8jQBJMYD5K8Eeci4D9Wn70Q/V5amkegef3p3ZAiq7ZYH5HxmEPJzWF4rfWcNusrSCpdilW6ynBXaytn7Q+jyKWfEHVS+iaPXBzKIskkoI/XSnC3fqjTVSP7FnER7B39/gYvJQglT3JGOq/S17tw=
+	t=1731571326; cv=none; b=Xb8QK457070jYl6rJo/2RqU92zd2HoIHkJrj8d01gGLooiiF1ordd1qr4TU0WOVxBPiPzJfT8POVsex6yunV2ylMgpfn5XpkO4hfL9y0j2Kcycxtz+tRnCtxU0kNdL18mP/wEhfn5fP4M4OyuOjt1obeBCHAv83GPis7oSt/RX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731571299; c=relaxed/simple;
-	bh=Qka/a3kZTQ8Mhjjbyc+iyeYQhIQ3WxkT3FKtU/EMAC0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aJAVv4NwmQU9WU6nd4zuALYkdIDjirN5Uz/MOo9yW273prwDBZLUsAx/TVqAiZMofpnq6g6V6oZQfUjb6Q2hLdUX6eY5qUG7rHvif5j/8/ZKua9UD7B359DDOCE4urBQ1SQiGpTMHe44TEYA9VC1F+WhK3XQDJTi6a6/U41VdfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R7MJA6qU; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731571297; x=1763107297;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Qka/a3kZTQ8Mhjjbyc+iyeYQhIQ3WxkT3FKtU/EMAC0=;
-  b=R7MJA6qUp6tbSsYH+iKgufshdRWXr6LuXS7dKNpswQ6oKfGo/Ctn1gsd
-   h45ebbtAwHYI0qjCOlEettJP95qrdBnMxOJeiuKx7e61RwpIn2XK08MGc
-   1O0GCDgovNnscSRHEGAz56ilhBE4A8iQAzgv7D/Wd+9xDNwdPZpmHKEKn
-   H8L5O17Wra8c9XzPmrIdfeLG9SfkY/YfokkN8D6NZy7nqFwonCO6cTfGX
-   iiVowtW2jto1oXbuIJsD7AgROU9Joevilg6yDH7ageGjua+7meUx5cizv
-   LNmgwq4K8gSycLnnqyImE3kuZeRoLcnPDNbUPl6oOoiZ9bIaqne4Sh1fF
-   w==;
-X-CSE-ConnectionGUID: P21K6D/yRciYEUBmLVdtwQ==
-X-CSE-MsgGUID: 64qhusjXQdiHOPdqi6dVXg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11255"; a="35291042"
-X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
-   d="scan'208";a="35291042"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 00:01:37 -0800
-X-CSE-ConnectionGUID: RSjFbsgUSK2aiPm6Jz9sow==
-X-CSE-MsgGUID: 29njlxtzRhaNQOaN1ECwEg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,153,1728975600"; 
-   d="scan'208";a="118942742"
-Received: from unknown (HELO [10.237.72.151]) ([10.237.72.151])
-  by orviesa002.jf.intel.com with ESMTP; 14 Nov 2024 00:01:36 -0800
-Message-ID: <6d3f1fd0-1ead-4a01-bb2d-8482f8c1799f@linux.intel.com>
-Date: Thu, 14 Nov 2024 10:01:35 +0200
+	s=arc-20240116; t=1731571326; c=relaxed/simple;
+	bh=WDYvRyvAY/tAXN49nAqsUWcZFM7exWHCT0vfyMZ+y+o=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qWYfxajce+Euk/nWA0FhF3IEbkEh2weFewZzs7JrxD69Z3Jp3kqUEqWSy+o+toiVhyrcPXXppdtopY2cWMo1boiVoJeI0BanfXvi1pTHD8QZDBD40OeFRDjHgJV2+xn/pv6G0vM6S+zZ88qWmzDk5BYhUrqDO8/sjE2286jA5e8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3c3ecaaabso4933045ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 00:02:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731571324; x=1732176124;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8C63pbKikR63X6q6+ORA9DKphbwUzHq5mk8VFFXiUsw=;
+        b=HJvRmMqz4BduVd916MxtbW+TJPhKfIz52W2EV/spbmNbLGAV4pCU6u3HjoFq4n79PK
+         IOSRAXUfhqDn29sr/Wi71eRA9tqBK/k5WFvPLYj6MvBykfImroEGaF6uyJpnZvE16CAJ
+         I8C57pWXr4BdELzYoV21U5+mwJuODaOWhSOuwfBmfuALkHJHQVuV5XOtW5C5dOz7qNh8
+         4z9u1OThDWFOKZcNgrxwMHd2KTfCeS9W2n+sIfk9oktKhrlXPRKF+mwJt/4SJu1Z939M
+         3K1BetF8QZ9mASTNsmL0DFXNLlK9paX1ekQ+ijZoHCePh/8svKg/54s1UJATRm/kiGSo
+         OsLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAEG89K0YkTmS+QP9iXQ7N9yutURJnasA8XPyfjqDHBrdp9WJWvYXkOVqAisPL3mjQ4l+iOa3YMnV6zVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmWs0jwa7CurjEJc2FWlcVlK3Q52wUnFjIqKgRFED2aWEdmMbS
+	iFqAh8VTgEaP8EzPzgCoazOOg1862UvSLYmUdI2gI/RDLxpeGFtDYLEALyL7qZsjrW369euBCVV
+	RlsxGAetzXxPRSGQXFqC7e82KyM/CGeHWj/5EV9L0iUZyS2LuRv83mws=
+X-Google-Smtp-Source: AGHT+IFMpWZcx+0zhMSQ3Us2BSh/ewkyJpVdS1ZdtuSj9SMnbIniHzoXXMPL3xV+GDa31wnprCTKYAnm6OKxcdwCSLemnZBi291f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/5] i3c: dw: Add quirk to address OD/PP timing issue
- on AMD platform
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Sanket.Goswami@amd.com, linux-i3c@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241108073323.523805-1-Shyam-sundar.S-k@amd.com>
- <20241108073323.523805-6-Shyam-sundar.S-k@amd.com>
-Content-Language: en-US
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-In-Reply-To: <20241108073323.523805-6-Shyam-sundar.S-k@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:c265:0:b0:3a4:db10:742d with SMTP id
+ e9e14a558f8ab-3a70c7f9043mr102731865ab.3.1731571323821; Thu, 14 Nov 2024
+ 00:02:03 -0800 (PST)
+Date: Thu, 14 Nov 2024 00:02:03 -0800
+In-Reply-To: <20241114025937.MnEIT%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6735ae7b.050a0220.1324f8.0093.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_set_new_buffer_uptodate
+From: syzbot <syzbot+453873f1588c2d75b447@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/8/24 9:33 AM, Shyam Sundar S K wrote:
-> The AMD Legacy I3C is having a problem with its IP, specifically with the
-> push-pull and open-drain pull-up registers. These registers need to be
-> manually programmed for every CCC submission to align with the duty cycle.
-> Therefore, add a quirk to address this issue.
-> 
-> Co-developed-by: Sanket Goswami <Sanket.Goswami@amd.com>
-> Signed-off-by: Sanket Goswami <Sanket.Goswami@amd.com>
-> Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-> ---
->   drivers/i3c/master/dw-i3c-master.c | 29 ++++++++++++++++++++++++++++-
->   drivers/i3c/master/dw-i3c-master.h |  1 +
->   2 files changed, 29 insertions(+), 1 deletion(-)
-> 
-Reviewed-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Hello,
+
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+
+Reported-by: syzbot+453873f1588c2d75b447@syzkaller.appspotmail.com
+Tested-by: syzbot+453873f1588c2d75b447@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         0a9b9d17 Merge tag 'pm-6.12-rc8' of git://git.kernel.o..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=12eb4b5f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=65582325943dbb6
+dashboard link: https://syzkaller.appspot.com/bug?extid=453873f1588c2d75b447
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=105eace8580000
+
+Note: testing is done by a robot and is best-effort only.
 
