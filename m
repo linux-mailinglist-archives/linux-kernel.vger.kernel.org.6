@@ -1,234 +1,133 @@
-Return-Path: <linux-kernel+bounces-409375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 538A59C8BEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:38:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6887C9C8C34
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:54:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D45921F221D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:38:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C82EB25BCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4413D0C5;
-	Thu, 14 Nov 2024 13:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16E518028;
+	Thu, 14 Nov 2024 13:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YMyXZRn+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="auEM5454"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E12C36AEC;
-	Thu, 14 Nov 2024 13:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A5C171C9
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731591434; cv=none; b=BubuXqjEyWZw5VJ5jmdRaYOB8uEhtgvRuatsgqnFWL7bZMPz8s7ZXY+/J5ittUQWxesGLBqS9wIp6yzyAjAgJ/NlRdem8wRjByRTgdxr9xjDFYTkWh49gG3QRtgWrfVPi7YhaFEzJ4doj+VLoFDYC3/uPbgYaS31QLPCtBEttkA=
+	t=1731591544; cv=none; b=koRnshjBpj9ptUX2OX6W0qb1RP1YarW6f9NKnI8eVFyaRxmczXmbswF0CQCe48gNNm3Helg5A5YN2panbVc/zR3BJVIPbDH5m00lhEyeJQQCV2Pdku2jUejgLDo4jfSEJSiKOWlmBCyARSrfGlGEsD7IR/xhtr+TexL2YCRapKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731591434; c=relaxed/simple;
-	bh=z0ibvP2+uFf2NigqDZN1BTPasnFxzj7OMV2W7BeLjtk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mJxQwScFpnlJU8nS2UaArzHOWxkGzoH+Vp4LtWurqjL4/9q0YhHuFQDiofopFv250GDqsDT2fBEZCwGtfONybCv26xwsQtgfcqSnPQFmk64XlwCZmj4FNx/sHH4jBC+jAlhGqOwOnYQbSfRWLvbAOHfVlz+632qswh2knFwpFzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YMyXZRn+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ED19C4CECD;
-	Thu, 14 Nov 2024 13:37:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731591434;
-	bh=z0ibvP2+uFf2NigqDZN1BTPasnFxzj7OMV2W7BeLjtk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=YMyXZRn+HhLi/gerWB9ktVwYFdfAs25Wg7SqUOYukeGHYtiLF7xV6skBVTiTL3Rcp
-	 TV8KqtXkh0DdkthCNQjd2uLcAFyGJjd8cp2XDas5PiinvVNsY6BbexjLIkc3oFcnXU
-	 mf6DAPGsIN7dnsEZ5gyBJECZOwJkgAPiP7U7U6RhimjYJRVSkk/JnR2/a6KysApXLb
-	 BQub3r5rJxPRh7bv2jSaWmJ9IWKzj2fYGIEBBsNkKUqZbSaSf4MKG+1YWqlxRnV1kV
-	 RCGHXxR0A5y9B3/z4uFPhn+5x+2ECXeQ8/YaqO+Y3Tl1dyYwYXZ3Y9LyzPN2PoRD/Q
-	 goIEG+szOkhRQ==
-From: Roger Quadros <rogerq@kernel.org>
-Date: Thu, 14 Nov 2024 15:36:53 +0200
-Subject: [PATCH net-next v4 2/2] net: ethernet: ti: am65-cpsw: enable DSCP
- to priority map for RX
+	s=arc-20240116; t=1731591544; c=relaxed/simple;
+	bh=3KSibIhh5D72qLuv7+J9ugRaTpaiOca/5e8P2qWxPfU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G5hgUwQauDUatNmRkk9QPOs+VQBfnLVb8rmy/WiAyNzMOPMldWjVIbF08j2xLX6A8m27TsJd2QpjdfiH0dHkz57QPlPjfa0OUX4+UOhbOj9IOZLfwjZxfI0i3BbLbw7LKrjSyLomLiwJ/bipkHnBJKrBZMnWXEDrEafoZmbTanY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=auEM5454; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539e4b7409fso561284e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 05:39:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731591541; x=1732196341; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=plbMqImFhCJ0rUEwt/xe5Y/dkXS3RPMYT6mE75jOpVE=;
+        b=auEM5454Mfac5QEExu45FsdTh5xnrX81g576Xr5PdPeOCobZMAXOjRNrw+5bvD298i
+         cEGLZDIUicOSa8rXHkKiD702OljEamN7MWHQHefIuQQNg6rNOmDM34NJbgTN8+4ysc7q
+         ZYRw7KA34lofju7aaTkwBUhNnpSvBfPoOBeVDjMJiYDqw6fcN2hChUJsCf+D9RKAeg/O
+         Rg1D2kXiwZpkU6GJnGHt17r5RsguI57PGDVGG+IIZSawngN2Sv9Iu33ghEomP5+a37MG
+         zNwHvb+iummuAv5/ma+NOuXOLlXu2vMpkRDLnKDE61mzOEy2irY89c2QzLjVcKOM8Khz
+         1owg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731591541; x=1732196341;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=plbMqImFhCJ0rUEwt/xe5Y/dkXS3RPMYT6mE75jOpVE=;
+        b=qnTNaQQADyKPma2l3hD4FyeWSRLKol2u0dmiyi5Gc40mhPGncMm/E1j2gqYC8+XGHb
+         XoWZJCUhz9dwRfRmpL+W+yd3tLE6co+3PLFEi98l8b13p71lKFjzqNQJEY+JgX5efrGo
+         sRsptslBQ6IOYIFeTywd5W8SvHjncD7y+i8fvSXOJK0VDJ7Z9BkzwsB/P4HA1Rx3/4NS
+         bj9A8Fx1ciJwAwjQs9KcVTQ/+3uaEWwix1NzHka5hNya6gkjIXwGgPwVOg7/KiiEkXHw
+         wqYy2/nB+vSKPR4Fh5fWTa4+2gjKlAUtqJyN34WFQYZnEBWmEt9/elTu3S6gKGorDypu
+         4cOA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2n+MjEnNVwOeuZgLelaPjIUj2tQEOeW4qqYiNwGsclk/vza3PQKneodu3/4pZDL9e+DXNnjeZQqWnJFI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdNbV1P2Ux10Yd1pbv4SFfWDw44nMISZsBXCtwQ2/N0eguoiwm
+	cLz0tewLJdMSD0qQdLl9OCLcWW7ao2vcDmwWqHKqRYIOWGctEu/NVCfm0y6/v6YeamA6dWo+yED
+	YFoLSFvCkDkBk0uRD/lthg5vGwO0=
+X-Google-Smtp-Source: AGHT+IEQJPPkaZenJ6oUItKeQ+Gc0nglFVvGLtAYAqzBmfCiIYqPyrENOvUqyilf8OxJD2ATIO6EG49gK5io82VJUDE=
+X-Received: by 2002:a05:6512:4014:b0:53d:8c0d:8513 with SMTP id
+ 2adb3069b0e04-53da47a57cbmr1114776e87.8.1731591540635; Thu, 14 Nov 2024
+ 05:39:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241114-am65-cpsw-multi-rx-dscp-v4-2-93eaf6760759@kernel.org>
-References: <20241114-am65-cpsw-multi-rx-dscp-v4-0-93eaf6760759@kernel.org>
-In-Reply-To: <20241114-am65-cpsw-multi-rx-dscp-v4-0-93eaf6760759@kernel.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, Guillaume Nault <gnault@redhat.com>
-Cc: linux-omap@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, srk@ti.com, Pekka Varis <p-varis@ti.com>, 
- Roger Quadros <rogerq@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4439; i=rogerq@kernel.org;
- h=from:subject:message-id; bh=z0ibvP2+uFf2NigqDZN1BTPasnFxzj7OMV2W7BeLjtk=;
- b=owEBbQKS/ZANAwAIAdJaa9O+djCTAcsmYgBnNf0AHuDqyqgGS25QnmggNIMqhYH+U6v67V6s6
- 1naCcHveWGJAjMEAAEIAB0WIQRBIWXUTJ9SeA+rEFjSWmvTvnYwkwUCZzX9AAAKCRDSWmvTvnYw
- kzFpEACgdyykrz7NgAUhIgedUGbQu5jwz8sRk6f3Et8ZW9z0yhi7zKnVYj/HNRCMToKKCP2Rnkr
- +rNmMbivrHQ4rC5/A01VYN52JkjVfQUqd7fM4d5YtjQPPDMgZOIXDhPxuDJGNRZTnol51gMnk+1
- W8htG14vcBpmE3xVgWc0jAYuT5XGJGYcTgwfFgV5IQRywoPeZzGBd8NCL1Ls8m6XWiHq/vxy625
- 7QgEsHhLkTyPAG7sE9B2EzTbQN3c+68affbNU999s+e6FC9FsoBgApZSiYWpb+vKOJEhspdBezQ
- TBb8xyykhL2HAEOWgegJX3VYme+PkeVYFJF4eqfnvAslLlSqnRplrUHHqaoqaUbDMCclU2AYL1e
- gr+AxygsJ7LAKlYUlI6kHNhjnm5tOgf5F5DkCRJ0qosk4VkQdEcX7C3YHLwL97QhmQRmWT37L89
- IkmHJILESNaS5++1KfZ8GSPZW9YXBDpfO6ePYl/h78Xcd5POzbe+6gAUuZhIIR4PaZmh6yoG1bD
- KYpOFSRLkUNh6ElXy1biOr09JvJgUAn0EFidgbEZo3x/e/RFRtRLHEJolQ/WXCqyDx+r/pg3m7W
- 7dRAwU4cNmIe97Xvhz4jSq2r6990JQEgwz9klGhI0U+pExsFLA6InpBbC0AgGsYHjtvFXwxa7u3
- 3Amydvz64lwxlvw==
-X-Developer-Key: i=rogerq@kernel.org; a=openpgp;
- fpr=412165D44C9F52780FAB1058D25A6BD3BE763093
+References: <20241016154152.1376492-1-feng.tang@intel.com> <20241016154152.1376492-2-feng.tang@intel.com>
+In-Reply-To: <20241016154152.1376492-2-feng.tang@intel.com>
+From: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Date: Thu, 14 Nov 2024 22:38:47 +0900
+Message-ID: <CAB=+i9TBMmq5EScWnNMHJAFqSxT3_wWkgJe20d3_w2D148gDVg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] mm/slub: Consider kfence case for get_orig_size()
+To: Feng Tang <feng.tang@intel.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Marco Elver <elver@google.com>, 
+	Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Danilo Krummrich <dakr@kernel.org>, Narasimhan.V@amd.com, linux-mm@kvack.org, 
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-AM65 CPSW hardware can map the 6-bit DSCP/TOS field to
-appropriate priority queue via DSCP to Priority mapping registers
-(CPSW_PN_RX_PRI_MAP_REG).
+On Thu, Oct 17, 2024 at 12:42=E2=80=AFAM Feng Tang <feng.tang@intel.com> wr=
+ote:
+>
+> When 'orig_size' of kmalloc object is enabled by debug option, it
+> should either contains the actual requested size or the cache's
+> 'object_size'.
+>
+> But it's not true if that object is a kfence-allocated one, and the
+> data at 'orig_size' offset of metadata could be zero or other values.
+> This is not a big issue for current 'orig_size' usage, as init_object()
+> and check_object() during alloc/free process will be skipped for kfence
+> addresses. But it could cause trouble for other usage in future.
+>
+> Use the existing kfence helper kfence_ksize() which can return the
+> real original request size.
+>
+> Signed-off-by: Feng Tang <feng.tang@intel.com>
+> ---
 
-Use a default DSCP to User Priority (UP) mapping as per
-https://datatracker.ietf.org/doc/html/rfc8325#section-4.3
-and
-https://datatracker.ietf.org/doc/html/rfc8622#section-11
+Looks good to me,
+Reviewed-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
 
-Signed-off-by: Roger Quadros <rogerq@kernel.org>
----
- drivers/net/ethernet/ti/am65-cpsw-nuss.c | 100 +++++++++++++++++++++++++++++++
- 1 file changed, 100 insertions(+)
-
-diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-index 0520e9f4bea7..8a6429aaded2 100644
---- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-+++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-@@ -71,6 +71,8 @@
- #define AM65_CPSW_PORT_REG_RX_PRI_MAP		0x020
- #define AM65_CPSW_PORT_REG_RX_MAXLEN		0x024
- 
-+#define AM65_CPSW_PORTN_REG_CTL			0x004
-+#define AM65_CPSW_PORTN_REG_DSCP_MAP		0x120
- #define AM65_CPSW_PORTN_REG_SA_L		0x308
- #define AM65_CPSW_PORTN_REG_SA_H		0x30c
- #define AM65_CPSW_PORTN_REG_TS_CTL              0x310
-@@ -94,6 +96,10 @@
- /* AM65_CPSW_PORT_REG_PRI_CTL */
- #define AM65_CPSW_PORT_REG_PRI_CTL_RX_PTYPE_RROBIN	BIT(8)
- 
-+/* AM65_CPSW_PN_REG_CTL */
-+#define AM65_CPSW_PN_REG_CTL_DSCP_IPV4_EN	BIT(1)
-+#define AM65_CPSW_PN_REG_CTL_DSCP_IPV6_EN	BIT(2)
-+
- /* AM65_CPSW_PN_TS_CTL register fields */
- #define AM65_CPSW_PN_TS_CTL_TX_ANX_F_EN		BIT(4)
- #define AM65_CPSW_PN_TS_CTL_TX_VLAN_LT1_EN	BIT(5)
-@@ -176,6 +182,99 @@ static void am65_cpsw_port_set_sl_mac(struct am65_cpsw_port *slave,
- 	writel(mac_lo, slave->port_base + AM65_CPSW_PORTN_REG_SA_L);
- }
- 
-+#define AM65_CPSW_DSCP_MAX	GENMASK(5, 0)
-+#define AM65_CPSW_PRI_MAX	GENMASK(2, 0)
-+#define AM65_CPSW_DSCP_PRI_PER_REG	8
-+#define AM65_CPSW_DSCP_PRI_SIZE		4	/* in bits */
-+static int am65_cpsw_port_set_dscp_map(struct am65_cpsw_port *slave, u8 dscp, u8 pri)
-+{
-+	int reg_ofs;
-+	int bit_ofs;
-+	u32 val;
-+
-+	if (dscp > AM65_CPSW_DSCP_MAX)
-+		return -EINVAL;
-+
-+	if (pri > AM65_CPSW_PRI_MAX)
-+		return -EINVAL;
-+
-+	/* 32-bit register offset to this dscp */
-+	reg_ofs = (dscp / AM65_CPSW_DSCP_PRI_PER_REG) * 4;
-+	/* bit field offset to this dscp */
-+	bit_ofs = AM65_CPSW_DSCP_PRI_SIZE * (dscp % AM65_CPSW_DSCP_PRI_PER_REG);
-+
-+	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
-+	val &= ~(AM65_CPSW_PRI_MAX << bit_ofs);	/* clear */
-+	val |= pri << bit_ofs;			/* set */
-+	writel(val, slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
-+
-+	return 0;
-+}
-+
-+static void am65_cpsw_port_enable_dscp_map(struct am65_cpsw_port *slave)
-+{
-+	int dscp, pri;
-+	u32 val;
-+
-+	/* Default DSCP to User Priority mapping as per:
-+	 * https://datatracker.ietf.org/doc/html/rfc8325#section-4.3
-+	 * and
-+	 * https://datatracker.ietf.org/doc/html/rfc8622#section-11
-+	 */
-+	for (dscp = 0; dscp <= AM65_CPSW_DSCP_MAX; dscp++) {
-+		switch (dscp) {
-+		case 56:	/* CS7 */
-+		case 48:	/* CS6 */
-+			pri = 7;
-+			break;
-+		case 46:	/* EF */
-+		case 44:	/* VA */
-+			pri = 6;
-+			break;
-+		case 40:	/* CS5 */
-+			pri = 5;
-+			break;
-+		case 34:	/* AF41 */
-+		case 36:	/* AF42 */
-+		case 38:	/* AF43 */
-+		case 32:	/* CS4 */
-+		case 26:	/* AF31 */
-+		case 28:	/* AF32 */
-+		case 30:	/* AF33 */
-+		case 24:	/* CS3 */
-+			pri = 4;
-+			break;
-+		case 18:	/* AF21 */
-+		case 20:	/* AF22 */
-+		case 22:	/* AF23 */
-+			pri = 3;
-+			break;
-+		case 16:	/* CS2 */
-+		case 10:	/* AF11 */
-+		case 12:	/* AF12 */
-+		case 14:	/* AF13 */
-+		case 0:		/* DF */
-+			pri = 0;
-+			break;
-+		case 8:		/* CS1 */
-+		case 1:		/* LE */
-+			pri = 1;
-+			break;
-+		default:
-+			pri = 0;
-+			break;
-+		}
-+
-+		am65_cpsw_port_set_dscp_map(slave, dscp, pri);
-+	}
-+
-+	/* enable port IPV4 and IPV6 DSCP for this port */
-+	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_CTL);
-+	val |= AM65_CPSW_PN_REG_CTL_DSCP_IPV4_EN |
-+		AM65_CPSW_PN_REG_CTL_DSCP_IPV6_EN;
-+	writel(val, slave->port_base + AM65_CPSW_PORTN_REG_CTL);
-+}
-+
- static void am65_cpsw_sl_ctl_reset(struct am65_cpsw_port *port)
- {
- 	cpsw_sl_reset(port->slave.mac_sl, 100);
-@@ -921,6 +1020,7 @@ static int am65_cpsw_nuss_ndo_slave_open(struct net_device *ndev)
- 	common->usage_count++;
- 
- 	am65_cpsw_port_set_sl_mac(port, ndev->dev_addr);
-+	am65_cpsw_port_enable_dscp_map(port);
- 
- 	if (common->is_emac_mode)
- 		am65_cpsw_init_port_emac_ale(port);
-
--- 
-2.34.1
-
+>  mm/slub.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/mm/slub.c b/mm/slub.c
+> index af9a80071fe0..1d348899f7a3 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -768,6 +768,9 @@ static inline unsigned int get_orig_size(struct kmem_=
+cache *s, void *object)
+>  {
+>         void *p =3D kasan_reset_tag(object);
+>
+> +       if (is_kfence_address(object))
+> +               return kfence_ksize(object);
+> +
+>         if (!slub_debug_orig_size(s))
+>                 return s->object_size;
+>
+> --
+> 2.27.0
+>
 
