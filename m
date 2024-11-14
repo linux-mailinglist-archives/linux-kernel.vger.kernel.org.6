@@ -1,74 +1,39 @@
-Return-Path: <linux-kernel+bounces-409552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ABE09C8E7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:42:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E33BD9C8E77
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:42:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF15B289912
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:42:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A71D92891EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737BA195811;
-	Thu, 14 Nov 2024 15:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Yo21kTQN"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DB81917C4;
-	Thu, 14 Nov 2024 15:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE9518E772;
+	Thu, 14 Nov 2024 15:35:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA5A5149C53;
+	Thu, 14 Nov 2024 15:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731598560; cv=none; b=DSb66T7F4hL/fSZr5anG/0uEaDLgeatkh4d3BiO//p7I4PM56+VuO2WhGKTLIhsVHMuKFWeiImJIejS9dr3LHdEsGR4Pc6DcebCcxhFpnIEbzrLGy9JHd5cxnQYuxho8sQZsEqlxIJ0PdTEX5AdQLDgjnq9bmLIDy8BUOJWrlPQ=
+	t=1731598532; cv=none; b=IuQAwOFVbdCe9v0rfrLzNbVdw7k5rOf5WnVauphGZJ0Rn/Npb0XkDoRYsVOY5fScHBIz+iJjMQGyG0WnFw2Tf8WHmkZQg72uvBQMj+a+AcnmQGtDqsamCwveRYgTHYixzDWnLfF49hbkLFoPeUtaU+jR7CGvdc6LPgVuxdlcfWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731598560; c=relaxed/simple;
-	bh=Xj/KHcG8gYRHoFDXwCtn2Qr7x9QzlGJfnFMEXKtUlkI=;
+	s=arc-20240116; t=1731598532; c=relaxed/simple;
+	bh=IT4Y74OkXGP7crFm1QoLu/BRJuwnmPvZBB2U0jdzxGs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f5GXQINF5WxuFmnThF8VqWDSbTmdvHnImVOhIqw5Qa2v8m9SG71Bj930O3Or7TTMtKbuxgbtDvI/iUN7Ll+1wvNBNJ1NNVAAE/l1fDeNBWWl/XeU4PYoAMmPWP/Q8Q4c3j1NHniZBQZKqTdRxcTJQIzqIRcDEy4ZF7nd57hDmho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Yo21kTQN; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AEDe26O003948;
-	Thu, 14 Nov 2024 15:35:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=4b2WT6
-	hUGU3GnqpVa+GvRu7VNTam6UXNHykx/b5eadw=; b=Yo21kTQN4ho/8SwuoJKheu
-	T64X4EFy6N6yBR2dlXHyqeOcroHKQf+wtZr7axDu6XZhnRZt3zSSgCbeO3wHlubE
-	CnD/V6RqbVbkpE3yqjVQ2/QUBTeBFxpIlgDWz4JHCHdYqLOo2DbM0ErPVHfqa5jy
-	IHJ0D4I6ChNS7iAurG8EqHK1KR/JAGZGZTMcAR//OoFOdcpAhUUJRBxCidhFgLtv
-	9dQLjRzlsEOS0KrR8F+jLaK91HMAAvcKTCwHbq0mMXalLJdWl+FOgahnB3hriY/n
-	dhd17cP3r37d4xaZxpVmxSZgXQ1YSkr6XqPp5Q1VTVNVT/yR7BNEx4BtidhxNrrA
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42wj9p0hb0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Nov 2024 15:35:52 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AECKQsP002765;
-	Thu, 14 Nov 2024 15:34:10 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42tms18dqy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Nov 2024 15:34:10 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AEFY6eT49283368
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 14 Nov 2024 15:34:06 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BBD9F20043;
-	Thu, 14 Nov 2024 15:34:06 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8C39F20040;
-	Thu, 14 Nov 2024 15:34:06 +0000 (GMT)
-Received: from [9.152.212.137] (unknown [9.152.212.137])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 14 Nov 2024 15:34:06 +0000 (GMT)
-Message-ID: <ae0f7492-412b-4506-9127-514577b33e7e@linux.ibm.com>
-Date: Thu, 14 Nov 2024 16:34:06 +0100
+	 In-Reply-To:Content-Type; b=FRrQL58tAFKo/QceAetQXFIBILtPyrYT3n/l4M2Jxc0VgNtkbCx05kfZcZFyYbUT5lU41aKhC99xA9fFZbH26lknv7XSHhW5Mhb1LAmQ4Qxb38ifV1ErMkwJU6FoVWm/6yorx77njehVgKqLvfXMzBm7/fySbLgHcetM9Zzg4hI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6827B169E;
+	Thu, 14 Nov 2024 07:35:57 -0800 (PST)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0A1FB3F59E;
+	Thu, 14 Nov 2024 07:35:16 -0800 (PST)
+Message-ID: <2621385c-6fcf-4035-a5a0-5427a08045c8@arm.com>
+Date: Thu, 14 Nov 2024 15:35:15 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,107 +41,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PING PATCH] perf/test: fix perf ftrace test on s390
-To: James Clark <james.clark@linaro.org>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org,
-        svens@linux.ibm.com
-Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
-        hca@linux.ibm.com
-References: <20241114090149.1489811-1-tmricht@linux.ibm.com>
- <b107d9a6-48b7-468d-b36e-da9c587b7953@linaro.org>
-Content-Language: en-US
-From: Thomas Richter <tmricht@linux.ibm.com>
-Organization: IBM
-In-Reply-To: <b107d9a6-48b7-468d-b36e-da9c587b7953@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: NpImJIsF-LnnozRiebymcqmlqhvwmb-i
-X-Proofpoint-GUID: NpImJIsF-LnnozRiebymcqmlqhvwmb-i
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1011
- spamscore=0 suspectscore=0 impostorscore=0 adultscore=0 bulkscore=0
- mlxlogscore=999 phishscore=0 priorityscore=1501 lowpriorityscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411140122
+Subject: Re: [PATCH RFCv1 0/7] vfio: Allow userspace to specify the address
+ for each MSI vector
+To: Alex Williamson <alex.williamson@redhat.com>,
+ Jason Gunthorpe <jgg@nvidia.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, tglx@linutronix.de, maz@kernel.org,
+ bhelgaas@google.com, leonro@nvidia.com,
+ shameerali.kolothum.thodi@huawei.com, dlemoal@kernel.org,
+ kevin.tian@intel.com, smostafa@google.com,
+ andriy.shevchenko@linux.intel.com, reinette.chatre@intel.com,
+ eric.auger@redhat.com, ddutile@redhat.com, yebin10@huawei.com,
+ brauner@kernel.org, apatel@ventanamicro.com,
+ shivamurthy.shastri@linutronix.de, anna-maria@linutronix.de,
+ nipun.gupta@amd.com, marek.vasut+renesas@mailbox.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, kvm@vger.kernel.org
+References: <cover.1731130093.git.nicolinc@nvidia.com>
+ <a63e7c3b-ce96-47a5-b462-d5de3a2edb56@arm.com>
+ <ZzPOsrbkmztWZ4U/@Asurada-Nvidia> <20241113013430.GC35230@nvidia.com>
+ <20241113141122.2518c55a.alex.williamson@redhat.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20241113141122.2518c55a.alex.williamson@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 11/14/24 12:09, James Clark wrote:
+On 13/11/2024 9:11 pm, Alex Williamson wrote:
+> On Tue, 12 Nov 2024 21:34:30 -0400
+> Jason Gunthorpe <jgg@nvidia.com> wrote:
 > 
-> 
-> On 14/11/2024 9:01 am, Thomas Richter wrote:
->> On s390 the perf test case ftrace sometimes fails as follows:
+>> On Tue, Nov 12, 2024 at 01:54:58PM -0800, Nicolin Chen wrote:
+>>> On Mon, Nov 11, 2024 at 01:09:20PM +0000, Robin Murphy wrote:
+>>>> On 2024-11-09 5:48 am, Nicolin Chen wrote:
+>>>>> To solve this problem the VMM should capture the MSI IOVA allocated by the
+>>>>> guest kernel and relay it to the GIC driver in the host kernel, to program
+>>>>> the correct MSI IOVA. And this requires a new ioctl via VFIO.
+>>>>
+>>>> Once VFIO has that information from userspace, though, do we really need
+>>>> the whole complicated dance to push it right down into the irqchip layer
+>>>> just so it can be passed back up again? AFAICS
+>>>> vfio_msi_set_vector_signal() via VFIO_DEVICE_SET_IRQS already explicitly
+>>>> rewrites MSI-X vectors, so it seems like it should be pretty
+>>>> straightforward to override the message address in general at that
+>>>> level, without the lower layers having to be aware at all, no?
+>>>
+>>> Didn't see that clearly!! It works with a simple following override:
+>>> --------------------------------------------------------------------
+>>> @@ -497,6 +497,10 @@ static int vfio_msi_set_vector_signal(struct vfio_pci_core_device *vdev,
+>>>                  struct msi_msg msg;
+>>>
+>>>                  get_cached_msi_msg(irq, &msg);
+>>> +               if (vdev->msi_iovas) {
+>>> +                       msg.address_lo = lower_32_bits(vdev->msi_iovas[vector]);
+>>> +                       msg.address_hi = upper_32_bits(vdev->msi_iovas[vector]);
+>>> +               }
+>>>                  pci_write_msi_msg(irq, &msg);
+>>>          }
+>>>   
+>>> --------------------------------------------------------------------
+>>>
+>>> With that, I think we only need one VFIO change for this part :)
 >>
->>    # ./perf test ftrace
->>    79: perf ftrace tests    : FAILED!
->>    #
+>> Wow, is that really OK from a layering perspective? The comment is
+>> pretty clear on the intention that this is to resync the irq layer
+>> view of the device with the physical HW.
 >>
->> The failure depends on the kernel .config file. Some configurarions
->> always work fine, some do not.  The ftrace profile test mostly fails,
->> because the ring buffer was not large enough, and some lines
->> (especially the interesting ones with nanosleep in it) where dropped.
+>> Editing the msi_msg while doing that resync smells bad.
 >>
->> To achieve success for all our tested kernel configurations, enlarge
->> the buffer to store the traces complete without wrapping.
->> The default buffer size is too small  for all kernel configurations.
->> Set the buffer size of /sys/kernel/tracing/buffer_size_kb to 16 MB
->>
->>
->> Output after:
->>    # ./perf test ftrace
->>    79: perf ftrace tests     : Ok
->>    #
->>
->> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
->> Suggested-by: Sven Schnelle <svens@linux.ibm.com>
->> ---
->>   tools/perf/tests/shell/ftrace.sh | 11 +++++++++++
->>   1 file changed, 11 insertions(+)
->>
->> diff --git a/tools/perf/tests/shell/ftrace.sh b/tools/perf/tests/shell/ftrace.sh
->> index a6ee740f0d7e..742d6b8f34d3 100755
->> --- a/tools/perf/tests/shell/ftrace.sh
->> +++ b/tools/perf/tests/shell/ftrace.sh
->> @@ -80,10 +80,21 @@ test_ftrace_profile() {
->>       echo "perf ftrace profile test  [Success]"
->>   }
->>   +if [ "$(uname -m)" = "s390x" ]
->> +then
->> +    ftrace_size=$(cat /sys/kernel/tracing/buffer_size_kb)
->> +    echo 16384 > /sys/kernel/tracing/buffer_size_kb
->> +fi
->> +
+>> Also, this is only doing MSI-X, we should include normal MSI as
+>> well. (it probably should have a resync too?)
 > 
-> It probably wouldn't be terrible to do this for all platforms to reduce fragmentation. It doesn't do any harm and it only added a few seconds to the test time even on a small Arm box, maybe it will prevent flakes everywhere else in the future. But I don't feel too strongly about this one.
-> 
->>   test_ftrace_list
->>   test_ftrace_trace
->>   test_ftrace_latency
->>   test_ftrace_profile
->>   +if [ "$(uname -m)" = "s390x" ]
->> +then
->> +    echo $ftrace_size > /sys/kernel/tracing/buffer_size_kb
->> +fi
->> +
-> 
-> Restoring the value should be in cleanup() so it works on interrupt too.
-> 
-> With that:
-> 
-> Reviewed-by: James Clark <james.clark@linaro.org>
-> 
+> This was added for a specific IBM HBA that clears the vector table
+> during a built-in self test, so it's possible the MSI table being in
+> config space never had the same issue, or we just haven't encountered
+> it.  I don't expect anything else actually requires this.
 
-Thanks for your feedback. Will do it and post v2
+Yeah, I wasn't really suggesting to literally hook into this exact case; 
+it was more just a general observation that if VFIO already has one 
+justification for tinkering with pci_write_msi_msg() directly without 
+going through the msi_domain layer, then adding another (wherever it 
+fits best) can't be *entirely* unreasonable.
 
--- 
-Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
---
-IBM Deutschland Research & Development GmbH
+At the end of the day, the semantic here is that VFIO does know more 
+than the IRQ layer, and does need to program the endpoint differently 
+from what the irqchip assumes, so I don't see much benefit in dressing 
+that up more than functionally necessary.
 
-Vorsitzender des Aufsichtsrats: Wolfgang Wendt
+>> I'd want Thomas/Marc/Alex to agree.. (please read the cover letter for
+>> context)
+> 
+> It seems suspect to me too.  In a sense it is still just synchronizing
+> the MSI address, but to a different address space.
+> 
+> Is it possible to do this with the existing write_msi_msg callback on
+> the msi descriptor?  For instance we could simply translate the msg
+> address and call pci_write_msi_msg() (while avoiding an infinite
+> recursion).  Or maybe there should be an xlate_msi_msg callback we can
+> register.  Or I suppose there might be a way to insert an irqchip that
+> does the translation on write.  Thanks,
 
-Geschäftsführung: David Faller
+I'm far from keen on the idea, but if there really is an appetite for 
+more indirection, then I guess the least-worst option would be yet 
+another type of iommu_dma_cookie to work via the existing 
+iommu_dma_compose_msi_msg() flow, with some interface for VFIO to update 
+per-device addresses directly. But then it's still going to need some 
+kind of "layering violation" for VFIO to poke the IRQ layer into 
+re-composing and re-writing a message whenever userspace feels like 
+changing an address, because we're fundamentally stepping outside the 
+established lifecycle of a kernel-managed IRQ around which said layering 
+was designed...
 
-Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
+Thanks,
+Robin.
 
