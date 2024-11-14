@@ -1,210 +1,100 @@
-Return-Path: <linux-kernel+bounces-409602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778499C8F0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:03:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD2BD9C8F14
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:03:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 059871F2584C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:03:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55CD21F25B85
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8DE1862B5;
-	Thu, 14 Nov 2024 16:01:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FDA15FA7B;
+	Thu, 14 Nov 2024 16:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="R/Z7jLgw"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Yp7/Xb1k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD01173336
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 16:01:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CD71420A8;
+	Thu, 14 Nov 2024 16:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731600111; cv=none; b=D50aR4qTgHWra+6/YjQ+hIuC7IXEQHs8Gwz6IuhEXQJ0RQZz/6DGkFsb7IsbY/iKwxaeT27C2a2k7DFpabDYaXLePHYzDOQ4WYxj4VPoPMw17vriQdUDesjcwpS9Rj5VNFxZUdKXFjbTvudlzInnRqnKNMC1ZXbVuFV9PMEGEwY=
+	t=1731600126; cv=none; b=tj7tkm2A2/XbXEpZySnrGHdGnOoQnzbXYkDNwOoijbl29TuK7Af3TKixFHnl8PRXdWk4Dsmaxf33/ZIwyw7hBTnJGYlCBa/ZbCVYisu+rQGFmqJVcbfzbzfJ7lynH7hT78Dk2f5QOiwohseLGMru0Ad1grC46jqAY7arxgE5ftM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731600111; c=relaxed/simple;
-	bh=2p5+br6JIn+rJJ5IqmSnGy2w4CU6wjDoK+kbpSR+fYo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZmjpiMyFXI1PJuH67mccH4MRg8N8dq5Ne4aCgyF2FoggUDSVOoggyQ5cooeCxZNmaxVCxq04pHKZi1bxRScIAJFb8nhYBAzu08oLRlhlrQ9/z2iJoURvF1CfCG27oNlxc7axn8ksc0Xd8Ej4Ax8Od/e10u0DChGxRo7ncWWxyUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=R/Z7jLgw; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d50fad249so593716f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:01:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1731600107; x=1732204907; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v2eGZqhXUh+UAPCtYMe67IF8Tywre6OlhMFZoVB/+W0=;
-        b=R/Z7jLgw6GjwTOKavaGh7PU/Li+/1L4Pj3r7vB9UkTHeVixHqP3Lk4vqANUkoh98Fu
-         cvTODdyAD6XzC/pgftgoXaS3MXLxmhhvtbq8jyTyGXCX3e/oSmy+A6ioJzuGkuqucFSZ
-         8QsqjJmq/6rSQsu3HmrI2gv+IwrNpzkRaJlg156dBjQWhfW+Aj+Bzh/zTouNW4wjQSOH
-         idu8/Mt0ZtwwPIUeGF4WhLtmJK0FfCbljX/1Jj0ZwXqzKGvrfxmCNm93g0asuByjHFUv
-         M16N3qyoWTV2/yCf3FmPNgUfWrz4AE4h/bbgI2skRkj4Kp2Dbp+PPzr/Vq8lxfNbSrT3
-         bqNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731600107; x=1732204907;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v2eGZqhXUh+UAPCtYMe67IF8Tywre6OlhMFZoVB/+W0=;
-        b=U8Ps2E6O2QcHKDHsOwNLLl7I4oiIXkVTW7/KchZ+tleh3hWfTWvUVOoSBBl3Ugzsqo
-         5SDzPuWs5IqZu+ucwiv8AUq75jt61Ij4As3Fp11Z+x74wQRtVlMDqLO4SNBUXqrvrbMU
-         s9AdCwELRHfxODSEkdfnnm2wCHjMP8iBteDXHpU2Q8VhLtb0uitFbnRIX7JtcRMgW6u+
-         Fs1N0HdW0mUb6AVIZ2F+fqDSwppnw9mpGpfsb3mX+N4GbUwr/IiykTmUEKDHggXr89zL
-         j8+ByOnL1gzjIaCBXeZXpCBlFAtKhlVodMEszZ2ZY22GaAq6ZM52QnRT8TxkLZ9J7VXD
-         n2ig==
-X-Forwarded-Encrypted: i=1; AJvYcCUXz3mqGoGlJll2eCJNnBzduLzrY/zLXhTK/nHXGItdj4pUHGf7X28o1LKabgMlOdWCUpggl3dxDg72sVQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxsu9LP5Z1necUYDuQnzwfzTpOPlJeo95O5ilQ06tRLu45BQSt3
-	GMQfMTun7CIFI+zFh85ggljmfZkIrx+7ukcsxze8zPHA5bzoZZCLSq3xIaIrsC0=
-X-Google-Smtp-Source: AGHT+IE41nl/kifwf5C3HD2lfOIE9l4CR33KFQ7CwfYgwG7tlg4gz09KKD06z7z6kibfjOlL9Rmy5w==
-X-Received: by 2002:a05:6000:1f82:b0:382:222b:1320 with SMTP id ffacd0b85a97d-382222b168dmr586958f8f.22.1731600105381;
-        Thu, 14 Nov 2024 08:01:45 -0800 (PST)
-Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-382200fe00esm1139024f8f.42.2024.11.14.08.01.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 08:01:45 -0800 (PST)
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Thu, 14 Nov 2024 16:01:15 +0000
-Subject: [PATCH 3/3] media: i2c: imx290: Add configuration for IMX462
+	s=arc-20240116; t=1731600126; c=relaxed/simple;
+	bh=VS84OE5xbCbtoGjEJe86AXMDZcLjjyOCrFf5UJkPv5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GB0MV1pd2kZ/NjyQK5sQ1K1G7I5FHqhk2HLPVSNYjoI5Rl3xYnDygTV2CODn/MJS2hKu8KEkj1o9B55kwur/0YnIDibXGOgTZ+LVppB0ha61G2ikmf2zAFb11NbP1chn2afTTY4iOlWkj5S/HWs7N+4m0dN8KnJidhgWaxPW/GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Yp7/Xb1k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC512C4CED0;
+	Thu, 14 Nov 2024 16:02:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1731600125;
+	bh=VS84OE5xbCbtoGjEJe86AXMDZcLjjyOCrFf5UJkPv5k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Yp7/Xb1kBh3F3QX4NTiTbx2Msm3PiCERUJGapnyxDghcRefRHmTXs/+fVfygWp4xI
+	 HjwAC/RQsmOF7BOdHwuWWZ7ocvnD428Bvf7VgC7FAD3YFk/14EoCtCjSq2F9Mb0WuV
+	 M7iMfm6SesUEvnX5sj/g/m5kAsBo+Tsbjow6yHY4=
+Date: Thu, 14 Nov 2024 17:02:01 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Parth Pancholi <parth105105@gmail.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Parth Pancholi <parth.pancholi@toradex.com>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: Re: [PATCH v2] kbuild: switch from lz4c to lz4 for compression
+Message-ID: <2024111442-yeast-flail-fcea@gregkh>
+References: <20241114145645.563356-1-parth105105@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241114-media-imx290-imx462-v1-3-c538a2e24786@raspberrypi.com>
-References: <20241114-media-imx290-imx462-v1-0-c538a2e24786@raspberrypi.com>
-In-Reply-To: <20241114-media-imx290-imx462-v1-0-c538a2e24786@raspberrypi.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241114145645.563356-1-parth105105@gmail.com>
 
-IMX462 is the successor to IMX290, and wants very minor
-changes to the register setup.
+On Thu, Nov 14, 2024 at 03:56:44PM +0100, Parth Pancholi wrote:
+> From: Parth Pancholi <parth.pancholi@toradex.com>
+> 
+> Replace lz4c with lz4 for kernel image compression.
+> Although lz4 and lz4c are functionally similar, lz4c has been deprecated
+> upstream since 2018. Since as early as Ubuntu 16.04 and Fedora 25, lz4
+> and lz4c have been packaged together, making it safe to update the
+> requirement from lz4c to lz4.
+> 
+> Consequently, some distributions and build systems, such as OpenEmbedded,
+> have fully transitioned to using lz4. OpenEmbedded core adopted this
+> change in commit fe167e082cbd ("bitbake.conf: require lz4 instead of
+> lz4c"), causing compatibility issues when building the mainline kernel
+> in the latest OpenEmbedded environment, as seen in the errors below.
+> 
+> This change also updates the LZ4 compression commands to make it backward
+> compatible by replacing stdin and stdout with the '-' option, due to some
+> unclear reason, the stdout keyword does not work for lz4 and '-' works for
+> both. In addition, this modifies the legacy '-c1' with '-9' which is also
+> compatible with both. This fixes the mainline kernel build failures with
+> the latest master OpenEmbedded builds associated with the mentioned
+> compatibility issues.
+> 
+> LZ4     arch/arm/boot/compressed/piggy_data
+> /bin/sh: 1: lz4c: not found
+> ...
+> ...
+> ERROR: oe_runmake failed
+> 
+> Cc: stable@vger.kernel.org
 
-Add the relevant configuration to support it.
+What bug does this resolve that it needs to be backported to stable
+kernels?
 
-Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
----
- drivers/media/i2c/imx290.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+thanks,
 
-diff --git a/drivers/media/i2c/imx290.c b/drivers/media/i2c/imx290.c
-index da654deb444a..f1780cc5d7cc 100644
---- a/drivers/media/i2c/imx290.c
-+++ b/drivers/media/i2c/imx290.c
-@@ -170,6 +170,8 @@ enum imx290_model {
- 	IMX290_MODEL_IMX290LQR,
- 	IMX290_MODEL_IMX290LLR,
- 	IMX290_MODEL_IMX327LQR,
-+	IMX290_MODEL_IMX462LQR,
-+	IMX290_MODEL_IMX462LLR,
- };
- 
- struct imx290_model_info {
-@@ -316,6 +318,50 @@ static const struct cci_reg_sequence imx290_global_init_settings_290[] = {
- 	{ CCI_REG8(0x33b3), 0x04 },
- };
- 
-+static const struct cci_reg_sequence imx290_global_init_settings_462[] = {
-+	{ CCI_REG8(0x300f), 0x00 },
-+	{ CCI_REG8(0x3010), 0x21 },
-+	{ CCI_REG8(0x3011), 0x02 },
-+	{ CCI_REG8(0x3016), 0x09 },
-+	{ CCI_REG8(0x3070), 0x02 },
-+	{ CCI_REG8(0x3071), 0x11 },
-+	{ CCI_REG8(0x309b), 0x10 },
-+	{ CCI_REG8(0x309c), 0x22 },
-+	{ CCI_REG8(0x30a2), 0x02 },
-+	{ CCI_REG8(0x30a6), 0x20 },
-+	{ CCI_REG8(0x30a8), 0x20 },
-+	{ CCI_REG8(0x30aa), 0x20 },
-+	{ CCI_REG8(0x30ac), 0x20 },
-+	{ CCI_REG8(0x30b0), 0x43 },
-+	{ CCI_REG8(0x3119), 0x9e },
-+	{ CCI_REG8(0x311c), 0x1e },
-+	{ CCI_REG8(0x311e), 0x08 },
-+	{ CCI_REG8(0x3128), 0x05 },
-+	{ CCI_REG8(0x313d), 0x83 },
-+	{ CCI_REG8(0x3150), 0x03 },
-+	{ CCI_REG8(0x317e), 0x00 },
-+	{ CCI_REG8(0x32b8), 0x50 },
-+	{ CCI_REG8(0x32b9), 0x10 },
-+	{ CCI_REG8(0x32ba), 0x00 },
-+	{ CCI_REG8(0x32bb), 0x04 },
-+	{ CCI_REG8(0x32c8), 0x50 },
-+	{ CCI_REG8(0x32c9), 0x10 },
-+	{ CCI_REG8(0x32ca), 0x00 },
-+	{ CCI_REG8(0x32cb), 0x04 },
-+	{ CCI_REG8(0x332c), 0xd3 },
-+	{ CCI_REG8(0x332d), 0x10 },
-+	{ CCI_REG8(0x332e), 0x0d },
-+	{ CCI_REG8(0x3358), 0x06 },
-+	{ CCI_REG8(0x3359), 0xe1 },
-+	{ CCI_REG8(0x335a), 0x11 },
-+	{ CCI_REG8(0x3360), 0x1e },
-+	{ CCI_REG8(0x3361), 0x61 },
-+	{ CCI_REG8(0x3362), 0x10 },
-+	{ CCI_REG8(0x33b0), 0x50 },
-+	{ CCI_REG8(0x33b2), 0x1a },
-+	{ CCI_REG8(0x33b3), 0x04 },
-+};
-+
- #define IMX290_NUM_CLK_REGS	2
- static const struct cci_reg_sequence xclk_regs[][IMX290_NUM_CLK_REGS] = {
- 	[IMX290_CLK_37_125] = {
-@@ -1455,6 +1501,20 @@ static const struct imx290_model_info imx290_models[] = {
- 		.max_analog_gain = 98,
- 		.name = "imx327",
- 	},
-+	[IMX290_MODEL_IMX462LQR] = {
-+		.colour_variant = IMX290_VARIANT_COLOUR,
-+		.init_regs = imx290_global_init_settings_462,
-+		.init_regs_num = ARRAY_SIZE(imx290_global_init_settings_462),
-+		.max_analog_gain = 98,
-+		.name = "imx462",
-+	},
-+	[IMX290_MODEL_IMX462LLR] = {
-+		.colour_variant = IMX290_VARIANT_MONO,
-+		.init_regs = imx290_global_init_settings_462,
-+		.init_regs_num = ARRAY_SIZE(imx290_global_init_settings_462),
-+		.max_analog_gain = 98,
-+		.name = "imx462",
-+	},
- };
- 
- static int imx290_parse_dt(struct imx290 *imx290)
-@@ -1653,6 +1713,12 @@ static const struct of_device_id imx290_of_match[] = {
- 	}, {
- 		.compatible = "sony,imx327lqr",
- 		.data = &imx290_models[IMX290_MODEL_IMX327LQR],
-+	}, {
-+		.compatible = "sony,imx462lqr",
-+		.data = &imx290_models[IMX290_MODEL_IMX462LQR],
-+	}, {
-+		.compatible = "sony,imx462llr",
-+		.data = &imx290_models[IMX290_MODEL_IMX462LLR],
- 	},
- 	{ /* sentinel */ },
- };
-
--- 
-2.34.1
-
+greg k-h
 
