@@ -1,129 +1,121 @@
-Return-Path: <linux-kernel+bounces-409572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B65649C8EAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:50:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C69B89C8EAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:50:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B94A2826BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:50:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85C4F281693
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FBBB17E44A;
-	Thu, 14 Nov 2024 15:41:29 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7873115C144;
+	Thu, 14 Nov 2024 15:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="YQETem0K";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GjaPlz4Z"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171D917C9F1
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7258813B288
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731598889; cv=none; b=SBkwVzuw3nC2EjgEDRdr3/cnfsbv5ngwh6U20yGrWYMFV2TREXhbxa8nNeRx3pTWouYKOmeDImL2IifhhALUHrI161b8zOTG6FPtAQOE+GF7sz2GSpdFSuLvgCfTOsgYeA9FV/DayAfXYtpIqtE77csAlK6tiaY0NEX9+lSwCEQ=
+	t=1731598959; cv=none; b=uTda8+dX6jgvrxAAmgPFfWjNLrFpIF6vhL89qkd0bB8AGpJ6+7hVW0rGoV5OPKtd3qS7GJgo/yt3c7Rx4aPQNo7XyB5xsP2yDXLjgGbq+BbUHc0dRpMkld/ZKbH41cazbts6Zd7A0AgIll1a6/fAQCqodrozpzRSc6/OAhdMqEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731598889; c=relaxed/simple;
-	bh=iGTk764dXrLuE3LmiA7X/sZSzRU69Oj0frD+5Y6PZlQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=gx/ZrLisZlsQ1VccTUxbemKqu3XvYC5HEZNFzskn2S+DUnlWar+HmcM9D2Qg1KxpIc9DT1r5hHfCRbGvXZR1I+8cOWslPXGqYiGaNDTJrixJIuXXgtt7AX3krLQlHC2ZYudtXFV5vVAqtcgMpovjcTeGnfxkBTItEvQHVbP+ETc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDC51C4CECD;
-	Thu, 14 Nov 2024 15:41:27 +0000 (UTC)
-Date: Thu, 14 Nov 2024 10:41:49 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [GIT PULL] ring-buffer: Revert previous fix as it wasn't the actual
- fix
-Message-ID: <20241114104149.1da4f584@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731598959; c=relaxed/simple;
+	bh=DIOlaexXWBpXt5ZOxzCBof5ZqDcQG3H+YoruoWb52YA=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=aklopP4vojFZqU6Rc9TjkiH9NyLsXktPtyOd/UeGpUrRvo5lJG1C+HO4IsMjcgKV2xbzGyCL/JYJtyiXXsIsYddmTOX5Z+2iYgnpGJEFaqGRm7HCXmURg/5edGfiYf460MJhRbG60ITf2okEtqfMVdXwCiN6h/y4rI0vNcxJ6s4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=YQETem0K; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GjaPlz4Z; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 5D9E2138026B;
+	Thu, 14 Nov 2024 10:42:36 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Thu, 14 Nov 2024 10:42:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1731598956;
+	 x=1731685356; bh=AbcZDy48H7U/Pt6qnMvR1gC8GiMBry3sfz5Sp6m/oeY=; b=
+	YQETem0KYVVXgGMNpr9rjjv4q+HpRSneAByExeTrKrhrJa9/8QPGkZCVwaDeXqWr
+	7LL2u7rIt9S+u7juI1aXq25sU3dgiyXb43mf4sQ3mwgRM5tFtbCGtsh8Nam/nK/1
+	dHD4Pd2v3csSTI316imswRaP0aoxzr4clrP15GaiAAFH476gDMYaDCpm5MofrSW4
+	6S54UBA+N10WGBy/HcFI6tcyHM1yroPtbh4pRn9SZO3HIhsDSNsg2s+OnfZtA9fC
+	9aDk3qz5KdiKljLCDTHSABdXyBsHb0RSY9O2RNLOdnxBsdFmmNTETWP/LsDHA+RQ
+	afAAX9uFZqLr63FiU/xlFg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731598956; x=
+	1731685356; bh=AbcZDy48H7U/Pt6qnMvR1gC8GiMBry3sfz5Sp6m/oeY=; b=G
+	jaPlz4ZY5d2ywyPSduy+xZR9YbzSYQp5wJlKAVpp+ph/nEylVZI9lNm1RzG2CRMy
+	S2Ie1qqz6sxRrf8esjHaPfeb7UQlfJSZQcey0Hhd7gwFtA7rOUz3oj64s3rOiV4B
+	sFn6KyAHxvBCP+JXUeCEH4AOkDi1VMw2lk1Ij+Kl/TvLmjTj5XUnvGrbfiAjQb76
+	ARZPHXt/05Q7Y8GzpSMIffW4HebT+8z0bnFiLbWrmQoHNSllpcOefV81bGL3RLpX
+	1JyLb5Bjav0trKl+ECVqgvrIpytdD4BcaI/EmcPYCDPNoW21izsH/wz8++ffC7ls
+	gy+PclURJ5TdmJMCWIMtg==
+X-ME-Sender: <xms:axo2Z0DRIqKtIAPOyOs8U-TUbCrYzH2-doyA-d_9wuy3sU9lCNhRyA>
+    <xme:axo2Z2i0yP-gJP-IC-euBFn-yyQGk3VnmWh8UF69SVxoo7zDDP9z5x249ELC4S4_U
+    enX4y-HHjHo2m0ZbV0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddvgdejlecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
+    gvqeenucggtffrrghtthgvrhhnpeeiffetvedutdeufeetkedtieffhffftdfgkeetudet
+    teetvdfgfeefjeehffduueenucffohhmrghinhephihouhhtuhgsvgdrtghomhenucevlh
+    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghr
+    nhgusgdruggvpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopehmphgvsegvlhhlvghrmhgrnhdrihgurdgruhdprhgtphhtthhopehgvggvrhht
+    sehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlihhnuhigphhptgdquggvvh
+    eslhhishhtshdrohiilhgrsghsrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
+    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:axo2Z3mYyrFdkTit_pHCoxS9H0leduW8mQj944RXPaD4zORmHd5SQg>
+    <xmx:axo2Z6wNr3qxy8KnoPCD5XubldZzLdnZqoCTZ_Xb4DiAnDbhhPeBOg>
+    <xmx:axo2Z5QepYFmFcfZGEAWgfrZ13KZmShfNLtt5fX62-1xpCKDIF8oFQ>
+    <xmx:axo2Z1aZHZZvk0Fv36neu1STufAamh9q5lwZ_tdhngRaHrhS7xVTxg>
+    <xmx:bBo2Z7eTIzXILtaHEBCIZNLtPsbhF-o4P3arZu_GspVv2bAqOHH1mjsA>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 784512220071; Thu, 14 Nov 2024 10:42:35 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Date: Thu, 14 Nov 2024 16:42:15 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Michael Ellerman" <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, "Geert Uytterhoeven" <geert@linux-m68k.org>
+Message-Id: <ecb9d449-85dd-4ca5-a58b-43244b7c0765@app.fastmail.com>
+In-Reply-To: <20241114131114.602234-8-mpe@ellerman.id.au>
+References: <20241114131114.602234-1-mpe@ellerman.id.au>
+ <20241114131114.602234-8-mpe@ellerman.id.au>
+Subject: Re: [RFC PATCH 08/10] macintosh: Remove ADB_MACIO
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
+On Thu, Nov 14, 2024, at 14:11, Michael Ellerman wrote:
+> 
+> -config ADB_MACIO
+> -	bool "Include MacIO (CHRP) ADB driver"
+> -	depends on ADB && PPC_CHRP && !PPC_PMAC64
 
+The dependency looked weird to me, so I had to look up
+what that thing is. Apparently this originally had a PPC_PMAC
+dependency instead of PPC_CHRP, which explains the !PPC_PMAC64
+part.
 
-Linus,
+I also found the promotional video from 1996 at
+https://www.youtube.com/watch?v=NrvrIEPeSNA .
 
-Revert: "ring-buffer: Do not have boot mapped buffers hook to CPU hotplug"
-
-- A crash that happened on cpu hotplug was actually caused by the incorrect
-  ref counting that was fixed by commit 2cf9733891a4 ("ring-buffer: Fix
-  refcount setting of boot mapped buffers"). The removal of calling cpu
-  hotplug callbacks on memory mapped buffers was not an issue even though
-  the tests at the time pointed toward it. But in fact, there's a check in
-  that code that tests to see if the buffers are already allocated or not,
-  and will not allocate them again if they are. Not calling the cpu hotplug
-  callbacks ended up not initializing the non boot CPU buffers.
-
-  Simply remove that change.
-
-
-Please pull the latest trace-ringbuffer-v6.12-rc7 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace-ringbuffer-v6.12-rc7
-
-Tag SHA1: 81ccc26cac30f76e5fb6d76aec178677c3e209ad
-Head SHA1: 580bb355bcae7e9a6606ce9644af09b2a793f1bb
-
-
-Steven Rostedt (1):
-      Revert: "ring-buffer: Do not have boot mapped buffers hook to CPU hotplug"
-
-----
- kernel/trace/ring_buffer.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
----------------------------
-commit 580bb355bcae7e9a6606ce9644af09b2a793f1bb
-Author: Steven Rostedt <rostedt@goodmis.org>
-Date:   Wed Nov 13 23:08:39 2024 -0500
-
-    Revert: "ring-buffer: Do not have boot mapped buffers hook to CPU hotplug"
-    
-    A crash happened when testing cpu hotplug with respect to the memory
-    mapped ring buffers. It was assumed that the hot plug code was adding a
-    per CPU buffer that was already created that caused the crash. The real
-    problem was due to ref counting and was fixed by commit 2cf9733891a4
-    ("ring-buffer: Fix refcount setting of boot mapped buffers").
-    
-    When a per CPU buffer is created, it will not be created again even with
-    CPU hotplug, so the fix to not use CPU hotplug was a red herring. In fact,
-    it caused only the boot CPU buffer to be created, leaving the other CPU
-    per CPU buffers disabled.
-    
-    Revert that change as it was not the culprit of the fix it was intended to
-    be.
-    
-    Cc: Masami Hiramatsu <mhiramat@kernel.org>
-    Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-    Link: https://lore.kernel.org/20241113230839.6c03640f@gandalf.local.home
-    Fixes: 912da2c384d5 ("ring-buffer: Do not have boot mapped buffers hook to CPU hotplug")
-    Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 3ea4f7bb1837..5807116bcd0b 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -2337,12 +2337,9 @@ static struct trace_buffer *alloc_buffer(unsigned long size, unsigned flags,
- 	if (!buffer->buffers[cpu])
- 		goto fail_free_buffers;
- 
--	/* If already mapped, do not hook to CPU hotplug */
--	if (!start) {
--		ret = cpuhp_state_add_instance(CPUHP_TRACE_RB_PREPARE, &buffer->node);
--		if (ret < 0)
--			goto fail_free_buffers;
--	}
-+	ret = cpuhp_state_add_instance(CPUHP_TRACE_RB_PREPARE, &buffer->node);
-+	if (ret < 0)
-+		goto fail_free_buffers;
- 
- 	mutex_init(&buffer->mutex);
- 
+     Arnd
 
