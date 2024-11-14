@@ -1,102 +1,146 @@
-Return-Path: <linux-kernel+bounces-409038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4ADE9C86B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:01:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A39F9C86B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:00:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23130B2ADE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:59:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10EFC1F266B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA8F1F77AF;
-	Thu, 14 Nov 2024 09:57:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9981F818E;
+	Thu, 14 Nov 2024 09:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="S4kke8GP"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46FC1F76AA;
-	Thu, 14 Nov 2024 09:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="GzsU5z4q"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7B71F80D2;
+	Thu, 14 Nov 2024 09:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731578255; cv=none; b=TPiyVa1jXFm4d09tgAuhiOyfDWXd0dtJ/dyk0gg5JgevfzjYqSW1agym3hqJA7SQBLo4sFbJsv+ajsrxOV6ezIharDoC7YoGbuG6c1BHsf86jvogSY3hNHCoXtreCRxnH1SoXtzk4Ehg5QdWzceJyZp5/2g65SjYr8pcYb4LZZg=
+	t=1731578292; cv=none; b=s0kke8dWRpfgWjmuBziS5BbyNx235mOdoSe6VOLCgdy7qbfQI+QpIo9N0ST0R9mLXsTcl1Chf2nggJxoeBYCwPq5RtsT+hJN9vvgz7wgruaLqxT/MkyfNTYmqDaKuALsqNTzVVtrfpg+Xd9PSb+iS5MZtE2CMxTb1AtduaKX1kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731578255; c=relaxed/simple;
-	bh=dl3f5V0GYfQ9H8usR6Gzm7s8YCR4Yk1aiQKw0lRR8Hg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=LhlU+BBFC/29rHL1R0ec+teCL7UlfHzSh1WYKp2Gnl2whj0x6h/KePRySXLlW8UoboMadbXhSh2V7Y9YDvNWaD+nCjvKSna6ofT+9ciEWSYUGZIRmusoKu7cleZHMqOPt25jgZhCBu6/MkMvIbaiHjFGF2v3MbPks6x6HRov3bI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=S4kke8GP reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=k1S/3BU8Zb5jgvsFwcgiEGk5aCzAh4QhHc+14jg67x8=; b=S
-	4kke8GPsTrrwTy6GOB3WU19VU7uRGFhTZNLdK9PDsWKaQE99G6ybxNY/PNFwDm+v
-	+YmF3frFqtTZjpZ9J2GrVjWKcBunC2HWGAb7BP0Iy3yuTATQ+Q3AJk3CmLiCw6uw
-	vp7JVGUC7PjJijpn9l0buFGgcq4hJ4kLFoQjF6wuRQ=
-Received: from 00107082$163.com ( [111.35.191.191] ) by
- ajax-webmail-wmsvr-40-106 (Coremail) ; Thu, 14 Nov 2024 17:56:57 +0800
- (CST)
-Date: Thu, 14 Nov 2024 17:56:57 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Paolo Abeni" <pabeni@redhat.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net/core/net-procfs: use seq_put_decimal_ull_width()
- for decimal values in /proc/net/dev
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <9e64f1ca-844f-47ec-8555-4ac1e409ec16@redhat.com>
-References: <20241110045221.4959-1-00107082@163.com>
- <9e64f1ca-844f-47ec-8555-4ac1e409ec16@redhat.com>
-X-NTES-SC: AL_Qu2YA/mct0oq4SOfZekXn0oTju85XMCzuv8j3YJeN500uCTo1SQ7cm9xHF/0+s6kCymhoAiRfBJQzsBob6pgeYnyvp1u4mGArd3gN7727wAl
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1731578292; c=relaxed/simple;
+	bh=crWZ1ze4cMR+zy2qScv/YRPHFpCp1d0+ehs6EwVQoH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q27iP0f6JLaPCX2aFGY3IUVtH6aihnuhJnkcQH4OzC0Qck4SEGLR8O26Iv+aGzegFU3k6QSSZCYzwknumz1Q6N2+GshccFS8U4fYeJ76pV/HNMTsXMUmhk25WH+WAmxX0Hu4ZSoV/WY5nMFJx07iD0yryoiBy9sOJ8+0lBYBp9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=GzsU5z4q; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id CC6FE1F967;
+	Thu, 14 Nov 2024 10:57:58 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1731578279;
+	bh=shuvYLY0wGIkdQPmLkGeU/39Ky+W1R7sgHWYS0+iKIo=; h=From:To:Subject;
+	b=GzsU5z4qaNTVEELKRIjILt6VvxTKUkxuZPAPw+19LBfnaIlsK/caxKH0LHa/yEXng
+	 qEETAAoG4FesVCxa4/cSIlamevbPQonV6rRPlLhhiAkPUGZTeAkZET+eYz0wORsROX
+	 3IlL+4Lj+SdU0IsLlmSDEcuttt3cMKZG7P6EPZUoYz6RfqFn6WfXpGYDuP5+MXlm8/
+	 cM5VGFu4ui/rd9Wsa59YRJrKInjfNUonM1zwxVRJA0JYveoiTYLT5poNQRCOtPechh
+	 olB25m6qLs1Twod2DEEMdSbDbEmPAV6sLGgDLFM9JXtoR0HyAg9w+lib8vfsP3+FGl
+	 kwSzFH58GdJ2g==
+Date: Thu, 14 Nov 2024 10:57:54 +0100
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v1] drm/bridge: tc358768: Fix DSI command tx
+Message-ID: <20241114095754.GA23530@francesco-nb>
+References: <20240926141246.48282-1-francesco@dolcini.it>
+ <e28f88ca-357b-4751-8b37-c324ff40f9f5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <309370ca.9ca1.1932a1ac39d.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:aigvCgAHYKFqyTVnFO4mAA--.55402W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqQmXqmc1u4ZyjgAFsL
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e28f88ca-357b-4751-8b37-c324ff40f9f5@linaro.org>
 
-CgpBdCAyMDI0LTExLTE0IDE3OjE3OjMyLCAiUGFvbG8gQWJlbmkiIDxwYWJlbmlAcmVkaGF0LmNv
-bT4gd3JvdGU6Cj4KPgo+T24gMTEvMTAvMjQgMDU6NTIsIERhdmlkIFdhbmcgd3JvdGU6Cj4+IHNl
-cV9wcmludGYoKSBpcyBjb3N0eSwgd2hlbiByZWFkaW5nIC9wcm9jL25ldC9kZXYsIHByb2ZpbGlu
-ZyBpbmRpY2F0ZXMKPj4gYWJvdXQgMTMlIHNhbXBsZXMgb2Ygc2VxX3ByaW50ZigpOgo+PiAJZGV2
-X3NlcV9zaG93KDk4LjM1MCUgNDI4MDQ2LzQzNTIyOSkKPj4gCSAgICBkZXZfc2VxX3ByaW50Zl9z
-dGF0cyg5OS43NzclIDQyNzA5Mi80MjgwNDYpCj4+IAkJZGV2X2dldF9zdGF0cyg4Ni4xMjElIDM2
-NzgxNC80MjcwOTIpCj4+IAkJICAgIHJ0bDgxNjlfZ2V0X3N0YXRzNjQoOTguNTE5JSAzNjIzNjUv
-MzY3ODE0KQo+PiAJCSAgICBkZXZfZmV0Y2hfc3dfbmV0c3RhdHMoMC41NTQlIDIwMzgvMzY3ODE0
-KQo+PiAJCSAgICBsb29wYmFja19nZXRfc3RhdHM2NCgwLjI1MCUgOTE5LzM2NzgxNCkKPj4gCQkg
-ICAgZGV2X2dldF90c3RhdHM2NCgwLjA3NyUgMjg0LzM2NzgxNCkKPj4gCQkgICAgbmV0ZGV2X3N0
-YXRzX3RvX3N0YXRzNjQoMC4wNTElIDE4OS8zNjc4MTQpCj4+IAkJICAgIF9maW5kX25leHRfYml0
-KDAuMDI5JSAxMDYvMzY3ODE0KQo+PiAJCXNlcV9wcmludGYoMTMuNzE5JSA1ODU5NC80MjcwOTIp
-Cj4+IEFuZCBvbiBhIHN5c3RlbSB3aXRoIG9uZSB3aXJlbGVzcyBpbnRlcmZhY2UsIHRpbWluZyBm
-b3IgMSBtaWxsaW9uIHJvdW5kcyBvZgo+PiBzdHJlc3MgcmVhZGluZyAvcHJvYy9uZXQvZGV2Ogo+
-PiAJcmVhbAkwbTUxLjgyOHMKPj4gCXVzZXIJMG0wLjIyNXMKPj4gCXN5cwkwbTUxLjY3MXMKPj4g
-T24gYXZlcmFnZSwgcmVhZGluZyAvcHJvYy9uZXQvZGV2IHRha2VzIH4wLjA1MW1zCj4+IAo+PiBX
-aXRoIHRoaXMgcGF0Y2gsIGV4dHJhIGNvc3RzIHBhcnNpbmcgZm9ybWF0IHN0cmluZyBieSBzZXFf
-cHJpbnRmKCkgY2FuIGJlCj4+IG9wdGltaXplZCBvdXQsIGFuZCB0aGUgdGltaW5nIGZvciAxIG1p
-bGxpb24gcm91bmRzIG9mIHJlYWQgaXM6Cj4+IAlyZWFsCTBtNDkuMTI3cwo+PiAJdXNlcgkwbTAu
-Mjk1cwo+PiAJc3lzCTBtNDguNTUycwo+PiBPbiBhdmVyYWdlLCB+MC4wNDhtcyByZWFkaW5nIC9w
-cm9jL25ldC9kZXYsIGEgfjYlIGltcHJvdmVtZW50Lgo+PiAKPj4gRXZlbiB0aG91Z2ggZGV2X2dl
-dF9zdGF0cygpIHRha2VzIHVwIHRoZSBtYWpvcml0eSBvZiB0aGUgcmVhZGluZyBwcm9jZXNzLAo+
-PiB0aGUgaW1wcm92ZW1lbnQgaXMgc3RpbGwgc2lnbmlmaWNhbnQ7Cj4+IEFuZCB0aGUgaW1wcm92
-ZW1lbnQgbWF5IHZhcnkgd2l0aCB0aGUgcGh5c2ljYWwgaW50ZXJmYWNlIG9uIHRoZSBzeXN0ZW0u
-Cj4+IAo+PiBTaWduZWQtb2ZmLWJ5OiBEYXZpZCBXYW5nIDwwMDEwNzA4MkAxNjMuY29tPgo+Cj5J
-ZiB0aGUgdXNlci1zcGFjZSBpcyBjb25jZXJuZWQgd2l0aCBwZXJmb3JtYW5jZXMsIGl0IG11c3Qg
-dXNlIG5ldGxpbmsuCj5PcHRpbWl6aW5nIGEgbGVnYWN5IGludGVyZmFjZSBnaXZlcyBJTUhPIGEg
-dmVyeSB3cm9uZyBtZXNzYWdlLgo+Cj5JJ20gc29ycnksIEkgdGhpbmsgd2Ugc2hvdWxkIG5vdCBh
-Y2NlcHQgdGhpcyBjaGFuZ2UuCgpJdCdzIE9LLiAKSSBoYXZlIGJlZW4gdXNpbmcgL3Byb2MvbmV0
-L2RldiB0byBnYXVnZSB0aGUgdHJhbnNtaXQvcmVjZWl2ZSByYXRlIGZvciBlYWNoIGludGVyZmFj
-ZSwKIGFuZCAvcHJvYy9uZXQvbmV0c3RhdCBmb3IgYWJub3JtYWxpdGllcyBpbiBteSBtb25pdG9y
-aW5nIHRvb2xzLiAgSSBndWVzcyBteSBrbm93bGVkZ2UgYXJlIHF1aXRlIG91dCBvZiBkYXRlIG5v
-dywKSSB3aWxsIGxvb2sgaW50byBuZXRsaW5rOyBBbmQgdGhhbmtzIGZvciBpbmZvcm1hdGlvbi4K
-Cj4KPi9QCgpUaGFua3MKRGF2aWQK
+Hello Neil,
+
+On Wed, Oct 23, 2024 at 10:03:20AM +0200, Neil Armstrong wrote:
+> On 26/09/2024 16:12, Francesco Dolcini wrote:
+> > From: Francesco Dolcini <francesco.dolcini@toradex.com>
+> > 
+> > Wait for the command transmission to be completed in the DSI transfer
+> > function polling for the dc_start bit to go back to idle state after the
+> > transmission is started.
+> > 
+> > This is documented in the datasheet and failures to do so lead to
+> > commands corruption.
+> > 
+> > Fixes: ff1ca6397b1d ("drm/bridge: Add tc358768 driver")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> > ---
+> >   drivers/gpu/drm/bridge/tc358768.c | 21 +++++++++++++++++++--
+> >   1 file changed, 19 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/bridge/tc358768.c b/drivers/gpu/drm/bridge/tc358768.c
+> > index 0e8813278a2f..bb1750a3dab0 100644
+> > --- a/drivers/gpu/drm/bridge/tc358768.c
+> > +++ b/drivers/gpu/drm/bridge/tc358768.c
+> > @@ -125,6 +125,9 @@
+> >   #define TC358768_DSI_CONFW_MODE_CLR	(6 << 29)
+> >   #define TC358768_DSI_CONFW_ADDR_DSI_CONTROL	(0x3 << 24)
+> > +/* TC358768_DSICMD_TX (0x0600) register */
+> > +#define TC358768_DSI_CMDTX_DC_START	BIT(0)
+> > +
+> >   static const char * const tc358768_supplies[] = {
+> >   	"vddc", "vddmipi", "vddio"
+> >   };
+> > @@ -229,6 +232,21 @@ static void tc358768_update_bits(struct tc358768_priv *priv, u32 reg, u32 mask,
+> >   		tc358768_write(priv, reg, tmp);
+> >   }
+> > +static void tc358768_dsicmd_tx(struct tc358768_priv *priv)
+> > +{
+> > +	u32 val;
+> > +
+> > +	/* start transfer */
+> > +	tc358768_write(priv, TC358768_DSICMD_TX, TC358768_DSI_CMDTX_DC_START);
+> > +	if (priv->error)
+> > +		return;
+> > +
+> > +	/* wait transfer completion */
+> > +	priv->error = regmap_read_poll_timeout(priv->regmap, TC358768_DSICMD_TX, val,
+> > +					       (val & TC358768_DSI_CMDTX_DC_START) == 0,
+> > +					       100, 100000);
+> > +}
+> > +
+> >   static int tc358768_sw_reset(struct tc358768_priv *priv)
+> >   {
+> >   	/* Assert Reset */
+> > @@ -516,8 +534,7 @@ static ssize_t tc358768_dsi_host_transfer(struct mipi_dsi_host *host,
+> >   		}
+> >   	}
+> > -	/* start transfer */
+> > -	tc358768_write(priv, TC358768_DSICMD_TX, 1);
+> > +	tc358768_dsicmd_tx(priv);
+> >   	ret = tc358768_clear_error(priv);
+> >   	if (ret)
+> 
+> Look good, I'll leave it here a few days if someone has comments
+
+Just a gently reminder, thanks
+
+> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+
+Francesco
+
 
