@@ -1,112 +1,98 @@
-Return-Path: <linux-kernel+bounces-410028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E0369C95BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:03:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 401D79C95C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:06:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02F1128158B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:03:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F227B283AA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6131B2196;
-	Thu, 14 Nov 2024 23:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67221B2198;
+	Thu, 14 Nov 2024 23:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MxmIQqjC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="L02ZK0hD"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D181AF0AA;
-	Thu, 14 Nov 2024 23:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C201AAE09;
+	Thu, 14 Nov 2024 23:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731625402; cv=none; b=O+AqinCRDNwWfwJkMc2kIVKT2442K/Ob6tg8i1H+rhbUra8JN3xgNYVnvL2RTzEskohQsQtPJ7aAqidkJ/t2oVgl2blbRWsPkW+JT6p+BcRFmSJsDl++lddGwOmbASPYvrY+yr7f+yLFj2LjT8zH4f+6xbpixoR1yHl7CJWQ3l8=
+	t=1731625572; cv=none; b=m2lG4I1qEwCN2IGqq5QgzRN4JjatmdDMvSl92D1kYB48r0vMOxWDAW0PL0OwaHMliLASW5nPzsY9z03NgtF0IU8cnGXg29XL96HTi3ij+113ZJSHj9bghHOGLNpV+8MeJz5E/rtgaSA4sHp57Cj873ByQ/a+Yx0HH7DiaMaZP3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731625402; c=relaxed/simple;
-	bh=7YLDk7m+k1pCnW+7dbogxl5nQSG7CCASV+qPKMwwB4U=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=YWWDg9SZeAckjBtVXiZFUwPANUvQw8wAqXU4ScWfH6KSb1EWw3VNYwmFLYwMdIn6Am/Q54LfkuK1J4L7Hj45tZQ9AMW4pj/ZSENEHrJuQsDPSowa1qhnZhniZnkMabIRjCEHOwCFOgT1oZI+99DZbQY83lERupbVjoP/uSj4C6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MxmIQqjC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACE9CC4CECD;
-	Thu, 14 Nov 2024 23:03:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731625401;
-	bh=7YLDk7m+k1pCnW+7dbogxl5nQSG7CCASV+qPKMwwB4U=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=MxmIQqjCqTDZ+RH9+X3QNEqtbJt3rt9Pqc6/UQggVpuupsnLlaRnTW0IQxebwHgBZ
-	 90/Rf1J029WWTJqrpFuex/vsffTKmUyF5a89XVDABwHaBb03giNkOC2RZ7PRwpgku5
-	 z0EgxskgrP3+IcjoEapDRBDMefj/1+3AKohINAZBJ6Ah6sq9Juaghr4TGbFg+Shttl
-	 AomkmrR3g4wiLkID9n1n2UQctR6+KdhOZvVc/KapXFeQAH+vrOyO6N9V5zGqughctN
-	 G7KUI05YLwCRs6U3rK24PAr4oBCtXmCNFFWTclQYka+yahkdpZ7JESUJB6cekQ/C7J
-	 /k81+sBtqZzfw==
-Message-ID: <ddc333ad3a150b1d3cc360bd16cc3459.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1731625572; c=relaxed/simple;
+	bh=wJRI4xRgfrY5VJtpilmqM1Vwv/3NX00NFAlgM7B7LDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CONUrXnMQ4dbQTUjK44hxSXDA1boZF9NFdGHF0+feU+9Nrx+o5JPwIPu1J+UHNGhstZycZW9GC04H0jcQBsxh7oUcGygwWJgXbJmduYKwRaBMvHobKOtKbFLRJs8ugpUMl9m147RY1ku7DWSzzK4Fd0ab3d9smaQesuMwbZ2wTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=L02ZK0hD; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BMw6PwJjMCAqkTCSaxzZzLEVq3+qMUjiYZSRnnbvSGE=; b=L02ZK0hDEjOAJgWyLmqZfn5jSl
+	l2eT9/x09ihmINDRKWPcXETLH+EoPSZwe4Db3gl7/yhbbp5pyAV4o0ERRQjAaMvVSZPCl6GnfsZxx
+	1NphBqE1zGY0LxaASbtZfb+4fENp5tImZDJzpjGQwVUgcv3IHrwHwVhKjI9sa/2MXRj8bxkYnVqtw
+	LfCY0eFbrBEVF7sBJjtw8X9xkBdEReU5pkA+yutExuolXP/PqO2S2vWlist881rooYc4qJlEIFZ0P
+	i8+TYDMZW+P6dp4KuwXZUhEWXYr41RZUJe0HzXjf8Gg4pmDsOL1Xwzi6iC3yoro+btycNH3E6n0lL
+	GvJQTx9w==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tBiuX-0000000F78u-1Ply;
+	Thu, 14 Nov 2024 23:06:01 +0000
+Date: Thu, 14 Nov 2024 23:06:01 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Aaron Rainbolt <arraybolt3@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Werner Sembach <wse@tuxedocomputers.com>, tux@tuxedocomputers.com,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Leemhuis <linux@leemhuis.info>
+Subject: Re: [PATCH 2/2] module: Block modules by Tuxedo from accessing GPL
+ symbols
+Message-ID: <20241114230601.GO3387508@ZenIV>
+References: <20241114103133.547032-4-ukleinek@kernel.org>
+ <20241114103133.547032-6-ukleinek@kernel.org>
+ <ZzYgrc4cNqlhezCs@infradead.org>
+ <20241114131843.0df6a5a2@kf-ir16>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ZzZ-cd_EFXs6qFaH@kspp>
-References: <ZzZ-cd_EFXs6qFaH@kspp>
-Subject: Re: [PATCH] clk: clk-loongson2: Fix memory corruption bug in struct loongson2_clk_provider
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Gustavo A. R. Silva <gustavoars@kernel.org>, linux-hardening@vger.kernel.org
-To: Binbin Zhou <zhoubinbin@loongson.cn>, Gustavo A. R. Silva <gustavoars@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Yinbo Zhu <zhuyinbo@loongson.cn>
-Date: Thu, 14 Nov 2024 15:03:19 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241114131843.0df6a5a2@kf-ir16>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Quoting Gustavo A. R. Silva (2024-11-14 14:49:21)
-> Some heap space is allocated for the flexible structure `struct
-> clk_hw_onecell_data` and its flexible-array member `hws` through
-> the composite structure `struct loongson2_clk_provider` in function
-> `loongson2_clk_probe()`, as shown below:
->=20
-> 289         struct loongson2_clk_provider *clp;
->         ...
-> 296         for (p =3D data; p->name; p++)
-> 297                 clks_num++;
-> 298
-> 299         clp =3D devm_kzalloc(dev, struct_size(clp, clk_data.hws, clks=
-_num),
-> 300                            GFP_KERNEL);
->=20
-> Then some data is written into the flexible array:
->=20
-> 350                 clp->clk_data.hws[p->id] =3D hw;
->=20
-> This corrupts `clk_lock`, which is the spinlock variable immediately
-> following the `clk_data` member in `struct loongson2_clk_provider`:
->=20
-> struct loongson2_clk_provider {
->         void __iomem *base;
->         struct device *dev;
->         struct clk_hw_onecell_data clk_data;
->         spinlock_t clk_lock;    /* protect access to DIV registers */
-> };
->=20
-> The problem is that the flexible structure is currently placed in the
-> middle of `struct loongson2_clk_provider` instead of at the end.
->=20
-> Fix this by moving `struct clk_hw_onecell_data clk_data;` to the end of
-> `struct loongson2_clk_provider`. Also, add a code comment to help
-> prevent this from happening again in case new members are added to the
-> structure in the future.
->=20
-> This change also fixes the following -Wflex-array-member-not-at-end
-> warning:
->=20
-> drivers/clk/clk-loongson2.c:32:36: warning: structure containing a flexib=
-le array member is not at the end of another structure [-Wflex-array-member=
--not-at-end]
->=20
-> Fixes: 9796ec0bd04b ("clk: clk-loongson2: Refactor driver for adding new =
-platforms")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
+On Thu, Nov 14, 2024 at 01:21:41PM -0600, Aaron Rainbolt wrote:
 
-Applied to clk-next
+> binary you get after compiling and linking. It looks to me like this
+> patch will prevent users from compiling Tuxedo's modules for personal
+> use on their own systems though. I personally dislike that for ethical
+> reasons - I should be able to use whatever code I legally obtain on my
+> system, and I don't like my use of Linux being wielded against another
+> open-source project by requiring them to relicense their code or no one
+> will be able to use their modules.
+
+I would question the "open-source" part here, TBH...  I'm no fan of
+GPLv3 (to put it mildly), but I really wonder if that use of said
+license is in keeping with its, er, spirit.  Ironic, that...
+
+Seriously, WTF had these folks had been thinking when they chose GPLv3
+for a kernel module?  I'm yet to see any coherent explanation - and
+the ones I have seen would be _really_ incompatible with the stated
+goals of GPLv3.  To such a degree that I can't take them as anything
+plausible.
+
+Could somebody who'd been there at least explain the rationale for
+the license choice made back then?
 
