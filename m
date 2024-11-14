@@ -1,96 +1,167 @@
-Return-Path: <linux-kernel+bounces-408939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E26399C855B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:56:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 893499C8560
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:57:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A76F428434E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:56:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E44B2841CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331271F76AA;
-	Thu, 14 Nov 2024 08:56:05 +0000 (UTC)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D921F7798;
+	Thu, 14 Nov 2024 08:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CPRL1XK1"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C34E1F756E;
-	Thu, 14 Nov 2024 08:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462331F76C2;
+	Thu, 14 Nov 2024 08:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731574564; cv=none; b=rQv1kUUkvuGlkBt7fxB3BV3E4GF8Gl/UBagKWRfBzkhaIdqAuYPiTB9qttN7wA4AQ1AHOAwXRlye1nHCXyxNXkY/FxGAoZGeEJDw0BvLeOYJJCT4JKwn6CUyW4xPO18WyrRFi5WOy8t7octPSZsiDyNVeJX/O5Z+pc+APANKiAI=
+	t=1731574578; cv=none; b=FZ++r7ZHL+dvNt9ZcVOXYKWv94kWDg+cqmQ05HLYEU7Q50rFBT+QSnCdpg5PFC/6FhHIkbwPIu/2ga+y+nr0V8XIuHwycOKYkoJr/RU0H8P4Kg86EDU+bkpnVs+Djfy684tkWVNdPQnea/iCs+ELuwQpUtyl6a7cG96AvLiHiVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731574564; c=relaxed/simple;
-	bh=TjRB9Gbd5aNrtHmKCEEdvrHAXTxMbkUuReyrNvQNkzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uek20w021LjEctX7fSxelFtIgI8tx4aj+gnjaUeO1VyafQp/e6UdrrMKltnTITVp+GlUg04rII8ninJfLUchWyQkiZz+I8pyp8CSiXct2jvBf9oQlIOY4b+Yqv7qoZ8/SEf9MCbDU3GZr8UUVRGzz2MU8JO16VQXHX17lIDNhkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	s=arc-20240116; t=1731574578; c=relaxed/simple;
+	bh=+Kcks4+MoH1dGgJVxVViGL1/8SgAheSksGOdFZwz/lQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f2F0fgktQAZK6sgUsNRr9rABovboIoyQ3JGlKX75qzJPFDkiLuVZogzZ4lEh7bvQaqvVlIfNDLUJN/OmXD7qA+NmQttp6VBtfoJ7XwwtrijNiUgHX0FC9uvA8o2CoAdCwu4PsX/v8+qvJuQ+TeXc3m9opsUUW88Lc5RSdIW98LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CPRL1XK1; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c9454f3bfaso469635a12.2;
-        Thu, 14 Nov 2024 00:56:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731574561; x=1732179361;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6d3e9e854b8so4656916d6.1;
+        Thu, 14 Nov 2024 00:56:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731574576; x=1732179376; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VHkLv7JkIdyvAs/fip3Bg30agNeNMKKQhB/ug+JtK20=;
-        b=lcsvZUrNnZ/emfc4FMoJIokfT8OL7e9q0jBp3tB7YmcmgFTqUukFc22Kequ8icIlSY
-         Q6wvj5ExCSqFU2zsjxZw/+ermrryfeOtLjrypywyq3+ZEsP1Ey6mqzzP/TT1Q8y+9/N/
-         tV37Oj0NXs/OokDGHWrT8tyGrJJuB1eVh9jX/2dJmOrFLhVoH79wndU2AX5o8S0638j5
-         Ogg44SZFesEK3W0D2mYAXjuPj5IGIqYLbOjtMaFXYoxaAv7DoyNv1qmfe9HdwdRGYa+r
-         D3UoF9oFbpzRxig7vFyvFC9DKZbug1+RtFc3vVbkccsh5gZKAlTQcXOKIXxKGRD/aVPK
-         8jdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYW7/ESURGGYstKQYSbZUApORzx/WDx2CTpSVxRzetDC3iHJjqNqN71farQyOh3pqBgkIY7Kw7@vger.kernel.org, AJvYcCXGIBeym9LVn657FujmhCn6WUh+62JAhPv7GPRoatHHHgtgM2Gxx3qvDPnKvIRR2hzc3zjEwm8gwXYZ6iI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxu7CpoTi8XiuyITsDgaZb2CXchnm3+g9ouAiSiQDV/yNRq6KeL
-	0B+YiSXuCqiTOLSFMYqoOIyNQD/yVZsg6nWFTjjMg6naHzmzSp77
-X-Google-Smtp-Source: AGHT+IGXh1M3pU2yYS+KqOaINla/6nHEPBMvrrgnBQTNw56mpKaKeVjwZqpckdzHp9FNm7dPRfD/NA==
-X-Received: by 2002:a05:6402:350b:b0:5ce:b720:8bf1 with SMTP id 4fb4d7f45d1cf-5cf77eeba60mr883872a12.31.1731574561226;
-        Thu, 14 Nov 2024 00:56:01 -0800 (PST)
-Received: from gmail.com (fwdproxy-lla-003.fbsv.net. [2a03:2880:30ff:3::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf79c0a5e1sm338248a12.70.2024.11.14.00.55.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 00:55:59 -0800 (PST)
-Date: Thu, 14 Nov 2024 00:55:57 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, David Ahern <dsahern@gmail.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH net v2] ipmr: Fix access to mfc_cache_list without lock
- held
-Message-ID: <20241114-ancient-piquant-ibex-28a70b@leitao>
-References: <20241108-ipmr_rcu-v2-1-c718998e209b@debian.org>
- <20241113191023.401fad6b@kernel.org>
+        bh=fka0qAiq0GtAsXHDcKvajqGKTaUu1AUnphiVt3sPZ0I=;
+        b=CPRL1XK1IoLh78FySDk4K+zHFmm39awbgnJhbHv7Wm1GdNkEcCoUMDq+l5H2dK8KQr
+         UvTFLO3yqToJyitAbcrfvacQkSMqvCBtF0az8f/KbdB7FFI/tsfgAzMKoo1VNeG+bbA2
+         scIxS5lMJ8BkepxpOUPXkWJX8OC07j1n6P1vJvD7n+l//H2FGc44MX7Uz96dWYwpjilt
+         xRkfPvSlnH16P8zlpTdeQqGA5IgANI+1/40W/hO4Be92ZEDavg5n+lcxCnbK6Ds7rLn1
+         zS2op7wYSn3hqCZ5L8Uo39BmTmH+Tfj9bWU9mPJFlAoQ8gGK+4CjwkLI0ePdvAIe3jua
+         m+zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731574576; x=1732179376;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fka0qAiq0GtAsXHDcKvajqGKTaUu1AUnphiVt3sPZ0I=;
+        b=IUIDeNz/1k6b/zpJHDR/TeFixZqnQXJHtXm313sLV+FxuFPdg5lgIgZoTm8mohR9gS
+         8xpeWNSTgaFf+NVCHp05L9HQtqiz6KjE+s9ABdvM+jHEWz631oCffayc7WGPczNkJ4v1
+         /74CQMj0PR0r2XYKGpePEQ986LOoN50tJs9/ztlMmLtctMJyVUCKdwUz0LzwcjNGVi93
+         U6jf0j8sJW1EUoKgsbM4ov3sxvvgQRIbXxnWnv856bNAOvbAoeYuf5gRnandkzkd//Jc
+         SVCpBF/Qjs7/js3pOyywFRPnmsbWMffHmHGXO0p0/PH2aPnO7p9jAn6E4gB4nPRl70HT
+         AV7g==
+X-Forwarded-Encrypted: i=1; AJvYcCV4wYMX/tXaA8D2YAQdJ3iBm31KVm8QuYc2n4xboKkweAZs8j5IT9e7z5oRKgG5XmaipSgYJmzpavBRPcvm@vger.kernel.org, AJvYcCVUq4j569PaRPE1ZXK5quJCPKMYzheUEPkm2kVVd5IAzHExCKIGjthH80X92I91x95riQC6UMc+3OjMzWue@vger.kernel.org, AJvYcCWNzaZRaVooWXyLKIfmqr5mqHBUTA9Z5ZNqGV5KAmq2LgmHPa6YpIOLK9W67Ht2jnnp1LKq9UOrT9CL0/ipsg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyl7L9cMDHeJaCOMGuO9RxuwtG6vFYmNY2t3ovFBkWInzKbeHT7
+	B18Xb05iTQSM96rgoIi3/dZoJ4ed7I1OW9c9WmJ1xRFOH150TnmK9YV1tljkUu/u5EHmlQooX8o
+	932CxLzAf5PXwt6e32DWAkjOhZiM=
+X-Google-Smtp-Source: AGHT+IG8hDvpof60JZ2Ge/zGIiukxyq1BC4BuxYDCknzlwMwZ31CgP6PQwy9cyUjAN8fUmeH7M5Z2FDboGBy84qXMik=
+X-Received: by 2002:a05:6214:450e:b0:6ce:26d0:c7cd with SMTP id
+ 6a1803df08f44-6d3e8fb7fa6mr39405556d6.2.1731574575934; Thu, 14 Nov 2024
+ 00:56:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241113191023.401fad6b@kernel.org>
+References: <20241107005720.901335-1-vinicius.gomes@intel.com>
+ <20241107005720.901335-5-vinicius.gomes@intel.com> <CAOQ4uxgHwmAa4K3ca7i1G2gFQ1WBge855R19hgEk7BNy+EBqfg@mail.gmail.com>
+ <87ldxnrkxw.fsf@intel.com>
+In-Reply-To: <87ldxnrkxw.fsf@intel.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 14 Nov 2024 09:56:04 +0100
+Message-ID: <CAOQ4uxguV9SkFihaCcyk1tADNJs4gb8wrA7J3SVYaNnzGhLusw@mail.gmail.com>
+Subject: Re: [PATCH v4 4/4] ovl: Optimize override/revert creds
+To: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Cc: brauner@kernel.org, miklos@szeredi.hu, hu1.chen@intel.com, 
+	malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com, 
+	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Jakub,
+On Wed, Nov 13, 2024 at 8:30=E2=80=AFPM Vinicius Costa Gomes
+<vinicius.gomes@intel.com> wrote:
+>
+> Amir Goldstein <amir73il@gmail.com> writes:
+>
+> > On Thu, Nov 7, 2024 at 1:57=E2=80=AFAM Vinicius Costa Gomes
+> > <vinicius.gomes@intel.com> wrote:
+>
+> [...]
+>
+> >
+> > Vinicius,
+> >
+> > While testing fanotify with LTP tests (some are using overlayfs),
+> > kmemleak consistently reports the problems below.
+> >
+> > Can you see the bug, because I don't see it.
+> > Maybe it is a false positive...
+>
+> Hm, if the leak wasn't there before and we didn't touch anything related =
+to
+> prepare_creds(), I think that points to the leak being real.
+>
+> But I see your point, still not seeing it.
+>
+> This code should be equivalent to the code we have now (just boot
+> tested):
+>
+> ----
+> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+> index 136a2c7fb9e5..7ebc2fd3097a 100644
+> --- a/fs/overlayfs/dir.c
+> +++ b/fs/overlayfs/dir.c
+> @@ -576,8 +576,7 @@ static int ovl_setup_cred_for_create(struct dentry *d=
+entry, struct inode *inode,
+>          * We must be called with creator creds already, otherwise we ris=
+k
+>          * leaking creds.
+>          */
+> -       WARN_ON_ONCE(override_creds(override_cred) !=3D ovl_creds(dentry-=
+>d_sb));
+> -       put_cred(override_cred);
+> +       WARN_ON_ONCE(override_creds_light(override_cred) !=3D ovl_creds(d=
+entry->d_sb));
+>
+>         return 0;
+>  }
+> ----
+>
+> Does it change anything? (I wouldn't think so, just to try something)
 
-On Wed, Nov 13, 2024 at 07:10:23PM -0800, Jakub Kicinski wrote:
-> On Fri, 08 Nov 2024 06:08:36 -0800 Breno Leitao wrote:
-> > Accessing `mr_table->mfc_cache_list` is protected by an RCU lock. In the
-> > following code flow, the RCU read lock is not held, causing the
-> > following error when `RCU_PROVE` is not held. The same problem might
-> > show up in the IPv6 code path.
-> 
-> good start, I hope someone can fix the gazillion warnings the CI 
-> is hitting on the table accesses :)
+No, but I think this does:
 
-If you have an updated list, I'd be happy to take a look.
+--- a/fs/overlayfs/dir.c
++++ b/fs/overlayfs/dir.c
+@@ -576,7 +576,8 @@ static int ovl_setup_cred_for_create(struct dentry
+*dentry, struct inode *inode,
+         * We must be called with creator creds already, otherwise we risk
+         * leaking creds.
+         */
+-       WARN_ON_ONCE(override_creds(override_cred) !=3D ovl_creds(dentry->d=
+_sb));
++       old_cred =3D override_creds(override_cred);
++       WARN_ON_ONCE(old_cred !=3D ovl_creds(dentry->d_sb));
+        put_cred(override_cred);
 
-Last time, all the problems I found were being discussed upstream
-already. I am wondering if they didn't land upstream, or, if you have
-warnings that are not being currently fixed.
+        return 0;
+
+Compiler optimized out override_creds(override_cred)? :-/
+
+However, this is not enough.
+
+Dropping the ref of the new creds is going to drop the refcount to zero,
+so that is incorrect, we need to return the reference to the new creds
+explicitly to the callers. I will send a patch.
+
+Thanks,
+Amir.
 
