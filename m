@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-409348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6AD49C8BB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:24:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 596AB9C8B90
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:12:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AA82B2B6E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:13:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E0622873BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C6B1FB8B6;
-	Thu, 14 Nov 2024 13:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F671FB883;
+	Thu, 14 Nov 2024 13:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="DEtb2py2"
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="sNX/7hKB"
 Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908131FB3EE
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A201FB3EF
 	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731589893; cv=none; b=livcy+38I3yB3Dk7s5rk9SudN6vyE+AG/S9Jr8OWhVcyI60b6Yw6GqPkLRTrUzM1+FtYbljUmdFpEoohCJsF7GhRCZpQx9ImzbZ/ny2T6RhlgP5iwD2ZsyWQbNalhwEYQvLEIW8S3osJVCllfkUPIfH904qLxFHoL4+aibmAHY0=
+	t=1731589893; cv=none; b=Qq0FUs0rFll8KnMnJ7BH8EAELxI+zNK6aFLGpgEiNIrLm0HRhCWmXXXGg8BPyFqaXFkMzI7Vhwqfae6Mo0gJ/TLeWa0375s138LEUq7fFmeRHH6bMcRu+ivG090Ol8OZISC5efyGcAsgS3djZpCPJUXpMFgFSU5aK0ixEf2GIFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731589893; c=relaxed/simple;
-	bh=Q/1Lxb2Dn1XmfAWL8ie+2BZo+12rCN5GLG1htCWkEUk=;
+	bh=69InTgkbQ/P2D6HIZK3TsoYrKFIx97fb289sR9FPbD0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L1rm80iT9HYA85qBfFR3CF7D7FfOnG2zrS+hr+ohqxwVtsqzYNsiGJwlsNk4nDpQg1MVqpLX3qpCNYmktzQA8n8Q72xAOZTfjH6Gd/F+SKWqRbYBjvn06sA/k9D1zvay/tZScGleVdA0BB1iFq5Pc2pVHtS4IK0msO9brRjFw7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=DEtb2py2; arc=none smtp.client-ip=150.107.74.76
+	 MIME-Version; b=MCbj4EMkWU7/zbpJ9Uha6hyRmAJ9XQ7IAq0V9TDqNB0qLLhdFLSy35YYNgM1L6jYBLMMt7iGYwUGXYGs3FjFX5Dn25d8dyizN5EaH35M87WQXF0JJTXyFrxD9L/OuvJGmXuo55s70N6vqRO/IJIjz2umOEgxhCUWNZHlbVEb/ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=sNX/7hKB; arc=none smtp.client-ip=150.107.74.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1731589885;
-	bh=VGq2sNQO3HPA2Db45uN43gCznAKko+I7CSNX5a98yY8=;
+	s=201909; t=1731589886;
+	bh=bh4YSrNjXuKLor5p5E2eFlc/Em8vHgx4kf/5d9oGFhA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DEtb2py2k3PLwI2TO9LZZjZd5g44Hbu6dsaQHpdRklqV0aAyT1QUXI0uuCey7WRCD
-	 rhXzZ5wLWGkaY/dH0pHiglg0wQgwdz+4mrV7vW724u/FnDTp9HPIQBs3gRwa+3Gr5P
-	 U052W8Cz/Lx2QXiAsIaBfBCx80sEwblpuwegBUH/ho05dlPl4kkgvlmTC9MRK9BkwK
-	 NK5BLZdRDM7LkJ+tnLI3E6QsSZXfoft350YPeVYACrIe+mhWbmnj9H9S46WqlgZZI0
-	 Z/E3wtJHQh30jOKF8nMVbXOW+xYB4r9RlvA/ilivymQF9o18ASIvUeC34Q7/rEZHGO
-	 p6DsweWH0m+Ug==
+	b=sNX/7hKB+hZn4c4CkhnjBmgVReHB2OzVWMjh5M4I6ytM5hgn0mZVUpyHcBafMsKml
+	 MU0dZe8q3HwMSTrCfGxwcq5JjpcXY6fyq+FwAyYxhkIzO5/GMQyAqUHoDMb3HJU5si
+	 D1QOp2Gk9oKgsTLZfrIVLKne3wFSMiMd1uXEuzcFua5+UnoEtZah3sIvmXK+pgfU7Z
+	 ri/mb5mqUBVsnT70yI7Rd3kr98MW3XzUBBhwEDuWejsqcReT1BHYL3sWEgHHmQUFRl
+	 TpaTNI9GkAddCop5qMoLLESWk8slCTjkvqVeEMSJeXoO+qeiXU+LkRIrQh39poHzFl
+	 FfbpK/RGLL3yw==
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xq0sT3x8Gz4xPy;
-	Fri, 15 Nov 2024 00:11:25 +1100 (AEDT)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xq0sV0Gy1z4xSX;
+	Fri, 15 Nov 2024 00:11:26 +1100 (AEDT)
 From: Michael Ellerman <mpe@ellerman.id.au>
 To: <linuxppc-dev@lists.ozlabs.org>
 Cc: <linux-kernel@vger.kernel.org>,
 	<geert@linux-m68k.org>,
 	<arnd@arndb.de>
-Subject: [RFC PATCH 09/10] i2c: Remove I2C_HYDRA
-Date: Fri, 15 Nov 2024 00:11:12 +1100
-Message-ID: <20241114131114.602234-9-mpe@ellerman.id.au>
+Subject: [RFC PATCH 10/10] i2c: Drop reference to PPC_CHRP
+Date: Fri, 15 Nov 2024 00:11:13 +1100
+Message-ID: <20241114131114.602234-10-mpe@ellerman.id.au>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241114131114.602234-1-mpe@ellerman.id.au>
 References: <20241114131114.602234-1-mpe@ellerman.id.au>
@@ -63,211 +63,28 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The i2c-hydra driver depends on PPC_CHRP which has now been removed,
-remove the driver also.
+PPC_CHRP has been removed, so remove the reference to it in Kconfig.
 
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 ---
- drivers/i2c/busses/Kconfig     |  12 ---
- drivers/i2c/busses/Makefile    |   1 -
- drivers/i2c/busses/i2c-hydra.c | 150 ---------------------------------
- 3 files changed, 163 deletions(-)
- delete mode 100644 drivers/i2c/busses/i2c-hydra.c
+ drivers/i2c/busses/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index 6b3ba7e5723a..cbd072955e45 100644
+index cbd072955e45..153929ac5f59 100644
 --- a/drivers/i2c/busses/Kconfig
 +++ b/drivers/i2c/busses/Kconfig
-@@ -373,18 +373,6 @@ endif # ACPI
- comment "Mac SMBus host controller drivers"
- 	depends on PPC_CHRP || PPC_PMAC
+@@ -371,7 +371,7 @@ config I2C_SCMI
+ endif # ACPI
  
--config I2C_HYDRA
--	tristate "CHRP Apple Hydra Mac I/O I2C interface"
--	depends on PCI && PPC_CHRP
--	select I2C_ALGOBIT
--	help
--	  This supports the use of the I2C interface in the Apple Hydra Mac
--	  I/O chip on some CHRP machines (e.g. the LongTrail).  Say Y if you
--	  have such a machine.
--
--	  This support is also available as a module.  If so, the module
--	  will be called i2c-hydra.
--
+ comment "Mac SMBus host controller drivers"
+-	depends on PPC_CHRP || PPC_PMAC
++	depends on PPC_PMAC
+ 
  config I2C_POWERMAC
  	tristate "Powermac I2C interface"
- 	depends on PPC_PMAC
-diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
-index ecc07c50f2a0..ab366ce6f15c 100644
---- a/drivers/i2c/busses/Makefile
-+++ b/drivers/i2c/busses/Makefile
-@@ -32,7 +32,6 @@ obj-$(CONFIG_I2C_VIAPRO)	+= i2c-viapro.o
- obj-$(CONFIG_I2C_ZHAOXIN)	+= i2c-viai2c-zhaoxin.o i2c-viai2c-common.o
- 
- # Mac SMBus host controller drivers
--obj-$(CONFIG_I2C_HYDRA)		+= i2c-hydra.o
- obj-$(CONFIG_I2C_POWERMAC)	+= i2c-powermac.o
- 
- # Embedded system I2C/SMBus host controller drivers
-diff --git a/drivers/i2c/busses/i2c-hydra.c b/drivers/i2c/busses/i2c-hydra.c
-deleted file mode 100644
-index c60b73e933cf..000000000000
---- a/drivers/i2c/busses/i2c-hydra.c
-+++ /dev/null
-@@ -1,150 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-or-later
--/*
--    i2c Support for the Apple `Hydra' Mac I/O
--
--    Copyright (c) 1999-2004 Geert Uytterhoeven <geert@linux-m68k.org>
--
--    Based on i2c Support for Via Technologies 82C586B South Bridge
--    Copyright (c) 1998, 1999 Kyösti Mälkki <kmalkki@cc.hut.fi>
--
--*/
--
--#include <linux/kernel.h>
--#include <linux/module.h>
--#include <linux/pci.h>
--#include <linux/types.h>
--#include <linux/i2c.h>
--#include <linux/i2c-algo-bit.h>
--#include <linux/io.h>
--#include <asm/hydra.h>
--
--
--#define HYDRA_CPD_PD0	0x00000001	/* CachePD lines */
--#define HYDRA_CPD_PD1	0x00000002
--#define HYDRA_CPD_PD2	0x00000004
--#define HYDRA_CPD_PD3	0x00000008
--
--#define HYDRA_SCLK	HYDRA_CPD_PD0
--#define HYDRA_SDAT	HYDRA_CPD_PD1
--#define HYDRA_SCLK_OE	0x00000010
--#define HYDRA_SDAT_OE	0x00000020
--
--static inline void pdregw(void *data, u32 val)
--{
--	struct Hydra *hydra = (struct Hydra *)data;
--	writel(val, &hydra->CachePD);
--}
--
--static inline u32 pdregr(void *data)
--{
--	struct Hydra *hydra = (struct Hydra *)data;
--	return readl(&hydra->CachePD);
--}
--
--static void hydra_bit_setscl(void *data, int state)
--{
--	u32 val = pdregr(data);
--	if (state)
--		val &= ~HYDRA_SCLK_OE;
--	else {
--		val &= ~HYDRA_SCLK;
--		val |= HYDRA_SCLK_OE;
--	}
--	pdregw(data, val);
--}
--
--static void hydra_bit_setsda(void *data, int state)
--{
--	u32 val = pdregr(data);
--	if (state)
--		val &= ~HYDRA_SDAT_OE;
--	else {
--		val &= ~HYDRA_SDAT;
--		val |= HYDRA_SDAT_OE;
--	}
--	pdregw(data, val);
--}
--
--static int hydra_bit_getscl(void *data)
--{
--	return (pdregr(data) & HYDRA_SCLK) != 0;
--}
--
--static int hydra_bit_getsda(void *data)
--{
--	return (pdregr(data) & HYDRA_SDAT) != 0;
--}
--
--/* ------------------------------------------------------------------------ */
--
--static struct i2c_algo_bit_data hydra_bit_data = {
--	.setsda		= hydra_bit_setsda,
--	.setscl		= hydra_bit_setscl,
--	.getsda		= hydra_bit_getsda,
--	.getscl		= hydra_bit_getscl,
--	.udelay		= 5,
--	.timeout	= HZ
--};
--
--static struct i2c_adapter hydra_adap = {
--	.owner		= THIS_MODULE,
--	.name		= "Hydra i2c",
--	.algo_data	= &hydra_bit_data,
--};
--
--static const struct pci_device_id hydra_ids[] = {
--	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, PCI_DEVICE_ID_APPLE_HYDRA) },
--	{ 0, }
--};
--
--MODULE_DEVICE_TABLE (pci, hydra_ids);
--
--static int hydra_probe(struct pci_dev *dev,
--				 const struct pci_device_id *id)
--{
--	unsigned long base = pci_resource_start(dev, 0);
--	int res;
--
--	if (!request_mem_region(base+offsetof(struct Hydra, CachePD), 4,
--				hydra_adap.name))
--		return -EBUSY;
--
--	hydra_bit_data.data = pci_ioremap_bar(dev, 0);
--	if (hydra_bit_data.data == NULL) {
--		release_mem_region(base+offsetof(struct Hydra, CachePD), 4);
--		return -ENODEV;
--	}
--
--	pdregw(hydra_bit_data.data, 0);		/* clear SCLK_OE and SDAT_OE */
--	hydra_adap.dev.parent = &dev->dev;
--	res = i2c_bit_add_bus(&hydra_adap);
--	if (res < 0) {
--		iounmap(hydra_bit_data.data);
--		release_mem_region(base+offsetof(struct Hydra, CachePD), 4);
--		return res;
--	}
--	return 0;
--}
--
--static void hydra_remove(struct pci_dev *dev)
--{
--	pdregw(hydra_bit_data.data, 0);		/* clear SCLK_OE and SDAT_OE */
--	i2c_del_adapter(&hydra_adap);
--	iounmap(hydra_bit_data.data);
--	release_mem_region(pci_resource_start(dev, 0)+
--			   offsetof(struct Hydra, CachePD), 4);
--}
--
--
--static struct pci_driver hydra_driver = {
--	.name		= "hydra_smbus",
--	.id_table	= hydra_ids,
--	.probe		= hydra_probe,
--	.remove		= hydra_remove,
--};
--
--module_pci_driver(hydra_driver);
--
--MODULE_AUTHOR("Geert Uytterhoeven <geert@linux-m68k.org>");
--MODULE_DESCRIPTION("i2c for Apple Hydra Mac I/O");
--MODULE_LICENSE("GPL");
 -- 
 2.47.0
 
