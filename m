@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-409568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 717809C8EA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:48:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAC039C8EA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:49:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A1671F2155F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:48:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B01B22812FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB2F1B2186;
-	Thu, 14 Nov 2024 15:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1959166F1A;
+	Thu, 14 Nov 2024 15:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="uaBedl8H"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="sC5MI1b8"
 Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B425150997;
-	Thu, 14 Nov 2024 15:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9684E9476;
+	Thu, 14 Nov 2024 15:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731598695; cv=none; b=mdo4otjB/x1UFi2dZJpGVrf0FSb24SCVb6ADOiErsl6hFMxSdkV5LvIOiC5ED/UdfxQD1w6ojdF+2bizvszV0nyyyPVsItUW+rrA+iQreU5bfEj6CUtDLJu3OhDuR9/s+axOorkEDD5gy/uijmZDDLFcFXFEU/S9DJ0+0C1ulzo=
+	t=1731598821; cv=none; b=aFQJcqYqZ+485YodozIMCJDgOP5zDRLEU10rwZNgEHptg863VG8g51CtfmEU5BvhZ/c7pB6bdQAO9mZfhdL1rCFMYiJ8y/3f4Hprrc8C/3RyDj5vw++Hrz2s+LwlA3OnZCNtg3+U9dB6CoK0YW/Ag8pPs4U7mWfztmolmPjgqyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731598695; c=relaxed/simple;
-	bh=mlAXRAgMve6+f/4rnGWaWmCnOK8cUZsS6OQ6L22iv7k=;
+	s=arc-20240116; t=1731598821; c=relaxed/simple;
+	bh=5sAZI5hjU+4WJJlB5HyWSKOqlo5rJUKPUVmXXRmlTP4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HZqeaj2SDhOBB55/0RQpdncL3kthqtfl3KCKo9JHz8pOErSeL+66rMTyV9pFFVPfzJ4XJ+8Alqe7Qo9eKFF6z6ZVGw6ASQ1ceBk1FXmS+OmqjPgoA2XNtn0kF5hrsDzF4EMCIYvGeqfvZrxwm+KW7ebOaYD8tVbLm+PrbITTWG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=uaBedl8H; arc=none smtp.client-ip=156.67.10.101
+	 Content-Type:Content-Disposition:In-Reply-To; b=s8sdFw9WZxTBvaxQpKxNH/FA3jZXVYad6yMIyIsDBS77XfnKOfB+G3tHwRXeCzHcVF7rG5aFpgPDJ4ytzaukV9bGHoHFWUDYiZ1VzbpkNfKcewud18yOK0gSuFX9DwHUXSH2vLYebPd6tqY6qrTa1v8D4M2o4BxOHohdBWnMWCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=sC5MI1b8; arc=none smtp.client-ip=156.67.10.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
@@ -35,13 +35,13 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
 	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
 	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=FNMWD0/TBlzi7ZB1FB7EAN9VcYluVvAfBP4VmUMbiC8=; b=uaBedl8HRP4sqxCNN4VErMwkyu
-	T79AvEg+S6PYzlhTobsS3EFfw4mWPjqN02RRHtb3Ww/1xhhpOZQNA0I7UBTuGQlBTMBPsXN94TJ1h
-	tXWeTw9k+GzIq4a9QrQMThecdgdsFfToZK+lAaG1eD7gWA9CHuWnNSSVE43sZ/9zd6g8=;
+	bh=BnvCuWB02FYo5F4Vm/+yNbrOAyV0kATHIXMKDigxXLw=; b=sC5MI1b8uGOT9S1tXUcybdKhCE
+	pr7xOGDrFXU4SqU42+O1JBnz+qAekxjmGBG4qmOQsjlzfpjDe/HVT4svPV489zH8DuF9gyF6rybfA
+	qnq4P+mFXmP9RnokG501P0OujJOJWGnZusZIZ/14Z7gFXQEgPoeiPn6W5dYivbKqtWlE=;
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
 	(envelope-from <andrew@lunn.ch>)
-	id 1tBbv6-00DJZ7-3J; Thu, 14 Nov 2024 16:38:08 +0100
-Date: Thu, 14 Nov 2024 16:38:08 +0100
+	id 1tBbx9-00DJaT-K0; Thu, 14 Nov 2024 16:40:15 +0100
+Date: Thu, 14 Nov 2024 16:40:15 +0100
 From: Andrew Lunn <andrew@lunn.ch>
 To: Justin Lai <justinlai0215@realtek.com>
 Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
@@ -50,7 +50,7 @@ Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
 	horms@kernel.org, pkshih@realtek.com, larry.chiu@realtek.com
 Subject: Re: [PATCH net 1/4] rtase: Refactor the
  rtase_check_mac_version_valid() function
-Message-ID: <2fac05ba-7766-4586-8676-e30f09cd2d09@lunn.ch>
+Message-ID: <83569c8e-d4d0-4790-9df6-87b06872229d@lunn.ch>
 References: <20241114111443.375649-1-justinlai0215@realtek.com>
  <20241114111443.375649-2-justinlai0215@realtek.com>
 Precedence: bulk
@@ -68,60 +68,11 @@ On Thu, Nov 14, 2024 at 07:14:40PM +0800, Justin Lai wrote:
 > 2. Changes the return type from bool to int.
 > 
 > Signed-off-by: Justin Lai <justinlai0215@realtek.com>
-> ---
->  drivers/net/ethernet/realtek/rtase/rtase.h    |  2 ++
->  .../net/ethernet/realtek/rtase/rtase_main.c   | 21 +++++++++++--------
->  2 files changed, 14 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/realtek/rtase/rtase.h b/drivers/net/ethernet/realtek/rtase/rtase.h
-> index 583c33930f88..547c71937b01 100644
-> --- a/drivers/net/ethernet/realtek/rtase/rtase.h
-> +++ b/drivers/net/ethernet/realtek/rtase/rtase.h
-> @@ -327,6 +327,8 @@ struct rtase_private {
->  	u16 int_nums;
->  	u16 tx_int_mit;
->  	u16 rx_int_mit;
-> +
-> +	u32 hw_ver;
->  };
->  
->  #define RTASE_LSO_64K 64000
-> diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-> index f8777b7663d3..33808afd588d 100644
-> --- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
-> +++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-> @@ -1972,20 +1972,21 @@ static void rtase_init_software_variable(struct pci_dev *pdev,
->  	tp->dev->max_mtu = RTASE_MAX_JUMBO_SIZE;
->  }
->  
-> -static bool rtase_check_mac_version_valid(struct rtase_private *tp)
-> +static int rtase_check_mac_version_valid(struct rtase_private *tp)
->  {
-> -	u32 hw_ver = rtase_r32(tp, RTASE_TX_CONFIG_0) & RTASE_HW_VER_MASK;
-> -	bool known_ver = false;
-> +	int ret = -ENODEV;
->  
-> -	switch (hw_ver) {
-> +	tp->hw_ver = rtase_r32(tp, RTASE_TX_CONFIG_0) & RTASE_HW_VER_MASK;
-> +
-> +	switch (tp->hw_ver) {
->  	case 0x00800000:
->  	case 0x04000000:
->  	case 0x04800000:
 
-Since these magic numbers are being used in more places, please add
-some #define with sensible names.
+If you want these in net, you should add a Fixes: tag.
 
-> -	if (!rtase_check_mac_version_valid(tp))
-> -		return dev_err_probe(&pdev->dev, -ENODEV,
-> -				     "unknown chip version, contact rtase maintainers (see MAINTAINERS file)\n");
-> +	ret = rtase_check_mac_version_valid(tp);
-> +	if (ret != 0) {
-> +		dev_err(&pdev->dev,
-> +			"unknown chip version, contact rtase maintainers (see MAINTAINERS file)\n");
-> +	}
+    Andrew
 
-Since you are changing this, maybe include the hw_ver?
-
-	Andrew
+---
+pw-bot: cr
 
