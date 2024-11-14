@@ -1,46 +1,63 @@
-Return-Path: <linux-kernel+bounces-408772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABCFB9C835F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:53:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF5A19C8365
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:56:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEB081F22460
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:53:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B04EC284265
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2E81EABC2;
-	Thu, 14 Nov 2024 06:53:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519681632D9;
+	Thu, 14 Nov 2024 06:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="U4Xl6V+B"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1968139D1B;
-	Thu, 14 Nov 2024 06:53:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="DAmkgmDN"
+Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C4F139D1B;
+	Thu, 14 Nov 2024 06:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731567220; cv=none; b=PuzbInt1UQsGIU0A0nOQrLnqWy1MVUn+IxKqkoZRTZ03kVc+b5LNEEa8zraJHWw3HPOA2HNUnnPVGBICgFrvV/0aTR/W1Ob9MmeqV4tV4dF8GwQYU6Ev4xFM/hv8jzNUak+sQWeQV5dFAOAlsZ60ULelxHbfweqF3DLqbGivyik=
+	t=1731567356; cv=none; b=QROBMBuiImCwbfVLH+/VcaQLE+TGF2ockjKv9gdBkJz/B3Bzw75GVojOjPoWggMrS9W8uH53dHzVh2njjxKjQXi/dB69JLLe+c1/PKvVDTLoEVznUmvCpzkVshnuv4liS3JVS9QJdn83+PXCE5B/YCYNf2orlM7JFd/7XT2D7nQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731567220; c=relaxed/simple;
-	bh=3E3RZts7S0yQ0tPNODlYreN6KeN+3CR5DvLxMRd6Lyw=;
+	s=arc-20240116; t=1731567356; c=relaxed/simple;
+	bh=tT+F9FX0TMseZ+QDnocmvAUWXy9+BVnVQc2W1Db5Rss=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A6H9olb1QtLTYH9zItpVo8eBjJNDt+aeBr7Q+RZOsUIcRm6iWZvRIa0ooU868+k/xCULEd5pnlAhymA5vUK2XHhbRmWwoytryBPoNxCYi5uC+lYqfp+5qBkABydk+DtkunGZoxIj12Gd/gMxRF3lqiIizDGi6EBtookUHL23JQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=U4Xl6V+B; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.95.72.143] (unknown [167.220.238.15])
-	by linux.microsoft.com (Postfix) with ESMTPSA id E786220BEBF0;
-	Wed, 13 Nov 2024 22:53:35 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E786220BEBF0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1731567218;
-	bh=MdUW8Lh7BXRu49gIQ82FDqPpJrZCoQvzQQSSlOudE9A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=U4Xl6V+BzmpFA4E2EVq96K2wzSYwZF+jFJJa+yW/aW6o0HqG7FDA2q5HGx1mb7DXy
-	 OjabUUVtvoVjz0Garsj/HUkMDFWKErVvL2uWjEdz4SUYPd521Z/2USUUiNqXl9ofBj
-	 G6MFNH3ghfeAR54kvib3+IU7mpDMrJvgvDDf4C6s=
-Message-ID: <e457a146-3154-4420-bac1-95cf0b33dec1@linux.microsoft.com>
-Date: Thu, 14 Nov 2024 12:23:34 +0530
+	 In-Reply-To:Content-Type; b=iPQNNwiScBSlYSTPdvuQL29p0c0WYrQNfTKlyIRHwC2qVBrMgT4gYWDvAHcYrgsGVwIg7Q/e5onejpwCQD1KABCBCJX5fhWFvfdT7NkHWELdTvyr/6QGP3huPUnHn9suJ0RLi5+/HJp8Yt6hqdCUXaF8vwzr7jS1QzZbCR6ITSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=pass smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=DAmkgmDN; arc=none smtp.client-ip=162.62.57.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyyself.name
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1731567337; bh=+w0VHjngWLWdo55EvCTs7zQIFu5eV9NVJlcIRyrLvOY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=DAmkgmDNDnG4ZA3nxM+krvSwbJtvxWV8E7LFy+TbutRxbxURDeK9Gcdm6Lh46WPoV
+	 m+VKuUDfO3U7zdodFvEpLxMoINg/Rigr6pmY43iTkPAvEelz77EyXSHMTT7Eyj6z1z
+	 ygvwM+zocIvX9CcKZfoGhmA50b54iu+OieT/thT0=
+Received: from [IPV6:2408:8207:18a1:fd2f:e457:528e:9ee1:6f68] ([2408:8207:18a1:fd2f:e457:528e:9ee1:6f68])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id D912D083; Thu, 14 Nov 2024 14:54:17 +0800
+X-QQ-mid: xmsmtpt1731567257tvedqcqio
+Message-ID: <tencent_9BB243901B8FF9FC0457B51D1CFF714B6209@qq.com>
+X-QQ-XMAILINFO: MMvVzQSdFuTpkWv4L95cwz9okYRFwb4n+GrHtWM3SuwScZZsza+NN1BR9LV7vw
+	 Yv/X6Qa+E/JuDiFW6ilYjaaisy7o5ihYVNVaxv3rkIbc4jNwUGRCRHAjUr2AeulZ44O02KiuGLuB
+	 uJSKhGyMa5MGYHX70cE8GHFuavCbUxFLfspVxqFEeCySxDGjXPk3xaAu42zgJzN4TAcJPay8+h52
+	 jT4v6dJZjAbe38063KKkRB849Pa7DfRSM3T9QdVR2PQNozT8x8JZzvhZ76A9z0olBShiF59wSXAg
+	 HR4odeWdFDGH4rp+Kcxi79NhNuw31S5OlIqCcGokcfOS88DYOV7gzAmvQ4nwqN20WV/kXHGwTHTx
+	 vxy4f8RAhCPIv9NWdSaRQ9EwNw8TOMLn6R3W+PEy0nH1yqebkDAtQGVOE1K3L//IxZogqMWjuQ59
+	 Y24n0oEGzlDa20yogz1CdGL3PpQahTGB1cLxu6kcLwSTe4IKjSJRNnNBPjGJw3wtP8eulYgndQNi
+	 aG0MoWxSVdq6hdz6lwQ2ALPNSHjNWXhmZapfHOMyevaaWAw/x1LKf67KpbQ5JQD00bSXkuX2UkOh
+	 Sf7imZdpkyhqpttbOlm2+c6gP3isHkAi/XKmKaPFZi3QcutZDZlKm7ZJWq7L5I6CZOcTJaHh1GVs
+	 6inWvn/btPA0vKQkZiy4vdURhND4M4Q+FerxUj8Z9oD5PNyRzBj7+d9B5TlPmpEXSYg/OLNcMoxx
+	 av9ueh5f62Bc6BLkwV91+xpWTLy3QfiUMnSEyCTZAyvFtdgUkyE8M/I53/GkIVZA9m8fx3WXU24c
+	 XWy0iCQKEKY/Xvvtuu+GdIggrDzdc3SimGwMMHFeGFMonKfGsgATBXlo6RCyC6v3rF6Y6Tw6+z55
+	 1ZEGfk9pZrdDFOA/Amit/zdN4B1sQxXphzCKGPl8QkwAYltoJEaoIFGKq5iQ8aJnbSUMNYnmeQDJ
+	 7U0PlMIHmzyCU8UVPGylHw/h3knu9Jd1pXA9wZZxxu1eiDU+q7g+JlsWJ8cQWr
+X-QQ-XMRINFO: MFuljud3PUW4EHVQZqpniSQ=
+X-OQ-MSGID: <61fc005e-f777-4ebf-bd1a-709161a9f06c@cyyself.name>
+Date: Thu, 14 Nov 2024 14:54:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,148 +65,167 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] Drivers: hv: vmbus: Log on missing offers
-To: Michael Kelley <mhklinux@outlook.com>,
- "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>
-Cc: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- John Starks <jostarks@microsoft.com>,
- "jacob.pan@linux.microsoft.com" <jacob.pan@linux.microsoft.com>,
- Easwar Hariharan <eahariha@linux.microsoft.com>,
- Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-References: <20241029080147.52749-1-namjain@linux.microsoft.com>
- <20241029080147.52749-3-namjain@linux.microsoft.com>
- <SN6PR02MB4157D7212FE3F0F50FAB0592D4552@SN6PR02MB4157.namprd02.prod.outlook.com>
- <4c9e670b-eb37-4bdb-adcf-a4ebbebcefab@linux.microsoft.com>
- <dc8f4e45-c89e-4e2d-82ac-58dd6e9c9884@linux.microsoft.com>
- <SN6PR02MB4157BB5A5F5EDFAC24D594DED4592@SN6PR02MB4157.namprd02.prod.outlook.com>
- <dc5b1aaf-62cc-49ea-9fc7-c07b3afbd714@linux.microsoft.com>
- <SN6PR02MB41574AC689EB671BA59679C7D45A2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Subject: Re: [PATCH v11 10/14] riscv: hwprobe: Add thead vendor extension
+ probing
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Samuel Holland <samuel.holland@sifive.com>, Jonathan Corbet
+ <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Guo Ren
+ <guoren@kernel.org>, Evan Green <evan@rivosinc.com>,
+ Jessica Clarke <jrtc27@jrtc27.com>, Andrew Jones <ajones@ventanamicro.com>,
+ Andy Chiu <andybnac@gmail.com>, linux-riscv@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20241113-xtheadvector-v11-0-236c22791ef9@rivosinc.com>
+ <20241113-xtheadvector-v11-10-236c22791ef9@rivosinc.com>
+ <tencent_5B500856E30E1FB920B6B68D6315EE70CC06@qq.com>
+ <ZzVoQi6D0U30p9sg@ghost>
+ <tencent_6A95637042401AD5F8BE05C7B4F11CAD7009@qq.com>
+ <ZzWAlJm1ShgsZr4m@ghost>
 Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB41574AC689EB671BA59679C7D45A2@SN6PR02MB4157.namprd02.prod.outlook.com>
+From: Yangyu Chen <cyy@cyyself.name>
+In-Reply-To: <ZzWAlJm1ShgsZr4m@ghost>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
-On 11/13/2024 8:56 PM, Michael Kelley wrote:
-> From: Naman Jain <namjain@linux.microsoft.com> Sent: Wednesday, November 13, 2024 12:47 AM
+On 11/14/24 12:46, Charlie Jenkins wrote:
+> On Thu, Nov 14, 2024 at 11:26:47AM +0800, Yangyu Chen wrote:
 >>
->> On 11/12/2024 8:43 AM, Michael Kelley wrote:
->>> From: Naman Jain <namjain@linux.microsoft.com> Sent: Sunday, November 10, 2024 9:44 PM
+>>
+>> On 11/14/24 11:02, Charlie Jenkins wrote:
+>>> On Thu, Nov 14, 2024 at 10:44:37AM +0800, Yangyu Chen wrote:
 >>>>
->>>> On 11/7/2024 11:14 AM, Naman Jain wrote:
+>>>>
+>>>> On 11/14/24 10:21, Charlie Jenkins wrote:
+>>>>> Add a new hwprobe key "RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0" which
+>>>>> allows userspace to probe for the new RISCV_ISA_VENDOR_EXT_XTHEADVECTOR
+>>>>> vendor extension.
 >>>>>
->>>>> On 11/1/2024 12:44 AM, Michael Kelley wrote:
->>>>>> From: Naman Jain <namjain@linux.microsoft.com> Sent: Tuesday, October 29, 2024 1:02 AM
->>>>>>>
+>>>>
+>>>> Hi Charlie,
+>>>>
+>>>> How about changing the name of the key from
+>>>> "RISCV_ISA_VENDOR_EXT_XTHEADVECTOR" to "RISCV_HWPROBE_KEY_VENDOR_EXT_0" and
+>>>> use marchid to identify what the vendor is, each vendor will have its own
+>>>> bit definition in this value. So we can avoid adding so many hwprobe keys
+>>>> for each vendor in the future.
+>>>>
+>>>> I proposed a commit here: https://github.com/cyyself/linux/commit/36390645d85d1ac75dd71172f167719df4297f59
 >>>
->>> [snip]
-
-<snip>
-
+>>> I actually originally had this in one of my first versions of this
+>>> series but was convinced by Conor to change it. The problem with it was
+>>> that tying vendor extensions to mvendorid means that it is enforced by
+>>> the kernel that vendors cannot share vendor extensions. It is possible
+>>> for vendor A to purchase IP that contains a vendor extension from vendor
+>>> B. This vendor extension should work on platforms created by vendor A
+>>> and vendor B. However, vendor A and vendor B have different mvendorids,
+>>> so the kernel can't support this if it is tied to mvendorid.  It could
+>>> be solved by duplicating every extension that vendors have, but then
+>>> userspace software would have to keep in mind the mvendorid they are
+>>> running on and check the different extensions for the different vendors
+>>> even though the implementation of the extension is the same.
 >>>
->>> 1)  VM boots with the intent of resuming from hibernation (though
->>> Hyper-V doesn't know about that intent)
->>> 2)  Original fresh kernel is loaded and begins initialization
->>> 3)  VMBus offers come in for boot-time devices, which excludes SR-IOV VFs.
->>> 4)  ALLOFFERS_DELIVERED message comes in
->>> 5)  The storvsc driver initializes for the virtual disks on the VM
->>> 6)  Kernel initialization code finds and reads the swap space to see if a
->>> hibernation image is present. If so, it reads in the hibernation image.
->>> 7)  The suspend sequence is initiated (just like during hibernation)
->>> to shutdown the VMBus devices and terminate the VMBus connection.
->>> 8)  Control is transferred to the previously read-in hibernation image
->>> 9)  The hibernation image runs the resume sequence, which
->>> initiates a new VMBus connection and requests offers
->>> 10) VMBus offers come in for whatever VMBus devices were present
->>> when Step 7 initiated the suspend sequence. If a VF device was present
->>> at that time, an offer for that VF device will come in and will match up
->>> with the VF that was present in the VM at the time of hibernation.
->>> 11) ALLOFFERS_DELIVERED message comes in again for the
->>> newly initiated VMBus connection.
+>>> The original conversation where Conor and I agreed that it was better to
+>>> have vendor extensions not rely on mvendorid:
+>>>
+>>> https://lore.kernel.org/linux-riscv/20240416-husband-flavored-96c1dad58b6e@wendy/
 >>>
 >>
->> 3), 4) works differently IMO. There is no request_for_offers, or
->> ALLOFFERS_DELIVERED for fresh kernel. Otherwise on adding the prints in
->> kernel, we should have seen these function calls *twice* in one
->> hibernation-resume cycle. But that is not the case.
+>> Thanks for your explanation. I will strongly agree with Conor's opinion if
+>> the feature bitmask does not exist in RISC-V C-ABI.
 >>
-
-I was looking at the wrong place for fresh kernel logs. The sequence you
-mentioned is indeed correct and aligns to my understanding and
-experiments results. Kindly ignore my comment above.
-
->> When the older/original kernel boots up, and requests offers, it gets
->> those VF offers again as part of boot time offers, and then
->> ALLOFFERS_DELIVERED msg comes. I'm still trying to figure out how fresh
->> kernel requests for VF offers or if it gets those offers automatically
->> from the host. I will update my findings so that it can be put up in
->> documentation which you mentioned.
-
-Fresh kernel does not seem to be getting these VF channel offers 
-automatically, but resuming kernel does, when it calls request_for_offers().
-
-
-Regards,
-Naman
-
+>> However, as the feature mask defined in RISC-V C-ABI[1] uses the design
+>> depending on marchid currently, should we reconsider this key for its use
+>> case? The current target_clones and taget_version implemented in GCC[2] and
+>> LLVM[3] also use the bitmask defined in C-ABI. I think if we use this key
+>> depending on marchid, to make a key shared with all vendors will make this
+>> cleaner.
 > 
-> Hmmm. I'm not sure what might be happening. I'll be interested in
-> what you find. I do indeed want to call out the details in my
-> documentation. And I'll also try to repro myself.
+> Changing this will break linux userspace API. It is a non-workable
+> solution for the kernel to associate extensions with marchid/mvendorid
+> for the reasons provided. I fail to see why this ABI would require the
+> kernel to behave in this manner. The ABI provides the marchid to be used
+> by function multi-versioning and applications are free to use the
+> marchid to change which function they want to compile. However, if they
+> want to know if an extension is supported, then they need to use
+> hwprobe. If they want to check if xtheadvector is supported, then they> call hwprobe with the xtheadvector key. This is true no matter what the
+> mvendorid of the system is.
+
+A userspace software can use either c-api defined feature masks or 
+directly use hwprobe syscall. If they use c-api defined feature masks as 
+GCC or LLVM did for compiler generated IFUNC resolver, the bitmask is 
+guarded by mvendorid. So my point at that time was that if the C-API 
+defined way became mainstream, why should we keep this key only for 
+T-Head to increase the maintenance overhead?
+
+This has been discussed here before in RISC-V C-API: 
+https://github.com/riscv-non-isa/riscv-c-api-doc/pull/74#issuecomment-2128844747
+
+But now (from the last email), you convinced me. So, I would like to 
+make the c-api change: 
+https://github.com/riscv-non-isa/riscv-c-api-doc/issues/96
+
+> This does not add any complexity, "clean"
+> code can equally be written following this scheme or following a scheme
+> that relies on mvendorid. Ditching the reliance on mvendorid in the
+> kernel allows the kernel to be as generic as possible, and allow
+> whatever ABIs or hardware that exist to have a resiliant way of
+> communicating with the kernel.
 > 
-> Michael
+
+OK. I'm just concerned about when these vendors will add the hwprobe key 
+for their own extension, which may introduce a potential merge conflict 
+in the kernel tree. It can also be a disaster if the hardware vendor 
+ships their kernel with these under-review patches for their products 
+with hwprobe key conflict with mainline kernel.
+
+But we can avoid this now by adding each key for each vendor to avoid 
+potential conflict in the future. This can be a separate patch for 
+future work, so there is nothing to change here.
+
+Thanks,
+Yangyu Chen
+
+> - CHarlie
 > 
 >>
->>> The netvsc driver gets initialized *after* step 4, but we don't know
->>> exactly *when* relative to the storvsc driver. The netvsc driver must
->>> tell Hyper-V that it can handle an SR-IOV VF, and the VF offer is sent
->>> sometime after that. While this netvsc/VF sequence is happening, the
->>> storvsc driver is reading the hibernation image from swap (Step 6).
->>>
+>> [1] https://github.com/riscv-non-isa/riscv-c-api-doc/blob/main/src/c-api.adoc#function-multi-version
+>> [2] https://github.com/gcc-mirror/gcc/blob/8564d0948c72df0a66d7eb47e15c6ab43e9b25ce/gcc/config/riscv/riscv.cc#L13016
+>> [3] https://github.com/llvm/llvm-project/blob/f407dff50cdcbcfee9dd92397d3792627c3ac708/clang/lib/CodeGen/CGBuiltin.cpp#L14627
 >>
->> Maybe this is how fresh kernel gets the offers for VF devices.
->>
->>> I think the sequence you describe works when reading the
->>> hibernation image from swap takes 10's of seconds, or even several
->>> minutes in an Azure VM with a remote disk. That gives plenty
->>> of time for the VF to get initialized and be fully present when Step 7
->>> starts. But there's no *guarantee* that the VF is initialized by then.
->>> It's also not clear to me what action by the guest causes Hyper-V to
->>> treat the VF as "added to the VM" so that in Step 10 the VF offer is
->>> sent before ALLOFFERS_DELIVERED.
->>>
->>> The sequence you describe also happens in an Azure VM, even if
->>> the VF is removed before hibernation. When the VF offer arrives
->>> during Step 10, it doesn't match with any VFs that were in the VM
->>> at the time of hibernation. It's treated as a new device, just like it
->>> would be if the offer arrived after ALLOFFERS_DELIVERED.
->>>
->>> But it seems like there's still the risk of having a fast swap disk
->>> and a small hibernation image that can be read in a shorter amount
->>> of time than it takes to initialize the VF to the point that Hyper-V
->>> treats it as added to the VM. Without knowing what that point is,
->>> it's hard to assess the likelihood of that happening. Or maybe there's
->>> an interlock I'm not aware of that ensures Step 7 can't proceed
->>> while the netvsc/VF sequence is in progress.
->>>
->>> So maybe it's best to proceed with this patch, and deal with the
->>> risk later when/if it becomes reality. I'm OK if you want to do
->>> that. This has been an interesting discussion that I'll try to capture
->>> in some high-level documentation about how Linux guests on
->>> Hyper-V do hibernation!
->>>
->>> Michael
+>>>>
+>>>>> This new key will allow userspace code to probe for which thead vendor
+>>>>> extensions are supported. This API is modeled to be consistent with
+>>>>> RISCV_HWPROBE_KEY_IMA_EXT_0. The bitmask returned will have each bit
+>>>>> corresponding to a supported thead vendor extension of the cpumask set.
+>>>>> Just like RISCV_HWPROBE_KEY_IMA_EXT_0, this allows a userspace program
+>>>>> to determine all of the supported thead vendor extensions in one call.
+>>>>>
+>>>>> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+>>>>> Reviewed-by: Evan Green <evan@rivosinc.com>
+>>>>> ---
+>>>>>     arch/riscv/include/asm/hwprobe.h                   |  3 +-
+>>>>>     .../include/asm/vendor_extensions/thead_hwprobe.h  | 19 +++++++++++
+>>>>>     .../include/asm/vendor_extensions/vendor_hwprobe.h | 37 ++++++++++++++++++++++
+>>>>>     arch/riscv/include/uapi/asm/hwprobe.h              |  3 +-
+>>>>>     arch/riscv/include/uapi/asm/vendor/thead.h         |  3 ++
+>>>>>     arch/riscv/kernel/sys_hwprobe.c                    |  5 +++
+>>>>>     arch/riscv/kernel/vendor_extensions/Makefile       |  1 +
+>>>>>     .../riscv/kernel/vendor_extensions/thead_hwprobe.c | 19 +++++++++++
+>>>>>     8 files changed, 88 insertions(+), 2 deletions(-)
+>>>>>
+>>>>
 >>
 >>
->>
->> I have sent v3 with the changes we discussed.
->>
->> Regards,
->> Naman
+
 
 
