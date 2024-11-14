@@ -1,271 +1,166 @@
-Return-Path: <linux-kernel+bounces-410067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F9489C961C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:32:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 197B99C9620
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:33:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C68121F22643
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:32:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D44D4B246C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E303E1B21A0;
-	Thu, 14 Nov 2024 23:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C66A1B219D;
+	Thu, 14 Nov 2024 23:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TrFDbWz1"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="knwweu2i"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54424139CFA;
-	Thu, 14 Nov 2024 23:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B590139CFA
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 23:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731627152; cv=none; b=CUr3qPK5TGOXUQuwD9vJJeGeQ4c0KG2RUx6crDe+RwrdRT5OQ/WYSQ10IjQ7HfKjVQ3ILJvl9MNX6pPih+HSr0lMIeAxrIonaFxiZljmetY7PwL/ePVPYqLajKiCcmH4gaV7AsuXS0k2pZmM6QFds81TILVM7fWcHCbOZfEG8O4=
+	t=1731627198; cv=none; b=jiTFXwIaeEElsxFtpyk1LnFQogFeU8tx96k+lrcUTSEhHF/cscwXozbyZlGfhOCOyQxMU3uBK3b2FBaMcdiCwrB9opdPUeOUsE8gHJ52OLkapl6BY4xJQzU8ePnpznUqZ3JqlMXEaAwXLuyW0gglGITiE0EmmPq6wD/EtMpdBuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731627152; c=relaxed/simple;
-	bh=r5qlinlgZbkeyRF94Q+X7z7IPq61D/QwNJCW1TEHC1c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C4NFr4Z/YWjEV9BigRJLCtBLD/78iY0DKJYw5F4etxOkKB9r0T3zH4WZ4Skskl8rlZSsn/Tz5HgfUSz1h193joYaAZWzjt7P9N6juzNAFy4tM2vCm6deeh0cu1Wp+BUDGx0mGqeijYPGVFFQ4tVRHlR0cwZm3UH3NrpGoXIUwcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TrFDbWz1; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53d8c08cfc4so1044528e87.3;
-        Thu, 14 Nov 2024 15:32:30 -0800 (PST)
+	s=arc-20240116; t=1731627198; c=relaxed/simple;
+	bh=UYWLHm7qfMw23PDHj1x/cvLxSnpl+KHifSvGS/dxR3I=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=odT0AyUlZeXfElwIwHZzOP/ZrWcT/3Bue5i85MYilOsqAC5pL++edhy7gdBtGuIBgIorQrAnKv8YfO3siJJPOL3j/9zGqx8Qzp5Gf5tyAtTa1Sdxm0PC9HYTkUPpz4ggNMN7/Y4Bm1A/kciUxBv11FEeF1mXUdxbZJqo8eK4FpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=knwweu2i; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43162cf1eaaso13307075e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:33:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731627148; x=1732231948; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SAox7OrLC9evhrM94BAPa5uAF/5KGEHvdJMWRYb0aO4=;
-        b=TrFDbWz1uWLOL/rXTtUnjur+ex+aPUlbdrbcUVUcFPwdJ0+RGsN/oOJ5WspoBij/hM
-         kxSvumREbncCpLPXsIBZck2MtNfJN54YuVfCAyBtqa7S87NjQ0fOATuJ/h5MSpPUykJr
-         JXJU7TWNCD+65wC+2ivX6uWwvD4SA7DQYFixhhPZF9fEw3RLe9wzVYSOGzBSL6078FPj
-         Uxazl+/1bZqYzKFxozepHNPrR4pml4Ws+xuhmVvSnrxKDSJXiJfOZkOKoISzgeNSxv8B
-         J1iwBxus7CZQl0si7RQ914Yc3eDq/Xpnx5E+/ckdgZGqMPdvo6/1sYsJEqTmINAH/P4I
-         5E9w==
+        d=linaro.org; s=google; t=1731627194; x=1732231994; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VVvwlAu+8zSpv+81YL0HNfwnIe4vXYe/t9Y2ZwRkEAk=;
+        b=knwweu2i6RwuZyu3uqCuLCgE2Kulu1D2F7jUscYz5++8v3/gZylbQzTNU+gXuV8mX+
+         h80X1oYoLKnxeRjQFQU/oSvfSlCwE16mwehI1RtKbK2lItPHOua4Dwsp8QIWigDMPyDu
+         TToyr1Enmia7IAYGKSHb6JojaZ22W4dTtTJaZolcz0g1+rCCmi4H5LmQ4r3uh69CRhNm
+         t6BxG4HTz7C1if0ailW2SFFzyNuObF37ESvkGUnP7zw9gXxQwA0HbJTQGZxkScIS637l
+         BuFDfuicBVva133fzMaomifXj6HPTArAS4IYwh7RrZKkhuxh1WAbpj7+jOOs9Mi1Vav2
+         JJBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731627148; x=1732231948;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SAox7OrLC9evhrM94BAPa5uAF/5KGEHvdJMWRYb0aO4=;
-        b=vkKxvLTO2ithnEKleEyGKa6FX2sZgCK8acTxUNv7IYzu+hBYPzWg2MApR5l6eM5wAK
-         5jVj6Ce+G968pTveQHVFcb2F5PFCtp7LBXbNGPuDt+GwT/9kWFUobC19XUdECrOgZ0pa
-         d4Se1MfBvhCRwez6err7d9PX2PuJAXO/JFTejD64EfAI3UR1A6FNy5vLWW1yEj6LUxdx
-         Wuv+p2KukldHSpy46NKdil7EQQMN0lO02Z6dwNxNGe1xY5cWsNpq0Z/GhkajNzL3f5G3
-         ncsriINCPhNEf03WoGLKNwVK39VvoCmO/vRSLXow27EEIa/Ccf331shwXZayiSViQtE+
-         oh1g==
-X-Forwarded-Encrypted: i=1; AJvYcCWGQC0KqpLjm2RQ3/Rwjn08xNJ69HTv6WuAPSR4dWp7as97ol7jrzCboVxJpvN3E9I6OcLMw+Nk0MkezA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzprdfSowfAdG0glzCAAHXHagEd4VwnjCkK4LzsreyCh6xO+bqv
-	sNefKyYnqJcZazOn7WHxH6JVr7gHqsmforZMzLex6iTPDptRRLugpCjAwUYGVS0CxqhSt0xqGFi
-	wQp2CP51scLf4RqQBe8LzY6AEqzZGBiXR
-X-Google-Smtp-Source: AGHT+IE5h9i6XkrPSiyX3nOSSC+yL7OxuBJtwpGMOGV9VIhVJqa8ehf857I1HP2B7FVRr66U+qjw/UWAh66SWtUZ8J8=
-X-Received: by 2002:a05:6512:ba1:b0:538:9e40:94b with SMTP id
- 2adb3069b0e04-53dab29c93dmr171846e87.19.1731627148097; Thu, 14 Nov 2024
- 15:32:28 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731627194; x=1732231994;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VVvwlAu+8zSpv+81YL0HNfwnIe4vXYe/t9Y2ZwRkEAk=;
+        b=nzSfBSD/GBYr52WfIQSxFWDFBx4MpwnL+9ZzORK7efj2IGkihd+oaJ9moASJPHaIgG
+         ef4x1M1PofwOljPMO0lOZTo58hALxZ5hxsnmLuL53edxp1s+S/Y1rffgwv3vvyqSDPbO
+         Y7OdUN3GIv4KUgDlc74aQ6tbEmO+wG0fx+6gT+pdLZAw7+6NiIMuifKrqLQq19nJ3Zgc
+         S2HMmKXs7f5+FM9HTt3Bbt0A7VqbikpKXQ4ZSnHbKKnC+yFzSzuociFCBrivMg4dqEMS
+         19HnApyE88OwFk3bcuBohzmh3BJlsRvZbgZg9JkrbCTk+lxdhJacf3P5oU9f4kvl2hlW
+         MiJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWgsm4P7c/Z+pJrf+KiJQ16hyqIGjhsdvuADkNQvv5E17rTSAdWKq7rG3b8wyqpNL1p2hhweQyi/IPu9CI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyf0bDjsGZlvVsF7xMzqdxqcWHqn2ordkx/TOIH/3TuxYxBAt76
+	7YIPtnohLPQl807lCBodcrI1S4prXkl/2MrIt/hEuUWHZ7DKPTPFsPyyfiVr62g=
+X-Google-Smtp-Source: AGHT+IGKLPXfM66rPtUFkfPweOwpn1ja3LCHTx2W2I4nd96tds3LIExpBIYxelahGIXvBpARzXKnpA==
+X-Received: by 2002:a05:600c:5125:b0:42f:8229:a09e with SMTP id 5b1f17b1804b1-432df7937c9mr4239815e9.29.1731627194373;
+        Thu, 14 Nov 2024 15:33:14 -0800 (PST)
+Received: from [127.0.1.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da28ba80sm39513565e9.29.2024.11.14.15.33.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 15:33:13 -0800 (PST)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Date: Thu, 14 Nov 2024 23:32:58 +0000
+Subject: [PATCH] clk: qcom: camcc-x1e80100: Set titan_top_gdsc as the
+ parent GDSC of subordinate GDSCs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKFNMok4ycxT48mUzNGkfvhw+evbSsUJ6U2MuTUSGwC1f_YcNQ@mail.gmail.com>
- <tencent_E58D929272DD80DDE119284FBF0DD325EC07@qq.com>
-In-Reply-To: <tencent_E58D929272DD80DDE119284FBF0DD325EC07@qq.com>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Fri, 15 Nov 2024 08:32:11 +0900
-Message-ID: <CAKFNMokni2i-qPtCxG7QQjnnRVo105zNZZtvL2qBvSqwszoxsg@mail.gmail.com>
-Subject: Re: [PATCH] nilfs2: fix a uaf in nilfs_find_entry
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org, 
-	syzbot+96d5d14c47d97015c624@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241114-b4-linux-next-master-24-11-14-titan-gdsc-v1-1-ef2533d487dc@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAKmINmcC/x2NwQoCMQwFf2XJ2QdNzclfEQ+1jWtAqzRVCsv+u
+ 8XjMDCzkWszdTotGzX9mturTuDDQvme6qqwMpliiMLMgqvgYfUzUHV0PJN3bYgCZkzbraeKtXi
+ GlCNnDlxCYpq5d9Objf/qfNn3H/mTBJR6AAAA
+X-Change-ID: 20241114-b4-linux-next-master-24-11-14-titan-gdsc-4d31c101d0a1
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abel.vesa@linaro.org>, 
+ Rajendra Nayak <quic_rjendra@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+X-Mailer: b4 0.14.2
 
-On Thu, Nov 14, 2024 at 9:01=E2=80=AFPM Edward Adam Davis wrote:
->
-> On Wed, 13 Nov 2024 23:54:39 +0900, Ryusuke Konishi wrote:
-> > On Wed, Nov 13, 2024 at 11:28=E2=80=AFAM Edward Adam Davis wrote:
-> > >
-> > > On Tue, 12 Nov 2024 23:38:11 +0900, Ryusuke Konishi wrote:
-> > > > On Tue, Nov 12, 2024 at 7:56=E2=80=AFPM Edward Adam Davis wrote:
-> > > > >
-> > > > > The i_size value of the directory "cgroup.controllers" opened by =
-openat is 0,
-> > > > > which causes 0 to be returned when calculating the last valid byt=
-e in
-> > > > > nilfs_last_byte(), which ultimately causes kaddr to move forward =
-by reclen
-> > > > > (its value is 32 in this case), which ultimately triggers the uaf=
- when
-> > > > > accessing de->rec_len in nilfs_find_entry().
-> > > > >
-> > > > > To avoid this issue, add a check for i_size in nilfs_lookup().
-> > > > >
-> > > > > Reported-by: syzbot+96d5d14c47d97015c624@syzkaller.appspotmail.co=
-m
-> > > > > Closes: https://syzkaller.appspot.com/bug?extid=3D96d5d14c47d9701=
-5c624
-> > > > > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> > > > > ---
-> > > > >  fs/nilfs2/namei.c | 3 +++
-> > > > >  1 file changed, 3 insertions(+)
-> > > >
-> > > > Hi Edward, thanks for the debugging help and patch suggestion.
-> > > >
-> > > > But this fix is incorrect.
-> > > >
-> > > > Reproducers are not creating the situation where i_size =3D=3D 0.
-> > > > In my debug message output inserted in the while loop of
-> > > > nilfs_find_entry(), i_size was a corrupted large value like this:
-> > > >
-> > > > NILFS (loop0): nilfs_find_entry: isize=3D422212465065984,
-> > > > npages=3D103079215104, n=3D0, last_byte=3D0, reclen=3D32
-> > > >
-> > > > This is different from your debug result, because the type of i_siz=
-e
-> > > > in the debug patch you sent to syzbot is "%u".
-> > > > The type of inode->i_size is "loff_t", which is "long long".
-> > > > Therefore, the output format specification for i_size in the debug
-> > > > output should be "%lld".
-> > > Yes, you are right, I ignore the type of i_size.
-> > > >
-> > > > If you look at the beginning of nilfs_find_entry(), you can see tha=
-t
-> > > > your check is double-checked:
-> > > >
-> > > > struct nilfs_dir_entry *nilfs_find_entry(struct inode *dir,
-> > > >                 const struct qstr *qstr, struct folio **foliop)
-> > > > {
-> > > >         ...
-> > > >         unsigned long npages =3D dir_pages(dir);
-> > > Yes, now I noticed dir_pages().
-> > > >         ..
-> > > >
-> > > >         if (npages =3D=3D 0)
-> > > >                 goto out;
-> > > >         ...
-> > > >
-> > > > Here, dir_pages() returns 0 if i_size is 0, so it jumps to "out" an=
-d
-> > > > returns ERR_PTR(-ENOENT).
-> > > >
-> > > > I'm still debugging, but one problem is that the implementation of
-> > > > nilfs_last_byte() is incorrect.
-> > > > In the following part, the local variable "last_byte" is not of typ=
-e
-> > > > "loff_t", so depending on the value, it may be truncated and return=
- a
-> > > > wrong value (0 in this case):
-> > > >
-> > > > static unsigned int nilfs_last_byte(struct inode *inode, unsigned l=
-ong page_nr)
-> > > > {
-> > > >         unsigned int last_byte =3D inode->i_size;
-> > > >         ...
-> > > > }
-> > > >
-> > > > If this is the only problem, the following fix will be effective. (=
-To
-> > > > complete this fix, I think we need to think more carefully about
-> > > > whether it's okay for i_size to have any value, especially since
-> > > > loff_t is a signed type):
-> > > >
-> > > > diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
-> > > > index a8602729586a..6bc8f474a3e5 100644
-> > > > --- a/fs/nilfs2/dir.c
-> > > > +++ b/fs/nilfs2/dir.c
-> > > > @@ -70,7 +70,7 @@ static inline unsigned int nilfs_chunk_size(struc=
-t
-> > > > inode *inode)
-> > > >   */
-> > > >  static unsigned int nilfs_last_byte(struct inode *inode, unsigned =
-long page_nr)
-> > > >  {
-> > > > -       unsigned int last_byte =3D inode->i_size;
-> > > > +       loff_t last_byte =3D inode->i_size;
-> > > >
-> > > >         last_byte -=3D page_nr << PAGE_SHIFT;
-> > > >         if (last_byte > PAGE_SIZE)
-> > > >
-> > > I have noticed nilfs_last_byte(), I have other concerns about it, suc=
-h
-> > > as the chance of last_byte overflowing when i_size is too small and p=
-age_nr
-> > > is too large, or that it will be negative after being type-adjusted t=
-o loff_t.
-> > > So, maybe following fix is more rigorous.
-> > >
-> > > diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
-> > > index a8602729586a..0dbcf91538fd 100644
-> > > --- a/fs/nilfs2/dir.c
-> > > +++ b/fs/nilfs2/dir.c
-> > > @@ -70,9 +70,10 @@ static inline unsigned int nilfs_chunk_size(struct=
- inode *inode)
-> > >   */
-> > >  static unsigned int nilfs_last_byte(struct inode *inode, unsigned lo=
-ng page_nr)
-> > >  {
-> > > -       unsigned int last_byte =3D inode->i_size;
-> > > +       loff_t last_byte =3D inode->i_size;
-> > >
-> > > -       last_byte -=3D page_nr << PAGE_SHIFT;
-> > > +       if (last_byte > page_nr << PAGE_SHIFT)
-> > > +               last_byte -=3D page_nr << PAGE_SHIFT;
-> > >         if (last_byte > PAGE_SIZE)
-> > >                 last_byte =3D PAGE_SIZE;
-> > >         return last_byte;
-> > > BR,
-> > > Edward
-> >
-> > nilfs_last_byte itself does not return an error and is a function that
-> > assumes that i_size is larger than the offset calculated from page_nr,
-> > so let's limit the modification of this function to correcting bit
-> > loss in assignment.
-> >
-> > If any caller is missing the necessary range check, add that check to
-> > the caller. I will check again for omissions, but please let me know
-> > if there are any callers that seem to have problems (I hope there
-> > aren't any).
-> Yes, I agree.
-> >
-> > To extend the bits of last_byte, declare last_byte as "u64" instead of =
-"loff_t".
-> > In assignments, the bit pattern is maintained regardless of whether it
-> > is signed or not, and declaring it as u64 also avoids the problem of
-> > negative i_size here.
-> >
-> > Comparisons between unsigned and signed integers may introduce
-> > warnings in syntax checks at build time such as "make W=3D2" depending
-> > on the environment, and may be reported by bots at a later date, so I
-> > would like to maintain comparisons between unsigned integers.
-> > (PAGE_SIZE is an unsigned constant)
-> >
-> > If the problem of negative i_size is actually a problem, I think we
-> > should add a sanity check for i_size_read(inode) < 0 to the function
-> > that reads inodes from block devices (such as
-> > nilfs_read_inode_common).  So, I would like to deal with that
-> > separately.
-> >
-> > I have already tested a change that modifies only the last_byte type
-> > to "u64" with syzbot, but if you could proceed with creating a patch
-> > that includes the commit log in this direction, I would like to adopt
-> > it.
-> You are such a nice person.
-> If I did that, I personally feel that you would suffer a loss.
-> There will be another chance in the future. I look forward to the next ti=
-me.
->
-> BR,
-> Edward
+The Titan TOP GDSC is the parent GDSC for all other GDSCs in the CAMCC
+block. None of the subordinate blocks will switch on without the parent
+GDSC switched on.
 
-Okay, I'll handle this bug fix.
-I don't mind either way, but maybe it was a superfluous suggestion. Never m=
-ind.
-Well then, maybe another time.
+Fixes: 76126a5129b5 ("clk: qcom: Add camcc clock driver for x1e80100")
+Cc: stable@vger.kernel.org
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+ drivers/clk/qcom/camcc-x1e80100.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Thanks,
-Ryusuke Konishi
+diff --git a/drivers/clk/qcom/camcc-x1e80100.c b/drivers/clk/qcom/camcc-x1e80100.c
+index 85e76c7712ad84c88decb62ccaed68533d8848de..b73524ae64b1b2b1ee94ceca88b5f3b46143f20b 100644
+--- a/drivers/clk/qcom/camcc-x1e80100.c
++++ b/drivers/clk/qcom/camcc-x1e80100.c
+@@ -2212,6 +2212,8 @@ static struct clk_branch cam_cc_sfe_0_fast_ahb_clk = {
+ 	},
+ };
+ 
++static struct gdsc cam_cc_titan_top_gdsc;
++
+ static struct gdsc cam_cc_bps_gdsc = {
+ 	.gdscr = 0x10004,
+ 	.en_rest_wait_val = 0x2,
+@@ -2221,6 +2223,7 @@ static struct gdsc cam_cc_bps_gdsc = {
+ 		.name = "cam_cc_bps_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.parent = &cam_cc_titan_top_gdsc.pd,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ };
+ 
+@@ -2233,6 +2236,7 @@ static struct gdsc cam_cc_ife_0_gdsc = {
+ 		.name = "cam_cc_ife_0_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.parent = &cam_cc_titan_top_gdsc.pd,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ };
+ 
+@@ -2245,6 +2249,7 @@ static struct gdsc cam_cc_ife_1_gdsc = {
+ 		.name = "cam_cc_ife_1_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.parent = &cam_cc_titan_top_gdsc.pd,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ };
+ 
+@@ -2257,6 +2262,7 @@ static struct gdsc cam_cc_ipe_0_gdsc = {
+ 		.name = "cam_cc_ipe_0_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.parent = &cam_cc_titan_top_gdsc.pd,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ };
+ 
+@@ -2269,6 +2275,7 @@ static struct gdsc cam_cc_sfe_0_gdsc = {
+ 		.name = "cam_cc_sfe_0_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.parent = &cam_cc_titan_top_gdsc.pd,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ };
+ 
+
+---
+base-commit: 37c5695cb37a20403947062be8cb7e00f6bed353
+change-id: 20241114-b4-linux-next-master-24-11-14-titan-gdsc-4d31c101d0a1
+
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
 
