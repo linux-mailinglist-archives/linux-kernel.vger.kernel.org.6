@@ -1,85 +1,77 @@
-Return-Path: <linux-kernel+bounces-408620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F27459C8124
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:54:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA85B9C8114
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:52:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8780282040
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:54:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 969681F230E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00DF61F76A3;
-	Thu, 14 Nov 2024 02:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486901EBA0E;
+	Thu, 14 Nov 2024 02:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="A48CLyrr"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="If0r09zr"
 Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DB81E9078;
-	Thu, 14 Nov 2024 02:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A141E25F7;
+	Thu, 14 Nov 2024 02:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731552680; cv=none; b=VkPPb7cQ9xvEBTXB+LXu/EnUqBgjv9HNIlSyORJqiveiy5DrXOaIPQanpA/95A5wA41JPMerxPARxkwexmSAEu0rrQ/vUN9BCp7nKI0POWyeiQUXOieFOtBmdyQGsCCuHgPDYlT247Y1XtuzV5Khn0lh3OVg+GmiEDG6PLnlzPE=
+	t=1731552657; cv=none; b=cSnmvMBN4HE2uEFm11SY3cNgz+Sdhz2HS1Ii5eYMtFop0UDNCVCYAYFJwRv2ewPhS+SY4wJG+Rnw/JvIh4eKNum1RWSm84zc1MOlQNBenevvfPlmVs+7Cr/uuyav+K6HekGN55a6C1oaaeq3Xt8ZYsFe4VUHH2NOHoiab3HddcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731552680; c=relaxed/simple;
-	bh=ykOy0Gl0f2PCP9FnizdmSyx6sDfupSjE3/Rdd6hQJsI=;
+	s=arc-20240116; t=1731552657; c=relaxed/simple;
+	bh=Vh8Bf9YrFjqQ2EJ4nv367Eaqr5Zss4CfAl+D/9oVBew=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uzBBJln+yLRFJ61p4V12GgI3Xs1FJHFmp36Ww/5W/YBp8rnT5htEnQbuhtQ6K3geK+qnXOZUMtdZ4ybw1KMWBjhR596bDS8NpOqxCQ4IEux+yaJWyQKXvjFq+1mEabh+c4Y4baEb+kCBvVVFHftvIErPtwNKuBbBBOGVhIjGLL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=A48CLyrr; arc=none smtp.client-ip=205.220.177.32
+	 MIME-Version:Content-Type; b=GToO5WVWjXb81+435oA6YNGCJUzMyj4gk1XwL2mKyQSyofAjGJ60ztkh781qja8l+DMwSqYjxLVzRXUbxESwGhdSPdexPMj+jh1YY1vmEssx/+2foTMfaluDFxtRjiVBLz/px2CnZjiUQqge5yEfzrQYxzdVYFWn8N6R4SoyBBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=If0r09zr; arc=none smtp.client-ip=205.220.177.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE1glgc008722;
-	Thu, 14 Nov 2024 02:50:50 GMT
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE1h1wd008864;
+	Thu, 14 Nov 2024 02:50:52 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=gYJVnBPMXhheHdB/DJlVC/G5ubvTltb2akrj529V2ak=; b=
-	A48CLyrrRUW0wIw3MEOMVjBMF4fsBzeh8y3J/lnwbPeiycWBoj1jQngzXlnLaHU8
-	0g9oI0RH030CgjfWg8rzw0garMOdU6MKgMPK21e+9ld4/03gtTKUXbje1oFjsZ/i
-	aNlpk6W28X44vl3uJBRn+Z6mbE3EUlTeXj0VrthRbH95AdH1/yJLE6I4CIaeOeTr
-	mNUgxj5Zd+e2wTQfF6C8UJOi+0VHmKoLWQXaCTQCaM7WP0lz3Ukb6TfJXcb9/bVG
-	766KB+a9NTLSLVSwO3+BBNCXxpVLArOQCJPAIxLUuAqY13GnSPPSfMViqnqcfZgO
-	YBTjvKLOFNf3w1+I0cWd6g==
+	corp-2023-11-20; bh=eiM0WcstWeeIcEkfTz7lPuaR5930wv3hByW/Yv0r5IE=; b=
+	If0r09zrTcwY7wjMb8l4hHKRtzeAALP9U+LOxX0s6kN9PygGREVuKDMinDGBNxk+
+	hJowrsrrsklvHKUz8x6bgPyveP14Q4fqimRysp9gYjTkWxcKg5Qok4XbZ54pJwM7
+	WAT1/7BbJWwEgO6JdiKO/5cHfBr3V3z22uPAC1WGiNrKuIqMI3rvo4jE6OYwSUx5
+	p+/bDlu/1PvyyOtFpRD7UDmXhvFFBW5mI4+HvibdbjVdLT4vplj13XzlTNHPEoup
+	smwXU5OVokn5D9EkhyEAesyGs9fgulkGriPW7gbLnQz0wYpbofh0sXOTHeY9128q
+	hcmbCm9WnhnhnECv162Rdw==
 Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42t0nwr8gt-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42t0nwr8gu-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 14 Nov 2024 02:50:50 +0000 (GMT)
+	Thu, 14 Nov 2024 02:50:52 +0000 (GMT)
 Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE1LVoc023918;
-	Thu, 14 Nov 2024 02:50:49 GMT
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE1FvCB022800;
+	Thu, 14 Nov 2024 02:50:51 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42vuw0p1xg-1
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42vuw0p1yw-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 14 Nov 2024 02:50:49 +0000
+	Thu, 14 Nov 2024 02:50:51 +0000
 Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4AE2ojYm003527;
-	Thu, 14 Nov 2024 02:50:48 GMT
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4AE2ojYq003527;
+	Thu, 14 Nov 2024 02:50:50 GMT
 Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 42vuw0p1vg-3;
-	Thu, 14 Nov 2024 02:50:48 +0000
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 42vuw0p1vg-5;
+	Thu, 14 Nov 2024 02:50:50 +0000
 From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: peter.wang@mediatek.com, Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
+To: Jack Wang <jinpu.wang@cloud.ionos.com>,
         "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Stanley Jhu <chu.stanley@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        ed.tsai@mediatek.com
+        Igor Pylypiv <ipylypiv@google.com>
 Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        wsd_upstream@mediatek.com, chun-hung.wu@mediatek.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] scsi: ufs: ufs-mediatek: configure individual LU queue flags
-Date: Wed, 13 Nov 2024 21:49:56 -0500
-Message-ID: <173155154783.970810.4459751536411041309.b4-ty@oracle.com>
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] scsi: pm8001: Increase request sg length to support 4MiB requests
+Date: Wed, 13 Nov 2024 21:49:58 -0500
+Message-ID: <173155154786.970810.18106220714427816741.b4-ty@oracle.com>
 X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241008065950.23431-1-ed.tsai@mediatek.com>
-References: <20241008065950.23431-1-ed.tsai@mediatek.com>
+In-Reply-To: <20241025185009.3278297-1-ipylypiv@google.com>
+References: <20241025185009.3278297-1-ipylypiv@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,25 +84,27 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
  definitions=2024-11-14_01,2024-11-13_01,2024-09-30_01
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 spamscore=0
- adultscore=0 phishscore=0 malwarescore=0 mlxlogscore=921 suspectscore=0
+ adultscore=0 phishscore=0 malwarescore=0 mlxlogscore=970 suspectscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
  definitions=main-2411140021
-X-Proofpoint-GUID: Zi8IdhYC6FopUOKlx7zd_MFUMADU3u7I
-X-Proofpoint-ORIG-GUID: Zi8IdhYC6FopUOKlx7zd_MFUMADU3u7I
+X-Proofpoint-GUID: SNBn4LmUabSXJ8NYgZFiN6Cv27NrDf91
+X-Proofpoint-ORIG-GUID: SNBn4LmUabSXJ8NYgZFiN6Cv27NrDf91
 
-On Tue, 08 Oct 2024 14:59:42 +0800, ed.tsai@mediatek.com wrote:
+On Fri, 25 Oct 2024 18:50:09 +0000, Igor Pylypiv wrote:
 
-> Previously, ufs vops config_scsi_dev was removed because there were no
-> users. ufs-mediatek needs it to configure the queue flags for each LU
-> individually. Therefore, bring it back and customize the queue flag as
-> we required.
+> Increasing the per-request size maximum to 4MiB (8192 sectors x 512 bytes)
+> runs into the per-device DMA scatter gather list limit (max_segments) for
+> users of the io vector system calls (e.g. readv and writev).
 > 
+> This change increases the max scatter gather list length to 1024 to enable
+> kernel to send 4MiB (1024 * 4KiB page size) requests.
 > 
+> [...]
 
 Applied to 6.13/scsi-queue, thanks!
 
-[1/1] scsi: ufs: ufs-mediatek: configure individual LU queue flags
-      https://git.kernel.org/mkp/scsi/c/7670e74ff319
+[1/1] scsi: pm8001: Increase request sg length to support 4MiB requests
+      https://git.kernel.org/mkp/scsi/c/53b550de4635
 
 -- 
 Martin K. Petersen	Oracle Linux Engineering
