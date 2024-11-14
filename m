@@ -1,798 +1,212 @@
-Return-Path: <linux-kernel+bounces-408770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEBB99C835B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:50:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91CDC9C835D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 07:51:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97A40283C12
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:50:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53050284266
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 06:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4094C1EB9FF;
-	Thu, 14 Nov 2024 06:49:52 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C041EABC2;
+	Thu, 14 Nov 2024 06:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cLiqPYkf"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210341E0E13;
-	Thu, 14 Nov 2024 06:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827F11632D9;
+	Thu, 14 Nov 2024 06:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731566991; cv=none; b=tNohAKu292wOPrJOnKdkizVg8juNFSb6VKrZ1kzHgWXnnmWk5V+ZaBkwLfoiVRwna5YLQUAHOLw4c4aJzC+iv7QcS3ntqd0sxaUxevtlekSwSVXnYjH2BOf6UtJiv72s+q4j7wpEPMUCv+PksQ3fBkov39F8UzfcW5NIJFaNNAg=
+	t=1731567103; cv=none; b=pIz0KicjaFaRRJtclVC5F9bgKbkAfSUSP6Q35SDny+pVbfkggd9a0C18paHCbdR06y1vAujITTxgp4zyEqA5mLBNR7qaoC2Mz1TKtikNqjl+uBKmLCzQfRzYWJNSV3/8HQ6vWqyTBCOroCuGFenIL9SQUrq7OOcVBIjKbgCSaeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731566991; c=relaxed/simple;
-	bh=j25/4Wm1R7SuND3Lxykrcon+SGPwbJxFWCyOVeCP0h0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OIY5FT1gju/tGCCBeiY0JJarjj5Pu+j1X6hohi9oMS+adu31eywjOf3WiIlAb42/Xh0NB/ApHUv7WbP1SsTetsZfKX98MFisuh/Mi6xW3iSChhv6GGT5q7FzDKcvG73v1f0ug4JCDHxwBgQ79zXZpbCv9JeRQEhKDRCS2hn3DXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Date: Thu, 14 Nov 2024 14:49:43 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Troy Mitchell <troymitchell988@gmail.com>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-riscv@lists.infradead.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] i2c: spacemit: add support for SpacemiT K1 SoC
-Message-ID: <20241114064943-GYA998060@gentoo>
-References: <20241112-k1-i2c-master-v3-0-5005b70dc208@gmail.com>
- <20241112-k1-i2c-master-v3-2-5005b70dc208@gmail.com>
+	s=arc-20240116; t=1731567103; c=relaxed/simple;
+	bh=M5KIXf/3vSdMRx54es3dtslE/1P4NhYk6hkZEFBd5JQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LEFV6hMHBBpAgt4VqxYBDFAyyvNxmAhp3X17g7F9JxRmjCYpuc+37ICujU9KZHqP1vdfb4M4RtmWTjsEer2OqnetrgPECflueB/iCvuQ8DrIxsMgGUuGOBizSS1Re8XhvoEqSznkKMSI9TxPhUJNAt1IU4p2b8Owgc3XxB61TP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cLiqPYkf; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7eab7622b61so166582a12.1;
+        Wed, 13 Nov 2024 22:51:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731567100; x=1732171900; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=K3f7TwC3h8s12iHcQJ9I2wjzbYEnmrxNyivbUcKjIZ0=;
+        b=cLiqPYkfK6DEbv4Pu8y4JCakqgnKeiHDpGpNXd5/A+qJzWqwKb2/GPQNsSZWR5BSJf
+         dC0H8YhFfeGjqyQO4s8pFqj4FWYWmxowpBP4FtsepOK9zVveLthXjM+IdIGqen4R2vmR
+         j2YRUq9/KOWQ8lTxhpHYubpJxH/UolELKHNzJUluYACRGgLEzp60pOPVOUCSj5b2V88w
+         ty6WpViUGU+hQdfjctA6QW/5VouKze5QmoFmhop5ooQwqoD4uC82gTnNHbJVOtrl7BEu
+         kYUPZgzLEbS8XB8ItUUV9IVL85i5UTJC/MIWDvhY8SPG6msL6wLvBI8dGbTtHGucIQ4U
+         KSCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731567100; x=1732171900;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K3f7TwC3h8s12iHcQJ9I2wjzbYEnmrxNyivbUcKjIZ0=;
+        b=oxtU5vA0MOLWBxLquRgXiUxIddfaofhwc3YtQgc/u3IxA02IwbIxpCn4NHTD0d3GsM
+         EQ3DXfk0puIkVMmj0yIf62OOgmW47w/zwTuLKODw/MNti5n7Lud2kaHstNPPm5Nmzz6Z
+         02riZM5MnNOBQnjMY0gJ5+EFBpfYWxRGMT3v0A67Mei9i3VUDwJIm3JF574JDeB+BF3O
+         rGT0/zjEuLBksDgXZuV5Im0t8ihiVjCUneb4JJLx3UMi7CdsJgBsOdw1rfJzWaXRgvsq
+         cyP2j1B2J3p463qtyf8hlo9w/K3H1tlNvU+gdFr5Mus48ir3Unt12sWZ9bcP/JfmvfVr
+         9mDw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1wWLCXEqxR5/81OqOMrwX7x/IarOKhDoaQ7laVDsCnXMAR+Q7fKypHnoS50Xfn/xd0D+Oamo/ZVfSKA==@vger.kernel.org, AJvYcCWy3WHTv2fwYSXKSzLkw8XyDoS7F8paYh3S8EXoM6SaZ4Ds+CIPkP69pwd3v6Irtd1kZ1/TH8YY6FZUfL7e@vger.kernel.org
+X-Gm-Message-State: AOJu0YwskQ6gMqqA9uyz7j5rMtTK9Ld+QPiwl5O8XJaltR8NLlh0yBOd
+	mMRS8l2r9aysrEkhLeogDQDoFIDd0wRpybttdCGiRALAdEBhvx7l
+X-Google-Smtp-Source: AGHT+IFePNTZ8/x7c02iaTCQoIFRY19RsUjRNw+zc3ChNHLeKL05xk4/42dZnuhm+0y9DuRkJFjAdA==
+X-Received: by 2002:a05:6a20:72a2:b0:1db:f057:151d with SMTP id adf61e73a8af0-1dc22b5764fmr33769885637.35.1731567099668;
+        Wed, 13 Nov 2024 22:51:39 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7246a6e6e57sm522393b3a.54.2024.11.13.22.51.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Nov 2024 22:51:39 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <3f1914da-4f94-415e-8c46-8731834e51a2@roeck-us.net>
+Date: Wed, 13 Nov 2024 22:51:37 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112-k1-i2c-master-v3-2-5005b70dc208@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] hwmon: (core) Avoid ifdef in C source file
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241113-hwmon-thermal-v1-1-71270be7f7a2@weissschuh.net>
+ <041a52c7-ac0b-4a78-8b39-4fc4ac4d2fd2@roeck-us.net>
+ <b6ed8499-bf84-486c-be5f-0ef13311eb18@t-8ch.de>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <b6ed8499-bf84-486c-be5f-0ef13311eb18@t-8ch.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 11:07 Tue 12 Nov     , Troy Mitchell wrote:
-> From: Troy Mitchell <troymitchell988@gmail.com>
+On 11/13/24 20:40, Thomas Weißschuh wrote:
+> Hi Guenter,
 > 
-> This patch introduces basic I2C support for the SpacemiT K1 SoC,
-> utilizing interrupts for transfers.
+> On 2024-11-12 22:52:36-0800, Guenter Roeck wrote:
+>> On 11/12/24 20:39, Thomas Weißschuh wrote:
+>>> Using an #ifdef in a C source files to have different definitions
+>>> of the same symbol makes the code harder to read and understand.
+>>> Furthermore it makes it harder to test compilation of the different
+>>> branches.
+>>>
+>>> Replace the ifdeffery with IS_ENABLED() which is just a normal
+>>> conditional.
+>>> The resulting binary is still the same as before as the compiler
+>>> optimizes away all the unused code and definitions.
+>>>
+>>> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+>>> ---
+>>> This confused me a bit while looking at the implementation of
+>>> HWMON_C_REGISTER_TZ.
+>>> ---
+>>>    drivers/hwmon/hwmon.c | 21 ++++++---------------
+>>>    1 file changed, 6 insertions(+), 15 deletions(-)
+>>>
+>>> diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
+>>> index 9c35c4d0369d7aad7ea61ccd25f4f63fc98b9e02..86fb674c85d3f54d475be014c3fd3dd74c815c57 100644
+>>> --- a/drivers/hwmon/hwmon.c
+>>> +++ b/drivers/hwmon/hwmon.c
+>>> @@ -147,11 +147,6 @@ static DEFINE_IDA(hwmon_ida);
+>>>    /* Thermal zone handling */
+>>> -/*
+>>> - * The complex conditional is necessary to avoid a cyclic dependency
+>>> - * between hwmon and thermal_sys modules.
+>>> - */
+>>> -#ifdef CONFIG_THERMAL_OF
+>>>    static int hwmon_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
+>>>    {
+>>>    	struct hwmon_thermal_data *tdata = thermal_zone_device_priv(tz);
+>>> @@ -257,6 +252,9 @@ static int hwmon_thermal_register_sensors(struct device *dev)
+>>>    	void *drvdata = dev_get_drvdata(dev);
+>>>    	int i;
+>>> +	if (!IS_ENABLED(CONFIG_THERMAL_OF))
+>>> +		return 0;
+>>> +
+>>>    	for (i = 1; info[i]; i++) {
+>>>    		int j;
+>>> @@ -285,6 +283,9 @@ static void hwmon_thermal_notify(struct device *dev, int index)
+>>>    	struct hwmon_device *hwdev = to_hwmon_device(dev);
+>>>    	struct hwmon_thermal_data *tzdata;
+>>> +	if (!IS_ENABLED(CONFIG_THERMAL_OF))
+>>> +		return;
+>>> +
+>>>    	list_for_each_entry(tzdata, &hwdev->tzdata, node) {
+>>>    		if (tzdata->index == index) {
+>>>    			thermal_zone_device_update(tzdata->tzd,
+>>
+>> There is no dummy function for thermal_zone_device_update().
+>> I really don't want to trust the compiler/linker to remove that code
+>> unless someone points me to a document explaining that it is guaranteed
+>> to not cause any problems.
 > 
-> The driver has been tested using i2c-tools on a Bananapi-F3 board,
-> and basic I2C read/write operations have been confirmed to work.
+> I'm fairly sure that a declaration should be enough, and believe
+> to remember seeing such advise somewhere.
+> However there is not even a function declaration with !CONFIG_THERMAL.
+> So I can add an actual stub for it for v2.
 > 
-> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
-> ---
->  drivers/i2c/busses/Kconfig  |  19 ++
->  drivers/i2c/busses/Makefile |   1 +
->  drivers/i2c/busses/i2c-k1.c | 656 ++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 676 insertions(+)
+> What do you think?
 > 
-> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-> index 6b3ba7e5723a..91630f55667f 100644
-> --- a/drivers/i2c/busses/Kconfig
-> +++ b/drivers/i2c/busses/Kconfig
-> @@ -779,6 +779,25 @@ config I2C_JZ4780
->  
->  	 If you don't know what to do here, say N.
->  
-> +config I2C_K1
-> +	tristate "Spacemit K1 I2C adapter"
-> +	depends on ARCH_SPACEMIT || COMPILE_TEST
-> +	depends on OF
-> +	help
-> +	  This option enables support for the I2C interface on the Spacemit K1
-> +	  platform.
-> +
-> +	  If you enable this configuration, the kernel will include support for
-> +	  the I2C adapter specific to the Spacemit K1 platform. This driver ca
-> +	  be used to manage I2C bus transactions, which are necessary for
-> +	  interfacing with I2C peripherals such as sensors, EEPROMs, and other
-> +	  devices.
-> +
-> +	  This driver can also be compiled as a module. If you choose to build
-> +	  it as a module, the resulting kernel module will be named `i2c-k1`.
-> +	  Loading this module will enable the I2C functionality for the K1
-> +	  platform dynamically, without requiring a rebuild of the kernel.
-> +
->  config I2C_KEBA
->  	tristate "KEBA I2C controller support"
->  	depends on HAS_IOMEM
-> diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
-> index ecc07c50f2a0..9744b0e58598 100644
-> --- a/drivers/i2c/busses/Makefile
-> +++ b/drivers/i2c/busses/Makefile
-> @@ -76,6 +76,7 @@ obj-$(CONFIG_I2C_IMX)		+= i2c-imx.o
->  obj-$(CONFIG_I2C_IMX_LPI2C)	+= i2c-imx-lpi2c.o
->  obj-$(CONFIG_I2C_IOP3XX)	+= i2c-iop3xx.o
->  obj-$(CONFIG_I2C_JZ4780)	+= i2c-jz4780.o
-> +obj-$(CONFIG_I2C_K1)		+= i2c-k1.o
->  obj-$(CONFIG_I2C_KEBA)		+= i2c-keba.o
->  obj-$(CONFIG_I2C_KEMPLD)	+= i2c-kempld.o
->  obj-$(CONFIG_I2C_LPC2K)		+= i2c-lpc2k.o
-> diff --git a/drivers/i2c/busses/i2c-k1.c b/drivers/i2c/busses/i2c-k1.c
-> new file mode 100644
-> index 000000000000..12bb71625e0a
-> --- /dev/null
-> +++ b/drivers/i2c/busses/i2c-k1.c
-> @@ -0,0 +1,656 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2024 Troy Mitchell <troymitchell988@gmail.com>
-> + */
-> +
-> + #include <linux/clk.h>
-> + #include <linux/i2c.h>
-> + #include <linux/iopoll.h>
-> + #include <linux/module.h>
-> + #include <linux/of_address.h>
-> + #include <linux/platform_device.h>
-> +
-> +/* spacemit i2c registers */
-> +#define ICR          0x0		/* Control Register */
-> +#define ISR          0x4		/* Status Register */
-> +#define ISAR         0x8		/* Slave Address Register */
-> +#define IDBR         0xc		/* Data Buffer Register */
-> +#define ILCR         0x10		/* Load Count Register */
-> +#define IWCR         0x14		/* Wait Count Register */
-> +#define IRST_CYC     0x18		/* Bus reset cycle counter */
-> +#define IBMR         0x1c		/* Bus monitor register */
-> +#define IWFIFO       0x20		/* Write FIFO Register */
-> +#define IWFIFO_WPTR  0x24		/* Write FIFO Write Pointer Register */
-> +#define IWFIFO_RPTR  0x28		/* Write FIFO Read Pointer Register */
-> +#define IRFIFO       0x2c		/* Read FIFO Register */
-> +#define IRFIFO_WPTR  0x30		/* Read FIFO Write Pointer Register */
-> +#define IRFIFO_RPTR  0x34		/* Read FIFO Read Pointer Register */
-> +
-> +/* register ICR fields */
-> +#define CR_START        BIT(0)		/* start bit */
-> +#define CR_STOP         BIT(1)		/* stop bit */
-> +#define CR_ACKNAK       BIT(2)		/* send ACK(0) or NAK(1) */
-> +#define CR_TB           BIT(3)		/* transfer byte bit */
-> +#define CR_TXBEGIN      BIT(4)		/* transaction begin */
-> +#define CR_FIFOEN       BIT(5)		/* enable FIFO mode */
-> +#define CR_GPIOEN       BIT(6)		/* enable GPIO mode for SCL in HS */
-> +#define CR_DMAEN        BIT(7)		/* enable DMA for TX and RX FIFOs */
-> +#define CR_MODE_FAST    BIT(8)		/* bus mode (master operation) */
-> +#define CR_MODE_HIGH    BIT(9)		/* bus mode (master operation) */
-> +#define CR_UR           BIT(10)		/* unit reset */
-> +#define CR_RSTREQ       BIT(11)		/* i2c bus reset request */
-> +#define CR_MA           BIT(12)		/* master abort */
-> +#define CR_SCLE         BIT(13)		/* master clock enable */
-> +#define CR_IUE          BIT(14)		/* unit enable */
-> +#define CR_HS_STRETCH   BIT(16)		/* I2C hs stretch */
-> +#define CR_ALDIE        BIT(18)		/* enable arbitration interrupt */
-> +#define CR_DTEIE        BIT(19)		/* enable tx interrupts */
-> +#define CR_DRFIE        BIT(20)		/* enable rx interrupts */
-> +#define CR_GCD          BIT(21)		/* general call disable */
-> +#define CR_BEIE         BIT(22)		/* enable bus error ints */
-> +#define CR_SADIE        BIT(23)		/* slave address detected int enable */
-> +#define CR_SSDIE        BIT(24)		/* slave STOP detected int enable */
-> +#define CR_MSDIE        BIT(25)		/* master STOP detected int enable */
-> +#define CR_MSDE         BIT(26)		/* master STOP detected enable */
-> +#define CR_TXDONEIE     BIT(27)		/* transaction done int enable */
-> +#define CR_TXEIE        BIT(28)		/* transmit FIFO empty int enable */
-> +#define CR_RXHFIE       BIT(29)		/* receive FIFO half-full int enable */
-> +#define CR_RXFIE        BIT(30)		/* receive FIFO full int enable */
-> +#define CR_RXOVIE       BIT(31)		/* receive FIFO overrun int enable */
-> +
-> +/* register ISR fields */
-> +#define SR_RWM          BIT(13)		/* read/write mode */
-> +#define SR_ACKNAK       BIT(14)		/* ACK/NACK status */
-> +#define SR_UB           BIT(15)		/* unit busy */
-> +#define SR_IBB          BIT(16)		/* i2c bus busy */
-> +#define SR_EBB          BIT(17)		/* early bus busy */
-> +#define SR_ALD          BIT(18)		/* arbitration loss detected */
-> +#define SR_ITE          BIT(19)		/* tx buffer empty */
-> +#define SR_IRF          BIT(20)		/* rx buffer full */
-> +#define SR_GCAD         BIT(21)		/* general call address detected */
-> +#define SR_BED          BIT(22)		/* bus error no ACK/NAK */
-> +#define SR_SAD          BIT(23)		/* slave address detected */
-> +#define SR_SSD          BIT(24)		/* slave stop detected */
-> +#define SR_MSD          BIT(26)		/* master stop detected */
-> +#define SR_TXDONE       BIT(27)		/* transaction done */
-> +#define SR_TXE          BIT(28)		/* tx FIFO empty */
-> +#define SR_RXHF         BIT(29)		/* rx FIFO half-full */
-> +#define SR_RXF          BIT(30)		/* rx FIFO full */
-> +#define SR_RXOV         BIT(31)		/* RX FIFO overrun */
-> +
-> +/* register ILCR fields */
-> +#define LCR_SLV         0x000001FF	/* SLV: bit[8:0] */
-> +#define LCR_FLV         0x0003FE00	/* FLV: bit[17:9] */
-> +#define LCR_HLVH        0x07FC0000	/* HLVH: bit[26:18] */
-> +#define LCR_HLVL        0xF8000000	/* HLVL: bit[31:27] */
-> +
-> +/* register IWCR fields */
-> +#define WCR_COUNT       0x0000001F	/* COUNT: bit[4:0] */
-> +#define WCR_COUNT1      0x000003E0	/* HS_COUNT1: bit[9:5] */
-> +#define WCR_COUNT2      0x00007C00	/* HS_COUNT2: bit[14:10] */
-> +
-> +/* register IBMR fields */
-> +#define BMR_SDA         BIT(0)		/* SDA line level */
-> +#define BMR_SCL         BIT(1)		/* SCL line level */
-> +
-> +/* register IWFIFO fields */
-> +#define WFIFO_DATA_MSK      0x000000FF  /* data: bit[7:0] */
-> +#define WFIFO_CTRL_MSK      0x000003E0  /* control: bit[11:8] */
-> +#define WFIFO_CTRL_START    BIT(8)      /* start bit */
-> +#define WFIFO_CTRL_STOP     BIT(9)      /* stop bit */
-> +#define WFIFO_CTRL_ACKNAK   BIT(10)     /* send ACK(0) or NAK(1) */
-> +#define WFIFO_CTRL_TB       BIT(11)     /* transfer byte bit */
-> +
-> +/* status register init value */
-> +#define I2C_INT_STATUS_MASK    0xfffc0000  /* SR bits[31:18] */
-> +#define I2C_INT_CTRL_MASK      (CR_ALDIE | CR_DTEIE | CR_DRFIE | \
-> +				CR_BEIE | CR_TXDONEIE | CR_TXEIE | \
-> +				CR_RXHFIE | CR_RXFIE | CR_RXOVIE | \
-> +				CR_MSDIE)
-> +
-> +/* i2c bus recover timeout: us */
-> +#define I2C_BUS_RECOVER_TIMEOUT		(100000)
-> +
-> +#define I2C_FAST_MODE_FREQ		(400000)
-> +
-> +enum spacemit_i2c_state {
-> +	STATE_IDLE,
-> +	STATE_START,
-> +	STATE_READ,
-> +	STATE_WRITE,
-> +};
-> +
-> +enum spacemit_i2c_dir {
-> +	DIR_WRITE,
-> +	DIR_READ
-> +};
-> +
-> +/* i2c-spacemit driver's main struct */
-> +struct spacemit_i2c_dev {
-> +	struct device *dev;
-> +	struct i2c_adapter adapt;
-> +
-> +	/* hardware resources */
-> +	void __iomem *base;
-> +	int irq;
-> +
-> +	struct i2c_msg *msgs;
-> +	int msg_num;
-> +	struct i2c_msg *cur_msg;
-> +
-> +	/* index of the current message being processed */
-> +	int msg_idx;
-> +	u8 *msg_buf;
-> +	/* the number of unprocessed bytes remaining in each message  */
-> +	size_t unprocessed;
-> +
-> +	enum spacemit_i2c_state state;
-> +	enum spacemit_i2c_dir dir;
-> +	struct completion complete;
-> +	u32 status;
-> +	u32 err;
-> +};
-> +
-> +static void spacemit_i2c_enable(struct spacemit_i2c_dev *i2c)
-> +{
-> +	u32 val;
-> +
-> +	val = readl(i2c->base + ICR);
-> +	writel(val | CR_IUE, i2c->base + ICR);
-> +}
-> +
-> +static void spacemit_i2c_disable(struct spacemit_i2c_dev *i2c)
-> +{
-> +	u32 val;
-> +
-> +	val = readl(i2c->base + ICR);
-> +	val &= ~CR_IUE;
-> +	writel(val, i2c->base + ICR);
-> +}
-> +
-> +static void spacemit_i2c_reset(struct spacemit_i2c_dev *i2c)
-> +{
-> +	writel(CR_UR, i2c->base + ICR);
-> +	udelay(5);
-> +	writel(0, i2c->base + ICR);
-> +}
-> +
-> +static int spacemit_i2c_handle_err(struct spacemit_i2c_dev *i2c);
-> +
-> +static void spacemit_i2c_bus_reset(struct spacemit_i2c_dev *i2c)
-> +{
-> +	u32 status;
-> +
-> +	/* if bus is locked, reset unit. 0: locked */
-> +	status = readl(i2c->base + IBMR);
-> +	if ((status & BMR_SDA) && (status & BMR_SCL))
-> +		return;
-> +
-> +	spacemit_i2c_reset(i2c);
-> +	usleep_range(10, 20);
-> +
-> +	/* check scl status again */
-> +	status = readl(i2c->base + IBMR);
-> +	if (!(status & BMR_SCL))
-> +		dev_warn_ratelimited(i2c->dev, "unit reset failed\n");
-> +}
-> +
-> +static int spacemit_i2c_recover_bus_busy(struct spacemit_i2c_dev *i2c)
-> +{
-> +	int ret = 0;
-> +	u32 val;
-> +
-> +	val = readl(i2c->base + ISR);
-> +	if (likely(!(val & (SR_UB | SR_IBB))))
-> +		return 0;
-> +
-> +	ret = readl_poll_timeout(i2c->base + ISR, val, !(val & (SR_UB | SR_IBB)),
-> +				 1500, I2C_BUS_RECOVER_TIMEOUT);
-> +	if (unlikely(ret)) {
-> +		spacemit_i2c_reset(i2c);
-> +		ret = -EAGAIN;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static void spacemit_i2c_check_bus_release(struct spacemit_i2c_dev *i2c)
-> +{
-> +	/* in case bus is not released after transfer completes */
-> +	if (unlikely(readl(i2c->base + ISR) & SR_EBB)) {
-> +		spacemit_i2c_bus_reset(i2c);
-> +		usleep_range(90, 150);
-> +	}
-> +}
-> +
-> +static void spacemit_i2c_init(struct spacemit_i2c_dev *i2c)
-> +{
-> +	u32 val = 0;
-> +
-> +	/*
-> +	 * Unmask interrupt bits for all xfer mode:
-> +	 * bus error, arbitration loss detected.
-> +	 * For transaction complete signal, we use master stop
-> +	 * interrupt, so we don't need to unmask CR_TXDONEIE.
-> +	 */
-> +	val |= CR_BEIE | CR_ALDIE;
-> +
-> +	/*
-> +	 * Unmask interrupt bits for interrupt xfer mode:
-> +	 * DBR rx full.
-> +	 * For tx empty interrupt CR_DTEIE, we only
-> +	 * need to enable when trigger byte transfer to start
-> +	 * data sending.
-> +	 */
-> +	val |= CR_DRFIE;
-> +
-> +	/* set speed bits: default fast mode */
-> +	val |= CR_MODE_FAST;
-> +
-> +	/* disable response to general call */
-> +	val |= CR_GCD;
-> +
-> +	/* enable SCL clock output */
-> +	val |= CR_SCLE;
-> +
-> +	/* enable master stop detected */
-> +	val |= CR_MSDE | CR_MSDIE;
-> +
-> +	writel(val, i2c->base + ICR);
-> +}
-> +
-> +static inline void
-> +spacemit_i2c_clear_int_status(struct spacemit_i2c_dev *i2c, u32 mask)
-> +{
-> +	writel(mask & I2C_INT_STATUS_MASK, i2c->base + ISR);
-> +}
-> +
-> +static void spacemit_i2c_start(struct spacemit_i2c_dev *i2c)
-> +{
-> +	u32 slave_addr_rw, val;
-> +
-> +	i2c->dir = i2c->cur_msg->flags & I2C_M_RD;
-> +	i2c->state = STATE_START;
-> +
-> +	if (i2c->cur_msg->flags & I2C_M_RD)
-> +		slave_addr_rw = ((i2c->cur_msg->addr & 0x7f) << 1) | 1;
-> +	else
-> +		slave_addr_rw = (i2c->cur_msg->addr & 0x7f) << 1;
-> +
-> +	writel(slave_addr_rw, i2c->base + IDBR);
-> +
-> +	val = readl(i2c->base + ICR);
-> +
-> +	/* send start pulse */
-> +	val &= ~CR_STOP;
-> +	val |= CR_START | CR_TB | CR_DTEIE;
-> +	writel(val, i2c->base + ICR);
-> +}
-> +
-> +static void spacemit_i2c_stop(struct spacemit_i2c_dev *i2c)
-> +{
-> +	u32 val;
-> +
-> +	val = readl(i2c->base + ICR);
-> +
-> +	val |= CR_STOP | CR_ALDIE | CR_TB;
-> +
-> +	if (i2c->dir == DIR_READ)
-> +		val |= CR_ACKNAK;
-> +
-> +	writel(val, i2c->base + ICR);
-> +}
-> +
-> +static int spacemit_i2c_xfer_msg(struct spacemit_i2c_dev *i2c)
-> +{
-> +	unsigned long time_left;
-> +
-> +	for (i2c->msg_idx = 0; i2c->msg_idx < i2c->msg_num; i2c->msg_idx++) {
-> +		i2c->cur_msg = i2c->msgs + i2c->msg_idx;
-> +		i2c->msg_buf = i2c->cur_msg->buf;
-> +		i2c->err = 0;
-> +		i2c->status = 0;
-> +		i2c->unprocessed = i2c->cur_msg->len;
-> +
-> +		reinit_completion(&i2c->complete);
-> +
-> +		spacemit_i2c_start(i2c);
-> +
-> +		time_left = wait_for_completion_timeout(&i2c->complete,
-> +							i2c->adapt.timeout);
-> +		if (unlikely(time_left == 0)) {
-> +			dev_alert(i2c->dev, "msg completion timeout\n");
-> +			spacemit_i2c_bus_reset(i2c);
-> +			spacemit_i2c_reset(i2c);
-> +			return -ETIMEDOUT;
-> +		}
-> +
-> +		if (unlikely(i2c->err))
-> +			return spacemit_i2c_handle_err(i2c);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int spacemit_i2c_is_last_msg(struct spacemit_i2c_dev *i2c)
-> +{
-> +	if (i2c->dir == DIR_READ) {
-> +		if (i2c->unprocessed == 1 && i2c->msg_idx == i2c->msg_num - 1)
-> +			return 1;
-> +	} else if (i2c->dir == DIR_WRITE) {
-> +		if (!i2c->unprocessed && i2c->msg_idx == i2c->msg_num - 1)
-> +			return 1;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void spacemit_i2c_handle_write(struct spacemit_i2c_dev *i2c)
-> +{
-> +	/* if transfer completes, ISR will handle it */
-> +	if (i2c->status & SR_MSD)
-> +		return;
-> +
-> +	if (i2c->unprocessed) {
-> +		writel(*i2c->msg_buf++, i2c->base + IDBR);
-> +		i2c->unprocessed--;
-> +		return;
-> +	}
-> +
-> +	/* STATE_IDLE avoids trigger next byte */
-> +	i2c->state = STATE_IDLE;
-> +	complete(&i2c->complete);
-> +}
-> +
-> +static void spacemit_i2c_handle_read(struct spacemit_i2c_dev *i2c)
-> +{
-> +	if (i2c->unprocessed) {
-> +		*i2c->msg_buf++ = readl(i2c->base + IDBR);
-> +		i2c->unprocessed--;
-> +	}
-> +
-> +	/* if transfer completes, ISR will handle it */
-> +	if (i2c->status & (SR_MSD | SR_ACKNAK))
-> +		return;
-> +
-> +	/* it has to append stop bit in icr that read last byte */
-> +	if (i2c->unprocessed)
-> +		return;
-> +
-> +	/* STATE_IDLE avoids trigger next byte */
-> +	i2c->state = STATE_IDLE;
-> +	complete(&i2c->complete);
-> +}
-> +
-> +static void spacemit_i2c_handle_start(struct spacemit_i2c_dev *i2c)
-> +{
-> +	if (i2c->dir == DIR_READ) {
-> +		i2c->state = STATE_READ;
-> +		return;
-> +	}
-> +
-> +	if (i2c->dir == DIR_WRITE) {
-> +		i2c->state = STATE_WRITE;
-> +		spacemit_i2c_handle_write(i2c);
-> +	}
-> +}
-> +
-> +static int spacemit_i2c_handle_err(struct spacemit_i2c_dev *i2c)
-> +{
-> +	if (!i2c->err)
-> +		return 0;
-> +
-> +	dev_dbg(i2c->dev, "i2c error status: 0x%08x\n",	i2c->status);
-> +
-> +	if (i2c->err & (SR_BED | SR_ALD))
-> +		spacemit_i2c_reset(i2c);
-> +
-> +	if (i2c->err & (SR_RXOV | SR_ALD))
-> +		return -EAGAIN;
-> +
-> +	return (i2c->status & SR_ACKNAK) ? -ENXIO : -EIO;
-> +}
-> +
-> +static void spacemit_i2c_err_check(struct spacemit_i2c_dev *i2c)
-> +{
-> +	u32 val;
-> +	/*
-> +	 * send transaction complete signal:
-> +	 * error happens, detect master stop
-> +	 */
-> +	if (likely(i2c->err || (i2c->status & SR_MSD))) {
-> +		/*
-> +		 * Here the transaction is already done, we don't need any
-> +		 * other interrupt signals from now, in case any interrupt
-> +		 * happens before spacemit_i2c_xfer to disable irq and i2c unit,
-> +		 * we mask all the interrupt signals and clear the interrupt
-> +		 * status.
-> +		 */
-> +		val = readl(i2c->base + ICR);
-> +		val &= ~I2C_INT_CTRL_MASK;
-> +		writel(val, i2c->base + ICR);
-> +
-> +		spacemit_i2c_clear_int_status(i2c, I2C_INT_STATUS_MASK);
-> +
-> +		i2c->state = STATE_IDLE;
-> +		complete(&i2c->complete);
-> +	}
-> +}
-> +
-> +static irqreturn_t spacemit_i2c_irq_handler(int irq, void *devid)
-> +{
-> +	struct spacemit_i2c_dev *i2c = devid;
-> +	u32 status, val;
-> +
-> +	status = readl(i2c->base + ISR);
-> +	if (!status)
-> +		return IRQ_HANDLED;
-> +
-> +	i2c->status = status;
-> +
-> +	i2c->err = status & (SR_BED | SR_RXOV | SR_ALD);
-> +
-> +	spacemit_i2c_clear_int_status(i2c, status);
-> +
-> +	if (unlikely(i2c->err))
-> +		goto err_out;
-> +
-> +	val = readl(i2c->base + ICR);
-> +
-> +	val &= ~(CR_TB | CR_ACKNAK | CR_STOP | CR_START);
-> +	writel(val, i2c->base + ICR);
-> +
-> +	switch (i2c->state) {
-> +	case STATE_START:
-> +		spacemit_i2c_handle_start(i2c);
-> +		break;
-> +	case STATE_READ:
-> +		spacemit_i2c_handle_read(i2c);
-> +		break;
-> +	case STATE_WRITE:
-> +		spacemit_i2c_handle_write(i2c);
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	if (i2c->state != STATE_IDLE) {
-> +		if (spacemit_i2c_is_last_msg(i2c)) {
-> +			/* trigger next byte with stop */
-> +			spacemit_i2c_stop(i2c);
-> +		} else {
-> +			/* trigger next byte */
-> +			val |= CR_ALDIE | CR_TB;
-> +			writel(val, i2c->base + ICR);
-> +		}
-> +	}
-> +
-> +err_out:
-> +	spacemit_i2c_err_check(i2c);
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static void spacemit_i2c_calc_timeout(struct spacemit_i2c_dev *i2c)
-> +{
-> +	unsigned long timeout;
-> +	int idx = 0, cnt = 0, freq;
-> +
-> +	while (idx < i2c->msg_num) {
-> +		cnt += (i2c->msgs + idx)->len + 1;
-> +		idx++;
-> +	}
-> +
-> +	freq = I2C_FAST_MODE_FREQ;
-so this will set frequency to fast mode (400K), this contradict with PATCH[1/2] which
-says default clock-frequency is 100000, either you need to change the code? or
-update the dt-binding?
+You mean an extern declaration without the actual function ?
+I'd really want to see that documented. It would seem rather unusual.
 
-> +	/*
-> +	 * multiply by 9 because each byte in I2C transmission requires
-> +	 * 9 clock cycles: 8 bits of data plus 1 ACK/NACK bit.
-> +	 */
-> +	timeout = cnt * 9 * USEC_PER_SEC / freq;
-> +
-> +	i2c->adapt.timeout = usecs_to_jiffies(timeout + USEC_PER_SEC / 2) / i2c->msg_num;
-> +}
-> +
-> +static inline int spacemit_i2c_xfer_core(struct spacemit_i2c_dev *i2c)
-drop inline? IMO, it isn't worth here for long function
+Besides, there are several other #ifdefs in the same file, so I am not
+as much bothered about this as you are.
 
-> +{
-> +	int ret = 0;
-no need to initilize to 0
-> +
-> +	spacemit_i2c_reset(i2c);
-> +
-> +	spacemit_i2c_calc_timeout(i2c);
-> +
-> +	spacemit_i2c_init(i2c);
-> +
-> +	spacemit_i2c_enable(i2c);
-> +	enable_irq(i2c->irq);
-> +
-> +	/* i2c wait for bus busy */
-> +	ret = spacemit_i2c_recover_bus_busy(i2c);
-> +	if (unlikely(ret))
-> +		return ret;
-> +
-> +	ret = spacemit_i2c_xfer_msg(i2c);
-> +	if (unlikely(ret < 0)) {
-> +		dev_dbg(i2c->dev, "i2c transfer error\n");
-> +		/* timeout error should not be overridden, and the transfer
-> +		 * error will be confirmed by err handle function latter,
-> +		 * the reset should be invalid argument error.
-> +		 */
-> +		if (ret != -ETIMEDOUT)
-> +			ret = -EINVAL;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int
-> +spacemit_i2c_xfer(struct i2c_adapter *adapt, struct i2c_msg msgs[], int num)
-no need to wrap the line, it makes the code a little bit weird..
+Thanks,
+Guenter
 
-current policy increase to 100characters, the old 80-column is not enforced
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=bdc48fa11e46f867ea4d75fa59ee87a7f48be144
-
-> +{
-> +	struct spacemit_i2c_dev *i2c = i2c_get_adapdata(adapt);
-> +	int ret;
-> +
-> +	i2c->msgs = msgs;
-> +	i2c->msg_num = num;
-> +
-> +	ret = spacemit_i2c_xfer_core(i2c);
-> +	if (likely(!ret))
-> +		spacemit_i2c_check_bus_release(i2c);
-> +
-> +	disable_irq(i2c->irq);
-> +
-> +	spacemit_i2c_disable(i2c);
-> +
-> +	if (unlikely((ret == -ETIMEDOUT || ret == -EAGAIN)))
-> +		dev_alert(i2c->dev, "i2c transfer failed, ret %d err 0x%x\n", ret, i2c->err);
-> +
-> +	return ret < 0 ? ret : num;
-> +}
-> +
-> +static u32 spacemit_i2c_func(struct i2c_adapter *adap)
-> +{
-> +	return I2C_FUNC_I2C | (I2C_FUNC_SMBUS_EMUL & ~I2C_FUNC_SMBUS_QUICK);
-> +}
-> +
-> +static const struct i2c_algorithm spacemit_i2c_algo = {
-> +	.xfer = spacemit_i2c_xfer,
-> +	.functionality = spacemit_i2c_func,
-> +};
-> +
-> +static int spacemit_i2c_probe(struct platform_device *pdev)
-> +{
-> +	struct spacemit_i2c_dev *i2c;
-> +	struct device_node *of_node = pdev->dev.of_node;
-> +	struct clk *clk;
-> +	int ret = 0;
-> +
-> +	i2c = devm_kzalloc(&pdev->dev, sizeof(*i2c), GFP_KERNEL);
-> +	if (!i2c)
-> +		return -ENOMEM;
-> +
-> +	i2c->dev = &pdev->dev;
-> +
-> +	i2c->base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(i2c->base))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(i2c->base), "failed to do ioremap");
-> +
-> +	i2c->irq = platform_get_irq(pdev, 0);
-> +	if (i2c->irq < 0)
-> +		return dev_err_probe(&pdev->dev, i2c->irq, "failed to get irq resource");
-> +
-> +	ret = devm_request_irq(i2c->dev, i2c->irq, spacemit_i2c_irq_handler,
-> +			       IRQF_NO_SUSPEND | IRQF_ONESHOT, dev_name(i2c->dev), i2c);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret, "failed to request irq");
-> +
-> +	disable_irq(i2c->irq);
-> +
-> +	clk = devm_clk_get_enabled(&pdev->dev, NULL);
-> +	if (IS_ERR(clk))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(clk), "failed to enable clock");
-> +
-I'd suggest also to handle pin request here, since pinctrl driver is merged
-
-https://lore.kernel.org/all/CACRpkdYnaJsKKfcdhHeMGTTp86M+wNODzZx2e=OYbxQ4Jc4Rjw@mail.gmail.com/
-
-> +	i2c_set_adapdata(&i2c->adapt, i2c);
-> +	i2c->adapt.owner = THIS_MODULE;
-> +	i2c->adapt.algo = &spacemit_i2c_algo;
-> +	i2c->adapt.dev.parent = i2c->dev;
-> +	i2c->adapt.nr = pdev->id;
-> +
-> +	i2c->adapt.dev.of_node = of_node;
-> +	i2c->adapt.algo_data = i2c;
-> +
-> +	strscpy(i2c->adapt.name, "spacemit-i2c-adapter", sizeof(i2c->adapt.name));
-> +
-> +	init_completion(&i2c->complete);
-> +
-> +	ret = i2c_add_numbered_adapter(&i2c->adapt);
-> +	if (ret)
-> +		return dev_err_probe(&pdev->dev, ret, "failed to add i2c adapter");
-> +
-> +	platform_set_drvdata(pdev, i2c);
-> +
-> +	return 0;
-> +}
-> +
-> +static void spacemit_i2c_remove(struct platform_device *pdev)
-> +{
-> +	struct spacemit_i2c_dev *i2c = platform_get_drvdata(pdev);
-> +
-> +	i2c_del_adapter(&i2c->adapt);
-> +}
-> +
-> +static const struct of_device_id spacemit_i2c_of_match[] = {
-> +	{ .compatible = "spacemit,k1-i2c", },
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, spacemit_i2c_of_match);
-> +
-> +static struct platform_driver spacemit_i2c_driver = {
-> +	.probe = spacemit_i2c_probe,
-> +	.remove = spacemit_i2c_remove,
-> +	.driver = {
-> +		.name = "i2c-k1",
-> +		.of_match_table = spacemit_i2c_of_match,
-> +	},
-> +};
-> +module_platform_driver(spacemit_i2c_driver);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("I2C bus driver for SpacemiT K1 SoC");
-> 
-> -- 
-> 2.34.1
-> 
-
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
 
