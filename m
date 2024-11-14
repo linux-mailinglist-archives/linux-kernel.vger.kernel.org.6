@@ -1,150 +1,172 @@
-Return-Path: <linux-kernel+bounces-409520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0FE39C8DED
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:27:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 037259C8DF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:27:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 410761F250D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:27:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCF1D286DD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473E51487CD;
-	Thu, 14 Nov 2024 15:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31AF214B06C;
+	Thu, 14 Nov 2024 15:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Xm5p6S6/"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="h1s8dlpx"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F7D2C859
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA502C859;
+	Thu, 14 Nov 2024 15:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731598011; cv=none; b=kbj8G3za/G1NcSsWt4LEOw5FxeWiHSl9ashpoi5B3K8+DhrKAn/VRknPA7GgDNS2rupjOjN5dVojUnYYGAhqoEFcxQPLHl+MvVthJMXDMdMHoylnxJzEu3pIRJxklAFUReTih7kRN0F/Ivu7a4+1mpwPCItq7f8pCRBOf+PMfpQ=
+	t=1731598049; cv=none; b=dji6MI66ai1mz//RctRAfg8aLFIT+6iMGoQ+6Pw4w7u28hNoseY7rovT10bvy5zT0bynj8OokRFRaTnHXrugkRG0Jodalv4c/mlKbIMBeH1sGO90Ht2qH0wt4fOAyb5pkyxRd/nR5/UkC2N4rhPaeov18IzARlCrKiMe2MPkvhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731598011; c=relaxed/simple;
-	bh=+jeoGf9IWx7kxj5wQSqzv2q+UrmcExRVO+ScQVuijCw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rMTHFIaeRsPEkToNt/jgDqJmTLxPBOHJYNjr23d3M3qcW0elAHE8lVGWtRcvmTWWNE05yG/Z8ILzGdcrJ8eblLJb8vRXrB6Q3Bmni/R29FrvzUOnebg75vCdPFanCGbZZ7YQwSZowFZQ8Ima/VgfvOe0M0K1st3fNNDwA9FAfOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Xm5p6S6/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE6fv7F001047
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:26:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MaAEA/MQL5Iap4up1jmtqc010b7v6svP+NEN3Qkjamg=; b=Xm5p6S6/VldMOuay
-	5rDQEKKux7pB3srITl7eFter0sjwCoHmBgANAXvM2vz2JhCE5PgVOtXNfIvxZ16U
-	Ixurh6AGLfwxtdO+d5yrFxsGzDj+C1C7RK35afcw32EvDjQI3Lol9NLPKISxSpVG
-	F+YyyVR6gp5EukjuCUaMnW1r7dbHzptp3RTuUFWN0Uzm9V8FW9ensdyyKC5EJyLK
-	bhsZEtRcua+gtd7GtrZ7vvZLb3XVGMaZPcTkHZU1mufjnAgsqa0WZS/3kGZfeCLP
-	JT1tI35Riz6lbVOtmB4t+4f7h0m9mlPfMOjXMTG+leyhqnZi1wMYsYb5Nf4kMfRo
-	T8nFVg==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vqbm5usk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:26:48 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4634796c2cbso1487981cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:26:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731598008; x=1732202808;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MaAEA/MQL5Iap4up1jmtqc010b7v6svP+NEN3Qkjamg=;
-        b=rzysWhSMU7K1UeoW6Pf+fGGI1UFqFaTq3O9Py1nD8WmYfX0wNRFbe5bJEGnI3TVYej
-         5Fu5LR/IsRV84qOoS9vAuHBXvpSdEfv/ypl6Xc2ObBMivuv2eyIzzdSe4iOgGXGieEUq
-         NAZ/KG32ULJrEGe72ZyskgafLGqCsUQbTCX/QRKfsOsU0bgq8HhYE7LmW3sM9V97hKmx
-         p5cM3gK7lyR19QYjLaVEGc9f4gaEw35vNBMSDA6G0nfBXVs8t/AyWfcUf8L1ZuW7nfe3
-         YkCXXBQlfH3dWclRnMk/pemYK5BKJ4cDakCAwgmY06UKvGnh0t+kvf/HDrwvpDGY0M19
-         MPvw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0EVFbvK0C760YHTXiE8tRXuLeWqUms7x8CMjbvC6PRgtGUR28JlYmIUjLZtF/4qoMmQy8IO/RoRKk1ds=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9IonjCZrLiBfwAqgM8vIpgd8DOiA6688fRxL22e7j86rGeTTG
-	0LZVkSpnoKw9kvuRU2hcASFM1JnXxW5m1MRFRnOZIpK5QtcPaUJnPppVGrxsmQDsIiIFOZ0Ll6B
-	JlhrZd/Hu8W3/K7cII93Jo5DeYFSZyfQCH7xr/QYtpCXngLYW6gAzwyUIUwy5YP8=
-X-Gm-Gg: ASbGncsyhtP5dkpvi7WGJDeUqDZ1GMXj6MJz/WzsjU0O9+61oOuPMRFW63rvT5ZgyI4
-	6GkZsH7GrMPgSs4lFGZVTgkxoHsMdu1TX5ByZVCx++uVqtMDwi3BKnXHj560T/q6TuRMrugtXFI
-	jlMLhJN1+dAccYSIzbr7wzHTFe2fup42QRxGZwT8Dj4KLaZjNKNUrHBbRaWMvwuG5slPu4wV9l5
-	6+AYJeCujGttXmNAF8RA8VjBYK3aAe7R9LdmIcQaPQAT9Nf9e7tZSeUwjoQAaXVoXV0SnGt33Cd
-	G6vImOHhmpFai1aQyFxgmazI2lq2yRw=
-X-Received: by 2002:a05:622a:2a0d:b0:463:97c:a2b with SMTP id d75a77b69052e-463097c0a2fmr145377341cf.0.1731598008115;
-        Thu, 14 Nov 2024 07:26:48 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF+Km+brd9preE/+PlVgl2cbIAUN7sFBM9KxI766x2sS9tI2y1AA2KqybBztWk0dxxSz5JK+A==
-X-Received: by 2002:a05:622a:2a0d:b0:463:97c:a2b with SMTP id d75a77b69052e-463097c0a2fmr145377191cf.0.1731598007771;
-        Thu, 14 Nov 2024 07:26:47 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20e043316sm73590466b.135.2024.11.14.07.26.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 07:26:47 -0800 (PST)
-Message-ID: <f987667a-5af9-468d-84eb-93051ed015f3@oss.qualcomm.com>
-Date: Thu, 14 Nov 2024 16:26:45 +0100
+	s=arc-20240116; t=1731598049; c=relaxed/simple;
+	bh=AlrJiZZOyYgTIyh3xiaPHspbKmDJnPiNHoinUQL7L1Q=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=agDEYSIFecrhvuaCpcFLP9boGe63FRay6AztSh3KFoWueZj6JRKxX0yDJH+EDF0tLT4ioCwI03T7GMi2iUWYSj6B8Dyll8SYq3DKMBLCxAeWDUhgdqD3L8t+yUT/UrkbqARFgYxi8PSDlxfk+JH/EqsMrL5EKaRty37ty/Z8QhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=h1s8dlpx; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AEEAUeh016507;
+	Thu, 14 Nov 2024 15:27:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=qWzriA
+	jXB4q5NSkWXUx0bVViLmGjPmLT8Bq1oELXIQs=; b=h1s8dlpxqUMwhOugdDIU2A
+	WabGaArQssp100QhFqjRPH1ChQ7XyG42NSAUz3MMeVJXnkT5wId5iLui45KoHPXL
+	6zyQY8cYLuwwL8cptRgjOnZsvbDmung95+ZHo7+E/IT6AQLMWhVYyPoCIjeoxMoa
+	1bd9RQp356j53y2GQ6rj+Ci4C9uFdY6zpk1I5PbR/L2k8815PNLmDKVz9Itv6bNd
+	3fHxLh9bAPBkS/0gseTGxApid+kh8B6CSUgVrxrsgJ2m85CE9zLkhcBugNnTXVdz
+	UFBWl0/PiD2yArk6JraBytOiti1tStBF7Ykg6YkTm0Znl2qPu19KGd5FbOwf10Ww
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42wjqrgb38-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 15:27:17 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AEFOmVf021989;
+	Thu, 14 Nov 2024 15:27:17 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42wjqrgb33-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 15:27:16 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AEAtOY7010521;
+	Thu, 14 Nov 2024 15:27:16 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 42tj2s8krb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Nov 2024 15:27:16 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AEFRE4S29557494
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 14 Nov 2024 15:27:14 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7F28220043;
+	Thu, 14 Nov 2024 15:27:14 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4D6A620040;
+	Thu, 14 Nov 2024 15:27:14 +0000 (GMT)
+Received: from [9.152.222.93] (unknown [9.152.222.93])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 14 Nov 2024 15:27:14 +0000 (GMT)
+Message-ID: <8eb7e7d2-6fd6-4f3f-a3ca-265639adc61c@linux.ibm.com>
+Date: Thu, 14 Nov 2024 16:27:13 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: perf report: fix off-by-one for non-activation frames
+To: Milian Wolff <milian.wolff@kdab.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jan Kratochvil <jan.kratochvil@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "linux-kernel@vger.kernel.org" <Linux-kernel@vger.kernel.org>,
+        linux-perf-users <linux-perf-users@vger.kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Yao Jin <yao.jin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Thomas Richter <tmricht@linux.ibm.com>
+References: <20170515150444.6841-1-milian.wolff@kdab.com>
+ <1916323.ygRLzu1ryd@agathebauer> <20170619185939.GA2170@redhat.com>
+ <1729469.05pq3V20xn@milian-kdab2>
+From: Jens Remus <jremus@linux.ibm.com>
+Content-Language: en-US
+Organization: IBM Deutschland Research & Development GmbH
+In-Reply-To: <1729469.05pq3V20xn@milian-kdab2>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: zDrQ29wDvZryIbrmCKcN7E3NOvqQQJn-
+X-Proofpoint-GUID: NdkQDcVZhV_yExKTemOuLAf2KPIhtRIZ
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 2/2] arm64: dts: qcom: qcs8300: add TRNG node
-To: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Vinod Koul <vkoul@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-crypto@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241113021819.2616961-1-quic_yrangana@quicinc.com>
- <20241113021819.2616961-3-quic_yrangana@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241113021819.2616961-3-quic_yrangana@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: W-u9kioKCkhqIUs_KvGEnrRhXAXIvIas
-X-Proofpoint-GUID: W-u9kioKCkhqIUs_KvGEnrRhXAXIvIas
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 impostorscore=0 priorityscore=1501 mlxlogscore=999
- spamscore=0 bulkscore=0 suspectscore=0 malwarescore=0 adultscore=0
- clxscore=1015 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411140120
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ priorityscore=1501 spamscore=0 mlxlogscore=999 suspectscore=0 mlxscore=0
+ clxscore=1011 malwarescore=0 phishscore=0 adultscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411140114
 
-On 13.11.2024 3:18 AM, Yuvaraj Ranganathan wrote:
-> The qcs8300 SoC has a True Random Number Generator, add the node with
-> the correct compatible set.
+On 04.07.2017 09:59, Milian Wolff wrote:
+> On Monday, June 19, 2017 8:59:39 PM CEST Arnaldo Carvalho de Melo wrote:
+>> Em Sat, Jun 17, 2017 at 01:13:11PM +0200, Milian Wolff escreveu:
+>>> On Samstag, 17. Juni 2017 10:04:02 CEST Jan Kratochvil wrote:
+>>>> On Sat, 17 Jun 2017 09:56:57 +0200, Namhyung Kim wrote:
+>>>>> Not sure whether it needs be fixed or not.  If we fix it, srcline and
+>>>>> address would not match so it can give its own confusion to users.
+>>>>> Ideally it should display an addressof the instruction before the
+>>>>> address IMHO.
+>>>>
+>>>> One can figure million ways how it can behave and each one has its pros
+>>>> and
+>>>> cons.  I was just describing the current behavior of GDB and LLDB which
+>>>> people are used to already.
+>>>
+>>> Personally, I agree with Jan that we should mimick existing tool's
+>>> behavior. I just fear that it's not trivial to do it with the current
+>>> code base...
+>> But we agree it is a worthwhile change (have backtraces in perf match
+>> what gdb, etc show), right?
+>>
+>> If you can, please try to do this, your attempt will help us understand
+>> more the extent of the changes needed and perhaps someonw can come up
+>> with simplifications...
 > 
-> Reviewed-by: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> Signed-off-by: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcs8300.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> index 2c35f96c3f28..2a3862568da2 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> @@ -588,6 +588,11 @@ &clk_virt SLAVE_QUP_CORE_0 0>,
->  			};
->  		};
->  
-> +		rng@10d2000 {
-> +			compatible = "qcom,qcs8300-trng", "qcom,trng";
-> +			reg = <0 0x010d2000 0 0x1000>;
-> +		};
-> +
->  		config_noc: interconnect@14c0000 {
->  			compatible = "qcom,qcs8300-config-noc";
->  			reg = <0x0 0x014c0000 0x0 0x13080>;
+> Sorry for the (long) delay, but I'm sadly busy on other things right now. I
+> have this on my radar and will try to find time to look into it. But it
+> probably won't happen before end of July. If this is urgent, maybe someone
+> else needs to look into it before me.
 
-There's a jarring style difference visible looking just at this diff :/
+I ran into the odd "decremented by one" IPs (and function offsets) on
+s390, which requires instructions to be aligned on 2 byte boundary, and
+ended up debugging the code to learn that this is actually on purpose
+and why.
 
-Konrad
+If it cannot easily be "fixed" in the output, could it at least be
+documented?
+
+Thanks and regards,
+Jens
+-- 
+Jens Remus
+Linux on Z Development (D3303) and z/VSE Support
++49-7031-16-1128 Office
+jremus@de.ibm.com
+
+IBM
+
+IBM Deutschland Research & Development GmbH; Vorsitzender des 
+Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der 
+Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
+IBM Data Privacy Statement: https://www.ibm.com/privacy/
+
 
