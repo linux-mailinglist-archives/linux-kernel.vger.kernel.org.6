@@ -1,107 +1,109 @@
-Return-Path: <linux-kernel+bounces-409218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C4D59C8915
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:36:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 074EA9C8916
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:37:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22B131F2584F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:36:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB7D52839C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096F81F8F17;
-	Thu, 14 Nov 2024 11:36:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83ED41F940A;
+	Thu, 14 Nov 2024 11:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NDXD5U8h"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F72f1g0A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B181F9413
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E400F1F8F02
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731584202; cv=none; b=R2z5ieHC0v7GnjRRB36ZwoMpKqmRuDmGQpU9CTUkmrbQfXKoF+YTFSxM0isckYEDV5uPc+lR5v730DwKskG9QSZNVSkjX3tkBwG9ClPlfNP3BDYb/eVg0jt9WZ/BTV+kopWvOZwGXTdw4T8bp8T4SyVRdVcdiTabMed7Fkw3ABs=
+	t=1731584211; cv=none; b=f8Rs1SHzZjIlgpeSU2UorvdVJWgKWwF55ATvxZUwAGZXE+ryg3VgJ64BUj2F1ujW812s+OyadAm3D0r6la409M0pRkQjsvO8RpEAay+6SHdSJOL/j/5WSKm+R5JONzF0kWmpQtwkkpGvhN8eDH8vYglH5d6aJhMQEau0Lqf21UU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731584202; c=relaxed/simple;
-	bh=RjEqXZW7G6PgskxRuCPoqRiyYTFHvTbuuqQ0EXQxJ0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I4rXBsd44U72UoAjGclFi21BUaYDTW+ae082jks7geBH2SmGqmEeLn6GCI30A+oc8pplEb6KzaKtY/W7l9+fDr7lAJhKK8Tz0kRlaDi/UF6zCSzfCMNPXYykG/p4t9hHJq6vQzQjfv7QA7iQr9zF6pPCTxxE+tanVa1XOC9Zy8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NDXD5U8h; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=LnEN4mKfGvtLuqC+FK9EHA3E78X1W7MaLS/jIl6uOjc=; b=NDXD5U8hwfydEilOPoF06Ux5yw
-	Lm4CDjSA12PIUIxFKofKvBp2o9wIYvruosISLDUFbLPlxMKPLRUqdOBW3L3cwj+9PIfIiiX1MGxnP
-	yPCwFFHHarERm8AbzFIM2ACFKvpKZm48GemBYIRSqAqUz0T12BWvLxa/mluBWmTaxWFMooAnbsWom
-	GD2o5i+o6Gb9idqDD1fHWc/aspj/v8uh5BT2KRIPhoSK8hEZTAgeUyb1D5tZ1dCMXZLUiEIMsq7pS
-	roLPteGgCEGjIvW4g90h+FjABfCOlNhAPgzGaJERUKYV60NV/dJyLFf66v396lrONe1+R81wPyEc4
-	JxhEHXTw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tBY9H-000000000jS-09iT;
-	Thu, 14 Nov 2024 11:36:31 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B0C8E300472; Thu, 14 Nov 2024 12:36:30 +0100 (CET)
-Date: Thu, 14 Nov 2024 12:36:30 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Rik van Riel <riel@surriel.com>, Borislav Petkov <bp@alien8.de>,
-	linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
-	luto@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	x86@kernel.org, kernel-team@meta.com, hpa@zytor.com,
-	bigeasy@linutronix.de
-Subject: Re: [PATCh 0/3] x86,tlb: context switch optimizations
-Message-ID: <20241114113630.GP6497@noisy.programming.kicks-ass.net>
-References: <20241109003727.3958374-1-riel@surriel.com>
- <20241113095550.GBZzR3pg-RhJKPDazS@fat_crate.local>
- <20241113095557.2d60a073@imladris.surriel.com>
- <ZzXIcAi4R5yH8ZtN@gmail.com>
+	s=arc-20240116; t=1731584211; c=relaxed/simple;
+	bh=2XLV7xqIZ+/aSQ7I3R7xYx69y86EEpnqqBcMYOUPhrI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PW9DPJS46ecip0tZP7cJEDMroBYdwRlsnrTmI6NfGDjCCI/C7rVFNvjtmTQvm1CN9ccLHotP+kmD9pQr+5c2lRWPJQZ1ifhUeaU34UVbZufmDSJMZwZZKu8S6/7cuN7GxMfOrNW5TMTIhYK1NK5Sef6UV/fdQzqt2noUYPP7/UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F72f1g0A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DA22C4CED4
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:36:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731584210;
+	bh=2XLV7xqIZ+/aSQ7I3R7xYx69y86EEpnqqBcMYOUPhrI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=F72f1g0A9KjZwriQXlG4GnG8rPKlRS/cSVHyOpooOSaXTevPxyElJWBJXrcnyOGum
+	 cwvykHsvtMGlPJ7gZd8PJbyGiyw7n98em9wW0JCwPHBlBw0SLkBafZ/HBB8zZh6F1c
+	 tWEu2NfzpVS9sZgKSg0bGZIvV4fN6Q9pfcBmBwRcDb37sqwdpflR1JC68WvmyIWTfT
+	 8XqAL6eh1Rc3fe5q9PXGP6SEctDF5wphQajiW9uOwN2hpL0nBZy2G37OTv/lVaeqoh
+	 aAwxRmVnnK5579G6fwvNAUYUVAC8zstRGdV6qUwHpGrMIuAj4dzYPOalYY2jfXasXZ
+	 ZQ1C5A6LKYrYA==
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9e44654ae3so74047966b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 03:36:50 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWVSi8N7ibpH6vyUJHevBXPJKxmActxZIq+/6DReKxqy6NsqnM4mDmue+a69yijql0r7OtcHY5QM50MvVM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpkkPDxBQpgWLK9Axt5er8Hmc0atg/VDg8Ae3ls15fUGqeckpP
+	C9u3EaNDNYLTvLPXeC17e6Iuh39BsUE3lcz3Zs8D+NWClLg0crvB4eecuYUCRnhD5910ZxQT0CP
+	diKNf+7jLWV0INPdKRuHzPDu0oYI=
+X-Google-Smtp-Source: AGHT+IEVjBJAdOEkjL8C0OM7eIPERUREE6SUOwX6AI7Zmg05mjU9nqzY30S3fyHXOIMX5OD6A9wIXSiaqR7EOrCjpNE=
+X-Received: by 2002:a17:907:1c0f:b0:a9e:51b6:2bab with SMTP id
+ a640c23a62f3a-aa1f7e26851mr540468266b.0.1731584208975; Thu, 14 Nov 2024
+ 03:36:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZzXIcAi4R5yH8ZtN@gmail.com>
+References: <20241108091545.4182229-1-chenhuacai@loongson.cn>
+ <20241108091545.4182229-4-chenhuacai@loongson.cn> <20241114103111.5W5ZY0D4@linutronix.de>
+ <CAAhV-H72YSNBGutYPOVi=S7nwLb6YOiQOFqnimAp=9D0wAJc3g@mail.gmail.com>
+ <20241114111409.LWKp5YEg@linutronix.de> <CAAhV-H4ecBZsV+9SxLZ-JFiUK=b3tMqkLZe0djac0_390==MMw@mail.gmail.com>
+ <20241114113018.Ilo9ZsQo@linutronix.de>
+In-Reply-To: <20241114113018.Ilo9ZsQo@linutronix.de>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Thu, 14 Nov 2024 19:36:38 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4jDNG8nsW30U9zE1-c6dHwy2fSjy5hkZhpWWu3=og64A@mail.gmail.com>
+Message-ID: <CAAhV-H4jDNG8nsW30U9zE1-c6dHwy2fSjy5hkZhpWWu3=og64A@mail.gmail.com>
+Subject: Re: [PATCH 3/3] LoongArch: Allow to enable PREEMPT_RT
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Huacai Chen <chenhuacai@loongson.cn>, Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev, 
+	Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	linux-rt-devel@lists.linux.dev, Guo Ren <guoren@kernel.org>, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 14, 2024 at 10:52:48AM +0100, Ingo Molnar wrote:
-> 
-> * Rik van Riel <riel@surriel.com> wrote:
-> 
-> > On Wed, 13 Nov 2024 10:55:50 +0100
-> > Borislav Petkov <bp@alien8.de> wrote:
-> > 
-> > > On Fri, Nov 08, 2024 at 07:27:47PM -0500, Rik van Riel wrote:
-> > > > While profiling switch_mm_irqs_off with several workloads,
-> > > > it appears there are two hot spots that probably don't need
-> > > > to be there.  
-> > > 
-> > > One of those three is causing the below here, zapping them from tip.
-> > > 
-> > 
-> > TL;DR: __text_poke ends up sending IPIs with interrupts disabled.
-> > 
-> > > [    3.186469]  on_each_cpu_cond_mask+0x50/0x90
-> > > [    3.186469]  flush_tlb_mm_range+0x1a8/0x1f0
-> > > [    3.186469]  ? cpu_bugs_smt_update+0x14/0x1f0
-> > > [    3.186469]  __text_poke+0x366/0x5d0
-> > 
-> > Here is an alternative to avoid __text_poke() from calling
-> > on_each_cpu_cond_mask() with IRQs disabled:
-> > 
-> > ---8<---
-> > From e872edeaad14c793036f290afc28000281e1b76a Mon Sep 17 00:00:00 2001
-> > From: Rik van Riel <riel@surriel.com>
-> > Date: Wed, 13 Nov 2024 09:51:16 -0500
-> > Subject: [PATCH] x86/alternatives: defer poking_mm TLB flush to next use
-> 
-> I'd argue *both* of your patches improve the code, right?
+On Thu, Nov 14, 2024 at 7:30=E2=80=AFPM Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+>
+> On 2024-11-14 19:19:26 [+0800], Huacai Chen wrote:
+> > > > > Why is ntpd/chronyd service affecting this? Is it running at prio=
+ 99?
+> > > > > Otherwise it should not be noticed.
+> > > > No, ntpd/chronyd doesn't affect latency. But they may trigger RTC
+> > > > synchronization every 11 minutes, and RTC synchronization affects
+> > > > latency. We can keep ntpd/chronyd running but disable RTC
+> > > > synchronization by configuration, this is the least aggressive meth=
+od.
+> > >
+> > > What is "RTC synchronization" in this context?
+> > Means the sync_hw_clock() function in kernel/time/ntp.c, it can be
+> > enabled/disabled by chronyd configuration:
+>
+> But what exactly is sync_hw_clock() doing that is causing a problem
+> here? The clock on HW is updated. The access to the RTC clock is
+> preemptible.
+This is a platform-specific problem, our RTC driver is
+drivers/rtc/rtc-loongson.c, the write operation to RTC register is
+slow.
 
-No, please don't.
+Huacai
+
+>
+> > Huacai
+>
+> Sebastian
+>
 
