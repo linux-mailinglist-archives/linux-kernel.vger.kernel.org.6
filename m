@@ -1,293 +1,119 @@
-Return-Path: <linux-kernel+bounces-410160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B6499CD560
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 03:26:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 032449CD5FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 04:42:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 130271F224BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 02:26:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CA881F22275
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 03:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B8A15B10D;
-	Fri, 15 Nov 2024 02:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D51A15C15E;
+	Fri, 15 Nov 2024 03:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="VK7hJ5zq"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jzJ12OFn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201A21442F4;
-	Fri, 15 Nov 2024 02:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D6B1547CA;
+	Fri, 15 Nov 2024 03:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731637559; cv=none; b=GEzqOgIcX4UsM46GLUJJtv4ChLBZx5Le1SN0cp5Y4+Jl7RoN0e91rVzowEyubxgo1t8CklVigiFcyPaWs5mz/4CIEstLiGP8tGAv4+6PWwaStmZxsHmVkNPxQULNnrN9eBn8+X36TbrSj9TWGz4XDv06fZD6U8CbBVZZZZ+HRXw=
+	t=1731642122; cv=none; b=mQtIWPXO1GLmnIrVi1tdoCmMCFibCVerABH20bBJnixT4LYGEePnbfqOzk+V2Vq/f90LeW4+6/JDW0uYmVFoCH6Ld47kH2RRWVXXEHEk+CkVhRVdMha6mOfebQacuKPmh8VYw4Yiq02DnMScMohbIm/GwfYXyw5x2O1kgdfOSJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731637559; c=relaxed/simple;
-	bh=Q/FqzVI86T2PL06lpAwTVGipB5NTfw5oUN3fUT9Pudo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QX3vhoKhiAqHFz8MfZ8uF9sayOhVZ9K3itWqm1tdSFgNXIHewXQeAgLPosGCGdYVDLzp7cwGxKHEizr50bZKA1vR/kcsyqYDHrqDGh1G2mueGriTu7IghV7uW3KyBnWQ7UIdsel5muKMASGXK6urcEvO0tZ/dAePfpRc3K+yeeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=VK7hJ5zq; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1731642122; c=relaxed/simple;
+	bh=Y/o5+BJKVt2usIAMwP1fN2hdjv9O5BMZe4WYxPWg1pk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q1j1MYoN/5YQoBNlgmt6BpMIOGXkZp0VqurSSNfG5zgqy56ifd6rNvq2PZnxSjDbGBdwLwaopQ2SSobl5nijtKb/IrIrtkmtudEl5jPLIXehsmbA1iOKN9H0OlDRAJkI4VpKwXeI0FPNVTTnr/IhLlUPrIg7OiqdVIQveRUQ+SE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jzJ12OFn; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1731637557; x=1763173557;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Q/FqzVI86T2PL06lpAwTVGipB5NTfw5oUN3fUT9Pudo=;
-  b=VK7hJ5zqXCTMngsMd7qlpbMIxU/vxs3NOJ4x/S/UtWA6N4Huqx9tLJ+p
-   jM1oSc2x+TbRXZDhZEnWB/FwsbkFZyh7zEdEkt4Ic3z8WAfznEk8yGjEK
-   x1NQGP7XHtk/XmzX7s7fZtPWeHsv3hNrEWX142vxkueQI6Kwt71H+fHJK
-   WSWJTCPAEfCQ9xPSdz/I7aqoEK/Cq1tPP+e8DvJhQ8eOUSQ3RqyrcwcRf
-   8TmeHNf6dC/tR/c5Iw6bqAaQoTKdAva6GSuinazKw8SHtjIeXrC1+uLu6
-   s/DyJXGJVMFpkrncOWV+DhPzpHX+NEOoQcRSo6bQyVq5KIbzxRBm1ikCZ
-   A==;
-X-CSE-ConnectionGUID: QjuG0j+zR8eJOiYtRT/ezA==
-X-CSE-MsgGUID: f9zCoi30QROEMbR52xbuZA==
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731642120; x=1763178120;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Y/o5+BJKVt2usIAMwP1fN2hdjv9O5BMZe4WYxPWg1pk=;
+  b=jzJ12OFnpHAG2BjHjc0CfeIrC8qZ/8zaWAzAoT0sIcGQnPFADuc0rpvX
+   e/fwroLYYdPZbtkmSiABf4IIGLMuoxkBJx2T0DFLzr6lTDIkbV4hPfkwO
+   IltEVbemZhdMvqHdQye2jb3m5lC4PLQmkLuRceFTps/kjqf789BNzSvnu
+   jmu0qKmqmNHZ7uBguPZhrIzHMuvNiJdNhAqGqkYsdmxr7ma1BPPQv2PqO
+   WTsWGw16hmbovx/ARqz4DjHgraVfaw/HvtX8LZUXSAtFDkU0SajSyuuH5
+   CY7cAE4o5CaAUN71dR3uUZku+yOxiBFT2gGQ7v8Wt+lrNAafOTRlnWDYu
+   g==;
+X-CSE-ConnectionGUID: q6ixvuXiRkCu3999HugbBQ==
+X-CSE-MsgGUID: wBl2J4JUS4CF3J+A/b0yPg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11256"; a="42149955"
 X-IronPort-AV: E=Sophos;i="6.12,155,1728975600"; 
-   d="scan'208";a="34078315"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Nov 2024 19:23:38 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 14 Nov 2024 19:23:38 -0700
-Received: from nisar-OptiPlex-9020.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Thu, 14 Nov 2024 19:23:33 -0700
-From: Mohan Prasad J <mohan.prasad@microchip.com>
-To: <netdev@vger.kernel.org>, <davem@davemloft.net>, <kuba@kernel.org>,
-	<andrew@lunn.ch>
-CC: <edumazet@google.com>, <pabeni@redhat.com>, <shuah@kernel.org>,
-	<mohan.prasad@microchip.com>, <linux-kernel@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <horms@kernel.org>,
-	<brett.creeley@amd.com>, <rosenp@gmail.com>, <UNGLinuxDriver@microchip.com>,
-	<willemb@google.com>, <petrm@nvidia.com>
-Subject: [PATCH net-next v4 3/3] selftests: nic_performance: Add selftest for performance of NIC driver
-Date: Fri, 15 Nov 2024 00:55:20 +0530
-Message-ID: <20241114192545.1742514-4-mohan.prasad@microchip.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241114192545.1742514-1-mohan.prasad@microchip.com>
-References: <20241114192545.1742514-1-mohan.prasad@microchip.com>
+   d="scan'208";a="42149955"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 12:02:28 -0800
+X-CSE-ConnectionGUID: JucirM5UTIyoYR5xKAi19w==
+X-CSE-MsgGUID: Nu8QWjBaQ++mSJtEJheNuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
+   d="scan'208";a="88079100"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.21])
+  by fmviesa007.fm.intel.com with ESMTP; 14 Nov 2024 12:02:28 -0800
+From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To: rafael@kernel.org,
+	rui.zhang@intel.com,
+	daniel.lezcano@linaro.org,
+	lukasz.luba@arm.com
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] thermal: int3400: Fix display of current_uuid for active policy
+Date: Thu, 14 Nov 2024 12:02:13 -0800
+Message-ID: <20241114200213.422303-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
 
-Add selftest case to check the send and receive throughput.
-Supported link modes between local NIC driver and partner
-are varied. Then send and receive throughput is captured
-and verified. Test uses iperf3 tool.
-Add iperf3 server/client function in GenerateTraffic class.
+When the current_uuid attribute is set to active policy UUID, reading
+back the same attribute is displaying uuid as "INVALID" instead of active
+policy UUID on some platforms before Ice Lake.
 
-Signed-off-by: Mohan Prasad J <mohan.prasad@microchip.com>
+In platforms before Ice Lake, firmware provides list of supported thermal
+policies. In this case user space can select any of the supported thermal
+policy via a write to attribute "current_uuid".
+
+With the 'commit c7ff29763989 ("thermal: int340x: Update OS policy
+capability handshake")', OS policy handshake is updated to support
+Ice Lake and later platforms. But this treated priv->current_uuid_index=0
+as invalid. This priv->current_uuid_index=0 is for active policy.
+Only priv->current_uuid_index=-1 is invalid.
+
+Fix this issue by treating priv->current_uuid_index=0 as valid.
+
+Fixes: c7ff29763989 ("thermal: int340x: Update OS policy capability handshake")
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+CC: stable@vger.kernel.org # 5.18+
 ---
- .../testing/selftests/drivers/net/hw/Makefile |   1 +
- .../drivers/net/hw/nic_performance.py         | 137 ++++++++++++++++++
- .../selftests/drivers/net/lib/py/load.py      |  20 ++-
- 3 files changed, 157 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/drivers/net/hw/nic_performance.py
+ drivers/thermal/intel/int340x_thermal/int3400_thermal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/drivers/net/hw/Makefile b/tools/testing/selftests/drivers/net/hw/Makefile
-index 7939f81fe..e400fd097 100644
---- a/tools/testing/selftests/drivers/net/hw/Makefile
-+++ b/tools/testing/selftests/drivers/net/hw/Makefile
-@@ -12,6 +12,7 @@ TEST_PROGS = \
- 	hw_stats_l3_gre.sh \
- 	loopback.sh \
- 	nic_link_layer.py \
-+	nic_performance.py \
- 	pp_alloc_fail.py \
- 	rss_ctx.py \
- 	#
-diff --git a/tools/testing/selftests/drivers/net/hw/nic_performance.py b/tools/testing/selftests/drivers/net/hw/nic_performance.py
-new file mode 100644
-index 000000000..201403b76
---- /dev/null
-+++ b/tools/testing/selftests/drivers/net/hw/nic_performance.py
-@@ -0,0 +1,137 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0
-+
-+#Introduction:
-+#This file has basic performance test for generic NIC drivers.
-+#The test comprises of throughput check for TCP and UDP streams.
-+#
-+#Setup:
-+#Connect the DUT PC with NIC card to partner pc back via ethernet medium of your choice(RJ45, T1)
-+#
-+#        DUT PC                                              Partner PC
-+#┌───────────────────────┐                         ┌──────────────────────────┐
-+#│                       │                         │                          │
-+#│                       │                         │                          │
-+#│           ┌───────────┐                         │                          │
-+#│           │DUT NIC    │         Eth             │                          │
-+#│           │Interface ─┼─────────────────────────┼─    any eth Interface    │
-+#│           └───────────┘                         │                          │
-+#│                       │                         │                          │
-+#│                       │                         │                          │
-+#└───────────────────────┘                         └──────────────────────────┘
-+#
-+#Configurations:
-+#To prevent interruptions, Add ethtool, ip to the sudoers list in remote PC and get the ssh key from remote.
-+#Required minimum ethtool version is 6.10
-+#Change the below configuration based on your hw needs.
-+# """Default values"""
-+#time_delay = 8 #time taken to wait for transitions to happen, in seconds.
-+#test_duration = 10  #performance test duration for the throughput check, in seconds.
-+#send_throughput_threshold = 80 #percentage of send throughput required to pass the check
-+#receive_throughput_threshold = 50 #percentage of receive throughput required to pass the check
-+
-+import time
-+import json
-+import argparse
-+from lib.py import ksft_run, ksft_exit, ksft_pr, ksft_true
-+from lib.py import KsftFailEx, KsftSkipEx, GenerateTraffic
-+from lib.py import NetDrvEpEnv, bkg, wait_port_listen
-+from lib.py import cmd
-+from lib.py import LinkConfig
-+
-+class TestConfig:
-+    def __init__(self, time_delay: int, test_duration: int, send_throughput_threshold: int, receive_throughput_threshold: int) -> None:
-+        self.time_delay = time_delay
-+        self.test_duration = test_duration
-+        self.send_throughput_threshold = send_throughput_threshold
-+        self.receive_throughput_threshold = receive_throughput_threshold
-+
-+def _pre_test_checks(cfg: object, link_config: LinkConfig) -> None:
-+    if not link_config.verify_link_up():
-+        KsftSkipEx(f"Link state of interface {cfg.ifname} is DOWN")
-+    common_link_modes = link_config.common_link_modes
-+    if common_link_modes is None:
-+        KsftSkipEx("No common link modes found")
-+    if link_config.partner_netif == None:
-+        KsftSkipEx("Partner interface is not available")
-+    if link_config.check_autoneg_supported():
-+        KsftSkipEx("Auto-negotiation not supported by local")
-+    if link_config.check_autoneg_supported(remote=True):
-+        KsftSkipEx("Auto-negotiation not supported by remote")
-+    cfg.require_cmd("iperf3", remote=True)
-+
-+def check_throughput(cfg: object, link_config: LinkConfig, test_config: TestConfig, protocol: str, traffic: GenerateTraffic) -> None:
-+    common_link_modes = link_config.common_link_modes
-+    speeds, duplex_modes = link_config.get_speed_duplex_values(common_link_modes)
-+    """Test duration in seconds"""
-+    duration = test_config.test_duration
-+
-+    ksft_pr(f"{protocol} test")
-+    test_type = "-u" if protocol == "UDP" else ""
-+
-+    send_throughput = []
-+    receive_throughput = []
-+    for idx in range(0, len(speeds)):
-+        if link_config.set_speed_and_duplex(speeds[idx], duplex_modes[idx]) == False:
-+            raise KsftFailEx(f"Not able to set speed and duplex parameters for {cfg.ifname}")
-+        time.sleep(test_config.time_delay)
-+        if not link_config.verify_link_up():
-+            raise KsftSkipEx(f"Link state of interface {cfg.ifname} is DOWN")
-+
-+        send_command=f"{test_type} -b 0 -t {duration} --json"
-+        receive_command=f"{test_type} -b 0 -t {duration} --reverse --json"
-+
-+        send_result = traffic.run_remote_test(cfg, command=send_command)
-+        if send_result.ret != 0:
-+            raise KsftSkipEx("Error occurred during data transmit: {send_result.stdout}")
-+
-+        send_output = send_result.stdout
-+        send_data = json.loads(send_output)
-+
-+        """Convert throughput to Mbps"""
-+        send_throughput.append(round(send_data['end']['sum_sent']['bits_per_second'] / 1e6, 2))
-+        ksft_pr(f"{protocol}: Send throughput: {send_throughput[idx]} Mbps")
-+
-+        receive_result = traffic.run_remote_test(cfg, command=receive_command)
-+        if receive_result.ret != 0:
-+            raise KsftSkipEx("Error occurred during data receive: {receive_result.stdout}")
-+
-+        receive_output = receive_result.stdout
-+        receive_data = json.loads(receive_output)
-+
-+        """Convert throughput to Mbps"""
-+        receive_throughput.append(round(receive_data['end']['sum_received']['bits_per_second'] / 1e6, 2))
-+        ksft_pr(f"{protocol}: Receive throughput: {receive_throughput[idx]} Mbps")
-+
-+    """Check whether throughput is not below the threshold (default values set at start)"""
-+    for idx in range(0, len(speeds)):
-+        send_threshold = float(speeds[idx]) * float(test_config.send_throughput_threshold / 100)
-+        receive_threshold = float(speeds[idx]) * float(test_config.receive_throughput_threshold / 100)
-+        ksft_true(send_throughput[idx] >= send_threshold, f"{protocol}: Send throughput is below threshold for {speeds[idx]} Mbps in {duplex_modes[idx]} duplex")
-+        ksft_true(receive_throughput[idx] >= receive_threshold, f"{protocol}: Receive throughput is below threshold for {speeds[idx]} Mbps in {duplex_modes[idx]} duplex")
-+
-+def test_tcp_throughput(cfg: object, link_config: LinkConfig, test_config: TestConfig, traffic: GenerateTraffic) -> None:
-+    _pre_test_checks(cfg, link_config)
-+    check_throughput(cfg, link_config, test_config, 'TCP', traffic)
-+
-+def test_udp_throughput(cfg: object, link_config: LinkConfig, test_config: TestConfig, traffic: GenerateTraffic) -> None:
-+    _pre_test_checks(cfg, link_config)
-+    check_throughput(cfg, link_config, test_config, 'UDP', traffic)
-+
-+def main() -> None:
-+    parser = argparse.ArgumentParser(description="Run basic performance test for NIC driver")
-+    parser.add_argument('--time-delay', type=int, default=8, help='Time taken to wait for transitions to happen(in seconds). Default is 8 seconds.')
-+    parser.add_argument('--test-duration', type=int, default=10, help='Performance test duration for the throughput check, in seconds. Default is 10 seconds.')
-+    parser.add_argument('--stt', type=int, default=80, help='Send throughput Threshold: Percentage of send throughput upon actual throughput required to pass the throughput check (in percentage). Default is 80.')
-+    parser.add_argument('--rtt', type=int, default=50, help='Receive throughput Threshold: Percentage of receive throughput upon actual throughput required to pass the throughput check (in percentage). Default is 50.')
-+    args=parser.parse_args()
-+    test_config = TestConfig(args.time_delay, args.test_duration, args.stt, args.rtt)
-+    with NetDrvEpEnv(__file__, nsim_test=False) as cfg:
-+        traffic = GenerateTraffic(cfg)
-+        link_config = LinkConfig(cfg)
-+        ksft_run(globs=globals(), case_pfx={"test_"}, args=(cfg, link_config, test_config, traffic,  ))
-+        link_config.reset_interface()
-+    ksft_exit()
-+
-+if __name__ == "__main__":
-+    main()
-diff --git a/tools/testing/selftests/drivers/net/lib/py/load.py b/tools/testing/selftests/drivers/net/lib/py/load.py
-index d9c10613a..da5af2c68 100644
---- a/tools/testing/selftests/drivers/net/lib/py/load.py
-+++ b/tools/testing/selftests/drivers/net/lib/py/load.py
-@@ -2,7 +2,7 @@
+diff --git a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
+index b0c0f0ffdcb0..f547d386ae80 100644
+--- a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
++++ b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
+@@ -137,7 +137,7 @@ static ssize_t current_uuid_show(struct device *dev,
+ 	struct int3400_thermal_priv *priv = dev_get_drvdata(dev);
+ 	int i, length = 0;
  
- import time
+-	if (priv->current_uuid_index > 0)
++	if (priv->current_uuid_index >= 0)
+ 		return sprintf(buf, "%s\n",
+ 			       int3400_thermal_uuids[priv->current_uuid_index]);
  
--from lib.py import ksft_pr, cmd, ip, rand_port, wait_port_listen
-+from lib.py import ksft_pr, cmd, ip, rand_port, wait_port_listen, bkg
- 
- class GenerateTraffic:
-     def __init__(self, env, port=None):
-@@ -23,6 +23,24 @@ class GenerateTraffic:
-             self.stop(verbose=True)
-             raise Exception("iperf3 traffic did not ramp up")
- 
-+    def run_remote_test(self, env: object, port=None, command=None):
-+        if port is None:
-+            port = rand_port()
-+        try:
-+            server_cmd = f"iperf3 -s 1 -p {port} --one-off"
-+            with bkg(server_cmd, host=env.remote):
-+                #iperf3 opens TCP connection as default in server
-+                #-u to be specified in client command for UDP
-+                wait_port_listen(port, host=env.remote)
-+        except Exception as e:
-+            raise Exception(f"Unexpected error occurred while running server command: {e}")
-+        try:
-+            client_cmd = f"iperf3 -c {env.remote_addr} -p {port} {command}"
-+            proc = cmd(client_cmd)
-+            return proc
-+        except Exception as e:
-+            raise Exception(f"Unexpected error occurred while running client command: {e}")
-+
-     def _wait_pkts(self, pkt_cnt=None, pps=None):
-         """
-         Wait until we've seen pkt_cnt or until traffic ramps up to pps.
 -- 
-2.43.0
+2.47.0
 
 
