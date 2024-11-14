@@ -1,176 +1,181 @@
-Return-Path: <linux-kernel+bounces-410074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45D209C9638
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:41:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BDE09C9649
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:43:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4B431F227A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:41:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0AA2B26BAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:43:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04A91B3958;
-	Thu, 14 Nov 2024 23:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE431BC08B;
+	Thu, 14 Nov 2024 23:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ds6SIuS7"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="JEeNag17"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2059.outbound.protection.outlook.com [40.107.102.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28C31AF0BA;
-	Thu, 14 Nov 2024 23:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731627674; cv=none; b=FRfbIZPX9+ZDnRLziDbyGJcvgPFuTjQWMAuFTQOAK8XKXvIImJxDlk/hWuYSL17iis90rT36GI67BrZ3KFM5OXMhO/p7925FB7ZgSuqc42Hyp5WDUZ5A9d/mUvmsxDDKYa5VAKGsuKTT1ot/m9lCrb+kYC8QxS/O6nmKTXTIYCM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731627674; c=relaxed/simple;
-	bh=ylL+d7fyuCtcJwGj54NW7/qUOBNPHqH5K7VBWejg5p0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r2lqZRbTG284t0bhtFmn2ut/NXjST6643HIKyzMB1RKDc2HHCAe6lSFq0hDZQpTeeUiXZCW7lTBriWJ98RAE65LjIGZQf3rjNTKSky9z6FOyfd6IAQC0iZGuRZtduqLsbnYH+OGnijmebusrN0lVF225YQt+y9JkVH/YjIqCP1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ds6SIuS7; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7205b6f51f3so818279b3a.1;
-        Thu, 14 Nov 2024 15:41:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731627672; x=1732232472; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J+/NvY5tVdBmQUZb33MAC3QKS9VGHEF59/xEUPDlkuA=;
-        b=ds6SIuS7/T1kFvh9zafEJZEvdY1KYCOyL9BMZzxqspNQ8KCTiI1yIIIexpDSXrxLf6
-         r2obLxotnAQ+cr/kVaw0nRaOXz9CExc5LO7XXrupxdRV8XuoNIiC0/OsHu9sGywCh9Hu
-         NZyhWR9yT9KQe/nkwCyEyhEg+EtUOMBeqlRummW3XVn6UgDOrh9+alb+vRT7Bt0u7Y8E
-         eyp8pAWUxCzOgeLnyMFAEQ0bdbLlox9gorNeF1jdNx4D2zX5+Onuyn4L9m1TB/fl/GGx
-         70qGx5XgrTzZtuYk9HNj3w7W70yrX5aH+MQ72aMK6J3WifzkQQXuZeUku2DYdAMuMVQh
-         6y5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731627672; x=1732232472;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J+/NvY5tVdBmQUZb33MAC3QKS9VGHEF59/xEUPDlkuA=;
-        b=ew9rDCWSq/+GXfeL1bOfMXq+5qYN5nBV7Vtr6Mmz4XjhXXOcFb3NSrb6Ug8pSnzv1r
-         25l3X1GUvV3Z0j6kiHkcCvcl8JyhWziNOnO5WbhNg+WqlETYXt1ztMBVBO7lEwK3bGXu
-         MLmEA8ZMPy/YB5qa3q44/DvpYtZ1zjNTUefjQHvz1JYGS0Q80vWSL/axuOIgKkdhg/+5
-         01kOi8YYuxTElwmyp1/wpg2IxGuQe5HUtrEN/yf4Y9URlkr7D68lehWGpT6cKjM4D1Uv
-         8U6eOImdxbjuLCgOW7n04Zp04/VGfzHl7wX0U6G8lhvGK1IoBGA+KWgi351m5KQh8mQc
-         nPTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtFMBPMf7CG1VeeWlZ8Y4apavDTW8THXhF8QkmmT8yqs5Zns7zG2lhBVJUWAfl9+/Bu0c=@vger.kernel.org, AJvYcCVv271SCr/Wtp7hqQEbYHrBPGdVYke1rPDH9SSto1FBqVOMmJZDH6yYHJU8osL9Ivwrve9jFj0RXx84QhCM@vger.kernel.org, AJvYcCWpbLSaH8Rrez9j2MnBt3rZT3LfMvPBafXZRGuAJRHCqo8pI1kg/D6Pxraov8eaMOk0nMj1jTxLTrCH/G+ISQdW9YRr@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzts1V8mU0QmDLbzEyuSsXeHths7+kHWSbRp+f2FI0CydvkqqAl
-	gpPDmEPs6gs6UL+3rgwUIUF3lJM2U2JV6JatsSiFlgB1BJolUfd28FWovd9zRk3ZRqTvaF8cMYJ
-	DkqAvM8Mi5XGQdSLlbPKqxYRfEzw=
-X-Google-Smtp-Source: AGHT+IFEEsZ4IDHutvsVqw1fgB/8JKSvzp4q8l/43owUzQWjSJS0H062X3NdlUN5KSdNoA9stxrUcYk4PvKnFjLq1GA=
-X-Received: by 2002:a17:90b:3b85:b0:2e2:effb:618b with SMTP id
- 98e67ed59e1d1-2ea154f74bdmr947212a91.13.1731627671908; Thu, 14 Nov 2024
- 15:41:11 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CC3374CC;
+	Thu, 14 Nov 2024 23:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731627715; cv=fail; b=dIO76GRqPsT/p4C/L2AlAWOTxZ/9gbIXaG5ei5yStKisEz4H7H5r5uSNFA8czBb0sSFaPFWXiGJAagNf/apCrTQ7dlGsgDueBcACtAWuOnqMwvvPgshWYtyME/vbBatGp1mE+Ij2MxLk58WIBJZiUBETxAH/cwYLN+58TEwSPBM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731627715; c=relaxed/simple;
+	bh=zgY2rLcfQeFbqyLUA7CqmjFUE/VqiyQix4+kR/9YWB8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d08S4JTc8R8dMPDRKZNDzF407YDxuTDyvHOtlEwH79mo4UUmX9q6eonlnyELzf7mQOWQlQ6fBUD8FdKF/m8zmYnwpYBeQP/yY6E7eCIRd7mqKJlkSA22Id+5wCWoyZoggX2VHbPU/Z84c2yrVKy3cPlOx9/8GVlGvPhsxH4oBkc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=JEeNag17; arc=fail smtp.client-ip=40.107.102.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XmCAdJCOfuQtv6FUKLGR+lFKpWQLecwl085sc4pcWiyyhtXAD8Gpy/Hs6i81PG/S//INlnnuRitt5YjjuOJwJ1ASYdaeqZBLyOO/QdsVk9vqBpf+xXMqyp+45B6oJrIFIirrKcJ6Gy0cMOxXNk4Vbyz/JPpsio8PWVt0WLwP0+XY9DM0jKdWZ/8ng94uzADZX9xqtiLAExk8ZTr1ekC2Tl0/xjOWLy8dBVR1m/R4B2dctFaR/81PguKiLO/LVRJSKFldiawcvaPt31jywLhZUO2yq1bbuHQAL4xwQgFeCQuP7K5cByYwnDjH2hAwdh8WWHw3YDmwRi8k3JYogSuDgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JrRHrJ6nFFsjRo85R60cfEKQFmuYnHJ5oxdyVTRZzp4=;
+ b=mOQxZnkycGkYLSCUC6PyGt3DnWIO/0x53E4j6y2zcQT0grsfDMBH0rR76SB6a1UW2gl2y/yHJNqOoZZ4RM5Gf3SNd93QEfnD+sf1Vw8MhAs85cXbhUT73M5gcxz51M/MuKOmv3RedEY4Uh03vJUosgKJAVhO2/DnGa7FtZG0u0rhmcnV4R5WPmioXfshbCwsxyFwwDz82up4WzKzOgAhgcR7Ka0Nojuin1wl7REFWQdoSIS0HbloAVQk5xbXwGYqEIxmH2+0dWwV2rQX1SipAECmOE4DXIS2qI5lCcL1nJR8U4xPprlxyZiyicOptcKHJv0qqQH0OEc58owUYLDtLA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JrRHrJ6nFFsjRo85R60cfEKQFmuYnHJ5oxdyVTRZzp4=;
+ b=JEeNag17ONj7AMFzR77ITKueZKH4ouUHsHfYSMT4hqvKX9UvwL0s9r4nbXd6vGXVT2CCgVlOtykmDNVH2w9z8lYq0CQhCC1E3Xmki/qPTHgteR2OoU8uJJITxmit5zD24oOMBgysZSuT3qaiWYhE9X/LdAnnAIP5UCS4auUS2sc=
+Received: from BY3PR04CA0011.namprd04.prod.outlook.com (2603:10b6:a03:217::16)
+ by DS7PR12MB6214.namprd12.prod.outlook.com (2603:10b6:8:96::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.17; Thu, 14 Nov
+ 2024 23:41:50 +0000
+Received: from CO1PEPF000044EF.namprd05.prod.outlook.com
+ (2603:10b6:a03:217:cafe::aa) by BY3PR04CA0011.outlook.office365.com
+ (2603:10b6:a03:217::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.17 via Frontend
+ Transport; Thu, 14 Nov 2024 23:41:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000044EF.mail.protection.outlook.com (10.167.241.69) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8158.14 via Frontend Transport; Thu, 14 Nov 2024 23:41:49 +0000
+Received: from AUSPRSAMPAT.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 14 Nov
+ 2024 17:41:48 -0600
+From: "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>
+To: <kvm@vger.kernel.org>
+CC: <seanjc@google.com>, <pbonzini@redhat.com>, <pgonda@google.com>,
+	<thomas.lendacky@amd.com>, <michael.roth@amd.com>, <shuah@kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<sos-linux-ext-patches@mailman-svr.amd.com>, <pratikrajesh.sampat@amd.com>
+Subject: [PATCH v4 3/8] KVM: selftests: Add VMGEXIT helper
+Date: Thu, 14 Nov 2024 17:40:59 -0600
+Message-ID: <20241114234104.128532-4-pratikrajesh.sampat@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241114234104.128532-1-pratikrajesh.sampat@amd.com>
+References: <20241114234104.128532-1-pratikrajesh.sampat@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105133405.2703607-1-jolsa@kernel.org> <20241105133405.2703607-3-jolsa@kernel.org>
-In-Reply-To: <20241105133405.2703607-3-jolsa@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 14 Nov 2024 15:40:58 -0800
-Message-ID: <CAEf4BzaqbBPmCvW5m8VCpxoKMu8B=1yYxAJ64m9gtS=Tg5Rz7g@mail.gmail.com>
-Subject: Re: [RFC perf/core 02/11] uprobes: Make copy_from_page global
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Song Liu <songliubraving@fb.com>, 
-	Yonghong Song <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Alan Maguire <alan.maguire@oracle.com>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044EF:EE_|DS7PR12MB6214:EE_
+X-MS-Office365-Filtering-Correlation-Id: b38fcf4f-983d-4c50-d763-08dd0505e8cc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?UJl4owoDp2E4VwLiUjM411/LAw3qIlovZxZ5RnkNkFXgZTKIaIh6BwrZcr4A?=
+ =?us-ascii?Q?bU1DKeZgC+4dn6RGq47vgdgqXHQUzD1fMWur+7XzEBvPeyUns807mNSxT81C?=
+ =?us-ascii?Q?N0PSfMVVxxcEoccKt/ghAQRQnnuwsbf2ljMdqDHTU2NXch7RzcFB1MxnlN1J?=
+ =?us-ascii?Q?H7ptfUDeRTTXvpLwMkE8mKMQo3UyY03fUgODRhj7GjPcub59RHThxH79BCYW?=
+ =?us-ascii?Q?eFC7FEnXleTCfHPVelWRggAsR1qXAvLQCrGgNosSorlFAEc6mNmt+7aofrTf?=
+ =?us-ascii?Q?Fs8/lduGPhr7hYkn3T5Rl/QusIjwk0ir88shWRxFAJ/Y3qWYthsU+R8kiAT8?=
+ =?us-ascii?Q?IdEi/5L2tjuDwI2om+OOKmxMb1LsCByNO715cknrEG0pZPJcddQrOYT2WANv?=
+ =?us-ascii?Q?PTJM/fchZaqXTTpeoXFc8l+BeeqNrmchDvhOHDxJpS8JlJZM1iScCvv+oxUy?=
+ =?us-ascii?Q?8BWMA6qIq55nzLZCt6tN9lnM3byvuH/VomZCzUGf9LP8fFOaPFffFleNfcWo?=
+ =?us-ascii?Q?CYs+t1Ss5/IMp4lzZh9e2Bw89392WkXjBNFUjKQc4hsjMmtNMGOeFWKQjWG9?=
+ =?us-ascii?Q?uNq4k9tv10x4lX+j6gvhh1pYsDw0Mep1Eg1YZ2BmUsrhaks3vShbfb4EPmAZ?=
+ =?us-ascii?Q?qsWXuRvFRM3qZvdupbK7q5tawJ0ICSfwo7XI1oNrJcNazWY3z4u4IOsGj5zu?=
+ =?us-ascii?Q?Z43W7O+4Cd7guwpusM09WDkzRgQOT3GWILGjXw3a6lX1Vnw56xJgP9OljXbY?=
+ =?us-ascii?Q?mcaLYtZxt2P5PnXNItqQHHOZ1pAbbR7YLBwn6SP7hNBHv9daK9gcnpxkr/Yu?=
+ =?us-ascii?Q?BLqT+6vhZpUGHipNSPHjpJTLVGNopIREsoGFvOh861Fd3etnWXvJPO8GYuEI?=
+ =?us-ascii?Q?WZSDX01HMJ8oTxnMWoVnl92pfnuEVdlPLNrX1jmCg/0q1RZF+blNtaix9Q1U?=
+ =?us-ascii?Q?traqkjXjFZdTaF3dt9IczbSvZT6VNvLIouzRIFweKqMUYsAyFdK3fw5xIDuZ?=
+ =?us-ascii?Q?wJhtEcPoaM5XJR3SVeKMXmndOqEVdYhWhgb23awpTIDoomVXWKGgSAEmzKHD?=
+ =?us-ascii?Q?BRS4UXXIn0qr7tjBfJR4XZ57U2LNNUeBcYktF0sPtpRPimA+VS436c4/l+zQ?=
+ =?us-ascii?Q?aPhF5yvZTyNleq1Tp2YjqLqZopSwJa+S/yo2EZAfXeJ0WFeuqYoGX3YkjLYY?=
+ =?us-ascii?Q?cAOj7B9KVKqzKaIJvSu9sPTGUsh1Xz6X9YM9G9t5pAHwi/Ltw89IA9itiXAU?=
+ =?us-ascii?Q?fSNTSf6EC3vpDt9415qNhdxx6desPCXaIzqwW4uBx+OTkKoJMdhlJEOQPLgb?=
+ =?us-ascii?Q?urYouMfHV34y349GqIWrabR9GKLxp3trtrwx2k4MeMgkNPWUHXVCriehpS6n?=
+ =?us-ascii?Q?0DfF3tWShPs08mPq4R3ZeB7vJV+WB4C1ye/6IV4PQHsI+Kbg5g=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2024 23:41:49.3473
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b38fcf4f-983d-4c50-d763-08dd0505e8cc
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044EF.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6214
 
-On Tue, Nov 5, 2024 at 5:34=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote:
->
-> Making copy_from_page global and adding uprobe prefix.
->
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  include/linux/uprobes.h |  1 +
->  kernel/events/uprobes.c | 10 +++++-----
->  2 files changed, 6 insertions(+), 5 deletions(-)
->
-> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-> index 2f500bc97263..28068f9fcdc1 100644
-> --- a/include/linux/uprobes.h
-> +++ b/include/linux/uprobes.h
-> @@ -213,6 +213,7 @@ extern void arch_uprobe_copy_ixol(struct page *page, =
-unsigned long vaddr,
->  extern void uprobe_handle_trampoline(struct pt_regs *regs);
->  extern void *arch_uretprobe_trampoline(unsigned long *psize);
->  extern unsigned long uprobe_get_trampoline_vaddr(void);
-> +extern void uprobe_copy_from_page(struct page *page, unsigned long vaddr=
-, void *dst, int len);
->  #else /* !CONFIG_UPROBES */
->  struct uprobes_state {
->  };
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index 0b04c051d712..e9308649bba3 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -250,7 +250,7 @@ bool __weak is_trap_insn(uprobe_opcode_t *insn)
->         return is_swbp_insn(insn);
->  }
->
-> -static void copy_from_page(struct page *page, unsigned long vaddr, void =
-*dst, int len)
-> +void uprobe_copy_from_page(struct page *page, unsigned long vaddr, void =
-*dst, int len)
->  {
->         void *kaddr =3D kmap_atomic(page);
->         memcpy(dst, kaddr + (vaddr & ~PAGE_MASK), len);
-> @@ -278,7 +278,7 @@ static int verify_opcode(struct page *page, unsigned =
-long vaddr, uprobe_opcode_t
->          * is a trap variant; uprobes always wins over any other (gdb)
->          * breakpoint.
->          */
-> -       copy_from_page(page, vaddr, &old_opcode, UPROBE_SWBP_INSN_SIZE);
-> +       uprobe_copy_from_page(page, vaddr, &old_opcode, UPROBE_SWBP_INSN_=
-SIZE);
->         is_swbp =3D is_swbp_insn(&old_opcode);
->
->         if (is_swbp_insn(new_opcode)) {
-> @@ -1027,7 +1027,7 @@ static int __copy_insn(struct address_space *mappin=
-g, struct file *filp,
->         if (IS_ERR(page))
->                 return PTR_ERR(page);
->
-> -       copy_from_page(page, offset, insn, nbytes);
-> +       uprobe_copy_from_page(page, offset, insn, nbytes);
->         put_page(page);
->
->         return 0;
-> @@ -1368,7 +1368,7 @@ struct uprobe *uprobe_register(struct inode *inode,
->                 return ERR_PTR(-EINVAL);
->
->         /*
-> -        * This ensures that copy_from_page(), copy_to_page() and
-> +        * This ensures that uprobe_copy_from_page(), copy_to_page() and
+Abstract rep vmmcall coded into the VMGEXIT helper for the sev
+library.
 
-rename copy_to_page() for symmetry?
+No functional change intended.
 
+Signed-off-by: Pratik R. Sampat <pratikrajesh.sampat@amd.com>
+---
+ tools/testing/selftests/kvm/include/x86_64/sev.h    | 2 ++
+ tools/testing/selftests/kvm/x86_64/sev_smoke_test.c | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
->          * __update_ref_ctr() can't cross page boundary.
->          */
->         if (!IS_ALIGNED(offset, UPROBE_SWBP_INSN_SIZE))
-> @@ -2288,7 +2288,7 @@ static int is_trap_at_addr(struct mm_struct *mm, un=
-signed long vaddr)
->         if (result < 0)
->                 return result;
->
-> -       copy_from_page(page, vaddr, &opcode, UPROBE_SWBP_INSN_SIZE);
-> +       uprobe_copy_from_page(page, vaddr, &opcode, UPROBE_SWBP_INSN_SIZE=
-);
->         put_page(page);
->   out:
->         /* This needs to return true for any variant of the trap insn */
-> --
-> 2.47.0
->
+diff --git a/tools/testing/selftests/kvm/include/x86_64/sev.h b/tools/testing/selftests/kvm/include/x86_64/sev.h
+index 82c11c81a956..e7df5d0987f6 100644
+--- a/tools/testing/selftests/kvm/include/x86_64/sev.h
++++ b/tools/testing/selftests/kvm/include/x86_64/sev.h
+@@ -27,6 +27,8 @@ enum sev_guest_state {
+ 
+ #define GHCB_MSR_TERM_REQ	0x100
+ 
++#define VMGEXIT()		{ __asm__ __volatile__("rep; vmmcall"); }
++
+ void sev_vm_launch(struct kvm_vm *vm, uint32_t policy);
+ void sev_vm_launch_measure(struct kvm_vm *vm, uint8_t *measurement);
+ void sev_vm_launch_finish(struct kvm_vm *vm);
+diff --git a/tools/testing/selftests/kvm/x86_64/sev_smoke_test.c b/tools/testing/selftests/kvm/x86_64/sev_smoke_test.c
+index ae77698e6e97..97d9989c8011 100644
+--- a/tools/testing/selftests/kvm/x86_64/sev_smoke_test.c
++++ b/tools/testing/selftests/kvm/x86_64/sev_smoke_test.c
+@@ -27,7 +27,7 @@ static void guest_sev_es_code(void)
+ 	 * force "termination" to signal "done" via the GHCB MSR protocol.
+ 	 */
+ 	wrmsr(MSR_AMD64_SEV_ES_GHCB, GHCB_MSR_TERM_REQ);
+-	__asm__ __volatile__("rep; vmmcall");
++	VMGEXIT();
+ }
+ 
+ static void guest_sev_code(void)
+-- 
+2.43.0
+
 
