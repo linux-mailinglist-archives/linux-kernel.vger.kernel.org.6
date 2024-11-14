@@ -1,215 +1,198 @@
-Return-Path: <linux-kernel+bounces-409925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 572379C9373
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:50:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72E389C9376
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:51:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CED051F2131D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:50:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13BF2B26544
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 20:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275961AAE30;
-	Thu, 14 Nov 2024 20:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31C51ABED7;
+	Thu, 14 Nov 2024 20:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ds4kDnaZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lm2O/Ybe"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA9B1AC88A;
-	Thu, 14 Nov 2024 20:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370C01ABED9;
+	Thu, 14 Nov 2024 20:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731617417; cv=none; b=lEtJH+jiOSwx5A9ruU8e4kAYZU3kvTmjqUIiU+g3scEClh5K5bLP5PmY40whon4/gtCqYSobTwp7Z03vrDPsvdGRnFdLNVVXLmuJUMtulMylPTFw+biQml5P586dNHKBpLv3P3UkDkfVN57tKBXlWk0UhH6wLMNI1JmIBJAQW5Y=
+	t=1731617458; cv=none; b=E6dq2SWStJrb5Lhd/F7yWHvg0h41bpqTfejxOHWR70fgkh0y7hsNWuSnjudl4skbyusf1rI2NZXbqd+ieow00kCMcgot+vJc++wcqEADWUoLPQnPMSE8S/cXxgoQQtXG6CRaufPjCFFtOm0yZqjH8gTccQ+BLsSvWb7ette2KMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731617417; c=relaxed/simple;
-	bh=sV6IFGZijGhIv7ZE2nCehV0lyPR9/22ZR/Dm7DrXThE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k2g/HxOrUV/l7MOJvI1S3ZJ44gJBcXY3zGiSDJobLEtRNFpVd6DsqQuxuvGvTft5TodfBznscaKZf8umspYWj2DsCI0GGc4tWNvsUHsn62GRDeovvyPas5EPTRj51EZl54KMW2z0vy5y5IUAUKFV9AfIhWZ24XIRij0hF2w0Oeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ds4kDnaZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1D77C4CECD;
-	Thu, 14 Nov 2024 20:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731617417;
-	bh=sV6IFGZijGhIv7ZE2nCehV0lyPR9/22ZR/Dm7DrXThE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ds4kDnaZtsvwVp5UeQ0ktd6dFpvdc0wxyQtY1rA/zYJp+Km/eGyj4bamcwpq8aZjv
-	 rRKHLK20ZokRAE0oO7H5w/HmNM6Cg5qt8HDytcP6N8sZ3Gw+NUt0kws9YtFW6H3nf2
-	 5F73BF0I7YCsnP1gv6EH2JcbP8ZFhcy/vLx65qy9ay/+phj/QY1GEPde3P7W/dYJ/m
-	 8+7RCFjcR78V7VI7HAE1RPBbwLDLEysbaEBN77ZUBAenFsN4Oh2UQGrOxo3IoQJBoq
-	 4XP0D1wcayrvjxD11qOc+jMAovzja11vufmEvU4xblYUJ9SiquNIC9cnF861h6TDA+
-	 sx0QVxsCQ35ew==
-Date: Thu, 14 Nov 2024 17:50:14 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Benjamin Peterson <benjamin@engflow.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>
-Subject: Re: [PATCH 2/2] perf tests: add test for trace output loss
-Message-ID: <ZzZihs9AvoaJeerD@x1>
-References: <20241106234518.115234-1-benjamin@engflow.com>
- <20241106234518.115234-2-benjamin@engflow.com>
- <ZzY1bPtoyRH-nRIV@x1>
- <ZzY20vZluj44w1Gt@x1>
- <CAEmfU+v8KR3Bd8w7kOX6ScGig106zh5gW9P5fwAw-BF3tmAp7A@mail.gmail.com>
- <ZzZY7U0AFk3245vy@x1>
+	s=arc-20240116; t=1731617458; c=relaxed/simple;
+	bh=FaMr7tIRWXDZ6ad3xtZlphSFUCsG4u9u+xXqtA7b6kQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QAgrN6dHSLfW5V9MVKpqEGAudrOP8BWhG+Vv8PCZvvImJ33RnJkBqfNd5ljw9v9iXmnfDcs9Hdlsz7Qqg6m8nXgfDu/YosuRpdQhMdC/gua4KzIuHU99eCQR9BQyh91F/B2sLrApGv3nqD05WooyIy/cFIF6HnPjTra83UYnmVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lm2O/Ybe; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731617456; x=1763153456;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=FaMr7tIRWXDZ6ad3xtZlphSFUCsG4u9u+xXqtA7b6kQ=;
+  b=Lm2O/YbeB3tzhPM7AQjXorc9icEumM4ByorhSRk7W024/fFP8VzPJ8NP
+   xTRJxGoYfslYRrs7G6h3TYRFpRs1YSk4z5KK4r86rXMl60cgSGR8kO2LB
+   SzTdTdIFq2W+UsC27SagYNatHyFzMUnwIMJBy+WyYQFXEyq+V4BWBK1nO
+   QUUBEgkDJMioFaFeWGHy/MqzbaEpcC2Y6dRU3zU/CsttPVzEie5QSDquY
+   BWnye3bl6E9LGB8SDZBGD6i0VpmdaPWGRAvBvnRmBo92Djq8tLFCge8gI
+   vayruRyw+zfosjCFRUwiTshQVI0dPf47niX5WO7OvZp64VtF6b4zQ5eo/
+   Q==;
+X-CSE-ConnectionGUID: Jc/b5speRUCaPOZfgHtcvA==
+X-CSE-MsgGUID: pzwlX8lnTcGOoMbiKkxspg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11256"; a="42981041"
+X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
+   d="scan'208";a="42981041"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 12:50:55 -0800
+X-CSE-ConnectionGUID: 1DMG7JpXQAa95Fox4xXQUg==
+X-CSE-MsgGUID: DWR2Ow4ZQDe6dEMKqKk43A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
+   d="scan'208";a="92402975"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa003.fm.intel.com with ESMTP; 14 Nov 2024 12:50:54 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id C8BA6380; Thu, 14 Nov 2024 22:50:52 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>
+Subject: [PATCH v1 1/1] spi: sc18is602: Switch to generic firmware properties and drop of_match_ptr()
+Date: Thu, 14 Nov 2024 22:50:51 +0200
+Message-ID: <20241114205051.3747458-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZzZY7U0AFk3245vy@x1>
 
-On Thu, Nov 14, 2024 at 05:09:17PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Thu, Nov 14, 2024 at 09:44:56AM -0800, Benjamin Peterson wrote:
-> > > On Thu, Nov 14, 2024 at 02:37:52PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > diff --git a/tools/perf/tests/shell/trace_exit_race.sh b/tools/perf/tests/shell/trace_exit_race.sh
-> > > index 8b70324bc5b4fb4c..c37ed6bb9f7e8fab 100755
-> > > --- a/tools/perf/tests/shell/trace_exit_race.sh
-> > > +++ b/tools/perf/tests/shell/trace_exit_race.sh
-> > > @@ -12,10 +12,10 @@
-> > >  skip_if_no_perf_trace || exit 2
-> 
-> > >  trace_shutdown_race() {
-> > > -       for i in $(seq 100); do
-> > > +       for _ in $(seq 100); do
-> > >                 perf trace -e syscalls:sys_enter_exit_group true 2>>$file
-> > >         done
-> > > -       [ $(grep -c -E " +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$" $file) = "100" ]
-> > > +       [ "$(grep -c -E ' +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$' $file)" = "100" ]
-> > >  }
->  
-> > This all looks okay.
-> 
-> The test is failing for me as there is garbage in the output of perf
-> trace even with Namhyung having already applied your previous patch:
-> 
-> ⬢ [acme@toolbox perf-tools-next]$ git log --oneline --author benjamin@engflow.com
-> 12bd434f68ea45c7 (HEAD -> perf-tools-next) perf tests: Add test for 'perf trace' output loss
-> efbcd2cd7eac10a9 perf trace: Do not lose last events in a race
-> 5fb8e56542a3cf46 (perf-tools-next/tmp.perf-tools-next) perf trace: avoid garbage when not printing a trace event's arguments
-> ⬢ [acme@toolbox perf-tools-next]$
-> 
-> root@number:~# perf trace -e syscalls:sys_enter_exit_group true
->      0.000 true/1982428 syscalls:sys_enter_exit_group( k?m)
-> root@number:~# perf trace -e syscalls:sys_enter_exit_group true
->      0.000 true/1982430 syscalls:sys_enter_exit_group()
-> root@number:~# perf trace -e syscalls:sys_enter_exit_group true
->      0.000 true/1982432 syscalls:sys_enter_exit_group()
-> root@number:~# perf trace -e syscalls:sys_enter_exit_group true
->      0.000 true/1982434 syscalls:sys_enter_exit_group()
-> root@number:~# perf trace -e syscalls:sys_enter_exit_group true
->      0.000 true/1982437 syscalls:sys_enter_exit_group( k�)
-> root@number:~# perf trace -e syscalls:sys_enter_exit_group true
->      0.000 true/1982439 syscalls:sys_enter_exit_group(, loads 8��1)
-> root@number:~#
-> 
-> So we don't _miss_ the events, which I was noticing and brought me to
-> test your latest 2 patches, which I applied and added a Tested-by, now
-> tryint to figure out this garbage...
+This enables using the driver with other firmware types such as ACPI
+via PRP0001.
 
-So, I fixed it with this simple patch:
+Also part of a general attempt to move drivers over to generic properties
+to avoid opportunities for cut and paste.
 
-And then, after adding this patch to the 'perf test' for the exit race
-that you contributed:
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/spi/spi-sc18is602.c | 34 ++++++++++++----------------------
+ 1 file changed, 12 insertions(+), 22 deletions(-)
 
-⬢ [acme@toolbox perf-tools-next]$ git diff tools/perf/tests/
-diff --git a/tools/perf/tests/shell/trace_exit_race.sh b/tools/perf/tests/shell/trace_exit_race.sh
-index c37ed6bb9f7e8fab..2eb39abaadffc344 100755
---- a/tools/perf/tests/shell/trace_exit_race.sh
-+++ b/tools/perf/tests/shell/trace_exit_race.sh
-@@ -11,11 +11,17 @@
+diff --git a/drivers/spi/spi-sc18is602.c b/drivers/spi/spi-sc18is602.c
+index eecf9ea95ae3..1627aa66c965 100644
+--- a/drivers/spi/spi-sc18is602.c
++++ b/drivers/spi/spi-sc18is602.c
+@@ -7,13 +7,15 @@
  
- skip_if_no_perf_trace || exit 2
- 
-+if [ "$1" = "-v" ]; then
-+        verbose="1"
-+fi
+ #include <linux/kernel.h>
+ #include <linux/err.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/spi/spi.h>
+ #include <linux/i2c.h>
+ #include <linux/delay.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/of.h>
+ #include <linux/platform_data/sc18is602.h>
++#include <linux/property.h>
 +
-+regexp=" +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$"
+ #include <linux/gpio/consumer.h>
+ 
+ enum chips { sc18is602, sc18is602b, sc18is603 };
+@@ -236,9 +238,7 @@ static int sc18is602_setup(struct spi_device *spi)
+ 
+ static int sc18is602_probe(struct i2c_client *client)
+ {
+-	const struct i2c_device_id *id = i2c_client_get_device_id(client);
+ 	struct device *dev = &client->dev;
+-	struct device_node *np = dev->of_node;
+ 	struct sc18is602_platform_data *pdata = dev_get_platdata(dev);
+ 	struct sc18is602 *hw;
+ 	struct spi_controller *host;
+@@ -251,8 +251,9 @@ static int sc18is602_probe(struct i2c_client *client)
+ 	if (!host)
+ 		return -ENOMEM;
+ 
++	device_set_node(&host->dev, dev_fwnode(dev));
 +
- trace_shutdown_race() {
-        for _ in $(seq 100); do
-                perf trace -e syscalls:sys_enter_exit_group true 2>>$file
-        done
--       [ "$(grep -c -E ' +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$' $file)" = "100" ]
-+       [ "$(grep -c -E '$regexp' $file)" = "100" ]
- }
+ 	hw = spi_controller_get_devdata(host);
+-	i2c_set_clientdata(client, hw);
  
+ 	/* assert reset and then release */
+ 	hw->reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
+@@ -265,11 +266,7 @@ static int sc18is602_probe(struct i2c_client *client)
+ 	hw->dev = dev;
+ 	hw->ctrl = 0xff;
  
-@@ -27,5 +33,11 @@ export PERF_CONFIG=/dev/null
+-	if (client->dev.of_node)
+-		hw->id = (uintptr_t)of_device_get_match_data(&client->dev);
+-	else
+-		hw->id = id->driver_data;
+-
++	hw->id = (uintptr_t)i2c_get_match_data(client);
+ 	switch (hw->id) {
+ 	case sc18is602:
+ 	case sc18is602b:
+@@ -278,28 +275,21 @@ static int sc18is602_probe(struct i2c_client *client)
+ 		break;
+ 	case sc18is603:
+ 		host->num_chipselect = 2;
+-		if (pdata) {
++		if (pdata)
+ 			hw->freq = pdata->clock_frequency;
+-		} else {
+-			const __be32 *val;
+-			int len;
+-
+-			val = of_get_property(np, "clock-frequency", &len);
+-			if (val && len >= sizeof(__be32))
+-				hw->freq = be32_to_cpup(val);
+-		}
++		else
++			device_property_read_u32(dev, "clock-frequency", &hw->freq);
+ 		if (!hw->freq)
+ 			hw->freq = SC18IS602_CLOCK;
+ 		break;
+ 	}
+-	host->bus_num = np ? -1 : client->adapter->nr;
++	host->bus_num = dev_fwnode(dev) ? -1 : client->adapter->nr;
+ 	host->mode_bits = SPI_CPHA | SPI_CPOL | SPI_LSB_FIRST;
+ 	host->bits_per_word_mask = SPI_BPW_MASK(8);
+ 	host->setup = sc18is602_setup;
+ 	host->transfer_one_message = sc18is602_transfer_one;
+ 	host->max_transfer_size = sc18is602_max_transfer_size;
+ 	host->max_message_size = sc18is602_max_transfer_size;
+-	host->dev.of_node = np;
+ 	host->min_speed_hz = hw->freq / 128;
+ 	host->max_speed_hz = hw->freq / 4;
  
- trace_shutdown_race
- err=$?
-+
-+if [ $err != 0 ] && [ "${verbose}" = "1" ]; then
-+       echo "Lines not matching the expected regexp: '$regexp':"
-+       grep -v -E "$regexp" $file
-+fi
-+
- rm -f ${file}
- exit $err
-⬢ [acme@toolbox perf-tools-next]
-
-⬢ [acme@toolbox perf-tools-next]$ git diff tools/perf/builtin-trace.c
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index ca5c3f5d6c389427..0834a11940c18f05 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -2405,6 +2405,9 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
-                }
-        }
+@@ -314,7 +304,7 @@ static const struct i2c_device_id sc18is602_id[] = {
+ };
+ MODULE_DEVICE_TABLE(i2c, sc18is602_id);
  
-+       if (printed == 0)
-+               bf[0] = '\0';
-+
-        return printed;
- }
- 
-⬢ [acme@toolbox perf-tools-next]$
+-static const struct of_device_id sc18is602_of_match[] __maybe_unused = {
++static const struct of_device_id sc18is602_of_match[] = {
+ 	{
+ 		.compatible = "nxp,sc18is602",
+ 		.data = (void *)sc18is602
+@@ -334,7 +324,7 @@ MODULE_DEVICE_TABLE(of, sc18is602_of_match);
+ static struct i2c_driver sc18is602_driver = {
+ 	.driver = {
+ 		.name = "sc18is602",
+-		.of_match_table = of_match_ptr(sc18is602_of_match),
++		.of_match_table = sc18is602_of_match,
+ 	},
+ 	.probe = sc18is602_probe,
+ 	.id_table = sc18is602_id,
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-The test still fails but for another reason:
-
-root@number:~# perf test -v "trace exit race"
---- start ---
-test child forked, pid 2002298
-Lines not matching the expected regexp: ' +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$':
-     0.000 :2002317/2002317 syscalls:sys_enter_exit_group()
-     0.000 :2002319/2002319 syscalls:sys_enter_exit_group()
-     0.000 :2002353/2002353 syscalls:sys_enter_exit_group()
-     0.000 :2002357/2002357 syscalls:sys_enter_exit_group()
-     0.000 :2002376/2002376 syscalls:sys_enter_exit_group()
-     0.000 :2002378/2002378 syscalls:sys_enter_exit_group()
-     0.000 :2002393/2002393 syscalls:sys_enter_exit_group()
-     0.000 :2002444/2002444 syscalls:sys_enter_exit_group()
-     0.000 :2002491/2002491 syscalls:sys_enter_exit_group()
-     0.000 :2002503/2002503 syscalls:sys_enter_exit_group()
----- end(-1) ----
-110: perf trace exit race                                            : FAILED!
-root@number:~# 
-
-Somehow we're missing the PERF_RECORD_COMM or racing to get it from
-/proc for those processes and thus we end up printing just the pid/ppid
-
-Since what we are testing here is garbage when printing the argument
-list, we can just disable comm printing and get consistent results:
-
-root@number:~# perf trace --no-comm -e syscalls:sys_enter_exit_group true
-     0.000 2003312 syscalls:sys_enter_exit_group()
-root@number:~#
-
-I'll take this route and sent a patch series.
-
-- Arnaldo
 
