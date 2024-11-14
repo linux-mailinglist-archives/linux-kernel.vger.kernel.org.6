@@ -1,102 +1,182 @@
-Return-Path: <linux-kernel+bounces-409228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A77D9C893E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:49:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 085769C8941
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:50:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F4166284A10
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:49:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC808284A3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1AD1F9420;
-	Thu, 14 Nov 2024 11:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99571F9433;
+	Thu, 14 Nov 2024 11:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XrI3dRjl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IRUvV5bR"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83821F891E
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABE91F891E
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731584959; cv=none; b=KKWqFOiBFPNIFbG15GcFWM3lNn5Sa1eUQr6BtRxb65hH/MC0DDgieRMDZ4Pi/D/yimNBosHt4YfKUlmr1fhq/GPoWlVhqa4EVNy6s9MKU/bmE7ohuWYlZqLETwa5EhLOWX0qJyrLameyVq2tHFZ3RImfGwJvxb/qqEcfPUMXTlY=
+	t=1731585028; cv=none; b=K6EAkU0fZFlvLVXwFJ79WrNSE9sNBRm5ypROPSQ29Jwsfy1iDf4scDGKShYLPbSXX+CXAN+e+uYTvr8Ymefw9Vle+gwq0eEWXQlGy96npuWdqnzhfVeY/ff1924NtnrcMC18san9wPxjT33mi52rme3YXcoCsptjr9bZK+ljqsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731584959; c=relaxed/simple;
-	bh=80RfyrS7acqSY3cbsQjPVsHwJPl09r5jmSGAmJTUIRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iV6Pz/53m+VfnC0MXYgTZmmbtFVnOpNp6FreabFPfESg1dyKAmfyOR1mW575C0RCQNuiBgOaYfY1auE6g93FTNg6i4nU9ymBL6u1dZOKQpfRjqGLuciohgLpgywy8bXByG+27nIjNuLRi9DKuWFxCEpTrjloYWNQOM/pDRwNvNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XrI3dRjl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4E13C4CECD;
-	Thu, 14 Nov 2024 11:49:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731584959;
-	bh=80RfyrS7acqSY3cbsQjPVsHwJPl09r5jmSGAmJTUIRA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XrI3dRjl/xMXjfZuE5+kaPd6dB3D8d11elYtDzJU42W8Xznzm86hC0YpIhj/grBah
-	 0nY7UxemIhmFTNQGx1qIlZQ9j29HelBEUaNcyHaBTOuJEHO+b3cVJarDeYPT7MROt9
-	 3xOJxYfdeJ+3aZKd94D9hGiYDiRyy4xsmhy/xyl2XSg15VH8LQcB3HRqzAmgvZkNLx
-	 X9AVi8bvEEGbOipRWTJCFh6owwC8Eqbo2xBBUIB0IWoqEeO/EOIQTEKVTY9pmowcTE
-	 bNlzCLv5usgU+QDtkYaZXcgWBgz082Slsq0ZvtwI9Ey8SBEShXFAzLvpOXDWy4iTKh
-	 1LmedVzdYtgrg==
-Date: Thu, 14 Nov 2024 11:49:16 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Liam Girdwood <lgirdwood@gmail.com>, Lee Jones <lee@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] regulator: bd96801: Add ERRB IRQ
-Message-ID: <ZzXjvHvOlP6VCzcI@finisterre.sirena.org.uk>
-References: <ZzWkny4lKpY09SX5@mva-rohm>
+	s=arc-20240116; t=1731585028; c=relaxed/simple;
+	bh=VMNOHBw5gBBtp43tH02IaMDcjlxPJ1NdFLla12jbm1U=;
+	h=MIME-Version:Content-Type:Date:Message-ID:From:Subject:CC:To:
+	 In-Reply-To:References; b=DixxbTheTQLjVSD/X3Yeu7h+vW8ZCXr/BXzK4RBh33HQmesKHKre5vJl0xYN6gQlTTKixHFJQYfyvroKvhZ4BvwOgIZOeIzikfi8AjHmUlbkJITKUKnYVlVcxIYYr+KCa7eVuug/GwvLO49ZWlvqgH0qxPH5ejP8LLy+3c9ceGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=IRUvV5bR; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241114115017euoutp0257bc986adf437793f89664b9cb43ae90~H02Y4-V8o0050800508euoutp02e
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:50:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241114115017euoutp0257bc986adf437793f89664b9cb43ae90~H02Y4-V8o0050800508euoutp02e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1731585017;
+	bh=aSnFwn3fyWLWfZWTjEoWx9q1NNGL8GR1CfTtxNKRsSE=;
+	h=Date:From:Subject:CC:To:In-Reply-To:References:From;
+	b=IRUvV5bRooMIV9FTy4IG4YzQrRPtebVFioKerh1rqO4KYQbG6dCZ8Tbro80p4kjlT
+	 C/U7AXBgpN0EvdGWJugF9Cxrrfqk/vu4FaYzmZL6J0zJFq/XI3XnhTvvvjE7ESTCx8
+	 AILDDI1wm8PzRwNZSixJBrfsAOXY1P7co0+RCCYQ=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20241114115017eucas1p1e8cdb0561b668b4715b67d1c0bbac162~H02Ys0Lo12345323453eucas1p1R;
+	Thu, 14 Nov 2024 11:50:17 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 3E.15.20409.9F3E5376; Thu, 14
+	Nov 2024 11:50:17 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241114115017eucas1p2862331fc47bf0f1a44035cc7e422a6c7~H02YYStlw0875708757eucas1p2O;
+	Thu, 14 Nov 2024 11:50:17 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241114115017eusmtrp1bd4dc11952f9293c6e1a39c45e7fbdbf~H02YXvXmX0888608886eusmtrp1I;
+	Thu, 14 Nov 2024 11:50:17 +0000 (GMT)
+X-AuditID: cbfec7f4-c0df970000004fb9-9a-6735e3f92001
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id B8.83.19920.9F3E5376; Thu, 14
+	Nov 2024 11:50:17 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241114115016eusmtip228356855edd0f55ee7d9ad03cba9a07d~H02YLyBx11445114451eusmtip25;
+	Thu, 14 Nov 2024 11:50:16 +0000 (GMT)
+Received: from mail.scsc.local (106.110.32.87) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Thu, 14 Nov 2024 11:50:16 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4g4PaPB7Fk8gogpb"
-Content-Disposition: inline
-In-Reply-To: <ZzWkny4lKpY09SX5@mva-rohm>
-X-Cookie: Editing is a rewording activity.
-
-
---4g4PaPB7Fk8gogpb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Date: Thu, 14 Nov 2024 12:50:15 +0100
+Message-ID: <D5LVNQFINITS.13C3C5UV89XRR@samsung.com>
+From: Daniel Gomez <da.gomez@samsung.com>
+Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
+ symbols
+CC: Werner Sembach <wse@tuxedocomputers.com>, <tux@tuxedocomputers.com>,
+	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>,
+	<linux-modules@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Thorsten
+	Leemhuis <linux@leemhuis.info>
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Luis
+ Chamberlain" <mcgrof@kernel.org>
+X-Mailer: aerc 0.18.2-67-g7f69618ac1fd
+In-Reply-To: <20241114103133.547032-4-ukleinek@kernel.org>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIKsWRmVeSWpSXmKPExsWy7djPc7o/H5umG5yeIGtxedccNouG2d9Z
+	LVbvjLa4MeEpo8XSL++YLZaueAsUWjWPxeLn/IusFueXLmV14PRYsKnUY9OqTjaPQ80PmDzW
+	b7nK4vFvWQObx+dNcgFsUVw2Kak5mWWpRfp2CVwZs37cZCxYIljRNX8+ewPjP74uRk4OCQET
+	idu9txi7GLk4hARWMErMPfMIyvnCKLF59382COczkDNzJxtMy+IFHewQieWMEg9Pf0eo+vV9
+	EROEs5NR4tnSThaQFl4BQYmTM5+A2cwC2hLLFr5mhrA1JVq3/2YHsVkEVCU+NRxkh6g3kfj4
+	eAaYzQZUs+/kJjBbWCBUYuadPcwgC5gFmpgkPi1bxgSSEBFIlfg79TkjxH1qEv/7J4It4xSw
+	kujf+5sJIq4oMWPiShYIu1bi1JZbYJdKCPznkPjV0AOVcJFY8r2FGcIWlnh1fAs7hC0jcXoy
+	TE26xJJ1s6DsAok9t2exdjFyANnWEn1nciDCjhJrD9xjgwjzSdx4KwjxL5/EpG3TmSHCvBId
+	bUITGFVmIYXQLKQQmoUUQgsYmVcxiqeWFuempxYb5aWW6xUn5haX5qXrJefnbmIEpqLT/45/
+	2cG4/NVHvUOMTByMhxglOJiVRHhPORunC/GmJFZWpRblxxeV5qQWH2KU5mBREudVTZFPFRJI
+	TyxJzU5NLUgtgskycXBKNTC1JNgs+Rk8X4f/faaOiG7cNfVC3xVBBh5s6Xs0nYzbbH/qOEie
+	7rSYHiy92WPaKRmlM8Gp8gb2YoFcr/oL1WYorao6krXvzX7eBEYthqVLvs7UfV0l9lznh8AE
+	N9/oMLvv21xuGij1rUlZtJKt4/s+731yl3QWst6/6pHY0Lt3pbdss2TQgQ/WO5l6uq+Xfazv
+	+37eu827/kpKRGPCH4UVW0LDhWol74WFeEd/9nx+yFKb5xF/a+kbRhNpPpbMGwI/kkT8+L6c
+	XvX3DvfirweOBrk9V2+fO3vGZ4E8MU7rV30V6VY380Jf/q4SC5k/MSy7m8/Q6Vxcomaj97p6
+	Q17L32Ylzu+3WTpIOjxTYinOSDTUYi4qTgQAhmJtj7QDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRmVeSWpSXmKPExsVy+t/xe7o/H5umG3T+Y7e4vGsOm0XD7O+s
+	Fqt3RlvcmPCU0WLpl3fMFktXvAUKrZrHYvFz/kVWi/NLl7I6cHos2FTqsWlVJ5vHoeYHTB7r
+	t1xl8fi3rIHN4/MmuQC2KD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTub
+	lNSczLLUIn27BL2MWT9uMhYsEazomj+fvYHxH18XIyeHhICJxOIFHexdjFwcQgJLGSVOPT7F
+	ApGQkdj45SorhC0s8edaFxtE0UdGiU+/5rFCODsZJfZ9WgLWwSsgKHFy5hMwm1lAW2LZwtfM
+	ELamROv23+wgNouAqsSnhoPsEPUmEh8fzwCz2YBq9p3cBGYLC4RKzLyzhxlkAbNAE5PEtOcr
+	wAaJCKRK/J36nBHiJDWJ//0TWSCu6AY56QnYrZwCVhL9e38zQRQpSsyYuBLqn1qJz3+fMU5g
+	FJmF5NhZSI6dheTYBYzMqxhFUkuLc9Nziw31ihNzi0vz0vWS83M3MQKjdduxn5t3MM579VHv
+	ECMTB+MhRgkOZiUR3lPOxulCvCmJlVWpRfnxRaU5qcWHGE2Bvp7ILCWanA9MF3kl8YZmBqaG
+	JmaWBqaWZsZK4rxul8+nCQmkJ5akZqemFqQWwfQxcXBKNTDl7roecqNw7kZnq/Ldeo+enYhJ
+	eD9t5bbPv+OEJpq3eroKq3RI+MjcniUhpPjKdu9CUcGVAXPdlvz6Np/nf4DK/6uXhSX9Hr1N
+	fH79yolFZl+bRTfN6lu4hOevuQIrp+P6JM6y7kffLq283Lot8uPpwpWcCTvV/IO+/vzLeSDc
+	y/lcqN6lD30L0+bJZJw6lFScc0voQ8TSih+X74ZwPN+pLxq6/q5TcoL5tq/ppd9CujfLnHrq
+	fsVh3r7FIeW5bL+epO6fnH7o72sne43QX4e2KH1WbX5stEnvh1voRhen37t+Hzoidzh7h9lT
+	oWVHVz6PMxEpvsL7W7Em4cophiM39fZf3NRap3LC08msWvHiFiWW4oxEQy3mouJEAHyRychf
+	AwAA
+X-CMS-MailID: 20241114115017eucas1p2862331fc47bf0f1a44035cc7e422a6c7
+X-Msg-Generator: CA
+X-RootMTR: 20241114103151eucas1p133de0b231bf06bf8cd42621347a0ed17
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20241114103151eucas1p133de0b231bf06bf8cd42621347a0ed17
+References: <CGME20241114103151eucas1p133de0b231bf06bf8cd42621347a0ed17@eucas1p1.samsung.com>
+	<20241114103133.547032-4-ukleinek@kernel.org>
 
-On Thu, Nov 14, 2024 at 09:19:59AM +0200, Matti Vaittinen wrote:
+On Thu Nov 14, 2024 at 11:31 AM CET, Uwe Kleine-K=C3=B6nig wrote:
+> Hello,
+>
+> the kernel modules provided by Tuxedo on
+> https://protect2.fireeye.com/v1/url?k=3D2f239e82-70bfb7a8-2f2215cd-000bab=
+e598f7-32952349600b722d&q=3D1&e=3D9535a8fa-5a9d-4d94-a12d-ff39b9d3b9cf&u=3D=
+https%3A%2F%2Fgitlab.com%2Ftuxedocomputers%2Fdevelopment%2Fpackages%2Ftuxed=
+o-drivers
+> are licensed under GPLv3 or later. This is incompatible with the
+> kernel's license and so makes it impossible for distributions and other
+> third parties to support these at least in pre-compiled form and so
+> limits user experience and the possibilities to work on mainlining these
+> drivers.
+>
+> This incompatibility is created on purpose to control the upstream
+> process. See https://protect2.fireeye.com/v1/url?k=3D12fa0a06-4d66232c-12=
+fb8149-000babe598f7-5be6d19feac11441&q=3D1&e=3D9535a8fa-5a9d-4d94-a12d-ff39=
+b9d3b9cf&u=3Dhttps%3A%2F%2Ffosstodon.org%2F%40kernellogger%2F11342331433799=
+1594 for
+> a nice summary of the situation and some further links about the issue.
+>
+> Note that the pull request that fixed the MODULE_LICENSE invocations to
+> stop claiming GPL(v2) compatibility was accepted and then immediately
+> reverted "for the time being until the legal stuff is sorted out"
+> (https://protect2.fireeye.com/v1/url?k=3D80a9845b-df35ad71-80a80f14-000ba=
+be598f7-b5ddbbaedbccb553&q=3D1&e=3D9535a8fa-5a9d-4d94-a12d-ff39b9d3b9cf&u=
+=3Dhttps%3A%2F%2Fgitlab.com%2Ftuxedocomputers%2Fdevelopment%2Fpackages%2Ftu=
+xedo-drivers%2F-%2Fcommit%2Fa8c09b6c2ce6393fe39d8652d133af9f06cfb427).
 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> Reviewed-by: Mark Brown <broonie@kernel.org>
-> ---
->=20
-> This patch was part of the:
-> https://lore.kernel.org/all/cover.1727931468.git.mazziesaccount@gmail.com/
-> The MFD part was applied by Lee, but I didn't see the regulator part in
-> MFD or regulator repository. Perhaps it fell through the cracks? I know
-> we're late in the cycle but I re-spin this now before I forgot... We do
-> always have the next cycle, right? :)
+This commit did not remove the license boilerplate as this other one [1]
+upstream did. So I think the license was still inconsistent.
 
-If this is part of a MFD series I'd have expected it to go in with
-that...
+[1] 1a59d1b8e05ea6ab45f7e18897de1ef0e6bc3da6 ("treewide: Replace GPLv2
+boilerplate/reference with SPDX - rule 15").
 
---4g4PaPB7Fk8gogpb
-Content-Type: application/pgp-signature; name="signature.asc"
+>
+> Best regards
+> Uwe
+>
+> Uwe Kleine-K=C3=B6nig (2):
+>   module: Put known GPL offenders in an array
+>   module: Block modules by Tuxedo from accessing GPL symbols
+>
+>  kernel/module/main.c | 56 +++++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 47 insertions(+), 9 deletions(-)
+>
+> base-commit: 28955f4fa2823e39f1ecfb3a37a364563527afbc
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmc147sACgkQJNaLcl1U
-h9BGiwf9FUZsPdGyI+6KlePgavGtjOenz9bFOPwRDNRFfYKyKPqIcB+bTBcG1GBg
-RMNFPt/JOyoBVUM+vNR+7pATHJuBpLlQDB3JZE8SjHDa+ud+yB2WYW6bxMk7b9lG
-s50Qqk1vH9zIJda3lStA5ELcMkK7FTX5rogoZnR59UdsHx7r8XdlE3IVuQJTV7oC
-AVZUBuxRVFT6YT3Bv3begE3A7YkhT1BT4KnGss7UhmZJOjxQaBc8/rB9xUGNEkdW
-xI/hb0rJfe84+15RimAckEQTrNHb7LSktyOIsrpCqIHeblHepKLG47YJlcFGq6NM
-UNCRsLLakUK6e12BflY5TM2h7vzgwA==
-=+R3J
------END PGP SIGNATURE-----
-
---4g4PaPB7Fk8gogpb--
 
