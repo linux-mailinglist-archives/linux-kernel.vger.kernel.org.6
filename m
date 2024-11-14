@@ -1,125 +1,114 @@
-Return-Path: <linux-kernel+bounces-409643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09EEB9C8FA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:24:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 743FF9C9066
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:01:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA9421F2267D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:24:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C8BFB605E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1BCE1AF0C0;
-	Thu, 14 Nov 2024 16:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504FB157465;
+	Thu, 14 Nov 2024 16:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="i/dm21c6"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="E1CkytfR"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B601ADFE0
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 16:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D56D17A583
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 16:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731601155; cv=none; b=JB0/j0+JIzrRAHkNCtkNbHDnonQbsHrWaQ6YbyLTy1m89m82M8bG4athDravjfRdv0OmbrvDHi+L9bxF0MMf7KDlnyDZtIIkfro2t0VfoICtP768Z+N1Z3zQ8ySRG9ArULcx6fxOZVCXFhwvIY6ByfRONd9w1SoF/1ELMxx6tpk=
+	t=1731601227; cv=none; b=OuO0RdrZbWSDrlg4UwsHlXvQgI/f9qcFceC0nzHtNHKwKM9FtJd3jqiHlrIY8zU3fEZqkxn6ksUBof9hvSkuTqHvLHN3UVPGdMKFPOU6lsNH1/NV37cZFhUCl474KVczwWZwCbaoSynLZpVq8ykIJ/2cR+C4SjHqT+y2pUYItVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731601155; c=relaxed/simple;
-	bh=nPnauxX7TiBvZUSelznoj4ZrHIzLIbMVHtA1EyH4RVI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bJm/ImB1izp2K2Bc5qBZVWAfB/pnBkNwYSG82aDSZUV81v1FBBFOQOTP6dHIs2nBTMXcAsfa46PVZVDIRrIQ4B0Dfz8+AnhsHsEY3eu1jhRwJslXlfXuSPKUTFVNg1AqFd1lOaV6tIk4QlAKlP8lsVUDFYqUxZzlQ8EtxoTD9gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=i/dm21c6; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4314b316495so7194845e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:19:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1731601152; x=1732205952; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bLyjPEUjYy3GGHllbim/73zpVvmemz3R8H3vfZF+LqU=;
-        b=i/dm21c6mHbPUh0kR2V+NaD9L4LdKkTk3mInd+TPeSVk7MDkqijGAwQrIB9Z+T1zJc
-         xmfoA+ATnVC7IRs/FxWba3DRi/SGb+YLPbfDLxhAE3ccENfNOQA6fpzeA3CQlyJ0aOs5
-         wboMSAFzZrIVvtHiYsvDar7j2RDk3qRxZpbmhPlnAeR34oS3U4jkMHMyJ1v/vKx7+j4P
-         TLnqGL7KqozomSlKbuk8pOW6oKctTDeAza+O5PP0S3VJGnXumADG8H0T2sL/WT+XER1s
-         Nff69oehon4dCrZ+XEi+GZ64a4nRuKatR39W/gcl3wV4YEiMqM3CdzpuKxGxpa9UT0Dg
-         RbVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731601152; x=1732205952;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bLyjPEUjYy3GGHllbim/73zpVvmemz3R8H3vfZF+LqU=;
-        b=ZppChIfj69rgJ5KqyPZCXBtqCOQrdiDwzOcLFsnYMRkzHrkcx2aBRnfugQcY8AxWH0
-         u9cFtURztCDsjfT4nylUIsN5t2XLjicV3sBSBsGzmqDeGoM34rK3XeRCmKS8hX/e7mJX
-         UgvVf9IUsirUEr+Is+NYTvwUcw61lZGu0omASm/ZEkSqyjSuTZOUr4uzt/SLivEMHxPi
-         tbev0fIFIVLyLVTCi/pJIK/ca32KYSDzjPVM8uJTUzNXIFtRT1GTONh7KqbW30U55sJ+
-         03Fi/wqNCpU7x8Xr5zPOCDkd0mJHbPDTrF8idKlhXS2KFOAF43jo+qsHwbAVmfd/WTNe
-         /gIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1xZl50IYRol3A65N2qILKDNLPFVNedkEHPzj07Aj7C7PkPCBEW6jBCrrDXuDBEhe4Oj5f6XwyS8aExq8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBYXvwpcbIA1zfLTURu/L1u2AptESKOvaLY8HWa5aZ5DR3GY2s
-	pcrDHY3cEAya0PiEpTQdn3wRuWz9ux0Fz0jOubtwG9PcB6IMgcvnfGoQVRSNjlk=
-X-Google-Smtp-Source: AGHT+IHKQidNVhwcm1UkvoSFM0iFKvguMA4Koj+yRoQBZD+zU91sO767fbB1E85gsh6vbgzv0SLQ3g==
-X-Received: by 2002:a05:600c:c08:b0:42c:bd27:4c12 with SMTP id 5b1f17b1804b1-432d4aae6b7mr76573235e9.10.1731601152220;
-        Thu, 14 Nov 2024 08:19:12 -0800 (PST)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da298a41sm29066525e9.38.2024.11.14.08.19.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 08:19:11 -0800 (PST)
-From: Andrew Jones <ajones@ventanamicro.com>
-To: iommu@lists.linux.dev,
-	kvm-riscv@lists.infradead.org,
-	kvm@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: tjeznach@rivosinc.com,
-	zong.li@sifive.com,
-	joro@8bytes.org,
-	will@kernel.org,
-	robin.murphy@arm.com,
-	anup@brainfault.org,
-	atishp@atishpatra.org,
-	tglx@linutronix.de,
-	alex.williamson@redhat.com,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu
-Subject: [RFC PATCH 15/15] RISC-V: defconfig: Add VFIO modules
-Date: Thu, 14 Nov 2024 17:19:00 +0100
-Message-ID: <20241114161845.502027-32-ajones@ventanamicro.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241114161845.502027-17-ajones@ventanamicro.com>
-References: <20241114161845.502027-17-ajones@ventanamicro.com>
+	s=arc-20240116; t=1731601227; c=relaxed/simple;
+	bh=EeL1GAxyHmFMaSZ7myAfX7UxFp3sNKBOB4azcS2HbjY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nn+QrvW2CaUuqKx+LYind73uT5WDM4LW325k1MHBYx3NyY0kJ6i9Mhw6cAmtqvWHhujphaCt6G16Y7m/997BvLfnM8GbhsnPC+741xnKw6WloCKpadxLbqTcOtyNlpjvAc9pm49Pmxn2sosM8xEOhVvLCgp3B1Gv/N9CWVZSU2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=E1CkytfR; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9641240E0276;
+	Thu, 14 Nov 2024 16:20:22 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id iPjM_A2w-ltm; Thu, 14 Nov 2024 16:20:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1731601217; bh=y5VRPzaV64Q2tLFYn2ihl6Rg2kn3Yqk0WdNzhetZWMw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E1CkytfRwFuzq1eMKRVkV2B1UOYBB5HeStHO8lJ0dJHpCvu/i70iLM9wgP6wmWq2n
+	 6N20AkeaJIhaQWzEDYJrHsVeSjTISImH4HGuhOiBYQPxdRivPg649eHGpb2dbkb5Kr
+	 wr2/gtMX7F2c89tkn6SpPJxWkr0SuEsRe1tfXAzhcKLN9CdTTi68wTZWLip3/SEpYY
+	 c1vNiMiFgiZ/O8jtYfCBorWwIwgqJ619q/onDeisjmrMek27EOsaENYyKwIOt6FSb4
+	 g5g2eRtIlP4gYyVZSKLUjs7EcLNC9Hk5KKC8gbjp1Rd1Qf1iZA8u1ba7GHLIcO7fCi
+	 ZP15gCLh3HXeDoXrzKOgHygXcCKSILv4n/cw96qwZeoYOvPMcdXt29XCqVKsZ2UVQQ
+	 Ph01sp4Y7a/dm9je7O87FuzCo3oMV0iNahTdS6cXjpEDYCOTsU1tdYBXmzEG2DLrAK
+	 75kWCuue9yyxR5MlKTr4newwt7rX4S6c82wPgKqpAp3nNltEeYx+SytI7PeiC/wghx
+	 m2jEJO/re0rhf19seu3qbGhjzHreHgKb00AEXxRCq7HE0QiZsz6bimG89ArlOGJGKF
+	 NlBTT9ZoKLGwOaH3d7ZeJH7PpSVv8m40rV6c9jqM4GMxSDfaGnxjAaXux750viteCn
+	 doy73q5JAZoxlUNv93gIeYS8=
+Received: from zn.tnic (p200300ea973a314f329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:973a:314f:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E168240E015E;
+	Thu, 14 Nov 2024 16:20:06 +0000 (UTC)
+Date: Thu, 14 Nov 2024 17:19:58 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 11/35] x86/bugs: Restructure spectre_v1 mitigation
+Message-ID: <20241114161958.GIZzYjLgooyYCECCl0@fat_crate.local>
+References: <20241105215455.359471-1-david.kaplan@amd.com>
+ <20241105215455.359471-12-david.kaplan@amd.com>
+ <20241114064001.v6ogsiaptrh6oixc@desk>
+ <LV3PR12MB9265747DB95F1F54E826A971945B2@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <LV3PR12MB92654B44C7BDB16BA140D342945B2@LV3PR12MB9265.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <LV3PR12MB92654B44C7BDB16BA140D342945B2@LV3PR12MB9265.namprd12.prod.outlook.com>
 
-Add the VFIO modules to the defconfig to complement KVM now
-that there is IOMMU support.
+On Thu, Nov 14, 2024 at 03:49:42PM +0000, Kaplan, David wrote:
+> Actually looks like the existing code wasn't always consistent here.  For
+> srbds, ssb, and gds, it would still print a message about the system being
+> vulnerable even if mitigations=off was passed.  But for the others it would
+> not print a message.  I think I'm going to suppress the message for all
+> cases, but if people feel it should be the other way, let me know.
 
-Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
----
- arch/riscv/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Yeah, we probably should fix this in a pre-patch. I.e., if mitigations=off,
+not issue any "Vulnerable" message because this is the "master switch", so to
+speak.
 
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index b4a37345703e..10fc9d84a28c 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -242,6 +242,8 @@ CONFIG_RTC_DRV_SUN6I=y
- CONFIG_DMADEVICES=y
- CONFIG_DMA_SUN6I=m
- CONFIG_DW_AXI_DMAC=y
-+CONFIG_VFIO=m
-+CONFIG_VFIO_PCI=m
- CONFIG_VIRTIO_PCI=y
- CONFIG_VIRTIO_BALLOON=y
- CONFIG_VIRTIO_INPUT=y
+Or do we want to issue a bunch of "Vulnerable" in dmesg?
+
+I gravitate towards former because if user supplies mitigations=off, then she
+probably knows what she's doing...?
+
+Hmm.
+
 -- 
-2.47.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
