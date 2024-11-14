@@ -1,347 +1,219 @@
-Return-Path: <linux-kernel+bounces-408466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 306089C7F26
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:14:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7130E9C7F2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:16:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D869028114B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:14:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D4FD282C98
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C087F3D9E;
-	Thu, 14 Nov 2024 00:14:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C968494;
+	Thu, 14 Nov 2024 00:16:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Uuap7bAX"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hV5UYlwy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688076FC3
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 00:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDD98489
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 00:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731543250; cv=none; b=tuzXxssFhmnaoDzaZHqS9iZGAun+TXA8uvCjGSGmgaNUTMu3qwYgGNBLqkGh/Jxq6ih/KJaEIEpNTD63o1k0JkbktHNujO3jpFNSdb4Gsesie5mYsbk2yHgUzHVrahkz98aZ26oWpLMfQ3nGUp1TnWeaDxlL7180aeHR701a52k=
+	t=1731543380; cv=none; b=aC4jbjrukz6j5JH6aC2/OKoprBAzLvCzlEt0Zl8ivUw8OBdOR+T8opTWN4vkWPAg6FrPFCpABDG94xafr4ATYVIESQeMy7MzbsRZb3qTZ1IkdA4qLCqkFlTUqapbP4Vey3copZUtVzT6nVF1bOUjcF6+GY2HYVTNVNPGuZ8n/zY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731543250; c=relaxed/simple;
-	bh=Fjs8VpEmXUt6iO23GOaHv975z0fKszxrrhrkRyYsWZM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Pc6v/lK8+1qsb4Xt3YaRwodbNUFI5OPsUn0EQwfJ3gwXMlbeGtWVNEMpLjzKpxEaUMLuinuBO+vdpVTzap9Qd2RqbF4RhHoepesXYXDx00lnrjL4XpkgAn7EAJkg1b8awX1VSNiMSBEdSblzxOrG+gdt+qDB/RkDBa5T/otDc5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Uuap7bAX; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-20c8b23167fso73039815ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:14:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731543248; x=1732148048; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YG6vDBku7kMpeHZSi1IzY0q9n0Nu+10g7LnoUPeeLH8=;
-        b=Uuap7bAXnOoRLIC99apdLtOwUdvI7RFqDCIdNozbQrbz1SrFPfWzRLuUGtG8gupC1q
-         0wv/nmYBeulUgmwRkU4Mkauh+vxPZiJbgKvhzWZ4cJwJgL5xrWbHVGs7p0Ik99fKhxus
-         JH4pPFtMrISOnSAhRuIFs5O74ia1Ok0reii/2nXG+GL6TUD+NDI5BYYBNV0mUr4XNBs6
-         ToDNYYaItAmMGfO5NTElLSLL6Lg1ToePtTzzg47GqANqx3M8s3dG5BGZZ4ImSro5R31W
-         iRWbZkcGX1dGsOQEAsbVLgUQ5bscbMRdLym3jiWQloNIK1PTE3BDhUA62n/jIHawn3Wx
-         8RKg==
+	s=arc-20240116; t=1731543380; c=relaxed/simple;
+	bh=SmM9lzE/xl0lhfhPg38MnZXVu+NoZr8qcZF6hb9xj4c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JLCCO0tQv425wj9LjslVoVhSAyF0lntj7dn0JPJKJF2tYddxa2AYfjAxa6g18BoWRfUDE5+AOOqixYUgpk9WCGKUOEI3+yc2SHEGFKYkhHKM32wl7lCy2LXIc+wA9JOj6zE79IQwDxAvLRjGxBq8pnI8N6vHslyGwwIoEUive50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hV5UYlwy; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731543378;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WGiWMkbbZ4wXd653FrpAzPkRyzlyuoN6kxu5JsuvJxE=;
+	b=hV5UYlwyN6pVzi9luWZr18luPVdKjxU4v+Uh1hoUaPoJnryAVCVWqvs3l1uqcgXM4ns42e
+	Rc0exU/ufav6fgFj0mpNt0wA8dnmHnulxnMRnGdPRCGInrdN1D9Rx/x0C0xiyrfV0Q5eGY
+	b0N32svVGhjBYq69MfbQoVfJfc79An8=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-582-NPvdiz76M8WjllVvIvHYDw-1; Wed, 13 Nov 2024 19:16:16 -0500
+X-MC-Unique: NPvdiz76M8WjllVvIvHYDw-1
+X-Mimecast-MFC-AGG-ID: NPvdiz76M8WjllVvIvHYDw
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4315c1b5befso506605e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:16:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731543248; x=1732148048;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YG6vDBku7kMpeHZSi1IzY0q9n0Nu+10g7LnoUPeeLH8=;
-        b=vd9fz8SgaobaNTJK6d3v1gBr59lvfj2Nf+BAaJvZKLuTGo5VsfPgkuSgqp/5Uqg9uj
-         xTKp4Vy0bo3bFbDPloxVsvAMhs64zHUV/KJmCDugD3kuJWfDh+CGS99xan8fwaMDgr0K
-         /6sOoqS1PSZ+yPUMjTMk12bu5gFTKPxDW03N8J/z5q9WDNz1PYoSiq21mbbNvxD11QwU
-         ZpMKnPJ64X5CLRAJtz988ey4VnGxaKKzIKZSbpWzNOXwOUJSiV+TS0rzaxMWD9euC8J9
-         gjBVg7H7NdtnpexINlMWaVtIhdnJrMSCVhu60SFK8ofIM6wPc3ZVaOy1/nQLZRvUypCH
-         6FIA==
-X-Gm-Message-State: AOJu0YwuHkZQtOIZWmJao7BNvT4fQoTsdOqS/gob7itbxBIuaKNt1u6k
-	MvIHaJhKdOcRYINjcLJbJaPaibDuvV0U5IFNWreUppPGUcPHQL/yIc+bR8ItNBIJJxCVJqeJ1sp
-	Hig==
-X-Google-Smtp-Source: AGHT+IGZMQ7d8FpvW2bgMLdn/MljHJen2J/r3edwH0bkQQHKdtX1wOgkU5/8fa6SpxEOLLapwoaKKz8/jy8=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a17:902:c602:b0:20c:bb19:d2ce with SMTP id
- d9443c01a7336-21183586702mr507345ad.8.1731543247464; Wed, 13 Nov 2024
- 16:14:07 -0800 (PST)
-Date: Wed, 13 Nov 2024 16:14:05 -0800
-In-Reply-To: <20241108155056.332412-2-pbonzini@redhat.com>
+        d=1e100.net; s=20230601; t=1731543375; x=1732148175;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WGiWMkbbZ4wXd653FrpAzPkRyzlyuoN6kxu5JsuvJxE=;
+        b=I1oswnT4+vChiBTMC4ygyx7QNKnllKKpOrosvx6E+WkOEX/LxPf2bZ7RsIf5xzfk+P
+         mZQnAay8dKhVorZytIXGzycu1KMKzikY0A1VK08IGwNtykMENKFWwZiPdQhhRF9vqaY4
+         4gCSe7Iq3lRMQvM95mScU1Yj0dKAa+Uq5QhcXrtjjjR21KyJ57/ErJIF7EnurX7y+pMh
+         UzO1NJcqBqqMQGnPekssbpoFz1mw46mVEcVLHQTvQaOTDdPUfikX2bi1T8f6qo7X8FcT
+         KLOBTePv9ssS9N1FEixMvgBRKl1fbV+XjHMIOEKAWzkjhY863ouPV8XVVZSxbWeSMO61
+         KdZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRdC/5OkEa0nH6gtzeKMfBx9fLdfu/Sah+sSwnl8NDH3vClFPDDmHd/TpMkYll3XW/2m9RfpPy6ondgQQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqLn0KLODczcsvZI/sVSBXTbBB4phaolaGt31uLaHV756QzVhm
+	ocHSjZK86lvBVO8PFBuPSbydpV4dJyvzbCR6R6aBSZ+dPD1pznYC0eSOjdBRHT9gxitL3IghrAW
+	Wf+vrEgCZMKYKQgKO/rhIkDh0L5woyK1Sep2Afk7O6ROxADnCQUZ2QTynT4hAPQ==
+X-Received: by 2002:a05:600c:510a:b0:42f:7c9e:1f96 with SMTP id 5b1f17b1804b1-432b74fdee3mr182191975e9.1.1731543375365;
+        Wed, 13 Nov 2024 16:16:15 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGxsk6041ZO1egyOz9QrsKPVB7t17ecHSk68BX7Uss/fbbhsCJduun+tQJJFQH/rQUGXuDMAg==
+X-Received: by 2002:a05:600c:510a:b0:42f:7c9e:1f96 with SMTP id 5b1f17b1804b1-432b74fdee3mr182191775e9.1.1731543374982;
+        Wed, 13 Nov 2024 16:16:14 -0800 (PST)
+Received: from debian (2a01cb058d23d600736cb2b04c893998.ipv6.abo.wanadoo.fr. [2a01:cb05:8d23:d600:736c:b2b0:4c89:3998])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed997313sm19532952f8f.53.2024.11.13.16.16.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2024 16:16:13 -0800 (PST)
+Date: Thu, 14 Nov 2024 01:16:11 +0100
+From: Guillaume Nault <gnault@redhat.com>
+To: Roger Quadros <rogerq@kernel.org>
+Cc: Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, linux-omap@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, srk@ti.com,
+	Pekka Varis <p-varis@ti.com>
+Subject: Re: [PATCH net-next v3 2/2] net: ethernet: ti: am65-cpsw: enable
+ DSCP to priority map for RX
+Message-ID: <ZzVBS1zXIy31pnaf@debian>
+References: <20241109-am65-cpsw-multi-rx-dscp-v3-0-1cfb76928490@kernel.org>
+ <20241109-am65-cpsw-multi-rx-dscp-v3-2-1cfb76928490@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241108155056.332412-1-pbonzini@redhat.com> <20241108155056.332412-2-pbonzini@redhat.com>
-Message-ID: <ZzVAzc3rVTW9OCJP@google.com>
-Subject: Re: [PATCH 1/3] KVM: gmem: allocate private data for the gmem inode
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, michael.roth@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241109-am65-cpsw-multi-rx-dscp-v3-2-1cfb76928490@kernel.org>
 
-+Ackerley, who's also working on resurrecting the file system[*].  At a glance,
-there appear to be non-trivial differences, e.g. Ackerley's version has a call
-to security_inode_init_security_anon().  I've paged out much of the inode stuff,
-so I trust Ackerley's judgment far, far more than my own :-)
-
-[*] https://lore.kernel.org/all/d1940d466fc69472c8b6dda95df2e0522b2d8744.1726009989.git.ackerleytng@google.com
-
-On Fri, Nov 08, 2024, Paolo Bonzini wrote:
-> In preparation for removing the usage of the uptodate flag,
-> reintroduce the gmem filesystem type.  We need it in order to
-> free the private inode information.
+On Sat, Nov 09, 2024 at 01:00:08PM +0200, Roger Quadros wrote:
+> AM65 CPSW hardware can map the 6-bit DSCP/TOS field to
+> appropriate priority queue via DSCP to Priority mapping registers
+> (CPSW_PN_RX_PRI_MAP_REG).
 > 
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> We use the upper 3 bits of the DSCP field that indicate IP Precedence
+> to map traffic to 8 priority queues.
+> 
+> Signed-off-by: Roger Quadros <rogerq@kernel.org>
 > ---
->  include/uapi/linux/magic.h |   1 +
->  virt/kvm/guest_memfd.c     | 117 +++++++++++++++++++++++++++++++++----
->  virt/kvm/kvm_main.c        |   7 ++-
->  virt/kvm/kvm_mm.h          |   8 ++-
->  4 files changed, 119 insertions(+), 14 deletions(-)
+>  drivers/net/ethernet/ti/am65-cpsw-nuss.c | 54 ++++++++++++++++++++++++++++++++
+>  1 file changed, 54 insertions(+)
 > 
-> diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
-> index bb575f3ab45e..d856dd6a7ed9 100644
-> --- a/include/uapi/linux/magic.h
-> +++ b/include/uapi/linux/magic.h
-> @@ -103,5 +103,6 @@
->  #define DEVMEM_MAGIC		0x454d444d	/* "DMEM" */
->  #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
->  #define PID_FS_MAGIC		0x50494446	/* "PIDF" */
-> +#define KVM_GUEST_MEM_MAGIC	0x474d454d	/* "GMEM" */
+> diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+> index 0520e9f4bea7..fab35e6aac7f 100644
+> --- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+> +++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+> @@ -71,6 +71,8 @@
+>  #define AM65_CPSW_PORT_REG_RX_PRI_MAP		0x020
+>  #define AM65_CPSW_PORT_REG_RX_MAXLEN		0x024
 >  
->  #endif /* __LINUX_MAGIC_H__ */
-> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> index 8f079a61a56d..3ea5a7597fd4 100644
-> --- a/virt/kvm/guest_memfd.c
-> +++ b/virt/kvm/guest_memfd.c
-> @@ -4,9 +4,74 @@
->  #include <linux/kvm_host.h>
->  #include <linux/pagemap.h>
->  #include <linux/anon_inodes.h>
-> +#include <linux/pseudo_fs.h>
+> +#define AM65_CPSW_PORTN_REG_CTL			0x004
+> +#define AM65_CPSW_PORTN_REG_DSCP_MAP		0x120
+>  #define AM65_CPSW_PORTN_REG_SA_L		0x308
+>  #define AM65_CPSW_PORTN_REG_SA_H		0x30c
+>  #define AM65_CPSW_PORTN_REG_TS_CTL              0x310
+> @@ -94,6 +96,10 @@
+>  /* AM65_CPSW_PORT_REG_PRI_CTL */
+>  #define AM65_CPSW_PORT_REG_PRI_CTL_RX_PTYPE_RROBIN	BIT(8)
 >  
->  #include "kvm_mm.h"
->  
-> +/* Do all the filesystem crap just for evict_inode... */
+> +/* AM65_CPSW_PN_REG_CTL */
+> +#define AM65_CPSW_PN_REG_CTL_DSCP_IPV4_EN	BIT(1)
+> +#define AM65_CPSW_PN_REG_CTL_DSCP_IPV6_EN	BIT(2)
 > +
-> +static struct vfsmount *kvm_gmem_mnt __read_mostly;
-> +
-> +static void gmem_evict_inode(struct inode *inode)
+>  /* AM65_CPSW_PN_TS_CTL register fields */
+>  #define AM65_CPSW_PN_TS_CTL_TX_ANX_F_EN		BIT(4)
+>  #define AM65_CPSW_PN_TS_CTL_TX_VLAN_LT1_EN	BIT(5)
+> @@ -176,6 +182,53 @@ static void am65_cpsw_port_set_sl_mac(struct am65_cpsw_port *slave,
+>  	writel(mac_lo, slave->port_base + AM65_CPSW_PORTN_REG_SA_L);
+>  }
+>  
+> +#define AM65_CPSW_DSCP_MAX	GENMASK(5, 0)
+> +#define AM65_CPSW_PRI_MAX	GENMASK(2, 0)
+> +#define AM65_CPSW_DSCP_PRI_PER_REG	8
+> +#define AM65_CPSW_DSCP_PRI_SIZE		4	/* in bits */
+> +static int am65_cpsw_port_set_dscp_map(struct am65_cpsw_port *slave, u8 dscp, u8 pri)
 > +{
-> +	kvfree(inode->i_private);
-> +	truncate_inode_pages_final(&inode->i_data);
-> +	clear_inode(inode);
-> +}
+> +	int reg_ofs;
+> +	int bit_ofs;
+> +	u32 val;
 > +
-> +static const struct super_operations gmem_super_operations = {
-> +	.drop_inode	= generic_delete_inode,
-> +	.evict_inode    = gmem_evict_inode,
-> +	.statfs         = simple_statfs,
-> +};
+> +	if (dscp > AM65_CPSW_DSCP_MAX)
+> +		return -EINVAL;
 > +
-> +static int gmem_init_fs_context(struct fs_context *fc)
-> +{
-> +	struct pseudo_fs_context *ctx = init_pseudo(fc, KVM_GUEST_MEM_MAGIC);
-> +	if (!ctx)
-> +		return -ENOMEM;
+> +	if (pri > AM65_CPSW_PRI_MAX)
+> +		return -EINVAL;
 > +
-> +	ctx->ops = &gmem_super_operations;
-> +	return 0;
-> +}
+> +	/* 32-bit register offset to this dscp */
+> +	reg_ofs = (dscp / AM65_CPSW_DSCP_PRI_PER_REG) * 4;
+> +	/* bit field offset to this dscp */
+> +	bit_ofs = AM65_CPSW_DSCP_PRI_SIZE * (dscp % AM65_CPSW_DSCP_PRI_PER_REG);
 > +
-> +static struct file_system_type kvm_gmem_fs_type = {
-> +	.name           = "kvm_gmemfs",
-> +	.init_fs_context = gmem_init_fs_context,
-> +	.kill_sb        = kill_anon_super,
-> +};
-> +
-> +static struct file *kvm_gmem_create_file(const char *name, const struct file_operations *fops)
-> +{
-> +	struct inode *inode;
-> +	struct file *file;
-> +
-> +	if (fops->owner && !try_module_get(fops->owner))
-> +		return ERR_PTR(-ENOENT);
-> +
-> +	inode = alloc_anon_inode(kvm_gmem_mnt->mnt_sb);
-> +	if (IS_ERR(inode)) {
-> +		file = ERR_CAST(inode);
-> +		goto err;
-> +	}
-> +	file = alloc_file_pseudo(inode, kvm_gmem_mnt, name, O_RDWR, fops);
-> +	if (IS_ERR(file))
-> +		goto err_iput;
-> +
-> +	return file;
-> +
-> +err_iput:
-> +	iput(inode);
-> +err:
-> +	module_put(fops->owner);
-> +	return file;
-> +}
-> +
-> +
-> +struct kvm_gmem_inode {
-> +	unsigned long flags;
-> +};
-> +
->  struct kvm_gmem {
->  	struct kvm *kvm;
->  	struct xarray bindings;
-> @@ -308,9 +373,31 @@ static struct file_operations kvm_gmem_fops = {
->  	.fallocate	= kvm_gmem_fallocate,
->  };
->  
-> -void kvm_gmem_init(struct module *module)
-> +int kvm_gmem_init(struct module *module)
->  {
-> +	int ret;
-> +
-> +	ret = register_filesystem(&kvm_gmem_fs_type);
-> +	if (ret) {
-> +		pr_err("kvm-gmem: cannot register file system (%d)\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	kvm_gmem_mnt = kern_mount(&kvm_gmem_fs_type);
-> +	if (IS_ERR(kvm_gmem_mnt)) {
-> +		pr_err("kvm-gmem: kernel mount failed (%ld)\n", PTR_ERR(kvm_gmem_mnt));
-> +		return PTR_ERR(kvm_gmem_mnt);
-> +	}
-> +
->  	kvm_gmem_fops.owner = module;
+> +	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
+> +	val &= ~(AM65_CPSW_PRI_MAX << bit_ofs);	/* clear */
+> +	val |= pri << bit_ofs;			/* set */
+> +	writel(val, slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
 > +
 > +	return 0;
 > +}
 > +
-> +void kvm_gmem_exit(void)
+> +static void am65_cpsw_port_enable_dscp_map(struct am65_cpsw_port *slave)
 > +{
-> +	kern_unmount(kvm_gmem_mnt);
-> +	unregister_filesystem(&kvm_gmem_fs_type);
->  }
->  
->  static int kvm_gmem_migrate_folio(struct address_space *mapping,
-> @@ -394,15 +481,23 @@ static const struct inode_operations kvm_gmem_iops = {
->  
->  static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
->  {
-> -	const char *anon_name = "[kvm-gmem]";
-> +	const char *gmem_name = "[kvm-gmem]";
-> +	struct kvm_gmem_inode *i_gmem;
->  	struct kvm_gmem *gmem;
->  	struct inode *inode;
->  	struct file *file;
->  	int fd, err;
->  
-> +	i_gmem = kvzalloc(sizeof(struct kvm_gmem_inode), GFP_KERNEL);
-> +	if (!i_gmem)
-> +		return -ENOMEM;
-> +	i_gmem->flags = flags;
+> +	int dscp, pri;
+> +	u32 val;
 > +
->  	fd = get_unused_fd_flags(0);
-> -	if (fd < 0)
-> -		return fd;
-> +	if (fd < 0) {
-> +		err = fd;
-> +		goto err_i_gmem;
+> +	/* Map IP Precedence field to Priority */
+> +	for (dscp = 0; dscp <= AM65_CPSW_DSCP_MAX; dscp++) {
+> +		pri = dscp >> 3; /* Extract IP Precedence */
+> +		am65_cpsw_port_set_dscp_map(slave, dscp, pri);
 > +	}
->  
->  	gmem = kzalloc(sizeof(*gmem), GFP_KERNEL);
->  	if (!gmem) {
-> @@ -410,19 +505,19 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
->  		goto err_fd;
->  	}
->  
-> -	file = anon_inode_create_getfile(anon_name, &kvm_gmem_fops, gmem,
-> -					 O_RDWR, NULL);
-> +	file = kvm_gmem_create_file(gmem_name, &kvm_gmem_fops);
->  	if (IS_ERR(file)) {
->  		err = PTR_ERR(file);
->  		goto err_gmem;
->  	}
->  
-> +	inode = file->f_inode;
 > +
-> +	file->f_mapping = inode->i_mapping;
-> +	file->private_data = gmem;
->  	file->f_flags |= O_LARGEFILE;
->  
-> -	inode = file->f_inode;
-> -	WARN_ON(file->f_mapping != inode->i_mapping);
-> -
-> -	inode->i_private = (void *)(unsigned long)flags;
-> +	inode->i_private = i_gmem;
->  	inode->i_op = &kvm_gmem_iops;
->  	inode->i_mapping->a_ops = &kvm_gmem_aops;
->  	inode->i_mode |= S_IFREG;
-> @@ -444,6 +539,8 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
->  	kfree(gmem);
->  err_fd:
->  	put_unused_fd(fd);
-> +err_i_gmem:
-> +	kvfree(i_gmem);
->  	return err;
->  }
->  
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 279e03029ce1..8b7b4e0eb639 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -6504,7 +6504,9 @@ int kvm_init(unsigned vcpu_size, unsigned vcpu_align, struct module *module)
->  	if (WARN_ON_ONCE(r))
->  		goto err_vfio;
->  
-> -	kvm_gmem_init(module);
-> +	r = kvm_gmem_init(module);
-> +	if (r)
-> +		goto err_gmem;
->  
->  	r = kvm_init_virtualization();
->  	if (r)
-> @@ -6525,6 +6527,8 @@ int kvm_init(unsigned vcpu_size, unsigned vcpu_align, struct module *module)
->  err_register:
->  	kvm_uninit_virtualization();
->  err_virt:
-> +	kvm_gmem_exit();
-> +err_gmem:
->  	kvm_vfio_ops_exit();
->  err_vfio:
->  	kvm_async_pf_deinit();
-> @@ -6556,6 +6560,7 @@ void kvm_exit(void)
->  	for_each_possible_cpu(cpu)
->  		free_cpumask_var(per_cpu(cpu_kick_mask, cpu));
->  	kmem_cache_destroy(kvm_vcpu_cache);
-> +	kvm_gmem_exit();
->  	kvm_vfio_ops_exit();
->  	kvm_async_pf_deinit();
->  	kvm_irqfd_exit();
-> diff --git a/virt/kvm/kvm_mm.h b/virt/kvm/kvm_mm.h
-> index 715f19669d01..91e4202574a8 100644
-> --- a/virt/kvm/kvm_mm.h
-> +++ b/virt/kvm/kvm_mm.h
-> @@ -36,15 +36,17 @@ static inline void gfn_to_pfn_cache_invalidate_start(struct kvm *kvm,
->  #endif /* HAVE_KVM_PFNCACHE */
->  
->  #ifdef CONFIG_KVM_PRIVATE_MEM
-> -void kvm_gmem_init(struct module *module);
-> +int kvm_gmem_init(struct module *module);
-> +void kvm_gmem_exit(void);
->  int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args);
->  int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
->  		  unsigned int fd, loff_t offset);
->  void kvm_gmem_unbind(struct kvm_memory_slot *slot);
->  #else
-> -static inline void kvm_gmem_init(struct module *module)
-> +static inline void kvm_gmem_exit(void) {}
-> +static inline int kvm_gmem_init(struct module *module)
+> +	/* enable port IPV4 and IPV6 DSCP for this port */
+> +	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_CTL);
+> +	val |= AM65_CPSW_PN_REG_CTL_DSCP_IPV4_EN |
+> +		AM65_CPSW_PN_REG_CTL_DSCP_IPV6_EN;
+> +	writel(val, slave->port_base + AM65_CPSW_PORTN_REG_CTL);
+> +}
+
+It seems that this hardware is capable of mapping all possible DSCP
+values. Then why restricting the mapping to the 3 high order bits only?
+According to RFC 8325 section 2.3, this seem to be a common practice,
+which this RFC considers a problem:
+https://datatracker.ietf.org/doc/html/rfc8325#section-2.3
+
+I know this RFC is about 802.11, not 802.1p, but as far as I know, the
+user priority (UP) are the same for both, so that shouldn't make a
+difference.
+
+So what about following the IETF mapping found in section 4.3?
+https://datatracker.ietf.org/doc/html/rfc8325#section-4.3
+
+>  static void am65_cpsw_sl_ctl_reset(struct am65_cpsw_port *port)
 >  {
-> -
-> +	return 0;
->  }
+>  	cpsw_sl_reset(port->slave.mac_sl, 100);
+> @@ -921,6 +974,7 @@ static int am65_cpsw_nuss_ndo_slave_open(struct net_device *ndev)
+>  	common->usage_count++;
 >  
->  static inline int kvm_gmem_bind(struct kvm *kvm,
+>  	am65_cpsw_port_set_sl_mac(port, ndev->dev_addr);
+> +	am65_cpsw_port_enable_dscp_map(port);
+>  
+>  	if (common->is_emac_mode)
+>  		am65_cpsw_init_port_emac_ale(port);
+> 
 > -- 
-> 2.43.5
+> 2.34.1
 > 
 > 
+
 
