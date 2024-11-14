@@ -1,143 +1,178 @@
-Return-Path: <linux-kernel+bounces-409594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D91F9C8EEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:59:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C8889C8EF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:00:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E705228977A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:59:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CC9D289DE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E692418CC0C;
-	Thu, 14 Nov 2024 15:53:51 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71904190686;
+	Thu, 14 Nov 2024 15:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N2zc8ugY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA98487BF
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295E44317C
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731599631; cv=none; b=Znt3WWdpEjTaVUD/mD+FYfsm9GoDaZ7Sd2CwmZZRuEIs59Hlzjdn1lJbGx6bdRcCAZeZCFqvnooJ8ROclZOA5hZglttUJ3q8XyP0I0ohOJvKzNH602NLinARQHO78H++WMYOSaWGo+6YOGI1G9aQV9vcDBb4GAyEVSFjqD5SlHk=
+	t=1731599780; cv=none; b=CgBW3MAODXCz19O5+vvVa1rlbHfNAGNk5gb7Djk4pANcJUqapxBybpT1ujf2udnVjhkv8cXb8bV6fgEGSa+mLiv/UBr9Y+HvLuIVQQ9FP+TxjN0F535zwzz8QO9yzBEU6lFVPrn7f5KHbd59TlYeNPuu3D3eZLQeBoUSFaFF1xU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731599631; c=relaxed/simple;
-	bh=XvKm27mu5dDXZTEjbH/rYYsOXdnLHAPNYRhv5/bN9nk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K20GZ6nHLbGOosEBNK6ItKR3iLG6vvVp5UIcPgJBifOGLyZKp5sLo9cC2yxOb6/vf/vAi6MQiWGBG0u856sGz5I2I1SGkqRYVaO6qPf8mx/BBRUSzw/Sq+7OYZbh8uX4NuEli3vw5a0otjogv1uF+9hBQzVRHW+GA1gGIZ/KZPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73590C4CECD;
-	Thu, 14 Nov 2024 15:53:50 +0000 (UTC)
-Date: Thu, 14 Nov 2024 10:54:12 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [GIT PULL] ring-buffer: Revert previous fix as it wasn't the
- actual fix
-Message-ID: <20241114105412.43b00a95@gandalf.local.home>
-In-Reply-To: <20241114104149.1da4f584@gandalf.local.home>
-References: <20241114104149.1da4f584@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731599780; c=relaxed/simple;
+	bh=OEjKFEcpQsz13XZdaX5cjpBVs6KT2WkZQePyblu+T0k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lygS3GZ5/A+/rDf7P7Va9W4vw/sUHhGbuJeEKDCEpYHnUyovMcJ+QHaVgowM0k5Gv0uPj4pQrPW0xtICJeld/au1aUVli6k/4yvrZailBGocY8OZ3KsvUR/0IAcT2P0M4DTSD2Ok20SZawnmbRldYKWp3Xx1LTDhUtxb9FCIjug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N2zc8ugY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731599777;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ua4wH/vsk3I0t11x5uOU5gdCtR20Wk4Y/+2Djkj+c9E=;
+	b=N2zc8ugYD2rULwcsPQeKO49QYIEeDGlx/VGiRpxwXLybIGXAkXwDcvQ+pweir1u9LMR76S
+	gCtDzm9uanLBvH06DMSE5ujH8nTujleHoy0OJ/qVeBlw48OlHUQH5VypVu4rP3izbwkjwi
+	IMvvomgZWtVgPZUM6hSzHMcvUUkeCAU=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-251-U6QBzEdcM7-uHr7FbB5-NQ-1; Thu,
+ 14 Nov 2024 10:56:13 -0500
+X-MC-Unique: U6QBzEdcM7-uHr7FbB5-NQ-1
+X-Mimecast-MFC-AGG-ID: U6QBzEdcM7-uHr7FbB5-NQ
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8A9421955F42;
+	Thu, 14 Nov 2024 15:56:10 +0000 (UTC)
+Received: from pauld.westford.csb (unknown [10.22.88.110])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DC064195DF81;
+	Thu, 14 Nov 2024 15:56:05 +0000 (UTC)
+Date: Thu, 14 Nov 2024 10:56:03 -0500
+From: Phil Auld <pauld@redhat.com>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Qais Yousef <qyousef@layalina.io>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Aashish Sharma <shraash@google.com>,
+	Shin Kawamura <kawasin@google.com>,
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] sched/deadline: Restore dl_server bandwidth on
+ non-destructive root domain changes
+Message-ID: <20241114155603.GC471026@pauld.westford.csb>
+References: <20241114142810.794657-1-juri.lelli@redhat.com>
+ <20241114142810.794657-2-juri.lelli@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241114142810.794657-2-juri.lelli@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+
+On Thu, Nov 14, 2024 at 02:28:09PM +0000 Juri Lelli wrote:
+> When root domain non-destructive changes (e.g., only modifying one of
+> the existing root domains while the rest is not touched) happen we still
+> need to clear DEADLINE bandwidth accounting so that it's then properly
+> restored, taking into account DEADLINE tasks associated to each cpuset
+> (associated to each root domain). After the introduction of dl_servers,
+> we fail to restore such servers contribution after non-destructive
+> changes (as they are only considered on destructive changes when
+> runqueues are attached to the new domains).
+> 
+> Fix this by making sure we iterate over the dl_servers attached to
+> domains that have not been destroyed and add their bandwidth
+> contribution back correctly.
+> 
+> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+>
 
 
-Hi Linus,
-
-You can hold off on pulling this. I just found another issue I want to fix
-and will likely have another pull request tomorrow on top of this one.
-
--- Steve
+Reviewed-by: Phil Auld <pauld@redhat.com>
 
 
-On Thu, 14 Nov 2024 10:41:49 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> Linus,
+> ---
+> v1->v2: always restore, considering a root domain span (and check for
+>         active cpus)
+> ---
+>  kernel/sched/deadline.c | 17 ++++++++++++++---
+>  kernel/sched/topology.c |  8 +++++---
+>  2 files changed, 19 insertions(+), 6 deletions(-)
 > 
-> Revert: "ring-buffer: Do not have boot mapped buffers hook to CPU hotplug"
-> 
-> - A crash that happened on cpu hotplug was actually caused by the incorrect
->   ref counting that was fixed by commit 2cf9733891a4 ("ring-buffer: Fix
->   refcount setting of boot mapped buffers"). The removal of calling cpu
->   hotplug callbacks on memory mapped buffers was not an issue even though
->   the tests at the time pointed toward it. But in fact, there's a check in
->   that code that tests to see if the buffers are already allocated or not,
->   and will not allocate them again if they are. Not calling the cpu hotplug
->   callbacks ended up not initializing the non boot CPU buffers.
-> 
->   Simply remove that change.
-> 
-> 
-> Please pull the latest trace-ringbuffer-v6.12-rc7 tree, which can be found at:
-> 
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-> trace-ringbuffer-v6.12-rc7
-> 
-> Tag SHA1: 81ccc26cac30f76e5fb6d76aec178677c3e209ad
-> Head SHA1: 580bb355bcae7e9a6606ce9644af09b2a793f1bb
-> 
-> 
-> Steven Rostedt (1):
->       Revert: "ring-buffer: Do not have boot mapped buffers hook to CPU hotplug"
-> 
-> ----
->  kernel/trace/ring_buffer.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> ---------------------------
-> commit 580bb355bcae7e9a6606ce9644af09b2a793f1bb
-> Author: Steven Rostedt <rostedt@goodmis.org>
-> Date:   Wed Nov 13 23:08:39 2024 -0500
-> 
->     Revert: "ring-buffer: Do not have boot mapped buffers hook to CPU hotplug"
->     
->     A crash happened when testing cpu hotplug with respect to the memory
->     mapped ring buffers. It was assumed that the hot plug code was adding a
->     per CPU buffer that was already created that caused the crash. The real
->     problem was due to ref counting and was fixed by commit 2cf9733891a4
->     ("ring-buffer: Fix refcount setting of boot mapped buffers").
->     
->     When a per CPU buffer is created, it will not be created again even with
->     CPU hotplug, so the fix to not use CPU hotplug was a red herring. In fact,
->     it caused only the boot CPU buffer to be created, leaving the other CPU
->     per CPU buffers disabled.
->     
->     Revert that change as it was not the culprit of the fix it was intended to
->     be.
->     
->     Cc: Masami Hiramatsu <mhiramat@kernel.org>
->     Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->     Link: https://lore.kernel.org/20241113230839.6c03640f@gandalf.local.home
->     Fixes: 912da2c384d5 ("ring-buffer: Do not have boot mapped buffers hook to CPU hotplug")
->     Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> 
-> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-> index 3ea4f7bb1837..5807116bcd0b 100644
-> --- a/kernel/trace/ring_buffer.c
-> +++ b/kernel/trace/ring_buffer.c
-> @@ -2337,12 +2337,9 @@ static struct trace_buffer *alloc_buffer(unsigned long size, unsigned flags,
->  	if (!buffer->buffers[cpu])
->  		goto fail_free_buffers;
+> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> index 9ce93d0bf452..a9cdbf058871 100644
+> --- a/kernel/sched/deadline.c
+> +++ b/kernel/sched/deadline.c
+> @@ -2970,11 +2970,22 @@ void dl_add_task_root_domain(struct task_struct *p)
 >  
-> -	/* If already mapped, do not hook to CPU hotplug */
-> -	if (!start) {
-> -		ret = cpuhp_state_add_instance(CPUHP_TRACE_RB_PREPARE, &buffer->node);
-> -		if (ret < 0)
-> -			goto fail_free_buffers;
-> -	}
-> +	ret = cpuhp_state_add_instance(CPUHP_TRACE_RB_PREPARE, &buffer->node);
-> +	if (ret < 0)
-> +		goto fail_free_buffers;
+>  void dl_clear_root_domain(struct root_domain *rd)
+>  {
+> -	unsigned long flags;
+> +	int i;
 >  
->  	mutex_init(&buffer->mutex);
+> -	raw_spin_lock_irqsave(&rd->dl_bw.lock, flags);
+> +	guard(raw_spinlock_irqsave)(&rd->dl_bw.lock);
+>  	rd->dl_bw.total_bw = 0;
+> -	raw_spin_unlock_irqrestore(&rd->dl_bw.lock, flags);
+> +
+> +	/*
+> +	 * dl_server bandwidth is only restored when CPUs are attached to root
+> +	 * domains (after domains are created or CPUs moved back to the
+> +	 * default root doamin).
+> +	 */
+> +	for_each_cpu(i, rd->span) {
+> +		struct sched_dl_entity *dl_se = &cpu_rq(i)->fair_server;
+> +
+> +		if (dl_server(dl_se) && cpu_active(i))
+> +			rd->dl_bw.total_bw += dl_se->dl_bw;
+> +	}
+>  }
 >  
+>  #endif /* CONFIG_SMP */
+> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> index 9748a4c8d668..9c405f0e7b26 100644
+> --- a/kernel/sched/topology.c
+> +++ b/kernel/sched/topology.c
+> @@ -2721,9 +2721,11 @@ void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
+>  
+>  				/*
+>  				 * This domain won't be destroyed and as such
+> -				 * its dl_bw->total_bw needs to be cleared.  It
+> -				 * will be recomputed in function
+> -				 * update_tasks_root_domain().
+> +				 * its dl_bw->total_bw needs to be cleared.
+> +				 * Tasks contribution will be then recomputed
+> +				 * in function dl_update_tasks_root_domain(),
+> +				 * dl_servers contribution in function
+> +				 * dl_restore_server_root_domain().
+>  				 */
+>  				rd = cpu_rq(cpumask_any(doms_cur[i]))->rd;
+>  				dl_clear_root_domain(rd);
+> -- 
+> 2.47.0
+> 
+
+-- 
 
 
