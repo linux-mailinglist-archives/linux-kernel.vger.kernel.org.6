@@ -1,110 +1,209 @@
-Return-Path: <linux-kernel+bounces-409798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD8629C91CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:41:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E96E9C91D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 19:44:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 693CF1F22CF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:41:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C123E286CE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013C0199948;
-	Thu, 14 Nov 2024 18:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1083E19995B;
+	Thu, 14 Nov 2024 18:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b="U7wFWkV5"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Djy6Bhgw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7781990D3
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 18:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928FD19993D
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 18:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731609695; cv=none; b=lACvghQzIBdKdMqZcg8dtbz3VxxLuZb1nZ3L6Dg8ql+vQqaQ8+nZrQyIXYSUU4zU/Evqbk8ktVWApWKVyqGDTcFpSjD7062hvC6qzgC4+VDJTNI0PHBrrSmyJ+r/AyhJUib+m6D10tGb1LTpYXfORUnCtv8WcypYvqnkD67IJ14=
+	t=1731609850; cv=none; b=fwFN1umCmGb5wPW9f4Mj5Nr0fp+ThNkcTQ9XEu1EA+V/AP24IblIx2ka4k5KeBWxoG0NgFu06Eob2rbrlqOq9vbIFR/xKJGfp9WlG1OLo08GH3dVi5zWVOTUnu3YqLbxfYluz7v3t4cpfDStvIDdaWimCf2C+r0kxqgtgjYgTEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731609695; c=relaxed/simple;
-	bh=WKf6aY2AGUMfI2JDRk3jnTXS9jlX/vJJ3h1XAzt7RFg=;
+	s=arc-20240116; t=1731609850; c=relaxed/simple;
+	bh=Q03vjJ5s1nrHoyz+1CUz5PPjOeiFkURMvI6nfkE3ZXU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nYyBpBeGIwV+mIthGiT/sVq2SpTSsSzSLfVW1UXxNMc7vagBW3m0Oi8ZKnHO3pfMBDnfornn/+bcZEJornj4b42aFrstB1NcKisKYL448uNuyQ94UkJER8xA96eyZchS7ac6aISZSqBjErbuAkgmjAvpEV2NTeW0T3KiHldeVNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chrisdown.name; spf=pass smtp.mailfrom=chrisdown.name; dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b=U7wFWkV5; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chrisdown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chrisdown.name
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7b148919e82so58166385a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:41:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chrisdown.name; s=google; t=1731609692; x=1732214492; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DQXEkeoQUC8p6hTmJ9wLSM3epfwlx86OSomyiO29A/M=;
-        b=U7wFWkV50lGYcPsE34Ewzj22dnFWqxy2TmaqfWBT954n2CED5BD0pQFnoytANnBtuL
-         t/TPf/nVtuuuCYhPI58eiPixXsHw4fkKVQ9Ux+z5ph1QPJoY+LaOJ3KMJBx7K3kwLpjb
-         fg8k/5uDuwWNbZ/glmOClxJt3/vEllMocDmio=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731609692; x=1732214492;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DQXEkeoQUC8p6hTmJ9wLSM3epfwlx86OSomyiO29A/M=;
-        b=nAUJlh5scGILh16JxPNRFX60SkFUctblm4F+/i2av8npchA61DUg1a5TTmTaZHRrIj
-         u4F4Pcj0lRygcbcEVLa16t82GlUJkQHU1qrcgc720AWuEopxO+we/4BISRNjpmqwLDQ8
-         wQrEwbHPiqB1mht2F9J5JdqEIfGb57X3I+XTGH2KkUcwZsfXS27C3UNbwBJjLNyv5ljv
-         s3PsJoq9eEDorqQzPcyXtA8kovzL1hgsfdYI1QxWIVZEhkJZpIXKtkam6stohF/Q64kH
-         5s+ARiZi7ELG4lBWyZOWUoech6GTUj4mme6eQHvLoxGAG/xZOOBNUgg4rFPHCz+0txHK
-         IejQ==
-X-Gm-Message-State: AOJu0YyxH2vjLcpoOOv1KpLpObLB4pPVt3gXElhGW2wf3k3xtutUmEw+
-	PiQKBI532hNybfnJglZXRfHCsid0v/jrNC675sxKt97zA9rUIfe3JK84+NXyEno=
-X-Google-Smtp-Source: AGHT+IEPfwJMiiA45TukagZKoPO7RV3c6JNxIvVLAhC37xOrPBQSsj0qd6agWSfawvjJJjoLtbyckw==
-X-Received: by 2002:a05:620a:bd4:b0:7b1:43c0:3de4 with SMTP id af79cd13be357-7b352952c1bmr900703985a.31.1731609692593;
-        Thu, 14 Nov 2024 10:41:32 -0800 (PST)
-Received: from localhost ([163.114.130.129])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b35c9843c7sm76353385a.23.2024.11.14.10.41.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 10:41:31 -0800 (PST)
-Date: Thu, 14 Nov 2024 13:41:31 -0500
-From: Chris Down <chris@chrisdown.name>
-To: Petr Mladek <pmladek@suse.com>
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=C7H18Knh064W/kcFEJMoNTIKX7xvxJlJsKAIFXKnb9TpffgRChjCsuUKyUFEmSiu+kXsaweL5ZU2Pl74qMCNpjDOHHzfLL8VSxEEJ8Kj3AS71XKI+IeVzaIrvMiQZqH3eUkv1BfbMPP6In1nX3Nkj0CuSQhJGfmmzo1FPkcjj68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Djy6Bhgw; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731609847;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EAeVfk02oDfwwY3n4EGA4ZA9KbhiKvVHyPWkd4Y/Xuw=;
+	b=Djy6BhgwHOadj4HTgQSjVQh7QDv1jujTIb/8WF/oUxc/Re9mpP9tmkro4sqTZNAbtPpF5b
+	ghSFn+dClfNU7IiKC/DBhN7RVBU5ghefJyhmulYojwCNoppkzeU4Q7A44xiqIfESH/35E2
+	sIY++Kh7uKyjcahhxQFQh/ym5eLgX/k=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-232-NdgwsRNSNcawzudfg8CLfg-1; Thu,
+ 14 Nov 2024 13:44:02 -0500
+X-MC-Unique: NdgwsRNSNcawzudfg8CLfg-1
+X-Mimecast-MFC-AGG-ID: NdgwsRNSNcawzudfg8CLfg
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 422EA1954B1E;
+	Thu, 14 Nov 2024 18:43:59 +0000 (UTC)
+Received: from pauld.westford.csb (unknown [10.22.88.110])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D44653003B71;
+	Thu, 14 Nov 2024 18:43:53 +0000 (UTC)
+Date: Thu, 14 Nov 2024 13:43:50 -0500
+From: Phil Auld <pauld@redhat.com>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
 	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Tony Lindgren <tony.lindgren@linux.intel.com>, kernel-team@fb.com
-Subject: Re: register_device: was: Re: [PATCH v6 06/11] printk: console:
- Introduce sysfs interface for per-console loglevels
-Message-ID: <ZzZEW5pz5WWVruvd@chrisdown.name>
-References: <cover.1730133890.git.chris@chrisdown.name>
- <0312cd1e80e68a1450a194ebce27728cdf497575.1730133890.git.chris@chrisdown.name>
- <ZzTM04qQXOg2RsOa@pathway.suse.cz>
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Qais Yousef <qyousef@layalina.io>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Aashish Sharma <shraash@google.com>,
+	Shin Kawamura <kawasin@google.com>,
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] Fix DEADLINE bandwidth accounting in root domain
+ changes and hotplug
+Message-ID: <20241114184350.GE471026@pauld.westford.csb>
+References: <20241114142810.794657-1-juri.lelli@redhat.com>
+ <ZzYhyOQh3OAsrPo9@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZzTM04qQXOg2RsOa@pathway.suse.cz>
-User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
+In-Reply-To: <ZzYhyOQh3OAsrPo9@jlelli-thinkpadt14gen4.remote.csb>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Petr Mladek writes:
->Honestly, I am not sure how to review this. I am not familiar with
->these APIs. I have spent few hours trying to investigate various
->drivers but I did not find any similar use case. I tried to look
->for documentation but I did not find any good HOWTO.
+On Thu, Nov 14, 2024 at 04:14:00PM +0000 Juri Lelli wrote:
+> Thanks Waiman and Phil for the super quick review/test of this v2!
+> 
+> On 14/11/24 14:28, Juri Lelli wrote:
+> 
+> ...
+> 
+> > In all honesty, I still see intermittent issues that seems to however be
+> > related to the dance we do in sched_cpu_deactivate(), where we first
+> > turn everything related to a cpu/rq off and revert that if
+> > cpuset_cpu_inactive() reveals failing DEADLINE checks. But, since these
+> > seem to be orthogonal to the original discussion we started from, I
+> > wanted to send this out as an hopefully meaningful update/improvement
+> > since yesterday. Will continue looking into this.
+> 
+> About this that I mentioned, it looks like the below cures it (and
+> hopefully doesn't regress wrt the other 2 patches).
+> 
+> What do everybody think?
 >
->It seems to work but it is the only thing that I could
->say about it ;-)
+
+I think that makes sense.  I think it's better not to have that
+deadline call buried the cpuset code as well.
+
+
+Reviewed-by: Phil Auld <pauld@redhat.com>
+
+
+
+> ---
+> Subject: [PATCH] sched/deadline: Check bandwidth overflow earlier for hotplug
 >
->Just by chance, do you have any pointers into a code or
->documentation which could help me to feel more comfortable?
+> Currently we check for bandwidth overflow potentially due to hotplug
+> operations at the end of sched_cpu_deactivate(), after the cpu going
+> offline has already been removed from scheduling, active_mask, etc.
+> This can create issues for DEADLINE tasks, as there is a substantial
+> race window between the start of sched_cpu_deactivate() and the moment
+> we possibly decide to roll-back the operation if dl_bw_deactivate()
+> returns failure in cpuset_cpu_inactive(). An example is a throttled
+> task that sees its replenishment timer firing while the cpu it was
+> previously running on is considered offline, but before
+> dl_bw_deactivate() had a chance to say no and roll-back happened.
+> 
+> Fix this by directly calling dl_bw_deactivate() first thing in
+> sched_cpu_deactivate() and do the required calculation in the former
+> function considering the cpu passed as an argument as offline already.
+> 
+> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+> ---
+>  kernel/sched/core.c     |  9 +++++----
+>  kernel/sched/deadline.c | 12 ++++++++++--
+>  2 files changed, 15 insertions(+), 6 deletions(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index d1049e784510..43dfb3968eb8 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -8057,10 +8057,6 @@ static void cpuset_cpu_active(void)
+>  static int cpuset_cpu_inactive(unsigned int cpu)
+>  {
+>  	if (!cpuhp_tasks_frozen) {
+> -		int ret = dl_bw_deactivate(cpu);
+> -
+> -		if (ret)
+> -			return ret;
+>  		cpuset_update_active_cpus();
+>  	} else {
+>  		num_cpus_frozen++;
+> @@ -8128,6 +8124,11 @@ int sched_cpu_deactivate(unsigned int cpu)
+>  	struct rq *rq = cpu_rq(cpu);
+>  	int ret;
+>  
+> +	ret = dl_bw_deactivate(cpu);
+> +
+> +	if (ret)
+> +		return ret;
+> +
+>  	/*
+>  	 * Remove CPU from nohz.idle_cpus_mask to prevent participating in
+>  	 * load balancing when not active
+> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> index 267ea8bacaf6..6e988d4cd787 100644
+> --- a/kernel/sched/deadline.c
+> +++ b/kernel/sched/deadline.c
+> @@ -3505,6 +3505,13 @@ static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
+>  		}
+>  		break;
+>  	case dl_bw_req_deactivate:
+> +		/*
+> +		 * cpu is not off yet, but we need to do the math by
+> +		 * considering it off already (i.e., what would happen if we
+> +		 * turn cpu off?).
+> +		 */
+> +		cap -= arch_scale_cpu_capacity(cpu);
+> +
+>  		/*
+>  		 * cpu is going offline and NORMAL tasks will be moved away
+>  		 * from it. We can thus discount dl_server bandwidth
+> @@ -3522,9 +3529,10 @@ static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
+>  		if (dl_b->total_bw - fair_server_bw > 0) {
+>  			/*
+>  			 * Leaving at least one CPU for DEADLINE tasks seems a
+> -			 * wise thing to do.
+> +			 * wise thing to do. As said above, cpu is not offline
+> +			 * yet, so account for that.
+>  			 */
+> -			if (dl_bw_cpus(cpu))
+> +			if (dl_bw_cpus(cpu) - 1)
+>  				overflow = __dl_overflow(dl_b, cap, fair_server_bw, 0);
+>  			else
+>  				overflow = 1;
+> 
 
-I think you and I are in a similar boat :-) Some similar code can be seen in 
-places like block/genhd.c in device_add_disk and __alloc_disk_node, which also 
-do this kind of dynamic setup. I mostly just spent my time looking at device.h 
-and its users.
+-- 
 
-Greg, maybe you could also take a look?
 
