@@ -1,170 +1,182 @@
-Return-Path: <linux-kernel+bounces-409759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E86189C9107
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:44:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 763D69C910C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:45:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6FCB283574
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:43:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 320791F24622
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914EC18C039;
-	Thu, 14 Nov 2024 17:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0192018C91E;
+	Thu, 14 Nov 2024 17:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nBHQC1UX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Y0FRrLGv"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A1F1862B5;
-	Thu, 14 Nov 2024 17:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147B1184528;
+	Thu, 14 Nov 2024 17:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731606231; cv=none; b=Gai9CuPQAezo/4QxZqJaAesRbOFLhWKqkaPYmSsmQ4Y91UODA2Q94HqF3qfzfOY5wUcWHd4awbmRKStGBdFfA6Cp7oohjsohkmnn9bohDHv86a11bFgnOW8k3nhRfB+xxaDRpMjKOuSU49QXeggqOWlsuClXAzJuPbivKXTtSlM=
+	t=1731606297; cv=none; b=tQVi2MGwI2Zc87cGlR0hrYrAfQn+l9eQVtH4eSJ5RkftC8E1QayohnnPJs3cNQ4/j9VWSB7uvBErWwrLYQA85eEnZ+e/a514f9kWHmD1KWQxPJpcZv72T5q6XUpHIw5qHDWn8gEqZIgayCF8DT07jfjb/tBkdxbPZY+dh1DyaxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731606231; c=relaxed/simple;
-	bh=hUbHRaYoAJFom79L/F3grgrXxrJbqSHEcrh/UTN0r3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lqydvm/vzpGQnIURF9++j+6olWrV3QtNFv+rewOQM7zhyUhIKzHDmv02+9RsAybWfRiojwHqkY4Su56t8cBvyuRpNk9rPje9lxXqCos33u/zDl3WtPCKv2YKi1ZmB5hcqBJSVqCgNuRD7MaPqhZRsUn4Un29X7F87+RPI66sv04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nBHQC1UX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B847C4CECD;
-	Thu, 14 Nov 2024 17:43:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731606230;
-	bh=hUbHRaYoAJFom79L/F3grgrXxrJbqSHEcrh/UTN0r3E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nBHQC1UXmCVc+2945Uy9bbzTyib39ztmyiFjDJJfzEOCHc4GW2nC0k53wDLt6c3xV
-	 hVbtxhCf2i/m9XT0Fvwtj/UQaLXTqLuocE6fXbzbuRyutMu80NpS1OKDqqfoZTWcY4
-	 O/YEjOZjxxi9Nwa5jzNb/cQHigp5r8iQKhZw4bS71suOmIr2aHWx+TSE/uZfFWo5RS
-	 MfhGKiV+KP7twMSq5xINze7AZezV6ztgyW6KMv5y+ybL/x3Je5yVdCYl6cGKfMhoFI
-	 6lN76A4NLGxQQ7EJvnZ938JjIbL+UsjP6i6r6OictGQOMlCzgc5v00mHEH7FetmI0o
-	 eebggfbZZ4kug==
-Date: Thu, 14 Nov 2024 14:43:46 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Benjamin Peterson <benjamin@engflow.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>
-Subject: Re: [PATCH 2/2] perf tests: add test for trace output loss
-Message-ID: <ZzY20vZluj44w1Gt@x1>
-References: <20241106234518.115234-1-benjamin@engflow.com>
- <20241106234518.115234-2-benjamin@engflow.com>
- <ZzY1bPtoyRH-nRIV@x1>
+	s=arc-20240116; t=1731606297; c=relaxed/simple;
+	bh=W+ydQ90TONgAfEYiEluV3t5x57+LGauopTl2uvcI1Yw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cvFs4G79h/YnTQ24rB4mewa/arwPfXGa2NB/2PwPA8Gd9RNmfk9wl5ef7f3bLqAC3FmGQBoDfjmyAIkauEi6eltK7D/PnfEEn99W+h7aux+TKUVN+Uq8sGbMWQmlDyR2nZxy+t/nVlnp5BGWUX3rN0kPxS/pS1tIg1acMuT9Vmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Y0FRrLGv; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4AEHiV5o028815;
+	Thu, 14 Nov 2024 11:44:31 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1731606271;
+	bh=4PC0ElUC8LkJ1ahDBqmcn8ZSzWDTsMdFJphZeZuf5E8=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=Y0FRrLGvrlCdACTxe6k6wgplw8zrruA1/pQrLBourkkwkxuvTGh5VvQraIXyAaKDY
+	 AAjf/NRLkiThYzo7tvU5mIp6YM39F9GJ+zBtSmAdj7mLLPspsC7Xm+ELC7qdTyUpYB
+	 w7FYJvQQ+IM01FMe6b79KxYwW2PdCxh6PmqojOAU=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4AEHiVYI030179
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 14 Nov 2024 11:44:31 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 14
+ Nov 2024 11:44:31 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 14 Nov 2024 11:44:31 -0600
+Received: from [10.250.214.214] ([10.250.214.214])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AEHiRr7110038;
+	Thu, 14 Nov 2024 11:44:28 -0600
+Message-ID: <6bf6412d-8f9e-461d-913c-9718b5f0b8d3@ti.com>
+Date: Thu, 14 Nov 2024 19:44:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZzY1bPtoyRH-nRIV@x1>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 09/17] wifi: cc33xx: Add main.c
+To: Johannes Berg <johannes@sipsolutions.net>, Kalle Valo <kvalo@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>, <linux-wireless@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Sabeeh Khan <sabeeh-khan@ti.com>
+References: <20241107125209.1736277-1-michael.nemanov@ti.com>
+ <20241107125209.1736277-10-michael.nemanov@ti.com>
+ <685d782d68bfc664c4fcc594dff96546ffc30e5f.camel@sipsolutions.net>
+Content-Language: en-US
+From: "Nemanov, Michael" <michael.nemanov@ti.com>
+In-Reply-To: <685d782d68bfc664c4fcc594dff96546ffc30e5f.camel@sipsolutions.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Nov 14, 2024 at 02:37:52PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Wed, Nov 06, 2024 at 11:45:18PM +0000, Benjamin Peterson wrote:
-> > Add a test that checks that trace output is not lost to races. This is
-> > accomplished by tracing the exit_group syscall of "true" multiple times and
-> > checking for correct output.
-> > 
-> > Conveniently, this test also serves as a regression test for 5fb8e56542a3 ("perf
-> > trace: avoid garbage when not printing a trace event's arguments") because
-> > exit_group triggers the previously buggy printing behavior.
-> > 
-> > Signed-off-by: Benjamin Peterson <benjamin@engflow.com>
-> > ---
-> >  tools/perf/tests/shell/trace_exit_race.sh | 31 +++++++++++++++++++++++
-> >  1 file changed, 31 insertions(+)
-> >  create mode 100755 tools/perf/tests/shell/trace_exit_race.sh
-> > 
-> > diff --git a/tools/perf/tests/shell/trace_exit_race.sh b/tools/perf/tests/shell/trace_exit_race.sh
-> > new file mode 100755
-> > index 000000000000..8b70324bc5b4
-> > --- /dev/null
-> > +++ b/tools/perf/tests/shell/trace_exit_race.sh
-> > @@ -0,0 +1,31 @@
-> > +#!/bin/sh
-> > +# perf trace exit race
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +
-> > +# Check that the last events of a perf trace'd subprocess are not
-> > +# lost. Specifically, trace the exiting syscall of "true" 100 times and ensure
-> > +# the output contains 100 correct lines.
-> > +
-> > +# shellcheck source=lib/probe.sh
-> > +. "$(dirname $0)"/lib/probe.sh
-> > +
-> > +skip_if_no_perf_trace || exit 2
-> > +
-> > +trace_shutdown_race() {
-> > +	for i in $(seq 100); do
-> > +		perf trace -e syscalls:sys_enter_exit_group true 2>>$file
-> > +	done
-> > +	[ $(grep -c -E " +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$" $file) = "100" ]
-> > +}
-> > +
-> > +
-> > +file=$(mktemp /tmp/temporary_file.XXXXX)
-> > +
-> > +# Do not use whatever ~/.perfconfig file, it may change the output
-> > +# via trace.{show_timestamp,show_prefix,etc}
-> > +export PERF_CONFIG=/dev/null
-> > +
-> > +trace_shutdown_race
-> > +err=$?
-> > +rm -f ${file}
-> > +exit $err
-> > -- 
-> 
-> Its failing with shellcheck, I'm trying to fix it:
-> 
->   CC      /tmp/build/perf-tools-next/builtin-trace.o
->   TEST    /tmp/build/perf-tools-next/tests/shell/trace_exit_race.sh.shellcheck_log
-> 
-> In tests/shell/trace_exit_race.sh line 15:
-> 	for i in $(seq 100); do
->         ^-^ SC2034 (warning): i appears unused. Verify use (or export if used externally).
-> 
-> 
-> In tests/shell/trace_exit_race.sh line 18:
-> 	[ $(grep -c -E " +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$" $file) = "100" ]
->           ^-- SC2046 (warning): Quote this to prevent word splitting.
-> 
-> For more information:
->   https://www.shellcheck.net/wiki/SC2034 -- i appears unused. Verify use (or ...
->   https://www.shellcheck.net/wiki/SC2046 -- Quote this to prevent word splitt...
-> make[4]: *** [tests/Build:91: /tmp/build/perf-tools-next/tests/shell/trace_exit_race.sh.shellcheck_log] Error 1
-> make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:158: tests] Error 2
-> make[2]: *** [Makefile.perf:777: /tmp/build/perf-tools-next/perf-test-in.o] Error 2
-> make[2]: *** Waiting for unfinished jobs....
+On 11/8/2024 1:42 PM, Johannes Berg wrote:
 
-I've read the links provided by ShellCheck and folded this to satisfy
-it, please consider installing ShellCheck, the perf build process will
-use it when avaiable.
+>> +	if (sta_rate_set) {
+>> +		wlvif->rate_set = cc33xx_tx_enabled_rates_get(cc, sta_rate_set,
+>> +							      wlvif->band);
+>> +	}
+> 
+> you have a thing for extra braces ;-)
+> (also in many other places)
+> 
 
-- Arnaldo
+Yeah most of those head debug traces that were dropped as part of the 
+feedback. Will fix the style too.
 
-diff --git a/tools/perf/tests/shell/trace_exit_race.sh b/tools/perf/tests/shell/trace_exit_race.sh
-index 8b70324bc5b4fb4c..c37ed6bb9f7e8fab 100755
---- a/tools/perf/tests/shell/trace_exit_race.sh
-+++ b/tools/perf/tests/shell/trace_exit_race.sh
-@@ -12,10 +12,10 @@
- skip_if_no_perf_trace || exit 2
- 
- trace_shutdown_race() {
--	for i in $(seq 100); do
-+	for _ in $(seq 100); do
- 		perf trace -e syscalls:sys_enter_exit_group true 2>>$file
- 	done
--	[ $(grep -c -E " +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$" $file) = "100" ]
-+	[ "$(grep -c -E ' +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$' $file)" = "100" ]
- }
- 
- 
+>> +static int cc33xx_init_ieee80211(struct cc33xx *cc)
+>> +{
+>> +	unsigned int i;
+>> +
+>> +	if (cc->conf.core.mixed_mode_support) {
+>> +		static const u32 cipher_suites[] = {
+>> +			WLAN_CIPHER_SUITE_CCMP,
+>> +			WLAN_CIPHER_SUITE_AES_CMAC,
+>> +			WLAN_CIPHER_SUITE_TKIP,
+>> +			WLAN_CIPHER_SUITE_GCMP,
+>> +			WLAN_CIPHER_SUITE_GCMP_256,
+>> +			WLAN_CIPHER_SUITE_BIP_GMAC_128,
+>> +			WLAN_CIPHER_SUITE_BIP_GMAC_256,
+>> +		};
+>> +		cc->hw->wiphy->cipher_suites = cipher_suites;
+>> +		cc->hw->wiphy->n_cipher_suites = ARRAY_SIZE(cipher_suites);
+>> +
+>> +	} else {
+>> +		static const u32 cipher_suites[] = {
+>> +			WLAN_CIPHER_SUITE_CCMP,
+>> +			WLAN_CIPHER_SUITE_AES_CMAC,
+>> +			WLAN_CIPHER_SUITE_GCMP,
+>> +			WLAN_CIPHER_SUITE_GCMP_256,
+>> +			WLAN_CIPHER_SUITE_BIP_GMAC_128,
+>> +			WLAN_CIPHER_SUITE_BIP_GMAC_256,
+>> +		};
+> 
+> I don't see you have GEM here, yet you handle it in other places above,
+> that seems odd. Also I'm not sure it can work at all now that we removed
+> the whole extended IV mess, unless you offloaded that?
+> 
+
+This cipher is unsupported. Will remove this and any related code.
+
+>> +	/* clear channel flags from the previous usage
+>> +	 * and restore max_power & max_antenna_gain values.
+>> +	 */
+>> +	for (i = 0; i < ARRAY_SIZE(cc33xx_channels); i++) {
+>> +		cc33xx_band_2ghz.channels[i].flags = 0;
+>> +		cc33xx_band_2ghz.channels[i].max_power = CC33XX_MAX_TXPWR;
+>> +		cc33xx_band_2ghz.channels[i].max_antenna_gain = 0;
+>> +	}
+>> +
+>> +	for (i = 0; i < ARRAY_SIZE(cc33xx_channels_5ghz); i++) {
+>> +		cc33xx_band_5ghz.channels[i].flags = 0;
+>> +		cc33xx_band_5ghz.channels[i].max_power = CC33XX_MAX_TXPWR;
+>> +		cc33xx_band_5ghz.channels[i].max_antenna_gain = 0;
+>> +	}
+>> +
+>> +	/* Enable/Disable He based on conf file params */
+>> +	if (!cc->conf.mac.he_enable) {
+>> +		cc33xx_band_2ghz.iftype_data = NULL;
+>> +		cc33xx_band_2ghz.n_iftype_data = 0;
+>> +
+>> +		cc33xx_band_5ghz.iftype_data = NULL;
+>> +		cc33xx_band_5ghz.n_iftype_data = 0;
+>> +	}
+> 
+> it seems wrong to modify the global data here
+> 
+>> +	/* We keep local copies of the band structs because we need to
+>> +	 * modify them on a per-device basis.
+>> +	 */
+>> +	memcpy(&cc->bands[NL80211_BAND_2GHZ], &cc33xx_band_2ghz,
+>> +	       sizeof(cc33xx_band_2ghz));
+>> +	memcpy(&cc->bands[NL80211_BAND_2GHZ].ht_cap,
+>> +	       &cc->ht_cap[NL80211_BAND_2GHZ],
+>> +	       sizeof(*cc->ht_cap));
+> 
+> and in particular if you *then* do that??
+> 
+
+I see your point. I'll drop the init loops and use C initializers 
+instead as this data does not change. Any dynamic modification will done 
+to cc->bands.
+
+Thanks and regards,
+Michael.
+
 
