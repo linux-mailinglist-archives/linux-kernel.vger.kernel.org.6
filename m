@@ -1,155 +1,183 @@
-Return-Path: <linux-kernel+bounces-408488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 688549C7F69
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:37:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32E529C7F6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:37:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E23B41F22AD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:37:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5A211F22C98
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 00:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70347DDDC;
-	Thu, 14 Nov 2024 00:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7761172A;
+	Thu, 14 Nov 2024 00:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="CHNubFvf"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T5RcN9zs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432F2BA53
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 00:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB59BF4FA
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 00:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731544637; cv=none; b=OmuTEll4kQqMinh8RWv8qA2O7Bo4+RYWgdZfT54eOC73/h3AVW53818PUqTM5lrSf9aCysdoD7Ph3MhORuLDOrfi7Bzpj+foJEGhL6bDttGTzNLCDKUHvBTGm8xw6aRbLUd1UKsUe4ZteWrMwO9ZvBZzMawOVxhevTTMLT8nUeY=
+	t=1731544654; cv=none; b=kuLDu2IZ8kJpA6B7vZ9pNmInaqK+5bTngCkVF/CJN21MEkI0RFy9JUfQW/iZhMcOx4iWy31fA4c7TPWUwgEs1cf34R+2I9lCko4G+qq727zsRrlSWCF/omUJz9m6hPawGjFKOWZA3BpsVz59RUbRsNWbnZwp4IdJi4Nv0mV/3WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731544637; c=relaxed/simple;
-	bh=QPrG53eiGGqVOY8cqda1uKvaeMNMMQSz5E31mtFgkTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QR2hQSpWBfla/zgkgEfujX9OQdUlNEvmKzWNuBk6t7dewAeDTQUmqsZLirNIWGbngBr8pPt9AaY4jML3ZJcCJ5S3OZNT6SUAgWenA1hIQ3dGvGLVFqlJiOTgCsbtgPQRcYKeNvxPB7FDg5ryhHmVSvrYc4RACeZRPGOLin8jifY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=CHNubFvf; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c803787abso197105ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 16:37:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1731544635; x=1732149435; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jL1bq/cs3DwHGudCjECuU0svhY9jIgo9sOD6hc9Njrw=;
-        b=CHNubFvfxNi8ZllZMxVMh+kA2TR3/pxcfbRzXihouDIjx6DJUe4SI7KL3tV3M4SSkS
-         ZaT2axF8zizwWKEx+vZGwVJ7JOf5PW28uMErXhANVNAPuEsakWK3AF7nZanyIAeK1rOF
-         D+cNYHlKhb1EzbZgxtUOUSjxYCA+05mHOoZMy5Gw/ECguqYJsKI3whLG8F/94pRwYDLK
-         HudHSBxQSChA0vD8Lnn++vnYyO2M6RN89erodHrdpsVVMn2Ho2ga2vN0NIKXuha/d+ng
-         yn1GcbHu9dZH7oHbpNnPfDlY3jW5TsWXktlc5FeACuRXNzmDTMhgGOumud9Ubb/7S8BJ
-         nyZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731544635; x=1732149435;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jL1bq/cs3DwHGudCjECuU0svhY9jIgo9sOD6hc9Njrw=;
-        b=q9VEmY7LYrXr0h5Dy9/jyE6UV0ZQoiX9xENM8fjKOtjN1i8SfBfhTH08XNk4EPznDg
-         LUYoB+Tzerjr4EvjR/+OJyn/3cgYpxmR2Lm1fzgnt5cHZcLgC0BNNjtFCNakLi15L04V
-         1kAV0amiJV8LYZ5cNdU2pd+tjIF1KEvodJZignYjmjp6Wc5Wsh17PgdYgEhHGZh26QRW
-         /LS+XZxLJpXEJAz8VHuIZUKwPOJD4+epx1/Dxj43TyEOJ7tZuxO19OhZu1hWvciknXk6
-         Lyljsmm2mnKD+KHS8R5TEJFfehCIaQss13BQpauBGYP4wCIHgqWjmI7Joyu+6OX5aig7
-         WHow==
-X-Forwarded-Encrypted: i=1; AJvYcCXUjUDfvpzpANCUvnzQo547zmiCSIBsAK5ilL2juXZm9Rm22/wpqC920wmxmWUX6H/RcHDqaDYbxRAV8oc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1wlqHHYoTV4HaRXqBVpctCiVf3BoZkSfnsSJO8HmI3vDa1g+Z
-	y/2nwH7GlQ6VQ2L+7SCj9fNTa+UcVPb19udmqWGw9dAmrsnMSUeNHHzP1E0ClJk=
-X-Google-Smtp-Source: AGHT+IEbvuImRnO77YgC/dY5K85BskHZNK65tOmH0Zaa7ILqfZYPsHP613mLFhEWCU0U/8qr0ttT/g==
-X-Received: by 2002:a17:903:244b:b0:20c:c18f:c39e with SMTP id d9443c01a7336-211c0fab017mr20154665ad.21.1731544635527;
-        Wed, 13 Nov 2024 16:37:15 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-86-168.pa.vic.optusnet.com.au. [49.186.86.168])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dc7d1csm116754865ad.51.2024.11.13.16.37.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 16:37:15 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1tBNrE-00EJXl-00;
-	Thu, 14 Nov 2024 11:37:12 +1100
-Date: Thu, 14 Nov 2024 11:37:11 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: syzbot <syzbot+3c653ce382d9a9b6fbc3@syzkaller.appspotmail.com>
-Cc: cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [xfs?] WARNING in mod_delayed_work_on (2)
-Message-ID: <ZzVGN3gvt4Pw2pwG@dread.disaster.area>
-References: <67342365.050a0220.1324f8.0003.GAE@google.com>
+	s=arc-20240116; t=1731544654; c=relaxed/simple;
+	bh=ul/p5tGhzdXXOd8O/DNHNnOAm6m7djyj9W0rJLaMb+8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KYQP6z4LL4vkuo3DT+Hde9VAc05Pb/RRZp18Gy4IFnqhqE9gySmCjkIExGdMYs9LXR+5AbvW00d6oGluXBIJPCHf8JRXmBpWupC7PVyQioKpeaqvb4+x/Sgnk2fa4xQanus11dF2C9lC2wm7lPmqaYJc+Re6vyIzQm70QlyrTcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T5RcN9zs; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731544653; x=1763080653;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ul/p5tGhzdXXOd8O/DNHNnOAm6m7djyj9W0rJLaMb+8=;
+  b=T5RcN9zsCvIB8MVs9lMvqFu6PQE52kjTQ8CyZcKYBOKBDzupGJuFdXx5
+   FM4AzXb9uVq0GgZFRfQ+FHxT+eHoY00X14wXVPa3+JY/CzY18bEBfe1aL
+   T4G6c7uZoeWpgryuarT34vMF6jFWLTjWgj/4mMZw7xNRDK585NQKYo6Pu
+   fn6pwx6FOJZG6q+AnMsZPDDcNLaEe2EbwCmh6u8QZrJjMRi1nxWudlENu
+   8K1XuxKi0YOFi0CsJ/qSVZaWeYXrDJpyO/Oc0GVs7lauooW33g3nxvqn5
+   kYeS10kUaTqUmmbEYPcdnRyjsKOjKDtTDTBwoHVI7QopxG1gNRbu9xzTm
+   A==;
+X-CSE-ConnectionGUID: j1PpNbF0QqGW9kgBuFmaEg==
+X-CSE-MsgGUID: d7kkw154T1mdotpm5R5jHQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="42580518"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="42580518"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 16:37:33 -0800
+X-CSE-ConnectionGUID: gx43qFLGTImbVMUWiSmgLw==
+X-CSE-MsgGUID: KCXu9t2MSjeLW+GrtKVMVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="92953371"
+Received: from kkkuntal-desk3 (HELO [10.124.220.196]) ([10.124.220.196])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Nov 2024 16:37:32 -0800
+Message-ID: <844f58da-638f-4a91-88e7-f66f7fcefe51@intel.com>
+Date: Wed, 13 Nov 2024 16:37:31 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67342365.050a0220.1324f8.0003.GAE@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH] x86/cpu/bugs: Consider having old Intel microcode to
+ be a vulnerability
+To: Alex Murray <alex.murray@canonical.com>, dave.hansen@linux.intel.com
+Cc: bp@alien8.de, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+ x86@kernel.org
+References: <87v7wtvty0.fsf@canonical.com>
+ <1c1015f8-1a47-4e5b-b088-f83054d2f613@intel.com>
+ <87iksrhkv8.fsf@canonical.com>
+ <7fc07eff-b4a1-4f8d-a9de-dba057d5c9c6@intel.com>
+ <87h68avg81.fsf@canonical.com>
+Content-Language: en-US
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <87h68avg81.fsf@canonical.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 12, 2024 at 07:56:21PM -0800, syzbot wrote:
-> Hello,
+On 11/13/24 15:58, Alex Murray wrote:
+...
+> The only other data point then to mention is that all the major distros
+> (Debian[1], Ubuntu[2] and Fedora[3]) are still only shipping the previous
+> security update release (20240910) in their stable releases - *not* the
+> more recent release with the functional updates in 20241029 - in which
+> case anyone running a current stable release would then show as being
+> "vulnerable". I can't speak for the other distros, but for Ubuntu we
+> generally only ship things which are called out as specific security
+> fixes in our security updates *and* we generally prioritise security
+> updates over bug fixes (which these 'functional' updates appear be
+> rather than fixing actual exploitable security issues).
+
+That's a very important data point. Thanks for that.
+
+Like I said in the original changelog, I'm open to relaxing things to
+define old to allow folks to be a release or two behind. But I'd want to
+hear a lot more about _why_ the distros lag. I'd probably also have some
+chats to see what other folks at Intel think about it.
+
+So what would you propose the rules be?  Are you suggesting that we go
+through the microcode changelogs for each CPU for each release and only
+update the "old" revisions for security issues?  If there were only
+functional issues fixed for, say, 2 years, on a CPU would the "old"
+version get updated?
+
+>> So I'm leaning toward setting:
+>>
+>> 	TAINT_CPU_OUT_OF_SPEC
+>> plus
+>> 	X86_BUG_OLD_MICROCODE
+>>
+>> and calling it a day.
 > 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    f1dce1f09380 Merge tag 'slab-for-6.12-rc7' of git://git.ke..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=143eaea7980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=347f0ef7656eeb41
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3c653ce382d9a9b6fbc3
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/290169b0e6d0/disk-f1dce1f0.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/e26fb82ee406/vmlinux-f1dce1f0.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/d26ba056ed6b/bzImage-f1dce1f0.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+3c653ce382d9a9b6fbc3@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 8571 at kernel/workqueue.c:2498 __queue_delayed_work+0x212/0x250 kernel/workqueue.c:2498
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 8571 Comm: syz-executor Not tainted 6.12.0-rc6-syzkaller-00192-gf1dce1f09380 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-> RIP: 0010:__queue_delayed_work+0x212/0x250 kernel/workqueue.c:2498
+> Does this mean you are thinking of dropping the userspace entry in the
+> cpu vulnerablities sysfs tree? 
 
-WARN_ON_ONCE(!list_empty(&work->entry));
+No, I plan to keep X86_BUG_OLD_MICROCODE and the corresponding sysfs entry.
 
-> Code: 0f 0b 90 e9 39 fe ff ff e8 8b 9f 37 00 90 0f 0b 90 e9 65 fe ff ff e8 7d 9f 37 00 90 0f 0b 90 e9 81 fe ff ff e8 6f 9f 37 00 90 <0f> 0b 90 e9 9f fe ff ff e8 61 9f 37 00 48 89 df 44 89 f6 eb ac 89
-> RSP: 0018:ffffc90002d5fac8 EFLAGS: 00010093
-> RAX: ffffffff815d3a91 RBX: ffffe8ffffc43440 RCX: ffff888028098000
-> RDX: 0000000000000000 RSI: ffff88805a2f1800 RDI: 0000000000000000
-> RBP: ffffe8ffffc43448 R08: ffffffff815d3c06 R09: 0000000000000000
-> R10: ffffc90002d5fb40 R11: fffff520005abf69 R12: 0000000000000001
-> R13: dffffc0000000000 R14: 0000000000000000 R15: ffff88805a2f1800
-> FS:  000055556c4f5500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007fdcb605fe07 CR3: 000000005d732000 CR4: 00000000003526f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  mod_delayed_work_on+0x153/0x370 kernel/workqueue.c:2588
->  xfs_inodegc_queue fs/xfs/xfs_icache.c:2158 [inline]
->  xfs_inode_mark_reclaimable+0x7a6/0xf60 fs/xfs/xfs_icache.c:2194
->  destroy_inode fs/inode.c:315 [inline]
->  evict+0x7b5/0x9b0 fs/inode.c:756
->  do_unlinkat+0x512/0x830 fs/namei.c:4540
+> If so then I am not so concerned, since my primary concern is having
+> something which looks scary to users/sysadmins ("your CPU has an
+> unpatched vulnerablity") which they can't do anything about since
+> their distribution has a different definition of what counts as a
+> security update compared to the upstream kernel maintainers. If the
+> sysfs entry is dropped then this is not so visible to end-users and
+> hence there is less panic.
 
-AFAICT there is nothing wrong with the way XFS is using
-mod_delayed_work_on() here - the internal work entry state that the
-workqueue infrastructure manages appears to be in an incorrect
-state.
+Right, we don't want to unnecessarily scare anyone.
 
-This is not obviously an XFS issue.
+But if a distro is being too slow in getting microcode out, then it
+would be good to inform users about known functional or security gaps
+they're exposed to.
 
--Dave.
-
--- 
-Dave Chinner
-david@fromorbit.com
+That's the thing we need to focus on.  Not: "Can users do anything about
+it?" Rather: "What's best for the users?"
 
