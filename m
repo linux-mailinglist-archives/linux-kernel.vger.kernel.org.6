@@ -1,127 +1,215 @@
-Return-Path: <linux-kernel+bounces-409334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB3739C8B73
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:08:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C589C8B71
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:08:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F284FB2EF21
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:06:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 913701F25DD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:08:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2071FAEF5;
-	Thu, 14 Nov 2024 13:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF191FAEF3;
+	Thu, 14 Nov 2024 13:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SM2dCkef"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EMYSag0s"
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8004818C32C
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E1718C32C;
+	Thu, 14 Nov 2024 13:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731589604; cv=none; b=p3YCnDxK6m2RSKKW4aRprr0B4z/RmYxkxlXmpu1OAevTcyKZC1X/dW69jyoKd8e0Plx/d5nU33XVCO22OmVTmSDzZTrUFPnBVwPfJ7p8oCYOEk/tCQqwvOoAbYUQONJXTByhNLEOiVTnWSFf924oKE2o1FtoHhYGQuWvf3ZQwB8=
+	t=1731589693; cv=none; b=uCjf66Ei44B+6XJdBzemMba2239pZ5OfydoaELT0Zt/D7UJxQZnxa48JLPQ8qn2kFgHldXloQk72TOMBiOusj+Rk8TZKccgVkpsXST4dNdK+sF7FRDfSl7NYdJBj46U43phU9aXQ1TXQg8BWADDDkL33x1hSzjXGiPMNu6j8BtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731589604; c=relaxed/simple;
-	bh=U0GhA3/+aWy9Xn1Tcitpj/Q/54Mwewvjxq/u/nQPg3Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rMRHE5z7C2QNVVAk451pDbji29k9hjEgiKSugRElMPIWEtS9ef+I0jbOComoRPa3KfNKZ6L34yaSFmQzDaQmwsTumSEVaEPNUZNvNv6s1Gkbye5vkXfVuhGl7aI1IhBttBZm4LbYdDaiUTWb4epOiwCarFhtQXtEc0g5eJs/7po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SM2dCkef; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE5XXPX026909
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:06:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wMKapcEu/BDec5OW1UblFViRGaMfwyVFJ5h9OM1dLHs=; b=SM2dCkef5e1pwVvK
-	90I6ZzY1CsiUH4u3o6A6XNTiU5U9mRK6RrD2/yap1XtlussRPRfmD3xu9uE3Gu5q
-	jAzIAARwYK2sonkeFVv3LpAx1iUEOoLB1cRGf18cjFESDUn7cg88JeyzkYXqSeTA
-	CvKuf+FznLX+lCQX/4CCCmIvmQG5a8rW91+YMT4GjunlQlnjtDmH2Mt5b4UmqrWe
-	lSyQELuVYLyPjMI8QgH421AzlrUHJbIsNpoOw/zueMkGsWADawDsjkIOpX/EQrKN
-	Yr37/UAohP38R9nnTZgazhc3gtK7v9aDamdXWHJ6iZ6lysn9In0sA6VJ6iIfFILN
-	BBm2rQ==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vt734xcw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:06:42 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-460958ceccdso1358561cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 05:06:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731589601; x=1732194401;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wMKapcEu/BDec5OW1UblFViRGaMfwyVFJ5h9OM1dLHs=;
-        b=XYGSDN8OFvSx+s1sAttijGeqpU13A8GQVkq4bw8HWbUgSpp536puJRvfVAJiOBESdZ
-         JrB7msMpHAwKFd9cK+vVn2HKytcMwNCkrgjYIWYyVUtWKiJaxngB6GERC5v+eHs8PC+6
-         Ny2903Zew6BQv2PKOn2PrXhci5PZjgpJqTsStY2B5Rd5D0BM8r9hVBKE6o2h35dLHTbl
-         yt4aTZc1e270zX8zRHqQe4/hvPsV2QLAtgtQ2to1Rm0Px5TAySTDyFnCbVILPgdYoI+K
-         ygRoJMyIi791+hiDi/z9fpfOCMgi4Wx6z48musRUeUf9i5HXRadOhsgDH3Ar8cpWKOW1
-         6kZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWV+NY2xbuDX1bvhHYtxM/X4ndjm0NeyoQWMFxW2hPktllxnLbw2QZPywnR6DrnvCQcuVzzaJs6fdPLNcw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU1D188PjD/MaPDEUphIFTi6PsZ3BfszQgVKdgihUjVlWOlQuE
-	dXf3NjaOZ9oEkgnAxXOkCn9sytsU/hCwIkzGZ+/7QwKogkIWQ+DIqB8GDt5AXB1twrXGt36vDgk
-	0+y27VCBCRjD0uiMV/6A7M7NKqgbfJ3ci+X9QPQk4YXZyuJJVSatNkAiG3JAiBH8=
-X-Received: by 2002:a05:622a:1a1e:b0:462:b46b:8bf8 with SMTP id d75a77b69052e-46309428d16mr146342711cf.14.1731589601681;
-        Thu, 14 Nov 2024 05:06:41 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF8BOxCDzfhiRn2Gz53nrznJn+QmhXe+672DgqS/U6htSiQxQfJEIG0thXCkJW1n2w3CatbDw==
-X-Received: by 2002:a05:622a:1a1e:b0:462:b46b:8bf8 with SMTP id d75a77b69052e-46309428d16mr146342521cf.14.1731589601372;
-        Thu, 14 Nov 2024 05:06:41 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df2664csm61675766b.7.2024.11.14.05.06.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 05:06:40 -0800 (PST)
-Message-ID: <ef598219-9114-4c9b-8a57-5384ee0747d4@oss.qualcomm.com>
-Date: Thu, 14 Nov 2024 14:06:38 +0100
+	s=arc-20240116; t=1731589693; c=relaxed/simple;
+	bh=/lPw8YuDV0AKrjoQl+M8qaGgzeSJaLFjQBu2/LAF8/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FkqO4HtyjUOWD9xUMS69bXPlO0CXpGpFS9ADgtfybqPdqj2yiFQmZOiRyAs7IVEC3i5OYKf2CWFtRvXB7qu9ie2jd+AvfstHKa6GMJPLw5vmAm1zblGbDY//Uqy7vEXV3u+5sV0VezupGSOHnMjeql/Xm9Oyk5WdlAwXhHp4lGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EMYSag0s; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 7B6BB11401EA;
+	Thu, 14 Nov 2024 08:08:10 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Thu, 14 Nov 2024 08:08:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1731589690; x=1731676090; bh=VwZkikMX0WnYtizo581kPA9GVlUC0Tn9wyC
+	7eMHPrQY=; b=EMYSag0st/FVrGspBN4hux+xKJQNWcci+5wpjfUcwoLa+WyMPyh
+	w1XVWnjj4JLJXat7jxcJ3gRrbUW5xcNhWNxqXZ++1YrCOtswoRoFPHvfsz9eGEFh
+	77PyjLShCUhkKPtkNZtRlD2a9rVItt0HZ/mdCgZ61kyj0/zsNOTKIBSC5LmDkGgE
+	9bwcuf4cerneU18iQtMEN31nbm6S/PJavfavmwMqaUdX0Ux/fy6kRfzxJspmpwrA
+	SSB8bJ9lyspwrQpsGh/XLX34NTmjpWW/AQunSrDwCgwjJfhcuG8yo2dnQrzf4ZAD
+	Ke7RSGQqtofWmmuJN0R+3i4VbWre8FaIgQw==
+X-ME-Sender: <xms:OfY1Z2B5fwzUq1-QMcGipr4FMlexIv9pzXp23h5wpaznW6i5L4LLRA>
+    <xme:OfY1ZwgKyUUjQ7Q-qWyZbCDTayWK2XAmAAur-goiTC4Ic72es_2HjAyypyFEE5mHE
+    LdcHQXajg7qSY0>
+X-ME-Received: <xmr:OfY1Z5nNXHzMneHjyzf5Cytm48i871rCjSIYF52XqIEcQDdiPuuZR4G5vGTe51HGW_O_baYhiyW0lsj2E6Ax-36a6NWh4A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddvgdegkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecuogfuuhhsphgvtghtffhomh
+    grihhnucdlgeelmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecu
+    hfhrohhmpefkughoucfutghhihhmmhgvlhcuoehiughoshgthhesihguohhstghhrdhorh
+    hgqeenucggtffrrghtthgvrhhnpedvhfevffeujefgieehgefhgeeihfekfffhfeetieek
+    jeejieeijedvueffffdvvdenucffohhmrghinhepshihiihkrghllhgvrhdrrghpphhsph
+    hothdrtghomhdpghhoohhglhgvrghpihhsrdgtohhmpdhgohhordhglhenucevlhhushht
+    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehiughoshgthhesihguoh
+    hstghhrdhorhhgpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgt
+    phhtthhopehshiiisghothdofeehvgejvgdvkeduudgssggvheejjeejsgdvtdgvsehshi
+    iikhgrlhhlvghrrdgrphhpshhpohhtmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughr
+    vgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvg
+    hmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtgho
+    mhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
+    hugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgv
+    thguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhise
+    hrvgguhhgrthdrtghomhdprhgtphhtthhopehshiiikhgrlhhlvghrqdgsuhhgshesghho
+    ohhglhgvghhrohhuphhsrdgtohhm
+X-ME-Proxy: <xmx:OfY1Z0xsKtDoLw49L740jTuA82UryiGMTQH8X7yAv6K2kDZ13LnFPg>
+    <xmx:OfY1Z7QosLlKvKv8PYMYr-GrLMCXBIBoEs6zzn8UAmMCotd8WLdDWA>
+    <xmx:OfY1Z_aoaXM0_HOpEQCB_cNW0TaL5f8gPtXv_cWYA88bu3zxIJXJeg>
+    <xmx:OfY1Z0SGL5va8y3_xc8GzO1MwlIkaFMjVqJXKhE7zsdPQ06H-Q-bBw>
+    <xmx:OvY1Z2FOLg5gFsxRFOCnsQhS0HaN43DLXNQ3pFYpRuu58bYUIkjmV0ym>
+Feedback-ID: i494840e7:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 14 Nov 2024 08:08:09 -0500 (EST)
+Date: Thu, 14 Nov 2024 15:08:04 +0200
+From: Ido Schimmel <idosch@idosch.org>
+To: syzbot <syzbot+35e7e2811bbe5777b20e@syzkaller.appspotmail.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, pabeni@redhat.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] KMSAN: uninit-value in __vxlan_find_mac
+Message-ID: <ZzX2NDWWYLYtvyAL@shredder>
+References: <6735d39a.050a0220.1324f8.0096.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/4] arm64: dts: qcom: sm6115: add LPASS LPI pin
- controller
-To: Alexey Klimov <alexey.klimov@linaro.org>, andersson@kernel.org,
-        konradybcio@kernel.org, linux-arm-msm@vger.kernel.org
-Cc: linux-sound@vger.kernel.org, srinivas.kandagatla@linaro.org,
-        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        devicetree@vger.kernel.org, dmitry.baryshkov@linaro.org,
-        krzysztof.kozlowski@linaro.org, caleb.connolly@linaro.org,
-        a39.skl@gmail.com, konrad.dybcio@oss.qualcomm.com,
-        linux-kernel@vger.kernel.org
-References: <20241112025306.712122-1-alexey.klimov@linaro.org>
- <20241112025306.712122-3-alexey.klimov@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241112025306.712122-3-alexey.klimov@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: Y2s4EKEZwWZEloQfHKSFHYuWbSXsfakc
-X-Proofpoint-GUID: Y2s4EKEZwWZEloQfHKSFHYuWbSXsfakc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 lowpriorityscore=0 impostorscore=0 adultscore=0
- clxscore=1015 mlxlogscore=812 mlxscore=0 phishscore=0 bulkscore=0
- malwarescore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411140103
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6735d39a.050a0220.1324f8.0096.GAE@google.com>
 
-On 12.11.2024 3:53 AM, Alexey Klimov wrote:
-> Add the Low Power Audio SubSystem Low Power Island (LPASS LPI) pin
-> controller device node required for audio subsystem on Qualcomm
-> QRB4210 RB2.
+On Thu, Nov 14, 2024 at 02:40:26AM -0800, syzbot wrote:
+> Hello,
 > 
-> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> syzbot found the following issue on:
+> 
+> HEAD commit:    de2f378f2b77 Merge tag 'nfsd-6.12-4' of git://git.kernel.o..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15b170c0580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=e4580d62ee1893a5
+> dashboard link: https://syzkaller.appspot.com/bug?extid=35e7e2811bbe5777b20e
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/f0ff1d637186/disk-de2f378f.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/1515128a919f/vmlinux-de2f378f.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/6624bf235bc6/bzImage-de2f378f.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+35e7e2811bbe5777b20e@syzkaller.appspotmail.com
+> 
+> =====================================================
+> BUG: KMSAN: uninit-value in __vxlan_find_mac+0x497/0x4e0
+>  __vxlan_find_mac+0x497/0x4e0
+>  vxlan_find_mac drivers/net/vxlan/vxlan_core.c:436 [inline]
+>  vxlan_xmit+0x1669/0x39f0 drivers/net/vxlan/vxlan_core.c:2753
+
+Missing a check that we have enough bytes for the Ethernet header.
+Will look into it.
+
+>  __netdev_start_xmit include/linux/netdevice.h:4928 [inline]
+>  netdev_start_xmit include/linux/netdevice.h:4937 [inline]
+>  xmit_one net/core/dev.c:3588 [inline]
+>  dev_hard_start_xmit+0x247/0xa20 net/core/dev.c:3604
+>  __dev_queue_xmit+0x3562/0x56d0 net/core/dev.c:4432
+>  dev_queue_xmit include/linux/netdevice.h:3094 [inline]
+>  __bpf_tx_skb net/core/filter.c:2152 [inline]
+>  __bpf_redirect_common net/core/filter.c:2196 [inline]
+>  __bpf_redirect+0x148c/0x1610 net/core/filter.c:2203
+>  ____bpf_clone_redirect net/core/filter.c:2477 [inline]
+>  bpf_clone_redirect+0x37e/0x500 net/core/filter.c:2447
+>  ___bpf_prog_run+0x13fe/0xe0f0 kernel/bpf/core.c:2010
+>  __bpf_prog_run512+0xc5/0xf0 kernel/bpf/core.c:2253
+>  bpf_dispatcher_nop_func include/linux/bpf.h:1265 [inline]
+>  __bpf_prog_run include/linux/filter.h:701 [inline]
+>  bpf_prog_run include/linux/filter.h:708 [inline]
+>  bpf_test_run+0x546/0xd20 net/bpf/test_run.c:434
+>  bpf_prog_test_run_skb+0x182f/0x24d0 net/bpf/test_run.c:1095
+>  bpf_prog_test_run+0x5e5/0xa30 kernel/bpf/syscall.c:4266
+>  __sys_bpf+0x6aa/0xd90 kernel/bpf/syscall.c:5671
+>  __do_sys_bpf kernel/bpf/syscall.c:5760 [inline]
+>  __se_sys_bpf kernel/bpf/syscall.c:5758 [inline]
+>  __x64_sys_bpf+0xa0/0xe0 kernel/bpf/syscall.c:5758
+>  x64_sys_call+0x2cce/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:322
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> Uninit was created at:
+>  slab_post_alloc_hook mm/slub.c:4091 [inline]
+>  slab_alloc_node mm/slub.c:4134 [inline]
+>  kmem_cache_alloc_node_noprof+0x6bf/0xb80 mm/slub.c:4186
+>  kmalloc_reserve+0x13d/0x4a0 net/core/skbuff.c:587
+>  pskb_expand_head+0x226/0x1a60 net/core/skbuff.c:2275
+>  skb_ensure_writable+0x496/0x520 net/core/skbuff.c:6214
+>  __bpf_try_make_writable net/core/filter.c:1677 [inline]
+>  bpf_try_make_writable net/core/filter.c:1683 [inline]
+>  bpf_try_make_head_writable net/core/filter.c:1691 [inline]
+>  ____bpf_clone_redirect net/core/filter.c:2471 [inline]
+>  bpf_clone_redirect+0x1c5/0x500 net/core/filter.c:2447
+>  ___bpf_prog_run+0x13fe/0xe0f0 kernel/bpf/core.c:2010
+>  __bpf_prog_run512+0xc5/0xf0 kernel/bpf/core.c:2253
+>  bpf_dispatcher_nop_func include/linux/bpf.h:1265 [inline]
+>  __bpf_prog_run include/linux/filter.h:701 [inline]
+>  bpf_prog_run include/linux/filter.h:708 [inline]
+>  bpf_test_run+0x546/0xd20 net/bpf/test_run.c:434
+>  bpf_prog_test_run_skb+0x182f/0x24d0 net/bpf/test_run.c:1095
+>  bpf_prog_test_run+0x5e5/0xa30 kernel/bpf/syscall.c:4266
+>  __sys_bpf+0x6aa/0xd90 kernel/bpf/syscall.c:5671
+>  __do_sys_bpf kernel/bpf/syscall.c:5760 [inline]
+>  __se_sys_bpf kernel/bpf/syscall.c:5758 [inline]
+>  __x64_sys_bpf+0xa0/0xe0 kernel/bpf/syscall.c:5758
+>  x64_sys_call+0x2cce/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:322
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> CPU: 1 UID: 0 PID: 8041 Comm: syz.2.760 Not tainted 6.12.0-rc6-syzkaller-00279-gde2f378f2b77 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+> =====================================================
+> 
+> 
 > ---
-
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-
-Konrad
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
+> 
 
