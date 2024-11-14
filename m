@@ -1,132 +1,117 @@
-Return-Path: <linux-kernel+bounces-409484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 355869C8D6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:57:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5A979C8D69
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:56:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CC5BB2ACFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:56:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 684801F244A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 14:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D841339A4;
-	Thu, 14 Nov 2024 14:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A73A136341;
+	Thu, 14 Nov 2024 14:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="PQXQiu3g";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="N1RSy0E7"
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kVSIF4JE"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECA41E521;
-	Thu, 14 Nov 2024 14:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5A6770FE;
+	Thu, 14 Nov 2024 14:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731596164; cv=none; b=O8993veRA1npBTxMwG5yrXd4twudcQ3QVWPUmC0XqJywK/FhAMP1lKbSYrKYds6ajH1LT+Aka9Bumc8k8AjBZiggPBeUGqx20FpNMarusgaEpA/KvG/RAO0rXMkcEQhOYxqtzhWKRc0YHTegFCSDePIy35Wg3K27qlZ6pC/F08U=
+	t=1731596177; cv=none; b=dw4va7IRXUDYPhQSq5sIa5ZNw4VQW5gV1fiN3Y0rnUXilJYSIxjA44KlQpvr6oQVB16BaCB4qioH5/a/K5MTegAX95wEzmET+7NC/dJYR1O27aGk0nF7332bPLJUIqxWJULBrQ5uKXhbnlFP4TNWt5R2u+4jFRTslmjRq1z0ufs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731596164; c=relaxed/simple;
-	bh=Y8JhZBLvCzMGYzwcIdQ9sxAuB3u+GhQ6FVmNMU0mlN0=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=G4GjzcWA2A0Dm2m9C1xwiZoREObY+UQtbIdHaq6wmpynALMuAtgyPmfy6CQs51fee5nbDK3clAG6J82zi38Ix/Lp6qITuhxaACPPxfn1at5wDElztcHAfrrVk2Pv0hEg0RaBEjv0bt0bueHR7nB4Mc0ocNA9Jyw6tH53cc7YVCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=PQXQiu3g; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=N1RSy0E7; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id DCEEC1140175;
-	Thu, 14 Nov 2024 09:55:59 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Thu, 14 Nov 2024 09:55:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1731596159;
-	 x=1731682559; bh=LO+dEuBMcGGWi/NcKB15GLyTAiVbiyQlFbT0CMd3c8I=; b=
-	PQXQiu3gQXuOTEfAcb0khgBfDDp290Po9XZ7S4536bxiU9W5UZi5PhYM+CHrviJp
-	oiuWojN4Ik6VAE6/5GRmBSrJhC/JRFCv2NM/nZBjaySowF9fhnWcSzdFeZNclvrc
-	xXvUIm63Zeryu1Cdgqi1TNa0601Vwd7w3o+DTXOdvl/y1MruWN5QkZji0P3IVO7l
-	NvdYTFHQCsziUxrnE2ImfjeBCNQMZ3KAwbET567hLwhwHSibGk3/yA+zR9L5xoRI
-	KpRziBR605SDzWx25Vshg0/ghJrmz6jgX0KaMaeTIDnq07iINma17RUmdR6OiT3J
-	D0uNtHB1DLKfcIZErVlr7g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731596159; x=
-	1731682559; bh=LO+dEuBMcGGWi/NcKB15GLyTAiVbiyQlFbT0CMd3c8I=; b=N
-	1RSy0E70eupxsUEh5AZkeVZnUf94jyKe9HqWAzi99t4aPlM/idVMLr45e7f38pnc
-	rKUUyYJyxe4MIUGVDOnX5xLnOgHB4boklSNSRccMrtzBqTpaH/s7AuZq0nmn2AeH
-	h22OsZET+fpVeXZvOFkAhlR8i4esBjS6fYGPyCF/TpaquiuPbCbg4qsgXqALTwWf
-	ieT4OTOEpBywJthxm+nAsLuzmQu3DJS7EnBZmBCtzLZSE3Ezntpw7CyjHArI0ckn
-	BHG0WRXd6mfjcfqjMWUYi5Ga2ETPNxLjLd+dUwQ7u1XiV0IAMw2l3iPhnxqWNgVR
-	I6Y0PQv1dK6gJs0a4oDiQ==
-X-ME-Sender: <xms:fw82Z-T-L5CbHwYciJkdtJgB61cAjfoWA4dTvVRWohbCwz36iTNEww>
-    <xme:fw82Zzx7ln2Xdb4ITTTkJVv-zVI15rl7kFsmPV83SIBc5YuJLspTr6RWL3QB2cS9J
-    x-oaDASnnkAh8nFIEc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvddvgdejtdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
-    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeeipdhm
-    ohguvgepshhmthhpohhuthdprhgtphhtthhopehmphgvsegvlhhlvghrmhgrnhdrihgurd
-    gruhdprhgtphhtthhopehgvghofhhfsehinhhfrhgruggvrggurdhorhhgpdhrtghpthht
-    oheplhhinhhugihpphgtqdguvghvsehlihhsthhsrdhoiihlrggsshdrohhrghdprhgtph
-    htthhopehjkhesohiilhgrsghsrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
-    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvgh
-    gvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:fw82Z724ekZiOinagGYezie-83_g99xYY_4JM4ua765-xzTHVR0qpw>
-    <xmx:fw82Z6DiWb1TGJvb9nbAZfmF-nbqz5ywnVS-mSOhWUTVhkYVFiF9Zw>
-    <xmx:fw82Z3gCpUj2KXft-24ve5I6qnC_-pngjavWNh3h0SJEGR8IgP6nTQ>
-    <xmx:fw82Z2p5AAbNW0AwIJPTJult45IQfPYyw1Vw4b9AzbxJqFEGMfNFMw>
-    <xmx:fw82Z9bR7dJEyScPZb4B3QIwmrZb9_oToLfEmWv-JG9AF9rC-wr_30Pd>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 827F62220071; Thu, 14 Nov 2024 09:55:59 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1731596177; c=relaxed/simple;
+	bh=5sOe9ripCxbSEVyi9HSWTx+dlYBbi2HF+KFmFLJmqIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ct3l1RsafEQWMATyzmHSwVDR+AgmbqvmJFroqV3JZDZr2rjUOh4DTY96M5i/6PJ1pnjBiXg1qgbt0HhcyO/+HuwL4gvT+DmX1GXmmvtP/hD5zFl9n2tEu8ybFi2TqFJnjfeqmAXQeUR4fbXgaY11bApltDrP6mJZ8dR6JZGYe7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kVSIF4JE; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43193678216so6957125e9.0;
+        Thu, 14 Nov 2024 06:56:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731596174; x=1732200974; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ypIe2x5wqkPNzyRl0qrW7xKxln38d/rreWFO8HGI778=;
+        b=kVSIF4JE4UKJyHl8ZYMzhKxkofQ8bWgd8BrIxqftmFDiqB2F6JLkovGrcjywbXcC+M
+         kDmf4QRD7t7DjvjTBMg6WAmjW1TyhdYlYA2fHE/BHAtb6dj5p7L3tZ/YESygT/+XSc1Y
+         YGH1Tl/KIus7JNxhzW5rtH5/vuwfp+nrRb6OuT6caZ1bI3ycwmFiUTgU1dcPdynoZiEx
+         29yrtxuANeLnYRs7XTJra7Tr4jIGHZkzuVtjWz6YK/ixclt7zvJIDRh74wi5z02LAhYM
+         grGJELPxs9803D6y5MyKNm2U7OkaNsVdCrcCdQd0SLw7I4uaj6Gnlj4xM6Fv4f0ttR8c
+         ghHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731596174; x=1732200974;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ypIe2x5wqkPNzyRl0qrW7xKxln38d/rreWFO8HGI778=;
+        b=fCf2uch7E/Y6E1uatyYnO7UDeCScQJ9OPd4KubjjSXRLsqHIWU89gI3/93tHnX7bK9
+         vVrcngt7jjIEBckQ2cZ+4sD1SKn4RYQsovnwFYGeY6vYPLX77Rx21n3wkNcYNaq677Zr
+         u20Ri9dwILMMqkCu1zFKt4xDR9BsigunJUIQ5gZvgwcB50whmGJseWRCg1+/a5dbRsWc
+         Q7zFYBKa1IHJlZkK/hux5jUvnnmtOggTjcFWN5x1C0EDx+10f1WAMTO0uUGRleK/nwJi
+         DZlFfY1Jsfz8NkBOp6mdfV3ERaYTDFV2h0SPgxCs2zJhvt6Ux0D9VpTD6cRYXjJTVHkL
+         ZYfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWkYnS7a2PhFOVwnUoYcabSZp+ta9Em2vXZRTfz8dCjvHi9OKDA1sZluHo0WXUctndjqlSqLTbTWRecCP1P@vger.kernel.org, AJvYcCXzQcdIsRcrUzBmWNntu7qtF9QP49fOnnwUve3Ip+SscVrmY2Vpq+fkati/JZcENrIqSBc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSXCpO8kMO9XWAyTvc/xBTPc9AtuRwIXQaZi40z1iTwZ0c9dqU
+	zRy25KBPDxkSaMZGXQ0uG4VFlnqyxcIQBeUfrQeQSmjbx+pfPCCt
+X-Google-Smtp-Source: AGHT+IGfT3/q3KJg0BmJv0M3JSpyylmNbOkhP3+kI1SDAPayxBKjFLi0azP6rHT0HtymqiHBO+xoLg==
+X-Received: by 2002:a05:6000:1787:b0:37d:5026:f787 with SMTP id ffacd0b85a97d-381f1885612mr21224023f8f.38.1731596173714;
+        Thu, 14 Nov 2024 06:56:13 -0800 (PST)
+Received: from andrea ([149.62.244.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ada3e7bsm1730816f8f.7.2024.11.14.06.56.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 06:56:12 -0800 (PST)
+Date: Thu, 14 Nov 2024 16:56:01 +0200
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Puranjay Mohan <puranjay12@gmail.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, puranjay@kernel.org,
+	bpf@vger.kernel.org, lkmm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: Some observations (results) on BPF acquire and release
+Message-ID: <ZzYPgd8rJDG9p6WQ@andrea>
+References: <Zxk2wNs4sxEIg-4d@andrea>
+ <13f60db0-b334-4638-a768-d828ecf7c8d0@paulmck-laptop>
+ <Zxor8xosL-XSxnwr@andrea>
+ <ZxujgUwRWLCp6kxF@andrea>
+ <ZzT9NR7mlSZQHzpD@andrea>
+ <CANk7y0gdNGM36Er9vq42-YouoGVVQ4gp0yvgVHarm0-NFC2i1w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 14 Nov 2024 15:55:39 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Michael Ellerman" <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, "Jeremy Kerr" <jk@ozlabs.org>,
- "Geoff Levand" <geoff@infradead.org>, Netdev <netdev@vger.kernel.org>
-Message-Id: <b7a930c8-52da-45bd-a085-7b886e2b2dcc@app.fastmail.com>
-In-Reply-To: <20241114125111.599093-17-mpe@ellerman.id.au>
-References: <20241114125111.599093-1-mpe@ellerman.id.au>
- <20241114125111.599093-17-mpe@ellerman.id.au>
-Subject: Re: [RFC PATCH 17/20] net: spider_net: Remove powerpc Cell driver
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANk7y0gdNGM36Er9vq42-YouoGVVQ4gp0yvgVHarm0-NFC2i1w@mail.gmail.com>
 
-On Thu, Nov 14, 2024, at 13:51, Michael Ellerman wrote:
-> This driver can no longer be built since support for IBM Cell Blades was
-> removed, in particular PPC_IBM_CELL_BLADE.
->
-> Remove the driver and the documentation.
-> Remove the MAINTAINERS entry, and add Ishizaki and Geoff to CREDITS.
->
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-> ---
+> I have applied your patches and modified them to add the new tests to
+> kinds.txt and shelf.py
+> now these tests will run with all other tests using 'make cata-bpf-test'
+> 
+> All 175 tests, including new tests added by you, pass :D
+> 
+> make cata-bpf-test
+> 
+> _build/default/internal/herd_catalogue_regression_test.exe \
+>         -j 32 \
+>         -herd-timeout 16.0 \
+>         -herd-path _build/install/default/bin/herd7 \
+>         -libdir-path ./herd/libdir \
+>         -kinds-path catalogue/bpf/tests/kinds.txt \
+>         -shelf-path catalogue/bpf/shelf.py \
+>         test
+> herd7 catalogue bpf tests: OK
+> 
+> 
+> I have pushed it and sent a PR so we can get all this merged to master.
+> https://github.com/herd/herdtools7/pull/1050
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Cool!  Thank you for the follow-up.
 
-(cc netdev)
-
-This means we can also move drivers/net/sungem_phy.c back
-into drivers/net/ethernet/sun/ since it is no longer shared
-infrastructure.
-
-This was an early bit of MII/PHY library code that along the
-same lines as what turned into drivers/net/phy/, but remains
-incompatible with it. Moving it into the sungem driver keeps
-it out of view of other drivers.
-
-      Arnd
+  Andrea
 
