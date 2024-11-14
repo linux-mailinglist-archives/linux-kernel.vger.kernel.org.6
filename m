@@ -1,97 +1,215 @@
-Return-Path: <linux-kernel+bounces-409515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5B8B9C8DDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:24:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABDE19C8E02
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 16:29:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57EA0286CBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:24:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F11BDB2C174
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 15:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB461531C1;
-	Thu, 14 Nov 2024 15:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7779918132F;
+	Thu, 14 Nov 2024 15:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="sU68WJzs"
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MBXlZawU"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167A72C859;
-	Thu, 14 Nov 2024 15:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449801547CF
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731597877; cv=none; b=lgDAzMu1c8yxIMpi/U8VM4AuXAB2WuzVV9UCc8QaDM1mDn1cn1UMgXA43ijfUzo8w7Ik55KsjhnwlzyNIVsKz8n+aFG52Mb5cRXFOCt7B0mkdajnDdByHCUWPpUzs4RUS2muKHhX6KwpaPM6VmoMbbmKDsy6+edP9I7MR/YuJd8=
+	t=1731598085; cv=none; b=fXKDrpkOphwLsE2fI4P5JWP3NU1/qPKRky4y5zrzTA3pXxujmocOsZElBo6aCgIlEq6JMPfdEQv3PPk8aQUv8DhXGhFL32KgmK6kd3FzGRaLKReXMDOoKbh+MyhmxbQHYF7DHOZVCSc6LRn1Nx9O5ElZpnYsJZjVzvmdPO/G4oE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731597877; c=relaxed/simple;
-	bh=xsVf3vew9SpRW1h1Z2z1A+QH4M4mxu4f69LMnQRUV98=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lpW4LanhBsaiv4xsxrUxK0OdrzPpE1WUM3esFtuV8+HjNA8Go/MDIgIv1CpXzngM1QlQNxZSEUFrp3YoM1Ha6AZVQRzT/4xK9ZFkJUg0CrLLEsYJwIQvcpdRXhlydz4HaYP918uaTwNqa8GNGZEusgrjGG7uw6oCudyLnhvOoTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=sU68WJzs; arc=none smtp.client-ip=80.12.242.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id BbhitqbCk9tmtBbhrtq9SO; Thu, 14 Nov 2024 16:24:33 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731597873;
-	bh=izzFa5suPr8w2SBDN7iZD4T89oyWBt6p8wvOJcttrRc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=sU68WJzs4DKbkHpVLb/IM1jhnO6MA7K6B5Vac7upD4dChBDroo3OOBl5pllxPz+ie
-	 +POA9pB3zED1p4gocSpHVjKAjsK0WkciLFh38CJY3JM6f09eFdic9s5mBlV9Cgbral
-	 o83a/L9Hj8rw1pVPZDmCwxT/ym58qgKui6/ad65bDQ+wyt6ExEwXeM/Mh2Fe9yfJgx
-	 6wJKGsqQz/cIWR2rjnlKYoCwv4i9LTtfqkUIcIut8jPNYFE1c6FFK+5/F+EIx2cjpI
-	 oWFjQchODcDdhBWXt9JZKqSCZCgBGpNGC0tXxxoYpRXRmUssRk0zWX75xnyh8Cp5yO
-	 MWXT401gTY1ZA==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 14 Nov 2024 16:24:33 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <7d4b176b-6b44-450b-ab2d-847e5199d1b9@wanadoo.fr>
-Date: Fri, 15 Nov 2024 00:24:17 +0900
+	s=arc-20240116; t=1731598085; c=relaxed/simple;
+	bh=c2TEu+YFRzeJg1sAj7V27VWatQDU0ccey6dX2M3ChOg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rgp84nQoZur1xWisCo+fHdIWkblKFHAWjRRupkJm/wz/hYzptLPwrW2EZ/+Rg8V3V3iSFmyoBS+mmEFd/OKlJsVTWQB2r8fQxER61W63UiqK0sp5Qyy3AH4xRftWP/8HdOKON5OrQY0XiPU6Mnav6Sfe2uKneBjbxy4+grokxo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MBXlZawU; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2884910c846so340956fac.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 07:28:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731598081; x=1732202881; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=upOcZ8Da+PhrMJT3+CvYdnGUaA0rMPuANSoknEoDO6c=;
+        b=MBXlZawUht7HoB0xXgeeHRp7Rs9EY3Oq+hF6vMqv4y1S1QuOS9TlrX6DnNa4IkeLfj
+         ZZIbiuRxdlrJp8hiztytOZDjj+PqUQgNRRhtpuNAk4s6iN2w4PdQWyCHchZfJA+nXdTR
+         gvX4DuyuVJW2TqIp5B/XsoQEhPC7GD3LE8A7iZqraH8T5wwpu6Cc8E+/J2Ah/FsL8bkR
+         0leP5oxs1zuKHptdaW9TS4h2N8sX7qxBcXSL/33puLU7xXbD40jJi7Jzzg9kF+Qb6Omc
+         snOVzxsUyRdXmjy5KKUv1IZzC7GWhbCXsjhvEz3aAznOrPjzyutsj/NMHso9yCFnb4Rp
+         QKeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731598081; x=1732202881;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=upOcZ8Da+PhrMJT3+CvYdnGUaA0rMPuANSoknEoDO6c=;
+        b=K4CxhZTonHortc5tzGP27S4vkVcWsJUIK+dyvDgUPV8d1RjGXtpIqZfVntmYI2u1iq
+         Epotiz2+YflWql+SVjNKsu/BwvBzeaWGGX5ExmkvrqhzigKppRb4GgvBpgjMyKaBq+Yk
+         R6oLCWvR2soLtJkIXHFyJgzCr8/jTE9eyb5RfsLS1sjAWyHVnC3OEQrrMQOdqgKK/tZC
+         wWy24q4SIK31HmggryN9iZPbQTHa2oM2H9YrmpUznarM1DpLTofhCZI0F7ytO2+yuERb
+         U2fAa2dqcM17BhfgMln6yAeAHwk6WxHo4OrDYxaNAzIu3W5qRheMp9hJ9p7UDm2UALKd
+         Sxcg==
+X-Forwarded-Encrypted: i=1; AJvYcCWtjlCoZYizd5I2ztasXX3boyGlaZBGD81YYj+4AAOuZqeT7neHS1G7lvuS6MNAvcbG7GiSEsY1WQhDXIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSH9gNgZVx6khtZtdkWP69lrCNPjQLtviOGuBs8ucsUrO+5m+W
+	CoBj9/vPMP8eKOniPMYXBg8YD9iCTGb5wwhfiYfVcMNWd30TsB12sWzprs4Yhl8at+O67rMKG2i
+	xz34=
+X-Google-Smtp-Source: AGHT+IHBiSMdAqkwaY/EaNZLQHe509r0Wv/sQpfdA1eWS0kETb8TpyQost056gI2LIEpEMGhxGO0ag==
+X-Received: by 2002:a05:6871:6306:b0:277:e1bc:7da7 with SMTP id 586e51a60fabf-295e8dc02c3mr7474161fac.22.1731598081287;
+        Thu, 14 Nov 2024 07:28:01 -0800 (PST)
+Received: from localhost.localdomain ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5eea026eb41sm368250eaf.39.2024.11.14.07.28.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 07:28:00 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Cc: hannes@cmpxchg.org,
+	clm@meta.com,
+	linux-kernel@vger.kernel.org,
+	willy@infradead.org,
+	kirill@shutemov.name,
+	linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	bfoster@redhat.com
+Subject: [PATCHSET v5 0/17] Uncached buffered IO
+Date: Thu, 14 Nov 2024 08:25:04 -0700
+Message-ID: <20241114152743.2381672-2-axboe@kernel.dk>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] can: can327: fix snprintf() limit in
- can327_handle_prompt()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Max Staudt <max@enpas.org>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- linux-can@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <c896ba5d-7147-4978-9e25-86cfd88ff9dc@stanley.mountain>
- <6db4d783-6db2-4b86-887c-3c95d6763774@wanadoo.fr>
- <4ff913b9-93b3-4636-b0f6-6e874f813d2f@stanley.mountain>
- <9d6837c1-6fd1-4cc6-8315-c1ede8f20add@wanadoo.fr>
- <20241114-olive-petrel-of-culture-5ae519-mkl@pengutronix.de>
- <7841268c-c8dc-4db9-b2dd-c2c5fc366022@wanadoo.fr>
- <0c4ebaf0-a6c5-4852-939b-e7ac135f6f32@stanley.mountain>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-In-Reply-To: <0c4ebaf0-a6c5-4852-939b-e7ac135f6f32@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 15/11/2024 at 00:08, Dan Carpenter wrote:
-> I'm happy to re-write the commit message.  Changing snprintf to sprintf() makes
-> me so much less happy...
+Hi,
 
-OK. Let me amend my previous message. I kind of understood from the past
-exchanges that Max will take the ownership of this patch and credit you
-a with a Reported-by: tag.
+5 years ago I posted patches adding support for RWF_UNCACHED, as a way
+to do buffered IO that isn't page cache persistent. The approach back
+then was to have private pages for IO, and then get rid of them once IO
+was done. But that then runs into all the issues that O_DIRECT has, in
+terms of synchronizing with the page cache.
 
-If you keep the ownership of the patch, then that's a different story :)
+So here's a new approach to the same concent, but using the page cache
+as synchronization. That makes RWF_UNCACHED less special, in that it's
+just page cache IO, except it prunes the ranges once IO is completed.
 
-I do not want to make you sad and I am fine with your preferred approach.
+Why do this, you may ask? The tldr is that device speeds are only
+getting faster, while reclaim is not. Doing normal buffered IO can be
+very unpredictable, and suck up a lot of resources on the reclaim side.
+This leads people to use O_DIRECT as a work-around, which has its own
+set of restrictions in terms of size, offset, and length of IO. It's
+also inherently synchronous, and now you need async IO as well. While
+the latter isn't necessarily a big problem as we have good options
+available there, it also should not be a requirement when all you want
+to do is read or write some data without caching.
 
+Even on desktop type systems, a normal NVMe device can fill the entire
+page cache in seconds. On the big system I used for testing, there's a
+lot more RAM, but also a lot more devices. As can be seen in some of the
+results in the following patches, you can still fill RAM in seconds even
+when there's 1TB of it. Hence this problem isn't solely a "big
+hyperscaler system" issue, it's common across the board.
 
-Yours sincerely,
-Vincent Mailhol
+Common for both reads and writes with RWF_UNCACHED is that they use the
+page cache for IO. Reads work just like a normal buffered read would,
+with the only exception being that the touched ranges will get pruned
+after data has been copied. For writes, the ranges will get writeback
+kicked off before the syscall returns, and then writeback completion
+will prune the range. Hence writes aren't synchronous, and it's easy to
+pipeline writes using RWF_UNCACHED. Folios that aren't instantiated by
+RWF_UNCACHED IO are left untouched. This means you that uncached IO
+will take advantage of the page cache for uptodate data, but not leave
+anything it instantiated/created in cache.
+
+File systems need to support this. The patches add support for the
+generic filemap helpers, and for iomap. Then ext4 and XFS are marked as
+supporting it. The last patch adds support for btrfs as well, lightly
+tested. The read side is already done by filemap, only the write side
+needs a bit of help. The amount of code here is really trivial, and the
+only reason the fs opt-in is necessary is to have an RWF_UNCACHED IO
+return -EOPNOTSUPP just in case the fs doesn't use either the generic
+paths or iomap. Adding "support" to other file systems should be
+trivial, most of the time just a one-liner adding FOP_UNCACHED to the
+fop_flags in the file_operations struct.
+
+Performance results are in patch 8 for reads and patch 10 for writes,
+with the tldr being that I see about a 65% improvement in performance
+for both, with fully predictable IO times. CPU reduction is substantial
+as well, with no kswapd activity at all for reclaim when using uncached
+IO.
+
+Using it from applications is trivial - just set RWF_UNCACHED for the
+read or write, using pwritev2(2) or preadv2(2). For io_uring, same
+thing, just set RWF_UNCACHED in sqe->rw_flags for a buffered read/write
+operation. And that's it.
+
+Patches 1..7 are just prep patches, and should have no functional
+changes at all. Patch 8 adds support for the filemap path for
+RWF_UNCACHED reads, patch 10 adds support for filemap RWF_UNCACHED
+writes, and patches 13..17 adds ext4, xfs/iomap, and btrfs support.
+
+Passes full xfstests and fsx overnight runs, no issues observed. That
+includes the vm running the testing also using RWF_UNCACHED on the host.
+I'll post fsstress and fsx patches for RWF_UNCACHED separately. As far
+as I'm concerned, no further work needs doing here. Once we're into
+the 6.13 merge window, I'll split up this series and aim to get it
+landed that way. There are really 4 parts to this - generic mm bits,
+ext4 bits, xfs bits, and btrfs bits.
+
+And git tree for the patches is here:
+
+https://git.kernel.dk/cgit/linux/log/?h=buffered-uncached.7
+
+ fs/btrfs/bio.c                 |   4 +-
+ fs/btrfs/bio.h                 |   2 +
+ fs/btrfs/extent_io.c           |   8 ++-
+ fs/btrfs/file.c                |   9 ++-
+ fs/ext4/ext4.h                 |   1 +
+ fs/ext4/file.c                 |   2 +-
+ fs/ext4/inline.c               |   7 +-
+ fs/ext4/inode.c                |  18 +++++-
+ fs/ext4/page-io.c              |  28 ++++----
+ fs/iomap/buffered-io.c         |  15 ++++-
+ fs/xfs/xfs_aops.c              |   7 +-
+ fs/xfs/xfs_file.c              |   3 +-
+ include/linux/fs.h             |  21 +++++-
+ include/linux/iomap.h          |   8 ++-
+ include/linux/page-flags.h     |   5 ++
+ include/linux/pagemap.h        |  14 ++++
+ include/trace/events/mmflags.h |   3 +-
+ include/uapi/linux/fs.h        |   6 +-
+ mm/filemap.c                   | 114 +++++++++++++++++++++++++++++----
+ mm/readahead.c                 |  22 +++++--
+ mm/swap.c                      |   2 +
+ mm/truncate.c                  |  35 ++++++----
+ 22 files changed, 271 insertions(+), 63 deletions(-)
+
+Since v3
+- Use foliop_is_uncached() in ext4 rather than do manual compares with
+  foliop_uncached.
+- Add filemap_fdatawrite_range_kick() helper and use that in
+  generic_write_sync() to kick off uncached writeback, rather than need
+  every fs adding a call to generic_uncached_write().
+- Drop generic_uncached_write() helper, not needed anymore.
+- Skip folio_unmap_invalidate() if the folio is dirty.
+- Move IOMAP_F_UNCACHED to the internal iomap flags section, and add
+  comment from Darrick to it as well.
+- Only kick uncached writeback in generic_write_sync() if
+  iocb_is_dsync() isn't true.
+- Disable RWF_UNCACHED on dax mappings. They require more extensive
+  invalidation, and as it isn't a likely use case, just disable it
+  for now.
+- Update a few commit messages
+
+-- 
+Jens Axboe
 
 
