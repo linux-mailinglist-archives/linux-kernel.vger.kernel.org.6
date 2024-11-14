@@ -1,143 +1,164 @@
-Return-Path: <linux-kernel+bounces-409323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DEA29C8B48
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:58:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40A929C8B4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:59:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09F041F24D14
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:58:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E771B1F24D68
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317AE1FA851;
-	Thu, 14 Nov 2024 12:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6C71FAC43;
+	Thu, 14 Nov 2024 12:59:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="OTACQh96"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Gvzo9N98"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CE61F8900
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 12:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A8D1F76C9
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 12:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731589122; cv=none; b=KZvwLuTRI3qupEYgTzQnL2YUx1zQxOrFBXaG7Xk9/bUBoU4tasLdrPf9gs8KuQJId/hpLeaIvKLlGyJX6k+O7vdtDUhX7tTlX3h3TVwYyPPJQyc4G27sst1XMk2d3GdGsCSY3dsKIOsfVbXHOMoEc+LArfPnOQhFEGDTzPN/Avw=
+	t=1731589175; cv=none; b=u1w9cM6C/6WrbxVkpzNI6/5NBjZJ1cbjxTRdLgzDOwaDTBEeM1RQSWhOVVoWlAGbJGpIKCwvdHNphVFcWaop5LBZC2kBXkhdR79Qd/mijWXFMGndqURdKAuEx9MaAE6CKgCMlopljNn86ZD0Tb5wArBcAU9zyypeTOMt2c+z90o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731589122; c=relaxed/simple;
-	bh=xWQWMy/jdFMJaTh4AOC32fDnuGBgd4vNcEibca7nWT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sKq/y2N1C/FPKY/wQKt+7gQEe7sA0cSNxtoNNij5RNecrRABSPj/YnZx29skPYE4/LnDznA/aAup5XE/CwIN1xUDK69TTpfXSiJCSRPvFOUdVIkKWVdIsOSBivCyoPFk/Qa7H736xKVRJ7g5IwVlco4tCLbySO8rIRTXb/5cacM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=OTACQh96; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B2B9F40E0286;
-	Thu, 14 Nov 2024 12:58:37 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 5BlOkF5UHrcN; Thu, 14 Nov 2024 12:58:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1731589111; bh=2/AlNgW6u7yIa6lOaXbDTi3Mq1hJf06A6eBH8f8bSJ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OTACQh96dk8K0SEzOD21FlLumOYDkSRoHaNlEh0DZsC+nFmoHytb8pF/3f6uZBA/2
-	 itsgv3X1t/Am51VqNgsX67f5+/jnDvUCeSF2OXe3tOPlGINTo0lVHtI8h5R809tPE5
-	 VrVvBzg68G1FfZT0ldRGB4+j8dM4vy2WoVAi/a7YrZ7qzkQqctldcDiq+oU2Ymtl83
-	 J3zkHvFUmO9opxbd/12hjebwb69oW+PuZI+jWgxkne0Uq+b/k3/Sq32mrzJkh4grrH
-	 2Ih5dR1MRlTCRW+pJGorfTpYirMPTnOtL6LR4w4hT1oh37vb7JhltTw0LBdKDbK0UA
-	 DiQDwfXz6DCy6br0XZGX4jjPBAOj/OieCiIbqyvRNvlR85zI+xfTfa6iqvGo7tN3+V
-	 2cK0hNKRY+1zaRvxYdpoHmd/wXDoxkzXlyE0cjg3Dt1VmNHQKFB3ZXQx5TJb3teitn
-	 dNvvYY1WkydyEqOTRSH9Wha8S/n2ZKxQXOtZLBVMxw6oLjfnUVN81N9WKSyCHoTjNF
-	 lXNxB+qWwC1r8/AnB9cK8B6xhsskwxFWnwafJz/gUxj3xvS+QSMcZPLBb5Wpl4vlCC
-	 HDqX09pugzpP4K9G/A99zzDt/IsMPf+/t8Tuk6BTXPDeFl8CsTHnlWonPYu8XqC0g3
-	 XYueF1SAOmJalDo/bYzxH7cs=
-Received: from zn.tnic (p200300ea973a314f329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:973a:314f:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 854B540E015E;
-	Thu, 14 Nov 2024 12:58:28 +0000 (UTC)
-Date: Thu, 14 Nov 2024 13:58:18 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Nikolay Borisov <nik.borisov@suse.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] x86/microcode/AMD: Make __verify_patch_size() return
- bool
-Message-ID: <20241114125818.GFZzXz6vdhwPdSa4dk@fat_crate.local>
-References: <20241018155151.702350-1-nik.borisov@suse.com>
- <20241018155151.702350-3-nik.borisov@suse.com>
+	s=arc-20240116; t=1731589175; c=relaxed/simple;
+	bh=MGkV6k7ekIpGE7d8ywuC6KKlX8ewwJtWiBawQLrWFHU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IIAGts20FsufsEhukd+NRUHBmqJAKpbCWR98tTULPewSD1BuZHSvEAi5jCfteLmcCM53MAgxuQKb6WOx8YtKKSVGWjV50ZWgLd42ZMXwidwxUMtoPAV1xsbYFLqHf/o9YF0UwwH7DruGNEPB4o5uNj0jEwHcsYKZTuZD14bpgyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Gvzo9N98; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539e59dadebso623014e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 04:59:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1731589171; x=1732193971; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dMdSFBpU3ulyQCbsazLw9uC5LrnPYy3sgCbS7yhbe+Y=;
+        b=Gvzo9N988zE0jIP7bkTslczqYdev7tCShQtZB57xvW2ceb2nfNrkSoB8kIwZlUDObr
+         jYMeVeZvqF9BfHYGaPoPLTe/UH3ckVC9qrvfgwyqsC93pxlBI3I0MZMqaoZVF9XrKQC5
+         McOZMtrrNJ2AEcqiNvGVg/56804Qv/vYCebvd2LlJn6EXx7WQhi2ceKTFm3S/SWelGGO
+         UDxSKCZGMO3zyBABcKRSrX646cBam4vjJz3Ocm95x7gv0ZKNUcBlIljw5WHvhQXsobWU
+         mrtEoYlEfVx+dtECYT2FndTjbVOzEa80dha2MxmGG/N9ozN4ssI3RoM2B8Lam6ieDeNE
+         vLcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731589171; x=1732193971;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dMdSFBpU3ulyQCbsazLw9uC5LrnPYy3sgCbS7yhbe+Y=;
+        b=J6pximuIbEjg7ZJ9WGIXlSrP7dXRElrz9wkbwVhtFK5UpwFMcjKF8LIKpkZ5pGWbAv
+         GnYyBNKZRUXUWLyMtKd6PxLcPWOrEGXGgQzcvp2mVfh11GTmVI5B7WQxoCX9T0ll+KSK
+         DyyTmQGMPsVS24sOMO5mPl/L3haC3/o6UlknHoffvKIKkRGpXDKG0CXGzIo9gAsVNwjV
+         HoHLPWNdqa2Tiyz+SXKIYnTagxnIQPLf1ZD2LsCzIW2rfIcLjX4Q9yFHFvm6HfhRV0Ab
+         lESf2DT8r7zf7i3znvKmUKWNaJxtNWrxI160tjYLfHPr3H4r+9b3SnKpqaPD0U1V5UR6
+         OXFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWsnLptD5IaAfhjeNM8JvYjXdRoMg3q102fbn4NYcsHOmXpiUTukFsHCVmJF/GPBSoFOq1uMKcdHVjLnmw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG6hKP2mZai1Syv+PovzA+ygVBBaWr0d35Jb91yyNbfDU/Hfjs
+	CHa5s3tl19M7ZKcU7Yj6WvMvq3WkGA8jIzawkTBoALwWTzXlM4V3Z5PG/voxHEAshPafuR94zKZ
+	zftY0s5q6VLNxGYIHCqmbvDNH/0EWEGb/2TqT/w==
+X-Google-Smtp-Source: AGHT+IGDWKkoZLl9YnbdXfMARn0TDFveOqGcTx6vBzaoMPB7NVaZvWqSjtNwS41hkaMepCKrVfrH4D2HsiCP1mEXYxY=
+X-Received: by 2002:a05:6512:230d:b0:539:e4b5:10e5 with SMTP id
+ 2adb3069b0e04-53d862bd4e3mr10788911e87.9.1731589171250; Thu, 14 Nov 2024
+ 04:59:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241018155151.702350-3-nik.borisov@suse.com>
+References: <20241113171219.2949157-1-andriy.shevchenko@linux.intel.com>
+ <CAMRc=MeaDjhxAwmTcNZ+oHniFn4EWVEmfP8MdNWitmD+Rr=scA@mail.gmail.com>
+ <ZzXTbEcrLigXWpAu@smile.fi.intel.com> <CAMRc=MeEtyTXr6A4gXbbN=ZY1tzAQnbVMF0NYA2_6Xm3=jfS6Q@mail.gmail.com>
+ <ZzXhf2zM9IisvZhs@smile.fi.intel.com>
+In-Reply-To: <ZzXhf2zM9IisvZhs@smile.fi.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 14 Nov 2024 13:59:19 +0100
+Message-ID: <CAMRc=Mdo2DysJRPvJRU9RwTCH8nmw_CFRYYoLfvfC8+j0K9roA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] gpio: Move and sort Kconfig entries as suggested
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 18, 2024 at 06:51:50PM +0300, Nikolay Borisov wrote:
-> The result of that function is in essence boolean, so simplify to return
-> the result of the relevant expression. It also makes it follow the
-> convetion used by __verify_patch_section(). No functional changes.
+On Thu, Nov 14, 2024 at 12:39=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Thu, Nov 14, 2024 at 12:15:46PM +0100, Bartosz Golaszewski wrote:
+> > On Thu, Nov 14, 2024 at 11:39=E2=80=AFAM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > > On Thu, Nov 14, 2024 at 09:54:50AM +0100, Bartosz Golaszewski wrote:
+> > > > On Wed, Nov 13, 2024 at 6:12=E2=80=AFPM Andy Shevchenko
+> > > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > > >
+> > > > > The Kconfig under drivers/gpio has a specific comment
+> > > > >
+> > > > >   put drivers in the right section, in alphabetical order
+> > > > >
+> > > > > but in time some of the entries fell unordered there.
+> > > > > Put an order again.
+> > > > >
+> > > > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com=
+>
+> > > > > ---
+> > > > Could you elaborate on why you're moving drivers between categories=
+?
+> > > > For instance: you moved Intel LJCA to USB drivers and I'm sure you
+> > > > have a reason for it (it's not clear if this actually is a USB driv=
+er,
+> > >
+> > > This one is actually clear as you see that it depends on USB_LJCS whi=
+ch
+> > > suggests that it's USB based.
+> > >
+> > > > it's not registered as such
+> > >
+> > > Neither one of the existing ones in that category, right?
+> > >
+> >
+> > Well if you really want to open that can of worms...
+> >
+> > Only gpio-mpsse is really a stand-alone USB GPIO expander. Others in
+> > this section are actually MFD devices and would probably better fit in
+> > there.
+> >
+> > I don't have a strong opinion but we should at least be consistent.
+>
+> So, as far as I can read the whole picture the categories are based on th=
+e HW
+> (and this is how it should be) and these what I moved _are_ true USB devi=
+ces.
+> Linux abstraction is just a Linux abstraction.
 
-convetion used by __verify_patch_section(). No functional changes.
-Unknown word [convetion] in commit message.
-Suggestions: ['convection', 'convention', 'conversion', 'confection', 'conviction', 'connection', 'confession']
+If that was true, we'd have no MFD section at all in GPIO. In there
+you have I2C, SPI, platform and I don't think there's a reason to
+treat USB MFD devices differently.
 
-You need a spellchecker. :)
+You know what? How about just reordering Kconfig entries
+alphabetically for this merge window and next release cycle we can
+decide on what to do about Kconfig consistency?
 
-> Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
-> ---
->  arch/x86/kernel/cpu/microcode/amd.c | 11 +++--------
->  1 file changed, 3 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-> index 9986cb85c951..37a428b109a2 100644
-> --- a/arch/x86/kernel/cpu/microcode/amd.c
-> +++ b/arch/x86/kernel/cpu/microcode/amd.c
-> @@ -282,7 +282,7 @@ __verify_patch_section(const u8 *buf, size_t buf_size, u32 *sh_psize)
->   * exceed the per-family maximum). @sh_psize is the size read from the section
->   * header.
->   */
-> -static unsigned int __verify_patch_size(u32 sh_psize, size_t buf_size)
-> +static bool __verify_patch_size(u32 sh_psize, size_t buf_size)
->  {
->  	u8 family = x86_family(bsp_cpuid_1_eax);
->  	u32 max_size;
+Bart
 
-You missed a spot here for the >= 0x15 families. And I think this is more
-readable and more precise what is supposed to be checked here:
-
----
-diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index 8bd79ad63437..0211c62bc4c4 100644
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -289,7 +289,7 @@ static bool __verify_patch_size(u32 sh_psize, size_t buf_size)
- 	u32 max_size;
- 
- 	if (family >= 0x15)
--		return min_t(u32, sh_psize, buf_size);
-+		return sh_psize == min_t(u32, sh_psize, buf_size);
- 
- #define F1XH_MPB_MAX_SIZE 2048
- #define F14H_MPB_MAX_SIZE 1824
-@@ -306,7 +306,7 @@ static bool __verify_patch_size(u32 sh_psize, size_t buf_size)
- 		return 0;
- 	}
- 
--	return sh_psize <= min_t(u32, buf_size, max_size);
-+	return sh_psize == min_t(u32, buf_size, max_size);
- }
- 
- /*
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+>
+> If you want consistency, drop these categories for good, just have plain =
+list
+> of the all GPIO drivers. No room for any speculations :-)
+>
+> > > > ) but please expand on it in the commit message.
+> > >
+> > > Okay, I will do in v2.
+> > >
+> > > Thank you for the review!
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
