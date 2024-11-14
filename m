@@ -1,105 +1,129 @@
-Return-Path: <linux-kernel+bounces-409279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D46C9C89EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:27:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E2E9C89AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 13:18:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 514F8285BC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:27:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76CE9B2547B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A882D1FBC93;
-	Thu, 14 Nov 2024 12:23:21 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890DB1F8929;
+	Thu, 14 Nov 2024 12:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BDSbBvrb"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A82C1FA244;
-	Thu, 14 Nov 2024 12:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 523B518C92C;
+	Thu, 14 Nov 2024 12:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731587001; cv=none; b=uP5pptPDeuPbOl+1h2lx5RNO74P0/4VvhS2sDNLDkjbM/xrh3nWVUMGL4Vi/LfB9vr0+AG8Ppt5ZZExmNyUZkK9e27xGMonNWHHY1u/b6TCfWQ7GALb6U/WjhKG5M55yrR9kmi1SWu7AFGciQhldgkXg3j1gC+UVZLxN0ISXw50=
+	t=1731586672; cv=none; b=ExlryZJ9I8QwUUP1xHKj474rmHsfXsoHB08fpcOo5qXTlEvE9EYKf1gcTljFnCTEthbhEtJ0J/nzMqVkTVfGxW+PjL/guVxGry0GKHOz8Nfr1iV+XMTPo/AIUtw2mOjnvJnIXwZJSEt94QBN8C+t9MeeCISxmmoHpOQRTO2Y9EI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731587001; c=relaxed/simple;
-	bh=6r7d6HjGdwRhzrtRt8DbR9XjmgWrYavIqMeh0H1O/6c=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dqG5yTxAR0o/P08Vv439JAgnYUwOyh9/YRXa1vPejlYUFCqCOlazIpfMFBx3CrPFWG7H8zb/CEd6skueZ0r3OQLhVHe/Zlq2BgG9Sd9aw5Uhx3sINkhmS/3mU/hDBIZ1KwpR4djaD4kfp1qP9ByoPCzpMTiIDfwAYTC/j7GmsxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Xpzlk2S9jzpb0d;
-	Thu, 14 Nov 2024 20:21:22 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id D48F618009B;
-	Thu, 14 Nov 2024 20:23:14 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 14 Nov 2024 20:23:14 +0800
-From: Yunsheng Lin <linyunsheng@huawei.com>
-To: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Yunsheng Lin
-	<linyunsheng@huawei.com>, Alexander Duyck <alexander.duyck@gmail.com>, Andrew
- Morton <akpm@linux-foundation.org>, Linux-MM <linux-mm@kvack.org>
-Subject: [PATCH net-next v1 10/10] mm: page_frag: add an entry in MAINTAINERS for page_frag
-Date: Thu, 14 Nov 2024 20:16:05 +0800
-Message-ID: <20241114121606.3434517-11-linyunsheng@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20241114121606.3434517-1-linyunsheng@huawei.com>
-References: <20241114121606.3434517-1-linyunsheng@huawei.com>
+	s=arc-20240116; t=1731586672; c=relaxed/simple;
+	bh=Qrz1XjOTeyRPFLyrkAQrTeiKf8T3tzBXiKIJH4F213I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VpJt2GVvgC8r3u9O8aL9+4+SWw8Xyc6sPipsFOISh8nDGUdCI+TOwrttaWLJ6SCccXGk6bGOGMwr6Q9oo7M6E9//xOuQFsKNxHbNBQ2v9iGdkpF9KIv+xFBMBqCoUoHQ6fhz2/aqInopKS6AToxNlNS38tVYJVtBh0k4BzOCrg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BDSbBvrb; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=0sj9eZp+dyyI8o7irWjZwbPZGsKmkQGU2wy0PFWXrZU=; b=BDSbBvrb1DcrhCkszATttEyIWe
+	n2l3lQdzaaGLcuE0DDoWDUItMG8fsdNfSQyzwHHuVCfgydDIilMekOwn42N+SZ4g0y1MTKfUgPXZ0
+	BqgjNEYqclEU/fsJxJBWiNRiNU9KSd2qs88RhtCgnxEmQV/vraDf7lgg7/KYdAFPlOoLuqYNm7fg/
+	t4XEwz2OkACM98dFOCQ8dtYM72Z5MtKi0AODgsRmfcrblepPM6nEVVf5ff/K5LJ4kHZihdA3xNLkH
+	zOOfF4JnRjLjUL5TBx+5zcjRv3EdN14gTC/TdebsyJU0SV0o1oApn9galDjxOWuhu8pqPgnWoWxJl
+	2iVFjmcw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tBYnA-0000000019g-0NOH;
+	Thu, 14 Nov 2024 12:17:44 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 712F1300472; Thu, 14 Nov 2024 13:17:43 +0100 (CET)
+Date: Thu, 14 Nov 2024 13:17:43 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	len.brown@intel.com, artem.bityutskiy@linux.intel.com,
+	dave.hansen@linux.intel.com
+Subject: Re: [PATCH v3 2/3] x86/smp native_play_dead: Prefer
+ cpuidle_play_dead() over mwait_play_dead()
+Message-ID: <20241114121743.GR6497@noisy.programming.kicks-ass.net>
+References: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
+ <20241108122909.763663-3-patryk.wlazlyn@linux.intel.com>
+ <20241112114743.GQ22801@noisy.programming.kicks-ass.net>
+ <CAJZ5v0hJ8NoFgjtnYce99+qjCZc3_ihBojyK1gRrcyU5Fp6inw@mail.gmail.com>
+ <20241112145618.GR22801@noisy.programming.kicks-ass.net>
+ <ZzSQcq5JxGgKVh5Z@BLRRASHENOY1.amd.com>
+ <20241113162222.GA24625@noisy.programming.kicks-ass.net>
+ <9152f296-3f81-438d-8dc8-3c0bc60ea4b6@intel.com>
+ <CAJZ5v0jeJsGyvb-LU7=sy37Cgj_SUCEGirAF58q5h_5ymx3juA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+In-Reply-To: <CAJZ5v0jeJsGyvb-LU7=sy37Cgj_SUCEGirAF58q5h_5ymx3juA@mail.gmail.com>
 
-After this patchset, page_frag is a small subsystem/library
-on its own, so add an entry in MAINTAINERS to indicate the
-new subsystem/library's maintainer, maillist, status and file
-lists of page_frag.
+On Thu, Nov 14, 2024 at 12:58:49PM +0100, Rafael J. Wysocki wrote:
+> On Wed, Nov 13, 2024 at 5:27 PM Wysocki, Rafael J
+> <rafael.j.wysocki@intel.com> wrote:
+> >
+> >
+> > On 11/13/2024 5:22 PM, Peter Zijlstra wrote:
+> > > On Wed, Nov 13, 2024 at 05:11:38PM +0530, Gautham R. Shenoy wrote:
+> > >
+> > >> How about something like this (completely untested)
+> > >>
+> > >> ---------------------x8----------------------------------------------------
+> > >>
+> > >> diff --git a/arch/x86/kernel/acpi/cstate.c b/arch/x86/kernel/acpi/cstate.c
+> > >> index f3ffd0a3a012..bd611771fa6c 100644
+> > >> --- a/arch/x86/kernel/acpi/cstate.c
+> > >> +++ b/arch/x86/kernel/acpi/cstate.c
+> > >> @@ -215,6 +215,24 @@ void __cpuidle acpi_processor_ffh_cstate_enter(struct acpi_processor_cx *cx)
+> > >>   }
+> > >>   EXPORT_SYMBOL_GPL(acpi_processor_ffh_cstate_enter);
+> > >>
+> > >> +static int acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx)
+> > >> +{
+> > >> +       unsigned int cpu = smp_processor_id();
+> > >> +       struct cstate_entry *percpu_entry;
+> > >> +
+> > >> +       /*
+> > >> +        * This is ugly. But AMD processors don't prefer MWAIT based
+> > >> +        * C-states when processors are offlined.
+> > >> +        */
+> > >> +       if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
+> > >> +           boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
+> > >> +               return -ENODEV;
+> > > Are there AMD systems with FFh idle states at all?
+> >
+> > I don't know.
+> >
+> >
+> > > Also, I don't think this works right, the loop in cpuidle_play_dead()
+> > > will terminate on this, and not try a shallower state which might have
+> > > IO/HLT on.
+> >
+> > I think you are right.
+> 
+> AFAICS, cpuidle_play_dead() needs to be reworked to not bail out after
+> receiving an error from :play_dead() for one state, but only after all
+> of them have failed.
 
-Alexander is the original author of page_frag, add him in the
-MAINTAINERS too.
-
-CC: Alexander Duyck <alexander.duyck@gmail.com>
-CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Linux-MM <linux-mm@kvack.org>
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
----
- MAINTAINERS | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 675bd38630b7..6b6b120a4f90 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17473,6 +17473,18 @@ F:	mm/page-writeback.c
- F:	mm/readahead.c
- F:	mm/truncate.c
- 
-+PAGE FRAG
-+M:	Alexander Duyck <alexander.duyck@gmail.com>
-+M:	Yunsheng Lin <linyunsheng@huawei.com>
-+L:	linux-mm@kvack.org
-+L:	netdev@vger.kernel.org
-+S:	Supported
-+F:	Documentation/mm/page_frags.rst
-+F:	include/linux/page_frag_cache.h
-+F:	mm/page_frag_cache.c
-+F:	tools/testing/selftests/mm/page_frag/
-+F:	tools/testing/selftests/mm/test_page_frag.sh
-+
- PAGE POOL
- M:	Jesper Dangaard Brouer <hawk@kernel.org>
- M:	Ilias Apalodimas <ilias.apalodimas@linaro.org>
--- 
-2.33.0
-
+That and ideally we remove that whole ACPI_STATE_C[123] filter on
+setting enter_dead. I don't see how that makes sense.
 
