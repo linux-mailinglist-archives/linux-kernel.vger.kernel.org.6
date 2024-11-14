@@ -1,111 +1,91 @@
-Return-Path: <linux-kernel+bounces-409202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D0209C88B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:19:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39D669C88D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 12:25:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE799282393
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:19:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDABD282B39
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:25:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073311F8EF8;
-	Thu, 14 Nov 2024 11:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 896521F8EF8;
+	Thu, 14 Nov 2024 11:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bSAzZFSy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="LX3f3b2o"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6407F18BBBD
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C7418BBBD;
+	Thu, 14 Nov 2024 11:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731583178; cv=none; b=KC/3PdsCjBpk9r614JtUFJAcd6Hx7jME8cId9ogYR+/wt4E8kvwdnHm4YRTsHtB6kmbEP9hEsaMk+OmQhQbSwiibkftNG+M6X9NaDj8kEHvwI4maTOyKoLkx2XuONpcN6vJpAQH8K4HRxAEoTK+c4NKNn+XSeptnBlLcoFNNkbE=
+	t=1731583512; cv=none; b=b4TX8OwqZuT8SAsCPx2hJC00tu7uErNWwENOo8gTCiA4g1+6fw3JWVqB1XAK6VDDmJEvoExIgk6yPhKj2cmdBiUxaPJnAwsB1IAEiWkO0sKLM4wiwhFCMV7NKoR5il1Ca22X74c9ZFI24g7Q2R2Kny4lJriSTpnAokf+PK6AS3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731583178; c=relaxed/simple;
-	bh=5LXLqdSsXTfm0lyWapZQvhYmEzIbgszuUVAiWJ1EX0c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O71UhQgU56ONYWM3DqyHXdKfTBErmF0dr8hdlHJJbWhHsomy0f10nu7CK2WWkZPRUcRIkqXyVX3zfEgO3i4pQG3lRIRhWuiZ3K9DgXmg5Z02G1kdsb/Wk5Fr/gQ2GNl0iazbc3B7edCGXQNkx0KwuVvf3aCqdtfMcr2XAE8VC64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bSAzZFSy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04297C4CED6
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 11:19:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731583178;
-	bh=5LXLqdSsXTfm0lyWapZQvhYmEzIbgszuUVAiWJ1EX0c=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bSAzZFSy8SLGBTGsvA5nPbA35l0AEE0i826hwPw51a4tMDmWGU8zs6M5QZ+OuZc6d
-	 H895jnylDkPeJiMMyESAgB0MpGysauYqQcc3BGcoS7HrWtVfvoT5zX0R7Ocjmbigm3
-	 IDXohjN267YCx+NTqiIcJPzDE0J3/zIavMQOlMZHC/kZbIgIQGanzULlBqLg1uoQdj
-	 1WcKPee6+05YxHdd5qjKCfrafG1EislSoMV03H8mRGBSZtS3+sfwsUpCK4s3WRQPb/
-	 YhFpdHPRX162/RHBAnSHllMtXCFTo607mkSj8JzzVozdxlXMfp/lK2BqCagS50BNK/
-	 9JxLOy2PSWz9w==
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cb6ca2a776so817483a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 03:19:37 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWRvC46yfpjNHTzd0Pg1YiHmtylEhBQSus+TBbfvEkPP3XJjHIbxlZq8i8ZYX9Z4FiQugqkuah2oNgLuTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2b6JbSKcuPnrxIekM+Ss6kmP0xlzbbTo9Ae1TO8r85DssBETA
-	d9n/vy5P39Y3qG00chbqiBUvil9rKGpClH13WIV/bfitjNotJj8btWlLjTcMN5z/9AH5Fol67Ry
-	y2eiqyG3oRxSNfvQMFTtUy3/CKFg=
-X-Google-Smtp-Source: AGHT+IEzbaxCl9yHaUy9e06m8amyonezn0fW6mbWCgCe35uRNmhkAtlT2MkM7mrhM4TmRqFOCAy8N23HKIDEJHmCVsg=
-X-Received: by 2002:a17:907:60d4:b0:a9a:1b32:5aa8 with SMTP id
- a640c23a62f3a-aa1b1024db6mr1068064666b.4.1731583176590; Thu, 14 Nov 2024
- 03:19:36 -0800 (PST)
+	s=arc-20240116; t=1731583512; c=relaxed/simple;
+	bh=aVIvz69luqtbRV5NCqi8GetZtaRWYDrPI881Uj4JbiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f8Sr5jsAzL/qtF3cogv2BZS5K5zvCoeGs0ymK/PK7gLto0exNbRkYhvp4MX1+zgGchjDDPRGjpmzleGmM1XrDDfZP4THuGSMqHM2mcbVH/sEmgnlElx/xJgJ9bGNaXoEEg1103XBJxvN075hCb+2R21KoEVGqLhMOTMmCxv5lzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=LX3f3b2o; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=axqXJOEvoFA8XZXHTN+P0B8l5JDKHF60G0U41LQtzq8=; b=LX3f3b2oa2RJw6pWciddcQfhFR
+	nFQl5fJSmncz+mJXUzGVfgQhfmXZRRs8ZoCGH65k8n8+iObxRykPrh7Im1kODRPx0vP8ysx1JZjw4
+	03BOV3T4tbbRpLDZDl5Gr307GJ1CZXpvf80x/rGCS7iotrixNOeSAaxBsZ5xr/pMXHp0YjhwPLCWV
+	NX8bVRQU1Aw/WckJxHlrEGmkaDhO4wQ22UNdj817qWu06W4WAZtvL9aUWGzgRuMiMxMrMjqmn1WiZ
+	OlTJnuFgVTXk168xrEAYG7RfH3IPkbaOMh7T96sdhH6f02xqNwVVvWBA2fO02/fh/wPaeAgaFnepC
+	yUeSOsiw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tBXy8-00GmQC-0H;
+	Thu, 14 Nov 2024 19:25:01 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 14 Nov 2024 19:25:00 +0800
+Date: Thu, 14 Nov 2024 19:25:00 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: syzbot <syzbot+listbb9cdfe92636134be785@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] Monthly crypto report (Nov 2024)
+Message-ID: <ZzXeDFlmeJt_npKr@gondor.apana.org.au>
+References: <6734be89.050a0220.1324f8.0049.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108091545.4182229-1-chenhuacai@loongson.cn>
- <20241108091545.4182229-4-chenhuacai@loongson.cn> <20241114103111.5W5ZY0D4@linutronix.de>
- <CAAhV-H72YSNBGutYPOVi=S7nwLb6YOiQOFqnimAp=9D0wAJc3g@mail.gmail.com> <20241114111409.LWKp5YEg@linutronix.de>
-In-Reply-To: <20241114111409.LWKp5YEg@linutronix.de>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Thu, 14 Nov 2024 19:19:26 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4ecBZsV+9SxLZ-JFiUK=b3tMqkLZe0djac0_390==MMw@mail.gmail.com>
-Message-ID: <CAAhV-H4ecBZsV+9SxLZ-JFiUK=b3tMqkLZe0djac0_390==MMw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] LoongArch: Allow to enable PREEMPT_RT
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Huacai Chen <chenhuacai@loongson.cn>, Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev, 
-	Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	linux-rt-devel@lists.linux.dev, Guo Ren <guoren@kernel.org>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6734be89.050a0220.1324f8.0049.GAE@google.com>
 
-On Thu, Nov 14, 2024 at 7:14=E2=80=AFPM Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
+On Wed, Nov 13, 2024 at 06:58:17AM -0800, syzbot wrote:
 >
-> On 2024-11-14 19:07:37 [+0800], Huacai Chen wrote:
-> > Hi, Sebastian,
-> Hi,
->
-> > > Why is ntpd/chronyd service affecting this? Is it running at prio 99?
-> > > Otherwise it should not be noticed.
-> > No, ntpd/chronyd doesn't affect latency. But they may trigger RTC
-> > synchronization every 11 minutes, and RTC synchronization affects
-> > latency. We can keep ntpd/chronyd running but disable RTC
-> > synchronization by configuration, this is the least aggressive method.
->
-> What is "RTC synchronization" in this context?
-Means the sync_hw_clock() function in kernel/time/ntp.c, it can be
-enabled/disabled by chronyd configuration:
+> Some of the still happening issues:
+> 
+> Ref Crashes Repro Title
+> <1> 228     Yes   BUG: unable to handle kernel paging request in crypto_skcipher_encrypt
+>                   https://syzkaller.appspot.com/bug?extid=026f1857b12f5eb3f9e9
+> <2> 15      Yes   KMSAN: uninit-value in sw842_compress
+>                   https://syzkaller.appspot.com/bug?extid=17cae3c0a5b0acdc327d
+> <3> 6       Yes   BUG: unable to handle kernel paging request in crypto_shash_update
+>                   https://syzkaller.appspot.com/bug?extid=e46f29a4b409be681ad9
 
-/etc/chrony.conf
-# Enable kernel synchronization of the real-time clock (RTC).
-# rtcsync
+None of these appear to be crypto bugs.
 
-Huacai
+#syz set <1> subsystems: bcachefs
+#syz set <2> subsystems: mm
+#syz set <3> subsystems: bcachefs
 
->
-> > > Is lockdep complaining in any workloads?
-> > > Is CONFIG_DEBUG_ATOMIC_SLEEP leading to any complains?
-> > This needs more tests because I haven't enabled them.
->
-> That would be good. It would show if there is anything that has not yet
-> been noticed.
->
-> > Huacai
->
-> Sebastian
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
