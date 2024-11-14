@@ -1,179 +1,139 @@
-Return-Path: <linux-kernel+bounces-408972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D0CA9C85E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:17:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB7369C85E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:18:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F07E5282988
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:17:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 978711F2141B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577581DED72;
-	Thu, 14 Nov 2024 09:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F431DED72;
+	Thu, 14 Nov 2024 09:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iuD/pcPO"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ufg2BNRA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39ADE17DFEC;
-	Thu, 14 Nov 2024 09:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C16517DFEC
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731575853; cv=none; b=kUEN4ZZlqWRXWQn7X1BtwcfjlBXxRkSS7Z/cQYxStQdiQR8rJOaewiUHPCLlwB4M/+u/bClXIKnGR5K/mbqBCnOy8x8ludE7tCN3zwFvS6K0XHcKEHAK60+ZcB2+/snc/svbSF0TymCcJQnDm0sD9Crtcj+yReNYrohKdlwCDy4=
+	t=1731575868; cv=none; b=PqP3DSKKxgYoLTerf0O4zEg63kCM4DaLNBrFgu08rHeCP7VFf5i7pUYCXGHP8SkxNi+YkYLdvfG7Rl0T9cNiA/uRcM9gGHRHXLIDfdXn6HsBXGJAOyc5ChHp2iepOMEoWzkF76JsyfzCukWMQEamxUyThUmALVxdp3MZgWmBZQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731575853; c=relaxed/simple;
-	bh=QKf6mfjMuPzIotqlNRXsRdLEIZjvJ7dhWNT5/jT13RE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h5z9Qjfjm08JLOipJ8ObgLnHYU3SFBN9XehVsza5agGMCvQHenIW7nh6F4XSGSxodmAwIbdXQgf4hwtiVddymS8rJsKoen3ACwuOp32A/r6jY0AE7c5/lz2qXQURKVi3a7Lt4jRCcrNyPS5b4LwZVStdawvi/fkOBJyPQSaXQPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iuD/pcPO; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6cbe3e99680so2059036d6.3;
-        Thu, 14 Nov 2024 01:17:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731575851; x=1732180651; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xLmlyoSVqmQfwHvu1g2di1RxtIWYJxIW+9O9DW6h9oY=;
-        b=iuD/pcPOeCUCkgW0yTr0Tka0kQtbsyrpzxPfQK+dXdLCmLGk8FV+vRAhU+odD8B6D4
-         3lre7HGN2RgwzL1j6pGFuJjm3WSt58bHLu0ZBI84pnvl/qfj9J1JBlNL1MTRIvq22tGk
-         jB8FxFC/t1JVc/p6nIOmIcc1Hwwl29AsNVrMpkzizWcd327T2xKdTpsjzozil/eIidop
-         gqO0gtM5ZyqW5O2FbKwokzXQ4PazWTLNuZ7Uu5Xxw3JV+/swvROQC0sr4BHqDuLMcEDk
-         XTjtD6zDHJgf7h/hw5tFOCwBi6OdepLe6fWUe4O6LlLnXeoy3s8oR1a0uPCHqZ2ZGKen
-         I4qQ==
+	s=arc-20240116; t=1731575868; c=relaxed/simple;
+	bh=2l1upWdLGnHpQBTsx9xJ7gWW3a/Of3mHuYaCwbe2cPo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f7CjFsQsMs3CjIf89PYUvgf94Z0aA4W6aKTdNSgdEEUhl0/Hc2Bn4kaG6y3bT1x0/ZJ/0e23dRsgFgJgDIb/OICXfpeAT+9Rzr0IdA0PvjeIxcmHtZ15NJJC1HH+Gmsb6dlEmrQ2YlPCCkKrRQMxFndlljQeElAeyc+O1NMq6I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ufg2BNRA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731575865;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5YTMof52wjObhgZR9ofRlLiT7bLjMKTtBkm72KHuyEs=;
+	b=Ufg2BNRAw0+1d/OBPsgbFjYzL9VGJglxNia+HX1o6As2tsRgSq3sE9G9jJWJlPtRHA9O5K
+	ogmk+rLBUUYSP+MIbwVm0yu7KH1wgrmWWfvyKxCagEmC3xGVdROsm+ErZI241opqPpgMJU
+	CUi6W53G41RVIPp8xKMiC6cLu9eyrcE=
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
+ [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-5-pq6hxKAjMbe8Pdu6WZwBOw-1; Thu, 14 Nov 2024 04:17:44 -0500
+X-MC-Unique: pq6hxKAjMbe8Pdu6WZwBOw-1
+X-Mimecast-MFC-AGG-ID: pq6hxKAjMbe8Pdu6WZwBOw
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-6ea90b6ee2fso8958417b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:17:44 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731575851; x=1732180651;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xLmlyoSVqmQfwHvu1g2di1RxtIWYJxIW+9O9DW6h9oY=;
-        b=wZPJgNQiIStq3n38/i+5o2jYe33dH9CGznZlCsvZ0BGpNf08QeXWFUka+R2NkiaFsb
-         ZYlWOO5FAwuMvA8atBFxDaNJTS+o2XYYcYaxOsD74cyGIVdjzQKYKtYzWjBSwUOveYLB
-         +s+l93peKYBOTgdo2HOEr0mVRdB/tfwD5FFfTsOx7GtqaN/XuQQfD3zr52Hvg57oKP3G
-         7dWRWAdb48MvcJtiBMwDiAdrHURuJ3//97Sg0psV7sAWpZk+Gv/C/qT6VOYnFIztnDLl
-         6iJlCs+/v8DUfx3LOGd7KlR2Uus6Q+8I1m3gVBthA2ZeulqiTawNTcGuFWZFBOxNefaM
-         TLOA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBhno/OxQDzf4gUDvfLYB68GUCmFjQ/NppheB3AbwX8NEd9Tf2a0anyRsZHaljM53DrZz3akTMac6Yhp/g@vger.kernel.org, AJvYcCXI/UhZntqlxe/YHjj7c66jLKuXtliMn6OWZqfEldP562zZt83k5l/3VjFyyTBxWtEvJzSfBGPa8DJrH0Su@vger.kernel.org, AJvYcCXtm2R4lPbkIq6dN4kW20NfCy7lSnFzDqvTzKdND6Lgj35p/0/l4CkUqgyBAL/7p4NX+Wo7TVp+BdbMBrp/NQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyik6eRxkGXzhyyn8zzASm9fm7/y4UeENzOWm/n6cb+/+tTfHp2
-	kOOBqRoNKP9s8drP7HpMNDmckNyZ25Xr9//C5BNdDaasYfstwvD5Ob9g0Ta+Uqu3NmsaYu6JUrU
-	3AqMIKzP5+yR1tk0KCJgDDyrNp+0=
-X-Google-Smtp-Source: AGHT+IFyty86XtBTOhDABYTfg53ztFDdwKsXvk0PjnfyehyVO/9LIAsDM67BtjEotZlCXaAyCKvFTZW8bQGJZaPBy0o=
-X-Received: by 2002:a05:6214:4b07:b0:6cc:c2:81d5 with SMTP id
- 6a1803df08f44-6d39e18004cmr309143446d6.15.1731575851157; Thu, 14 Nov 2024
- 01:17:31 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731575863; x=1732180663;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5YTMof52wjObhgZR9ofRlLiT7bLjMKTtBkm72KHuyEs=;
+        b=P4gX3a8xby5Krt9zizvLMa7dMvwM8TP9hvyXOHtRKQf1k1mWzUUx2YEszZ3c0P/UPm
+         vKRfAoX4qbwK7c0Jw++5BEbmzf+/wGET5SL5ZFu1+oSDL28ID3LCHpcVNd06r6vfZx8c
+         j4ynMf36pVODjCUz0YZejE/Hr478kkSLpjZ5uqhMeITvnsNX4S87/RKlCdVwSoddwXbh
+         o7fn49xmclzddHtYHBiTmk9f0FXYwTtD1VHHqIFgjhh5mbSLkEl0LKIM38YgbnZOUkN/
+         rtOgxWKI/ox7hQ7l3s1SeMJDlChaebPFd22OKxtDkjJ7zzpNnW8Vz5c2qCBvUIObeEgH
+         PYew==
+X-Forwarded-Encrypted: i=1; AJvYcCUM+DQq3MWVP1kl9yg+I9quc6L/N5lEP7PIS4dlOUwlUccJVQEebgDw+tXVoWcEofwYfE0WZtmZ1fB2uDs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUHo8IFioOQgoJGuof8Qta/jIj9EqeDG/YP7GISY7mi4VmXQH/
+	8Sutr5QovETIj75e18S4SkR7msZHgyiv6B0y+bSKmlWXdYXqr8u3ZH428M7bshO41qMJUl5+Fub
+	yXlZeb3YXf7d7F+WLnQaa5SiV+4QCDcUiGigr0f5P5Kcpx32VXCUeW0B/b0LOpQ==
+X-Received: by 2002:a05:690c:3504:b0:6ee:40f0:dda8 with SMTP id 00721157ae682-6ee40f0e2cfmr16971187b3.30.1731575863545;
+        Thu, 14 Nov 2024 01:17:43 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFsiQSf8ZdEH6QnDVrnxq7SyDxajgrhb5FvkPicA2hLnRMRhzQMJ0Rdc+FgVp0To67bMvJMyw==
+X-Received: by 2002:a05:690c:3504:b0:6ee:40f0:dda8 with SMTP id 00721157ae682-6ee40f0e2cfmr16971077b3.30.1731575863247;
+        Thu, 14 Nov 2024 01:17:43 -0800 (PST)
+Received: from [192.168.88.24] (146-241-44-112.dyn.eolo.it. [146.241.44.112])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4635a9eefd0sm3301361cf.27.2024.11.14.01.17.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Nov 2024 01:17:35 -0800 (PST)
+Message-ID: <9e64f1ca-844f-47ec-8555-4ac1e409ec16@redhat.com>
+Date: Thu, 14 Nov 2024 10:17:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107005720.901335-1-vinicius.gomes@intel.com>
- <20241107005720.901335-5-vinicius.gomes@intel.com> <CAOQ4uxgHwmAa4K3ca7i1G2gFQ1WBge855R19hgEk7BNy+EBqfg@mail.gmail.com>
- <87ldxnrkxw.fsf@intel.com> <CAOQ4uxguV9SkFihaCcyk1tADNJs4gb8wrA7J3SVYaNnzGhLusw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxguV9SkFihaCcyk1tADNJs4gb8wrA7J3SVYaNnzGhLusw@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 14 Nov 2024 10:17:19 +0100
-Message-ID: <CAOQ4uxgk-EFsc_35vrhkZCmyEYfbOPm=RRdMcC_dZAyjUfnSAg@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] ovl: Optimize override/revert creds
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Cc: brauner@kernel.org, miklos@szeredi.hu, hu1.chen@intel.com, 
-	malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com, 
-	linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net/core/net-procfs: use seq_put_decimal_ull_width() for
+ decimal values in /proc/net/dev
+To: David Wang <00107082@163.com>, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241110045221.4959-1-00107082@163.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241110045221.4959-1-00107082@163.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 14, 2024 at 9:56=E2=80=AFAM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> On Wed, Nov 13, 2024 at 8:30=E2=80=AFPM Vinicius Costa Gomes
-> <vinicius.gomes@intel.com> wrote:
-> >
-> > Amir Goldstein <amir73il@gmail.com> writes:
-> >
-> > > On Thu, Nov 7, 2024 at 1:57=E2=80=AFAM Vinicius Costa Gomes
-> > > <vinicius.gomes@intel.com> wrote:
-> >
-> > [...]
-> >
-> > >
-> > > Vinicius,
-> > >
-> > > While testing fanotify with LTP tests (some are using overlayfs),
-> > > kmemleak consistently reports the problems below.
-> > >
-> > > Can you see the bug, because I don't see it.
-> > > Maybe it is a false positive...
-> >
-> > Hm, if the leak wasn't there before and we didn't touch anything relate=
-d to
-> > prepare_creds(), I think that points to the leak being real.
-> >
-> > But I see your point, still not seeing it.
-> >
-> > This code should be equivalent to the code we have now (just boot
-> > tested):
-> >
-> > ----
-> > diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> > index 136a2c7fb9e5..7ebc2fd3097a 100644
-> > --- a/fs/overlayfs/dir.c
-> > +++ b/fs/overlayfs/dir.c
-> > @@ -576,8 +576,7 @@ static int ovl_setup_cred_for_create(struct dentry =
-*dentry, struct inode *inode,
-> >          * We must be called with creator creds already, otherwise we r=
-isk
-> >          * leaking creds.
-> >          */
-> > -       WARN_ON_ONCE(override_creds(override_cred) !=3D ovl_creds(dentr=
-y->d_sb));
-> > -       put_cred(override_cred);
-> > +       WARN_ON_ONCE(override_creds_light(override_cred) !=3D ovl_creds=
-(dentry->d_sb));
-> >
-> >         return 0;
-> >  }
-> > ----
-> >
-> > Does it change anything? (I wouldn't think so, just to try something)
->
-> No, but I think this does:
->
-> --- a/fs/overlayfs/dir.c
-> +++ b/fs/overlayfs/dir.c
-> @@ -576,7 +576,8 @@ static int ovl_setup_cred_for_create(struct dentry
-> *dentry, struct inode *inode,
->          * We must be called with creator creds already, otherwise we ris=
-k
->          * leaking creds.
->          */
-> -       WARN_ON_ONCE(override_creds(override_cred) !=3D ovl_creds(dentry-=
->d_sb));
-> +       old_cred =3D override_creds(override_cred);
-> +       WARN_ON_ONCE(old_cred !=3D ovl_creds(dentry->d_sb));
->         put_cred(override_cred);
->
->         return 0;
->
-> Compiler optimized out override_creds(override_cred)? :-/
 
-Nope, this voodoo did not help either.
 
->
-> However, this is not enough.
->
-> Dropping the ref of the new creds is going to drop the refcount to zero,
-> so that is incorrect, we need to return the reference to the new creds
-> explicitly to the callers. I will send a patch.
+On 11/10/24 05:52, David Wang wrote:
+> seq_printf() is costy, when reading /proc/net/dev, profiling indicates
+> about 13% samples of seq_printf():
+> 	dev_seq_show(98.350% 428046/435229)
+> 	    dev_seq_printf_stats(99.777% 427092/428046)
+> 		dev_get_stats(86.121% 367814/427092)
+> 		    rtl8169_get_stats64(98.519% 362365/367814)
+> 		    dev_fetch_sw_netstats(0.554% 2038/367814)
+> 		    loopback_get_stats64(0.250% 919/367814)
+> 		    dev_get_tstats64(0.077% 284/367814)
+> 		    netdev_stats_to_stats64(0.051% 189/367814)
+> 		    _find_next_bit(0.029% 106/367814)
+> 		seq_printf(13.719% 58594/427092)
+> And on a system with one wireless interface, timing for 1 million rounds of
+> stress reading /proc/net/dev:
+> 	real	0m51.828s
+> 	user	0m0.225s
+> 	sys	0m51.671s
+> On average, reading /proc/net/dev takes ~0.051ms
+> 
+> With this patch, extra costs parsing format string by seq_printf() can be
+> optimized out, and the timing for 1 million rounds of read is:
+> 	real	0m49.127s
+> 	user	0m0.295s
+> 	sys	0m48.552s
+> On average, ~0.048ms reading /proc/net/dev, a ~6% improvement.
+> 
+> Even though dev_get_stats() takes up the majority of the reading process,
+> the improvement is still significant;
+> And the improvement may vary with the physical interface on the system.
+> 
+> Signed-off-by: David Wang <00107082@163.com>
 
-And neither did this.
-The suspect memleak is still reported.
+If the user-space is concerned with performances, it must use netlink.
+Optimizing a legacy interface gives IMHO a very wrong message.
 
-Any other ideas?
+I'm sorry, I think we should not accept this change.
 
-Thanks,
-Amir.
+/P
+
 
