@@ -1,142 +1,105 @@
-Return-Path: <linux-kernel+bounces-409048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 921029C86CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:03:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 816599C8774
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:25:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 491971F26CE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:03:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AF7FB2E069
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6EDC1F77A9;
-	Thu, 14 Nov 2024 10:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90741F9ABF;
+	Thu, 14 Nov 2024 10:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mXI67Sho";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sqcCOslb"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="P8NbYm2E"
+Received: from prime.voidband.net (prime.voidband.net [199.247.17.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70B11F81B0
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC081F8194
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.247.17.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731578492; cv=none; b=uF4d3Vt+Fah7jjjsmhbyoxMSNC8WL9wRuFm/qgr5dL2RUsucmqjubNHMvJP8iNgJzX5GKPsuC7z91v/ac0Jh9dKIHdHrO4XFRDwUmZMQHo/87wyL4EGky+eTCqKB4Z5AyeLxqQ10TJZC7A/1eVI3DMJyw9FaLgxX6HUXl402hRc=
+	t=1731579021; cv=none; b=MOGhJPXFU6w4sgR+Sx5Mub2aehtC/PSsdk7WRCODGZZq/b48iYmuYwasPkQFnsbk7Ezyu3y/ufQOYqoeLLtFLlP3hkRcQfiHjJ0dx2jx9H7SKgJn+WSgn+XYOpewr6bb5JB8qE0HSC01Nk4BIa3nXPTwmT/4QSJSAwBNWBCXNbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731578492; c=relaxed/simple;
-	bh=dhHJl6av9cDkkRH5ZC+F2c2WiggTpCp+fQWsNBDcti0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aRLM3HwJeUqrm93C+UeAD3HnG9WlJehsGr05Z8B0mlGolHPhq7Kwt+NVzk06QUiSkaNZMuFRsYoXgDHnOu0KKwo8MuxAAsCphmk1FP+ruTFHDG/PfBkC9aBbDWD8jiBcKYz7ni+PF2c0twkcTYF/AKJrrlzlhiqZQKCg9zBUlvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mXI67Sho; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sqcCOslb; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 14 Nov 2024 11:01:27 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731578488;
+	s=arc-20240116; t=1731579021; c=relaxed/simple;
+	bh=lDluijp/Trjr23oTS6A0JZzjxVYqimWqvpNYQqVtjDA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=USmk/Gx6ppcNkHppwC+tO72bYdvpgZfhriQO+MtFmtzTxozPsNIYLny31C8SU18liQCqAa9S0GWCEudVh36yvVRgNrb3OP/CtzNjBsPrfTfwrUJ90qjkhRZd8sEjewdRXr87aAy6lOcjFLHq3hoQaSA2Xqscfv7d1G9OlG6oxyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name; spf=pass smtp.mailfrom=natalenko.name; dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b=P8NbYm2E; arc=none smtp.client-ip=199.247.17.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=natalenko.name
+Received: from spock.kanapka.home.arpa (unknown [212.20.115.26])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by prime.voidband.net (Postfix) with ESMTPSA id 51C7B635B045;
+	Thu, 14 Nov 2024 11:01:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+	s=dkim-20170712; t=1731578501;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L46kT3JQkvuohkZS6z3cLdv4x6ovgH4uNYpQUsVBLl4=;
-	b=mXI67Sho52iSfUJeK/vzfUORX8Pfpnm/eLuxL4nk7tS5HGjYpS/F3gklccbuEXSSKJU1wd
-	wk1K5oSnPqKF7Q207XO63mxOWhaNrf4NmrTaUYytpsMo5Ib4Cv5mJasDrJvbVKfjy7FSdH
-	lHMw4C9UjfniRr77o08He36Upl8t4hv2IgTjvb/dw89LrY9Npc65dE2HTAMfGCUdkcuE1v
-	fHulLlqIOmK5JjrQ3x3zIjQFOs4246Gvi7YWs/BiWD84u3E9T6COucT/JtEOGdK4KJQ8xy
-	vrKYukYf0zbbnlO7vG46k20MKsoCJEp+NzhJj0Goks3KQbUFmQrLuJ17bFfWoQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731578488;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L46kT3JQkvuohkZS6z3cLdv4x6ovgH4uNYpQUsVBLl4=;
-	b=sqcCOslbrtwOWRZEU3dkdaZzYLcPPiUGuR1jUDmxREDBb7iTjYaIPBCCQuzsEsVFxf7msG
-	ZPw+5Gf3P19PgyCg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de,
-	paulmck@kernel.org, mingo@kernel.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, frederic@kernel.org, efault@gmx.de,
-	sshegde@linux.ibm.com, boris.ostrovsky@oracle.com
-Subject: Re: [PATCH v2 0/6] RCU changes for PREEMPT_LAZY
-Message-ID: <20241114100127.9xLSy4yq@linutronix.de>
-References: <20241106201758.428310-1-ankur.a.arora@oracle.com>
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=b6kOasXKOb7vqjNpZjqu3R9kaf6Rf+hRFr9lWZXsLb4=;
+	b=P8NbYm2E/CHhWSOLEm0J6zGlrzJhFpPwpzB1XyFmpk9rnGi1ZAl1BLwov23ZZbn1PTECts
+	ChUkCbV+Cw4YbkXHGaFxlSCHd3HK4eEzc0LlPznjsHYMlCu8bKnLkbsOO7CJPxbGni2SCr
+	5CVSXHvvNfXIIhcYWL8fPB35EVTHlRY=
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Wladislav Wiebe <wladislav.kw@gmail.com>
+Subject: [PATCH] tools/mm: fix show_page() build error
+Date: Thu, 14 Nov 2024 11:01:40 +0100
+Message-ID: <20241114100140.406416-1-oleksandr@natalenko.name>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241106201758.428310-1-ankur.a.arora@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 2024-11-06 12:17:52 [-0800], Ankur Arora wrote:
-> This series adds RCU and some leftover scheduler bits for lazy
-> preemption.
+At one point I needed mm tools for debugging but couldn't compile them due to the
+following error:
 
-This is not critical for the current implementation. The way I
-understand is that you make a change in 3/6 and then all other patches
-in this series are required to deal with this.
+gcc -Wall -Wextra -I../lib/ -pthread -o page-types page-types.c ../lib/api/libapi.a -pthread
+page-types.c: In function ‘show_page’:
+page-types.c:423:49: error: expected ‘;’ before ‘if’
+  423 |                 printf("@%" PRIu64 "\t", cgroup)
+      |                                                 ^
+      |                                                 ;
+  424 |         if (opt_list_mapcnt)
+      |         ~~
+page-types.c:416:65: warning: unused parameter ‘mapcnt’ [-Wunused-parameter]
+  416 |                       uint64_t flags, uint64_t cgroup, uint64_t mapcnt)
+      |                                                        ~~~~~~~~~^~~~~~
+make: *** [Makefile:23: page-types] Error 1
 
-For bisect reasons it would make sense to have 3/6 last in the series
-and to the "fixes" first before the code is enabled. I mean if you apply
-3/6 first then you get build failures without 1/6. But with 3/6 before
-5/6 you should get runtime errors, right?
+Trailing ; was forgotten, so add it.
 
-> The main problem addressed in the RCU related patches is that before
-> PREEMPT_LAZY, PREEMPTION=y implied PREEMPT_RCU=y. With PREEMPT_LAZY,
-> that's no longer true. 
+Fixes: ece5897e5a10 ("tools/mm: -Werror fixes in page-types/slabinfo")
+Signed-off-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+---
+ tools/mm/page-types.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-No, you want to make PREEMPTION=y + PREEMPT_RCU=n + PREEMPT_LAZY=y
-possible. This is different. Your wording makes it sound like there _is_
-an actual problem.
-
-> That's because PREEMPT_RCU makes some trade-offs to optimize for
-> latency as opposed to throughput, and configurations with limited
-> preemption might prefer the stronger forward-progress guarantees of
-> PREEMPT_RCU=n.
-> 
-> Accordingly, with standalone PREEMPT_LAZY (much like PREEMPT_NONE,
-> PREEMPT_VOLUNTARY) we want to use PREEMPT_RCU=n. And, when used in
-> conjunction with PREEMPT_DYNAMIC, we continue to use PREEMPT_RCU=y.
-> 
-> Patches 1 and 2 are cleanup patches:
->   "rcu: fix header guard for rcu_all_qs()"
->   "rcu: rename PREEMPT_AUTO to PREEMPT_LAZY"
-> 
-> Patch 3, "rcu: limit PREEMPT_RCU configurations", explicitly limits
-> PREEMPT_RCU=y to the PREEMPT_DYNAMIC or the latency oriented models.
-> 
-> Patches 4 and 5,
->   "rcu: handle quiescent states for PREEMPT_RCU=n, PREEMPT_COUNT=y"
->   "osnoise: handle quiescent states for PREEMPT_RCU=n, PREEMPTION=y"
-> 
-> handle quiescent states for the (PREEMPT_LAZY=y, PREEMPT_RCU=n)
-> configuration.
-
-I was briefly thinking about 
-
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5646,8 +5646,11 @@ void sched_tick(void)
- 	hw_pressure = arch_scale_hw_pressure(cpu_of(rq));
- 	update_hw_load_avg(rq_clock_task(rq), rq, hw_pressure);
+diff --git a/tools/mm/page-types.c b/tools/mm/page-types.c
+index 6eb17cc1a06c5..bcac7ebfb51fd 100644
+--- a/tools/mm/page-types.c
++++ b/tools/mm/page-types.c
+@@ -420,7 +420,7 @@ static void show_page(unsigned long voffset, unsigned long offset,
+ 	if (opt_file)
+ 		printf("%lx\t", voffset);
+ 	if (opt_list_cgroup)
+-		printf("@%" PRIu64 "\t", cgroup)
++		printf("@%" PRIu64 "\t", cgroup);
+ 	if (opt_list_mapcnt)
+ 		printf("%" PRIu64 "\t", mapcnt);
  
--	if (dynamic_preempt_lazy() && tif_test_bit(TIF_NEED_RESCHED_LAZY))
-+	if (dynamic_preempt_lazy() && tif_test_bit(TIF_NEED_RESCHED_LAZY)) {
- 		resched_curr(rq);
-+		if (!IS_ENABLED(CONFIG_PREEMPT_RCU))
-+			rcu_all_qs();
-+	}
- 
- 	donor->sched_class->task_tick(rq, donor, 0);
- 	if (sched_feat(LATENCY_WARN))
+-- 
+2.47.0
 
-which should make #4+ #5 obsolete. But I think it is nicer to have the
-change in #4 since it extends the check to cover all cases. And then
-we would do it twice just for osnoise.
-
-Sebastian
 
