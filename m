@@ -1,88 +1,97 @@
-Return-Path: <linux-kernel+bounces-409107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA5EE9C878E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:30:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFD839C878F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:30:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EC352875D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:30:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A54FC280788
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91B21F81AD;
-	Thu, 14 Nov 2024 10:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58991F7566;
+	Thu, 14 Nov 2024 10:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jTI42C+s";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kDzQ3aVb"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BS56wmC8"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F5F1DD0EF
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779481D9A41;
+	Thu, 14 Nov 2024 10:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731579700; cv=none; b=FmsGMfTx4uTqPddME+R8AcKstTwEY5/cjH5kb+2QcbMC/rBKnCnFXnBIHuYdDHpigYfLl7QhJa80U5Uo86Z/BHOXvSiy/JRC2We8Ek5Jo48KIEEBtywqem7GXjbwkvQYpr6fUgXztK59ceUG2YwxYfMHQF648E4aCfwnVADKzH4=
+	t=1731579770; cv=none; b=REqOaNi8WsfM9U6SajmwtJb4H/HgODlCNSx1KosBQXkhFt2CyQjRBSUjyTwcuQxeSI0o3sLOxkMp/YD6MGNXNFfuhz9kzB3dPVJEspCanbu2rO8kA/ZU+wSFP2OeKQVyih8xs0gcy/eE/brta0y1XrX9+gevwJR0SPk+/xsgSL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731579700; c=relaxed/simple;
-	bh=TEoZNOCdI7xNZCkq1Y3DANMX7RzVOnudyVhuh0ii8i0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=emESROBbjhCeAzc7L+3paYm/PmxnBiEVXvWnET9j4B1tcTIfbeAMc2DmAlaBzWjvsKfSc03oKzCZNdLUqWIbqgIBOz6mmJaJEctioJpAwDhmzmc0HeniGEfmW9OkAmpw2ubIfrcPSNH8tzDsMkZJ1h2MRioeoXKjSW56JPcAN98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jTI42C+s; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kDzQ3aVb; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 14 Nov 2024 11:21:36 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731579697;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TEoZNOCdI7xNZCkq1Y3DANMX7RzVOnudyVhuh0ii8i0=;
-	b=jTI42C+sqxH+U4RZLpRZWPExmJKPrCbbacd6rnECOG7E9Mtv4Rm0+fhep/G05wT29RRQw7
-	6msRNjut7KcEvMFvhy5zcGlnG9X226hGJSDXBgSkInqNlT9xGXtx5kvWygF9NZBeb5alk7
-	2IJdNh9+rt4ype9skt/bPyjOaHTe4WozboL+ogf/hZtNp5+4/4+TBsQeB2oy3sp0dyxnXt
-	5eimBc2LXO47r1UkX5M2AxvNSeyqCBtPq5dmRRMr+X7bTc3YrNwBPFdz1VsHg3EmlywZb4
-	x/KUEGm4pY3BX/ZVhMl/QpizcIgRcg0cmXJz9D1Tq+dgdJu6bgJMaklXz9OK+Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731579697;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TEoZNOCdI7xNZCkq1Y3DANMX7RzVOnudyVhuh0ii8i0=;
-	b=kDzQ3aVb4GVo/+ptSTPNFLn+oXo6Fi7B7F0WiQpLNDr9+CiLsgOv/oKmWv9mFRtXlxiMiq
-	ZWbi0Y0nrxu5COCQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Huacai Chen <chenhuacai@loongson.cn>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Xuerui Wang <kernel@xen0n.name>,
-	loongarch@lists.linux.dev, Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-rt-devel@lists.linux.dev, Guo Ren <guoren@kernel.org>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] LoongArch: Reduce min_delta for the arch clockevent
- device
-Message-ID: <20241114102136.X-knc36J@linutronix.de>
-References: <20241108091545.4182229-1-chenhuacai@loongson.cn>
- <20241108091545.4182229-2-chenhuacai@loongson.cn>
+	s=arc-20240116; t=1731579770; c=relaxed/simple;
+	bh=N0Zs06FQ5Xtv3SHbCA4mOGMqJ8tnWHRBdA2cSQ+32Nk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QJaoHyx7ki6zz02bPmQ3F7z5ch4Poob8lTf28Ildq92oGRi1W1+pbWkKw31wEgxc2U8GVb8pMDkJpUFALYshLOnGopSsnGvsp0zDp+936nd3wnS808gBU4NohL3+yj7EvpjDE6pJ363x8HltBBdLeKNiXj1mLRaiI6oNkuKsBKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BS56wmC8; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1731579766;
+	bh=N0Zs06FQ5Xtv3SHbCA4mOGMqJ8tnWHRBdA2cSQ+32Nk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BS56wmC8dD7ZOfnypazCktbot14vilOAIeneaG4ZyzWr8JY5UbLY16X5RL4jskCm5
+	 I0dOZNQfcpaWMdiaft42eej+JtjZhga4BY+ss563+AkGfe081OWzH8vHnpanKdEc1E
+	 uU0UbM1jokCZf8z8uWVIjpNQlvOIIv/OHLaXg6WSobK04nOrAeZIQQVRhQQ26YdWWy
+	 TL/YD2iHuEzY/bEMbN6MMTdGGBsu47DUSHaZHgrF1uv58IFgK5j4DYge2cgP46Qnfv
+	 HsSOmcjyrzOuImoVNZ4CU3SV6oU+MBQVfjL6iLLm6NP7Lz/xqs8X9awWH/WWgh6tgG
+	 +qdRy0lMeLfRA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 34DE117E14EF;
+	Thu, 14 Nov 2024 11:22:46 +0100 (CET)
+Message-ID: <9f9a969f-6ce5-4e6c-89bd-51fe121db693@collabora.com>
+Date: Thu, 14 Nov 2024 11:22:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241108091545.4182229-2-chenhuacai@loongson.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] cpufreq: mediatek: CCI support SoC , the
+ transition_delay set to 10 ms
+To: Mark Tseng <chun-jen.tseng@mediatek.com>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20241108063942.19744-1-chun-jen.tseng@mediatek.com>
+ <20241108063942.19744-2-chun-jen.tseng@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241108063942.19744-2-chun-jen.tseng@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2024-11-08 17:15:43 [+0800], Huacai Chen wrote:
-> Now the min_delta is 0x600 (1536) for LoongArch's constant clockevent
-> device. For a 100MHz hardware timer this means ~15us. This is a little
-> big, especially for PREEMPT_RT enabled kernels. So reduce it to 1000
-> (we don't want too small values to affect performance).
+Il 08/11/24 07:39, Mark Tseng ha scritto:
+> SoC with CCI architecture should set transition_delay to 10 ms because
+> cpufreq need to call devfreq notifier in async mode. if delay less than
+> 10 ms, it may get wrong OPP-level in devfreq passive governor.
+> 
 
-So this reduces it to 10us. Is anything lower than that bad performance
-wise?
+This means that MediaTek SoCs can change their CPU frequency once every
+10 milliseconds?!?!?!
 
-> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+I don't think that's really the case.
 
-Sebastian
+Besides, are you aware that this will have a *huge* impact on either power
+consumption or performance?
+We're going from a bunch of microseconds to *multiple* milliseconds here.
+
+Regards,
+Angelo
+
 
