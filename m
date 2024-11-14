@@ -1,174 +1,114 @@
-Return-Path: <linux-kernel+bounces-410099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30C7A9C967C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:57:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F0D9C967D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:57:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FD2CB24BE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:57:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9E5B283B3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B5F1B3935;
-	Thu, 14 Nov 2024 23:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2011AAE33;
+	Thu, 14 Nov 2024 23:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="c6tGHY2y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=castellotti.net header.i=@castellotti.net header.b="ccDvCUP0"
+Received: from qs51p00im-qukt01072301.me.com (qs51p00im-qukt01072301.me.com [17.57.155.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5531AAE33;
-	Thu, 14 Nov 2024 23:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5114F1B392B
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 23:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.57.155.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731628621; cv=none; b=dQ1dsBzqlC99w4xxL4/P85E60xYh4yb5w1btq2qEifyHJVYqsQwCcNHJEf+JcUbGIlEJqLSEF8DBmUV2HZpGztUwh09bof/YcICH+KCMk/Qi9eNEIkqf6nFI6vM/gUeHVohB9MqnPFdUAWWN1R+gz8t6yR1A0o1K4M8sQVVzqag=
+	t=1731628639; cv=none; b=XYJjW9X+nlaqB6SX4doOEQnjUu8xbJeFrAZHoRc2w0lrSJmv2BTw6IJBS3OYTw9Wf6dR2xEasJsgbSRPUsMuDkkA/yJVCvwDJoQweHCU/FxknZNMqgI1Bgfijw2x9vD16cAXYyPSxdZSzG8U11jFSeVXiTgTImtxQ7lXSyYMnDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731628621; c=relaxed/simple;
-	bh=4LEMw7tFZ/I2l0o9tYXh+UZzqxJqnQPfsr1Kfeb3eLk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=SmmZrAp/BbhZ0dFn975kS4CBRQDw0W2KdQx83BLoFbrNIoxHuGzR18PWbsFULr4kEIlGMRL+6Reo06Y47DokqtbzQ/7D80se9KwNy6MC63b2Z7hOIoPmWIoOmgRBP8QA8D5Uz7UJOZfNldn6X9YC0mc2I5Wy4LppauRIth7ER/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=c6tGHY2y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B65C4CECD;
-	Thu, 14 Nov 2024 23:56:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1731628621;
-	bh=4LEMw7tFZ/I2l0o9tYXh+UZzqxJqnQPfsr1Kfeb3eLk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=c6tGHY2yKKUHKw8OBYSweMkHUUuvnopjACx/RdLwVsviU+aQ3RYU9Oue96sB75Y0g
-	 NZQofGRg691A0PsHsb6yT90uzEYgigEcx8khpKRboxx2KYyHxlD3tfdbIG8Kf+rITz
-	 SLmrVxRfFQ5MUhjPy+ofIrr7W6rY08lqs0tful7Y=
-Date: Thu, 14 Nov 2024 15:56:56 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: kernel test robot <lkp@intel.com>
-Cc: Qi Xi <xiqi2@huawei.com>, oe-kbuild-all@lists.linux.dev,
- linux-kernel@vger.kernel.org, Linux Memory Management List
- <linux-mm@kvack.org>
-Subject: Re: fs/proc/vmcore.c:424:19: warning: 'mmap_vmcore_fault' defined
- but not used
-Message-Id: <20241114155656.a189f0b92d5596e4cb940d82@linux-foundation.org>
-In-Reply-To: <202411140156.2o0nS4fl-lkp@intel.com>
-References: <202411140156.2o0nS4fl-lkp@intel.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731628639; c=relaxed/simple;
+	bh=4lFOEw1Cuwl0/qLgmCJe5RhGno98lXHPUYNOJ0IfpX8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BxhMGAbpGSQST8ZWFedytSDaCo2t/w6VW3JEW3gVWc+BVEep8nWbkytQiAdUTVGXh0gA3FCgkLtwxP4nkQY5KO5bClS4fnRaykC4JG15AVRlc528IV3pzRQaMN/XPQ0Ep4N6kutkEgw+rW5BRWAk0FyNNAIHV36LFSRU8JUxpEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=castellotti.net; spf=pass smtp.mailfrom=castellotti.net; dkim=pass (2048-bit key) header.d=castellotti.net header.i=@castellotti.net header.b=ccDvCUP0; arc=none smtp.client-ip=17.57.155.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=castellotti.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=castellotti.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=castellotti.net;
+	s=sig1; t=1731628636;
+	bh=iSCE/Qi+tv7NDRxH+x0UHfkFAYCL1dJiR18XFW4tY80=;
+	h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version:
+	 x-icloud-hme;
+	b=ccDvCUP0SWQJCXe6CnHMGpX9Lipo3GhPS/7nfjEkeW8sLC2vvSeQ5zoA/pdiFGrBd
+	 MzX626s6TvubZk5CHJjE1slrOlDMa0Cm5aQ3QuXZ2JdPzuhX4W06Rh1Tx8JYcBKJht
+	 zFzKlZX8mMytx8ZlZHfcj9EzyYXF3uAoEuEbj7JHGO6VjtY4HBDUhAprjJmpYef/Lr
+	 xeoljcOU3SXxUEwBupEsM6BVHasVzamEoqinhYEaGs02rznrsh69NdAA9EmubHlDGb
+	 xFefMwOG6UOmCE/zzMsq+813l1Vtn3wZorBtB3PoJV8uWQS63SV/K8SveLxEV2suwz
+	 z8TWWL4QFpSxA==
+Received: from MSI-Laptop.local (qs51p00im-dlb-asmtp-mailmevip.me.com [17.57.155.28])
+	by qs51p00im-qukt01072301.me.com (Postfix) with ESMTPSA id 99FDD25401B4;
+	Thu, 14 Nov 2024 23:57:12 +0000 (UTC)
+Message-ID: <799753305484d74cb9d194347743ff986da071d5.camel@castellotti.net>
+Subject: Re: [Intel-wired-lan] [PATCH v2 1/1] ixgbe: Correct BASE-BX10
+ compliance code
+From: Erny <ernesto@castellotti.net>
+Reply-To: 20241114195047.533083-2-tore@amundsen.org
+To: Tore Amundsen <tore@amundsen.org>
+Cc: andrew+netdev@lunn.ch, anthony.l.nguyen@intel.com, davem@davemloft.net, 
+	edumazet@google.com, ernesto@castellotti.net,
+ intel-wired-lan@lists.osuosl.org, 	kuba@kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 	pabeni@redhat.com,
+ pmenzel@molgen.mpg.de, przemyslaw.kitszel@intel.com
+Date: Fri, 15 Nov 2024 00:57:10 +0100
+In-Reply-To: <20241114195047.533083-2-tore@amundsen.org>
+References: <ec66b579-90b7-42cc-b4d4-f4c2e906aeb9@molgen.mpg.de>
+	 <20241114195047.533083-1-tore@amundsen.org>
+	 <20241114195047.533083-2-tore@amundsen.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Proofpoint-GUID: Spi5FdVucACLcYERu8XdpffBqfSFfqS6
+X-Proofpoint-ORIG-GUID: Spi5FdVucACLcYERu8XdpffBqfSFfqS6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-14_05,2024-11-14_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=876 bulkscore=0 mlxscore=0
+ phishscore=0 adultscore=0 spamscore=0 suspectscore=0 clxscore=1030
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2411140190
 
-On Thu, 14 Nov 2024 01:06:42 +0800 kernel test robot <lkp@intel.com> wrote:
+On Thu, 2024-11-14 at 19:50 +0000, Tore Amundsen wrote:
+> The current value in the source code is 0x64, which appears to be a
+> mix-up of hex and decimal values. A value of 0x64 (binary 01100100)
+> incorrectly sets bit 2 (1000BASE-CX) and bit 5 (100BASE-FX) as well.
+> ---
+> =C2=A0drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
+> b/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
+> index 14aa2ca51f70..81179c60af4e 100644
+> --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
+> +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
+> @@ -40,7 +40,7 @@
+> =C2=A0#define IXGBE_SFF_1GBASESX_CAPABLE		0x1
+> =C2=A0#define IXGBE_SFF_1GBASELX_CAPABLE		0x2
+> =C2=A0#define IXGBE_SFF_1GBASET_CAPABLE		0x8
+> -#define IXGBE_SFF_BASEBX10_CAPABLE		0x64
+> +#define IXGBE_SFF_BASEBX10_CAPABLE		0x40
+> =C2=A0#define IXGBE_SFF_10GBASESR_CAPABLE		0x10
+> =C2=A0#define IXGBE_SFF_10GBASELR_CAPABLE		0x20
+> =C2=A0#define IXGBE_SFF_SOFT_RS_SELECT_MASK		0x8
 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   f1b785f4c7870c42330b35522c2514e39a1e28e7
-> commit: b8ee299855f08539e04d6c1a6acb3dc9e5423c00 fs/proc: fix compile warning about variable 'vmcore_mmap_ops'
-> date:   6 days ago
-> config: riscv-randconfig-r071-20241113 (https://download.01.org/0day-ci/archive/20241114/202411140156.2o0nS4fl-lkp@intel.com/config)
-> compiler: riscv32-linux-gcc (GCC) 14.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241114/202411140156.2o0nS4fl-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202411140156.2o0nS4fl-lkp@intel.com/
-> 
-> All warnings (new ones prefixed by >>):
-> 
-> >> fs/proc/vmcore.c:424:19: warning: 'mmap_vmcore_fault' defined but not used [-Wunused-function]
->      424 | static vm_fault_t mmap_vmcore_fault(struct vm_fault *vmf)
->          |                   ^~~~~~~~~~~~~~~~~
+LGMT.
 
-Thanks, I did this:
+Acked-by: Ernesto Castellotti <ernesto@castellotti.net>
 
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: fs/proc/vmcore.c: fix warning when CONFIG_MMU=n
-Date: Thu Nov 14 03:44:21 PM PST 2024
+Kind regards,
 
->> fs/proc/vmcore.c:424:19: warning: 'mmap_vmcore_fault' defined but not used [-Wunused-function]
-     424 | static vm_fault_t mmap_vmcore_fault(struct vm_fault *vmf)
+Ernesto
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202411140156.2o0nS4fl-lkp@intel.com/
-Cc: Qi Xi <xiqi2@huawei.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- fs/proc/vmcore.c |   56 ++++++++++++++++++++++-----------------------
- 1 file changed, 28 insertions(+), 28 deletions(-)
-
---- a/fs/proc/vmcore.c~fs-proc-vmcorec-fix-warning-when-config_mmu=n
-+++ a/fs/proc/vmcore.c
-@@ -414,6 +414,34 @@ static ssize_t read_vmcore(struct kiocb
- 	return __read_vmcore(iter, &iocb->ki_pos);
- }
- 
-+/**
-+ * vmcore_alloc_buf - allocate buffer in vmalloc memory
-+ * @size: size of buffer
-+ *
-+ * If CONFIG_MMU is defined, use vmalloc_user() to allow users to mmap
-+ * the buffer to user-space by means of remap_vmalloc_range().
-+ *
-+ * If CONFIG_MMU is not defined, use vzalloc() since mmap_vmcore() is
-+ * disabled and there's no need to allow users to mmap the buffer.
-+ */
-+static inline char *vmcore_alloc_buf(size_t size)
-+{
-+#ifdef CONFIG_MMU
-+	return vmalloc_user(size);
-+#else
-+	return vzalloc(size);
-+#endif
-+}
-+
-+/*
-+ * Disable mmap_vmcore() if CONFIG_MMU is not defined. MMU is
-+ * essential for mmap_vmcore() in order to map physically
-+ * non-contiguous objects (ELF header, ELF note segment and memory
-+ * regions in the 1st kernel pointed to by PT_LOAD entries) into
-+ * virtually contiguous user-space in ELF layout.
-+ */
-+#ifdef CONFIG_MMU
-+
- /*
-  * The vmcore fault handler uses the page cache and fills data using the
-  * standard __read_vmcore() function.
-@@ -457,34 +485,6 @@ static vm_fault_t mmap_vmcore_fault(stru
- #endif
- }
- 
--/**
-- * vmcore_alloc_buf - allocate buffer in vmalloc memory
-- * @size: size of buffer
-- *
-- * If CONFIG_MMU is defined, use vmalloc_user() to allow users to mmap
-- * the buffer to user-space by means of remap_vmalloc_range().
-- *
-- * If CONFIG_MMU is not defined, use vzalloc() since mmap_vmcore() is
-- * disabled and there's no need to allow users to mmap the buffer.
-- */
--static inline char *vmcore_alloc_buf(size_t size)
--{
--#ifdef CONFIG_MMU
--	return vmalloc_user(size);
--#else
--	return vzalloc(size);
--#endif
--}
--
--/*
-- * Disable mmap_vmcore() if CONFIG_MMU is not defined. MMU is
-- * essential for mmap_vmcore() in order to map physically
-- * non-contiguous objects (ELF header, ELF note segment and memory
-- * regions in the 1st kernel pointed to by PT_LOAD entries) into
-- * virtually contiguous user-space in ELF layout.
-- */
--#ifdef CONFIG_MMU
--
- static const struct vm_operations_struct vmcore_mmap_ops = {
- 	.fault = mmap_vmcore_fault,
- };
-_
 
 
