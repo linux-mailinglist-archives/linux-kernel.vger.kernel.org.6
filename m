@@ -1,343 +1,188 @@
-Return-Path: <linux-kernel+bounces-409070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ED2A9C87AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:35:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37E369C8753
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 11:20:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0874B2F9C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:17:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBFA11F2193E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438B61F77A8;
-	Thu, 14 Nov 2024 10:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E0A1F81B1;
+	Thu, 14 Nov 2024 10:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="U5dWbKxG"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="H1IDs8ap";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wUbPSJg7";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="H1IDs8ap";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wUbPSJg7"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156A31F8F1D;
-	Thu, 14 Nov 2024 10:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC041F818E
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 10:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731578902; cv=none; b=XzNJbqfeR7LZ7LSXVzf5NL/+BvpWPWZsDXFaT0Rq5cbQl6b70/Zc80FcT1Bocdkqq9S7f+ChiUFLzT75uNliQbv1maXEH7JgcPGtWUshBb+sr38dlXJ3i8GX8qDz9OjMpIzuaX2hZSdNawwxglEuP5HdaTbc64hAE/KdXw3J8IQ=
+	t=1731578964; cv=none; b=qs9pgI2b3UuJfih2V2wFPK3mfNX+SLbBYM/jfs63WFBGs1ZTI8LCsBySepNzacJffF/lbDM5whRUOzNNiabe9kKLkgXQzPOAa4DBTBDy9Y8h2GRzjA1zzAnaCDue9baf4o5ZHNUvAaX98B0Z/JTT1Z0tuG5MNGyqt6VK92RTv0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731578902; c=relaxed/simple;
-	bh=8NKuoOg75JhwHkLKnxA1sr9ZsZYcDBPVWjHlfiLi0rE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nXUijFVwTwBood87wqInWPFhMMHrHtx8kOes6baVml3q4mBrA6VrpyqpNT38Z09xJULdJgwBb/b0MmPqLis8qq6X4TfpiTqkc9hCOLK6iUSdKzyynfcil66C0PpTIHTm+86xfI/iMVmfxNck0a4RFNDysqboe87cnZ1TeM+fJ5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=U5dWbKxG; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 590c1deca27011ef99858b75a2457dd9-20241114
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=kJib80vtMQ+j8z3Fr/DFzZp66roaGSj4aK6eGZ/xOt0=;
-	b=U5dWbKxGD9R61cqlMsTR5Q/JPSz7YTafL6r+hIezdZAJypDUrT21tFDT4m0Nfon/c1mn9JP0T0Ov9BrEqPDSrsMgJl5RvFWjE6u8BUXWGsPxPg+1dIcrdHpk8e8fh096cFscYgpFbdqQn9PotaT7iBrYhQOcz0pUtrGoYAKK/50=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.42,REQID:95cc1b4a-5f90-49d2-a999-43f096e58e85,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-25
-X-CID-META: VersionHash:b0fcdc3,CLOUDID:156c1307-6ce0-4172-9755-bd2287e50583,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0,EDM:-3,IP
-	:nil,URL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_ULN,TF_CID_SPAM_SNR
-X-UUID: 590c1deca27011ef99858b75a2457dd9-20241114
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
-	(envelope-from <liju-clr.chen@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 778533351; Thu, 14 Nov 2024 18:08:08 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Thu, 14 Nov 2024 02:08:07 -0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Thu, 14 Nov 2024 18:08:07 +0800
-From: Liju-clr Chen <liju-clr.chen@mediatek.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Catalin
- Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Richard Cochran
-	<richardcochran@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Liju-clr Chen <Liju-clr.Chen@mediatek.com>, Yingshiuan Pan
-	<Yingshiuan.Pan@mediatek.com>, Ze-yu Wang <Ze-yu.Wang@mediatek.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-trace-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, Shawn Hsiao <shawn.hsiao@mediatek.com>,
-	PeiLun Suei <PeiLun.Suei@mediatek.com>, Chi-shen Yeh
-	<Chi-shen.Yeh@mediatek.com>, Kevenny Hsieh <Kevenny.Hsieh@mediatek.com>
-Subject: [PATCH v13 25/25] virt: geniezone: Reduce blocked duration in hypervisor when destroying a VM
-Date: Thu, 14 Nov 2024 18:08:02 +0800
-Message-ID: <20241114100802.4116-26-liju-clr.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20241114100802.4116-1-liju-clr.chen@mediatek.com>
-References: <20241114100802.4116-1-liju-clr.chen@mediatek.com>
+	s=arc-20240116; t=1731578964; c=relaxed/simple;
+	bh=KMzNPvCxaCOcEEb7CWWW5njE53kJtlshFvvmL4nwOlE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lHCK8I8v5Ml0f74T3PaDAfs5GUJqnLk04gvBRUPgHJawXNzKxtGiFmYgbD2fhG5hGIlv0bStb6T/xrHrjM+vUOC3XR82BUn6YnrXCS1Z68eTb0CIpec02XSF0/4VwZ9LuIcrnBTMHSrZUwYxr9r5GJzkYpiXR50wq2hOCbduu9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=H1IDs8ap; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wUbPSJg7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=H1IDs8ap; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wUbPSJg7; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 753E52119F;
+	Thu, 14 Nov 2024 10:09:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731578960; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Il6MCIWPQie3YJaODFOx8K/akx4KWy4DGzrSlIIzXQo=;
+	b=H1IDs8ap3R0WhxzhJfAHUhV8nquICuKmn5BuJQnAUKNFH6hm2KdhOqPqQr+gA4lgXT42kl
+	+gZj/NWcbBBcPErB7piRzIcSPlQB8UnLhFdXy3NX0M0djJ1WRSzQ0z/dtVh1HKntq23YBi
+	Vrs+1m6IdvMbffMB/70fSRZhc+9CLkg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731578960;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Il6MCIWPQie3YJaODFOx8K/akx4KWy4DGzrSlIIzXQo=;
+	b=wUbPSJg7bnBdXNUSJ01COjnVMsD68Mwtcu2s/SzXdEW6KYLyBSgrw6jQXDJH63C7yplZdT
+	9ifItblf8gGgiDBQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731578960; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Il6MCIWPQie3YJaODFOx8K/akx4KWy4DGzrSlIIzXQo=;
+	b=H1IDs8ap3R0WhxzhJfAHUhV8nquICuKmn5BuJQnAUKNFH6hm2KdhOqPqQr+gA4lgXT42kl
+	+gZj/NWcbBBcPErB7piRzIcSPlQB8UnLhFdXy3NX0M0djJ1WRSzQ0z/dtVh1HKntq23YBi
+	Vrs+1m6IdvMbffMB/70fSRZhc+9CLkg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731578960;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Il6MCIWPQie3YJaODFOx8K/akx4KWy4DGzrSlIIzXQo=;
+	b=wUbPSJg7bnBdXNUSJ01COjnVMsD68Mwtcu2s/SzXdEW6KYLyBSgrw6jQXDJH63C7yplZdT
+	9ifItblf8gGgiDBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 66D9C13721;
+	Thu, 14 Nov 2024 10:09:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id f/HHGFDMNWc2GwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 14 Nov 2024 10:09:20 +0000
+Message-ID: <cb9cabed-0038-42b3-b9fc-c9ba62b12781@suse.cz>
+Date: Thu, 14 Nov 2024 11:09:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] mm/slab: Avoid build bug for calls to kmalloc with a
+ large constant
+Content-Language: en-US
+To: Dave Kleikamp <dave.kleikamp@oracle.com>,
+ Ryan Roberts <ryan.roberts@arm.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20241014105514.3206191-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-6-ryan.roberts@arm.com>
+ <44312f4a-8b9c-49ce-9277-5873a94ca1bb@oracle.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <44312f4a-8b9c-49ce-9277-5873a94ca1bb@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_FIVE(0.00)[6]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-From: Jerry Wang <ze-yu.wang@mediatek.com>
+On 11/1/24 21:16, Dave Kleikamp wrote:
+> When boot-time page size is enabled, the test against KMALLOC_MAX_CACHE_SIZE
+> is no longer optimized out with a constant size, so a build bug may
+> occur on a path that won't be reached.
 
-Reduce the blocked duration in the hypervisor when destroying a VM
-by splitting a single hypercall into multiple calls. Previously, the
-hypervisor could be blocked for an extended period when destroying a VM, as
-the entire process was handled in a single hypercall. This could lead to
-performance degradation because the scheduler does not have chances to
-schedule other tasks when the hypercall is processing by the hypervisor.
+That's rather unfortunate, the __builtin_constant_p(size) part of
+kmalloc_noprof() really expects things to resolve at compile time and it
+would be better to keep it that way.
 
-By splitting the destruction process into multiple smaller hypercalls,
-significantly reduce the blocked duration in the hypervisor. Additionally,
-making the amount of each call adjustable provides flexibility to optimize
-the process based on different workloads and system configurations.
+I think it would be better if we based KMALLOC_MAX_CACHE_SIZE itself on
+PAGE_SHIFT_MAX and kept it constant, instead of introducing
+KMALLOC_SHIFT_HIGH_MAX only for some sanity checks.
 
-Signed-off-by: Jerry Wang <ze-yu.wang@mediatek.com>
-Signed-off-by: Liju Chen <liju-clr.chen@mediatek.com>
----
- arch/arm64/geniezone/vm.c             | 27 ++++++++++--
- drivers/virt/geniezone/gzvm_main.c    | 62 +++++++++++++++++++++++++++
- drivers/virt/geniezone/gzvm_vm.c      |  2 +-
- include/linux/soc/mediatek/gzvm_drv.h |  7 ++-
- include/uapi/linux/gzvm.h             |  1 +
- 5 files changed, 94 insertions(+), 5 deletions(-)
+So if the kernel was built to support 4k to 64k, but booted as 4k, it would
+still create and use kmalloc caches up to 128k. SLUB should handle that fine
+(if not, please report it :)
 
-diff --git a/arch/arm64/geniezone/vm.c b/arch/arm64/geniezone/vm.c
-index cfd0aeb865e5..fb4e5dd41002 100644
---- a/arch/arm64/geniezone/vm.c
-+++ b/arch/arm64/geniezone/vm.c
-@@ -175,12 +175,18 @@ int gzvm_arch_create_vm(unsigned long vm_type)
- 	return ret ? ret : res.a1;
- }
- 
--int gzvm_arch_destroy_vm(u16 vm_id)
-+int gzvm_arch_destroy_vm(u16 vm_id, u64 destroy_page_gran)
- {
- 	struct arm_smccc_res res;
-+	int ret;
-+
-+	do {
-+		ret = gzvm_hypcall_wrapper(MT_HVC_GZVM_DESTROY_VM, vm_id,
-+					   destroy_page_gran, 0, 0,
-+					   0, 0, 0, &res);
-+	} while (ret == -EAGAIN);
- 
--	return gzvm_hypcall_wrapper(MT_HVC_GZVM_DESTROY_VM, vm_id, 0, 0, 0, 0,
--				    0, 0, &res);
-+	return ret;
- }
- 
- int gzvm_arch_memregion_purpose(struct gzvm *gzvm,
-@@ -241,6 +247,21 @@ int gzvm_arch_query_hyp_batch_pages(struct gzvm_enable_cap *cap,
- 	return ret;
- }
- 
-+int gzvm_arch_query_destroy_batch_pages(struct gzvm_enable_cap *cap,
-+					void __user *argp)
-+{
-+	struct arm_smccc_res res = {0};
-+	int ret;
-+
-+	ret = gzvm_arch_enable_cap(cap, &res);
-+	// destroy page batch size should be power of 2
-+	if (ret || ((res.a1 & (res.a1 - 1)) != 0))
-+		return -EINVAL;
-+
-+	cap->args[0] = res.a1;
-+	return ret;
-+}
-+
- /**
-  * gzvm_vm_ioctl_get_pvmfw_size() - Get pvmfw size from hypervisor, return
-  *				    in x1, and return to userspace in args
-diff --git a/drivers/virt/geniezone/gzvm_main.c b/drivers/virt/geniezone/gzvm_main.c
-index 0ec15c33111e..38a2406a16bd 100644
---- a/drivers/virt/geniezone/gzvm_main.c
-+++ b/drivers/virt/geniezone/gzvm_main.c
-@@ -49,6 +49,33 @@ static ssize_t demand_paging_batch_pages_store(struct kobject *kobj,
- 	return count;
- }
- 
-+static ssize_t destroy_batch_pages_show(struct kobject *kobj,
-+					struct kobj_attribute *attr,
-+					char *buf)
-+{
-+	return sprintf(buf, "%u\n", gzvm_drv.destroy_batch_pages);
-+}
-+
-+static ssize_t destroy_batch_pages_store(struct kobject *kobj,
-+					 struct kobj_attribute *attr,
-+					 const char *buf, size_t count)
-+{
-+	int ret;
-+	u32 temp;
-+
-+	ret = kstrtoint(buf, 10, &temp);
-+	if (ret < 0)
-+		return ret;
-+
-+	// destroy page batch size should be power of 2
-+	if ((temp & (temp - 1)) != 0)
-+		return -EINVAL;
-+
-+	gzvm_drv.destroy_batch_pages = temp;
-+
-+	return count;
-+}
-+
- /* /sys/kernel/gzvm/demand_paging_batch_pages */
- static struct kobj_attribute demand_paging_batch_pages_attr = {
- 		.attr = {
-@@ -59,6 +86,16 @@ static struct kobj_attribute demand_paging_batch_pages_attr = {
- 		.store = demand_paging_batch_pages_store,
- };
- 
-+/* /sys/kernel/gzvm/destroy_batch_pages */
-+static struct kobj_attribute destroy_batch_pages_attr = {
-+		.attr = {
-+			.name = "destroy_batch_pages",
-+			.mode = 0660,
-+		},
-+		.show = destroy_batch_pages_show,
-+		.store = destroy_batch_pages_store,
-+};
-+
- static int gzvm_drv_sysfs_init(void)
- {
- 	int ret = 0;
-@@ -73,6 +110,11 @@ static int gzvm_drv_sysfs_init(void)
- 	if (ret)
- 		pr_debug("failed to create demand_batch_pages in /sys/kernel/gzvm\n");
- 
-+	ret = sysfs_create_file(gzvm_drv.sysfs_root_dir,
-+				&destroy_batch_pages_attr.attr);
-+	if (ret)
-+		pr_debug("failed to create destroy_batch_pages in /sys/kernel/gzvm\n");
-+
- 	return ret;
- }
- 
-@@ -124,6 +166,8 @@ int gzvm_err_to_errno(unsigned long err)
- 		return -EOPNOTSUPP;
- 	case ERR_FAULT:
- 		return -EFAULT;
-+	case ERR_BUSY:
-+		return -EAGAIN;
- 	default:
- 		break;
- 	}
-@@ -220,6 +264,20 @@ static int gzvm_query_hyp_batch_pages(void)
- 	return ret;
- }
- 
-+static int gzvm_query_destroy_batch_pages(void)
-+{
-+	int ret;
-+	struct gzvm_enable_cap cap = {0};
-+
-+	gzvm_drv.destroy_batch_pages = GZVM_DRV_DESTROY_PAGING_BATCH_PAGES;
-+	cap.cap = GZVM_CAP_QUERY_DESTROY_BATCH_PAGES;
-+
-+	ret = gzvm_arch_query_destroy_batch_pages(&cap, NULL);
-+	if (!ret)
-+		gzvm_drv.destroy_batch_pages = cap.args[0];
-+	return ret;
-+}
-+
- static int gzvm_drv_probe(struct platform_device *pdev)
- {
- 	int ret;
-@@ -257,6 +315,10 @@ static int gzvm_drv_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	ret = gzvm_query_destroy_batch_pages();
-+	if (ret)
-+		return ret;
-+
- 	return 0;
- }
- 
-diff --git a/drivers/virt/geniezone/gzvm_vm.c b/drivers/virt/geniezone/gzvm_vm.c
-index 999c8c586d7b..43b6cf8b7d3f 100644
---- a/drivers/virt/geniezone/gzvm_vm.c
-+++ b/drivers/virt/geniezone/gzvm_vm.c
-@@ -360,7 +360,7 @@ static void gzvm_destroy_vm(struct gzvm *gzvm)
- 
- 	gzvm_vm_irqfd_release(gzvm);
- 	gzvm_destroy_vcpus(gzvm);
--	gzvm_arch_destroy_vm(gzvm->vm_id);
-+	gzvm_arch_destroy_vm(gzvm->vm_id, gzvm->gzvm_drv->destroy_batch_pages);
- 
- 	mutex_lock(&gzvm_list_lock);
- 	list_del(&gzvm->vm_list);
-diff --git a/include/linux/soc/mediatek/gzvm_drv.h b/include/linux/soc/mediatek/gzvm_drv.h
-index 8fc6c6f54227..b234edb3b9f3 100644
---- a/include/linux/soc/mediatek/gzvm_drv.h
-+++ b/include/linux/soc/mediatek/gzvm_drv.h
-@@ -30,6 +30,7 @@ struct gzvm_driver {
- 
- 	struct kobject *sysfs_root_dir;
- 	u32 demand_paging_batch_pages;
-+	u32 destroy_batch_pages;
- 
- 	struct dentry *gzvm_debugfs_dir;
- };
-@@ -53,6 +54,7 @@ struct gzvm_driver {
- #define ERR_INVALID_ARGS        (-8)
- #define ERR_NOT_SUPPORTED       (-24)
- #define ERR_NOT_IMPLEMENTED     (-27)
-+#define ERR_BUSY                (-33)
- #define ERR_FAULT               (-40)
- #define GZVM_IRQFD_RESAMPLE_IRQ_SOURCE_ID       1
- 
-@@ -68,6 +70,7 @@ struct gzvm_driver {
- #define GZVM_BLOCK_BASED_DEMAND_PAGE_SIZE	(PMD_SIZE) /* 2MB */
- #define GZVM_DRV_DEMAND_PAGING_BATCH_PAGES	\
- 	(GZVM_BLOCK_BASED_DEMAND_PAGE_SIZE / PAGE_SIZE)
-+#define GZVM_DRV_DESTROY_PAGING_BATCH_PAGES	(128)
- 
- #define GZVM_MAX_DEBUGFS_DIR_NAME_SIZE  20
- #define GZVM_MAX_DEBUGFS_VALUE_SIZE	20
-@@ -225,12 +228,14 @@ int gzvm_arch_probe(struct gzvm_version drv_version,
- 		    struct gzvm_version *hyp_version);
- int gzvm_arch_query_hyp_batch_pages(struct gzvm_enable_cap *cap,
- 				    void __user *argp);
-+int gzvm_arch_query_destroy_batch_pages(struct gzvm_enable_cap *cap,
-+					void __user *argp);
- 
- int gzvm_arch_set_memregion(u16 vm_id, size_t buf_size,
- 			    phys_addr_t region);
- int gzvm_arch_check_extension(struct gzvm *gzvm, __u64 cap, void __user *argp);
- int gzvm_arch_create_vm(unsigned long vm_type);
--int gzvm_arch_destroy_vm(u16 vm_id);
-+int gzvm_arch_destroy_vm(u16 vm_id, u64 destroy_page_gran);
- int gzvm_arch_map_guest(u16 vm_id, int memslot_id, u64 pfn, u64 gfn,
- 			u64 nr_pages);
- int gzvm_arch_map_guest_block(u16 vm_id, int memslot_id, u64 gfn, u64 nr_pages);
-diff --git a/include/uapi/linux/gzvm.h b/include/uapi/linux/gzvm.h
-index d69e1abb21a0..87574bdc5c48 100644
---- a/include/uapi/linux/gzvm.h
-+++ b/include/uapi/linux/gzvm.h
-@@ -23,6 +23,7 @@
- #define GZVM_CAP_ENABLE_DEMAND_PAGING	0x9202
- #define GZVM_CAP_ENABLE_IDLE		0x9203
- #define GZVM_CAP_QUERY_HYP_BATCH_PAGES	0x9204
-+#define GZVM_CAP_QUERY_DESTROY_BATCH_PAGES	0x9205
- 
- /* sub-commands put in args[0] for GZVM_CAP_PROTECTED_VM */
- #define GZVM_CAP_PVM_SET_PVMFW_GPA		0
--- 
-2.18.0
+Maybe we could also stop adding + 1 to PAGE_SHIFT_MAX if it's >=64k, so the
+cache size is max 64k and not 128k but that should be probably evaluated
+separately from this series.
+
+Vlastimil
+
+> Found compiling drivers/net/ethernet/qlogic/qed/qed_sriov.c
+> 
+> Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
+> ---
+> 
+> Ryan,
+> 
+> Please consider incorporating this fix or something similar into your
+> mm patch in the boot-time pages size patches.
+> 
+>   include/linux/slab.h | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/slab.h b/include/linux/slab.h
+> index 9848296ca6ba..a4c7507ab8ec 100644
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@ -685,7 +685,8 @@ static __always_inline unsigned int __kmalloc_index(size_t size,
+>   	if (size <= 1024 * 1024) return 20;
+>   	if (size <=  2 * 1024 * 1024) return 21;
+>   
+> -	if (!IS_ENABLED(CONFIG_PROFILE_ALL_BRANCHES) && size_is_constant)
+> +	if (!IS_ENABLED(CONFIG_ARM64_BOOT_TIME_PAGE_SIZE) &&
+> +	    !IS_ENABLED(CONFIG_PROFILE_ALL_BRANCHES) && size_is_constant)
+>   		BUILD_BUG_ON_MSG(1, "unexpected size in kmalloc_index()");
+>   	else
+>   		BUG();
 
 
