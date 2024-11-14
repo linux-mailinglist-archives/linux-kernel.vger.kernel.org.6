@@ -1,170 +1,179 @@
-Return-Path: <linux-kernel+bounces-408647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE639C8175
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 04:24:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 075729C8179
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 04:27:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BA2C281686
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:24:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A167B209CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988861E8854;
-	Thu, 14 Nov 2024 03:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65D5198E96;
+	Thu, 14 Nov 2024 03:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Npnd7a68"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="OI5HoIX+"
+Received: from out203-205-221-231.mail.qq.com (out203-205-221-231.mail.qq.com [203.205.221.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E091E3DD8
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 03:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7CAF3D9E;
+	Thu, 14 Nov 2024 03:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731554641; cv=none; b=NdFV18kzsnNE/IkQnL7TZDUTvXASe9OEd1E1vw0NByyNASlKBJ0wvonBqFO4506ihscEF0lmtsS5+zGFR1A96ok8yXHWLEKkHGd3JnWLdaOA3ADWomwzFFOQytzXUUBAoPqicMHWrb568L/prC+cSPUMwH2dVfpLZSfUFkN6VNU=
+	t=1731554827; cv=none; b=dCbFgEFqR6BLXkGSqJs7xBsZezFWA8edpYlMML/ykhRz8vHcQV6faRk2Jd0pU0uxiho8vA75HPDmwiPbQ17WXb6ruCanOh0uvQ15IYIY1Qun7fwjaRlBV7nI56qLyCn4nJwkgG275gY+WPz9FFoH2Ax3nSiLR4qOip+1jJCllE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731554641; c=relaxed/simple;
-	bh=JgrV2Jq0SPELrPZSvyVQdJlx6L/sMyGDhRU2eXf0MZA=;
-	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=S3rikiCaufnbtGsGQMj4O7aRcgsFIoBX22cjFmIPprL6pnbMhnBflzzWqvB7+J5v37B/dt0YcYkgvP/BYFMd2h7+XX9alavZAQ0E7fxZojClVO4DE7+DQay4pnLredj3Swg9I6Whih+i/3s0tKyb0lpSaxsGCH//iWpZQX8VgJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Npnd7a68; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7b1601e853eso6586285a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 19:23:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1731554639; x=1732159439; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kUpPj+dpybQGGOfSGoW27bPTzacoX7hU8r/cJFFobQk=;
-        b=Npnd7a68omikY783X+WyIQ2z4iNQeO6vs+ZmrvxlrNsqS1zPZheYa5HGI1TfIzudq3
-         ZFXWI5LojTKlygnFLw/0Z+Ee9iyDKaJVr3p9Yg3oDG6V9W5lZx8Yusj6/7p6GMdi0dFi
-         ZtgoB6zzxou3jOMRCQ36HYAieYZMUxpTePAciQ6e8ohIomqaUUlKbu3PXzRC19WRfLyW
-         +fbWL3YXzyJ8tQblwP0kQ8meRmVra5bRiPO1enQ/lpMcDA8Yfbu3jUfov72aXJk757Q0
-         zylbt64GoTAu+qsOfGSZ9hJlw64lAoCf5+ggnSSX99AFDOgQsVhrJ+vGrSd5DJ1y+zzB
-         iy9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731554639; x=1732159439;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kUpPj+dpybQGGOfSGoW27bPTzacoX7hU8r/cJFFobQk=;
-        b=r69t630UJQe1f4yRsRiU+bbJT0wEIURJwJh7mSnysiJLbBNiXN0qe2HebHDwxbd/0l
-         iCBdy65X9jQ3YU/Oky8yZcV+iPr7HNo0SpHmwx0OX2Lblebk+Xw/7hCDc1T8VBsQucq1
-         dU5Rj8nCHFiYUJihlCsWYY818q5AJZwT7jvVz1YO3wofn5e2sxKct/Gq/qeu56JY8Tlj
-         IPm2zsAnC60oSIAM9i791LGTp9AiAf8yif6c28P2Mp6J/pB+xHZSmqGfefGV5czKl9D3
-         YjH4UZaQGEyezpUtF9+Ldk+Z2CdnwHnqdW0dN3/VWTdQRJ2NOKKFQB72onWla9Ts/PqO
-         5EYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWxpwGxppLCDLL2T/qU+2MrQC+2pcjqgJsn/tgNZtndgl6o01N1JvPOknw3z2qj7WBeRPryykWAfophHGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWZBZFBf1n+v96u6EszJYRMcdbT05NcUqT20Sc/x2YYwzX8wuV
-	eJ4p85cJPZ4A7psr+r+K+1KgcJGZM/2Y9P/uQnkKxRrwuhr0QaaBjFmt5+BY5Q==
-X-Google-Smtp-Source: AGHT+IG3Wdvq7FikGudpKFODVTevKnkEGW7rbWK3lfvSez93bNJXQhpltuZjtk9OIthHDKdV3+dI5w==
-X-Received: by 2002:a05:620a:24c2:b0:7b1:41b8:9ed7 with SMTP id af79cd13be357-7b35c0b3d7dmr76252285a.16.1731554638970;
-        Wed, 13 Nov 2024 19:23:58 -0800 (PST)
-Received: from [10.69.180.250] ([166.194.203.81])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b35c99c6easm8793685a.31.2024.11.13.19.23.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2024 19:23:58 -0800 (PST)
-From: Paul Moore <paul@paul-moore.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-CC: Ricardo Robaina <rrobaina@redhat.com>, <audit@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <eparis@redhat.com>, <rgb@redhat.com>
-Date: Wed, 13 Nov 2024 22:23:55 -0500
-Message-ID: <19328b27f98.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-In-Reply-To: <20241113230425.GJ3387508@ZenIV>
-References: <20241105123807.1257948-1-rrobaina@redhat.com>
- <2d9292c28df34c50c1c0d1cbf6ce3b52@paul-moore.com>
- <20241113230425.GJ3387508@ZenIV>
-User-Agent: AquaMail/1.53.0 (build: 105300523)
-Subject: Re: [PATCH v1] audit: fix suffixed '/' filename matching in __audit_inode_child()
+	s=arc-20240116; t=1731554827; c=relaxed/simple;
+	bh=mI3bhgqrUQ1lNlVTysJnfa6U8ppTkYb5od6VjGTCjWU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p1Q47sYL26i8Hhda5lL3bS/d35m9xhhQP+mraENYgvxjoggK6bCq0IZzUtBPq5FQTHuD2dibA17+Y5/ywtdxtkWx73n+P0fjgPlAeJ89qYf1P1aDmrfD6mJGx6EkTOcpqqmZ/+GUJ3dt5trQALD+zUhEitYRCmdNhkcgBx6Uf3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=pass smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=OI5HoIX+; arc=none smtp.client-ip=203.205.221.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyyself.name
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1731554812; bh=x3rqSVs17z7FLCIDeBV31FD0qTwySPyh5yvySCRhr74=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=OI5HoIX+IGR2fzBvjK+lTky9vGa00Obh+d206LU7RKAJbzVFwDSaGNWuGvgLCYKSn
+	 44j+auyjNclWQbR8+Fscpge2PMjJK5gRi4Z7Y8lJ5x7CYMr8R/Zg2JVRb5ipA1H+OY
+	 VNDV4LFkgSoye9FbITzRHgwBf0DZYTpDsWxmvPbA=
+Received: from [IPV6:2408:8207:18a1:fd2f:e457:528e:9ee1:6f68] ([2408:8207:18a1:fd2f:e457:528e:9ee1:6f68])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 6AF9025D; Thu, 14 Nov 2024 11:26:47 +0800
+X-QQ-mid: xmsmtpt1731554807t0kuak236
+Message-ID: <tencent_6A95637042401AD5F8BE05C7B4F11CAD7009@qq.com>
+X-QQ-XMAILINFO: NWEwCzsFJJ7KjNbs5dBDITIAOft8UJoS2NDzV0IcW/t8PCPBoX4G5IS+s4JCw/
+	 oLp82skEtbwCt2kjpR5iq6i+irEkJ3A142J0h5mg4nJ4DIG5CoKtu66ZMx6iwhqqvXmpfH/fmM8S
+	 fncaO2fbGSxpYYdBxUFCCFGIf/oBr1C3ERhE+0LBJUuRC29/OHCSINpabUBThX9V4UOyLJtr1n8V
+	 ksGCP5wVVRXPXGNQ3QP2BOfF2NWAgT5ma7lKeM3m7vguTpUeAsArcyiR+nPMtsoRqPaSvF1XxojA
+	 jqgZirNmg5QSwyFaimBsKyiG1vIdLSWMd9eUw634n9SrKh5SMwTecHo0fHoNGTS7paNm7E1yDri9
+	 b2vRkGmAH9jvvCW8+3DU28G0A4XUVKl/yO/QHm2MkC/9r7PROgzuyU7lpMu6fZlqVAdgI4Z1Ksjj
+	 thwIN/q27cztBkfiguXXkNRUAtNB5qZOvwbOJrKUg+cOOZDThkUTU0owFAujxjL4/LWZiHYy5+he
+	 GnSnRbecspkb6Zc/mExLQWFlAtupX5mH8ldLXm9jgV234x0GTd1EyHOdAnurqEpcHMISY5qk6rtI
+	 zjJwEtaSqnQ7aH39NO7uhcCALe3i3C1gfgE5v6ceDcnj5bGmkLBvMtb3DdCQxoVWdizH7p23MkxP
+	 Ipg9gL0bKkGuSJ8astUJ2gboPyyBS4JgjVpv8eRnJttZnF1H/0JbQvrnS7Be/C3LPYiCN/G7y3yk
+	 YNAo2ih1TxcrajuaUsfOSJSy4fljx25L/wk0Lfmo1wdTS89TANzQxraN5rCWbIj1TokrRJN8oEd5
+	 YGSxqZybAsayAsHuGM1AVIEaZ3pxI0MIGL/eWj3JJHF6KxUqoMjhIsmaMuhP0ehPr/y1/Udw80Uu
+	 1I7k4syqBsOe1Ln3oB0tJJTiy4YU3GzU5YNJczS38CYpeCCH+di3Pr+mmh7hBFGUcsmH+eNrfu2V
+	 Epr9F+d1uuNETdf7tmfxG2o0idkeem8liMMVkEMOeYn+Dl1Y1vfpZMpcmglHUXVV9xciwFaO97MO
+	 1ITFYzJtXtyyMkiWRN
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-OQ-MSGID: <c00e4a8d-586f-408f-85a0-e241eaee090d@cyyself.name>
+Date: Thu, 14 Nov 2024 11:26:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="us-ascii"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 10/14] riscv: hwprobe: Add thead vendor extension
+ probing
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Samuel Holland <samuel.holland@sifive.com>, Jonathan Corbet
+ <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Guo Ren
+ <guoren@kernel.org>, Evan Green <evan@rivosinc.com>,
+ Jessica Clarke <jrtc27@jrtc27.com>, Andrew Jones <ajones@ventanamicro.com>,
+ Andy Chiu <andybnac@gmail.com>, linux-riscv@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20241113-xtheadvector-v11-0-236c22791ef9@rivosinc.com>
+ <20241113-xtheadvector-v11-10-236c22791ef9@rivosinc.com>
+ <tencent_5B500856E30E1FB920B6B68D6315EE70CC06@qq.com>
+ <ZzVoQi6D0U30p9sg@ghost>
+Content-Language: en-US
+From: Yangyu Chen <cyy@cyyself.name>
+In-Reply-To: <ZzVoQi6D0U30p9sg@ghost>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On November 13, 2024 6:04:27 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Mon, Nov 11, 2024 at 05:06:43PM -0500, Paul Moore wrote:
->
->> This is completely untested, I didn't even compile it, but what about
->> something like the following?  We do add an extra strlen(), but that is
->> going to be faster than the alloc/copy.
+
+
+On 11/14/24 11:02, Charlie Jenkins wrote:
+> On Thu, Nov 14, 2024 at 10:44:37AM +0800, Yangyu Chen wrote:
 >>
->> diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
->> index 470041c49a44..c30c2ee9fb77 100644
->> --- a/kernel/auditfilter.c
->> +++ b/kernel/auditfilter.c
->> @@ -1320,10 +1320,13 @@ int audit_compare_dname_path(const struct qstr 
->> *dname, const char *path, int par
->>        return 1;
 >>
->> parentlen = parentlen == AUDIT_NAME_FULL ? parent_len(path) : parentlen;
->> -       if (pathlen - parentlen != dlen)
->> -               return 1;
->> -
->> p = path + parentlen;
->> +       pathlen = strlen(p);
->
-> Huh?  We have
->        pathlen = strlen(path);
-> several lines prior to this.  So unless parentlen + path manages to exceed
-> strlen(path) (in which case your strlen() is really asking for trouble),
-> this is simply
-> pathlen -= parentlen;
->
-> What am I missing here?
-
-[NOTE: network access is patchy right now so you're getting a phone reply 
-without an opportunity to look more closely at the code]
-
-To be fair, this was a quick example of "do something like this" to 
-demonstrate a different idea than was proposed in the original patch.  The 
-bit of code I shared was not a fully baked patch; I thought that would have 
-been clear from the context, if not my comments.
-
-Of course improvements are welcome, but in the future know that unless I'm 
-submitting a proper patch, the code snippets I share during review are 
-going to be *rough* and not fully developed.  Additional work by the 
-original author is expected.
-
-> And while we are at it,
-> parentlen = parentlen == AUDIT_NAME_FULL ? parent_len(path) : parentlen;
-> is a bloody awful way to spell
-> if (parentlen == AUDIT_NAME_FULL)
->  parentlen = parent_len(path);
-> What's more, parent_len(path) starts with *yet* *another* strlen(path),
-> followed by really awful crap - we trim the trailing slashes (if any),
-> then search for the last slash before that...  is that really worth
-> the chance to skip that strncmp()?
-
-Pretty much all of the audit code is awkward at best Al, you should know 
-that. We're not going to fix it all in one patch, and considering the 
-nature of this patch effort, I think there is going to be a lot of value in 
-keeping the initial fix patch to a minimum to ease backporting.  We can 
-improve on some of those other issues in a second patch or at a later time.
-
-As a reminder to everyone, patches are always welcome.  Fixing things is a 
-great way to channel disgust into something much more useful.
-
->
->> +       if (p[pathlen - 1] == '/')
->> +               pathlen--;
->> +
->> +       if (pathlen != dlen)
->> +               return 1;
+>> On 11/14/24 10:21, Charlie Jenkins wrote:
+>>> Add a new hwprobe key "RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0" which
+>>> allows userspace to probe for the new RISCV_ISA_VENDOR_EXT_XTHEADVECTOR
+>>> vendor extension.
+>>>
 >>
->> return strncmp(p, dname->name, dlen);
->
-> ... which really should've been memcmp(), at that.
+>> Hi Charlie,
+>>
+>> How about changing the name of the key from
+>> "RISCV_ISA_VENDOR_EXT_XTHEADVECTOR" to "RISCV_HWPROBE_KEY_VENDOR_EXT_0" and
+>> use marchid to identify what the vendor is, each vendor will have its own
+>> bit definition in this value. So we can avoid adding so many hwprobe keys
+>> for each vendor in the future.
+>>
+>> I proposed a commit here: https://github.com/cyyself/linux/commit/36390645d85d1ac75dd71172f167719df4297f59
+> 
+> I actually originally had this in one of my first versions of this
+> series but was convinced by Conor to change it. The problem with it was
+> that tying vendor extensions to mvendorid means that it is enforced by
+> the kernel that vendors cannot share vendor extensions. It is possible
+> for vendor A to purchase IP that contains a vendor extension from vendor
+> B. This vendor extension should work on platforms created by vendor A
+> and vendor B. However, vendor A and vendor B have different mvendorids,
+> so the kernel can't support this if it is tied to mvendorid.  It could
+> be solved by duplicating every extension that vendors have, but then
+> userspace software would have to keep in mind the mvendorid they are
+> running on and check the different extensions for the different vendors
+> even though the implementation of the extension is the same.
+> 
+> The original conversation where Conor and I agreed that it was better to
+> have vendor extensions not rely on mvendorid:
+> 
+> https://lore.kernel.org/linux-riscv/20240416-husband-flavored-96c1dad58b6e@wendy/
+> 
 
-Agreed. See above.
+Thanks for your explanation. I will strongly agree with Conor's opinion 
+if the feature bitmask does not exist in RISC-V C-ABI.
 
---
-paul-moore.com
+However, as the feature mask defined in RISC-V C-ABI[1] uses the design 
+depending on marchid currently, should we reconsider this key for its 
+use case? The current target_clones and taget_version implemented in 
+GCC[2] and LLVM[3] also use the bitmask defined in C-ABI. I think if we 
+use this key depending on marchid, to make a key shared with all vendors 
+will make this cleaner.
 
+[1] 
+https://github.com/riscv-non-isa/riscv-c-api-doc/blob/main/src/c-api.adoc#function-multi-version
+[2] 
+https://github.com/gcc-mirror/gcc/blob/8564d0948c72df0a66d7eb47e15c6ab43e9b25ce/gcc/config/riscv/riscv.cc#L13016
+[3] 
+https://github.com/llvm/llvm-project/blob/f407dff50cdcbcfee9dd92397d3792627c3ac708/clang/lib/CodeGen/CGBuiltin.cpp#L14627
+
+>>
+>>> This new key will allow userspace code to probe for which thead vendor
+>>> extensions are supported. This API is modeled to be consistent with
+>>> RISCV_HWPROBE_KEY_IMA_EXT_0. The bitmask returned will have each bit
+>>> corresponding to a supported thead vendor extension of the cpumask set.
+>>> Just like RISCV_HWPROBE_KEY_IMA_EXT_0, this allows a userspace program
+>>> to determine all of the supported thead vendor extensions in one call.
+>>>
+>>> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+>>> Reviewed-by: Evan Green <evan@rivosinc.com>
+>>> ---
+>>>    arch/riscv/include/asm/hwprobe.h                   |  3 +-
+>>>    .../include/asm/vendor_extensions/thead_hwprobe.h  | 19 +++++++++++
+>>>    .../include/asm/vendor_extensions/vendor_hwprobe.h | 37 ++++++++++++++++++++++
+>>>    arch/riscv/include/uapi/asm/hwprobe.h              |  3 +-
+>>>    arch/riscv/include/uapi/asm/vendor/thead.h         |  3 ++
+>>>    arch/riscv/kernel/sys_hwprobe.c                    |  5 +++
+>>>    arch/riscv/kernel/vendor_extensions/Makefile       |  1 +
+>>>    .../riscv/kernel/vendor_extensions/thead_hwprobe.c | 19 +++++++++++
+>>>    8 files changed, 88 insertions(+), 2 deletions(-)
+>>>
+>>
 
 
 
