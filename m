@@ -1,151 +1,103 @@
-Return-Path: <linux-kernel+bounces-409725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C72529C9090
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:13:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C699C9094
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 18:14:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBE6C2830F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:13:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A292B283500
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 17:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B66188735;
-	Thu, 14 Nov 2024 17:13:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6022717C208;
+	Thu, 14 Nov 2024 17:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qX2DdKZl"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FZ3SCvGM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FBA433D2
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 17:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DA117BED0;
+	Thu, 14 Nov 2024 17:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731604402; cv=none; b=ZipBsWbympnpIIOe6lWJ3ibDzEJugqcao/0DbA/3gJp+BF72PqAaghIhpF80zTfRhuLWp0em4O2Uxr8jQS5UID5vK5gwYzwSqwCIPhipkvkXl1bKrcIzM6Lf4Us1f4gLrs9zlaJCHA7YsyvyTexZVzVza8/A12Za/KODLlkGzXA=
+	t=1731604434; cv=none; b=X48To96Yy6lDOGX7jyAcLZ1XSYbCkO9chPA4xIUiZJtggPeDDaUAulihNh0uHSvZbh2J+8gNDgzdlWlUdbsVxuIBFmUFkrnQHbq6ZYIQZWGB2NmrhdM/wbaR7ChNqtwATf6Y0q+uVW3cYOiWdRf99uuHymSiIH3RRWBHi7hjVtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731604402; c=relaxed/simple;
-	bh=A80VzsnOEipCxkUh97wzvMqS3FP+WLn0ePpQ1WrySQg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rKsbxK9JQFRTMgnIVmQkS0VV2f8gPIL35vFlPvqbx0OZzeJdL8tpiXPaSJR7yriTIvS6Vubb5E6o/HW9HPMY58sj3BBHOQz9VP6P43kiJZlOaUG2xsCZjlLC8CykOlE6ki02GcYu/OZXkbewzNzNfb65QNWj0tkgmG3sj9vch6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qX2DdKZl; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20c693b68f5so10131055ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:13:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731604399; x=1732209199; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x2r2gffF9fCgNgH81FqMLKgByrEvtAcE8L5uD28+7jI=;
-        b=qX2DdKZlzYwNaXoPAbk1LsDDMB2lpfN4G5jPeCf6vpuXFWqYqvk/bn7yAfnwJk2s/8
-         b0+yACgDUl7plZea2AJ16i19zAEOktnvBN9k4Q2vrpIIfeFAqoQZul0zftxGNb0hDvI0
-         OSynRpQdb0kdGR/L6ymPKOI/dKxz4dLhEaiKxGbj7eVieS9GOiZOL2BIm3runT8Is8/K
-         46mcIOysvdqw6htxox080Xvm80370HbFVKoqbbAv4onkW+F00I2fivzkS0nC8UUHQYqY
-         c4W87PU1MvRsf/QFyU+PrwWV8RqDaOJMJ3EMro9YnR+kibwUOL9GIVz2oOLgYt/bB/py
-         iOoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731604399; x=1732209199;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x2r2gffF9fCgNgH81FqMLKgByrEvtAcE8L5uD28+7jI=;
-        b=llQlSYjQ11jLiFiwbygzWMgP4v80hfRbyvfmG12KpQrdUKyJu+dDsK6YG3kiLuCmKc
-         UzfII7VMY1Rt08SaTvUkURKQ0bjuyk7AIIKzHsTduo24lT7uFJ+iQPplfmdZwG6yIG4D
-         2ZE/SJP7F0YPrp6r0oHldgGFpNLe382qcPl+3ZX9p0TlgkWJsr7uZricLZy5waCeq1Y3
-         8UEv9vu5ExQv1jVCUnlaZaum09I5Z5p5eBzQtl8tjskTCGfGWBPmv1YmOxwGJmcpnwaN
-         EJbIaN391TxscngwMLYgqTSSvPpEoq28pBaG5V787DOlt/YO+E0DXjqtkLlFxcfIyHO3
-         YWmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSvN+qkUfjLAYHjOUUL2GkClXeld5Horx5TVnA4p2KX4B6DLxIc0LwpV/mQGyBLRq4I/CCAfSGe/5K0GI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypnTRNXZ7fdYmUla6q/qaCk3MkkyywFwJpn3I2PjSx92kk7I3T
-	XrrRh5ZyfGgzq2Z8oleRTLNWZeaEUN/4F0uuhsK5qC1VkRyx6tI43C2dih/i8tHv8q0lzS2vmOT
-	QAywOsjYjxGIEkYUXFtx9vZyP7ls5Wy9dsiC8
-X-Google-Smtp-Source: AGHT+IGXLLQ599KLZBit3Ubp5UM43jPzJZqyV/9Pu9rr5uQzEA3J6VZvB/vvL8YEOtbhRsirwS8okjixKMtL1ARDbp8=
-X-Received: by 2002:a17:902:ea02:b0:20b:ab4b:5432 with SMTP id
- d9443c01a7336-211b5bcc3b0mr111508655ad.12.1731604398795; Thu, 14 Nov 2024
- 09:13:18 -0800 (PST)
+	s=arc-20240116; t=1731604434; c=relaxed/simple;
+	bh=/LZlSOccn1m3pAZvKwPhMaD9G7pEsN/iu8vODiTHqP4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Otu4u/31M0Sdv5peXQiIqlhb3YcAgRsnrhjwI08Hu7VQs7dy7qODAQk0mBNokPIYouPyqeNRzrYHIz4WPK8oFG4gw5R+srBUen/l3Jq/Cxf4g46qIWkG5atXI0hbxtUD179mJNvSEbD9jbqwa7P/yhY5T7zLRgq2zpGloC6tqT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FZ3SCvGM; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731604433; x=1763140433;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/LZlSOccn1m3pAZvKwPhMaD9G7pEsN/iu8vODiTHqP4=;
+  b=FZ3SCvGMd36qfsNCvrnaxNVtPGDN4xg4chzfZifyzC4jdU5hD3R18HVn
+   6g/a6/veeVeBmt2B8pHJxCvnVTeKJFbGb8jkceIrX97+41b5qboAo8zrh
+   ArNoYeg/CkCydSZ3G5rI60GdacGL5Z4KU9CPLWMYzIL/AEdHGi7XvNGSE
+   5l/KEZVLeqkxOCFbkIJrRRausaccBx5zes2fL0R656AUxFR6wkwO7dbMX
+   SjddpYV9Obxnz37k9daTL8id+zoiknr5sTQWAByOKWwiP3mC8obCMwQBU
+   D/ycK1HGGs4Cegn8S+NJ5Zqx2g2epczIK4YsMmeNR4qm3HQGRbeZ5peF+
+   w==;
+X-CSE-ConnectionGUID: yFRr4VvbTvqYPd4lbMOHxg==
+X-CSE-MsgGUID: 2NKYg+JzR7yCjm/ssEBWnQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11256"; a="31471533"
+X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
+   d="scan'208";a="31471533"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 09:13:53 -0800
+X-CSE-ConnectionGUID: 0uX9F+DhS52CIvl7k1yOwg==
+X-CSE-MsgGUID: EunNGp7GSvOC1rF2/IZ2og==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,154,1728975600"; 
+   d="scan'208";a="111581703"
+Received: from johunt-mobl9.ger.corp.intel.com (HELO [10.245.244.40]) ([10.245.244.40])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 09:13:49 -0800
+Message-ID: <15d18759-68eb-4683-9255-715545505ed6@linux.intel.com>
+Date: Thu, 14 Nov 2024 18:13:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105123906.26072-1-yangtiezhu@loongson.cn>
- <20241105123906.26072-6-yangtiezhu@loongson.cn> <20241105141530.GE10375@noisy.programming.kicks-ass.net>
- <62df4c24-68ed-fbfc-ed98-2df796697d89@loongson.cn> <9589c5b673f45f02e2b0fa9d9a96eff0f0df0920.camel@xry111.site>
- <7e8adb0b-e681-72ae-40d8-740dc3f9480b@loongson.cn> <20241113211119.lfwlxv2bjyqfqeh2@jpoimboe>
-In-Reply-To: <20241113211119.lfwlxv2bjyqfqeh2@jpoimboe>
-From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Thu, 14 Nov 2024 09:13:06 -0800
-Message-ID: <CAKwvOdmE7zZN2x9echrje7dqunda=SywqurkyXyJaaUp3M0aEg@mail.gmail.com>
-Subject: Re: annotating jump tables (Re: [PATCH v2 5/5] LoongArch: Enable jump
- table with GCC for objtool)
-To: Josh Poimboeuf <jpoimboe@kernel.org>, Ard Biesheuvel <ardb@kernel.org>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Xi Ruoyao <xry111@xry111.site>, 
-	Peter Zijlstra <peterz@infradead.org>, Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-toolchains@vger.kernel.org, 
-	Jan Beulich <jbeulich@suse.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/3] SRF: Fix offline CPU preventing pc6 entry
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ rafael.j.wysocki@intel.com, len.brown@intel.com,
+ artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com,
+ Peter Zijlstra <peterz@infradead.org>
+References: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
+ <20241112114543.GP22801@noisy.programming.kicks-ass.net>
+ <1ee47890-7f19-4c21-9d0d-94834d716159@linux.intel.com> <87o72klylj.ffs@tglx>
+Content-Language: en-US
+From: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+In-Reply-To: <87o72klylj.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 13, 2024 at 1:11=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.org=
-> wrote:
+> That's not really working:
 >
-> On Tue, Nov 12, 2024 at 08:26:56PM +0800, Tiezhu Yang wrote:
-> > On 11/12/2024 11:15 AM, Xi Ruoyao wrote:
-> > > On Wed, 2024-11-06 at 13:03 +0800, Tiezhu Yang wrote:
-> > > > On 11/05/2024 10:15 PM, Peter Zijlstra wrote:
-> > > > > On Tue, Nov 05, 2024 at 08:39:06PM +0800, Tiezhu Yang wrote:
-> > > > > > For now, it is time to remove the compiler option -fno-jump-tab=
-les
-> > > > > > to enable jump table for objtool if the compiler is GCC and it =
-has
-> > > > > > the compiler option -mannotate-tablejump, otherwise still keep =
-the
-> > > > > > compiler option -fno-jump-tables to maintain compatibility with=
- the
-> > > > > > older compilers.
-> >
-> > ...
-> >
-> > > > ifdef CONFIG_CC_HAS_ANNOTATE_TABLEJUMP
-> > > > KBUILD_CFLAGS                   +=3D $(call cc-option,-mannotate-ta=
-blejump)
-> > > > else
-> > > > KBUILD_CFLAGS                   +=3D -fno-jump-tables
-> > > > endif
-> > >
-> > > Has -mannotate-tablejump been added to Clang?
-> >
-> > Yes.
-> >
-> > > IMO it's better to add it
-> > > to Clang first, and add Clang & GCC support at once into objtool.
-> >
-> > Looks reasonable, the fact is that there are some corner issues
-> > compiled with Clang due to different compiler behaviors, most of
-> > the issues have been addressed and I need to do more test, I will
-> > send v3 with about 10 patches after the coming merge window.
->
-> Hm, I didn't know -mannotate-tablejump existed.  We really need
-> something which supports all arches, not just loongarch.
->
-> Others were looking at adding something similar (adding them to Cc).
+>   1) Regular kexec offlines them again.
 
-Looks like this was added to clang in:
-https://github.com/llvm/llvm-project/pull/102411
+But then, they execute hlt loop in the reboot vector right?
+I think that's fine. We just don't want to be woken up from the mwait
+when the RIP points to garbage.
 
-A comment in llvm/lib/Target/LoongArch/LoongArchAsmPrinter.cpp
-describes the scheme:
-+  // Emit an additional section to store the correlation info as pairs of
-+  // addresses, each pair contains the address of a jump instruction (jr) =
-and
-+  // the address of the jump table.
+>   2) Kexec in panic can't do any of that.
 
-Ard had a prototype in:
-https://github.com/llvm/llvm-project/pull/112606
-which used relocations rather than a discardable section.
---=20
-Thanks,
-~Nick Desaulniers
+Does it make sense to change the kexec, so that every CPU is forced
+into the reboot vector, which I believe happens for online CPUs?
+We don't have to online them all the way. Maybe minimal bringup just
+to be able to send them the IPI?
+
+As a side note, It's not that important for this patchset. I think I
+can make it work without simplifying the existing hack, but crossed my
+mind at some point that maybe we could do that.
+
 
