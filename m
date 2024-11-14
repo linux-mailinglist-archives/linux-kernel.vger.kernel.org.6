@@ -1,110 +1,213 @@
-Return-Path: <linux-kernel+bounces-408981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A4D69C860D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:26:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C5B9C85FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:23:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DA13B2DAD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:22:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10E9F281CC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5FC61E04BE;
-	Thu, 14 Nov 2024 09:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6B61DA109;
+	Thu, 14 Nov 2024 09:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rJjKbuDX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Grk+Uh31"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="diZYwHVZ"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E524C85
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6E01DD543
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731576150; cv=none; b=CLCAO1XyZPyW1Ll6LUbVD6pfaSuZccF+XsAn3EJXiUkEyNudghGCkL4O4vgyDUCvay/ijs6jEjUSPuS2FM2iJB9a37wJ9vuft/73UhyfH+KTKPStWfnq2gzIUAOJHm6aKgAK/nw5bW6QQmSgkg3JTj0QTY3PkUY6XYzmXG/hm2U=
+	t=1731576193; cv=none; b=Rg0NODIVB1vUL1H21USnaZsvyVyG1MUxSNh+tbXmGqAkJJD07gZe0hpj5PdfWBtwHcCtEuPvxAekqhX0d8dVaqpifb7+s9cxnl4XF2rY8/aCLxgvLjQ219URgXf4NY2ljT6Cx27zfCtFyEthQ+m+MGvntiRhqduxTjxajcSqlnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731576150; c=relaxed/simple;
-	bh=FtMvVrIkVgS87aYeDGnaRwQsqdUP2fDxVqVQT3zYK2A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sL1s+AHJlhD35XuSIWkrKwlnDOGs9taUUhNjqtqkmc+Ucq9cU92Yfgwi5Wykblmq7ey+REJ+NQouhqrk4opy3OXCDsvA912KIejIqmSEcPkcsHp3ODUtp8vrsezBeAh3MgQRhdV2rPeQL8LfK56XGXINtLvMwzmcPxAHVyZ2gLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rJjKbuDX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Grk+Uh31; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 14 Nov 2024 10:22:25 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731576147;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jU6QogdISgLdskSA0MGg4nE5fmBcyP9GNCznhYTpfNw=;
-	b=rJjKbuDX2afhl77Zty7d/BMMQOZukZZzxuX98WUcv3q7xJqcZVqSXQTp6aLYjFWfgh6mAN
-	pe37wIDQPsn3TqyjbjYsTB0s7KizfdP2FqhhkkWiO+M1Z4B65oGZ3NTACOBY8ywO8XrvqY
-	V4F8GNg07VCeUJcwsdOZLSKsTdo0mkGt4mDpAcuH3/S56Y4RwkMO28Hb+RA+Pz9aoiCSvG
-	qDToo1ubr2gpZ4YezakycBl0oyG5eVPm+TGJ6hcW2qoX94PVr7GyAy4Tbi46Jc3KBcFtcz
-	TGeYuTLgWxmfKEYrqX7Q5q5j4VhTtl71wg54mwGsBW01uLyeZdkvC0wNd5/90A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731576147;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jU6QogdISgLdskSA0MGg4nE5fmBcyP9GNCznhYTpfNw=;
-	b=Grk+Uh31urIJRtSCMGkvxDRjqxWV2fXWZMmXkLwwv/r393IhH3jklR0FoXSQiA+ZHNg9j+
-	QBx8JTszDmdKktAA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de,
-	paulmck@kernel.org, mingo@kernel.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, frederic@kernel.org, efault@gmx.de,
-	sshegde@linux.ibm.com, boris.ostrovsky@oracle.com,
-	Daniel Bristot de Oliveira <bristot@kernel.org>
-Subject: Re: [PATCH v2 5/6] osnoise: handle quiescent states for
- PREEMPT_RCU=n, PREEMPTION=y
-Message-ID: <20241114092225.lVdeX1wG@linutronix.de>
-References: <20241106201758.428310-1-ankur.a.arora@oracle.com>
- <20241106201758.428310-6-ankur.a.arora@oracle.com>
+	s=arc-20240116; t=1731576193; c=relaxed/simple;
+	bh=aKi0+1sKEXobfNQZc5o0QxGdgLKu8VAEg01D+//FBDs=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=b489PWD0T44qIaZsrH9RRLS6YDgg2AKtjm+s38sjoKwOoT73fA3M/nuBvu+G6+QLPWPelELUu9k2K4Zy/f4XqepyR8lKL0dTtL3Wm4GOHoaoqkhtMAsWE8h0ap2ShEt795Goa4YvpEgWFhA5/8IUzHTLzgvYy1LUgc2q6P3twew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=diZYwHVZ; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ff5d2b8f0eso270361fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:23:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731576190; x=1732180990; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pKVskJH08XCjh0dvrOvGb7Xw0ql6HSZ5m3cIUFTJUOc=;
+        b=diZYwHVZdVYebC2nx6FICekvL2roVUjZejsz6hYpzcP6lH7QNqOywN26zTKw1mpYJj
+         07Rh8HoyC8aFU8wXpsFGq5aBAtqwfE+MOERSt/1xrOLHzDZWc1u/qQQM74zgeLW/wKdi
+         c0nElZOBh9eOdnU5+yHoTBSGaih/6eoLxHPJaaPAdzmEMseb1FFU6hv8ExgU/7Urc/pz
+         /yo+aSWaCiQfV7xnrEAxKfYxvRcrA10ft3oAwO4BzmmjpSVbyUZRFYGh8EjyErXKgNlI
+         mP5e93pRdBuLPIp9cmbIWkZrTDExYkqkAZ8b97be/turwbJosf2j1Ye3SInoGYgK6LBT
+         0/HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731576190; x=1732180990;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=pKVskJH08XCjh0dvrOvGb7Xw0ql6HSZ5m3cIUFTJUOc=;
+        b=OikytK6W5s42jdYhW/0DYw5aCzKIHPSxnuZhtTHCjP6vZe2pjw2ZR9k3KpQeV3oznE
+         1zFCHGRHLXwVwwZjbf0qqDpmc4gf5/Z/3fkniK3luwBXDKEw7Wi/uEyq0OKDxwuhjVjD
+         0P1adpPiwNV8DcAWzZR1duLSJA5btMRlxVDOx95wi/e5hH6hj6c1qiRqo1ZPjReMv6Y5
+         JbNYH4H2uyqLGPshLLqtqUX5ULibtL88aI3fH/60KJqKMDdUL3XFvn0KJZuIYavhtftM
+         aUixRWJvNqSsG5iCyGRjiE59pVRKdB3WOBbAiwM2uLaMHealfkFlP0SUeb3/fS3X3qCv
+         kv0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVw8EpLZSH9vqMD+j1h7d4cBHZFoorZS3fW50G0lMoIoU6NvflHWOy/9+HsccJhyuRMSJvq+QtEsfQj4GU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsJOsTi74wvV95CFkfMdqSRJOX/FRRXsJVSnaBAn9oLTutLHy2
+	7oo/OPfq0dCjpT9sL9gr/ZU4/ViQ9HfMdwaJpdEiWT7XJgaY0/Of8WHkZK6iQwc=
+X-Google-Smtp-Source: AGHT+IGErzUCoRrzEItkg1L3C/jktxdQuqW4d/nGFV/zoyOKtwAeZgerInrjMql5bO5vzmezrLU3dw==
+X-Received: by 2002:a05:651c:e15:b0:2ff:53c7:a79f with SMTP id 38308e7fff4ca-2ff53c7a8admr13442661fa.7.1731576189979;
+        Thu, 14 Nov 2024 01:23:09 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:a62a:6bba:b737:406e? ([2a01:e0a:982:cbb0:a62a:6bba:b737:406e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da298c81sm16941005e9.39.2024.11.14.01.23.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Nov 2024 01:23:09 -0800 (PST)
+Message-ID: <ff0ec93b-e2d0-4022-b8ae-8e4d9d1eac9f@linaro.org>
+Date: Thu, 14 Nov 2024 10:23:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241106201758.428310-6-ankur.a.arora@oracle.com>
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH RFC 1/8] opp: core: implement dev_pm_opp_get_bandwidth
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>,
+ Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+ Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Connor Abbott <cwabbott0@gmail.com>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
+References: <20241113-topic-sm8x50-gpu-bw-vote-v1-0-3b8d39737a9b@linaro.org>
+ <20241113-topic-sm8x50-gpu-bw-vote-v1-1-3b8d39737a9b@linaro.org>
+ <20241114041044.esfazw5mv6zfyrix@vireshk-i7>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241114041044.esfazw5mv6zfyrix@vireshk-i7>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2024-11-06 12:17:57 [-0800], Ankur Arora wrote:
-> To reduce RCU noise for nohz_full configurations, osnoise depends
-> on cond_resched() providing quiescent states for PREEMPT_RCU=n
-> configurations. And, for PREEMPT_RCU=y configurations does this
-> by directly calling rcu_momentary_eqs().
+Hi,
+
+On 14/11/2024 05:10, Viresh Kumar wrote:
+> On 13-11-24, 16:48, Neil Armstrong wrote:
+>> Add and implement the dev_pm_opp_get_bandwidth() to retrieve
+>> the OPP's bandwidth in the same was as the dev_pm_opp_get_voltage()
 > 
-> With PREEMPT_LAZY=y, however, we can have configurations with
-> (PREEMPTION=y, PREEMPT_RCU=n), which means neither of the above
-> can help.
+>                                    way
+> 
+>> helper.
+>>
+>> Retrieving bandwidth is required in the case of the Adreno GPU
+>> where the GPU Management Unit can handle the Bandwidth scaling.
+>>
+>> The helper can get the peak or everage bandwidth for any of
+> 
+>                                   average
 
-The problem is as you say CONFIG_PREEMPT_RCU=n + CONFIG_PREEMPTION=y.
-You can't select any of those two directly but get here via
- PREEMPT_LAZY=y + PREEMPT_DYNAMIC=n.
+Aww, good catch, thanks
 
-Please spell it out to make it obvious. It is not a large group of
-configurations, it is exactly this combo.
+> 
+>> the interconnect path.
+>>
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
+>>   drivers/opp/core.c     | 25 +++++++++++++++++++++++++
+>>   include/linux/pm_opp.h |  7 +++++++
+>>   2 files changed, 32 insertions(+)
+>>
+>> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+>> index 494f8860220d97fc690ebab5ed3b7f5f04f22d73..19fb82033de26b74e9604c33b9781689df2fe80a 100644
+>> --- a/drivers/opp/core.c
+>> +++ b/drivers/opp/core.c
+>> @@ -106,6 +106,31 @@ static bool assert_single_clk(struct opp_table *opp_table)
+>>   	return !WARN_ON(opp_table->clk_count > 1);
+>>   }
+>>   
+>> +/**
+>> + * dev_pm_opp_get_bandwidth() - Gets the peak bandwidth corresponding to an opp
+> 
+> s/peak bandwidth/bandwidth/
 
- With PREEMPT_LAZY=y + PREEMPT_DYNAMIC=n however we get PREEMPT_RCU=n
- which means no direct rcu_momentary_eqs() invocations and
- cond_resched() is an empty stub.
+Ack
 
-> Handle that by fallback to the explicit quiescent states via
-> rcu_momentary_eqs().
+> 
+>> + * @opp:	opp for which voltage has to be returned for
+>> + * @peak:	select peak or average bandwidth
+>> + * @index:	bandwidth index
+>> + *
+>> + * Return: peak bandwidth in kBps, else return 0
+> 
+> s/peak bandwidth/bandwidth/
 
-> Cc: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Daniel Bristot de Oliveira <bristot@kernel.org>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-> Acked-by: Daniel Bristot de Oliveira <bristot@kernel.org>
-> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
+Ack
 
-Sebastian
+> 
+>> + */
+>> +unsigned long dev_pm_opp_get_bandwidth(struct dev_pm_opp *opp, bool peak, int index)
+>> +{
+>> +	if (IS_ERR_OR_NULL(opp)) {
+>> +		pr_err("%s: Invalid parameters\n", __func__);
+>> +		return 0;
+>> +	}
+>> +
+>> +	if (index > opp->opp_table->path_count)
+>> +		return 0;
+>> +
+>> +	if (!opp->bandwidth)
+>> +		return 0;
+>> +
+>> +	return peak ? opp->bandwidth[index].peak : opp->bandwidth[index].avg;
+>> +}
+>> +EXPORT_SYMBOL_GPL(dev_pm_opp_get_bandwidth);
+> 
+> All other bandwidth APIs are named as _bw, maybe do same here too ?
+> 
+
+Sure, I wasn't sure about that, will switch to _bw.
+
+Neil
+
 
