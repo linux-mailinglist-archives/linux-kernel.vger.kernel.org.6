@@ -1,186 +1,178 @@
-Return-Path: <linux-kernel+bounces-408956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F07B9C8593
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:05:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BD4C9C8597
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 10:05:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 130911F26852
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:05:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10A661F2246B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08CD1DE8A0;
-	Thu, 14 Nov 2024 09:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF863194A67;
+	Thu, 14 Nov 2024 09:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="ijfhqiIa"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GsiOO7if"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58CA81991CD;
-	Thu, 14 Nov 2024 09:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7321DD88E
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 09:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731575080; cv=none; b=dic5IWTszQjYifIy56pwiEcZRPkx/UgjRaTEJcoI83CPqp2l9yItN1zjGyA28PvEnveTcCJc2zEQNlZbBbcyzA1F5kRU8/3sa1oxQYqZNBeF05MY+nups01YCLF/5sg5iUfyRzVXG12CmEMG9aa+UFX0T1FeJJ16TRoItYQUMGo=
+	t=1731575122; cv=none; b=kFjpZz/4dwardrGsihkhxhiDHa8UWTG5WYq7GV/9rMf1fq7GK1MkIjjMpLyNVtbiN0m6zP/bCEJVf7Fg80M1mwvYK+lZFXOrS9vnRPaws3pJqk02YcbS9Ey8QVwpfJl5L8DdMB2lsAfPQsz5EMFRTCzWZ9AKHEThwXaY7Le2c4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731575080; c=relaxed/simple;
-	bh=iRPXMOyExoi/69l5RX3rJc18D1pUDb01VAexzrIlrEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g0KaTteh5EeuPrxcgBZutt1ActOVHCCPyibli4ZlrWqx6a/hJZRJuIgw2N5cy38C0P8MbE+9/UeB2geNXsTfG4hlRs+4LT3z955aKB4N+5apv+or14SZFrzCbqzR035d/JCRKPksQCPWuYAdLHzYPuiPTbm70eF7EvQT7vUsYNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=ijfhqiIa; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=DTask+hWGywo0tXDj4oHwyAVi94Iui8lkNGWuJeSb0w=; b=ijfhqiIaNkSj9Vm9B64Z7ZBM2Z
-	DVmR9pHHFBojzICcvhrNdotdtePKjaqRdtGWhQJwckWac4ABDdOhFYgStaWfUG5BlUDgBbLUEBQJI
-	JA0l+MHLgu7ousiWQ3Ci70W1VgwbkBjCAaUgdWPlHZKVstKNDco4wXWN45WbYCO+x/JpKbsXvCkgx
-	Ne7Ae/THTPKcLxclBAw/DPyRdZEFCeQ6H76zBtG8yYjwwJdvnhgP4Xgnw5+jQ0imFqE3p9yW2Vsq5
-	LoixFhmuakyWixoWjfpGHpZonxJ5sDZyX7JFWuvEMMI6Xa9Tvtsbt9ZeQ+D8DJkIKNoGXtiIDxSKx
-	B4sa/ESA==;
-Received: from sslproxy07.your-server.de ([78.47.199.104])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sean@geanix.com>)
-	id 1tBVmD-000EWr-6H; Thu, 14 Nov 2024 10:04:33 +0100
-Received: from [2a06:4004:10df:0:6905:2e05:f1e4:316f] (helo=Seans-MacBook-Pro.local)
-	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sean@geanix.com>)
-	id 1tBVmC-000H8n-1e;
-	Thu, 14 Nov 2024 10:04:32 +0100
-Date: Thu, 14 Nov 2024 10:04:31 +0100
-From: Sean Nyekjaer <sean@geanix.com>
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, linux-can@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH can-next v3 2/2] can: tcan4x5x: add option for selecting
- nWKRQ voltage
-Message-ID: <bmuodxb7xtuwexm7rg6ijepxlyqlwdux37ye2ztwreg7kiynwy@xxt3qvgwebvw>
-References: <20241112-tcan-wkrqv-v3-0-c66423fba26d@geanix.com>
- <20241112-tcan-wkrqv-v3-2-c66423fba26d@geanix.com>
- <b61e19bb-58ae-42ac-9863-f1149a812261@wanadoo.fr>
+	s=arc-20240116; t=1731575122; c=relaxed/simple;
+	bh=kF95GC+iUY1Dm9Qv60S9X5a5C7Gjugcat/GIm+/tUc4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=P4XKh9/wyonWUIYkQYAlCEJ4G5n/To6uKogyGcYGF7orY3MYu1ADJqlfB7WELIXGRxZBhKg8deI8BIZfwBtDsT7leVxWmhIkpU5C2YmSBnjY2h90CoYM77FTuUDfvYb48t+7cf/Thjs5BDmYGmon5Zqx7B9UroEZ98mSKdLgzs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GsiOO7if; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731575119;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kF95GC+iUY1Dm9Qv60S9X5a5C7Gjugcat/GIm+/tUc4=;
+	b=GsiOO7ifx1YCaMFAgQm31YEU0WUwTtW6TGcA8d6VFV+DBqip5wofcMl/rKT8i31+xi47fa
+	fLAO0thBoPn4PGJZQ8cDOl52EIPRCXiyaZT23uPDHflLaZ2AaG80SWtC9bTJExmIUPSfDH
+	c38pj3dgyzwT9jZPmDT2CjnqI+CR3y4=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-517-MmKf6Ir3OoqkphjameGfAg-1; Thu, 14 Nov 2024 04:05:17 -0500
+X-MC-Unique: MmKf6Ir3OoqkphjameGfAg-1
+X-Mimecast-MFC-AGG-ID: MmKf6Ir3OoqkphjameGfAg
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-53da203141bso281631e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:05:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731575115; x=1732179915;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kF95GC+iUY1Dm9Qv60S9X5a5C7Gjugcat/GIm+/tUc4=;
+        b=ciwGP/FZLMBB4hUwGsC76xkEdZxhxL1HKLCRDWPGmIAkjmuli1w4X5Sh3KGkxzlUGL
+         1Aoo4xFQdWtn+84sdAGOSil/j5Q4nJo3q/shdGaeESeYYdCO9/Y4Ju6FAEnaIxry8FSA
+         oHLBfiaH6zm+Ptxbkwg0sWUls2vQ4OufKZc8t4DFo/lNqG908Ud0p4+DJLdTzOmqCmDo
+         7lQ8M41TlEZQIqap9uIDbJdrrPwhHzfIAzWdw0LyAg9mvJSFoRyjdF3tP+UfM+QN7vmX
+         lAeykjeR7OeFOVGnet5OXhBl44/fSrsxaW9V3i9AlomPB4X5t3Q5kn1PfIs3McBl5xRL
+         JppA==
+X-Forwarded-Encrypted: i=1; AJvYcCU67Dyf/PEJRPxiWa9mqKGFPu6RUprvoJ4txum0TQgxcaE7lcDUWm/LiGwec52HmyIw1Z5lafKbEi5YB6c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzL5YGEiK/M2f7q98TbAvW4gAC7DkEhTLjKI3hhxJH/iWJHVd9O
+	MTTZqfWP0EjkieEpBt5Q99Jakhat2q0nDVCXP86/jVaFr+bT54uQoldMHfrxzgm0jgSpTV3WZkb
+	2oVGsOCrBYmNtJxmRarBqGNuL1ic9Ky8kGg52E1vI8YoXwanQoJEnMFR8SJAi9A==
+X-Received: by 2002:a05:6512:1191:b0:539:f67b:b849 with SMTP id 2adb3069b0e04-53d862f33b4mr10003030e87.49.1731575115338;
+        Thu, 14 Nov 2024 01:05:15 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHN0Hy6qiNEuUsypmH2/i/ZX6h1LZFagvmv3lYpze64dRxm0m4HLn6U0lfPme4RmJ7ieJ/jJA==
+X-Received: by 2002:a05:6512:1191:b0:539:f67b:b849 with SMTP id 2adb3069b0e04-53d862f33b4mr10002974e87.49.1731575114801;
+        Thu, 14 Nov 2024 01:05:14 -0800 (PST)
+Received: from ?IPv6:2001:16b8:3dc0:7e00:9ea7:2841:8d4a:6aac? ([2001:16b8:3dc0:7e00:9ea7:2841:8d4a:6aac])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab788e1sm13078295e9.15.2024.11.14.01.05.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 01:05:14 -0800 (PST)
+Message-ID: <49bb6fc9ebff3cae844da0465ceadeef8d3217c7.camel@redhat.com>
+Subject: Re: [PATCH v2 11/11] Remove devres from pci_intx()
+From: Philipp Stanner <pstanner@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Damien Le Moal
+ <dlemoal@kernel.org>,  Niklas Cassel <cassel@kernel.org>, Basavaraj Natikar
+ <basavaraj.natikar@amd.com>, Jiri Kosina <jikos@kernel.org>,  Benjamin
+ Tissoires <bentiss@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Dubov <oakad@yahoo.com>,
+ Sudarsana Kalluru <skalluru@marvell.com>, Manish Chopra
+ <manishc@marvell.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rasesh Mody
+ <rmody@marvell.com>,  GR-Linux-NIC-Dev@marvell.com, Igor Mitsyanko
+ <imitsyanko@quantenna.com>,  Sergey Matyukevich <geomatsi@gmail.com>, Kalle
+ Valo <kvalo@kernel.org>, Sanjay R Mehta <sanju.mehta@amd.com>, Shyam Sundar
+ S K <Shyam-sundar.S-k@amd.com>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
+ <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, Alex Williamson <alex.williamson@redhat.com>,
+ Juergen Gross <jgross@suse.com>, Stefano Stabellini
+ <sstabellini@kernel.org>, Oleksandr Tyshchenko
+ <oleksandr_tyshchenko@epam.com>, Mario Limonciello
+ <mario.limonciello@amd.com>, Chen Ni <nichen@iscas.ac.cn>, Ricky Wu
+ <ricky_wu@realtek.com>,  Al Viro <viro@zeniv.linux.org.uk>, Breno Leitao
+ <leitao@debian.org>, Kevin Tian <kevin.tian@intel.com>, Mostafa Saleh
+ <smostafa@google.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>, Kunwu Chan
+ <chentao@kylinos.cn>, Ankit Agrawal <ankita@nvidia.com>, Christian Brauner
+ <brauner@kernel.org>, Reinette Chatre <reinette.chatre@intel.com>, Eric
+ Auger <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-input@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-wireless@vger.kernel.org, ntb@lists.linux.dev,
+ linux-pci@vger.kernel.org,  kvm@vger.kernel.org,
+ xen-devel@lists.xenproject.org
+Date: Thu, 14 Nov 2024 10:05:12 +0100
+In-Reply-To: <87msi3ksru.ffs@tglx>
+References: <20241113124158.22863-2-pstanner@redhat.com>
+	 <20241113124158.22863-13-pstanner@redhat.com> <87msi3ksru.ffs@tglx>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b61e19bb-58ae-42ac-9863-f1149a812261@wanadoo.fr>
-X-Authenticated-Sender: sean@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27457/Wed Nov 13 10:35:46 2024)
 
-Hi Vincent,
+T24gV2VkLCAyMDI0LTExLTEzIGF0IDE3OjIyICswMTAwLCBUaG9tYXMgR2xlaXhuZXIgd3JvdGU6
+Cj4gT24gV2VkLCBOb3YgMTMgMjAyNCBhdCAxMzo0MSwgUGhpbGlwcCBTdGFubmVyIHdyb3RlOgo+
+ID4gcGNpX2ludHgoKSBpcyBhIGh5YnJpZCBmdW5jdGlvbiB3aGljaCBjYW4gc29tZXRpbWVzIGJl
+IG1hbmFnZWQKPiA+IHRocm91Z2gKPiA+IGRldnJlcy4gVGhpcyBoeWJyaWQgbmF0dXJlIGlzIHVu
+ZGVzaXJhYmxlLgo+ID4gCj4gPiBTaW5jZSBhbGwgdXNlcnMgb2YgcGNpX2ludHgoKSBoYXZlIGJ5
+IG5vdyBiZWVuIHBvcnRlZCBlaXRoZXIgdG8KPiA+IGFsd2F5cy1tYW5hZ2VkIHBjaW1faW50eCgp
+IG9yIG5ldmVyLW1hbmFnZWQgcGNpX2ludHhfdW5tYW5hZ2VkKCksCj4gPiB0aGUKPiA+IGRldnJl
+cyBmdW5jdGlvbmFsaXR5IGNhbiBiZSByZW1vdmVkIGZyb20gcGNpX2ludHgoKS4KPiA+IAo+ID4g
+Q29uc2VxdWVudGx5LCBwY2lfaW50eF91bm1hbmFnZWQoKSBpcyBub3cgcmVkdW5kYW50LCBiZWNh
+dXNlCj4gPiBwY2lfaW50eCgpCj4gPiBpdHNlbGYgaXMgbm93IHVubWFuYWdlZC4KPiA+IAo+ID4g
+UmVtb3ZlIHRoZSBkZXZyZXMgZnVuY3Rpb25hbGl0eSBmcm9tIHBjaV9pbnR4KCkuIEhhdmUgYWxs
+IHVzZXJzIG9mCj4gPiBwY2lfaW50eF91bm1hbmFnZWQoKSBjYWxsIHBjaV9pbnR4KCkuIFJlbW92
+ZSBwY2lfaW50eF91bm1hbmFnZWQoKS4KPiA+IAo+ID4gU2lnbmVkLW9mZi1ieTogUGhpbGlwcCBT
+dGFubmVyIDxwc3Rhbm5lckByZWRoYXQuY29tPgo+ID4gLS0tCj4gPiDCoGRyaXZlcnMvbWlzYy9j
+YXJkcmVhZGVyL3J0c3hfcGNyLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoCAyICstCj4gPiDC
+oGRyaXZlcnMvbWlzYy90aWZtXzd4eDEuY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCB8wqAgNiArLS0KPiA+IMKgLi4uL25ldC9ldGhlcm5ldC9icm9hZGNvbS9ibngy
+eC9ibngyeF9tYWluLmPCoCB8wqAgMiArLQo+ID4gwqBkcml2ZXJzL25ldC9ldGhlcm5ldC9icm9j
+YWRlL2JuYS9ibmFkLmPCoMKgwqDCoMKgwqAgfMKgIDIgKy0KPiA+IMKgZHJpdmVycy9udGIvaHcv
+YW1kL250Yl9od19hbWQuY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDQgKy0KPiA+
+IMKgZHJpdmVycy9udGIvaHcvaW50ZWwvbnRiX2h3X2dlbjEuY8KgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgfMKgIDIgKy0KPiA+IMKgZHJpdmVycy9wY2kvZGV2cmVzLmPCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqAgNCArLQo+ID4gwqBkcml2ZXJzL3Bj
+aS9tc2kvYXBpLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgfMKgIDIgKy0KPiA+IMKgZHJpdmVycy9wY2kvbXNpL21zaS5jwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoCAyICstCj4gPiDCoGRyaXZlcnMvcGNp
+L3BjaS5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgfCA0MyArLS0tLS0tLS0tLS0tLS0KPiA+IC0tLS0KPiA+IMKgZHJpdmVycy92ZmlvL3Bj
+aS92ZmlvX3BjaV9jb3JlLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqAgMiArLQo+ID4g
+wqBkcml2ZXJzL3ZmaW8vcGNpL3ZmaW9fcGNpX2ludHJzLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgfCAxMCArKy0tLQo+ID4gwqBkcml2ZXJzL3hlbi94ZW4tcGNpYmFjay9jb25mX3NwYWNlX2hl
+YWRlci5jwqDCoCB8wqAgMiArLQo+ID4gwqBpbmNsdWRlL2xpbnV4L3BjaS5owqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqAgMSAtCj4gPiDCoDE0
+IGZpbGVzIGNoYW5nZWQsIDIyIGluc2VydGlvbnMoKyksIDYyIGRlbGV0aW9ucygtKQo+IAo+IE5v
+dyBJJ20gdXR0ZXJseSBjb25mdXNlZC4gVGhpcyB1bmRvZXMgdGhlIHBjaV9pbnR4X3VubWFuYWdl
+ZCgpIGNodXJuCj4gd2hpY2ggeW91IGNhcmVmdWxseSBzcGxpdCBpbnRvIHNldmVyYWwgcGF0Y2hl
+cyBmaXJzdC4KCkhhdmUgeW91IHJlYWQgdGhlIGVtYWlsIEkgaGF2ZSBsaW5rZWQ/CgpUaGVyZSBp
+cyBhbHNvIHRoZSBjb3Zlci1sZXR0ZXIgKGRvZXMgYW55b25lIGluIHRoZSBjb21tdW5pdHkgZXZl
+ciByZWFkCnRob3NlPykgd2hpY2ggZXhwbGljaXRseSBzdGF0ZXM6CgoiUGF0Y2ggIlJlbW92ZSBk
+ZXZyZXMgZnJvbSBwY2lfaW50eCgpIiBvYnZpb3VzbHkgcmV2ZXJ0cyB0aGUgcHJldmlvdXMKcGF0
+Y2hlcyB0aGF0IG1hZGUgZHJpdmVycyB1c2UgcGNpX2ludHhfdW5tYW5hZ2VkKCkuIEJ1dCB0aGlz
+IHdheSBpdCdzCmVhc2llciB0byByZXZpZXcgYW5kIGFwcHJvdmUuIEl0IGFsc28gbWFrZXMgc3Vy
+ZSB0aGF0IGVhY2ggY2hlY2tlZCBvdXQKY29tbWl0IHNob3VsZCBwcm92aWRlIGNvcnJlY3QgYmVo
+YXZpb3IsIG5vdCBqdXN0IHRoZSBlbnRpcmUgc2VyaWVzIGFzIGEKd2hvbGUuIgpQLgoKCgo+IAo+
+IFNvIHRoZSBuZXQgY2hhbmdlIGlzIHRoYXQ6Cj4gCj4gwqDCoCAxKSBwY2lfaW50eCgpIGlzIG5v
+dyBhbHdheXMgdW5tYW5hZ2VkCj4gCj4gwqDCoCAyKSBhIGNvdXBsZSBvZiBkcml2ZXJzIHVzZSBw
+Y2ltX2ludHgoKSBub3cgaW5zdGVhZCBvZiBwY2lfaW50eCgpCj4gCj4gVGhlIG9idmlvdXMgb3Jk
+ZXJpbmcgaXM6Cj4gCj4gwqDCoCAxKSBDb252ZXJ0IHRoZSBkcml2ZXJzIHdoaWNoIG5lZWQgdGhl
+IG1hbmFnZWQgdmVyc2lvbiB0byB1c2UKPiDCoMKgwqDCoMKgIHBjaW1faW50eCgpCj4gCj4gwqDC
+oCAyKSBSZW1vdmUgdGhlIG1hbmFnZWQgd2FybmluZyBpbiBwY2lfaW50eCgpIGFuZCBjbGVhbiB1
+cCB0aGUKPiBjb21tZW50Cj4gCj4gwqDCoCAzKSBSZW1vdmUgX19wY2ltX2ludHgoKSBhbmQgaW52
+b2tlIHBjaV9pbnR4KCkgaW4gdGhlIGRldnJlcyBjb2RlLgo+IAo+IE5vPwo+IAo+IFRoYW5rcywK
+PiAKPiDCoMKgwqDCoMKgwqDCoCB0Z2x4Cj4gCgoK
 
-On Thu, Nov 14, 2024 at 05:59:54PM +0100, Vincent Mailhol wrote:
-> Hi Sean,
-> 
-> I found the v3. I was a bit confused because it was hidden before the v2 in
-> my mailbox: the active thread in v2 bump it to the top, thus "shadowing" the
-> v3.
-> 
-> On 12/11/2024 at 23:39, Sean Nyekjaer wrote:
-> > nWKRQ supports an output voltage of either the internal reference voltage
-> > (3.6V) or the reference voltage of the digital interface 0 - 6V (VIO).
-> > Add the devicetree option ti,nwkrq-voltage-vio to set it to VIO.
-> > Unset nWKRQ is kept at internal reference voltage.
-> > 
-> > Signed-off-by: Sean Nyekjaer <sean@geanix.com>
-> 
-> Notwithstanding of bellow nitpick:
-> 
-> Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-> 
-> > ---
-> >   drivers/net/can/m_can/tcan4x5x-core.c | 20 ++++++++++++++++++++
-> >   drivers/net/can/m_can/tcan4x5x.h      |  2 ++
-> >   2 files changed, 22 insertions(+)
-> > 
-> > diff --git a/drivers/net/can/m_can/tcan4x5x-core.c b/drivers/net/can/m_can/tcan4x5x-core.c
-> > index 2f73bf3abad889c222f15c39a3d43de1a1cf5fbb..12a375c653cbd255b5dc85faf2f76de397a644ec 100644
-> > --- a/drivers/net/can/m_can/tcan4x5x-core.c
-> > +++ b/drivers/net/can/m_can/tcan4x5x-core.c
-> > @@ -92,6 +92,8 @@
-> >   #define TCAN4X5X_MODE_STANDBY BIT(6)
-> >   #define TCAN4X5X_MODE_NORMAL BIT(7)
-> > +#define TCAN4X5X_NWKRQ_VOLTAGE_VIO BIT(19)
-> > +
-> >   #define TCAN4X5X_DISABLE_WAKE_MSK	(BIT(31) | BIT(30))
-> >   #define TCAN4X5X_DISABLE_INH_MSK	BIT(9)
-> > @@ -267,6 +269,13 @@ static int tcan4x5x_init(struct m_can_classdev *cdev)
-> >   	if (ret)
-> >   		return ret;
-> > +	if (tcan4x5x->nwkrq_voltage_vio) {
-> > +		ret = regmap_set_bits(tcan4x5x->regmap, TCAN4X5X_CONFIG,
-> > +				      TCAN4X5X_NWKRQ_VOLTAGE_VIO);
-> > +		if (ret)
-> > +			return ret;
-> > +	}
-> > +
-> >   	return ret;>   }
-> > @@ -318,6 +327,15 @@ static const struct tcan4x5x_version_info
-> >   	return &tcan4x5x_versions[TCAN4X5X];
-> >   }
-> > +static void tcan4x5x_get_dt_data(struct m_can_classdev *cdev)
-> > +{
-> > +	struct tcan4x5x_priv *tcan4x5x = cdev_to_priv(cdev);
-> > +	struct device_node *np = cdev->dev->of_node;
-> > +
-> > +	if (of_property_read_bool(np, "ti,nwkrq-voltage-vio"))
-> > +		tcan4x5x->nwkrq_voltage_vio = true;
-> 
-> Nitpick: you can directly assign the value. No need for the if.
-> 
-> 	tcan4x5x->nwkrq_voltage_vio =
-> 		of_property_read_bool(cdev->dev->of_node,
-> 				      "ti,nwkrq-voltage-vio");
-> 
-> My personal preference is to not declare the np variable because it used
-> only once but instead directly use cdev->dev->of_node. See this as a
-> suggestion. If you prefer to keep as it is, OK for me :)
-
-It looks a lot cleaner :)
-Just send v4, with some commit messange changens from Marc.
-I will update and sent v5
-
-> 
-> > +}
-> > +
-> >   static int tcan4x5x_get_gpios(struct m_can_classdev *cdev,
-> >   			      const struct tcan4x5x_version_info *version_info)
-> >   {
-> > @@ -453,6 +471,8 @@ static int tcan4x5x_can_probe(struct spi_device *spi)
-> >   		goto out_power;
-> >   	}
-> > +	tcan4x5x_get_dt_data(mcan_class);
-> > +
-> >   	tcan4x5x_check_wake(priv);
-> >   	ret = tcan4x5x_write_tcan_reg(mcan_class, TCAN4X5X_INT_EN, 0);
-> > diff --git a/drivers/net/can/m_can/tcan4x5x.h b/drivers/net/can/m_can/tcan4x5x.h
-> > index e62c030d3e1e5a713c997e7c8ecad4a44aff4e6a..203399d5e8ccf3fd7a26b54d8356fca9d398524c 100644
-> > --- a/drivers/net/can/m_can/tcan4x5x.h
-> > +++ b/drivers/net/can/m_can/tcan4x5x.h
-> > @@ -42,6 +42,8 @@ struct tcan4x5x_priv {
-> >   	struct tcan4x5x_map_buf map_buf_rx;
-> >   	struct tcan4x5x_map_buf map_buf_tx;
-> > +
-> > +	bool nwkrq_voltage_vio;
-> >   };
-> >   static inline void
-> > 
-> 
-> Yours sincerely,
-> Vincent Mailhol
-> 
-
-/Sean
 
