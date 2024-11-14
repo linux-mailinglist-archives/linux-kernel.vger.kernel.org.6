@@ -1,156 +1,162 @@
-Return-Path: <linux-kernel+bounces-409938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-409939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 659B39C93A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:01:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA789C93AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 22:02:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA57EB28AD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:01:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2C3B28620A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 21:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E591ADFE4;
-	Thu, 14 Nov 2024 21:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589291AE016;
+	Thu, 14 Nov 2024 21:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Eu+RVRc0"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="c8uvZJRs"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073B81AB6F1;
-	Thu, 14 Nov 2024 21:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5A31ADFE3
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 21:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731618094; cv=none; b=F60Jk7a3iJS1Fqb1bbUNYJ7072PfaeMWTMC90G7NfQGFSrljjV3ExcOSWHYNpI+5VOeR4hF0JtfZzc73f+NLCUwsdyKcjneq0vFrH1SmkH3FvqtrJ7x3n2FRkpNePV4V6essHGtYB5BMrfvQmLL2/ZDlqPE++Jgkzr6PtAyM7Lk=
+	t=1731618096; cv=none; b=EdsLYs6oe8yB9Qj2iVbZZOuvlKv0dms1xEpGEQrtk9phDuprde3wneFQ0cMTZkV2en5Smq9GiWhdB90USQVc+1d0w5ybXpsJPxryDVSWLHnvXn8K81lx/BpP2NIThf0CWgumda6EE8N2TZWtNdDpcBs83cU43/R/g1O+YYtP0aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731618094; c=relaxed/simple;
-	bh=S7tRjuXaZpHsyBV91aZWFUrd0TldunNKHIzfBKQ6OdQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q8ouG5UdZDLdXP5OuhtvIfVhuARbpE91cWVR1SeSVXbEdVHkgMJX8Uymjd6kpSzpFgFT2n5Q5d7G0gWWjxx1kLeMEivW+BH2tu2DYWDXeCPr3RXCdGCHcDd0pcEMtjMIljc7nSl2G9bZlEJw+VsSS1doI2QdmtD74EzcwwAUkCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Eu+RVRc0; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-211c1bd70f6so10007015ad.0;
-        Thu, 14 Nov 2024 13:01:32 -0800 (PST)
+	s=arc-20240116; t=1731618096; c=relaxed/simple;
+	bh=WdnN9RkWEY0znd0mQ0/IW3+fPe1D/YjFWy/FwIstxpo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fD04xMLybcD02vqf8J7dJkWojS6V78WACs3hfilea2mcCqWt9wpQZ0XddJIPoZfC/VbJLh//1ZejZGq9WzRalk4y65QYveG2BflGpV/tQf0jl+lwWb3ZPl9C8O1Q70ai1RnVQHX3tMwsZ2pUD0XPhuwzBwXsFc5F6znUcTl2Y4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=c8uvZJRs; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539e8607c2aso1151103e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:01:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731618092; x=1732222892; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=B8if49p7SgY4GYN04lAfksTYRw6sC0UZKeThEbuX8Kw=;
-        b=Eu+RVRc0r4FQHLAJXuZePiQhJ4HklrVBcIreb3NcDACiUW7QFHh3yqj5/OUSa+KtY5
-         gMLhCH8rHgDXMRoNFCiO31MU1tZCncPp4EIY5VApw/LCNj9znFnNmzDBPggzI+h9QN4q
-         TSehWK2sWfV0YhlbqXK4Aw160tIhkG8XbX0jyZfRQ9vhut/f8x4wdK/znVnHL4vYE06F
-         h6i/N6K4/mnBV0w7B78RfzjVV/YJnw+b2OAIYlsgCaoZ8tt+SvgYdgJD9IQoCgbAxFed
-         iIlT1KFJiZC9Rhps3QvQ5OsWSyUNIsL0ysQjhK2WUxxFTK0V3s0uPhzLDlzNb2vbKB0m
-         0lWg==
+        d=chromium.org; s=google; t=1731618092; x=1732222892; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YnUKVo16ukwoIjQKD09CO7Jp33xMIiEIYirHJ325zac=;
+        b=c8uvZJRsrd4NQ1QWbo9IPuo4mj6CSwl+HV12FHe32jq/HP4/oGr5KyGh12TRpWzDCe
+         jFew1JhSFs0sMyWnDJnhG3d+BZwiP7n0iILk+JNxnld3W9Wp2OyzvJkqZy6qJ2wL3TAE
+         7k0wkxIJUHVBGG9bo5/VoW76IPtVDClxhwMB8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1731618092; x=1732222892;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B8if49p7SgY4GYN04lAfksTYRw6sC0UZKeThEbuX8Kw=;
-        b=HotnE4/yXow6dxmUYeUqU/rT0uis/EUsDG/77ANfz90ua6ccYRnDzQwd4KBxwrEJ+I
-         eNfgqvzn7y0ehUmh+7/d5aTVBYGSqLxA2bpvLOQQapOj7OvMesqr2gmtY8Zpx1Sfo4O1
-         H//4F63OG+UnqnO2CGyX7XZfB3L1IDRxfcQJdiTn7sNKUhaR34zQoKsDIz5XeNmRnaQx
-         eID4S+ETEQr+a2LtzJAcQkYmFfb7wNs94J0b/oHMo2WE8b77BD0BJStcWFYRUSdOh83J
-         SP/HwuVb5+PJgqfa3UXYqNP2X4OrlRjolBlWvc7RMs8c8nFdyJTZkCFVuAxSar7jtE5E
-         Yg/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUdk4XctGmMS8bm9yolyaq8WsTk5ifa6MQznOGWsgZYEnK0S4dKpogHZ4ZDossbsspa4APgHjAHLlojJKg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ9M8uFnzmk3KhtFaE+K/Tse/gupdwLbNBpHCffqv5N7/v2H7t
-	zuuZ5QgTbt/kgEjzNbnaAMxpjTB20IJTAADJbPhJ4O0VzQ8PswXL
-X-Google-Smtp-Source: AGHT+IHj4ZXgkfQxt90ivIXnn4Vke6xU9tFkg7w7hfd+e0TpPIOlSvx61B0tPtnj/U3hHjtCmfl8ug==
-X-Received: by 2002:a05:6a21:9983:b0:1d8:a322:6e with SMTP id adf61e73a8af0-1dc80691cd1mr7436048637.19.1731618091988;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YnUKVo16ukwoIjQKD09CO7Jp33xMIiEIYirHJ325zac=;
+        b=hAQerZszki5e/zL2/8G/CiT0aDfbOltGwlYxDfo7pGRvUJB6bUFrKoUxZGw/JNfw3C
+         cZdGX5/hd9Y/9uRHT1w/tkjqHvdS9u0rgxL8wV0/lYAOrvU4V59yCTu4T+c4Y7K/xvWl
+         K3sYHt/ijEMkx9hMgy+51Mckbt0PG2kDVYSjnCUrgrTJIbx2rb1p6KGCQz+F6TMCg7N0
+         lkqw6KEJud8POfEmclrN9UUBKTVX0h/UnVsGQHzVugNtQ7/WwJBqWaA8CIZ/bvL0xqme
+         oKXQQu9sTtGU6WRzIfLfPHuYYbwEmPKlupV2joAmy/VouYE18se7m3JJ+BVY2tEh1v7t
+         zQlA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZgze0WSX894FPJn5qEc7jIgQwxnSHYkca+a/D7h54YfgEh2zT5ftHhuKI8TzWEH6dC55RFIzOV9bFdwI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz49G78iFMMZaf3sWmpj7eLQhZA/w0euOxRdovWfyaH+SRp1M7k
+	g6RIbTOZBpZWjv2f2B15DHKFPW+4jcoAZ+hkrJhxSQp3FKTe0HsAtjNwKb5WJ0gl+uMnkYMSKlP
+	C2g==
+X-Google-Smtp-Source: AGHT+IHlrOeA6RMmPoov1BwyKZaHHI3GdteVwbTTACHN5EcUWMsFDRZceL3kFG6bKY/R83aJO5xPGw==
+X-Received: by 2002:a05:6512:3d2a:b0:53d:a5f7:ae76 with SMTP id 2adb3069b0e04-53dab298a91mr103059e87.12.1731618091773;
         Thu, 14 Nov 2024 13:01:31 -0800 (PST)
-Received: from localhost ([38.141.211.103])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1c3c39esm68973a12.33.2024.11.14.13.01.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 13:01:31 -0800 (PST)
-From: Ragavendra <ragavendra.bn@gmail.com>
-To: unicorn_wang@outlook.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	inochiama@outlook.com
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ragavendra <ragavendra.bn@gmail.com>
-Subject: [PATCH v2] clk:sophgo: Remove uninitialized variable for CV1800 PLL
-Date: Thu, 14 Nov 2024 13:01:15 -0800
-Message-ID: <20241114210115.29766-1-ragavendra.bn@gmail.com>
-X-Mailer: git-send-email 2.46.1
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da64f9c0dsm314640e87.35.2024.11.14.13.01.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Nov 2024 13:01:30 -0800 (PST)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fb57f97d75so11745251fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 13:01:30 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXimsaepWsS+IwhXnm+zZQZXn119+1RFLKDvvKV+1ALeVOeQ4OjTpzGCbGohLutwdsZCCNBkftJvaxvduI=@vger.kernel.org
+X-Received: by 2002:a05:651c:88a:b0:2fe:fec7:8adf with SMTP id
+ 38308e7fff4ca-2ff609be35fmr1805451fa.38.1731618089985; Thu, 14 Nov 2024
+ 13:01:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241113090022.332586-1-yelangyan@huaqin.corp-partner.google.com>
+In-Reply-To: <20241113090022.332586-1-yelangyan@huaqin.corp-partner.google.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Thu, 14 Nov 2024 13:01:18 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=V_jYygpcCcU0H7UOL2AY5vbg-y0UpJczwWBKyc4+L8kA@mail.gmail.com>
+Message-ID: <CAD=FV=V_jYygpcCcU0H7UOL2AY5vbg-y0UpJczwWBKyc4+L8kA@mail.gmail.com>
+Subject: Re: [PATCH] drm/panel-edp: Add KDB KD116N2130B12
+To: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
+Cc: thierry.reding@gmail.com, sam@ravnborg.org, airlied@gmail.com, 
+	daniel@ffwll.ch, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Updating the detected value to 0 in the ipll_find_rate and removing it
-from the method parameters as it does not depend on external input.
-Updating the calls to ipll_find_rate as well and removing the u32 val
-variable from ipll_determine_rate.
+Hi,
 
-Fixes: 80fd61ec4612 ("clk: sophgo: Add clock support for CV1800 SoC")
-Signed-off-by: Ragavendra Nagraj <ragavendra.bn@gmail.com>
----
-V1 -> V2: Updated commit log, title and addressed review comments
----
- drivers/clk/sophgo/clk-cv18xx-pll.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+On Wed, Nov 13, 2024 at 1:00=E2=80=AFAM Langyan Ye
+<yelangyan@huaqin.corp-partner.google.com> wrote:
+>
+> Add support for the KDB KD116N2130B12, pleace the EDID here for
+> subsequent reference.
+> 00 ff ff ff ff ff ff 00 2c 82 07 17 00 00 00 00
+> 1c 21 01 04 95 1a 0e 78 0a 63 25 99 5b 5d 96 26
+> 18 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+> 01 01 01 01 01 01 87 1b 56 88 50 00 0e 30 28 20
+> 55 00 00 90 10 00 00 18 00 00 00 00 00 00 00 00
+> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fe
+> 00 4b 44 31 31 36 4e 32 31 33 30 42 31 32 00 17
+>
+> Signed-off-by: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
+> ---
+>  drivers/gpu/drm/panel/panel-edp.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/pa=
+nel-edp.c
+> index 012dfbcb9475..5355acd52f0b 100644
+> --- a/drivers/gpu/drm/panel/panel-edp.c
+> +++ b/drivers/gpu/drm/panel/panel-edp.c
+> @@ -1978,6 +1978,12 @@ static const struct panel_delay delay_200_500_e50_=
+po2e200 =3D {
+>         .powered_on_to_enable =3D 200,
+>  };
+>
+> +static const struct panel_delay delay_200_150_e50 =3D {
+> +       .hpd_absent =3D 200,
+> +       .unprepare =3D 150,
+> +       .enable =3D 50,
+> +};
+> +
+>  #define EDP_PANEL_ENTRY(vend_chr_0, vend_chr_1, vend_chr_2, product_id, =
+_delay, _name) \
+>  { \
+>         .ident =3D { \
+> @@ -2134,6 +2140,7 @@ static const struct edp_panel_entry edp_panels[] =
+=3D {
+>         EDP_PANEL_ENTRY('K', 'D', 'B', 0x0624, &kingdisplay_kd116n21_30nv=
+_a010.delay, "116N21-30NV-A010"),
+>         EDP_PANEL_ENTRY('K', 'D', 'B', 0x1118, &delay_200_500_e50, "KD116=
+N29-30NK-A005"),
+>         EDP_PANEL_ENTRY('K', 'D', 'B', 0x1120, &delay_200_500_e80_d50, "1=
+16N29-30NK-C007"),
+> +       EDP_PANEL_ENTRY('K', 'D', 'B', 0x1707, &delay_200_150_e50, "KD116=
+N2130B12"),
 
-diff --git a/drivers/clk/sophgo/clk-cv18xx-pll.c b/drivers/clk/sophgo/clk-cv18xx-pll.c
-index 29e24098bf5f..350195d4ac46 100644
---- a/drivers/clk/sophgo/clk-cv18xx-pll.c
-+++ b/drivers/clk/sophgo/clk-cv18xx-pll.c
-@@ -45,14 +45,13 @@ static unsigned long ipll_recalc_rate(struct clk_hw *hw,
- }
- 
- static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
--			  unsigned long prate, unsigned long *rate,
--			  u32 *value)
-+			  unsigned long prate, unsigned long *rate)
- {
- 	unsigned long best_rate = 0;
- 	unsigned long trate = *rate;
- 	unsigned long pre_div_sel = 0, div_sel = 0, post_div_sel = 0;
- 	unsigned long pre, div, post;
--	u32 detected = *value;
-+	u32 detected = 0;
- 	unsigned long tmp;
- 
- 	for_each_pll_limit_range(pre, &limit->pre_div) {
-@@ -77,7 +76,6 @@ static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
- 		detected = PLL_SET_PRE_DIV_SEL(detected, pre_div_sel);
- 		detected = PLL_SET_POST_DIV_SEL(detected, post_div_sel);
- 		detected = PLL_SET_DIV_SEL(detected, div_sel);
--		*value = detected;
- 		*rate = best_rate;
- 		return 0;
- 	}
-@@ -87,11 +85,10 @@ static int ipll_find_rate(const struct cv1800_clk_pll_limit *limit,
- 
- static int ipll_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
- {
--	u32 val;
- 	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
- 
- 	return ipll_find_rate(pll->pll_limit, req->best_parent_rate,
--			      &req->rate, &val);
-+			      &req->rate);
- }
- 
- static void pll_get_mode_ctrl(unsigned long div_sel,
-@@ -134,7 +131,7 @@ static int ipll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned long flags;
- 	struct cv1800_clk_pll *pll = hw_to_cv1800_clk_pll(hw);
- 
--	ipll_find_rate(pll->pll_limit, parent_rate, &rate, &detected);
-+	ipll_find_rate(pll->pll_limit, parent_rate, &rate);
- 	pll_get_mode_ctrl(PLL_GET_DIV_SEL(detected),
- 			  ipll_check_mode_ctrl_restrict,
- 			  pll->pll_limit, &detected);
+In the future, please post patches against upstream Linux. For
+panel-edp.c, you'd ideally want to post against
+drm-misc/drm-misc-next. Specifically, in upstream the entry right
+before your new one should have been "'K', 'D', 'B', 0x1212", not
+"'K', 'D', 'B', 0x1120". That's been upstream for the last 6 months...
 
-base-commit: 2e1b3cc9d7f790145a80cb705b168f05dab65df2
--- 
-2.46.1
+In any case, I'll resolve the conflict this time since it's trivial.
 
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+
+Pushed to drm-misc-next:
+
+[1/1] drm/panel-edp: Add KDB KD116N2130B12
+      commit: ae4a812a64dad3fd4f7bbcd7af215cb68af8cf8c
+
+-Doug
 
