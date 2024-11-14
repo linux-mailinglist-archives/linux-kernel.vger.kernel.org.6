@@ -1,99 +1,138 @@
-Return-Path: <linux-kernel+bounces-408533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1D9D9C8019
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:40:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAF529C801C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:42:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71FD5B2327C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:40:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BEDB1F23EDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 01:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 269AE1E5731;
-	Thu, 14 Nov 2024 01:40:18 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7AC1E3DD8;
+	Thu, 14 Nov 2024 01:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sswXhWm9"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C8B1E3DC9
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC4C1CCEF0
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 01:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731548417; cv=none; b=Yi3gn8bUh1MhE/RZRzIXRgjD2FvSREmFzXDv2nBhA6UQ3jblUNDIWgYchxkyPWaJs2kzB+dtlPOkPdHiyaogXTLT7yh3drbyQFlPtsoGxm7p9mGe5kz9r/4xPZ9JTpyvO5hnFPiJ1OlhbBo/sjWpIiKLgdyvkqK0/acq2F8+Tk4=
+	t=1731548516; cv=none; b=KiOCjT3+pWCP9MdWQ55jUWhbff16wXYtLDl8Hzn2wR5qrFdi/Rp6eazX4wpirlmqNk+LfZ/K0A9Wc+1PYCLsfxOfYj3WBmrY2BDUXYV+wg9DDLpgHzJ47KxEqf4cqi3Ebn9/t4JBLkAPeUXGupr4RcaHohsPqW2K44o5tt4Z1z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731548417; c=relaxed/simple;
-	bh=ZJ/ujmIN1i9K9n54X6yUfiA9sCxlY+oOdFSHdgyuRVk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=E+l05t26jmUbSzTKljazZolP19dGGsHqNZ7FcLtnwIlTiBSfKhD/1sz7RTMUyxfzDwFKsAtZYDyNFOA8XrAXYrc/rDBwEmnQzPNoDaIrE3/hlkC6OpejvohqKMIpQvaWVrUAvVkyTYY0i62InktHK4QLRKDLT0Ojo1nnNC5Rj0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 5fe5a8bea22911efa216b1d71e6e1362-20241114
-X-CTIC-Tags:
-	HR_CC_AS_FROM, HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN
-	HR_FROM_NAME, HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER
-	HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_PRE_RE, HR_SJ_QUESTION
-	HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME, IP_TRUSTED
-	SRC_TRUSTED, DN_TRUSTED, SA_TRUSTED, SA_EXISTED, SN_TRUSTED
-	SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD
-	CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1
-	AMN_GOOD, AMN_C_TI, AMN_C_BU
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:ac839e93-d55e-4b78-9437-6f2722978294,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:15
-X-CID-INFO: VERSION:1.1.38,REQID:ac839e93-d55e-4b78-9437-6f2722978294,IP:0,URL
-	:0,TC:0,Content:-5,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:15
-X-CID-META: VersionHash:82c5f88,CLOUDID:602ae245ff980491ed08d2a9c02dbb2e,BulkI
-	D:241113230005088VC21T,BulkQuantity:4,Recheck:0,SF:17|19|66|841|38|102,TC:
-	nil,Content:0,EDM:5,IP:nil,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:nil,CO
-	L:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
-X-UUID: 5fe5a8bea22911efa216b1d71e6e1362-20241114
-X-User: xiaopei01@kylinos.cn
-Received: from xiaopei-pc.. [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <xiaopei01@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1245650665; Thu, 14 Nov 2024 09:40:05 +0800
-From: Pei Xiao <xiaopei01@kylinos.cn>
-To: syzbot+3fa2af55f15bd21cada9@syzkaller.appspotmail.com,
-	linux-kernel@vger.kernel.org
-Cc: xiaopei01@kylinos.cn
-Subject: Re: [syzbot] [input?] [usb?] UBSAN: shift-out-of-bounds in s32ton
-Date: Thu, 14 Nov 2024 09:40:02 +0800
-Message-Id: <20241114014002.7435-2-xiaopei01@kylinos.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241114014002.7435-1-xiaopei01@kylinos.cn>
-References: <67321ded.050a0220.a83d0.0016.GAE@google.com>
- <20241114014002.7435-1-xiaopei01@kylinos.cn>
+	s=arc-20240116; t=1731548516; c=relaxed/simple;
+	bh=sCZijQldNddnJqIRYCxQ+IuTp4D+2BMidbKlbBsoKU8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=IYE0Y9FN9bsHIa3AKJ+iy96s5H6UxFW1Odv9lY+/5BUvkG2YpwDQQO4UlRrwg01VmNoEVIymno0PsynE7ZiUmpbAS5+QpXrGtctbhEFiWZfvHEh7hAiXclwmYIdh8+uqhoP/9CF71ueBzag4rMDsqWjIjW5VkZ1Gh4oRmEFO8ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sswXhWm9; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ee3fc5a13fso3506767b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Nov 2024 17:41:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731548514; x=1732153314; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2IQEQSrvxNS5k9+sCTXCAkRA5erN7PfoAPhF92B1Jgs=;
+        b=sswXhWm9oj1o5kCKsFPz5UYtad0tnhQvjkO46kUG8GyvZF03rUy7ALQhVmQryMMaAQ
+         3O7vLcmex7306kElD6Mn/m+6I1CnOrYASe5+XZrXE7hrGSGZyh/ipuxtgOWdKThpRlYS
+         RsbwtMOH3/B58Mvgz7HuVxofi940nrC0kqunmYJM7b1u4kEBiACDQfE0S/O+Tl/O4UZO
+         xB9It/clTaSz2zG3CCdV9t5GDPHOJ7FKSqklTQmh5078HrUE5K/e9vf5MlSHO23/EQwO
+         LDogtnpeFpwlDKlMvOd2lrm8DGr+/LxqKUyUcFyRZxd3cIdHbsm6GfqAAKvA79DVcMWO
+         9TZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731548514; x=1732153314;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2IQEQSrvxNS5k9+sCTXCAkRA5erN7PfoAPhF92B1Jgs=;
+        b=puR/4VSfhFP3CEl0QyTHTGlF5fqKIRestBiqjdxqpMy2x0WDPXeWd91rkS5FQBjBfe
+         syZ52EPw3ge5OTQ5rUfujZnrMARBVdjIHgOJMXYsnKWubE3UAQ7L9RD6cOFai3Yiml9P
+         LGXRbcPnF8+CR+YQSa3SzXu6yiB84QiBN/ruZO5ipkCosNiskLcUnNV3KvabrxMDzZo7
+         xoL6Eu7YUIdw7bmxS2JW3KT2b23KaBpThenVpknIEdsbP0JJAymYEF6bA7p735i6Bwz1
+         S8P0MUldlzhlLKJXKIvQZNIB8S/vZiL2fDMoBpgiOVeuYU1ZQsHQveGdZp+oSQVvISb+
+         bJpQ==
+X-Gm-Message-State: AOJu0YzZ0TFJC4uc/5ATPWCzp7Q6zprN2JR0Evnkb5372FG3iimXBSDG
+	mQ3Hk+jbwTvyQGjYhaV/Ml0Afpwxv1nyzawcVxpEx5zOP//39E62FD3Q6SCkgiTA3kG5mv+H4gV
+	EBw==
+X-Google-Smtp-Source: AGHT+IFCHdEssTyN26kbPfUSHvKtSB8lshflrEHG+IPNc3pgDCqXhZe7d0YTYBYAVNK7FHjN3BPlIjwRdJA=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a25:6888:0:b0:e29:9c5:5fcb with SMTP id
+ 3f1490d57ef6-e380e241492mr35279276.4.1731548514280; Wed, 13 Nov 2024 17:41:54
+ -0800 (PST)
+Date: Wed, 13 Nov 2024 17:41:52 -0800
+In-Reply-To: <ZzVTDCwLTMB_fagq@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20241108155056.332412-1-pbonzini@redhat.com> <20241108155056.332412-4-pbonzini@redhat.com>
+ <ZzVTDCwLTMB_fagq@google.com>
+Message-ID: <ZzVVYCNFkH3cpGY-@google.com>
+Subject: Re: [PATCH 3/3] KVM: gmem: track preparedness a page at a time
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, michael.roth@amd.com
+Content-Type: text/plain; charset="us-ascii"
 
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index 81d6c734c8bc..ead1d338fa58 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -66,8 +66,11 @@ static s32 snto32(__u32 value, unsigned int n)
- 
- static u32 s32ton(__s32 value, unsigned int n)
- {
--	s32 a = value >> (n - 1);
-+	s32 a;
- 
-+	if (n >= 32)
-+		return value;
-+	a = value >> (n - 1);
- 	if (a && a != -1)
- 		return value < 0 ? 1 << (n - 1) : (1 << (n - 1)) - 1;
- 	return value & ((1 << n) - 1);
+On Wed, Nov 13, 2024, Sean Christopherson wrote:
+> On Fri, Nov 08, 2024, Paolo Bonzini wrote:
+> >  static void kvm_gmem_mark_prepared(struct file *file, pgoff_t index, struct folio *folio)
+> >  {
+> > -	folio_mark_uptodate(folio);
+> > +	struct kvm_gmem_inode *i_gmem = (struct kvm_gmem_inode *)file->f_inode->i_private;
+> > +	unsigned long *p = i_gmem->prepared + BIT_WORD(index);
+> > +	unsigned long npages = folio_nr_pages(folio);
+> > +
+> > +	/* Folios must be naturally aligned */
+> > +	WARN_ON_ONCE(index & (npages - 1));
+> > +	index &= ~(npages - 1);
+> > +
+> > +	/* Clear page before updating bitmap.  */
+> > +	smp_wmb();
+> > +
+> > +	if (npages < BITS_PER_LONG) {
+> > +		bitmap_set_atomic_word(p, index, npages);
+> > +	} else {
+> > +		BUILD_BUG_ON(BITS_PER_LONG != 64);
+> > +		memset64((u64 *)p, ~0, BITS_TO_LONGS(npages));
+> 
+> More code that could be deduplicated (unprepared path below).
+> 
+> But more importantly, I'm pretty sure the entire lockless approach is unsafe.
+> 
+> Callers of kvm_gmem_get_pfn() do not take any locks that protect kvm_gmem_mark_prepared()
+> from racing with kvm_gmem_mark_range_unprepared().  kvm_mmu_invalidate_begin()
+> prevents KVM from installing a stage-2 mapping, i.e. from consuming the PFN, but
+> it doesn't prevent kvm_gmem_mark_prepared() from being called.  And
+> sev_handle_rmp_fault() never checks mmu_notifiers, which is probably fine?  But
+> sketchy.
+> 
+> Oof.  Side topic.  sev_handle_rmp_fault() is suspect for other reasons.  It does
+> its own lookup of the PFN, and so could see an entirely different PFN than was
+> resolved by kvm_mmu_page_fault().  And thanks to KVM's wonderful 0/1/-errno
+> behavior, sev_handle_rmp_fault() is invoked even when KVM wants to retry the
+> fault, e.g. due to an active MMU invalidation.
+> 
+> Anyways, KVM wouldn't _immediately_ consume bad data, as the invalidation
+> would block the current page fault.  But clobbering i_gmem->prepared would result
+> in a missed "prepare" phase if the hole-punch region were restored.
+> 
+> One idea would be to use a rwlock to protect updates to the bitmap (setters can
+> generally stomp on each other).  And to avoid contention whenever possible in
+> page fault paths, only take the lock if the page is not up-to-date, because again
+> kvm_mmu_invalidate_{begin,end}() protects against UAF, it's purely updates to the
+> bitmap that need extra protection.
 
+Actually, there's no point in having a rwlock, because readers are serialized on
+the folio's lock.  And KVM absolutely relies on that already, because otherwise
+multiple vCPUs could see an unprepared folio, and clear_highpage() could end up
+racing with writes from the vCPU.
+
+> Note, using is mmu_invalidate_retry_gfn() is unsafe, because it must be called
+> under mmu_lock to ensure it doesn't get false negatives.
 
