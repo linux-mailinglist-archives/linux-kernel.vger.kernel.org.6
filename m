@@ -1,320 +1,145 @@
-Return-Path: <linux-kernel+bounces-410035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B25269C95CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:08:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F59A9C95CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:10:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FE1F1F22413
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:08:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F35751F22A60
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3E51B21B5;
-	Thu, 14 Nov 2024 23:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB141B2190;
+	Thu, 14 Nov 2024 23:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O9noGree"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="arGwfRKa"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389FF1B3952
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 23:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31A21AD3F5;
+	Thu, 14 Nov 2024 23:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731625654; cv=none; b=i4CYABZQei1y5vTiNi6bx8GLPO3qod9n/UOKsOZ9MUyQhniBTBtGFyDeTiCnTCL5ygRJizNFrPEHxfZFIFVvMLInLPbO+TiId2Ej5gNj6iuueBaFllTgZSd9gEUmcjSELbMU+7AbpTsS7XzZCM78ym7ybWPjjkjizPX9wGxbqpM=
+	t=1731625816; cv=none; b=IskpLvDGngz/JdcYu1UxGLB6Rupp9QZYGQzlVWZ3ZVYHdePgdOgq/DPu0rLCsu/oSddkhGG7UZ3NutXJFI6IEwiemd18zRdrFHipQ/1xZ5Ck3cKexYomhNs+PHXysi/EKKlWP2MBhq9f346egGExIwBM3AJLe1WNjH4zfkRIEJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731625654; c=relaxed/simple;
-	bh=3JoeJuw8QxsbHL6WLuQjYhTPCcdRnI6vX0QdH3V4OBQ=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=dk2TVNYMqSOfWInECfz9STpBkcWyEgoCpyS8mnWZCXKs0giBo9ijV2twW9XRmAw7fnBkl78aqjtXqV+C1kZtV8shnvxejtFPX1ju8QSbncxtzbk6bKYZTiElb7vHUKPb15TKUAMNyFOMhj/Vlcdzcz1gUynbCrlYYBOkT+OfGEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O9noGree; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ee3fc1090cso18117947b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:07:31 -0800 (PST)
+	s=arc-20240116; t=1731625816; c=relaxed/simple;
+	bh=EtxgykpiwTGum4emwebpSI10Ti+cO07K3Cy+24jDlWs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YJdwSmKYxQIn9k0syew0WpFyVydr/L2FYfeSWlWj8IM662zy4ohN0ApVm6MWU2wr/2JchJeDL4QutVcxiyttUpCNY+ZYoR4oaj6RNwFhcY1zSLQx5I9mXwTc6/IV1R5n71pib/6tVbnQnB9A0DGnn3d0PJAoqqlGNW8Rmegjgtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=arGwfRKa; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43159469053so626065e9.2;
+        Thu, 14 Nov 2024 15:10:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731625650; x=1732230450; darn=vger.kernel.org;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MVuzS7YJqN+s4J7S8KkTY7fYBB6a47H7Bb0wygpO12c=;
-        b=O9noGreeQrUw+HN9GJDABfpsJxOgJrHoPxP/ckJLU1jxj6hOC63zPjqM3q/7Ap+MiX
-         chC5aWlnSuDANblQtiy0RH3JHcPOtmaLsEUPgH/PKkMB4uSCIe6LHGvzwFxAkkiUpK6f
-         xfFSt8otyXW1lGb3Ku+9X4nEDsCB34ZFJdgI4UV1wVV0HBmCDWmV2fMRN9sEXDs/+5GE
-         Z7hEJLWcKfejZE5sdoDisQ/7qb8RMq70l2v1jHjiAVis8S/1cDgNABIGMh2QotQZ+C5o
-         Wi3V/RVOw8XCTpq2MIu5KbXyKgAeeOfgC3K+t7PAiPF0bqpj1h5YNJ0l+Ibk5JeozoHv
-         fAcg==
+        d=gmail.com; s=20230601; t=1731625813; x=1732230613; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jrFI0I6oUGMqCgCVk1ek/DuzLyfec2IzYEyQbc1aETo=;
+        b=arGwfRKaWOdc0RwQ1MHCW/G7QNb8+yi4qRW3218uGyKIDvrGQ4+pWWXmSfrXeCVzvB
+         Y3VOPWJfGrX3vOs6iIIsnQAbgY1dInNMz3C6v+2U6Y4yYS9trf37FHXV2Q1PqLsiy1Dz
+         0Zouw4J64rxGU1Wef+YtAtIJdO38YIcVBc5COCMFDOwvHzEmZEIDjSGbB93mLs6hADGV
+         SBtVXxJ2RvksUqngzrp3ajI2CCjWadS4E4zjOjw6aWN6sLqQ72wsL8A09gwba8LkszrE
+         BLVqxh/aM1biFx/LP6nLuQBH12kb1AhOXZAn7UdvWcuzJXozIdWStXJswGMa0+LF7P5L
+         UZug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731625650; x=1732230450;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MVuzS7YJqN+s4J7S8KkTY7fYBB6a47H7Bb0wygpO12c=;
-        b=b6hj611C3wQMf7iJgzMlZchGNiP/yTQ55QWb0pAbCX9DO5TKyeXWa7OR95A3AsAQ9p
-         Mt2/qbtGgsu34tmOotvqEnF+MfWnx0eCMiMaFIinNGlGjKyLFq7zNjr/PFKvKpQ1Iwpe
-         eGAIMEtTYOc43UGz/6mHvxlpHZ0RktohJmmHUk5aYS5ReiRMi2eF6kVRjqAOetco+Osx
-         hMNr+M3CaJ2cobv2HCgKL/DKyE4PP5vSShao2VNyM/gNqJa1kQIOVRewIBqpsFfiQDaI
-         AnafbEap6ppVKaQBpHr8F5iqlm+iiAofZbAkRhjBHYEFvZBPHWe2zcFTjeJa6iBGe4za
-         FI4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWIdlk45SsH3imulkfHV42MTx03IlFpLNnp+qJ0Nwet5KAUNl6eT11O+rVFzm1sek8R1uHm1LJeXqgDxKw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbFQ/DPZ04ioE+5mv7c5CGYW8rsXCEZSsIswdwqK/rAQQYmqzP
-	uNYwXSsm+Myn8XLYetyN6YWvNsY7gaLd9NgX0yUzemMBmfDyxgk4DZn5H3IkzcYw9Qce5f2HMP4
-	RjbzPKg==
-X-Google-Smtp-Source: AGHT+IFb9RpEJSri/jcDuTntZilE5runTdMWKIlRz1CGZ9It41OwwGqQKjZdre9qJ3utbEntStgk+ArT4Jpr
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:7595:be86:b969:ac41])
- (user=irogers job=sendgmr) by 2002:a05:690c:8203:b0:6e2:ac0a:8982 with SMTP
- id 00721157ae682-6ee3c331f57mr386767b3.0.1731625650368; Thu, 14 Nov 2024
- 15:07:30 -0800 (PST)
-Date: Thu, 14 Nov 2024 15:07:13 -0800
-In-Reply-To: <20241114230713.330701-1-irogers@google.com>
-Message-Id: <20241114230713.330701-4-irogers@google.com>
+        d=1e100.net; s=20230601; t=1731625813; x=1732230613;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jrFI0I6oUGMqCgCVk1ek/DuzLyfec2IzYEyQbc1aETo=;
+        b=rpQQiOA9y/pCfafHBhbZEYLcU1Xf7XH11YdCzUSKWcIX04B/tvVSvBcDlD21On5Y8Y
+         pzT9pvRH4MapDr1D8bNe3yKS+5XKqG1KCiN5VSRPC0In4IyX2EmrpIy5mqAHRYOuPF5Y
+         4Y1WMo95NZgAQXIbofa8LsW43pbLGV6IgG+Etm50l2v3WP4dusUaANnhiy1NaLMmgCec
+         30VkLt+iHXpKps7UKhpCbpovnpYf11wFky2MCRDj8y7JfnnchPZEdbQx+ArVl3EThtQ2
+         KslRu0BuIwjJeLY+aKaU0DokmsX6DFQBhk5U7JhVR13p3R6J++lT5PuHUvXvKRA9YSx0
+         IMSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvZZM9TXWgkkRm4IuB8ySTGD6kFvi75uKu7b8dWWax5ZT1T0tPcY2piJ904Br/sjXb/dCRi+IR5k/9/TdR@vger.kernel.org, AJvYcCV2DL1+CjLqi0GxHPCVgkvezuIo8KRgeUMOBOSUTlWyU+NMbfQFU5aGlZ3AB23Bf05x0woA8EzfcQc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysqL1HexiAhERSoUgLfCmNhKMl3/3V+sOfBVzPQoNjxw7OC2Bw
+	ewQVZ2U/VxRM8ANnN0hq8AhRvlqsMpAHMW8CpTs6FDibyPS1rN8v
+X-Google-Smtp-Source: AGHT+IFpPZyR9cC1fTCt9fWazoRXtXVw7K6C696QtleyuiEIP5NO0dQ/izTa9RvoDdfKszjplAX2rA==
+X-Received: by 2002:a05:600c:1991:b0:42c:ba83:3efa with SMTP id 5b1f17b1804b1-432df6841femr1833195e9.0.1731625812856;
+        Thu, 14 Nov 2024 15:10:12 -0800 (PST)
+Received: from 5dfbf0f66296.v.cablecom.net (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab789fasm36464265e9.18.2024.11.14.15.10.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 15:10:12 -0800 (PST)
+From: Lothar Rubusch <l.rubusch@gmail.com>
+To: lars@metafoo.de,
+	Michael.Hennerich@analog.com,
+	jic23@kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: l.rubusch@gmx.ch,
+	Lothar Rubusch <l.rubusch@gmail.com>
+Subject: [PATCH 00/22] iio: accel: adxl345: add FIFO operating with IRQ triggered watermark events
+Date: Thu, 14 Nov 2024 23:09:40 +0000
+Message-Id: <20241114231002.98595-1-l.rubusch@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241114230713.330701-1-irogers@google.com>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Subject: [PATCH v1 3/3] perf annotate: Prefer passing evsel to evsel->core.idx
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>, 
-	"=?UTF-8?q?Ahelenia=20Ziemia=C5=84ska?=" <nabijaczleweli@nabijaczleweli.xyz>, Chen Ni <nichen@iscas.ac.cn>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-An evsel idx may not be stable due to sorting, evlist removal,
-etc. Try to reduce it being part of APIs by explicitly passing the
-evsel in annotate code. Internally the code just reads evsel->core.idx
-so behavior is unchanged.
+The adxl345 sensor offers several features. Most of them are based on
+using the hardware FIFO and reacting on events coming in on an interrupt
+line. Add access to configure and read out the FIFO, handling of interrupts
+and configuration and application of the watermark feature on that FIFO.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
+The series will include the public adxl345.h used also in the
+corresponding older input driver. In brief, the data fields seem to be
+identical when implementing it for IIO, the file is already in public
+include, and to avoid duplication.
+
+The series is meant as base. Implementation of single tap, double tap,
+freefall, activity/inactivity on top is relatively straight forward and
+will be upcoming, as soon as this patch set is stabilized.
+
+The series reverts the data justification mode of the measurements
+(right and left-justified) since it comes in more handy. Further the
+series reverts moving out constant defines to the header file and moves
+them back into the source file. This is kind of embarassing, and
+definitely not on purpose.
+When implementing the features, it became clear what was actually used
+to be in the header. I hope this is still acceptible, for the learning
+curve.
+
+Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
 ---
- tools/perf/builtin-top.c          |  4 ++--
- tools/perf/ui/browsers/annotate.c |  2 +-
- tools/perf/util/annotate.c        | 32 +++++++++++++++----------------
- tools/perf/util/annotate.h        | 20 ++++++++++---------
- 4 files changed, 29 insertions(+), 29 deletions(-)
+Lothar Rubusch (22):
+  iio: accel: adxl345: fix comment on probe
+  iio: accel: adxl345: rename variable data to st
+  iio: accel: adxl345: rename struct adxl34x_state
+  iio: accel: adxl345: rename to adxl34x_channels
+  iio: accel: adxl345: measure right-justified
+  iio: accel: adxl345: add function to switch measuring
+  iio: accel: adxl345: initialize IRQ number
+  iio: accel: adxl345: initialize FIFO delay value for SPI
+  iio: accel: adxl345: unexpose private defines
+  iio: accel: adxl345: set interrupt line to INT1
+  iio: accel: adxl345: import adxl345 general data
+  iio: accel: adxl345: elaborate iio channel definition
+  iio: accel: adxl345: add trigger handler
+  iio: accel: adxl345: read FIFO entries
+  iio: accel: adxl345: reset the FIFO on error
+  iio: accel: adxl345: register trigger ops
+  iio: accel: adxl345: push FIFO data to iio
+  iio: accel: adxl345: start measure at buffer en/disable
+  iio: accel: adxl345: prepare FIFO watermark handling
+  iio: accel: adxl345: use FIFO with watermark IRQ
+  iio: accel: adxl345: sync FIFO reading with sensor
+  iio: accel: adxl345: add debug printout
 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 724a79386321..881e6cf26979 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -267,9 +267,9 @@ static void perf_top__show_details(struct perf_top *top)
- 
- 	if (top->evlist->enabled) {
- 		if (top->zero)
--			symbol__annotate_zero_histogram(symbol, top->sym_evsel->core.idx);
-+			symbol__annotate_zero_histogram(symbol, top->sym_evsel);
- 		else
--			symbol__annotate_decay_histogram(symbol, top->sym_evsel->core.idx);
-+			symbol__annotate_decay_histogram(symbol, top->sym_evsel);
- 	}
- 	if (more != 0)
- 		printf("%d lines not displayed, maybe increase display entries [e]\n", more);
-diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-index d7e727345dab..135d6ce88fb3 100644
---- a/tools/perf/ui/browsers/annotate.c
-+++ b/tools/perf/ui/browsers/annotate.c
-@@ -754,7 +754,7 @@ static int annotate_browser__run(struct annotate_browser *browser,
- 				hbt->timer(hbt->arg);
- 
- 			if (delay_secs != 0) {
--				symbol__annotate_decay_histogram(sym, evsel->core.idx);
-+				symbol__annotate_decay_histogram(sym, evsel);
- 				hists__scnprintf_title(hists, title, sizeof(title));
- 				annotate_browser__show(&browser->b, title, help);
- 			}
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index b1d98da79be8..9bd3f472a525 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -209,7 +209,7 @@ static int __symbol__account_cycles(struct cyc_hist *ch,
- }
- 
- static int __symbol__inc_addr_samples(struct map_symbol *ms,
--				      struct annotated_source *src, int evidx, u64 addr,
-+				      struct annotated_source *src, struct evsel *evsel, u64 addr,
- 				      struct perf_sample *sample)
- {
- 	struct symbol *sym = ms->sym;
-@@ -228,14 +228,14 @@ static int __symbol__inc_addr_samples(struct map_symbol *ms,
- 	}
- 
- 	offset = addr - sym->start;
--	h = annotated_source__histogram(src, evidx);
-+	h = annotated_source__histogram(src, evsel);
- 	if (h == NULL) {
- 		pr_debug("%s(%d): ENOMEM! sym->name=%s, start=%#" PRIx64 ", addr=%#" PRIx64 ", end=%#" PRIx64 ", func: %d\n",
- 			 __func__, __LINE__, sym->name, sym->start, addr, sym->end, sym->type == STT_FUNC);
- 		return -ENOMEM;
- 	}
- 
--	hash_key = offset << 16 | evidx;
-+	hash_key = offset << 16 | evsel->core.idx;
- 	if (!hashmap__find(src->samples, hash_key, &entry)) {
- 		entry = zalloc(sizeof(*entry));
- 		if (entry == NULL)
-@@ -252,7 +252,7 @@ static int __symbol__inc_addr_samples(struct map_symbol *ms,
- 
- 	pr_debug3("%#" PRIx64 " %s: period++ [addr: %#" PRIx64 ", %#" PRIx64
- 		  ", evidx=%d] => nr_samples: %" PRIu64 ", period: %" PRIu64 "\n",
--		  sym->start, sym->name, addr, addr - sym->start, evidx,
-+		  sym->start, sym->name, addr, addr - sym->start, evsel->core.idx,
- 		  entry->nr_samples, entry->period);
- 	return 0;
- }
-@@ -323,7 +323,7 @@ static int symbol__inc_addr_samples(struct map_symbol *ms,
- 	if (sym == NULL)
- 		return 0;
- 	src = symbol__hists(sym, evsel->evlist->core.nr_entries);
--	return src ? __symbol__inc_addr_samples(ms, src, evsel->core.idx, addr, sample) : 0;
-+	return src ? __symbol__inc_addr_samples(ms, src, evsel, addr, sample) : 0;
- }
- 
- static int symbol__account_br_cntr(struct annotated_branch *branch,
-@@ -861,15 +861,14 @@ static void calc_percent(struct annotation *notes,
- 			 s64 offset, s64 end)
- {
- 	struct hists *hists = evsel__hists(evsel);
--	int evidx = evsel->core.idx;
--	struct sym_hist *sym_hist = annotation__histogram(notes, evidx);
-+	struct sym_hist *sym_hist = annotation__histogram(notes, evsel);
- 	unsigned int hits = 0;
- 	u64 period = 0;
- 
- 	while (offset < end) {
- 		struct sym_hist_entry *entry;
- 
--		entry = annotated_source__hist_entry(notes->src, evidx, offset);
-+		entry = annotated_source__hist_entry(notes->src, evsel, offset);
- 		if (entry) {
- 			hits   += entry->nr_samples;
- 			period += entry->period;
-@@ -1140,15 +1139,14 @@ static void print_summary(struct rb_root *root, const char *filename)
- 
- static void symbol__annotate_hits(struct symbol *sym, struct evsel *evsel)
- {
--	int evidx = evsel->core.idx;
- 	struct annotation *notes = symbol__annotation(sym);
--	struct sym_hist *h = annotation__histogram(notes, evidx);
-+	struct sym_hist *h = annotation__histogram(notes, evsel);
- 	u64 len = symbol__size(sym), offset;
- 
- 	for (offset = 0; offset < len; ++offset) {
- 		struct sym_hist_entry *entry;
- 
--		entry = annotated_source__hist_entry(notes->src, evidx, offset);
-+		entry = annotated_source__hist_entry(notes->src, evsel, offset);
- 		if (entry && entry->nr_samples != 0)
- 			printf("%*" PRIx64 ": %" PRIu64 "\n", BITS_PER_LONG / 2,
- 			       sym->start + offset, entry->nr_samples);
-@@ -1178,7 +1176,7 @@ int symbol__annotate_printf(struct map_symbol *ms, struct evsel *evsel)
- 	const char *d_filename;
- 	const char *evsel_name = evsel__name(evsel);
- 	struct annotation *notes = symbol__annotation(sym);
--	struct sym_hist *h = annotation__histogram(notes, evsel->core.idx);
-+	struct sym_hist *h = annotation__histogram(notes, evsel);
- 	struct annotation_line *pos, *queue = NULL;
- 	struct annotation_options *opts = &annotate_opts;
- 	u64 start = map__rip_2objdump(map, sym->start);
-@@ -1364,18 +1362,18 @@ int map_symbol__annotation_dump(struct map_symbol *ms, struct evsel *evsel)
- 	return err;
- }
- 
--void symbol__annotate_zero_histogram(struct symbol *sym, int evidx)
-+void symbol__annotate_zero_histogram(struct symbol *sym, struct evsel *evsel)
- {
- 	struct annotation *notes = symbol__annotation(sym);
--	struct sym_hist *h = annotation__histogram(notes, evidx);
-+	struct sym_hist *h = annotation__histogram(notes, evsel);
- 
- 	memset(h, 0, sizeof(*notes->src->histograms) * notes->src->nr_histograms);
- }
- 
--void symbol__annotate_decay_histogram(struct symbol *sym, int evidx)
-+void symbol__annotate_decay_histogram(struct symbol *sym, struct evsel *evsel)
- {
- 	struct annotation *notes = symbol__annotation(sym);
--	struct sym_hist *h = annotation__histogram(notes, evidx);
-+	struct sym_hist *h = annotation__histogram(notes, evsel);
- 	struct annotation_line *al;
- 
- 	h->nr_samples = 0;
-@@ -1385,7 +1383,7 @@ void symbol__annotate_decay_histogram(struct symbol *sym, int evidx)
- 		if (al->offset == -1)
- 			continue;
- 
--		entry = annotated_source__hist_entry(notes->src, evidx, al->offset);
-+		entry = annotated_source__hist_entry(notes->src, evsel, al->offset);
- 		if (entry == NULL)
- 			continue;
- 
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index 8b9e05a1932f..2458e99abc18 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -15,6 +15,7 @@
- #include "hashmap.h"
- #include "disasm.h"
- #include "branch.h"
-+#include "evsel.h"
- 
- struct hist_browser_timer;
- struct hist_entry;
-@@ -23,7 +24,6 @@ struct map_symbol;
- struct addr_map_symbol;
- struct option;
- struct perf_sample;
--struct evsel;
- struct symbol;
- struct annotated_data_type;
- 
-@@ -367,21 +367,23 @@ static inline u8 annotation__br_cntr_width(void)
- void annotation__update_column_widths(struct annotation *notes);
- void annotation__toggle_full_addr(struct annotation *notes, struct map_symbol *ms);
- 
--static inline struct sym_hist *annotated_source__histogram(struct annotated_source *src, int idx)
-+static inline struct sym_hist *annotated_source__histogram(struct annotated_source *src,
-+							   const struct evsel *evsel)
- {
--	return &src->histograms[idx];
-+	return &src->histograms[evsel->core.idx];
- }
- 
--static inline struct sym_hist *annotation__histogram(struct annotation *notes, int idx)
-+static inline struct sym_hist *annotation__histogram(struct annotation *notes,
-+						     const struct evsel *evsel)
- {
--	return annotated_source__histogram(notes->src, idx);
-+	return annotated_source__histogram(notes->src, evsel);
- }
- 
- static inline struct sym_hist_entry *
--annotated_source__hist_entry(struct annotated_source *src, int idx, u64 offset)
-+annotated_source__hist_entry(struct annotated_source *src, const struct evsel *evsel, u64 offset)
- {
- 	struct sym_hist_entry *entry;
--	long key = offset << 16 | idx;
-+	long key = offset << 16 | evsel->core.idx;
- 
- 	if (!hashmap__find(src->samples, key, &entry))
- 		return NULL;
-@@ -442,8 +444,8 @@ enum symbol_disassemble_errno {
- int symbol__strerror_disassemble(struct map_symbol *ms, int errnum, char *buf, size_t buflen);
- 
- int symbol__annotate_printf(struct map_symbol *ms, struct evsel *evsel);
--void symbol__annotate_zero_histogram(struct symbol *sym, int evidx);
--void symbol__annotate_decay_histogram(struct symbol *sym, int evidx);
-+void symbol__annotate_zero_histogram(struct symbol *sym, struct evsel *evsel);
-+void symbol__annotate_decay_histogram(struct symbol *sym, struct evsel *evsel);
- void annotated_source__purge(struct annotated_source *as);
- 
- int map_symbol__annotation_dump(struct map_symbol *ms, struct evsel *evsel);
+ drivers/iio/accel/adxl345.h      |  34 +-
+ drivers/iio/accel/adxl345_core.c | 871 +++++++++++++++++++++++++++++--
+ drivers/iio/accel/adxl345_i2c.c  |   2 +-
+ drivers/iio/accel/adxl345_spi.c  |  11 +-
+ 4 files changed, 829 insertions(+), 89 deletions(-)
+
 -- 
-2.47.0.338.g60cca15819-goog
+2.39.2
 
 
