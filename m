@@ -1,112 +1,106 @@
-Return-Path: <linux-kernel+bounces-408617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15A879C811C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:53:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E32A79C810A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 03:50:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C16361F22726
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:53:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2968284F09
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 02:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B8A1F6693;
-	Thu, 14 Nov 2024 02:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABE41E8829;
+	Thu, 14 Nov 2024 02:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gH34ZjXv"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="cUQC8PNl"
+Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551341E7C34;
-	Thu, 14 Nov 2024 02:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977B93D9E;
+	Thu, 14 Nov 2024 02:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731552664; cv=none; b=jifL03W7sAuYvyAlCi3bHtKt93u5bj5m4VXhXd1iNjr/C+Uw9QGop8bvmaEPH3xKJgoz4cjtT+aTcZ5+UtNOERyT91gXt7BRJovUQP43x3opPAe7+wonpsIZ/8dzbTlBcpH0JJsUCXd//Q/woxCmkpg60RIPIwz/q99bH+ZjOJQ=
+	t=1731552624; cv=none; b=rt9W+ck94C1V1zcEBUzJyH2hW3gfSSJb5NaG9fiAk8B5GR5gR1YHoHtdnGPOlz5oFrHjpILh+MC/5MKrb2t/pa3q+nffi4tIeU7NE3jSdzkfz6byXGCyOBnduvxfscIXteMLGfZ2ifQP++M0R4or429oFzVf5rt+stU+T4YLGJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731552664; c=relaxed/simple;
-	bh=p8AWcj8QrDoU5V0YKXJ4v0DZplBv958fJVAFp1sU4Tc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KWx9dOvZSVIoASIwGfgZci7kst3O0y0bEypmuDXrwk42b9g+37prAohMM4/Off1jhPeO4iaH/gCq/sJLUOO4ClkLazVNofQ4TdbvuHyrDi7Bune6vcKvLpvF6NN//aaZ2KCykti2rBY4/KTezqv2UTxzLPjZwDa892uQ3mSWSOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=gH34ZjXv; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE1fhSV008279;
-	Thu, 14 Nov 2024 02:51:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=WkfP31R/7XluiquOLzTK5GOa7HzuGejPon6EZLbDMTE=; b=
-	gH34ZjXvoYgvZtE6mKFVqV9yGbVKTBNBFGYpvGXoWjLCddtPMGPlS/DyQuck6GqG
-	Q8Z54JdXdXqDk3Ul78dQyuJboRqQ6agD8WSPTHCpaaDl+nO0gKGZq8c1z6u20CTj
-	SKx1GHEMnfRJs8WoGe3PpNJPwnRp6z28RWB4Tx1P+4F6R4Co/JvwZOes8lP4jxKA
-	k+Nb9QFm2BwMgWF1cpmnqBALlz6FGcayzegyaM/+IBJyz3Lg2yaE9JcfswYbJaVR
-	786cm+0om8I7+2Ftba7dlI/An97T/Jwu9mkNF6niQfrtj/PFWBxzBZ/7EIEVwSte
-	FXxviaCmcvg0JpLXwZwPbw==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42t0n508j0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 14 Nov 2024 02:50:59 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE1C1Yu022742;
-	Thu, 14 Nov 2024 02:50:58 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42vuw0p23m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 14 Nov 2024 02:50:58 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4AE2ojZ4003527;
-	Thu, 14 Nov 2024 02:50:58 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 42vuw0p1vg-11;
-	Thu, 14 Nov 2024 02:50:58 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: Jack Wang <jinpu.wang@cloud.ionos.com>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        TJ Adams <tadamsjr@google.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Igor Pylypiv <ipylypiv@google.com>
-Subject: Re: [PATCH] scsi: pm8001: Initialize devices in pm8001_alloc_dev()
-Date: Wed, 13 Nov 2024 21:50:04 -0500
-Message-ID: <173155154786.970810.10385719120900461331.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241021201828.1378858-1-tadamsjr@google.com>
-References: <20241021201828.1378858-1-tadamsjr@google.com>
+	s=arc-20240116; t=1731552624; c=relaxed/simple;
+	bh=6l5Kz1Vo9Vdfhw8FNuLIO3ykNDBGv6861t8VwWdIquk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QYxOb3VNaeEHK/YIsgcg3OvKijXRPkDUVxwsxCtoG0uynLlr9xXJ7fhoh9Rne6jE6VWR0FL2u9OxtVo87jilS+SJJ41o1cDsoznT3B8OVsAyeigshQpIywul1ECEqquLUwGLRzENbw/IcrxxV7Ki26QLy9Yy9jyacetDt2sizZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=cUQC8PNl; arc=none smtp.client-ip=207.171.188.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1731552623; x=1763088623;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=WV93mZS5kqQSypy1nAkSsyu48bHJZ86isxlJ7Z6bGP4=;
+  b=cUQC8PNl9DtVt36T4JmBhhEpjTJDdaghJMlXOY60mfsittovRnFNnv3h
+   y0SRUqzG5mccmrjJS7EtUdffLGJY8s/QC+1ajldJ9yhREsSX9220+ghU8
+   WphnYHwG57iEgpHivurFhbwF8nYXTKrSn71EDwYoADWOFKAcPjTErdvxr
+   A=;
+X-IronPort-AV: E=Sophos;i="6.12,152,1728950400"; 
+   d="scan'208";a="775497976"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 02:50:17 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [10.0.7.35:21604]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.18.85:2525] with esmtp (Farcaster)
+ id 3473ada9-3da5-419a-ad22-b3ebd80d5d47; Thu, 14 Nov 2024 02:50:16 +0000 (UTC)
+X-Farcaster-Flow-ID: 3473ada9-3da5-419a-ad22-b3ebd80d5d47
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 14 Nov 2024 02:50:16 +0000
+Received: from 6c7e67c6786f.amazon.com (10.106.101.42) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Thu, 14 Nov 2024 02:50:10 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <stsp2@yandex.ru>
+CC: <almasrymina@google.com>, <asml.silence@gmail.com>, <axboe@kernel.dk>,
+	<brauner@kernel.org>, <davem@davemloft.net>, <edumazet@google.com>,
+	<gouhao@uniontech.com>, <horms@kernel.org>, <kees@kernel.org>,
+	<krisman@suse.de>, <kuba@kernel.org>, <kuniyu@amazon.com>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<mhal@rbox.co>, <netdev@vger.kernel.org>, <oleg@redhat.com>,
+	<pabeni@redhat.com>, <quic_abchauha@quicinc.com>, <shuah@kernel.org>,
+	<tandersen@netflix.com>, <viro@zeniv.linux.org.uk>, <willemb@google.com>
+Subject: Re: [PATCH] net/unix: pass pidfd flags via SCM_PIDFD cmsg
+Date: Wed, 13 Nov 2024 18:50:07 -0800
+Message-ID: <20241114025007.99331-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20241113210206.3440784-1-stsp2@yandex.ru>
+References: <20241113210206.3440784-1-stsp2@yandex.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-14_01,2024-11-13_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 spamscore=0
- adultscore=0 phishscore=0 malwarescore=0 mlxlogscore=939 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2411140021
-X-Proofpoint-ORIG-GUID: WZiUcbnHXdADCpVBDSnnnAF0RPSsas-d
-X-Proofpoint-GUID: WZiUcbnHXdADCpVBDSnnnAF0RPSsas-d
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D042UWB003.ant.amazon.com (10.13.139.135) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Mon, 21 Oct 2024 13:18:28 -0700, TJ Adams wrote:
+From: Stas Sergeev <stsp2@yandex.ru>
+Date: Thu, 14 Nov 2024 00:02:05 +0300
+> @@ -154,7 +157,12 @@ static __inline__ void scm_pidfd_recv(struct msghdr *msg, struct scm_cookie *scm
+>  	if (!scm->pid)
+>  		return;
+>  
+> -	pidfd = pidfd_prepare(scm->pid, 0, &pidfd_file);
+> +	err = pidfd_validate_flags(scm->pidfd_flags);
 
-> Devices can be allocated and freed at runtime. For example during
-> a soft reset all devices are freed and reallocated upon discovery.
-> 
-> Currently driver fully initializes devices once in pm8001_alloc().
-> This commit allows initialization steps to happen during runtime,
-> avoiding any leftover states from the device being freed.
-> 
-> [...]
+No neede to double check here, it's already checked in __scm_send().
 
-Applied to 6.13/scsi-queue, thanks!
 
-[1/1] scsi: pm8001: Initialize devices in pm8001_alloc_dev()
-      https://git.kernel.org/mkp/scsi/c/4501ea5f0a5c
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+> +	if (err) {
+> +		msg->msg_flags |= MSG_CTRUNC;
+> +		return;
+> +	}
+> +	pidfd = pidfd_prepare(scm->pid, scm->pidfd_flags, &pidfd_file);
+>  
+>  	if (put_cmsg(msg, SOL_SOCKET, SCM_PIDFD, sizeof(int), &pidfd)) {
+>  		if (pidfd_file) {
 
