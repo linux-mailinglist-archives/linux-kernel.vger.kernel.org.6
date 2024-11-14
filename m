@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-408876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-408881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF0D29C8495
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:08:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72F3C9C84A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 09:11:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FC1F28276B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:08:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9D10B282BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 08:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF3813CA99;
-	Thu, 14 Nov 2024 08:08:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2CC1F6668;
+	Thu, 14 Nov 2024 08:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VQEqZz4w"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="fn2+HGiN"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0AA81E9089
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06721F6690
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 08:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731571722; cv=none; b=GCQCYxjgv2G0cv/l2XwUM8AUo2dodj+F97wHEqJWs82aqusxECNQZlmiimsoSKRDPm43Zb8fWjj/egnAImNTkCp8kOr8HBVL2N4JZ3k2K7tdt462DuDYm6IAKyqO2y8P7jxZmsFrL5646iLlsTvcLA9fobiM1Y8jt+Gg6BHo17Y=
+	t=1731571895; cv=none; b=H19rYQ7g/FXWeLL2mbkh7dROx7UuyWUMVwVfwFQlFj1S37euVpnp54A6EaokRGznCfGDt+/ClFMkHpEvra4gZEoaZ79m8K/oposXgHKDKPREOOoJlgRRfNAXGnREzU0jSFVD9Vg9YyZyiAHa124b1vrpk16UuuKNKO7ZRjA5huA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731571722; c=relaxed/simple;
-	bh=icAKHO3XdFjTPRQoSoY40/A30bW01Zctkb2EmkZvI00=;
+	s=arc-20240116; t=1731571895; c=relaxed/simple;
+	bh=Dak7zVPoLqnhTV81XfL68498x/xktW2DL9spdvnsLQg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HcyLOIGsedgdELYx4/bnx3CFQ6n11tKNiS5ljwoE5xbXn2+h9sHg7sFK31MyTre2GDtKNNSyDlisVIJihNQlmmb2plKGmuCQ/84qYb/vBjx+catuBd3ajRyBa/d1QXkbcNURIHQgKOGnI0I/oLurI5F2+jhgKltrWn+qC6rcJYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VQEqZz4w; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43169902057so3097585e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 00:08:40 -0800 (PST)
+	 In-Reply-To:Content-Type; b=S6vs41vYpwTDveclsRCvS5aOLwvKmtKMojrkRw76AN1r5Aus/x6cp6bH8CGYOcwHC5aGKoIbB7LUBK4NF5pQmrUGCGVpUB3KqAm1CXntlLh+xqqjhBb6ztlpTuPySiWhz4ZamkYGWcX0O4QbZPGsGn9geXLHt30SjR4UayKda2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=fn2+HGiN; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4315839a7c9so3280385e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 00:11:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731571719; x=1732176519; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=tuxon.dev; s=google; t=1731571891; x=1732176691; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=t+O9kp15ulmkDsZL6FcyG0SNyoP+OGnZmJFKve5ejek=;
-        b=VQEqZz4wa4ShjonakVafS5dz/QQ3Egq4FbJJxMo4M/yLn0JPG01+uXx4drFElLI4Mw
-         gpLFbj+60CGRjkNxIUAvkt1/uneFKYf8Yb8Y5TsXFTGGl3Wq1AFEggga7ekpfu+GJP93
-         TJonO9pQxfKylQxwaPpd+AIjSOGPyazA5Ptptgj1r/k59BrXf5zH2Y6+FHMbsVQe3Ybf
-         zyVVpYCtvaQrhTYH9BupYGR9xZ7YmxE1JBDYTh8FTeKQ6TpBGce6WGlDlWGho2FrfXaq
-         Fr+3GYVNc2XnW4x+8NPcl+RWTnrCOGMYInkugSCrOQqHye049+ump9+pkgCaa0jxInCO
-         4CVg==
+        bh=BtK7Koq5plsXkaoeepNkxSJgKDlZH5uwXtI9Rumwzq0=;
+        b=fn2+HGiNc8jvO6VW3mCTV+zv+fIXozZh0EHlGIjXTNb94zdqz0fSwIrEUUkP9Sh+FG
+         WisFiBkpPTyvH+c04psi3TrdL3pYRoYT7H7QHUjlpf/Y5813MucTAvz2aXQlvnOg/C2/
+         Oc7wKu4Ibmgxcukyy61mMZ6H/18B7hH47HZNkXBjL6H3sLEbHN/+Ac2ORRTj29ktGfJC
+         z3XmEpO5knKBzshHw6u4uJHrU56dz7dK0uTEsgTwm1kds3ZAZfEPZMGRpkN5FMWbSfPZ
+         pUPfGpWRGMNdDLYIk1w1GS+qoQC6jtC8pUvWSr3LJso0aUCTcvRy78KLMyPs6A99cqeZ
+         WKvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731571719; x=1732176519;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1731571891; x=1732176691;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t+O9kp15ulmkDsZL6FcyG0SNyoP+OGnZmJFKve5ejek=;
-        b=Eia9G3Axj1/sc1QmOdf64D35P2UcYeLBaDsk1HMIHQmaIoUaMvCT/k+7FPhqvK4LJW
-         Z59kBMHUoPjTwWXNXzlBkV3+pf16Ft8+Ua/ABK3gDjv8DVrOo3G8dQjE4uGpVUytTbba
-         1JjZp113miJVsYdSi7ISzp+W6ZZaMRqYzCVGwQv7UxabAk3xf3oSrWYsFxlEDjAtsEWg
-         0m5aOEIdy9ynLuClmKsAES24suO7dGBaNysxWwzIQJHYBU7LGoYp15OgYBwJPjgXI+RT
-         1pKMrWvJAyjj8w6Wn2Y7MtKowidWz9Pp4iTpMLMjgqtc0csqlY00xGteXwbSbcgpubsd
-         yVDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWXfbtgwKnzpooYr/S1LOhQEr0c971pBTyASJb2Lraz2pPtFYYejcW8xMoc3D/BJG3NqtyPuFQlBZ49RIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFkcCoXVj4aM/7RL/E3wNl40Xx2mSa5kkDN7cq5RILant0yj6Y
-	R2P2siOVAVXygjh2g8PWEumWY19eLSaCUIPSkiTHI0FLS0UtbIabmFTu5YdFwBU=
-X-Google-Smtp-Source: AGHT+IHyd6RzOZzyB9DdcPGem/cYcPNN7x7i0VssOkuKf2eJ37J7FH3H9T6y3I8gzSOnXFeEryo80g==
-X-Received: by 2002:a05:600c:5247:b0:42c:b63e:fe91 with SMTP id 5b1f17b1804b1-432cd474820mr77028005e9.24.1731571718928;
-        Thu, 14 Nov 2024 00:08:38 -0800 (PST)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3821ae161e3sm753266f8f.64.2024.11.14.00.08.38
+        bh=BtK7Koq5plsXkaoeepNkxSJgKDlZH5uwXtI9Rumwzq0=;
+        b=eJ4zXuyDrqSpPkLrw27w5j7tp74+9ZOkT0LsYs5Ne1geNVXtD+OOxHaWdhogHmXwMQ
+         02Xha0k3mz3bteexnqEbuWPrfcl9iafPYzAhZgiq9KjdO1/lWcVnDXgguD5SyDHwPjyD
+         BKD1it12Fn5STvwryQJe9Pttf6KIHU94ojzO+w81ejBHwZwMMehG5O0nccN0pskN6wj+
+         mZWViWQSEDejVv5Jd6qbmCuNYhhCiGLlp3LBcF0ZHc0mCNVs8MlaRGDStYj5k47GUsv6
+         M50osFZub71SyLcWmPi1drX3PEKgkpeaD0FpKK65NPuMCv4nABcuIAX2J960Fmd4rdpu
+         Aciw==
+X-Forwarded-Encrypted: i=1; AJvYcCW143Ddfd5/pAUPhk1U6fk02D2dk7Jqv7cPj7//Z6+dshsGtKarTYLH6sEsRlA1fyjKLTxrpl4YnePPw2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7Z3pjpCpOb28uQlynpb2hOISpsFq8hJfXpLxSTf7gkvjXNM+q
+	XhJL14Ubi6OzOvFEq3yzQPHkpziLtWkgGkKrMLhtHYPRCgTk6jNnkqs2OxUNqD8=
+X-Google-Smtp-Source: AGHT+IGQwL97xGZDE67jemb32d4K5FWvWjN8w39M98m1r+VimY0ubTvizw1TQfZpwlKMc9NeHCwreA==
+X-Received: by 2002:a05:600c:3b82:b0:42c:bb10:7292 with SMTP id 5b1f17b1804b1-432b74fc98cmr197271285e9.1.1731571890834;
+        Thu, 14 Nov 2024 00:11:30 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.28])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da2982fasm14730395e9.36.2024.11.14.00.11.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 00:08:38 -0800 (PST)
-Message-ID: <2c70b9c3-e0f0-4551-864d-5d5252fccf99@linaro.org>
-Date: Thu, 14 Nov 2024 09:08:37 +0100
+        Thu, 14 Nov 2024 00:11:30 -0800 (PST)
+Message-ID: <20138ae9-ce35-40a5-be10-d0c6da23f5d1@tuxon.dev>
+Date: Thu, 14 Nov 2024 10:11:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,78 +75,123 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools/thermal: Fix common realloc mistake
-To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>, rafael@kernel.org
-Cc: rui.zhang@intel.com, lukasz.luba@arm.com, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241108044700.37633-1-zhangjiao2@cmss.chinamobile.com>
+Subject: Re: [PATCH v2 2/8] serial: sh-sci: Check if TX data was written to
+ device in .tx_empty()
 Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20241108044700.37633-1-zhangjiao2@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Jiri Slaby <jirislaby@kernel.org>, geert+renesas@glider.be,
+ magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ gregkh@linuxfoundation.org, p.zabel@pengutronix.de, g.liakhovetski@gmx.de,
+ lethal@linux-sh.org
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-serial@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org
+References: <20241108100513.2814957-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241108100513.2814957-3-claudiu.beznea.uj@bp.renesas.com>
+ <530f4a8e-b71a-4db1-a2cc-df1fcfa132ec@kernel.org>
+ <3711546e-a551-4cc9-a378-17aab5b426ef@tuxon.dev>
+ <b3f67cd7-056a-43c2-98dc-e983649124ed@kernel.org>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <b3f67cd7-056a-43c2-98dc-e983649124ed@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+Hi, Jiri,
 
-Hi Zhang,
-
-thanks for spotting the issue
-
-On 08/11/2024 05:47, zhangjiao2 wrote:
-> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+On 14.11.2024 08:26, Jiri Slaby wrote:
+> Hi,
 > 
-> Do not set thermometer->tz NULL when realloc failed.
-
-You may describe a bit more the change.
-
-eg.
-
-If the 'realloc' fails, the thermal zones pointer is set to NULL. This 
-makes all thermal zones references which were previously successfully 
-initialized to be lost.
-
-> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-> ---
->   tools/thermal/thermometer/thermometer.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
+> On 08. 11. 24, 13:19, Claudiu Beznea wrote:
+>> On 08.11.2024 12:57, Jiri Slaby wrote:
+>>> On 08. 11. 24, 11:05, Claudiu wrote:
+> ...
+>>>> --- a/drivers/tty/serial/sh-sci.c
+>>>> +++ b/drivers/tty/serial/sh-sci.c
+>>>> @@ -157,6 +157,7 @@ struct sci_port {
+>>>>          bool has_rtscts;
+>>>>        bool autorts;
+>>>> +    bool first_time_tx;
+>>>
+>>> This is a misnomer. It suggests to be set only during the first TX.
+>>
+>> I chose this naming as this was the scenario I discovered it didn't work.
+>> Reproducible though these steps:
+>>
+>> 1/ open the serial device (w/o running any TX/RX)
+>> 2/ call tx_empty()
+>>
+>> What
+>>> about ::did_tx, ::performed_tx, ::transmitted, or alike?
+>>
+>> I have nothing against any of these. Can you please let me know if you have
+>> a preferred one?
 > 
-> diff --git a/tools/thermal/thermometer/thermometer.c b/tools/thermal/thermometer/thermometer.c
-> index 1a87a0a77f9f..e08291a97fd8 100644
-> --- a/tools/thermal/thermometer/thermometer.c
-> +++ b/tools/thermal/thermometer/thermometer.c
-> @@ -259,6 +259,7 @@ static int thermometer_add_tz(const char *path, const char *name, int polling,
->   {
->   	int fd;
->   	char tz_path[PATH_MAX];
-> +	void *tmp;
+> No, you choose, or invent even better one :). Or let AI do it for you.
+> 
+>>>> @@ -885,6 +887,7 @@ static void sci_transmit_chars(struct uart_port *port)
+>>>>            }
+>>>>              sci_serial_out(port, SCxTDR, c);
+>>>> +        s->first_time_tx = true;
+>>>>              port->icount.tx++;
+>>>>        } while (--count > 0);
+>>>> @@ -1241,6 +1244,8 @@ static void sci_dma_tx_complete(void *arg)
+>>>>        if (kfifo_len(&tport->xmit_fifo) < WAKEUP_CHARS)
+>>>>            uart_write_wakeup(port);
+>>>>    +    s->first_time_tx = true;
+>>>
+>>> This is too late IMO. The first in-flight dma won't be accounted in
+>>> sci_tx_empty(). From DMA submit up to now.
+>>
+>> If it's in-flight we can't determine it's status anyway with one variable.
+>> We can set this variable later but it wouldn't tell the truth as the TX
+>> might be in progress anyway or may have been finished?
+>>
+>> The hardware might help with this though the TEND bit. According to the HW
+>> manual, the TEND bit has the following meaning:
+>>
+>> 0: Transmission is in the waiting state or in progress.
+>> 1: Transmission is completed.
+>>
+>> But the problem, from my point of view, is that the 0 has double meaning.
+>>
+>> I noticed the tx_empty() is called in kernel multiple times before
+>> declaring TX is empty or not. E.g., uart_suspend_port() call it 3 times,
+>> uart_wait_until_sent() call it in a while () look with a timeout. There is
+>> the uart_ioctl() which calls it though uart_get_lsr_info() only one time
+>> but I presumed the user space might implement the same multiple trials
+>> approach before declaring it empty.
+>>
+>> Because of this I considered it wouldn't be harmful for the scenario you
+>> described "The first in-flight dma won't be accounted in sci_tx_empty()"
+>> as the user may try again later to check the status. For this reason I also
+>> chose to have no extra locking around this variable.
+> 
+> What about the below?
+> 
+>>>> @@ -2076,6 +2081,10 @@ static unsigned int sci_tx_empty(struct uart_port
+>>>> *port)
+>>>>    {
+>>>>        unsigned short status = sci_serial_in(port, SCxSR);
+>>>>        unsigned short in_tx_fifo = sci_txfill(port);
+>>>> +    struct sci_port *s = to_sci_port(port);
+>>>> +
+>>>> +    if (!s->first_time_tx)
+>>>> +        return TIOCSER_TEMT;
+>>>
+>>> So perhaps check if there is a TX DMA running here too?
+> 
+> This ^^^? Like dmaengine_tx_status()?
 
-Please use right type:
+I missed that I can use this ^. Thanks for pointing it.
 
-	struct tz *tz;
+Claudiu
 
->   	sprintf(tz_path, CLASS_THERMAL"/%s/temp", path);
->   
-> @@ -268,12 +269,13 @@ static int thermometer_add_tz(const char *path, const char *name, int polling,
->   		return -1;
->   	}
->   
-> -	thermometer->tz = realloc(thermometer->tz,
-> +	tmp = realloc(thermometer->tz,
->   				  sizeof(*thermometer->tz) * (thermometer->nr_tz + 1));
-> -	if (!thermometer->tz) {
-> +	if (!tmp) {
->   		ERROR("Failed to allocate thermometer->tz\n");
->   		return -1;
->   	}
-> +	thermometer->tz = tmp;
->   
->   	thermometer->tz[thermometer->nr_tz].fd_temp = fd;
->   	thermometer->tz[thermometer->nr_tz].name = strdup(name);
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+> 
+>>>
+>>>>          return (status & SCxSR_TEND(port)) && !in_tx_fifo ? TIOCSER_TEMT
+>>>> : 0;
+>>>>    }
+>>>
+>>> thanks,
 
