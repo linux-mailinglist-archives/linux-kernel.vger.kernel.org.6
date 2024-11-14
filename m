@@ -1,110 +1,81 @@
-Return-Path: <linux-kernel+bounces-410060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3A899C9603
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:17:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEF639C9605
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:17:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90AE91F2141A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:17:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83796280FB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720A21B21B5;
-	Thu, 14 Nov 2024 23:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0961B2196;
+	Thu, 14 Nov 2024 23:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cie8v75h"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ERrQyPQ/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C631E1AA785
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 23:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37B618BC1D;
+	Thu, 14 Nov 2024 23:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731626233; cv=none; b=giH6D27K6bPh9QBieUYV1XWbPgrHQNszGjavNMrtm5kQFG8iqefb5JREdqUvwbhXJYd1fYZYG2E+9mONprBWP5kGUejKMjQ5eigOvVUQF9S0WaR0fXYuWqFK/QhYJFp5Nb46fRKTfYhC+FlFGz3kPh5n6dK/3FzLwuamfGNIZjM=
+	t=1731626242; cv=none; b=iatFBLp2WhfdNVcqw+oqcKu9tNpwqQnbn1ZhBxgmAanF2vnvKvzvDVU0A6zBlGYlJ7HI/RRAXVO3HvJnz0elD+JonFg+9ETJksm/d6JSjbNjyLFLHjyqevDT6gOvoRO2298GXvfuaxOe3GJvg1XColhiFWd0yJOpJx+73HXacGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731626233; c=relaxed/simple;
-	bh=CI1r12nNHRwypDsUYC8xY9fzjewA2c/mrZsbdnAEyB8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OjoBTo+OKji9y0R+WvVjJmXLSKNlj2nRvl0bHXKbfqwe+ZQTg5Idgg04X7KWF3TYbTEAxbGyCGga4PapPKJ/3IoaDVcwZci76Sc34GYSH/5QIQ0+PudIUhSA2I1uDE99Iq9/3WFLnge6auFVQfNuOoKk2Q96WvC5Rc/Od0Kolbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cie8v75h; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e30b8fd4ca1so1717521276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 15:17:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731626231; x=1732231031; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vwAzg/sQCaKfbfUxYjkIW4dK4mXFdPygldw0DR81bXI=;
-        b=cie8v75h4JigBi3C9ayjkHTv1bcGaPALHy4DUS9KhfM+MJgpMavda4mB3jLzUDkXv7
-         qRdyOWKgMc24sTK1gH/GWzmL3SSUHe/TEQlUhb42EUe///VOIW3hXvylnaMkwn8BB8tl
-         37W0ePhSDYbJHX8NBCgX9BVK7XYxY2czsMMwe7TIjbHMMJKqOvLf+1kfD3uY0w1fvZDG
-         0Mss+KFHOKqueFy9yoP/p/TGwjoxC5VXQf7yDYNcGXRfsRMc1KXOqfcOFKFojeAm/byJ
-         phzV+1IrrGVIhVZylYua8kEF7pc11Qjl7ub/3DNRE1D/h4dseATKp0JAdbgKest74s5z
-         7v7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731626231; x=1732231031;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vwAzg/sQCaKfbfUxYjkIW4dK4mXFdPygldw0DR81bXI=;
-        b=HyWvD8+uoJWagvv/qvzcK3uvNJ+4lBDaJZu925genhm5OhBQfLFrOLJy3O9ccza7wm
-         GUTAsN1aF9mVhlNcGWrZ8PC/TZTcG4i1GgzTRKuDWL9DUOS4CBl5eZgFf4idzRYEznK7
-         gXUVvFHtsZHGlvHD1lWzPK7sExKjYv88v4yFC5N9IljuwfZvhgshSbq9vUMAV4tz/hLc
-         UTrRwtMKojkKA4J3JuIeS7+P7tmh3soeTyBLr3Er/o5NjKqwkH21/CRZxzJlerbX21I5
-         9t86lcEV8yVhRUlWZ5miDaYRPLKAqJiC+AvExc2ex2SmRvsMI9rXlp7S13Dlqu3qOcLs
-         NBYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWojtMFYiFv2Eh2nA9DkRKBvxl3RiFAucOgRNsbpq822ivw6kZ/olDHix2xjzaeEysM0rhY9FOxX3h8e48=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoFbyG+yRDnLP9wG7HmoZQYDKKj9vrlqTKKjhBao/LNj6qlDga
-	pYIAPT3uv19gQZF5SVORWKNJrQUjKcemQOdWtCgwZAXGHq+8LjeT5gC89QGztwGLOK7P6Q7I3Um
-	8IA==
-X-Google-Smtp-Source: AGHT+IGFlgWX0KKA/ZGZ5IsWUoPGyuuB/g3OCmrsFVhtApZPgZzMWdFLLtgmd2LXV8EXavHvLHIIovN59Bs=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a25:9e0a:0:b0:e38:e8d:2c02 with SMTP id
- 3f1490d57ef6-e38263a8b74mr588276.5.1731626230833; Thu, 14 Nov 2024 15:17:10
- -0800 (PST)
-Date: Thu, 14 Nov 2024 15:17:09 -0800
-In-Reply-To: <20241114223738.290924-3-gianf.trad@gmail.com>
+	s=arc-20240116; t=1731626242; c=relaxed/simple;
+	bh=4+8a7cmDyZXmllSyoE0Q6DeOS813QuLGqC6l3uuoyrk=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=QLWDQ2rOfKZ/w73mlWKSiYlBRS1ic55+tmVX9AxcmhWX8eV7vZWkfhi915SlAc1opdXSpVT3JV6bWuFQxNiqvlspHiD1xYJAN/I/gh7I4nJelhKAjUpucJkESC46bL5MX4B6jQwQSEqZ3WZD4vXCzhSQj6RvF9JrXiilAoaONwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ERrQyPQ/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C949C4CECD;
+	Thu, 14 Nov 2024 23:17:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731626242;
+	bh=4+8a7cmDyZXmllSyoE0Q6DeOS813QuLGqC6l3uuoyrk=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=ERrQyPQ/Yz89FiHeIMiLKVQrWz2V7CmTi3DVk90pz2+fyrrf3VKT1zL7sY3tRO/JB
+	 mIC2HMWqrqlkCIKD0CR9m2xO+PcYjgFy4HYu8k171+8nklyFEsnJqwXr6fdpZXgIYS
+	 rqlcKu7+5PPEzxqNhbznqSNgwAEyGnZIlIfazW5HnfgFnp/VtV2XRQ8LaEny63X4o2
+	 lAG15aT6qXLMNKGyIvQqdF3QP0fZb5qFEDh0zze0FmFtAw3R8zA/wTYpZ6IYuPzqef
+	 tQSQNo0uZU2AxmqUdtFiWFIY2m+yRGNjZcySjOsDNl0drYv+QFv1q1F1bRDF5ehc0c
+	 PDBbp7kJC1Djg==
+Message-ID: <0ea59af3c891859681cac378eaface75.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241114223738.290924-3-gianf.trad@gmail.com>
-Message-ID: <ZzaE9dYmSqg3U33y@google.com>
-Subject: Re: [PATCH] Documentation: kvm: fix tipo in api.rst
-From: Sean Christopherson <seanjc@google.com>
-To: Gianfranco Trad <gianf.trad@gmail.com>
-Cc: corbet@lwn.net, pbonzini@redhat.com, kvm@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240910-fix_clk-v1-1-111443baaeaa@amlogic.com>
+References: <20240910-fix_clk-v1-1-111443baaeaa@amlogic.com>
+Subject: Re: [PATCH] clk: Fix invalid execution of clk_set_rate
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Chuan Liu <chuan.liu@amlogic.com>
+To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>, Michael Turquette <mturquette@baylibre.com>, chuan.liu@amlogic.com
+Date: Thu, 14 Nov 2024 15:17:19 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-I must know.  Is the "tipo" in the shortlog intentional? :-)
+Quoting Chuan Liu via B4 Relay (2024-09-09 22:53:44)
+> From: Chuan Liu <chuan.liu@amlogic.com>
+>=20
+> Some clocks have rates that can be changed elsewhere, so add a flag
+> CLK_GET_RATE_NOCACHE(such as scmi_clk) to these clocks to ensure that
+> the real-time rate is obtained.
+>=20
+> When clk_set_rate is called, it is returned if the request to set rate
+> is consistent with the current rate. Getting the current rate in
+> clk_set_rate returns the rate stored in clk_core. CLK_GET_RATE_NOCACHE
+> does not take effect here.
+>=20
+> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 
-On Thu, Nov 14, 2024, Gianfranco Trad wrote:
-> Fix minor typo in api.rst where the word physical was misspelled
-> as physcial.
-> 
-> Signed-off-by: Gianfranco Trad <gianf.trad@gmail.com>
-> ---
->  Documentation/virt/kvm/api.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-> index edc070c6e19b..4ed8f222478a 100644
-> --- a/Documentation/virt/kvm/api.rst
-> +++ b/Documentation/virt/kvm/api.rst
-> @@ -5574,7 +5574,7 @@ KVM_XEN_ATTR_TYPE_SHARED_INFO_HVA
->    in guest physical address space. This attribute should be used in
->    preference to KVM_XEN_ATTR_TYPE_SHARED_INFO as it avoids
->    unnecessary invalidation of an internal cache when the page is
-> -  re-mapped in guest physcial address space.
-> +  re-mapped in guest physical address space.
->  
->    Setting the hva to zero will disable the shared_info page.
->  
-> -- 
-> 2.43.0
-> 
+This looks obviously correct but I'm worried that it will cause some
+problem somewhere. It would be nice if there were some kunit tests
+associated with this. The worst case situation is that we recalc rates
+if the CLK_GET_RATE_NOCACHE flag is set, right? I guess I'll just apply
+this as a cleanup for the next merge window and see if it causes
+problems for anyone.
 
