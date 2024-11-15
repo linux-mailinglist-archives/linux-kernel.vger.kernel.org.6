@@ -1,70 +1,93 @@
-Return-Path: <linux-kernel+bounces-410372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B4139CDA8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:33:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E30199CDA6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:26:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9D38B24758
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:33:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8FBC283990
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF5D18E056;
-	Fri, 15 Nov 2024 08:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="F2vwKLTn"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908EC18C33C
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731659551; cv=none; b=LcMf/RUtWOxrLQNzvS85B+udd/QBflIOxkPS5M1PDlk8RGhwaNzx8qSvRJmw9tI0Dv8un3m90jEHPuplaevAg3TfXJyzM/JNMTm322vpUffRTbEcfUJ/gPTvBzJ+Cdi2SqPYToluIiQowbR1cl9TtFIpSf7hcyLokadVaB/APN8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731659551; c=relaxed/simple;
-	bh=ddyxbqxMF4oFoUnh8kdfqjS/EgpzWIB8AfoREuHj214=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=am2yvI6TkRt6Vl0CxGJsNFDRqECyIWrgHgTW+DJc8fIdL+/IF6xwKXl3SL8knCtcIa0OxZ0lI0G/zog0Gz88aE3/71GVp9UdysfS6Z0+USIDcvHR2UHtphJyAKltR9Nll/Xn/HAoWRL+/6G0mFjsQPq6ladKp8/QTOwRQJYg3GY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=F2vwKLTn; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p54921e31.dip0.t-ipconnect.de [84.146.30.49])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427EA18A6D5;
+	Fri, 15 Nov 2024 08:26:35 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 014DE2C1435;
-	Fri, 15 Nov 2024 09:26:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1731659180;
-	bh=ddyxbqxMF4oFoUnh8kdfqjS/EgpzWIB8AfoREuHj214=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F2vwKLTnRedZtouBv7ykR8mVjofKq/jjctu8ciEhMsAxCR/rScmyH+Uvqor2b7qfu
-	 Omz7FxHMijGktUpxZocWS1X2I+SP3bRoYzuSq+VFxZU9CbUHOGgIgYiEysX30c7uKc
-	 NIJ/f8Id/s1JBmXCphPlJpNidMcmiesQ4FG1MtSaXt/gJEAxR1ZFQnReeG3VD033OF
-	 FuEBXfAXa6lebusYJs1bwvVgFEQXQhQo8v1RSbNCBNMF3voS70+e8j+yj671riozv7
-	 SfBDB3TobT/NGDoLEC8Shd8spTjbNLigVytSDleNd+gwjxijUSXBKVIusk2hm8gFUU
-	 tzoDm/T87s4fA==
-Date: Fri, 15 Nov 2024 09:26:18 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Will Deacon <will@kernel.org>
-Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, robin.murphy@arm.com,
-	kernel-team@android.com
-Subject: Re: [GIT PULL] iommu/arm-smmu: Updates for 6.13
-Message-ID: <ZzcFqvfa6BoFBiE0@8bytes.org>
-References: <20241114171808.GA24017@willie-the-truck>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40560189528
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731659194; cv=none; b=qcJINmp+2ENlyFy1QfcOvJKDjoPhztoE9VXXcT3Z/lA+fEffjbQKuhaygZdY592XbTEKRYk5B6uKKERrt3GlakNIZ8YF6+/WnnMWT5b5NxNcSCiJl7JKUF+rYHeHqEfj1w1yr4gL8dvBGSYe3efnShyAy6SyTT95xAlQczecIAI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731659194; c=relaxed/simple;
+	bh=8wKPhUOT9T5aGZCbzbxqrv3QLs4wnqUJO893p2oXsQ0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=TRLm9k8Azgc5voEdaG3ovjMmOi+H6/KrKjb4bvGHxfNxYH8NfPTd2gpVECbUFC7D6XIJkJT83JsocHxEJ9qXXPu7Ji1HdvAS+tXAjzxg2+DgB9eaiv6HIUDsUgLMGhtNJ9Durnmga6/hx4Nmh7b/BstMDcFlGLP5E8xTQojU2uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83abad6594fso55411539f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 00:26:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731659192; x=1732263992;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gj1kT6DNIxpoEsuPOvZYFOXRj3E43iQAQpFVr6sujoE=;
+        b=t88zEu7ZptxqpUGidQ5Rj6TlKR3Q1k+TOsPlbA+vZF5D60GrzSZSmiloFonRCX5S38
+         LoGonvrV6/z2TOmXNxhMSltBC4jrTk409N4gQXf/uf9gSJs/kLriSA0Cf4ZOlhYRlcaK
+         sqYQjCp76rS2PWg11HYUFpt7uF9R/f06mA5ddGgzLF96uGecytn7JpNpARvjiNsTWLq5
+         ShyEaYcAS8jY4Ro6tj5BJydSjWa5JzmWeI39/4pA8oth1147X4xr2/R1DCHGny3QvyUY
+         k8FzXH0750ZAV9peIg5Z6S2Tyea8CSqd4HfbofA+D02mkG7SPy+s2iyEbG4EH1yupWk8
+         Bndg==
+X-Gm-Message-State: AOJu0YwjvuGQIzkh/rYFgy300J+7B9OKCvaXNf35tjNn6vRpOryltHth
+	gixqLAIZp06GvBC6SQ21m0cVJn+I6GkvZGvz+lR8Hs4b3Z9Cw5Ln37PsalbM6lwNkBd4Qv2nD6l
+	1sFIenwccNPEJ74b9uTrECU+D+bh2dabl7uGRnGOkpVw/eQMUvUbJLCk=
+X-Google-Smtp-Source: AGHT+IFYIz71zAVSOkkFYtOsCFDIjhU+6t7lx5ow5wnR/6/zMKmJorVSoVxcsuK7J3o4An+8d4zwex0/5elDR04W0RVzci1GfXhO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241114171808.GA24017@willie-the-truck>
+X-Received: by 2002:a92:cda3:0:b0:3a0:a070:b81 with SMTP id
+ e9e14a558f8ab-3a748084dcdmr21174345ab.23.1731659192256; Fri, 15 Nov 2024
+ 00:26:32 -0800 (PST)
+Date: Fri, 15 Nov 2024 00:26:32 -0800
+In-Reply-To: <67363c96.050a0220.1324f8.009e.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673705b8.050a0220.1324f8.00a2.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [ntfs3?] general protection fault in pick_link
+From: syzbot <syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 14, 2024 at 05:18:09PM +0000, Will Deacon wrote:
->   git://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git tags/arm-smmu-updates
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Pulled, thanks Will.
+***
+
+Subject: Re: [syzbot] [ntfs3?] general protection fault in pick_link
+Author: lizhi.xu@windriver.com
+
+the symlink inode is corrupted.
+
+#syz test
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 4a4a22a08ac2..f5dbccb3aafc 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1844,6 +1844,9 @@ static const char *pick_link(struct nameidata *nd, struct path *link,
+ 	if (unlikely(error))
+ 		return ERR_PTR(error);
+ 
++	if (!S_ISLNK(inode->i_mode))
++		return ERR_PTR(-EINVAL);
++
+ 	res = READ_ONCE(inode->i_link);
+ 	if (!res) {
+ 		const char * (*get)(struct dentry *, struct inode *,
 
