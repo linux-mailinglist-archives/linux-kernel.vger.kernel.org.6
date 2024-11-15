@@ -1,121 +1,106 @@
-Return-Path: <linux-kernel+bounces-410858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EC969CE91B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:06:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5FD49CE964
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:07:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0617B1F230FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:06:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CD501F23DFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78401D47C3;
-	Fri, 15 Nov 2024 15:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323561CEEB8;
+	Fri, 15 Nov 2024 15:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oe6QXSID"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bZ3BH0cd"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D061D47AD
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 15:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550D41CDA1A
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 15:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731683165; cv=none; b=mYyPDtKOq4OJyaA8PbGryHRQMMP879f58GnazUw0oJedmvXihmIJ4DX6tFroeaGTQrB6bQawqNHxzW4Xi4aTO4m7tvT9DVCy1+8zevF+aDKluwoms4Ah7ym4cADIqDp7rlBKGaVvHL8zCUadWqTVLQuqS/RnBKv6yz8bmMIvxmg=
+	t=1731683208; cv=none; b=JG5oXYrFs3UYedfz3QqCaETiuVXQnDZAH5hLVVZN2c/w72gK/EtbQzRnwy2vhW3JJZeK91p9sL91ggWZ0n2hhqTCwroCzM5b7WV9vnF5gRzEArL9h2cRbczw00fkjTU+DrZxmAdGGB2PjU1mw2MDJSmpt5WxrfTzoK8lVlDaTtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731683165; c=relaxed/simple;
-	bh=ohSlArcrCn8HsNShzObP/cKlpHWBfNwiCTE7R8oJ91U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D8+WBQwKXZKc660nMoWV+mPj1w9SNY9ydhyI7tkkBC8SlexSxpNuBTma25Zf3lWH9+l8jCEce4pPRZgOaza5N4JomXAifRf/4Ka+cvGU/KlZuR/gr9LsPvMy+mv4GzeJRlQOhi3Q3LKen9LEBUZmN1UAkmzKkhfYHSFWfuxoRo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oe6QXSID; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 436E1C4CECF;
-	Fri, 15 Nov 2024 15:06:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731683164;
-	bh=ohSlArcrCn8HsNShzObP/cKlpHWBfNwiCTE7R8oJ91U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oe6QXSID/IpgY9kPNukp2eOpMkCKgiJT947x7UWS235fRqAtjrtDlX5z5LMrzjNEW
-	 WRokDkwqfL/AGi1BvZfOUQj+uo0lo7PW1Sz/e8z+TxSP1Iw8rIDUXPAq0p3CpRsqJa
-	 wQyZpkTzNMMYPc/SCwO42HsZ1lgRVZ6ZBWCn8yqlLvpDMhnsOv8oQBJErFTxcDDoWd
-	 UUL3Z9UtCzm7J62hPKSPsr/foDB+flnvv2XsAKPCHzNiMrLh/GKEWbxKw1a7LoSPRn
-	 knqYOlvc6lttg7ZCNWbl05IZ8b0AB44lwn2LOoAVP2iIMZ/pTXfRfZj0jvlIYIT7s6
-	 MQnw7jPPoVZ1g==
-Date: Fri, 15 Nov 2024 15:06:01 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Frank Li <Frank.Li@nxp.com>
-Subject: Re: regmap I3C support
-Message-ID: <ZzdjWWrTK1bniwFf@finisterre.sirena.org.uk>
-References: <67d549d0-64c6-4d62-add6-0958ef24910f@roeck-us.net>
- <ZzSxKctLlLZexdF5@finisterre.sirena.org.uk>
- <feda265f-f7ba-4017-a08d-b35916aafe96@roeck-us.net>
- <ZzS6ph8KulEITt5C@finisterre.sirena.org.uk>
- <88f34137-b215-4bee-b117-3ff00402ba6c@roeck-us.net>
- <ZzXfmonkRB-KaBhi@finisterre.sirena.org.uk>
- <85584c2e-2c45-4ec4-89a0-111fa5ad1080@roeck-us.net>
- <ZzYyu4ptPtYT6vJC@finisterre.sirena.org.uk>
- <7b23e033-5cde-44e9-be97-10296833863b@roeck-us.net>
+	s=arc-20240116; t=1731683208; c=relaxed/simple;
+	bh=L6rHc7bIH39FF/0gn7erG2N5q0A9lM5z0Mr12TL8uZA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DEcDrxSe4Y/4++IgtQeEIl4xq1/WDtypd2Ju7R8oxqHSmbnqJ91UZpAnHpWeY0QJgOIdqsZtS/LoIxkf8yLBt04CPb6CDXRcbRgoN3CWSOP9c5ESBFG3D2KmfzbSbkkspwm2856kjsqRWMsDQBgdL5PbTxXUAWUqEhYeK5zGVU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bZ3BH0cd; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7240d93fffdso732128b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 07:06:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731683207; x=1732288007; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=L6rHc7bIH39FF/0gn7erG2N5q0A9lM5z0Mr12TL8uZA=;
+        b=bZ3BH0cdpGqjLW/Zy1Su3xOAXFJG64gGA19W1qzxzuZimGCtfPiSnIQF/RA9wzk2sO
+         xmC9DoW9tsNRxJHENh336HU1fVe6aYKch+Kfgy8vArCS8JLyohnGxDFfEuChqlJMO1uc
+         ye6wzVcV5WPvpCdHWZVpbR4/+VY2MYU1ktck7ot1B4v8PvUh+19FMiNQmpZH3Kp+gpjg
+         rWeQGduyfOZZCF5f715Q26J/hYLvC5LtymhxzJSRqiVFwcf80femPdv5afKPDxh1EGGn
+         91JUfZHLrCu0i6rgPalNVsbnuqQYnQmNwlWtQvlUkxT8GEw4z697c/ublA3aZ74RD+M3
+         a92Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731683207; x=1732288007;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L6rHc7bIH39FF/0gn7erG2N5q0A9lM5z0Mr12TL8uZA=;
+        b=D6NEhN8l9/d/TZDUBLAKjvbByeq8emp95SQw+UHr2LovQG35UamBEvsNSuCVvhD9Bg
+         JyXHhT9jx/vhxSNKFHwcJDCy4id8zL15QJnxNLu0Z5Ioxc33/acYhS3ChrxKZf0MhSzc
+         Bmu+mc4FzgcgdA6WlRCJbx32ZrkkhWcaz17ChlvmOdtS+ZXbMng9bYbEYtFOFavCX03y
+         ePrw5TuvTeSEp66ARU9JgGtqB09W8Kt0Olrub7pDtgyNuBtKTJYgTTL/6qLEE+9C+aE9
+         UZH6raOWiKy47fM3yIkURf1YgUJFjwjWQg028kMaZ64uDmKXOdWhkzz/OmrT53MOKrl2
+         bYFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXK0VOLVmB6rJBuxgKkgsphdMXGUZkX2jiWN1QmesJcvnF7qMuD3MlT0jjzBqyajVSUsGIOSJtfZFLVwEw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi4SqHBKfFXCXS4DaBppFTP30j2sh/lG+rXboj8B2aYsxiQ88f
+	gWFyjOpstoQBB8GWnwCj3w/3hEC9HrziYDWDePbd3WzqBomSIx2/L2JI4T9IN6VbcOojAz1v5lx
+	rlen2dWA0JGHM0LyZ+RuO+z78pc8XOKzlwKG8YqkqmXyXMNOc9g==
+X-Google-Smtp-Source: AGHT+IEUgPtK0zm9JlHmILKAZrzqF/XanePDYjHMFgQeF9qQLS2OeBR9J+dbTbFzei2pMXsVmlaqR4ic11xSOoquQpQ=
+X-Received: by 2002:a17:90b:3b46:b0:2e2:ca4d:9164 with SMTP id
+ 98e67ed59e1d1-2ea154f71e0mr4241757a91.12.1731683206476; Fri, 15 Nov 2024
+ 07:06:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="06HKCtrWrOkbe4Qe"
-Content-Disposition: inline
-In-Reply-To: <7b23e033-5cde-44e9-be97-10296833863b@roeck-us.net>
-X-Cookie: Editing is a rewording activity.
+References: <20241108113455.2924361-1-elver@google.com> <CANpmjNPuXxa3=SDZ_0uQ+ez2Tis96C2B-nE4NJSvCs4LBjjQgA@mail.gmail.com>
+ <20241115082737.5f23e491@gandalf.local.home>
+In-Reply-To: <20241115082737.5f23e491@gandalf.local.home>
+From: Marco Elver <elver@google.com>
+Date: Fri, 15 Nov 2024 16:06:09 +0100
+Message-ID: <CANpmjNM_94fmQ025diHd9_vKtRxtDbSYaOpfBbshNQYEPQmHZw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] tracing: Add task_prctl_unknown tracepoint
+To: Steven Rostedt <rostedt@goodmis.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Kees Cook <keescook@chromium.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Oleg Nesterov <oleg@redhat.com>, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+On Fri, 15 Nov 2024 at 14:27, Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> On Fri, 15 Nov 2024 13:00:00 +0100
+> Marco Elver <elver@google.com> wrote:
+>
+> > Steven, unless there are any further objections, would you be able to
+> > take this through the tracing tree?
+> >
+> > Many thanks!
+>
+> This isn't my file. Trace events usually belong to the subsystems that
+> use them. As this adds an event to kernel/sys.c which doesn't really have
+> an owner, then I would ask Andrew Morton to take it.
 
---06HKCtrWrOkbe4Qe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Got it.
 
-On Thu, Nov 14, 2024 at 10:58:05PM -0800, Guenter Roeck wrote:
-> On Thu, Nov 14, 2024 at 05:26:19PM +0000, Mark Brown wrote:
+Andrew, can you pick this up?
 
-> > Right, so the fact that I3C depends on I2C deals with a lot of the
-> > problems that plague the I2C/SPI combination.  Ugh.  I guess the helper
-> > should be OK and there's not much doing for I2C/SPI.
-
-> Is it really that difficult for I2C and SPI ? The patch below seems to wo=
-rk
-> for the LTC2947 driver. It doesn't even need dummies (the compiler drops
-> the unused code), though I am not sure if that can be relied on. I thought
-> that dummy functions are needed, but maybe I am wrong.
->=20
-> The Kconfig for the combined ltc2947 driver is
->=20
-> config SENSORS_LTC2947
->         tristate "Analog Devices LTC2947 High Precision Power and Energy =
-Monitor"
->         depends on I2C || SPI
->         depends on I2C || I2C=3Dn
->         select REGMAP_I2C if I2C
->         select REGMAP_SPI if SPI
-
-This prevents building the driver in if I2C=3Dm which isn't always
-desirable, and IIRC the randconfig people kept turning issues up.  You
-can make things work well enough for normal configurations, it's all
-edge cases that cause issues.
-
---06HKCtrWrOkbe4Qe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmc3Y1kACgkQJNaLcl1U
-h9B8jAf+Lw4+IyKkev3fhHsl5PiBuZZ6fkwIH7G9ogUG9piPOz6W35f5W57HRPtB
-6diEpjtI3/XfB2kyZt2fCrHbQljZV5N60HMiqyHrvWId/sd2oPWVns4+qYgtLNeL
-6yfDihCd+XoPEAvwvuUJVCoQSZKOR5MGzAxrRkBFT2s/JN8Zae+O8qyTyqhJ6U0g
-47FATd3eqzLwDI2xk5fLuKMh+ui3PVM649jm8TaPyA6N9Y8CkI0MGFIwuHPkcLBY
-/QdCku7bPLu45SVx0UJ3Y+GX8YCY7iI2xijDu6VDhQPcvSAsEV7HKXiTfpJ9Jc2t
-sHN9zr2WfUsX5Y0o2nSu7anJjgkFYA==
-=C5xB
------END PGP SIGNATURE-----
-
---06HKCtrWrOkbe4Qe--
+Thanks,
+-- Marco
 
