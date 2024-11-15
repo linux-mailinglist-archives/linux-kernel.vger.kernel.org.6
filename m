@@ -1,200 +1,75 @@
-Return-Path: <linux-kernel+bounces-411298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D7209CF5EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:24:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E7949CF61A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:31:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14C5028BAC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:24:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BEC9B35856
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:25:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDFA1FAEEA;
-	Fri, 15 Nov 2024 20:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4BA1E2835;
+	Fri, 15 Nov 2024 20:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xOyyUJxh"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="m51T3t48"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C601F9ABE
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 20:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831261E261B
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 20:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731701956; cv=none; b=VlehcNprJiwynCoJDDTVX6qNtXapXNC6nW4xkirWRLAZLlyLHTmTEaEayLBkaFtnUXGlEN9war1OlNR0Ur3wkVa77WRaE9ugqiZ46V7WvVukTVz+LSQjxRLK8IqbLzjJJNiZx2iL0AwT6RY/gexkLR0B3PQ5JzvA1nTVfYnegWY=
+	t=1731701974; cv=none; b=E4TdPPsXp2OJLk2eWwl2qecJJKvN5QsNpJ3JusZet8s6LNxyKrC2mhFLxPn08hGx9xiupLICZpNnww7E6YRFx2qpt8EgvYzt1yPbX4ihvcok9Z9U3Dz4w0O+II+Q4NwGAQG9+IEdT7ZeKCcPilT3nU+u//4mgAomZ4yiALiDnFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731701956; c=relaxed/simple;
-	bh=Hk8RC/iufxLD2a+ydJA5dpksupb3CS/GNCxUZjKmAHU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VOICcg+0FRxxGDiA+PF2Ea0UhTuE+5tncJ++xVPsQRF/K94VMuCmrUHC6J+AszuC5dtBU7gYgrqrtHLK/D3M9vH3tZFNDQiIVDgJVbnefcTG6YtNAUgwsL4rw0cVjUJc6JMfTiXsP6wUfo8KPlgYHAJD42KKV44nSkQWeQqug2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xOyyUJxh; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5ee53b30470so1288247eaf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 12:19:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731701953; x=1732306753; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6w6V24uqzrq77Vph3I2ahD02yEXC9JX57Vqpm9P42UI=;
-        b=xOyyUJxhxgZd6Q6GZohN9F1v2IpE+n7woi4+cr95f24s7g/EWkYF8JM/S0bxg+2ies
-         79ZL8dz3MXx00RbAemQ72Y4RjR6HwA5lfB94HkHIq9HpMaEjmMNV4OKGXhAgfaRTi25p
-         7i0SW3A0U7hA1rVuT+JiLW1lHGq03mbL9dpTcGP7HD8TEhcRpojFnVDohP3HDNSarHhJ
-         8DphJpHaXd1+7DRvomaxOjAyU7HhU/PJh2glFcdu8KvMi1U27lHZyrWXqfzIOGZsYHHl
-         X/BSBct/TCGBTimZDIABQ3TN3uYQ+tityGl0N65no+iEqzH4wncG/QpCXXrTdu/XGbQ0
-         H2rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731701953; x=1732306753;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6w6V24uqzrq77Vph3I2ahD02yEXC9JX57Vqpm9P42UI=;
-        b=UeEoEipkyya0B62eCDJoCCPKMBJBJFOi16rxZDGETg5h/inufMrgwnrK0/h4Qvh796
-         FfziuvQGiY8wNlWeKPcFI5L0pFvvDgJaymB1WpGJacAY7lbsg5yO+j4CC0scK76KHcpY
-         NS2DBCH5rs51ZrBacByMyM/Cmz/kRNdzt/V/jNcO8DLGVajw3EvGtLxQon0KgKnGXzmt
-         Cn3AFvFg1lTkjPiI0Ajk9CD92Gc9Shr4B2u2o+rS1SggvICrk4nQc7+x8C8CGJbyHoBH
-         YsE6Ez9Uw3CehUAGRd8WgCVDZ1ZQpKNVVfpcxve44kSWS8YELRZcUHqFKsVtFpLjsGZH
-         NELw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5x9nSdS0winwHcN25+RwFO0KLBODUxVDQRsHy/SiDZ7RiOZerel9GXMaUzZg4deZTmI3Zj0oYUDcNvi4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsBznt/SZyTva+a9UM//umsbiXUYChJqzMgHrWL012qwlcyb8X
-	0hmhvKU3vViV2b95fIWkWFFvMfJlt4YvDd+939xlxpRiYMVuMjuSSIjnrbSL7GI=
-X-Google-Smtp-Source: AGHT+IFO2Tmuu3SXBwdN6noWGmFoRzGeGSqPwhckywErQbXZsu+Ra0D/gCw1hGXbt0rPUVfh6B5vqg==
-X-Received: by 2002:a05:6820:1a0a:b0:5ec:c22c:72db with SMTP id 006d021491bc7-5eeab29e337mr4710916eaf.2.1731701953013;
-        Fri, 15 Nov 2024 12:19:13 -0800 (PST)
-Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a780ea62esm748978a34.5.2024.11.15.12.19.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 12:19:12 -0800 (PST)
-From: David Lechner <dlechner@baylibre.com>
-Date: Fri, 15 Nov 2024 14:18:55 -0600
-Subject: [PATCH v5 16/16] doc: iio: ad4695: add SPI offload support
+	s=arc-20240116; t=1731701974; c=relaxed/simple;
+	bh=No3tEv2Po4wOtfTaSzdDHm2nj44/Ix0K0nRqHcsJrdU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lbgoilkHoykeyIWIJz6UHe3DPS8obayXSjDzFqZm8YjIVNKiO51ytJhUb0wYTOl5LAGchgbyDv+JxBGqJT+rzUwsIm2MQPmctNaFo7LAW6jC5it8I3DOSyneFlI/rviMK6oJiXLysnFHjlwGPr7EgenDX6B9Yf9D4Jny7w3QPIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=m51T3t48; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 15 Nov 2024 12:19:24 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731701970;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0zAJGhchRoBADrhT+zd71hoHYOWBCEKuIklnr6QxgXY=;
+	b=m51T3t48gnRHJd26lp/bv4kWcqiydqG9DeEgIC01PJB4T7HmmBCyak9KvElN5pIZR6Rp37
+	+/N+hAIKTVE52pRWPyqnPQ8JxHhCPhXuo/POBm3q4q+Ty2MczovyNyYwcs4iB2h0p2mIZ+
+	/TRoQVAs5aVVq34o0pMXZgHR6SMC7VQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, Michal Hocko <mhocko@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [PATCH 2/2] mm: swap_cgroup: get rid of __lookup_swap_cgroup()
+Message-ID: <otbcl5dpbzvlyogebjo2cpc45ipuktr57ekbvk7ss65lxe63a6@hkyjf6vj2jnm>
+References: <20241115190229.676440-1-roman.gushchin@linux.dev>
+ <20241115190229.676440-2-roman.gushchin@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241115-dlech-mainline-spi-engine-offload-2-v5-16-bea815bd5ea5@baylibre.com>
-References: <20241115-dlech-mainline-spi-engine-offload-2-v5-0-bea815bd5ea5@baylibre.com>
-In-Reply-To: <20241115-dlech-mainline-spi-engine-offload-2-v5-0-bea815bd5ea5@baylibre.com>
-To: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
-Cc: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Lars-Peter Clausen <lars@metafoo.de>, David Jander <david@protonic.nl>, 
- Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241115190229.676440-2-roman.gushchin@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-Document SPI offload support for the ad4695 driver.
+On Fri, Nov 15, 2024 at 07:02:29PM +0000, Roman Gushchin wrote:
+> Because swap_cgroup map is now virtually contiguous,
+> swap_cgroup_record() can be simplified, which eliminates
+> a need to use __lookup_swap_cgroup().
+> 
+> Now as __lookup_swap_cgroup() is really trivial and is used only once,
+> it can be inlined.
+> 
+> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
-
-v5 changes: new patch in v5
----
- Documentation/iio/ad4695.rst | 68 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 68 insertions(+)
-
-diff --git a/Documentation/iio/ad4695.rst b/Documentation/iio/ad4695.rst
-index 9ec8bf466c15..8009a0c272bc 100644
---- a/Documentation/iio/ad4695.rst
-+++ b/Documentation/iio/ad4695.rst
-@@ -47,6 +47,36 @@ In this mode, CNV and CS are tied together and there is a single SDO line.
- To use this mode, in the device tree, omit the ``cnv-gpios`` and
- ``spi-rx-bus-width`` properties.
- 
-+SPI offload wiring
-+^^^^^^^^^^^^^^^^^^
-+
-+When used with a SPI offload, the supported wiring configuration is:
-+
-+.. code-block::
-+
-+    +-------------+         +-------------+
-+    |    GP0/BUSY |-------->| TRIGGER     |
-+    |          CS |<--------| CS          |
-+    |             |         |             |
-+    |     ADC     |         |     SPI     |
-+    |             |         |             |
-+    |         SDI |<--------| SDO         |
-+    |         SDO |-------->| SDI         |
-+    |        SCLK |<--------| SCLK        |
-+    |             |         |             |
-+    |             |         +-------------+
-+    |         CNV |<-----+--| PWM         |
-+    |             |      +--| GPIO        |
-+    +-------------+         +-------------+
-+
-+In this case, both the ``cnv-gpios`` and  ``pwms`` properties are required.
-+The ``#trigger-source-cells = <2>`` property is also required to connect back
-+to the SPI offload. The SPI offload will have ``trigger-sources`` property
-+with cells to indicate the busy signal and which GPx pin is used, e.g
-+``<&ad4695 AD4695_TRIGGER_EVENT_BUSY AD4695_TRIGGER_PIN_GP0>``.
-+
-+.. seealso:: `SPI offload support`_
-+
- Channel configuration
- ---------------------
- 
-@@ -158,6 +188,27 @@ Unimplemented features
- - GPIO support
- - CRC support
- 
-+SPI offload support
-+===================
-+
-+To be able to achieve the maximum sample rate, the driver can be used with the
-+`AXI SPI Engine`_ to provide SPI offload support.
-+
-+.. _AXI SPI Engine: http://analogdevicesinc.github.io/hdl/projects/ad469x_fmc/index.html
-+
-+.. seealso:: `SPI offload wiring`_
-+
-+When SPI offload is being used, some attributes will be different.
-+
-+* ``trigger`` directory is removed.
-+* ``in_voltage0_sampling_frequency`` attributes are added for setting the sample
-+  rate.
-+* ``in_voltage0_sampling_frequency_available`` attributes are added for querying
-+  the max sample rate.
-+* ``timestamp`` channel is removed.
-+* Buffer data format may be different compared to when offload is not used,
-+  e.g. the ``in_voltage0_type`` attribute.
-+
- Device buffers
- ==============
- 
-@@ -165,3 +216,20 @@ This driver supports hardware triggered buffers. This uses the "advanced
- sequencer" feature of the chip to trigger a burst of conversions.
- 
- Also see :doc:`iio_devbuf` for more general information.
-+
-+Effective sample rate for buffered reads
-+----------------------------------------
-+
-+When SPI offload is not used, the sample rate is determined by the trigger that
-+is manually configured in userspace. All enabled channels will be read in a
-+burst when the trigger is received.
-+
-+When SPI offload is used, the sample rate is configured per channel. All
-+all channels will have the same rate, so only one ``sampling_frequency``
-+attribute needs to be set. Since this rate determines the delay between each
-+individual conversion, the effective sample rate for each sample is actually
-+the sum of the periods of each enabled channel in a buffered read. In other
-+words, it is the value of the ``sampling_frequency`` attribute divided by the
-+number of enabled channels. So if 4 channels are enabled, with the
-+``sampling_frequency`` attributes set to 1 MHz, the effective sample rate is
-+250 kHz.
-
--- 
-2.43.0
-
+Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
 
