@@ -1,175 +1,188 @@
-Return-Path: <linux-kernel+bounces-410827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 949B49CE173
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:40:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6671D9CE16D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:39:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C27C1F21BF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:40:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F03B028143B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25D91CF2A0;
-	Fri, 15 Nov 2024 14:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD7A1D45F3;
+	Fri, 15 Nov 2024 14:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pD51GfRl"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="Eegd4ZWk"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F43A1D47A2
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 14:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701703A1BF
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 14:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731681558; cv=none; b=TGt9F/KFoXiJtlnr+hZa9v9s6POOjScCQ3QT+CTT0xqEGW9WPjl4z2lGBHhI20jrS2/GTbD5eEyYfVwEQrCm8/JCF6Yj8jfQetPFNQsKST/nv/SOdxGZe/BNe6QRjkopEXgwW/oQQ5gfVvWo6nyNJGBbvSb1w/MKDGDZ/gX4Iwk=
+	t=1731681554; cv=none; b=g++0piyZZ2bZBCUVJfvla81FYXGWN1TgXpQ+C2X7p0/eTjsew3VfCtgfab4W5ZijRoeT3uRejrTLgco4ZGVzpn1pmrZmCqhAvrsNQ3TI5WEMMx7s+V67eNz5KhpM4EL+h7M6Ug9w8IIKVenTTHYW1/BryeJ1YHMaD5S9dE2sNik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731681558; c=relaxed/simple;
-	bh=zcDxiuozB1RcZw7DlAgdwSLCbxobCRcmPW74Fz2cwn0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HwTQ21vZyzlwqo/knspJjiRqmML3llaNhjMc3pD1WmVFXfOAwvH+BIYbDSYE+I/XH9ELxCIuE2khWZ27h7p/PV086Whph79VLxbceYLftUQb7By+HMkmO8aiOfbKEO+GyAgotbGTt8+CNhhCkLU/fnkbEWw2VSb+SR+Uxk+6yas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pD51GfRl; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53d9ff8f1e4so2187253e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:39:16 -0800 (PST)
+	s=arc-20240116; t=1731681554; c=relaxed/simple;
+	bh=4tlLltxo+Hj+0MDVTEjHpvj7Ka2vLnni5nupXYpEmNk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RN79eZxKKjRwP4j5BfFvWXEZ5BdKSDwrlzHJ4yaqd1CoA7I78Emhb5w7yYQHgvu3R5o7rPi7Q3ALudOoJRDz8dqDb5C/ETePCSmAKqmiD6IrgkEs6mbo1EjStVsCEZmdHizBouQcQorVcWZNSINXo57a0K76JJ+0AMUgVnsQf6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=Eegd4ZWk; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4315baa51d8so6405125e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:39:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731681555; x=1732286355; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=51jmKSwVle1x+SelryYShRFN85JrDXZwY4DieM6p0Rk=;
-        b=pD51GfRlTxgZW2OvMcTXCx4+pYvEQnhIPlCP07adfPi1C41kiqtQ+dMhLSRUSxeMrM
-         Ks1UNk2MsbEMgkYM2b0Hb+XYSM3bf7fmKBWovd0VCh986kk3V1wBSWBJS2WmrC2xW7nf
-         iEZ79o9tOxCs8EfpaqsqbmwC3SeuyuO/V26nym0U96nBSurs2il9zAEWbvyj0eqAsZAc
-         Tt8OL6o3mPMFKU8cNOl7iVV0vXYY8z4W6+aqn8cqFlLoOj30JAuRMiT9JtzxDpciyHH6
-         8aSOA/kc9Vwf3PvXNGJQaz6q74UXjbfSZ+hoFvab1WTTFi70nbJ3OjXOJKqIrSfWV1aE
-         2sOA==
+        d=openvpn.net; s=google; t=1731681551; x=1732286351; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=jFC7sT7ccqdUHp1cDL4XMUSFjZj93CegQi4p8wl3lxA=;
+        b=Eegd4ZWksJGs7+btMgWSHnjZqw8+8MnfNZZNcLisS+OzjYTgeKzNZglSeLxL3EkMJN
+         w2x929T7qK/lAt8h+zKhX2ZsUPdPkUOzOs0Xaf3tyounzZ3eA0t4CdDMWBFt3h2IMTx6
+         /2xa3rbjj2J1nN9BuS2tqJl+XX0SSMZvh0L7KPWwFpvpzTtjftK2nEQqjx9pyzSIyljP
+         a56fDEo/IwAQG5ntknQZ0vcn4d0nYC6SHw/XY7tlUGHfpaP/NcziVdRtQFqliBTFIyI+
+         zvow4xX7G+dP49KgnOYRwS8+UNJ/+Hc3RDgUq4cnz4Hl/V4hQJrwrS4Dg5L3+ixmCz7C
+         Dpjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731681555; x=1732286355;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1731681551; x=1732286351;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=51jmKSwVle1x+SelryYShRFN85JrDXZwY4DieM6p0Rk=;
-        b=fOKfQe3jVkwIXoXIwg6Eo3WrGrJ1NLYA1FDtxkDyU8G5hr4pu+W9Y20fMr9SlIDHF2
-         24/m7ySj9oS/mfjbWyftehOauBhW7vp5NHmeUeNJghVaRx1yKd8Bh64pZd98DRYOwCSe
-         zGH3B4vrJpdaVGsHx+vk/px4TjmeBsEv15e2YHXWzxIFSNw46yPXrXtfPfU6RlgCnEmM
-         dHoh3H6G6ZJ/9nvoxJV/xC8rMbqyq0Nxlx9FFtaETjPGtUbmL4eec1VlJUQ293aYbxkH
-         eJmiS/lqHOKTJeoODZe9FaNXtcVVzq5bQlzal9/fbAM3FZ/ap2rdPIlPdCzN2VFA/cq7
-         DvlA==
-X-Forwarded-Encrypted: i=1; AJvYcCURB/RPudpP6OW5pT3+AY9RgZAcEmPAzHLFvfc7MeI4lOPZcClaW9xnsQUUfwTXhLm3uUcvLtElTw00Mi0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+tY1HYJhzMNRFtwoN55pC2f0cEoJFJfw4V2pqOilXoV1WvV+k
-	kIZF5ht6COKFv7NksFYDFI8VDEzPZbPMCypNuHPM0F9xDgtNY4EJXOKEf1uE1+4=
-X-Google-Smtp-Source: AGHT+IFFXq6ZdVs+esKVUTRY3iUZ2e43HpYp71jG48QwgglW7QLb5Zy314u5bVlw4Lh3Mu4F4rG/gw==
-X-Received: by 2002:a05:6512:3d07:b0:539:918c:5124 with SMTP id 2adb3069b0e04-53dab2a2e59mr1717693e87.31.1731681554662;
-        Fri, 15 Nov 2024 06:39:14 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da65019ccsm593960e87.110.2024.11.15.06.39.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 06:39:14 -0800 (PST)
-Date: Fri, 15 Nov 2024 16:39:11 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Bjorn Andersson <andersson@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Connor Abbott <cwabbott0@gmail.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH RFC 6/8] drm/msm: adreno: enable GMU bandwidth for A740
- and A750
-Message-ID: <p4pqswgaxbx2aji6y5v2qngn3xp4gdlruthhbzpb4cgfs2earz@mo7zbsgqwc4b>
-References: <20241113-topic-sm8x50-gpu-bw-vote-v1-0-3b8d39737a9b@linaro.org>
- <20241113-topic-sm8x50-gpu-bw-vote-v1-6-3b8d39737a9b@linaro.org>
- <nw2sqnxmhntvizzvygfho6nhiwfni4xfquwst5gd5g2tel6pnr@h66d4mw46jcf>
- <8df952a8-3599-4198-9ff0-f7fac6d5feaf@linaro.org>
+        bh=jFC7sT7ccqdUHp1cDL4XMUSFjZj93CegQi4p8wl3lxA=;
+        b=Vj+v+QeAZ+CAyG0YqwnipttU3cX36FEqN/aVYynQ1no1SsCyUJX5nT+ZEIIT97JBb5
+         XgKuudQBMSlcrfCCxYEU9oywtNLEqAGYw21xw9hG4G2mnZJdvk3xvblBEV7dbGTCT2zj
+         RM4aoWZAvijC9qXUlfZsSVxRVWgLuCLohc6RLiWjk4jpkk9GYASEo/pTZ3TJr4kuaeZD
+         z5gNuGRpf29yKOYDFOqTUD86IXJKQXzbBc9SRibznUqHMUA90GP+16PSh1bum/h5C4fj
+         RUvHosAlmEnfex9iX1EnHqaRW/jutzy/mfYZPr8w0ieadqCWWPUlc7fH8K5BYSYkFWgY
+         m5pg==
+X-Forwarded-Encrypted: i=1; AJvYcCVx0zSkud4+t3Cusl4SrD0XcAVVsW8P0zjzyxsR8p2dg+sZ4/zXLC+wvdnsIOvZh+hwOWjvA8tEh6LCWVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzi52fjuN3ej3mygOEjC9oRxuZx9t634LApBlp79CU0SygLaFKM
+	qUXgndfE7KCSZTsefooGsvIAyaTSMkYFalGj8K1S4wSW4KJMT3PLmZ5bV05Z6yg=
+X-Google-Smtp-Source: AGHT+IHynH3QnvU6nVv7lZXeKUim6BKbTkTiRuQ7hpZ9Jr52HVBBSOHcVHcsmd9GfvobRtv2iCKJvw==
+X-Received: by 2002:a05:600c:3584:b0:430:5887:c238 with SMTP id 5b1f17b1804b1-432df725532mr23699705e9.11.1731681550884;
+        Fri, 15 Nov 2024 06:39:10 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:59f4:10be:886a:27eb? ([2001:67c:2fbc:1:59f4:10be:886a:27eb])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da24459bsm60768935e9.6.2024.11.15.06.39.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 06:39:10 -0800 (PST)
+Message-ID: <387d3fc5-9ff6-4a8e-b766-5e30d0aef4a4@openvpn.net>
+Date: Fri, 15 Nov 2024 15:39:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8df952a8-3599-4198-9ff0-f7fac6d5feaf@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v11 08/23] ovpn: implement basic TX path (UDP)
+To: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, sd@queasysnail.net,
+ Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-8-de4698c73a25@openvpn.net>
+ <4fe9f0d5-a8ac-4f2e-aee7-00cbeaf2f0aa@gmail.com>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <4fe9f0d5-a8ac-4f2e-aee7-00cbeaf2f0aa@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 15, 2024 at 10:20:01AM +0100, Neil Armstrong wrote:
-> On 15/11/2024 08:33, Dmitry Baryshkov wrote:
-> > On Wed, Nov 13, 2024 at 04:48:32PM +0100, Neil Armstrong wrote:
-> > > Now all the DDR bandwidth voting via the GPU Management Unit (GMU)
-> > > is in place, let's declare the Bus Control Modules (BCMs) and
-> > 
-> > s/let's //g
-> > 
-> > > it's parameters in the GPU info struct and add the GMU_BW_VOTE
-> > > quirk to enable it.
-> > 
-> > Can we define a function that checks for info.bcm[0].name isntead of
-> > adding a quirk?
+On 11/11/2024 00:54, Sergey Ryazanov wrote:
+> Another one forgotten question, sorry about this. Please find the 
+> question inlined.
 > 
-> Probably, I'll need ideas to how design this better, perhaps a simple
-> capability bitfield in a6xx_info ?
-
-I'm not sure if I follow the question. I think it's better to check for
-the presens of the data rather than having a separate 'cap' bit in
-addition to that data.
-
-> There's other feature that are lacking, like ACD or BCL which are not supported
-> on all a6xx/a7xx gpus.
-
-Akhil is currently working on ACD, as you have seen from the patches.
-
+> On 29.10.2024 12:47, Antonio Quartulli wrote:
+>>   /* Send user data to the network
+>>    */
+>>   netdev_tx_t ovpn_net_xmit(struct sk_buff *skb, struct net_device *dev)
+>>   {
+>> +    struct ovpn_struct *ovpn = netdev_priv(dev);
+>> +    struct sk_buff *segments, *curr, *next;
+>> +    struct sk_buff_head skb_list;
+>> +    __be16 proto;
+>> +    int ret;
+>> +
+>> +    /* reset netfilter state */
+>> +    nf_reset_ct(skb);
+>> +
+>> +    /* verify IP header size in network packet */
+>> +    proto = ovpn_ip_check_protocol(skb);
+>> +    if (unlikely(!proto || skb->protocol != proto)) {
+>> +        net_err_ratelimited("%s: dropping malformed payload packet\n",
+>> +                    dev->name);
+>> +        dev_core_stats_tx_dropped_inc(ovpn->dev);
+>> +        goto drop;
+>> +    }
 > 
-> > 
-> > > 
-> > > Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> > > ---
-> > >   drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 26 ++++++++++++++++++++++++--
-> > >   1 file changed, 24 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> > > index 0c560e84ad5a53bb4e8a49ba4e153ce9cf33f7ae..014a24256b832d8e03fe06a6516b5348a5c0474a 100644
-> > > --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> > > +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> > > @@ -1379,7 +1379,8 @@ static const struct adreno_info a7xx_gpus[] = {
-> > >   		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
-> > >   		.quirks = ADRENO_QUIRK_HAS_CACHED_COHERENT |
-> > >   			  ADRENO_QUIRK_HAS_HW_APRIV |
-> > > -			  ADRENO_QUIRK_PREEMPTION,
-> > > +			  ADRENO_QUIRK_PREEMPTION |
-> > > +			  ADRENO_QUIRK_GMU_BW_VOTE,
-> > >   		.init = a6xx_gpu_init,
-> > >   		.zapfw = "a740_zap.mdt",
-> > >   		.a6xx = &(const struct a6xx_info) {
-> > > @@ -1388,6 +1389,16 @@ static const struct adreno_info a7xx_gpus[] = {
-> > >   			.pwrup_reglist = &a7xx_pwrup_reglist,
-> > >   			.gmu_chipid = 0x7020100,
-> > >   			.gmu_cgc_mode = 0x00020202,
-> > > +			.bcm = {
-> > > +				[0] = { .name = "SH0", .buswidth = 16 },
-> > > +				[1] = { .name = "MC0", .buswidth = 4 },
-> > > +				[2] = {
-> > > +					.name = "ACV",
-> > > +					.fixed = true,
-> > > +					.perfmode = BIT(3),
-> > > +					.perfmode_bw = 16500000,
-> > 
-> > Is it a platform property or GPU / GMU property? Can expect that there
-> > might be several SoCs having the same GPU, but different perfmode_bw
-> > entry?
+> The above check implies that kernel can feed a network device with skb- 
+>  >protocol value mismatches actual skb content. Can you share any 
+> example of such case?
 > 
-> I presume this is SoC specific ? But today the XXX_build_bw_table() are
-> already SoC specific, so where should this go ?
+> If you just want to be sure that the user packet is either IPv4 or IPv6 
+> then it can be done like this and without error messages:
+> 
+> /* Support only IPv4 or IPv6 traffic transporting */
+> if (unlikely(skb->protocol == ETH_P_IP || skb->protocol == ETH_P_IPV6))
+>      goto drop;
 
-XXX_build_bw_table() are GPU-specific. There are cases of several SoCs
-sharing the same GPU on them.
+It look good, but I will still increase the drop counter, because 
+something entered the interface and we are trashing it.
 
-> Downstream specifies this in the adreno-gpulist.h, which is the equivalent
-> here.
+Why not printing a message? The interface is not Ethernet based, so I 
+think we should not expect anything else other than v4 or v6, no?
+
+Thanks.
+
+Regards,
+
 
 -- 
-With best wishes
-Dmitry
+Antonio Quartulli
+OpenVPN Inc.
+
 
