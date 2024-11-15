@@ -1,105 +1,101 @@
-Return-Path: <linux-kernel+bounces-410789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11D199CE30A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:52:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06E2F9CE0F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:11:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB25AB35A16
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:10:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF735282F8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C8C1CEAD1;
-	Fri, 15 Nov 2024 14:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F4LGXIKQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310461CDA18;
+	Fri, 15 Nov 2024 14:11:16 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDE912F585;
-	Fri, 15 Nov 2024 14:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4832A1BA86C
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 14:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731679828; cv=none; b=jzUdyqI9PuMpgkg5vk8APrWnuxDzQGdL/gmVttP6K6qopmH2Q2yzgrsP1KN5FyDEsI2FnimnAa0bj6TqRTyJceefjaAStGuYvZd0JWxBw+huJHvJPCeIYI7sw+1ASIVm1RZ77rtLLZGga2ooxWEYplKVZyG2ZQU8B8ktFNfy6ck=
+	t=1731679875; cv=none; b=fkM+LUr5deNG4sYSu0NEsGnPWxzdfIjGimfA59Vsd7YXyyquyTTHBlwxPB+mAq5dllw3ov0u38Uh6Gbpu1ByhMOoP0GnvGg3+XOuJqJ/49TOME8AK1+YTSijKsSyWugA1XpnLMWch56jqtZESdHjI/pmQx3xbYOheU1U4hGC1C4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731679828; c=relaxed/simple;
-	bh=8CSwi+zLM3ewH0q5v5yP7A9xGFhlcIhP7HN+w9H2H84=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r+EDwatqQQHZbENC9/BtcCnjogtMcx+HiOAvoVkhQ46tKaG41qf7Qdfic1gSP/adTboxCIOk6WSb1yM4GHLqlKJRx7HGdzXFpOTjxFvn1v3DUAKIhH8jV+38aC8dya8KJgrmhydSExO1R6S3VTQikNxFEqHbZoIBn09HjxsqSOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F4LGXIKQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FD0CC4CED2;
-	Fri, 15 Nov 2024 14:10:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731679827;
-	bh=8CSwi+zLM3ewH0q5v5yP7A9xGFhlcIhP7HN+w9H2H84=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=F4LGXIKQnejA/xtyDR+CZAuDhnASsY/r7MFj28/Q50y5I/BIOT3N6+t7VWbBMGOT8
-	 4P46s4uf3LW/HD5irCXeQJr7iAqGWkWlvDVrxhthCiZTMz479sWgAilGub1OWcCXTZ
-	 hBDZqwNuNPx7kTfVypIADM01/zVb5cAVk0p8BoxLbsgiQHWJmUJJZUQrpXI9lL/d4P
-	 KHs8rqYZk9wpDPZ7RpSKnFEf7WkJNrmhBQgxSZjCFpIvjKYyMWMaMW4311dOqcthwy
-	 gZJawSiE2nlKmzKx3LjG5p3M6zB+Y5nTmEShxpcqHzPKcrFOTLCjoEk7PH4XRB8dmh
-	 CNnQ2YFK9X1ag==
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e382350652bso885187276.3;
-        Fri, 15 Nov 2024 06:10:27 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUbzf3h+7hhHBpSMezepbAXAYOsa5K9czU8x2wizDTNKG4GrLZprPYqe2vn88fON5wMKXOeLfQyaZHaEUsf@vger.kernel.org, AJvYcCX7RGWSKxOaj5lFOmm0fkGf8RuMTWJY33I0MSgufaV4++x0IQa5fDVzsLQJ+ZVhNawolA0oYWVYhdO1@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW+13bee8f8/SNX8iM9jCzrSUus/Czz7CHYz8igOYERAgVg65C
-	zwpwAFZQp79lya9OlIDGH6thERNcgjSXgH/8/sdGz6sI4Ivf/qDgSj5mf+KP4EOVYB0qm4jEpdV
-	WYI2Zq6ACUd07tIH5iFi4mHNIfg==
-X-Google-Smtp-Source: AGHT+IHryldJ3ukfy6/K9XYjT+zG+pVX4OOyz2cm6ONsY6VlQexu1ggrxHZf21CfHDkABwxYg58gi7ylStJXS609Zfc=
-X-Received: by 2002:a05:690c:6707:b0:6de:a3:a7ca with SMTP id
- 00721157ae682-6ee55cbc10cmr35436367b3.32.1731679826592; Fri, 15 Nov 2024
- 06:10:26 -0800 (PST)
+	s=arc-20240116; t=1731679875; c=relaxed/simple;
+	bh=lv3007Jwe6szzwK3Ineb2yF+RPJbDYTYHAGqj80Akw4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=sbgHwdfZo+LxiqheXiN1juYSCkEwwJgqzivnJOyASTDFmzeocqmeiiNKu4F8MfuhEIlnU8cs5Zp6d21Cl2Y+VF2wUmOu3fl0RAt5ZVwP1NCxIpSycwGuypFERe18FUyzSJh3PDyXTZHvW/dD/PoK/hAbXk+GJjqNO8eot8MvAFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a6b963ca02so7655535ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:11:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731679873; x=1732284673;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ul7J8wvAu2BZqJVFr4I3MeNSMoxisq4JfNHuKXm1IHU=;
+        b=Zb6bLiBynIQgsgQesDfWwUnLYHXHGZgijw1s6EIvMjz4uT/Fbk4nMLoUPasKMx/DQD
+         ZWaMU2D8LoWtDzg2erbZUrBbsirE3EvMtWqvYx838vAo0qrIQGrNP0Wq+bvzIbJopW40
+         XxneLqgMW0en24r+xBvXI5HqPkjOHSVigfGRnc4nepq0dRCg9n6cAOVRAMiT+XYf8xDg
+         THyngjlCkURMj0WCIpuEI5S0oNAkAhaeQb5fKvr3yzUb99Fq+zfUOUrzLZwh3wbstS3/
+         299cpyR01ryrIbbwF9obFqcvgXa9Mb2N1V5M6ZzrW5gYitbqzuBi4Fw8gVq03LVLJvjw
+         HnMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXl9v9DjwHR9WLAiH1caWmuEmrcASF8xjFFFvU5ZVBKdj+PTnsAdMgAk7MwAy0k/xtobc8+l8fU50foCjY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBLsJ0+yuSfT9LHOem/FL8inVD3VBEus9L70FTvSgbLv6aeyet
+	K+8suDesHGZItu+kTEZ4tyJ25z/n/bdOltTGQwbDVlETieYSmEAVqoodSls3ilpM+hJnQ5voa6K
+	c2APpjLg/H2IhvL9jAXo8fz8Zp9iVKKdKRZajhIqk0Al8K+GQKM20e70=
+X-Google-Smtp-Source: AGHT+IFfrju2aNBPaXrGdqtc4H2UqZc/ckvDgjgC8JieUc/1cskWfs9fHqxKMP4Aa5csTyASxlWycL3ozXfcjBA9xOgBvNavQkkv
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106171028.3830266-1-robh@kernel.org> <87jzdfcm3l.fsf@mpe.ellerman.id.au>
- <20241114125436.GL29862@gate.crashing.org>
-In-Reply-To: <20241114125436.GL29862@gate.crashing.org>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 15 Nov 2024 08:10:15 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+OCMa1P_AAxL7LxRjo7iJ368wwYFOhZ_-rSYbs=0QbWA@mail.gmail.com>
-Message-ID: <CAL_Jsq+OCMa1P_AAxL7LxRjo7iJ368wwYFOhZ_-rSYbs=0QbWA@mail.gmail.com>
-Subject: Re: [PATCH v2] of: WARN on deprecated #address-cells/#size-cells handling
-To: Segher Boessenkool <segher@kernel.crashing.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Saravana Kannan <saravanak@google.com>, 
-	linuxppc-dev@lists.ozlabs.org, Conor Dooley <conor@kernel.org>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6e02:218e:b0:3a4:e4d0:9051 with SMTP id
+ e9e14a558f8ab-3a74808cc3emr30100305ab.24.1731679873195; Fri, 15 Nov 2024
+ 06:11:13 -0800 (PST)
+Date: Fri, 15 Nov 2024 06:11:13 -0800
+In-Reply-To: <PH0PR11MB7496D8FBFAC72061A9C5F07CD1242@PH0PR11MB7496.namprd11.prod.outlook.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67375681.050a0220.2a2fcc.007d.GAE@google.com>
+Subject: Re: [Linux Kernel Bug] memory leak in ubi_attach
+From: syzbot <syzbot+3a0f6c96e37e347c6ba9@syzkaller.appspotmail.com>
+To: sudumbha@cisco.com
+Cc: sudumbha@cisco.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 14, 2024 at 6:59=E2=80=AFAM Segher Boessenkool
-<segher@kernel.crashing.org> wrote:
+> #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git<http://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git> 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
+
+This crash does not have a reproducer. I cannot test it.
+
 >
-> On Thu, Nov 07, 2024 at 10:35:58PM +1100, Michael Ellerman wrote:
-> > "Rob Herring (Arm)" <robh@kernel.org> writes:
-> > > While OpenFirmware originally allowed walking parent nodes and defaul=
-t
-> > > root values for #address-cells and #size-cells, FDT has long required
-> > > explicit values. It's been a warning in dtc for the root node since t=
-he
-> > > beginning (2005) and for any parent node since 2007. Of course, not a=
-ll
-> > > FDT uses dtc, but that should be the majority by far. The various
-> > > extracted OF devicetrees I have dating back to the 1990s (various
-> > > PowerMac, OLPC, PASemi Nemo) all have explicit root node properties.
-> >
-> > I have various old device trees that have been given to me over the
-> > years, and as far as I can tell they all have these properties (some of
-> > them are partial trees so it's hard to be 100% sure).
+> ----------------------------------------------------------------------------------
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 5b832512044e..dc77128358d8 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -7098,8 +7098,11 @@ static int sysfs_slab_add(struct kmem_cache *s)
 >
-> Many SUN systems won't have such superfluous properties.  But does
-> anyone use such systems at all anymore, and do people use dtc with
-> those :-)
-
-There's still a few presumably. Sparc is omitted from this warning
-already because I suspected a problem which was confirmed on v1 thanks
-to the DT dumps here[1].
-
-Rob
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/davem/prtconfs.git/
+>     s->kobj.kset = kset;
+>     err = kobject_init_and_add(&s->kobj, &slab_ktype, NULL, "%s", name);
+> -   if (err)
+> +   if (err) {
+> +       kfree_const(s->kobj.name);
+> +       s->kobj.name = NULL;
+>         goto out;
+> +   }
+>
+>     err = sysfs_create_group(&s->kobj, &slab_attr_group);
+>     if (err)
+> --
+> 2.42.0
+>
+> ----------------------------------------------------------------------------------
+>
+> Thanks & regards,
+> Sudhir
+>
 
