@@ -1,262 +1,195 @@
-Return-Path: <linux-kernel+bounces-411122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 934099CF35B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:55:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 911729CF360
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:55:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5386F287B9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:55:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 528022866A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C7E1D61A1;
-	Fri, 15 Nov 2024 17:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A101D5ADB;
+	Fri, 15 Nov 2024 17:55:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dvehh1DR"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="OyP3fpOW"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2077.outbound.protection.outlook.com [40.107.220.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3F01D619D
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731693310; cv=none; b=Lm19SnR2yHc8hw3h8UMqxlAo/GDDacVZ24pAt4JRWCEODHp9uBu+r6eR+78m7wqZOH/AeqgOs9u53cAN9NHjKgLLSW+5GuEICMwlU/ruJJ19H9Nn8eOfEmyGylsFJ0R1exDm2td6kA13NKpwP/hdLZ8oViroiFan3HdM9PHY8O0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731693310; c=relaxed/simple;
-	bh=Dc/5CWn5I9oj0IhCuyvb47QZKddMSwNPrXDwm06esJ0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sFmBNkK2TxUzyyIuBTJ/PCB+tYbYPUQBtAA1tpdWbi6x4ukF5oXqSoR1TCkyuehX8lb/hMVMALFVBGmnwYlIcz0cWzyKkKF5SqwS5AoDEEGF3vDV5N0JfMIdcYrh44moeSlcLasSsEeCuE3lcgX5KReLfNDGucLfpBnW3u2Gtso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dvehh1DR; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a716d74c28so184625ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:55:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731693308; x=1732298108; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hnHS6ipKNUUpXk/6JmH9J/OJBc1PBR+N05vgPQHYS08=;
-        b=dvehh1DR0/Di6XWMW+AmghMfE2Fk/Se9bNDiGSmgRjO16FUideu/VZKrJNKvxCgYKz
-         0RPB+0SslcB9C9IQuhYsg/Q0lK1sYXw0DkvR2RVAqwjEkGK5u3BLE7NHN7OPyN40IcDh
-         moMNd+v+v0uyVcnM3rKb6JyIN0Wp1JOR8EgmoE4jHcm0WN4ljT78XFPA1zjMvYea599t
-         FvVvuukHCeiXAStKphDMgjW538oVpQKQ3fxk5NHOlHO+s3aztNJlMaYa0vwRI6RrBjEy
-         sGHdQMcahXZQuFW4tR736xzcLwg8vs35OXZ87hA0a5nVdEXKBroL1p+h6heJ077ApVT1
-         DDbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731693308; x=1732298108;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hnHS6ipKNUUpXk/6JmH9J/OJBc1PBR+N05vgPQHYS08=;
-        b=aSI7Ul40RzBZjE6hGhbbG8zQTGKcZ8YZGLwVOrLnvLHayFLiD6S6k9rUZ1H1IP6xUj
-         /TEKj3XObwq3omY7QyGA/l1u+4oTGL7nD8HzUnQ7hKSMdhP8ytS7bJwwc9n3O9CPmy3x
-         fg40TL3s1Drg7R9iZ9XCYZQvG2Zw4BF+IUVTnt8SMa03C4cvLfEKJHmy+/5auNEnSy22
-         8H9E4Wb3BW3vNXuAo8s+95h2QV+iewqOigk8GpRAbTSJrpVpY+w4d5XxQ+3rpSrueug2
-         HFaBB9wFl7vHtBimUV6WrpmiFXCcZKkqmSr2NUKOqJkoEE2iE7bFo6X4ktA5z598zOMN
-         u6ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVGxjFeTA4UYNKMNxRUp/CyUy/7l//AKvGZgmVGNW4pBz41ZWjysyIb3pwjk8KZEfpZ+kJpL5v2mh/2Q30=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5SqN/f03VO9PliuVIXIVXFC9DsP/It9E6kvudhtNZc0GYqguJ
-	q+BkV+4RQqN2XLdGTLRLA944dSzEmiQJckJA0Htg27u5Wr12vvlrNerri2+xYKdfZL1tgT30lsQ
-	uICsrI28MxH/T02weRxHOFmfeKLbZ/QafMwFz
-X-Gm-Gg: ASbGnct/EMkWfzoYk6cpPPMtFon6MAgKSXX9vCP0mpHPl6s5E9dyvSsRagQYzh0mlIC
-	A+XzNC71fllgoOru8v8/+L+0Oxk2TAh1O
-X-Google-Smtp-Source: AGHT+IGFQN2nBXFYab64aGS4JtOZbQ+HWAGUOdHNwbOsju2UCSDpdaV9yh5k0nEy6/NghsRYHkioIry2Xz7RaFY58EI=
-X-Received: by 2002:a05:6e02:1a0a:b0:3a7:319f:e486 with SMTP id
- e9e14a558f8ab-3a74f776eefmr581795ab.7.1731693308209; Fri, 15 Nov 2024
- 09:55:08 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D5A1D5ABF;
+	Fri, 15 Nov 2024 17:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731693332; cv=fail; b=p9+FmoeKIgXFhkjdrtv+EH+eOapLQS1YQMgrnOZH4QuZUtQY5EJotKfqk0mJRnThsehyD1gLnMAerxDh/EoOCrExOCrcgrIoNoOrYq3wGbDRhSuy7/qOfdVjXZYLg0nNs26A+4/LBENLHGDW7qfgTYEt7eilC91R9Q/TAaefvkw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731693332; c=relaxed/simple;
+	bh=lg1w7V/XMpUU70O2OmeaUk2UNbbqyFmNyzp8e4Ep47Y=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=qBMqRL7BMwEdOfnwXMjUpvaZJEDvit/nHsIblN1aQN69ybJDA5doKVtz6QKZxOYWZYl/i3u2mBKoPVVWN5gFsa2bmhHClcWIr8HbUcncdRe7RCHn0BJfAzKeEQ+095kLO/qRztL2gcpendnEcYsWrR6ca1fjzyWY+4P26YEX3FE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=OyP3fpOW; arc=fail smtp.client-ip=40.107.220.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tGPtMIOrWExs3LYCYjleMdAXMjHwpaKK/lbQUxwz4UC+brlwl+ZSfi50wqp4GSGTsGWSNMnrLinchqTuduZ9QXv6L01k+ejAAaD3RvnZUinGmeSD7gfLNs9hqylL1fRhkZUy6fc3GFGYCRxcNaJRLigEubVbuMgCb+5hztY8NP8p4MHiWA9cKVE+OQ7CEejxFbAmZbPYTHbV9CeVwno6I7+NZPHzaCywV+J5qYGaqmd+gUVGuVibHynPUx1dwWPbX0WFPoiZdieejiuLoUPishnuCyymcfm6Ze+A8jEDZbeiVL3+3Cbb4RgiqBthn3UBFjUPUgq0YATwvgyGgrUJDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2GTnM84B2JL98aHSEL/hmah6tA8QseY+VFJCkWx9Ebw=;
+ b=CaxWHMFQh0p/91N4qszCXgmTPzsDCPYdsggRTTlkgOc64Q++Cl2FDmp7SqcT+kX6t5YmiQvUTsFZYBILSpenATWeR9b0FmnSa4tDSBJNeZBekznVrYi11J9+mmC/8GQjfvM4LDAHjgnBOeUHcHMKaoCSjSCdFBS/qKSQ+WrcQKbnNaFM+tcM9NBvigULtqb803wkrHfuAe56hEVvpl/z5xotEJ75AvZPH6gDc14ZOTZTLZGubruRsMtPD5Ud4Qs6twnRWyDGztqECshHx3bp407QGcxt/wSBncOlA5LXaPoDbbHPJ9Vu/nXbkaVchlAUkKUMBl30rYpdMRNXvrnn0g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2GTnM84B2JL98aHSEL/hmah6tA8QseY+VFJCkWx9Ebw=;
+ b=OyP3fpOWLKEPXaAj1J0tc8c0EiSfY8iCJ8U54t9/yAjtMBTjA1F8/HNma5A0gZZvk5zSD9U/B6rerzXHMksDIeLNOnxvjUlmsQ0cHB7YUM0TQiJqTxj8pCO1U6ijvKWiKfnAG0xyHAJ3dFduB9vmVpklNrk61dOhGuUvjWRdxHG9LwyvPJrnAzmuCYGJuIySWF49MVbg40p+9A4UkRMtZy5Qvm7UKwVMhi+tmMEK5FIhkPwHLMvPg53wXygPptG4fQ0oTZ6e1qQOSq+vw4+j+VWZ16SzWAOD2fQ4GHsPRpC5fXHDSoe2OXrLHCIciGInUmUtXG7DX1ITFqfDmaHeDw==
+Received: from SN7PR04CA0049.namprd04.prod.outlook.com (2603:10b6:806:120::24)
+ by PH7PR12MB6492.namprd12.prod.outlook.com (2603:10b6:510:1f3::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.31; Fri, 15 Nov
+ 2024 17:55:27 +0000
+Received: from SN1PEPF000397B5.namprd05.prod.outlook.com
+ (2603:10b6:806:120:cafe::69) by SN7PR04CA0049.outlook.office365.com
+ (2603:10b6:806:120::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.18 via Frontend
+ Transport; Fri, 15 Nov 2024 17:55:25 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SN1PEPF000397B5.mail.protection.outlook.com (10.167.248.59) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8158.14 via Frontend Transport; Fri, 15 Nov 2024 17:55:25 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 15 Nov
+ 2024 09:55:11 -0800
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 15 Nov
+ 2024 09:55:10 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Fri, 15 Nov 2024 09:55:10 -0800
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 4.19 00/52] 4.19.324-rc1 review
+In-Reply-To: <20241115063722.845867306@linuxfoundation.org>
+References: <20241115063722.845867306@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zzdtj0PEWEX3ATwL@x1>
-In-Reply-To: <Zzdtj0PEWEX3ATwL@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 15 Nov 2024 09:54:56 -0800
-Message-ID: <CAP-5=fX7JZNmiaNDezExqGk9FMXdHihxvLNmnD8HHB3YCehemg@mail.gmail.com>
-Subject: Re: perf test failures with tmp.perf-tools-next
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kan Liang <kan.liang@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, 
-	James Clark <james.clark@linaro.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <899ea853-ecfa-40da-87c8-c9d0d17fcf58@rnnvmail203.nvidia.com>
+Date: Fri, 15 Nov 2024 09:55:10 -0800
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF000397B5:EE_|PH7PR12MB6492:EE_
+X-MS-Office365-Filtering-Correlation-Id: c17b010b-a605-40c1-b47a-08dd059eaece
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|7416014|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dlNtSlovSTJZenJxcHZRRVRZMzNMVHlweER5U1poSVppYXNCd1F3SGZEOFZa?=
+ =?utf-8?B?Zm5xUit2NndhcndjR0EvTDdpdmZRL2xVRVdncHdHR2xtdlIzYjdGWVpnSHZs?=
+ =?utf-8?B?TWd3WFFvTG9KaUx3cXFxWk0yQ1YzNjU2SXFNMEh6VVlsenpueXp2dEpkbzg4?=
+ =?utf-8?B?cmFCaGwvZzdpdG41OXh2OGd6aG5mcFp0NVRpVWZmWE5GMmZKbVduSXY1SkRt?=
+ =?utf-8?B?SGNEWTgvU0QwaFRmaUcyeW1iNEpKMGZMUFpOWU5aUytJUWJFWU9NS2hEQmpH?=
+ =?utf-8?B?cVFLVXB0em5LdVFURTdZQVR1bEV0NWE0UC9BaFAvajZvWHJvRHI5WUFBZ2Q4?=
+ =?utf-8?B?bnkxemVPWTdrbExYMU0ycVJadGJ2M3BpSkFyK25tZ1R4S3huS0ZQZm9DT0Yz?=
+ =?utf-8?B?WVJpSytqTXcxTVZ2N0FmTnRpbVE4bEx4T1ZPSm95UWo1UFZjRHNBZUJmakgy?=
+ =?utf-8?B?VjVuWmJTYnJZKzlBSnVEZ1BxTEZBZXV4YlJDQUh2cTJSRENiWlVVNW4zYTRB?=
+ =?utf-8?B?QzRDTG9YNjd2bXh0ZzlsRDl5cHlnVCs5ZXZHM3Jsdk5sbGtud04yYWhmSGM2?=
+ =?utf-8?B?L29rUDZmMjZaeXNiamFGeHZtZlhHbTdKSDh2RFVnclBULzJVNU1tZW9CK3pZ?=
+ =?utf-8?B?VXExQWJDV3NrUHdYK293RXBKYWtMQ05ITjFPbG5qeDZFYlRSbVJLK2ZyeER3?=
+ =?utf-8?B?bFAvQUtSeHFIN0lINVlld2xmZVNUZFkrYWUydzZZVjZGdVJVTDdVWmtYN1Fu?=
+ =?utf-8?B?UDJCSkVDMnNGQ1IwRWpTZ1AxZ0lwZUgxQTBBNlcxQ01oQzYwMzFuako0OTVF?=
+ =?utf-8?B?aFhocFMxa0dTVzhSeXFZRjVBK3FtTTFic3h0SWdXYk13STdocHpONHBRZ0dN?=
+ =?utf-8?B?aHF0TCsyUW8wamxGZmJLU3I5aVdKSHlEcU42QmprUW55WGxiZjlzYlQzMGFP?=
+ =?utf-8?B?dnZXYU9rVkRPcVl4N0FwcW1CMUN2dkQwRnVLbG1scHhBUHV4MkRHUmRKbTZr?=
+ =?utf-8?B?QmtVMjlMU0t3M1NEMFAxdHMzUUMvb3RnR1BtSUhPRkFyKzNid2tScWpROWdn?=
+ =?utf-8?B?WXlrdVEyU0p5RTJmSzFvcHBrTXo5WjIxcjJ5OStsd1lGMWJGTzNDOVRVVUI4?=
+ =?utf-8?B?OFBkaW92akM4ZCt0TE8xNStTZnp5bTZZTkFGTlo5eTFEbnAwSWlJa1hhcEdG?=
+ =?utf-8?B?eWFRYzdwWTNQcEJabVhHUHozdkRSOXk5RHZMak9xbW1CeTh5WjloU3VhUnJk?=
+ =?utf-8?B?RGVKeDdld0pxMjZUcmxoOTdCbXNnNmF5YjNyb3VtMVZkRGF6bWRHVWxITUhw?=
+ =?utf-8?B?NXB0cWgyamM5N005YUkveUYvU3czSVVydUVtK2d2ZGFYTlBVNGs4VW5QVmkx?=
+ =?utf-8?B?KzhpaEo1WmZBQVQzNGRwcEFGNzRBYlg4ejBGaWU0empsdngzV2tVYmQ4Mmpz?=
+ =?utf-8?B?QWFYQVVuT2tHalpSMDhZZ3FmL0txVTczWUYwTkRDcjd4c014VWk2RGJWZ2pW?=
+ =?utf-8?B?dG14blNvblZ6WmJERHNmcjVERFRyM1NjcFlqa0wyRHFGaXRPL1d6dVZ4TDAv?=
+ =?utf-8?B?R0ltSzVLT0duNzVnZ3U5NkpXOVdDS1lvc2U3Qm1JbjZoZ1RCYjljWEQ0ZVJS?=
+ =?utf-8?B?MGpNQkNvYUFEWG1QUWpZdWJZeU5vZ3hJNnRRTDUxNzRuSitzK3UrOS93ekxl?=
+ =?utf-8?B?bFNoL3JUclV5SzFLSU9lOXREQXNYL05OZnVNVU9nOUhCM01Wd3ppTVRmZmFy?=
+ =?utf-8?B?NklZR0Q3eUVVQjVHUnp5dlRybXJGOC9VVURFbjI5VlR3ZE9HeHBGREdvdm85?=
+ =?utf-8?B?MnVTK3NhTWsvdWJBTS9CRkp5aENMcEJkamlHRGxaUkZMMW5GU1VleEhmYnRR?=
+ =?utf-8?B?cW11OHUzZ0xzTUFLVkNyZ3hLZmFnTkI4RitKWVowSnF0cVE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2024 17:55:25.0826
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c17b010b-a605-40c1-b47a-08dd059eaece
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF000397B5.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6492
 
-On Fri, Nov 15, 2024 at 7:49=E2=80=AFAM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> With what is in tmp.perf-tools-next I'm getting:
->
->  11: Hwmon PMU                                                       :
->  11.1: Basic parsing test                                            : Ok
->  11.2: Parsing without PMU name                                      : FA=
-ILED!
->  11.3: Parsing with PMU name                                         : FA=
-ILED!
->  84: perftool-testsuite_probe                                        : FA=
-ILED!
->  86: probe libc's inet_pton & backtrace it with ping                 : FA=
-ILED!
->  96: perf stat tests                                                 : FA=
-ILED!
->  97: perf all metricgroups test                                      : FA=
-ILED!
->  98: perf all metrics test                                           : FA=
-ILED!
-> 117: perftool-testsuite_report                                       : FA=
-ILED!
-> 118: Add vfs_getname probe to get syscall args filenames             : FA=
-ILED!
-> 119: Use vfs_getname probe to get syscall args filenames             : FA=
-ILED!
-> 120: perf record tests                                               : FA=
-ILED!
-> 121: perf record LBR tests                                           : FA=
-ILED!
-> 128: Test data symbol                                                : FA=
-ILED!
->
-> root@x1:~# perf test -vv 11
->  11: Hwmon PMU                                                       :
->  11.1: Basic parsing test:
-> --- start ---
-> test child forked, pid 391389
-> hwmon_pmu: not a hwmon type 'badtype' in file name 'badtype5_baditem'
-> hwmon_pmu: not a hwmon item 'baditem' in file name 'humidity6_baditem'
-> ---- end(0) ----
->  11.1: Basic parsing test                                            : Ok
->  11.2: Parsing without PMU name:
-> --- start ---
-> test child forked, pid 391390
-> Testing 'temp_test_hwmon_event1'
-> Using CPUID GenuineIntel-6-BA-3
-> hwmon_pmu: not a hwmon file 'uevent'
-> Not a hwmon file 'uevent'
-> hwmon_pmu: not a hwmon file 'name'
-> Not a hwmon file 'name'
-> hwmon_pmu: not a hwmon file 'uevent'
-> Not a hwmon file 'uevent'
-> hwmon_pmu: not a hwmon file 'name'
-> Not a hwmon file 'name'
-> hwmon_pmu: not a hwmon file 'uevent'
-> Not a hwmon file 'uevent'
-> hwmon_pmu: not a hwmon file 'name'
-> Not a hwmon file 'name'
-> hwmon_pmu: not a hwmon file 'uevent'
-> Not a hwmon file 'uevent'
-> hwmon_pmu: not a hwmon file 'name'
-> Not a hwmon file 'name'
-> hwmon_pmu: not a hwmon file 'uevent'
-> Not a hwmon file 'uevent'
-> hwmon_pmu: not a hwmon file 'name'
-> Not a hwmon file 'name'
-> hwmon_pmu: not a hwmon file 'uevent'
-> Not a hwmon file 'uevent'
-> hwmon_pmu: not a hwmon file 'name'
-> Not a hwmon file 'name'
-> hwmon_pmu: not a hwmon file 'uevent'
-> Not a hwmon file 'uevent'
-> hwmon_pmu: not a hwmon file 'pwm1'
-> Not a hwmon file 'pwm1'
-> hwmon_pmu: not a hwmon file 'name'
-> Not a hwmon file 'name'
-> hwmon_pmu: removing event 'pwm1' that has no input file
-> hwmon_pmu: not a hwmon file 'uevent'
-> Not a hwmon file 'uevent'
-> hwmon_pmu: not a hwmon file 'name'
-> Not a hwmon file 'name'
-> hwmon_pmu: not a hwmon file 'uevent'
-> Not a hwmon file 'uevent'
-> hwmon_pmu: not a hwmon file 'name'
-> Not a hwmon file 'name'
-> FAILED tests/hwmon_pmu.c:160 failed to parse event 'temp_test_hwmon_event=
-1', err 1
-> event syntax error: 'temp_test_hwmon_event1'
->                      \___ Bad event name
->
-> Unable to find event on a PMU of 'temp_test_hwmon_event1'
-> free(): invalid pointer
->
-> ---- unexpected signal (6) ----
->  11.2: Parsing without PMU name                                      : FA=
-ILED!
->  11.3: Parsing with PMU name:
-> --- start ---
-> test child forked, pid 391391
-> Testing 'temp_test_hwmon_event1'
-> Using CPUID GenuineIntel-6-BA-3
-> hwmon_pmu: not a hwmon file 'uevent'
-> Not a hwmon file 'uevent'
-> hwmon_pmu: not a hwmon file 'name'
-> Not a hwmon file 'name'
-> hwmon_pmu: not a hwmon file 'uevent'
-> Not a hwmon file 'uevent'
-> hwmon_pmu: not a hwmon file 'name'
-> Not a hwmon file 'name'
-> hwmon_pmu: not a hwmon file 'uevent'
-> Not a hwmon file 'uevent'
-> hwmon_pmu: not a hwmon file 'name'
-> Not a hwmon file 'name'
-> hwmon_pmu: not a hwmon file 'uevent'
-> Not a hwmon file 'uevent'
-> hwmon_pmu: not a hwmon file 'name'
-> Not a hwmon file 'name'
-> hwmon_pmu: not a hwmon file 'uevent'
-> Not a hwmon file 'uevent'
-> hwmon_pmu: not a hwmon file 'name'
-> Not a hwmon file 'name'
-> hwmon_pmu: not a hwmon file 'uevent'
-> Not a hwmon file 'uevent'
-> hwmon_pmu: not a hwmon file 'name'
-> Not a hwmon file 'name'
-> hwmon_pmu: not a hwmon file 'uevent'
-> Not a hwmon file 'uevent'
-> hwmon_pmu: not a hwmon file 'pwm1'
-> Not a hwmon file 'pwm1'
-> hwmon_pmu: not a hwmon file 'name'
-> Not a hwmon file 'name'
-> hwmon_pmu: removing event 'pwm1' that has no input file
-> hwmon_pmu: not a hwmon file 'uevent'
-> Not a hwmon file 'uevent'
-> hwmon_pmu: not a hwmon file 'name'
-> Not a hwmon file 'name'
-> hwmon_pmu: not a hwmon file 'uevent'
-> Not a hwmon file 'uevent'
-> hwmon_pmu: not a hwmon file 'name'
-> Not a hwmon file 'name'
-> FAILED tests/hwmon_pmu.c:160 failed to parse event 'temp_test_hwmon_event=
-1', err 1
-> event syntax error: 'temp_test_hwmon_event1'
->                      \___ Bad event name
->
-> Unable to find event on a PMU of 'temp_test_hwmon_event1'
->
-> ---- unexpected signal (11) ----
->  11.3: Parsing with PMU name                                         : FA=
-ILED!
-> root@x1:~#
->
->
->
-> I'm working on removing the vfs_getname code from 'perf trace' so those
-> will go away, probably there are patches fixing some of the other ones,
-> I'll try and look after those, but probably later today I'll push what I
-> have so that it gets exposure on linux-next.
+On Fri, 15 Nov 2024 07:37:13 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.324 release.
+> There are 52 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun, 17 Nov 2024 06:37:07 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.324-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-I'm trying to repro the hwmon issue on tmp.perf-tools-next, with asan
-root/non-root I get:
-```
- 11: Hwmon PMU                                                       :
-11.1: Basic parsing test                                            : Ok
-11.2: Parsing without PMU name                                      : Ok
-11.3: Parsing with PMU name                                         : Ok
-```
-I'm trying more machines to try to get a reproduction.
+All tests passing for Tegra ...
 
-Thanks,
-Ian
+Test results for stable-v4.19:
+    10 builds:	10 pass, 0 fail
+    20 boots:	20 pass, 0 fail
+    37 tests:	37 pass, 0 fail
+
+Linux version:	4.19.324-rc1-g3b4d1c2cc314
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
 
