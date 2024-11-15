@@ -1,112 +1,182 @@
-Return-Path: <linux-kernel+bounces-410880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55A9C9CEEBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:22:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DE6E9CF007
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:34:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A7E8289031
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:21:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE093B32772
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5190A1D4613;
-	Fri, 15 Nov 2024 15:21:43 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4F61D47AD;
+	Fri, 15 Nov 2024 15:22:25 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F15D16F282
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 15:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2331CDA2F
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 15:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731684103; cv=none; b=uvAN6JMuqizGvFkOGSVjZjN5bY2ndfyUJ2l+xMqq1N6IRT5HaTGF0PcJDjd1LEN3bR9H6+SJ+Uh6S00YYtA6FNtmy0e+nRxb6sAjbM9FB9cNF7W0YwDV6D9PQxTlExNyeH9gqZ3BilkL9TmW4cED6QCo/Tm5h3Ch92j2MMVzmjg=
+	t=1731684145; cv=none; b=QcAuqnKGsf3aTiKnIIBiBZ2pyXopzfO7jgnOSMY9jdbz9ELF/96pwhWTOD9ghkqF5VAOVABy6oGM0u1PRp7mOC/AXwR4/r8XOG/T5BScBQUnmWomd7gt3hMR7OeayXsHKfXf3AFrOM9GXCJiOiMPU3Uv46SzFWsVU0QubAvrCw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731684103; c=relaxed/simple;
-	bh=Lb0G9mdyHVtMwVgHI/O8f574sC+XbcQnuvGqZzDE0D0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=QdXH4eYrgbQAnraoSZhF5OxhyGJdEkftqxNN0bd7+zfmcCnO52i+LDX2T4ub725qmzDqi8HkIOdOD3RjqODUGaaN3aencCLCazO+ll95NZzCv+6lTu43H69ZNYbk/ayK8P2nlOlUvAljR0YYXIlsPL24OerzgRXBmsgoRaihhyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a6c01d8df2so16968595ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 07:21:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731684100; x=1732288900;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=opHRQjrPsSovgnJtOEqG2C6LUU0u43OG3/mmNiSILaU=;
-        b=py/evuVCjTLeup5YY7WwB3OnyD+HabCJ+6W1LnGhEVxeL5YUhxXRzaekiCqfdPbepV
-         7QOc7lPo3W46Q6PPOENPbs/6KfNtypEPYyMIQKqZscVmko/wlOzL1jzHsigFXINbki15
-         mVBEB3CQ+j1OjmNRjJjLCOD8b0Hn7K6H54mmbMwSj2DsSWoW7cnBuVbVbQqAFzCjNIpY
-         yozulxPXJGSYbI0MK0aEWCpenem7oE1xt9hDgf2xD22iv8AxxRiqKh3+dZVWERWJWSAE
-         6adnRgk746LnaYDsKcvyvl7BvyBt6z2a83Q1yLSTr6aM4ugEWyiLRnK/Z9W6xAjKeLee
-         45AQ==
-X-Gm-Message-State: AOJu0YyMfPipClztlEltW/+7czDlxRPicMwPmKaTUfV6jI0NBrmAyzUU
-	GXoZAOebYKDKYBBNe4YqR1JZnYVYI3T1+rt7yY5EykmCAoFHVqfbGqP0v4fDBSJBuk8KwbARlOW
-	bW90Y8QoBDMZ3LYXx8a8di5+zU5I8xYcOrkHNHVph1QhptC0Es0D7K6I=
-X-Google-Smtp-Source: AGHT+IGGopq1tuTKIgcF6N95oMYKHBJzhnxroVnYP2Dpndx7u2JMe4EP6eCn0sHaCNw9fqNM/joQmHxYriWsGR61gJSc3QgkLzFs
+	s=arc-20240116; t=1731684145; c=relaxed/simple;
+	bh=JG9wzZAxrWcUqKqSKkSfRXDlYubm7e3orhR/A6kj0L0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=UuFtcYQaKtqja57FzFteWpKs4YGZbYxQ1q5EOJgzIx0rmSf9YBrjZL8WFIatO8nGxHQ17X8X+UI3YhPrjs2TIwqz0WeyAQyKCh16MoZREF2Y/spGf045qVbBXvAcLAX+vyQSpJb4GpXUqyu4IEbdb0Csg2b0w7X68VE8vlwffjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1602C4CECF;
+	Fri, 15 Nov 2024 15:22:24 +0000 (UTC)
+Date: Fri, 15 Nov 2024 10:22:48 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>
+Subject: [for-linus][PATCH] tracing/ring-buffer: Clear all memory mapped CPU
+ ring buffers on first recording
+Message-ID: <20241115102248.60710e5d@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:de10:0:b0:3a6:bafd:5650 with SMTP id
- e9e14a558f8ab-3a71dec4245mr82796145ab.10.1731684100125; Fri, 15 Nov 2024
- 07:21:40 -0800 (PST)
-Date: Fri, 15 Nov 2024 07:21:40 -0800
-In-Reply-To: <000000000000736bd406151001d7@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67376704.050a0220.3bcb1c.0000.GAE@google.com>
-Subject: Re: [syzbot] Re: KMSAN: uninit-value in __crc32c_le_base
-From: syzbot <syzbot+549710bad9c798e25b15@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-***
+Clear all CPU buffers when starting tracing in a boot mapped buffer
 
-Subject: Re: KMSAN: uninit-value in __crc32c_le_base
-Author: dmantipov@yandex.ru
+To properly process events from a previous boot, the address space needs to
+be accounted for due to KASLR and the events in the buffer are updated
+accordingly when read. This also requires that when the buffer has tracing
+enabled again in the current boot that the buffers are reset so that events
+from the previous boot do not interact with the events of the current boot
+and cause confusing due to not having the proper meta data.
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git cfaaa7d010d1fc58f9717fcc8591201e741d2d49
+It was found that if a CPU is taken offline, that its per CPU buffer is not
+reset when tracing starts. This allows for events to be from both the
+previous boot and the current boot to be in the buffer at the same time.
+Clear all CPU buffers when tracing is started in a boot mapped buffer.
 
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index b11bfe68dd65..e0b515aa1c63 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -18,6 +18,9 @@
- #include <linux/crc32c.h>
- #include <linux/sched/mm.h>
- #include <linux/unaligned.h>
-+#ifdef CONFIG_KMSAN
-+#include <linux/kmsan-checks.h>
-+#endif
- #include <crypto/hash.h>
- #include "ctree.h"
- #include "disk-io.h"
-@@ -93,6 +96,10 @@ static void csum_tree_block(struct extent_buffer *buf, u8 *result)
- 		num_pages = num_extent_pages(buf);
- 	}
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+ring-buffer/fixes
+
+Head SHA1: 09663753bb7c50b33f8e5fa562c20ce275b88237
+
+
+Steven Rostedt (1):
+      tracing/ring-buffer: Clear all memory mapped CPU ring buffers on first recording
+
+----
+ kernel/trace/trace.c | 28 ++++++++++++++++++++++++++--
+ 1 file changed, 26 insertions(+), 2 deletions(-)
+---------------------------
+commit 09663753bb7c50b33f8e5fa562c20ce275b88237
+Author: Steven Rostedt <rostedt@goodmis.org>
+Date:   Thu Nov 14 11:28:25 2024 -0500
+
+    tracing/ring-buffer: Clear all memory mapped CPU ring buffers on first recording
+    
+    The events of a memory mapped ring buffer from the previous boot should
+    not be mixed in with events from the current boot. There's meta data that
+    is used to handle KASLR so that function names can be shown properly.
+    
+    Also, since the timestamps of the previous boot have no meaning to the
+    timestamps of the current boot, having them intermingled in a buffer can
+    also cause confusion because there could possibly be events in the future.
+    
+    When a trace is activated the meta data is reset so that the pointers of
+    are now processed for the new address space. The trace buffers are reset
+    when tracing starts for the first time. The problem here is that the reset
+    only happens on online CPUs. If a CPU is offline, it does not get reset.
+    
+    To demonstrate the issue, a previous boot had tracing enabled in the boot
+    mapped ring buffer on reboot. On the following boot, tracing has not been
+    started yet so the function trace from the previous boot is still visible.
+    
+     # trace-cmd show -B boot_mapped -c 3 | tail
+              <idle>-0       [003] d.h2.   156.462395: __rcu_read_lock <-cpu_emergency_disable_virtualization
+              <idle>-0       [003] d.h2.   156.462396: vmx_emergency_disable_virtualization_cpu <-cpu_emergency_disable_virtualization
+              <idle>-0       [003] d.h2.   156.462396: __rcu_read_unlock <-__sysvec_reboot
+              <idle>-0       [003] d.h2.   156.462397: stop_this_cpu <-__sysvec_reboot
+              <idle>-0       [003] d.h2.   156.462397: set_cpu_online <-stop_this_cpu
+              <idle>-0       [003] d.h2.   156.462397: disable_local_APIC <-stop_this_cpu
+              <idle>-0       [003] d.h2.   156.462398: clear_local_APIC <-disable_local_APIC
+              <idle>-0       [003] d.h2.   156.462574: mcheck_cpu_clear <-stop_this_cpu
+              <idle>-0       [003] d.h2.   156.462575: mce_intel_feature_clear <-stop_this_cpu
+              <idle>-0       [003] d.h2.   156.462575: lmce_supported <-mce_intel_feature_clear
+    
+    Now, if CPU 3 is taken offline, and tracing is started on the memory
+    mapped ring buffer, the events from the previous boot in the CPU 3 ring
+    buffer is not reset. Now those events are using the meta data from the
+    current boot and produces just hex values.
+    
+     # echo 0 > /sys/devices/system/cpu/cpu3/online
+     # trace-cmd start -B boot_mapped -p function
+     # trace-cmd show -B boot_mapped -c 3 | tail
+              <idle>-0       [003] d.h2.   156.462395: 0xffffffff9a1e3194 <-0xffffffff9a0f655e
+              <idle>-0       [003] d.h2.   156.462396: 0xffffffff9a0a1d24 <-0xffffffff9a0f656f
+              <idle>-0       [003] d.h2.   156.462396: 0xffffffff9a1e6bc4 <-0xffffffff9a0f7323
+              <idle>-0       [003] d.h2.   156.462397: 0xffffffff9a0d12b4 <-0xffffffff9a0f732a
+              <idle>-0       [003] d.h2.   156.462397: 0xffffffff9a1458d4 <-0xffffffff9a0d12e2
+              <idle>-0       [003] d.h2.   156.462397: 0xffffffff9a0faed4 <-0xffffffff9a0d12e7
+              <idle>-0       [003] d.h2.   156.462398: 0xffffffff9a0faaf4 <-0xffffffff9a0faef2
+              <idle>-0       [003] d.h2.   156.462574: 0xffffffff9a0e3444 <-0xffffffff9a0d12ef
+              <idle>-0       [003] d.h2.   156.462575: 0xffffffff9a0e4964 <-0xffffffff9a0d12ef
+              <idle>-0       [003] d.h2.   156.462575: 0xffffffff9a0e3fb0 <-0xffffffff9a0e496f
+    
+    Reset all CPUs when starting a boot mapped ring buffer for the first time,
+    and not just the online CPUs.
+    
+    Fixes: 7a1d1e4b9639f ("tracing/ring-buffer: Add last_boot_info file to boot instance")
+    Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index a8f52b6527ca..619e9aa62201 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -2386,6 +2386,25 @@ void tracing_reset_online_cpus(struct array_buffer *buf)
+ 	ring_buffer_record_enable(buffer);
+ }
  
-+#ifdef CONFIG_KMSAN
-+	kmsan_unpoison_memory(kaddr + BTRFS_CSUM_SIZE,
-+			      first_page_part - BTRFS_CSUM_SIZE);
-+#endif
- 	crypto_shash_update(shash, kaddr + BTRFS_CSUM_SIZE,
- 			    first_page_part - BTRFS_CSUM_SIZE);
++static void tracing_reset_all_cpus(struct array_buffer *buf)
++{
++	struct trace_buffer *buffer = buf->buffer;
++
++	if (!buffer)
++		return;
++
++	ring_buffer_record_disable(buffer);
++
++	/* Make sure all commits have finished */
++	synchronize_rcu();
++
++	buf->time_start = buffer_ftrace_now(buf, buf->cpu);
++
++	ring_buffer_reset(buffer);
++
++	ring_buffer_record_enable(buffer);
++}
++
+ /* Must have trace_types_lock held */
+ void tracing_reset_all_online_cpus_unlocked(void)
+ {
+@@ -6141,8 +6160,13 @@ static void update_last_data(struct trace_array *tr)
+ 	if (!tr->text_delta && !tr->data_delta)
+ 		return;
  
-@@ -104,6 +111,9 @@ static void csum_tree_block(struct extent_buffer *buf, u8 *result)
- 	 */
- 	for (i = 1; i < num_pages && INLINE_EXTENT_BUFFER_PAGES > 1; i++) {
- 		kaddr = folio_address(buf->folios[i]);
-+#ifdef CONFIG_KMSAN
-+		kmsan_unpoison_memory(kaddr, PAGE_SIZE);
-+#endif
- 		crypto_shash_update(shash, kaddr, PAGE_SIZE);
- 	}
- 	memset(result, 0, BTRFS_CSUM_SIZE);
+-	/* Clear old data */
+-	tracing_reset_online_cpus(&tr->array_buffer);
++	/*
++	 * Need to clear all CPU buffers as there cannot be events
++	 * from the previous boot mixed with events with this boot
++	 * as that will cause a confusing trace. Need to clear all
++	 * CPU buffers, even for those that may currently be offline.
++	 */
++	tracing_reset_all_cpus(&tr->array_buffer);
+ 
+ 	/* Using current data now */
+ 	tr->text_delta = 0;
 
