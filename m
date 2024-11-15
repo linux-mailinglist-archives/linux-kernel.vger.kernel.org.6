@@ -1,238 +1,105 @@
-Return-Path: <linux-kernel+bounces-410371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9DEA9CDA85
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:32:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C079CDA8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:33:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C5DE1F23ACA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:32:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8707D282E99
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768B118C03F;
-	Fri, 15 Nov 2024 08:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5238118C332;
+	Fri, 15 Nov 2024 08:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f8N1XZMx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="GTtEJuxQ"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA9918990C
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B689718C004
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731659546; cv=none; b=Efb3Z8qxLWSa6G8rMaHCmUtzh6mjrhRn780L5bKwWNyBbxaAQGfdw2lwtbVnnyDVD3NSAhmQR6Pm+h5T1CVLYZw6FDcRZEFLsJScqm5eewB7iGxyHBgpyeWjm1OQUzZhrSF8dB35H3Q83jNpR0iX1dAkk3me8rrWZuI80y6+fn8=
+	t=1731659571; cv=none; b=cqOiHeosgdVjnlHclFTKWqplTC50AFF9JJ2VhQbrUA6kwHFrHmDrptnypPhxbc9ebsSajvX1YOeloyRxVIktkemZQf3rfnq/GqX0v7psP8Hs20gQYNk56pOcVssQM5XGUSGfpCnIt9OA9aNmd1/+ULgBxIjUn8SHxG5SXfrlDXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731659546; c=relaxed/simple;
-	bh=KwwtRZveGMe16US76kOe+Iauo+yTFHTCMml6hFlPRTY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=rjYIEpAaU0qWrh3IkZfj5HyshF/X1mvCYZKFxhZy01vA2SpTsvNhVwqJj8PdgG0KHuwtygB03yGZsGFeJmnG/bLHunVvy5/cDYIe8HhNLv8DuBfIM8b5aek2Iwe7ZqARyTgTYueL/YI1mtxgRwFbKG+ew8J4HqqLCTu+mxKBPB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f8N1XZMx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731659544;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KwwtRZveGMe16US76kOe+Iauo+yTFHTCMml6hFlPRTY=;
-	b=f8N1XZMxBN9C3i3Z2uPoHDfCCYGDGhzCAwc8eWU9L3bEJYRP8K47Fj5TIp7Hb8FT3efy30
-	jPW+tsZVyrCLQy7CjsxUgmhSW+R16/IozujoP39igvyH0jDWjGtdhSrz1o8s2KiEMCu6A6
-	hkr63THX/zhIFF9/5ZbE3oPlqWCwAr4=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-277-wVa4pSyMNFyUpv8clL8Twg-1; Fri, 15 Nov 2024 03:32:22 -0500
-X-MC-Unique: wVa4pSyMNFyUpv8clL8Twg-1
-X-Mimecast-MFC-AGG-ID: wVa4pSyMNFyUpv8clL8Twg
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d3e8dccc9so260545f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 00:32:21 -0800 (PST)
+	s=arc-20240116; t=1731659571; c=relaxed/simple;
+	bh=bwKXMZ/CqyKVXHRWjad7VNJ99PRPhanXO2k0v/9eehs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LJz+4F196KADCUyZ6i8WB8f7ppl5qb0oNOb2tgxN50HxiZ1SEMIRxPIZAm2J7NYuUfkz0Fg7koKZKt23OOqGPCZKmBwwDw8WYVJxpXICvZQjpJr/Zjh/xGknCcZtUZmwGccroEPzTIzq/Y9K8IBCE2HbqahE4RWIEelKCY4yw00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=GTtEJuxQ; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-460a415633fso3085951cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 00:32:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1731659567; x=1732264367; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+oyM45fO7kqXMoRRUsCsV2dgNjzQvpxBqm/zmpiRHXg=;
+        b=GTtEJuxQtRSaBvciE0/O4V34pZ7STyPdVt2dMCpwWrN1Bp+jAL6Dm048ct+xkbpfB+
+         1XDNUdpqYfz4eS6KwONDWy2BhpftlINR4rF1NLU7vnKuFWydHUZ0UYh6Yk20CAhcRSmO
+         L3XpjPMfAI39c9Y+JI34YvXxEpzPU3/A9TnfQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731659540; x=1732264340;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KwwtRZveGMe16US76kOe+Iauo+yTFHTCMml6hFlPRTY=;
-        b=fPAjdU4xRZBZueOOf6aAN1DhZnW1mS1CVxELw7AqtS6dXPXwtzEEpAy7vzhLGNlsUr
-         UtpO280Dzar6tV4ZkCLoLMYKLi57nbCLZJQIoiO69iDU5hHa/y5F/9EOSYLrUDVfN2jg
-         1E561jUwuYp3twXNjEo3kpazlydg4tVRSiU13ry9GdCF/y7tp3OP1EkOWWbDbHoWP1F0
-         iRQfwlIqEky7JXgyrM5XJfCxUPqk+IU97pzVQ3I7cCpa3H1Y7KYJmKW/4NwH/oJKlsEW
-         6XHfWMO6NCGpy2wyVNfoTKtQC5fcQnOU7SfRrjeahskWgFN3djpF5cvM0ghJbhbYDWre
-         C7JA==
-X-Forwarded-Encrypted: i=1; AJvYcCXns6jxnwclaeytbahvukinGIcbOYwOmaCFBXWYi41G+bpGF7873civATQXA8zGYLjHWf9yhGeGLSR2h1E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgdYuaeLlf0or4h72HCKo+8WDcTESFSpQ+AEWFKsbHMZLnIi1E
-	mdHruSs922Og2ZvJ2bPt38JI3937CvEZIH1NvW/Qvz1BQ7ntfN4I4sqQJ6MK8ddtXTH2Pgxc5RT
-	U0rvvdRU0JRyacz8s0ZSVKSOmQgAL095idFBymTsVCqxIn3EyL+o8sZ4E+dPpcg==
-X-Received: by 2002:a5d:64c9:0:b0:37d:5173:7a54 with SMTP id ffacd0b85a97d-38225aafc0bmr1382369f8f.52.1731659540159;
-        Fri, 15 Nov 2024 00:32:20 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGdh/kmNlYkC/WQKFf2J1h1Btsr4ZUjp0WRHuv0DJX0wKMjNySBXwoM4GCHyqPFiIGeYI7IOw==
-X-Received: by 2002:a5d:64c9:0:b0:37d:5173:7a54 with SMTP id ffacd0b85a97d-38225aafc0bmr1382314f8f.52.1731659539626;
-        Fri, 15 Nov 2024 00:32:19 -0800 (PST)
-Received: from [10.200.68.91] (nat-pool-muc-u.redhat.com. [149.14.88.27])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ada2da2sm3716393f8f.15.2024.11.15.00.32.17
+        d=1e100.net; s=20230601; t=1731659567; x=1732264367;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+oyM45fO7kqXMoRRUsCsV2dgNjzQvpxBqm/zmpiRHXg=;
+        b=H+tgoOFgwEIxAIYLo3Pittf2yIguQehvT9SPkzm6DU8L3uewlD5zs3L1Bj+Q+gEvPN
+         +k6wVj8JUzK4We5j3HI/74l/V2RtpFiff1bd/+Nrb4iTnZ3bAfN7QLIBVFcaFlaO9ed8
+         1MwRfZQYwz4ehPdXWJNSlkDOGbtxMK4AEeeOK4DmmRa4af9uFQwkG7k/Uo/ZEvO8Z8Xd
+         22cUBVDVcDGyo5rnxncNprrzdh7URhFMbGw6Ibwzl0pUD8Ca8PAo4Oh8dhmW1lEFJuAd
+         cCV49IcLn6ZJPKBHg0G5yMpLcL5EI0VgDuInXfh6tfyzoW8d8A12v45OkN82c7Hj1UJF
+         hwtw==
+X-Forwarded-Encrypted: i=1; AJvYcCWzaieYEcVcjpkJ3N+CY51O36CuOwhhPv3hUwBQRltDRViR0jReXdn986tsbGviNa3URrQvze3FggrlFLA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzKwBKWCAAO0F43vZeeWRsywVAPZ9twOFAMR/HGy6PzoZh1LmI
+	DAOlR38q76Ub3TqODyY2F36aOLb4l9PJFIEqVB/Z3lLevF4lbptizNug/+7Ohw==
+X-Google-Smtp-Source: AGHT+IEIC73NXLt7bHwh/TMQ6UkI0zrz/RHhFfkxb8RIMOzTdzyOAiIAIfCgAfuhcrXgqjJXvnY2dQ==
+X-Received: by 2002:a05:622a:5187:b0:460:9ac7:8fcd with SMTP id d75a77b69052e-46363de864bmr26095761cf.1.1731659567548;
+        Fri, 15 Nov 2024 00:32:47 -0800 (PST)
+Received: from vb004028-vm1.. ([192.19.161.250])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4635aa37c54sm16584231cf.53.2024.11.15.00.32.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 00:32:19 -0800 (PST)
-Message-ID: <ff7f7358cec4bb03423879a2e4efd16d0a3e8ed7.camel@redhat.com>
-Subject: Re: [PATCH v2 11/11] Remove devres from pci_intx()
-From: Philipp Stanner <pstanner@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Damien Le Moal
- <dlemoal@kernel.org>,  Niklas Cassel <cassel@kernel.org>, Basavaraj Natikar
- <basavaraj.natikar@amd.com>, Jiri Kosina <jikos@kernel.org>,  Benjamin
- Tissoires <bentiss@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Dubov <oakad@yahoo.com>,
- Sudarsana Kalluru <skalluru@marvell.com>, Manish Chopra
- <manishc@marvell.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rasesh Mody
- <rmody@marvell.com>,  GR-Linux-NIC-Dev@marvell.com, Igor Mitsyanko
- <imitsyanko@quantenna.com>,  Sergey Matyukevich <geomatsi@gmail.com>, Kalle
- Valo <kvalo@kernel.org>, Sanjay R Mehta <sanju.mehta@amd.com>, Shyam Sundar
- S K <Shyam-sundar.S-k@amd.com>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
- <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Alex Williamson <alex.williamson@redhat.com>,
- Juergen Gross <jgross@suse.com>, Stefano Stabellini
- <sstabellini@kernel.org>, Oleksandr Tyshchenko
- <oleksandr_tyshchenko@epam.com>, Mario Limonciello
- <mario.limonciello@amd.com>, Chen Ni <nichen@iscas.ac.cn>, Ricky Wu
- <ricky_wu@realtek.com>,  Al Viro <viro@zeniv.linux.org.uk>, Breno Leitao
- <leitao@debian.org>, Kevin Tian <kevin.tian@intel.com>, Mostafa Saleh
- <smostafa@google.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>, Kunwu Chan
- <chentao@kylinos.cn>, Ankit Agrawal <ankita@nvidia.com>, Christian Brauner
- <brauner@kernel.org>, Reinette Chatre <reinette.chatre@intel.com>, Eric
- Auger <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>
-Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-input@vger.kernel.org, netdev@vger.kernel.org, 
- linux-wireless@vger.kernel.org, ntb@lists.linux.dev,
- linux-pci@vger.kernel.org,  kvm@vger.kernel.org,
- xen-devel@lists.xenproject.org
-Date: Fri, 15 Nov 2024 09:32:16 +0100
-In-Reply-To: <8734jtl3xm.ffs@tglx>
-References: <20241113124158.22863-2-pstanner@redhat.com>
-	 <20241113124158.22863-13-pstanner@redhat.com> <87msi3ksru.ffs@tglx>
-	 <49bb6fc9ebff3cae844da0465ceadeef8d3217c7.camel@redhat.com>
-	 <8734jtl3xm.ffs@tglx>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+        Fri, 15 Nov 2024 00:32:47 -0800 (PST)
+From: Vamsi Krishna Brahmajosyula <vamsi-krishna.brahmajosyula@broadcom.com>
+To: stable@vger.kernel.org,
+	gregkh@linuxfoundation.org
+Cc: yuxuanzhe@outlook.com,
+	linkinjeon@kernel.org,
+	stfrench@microsoft.com,
+	sashal@kernel.org,
+	senozhatsky@chromium.org,
+	tom@talpey.com,
+	linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ajay.kaher@broadcom.com,
+	alexey.makhalov@broadcom.com,
+	vasavi.sirnapalli@broadcom.com,
+	Vamsi Krishna Brahmajosyula <vamsi-krishna.brahmajosyula@broadcom.com>
+Subject: [PATCH v6.1 0/2] ksmbd: fix potencial out-of-bounds when buffer offset is invalid
+Date: Fri, 15 Nov 2024 08:32:38 +0000
+Message-Id: <20241115083240.230361-1-vamsi-krishna.brahmajosyula@broadcom.com>
+X-Mailer: git-send-email 2.39.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2024-11-15 at 01:46 +0100, Thomas Gleixner wrote:
-> On Thu, Nov 14 2024 at 10:05, Philipp Stanner wrote:
-> > On Wed, 2024-11-13 at 17:22 +0100, Thomas Gleixner wrote:
-> > > On Wed, Nov 13 2024 at 13:41, Philipp Stanner wrote:
-> > > > pci_intx() is a hybrid function which can sometimes be managed
-> > > > through
-> > > > devres. This hybrid nature is undesirable.
-> > > >=20
-> > > > Since all users of pci_intx() have by now been ported either to
-> > > > always-managed pcim_intx() or never-managed
-> > > > pci_intx_unmanaged(),
-> > > > the
-> > > > devres functionality can be removed from pci_intx().
-> > > >=20
-> > > > Consequently, pci_intx_unmanaged() is now redundant, because
-> > > > pci_intx()
-> > > > itself is now unmanaged.
-> > > >=20
-> > > > Remove the devres functionality from pci_intx(). Have all users
-> > > > of
-> > > > pci_intx_unmanaged() call pci_intx(). Remove
-> > > > pci_intx_unmanaged().
-> > > >=20
-> > > > Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> > > > ---
-> > > > =C2=A0drivers/misc/cardreader/rtsx_pcr.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
-> > > > =C2=A0drivers/misc/tifm_7xx1.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0 6 +--
-> > > > =C2=A0.../net/ethernet/broadcom/bnx2x/bnx2x_main.c=C2=A0 |=C2=A0 2 =
-+-
-> > > > =C2=A0drivers/net/ethernet/brocade/bna/bnad.c=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0 2 +-
-> > > > =C2=A0drivers/ntb/hw/amd/ntb_hw_amd.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 4 +-
-> > > > =C2=A0drivers/ntb/hw/intel/ntb_hw_gen1.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
-> > > > =C2=A0drivers/pci/devres.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 4 +-
-> > > > =C2=A0drivers/pci/msi/api.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
-> > > > =C2=A0drivers/pci/msi/msi.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
-> > > > =C2=A0drivers/pci/pci.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 43 +----------
-> > > > ----
-> > > > ----
-> > > > =C2=A0drivers/vfio/pci/vfio_pci_core.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
-> > > > =C2=A0drivers/vfio/pci/vfio_pci_intrs.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 10 ++---
-> > > > =C2=A0drivers/xen/xen-pciback/conf_space_header.c=C2=A0=C2=A0 |=C2=
-=A0 2 +-
-> > > > =C2=A0include/linux/pci.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 -
-> > > > =C2=A014 files changed, 22 insertions(+), 62 deletions(-)
-> > >=20
-> > > Now I'm utterly confused. This undoes the pci_intx_unmanaged()
-> > > churn
-> > > which you carefully split into several patches first.
-> >=20
-> > Have you read the email I have linked?
-> >=20
-> > There is also the cover-letter (does anyone in the community ever
-> > read
-> > those?) which explicitly states:
-> >=20
-> > "Patch "Remove devres from pci_intx()" obviously reverts the
-> > previous
-> > patches that made drivers use pci_intx_unmanaged(). But this way
-> > it's
-> > easier to review and approve. It also makes sure that each checked
-> > out
-> > commit should provide correct behavior, not just the entire series
-> > as a
-> > whole."
->=20
-> I read it and I assume your intention was to force an eye on every
-> use
-> case of pci_intx() and not just on those which need to be converted
-> to
-> pcim_intx().
->=20
-> I'm not convinced that this is needed, but fair enough.
+The dependent patch (slab-out-of-bounds) is backported from 6.7 instead of 6.6.
+In the 6.6 commit (9e4937cbc150f), the upstream commit id points to an incorrect one.
 
-Whether pcim_enable_device() is really not used could have been
-overlooked, or the driver could move to "managed mode" in parallel for
-v6.13 for example. Then a bug would be silently introduced into those
-drivers.
+Namjae Jeon (2):
+  ksmbd: fix slab-out-of-bounds in smb_strndup_from_utf16()
+  ksmbd: fix potencial out-of-bounds when buffer offset is invalid
 
-Besides, me touching pci_intx() unfortunately caused a few explosions
-in the past already, in
+ fs/smb/server/smb2misc.c | 26 ++++++++++++++++------
+ fs/smb/server/smb2pdu.c  | 48 ++++++++++++++++++++++------------------
+ 2 files changed, 45 insertions(+), 29 deletions(-)
 
-fc8c818e756991f5f50b8dfab07f970a18da2556 and
-00f89ae4e759a7eef07e4188e1534af7dd2c7e9c
-
-So this time I prefer to be rather safe than sorry.
-
-
-BTW, if you can review the MSI patch and check whether removing devres
-from there really is fine, that would be helpful.
-
-
-Regards,
-P.
+-- 
+2.39.4
 
 
