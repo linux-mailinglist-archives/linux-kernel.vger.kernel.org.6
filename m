@@ -1,147 +1,172 @@
-Return-Path: <linux-kernel+bounces-410619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E599CDE1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:14:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 091A49CDE22
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:18:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6B0BB246B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:14:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69BD1B2248E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CAE1B6D04;
-	Fri, 15 Nov 2024 12:14:24 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31AF1BA89B;
+	Fri, 15 Nov 2024 12:18:22 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455271B3942;
-	Fri, 15 Nov 2024 12:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F211A1A3035
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 12:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731672864; cv=none; b=X47Nd9E+DRKf96mNuuVn31+VWfeVSfxxdO/S0+N8lbHJyhWQ4bG1hSnhzoRPtwKu+gvvO9AqTPpKnYRCYPo8bjWCcviWNfoc5RrJ1cGoL8bfXkPjjULN1+vroJNJ66VGJK3idb4fc/eFaTi6rYTEi3gDqIoTn/+xwHamVi5D/M4=
+	t=1731673102; cv=none; b=A2mQi4J9H5DnO3NgnLHfVsQd081dsalx0gd582Fam+HRLWM0ImLjZwdbRbQ/OLpSjpRFaaUoLY2flFAoviWt3wdBymg5v3fhcXZ1jYO9S6rtcry4FNgJBEbsnSyd4IT+qR7a+mR9fGblprSuW9UBkRHYXf30Qm/wLmfkXkpuA8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731672864; c=relaxed/simple;
-	bh=rWmshmSMK3ztYZPMn5WUQGtD4MV6pNS+89ldeBjN4z4=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Vb91aaK+xSmkwCJErdHT5DLeWPfMVwMn4EUApchfjzSHCFnN2dySqiAKf6opJEuF9ncsM1j7nebpTRQ8L0gX//7PA7HSvsge17e3dMM/2ikbAERB3759PyIEOY4fEAwSHm38sOobtVmp3Y/RWn8td8oBjQ2METpUSILgDOJD+k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XqbXq0CZJz6LD9k;
-	Fri, 15 Nov 2024 20:14:03 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id AF913140A08;
-	Fri, 15 Nov 2024 20:14:18 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 15 Nov
- 2024 13:14:17 +0100
-Date: Fri, 15 Nov 2024 12:14:15 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Borislav Petkov <bp@alien8.de>
-CC: Shiju Jose <shiju.jose@huawei.com>, "linux-edac@vger.kernel.org"
-	<linux-edac@vger.kernel.org>, "linux-cxl@vger.kernel.org"
-	<linux-cxl@vger.kernel.org>, "linux-acpi@vger.kernel.org"
-	<linux-acpi@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"tony.luck@intel.com" <tony.luck@intel.com>, "rafael@kernel.org"
-	<rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>,
-	"mchehab@kernel.org" <mchehab@kernel.org>, "dan.j.williams@intel.com"
-	<dan.j.williams@intel.com>, "dave@stgolabs.net" <dave@stgolabs.net>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"sudeep.holla@arm.com" <sudeep.holla@arm.com>, "jassisinghbrar@gmail.com"
-	<jassisinghbrar@gmail.com>, "dave.jiang@intel.com" <dave.jiang@intel.com>,
-	"alison.schofield@intel.com" <alison.schofield@intel.com>,
-	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>, "ira.weiny@intel.com"
-	<ira.weiny@intel.com>, "david@redhat.com" <david@redhat.com>,
-	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>, "leo.duran@amd.com"
-	<leo.duran@amd.com>, "Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
-	"rientjes@google.com" <rientjes@google.com>, "jiaqiyan@google.com"
-	<jiaqiyan@google.com>, "Jon.Grimm@amd.com" <Jon.Grimm@amd.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>, "james.morse@arm.com"
-	<james.morse@arm.com>, "jthoughton@google.com" <jthoughton@google.com>,
-	"somasundaram.a@hpe.com" <somasundaram.a@hpe.com>, "erdemaktas@google.com"
-	<erdemaktas@google.com>, "pgonda@google.com" <pgonda@google.com>,
-	"duenwen@google.com" <duenwen@google.com>, "gthelen@google.com"
-	<gthelen@google.com>, "wschwartz@amperecomputing.com"
-	<wschwartz@amperecomputing.com>, "dferguson@amperecomputing.com"
-	<dferguson@amperecomputing.com>, "wbs@os.amperecomputing.com"
-	<wbs@os.amperecomputing.com>, "nifan.cxl@gmail.com" <nifan.cxl@gmail.com>,
-	tanxiaofei <tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>,
-	"Roberto Sassu" <roberto.sassu@huawei.com>, "kangkang.shen@futurewei.com"
-	<kangkang.shen@futurewei.com>, wanghuiqiang <wanghuiqiang@huawei.com>,
-	Linuxarm <linuxarm@huawei.com>
-Subject: Re: [PATCH v15 11/15] EDAC: Add memory repair control feature
-Message-ID: <20241115121415.00005c76@huawei.com>
-In-Reply-To: <20241114133249.GEZzX8ATNyc_Xw1L52@fat_crate.local>
-References: <20241101091735.1465-1-shiju.jose@huawei.com>
-	<20241101091735.1465-12-shiju.jose@huawei.com>
-	<20241104061554.GOZyhmmo9melwI0c6q@fat_crate.local>
-	<1ac30acc16ab42c98313c20c79988349@huawei.com>
-	<20241111112819.GCZzHqUz1Sz-vcW09c@fat_crate.local>
-	<7fd81b442ba3477787f5342e69adbb96@huawei.com>
-	<20241114133249.GEZzX8ATNyc_Xw1L52@fat_crate.local>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1731673102; c=relaxed/simple;
+	bh=gu/QgsF8CP3zgp/9RFCHgqw+CwVzw7nqGrmh7Vcjc60=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PwSlw26tKHcofwQo7Rebe1a/L2OL6nasRMr7+75IVqdrema9O+gm4sCY7XBn2f7QLKq33R8dqJyPLMj15KRzwY6CVB1QnNJQrqXHfzbnt+9CfkRedJ282FoDkF3HiY7qsmE51RV//FmjToIhJbVAlI0FemYS+3UUh6h2eLHKm8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83acaa1f819so174234439f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 04:18:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731673100; x=1732277900;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CWyIAe7Iyu79cPa4yiK4qyYvtRQUg06RByJAlqRtbP8=;
+        b=LZ3mLQePPMmuzdFWR+0lcpadmQfMZhkj1ct/KSxzqmuUPVAtHIZ4RNHoE3ROxvOdzc
+         s9/XATJsVhT9RSUOZr8XJuIF350nYbHhBwb49MXOhvSiZ9DXzlazkaF7Rb+I73Pn5a2M
+         SrEF7gLlEZjNTna5wqRM64u5HeihjlC9uVzZpp1GpIhl7PCMSTMV8FBONC8wpanpWRyz
+         dyGGuuQUqFj4n3AKYbsZdFqnA3lLNfMwV+DyOXroWjiOpgYpDLeeexXKMcpMOiMc3kA3
+         Rama4PhBrD3gs96o6aG7pVTog3sNoggN457yb/JJO6ysuG6jB7HRPBhw4rNpE7EinF5p
+         tKlg==
+X-Forwarded-Encrypted: i=1; AJvYcCUui2twkCMPLrY6d7VDxzlwfkTOV2ws8zsR+Pfhw8UPMoA4S/NofO7iU43L2AsxH64InR2qD3aZygsj9To=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyilltbt177q5JDv5KEA0m6o4jpMbvHMAIP0FLBRLoQz52/0QNt
+	6zVInp1/dENt6Xiz2gEk9V39/BD2VA5IfDS+WC+5Iumk7GFTzw9+3ZBzz4KJphzwYVe+z4k8tje
+	ssnVGeLmQoLqD8DjvUu32Gai1LnUsx1PgLt3JJXMFu9wX7Rv36ptqkBA=
+X-Google-Smtp-Source: AGHT+IHS83RxK07c7iu+7NBNxARqNlY4aGwLt7IOp5zWA1rimRz8w0n+4/b3UaoSpsjx6Op1sPuCWN4W6Gz4v8ZgFCtgF1iFzvnV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-Received: by 2002:a05:6e02:1c02:b0:3a7:2237:1c4c with SMTP id
+ e9e14a558f8ab-3a747ff8de0mr22755315ab.2.1731673100224; Fri, 15 Nov 2024
+ 04:18:20 -0800 (PST)
+Date: Fri, 15 Nov 2024 04:18:20 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67373c0c.050a0220.2a2fcc.0079.GAE@google.com>
+Subject: [syzbot] [iomap?] [erofs?] WARNING in iomap_iter (4)
+From: syzbot <syzbot+6c0b301317aa0156f9eb@syzkaller.appspotmail.com>
+To: brauner@kernel.org, chao@kernel.org, djwong@kernel.org, hch@infradead.org, 
+	hsiangkao@linux.alibaba.com, linux-erofs@lists.ozlabs.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com, xiang@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Borislav,
+Hello,
 
-I'll just jump in on one element.
+syzbot found the following issue on:
 
-> > This will work for the CXL PPR feature where the result of the query operation for resources  availability
-> > return to the command, however for the CXL memory sparing features,  the result of the query resources 
-> > availability command returned later in a Memory Sparing Event Record from the device. 
-> > Userspace shall issue repair operation with the attributes values received on the Memory Sparing trace event.
-> > Thus for the CXL memory sparing feature, query for resources availability and repair operation 
-> > cannot be combined.  
-> 
-> What happens if the resources availability changes between the query and the
-> start of the repair operation?
->
-Short answer, you get an error return. 
+HEAD commit:    2d5404caa8c7 Linux 6.12-rc7
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=10bee5f7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1503500c6f615d24
+dashboard link: https://syzkaller.appspot.com/bug?extid=6c0b301317aa0156f9eb
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14b0e8c0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16c13ea7980000
 
-The query is an optional step / optimization. You can just skip it.
-There is no point in  querying if you are going to immediately issue the command to repair
-(as that will report an error if you can't do it). 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a2d329b82126/disk-2d5404ca.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/37a04ca225dd/vmlinux-2d5404ca.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4f837ce9d9dc/bzImage-2d5404ca.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/0a46612eab9b/mount_0.gz
 
-A typical flow where it might be useful is:
-1) Lots of corrected errors reported on a particular part of the memory.
-2) OS decides enough is enough, that row/bank/nibble should be replaced.
-3) Before doing so it checks it can actually replace it - otherwise maybe we will be disrupting a
-   gigantic page or similar where the perf cost of just off lining is higher than we want.
-4) After query the page is offlined etc (may or may not be necessary depending on the
-   hardware design - we may be able to do it 'live').
-5) 'Try' to repair. Hopefully no one raced with us and used up the remaining resources.
-  Given this is typically only driven by something like RASDaemon that race should be
-  a corner case only (very unlikely)
-6) If repair fails can just bring the memory back - but this dance was expensive and
-   we will carry on working with less than ideal memory (probably schedule some
-   real maintenance to swap out the device).
-7) If repair succeeds bring the memory back as now we have shiny new memory.
+The issue was bisected to:
 
-We could drop the query for now and bring it back later once more of the surrounding
-infrastructure becomes clearer.  To me it's a useful feature, but I appreciate
-this is early days and we shouldn't always try for all the bells and whistles on
-day 1.
+commit 001b8ccd0650727e54ec16ef72bf1b8eeab7168e
+Author: Gao Xiang <hsiangkao@linux.alibaba.com>
+Date:   Thu Jun 1 11:23:41 2023 +0000
+
+    erofs: fix compact 4B support for 16k block size
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=105174e8580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=125174e8580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=145174e8580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6c0b301317aa0156f9eb@syzkaller.appspotmail.com
+Fixes: 001b8ccd0650 ("erofs: fix compact 4B support for 16k block size")
+
+=======================================================
+erofs: (device loop0): mounted with root inode @ nid 36.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5826 at fs/iomap/iter.c:51 iomap_iter_done fs/iomap/iter.c:51 [inline]
+WARNING: CPU: 0 PID: 5826 at fs/iomap/iter.c:51 iomap_iter+0x9db/0xf60 fs/iomap/iter.c:95
+Modules linked in:
+CPU: 0 UID: 0 PID: 5826 Comm: syz-executor236 Not tainted 6.12.0-rc7-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+RIP: 0010:iomap_iter_done fs/iomap/iter.c:51 [inline]
+RIP: 0010:iomap_iter+0x9db/0xf60 fs/iomap/iter.c:95
+Code: 0f 0b 90 e9 0a f9 ff ff e8 92 7f 65 ff 90 0f 0b 90 e9 42 fd ff ff e8 84 7f 65 ff 90 0f 0b 90 e9 71 fd ff ff e8 76 7f 65 ff 90 <0f> 0b 90 e9 d5 fd ff ff e8 68 7f 65 ff 90 0f 0b 90 43 80 3c 2e 00
+RSP: 0018:ffffc90003ce76e0 EFLAGS: 00010293
+RAX: ffffffff822f5a3a RBX: 0000000000670000 RCX: ffff8880490cda00
+RDX: 0000000000000000 RSI: 0000000000670000 RDI: 0000000000670000
+RBP: 0000000000670000 R08: ffffffff822f580a R09: 1ffffd400024b686
+R10: dffffc0000000000 R11: fffff9400024b687 R12: 1ffff9200079cf05
+R13: dffffc0000000000 R14: 1ffff9200079cf04 R15: ffffc90003ce7820
+FS:  000055556b307380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000066c7e0 CR3: 000000007d26e000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ iomap_fiemap+0x73b/0x9b0 fs/iomap/fiemap.c:80
+ ioctl_fiemap fs/ioctl.c:220 [inline]
+ do_vfs_ioctl+0x1bf8/0x2e40 fs/ioctl.c:841
+ __do_sys_ioctl fs/ioctl.c:905 [inline]
+ __se_sys_ioctl+0x81/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f761d04b679
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc1fa5b488 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007ffc1fa5b658 RCX: 00007f761d04b679
+RDX: 0000000020000040 RSI: 00000000c020660b RDI: 0000000000000004
+RBP: 00007f761d0be610 R08: 0000000000000000 R09: 00007ffc1fa5b658
+R10: 00000000000001f9 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffc1fa5b648 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
 
 
-> The cat catches fire?
-Dog person? :) Just a nice normal error return to indicate no resources.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Jonathan
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-> 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
