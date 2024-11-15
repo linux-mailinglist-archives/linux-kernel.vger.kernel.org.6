@@ -1,87 +1,149 @@
-Return-Path: <linux-kernel+bounces-411268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C8479CF559
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:58:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8F439CF56D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:04:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 352A81F21665
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:58:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C6FCB2D2BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0EA1E1A34;
-	Fri, 15 Nov 2024 19:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080121E22F6;
+	Fri, 15 Nov 2024 20:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oN/OXCB2"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF03816D4E6
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 19:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b="cHfjERfY"
+Received: from bout3.ijzerbout.nl (bout3.ijzerbout.nl [136.144.140.114])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83C710F2;
+	Fri, 15 Nov 2024 20:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.140.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731700710; cv=none; b=P8k9mY7KMXYkRpcL2GCyPYJDmSjQQvCk8cDbzdGuGu4ouKVbQMYuGBsvAzqA8iawmSVrBSKGPnV1VmvtNwxNZMb8Bx5vILLUQNt9FWK12Zd8c/n/1xnvvBxUaSDYLdrzvZrLGFh0GlQZcglbR5XzWeayzaEXrOIetkz3gNPWBMc=
+	t=1731700927; cv=none; b=evUobVOiuMONUJaOYoiTzR387qolpwdmtUzML2mq273NZf489j3PYHfRVkT5puzvGeB/i1vGftK8V5ptRdLK2KFc1Dn6Wan5YFbpdHsO+HKiD8/qwrVZwGXQoYFJOkiO0xKQIzMsIbD7EcrDfG6Pd1HrvWOcHEw2uKJzRtniX6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731700710; c=relaxed/simple;
-	bh=LCcNL9j+JHpEUWwQ1+V/y6fhBw9ANCI49Cstw5j3pro=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KIPelCbt7fpm71EvUaMB2YDqGlUgX3DbgYE+1G2R/87kWOn1dQsgZoAtcfFHGWhyLzppOep+BDFna0n7F2sh+KeGYDCfiXD9orVjnSlrRHQUi1YSc8Fi2TheQuvuS22508DPHW1624VL14ULKMObeYiA535+9tzE0HBMIf/jXFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oN/OXCB2; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DCEA9E0002;
-	Fri, 15 Nov 2024 19:58:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731700700;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T6fzcxagWyMTwXuJJwuCweyoeq3e4Jn/aH3kJkkVikk=;
-	b=oN/OXCB2lWBwrp2SmLeOnPni2S2XVS25+JTSJaJbjqKOu+EJrX9l0CaafNc2yfLPzpIHNL
-	vA/521AiTIvtmGYkozCUK32I+qDBbsiyuU6ptcNT6dqJgxBVdgg2/V/s4kIQA9yE1wHjWN
-	a0RE9gBWXw/T6KKFdva7DTWlJ2BS9rwirLg38FPDQhHppOJ2PLZECv2+zT1t2uTqCnkQB5
-	7T9mvYqsSHgAWx5QVPZ9i1MF4ELLERQ6aqRA6vkEGdo8zvUHg0bmXo/BAI8suEpefWiFn2
-	pF+D/0/40ccM44Qjgti0Tdo/6gCaPS/bvcXKP02bglbf58JqYlDv3b4O3idBKw==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Bastien Curutchet <bastien.curutchet@bootlin.com>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>,  Krzysztof Kozlowski
- <krzk@kernel.org>,  Richard Weinberger <richard@nod.at>,  Vignesh
- Raghavendra <vigneshr@ti.com>,  linux-kernel@vger.kernel.org,
-  linux-mtd@lists.infradead.org,  Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>,  Herve Codina <herve.codina@bootlin.com>,
-  Christopher Cordahi <christophercordahi@nanometrics.ca>
-Subject: Re: [PATCH v4 04/10] memory: ti-aemif: Create aemif_check_cs_timings()
-In-Reply-To: <20241115132631.264609-5-bastien.curutchet@bootlin.com> (Bastien
-	Curutchet's message of "Fri, 15 Nov 2024 14:26:25 +0100")
-References: <20241115132631.264609-1-bastien.curutchet@bootlin.com>
-	<20241115132631.264609-5-bastien.curutchet@bootlin.com>
-User-Agent: mu4e 1.12.1; emacs 29.4
-Date: Fri, 15 Nov 2024 20:58:17 +0100
-Message-ID: <8734jsmfqe.fsf@bootlin.com>
+	s=arc-20240116; t=1731700927; c=relaxed/simple;
+	bh=kTKcI7rAzWbnFx3Ax+rm7FwXA+3N7eD2+FIgr2oP7kg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nT69W+dUPLRd6Ns0ZrrxqLVsL9RUqbv8de2Iim/DeGIcPbdrPKnitUjHfgI8mLwVcqZti+uOAUHX5GJYaUV2/uR6R5A0jlOPFwV22+2M1dIdVEQCM+dH0QscfuKhjiKbzaE+9BjZ1/vIBW1okvEnAxbgDzKeIjHfLF0gMC/2PSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl; spf=pass smtp.mailfrom=ijzerbout.nl; dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b=cHfjERfY; arc=none smtp.client-ip=136.144.140.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ijzerbout.nl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ijzerbout.nl; s=key;
+	t=1731700922; bh=kTKcI7rAzWbnFx3Ax+rm7FwXA+3N7eD2+FIgr2oP7kg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cHfjERfY1/rAAYikk2QNbgGZwf8P76vzMPzQy0d38kXIISsg6cIu+TyONdT+1XA9d
+	 dnHVgoiBK/U+Ro40XfKwbu0kYfn03m1yCclV6oORc5HF1o34pGsZmNOzLqCRhoSAH+
+	 bVBVKjSR8nU5xVOSXJDnjtUPKMWJyAKcxgCzdVYtvgvWOYTpPivdsVJJLPoI2YBvDv
+	 YfdiF9W8RjIdBQ3sShsTkRNGpSMMNgugIUwUnbAbuBOE3sUaWPyxt1eEG2fB+9Ojh6
+	 clox9OhOuRhluFaZfycU5bW3lyo10aEcZYWTp4LajDyqEsevUsJGiGsQGbbtmUsAGw
+	 zM/4cMlJZi0LxU8Iz7pva37mepW1yCxANkesaw/WVrlzxEL2BBIYcvn4Ns+IWj/Pl9
+	 3xbzlIzCPENc15jBiKC3X5tUuOq6P+iM8sUBOmiD5JyFBSMXeuSuAu1HJ7Bbd4FyE/
+	 PBYXB2Di/tBAed2LS23SuHO40UV3Hf8QS8rw4yLte6S2qH/ZvWXvDoEQF9H7Wt0ZGA
+	 ysGoIjNlPNdRkfpyOTMNcAHMh4u1X1WsE3uuWa2Onkmd9yvzplXQr4YqjLyvanucka
+	 NQVkL1t60WZZNPUDpdDPVX+iR4y9mn87zk2epeaPRvd1Pow2ipBYG6a3996OgEmpKk
+	 fItX9fSiHH5XvvnpO8iKLYxA=
+Received: from [IPV6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a] (racer.ijzerbout.nl [IPv6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a])
+	by bout3.ijzerbout.nl (Postfix) with ESMTPSA id 7CF6618A7E9;
+	Fri, 15 Nov 2024 21:02:00 +0100 (CET)
+Message-ID: <b7135da8-a04f-48ec-957f-09542178b861@ijzerbout.nl>
+Date: Fri, 15 Nov 2024 21:01:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-GND-Sasl: miquel.raynal@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 07/33] netfs: Abstract out a rolling folio buffer
+ implementation
+To: David Howells <dhowells@redhat.com>,
+ Christian Brauner <christian@brauner.io>, Steve French <smfrench@gmail.com>,
+ Matthew Wilcox <willy@infradead.org>
+Cc: Jeff Layton <jlayton@kernel.org>, Gao Xiang
+ <hsiangkao@linux.alibaba.com>, Dominique Martinet <asmadeus@codewreck.org>,
+ Marc Dionne <marc.dionne@auristor.com>, Paulo Alcantara <pc@manguebit.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+ Eric Van Hensbergen <ericvh@kernel.org>, Ilya Dryomov <idryomov@gmail.com>,
+ netfs@lists.linux.dev, linux-afs@lists.infradead.org,
+ linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+ ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241108173236.1382366-1-dhowells@redhat.com>
+ <20241108173236.1382366-8-dhowells@redhat.com>
+Content-Language: en-US
+From: Kees Bakker <kees@ijzerbout.nl>
+In-Reply-To: <20241108173236.1382366-8-dhowells@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 15/11/2024 at 14:26:25 +01, Bastien Curutchet <bastien.curutchet@bootlin.com> wrote:
-
-> aemif_calc_rate() check the validity of a new computed timing against a
-
-                    checks
-
-> 'max' value given as input. This isn't convenient if we want to check
-> the CS timing configuration somewhere else in the code.
+Op 08-11-2024 om 18:32 schreef David Howells:
+> A rolling buffer is a series of folios held in a list of folio_queues.  New
+> folios and folio_queue structs may be inserted at the head simultaneously
+> with spent ones being removed from the tail without the need for locking.
 >
-> Wrap the verification of all the chip select's timing configuration into a
-> single function to ease its exportation in upcoming patches.
-> Remove the 'max' input from aemif_calc_rate() as it's no longer used.
+> The rolling buffer includes an iov_iter and it has to be careful managing
+> this as the list of folio_queues is extended such that an oops doesn't
+> incurred because the iterator was pointing to the end of a folio_queue
+> segment that got appended to and then removed.
 >
-> Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
+> We need to use the mechanism twice, once for read and once for write, and,
+> in future patches, we will use a second rolling buffer to handle bounce
+> buffering for content encryption.
+>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: netfs@lists.linux.dev
+> cc: linux-fsdevel@vger.kernel.org
+> ---
+>   fs/netfs/Makefile              |   1 +
+>   fs/netfs/buffered_read.c       | 119 ++++-------------
+>   fs/netfs/direct_read.c         |  14 +-
+>   fs/netfs/direct_write.c        |  10 +-
+>   fs/netfs/internal.h            |   4 -
+>   fs/netfs/misc.c                | 147 ---------------------
+>   fs/netfs/objects.c             |   2 +-
+>   fs/netfs/read_pgpriv2.c        |  32 ++---
+>   fs/netfs/read_retry.c          |   2 +-
+>   fs/netfs/rolling_buffer.c      | 225 +++++++++++++++++++++++++++++++++
+>   fs/netfs/write_collect.c       |  19 +--
+>   fs/netfs/write_issue.c         |  26 ++--
+>   include/linux/netfs.h          |  10 +-
+>   include/linux/rolling_buffer.h |  61 +++++++++
+>   include/trace/events/netfs.h   |   2 +
+>   15 files changed, 375 insertions(+), 299 deletions(-)
+>   create mode 100644 fs/netfs/rolling_buffer.c
+>   create mode 100644 include/linux/rolling_buffer.h
+> [...]
+> diff --git a/fs/netfs/direct_write.c b/fs/netfs/direct_write.c
+> index 88f2adfab75e..0722fb9919a3 100644
+> --- a/fs/netfs/direct_write.c
+> +++ b/fs/netfs/direct_write.c
+> @@ -68,19 +68,19 @@ ssize_t netfs_unbuffered_write_iter_locked(struct kiocb *iocb, struct iov_iter *
+>   		 * request.
+>   		 */
+>   		if (async || user_backed_iter(iter)) {
+> -			n = netfs_extract_user_iter(iter, len, &wreq->iter, 0);
+> +			n = netfs_extract_user_iter(iter, len, &wreq->buffer.iter, 0);
+>   			if (n < 0) {
+>   				ret = n;
+>   				goto out;
+>   			}
+> -			wreq->direct_bv = (struct bio_vec *)wreq->iter.bvec;
+> +			wreq->direct_bv = (struct bio_vec *)wreq->buffer.iter.bvec;
+>   			wreq->direct_bv_count = n;
+>   			wreq->direct_bv_unpin = iov_iter_extract_will_pin(iter);
+>   		} else {
+> -			wreq->iter = *iter;
+> +			wreq->buffer.iter = *iter;
+>   		}
+>   
+> -		wreq->io_iter = wreq->iter;
+> +		wreq->buffer.iter = wreq->buffer.iter;
+Is this correct, an assignment to itself?
+>   	}
+>   
+>   	__set_bit(NETFS_RREQ_USE_IO_ITER, &wreq->flags);
+> [...]
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
