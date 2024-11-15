@@ -1,355 +1,454 @@
-Return-Path: <linux-kernel+bounces-410519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7793A9CDCB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:35:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C76CC9CDCB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:36:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA40FB291D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:35:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DB461F238CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A20838DD8;
-	Fri, 15 Nov 2024 10:35:27 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9E619CD08;
+	Fri, 15 Nov 2024 10:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hCNtK54i"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73B814A088
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E1518950A
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731666926; cv=none; b=dpyO9JfPC5hgbwNVGB2Aw9XcARlqmttFHiY2SlqSXyJm4s9GGYbArkhElyC4Rh7bjbJlbML1Xs9Z4joUgYHYwagUBzdptb1Fg7IwSOl0HUarfD8C1cjCUUL8S0TaZmhB5lgicuKoxIGoIz3ES3DNioiQqYmJH+GF5ZbPqzS1ynM=
+	t=1731666976; cv=none; b=NlWBLhftuw2uwUphMI7mFzww0RRqBicGrtr6m1OphTg8YyoucPxO9dCONXIDqEranRlszpwaNfE+8EXqFf0K4SwU+QvPAkSV0XeLq1SPC7AkZFPm6Tk4OJIsDOrXBLwVvIPT8KVHMSQe8PGgj9ArUIHzpnSqLj7BD9Ht833TDfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731666926; c=relaxed/simple;
-	bh=KKmX3zPLqu8GcQIi5/bD3fvLtFEdzzQ3PrcUzvrYVXE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZFd3tPrLCSdUAbfoWNjUTlZgzZLrrdavqZvHElSiviZ/Z80/hmtFEKB9d66dEtsuoujxRZqlnAPxUxIxMPyyt67EenM6NYUPHP9I1J+MJHzAUUEjaEfwYqYcq6To2e9U2G0Uzj/Qbm2e3YooauKSfhu/LM72li1KqHNnn5bkoDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a71d035135so19700595ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 02:35:24 -0800 (PST)
+	s=arc-20240116; t=1731666976; c=relaxed/simple;
+	bh=0ICS41chj1IXvCClZepPcoSop9V6lyZFbioF8sspHl8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=edroXKFasP0qFQ4YLZJnweTiu7NX8xu+OugYLoKw2VFn3gc6kbERAUIGDNQXyQwe/wmsUrM1JK8xcS0dB8XVLwY5XYWZL1YQjrOVthS7PBG48FgMgvc16wYKP5bfsw36Nwurf9pRpb46tgNjEmk8g9PRiZINQJdu6gdjBxM3Aw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hCNtK54i; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731666972;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=cHQ6htVX/G4IOPWLSuJ9JMewXYWtm+ZQ8nEDgpbt6UU=;
+	b=hCNtK54i3TYHSj/NqC54Th8d1gAXny2OpzpayQUjAp3JdbNW0uUlgs/x0eFJtwn6xyfn03
+	WB/LqPkyPjAIzjtUUr6mQp+sqn8o8Xvi2IkDAOI1VjFU0ScXP6TDSCkUbkfO/n+VK7mI7v
+	0bKDAF1yMWj/YAAN2oZ+dimm7DEx2DM=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-561-jYMQ0L5ENc-t2UhLxW__QA-1; Fri, 15 Nov 2024 05:36:10 -0500
+X-MC-Unique: jYMQ0L5ENc-t2UhLxW__QA-1
+X-Mimecast-MFC-AGG-ID: jYMQ0L5ENc-t2UhLxW__QA
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4315afcae6cso9818165e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 02:36:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731666924; x=1732271724;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lE5ryar0fVqLxzlPOEtRYMo6rfMf17zBcG3/O3u/ybQ=;
-        b=LX+s/zev2OGUcoSELhfZfDOu3u+ae8zcPIbQxDX6GJgZzxwK/qYoRF62YwZhdM09vi
-         IzFmv0/PhYbZqr63GqFKfaAyr4SczUIQBskZzADhSoqZKC0SSJJdmTfqIXr7lObYAbNm
-         p9ui4Kb0/drasUm1amNnUW8+k7KKdH0dD7WcVOMOiPVxn2UabvXElnKw9oqt5arPGl2t
-         xDihAEm62J9VxjsvKZkIGUqKY/PaF1lLfctkbaFmYTvtsoTVXBXIQMS5sxcapw/mj0ER
-         /QfmDvlIaO9CAxug0l1BHIPp7zUPICXnKu089JVUSSbHRXuyQJoO8r3pVtDIgwMjoQO3
-         oU9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVjpv0g6RFJRgAAO9wRz2E2ospPdmRR1icvqOLvDRZzhoGtpmIB5/tquetFEtT0cU+Exrdg49dkhZohGW0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrVf4BIEfjbG0YOWsIboRghyED1ifzCA6qlbT6kiTY63HA0+Iy
-	haHDxjQWoSWxkqHrd/infttKvtkk36ZdiPaSBYiqXbdy0NzDpG3rmxDx5+hdgO9FFpttGGmVjzE
-	7uCPIzdNllhEHXaOi2nGS0Yz71hMbbc6STGFNhbb8TgHKsBkRUf6BfK0=
-X-Google-Smtp-Source: AGHT+IEbkPGcE177W56REAwGOYU+NklAaJRLbRr6EIqQcg0kF6J7D49fZ0iFgKzPw+j04RbsCOeK9fL0BOCJB8EzXZAjZCq+pG0u
+        d=1e100.net; s=20230601; t=1731666969; x=1732271769;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cHQ6htVX/G4IOPWLSuJ9JMewXYWtm+ZQ8nEDgpbt6UU=;
+        b=RZb96NP1c2t4sYNN91aYV3YGg3T4jDrlfp6pmVBPsQmHlTFmr9AQuofM7rWQTVPdIi
+         dLKdGPxzr4T6uJ8CJymLuK6cdFkdNuPNzgr9GPqnLpRtGBE65KjzLMxofFZ8XP87lZam
+         gVa55fdUdXB4CkidxWrYyuYWlyt5EMGl/+/gjkb6kw8U65gCdLLz+0Hfjkn3kHIrZWzC
+         ZanVxQAzSavcz1lp8+BuOYFzBoTqUSapG/72TiW/zmknlRCU80pNV47FB9IwTn5TQTPE
+         aqu8D1897V5oIGNz+xIOGK1unLp8ux4PMk9wXCiM04lFbkhVAYhjENQq832JxsTvvl+u
+         Jh0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUrJxhjigLZ21OvV7OVNcSlJhP/mxRJEFyW4ffEliZpCGNntFZtrTup1aADXZUI1crplRsV6u8NHfcjYtk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6S+EGFeqGkqHJ3i+vE7sNG/E7sg1xjJIr5X+lVGAQxwE8M0r8
+	/Mt27/ygcahLYfeY4nelpZHP+jXMywZyhLx28N1vgGdsvsGbGwamAspwsOXxY2L2nhWx0uzuG50
+	C9WSyw1N9Axz3rObWypHnVjvcGy3AeQVPyRIIaBqwizxG4UtQUr+TsDiHYoufuw==
+X-Received: by 2002:a05:600c:5120:b0:42c:b603:422 with SMTP id 5b1f17b1804b1-432defe3438mr20297365e9.8.1731666969256;
+        Fri, 15 Nov 2024 02:36:09 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFEAkw+4KtGxbqXPVgexI1Pjg6wJXQXTINQOuPgRiGfGfHR44ozYnEiMr598/WBPOjUAipBZw==
+X-Received: by 2002:a05:600c:5120:b0:42c:b603:422 with SMTP id 5b1f17b1804b1-432defe3438mr20296985e9.8.1731666968771;
+        Fri, 15 Nov 2024 02:36:08 -0800 (PST)
+Received: from eisenberg.redhat.com (nat-pool-muc-u.redhat.com. [149.14.88.27])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dac1f94asm49265375e9.39.2024.11.15.02.36.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 02:36:08 -0800 (PST)
+From: Philipp Stanner <pstanner@redhat.com>
+To: David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Luben Tuikov <ltuikov89@gmail.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Philipp Stanner <pstanner@redhat.com>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
+Subject: [PATCH] drm/sched: Extend and update documentation
+Date: Fri, 15 Nov 2024 11:35:49 +0100
+Message-ID: <20241115103548.90605-2-pstanner@redhat.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12cb:b0:39f:5e18:239d with SMTP id
- e9e14a558f8ab-3a74807811cmr20358325ab.15.1731666923818; Fri, 15 Nov 2024
- 02:35:23 -0800 (PST)
-Date: Fri, 15 Nov 2024 02:35:23 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673723eb.050a0220.1324f8.00a8.GAE@google.com>
-Subject: [syzbot] [btrfs?] KASAN: slab-use-after-free Read in free_block_entry
-From: syzbot <syzbot+7325f164162e200000c1@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+The various objects defined and used by the GPU scheduler are currently
+not fully documented. Furthermore, there is no documentation yet
+informing drivers about how they should handle timeouts.
 
-syzbot found the following issue on:
+Add documentation describing the scheduler's objects and timeout
+procedure. Consistently, update drm_sched_backend_ops.timedout_job()'s
+documentation.
 
-HEAD commit:    2d5404caa8c7 Linux 6.12-rc7
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=141534e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d2aeec8c0b2e420c
-dashboard link: https://syzkaller.appspot.com/bug?extid=7325f164162e200000c1
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-2d5404ca.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c68277f7b0f1/vmlinux-2d5404ca.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/161b075483b1/bzImage-2d5404ca.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7325f164162e200000c1@syzkaller.appspotmail.com
-
-BTRFS error (device loop0 state EA):   Ref action 2, root 5, ref_root 0, parent 8564736, owner 0, offset 0, num_refs 18446744073709551615
-   __btrfs_mod_ref+0x7dd/0xac0 fs/btrfs/extent-tree.c:2523
-   update_ref_for_cow+0x9cd/0x11f0 fs/btrfs/ctree.c:512
-   btrfs_force_cow_block+0x9f6/0x1da0 fs/btrfs/ctree.c:594
-   btrfs_cow_block+0x35e/0xa40 fs/btrfs/ctree.c:754
-   btrfs_search_slot+0xbdd/0x30d0 fs/btrfs/ctree.c:2116
-   btrfs_insert_empty_items+0x9c/0x1a0 fs/btrfs/ctree.c:4314
-   btrfs_insert_empty_item fs/btrfs/ctree.h:669 [inline]
-   btrfs_insert_orphan_item+0x1f1/0x320 fs/btrfs/orphan.c:23
-   btrfs_orphan_add+0x6d/0x1a0 fs/btrfs/inode.c:3482
-   btrfs_unlink+0x267/0x350 fs/btrfs/inode.c:4293
-   vfs_unlink+0x365/0x650 fs/namei.c:4469
-   do_unlinkat+0x4ae/0x830 fs/namei.c:4533
-   __do_sys_unlinkat fs/namei.c:4576 [inline]
-   __se_sys_unlinkat fs/namei.c:4569 [inline]
-   __x64_sys_unlinkat+0xcc/0xf0 fs/namei.c:4569
-   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-BTRFS error (device loop0 state EA):   Ref action 1, root 5, ref_root 5, parent 0, owner 260, offset 0, num_refs 1
-   __btrfs_mod_ref+0x76b/0xac0 fs/btrfs/extent-tree.c:2521
-   update_ref_for_cow+0x96a/0x11f0
-   btrfs_force_cow_block+0x9f6/0x1da0 fs/btrfs/ctree.c:594
-   btrfs_cow_block+0x35e/0xa40 fs/btrfs/ctree.c:754
-   btrfs_search_slot+0xbdd/0x30d0 fs/btrfs/ctree.c:2116
-   btrfs_lookup_inode+0xdc/0x480 fs/btrfs/inode-item.c:411
-   __btrfs_update_delayed_inode+0x1e7/0xb90 fs/btrfs/delayed-inode.c:1030
-   btrfs_update_delayed_inode fs/btrfs/delayed-inode.c:1114 [inline]
-   __btrfs_commit_inode_delayed_items+0x2318/0x24a0 fs/btrfs/delayed-inode.c:1137
-   __btrfs_run_delayed_items+0x213/0x490 fs/btrfs/delayed-inode.c:1171
-   btrfs_commit_transaction+0x8a8/0x3740 fs/btrfs/transaction.c:2313
-   prepare_to_relocate+0x3c4/0x4c0 fs/btrfs/relocation.c:3586
-   relocate_block_group+0x16c/0xd40 fs/btrfs/relocation.c:3611
-   btrfs_relocate_block_group+0x77d/0xd90 fs/btrfs/relocation.c:4081
-   btrfs_relocate_chunk+0x12c/0x3b0 fs/btrfs/volumes.c:3377
-   __btrfs_balance+0x1b0f/0x26b0 fs/btrfs/volumes.c:4161
-   btrfs_balance+0xbdc/0x10c0 fs/btrfs/volumes.c:4538
-BTRFS error (device loop0 state EA):   Ref action 2, root 5, ref_root 0, parent 8564736, owner 0, offset 0, num_refs 18446744073709551615
-   __btrfs_mod_ref+0x7dd/0xac0 fs/btrfs/extent-tree.c:2523
-   update_ref_for_cow+0x9cd/0x11f0 fs/btrfs/ctree.c:512
-   btrfs_force_cow_block+0x9f6/0x1da0 fs/btrfs/ctree.c:594
-   btrfs_cow_block+0x35e/0xa40 fs/btrfs/ctree.c:754
-   btrfs_search_slot+0xbdd/0x30d0 fs/btrfs/ctree.c:2116
-   btrfs_lookup_inode+0xdc/0x480 fs/btrfs/inode-item.c:411
-   __btrfs_update_delayed_inode+0x1e7/0xb90 fs/btrfs/delayed-inode.c:1030
-   btrfs_update_delayed_inode fs/btrfs/delayed-inode.c:1114 [inline]
-   __btrfs_commit_inode_delayed_items+0x2318/0x24a0 fs/btrfs/delayed-inode.c:1137
-   __btrfs_run_delayed_items+0x213/0x490 fs/btrfs/delayed-inode.c:1171
-   btrfs_commit_transaction+0x8a8/0x3740 fs/btrfs/transaction.c:2313
-   prepare_to_relocate+0x3c4/0x4c0 fs/btrfs/relocation.c:3586
-   relocate_block_group+0x16c/0xd40 fs/btrfs/relocation.c:3611
-   btrfs_relocate_block_group+0x77d/0xd90 fs/btrfs/relocation.c:4081
-   btrfs_relocate_chunk+0x12c/0x3b0 fs/btrfs/volumes.c:3377
-   __btrfs_balance+0x1b0f/0x26b0 fs/btrfs/volumes.c:4161
-   btrfs_balance+0xbdc/0x10c0 fs/btrfs/volumes.c:4538
-==================================================================
-BUG: KASAN: slab-use-after-free in rb_first+0x69/0x70 lib/rbtree.c:473
-Read of size 8 at addr ffff888042d1af38 by task syz.0.0/5329
-
-CPU: 0 UID: 0 PID: 5329 Comm: syz.0.0 Not tainted 6.12.0-rc7-syzkaller #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- rb_first+0x69/0x70 lib/rbtree.c:473
- free_block_entry+0x78/0x230 fs/btrfs/ref-verify.c:248
- btrfs_free_ref_cache+0xa3/0x100 fs/btrfs/ref-verify.c:917
- btrfs_ref_tree_mod+0x139f/0x15e0 fs/btrfs/ref-verify.c:898
- btrfs_free_extent+0x33c/0x380 fs/btrfs/extent-tree.c:3544
- __btrfs_mod_ref+0x7dd/0xac0 fs/btrfs/extent-tree.c:2523
- update_ref_for_cow+0x9cd/0x11f0 fs/btrfs/ctree.c:512
- btrfs_force_cow_block+0x9f6/0x1da0 fs/btrfs/ctree.c:594
- btrfs_cow_block+0x35e/0xa40 fs/btrfs/ctree.c:754
- btrfs_search_slot+0xbdd/0x30d0 fs/btrfs/ctree.c:2116
- btrfs_lookup_inode+0xdc/0x480 fs/btrfs/inode-item.c:411
- __btrfs_update_delayed_inode+0x1e7/0xb90 fs/btrfs/delayed-inode.c:1030
- btrfs_update_delayed_inode fs/btrfs/delayed-inode.c:1114 [inline]
- __btrfs_commit_inode_delayed_items+0x2318/0x24a0 fs/btrfs/delayed-inode.c:1137
- __btrfs_run_delayed_items+0x213/0x490 fs/btrfs/delayed-inode.c:1171
- btrfs_commit_transaction+0x8a8/0x3740 fs/btrfs/transaction.c:2313
- prepare_to_relocate+0x3c4/0x4c0 fs/btrfs/relocation.c:3586
- relocate_block_group+0x16c/0xd40 fs/btrfs/relocation.c:3611
- btrfs_relocate_block_group+0x77d/0xd90 fs/btrfs/relocation.c:4081
- btrfs_relocate_chunk+0x12c/0x3b0 fs/btrfs/volumes.c:3377
- __btrfs_balance+0x1b0f/0x26b0 fs/btrfs/volumes.c:4161
- btrfs_balance+0xbdc/0x10c0 fs/btrfs/volumes.c:4538
- btrfs_ioctl_balance+0x493/0x7c0 fs/btrfs/ioctl.c:3673
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f996df7e719
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f996ede7038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f996e135f80 RCX: 00007f996df7e719
-RDX: 0000000020000180 RSI: 00000000c4009420 RDI: 0000000000000004
-RBP: 00007f996dff139e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f996e135f80 R15: 00007fff79f32e68
- </TASK>
-
-Allocated by task 5329:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:257 [inline]
- __kmalloc_cache_noprof+0x19c/0x2c0 mm/slub.c:4295
- kmalloc_noprof include/linux/slab.h:878 [inline]
- kzalloc_noprof include/linux/slab.h:1014 [inline]
- btrfs_ref_tree_mod+0x264/0x15e0 fs/btrfs/ref-verify.c:701
- btrfs_free_extent+0x33c/0x380 fs/btrfs/extent-tree.c:3544
- __btrfs_mod_ref+0x7dd/0xac0 fs/btrfs/extent-tree.c:2523
- update_ref_for_cow+0x9cd/0x11f0 fs/btrfs/ctree.c:512
- btrfs_force_cow_block+0x9f6/0x1da0 fs/btrfs/ctree.c:594
- btrfs_cow_block+0x35e/0xa40 fs/btrfs/ctree.c:754
- btrfs_search_slot+0xbdd/0x30d0 fs/btrfs/ctree.c:2116
- btrfs_lookup_inode+0xdc/0x480 fs/btrfs/inode-item.c:411
- __btrfs_update_delayed_inode+0x1e7/0xb90 fs/btrfs/delayed-inode.c:1030
- btrfs_update_delayed_inode fs/btrfs/delayed-inode.c:1114 [inline]
- __btrfs_commit_inode_delayed_items+0x2318/0x24a0 fs/btrfs/delayed-inode.c:1137
- __btrfs_run_delayed_items+0x213/0x490 fs/btrfs/delayed-inode.c:1171
- btrfs_commit_transaction+0x8a8/0x3740 fs/btrfs/transaction.c:2313
- prepare_to_relocate+0x3c4/0x4c0 fs/btrfs/relocation.c:3586
- relocate_block_group+0x16c/0xd40 fs/btrfs/relocation.c:3611
- btrfs_relocate_block_group+0x77d/0xd90 fs/btrfs/relocation.c:4081
- btrfs_relocate_chunk+0x12c/0x3b0 fs/btrfs/volumes.c:3377
- __btrfs_balance+0x1b0f/0x26b0 fs/btrfs/volumes.c:4161
- btrfs_balance+0xbdc/0x10c0 fs/btrfs/volumes.c:4538
- btrfs_ioctl_balance+0x493/0x7c0 fs/btrfs/ioctl.c:3673
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 5329:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:230 [inline]
- slab_free_hook mm/slub.c:2342 [inline]
- slab_free mm/slub.c:4579 [inline]
- kfree+0x1a0/0x440 mm/slub.c:4727
- btrfs_ref_tree_mod+0x136c/0x15e0
- btrfs_free_extent+0x33c/0x380 fs/btrfs/extent-tree.c:3544
- __btrfs_mod_ref+0x7dd/0xac0 fs/btrfs/extent-tree.c:2523
- update_ref_for_cow+0x9cd/0x11f0 fs/btrfs/ctree.c:512
- btrfs_force_cow_block+0x9f6/0x1da0 fs/btrfs/ctree.c:594
- btrfs_cow_block+0x35e/0xa40 fs/btrfs/ctree.c:754
- btrfs_search_slot+0xbdd/0x30d0 fs/btrfs/ctree.c:2116
- btrfs_lookup_inode+0xdc/0x480 fs/btrfs/inode-item.c:411
- __btrfs_update_delayed_inode+0x1e7/0xb90 fs/btrfs/delayed-inode.c:1030
- btrfs_update_delayed_inode fs/btrfs/delayed-inode.c:1114 [inline]
- __btrfs_commit_inode_delayed_items+0x2318/0x24a0 fs/btrfs/delayed-inode.c:1137
- __btrfs_run_delayed_items+0x213/0x490 fs/btrfs/delayed-inode.c:1171
- btrfs_commit_transaction+0x8a8/0x3740 fs/btrfs/transaction.c:2313
- prepare_to_relocate+0x3c4/0x4c0 fs/btrfs/relocation.c:3586
- relocate_block_group+0x16c/0xd40 fs/btrfs/relocation.c:3611
- btrfs_relocate_block_group+0x77d/0xd90 fs/btrfs/relocation.c:4081
- btrfs_relocate_chunk+0x12c/0x3b0 fs/btrfs/volumes.c:3377
- __btrfs_balance+0x1b0f/0x26b0 fs/btrfs/volumes.c:4161
- btrfs_balance+0xbdc/0x10c0 fs/btrfs/volumes.c:4538
- btrfs_ioctl_balance+0x493/0x7c0 fs/btrfs/ioctl.c:3673
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff888042d1af00
- which belongs to the cache kmalloc-64 of size 64
-The buggy address is located 56 bytes inside of
- freed 64-byte region [ffff888042d1af00, ffff888042d1af40)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x42d1a
-anon flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 04fff00000000000 ffff88801ac418c0 0000000000000000 dead000000000001
-raw: 0000000000000000 0000000000200020 00000001f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52c40(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 5055, tgid 5055 (dhcpcd-run-hook), ts 40377240074, free_ts 40376848335
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1541
- prep_new_page mm/page_alloc.c:1549 [inline]
- get_page_from_freelist+0x3649/0x3790 mm/page_alloc.c:3459
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4735
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- alloc_slab_page+0x6a/0x140 mm/slub.c:2412
- allocate_slab+0x5a/0x2f0 mm/slub.c:2578
- new_slab mm/slub.c:2631 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3818
- __slab_alloc+0x58/0xa0 mm/slub.c:3908
- __slab_alloc_node mm/slub.c:3961 [inline]
- slab_alloc_node mm/slub.c:4122 [inline]
- __do_kmalloc_node mm/slub.c:4263 [inline]
- __kmalloc_noprof+0x25a/0x400 mm/slub.c:4276
- kmalloc_noprof include/linux/slab.h:882 [inline]
- kzalloc_noprof include/linux/slab.h:1014 [inline]
- tomoyo_encode2 security/tomoyo/realpath.c:45 [inline]
- tomoyo_encode+0x26f/0x540 security/tomoyo/realpath.c:80
- tomoyo_realpath_from_path+0x59e/0x5e0 security/tomoyo/realpath.c:283
- tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
- tomoyo_check_open_permission+0x255/0x500 security/tomoyo/file.c:771
- security_file_open+0x777/0x990 security/security.c:3109
- do_dentry_open+0x369/0x1460 fs/open.c:945
- vfs_open+0x3e/0x330 fs/open.c:1088
- do_open fs/namei.c:3774 [inline]
- path_openat+0x2c84/0x3590 fs/namei.c:3933
-page last free pid 5055 tgid 5055 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1112 [inline]
- free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2642
- free_pipe_info+0x300/0x390 fs/pipe.c:860
- put_pipe_info fs/pipe.c:719 [inline]
- pipe_release+0x245/0x320 fs/pipe.c:742
- __fput+0x23f/0x880 fs/file_table.c:431
- __do_sys_close fs/open.c:1567 [inline]
- __se_sys_close fs/open.c:1552 [inline]
- __x64_sys_close+0x7f/0x110 fs/open.c:1552
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff888042d1ae00: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
- ffff888042d1ae80: 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc
->ffff888042d1af00: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-                                        ^
- ffff888042d1af80: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc
- ffff888042d1b000: 00 00 00 00 00 fc fc 00 00 00 00 00 fc fc 00 00
-==================================================================
-
-
+Co-developed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Philipp Stanner <pstanner@redhat.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+I shamelessly stole- ahm, borrowed this documentation patch that
+Christian had submitted a year ago:
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+https://lore.kernel.org/dri-devel/20231116141547.206695-1-christian.koenig@amd.com/
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+I took feedback from last year into account where applicable, but it's
+probably a good idea if you all take a close look again.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+P.
+---
+ Documentation/gpu/drm-mm.rst           |  36 +++++
+ drivers/gpu/drm/scheduler/sched_main.c | 200 ++++++++++++++++++++++---
+ include/drm/gpu_scheduler.h            |  16 +-
+ 3 files changed, 225 insertions(+), 27 deletions(-)
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+diff --git a/Documentation/gpu/drm-mm.rst b/Documentation/gpu/drm-mm.rst
+index d55751cad67c..95ee95fd987a 100644
+--- a/Documentation/gpu/drm-mm.rst
++++ b/Documentation/gpu/drm-mm.rst
+@@ -556,12 +556,48 @@ Overview
+ .. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
+    :doc: Overview
+ 
++Job Object
++----------
++
++.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
++   :doc: Job Object
++
++Entity Object
++-------------
++
++.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
++   :doc: Entity Object
++
++Hardware Fence Object
++---------------------
++
++.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
++   :doc: Hardware Fence Object
++
++Scheduler Fence Object
++----------------------
++
++.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
++   :doc: Scheduler Fence Object
++
++Scheduler and Run Queue Objects
++-------------------------------
++
++.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
++   :doc: Scheduler and Run Queue Objects
++
+ Flow Control
+ ------------
+ 
+ .. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
+    :doc: Flow Control
+ 
++Error and Timeout handling
++--------------------------
++
++.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
++   :doc: Error and Timeout handling
++
+ Scheduler Function References
+ -----------------------------
+ 
+diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+index e97c6c60bc96..76eb46281985 100644
+--- a/drivers/gpu/drm/scheduler/sched_main.c
++++ b/drivers/gpu/drm/scheduler/sched_main.c
+@@ -24,28 +24,155 @@
+ /**
+  * DOC: Overview
+  *
+- * The GPU scheduler provides entities which allow userspace to push jobs
+- * into software queues which are then scheduled on a hardware run queue.
+- * The software queues have a priority among them. The scheduler selects the entities
+- * from the run queue using a FIFO. The scheduler provides dependency handling
+- * features among jobs. The driver is supposed to provide callback functions for
+- * backend operations to the scheduler like submitting a job to hardware run queue,
+- * returning the dependencies of a job etc.
++ * The GPU scheduler is shared infrastructure intended to help drivers managing
++ * command submission to their hardware.
+  *
+- * The organisation of the scheduler is the following:
++ * To do so, it offers a set of scheduling facilities that interact with the
++ * driver through callbacks which the latter can register.
+  *
+- * 1. Each hw run queue has one scheduler
+- * 2. Each scheduler has multiple run queues with different priorities
+- *    (e.g., HIGH_HW,HIGH_SW, KERNEL, NORMAL)
+- * 3. Each scheduler run queue has a queue of entities to schedule
+- * 4. Entities themselves maintain a queue of jobs that will be scheduled on
+- *    the hardware.
++ * In particular, the scheduler takes care of:
++ *   - Ordering command submissions
++ *   - Signalling DMA fences, e.g., for finished commands
++ *   - Taking dependencies between command submissions into account
++ *   - Handling timeouts for command submissions
+  *
+- * The jobs in a entity are always scheduled in the order that they were pushed.
++ * All callbacks the driver needs to implement are restricted by DMA-fence
++ * signaling rules to guarantee deadlock free forward progress. This especially
++ * means that for normal operation no memory can be allocated in a callback.
++ * All memory which is needed for pushing the job to the hardware must be
++ * allocated before arming a job. It also means that no locks can be taken
++ * under which memory might be allocated as well.
+  *
+- * Note that once a job was taken from the entities queue and pushed to the
+- * hardware, i.e. the pending queue, the entity must not be referenced anymore
+- * through the jobs entity pointer.
++ * Memory which is optional to allocate, for example for device core dumping or
++ * debugging, *must* be allocated with GFP_NOWAIT and appropriate error
++ * handling if that allocation fails. GFP_ATOMIC should only be used if
++ * absolutely necessary since dipping into the special atomic reserves is
++ * usually not justified for a GPU driver.
++ *
++ * Note especially the following about the scheduler's historic background that
++ * lead to sort of a double role it plays today:
++ *
++ * In classic setups N entities share one scheduler, and the scheduler decides
++ * which job to pick from which entity and move it to the hardware ring next
++ * (that is: "scheduling").
++ *
++ * Many (especially newer) GPUs, however, can have an almost arbitrary number
++ * of hardware rings and it's a firmware scheduler which actually decides which
++ * job will run next. In such setups, the GPU scheduler is still used (e.g., in
++ * Nouveau) but does not "schedule" jobs in the classical sense anymore. It
++ * merely serves to queue and dequeue jobs and resolve dependencies. In such a
++ * scenario, it is recommended to have one scheduler per entity.
++ */
++
++/**
++ * DOC: Job Object
++ *
++ * The base job object (drm_sched_job) contains submission dependencies in the
++ * form of DMA-fence objects. Drivers can also implement an optional
++ * prepare_job callback which returns additional dependencies as DMA-fence
++ * objects. It's important to note that this callback can't allocate memory or
++ * grab locks under which memory is allocated.
++ *
++ * Drivers should use this as base class for an object which contains the
++ * necessary state to push the command submission to the hardware.
++ *
++ * The lifetime of the job object needs to last at least from submitting it to
++ * the scheduler (through drm_sched_job_arm()) until the scheduler has invoked
++ * drm_sched_backend_ops.free_job() and, thereby, has indicated that it does
++ * not need the job anymore. Drivers can of course keep their job object alive
++ * for longer than that, but that's outside of the scope of the scheduler
++ * component.
++ *
++ * Job initialization is split into two stages:
++ *   1. drm_sched_job_init() which serves for basic preparation of a job.
++ *      Drivers don't have to be mindful of this function's consequences and
++ *      its effects can be reverted through drm_sched_job_cleanup().
++ *   2. drm_sched_job_arm() which irrevokably arms a job for execution. This
++ *      activates the job's fence, i.e., it registers the callbacks. Thus,
++ *      inevitably, the callbacks will access the job and its memory at some
++ *      point in the future. This means that once drm_sched_job_arm() has been
++ *      called, the job structure has to be valid until the scheduler invoked
++ *      drm_sched_backend_ops.free_job().
++ *
++ * It's important to note that after arming a job drivers must follow the
++ * DMA-fence rules and can't easily allocate memory or takes locks under which
++ * memory is allocated.
++ */
++
++/**
++ * DOC: Entity Object
++ *
++ * The entity object (drm_sched_entity) which is a container for jobs which
++ * should execute sequentially. Drivers should create an entity for each
++ * individual context they maintain for command submissions which can run in
++ * parallel.
++ *
++ * The lifetime of the entity *should not* exceed the lifetime of the
++ * userspace process it was created for and drivers should call the
++ * drm_sched_entity_flush() function from their file_operations.flush()
++ * callback. It is possible that an entity object is not alive anymore
++ * while jobs previously fetched from it are still running on the hardware.
++ *
++ * This is done because all results of a command submission should become
++ * visible externally even after a process exits. This is normal POSIX
++ * behavior for I/O operations.
++ *
++ * The problem with this approach is that GPU submissions contain executable
++ * shaders enabling processes to evade their termination by offloading work to
++ * the GPU. So when a process is terminated with a SIGKILL the entity object
++ * makes sure that jobs are freed without running them while still maintaining
++ * correct sequential order for signaling fences.
++ */
++
++/**
++ * DOC: Hardware Fence Object
++ *
++ * The hardware fence object is a DMA-fence provided by the driver as result of
++ * running jobs. Drivers need to make sure that the normal DMA-fence semantics
++ * are followed for this object. It's important to note that the memory for
++ * this object can *not* be allocated in drm_sched_backend_ops.run_job() since
++ * that would violate the requirements for the DMA-fence implementation. The
++ * scheduler maintains a timeout handler which triggers if this fence doesn't
++ * signal within a configurable amount of time.
++ *
++ * The lifetime of this object follows DMA-fence refcounting rules. The
++ * scheduler takes ownership of the reference returned by the driver and
++ * drops it when it's not needed any more.
++ */
++
++/**
++ * DOC: Scheduler Fence Object
++ *
++ * The scheduler fence object (drm_sched_fence) which encapsulates the whole
++ * time from pushing the job into the scheduler until the hardware has finished
++ * processing it. This is internally managed by the scheduler, but drivers can
++ * grab additional reference to it after arming a job. The implementation
++ * provides DMA-fence interfaces for signaling both scheduling of a command
++ * submission as well as finishing of processing.
++ *
++ * The lifetime of this object also follows normal DMA-fence refcounting rules.
++ * The finished fence is the one normally exposed to the outside world, but the
++ * driver can grab references to both the scheduled as well as the finished
++ * fence when needed for pipelining optimizations.
++ */
++
++/**
++ * DOC: Scheduler and Run Queue Objects
++ *
++ * The scheduler object itself (drm_gpu_scheduler) does the actual work of
++ * selecting a job and pushing it to the hardware. Both FIFO and RR selection
++ * algorithm are supported, but FIFO is preferred for many use cases.
++ *
++ * The lifetime of the scheduler is managed by the driver using it. Before
++ * destroying the scheduler the driver must ensure that all hardware processing
++ * involving this scheduler object has finished by calling for example
++ * disable_irq(). It is *not* sufficient to wait for the hardware fence here
++ * since this doesn't guarantee that all callback processing has finished.
++ *
++ * The run queue object (drm_sched_rq) is a container for entities of a certain
++ * priority level. This object is internally managed by the scheduler and
++ * drivers shouldn't touch it directly. The lifetime of a run queue is bound to
++ * the scheduler's lifetime.
+  */
+ 
+ /**
+@@ -72,6 +199,43 @@
+  * limit.
+  */
+ 
++/**
++ * DOC: Error and Timeout handling
++ *
++ * Errors schould be signaled by using dma_fence_set_error() on the hardware
++ * fence object before signaling it. Errors are then bubbled up from the
++ * hardware fence to the scheduler fence.
++ *
++ * The entity allows querying errors on the last run submission using the
++ * drm_sched_entity_error() function which can be used to cancel queued
++ * submissions in drm_sched_backend_ops.run_job()  as well as preventing
++ * pushing further ones into the entity in the driver's submission function.
++ *
++ * When the hardware fence doesn't signal within a configurable amount of time
++ * drm_sched_backend_ops.timedout_job() gets invoked. The driver should then
++ * follow the procedure described in that callback's documentation.
++ * (TODO: The timeout handler should probably switch to using the hardware
++ * fence as parameter instead of the job. Otherwise the handling will always
++ * race between timing out and signaling the fence).
++ *
++ * The scheduler also used to provided functionality for re-submitting jobs
++ * and, thereby, replaced the hardware fence during reset handling. This
++ * functionality is now marked as deprecated. This has proven to be
++ * fundamentally racy and not compatible with DMA-fence rules and shouldn't be
++ * used in new code.
++ *
++ * Additionally, there is the function drm_sched_increase_karma() which tries
++ * to find the entity which submitted a job and increases its 'karma' atomic
++ * variable to prevent resubmitting jobs from this entity. This has quite some
++ * overhead and resubmitting jobs is now marked as deprecated. Thus, using this
++ * function is discouraged.
++ *
++ * Drivers can still recreate the GPU state in case it should be lost during
++ * timeout handling *if* they can guarantee that forward progress will be made
++ * and this doesn't cause another timeout. But this is strongly hardware
++ * specific and out of the scope of the general GPU scheduler.
++ */
++
+ #include <linux/wait.h>
+ #include <linux/sched.h>
+ #include <linux/completion.h>
+diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
+index 9c437a057e5d..c52363453861 100644
+--- a/include/drm/gpu_scheduler.h
++++ b/include/drm/gpu_scheduler.h
+@@ -417,8 +417,8 @@ struct drm_sched_backend_ops {
+ 	struct dma_fence *(*run_job)(struct drm_sched_job *sched_job);
+ 
+ 	/**
+-	 * @timedout_job: Called when a job has taken too long to execute,
+-	 * to trigger GPU recovery.
++	 * @timedout_job: Called when a hardware fence didn't signal within a
++	 * configurable amount of time. Triggers GPU recovery.
+ 	 *
+ 	 * This method is called in a workqueue context.
+ 	 *
+@@ -429,9 +429,8 @@ struct drm_sched_backend_ops {
+ 	 *    scheduler thread and cancel the timeout work, guaranteeing that
+ 	 *    nothing is queued while we reset the hardware queue
+ 	 * 2. Try to gracefully stop non-faulty jobs (optional)
+-	 * 3. Issue a GPU reset (driver-specific)
+-	 * 4. Re-submit jobs using drm_sched_resubmit_jobs()
+-	 * 5. Restart the scheduler using drm_sched_start(). At that point, new
++	 * 3. Issue a GPU or context reset (driver-specific)
++	 * 4. Restart the scheduler using drm_sched_start(). At that point, new
+ 	 *    jobs can be queued, and the scheduler thread is unblocked
+ 	 *
+ 	 * Note that some GPUs have distinct hardware queues but need to reset
+@@ -447,16 +446,15 @@ struct drm_sched_backend_ops {
+ 	 * 2. Try to gracefully stop non-faulty jobs on all queues impacted by
+ 	 *    the reset (optional)
+ 	 * 3. Issue a GPU reset on all faulty queues (driver-specific)
+-	 * 4. Re-submit jobs on all schedulers impacted by the reset using
+-	 *    drm_sched_resubmit_jobs()
+-	 * 5. Restart all schedulers that were stopped in step #1 using
++	 * 4. Restart all schedulers that were stopped in step #1 using
+ 	 *    drm_sched_start()
+ 	 *
+ 	 * Return DRM_GPU_SCHED_STAT_NOMINAL, when all is normal,
+ 	 * and the underlying driver has started or completed recovery.
+ 	 *
+ 	 * Return DRM_GPU_SCHED_STAT_ENODEV, if the device is no longer
+-	 * available, i.e. has been unplugged.
++	 * available, for example if it has been unplugged or failed to
++	 * recover.
+ 	 */
+ 	enum drm_gpu_sched_stat (*timedout_job)(struct drm_sched_job *sched_job);
+ 
+-- 
+2.47.0
 
-If you want to undo deduplication, reply with:
-#syz undup
 
