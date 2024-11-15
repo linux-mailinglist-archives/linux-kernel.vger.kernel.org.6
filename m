@@ -1,137 +1,307 @@
-Return-Path: <linux-kernel+bounces-410569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C1BC9CDD67
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:24:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B126F9CDD6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:25:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E571283990
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:24:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7221D283874
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C4B1B6D01;
-	Fri, 15 Nov 2024 11:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7091B2195;
+	Fri, 15 Nov 2024 11:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b="UBzKEsqC"
-Received: from sonic310-19.consmr.mail.sg3.yahoo.com (sonic310-19.consmr.mail.sg3.yahoo.com [106.10.244.139])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jc6dPKfy"
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2386018C937
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.244.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E5D1B21BC
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731669885; cv=none; b=ImgDw6TvNePTeBMYNvjDuAhfxfHZzD/vuL2pJ3TZT8sQxl1WHSnKiSOgB9GqE/6ZvJaBkKwqtQl1cw3ZTWHhttz4q8YFNelBrr4JhCdns7ie4a8C8m+VTb3b5aLuGS2OIpQZL3PR5CaJmToVHNwh8/eFFIcNe8eo1S6qB01AKh8=
+	t=1731669914; cv=none; b=a1Jiz129Y8trkRvB2JqHwlSx93D2NHmk/xHZ5SfvzFOJGlhlYMBsa8/OfPu/Dl+iYWB0yJfk1Xkts67kF1rXqJkgIcyWH5OUeR2R5R2Go2KbqiLV0Z2OE7zdTWeXUUJ6WGCU0vwBaB11erqd/vg27eKncwUnnO8C7y80QnZr06I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731669885; c=relaxed/simple;
-	bh=t0Fl5hfSyZNiuPBvDejZLRu40BusxN7bDAG45nb+WZg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=L4PgYlosbs2k3VpebWEzMF/HJGDN+jzZj26z04ehV529ZB432BQjvy9Sm9xs0FIBLh8bYrEtKU42sAzFME/QkyZiunb+8Rhdhz4NUKKKFWqXEOaD7C/0QEQQqHQBWT+r7Qjh8kG19S+k8KvfaotquPVhfz9prGyt5awFED01DbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com; spf=pass smtp.mailfrom=myyahoo.com; dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b=UBzKEsqC; arc=none smtp.client-ip=106.10.244.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=myyahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=myyahoo.com; s=s2048; t=1731669875; bh=slYMq2Zmby0491A1PE7H8ao60Az9AMutaRCL53H62hw=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=UBzKEsqC6jRZgIPLCoQVeFPWXtHsgRSieURYcZ5Ap8oWLFpHXoiiFg1k+ufRAVqTVIRaz49LRLRLiXPqahoLgpo9PqYl1eJVRkVBS2rcTuvlXIOFR7jhX6y7Jk9VggnW8K2x6wHDVCvNQYDMNqBi4gseCBIOQ1uLG/5IdYS98ODQbshproUyxq7yM0mR5XVIkj9wPc+WzP7T6qKIH7W0YKz+Wtgjho8WL2ElE+SRjmE4NTa7pzcp6h5f/Dyx7SKBl+Y/HF7xuKJ99EWhZr2n90PvSWYpgvwcFKZOBRvmTsqNu5luKUEoZMhDY6mTJDYvKSoxenfUsJxn7OOX47Widw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731669875; bh=zNitpFp8uUxC1vF8jUB/vl1kv8bRHd2Yq1qQ3KoSzwO=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=nh03Wytec4Rp9xXsV5r0Alh40FTZhZp0/YBxUYFvVktvXC8DaURlwd3DGTj79o06fIRz7U4XM0nRaunxLfariFar+60nVBI5Tr+YaxTaYnaUJWx4YgUENeYbFkeaMGph/aFl2M8VVqzmSmXeeipVnNXRtv8N9QJYDq4XXYHffx6ubCjWghOC+ia9tZoU/IhSt8s54YMpuJO9iuzt2+o+VTp9stOLf+JRcidULG6BTukH7qUtpYtjug+WcBaPqug51OUlJbhVwbTPWfMQj5T7tJ7CAne0A+QqEtR8A+mNYD7gL2eBs6OxxnwOoVDei68pUuNne1uLyxruCxqNDm9hcg==
-X-YMail-OSG: hejv99EVM1lSPqrykHDhFKDGiuwUHabCln9Os.wApfMRQv8U93ubwdvVb23Bhig
- uskkdF6Ojqrt3SLrYydimWZJSN0QttvFqc_UQIgCvpRCW4wi3wgtbPDyZDpk5.oYlU2YzRlnTsMn
- oh3xX_h8QbNgO5qOQxHsP3CHFJZmWnW0pnOQAMWeHjkUuGiwYlDJGm_.1yagr4eLDNrUuMHrRpLE
- PXqnrnfjtZvC0IZYMjlNWp82qedU.8frG0QDM.1LVzx8QxWrCHFl8BuMrMm8Td5JXp8X8QxRrBIj
- zLnlvLw.tAhI65gu8Qp5i1bjh8M2uckecZOPYIc3ikyJ7yWSOg6kPIAVgST5aJ9uQI1YtlbIWO5t
- Rwkbs07JML6WYT1N3ilZ6edEXwY.c7TKjZpKAscYgdm4HDXygEZC2BFXG2F9QFljE2iVY1MLfNyZ
- Mmryk2d9jH5bHEJkMc62ITEm9BxTL7bcQlRtJzviaKLoUGlEFhAF3l2PHGS78yolQkc5M8zGELzD
- G46gDdh9hCzAXYnzkErpTd4zNhnaOsFQk6vQpbF_KCUh2AWtUqCV9CySmwDjiVAeKWTy08Lk_1lU
- SGX_rt67jHk2M2AaGzUNAKq3G8dZyiBc.YkoaC82JBySy0UcsNpVpafQ4lEyIvA7yRzwoBYgucLA
- 9aaCeyZYla4JqKdtuQovcEZSwDTDt0hJEVnk7s7UdI.y_JLlyGzUtTvLPTgPazfm.i3LcuFAEj9V
- IV6HvSXoiBTkjOtxLNlBBsSYZth4zpi5siwcdvIrCXH.fht1XRWY.WsNlTLYEH16_dsvVW6ctIM4
- w4B1vAmPR0o9PN.ZV2FZrJ.DPwgfJC1dGIb0q8Q2W0zZbA1yoCujO194x9SLIK0i_L7MicdYhd8h
- UMYni2vsbjzfKKhTL_4xoqGuM_G3un8JmUqmTbL0YmCbyn6lkISLfgrtLhJnB2W0Oq2Rj2NRp4bA
- aw1a4AczTnm8hjxe26FcS0..bCN0hPliAw9Py6a5fThyy_mQXnbTaJQThsf6fe2nHpHlcPIMFeet
- O.9DquiupoOs7h0AX142kIZE6FGAesocLp3f4uYbRbh6V1akxb1tCz5FMwSbsjYhxO3g_rRwVVnF
- dGUiVnYWvmnkpN_OwKKyf_dWtcsXBbBdgeN6QilVGSjS1YFytV2Zv1rM190HeQUlu1L.VFLGewlI
- PRXqUiud5hwGQvAlmeRoVXNqkwVcUYd2y8OWfriwGOgtM3GImWgGTJHUJY4KXYnWC8zSdHQqMhX6
- akCEX_lB0nEeXhpv3uvN.D7iz9fWjlmiFh8V44ju_WD.FHiwhT3_3McjT8VATMvo5DW26nrqVjM_
- .mtSzPcaBAmN0b3qqwSf2lY4jDIXDAkM_MMmXxHIRfnDS..9FjLPbf1UEiuK3hmyxPHnuy3RRaTm
- kNq5nX4vMD1nUKNLD4B3QZuHjVX5Hnt97HJf3F9s0dB9fr4NB5TfRDRGL.3XERxkv6moDEyyuEil
- Ui5FIIX8GsD_MGXZm2vgifB7MpHu0F2f2KwMI8vOw0vAvtzdr.FYDrHdswa4TB25wpDZRGI5Id0g
- DFKrCW1e4g11IUXtgZJ8LLwMVqHukhT9gSl8r7OE6IH5gqEF94tzU3SuBJMQXvQCPXOjFGqDR4vC
- _7FC7M1OsLB_rPS2kYTgWomqYACb5aCCgMrUYxN1Gn7Xkg9PUSukehce9NpcdbW7Z42MhplKrVA3
- gHl34AaatAv24DhID.k3Ue0WplXtr7tXTgoqwPdtfl4O.tDNpUpGV14C234zAwCUZos2WaQAtkuo
- M5feo8gA71yLLovXvFoMC4zaJPN7Bbz3op8E7gHkMpeyVlLnVdVLw1NIiNW9uMVE_eCxDWTf1IID
- ZxqjV.mX9pq.UN7E7c3e5e11lbiiffmYQcNt_R4k8An1UBAbzjbYKzIWPk68gHOdj9O8I5vWdMdf
- ytk12atGm8Jq1qUrOETt.yhgLauvCpcGqCg6UYTqDVqPywyXeMVHZHtUihUC0eW.BW8U38P.1_FX
- tvLTFhwCY.RYgXH3MjydGBZ2jJK_Alp8jogHwUsH1lDfB4xzpFrcFGghVNIHmvvBrMBy1k_Olyoj
- 5UaulKe377KFuxw54_RqOlNyjXHSnh72cqumhI735rbvmF9qwxxNBuS1j306T7kEAuo9i.3lb1xH
- Y1V3lfKs2dGad4eOQ3ueNMMrE4GygJWcEIA8D5L43k07KrO1U6.hSuEqkopI5WcWCHGitKCb00Ak
- .vQ60DEx4kXx0U74s_KTL.tdvv47l4YHdK60HP9N6rRUU4O5qt_eZxw--
-X-Sonic-MF: <abdul.rahim@myyahoo.com>
-X-Sonic-ID: 87d31a78-8c80-4d80-bee8-a391d60809c3
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.sg3.yahoo.com with HTTP; Fri, 15 Nov 2024 11:24:35 +0000
-Received: by hermes--production-sg3-5b7954b588-2czcw (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 30b2b63ae3584f58ae1ae168a243895b;
-          Fri, 15 Nov 2024 11:24:33 +0000 (UTC)
-From: Abdul Rahim <abdul.rahim@myyahoo.com>
-To: xiubli@redhat.com,
-	idryomov@gmail.com
-Cc: ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abdul Rahim <abdul.rahim@myyahoo.com>
-Subject: [PATCH v2] ceph: Use strscpy() instead of strcpy()
-Date: Fri, 15 Nov 2024 16:54:19 +0530
-Message-ID: <20241115112419.11137-1-abdul.rahim@myyahoo.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1731669914; c=relaxed/simple;
+	bh=FCKY1eD04I5Z3uVFWPqntsNBMF1+X8iJFFBU/nIcbio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HQFsfgnrURoLsAkib0YMzNNGbIJNBcrVo4rQ22Jea8tSnj8pq7W3rCJTPAXRKVVTqvFfIjoJKYbr2Scn1FxBdhqH9WnlsLwHGXFhmdOAJI1mR2NEDs5GNZ1+rgKbfru4DXhbRXBZHvgnjWldsI/bYFbT/ze/HtTtCRI/xTKnBeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jc6dPKfy; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3e7bb53fdb1so681737b6e.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 03:25:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731669912; x=1732274712; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=t0ID6LGyvQNAjf20EM8AU6orAPT1m416dbiwXz3DRXI=;
+        b=Jc6dPKfy4IFHXYd0JSOBWh2UQ11FDgmaH5VwgDdxc9LB53S0k3gjnRIYl9x/BCqX5c
+         VEQzbTOEpGQftkGsex/NdGrOruYGTDqGBIs2rdQtX5SSi441W4xXV46cQh6+aCf7h0z4
+         U8gRddA4p+b7s+n23e3hA6GWh68gfCXWGH05SdQGdj/hX6JlQJBZar2YAHyM58dyV8Ps
+         vHNAOK6bYuVsg80ekYxogdyAOBXJqebALwIqjMmshLTVm9jflAhvy7f6tQF4aPwHjQUZ
+         xLsmfVysQ6FGyTfSlg90Gm0Fd1XbxX/8HF8SCwweiVMLp9azxYCWVRQeGFTu0UdmOY9B
+         rapw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731669912; x=1732274712;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=t0ID6LGyvQNAjf20EM8AU6orAPT1m416dbiwXz3DRXI=;
+        b=iZHDgL0Wv5V15NscXNZ1l568rtXNV8j1RfC/59YfDZIKQFPf2le2/97Yiqfl8z3YTm
+         1CSdW0MmBEEVw7MvYe6w9pFiwzhIJ16C0C1+rjlScDGc0D+Giu2wOBg8FfDGNMCfjxZG
+         6/qto3vSbY/iNTCl4sQS2klY0PcopsyU9A5VbF8qyUrkY/YGFreVJ7B5rgQMy9YIITZg
+         qkRbgBKKG8O2CAe8izKcpeg790vgqhcpe549IToLg4Hqrr1AuipuxVUFwWwJnNHKDYKw
+         y4x1KQCMywwXxCjoAL8yFLK7iKjPpIxCkkFQEMPcG+Fq7XwlzYIQxiDtrdbKPYD/Xdj4
+         2E8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVVcboEouAeH6tU29o7D3D/eXJ7qgNLf4ibVlPtALzfMWuXvA9O3/RuGqZ0oO96nibsW/ZCuLbnK0jP52g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSQK5XtlKAFzM4ktJK/oXeZF4DiO9qCh/o+Vny0x/lWqRAma5j
+	nW02JyRTIcNpGJlpz5szKNw/B+934GsfE8enUP01BJsBU+UXB0KSww74paHBFA==
+X-Google-Smtp-Source: AGHT+IFpZg539it1BfGL4KI3yO9IXU1yUG5k4Sss5OebPIZ+F3teAQBNcSqyZsp7sjkXoLsd1CMR1A==
+X-Received: by 2002:a05:6808:320d:b0:3e6:3205:1a71 with SMTP id 5614622812f47-3e7bc7bb0a0mr2480605b6e.15.1731669912170;
+        Fri, 15 Nov 2024 03:25:12 -0800 (PST)
+Received: from thinkpad ([117.193.208.47])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1c15227sm921010a12.13.2024.11.15.03.25.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 03:25:11 -0800 (PST)
+Date: Fri, 15 Nov 2024 16:55:04 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Mayank Rana <quic_mrana@quicinc.com>
+Cc: jingoohan1@gmail.com, will@kernel.org, lpieralisi@kernel.org,
+	kw@linux.com, robh@kernel.org, bhelgaas@google.com, krzk@kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, quic_krichai@quicinc.com
+Subject: Re: [PATCH v3 4/4] PCI: qcom: Add Qualcomm SA8255p based PCIe root
+ complex functionality
+Message-ID: <20241115112504.anaatuqitdvjubyx@thinkpad>
+References: <20241106221341.2218416-1-quic_mrana@quicinc.com>
+ <20241106221341.2218416-5-quic_mrana@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-References: <20241115112419.11137-1-abdul.rahim.ref@myyahoo.com>
+In-Reply-To: <20241106221341.2218416-5-quic_mrana@quicinc.com>
 
-strcpy() performs no bounds checking on the destination buffer. This
-could result in linear overflows beyond the end of the buffer, leading
-to all kinds of misbehaviors. [1]
+On Wed, Nov 06, 2024 at 02:13:41PM -0800, Mayank Rana wrote:
+> On SA8255p ride platform, PCIe root complex is firmware managed as well
+> configured into ECAM compliant mode. This change adds functionality to
+> enable resource management (system resource as well PCIe controller and
+> PHY configuration) through firmware, and enumerating ECAM compliant root
+> complex.
+> 
+> Signed-off-by: Mayank Rana <quic_mrana@quicinc.com>
+> ---
+>  drivers/pci/controller/dwc/Kconfig     |   1 +
+>  drivers/pci/controller/dwc/pcie-qcom.c | 116 +++++++++++++++++++++++--
+>  2 files changed, 108 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+> index b6d6778b0698..0fe76bd39d69 100644
+> --- a/drivers/pci/controller/dwc/Kconfig
+> +++ b/drivers/pci/controller/dwc/Kconfig
+> @@ -275,6 +275,7 @@ config PCIE_QCOM
+>  	select PCIE_DW_HOST
+>  	select CRC8
+>  	select PCIE_QCOM_COMMON
+> +	select PCI_HOST_COMMON
+>  	help
+>  	  Say Y here to enable PCIe controller support on Qualcomm SoCs. The
+>  	  PCIe controller uses the DesignWare core plus Qualcomm-specific
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index ef44a82be058..2cb74f902baf 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -21,7 +21,9 @@
+>  #include <linux/limits.h>
+>  #include <linux/init.h>
+>  #include <linux/of.h>
+> +#include <linux/of_pci.h>
+>  #include <linux/pci.h>
+> +#include <linux/pci-ecam.h>
+>  #include <linux/pm_opp.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/platform_device.h>
+> @@ -254,10 +256,12 @@ struct qcom_pcie_ops {
+>    * @ops: qcom PCIe ops structure
+>    * @override_no_snoop: Override NO_SNOOP attribute in TLP to enable cache
+>    * snooping
+> +  * @firmware_managed: Set if PCIe root complex is firmware managed
 
-this fixes checkpatch warning:
-    WARNING: Prefer strscpy over strcpy
+ecam_compliant?
 
-[1] : https://www.kernel.org/doc/html/latest/process/deprecated.html#strcpy
-Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
----
-Changes since v1:
-- Added third parameter in strscpy()
-- Added comment to explain where the limit `NAME_MAX+1` is comming from
-  as suggested by Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>    */
+>  struct qcom_pcie_cfg {
+>  	const struct qcom_pcie_ops *ops;
+>  	bool override_no_snoop;
+> +	bool firmware_managed;
+>  	bool no_l0s;
+>  };
+>  
+> @@ -1415,6 +1419,10 @@ static const struct qcom_pcie_cfg cfg_sc8280xp = {
+>  	.no_l0s = true,
+>  };
+>  
+> +static const struct qcom_pcie_cfg cfg_fw_managed = {
 
-Link to v1: https://lore.kernel.org/lkml/20241111221037.92853-1-abdul.rahim@myyahoo.com/
+cfg_ecam?
 
-The function __get_snap_name() is assigned to .get_name() from 
-struct export_operations, when `ceph_snap(inode) != CEPH_NOSNAP`.
-`struct export_operations` is comming from `include/linux/exportfs.h`,
-and according to [1], the operation get_name assumes that the variable
-`name` is pointing to a buffer of size NAME_MAX+1
+> +	.firmware_managed = true,
+> +};
+> +
+>  static const struct dw_pcie_ops dw_pcie_ops = {
+>  	.link_up = qcom_pcie_link_up,
+>  	.start_link = qcom_pcie_start_link,
+> @@ -1566,6 +1574,51 @@ static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> +static void qcom_pci_free_msi(void *ptr)
+> +{
+> +	struct dw_pcie_rp *pp = (struct dw_pcie_rp *)ptr;
+> +
+> +	if (pp && pp->has_msi_ctrl)
+> +		dw_pcie_free_msi(pp);
+> +}
+> +
+> +static int qcom_pcie_ecam_host_init(struct pci_config_window *cfg)
+> +{
+> +	struct device *dev = cfg->parent;
+> +	struct dw_pcie_rp *pp;
+> +	struct dw_pcie *pci;
+> +	int ret;
+> +
+> +	pci = devm_kzalloc(dev, sizeof(*pci), GFP_KERNEL);
+> +	if (!pci)
+> +		return -ENOMEM;
+> +
+> +	pci->dev = dev;
+> +	pp = &pci->pp;
+> +	pci->dbi_base = cfg->win;
+> +	pp->num_vectors = MSI_DEF_NUM_VECTORS;
+> +
+> +	ret = dw_pcie_msi_host_init(pp);
+> +	if (ret)
+> +		return ret;
+> +
+> +	pp->has_msi_ctrl = true;
+> +	dw_pcie_msi_init(pp);
+> +
+> +	ret = devm_add_action_or_reset(dev, qcom_pci_free_msi, pp);
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/exportfs.h?h=v6.12-rc7#n203
+return devm_add_action_or_reset()...
 
- fs/ceph/export.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+> +	return ret;
+> +}
+> +
+> +/* ECAM ops */
+> +const struct pci_ecam_ops pci_qcom_ecam_ops = {
+> +	.init		= qcom_pcie_ecam_host_init,
+> +	.pci_ops	= {
+> +		.map_bus	= pci_ecam_map_bus,
+> +		.read		= pci_generic_config_read,
+> +		.write		= pci_generic_config_write,
+> +	}
+> +};
+> +
+>  static int qcom_pcie_probe(struct platform_device *pdev)
+>  {
+>  	const struct qcom_pcie_cfg *pcie_cfg;
+> @@ -1580,11 +1633,52 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>  	char *name;
+>  
+>  	pcie_cfg = of_device_get_match_data(dev);
+> -	if (!pcie_cfg || !pcie_cfg->ops) {
+> -		dev_err(dev, "Invalid platform data\n");
+> +	if (!pcie_cfg) {
+> +		dev_err(dev, "No platform data\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (!pcie_cfg->firmware_managed && !pcie_cfg->ops) {
+> +		dev_err(dev, "No platform ops\n");
+>  		return -EINVAL;
+>  	}
+>  
+> +	pm_runtime_enable(dev);
+> +	ret = pm_runtime_get_sync(dev);
+> +	if (ret < 0)
+> +		goto err_pm_runtime_put;
+> +
+> +	if (pcie_cfg->firmware_managed) {
+> +		struct pci_host_bridge *bridge;
+> +		struct pci_config_window *cfg;
+> +
+> +		bridge = devm_pci_alloc_host_bridge(dev, 0);
+> +		if (!bridge) {
+> +			ret = -ENOMEM;
+> +			goto err_pm_runtime_put;
+> +		}
+> +
+> +		of_pci_check_probe_only();
 
-diff --git a/fs/ceph/export.c b/fs/ceph/export.c
-index 44451749c544..96421f2b6cec 100644
---- a/fs/ceph/export.c
-+++ b/fs/ceph/export.c
-@@ -452,7 +452,11 @@ static int __get_snap_name(struct dentry *parent, char *name,
- 		goto out;
- 	if (ceph_snap(inode) == CEPH_SNAPDIR) {
- 		if (ceph_snap(dir) == CEPH_NOSNAP) {
--			strcpy(name, fsc->mount_options->snapdir_name);
-+			/* .get_name() from struct export_operations assumes
-+			 * that its 'name' parameter is pointing to a 
-+			 * NAME_MAX+1 sized buffer */
-+			strscpy(name, fsc->mount_options->snapdir_name,
-+					NAME_MAX+1);
- 			err = 0;
- 		}
- 		goto out;
+You haven't defined the "linux,pci-probe-only" property in DT. So if everything
+works fine, then you can leave this call.
+
+> +		/* Parse and map our Configuration Space windows */
+> +		cfg = gen_pci_init(dev, bridge, &pci_qcom_ecam_ops);
+> +		if (IS_ERR(cfg)) {
+> +			ret = PTR_ERR(cfg);
+> +			goto err_pm_runtime_put;
+> +		}
+> +
+> +		bridge->sysdata = cfg;
+> +		bridge->ops = (struct pci_ops *)&pci_qcom_ecam_ops.pci_ops;
+> +		bridge->msi_domain = true;
+> +
+> +		ret = pci_host_probe(bridge);
+
+return pci_host_probe()...
+
+> +		if (ret) {
+> +			dev_err(dev, "pci_host_probe() failed:%d\n", ret);
+> +			goto err_pm_runtime_put;
+> +		}
+> +
+> +		return ret;
+> +	}
+> +
+>  	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
+>  	if (!pcie)
+>  		return -ENOMEM;
+> @@ -1593,11 +1687,6 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>  	if (!pci)
+>  		return -ENOMEM;
+>  
+> -	pm_runtime_enable(dev);
+> -	ret = pm_runtime_get_sync(dev);
+> -	if (ret < 0)
+> -		goto err_pm_runtime_put;
+> -
+>  	pci->dev = dev;
+>  	pci->ops = &dw_pcie_ops;
+>  	pp = &pci->pp;
+> @@ -1739,9 +1828,13 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>  
+>  static int qcom_pcie_suspend_noirq(struct device *dev)
+>  {
+> -	struct qcom_pcie *pcie = dev_get_drvdata(dev);
+> +	struct qcom_pcie *pcie;
+>  	int ret = 0;
+>  
+> +	if (of_device_is_compatible(dev->of_node, "qcom,pcie-sa8255p"))
+> +		return 0;
+
+How about bailing out if dev_get_drvdata() returns NULL?
+
+- Mani
+
 -- 
-2.43.0
-
+மணிவண்ணன் சதாசிவம்
 
