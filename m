@@ -1,158 +1,153 @@
-Return-Path: <linux-kernel+bounces-410622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70B939CDE29
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:19:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D63B89CDE2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:20:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCD63B21657
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:19:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38F6AB239FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1EFD1BA89C;
-	Fri, 15 Nov 2024 12:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CDF1BBBEB;
+	Fri, 15 Nov 2024 12:20:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hgp2erme"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tEGYwmg4"
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D647D3F4;
-	Fri, 15 Nov 2024 12:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95BE81B9831
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 12:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731673160; cv=none; b=cvowa4Lo9/Z2KaqyDHwqQrq8VpGNXx7dQ1y3e5TFC9TCyeDlUM+1dh7y4F0/g3YisQLXxS7aLr3T7HTf9yovyIh1LlUjb344I9VsbIQ8KYnqKwGguT5tUD3M3QOGDf9ExG878FRytD1FYr30F1LXRKp/dnU2kDrlxnMVn6p8Ohg=
+	t=1731673201; cv=none; b=CtCwcZqowMgfeIR/e3STKcicbLISyqZwKZfIlzyFU/xMdo69u2mLOkPc8BXcWoIGR4GWazhNmXRIvZ8jYcJ5WGShklEbqNuKOFymLu29+VLMwOPumT3J79HGWoksuUYztlDSxV94lkcTuE7+NY2z9se9IY5ERdydEG3spyU99uY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731673160; c=relaxed/simple;
-	bh=xYQ9TNp9p5kYBx3sWMGmhMUu5MqStfTQnH3N5bBDZJc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hZ177MoeI3ROUYB0NATMj2oWtR/M+XRHFfyfFeM/v1LbcG8am0LNQOe27MuvoRQjIiS0JJUpgiQ/gDwAptLi4QIYuIMLzRH+8oomJqdRoCcjwJHTit/KPeodSk0lvNVFNUorbDtJANxIYERn9/vWfCAiGu4DxxhHSuSN/wLCBmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hgp2erme; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D463EC4CECF;
-	Fri, 15 Nov 2024 12:19:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731673159;
-	bh=xYQ9TNp9p5kYBx3sWMGmhMUu5MqStfTQnH3N5bBDZJc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hgp2ermerQoEtA7rDHw8fmjZvMztpbM6wzYhbqM2dYdaYgpB3s7A2zNC5RUoQUExz
-	 EWON/IPsj0QzBO0ybOKrRxgw7bgnE5FrwLJ969oQFLtmAiCWTyxblXbsnBgnXBEwDD
-	 KV2XdzQ0Mjfo0DisVOxFYLAVidMOxlVPpJX9P/ruVUaefgrxnm9bWc9WVUSZEPWOzW
-	 tFZQbG9M083rPlm8lnCUzkoa7tXVuqzvA3MyGheGxFQMxbtpGKjBniaL659U2akiQC
-	 kxwl+CVy45uP7aIZUqT+wynK25ye9nFWmWqai+3yguXZzNZf9g9PGuYzBMzCkWnYwK
-	 OAyU/ogCBDf7w==
-Date: Fri, 15 Nov 2024 12:19:14 +0000
-From: Simon Horman <horms@kernel.org>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Herve Codina <herve.codina@bootlin.com>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH net-next v2 01/10] net: freescale: ucc_geth: Drop support
- for the "interface" DT property
-Message-ID: <20241115121914.GL1062410@kernel.org>
-References: <20241114153603.307872-1-maxime.chevallier@bootlin.com>
- <20241114153603.307872-2-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1731673201; c=relaxed/simple;
+	bh=uN2T0hKnqxB4NWs/1gfOc+22eYGA6JVtajykVUMCbdg=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=knipcIA5Vs/PqmWcRDO2ZiI+RPEZIZa0LW8Cur5oqnuOVOt3N4l+/HwjC8oZ1hwUB9EnCQwYaPlnTFuUwmEp/MV8zkggyAjWWO2QFuepfo90D7CVEmJXsPVnhQ2DQw02oBiZ2kQiqboWT04GGEQ3TsIu6GVqtJabXFlrEcthMxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tEGYwmg4; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-513de4267d8so811635e0c.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 04:19:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731673198; x=1732277998; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BrmgfHiQVdWt3bBrDk5codO30Y6e5vUnxjycTHd1oVY=;
+        b=tEGYwmg4UHx3ee7x6NnAzdwbzGfryFf3nvlZHnmN4lHWivtpsvFlI32fckJaDZ6nq3
+         zV8C1PFrBIj6sR93oER3ZXQ4plNwA0sHY+Fc2zpa5IGDIFvZdwpm0ED5tp2rwuY97XdM
+         xEsG17zUlmZmc8uMMGjYn0GrkhVZURsT33MYA8iRhGlMkVv3FU1wx2nETL8gkGJcH0cB
+         lFZC/0F2JZqmMng3dJQppN1Xc1e0d0n5LCRqEMxRl88kSz+tTkVrlE4ugxpyOZnGYs3N
+         sVuknhbgacpMKzgVGDFJ3WRnkIZ9glN5DC+TivDfgGuMyEAv5P2PXfY7cQvPaGxAsXUB
+         yFcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731673198; x=1732277998;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BrmgfHiQVdWt3bBrDk5codO30Y6e5vUnxjycTHd1oVY=;
+        b=E9ADOkISqUejRdR0W0SZtxu7wNcB47TYuGzDHe0rSpNoXToXHSpyXrY7WpKp5UIs7X
+         RHXIgn25f7CYB25WZnAXr/ipGoKd5GjRdPW3DkpOQ0R9TgHxZon7O3D2ybTZ/eg0LLA/
+         C5AQi+d/Uq7aTpLjZn57R01u7vjapNi8yHii1sG1lWgg1EdIafOj9nj3LL5ITtCVQuOb
+         n+VtW2VDyx14xo0qJZ0USP2+RpF7a+MuPW86OeUTN7mYQCkE5oKL2znY1hu70dUktfYW
+         9ozpkv3DXplhFmxHsr7HUCkHVd/fROLNQH45qCY1Y8iHupvyLBUvTUE7SI0498lcSNHz
+         sRoQ==
+X-Gm-Message-State: AOJu0YyBjiK9bZM/F2jm4maJ+deA/WVXiI5ub+YObMRB6Vl0b/N236Tv
+	kIUIOl1gnn0Hm9JkvAu7xog38YPzjPn4PjoqaIocnyiV182TpvxgkF287ZikmffVSPLc7CoWzzL
+	be/8GNxbVGXzMCFvF+CExyvtno3cwqixnJm8UIo4/9BinwkaCet0=
+X-Google-Smtp-Source: AGHT+IHDI7wr6k8bNzIN8dP+INAqSB/KifXxi0/sCOrtTa5mU7qUxRv4jWPQh+5k7/tidliCeLz9YCf87oIZixyf+pI=
+X-Received: by 2002:a05:6122:3c4d:b0:4f5:199b:2a61 with SMTP id
+ 71dfb90a1353d-51477f99aa8mr2714614e0c.9.1731673197759; Fri, 15 Nov 2024
+ 04:19:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241114153603.307872-2-maxime.chevallier@bootlin.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 15 Nov 2024 17:49:45 +0530
+Message-ID: <CA+G9fYtPQ=L8g5i=3vzBOW4dPSPYviKGR0xP-gR=2Ta_FZFBPQ@mail.gmail.com>
+Subject: Tinyconfig: include/linux/blkdev.h:1692:17: error: field has
+ incomplete type 'struct rq_list'
+To: open list <linux-kernel@vger.kernel.org>, linux-block <linux-block@vger.kernel.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, 
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 14, 2024 at 04:35:52PM +0100, Maxime Chevallier wrote:
-> In april 2007, ucc_geth was converted to phylib with :
-> 
-> commit 728de4c927a3 ("ucc_geth: migrate ucc_geth to phylib").
-> 
-> In that commit, the device-tree property "interface", that could be used to
-> retrieve the PHY interface mode was deprecated.
-> 
-> DTS files that still used that property were converted along the way, in
-> the following commit, also dating from april 2007 :
-> 
-> commit 0fd8c47cccb1 ("[POWERPC] Replace undocumented interface properties in dts files")
-> 
-> 17 years later, there's no users of that property left and I hope it's
-> safe to say we can remove support from that in the ucc_geth driver,
-> making the probe() function a bit simpler.
-> 
-> Should there be any users that have a DT that was generated when 2.6.21 was
-> cutting-edge, print an error message with hints on how to convert the
-> devicetree if the 'interface' property is found.
-> 
-> With that property gone, we can greatly simplify the parsing of the
-> phy-interface-mode from the devicetree by using of_get_phy_mode(),
-> allowing the removal of the open-coded parsing in the driver.
-> 
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> ---
-> V2: No changes
-> 
->  drivers/net/ethernet/freescale/ucc_geth.c | 63 +++++------------------
->  1 file changed, 12 insertions(+), 51 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/freescale/ucc_geth.c b/drivers/net/ethernet/freescale/ucc_geth.c
+The tinyconfig builds failed with clang-19 and gcc-13 on the Linux
+next-20241114 tag
+for the listed architectures,
+ - arm
+ - arm64
+ - i386
+ - powerpc
+ - riscv
+ - s390
+ - x86_64
 
-...
+First seen on Linux next-20241114 tag.
+  Good: next-20241113
+  Bad:  next-20241114
 
-> @@ -3627,18 +3588,17 @@ static int ucc_geth_probe(struct platform_device* ofdev)
->  	/* Find the TBI PHY node.  If it's not there, we don't support SGMII */
->  	ug_info->tbi_node = of_parse_phandle(np, "tbi-handle", 0);
->  
-> -	/* get the phy interface type, or default to MII */
-> -	prop = of_get_property(np, "phy-connection-type", NULL);
-> -	if (!prop) {
-> -		/* handle interface property present in old trees */
-> -		prop = of_get_property(ug_info->phy_node, "interface", NULL);
-> -		if (prop != NULL) {
-> -			phy_interface = enet_to_phy_interface[*prop];
-> -			max_speed = enet_to_speed[*prop];
-> -		} else
-> -			phy_interface = PHY_INTERFACE_MODE_MII;
-> -	} else {
-> -		phy_interface = to_phy_interface((const char *)prop);
-> +	prop = of_get_property(ug_info->phy_node, "interface", NULL);
-> +	if (prop) {
-> +		dev_err(&ofdev->dev,
-> +			"Device-tree property 'interface' is no longer supported. Please use 'phy-connection-type' instead.");
-> +		goto err_put_tbi;
+build:
+  * gcc-13-tinyconfig
+  * clang-19-tinyconfig
+  * clang-nightly-tinyconfig
 
-Hi Maxime,
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-This goto will result in err being returned by this function.
-But here err is 0. Should it be set to an error value instead?
+Build log:
+---------
+In file included from init/main.c:85:
+include/linux/blkdev.h:1692:17: error: field has incomplete type
+'struct rq_list'
+ 1692 |         struct rq_list req_list;
+      |                        ^
+include/linux/blkdev.h:1692:9: note: forward declaration of 'struct rq_list'
+ 1692 |         struct rq_list req_list;
+      |                ^
+1 error generated.
+make[4]: *** [scripts/Makefile.build:229: init/main.o] Error 1
+In file included from kernel/sched/core.c:41:
+include/linux/blkdev.h:1692:17: error: field has incomplete type
+'struct rq_list'
+ 1692 |         struct rq_list req_list;
+      |                        ^
+include/linux/blkdev.h:1692:9: note: forward declaration of 'struct rq_list'
+ 1692 |         struct rq_list req_list;
+      |                ^
+1 error generated.
+make[5]: *** [scripts/Makefile.build:229: kernel/sched/core.o] Error 1
 
-Flagged by Smatch.
 
-> +	}
-> +
-> +	err = of_get_phy_mode(np, &phy_interface);
-> +	if (err) {
-> +		dev_err(&ofdev->dev, "Invalid phy-connection-type");
-> +		goto err_put_tbi;
->  	}
->  
->  	/* get speed, or derive from PHY interface */
-> @@ -3746,6 +3706,7 @@ static int ucc_geth_probe(struct platform_device* ofdev)
->  err_deregister_fixed_link:
->  	if (of_phy_is_fixed_link(np))
->  		of_phy_deregister_fixed_link(np);
-> +err_put_tbi:
->  	of_node_put(ug_info->tbi_node);
->  	of_node_put(ug_info->phy_node);
->  	return err;
-> -- 
-> 2.47.0
-> 
-> 
+Build image:
+-----------
+- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241115/testrun/25823523/suite/build/test/clang-19-tinyconfig/log
+- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241115/testrun/25823523/suite/build/test/clang-19-tinyconfig/details/
+- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241114/testrun/25810736/suite/build/test/gcc-13-tinyconfig/details/
+- https://storage.tuxsuite.com/public/linaro/lkft/builds/2osJibjMRLtDUebXPN6WOC65CLb/
+
+Steps to reproduce:
+------------
+- # tuxmake --runtime podman --target-arch arm64 --toolchain clang-19
+--kconfig tinyconfig LLVM=1 LLVM_IAS=1
+
+metadata:
+----
+  git describe: next-20241114
+  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+  git sha: 37c5695cb37a20403947062be8cb7e00f6bed353
+  kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2osJibjMRLtDUebXPN6WOC65CLb/config
+  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2osJibjMRLtDUebXPN6WOC65CLb/
+  toolchain: clang-19 and gcc-13
+  config: tinyconfig
+  arch: arm, arm64, i386, powerpc, riscv, s390, x86_64
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
