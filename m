@@ -1,182 +1,118 @@
-Return-Path: <linux-kernel+bounces-411469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 731289CFB04
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:19:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ACD59CFA5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:51:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14DE3B2CEF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:50:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 022552862F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB371922DC;
-	Fri, 15 Nov 2024 22:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E641922D4;
+	Fri, 15 Nov 2024 22:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Xz6Mt27D"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PCFkBbW4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F61917BB32;
-	Fri, 15 Nov 2024 22:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0283014F9D9;
+	Fri, 15 Nov 2024 22:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731711009; cv=none; b=J2x7XW+IEpNoUe8rH9uJfiYJOvpWMU9Pk64KM/PC6jEW9b5cIVibKENes8c6Te9O41NaUsVEziFOzyQmEpObdhlSJP2FLFX/9qOxE5dfkjySOwLX3Z1SnTI34eK7mcMmSu9Qic7TGjUQxcPT/HhRe0ruF8CRmfjTldNeuQu0xSg=
+	t=1731711076; cv=none; b=dJQTwY8wj9sBvF2PoC0Yze5eMY/wlMFElkyeLYKL0+549Oj/BKLgMvbf979LSxZ6w2Ajken3m/3CM5pACuL9DhQHHkTjureBSBFSHu0p0zubyeG5fmAf96Cqz2sqF+IT9Biqu8IO4XnPeJ10KXLAfYGFkSUWsQ5Yi6SuK8oS5zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731711009; c=relaxed/simple;
-	bh=EPBhO/3fFFDG34vKMqFcFU48rUpYA4EvoMsttgim34w=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g17fE3pT9urTGkQuQl0jEcPBMTrJw8iXn5hPemBd7vgMcmDZIueBcH2n6dSJrlozi5P0DKMupoAC4eiuhJRVaXfEFLhnDYUugRbXEpugzhGe4c7JdqHGXk6eA+VktOpcNRYC9fD0foD/MfN/DT2c3nd+P0kDqOE2/Up8SBIJ000=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Xz6Mt27D; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AFCMWR7012975;
-	Fri, 15 Nov 2024 22:50:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=6PNE6+OfMxWFT7FW0ro/WbHK
-	WIUSDgbp8snCkqh0hic=; b=Xz6Mt27DrIsZvH5Xjq341X13BW2MlAmOpzHHAJhM
-	rn3Sa+c1BlVvq2KKNk3c/a6BOxXxnGrygvy3NNAh8/LRbY+V5ic1Wjoc84DuxCDA
-	Gwbs/+YwPGNTFTuOw+K3cWmECinJltzBa6JrTURNEy/k9QHPmRErGI45VLruG6BN
-	PKsOTTcDAW+Ll7mKEU7imrp4H5f/22yLX7QRnFz4b3RwPunVgtWdBSAUQBSgWNHV
-	S8yd+hrwMF0vAVJD//xq9prYce9/mhlJt+HQQXBiwjLgsycfqG6N7r1KRDNeVIqy
-	C+hQ0frSOKBUd66xn251WDt+hURQ8xf43yc6G6fghP9iEw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42wwddb096-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 22:50:02 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AFMo2UI032522
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 22:50:02 GMT
-Received: from hu-wasimn-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 15 Nov 2024 14:49:58 -0800
-Date: Sat, 16 Nov 2024 04:19:54 +0530
-From: Wasim Nazir <quic_wasimn@quicinc.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 5/5] arm64: dts: qcom: Add support for QCS9075 Ride &
- Ride-r3
-Message-ID: <ZzfQEgDm5xOOJ3E/@hu-wasimn-hyd.qualcomm.com>
-References: <20241110145339.3635437-1-quic_wasimn@quicinc.com>
- <20241110145339.3635437-6-quic_wasimn@quicinc.com>
- <w43u62ikaixw6pkianhnnmlqutkkzsjomhnj7szgxriuh3jvvn@x5mhnnigrnls>
+	s=arc-20240116; t=1731711076; c=relaxed/simple;
+	bh=Jht/2wZpROGtsN14r3YcP1e9epsnJMyCctqGZl0f40s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZLtQRV7eRGaDc6Q4ZchczF7aFL3vnDIwxQrg7XW9FKVF5s3AM9Kn5+MwF/VXZ/R+/PapectXGRLCbRUkv5gb6krUEDZLyY1CLEv8J9oAWpVUvODOXSKNLCz46ptB+5eJm7p1xYSt8mHFLVAjGTRmFyrnTnhY4H3zYHT/Lh2PE48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PCFkBbW4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14001C4CECF;
+	Fri, 15 Nov 2024 22:51:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731711075;
+	bh=Jht/2wZpROGtsN14r3YcP1e9epsnJMyCctqGZl0f40s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PCFkBbW4KMxzIiNilnx1D+38dZUl9xMatxEwTnxieesvyQaDMebt0p8A1S5AD0XwX
+	 6xS7Dsp8BRDyGdbMKli/DgLMzyCJ5yOP8HIShiKmA/wQX+CRKDIPrUvlXP8GjrKemD
+	 nXAL97JH746uehmvPZsiFshb860GinB8Ny7ro1xGR1ym232+5LwAvZIVbxRl7lEx5X
+	 F0ca/qbe42fil5LCSfhCYj/pMtLSFuJDb994762noA21eA+CF8rSv/k0dZ98CwSIAx
+	 f3cT5ZJnrmxQNrNoCLiykc1+bUGUwRWSfmKJu9KZHtFhQlDvMFmvUWF5361B93lzTN
+	 TKguxkPtB2TSQ==
+Message-ID: <80785a22-26de-4466-af44-5aee85a056fe@kernel.org>
+Date: Fri, 15 Nov 2024 14:51:14 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <w43u62ikaixw6pkianhnnmlqutkkzsjomhnj7szgxriuh3jvvn@x5mhnnigrnls>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: PBzZ7YeFbrCLgH6IUn4Nsd0dxB94qpc2
-X-Proofpoint-ORIG-GUID: PBzZ7YeFbrCLgH6IUn4Nsd0dxB94qpc2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=960 mlxscore=0
- malwarescore=0 bulkscore=0 priorityscore=1501 impostorscore=0
- lowpriorityscore=0 clxscore=1015 spamscore=0 phishscore=0 suspectscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411150192
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net 1/2] net/ipv6: delete temporary address if mngtmpaddr
+ is removed or un-mngtmpaddr
+Content-Language: en-US
+To: Sam Edwards <cfsworks@gmail.com>, Hangbin Liu <liuhangbin@gmail.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, =?UTF-8?Q?Maciej_=C5=BBenczykowski?=
+ <maze@google.com>, Xiao Ma <xiaom@google.com>
+References: <20241113125152.752778-1-liuhangbin@gmail.com>
+ <20241113125152.752778-2-liuhangbin@gmail.com>
+ <CAH5Ym4jjVFofG5J7QW=EsD00siDXtNWKt4ZDNbbUmP+Y4Jb-DQ@mail.gmail.com>
+ <ZzWo5fJcraaDDLm_@fedora>
+ <CAH5Ym4hcguhXvJvVuANns7Q9VTOWR-SxHSdD55rR5BWhWeg2Ow@mail.gmail.com>
+From: David Ahern <dsahern@kernel.org>
+In-Reply-To: <CAH5Ym4hcguhXvJvVuANns7Q9VTOWR-SxHSdD55rR5BWhWeg2Ow@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 15, 2024 at 06:06:19PM +0200, Dmitry Baryshkov wrote:
-> On Sun, Nov 10, 2024 at 08:23:39PM +0530, Wasim Nazir wrote:
-> > Add device tree support for QCS9075 Ride & Ride-r3 boards.
-> > QCS9075 Ride & Ride-r3 are similar to QCS9100 Ride and Ride-r3
-> > boards but without safety monitoring feature of SAfety-IsLand
-> > subsystem.
+On 11/15/24 1:46 PM, Sam Edwards wrote:
+> Hi Hangbin,
 > 
-> What is the difference between Ride and Ride-r3 which requires a
-> separate DT for the -r3 variant?
-Difference between ride and ride-r3 is in ethernet phy.
-Ride uses 1G phy while ride-r3 uses 2.5G phy and both has its own
-corresponding DT nodes which will be added at later stage.
+> It took me a while to grasp but the problem seems to be a confusion
+> about what it means to set a temporary's lifetimes to 0/0:
+> 1) "The mngtmpaddrs has gone away; this temporary is slated for
+> deletion by addrconf_verify_rtnl()"
+> 2) "This temporary address itself shall no longer be used, regenerate
+> it immediately."
+> 
+> The existing behavior makes sense for the #2 case, but not for the #1
+> case. It seems sensible to me to keep the #2 behavior as-is, because
+> userspace might be setting a 0/0 lifetime to forcibly rotate the
+> temporary.
+> 
+> So it sounds like (at least) one of three fixes is in order:
+> a) Make ipv6_create_tempaddr() verify that the `ifp` is (still)
+> alive+mngtmpaddrs, returning with an error code if not.
+> b) Look at the 3 callsites for ipv6_create_tempaddr() and add the
+> above verifications before calling.
+> c) Add a function that calls ipv6_del_addr(temp) for every temporary
+> with a specified ifpub, and use it instead of manage_tempaddrs(..., 0,
+> 0, false, ...) when deleting/unflagging a mngtmpaddrs.
+> 
+> Personally I like option C the best. What are your thoughts?
+> 
+> Cheers,
 
-I will update the commit message in next series to point out the
-difference.
-> 
-> > 
-> > Signed-off-by: Wasim Nazir <quic_wasimn@quicinc.com>
-> > ---
-> >  arch/arm64/boot/dts/qcom/Makefile            |  2 ++
-> >  arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts | 12 ++++++++++++
-> >  arch/arm64/boot/dts/qcom/qcs9075-ride.dts    | 12 ++++++++++++
-> >  3 files changed, 26 insertions(+)
-> >  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
-> >  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-ride.dts
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> > index 5d9847119f2e..91c811aca2ca 100644
-> > --- a/arch/arm64/boot/dts/qcom/Makefile
-> > +++ b/arch/arm64/boot/dts/qcom/Makefile
-> > @@ -116,6 +116,8 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
-> >  dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2.dtb
-> >  dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
-> >  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9075-rb8.dtb
-> > +dtb-$(CONFIG_ARCH_QCOM)	+= qcs9075-ride.dtb
-> > +dtb-$(CONFIG_ARCH_QCOM)	+= qcs9075-ride-r3.dtb
-> >  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride.dtb
-> >  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride-r3.dtb
-> >  dtb-$(CONFIG_ARCH_QCOM)	+= qdu1000-idp.dtb
-> > diff --git a/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts b/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
-> > new file mode 100644
-> > index 000000000000..a04c8d1fa258
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
-> > @@ -0,0 +1,12 @@
-> > +// SPDX-License-Identifier: BSD-3-Clause
-> > +/*
-> > + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-> > + */
-> > +/dts-v1/;
-> > +
-> > +#include "sa8775p-ride-r3.dts"
-> > +
-> > +/ {
-> > +	model = "Qualcomm Technologies, Inc. QCS9075 Ride Rev3";
-> > +	compatible = "qcom,qcs9075-ride-r3", "qcom,qcs9075", "qcom,sa8775p";
-> > +};
-> > diff --git a/arch/arm64/boot/dts/qcom/qcs9075-ride.dts b/arch/arm64/boot/dts/qcom/qcs9075-ride.dts
-> > new file mode 100644
-> > index 000000000000..9ffab74fb1a8
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/qcom/qcs9075-ride.dts
-> > @@ -0,0 +1,12 @@
-> > +// SPDX-License-Identifier: BSD-3-Clause
-> > +/*
-> > + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-> > + */
-> > +/dts-v1/;
-> > +
-> > +#include "sa8775p-ride.dts"
-> > +
-> > +/ {
-> > +	model = "Qualcomm Technologies, Inc. QCS9075 Ride";
-> > +	compatible = "qcom,qcs9075-ride", "qcom,qcs9075", "qcom,sa8775p";
-> > +};
-> > --
-> > 2.47.0
-> > 
-> 
-> -- 
-> With best wishes
-> Dmitry
+Off the top of my head regarding recent changes, please include Maciej:
 
-Thanks & Regards,
-Wasim
+commit 69172f0bcb6a09110c5d2a6d792627f5095a9018
+Author: Maciej Żenczykowski <maze@google.com>
+Date:   Thu Jul 20 09:00:22 2023 -0700
+
+    ipv6 addrconf: fix bug where deleting a mngtmpaddr can create a new
+temporary address
+
+
+
+and Alex in discussions around changes to temp addresses
+
+commit f4bcbf360ac8dc424dc4d2b384b528e69b6f34d9
+Author: Alex Henrie <alexhenrie24@gmail.com>
+Date:   Tue Feb 13 23:26:32 2024 -0700
+
+    net: ipv6/addrconf: clamp preferred_lft to the minimum required
 
