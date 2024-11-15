@@ -1,90 +1,128 @@
-Return-Path: <linux-kernel+bounces-411048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A85F19CF379
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:00:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 324729CF3B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:15:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CA09B64E5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:55:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D71E7B2FC21
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C091D54D1;
-	Fri, 15 Nov 2024 16:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18231D54EE;
+	Fri, 15 Nov 2024 16:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="qHYC794z"
-Received: from lichtman.org (lichtman.org [149.28.33.109])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f/DqiZsy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF55762E0
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 16:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4C21CEE9F;
+	Fri, 15 Nov 2024 16:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731689743; cv=none; b=iKCGCB+7BkXAcoiZlxe2WwrMIoEgQ2lEJRMUFlnaQv8TPkd0IcAciNnFyFZn/LjrYgFE6rjl+tcpDWghBWKXD/x9LHTAf3jNrPv7DmJyzmMuDC/OJI/DJLhM7yfsDTCZZmtpjQEUSFltrwqMpeRQ1gc921pdvPLrdzlQV7fHmOA=
+	t=1731689849; cv=none; b=jN0i1Uf25GMTOpkvwUPhji9WtO/OB/RPT1a9Knf08tI4vfSkzgl+ozqWqbBSFcNlkIlkDen4CQM6OqmxG63VMmJ7j3XGh0sG5uCR/SJM838QPFi9YANaPCYNUwf68R1D3e+KURwOtv8JDVht2GMpMNAlLSyZs+d+ilEd6RvmFvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731689743; c=relaxed/simple;
-	bh=b7lGpWdm4rz58yr3GDepY+GoJDmX40WkokM3hkmIl6s=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=tFXzkVTGl0EOgeUv0TSMc5hQJ90VeRTlYV4cq1WzxAfwJatQ1v49jymmfbampFQl7CUYmxSGqEyLNsBpeNWOJv6gH1rXdI5z2NlGvpA6h9RGRm99IpuIxqjLwoXFaL+s4A0xPjmSOaVwddepSc/qF9DaVGw69vy0bvfkO25eX7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=qHYC794z; arc=none smtp.client-ip=149.28.33.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
-Received: by lichtman.org (Postfix, from userid 1000)
-	id 876551770E5; Fri, 15 Nov 2024 16:55:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
-	t=1731689741; bh=b7lGpWdm4rz58yr3GDepY+GoJDmX40WkokM3hkmIl6s=;
-	h=Date:From:To:Subject:From;
-	b=qHYC794z9fSe+3YxtW0slwOcoBY4AwWVOeHbySRA6BrbU5uLiUhObR0zVrDlRi59A
-	 es7I/ux5X92IAxgcbJmf625ODM9pD2jQh+82w3SpsGftzPVPpfwiqYkKZOH4vQqMvf
-	 pNWnlpOkLoanxzMTh52/G36x/k9dXRp0XkMgQApMrnBcKGLnnO0Xum3UbYrCW96m3l
-	 CwIl527Cm+rXW7xPnU7o+lQm/Dqz73cPzsUbelmMblLtI7obYvQVSBHhBZN7lYajh4
-	 SDW8D+j530fyJCB2NPQzqajlqxWSnviXFHLekP/+h6aBwlJCDJXyj9uQSSY05Klvr8
-	 XBaRc43Hx+uGQ==
-Date: Fri, 15 Nov 2024 16:55:41 +0000
-From: Nir Lichtman <nir@lichtman.org>
-To: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	ebiederm@xmission.com, kees@kernel.org,
+	s=arc-20240116; t=1731689849; c=relaxed/simple;
+	bh=P9vPaqkvdnj3RZZRoSi57ArSc52yZfn5QJ1q2s/oo0o=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type; b=stfRBATAm7UFyCECANwxBwphtcPUOK7CBc7rrfug3PUxrHVyTrZISpiW7ge/F9252y3VW1oU1Dh9vsHUyQYtQXvtwT6sSkKtmHEUooYL2avNoHZEpy3IKrTSObBm82g4qlXgGriLA/zPQ2jlCPZDVcCOliLAF+cLucmHeCGbNcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f/DqiZsy; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731689848; x=1763225848;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=P9vPaqkvdnj3RZZRoSi57ArSc52yZfn5QJ1q2s/oo0o=;
+  b=f/DqiZsyKEsnTGTBqf4BGN1iTHcQsqMmyQMBoDi7/HEuCyOB0D7AnuKV
+   iu8QuxowgugXXa10Q8uZAHaRu5nBL4MeWxuhSRIqFyqmZWhWiCmNe0/NY
+   JZFITBUoZlgAbzYBa+jftAFnGFuouEQvO1oRM8XaKG9Va2RRk+NcQQ/he
+   lva+crIu04+P64tuX7B146JQVAE9+dhQ/wOzpaD2zI9+CXYmPSBwBZtjX
+   cd3kZkzj4WWfKVdk/EE4Y+WAWuDFWmYtJoZ2UWIWYW42M3p5yHfdXx2Q+
+   uXEzwnEGZwfJuPglVCLvetliAygjUUrF9oOnzNVbFzjDrv6v9CiqvZyjJ
+   w==;
+X-CSE-ConnectionGUID: XgGw5G78S0WmVoNiXO+2sA==
+X-CSE-MsgGUID: 4V7ojmreTISQURKM3iI3gg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11257"; a="31773936"
+X-IronPort-AV: E=Sophos;i="6.12,157,1728975600"; 
+   d="scan'208";a="31773936"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 08:57:28 -0800
+X-CSE-ConnectionGUID: MNYqYWCgQrWW3QRvTO7RHw==
+X-CSE-MsgGUID: SvSO5lY9RdWbZeYtvZE5rQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,157,1728975600"; 
+   d="scan'208";a="88615069"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.142])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 08:57:24 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Stefan Wahren <wahrenst@gmx.net>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] exec: fix no kernel module found error to be more clear
-Message-ID: <20241115165541.GB209124@lichtman.org>
+Subject: [PATCH 1/1] PCI/bwctrl: Remove IRQF_ONESHOT and handle hardirqs instead
+Date: Fri, 15 Nov 2024 18:57:17 +0200
+Message-Id: <20241115165717.15233-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Problem: Before starting the enumeration of the supported formats the
-default return value is set to no entity which is misleading since if
-the kernel module of the binary format is not found, it would return no
-entity to user mode which is misleading since it is signaling that a
-file was not found, but in this case the more suitable error is that the
-executable has an unsupported format
+bwctrl cannot use IRQF_ONESHOT because it shares interrupt with other
+service drivers that are not using IRQF_ONESHOT nor compatible with it.
 
-Solution: Refactor to return no-exec error instead
+Remove IRQF_ONESHOT from bwctrl and convert the irq thread to hardirq
+handler. Rename the handler to pcie_bwnotif_irq() to indicate its new
+purpose.
 
-Signed-off-by: Nir Lichtman <nir@lichtman.org>
+The IRQ handler is simple enough to not require not require other
+changes.
+
+Fixes: 058a4cb11620 ("PCI/bwctrl: Re-add BW notification portdrv as PCIe BW controller")
+Reported-by: Stefan Wahren <wahrenst@gmx.net>
+Link: https://lore.kernel.org/linux-pci/dcd660fd-a265-4f47-8696-776a85e097a0@gmx.net/
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 ---
- fs/exec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/pcie/bwctrl.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 3394de5882af..6324f9546b09 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1740,7 +1740,7 @@ static int search_binary_handler(struct linux_binprm *bprm)
- 	if (retval)
- 		return retval;
+diff --git a/drivers/pci/pcie/bwctrl.c b/drivers/pci/pcie/bwctrl.c
+index ff5d12e01f9c..a6c65bbe3735 100644
+--- a/drivers/pci/pcie/bwctrl.c
++++ b/drivers/pci/pcie/bwctrl.c
+@@ -230,7 +230,7 @@ static void pcie_bwnotif_disable(struct pci_dev *port)
+ 				   PCI_EXP_LNKCTL_LBMIE | PCI_EXP_LNKCTL_LABIE);
+ }
  
--	retval = -ENOENT;
-+	retval = -ENOEXEC;
-  retry:
- 	read_lock(&binfmt_lock);
- 	list_for_each_entry(fmt, &formats, lh) {
+-static irqreturn_t pcie_bwnotif_irq_thread(int irq, void *context)
++static irqreturn_t pcie_bwnotif_irq(int irq, void *context)
+ {
+ 	struct pcie_device *srv = context;
+ 	struct pcie_bwctrl_data *data = srv->port->link_bwctrl;
+@@ -302,10 +302,8 @@ static int pcie_bwnotif_probe(struct pcie_device *srv)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = devm_request_threaded_irq(&srv->device, srv->irq, NULL,
+-					pcie_bwnotif_irq_thread,
+-					IRQF_SHARED | IRQF_ONESHOT,
+-					"PCIe bwctrl", srv);
++	ret = devm_request_irq(&srv->device, srv->irq, pcie_bwnotif_irq,
++			       IRQF_SHARED, "PCIe bwctrl", srv);
+ 	if (ret)
+ 		return ret;
+ 
 -- 
-2.39.2
+2.39.5
 
 
