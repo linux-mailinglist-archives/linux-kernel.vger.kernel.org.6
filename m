@@ -1,81 +1,115 @@
-Return-Path: <linux-kernel+bounces-411057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CD179CF254
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:05:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB6109CF338
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:46:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5765283853
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:04:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BAA6B3F3E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622A31D47C0;
-	Fri, 15 Nov 2024 17:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807531D54E1;
+	Fri, 15 Nov 2024 17:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="fmXKYvTa"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fdHlH1FF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24181163
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D853A15C15E;
+	Fri, 15 Nov 2024 17:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731690292; cv=none; b=O9/v2q1d13z8BrtOUTh5WRFrEShd/nUU+M7nZ0ncfDZCbV7hXp+qHfLf7D4J9ME1x0zBJBD+1K8MqC+qfuN3pZjFePVTPFjvdCpruKrp/avA7OYerj7pboVw02yX19GHJEaz7E3tGrfg17loQqi94/GTcGFyJbW+OK6L173U5jg=
+	t=1731690308; cv=none; b=pJ+VJZIiRa7KYq2j/+vg2jO0XoCJhPgxVDknhZSn1S0Se2K8n882qMqMDKsQ4iDPkuomlfS6Bw2vgzAJSTIxYpGtqzRL8r53dHEEU/ps4tVveoglLM4cExou7qOMJnmW/16HGzaD0XgqcdRWtfq3u79Sk37/a1klPt2Fa4fkQg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731690292; c=relaxed/simple;
-	bh=h9IOYnlDPDXX7q2X4pLGws5VJDbx+DSMwS7DmUunXbM=;
+	s=arc-20240116; t=1731690308; c=relaxed/simple;
+	bh=IZXJjOHaQOlLB5hUWmL66GluwmMp25uxMZjNvQ7Gh2A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rODmmRBhSpTNFxuwnmyrwPLherYlIghSxDYI4SrxTzh5BPWL5FPWF8GbrOENSlZRHPmLNawrirgfXHsK0WjCo21qgomf/j+JozX6Id2hmbnWsvUH1Af3H38ttbOSe4ms4bXpce1Shlya2ucmBFBpgEubR7tp/Jop6UFmzSXM54c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=fmXKYvTa; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=daWOt+QRGGVwS5QkFZ/T1q1gY0282sg7nLJ38V5gr2U=; b=fmXKYvTaVlfSPUdi1cMGm1nu17
-	ajwdDoJ2IRnuN7YsPAdWbxgDW8HKq3FkbHIhfbF0Rzl6piHccjRWhpfCFEIeoh+2u80+cPjgJD31N
-	UTMqe/piD45MQ2fCAzwbgz5o/e/CDIeZCPM5tHsdaxKq+xOlru4E8kwr2i+UwRwTZ75SqCns82oxR
-	j17fyAubHZQTzC1jw6gUZ8U5J5FfFBP29bUze5JSNIext13TX9LeeljfS0msX7BsZ+ID6WWz1cuBc
-	3hVEn47xwynnxZwxJ5gL/klikemaBBSQHZNLmaOczKboQHvdr/CxuSbnMG3s8Zcj584kSmv3QWG1O
-	D6adVfog==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tBzkV-0000000FVee-0j0d;
-	Fri, 15 Nov 2024 17:04:47 +0000
-Date: Fri, 15 Nov 2024 17:04:47 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Nir Lichtman <nir@lichtman.org>
-Cc: brauner@kernel.org, jack@suse.cz, ebiederm@xmission.com,
-	kees@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] exec: refactor an invalid executable check to use isprint
-Message-ID: <20241115170447.GX3387508@ZenIV>
-References: <20241115165351.GA209124@lichtman.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MuhozYd6yY9pVs6u/HLIoNfXgGVAG35S0DFJ0r+/sFa6efDWkXrvvHdb/8W6K533W17kAMpaRxO9HaH701S+Dz3qilmiqxXI7gpnxXpgFIUk0zqEqJWlNlVd2TWoh+0k0GvgxYd78TqYoihpTullBYgdw+h79RFoaUjSwQcQhAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fdHlH1FF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AD75C4CECF;
+	Fri, 15 Nov 2024 17:05:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731690307;
+	bh=IZXJjOHaQOlLB5hUWmL66GluwmMp25uxMZjNvQ7Gh2A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fdHlH1FFuWZGoAqVEiD0dtFMCOf3Pss8dTrG6uECfFHaLRAisDIEjWhkB7kTbsCBJ
+	 LiHiqtmFBX94e5A9Zuj1/HjCViq9AtvCx8Uwdp6ZOqNnnsX2XpnooK4RwEhb+ttrrM
+	 uE4YmjPeJ+DOWyeRQLUqBI6LeGWG6T7CnlQu4YXBhOFiv1JO2lDMLXy8L+qoA1/mZS
+	 AD44emBEwFL4zXb3N3QIfp1fSlqwP2a2aA9BN75cKeyRItbVar/CMsBDHuBK726+Qp
+	 6FfPZMZO8lQDCFlQZH1DPtjyxhfd/w6ZujKFxCcSMQRZKbWYnbreBwHsVf55eg8Rc0
+	 CfOqmsNIq1WBg==
+Date: Fri, 15 Nov 2024 09:05:05 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Amit Shah <amit@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"Shah, Amit" <Amit.Shah@amd.com>,
+	"Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"corbet@lwn.net" <corbet@lwn.net>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"hpa@zytor.com" <hpa@zytor.com>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"daniel.sneddon@linux.intel.com" <daniel.sneddon@linux.intel.com>,
+	"kai.huang@intel.com" <kai.huang@intel.com>,
+	"Das1, Sandipan" <Sandipan.Das@amd.com>,
+	"boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
+	"Moger, Babu" <Babu.Moger@amd.com>,
+	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>
+Subject: Re: [RFC PATCH v2 1/3] x86: cpu/bugs: update SpectreRSB comments for
+ AMD
+Message-ID: <20241115170505.bngqx5ws52hhzzho@jpoimboe>
+References: <20241111193304.fjysuttl6lypb6ng@jpoimboe>
+ <564a19e6-963d-4cd5-9144-2323bdb4f4e8@citrix.com>
+ <20241112014644.3p2a6te3sbh5x55c@jpoimboe>
+ <20241112214241.fzqq6sqszqd454ei@desk>
+ <20241113202105.py5imjdy7pctccqi@jpoimboe>
+ <20241114015505.6kghgq33i4m6jrm4@desk>
+ <20241114023141.n4n3zl7622gzsf75@jpoimboe>
+ <20241114075403.7wxou7g5udaljprv@desk>
+ <20241115054836.oubgh4jbyvjum4tk@jpoimboe>
+ <LV3PR12MB9265FC675DE47911654E605E94242@LV3PR12MB9265.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241115165351.GA209124@lichtman.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <LV3PR12MB9265FC675DE47911654E605E94242@LV3PR12MB9265.namprd12.prod.outlook.com>
 
-On Fri, Nov 15, 2024 at 04:53:51PM +0000, Nir Lichtman wrote:
-> Remove private printable macro that is defined in exec.c and migrate to
-> using the public isprint macro instead
+On Fri, Nov 15, 2024 at 02:44:12PM +0000, Kaplan, David wrote:
+> > On Thu, Nov 14, 2024 at 12:01:16AM -0800, Pawan Gupta wrote:
+> > > > For PBRSB, I guess we don't need to worry about that since there
+> > > > would be at least one kernel CALL before context switch.
+> > >
+> > > Right. So the case where we need RSB filling at context switch is
+> > > retpoline+CDT mitigation.
+> >
+> > According to the docs, classic IBRS also needs RSB filling at context switch to
+> > protect against corrupt RSB entries (as opposed to RSB underflow).
+> 
+> Which docs are that?  Classic IBRS doesn't do anything with returns
+> (at least on AMD).  The AMD docs say that if you want to prevent
+> earlier instructions from influencing later RETs, you need to do the
+> 32 CALL sequence.  But I'm not sure what corrupt RSB entries mean
+> here, and how it relates to IBRS?
 
+Sorry, by "corrupt", I meant poisoned.  I think we are saying the same
+thing.  Classic IBRS doesn't protect against RSB poisoning.
 
-> -#define printable(c) (((c)=='\t') || ((c)=='\n') || (0x20<=(c) && (c)<=0x7e))
-
-> -		if (printable(bprm->buf[0]) && printable(bprm->buf[1]) &&
-> -		    printable(bprm->buf[2]) && printable(bprm->buf[3]))
-> +		if (isprint(bprm->buf[0]) && isprint(bprm->buf[1]) &&
-> +		    isprint(bprm->buf[2]) && isprint(bprm->buf[3]))
-
-RTFM(isprint).  Or run a trivial loop and check what it does, for that
-matter.
-
-isprint('\t') is false.  So's isprint('\n').
+-- 
+Josh
 
