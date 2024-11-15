@@ -1,172 +1,98 @@
-Return-Path: <linux-kernel+bounces-411021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9687D9CF1E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:43:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99D789CF23E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:59:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51AD3287E73
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:43:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91635B61552
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:43:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F1E1D54D1;
-	Fri, 15 Nov 2024 16:40:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68EFD1E105A;
+	Fri, 15 Nov 2024 16:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="AZsXd3Kj"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="rk3hDSHL"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0551D54CB
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 16:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2AF1D54E1;
+	Fri, 15 Nov 2024 16:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731688821; cv=none; b=eOqqdI5IX5vL6Ivu3sACpdh/RJUglfClsh0xaNk1ma69PzNPgPrzagip90xQhwBa6ZO3587jrJCdYuwUJTVOCePxZopW1CdOp1IKW+cqwSZng0K94uq9TRmou7RIsf/7jSt00j7VImy0K0tIENouViG/u+CGbPNDjODImx5t6hQ=
+	t=1731688839; cv=none; b=d0xFr7X/bQZHuMUTi9Fd/p15PEBi6V3DEQO66moBh45tV/pwDdeZogqsYFC1KOjrrYFsXa+iuFHrW2wtwdWl5TJFUYNMe8DkbRWllQ2mKVgbEbdO/Yn/rNWo4ru3iPuLjbFfXYIzVY8Nfmc3ddf8gjdF8dhKMHpyBme5zlMYt0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731688821; c=relaxed/simple;
-	bh=b0/gJJyyQjJP3pcSFkrnwxvFkdns5mixUfzVHRmn7oQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jMwg/eMLGEKmSCPyTigiN5TmMoeVrOwEJcNhSHclfYt+q5bhUI6johxr9EEF/hZXg/cjBo++gZaRVw3LzhQraJB+eXi+c8gMFgK5b2XUCkJGTb/cCmm8fcWdVAQLK+zEJlEWsegJ8EmdC8V7MWbK1Nkm37baBIB5oB3IEkcTyD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=AZsXd3Kj; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-38224150a84so746821f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:40:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731688817; x=1732293617; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=170RFOIN/xfN7IZfnc2mXRNJ92+bK44F1urWxzLbiM0=;
-        b=AZsXd3Kj7vYQo+Bd3V6LxMQqcqBYzga0IWOvu0pbVkZ3n2noI0biLTxevoRVjQr4yu
-         F4tzxMs3iIybXRVb8u6tbOvec4c7CNX6VQyty7RheyBDCAe+9JQ634J1z4eBVwLtv0KI
-         bRNxwMHhR7P+lvcnpTnuY2r8uF1OqyFOYXr3YXPfNJ7S8GjZ27MUaxiDQC14KwCUbGUX
-         07z1al8HYg5LXfuAvQaM//bOGPNnNogAFfIEq1E+y1nwZHcpVnudjFmLwidbXfLjckun
-         6HQ8MTPT6RVprLrGS17Mm5cPxiOu7OiqGMjCm75SFMFoWc1bnepSTVMVtgXwOed9FEYw
-         GCLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731688817; x=1732293617;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=170RFOIN/xfN7IZfnc2mXRNJ92+bK44F1urWxzLbiM0=;
-        b=pfEyaPPqSVc0cLj2kJsxfrbF1Hhp06zIfZDDE5GKXKJVagjFJdsDqsKCM4LogOQaNZ
-         nPT2hpEXIB7rFOAr/lHC29FOTIPqA7wJAQT9G6Z3fDDyWTBlqK6ZnFDRMiYTjC4pOYBO
-         G3hbSgyQSBrLm/PWFUl0UxODxfHlzuKfHg3I9WgiK8KoqXHXq/FqTlNIUbRFzeL6/ZWU
-         BZ5k/IGKRIX9aSZvBoWCmsIVi96Z4nCS7VxVQP2LaLqYvwc5pOOmCYcM2dWuzAU6EIVn
-         M1hFDkW1bgUmXqyxBfXg0kQWLgY9ON2RENGGwPTqyd5k2Fef+k6TIqsaM4fkeDWMUolL
-         bfCA==
-X-Forwarded-Encrypted: i=1; AJvYcCUy67cNrZApKeqOUEvWudffeMgJBvN/RfOM9qBajUwHbNDHkoe9jinSFglwyaMlsj33+q4HhX9tMOny2I0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBjTTYGtthYZ9gDs6EKFHrLXvS/Ox3KOTa8lMthjiYJXNGDgVm
-	MwKHiEENH2E9n/91C2KmYbOazLBJ0xUkEN1oi7zXwkqeekzK7kgyuDbCjSHnwMs=
-X-Google-Smtp-Source: AGHT+IFUPc9PAhRL6rlHpraKmDxTbG98T6xeZQoU3l6oEoE+2VvXuQga5sYs9SPjCzqPWCEBJKKm0Q==
-X-Received: by 2002:a05:6000:1565:b0:37d:38a1:6470 with SMTP id ffacd0b85a97d-38225a91eacmr2579872f8f.46.1731688816947;
-        Fri, 15 Nov 2024 08:40:16 -0800 (PST)
-Received: from localhost (p200300f65f28bb0063ffae39110fa2df.dip0.t-ipconnect.de. [2003:f6:5f28:bb00:63ff:ae39:110f:a2df])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38222a5640csm3289329f8f.104.2024.11.15.08.40.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 08:40:16 -0800 (PST)
-Date: Fri, 15 Nov 2024 17:40:14 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Werner Sembach <wse@tuxedocomputers.com>
-Cc: mcgrof@kernel.org, petr.pavlu@suse.com, samitolvanen@google.com, 
-	da.gomez@samsung.com, linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux@leemhuis.info, vv@tuxedocomputers.com, cs@tuxedo.de
-Subject: Re: [PATCH v3 0/2] module: Block some modules by TUXEDO from
- accessing
-Message-ID: <uedhiz7luybtelifxooii5efesmpuot3bsoifdutsvt4axyror@zq37gl3x7je2>
-References: <20241115130139.1244786-1-wse@tuxedocomputers.com>
- <3023bbda-0902-4e5c-aeb1-074623cd8ff0@tuxedocomputers.com>
+	s=arc-20240116; t=1731688839; c=relaxed/simple;
+	bh=XJgwbJmJy1dij2tvJOcwOOlxmwxz8tQU72/Pm0EegoA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uvyqeW7vmbfqQ3y5InrKEsZDBmDMKurC/qTwevOqAq0lQAMT1Mhq8Bj8QxdrlMAQ9SvSivy9ZXTqtfZ4CGULohVm/YW7UpCafX2Lx3MmZJLG5PDTmch4oC0KPR32BZCC61PPxbzesII+lPQKxGyLeC66XSUUvAOudz7Q2u25iZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=rk3hDSHL; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1731688833;
+	bh=XJgwbJmJy1dij2tvJOcwOOlxmwxz8tQU72/Pm0EegoA=;
+	h=From:Subject:Date:To:Cc:From;
+	b=rk3hDSHLR+Ep6ydphocv3aeZ30Fd16rSlDBYSX1ELszo2drVLuEYA6OxnqkS20sKs
+	 1z0MJJM0xNQ00cx9ktjL8zwXMis6e/oVbSZW3PwXlQMZYqJxaJs7J7jGFY0C+xxD+4
+	 L47Uz+98nYD27W4PzbDAw3fwz1iiB3xnyyT82kvA=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH v2 0/2] hwmon: (core) Avoid ifdef CONFIG_THERMAL in C
+ source file
+Date: Fri, 15 Nov 2024 17:40:20 +0100
+Message-Id: <20241115-hwmon-thermal-v2-0-c96f0c0984b2@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="u44ztxo46m4qmee3"
-Content-Disposition: inline
-In-Reply-To: <3023bbda-0902-4e5c-aeb1-074623cd8ff0@tuxedocomputers.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAHR5N2cC/3XMyw6CMBCF4Vchs7aGGS81rnwPw6LSwU4ixXSwa
+ AjvbmXv8j/J+WZQTsIK52qGxFlUhliCNhW0wcU7G/GlgWraI+LOhKkfohkDp949DHny7nDCluw
+ RyueZuJP36l2b0kF0HNJn5TP+1n9SRoPGItn6xrazji4Ti6q24RW2kUdolmX5AoHun+ivAAAA
+X-Change-ID: 20241113-hwmon-thermal-2d2da581c276
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731688832; l=849;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=XJgwbJmJy1dij2tvJOcwOOlxmwxz8tQU72/Pm0EegoA=;
+ b=jDhwvYH1RRBZYDcKyKhsKmJMFFTEW6KNBzi9NHeRqwg+sXj7dZEKy1K3u1yqSmbEN5cJOXOLx
+ VPqxI1c6CcMDWFDjeS0B63gxickl07yDfaeXB86iKJIB6HcB0+tWYjI
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
+Replace some confusing ifdeffery with IS_ENABLED() conditionals.
+The ifdefs confused me while looking at the implementation of
+HWMON_C_REGISTER_TZ.
 
---u44ztxo46m4qmee3
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 0/2] module: Block some modules by TUXEDO from
- accessing
-MIME-Version: 1.0
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Changes in v2:
+- Add stub for thermal_zone_device_update()
+- Link to v1: https://lore.kernel.org/r/20241113-hwmon-thermal-v1-1-71270be7f7a2@weissschuh.net
 
-Hello Werner,
+---
+Thomas Weißschuh (2):
+      thermal: core: Add stub for thermal_zone_device_update()
+      hwmon: (core) Avoid ifdef CONFIG_THERMAL in C source file
 
-On Fri, Nov 15, 2024 at 02:03:27PM +0100, Werner Sembach wrote:
-> Am 15.11.24 um 13:58 schrieb Werner Sembach:
-> > Following the meeting I wrote about yesterday, I now changed the license
-> > of what we could change spontaniously to prove good faith.
-> >=20
-> > I still hope that the rest can be sorted out before anything gets merge=
-d.
-> > We are working on it. A clear time window would still be helpfull.
-> >=20
-> > At Uwe. I don't know how it works if you modifiy someone elses code. I
-> > removed the Signed-off-by: line and I guess you have to add it again?
+ drivers/hwmon/hwmon.c   | 21 ++++++---------------
+ include/linux/thermal.h |  4 ++++
+ 2 files changed, 10 insertions(+), 15 deletions(-)
+---
+base-commit: cfaaa7d010d1fc58f9717fcc8591201e741d2d49
+change-id: 20241113-hwmon-thermal-2d2da581c276
 
-The more usual thing would have been to reply to my mail saying
-something like:
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
 
-	All the code in tuxedo-drivers.git that Tuxedo owns the complete
-	copyright for was relicensed to GPLv2+ now. (See $link)
-	For the remaining code I'm working in the background towards
-	relicensing.
-
-	So please drop
-
-		$modulelist
-
-	from your patch of modules to block.
-
-I'm sure with that feedback you don't risk that the original patch is
-applied.
-
-If you take someone else's patch and rework it (which IMHO should only
-be done when the original submitter dropped following up to prevent
-duplication of work), it's good style to explicitly mention the changes
-you implemented since the patch was initially posted. And then don't
-remove the S-o-b line. See 7602ffd1d5e8927fadd5187cb4aed2fdc9c47143 for
-an example. I think this is (at least partly) also described in
-Documentation/ somewhere.
-
-Looking at
-https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/co=
-mmit/dd34594ab880ed477bb75725176c3fb9352a07eb
-(which would be $link mentioned above): If you switch to GPLv2, using
-the SPDX-License-Identifier should be good enough (but INAL). For sure
-don't put "51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA"
-in your files,
-https://www.fsf.org/blogs/community/fsf-office-closing-party. Just keep
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, see <https://www.gnu.org/licenses/>.
-
-which is also the current suggestion by the FSF,
-https://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
-
-Thanks for working on this!
-Uwe
-
---u44ztxo46m4qmee3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmc3eWwACgkQj4D7WH0S
-/k4uQAf+JFBkqTZimsBnHa0edLEECbw1CPo0vACnfPb7OuCEPgStCkHFBEtTd4zM
-Aw2neONOmPVE1D+zpdXcI32wRbo5okSyJeQjtiZHDLCLsytK36h3uoNn9WdaOu+E
-VukZs3qPidafqg2ZNTh0kR/Y/z3pahShXLgnmQCl9+4F2v5EUa5JwvvM97ZSFcG0
-NqddYnOe4K9VGOwI9j6OHYUc+FwklPmgf3yzSF0pPwiszgrGXJCBKZGkrumoYFrf
-hOxelLeIYGox+5u1LAc20zwJ7HEpNmstbOMNGZ4HFNecS0kUMUxGSyfvcpUtfg7B
-lwqUUO6vWM84WKQfDgiidxAbPPxISg==
-=Sjp8
------END PGP SIGNATURE-----
-
---u44ztxo46m4qmee3--
 
