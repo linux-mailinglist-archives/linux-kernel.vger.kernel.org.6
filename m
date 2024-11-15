@@ -1,130 +1,216 @@
-Return-Path: <linux-kernel+bounces-410592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 585D49CDDA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:45:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED8549CDDAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:46:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1124F1F22508
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:45:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D6B31F2346E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD881B6CEB;
-	Fri, 15 Nov 2024 11:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803621B6D17;
+	Fri, 15 Nov 2024 11:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KbMjIjK8"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C6kgP6XZ"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A7518871E;
-	Fri, 15 Nov 2024 11:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D52D52F9E
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731671132; cv=none; b=LloM1wp4NFa82ulw5ziK0GHDJr44qbvEww3m77SoJY5S+baecBE+3iwHZvmdVerlcjd//GnLLq0VIQeRxhLqCjl2ilcq1zskfe+NTiCDjLcqmuk7eeD6cej5Rdhbhp9YytjQUIGBvx0C44Kw4U7kmIR+At2jOKVmYoG6c3ykHuQ=
+	t=1731671144; cv=none; b=AzSw7uC2yDYCyeYCb4jhQS+8vsAt9jeBMgTtKL2J1lIiSWA5YSGe2mg4ZbIM6MlD9LpIj2MxrSMUaupefqeOwwyatIpvq97cpeA02KcQjaYWuUcZzoRE2YjnSwyMbzvOWZLnGpH7cE6urkD2gMmaNi3IMnn1MPv2b8+8ExtKGKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731671132; c=relaxed/simple;
-	bh=xGuzkMxDO+F3Rehl/23Ny+lunu3NLkrjLfDk/TbcNEI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MhjvljCI5fcSqHYd5LVrjVKR5eL0MmqyVaL4dhbfyozcZwHuBIic1A+S1EfCKEFrcnAsrzpQCBi4ZmqUs5F0pQFo3S27JGBDw9SVMbQr8NHO2jv1QUbQg6XgBI30ZURg/SAkqnaflRfOKRMRUUSiFQ8uGMp18tBEJa3mWOlidTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KbMjIjK8; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43169902057so14030785e9.0;
-        Fri, 15 Nov 2024 03:45:30 -0800 (PST)
+	s=arc-20240116; t=1731671144; c=relaxed/simple;
+	bh=AYQ6bm2XTleVCZIFNAkhoEQnWTu4KviKfTHZ/1z9dcg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GN7AH6q1GxleCAO5DaJ2o2unNZzFRcVU20r6573dxYH/T2qETeIzAviDHvpG/AHCuvZRd4KmoF1GV6c2UywYv5kjGAb7VVGRSbUxS0yXFGbyKsWWwxFcw69pbiH69Bf404jtHlLZCCbiuf9e5sOYaSLZoVYIWyW3RvK6hPqLcGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C6kgP6XZ; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20cbca51687so17674765ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 03:45:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731671129; x=1732275929; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mzc1r6b78LAiuytUC+As0bITf0u5NeHauNj5GmJJ8cs=;
-        b=KbMjIjK8xYBwbmxO/2TiSaL+rSI7wH50ZPZgy+uzX90kXynoNnvmYYMZwUf60CmgW+
-         P2lqQSmRPkzLQhEnXzXUI1LlSAnwawRqGERYl6gBx0akC6RRhJyuUrg4ycg1FjMiCaQo
-         aWjfDoteZq8kNHvlYYIY1KCPRo1MSPdh71lh3xqLz1ga2GxJZDvHASWFfh6ntDWpR7yn
-         kRvhn+rFaqGP3PNSGvK0IU0fbjts1p8cSDCLSv1QevKGg/QIqRFbTxpMfBuBjWSeOLMs
-         6OwWDAbwLtleaSvwpr/daM0H0lsD15tGj/SboNEheOqpi1t4oRhHU9fb2JLvnLdRlltz
-         NcLQ==
+        d=linaro.org; s=google; t=1731671142; x=1732275942; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HimgWaHQTpzhPp/68+0fUZZbBB8cI4FMHzyZ2vd64Sw=;
+        b=C6kgP6XZ8Y5CAu4v6tR8uaVfWM/jpP6L+z5M+VVa0fmWMXgWj30Is2qergxbpliyPg
+         aG6kR7D2+FleQMWLiFgBp58/MjchzGKJl3ZrSzJdqDx8mMxgBi34Nd3Co3uEETgNQb1S
+         QoGqzFB4uuA159dINKgtiAef1czmxa3bmgtgfKk5MAdU9H6NCi/ZtMOFBONOnesoX59Y
+         YOMqIQ3kqiY+YuSym9iwhngRe/FvZNRKSkq0vp7fmlT7JhySE2qyUvvq3OpABAyXt9No
+         aPwbbv+0J0ZuOShEWkYPUcxcnnxSwqKxDfB3xrWtiO8wSBxoyKQt3lqnLm4GHwYkBYw0
+         8IJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731671129; x=1732275929;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mzc1r6b78LAiuytUC+As0bITf0u5NeHauNj5GmJJ8cs=;
-        b=OnTHCOdzjOKJrc/X6z9I1gJ1/rWMB9F7FJG2hoA4WCx3cUK0HsaIHACK4kMlltDB55
-         cgOrmhEp4Vspff3IuD0hhAMuXBMdKLafGPjNeKcJEDgXkk4qRLRL28HLceLwHd5kXun/
-         3wYUbqmU0F/VHYrDZlSyCuQUB+mqz1eLw/7Z2SWo07xl9r+V/pskWHRo3h0dNOvDARBB
-         uag8fc7EkNTQ4FXyj1x2ItZ8c90uQSAJRPk4lfNQu4WhuTIxthIu7Hl51EXbERtJT5wk
-         1gH8m1dVlqCwOSzx+bCkrS7q/y4t4K5tMJh24GLHcASKrwLVIU8Q5u1U3yezK51O1ogV
-         YqhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVCFnzm3KVWTlNEwPGnwnGzletsIFD126WppECd52EaWld74P4eHT0QRU7meXRUE8s0NTI=@vger.kernel.org, AJvYcCWDTrNGruUBgtVsAaMf5WecYfTSDo6xvLePLdZykTnOouIQbT8VrJ00EJy2kJU1/akvDrsA4XWigTwfja66@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxzt3KkqaMNu8sSsIQf0X6lx4T5fEF0EdxF5P4aGc34fRP6gqu/
-	Ii6qpjkLVehylB7HzXZdYUo0NlZqVTGx5Gsy8VpxeXiHS3PSpJM=
-X-Google-Smtp-Source: AGHT+IGPNwUnfCard+9TZO605jPVU79JEDGb94F5QQgc7VL7/oLVfn6eejgrFu6pxqfA3pKJKosKWQ==
-X-Received: by 2002:a05:600c:35d1:b0:431:6153:a258 with SMTP id 5b1f17b1804b1-432df72c1cfmr19249825e9.13.1731671128528;
-        Fri, 15 Nov 2024 03:45:28 -0800 (PST)
-Received: from qoroot.. ([2.181.242.206])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d4788a31sm50500545e9.0.2024.11.15.03.45.22
+        d=1e100.net; s=20230601; t=1731671142; x=1732275942;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HimgWaHQTpzhPp/68+0fUZZbBB8cI4FMHzyZ2vd64Sw=;
+        b=ht4PxefbxUpEM3AA9LATlHfLEGSmB5xbsxOtmRUhkfIckS0E3LO0K9hTdaW66pzdm7
+         3NswsnQY7O980zC6U3aM7yc/y/wxwJEqFlU+1XtNZ+UuGf4B+e3RCsV/BMMDmAgG3Kpl
+         rRitxROsyyEAJrndgKNJYWiADQbyAfdH4H3lhSfhF4S3sqVCPRHjviOamlCXWUv4tn4Z
+         pedv4vrm2OFwyzPtsBaxwfGK6FmQeCu0oKjBtzVyeOaysPfywKqQJlRrLBNcTtGUYCD0
+         40c0OJOqNrzFlSug+xl3TbyAW15h1X4Hpen9VZmxxYFUC5GruVkrXGe/t3AhX9DnzZX4
+         seUA==
+X-Forwarded-Encrypted: i=1; AJvYcCVEzeDS+0QVG2ckjfOdJheG3wW8Ck8WCeMkU+N8BiE76BCpmnwutHfEKyQUZ7/3bKr8l0qI+FQUt/brMHk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyECbLEhY2xXvyEh1HwJtw7AXxl/fjdvRsv3WC56mcKgq8GcBY7
+	2R/ObJykOHOvqLNN+Bybf/8eNHWhZFd/5c4/8irsMNhL6/p9ArStPiOyfPs0fA==
+X-Google-Smtp-Source: AGHT+IFZFtP+1BGeoW8Q/+hmGF/1QZO1mnKMY+wp/cR1tUMg1R4X+CzMnsq8s7hdN6cWY5lMFAk59w==
+X-Received: by 2002:a17:902:d48f:b0:20b:4875:2c51 with SMTP id d9443c01a7336-211d0d92274mr24621765ad.27.1731671142496;
+        Fri, 15 Nov 2024 03:45:42 -0800 (PST)
+Received: from thinkpad ([117.193.208.47])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f56e55sm10454435ad.274.2024.11.15.03.45.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 03:45:27 -0800 (PST)
-From: Amir Mohammadi <amirmohammadi1999.am@gmail.com>
-X-Google-Original-From: Amir Mohammadi <amiremohamadi@yahoo.com>
-To: qmo@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Amir Mohammadi <amiremohamadi@yahoo.com>
-Subject: [PATCH] bpftool: fix potential NULL pointer dereferencing in prog_dump()
-Date: Fri, 15 Nov 2024 15:15:07 +0330
-Message-ID: <20241115114507.1322910-1-amiremohamadi@yahoo.com>
-X-Mailer: git-send-email 2.42.0
+        Fri, 15 Nov 2024 03:45:42 -0800 (PST)
+Date: Fri, 15 Nov 2024 17:15:33 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Cc: andersson@kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	cros-qcom-dts-watchers@chromium.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicinc.com,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/6] arm64: dts: qcom: qcs6490-rb3gen2: Add node for
+ qps615
+Message-ID: <20241115114533.vilxuszzmqg4vrko@thinkpad>
+References: <20241112-qps615_pwr-v3-0-29a1e98aa2b0@quicinc.com>
+ <20241112-qps615_pwr-v3-2-29a1e98aa2b0@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241112-qps615_pwr-v3-2-29a1e98aa2b0@quicinc.com>
 
-A NULL pointer dereference could occur if ksyms
-is not properly checked before usage in the prog_dump() function.
+On Tue, Nov 12, 2024 at 08:31:34PM +0530, Krishna chaitanya chundru wrote:
+> Add QPS615 PCIe switch node which has 3 downstream ports and in one
+> downstream port two embedded ethernet devices are present.
+> 
+> Power to the QPS615 is supplied through two LDO regulators, controlled
+> by two GPIOs, these are added as fixed regulators. And the QPS615 is
+> configured through i2c.
+> 
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
 
-Signed-off-by: Amir Mohammadi <amiremohamadi@yahoo.com>
----
- tools/bpf/bpftool/prog.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
-index 2ff949ea8..8b5300103 100644
---- a/tools/bpf/bpftool/prog.c
-+++ b/tools/bpf/bpftool/prog.c
-@@ -822,11 +822,12 @@ prog_dump(struct bpf_prog_info *info, enum dump_mode mode,
- 					printf("%s:\n", sym_name);
- 				}
- 
--				if (disasm_print_insn(img, lens[i], opcodes,
--						      name, disasm_opt, btf,
--						      prog_linfo, ksyms[i], i,
--						      linum))
--					goto exit_free;
-+				if (ksyms)
-+					if (disasm_print_insn(img, lens[i], opcodes,
-+							      name, disasm_opt, btf,
-+							      prog_linfo, ksyms[i], i,
-+							      linum))
-+						goto exit_free;
- 
- 				img += lens[i];
- 
+One comment below.
+
+> ---
+>  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 115 +++++++++++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/sc7280.dtsi         |   2 +-
+>  2 files changed, 116 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> index 0d45662b8028..0e890841b600 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> @@ -202,6 +202,30 @@ vph_pwr: vph-pwr-regulator {
+>  		regulator-min-microvolt = <3700000>;
+>  		regulator-max-microvolt = <3700000>;
+>  	};
+> +
+> +	vdd_ntn_0p9: regulator-vdd-ntn-0p9 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "VDD_NTN_0P9";
+> +		gpio = <&pm8350c_gpios 2 GPIO_ACTIVE_HIGH>;
+> +		regulator-min-microvolt = <899400>;
+> +		regulator-max-microvolt = <899400>;
+> +		enable-active-high;
+> +		pinctrl-0 = <&ntn_0p9_en>;
+> +		pinctrl-names = "default";
+> +		regulator-enable-ramp-delay = <4300>;
+> +	};
+> +
+> +	vdd_ntn_1p8: regulator-vdd-ntn-1p8 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "VDD_NTN_1P8";
+> +		gpio = <&pm8350c_gpios 3 GPIO_ACTIVE_HIGH>;
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +		enable-active-high;
+> +		pinctrl-0 = <&ntn_1p8_en>;
+> +		pinctrl-names = "default";
+> +		regulator-enable-ramp-delay = <10000>;
+> +	};
+>  };
+>  
+>  &apps_rsc {
+> @@ -684,6 +708,75 @@ &mdss_edp_phy {
+>  	status = "okay";
+>  };
+>  
+> +&pcie1_port {
+> +	pcie@0,0 {
+> +		compatible = "pci1179,0623";
+> +		reg = <0x10000 0x0 0x0 0x0 0x0>;
+> +		#address-cells = <3>;
+> +		#size-cells = <2>;
+> +
+> +		device_type = "pci";
+> +		ranges;
+> +		bus-range = <0x2 0xff>;
+> +
+> +		vddc-supply = <&vdd_ntn_0p9>;
+> +		vdd18-supply = <&vdd_ntn_1p8>;
+> +		vdd09-supply = <&vdd_ntn_0p9>;
+> +		vddio1-supply = <&vdd_ntn_1p8>;
+> +		vddio2-supply = <&vdd_ntn_1p8>;
+> +		vddio18-supply = <&vdd_ntn_1p8>;
+> +
+> +		i2c-parent = <&i2c0 0x77>;
+> +
+> +		reset-gpios = <&pm8350c_gpios 1 GPIO_ACTIVE_LOW>;
+> +
+> +		pcie@1,0 {
+> +			reg = <0x20800 0x0 0x0 0x0 0x0>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +
+> +			device_type = "pci";
+> +			ranges;
+> +			bus-range = <0x3 0xff>;
+> +		};
+> +
+> +		pcie@2,0 {
+> +			reg = <0x21000 0x0 0x0 0x0 0x0>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +
+> +			device_type = "pci";
+> +			ranges;
+> +			bus-range = <0x4 0xff>;
+> +		};
+> +
+> +		pcie@3,0 {
+> +			reg = <0x21800 0x0 0x0 0x0 0x0>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +			device_type = "pci";
+> +			ranges;
+> +			bus-range = <0x5 0xff>;
+> +
+
+You haven't added any additional properties (dfe etc...) to any of the
+downstream port nodes. Does this mean that this board doesn't need any of them?
+
+- Mani
+
 -- 
-2.42.0
-
+மணிவண்ணன் சதாசிவம்
 
