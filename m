@@ -1,260 +1,599 @@
-Return-Path: <linux-kernel+bounces-410626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75AC89CDE33
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:25:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2D019CDE37
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:26:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0ED2B21EB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:25:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 916B4282934
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DD21BBBD4;
-	Fri, 15 Nov 2024 12:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67B91BC064;
+	Fri, 15 Nov 2024 12:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="TKqjruRG"
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2042.outbound.protection.outlook.com [40.107.247.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jvBw/SPx"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEBE81BBBCC
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 12:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731673510; cv=fail; b=DEX1s+/gB4Uh8mQ4fV7gd+MaVBzwPFLRkmngqSeQEoP2h5FKnjFK9uzkGYto94iIbdVonWShRKkhrslWCESqOOz5Lmxt/j/1SHMvAdmeZv0tth7hRx59stLerjOoirF3/k4ukuDxvzhvXtt1ORvYZno+rQf/AoBVJkTPSuG9OTw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731673510; c=relaxed/simple;
-	bh=vYoiBX2kD8Fd6rxyKomFlWcjptxFd4YzbL68diHQlcA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=P214V88+XP3aKU0C31kKT2lm3+7rO0N5u+gRfprQOS5GN9vx4cOHrGzknPxVjH6U/qnRV0UiHQeBjROf34LIVkmP1e1UmHR13LGY//zpDms2we6K9M72eJ4sRxwelzVzdw6y3bTiFCVdEnAK8acXczwJsYvOVIbrxe3nE0gM7vU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=TKqjruRG; arc=fail smtp.client-ip=40.107.247.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oYh2eJh8nn+MdIc1KUXvQ6FDFJ37PKAyJx5IyDt3nH+W3ctoArzPPuwgeAqEx7ovXuB2l6pdETTT0/Fj/XVCD3sn28t/KzmrP50cw9CLAu1Yk5A0FmWsXMNvbYxGHzDDrIfIYqp/hfkK+x7Xmbmdcpspj+0NZAWvdQ4yQrJGvJaMt5rS5GlzLorlL3tTuE1QREC4BbHhQvFoCdUn4dJ93xBJWSkUEVSPgnreDqqOZntq9/KG7Zlq7klSwnthikq1LS5VDdg5hwdgD8eoqstvJ9HRQnCG6+CRc/xFDdM2pZioQU2BUNTYO2pBc8ECV1j93hlNMvpz/UFoLjKbT6Racw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ljOk7e8baIliHveVz/CurL0+CAr+LHIykSIBhinzt8Y=;
- b=sFw4mZ70PfZ1+ogYl9/yg2RzsZrFwpIXHbC2K8saeZx7ysa4Mq8xmD07fqMcDN8BlL1UaVeyYWhxbRzNDlL/G2HLQWiyWWCv7q0aJzuJYz0ve3FM1TyL+eLYxG4tSVV9vKA4C+bTDOQzRnopH6H+ciiJIx62ngLIeRD8lfWTjCeyCX/p9xRb3+vO/4RPK+H6gXETWz94AYfjFjjGlmElacew+apCf6Ba3RzHT0b9cWcrEafuCUuWMTKRtuZ8sMlHzf/YuQkf7HZTEUZsGMnvE8MxrCEe7Jf/hBbikFnKw3eQAmxsqmp8n8my+lQuTR6++gKaya4pRf09g726A1+sRA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=axis.com; dmarc=pass action=none header.from=axis.com;
- dkim=pass header.d=axis.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ljOk7e8baIliHveVz/CurL0+CAr+LHIykSIBhinzt8Y=;
- b=TKqjruRGmY2QwW+ixAl981MmdRmMte9TZQss54kDLecXDRzolpLmvxqSW7Xajgdkf3Q/d+SInG/em+5CkqUcJQQ71IUrmtNNHKyvuhEVTb7RGP/KxyGrO03NDPOdCzOYIfoSZa6VvynWEy4u8Ha8fKw3N33Ls4tBbRhrQvUY55Q=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=axis.com;
-Received: from AM9PR02MB7625.eurprd02.prod.outlook.com (2603:10a6:20b:43c::10)
- by PA4PR02MB6942.eurprd02.prod.outlook.com (2603:10a6:102:102::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.25; Fri, 15 Nov
- 2024 12:25:02 +0000
-Received: from AM9PR02MB7625.eurprd02.prod.outlook.com
- ([fe80::aad2:67d9:c82c:fbcd]) by AM9PR02MB7625.eurprd02.prod.outlook.com
- ([fe80::aad2:67d9:c82c:fbcd%4]) with mapi id 15.20.8158.013; Fri, 15 Nov 2024
- 12:25:02 +0000
-Message-ID: <d7121d00-4353-2901-e87b-7fef7da5a35f@axis.com>
-Date: Fri, 15 Nov 2024 13:25:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH] drm/bridge: adv7511_audio: Update Audio InfoFrame
- properly
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel@axis.com
-References: <20241113-adv7511-audio-info-frame-v1-1-49b368b995a5@axis.com>
- <nramdgi4pziet3ypwdi32zolnhdzualv4rpov372s4mfsakdhs@7qjro2oaef7i>
-From: Stefan Ekenberg <stefan.ekenberg@axis.com>
-In-Reply-To: <nramdgi4pziet3ypwdi32zolnhdzualv4rpov372s4mfsakdhs@7qjro2oaef7i>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MM0P280CA0053.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:190:b::32) To AM9PR02MB7625.eurprd02.prod.outlook.com
- (2603:10a6:20b:43c::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6863315C140
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 12:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731673553; cv=none; b=SwEsDSzLt/zyUm27LW9/VCCwC8aR02p2uwILl9vabq4cim7EtajAUziMteEtcE3irg0i33UsMzwJEAzkeGebEZItaYzIe7ZkLjIN7s9M69KuDpQ/fx7hUNq8NiV7SZX+ub/Zk7PTQTX6K3p7O1Yuj+mNoNQyMewNhDVSkXbJ4Qs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731673553; c=relaxed/simple;
+	bh=lIJ/3E49ECCRY/5Ravabl3ejOOnuTLKZf1mm56g4roM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iq8H+38b/YBMx1ylrqsdQuChFpeU95t/6Gqwr7qUplWlt6aM6qUiHrnlUEgoWFs1/ghln2qd0ecQCyhw6YySmzMqu27a5Rybm4AsF7eeuV6pfhztKkVS/13B4mKY5Q/Uw7vA431Gs4iIROwUwU1BN6XkQ3i9uDebT7iv6LGO5RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jvBw/SPx; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e2fb304e7dso1491585a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 04:25:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731673550; x=1732278350; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=CEWQbLPz0G8f0UPh7thhjQWlTKXTRi0zZUX8xbTR0Vs=;
+        b=jvBw/SPxZE6K49TiH7vuBkaH9mucu+CgYwMNAKdYTOAGoGp+Nv1tKD5EnOuLkQknWk
+         Ly72c86Z702pIkLBtdCxt1t8C+CiTbP3hx43768q7dk1uQXca7MBaxLcgmXp8zrX03cP
+         ekT4s/JmzBlfD/7JEdhbgBghnSFiXgoCXiFfDthaYkvC6kkp8xT5fSsQRQd0w4OE8ll5
+         8xgpIzvDKBb2GdBrJzijAFPpFCOFHScjrR+8XjuLhB+iNEClGAajlldt8htaVr4D5Jfh
+         ROAZIO3KfGZ9ELObiZffU5645/xQy561BlPVKVcHD+QhuuzvIlsjcrh+jRq2t1Qb4YJQ
+         529g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731673550; x=1732278350;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CEWQbLPz0G8f0UPh7thhjQWlTKXTRi0zZUX8xbTR0Vs=;
+        b=e8Vi3UoboQoMVYcQ7ijqn4o0YvMWDkDxJok7MwfZrbVKJWQFYV/aof5MS2rI4595VY
+         7k0S3iAbzy4zRzrXjNFl72/KniPC1Zy4MkjBFaro0kryN17Ilv0EeR5a8ylwD8gow2Fu
+         uV8kZV95dLjYT7b0nlljUbyfJzpgCTHaNX922OcwJxzSAfM1WiM7eU8KwwShDw7prJOL
+         MUUFMTbNjpMVF29C6eg35R26ZDBOSU6uWP7KXpkY0WSiSJHOcjnLrkEcyKlr0tkTI0NP
+         XTZpNIU/ZoTorv53M4wPyKqdtF/3piccLMqvRqcMZHBAug91JxnCg6fsY4uFb5bIKttI
+         uENw==
+X-Forwarded-Encrypted: i=1; AJvYcCURV6z61LDIbmKPkXC7fvDlnqkZ7MOPc1PGCJj4+5MoeMaFPG8wTClRaVB+pVjSD5nPNfxPCm+4HnMAck8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDRMUtRKwKpXhTZrH05JAUQmCw/E2j64Wy5JPSS1NuaVaSQKLW
+	dAUhVScYPN/14IfQf/76c06rg+5nM3delVUvIxh6y5+qDfH2c6eVmxbIGE0/qw==
+X-Google-Smtp-Source: AGHT+IH7BvXsWxX9oWXtG753qt07vyMmSgbdYhlT0zdlYkcuidltUonudpcoYJ/0EDkCxsS1zU2q+Q==
+X-Received: by 2002:a17:90b:4c03:b0:2e2:da81:40c3 with SMTP id 98e67ed59e1d1-2ea154cd474mr2729975a91.1.1731673549660;
+        Fri, 15 Nov 2024 04:25:49 -0800 (PST)
+Received: from thinkpad ([117.193.215.93])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea02481b30sm2769144a91.7.2024.11.15.04.25.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 04:25:49 -0800 (PST)
+Date: Fri, 15 Nov 2024 17:55:39 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Cc: andersson@kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	cros-qcom-dts-watchers@chromium.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicinc.com,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 6/6] PCI: pwrctl: Add power control driver for qps615
+Message-ID: <20241115122539.yltkwukg5zuhwit4@thinkpad>
+References: <20241112-qps615_pwr-v3-0-29a1e98aa2b0@quicinc.com>
+ <20241112-qps615_pwr-v3-6-29a1e98aa2b0@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM9PR02MB7625:EE_|PA4PR02MB6942:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8117db44-32d5-41b0-48e1-08dd05708769
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YWlDR2U3SHZ3TUp2WjkyS243azM4bHYvY3NaenZGZlAwbDlRYnVuM04zRzA3?=
- =?utf-8?B?WkpKWkhpNmd2SHJmbTJMVEdJekdhY0lsRkxwWUpzNUtJZlFmZG9lMlRMV1dB?=
- =?utf-8?B?K1VwN3pTSGk2RzN1UTQ3VEhWTDF6U21IcC9hRjZ6QjJRVkNZc0t5c3hXZ1Fm?=
- =?utf-8?B?a0FzNUYrd1U0eTF1QU5BNjM2RTdZSWRpN3RFTjlZVTViWjhrWlkrdVZJR0Qx?=
- =?utf-8?B?bmlIM1N1K05QYnpWd2NwKzZNNUtaa0FYUkpLd3hOS01FM0NUSWZHNXgwcm1D?=
- =?utf-8?B?clNLOHdwOHpmMlV3N1JLVjBFcSs1ZDNvVkhZUE1ZT01tNCs1MnQvcnI5ZWxr?=
- =?utf-8?B?ekw1L09HWHRUWkJwMHVTNEtQemtrdjhGdGk2UXpTaWtOZVduaDFNQ1hWcnhH?=
- =?utf-8?B?SlVHSCtHMlg4T29Yc1hKWnl4elllZ09MM2dxQlF5RDRDazhnYlQzS0pxUktp?=
- =?utf-8?B?NDFtUXkxN1l0V21iRzFmWVQ0Ymh0N3BIOE5PMlh2MWdURGFibkRVSnYyWkZW?=
- =?utf-8?B?R1pXZU5RYjhpSFFkYlBuc3ZaMHNQMUptZ1ZtREZ2OEJYRUprRUl0VFRobXVi?=
- =?utf-8?B?N1hEUGJ3UDVYWG9Ec3VnaUk3dHRyZ0huMWxSM0sxaGh1K0J6YlcvMzUvK1N1?=
- =?utf-8?B?cllleHErWlhqaVRuYmdOWUM3dWhqRlhySE9rbDg3cjhmeE5EV3BYWHFTeGxj?=
- =?utf-8?B?MjhuV0cxbGt1TjJaSm5BdG94WVlWSEg1OFNRK2liZWhOM1Nvd0xnMXdLcUxk?=
- =?utf-8?B?N0tuYW1lOS9SMjVrZmZEYmJLTDdxYjBneGRPS091Z1d2SXR6ZUI4WWNYb3JY?=
- =?utf-8?B?Y2JSOW1QWkIzVk1ka3JPVytjZ2RyWTNTU1U3dzhGZXRITENLOGRzMzBxalFG?=
- =?utf-8?B?ZUREVll6SlluaEd6KzhBTmpGbk1pZklPZXZSV05qNWw2TVdRZDFUMVJOSkVI?=
- =?utf-8?B?eTk1b3F5TmlxQnFVR1EzSkFjWFExU25pdWZ3MTBGaWVaYUpBU0dndzdpcHdN?=
- =?utf-8?B?Vm5tZ042eXNuU1U0SmZRTjBCZ2YwYk5JMXYwS2F2aXhka0Y4eEU5MHBtRmhJ?=
- =?utf-8?B?RVNmd3V4alZuZXlpTmc1VDFGeEVCRERyOGxVQkZLZVYrTXdKaWVDRDRSSFhu?=
- =?utf-8?B?Mkc4VFpNbTRrUGh6TGliNUQvdm0zWDRXNzZCa0NKS0tzcEliUUEra05wenB6?=
- =?utf-8?B?QlpaMG5aV1RJZmdIendkNENtYmx3SUxOcC9QcURHTk5zeEN6Y001eGRCUW9X?=
- =?utf-8?B?aHJDOTZXWUYzcHpIYWNPbnNKTm1IZUxLWnFDSDZRMVBJQmhJZnJwc2c1Z05K?=
- =?utf-8?B?aldmbUlXSmdncEJ1ZXFTL1ZYZHVjWTVBdThnOTYzNVBsTllZVUR2K0toaTJU?=
- =?utf-8?B?YmtGd0orV2s2WGhvajJsSUZTdWRFTVFmZHQrMTF6RTg3YnFqNGx6ZmNDcVk5?=
- =?utf-8?B?c2FrR1pIUnNrUjZyTFpSU0hMZ2hyTCtFV1E4UFdHcjBYZExXOWJPOHdja2Vl?=
- =?utf-8?B?RityYUN4WW4wbi8wNmU0bWdQdWpvbVd6eFdORHRJZGprQklVeXRZVVN4UjhU?=
- =?utf-8?B?cnRRRFB1b05obG9uY0FvS2NoV2Z0WnNEZXB4Q1BybDQ1MGxCT1R4ckVQVFVT?=
- =?utf-8?B?b2YrSUYzdkpjSCsvYTIxN29iOWFFTlltRFF4QUthVE15T3hTc1VERGF6V2JW?=
- =?utf-8?B?OUEyNHhUZVl0cDZpb1NHeVlSQTNvb3E4aklOSEEzVit0ZE1KYnNJNDhIeGIr?=
- =?utf-8?Q?YA47J2Da2BnfPdvSsH4rK5Q9ug5h7TCBLG5Oh+W?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR02MB7625.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dHQrQjcxaVp2VWdZVExNenU3UmlwZ3NlMU9BcU1kKzRpUkRIcUkzWVMvWmZo?=
- =?utf-8?B?blFHNWtSMEh5d1ozbk9HOTlLdVd2TzhGQ2p6SjRwV3pmRWdwNm53UGV4Ti9h?=
- =?utf-8?B?MXhYcHlTbllUSXFqT3hxWXV5N2VPWWcyVmFEVUIwcjBNenF1S3ozazF4dTdH?=
- =?utf-8?B?T1NiWDZ5QXlFcThCb0RVM0diWnI4aHZoSVl1aUZGV3BaSHlweTNBTkY1Wjgx?=
- =?utf-8?B?S3R1emJHck16TDVzZzdQaHBYV0Iwc2xHdUNmdHV6NU1NN2FLcUoraE1NbS9k?=
- =?utf-8?B?WTJZSjllY3h0NUltUi9uZk4xcDVKRElYT25xYlZsdVNrakZNdUVFTy9nRWRs?=
- =?utf-8?B?TTRHdXVJYnNIOGY0RThxdStOODV6TUpFNDBNd202V05hcWlDY1EyZEpLcE5H?=
- =?utf-8?B?c2FwUmxWY21iOXpCTloyTGU2T0FRSkNoaXVyVjRONnBHUVptUTJ0ZjhFS2lr?=
- =?utf-8?B?U2JORDU4Q3RHVWdSMHBFcnV0ejVUY1pTWFROUDlIcU5NK3lyNUxrNHplVGs4?=
- =?utf-8?B?VFBmcGhCWkFncG5WaEMxMktOQldmTDRPd1hIaU5kbGVuK1RaelNkd0craTNC?=
- =?utf-8?B?dmNlUENSRmtrSFJQeHl4K3VNUUdmSC9ibXF1bmZrYnJkZUVzYjlwdnpBT1Nr?=
- =?utf-8?B?dTZCODFNTWZzV3NLR0U1Z1dKeWRoSER2ZCtFQmpqM2l5S0dhYTJaRDBlRzd1?=
- =?utf-8?B?azBQTlQxeDR4azFoeTlrUENqYTcrdHlkMXBueWVvMzNIejFBSEJ3TFY4Ulpo?=
- =?utf-8?B?NjJqR0lsRThtMzRjd2FYd0dSR0E1WWE4NVdFUWJQYjZyNDloaitHTkw5WDFG?=
- =?utf-8?B?MFhnSlVNcnE4OFVoMGpFbmtySlhDT2V1QVNqOGQxQnVpKzFxb09zN09DOGNO?=
- =?utf-8?B?elF6TEJmSk11ZHZraU5CTFJMOCtjU3EwbjFRblJFWkc4eVhVMXB2RXNlQU9y?=
- =?utf-8?B?WlJWbWFsU0hMTWtFd2E1VUtJMEw0T3NEbVB6MHNNc0FLT3daU1BYdVZtdDA2?=
- =?utf-8?B?cURIOS9HUmxGOFMxWGFPVjR6ZDYyVGpiTUR1ZjV4N0xnRDk0ZHZCZzE1ZkUx?=
- =?utf-8?B?S0dvNGF0aG5qTnZ6VGtxVldFaXgzVTA2Y0I0SHpFMGYrbysvRWdOYUttUXI4?=
- =?utf-8?B?WlFhajJGMXJuUm1QWjhSemMybVBSZGt2ZkR4cUppL0N2ajJkY1FseHVMWENN?=
- =?utf-8?B?Wkw2MUJTZnliMWlFcjVzQ0NwZjFJSXdXcWJnZGhKTEtyRnJvVWdUTGF4dlB4?=
- =?utf-8?B?WGc0aHQvS1IrWnFCa2J5QldNQjFZYXU4SVhnNHF6MFpZcE40WHJsMERqQXFE?=
- =?utf-8?B?b2ZEelB6TXJjM0t0UnFoemRTZ1JCSzlqNW1vZW55MUpvNFNScEVTRWsxU3o4?=
- =?utf-8?B?WmUvMXM0RHR5aFJkTUZva3ppWmc3Y29adUh0UUQxQmY4elhJN2VzVmhlekZy?=
- =?utf-8?B?MzQ3N0pqL0RLZW96UFk0ZjRYNDhwY3BtK0tDQU1USnRRcXpRN1g0OGdJdThy?=
- =?utf-8?B?QzF3QmJRdWZKczRoWjd6cFlDRkk3SEIvMXpMVkhIYnNHZlRFK3VHT1ZJTEVk?=
- =?utf-8?B?Mk5vZXR1YU9IZktRa1pKdnJNNkkybUhsbTYveGxZRnRaWXhGM0R6a24wSlFG?=
- =?utf-8?B?MWpvZlptZEtKSnNEVlVHOWlPRGlJMDJRb2tKcndwSHF5T0xCL3hXalFBUHBZ?=
- =?utf-8?B?TGM3bjQ3engvdmJVUTJTeHp1ZytVU0dCN2FPbi9RS3ZMbGZ5emt3OVRUeUtC?=
- =?utf-8?B?R1ZZVkFZZ1AxeDNlV3dwQ2VEcmNLb25PN3IwRVVQUkEwUTRXamxEZ2laY2Mx?=
- =?utf-8?B?WXJCMmpGajVGSzU4ZDRqLzBhYUVLMFJtZWY3T05zRVB1U0NkZHN2WExQY3FO?=
- =?utf-8?B?QVlQUkZnajZIRzIwdGFOcTBsOVB1ZDhlTzF4L01hcjVaeWM2cUJEc1RrLzh6?=
- =?utf-8?B?bjlPT3NGZWhHcnBFTFc3cXg4cW5RS1lGbFhmZDczQmZ1aXZBR09CbGJicXRo?=
- =?utf-8?B?YWF2YUlOMzJLVDF4SGNpeEVDblNmU2lyN0MvdTlFbDdNTGloc1NhQ0s2ZEd1?=
- =?utf-8?B?YXhtbVl3YUFQUTlUTmhSM1JaM25JSUxMU3lKeFNsYWVZSVI2T2luVEVPcWZM?=
- =?utf-8?Q?Xnzk=3D?=
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8117db44-32d5-41b0-48e1-08dd05708769
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR02MB7625.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2024 12:25:02.6928
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LGTyaN9UMGAltUg43JroVozQehZyhxX9iZrMiMIojnL++c5ndiwF6M7R2dMxS7b+
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR02MB6942
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241112-qps615_pwr-v3-6-29a1e98aa2b0@quicinc.com>
 
-On 11/15/24 09:16, Dmitry Baryshkov wrote:
-> On Wed, Nov 13, 2024 at 08:38:11AM +0100, Stefan Ekenberg wrote:
->> AUDIO_UPDATE bit (Bit 5 of MAIN register 0x4A) needs to be set to 1
->> while updating Audio InfoFrame information and then set to 0 when done.
->> Otherwise partially updated Audio InfoFrames could be sent out. Two
->> cases where this rule were not followed are fixed:
->>   - In adv7511_hdmi_hw_params() make sure AUDIO_UPDATE bit is updated
->>     before/after setting ADV7511_REG_AUDIO_INFOFRAME.
->>   - In audio_startup() use the correct register for clearing
->>     AUDIO_UPDATE bit.
->>
->> The problem with corrupted audio infoframes were discovered by letting
->> a HDMI logic analyser check the output of ADV7535.
->>
->> Signed-off-by: Stefan Ekenberg <stefan.ekenberg@axis.com>
+On Tue, Nov 12, 2024 at 08:31:38PM +0530, Krishna chaitanya chundru wrote:
+> QPS615 is the PCIe switch which has one upstream and three downstream
+> ports. To one of the downstream ports ethernet MAC is connected as endpoint
+> device. Other two downstream ports are supposed to connect to external
+> device. One Host can connect to QPS615 by upstream port. QPS615 switch
+> needs to be configured after powering on and before PCIe link was up.
 > 
-> Missing Fixes tag,
+> The PCIe controller driver already enables link training at the host side
+> even before qps615 driver probe happens, due to this when driver enables
+> power to the switch it participates in the link training and PCIe link
+> may come up before configuring the switch through i2c. To prevent the
 
-Ok, I will add Fixes tag.
+State the reason why the i2c config needs to be done before link up.
 
+> host from participating in link training, disable link training on the
+> host side to ensure the link does not come up before the switch is
+> configured via I2C.
 > 
->> ---
->>   drivers/gpu/drm/bridge/adv7511/adv7511_audio.c | 14 ++++++++++++--
->>   1 file changed, 12 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
->> index 61f4a38e7d2bf6905683cbc9e762b28ecc999d05..8f786592143b6c81e5a434768b51508d5e5f3c73 100644
->> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
->> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
->> @@ -153,7 +153,16 @@ static int adv7511_hdmi_hw_params(struct device *dev, void *data,
->>   			   ADV7511_AUDIO_CFG3_LEN_MASK, len);
->>   	regmap_update_bits(adv7511->regmap, ADV7511_REG_I2C_FREQ_ID_CFG,
->>   			   ADV7511_I2C_FREQ_ID_CFG_RATE_MASK, rate << 4);
->> -	regmap_write(adv7511->regmap, 0x73, 0x1);
->> +
->> +	/* send current Audio infoframe values while updating */
->> +	regmap_update_bits(adv7511->regmap, ADV7511_REG_INFOFRAME_UPDATE,
->> +			   BIT(5), BIT(5));
->> +
->> +	regmap_write(adv7511->regmap, ADV7511_REG_AUDIO_INFOFRAME(0), 0x1);
->> +
->> +	/* use Audio infoframe updated info */
->> +	regmap_update_bits(adv7511->regmap, ADV7511_REG_INFOFRAME_UPDATE,
->> +			   BIT(5), 0);
->>   
->>   	return 0;
->>   }
->> @@ -184,8 +193,9 @@ static int audio_startup(struct device *dev, void *data)
->>   	regmap_update_bits(adv7511->regmap, ADV7511_REG_GC(0),
->>   				BIT(7) | BIT(6), BIT(7));
->>   	/* use Audio infoframe updated info */
->> -	regmap_update_bits(adv7511->regmap, ADV7511_REG_GC(1),
->> +	regmap_update_bits(adv7511->regmap, ADV7511_REG_INFOFRAME_UPDATE,
->>   				BIT(5), 0);
+> Based up on dt property and type of the port, qps615 is configured
+> through i2c.
 > 
-> Should the REG_GC(1) still be written?
-
-The comment before this line states "use Audio infoframe updated info" 
-and, before my change, bit 5 of REG_GC(1) was cleared by the line I 
-removed. Bit 5 is positioned within field GC_PP[3:0] and that field 
-doesn't control audio infoframe and is read-only. My conclusion 
-therefore was that the author if this code actually meant to clear bit 5 
-of REG_INFOFRAME_UPDATE from the very beginning. In short, clearing bit 
-5 of REG_GC(1) is invalid since it is a read-only field.
-
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> ---
+>  drivers/pci/pwrctl/Kconfig             |   8 +
+>  drivers/pci/pwrctl/Makefile            |   1 +
+>  drivers/pci/pwrctl/pci-pwrctl-qps615.c | 630 +++++++++++++++++++++++++++++++++
+>  3 files changed, 639 insertions(+)
 > 
->> +
->>   	/* enable SPDIF receiver */
->>   	if (adv7511->audio_source == ADV7511_AUDIO_SOURCE_SPDIF)
->>   		regmap_update_bits(adv7511->regmap, ADV7511_REG_AUDIO_CONFIG,
->>
->> ---
->> base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
->> change-id: 20241108-adv7511-audio-info-frame-54614dd4bf57
->>
->> Best regards,
->> -- 
->> Stefan Ekenberg <stefan.ekenberg@axis.com>
->>
-> 
+> diff --git a/drivers/pci/pwrctl/Kconfig b/drivers/pci/pwrctl/Kconfig
+> index 54589bb2403b..fe945d176b8b 100644
+> --- a/drivers/pci/pwrctl/Kconfig
+> +++ b/drivers/pci/pwrctl/Kconfig
+> @@ -10,3 +10,11 @@ config PCI_PWRCTL_PWRSEQ
+>  	tristate
+>  	select POWER_SEQUENCING
+>  	select PCI_PWRCTL
+> +
+> +config PCI_PWRCTL_QPS615
+> +	tristate "PCI Power Control driver for QPS615"
 
+QPS615 PCIe switch
+
+> +	select PCI_PWRCTL
+> +	help
+> +	  Say Y here to enable the pwrctl driver for Qualcomm
+> +	  QPS615 PCIe switch which enables and configures it
+> +	  through i2c.
+> diff --git a/drivers/pci/pwrctl/Makefile b/drivers/pci/pwrctl/Makefile
+> index d308aae4800c..ac563a70c023 100644
+> --- a/drivers/pci/pwrctl/Makefile
+> +++ b/drivers/pci/pwrctl/Makefile
+> @@ -4,3 +4,4 @@ obj-$(CONFIG_PCI_PWRCTL)		+= pci-pwrctl-core.o
+>  pci-pwrctl-core-y			:= core.o
+>  
+>  obj-$(CONFIG_PCI_PWRCTL_PWRSEQ)		+= pci-pwrctl-pwrseq.o
+> +obj-$(CONFIG_PCI_PWRCTL_QPS615)		+= pci-pwrctl-qps615.o
+> diff --git a/drivers/pci/pwrctl/pci-pwrctl-qps615.c b/drivers/pci/pwrctl/pci-pwrctl-qps615.c
+> new file mode 100644
+> index 000000000000..c338e35c9083
+> --- /dev/null
+> +++ b/drivers/pci/pwrctl/pci-pwrctl-qps615.c
+> @@ -0,0 +1,630 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/device.h>
+> +#include <linux/i2c.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/pci.h>
+> +#include <linux/pci-pwrctl.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/string.h>
+> +#include <linux/types.h>
+> +#include <linux/unaligned.h>
+> +
+> +#include "../pci.h"
+> +
+> +#define QPS615_GPIO_CONFIG		0x801208
+> +#define QPS615_RESET_GPIO		0x801210
+> +
+> +#define QPS615_BUS_CONTROL		0x801014
+> +
+> +#define QPS615_PORT_L0S_DELAY		0x82496c
+> +#define QPS615_PORT_L1_DELAY		0x824970
+> +
+> +#define QPS615_EMBEDDED_ETH_DELAY	0x8200d8
+> +#define QPS615_ETH_L1_DELAY_MASK	GENMASK(27, 18)
+> +#define QPS615_ETH_L1_DELAY_VALUE(x)	FIELD_PREP(QPS615_ETH_L1_DELAY_MASK, x)
+> +#define QPS615_ETH_L0S_DELAY_MASK	GENMASK(17, 13)
+> +#define QPS615_ETH_L0S_DELAY_VALUE(x)	FIELD_PREP(QPS615_ETH_L0S_DELAY_MASK, x)
+> +
+> +#define QPS615_NFTS_2_5_GT		0x824978
+> +#define QPS615_NFTS_5_GT		0x82497c
+> +
+> +#define QPS615_PORT_LANE_ACCESS_ENABLE	0x828000
+> +
+> +#define QPS615_PHY_RATE_CHANGE_OVERRIDE	0x828040
+> +#define QPS615_PHY_RATE_CHANGE		0x828050
+> +
+> +#define QPS615_TX_MARGIN		0x828234
+> +
+> +#define QPS615_DFE_ENABLE		0x828a04
+> +#define QPS615_DFE_EQ0_MODE		0x828a08
+> +#define QPS615_DFE_EQ1_MODE		0x828a0c
+> +#define QPS615_DFE_EQ2_MODE		0x828a14
+> +#define QPS615_DFE_PD_MASK		0x828254
+> +
+> +#define QPS615_PORT_SELECT		0x82c02c
+> +#define QPS615_PORT_ACCESS_ENABLE	0x82c030
+> +
+> +#define QPS615_POWER_CONTROL		0x82b09c
+> +#define QPS615_POWER_CONTROL_OVREN	0x82b2c8
+> +
+> +#define QPS615_FREQ_125_MHZ		125000000
+> +#define QPS615_FREQ_250_MHZ		250000000
+> +
+> +#define QPS615_GPIO_MASK		0xfffffff3
+> +
+> +struct qps615_pwrctl_reg_setting {
+> +	unsigned int offset;
+> +	unsigned int val;
+> +};
+> +
+> +enum qps615_pwrctl_ports {
+> +	QPS615_USP,
+> +	QPS615_DSP1,
+> +	QPS615_DSP2,
+> +	QPS615_DSP3,
+> +	QPS615_ETHERNET,
+> +	QPS615_MAX
+> +};
+> +
+> +struct qps615_pwrctl_cfg {
+> +	u32 l0s_delay;
+> +	u32 l1_delay;
+> +	u32 tx_amp;
+> +	u32 nfts;
+> +	bool disable_dfe;
+> +	bool disable_port;
+> +	bool axi_freq_125;
+> +};
+> +
+> +#define QPS615_PWRCTL_MAX_SUPPLY	6
+> +
+> +struct qps615_pwrctl_ctx {
+> +	struct regulator_bulk_data supplies[QPS615_PWRCTL_MAX_SUPPLY];
+> +	struct qps615_pwrctl_cfg cfg[QPS615_MAX];
+> +	struct gpio_desc *reset_gpio;
+> +	struct i2c_adapter *adapter;
+> +	struct i2c_client *client;
+> +	struct pci_pwrctl pwrctl;
+> +};
+> +
+> +/*
+> + * downstream port power off sequence, hardcoding the address
+> + * as we don't know register names for these register offsets.
+> + */
+> +static const struct qps615_pwrctl_reg_setting common_pwroff_seq[] = {
+> +	{0x82900c, 0x1},
+> +	{0x829010, 0x1},
+> +	{0x829018, 0x0},
+> +	{0x829020, 0x1},
+> +	{0x82902c, 0x1},
+> +	{0x829030, 0x1},
+> +	{0x82903c, 0x1},
+> +	{0x829058, 0x0},
+> +	{0x82905c, 0x1},
+> +	{0x829060, 0x1},
+> +	{0x8290cc, 0x1},
+> +	{0x8290d0, 0x1},
+> +	{0x8290d8, 0x1},
+> +	{0x8290e0, 0x1},
+> +	{0x8290e8, 0x1},
+> +	{0x8290ec, 0x1},
+> +	{0x8290f4, 0x1},
+> +	{0x82910c, 0x1},
+> +	{0x829110, 0x1},
+> +	{0x829114, 0x1},
+> +};
+> +
+> +static const struct qps615_pwrctl_reg_setting dsp1_pwroff_seq[] = {
+> +	{QPS615_PORT_ACCESS_ENABLE, 0x2},
+> +	{QPS615_PORT_LANE_ACCESS_ENABLE, 0x3},
+> +	{QPS615_POWER_CONTROL, 0x014f4804},
+> +	{QPS615_POWER_CONTROL_OVREN, 0x1},
+> +	{QPS615_PORT_ACCESS_ENABLE, 0x4},
+> +};
+> +
+> +static const struct qps615_pwrctl_reg_setting dsp2_pwroff_seq[] = {
+> +	{QPS615_PORT_ACCESS_ENABLE, 0x8},
+> +	{QPS615_PORT_LANE_ACCESS_ENABLE, 0x1},
+> +	{QPS615_POWER_CONTROL, 0x014f4804},
+> +	{QPS615_POWER_CONTROL_OVREN, 0x1},
+> +	{QPS615_PORT_ACCESS_ENABLE, 0x8},
+> +};
+> +
+> +/*
+> + * Since all transfers are initiated by the probe, no locks are necessary,
+> + * ensuring there are no concurrent calls.
+
+'ensuring there are no concurrent calls' is not quite right here.
+
+> + */
+> +static int qps615_pwrctl_i2c_write(struct i2c_client *client,
+> +				   u32 reg_addr, u32 reg_val)
+> +{
+> +	struct i2c_msg msg;
+> +	u8 msg_buf[7];
+> +	int ret;
+> +
+> +	msg.addr = client->addr;
+> +	msg.len = 7;
+> +	msg.flags = 0;
+> +
+> +	/* Big Endian for reg addr */
+> +	put_unaligned_be24(reg_addr, &msg_buf[0]);
+> +
+> +	/* Little Endian for reg val */
+> +	put_unaligned_le32(reg_val, &msg_buf[3]);
+> +
+> +	msg.buf = msg_buf;
+> +	ret = i2c_transfer(client->adapter, &msg, 1);
+> +	return ret == 1 ? 0 : ret;
+> +}
+> +
+> +static int qps615_pwrctl_i2c_read(struct i2c_client *client,
+> +				  u32 reg_addr, u32 *reg_val)
+> +{
+> +	struct i2c_msg msg[2];
+> +	u8 wr_data[3];
+> +	u32 rd_data;
+> +	int ret;
+> +
+> +	msg[0].addr = client->addr;
+> +	msg[0].len = 3;
+> +	msg[0].flags = 0;
+> +
+> +	/* Big Endian for reg addr */
+> +	put_unaligned_be24(reg_addr, &wr_data[0]);
+> +
+> +	msg[0].buf = wr_data;
+> +
+> +	msg[1].addr = client->addr;
+> +	msg[1].len = 4;
+> +	msg[1].flags = I2C_M_RD;
+> +
+> +	msg[1].buf = (u8 *)&rd_data;
+> +
+> +	ret = i2c_transfer(client->adapter, &msg[0], 2);
+> +	if (ret == 2) {
+> +		*reg_val = get_unaligned_le32(&rd_data);
+> +		return 0;
+> +	}
+> +
+> +	/* If only one message successfully completed, return -ENODEV */
+
+EIO?
+
+> +	return ret == 1 ? -ENODEV : ret;
+> +}
+> +
+
+[...]
+
+> +static int qps615_pwrctl_set_nfts(struct qps615_pwrctl_ctx *ctx,
+> +				  enum qps615_pwrctl_ports port, u32 nfts)
+> +{
+> +	int ret;
+> +	struct qps615_pwrctl_reg_setting nfts_seq[] = {
+> +		{QPS615_NFTS_2_5_GT, nfts},
+> +		{QPS615_NFTS_5_GT, nfts},
+> +	};
+
+Reverse Xmas order.
+
+> +
+> +	ret =  qps615_pwrctl_i2c_write(ctx->client, QPS615_PORT_SELECT, BIT(port));
+> +	if (ret)
+> +		return ret;
+> +
+> +	return qps615_pwrctl_i2c_bulk_write(ctx->client, nfts_seq, ARRAY_SIZE(nfts_seq));
+> +}
+> +
+> +static int qps615_pwrctl_assert_deassert_reset(struct qps615_pwrctl_ctx *ctx, bool deassert)
+> +{
+> +	int ret, val;
+> +
+> +	ret = qps615_pwrctl_i2c_write(ctx->client, QPS615_GPIO_CONFIG, QPS615_GPIO_MASK);
+> +	if (ret)
+> +		return ret;
+> +
+> +	val = deassert ? 0xc : 0;
+> +
+> +	return qps615_pwrctl_i2c_write(ctx->client, QPS615_RESET_GPIO, val);
+> +}
+> +
+> +static int qps615_pwrctl_parse_device_dt(struct qps615_pwrctl_ctx *ctx, struct device_node *node,
+> +					 enum qps615_pwrctl_ports port)
+> +{
+> +	struct qps615_pwrctl_cfg *cfg;
+> +	u32 axi_freq = 0;
+> +	int ret;
+> +
+> +	cfg = &ctx->cfg[port];
+> +
+
+It'd be better to add a comment here about disabling ports.
+
+> +	if (!of_device_is_available(node)) {
+> +		cfg->disable_port = true;
+> +		return 0;
+> +	};
+> +
+> +	ret = of_property_read_u32(node, "qcom,axi-clk-freq-hz", &axi_freq);
+> +	if (ret && ret != -EINVAL)
+> +		return ret;
+> +	else if (axi_freq && (axi_freq != QPS615_FREQ_125_MHZ || axi_freq != QPS615_FREQ_250_MHZ))
+> +		return -EINVAL;
+
+Add a dev_err() to print the reason.
+
+> +	else if (axi_freq == QPS615_FREQ_125_MHZ)
+> +		cfg->axi_freq_125 = true;
+> +
+> +	ret = of_property_read_u32(node, "qcom,l0s-entry-delay-ns", &cfg->l0s_delay);
+> +	if (ret && ret != -EINVAL)
+> +		return ret;
+> +
+> +	ret = of_property_read_u32(node, "qcom,l1-entry-delay-ns", &cfg->l1_delay);
+> +	if (ret && ret != -EINVAL)
+> +		return ret;
+> +
+> +	ret = of_property_read_u32(node, "qcom,tx-amplitude-millivolt", &cfg->tx_amp);
+> +	if (ret && ret != -EINVAL)
+> +		return ret;
+> +
+> +	ret = of_property_read_u32(node, "qcom,nfts", &cfg->nfts);
+> +	if (ret && ret != -EINVAL)
+> +		return ret;
+> +
+> +	cfg->disable_dfe = of_property_read_bool(node, "qcom,no-dfe-support");
+> +
+> +	return 0;
+> +}
+> +
+> +static void qps615_pwrctl_power_off(struct qps615_pwrctl_ctx *ctx)
+> +{
+> +	gpiod_set_value(ctx->reset_gpio, 1);
+> +
+> +	regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
+> +}
+> +
+> +static int qps615_pwrctl_power_on(struct qps615_pwrctl_ctx *ctx)
+> +{
+> +	struct qps615_pwrctl_cfg *cfg;
+> +	int ret, i;
+> +
+> +	ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
+> +	if (ret < 0)
+> +		return dev_err_probe(ctx->pwrctl.dev, ret, "cannot enable regulators\n");
+> +
+> +	gpiod_set_value(ctx->reset_gpio, 0);
+> +
+> +	 /* wait for the internal osc frequency to stablise */
+> +	usleep_range(10000, 10500);
+> +
+> +	ret = qps615_pwrctl_assert_deassert_reset(ctx, false);
+> +	if (ret)
+> +		goto out;
+
+goto power_off;
+
+> +
+> +	if (ctx->cfg[QPS615_USP].axi_freq_125) {
+> +		ret = qps615_pwrctl_i2c_write(ctx->client, QPS615_BUS_CONTROL, BIT(16));
+> +		if (ret)
+> +			dev_err(ctx->pwrctl.dev, "Setting AXI clk freq failed %d\n", ret);
+> +	}
+> +
+> +	for (i = 0; i < QPS615_MAX; i++) {
+> +		cfg = &ctx->cfg[i];
+> +		if (cfg->disable_port) {
+> +			ret = qps615_pwrctl_disable_port(ctx, i);
+> +			if (ret) {
+> +				dev_err(ctx->pwrctl.dev, "Disabling port failed\n");
+> +				goto out;
+> +			}
+> +		}
+> +
+> +		if (cfg->l0s_delay) {
+> +			ret = qps615_pwrctl_set_l0s_l1_entry_delay(ctx, i, false, cfg->l0s_delay);
+> +			if (ret) {
+> +				dev_err(ctx->pwrctl.dev, "Setting L0s entry delay failed\n");
+> +				goto out;
+> +			}
+> +		}
+> +
+> +		if (cfg->l1_delay) {
+> +			ret = qps615_pwrctl_set_l0s_l1_entry_delay(ctx, i, true, cfg->l1_delay);
+> +			if (ret) {
+> +				dev_err(ctx->pwrctl.dev, "Setting L1 entry delay failed\n");
+> +				goto out;
+> +			}
+> +		}
+> +
+> +		if (cfg->tx_amp) {
+> +			ret = qps615_pwrctl_set_tx_amplitude(ctx, i, cfg->tx_amp);
+> +			if (ret) {
+> +				dev_err(ctx->pwrctl.dev, "Setting Tx amplitube failed\n");
+> +				goto out;
+> +			}
+> +		}
+> +
+> +		if (cfg->nfts) {
+> +			ret = qps615_pwrctl_set_nfts(ctx, i, cfg->nfts);
+> +			if (ret) {
+> +				dev_err(ctx->pwrctl.dev, "Setting nfts failed\n");
+> +				goto out;
+> +			}
+> +		}
+> +
+> +		if (cfg->disable_dfe) {
+> +			ret = qps615_pwrctl_disable_dfe(ctx, i);
+> +			if (ret) {
+> +				dev_err(ctx->pwrctl.dev, "Disabling DFE failed\n");
+> +				goto out;
+> +			}
+> +		}
+> +	}
+> +
+> +	ret = qps615_pwrctl_assert_deassert_reset(ctx, true);
+> +	if (!ret)
+> +		return 0;
+> +
+> +out:
+> +	qps615_pwrctl_power_off(ctx);
+> +	return ret;
+> +}
+> +
+> +static int qps615_pwrctl_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct pci_host_bridge *bridge;
+> +	enum qps615_pwrctl_ports port;
+> +	struct qps615_pwrctl_ctx *ctx;
+> +	int ret, addr;
+> +
+> +	bridge = pci_find_host_bridge(to_pci_dev(dev->parent)->bus);
+
+You can initialize it at the declaration itself.
+
+> +
+> +	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+> +	if (!ctx)
+> +		return -ENOMEM;
+> +
+> +	ret = of_property_read_u32_index(pdev->dev.of_node, "i2c-parent", 1, &addr);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to read i2c-parent property\n");
+> +
+> +	ctx->adapter = of_find_i2c_adapter_by_node(of_parse_phandle(dev->of_node, "i2c-parent", 0));
+> +	of_node_put(dev->of_node);
+> +	if (!ctx->adapter)
+> +		return dev_err_probe(dev, -EPROBE_DEFER, "Failed to find I2C adapter\n");
+> +
+> +	ctx->client = i2c_new_dummy_device(ctx->adapter, addr);
+> +	if (IS_ERR(ctx->client)) {
+> +		dev_err(dev, "Failed to create I2C client\n");
+> +		i2c_put_adapter(ctx->adapter);
+> +		return PTR_ERR(ctx->client);
+> +	}
+> +
+> +	ctx->supplies[0].supply = "vddc";
+> +	ctx->supplies[1].supply = "vdd18";
+> +	ctx->supplies[2].supply = "vdd09";
+> +	ctx->supplies[3].supply = "vddio1";
+> +	ctx->supplies[4].supply = "vddio2";
+> +	ctx->supplies[5].supply = "vddio18";
+> +	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(ctx->supplies), ctx->supplies);
+> +	if (ret) {
+> +		dev_err_probe(dev, ret,
+> +			      "failed to get supply regulator\n");
+> +		goto remove_i2c;
+> +	}
+> +
+> +	ctx->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_ASIS);
+
+Do not request GPIO with ASIS, always specify the polarity.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
