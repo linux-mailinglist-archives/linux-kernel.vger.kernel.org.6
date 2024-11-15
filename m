@@ -1,93 +1,112 @@
-Return-Path: <linux-kernel+bounces-410602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22CE29CDDE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:58:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83E019CDDEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:59:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1B2CB24586
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:58:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4139282A51
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EEB91B86E4;
-	Fri, 15 Nov 2024 11:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D13331B6D1F;
+	Fri, 15 Nov 2024 11:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="AdJQJaBA"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="cZvkPU1F"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42193BB22;
-	Fri, 15 Nov 2024 11:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538E41B85CC
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731671925; cv=none; b=epLQ1E6W8UtcJrx9JLE7PLwp8A4V3T1iFTCYD9PPJBfF9Glz0JwrM08ci+J0O+t/rV0PlWy7j3bhc8eAL7DXzt3pAhmrU1wtdq6CbWI0r6/ovBhzXbkJNUhfSyVcwLwzKWBJ1EZto/QQnvom+TvM5NJUELq3bz3V0HFEKDh+YSw=
+	t=1731671944; cv=none; b=bcg+NTQvfxd9e0wwuhqytn7CYxovirBgvg0NKjtwHyLE9ZD4Fe8n4IA522YNJli+38nLPfuCxQRmmmyLT6UCf5MaNSVuEuhQk7WwGrOcWoxwD56JDR7nNsPsu5IlMJ1/c7uIldf8gu3ONje9cAB/rttyWRY6XkURjjd1Ohma8aA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731671925; c=relaxed/simple;
-	bh=BCIW7Eqtkd/JoC4ZXWZqmDWtYnGayq/LlJ9Oqz3xXe4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jcSnqDfmvsreWWy9dqt0Oa2K6EBD06jppSCn7yt06CLVOcYnK++YtGVf1Y5ymRATpXYfv8F19Z0UeZMc13ma64V6mZo0vTkJZIc87t3PI+PU4lb8CdkEvbV2APk+jQF9Yrz+1CQ2EBAZZPMjfxzUOcFX73wn5AxdCQ3pJX0BiqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=AdJQJaBA; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=ln6NUFo2qRXRfJFl/RulvjbR0lolf2yFHeb6Il/5kl8=; b=AdJQJaBAWwAXJEsrsvth3BJ0xd
-	EShv8PQUIgwXqdbV4VJhtB8N1V8PZAGLCjMratcIou5WEASpf+20CbKdi9LHIdct9/Vov9k8+2x+O
-	SprrVl4US0j9Ev+PWllTbiSVOAIxYuZYgVtjh25w6LUAzASJMNxDuGu8hepsR0r77Fzh2eaafrYoW
-	QOi8CkMk40kALSP73u5a8De7MWeYKdhs/CTmXXcJRQaW0qSOOp+H5crJ5QZ7FS532uiGSeBKE/xqi
-	hdt16PBVKfsptTaa8c8RIRdPwpsHNnyIDppRwXqEpLxQ2CkUTAXQ0Vr5ztjojXE5FAwCBfgxruoaf
-	ViEv09pg==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tBuy5-00H20E-1l;
-	Fri, 15 Nov 2024 19:58:30 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 15 Nov 2024 19:58:29 +0800
-Date: Fri, 15 Nov 2024 19:58:29 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Olivia Mackall <olivia@selenic.com>, linux-crypto@vger.kernel.org,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] hwrng: amd - remove reference to removed PPC_MAPLE config
-Message-ID: <Zzc3ZUgMVFAd8xN6@gondor.apana.org.au>
-References: <20241106081343.66479-1-lukas.bulwahn@redhat.com>
+	s=arc-20240116; t=1731671944; c=relaxed/simple;
+	bh=HTGuyqghFMpQLRstslb57s6VUDSp1VzcCf57gtfUdOA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y+VXOIXLgDOHX04UPo95YxKzrOZomzxnMP7wjwePumAeP0+ux3S6pZF9Yvw0ti+79ydb1Obsy2kMkstVGAZgdhEw94DqWPQEOMp6e19NvAPyqQz8PgkGmgFBX2sAsQP1N5asPzv9+c6SKdkqeTUzrqR9mb44s20C3AKsQ6veYKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=cZvkPU1F; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb57f97d75so17563331fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 03:59:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1731671940; x=1732276740; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EXwHEadxWmCoxLkoyLtprE1vuyARVAjxnpelz5IPf9Y=;
+        b=cZvkPU1FRN0JGdn1zTkNB5pY0cZE9x5uqvH+miAewaZ69n2gjpjzh4a8XifDO8ERIx
+         ADrmXOWyieSFa7Nr/13hRw1Ur1dfBuix1nYWNNLK22z6EqpoJvmcGNV7sp0ClfKb/WgL
+         AgYngDJvCD9nJWy9cLjS30W8+C0VpXDx6MOAjspW32zjmMa/RKwSs43UmV5ajGIK35jj
+         Z2Belk8hFVaf/z8AmnJQ8fdhh9p9jVi9npgKiZROteaM/zRxLQP6iU+Sy31M5tDjWsRy
+         Be0NNxdep34p8v96mn3dzZ6b/JLCDAucHRRF1wIO7eyNA3lWqoW/WzrELfyJbOE6Zgxa
+         VgiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731671940; x=1732276740;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EXwHEadxWmCoxLkoyLtprE1vuyARVAjxnpelz5IPf9Y=;
+        b=oAfk9g5eDlQmHo/cIuLl7bvDhcWNHv8cRLolGN57ENlldC9FZXd/AgEJwiYMELPUUh
+         p6G3bbuSEh4eBf0FPUsQFWvjJY0MN0sSAYC4uS1rVsOzPbfDpkwaT+hskrLP8FoS4aO0
+         3DdDkgDnlj8fZdRxuZ1jl3lFTbeNVYsbMyd3wdtuhcKs04980RfoxH/4mGEcT9kGdNLr
+         KYYdnol9JSeBGkQhUHB9A9wiyAavnV6SLIwSuw4mpdMuC4mN+vbRyD+fen5v16bBSS+X
+         6SRQpyQx5RWMuVH5DmHE2odZHw5Kqi+stXlcMDOnzu9hwE1beHh/FSVF81KahoKLJN+Y
+         +w+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVyCRlQkIHfBmT/NoHB9lHMBJ2dvefYGWHqNHGJbWZLZTm0O70oHH9pMbL4Hf/+9xbzJEXto0mOZk/Vnjk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH9dFAG9iRyeKuK8dNPeiWEjCyISCaPwx3NFdwSznGD+fi2zt5
+	tsL3CLi95/T6N+9fvtlWK6vxFmmii/AunwC+7HEEbkg2Y87/jPnaftv/EOlWLoI4RQhLxt+S/xt
+	16Bja/3dXUep+9XfTBoje5yYIuenz2RMU8CCjoA==
+X-Google-Smtp-Source: AGHT+IF0nsR2k8u6MoTlNgkeSprRNolHD2YJ9vJ829LyOHGCWai/LvnLaLM3UhO2dd/h8Cvtta4ugz2CwMMNB/wzaxA=
+X-Received: by 2002:a05:651c:2212:b0:2ef:21b3:cdef with SMTP id
+ 38308e7fff4ca-2ff609a6c1cmr15902051fa.25.1731671940255; Fri, 15 Nov 2024
+ 03:59:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241106081343.66479-1-lukas.bulwahn@redhat.com>
+References: <20241112201659.16785-1-surajsonawane0215@gmail.com>
+ <ZzcWGJxqMJVYd4Tp@black.fi.intel.com> <f9daa71f-cba7-4086-a523-a2e6aa526ff3@stanley.mountain>
+In-Reply-To: <f9daa71f-cba7-4086-a523-a2e6aa526ff3@stanley.mountain>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 15 Nov 2024 12:58:48 +0100
+Message-ID: <CAMRc=MfuC8rfag-8vxFqJ=qsXzsTpoBfvP+xWS9+rBdj0H0epQ@mail.gmail.com>
+Subject: Re: [PATCH] gpio: gpio-exar: replace division condition with direct comparison
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Suraj Sonawane <surajsonawane0215@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 06, 2024 at 09:13:43AM +0100, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> 
-> Commit 62f8f307c80e ("powerpc/64: Remove maple platform") removes the
-> PPC_MAPLE config as a consequence of the platform’s removal.
-> 
-> The config definition of HW_RANDOM_AMD refers to this removed config option
-> in its dependencies.
-> 
-> Remove the reference to the removed config option.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> ---
->  drivers/char/hw_random/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri, Nov 15, 2024 at 12:55=E2=80=AFPM Dan Carpenter <dan.carpenter@linar=
+o.org> wrote:
+>
+> Uh, I had to think back...  I had forgotten that I actually published tha=
+t
+> check.  I can unpublish it.
+>
+> I wrote it based on a real issue, and then when I looked at the warnings =
+quite
+> a few places wrote code like "if (x / 4)" where they had intended to writ=
+e if
+> if ((x % 4) =3D=3D 0).  So it seemed like a good idea.
+>
+> But in the two years since I published the warning, it has mostly been fa=
+lse
+> positives.
+>
+> regards,
+> dan carpenter
+>
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Ok, I dropped this patch from my queue. I typically trust smatch so I
+picked it up without giving it much thought.
+
+Bart
 
