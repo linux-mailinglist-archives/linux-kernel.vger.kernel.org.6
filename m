@@ -1,99 +1,92 @@
-Return-Path: <linux-kernel+bounces-411443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FFDB9CF98E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:16:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A499CF999
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:17:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 062C428C9F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:16:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D8C228CD84
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160671FAC5E;
-	Fri, 15 Nov 2024 22:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nNapsh+n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A285D1FB3D5;
+	Fri, 15 Nov 2024 22:07:31 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 669931E412A;
-	Fri, 15 Nov 2024 22:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00B118FC85;
+	Fri, 15 Nov 2024 22:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731708276; cv=none; b=HobFAlnVVxHucs2U2uYAW0JICWlHNWgR4ZM0CW+f+fbb8PrVBImPA3bs54ug5DMAOhfUGliQJYcg5onEsBKJkNoDUSNSnshOOIpn3xOlUGjDecGBtO2Y9IcNqCgyuSAU2AT4RHUwa8HFm610zBQo9AbtLKwZGXtwmB2SBtvQ6EM=
+	t=1731708451; cv=none; b=PZAiANQV9rhR5F9GLLCzBKgHv0ssV6EOZ/VV97kGgqROoU4uwjgNU9dlHbeRJ8nxEyBSBZsU8HYo//IDeMQwhn0BNIfWHnTMTODJ7PVr6uYrYuwWKZ9X7akEUIUc0lhdkCwPH/mEZMEunk93n5aS/6mWI4Lo3zXy9mzWADE6fb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731708276; c=relaxed/simple;
-	bh=s/oaTJ92LOLtErWBpsl2hcdFm5LunYXQJfDrYlkVx/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Twh+kPxOwhfFAEL2SmH/KA+HJKR6iGJgAkr0kgDS3wcxu2ZptCKdByhJPLq/Vj3aXHd206QEE6l+EZFQ2MdSxRHXiIBF7bZvvIlahjCPhWx5z2mfiKvVoM0HQKU/wF7zA51m3Flj7dePqN10QHfXucvll+mYKZ3mM1Ca8IKA7Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nNapsh+n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 377E9C4CECF;
-	Fri, 15 Nov 2024 22:04:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731708275;
-	bh=s/oaTJ92LOLtErWBpsl2hcdFm5LunYXQJfDrYlkVx/o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nNapsh+nIWwnrX72qvT/6FhSVUcKj26uVVnjtQG0JnoproZt03ReaeI7JP099JFGF
-	 mmQT7aq9E0wZ6WeTgWmth3OT11bGXB+OmGl4fmbrjBYInMoZ1FGpReR+JW48DD05tX
-	 Yz1bm0K87do35tnBWyxBmaHhQzALsRpf7wCYvrD/DNBosrCbN1xpjtesCRSzwTx1XG
-	 3PpfjbM+yewf9Znw0zlGKZxYLhYnI8WrAmI3XbUKSS9v4Mwuf0/Gz/vUHEB9TOT4z1
-	 3QyGu4LXoTConxzGWKAbjxOPdo8949jeRGEyl9r27oZnvHtHDpMD0n1bIMGQ8MevMy
-	 y0y0RSuX9G4lw==
-Date: Fri, 15 Nov 2024 14:04:34 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: <bhelgaas@google.com>
-Cc: Wei Huang <wei.huang2@amd.com>, <linux-pci@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
- <helgaas@kernel.org>, <davem@davemloft.net>, <edumazet@google.com>,
- <pabeni@redhat.com>, <asml.silence@gmail.com>, <almasrymina@google.com>,
- <gospo@broadcom.com>, <michael.chan@broadcom.com>,
- <ajit.khaparde@broadcom.com>, <somnath.kotur@broadcom.com>,
- <andrew.gospodarek@broadcom.com>, <manoj.panicker2@amd.com>,
- <Eric.VanTassell@amd.com>
-Subject: Re: [PATCH V1 1/2] bnxt_en: Add TPH support in BNXT driver
-Message-ID: <20241115140434.50457691@kernel.org>
-In-Reply-To: <20241115200412.1340286-2-wei.huang2@amd.com>
-References: <20241115200412.1340286-1-wei.huang2@amd.com>
-	<20241115200412.1340286-2-wei.huang2@amd.com>
+	s=arc-20240116; t=1731708451; c=relaxed/simple;
+	bh=S1gbOZnwHTkvKX7h3+VujJFAcGcCLknMJrBJYnSZHuM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uDwTa0eAbGg+AIuKwrS87qOAk6vxdGtE6f5m57g68fiZ2+nRPfzBlHFKIWlwUW6S5x/yCQrFkcV4AxTMKpoWmtt9WTj0NKPG3wV5bd2TkrNQvcYtOfvS5AK7OlUI+qBIfPJE0kagnYsFujHw5ata4S8FRw+9ylpHy8M69Ef7t2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from [2601:18c:9101:a8b6:6e0b:84ff:fee2:98bb] (helo=imladris.surriel.com)
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1tC4SE-0000000046q-2vQ1;
+	Fri, 15 Nov 2024 17:06:14 -0500
+Message-ID: <8dcc96f65ebbcb5d26d18342b0dffda6acd77b91.camel@surriel.com>
+Subject: Re: [PATCH] mm: Respect mmap hint address when aligning for THP
+From: Rik van Riel <riel@surriel.com>
+To: Kalesh Singh <kaleshsingh@google.com>
+Cc: kernel-team@android.com, android-mm@google.com, Andrew Morton
+ <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, Yang Shi
+ <yang@os.amperecomputing.com>, Ryan Roberts <ryan.roberts@arm.com>, Suren
+ Baghdasaryan <surenb@google.com>, Minchan Kim <minchan@kernel.org>, Hans
+ Boehm <hboehm@google.com>, Lokesh Gidra <lokeshgidra@google.com>,
+ stable@vger.kernel.org, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,  Jann Horn
+ <jannh@google.com>, Yang Shi <shy828301@gmail.com>, linux-mm@kvack.org, 
+ linux-kernel@vger.kernel.org
+Date: Fri, 15 Nov 2024 17:06:14 -0500
+In-Reply-To: <20241115215256.578125-1-kaleshsingh@google.com>
+References: <20241115215256.578125-1-kaleshsingh@google.com>
+Autocrypt: addr=riel@surriel.com; prefer-encrypt=mutual;
+ keydata=mQENBFIt3aUBCADCK0LicyCYyMa0E1lodCDUBf6G+6C5UXKG1jEYwQu49cc/gUBTTk33Aeo2hjn4JinVaPF3zfZprnKMEGGv4dHvEOCPWiNhlz5RtqH3SKJllq2dpeMS9RqbMvDA36rlJIIo47Z/nl6IA8MDhSqyqdnTY8z7LnQHqq16jAqwo7Ll9qALXz4yG1ZdSCmo80VPetBZZPw7WMjo+1hByv/lvdFnLfiQ52tayuuC1r9x2qZ/SYWd2M4p/f5CLmvG9UcnkbYFsKWz8bwOBWKg1PQcaYHLx06sHGdYdIDaeVvkIfMFwAprSo5EFU+aes2VB2ZjugOTbkkW2aPSWTRsBhPHhV6dABEBAAG0HlJpayB2YW4gUmllbCA8cmllbEByZWRoYXQuY29tPokBHwQwAQIACQUCW5LcVgIdIAAKCRDOed6ShMTeg05SB/986ogEgdq4byrtaBQKFg5LWfd8e+h+QzLOg/T8mSS3dJzFXe5JBOfvYg7Bj47xXi9I5sM+I9Lu9+1XVb/r2rGJrU1DwA09TnmyFtK76bgMF0sBEh1ECILYNQTEIemzNFwOWLZZlEhZFRJsZyX+mtEp/WQIygHVWjwuP69VJw+fPQvLOGn4j8W9QXuvhha7u1QJ7mYx4dLGHrZlHdwDsqpvWsW+3rsIqs1BBe5/Itz9o6y9gLNtQzwmSDioV8KhF85VmYInslhv5tUtMEppfdTLyX4SUKh8ftNIVmH9mXyRCZclSoa6IMd635Jq1Pj2/Lp64tOzSvN5Y9zaiCc5FucXtB9SaWsgdmFuIFJpZWwgPHJpZWxAc3VycmllbC5jb20+iQE+BBMBAgAoBQJSLd2lAhsjBQkSzAMABgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDOed6ShMTeg4PpB/0ZivKYFt0LaB22ssWUrBoeNWCP1NY/lkq2QbPhR3agLB7ZXI97PF2z/5QD9Fuy/FD/j
+	ddPxKRTvFCtHcEzTOcFjBmf52uqgt3U40H9GM++0IM0yHusd9EzlaWsbp09vsAV2DwdqS69x9RPbvE/NefO5subhocH76okcF/aQiQ+oj2j6LJZGBJBVigOHg+4zyzdDgKM+jp0bvDI51KQ4XfxV593OhvkS3z3FPx0CE7l62WhWrieHyBblqvkTYgJ6dq4bsYpqxxGJOkQ47WpEUx6onH+rImWmPJbSYGhwBzTo0MmG1Nb1qGPG+mTrSmJjDRxrwf1zjmYqQreWVSFEt26tBpSaWsgdmFuIFJpZWwgPHJpZWxAZmIuY29tPokBPgQTAQIAKAUCW5LbiAIbIwUJEswDAAYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQznnekoTE3oOUEQgAsrGxjTC1bGtZyuvyQPcXclap11Ogib6rQywGYu6/Mnkbd6hbyY3wpdyQii/cas2S44NcQj8HkGv91JLVE24/Wt0gITPCH3rLVJJDGQxprHTVDs1t1RAbsbp0XTksZPCNWDGYIBo2aHDwErhIomYQ0Xluo1WBtH/UmHgirHvclsou1Ks9jyTxiPyUKRfae7GNOFiX99+ZlB27P3t8CjtSO831Ij0IpQrfooZ21YVlUKw0Wy6Ll8EyefyrEYSh8KTm8dQj4O7xxvdg865TLeLpho5PwDRF+/mR3qi8CdGbkEc4pYZQO8UDXUN4S+pe0aTeTqlYw8rRHWF9TnvtpcNzZw==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Sender: riel@surriel.com
 
-On Fri, 15 Nov 2024 14:04:11 -0600 Wei Huang wrote:
-> +static void bnxt_irq_affinity_release(struct kref __always_unused *ref)
+On Fri, 2024-11-15 at 13:52 -0800, Kalesh Singh wrote:
+>=20
+> To restore the expected behavior; don't use
+> thp_get_unmapped_area_vmflags()
+> when the user provided a hint address.
+>=20
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Yang Shi <yang@os.amperecomputing.com>
+> Cc: Rik van Riel <riel@surriel.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: Hans Boehm <hboehm@google.com>
+> Cc: Lokesh Gidra <lokeshgidra@google.com>
+> Cc: <stable@vger.kernel.org>
+> Fixes: efa7df3e3bb5 ("mm: align larger anonymous mappings on THP
+> boundaries")
+> Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
+>=20
 
-unused? you're using it now
+Reviewed-by: Rik van Riel <riel@surriel.com>
 
-> +{
-> +	struct irq_affinity_notify *notify =
-> +		(struct irq_affinity_notify *)
-> +		container_of(ref, struct irq_affinity_notify, kref);
-
-this is ugly, and cast is unnecessary.
-
-> +	struct bnxt_irq *irq;
-> +
-> +	irq = container_of(notify, struct bnxt_irq, affinity_notify);
-
-since you init irq out of line you can as well init notify here
-
-> +	if (pcie_tph_set_st_entry(irq->bp->pdev, irq->msix_nr, 0)) {
-
-You checked this function can sleep, right? Because rtnl_lock()
-will sleep.
-
-
-Bjorn, do you have a strong preference to have a user of the TPH code
-merged as part of 6.13?  We're very close to the merge window, I'm not
-sure build bots etc. will have enough time to hammer this code.
-My weak preference would be to punt these driver changes to 6.14
-avoid all the conflicts and risks (unless Linus gives us another week.)
--- 
-pw-bot: nap
+--=20
+All Rights Reversed.
 
