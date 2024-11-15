@@ -1,118 +1,125 @@
-Return-Path: <linux-kernel+bounces-410914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2730B9CF065
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:41:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 822719CF06B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:42:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3B3E1F21F25
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:41:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AD131F20944
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554731D90BC;
-	Fri, 15 Nov 2024 15:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028B31E25F1;
+	Fri, 15 Nov 2024 15:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IBWtp97m";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HbOShzA2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AzcgDJkp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD421D517F;
-	Fri, 15 Nov 2024 15:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6711E2315;
+	Fri, 15 Nov 2024 15:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731684918; cv=none; b=Ftax4Q2T9PYjlXkJEF3wh1xgjcXdToKQrHoMFNOBmhIF1JJ8V2MtkbO5F2HapsYS91eehWJ49wSS/6Rbn7PM4PlHtP2PrmWEllFvcfGhmeGZBXx5RYAB13Me4iE5r9mIuXU+EVYnzpNbsKn8htgD0PzxLjvo39/FasXWDUzDva8=
+	t=1731684964; cv=none; b=Y67EUIVGq+XCZofwwn5C1xM2yGJ1Ulv6RvaDnckvJkYP/r4CgscEPQaqTX1DuD08Nx7ihPKFd7Lp1WFG/V4eJZUlqCmLHxLbv1nZpwAjZA761Kb16q5oj2LvMcBHX94UOCt5EMJYvmrz7gV2qpcBg+DR7PDcAvJU4MT0bX+dcEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731684918; c=relaxed/simple;
-	bh=yU1G2hIrLcZlXd3LaebeyKYONXTnd34hSfRSQEHJ1yU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=m/pI1vZAQ9gxkkrLO4Ck9+wP9LbxWHNLTrhIlgyWxvHYEzuYsWqKH43sexoA3BbGj7kQl9pEwxtFlUBhKoXMYEr3MPsrKTXACWNVH2K83g8VfSZbA+QAphVFxiaJU71bVjVC2mmG1w6Z5DxdTlmomxVVMcXRL/fQCj5cluVl7lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IBWtp97m; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HbOShzA2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731684913;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yU1G2hIrLcZlXd3LaebeyKYONXTnd34hSfRSQEHJ1yU=;
-	b=IBWtp97mInpsavyNlaW7Wa7P9t1WIhdFZFGtmkYainZ6bfXDspevPRYpFW4pLoFiUdTJD4
-	U5VvdoT1K3yOQRre+DBq0sQWHdk4rIynAWjUT2zmNpIj2n43BIKL0t0/Vf6l/rtvSO0Fi+
-	gDrBIw99IdYG1uqRK3qErn9uAAGZz664d/tZZ8KcSi+2Phfl0Sz1omrERQ/lrAOES/7JlS
-	yRewNvz7aEuvd8A4q0Bq1FSIlOgXPmu0k2lEr6yoDeEt0bajmGyelDX+RQ8ypFICvCudhA
-	M17FF+uzSWHmHhP49+FBOqW8qbOWE/x/12QiHel/8b+KvHi6yusfYdMgsiBxnw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731684913;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yU1G2hIrLcZlXd3LaebeyKYONXTnd34hSfRSQEHJ1yU=;
-	b=HbOShzA2dgF/rf/JxxHpay75yREzH698PUJ7XWVcQ8L3AwP4KqCVbfvEjEUE+BssSSuAzH
-	UAxm3b5R+xtq6JDw==
-To: Philipp Stanner <pstanner@redhat.com>, Damien Le Moal
- <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, Basavaraj Natikar
- <basavaraj.natikar@amd.com>, Jiri Kosina <jikos@kernel.org>, Benjamin
- Tissoires <bentiss@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Dubov <oakad@yahoo.com>,
- Sudarsana Kalluru <skalluru@marvell.com>, Manish Chopra
- <manishc@marvell.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rasesh Mody
- <rmody@marvell.com>, GR-Linux-NIC-Dev@marvell.com, Igor Mitsyanko
- <imitsyanko@quantenna.com>, Sergey Matyukevich <geomatsi@gmail.com>, Kalle
- Valo <kvalo@kernel.org>, Sanjay R Mehta <sanju.mehta@amd.com>, Shyam
- Sundar S K <Shyam-sundar.S-k@amd.com>, Jon Mason <jdmason@kudzu.us>, Dave
- Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, Bjorn
- Helgaas <bhelgaas@google.com>, Alex Williamson
- <alex.williamson@redhat.com>, Juergen Gross <jgross@suse.com>, Stefano
- Stabellini <sstabellini@kernel.org>, Oleksandr Tyshchenko
- <oleksandr_tyshchenko@epam.com>, Philipp Stanner <pstanner@redhat.com>,
- Mario Limonciello <mario.limonciello@amd.com>, Chen Ni
- <nichen@iscas.ac.cn>, Ricky Wu <ricky_wu@realtek.com>, Al Viro
- <viro@zeniv.linux.org.uk>, Breno Leitao <leitao@debian.org>, Kevin Tian
- <kevin.tian@intel.com>, Mostafa Saleh <smostafa@google.com>, Andy
- Shevchenko <andriy.shevchenko@linux.intel.com>, Jason Gunthorpe
- <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>, Kunwu Chan
- <chentao@kylinos.cn>, Ankit Agrawal <ankita@nvidia.com>, Christian Brauner
- <brauner@kernel.org>, Reinette Chatre <reinette.chatre@intel.com>, Eric
- Auger <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>
-Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-input@vger.kernel.org, netdev@vger.kernel.org,
- linux-wireless@vger.kernel.org, ntb@lists.linux.dev,
- linux-pci@vger.kernel.org, kvm@vger.kernel.org,
- xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v2 07/11] PCI: MSI: Use never-managed version of pci_intx()
-In-Reply-To: <20241113124158.22863-9-pstanner@redhat.com>
-References: <20241113124158.22863-2-pstanner@redhat.com>
- <20241113124158.22863-9-pstanner@redhat.com>
-Date: Fri, 15 Nov 2024 16:35:22 +0100
-Message-ID: <87y11kzf0l.ffs@tglx>
+	s=arc-20240116; t=1731684964; c=relaxed/simple;
+	bh=UIz/7wgCTYHuotgnuBv5q/lZMwI6XVc4LpUgzNg/FzQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JHH9ATR6tskf3uw08v2SpHU1f9Cv9+/1FtNbgZZcn8ctdAja2TYTEreLbkmaPdjUM7mUmN2EkuKiOs6Rq4m/f4DVeREJgOMN5C6Ug+wn2odnUCnB6bU9BQfJ5fXHrmj7bLMH+Aq50BL8jSPp8Qptp8uvigZp+aEsEEPKGcek+H4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AzcgDJkp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAD37C4AF13;
+	Fri, 15 Nov 2024 15:36:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731684963;
+	bh=UIz/7wgCTYHuotgnuBv5q/lZMwI6XVc4LpUgzNg/FzQ=;
+	h=From:Subject:Date:To:Cc:From;
+	b=AzcgDJkpUGGd13jctGgjWg3XG2CS/BmohjMqWV53dknmJkI4Ga9ftG5STPdAHyNG2
+	 4wmi5P2uj0LoM0q2h0cQt8Blo/e5+MLBXa8l/AUX1gGqK0Lg6YH6cQLEkLB/Qe5JIA
+	 CaKpznp4PfGFzyvRVgJatx0KXYFOjA/WEeFd3Jzldw6P7TpMZlNpUx5hwpugYNDBz9
+	 cOFQspb9/oaafxuR/Nh0WqYN7lbgs2UcWYeD8ZQ3u5qjrbrP8AdUzwQjwF6kOjYmIF
+	 UAuuWNxswPvMsowEsNch+D+Z8kwqWxzL9L6dO13TZZRSZSn7iQBh8lSCarLsY8oVAS
+	 nH7QhuAI4Y6jA==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v2 0/2] fs: listmount()/statmount() fix and sample program
+Date: Fri, 15 Nov 2024 10:35:51 -0500
+Message-Id: <20241115-statmount-v2-0-cd29aeff9cbb@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFdqN2cC/23MQQ6CMBCF4auQWVvTGUkorryHYQFlhEZtybQ2G
+ sLdraxd/i8v3wqRxXGEc7WCcHbRBV+CDhXYufcTKzeWBtJUIyKpmPr0DC+fVNMYbQar6aQJyn8
+ Rvrn3bl270rOLKchnpzP+1n9KRoVqbI1uta2tGfhyZ/H8OAaZoNu27QuQL0HUowAAAA==
+X-Change-ID: 20241112-statmount-77808bc02302
+To: Christian Brauner <brauner@kernel.org>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+Cc: Josef Bacik <josef@toxicpanda.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+ Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>, 
+ Amir Goldstein <amir73il@gmail.com>, Paul Moore <paul@paul-moore.com>, 
+ Karel Zak <kzak@redhat.com>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1657; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=UIz/7wgCTYHuotgnuBv5q/lZMwI6XVc4LpUgzNg/FzQ=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnN2piwqq2Biywd/Eutsg9jis2+CgEbToA1krzI
+ It2G9Q4HeSJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZzdqYgAKCRAADmhBGVaC
+ FVTtEACHDCyZyM5kBlAmsa8aWHt9aLdMl4L1+xmiM/pN+28GG/GAfzmNlVI8EkBqtiljcHigtPy
+ 35zr/r5enhNnOyqLt66QIsTlsWZO8t8P+UodkX/IkWNnRbbfGX8rU9bEeQYEODcB88CqtL5z8Ti
+ ckXzY5YcozuUmPPivKLz8NVpwg4TKAjTUv3RVllAPrevI3rM/QGQuJI88s5PrccLwwV95pCVuI3
+ hvqdT1Y9Gd6IysBFe4bAhBFKdCwzbZnVkrlLoAewXaMw5SPTVNrXJFyruPd3R1KEn41nx/17S1W
+ dBwEUo3Du1CPRXQHWOEnyg5PeNu8cTj44B1sfCE3uscL8xZMKk3yOKqG6Os8D/iD9Z2XxnvGHmS
+ 1mkOgJts+X1yCz6AnZzmEmivi6Yhz2R5OIY7ESKvi+aHUCLcTbKMi62p3+9N+cytYw46oLsRKYa
+ /1fdssN18hskXwIoIqQYiXRH0cia7r6vGXI1Uis375ftaC306/B3r1CIPhy/dUZeIWjXaLbymXl
+ 3VTK5KGwFI1R1TIJZL1N1PBmJ1XgFJJkrILQ/kLmgqNgDFLQ/6tBoxCssmYRRGPQBUHYyvZJwrZ
+ F9zpDwk452r6whP1Oh7gGHN0csQA4zjr6MXvONfNXb+2yU/nsJtVP1s7SAn3G/PtPw3VLOOyfUX
+ 4q7Odie7CH2Gwew==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Wed, Nov 13 2024 at 13:41, Philipp Stanner wrote:
-> pci_intx() is a hybrid function which can sometimes be managed through
-> devres. To remove this hybrid nature from pci_intx(), it is necessary to
-> port users to either an always-managed or a never-managed version.
->
-> MSI sets up its own separate devres callback implicitly in
-> pcim_setup_msi_release(). This callback ultimately uses pci_intx(),
-> which is problematic since the callback of course runs on driver-detach.
->
-> That problem has last been described here:
-> https://lore.kernel.org/all/ee44ea7ac760e73edad3f20b30b4d2fff66c1a85.camel@redhat.com/
->
-> Replace the call to pci_intx() with one to the never-managed version
-> pci_intx_unmanaged().
->
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+We had some recent queries internally asking how to use the new
+statmount() and listmount() interfaces. I was doing some other work in
+this area, so I whipped up this tool.
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+My hope is that this will represent something of a "rosetta stone" for
+how to translate between mountinfo and statmount(), and an example for
+other people looking to use the new interfaces.
+
+It may also be possible to use this as the basis for a listmount() and
+statmount() testcase. We can call this program, and compare its output
+to the mountinfo file.
+
+The second patch adds security mount options to the existing mnt_opts in
+the statmount() interface, which I think is the final missing piece
+here. The alternative to doing that would be to add a new string field
+for that, but I'm not sure that's worthwhile.
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Changes in v2:
+- fixed off-by-one bug in listmount last_mnt_id handling
+- patch to add the security mount options to statmount()
+- Link to v1: https://lore.kernel.org/r/20241112-statmount-v1-1-d98090c4c8be@kernel.org
+
+---
+Jeff Layton (2):
+      samples: add a mountinfo program to demonstrate statmount()/listmount()
+      fs: prepend statmount.mnt_opts string with security_sb_mnt_opts()
+
+ fs/namespace.c          |   4 +
+ samples/vfs/.gitignore  |   1 +
+ samples/vfs/Makefile    |   2 +-
+ samples/vfs/mountinfo.c | 271 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 277 insertions(+), 1 deletion(-)
+---
+base-commit: 4be4eaeb1a60a7d52e66123f2f52f2da017c9881
+change-id: 20241112-statmount-77808bc02302
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
