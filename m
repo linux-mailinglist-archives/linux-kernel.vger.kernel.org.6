@@ -1,147 +1,125 @@
-Return-Path: <linux-kernel+bounces-410283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B6059CD7B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:44:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EE7A9CD7DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:45:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF0B51F230AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:44:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14A071F23432
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74538188CDB;
-	Fri, 15 Nov 2024 06:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEE61885BF;
+	Fri, 15 Nov 2024 06:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kyOdYdH4"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aTOP/ajm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CC61885AA
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D601339A4
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731653013; cv=none; b=cwCCcFBjeu7Uqna12UYJJGxkH22pbaa8mX8y6ISUGDkVjuchUFP5HgqR8RwYiaajHMGAiwkmi3dwM2gq/sWja+s4zEShRria9gYwj/KmPN01wlV1bIwyLYij4G398UyxUhpx3r+r2H9KpjeC4gwTcRk4MJo5tIX8KZQDoAYi+KI=
+	t=1731653109; cv=none; b=os7jnCWHFNKQj1hTRCmRrZG8WcccUEeXHg2bajwrZ992g5aEAycwvd67ikXkI+GdSJEUXHyR0Q20I1oMbaiT6RyJeOlAgcGpZv/kyXBhzF7HWzUwdlvpsOpClJdJhF9EALnltPtI7H1QP4e6DNYRF3f2EiNlO+tOHDXBjXvqMps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731653013; c=relaxed/simple;
-	bh=yFaqn0TM8DwaMrQ+sb2LpKFQLJb2yjVSUuadb+2rd5M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ovi+z5oAreU7uNHlMgxdenZgIS2MvBq7HgkTTTO3ci3R4FZchThaY5znnE1WUx66KWus1zNHfOBiqnnBhmTrslSGlqBRHpOU3de9XrrLlxIZPCnJKpIHeVoaAwMabAUEamZwGXu+5VsRuYPrn5rgxcMNX/z6+HcZOBCG6tOCePU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kyOdYdH4; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-723f37dd76cso403092b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:43:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731653011; x=1732257811; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3MYYRbyHSKnkKj/U1ajnAZh9FgwdbjyrEbwmDmiOJ74=;
-        b=kyOdYdH4FVy8vMZ56AMJxMs4RtvvScdwPMENwzkxhZccHSGf//BLvjBa+yu23R4Dc3
-         yfOOhIA5Sh1+xV01rwVt3iWmYxUsbRvFVK4beqZTPbknq/y4cOrkRpV+9Ob/mFfTzZyS
-         WUp0673qb4kYWaZwl6G05bky3lByzWmbrad8hNajaKRII4vUa9uzAlTR4WYGbf3BYm3H
-         fDtycpnE4Xn2v8iwJOAP3/Obq1mTdY2pxmcpmjbDMi71opciRjopHIKhG/mIpIpkWYSo
-         2mE/akYEFdYHDVT2x71XBU69QW/q/wX2HIyzt8AX6N32wooRpQE9FLOic7ruJ6t0LTyD
-         Poug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731653011; x=1732257811;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3MYYRbyHSKnkKj/U1ajnAZh9FgwdbjyrEbwmDmiOJ74=;
-        b=n8btJENF4S2MJTLu4ulcAfWi68awkv0lMTrcLvcLDg0L5l3p7tluicV7YgQIioauB8
-         TkcPDv4sY9WDRp2ZDxiF08olCk7nEmOt3WB8+LVbh9TiA3h65tPEs6TU98OyCbXiEp9E
-         5U7F8POP5DWgIQO5O70V4tV+voz1dmGfCEYFCDWrj58bZkwlXqDSA4Szbnj9akUUs4JR
-         tdGo+MVHFO9EfZTGC8al28TQD7ZhOSCSK+cSYXvsWSd/MjlCGKMmM+dfb4c9grGIRwMh
-         ATv2Xz/uqJuYCVv0Yat48rzd7HyfUN1TRntaS0jqoKd3n/87vgJdiVcM/nYDwYjR6eBm
-         V1AQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSDUvD3bTcp5JH2U3yjg1nB3rdNR7jnF8JygY+w0HCY1PyHNw8YJCimqrM0xWQPeg0em9WRL1KXsJIZU8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLYKUgzWwpBEyKEB99xHaDeq8PRi9KSQ04lIC3XfHncUpMUtTJ
-	jfyo2+pIF/Wau2nZQogYY0KP8WVbSG4sEhWP8IKX48ZbPQRCS5RV0kI01y1VYgJ2DDxR3uWvUOA
-	=
-X-Google-Smtp-Source: AGHT+IHY6v9j5fvHwvuygpXSp/ldJste9oxVxyRTDqgsgbIZ7G245t9I6FYAct4vrO9HjSZAZqBz4Q==
-X-Received: by 2002:a05:6a00:22c8:b0:71e:4930:162c with SMTP id d2e1a72fcca58-72476b872c4mr2212375b3a.6.1731653011440;
-        Thu, 14 Nov 2024 22:43:31 -0800 (PST)
-Received: from thinkpad ([117.193.208.47])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724770ee7d3sm673330b3a.38.2024.11.14.22.43.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 22:43:31 -0800 (PST)
-Date: Fri, 15 Nov 2024 12:13:21 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: l.stach@pengutronix.de, bhelgaas@google.com, lpieralisi@kernel.org,
-	kw@linux.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, shawnguo@kernel.org, frank.li@nxp.com,
-	s.hauer@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
-	kernel@pengutronix.de, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 04/10] PCI: imx6: Correct controller_id generation
- logic for i.MX7D
-Message-ID: <20241115064321.3cuqng7bzmphiomw@thinkpad>
-References: <20241101070610.1267391-1-hongxing.zhu@nxp.com>
- <20241101070610.1267391-5-hongxing.zhu@nxp.com>
+	s=arc-20240116; t=1731653109; c=relaxed/simple;
+	bh=uVcm7BxxoK7H3Kj7VhY4WsbhXXCZRM5oZCkE3o6Mhuk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IhrK7PDMk2kvDhlUvtefvLgzk0jtctnJXqxfKbrJ8X+OvmFc9GsaiFw5GcN9JYpPzqPFrDLVSbxE2bJIOHqmp1S/wRFEzzrHU3jTqfxLO+I54NTDJ50jrtpRnhoOcQnqZbtG9vFML2pZUShmja5g79+/rinad7DuqHx8tmAkjm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aTOP/ajm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 543B1C4AF09
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:45:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731653109;
+	bh=uVcm7BxxoK7H3Kj7VhY4WsbhXXCZRM5oZCkE3o6Mhuk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=aTOP/ajmdC2zqBtkFAHyU+FXiiE/dxpOvjSZ0YBF0tWHinQTC/ueAY+onRh9Zfjtz
+	 h5cI0gQYr99zbP/AipK4yDwO2ZLdmUzyiv346DOs6AGsIlZRaiYSX7Kkz9hUjsfk++
+	 SCBV13T/VG8Sg2GcOV774LJT462Y1jPLdfmiKN060mDFPqnD1CryMZp0QyZoUBcrL/
+	 28Yrg7unBkGddf7Q+8uhW14WnoKcTvcxFDtEDAoPDSvHwvG6Xr1jjhT84oFFBtMmBy
+	 h6gGrji5OokbyPgqVoLZYg/W0fuFkzycXWZ9euA1HQyfoOw8tE7R8sB1mJJQllqs/B
+	 DxA/FGLcp5l3A==
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5cf8ef104a8so579385a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:45:09 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUxRMI/74QN0d1DZO6AJ1pYg5XdqNIPEbaYm3SqXOF5H314rRK6WBp94ZO1wBgye+CwDi9l+Ud+TdhKb/w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXR3ph194F1Ks7sfTQDCrHpIyeL3ZBleUweGZWGebb2j6kqEw4
+	LGN8mOFn0JhRD9WHsRpYE6iU/PD1bGKNNpBrb31/1HvSnzp9gmfYoUXyGM4M8yyCvDrjeMRQXiD
+	epkNNSOzdPf/PiLRVvXGQ0YlW+44=
+X-Google-Smtp-Source: AGHT+IGEzue8njdYb9/Yv8+o/LRCA7ZeL1txxLTqIScGAKsOgcAHv7WQdcL1whZ1tdFMEOM+G9dI9M7nb7sfjDyFV5U=
+X-Received: by 2002:a17:907:981:b0:a9e:b0a3:db75 with SMTP id
+ a640c23a62f3a-aa4834544c8mr111103166b.35.1731653107976; Thu, 14 Nov 2024
+ 22:45:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241101070610.1267391-5-hongxing.zhu@nxp.com>
+References: <20241108091545.4182229-1-chenhuacai@loongson.cn>
+ <20241108091545.4182229-2-chenhuacai@loongson.cn> <20241114102136.X-knc36J@linutronix.de>
+ <CAAhV-H6vTBwi+t8cPKSo44KZKYj8ubwv2vV4FHrNH+nG=_ZXnw@mail.gmail.com> <20241114132740.NuomQBEN@linutronix.de>
+In-Reply-To: <20241114132740.NuomQBEN@linutronix.de>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Fri, 15 Nov 2024 14:44:56 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7wzTsSE4hUpfW4MaXAUA5xfXhdERke9zW3E+5apnRxfA@mail.gmail.com>
+Message-ID: <CAAhV-H7wzTsSE4hUpfW4MaXAUA5xfXhdERke9zW3E+5apnRxfA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] LoongArch: Reduce min_delta for the arch clockevent device
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Huacai Chen <chenhuacai@loongson.cn>, Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev, 
+	Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	linux-rt-devel@lists.linux.dev, Guo Ren <guoren@kernel.org>, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 01, 2024 at 03:06:04PM +0800, Richard Zhu wrote:
-> i.MX7D only has one PCIe controller, so controller_id should always be 0.
-> The previous code is incorrect although yielding the correct result. Fix by
-> removing IMX7D from the switch case branch.
-> 
+On Thu, Nov 14, 2024 at 9:27=E2=80=AFPM Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+>
+> On 2024-11-14 19:46:39 [+0800], Huacai Chen wrote:
+> > Hi, Sebastian,
+> Hi,
+>
+> > On Thu, Nov 14, 2024 at 6:21=E2=80=AFPM Sebastian Andrzej Siewior
+> > <bigeasy@linutronix.de> wrote:
+> > >
+> > > On 2024-11-08 17:15:43 [+0800], Huacai Chen wrote:
+> > > > Now the min_delta is 0x600 (1536) for LoongArch's constant clockeve=
+nt
+> > > > device. For a 100MHz hardware timer this means ~15us. This is a lit=
+tle
+> > > > big, especially for PREEMPT_RT enabled kernels. So reduce it to 100=
+0
+> > > > (we don't want too small values to affect performance).
+> > >
+> > > So this reduces it to 10us. Is anything lower than that bad performan=
+ce
+> > > wise?
+> > Maybe I misunderstood the meaning of min_delta, but if I'm correct,
+> > small min_delta may cause more timers to be triggered, because timers
+> > are aligned by the granularity (min_delta). So I think min_delta
+> > affects performance.
+>
+> They are not aligned. Well they get aligned due to the consequences.
+Then I still think it affects performance (and power
+consumption).Because it is different to fire a timer every 1us and
+fire 10 timers together at the end of 10us.
 
-Worth adding a fixes tag?
+Huacai
 
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> "This is just *wrong*. You cannot hardcode the MMIO address in the driver.
-> Even though this code is old, you should fix it instead of building on top
-> of it.
-> 
-> - Mani"
-> 
-> IMX7D here is wrong athough check IMX8MQ_PCIE2_BASE_ADDR is not good
-> method. Previously try to use 'linux,pci-domain' to replace this check
-> logic. Need more discussion to improve it and keep old compatiblity.
-> Let's fix this code error firstly.
-
-I really hope that you'll fix it asap.
-
-- Mani
-
-> ---
->  drivers/pci/controller/dwc/pci-imx6.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 462decd1d589..996333e9017d 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -1342,7 +1342,6 @@ static int imx_pcie_probe(struct platform_device *pdev)
->  	switch (imx_pcie->drvdata->variant) {
->  	case IMX8MQ:
->  	case IMX8MQ_EP:
-> -	case IMX7D:
->  		if (dbi_base->start == IMX8MQ_PCIE2_BASE_ADDR)
->  			imx_pcie->controller_id = 1;
->  		break;
-> -- 
-> 2.37.1
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+>
+> In one-shot mode you program the device for the next timer to expire. It
+> computes the delta between expire-time and now. This delta is then
+> clamped between min & max delta. See clockevents_program_event().
+>
+> This means if your timer is supposed to expire in 5us (from now) but
+> your min delta is set to 15us then the timer device will be programmed
+> to 15us from now. This is 10us after the expire time of your first
+> timer. Once the timer devices fires, it will expire all hrtimers which
+> expired at this point. This includes that timer, that should have fired
+> 10us ago, plus everything else following in the 10us window.
+>
+> > Huacai
+>
+> Sebastian
 
