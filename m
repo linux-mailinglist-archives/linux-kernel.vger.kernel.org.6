@@ -1,148 +1,100 @@
-Return-Path: <linux-kernel+bounces-411430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D56F9CF947
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:11:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B42849CF94B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:11:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04DBE1F21EC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:11:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C316281471
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720121F77AC;
-	Fri, 15 Nov 2024 21:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456C31F8933;
+	Fri, 15 Nov 2024 21:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="QDaSXODW"
-Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B58c+O0Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85FE91E261E;
-	Fri, 15 Nov 2024 21:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994701D5AC0;
+	Fri, 15 Nov 2024 21:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731707401; cv=none; b=BEm326auustDiWwr6ntqjAk/VHFKA+fvSBp29wFtW+3ZMxbwKumqyYYmMy+dKAkx5H8uIse7pMeGrQwAKQdV15ycp+Jo5Zd6ASFUUe3lWkTXlbVbD6SRDQsoWmGhNrDFG4hAL9rW3kcJaG2M6AI4sDehNRop3tmfyI74SdQUuaY=
+	t=1731707460; cv=none; b=MRkiwzWeuEDTRJH7XQtlCqH55mXdpepQ+/iTBVKJBzhVM8xmtP8uLWi+pQCjVqisCF9YFNESpCzDmYRdH7MnklDp5JIw29cr9iMYAksW8jqpwCn3AcTJhg172PeST+uAZzu1rgoLoCC6C3WBitLjbGfTF5up65cighYuCuQI4v4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731707401; c=relaxed/simple;
-	bh=RBsCvaccGcvYyCrjd7CjL4oegLTgWL9V38JUNqV3SK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k2v5J7sxzAGByRw1AjHhGltNLrWWd87vefQAddvANinEE2exuuChC7UjxULoABvRpI+EmNca+EakiGVbZTr8sVfa+V51WFzAmMXKtKgvdfkgcwAm2hBovQalmvTOz9V8ngXFZ+o9ScPm2LMmE0FMoSKJbT3c1sv8wIvzxKtcYTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=QDaSXODW; arc=none smtp.client-ip=195.154.113.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
-	; s=202004.hall; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:Reply-To:
-	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
-	bh=prMCeiS3C5eJ4JUpUHzaK1wSkzL+Nfbek9oMDzah4h0=; b=QDaSXODWgq8n0WBjsGY9mufYRE
-	TprfLoI9CPd0FjQsYPK2yfUZzgi1tSu29V5Et0dXxfSrwlpnjVXwSdgVxuOcNaDT+B99oKycmjsmB
-	DAABnDWgi07vWpOjFBUvxdqQ5eR3afnCJXEwU7k4FqxuQnDpot0lExyWy/eWu/KAqnGYpHkkW1HwM
-	uylRomXHgYBtXoB6tACZYx/mNUrZ8SedBZSQqQrO19ColuLE/x9NgtXDJsy3Etgxj0mjJxwXTdMnW
-	nhLSuiNcEworCLm/4gF1muA7o4RXFgXaC525GxvuC7BZ56mRTvSOlCbXWgiNhGFN+8m6bGS8lowou
-	wlzpax5A==;
-Received: from ohm.aurel32.net ([2001:bc8:30d7:111::2] helo=ohm.rr44.fr)
-	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <aurelien@aurel32.net>)
-	id 1tC4Bl-00D5ON-36;
-	Fri, 15 Nov 2024 22:49:13 +0100
-Date: Fri, 15 Nov 2024 22:49:12 +0100
-From: Aurelien Jarno <aurelien@aurel32.net>
-To: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Celeste Liu <coelacanthushex@gmail.com>,
-	Celeste Liu via B4 Relay <devnull+CoelacanthusHex.gmail.com@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Alexandre Ghiti <alex@ghiti.fr>, "Dmitry V. Levin" <ldv@strace.io>,
-	Andrea Bolognani <abologna@redhat.com>,
-	Felix Yan <felixonmars@archlinux.org>,
-	Ruizhe Pan <c141028@gmail.com>,
-	Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>,
-	Yao Zi <ziyao@disroot.org>, Han Gao <gaohan@iscas.ac.cn>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] riscv/entry: get correct syscall number from
- syscall_get_nr()
-Message-ID: <ZzfB2LfsD0ATjLMv@aurel32.net>
-Mail-Followup-To: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Celeste Liu <coelacanthushex@gmail.com>,
-	Celeste Liu via B4 Relay <devnull+CoelacanthusHex.gmail.com@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Alexandre Ghiti <alex@ghiti.fr>, "Dmitry V. Levin" <ldv@strace.io>,
-	Andrea Bolognani <abologna@redhat.com>,
-	Felix Yan <felixonmars@archlinux.org>,
-	Ruizhe Pan <c141028@gmail.com>,
-	Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>,
-	Yao Zi <ziyao@disroot.org>, Han Gao <gaohan@iscas.ac.cn>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-References: <87ldya4nv0.ffs@tglx>
- <87sesgftng.fsf@all.your.base.are.belong.to.us>
+	s=arc-20240116; t=1731707460; c=relaxed/simple;
+	bh=CoWsFVfyoNDdP+sDuo4UK0OuVO6qk8o69BlkEOSeKdY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ucdos74pXRFQMsHssNetb2ucal72M75BEF3TYAZpqAGUkTWDl4cq16F/e5lQPmZFQYWVE7hLmJ+/nD/W9XYefm4MJaWtehi97wUQif03wLEs/u3rQE8No7brJxSF9itGTlrEMtsCybmBXIAR9hnSYqdcmJ9796zUVKLMtTr1feY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B58c+O0Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A78CC4CECF;
+	Fri, 15 Nov 2024 21:50:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731707460;
+	bh=CoWsFVfyoNDdP+sDuo4UK0OuVO6qk8o69BlkEOSeKdY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=B58c+O0YLZsaGUKS158WzIcWRpmUSdS+o0ksy5dTGxUyhuSJ6aGtl/Kgo5DzLGXiZ
+	 N9H3ht8Mayfu4tBRNA14YpSdTgv/ay1CKQ8Xzwa7uvivm4D+NzDTP1lDNQGZgV+lli
+	 fA4Ax7FE7iNC3m6FzqQ4SXOA/SMpIrGPTrc8vYf4WrFxXEnDtZYSBsIH5zl8L3wRjZ
+	 Ss0gXHXa+MmgNej0Kg9VgATTaAYAIXilgzIG+TqLLzwb+bhepNdfHDms5hHN6iwT2B
+	 voe7HfNUxPAxha9zNEmop8rK9oIWYr6WUEMoUOafG4S+x8HAqxdgosXHzKhSimUbXu
+	 65Z37oJfBUONA==
+Date: Fri, 15 Nov 2024 13:50:58 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>, "David S. Miller"
+ <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>, "Kory Maincent (Dent
+ Project)" <kory.maincent@bootlin.com>, Michael Chan
+ <michael.chan@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Potnuri
+ Bharat Teja <bharat@chelsio.com>, Christian Benvenuti <benve@cisco.com>,
+ Satish Kharat <satishkh@cisco.com>, Manish Chopra <manishc@marvell.com>,
+ Simon Horman <horms@kernel.org>, Edward Cree <ecree.xilinx@gmail.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Ahmed Zaki <ahmed.zaki@intel.com>, Rahul Rameshbabu
+ <rrameshbabu@nvidia.com>, Ido Schimmel <idosch@nvidia.com>, Maxime
+ Chevallier <maxime.chevallier@bootlin.com>, Takeru Hayasaka
+ <hayatake396@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 3/3] UAPI: ethtool: Avoid flex-array in struct
+ ethtool_link_settings
+Message-ID: <20241115135058.01065c04@kernel.org>
+In-Reply-To: <20241115204308.3821419-3-kees@kernel.org>
+References: <20241115204115.work.686-kees@kernel.org>
+	<20241115204308.3821419-3-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <87sesgftng.fsf@all.your.base.are.belong.to.us>
-User-Agent: Mutt/2.2.13 (2024-03-09)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 2024-10-28 02:45, Bj=C3=B6rn T=C3=B6pel wrote:
-> Thanks for helping out to dissect this! Much appreciated!
->=20
-> Thomas Gleixner <tglx@linutronix.de> writes:
->=20
-> > Let me look at your failure analysis from your first reply:
-> >
-> >>  1. strace "tracing": Requires that regs->a0 is not tampered with prior
-> >>     ptrace notification
-> >>=20
-> >>     E.g.:
-> >>     | # ./strace /
-> >>     | execve("/", ["/"], 0x7ffffaac3890 /* 21 vars */) =3D -1 EACCES (=
-Permission denied)
-> >>     | ./strace: exec: Permission denied
-> >>     | +++ exited with 1 +++
-> >>     | # ./disable_ptrace_get_syscall_info ./strace /
-> >>     | execve(0xffffffffffffffda, ["/"], 0x7fffd893ce10 /* 21 vars */) =
-=3D -1 EACCES (Permission denied)
-> >>     | ./strace: exec: Permission denied
-> >>     | +++ exited with 1 +++
-> >>=20
-> >>     In the second case, arg0 is prematurely set to -ENOSYS
-> >>     (0xffffffffffffffda).
-> >
-> > That's expected if ptrace_get_syscall_info() is not used. Plain dumping
-> > registers will give you the current value on all architectures.
-> > ptrace_get_syscall_info() exist exactly for that reason.
->=20
-> Noted! So this shouldn't be considered as a regression. IOW, the
-> existing upstream code is OK for this scenario.
+On Fri, 15 Nov 2024 12:43:05 -0800 Kees Cook wrote:
+> struct ethtool_link_settings tends to be used as a header for other
+> structures that have trailing bytes[1], but has a trailing flexible array
+> itself. Using this overlapped with other structures leads to ambiguous
+> object sizing in the compiler, so we want to avoid such situations (which
+> have caused real bugs in the past). Detecting this can be done with
+> -Wflex-array-member-not-at-end, which will need to be enabled globally.
+> 
+> Using a tagged struct_group() to create a new ethtool_link_settings_hdr
+> structure isn't possible as it seems we cannot use the tagged variant of
+> struct_group() due to syntax issues from C++'s perspective (even within
+> "extern C")[2]. Instead, we can just leave the offending member defined
+> in UAPI and remove it from the kernel's view of the structure, as Linux
+> doesn't actually use this member at all. There is also no change in
+> size since it was already a flexible array that didn't contribute to
+> size returned by any use of sizeof().
 
-Not however that it breaks some programs, for instance I arrived on this
-thread by debugging python-ptrace. I'll try to look at adding support
-for ptrace_get_syscall_info(), but I am afraid we will find more broken
-programs.
+Perfect. I was starting to doubt if user space needs the member,
+ethtool CLI doesn't but looks like NetworkManager does. 
+So as you say we'll cross that bridge...
 
-Regards
-Aurelien
+Reviewed-by: Jakub Kicinski <kuba@kernel.org>
 
-[1] https://buildd.debian.org/status/fetch.php?pkg=3Dpython-ptrace&arch=3Dr=
-iscv64&ver=3D0.9.9-0.1%2Bb2&stamp=3D1731547088&raw=3D0
-
---=20
-Aurelien Jarno                          GPG: 4096R/1DDD8C9B
-aurelien@aurel32.net                     http://aurel32.net
+Thanks!
 
