@@ -1,85 +1,93 @@
-Return-Path: <linux-kernel+bounces-411340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 526729CF66B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:55:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DC2E9CF67F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:01:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48441B252A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:55:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 497E01F2269B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728B3153800;
-	Fri, 15 Nov 2024 20:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C82C1E32CC;
+	Fri, 15 Nov 2024 21:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SivHPTv7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="RC+iVSn9"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D176F1DA23
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 20:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA36812F585;
+	Fri, 15 Nov 2024 21:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731704105; cv=none; b=SWynVTgyaTpgD8OBaDQqSWcz0ISix9LinRDHweL2pP63kI8eosAx8yW3t/igsW2qO62tJPwj6ffbRp+wtfzZshDCYkewdjyjQ6t8JfYzVq6410pFn7tuhdbGd/80NUa83oW9ygJ25+zHqcHeXYivCYbOspz1Mp54B1lZW3DVvco=
+	t=1731704477; cv=none; b=urnCNRoCWMmAIgIV6hvAsM9as3X2JQ1Co5ZOVcaksb957Ieb7rXupQQFqaL5iv+3h36PAzdZOo/7gsvyvzxFzZV3jgmc8Czj/SECy3AIDBbzs975RhVff8WWAeBxhfyv3+6Vjn6++uUZ2Vg4U+boX3BQ047hGDx2AexGnhX8AO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731704105; c=relaxed/simple;
-	bh=JqaGaa4vu+2We5DLOwGHmvuDksUulja8ThUNLcvTB4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=azHx40bWR/upZypU7gieKArUJcGVycKSmogHhfRuvL4OOvLaMQ+TjX3Ygzs8eRvvhZr/MR4NM20IyfSn5UUF/1D224Vkj3XpNa2mcMlVFsDcQcTQoriGsjkIOAOiaXOo87xuYYZAZIn7ZyqYjn4cCc2blPLvwfe92jeVZcuZUe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SivHPTv7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25FDDC4CECF;
-	Fri, 15 Nov 2024 20:55:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731704105;
-	bh=JqaGaa4vu+2We5DLOwGHmvuDksUulja8ThUNLcvTB4Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SivHPTv7lgVNbV/6iOwRXTiGVxmRYmgVlWu2IvNM7DdqmQHApOB6b2t42gb+ku3FV
-	 riNGW9glvQITZpvthdBckCDi1jz954ZqJdcLRkS2IImCNjbcJMWHgD8JeqVP5NOXvk
-	 BEPdsZYNA7gXV4Lbk6QBaqtZcHEwhmpN+DK4GknYBPe+usagAF2KkhI1IdmUZsPRLy
-	 qXOjfiJjkZ0zYwmvRfrlDOvfIrvxuZ85rF0OsuMl6OYFIO5wneqZs+11fLqjTMfq3u
-	 gqmwhYttJ6CmoTIKxCUyrn8ZeUIMO9vCYVDGEu0I4PF316JlEEalWmVOPKXA7G2VgL
-	 n5zmSHoq0d3bg==
-Date: Fri, 15 Nov 2024 21:55:02 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: syzbot <syzbot+852e935b899bde73626e@syzkaller.appspotmail.com>
-Cc: hdanton@sina.com, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Subject: Re: [syzbot] [kernel?] WARNING in posixtimer_send_sigqueue
-Message-ID: <Zze1Jj4_pzOL1bzp@pavilion.home>
-References: <20241115115401.3701-1-hdanton@sina.com>
- <673738b2.050a0220.1324f8.00ac.GAE@google.com>
+	s=arc-20240116; t=1731704477; c=relaxed/simple;
+	bh=rsn+RwiG0Uq2EfiVehR0Bd4Q9j5Z+jOh9GWo9JKzu9w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=p/YDcTrY4jaZ6inAsDWxFeCHkbnht2nP/VBNJU7mV3MkCAeNpk+FUMe4oKxyBsTZPsyY5caDg4nhcFyFHklFay+j2AdfaYRpo2rM1/lTgO/kY12ezil+kWhII1PhIGJdzw9nLdE49QfsMdVjMwLnB3Ag/55fobIzyGhDUefxB1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=RC+iVSn9 reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
+ id fb68522096ef80c5; Fri, 15 Nov 2024 22:01:06 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id A77EB851B10;
+	Fri, 15 Nov 2024 22:01:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1731704466;
+	bh=rsn+RwiG0Uq2EfiVehR0Bd4Q9j5Z+jOh9GWo9JKzu9w=;
+	h=From:Subject:Date;
+	b=RC+iVSn9FP6QblHtHIh0ohYq30KmyFXkknXYdM7ru2rZTMecRI7YA574xcdhp38BW
+	 XXMpm4RvxLCwlSCxnUpVAJqzWoysngdKvSJ0OQAp7Rxow9+xaZ+Ae52wNUKMdfJ6DC
+	 apWvPZIoSJeVqI1i8AfCxxHwtYVBzOKNw/6TdCIWeXMzbBuFjkBjX+zVcvI+S/NFYT
+	 sfjZpn4vz2i9LhNTu0fxuYZOe9d8bLg/o/fu2kBH8LIv2jtyRyfPhihP22dHKPLrDH
+	 e7LSYL1kMu6z0gNrGZ3MroI8aUa9nkjV9dkOQuWXUS+yDj/xh2R5NKgeqIiIY1C+dK
+	 LRWuP1FM/eJ9w==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, x86 Maintainers <x86@kernel.org>,
+ Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
+ "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+ Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Linux ACPI <linux-acpi@vger.kernel.org>
+Subject:
+ [PATCH v2 0/2] cpuidle: Do not return from cpuidle_play_dead() on callback
+ failures
+Date: Fri, 15 Nov 2024 21:57:41 +0100
+Message-ID: <13636465.uLZWGnKmhe@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <673738b2.050a0220.1324f8.00ac.GAE@google.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefuddrvdeggddugeduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepgeffhfdujeelhfdtgeffkeetudfhtefhhfeiteethfekvefgvdfgfeeikeeigfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeelpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrthhrhihkrdiflhgriihlhihnsehlihh
+X-DCC--Metrics: v370.home.net.pl 0; Body=9 Fuz1=9 Fuz2=9
 
-Le Fri, Nov 15, 2024 at 04:04:02AM -0800, syzbot a écrit :
-> Hello,
-> 
-> syzbot tried to test the proposed patch but the build/boot failed:
-> 
-> security/apparmor/domain.c:695:3: error: expected expression
-> security/apparmor/domain.c:697:3: error: use of undeclared identifier 'new_profile'
-> security/apparmor/domain.c:699:8: error: use of undeclared identifier 'new_profile'
-> security/apparmor/domain.c:704:11: error: use of undeclared identifier 'new_profile'
-> 
-> Tested on:
-> 
-> commit:         744cf71b Add linux-next specific files for 20241115
-> git tree:       linux-next
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=75175323f2078363
-> dashboard link: https://syzkaller.appspot.com/bug?extid=852e935b899bde73626e
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> patch:          https://syzkaller.appspot.com/x/patch.diff?x=17c582e8580000
-> 
+Hi Everyone,
 
-Can you test on git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
-timers/core instead?
+This series of 2 patches supersedes
+
+https://lore.kernel.org/linux-pm/4992010.31r3eYUQgx@rjwysocki.net/
+
+in order to address review feedback.
+
+Patch [1/2] modifies cpuidle_play_dead() as per the subject and patch [2/2]
+changes the :enter_dead() cpuidle state callback return type to void.
+
+Thanks!
+
+
+
 
