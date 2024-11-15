@@ -1,81 +1,74 @@
-Return-Path: <linux-kernel+bounces-411217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 504289CF4C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:23:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C68E9CF4CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:27:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D54861F226DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:23:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DA7228A075
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D421E1C03;
-	Fri, 15 Nov 2024 19:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FC51D79B6;
+	Fri, 15 Nov 2024 19:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="O9AQRPON"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J5QUJ0z5"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF22E1E104E
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 19:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6BD1D5CD4;
+	Fri, 15 Nov 2024 19:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731698591; cv=none; b=HYYlf4VeySd1/ZBQ2GQsgVnK4kDIm0f6wMtY/WCq08fB8z5OsMF1bLrmMiLucAfRMkgtQcABB+2ARb6BT+Ai1+JwfwCh2YElj2C0kwIIYawOqK0OUzHwLU4Xlsg/1s2QgmseC2wvsqpjRtZZ71zAGQL0SLR1vAf3jK9KXPfL0dY=
+	t=1731698834; cv=none; b=GGrpnZHiL/kHJguODO1JD7vB5XF6qXHepCcdqpNvYlwoNWjIFX5QjcMvInCp+cUkpXtZqLxs9yLv31LSpIb5bmX8/mGVgvbChZiyyFXQT6HokZIEe30n7+f9DciXrIDTwTXNViavJWeuqdJF5WsFFzpH/6wUSclAo/vZ+MfsK6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731698591; c=relaxed/simple;
-	bh=0ugwYsMiPjIzE3XO6yj6SmDSHCV6ux2FxLlF975nzOc=;
+	s=arc-20240116; t=1731698834; c=relaxed/simple;
+	bh=2rS48foIIf5JR+VdNlIRsLewJotOaVFSzv/PAdjDMFo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cTP6lYsxfLXVgnDERAON9NXPoiOkaNwzPjSoLPcDe3mYdzmqXBfvzR2d7/LfWQWKfvnYCcxduGJVILw9cvITZLchsIPhu1bOYnYhvsck4r/8kJJ+Hbs5nBCzNel5IYhUmIH57xD32M13TF+CRAAlM1dMDgfQ33VnBCS+SFeLT3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=O9AQRPON; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AF91r5c024652
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 19:23:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vQzNcm9MPebrurEXRmoO+0JRCZ5y5XJ1U7A64WaIO54=; b=O9AQRPONyF+IU8e1
-	sX8WQubaMBWfkr/q774TjLs4rcEFmb5VHPMyxL9eoItXv44e/4ve0zi1NlQZrXBh
-	nmsirgnss8GovmTniEqLVSCtl4LlGYJSg+j/SL4mv8i39XWsGt+Lse+0gnap4JXK
-	84ywbk4ruaOk3KYuRXvDmUXVgdJSc6I1MyAleIa1AHjrjW43NGKpovaUgotIhmmq
-	tLrmbKXd/EouD502jy4k2XjsvXxrElgur1Fa3r99cbS+bkkKDNIIUQkgdGWUTUf7
-	tMLQkatyDp8OXVo5R9X+OV0Y45AK+LxsyHwGqqAPOmCrjusIylHhMms5/CwkeHVF
-	fzFAdQ==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42x3achmk2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 19:23:08 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6d3f929dcfeso4727796d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:23:08 -0800 (PST)
+	 In-Reply-To:Content-Type; b=YVQsovgfkxkSFXu4Kh1XgKGQvaFHi6TOAqzzVAxS2sMKHPLkFFr2nykll0Q+HDZWd/XgFVidQNr3+7PGHzBRChrkwcvYwwYvI4zAHcfVf3qL8Gmq89HeFCuscHt3zfIHiI1Bp2GQohGfwrL7xnl2gp3s2a88Cs6+x7I3fblQDEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J5QUJ0z5; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6d40ae72d35so2538796d6.1;
+        Fri, 15 Nov 2024 11:27:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731698831; x=1732303631; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=QrGlch7VOkBCU8vOGd56UvAvW+RDh0w7PLRsUbRE6mw=;
+        b=J5QUJ0z558gntMktS2rQJpKSQ0xf6o2SfBOXkgNTsYnnOosT0VL3w5PvW7xBarwMiF
+         3bFDf3ghogakJ9wn46F4zdMq8fyiiXycWlMEbhxPnkHyBjq9VsAy0fZPZv8lEqhMvtpz
+         l70JVt7p8R2kx8NViNLw0L0CT4LphGoAmUVsAuS+eHkylxLh2yG5CoY7D6mbkYGKVySn
+         wD1hngJTeA2l9VpFnYi+4JZuKrQFMUSoOQrNdkYn08Y7ieWoslOlx7wDCVrhQOOc6mH4
+         iSHYV/FcaZfsVUElhqXdCo9FCZcAW2o9TxzqeD8bupbLIYnF959MVMTlkFLJ6azb4oLx
+         u7Lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731698588; x=1732303388;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vQzNcm9MPebrurEXRmoO+0JRCZ5y5XJ1U7A64WaIO54=;
-        b=lBwsDNtYCuthcQfsEKai4g+giIniPpvO70R3gjdF84zZZ65UGoztZzQf1zlW1Xsve3
-         R/LByDcrBkUORGbBjh10t7E0x8Lq9nF1YZ6CWeez0KqmbU9nO2hp9eIoPnu7XWxPog+H
-         EVM0zurSGNl6teDmbQHFH3KXqfugfO4aq2ZNi+cVSlNcVjt2YxcfNb5/jLHa1AJQ33g8
-         bpTtmwxPxVi1v0rhvKCIaUls5pEvwgcThP/LPFOccJgPvifa26VfcBphxC70X0B3p5YK
-         y93tSDKkywkIxRb93KD5kOMqWwpTH+TwGHnjQU6/E8WhOqn9ywmSS7k9q5EDEO/YG30n
-         7bPw==
-X-Forwarded-Encrypted: i=1; AJvYcCWdZRMu4VeykGjK/ZSIKJbMFSfCXy74IftJbS6iG6vEMW5lp6ucjYg+XtwA/jcwDmymYCbOotA3Mllif5Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOk2/GmvMl8vWVQKcShmJBxz8wNXutYr8uq6SEGUUiGSzj+f3c
-	NL/6PpOH2iMqmwS5N6STYMumqnPaxkikiUDCk4Vf3hjCeBNos/wdlQfQgRvhG35+hJ2v87PX3+4
-	rnO31a0oMX58jsMSk1tJwVYqxRV8p4bvUI1gK75PJA82zAlq5R+OUsPzU5DfzJK0=
-X-Received: by 2002:a05:620a:d8d:b0:7b1:aeb3:8cc8 with SMTP id af79cd13be357-7b3621c7d95mr233833185a.0.1731698587808;
-        Fri, 15 Nov 2024 11:23:07 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEjzrzD6ZAVyYrWwmcz9xTYFtSBD7Vx63QI4phyNsR8JT9avb0i4h9YwIrXteSGtjIrVPNcpg==
-X-Received: by 2002:a05:620a:d8d:b0:7b1:aeb3:8cc8 with SMTP id af79cd13be357-7b3621c7d95mr233830185a.0.1731698587348;
-        Fri, 15 Nov 2024 11:23:07 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df1b5eesm211019666b.26.2024.11.15.11.23.04
+        d=1e100.net; s=20230601; t=1731698831; x=1732303631;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QrGlch7VOkBCU8vOGd56UvAvW+RDh0w7PLRsUbRE6mw=;
+        b=lAHgZfKpAYMvJSjtGiMLoNpS3SdMHBlB/sTjojejAErVxNGWHZJPCTf/vIv1qquULE
+         0WAMiXKeA5UOZC0g21umrvpnrcDHy0wrGZvfi8ns/dcQw+HykHlzCh08IdcmjBoYS9pL
+         AyV3xqY0xAx17EbeLh8ni6Uh/Kp3R6ZwiBtuhp06E9q9fRJx+LXU3D+ohM8hMQaU3YLt
+         cwjFaVC8txlIzS1iN4MmGi/QqsaMqHtdfaE4uIjlycnaJlrHIs6F2N//xZk4i4b8vdfU
+         hBDFbpwjHIXbciBTtwKp3kIzn2vyc0ux2Go9siK3evVCjICKOSS/c/4P3x+A2ErD50hL
+         PtQg==
+X-Forwarded-Encrypted: i=1; AJvYcCWG+AAN67716lTZ5NaZP3YAWbJTgvSN5dMLSqU/ubO4/vTMr9d79ylbFeLL4+4KkpL58FBuktKvEbxyKFU=@vger.kernel.org, AJvYcCXAp8M5TR+YrxrC3zX5kzcEkHTbdQsgX2pKYHEsm6GSL2NkNaFSafxsnE9MjQUPKuy1pgmDyv4W@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW6KCG417EAkh6gNHi2QYyN05NNVbOpHm0ZX0Suee8rC2PTsiv
+	rklkqNs37Et2wOeRrDQQ4toOWZxkno5AAav8EqQaVf6LF058KI6UQdYduQ==
+X-Google-Smtp-Source: AGHT+IGkk08MEDMV6c2bgQaSo4kzCYdKQJxkxy5/P8ukSjLYv8BPsi5c7hciuQIXNX8SRUCp2Ti1Vg==
+X-Received: by 2002:a05:6214:2f12:b0:6d0:7a60:1760 with SMTP id 6a1803df08f44-6d3fb86a009mr47811506d6.48.1731698831275;
+        Fri, 15 Nov 2024 11:27:11 -0800 (PST)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b35c98451fsm192791685a.24.2024.11.15.11.27.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 11:23:06 -0800 (PST)
-Message-ID: <87cc1f1e-85d2-40cb-b3b3-8935004f4f98@oss.qualcomm.com>
-Date: Fri, 15 Nov 2024 20:23:04 +0100
+        Fri, 15 Nov 2024 11:27:10 -0800 (PST)
+Message-ID: <62cc3603-6d6f-4b93-8bfb-88779e13b2a8@gmail.com>
+Date: Fri, 15 Nov 2024 11:27:07 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,107 +76,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] dmaengine: gpi: Add Lock and Unlock TRE support to
- access I2C exclusively
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
-        konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
-        linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        conor+dt@kernel.org, agross@kernel.org, devicetree@vger.kernel.org,
-        vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org,
-        Frank.Li@nxp.com, konradybcio@kernel.org, bryan.odonoghue@linaro.org,
-        krzk+dt@kernel.org, robh@kernel.org
-Cc: quic_vdadhani@quicinc.com
-References: <20241113161413.3821858-1-quic_msavaliy@quicinc.com>
- <20241113161413.3821858-3-quic_msavaliy@quicinc.com>
+Subject: Re: [PATCH 6.6 00/48] 6.6.62-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20241115063722.962047137@linuxfoundation.org>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241113161413.3821858-3-quic_msavaliy@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+In-Reply-To: <20241115063722.962047137@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: -QUiIC5UTpelGf1TCU19HGbhgpq3saVj
-X-Proofpoint-ORIG-GUID: -QUiIC5UTpelGf1TCU19HGbhgpq3saVj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- clxscore=1015 bulkscore=0 impostorscore=0 adultscore=0 malwarescore=0
- mlxlogscore=999 lowpriorityscore=0 spamscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411150163
 
-On 13.11.2024 5:14 PM, Mukesh Kumar Savaliya wrote:
-> GSI DMA provides specific TREs(Transfer ring element) namely Lock and
-> Unlock TRE. It provides mutually exclusive access to I2C controller from
-> any of the processor(Apps,ADSP). Lock prevents other subsystems from
-> concurrently performing DMA transfers and avoids disturbance to data path.
-> Basically for shared I2C usecase, lock the SE(Serial Engine) for one of
-> the processor, complete the transfer, unlock the SE.
+On 11/14/24 22:37, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.62 release.
+> There are 48 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Apply Lock TRE for the first transfer of shared SE and Apply Unlock
-> TRE for the last transfer.
+> Responses should be made by Sun, 17 Nov 2024 06:37:07 +0000.
+> Anything received after that time might be too late.
 > 
-> Also change MAX_TRE macro to 5 from 3 because of the two additional TREs.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.62-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
 > 
-> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-> ---
->  drivers/dma/qcom/gpi.c           | 37 +++++++++++++++++++++++++++++++-
->  include/linux/dma/qcom-gpi-dma.h |  6 ++++++
->  2 files changed, 42 insertions(+), 1 deletion(-)
+> thanks,
 > 
-> diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
-> index 52a7c8f2498f..c9e71c576680 100644
-> --- a/drivers/dma/qcom/gpi.c
-> +++ b/drivers/dma/qcom/gpi.c
-> @@ -2,6 +2,7 @@
->  /*
->   * Copyright (c) 2017-2020, The Linux Foundation. All rights reserved.
->   * Copyright (c) 2020, Linaro Limited
-> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
->   */
->  
->  #include <dt-bindings/dma/qcom-gpi.h>
-> @@ -65,6 +66,14 @@
->  /* DMA TRE */
->  #define TRE_DMA_LEN		GENMASK(23, 0)
->  
-> +/* Lock TRE */
-> +#define TRE_LOCK		BIT(0)
-> +#define TRE_MINOR_TYPE		GENMASK(19, 16)
-> +#define TRE_MAJOR_TYPE		GENMASK(23, 20)
-> +
-> +/* Unlock TRE */
-> +#define TRE_I2C_UNLOCK		BIT(8)
+> greg k-h
 
-So the lock is generic.. I'd then expect the unlock to be generic, too?
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested with 
+BMIPS_GENERIC:
 
-> +
->  /* Register offsets from gpi-top */
->  #define GPII_n_CH_k_CNTXT_0_OFFS(n, k)	(0x20000 + (0x4000 * (n)) + (0x80 * (k)))
->  #define GPII_n_CH_k_CNTXT_0_EL_SIZE	GENMASK(31, 24)
-> @@ -516,7 +525,7 @@ struct gpii {
->  	bool ieob_set;
->  };
->  
-> -#define MAX_TRE 3
-> +#define MAX_TRE 5
->  
->  struct gpi_desc {
->  	struct virt_dma_desc vd;
-> @@ -1637,6 +1646,19 @@ static int gpi_create_i2c_tre(struct gchan *chan, struct gpi_desc *desc,
->  	struct gpi_tre *tre;
->  	unsigned int i;
->  
-> +	/* create lock tre for first tranfser */
-> +	if (i2c->shared_se && i2c->first_msg) {
-
-Does the first/last logic handle errors well? i.e. what if we
-have >= 3 transfers and:
-
-1) the first transfer succeeds but the last doesn't
-2) the first transfer succeeds, the second one doesn't and the lock
-   is submitted again
-3) the unlock never suceeds
-
-Konrad
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
