@@ -1,57 +1,82 @@
-Return-Path: <linux-kernel+bounces-410340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66BAA9CDA1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:59:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6323C9CDA22
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:00:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4824B22257
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:58:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A8E71F21AC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2F1188CD8;
-	Fri, 15 Nov 2024 07:58:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6088718C004;
+	Fri, 15 Nov 2024 08:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ZyYcW6mD"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E53288DA;
-	Fri, 15 Nov 2024 07:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cF0jnKno"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86D618B48B
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731657531; cv=none; b=KLscnAV4rMfNS+vgdlL0ZY95EGq1VW3dZlgvJsmtGe+GXlpMzsJYe2kTBRlSDmn7JYwfqsxVaYwzDCmc0Um7B+J8E91IgDf1Fbstlo/HDiZ+2E68gv90HxU1llRBbtdajzkd2Xb6aPx0/ukIYA3fML5l+RO3ujIu+taouXzHLSw=
+	t=1731657605; cv=none; b=kCHpAGKIx3OjXNC7af380F8YS3fojV11sGvtBWDouauUzsNc8nG1hrFuSS5HOAWDJmM/aYKRgv+iDOw20NL0tY8PbxwLuKOLD9PW2+xb93uJs5YpqicReS5TfRit6gSTw4cbcZX9Halw9JxsTK4AFJKqgijbt10vkqaXEA6gYZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731657531; c=relaxed/simple;
-	bh=wIkiy+QteJhjeJ20sh1Xcq3Q2Jh4O4HpvU/DzWtMTJE=;
+	s=arc-20240116; t=1731657605; c=relaxed/simple;
+	bh=WM2XcKMTRtzMASGzJonfdgJeUtxp6hnEUEwU0sO1g7I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TMdi5AiKwPvGF4uHo5OcaAB6IsOFX5Os7kGv2az1OxBYCPtMse9gH8KADLvz1QFfkkqbnV3juPESer826yjZOlYjG13NshBg5gcoDVrkdbP6oW8mmAFScNAHYcUSPhZGCAIeBOXTlbe22W6FEhN7GKLQRUhLV2yD9LYdxj6Vyy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ZyYcW6mD; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id 0A969206BCC9; Thu, 14 Nov 2024 23:58:49 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0A969206BCC9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1731657529;
-	bh=TuB/d6ReaTiRiZwBzzLa3GlP4F720U7qluSCKqYmo8c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZyYcW6mD6BAra4UNC3p2uxqb9O7SPfSZg6I7lSLSreg4YRdJdAIlGWSdmsId9e3f1
-	 +ufoa7ZuJhPA1gkLT/pAf+7CujtdmmVHTtX5zc/2dYwkx6Z2RSEiqqkZyH/I6DgErD
-	 8EP1LWKo/1ZCKFJ8g7PYluJjE8WStyuWvZL6/YwM=
-Date: Thu, 14 Nov 2024 23:58:48 -0800
-From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-To: Naman Jain <namjain@linux.microsoft.com>
-Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	John Starks <jostarks@microsoft.com>, jacob.pan@linux.microsoft.com,
-	Easwar Hariharan <eahariha@linux.microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>
-Subject: Re: [PATCH v3 0/2] Drivers: hv: vmbus: Wait for boot-time offers and
- log missing offers
-Message-ID: <20241115075848.GA11347@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <20241113084700.2940-1-namjain@linux.microsoft.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SyMXA0il3mUvzSp1D42KbO4AAQ9zMDTLUtCx8UunpqDaTF+6r4sGkfTlUvuFGnMIfR0ldCT3vVZFQixMQENbpfxo2NwZS1WhkD+DIscR+CCLXPsEraotKvzzDvhPuNhOCtjtbOCAlRgD/+KLKSKwBe3WG+fA/lCq5zjAoAPsYsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cF0jnKno; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53d9ff92ee9so1673984e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 00:00:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731657601; x=1732262401; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FbaNobGvB+49vSNUrxvHE3klAkCYrfuy1GrMPT8td8A=;
+        b=cF0jnKnosXcTjHAYw43OXEcnb+h8iHRIE9OBwtRd+eORSd3f/O3tVeFZ6Nrl7jj1UY
+         2lnryslGl39I9DSH8JEw2BiZe0ms8E+XbmGRYPD/1VfP3y/bMEOKQUxIb+KJHTehLOem
+         Pry8eAL5Mg+qFGpjUbvJ7t3KmS/N+rzmAkIYgRyPEVpyRwVP0fLfAilGETqvX5P4Od4Z
+         EqGbPSMWyhF/SnewPE6raTzn+CAch4WgWn9p+ER6x8bVav2edOcm0YnDxNLAWC3gBQoa
+         BfJ2UiR11eIELSFn4CYqmhTxM6Av7b8SA4LTXovelRWts3bAvqLq5qARyTjAlCWih/V6
+         PfpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731657601; x=1732262401;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FbaNobGvB+49vSNUrxvHE3klAkCYrfuy1GrMPT8td8A=;
+        b=mrlGfR93dKNBmHQtv0/2ShfnSkVVD0U2AxChr1Rsm/mvce9GjFWqUW35GLDccxOB5L
+         FOgGf0yj2wZxNMk42QS4BDqwZgCIo50iVqKK6UkelpLKXXg1/EHpKiGk5+Ry65ZdBuNl
+         JDvu5vmR2ORF+tgHJLnut5bQOTMWNAbn/SBkqT7g2dPQ0rU6JqznZ5wWIBrzZw1HzU26
+         /Jy9VvBYAadZWYiCEaSrgDTZ1jbvvY4PP7pZ/K63nCvXc74iyt7R3ETgMyY+t7wzcPaC
+         nGUVBoi+XhcUuXlk+nPgS6hqU4NtdGkX2/mzl+65eRkxmmzr75Mr9Nch/K+QPNVUaAxb
+         U6jw==
+X-Forwarded-Encrypted: i=1; AJvYcCUD4tzYqdKcTGHo/mJ2QKWFqoglApXDBZyuV2OTSC/3gwy5eE2g14o4mQfKFdTh0baLrgwknLqzSul54JQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPzBR6qi7xjavEoqt3JSOxd0HCtmd+qz6SADMarOoAzsK3/DpT
+	BMRv/3SC5lOtRkow28wsxkNgELRoyHiX50V9cY9JrXFfUq5Bpg/KL96ZiDTZANgEUN581USd1jp
+	a
+X-Google-Smtp-Source: AGHT+IGKG+BVnDzL8MVS07U1zfzbfPB2Rj7jbqs6XD3kf5aVHBo3BGUS6sMZvAC8j5ja8q9iG+4uxQ==
+X-Received: by 2002:a2e:be93:0:b0:2fb:5ac6:90f0 with SMTP id 38308e7fff4ca-2ff609a8cbbmr10031331fa.34.1731657600826;
+        Fri, 15 Nov 2024 00:00:00 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff59890551sm4649721fa.112.2024.11.14.23.59.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 23:59:59 -0800 (PST)
+Date: Fri, 15 Nov 2024 09:59:58 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Naman Jain <quic_namajain@quicinc.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v2 0/2] nvmem: qfprom: add Qualcomm SAR2130P support
+Message-ID: <5lucyuowwaz7k5x2grlifuc7xxxppant3ysofy52xsrxdsx4zf@2tj43gglshcf>
+References: <20241027-sar2130p-nvmem-v2-0-743c1271bf2d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,83 +85,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241113084700.2940-1-namjain@linux.microsoft.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20241027-sar2130p-nvmem-v2-0-743c1271bf2d@linaro.org>
 
-On Wed, Nov 13, 2024 at 12:46:58AM -0800, Naman Jain wrote:
-> After VM requests for channel offers during boot or resume from
-> hibernation, host offers the devices that the VM is configured with and
-> then sends a separate message indicating that all the boot-time channel
-> offers are delivered. Wait for this message to make this boot-time offers
-> request and receipt process synchronous.
+On Sun, Oct 27, 2024 at 01:42:32AM +0300, Dmitry Baryshkov wrote:
+> Pick up a fix from msm-5.x kernels and add compatible for the Qualcomm
+> SAR2130P platform.
 > 
-> Without this, user mode can race with VMBus initialization and miss
-> channel offers. User mode has no way to work around this other than
-> sleeping for a while, since there is no way to know when VMBus has
-> finished processing boot-time offers.
-> 
-> This is in analogy to a PCI bus not returning from probe until it has
-> scanned all devices on the bus.
-> 
-> As part of this implementation, some code cleanup is also done for the
-> logic which becomes redundant due to this change.
-> 
-> Second patch prints the channels which are not offered when resume
-> happens from hibernation to supply more information to the end user.
-> 
-> Changes since v2:
-> https://lore.kernel.org/all/20241029080147.52749-1-namjain@linux.microsoft.com/
-> * Incorporated Easwar's suggestion to use secs_to_jiffies() as his
->   changes are now merged.
-> * Addressed Michael's comments:
->   * Used boot-time offers/channels/devices to maintain consistency
->   * Rephrased CHANNELMSG_ALLOFFERS_DELIVERED handler function comments
->     for better explanation. Thanks for sharing the write-up.
->   * Changed commit msg and other things as per suggestions
-> * Addressed Dexuan's comments, which came up in offline discussion:
->   * Changed timeout for waiting for all offers delivered msg to 60s instead of 10s.
->     Reason being, the host can experience some servicing events or diagnostics events,
->     which may take a long time and hence may fail to offer all the devices within 10s.
->   * Minor additions in commit subject of both patches
-> * Rebased on latest linux-next master tip
-> 
-> Changes since v1:
-> https://lore.kernel.org/all/20241018115811.5530-1-namjain@linux.microsoft.com/
-> * Added Easwar's Reviewed-By tag
-> * Addressed Michael's comments:
->   * Added explanation of all offers delivered message in comments
->   * Removed infinite wait for offers logic, and changed it wait once.
->   * Removed sub channel workqueue flush logic
->   * Added comments on why MLX device offer is not expected as part of
->     this essential boot offer list. I refrained from adding too many
->     details on it as it felt like it is beyond the scope of this patch
->     series and may not be relevant to this. However, please let me know if
->     something needs to be added.
-> * Addressed Saurabh's comments:
->   * Changed timeout value to 10000 ms instead of 10*1000
->   * Changed commit msg as per suggestions
->   * Added a comment for warning case of wait_for_completion timeout
->   * Added a note for missing channel cleanup in comments and commit msg
-> 
-> John Starks (1):
->   Drivers: hv: vmbus: Log on missing offers if any
-> 
-> Naman Jain (1):
->   Drivers: hv: vmbus: Wait for boot-time offers during boot and resume
-> 
->  drivers/hv/channel_mgmt.c | 61 +++++++++++++++++++++++++++++----------
->  drivers/hv/connection.c   |  4 +--
->  drivers/hv/hyperv_vmbus.h | 14 ++-------
->  drivers/hv/vmbus_drv.c    | 31 ++++++++++----------
->  4 files changed, 67 insertions(+), 43 deletions(-)
-> 
-> 
-> base-commit: 28955f4fa2823e39f1ecfb3a37a364563527afbc
-> -- 
-> 2.34.1
-> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+> Changes in v2:
+> - Picked up required patch from QCLinux.
+> - Link to v1: https://lore.kernel.org/r/20241017-sar2130p-nvmem-v1-1-6cc32789afc6@linaro.org
 
-The overall series looks good to me. However, I noticed a few checkpatch.pl warnings
-that could be addressed. After fixing them:
-Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+These two patches have been sent two weeks ago, but got no response from
+the maintainers. Is there any reason for that? Srinivas, is the
+subsystem being maintained or should we change it to 'S: Odd Fixes'?
+
+-- 
+With best wishes
+Dmitry
 
