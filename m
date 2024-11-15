@@ -1,137 +1,115 @@
-Return-Path: <linux-kernel+bounces-410110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA0849CCE64
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 01:33:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 864B39CCFB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 01:34:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23356B22411
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:33:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8758B225A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73BC121106;
-	Fri, 15 Nov 2024 00:33:27 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF673A1BF;
+	Fri, 15 Nov 2024 00:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="WAirH+7v"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1156E1362
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 00:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769AE1E4A9;
+	Fri, 15 Nov 2024 00:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731630807; cv=none; b=inOm29tWUz3kOJNtC9VOIv7in8sWVt8wDoAlr3uE5XhEktg+cxIuFtmKdhphC6p8PYIibnfKHt74MQz4SHzED9w7/QZKxZpSKctZaOz5WbqtmjtWRoUmrTiuWCmaK2pDgyKvJbG703tcP2xmaneAIoQHgmrx1GCGF688tIApFoo=
+	t=1731630855; cv=none; b=tLsdRRTOmosKivr5jHvIROcD6QVeWDJ6rQk8p4xOucArwxoxAk+PNedOfbJqtI1GFDYlOy30YxRBtQA3QPXMOU/sch6woAlQvL0NmBKWpFCtIasbC7WGAOQp8Du0Eojghi1EXZvdB4bG51h84RuC9mNe4Uz0sIWdZFQdNGNVA9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731630807; c=relaxed/simple;
-	bh=TpfaO18ZewFvK8/Vzfq3MR2zI//UJ7UuMOKzZxyr3vM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XfWlqSoQOSPFAxkXLIrFiNMwXER0vLHWbF45QdpdYa1SWwV8Jp/GkpRaCqU8wj8gFfY0+dGGDFRfz4CMx/PqtaEEeN8T/ryyoUYKRHmKcPAw7Wiq9tCr3BMSnsvb2TQy4yBe8LNDM4O7SijhAMHxQFORde+VKYHuGCf5tnU3Czg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 312592daa2e911efa216b1d71e6e1362-20241115
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:d405ee10-21a9-4659-b63b-dc39b6426624,IP:20,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:15
-X-CID-INFO: VERSION:1.1.38,REQID:d405ee10-21a9-4659-b63b-dc39b6426624,IP:20,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:15
-X-CID-META: VersionHash:82c5f88,CLOUDID:d67ac3610b9c32aa5829e17a9de8f682,BulkI
-	D:241115011238Z3MKOVQV,BulkQuantity:2,Recheck:0,SF:43|17|19|74|64|66|841|3
-	8|25|102,TC:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:ni
-	l,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,TF_CID_SPAM_SNR,TF_CID_SPAM_FAS
-X-UUID: 312592daa2e911efa216b1d71e6e1362-20241115
-X-User: zhaomengmeng@kylinos.cn
-Received: from [192.168.109.86] [(123.53.36.205)] by mailgw.kylinos.cn
-	(envelope-from <zhaomengmeng@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_128_GCM_SHA256 128/128)
-	with ESMTP id 1721579415; Fri, 15 Nov 2024 08:33:10 +0800
-Message-ID: <c541c0f7-4b43-4527-9a01-ed57aa0f78b1@kylinos.cn>
-Date: Fri, 15 Nov 2024 08:33:06 +0800
+	s=arc-20240116; t=1731630855; c=relaxed/simple;
+	bh=rBoI67vQ1EQnkFX0pf9Pdh59absDICM5ehoSjvK93Yo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QfZTe6hKdvbbtUgBtz64jVGldBD7n4dMAQo5Jth77f4gYxy8/uEbQQ2wMkicJ+znoQKLrgtrWWY9esK3vm55UciwJ1zfSNB94a5xwpq9hfRV+uwE5JJjK2cmCQI4x/ePKnL/GqVZ1L48v1Ccx2J+n2dSIe1TR7uRxCQB5aBiyjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=WAirH+7v; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C3225502;
+	Fri, 15 Nov 2024 01:33:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1731630838;
+	bh=rBoI67vQ1EQnkFX0pf9Pdh59absDICM5ehoSjvK93Yo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WAirH+7vP92sL8PRYkVG6wUSgeP3KVGSVpbQ4DLNOPFYelz2l5oB53V32hemL6Psg
+	 8qg15DRTZrHvlCQgybLTO4I8OheDcpfN3eKDAj7Y+hCuiBC5sDZ1yBLEst4ga/5OYV
+	 68hpwfNPcrcSyOiDx+44GNnAECxHMcMsPOyCX6g4=
+Date: Fri, 15 Nov 2024 02:34:03 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] media: uvcvideo: Fix event flags in uvc_ctrl_send_events
+Message-ID: <20241115003403.GP26171@pendragon.ideasonboard.com>
+References: <20241114-uvc-fix-event-v1-1-6c580ccf0766@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] sched_ext: Replace hardcoding with macro and minor
- typo fix
-To: Tejun Heo <tj@kernel.org>, Zhao Mengmeng <zhaomzhao@126.com>
-Cc: void@manifault.com, linux-kernel@vger.kernel.org
-References: <20241113025908.306936-1-zhaomzhao@126.com>
- <ZzYvf2L3rlmjuKzh@slm.duckdns.org>
-From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
-In-Reply-To: <ZzYvf2L3rlmjuKzh@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241114-uvc-fix-event-v1-1-6c580ccf0766@chromium.org>
 
-On 2024/11/15 01:12, Tejun Heo wrote:
-> Hello,
-> 
-> On Wed, Nov 13, 2024 at 10:59:08AM +0800, Zhao Mengmeng wrote:
->> From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
->>
->> 1. replace hardcoding with SCX_KF_UNLOCKED.
->> 2. scx_next_task_picked() has been replaced with siwtch_class().
->> 3. minor typo fixes.
->>
->> Signed-off-by: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
->> ---
->>  kernel/sched/ext.c             | 6 +++---
->>  tools/sched_ext/scx_qmap.bpf.c | 2 +-
->>  2 files changed, 4 insertions(+), 4 deletions(-)
->>
->> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
->> index 1b1c33f12dd7..832f77d1d318 100644
->> --- a/kernel/sched/ext.c
->> +++ b/kernel/sched/ext.c
->> @@ -2759,10 +2759,10 @@ static int balance_one(struct rq *rq, struct task_struct *prev)
->>  		 * If the previous sched_class for the current CPU was not SCX,
->>  		 * notify the BPF scheduler that it again has control of the
->>  		 * core. This callback complements ->cpu_release(), which is
->> -		 * emitted in scx_next_task_picked().
->> +		 * emitted in switch_class().
->>  		 */
->>  		if (SCX_HAS_OP(cpu_acquire))
->> -			SCX_CALL_OP(0, cpu_acquire, cpu_of(rq), NULL);
->> +			SCX_CALL_OP(SCX_KF_UNLOCKED, cpu_acquire, cpu_of(rq), NULL);
-> 
-> I think this is actually a bug. David, shouldn't this be SCX_KF_REST?
-> 
->>  		rq->scx.cpu_released = false;
->>  	}
+Hi Ricardo,
 
-Got it.
->> @@ -6096,7 +6096,7 @@ static void kick_cpus_irq_workfn(struct irq_work *irq_work)
->>  		if (cpu != cpu_of(this_rq)) {
->>  			/*
->>  			 * Pairs with smp_store_release() issued by this CPU in
->> -			 * scx_next_task_picked() on the resched path.
->> +			 * switch_class() on the resched path.
->>  			 *
->>  			 * We busy-wait here to guarantee that no other task can
->>  			 * be scheduled on our core before the target CPU has
->> diff --git a/tools/sched_ext/scx_qmap.bpf.c b/tools/sched_ext/scx_qmap.bpf.c
->> index ee264947e0c3..f230641929ec 100644
->> --- a/tools/sched_ext/scx_qmap.bpf.c
->> +++ b/tools/sched_ext/scx_qmap.bpf.c
->> @@ -5,7 +5,7 @@
->>   * There are five FIFOs implemented using BPF_MAP_TYPE_QUEUE. A task gets
->>   * assigned to one depending on its compound weight. Each CPU round robins
->>   * through the FIFOs and dispatches more from FIFOs with higher indices - 1 from
->> - * queue0, 2 from queue1, 4 from queue2 and so on.
->> + * queue0, 2 from queue1, 3 from queue2 and so on.
-> 
-> The number to dispatch is determined by:
-> 
->   cpuc->dsp_cnt = 1 << cpuc->dsp_idx;
-> 
-> I think the existing comment is correct.
+Thank you for the patch.
 
-You are right, I missed something. Will send a V3
+On Thu, Nov 14, 2024 at 12:17:51PM +0000, Ricardo Ribalda wrote:
+> If there is an event that needs the V4L2_EVENT_CTRL_CH_FLAGS flag, all
+> the following events will have that flag, regardless if they need it or
+> not.
+> 
+> This is because we keep using the same variable all the time and we do
+> not reset its original value.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 805e9b4a06bf ("[media] uvcvideo: Send control change events for slave ctrls when the master changes")
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
+Good catch.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/media/usb/uvc/uvc_ctrl.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index e59a463c2761..5314e7864c49 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -1626,13 +1626,13 @@ static void uvc_ctrl_send_events(struct uvc_fh *handle,
+>  {
+>  	struct uvc_control_mapping *mapping;
+>  	struct uvc_control *ctrl;
+> -	u32 changes = V4L2_EVENT_CTRL_CH_VALUE;
+>  	unsigned int i;
+>  	unsigned int j;
+>  
+>  	for (i = 0; i < xctrls_count; ++i) {
+> -		ctrl = uvc_find_control(handle->chain, xctrls[i].id, &mapping);
+> +		u32 changes = V4L2_EVENT_CTRL_CH_VALUE;
+>  
+> +		ctrl = uvc_find_control(handle->chain, xctrls[i].id, &mapping);
+>  		if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
+>  			/* Notification will be sent from an Interrupt event. */
+>  			continue;
+> 
+> ---
+> base-commit: b14257abe7057def6127f6fb2f14f9adc8acabdb
+> change-id: 20241114-uvc-fix-event-272df1585bb3
+
+-- 
+Regards,
+
+Laurent Pinchart
 
