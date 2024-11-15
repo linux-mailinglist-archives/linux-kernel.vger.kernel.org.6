@@ -1,98 +1,131 @@
-Return-Path: <linux-kernel+bounces-411333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA15D9CF652
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:46:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C961B9CF653
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:46:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F0B61F21FBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:46:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 709992869FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF4F1E1C32;
-	Fri, 15 Nov 2024 20:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A621D9346;
+	Fri, 15 Nov 2024 20:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IDo2lpXH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b="zKHB0oIi"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977C21BF311;
-	Fri, 15 Nov 2024 20:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C3C1E1035
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 20:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731703464; cv=none; b=K2ouHBjWsUKySuSsVUvoVM3Al9gHJEOBo1LIClI51s73wYFwsVxXVCFhIne+8R6lgdlH+Ca5SiP35whbaKtHfIualfoXegzmwJA46RE3SMnLEQtIKc4vaL5KUz0qtHLUAZHQq11u3eOt82i+Pjeaoa58m9K8lJwmBYlC5gXtDSE=
+	t=1731703569; cv=none; b=C6e/+m80Z/6+e2ko+DGZJbIzAsvQooq6NZUrtIIl/05/waRk7ckw14C++dTx6+dwJfvPcOB2cr/UP1jgIdBEJB1O0OcKp7uBiKcc8Nu2TyFeiKum0cFuw/HlT+yEuzVih5jCmS3XdlW/iXnIzQnxH+BdrnvOTqFqufcXNCX433A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731703464; c=relaxed/simple;
-	bh=YKv8qlR50k2LC5KO7h2NGGsnEnAHMHmkAu5g9BMeZww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lb2fqzPiD12iSTuLzmpEK+mYvN0fG/NJrxmTHO0rE1DaPIl5PoZaVxitH4VYrcJ2OvhXDP+aPow9qGt97mWXqw1PNsFk6lbBJ7Hf1C/hYPiBzBT81B/smFGEzMVm4oAyYh+3povrR8Z68Ry/c/ZlFyqekD578sZvrzq7n0sNqAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IDo2lpXH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FC4EC4CECF;
-	Fri, 15 Nov 2024 20:44:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731703464;
-	bh=YKv8qlR50k2LC5KO7h2NGGsnEnAHMHmkAu5g9BMeZww=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IDo2lpXHwzAlFdbUb+A9UooiqxzmOF6PwauIWM6BDnkuNPLs0UUH9jjoGWx54/nwK
-	 pcB/9x2oYASh5C7VxwhyTUfs6Lxd3GU7/3ytLHdoIvk+vkjhalBd4va7EWTVfTdt+9
-	 CvFtZUSXtKGyPdnjUoQl2rFtCCSFypcEKUKMZjaDGsiA7g6MUboKOI7+EaG4h8O//u
-	 Zr9KC/RuXbpIH3Wx+y3HMZqan2++JP7MW3cFAkBgFfSr1udnGHU4iUYb9ZPenQvSqG
-	 1tbyQNuSkoFZnKsogs9WVbb1MCyxujp1YTbGnE1R2uCHUCUI52Kft7SeiYClfihJzd
-	 rEQiDvaj22PCw==
-Date: Fri, 15 Nov 2024 12:44:20 -0800
-From: Kees Cook <kees@kernel.org>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: gregkh@linuxfoundation.org, corbet@lwn.net, workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rdunlap@infradead.org, daniel@ffwll.ch,
-	laurent.pinchart@ideasonboard.com, broonie@kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Subject: Re: [PATCH v4] Documentation/CoC: spell out enforcement for
- unacceptable behaviors
-Message-ID: <202411151244.CD2F8AC9A@keescook>
-References: <20241114205649.44179-1-skhan@linuxfoundation.org>
+	s=arc-20240116; t=1731703569; c=relaxed/simple;
+	bh=XyNHVlWArvdX146gZuzHeGdpDCkh87/BT8U5Fy7c6Zk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=UamhcW/d+F3sS1Z2NbFeUOjHAH9hYAFj8MHvkdsj3JhVDtJGr8tDFJ/rz+I2TMv52SF/X3F8uw6ALERUFyWYqVgm+PxcClBWVY08Qi5iAodLXG3g1wCstkV2dmr2pdJ3Whpj7HurXdAm8/R3zOOCcZ2nN2gmrUN8tWWn/s75iH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com; spf=pass smtp.mailfrom=linbit.com; dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b=zKHB0oIi; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linbit.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5cef772621eso1461576a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 12:46:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linbit-com.20230601.gappssmtp.com; s=20230601; t=1731703564; x=1732308364; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NIsOzL1TL5S0a6NvpEb/SIB7nJlBKvKr3uCVh+cqpFI=;
+        b=zKHB0oIisQSwyXlpKE10/xtcgnGUDd3v3NFV/BLHmzwcyyY2uIQwFeWU+3xZv7Zefu
+         llcDAtjxbVVq368Co5EAOhqzLiXlaBjARbY+Zsiq7DaKFBXnCbZrkomyzuVzkwSndI+S
+         r/h8v+xjU0XrrB9vHa/t0ZjMkL3j0ZnFUjnNcPl9o1rd8J7cHqhhWtEbvRl0R67t+GCi
+         pG+2sRv773KcbOg/177gYMci2mATUKXiXpokpK7Cv9DndvG9Rq+4xt34fni8TuOnfgIU
+         tSoqIawRQ4/ODDiobI2v2woiLMVEqBWjf+pzOe9kqA8yTsz+Qvh25WJVu0zHk8c2LHvB
+         q2wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731703564; x=1732308364;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NIsOzL1TL5S0a6NvpEb/SIB7nJlBKvKr3uCVh+cqpFI=;
+        b=eiuSrVZRc+228+ZIsYBsYrnXQ9oqstTyAT9iMMSO4ERrYT3xPriMh0KWVljyRkui8/
+         oqDbjoUIz6dxnyzY+PiOpmTVxBRIPuvdN6uF5oFohrckm8ED2VqjaZkhTVn9USMugAoz
+         maaOZ3QH5V/a09BbMi0DK2xKKvEkyjRtO0MfWjYwi/CbC/qO6MvFlGXbRUeZ5CBheIyT
+         66J8zcB5X3saj7GrzHbPKnAow0jCt3U0l6rRoxv0eqfEzsDU1SOus2u+9/uZhRzRbMY6
+         4StXm7RsBI+fq8vsg7jgiyiGcdKnvnQVs1S/ZzsMp+EvDTShKHLnphUJOoGmUZLpe45V
+         v3tA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSI8VdaLXRdoCbhNqR18OGtA2vJjoFg/knJ0r1Yeu4zfOQy0E3ykApaqnrauW8OIWlHvVtvMZ7WSv56tI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1i+0YZJVkF4wRsC3yhnLn2qLZbYHSAWVJ/cEaw6OK8QV5KCeh
+	EQzlnCK7wW1D8VxdHbSB9nq9Fg0Ql8Q624Gz4BGqSQpuEU5qbNSR/i33xQHRbQg=
+X-Google-Smtp-Source: AGHT+IHrJIgFHzNI33P22/GuDZL5K7P5kle4zcvSF+rw03HRsCdnoxcq89YtrUp3Vdg+5KHxoucflg==
+X-Received: by 2002:a17:907:70b:b0:a99:499f:4cb7 with SMTP id a640c23a62f3a-aa48341481dmr376258966b.23.1731703564587;
+        Fri, 15 Nov 2024 12:46:04 -0800 (PST)
+Received: from ryzen9.home (193-154-230-113.hdsl.highway.telekom.at. [193.154.230.113])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20e046ea8sm214059366b.169.2024.11.15.12.46.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 12:46:04 -0800 (PST)
+From: Philipp Reisner <philipp.reisner@linbit.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <keescook@chromium.org>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+	linux-sparse@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] compiler.h: Fix undefined BUILD_BUG_ON_ZERO()
+Date: Fri, 15 Nov 2024 21:46:02 +0100
+Message-ID: <20241115204602.249590-1-philipp.reisner@linbit.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <CAHk-=wiPZmd1hrsUoP+9vPg2=E0Jj6Li77_BZcV9GocbJg8fag@mail.gmail.com>
+References: <CAHk-=wiPZmd1hrsUoP+9vPg2=E0Jj6Li77_BZcV9GocbJg8fag@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241114205649.44179-1-skhan@linuxfoundation.org>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 14, 2024 at 01:56:49PM -0700, Shuah Khan wrote:
-> The Code of Conduct committee's goal first and foremost is to bring about
-> change to ensure our community continues to foster respectful discussions.
-> 
-> In the interest of transparency, the CoC enforcement policy is formalized
-> for unacceptable behaviors.
-> 
-> Update the Code of Conduct Interpretation document with the enforcement
-> information.
-> 
-> Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Acked-by: Miguel Ojeda <ojeda@kernel.org>
-> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Acked-by: Jonathan Corbet <corbet@lwn.net>
-> Acked-by: Steven Rostedt <rostedt@goodmis.org>
-> Acked-by: Dan Williams <dan.j.williams@intel.com>
-> Acked-by: Theodore Ts'o <tytso@mit.edu>
-> Acked-by: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+<linux/compiler.h> defines __must_be_array() and __must_be_cstr() and
+both expand to BUILD_BUG_ON_ZERO(), but <linux/build_bug.h> defines
+BUILD_BUG_ON_ZERO(). Including <linux/build_bug.h> in
+<linux/compiler.h> would create a cyclic dependency as
+<linux/build_bug.h> already includes <linux/compiler.h>.
 
-Thanks for working on this!
+Fix that by defining __BUILD_BUG_ON_ZERO_MSG() in <linux/compiler.h>
+and using that for __must_be_array() and __must_be_cstr().
 
-Acked-by: Kees Cook <kees@kernel.org>
+Signed-off-by: Philipp Reisner <philipp.reisner@linbit.com>
+---
+ include/linux/compiler.h | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 4d4e23b6e3e7..469a64dd6495 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -239,11 +239,18 @@ static inline void *offset_to_ptr(const int *off)
+ 
+ #endif /* __ASSEMBLY__ */
+ 
++#ifdef __CHECKER__
++#define __BUILD_BUG_ON_ZERO_MSG(e, msg) (0)
++#else /* __CHECKER__ */
++#define __BUILD_BUG_ON_ZERO_MSG(e, msg) ((int)sizeof(struct {_Static_assert(!(e), msg);}))
++#endif /* __CHECKER__ */
++
+ /* &a[0] degrades to a pointer: a different type from an array */
+-#define __must_be_array(a)	BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
++#define __must_be_array(a)	__BUILD_BUG_ON_ZERO_MSG(__same_type((a), &(a)[0]), "must be array")
+ 
+ /* Require C Strings (i.e. NUL-terminated) lack the "nonstring" attribute. */
+-#define __must_be_cstr(p)	BUILD_BUG_ON_ZERO(__annotated(p, nonstring))
++#define __must_be_cstr(p) \
++	__BUILD_BUG_ON_ZERO_MSG(__annotated(p, nonstring), "must be cstr (NUL-terminated)")
+ 
+ /*
+  * This returns a constant expression while determining if an argument is
 -- 
-Kees Cook
+2.47.0
+
 
