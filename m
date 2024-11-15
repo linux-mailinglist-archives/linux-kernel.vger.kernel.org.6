@@ -1,122 +1,100 @@
-Return-Path: <linux-kernel+bounces-410133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 753719CD4FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 02:21:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9151D9CD503
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 02:22:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F8A7B2456D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 01:21:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1197B24CE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 01:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A2E77102;
-	Fri, 15 Nov 2024 01:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FCD05B05E;
+	Fri, 15 Nov 2024 01:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ChBh6qgu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TSCTKgXP"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Oe1HLGNA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456241E522;
-	Fri, 15 Nov 2024 01:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180FB28366
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 01:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731633670; cv=none; b=aZ7KPRZ/jbjwsXqdInv4zQqfiKiKXJz+D42bS5MN/wR2dMB5D2KVTyMMz+TRFUh/AYNqAdDwzt3Y70TeNNr7CrNam5dP3rFlPJVFcu1+tVPR/QmtLSG4xt9j09A/O5gFlCI29eDdh62czzq3mVG/A7u/ACBfLQj2CeujVTykqfU=
+	t=1731633708; cv=none; b=oz+wF6bZTHB9VceA0f9ZXirPGiAWi8N39gs5DBeR0aBmin7Upf0iRzv3FOXX0XYUhnJWREs9WopZ0eUyoTJvkBtjzJ8yvE+zMmCXGh2No/YCoTGNPlkJO/e3Qpob5tG9CHbSxkDGd2u86Q54wDD76F4NMmJ+kFKCN3ray941D6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731633670; c=relaxed/simple;
-	bh=HLp2K0qSNQTF0zw4d2mGUxpmk9h83u/VFvEYDYSXtcs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ft6G3bfkb/sMLILzaGMq5N371fnrLfGOqwVkE1Bie2WNZ+87qu5LGNRYLmon5b4lXl2FsyWyHPeNbktjzkHW5C6jmpiazLC3VYrN50C1DW5ELPt6H56WbRD4nTxF6EY4A3KuzFX4kEtA2ZjBuYK7RX4jfSnak/cuTNnHI96D6RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ChBh6qgu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TSCTKgXP; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731633665;
+	s=arc-20240116; t=1731633708; c=relaxed/simple;
+	bh=0q+59TdxB9dq6grIoOxOxeJg7c5lWcqCZSTOZ8YhA5c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-type; b=IiFioYFKbtS+j8nYbqKCFOXDZI0ZwU1sL3FZrQD8jO20ec9/nMvqY25QRPGzoEdngdFk+t3aGLO210WVJnQVPEzJyWWZ03YtPmkmOsrzJsD1FSOdD4vztJvo7Vhi0xbbGpSs3MaqGxfqVp0stm72bOaP71uY++COI+9xbBb5+l4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Oe1HLGNA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731633704;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vh6/h6C3V7m6yhXVw4h4ri51ZQJecNTwZjudLkasxj0=;
-	b=ChBh6qguzawH2vKd0SipNNQEA6u+3lqDfgebn5q+xfXqdy2mhYKba1JVn/G0vwGA9vNx8P
-	WnfcCpRdH13dbo+hnvW2qYtdyU87mDlOj2nnVQioFUdGxcqwO3CmKLYvA0HpPu/wyqsZ2k
-	KDviVplKZvEMDvpow3cpIRKOtWv6M0ldEOhK+rclGPYT6TWCIcLMgWgoHD/B+DSPv3vPNG
-	vLZiqFMe7DD1a8VtAtroMVC98uyK1JLf++2PyXKqKnPkMIRxZIUrzsbAgCSRs9oo8iQ6h4
-	uhRuaGLUCNkwtboTeejAE2VHzGUzOlHX7tSv8UFngt3qpnfppcevRu0jam6bMw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731633665;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vh6/h6C3V7m6yhXVw4h4ri51ZQJecNTwZjudLkasxj0=;
-	b=TSCTKgXPaqRRhZzDqj62uSEgydNBeAyWWCi+PPZ9OyEjb+wrBQdhuN5cQFFdvX+jV370Su
-	ThQyelbbnOKHTuCw==
-To: Peter Zijlstra <peterz@infradead.org>, Artem Bityutskiy
- <artem.bityutskiy@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Patryk Wlazlyn
- <patryk.wlazlyn@linux.intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- rafael.j.wysocki@intel.com, len.brown@intel.com,
- dave.hansen@linux.intel.com
-Subject: Re: [PATCH v3 2/3] x86/smp native_play_dead: Prefer
- cpuidle_play_dead() over mwait_play_dead()
-In-Reply-To: <20241114120315.GG38972@noisy.programming.kicks-ass.net>
-References: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
- <20241108122909.763663-3-patryk.wlazlyn@linux.intel.com>
- <20241112114743.GQ22801@noisy.programming.kicks-ass.net>
- <CAJZ5v0ivAk1xrcJgiJnDWnL3GdijSdsuV4K_4ORjnsjPUVAEnA@mail.gmail.com>
- <20241112121843.GF6497@noisy.programming.kicks-ass.net>
- <0ecea0e5be59e63b7827f4db368f2aa3322fb71d.camel@linux.intel.com>
- <20241112140127.GH6497@noisy.programming.kicks-ass.net>
- <20241114120315.GG38972@noisy.programming.kicks-ass.net>
-Date: Fri, 15 Nov 2024 02:21:19 +0100
-Message-ID: <871pzd1ecw.ffs@tglx>
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=9vvkwI9Qvrwn21VKFyaeqJcATB7LqpeY5AvPDATgnFA=;
+	b=Oe1HLGNAqn1xzqUmb+NKcYdmV7gDVaEWVbEooIyzt46uSp8ixwhZe3osYoqgMVTCCrm4L+
+	4WC7SWjKWICj2xe7M/mEg8Tsm9jQKNJnRlE+u3owSzj+kkSK7e/jc2nxNmkbeoJbIl0i24
+	co26Yf2ds8YjQEaSmXA30J2fym+MFjw=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-398-ez4P6viXMzW8VRFn6B7k4w-1; Thu,
+ 14 Nov 2024 20:21:40 -0500
+X-MC-Unique: ez4P6viXMzW8VRFn6B7k4w-1
+X-Mimecast-MFC-AGG-ID: ez4P6viXMzW8VRFn6B7k4w
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 514681956077;
+	Fri, 15 Nov 2024 01:21:39 +0000 (UTC)
+Received: from MiWiFi-R3L-srv.redhat.com (unknown [10.72.112.16])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1920D3003B74;
+	Fri, 15 Nov 2024 01:21:35 +0000 (UTC)
+From: Baoquan He <bhe@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	bp@alien8.de
+Cc: x86@kernel.org,
+	thomas.lendacky@amd.com,
+	Baoquan He <bhe@redhat.com>
+Subject: [PATCH 0/3] x86/ioremap: clean up the mess in xxx_is_setup_data
+Date: Fri, 15 Nov 2024 09:21:28 +0800
+Message-ID: <20241115012131.509226-1-bhe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Thu, Nov 14 2024 at 13:03, Peter Zijlstra wrote:
-> On Tue, Nov 12, 2024 at 03:01:27PM +0100, Peter Zijlstra wrote:
->
->> No, not mwait hint. We need an instruction that:
->> 
->>  - goes to deepest C state
->>  - drops into WAIT-for-Start-IPI (SIPI)
->> 
->> Notably, it should not wake from:
->> 
->>  - random memory writes
->>  - NMI, MCE, SMI and other such non-maskable thingies
->>  - anything else -- the memory pointed to by RIP might no longer exist
->> 
->> Lets call the instruction: DEAD.
->
-> So, turns out that when you send INIT to an AP it does the whole drop
-> into Wait-for-SIPI and ignore non-maskable crap.
->
-> The reason we don't do that is because INIT to CPU0 (BP) is somewhat
-> fatal, but since Thomas killed all that CPU0 hotplug crap, I think we
-> can actually go do that.
+Functions memremap_is_setup_data() and early_memremap_is_setup_data()
+share completely the same process and handling, except of the
+different memremap/unmap invocations. The code can be extracted and put
+into a helper function __memremap_is_setup_data().
 
-Instead of playing dead or to kick out CPUs from whatever dead play
-routine they are in?
+And parameter 'size' is unused in implementation of memremap_is_efi_data(),
+memremap_is_setup_data and early_memremap_is_setup_data().
 
-playimg dead is to stay because INIT will bring back the MCE broadcast
-problem, which we try to avoid by bringing SMT siblings up just to shut
-them down again by playing dead.
+This patchset is made to clean them up. It sits on top of tip/x86/urgent
+commit 8d9ffb2fe65a ("x86/mm: Fix a kdump kernel failure on SME system
+when CONFIG_IMA_KEXEC=y")
 
-You need a MCE broadcast free system and/or some sensible BIOS bringup
-code for that to work...
+Baoquan He (3):
+  x86/ioremap: introduce helper to check if physical address is in
+    setup_data
+  x86/ioremap: use helper to implement xxx_is_setup_data()
+  x86/mm: clean up unused parameters of functions
 
-Thanks,
+ arch/x86/mm/ioremap.c | 117 +++++++++++++++---------------------------
+ 1 file changed, 41 insertions(+), 76 deletions(-)
 
-        tglx
-
-
-
+-- 
+2.41.0
 
 
