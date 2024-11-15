@@ -1,157 +1,247 @@
-Return-Path: <linux-kernel+bounces-410296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B51BA9CD948
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:58:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71F889CD939
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:58:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B300283B8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:58:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3250F2837E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8D01891AA;
-	Fri, 15 Nov 2024 06:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F3F188737;
+	Fri, 15 Nov 2024 06:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tONJMBVo"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XflMr7xM"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01E815FD13;
-	Fri, 15 Nov 2024 06:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93C215FD13
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731653925; cv=none; b=ffsByuZxR2HC5HNyMCd/bcBK+LcjS0AuX8Fyt7q8KiyufwL1LtAwjgz4QDQaxOM3NnpZDyEUinPfI7OYD5nxRgmDBFoR2bR3kIZVaaxc3GRa4QUA7FUupMswUxztHgh919+qZWzX6cEdMBBch9LI3lmaMJEBKVJQO6i6eZwv/c4=
+	t=1731653890; cv=none; b=VUTK6EfNMmh0Y913wyBA126LeTu4lUnjXfp3RV9rQLvomtC6CFNV9UHNhhcrGTBnAIvkQ04+UDIG72kcS0WSq2IB8jGE+EutdR3r894H4TfjeeCJo4htw4SObtIrIgemEQHzgljUD3nHlAdLvAtdNAWuC4eZooZWxQkrJEP4Bgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731653925; c=relaxed/simple;
-	bh=10du59C/TjTMek/wJqaaitNg65N/1xTl/sv46eFN7Wo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NvYpkD1v5Ci2MQUmfAF/EwWLgYL7mXOwpQp5EGD8M6SNbV4UKIoQH6BfTM0GcFJ7o/VxvTSPvMwsmiUjG9wcZK07Pdn3bkMrrjArQwaSO6CkgK0bCDzkFc15+0u4qK12vDQnMjDneQAY0mr8b302VPHTrPaT46ywys+zH3KX9xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tONJMBVo; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AF0knSc024160;
-	Fri, 15 Nov 2024 06:58:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=Xm88JJ/2BqYNLX0CZsa3yZ+pb86eV5BH3J808h1F8
-	7A=; b=tONJMBVoXU4TOtMIIwda/+QbZCW56Ez1BYknIuXa6MhROfkZ5vtWXF74D
-	SboH4tazHttsozH94WiLxPnHTiBzU41uMVGLL+NEDRqs+aO8qfQGbCyl761Baz7G
-	pfVtIsOtDqhwkEeDfDPHpY5rj6/8FvT3hkg2oXRMZQqdnpKPFVyzcMLKpd5wc9zH
-	simts9srMbjy/mLyD5DnUnh1SSN25MXYEcBsRBhEXk4sIbrS6QhmQeSsoe3pNVxG
-	ykwm3HIbGZAukhlAlq08oOVApdP2lMu2TqLxbTTEY6c4yiSeeLuQ+9hxcVFFZbA+
-	vOrPEolGfTyPq9+YkkOevilRCe78Q==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42wu2vsm7h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 06:58:39 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AF5C7pZ029689;
-	Fri, 15 Nov 2024 06:58:38 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42tkjmq83v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 06:58:38 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AF6wYJS34013702
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 15 Nov 2024 06:58:34 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5E16220043;
-	Fri, 15 Nov 2024 06:58:34 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2ECDB20040;
-	Fri, 15 Nov 2024 06:58:34 +0000 (GMT)
-Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 15 Nov 2024 06:58:34 +0000 (GMT)
-From: Thomas Richter <tmricht@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org, namhyung@kernel.org, james.clark@linaro.org
-Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
-        hca@linux.ibm.com, Thomas Richter <tmricht@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>
-Subject: [PATCH v2] perf/test: fix perf ftrace test on s390
-Date: Fri, 15 Nov 2024 07:57:35 +0100
-Message-ID: <20241115065735.2753032-1-tmricht@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1731653890; c=relaxed/simple;
+	bh=UGJREjOHz5RHJMYXmzG0Tou5gZp5PeWqq4mm1kyqUGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qXXtBmQ8jX2xbZSaoSypSNa4oHMEljr0jCUlyGn5ZtQOh7uCi+xlaYWi7sV49svIcckqKr00erDmpkjke/PaZCmAtNIdNTJyWq261NminTRaLAi09kneQI2wSinbwiaFdMC2i5XJfe1EBQR1nTqUzvEprxdc8JsQcPhifeZhZrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XflMr7xM; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-72475e29578so363100b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:58:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731653888; x=1732258688; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wtnA5EAAxwC1kI1kCfZtNl7bbPWqSTJS09SRk41HtKs=;
+        b=XflMr7xMq06+A3TjvynmpaSqgP+2iKsTnB/EbH1QwW3PKpkU8ZOxsM5ec3URIwNtuY
+         hjzIFqYoachwykUbepDvIRM+uzLviCIEr6kiFGP/TwfZ0YaGWZKUAhmPlH0EIX58R7Ma
+         rEkT7wZcFxliCWtNlVz3/utbRLnie+6HMB1EH7KwKeaUm8/wVERyM6G8Lr9rtsqMqH6z
+         Zs4EUpnggaNPYHhAyk9oh2Dvd1Ag6cXYdYEyxtmA4vSsBiyq2OfiazoBfiRYM+pSMsN+
+         179ksAIeXwmmcCWd+0W2aqPp1O+5C6C6w4TCwgYdM/QsiaWasqyvPCoE7eOgucH1nZR0
+         Ampg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731653888; x=1732258688;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wtnA5EAAxwC1kI1kCfZtNl7bbPWqSTJS09SRk41HtKs=;
+        b=XWZmq0r6K1CdCCFd1D3NFftvUVir0Z6bLGBnlckd9Bad9QBw8iKbbdZECFF+yNHqlP
+         j9ywIQO8IPkvxJtJoK36IJW7W0Wbe8DYXZsjAyR9bu5L3mTsgTT6ZR3Rdejzur0ieGD1
+         gPsAKnI5l4eFL2snFqG9DmoncnSPIm8fRQRKDZD+wEX+r06GXBEH7QzlUCM58EJzVGX2
+         MakGdFs/498j7jlqAuSFhimUYRTl49wL2+KlmzCUa3fn6WzQO0bQCkZtkWbEwuYZtPoz
+         nbZ18ODDKk6xxP3TO9uS6UrOk1MjwYlzsngMyCuYEt3U6KzXyHkDWDueJY6Nv7PNK3AD
+         KQ7w==
+X-Gm-Message-State: AOJu0YyQ3DxM0eWuhkbjjdGv9Apgm/0DH7gET/Fc9QxORSbnEmSP0gtT
+	dzjfuwqC8Et31pxvFL8WUGYmZ3+5VmbzXC+YKgpoW5U2MFFXH+h1wD9LwQ==
+X-Google-Smtp-Source: AGHT+IEY20lQegcOPFc6UAgqjcSbWicOTjbzSoWgpblxhfcM6UZs0t1epSZASKHHXgNvQSyr/8ELJw==
+X-Received: by 2002:a05:6a00:1890:b0:71e:634e:fe0d with SMTP id d2e1a72fcca58-72476bb01dbmr2018494b3a.12.1731653887774;
+        Thu, 14 Nov 2024 22:58:07 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72477120ab4sm692382b3a.44.2024.11.14.22.58.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 22:58:06 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 14 Nov 2024 22:58:05 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Mark Brown <broonie@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Frank Li <Frank.Li@nxp.com>
+Subject: Re: regmap I3C support
+Message-ID: <7b23e033-5cde-44e9-be97-10296833863b@roeck-us.net>
+References: <67d549d0-64c6-4d62-add6-0958ef24910f@roeck-us.net>
+ <ZzSxKctLlLZexdF5@finisterre.sirena.org.uk>
+ <feda265f-f7ba-4017-a08d-b35916aafe96@roeck-us.net>
+ <ZzS6ph8KulEITt5C@finisterre.sirena.org.uk>
+ <88f34137-b215-4bee-b117-3ff00402ba6c@roeck-us.net>
+ <ZzXfmonkRB-KaBhi@finisterre.sirena.org.uk>
+ <85584c2e-2c45-4ec4-89a0-111fa5ad1080@roeck-us.net>
+ <ZzYyu4ptPtYT6vJC@finisterre.sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: xzeUxkdyVjJP3Lf_7IMC0yZOOLbPUvoL
-X-Proofpoint-GUID: xzeUxkdyVjJP3Lf_7IMC0yZOOLbPUvoL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 suspectscore=0 bulkscore=0 mlxlogscore=668 impostorscore=0
- malwarescore=0 mlxscore=0 clxscore=1015 adultscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411150054
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZzYyu4ptPtYT6vJC@finisterre.sirena.org.uk>
 
-On s390 the perf test case ftrace sometimes fails as follows:
+On Thu, Nov 14, 2024 at 05:26:19PM +0000, Mark Brown wrote:
+> On Thu, Nov 14, 2024 at 06:45:52AM -0800, Guenter Roeck wrote:
+> 
+> > We now use
+> 
+> > config SENSORS_TMP108
+> >         tristate "Texas Instruments TMP108"
+> >         depends on I2C
+> >         depends on I3C || !I3C
+> >         select REGMAP_I2C
+> >         select REGMAP_I3C if I3C
+> 
+> > and in the i3c_probe function
+> 
+> > #ifdef CONFIG_REGMAP_I3C
+> >         regmap = devm_regmap_init_i3c(i3cdev, &tmp108_regmap_config);
+> > #else
+> >         regmap = ERR_PTR(-ENODEV);
+> > #endif
+> >         if (IS_ERR(regmap))
+> 
+> > Clumsy, and not my preferred solution, but it works.
+> 
+> Right, so the fact that I3C depends on I2C deals with a lot of the
+> problems that plague the I2C/SPI combination.  Ugh.  I guess the helper
+> should be OK and there's not much doing for I2C/SPI.
 
-  # ./perf test ftrace
-  79: perf ftrace tests    : FAILED!
-  #
+Is it really that difficult for I2C and SPI ? The patch below seems to work
+for the LTC2947 driver. It doesn't even need dummies (the compiler drops
+the unused code), though I am not sure if that can be relied on. I thought
+that dummy functions are needed, but maybe I am wrong.
 
-The failure depends on the kernel .config file. Some configurarions
-always work fine, some do not.  The ftrace profile test mostly fails,
-because the ring buffer was not large enough, and some lines
-(especially the interesting ones with nanosleep in it) where dropped.
+The Kconfig for the combined ltc2947 driver is
 
-To achieve success for all our tested kernel configurations, enlarge
-the buffer to store the traces complete without wrapping.
-The default buffer size is too small  for all kernel configurations.
-Set the buffer size of /sys/kernel/tracing/buffer_size_kb to 16 MB
+config SENSORS_LTC2947
+        tristate "Analog Devices LTC2947 High Precision Power and Energy Monitor"
+        depends on I2C || SPI
+        depends on I2C || I2C=n
+        select REGMAP_I2C if I2C
+        select REGMAP_SPI if SPI
+        help
+	...
 
-Output after:
-  # ./perf test ftrace
-  79: perf ftrace tests     : Ok
-  #
+Guenter
 
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Suggested-by: Sven Schnelle <svens@linux.ibm.com>
-Reviewed-by: James Clark <james.clark@linaro.org>
 ---
- tools/perf/tests/shell/ftrace.sh | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+From 8b72bcea4f399b3ffbea07256c5e48af63dfd230 Mon Sep 17 00:00:00 2001
+From: Guenter Roeck <linux@roeck-us.net>
+Date: Thu, 14 Nov 2024 17:30:01 -0800
+Subject: [PATCH] Add infrastructure for supporting both I2C and SPI in single
+ driver
 
-diff --git a/tools/perf/tests/shell/ftrace.sh b/tools/perf/tests/shell/ftrace.sh
-index a6ee740f0d7e..6161a8bdc251 100755
---- a/tools/perf/tests/shell/ftrace.sh
-+++ b/tools/perf/tests/shell/ftrace.sh
-@@ -14,6 +14,11 @@ output=$(mktemp /tmp/__perf_test.ftrace.XXXXXX)
- 
- cleanup() {
-   rm -f "${output}"
-+  if [ "$(uname -m)" = "s390x" ]
-+  then
-+	echo $ftrace_size > /sys/kernel/tracing/buffer_size_kb
-+  fi
+Add support for register and unregister functions for drivers supporting
+both I2C and SPI. Support situations where only one of the protocols is
+enabled.
+
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+ include/linux/i2c_spi.h | 81 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 81 insertions(+)
+ create mode 100644 include/linux/i2c_spi.h
+
+diff --git a/include/linux/i2c_spi.h b/include/linux/i2c_spi.h
+new file mode 100644
+index 000000000000..3a8d32355338
+--- /dev/null
++++ b/include/linux/i2c_spi.h
+@@ -0,0 +1,81 @@
++/*---------------------------------------------------------------------------
++ *
++ * i2c_spi.h
++ *     Copyright (c) 2024 Guenter Roeck <linux@roeck-us.net>
++ *
++ * API functions to support both I2C and SPI in a single driver.
++ */
 +
- 
-   trap - EXIT TERM INT
- }
-@@ -80,6 +85,12 @@ test_ftrace_profile() {
-     echo "perf ftrace profile test  [Success]"
- }
- 
-+if [ "$(uname -m)" = "s390x" ]
-+then
-+	ftrace_size=$(cat /sys/kernel/tracing/buffer_size_kb)
-+	echo 16384 > /sys/kernel/tracing/buffer_size_kb
-+fi
++#ifndef I2C_SPI_H
++#define I2C_SPI_H
 +
- test_ftrace_list
- test_ftrace_trace
- test_ftrace_latency
++#include <linux/i2c.h>
++#include <linux/spi/spi.h>
++
++/**
++ * i2c_spi_driver_register() - Register an I2C and a SPI driver
++ * @i2cdrv: the I2C driver to register
++ * @spidrv: the SPI driver to register
++ *
++ * This function registers both @i2cdev and @spidev, and fails if one of these
++ * registrations fails. This is mainly useful for devices that support both I2C
++ * and SPI modes.
++ * Note that the function only registers drivers for the enabled protocol(s).
++ * If neither I2C nor SPI are enabled, it does nothing.
++ *
++ * Return: 0 if enabled registrations succeeded, a negative error code otherwise.
++ */
++static inline int i2c_spi_driver_register(struct i2c_driver *i2cdrv,
++					  struct spi_driver *spidrv)
++{
++	int ret = 0;
++
++	if (IS_ENABLED(CONFIG_I2C))
++		ret = i2c_add_driver(i2cdrv);
++	if (ret || !IS_ENABLED(CONFIG_SPI))
++		return ret;
++
++	ret = spi_register_driver(spidrv);
++	if (ret && IS_ENABLED(CONFIG_I2C))
++		i2c_del_driver(i2cdrv);
++
++	return ret;
++}
++
++/**
++ * i2c_spi_driver_unregister() - Unregister an I2C and a SPI driver
++ * @i2cdrv: the I2C driver to register
++ * @spidrv: the SPI driver to register
++ *
++ * This function unregisters both @i2cdrv and @i3cdrv.
++ * Note that the function only unregisters drivers for the enabled protocol(s).
++ */
++static inline void i2c_spi_driver_unregister(struct i2c_driver *i2cdrv,
++					     struct spi_driver *spidrv)
++{
++	if (IS_ENABLED(CONFIG_SPI))
++		spi_unregister_driver(spidrv);
++
++	if (IS_ENABLED(CONFIG_I2C))
++		i2c_del_driver(i2cdrv);
++}
++
++/**
++ * module_i2c_spi_driver() - Register a module providing an I2C and a SPI
++ *			     driver
++ * @__i2cdrv: the I2C driver to register
++ * @__spidrv: the SPI driver to register
++ *
++ * Provide generic init/exit functions that simply register/unregister an I2C
++ * and a SPI driver.
++ * This macro can be used even if CONFIG_I2C and/or CONFIG_SPI are disabled,
++ * in this case, only the enabled driver(s) driver will be registered.
++ * Should be used by any driver that does not require extra init/cleanup steps.
++ */
++#define module_i2c_spi_driver(__i2cdrv, __spidrv)	\
++	module_driver(__i2cdrv,				\
++		      i2c_spi_driver_register,		\
++		      i2c_spi_driver_unregister,	\
++		      __spidrv)
++
++#endif /* I2C_SPI_H */
 -- 
-2.47.0
+2.45.2
+
 
 
