@@ -1,194 +1,142 @@
-Return-Path: <linux-kernel+bounces-410431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E899CDB85
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:26:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC9679CDB89
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:28:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4CE2B2277F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:26:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75B7C1F22506
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80DDE18FC8C;
-	Fri, 15 Nov 2024 09:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE32618FC67;
+	Fri, 15 Nov 2024 09:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dk/ckOrE"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=monstr-eu.20230601.gappssmtp.com header.i=@monstr-eu.20230601.gappssmtp.com header.b="2bjwkN9u"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902B518C322;
-	Fri, 15 Nov 2024 09:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CC418785D
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731662785; cv=none; b=c/Kp3QqNTI9zMb5y60OjPtl3bgMb93o9ANnidGbRGiaJZtT0Q1cT68GLx38ZaW/DSNoMNw/YJFsyyZxOoyarmq2vvj/w6uekYbuv0jEbtOcm3NEvpoyNP1XGqUnSmDD4cjkzyhD0l/vqCC6uRDb/BaAR+fKmeQmxUj1V9XgclM4=
+	t=1731662916; cv=none; b=pa9nqi29EILrDaj6Cv1ZkjI0tzVMvboPuHtGEHJ3Nw8WiweJ5ptbfpp51wUaSSFarngy02xHwDOEuPSK42rNIY16HnLB8trfSzJcEZ5fAv9XHQSM48kKd+Wc81HV2mEokKf0ULZZU133lwqIkXNejDTBVTZE6lwUAtQqcQsuCLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731662785; c=relaxed/simple;
-	bh=Guw0XR5d0BgTLqHT6YoapFxf8RK2MKtxRUr39yYdodE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f/swisNbej9wqzgPRmwzY4ZrDsDlKdET9Y2TmniWGb0LgemlzE+FWuAu1LNOf13R8uKOaZ5RYg3TusI/qOzFNghrRn61c/lP5WQwXxH1+AhqjYWdNQQUKErtRZPk9IvpbN/tkC21GGfCT+qPhLuM6GQexXLWa97AHhFV/77JIxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dk/ckOrE; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1731662781;
-	bh=Guw0XR5d0BgTLqHT6YoapFxf8RK2MKtxRUr39yYdodE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dk/ckOrE/DWFWJW2vFRsRgMJ4FhMTQHBkF0Bi4nB+DpsWTTjAmh9Q9kjgGJH7cQDu
-	 9lwZwx4FUcJ3AgkXiTSlKhM4aK+cvrd8ghAok0SA0WFCWI+UP3qk1dNVoFRyNCmHKI
-	 lzn4f3P+bsYz0ekZ4OJAnrTTo30iuGgyIIqXEmTaQg05KbQOKuT9Nx7qLpNJJVNlSn
-	 cYCZYf4afyyG1Jy5Tb1XqEMf2k3ieULQd1mI/gBeQrpGVS/LQv83IL64YbqE6PPJ3z
-	 0DUFF9OpXm3FyEe3ZgRRqSihuGp6Vxn/nMYcGkC8XwXIeJEUa27WVZWZkmJX6SdZom
-	 7bgfL8C5k/7SA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8C76117E35D1;
-	Fri, 15 Nov 2024 10:26:20 +0100 (CET)
-Message-ID: <c681604b-d439-4815-b1d9-ad435b85b5be@collabora.com>
-Date: Fri, 15 Nov 2024 10:26:19 +0100
+	s=arc-20240116; t=1731662916; c=relaxed/simple;
+	bh=1saefCUChvEhGZXcAc9PO3UWP9KsoqvaJTxye4PNbnE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tt+IzBikArnG6UPNe+BLSdULmsLgdrMPu8gHG7DEcMyW52oQAHpS9dLk2ppS0LMqUKQ7HRXx4b5O5REskcRNlDZgeVWKSLo2OJxswUkpneLz4AuqoTm6yNhitgcsDxgqgKw0sQUeXbHvnxSxl1T2vNofuOJya4Otf2ofhkUQLCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu; spf=none smtp.mailfrom=monstr.eu; dkim=pass (2048-bit key) header.d=monstr-eu.20230601.gappssmtp.com header.i=@monstr-eu.20230601.gappssmtp.com header.b=2bjwkN9u; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=monstr.eu
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6ee55cfa88cso5234817b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 01:28:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20230601.gappssmtp.com; s=20230601; t=1731662911; x=1732267711; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Uw7NeD1/kSkLl42Ng22aPPWvXyQP8eKPKhV8K/hAOx0=;
+        b=2bjwkN9uPFNzYTwDVkwCWykg/GNLaUPM/rj2EaX1o87IGURojL6CZrKbSAKyuS8Z+I
+         BhpMK3+C0UCJOpRYHCBHBLr9bilFbfxgzoXBtISbe7NpxtWqpQnAFMf5YaaN4kPeh+FA
+         H14okcHqE454lgWlUN3opeKhcI2LWM0FhrB2rK5sNyUNjKK5tVO0KZ+ap+S0CuI1dL/P
+         RckJV0GNkZHdiqxnN3QZNk1IL2CgDeEZObvfgJSHKRqYo3+4FAPzIT67rdYMvk9sYUIt
+         HSaPv05H9aBf9WWLDJUCY5QWX8YGmZdmkM5oi4wG448hGQbMWZ48sdzP2IYDJTYJNild
+         TpKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731662911; x=1732267711;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Uw7NeD1/kSkLl42Ng22aPPWvXyQP8eKPKhV8K/hAOx0=;
+        b=QyOxkihqN8L6ViDj7m40XOLAzm44mr0CDbcxCtofbIB7SuNNhYlDWKk1AySuw/E12m
+         9In/Tu+MJYfvUoo2LdiTzinCMI5kZv52OTO8LYBQzSJ91+M7edJ/4TaD/XqNnlAWLG/a
+         ehYfupqpg1TfOf6iHkaKbvK/+Qd6zh13oGRVvO6OFM9cVscMuE5FK19wzZ8RYkKggn88
+         ZdlEnbuRuU6iFgqGQ4SYpi0g0rn+qKpzD0JS2sMer7oXS50S5ykFlg/0ZXZSkOjQRmF2
+         SwTODjtuD/jE0H1e6AntnVzkZI7v+x/peSFRRzY+c9298fJmo4PlWFNOEiIwazPZF3NM
+         OItg==
+X-Gm-Message-State: AOJu0YxNiIdPnMws6c9USqdNL2tLG8B5zHHS2KF3NhMlMDGmjrhN1aZP
+	1UNKBqVDHwx/sm5kGzEw3k5mH9xPAWtIMS3oGN9uuqZwLtqlaz6FNEKXoW+unx+loxvW/ktzn+z
+	pipq3vfDUnCcXot8C0/633yuYSUBIIhZ37W9DzuJMX1S+kx0vJQ==
+X-Google-Smtp-Source: AGHT+IHggNczWxL1cX0MfUC81Iuopw3yFOo11zb+X0CvuQwZIjjbkP8RtzFM/W+MbKw8506qt9/vpbynxciqz+5r0m8=
+X-Received: by 2002:a05:690c:60c5:b0:6e2:1527:446b with SMTP id
+ 00721157ae682-6ee55bba6ecmr25603267b3.3.1731662911410; Fri, 15 Nov 2024
+ 01:28:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] arm64: dts: mediatek: Set mediatek,mac-wol on
- DWMAC node for all boards
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
-Cc: Michael Walle <mwalle@kernel.org>, kernel@collabora.com,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Biao Huang <biao.huang@mediatek.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Andrew Halaney <ahalaney@redhat.com>, Simon Horman <horms@kernel.org>
-References: <20241109-mediatek-mac-wol-noninverted-v2-0-0e264e213878@collabora.com>
- <20241109-mediatek-mac-wol-noninverted-v2-2-0e264e213878@collabora.com>
- <bdbfb1db-1291-4f95-adc9-36969bb51eb4@collabora.com>
- <d441b614-0b71-410f-af4e-30cb164d9cd5@notapiano>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <d441b614-0b71-410f-af4e-30cb164d9cd5@notapiano>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241114224649.57946-4-thorsten.blum@linux.dev>
+In-Reply-To: <20241114224649.57946-4-thorsten.blum@linux.dev>
+From: Michal Simek <monstr@monstr.eu>
+Date: Fri, 15 Nov 2024 10:28:20 +0100
+Message-ID: <CAHTX3dKYrSqLk+1nODm+yMVFfEeW_WvfboiZ_A13DN4_iCeuag@mail.gmail.com>
+Subject: Re: [PATCH] microblaze: mb: Use str_yes_no() helper in show_cpuinfo()
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 14/11/24 20:22, Nícolas F. R. A. Prado ha scritto:
-> On Thu, Nov 14, 2024 at 10:26:34AM +0100, AngeloGioacchino Del Regno wrote:
->> Il 09/11/24 16:16, Nícolas F. R. A. Prado ha scritto:
->>> Due to the mediatek,mac-wol property previously being handled backwards
->>> by the dwmac-mediatek driver, its use in the DTs seems to have been
->>> inconsistent.
->>>
->>> Now that the driver has been fixed, correct this description. All the
->>> currently upstream boards support MAC WOL, so add the mediatek,mac-wol
->>> property to the missing ones.
->>>
->>> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
->>> ---
->>>    arch/arm64/boot/dts/mediatek/mt2712-evb.dts                   | 1 +
->>>    arch/arm64/boot/dts/mediatek/mt8195-demo.dts                  | 1 +
->>>    arch/arm64/boot/dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dts | 1 +
->>>    3 files changed, 3 insertions(+)
->>>
->>
->> ..snip..
->>
->>> diff --git a/arch/arm64/boot/dts/mediatek/mt8195-demo.dts b/arch/arm64/boot/dts/mediatek/mt8195-demo.dts
->>> index 31d424b8fc7cedef65489392eb279b7fd2194a4a..c12684e8c449b2d7b3b3a79086925bfe5ae0d8f8 100644
->>> --- a/arch/arm64/boot/dts/mediatek/mt8195-demo.dts
->>> +++ b/arch/arm64/boot/dts/mediatek/mt8195-demo.dts
->>> @@ -109,6 +109,7 @@ &eth {
->>>    	pinctrl-names = "default", "sleep";
->>>    	pinctrl-0 = <&eth_default_pins>;
->>>    	pinctrl-1 = <&eth_sleep_pins>;
->>> +	mediatek,mac-wol;
->>
->> The demo board has the same WoL capability as the EVK, so you can avoid adding the
->> mac-wol property here.
-> 
-> Not sure I follow... If we omit the property here it will use PHY WOL instead,
-> while the genio 1200 EVK has the property, so it will be using MAC WOL, so
-> they're already the same and omitting will make them behave differently...
-> 
-> Let me recap to make sure we're all on the same page:
-> 
-> This was the WOL configuration for each board before this series:
-> MAC mt2712-evb.dts
-> MAC mt8195-demo.dts
-> PHY mt8395-genio-1200-evk.dts
-> MAC mt8395-kontron-3-5-sbc-i1200.dts
-> PHY mt8395-radxa-nio-12l.dts
-> PHY mt8390-genio-700-evk.dts
-> 
-> After patch 1, they all get inverted:
-> PHY mt2712-evb.dts
-> PHY mt8195-demo.dts
-> MAC mt8395-genio-1200-evk.dts
-> PHY mt8395-kontron-3-5-sbc-i1200.dts
-> MAC mt8395-radxa-nio-12l.dts
-> MAC mt8390-genio-700-evk.dts
-> 
-> And after patch 2, the remaining PHY ones are set to MAC:
-> MAC mt2712-evb.dts
-> MAC mt8195-demo.dts
-> MAC mt8395-genio-1200-evk.dts
-> MAC mt8395-kontron-3-5-sbc-i1200.dts
-> MAC mt8395-radxa-nio-12l.dts
-> MAC mt8390-genio-700-evk.dts
-> 
-> The only board I have in hands and am able to test is mt8390-genio-700-evk.dts,
-> which requires MAC WOL to work. For the others, your feedback on v1 was that
-> they should all be set to MAC WOL. Except for mt2712, which you were not sure
-> about, but it was already set to MAC WOL so we're keeping the same behavior.
-> 
-> That's how we got to adding mediatek,mac-wol to mt8195-demo.dts,
-> mt8395-kontron-3-5-sbc-i1200.dts and mt2712-evb.dts. Let me know if there has
-> been some misunderstanding.
-> 
+=C4=8Dt 14. 11. 2024 v 23:49 odes=C3=ADlatel Thorsten Blum
+<thorsten.blum@linux.dev> napsal:
+>
+> Remove hard-coded strings by using the str_yes_no() helper function.
+>
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  arch/microblaze/kernel/cpu/mb.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/microblaze/kernel/cpu/mb.c b/arch/microblaze/kernel/cpu=
+/mb.c
+> index 9581d194d9e4..37cb2898216b 100644
+> --- a/arch/microblaze/kernel/cpu/mb.c
+> +++ b/arch/microblaze/kernel/cpu/mb.c
+> @@ -66,10 +66,10 @@ static int show_cpuinfo(struct seq_file *m, void *v)
+>                    " MSR:\t\t%s\n"
+>                    " PCMP:\t\t%s\n"
+>                    " DIV:\t\t%s\n",
+> -                  (cpuinfo.use_instr & PVR0_USE_BARREL_MASK) ? "yes" : "=
+no",
+> -                  (cpuinfo.use_instr & PVR2_USE_MSR_INSTR) ? "yes" : "no=
+",
+> -                  (cpuinfo.use_instr & PVR2_USE_PCMP_INSTR) ? "yes" : "n=
+o",
+> -                  (cpuinfo.use_instr & PVR0_USE_DIV_MASK) ? "yes" : "no"=
+);
+> +                  str_yes_no(cpuinfo.use_instr & PVR0_USE_BARREL_MASK),
+> +                  str_yes_no(cpuinfo.use_instr & PVR2_USE_MSR_INSTR),
+> +                  str_yes_no(cpuinfo.use_instr & PVR2_USE_PCMP_INSTR),
+> +                  str_yes_no(cpuinfo.use_instr & PVR0_USE_DIV_MASK));
+>
+>         seq_printf(m, " MMU:\t\t%x\n", cpuinfo.mmu);
+>
+> @@ -120,7 +120,7 @@ static int show_cpuinfo(struct seq_file *m, void *v)
+>
+>         seq_printf(m,
+>                    "HW-Debug:\t%s\n",
+> -                  cpuinfo.hw_debug ? "yes" : "no");
+> +                  str_yes_no(cpuinfo.hw_debug));
+>
+>         seq_printf(m,
+>                    "PVR-USR1:\t%02x\n"
+> --
+> 2.47.0
+>
 
-No, it's me getting confused about the current status - and I'm sorry about that.
+Applied.
 
-So just ignore me saying "we can avoid adding" - we can't.
-This commit is definitely needed.
-
-Cheers,
-Angelo
-
-> Thanks,
-> Nícolas
-> 
->>
->>>    	status = "okay";
->>>    	mdio {
->>> diff --git a/arch/arm64/boot/dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dts b/arch/arm64/boot/dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dts
->>> index e2e75b8ff91880711c82f783c7ccbef4128b7ab4..4985b65925a9ed10ad44a6e58b9657a9dd48751f 100644
->>> --- a/arch/arm64/boot/dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dts
->>> +++ b/arch/arm64/boot/dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dts
->>> @@ -271,6 +271,7 @@ &eth {
->>>    	pinctrl-names = "default", "sleep";
->>>    	pinctrl-0 = <&eth_default_pins>;
->>>    	pinctrl-1 = <&eth_sleep_pins>;
->>> +	mediatek,mac-wol;
->>
->> I'm mostly sure that Kontron's i1200 works the same as the EVK in regards to WoL.
->>
->> Michael, I recall you worked on this board - can you please confirm?
->>
->> Thanks,
->> Angelo
->>
+Thanks,
+Michal
 
 
-
+--=20
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Xilinx Microblaze
+Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
+U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP/Versal SoCs
 
