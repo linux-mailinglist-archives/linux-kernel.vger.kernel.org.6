@@ -1,313 +1,234 @@
-Return-Path: <linux-kernel+bounces-411282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F8819CF59F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:18:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87B749CF5A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:19:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7051282571
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:18:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E627283732
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:19:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D171E1C1A;
-	Fri, 15 Nov 2024 20:18:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925DB1E2843;
+	Fri, 15 Nov 2024 20:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p8/rMtgw"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="kkp4vBs2"
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD111DA23
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 20:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D441E2602
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 20:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731701922; cv=none; b=uNxFGta+vPfT6I0EQv0Kd5UvarYmst1CCazHnv8X+nYi+fmqu0aiQy0eyRqPO/x/32Ri7HSk/dhHfh2DRYJUygd7gLi5RAW/Rr8T+rqJvXRoWMa/kEZPlqiR1QJ8JR+/g8Ajmac4k9QwW0dGzPFcfgGj75Orov/3QM8SGZK3nKQ=
+	t=1731701932; cv=none; b=TwjKx7jWDOkyxV2mLgZS5l4Jpuy1a2hDNzOdu7iExV5g4qsQhVW4zbKG198w0anEgw4fz9jSPsdXVE3hFEDc0P0jW19P9aJL318tHQXmfH34tQY9Vy+1DVBx1OycHvIrMkikiFCLv9dbUihc0fZTZmGAjqxlK0F+8ZcaO2yV+oE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731701922; c=relaxed/simple;
-	bh=GfooVAynkoOrmm2tbyxHPRV5xwbtTrqQtV3CoOROJV8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b0saC2StYMZsGpUd6ibtDojnrT7oOT08lKcSyiU/105CtQKfEvdBLupFqCnpVrKlRUYZ/aeJWvHQI4/dNsDLtG9SAzS2CR8KXa70SILymvJk6Flnw4w2GKqMEnfhm3QC6RT8XhbgBH3qibnB9yfWGpOMRsRr4jILpNkjSaTVeao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p8/rMtgw; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20c8ac50b79so19375ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 12:18:40 -0800 (PST)
+	s=arc-20240116; t=1731701932; c=relaxed/simple;
+	bh=3Ni7PT0axBtuHvRncCE5DWh0E9rbAEHiA+isJunCRHU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XOrmpDDNSF2PLkhO57NPvYukqZoFarEbylNIuQAG0JmNvuqOe4YebXGi+Rdg1SNNFrl1fJtTairc5EsO0pHa2P5/9cQ0DLxA9dDM79jeRcWaeKDssJBwG3HMLtIngkI7aYPIRrsEs+lPwVmsSCFXo7x6Og01CL6ec2xItx1EuzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=kkp4vBs2; arc=none smtp.client-ip=209.85.161.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5ec1ee25504so504761eaf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 12:18:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731701920; x=1732306720; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vOebRQETbZvWS73rKNCR7PLpNcmPn5Rr3U0j+a9cUYI=;
-        b=p8/rMtgwCvOswXHqMzC0NhS43mPAkqlqX7VOoDFfjOwWgaNuydyrj7tD/dG4HhCjxl
-         8U6p3o9Y8HMiE6ehJIcfJ4KeYdgO9g+xJyvBf4TLBhF9wzd8ShvOtCVx5S68DGCVqvbe
-         rm9PcHLXmHqIOYBzUF0m4OZeXUMtp2GBdHu1gsvT4L104Y/dCa/YAn1JYZ66DKrJ3SOv
-         StQmGdueRZOd1mfGSSgKvQFOPya28Susyxv6sAfV+W81YaePt38XEXzab4K0Ya1kT18q
-         yA13SqDufOL+pzNVKzqSz6wzNW4k4Hk0NTxMCvkZBzxKRjC1BY21sQd6hjsQU9Vn2cYu
-         JUhg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731701928; x=1732306728; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UUdI24Fc01rV8+2ozp3YiQjyTDz4RClZ9j2UmHM3EPY=;
+        b=kkp4vBs2vghluPAJtKK90SGw0tK3BJidZR1P0l7kIsOooIY8D1CWH01cThzXlOMJpC
+         bnsKPsf1TuEbxNPSUVEh5MK0PL566LCXvrgTghpPflbbIvMY9aBf/HaT2It5P8vqvdgU
+         ABCw9X/PL8xdJtJl1+DuL8WIEyyeHjN9Z+6Url6RwopEk4Jtou48CbsXLxs7Hj7/gKPq
+         swk60UFY7k/YZqPwJdxkfCGr+thp0LLpr5lAHtFnBv/+/oZo1EYAs+BIb9cSqOU67yHS
+         aCQjSs71cNMD5VVqSX1+KqoerfzU5P5UHJhDcFiuTSjaoVc0LRuEuHBuPmsGJzZPr05Q
+         Db0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731701920; x=1732306720;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vOebRQETbZvWS73rKNCR7PLpNcmPn5Rr3U0j+a9cUYI=;
-        b=tph/oXfbpKVuAZkJmcr/OFNNhGzzrGsWuokSspLiyu3ukIDWW1zPQAjJCVfUUb8OJH
-         gK9h8bLoWG6d9k02s41nQvCj+hO9z2Sbzra4G51k2GlZ56wON4FtAkGfQDITCXqj7pg3
-         U7HCIASU4A22eNjyxs2TNWqmr6hmkVWiWstE47kQD0ytZNv2hQRvDghNeXI9e+3wbJkT
-         9SOeVRo5kBIWzuOxu54gAZIZNeqNet8s9JCqgYLp+UlCOSnssQCYzBKq/FQtJCGj8u9i
-         4NGlWlJOwcpkyml+65NuK1DlZskp/apqMz5/sgj60xSFgwzsriywf/NYRFWx4QCz+lH+
-         h4Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCXOw13gX4OvxKLVc3tV7geiT2pl0admLd75osdB5MW4HYiPfEBhnXAuuJitt95CVhXL5TGH3nvnFwk/mkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVh7zpEb0owXRs/s13oKRdNRMfSzoc5AEuxr9ockZgPE/1P7Sr
-	fNUtJPSV7WcNRAobhiI7uO3gl7uutiMCwARov0hgHmvmEMWhjsTGUzbphph1NQ==
-X-Gm-Gg: ASbGnct+4dhzUAmkFJAK3SD3LqD4wwCBMktFj6vipq0FsK4u4fgeXXXwJ0UHifqadMO
-	PK9dRWg7KrNt9pSh+G7tX13cHe4HhYh1uDw7c3dDssjPe7E3nceAGzQ1LLQSAzxCPDsj0OIhvgy
-	5BVmTruCkf3Kidn7bcqZWyG2F3ZO6DBA/o/f8uPQUbJ90syWT90YFi00Fzf5cxjlbcInwp9Wv0n
-	ofn7Ny+BkoaCNQvjkPyE3V0ARs00vbVvW2hGInB1JDcuW5IV87Yd3iM++Zh5gLkvHsnmmlsnUvt
-	ZA0H8yuP
-X-Google-Smtp-Source: AGHT+IF9YmYViYu4bbu+rcQFvrqm2Ir1zaH/4DN+NJJV5bwFNTi7N4AI+TENAbybYY+gwUtHULYlMQ==
-X-Received: by 2002:a17:902:ea05:b0:205:753e:b49d with SMTP id d9443c01a7336-211ecbe9b05mr288535ad.0.1731701919907;
-        Fri, 15 Nov 2024 12:18:39 -0800 (PST)
-Received: from google.com (60.89.247.35.bc.googleusercontent.com. [35.247.89.60])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0dc2bfbsm16436765ad.50.2024.11.15.12.18.38
+        d=1e100.net; s=20230601; t=1731701928; x=1732306728;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UUdI24Fc01rV8+2ozp3YiQjyTDz4RClZ9j2UmHM3EPY=;
+        b=ey9u26IkLCWIWQov3PPo1fUZ0mTykng41w0zCk8R+dOz1ylpkp27Mnfkz2jv8u6tHL
+         BaRdTspLkUj9c5FBYqhIEEK5XOcLNM5XnywDqlYH0UWyG8Zjw2Ra5rM3A+USQGQ3Ayoj
+         UTl0D1+upAYzjoPNeQqulPYsGwDx8F1p6VC47lExqJaEMnC9XrwpSldV0ODBkqV1FSST
+         vpAz0Kwv+wuT7gdxiwdyjwYgRDcYPHIQ0vxL51m0EkEKtB7JIh57A/evNDECX4xmT7co
+         Ao1M3H/AQp29yT3G+Y9bq4SUld+Igk4WIfAxGoDA+rWo0l4TWdlZFWMXabJ/rUnxpqzt
+         t5WA==
+X-Forwarded-Encrypted: i=1; AJvYcCVkEg7f4zU72VcZqatG/t4yKs2BpR/LhRYPH3DNs8Y/5IZVcw74b8CczwthFdZGvQeSGgr8SdIbMVxKJ40=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMRZXAuQSK1zKrXXUjj0JYjyU5ZWHLscc8IiyMMhnl687Sf0dW
+	RHMjO6Xj/A6X7vRdhTbIuljpjLCORTHDdCfVfv5hT0nHRfED7g8NWT06Nv6tLWE=
+X-Google-Smtp-Source: AGHT+IFUja7/dvg8AIw0VHQ8Lb/HKthQzctuYLuTqPCTOrmcEocRyzaIPnu3nWrxg113jaeXYkpXdw==
+X-Received: by 2002:a05:6820:260e:b0:5e5:7086:ebe8 with SMTP id 006d021491bc7-5eeab0fbd99mr3752213eaf.0.1731701928109;
+        Fri, 15 Nov 2024 12:18:48 -0800 (PST)
+Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a780ea62esm748978a34.5.2024.11.15.12.18.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 12:18:38 -0800 (PST)
-Date: Fri, 15 Nov 2024 12:18:35 -0800
-From: Vipin Sharma <vipinsh@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
-	kvm-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Anup Patel <anup@brainfault.org>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/1] KVM selftests runner for running more than just
- default
-Message-ID: <20241115201835.GA599524.vipinsh@google.com>
-References: <20240821223012.3757828-1-vipinsh@google.com>
- <CAHVum0eSxCTAme8=oV9a=cVaJ9Jzu3-W-3vgbubVZ2qAWVjfJA@mail.gmail.com>
- <CAHVum0fWJW7V5ijtPcXQAtPSdoQSKjzYwMJ-XCRH2_sKs=Kg7g@mail.gmail.com>
- <ZyuiH_CVQqJUoSB-@google.com>
+        Fri, 15 Nov 2024 12:18:46 -0800 (PST)
+From: David Lechner <dlechner@baylibre.com>
+Subject: [PATCH v5 00/16] spi: axi-spi-engine: add offload support
+Date: Fri, 15 Nov 2024 14:18:39 -0600
+Message-Id: <20241115-dlech-mainline-spi-engine-offload-2-v5-0-bea815bd5ea5@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyuiH_CVQqJUoSB-@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKCsN2cC/5XRS07DMBAG4KtEXjPIz6TJinsghOx4nIzUOMUOU
+ auqd8dtoUWIBSxsebz4Zvz7yDImwsy66sgSrpRpjqUwDxXrRxsHBPKlZpJLzY3g4LfYjzBZilu
+ KCHlHgHE4H+cQtrP1IMGGHlXTcmesY0XaJQy0v3R5fin1SHmZ0+HSdJXn2//5qwQOm4Y3tmy9V
+ ubJ2cOWXMLHfp7YucWq7mwj5d9YVdhGS47a+FC37hdW31jBpfobqwsbNkIa17bBWPGDPV0TSvj
+ 2XuJfrjHd0++qSzchFBDNYH1flq5bA9O8IvgFHEVPccgwovWYwNetlBgaL5TuVsG+/+VNE7AMd
+ nJl7E/ulaZdKuKEccnQWCVtLetNL+uu/FExnM0IZeKJlq6KuF/giypvOH0AfUrSx0oCAAA=
+To: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+Cc: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Lars-Peter Clausen <lars@metafoo.de>, David Jander <david@protonic.nl>, 
+ Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.1
 
-On 2024-11-06 09:06:39, Sean Christopherson wrote:
-> On Fri, Nov 01, 2024, Vipin Sharma wrote:
-> > 
-> > We need to have a roadmap for the runner in terms of features we support.
-> > 
-> > Phase 1: Having a basic selftest runner is useful which can:
-> > 
-> > - Run tests parallely
-> 
-> Maybe with a (very conversative) per test timeout?  Selftests generally don't have
-> the same problems as KVM-Unit-Tests (KUT), as selftests are a little better at
-> guarding against waiting indefinitely, i.e. I don't think we need a configurable
-> timeout.  But a 120 second timeout or so would be helpful.
-> 
-> E.g. I recently was testing a patch (of mine) that had a "minor" bug where it
-> caused KVM to do a remote TLB flush on *every* SPTE update in the shadow MMU,
-> which manifested as hilariously long runtimes for max_guest_memory_test.  I was
-> _this_ close to not catching the bug (which would have been quite embarrasing),
-> because my hack-a-scripts don't use timeouts (I only noticed because a completely
-> unrelated bug was causing failures).
+There weren't any major revisions or this time around and there weren't
+any more long discussions on higher level design, so I've dropped the
+RFC label and started polishing things up a bit more. So hopefully we
+are getting close to a final version.
 
-RFC code has the feature to specify timeout for each test. I will change
-it so that a default value of 120 second is applied to all and remove the need
-to write timeout for each individual test in json. It will be simple to
-add a command line option to override this value.
+---
+Changes in v5:
+- Dropped pwm patch. A variant of this patch has been picked up in the
+  pwm tree.
+- Addressed review comments (see details in individual patches).
+- Added some polish, like MAINTAINERS entries and updating ADC docs.
+- Link to v4: https://lore.kernel.org/r/20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com
 
-> 
-> > - Provide a summary of what passed and failed, or only in case of failure.
-> 
-> I think a summary is always warranted.  And for failures, it would be helpful to
-> spit out _what_ test failed, versus the annoying KUT runner's behavior of stating
-> only the number of passes/failures, which forces the user to go spelunking just
-> to find out what (sub)test failed.
+Changes in v4:
+- Dropped #spi-offload-cells and spi-offload properties from DT bindings.
+- Made an attempt at a more generic trigger interface instead of using
+  clk framework. This also includes a new driver for a generic PWM
+  trigger.
+- Addressed IIO review comments.
+- Added new patches for iio/adc/ad4695 as 2nd user of SPI offload.
+- Link to v3: https://lore.kernel.org/r/20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com
 
-Default will be to print all test statuses, one line per test. This is
-what RFC code does.
+Changes in v3:
+- Reworked DT bindings to have things physically connected to the SPI
+  controller be properties of the SPI controller and use more
+  conventional provider/consumer properties.
+- Added more SPI APIs for peripheral drivers to use to get auxillary
+  offload resources, like triggers.
+- Link to v2: https://lore.kernel.org/r/20240510-dlech-mainline-spi-engine-offload-2-v2-0-8707a870c435@baylibre.com
 
-For summary, I can add one line at the end which shows count of passed,
-skipped, and failed tests.
+Individual patches have more details on these changes and earlier revisions too.
+---
 
-Having an option to only print failed/skipped test will provide easy
-way to identify them. When we print each test status then user has to
-scroll up the terminal read each status to identify what failed. But with an
-option to override default behavior and print only skipped, failed, or
-both. This doesn't have to be in phase 1, but I think its useful and we
-should add in future version.
+As a recap, here is the background and end goal of this series:
 
-> 
-> I also think the runner should have a "heartbeat" mechanism, i.e. something that
-> communicates to the user that forward progress is being made.  And IMO, that
-> mechanism should also spit out skips and failures (this could be optional though).
-> One of the flaws with the KUT runner is that it's either super noisy and super
-> quiet.
+The AXI SPI Engine is a SPI controller that has the ability to record a
+series of SPI transactions and then play them back using a hardware
+trigger. This allows operations to be performed, repeating many times,
+without any CPU intervention. This is needed for achieving high data
+rates (millions of samples per second) from ADCs and DACs that are
+connected via a SPI bus.
 
-A true heartbeat feature would be something like runner is sending and
-receiving messages from individual selftests. That is gonna be difficult
-and not worth the complexity.
+The offload hardware interface consists of a trigger input and a data
+output for the RX data. These are connected to other hardware external
+to the SPI controller.
 
-To show forward progress, each test's pass/fail status can be printed
-immediately (RFC runner does this). As we are planning to have a
-default timeout then there will always be a forward progress.
+To record one or more transactions, commands and TX data are written
+to memories in the controller (RX buffer is not used since RX data gets
+streamed to an external sink). This sequence of transactions can then be
+played back when the trigger input is asserted.
 
-RFC runner has output like this:
+This series includes core SPI support along with the first SPI
+controller (AXI SPI Engine) and SPI peripheral (AD7944 ADC) that use
+them. This enables capturing analog data at 2 million samples per
+second.
 
-2024-11-15 09:53:52,124 | 638866 |     INFO | SKIPPED: dirty_log_perf_tests/dirty_log_perf_test_max_vcpu_no_manual_protect
-2024-11-15 09:53:52,124 | 638866 |     INFO | SKIPPED: dirty_log_perf_tests/dirty_log_perf_test_max_vcpu_manual_protect
-2024-11-15 09:53:52,124 | 638866 |     INFO | SKIPPED: dirty_log_perf_tests/dirty_log_perf_test_max_vcpu_manual_protect_random_access
-2024-11-15 09:53:52,124 | 638866 |     INFO | SETUP_FAILED: dirty_log_perf_tests/dirty_log_perf_test_max_10_vcpu_hugetlb
-2024-11-15 09:53:52,171 | 638866 |     INFO | SKIPPED: x86_sanity_tests/vmx_msrs_test
-2024-11-15 09:53:52,171 | 638866 |     INFO | SKIPPED: x86_sanity_tests/private_mem_conversions_test
-2024-11-15 09:53:52,171 | 638866 |     INFO | SKIPPED: x86_sanity_tests/apic_bus_clock_test
-2024-11-15 09:53:52,171 | 638866 |     INFO | SETUP_FAILED: x86_sanity_tests/dirty_log_page_splitting_test
+The hardware setup looks like this:
 
-> 
-> E.g. my mess of bash outputs this when running selftests in parallel (trimmed for
-> brevity):
-> 
->         Running selftests with npt_disabled
->         Waiting for 'access_tracking_perf_test', PID '92317'
->         Waiting for 'amx_test', PID '92318'
->         SKIPPED amx_test
->         Waiting for 'apic_bus_clock_test', PID '92319'
->         Waiting for 'coalesced_io_test', PID '92321'
->         Waiting for 'cpuid_test', PID '92324'
->         
->         ...
->         
->         Waiting for 'hyperv_svm_test', PID '92552'
->         SKIPPED hyperv_svm_test
->         Waiting for 'hyperv_tlb_flush', PID '92563'
->         FAILED hyperv_tlb_flush : ret ='254'
->         Random seed: 0x6b8b4567
->         ==== Test Assertion Failure ====
->           x86_64/hyperv_tlb_flush.c:117: val == expected
->           pid=92731 tid=93548 errno=4 - Interrupted system call
->              1	0x0000000000411566: assert_on_unhandled_exception at processor.c:627
->              2	0x000000000040889a: _vcpu_run at kvm_util.c:1649
->              3	 (inlined by) vcpu_run at kvm_util.c:1660
->              4	0x00000000004041a1: vcpu_thread at hyperv_tlb_flush.c:548
->              5	0x000000000043a305: start_thread at pthread_create.o:?
->              6	0x000000000045f857: __clone3 at ??:?
->           val == expected
++-------------------------------+   +------------------+
+|                               |   |                  |
+|  SOC/FPGA                     |   |  AD7944 ADC      |
+|  +---------------------+      |   |                  |
+|  | AXI SPI Engine      |      |   |                  |
+|  |             SPI Bus ============ SPI Bus          |
+|  |                     |      |   |                  |
+|  |  +---------------+  |      |   |                  |
+|  |  | Offload 0     |  |      |   +------------------+
+|  |  |   RX DATA OUT > > > >   |
+|  |  |    TRIGGER IN < < <  v  |
+|  |  +---------------+  | ^ v  |
+|  +---------------------+ ^ v  |
+|  | AXI PWM             | ^ v  |
+|  |                 CH0 > ^ v  |
+|  +---------------------+   v  |
+|  | AXI DMA             |   v  |
+|  |                 CH0 < < <  |
+|  +---------------------+      |
+|                               |
++-------------------------------+
 
-This is interesting, i.e. printing error message inline for the failed tests.
-I can add this feature.
+---
+David Lechner (16):
+      spi: add basic support for SPI offloading
+      spi: offload: add support for hardware triggers
+      spi: dt-bindings: add trigger-source.yaml
+      spi: dt-bindings: add PWM SPI offload trigger
+      spi: offload-trigger: add PWM trigger driver
+      spi: add offload TX/RX streaming APIs
+      spi: dt-bindings: axi-spi-engine: add SPI offload properties
+      spi: axi-spi-engine: implement offload support
+      iio: buffer-dmaengine: document iio_dmaengine_buffer_setup_ext
+      iio: buffer-dmaengine: add devm_iio_dmaengine_buffer_setup_ext2()
+      iio: adc: ad7944: don't use storagebits for sizing
+      iio: adc: ad7944: add support for SPI offload
+      doc: iio: ad7944: describe offload support
+      dt-bindings: iio: adc: adi,ad4695: add SPI offload properties
+      iio: adc: ad4695: Add support for SPI offload
+      doc: iio: ad4695: add SPI offload support
 
->         Waiting for 'kvm_binary_stats_test', PID '92579'
->         
->         ...
->         
->         SKIPPED vmx_preemption_timer_test
->         Waiting for 'vmx_set_nested_state_test', PID '93316'
->         SKIPPED vmx_set_nested_state_test
->         Waiting for 'vmx_tsc_adjust_test', PID '93329'
->         SKIPPED vmx_tsc_adjust_test
->         Waiting for 'xapic_ipi_test', PID '93350'
->         Waiting for 'xapic_state_test', PID '93360'
->         Waiting for 'xcr0_cpuid_test', PID '93374'
->         Waiting for 'xen_shinfo_test', PID '93391'
->         Waiting for 'xen_vmcall_test', PID '93405'
->         Waiting for 'xss_msr_test', PID '93420'
-> 
-> It's far from perfect, e.g. just waits in alphabetical order, but it gives me
-> easy to read feedback, and signal that tests are indeed running and completing.
->         
-> > - Dump output which can be easily accessed and parsed.
-> 
-> And persist the output/logs somewhere, e.g. so that the user can triage failures
-> after the fact.
-> 
+ .../devicetree/bindings/iio/adc/adi,ad4695.yaml    |  16 +-
+ .../bindings/spi/adi,axi-spi-engine.yaml           |  24 ++
+ .../devicetree/bindings/spi/trigger-pwm.yaml       |  39 ++
+ .../devicetree/bindings/spi/trigger-source.yaml    |  28 ++
+ Documentation/iio/ad4695.rst                       |  68 ++++
+ Documentation/iio/ad7944.rst                       |  24 +-
+ MAINTAINERS                                        |   9 +
+ drivers/iio/adc/Kconfig                            |   2 +
+ drivers/iio/adc/ad4695.c                           | 438 +++++++++++++++++++-
+ drivers/iio/adc/ad7944.c                           | 297 ++++++++++++--
+ drivers/iio/buffer/industrialio-buffer-dmaengine.c | 104 ++++-
+ drivers/spi/Kconfig                                |  16 +
+ drivers/spi/Makefile                               |   4 +
+ drivers/spi/spi-axi-spi-engine.c                   | 314 +++++++++++++-
+ drivers/spi/spi-offload-trigger-pwm.c              | 162 ++++++++
+ drivers/spi/spi-offload.c                          | 452 +++++++++++++++++++++
+ drivers/spi/spi.c                                  |  10 +
+ include/dt-bindings/iio/adc/adi,ad4695.h           |   7 +
+ include/linux/iio/buffer-dmaengine.h               |   5 +
+ include/linux/spi/spi-offload.h                    | 164 ++++++++
+ include/linux/spi/spi.h                            |  21 +
+ 21 files changed, 2132 insertions(+), 72 deletions(-)
+---
+base-commit: 172b9942b1a943f2971b1b655f3907f2f568e95b
+change-id: 20240510-dlech-mainline-spi-engine-offload-2-afce3790b5ab
+prerequisite-change-id: 20241113-iio-adc-ad4695-move-dt-bindings-header-d6922ef7d134:v1
+prerequisite-patch-id: 9dd88581d962cc5454c3577dc5ef59413db467b5
+prerequisite-patch-id: d71deacf6bb4e90e8059a12a94ade36866729fa0
+prerequisite-change-id: 20241111-tgamblin-ad4695_improvements-7a32a6268c26:v2
+prerequisite-patch-id: 9752467c406cec438286e5c3efa7c0cddf8a9b3a
+prerequisite-patch-id: 7e6d36bfc262e562cb74d524e96db64694064326
+prerequisite-patch-id: d864ef9f8a7303822d50d580a9ebbd8d304c8aa6
 
-RFC runner does this but not by default. Its provide an option to pass
-a path to dump output in hierarchical folder structure.
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
 
-Do you think this should be enabled by default? I prefer not, because
-then it becomes a cleaning chore to delete the directories later.
-
-> > - Allow to run with different command line parameters.
-> 
-> Command line parameters for tests?  If so, I would put this in phase 3.  I.e. make
-> the goal of Phase 1 purely about running tests in parallel.
-
-Okay. Only default execution in phase 1.
-
-> 
-> > Current patch does more than this and can be simplified.
-> > 
-> > Phase 2: Environment setup via runner
-> > 
-> > Current patch, allows to write "setup" commands at test suite and test
-> > level in the json config file to setup the environment needed by a
-> > test to run. This might not be ideal as some settings are exposed
-> > differently on different platforms.
-> > 
-> > For example,
-> > To enable TDP:
-> > - Intel needs npt=Y
-> > - AMD needs ept=Y
-> > - ARM always on.
-> > 
-> > To enable APIC virtualization
-> > - Intel needs enable_apicv=Y
-> > - AMD needs avic=Y
-> > 
-> > To enable/disable nested, they both have the same file name "nested"
-> > in their module params directory which should be changed.
-> > 
-> > These kinds of settings become more verbose and unnecessary on other
-> > platforms. Instead, runners should have some programming constructs
-> > (API, command line options, default) to enable these options in a
-> > generic way. For example, enable/disable nested can be exposed as a
-> > command line --enable_nested, then based on the platform, runner can
-> > update corresponding module param or ignore.
-> > 
-> > This will easily extend to providing sane configuration on the
-> > corresponding platforms without lots of hardcoding in JSON. These
-> > individual constructs will provide a generic view/option to run a KVM
-> > feature, and under the hood will do things differently based on the
-> > platform it is running on like arm, x86-intel, x86-amd, s390, etc.
-> 
-> My main input on this front is that the runner needs to configure module params
-> (and other environment settings) _on behalf of the user_, i.e. in response to a
-> command line option (to the runner), not in response to per-test configurations.
-> 
-> One of my complaints with our internal infrastructure is that the testcases
-> themselves can dictate environment settings.  There are certainly benefits to
-> that approach, but it really only makes sense at scale where there are many
-> machines available, i.e. where the runner can achieve parallelism by running
-> tests on multiple machines, and where the complexity of managing the environment
-> on a per-test basis is worth the payout.
-> 
-> For the upstream runner, I want to cater to developers, i.e. to people that are
-> running tests on one or two machines.  And I want the runner to rip through tests
-> as fast as possible, i.e. I don't want tests to get serialized because each one
-> insists on being a special snowflake and doesn't play nice with other children.
-> Organizations that the have a fleet of systems can pony up the resources to develop
-> their own support (on top?).
-> 
-> Selftests can and do check for module params, and should and do use TEST_REQUIRE()
-> to skip when a module param isn't set as needed.  Extending that to arbitrary
-> sysfs knobs should be trivial.  I.e. if we get _failures_ because of an incompatible
-> environment, then it's a test bug.
-
-I agree, RFC runner approach is not great in this regards, it is very
-verbose and hinders parallel execution.
-
-Just for the record, not all options can be generic, there might be some
-arch specific command line options. We should first strive to have
-generic options or name them in a way they can be applied to other arch
-when (if ever) they add a support. I don't have good playbook for this,
-I think this will be handled case by case.
 
