@@ -1,193 +1,171 @@
-Return-Path: <linux-kernel+bounces-410303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 575F29CD9A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:02:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D78AE9CD9A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:03:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18A67282BC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:02:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98372281BD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EEC185924;
-	Fri, 15 Nov 2024 07:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828BA187848;
+	Fri, 15 Nov 2024 07:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M1Z5t6ZI"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NwgpjsJx"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BD61F95A
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 07:02:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1750515FD13
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 07:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731654172; cv=none; b=eHRtal6FpLmR9axsuhFsWUsBAxjiLOVv/3Fs2HMC3Dk//iDU83/HYedZkiCFVeDK+xcQfob+nN178OheT5HYC1Re3/p5eF/QV4F+e13Eby4X5oLxm8UOxn1ugvgXqZUy5qHsl48UCMwk7BahG85O3O7MVdyWk6hkk874DZ6WrmY=
+	t=1731654216; cv=none; b=npzGIaty/zBgWSiwyc1qVtQ1Ar06KpssvvrMXFD7WT20v7eojDylFZlQg0XGd+bPe7hkU/d9SldnUrS/cywDwlD6qQoiqG1GKhmUcgzVlrxDVhK3SmWQO/13+/KYxfV8H7pqMf0wD1ZUZT0x3wyiHPdZAh4dUubhA0yu1jJJZro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731654172; c=relaxed/simple;
-	bh=ucRdI4zZiJOb3gsW2929kn/SeFGdDlj7BOd7CP512xk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vAwEAyFhXjXvrLTL45G3YgsWnRRbY29TScop58WBTBvXkrZxjrCcKXGRj6pv0yh87DCPXnPAME0j53fE2IykDdtT2TW5nv3wTUAEVzQGrw3xZAymtWW1rYX9shsAM/yKLPDVNcMhakxznj9RBOY+eqatSbyrfDEVwjD2MURjTk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M1Z5t6ZI; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4635b03a3cdso98981cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 23:02:48 -0800 (PST)
+	s=arc-20240116; t=1731654216; c=relaxed/simple;
+	bh=ndua2+XULZaUMxeUglwKWZQf7tWC3oqAw6/DBhtlG1o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QQBALhTQhd0qQhzH3G57fJ1ln9caCZ+EZy+HfVQf3ENPZI1+eAxGoS8ubgI8wArNRK1aLxBOUP7WrGhWPGxqTSm5BPPumGGUdQD0E65skAeep/tg6gJpOA5EVwnt0lwZkjXHj6UHjCJ+9TYDR1Et3vnAQKNmD+2VecH5hAvw1ZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NwgpjsJx; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539f53973fdso1289543e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 23:03:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731654168; x=1732258968; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qdhHbTzTKc3SMetmKy+wNf6PkpzJgq0XFpQInOkKr7k=;
-        b=M1Z5t6ZIW6ifi0pvQPdcVfskk3l+t2kp4zNiW2kuMcXKNisCxPG2lNgQaQKpIfBVKu
-         z1qYUwHGTVcf0UXQwN2V/q0Zr2z7QHUOeiDHzSyw1Szp4Nu/mou7Ypl3xkV+IUNNHOH8
-         9DXLEjBHQg+WYbOLmpjxcR8A8vkUIf4i/XZRcNyHktbF5niV8SomJzeD7Jwm91pNUVf2
-         +ahKpHwv+eJjfSVClAQRClRkbUYfn5oQ6T8oePKcucQPxnljatlkyDcxLvVmTT+TX52u
-         xbDyeUCrKu7d4NGIKJFqHQiWsSNz2ydXrZ1qmf3i6e/geVkX9Shj2HrBT1kcTw63HNn6
-         DgIA==
+        d=linaro.org; s=google; t=1731654212; x=1732259012; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=q+XXpl77AsqnMSW/X4uwuxdnVb5E7QETWZtbP20KJGw=;
+        b=NwgpjsJx0Yr7oAOBxKBpPGZ2wBeTMyfglxn82hQEPOoDTsymPi2PY8hPJ+6/5VNG4+
+         DiUNEWj4uVyGT/lC0AfnRJhOt8ohWqrAoung53KHaO1G2ot+XMFKZzewTc6tySMzR4sx
+         uzSQ05pfgKBfPcD/WdfhwTVasFCgZ69TNN4CL2uG2ms2HMCqiIhM0vP2xFNVAu41CDea
+         lcmxna5IKrh6QMzODiFL+kWrALOfU4mke6W7uVqqVs2uNnv8odNHjERfWXfEtEcSaqpa
+         CxkIpu2+ZxVNrUTJcAiWuymzLdlyJeHaksGgYDtnbmLbpqHGovztioeuyxY2G72wQphS
+         x/Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731654168; x=1732258968;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qdhHbTzTKc3SMetmKy+wNf6PkpzJgq0XFpQInOkKr7k=;
-        b=cuHBvslaH7G/KJE5+G/9AY1BZTSkmpfx6uee2oXvf7Rh+6S+Eix/T/L0MMoKs7ecI4
-         mTHyl2yJI/MUew5aw8xz1jECetFHTUPgkz9hmv5qrujKycoNA4xSXC+kNqd/J5MhDCc7
-         IlWks9ts/rosIOU6ZM7JLxhf9plaNCJLMKiEl23ervjayI86yxYyVWOmYsjxX/PTZm9w
-         2pOCa8g2qmVxm7MNNGKp64IrFgJcL9KxPdxse2WQvjKj5Qh/K+fqn/Z348XLahGeGO5h
-         7wjkwzbhn4wSi4EX69YJEGEM2BCQNYVru+xBNJiom55IoHn4EsLwBZhMb89yTvVHvN+H
-         WGmA==
-X-Forwarded-Encrypted: i=1; AJvYcCWslu5huHSMn/giD56JILEBxHPhzT0g5FQHgH/gVpdBo3vC5mZ/iZOIeyWjtHP5Es/HqrEP0qs68n9RXs8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoAiM0ttz/dNzNlQKVMXd/QZMZnnX7TS1Y4T7f8UBW9bXAC9ny
-	87BFro4ajbMw/7WkjLJIVRS0dA+KgRgnRTfCfZh4MJ7u88ZFZBVnY5AVLMrjY0ymkWkolfwZ/Lv
-	DC/WvcpEH22jVnLi/wxpspJLFtR/UqliYOfSj
-X-Gm-Gg: ASbGncvg8lTCyox0lwi/i9vTzkbyKcoQkg1kPIJbXKcddvpolsaHjlb8nYhyVmhYnhi
-	5DBnBa8cb+bK42t7QsVyBx/pqmkbtAg==
-X-Google-Smtp-Source: AGHT+IEZQumBx9rAByuSeR05qYBdTIlqZ++eXdNrS2altRO43l1pCrcUxa66OFIF831o8TKPmzacL49GHPpAP9FS1l8=
-X-Received: by 2002:a05:622a:47ce:b0:461:32e9:c5f1 with SMTP id
- d75a77b69052e-463637282c0mr2202191cf.10.1731654167227; Thu, 14 Nov 2024
- 23:02:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731654212; x=1732259012;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q+XXpl77AsqnMSW/X4uwuxdnVb5E7QETWZtbP20KJGw=;
+        b=pviIm07AcMLwtZ860SP/hkTmgyQBo3Ib0T81Q9Tga65UEANP6l3o5CFW0ZulpCJXns
+         wliX7NbA1LpEBYDgd+yL+oRvy159ONuGGl1et3Dk0aygLW/rsnn1M1U2NMFUMmxKtxPk
+         mte4hfBi/YZKjhgtKD4mfAxHkwzkEDsgqJJxUi74quNIlX46aZriVA4ZVbrjyNzkACY+
+         zz/pKxlCSa3DfwN51Bw02mIH1cp90/cv7vurndfnKpz2g788Vf7mp27pGU9aUvQZ3RUx
+         sR3Lt3CKFWm+4zulHr49tfzIxf4VBu508sfnnC/cm8eGOfJf2zCdI5rJzYQE0qd46ksk
+         6NdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVum5VU5DooPTJXkOvywD1n1s3xL7hG3fxU4jv6ywv5U8jTt+Hh7r7w6WgFU1051E98axTy/8cogultsac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymB71GOSFw5NkY3SUYEUXGpyXCa8hxxe5TxDePwAtNo7+XJ1Qm
+	DVey2JdroSpw8i5JP71ph2h4TwBEF6iBloPVEG3TeghpJ1vDR7Lsl7wVBBODIi4=
+X-Google-Smtp-Source: AGHT+IHM3zGQ1oqt1miJAq+kPUmZOKc2Lgbol5o9QIqKe1inLvN5UGopKJienSpRrvOBH9LrMKG0Iw==
+X-Received: by 2002:a05:6512:3b12:b0:53d:a895:7fb9 with SMTP id 2adb3069b0e04-53dab03f96emr531496e87.26.1731654212135;
+        Thu, 14 Nov 2024 23:03:32 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da653125asm452597e87.154.2024.11.14.23.03.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 23:03:30 -0800 (PST)
+Date: Fri, 15 Nov 2024 09:03:28 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Tingwei Zhang <quic_tingweiz@quicinc.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	Ziyue Zhang <quic_ziyuzhan@quicinc.com>, vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org, 
+	manivannan.sadhasivam@linaro.org, bhelgaas@google.com, kw@linux.com, lpieralisi@kernel.org, 
+	quic_qianyu@quicinc.com, conor+dt@kernel.org, neil.armstrong@linaro.org, 
+	andersson@kernel.org, konradybcio@kernel.org, quic_shashim@quicinc.com, 
+	quic_kaushalk@quicinc.com, quic_tdas@quicinc.com, quic_aiquny@quicinc.com, 
+	kernel@quicinc.com, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
+Subject: Re: [PATCH 4/5] arm64: dts: qcom: qcs8300: enable pcie0 for QCS8300
+Message-ID: <nr4xt5pefd3jngml6bkbgrfhsuxmre44v3qs6uyxz7qp5dzqad@6dss6lwhb35n>
+References: <20241114095409.2682558-1-quic_ziyuzhan@quicinc.com>
+ <20241114095409.2682558-5-quic_ziyuzhan@quicinc.com>
+ <rg4isufmnhnbsiljm34rfdsn46gfpatbsiscynaqtsnykbhnm3@ovcaulkfj4nk>
+ <26943ea3-109c-473d-818b-2a08dba859ab@oss.qualcomm.com>
+ <288be342-952b-4210-afe7-6e194dfd54a9@quicinc.com>
+ <cp2g6j43zlx2njou5qz5tmwsnnzahqtk2hsxkj2ftrzbcmy742@ysca5ica4mvr>
+ <bb6ae010-5dbf-455c-a53c-6c0e688f0ebc@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241115051107.3374417-1-yabinc@google.com>
-In-Reply-To: <20241115051107.3374417-1-yabinc@google.com>
-From: Rong Xu <xur@google.com>
-Date: Thu, 14 Nov 2024 23:02:35 -0800
-Message-ID: <CAF1bQ=R=481iZu1Zp8p42zvGd_oLrU-K9UHtSe9TbZUDkS8Qkw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: Allow CONFIG_AUTOFDO_CLANG to be selected
-To: Yabin Cui <yabinc@google.com>
-Cc: Han Shen <shenhan@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, workflows@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bb6ae010-5dbf-455c-a53c-6c0e688f0ebc@quicinc.com>
 
-Hi Yabin,
+On Fri, Nov 15, 2024 at 02:42:47PM +0800, Tingwei Zhang wrote:
+> On 11/15/2024 2:26 PM, Dmitry Baryshkov wrote:
+> > On Fri, Nov 15, 2024 at 12:59:12PM +0800, Tingwei Zhang wrote:
+> > > On 11/14/2024 9:03 PM, Konrad Dybcio wrote:
+> > > > On 14.11.2024 1:10 PM, Dmitry Baryshkov wrote:
+> > > > > On Thu, Nov 14, 2024 at 05:54:08PM +0800, Ziyue Zhang wrote:
+> > > > > > Add configurations in devicetree for PCIe0, including registers, clocks,
+> > > > > > interrupts and phy setting sequence.
+> > > > > > 
+> > > > > > Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+> > > > > > ---
+> > > > > >    arch/arm64/boot/dts/qcom/qcs8300-ride.dts |  44 +++++-
+> > > > > >    arch/arm64/boot/dts/qcom/qcs8300.dtsi     | 176 ++++++++++++++++++++++
+> > > > > >    2 files changed, 219 insertions(+), 1 deletion(-)
+> > > > > > 
+> > > > > > diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+> > > > > > index 7eed19a694c3..9d7c8555ed38 100644
+> > > > > > --- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+> > > > > > +++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+> > > > > > @@ -213,7 +213,7 @@ vreg_l9c: ldo9 {
+> > > > > >    &gcc {
+> > > > > 
+> > > > > The patch doesn't seem to update the gcc node in qcs8300.dtsi. Is there
+> > > > > any reason to have the clocks property in the board data file?
+> > > > 
+> > > > Definitely not. Ziyue, please move that change to the soc dtsi
+> > > 
+> > > Gcc node is updated in board device tree due to sleep_clk is defined in
+> > > board device tree. Sleep_clk is from PMIC instead SoC so we were requested
+> > > to move sleep_clk to board device tree in previous review [1].
+> > 
+> > Note, the review doesn't talk about sleep_clk at all. The recent
+> > examples (sm8650, x1e80100, sa8775p) still pull the clocks into the SoC
+> > dtsi, but without the freq.
+> > 
+> It's begining of the discussion of the PMIC clock for SoC. Sleep clock
+> specific discussion is here [2].
+> [2]https://lore.kernel.org/all/be8b573c-db4e-4eec-a9a6-3cd83d04156d@kernel.org/
 
-Thanks for working to enable this on ARM64 and test the performance on Andr=
-oid!
-Please see my comments below.
+Please note how the recent platforms describe those clocks: the node in
+the SoC dtsi, the frequency in the board dtsi. X1E80100 is a step
+backwards, the clock are completely defined in the x1e80100.dtsi. There
+seems to be no strict rule on how to handle board clocks. I've sent an
+RFC patchset, trying to move them to a single logical location. Let's
+see what kind of response it will get. We probably need to define and
+follow a common rule for all Qualcomm platforms. Please give it a couple
+of days for the dust to settle. However, I think there should be no
+reason to keep GCC's clock definitions in the board DTS.
 
-Thanks,
+> > > 
+> > > [1]https://lore.kernel.org/all/10914199-1e86-4a2e-aec8-2a48cc49ef14@kernel.org/
+> > > > 
+> > > > Konrad
+> > > 
+> > > 
+> > > -- 
+> > > Thanks,
+> > > Tingwei
+> > > 
+> > > -- 
+> > > linux-phy mailing list
+> > > linux-phy@lists.infradead.org
+> > > https://lists.infradead.org/mailman/listinfo/linux-phy
+> > 
+> 
+> 
+> -- 
+> Thanks,
+> Tingwei
 
--Rong
-
-On Thu, Nov 14, 2024 at 9:11=E2=80=AFPM Yabin Cui <yabinc@google.com> wrote=
-:
->
-> Select ARCH_SUPPORTS_AUTOFDO_CLANG to allow AUTOFDO_CLANG to be
-> selected.
->
-> On ARM64, ETM traces can be recorded and converted to AutoFDO profiles.
-> Experiments on Android show 4% improvement in cold app startup time
-> and 13% improvement in binder benchmarks.
->
-> Signed-off-by: Yabin Cui <yabinc@google.com>
-> ---
->  Documentation/dev-tools/autofdo.rst | 18 +++++++++++++++++-
->  arch/arm64/Kconfig                  |  1 +
->  2 files changed, 18 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/dev-tools/autofdo.rst b/Documentation/dev-tool=
-s/autofdo.rst
-> index 1f0a451e9ccd..f0952e3e8490 100644
-> --- a/Documentation/dev-tools/autofdo.rst
-> +++ b/Documentation/dev-tools/autofdo.rst
-> @@ -55,7 +55,7 @@ process consists of the following steps:
->     workload to gather execution frequency data. This data is
->     collected using hardware sampling, via perf. AutoFDO is most
->     effective on platforms supporting advanced PMU features like
-> -   LBR on Intel machines.
-> +   LBR on Intel machines, ETM traces on ARM machines.
->
->  #. AutoFDO profile generation: Perf output file is converted to
->     the AutoFDO profile via offline tools.
-> @@ -141,6 +141,22 @@ Here is an example workflow for AutoFDO kernel:
->
->        $ perf record --pfm-events RETIRED_TAKEN_BRANCH_INSTRUCTIONS:k -a =
--N -b -c <count> -o <perf_file> -- <loadtest>
->
-> +   - For ARM platforms:
-
-The instructions for SPE might be different. Can we change to "- For
-ARM platforms with ETM trace:"
-
-> +
-> +     Follow the instructions in the `Linaro OpenCSD document
-> +     https://github.com/Linaro/OpenCSD/blob/master/decoder/tests/auto-fd=
-o/autofdo.md`_
-> +     to record ETM traces for AutoFDO::
-> +
-> +      $ perf record -e cs_etm/@tmc_etr0/k -a -o <etm_perf_file> -- <load=
-test>
-> +      $ perf inject -i <etm_perf_file> -o <perf_file> --itrace=3Di500009=
-il
-> +
-> +     For ARM platforms running Android, follow the instructions in the
-> +     `Android simpleperf document
-> +     <https://android.googlesource.com/platform/system/extras/+/main/sim=
-pleperf/doc/collect_etm_data_for_autofdo.md>`_
-> +     to record ETM traces for AutoFDO::
-
-The instructions in "Step 3: Convert ETM data to AutoFDO profile"
-currently use create_llvm_prof to generate
- a "binary" profile format. This is incompatible with the default
-FSAFDO format used for the kernel, which
- requires an "extbinary" format.
-
-To correct this, please update the instructions to include the flag
-"-format extbinary" in the
-create_llvm_prof command.
-
-Using a non-FSAFDO profile with FSAFDO can negatively impact performance.
-Therefore, I recommend rerunning the test with the updated flag to
-potentially achieve better results.
-
-> +
-> +      $ simpleperf record -e cs-etm:k -a -o <perf_file> -- <loadtest>
-> +
->  4) (Optional) Download the raw perf file to the host machine.
->
->  5) To generate an AutoFDO profile, two offline tools are available:
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index fd9df6dcc593..c3814df5e391 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -103,6 +103,7 @@ config ARM64
->         select ARCH_SUPPORTS_PER_VMA_LOCK
->         select ARCH_SUPPORTS_HUGE_PFNMAP if TRANSPARENT_HUGEPAGE
->         select ARCH_SUPPORTS_RT
-> +       select ARCH_SUPPORTS_AUTOFDO_CLANG
->         select ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH
->         select ARCH_WANT_COMPAT_IPC_PARSE_VERSION if COMPAT
->         select ARCH_WANT_DEFAULT_BPF_JIT
-> --
-> 2.47.0.338.g60cca15819-goog
->
+-- 
+With best wishes
+Dmitry
 
