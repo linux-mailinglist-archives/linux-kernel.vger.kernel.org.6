@@ -1,133 +1,94 @@
-Return-Path: <linux-kernel+bounces-410770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 130569CE0CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:59:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BBFC9CE0CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:59:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6B0C1F212E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:59:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8CAF1F20F8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A751CDA17;
-	Fri, 15 Nov 2024 13:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C151CDA19;
+	Fri, 15 Nov 2024 13:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GS4wFG1v"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F2Feadav"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39FF1DA23;
-	Fri, 15 Nov 2024 13:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5ED21CD20F;
+	Fri, 15 Nov 2024 13:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731679156; cv=none; b=pEvUB0zHIOdyL8cNasWaZfrhTLJXIY8A4dT8Rxp5DDKWzQ0DFHVVeWzWUMtOmCIiStKwYjvbab6Qj337zN+MescwvFfoRoBbM/jrImyvZOctnSwgjaC3UJNOWrCxTVzD2gJBT/XBvxNcV1HgDcOZurPiyF14h3ZS3U1Nr4p9094=
+	t=1731679186; cv=none; b=S2NDjm93tn+KJXaK94zqONVzmpMip4jdS+raWUdJskgTI2pNWJckLD/HegkS1RidLevS8wd1augv/rXva/kjITg3ZEPKZbSPUHTnWNRyT0LNhEKhcbpQVLMMr7NQ1TfmcPee5Ly9FregJ4KOl2yfKw0+LvRbGYDDzsDt+jQG410=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731679156; c=relaxed/simple;
-	bh=h2C2D4Q7BLuHi0lPIr5O4bCEtewWS9pz+R+mQwo6ZoM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KHhgepjhR5sfmwHbP80yn0VQb2crBIwy6CgY0FCbOe9JfhgPyViRVVWefGm9Jxqmf4xEWvdDcFYNN9aU1drh+JHd1i1zxq8pHOqC31ACk0ypf/4evCFyjE72IOpUerpJzwhboi9dK4m82fMtUurQ6gyjyl9skspc6s8LVgtAtdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GS4wFG1v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC4E8C4CECF;
-	Fri, 15 Nov 2024 13:59:14 +0000 (UTC)
+	s=arc-20240116; t=1731679186; c=relaxed/simple;
+	bh=PSfsjIXrqm6BSGG68frO5ZsOFBb9yWeIaF0QJ1XDYLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=sRei337vy6UEGl7Gvy83SDhvLx7PEZg2hcLVKCJdN4A5pEswzPEmqW4/BECWpFgRNBiNkUfYPioAmzclSFPVRJof7Jnakvzuf3TQZHS4HJu4NMuK3BzwCqtQEsU9HSlhIJ2ZhLzJT/rAO6F1JOlmkzH0TJl/KjoUArC3wwjQhm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F2Feadav; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FAE4C4CECF;
+	Fri, 15 Nov 2024 13:59:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731679156;
-	bh=h2C2D4Q7BLuHi0lPIr5O4bCEtewWS9pz+R+mQwo6ZoM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=GS4wFG1vav5Una/f5QSv3P4f0KN/ViJ+V24LAWRAo88DpW/brbNsxcx6De5WSNbmq
-	 dzQpOtRHN3FCLL1hLU1ie5b16uyC7OLzk1JwpBVu+0guEaDE8zkbv2kyeBvyoriMiF
-	 hKld4UJ8or51OWSka+rs9jb9aDKULeY91W+Kq4Lyk0lwdahW61EQuFUsCQSFTNuHmM
-	 zY9x+jGhTZ8YUTK3ouFQ43UP5NS12QgbmJLkqLleQqYWr4cPSaqvrfijqaxPvwv3H/
-	 Cmu9gbJvV7PXki1eYOSJ+Av3IJet1Vl4MBglFXaPhyaoQyqPR7VkAYL6kln8OFefSF
-	 NMe4C8bJdEN2Q==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs pagecache
-Date: Fri, 15 Nov 2024 14:58:59 +0100
-Message-ID: <20241115-vfs-pagecache-a00177616c8d@brauner>
-X-Mailer: git-send-email 2.45.2
+	s=k20201202; t=1731679186;
+	bh=PSfsjIXrqm6BSGG68frO5ZsOFBb9yWeIaF0QJ1XDYLQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=F2FeadavcKqIauy+ZIJj+LYyecKj41wVfymZ0bA9zSGrjgOJjCNMzxTI0G91s+PJu
+	 ZunKnxGVklhIvsY7pBomeOxB/uq+vFzbfEOFgXd93TDfpMUwy6SkSMKxIzB+r72Xdl
+	 mcxwYqJQLKvHrRmhNAg3raQi/0Rk60YlAGqCHE1c4UG5MRNAtbppE7uVIGNrz6jEpk
+	 VhcIElSiXEpLhz4qGW9/ph+KVq34Y2AV1Ds1/JWeB998hFJpWeFCC7SPnSIhmJMzbR
+	 rMLnm/mC+yuezmdr0DMr+YNDQzTxHyZTwde7DAXWMXSpWED7HQGbqEwrbHAT6SuVKC
+	 OdbOtu7SO9ONg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tBwrJ-0000000009b-3V5B;
+	Fri, 15 Nov 2024 14:59:37 +0100
+Date: Fri, 15 Nov 2024 14:59:37 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] USB-serial updates for 6.13-rc1
+Message-ID: <ZzdTyegI_dodavrc@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2356; i=brauner@kernel.org; h=from:subject:message-id; bh=h2C2D4Q7BLuHi0lPIr5O4bCEtewWS9pz+R+mQwo6ZoM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSbB6/TU7kayxuyhTdVWT59njAHwxs3OcFXvN3f2lUdD 17Uy7jfUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJHcjwz/g+bcPiHnZPvb54mc pplcZUhj7WJ5pZjpy+fdyGJ72Mipz/BXfHatwuyz51eu49dWkOXIlrulx6c8649w2qocad1+n43 cAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hey Linus,
+The following changes since commit 59b723cd2adbac2a34fc8e12c74ae26ae45bf230:
 
-/* Summary */
-
-Cleanup filesystem page flag usage: This continues the work to make the
-mappedtodisk/owner_2 flag available to filesystems which don't use
-buffer heads. Further patches remove uses of Private2. This brings us
-very close to being rid of it entirely.
-
-/* Testing */
-
-gcc version 14.2.0 (Debian 14.2.0-6)
-Debian clang version 16.0.6 (27+b1)
-
-All patches are based on v6.12-rc1 and have been sitting in linux-next.
-No build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-(1) linux-next: manual merge of the vfs-brauner tree with the btrfs tree
-    https://lore.kernel.org/r/20241101092212.1c112872@canb.auug.org.au
-
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
-
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+  Linux 6.12-rc6 (2024-11-03 14:05:52 -1000)
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.13.pagecache
+  https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git tags/usb-serial-6.13-rc1
 
-for you to fetch changes up to c6bbfc7ce1567eb7928f22d92b6ad34d8e4ea22b:
+for you to fetch changes up to 8b524944f92ccad925b574f645e9c2709cf60d1e:
 
-  Merge patch series "Filesystem page flags cleanup" (2024-10-04 09:24:28 +0200)
-
-Please consider pulling these changes from the signed vfs-6.13.pagecache tag.
-
-Thanks!
-Christian
+  USB: serial: ftdi_sio: Fix atomicity violation in get_serial_info() (2024-11-07 17:21:10 +0100)
 
 ----------------------------------------------------------------
-vfs-6.13.pagecache
+USB-serial updates for 6.13-rc1
+
+Here are the USB-serial updates for 6.13-rc1, including:
+
+ - improved support for quirky pl2303 hxd devices
+ - make sure ftdi_sio TIOCGSERIAL returns consistent data
+
+Everything has been in linux-next with no reported issues.
 
 ----------------------------------------------------------------
-Christian Brauner (1):
-      Merge patch series "Filesystem page flags cleanup"
+Jan Kiszka (1):
+      USB: serial: pl2303: account for deficits of clones
 
-Matthew Wilcox (Oracle) (6):
-      fs: Move clearing of mappedtodisk to buffer.c
-      nilfs2: Convert nilfs_copy_buffer() to use folios
-      mm: Remove PageMappedToDisk
-      btrfs: Switch from using the private_2 flag to owner_2
-      ceph: Remove call to PagePrivate2()
-      migrate: Remove references to Private2
+Qiu-ji Chen (1):
+      USB: serial: ftdi_sio: Fix atomicity violation in get_serial_info()
 
- fs/btrfs/ctree.h           | 13 ++++---------
- fs/btrfs/inode.c           |  8 ++++----
- fs/btrfs/ordered-data.c    |  4 ++--
- fs/buffer.c                |  1 +
- fs/ceph/addr.c             | 20 ++++++++++----------
- fs/nilfs2/page.c           | 22 +++++++++++-----------
- include/linux/page-flags.h |  4 ++--
- mm/migrate.c               |  4 ++--
- mm/truncate.c              |  1 -
- 9 files changed, 36 insertions(+), 41 deletions(-)
+ drivers/usb/serial/ftdi_sio.c |  2 ++
+ drivers/usb/serial/pl2303.c   | 38 +++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 39 insertions(+), 1 deletion(-)
 
