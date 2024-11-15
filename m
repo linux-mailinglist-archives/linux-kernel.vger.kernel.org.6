@@ -1,116 +1,116 @@
-Return-Path: <linux-kernel+bounces-410270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A3A79CD71C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:31:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 451D59CD71F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:33:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41526281894
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:31:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E516EB22942
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93AE185B5B;
-	Fri, 15 Nov 2024 06:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C397018785C;
+	Fri, 15 Nov 2024 06:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vrBRiE3m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="sdViNGgR"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B22126C17;
-	Fri, 15 Nov 2024 06:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33A1645;
+	Fri, 15 Nov 2024 06:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731652257; cv=none; b=LtyyWjMa7B4gi0Z+sdILNgwTBzj1QFfn9hIHmt7L0SairnDFqsvpZMitHgkT7Doa6s7K6NyfkDr2Gmd7ALuL5Z6VWykf/GThECpL0b1ew9DqMTAmbx4SVRn9SJC11xDAn7dZnFGuUfkQWXWsQvfwmeTtcopsDkb8KMK4fBV5xjk=
+	t=1731652398; cv=none; b=TkwNIJmWkF8WN2UQU/XsXkfRtQRjYg+gNcsNDOobsOU//RXjmCAVb7y/wu9Ea8i6cR/KVXL67hLiydudymXie7DeratkNvJMqq+hgh2smdaPE2EkLEc8zrhMIga3+gQbYvlLvLa8E5tMglSqJQuil/crhdD35Lwc4nLGw6OpkWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731652257; c=relaxed/simple;
-	bh=jE+fcubQiJTZYuRKvwt2hu15vk3aNy0fI5FIkyuJ1V4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mrhdLvKb4NLNQuRSCokAvV/qNUS9gaONQmfV8uY6wCHJwhp8XWhtzEi9AvDprr5ChHhyo/bPYnXq8VIe+n0akDvnJqt93UL2mnYURo2Hk6TazKud6bGEsjcH61nIJTMM6G5zw+lFOtT/gQkD/kwyvEaV36aDBz8BlCybDrNinG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vrBRiE3m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7422C4CED2;
-	Fri, 15 Nov 2024 06:30:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731652256;
-	bh=jE+fcubQiJTZYuRKvwt2hu15vk3aNy0fI5FIkyuJ1V4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vrBRiE3mUalIe8T51KZHKXNwub6M4lwjy4kYvgmbdj14qR7dVu9EC1MnHEt9X3A4T
-	 rf6ZueEJZXGqwnIQWFNvTZiXmlKOkVjgQQmWs9Qk36B4eFl+LvMjtiHoAeRUZhPIn2
-	 mZcOw7O0Zz3GCrEcNfPiywFcEA3z0A2r+hzugQyY=
-Date: Fri, 15 Nov 2024 07:30:53 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Werner Sembach <wse@tuxedocomputers.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Luis Chamberlain <mcgrof@kernel.org>, tux@tuxedocomputers.com,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Leemhuis <linux@leemhuis.info>
-Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
- symbols
-Message-ID: <2024111517-booting-grafted-8c4c@gregkh>
-References: <20241114103133.547032-4-ukleinek@kernel.org>
- <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
- <2024111557-unlighted-giggle-0d86@gregkh>
- <6c1952bc-f58d-4c55-887e-6aa247daec5c@tuxedocomputers.com>
+	s=arc-20240116; t=1731652398; c=relaxed/simple;
+	bh=KGbCXoBZOcHJK+gVr+MJPUUaqUCYGQjLZ6iycOTgm+8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=AzInNOHzWCGoa/H53NKnI4P/QmnrOLa/3jHuW7lO2WpQ/U8orUKUfKaxpmhWbhVk58oVJ7pJVXDDaCh95EtLHuHia/bgJ5T835LlhdPEnOmnDT9rZ3zK9X+Pai4M3KWTobZgOl2LNDoySJh1Yyn2OL1kOlgcy/N1Y3/IpGX4WpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=sdViNGgR; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4AF6WsKiA056657, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1731652374; bh=KGbCXoBZOcHJK+gVr+MJPUUaqUCYGQjLZ6iycOTgm+8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=sdViNGgRgVCAeyLGPw8h3JSNO+Sqlbvt8nEOVbY9us41zI0uq6YVuI3K2mzGfKvon
+	 SX8etaSSaneVdHWODGDmNLYpr/pfZH5z7c8ZiE4fxupNus3e7My/VE2YZAngeVbjoI
+	 rC7neCn5c69fHFdu0x1lO8tpvM49DKDs6ArIirFH6YzhvCyPKIui9P7TcAVRgsqnil
+	 D6yAUea+DZZ8KxsraGqCeNpuoiBKug11xdD7FpG8uPcYn+d/DsKAX5zwrgg4ksaFWQ
+	 Y8YUfjO4CTSkZBUCNcCPS/z7DMhGT7S1fNx7nVuUVl8Y/MQ9XSz8vVrqaJr/GbyzX1
+	 /zHiJNYuZOalg==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 4AF6WsKiA056657
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 15 Nov 2024 14:32:54 +0800
+Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 15 Nov 2024 14:32:55 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS01.realtek.com.tw (172.21.6.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Fri, 15 Nov 2024 14:32:54 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f]) by
+ RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f%11]) with mapi id
+ 15.01.2507.035; Fri, 15 Nov 2024 14:32:54 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: "kuba@kernel.org" <kuba@kernel.org>,
+        "davem@davemloft.net"
+	<davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "andrew+netdev@lunn.ch"
+	<andrew+netdev@lunn.ch>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>,
+        "horms@kernel.org" <horms@kernel.org>,
+        Ping-Ke Shih
+	<pkshih@realtek.com>,
+        Larry Chiu <larry.chiu@realtek.com>
+Subject: RE: [PATCH net 1/4] rtase: Refactor the rtase_check_mac_version_valid() function
+Thread-Topic: [PATCH net 1/4] rtase: Refactor the
+ rtase_check_mac_version_valid() function
+Thread-Index: AQHbNoZ3TgKh3vcPZkulu1daZxQDq7K2Y9aAgAF+VRA=
+Date: Fri, 15 Nov 2024 06:32:54 +0000
+Message-ID: <78ffc49101b343338671650e5b5dcfcf@realtek.com>
+References: <20241114111443.375649-1-justinlai0215@realtek.com>
+ <20241114111443.375649-2-justinlai0215@realtek.com>
+ <83569c8e-d4d0-4790-9df6-87b06872229d@lunn.ch>
+In-Reply-To: <83569c8e-d4d0-4790-9df6-87b06872229d@lunn.ch>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+x-kse-serverinfo: RTEXMBS01.realtek.com.tw, 9
+x-kse-antispam-interceptor-info: fallback
+x-kse-antivirus-interceptor-info: fallback
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6c1952bc-f58d-4c55-887e-6aa247daec5c@tuxedocomputers.com>
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
-On Fri, Nov 15, 2024 at 07:09:49AM +0100, Werner Sembach wrote:
-> Hi,
-> 
-> Am 15.11.24 um 05:43 schrieb Greg KH:
-> > On Thu, Nov 14, 2024 at 11:49:04AM +0100, Werner Sembach wrote:
-> > > Hello,
-> > > 
-> > > Am 14.11.24 um 11:31 schrieb Uwe Kleine-König:
-> > > > Hello,
-> > > > 
-> > > > the kernel modules provided by Tuxedo on
-> > > > https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers
-> > > > are licensed under GPLv3 or later. This is incompatible with the
-> > > > kernel's license and so makes it impossible for distributions and other
-> > > > third parties to support these at least in pre-compiled form and so
-> > > > limits user experience and the possibilities to work on mainlining these
-> > > > drivers.
-> > > > 
-> > > > This incompatibility is created on purpose to control the upstream
-> > > > process. Seehttps://fosstodon.org/@kernellogger/113423314337991594 for
-> > > > a nice summary of the situation and some further links about the issue.
-> > > > 
-> > > > Note that the pull request that fixed the MODULE_LICENSE invocations to
-> > > > stop claiming GPL(v2) compatibility was accepted and then immediately
-> > > > reverted "for the time being until the legal stuff is sorted out"
-> > > > (https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/a8c09b6c2ce6393fe39d8652d133af9f06cfb427).
-> > > As already being implied by that commit message, this is sadly not an issue
-> > > that can be sorted out over night.
-> > > 
-> > > We ended up in this situation as MODULE_LICENSE("GPL") on its own does not
-> > > hint at GPL v2, if one is not aware of the license definition table in the
-> > > documentation.
-> > That's why it is documented, to explain this very thing.  Please don't
-> > suggest that documenting this is somehow not providing a hint.  That's
-> > just not going to fly with any lawyer who reads any of this, sorry.
-> 
-> You are right, that's why when I became aware of the situation this Monday https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/9db67459510f18084694c597ff1ea57ef1842f4e
-> I got the gears to resolve this into moving (me playing devils advocate here
-> is directly related to this https://lore.kernel.org/all/17276996-dcca-4ab5-a64f-0e76514c5dc7@tuxedocomputers.com/)
-> and then returned on working on the code rewrite for upstream ( https://lore.kernel.org/all/8847423c-22ec-4775-9119-de3e0ddb5204@tuxedocomputers.com/
-> is directly related to that), because I'm a developer not a lawyer.
-
-I would strongly suggest you work with your lawyers now as they are the
-ones that need to resolve this properly.
-
-thanks,
-
-greg k-h
+>
+>=20
+> On Thu, Nov 14, 2024 at 07:14:40PM +0800, Justin Lai wrote:
+> > 1. Sets tp->hw_ver.
+> > 2. Changes the return type from bool to int.
+> >
+> > Signed-off-by: Justin Lai <justinlai0215@realtek.com>
+>=20
+> If you want these in net, you should add a Fixes: tag.
+>=20
+>     Andrew
+>=20
+Ok, I will do that.
+> ---
+> pw-bot: cr
 
