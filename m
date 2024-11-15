@@ -1,98 +1,87 @@
-Return-Path: <linux-kernel+bounces-411106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2750D9CF30F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:36:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FE909CF319
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:38:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C55D91F28C56
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:36:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA91228A896
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35AFA1D63CF;
-	Fri, 15 Nov 2024 17:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE67C1D63F3;
+	Fri, 15 Nov 2024 17:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mail.rarity.fan header.i=@mail.rarity.fan header.b="KKkR+N7P"
-Received: from so254-54.mailgun.net (so254-54.mailgun.net [198.61.254.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hnGPl7zu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E081D61A4
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.61.254.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4279A1D61A4;
+	Fri, 15 Nov 2024 17:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731692189; cv=none; b=CN5puiXPo2Zl3Gvf6jnUvzywk+4ul3NSdRaKUFLRuyzlDSM9wjcVwPZsh9IBrkEeJfraNdkFnGxv+ADX+UP8qzsfQhPp2oOPK1/dCaR55Eb15F+WKsvHqkMEB27PaJVrg4Rcd0MvWFGlQurO3zCyIoYIyUC5NzX7iQiuH/WN8pY=
+	t=1731692278; cv=none; b=XorXiwyt05uG8XRIkIMn6ZIRDk1pppd8QbhIJT8DSqrUkIC7r/jreknxcbpWll8gKq5WIgDoKu5w7qbAD9J3qjS/GnTyZUwfaroSI6+4oqlYZ90BsxYjIecuYMO6NzYUo8FKCFgmJY2S5LlBDlkE4edeEf4dkidSb3ED0ibnzlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731692189; c=relaxed/simple;
-	bh=SnO4p4dNKukr62VNDO+93FBRVFDQDrCzUThgfxJgAvM=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=YatIJkG2zGDVcdTthX5hMmRNscX+0Nw+AyHMaABfGHTIsa/97UXYw1ALCvXrsgMr66izdP8lqSJcbcclryJ2HCzz7ENGINihlk1Wg4U8ngFjWJsZgvD/xVdYNK8+AOLm2ptUhBz7p3etYkg+zkLsNUKVwIm6Fcto4aW6XWiMs24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rarity.fan; spf=pass smtp.mailfrom=mail.rarity.fan; dkim=pass (2048-bit key) header.d=mail.rarity.fan header.i=@mail.rarity.fan header.b=KKkR+N7P; arc=none smtp.client-ip=198.61.254.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rarity.fan
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.rarity.fan
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mail.rarity.fan; q=dns/txt; s=pic; t=1731692184; x=1731699384;
- h=Content-Type: MIME-Version: Message-ID: Subject: Subject: cc: To: To: From: From: Date: Sender: Sender;
- bh=2FrTp4VYt1CjS5B5El+XQlzklQncWc53/Wj418ZaeCE=;
- b=KKkR+N7PffrPFaIAuGUs8jzb4sPvRsl2hNYwWcdX1562oO62ZVvS3WvT1Ra9dPR1k9+5V0g6N8X6xkx1OzQVuY9STBihFyCT0bjnqoLOnYyEvbsag5YAdNykce6Ew+KXP1amgRWC5kMW1ShsYjlwNLzaY0fdESKjPtPij3UjUT11RVwqhNo1wpN6xNKwPGkwGs0HFrKM3us61eNai3Eq21Ae7qd1dzvtGKbyNy3Cyg1qObyBSrPYPBJ/JtoSQ/26rcfIbGKkulBIgMbL12IaIOsnTCnQ+NBP0xMB4wlPrU5vZSISAXSJFDksu3QIac808NBc4sOLU6BAEtUWhFMJ8Q==
-X-Mailgun-Sending-Ip: 198.61.254.54
-X-Mailgun-Sending-Ip-Pool-Name: 
-X-Mailgun-Sending-Ip-Pool: 
-X-Mailgun-Sid: WyI4MmIyMCIsImxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmciLCI4NmFiY2IiXQ==
-Received: from 79-126-23-27.dynamic.mts-nn.ru (79-126-23-27.dynamic.mts-nn.ru
- [79.126.23.27]) by 324f4e6314b2 with SMTP id 67378698b64c4812b20c9987
- (version=TLS1.3, cipher=TLS_AES_128_GCM_SHA256); Fri, 15 Nov 2024 17:36:24
- GMT
-Sender: me=rarity.fan@mail.rarity.fan
-Date: Fri, 15 Nov 2024 20:36:59 +0300
-From: gldrk <me@rarity.fan>
-To: Dave Hansen <dave.hansen@linux.intel.com>, 
-    Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-    x86@kernel.org
-cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/mm: Check return value from
- memblock_phys_alloc_range()
-Message-ID: <94b3e98f-96a7-3560-1f76-349eb95ccf7f@rarity.fan>
+	s=arc-20240116; t=1731692278; c=relaxed/simple;
+	bh=6+nVvbtdtzz+fSNZ2JXC4MDqsI77GIGKpN0z063gAP8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eettAqaWubsS3ehU7R2eLVxt9yQPp1TTsxLKSZ+HQHLGGwPcCQbc+EsTIk6hGn3l/5wmceKpQo9Ye3bgkejYZL/Pc8vUHPP72xQXJ/tnln/akO6EjCxQflMpvJ9aiP7+BkB3RPxDnBMAdLhBZzDsokjSTJEPNvFbXfrzRrWWy54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hnGPl7zu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA77CC4CECF;
+	Fri, 15 Nov 2024 17:37:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731692277;
+	bh=6+nVvbtdtzz+fSNZ2JXC4MDqsI77GIGKpN0z063gAP8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hnGPl7zuP1ZWk0xig9HRrOEvSbqDg5Lkq/bgde7py7HG7pFcOfDx+K+lPHnvSPmtl
+	 +YN8C++1IcEUHSjfyh8CFqS7bj/TBjJ77s2CVmFKu0YYhOIvF8GnVPXNWOQ7Jpcpzk
+	 Qv2Pgp4o194FIwkghm9GCPJyLrkUG/IS2ixcQsj+K0ur9NPqxN/xlU883nbv4Izpmr
+	 QvpBqM6C/fPyD5z0qtQiSiVTvXuS9YPrctR0SYZpHEqHw+FOg+YnvJpIYPoBOxuThZ
+	 l/A1oYNwwMTyjB93eDsqPT6lpM47RJb4KEhw1v/KHopwv77j76A13uB5+oMbLUlWC2
+	 RxNIvp1rRWphw==
+Date: Fri, 15 Nov 2024 11:37:55 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Conor Dooley <conor+dt@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	linux-can@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH can-next v5 1/2] dt-bindings: can: tcan4x5x: Document the
+ ti,nwkrq-voltage-vio option
+Message-ID: <173169227528.3443207.4824174918630075657.robh@kernel.org>
+References: <20241114-tcan-wkrqv-v5-0-a2d50833ed71@geanix.com>
+ <20241114-tcan-wkrqv-v5-1-a2d50833ed71@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241114-tcan-wkrqv-v5-1-a2d50833ed71@geanix.com>
 
-At least with CONFIG_PHYSICAL_START=0x100000, if there is < 4 MiB of contiguous
-free memory available at this point, the kernel will crash and burn because
-memblock_phys_alloc_range returns 0 on failure, which leads memblock_phys_free
-to throw the first 4 MiB of physical memory to the wolves.  At a minimum it
-should fail gracefully with a meaningful diagnostic, but in fact everything
-seems to work fine without the weird reserve allocation.
 
----
-  arch/x86/mm/init.c | 9 +++++++--
-  1 file changed, 7 insertions(+), 2 deletions(-)
+On Thu, 14 Nov 2024 10:14:49 +0100, Sean Nyekjaer wrote:
+> The nWKRQ pin supports an output voltage of either the internal reference
+> voltage (3.6V) or the reference voltage of
+> the digital interface 0-6V (VIO).
+> Add the devicetree option ti,nwkrq-voltage-vio to set it to VIO.
+> 
+> If this property is omitted the reset default, the internal reference
+> voltage, is used.
+> 
+> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> ---
+>  Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
 
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index eb503f5..3696770 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -640,8 +640,13 @@ static void __init memory_map_top_down(unsigned long 
-map_start,
-  	 */
-  	addr = memblock_phys_alloc_range(PMD_SIZE, PMD_SIZE, map_start,
-  					 map_end);
--	memblock_phys_free(addr, PMD_SIZE);
--	real_end = addr + PMD_SIZE;
-+	if (unlikely(addr < map_start)) {
-+		pr_warn("Failed to release memory for alloc_low_pages()");
-+		real_end = ALIGN_DOWN(map_end, PMD_SIZE);
-+	} else {
-+		memblock_phys_free(addr, PMD_SIZE);
-+		real_end = addr + PMD_SIZE;
-+	}
-
-  	/* step_size need to be small so pgt_buf from BRK could cover it 
-*/
-  	step_size = PMD_SIZE;
--- 
-2.34.0
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
