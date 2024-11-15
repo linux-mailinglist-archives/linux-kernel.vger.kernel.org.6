@@ -1,145 +1,132 @@
-Return-Path: <linux-kernel+bounces-410523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BA019CDCC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:39:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB5FB9CDCCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:39:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E27B1F237E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:39:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B10BB27967
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC8C1B6CF9;
-	Fri, 15 Nov 2024 10:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235C21B6CE1;
+	Fri, 15 Nov 2024 10:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSVQ41T+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GJ1eX9Da"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8125818FDCE;
-	Fri, 15 Nov 2024 10:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F70714A088;
+	Fri, 15 Nov 2024 10:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731667131; cv=none; b=jGoMUGfHjUUCb8d4GUO/WiNSLezLpDVtGg6BHDy+Ze5GFOA9QrjjGXDQ9UlzUvW4F7LlfO6zyHnt9kg/i2ht549SFh3Lx184aIw9LPj4Anhg42w9YP0ct8Eh3Xgd+/l5lyJWbXeT2hVgvm9oAOyo3Za6n2nzk8WkEb7+KDU7ri4=
+	t=1731667152; cv=none; b=Mch2x2zYfSHRB8CNwZRorGOK8TEcUWdXfiCkGmkfnHpdMAS3Az1Tf8tiW9JxBWv+cRpBoXkbcpvGLDt+UeJ0bkn0x1X7m++YfYz5qIhlfmRiX2MZG7QPToihGq0pJ3NrbHMGDyTUdd9nqtWMkPlnugHoLq0jJvQRIRaI6Z5eF6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731667131; c=relaxed/simple;
-	bh=shVHcw3WNIa3pbYlKTq7wOJKs+PhQDB4a8mCLOg2BaY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ewrqPegETMzdiCevapJ8QNEVnrFEIKavFG00pzN32LbCK5/U57LftxUQ7zCB17D/g1/OnHx2yLFjmt2QKHb2njf9zxUNxfN6mLEWZlIPsYm4gurSbRnl+WrJgXOCixIWZulK/pV1X33SLc30A5md50g4NuWY2hHADhJmzn1XfK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SSVQ41T+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98440C4CECF;
-	Fri, 15 Nov 2024 10:38:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731667131;
-	bh=shVHcw3WNIa3pbYlKTq7wOJKs+PhQDB4a8mCLOg2BaY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=SSVQ41T+CC4JUHAGFK2hW1yUmu3t+OJ4Os7//NeOkhAFeM76XpvDPPpfl2ZmRztwi
-	 s7RN5YmYuZp6gUBXQyq81PDHEDIX8CwwnwGtSbYDdIiomFBwwpNCXvT1q5SMrPP2rK
-	 sdy/qqYPyfJ52+zLTxG0pMdHrwNqwHbAncoRAnZ10TMAb6kJHEPh/fnt1UDG6AGMRe
-	 XfOfQvQmD70XNZFjV1W64ZmFX97ruBIGwS1z1vOVBWZlFJkzqVL6Zp3xgeTOiOvjmS
-	 sw4Dp3kaRnXCQ0H3WGaLUnphGT9JnKaF76b0s8CfSIt+fmktInwNIix3+iT8Jw5rbK
-	 W7jkgtbwvixiA==
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Werner Sembach <wse@tuxedocomputers.com>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-spdx@vger.kernel.org,
-	workflows@vger.kernel.org
-Subject: [PATCH] docs/licensing: Clarify wording about "GPL" and "Proprietary"
-Date: Fri, 15 Nov 2024 11:38:41 +0100
-Message-ID: <20241115103842.585207-2-ukleinek@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1731667152; c=relaxed/simple;
+	bh=3HM/RaDSon8LA8N7zpH4WJ9nFNUKx6dsdgQ7GDtnl6w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=a+egixr83GvofGjrxyGoeG6nYf5gwj+kNSVsWrf0NEHsSWwDQGM1W7SDuzL2vCRQ4z40X8LKhs+HI2vifUh5bJ+MudFk0naKKrY4XrA0pbQUkwxKHb9PpDGt1agc5kStE9eMAvrs6w3lOy5tgSFr+4Hlwqq03TrG0O7JVtodR+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GJ1eX9Da; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AF8ZuwY019841;
+	Fri, 15 Nov 2024 10:39:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	uEBQz/rxpsUSb24M9rVZsdf+zdWS4znILDaiAox6hRk=; b=GJ1eX9Da3v4FM8DB
+	3YEqdUnAH5gRsMfeovEkX+LoED3P4iZFPQt8suDEit/bLcE0mPk1kuW10u2Fyfu1
+	2UDVkpr5zBtWzlXfSFFN1nsO5iXMPfWVfAWT5FWCSUu+Am6zIFnoBi9TXQx65dWJ
+	yyLYirrQA9yH2tvsVYa+/4Yyo0hp8CP6BaLbFjdyK8vZjHOh/u13i07AqNZyx6vi
+	N7p0WWLBqckxCmtiWL5NR3dH257msfCU3avZIRDhFGgvDECvYcfk9wTwaG7B03LT
+	4wAKGH0JOqLkm6nwdb9s67B/VS0Gc2bbUG8A9e+qGH/BAAOr7g1GPjluCnl0uzqu
+	Eu4lbA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42v4kr3qcd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 10:39:02 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AFAd1nK009405
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 10:39:01 GMT
+Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 15 Nov
+ 2024 02:38:55 -0800
+Message-ID: <a6ac986c-4e26-41d4-9781-80373ea8972d@quicinc.com>
+Date: Fri, 15 Nov 2024 16:08:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3724; i=ukleinek@kernel.org; h=from:subject; bh=shVHcw3WNIa3pbYlKTq7wOJKs+PhQDB4a8mCLOg2BaY=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnNySyhNbpd9jNbMictTcNY8WBTJ5+Z3udDEZqi 0KaVRgcvzuJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZzcksgAKCRCPgPtYfRL+ TrUeB/9Vlim6gusugJu/VZJG8BKbQUqk3EzSXlFWscPwPby6BU1/P5mdWh/hL3gMGX51efnhtA4 AewxlPJS2gY+Jh/r8kPpq/8VkNB8ndtcjSSHxxzSJ/J9aSVFdxvpNQZFmkG7mjs4kCVYJpSVGKd Q/Ms1HFovOe+wBBsV8U9SsFkc6o8QCT6hWEI9ANm3qExjCBkXrSY+nJStaLLmsTF4bzIcyTp5xD i/HTkGeLUOfltaBgjEwXqhHLURc/f7ne/zL59mAMpgxQSnH9JrRGu3RleS047GPmjrMeCv4MeVG nGf1c2EBkMM7p4o3cj2IyzS3bh6Tjraw6QutHVugVmP4toJO
-X-Developer-Key: i=ukleinek@kernel.org; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/7] Add TSENS support for IPQ5332, IPQ5424
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        <srinivas.kandagatla@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <amitk@kernel.org>,
+        <thara.gopinath@gmail.com>, <rafael@kernel.org>,
+        <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
+References: <20241107140550.3260859-1-quic_mmanikan@quicinc.com>
+ <720286f3-8d92-45e0-822b-c4c5c40e7337@oss.qualcomm.com>
+Content-Language: en-US
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <720286f3-8d92-45e0-822b-c4c5c40e7337@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: R4wHfw9SsmMnWeU8Auuixcffp6BTSHKr
+X-Proofpoint-GUID: R4wHfw9SsmMnWeU8Auuixcffp6BTSHKr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ adultscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
+ malwarescore=0 spamscore=0 clxscore=1015 mlxscore=0 mlxlogscore=536
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411150090
 
-There are currently some doubts about out-of-tree kernel modules licensed
-under GPLv3 and if they are supposed to be able to use symbols exported
-using EXPORT_SYMBOL_GPL.
 
-Clarify that "Proprietary" means anything non-GPL2 even though the
-license might be an open source license. Also disambiguate "GPL
-compatible" to "GPLv2 compatible".
 
-Signed-off-by: Uwe Kleine-König <ukleinek@kernel.org>
----
-Hello,
+On 11/9/2024 3:48 PM, Konrad Dybcio wrote:
+> On 7.11.2024 3:05 PM, Manikanta Mylavarapu wrote:
+>> IPQ5332 uses tsens v2.3.3 IP with combined interrupt for
+>> upper/lower and critical. IPQ5332 does not have RPM and
+>> kernel has to take care of TSENS enablement and calibration.
+>>
+>> IPQ5424 also uses same tsens v2.3.3 IP and it's similar to IPQ5332
+>> (no RPM) hence add IPQ5424 support in this series itself.
+>>
+>> This patch series adds the temperature sensor enablement,
+>> calibration support for IPQ5332 and IPQ5424.
+>>
+>> Depends On:
+>> https://lore.kernel.org/linux-arm-msm/20241028060506.246606-1-quic_srichara@quicinc.com/
+>>
+>> Changes in V7:
+>> 	- Fixed all review comments from Dmitry Baryshkov, Konrad Dybico
+>> 	- Detailed change logs are added to the respective patches
+> 
+> Please see the responses I made on that thread
+> 
+> Konrad
+> 
 
-these are the locations that I found by a quick grep. If you spot a
-document that needs similar updating, please tell.
+Hi Konrad,
 
-The change in license-rules.rst looks bigger than it actually is due to
-changing where the line wrappings occur. With `git diff --word-diff` it
-reduces to:
+I have addressed all of your comments.
 
-    "Proprietary"                 The module is under a proprietary license.
-                                  {+"Proprietary" is to be understood only as+}
-{+                                "The license is not compatible to GPLv2".+}
-                                  This string is solely for [-proprietary-]{+non-GPL2 compatible+}
-                                  third party modules and cannot be used for
-
-Best regards
-Uwe
-
- Documentation/kernel-hacking/hacking.rst |  2 +-
- Documentation/process/license-rules.rst  | 18 ++++++++++--------
- 2 files changed, 11 insertions(+), 9 deletions(-)
-
-diff --git a/Documentation/kernel-hacking/hacking.rst b/Documentation/kernel-hacking/hacking.rst
-index 1717348a4404..0042776a9e17 100644
---- a/Documentation/kernel-hacking/hacking.rst
-+++ b/Documentation/kernel-hacking/hacking.rst
-@@ -587,7 +587,7 @@ Defined in ``include/linux/export.h``
- 
- Similar to :c:func:`EXPORT_SYMBOL()` except that the symbols
- exported by :c:func:`EXPORT_SYMBOL_GPL()` can only be seen by
--modules with a :c:func:`MODULE_LICENSE()` that specifies a GPL
-+modules with a :c:func:`MODULE_LICENSE()` that specifies a GPLv2
- compatible license. It implies that the function is considered an
- internal implementation issue, and not really an interface. Some
- maintainers and developers may however require EXPORT_SYMBOL_GPL()
-diff --git a/Documentation/process/license-rules.rst b/Documentation/process/license-rules.rst
-index 2ef44ada3f11..59a7832df7d0 100644
---- a/Documentation/process/license-rules.rst
-+++ b/Documentation/process/license-rules.rst
-@@ -471,14 +471,16 @@ _`MODULE_LICENSE`
- 				  source files.
- 
-     "Proprietary"		  The module is under a proprietary license.
--				  This string is solely for proprietary third
--				  party modules and cannot be used for modules
--				  which have their source code in the kernel
--				  tree. Modules tagged that way are tainting
--				  the kernel with the 'P' flag when loaded and
--				  the kernel module loader refuses to link such
--				  modules against symbols which are exported
--				  with EXPORT_SYMBOL_GPL().
-+				  "Proprietary" is to be understood only as
-+				  "The license is not compatible to GPLv2".
-+                                  This string is solely for non-GPL2 compatible
-+                                  third party modules and cannot be used for
-+                                  modules which have their source code in the
-+                                  kernel tree. Modules tagged that way are
-+                                  tainting the kernel with the 'P' flag when
-+                                  loaded and the kernel module loader refuses
-+                                  to link such modules against symbols which
-+                                  are exported with EXPORT_SYMBOL_GPL().
-     ============================= =============================================
- 
- 
-
-base-commit: 28955f4fa2823e39f1ecfb3a37a364563527afbc
--- 
-2.45.2
-
+Thanks & Regards,
+Manikanta.
 
