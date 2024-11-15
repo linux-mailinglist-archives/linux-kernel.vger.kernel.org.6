@@ -1,148 +1,222 @@
-Return-Path: <linux-kernel+bounces-411008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FDAB9CF19A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:36:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D365B9CF198
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:36:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 583871F2813A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:36:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93CA328264D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7B91D5157;
-	Fri, 15 Nov 2024 16:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D5D1D5AC8;
+	Fri, 15 Nov 2024 16:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="N1V/uaTI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TuUuyXh8"
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s2yeD8VQ"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535A51D5CFB
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 16:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BECC1D5145
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 16:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731688572; cv=none; b=Sn856acGTbVi75xNcJLssF5YLoweMsWQu74ZFO/4QS5YmR1tn8c3Q2mtPYoEHD6p4+yygT3rs7moYeTqMXlfxPx6Gf5uyY+qY6bJJq2pBL0Enqbi0y4tzPlqSW7z+uMUMOjrbYFIQPUVAdykONfWIwvh0KIurYNRlQEX54f6LVY=
+	t=1731688567; cv=none; b=InyXz/taXKSCJc75hBZY+XwWOgaCOmEay0XLONxDYiQ8kJSghCt1LixfuSA7WnHACIjsF5LVS6HYpCwOHS4xHtcEuG1ZzTmux/zeQz3qkSsbUgxuDt2DcKs/dkLPFn/g4dY57L3UXXaKdmibhyKXxiAnniSWX7HL3vFN4oZqlq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731688572; c=relaxed/simple;
-	bh=lVEjyTWnNJzX+QLMEj5/qQO59ZHLAMcXsBdrK2jBIfs=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=abNGvHVUmJfDSbZPkyZLpDwnPcmmLlxxmZXj3tyWDhwphEh6wcdod4aR6/eCrmFsSGXOuwMhWKB/ECWQ2xieV/Z+1taTLhWzBry1i/CDdDYuY9vXKfFMjO+PEo56QWTQTcX7uXLSaBmz44Cs0hby6gv281d3t1lHoODl/lBlG88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=N1V/uaTI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TuUuyXh8; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id D8016114011A;
-	Fri, 15 Nov 2024 11:36:08 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 15 Nov 2024 11:36:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1731688568;
-	 x=1731774968; bh=Di/rS4M465PPBMn1lW76KE0FVONCxRZbbC1er82K2KA=; b=
-	N1V/uaTIIinuZJbAPUA7QBWjnK7q33fI/3NpfhABhaLBbKLxLZXFDgjYTwrG5nQG
-	yS9I9liMDeYpPoQpRjclQJ0L6vvsghTpfBlj5BA7OcuUV4N9n2ftvQMpD1UqmznK
-	owtbqhxAYFwR2MMuh0JFX8xZtkiFxyl5teDRE9FWPG5ipDWUwNmcmZrkRENb60yN
-	RTKKX34nMx/zLGa0d8YlFllkRWdidq5a2EEP2XPbjDSVSwjrIQQUvaacVML4mGup
-	X/odWQpcAZ5HQYxuQKTi2TdptOPZZTxE0/X/XnEhY4bw+yPsyPZ8wnwdiea4iMLY
-	diZQwZK3sFxc5qvY20y97Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731688568; x=
-	1731774968; bh=Di/rS4M465PPBMn1lW76KE0FVONCxRZbbC1er82K2KA=; b=T
-	uUuyXh8KkZvC28+YbhrXUZInLT048FHI70IYoFsRN32sR0wCsxud/ytRpWPPfJTY
-	MY18sBTsFssnyv+6PKR3R4QipY48i40jUGr6snIn/n2kbWArDMWrwsdXIdqy6AiQ
-	hidMJDq7yg004jj5gGk/BcMcQPptc7WxXQ37Zvd/qTnxgy6q3zmHT3iGHeOm93H1
-	W81Lv8XDePenJs+wOHoXEEHo07xYGL7+NEDzilaisYcoapMAXAimIbXxDqNwMt5l
-	AmCbhvIouU2oE9+yPbk4xz60+G3M5bql1InqTmZncIPiS2bMvtzOrZN6yY3q0AJq
-	b0hyCGnmV0d9ZqRTpB4Pw==
-X-ME-Sender: <xms:eHg3Z4hizG_dOCVH1Oye3-gkJjK4d0x1aRqj-o8Q3_aKmNHnCT5tRw>
-    <xme:eHg3ZxBA4kc_OfD_Spftv4SFW1xDHkTcbDSiW5ezHcfPRURR-jIEO9hnrfjEJrjcQ
-    BumKsgjUAgm0Bi69v0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvdeggdekkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
-    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedugedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohephhgrrhhrhidrfigvnhhtlhgrnhguse
-    grmhgurdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphht
-    thhopehgvggvrhhtodhrvghnvghsrghssehglhhiuggvrhdrsggvpdhrtghpthhtoheprg
-    hirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehjrghnihdrnhhikhhulhgr
-    sehinhhtvghlrdgtohhmpdhrtghpthhtohepjhhonhgrthhhrghnrdgtrghvihhtthesih
-    hnthgvlhdrtghomhdprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtohepmhgrshgrhhhirhhohieskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhhrih
-    hprghrugeskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:eHg3ZwH_A8dWUgIz_T_3FfKBcEgM2XE3rxZos1gm7alCFnU0mTVnmQ>
-    <xmx:eHg3Z5TlnYsSVRPc1oI3ScwsWuQKmRYS412295ODwvMUUyazCLBerg>
-    <xmx:eHg3Z1x8MYdNTLCM895nyWYDt6sTcfCiGhHmHABRv1xL-UPpT9o-dQ>
-    <xmx:eHg3Z343g_NDTIrTu_TY8VGMQTmTGvPxPCcGYkqhWbjGrKp2pYIhjQ>
-    <xmx:eHg3Z1jH9_WjP7Ql5uhKr9s9BXtQbH0An8N87Gdm2WZVSIyQFYUuaS1I>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 2D0B72220071; Fri, 15 Nov 2024 11:36:08 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1731688567; c=relaxed/simple;
+	bh=F0dKwfWND9Cr158pJFNX+LI79Kd6IcQezYwh3JmGItg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vF95bNXxEDt7eY02HygOxJy5oOruzcx39WSyQYm2K5e7bOQqxFKVMbCI3Ng4WkW9IxPYarXOdK5es2BEIuzU/BrBmVod0ASm5oLHJaXx+tXNJ90vh0KbtzJTVCkLuX0InADqb+LTgg8Y+MTalQGOzBv+7mjWXM2f8hAsIW7+W4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s2yeD8VQ; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71e4e481692so1665932b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:36:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731688563; x=1732293363; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=A1rLKs7XMafDwKPJur3KVVVuDZ+Nk4nB0R3fvhHVGOI=;
+        b=s2yeD8VQ6yVbWSGjmxrUE72AAM/eGIef7R5B0pms8UuAdckzDrSdPYykD8vWT8gr6e
+         n4f5IwzthJtJfRPmy+eBNWCbrnJh0IvQaj4/KjtSwOZxEg2ne4gfgggvps0YwCGzMN6L
+         KhGQBip7FoWEIxP3J05dd4JQyiIlrJx5Gi8NyE3Psmd4kFG0gJJXqh0MO6OUcb7B1tJf
+         TSf8AiqeOI6B41uqM4s5Yex1eJKFAK4cTPAmfsTeMn/jbNHFbXcBd0Ckr5RE2SqmlTDk
+         BGdKd2yxlZKh8owokP4v9mJ1p/slJP3qDwQ/gIzgMLZT7zogPRvwkvCJ8Rwh+jgVD+6z
+         CQ6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731688563; x=1732293363;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=A1rLKs7XMafDwKPJur3KVVVuDZ+Nk4nB0R3fvhHVGOI=;
+        b=ewVrTl33+gkdKWz9Y1NHvjHcxb4WcG9JOxiwTe7HiG2Ugo3TSHqX5J6gTP/f06z3Tr
+         AfqxckfqqFTjQXFgBapZuyXpXRT9p1K/O9Ty3fBhT/d84/ZprRfLPLLgkwyA8Oevy38R
+         Xni9NlLBugQTyWrTgkbZ59a1GLuFqb97Bvka2PDesFbjZY/84ZiWEF5oMszWqEwiL1FY
+         H2LJztdPSXC9Kq9L3JXVcTtCXqQ3IwoQi/NlrnVcyQnps3TIbxxlZs5oLZeye/Shgkya
+         lMY1YvpTUI5bdh+QwnBKemxKSiINKXQjcYZrwg93GFh/gDku71ZxtR/q+mXPtgqKfJy+
+         uwYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXIh0kk0wdiQqRjyXjawWX6SU7BXQSL1qtiepexGdAQAZccxsAZs8HUrRj9BsAyIY4tyhheeFGAKjVVFq8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNjgEzEvWziDyIkG5ZnO+d6W/MoKsABJ5g/NACFBRtSzKTeFmk
+	M3x6l9DoMHefzIEVD07h1L11NH92QlLwJqCyP9WXpYxb3vP7wR35RMw5kiRUuQ==
+X-Google-Smtp-Source: AGHT+IGFnW6rFMw+hHUnNFuHyJmsLi6k9X5/Gsoh1t7i3szUhNuaPDcIgnR8yPSEXL5+AmJiguW+3g==
+X-Received: by 2002:a05:6a00:b56:b0:71d:fb29:9f07 with SMTP id d2e1a72fcca58-72476bba9femr3943662b3a.15.1731688563135;
+        Fri, 15 Nov 2024 08:36:03 -0800 (PST)
+Received: from thinkpad ([117.193.215.93])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724771e8ad1sm1533972b3a.168.2024.11.15.08.35.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 08:36:02 -0800 (PST)
+Date: Fri, 15 Nov 2024 22:05:52 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev
+Subject: Re: [PATCH v7 1/7] of: address: Add parent_bus_addr to struct
+ of_pci_range
+Message-ID: <20241115163552.mk7msyu57oqqetaw@thinkpad>
+References: <20241029-pci_fixup_addr-v7-0-8310dc24fb7c@nxp.com>
+ <20241029-pci_fixup_addr-v7-1-8310dc24fb7c@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 15 Nov 2024 17:35:46 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Thomas Zimmermann" <tzimmermann@suse.de>,
- "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
- "Maxime Ripard" <mripard@kernel.org>, "Dave Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Jocelyn Falempe" <jfalempe@redhat.com>,
- "Geert Uytterhoeven" <geert+renesas@glider.be>,
- "Jani Nikula" <jani.nikula@intel.com>,
- "Harry Wentland" <harry.wentland@amd.com>,
- "Masahiro Yamada" <masahiroy@kernel.org>,
- "Jonathan Cavitt" <jonathan.cavitt@intel.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Message-Id: <96269b2e-2a0e-4c7e-9d47-a52e64d1ea0a@app.fastmail.com>
-In-Reply-To: <a600708e-5240-4c31-ad29-4a6e791a65e7@suse.de>
-References: <20241115152722.3537630-1-arnd@kernel.org>
- <a600708e-5240-4c31-ad29-4a6e791a65e7@suse.de>
-Subject: Re: [PATCH] drm: rework FB_CORE dependency
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241029-pci_fixup_addr-v7-1-8310dc24fb7c@nxp.com>
 
-On Fri, Nov 15, 2024, at 16:54, Thomas Zimmermann wrote:
-> Am 15.11.24 um 16:27 schrieb Arnd Bergmann:
->>   
->> @@ -220,7 +221,6 @@ config DRM_CLIENT_LIB
->>   	tristate
->>   	depends on DRM
->>   	select DRM_KMS_HELPER if DRM_FBDEV_EMULATION
->> -	select FB_CORE if DRM_FBDEV_EMULATION
->
-> This should remain. More fbdev code will move into drm_fbdev_client.c 
-> and that will require FB_CORE.
+On Tue, Oct 29, 2024 at 12:36:34PM -0400, Frank Li wrote:
+> Introduce field 'parent_bus_addr' in struct of_pci_range to retrieve parent
+> bus address information.
+> 
+> Refer to the diagram below to understand that the bus fabric in some
+> systems (like i.MX8QXP) does not use a 1:1 address map between input and
+> output.
+> 
+> Currently, many controller drivers use .cpu_addr_fixup() callback hardcodes
+> that translation in the code, e.g., "cpu_addr & CDNS_PLAT_CPU_TO_BUS_ADDR"
+> (drivers/pci/controller/cadence/pcie-cadence-plat.c),
+> "cpu_addr + BUS_IATU_OFFSET"(drivers/pci/controller/dwc/pcie-intel-gw.c),
+> etc, even though those translations *should* be described via DT.
+> 
+> The .cpu_addr_fixup() can be eliminated if DT correct reflect hardware
+> behavior and driver use 'parent_bus_addr' in struct of_pci_range.
+> 
+>             ┌─────────┐                    ┌────────────┐
+>  ┌─────┐    │         │ IA: 0x8ff8_0000    │            │
+>  │ CPU ├───►│   ┌────►├─────────────────┐  │ PCI        │
+>  └─────┘    │   │     │ IA: 0x8ff0_0000 │  │            │
+>   CPU Addr  │   │  ┌─►├─────────────┐   │  │ Controller │
+> 0x7ff8_0000─┼───┘  │  │             │   │  │            │
+>             │      │  │             │   │  │            │   PCI Addr
+> 0x7ff0_0000─┼──────┘  │             │   └──► IOSpace   ─┼────────────►
+>             │         │             │      │            │    0
+> 0x7000_0000─┼────────►├─────────┐   │      │            │
+>             └─────────┘         │   └──────► CfgSpace  ─┼────────────►
+>              BUS Fabric         │          │            │    0
+>                                 │          │            │
+>                                 └──────────► MemSpace  ─┼────────────►
+>                         IA: 0x8000_0000    │            │  0x8000_0000
+>                                            └────────────┘
+> 
+> bus@5f000000 {
+>         compatible = "simple-bus";
+>         #address-cells = <1>;
+>         #size-cells = <1>;
+>         ranges = <0x80000000 0x0 0x70000000 0x10000000>;
+> 
+>         pcie@5f010000 {
+>                 compatible = "fsl,imx8q-pcie";
+>                 reg = <0x5f010000 0x10000>, <0x8ff00000 0x80000>;
+>                 reg-names = "dbi", "config";
+>                 #address-cells = <3>;
+>                 #size-cells = <2>;
+>                 device_type = "pci";
+>                 bus-range = <0x00 0xff>;
+>                 ranges = <0x81000000 0 0x00000000 0x8ff80000 0 0x00010000>,
+>                          <0x82000000 0 0x80000000 0x80000000 0 0x0ff00000>;
+> 	...
+> 	};
+> };
+> 
+> 'parent_bus_addr' in struct of_pci_range can indicate above diagram internal
+> address (IA) address information.
+> 
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-Got it.
+Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
->>   	help
->>   	  This option enables the DRM client library and selects all
->>   	  modules and components according to the enabled clients.
->> @@ -372,6 +372,7 @@ config DRM_GEM_SHMEM_HELPER
->>   	tristate
->>   	depends on DRM && MMU
->>   	select FB_SYSMEM_HELPERS_DEFERRED if DRM_FBDEV_EMULATION
->> +	select FB_CORE if DRM_FBDEV_EMULATION
->
-> This select is also needed by DRM_GEM_DMA_HELPER and DRM_GEM_TTM_HELPER.
->
-> Please sort these select statements alphabetically.
+- Mani
 
-Sent a v2 now.
+> ---
+> Change from v5 to v7
+> -none
+> 
+> Change from v4 to v5
+> - remove confused  <0x5f000000 0x0 0x5f000000 0x21000000>
+> - change address order to 7ff8_0000, 7ff0_0000, 7000_0000
+> - In commit message use parent bus addres
+> 
+> Change from v3 to v4
+> - improve commit message by driver source code path.
+> 
+> Change from v2 to v3
+> - cpu_untranslate_addr -> parent_bus_addr
+> - Add Rob's review tag
+>   I changed commit message base on Bjorn, if you have concern about review
+> added tag, let me know.
+> 
+> Change from v1 to v2
+> - add parent_bus_addr in struct of_pci_range, instead adding new API.
+> ---
+>  drivers/of/address.c       | 2 ++
+>  include/linux/of_address.h | 1 +
+>  2 files changed, 3 insertions(+)
+> 
+> diff --git a/drivers/of/address.c b/drivers/of/address.c
+> index 286f0c161e332..1a0229ee4e0b2 100644
+> --- a/drivers/of/address.c
+> +++ b/drivers/of/address.c
+> @@ -811,6 +811,8 @@ struct of_pci_range *of_pci_range_parser_one(struct of_pci_range_parser *parser,
+>  	else
+>  		range->cpu_addr = of_translate_address(parser->node,
+>  				parser->range + na);
+> +
+> +	range->parent_bus_addr = of_read_number(parser->range + na, parser->pna);
+>  	range->size = of_read_number(parser->range + parser->pna + na, ns);
+>  
+>  	parser->range += np;
+> diff --git a/include/linux/of_address.h b/include/linux/of_address.h
+> index 26a19daf0d092..13dd79186d02c 100644
+> --- a/include/linux/of_address.h
+> +++ b/include/linux/of_address.h
+> @@ -26,6 +26,7 @@ struct of_pci_range {
+>  		u64 bus_addr;
+>  	};
+>  	u64 cpu_addr;
+> +	u64 parent_bus_addr;
+>  	u64 size;
+>  	u32 flags;
+>  };
+> 
+> -- 
+> 2.34.1
+> 
 
-     Arnd
+-- 
+மணிவண்ணன் சதாசிவம்
 
