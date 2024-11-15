@@ -1,212 +1,196 @@
-Return-Path: <linux-kernel+bounces-410499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFC1B9CDC5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:19:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D693D9CDC5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:19:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51BBF1F22064
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:19:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AEE3B24A18
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5104F1B4F2F;
-	Fri, 15 Nov 2024 10:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1B41B394F;
+	Fri, 15 Nov 2024 10:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="KotL9glM"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2077.outbound.protection.outlook.com [40.107.241.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="dQQXSmFb"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96BB31B4F21;
-	Fri, 15 Nov 2024 10:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731665946; cv=fail; b=NIgS657Y3w3638cl8ridVkHt4T4oR+5mVL/wIH/aL3evpc55l1s4lA2LWl0K638qeZWRRtVz5YVviI0/lggVEBn+5uAt9qqGfxg3oxHO6VNrewVtZ6uZe62VJsSWqG4ZS647dL79zTasy2Pi7VniXmFoQUzBzVoghJLFuS40Hc0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731665946; c=relaxed/simple;
-	bh=E2/BpQPEf6Ghcw1nrElAXnVAPgfpULOCsmFGVvdtKI4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=RzWqBMobhI1bibkRThYU1mcb+fU2Hn1jPJZ40aXnpZ3sNvF9z6V9FMBvphyIgZmkK4f9HqkNdQKn5EQvRCaTxlsA0DDfaIhQKl07Tpn/JFFhNykUM6LYgVioBsaxaXoeudFCwtmmLOPwKLYPsGsCFPUWO0iEa/tfjC1yzHmkCx0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=KotL9glM; arc=fail smtp.client-ip=40.107.241.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=geC1oO9Vi2/mY3yu2tUbXZ0sOLQLeJwW0ycofGfsBn19JSRQCg2M8N4DD1gvfNDiINL2PFLk9zQo/UKny4MIcy2wL5n3mX1XbiTw2sBgL+dOnXbKfRF0tE7KmPYGdDbUuaRxS92MTk6bzHxQeho19aFILYHTOr04ZJsSYaFs90FPUeZ7VhqXCKSyP1aGdKESb3tGzreWKPwxbI+Pe29qxhw95vMoVSfNSfYPaXbC8Bd1wOTRiztGyi0KxKIZHWuF906AwzEJSkaWuTbwoA1mU+gVjielt9HwREvCktVyn8tJsT6FtWL52zCSeaSwu9+UE0e8y2X+1RjYpFGH3WodMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fJLnBT8DMPQ+CTicnTqVsU++jGsuIuNXIpGjZS+mOcs=;
- b=Z1IjDjaMBqF1h0Z8HYhvtsXVK+CKBO29Spx7yV8WqkLVXPrZ0KAhu+RT2dSrCVHjATQxI5ck/Ot86KgP26cb67qUtPMVosel/HALQEB+l/eJnX/VFJDdjxcrdInwxRYEkwIvj7fx8xmgh2+YZRfBQicJRMoHZPyLK3unGCZREa0FnP2gLDAxNhkGh+gZkOQ4uvm1iLr99NotVjth6OO/T7Nlh7/76OzWe487mYD8jJSrdIp/B8AIilLaDjoAQXof0v3IhAD0HeeB+ouAgljL/ev/p7ieS7zGz+l+Mb++u7Lr/l87wf/eAvvTs8jOfOloVW8mC5vhz+cvcmtByWT1Zw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fJLnBT8DMPQ+CTicnTqVsU++jGsuIuNXIpGjZS+mOcs=;
- b=KotL9glMjQ5esszmWa5RWPqoj3D9T88r8VfZYmuQbs6OpV9dqt4r5UerH8AE+lSc7EMPJP0kLHCWJn2/lwgqPO1F3iiwdGounMluSccXexSdQX8A4chjML8QI2reQdObaJWt45E7KusvaFd7VWG2OHKu7yVMGoX4tMHsxQ8lpcA6eB4ibms5S/nj45zmkOf3lWcoJ+5v5HKbjzTekaBlMEy/kqCAKvi80PKwi/+QZaCxJhI9+jVdsNmPCI0p0Zi32m36wW9sFGuKPjetX8CwYWMo0iaT9V5GtqY6U8pss4hwnRODNV1qZsKlDOpFR0qtcVSONOpO9IzTC/AKIjxYcA==
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by AS4PR04MB9508.eurprd04.prod.outlook.com (2603:10a6:20b:4cb::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.18; Fri, 15 Nov
- 2024 10:19:00 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%6]) with mapi id 15.20.8158.017; Fri, 15 Nov 2024
- 10:19:00 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Ying Liu <victor.liu@nxp.com>, "imx@lists.linux.dev"
-	<imx@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>
-CC: "shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de"
-	<s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>, "robh@kernel.org"
-	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "catalin.marinas@arm.com"
-	<catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>,
-	"abelvesa@kernel.org" <abelvesa@kernel.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
-	"andrzej.hajda@intel.com" <andrzej.hajda@intel.com>,
-	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, "rfoss@kernel.org"
-	<rfoss@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	"jonas@kwiboo.se" <jonas@kwiboo.se>, "jernej.skrabec@gmail.com"
-	<jernej.skrabec@gmail.com>, "maarten.lankhorst@linux.intel.com"
-	<maarten.lankhorst@linux.intel.com>, "mripard@kernel.org"
-	<mripard@kernel.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch" <simona@ffwll.ch>,
-	"quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>,
-	"geert+renesas@glider.be" <geert+renesas@glider.be>,
-	"dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>, "arnd@arndb.de"
-	<arnd@arndb.de>, "nfraprado@collabora.com" <nfraprado@collabora.com>,
-	"marex@denx.de" <marex@denx.de>
-Subject: RE: [PATCH v7 2/7] Revert "clk: imx: clk-imx8mp: Allow media_disp
- pixel clock reconfigure parent rate"
-Thread-Topic: [PATCH v7 2/7] Revert "clk: imx: clk-imx8mp: Allow media_disp
- pixel clock reconfigure parent rate"
-Thread-Index: AQHbNmKPsdMS3GH44ka1InYw8jGl+LK4IqkA
-Date: Fri, 15 Nov 2024 10:19:00 +0000
-Message-ID:
- <PAXPR04MB8459C6337B096C4326547CD888242@PAXPR04MB8459.eurprd04.prod.outlook.com>
-References: <20241114065759.3341908-1-victor.liu@nxp.com>
- <20241114065759.3341908-3-victor.liu@nxp.com>
-In-Reply-To: <20241114065759.3341908-3-victor.liu@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|AS4PR04MB9508:EE_
-x-ms-office365-filtering-correlation-id: 99d527c6-760a-4c8e-97e0-08dd055eec79
-x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|1800799024|7416014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?1nOHs0+fhTALFybSWZrAfOJc19VN+8+XH7cVRqCrG1K6zBXBUkFSyy78W0jb?=
- =?us-ascii?Q?PPpP1UqFXQJsaPWx3Dpa7AMoskDym4eQtpbFBt3FGfXuDE+h9vNHFlq1M42M?=
- =?us-ascii?Q?+DHHFDitnXr6uC9//dIJoVFYuJtA3ngMsF80f0FH/YEahoQOCnXJm/gxO40q?=
- =?us-ascii?Q?fI84Q2eDNCLzVSc2sS4FfjqXs2HDFFb6VXHlboOK/uWJ87waO3ULQWrX0j1J?=
- =?us-ascii?Q?9HyeUErVoSbhAumPi/TGSKY0phZ1hX7XKfIHLwiL5PNq8hl+Ifa9Vgqsbc6g?=
- =?us-ascii?Q?izIiT0janVcrlNffJkAkawsa4soii6GSwXnYZfe4ZDw1ehSdn1fxOL3e4fJp?=
- =?us-ascii?Q?sznxbHN3wBheo5UDAwR9hbFIh//JYOoTZ8SHJGg2NubtMasJXyXfP3LhHYLg?=
- =?us-ascii?Q?lm7LTEE3FkNB6/pk2m3E/VBvnOc3hhiRgK2pSsQM4UqN/6RyM7ISa8hX/jDX?=
- =?us-ascii?Q?RzarnzhvLzEJbMOfK/dkTMBAK3K1fgBcQZMBlMOpE3iRQ3+gGJifmKOsxndi?=
- =?us-ascii?Q?O8GVYHuWPNozFALgURJ+NqOBGHPu59v32ECY3yXCK7cyTqWkGPMXn1iaRVMF?=
- =?us-ascii?Q?TFVJZInYspsfDBHw4oU8iYkB9ew0Ct3GBYT6auWHa+1ZJWNoFBlddQVKDC8L?=
- =?us-ascii?Q?/OOfFXo2f+0A55hNeP4WLoXu0ySXKSOj/AXm9bPuf6u6HUsBztyOqJVeXiVF?=
- =?us-ascii?Q?BtKbg2NwIB5Ly5cnvj7wCkih66BD50gxXOl+IEsDayr/YvHB5py1X46OD5mN?=
- =?us-ascii?Q?hoV0Lypsbxvz/Fk7JbnGWUb2Ku3Ld8/CysdaxQPcQFtF/7fCwDsLa9gy1GOa?=
- =?us-ascii?Q?mBbJWn8TG6Wu2tiNK+eQcmeCjhfZ9K/QJOVQmtJrh4f0K159l+iQBG6rfM/W?=
- =?us-ascii?Q?ExFT1J7pNkqcSDo2htk8HVc2vaon5LO3oX7Y4HCEmuUYPJQYkqpgM/I2V/yE?=
- =?us-ascii?Q?iIz7gYhYO53ZOYhro8T9vJpQMsPde2WD3htp0zohtZuJi7sUjall1VzzqByn?=
- =?us-ascii?Q?6m58WbW8m+5yYOc+g8QkLUUjjsmtjbHVuGNe41lcvDpixPHyXVC6MTDTyiGG?=
- =?us-ascii?Q?qA/xXSLEN/crqbwPIvNKIjZZdkVltI/KxXapkGK+LlwvEnufQ3lm6VMYSyxF?=
- =?us-ascii?Q?ze6fpQGUYlDtcPOL4M4b93JRvXtN6I5qGC53kYvf1OZMqJYryB3tWdo4uBZh?=
- =?us-ascii?Q?IkGKAEDm1nzQ4wsck2aEu48lWNDPesJbsHaINXswY7MjJqWYi9RmvWRLmgKs?=
- =?us-ascii?Q?BAUY457uSkLBLzTSdpkAQRJGvztU0wOkftXAJ6/KYKfhqE/W57xRE6oz9Usp?=
- =?us-ascii?Q?Tn/n9Uk+6WQbKHbt5iMoILTa/8qAmd8pz7oLZkjrCppcs/BKu0ZKg42s7Jtr?=
- =?us-ascii?Q?R+aAC4M=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?St2eCZQh8sWaz6d/zls0haG7qGojsUFUictFqVXqFek/xSYI3lwaq8eceq9E?=
- =?us-ascii?Q?U5prwMFkQSOiywqYqrqxevyNA+fKO6w73bkHzeNUcz1hIQQG67BnfomC61Sx?=
- =?us-ascii?Q?oVwyg2kVTm/2VcCfcnyW9gNpnfwzEFI+K03+2hZURuoesIlU8gPDJ4/q/JTi?=
- =?us-ascii?Q?jp33lpt5s981BSyhPWWxMsQpBJ1rLb+aulJP13bYr1a8eJ99kuOPhcGR94vd?=
- =?us-ascii?Q?aOSJoGUVyex6wTHdTdSWlcm32aee0fn6LNVRA+5HeE9iAC4vIGGbm5ogEhev?=
- =?us-ascii?Q?JP1o4mjfYB2TOunkbtmZhOzVaV7ajGt420cQxio1KWvs8igYpYwDr8lJl78o?=
- =?us-ascii?Q?2wn5m14vusVdUkFAWnuFD0Kdh5VgcF6G+cyX7S9GO8jN89RSxLo/Oy0YGkbS?=
- =?us-ascii?Q?zSKVBJYYulq6IvbQkUVXJDlhRc3NuO4DIDuM9AcQNqxeQjRute/iALzaWC/V?=
- =?us-ascii?Q?jyVlHLw3YLqWSMDkhuMHIkVWm3tyAHMrCUK7kdfrACAQGk+jtUePGcouOiKg?=
- =?us-ascii?Q?YbFnhAJRPl8Aqov49BmicF4hnRTamQaQ1m6GDYMMY+wEGwT5ZPAjVWQjwzYZ?=
- =?us-ascii?Q?Oyec7DkIPqK8gT3ZEo2Yqokkd453Jk8EPWYgcVOgu5XeU9aT7upKrtF1rZCK?=
- =?us-ascii?Q?PORPiAzcSFf0h0Nc0Tz+X6JN+don3q5D+RbrzptSLYXsDWcxAtshHFQHyax6?=
- =?us-ascii?Q?KVpGiVa6LWYGEhb75HcoI2Y7Z/dg00fQm1685z95mUY3Kwnm1j2LxGIyZLEs?=
- =?us-ascii?Q?/kiqgt7Gu++cDIk19b8lY5o+6vYzSg4RTk1h/OSku3bOeKYES9YIkEsEXkDl?=
- =?us-ascii?Q?OvZByltLzoXEDqNtlhQJ4sv2vlNDCf0IZwIv16/a9kBx3FuQ8HrcCfwSxRWC?=
- =?us-ascii?Q?xv6bdJLiE6Uspq1Pm65EewfQnbXO86g2uOJOrUn+1A1h6T+hYT7xY3lbMrq8?=
- =?us-ascii?Q?APmW6DIutDK5boV/NHjKOLAGEhH7AAdsdgXB7zZbNZCrJCzXuPbqYmwlYgRp?=
- =?us-ascii?Q?XtA+Ia4WYaj3DDfdAqHxwdNmULmDYY6axpXXkjZ8Pt3THpIxsCIcGz+VKZR1?=
- =?us-ascii?Q?ht92eExzd2Po+oBCZMA6VslHbXWWX4/RR8FArudgHSatsEq2TxPePhvI4i13?=
- =?us-ascii?Q?ZgZVAnD0nWsy9sYG3RpBIx5Z9eBkDSDAhaBr7eIaeG+Ygm8/ehr2wp4cARqm?=
- =?us-ascii?Q?Xt2JHKoROdr4qwVNNojzihBb1bkFmZ6Dldt/KcSsa6Ey0zO9ukLIgkDFqbVN?=
- =?us-ascii?Q?xAhfgE22cJoY9sehBvvVARp7KtREZ0A4Ax2bNTPtIk8iSIIQnZ5oYt2CIND+?=
- =?us-ascii?Q?lAal3FfphauY3SDmgVUR6R6LloxlCze/ES6Bj5/fN82ke4CWNeb41hR9AzkD?=
- =?us-ascii?Q?txeH/oX0KP69jSov1MGRT2Cm5i5vdKOQ14bnBJo8Cle2vO3synOOoDujGPXY?=
- =?us-ascii?Q?IhXCnHSBkrJq52M/5+0b39teJ63XPSuxFuu8oBE9+QQi9D5lFLp+tDx4gImj?=
- =?us-ascii?Q?C7pzq4+bqJ3FYa1loybe4Ne5vtkv3U6/hS/SUdFzaPV3MrzK3nQ6avMhNSeE?=
- =?us-ascii?Q?KSwHyQsEoJGaJ7CDsik=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12CAA1B219A
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731665941; cv=none; b=eakKxGFZStVj57UHhSDUKQGcfPvjyuajlrUX2AihUZGGi5AuZP4DcqoWqTOY2/zPznOI3b8ZaNCZMoNqeUOPkMFr+82mpLljS1jWUtGjl7Ne/d+q+t/NdDYc99Im1/eHRW76RN3ka3MKFLc2L7vOCpxi92fBweEoq2hc+LJ/T6I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731665941; c=relaxed/simple;
+	bh=X5D0h9UNJl13Pe4z8gullnSJc8fhH65Kg8B35uclJ0c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nJ6qe2jHoEZZpNiH2brzpOwY3L4duOi0WHb5KjADgHjNCfkG/OjXJnYaAQNQrBfJgFGdyEHMkyBiO5935n82tiKzz3yHOIBBr56DmwsoiABCrLWXn/3fbKMw4rENqtFd+NdURJvN2SrVBHTg+gxL8fwOxUurlvY/pADIPv7dQVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=dQQXSmFb; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43161e7bb25so13291865e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 02:18:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1731665937; x=1732270737; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=moBXfLDVX5c6Ljj6/t/WvvrljNE0SqwxGCewjZjiArM=;
+        b=dQQXSmFb01ocaTBhm7x0t/GB9tAv2BAD49D7Zfa9OIuN1Lbmjg/1hps1qR3e6uzCVr
+         UpcbVCCYN7xcg+3WN1Hlu9SnEwInSJaD6dSI8tl75RRDOrA6mG/MS7efDcOduz+pyGi1
+         BZ4gUOtUSnmXALrh7ljqACp4oRbEVoTxu1PDKEgCAbLvPc0JWZfXTTp6NOHf1uCrMPb2
+         RolgXh8pgOu/BlhTGdbOh0T7rB+/ul5zVDO3O3tOJJEVRP89rdBpo1zfBBXalggcBfgZ
+         SYllH5RmpquIl7+E8b67P6ZLBR/TcYodzh5TA5KKIeS4Cbfh9qQQYtjr3Lyecb4sMj0N
+         Eubw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731665937; x=1732270737;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=moBXfLDVX5c6Ljj6/t/WvvrljNE0SqwxGCewjZjiArM=;
+        b=joy8JvtZ8n7AQHbQh6Hwv5F+I+Awb5hlQNox8th2y0K3wKef3hDjGQBa39Eim2OTVz
+         Oa6wF0ciFq7Z2D0+X2sI/7V+caoA1u2Ils5dvFOHcDwS0zhM3KLtqvb0LwkLM1zExUlP
+         eMxbopzQ3XN0ngcXNjdgWf1J863s9PZHZyDh8pYJisWLvVAAiNGCs6i53JHvkK18a7nx
+         z9D7XkFECtVBChEYUmRYIIwNaoIZxJOvkgN9O16Bo8pyUuRBrpuu2veTToBzAjXb3wEP
+         MCo9mNz7j/c0iEOM27xAsg3fBjZRwc8upss7KK3Dm93uEba5VXZiP4n3asW9vKvGVd8R
+         j+JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsuLv3V0b7yh6JdX2AoijJPujAok8NVWys2C2wVhtIJwbGch0Ab8yLVkDNox1e7fiwaE/jOekLR/0U4p0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yymzo0GspILukOUA0SRgaWXiNEM+Behk5bNQXkZKGZhsmRO4j9c
+	NnLj1S7oHCz+Yz4pTxQqfGZR98r+plyZVAcE1CPcwC+jusrkLcRUJQY8a3D22mMCutdNeGKnVT2
+	J
+X-Google-Smtp-Source: AGHT+IGn9S7JhSYSeHgbVmQ2BSBxvX0GWYaTGrCbot1ed9O8BPB4IeK8ajzzLD6HoKiGPR6iN1/CKA==
+X-Received: by 2002:a05:600c:3513:b0:42c:b16e:7a22 with SMTP id 5b1f17b1804b1-432df72c555mr18504095e9.12.1731665937243;
+        Fri, 15 Nov 2024 02:18:57 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:59f4:10be:886a:27eb? ([2001:67c:2fbc:1:59f4:10be:886a:27eb])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab78783sm49172485e9.12.2024.11.15.02.18.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 02:18:56 -0800 (PST)
+Message-ID: <dc63a3cb-7ace-4aca-9b67-f3c50297b2d2@openvpn.net>
+Date: Fri, 15 Nov 2024 11:19:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 99d527c6-760a-4c8e-97e0-08dd055eec79
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Nov 2024 10:19:00.8799
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: utDYT26WAieS8JcLRGvvWFUtCXNmBfFXpPU1ZQE9uNDL+SHif0inaiiFrWKoPYHHohPdpBNIiWwnCZG1h2FjDQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR04MB9508
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v11 03/23] ovpn: add basic netlink support
+To: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, sd@queasysnail.net,
+ Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-3-de4698c73a25@openvpn.net>
+ <21c0887b-1c7d-424d-a723-2a8d212cbde1@gmail.com>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <21c0887b-1c7d-424d-a723-2a8d212cbde1@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> Subject: [PATCH v7 2/7] Revert "clk: imx: clk-imx8mp: Allow
-> media_disp pixel clock reconfigure parent rate"
->=20
-> This reverts commit ff06ea04e4cf3ba2f025024776e83bfbdfa05155.
->=20
-> media_disp1_pix clock is the pixel clock of the first i.MX8MP LCDIFv3
-> display controller, while media_disp2_pix clock is the pixel clock of the
-> second i.MX8MP LCDIFv3 display controller.  The two display
-> controllers connect with Samsung MIPI DSI controller and LVDS Display
-> Bridge(LDB) respectively.  Since the two display controllers are driven
-> by separate DRM driver instances and the two pixel clocks may be
-> derived from the same video_pll1_out clock(sys_pll3_out clock could
-> be already used to derive audio_axi clock), there is no way to negotiate
-> a dynamically changeable video_pll1_out clock rate to satisfy both of
-> the two display controllers.  In this case, the only solution to drive
-> them with the single video_pll1_out clock is to assign a
-> sensible/unchangeable clock rate for video_pll1_out clock.  Thus, there
-> is no need to set the CLK_SET_RATE_PARENT flag for
-> media_disp{1,2}_pix clocks, drop it then.
->=20
-> Fixes: ff06ea04e4cf ("clk: imx: clk-imx8mp: Allow media_disp pixel
-> clock reconfigure parent rate")
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> ---
+On 09/11/2024 00:31, Sergey Ryazanov wrote:
+> On 29.10.2024 12:47, Antonio Quartulli wrote:
+>> This commit introduces basic netlink support with family
+>> registration/unregistration functionalities and stub pre/post-doit.
+>>
+>> More importantly it introduces the YAML uAPI description along
+>> with its auto-generated files:
+>> - include/uapi/linux/ovpn.h
+>> - drivers/net/ovpn/netlink-gen.c
+>> - drivers/net/ovpn/netlink-gen.h
+>>
+>> Cc: donald.hunter@gmail.com
+>> Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
+> 
+> [skipped]
+> 
+>> diff --git a/drivers/net/ovpn/ovpnstruct.h b/drivers/net/ovpn/ 
+>> ovpnstruct.h
+>> --- /dev/null
+>> +++ b/drivers/net/ovpn/ovpnstruct.h
+>> @@ -0,0 +1,25 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*  OpenVPN data channel offload
+>> + *
+>> + *  Copyright (C) 2019-2024 OpenVPN, Inc.
+>> + *
+>> + *  Author:    James Yonan <james@openvpn.net>
+>> + *        Antonio Quartulli <antonio@openvpn.net>
+>> + */
+>> +
+>> +#ifndef _NET_OVPN_OVPNSTRUCT_H_
+>> +#define _NET_OVPN_OVPNSTRUCT_H_
+>> +
+>> +#include <net/net_trackers.h>
+>> +
+>> +/**
+>> + * struct ovpn_struct - per ovpn interface state
+>> + * @dev: the actual netdev representing the tunnel
+>> + * @dev_tracker: reference tracker for associated dev
+>> + */
+>> +struct ovpn_struct {
+> 
+> There is no standard convention how to entitle such structures, so the 
+> question is basically of out-of-curiosity class. For me, having a 
+> sturcuture with name 'struct' is like having no name. Did you consider 
+> to use such names as ovpn_dev or ovpn_iface? Meaning, using a name that 
+> gives a clue regarding the scope of the content.
 
-Acked-by: Peng Fan <peng.fan@nxp.com>
+Yes, I wanted to switch to ovpn_priv, but  did not care much for the 
+time being :)
+
+I can still do it now in v12.
+
+Thanks!
+Regards,
+
+-- 
+Antonio Quartulli
+OpenVPN Inc.
+
 
