@@ -1,357 +1,142 @@
-Return-Path: <linux-kernel+bounces-410339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E47509CDA1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:56:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66BAA9CDA1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:59:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B6F0B223F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:56:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4824B22257
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B39189BAC;
-	Fri, 15 Nov 2024 07:56:15 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3018D174EE4;
-	Fri, 15 Nov 2024 07:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2F1188CD8;
+	Fri, 15 Nov 2024 07:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ZyYcW6mD"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E53288DA;
+	Fri, 15 Nov 2024 07:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731657374; cv=none; b=NHKoLPT/NTsocUjrS+kdqJgOpH0OhnLiqP20XYW7pxSxMbOFX8F0e584oug+xKBh+0DXAi5NMIl6nFgqWW1YITRBMzVrX0cmLLI6nbN5mwv2+WTlOgqvNYh/adzzGWYiZ1aGlkiHsC2VH9B+YlfH2MmJmWI2p5rgjACNKZbMVs8=
+	t=1731657531; cv=none; b=KLscnAV4rMfNS+vgdlL0ZY95EGq1VW3dZlgvJsmtGe+GXlpMzsJYe2kTBRlSDmn7JYwfqsxVaYwzDCmc0Um7B+J8E91IgDf1Fbstlo/HDiZ+2E68gv90HxU1llRBbtdajzkd2Xb6aPx0/ukIYA3fML5l+RO3ujIu+taouXzHLSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731657374; c=relaxed/simple;
-	bh=XAMeUncRlZwG/5Mc5pyd9Qbhh/IujhIkbiONNMjlHkE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ev2w48Z1mqvkMRjEAEsIhsPGZBHJDFQaTknPbG0lU8u+KjqRQl7TicJIgtBdiCdv7NWpH9fl869f7YsYx53csdwi1I1I5c34x49APfaBTXRcrqT/FZPskEFnMbt58NbGcPFDeow4qgn07jWeuAXP8oy0XxzENWfE12YJQ0O+Gpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.40.49.17])
-	by gateway (Coremail) with SMTP id _____8Bx366S_jZnOTA+AA--.18142S3;
-	Fri, 15 Nov 2024 15:56:02 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.40.49.17])
-	by front1 (Coremail) with SMTP id qMiowMAxVcCR_jZntWxWAA--.19030S2;
-	Fri, 15 Nov 2024 15:56:01 +0800 (CST)
-From: Zhao Qunqin <zhaoqunqin@loongson.cn>
-To: chenhuacai@kernel.org,
-	kernel@xen0n.name,
-	bp@alien8.de,
-	tony.luck@intel.com,
-	james.morse@arm.com,
-	mchehab@kernel.org,
-	rric@kernel.org
-Cc: linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	xry111@xry111.site,
-	Markus.Elfring@web.de,
-	Jonathan.Cameron@Huawei.com,
-	Zhao Qunqin <zhaoqunqin@loongson.cn>,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH V10] EDAC: Add EDAC driver for loongson memory controller
-Date: Fri, 15 Nov 2024 15:55:56 +0800
-Message-Id: <20241115075556.7349-1-zhaoqunqin@loongson.cn>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1731657531; c=relaxed/simple;
+	bh=wIkiy+QteJhjeJ20sh1Xcq3Q2Jh4O4HpvU/DzWtMTJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TMdi5AiKwPvGF4uHo5OcaAB6IsOFX5Os7kGv2az1OxBYCPtMse9gH8KADLvz1QFfkkqbnV3juPESer826yjZOlYjG13NshBg5gcoDVrkdbP6oW8mmAFScNAHYcUSPhZGCAIeBOXTlbe22W6FEhN7GKLQRUhLV2yD9LYdxj6Vyy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ZyYcW6mD; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1127)
+	id 0A969206BCC9; Thu, 14 Nov 2024 23:58:49 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0A969206BCC9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1731657529;
+	bh=TuB/d6ReaTiRiZwBzzLa3GlP4F720U7qluSCKqYmo8c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZyYcW6mD6BAra4UNC3p2uxqb9O7SPfSZg6I7lSLSreg4YRdJdAIlGWSdmsId9e3f1
+	 +ufoa7ZuJhPA1gkLT/pAf+7CujtdmmVHTtX5zc/2dYwkx6Z2RSEiqqkZyH/I6DgErD
+	 8EP1LWKo/1ZCKFJ8g7PYluJjE8WStyuWvZL6/YwM=
+Date: Thu, 14 Nov 2024 23:58:48 -0800
+From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+To: Naman Jain <namjain@linux.microsoft.com>
+Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	John Starks <jostarks@microsoft.com>, jacob.pan@linux.microsoft.com,
+	Easwar Hariharan <eahariha@linux.microsoft.com>,
+	Michael Kelley <mhklinux@outlook.com>
+Subject: Re: [PATCH v3 0/2] Drivers: hv: vmbus: Wait for boot-time offers and
+ log missing offers
+Message-ID: <20241115075848.GA11347@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <20241113084700.2940-1-namjain@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMAxVcCR_jZntWxWAA--.19030S2
-X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoWxtr1kGFyDGr1kGFWkKFW3urX_yoW3WF1kpF
-	45Cw1fGr48tr43Can3ArWUuF15uwsa9a42vay7A3yY93srA34DXryktFW2yF9rCrWDJrW3
-	Xa4rKa1DCF4DCwbCm3ZEXasCq-sJn29KB7ZKAUJUUUUx529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUB2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	AVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7V
-	AKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY
-	6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUcbAwUUUUU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241113084700.2940-1-namjain@linux.microsoft.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-Add ECC support for Loongson SoC DDR controller. This
-driver reports single bit errors (CE) only.
+On Wed, Nov 13, 2024 at 12:46:58AM -0800, Naman Jain wrote:
+> After VM requests for channel offers during boot or resume from
+> hibernation, host offers the devices that the VM is configured with and
+> then sends a separate message indicating that all the boot-time channel
+> offers are delivered. Wait for this message to make this boot-time offers
+> request and receipt process synchronous.
+> 
+> Without this, user mode can race with VMBus initialization and miss
+> channel offers. User mode has no way to work around this other than
+> sleeping for a while, since there is no way to know when VMBus has
+> finished processing boot-time offers.
+> 
+> This is in analogy to a PCI bus not returning from probe until it has
+> scanned all devices on the bus.
+> 
+> As part of this implementation, some code cleanup is also done for the
+> logic which becomes redundant due to this change.
+> 
+> Second patch prints the channels which are not offered when resume
+> happens from hibernation to supply more information to the end user.
+> 
+> Changes since v2:
+> https://lore.kernel.org/all/20241029080147.52749-1-namjain@linux.microsoft.com/
+> * Incorporated Easwar's suggestion to use secs_to_jiffies() as his
+>   changes are now merged.
+> * Addressed Michael's comments:
+>   * Used boot-time offers/channels/devices to maintain consistency
+>   * Rephrased CHANNELMSG_ALLOFFERS_DELIVERED handler function comments
+>     for better explanation. Thanks for sharing the write-up.
+>   * Changed commit msg and other things as per suggestions
+> * Addressed Dexuan's comments, which came up in offline discussion:
+>   * Changed timeout for waiting for all offers delivered msg to 60s instead of 10s.
+>     Reason being, the host can experience some servicing events or diagnostics events,
+>     which may take a long time and hence may fail to offer all the devices within 10s.
+>   * Minor additions in commit subject of both patches
+> * Rebased on latest linux-next master tip
+> 
+> Changes since v1:
+> https://lore.kernel.org/all/20241018115811.5530-1-namjain@linux.microsoft.com/
+> * Added Easwar's Reviewed-By tag
+> * Addressed Michael's comments:
+>   * Added explanation of all offers delivered message in comments
+>   * Removed infinite wait for offers logic, and changed it wait once.
+>   * Removed sub channel workqueue flush logic
+>   * Added comments on why MLX device offer is not expected as part of
+>     this essential boot offer list. I refrained from adding too many
+>     details on it as it felt like it is beyond the scope of this patch
+>     series and may not be relevant to this. However, please let me know if
+>     something needs to be added.
+> * Addressed Saurabh's comments:
+>   * Changed timeout value to 10000 ms instead of 10*1000
+>   * Changed commit msg as per suggestions
+>   * Added a comment for warning case of wait_for_completion timeout
+>   * Added a note for missing channel cleanup in comments and commit msg
+> 
+> John Starks (1):
+>   Drivers: hv: vmbus: Log on missing offers if any
+> 
+> Naman Jain (1):
+>   Drivers: hv: vmbus: Wait for boot-time offers during boot and resume
+> 
+>  drivers/hv/channel_mgmt.c | 61 +++++++++++++++++++++++++++++----------
+>  drivers/hv/connection.c   |  4 +--
+>  drivers/hv/hyperv_vmbus.h | 14 ++-------
+>  drivers/hv/vmbus_drv.c    | 31 ++++++++++----------
+>  4 files changed, 67 insertions(+), 43 deletions(-)
+> 
+> 
+> base-commit: 28955f4fa2823e39f1ecfb3a37a364563527afbc
+> -- 
+> 2.34.1
+> 
 
-Only ACPI firmware is supported.
-
-Signed-off-by: Zhao Qunqin <zhaoqunqin@loongson.cn>
-Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
----
-Changes in v10:
-	- Changed acpi_device_id to "LOON0010"
-
-Changes in v9:
-	- Still using readq() and included "linux/io-64-nonatomic-lo-hi.h"
-	  to avoid the compiler's waring.
-	- Used alpha-betical order when selecting symbol and including
-	  header file.
-
-Changes in v8:
-	- Used readl() instead of readq()
-	- Used acpi_device_id instead of of_device_id, then removed
-	  dt-bindings
-
-Changes in v7:
-	- Fixed sparse's "incorrect type in assignment"
-	- Cleaned up coding style
-
-Changes in v6:
-	- Changed the Kconfig name to CONFIG_EDAC_LOONGSON
-
-Changes in v5:
-	- Dropepd the loongson_ prefix from all static functions.
-	- Aligned function arguments on the opening brace.
-	- Dropepd useless comments and useless wrapper. Dropped side
-	  comments.
-	- Reordered variable declarations.
-
-Changes in v4:
-	- None
-
-Changes in v3:
-	- Addressed review comments raised by Krzysztof and Huacai
-
-Changes in v2:
-	- Addressed review comments raised by Krzysztof
-
- MAINTAINERS                  |   6 ++
- arch/loongarch/Kconfig       |   1 +
- drivers/edac/Kconfig         |   8 ++
- drivers/edac/Makefile        |   1 +
- drivers/edac/loongson_edac.c | 156 +++++++++++++++++++++++++++++++++++
- 5 files changed, 172 insertions(+)
- create mode 100644 drivers/edac/loongson_edac.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e9659a5a7..b36a45051 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13397,6 +13397,12 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/thermal/loongson,ls2k-thermal.yaml
- F:	drivers/thermal/loongson2_thermal.c
- 
-+LOONGSON EDAC DRIVER
-+M:	Zhao Qunqin <zhaoqunqin@loongson.cn>
-+L:	linux-edac@vger.kernel.org
-+S:	Maintained
-+F:	drivers/edac/loongson_edac.c
-+
- LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
- M:	Sathya Prakash <sathya.prakash@broadcom.com>
- M:	Sreekanth Reddy <sreekanth.reddy@broadcom.com>
-diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-index bb35c34f8..33052526b 100644
---- a/arch/loongarch/Kconfig
-+++ b/arch/loongarch/Kconfig
-@@ -79,6 +79,7 @@ config LOONGARCH
- 	select BUILDTIME_TABLE_SORT
- 	select COMMON_CLK
- 	select CPU_PM
-+	select EDAC_SUPPORT
- 	select EFI
- 	select GENERIC_CLOCKEVENTS
- 	select GENERIC_CMOS_UPDATE
-diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
-index 81af6c344..433c33785 100644
---- a/drivers/edac/Kconfig
-+++ b/drivers/edac/Kconfig
-@@ -564,5 +564,13 @@ config EDAC_VERSAL
- 	  Support injecting both correctable and uncorrectable errors
- 	  for debugging purposes.
- 
-+config EDAC_LOONGSON
-+	tristate "Loongson Memory Controller"
-+	depends on (LOONGARCH && ACPI) || COMPILE_TEST
-+	help
-+	  Support for error detection and correction on the Loongson
-+	  family memory controller. This driver reports single bit
-+	  errors (CE) only. Loongson-3A5000/3C5000/3D5000/3A6000/3C6000
-+	  are compatible.
- 
- endif # EDAC
-diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
-index faf310eec..f8bdbc895 100644
---- a/drivers/edac/Makefile
-+++ b/drivers/edac/Makefile
-@@ -88,3 +88,4 @@ obj-$(CONFIG_EDAC_DMC520)		+= dmc520_edac.o
- obj-$(CONFIG_EDAC_NPCM)			+= npcm_edac.o
- obj-$(CONFIG_EDAC_ZYNQMP)		+= zynqmp_edac.o
- obj-$(CONFIG_EDAC_VERSAL)		+= versal_edac.o
-+obj-$(CONFIG_EDAC_LOONGSON)		+= loongson_edac.o
-diff --git a/drivers/edac/loongson_edac.c b/drivers/edac/loongson_edac.c
-new file mode 100644
-index 000000000..29607972f
---- /dev/null
-+++ b/drivers/edac/loongson_edac.c
-@@ -0,0 +1,156 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2024 Loongson Technology Corporation Limited.
-+ */
-+
-+#include <linux/acpi.h>
-+#include <linux/edac.h>
-+#include <linux/init.h>
-+#include <linux/io-64-nonatomic-lo-hi.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include "edac_module.h"
-+
-+#define ECC_CS_COUNT_REG	0x18
-+
-+struct loongson_edac_pvt {
-+	void __iomem *ecc_base;
-+	int last_ce_count;
-+};
-+
-+static int read_ecc(struct mem_ctl_info *mci)
-+{
-+	struct loongson_edac_pvt *pvt = mci->pvt_info;
-+	u64 ecc;
-+	int cs;
-+
-+	if (!pvt->ecc_base)
-+		return pvt->last_ce_count;
-+
-+	ecc = readq(pvt->ecc_base + ECC_CS_COUNT_REG);
-+	/* cs0 -- cs3 */
-+	cs = ecc & 0xff;
-+	cs += (ecc >> 8) & 0xff;
-+	cs += (ecc >> 16) & 0xff;
-+	cs += (ecc >> 24) & 0xff;
-+
-+	return cs;
-+}
-+
-+static void edac_check(struct mem_ctl_info *mci)
-+{
-+	struct loongson_edac_pvt *pvt = mci->pvt_info;
-+	int new, add;
-+
-+	new = read_ecc(mci);
-+	add = new - pvt->last_ce_count;
-+	pvt->last_ce_count = new;
-+	if (add <= 0)
-+		return;
-+
-+	edac_mc_handle_error(HW_EVENT_ERR_CORRECTED, mci, add,
-+			     0, 0, 0, 0, 0, -1, "error", "");
-+	edac_mc_printk(mci, KERN_INFO, "add: %d", add);
-+}
-+
-+static void dimm_config_init(struct mem_ctl_info *mci)
-+{
-+	struct dimm_info *dimm;
-+	u32 size, npages;
-+
-+	/* size not used */
-+	size = -1;
-+	npages = MiB_TO_PAGES(size);
-+
-+	dimm = edac_get_dimm(mci, 0, 0, 0);
-+	dimm->nr_pages = npages;
-+	snprintf(dimm->label, sizeof(dimm->label),
-+		 "MC#%uChannel#%u_DIMM#%u", mci->mc_idx, 0, 0);
-+	dimm->grain = 8;
-+}
-+
-+static void pvt_init(struct mem_ctl_info *mci, void __iomem *vbase)
-+{
-+	struct loongson_edac_pvt *pvt = mci->pvt_info;
-+
-+	pvt->ecc_base = vbase;
-+	pvt->last_ce_count = read_ecc(mci);
-+}
-+
-+static int edac_probe(struct platform_device *pdev)
-+{
-+	struct edac_mc_layer layers[2];
-+	struct mem_ctl_info *mci;
-+	void __iomem *vbase;
-+	int ret;
-+
-+	vbase = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(vbase))
-+		return PTR_ERR(vbase);
-+
-+	/* allocate a new MC control structure */
-+	layers[0].type = EDAC_MC_LAYER_CHANNEL;
-+	layers[0].size = 1;
-+	layers[0].is_virt_csrow = false;
-+	layers[1].type = EDAC_MC_LAYER_SLOT;
-+	layers[1].size = 1;
-+	layers[1].is_virt_csrow = true;
-+	mci = edac_mc_alloc(0, ARRAY_SIZE(layers), layers,
-+			    sizeof(struct loongson_edac_pvt));
-+	if (mci == NULL)
-+		return -ENOMEM;
-+
-+	mci->mc_idx = edac_device_alloc_index();
-+	mci->mtype_cap = MEM_FLAG_RDDR4;
-+	mci->edac_ctl_cap = EDAC_FLAG_NONE;
-+	mci->edac_cap = EDAC_FLAG_NONE;
-+	mci->mod_name = "loongson_edac.c";
-+	mci->ctl_name = "loongson_edac_ctl";
-+	mci->dev_name = "loongson_edac_dev";
-+	mci->ctl_page_to_phys = NULL;
-+	mci->pdev = &pdev->dev;
-+	mci->error_desc.grain = 8;
-+	/* Set the function pointer to an actual operation function */
-+	mci->edac_check = edac_check;
-+
-+	pvt_init(mci, vbase);
-+	dimm_config_init(mci);
-+
-+	ret = edac_mc_add_mc(mci);
-+	if (ret) {
-+		edac_dbg(0, "MC: failed edac_mc_add_mc()\n");
-+		edac_mc_free(mci);
-+		return ret;
-+	}
-+	edac_op_state = EDAC_OPSTATE_POLL;
-+
-+	return 0;
-+}
-+
-+static void edac_remove(struct platform_device *pdev)
-+{
-+	struct mem_ctl_info *mci = edac_mc_del_mc(&pdev->dev);
-+
-+	if (mci)
-+		edac_mc_free(mci);
-+}
-+
-+static const struct acpi_device_id loongson_edac_acpi_match[] = {
-+	{"LOON0010", 0},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(acpi, loongson_edac_acpi_match);
-+
-+static struct platform_driver loongson_edac_driver = {
-+	.probe		= edac_probe,
-+	.remove		= edac_remove,
-+	.driver		= {
-+		.name	= "loongson-mc-edac",
-+		.acpi_match_table = loongson_edac_acpi_match,
-+	},
-+};
-+module_platform_driver(loongson_edac_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Zhao Qunqin <zhaoqunqin@loongson.cn>");
-+MODULE_DESCRIPTION("EDAC driver for loongson memory controller");
-
-base-commit: e14232afa94445e03fc3a0291b07a68f3408c120
--- 
-2.43.0
-
+The overall series looks good to me. However, I noticed a few checkpatch.pl warnings
+that could be addressed. After fixing them:
+Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
 
