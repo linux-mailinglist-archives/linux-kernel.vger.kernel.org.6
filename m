@@ -1,71 +1,78 @@
-Return-Path: <linux-kernel+bounces-410156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 424E79CD552
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 03:21:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCC49CD565
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 03:33:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4D8EB23156
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 02:21:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5229281BBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 02:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CC61459EA;
-	Fri, 15 Nov 2024 02:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHpFN8nq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F260810F2;
-	Fri, 15 Nov 2024 02:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D700314A4FF;
+	Fri, 15 Nov 2024 02:33:00 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 8D69057333;
+	Fri, 15 Nov 2024 02:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731637292; cv=none; b=SNrYopF7NP4dwJFg3IGoaLIPU5e3KUyC+IVGhK4+n3gHtczEcDFRrkablY5McuE+MWgCIsdlWeEjHB0XR2Evy4iU9hrOqOqHa/LVJjy90Y4maJLB5WOCgr13btBCYyoVhPzvifqZ7/Q1jUNjvw13xqT5llnv3NZX1QHOdwp6xVs=
+	t=1731637980; cv=none; b=aKSvRH+Q0ycrnzv8S6gP0WfKtOdC7tMiT+174gZo3WE1EeU7LapK6SLA17EDmiwwMnjBsL3NYE8wtsoM2KHxZiS/1zY+uakzx0wZYDg+IDC3ENq5OguBJN7iPsZseCe5v6RmfWiq6/2EqEFsRzs5wv1+ChvR5HrIBwXs7N1DxyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731637292; c=relaxed/simple;
-	bh=Q8Ybzo1fId6IBFRGK6t66WdQaQjuTFAu8RDFlvU8oD0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QBLZxeEYnA1b7CHgt4/yehR4vCIj3La2MJXxdsLnri62IVQajQ5TrC2BQxSm4zQmUYabnYqyCqKImOyixA74aHjkPWzJ85uZf0jnDo8/l63+JbXbGHCH7MqH2yFeEYUiMqriGVjI4aTzkkHgecMEyX1uUQUSHaTdrKXFzo5EzzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHpFN8nq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB8F0C4CECD;
-	Fri, 15 Nov 2024 02:21:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731637291;
-	bh=Q8Ybzo1fId6IBFRGK6t66WdQaQjuTFAu8RDFlvU8oD0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VHpFN8nqYC6JJlCK4yIe/fqJyowZ6Byk1Lo9qxkQf0fcrAP58M9VCoUo1PotuNYDR
-	 pTyafyT3Nrus8GdJHxugAx+A9drmBh30nC01feya6EQYkQ5mwMW7JnX6rZoQF4bV66
-	 4gsi0tTs8U5UsCmi122jDnA7FlMRcd+tbucropIGjJcBlT9xUe4L0fu4ku6v6W9bKp
-	 8Qqej+eA0T/7MPy9QqetE7DbiQBWgiXU8cUJhWTs+Kc0ThmdW5/Ewtf+VWygWZIqYy
-	 EqLswuxRjlC9fs6wfZvqlUPoqJF6gw9nTG3YrGQDhmmNxMQv7+qo55DyZlbuuOY8MA
-	 jVySonrl4/aPg==
-Date: Thu, 14 Nov 2024 18:21:29 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: <jiang.kun2@zte.com.cn>
-Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
- <horms@kernel.org>, <corbet@lwn.net>, <jmaloy@redhat.com>,
- <lucien.xin@gmail.com>, <netdev@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <tu.qiang35@zte.com.cn>, <xu.xin16@zte.com.cn>
-Subject: Re: [PATCH linux-next] Documentation: ticp: fix formatting issue in
- tipc.rst
-Message-ID: <20241114182129.0b24d293@kernel.org>
-In-Reply-To: <20241114200611368_vpMExu265JwdZuArEo_D@zte.com.cn>
-References: <20241114200611368_vpMExu265JwdZuArEo_D@zte.com.cn>
+	s=arc-20240116; t=1731637980; c=relaxed/simple;
+	bh=OX1t5DPbooVFsbdG4KwG5aXVwsLvCwuExJhDiWSi97M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=r9GbpJpkvYKiEuQzY9uVhMx18wOmya9AKir4APsnE92hg/I+Ha6MLfhxUvWHzUvHwH4HTvaNW98ieeoifTHPhFzJUb1fCJ15cjgYXPMJOphKaW7A2Y2TWZIi4rVhmMa0aoC0gvLiiPmFh0gyjh9P7LeLw0rBVsboouHNgDfy/ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from localhost.localdomain (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id D73CE619C974D;
+	Fri, 15 Nov 2024 10:32:48 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: stuyoder@gmail.com,
+	laurentiu.tudor@nxp.com,
+	nathan@kernel.org,
+	ndesaulniers@google.com,
+	morbo@google.com,
+	justinstitt@google.com,
+	dan.carpenter@linaro.org
+Cc: Su Hui <suhui@nfschina.com>,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH v2 0/2]  bus: fsl-mc: Fix two double free problems in fsl_mc_device_add()
+Date: Fri, 15 Nov 2024 10:32:05 +0800
+Message-Id: <20241115023206.3722933-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 14 Nov 2024 20:06:11 +0800 (CST) jiang.kun2@zte.com.cn wrote:
-> Subject: [PATCH linux-next] Documentation: ticp: fix formatting issue in tipc.rst
+This patchset fixes two double free problems in fsl_mc_device_add().
+One is reported by clang static checker, another is reported by Dan when
+reviewing the code.
 
-typo in the subject ticp -> tipc
+ps: There is only patch 1 in v1 patch, patch 2 has no v1 version.
+
+v1: https://lore.kernel.org/all/20241114082751.3475110-1-suhui@nfschina.com/
+
+Su Hui (2):
+  bus: fsl-mc:  Fix the double free in fsl_mc_device_add()
+  bus: fsl-mc: using put_device() when add_device() failed in
+    fsl_mc_device_add()
+
+ drivers/bus/fsl-mc/fsl-mc-bus.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
 -- 
-pw-bot: cr
+2.30.2
+
 
