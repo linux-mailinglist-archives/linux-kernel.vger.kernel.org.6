@@ -1,158 +1,67 @@
-Return-Path: <linux-kernel+bounces-410705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B43789CDFEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:29:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4007D9CDFEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:29:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4FBF280E34
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:29:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0374A281FEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B7C1C07C4;
-	Fri, 15 Nov 2024 13:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="omP7zZoL"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1201C07F2;
+	Fri, 15 Nov 2024 13:27:15 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97BD1BF7FC;
-	Fri, 15 Nov 2024 13:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505F81C07E6;
+	Fri, 15 Nov 2024 13:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731677223; cv=none; b=NwfsIeXnfee8bN0Lk3sefEApxHPtUni09vLINj815Z1flsEp/Zbs82Ssnz0xfuBHvCj3mMLSMHvgvBG3J7qskdUBApRqsCXTVB7hKI7gKCY7PBOcuXjYVbq6U3YaQmv+3m3rkl5xLoSVW/lnkts6yXtrtiEjHly71ozTKk7cKBY=
+	t=1731677235; cv=none; b=NdflypfgH5aioa0sWwyKkcnglMS42cB99Av7VY1cCvef68QfxprmoIuNT5D0pgVvU6YWO7zqyItov5yH6LSqjW7BqrxYDJ2L7WZzZZI9sjBQ6RTcYIv2aogawKetUjns8XSTZEmreSdIOnPcgTlCFQIVFArNU/xMTp5m7Gy7s0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731677223; c=relaxed/simple;
-	bh=xmb6AeeJzlrkGrfBGxdwUoyxLn2DL5/bv17R11jozjA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=S8JGfEcdV5voaCw8jD9NIJpo6p4XhnmKlAk6LhxuMOabHJLLwJRK96Oz+hpa/w6F065SC+BnKEuoGJzpPLabsIQ2Wal6ot51fj4f6zyy3xRr/f8Ytr1tYgHoGUDxggsGKgXvIu63QEndLhKZWjQbt5H6PqoGUWNHHVH8Izx1alQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=omP7zZoL; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from ldvnode.intra.ispras.ru (unknown [10.10.2.153])
-	by mail.ispras.ru (Postfix) with ESMTPSA id BDDCA40777D2;
-	Fri, 15 Nov 2024 13:26:55 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru BDDCA40777D2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1731677215;
-	bh=1e1LOUtI0Astf/a7ioL+raSU9vL4XmV0G94gVl8ZTzA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=omP7zZoLTS3qTb2wHMaUKEYSdvj2aRwzUayVpDedz18JlYgjCW/T1J77VZLAhifpF
-	 tWkxPCmDCuE+bKNCgd61u5jWKhkHmQEk8LPHnSWRZ2dEno85iLZCNS08rRLC1rp4cH
-	 GO32E5lDSfPXhciACWi1DWaBIbaHF5xpLGgP+vKE=
-From: Vitalii Mordan <mordan@ispras.ru>
-To: Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: Vitalii Mordan <mordan@ispras.ru>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	Fedor Pchelkin <pchelkin@ispras.ru>,
-	Alexey Khoroshilov <khoroshilov@ispras.ru>,
-	Vadim Mutilin <mutilin@ispras.ru>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCH net-next v3] stmmac: dwmac-intel-plat: remove redundant dwmac->data check in probe
-Date: Fri, 15 Nov 2024 16:26:32 +0300
-Message-Id: <20241115132632.599188-1-mordan@ispras.ru>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1731677235; c=relaxed/simple;
+	bh=t4T2XHdtaRZDeVjyalXTBY+pLv2dFJNSc9eDjmvyR60=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CiLRLkjrPEJE1aUIRogN3af5BbQKGsRVn6OI3lltB9iirUNClMdU8HdkzQInc9s2H2104qqzWMCWFW9BEhpWZDyiU2ZgwkQaszgck1wInkHHpeMlpa69MD4BRdf6lMZcZaV9nmUkyCdcwGs6xok1tVuMaM1N5j7LjoObClpWnyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF660C4CECF;
+	Fri, 15 Nov 2024 13:27:13 +0000 (UTC)
+Date: Fri, 15 Nov 2024 08:27:37 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Marco Elver <elver@google.com>
+Cc: Kees Cook <keescook@chromium.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Oleg Nesterov <oleg@redhat.com>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Dmitry
+ Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com
+Subject: Re: [PATCH v3 1/2] tracing: Add task_prctl_unknown tracepoint
+Message-ID: <20241115082737.5f23e491@gandalf.local.home>
+In-Reply-To: <CANpmjNPuXxa3=SDZ_0uQ+ez2Tis96C2B-nE4NJSvCs4LBjjQgA@mail.gmail.com>
+References: <20241108113455.2924361-1-elver@google.com>
+	<CANpmjNPuXxa3=SDZ_0uQ+ez2Tis96C2B-nE4NJSvCs4LBjjQgA@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The driver’s compatibility with devices is confirmed earlier in
-platform_match(). Since reaching probe means the device is valid,
-the extra check can be removed to simplify the code.
+On Fri, 15 Nov 2024 13:00:00 +0100
+Marco Elver <elver@google.com> wrote:
 
-Signed-off-by: Vitalii Mordan <mordan@ispras.ru>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
----
-v2: Add a comment explaining why dwmac->data cannot be NULL, as per
-Andrew Lunn's request.
-v3: Resolve merge conflicts.
- .../stmicro/stmmac/dwmac-intel-plat.c         | 53 ++++++++++---------
- 1 file changed, 28 insertions(+), 25 deletions(-)
+> Steven, unless there are any further objections, would you be able to
+> take this through the tracing tree?
+> 
+> Many thanks!
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c
-index a433526dcbe8..d94f0a150e93 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c
-@@ -97,35 +97,38 @@ static int intel_eth_plat_probe(struct platform_device *pdev)
- 	dwmac->dev = &pdev->dev;
- 	dwmac->tx_clk = NULL;
- 
-+	/*
-+	 * This cannot return NULL at this point because the driver’s
-+	 * compatibility with the device has already been validated in
-+	 * platform_match().
-+	 */
- 	dwmac->data = device_get_match_data(&pdev->dev);
--	if (dwmac->data) {
--		if (dwmac->data->fix_mac_speed)
--			plat_dat->fix_mac_speed = dwmac->data->fix_mac_speed;
--
--		/* Enable TX clock */
--		if (dwmac->data->tx_clk_en) {
--			dwmac->tx_clk = devm_clk_get(&pdev->dev, "tx_clk");
--			if (IS_ERR(dwmac->tx_clk))
--				return PTR_ERR(dwmac->tx_clk);
-+	if (dwmac->data->fix_mac_speed)
-+		plat_dat->fix_mac_speed = dwmac->data->fix_mac_speed;
-+
-+	/* Enable TX clock */
-+	if (dwmac->data->tx_clk_en) {
-+		dwmac->tx_clk = devm_clk_get(&pdev->dev, "tx_clk");
-+		if (IS_ERR(dwmac->tx_clk))
-+			return PTR_ERR(dwmac->tx_clk);
-+
-+		ret = clk_prepare_enable(dwmac->tx_clk);
-+		if (ret) {
-+			dev_err(&pdev->dev,
-+				"Failed to enable tx_clk\n");
-+			return ret;
-+		}
- 
--			ret = clk_prepare_enable(dwmac->tx_clk);
-+		/* Check and configure TX clock rate */
-+		rate = clk_get_rate(dwmac->tx_clk);
-+		if (dwmac->data->tx_clk_rate &&
-+		    rate != dwmac->data->tx_clk_rate) {
-+			rate = dwmac->data->tx_clk_rate;
-+			ret = clk_set_rate(dwmac->tx_clk, rate);
- 			if (ret) {
- 				dev_err(&pdev->dev,
--					"Failed to enable tx_clk\n");
--				return ret;
--			}
--
--			/* Check and configure TX clock rate */
--			rate = clk_get_rate(dwmac->tx_clk);
--			if (dwmac->data->tx_clk_rate &&
--			    rate != dwmac->data->tx_clk_rate) {
--				rate = dwmac->data->tx_clk_rate;
--				ret = clk_set_rate(dwmac->tx_clk, rate);
--				if (ret) {
--					dev_err(&pdev->dev,
--						"Failed to set tx_clk\n");
--					goto err_tx_clk_disable;
--				}
-+					"Failed to set tx_clk\n");
-+				goto err_tx_clk_disable;
- 			}
- 		}
- 
--- 
-2.25.1
+This isn't my file. Trace events usually belong to the subsystems that
+use them. As this adds an event to kernel/sys.c which doesn't really have
+an owner, then I would ask Andrew Morton to take it.
 
+-- Steve
 
