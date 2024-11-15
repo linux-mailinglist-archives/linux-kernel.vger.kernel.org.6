@@ -1,110 +1,182 @@
-Return-Path: <linux-kernel+bounces-411468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 747139CFA55
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:46:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 731289CFB04
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:19:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2902C1F257C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:46:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14DE3B2CEF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A17191F69;
-	Fri, 15 Nov 2024 22:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB371922DC;
+	Fri, 15 Nov 2024 22:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Whyit7I0"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Xz6Mt27D"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B130B18BBB0
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 22:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F61917BB32;
+	Fri, 15 Nov 2024 22:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731710806; cv=none; b=CzMicjwMjTPNarQmQivjGPr+/StklcwDN7fnc3V6IJD9G5HS1a9vu1P6u+RxWJMB2Qn2II7X08ybzLGayX7H/Rq4Bauq03kk3bG74S0XNNxzTnqb7appSlmcqJFmI253FpCSPN2TfL5TbeUhz2vRbUl1EPeSVxwxNk9mXHeqo38=
+	t=1731711009; cv=none; b=J2x7XW+IEpNoUe8rH9uJfiYJOvpWMU9Pk64KM/PC6jEW9b5cIVibKENes8c6Te9O41NaUsVEziFOzyQmEpObdhlSJP2FLFX/9qOxE5dfkjySOwLX3Z1SnTI34eK7mcMmSu9Qic7TGjUQxcPT/HhRe0ruF8CRmfjTldNeuQu0xSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731710806; c=relaxed/simple;
-	bh=SHfm1H6utnhnE/6b4Wl0eT3+Xuyn8mMuSgWmzDEK3G8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HKExBldowP9foLuQhlLTBem1rZCs1SSEoe9O9mQKMrlyAl7Goq6L4gO+JiWAHuETHhiaQOBPMna55ABXc0Fj+vJQyx7ggXqXP/MdnTcdTTWUVSOtVCfXHQTD4MUXA18Cnt8NVItxC+146s1LqKb3ap/Mzw1y1mtDRFUlq04c4mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Whyit7I0; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 15 Nov 2024 22:46:35 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1731710801;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F+XkfQkv61y6MHM2C1K/HEDEHbXtzc7+sIRDedcjJLs=;
-	b=Whyit7I076zGP5Iwr9ST+6OduULZjhg5bVi+kdfyPiaGLRPb4VHRWI5BJd5by6z9h4taTa
-	eu24NjZErNOggMrWrp1MDnHzDfGiBeLd7kwRPpIDowL2Bh/fbwqXjz7NuLubtNB4hTHxJ/
-	yWosy5VPqBgnWfQmUoaZXoekT93lwr4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Michal Hocko <mhocko@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH 1/2] mm: swap_cgroup: allocate swap_cgroup map using
- vcalloc()
-Message-ID: <ZzfPS_YFeWVhySQJ@google.com>
-References: <20241115190229.676440-1-roman.gushchin@linux.dev>
- <tygpha75uaeztnihylxyiguts2xfdzwr4arz4dwsygmbspdubr@gqwcze4d5ufd>
+	s=arc-20240116; t=1731711009; c=relaxed/simple;
+	bh=EPBhO/3fFFDG34vKMqFcFU48rUpYA4EvoMsttgim34w=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g17fE3pT9urTGkQuQl0jEcPBMTrJw8iXn5hPemBd7vgMcmDZIueBcH2n6dSJrlozi5P0DKMupoAC4eiuhJRVaXfEFLhnDYUugRbXEpugzhGe4c7JdqHGXk6eA+VktOpcNRYC9fD0foD/MfN/DT2c3nd+P0kDqOE2/Up8SBIJ000=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Xz6Mt27D; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AFCMWR7012975;
+	Fri, 15 Nov 2024 22:50:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=6PNE6+OfMxWFT7FW0ro/WbHK
+	WIUSDgbp8snCkqh0hic=; b=Xz6Mt27DrIsZvH5Xjq341X13BW2MlAmOpzHHAJhM
+	rn3Sa+c1BlVvq2KKNk3c/a6BOxXxnGrygvy3NNAh8/LRbY+V5ic1Wjoc84DuxCDA
+	Gwbs/+YwPGNTFTuOw+K3cWmECinJltzBa6JrTURNEy/k9QHPmRErGI45VLruG6BN
+	PKsOTTcDAW+Ll7mKEU7imrp4H5f/22yLX7QRnFz4b3RwPunVgtWdBSAUQBSgWNHV
+	S8yd+hrwMF0vAVJD//xq9prYce9/mhlJt+HQQXBiwjLgsycfqG6N7r1KRDNeVIqy
+	C+hQ0frSOKBUd66xn251WDt+hURQ8xf43yc6G6fghP9iEw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42wwddb096-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 22:50:02 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AFMo2UI032522
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 22:50:02 GMT
+Received: from hu-wasimn-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 15 Nov 2024 14:49:58 -0800
+Date: Sat, 16 Nov 2024 04:19:54 +0530
+From: Wasim Nazir <quic_wasimn@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 5/5] arm64: dts: qcom: Add support for QCS9075 Ride &
+ Ride-r3
+Message-ID: <ZzfQEgDm5xOOJ3E/@hu-wasimn-hyd.qualcomm.com>
+References: <20241110145339.3635437-1-quic_wasimn@quicinc.com>
+ <20241110145339.3635437-6-quic_wasimn@quicinc.com>
+ <w43u62ikaixw6pkianhnnmlqutkkzsjomhnj7szgxriuh3jvvn@x5mhnnigrnls>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <tygpha75uaeztnihylxyiguts2xfdzwr4arz4dwsygmbspdubr@gqwcze4d5ufd>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <w43u62ikaixw6pkianhnnmlqutkkzsjomhnj7szgxriuh3jvvn@x5mhnnigrnls>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: PBzZ7YeFbrCLgH6IUn4Nsd0dxB94qpc2
+X-Proofpoint-ORIG-GUID: PBzZ7YeFbrCLgH6IUn4Nsd0dxB94qpc2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=960 mlxscore=0
+ malwarescore=0 bulkscore=0 priorityscore=1501 impostorscore=0
+ lowpriorityscore=0 clxscore=1015 spamscore=0 phishscore=0 suspectscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411150192
 
-On Fri, Nov 15, 2024 at 12:17:43PM -0800, Shakeel Butt wrote:
-> On Fri, Nov 15, 2024 at 07:02:28PM +0000, Roman Gushchin wrote:
-> > Currently swap_cgroup's map is constructed as a vmalloc()'s-based
-> > array of pointers to individual struct pages. This brings an
-> > unnecessary complexity into the code.
+On Fri, Nov 15, 2024 at 06:06:19PM +0200, Dmitry Baryshkov wrote:
+> On Sun, Nov 10, 2024 at 08:23:39PM +0530, Wasim Nazir wrote:
+> > Add device tree support for QCS9075 Ride & Ride-r3 boards.
+> > QCS9075 Ride & Ride-r3 are similar to QCS9100 Ride and Ride-r3
+> > boards but without safety monitoring feature of SAfety-IsLand
+> > subsystem.
+> 
+> What is the difference between Ride and Ride-r3 which requires a
+> separate DT for the -r3 variant?
+Difference between ride and ride-r3 is in ethernet phy.
+Ride uses 1G phy while ride-r3 uses 2.5G phy and both has its own
+corresponding DT nodes which will be added at later stage.
+
+I will update the commit message in next series to point out the
+difference.
+> 
 > > 
-> > This patch turns the swap_cgroup's map into a single space
-> > allocated by vcalloc().
+> > Signed-off-by: Wasim Nazir <quic_wasimn@quicinc.com>
+> > ---
+> >  arch/arm64/boot/dts/qcom/Makefile            |  2 ++
+> >  arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts | 12 ++++++++++++
+> >  arch/arm64/boot/dts/qcom/qcs9075-ride.dts    | 12 ++++++++++++
+> >  3 files changed, 26 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
+> >  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-ride.dts
 > > 
-> > Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
+> > diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> > index 5d9847119f2e..91c811aca2ca 100644
+> > --- a/arch/arm64/boot/dts/qcom/Makefile
+> > +++ b/arch/arm64/boot/dts/qcom/Makefile
+> > @@ -116,6 +116,8 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
+> >  dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2.dtb
+> >  dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
+> >  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9075-rb8.dtb
+> > +dtb-$(CONFIG_ARCH_QCOM)	+= qcs9075-ride.dtb
+> > +dtb-$(CONFIG_ARCH_QCOM)	+= qcs9075-ride-r3.dtb
+> >  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride.dtb
+> >  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride-r3.dtb
+> >  dtb-$(CONFIG_ARCH_QCOM)	+= qdu1000-idp.dtb
+> > diff --git a/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts b/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
+> > new file mode 100644
+> > index 000000000000..a04c8d1fa258
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
+> > @@ -0,0 +1,12 @@
+> > +// SPDX-License-Identifier: BSD-3-Clause
+> > +/*
+> > + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+> > + */
+> > +/dts-v1/;
+> > +
+> > +#include "sa8775p-ride-r3.dts"
+> > +
+> > +/ {
+> > +	model = "Qualcomm Technologies, Inc. QCS9075 Ride Rev3";
+> > +	compatible = "qcom,qcs9075-ride-r3", "qcom,qcs9075", "qcom,sa8775p";
+> > +};
+> > diff --git a/arch/arm64/boot/dts/qcom/qcs9075-ride.dts b/arch/arm64/boot/dts/qcom/qcs9075-ride.dts
+> > new file mode 100644
+> > index 000000000000..9ffab74fb1a8
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/qcom/qcs9075-ride.dts
+> > @@ -0,0 +1,12 @@
+> > +// SPDX-License-Identifier: BSD-3-Clause
+> > +/*
+> > + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+> > + */
+> > +/dts-v1/;
+> > +
+> > +#include "sa8775p-ride.dts"
+> > +
+> > +/ {
+> > +	model = "Qualcomm Technologies, Inc. QCS9075 Ride";
+> > +	compatible = "qcom,qcs9075-ride", "qcom,qcs9075", "qcom,sa8775p";
+> > +};
+> > --
+> > 2.47.0
+> > 
 > 
-> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+> -- 
+> With best wishes
+> Dmitry
 
-Thank you for reviewing the patchset!
-
-> 
-> [...]
-> > @@ -215,19 +169,8 @@ void swap_cgroup_swapoff(int type)
-> >  	mutex_lock(&swap_cgroup_mutex);
-> >  	ctrl = &swap_cgroup_ctrl[type];
-> >  	map = ctrl->map;
-> > -	length = ctrl->length;
-> >  	ctrl->map = NULL;
-> > -	ctrl->length = 0;
-> >  	mutex_unlock(&swap_cgroup_mutex);
-> >  
-> > -	if (map) {
-> > -		for (i = 0; i < length; i++) {
-> > -			struct page *page = map[i];
-> > -			if (page)
-> > -				__free_page(page);
-> > -			if (!(i % SWAP_CLUSTER_MAX))
-> > -				cond_resched();
-> > -		}
-> > -		vfree(map);
-> > -	}
-> > +	kvfree(map);
-> 
-> Any reason to use kvfree() instead of just vfree()?
-
-No, you're right, vfree() is a better choice here.
-
-Andrew, do you prefer a v2 or it's easier to master a fix-up?
-
-Thank you!
+Thanks & Regards,
+Wasim
 
