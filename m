@@ -1,307 +1,146 @@
-Return-Path: <linux-kernel+bounces-411134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F2999CF38F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:04:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 683649CF403
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:33:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F754281440
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:04:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86FF7B2F10B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5AD1D9339;
-	Fri, 15 Nov 2024 18:04:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14401D90A2;
+	Fri, 15 Nov 2024 18:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CZIWAfl/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="17WXqp05"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF19E1D63D7;
-	Fri, 15 Nov 2024 18:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731693858; cv=fail; b=UJ7wC8oLS3RMh06TPiYIXrKDwxOGr2VAk1PanvKxnvkHWpSXYT6KA83pmW95P1tfDa++1/WhKH5eZvDnwskh5bbMzKEZjebNiJVqzrki5ORhskWiFqX/9g/N/YmovzF7cUnYdadOog/TkM9RX9B/oHNGpl4B5xq0AzXKhfs0RmA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731693858; c=relaxed/simple;
-	bh=mN50RIYXX1ARr/rNVuYZQCVtzOTHPQlI5Oij0sMwZ7k=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=t+IDTJe9yTw6Zc6Hv6Ky4mrpTM+IBiQXF7cYVGaKeSG7o/F8TTaGwZjyb2iTt6XgYPUhL+SnAwuS6zfsver3zIrXkhhvd+Q5L6ttxsc3xqumwz3Pce2DWoXOLXn7aUgCOALNqGsN44lm8VbwS6PoaQxy7UbPFksANrnF53QRQjw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CZIWAfl/; arc=fail smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731693856; x=1763229856;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=mN50RIYXX1ARr/rNVuYZQCVtzOTHPQlI5Oij0sMwZ7k=;
-  b=CZIWAfl/80RaRFk5Hve/f5StJJ08ujTAoYQi1Mw8MkuxRKsDLpWw0l4H
-   Duy46JBUdSzCAnkHEGmPuN4KI7dZkimLJbel/CuWYIlPLZKW/7pcNgqXv
-   js3xC7WTx6n67DSarMG8PXqeQ/eKkfB0y4gXQsXU0qsz4rLQxS0vb+bQ7
-   PsSUjEUETMOD4QyCKNaSA79FiFN7nmrce12BForkgtHl/xTuf06Dq63FZ
-   z3Rhp2yrmcDPGQrBMDfErsbfSUvPcdaexFD2YAU9PPmDakaFFwDCvrfOd
-   9CjR0MerFsQn6b69mmsDUwzzHwxycTpMZhNb77fN4iW45y4Wna4TMcSrR
-   Q==;
-X-CSE-ConnectionGUID: DJHHMWYtS4GsBeSW8G+v5w==
-X-CSE-MsgGUID: q0wHy8LWRL6B4Nf5Yv/Uuw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11257"; a="31095192"
-X-IronPort-AV: E=Sophos;i="6.12,157,1728975600"; 
-   d="scan'208";a="31095192"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 10:04:08 -0800
-X-CSE-ConnectionGUID: ++6jkSkRS3ysRNjAvGsX9w==
-X-CSE-MsgGUID: j68TWkw0RsW22WFeeUGc8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,157,1728975600"; 
-   d="scan'208";a="92708522"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 15 Nov 2024 10:04:08 -0800
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 15 Nov 2024 10:04:07 -0800
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 15 Nov 2024 10:04:07 -0800
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.43) by
- edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 15 Nov 2024 10:04:07 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YlGQ8S3axwXROpNCTxEVE0NxkOj79049u+qlh2sz7ElgShXb/xdPKUWSsGaPVhtfRi9TWexcCPVM0xwzCepRqPt+9wBghO/2s2zIX0UPoz4/sVT9GTLPywbdENekVNo6WYFp0r8M9E122XbtHU9umebG2lYzh20Mc0DtwcyUMgZcI7oguh4AQR4YI5/CuRj4enQSpD4EemXI3AC5lR9KqcCX5DeZ3zXBY/nEri+X2DnWU7kQ7lyiY4MEQYD+MuLS3sDzkQuW9nz4QJb1txjN9mT1ez02NeeiP7THuSbsR2oFUo7OfzRBtpxKcIpvHQbDzUWf7hj+MhOROL01dJqQWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+lCbDgVBvMU65XY312NU73nW/BJz97hO77RcbKA1asw=;
- b=aiJ9qsFRA+0nZKEQPYo2ji25rkmcEeIb3H9cpyvHjiXpVKV5GM433x5ogWqdlvrlKT/8iQfYu1Lmq2fKqgCswE8HNlAO2EhYZe+5/OZgoH0BD2k5tcjb82j8YhicLF8lgW8YU9V9VUxArvU79uwZILXHaaQ92eQQcQuw0vx2W6dkmKIA89sV8Kwmmn4q0xjaqnCbEoZSu33U7rhahq5X5HbVQGpNLiyj6QS7EY+NtgVPYXuDbI+PFs83IZ387IjzaiVE9eqtFoC2FXAcdnPyo/Xtpyh4EbF/H28QUwYTlgPBp/meLSVc3SfpqXpPuxTwjc8VOsSZ6+IDp9NBNxIEWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL3PR11MB6508.namprd11.prod.outlook.com (2603:10b6:208:38f::5)
- by CH3PR11MB8187.namprd11.prod.outlook.com (2603:10b6:610:160::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.20; Fri, 15 Nov
- 2024 18:04:03 +0000
-Received: from BL3PR11MB6508.namprd11.prod.outlook.com
- ([fe80::1a0f:84e3:d6cd:e51]) by BL3PR11MB6508.namprd11.prod.outlook.com
- ([fe80::1a0f:84e3:d6cd:e51%3]) with mapi id 15.20.8158.017; Fri, 15 Nov 2024
- 18:04:02 +0000
-Date: Fri, 15 Nov 2024 10:04:35 -0800
-From: Matthew Brost <matthew.brost@intel.com>
-To: Su Hui <suhui@nfschina.com>
-CC: <balasubramani.vivekanandan@intel.com>, <lucas.demarchi@intel.com>,
-	<thomas.hellstrom@linux.intel.com>, <rodrigo.vivi@intel.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
-	<nathan@kernel.org>, <ndesaulniers@google.com>, <morbo@google.com>,
-	<justinstitt@google.com>, <francois.dugast@intel.com>,
-	<intel-xe@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>,
-	<kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH v2] drm/xe/hw_engine_group: Fix bad free in
- xe_hw_engine_setup_groups()
-Message-ID: <ZzeNM5dmKb22VoRw@lstrano-desk.jf.intel.com>
-References: <20241115024941.3737042-1-suhui@nfschina.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241115024941.3737042-1-suhui@nfschina.com>
-X-ClientProxiedBy: MW3PR06CA0003.namprd06.prod.outlook.com
- (2603:10b6:303:2a::8) To BL3PR11MB6508.namprd11.prod.outlook.com
- (2603:10b6:208:38f::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7071CF2B7
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 18:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731694050; cv=none; b=L617S87BMgLOdq+tGzrzSvLmO4O+TzKgc3ix9yq4zCfoc8kY3kOrWah3N3a/+zeU5m9enZxr72vqrB4gDUJhql7zWovJPHw6hZtf3di6eBn5AaUlYaw71Dr9sb4UZZMVaAcmig+bNQPkaW98eZy7XHy1nYjA0xrmbKcU/+IpZRg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731694050; c=relaxed/simple;
+	bh=AH9lmUK/nV3spgNCYYokydJm+WFX/Jy8tWVheghWbEw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=WEC1Ujrv1d/VCEO8kQrpJeAhTa5onAVyOMANl5b+Mncz5AXO4k9uaQv/lRmuRvbmgRvBt9tF8NP3QC0YHG7NGqrCHwJ9s6cYF+npBs5ztO6UbsRsIGKWj2B5LyoQzSyJPhbL9Z3fixIErz0PTKr7477yMWQmSkaGBYCPl0WvdwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=17WXqp05; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43162cf1eaaso22584655e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:07:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731694044; x=1732298844; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o419LoPHEwZk9uqC04SIW17qJKyWQe/rAVJ23MnW91M=;
+        b=17WXqp0579ZvxyQ9DfImD7X+mA9B4kj59aZMMqw8/xhnrfgYcrEUJBe3RE8yN3f5Jl
+         izuahg5wYJGyaPF0wUjwvpxSHOlfI2hs0e1RDPST6dBUOmfKf286i6qsk4F71eSOSWzA
+         okvEZSO3qr+r+jbNMI43tjRpTA3huL+hWQQHeijB15ynEF+fvNw0olb8KZMzE1oy235i
+         5kzEGsgckpXD8+D5J0TXQngeT7e9qBrZBRWonMbsHgYj916JUBJCmdOpLWoh+WymlTXB
+         hq+wgTzkAuvgDGxIH+f+Kl13Dz2JTfo4Z8inP+z0ElfPyC1RF62zzr9wVBByPXfZy6K+
+         JTpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731694044; x=1732298844;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o419LoPHEwZk9uqC04SIW17qJKyWQe/rAVJ23MnW91M=;
+        b=nvM0wznOHRRHqETI9QK1BcOz3h33zhfR2lWQRiZlA9a8p/a23kVKUQgFbWxxGWKzVJ
+         joY30TWQTjCGy4glFappXM/FCpddyRfcBZ9XZHd/STNLRFab+yGXvWy2tyerUN98cgOe
+         rD1wtibN2QzLwj8DPr1gCRiiiywyogMa3v6e6oCrkVlVXOJ2xqcdT8snsyBwOqLnXRZw
+         joovzQYNrnrn4X5W07wtfrkvGrV1xKj8rKHTjxGfTK8wYO4uc0XB88rhWb88CbZaD4q0
+         McZmTDwjpCrMmkJRY8FBFOwunO89uaG8UUqVnsaupAXjKRfb7+G9XaaU8/AVX2VyJYIZ
+         XHog==
+X-Gm-Message-State: AOJu0YwdS/hZr7q/5dZMkcWXhmCSnv5b4eJMU1OOVItRCbuqLtMpO+S6
+	wp21IeQVHJpooBIjenmAQEIu8bqbfUmSbKL1+2zt/47H6vkFHb8/MOlrDzZ7giIag8u8V0R/3Hn
+	g
+X-Google-Smtp-Source: AGHT+IG7RtnvTlDkMryRojxaNybiE5sp971d9ovbcqBFKVQ5zzkyDuenimLIyd8f6VCrJr4dMs8DRQ==
+X-Received: by 2002:a05:600c:3583:b0:431:5f8c:ccb9 with SMTP id 5b1f17b1804b1-432df74fc2emr41328725e9.17.1731694043625;
+        Fri, 15 Nov 2024 10:07:23 -0800 (PST)
+Received: from localhost.localdomain ([188.27.128.50])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821adbbd82sm4957755f8f.52.2024.11.15.10.07.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 10:07:23 -0800 (PST)
+From: Alexandru Ardelean <aardelean@baylibre.com>
+To: linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org
+Cc: laurent.pinchart@ideasonboard.com,
+	manivannan.sadhasivam@linaro.org,
+	sakari.ailus@linux.intel.com,
+	mchehab@kernel.org,
+	kieran.bingham@ideasonboard.com,
+	naush@raspberrypi.com,
+	Alexandru Ardelean <aardelean@baylibre.com>
+Subject: [PATCH v2] drivers: media: imx296: Add standby delay during probe
+Date: Fri, 15 Nov 2024 20:07:17 +0200
+Message-ID: <20241115180717.10820-1-aardelean@baylibre.com>
+X-Mailer: git-send-email 2.46.1
+In-Reply-To: <20241115142021.574402-1-aardelean@baylibre.com>
+References: <20241115142021.574402-1-aardelean@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR11MB6508:EE_|CH3PR11MB8187:EE_
-X-MS-Office365-Filtering-Correlation-Id: 18e3ed5b-d5d4-4d0e-9a34-08dd059fe31f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?YnNta25QZmJaeE1XdFplS2ZMV2NXS1E4Tlg0OEhqY2ZpcUVsUXAyS0dOMngw?=
- =?utf-8?B?SHhtVEdpdWdCL1BqZndrbzZaQ2xmaGRycDRiYlMweGczakRUbW44VElrdHcy?=
- =?utf-8?B?ZXUxZy96ZmhaZnl4R1dvc25Xc0lFdXF2Qm4yY1g3alNYcXRTN0ZwK05KWHln?=
- =?utf-8?B?ajkwRExQbHhQc2RVd1hyTWxWYTk4alJENDJJRzBuVXJGZVYwdmhtdmYraXRL?=
- =?utf-8?B?d0tZM2ZudEt0VmJnT1dVRWFqRGJIZWZTYmQ4TzZ4VVBFWEpYMWlhQU9KVC9Y?=
- =?utf-8?B?dWtJRUlhVE1XaXYrYzlmQjJBQ29JQlhEcEtkL1I1Y0h4RHNUa1I5ZUIzbXRt?=
- =?utf-8?B?VUxZYVBSZDNlaDFrRFBYSG9uWk9BY2U3RU42MkQ5amx1ME1sTUxEaGNrUVVT?=
- =?utf-8?B?a1daeUhXM2dSNzFkZGZmaTJxQzRwQXR4TG1CYkhIS0s1SVdVS2VldHU0ZUxU?=
- =?utf-8?B?ZWx0Q3FoaG9pSzJnUG1sc0hMdUg3djlkK1NQM1VzQk5iR3ZtUlU4UDJGM3l0?=
- =?utf-8?B?Qm9KYVhXVVN6Y3pWd2NzNlkrR1M5aWd0dE1TaHRDRFk5cUxNOG9QRFA3ajBp?=
- =?utf-8?B?L2RoU0l6TEFFUG1VdWJETzQ4cFN1ZlNUQ0o5K1NXVERBblFVVENMQ3NEemZQ?=
- =?utf-8?B?Q2xCWm0yaWkyTzE2RzlTZnozUGJhdWxaMGo2VXF5QVNSa0dhamNyWm50cU9W?=
- =?utf-8?B?OGJwRHY5UlNmZlF5Sk0zWnBpa2xDQlpQRnFFYjJDQzA0bkZ2aWJ6a1ZFQUhS?=
- =?utf-8?B?WFRyclVDTTdQWCtxbGxBWm8wQzcwQnhyNVdtYmg2NGxmQlJTd0VKQjJ1OVdr?=
- =?utf-8?B?YWdFVSs5SGk5V0QxdUhGVUFkTmk2N09OeFBiZ0tjNEV6NTBOY3RGS1BPNFRK?=
- =?utf-8?B?UGxXa0swNnBBWk9EQldQN0paYkI2M0U4cEJnWnEvUGtUTmVSeSs0aERXck13?=
- =?utf-8?B?YXJKYnczT0pLbXJPOVdiaTMwbmVUcDFnQVpVMmlaaThleEY0SUg4V3pCTTZr?=
- =?utf-8?B?VGUrc0M2RG10cWhtVHp1dVpXRUJ6ZEgyelRjcTNJblk3Q0RnZjAxbjJwS1FJ?=
- =?utf-8?B?Qk1KVUw5SGNSNCtha0ROL24xL1RzaExsQXdZVDNZQnBMclhRKysybDl4Sk5J?=
- =?utf-8?B?RCtsMkJwa2JhaTZycVYzaXFPMExNY3R3UyttVm1kYkVYeFgycGdCQTNvajFC?=
- =?utf-8?B?L3BCUDBPckNDSnQ5Wk5UNFljbW5QT291MS92bGtzZUNUU2pNMk5XVE1qY2xU?=
- =?utf-8?B?WTkzT1crMVdSSTc1eFc3ZmFrRis5RzdZRkZDK1VhR0xsS3lQNE9hSElqYmNH?=
- =?utf-8?B?Q0k5Ym93UHJ4ZUpNRXhMWDFGbE9HMmt4Ry9HOStmZHFHcGZZbllQUFBBbXRY?=
- =?utf-8?B?U3NrN1N6VENPSW9TNnl6dS9rK2tpTms3R3JZSHJyQ094Wi9ZclBNaE8wck16?=
- =?utf-8?B?TWFmZnNVSGd6TmVkV2hZQUtIb1BSQ20rZDV6WDdiQ21VaWptNXZHR2xTdFF5?=
- =?utf-8?B?OFpUc3FzS0hPR25ocDlCL2k1ZmV2RDRwTGpPRHVVcnVkU3hmdTRSUU11NGhq?=
- =?utf-8?B?cjNTTUQ4L3puN0hDajRxY3BWOTdDaDdLY1F1b0RVTkU2OFd1WGRraTRMcDhF?=
- =?utf-8?B?MnQ1WnllL2ZzSk5wQmdXS2tFZDBIVEJ5L2t0MUhha1FwT1pYV01PcFBEbUVt?=
- =?utf-8?B?RkEzNEVia0piMkJkS0ZHYnl5MFRNdWYxSjVSUmJ3dmYwalBscTZtakthcTdm?=
- =?utf-8?Q?UqXv79gU1WNd4EdOfo+51M7QTtXCOXiNqPtNJ2O?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR11MB6508.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RWFlVmpNcm53bnp0dVFrU3RsdGN2dVY3cVlWckRQc0xKNzVORGMyVzRqRy9v?=
- =?utf-8?B?Si9hS3U0TEZRa3R3L21FVm4zV0RmZi9ITDRTWmVhdm40N255dTRCcmZ3dWlW?=
- =?utf-8?B?TURkcjJSOEhJaDNwOXpOL3BaOFZwK2tzNEFuR1JEM25UMzBGSWVaeTgrMUY5?=
- =?utf-8?B?VWRiRU5rb3BJZld6b0pHa3JTdmFDRXZ3enZaMlRJUk1lTFo0OUR1Zzh2QXNl?=
- =?utf-8?B?bm00UktINDlQemVpSCtIejR2cU5QdC9iOHlJODRzY3ZJc0NUNkRlY0VvWURF?=
- =?utf-8?B?a3FNT3o4K0VZZmd5YkFSSituWTBtWVY0L2M5VWp0WkV0ZGN2VFAxd0tiTUha?=
- =?utf-8?B?cVF3b2diM2tyUUJ2SXl4OEJ0WVdOWSt0Yk4vQzBQUzZEeXVaZ2Q5R2NuVmZI?=
- =?utf-8?B?UjNwOG9WckVsaERMaUNmZ1A3dDAybTErTnZGRkIzWm5kdU9CVVhqenhKY3d4?=
- =?utf-8?B?ekN4MU5sTE5GcmxzandNOEZzM1ZTbWVsbFFmZklEWHBXbEU4SWJiRHdkRjRS?=
- =?utf-8?B?WnNvRGVoQlFqejFGekgwSDlFQ1ZrdytFSXZucjI5U1JKenR1RnhJamlsQVhu?=
- =?utf-8?B?Z0xIdml2UncyRkd3OU9tcFo1MmlKcUJPaGQvMDZCamNTK09DdnVrSHk3WlBT?=
- =?utf-8?B?TTdiZU1jUUg5MkZXaDdRZGtTRkZWazRMRUp1SVRKZjRCcFhGRVZQN0hlcEU2?=
- =?utf-8?B?NGZPc1FERDVxRVczKzZZR0wvT3JFd0E3NlRaQ1VlTVNEekNyaDJzdzlLeGdq?=
- =?utf-8?B?NjJSYW9laUV3b1RHeFY0aklGM1RBQUs3N0FIODFRdGd3Y2xIWkcrMjY1QUtR?=
- =?utf-8?B?YnVvTDFIR2szRlVrM1Y0YkFEc2ljSlh3SlZBMmxvVDJOTFpRMEZlejVIdVJt?=
- =?utf-8?B?ZG0zU3Y1SFVRcEZCRGNON3ZGK2ZvaUpyeHR2d0ZPdVlyb1E5ancyL094SVhM?=
- =?utf-8?B?OE1LbEVWTDFuS2s2Q3FKNWF2aGR5eC91L2ZrMjZXckIxUkN6Sm80c2Y5SVd1?=
- =?utf-8?B?TWhhUXk0ajNEMFh0VmR1N2I2QzhiSzRuN1pIWFcyaTZJNFVnZTdRbEtmNHhl?=
- =?utf-8?B?aVFaRk1xNjVDb0tOd0RERFNjS1hVQTlrZkgzR0tSbFhrWWYydmpEVVFENGtm?=
- =?utf-8?B?TXpKTTNoNTMwWjVGemladGJWbWRMT2N0OFcwVlZ2RGlOdVVkOGFzVEp5RGFa?=
- =?utf-8?B?MnYvZDhGK21Nc0F2Z3hwclRUT2hzZEdjS2I5ZkhhdVJQd0tQeENCWHZoanRL?=
- =?utf-8?B?L0FYN0dJV1RxTURjU2dCRzhuWmI3V1VBUkU4MUNHMEtVcEloZVZxOWRyU0po?=
- =?utf-8?B?MzQzT3BmcGZvQXJQejQ2eTJuVWlTNTYrWlNqVDRvVWEwZVJDdmFVcDVaQXZk?=
- =?utf-8?B?Zk1iQ3pHWmk4YWFsNDE1L3RJMk8rYmFWaGJBcTFBZEtzdTU3aW82bHZmT245?=
- =?utf-8?B?WlNWNE9sdXk5NmVNTlFDNDlJdks5S3cwRHFHcVJmQUE5Y2U0bkk5UkdYZjlX?=
- =?utf-8?B?cWZSa0hrOTdoY2VFdjgyMHpLeTVIMUxmWlJiL1JiOHhXclhDNEdrZWNDYWJR?=
- =?utf-8?B?Y0d0N0IrWFptNTJjeloxVFZSaU9xdzFBNlVjN0t4SXRrY2M2RHRvVENYZ0ZX?=
- =?utf-8?B?K3d5dUFPTXdtVGNlQWxOL0hVV2pLRmhXL05xYituRjFZSFRZUkVuQnBEaWxn?=
- =?utf-8?B?ejE2WWF1dmF1Zmx3YXg3aFIwZUlnZDJGWkxhS3JQdmorK0h1QVBVcGpQeWpr?=
- =?utf-8?B?Y1ErWEU0aVpCcTROR2FqMmFWY0hHSFI5N1dLbGZrb3ZUY3d0Y2VzR2s0cVlm?=
- =?utf-8?B?V1p5cW84NHZxU2ZGYTJQS3ZES1ozRFZJUUdWcXUxQkxuaXZEejJnZU13OHkv?=
- =?utf-8?B?ekpmdXZwTmtHVksxdE1ybXAwY3BaWnFqZmpFN0dDaWVEbUdmMDFtZlVlNHNr?=
- =?utf-8?B?TlI2V0V1eU9wZDh0WE1vcDc3QjdFaWFwTlpXRXlmSnZlUVRwV0daMjUxSG1W?=
- =?utf-8?B?eUNaTnZBQndiczV5c0h5by9tMDdBZ0xLVllOUWpKWVJrbWprdjFla0RlRzc5?=
- =?utf-8?B?TTR0NytOZHV0QVM2a3dDbnY4NmJuY1VuKzdQSjQ4ZGl1S0pjQWpxRXdYdFZz?=
- =?utf-8?B?aEtjOHYwMEw5VkpUaDdUTDdpay82ZkVaaFJrTDAzWFNHbkx2MDhXNFpic2xs?=
- =?utf-8?B?Ync9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 18e3ed5b-d5d4-4d0e-9a34-08dd059fe31f
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR11MB6508.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2024 18:04:02.7357
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6QEkEc+3JFsjiQdsT3R8ax+5+29l8yjnmGdJCuNeVfsA9tKJMO4wqoP4A03Q9CjBbH5CkOyL9DKlCG0Q4ulTZQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8187
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 15, 2024 at 10:49:42AM +0800, Su Hui wrote:
-> Clang static checker(scan-build) warning：
-> drivers/gpu/drm/xe/xe_hw_engine_group.c: line 134, column 2
-> Argument to kfree() is a constant address (18446744073709551604), which
-> is not memory allocated by malloc().
-> 
-> kfree() can only handle NULL pointers instead of negitave error codes.
-> When hw_engine_group_alloc() failed, there is a bad kfree call for
-> negitave error codes in xe_hw_engine_setup_groups().
-> 
-> Free 'group' when alloc_workqueue() failed in hw_engine_group_alloc(), and
-> remove wrong kfree() in xe_hw_engine_setup_groups() to fix this problem.
-> It's safe to remove these kfree() because drmm_add_action_or_reset()
-> can free these by calling hw_engine_group_free().
-> 
-> Fixes: d16ef1a18e39 ("drm/xe/exec: Switch hw engine group execution mode upon job submission")
-> Fixes: f784750c670f ("drm/xe/hw_engine_group: Introduce xe_hw_engine_group")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
+From: Naushir Patuck <naush@raspberrypi.com>
 
-Thanks for thr fix. Look correct to me.
-Reviewed-by: Matthew Brost <matthew.brost@intel.com>
+Add a 2-5ms delay when coming out of standby and before reading the
+sensor info register durning probe, as instructed by the datasheet. This
+standby delay is already present when the sensor starts streaming.
 
-> ---
-> v2:
->  - remove wrong destroy_workqueue() and kfree() in v1 patch
-> v1:
->  - https://lore.kernel.org/all/20241114063942.3448607-1-suhui@nfschina.com/
-> 
->  drivers/gpu/drm/xe/xe_hw_engine_group.c | 32 +++++++------------------
->  1 file changed, 9 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/xe/xe_hw_engine_group.c b/drivers/gpu/drm/xe/xe_hw_engine_group.c
-> index 82750520a90a..3bfa002734ad 100644
-> --- a/drivers/gpu/drm/xe/xe_hw_engine_group.c
-> +++ b/drivers/gpu/drm/xe/xe_hw_engine_group.c
-> @@ -58,8 +58,10 @@ hw_engine_group_alloc(struct xe_device *xe)
->  		return ERR_PTR(-ENOMEM);
->  
->  	group->resume_wq = alloc_workqueue("xe-resume-lr-jobs-wq", 0, 0);
-> -	if (!group->resume_wq)
-> +	if (!group->resume_wq) {
-> +		kfree(group);
->  		return ERR_PTR(-ENOMEM);
-> +	}
->  
->  	init_rwsem(&group->mode_sem);
->  	INIT_WORK(&group->resume_work, hw_engine_group_resume_lr_jobs_func);
-> @@ -84,25 +86,18 @@ int xe_hw_engine_setup_groups(struct xe_gt *gt)
->  	enum xe_hw_engine_id id;
->  	struct xe_hw_engine_group *group_rcs_ccs, *group_bcs, *group_vcs_vecs;
->  	struct xe_device *xe = gt_to_xe(gt);
-> -	int err;
->  
->  	group_rcs_ccs = hw_engine_group_alloc(xe);
-> -	if (IS_ERR(group_rcs_ccs)) {
-> -		err = PTR_ERR(group_rcs_ccs);
-> -		goto err_group_rcs_ccs;
-> -	}
-> +	if (IS_ERR(group_rcs_ccs))
-> +		return PTR_ERR(group_rcs_ccs);
->  
->  	group_bcs = hw_engine_group_alloc(xe);
-> -	if (IS_ERR(group_bcs)) {
-> -		err = PTR_ERR(group_bcs);
-> -		goto err_group_bcs;
-> -	}
-> +	if (IS_ERR(group_bcs))
-> +		return PTR_ERR(group_bcs);
->  
->  	group_vcs_vecs = hw_engine_group_alloc(xe);
-> -	if (IS_ERR(group_vcs_vecs)) {
-> -		err = PTR_ERR(group_vcs_vecs);
-> -		goto err_group_vcs_vecs;
-> -	}
-> +	if (IS_ERR(group_vcs_vecs))
-> +		return PTR_ERR(group_vcs_vecs);
->  
->  	for_each_hw_engine(hwe, gt, id) {
->  		switch (hwe->class) {
-> @@ -125,15 +120,6 @@ int xe_hw_engine_setup_groups(struct xe_gt *gt)
->  	}
->  
->  	return 0;
-> -
-> -err_group_vcs_vecs:
-> -	kfree(group_vcs_vecs);
-> -err_group_bcs:
-> -	kfree(group_bcs);
-> -err_group_rcs_ccs:
-> -	kfree(group_rcs_ccs);
-> -
-> -	return err;
->  }
->  
->  /**
-> -- 
-> 2.30.2
-> 
+During a cold-boot, reading the IMX296_SENSOR_INFO register would often
+return a value of 0x0000, if this delay is not present before.
+
+Fixes: cb33db2b6ccfe ("media: i2c: IMX296 camera sensor driver")
+Tested-by: Alexandru Ardelean <aardelean@baylibre.com>
+Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
+---
+
+Changelog v1 -> v2:
+* https://lore.kernel.org/linux-media/20241115142021.574402-1-aardelean@baylibre.com/
+* Technically, this is not a true V2, but rather a new patch
+  - But in V1, the attempt was to fix an issue found with the upstream
+    IMX296 driver, which was pointed out by Kieran that it was already
+    fixed (more elegantly) in the RPi tree.
+  - The standby delay helps during a cold-boot so that the driver can read
+    the IMX296_SENSOR_INFO register. If the delay isn't present the value
+    read is 0xx0000.
+  - Original patch can be found:
+    https://github.com/raspberrypi/linux/commit/7713ce38e6a26425ace3a57b3d03ba0125c16f89
+  - From the original patch of Naushir Patuck,
+    - Added comment 
+      -------
+      During a cold-boot, reading the IMX296_SENSOR_INFO register would often 
+      return a value of 0x0000, if this delay is not present before.
+      -------
+    - Added 'Tested-by: Alexandru Ardelean <aardelean@baylibre.com>
+    - Added 'Fixes: cb33db2b6ccfe ("media: i2c: IMX296 camera sensor driver")'
+
+ drivers/media/i2c/imx296.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/media/i2c/imx296.c b/drivers/media/i2c/imx296.c
+index f942f66fa664..395bfe4fb23d 100644
+--- a/drivers/media/i2c/imx296.c
++++ b/drivers/media/i2c/imx296.c
+@@ -940,6 +940,8 @@ static int imx296_identify_model(struct imx296 *sensor)
+ 		return ret;
+ 	}
+ 
++	usleep_range(2000, 5000);
++
+ 	ret = imx296_read(sensor, IMX296_SENSOR_INFO);
+ 	if (ret < 0) {
+ 		dev_err(sensor->dev, "failed to read sensor information (%d)\n",
+-- 
+2.46.1
+
 
