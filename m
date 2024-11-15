@@ -1,131 +1,163 @@
-Return-Path: <linux-kernel+bounces-410332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0D9B9CDA09
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:47:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 353439CDA0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:50:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C52A28336B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:47:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBF541F22064
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9591F188A0E;
-	Fri, 15 Nov 2024 07:46:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1771918A6C5;
+	Fri, 15 Nov 2024 07:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mUjwnJHl"
-Received: from mail-pj1-f65.google.com (mail-pj1-f65.google.com [209.85.216.65])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g8ACBon8"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9363317D354;
-	Fri, 15 Nov 2024 07:46:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04A21DFFD;
+	Fri, 15 Nov 2024 07:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731656819; cv=none; b=Ak0wt2a1XMnzV6O5wNzQLW/QIMkR4jQEStuPN+kI5EbUcRIdQPuo+tx07GOpfbxuCkVsmcvCAIXoUJ4Hf24DrKaGqRSyFdoQa+0dbz3X2Sl1KP9wa8bTYE1U29G0nuq1wpv+Ab4QTwHem2LSD8hYxSZs95SC8NKUbJ3mYeeU+Vc=
+	t=1731657045; cv=none; b=h1IStl5weA7fRvKU3N49WEdoCGGBvgMtiwM9W7JwLXfDG/FrWJbbJFr9lRK0mOz6vE+jdSgaV/kWRhGMYRu7IWuJjffowpqm49JFaD905cgFbQ10nQOkpYeQRZuWmMx4hHqj3dT2vS7Q7d1pdc73IbXYtbLVXPH6jK/4zsvtagc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731656819; c=relaxed/simple;
-	bh=Yn5H2K1hbNN2pRo3y5lGrHrmP1Raa0C4Moh+djHQYt4=;
+	s=arc-20240116; t=1731657045; c=relaxed/simple;
+	bh=lklE/h3tDzXVoR6ngV+NqfpBcWmdTi9t9s8wjTuCeGA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dUtGQd6soIiwigkzDNrpEIcBFGJDiNP3K/0Ts1zEoBg88PzyhOOcx37sUhuHH51l8ELi35ElWIMU3Pv7KM9UkGX+0HrybLLVd9JuTpSXtW71Ms1CzRG/Qc7atvAshUF1XqLcPClIy+IKHwt5QeXG11BukS77RfhwQ0cvkohilzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mUjwnJHl; arc=none smtp.client-ip=209.85.216.65
+	 To:Cc:Content-Type; b=YozC1Ru4PFacftRlhsk6SYc5ppgOc9/nSubAExt7GCH4QMg1ur0NwLLb9OagJFRpjUG+QEKydz8WLmVpuXXVkEJ+/82byU9iSyeY0S2ft6ggb87iSyy5UoBx++1WT4KYLq95W55qPZvy6omVxyIpNTX00FmueXHvUSZctn2aG7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g8ACBon8; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f65.google.com with SMTP id 98e67ed59e1d1-2ea0bd709c0so1067839a91.3;
-        Thu, 14 Nov 2024 23:46:57 -0800 (PST)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9ec267b879so76827066b.2;
+        Thu, 14 Nov 2024 23:50:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731656817; x=1732261617; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731657042; x=1732261842; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FZQ+Zr3Ocu23U0mYDZSaGtjvo9T3p9MWegkwHbx+FBA=;
-        b=mUjwnJHlZPaU0p3jk/53bhKxzMYF8Ll5Vzfg98h1h0HiGZLrCyz6uhzS4RH1KZ/I+z
-         Y0MC30j5SaPub88RPQajJKvlduslTXsF9i1uJ1oI53VM1FHRLOyv+vKSVT18x6XOWzsM
-         h5cYiPmv25nxMqiSYBuUjzYafvh4cHZvQa9m+TbqGyc7LCBBW38eszOeuaX1kA3Hf2rY
-         b0ge3lAeU6d0W/nIJ2Ca3HrBW5G/0dBG58yhiTzoAgm8H6dDZftLM6390FM5IHwGX7z2
-         40ePrwDzTfl0Tz6pVn8zDJ5gFUnfEFTgnI8aOYtBIUEJMovpglxyDKoKscNr/Gpp2987
-         I5XQ==
+        bh=gSCELLkG6SqRQfxY54OPgk4TIjdd+v1bnFxBYGVAXQA=;
+        b=g8ACBon8WVH5PrCzEK8qdlM0c3x4ryskNaoT09762j5NbyFYtKZG/oPn72tlZ0mUwz
+         ar4vyr07JVjN+qJwY2wfi9KejnsLryuxeqzpmAGlOhjaXfNjIp6rsMxhUbeCV7m2Jn+s
+         LFC+7nsxItwj9zNALqkc1Q2FlKd2ER/1wF1d+GSjnWcu30SChhDf0NmdGe+bdgt+BINI
+         pndYUH5wwsKHkoy6gJxOTqIg+fZmNSiEedVd2ij13A7qTZmDVkprLxU/QhfzhzIykstv
+         v1+lOGvJBP5i0+X1J0aVQ5lK8rB19WESN/3fZ5u7D2yUZ1eHqFHw7AYYIyV7hTk6pvY1
+         R+Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731656817; x=1732261617;
+        d=1e100.net; s=20230601; t=1731657042; x=1732261842;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FZQ+Zr3Ocu23U0mYDZSaGtjvo9T3p9MWegkwHbx+FBA=;
-        b=MBOGZQ58BG2cjUgZ/xvn/7CCgWsjth1yxdWf8S0YXhUvjhAeW0HLRAUWLTwsUPXWt1
-         CzqitepjAVdMXra6yoFtWX4EokdyOMzH0ZACeCuyirA1UzfRl+OwXVqmPEvFCx/z9q9k
-         cKJmqJTSuw90QR89tfRNeUFVADnQJbLMj7RuG9OYjUF/NHPFHNRvSzOM4iSrvsVNpyV0
-         Eo7wx3GJR7GrR8wT9uweuvR3j0YNV8u6Ml1Tz2yGK8TNmT7oIoneIzxTzA++4ITDm3D9
-         orMt2okLjV+EBs9KTU4z6iA7GpI4iZ3FppXqJinIyiEGx/ak7u3TduG467jl7SZGWkCs
-         Ua4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVMyvqWfoMKDsb1EoexZKLl96CPuctc+/vE41gzqgH9qhYek/JL0gbE43/4UPS54YpMoaK2wUKdwN0jzXrN@vger.kernel.org, AJvYcCW0VHBqmTZLYkH3wQ8bVaX4iWqN3kLZpWIIaD9ApLRG+izk4T11PWCRPGVG8A8BtMoXZXa2mPFDnRxV@vger.kernel.org, AJvYcCWl1ZyNo25vVCfwN9a+AXejT9/JMun3BEy/Sc4iNhbEk/aPeIHxMhAwuNpaAt13gY1mVBOBiBK4J4pCfcf0@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5Lxgc4KLQArYU4/28UAPAQ+2JGnfr9gnl8ChTdeeohgK+fHd0
-	mpBgKR/UuNFT+YBW2idFomX1FP4vXWotQamj88JcV3KCbxnVjZ8uncQDVr4zFObCSIBtZVXlNew
-	bnqwZAFan+oVGRgr6g/u+F9sYeJk=
-X-Google-Smtp-Source: AGHT+IFa5TVuuI7zGjEbWeGNLPDWke0uXRT8ztWH3KhLye10MaKUazSqhMGxJYhBjFNGrzc9q6a+UU6Kh75E3YCcyvk=
-X-Received: by 2002:a17:90b:4f4b:b0:2e9:5d94:5992 with SMTP id
- 98e67ed59e1d1-2ea15596ca3mr2015547a91.31.1731656816889; Thu, 14 Nov 2024
- 23:46:56 -0800 (PST)
+        bh=gSCELLkG6SqRQfxY54OPgk4TIjdd+v1bnFxBYGVAXQA=;
+        b=KBM5oJUjaMlCNUBow5OwcyVcx3sOxjl0GGlu/JSztBEPeQW23aYtYjLG1h9DEkunqN
+         8/b0oH/o2KOFtLvAavd6d2rwIVqN3tw06zUjvtGOKTshfOJhtBukNq1vC8gy5SaFKwwt
+         rODbKQ2CAePskpyqJUFQVdDI+U+CMV4Or27Jn1u9ifzSKld8FU3L41M/kLrMN3s0Ld6R
+         DkHuSmn/ssbqHyWAYWxV6DFBjhoPFuV+7pWrSXIkJ9Lg/SgLLUhVMGe8+FlaPOl7y5rD
+         vxUgZ/LAvF3Vh+dwsmycaL8xqhkf46S7Wt/EYpX+HZsubh0q2Zc11HS4gh9TX9ba3OTb
+         ZaXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlZOI12p1PHeemHIETkBpTUfm36RpdAKKuc4HVYn9LMyohA3K3Tb2dr1HKbtCRPpOidC59CRJSO68fUk0P@vger.kernel.org, AJvYcCUrAU6ZPOvBBzRWkK8Iumoqm54680doveZzOEn5AJblwBwP7divUbTYYqVPTisCOeIY37JMTvazFxyx@vger.kernel.org, AJvYcCVBxtZ2xLPd4tGBUr1FQ8kHxWiVK/3/kHZJ0cZOgwO4KVEXXaVXwIrNKXGbH2vqmkDgcUCKgFXSpao+jf9h@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGywJgrr8OBFKHTYFsqYrSBDlYIUhwW31hN1Lz2YwggMd98Dwp
+	1NohkHgI70gutYGZkXapUll7XX2niMmfeIL7OmYYF4hKADAeOIfLJWQbCPJZgjxeEEdpAiWiP7l
+	kdZ6v689ITk/DPXl9tjitU5OKs8cMYMdmons=
+X-Google-Smtp-Source: AGHT+IEi3bcFpS5EBdh9BX9bznABAMyAWwxnKMRIdw/iNJL8JS0W2vQeO8MtkFnuX9eM8/QDG4g9uAC7+XPhZfXCTMw=
+X-Received: by 2002:a17:906:dc8f:b0:a9e:b0a6:6e13 with SMTP id
+ a640c23a62f3a-aa483469563mr138192866b.30.1731657041921; Thu, 14 Nov 2024
+ 23:50:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113110516.2166328-1-Wenhua.Lin@unisoc.com>
- <20241113110516.2166328-2-Wenhua.Lin@unisoc.com> <3f89369f-7c0a-47c3-a22a-a125847edb98@linux.alibaba.com>
-In-Reply-To: <3f89369f-7c0a-47c3-a22a-a125847edb98@linux.alibaba.com>
-From: wenhua lin <wenhua.lin1994@gmail.com>
-Date: Fri, 15 Nov 2024 15:46:45 +0800
-Message-ID: <CAB9BWhdi2Q3gViCPjYAUYeYktBKR_rc4DN5PqXKvAvA44LDd9g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] serial: sprd: Add support for sc9632
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Wenhua Lin <Wenhua.Lin@unisoc.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Orson Zhai <orsonzhai@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Cixi Geng <cixi.geng@linux.dev>, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org, devicetree@vger.kernel.org, 
-	Xiongpeng Wu <xiongpeng.wu@unisoc.com>, Zhaochen Su <Zhaochen.Su@unisoc.com>, 
-	Zhirong Qiu <Zhirong.Qiu@unisoc.com>
+References: <20241113-pidfs_fh-v2-0-9a4d28155a37@e43.eu> <20241113-pidfs_fh-v2-3-9a4d28155a37@e43.eu>
+ <20241114-erhielten-mitziehen-68c7df0a2fa2@brauner> <1128f3cd-38de-43a0-981e-ec1485ec9e3b@e43.eu>
+ <20241114-monat-zehnkampf-2b1277d5252d@brauner> <b4353823-16ef-4a14-9222-acbe819fdce8@e43.eu>
+In-Reply-To: <b4353823-16ef-4a14-9222-acbe819fdce8@e43.eu>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 15 Nov 2024 08:50:30 +0100
+Message-ID: <CAOQ4uxhP9_WPinm2wM6uW+L0rH_xwwrw=qAUd_YjzbFCJBf0+g@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] pidfs: implement file handle support
+To: Erin Shepherd <erin.shepherd@e43.eu>
+Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+	linux-nfs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 15, 2024 at 1:47=E2=80=AFPM Baolin Wang
-<baolin.wang@linux.alibaba.com> wrote:
+On Thu, Nov 14, 2024 at 11:51=E2=80=AFPM Erin Shepherd <erin.shepherd@e43.e=
+u> wrote:
 >
+> On 14/11/2024 15:13, Christian Brauner wrote:
 >
+> > On Thu, Nov 14, 2024 at 02:13:06PM +0100, Erin Shepherd wrote:
+> >> These two concerns combined with the special flag make me wonder if pi=
+dfs
+> >> is so much of a special snowflake we should just special case it up fr=
+ont
+> >> and skip all of the shared handle decode logic?
+> > Care to try a patch and see what it looks like?
 >
-> On 2024/11/13 19:05, Wenhua Lin wrote:
-> > Due to the platform's new project uart ip upgrade,
-> > the new project's timeout interrupt needs to use bit17
-> > while other projects' timeout interrupt needs to use
-> > bit13, using private data to adapt and be compatible
-> > with all projects.
-> >
-> > Signed-off-by: Wenhua Lin <Wenhua.Lin@unisoc.com>
-> > ---
-> >   drivers/tty/serial/sprd_serial.c | 41 ++++++++++++++++++++++++++++---=
--
-> >   1 file changed, 36 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd=
-_serial.c
-> > index 3fc54cc02a1f..882580c3cf37 100644
-> > --- a/drivers/tty/serial/sprd_serial.c
-> > +++ b/drivers/tty/serial/sprd_serial.c
-> > @@ -53,10 +53,12 @@
-> >   #define SPRD_IEN_TX_EMPTY   BIT(1)
-> >   #define SPRD_IEN_BREAK_DETECT       BIT(7)
-> >   #define SPRD_IEN_TIMEOUT    BIT(13)
-> > +#define SPRD_IEN_DATA_TIMEOUT        BIT(17)
+> The following is a completely untested sketch on top of the existing patc=
+h series.
+> Some notes:
 >
-> I don't know the meaning of 'DATA' in the new macro name. But I have no
-> better name now:) Otherwise look good to me.
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> - I made heavy use of the cleanup macros. I'm happy to convert things bac=
+k to
+>   goto out_xx style if preferred - writing things this way just made bash=
+ing out
+>   the code without dropping resources on the floor easier
 
-Hi baolin:
-  TIMEOUT means only timeout, DATA_TIMEOUT means timeout and fifo is not em=
-pty.
-  Therefore, the macro name is distinguished by adding DATA.
+Your cleanup is very welcome, just please! not in the same patch as refacto=
+ring
+and logic changes. Please do these 3 different things in different commits.
+This patch is unreviewable as far as I am concerned.
 
-Thanks
+> - If you don't implement fh_to_dentry then name_to_handle_at will just re=
+turn an error
+>   unless called with AT_HANDLE_FID. We need to decide what to do about th=
+at
+
+What's to decide? I did not understand the problem.
+
+> - The GET_PATH_FD_IS_NORMAL/etc constants don't match (what I see as) usu=
+al kernel style
+>   but I'm not sure how to conventionally express something like that
+
+I believe the conventional way to express a custom operation is an
+optional method.
+
+For example:
+
+static int exportfs_get_name(struct vfsmount *mnt, struct dentry *dir,
+                char *name, struct dentry *child)
+{
+        const struct export_operations *nop =3D dir->d_sb->s_export_op;
+        struct path path =3D {.mnt =3D mnt, .dentry =3D dir};
+
+        if (nop->get_name)
+                return nop->get_name(dir, name, child);
+        else
+                return get_name(&path, name, child);
+}
+
+There are plenty of optional custom inode, file, sb, dentry
+operations with default fallback. some examples:
+
+        if (dir_inode->i_op->atomic_open) {
+                dentry =3D atomic_open(nd, dentry, file, open_flag, mode);
+
+        if (!splice && file_out->f_op->copy_file_range) {
+                ret =3D file_out->f_op->copy_file_range(file_in, pos_in,
+                                                      file_out, pos_out,
+                                                      len, flags);
+        } else if (!splice && file_in->f_op->remap_file_range && samesb) {
+                ret =3D file_in->f_op->remap_file_range(file_in, pos_in,
+
+So I think the right model for you to follow is a custom optional
+s_export_op->open_by_handle() operation.
+
+Thanks,
+Amir.
 
