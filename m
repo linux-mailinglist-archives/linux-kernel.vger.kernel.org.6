@@ -1,89 +1,129 @@
-Return-Path: <linux-kernel+bounces-411063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F59C9CF3A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:10:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ED669CF40F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:36:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 033D7B2E85C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:09:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7A73B3A465
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680731D5AA7;
-	Fri, 15 Nov 2024 17:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521AA1D5AB7;
+	Fri, 15 Nov 2024 17:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUkFj+1V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OF4TyBHW"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4FC4136341;
-	Fri, 15 Nov 2024 17:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EDD51D5AAD
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731690565; cv=none; b=r0k5GIL1luI2H+uOXkgu5lU64Hr62GifrF0xpeNCG7AkNS5qyyrm9ppazRdw4fyvCWFtYGX3gQpL/Z7RWzqM0OVTT1V/WMjNLiHLYuUR3uYBVO8vflBgy9/7dkK3a5sWIDCal+3BspCoJJU8r09tdOrspg1UBpj2DJlZa7y7LIw=
+	t=1731691369; cv=none; b=Q3bYvw9iYwQQl05Ac3a6KTXe9fL97+hf9c2TCJQlNj9CyyuWTWkm4bh/ty0BwactJ+UHH4KsR5V3cR3Epgo2Z92TZcoW4S3zpz0aw3qj72b9+vROfX7T6++UTPZFTJ+DTBmbdcMBg9ljsec/K4Cr/Ig8kmJs7G+QWIsk/JcxCl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731690565; c=relaxed/simple;
-	bh=Kat0vAa0R0WH/hqaed0tTlbgXevMzDUhnZLBXcBEO8E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g7VW7DCSUc2CaZ+ZrhH6mQKTzZH5E2LDQTu3W0AvXq6J1AsjO/ZVLa0TkJcWkHAuy7dHD0IbItT96hGHLX/JacSbUyyVhY2M42dwGyQAbfUovNKvvYutokoboax7yXy4srid6oH9lF4wGC+G8+YTiPtg9bVn9WcPLrOty3lItEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tUkFj+1V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF2DDC4CECF;
-	Fri, 15 Nov 2024 17:09:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731690565;
-	bh=Kat0vAa0R0WH/hqaed0tTlbgXevMzDUhnZLBXcBEO8E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tUkFj+1V4H5JGTNQNeKE4bp0/9yLPX11JH7rDNUBd59qfbrY9qhxOwyU0GyclUsqU
-	 FNzzJimsDZSn+6yn/qxKa2ddEzagWoSkSqTvnx4WaW+t0LwO3Z4AaYik8wLx2n74q+
-	 NpNKkVtN8tEz3F/TZhEoJzS3hmGeIbtWCZRzOJsiNihxb6aTIaoc6/WupAaaibGRBk
-	 lNCBVlvVD/KMGu/LAEsVsIetmZWL3RPltmcGJAavsXyg5o0l4MXMzILTPAfq0o9q4o
-	 pRoRUNKAHH5MexxRl8sHW9L7Imb4cyyTOw8FVeKJbOreurjMpNy8usapuVmgXNCPCb
-	 OiU5TZf0qidPA==
-Date: Fri, 15 Nov 2024 11:09:23 -0600
-From: Rob Herring <robh@kernel.org>
-To: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 1/5] dt-bindings: pinctrl: move gpio-cells and
- gpio-controller property
-Message-ID: <20241115170923.GA3356657-robh@kernel.org>
-References: <20241113-a4_pinctrl-v7-0-0546a20c1c22@amlogic.com>
- <20241113-a4_pinctrl-v7-1-0546a20c1c22@amlogic.com>
+	s=arc-20240116; t=1731691369; c=relaxed/simple;
+	bh=xv6EhGIjp0yNQhtdD5CT3ixx8ib+7RX5OoUHS2SRIGU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Zhy5+Y9LUdNjIVvfmzq08CsHITvKGe4Pf2CtFAM2X3P6SE9MiZ9hVb8YovGtLKt9YOFlTgxajhb6ixaXTzA5eCpVGhfRxlBvmw58ClzXSUddFvEv+qhpDjzMqbQXkE2A8NqfdER5tet/ufJUUWxhR59noATaKvz7Nbf9qHAf3cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OF4TyBHW; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e3313b47a95so3762861276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:22:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731691367; x=1732296167; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BsyG1LXRA/7W+KV3OjFnPglA0evpVqXbyPXRpQQ0nGw=;
+        b=OF4TyBHWZGXYgTpTg9CQivL/MUGaG/q546anjfFwVzoMU5n4dTXmhjDyvtqS4g2yOq
+         wk9hvebZnlTFCek0af74CrkluLfpKt4CV6JDzPTgDHRSUVU+fQa2gFt3rIxTT68kzgNz
+         /OJtK2uCjsAcMOE3GP22dKLaUvRSz8ewx8IhFqtYYkgchHa3qh+/sLvIBokgKOuzwyM+
+         WEl4kurSnKW2kCfPSj1tQPnimhqm8wscQUvdU3jleSIrbwCAjEJK//1dIZqI4AtPFkWA
+         /r+3GcMw8fNcVTO1kGQaqf60KwW5cJCoZS+waIvJ2gTudevfqflM7cva151XxGjX6Wxt
+         Ms2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731691367; x=1732296167;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BsyG1LXRA/7W+KV3OjFnPglA0evpVqXbyPXRpQQ0nGw=;
+        b=mI/ia9LHPlbfii9Mf/mbdqZ4PedSSbOompaH1WRYUUjwFUGt/7FydMsSAkD7f5pqAB
+         uXATBzt+CIQgW5WwOgvce9BaQGYMtHs2dIsFRltLluPJcIYmSCcwdXDgY8+VcwRZeSR6
+         bOjB4L+yqaRD7Tn4aumjWY9vvo/I/rSyME1/2P2fmWqAaeZ9EYf6A4t2uhN/AQXj25Gf
+         x54PVHAqGmFG3oRuSr4kGuXWVOW1ZC5GUAkRqm4i1FrEgiqXdJ2t7qMKkdfe6Vww6YPd
+         A6y1T0HpxT+lwA3BaNawgUQ8b10T6QUSLRmN0OlKU3VJXQr3pcmPzR2ptNkT/7wGyiwo
+         o4XQ==
+X-Gm-Message-State: AOJu0YzM5A1p1g0N7O5wqhwOmW88wTVGNV1UWakv/ouuU1Ov+5MmkY/S
+	2UItm2XSTd6G8qPkGzFWdCU/jo/HdlQlgm9Phw7pK3wAQ+00pTSbMCvJ5QITuuJsn30cSinnH+c
+	KlqDjas9PRFHT2HTyDyTzfDC3olft8ltfwNZGFO5wCXpPzNLUw4kfrOTgiN4nKoLyF5pOetiVwq
+	uFNwSM+rrBFcIiXcSIKARYmv0E6gaE0DiR8MThMu4R5Ad52njD4B0=
+X-Google-Smtp-Source: AGHT+IGsNFjwDx3jzS5qgLurnITHUTNl+C7edx5Hcxb5uU5DHpf+5tuu5L5h4bcVjOQnEwH2ggCQphITmYa6kA==
+X-Received: from mostafa.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:333c])
+ (user=smostafa job=sendgmr) by 2002:a25:660d:0:b0:e2e:2cba:ac1f with SMTP id
+ 3f1490d57ef6-e3826395ad4mr76341276.6.1731691366807; Fri, 15 Nov 2024 09:22:46
+ -0800 (PST)
+Date: Fri, 15 Nov 2024 17:22:35 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241113-a4_pinctrl-v7-1-0546a20c1c22@amlogic.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Message-ID: <20241115172235.1493328-1-smostafa@google.com>
+Subject: [PATCH] drivers/io-pgtable-arm: Fix stage concatenation with 16K
+From: Mostafa Saleh <smostafa@google.com>
+To: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org
+Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, 
+	Mostafa Saleh <smostafa@google.com>, Daniel Mentz <danielmentz@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Nov 13, 2024 at 05:37:28PM +0800, Xianwei Zhao wrote:
-> Move #gpio-cells and gpio-controller properties from common yaml file
-> to lower-level yaml files.
-> 
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
->  .../devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml        | 5 +++++
->  .../devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml    | 5 -----
->  .../bindings/pinctrl/amlogic,meson-pinctrl-g12a-aobus.yaml           | 5 +++++
->  .../bindings/pinctrl/amlogic,meson-pinctrl-g12a-periphs.yaml         | 5 +++++
->  .../devicetree/bindings/pinctrl/amlogic,meson8-pinctrl-aobus.yaml    | 5 +++++
->  .../devicetree/bindings/pinctrl/amlogic,meson8-pinctrl-cbus.yaml     | 5 +++++
->  6 files changed, 25 insertions(+), 5 deletions(-)
+According to the Arm spec DDI0487 K.a, in:
+"Table D8-9 Implications of the effective minimum T0SZ value on the
+initial stage 2 lookup level"
 
-Please don't send new versions when the prior version comments are not 
-resolved.
+Some combinations of granule and input size with stage-2 would
+require to use initial lookup levels that can only be achieved
+with concatenated PGDs.
 
-Rob
+There was one missing case in the current implementation for 16K,
+which is 40-bits.
+
+Cc: Daniel Mentz <danielmentz@google.com>
+
+Signed-off-by: Mostafa Saleh <smostafa@google.com>
+---
+ drivers/iommu/io-pgtable-arm.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+index 0e67f1721a3d..9a57874a5cb8 100644
+--- a/drivers/iommu/io-pgtable-arm.c
++++ b/drivers/iommu/io-pgtable-arm.c
+@@ -1044,10 +1044,18 @@ arm_64_lpae_alloc_pgtable_s2(struct io_pgtable_cfg *cfg, void *cookie)
+ 		return NULL;
+ 
+ 	/*
+-	 * Concatenate PGDs at level 1 if possible in order to reduce
+-	 * the depth of the stage-2 walk.
++	 * Some cases where concatenation is mandatory after de-ciphering RSRKBC
++	 * in the Arm DDI0487 (K.a):
++	 * - 40 bits with 4K: use 2 table at level 1 instead of level 0
++	 * - 40 bits with 16K: use 16 tables at level 2 instead of level 1
++	 * - 42 bits with 4K: use 8 tabels at level 1 instead of level 0
++	 * - 48 bits with 16K: use 2 tabels at level 1 instead of level 0
++	 * Looking at the possible valid input size, that concludes to always
++	 * use level 1 with concatentation if possible or at level 2 only
++	 * with 16K.
+ 	 */
+-	if (data->start_level == 0) {
++	if ((data->start_level == 0) ||
++	    ((data->start_level == 1) && (ARM_LPAE_GRANULE(data) == SZ_16K))) {
+ 		unsigned long pgd_pages;
+ 
+ 		pgd_pages = ARM_LPAE_PGD_SIZE(data) / sizeof(arm_lpae_iopte);
+-- 
+2.47.0.338.g60cca15819-goog
+
 
