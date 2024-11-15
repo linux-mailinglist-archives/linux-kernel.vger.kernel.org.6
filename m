@@ -1,83 +1,125 @@
-Return-Path: <linux-kernel+bounces-410378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BA3A9CDAB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:38:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA809CDAB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:40:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0333B258F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:38:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6AE91F218F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:40:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62AC818BC2F;
-	Fri, 15 Nov 2024 08:38:35 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFAA2B9B9;
-	Fri, 15 Nov 2024 08:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A6818BC19;
+	Fri, 15 Nov 2024 08:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="FpSboBLT"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018F62B9B9;
+	Fri, 15 Nov 2024 08:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731659915; cv=none; b=tKpb5ThzdztZRz2FRHOYG5npVdLIkALv8gupWAnj56EdPfws2GKOF4bJKQHFoPSZgJzqIcj/WPo77Euekj/6PSqh5BSDy5kTWSesd3vfQVedv4eOmOKmGjiylnpwcJbTymZa78uXLk14ow8KS4wAOF+BaNNuoL202xXnHRAY1qQ=
+	t=1731659994; cv=none; b=lDI1yymhExXO3I5p791pVwhCkbXPEEp2uQS9lBfYbePfp8xB1eoe7Uarg3Vg45XX1V6ZjOH48EoPmsvCn9PYSB7Iactvu0+uwBYwn5myy+6XRiz2PYSKpmQXY4arkr1QQUaB3kGRTOyvE83nj8+IiPE3Kx0Mt0dtTQec5z4SS38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731659915; c=relaxed/simple;
-	bh=kBl9PceVCM+x29s5XWwbdQpNT0KY8ECBwJiaj3MWn1w=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=PflTGxwH7MDymIpIQ9BhaaN0Cl88D/Ads4LlQ6RGSBOaO9ipLm9lborDw1nJJKlFkTzI+yJ16xJGA5nntewmu8RvpL4joCUQqZVmba44629Cgz9iP9Dg8lU0MDIB1Ay0pOCt4nlcP90YGVph9BcqBmds/Bf9Dr+XWaWH5+JQ+pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee16737087c430-fbd47;
-	Fri, 15 Nov 2024 16:38:20 +0800 (CST)
-X-RM-TRANSID:2ee16737087c430-fbd47
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from ubuntu.localdomain (unknown[10.55.1.70])
-	by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee66737087bb44-fd15d;
-	Fri, 15 Nov 2024 16:38:20 +0800 (CST)
-X-RM-TRANSID:2ee66737087bb44-fd15d
-From: Zhu Jun <zhujun2@cmss.chinamobile.com>
-To: James.Bottomley@HansenPartnership.com
-Cc: martin.petersen@oracle.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	anil.gurumurthy@qlogic.com,
-	sudarsana.kalluru@qlogic.com,
-	zhujun2@cmss.chinamobile.com
-Subject: [PATCH] bfa: Fix typo in bfi.h
-Date: Fri, 15 Nov 2024 00:38:17 -0800
-Message-Id: <20241115083817.6637-1-zhujun2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1731659994; c=relaxed/simple;
+	bh=szWPyMhF2TaPYgYdAiyareXGxnMhv3fBBNmJWFTgqYw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QYuUefm+tGKfy6YVfDFJyThosVJUsHnurbiapwrC9HOzmTaXLeCirmAolGne6kvGUHg4/txgtxzUjMaFlSknuyf71F0ivsYOtp6/JRoPl6zlaTMAvYgV92NCRBdYKWZwp5p0/XEgZqH0Geg4Ej1q3Rb8ubz866sjP3YsVR4u/dM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=FpSboBLT; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 62B611F987;
+	Fri, 15 Nov 2024 09:39:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1731659986;
+	bh=laxSPqZHzjZ/9jJd5FP23rk7JMnLBz/mjZvgCEDeXZg=; h=From:To:Subject;
+	b=FpSboBLTerqpNyZIuUJ+MfwRwzwLMkD7Lbv5J4tJX4Q1h9a+a2XPpVUTOrTPWPIKm
+	 8tzV/N/lLfiuJ8idrpKPTFp57O2PGfFre/izM8lmoLFG965wgrpoG1tAiIBiChh4mk
+	 g+SJt+2X1AdGlGsOV+NY2GA4YwaBpj8LEN1mf4y8csXNLpQJGL/ORlG3+7WIcb3lrL
+	 lHxAzIzEjgJMiqpdiIDscIXuOjQmSfApH5VLVBjNrDlignFhaLZqlzs/k1Yex/BkK7
+	 gR5RN50TFbfUHAVXGb3w8KhP+TnMuwYX5/iviJAkrb97ZNN29j0P2baTlD0cNXKGuG
+	 CVsb2fRovfGHg==
+Date: Fri, 15 Nov 2024 09:39:40 +0100
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Parth Pancholi <parth105105@gmail.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Parth Pancholi <parth.pancholi@toradex.com>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: Re: [PATCH v2] kbuild: switch from lz4c to lz4 for compression
+Message-ID: <20241115083940.GA3971@francesco-nb>
+References: <20241114145645.563356-1-parth105105@gmail.com>
+ <2024111442-yeast-flail-fcea@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024111442-yeast-flail-fcea@gregkh>
 
-The word 'swtich' is wrong, so fix it.
+Hello Greg,
 
-Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
----
- drivers/scsi/bfa/bfi.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Nov 14, 2024 at 05:02:01PM +0100, Greg KH wrote:
+> On Thu, Nov 14, 2024 at 03:56:44PM +0100, Parth Pancholi wrote:
+> > From: Parth Pancholi <parth.pancholi@toradex.com>
+> > 
+> > Replace lz4c with lz4 for kernel image compression.
+> > Although lz4 and lz4c are functionally similar, lz4c has been deprecated
+> > upstream since 2018. Since as early as Ubuntu 16.04 and Fedora 25, lz4
+> > and lz4c have been packaged together, making it safe to update the
+> > requirement from lz4c to lz4.
+> > 
+> > Consequently, some distributions and build systems, such as OpenEmbedded,
+> > have fully transitioned to using lz4. OpenEmbedded core adopted this
+> > change in commit fe167e082cbd ("bitbake.conf: require lz4 instead of
+> > lz4c"), causing compatibility issues when building the mainline kernel
+> > in the latest OpenEmbedded environment, as seen in the errors below.
+> > 
+> > This change also updates the LZ4 compression commands to make it backward
+> > compatible by replacing stdin and stdout with the '-' option, due to some
+> > unclear reason, the stdout keyword does not work for lz4 and '-' works for
+> > both. In addition, this modifies the legacy '-c1' with '-9' which is also
+> > compatible with both. This fixes the mainline kernel build failures with
+> > the latest master OpenEmbedded builds associated with the mentioned
+> > compatibility issues.
+> > 
+> > LZ4     arch/arm/boot/compressed/piggy_data
+> > /bin/sh: 1: lz4c: not found
+> > ...
+> > ...
+> > ERROR: oe_runmake failed
+> > 
+> > Cc: stable@vger.kernel.org
+> 
+> What bug does this resolve that it needs to be backported to stable
+> kernels?
 
-diff --git a/drivers/scsi/bfa/bfi.h b/drivers/scsi/bfa/bfi.h
-index 41e6b4dac056..e1e0e967bcc3 100644
---- a/drivers/scsi/bfa/bfi.h
-+++ b/drivers/scsi/bfa/bfi.h
-@@ -1148,7 +1148,7 @@ struct bfi_diag_dport_scn_testcomp_s {
- 	u16	numbuffer; /* from switch  */
- 	u8	subtest_status[DPORT_TEST_MAX];  /* 4 bytes */
- 	u32	latency;   /* from switch  */
--	u32	distance;  /* from swtich unit in meters  */
-+	u32	distance;  /* from switch unit in meters  */
- 			/* Buffers required to saturate the link */
- 	u16	frm_sz;	/* from switch for buf_reqd */
- 	u8	rsvd[2];
--- 
-2.17.1
+This is not solving any existing actual bug, and therefore there is no
+fixes tag.
 
+The issue here is that the kernel build system is using lz4c, that is
+deprecated since 2018, and now distributions are actively moving away from it. 
 
+openSUSE Tumbleweed and OE already removed it, so you would not be able
+to compile a stable kernel on such distribution when using lz4 unless we
+backport such a patch.
+
+Everything should be properly documented in the commit message already.
+
+My understanding is that something like that would be a reason for
+backporting to stable, if my understanding is not correct we'll remove
+the cc:stable and send a v3.
+
+Francesco
 
 
