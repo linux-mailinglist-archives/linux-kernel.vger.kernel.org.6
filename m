@@ -1,247 +1,151 @@
-Return-Path: <linux-kernel+bounces-410295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F889CD939
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:58:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F07549CD95D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:59:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3250F2837E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:58:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10EEA1F2350D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F3F188737;
-	Fri, 15 Nov 2024 06:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CFA189520;
+	Fri, 15 Nov 2024 06:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XflMr7xM"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fIsz8yYa"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93C215FD13
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1D9187FE8
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731653890; cv=none; b=VUTK6EfNMmh0Y913wyBA126LeTu4lUnjXfp3RV9rQLvomtC6CFNV9UHNhhcrGTBnAIvkQ04+UDIG72kcS0WSq2IB8jGE+EutdR3r894H4TfjeeCJo4htw4SObtIrIgemEQHzgljUD3nHlAdLvAtdNAWuC4eZooZWxQkrJEP4Bgk=
+	t=1731653966; cv=none; b=DGdY2jEib+1+YtVbGX4MF7TloVVvSGbpX/XvNLszL734ys9N9vOzyvDcQbOxogkGJC/iA0v6VkP20VS/yL4JlAsFLdLf4TOgY3ySbaOfz/S8EK93YXp7PPU9HEn8zWRRA9s7FTaRio/cq3m9aLvlJFwjIP1KVnhX17wzyLG5e6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731653890; c=relaxed/simple;
-	bh=UGJREjOHz5RHJMYXmzG0Tou5gZp5PeWqq4mm1kyqUGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qXXtBmQ8jX2xbZSaoSypSNa4oHMEljr0jCUlyGn5ZtQOh7uCi+xlaYWi7sV49svIcckqKr00erDmpkjke/PaZCmAtNIdNTJyWq261NminTRaLAi09kneQI2wSinbwiaFdMC2i5XJfe1EBQR1nTqUzvEprxdc8JsQcPhifeZhZrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XflMr7xM; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-72475e29578so363100b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:58:08 -0800 (PST)
+	s=arc-20240116; t=1731653966; c=relaxed/simple;
+	bh=vCdT0PSYt7ug/bjF626EO7sSeIjB87TMkLXNwZ9G7Ew=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bPwkLL3zCozVa8BcD4BJlqPJlZXU8NBhYCJhtTkleNm8Q1NfC81PUUayIRj86BT5nWAlA4UhUwtHWGTYm4S1EpTBM40iXHS1bPqO5PsJHbqd2qLwpPP8S+hoi9uRKbWUkPVa3qq6Oot+NLFT7hmRyIGHLGhqMaRoKDbam4QOtvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fIsz8yYa; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb5740a03bso15567591fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:59:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731653888; x=1732258688; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wtnA5EAAxwC1kI1kCfZtNl7bbPWqSTJS09SRk41HtKs=;
-        b=XflMr7xMq06+A3TjvynmpaSqgP+2iKsTnB/EbH1QwW3PKpkU8ZOxsM5ec3URIwNtuY
-         hjzIFqYoachwykUbepDvIRM+uzLviCIEr6kiFGP/TwfZ0YaGWZKUAhmPlH0EIX58R7Ma
-         rEkT7wZcFxliCWtNlVz3/utbRLnie+6HMB1EH7KwKeaUm8/wVERyM6G8Lr9rtsqMqH6z
-         Zs4EUpnggaNPYHhAyk9oh2Dvd1Ag6cXYdYEyxtmA4vSsBiyq2OfiazoBfiRYM+pSMsN+
-         179ksAIeXwmmcCWd+0W2aqPp1O+5C6C6w4TCwgYdM/QsiaWasqyvPCoE7eOgucH1nZR0
-         Ampg==
+        d=linaro.org; s=google; t=1731653963; x=1732258763; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=S8cfWVnQzgW/o8QfkeZ4D6IstQJzWOaYah0IgQm88BY=;
+        b=fIsz8yYaLkPT3nxs0Upaxo+RhEfZzz4ZKLh3M5+XxOFq3Ao7vwbij/Jqa+PONpIcDO
+         RWofzEXoXEro92wY8l7yg8fBmFd/4/m3ZRYDWivKWyigU5fdYAXufFetdmM2kcGq26Cc
+         skoUusUWciSoQL/Dh+phDDAUGR8jaFvrpEybj7MonoStthzLbysfn9m/HQZ5OjCv4CY0
+         zoJm9yIdQTpPv1I0S8/AqT86SNV6FlpwjrtbfwE2smsk5swlcoJNPMTF1JIXFrOC+i7c
+         LmvUDaxkMEQL4u3c+1STRC8ZBi5Zm78fyuDrRJQW0YKa/NvHD8x99qtHiGvvuAq8RPU8
+         VSYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731653888; x=1732258688;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wtnA5EAAxwC1kI1kCfZtNl7bbPWqSTJS09SRk41HtKs=;
-        b=XWZmq0r6K1CdCCFd1D3NFftvUVir0Z6bLGBnlckd9Bad9QBw8iKbbdZECFF+yNHqlP
-         j9ywIQO8IPkvxJtJoK36IJW7W0Wbe8DYXZsjAyR9bu5L3mTsgTT6ZR3Rdejzur0ieGD1
-         gPsAKnI5l4eFL2snFqG9DmoncnSPIm8fRQRKDZD+wEX+r06GXBEH7QzlUCM58EJzVGX2
-         MakGdFs/498j7jlqAuSFhimUYRTl49wL2+KlmzCUa3fn6WzQO0bQCkZtkWbEwuYZtPoz
-         nbZ18ODDKk6xxP3TO9uS6UrOk1MjwYlzsngMyCuYEt3U6KzXyHkDWDueJY6Nv7PNK3AD
-         KQ7w==
-X-Gm-Message-State: AOJu0YyQ3DxM0eWuhkbjjdGv9Apgm/0DH7gET/Fc9QxORSbnEmSP0gtT
-	dzjfuwqC8Et31pxvFL8WUGYmZ3+5VmbzXC+YKgpoW5U2MFFXH+h1wD9LwQ==
-X-Google-Smtp-Source: AGHT+IEY20lQegcOPFc6UAgqjcSbWicOTjbzSoWgpblxhfcM6UZs0t1epSZASKHHXgNvQSyr/8ELJw==
-X-Received: by 2002:a05:6a00:1890:b0:71e:634e:fe0d with SMTP id d2e1a72fcca58-72476bb01dbmr2018494b3a.12.1731653887774;
-        Thu, 14 Nov 2024 22:58:07 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72477120ab4sm692382b3a.44.2024.11.14.22.58.06
+        d=1e100.net; s=20230601; t=1731653963; x=1732258763;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S8cfWVnQzgW/o8QfkeZ4D6IstQJzWOaYah0IgQm88BY=;
+        b=pxUEoSgVp/QeD/Qu91jrEOiBXCsKk3Fs6+dv4B0ltuotrxQXrq2PIgZI4oKA/tetIb
+         kbSsN03oXVk33H0pCmZoFmOUPGzNRJKAhjAn7gV7Fi0FOVGvIT70ZjNxYZQ2xlb6+Ain
+         ByYEJKrWnSTjuZ6HnodBT2K/rgLNuKhxyvi8bb6KPf75HzFs3b5Mccv5DGhDvAqXxGBD
+         pbLlW8h0cyT8ZvSuGL2RRggr20g8ki0pV3KRoqM2owllTytKlTISGDruti3+GIrsOfw4
+         MUryXEF5C65BdfmXMSxTbi88IhDW1ortbNoLz7V/AyEwHZQ1ADuuB+w0W9XzJNI4UNPg
+         jooQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCaccqz1OCEnhdCls/S38ZSnb/t0qdRBgYLdiRHgbBiFdKPclB3LFOqNj0n7rPMN2JbH9axibXdDtsTHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3PYdMp3AlGy25DyCH4FTwjVSgygw9ZnkbMaNVJIqRhyAY42G5
+	fReY1heBm+J3biF5UHuBV4D8PqZvrpJb4dFBCl658K6HEGiSh3qR786U+awM4G0=
+X-Google-Smtp-Source: AGHT+IGR14P71JvmfPxscnZ8AtrJiDNaABAoCva8RLK6hhRhDLztxqxeX/QSTGO3aJyFaA8uuOmTfQ==
+X-Received: by 2002:a05:651c:1543:b0:2fb:407b:1702 with SMTP id 38308e7fff4ca-2ff606618ecmr7216791fa.20.1731653963122;
+        Thu, 14 Nov 2024 22:59:23 -0800 (PST)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff5988ffdbsm4438281fa.111.2024.11.14.22.59.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 22:58:06 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 14 Nov 2024 22:58:05 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Mark Brown <broonie@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Frank Li <Frank.Li@nxp.com>
-Subject: Re: regmap I3C support
-Message-ID: <7b23e033-5cde-44e9-be97-10296833863b@roeck-us.net>
-References: <67d549d0-64c6-4d62-add6-0958ef24910f@roeck-us.net>
- <ZzSxKctLlLZexdF5@finisterre.sirena.org.uk>
- <feda265f-f7ba-4017-a08d-b35916aafe96@roeck-us.net>
- <ZzS6ph8KulEITt5C@finisterre.sirena.org.uk>
- <88f34137-b215-4bee-b117-3ff00402ba6c@roeck-us.net>
- <ZzXfmonkRB-KaBhi@finisterre.sirena.org.uk>
- <85584c2e-2c45-4ec4-89a0-111fa5ad1080@roeck-us.net>
- <ZzYyu4ptPtYT6vJC@finisterre.sirena.org.uk>
+        Thu, 14 Nov 2024 22:59:21 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH RFC 0/2] arm64: dts: qcom: move board clocks to DTS files
+Date: Fri, 15 Nov 2024 08:59:19 +0200
+Message-Id: <20241115-fix-board-clocks-v1-0-8cb00a4f57c2@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZzYyu4ptPtYT6vJC@finisterre.sirena.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEfxNmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQ0NT3bTMCt2k/MSiFN3knPzk7GLdVOPEtFRTIwMzI/NkJaC2gqJUoBq
+ wkdFKQW7OSrG1tQD4+HsoZwAAAA==
+X-Change-ID: 20241115-fix-board-clocks-e3afe520627c
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2377;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=vCdT0PSYt7ug/bjF626EO7sSeIjB87TMkLXNwZ9G7Ew=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnNvFIJY4yUnhWZoSpTYrIbc8hNlNDQmafk95eG
+ N/n2jCZI+qJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZzbxSAAKCRCLPIo+Aiko
+ 1SB2CACr8iWTqBO8VkWl670KxlCnGUnppG7N0fIiL9BKA9sxN5E4b+aS3FM1bt7bjxoxhlL1nag
+ zdq+VSh+Wax6PSYWqTUMQ+4sukwj8Y/kCb0vkVkEYiHlfDkFPM4ZVkLxVf7msx6Be4OW4yitsS8
+ J3oYzLikmRpV/zwOLBqRag1NaU60hIdTKFSYSslG8kiLIcDfaqZP3GWWaoJlDn+JekL8KWr0cXV
+ Vx39mCFyXYgt667kellvUMGhmEyG9WQjKrX267SFl9CIot0F2glDWUQhfQ8aCIZ4z+uCD8H1lwQ
+ NiDkAfD3vLL2NJT3hgynWug1e2SmS8x6Xd+K++Q4Oet0XoRp
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On Thu, Nov 14, 2024 at 05:26:19PM +0000, Mark Brown wrote:
-> On Thu, Nov 14, 2024 at 06:45:52AM -0800, Guenter Roeck wrote:
-> 
-> > We now use
-> 
-> > config SENSORS_TMP108
-> >         tristate "Texas Instruments TMP108"
-> >         depends on I2C
-> >         depends on I3C || !I3C
-> >         select REGMAP_I2C
-> >         select REGMAP_I3C if I3C
-> 
-> > and in the i3c_probe function
-> 
-> > #ifdef CONFIG_REGMAP_I3C
-> >         regmap = devm_regmap_init_i3c(i3cdev, &tmp108_regmap_config);
-> > #else
-> >         regmap = ERR_PTR(-ENODEV);
-> > #endif
-> >         if (IS_ERR(regmap))
-> 
-> > Clumsy, and not my preferred solution, but it works.
-> 
-> Right, so the fact that I3C depends on I2C deals with a lot of the
-> problems that plague the I2C/SPI combination.  Ugh.  I guess the helper
-> should be OK and there's not much doing for I2C/SPI.
+Multiple Qualcomm platforms play strange tricks with board-level clocks
+(XO, sleep) definitions. On some (older) platforms such clocks are
+completely defined within SoC.dtsi file (although these clocks are not a
+part of the SoC). On other platforms definitions of such clocks  are
+split between the SoC dtsi file and the board file.
+Such definitions don't fully follow the DT guidelines. Move these two
+clocks to the board files completely.
 
-Is it really that difficult for I2C and SPI ? The patch below seems to work
-for the LTC2947 driver. It doesn't even need dummies (the compiler drops
-the unused code), though I am not sure if that can be relied on. I thought
-that dummy functions are needed, but maybe I am wrong.
+Being an RFC this series converts two platforms as a way to raise the
+question. However note, this is still not fully correct.
 
-The Kconfig for the combined ltc2947 driver is
+The XO clock is (usually) an external crystal used by the external PMIC,
+which then provides RF CLK and LN BB CLK to the main SoC. However for
+technical reasons this part of the PMIC is modelled as a part of the SoC
+as RPM or RPMh clock controllers. It makes it impractical to describe XO
+clock as being used or being connected to the PMIC.
 
-config SENSORS_LTC2947
-        tristate "Analog Devices LTC2947 High Precision Power and Energy Monitor"
-        depends on I2C || SPI
-        depends on I2C || I2C=n
-        select REGMAP_I2C if I2C
-        select REGMAP_SPI if SPI
-        help
-	...
+Sleep clock is a 32 KHz or 32.768 kHz RC oscillator provided by one of
+PMICs. However pushing it into the PMIC might interact badly with fw
+devlink, causing unnecessary probe delays and/or devlink loops. One of
+the possible solutions might be to move it to the corresponding
+PMIC.dtsi, but model the clock outside of the PMIC node, providing
+/clocks/sleep-clk node from that file.
 
-Guenter
-
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
-From 8b72bcea4f399b3ffbea07256c5e48af63dfd230 Mon Sep 17 00:00:00 2001
-From: Guenter Roeck <linux@roeck-us.net>
-Date: Thu, 14 Nov 2024 17:30:01 -0800
-Subject: [PATCH] Add infrastructure for supporting both I2C and SPI in single
- driver
+Dmitry Baryshkov (2):
+      arm64: dts: qcom: sm8450: move board clocks to DTS files
+      arm64: dts: qcom: sm8650: move board clocks to DTS files
 
-Add support for register and unregister functions for drivers supporting
-both I2C and SPI. Support situations where only one of the protocols is
-enabled.
-
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+ arch/arm64/boot/dts/qcom/sm8450-hdk.dts            | 14 ++++++++++++++
+ arch/arm64/boot/dts/qcom/sm8450-qrd.dts            | 14 ++++++++++++++
+ .../boot/dts/qcom/sm8450-sony-xperia-nagara.dtsi   | 14 ++++++++++++++
+ arch/arm64/boot/dts/qcom/sm8450.dtsi               | 14 --------------
+ arch/arm64/boot/dts/qcom/sm8650-hdk.dts            | 22 ++++++++++++++--------
+ arch/arm64/boot/dts/qcom/sm8650-mtp.dts            | 22 ++++++++++++++--------
+ arch/arm64/boot/dts/qcom/sm8650-qrd.dts            | 22 ++++++++++++++--------
+ arch/arm64/boot/dts/qcom/sm8650.dtsi               | 10 ----------
+ 8 files changed, 84 insertions(+), 48 deletions(-)
 ---
- include/linux/i2c_spi.h | 81 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 81 insertions(+)
- create mode 100644 include/linux/i2c_spi.h
+base-commit: 6d59cab07b8d74d0f0422b750038123334f6ecc2
+change-id: 20241115-fix-board-clocks-e3afe520627c
 
-diff --git a/include/linux/i2c_spi.h b/include/linux/i2c_spi.h
-new file mode 100644
-index 000000000000..3a8d32355338
---- /dev/null
-+++ b/include/linux/i2c_spi.h
-@@ -0,0 +1,81 @@
-+/*---------------------------------------------------------------------------
-+ *
-+ * i2c_spi.h
-+ *     Copyright (c) 2024 Guenter Roeck <linux@roeck-us.net>
-+ *
-+ * API functions to support both I2C and SPI in a single driver.
-+ */
-+
-+#ifndef I2C_SPI_H
-+#define I2C_SPI_H
-+
-+#include <linux/i2c.h>
-+#include <linux/spi/spi.h>
-+
-+/**
-+ * i2c_spi_driver_register() - Register an I2C and a SPI driver
-+ * @i2cdrv: the I2C driver to register
-+ * @spidrv: the SPI driver to register
-+ *
-+ * This function registers both @i2cdev and @spidev, and fails if one of these
-+ * registrations fails. This is mainly useful for devices that support both I2C
-+ * and SPI modes.
-+ * Note that the function only registers drivers for the enabled protocol(s).
-+ * If neither I2C nor SPI are enabled, it does nothing.
-+ *
-+ * Return: 0 if enabled registrations succeeded, a negative error code otherwise.
-+ */
-+static inline int i2c_spi_driver_register(struct i2c_driver *i2cdrv,
-+					  struct spi_driver *spidrv)
-+{
-+	int ret = 0;
-+
-+	if (IS_ENABLED(CONFIG_I2C))
-+		ret = i2c_add_driver(i2cdrv);
-+	if (ret || !IS_ENABLED(CONFIG_SPI))
-+		return ret;
-+
-+	ret = spi_register_driver(spidrv);
-+	if (ret && IS_ENABLED(CONFIG_I2C))
-+		i2c_del_driver(i2cdrv);
-+
-+	return ret;
-+}
-+
-+/**
-+ * i2c_spi_driver_unregister() - Unregister an I2C and a SPI driver
-+ * @i2cdrv: the I2C driver to register
-+ * @spidrv: the SPI driver to register
-+ *
-+ * This function unregisters both @i2cdrv and @i3cdrv.
-+ * Note that the function only unregisters drivers for the enabled protocol(s).
-+ */
-+static inline void i2c_spi_driver_unregister(struct i2c_driver *i2cdrv,
-+					     struct spi_driver *spidrv)
-+{
-+	if (IS_ENABLED(CONFIG_SPI))
-+		spi_unregister_driver(spidrv);
-+
-+	if (IS_ENABLED(CONFIG_I2C))
-+		i2c_del_driver(i2cdrv);
-+}
-+
-+/**
-+ * module_i2c_spi_driver() - Register a module providing an I2C and a SPI
-+ *			     driver
-+ * @__i2cdrv: the I2C driver to register
-+ * @__spidrv: the SPI driver to register
-+ *
-+ * Provide generic init/exit functions that simply register/unregister an I2C
-+ * and a SPI driver.
-+ * This macro can be used even if CONFIG_I2C and/or CONFIG_SPI are disabled,
-+ * in this case, only the enabled driver(s) driver will be registered.
-+ * Should be used by any driver that does not require extra init/cleanup steps.
-+ */
-+#define module_i2c_spi_driver(__i2cdrv, __spidrv)	\
-+	module_driver(__i2cdrv,				\
-+		      i2c_spi_driver_register,		\
-+		      i2c_spi_driver_unregister,	\
-+		      __spidrv)
-+
-+#endif /* I2C_SPI_H */
+Best regards,
 -- 
-2.45.2
-
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
