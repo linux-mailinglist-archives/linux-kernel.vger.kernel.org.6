@@ -1,124 +1,122 @@
-Return-Path: <linux-kernel+bounces-410798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0861C9CE116
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:18:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BEBC9CEADB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:10:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81B231F213A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:18:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86465B3847C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83F11CEAD3;
-	Fri, 15 Nov 2024 14:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816A11CF2A0;
+	Fri, 15 Nov 2024 14:19:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amundsen.org header.i=@amundsen.org header.b="WO309TWA"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nR05r7Nv"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2EC1B218E
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 14:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680C41B218E
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 14:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731680272; cv=none; b=EkCtj87DPy23DlqF7K3j69qPSu99r9AC4QkmrtVXQ7Mr73Kg2dbHiMT9Wf9kiVtYe1Q0Qij7Cf4x4RkNSr+l/M9S8vSlRZkSLZ0yENUafRWLD1SO32Lbg7awCgNKSLxcZCRM1kGLKXDPlgD2wZzo3Cz6qSt+MDNTVAvVaU6PqPQ=
+	t=1731680339; cv=none; b=hxWgu0iLjUsGDLZHfHVZQxqaKgVJI9oznBd8akeNiZy0yvQueunRvzkPCjQpJAbhLOAuvP8OSD+i4GEPUzXY8LYA4HCY1qsqk3P3zlFfZqCCvwd21BcZ2haTrw0pj+yAwRhXMATo5Xa6Ncb889hOqc8SH4fhc9iHRQ6TIXYJU+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731680272; c=relaxed/simple;
-	bh=L3xpZ/FFqX3wjwyttua720jfc/R05tAReQiCDMXpsdg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UenkBJZYVqaqRxLJSTc6f6+YPaSLNUBZoVTUniRLpNL09NDVm07dcPf/Z6F6xpbv+xi0Ly40YL/LLb7qQwIWqLSkLCyZzMJstd5s4/pT5iX3hYqmtZrevpCchWaQ5av5bi0/sVq/91vgawAXq475+Q6pJJKf7Pz50xSAl2Hw9Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amundsen.org; spf=pass smtp.mailfrom=amundsen.org; dkim=pass (1024-bit key) header.d=amundsen.org header.i=@amundsen.org header.b=WO309TWA; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amundsen.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amundsen.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb3c3d5513so7373461fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:17:49 -0800 (PST)
+	s=arc-20240116; t=1731680339; c=relaxed/simple;
+	bh=ZIPyT8dx+eHreBugSxOn3Ptl0BOPxKH7//P+XwhpvVY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LwMAtbqKAcyXb5DIjIfuOYFP0LvbabcA4eyLavlew/l5Sb3UHQqRJce+OGOIoAqkuB8sDZhk4Sj/QtfE1VgE5rDJdrQxMe3G44l1nrsJN+Jycaqh/+h42aW/YrunsOQXk+LI9auO/rZgL7oKbetK4SHeH/jwPK6g66Zx0r++WtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nR05r7Nv; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6ee676b4e20so3203427b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:18:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amundsen.org; s=google; t=1731680268; x=1732285068; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ji98jAueku6e1lv14MgUoovwYkrHFp8EgmSQx8sgEos=;
-        b=WO309TWAZ9EHGiaJyMgNx4IuURJBIMAQe9q+fTVSefyw8FmG72ifNdZeklKYh8x8ws
-         z5HdwnwaYWPhGnqQrmdTI1QdSipZZdOF2pwu7u5hX++xXaMonNjqcDUZ1HFU1sUkdbKl
-         A8ZKFyNTEXvKQ/hlL4eYP+4ToMvjSo5kiWkGE=
+        d=linaro.org; s=google; t=1731680337; x=1732285137; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rhxBFTVLr9CXs7yVyXnjqOaOGkDhEtwnjzGXMrCkuoY=;
+        b=nR05r7NvBkkADilYRK6uzNCYjpnUGZtXbIkOVJsZT2VzuneOW/jJcogANkkNvUkN+v
+         FMm7JwgAeQg6tIVVqBLfSa7QhJp3iSk7de0l8/Hg9zlrVi6UQjdK78W0rgLMM3Xja9le
+         FWYp4n10nzWu1DHldcMiN5jcUKsrqbej5hAuPJ8DinZl99LHZBwjTzOlP7DSer85eCfi
+         Aorc4daP4kvr1+tyqXn9gOGbYDauDaXhG37D2KmcQhQa4YuCrnBtPm3VFiRJB7E98eZv
+         uBNcpodd0ill9fUDH/fbLmVZkF0gcaAyyxf4ITVmVmJkfaebtBibnwDhJB2gCYHxDicj
+         6oIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731680268; x=1732285068;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1731680337; x=1732285137;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Ji98jAueku6e1lv14MgUoovwYkrHFp8EgmSQx8sgEos=;
-        b=xTGLtTcBHJEb8+8hPf1tA5zNrkLcu49ebHdlcxlZstre1QQ7+ILQ2+EUbkqJ89CW+4
-         SyMFc2neLVH2QgYtettepMtjOgfcalGbyJYsCUpjb59H+n6d8LVsa4Z5PWy8/OmAr8XQ
-         OOpVplwrRq5tbEOh3JBBp+UpvkFW4+QzMjOWt+sTx/7bka1o44pFSFjXvBPduxV3Qjez
-         +yoJ6GP1AqQ8mu75ur9TL5AIBt+atQERqmYA4whEtberUQ0YRVrnif91JCOZ8KGhZd+y
-         il9NFg6SzxVF/BOEB6vXU+8OOWJUI3iRNmbqj19qp6xbYDUHZP2l+1za3zouYudJhURx
-         fDWA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtoRg94RsYJ02O3K2M+J0SfFW2D/OXc1+9x6mjOLJublQo+npbd+usxRJ+erNZxtDo9YefFh3+Uh7bIqI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXj4HVztgNBueHzgGblb51PjJ6UYnSRV+nHpGGMAZEV/9iUuLE
-	dbkB2hujnBP9xyQH222YS+fHsYmDXgImv8fVx8eEBnMxcyAnR2LhQBIe/xVg1I0=
-X-Google-Smtp-Source: AGHT+IGVhdFKt8T6HX7yVrULBvS6gpPhEbblidatFeADEvWpgf+4fMZ34SXLF0m/q5wdbPdVX9sMbQ==
-X-Received: by 2002:a05:651c:b27:b0:2fe:f8e1:5127 with SMTP id 38308e7fff4ca-2ff60665f0cmr15414471fa.9.1731680268056;
-        Fri, 15 Nov 2024 06:17:48 -0800 (PST)
-Received: from localhost.localdomain (77-95-74-246.bb.cust.hknett.no. [77.95.74.246])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff5977ab18sm5588441fa.46.2024.11.15.06.17.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 06:17:47 -0800 (PST)
-From: Tore Amundsen <tore@amundsen.org>
-To: netdev@vger.kernel.org
-Cc: pmenzel@molgen.mpg.de,
-	andrew+netdev@lunn.ch,
-	anthony.l.nguyen@intel.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	ernesto@castellotti.net,
-	intel-wired-lan@lists.osuosl.org,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	pabeni@redhat.com,
-	przemyslaw.kitszel@intel.com,
-	tore@amundsen.org
-Subject: [Intel-wired-lan] [PATCH v3 1/1] ixgbe: Correct BASE-BX10 compliance code
-Date: Fri, 15 Nov 2024 14:17:36 +0000
-Message-ID: <20241115141736.627079-1-tore@amundsen.org>
-X-Mailer: git-send-email 2.43.0
+        bh=rhxBFTVLr9CXs7yVyXnjqOaOGkDhEtwnjzGXMrCkuoY=;
+        b=QGk/Ug3SKRqN/wBKUGW4wfJ5F8cffV4H6BO79UzfQAiccrrZK2Ho/b/ttymLtEHRG5
+         5FyBHQARMVzw4efDxwHdg7tbkZjqZhTqnJmQlJ4GZNLHfSZJOko/sZ2iQre/jk01UzGD
+         S4G848uKFI3C4zP0mOnWKwfH/s1/k0zUx8ybJUH8f9M1QqbryVLrusr07uVsV81Teo0z
+         DNpNJG6baqRK/RlQ+/V8y27SJJaZf8d766ILODH9ewckopAoxBnETuaZGgxWRzvP5FoL
+         U+2dY9O2kxSSRtRVgeWZCx56cQpZHpjyR4OgePup4wN2dAjyUKyv96p8Yt54KgF3XDwJ
+         or3w==
+X-Forwarded-Encrypted: i=1; AJvYcCU4jgS3aFNAE8iKK4NkrsUYBoLvFD1PlgKUxQnCGOeK1zHEDfDbjMgJIVGwDbfQ2kBm2mg30CJCm8n7wFQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHibbcjrUI7LWKNcpUTzB3dJoPy7YUJWcKpJ0rIMtUSJ5W9tso
+	BoYJDcXFKCL7RFdrmtn3u4CcE/AzxBTnB/qGUGAtul4P6oQzjtUfUkxVQDHbvfck0Hr0G+o8Mx5
+	bcnA7Cx97N2K3py4R2F1nxktDZshZT046sIUQQQ==
+X-Google-Smtp-Source: AGHT+IHAutNFbQIYrWEa7iEgXdJ0MlhAPiCQSjQjzOFudXA+GpwEclomXP7Hjrwzw+jQnjMyfUPPdwlemfoRMd5mMNo=
+X-Received: by 2002:a05:690c:7309:b0:6ee:36be:64b0 with SMTP id
+ 00721157ae682-6ee55bf0725mr36374547b3.16.1731680337418; Fri, 15 Nov 2024
+ 06:18:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241113-topic-sm8x50-gpu-bw-vote-v1-0-3b8d39737a9b@linaro.org>
+ <20241113-topic-sm8x50-gpu-bw-vote-v1-2-3b8d39737a9b@linaro.org>
+ <sgz4h6rlmekiwypaisjbnej326wv4vaqt3mgspp4fs4tg3mdfx@cwmdqcu6gwbf> <63a2b391-8b71-41cb-bed2-3bc7fd2154ab@linaro.org>
+In-Reply-To: <63a2b391-8b71-41cb-bed2-3bc7fd2154ab@linaro.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 15 Nov 2024 16:18:45 +0200
+Message-ID: <CAA8EJpoFm8EjfBq70RTPtwR7Y7Rm24kHO20NukGiLGRYD0p9Tg@mail.gmail.com>
+Subject: Re: [PATCH RFC 2/8] drm/msm: adreno: add GMU_BW_VOTE quirk
+To: neil.armstrong@linaro.org
+Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>, Viresh Kumar <vireshk@kernel.org>, 
+	Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Connor Abbott <cwabbott0@gmail.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-SFF-8472 (section 5.4 Transceiver Compliance Codes) defines bit 6 as
-BASE-BX10. Bit 6 means a value of 0x40 (decimal 64).
+On Fri, 15 Nov 2024 at 11:21, Neil Armstrong <neil.armstrong@linaro.org> wrote:
+>
+> On 15/11/2024 08:07, Dmitry Baryshkov wrote:
+> > On Wed, Nov 13, 2024 at 04:48:28PM +0100, Neil Armstrong wrote:
+> >> The Adreno GMU Management Unit (GNU) can also scale the DDR Bandwidth
+> >> along the Frequency and Power Domain level, but by default we leave the
+> >> OPP core vote for the interconnect ddr path.
+> >>
+> >> While scaling via the interconnect path was sufficient, newer GPUs
+> >> like the A750 requires specific vote paremeters and bandwidth to
+> >> achieve full functionality.
+> >>
+> >> Add a new Quirk enabling DDR Bandwidth vote via GMU.
+> >
+> > Please describe, why this is defined as a quirk rather than a proper
+> > platform-level property. From my experience with 6xx and 7xx, all the
+> > platforms need to send some kind of BW data to the GMU.
+>
+> Well APRIV, CACHED_COHERENT & PREEMPTION are HW features, why this can't be part of this ?
+>
+> Perhaps the "quirks" bitfield should be features instead ?
 
-The current value in the source code is 0x64, which appears to be a
-mix-up of hex and decimal values. A value of 0x64 (binary 01100100)
-incorrectly sets bit 2 (1000BASE-CX) and bit 5 (100BASE-FX) as well.
+Sounds like that.
 
-Fixes: 1b43e0d20f2d ("ixgbe: Add 1000BASE-BX support")
-Signed-off-by: Tore Amundsen <tore@amundsen.org>
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
-Acked-by: Ernesto Castellotti <ernesto@castellotti.net>
----
-v2: Added Fixes tag as requested by Paul Menzel.
-v3: Correct Fixes tag format and add Acked-By.
 
- drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h b/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
-index 14aa2ca51f70..81179c60af4e 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
-@@ -40,7 +40,7 @@
- #define IXGBE_SFF_1GBASESX_CAPABLE		0x1
- #define IXGBE_SFF_1GBASELX_CAPABLE		0x2
- #define IXGBE_SFF_1GBASET_CAPABLE		0x8
--#define IXGBE_SFF_BASEBX10_CAPABLE		0x64
-+#define IXGBE_SFF_BASEBX10_CAPABLE		0x40
- #define IXGBE_SFF_10GBASESR_CAPABLE		0x10
- #define IXGBE_SFF_10GBASELR_CAPABLE		0x20
- #define IXGBE_SFF_SOFT_RS_SELECT_MASK		0x8
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
