@@ -1,134 +1,201 @@
-Return-Path: <linux-kernel+bounces-410274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0694A9CD730
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:39:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 284499CD970
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:00:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1E561F225A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:38:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1E581F21EBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A24185B5B;
-	Fri, 15 Nov 2024 06:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC411898E9;
+	Fri, 15 Nov 2024 06:59:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R7X5ZCLA"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fo+XKfa9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C08817BEC5
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B6A2BB1B;
+	Fri, 15 Nov 2024 06:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731652734; cv=none; b=om1Bh+PdvTYDY4xRzo+/nt+M17MkPq+4Yye4UQv/bvOW4kD+WIrMAYDlN7WF9LiNySzt2IxImkopO2OyW8j0YRa4qaPQfosqoKE0Sbt13zzWiQAWJfTxTzdzMeXok0j0rIl6QnQcp6kLc+0AyM7+1UObN/rJqLo5D184A/tXw6I=
+	t=1731653977; cv=none; b=L+VBO9JEaQwwbgQA5nZnYHm2ZaCEpIC2y2VvOMVTOzp9uPntwj9DR1JolH1aNcV1ZKZgfzalsR1fPZkvJ9lbq1kvVUPqsoVG1LxuwGUNUvlV5VGrTzrOhkh4vIroDo22hD8Q+pKxe2pyt5ve57oQtzy2oen/DaAd7b6lTJM80Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731652734; c=relaxed/simple;
-	bh=ZeWryhIAPEAd274GWiRj2SxvjKD/sJo0720ArcqeGBY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CDNbJXJucmBH58EjGLNYF8pDE8raNLEFCmwXu6+KCnky9miCfHFJlC82oaz7qL9W+rGk4f9JBkz7T5K9723Xd17oP0kxNfq1agdQLHuh6o08EIMesX1A0ArLlhbTHsNYpaFjgUHz971QtR6qFdqEQynfwVqCx4T7OvtcSf1Eat4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R7X5ZCLA; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7f71f2b1370so1008381a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:38:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731652732; x=1732257532; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=56X8BgBkivT5wkK96qVoAkc6Emo/mlq4sGR9REwolaw=;
-        b=R7X5ZCLA+ArYEYJGNbmlOSzm401w3lXlMTd1fCUVzeT+mR1sdIwJhzlPylFC5QwPyr
-         mnXkJhP/CFRiKb9BJvPiWOm9PnfGvmcISh98LwBdztwjZ3s96BkpinfK04ZuBypWQjZ4
-         MMPRNI85fCBm56vSQgqEErOkOMcr18nOdi6DQFCpX2kX5X9ytjFoKHddKg5XlIPcBnwc
-         Q5f606Sb2WeaxK/RMZNVqj3/PdcKslPCUqirRqlge0o+LzOPwjEO5dwx7eSXWUAWHWGE
-         BFwEU3ap7VvePnz3jPcPwazYFmSmDm8AmhhM7NumrNeHpgXV5biIhzAmMsLiziSz+c7r
-         avXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731652732; x=1732257532;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=56X8BgBkivT5wkK96qVoAkc6Emo/mlq4sGR9REwolaw=;
-        b=QlnoneTR9v/Amtyb7ORcvTggyF4l8uJYyUlltFQyDgckErYX0KetrQKVV1Mi0WyU10
-         VcPCWcD1/05Fi5ijPnz54qBtoxPc/9o4MlWZLqn+8mv/LMzRQ3BiJEAPU4v1r9c+0ftG
-         WB/+vrNqO42wsp3mR0wN7VpR7yvO/7oxP9u0fcMlByzLz2i4PyVlqx6K5hGxORTpXr1x
-         O0fJ7bJMthY6nNXtQxCWbVnhA+nkSSd6MLcsbKZr2ERN6X6vI4Tv5eS1CmRSOcsyxpn7
-         wnn0tetuS68ItnYdYh1efqEvQUbiVkhOV84dFjfguyWSQAUdebCDY72G60UQfXzx5Y8n
-         +M4A==
-X-Forwarded-Encrypted: i=1; AJvYcCURhiBSUSY86zN7I3PnmYFQkdVOEIbxTLNv6Fy60471kxwfNiPjXx1URMUhl0oVs+tgXGW9dxkbEzoUb9c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWnyhvFqqTKfZavTzWelbYV6OHhU4QXmtxJR9vt3FJfkoYdO9W
-	hVHNFHumYTRN+4/ASttoyTMhYq4jObSFgVq4g/epW/QPCxRQp1nJf7j0OcH0GBOSzqC2AWrNq6r
-	JdABE0yc7hNlkluMTXxlMRNTAqzs=
-X-Google-Smtp-Source: AGHT+IEHmbCGkxfuYxBbp5w9bJbGzBcjKIH78G3/w4OoaBqCYkg78xiX+9n4CvsR3ySueptW/YWVUMRwTGv0fi/kg50=
-X-Received: by 2002:a05:6a21:205:b0:1db:ff57:562b with SMTP id
- adf61e73a8af0-1dc90be4502mr1557905637.31.1731652732323; Thu, 14 Nov 2024
- 22:38:52 -0800 (PST)
+	s=arc-20240116; t=1731653977; c=relaxed/simple;
+	bh=Iw0maWuVk35Bzc5A/pGLcIZyak5wPQYKA9zSoI0rMMw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tZhvqUHz3KxNBF93dB9/OXITIUz06ggvkur97MCOhcYydXIRUZrGKQXSZaIT3sx2B0ZUjsLIGi75Jhb4ghIBaje3x+d1kellkUmtyF4x92LytZOIGN499PSWk6hlRCflM8iFCPz7cVhcB4yuHjWy6XtXkpseLCfTBO9EoUJ4waE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fo+XKfa9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19228C4CED2;
+	Fri, 15 Nov 2024 06:59:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1731653977;
+	bh=Iw0maWuVk35Bzc5A/pGLcIZyak5wPQYKA9zSoI0rMMw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fo+XKfa9DbkgIj1FC7mQf+XksalbQD/n8Os6+EGSTbbZK/q0XIjS/qRiru4TDQ40G
+	 qGQE2cJPc3OpUmYbvK6NHAYNPA+JY7djpZqsUFC7ra7jzzfMYvJjw4vH3vw0rHJwM0
+	 B4+USH9dILZmRZ6EgC8iGV8vwdr/yrvbwdGUXgIw=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	hargar@microsoft.com,
+	broonie@kernel.org
+Subject: [PATCH 5.15 00/22] 5.15.173-rc1 review
+Date: Fri, 15 Nov 2024 07:38:46 +0100
+Message-ID: <20241115063721.172791419@linuxfoundation.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241115054936.113567-1-wangyang.guo@intel.com>
-In-Reply-To: <20241115054936.113567-1-wangyang.guo@intel.com>
-From: Lai Jiangshan <jiangshanlai@gmail.com>
-Date: Fri, 15 Nov 2024 14:38:40 +0800
-Message-ID: <CAJhGHyBbhJHqAyfQ6x9BSkLdkMr0P5Fqx8T_2XoW-+X1AQobhg@mail.gmail.com>
-Subject: Re: [PATCH] workqueue: Reduce expensive locks for unbound workqueue
-To: Wangyang Guo <wangyang.guo@intel.com>
-Cc: Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org, 
-	Tim Chen <tim.c.chen@linux.intel.com>, tianyou.li@intel.com, pan.deng@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.173-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-5.15.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 5.15.173-rc1
+X-KernelTest-Deadline: 2024-11-17T06:37+00:00
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 15, 2024 at 2:00=E2=80=AFPM Wangyang Guo <wangyang.guo@intel.co=
-m> wrote:
->
-> For unbound workqueue, pwqs usually map to just a few pools. Most of
-> the time, pwqs will be linked sequentially to wq->pwqs list by cpu
-> index.  Usually, consecutive CPUs have the same workqueue attribute
-> (e.g. belong to the same NUMA node). This makes pwqs with the same
-> pool cluster together in the pwq list.
->
-> Only do lock/unlock if the pool has changed in flush_workqueue_prep_pwqs(=
-).
-> This reduces the number of expensive lock operations.
->
-> The performance data shows this change boosts FIO by 65x in some cases
-> when multiple concurrent threads write to xfs mount points with fsync.
->
-> FIO Benchmark Details
-> - FIO version: v3.35
-> - FIO Options: ioengine=3Dlibaio,iodepth=3D64,norandommap=3D1,rw=3Dwrite,
->   size=3D128M,bs=3D4k,fsync=3D1
-> - FIO Job Configs: 64 jobs in total writing to 4 mount points (ramdisks
->   formatted as xfs file system).
-> - Kernel Codebase: v6.12-rc5
-> - Test Platform: Xeon 8380 (2 sockets)
->
-> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-> Signed-off-by: Wangyang Guo <wangyang.guo@intel.com>
-> ---
->  kernel/workqueue.c | 22 ++++++++++++++++++----
->  1 file changed, 18 insertions(+), 4 deletions(-)
+This is the start of the stable review cycle for the 5.15.173 release.
+There are 22 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-Reviewed-by: Lai Jiangshan <jiangshanlai@gmail.com>
+Responses should be made by Sun, 17 Nov 2024 06:37:07 +0000.
+Anything received after that time might be too late.
 
-This is a problem caused by 636b927eba5b("workqueue: Make unbound
-workqueues to use per-cpu pool_workqueues").
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.173-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+and the diffstat can be found below.
 
-Before the said commit, there is much less likely that two or more PWQs
-in the same WQs share the same pool. After the commit, it becomes a common =
-case.
+thanks,
 
-I planned to make the PWQs shared for different CPUs if possible.
-But the patch[1] has a problem which is easy to fix.
-I will update it if it is needed.
+greg k-h
 
-Thanks
-Lai
+-------------
+Pseudo-Shortlog of commits:
 
-[1] https://lore.kernel.org/lkml/20231227145143.2399-3-jiangshanlai@gmail.c=
-om/
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 5.15.173-rc1
+
+Linus Torvalds <torvalds@linux-foundation.org>
+    9p: fix slab cache name creation for real
+
+Jan Kara <jack@suse.cz>
+    udf: Avoid directory type conversion failure due to ENOMEM
+
+Jan Kara <jack@suse.cz>
+    udf: Allocate name buffer in directory iterator on heap
+
+Yuanzheng Song <songyuanzheng@huawei.com>
+    mm/memory: add non-anonymous page check in the copy_present_page()
+
+Qun-Wei Lin <qun-wei.lin@mediatek.com>
+    mm: krealloc: Fix MTE false alarm in __do_krealloc
+
+Hagar Hemdan <hagarhem@amazon.com>
+    io_uring: fix possible deadlock in io_register_iowq_max_workers()
+
+Li Nan <linan122@huawei.com>
+    md/raid10: improve code of mrdev in raid10_sync_request
+
+Reinhard Speyerer <rspmn@arcor.de>
+    net: usb: qmi_wwan: add Fibocom FG132 0x0112 composition
+
+Hans de Goede <hdegoede@redhat.com>
+    HID: lenovo: Add support for Thinkpad X1 Tablet Gen 3 keyboard
+
+Kenneth Albanowski <kenalba@chromium.org>
+    HID: multitouch: Add quirk for Logitech Bolt receiver w/ Casa touchpad
+
+Alessandro Zanni <alessandro.zanni87@gmail.com>
+    fs: Fix uninitialized value issue in from_kuid and from_kgid
+
+Yuan Can <yuancan@huawei.com>
+    vDPA/ifcvf: Fix pci_read_config_byte() return code handling
+
+Michael Ellerman <mpe@ellerman.id.au>
+    powerpc/powernv: Free name on error in opal_event_init()
+
+Ian Forbes <ian.forbes@broadcom.com>
+    drm/vmwgfx: Limit display layout ioctl array size to VMWGFX_NUM_DISPLAY_UNITS
+
+Julian Vetter <jvetter@kalrayinc.com>
+    sound: Make CONFIG_SND depend on INDIRECT_IOMEM instead of UML
+
+Herbert Xu <herbert@gondor.apana.org.au>
+    crypto: marvell/cesa - Disable hash algorithms
+
+Rik van Riel <riel@surriel.com>
+    bpf: use kvzmalloc to allocate BPF verifier environment
+
+WangYuli <wangyuli@uniontech.com>
+    HID: multitouch: Add quirk for HONOR MagicBook Art 14 touchpad
+
+Stefan Blum <stefanblum2004@gmail.com>
+    HID: multitouch: Add support for B2402FVA track point
+
+SurajSonawane2415 <surajsonawane0215@gmail.com>
+    block: Fix elevator_get_default() checking for NULL q->tag_set
+
+Sergey Matsievskiy <matsievskiysv@gmail.com>
+    irqchip/ocelot: Fix trigger register address
+
+Pedro Falcato <pedro.falcato@gmail.com>
+    9p: Avoid creating multiple slab caches with the same name
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                      |  4 ++--
+ arch/powerpc/platforms/powernv/opal-irqchip.c |  1 +
+ block/elevator.c                              |  4 ++--
+ drivers/crypto/marvell/cesa/hash.c            | 12 ++++++------
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.h           |  4 ++--
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.c           |  4 +++-
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.h           |  3 ---
+ drivers/hid/hid-ids.h                         |  1 +
+ drivers/hid/hid-lenovo.c                      |  8 ++++++++
+ drivers/hid/hid-multitouch.c                  | 13 +++++++++++++
+ drivers/irqchip/irq-mscc-ocelot.c             |  4 ++--
+ drivers/md/raid10.c                           | 23 ++++++++++++-----------
+ drivers/net/usb/qmi_wwan.c                    |  1 +
+ drivers/vdpa/ifcvf/ifcvf_base.c               |  2 +-
+ fs/ocfs2/file.c                               |  9 ++++++---
+ fs/udf/directory.c                            | 27 +++++++++++++++++++--------
+ fs/udf/udfdecl.h                              |  2 +-
+ io_uring/io_uring.c                           |  5 +++++
+ kernel/bpf/verifier.c                         |  4 ++--
+ mm/memory.c                                   | 11 +++++++++++
+ mm/slab_common.c                              |  2 +-
+ net/9p/client.c                               | 12 +++++++++++-
+ sound/Kconfig                                 |  2 +-
+ 23 files changed, 111 insertions(+), 47 deletions(-)
+
+
 
