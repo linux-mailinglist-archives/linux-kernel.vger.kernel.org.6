@@ -1,149 +1,89 @@
-Return-Path: <linux-kernel+bounces-411061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D28A9CF34B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:51:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F59C9CF3A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:10:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B70E7B43454
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:07:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 033D7B2E85C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F7D1D5AAD;
-	Fri, 15 Nov 2024 17:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680731D5AA7;
+	Fri, 15 Nov 2024 17:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="KNNZC1KM"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUkFj+1V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760ED136341
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4FC4136341;
+	Fri, 15 Nov 2024 17:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731690460; cv=none; b=Z3gjV71FTVfG38yfLdF5GoyZczmlW0QZ+i30WOnlq3hc1d+9DCqIf7ZsZQ716pRrMM9hJDR3A88unttk4e8YLb0KJkxvpLUfaYLs1yy6+sdGGQg4B67RVHXFIsB5Sa/0Ykl0uxIXazrCol1w+qUaIns0WWQPE3cobbwiG040s6g=
+	t=1731690565; cv=none; b=r0k5GIL1luI2H+uOXkgu5lU64Hr62GifrF0xpeNCG7AkNS5qyyrm9ppazRdw4fyvCWFtYGX3gQpL/Z7RWzqM0OVTT1V/WMjNLiHLYuUR3uYBVO8vflBgy9/7dkK3a5sWIDCal+3BspCoJJU8r09tdOrspg1UBpj2DJlZa7y7LIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731690460; c=relaxed/simple;
-	bh=RlgLCwt0pHAzO+8y8JHjzVJt2BMGqQLKA4J3pAJFt7A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BVtqcUEiEajdS0keewxFQ/HvmuYPe2HBGsD9QSIcObdMokVWn4tKVHXnKWnnwnnlW/Keoq66y6Zfi2t4RLqcJbe5SvxvK3Y7xwucUUh7Pmmui3gGr9Y3yvM78oHyIrISvOGVEw3P4VNOSzJMZwC4nD4ZmI0iOBQ/H9tlZaxs1YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=KNNZC1KM; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3e5fef69f2eso607427b6e.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:07:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731690457; x=1732295257; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0UZ4bmKiEfcrQ88X0EpormBgHcykEkWHrKLssaVp+ps=;
-        b=KNNZC1KMH//UilrDoY+W3OmZrVLJKwQnRxU9ErFB2vkIXGNrMrpsRSafWnd2LllDgY
-         glJOGGy3T+FWqE/5tlaK4JLxOtDPbdQ0/7WMpSaEWo6KGGnpBzQfH+mwS5G0EVRZKE1d
-         mkD9QEyUeVLdGBlNFC7HtPfY84iskgtUbAOD1VP1V6ByWHVJ4/Bt43ffaWWWwUA6/8aJ
-         /6Ewg1eZjmgvgGEJpdNExRx2NJB8awcKJobTHbf8IT0OgTKZC25hpZ7GKbvH4T5p23m5
-         HF+44VrzVUesHsbORPYf8A0oMDtzwzIqXJUSuW8qBFNwjDlX69v8CHQrWmmbCC7Q6M1X
-         0tdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731690457; x=1732295257;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0UZ4bmKiEfcrQ88X0EpormBgHcykEkWHrKLssaVp+ps=;
-        b=UGIwLsWjeJR/0EMvr6sdtaPexJ19YrakpbQ6MtnM7UcZcJv5YuQLt99XX3If87Hj4/
-         d+oCDC37LXi3dUIupd2CMiexxgmrpe0rpgP3DTnC/JZI9Acu90O1Jt7jTa7MS9gi5xNG
-         K3dBjQcmJV5O6MNwuNyfCSM8axL9xdqIlhpBt1npMUH0Hf4hqfzrtkreSDft7BQxglT+
-         wp3wzYqOzez1vzc+g29XJjdXC+28VIdv4X8gFrbSj+9SeU/HhyeWFik8Gxn2kbfMgSJL
-         gSveJPHSwFMcm/IOfJcGd9M62HKCnL0aS/2dT+W2alFM1DRHi0DppAXGjR2g9HWOVKuZ
-         xj7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUNfKHFJPCPCDiLWL5nysgmWjTjctem4T0SIqUPB5+E7zP7C+o8RLc44k27RdxLiofz72TDE9ULSezAAeE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSum4fCjb0vjiBDVWjlWuBI9Rti4WSkmVoNDodDOn/txO7l+Bs
-	YenJy9v35yhktJInYN3kGQLln4RwhsXFjVwBI0icSnpOP/qc8JW0mv8EyEOhMiI=
-X-Google-Smtp-Source: AGHT+IFFqGUcRPyBDjreOCcM1rzo3LgkxNVwNrVKyhxfFUltStJRCbjgMz5dV1Tl7g+Si9O2R8j5Zg==
-X-Received: by 2002:a05:6808:2020:b0:3e0:3ab7:d7ad with SMTP id 5614622812f47-3e7bc7d2f6fmr4048241b6e.22.1731690457623;
-        Fri, 15 Nov 2024 09:07:37 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e7bcd82997sm629389b6e.34.2024.11.15.09.07.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 09:07:36 -0800 (PST)
-Message-ID: <7e302a49-db5a-444d-aae1-3c80ab75b471@baylibre.com>
-Date: Fri, 15 Nov 2024 11:07:34 -0600
+	s=arc-20240116; t=1731690565; c=relaxed/simple;
+	bh=Kat0vAa0R0WH/hqaed0tTlbgXevMzDUhnZLBXcBEO8E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g7VW7DCSUc2CaZ+ZrhH6mQKTzZH5E2LDQTu3W0AvXq6J1AsjO/ZVLa0TkJcWkHAuy7dHD0IbItT96hGHLX/JacSbUyyVhY2M42dwGyQAbfUovNKvvYutokoboax7yXy4srid6oH9lF4wGC+G8+YTiPtg9bVn9WcPLrOty3lItEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tUkFj+1V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF2DDC4CECF;
+	Fri, 15 Nov 2024 17:09:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731690565;
+	bh=Kat0vAa0R0WH/hqaed0tTlbgXevMzDUhnZLBXcBEO8E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tUkFj+1V4H5JGTNQNeKE4bp0/9yLPX11JH7rDNUBd59qfbrY9qhxOwyU0GyclUsqU
+	 FNzzJimsDZSn+6yn/qxKa2ddEzagWoSkSqTvnx4WaW+t0LwO3Z4AaYik8wLx2n74q+
+	 NpNKkVtN8tEz3F/TZhEoJzS3hmGeIbtWCZRzOJsiNihxb6aTIaoc6/WupAaaibGRBk
+	 lNCBVlvVD/KMGu/LAEsVsIetmZWL3RPltmcGJAavsXyg5o0l4MXMzILTPAfq0o9q4o
+	 pRoRUNKAHH5MexxRl8sHW9L7Imb4cyyTOw8FVeKJbOreurjMpNy8usapuVmgXNCPCb
+	 OiU5TZf0qidPA==
+Date: Fri, 15 Nov 2024 11:09:23 -0600
+From: Rob Herring <robh@kernel.org>
+To: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 1/5] dt-bindings: pinctrl: move gpio-cells and
+ gpio-controller property
+Message-ID: <20241115170923.GA3356657-robh@kernel.org>
+References: <20241113-a4_pinctrl-v7-0-0546a20c1c22@amlogic.com>
+ <20241113-a4_pinctrl-v7-1-0546a20c1c22@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] iio: adc: ad4000: Use device specific timing for SPI
- transfers
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
- Michael.Hennerich@analog.com, jic23@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, marcelo.schmitt1@gmail.com
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1731626099.git.marcelo.schmitt@analog.com>
- <81370b043de208795738e5679c33de37439c0a2e.1731626099.git.marcelo.schmitt@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <81370b043de208795738e5679c33de37439c0a2e.1731626099.git.marcelo.schmitt@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241113-a4_pinctrl-v7-1-0546a20c1c22@amlogic.com>
 
-On 11/14/24 5:51 PM, Marcelo Schmitt wrote:
-> The SPI transfers for AD4020, AD4021, and AD4022 have slightly different
-> timing specifications. Use device specific timing constraints to set SPI
-> transfer parameters.
+On Wed, Nov 13, 2024 at 05:37:28PM +0800, Xianwei Zhao wrote:
+> Move #gpio-cells and gpio-controller properties from common yaml file
+> to lower-level yaml files.
 > 
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > ---
->  drivers/iio/adc/ad4000.c | 50 ++++++++++++++++++++++++++++++++--------
->  1 file changed, 41 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ad4000.c b/drivers/iio/adc/ad4000.c
-> index 21731c4d31ee..68ac77494263 100644
-> --- a/drivers/iio/adc/ad4000.c
-> +++ b/drivers/iio/adc/ad4000.c
-> @@ -35,10 +35,6 @@
->  
->  #define AD4000_SCALE_OPTIONS		2
->  
-> -#define AD4000_TQUIET1_NS		190
-> -#define AD4000_TQUIET2_NS		60
-> -#define AD4000_TCONV_NS			320
+>  .../devicetree/bindings/pinctrl/amlogic,meson-pinctrl-a1.yaml        | 5 +++++
+>  .../devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml    | 5 -----
+>  .../bindings/pinctrl/amlogic,meson-pinctrl-g12a-aobus.yaml           | 5 +++++
+>  .../bindings/pinctrl/amlogic,meson-pinctrl-g12a-periphs.yaml         | 5 +++++
+>  .../devicetree/bindings/pinctrl/amlogic,meson8-pinctrl-aobus.yaml    | 5 +++++
+>  .../devicetree/bindings/pinctrl/amlogic,meson8-pinctrl-cbus.yaml     | 5 +++++
+>  6 files changed, 25 insertions(+), 5 deletions(-)
 
-We are removing 3 but only adding 2 in the struct below?
+Please don't send new versions when the prior version comments are not 
+resolved.
 
-If one of these was unused, best to mention it in the commit message.
-
-> -
->  #define __AD4000_DIFF_CHANNEL(_sign, _real_bits, _storage_bits, _reg_access)	\
->  {										\
->  	.type = IIO_VOLTAGE,							\
-> @@ -122,10 +118,30 @@ static const int ad4000_gains[] = {
->  	454, 909, 1000, 1900,
->  };
->  
-> +struct ad4000_time_spec {
-> +	int t_conv_ns;
-> +	int t_quiet2_ns;
-> +};
-> +
-> +/*
-> + * Same timing specifications for all of AD4000, AD4001, ..., AD4008, AD4010,
-> + * ADAQ4001, and ADAQ4003.
-> + */
-> +static const struct ad4000_time_spec ad4000_t_spec = {
-> +	.t_conv_ns = 320,
-> +	.t_quiet2_ns = 60,
-> +};
-> +
-> +static const struct ad4000_time_spec ad4020_t_spec = {
-> +	.t_conv_ns = 350,
-> +	.t_quiet2_ns = 60,
-> +};
-
-t_quiet2_ns is the same in both cases, so do we actually need to
-add it here instead of using a common macro? Or if it is for future
-differences, mention that in the commit message.
+Rob
 
