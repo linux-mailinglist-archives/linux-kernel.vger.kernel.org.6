@@ -1,127 +1,154 @@
-Return-Path: <linux-kernel+bounces-410785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30D199CE131
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:25:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6620D9CE0F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:08:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CACEAB34ADB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:08:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C8B5284108
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99ADA1CEAD4;
-	Fri, 15 Nov 2024 14:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276A61CDA3F;
+	Fri, 15 Nov 2024 14:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P+MZoXMj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ye+Hb/5G"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033781B2EEB;
-	Fri, 15 Nov 2024 14:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1354C1CDA01
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 14:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731679698; cv=none; b=mHL+S9gOrhpfJOH3eNEbC8qC/YmHeeVrk2oGCAqJgOxzvZs9oHrNVccwuh/U+jl4v1S+8ihl2RAcKVsWZwafcMOdmYCiZFZxrk/GDjHDYa32cpkGoGzcvfpYs5aMZb9UFNlLkW5HvWhJXxZJS9sY3U9IKiVlpxZjNnr9sjysitU=
+	t=1731679727; cv=none; b=n8M8ZGrosTXX6g6ABhETH7/Wzdry8aIhmYFIWywdjV+kt2b/ozFX3RZSvjlRSBzVLbxcfh4UlPgz/tkFPYStS4Z0snSuninfxC3a+pD/e4URrjdBOfPQGhqVEBwjIDGoQWpz+E0vWD5ne0oloisghxVXPapRiybc3O9Jyo/y3PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731679698; c=relaxed/simple;
-	bh=7TCiUevGA4XMe2fgZ9qj70lMNta4ONqhloKEk8TYICg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kg9Ir912zD9kZNlQuJuHBpganz/YOcccXJZuj+hHLleaFQWH6q9G/rw+SMB2GbwAOLKOaSVKIa6yAywY1z3OL6Anh/HyyGUjR96c6/PUBn58Ubb/GVjGLSF2vpeHNe2AYqgikqnpgEsudKZB0VZ+NDGYFAe+f5uEZcBfi8RlxlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P+MZoXMj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55A5EC4CECF;
-	Fri, 15 Nov 2024 14:08:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731679697;
-	bh=7TCiUevGA4XMe2fgZ9qj70lMNta4ONqhloKEk8TYICg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=P+MZoXMjK2zMgyBDNsVFXsbriztsk7eG5Pg4SqXsIUAsf0fvqRFTMOs/QmAniXZq0
-	 U2QQehRDOh7ieA0NWQ0/aeDA+MuWHoS7ZrfG7vFO1j7H+zF0dbg7ePi6eT4nZoGWvN
-	 udaN9kwVXAwoL5Ufr1h1N0RkL26LBiagncPyCmACCTb/KLaGq6reTmLHkxlboAKPRr
-	 IOzwUcJN9ELWqGpws8HfC1SaVlCrIVON/r9+1aVwj5cutml0Fh/KD59kxz3k8jdjfp
-	 MbB21hH8qesI2aU8npVkaGxHJsC7vilJJdgWSVYD5A3PgRe32iVqz06z+MNhfX/G/B
-	 7poc38F6U5AGw==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs ecryptfs
-Date: Fri, 15 Nov 2024 15:08:10 +0100
-Message-ID: <20241115-vfs-ecryptfs-e1d0f86e210b@brauner>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1731679727; c=relaxed/simple;
+	bh=xKws5Q0o4CUmb4V5oZwIdg4rnXrBMpqWmbqe1P0JpKk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JkrM+391pZMFgAJ9q3pMJgrQycAWhPiDMoJCk7SmgQxr/E9YeHwBni0LDKulwYYc8j5E8IfNLWsiJzzH5KKO+wRSoxd8/EfnsLjEehJpAWJ+T1JmyZUDPfs89dCY1wYXHXsqk8HFVUOGDX7q9R4jgC4IDXb8tYJhESZsIDFXLkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ye+Hb/5G; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20c693b68f5so8569985ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:08:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731679725; x=1732284525; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YoKAbJCqo7qQrbAphdCyAKp6bujOtKlKbGWGDDJbWRA=;
+        b=ye+Hb/5GHWLIhggbv59nQUe8sDEJFpqDS/poSYKi3afXi9F/zx22IkXyMpgmgB5DkT
+         JZoa8tCQIbua/teceod3kr2zCBrINCTR09Am8s+grDCfc1dH5cRV4hzxs+sfVEx8kfqu
+         v+FWPy1711MtySS3WPRI0Gf46meHTNsfPOJoE7lNG3UoQWaLBPvWuM2HBMCYXBJbmNlj
+         pMstWp0vfV7NOf4nSPf+ZxYpUKxBQ6vGD4uhzZAOHkwszExurnCBHpqDOZQFx9aH1ef8
+         J9QwfyfDetQIwV9UgGKSSc/b3hO/437qnC8+/caOPCtG0isBQrwkDpG89qNVv42w3O1v
+         460w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731679725; x=1732284525;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YoKAbJCqo7qQrbAphdCyAKp6bujOtKlKbGWGDDJbWRA=;
+        b=rZE1DyssfoN4XlwTkX/aY+ZF8EVQhLSWiUQTWOXmJgHruTwNKZLGfljehbqPme1499
+         Im3iLmQsiWfZthcAuQMuEtsulyYgfmEQbOb6d7VAb/tEzqnkw/DkvoqMkXeKh6MEXLFW
+         IN7deP3dt6MIKbz5GXpHIWWp9DIjdKnuJkV3Bj7f5gSAoeZfvwGWYekVw8l84OCfxCaV
+         1zIXziUWLh4Gz8KwJadsWPr2yl0CLi+fWw97Gn/oq+wa23rlnDigusy1s7ZSSYDJaR5h
+         6Axl10vdRgXFQK8ONZGYr4yQNWswtLEOlBsdcz+5How7Os2Fu2Zp29DjVBJFln3kMNGq
+         bkGg==
+X-Forwarded-Encrypted: i=1; AJvYcCXdERR9gsyugcZPnajo9cWHQleK/PKTCqA2kUQIQFlSkTc5/5pTQ8EEO0Hfj4XQVAzOKOLKfd/1d7cykPM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdAz2fl6ASbPNpHGWqJuD4Qc5WAerLAW7mLXQEkLtnSyEzLFSS
+	pnrtbgvdOqkooJazO1uel3DFkrTY85Zp7GHuIJbgQxaArtYYH826gGtwARrQ9SttYUDRBVpoNCk
+	=
+X-Google-Smtp-Source: AGHT+IEqBDQQkEI9Z4A5hSXt4LEIhHr4FdA2+i1zXQxXIjMye1x3OLoASktaOIHTJpstuWkhM6cEBw==
+X-Received: by 2002:a17:902:eccf:b0:20c:bda8:3a10 with SMTP id d9443c01a7336-211d0ecb145mr37222735ad.37.1731679725382;
+        Fri, 15 Nov 2024 06:08:45 -0800 (PST)
+Received: from thinkpad ([117.193.215.93])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0dc5c94sm12679055ad.17.2024.11.15.06.08.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 06:08:45 -0800 (PST)
+Date: Fri, 15 Nov 2024 19:38:36 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Konrad Dybcio <konradybcio@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	quic_vbadigan@quicinc.com, quic_mrana@quicinc.com,
+	andersson@kernel.org
+Subject: Re: [PATCH v4 3/3] PCI: qcom: Update ICC and OPP values during link
+ up event
+Message-ID: <20241115140836.3wjfnlslozexd2ic@thinkpad>
+References: <20241115-remove_wait1-v4-0-7e3412756e3d@quicinc.com>
+ <20241115-remove_wait1-v4-3-7e3412756e3d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2290; i=brauner@kernel.org; h=from:subject:message-id; bh=7TCiUevGA4XMe2fgZ9qj70lMNta4ONqhloKEk8TYICg=; b=kA0DAAoWkcYbwGV43KIByyZiAGc3VcyierHm0crafZHxXZmndFwl8g9s4Yzj95W0pXjeAeiCK Yh1BAAWCgAdFiEEQIc0Vx6nDHizMmkokcYbwGV43KIFAmc3VcwACgkQkcYbwGV43KI9OQD9EOdg 2juws1hzScrp2SzvBlEnCkgy5C6Svv5oxCVlDMAA/0fz4tv8FRbW/G/i5YzO+0SpLxaITC4jWGi W0w2lYDgG
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241115-remove_wait1-v4-3-7e3412756e3d@quicinc.com>
 
-Hey Linus,
+On Fri, Nov 15, 2024 at 04:00:23PM +0530, Krishna chaitanya chundru wrote:
+> As the wait for linkup is removed if there is a global IRQ support,
+> there is no guarantee that the correct icc and opp votes are updated
+> as part of probe.
+> 
+> And also global IRQ is being used as hotplug event in case link hasn't
+> come up as part probe, link up IRQ is the correct place to update the
+> ICC and OPP votes.
+> 
+> So, as part of the PCIe link up event, update ICC and OPP values.
+> 
 
-/* Summary */
+How about,
 
-The folio project is about to remove page->index. This pull request
-contains the work required for ecryptfs.
+"The commit added the Link up based enumeration support failed to update the
+ICC/OPP vote once link is up. Earlier, the update happens during probe and the
+endpoints may or may not be enumerated at that time. So the ICC/OPP vote was not
+guaranteed to be accurate. Now with the Link up based enumeration support, the
+driver can request the accurate vote based on the PCIe link.
 
-/* Testing */
+So call qcom_pcie_icc_opp_update() in qcom_pcie_global_irq_thread() after
+enumerating the endpoints."
 
-gcc version 14.2.0 (Debian 14.2.0-6)
-Debian clang version 16.0.6 (27+b1)
+> Fixes: 4581403f6792 ("PCI: qcom: Enumerate endpoints based on Link up event in 'global_irq' interrupt")
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
 
-All patches are based on v6.12-rc5 and have been sitting in linux-next.
-No build failures or warnings were observed.
+With above,
 
-/* Conflicts */
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Merge conflicts with mainline
-=============================
+- Mani
 
-No known merge conflicts.
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index c39d1c55b50e..39f5c782e2c3 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -1558,6 +1558,8 @@ static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
+>  		pci_lock_rescan_remove();
+>  		pci_rescan_bus(pp->bridge->bus);
+>  		pci_unlock_rescan_remove();
+> +
+> +		qcom_pcie_icc_opp_update(pcie);
+>  	} else {
+>  		dev_WARN_ONCE(dev, 1, "Received unknown event. INT_STATUS: 0x%08x\n",
+>  			      status);
+> 
+> -- 
+> 2.34.1
+> 
 
-Merge conflicts with other trees
-================================
-
-The following changes since commit 81983758430957d9a5cb3333fe324fd70cf63e7e:
-
-  Linux 6.12-rc5 (2024-10-27 12:52:02 -1000)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.13.ecryptfs
-
-for you to fetch changes up to b4201b51d93eac77f772298a96bfedbdb0c7150c:
-
-  Merge patch series "Convert ecryptfs to use folios" (2024-11-05 17:20:17 +0100)
-
-Please consider pulling these changes from the signed vfs-6.13.ecryptfs tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.13.ecryptfs
-
-----------------------------------------------------------------
-Christian Brauner (1):
-      Merge patch series "Convert ecryptfs to use folios"
-
-Matthew Wilcox (Oracle) (10):
-      ecryptfs: Convert ecryptfs_writepage() to ecryptfs_writepages()
-      ecryptfs: Use a folio throughout ecryptfs_read_folio()
-      ecryptfs: Convert ecryptfs_copy_up_encrypted_with_header() to take a folio
-      ecryptfs: Convert ecryptfs_read_lower_page_segment() to take a folio
-      ecryptfs: Convert ecryptfs_write() to use a folio
-      ecryptfs: Convert ecryptfs_write_lower_page_segment() to take a folio
-      ecryptfs: Convert ecryptfs_encrypt_page() to take a folio
-      ecryptfs: Convert ecryptfs_decrypt_page() to take a folio
-      ecryptfs: Convert lower_offset_for_page() to take a folio
-      ecryptfs: Pass the folio index to crypt_extent()
-
- fs/ecryptfs/crypto.c          |  35 ++++++-----
- fs/ecryptfs/ecryptfs_kernel.h |   9 ++-
- fs/ecryptfs/mmap.c            | 136 ++++++++++++++++++------------------------
- fs/ecryptfs/read_write.c      |  50 ++++++++--------
- 4 files changed, 105 insertions(+), 125 deletions(-)
+-- 
+மணிவண்ணன் சதாசிவம்
 
