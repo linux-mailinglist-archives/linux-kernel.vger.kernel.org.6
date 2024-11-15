@@ -1,122 +1,105 @@
-Return-Path: <linux-kernel+bounces-411480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 048639CFA91
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:00:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 075FF9CFA85
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:59:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE62B2865A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:00:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1784286803
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898F6190472;
-	Fri, 15 Nov 2024 23:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8981F1922DC;
+	Fri, 15 Nov 2024 22:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iGLcYkgN"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eu4cs5Wf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E53190471;
-	Fri, 15 Nov 2024 23:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCEAB1DA23;
+	Fri, 15 Nov 2024 22:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731711608; cv=none; b=lvRLfBTzaiHCvQJ20U03HahRluMpaUIlk41Nu/azS9kOZvzijXVhDtA4keeL6dDdXlqMhMOsWlVnWST75w03OcVSBAAQs+97rCE9NFyNH4YS6q/qjmkbSdiBc/k+CcMROnIZ9A7KWqCYXiIwBxDr8E0OeDaIQVN6h2+YLTTLV0w=
+	t=1731711561; cv=none; b=jECfpJolNfN8ei6aX2/mq1Zj9D/kRYWF6lmYkrl9t58r80Q9jbPQda+oK0rBiwYaVNbVVhzBebRa5ZBbIg/qiFDT0Xg9SBnDUA5L+A4Wz5pxipnhcdwztyERVsHamM/LMPuD+GsiA7dO+R21H9EjqmJcvHqEUu8q40pGkNkVUxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731711608; c=relaxed/simple;
-	bh=h0nperqVqbHB5eqqjIn9F+8wj6Mb6ucj+/I59BTez6s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lo9iBLS5ulXruogLFl0lyySK6nIAvnLjNz1a4ehm5JWRFCeHWQSxYCOhiJynp6vtIY5eJVbwmm0G4chXbJhoSUZXjzpPAeJoJpf+eBG3qasQ43xmi3o+mWK7cIvD/5BowNmcOtTx6nnkEXTcZa+NGjSTZWxvdiA3dCRhSYX83jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iGLcYkgN; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20cbcd71012so720055ad.3;
-        Fri, 15 Nov 2024 15:00:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731711607; x=1732316407; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ya0Xzxf9sfPPzCc2BoY8o1v3FhPr9pgYNNyxWUxd1nI=;
-        b=iGLcYkgNBeaa5YG5GMNESbmGIuxf19PM/59PEG3Az7QUbE6XPTBVtSeMU/mwHLG96T
-         2aQDBoDADDUbs7LbU/bTMHdmyRmCfyOttHqSpVZw+DKJGG9iaMxHAd2bLzark9t4dQ8W
-         Lbc/0JwyvdROUrXGu5p/+Pvwf8NEL9TdpEfGuLVwWYw+zMv13VIlosSs41CZwBJc1lGM
-         qF/qCBketkQhL0z2UYqhB2YC5+mqDDzoXjEi/kzJB1VZL+KSepL3+eJkjMlrdIoViry6
-         LeCxaE/sfpMhODMHfhY7lm3KZphTd+NJHU7ni8IV1Wjv/AAQEUc1lveqk3U4Fv8SP7O7
-         lsPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731711607; x=1732316407;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ya0Xzxf9sfPPzCc2BoY8o1v3FhPr9pgYNNyxWUxd1nI=;
-        b=KGsFc8mVHAVjLtr7nqjSBeheZH8GoSHM9cbf/ceLQNWrQ9bWaSIVK3n3JKBdpT33l9
-         N2IunvEUM37tBk+Y+4uxOOB1TMWSRHERtFP3ulqA1COwOQzg0q9QNE39KPxE/0pigdn6
-         qBI6VjM16wiyZ7fvEjqmfk/PM1fb979Y1MW2duaNGnKX4VW1CZEM3ihToz8LN4cFdtne
-         ikCK5INfYmQOaFNXvniHzTzmSQpPoeGq5u8CrmDAXZomXdGVrieZiYa4tOnHLbGTkeKi
-         /krcyvIyGpMEkOk3fcqhFBN9WJTE7LMOzfwqjxHgbfOtmzxhEflzRo38p7xvh7iau9wj
-         8prw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9/jVJAJX9wiuottVjJgG5wEW3tWCvm8vCruMKTtwivFOtXpA23YLGxLb5VCJwaIw1Z1ErdjUj2Y+HsdM=@vger.kernel.org, AJvYcCXOB8NG/claP1m8Pxum6xMKmwwnMQKY38th6Bo4uoWUDVDbfNSgn1hFGCIyebnYWx1pljP3Zx1/7cADqud24Guvmg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1jdO28sj1yS3gKodRq5mLisfD5Lbtf7z5HzUkRI/ctG9+ilkc
-	YF7z0zNVnf/6mrm5qBd9F+qEMdR76AaGHzCYyFoMcWyIlaIl/Ntk
-X-Google-Smtp-Source: AGHT+IHlaGMSP3eqwTL20AdsmPEI86SsLw7MYOyx8/0xopEAlkmFnin4y5YG+JQCH0fMF5SxIQeQTQ==
-X-Received: by 2002:a17:902:ce8b:b0:211:d00a:1974 with SMTP id d9443c01a7336-211d0d7f96bmr48350715ad.13.1731711606840;
-        Fri, 15 Nov 2024 15:00:06 -0800 (PST)
-Received: from localhost ([38.141.211.103])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0ecafebsm17521015ad.105.2024.11.15.15.00.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 15:00:06 -0800 (PST)
-From: Ragavendra <ragavendra.bn@gmail.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	tglx@linutronix.de,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com
-Cc: x86@kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ragavendra <ragavendra.bn@gmail.com>
-Subject: [PATCH] perf/x86/intel: Cast u64 variable
-Date: Fri, 15 Nov 2024 14:58:30 -0800
-Message-ID: <20241115225829.112361-2-ragavendra.bn@gmail.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1731711561; c=relaxed/simple;
+	bh=fUh5s7BsCwoaZmYFGIY2veyC4azYYi1dCvhz9yokXG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Fel/4/kiVni3OXL4k+OOZ8Qh+glEQC4CUEAn90ZYTDtfDqPoYEsLhifQaOikbqNfY5SfdmSJkPsREzreMz/XzwoWZEq2Svvj+rOyqsYpYJgGWm/MkCw0HVxGMsudUd6hGvk8FAIsYiMZUG9t+soyAC0xouXudCymEXbW68vkU8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eu4cs5Wf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B642EC4CECF;
+	Fri, 15 Nov 2024 22:59:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731711560;
+	bh=fUh5s7BsCwoaZmYFGIY2veyC4azYYi1dCvhz9yokXG0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eu4cs5Wf05VYisSHEwhIeVyub9YTwSD6bDuvbIuAC+BhUmUpPzMeybF4t20rSew0k
+	 eAp+tOXT1vRizIbTAeM5kZ9qJ8pWIWwTbyAAnzbAA5cs/aQnaOCkLNdBS4dR+S/eG5
+	 pYxHNlclxuoUjkpHSdGDi6RBZ+do8EovBK2pooEO3b/cznfsvGh+X7XVy3KYwx3qx3
+	 yUQdEHosRJ0W1x13K+leNe8DHoVIZ7NxeVUDhuHx+yb/qMK+Mx+plzTiuLRjGn915E
+	 7n2jtcBIyVSXjC/1b1IpdU7wWRTNvo7A9TdZcs2mWtZVIcYVo30HAsyt2H2OoqUVyB
+	 MVmD+rElBmTdg==
+Date: Fri, 15 Nov 2024 14:59:18 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Matthias
+ Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, upstream@airoha.com
+Subject: Re: [net-next PATCH v5 3/4] net: dsa: Add Airoha AN8855 5-Port
+ Gigabit DSA Switch driver
+Message-ID: <20241115145918.5ed4d5ec@kernel.org>
+In-Reply-To: <6737c439.5d0a0220.d7fe0.2221@mx.google.com>
+References: <20241112204743.6710-1-ansuelsmth@gmail.com>
+	<20241112204743.6710-4-ansuelsmth@gmail.com>
+	<20241114192202.215869ed@kernel.org>
+	<6737c439.5d0a0220.d7fe0.2221@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Casting (1 >> bit) to u64 before it is compared with pebs_status variable.
+On Fri, 15 Nov 2024 22:59:18 +0100 Christian Marangi wrote:
+> On Thu, Nov 14, 2024 at 07:22:02PM -0800, Jakub Kicinski wrote:
+> > On Tue, 12 Nov 2024 21:47:26 +0100 Christian Marangi wrote:  
+> > > +	MIB_DESC(1, 0x00, "TxDrop"),
+> > > +	MIB_DESC(1, 0x04, "TxCrcErr"),  
+> > 
+> > What is a CRC Tx error :o 
+> > Just out of curiosity, not saying its worng.
+> >  
+> 
+> From Documentation, FCS error frame due to TX FIFO underrun.
 
-Fixes: 21509084f999 perf/x86/intel: Handle multiple records in the PEBS buffer
-Signed-off-by: Ragavendra Nagraj <ragavendra.bn@gmail.com>
----
- arch/x86/events/intel/ds.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Interesting
 
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index fa5ea65de0d0..9ea147565dc2 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -2072,7 +2072,7 @@ get_next_pebs_record_by_bit(void *base, void *top, int bit)
- 			/* clear non-PEBS bit and re-check */
- 			pebs_status = status & cpuc->pebs_enabled;
- 			pebs_status &= PEBS_COUNTER_MASK;
--			if (pebs_status == (1 << bit))
-+			if (pebs_status == (u64) (1 << bit))
- 				return at;
- 		}
- 	}
--- 
-2.46.1
+> > > +	MIB_DESC(1, 0x08, "TxUnicast"),
+> > > +	MIB_DESC(1, 0x0c, "TxMulticast"),
+> > > +	MIB_DESC(1, 0x10, "TxBroadcast"),
+> > > +	MIB_DESC(1, 0x14, "TxCollision"),  
+> > 
+> > Why can't these be rtnl stats, please keep in mind that we ask that
+> > people don't duplicate in ethtool -S what can be exposed via standard
+> > stats
+> >   
+> 
+> Ok I will search for this but it does sounds like something new and not
+> used by other DSA driver, any hint on where to look for examples?
 
+It's relatively recent but I think the ops are plumbed thru to DSA.
+Take a look at all the *_stats members of struct dsa_switch_ops, most
+of them take a fixed format struct to fill in and the struct has some
+extra kdoc on which field is what.
 
