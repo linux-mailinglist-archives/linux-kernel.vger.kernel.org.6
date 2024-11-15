@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-411265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F9CC9CF56A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:02:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB96B9CF555
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:57:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9D1AB2F34A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:56:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80177281CE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B493C1E1A34;
-	Fri, 15 Nov 2024 19:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857291E105A;
+	Fri, 15 Nov 2024 19:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XDbWp8i8"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="j4ea1HT2"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0069B1DD0C7
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 19:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38961D5173
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 19:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731700593; cv=none; b=nQZ0y+1V9gq6kyTyH0tGq3/FSC4Qhdpaf6Vp35J9/fJPa6ZUJFT6xni/J69uF+LU6zf3iFejPhA60W62ngCwYA6KG5WfLMqYIwpWB+S7Im6pTD/DjVjWDA9kJhY4Eei1UJxs52MCEu+hl8ZkjRE5XNcANDlKvIA6CmJYy4NY7mo=
+	t=1731700625; cv=none; b=HtC2egdt6J6Wo+pWRAVB0/H4srYd8k9p018WjRAyl/V1ZWPvOytYhFi1cGhDCogDKPUngNgiICff1ewxrqu/2bO9VhsxPFXhfRHDHLFulanPC9aAF4f9yc0QzpXZCuXDm8dUd7C/gG7RnKOQ6deaN0T7N8UxkT4Vzy5KzihweGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731700593; c=relaxed/simple;
-	bh=hZ6Co4N3thBmRpA4ccL2c7pOVG/mJ2c9Ht9oLnIkdzU=;
+	s=arc-20240116; t=1731700625; c=relaxed/simple;
+	bh=RMPOtaSPR2u/J6W/otLqp/bAJKMCLqxDB3D+lpqWdvU=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iZeQu2p7nyclJADxuVj5zkRVFMmMkgZnnFjbprLfefUQjTyeop9Z1FlQFM5/uXXwAgrLcySNA4INelbCszDBlhyHxhrsnj8kcFYe1dktLv4928XyZUDMStLxmQYN3FjAt8j1J7dZWVdYj6rX0TSufEPcWjxx6g0RGLewR/QXHRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XDbWp8i8; arc=none smtp.client-ip=217.70.183.193
+	 MIME-Version:Content-Type; b=GkvJhDOxLKWnvv4ZSZUkwD/SRb85/fYh51nh6OtbsySbZz6wrvqT6jpFuBItTIu49FYn03ow/QTgTK295olfh9iImFbo/Sl0XcJSy3mQJmZeBnDZLomyXI44h6IYwVssd5q+VzxsH0hyegxCjeBeYMEJeoJtAAB4YD5qz4KIW58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=j4ea1HT2; arc=none smtp.client-ip=217.70.183.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 01596240005;
-	Fri, 15 Nov 2024 19:56:27 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D5F1E1BF205;
+	Fri, 15 Nov 2024 19:56:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731700589;
+	t=1731700615;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7mNYmj6ni23Jqko1xtDRAMtam5EhBsgqdEbqnjiENf0=;
-	b=XDbWp8i8JF47NcJG/C7twNY8eXASi6ybsjpo1jkIg6zozBQyheFJ+4vmRR5rGbrnNqbtDt
-	cq6NoEdhqw0Ty1N6aSuPSwbb59OqxoFhQUNZNF1HsCKcaHMIC3B3SV0ijuXYxeIjExHJBy
-	mSQP+RyJz9AIxLKqOMLeUYfT5qNVx414L3hSCBaA0zj6MV5dfpSKz8z52mCjWhdgT9iB+v
-	0Xi1Uafy925rS23lfO/vn+mPAKKu6Qq03Lwc1/EIsMSstyeTtNtBkhQwnFV8PC6k0KIMeW
-	pU208kbhVfSJT50YH+FUfwQT/FVsmwD1WF60YM+oC1l9a/z96LGoFVw5RlLOWA==
+	bh=RMPOtaSPR2u/J6W/otLqp/bAJKMCLqxDB3D+lpqWdvU=;
+	b=j4ea1HT2ncPsYema0YJq7ESOcgNcHXZCn87eWbrnKmENKzLgtSsoZsmNNYAz8ZQWBKpQwf
+	CTDvnuvHLFN8veGdWKfEPOb8pEArEMFtX2i13ygjxFxcU/NXGcGXyuA09qrR64Mg2fhMx6
+	sF3oUiqPlCCJtAg9GXnWpNryodDHqRuVj7D6T2JnsHEMiKFuEJVesufVUxPDH9UI365y/y
+	oq4GlUEHaWT4H5sQaHDdCg31ObgM7BZ9xmRgvhnFggQSj10h24iilT5KTAKeLsnRwixS3U
+	qDYDdW7QwPG7eBjI7GkOM0DxzDSw9s7MetykRin2r8rpDlQMPjJ6tzilWLMNSQ==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
 To: Bastien Curutchet <bastien.curutchet@bootlin.com>
 Cc: Santosh Shilimkar <ssantosh@kernel.org>,  Krzysztof Kozlowski
@@ -51,14 +51,15 @@ Cc: Santosh Shilimkar <ssantosh@kernel.org>,  Krzysztof Kozlowski
   linux-mtd@lists.infradead.org,  Thomas Petazzoni
  <thomas.petazzoni@bootlin.com>,  Herve Codina <herve.codina@bootlin.com>,
   Christopher Cordahi <christophercordahi@nanometrics.ca>
-Subject: Re: [PATCH v4 03/10] memory: ti-aemif: Wrap CS timings into a struct
-In-Reply-To: <20241115132631.264609-4-bastien.curutchet@bootlin.com> (Bastien
-	Curutchet's message of "Fri, 15 Nov 2024 14:26:24 +0100")
+Subject: Re: [PATCH v4 02/10] memory: ti-aemif: Remove unnecessary local
+ variables
+In-Reply-To: <20241115132631.264609-3-bastien.curutchet@bootlin.com> (Bastien
+	Curutchet's message of "Fri, 15 Nov 2024 14:26:23 +0100")
 References: <20241115132631.264609-1-bastien.curutchet@bootlin.com>
-	<20241115132631.264609-4-bastien.curutchet@bootlin.com>
+	<20241115132631.264609-3-bastien.curutchet@bootlin.com>
 User-Agent: mu4e 1.12.1; emacs 29.4
-Date: Fri, 15 Nov 2024 20:56:27 +0100
-Message-ID: <87jzd4mftg.fsf@bootlin.com>
+Date: Fri, 15 Nov 2024 20:56:53 +0100
+Message-ID: <87bjygmfsq.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,21 +69,16 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-GND-Sasl: miquel.raynal@bootlin.com
 
-On 15/11/2024 at 14:26:24 +01, Bastien Curutchet <bastien.curutchet@bootlin.com> wrote:
+On 15/11/2024 at 14:26:23 +01, Bastien Curutchet <bastien.curutchet@bootlin.com> wrote:
 
-> CS timings are store in the struct aemif_cs_data along with other CS
-> parameters. It isn't convenient for exposing CS timings to other drivers
-> without also exposing the other parameters.
+> CS timings are copied to local variables that are then used as is,
+> without any modifications.
 >
-> Wrap the CS timings in a new the struct aemif_cs_timings to simplify
-
-s/the//                        ^^^
-
-> their export in upcoming patches.
+> Remove these unneeded local variables and deal directly with the timings
+> stored in the struct aemif_cs_data.
 >
 > Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
-
-But otherwise this feels very sensible.
+> ---
 
 Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
