@@ -1,116 +1,351 @@
-Return-Path: <linux-kernel+bounces-410868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14E519CEB14
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:11:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF799CEE7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:21:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C32681F26AA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:11:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE0A3B3919B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE8A1D4610;
-	Fri, 15 Nov 2024 15:11:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601FF1D460E;
+	Fri, 15 Nov 2024 15:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="glIS0q9K"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PgazKs+q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28ED1B395F;
-	Fri, 15 Nov 2024 15:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764A91B395F;
+	Fri, 15 Nov 2024 15:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731683471; cv=none; b=pdqV29XBDAdSc4Wr+1iZBCTceYQjUquSd2Nb7mmdOiOlx2TY2EySlImaEOFFBnDYM0vm18/7/BnBxsJD5BARrrPff+ruq8XNagaYLxg+gPWequQWswnPBn+nv6shjIZbqTIRCi+SeUG5yxTb5sx78LI+BtCXhvPA88j6UOUnGWs=
+	t=1731683489; cv=none; b=rpmVVhoCHIhdfWwcIe7ATkdkTpnevKSG6039h9reUa+g0iXurbHjbeujuOees4nh5yUGrUA2Tlto8zSW3ALp2W5Q6wjb7GM1J5yvqUix8T7k1sZAjOKPzjhpbzxuCYYmcrQZi45NEbaCl405cg6J7Qu2/JOOecOKJulRj08d5yY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731683471; c=relaxed/simple;
-	bh=hud0JYmElCCPRBVEtM0rGWZLObUxIAmftvC8O2MR1Fc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VU1jy+tYogNs46oW1FVR3+RhAi60ri0rouF0e7OW0xP7aI4oOGQPXbbxkz4e9JixUr3aQnDibu7TEX6VrCuKCyqDy7cJgd5oO+pOvdR4rvWSTeL7qbNm9Z/MeNnMDTfJwuP2NQX4zYOVyXOwUwclI9Ln9DL4QcrhN93k08AiZEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=glIS0q9K; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=UbxntHEjxWIKxNGGLDRTMQ6Ue5XZwjMLXKIitt3BbX8=; b=glIS0q9KUrlgfCtkmapojys1J/
-	XUIYCfM4quCS90pgOdlAn2+fMmkPD9k6sUrtlRL7Q2iNnh2DY/1TFD0xBaib1SIRrYBJvJ8o0kZ9R
-	F68YztgwCvAo2+mbnPHUgPszN8c2VIiS3kO++ItOiTCEPTfsDGSV4+ZYS16WqZFj95QHtpOm49k9/
-	nWOxBv6XlmMTbvWTreqdaHbc7fmIaAjObsC1flZMN7Cqlvg2ZFz9Xen3OfCu55THAd9K9c4cA9k/1
-	N1w7qBsGArH9BVQVOkBx2Ujz+EnDKpw0lbZ9f125Ius3OpNMByC2ZDjqielMzYxENNXLbp4nUN1Ln
-	lssLMgwg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tBxyW-0000000FTcC-0Wyt;
-	Fri, 15 Nov 2024 15:11:08 +0000
-Date: Fri, 15 Nov 2024 15:11:08 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [git pull] ufs stuff
-Message-ID: <20241115151108.GV3387508@ZenIV>
+	s=arc-20240116; t=1731683489; c=relaxed/simple;
+	bh=if44ysNZmw/vKZZ6rIpvWKZdiZAVyyynGblPrzRYVCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MmQpicc28LwmMVAuTjbZnqV5vR53DMhxY5i8FA539DT0EhGXq7wgVvKWotsCrhUTcHRTadqWngZzITpBWVnBdbpvINL2r8vDPKiFFcUbupXxqV5zsxIsgYnH0aPOI1wXfMAb42GWPt/wZ8JjzDe2DNPkpN8Zf0L9ZfpqldgF+9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PgazKs+q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98E99C4CECF;
+	Fri, 15 Nov 2024 15:11:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731683489;
+	bh=if44ysNZmw/vKZZ6rIpvWKZdiZAVyyynGblPrzRYVCI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PgazKs+q4c9f+hlscvjGUrCPlJYGHUU37ZQZb8YDgjCzdHEVdARJHgTfXJHXba8b5
+	 EXfO4OMsQTMW/hQY9Mx8vJTHkt+VnkBFEO88YHFNtc9AESB+b/bJXAiFCA7mPlCaCP
+	 8hHsEVbSP9mEMeBQcAghetLwunk3sg1LTkrA+5HGIBePQJMUQzkO52YUBkTxyyh3sL
+	 9+DXfI8aIRoGj9X67jIB9l+o+p2laKmfdVpPDbYU8gc0vaZADlT8Cl/UHNYS4KJt92
+	 cYGaKOrSiONSrC2HHBrvI9SxUbrxm/4Q340Sv8+lf7r3DE1q73d6fNVZljSrePw095
+	 r52aL1IkaB4hA==
+Date: Fri, 15 Nov 2024 12:11:26 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: Benjamin Peterson <benjamin@engflow.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 1/1] perf tests shell trace_exit_race: Show what went
+ wrong in verbose mode
+Message-ID: <ZzdknoHqrJbojb6P@x1>
+References: <ZzZpX5O053UsHmsV@x1>
+ <CAH0uvohi_8_itv+jDjCEvrprakhp5w7=GvWw+hJG4gTLwJQjog@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH0uvohi_8_itv+jDjCEvrprakhp5w7=GvWw+hJG4gTLwJQjog@mail.gmail.com>
 
-The following changes since commit 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b:
+On Fri, Nov 15, 2024 at 01:32:15AM -0800, Howard Chu wrote:
+> On Thu, Nov 14, 2024 at 1:19 PM <arnaldo.melo@gmail.com> wrote:
+> > This is in the tmp.perf-tools-next  branch at:
 
-  Linux 6.12-rc2 (2024-10-06 15:32:27 -0700)
+> > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git
 
-are available in the Git repository at:
+> > I'll later add another patch adding the --no-comm to the 'perf trace'
+> > command line and will adjust the regexp.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-ufs
+> > If it fails we need to check what was the reason, what were the lines
+> > that didn't match the expected format, so:
+> >
+> >   root@number:~# perf test -v "trace exit race"
+> >   --- start ---
+> >   test child forked, pid 2028724
+> >   Lines not matching the expected regexp: ' +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$':
+> >        0.000 :2028750/2028750 syscalls:sys_enter_exit_group()
+ 
+> This output looks good but I got an empty grep -v:
+ 
+> perf $ ./perf test 110 -v
+> 110: perf trace exit race                                            :
+> Running (1
+> --- start ---
+> test child forked, pid 3865874
+> Lines not matching the expected regexp: ' +[0-9]+\.[0-9]+ +true/[0-9]+
+> syscalls:sys_enter_exit_group\(\)$':
+> ---- end(-1) ----
+> 110: perf trace exit race                                            : FAILED!
+ 
+> In temp file:
+> 0.000 true/3867219 syscalls:sys_enter_exit_group()
+> 0.000 true/3867221 syscalls:sys_enter_exit_group()
+> 0.000 true/3867223 syscalls:sys_enter_exit_group()
+> 0.000 true/3867226 syscalls:sys_enter_exit_group()
+> 0.000 true/3867250 syscalls:sys_enter_exit_group()
+> 0.000 true/3867252 syscalls:sys_enter_exit_group()
+> 0.000 true/3867255 syscalls:sys_enter_exit_group()
+> 0.000 true/3867257 syscalls:sys_enter_exit_group()
+> 0.000 true/3867259 syscalls:sys_enter_exit_group()
+> 0.000 true/3867262 syscalls:sys_enter_exit_group()
+> 
+> There are 10 lines of output which match the regex (I got the comm
+> instead of pid), but it still falls into error, and inverse regex got
+> nothing because they are all right.
 
-for you to fetch changes up to 6cfe56fbad32c8c5b50e82d9109413566d691569:
+You're right, I got confused with the other problem, namely in my case
+some failures due to non-COMM resolution which ended up showing a few
+that are not matching, so I thought it was about that.
 
-  ufs: ufs_sb_private_info: remove unused s_{2,3}apb fields (2024-11-12 19:02:12 -0500)
+Also at some point ShellCheck complained about some quoting and I ended
+up adding that thinko, well spotted!
 
-----------------------------------------------------------------
-ufs cleanups, fixes and folio conversion
+So with:
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+⬢ [acme@toolbox perf-tools-next]$ git diff
+diff --git a/tools/perf/tests/shell/trace_exit_race.sh b/tools/perf/tests/shell/trace_exit_race.sh
+index ce05d4e6e7133cd1..2e5581f550c50d16 100755
+--- a/tools/perf/tests/shell/trace_exit_race.sh
++++ b/tools/perf/tests/shell/trace_exit_race.sh
+@@ -21,7 +21,7 @@ trace_shutdown_race() {
+        for _ in $(seq 10); do
+                perf trace -e syscalls:sys_enter_exit_group true 2>>$file
+        done
+-       [ "$(grep -c -E '$regexp' $file)" = "10" ]
++       [ "$(grep -c -E "$regexp" $file)" = "10" ]
+ }
+ 
+ 
+@@ -39,5 +39,5 @@ if [ $err != 0 ] && [ "${verbose}" = "1" ]; then
+        grep -v -E "$regexp" $file
+ fi
+ 
+-rm -f ${file}
++echo rm -f ${file}
+ exit $err
+⬢ [acme@toolbox perf-tools-next]$
 
-----------------------------------------------------------------
-Agathe Porte (1):
-      ufs: ufs_sb_private_info: remove unused s_{2,3}apb fields
+I'm getting what you're getting:
 
-Al Viro (12):
-      ufs: fix handling of delete_entry and set_link failures
-      ufs: missing ->splice_write()
-      ufs: fix ufs_read_cylinder() failure handling
-      ufs: untangle ubh_...block...() macros, part 1
-      ufs: untangle ubh_...block...(), part 2
-      ufs: untangle ubh_...block...(), part 3
-      ufs_clusteracct(): switch to passing fragment number
-      ufs_free_fragments(): fix the braino in sanity check
-      ufs_inode_getfrag(): remove junk comment
-      ufs: get rid of ubh_{ubhcpymem,memcpyubh}()
-      clean ufs_trunc_direct() up a bit...
-      ufs: take the handling of free block counters into a helper
+root@number:~# perf test -v "trace exit race"
+--- start ---
+test child forked, pid 12139
+Lines not matching the expected regexp: ' +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$':
+     0.000 :12161/12161 syscalls:sys_enter_exit_group()
+     0.000 :12167/12167 syscalls:sys_enter_exit_group()
+rm -f /tmp/temporary_file.v7REF
+---- end(-1) ----
+110: perf trace exit race                                            : FAILED!
+root@number:~# cat /tmp/temporary_file.v7REF
+     0.000 true/12147 syscalls:sys_enter_exit_group()
+     0.000 true/12151 syscalls:sys_enter_exit_group()
+     0.000 true/12153 syscalls:sys_enter_exit_group()
+     0.000 true/12155 syscalls:sys_enter_exit_group()
+     0.000 true/12157 syscalls:sys_enter_exit_group()
+     0.000 true/12159 syscalls:sys_enter_exit_group()
+     0.000 :12161/12161 syscalls:sys_enter_exit_group()
+     0.000 true/12163 syscalls:sys_enter_exit_group()
+     0.000 true/12165 syscalls:sys_enter_exit_group()
+     0.000 :12167/12167 syscalls:sys_enter_exit_group()
+root@number:~# grep -E ' +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$' /tmp/temporary_file.v7REF
+     0.000 true/12147 syscalls:sys_enter_exit_group()
+     0.000 true/12151 syscalls:sys_enter_exit_group()
+     0.000 true/12153 syscalls:sys_enter_exit_group()
+     0.000 true/12155 syscalls:sys_enter_exit_group()
+     0.000 true/12157 syscalls:sys_enter_exit_group()
+     0.000 true/12159 syscalls:sys_enter_exit_group()
+     0.000 true/12163 syscalls:sys_enter_exit_group()
+     0.000 true/12165 syscalls:sys_enter_exit_group()
+root@number:~# grep -v -E ' +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$' /tmp/temporary_file.v7REF
+     0.000 :12161/12161 syscalls:sys_enter_exit_group()
+     0.000 :12167/12167 syscalls:sys_enter_exit_group()
+root@number:~# git difroot@number:~# perf test -v "trace exit race"
+--- start ---
+test child forked, pid 12139
+Lines not matching the expected regexp: ' +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$':
+     0.000 :12161/12161 syscalls:sys_enter_exit_group()
+     0.000 :12167/12167 syscalls:sys_enter_exit_group()
+rm -f /tmp/temporary_file.v7REF
+---- end(-1) ----
+110: perf trace exit race                                            : FAILED!
+root@number:~# cat /tmp/temporary_file.v7REF
+     0.000 true/12147 syscalls:sys_enter_exit_group()
+     0.000 true/12151 syscalls:sys_enter_exit_group()
+     0.000 true/12153 syscalls:sys_enter_exit_group()
+     0.000 true/12155 syscalls:sys_enter_exit_group()
+     0.000 true/12157 syscalls:sys_enter_exit_group()
+     0.000 true/12159 syscalls:sys_enter_exit_group()
+     0.000 :12161/12161 syscalls:sys_enter_exit_group()
+     0.000 true/12163 syscalls:sys_enter_exit_group()
+     0.000 true/12165 syscalls:sys_enter_exit_group()
+     0.000 :12167/12167 syscalls:sys_enter_exit_group()
+root@number:~# grep -E ' +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$' /tmp/temporary_file.v7REF
+     0.000 true/12147 syscalls:sys_enter_exit_group()
+     0.000 true/12151 syscalls:sys_enter_exit_group()
+     0.000 true/12153 syscalls:sys_enter_exit_group()
+     0.000 true/12155 syscalls:sys_enter_exit_group()
+     0.000 true/12157 syscalls:sys_enter_exit_group()
+     0.000 true/12159 syscalls:sys_enter_exit_group()
+     0.000 true/12163 syscalls:sys_enter_exit_group()
+     0.000 true/12165 syscalls:sys_enter_exit_group()
+root@number:~# grep -v -E ' +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$' /tmp/temporary_file.v7REF
+     0.000 :12161/12161 syscalls:sys_enter_exit_group()
+     0.000 :12167/12167 syscalls:sys_enter_exit_group()
+root@number:~# git diff
+ 
+> >   ---- end(-1) ----
+> >   110: perf trace exit race                                            : FAILED!
+> >   root@number:~#
+> >
+> > In this case we're not resolving the process COMM for some reason and
+> > fallback to printing just the pid/tid, this will be fixed in a followup
+> > patch.
+> > -       [ "$(grep -c -E ' +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$' $file)" = "10" ]
+> > +       [ "$(grep -c -E '$regexp' $file)" = "10" ]
+> 
+> shouldn't this be
+> [ "$(grep -c -E "$regexp" $file)" = "10" ]
+> ?
+> 
+> In shell script single quote doesn't interpolate, in this case you are
+> literally grepping the string "$regexp". After changing this to double
+> quotes it works for me.
 
-Matthew Wilcox (Oracle) (5):
-      ufs: Convert ufs_inode_getblock() to take a folio
-      ufs: Convert ufs_extend_tail() to take a folio
-      ufs: Convert ufs_inode_getfrag() to take a folio
-      ufs: Pass a folio to ufs_new_fragments()
-      ufs: Convert ufs_change_blocknr() to take a folio
+Right, see above.
+ 
+> >  err=$?
+> > +
+> > +if [ $err != 0 ] && [ "${verbose}" = "1" ]; then
+> > +       echo "Lines not matching the expected regexp: '$regexp':"
+ 
+> Also, I think there is a case, where $err != 0 can come from not
+> having 10 matches, say 4 (because of racing), and these 4 can all be
+> correct, the inverse grep -v won't match anything, results in an empty
+> output as above:
 
- fs/ufs/balloc.c   | 107 ++++++++++++++------------------
- fs/ufs/cylinder.c |  31 ++++++----
- fs/ufs/dir.c      |  29 +++++----
- fs/ufs/file.c     |   1 +
- fs/ufs/inode.c    | 179 +++++++++++++++++++++++-------------------------------
- fs/ufs/namei.c    |  39 ++++++------
- fs/ufs/super.c    |  49 ++++++---------
- fs/ufs/ufs.h      |  12 ++--
- fs/ufs/ufs_fs.h   |   4 --
- fs/ufs/util.c     |  46 --------------
- fs/ufs/util.h     |  61 +++++++++----------
- 11 files changed, 222 insertions(+), 336 deletions(-)
+Right again,
+ 
+> Lines not matching the expected regexp: ' +[0-9]+\.[0-9]+ +true/[0-9]+
+> syscalls:sys_enter_exit_group\(\)$':
+> ---- end(-1) ----
+> 
+> > +       grep -v -E "$regexp" $file
+> > +fi
+> > +
+> >  rm -f ${file}
+> >  exit $err
+> > --
+> > 2.47.0
+> >
+> 
+> Maybe this? (based on your test)
+> 
+> +++ b/tools/perf/tests/shell/trace_exit_race.sh
+> @@ -16,12 +16,15 @@ if [ "$1" = "-v" ]; then
+>  fi
+> 
+>  regexp=" +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$"
+> +iter=15
+> 
+>  trace_shutdown_race() {
+> -        for _ in $(seq 10); do
+> +        for _ in $(seq $iter); do
+>                  perf trace -e syscalls:sys_enter_exit_group true 2>>$file
+>          done
+> -        [ "$(grep -c -E '$regexp' $file)" = "10" ]
+> +
+> +        result="$(grep -c -E "$regexp" $file)"
+> +        [ $result = $iter ]
+>  }
+> 
+> 
+> @@ -35,8 +38,12 @@ trace_shutdown_race
+>  err=$?
+> 
+>  if [ $err != 0 ] && [ "${verbose}" = "1" ]; then
+> -        echo "Lines not matching the expected regexp: '$regexp':"
+> -        grep -v -E "$regexp" $file
+> +        if grep -q -v -E "$regexp" $file; then
+> +                echo "Lines not matching the expected regexp: '$regexp':"
+> +                grep -v -E "$regexp" $file
+> +        else
+> +                echo "Missing output, expected $iter but only got $result"
+> +        fi
+>  fi
+> 
+>  rm -f ${file}
+> 
+> Reviewed-by: Howard Chu <howardchu95@gmail.com>
+
+Please see if you keep it, I ended up applying the slight variation
+below, to avoid an repeating the last inverse grep.
+
+Thanks a lot for reviewing and spotting that st00pid problem and
+suggesting the improvement for the inverse grep!
+
+- Arnaldo
+
+diff --git a/tools/perf/tests/shell/trace_exit_race.sh b/tools/perf/tests/shell/trace_exit_race.sh
+index ce05d4e6e7133cd1..8ea24f4256bc8f5e 100755
+--- a/tools/perf/tests/shell/trace_exit_race.sh
++++ b/tools/perf/tests/shell/trace_exit_race.sh
+@@ -15,13 +15,15 @@ if [ "$1" = "-v" ]; then
+ 	verbose="1"
+ fi
+ 
++iter=10
+ regexp=" +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$"
+ 
+ trace_shutdown_race() {
+-	for _ in $(seq 10); do
++	for _ in $(seq $iter); do
+ 		perf trace -e syscalls:sys_enter_exit_group true 2>>$file
+ 	done
+-	[ "$(grep -c -E '$regexp' $file)" = "10" ]
++	result="$(grep -c -E "$regexp" $file)"
++	[ $result = $iter ]
+ }
+ 
+ 
+@@ -35,8 +37,14 @@ trace_shutdown_race
+ err=$?
+ 
+ if [ $err != 0 ] && [ "${verbose}" = "1" ]; then
+-	echo "Lines not matching the expected regexp: '$regexp':"
+-	grep -v -E "$regexp" $file
++	lines_not_matching=$(mktemp /tmp/temporary_file.XXXXX)
++	if grep -v -E "$regexp" $file > $lines_not_matching ; then
++		echo "Lines not matching the expected regexp: '$regexp':"
++		cat $lines_not_matching
++	else
++		echo "Missing output, expected $iter but only got $result"
++	fi
++	rm -f $lines_not_matching
+ fi
+ 
+ rm -f ${file}
+
+
 
