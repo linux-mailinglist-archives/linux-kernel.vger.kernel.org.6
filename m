@@ -1,148 +1,205 @@
-Return-Path: <linux-kernel+bounces-410946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4EAD9CF0B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:52:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6DAE9CF0B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:53:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61BD21F29FF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:52:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D6F11F2A8BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2049E1D63DB;
-	Fri, 15 Nov 2024 15:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A991E0DB7;
+	Fri, 15 Nov 2024 15:49:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h34mAnO8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n/PmF3X+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDBB2F29;
-	Fri, 15 Nov 2024 15:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C031DFDB1;
+	Fri, 15 Nov 2024 15:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731685760; cv=none; b=VMRwnMgXZ1sntYfqQHEKFMng3CvF5pM1Bxo1yK+eLknHItdXGuTjpjK6rhzqr9YA7BVSjQKq+qalPVle4Fcuk55z9dsEvz/ty4rRC8NoVRx5ss+y9iayDLN1Tp+yO8qxiCq0EaJZiUseWLMssh1XK16fBJtz+YmyIDOmV1MFX3Q=
+	t=1731685779; cv=none; b=ExUnv/Q88vE2KsqvTXhAzoRxi8Eul8r68IacMML4ebl/LhAmNKoq3jsUf9Js2AkHkTjY1L/eCfFvgIZohpPlu3rSlk4l2ZtRHiTUZ9rOI90CUFjdz8UErcfNPFxtR24FhGTVim8HJZgQypT9nXh1UAz7UI12QpQBn7QWOZaQ/sE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731685760; c=relaxed/simple;
-	bh=REuaaHZMoQv6ITFn0py/x2i/HcpSTzvBWmRC4GySXaY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fnICukBeTuA0U0lpOBBfPmu46jXEEa7Q1meM6awYDWvBl/cx2en6bfCrHSqP7B1b/z90NgMm4nnbJkdApaPVKdRHdDgUTwckRaXrNYoe0YlgC5R2RKxlWD/D6Qk3HoqV6hP/zQVzxw13aK9HvwXF4cAFD1BuS7uewo05YtX5vac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h34mAnO8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5946CC4CECF;
-	Fri, 15 Nov 2024 15:49:17 +0000 (UTC)
+	s=arc-20240116; t=1731685779; c=relaxed/simple;
+	bh=tU1xmk3+Nnc7sUGOBXAWq/oVW6HP8BYPHD2LHmlMFlg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AewLu0nes2CDKauGRH6FhvCJP4uVUnLmq7IMoBKKBk7g8bdcKpHaTDCrAdhxl5BEZ65ex27LAsxpr+CLcTWXfg301pPPvdQ0eTNtStgxovz4yrau24ZnqBYHSa5AOnu7Y/zCtOlU1xN3C0ipOCZ3JH4087akfoI7MWGhjcP9qpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n/PmF3X+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29A6FC4CECF;
+	Fri, 15 Nov 2024 15:49:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731685759;
-	bh=REuaaHZMoQv6ITFn0py/x2i/HcpSTzvBWmRC4GySXaY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=h34mAnO8WRER/CpGHbOe2J48d14EhGHGf/ssbas1iuMjfq9Xwt9n+8pxXF+SvB23H
-	 iRIKIqDrOfyLVeWbTjw5o5SAd1sJbT6rwVF66nZjiMO2OrmSbHbGHA1reKbu4he5hv
-	 Gsqs+uMBy0QUDSOOYYEmBDMNU+t1cm9n3Np1KYGZrN8Gkh2ykKV17RU/wvm8Fds4A9
-	 j6wHkBdgjsbLK0ndXlv9gy2lk8FPjgPxH7Bj84T46BUgv0LFU48EIccPdEv+3bx7Dr
-	 0nZZY2c4Bo6C8dnpfP6rwDs1oLrQLVg6wnI9Cfj4PC69rdWfG5DzAp4VrREqwBxtpe
-	 X5bkoTltk4yBA==
-Message-ID: <f7b13e22-5241-4cdb-9c9a-1506b0066f0e@kernel.org>
-Date: Fri, 15 Nov 2024 16:49:15 +0100
+	s=k20201202; t=1731685778;
+	bh=tU1xmk3+Nnc7sUGOBXAWq/oVW6HP8BYPHD2LHmlMFlg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=n/PmF3X+8OaXb/wUpoKWolBP3m9/tbsXE4I/bbeMUiwxgMmepJ4/VuEDuKUfpaL01
+	 zcC3GWDpzU2OjV6r1TcFAofKZntJ3axaE/2O/lj/kQltKsY12HPcmkg+LBEIT6sB/3
+	 OSuE5O4rSk2BDgj8a3MH+jYwy6TYmkvoTgkRMvS6Ph2x47vo3Zh9hmghADRJoyCudm
+	 bAS7+0KrqGLbWhG/fjkqKOY7D7YXeV7akn3H9x86aX5e8Wsp7qGBIK0Pea5bgGonoK
+	 YFNtndsIfxhaOXSS+KSb5pG/d5x9JvDa0xozC+f8zhZmkFLbYu4UtbI8kbb7zJep6e
+	 oIs3q2G0lK+Kg==
+Date: Fri, 15 Nov 2024 12:49:35 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: perf test failures with tmp.perf-tools-next
+Message-ID: <Zzdtj0PEWEX3ATwL@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: LKFT CI: improving Networking selftests results when validating
- stable kernels
-Content-Language: en-GB
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Shuah Khan <shuah@kernel.org>,
- Linux Kernel Functional Testing <lkft@linaro.org>,
- Kernel Selftests <linux-kselftest@vger.kernel.org>,
- Netdev <netdev@vger.kernel.org>, Linux Kernel
- <linux-kernel@vger.kernel.org>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>,
- Naresh Kamboju <naresh.kamboju@linaro.org>, Ido Schimmel
- <idosch@nvidia.com>, stable@vger.kernel.org
-References: <ff870428-6375-4125-83bd-fc960b3c109b@kernel.org>
- <1bda012e-817a-45be-82e2-03ac78c58034@stanley.mountain>
- <c4ed1f88-e43b-4b12-bffc-faf27879042c@kernel.org>
- <226bc28f-d720-4bf9-90c9-ebdd4e711079@stanley.mountain>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <226bc28f-d720-4bf9-90c9-ebdd4e711079@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Dan,
+With what is in tmp.perf-tools-next I'm getting:
 
-On 15/11/2024 14:07, Dan Carpenter wrote:
-> On Fri, Nov 15, 2024 at 01:43:14PM +0100, Matthieu Baerts wrote:
->> Regarding the other questions from my previous email -- skipped tests
->> (e.g. I think Netfilter tests are no longer validated), KVM,
->> notifications -- do you know who at Linaro could eventually look at them?
->>
-> 
-> The skip tests were because they lead to hangs.  We're going to look at those
-> again to see if they're still an issue.  And we're also going to try enable the
-> other tests you mentioned.
+ 11: Hwmon PMU                                                       :
+ 11.1: Basic parsing test                                            : Ok
+ 11.2: Parsing without PMU name                                      : FAILED!
+ 11.3: Parsing with PMU name                                         : FAILED!
+ 84: perftool-testsuite_probe                                        : FAILED!
+ 86: probe libc's inet_pton & backtrace it with ping                 : FAILED!
+ 96: perf stat tests                                                 : FAILED!
+ 97: perf all metricgroups test                                      : FAILED!
+ 98: perf all metrics test                                           : FAILED!
+117: perftool-testsuite_report                                       : FAILED!
+118: Add vfs_getname probe to get syscall args filenames             : FAILED!
+119: Use vfs_getname probe to get syscall args filenames             : FAILED!
+120: perf record tests                                               : FAILED!
+121: perf record LBR tests                                           : FAILED!
+128: Test data symbol                                                : FAILED!
 
-Great, thank you!
+root@x1:~# perf test -vv 11
+ 11: Hwmon PMU                                                       :
+ 11.1: Basic parsing test:
+--- start ---
+test child forked, pid 391389
+hwmon_pmu: not a hwmon type 'badtype' in file name 'badtype5_baditem'
+hwmon_pmu: not a hwmon item 'baditem' in file name 'humidity6_baditem'
+---- end(0) ----
+ 11.1: Basic parsing test                                            : Ok
+ 11.2: Parsing without PMU name:
+--- start ---
+test child forked, pid 391390
+Testing 'temp_test_hwmon_event1'
+Using CPUID GenuineIntel-6-BA-3
+hwmon_pmu: not a hwmon file 'uevent'
+Not a hwmon file 'uevent'
+hwmon_pmu: not a hwmon file 'name'
+Not a hwmon file 'name'
+hwmon_pmu: not a hwmon file 'uevent'
+Not a hwmon file 'uevent'
+hwmon_pmu: not a hwmon file 'name'
+Not a hwmon file 'name'
+hwmon_pmu: not a hwmon file 'uevent'
+Not a hwmon file 'uevent'
+hwmon_pmu: not a hwmon file 'name'
+Not a hwmon file 'name'
+hwmon_pmu: not a hwmon file 'uevent'
+Not a hwmon file 'uevent'
+hwmon_pmu: not a hwmon file 'name'
+Not a hwmon file 'name'
+hwmon_pmu: not a hwmon file 'uevent'
+Not a hwmon file 'uevent'
+hwmon_pmu: not a hwmon file 'name'
+Not a hwmon file 'name'
+hwmon_pmu: not a hwmon file 'uevent'
+Not a hwmon file 'uevent'
+hwmon_pmu: not a hwmon file 'name'
+Not a hwmon file 'name'
+hwmon_pmu: not a hwmon file 'uevent'
+Not a hwmon file 'uevent'
+hwmon_pmu: not a hwmon file 'pwm1'
+Not a hwmon file 'pwm1'
+hwmon_pmu: not a hwmon file 'name'
+Not a hwmon file 'name'
+hwmon_pmu: removing event 'pwm1' that has no input file
+hwmon_pmu: not a hwmon file 'uevent'
+Not a hwmon file 'uevent'
+hwmon_pmu: not a hwmon file 'name'
+Not a hwmon file 'name'
+hwmon_pmu: not a hwmon file 'uevent'
+Not a hwmon file 'uevent'
+hwmon_pmu: not a hwmon file 'name'
+Not a hwmon file 'name'
+FAILED tests/hwmon_pmu.c:160 failed to parse event 'temp_test_hwmon_event1', err 1
+event syntax error: 'temp_test_hwmon_event1'
+                     \___ Bad event name
 
-For KVM (or similar), I guess it is not available, right? Some
-time-sensitive tests might be unstable in such environment, and need to
-be skipped.
+Unable to find event on a PMU of 'temp_test_hwmon_event1'
+free(): invalid pointer
 
-For the notifications, do not hesitate to contact the corresponding
-maintainers, the last people who modified the problematic selftests and
-the netdev list. These "net" selftests are now better maintained, and
-they are regularly validated on the development branches:
+---- unexpected signal (6) ----
+ 11.2: Parsing without PMU name                                      : FAILED!
+ 11.3: Parsing with PMU name:
+--- start ---
+test child forked, pid 391391
+Testing 'temp_test_hwmon_event1'
+Using CPUID GenuineIntel-6-BA-3
+hwmon_pmu: not a hwmon file 'uevent'
+Not a hwmon file 'uevent'
+hwmon_pmu: not a hwmon file 'name'
+Not a hwmon file 'name'
+hwmon_pmu: not a hwmon file 'uevent'
+Not a hwmon file 'uevent'
+hwmon_pmu: not a hwmon file 'name'
+Not a hwmon file 'name'
+hwmon_pmu: not a hwmon file 'uevent'
+Not a hwmon file 'uevent'
+hwmon_pmu: not a hwmon file 'name'
+Not a hwmon file 'name'
+hwmon_pmu: not a hwmon file 'uevent'
+Not a hwmon file 'uevent'
+hwmon_pmu: not a hwmon file 'name'
+Not a hwmon file 'name'
+hwmon_pmu: not a hwmon file 'uevent'
+Not a hwmon file 'uevent'
+hwmon_pmu: not a hwmon file 'name'
+Not a hwmon file 'name'
+hwmon_pmu: not a hwmon file 'uevent'
+Not a hwmon file 'uevent'
+hwmon_pmu: not a hwmon file 'name'
+Not a hwmon file 'name'
+hwmon_pmu: not a hwmon file 'uevent'
+Not a hwmon file 'uevent'
+hwmon_pmu: not a hwmon file 'pwm1'
+Not a hwmon file 'pwm1'
+hwmon_pmu: not a hwmon file 'name'
+Not a hwmon file 'name'
+hwmon_pmu: removing event 'pwm1' that has no input file
+hwmon_pmu: not a hwmon file 'uevent'
+Not a hwmon file 'uevent'
+hwmon_pmu: not a hwmon file 'name'
+Not a hwmon file 'name'
+hwmon_pmu: not a hwmon file 'uevent'
+Not a hwmon file 'uevent'
+hwmon_pmu: not a hwmon file 'name'
+Not a hwmon file 'name'
+FAILED tests/hwmon_pmu.c:160 failed to parse event 'temp_test_hwmon_event1', err 1
+event syntax error: 'temp_test_hwmon_event1'
+                     \___ Bad event name
 
-  https://netdev.bots.linux.dev/status.html
+Unable to find event on a PMU of 'temp_test_hwmon_event1'
 
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
+---- unexpected signal (11) ----
+ 11.3: Parsing with PMU name                                         : FAILED!
+root@x1:~# 
 
+
+
+I'm working on removing the vfs_getname code from 'perf trace' so those
+will go away, probably there are patches fixing some of the other ones,
+I'll try and look after those, but probably later today I'll push what I
+have so that it gets exposure on linux-next.
+
+- Arnaldo
 
