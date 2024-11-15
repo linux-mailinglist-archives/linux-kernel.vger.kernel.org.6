@@ -1,211 +1,171 @@
-Return-Path: <linux-kernel+bounces-410614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FB449CDE0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:10:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA40C9CDE10
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:11:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16C581F224DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:10:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E5A7B240E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1472A1B6D1C;
-	Fri, 15 Nov 2024 12:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A781B6CE0;
+	Fri, 15 Nov 2024 12:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jWFYH6MM"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="BdbMhenO"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7324E2AE77;
-	Fri, 15 Nov 2024 12:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2170818871E
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 12:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731672637; cv=none; b=BnmLSDUsrChOPjIeVgiBTFr2VUKRW1QKtaCop2HElH2dGNTXkciKxMCnXybYhssxh+9WJXXvbdrUAnxjMeOn8GpUQWYlJ8ix8DZMKo+L1TUegaeAdtDNf5wI8sgHINATH+ZvKAhrjUrHDB3UCXgVPUxQVHY6vYfr/5EIzx9PWnk=
+	t=1731672683; cv=none; b=N2C79mlhJtEmI591vR84laoXoettJait6/OSxJV/Nkye+WRaQa0vR0E0dTgTlZINua8IYLPDyEJC21zHthiF3PU4iEW2KcV5X3MFQCIB3uQrUBpwiXzG6r5jQbpN9OK/NDXZ7s4SEMtnefdY2qM09kkMNvUdt+QmjiuOTU7I0nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731672637; c=relaxed/simple;
-	bh=EQ6TU9xB854mxcM3E8J6oqRyNgA89ixsp5dU8F/nDXg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FuD6dlCrz+zmN24jAqlitXAatlOxEt2+9mQI25c9gHlnRWqsLT0XjmkjKkq9IEMi37XIwC8i6iIduwI+660R+9YIbhkpzem87ec2bpFb3EG0Z3MU6kJSrCPE5KhGvlbW2hJHeX0Oj6/2/3LaEjOh9bWwwR3y1QndcrI3QWsVay4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jWFYH6MM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AF8NgdB020734;
-	Fri, 15 Nov 2024 12:10:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	otdQxhxs0sr7H9CWumkpBZ2P0dQz/+4HKxJl4nBPVPI=; b=jWFYH6MMuBI7Hbum
-	+QIC3A284Q0V5Cm+9rUpjP/bhw5eR2e9B3jfaHcUY58FwDItFVSiNX3WDdrsd0xN
-	bSBFcAkWIjQz/WnC3ShzSTCPpK34jacx+O7Lp1TirPUk/wei/Df53OionqG0soYv
-	1NfsoWrqzaPAG/KDgqy8DRZO6HH4xhGw3soXILu0vm4RtKOQkUALIZZD2Dgfod6i
-	cWTDbZ/vjIJHBw/9qqQe1nro9kR6sTGfDZff6ghlEFsjRSetnlrt0JEAv9hT8wTO
-	xJAC/+TmK5haXHYViX7QA8o3rZZ1JmfpJeUguIAVJUM1exEE3Q8hvhT9bhJ1OmpV
-	z99VWg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42wex8v1em-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 12:10:30 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AFCAU4k019173
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 12:10:30 GMT
-Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 15 Nov
- 2024 04:10:26 -0800
-Message-ID: <9b16f4d8-56ea-4ef6-9cb5-35750af871e9@quicinc.com>
-Date: Fri, 15 Nov 2024 17:40:23 +0530
+	s=arc-20240116; t=1731672683; c=relaxed/simple;
+	bh=FaSLZA5wMvzyJDHBkqPnRryv+JsqVtjFtEN9K1XiMn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hjj7rwaedDHZdZO3K37D6D4DX5AC/pxVHm02t+DQzykvyGPPFHXCD0BC0XvUB9GwR7TT5r8bZbFXU+BJkBkRLtJedcF9o1CWSkdWQGqVOBVEK96cE0pQ4uyQwfeNmGxTWqzxNtTUDqC47MHe8rmV2zLmLycroefZVbijoG9U7sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=BdbMhenO; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539fb49c64aso2800327e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 04:11:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1731672680; x=1732277480; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XQ+AdD1yknk1kRQgfBx7Kwn6AzJEYVnpkDhWcnwpCyw=;
+        b=BdbMhenOPPQueifMq8F4CjeKN+NoUIOIIjWz04dqAMF68yWBQv//o0MWyn7F93+ted
+         x1SiMakKlghKvYVVXxg3+QXo9PJQ4fFiBzeWYFoRDSRwREmFqafYegT/CbaWsc55J1Vq
+         Ysty57mT/etTcS2dphxYegvs7oowqtOV+KVKcbhzmJbT461dk0uynVUdZC2G5E4KZJyD
+         RBTYPNGju64q+BNFE5UQM7N+IAy2BqjlBMDkqRFCwvoIsbXxyIH9XoIIchUJyqcGmHUM
+         jSnQxMe3LS5uFo7BsjF3TgEMx2VtnGzewbHfYXyt7g9Gor3AGzun1a4O5AqfeViKC/r6
+         9wTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731672680; x=1732277480;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XQ+AdD1yknk1kRQgfBx7Kwn6AzJEYVnpkDhWcnwpCyw=;
+        b=iz/BhqOc5VZG8WacG9vU+XOZulUJdCVXYcZPZXXXNiWYBoKE0DOAnRVnfQsjuJKmkt
+         p7IsnVYhSy/1vSa55u0YHGwfHniHqlX07vAoXhjMhxoaEuE/8k41WueP8t8oqQHeZAgz
+         vgJoF4cB7HLWAMT8DBCiTY+zgK7zsVZh9VP3tS0dAvjNiMHWd144272Uu5yVtY4glFfg
+         dXp+AE9WuBqiDcu3dIdwX5BM6Im2RQdxcF0o6xfmV5+BAfCwp+doL54FlvoiHfrCz0R3
+         sm8Q4heNFBfsFLL2fdVpWSKhgnl+FfTU//kzOg8z9pVsFd3WX+QgfjgIvGrVa6Ky14Cu
+         d5EA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBQYLBQJSyotTq1TGascr3tnlYdQT3fYrVx2+joT5n7m0z7rYtiejUSpdLgA1HZjh9hHb5Ip6NEUlOCXQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyf2D1kvALhUdXI/vS1DTLEJg1Zb9eerUygTWWpjiISOavoOLc5
+	fm92/99HmJyaMWtGN2zQAsr/2y+oJL4Qq1qT9c2SjNouAEGcPhKs2q/thJNUzPc=
+X-Google-Smtp-Source: AGHT+IEumWSW2u3xlYJBaOGTCxOD92+UWLxyLa8a3IDnjbv/tYMlWpFgTL/S3Vntc2APqXqwBNhTaA==
+X-Received: by 2002:a05:6512:1294:b0:53b:1fd1:df34 with SMTP id 2adb3069b0e04-53dab3b16c1mr2002910e87.45.1731672679939;
+        Fri, 15 Nov 2024 04:11:19 -0800 (PST)
+Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df1c53asm173250366b.15.2024.11.15.04.11.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 04:11:19 -0800 (PST)
+Date: Fri, 15 Nov 2024 13:11:18 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Kan Liang <kan.liang@linux.intel.com>, 
+	Colton Lewis <coltonlewis@google.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	Prabhakar <prabhakar.csengg@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: Re: [PATCH] riscv: perf: Drop defining `perf_instruction_pointer()`
+ and `perf_misc_flags()`
+Message-ID: <20241115-829a0b75f783dad6dac037a5@orel>
+References: <20241115111345.17750-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] arm64: dts: qcom: sc7280: Make ADSP a secure fastrpc
- domain
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <cros-qcom-dts-watchers@chromium.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <srinivas.kandagatla@linaro.org>, <quic_bkumar@quicinc.com>,
-        <quic_chennak@quicinc.com>
-References: <20241113050042.181028-1-quic_ekangupt@quicinc.com>
- <5oqzxppquoeppt6xnjfm2rdwm23hbui5k3caz5v5ffqzizepob@dz5ikvzgbd4x>
- <c1f0e56b-b489-4370-99e3-0973641410b8@quicinc.com>
- <CAA8EJprDTz7b4rNtR4e9A-=j9_z-aJGBg3+g5is8Bmy=cgTM1Q@mail.gmail.com>
- <b8a9a8f5-1f36-4eea-925b-84578e71838d@quicinc.com>
- <sbkm5wvhtjoluhz7mi7f2wyc4t5znhazcxra52cd5yev5iksbi@yqielk6i7bpe>
-Content-Language: en-US
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-In-Reply-To: <sbkm5wvhtjoluhz7mi7f2wyc4t5znhazcxra52cd5yev5iksbi@yqielk6i7bpe>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 1c2fIRMsUQQ0iFx15o8odrnAYfMc_AzW
-X-Proofpoint-ORIG-GUID: 1c2fIRMsUQQ0iFx15o8odrnAYfMc_AzW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- phishscore=0 bulkscore=0 mlxlogscore=999 lowpriorityscore=0 suspectscore=0
- priorityscore=1501 malwarescore=0 spamscore=0 clxscore=1015 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411150104
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241115111345.17750-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-
-
-On 11/14/2024 5:30 PM, Dmitry Baryshkov wrote:
-> On Thu, Nov 14, 2024 at 10:49:52AM +0530, Ekansh Gupta wrote:
->>
->> On 11/13/2024 5:20 PM, Dmitry Baryshkov wrote:
->>> On Wed, 13 Nov 2024 at 08:18, Ekansh Gupta <quic_ekangupt@quicinc.com> wrote:
->>>>
->>>> On 11/13/2024 11:13 AM, Dmitry Baryshkov wrote:
->>>>> On Wed, Nov 13, 2024 at 10:30:42AM +0530, Ekansh Gupta wrote:
->>>>>> FastRPC framework treats ADSP as a secure domain on sc7280 SoC
->>>>>> which means that only secure fastrpc device node should be
->>>>>> created for ADSP remoteproc. Remove the non-secure-domain
->>>>>> property from ADSP fastrpc node.
->>>>> If this prevents the non-secure devices from being created, isn't that a
->>>>> regression from the userspace point of view?
->>>> The actual intention of having secure and non-secure domains is to utilize signed(high privilege)
->>>> and unsigned(low privilege) DSP processes properly.
->>>>
->>>> Non-secure device node is intended to be used by untrusted/generic applications which needs to
->>>> offload tasks to DSP as unsignedPD. Only unsigned PD is expected to be allowed if the process is
->>>> using non-secure node.
->>>>
->>>> Secure device is intended to be used by trusted processes like daemons or any application
->>>> which needs to offload as signed PD to DSP.
->>>>
->>>> The ideal expectation from userspace is to first try to open secure device node and fall back to
->>>> non-secure node if the secure node is not accessible or absent.
->>>>
->>>> I understand your concerns, can you please suggest how this can be improved/corrected?
->>> Thank you for the explanation, and thanks for the description of the
->>> expected behaviour, but the question is different.
->>> Currently (with the property being present in DT) the driver creates a
->>> non-secure fastrpc device for the ADSP.
->>> Can it actually be used? Note: no mentioning of a particular userspace
->>> implementation or the (un)expected usage.
->>> If it could not and an attempt to use it resulted in some kind of an
->>> error, then the patch is a fix and it should be decribed accordingly.
->>> If it could be used and now you are removing this possibility, then it
->>> is a regression. Again, this must be clearly documented, but generally
->>> this is not allowed.
->> Thanks for the clarification, Dmitry.
->>
->> As of today, if the property is present in DT, non-secure fastrpc device will be created
->> for ADSP and as there are no checks to restrict daemons to use only secure node, there
->> will not be any failures observed. So there is no error if non-secure property is added
->> for ADSP and your 2nd point holds here.
->>
->> Problems with the current design are(you can look into below points independent of the change):
->>
->> 1. This creates a security concern as any process that can open non-secure device
->> can replicate daemon to attach to DSP root PD and cause troubles there which is not
->> a good thing. So basically any trusted process(maybe same group) should only use secure
->> device node and any process using non-secure node should only offload to unsigned PD.
-> Again, you are describing expected behaviour. Other userspace clients
-> can deviate from this.
-Okay, understood.
+On Fri, Nov 15, 2024 at 11:13:45AM +0000, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> With commit 2c47e7a74f44 ("perf/core: Correct perf sampling with guest
+> VMs"), the perf core now handles the functionality previously requiring
+> arch-specific definitions of `perf_instruction_pointer()` and
+> `perf_misc_flags()`. As these definitions are no longer necessary for
+> RISC-V, this patch removes their implementation and declarations.
+> 
+> This cleanup aligns the RISC-V architecture with the updated perf core
+> mechanism, reducing code redundancy and improving maintainability.
+> 
+> Fixes: 2c47e7a74f44 ("perf/core: Correct perf sampling with guest VMs")
+> Reported-by: Chris Paterson <Chris.Paterson2@renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  arch/riscv/include/asm/perf_event.h |  3 ---
+>  arch/riscv/kernel/perf_callchain.c  | 28 ----------------------------
+>  2 files changed, 31 deletions(-)
+> 
+> diff --git a/arch/riscv/include/asm/perf_event.h b/arch/riscv/include/asm/perf_event.h
+> index 38926b4a902d..bcc928fd3785 100644
+> --- a/arch/riscv/include/asm/perf_event.h
+> +++ b/arch/riscv/include/asm/perf_event.h
+> @@ -10,9 +10,6 @@
+>  
+>  #ifdef CONFIG_PERF_EVENTS
+>  #include <linux/perf_event.h>
+> -extern unsigned long perf_instruction_pointer(struct pt_regs *regs);
+> -extern unsigned long perf_misc_flags(struct pt_regs *regs);
+> -#define perf_misc_flags(regs) perf_misc_flags(regs)
+>  #define perf_arch_bpf_user_pt_regs(regs) (struct user_regs_struct *)regs
+>  
+>  #define perf_arch_fetch_caller_regs(regs, __ip) { \
+> diff --git a/arch/riscv/kernel/perf_callchain.c b/arch/riscv/kernel/perf_callchain.c
+> index c2c81a80f816..b465bc9eb870 100644
+> --- a/arch/riscv/kernel/perf_callchain.c
+> +++ b/arch/riscv/kernel/perf_callchain.c
+> @@ -46,31 +46,3 @@ void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry,
+>  
+>  	walk_stackframe(NULL, regs, fill_callchain, entry);
+>  }
+> -
+> -unsigned long perf_instruction_pointer(struct pt_regs *regs)
+> -{
+> -	if (perf_guest_state())
+> -		return perf_guest_get_ip();
+> -
+> -	return instruction_pointer(regs);
+> -}
+> -
+> -unsigned long perf_misc_flags(struct pt_regs *regs)
+> -{
+> -	unsigned int guest_state = perf_guest_state();
+> -	unsigned long misc = 0;
+> -
+> -	if (guest_state) {
+> -		if (guest_state & PERF_GUEST_USER)
+> -			misc |= PERF_RECORD_MISC_GUEST_USER;
+> -		else
+> -			misc |= PERF_RECORD_MISC_GUEST_KERNEL;
+> -	} else {
+> -		if (user_mode(regs))
+> -			misc |= PERF_RECORD_MISC_USER;
+> -		else
+> -			misc |= PERF_RECORD_MISC_KERNEL;
+> -	}
+> -
+> -	return misc;
+> -}
+> -- 
+> 2.25.1
 >
->> 2. Having this property well defined also help in scaling fastrpc driver for new domains(like CDSP1
->> was recently introduced) as driver can only rely on the "label" and "non-secure-domain" property
->> for device creation. Say, only secure device is create if property is not defined and both device nodes
->> are created if non-secure-domain is define. This way, the dependency on domain_id can be removed
->> from fastrpc_rpmsg_probe[1] and create either only fastrpc-xdsp-secure or both(secure and non-secure).
-> Well, I don't think I follow this point. The property is already
-> well-defined.
-By well-defined I meant there isn't a proper documentation of what is meant by non-secure-domain.
->> This however is a regression as you have mentioned, but it it helps address multiple problems.
->>
->> Should I discuss further on documentation or is any more design clarification should be done here?
-> At least you must explicitly specify that this causes changes to
-> userspace, and all the reasons to do that. So that everybody else
-> doesn't have to read between the lines.
-Ack.
->
->> [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/misc/fastrpc.c#n2327
->>
->> --ekansh
->>>> --ekansh
->>>>>> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
->>>>>> ---
->>>>>>  arch/arm64/boot/dts/qcom/sc7280.dtsi | 1 -
->>>>>>  1 file changed, 1 deletion(-)
->>>>>>
->>>>>> diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
->>>>>> index 3d8410683402..c633926c0f33 100644
->>>>>> --- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
->>>>>> +++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
->>>>>> @@ -3852,7 +3852,6 @@ fastrpc {
->>>>>>                                      compatible = "qcom,fastrpc";
->>>>>>                                      qcom,glink-channels = "fastrpcglink-apps-dsp";
->>>>>>                                      label = "adsp";
->>>>>> -                                    qcom,non-secure-domain;
-> - Are there other platforms which have this flag set for ADSP?
-Yes, there are a few platforms where this property is added for ADSP.
-> - Granted that sc7280 was targeting ChromeOS devices, might it be that
->   there is a CrOS-specific userspace for that?
-FastRPC nodes were recently added to this devicetree recently. Looks like this property is just getting copied.
-It might be that fastrpc was recently tried on ChromeOS device or it might be added to support some other devices
-that uses fastrpc(qcm6490-idp etc.).
 
---ekansh
-
->>>>>>                                      #address-cells = <1>;
->>>>>>                                      #size-cells = <0>;
->>>>>>
->>>>>> --
->>>>>> 2.34.1
->>>>>>
-
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
