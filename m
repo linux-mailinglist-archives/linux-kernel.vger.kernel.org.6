@@ -1,130 +1,173 @@
-Return-Path: <linux-kernel+bounces-410585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B50B99CDD8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:36:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE4929CDD94
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:37:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AE74280E11
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:36:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59937B24462
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5E71B6D15;
-	Fri, 15 Nov 2024 11:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TR7VEAnE"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB9BA1B6D0C;
+	Fri, 15 Nov 2024 11:37:31 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799BE19F49E
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D74018622;
+	Fri, 15 Nov 2024 11:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731670604; cv=none; b=UYWD+YicQYLwZq+O3gclIORn/WkcnUl5yovJoCh2rQhpjA3+hDLLtqPyBdlVv6iCDWIeKMLZ+83R6Gaek9DJcpXUGGJpWHlCmgQcrWyzLt4BEwc9CdoaQkz3CKvdWNsZ8/EndtK0V95jkZqr2s/4o6h1+vTqXxowWfVceOkEc4I=
+	t=1731670651; cv=none; b=N3uRhMlv0hzbzP/Z1g5hRAkEDF97Qkx7u8r8q9H4pT5dVeLawWKVyzw2L3V9rb0hUMoJSFZcC+mCLYy0aHh/G8g/H9rDTO03CYjJbKHytix9MhXFEh9Q7Px6YYv+fM/KL8nRfSFlRAnnrRdUqdzkMdGz0wsgPWY7RCaGQu2OwZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731670604; c=relaxed/simple;
-	bh=crWLODjQpBqZ+m0y2RkNiyT7JqSJuT+LTuTTfY3kFqk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nbtU+OMX9qAD9JasPr+dnl5efEcyk//ju7Fk0D9MZzvVgmsWmPuTTcTv4rtfaAAkdIMj54OZy7jr0aq9lqs5i/Lb6tMM1Zwmsx3pc2u76nuZZZQcPthVJoLcPKcZqQ+RPzXk+li1bJs1RKZXres15BX/+WBjzwzO63UqeA6+gTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TR7VEAnE; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4315839a7c9so14660085e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 03:36:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731670601; x=1732275401; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WSGRTDmiyj5r7QBcQAG3/CwgNIVXzFyhUa3EYkSmiZw=;
-        b=TR7VEAnEjnTZaeVSWUXWEwtHM6IfrdS0p4KLc7WfdKl/80Mw5oo0rwUpRBDYZySMmq
-         Cd1/4oPnizsjBZnb/dcwnFor66v+0bqaQvPllqf9xN/v4IpYVUICSVVFilNBPL2NrKCy
-         JCrDO5EUOUt0HAropgzlHIa0W+SsCw5w7hI2h9a2l2N7/puvfr00E76gQFfdEqRiV3uD
-         CFFegvBT4RmDOyxZ6CX+o/0UEOF9muPCMYlsasPwQV17BACnnHMsGNQ1+/vF/5lJJk6R
-         Lp/ZLEprmjVz/QcgPl6kbmK/VsIY/73WiSDrmz4HNyq8aN5c0o3sIw+sZEialIWPwHlt
-         xCkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731670601; x=1732275401;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WSGRTDmiyj5r7QBcQAG3/CwgNIVXzFyhUa3EYkSmiZw=;
-        b=uOkOXDOkC87AH4X8Jkzb8L2bgJS67hO6UM5cJs4yArGKTme/RpoCwCrG0JLYAiNH+k
-         Cg8cKWHKZhsfKHbG8gUrMNYS55AnP8kTPT6kw3aPLUJFbRACkqeFyFjiP87ZeblL71ka
-         Oj57TrwJL2xqwOQws/VsW7BGYsNN8tsn/xkfHvldHjo1jpEkykZIENKkydtm3mkTuV5f
-         bkRUIGC3ygEk0tcpMyxjvFSrKvFL6cqNQYHCJbZ0K1hhW3F+wqsedQ/o7pGZz0ez386W
-         vIptDR8ZhJKt1Gk9A7iudjC6zkDSjwFD3dcjPxm3+95x767TcdQyoHKl0odj7/RHea+M
-         57tA==
-X-Gm-Message-State: AOJu0Yz7k5HBDeD6ehVYaKPVJ+1omBbLYmxM29cHKJx7U4edkK5/4QtF
-	627TZN+G0lG2+eAqfYu+bQ8XoPGWKDyX/IFkS9JT5+bTYPcyeets3w3ZuYeHrxs=
-X-Google-Smtp-Source: AGHT+IFIsSL9RT5iSe+vLSl41am/5/jhAKU+/p/ZXCUoV9GFNjOawPHjWOdevmpf3bo8t9oWVv9VFQ==
-X-Received: by 2002:a05:600c:354c:b0:432:7c30:abe6 with SMTP id 5b1f17b1804b1-432df78c5c8mr16131455e9.21.1731670600745;
-        Fri, 15 Nov 2024 03:36:40 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d48c731dsm50881685e9.2.2024.11.15.03.36.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 03:36:40 -0800 (PST)
-Date: Fri, 15 Nov 2024 12:36:37 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Chris Down <chris@chrisdown.name>
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Tony Lindgren <tony.lindgren@linux.intel.com>, kernel-team@fb.com
-Subject: Re: syslog warning: was: Re: [PATCH v6 04/11] printk: Support
- toggling per-console loglevel via syslog() and cmdline
-Message-ID: <ZzcyRdf8gzx5Zkk9@pathway.suse.cz>
-References: <cover.1730133890.git.chris@chrisdown.name>
- <07141a533c4071c364c4f2eda6d97a9a89797e67.1730133890.git.chris@chrisdown.name>
- <ZzYv7SznkX34Wulr@pathway.suse.cz>
- <ZzZHNIL6o0Ep1vfA@chrisdown.name>
+	s=arc-20240116; t=1731670651; c=relaxed/simple;
+	bh=dOalgTtg/bwqmLEZLE2g2dxJ45h6yNkggGcJMwBqGTI=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PHlfDYF/9q86abYjXxOkiWjxudG8ms6BCjxeEBBKoZJoTbkMt6m7IQLuu2iM6DaJE9v5iatlGSEHKnyt456vhPeKLu5l/twQImQsHcqbOWhMdgaCT7l7pZQ0mvUxmNXSf29cc4Yj0wA47dNMCDKk1gqtctroLuCjpUP5mGBs0xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XqZk81n4tz6LCyH;
+	Fri, 15 Nov 2024 19:37:04 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id F11D1140A46;
+	Fri, 15 Nov 2024 19:37:19 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 15 Nov
+ 2024 12:37:19 +0100
+Date: Fri, 15 Nov 2024 11:37:18 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Li Huafei <lihuafei1@huawei.com>
+CC: <gregkh@linuxfoundation.org>, <tiantao6@hisilicon.com>,
+	<rafael@kernel.org>, <baohua@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<stable@vger.kernel.org>
+Subject: Re: [PATCH v2] topology: Keep the cpumask unchanged when printing
+ cpumap
+Message-ID: <20241115113718.00000c31@huawei.com>
+In-Reply-To: <20241114110141.94725-1-lihuafei1@huawei.com>
+References: <20241114110141.94725-1-lihuafei1@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZzZHNIL6o0Ep1vfA@chrisdown.name>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Thu 2024-11-14 13:53:40, Chris Down wrote:
-> Petr Mladek writes:
-> > I see this warning during every boot because rsyslogd() modifies the
-> > global loglevel.
-> > 
-> > [...]
-> > 
-> > I am not sure if we have already discussed this in the past.
-> > But I would prefer the compromise after all.
+On Thu, 14 Nov 2024 19:01:41 +0800
+Li Huafei <lihuafei1@huawei.com> wrote:
+
+> During fuzz testing, the following warning was discovered:
 > 
-> I initially implemented that way until v4, but during the v3 review, as I
-> understood it you recommended changing it to use
-> !ignore_per_console_loglevel based on the assumption that
-> SYSLOG_ACTION_CONSOLE_{ON,OFF} wasn't widely used. Maybe I misunderstood
-> what was intended?
+>  different return values (15 and 11) from vsnprintf("%*pbl
+>  ", ...)
+> 
+>  test:keyward is WARNING in kvasprintf
+>  WARNING: CPU: 55 PID: 1168477 at lib/kasprintf.c:30 kvasprintf+0x121/0x130
+>  Call Trace:
+>   kvasprintf+0x121/0x130
+>   kasprintf+0xa6/0xe0
+>   bitmap_print_to_buf+0x89/0x100
+>   core_siblings_list_read+0x7e/0xb0
+>   kernfs_file_read_iter+0x15b/0x270
+>   new_sync_read+0x153/0x260
+>   vfs_read+0x215/0x290
+>   ksys_read+0xb9/0x160
+>   do_syscall_64+0x56/0x100
+>   entry_SYSCALL_64_after_hwframe+0x78/0xe2
+> 
+> The call trace shows that kvasprintf() reported this warning during the
+> printing of core_siblings_list. kvasprintf() has several steps:
+> 
+>  (1) First, calculate the length of the resulting formatted string.
+> 
+>  (2) Allocate a buffer based on the returned length.
+> 
+>  (3) Then, perform the actual string formatting.
+> 
+>  (4) Check whether the lengths of the formatted strings returned in
+>      steps (1) and (2) are consistent.
+> 
+> If the core_cpumask is modified between steps (1) and (3), the lengths
+> obtained in these two steps may not match. Indeed our test includes cpu
+> hotplugging, which should modify core_cpumask while printing.
+> 
+> To fix this issue, cache the cpumask into a temporary variable before
+> calling cpumap_print_{list, cpumask}_to_buf(), to keep it unchanged
+> during the printing process.
+> 
+> Fixes: bb9ec13d156e ("topology: use bin_attribute to break the size limitation of cpumap ABI")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Li Huafei <lihuafei1@huawei.com>
+Makes sense. Trivial comment inline.
 
-The current solution of SYSLOG_ACTION_CONSOLE_{ON,OFF} is fine. I
-still hope that it is not used much.
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-My concern is with SYSLOG_ACTION_CONSOLE_LEVEL. It seems to be used
-by rsyslogd.
+> ---
+> Changes in v2:
+>  - Return an error when calling alloc_cpumask_var() fails instead of
+>    returning a size of 0. 
+>  - Add Cc (to stable) tag.
+> ---
+>  drivers/base/topology.c | 24 ++++++++++++++++++++----
+>  1 file changed, 20 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/base/topology.c b/drivers/base/topology.c
+> index 89f98be5c5b9..d293cbd253e4 100644
+> --- a/drivers/base/topology.c
+> +++ b/drivers/base/topology.c
+> @@ -27,9 +27,17 @@ static ssize_t name##_read(struct file *file, struct kobject *kobj,		\
+>  			   loff_t off, size_t count)				\
+>  {										\
+>  	struct device *dev = kobj_to_dev(kobj);                                 \
+> +	cpumask_var_t mask;							\
+> +	ssize_t n;								\
+>  										\
+> -	return cpumap_print_bitmask_to_buf(buf, topology_##mask(dev->id),	\
+> -					   off, count);                         \
+> +	if (!alloc_cpumask_var(&mask, GFP_KERNEL))				\
+> +		return -ENOMEM;							\
+Good catch.
+Could use __free(free_cpumask_var) but that is a bit messy given it's not a conventional
+allocation that returns a pointer.  So probably not worth doing just to save a single
+manual free call.
 
-But wait! I see the warning only on SLE15-SP3 which I use for
-testing. It is a pretty old system. I see that rsyslogd is not
-longer used on never systems. I guess that it has been obsoleted
-by systemd journal.
 
-> Happy to revert to the previous approach with warn_on_local_loglevel(), just
-> let me know :-)
+> +										\
+> +	cpumask_copy(mask, topology_##mask(dev->id));				\
+> +	n = cpumap_print_bitmask_to_buf(buf, mask, off, count);			\
+> +	free_cpumask_var(mask);							\
+> +										\
+> +	return n;								\
+>  }										\
+>  										\
+>  static ssize_t name##_list_read(struct file *file, struct kobject *kobj,	\
+> @@ -37,9 +45,17 @@ static ssize_t name##_list_read(struct file *file, struct kobject *kobj,	\
+>  				loff_t off, size_t count)			\
+>  {										\
+>  	struct device *dev = kobj_to_dev(kobj);					\
+> +	cpumask_var_t mask;							\
+> +	ssize_t n;								\
+> +										\
+> +	if (!alloc_cpumask_var(&mask, GFP_KERNEL))				\
+> +		return -ENOMEM;							\
+> +										\
+> +	cpumask_copy(mask, topology_##mask(dev->id));				\
+> +	n = cpumap_print_list_to_buf(buf, mask, off, count);			\
+> +	free_cpumask_var(mask);							\
+>  										\
+> -	return cpumap_print_list_to_buf(buf, topology_##mask(dev->id),		\
+> -					off, count);				\
+> +	return n;								\
+>  }
+>  
+>  define_id_show_func(physical_package_id, "%d");
 
-No, I take it back ;-) Let's keep it simple as it is done in this patch [v6].
-We could always add more conditions around the warning when people
-complains.
-
-Best Regards,
-Petr
 
