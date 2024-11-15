@@ -1,140 +1,129 @@
-Return-Path: <linux-kernel+bounces-411509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F05C9CFB50
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:51:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8727D9CFB51
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:51:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FD0DB2590F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:50:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3077F1F245D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F99B1AF0A5;
-	Fri, 15 Nov 2024 23:50:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D801AF0B5;
+	Fri, 15 Nov 2024 23:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DEDe0Y20";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wtMf0vKV"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="g9FYo7ma"
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596251AE01B;
-	Fri, 15 Nov 2024 23:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B813B19CD01
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 23:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731714646; cv=none; b=J2DZBX3h1TvgGV+bqaWuKkmngm86VUOjdHv5CBoGwhw1rFdXjXcBmeeN9E3+5jeecLMF6Lrc2M2mar3yTbjP/Y/Kwt75I+I1fimYfYbOqDLMtciT5x8krIMHWo7usZ9PSo/2Ddttpvs8Qt3TD2Uk69iu3YYcseuHtnvfbSwiLEQ=
+	t=1731714660; cv=none; b=DboHcvmiEqr6fxATnxmfGzyqTxHTjGYavpEcua3dJzdtW4GYjop5uYKciTTY1kqxuxTA0GOrl6Jvj3zioAknzXeF9wRr7sJhydsD8RX44kbJ2PGNdaRpREX6725opokzFkDXti+IMJxpb4MiY/1Q8TUbKOtdSWyQuqplCqMtAtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731714646; c=relaxed/simple;
-	bh=maBdDELOHQBd+g5+tIPYR6dABYPJfCxmDeyoGZ2b9OQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=XH94zounNeyD2Y9hrOODDHZujXXHMo+LLAJi1f1S02SJs8NLD09yW/GHupGLXT2BTGsuBjLEg5DqfTVGha6fOL2GX954w49D25lkoPFtE2OMbD7mchgMnkn/s2cREMVGbCy3y/QfNn+rHMGcKVM3xBVx0QGc+ickLnHu9NV4xJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DEDe0Y20; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wtMf0vKV; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 15 Nov 2024 23:50:41 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731714642;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dqNpDI7gI+gzJsQxMzcH8AMU0zhgHwx7w7ONikav/P8=;
-	b=DEDe0Y20gC2gl2Jj6YlQzGElafP1suHZaQ59yQvzr+CeGc2KpknVFDpRs8btbI0YYQA1/A
-	75HCmhJtbUpFYCiYXUKVbfcPd57u4DZlpi0n979SRT8phLVJl6em2U0zlG1oediEQURuGv
-	bqWhMDfBa912IL6Wp2bXUKs0HrA6znZ/rhYX8v2AWIze0wt2W9dAU316O3yn2i+byq4j1Q
-	l3WnetWrSPHvh0GVaEaF9OBAZ+jIJQOPAWTDNGR9eBnKhMghIU7jkHHmF0J/8y1XrfEDvX
-	cX8ziASnpui1EJFfLzzCbMCoDHsHDYyp7R/rMqfBGRGs7jK/nNVaPaylns5RhQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731714642;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dqNpDI7gI+gzJsQxMzcH8AMU0zhgHwx7w7ONikav/P8=;
-	b=wtMf0vKVxOicMKLBMxdUL1zFObR3XCLDrkFScur2LBWTFaiJWkGJKPDqY9+lZe58TyLNY2
-	nb4kBdPALiOb8vCA==
-From: "tip-bot2 for Samuel Holland" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: irq/core] irqchip/riscv-aplic: Prevent crash when MSI domain is missing
-Cc: Samuel Holland <samuel.holland@sifive.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20241114200133.3069460-1-samuel.holland@sifive.com>
-References: <20241114200133.3069460-1-samuel.holland@sifive.com>
+	s=arc-20240116; t=1731714660; c=relaxed/simple;
+	bh=FXB8KfrG6LQU/Mqli+pn+JitQwrgrbd6o3WyS/Xs4wg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oiipnefFHxwR0QewFD3xGNb6A16tLfTZ1t2u61LydgxG95Cca8mToOkSvQwPKpMIloE3ABF8viPzUbRxcprYF84BbVl5kgx+TsdSNGxU7/IWt9oBvrg52x2UDiIVTt5KUKcvBt53JxPFvqiCK4V+oKye25hbP+DAvg9NSJOy48w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=g9FYo7ma; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6002a.ext.cloudfilter.net ([10.0.30.222])
+	by cmsmtp with ESMTPS
+	id C0c2tqqA8umtXC65TtOYQA; Fri, 15 Nov 2024 23:50:51 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id C65StqmT465gFC65StAiVX; Fri, 15 Nov 2024 23:50:51 +0000
+X-Authority-Analysis: v=2.4 cv=Z58nH2RA c=1 sm=1 tr=0 ts=6737de5b
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=hkF7UjICvhDUN6hEiEAA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=TZjrYAUVPhGj6S/Hl2h4USY8zvXns70WNu2i9VSUbBI=; b=g9FYo7maf9KgfQ9OfCOlqVjMcj
+	oZtxwDozvD6zYWEbBF3vF1ZxjJJN+2oZTF1cxLsPKMabxy2UsH/tDYBXXsrT/bPIinFJLGOPx4ecN
+	bx2exuplFvuIH/aw2wdC1Pa9rHoePEP9Y4ywBNtg+ay8v1bHIJQX9xDySoESa45u0r1AXdFluemhW
+	oPoVlYJXW4fYHmQEZCUYv/G+0gFayNJaIQ4sNKs1t3NjGfUnmGTAXo4EFW79zhTj/lPmpNTa34bKh
+	0iDoJExIPY3Dp5jiAJOy3+a+fKYA9AjePYAyzA1AsfmkpwQ54gC7EWl7iw+M7nx2aP9E8L/qh1Kym
+	fpAJN3pw==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:59976 helo=[10.0.1.115])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1tC65R-002m0G-24;
+	Fri, 15 Nov 2024 16:50:49 -0700
+Message-ID: <3c97fb58-0d37-493b-88de-ebc62a514310@w6rz.net>
+Date: Fri, 15 Nov 2024 15:50:46 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173171464193.412.13982264589277396499.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.11 00/63] 6.11.9-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20241115063725.892410236@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20241115063725.892410236@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1tC65R-002m0G-24
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.115]) [73.223.253.157]:59976
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 16
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfDLnuCkhXh9RSKbadqcEZopk4b622j/wDSLYtjyhtNnP+JNuyBQHrsK4uV/u2KtDeMU8Qeh3Szn5FBUuUEhdtp3ulEXT///GlgdZd1kB/Q6f4eSi5Rva
+ ROs7wZR4K3VFrjU1ibxVudFIUFPxZP4YQ9Ai4Uo0YmhbqtVApjvcS9/rtmilieTkY5soHNWQdBtRYGzCfE1tTGu3FsRdaEJO3zw=
 
-The following commit has been merged into the irq/core branch of tip:
+On 11/14/24 22:37, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.11.9 release.
+> There are 63 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sun, 17 Nov 2024 06:37:07 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.9-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Commit-ID:     1f181d1cda56c2fbe379c5ace1aa1fac6306669e
-Gitweb:        https://git.kernel.org/tip/1f181d1cda56c2fbe379c5ace1aa1fac6306669e
-Author:        Samuel Holland <samuel.holland@sifive.com>
-AuthorDate:    Thu, 14 Nov 2024 12:01:30 -08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sat, 16 Nov 2024 00:45:37 +01:00
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-irqchip/riscv-aplic: Prevent crash when MSI domain is missing
+Tested-by: Ron Economos <re@w6rz.net>
 
-If the APLIC driver is probed before the IMSIC driver, the parent MSI
-domain will be missing, which causes a NULL pointer dereference in
-msi_create_device_irq_domain().
-
-Avoid this by deferring probe until the parent MSI domain is available. Use
-dev_err_probe() to avoid printing an error message when returning
--EPROBE_DEFER.
-
-Fixes: ca8df97fe679 ("irqchip/riscv-aplic: Add support for MSI-mode")
-Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20241114200133.3069460-1-samuel.holland@sifive.com
-
----
- drivers/irqchip/irq-riscv-aplic-main.c | 3 ++-
- drivers/irqchip/irq-riscv-aplic-msi.c  | 3 +++
- 2 files changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/irqchip/irq-riscv-aplic-main.c b/drivers/irqchip/irq-riscv-aplic-main.c
-index 900e725..93e7c51 100644
---- a/drivers/irqchip/irq-riscv-aplic-main.c
-+++ b/drivers/irqchip/irq-riscv-aplic-main.c
-@@ -207,7 +207,8 @@ static int aplic_probe(struct platform_device *pdev)
- 	else
- 		rc = aplic_direct_setup(dev, regs);
- 	if (rc)
--		dev_err(dev, "failed to setup APLIC in %s mode\n", msi_mode ? "MSI" : "direct");
-+		dev_err_probe(dev, rc, "failed to setup APLIC in %s mode\n",
-+			      msi_mode ? "MSI" : "direct");
- 
- #ifdef CONFIG_ACPI
- 	if (!acpi_disabled)
-diff --git a/drivers/irqchip/irq-riscv-aplic-msi.c b/drivers/irqchip/irq-riscv-aplic-msi.c
-index 945bff2..fb8d183 100644
---- a/drivers/irqchip/irq-riscv-aplic-msi.c
-+++ b/drivers/irqchip/irq-riscv-aplic-msi.c
-@@ -266,6 +266,9 @@ int aplic_msi_setup(struct device *dev, void __iomem *regs)
- 			if (msi_domain)
- 				dev_set_msi_domain(dev, msi_domain);
- 		}
-+
-+		if (!dev_get_msi_domain(dev))
-+			return -EPROBE_DEFER;
- 	}
- 
- 	if (!msi_create_device_irq_domain(dev, MSI_DEFAULT_DOMAIN, &aplic_msi_template,
 
