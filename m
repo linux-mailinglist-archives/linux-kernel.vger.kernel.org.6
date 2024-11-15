@@ -1,97 +1,77 @@
-Return-Path: <linux-kernel+bounces-411413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E8CD9CF975
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:14:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA0CC9CF8F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:03:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 129A7B46733
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:02:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5902F1F215C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF501FAF0E;
-	Fri, 15 Nov 2024 21:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF331FB74A;
+	Fri, 15 Nov 2024 21:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IpXh+lP9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eSAMZih3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779A61FAF00;
-	Fri, 15 Nov 2024 21:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834EE1F893A;
+	Fri, 15 Nov 2024 21:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731706063; cv=none; b=pittSrQ8tyZTxoaCvjzyGee9L73OfXqXH+RIoyf4yNbW5hR17FL3EzElUOYGzEY+EUuHSvHFi+ooA+mP84BREMcjoafq2aU7dZNiudgeYpimyCH5UKU0Nu7j6WtTHq2nBx31SFcsIkjUsF4353eGxizqZDnnMV+JF1HvSxDog0U=
+	t=1731706120; cv=none; b=I7iUi2ivFyU8tRV1mhSUVoB/VnLbCCjW46IeAhAvZCXJi3WNmsQ0LGZYzQ84qylh59nHBou9AIbQTCCrbd100Km6dCId5mobrfiS7yLUvgrdlUJ05+xJQ07gJybLPvL7QrQbTiE4pAjewXLqGNnt3+lDPSg8jTMa4hKotNuZ0Ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731706063; c=relaxed/simple;
-	bh=zBajkRM9JbHpDxyGGYx7924Z8qil0sf4kBqZ3lttZrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bvX7+qGdL0LT7s+JHX6ilaKkl3A2knYpn1mBdlwcNxaML4a30qurGJM+J+Byhj8iRjzVpUyVtCM8NGpOFaj8VYEz6fVli2lFtsyP4UZ2pf9NaHzWrSDiMpyKm7TkSMTmP23FC22IYT1EKV1xeTB6t37LJkBBUj3lnGlzzsIhmRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IpXh+lP9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98390C4CECF;
-	Fri, 15 Nov 2024 21:27:42 +0000 (UTC)
+	s=arc-20240116; t=1731706120; c=relaxed/simple;
+	bh=k0g3XUmKfL/FbjKfmQsN2e0noC2xG7BjO+ZZ6ZxxaYU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uaeF/yhvb7M/5WYGJtbIjJqKh7ZxpH22+feKFCzG0ZiiwtkhZTPq3BDZBYsP6SrOEAtj/4dNXR0ZJS/Ait6xcSBx8m0Q1fYNmDL2wLltjleDyjKdiq36EASY37BnNGhY4SL/EnvKtkO8qbZ2U+ufQklGqeBMbtd8facjY22rpqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eSAMZih3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1546C4CECF;
+	Fri, 15 Nov 2024 21:28:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731706063;
-	bh=zBajkRM9JbHpDxyGGYx7924Z8qil0sf4kBqZ3lttZrQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IpXh+lP9Z3Ke7UE7DhFx6lLU5gW8oguhRh+c9l94/LhzXaTFxKNVa3Fdji64fXKYG
-	 c93sPQwY0LN8UrnqRyUMQ07iIJMYP6L8OZhZ3tfzqZZgHuk0SGyxQih1rj7qRzISm8
-	 +IUW3McJ54sl0AqDycPboHAfyoXbFXBxVpEndWke9h2GTjULctM6NELXe995zhvm1F
-	 xLmfFvQ96pY9qIsZgbjzCCSn0yyVEAbi8cDCY5hu6lepQbxXPtTvMokGjQGqJ0So1M
-	 neQTCboDuw9kHeMmQS+yfmu3/xv+n8qWHXZCSuNQa+AmBL8FwHihGZ9KC3T8hl/lhC
-	 D14CsElkStLmA==
-Date: Fri, 15 Nov 2024 21:27:39 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com
-Subject: Re: [PATCH 5.10 00/82] 5.10.230-rc1 review
-Message-ID: <Zze8y08U9r5G0n3W@finisterre.sirena.org.uk>
-References: <20241115063725.561151311@linuxfoundation.org>
+	s=k20201202; t=1731706120;
+	bh=k0g3XUmKfL/FbjKfmQsN2e0noC2xG7BjO+ZZ6ZxxaYU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eSAMZih3WrbJDKa91wE1x0mTR4CJb93inDYru65VHrV4YpQAVeh2ZMsA5ngJWvmxV
+	 jP422dsvR25DkDoLrgqOoS29e+Cb3pBIU7pBlC8MvVQVneS9GJCZDvbQlQUVB3HWe0
+	 fayaL9ASXWPIzY41p3wrJhZxHxJWcDc3RnhbKyyi4Dq0Q6HS7qKctqFCE13aj4kTqa
+	 Cu0Ja9ap37zG2e8nUHhvqXQNAnpvxSCxIihBpLNMCdj9LCkrihaBkyQ88WtIOydJOd
+	 FoPg/ZIlw5rwQRp8ixB217bfcIYfle2VOIVV58oL6NVa4TP+lbPcJ0zfgBorj2LGva
+	 6cbxOxWGGKSqg==
+Date: Fri, 15 Nov 2024 13:28:38 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Stanislav Fomichev <sdf@fomichev.me>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ donald.hunter@gmail.com, horms@kernel.org, corbet@lwn.net,
+ andrew+netdev@lunn.ch, kory.maincent@bootlin.com
+Subject: Re: [PATCH net-next v2 8/8] ethtool: regenerate uapi header from
+ the spec
+Message-ID: <20241115132838.1d13557c@kernel.org>
+In-Reply-To: <20241115193646.1340825-9-sdf@fomichev.me>
+References: <20241115193646.1340825-1-sdf@fomichev.me>
+	<20241115193646.1340825-9-sdf@fomichev.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/Lgc3cRAkiiFft5E"
-Content-Disposition: inline
-In-Reply-To: <20241115063725.561151311@linuxfoundation.org>
-X-Cookie: Editing is a rewording activity.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Fri, 15 Nov 2024 11:36:46 -0800 Stanislav Fomichev wrote:
+> +/**
+> + * enum ethtool_header_flags
+> + * @ETHTOOL_FLAG_COMPACT_BITSETS: use compact bitsets in reply
+> + * @ETHTOOL_FLAG_OMIT_REPLY: provide optional reply for SET or ACT requests
+> + * @ETHTOOL_FLAG_STATS: request statistics, if supported by the driver
+> + */
 
---/Lgc3cRAkiiFft5E
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Looks like we need a doc on the enum itself here:
 
-On Fri, Nov 15, 2024 at 07:37:37AM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.230 release.
-> There are 82 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-Tested-by: Mark Brown <broonie@kernel.org>
-
---/Lgc3cRAkiiFft5E
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmc3vMsACgkQJNaLcl1U
-h9AdvAf/TtI0H+SWxVI7IK5Z5c7fnjl/HImIj0Wjxbha7k7JU8+Gi+g7XTdy8Sgx
-DIVl7JBQ8Rccpstn8Z74jGtvXqgGrKtYwkIgHbYs/ZlqPUAVDFB5zfDvvDLfBa3n
-UzAzgoTHjDSeXnQFHQTNsW/s8Sg6043Zlp7w9XLLcOmg8iP+tY+HvIKTeYIM78vY
-EWuPyCCSWYPujgJmskTEnAyeCurFUJKwgF7Z/5R86+Xps9hvKcrXPTdaCdP4cImp
-3jCIQ3F5BwvqJ8+ArKPNMu+RrTtmSS9WvwDgYGYWH2HaSXFNKGqMcT3SVgjLc7dz
-zgAEzRXJKdJ/wE3aZT+/nLtsxFtmUA==
-=qwQ8
------END PGP SIGNATURE-----
-
---/Lgc3cRAkiiFft5E--
+include/uapi/linux/ethtool_netlink_generated.h:23: warning: missing initial short description on line:
+ * enum ethtool_header_flags
 
