@@ -1,142 +1,103 @@
-Return-Path: <linux-kernel+bounces-410606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 959A09CDDF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:00:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B8C99CDDDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:55:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 408161F20FAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:00:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E56112824ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888D01B85CC;
-	Fri, 15 Nov 2024 11:59:51 +0000 (UTC)
-Received: from smtp134-31.sina.com.cn (smtp134-31.sina.com.cn [180.149.134.31])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBBB1B6D1F;
+	Fri, 15 Nov 2024 11:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x58n/RLg"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3127192D8B
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225EE18871E
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731671991; cv=none; b=Gab5Dz1okXVlyM+FKTHxccHKqGVWzktKq10J5/+SmE5KrNCUgf/HMQvmfjvZu8Dg9b85N6DZvraUBxQNNy0z2uux6kq7EV3Gdk/wbAQSHtnDsQBvG89eIdMaWK4qs/CkfOEUYyyMTjWn0CcXCwMa8cgvAGlGrZdjrMNT2FuaVhU=
+	t=1731671719; cv=none; b=iWQhF5SlGEO+nQCsWx9bcQrn1Bh+1NfTqzIKBf0xR9/FHL11SDKNCVBXvkrTKCyOInpOQvFw/VTLlnhIvbK65/xfQXzmyTsHyAifD/stP1nQlEYd04dXyQyjD4raDOuwbYoW2M3CyhI0JceP+xCRoZ1PH2xB25GQzn8RqLLC0so=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731671991; c=relaxed/simple;
-	bh=XddeauN3/ObPYt2c5xEOf8RevQ8sUh5W0rxnOkgJToU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FuyaMcTy/OKw8T9QFUsF6sOgolGF/DL1t9BeW18Inwf/o3IcZ+tw0kSROfVVGx3QL3VBAMxF9eloUR8iM2hyCpp9vgDkBJRnKaxxfLx0d8A6MU/qS+fAuXwgNZP3ZIxoBnRTBwnwOasU57/tQ1ZtlYbrmwxPn2Vf2NTStnq+EEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.8.6])
-	by sina.com (10.185.250.21) with ESMTP
-	id 6737365F00006C0B; Fri, 15 Nov 2024 19:54:13 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 5570963408370
-X-SMAIL-UIID: CED635E2AC664741BA0D9E98966E66C5-20241115-195413-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+852e935b899bde73626e@syzkaller.appspotmail.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	tglx@linutronix.de
-Subject: Re: [syzbot] [kernel?] WARNING in posixtimer_send_sigqueue
-Date: Fri, 15 Nov 2024 19:54:01 +0800
-Message-Id: <20241115115401.3701-1-hdanton@sina.com>
-In-Reply-To: <ZzYqE-L-9Ga3Fe7n@localhost.localdomain>
-References: <673549c6.050a0220.1324f8.008c.GAE@google.com>
+	s=arc-20240116; t=1731671719; c=relaxed/simple;
+	bh=N0Dlcy4ODEyINkyFqZ4OExz3WI7d7VOMlLyb9BnaUkc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rZfcX/79M6XIam5C93vN3bs1ONrweB/0w1//TI5BKNC+sjOtxncOYhr+jCQka6rcS0THDr4rOWxXZ7XR77Bt1KNmwTrpC6DS7P6r14JDqldIGT4pLn1JI7vDg+H9wAM2bBoOcMC7G89zFaFxuRKVVbxcSmzMCvbTBR6CaPUD9Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x58n/RLg; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d518f9abcso1174599f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 03:55:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731671716; x=1732276516; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xNxG4xdSJv0mTSk+keMrkENbnyIHTmTRRxL8dSugZL0=;
+        b=x58n/RLgHNQVi8T8uD+0EkC3Uyd/vNRlfKMXlvxVhpGR5bPI5lASaWhDHQLsgOoz+p
+         hrvHf7KA92HiZH+wcCFUkLE0mBpwg1Foj7CEZzoDDwE39N5fqg1CITNAlqW+0iMoLrvJ
+         dlG4yq4GfAUam4qIBp74tGLUiULdz4oD2At2EW8+V3I6iT5KjA7AAhQVNoZCRj2WNdRW
+         V7yCmKQr5TydMyAOJYKzb37OoCPjwyspt2iwz2ur5+rn8RUHdf2exMT+s4CwiX93aVYC
+         MWRmIDO48IjE9laFA+3VcOIMA6gI7CTiW4r8EAUS/3+VD9AExaLMVC5eBT50A0z+RSHf
+         MNqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731671716; x=1732276516;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xNxG4xdSJv0mTSk+keMrkENbnyIHTmTRRxL8dSugZL0=;
+        b=cXrsUV/S9w9i6Ql0vGiXVBTymbxEM/mmmlfQjznWuwOG6C6VO0MVRXm+OdaWPVAvlW
+         RGXBNecjucjFz4MBwKk9OWcHWxkvKharU272NY6IouVu5I8chRrvUa8mHgW951KOXlUl
+         m7iMSBFXNHwtEYnxV+KmVWut1ZXmQ0xY6JO5YHi0+xwJjHe79REj32M/33eCaumqADh0
+         D29nGI3rFUCBpKiUqCtyA6iom5C2PnMCfpYSzVB490uAvkerl+yQHbfBrsT1t+emuUhw
+         2lUF12a3XuzGv5f/3aieUjpZdyGi1i+TTgIUvFXlglUIog0l0FQQwZCQiL82TMqGjM4e
+         lWoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlgo0vgI3AfrRVeKajKQdUvByHY2+tT27ubJwkm1ar54dQ1tr6HOM+lRFt1pyRTdDVFsf4kXKnoB+fo/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcK9SklKidh64wvvurYVbJhTzcfU/lCbIMMnBW0p+Io6t2Ire9
+	tu3dYUf5CS/eLd6aSP8nLvVT4Gc0ejJOvY4ItHF7Oclr/YLOTI4pytkeeRBKF2Q=
+X-Google-Smtp-Source: AGHT+IEDrFmWkNJyBlQfh9eLZ6iUWVe1jY5a4fTFgja8Q/hvy4vO1xvurXhI1C3fDweeY77TtX07yQ==
+X-Received: by 2002:a05:6000:1f8b:b0:37d:4fab:c194 with SMTP id ffacd0b85a97d-38225a29fe4mr1936660f8f.25.1731671716421;
+        Fri, 15 Nov 2024 03:55:16 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ae2f602sm4157425f8f.90.2024.11.15.03.55.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 03:55:15 -0800 (PST)
+Date: Fri, 15 Nov 2024 14:55:12 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Suraj Sonawane <surajsonawane0215@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: gpio-exar: replace division condition with direct
+ comparison
+Message-ID: <f9daa71f-cba7-4086-a523-a2e6aa526ff3@stanley.mountain>
+References: <20241112201659.16785-1-surajsonawane0215@gmail.com>
+ <ZzcWGJxqMJVYd4Tp@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZzcWGJxqMJVYd4Tp@black.fi.intel.com>
 
-On Thu, 14 Nov 2024 17:49:23 +0100 Frederic Weisbecker <frederic@kernel.org>
-Le Wed, Nov 13, 2024 at 04:52:22PM -0800
-> > syzbot found the following issue on:
-> > 
-> > HEAD commit:    929beafbe7ac Add linux-next specific files for 20241108
-> > git tree:       linux-next
-> > console+strace: https://syzkaller.appspot.com/x/log.txt?x=10f714e8580000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=75175323f2078363
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=852e935b899bde73626e
-> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14f714e8580000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1657b0c0580000
-> > 
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/9705ecb6a595/disk-929beafb.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/dbdd1f64b9b8/vmlinux-929beafb.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/3f70d07a929b/bzImage-929beafb.xz
-> > 
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+852e935b899bde73626e@syzkaller.appspotmail.com
-> > 
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 0 PID: 5854 at kernel/signal.c:2008
-> > posixtimer_send_sigqueue+0x9da/0xbc0 kernel/signal.c:2008
-> 
-> That's because prepare_signal() does not only return false when the signal is
-> ignored but also when the task group is exiting. It's possible that the task
-> enters in do_exit() with pending signal and then the timer is reset and a new
-> signal is queued before the sighand dies.
-> 
-> This should fix it:
-> 
-> diff --git a/kernel/signal.c b/kernel/signal.c
-> index cbf70c808969..10b464b9d91f 100644
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -2003,9 +2003,15 @@ void posixtimer_send_sigqueue(struct k_itimer *tmr)
->  	if (!prepare_signal(sig, t, false)) {
->  		result = TRACE_SIGNAL_IGNORED;
->  
-> -		/* Paranoia check. Try to survive. */
-> -		if (WARN_ON_ONCE(!list_empty(&q->list)))
-> +		if (!list_empty(&q->list)) {
-> +			/*
-> +			 * If task group is exiting with the signal already pending,
-> +			 * wait for __exit_signal() to do its job. Otherwise if
-> +			 * ignored, it's not supposed to be queued. Try to survive.
-> +			 */
-> +			WARN_ON_ONCE(!(t->signal->flags & SIGNAL_GROUP_EXIT));
->  			goto out;
-> +		}
->  
->  		/* Periodic timers with SIG_IGN are queued on the ignored list */
->  		if (tmr->it_sig_periodic) {
-> 
-Test Frederic's patch on top of the next tree.
+Uh, I had to think back...  I had forgotten that I actually published that
+check.  I can unpublish it.
 
-#syz test
+I wrote it based on a real issue, and then when I looked at the warnings quite
+a few places wrote code like "if (x / 4)" where they had intended to write if
+if ((x % 4) == 0).  So it seemed like a good idea.
 
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2004,9 +2004,15 @@ void posixtimer_send_sigqueue(struct k_i
- 	if (!prepare_signal(sig, t, false)) {
- 		result = TRACE_SIGNAL_IGNORED;
- 
--		/* Paranoia check. Try to survive. */
--		if (WARN_ON_ONCE(!list_empty(&q->list)))
-+		if (!list_empty(&q->list)) {
-+			/*
-+			 * If task group is exiting with the signal already pending,
-+			 * wait for __exit_signal() to do its job. Otherwise if
-+			 * ignored, it's not supposed to be queued. Try to survive.
-+			 */
-+			WARN_ON_ONCE(!(t->signal->flags & SIGNAL_GROUP_EXIT));
- 			goto out;
-+		}
- 
- 		/* Periodic timers with SIG_IGN are queued on the ignored list */
- 		if (tmr->it_sig_periodic) {
---
+But in the two years since I published the warning, it has mostly been false
+positives.
+
+regards,
+dan carpenter
+
 
