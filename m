@@ -1,205 +1,126 @@
-Return-Path: <linux-kernel+bounces-411070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EF6B9CF289
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:14:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF449CF28F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:15:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4B471F21BE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:14:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 015E628E34E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BFB51D434F;
-	Fri, 15 Nov 2024 17:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A469A1D63CA;
+	Fri, 15 Nov 2024 17:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwE4BVqv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jf7YoCl1"
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71AF2163;
-	Fri, 15 Nov 2024 17:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E441D5AB7
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731690854; cv=none; b=Y7uTNNhyDya3XtrwR8MWQsgWp4KkffRj1WePk6EUoV9BLnBc4h6WRgeGkisgJ/aGjDXUxLeMK2yIamra42ki1dl3IGg2vcRd/wCn90wVNFOM9gMTF/j9whN0ZxJSjynth7aN826mP5P8EV82oJfmUUvNLS0vGzb2ZVB2AFq2HKs=
+	t=1731690902; cv=none; b=rP1zFCvB+86WiWyBWLBEmXCDz4FCWD+QgKG3g1tI6vSnVwqHJb3zY4nq49OMRcJIomdEneknnlxrLxwNyRK4oboAz/j0oSqmjdkTFueD5Qgq2D2mYlyQ4PmiyxV1OyarvfWJQtF7kvlTWFfOv9Hm1VvvDKoP0kkupJkfGeFtGGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731690854; c=relaxed/simple;
-	bh=UKf2D05K/gyn5pqOi5hcQw1T7lYxnxkCGJHDkIuIm10=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M60mnVKM+3vKAJ7N1FqGVcIXj+0PWjzF46BQ5h7FENdSWD3De8psKpt6691B1JdQ/KFI6572gwYMKeegpkCyMCi5/xv61Zt4MaBa6YVWe6HEqqxa6SEOKqIbX+BL80mS4vhwvK5kHliLweAwPVWyTH+8cAL4waz9npEwkPJ1Qxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iwE4BVqv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 000F6C4CED8;
-	Fri, 15 Nov 2024 17:14:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731690854;
-	bh=UKf2D05K/gyn5pqOi5hcQw1T7lYxnxkCGJHDkIuIm10=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=iwE4BVqvZda0J1277F1H4YcH9sfxhJaJslulxchAbGjqEmV76eegLoEsjV42rj3pR
-	 LCtxWK0QJDoxwjhJjV9vZ7bq/YnYVbu2uLiO2zrF7AfPhXtNfIqQUb3p7g++rKbjsj
-	 I3TtFIoSCbmurvQ2Yeu4+IBguDut/bNADoqC+MDFf+BxO6L7wJT4iyZ1L8flG6rJgF
-	 0mNCM6r+MEuqJVN1m9WHpa8WvKUSEW7SzOrK6fNVfv6FjiYMeNPV11qRSJJvVW+wQQ
-	 zsatj9NCvdHDb49ttt9ZM+T1CP6QYV4AzX3HQfDFPj5whxMCcr+eLx9cy7XlgZlREc
-	 hrZVnGBfRO6jw==
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6ea7c26e195so10729957b3.0;
-        Fri, 15 Nov 2024 09:14:13 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUgKJGhpE/64OiAdYibay4AK8vo4e8ccwUs8Zg2DCrFFvlztTAx2K3TDpd6FvpL2d71j3xw2AGkOzDQybSi@vger.kernel.org, AJvYcCXFSZwt1okcpVJTC6FBJze+F3zUaecGh/ZI7RvPwfg0kN1s3aqaXRNGrozI6dC45NIQ0ORc7rSnCjRR@vger.kernel.org, AJvYcCXojsyIWtK4FVIISeSsQWmTZ5nGRVEqzIur6KoSfjY3tHK0AxeXrwgpkQYMA7YaoCBpwwENRsN5zA1BYA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWpPy7YoEk6dwzaQA7TiXJY05XQRfPHgKW4ZYp11ipwo5kzZ3f
-	bLkDYwFNn5j15utqTM6smxTDh4SlJmWsc1LPhjqgnpvzQIIRT0cOp3uDTK6C8xIq/CMVmK8G5Yz
-	u+efnsNBP7XfMalhu5M6mQ+0guw==
-X-Google-Smtp-Source: AGHT+IGiE+cnU9ZWYlzlV7eNcWe8xaMDYeLmmNOeSFn104dNU8yMitWKPRWl5TyCIWwi1hpMUQwq+ALlqCkKVFk4tJI=
-X-Received: by 2002:a05:690c:d19:b0:6e2:4c7b:e379 with SMTP id
- 00721157ae682-6ee55a83a50mr41263137b3.19.1731690853131; Fri, 15 Nov 2024
- 09:14:13 -0800 (PST)
+	s=arc-20240116; t=1731690902; c=relaxed/simple;
+	bh=MLVGdOKUHWHTbWRLhDF0MToJ/PEyDmhqvew3tWWi1Ro=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oWWNHxRgihcZYYroCbdT/OrGkfXN6xWtPoNecJoeaw4HcpgF/Oz+E7OAdK+oxiZ7pM/IZY/pnHvfT8v+b9MJKd+7xmU4+tq3Pk74X9mCZIsWRjLQrC6iImlRGsm8EDwEbG8STqAHRWpqC8eUCgpeVJmLqps4Z6kdf65YzGx93d0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jf7YoCl1; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3e7b706b966so1037650b6e.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:15:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731690899; x=1732295699; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+t5QbplXWf+OH1Spy65VnQjon5zvVtjuq4EZhXbiI6U=;
+        b=jf7YoCl1czhp9aIYVRd2MzNKpL36C9ZX28iPoA3EgyKzI1957EqTomkM5f6wolaoGc
+         YLzbroZxa/kd4bgZ4rjrYyCwzywk5Rfp8Dla61+daYEmbgb8XCb3TLfAqcZPHp3wq6sq
+         rhHImRt9KPEOoqKn+FmhcjVysB829MWnErku45PtntwN7VErqfWg1iDLqR103+lYeKCJ
+         6RdWra6ki2RmBmd2JrXn7BPOJIE467IZmM/2lgvXHdsw92fyn/jkqM/9yoiH6u9Gum+0
+         /fr+kvl0iK+bJLPq+M8iimZWe1nApQYFY17dtegNBei0VO+NzvINVHhjfFOEMWfGkHmG
+         nQ5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731690899; x=1732295699;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+t5QbplXWf+OH1Spy65VnQjon5zvVtjuq4EZhXbiI6U=;
+        b=h5bkANMMeRmX5jeNyNUXJrYn/RslPeodkTLAxrX/a6i+vkAIepwGlAdsoaH5XK4uLZ
+         3v0iMeabYDkZ5SnhDIsZ8RuKa0rlUgdteZfz7dr58i02wt5XB3CwxsRjsMap68py/7to
+         CDogYAwdfqmQPuajSClffZFpCpyDZRUiGqhvQ75aQ3Qeox2FGvJSmij1LF0mp4K9M0cg
+         1OzHFfPVfkv/t71ZGFc8TK1zNQRhWA8ET6CywshAMR7Kcfr4U+cgK6/MwIc0fTpJW0nf
+         KmM1VfgPZwPOh/wkmlGnF79d1WwivBMtUH03k+BYK63DwrJABbZKuQJ1FrJGSq5DBczw
+         aI+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWGL/MABmgvaNCFjC8OzYD1pOIFyEjWeunjOqXp8DWqUvBqkXi3TqhozZ81A3/DKnJipq455HOqj+O22jY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFnYU7a5ZWTm4xtUnC9LUcZKT4TPMtSDU1u20QYDXG3bppAFDu
+	tw9dcyYOEQRbh0yWUXPsq7Ye/ljDmq8JOBElJMFVRpaZ+gR2Hogzym9HAf9WpO8=
+X-Google-Smtp-Source: AGHT+IFA6j1bD6Ro4mlGCDGX37IVHQawFAOECWLhe4iMVSQfihiezYooSzpr0q3F9esVAzQwmh3qAQ==
+X-Received: by 2002:a05:6808:3a0a:b0:3e6:22ce:d1c4 with SMTP id 5614622812f47-3e7b66c64e1mr4790001b6e.12.1731690897961;
+        Fri, 15 Nov 2024 09:14:57 -0800 (PST)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a780feccasm592983a34.28.2024.11.15.09.14.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 09:14:57 -0800 (PST)
+Message-ID: <a1852540-eeb4-4d92-a381-185014c828ac@baylibre.com>
+Date: Fri, 15 Nov 2024 11:14:56 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113-a4_pinctrl-v6-0-35ba2401ee35@amlogic.com>
- <20241113-a4_pinctrl-v6-4-35ba2401ee35@amlogic.com> <20241113180405.GA653353-robh@kernel.org>
- <1764b1b4-336d-4ca5-ab21-8213691a9622@linaro.org>
-In-Reply-To: <1764b1b4-336d-4ca5-ab21-8213691a9622@linaro.org>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 15 Nov 2024 11:14:02 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+2v7=egxakPKZ90j9wro+prn5FOjuCGwwsYB8M1GP+mQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+2v7=egxakPKZ90j9wro+prn5FOjuCGwwsYB8M1GP+mQ@mail.gmail.com>
-Subject: Re: [PATCH v6 4/5] pinctrl: meson: Add driver support for Amlogic A4 SoCs
-To: neil.armstrong@linaro.org
-Cc: Xianwei Zhao <xianwei.zhao@amlogic.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] iio: adc: ad4000: Add support for PulSAR devices
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
+ Michael.Hennerich@analog.com, jic23@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, marcelo.schmitt1@gmail.com
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1731626099.git.marcelo.schmitt@analog.com>
+ <a2a1bb929a83f5906a9c1fd9ba76889a3682cf95.1731626099.git.marcelo.schmitt@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <a2a1bb929a83f5906a9c1fd9ba76889a3682cf95.1731626099.git.marcelo.schmitt@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 14, 2024 at 3:21=E2=80=AFAM Neil Armstrong
-<neil.armstrong@linaro.org> wrote:
->
-> On 13/11/2024 19:04, Rob Herring wrote:
-> > On Wed, Nov 13, 2024 at 03:29:42PM +0800, Xianwei Zhao wrote:
-> >> Add a new pinctrl driver for Amlogic A4 SoCs which share
-> >> the same register layout as the previous Amlogic S4.
-> >>
-> >> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> >> ---
-> >>   drivers/pinctrl/meson/Kconfig              |    6 +
-> >>   drivers/pinctrl/meson/Makefile             |    1 +
-> >>   drivers/pinctrl/meson/pinctrl-amlogic-a4.c | 1324 ++++++++++++++++++=
-++++++++++
-> >>   3 files changed, 1331 insertions(+)
-> >>
-> >> diff --git a/drivers/pinctrl/meson/Kconfig b/drivers/pinctrl/meson/Kco=
-nfig
-> >> index cc397896762c..3e90bb5ec442 100644
-> >> --- a/drivers/pinctrl/meson/Kconfig
-> >> +++ b/drivers/pinctrl/meson/Kconfig
-> >> @@ -67,6 +67,12 @@ config PINCTRL_MESON_S4
-> >>      select PINCTRL_MESON_AXG_PMX
-> >>      default y
-> >>
-> >> +config PINCTRL_AMLOGIC_A4
-> >> +    tristate "Amlogic A4 SoC pinctrl driver"
-> >> +    depends on ARM64
-> >> +    select PINCTRL_MESON_AXG_PMX
-> >> +    default y
-> >> +
-> >>   config PINCTRL_AMLOGIC_C3
-> >>      tristate "Amlogic C3 SoC pinctrl driver"
-> >>      depends on ARM64
-> >> diff --git a/drivers/pinctrl/meson/Makefile b/drivers/pinctrl/meson/Ma=
-kefile
-> >> index 9e538b9ffb9b..c92a65a83344 100644
-> >> --- a/drivers/pinctrl/meson/Makefile
-> >> +++ b/drivers/pinctrl/meson/Makefile
-> >> @@ -10,5 +10,6 @@ obj-$(CONFIG_PINCTRL_MESON_AXG) +=3D pinctrl-meson-a=
-xg.o
-> >>   obj-$(CONFIG_PINCTRL_MESON_G12A) +=3D pinctrl-meson-g12a.o
-> >>   obj-$(CONFIG_PINCTRL_MESON_A1) +=3D pinctrl-meson-a1.o
-> >>   obj-$(CONFIG_PINCTRL_MESON_S4) +=3D pinctrl-meson-s4.o
-> >> +obj-$(CONFIG_PINCTRL_AMLOGIC_A4) +=3D pinctrl-amlogic-a4.o
-> >>   obj-$(CONFIG_PINCTRL_AMLOGIC_C3) +=3D pinctrl-amlogic-c3.o
-> >>   obj-$(CONFIG_PINCTRL_AMLOGIC_T7) +=3D pinctrl-amlogic-t7.o
-> >> diff --git a/drivers/pinctrl/meson/pinctrl-amlogic-a4.c b/drivers/pinc=
-trl/meson/pinctrl-amlogic-a4.c
-> >> new file mode 100644
-> >> index 000000000000..edc5f2ba2c8a
-> >> --- /dev/null
-> >> +++ b/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
-> >> @@ -0,0 +1,1324 @@
-> >> +// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
-> >> +/*
-> >> + * Pin controller and GPIO driver for Amlogic A4 SoC.
-> >> + *
-> >> + * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
-> >> + * Author: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> >> + *         Huqiang Qin <huqiang.qin@amlogic.com>
-> >> + */
-> >> +
-> >> +#include "pinctrl-meson.h"
-> >> +#include "pinctrl-meson-axg-pmx.h"
-> >> +#include <dt-bindings/gpio/amlogic-gpio.h>
-> >> +
-> >> +/* Standard port */
-> >> +
-> >> +#define GPIOE_0                             0
-> >> +#define GPIOE_1                             1
-> >> +
-> >> +#define GPIOD_0                             2
-> >> +#define GPIOD_1                             3
-> >> +#define GPIOD_2                             4
-> >> +#define GPIOD_3                             5
-> >> +#define GPIOD_4                             6
-> >> +#define GPIOD_5                             7
-> >> +#define GPIOD_6                             8
-> >> +#define GPIOD_7                             9
-> >> +#define GPIOD_8                             10
-> >> +#define GPIOD_9                             11
-> >> +#define GPIOD_10                    12
-> >> +#define GPIOD_11                    13
-> >> +#define GPIOD_12                    14
-> >> +#define GPIOD_13                    15
-> >> +#define GPIOD_14                    16
-> >> +#define GPIOD_15                    17
-> >
-> > The conversion from bank+index to a single index space seems less than
-> > ideal, and looks like a work-around to fit into the existing driver fro=
-m
-> > a brief look at it.
->
-> Not really, it simply adds a custom xlate per SoC, nothing particulary ha=
-cky.
->
-> I was relunctant at first, but since Xianwei added the plumbing for a per=
--SoC
-> xlate, then it was easy to add 3-cells support.
->
-> >
-> > If there's not really banks of GPIOs here, then DT shouldn't have them
-> > either. The question is does anything need to know the bank number
-> > and/or index? If it's only for human readability (and matching to
-> > datasheet), then just something like this can be done:
-> >
-> > #define GPIOD(n) (2 + (n))
->
-> There's no linear mapping possible, each set of gpios is grouped into log=
-ical
-> "banks" per group of functions, and this grouping is also in the gpio con=
-troller
-> register space.
+On 11/14/24 5:51 PM, Marcelo Schmitt wrote:
+> The AD4000 series and the single-channel PulSAR series of devices have
+> similar SPI transfer specifications and wiring configurations.
+> Single-channel PulSAR devices are slower than AD4000, and don't have a
+> configuration register. That taken into account, single-channel PulSARs can
+> be supported by the ad4000 driver without any increase in code complexity.
+> 
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> ---
+>  drivers/iio/adc/ad4000.c | 163 +++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 163 insertions(+)
+> 
+> diff --git a/drivers/iio/adc/ad4000.c b/drivers/iio/adc/ad4000.c
+> index 68ac77494263..8e31b42534f5 100644
+> --- a/drivers/iio/adc/ad4000.c
+> +++ b/drivers/iio/adc/ad4000.c
+> @@ -137,6 +137,41 @@ static const struct ad4000_time_spec ad4020_t_spec = {
+>  	.t_quiet2_ns = 60,
+>  };
+>  
+> +/* AD7983, AD7984 */
+> +static const struct ad4000_time_spec ad7983_t_spec = {
+> +	.t_conv_ns = 500,
 
-v1 had just that. So it is possible. No one reviewed the driver then,
-so I don't know if that was less than ideal on the driver side. But it
-looks like that linear map was just moved from DT into the driver. Why
-are there a bunch of defines creating a linear mapping? The xlate()
-function just converts bank+index into a linear number. At some point
-you need arrays of settings I suppose, but why do you need a #define
-for every index? Why not an array per bank? I suppose you could use
-the above define within the driver to at least not have a bunch of
-defines.
+I'm sure there are diffing opinions on this but I would prefer
+an explicit .t_quiet2_ns = 0, so we know that it wasn't omitted
+on accident. Or a group comment to say that these chips don't need
+any quite time.
 
-Rob
+In any case...
+
+Reviewed-by: David Lechner <dlechner@baylibre.com>
+
+
 
