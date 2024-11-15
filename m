@@ -1,137 +1,132 @@
-Return-Path: <linux-kernel+bounces-410688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47EAB9CDFCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:23:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FDFC9CDFC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:23:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B3DB28393D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:23:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD44B1F23A02
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00351C07FC;
-	Fri, 15 Nov 2024 13:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112001BF7FC;
+	Fri, 15 Nov 2024 13:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZRupQ3g6"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="PFvfaJ3x"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DC81BCA0E
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 13:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739EB1B85EC;
+	Fri, 15 Nov 2024 13:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731676995; cv=none; b=FkVkzXRB2GHIpx9rq8H9letE0pGTMKcMmggLsP2SDt0XPneWhf2FLQaLm3n8yxmqSJ/0LWGVjLMdx2YY0waAO2YYgfYDgiiF0t/0CsaOAZyfjDTTq6HY792t5yCac22gYtHGl62m8bT52CF5ZwCgagVK5732wqFyZYDrcRx7DsQ=
+	t=1731676993; cv=none; b=e5Vi0UmvC74Zc8hE1G1FdaDy7piICLpmHSctWgL8O62oXUJPGn61dRjivHiSAzbYJRPFlpaaeS56BOVBkqU/do1PoRtSoCbHQ8IcYbXM87ralK6f6cT2Y9Nu7pT0cm8XQqVnS2/MLfCznJTSnV1r60tKxV7d3fFc3MhEf2hCDLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731676995; c=relaxed/simple;
-	bh=0Q/CxoVEhocZ6ezfGf1u7ZNO4bfBmEBX2SgfqPCZuS0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rFpIBbvW1sEMVC2M38Ny/Wa7dua8nqL9yVVI05Bkg7h9d1bgSYq/MbCUViEI13VgV29XiZWbMC+QN3LmF3NhvsLoVvTW9oJsfA9U8mu2LLAE8l9Ih8oHSNkEdShdDVZMf4yVztwEn/wuRH6bKj9dQc6OqRm1oVKqqlORJx4B9eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZRupQ3g6; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e38193093a7so1437894276.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 05:23:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731676992; x=1732281792; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mFcf9RJcjAVItM51bFy5niFyrBA5g5XDe+IUsN6u8qg=;
-        b=ZRupQ3g6D2eV4OSzfODLyDHMmITCiAymIh00vfDOJC9DjLtpmpCM7B8BrPfYGE+ksj
-         0JS97fajwNmMLgouauNi+ltdAUvzEGXamLATQMm7xy7aEtNawL4rTMkR/1k/cHcKClJ8
-         JsHDIj7DjrXhX+UK6o9+iSsoSYLfeo0hLbwJBxtdLyYeRtYZ+/4nLlB/aAOW6ldr3a/r
-         qC314maFW8wJoCf2jhN+8fOP8FM8Q6lUkqyW1bqeeZxlPn22y921k8Y5h7UhVXxpPGK/
-         hTrlZJJOTSsO2/ucnaZOA/pSNo7ZbrLAsa1RvvtzNoFNjLOXh69VWdNd4l6MgoXAThMd
-         cYfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731676992; x=1732281792;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mFcf9RJcjAVItM51bFy5niFyrBA5g5XDe+IUsN6u8qg=;
-        b=m7qVNkVFibvoix0i03aa8t/Wv941p463IBPrZjhODQgfxtR0kgtSkjw1t+hCZXXqPS
-         +B3BXMHEP/mF8JFAG2HavAdPRCQHT0HvE5OF7FjHjX/pos8vO41Icn+2aC8uyB9tCgGB
-         xSD4+qPB8rXIjjbpFE9vQ6FvYkPQSWvl0MA7AdvDkPAp9nz6gZfnhHrAG/ZVyp4bV/L2
-         UBlcPHvJApZ8/U1hWoXDxuncquE2hK/HZesRPrWaP9LGjPLfD1NNYslWpDNEwAqzC28E
-         ETCf42JY36DR/gRI6vaicl4Ke59EXBufZgtlL/MBqo8vpJPPAuRvpbnU1ctMIUcG53K1
-         QkLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDcwAU3MFyqhGTZKjEKCH1Ia7jS8POi92N2k90GQHL7E21y+QuQ/r8By/m8sbtpDaAmoy6/QHT34maU7E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoeLV8pFzia5y42n/m9WqJ0j1O/DMI2IsXTZpCFB5gmdTcV3b6
-	HP3ugSuzCD6i9DseD6XiXTX9PKo6xpQC1jP2mup9AJ5VB8ASuljXkwCpirIHlXMndHA2WNYjZqW
-	8/m1WuNQpMOsF/5rsibjvFu7E8yQ1j1qpANrbkA==
-X-Google-Smtp-Source: AGHT+IHCgG2uruTWqMGPEa/kjxndenrmy3iqrUer02q4NYfZY7sfxcicR/uF3A5MhOvjIYFRPv2PSm5gVYMIbtpw4V8=
-X-Received: by 2002:a05:6902:e06:b0:e2e:49f0:fc26 with SMTP id
- 3f1490d57ef6-e38263e1858mr2271366276.49.1731676991883; Fri, 15 Nov 2024
- 05:23:11 -0800 (PST)
+	s=arc-20240116; t=1731676993; c=relaxed/simple;
+	bh=aXmW/SlFuMTBx0uvUSkbp6nYdFZtT3GvPmQoFTxirQg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=to8O+AatVIu4rKtTbdX+McyCjGNcCcF+llWx9JPZqlW2fuQet0A2ITAytDWTquUW58gGueXgJzUbPQnI0KD37X7mKpvQ5UBrqS+xHo7qgJ0ebgG3GFGKym19rH+VVhiE2SHyfE91qlghQYXWjUyvUcC90I6Sg9ZMK1FDX2jCfEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=PFvfaJ3x; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id A63A9A03F3;
+	Fri, 15 Nov 2024 14:23:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:content-transfer-encoding:content-type:content-type:date:from
+	:from:in-reply-to:message-id:mime-version:references:reply-to
+	:subject:subject:to:to; s=mail; bh=t7g3cSkvm0PW3SmedMT5JjoODC5Qn
+	0jSLN8FBVFZMrc=; b=PFvfaJ3xeTl6gtIjREgawA/1osfrZCQzzu6svm3jRurrp
+	fwjOC+fWaTEmfeTKdVclPoqCPVufqzunplLFZ4QiOx8IcgMHpY0IBVnGkWHs1IcP
+	yWoQlZOno4gyYnQDE8epR1eLCjd7bk2DTu1QT4pYk0IqFBuWua5kxgyU+UpaHQq3
+	XdspBRA9GWnACidej7QHU6DaMLDWLsmi9CMPN4AX3EPNY4dnnLdmgxcNrMnlcBSZ
+	767l3vjFFtU2rkkM1ts7d7vJxzzPeCfPmObI7Z3kwfjgta/rMI/TxK77G2HBHEGJ
+	06tzFbkF9Z342iSRqe5RsSoZkdeuzOQIw+Shtf2uGIkaRybarLertzJncph+Tisb
+	lGvV1ZcL+cAo52Pj32xePQR1tkaSQZtPPYIMJMzj71De/LYh6TVveEikCy+rNsJj
+	sn/1kM7YfmK4r1YMXMCyXiDz+s7lUSMy11Gq05o8A1lnxKqqH9izS5PtSf+EzXvl
+	Ms6+FaVz+yiZA5qAnFZxytF82ozZNXc9Xvh0WXImhlW/84ClrkGfofOnDm/IpAls
+	xk4idtz+FFTchHwTCibhcYyW29glXBWh2t7+PvD/2e3XiUwwmTPRsNXYl9paXpkb
+	vkd+EDgBdtHVnSUtWkTy9FFQCTGgia1xnZ49jtIamnd6VtD6RUSB21LGisa4XY=
+Message-ID: <32a5c58c-f318-4c02-ae76-421b9cca0875@prolan.hu>
+Date: Fri, 15 Nov 2024 14:23:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104060722.10642-1-quic_sartgarg@quicinc.com>
- <konkbi4hvd7qc4rhokwrymzqntroy7gijk3ndwv5rluswdrykp@xsafrtrjzmuq> <10c90fee-ce7f-4034-9028-4252f19cb67f@quicinc.com>
-In-Reply-To: <10c90fee-ce7f-4034-9028-4252f19cb67f@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 15 Nov 2024 15:23:02 +0200
-Message-ID: <CAA8EJpoLLDXFQk-ViuaioKrECzMV0aUrcOj4v+Ufs4oHY53mrw@mail.gmail.com>
-Subject: Re: [PATCH V1] mmc: sdhci-msm: Enable MMC_CAP_AGGRESSIVE_PM for
- qualcomm controllers
-To: Sarthak Garg <quic_sartgarg@quicinc.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_cang@quicinc.com, quic_nguyenb@quicinc.com, 
-	quic_rampraka@quicinc.com, quic_pragalla@quicinc.com, 
-	quic_sayalil@quicinc.com, quic_nitirawa@quicinc.com, 
-	quic_sachgupt@quicinc.com, quic_bhaskarv@quicinc.com, 
-	quic_narepall@quicinc.com, kernel@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] spi: atmel-quadspi: Create `atmel_qspi_ops` to support
+ newer SoC families
+To: <Hari.PrasathGE@microchip.com>, <tudor.ambarus@linaro.org>,
+	<linux-spi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <Varshini.Rajendran@microchip.com>,
+	<alexandre.belloni@bootlin.com>, <broonie@kernel.org>,
+	<claudiu.beznea@tuxon.dev>, <Nicolas.Ferre@microchip.com>,
+	<Patrice.Vilchez@microchip.com>, <Cristian.Birsan@microchip.com>
+References: <20241030084445.2438750-1-csokas.bence@prolan.hu>
+ <7cc95e52-7509-44eb-8e30-d518283e7d87@linaro.org>
+ <2b310b54-c215-40fa-b6d4-81faf75a8c9e@prolan.hu>
+ <20241104-vanilla-operating-de19b033f0a8@thorsis.com>
+ <ad585127-9e3c-414a-84c2-c4ea3e6d3c7d@prolan.hu>
+ <78f38031-1723-4474-9bea-1c23918a75f6@microchip.com>
+Content-Language: en-US
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <78f38031-1723-4474-9bea-1c23918a75f6@microchip.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94855617C6B
 
-On Fri, 15 Nov 2024 at 12:23, Sarthak Garg <quic_sartgarg@quicinc.com> wrote:
->
->
->
-> On 11/4/2024 4:19 PM, Dmitry Baryshkov wrote:
-> > On Mon, Nov 04, 2024 at 11:37:22AM +0530, Sarthak Garg wrote:
-> >> Enable MMC_CAP_AGGRESSIVE_PM for qualcomm controllers.
-> >> This enables runtime PM for eMMC/SD card.
-> >
-> > Could you please mention, which platforms were tested with this patch?
-> > Note, upstream kernel supports a lot of platforms, including MSM8974, I
-> > think the oldest one, which uses SDHCI.
-> >
->
-> This was tested with qdu1000 platform.
+Hi,
 
-Are you sure that it won't break other platforms?
+On 2024. 11. 05. 8:47, Hari.PrasathGE@microchip.com wrote:
+> Hello Bence,
+> 
+> On 11/4/24 6:26 PM, Csókás Bence wrote:
+>> EXTERNAL EMAIL: Do not click links or open attachments unless you know
+>> the content is safe
+>>
+>> Hi!
+>>
+>> On 2024. 11. 04. 13:48, Alexander Dahl wrote:
+>>> It would actually be better if vendor would bring their stuff
+>>> upstream, so there's no need for a vendor kernel.  Did you talk to
+>>> Microchip about their upstreaming efforts?  What was the answer?
+>>>
+>>> Greets
+>>> Alex
+>>
+>> Agreed. Though in this case, the original patch *was* submitted by
+>> Microchip (by Tudor, originally) for upstream inclusion, but it was not
+>> merged. Hence this forward-port.
+>> Link:
+>> https://lore.kernel.org/linux-spi/20211214133404.121739-1-tudor.ambarus@microchip.com/
+> 
+> 
+> Thanks for your patch. We are planning to revive this work at the
+> earliest. While I don't have specific timeline for this, we at Microchip
+> are fully aware of this gap and doing everything we could to keep the
+> delta between the upstream kernel and vendor kernel as minimal as possible.
+> 
+> We will discuss internally and provide you the feedback. Thanks again
+> for your efforts.
+> 
+> Regards,
+> Hari
 
->
-> >>
-> >> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
-> >> ---
-> >>   drivers/mmc/host/sdhci-msm.c | 1 +
-> >>   1 file changed, 1 insertion(+)
-> >>
-> >> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> >> index e00208535bd1..6657f7db1b8e 100644
-> >> --- a/drivers/mmc/host/sdhci-msm.c
-> >> +++ b/drivers/mmc/host/sdhci-msm.c
-> >> @@ -2626,6 +2626,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
-> >>              goto clk_disable;
-> >>      }
-> >>
-> >> +    msm_host->mmc->caps |= MMC_CAP_AGGRESSIVE_PM;
-> >>      msm_host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY | MMC_CAP_NEED_RSP_BUSY;
-> >>
-> >>      /* Set the timeout value to max possible */
-> >> --
-> >> 2.17.1
-> >>
-> >
+Did you reach a conclusion internally regarding whether to support this 
+patch? Since then, I opened a ticket with Microchip, but haven't got a 
+response yet. I have also been in face-to-face contact with some of the 
+engineers from the Rousset office, and they have expressed their 
+support, and even the possibility of lending us a SAMA7G5 to test with. 
+So really, all I'm waiting for is this patch to be merged, and then I 
+can submit the SAMA7G5 parts, at worst as an RFC, if we don't get the 
+real hardware in time.
 
+Bence
 
-
--- 
-With best wishes
-Dmitry
 
