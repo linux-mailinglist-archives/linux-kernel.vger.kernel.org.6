@@ -1,121 +1,178 @@
-Return-Path: <linux-kernel+bounces-410997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF8D9CF16B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:23:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9F749CF16F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:23:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6274D29551E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:23:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A04BB2958AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8551CEAD6;
-	Fri, 15 Nov 2024 16:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQUYRmpn"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1EA1D516D;
+	Fri, 15 Nov 2024 16:23:35 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39EF01E4A6
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 16:23:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DA5126C10;
+	Fri, 15 Nov 2024 16:23:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731687809; cv=none; b=l6rdk2VRmL1F9aMpi6QDKiOBadTMnZO2HlK2c6UWpsgCk++VDfmSO/KniKxWiUnQ/S7+rfpq3YuZKn2ktbLoS3F3+Tpl8+C/lAe71dpiNIHJKEaLqIKeRqLgoXA1eAkCndW/PtXw+ZxYEY1R8EDYf98cYGbPr1YRXxYfTKdsKdA=
+	t=1731687815; cv=none; b=tkQ93B8qppqR5sKsUMxTh5ApJNZxCJaC24WErY5yWUmK/8/az73oUwSov1E4RXDpqygXyrHXmlFUvpb2+rr40Z4ZuJXZiZZHXxKP2Rf71CXl9G58YKeWhzEmHHl7HHwVN6p0yBjDZEgdwbvdX2MepLnVJkszMzBlfT50QdWWRn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731687809; c=relaxed/simple;
-	bh=17c2BctoatZCGP+sdz3tAGm/ndqqwG8Ri12IIiba7I0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BlLhZ8E1phiCNwQN9zQpjtI1iT6laLNF+rrelrmEu2eGYpSzMGEmGpZcO/rsHphw2ks3N5hbaFzkYWFFQmAGYRnYljpBpBID0Iay0F/H3DXdTxXG3BgjMAGXAwLG6CuY2f9kzcNN/mBfuIUh6/zLtMPJCNqcS+4So2R14x+xbFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cQUYRmpn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8F10C4CECF;
-	Fri, 15 Nov 2024 16:23:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731687808;
-	bh=17c2BctoatZCGP+sdz3tAGm/ndqqwG8Ri12IIiba7I0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=cQUYRmpnxftDsI7zRrVikCiERAoyp0k7BNogOtUbU37ZJX/C7M2+lkVArUzi/A6xx
-	 MGrGhHkv2+dlRBl7Jha6+VUsZaQMa17fz34YKTY4VNPLKIzzC1w75ItHJt5crbvqHn
-	 Fi97xBOw93OzGcR4bkwW/FoQrxMkpIpehXx9jc9u/bX7XGWPbqfNq2FkWOFXg4Be3F
-	 eFjy2BogsyiBuzudTb6fKRtlL9RPJHREOvQIbBXqtcz9jYj5G33D9TJ1o+ODvHy8bz
-	 zp5qeJhssACEdKh++VBgVNaWez+8VFXRHYO2JOMlHaiHqyaH2OKBMJlI1tLDOibjz/
-	 MItBoNmEt7TNw==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jocelyn Falempe <jfalempe@redhat.com>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Harry Wentland <harry.wentland@amd.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Jonathan Cavitt <jonathan.cavitt@intel.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] [v2] drm: rework FB_CORE dependency
-Date: Fri, 15 Nov 2024 17:23:10 +0100
-Message-Id: <20241115162323.3555229-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1731687815; c=relaxed/simple;
+	bh=DM27c+y+WOBeLHMhqrwMS7rn3rHMwv1YhipdWe80R8Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KH5Ldu5lfT8eaxJOXguv+w/cqTJPtI2BvPlwaPY3nhl8om9A81A5UIYdRb4CDDj4/kXs+qoIXWwVZHwXSw46AcR6hBTAvYzUmW8W0xeGETULayuzuqKo5UOFoAg/jHPFDUwxu1NPuwbEtDZVWkOfs7H6Q/uECK3iD9Uc9UQbYhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 745ABC4CED5;
+	Fri, 15 Nov 2024 16:23:32 +0000 (UTC)
+Date: Fri, 15 Nov 2024 16:23:30 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>, Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>, Zenghui Yu <yuzenghui@huawei.com>
+Subject: Re: [PATCH 4/4] arm64: mte: Use stage-2 NoTagAccess memory attribute
+ if supported
+Message-ID: <Zzd1giMm-bzUiZgA@arm.com>
+References: <20241028094014.2596619-1-aneesh.kumar@kernel.org>
+ <20241028094014.2596619-5-aneesh.kumar@kernel.org>
+ <87o734ts4m.wl-maz@kernel.org>
+ <yq5ar080cq5x.fsf@kernel.org>
+ <87jzdst6os.wl-maz@kernel.org>
+ <yq5a34k2rw9o.fsf@kernel.org>
+ <86ldxozn3i.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86ldxozn3i.wl-maz@kernel.org>
 
-From: Arnd Bergmann <arnd@arndb.de>
+(joining the thread as well, though not sure I'm bringing anything new)
 
-The 'select FB_CORE' statement moved from CONFIG_DRM to DRM_CLIENT_LIB,
-but there are now configurations that have code calling into fb_core
-as built-in even though the client_lib itself is a loadable module:
+On Tue, Nov 12, 2024 at 11:51:45AM +0000, Marc Zyngier wrote:
+> On Fri, 08 Nov 2024 07:59:31 +0000, Aneesh Kumar K.V <aneesh.kumar@kernel.org> wrote:
+> > Marc Zyngier <maz@kernel.org> writes:
+> > > On Mon, 28 Oct 2024 13:28:42 +0000, Aneesh Kumar K.V <aneesh.kumar@kernel.org> wrote:
+> > >> Marc Zyngier <maz@kernel.org> writes:
+> > >> > On Mon, 28 Oct 2024 09:40:14 +0000, "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
+> > >> >> Currently, the kernel won't start a guest if the MTE feature is enabled
+> > >> >> and the guest RAM is backed by memory which doesn't support access tags.
+> > >> >> Update this such that the kernel uses the NoTagAccess memory attribute
+> > >> >> while mapping pages from VMAs for which MTE is not allowed. The fault
+> > >> >> from accessing the access tags with such pages is forwarded to VMM so
+> > >> >> that VMM can decide to kill the guest or remap the pages so that
+> > >> >> access tag storage is allowed.
+> > >> >
+> > >> > I only have questions here:
+> > >> >
+> > >> > - what is the benefit of such approach? why shouldn't that be the
+> > >> >   kernel's job to fix it?
+> > >>
+> > >> IMHO leaving that policy decision to VMM makes the kernel changes
+> > >> simpler. In most cases, VMM will kill the guest, because these
+> > >> restrictions of MTE_ALLOWED are applied at the memslot/vma.
+> > >
+> > > Where is that captured? The whole idea behind FEAT_MTE_PERM was that
+> > > it would be the hypervisor's task to lazily allocate MTE-capable
+> > > memory as tagged-access would occur.
+> > 
+> > Lazily allocating MTE-capable memory requires changes to different
+> > kernel subsystems and previous attempts got dropped [1] because it
+> > was not clear whether the benefit of saving 3% memory overhead was worth
+> > the complexity we add to the kernel.
 
-x86_64-linux-ld: drivers/gpu/drm/drm_fbdev_shmem.o: in function `drm_fbdev_shmem_driver_fbdev_probe':
-drm_fbdev_shmem.c:(.text+0x1fc): undefined reference to `fb_deferred_io_init'
-x86_64-linux-ld: drivers/gpu/drm/drm_fbdev_shmem.o: in function `drm_fbdev_shmem_fb_destroy':
-drm_fbdev_shmem.c:(.text+0x2e1): undefined reference to `fb_deferred_io_cleanup'
-...
-x86_64-linux-ld: drivers/gpu/drm/drm_fb_helper.o: in function `drm_fb_helper_set_suspend':
-drm_fb_helper.c:(.text+0x2c6): undefined reference to `fb_set_suspend'
-x86_64-linux-ld: drivers/gpu/drm/drm_fb_helper.o: in function `drm_fb_helper_resume_worker':
-drm_fb_helper.c:(.text+0x2e1): undefined reference to `fb_set_suspend'
+I'd say the most complex part in Alex's approach was the need to reuse
+the tag storage for classic data and kick the pages around when some
+other page needs to store tags in there. That approach is pretty much
+dead.
 
-In addition to DRM_CLIENT_LIB, the 'select' needs to be at least in
-two more parts, DRM_KMS_HELPER and DRM_GEM_SHMEM_HELPER, so add those
-here.
+In theory, having MTE and non-MTE memory (heterogeneous) without a
+carveout reuse would be a bit more manageable - not that far from the
+NUMA migration and at least you only migrate the page being accessed
+rather than unrelated ones where the tags need to go. But this was not
+Alex's goal for Android since people were asking for the reuse of the 3%
+carveout rather than a smaller carveout.
 
-Fixes: dadd28d4142f ("drm/client: Add client-lib module")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v2: keep the select in DRM_CLIENT_LIB, keep alphabetic sorting
----
- drivers/gpu/drm/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Other future deployments, CXL-attached memory etc. may benefit from a
+new scheme but I wouldn't rush in implementing anything in the kernel
+for now.
 
-diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-index a4a092ee70d9..410bd6d78408 100644
---- a/drivers/gpu/drm/Kconfig
-+++ b/drivers/gpu/drm/Kconfig
-@@ -98,6 +98,7 @@ config DRM_KUNIT_TEST
- config DRM_KMS_HELPER
- 	tristate
- 	depends on DRM
-+	select FB_CORE if DRM_FBDEV_EMULATION
- 	help
- 	  CRTC helpers for KMS drivers.
- 
-@@ -371,6 +372,7 @@ config DRM_GEM_DMA_HELPER
- config DRM_GEM_SHMEM_HELPER
- 	tristate
- 	depends on DRM && MMU
-+	select FB_CORE if DRM_FBDEV_EMULATION
- 	select FB_SYSMEM_HELPERS_DEFERRED if DRM_FBDEV_EMULATION
- 	help
- 	  Choose this if you need the GEM shmem helper functions
+The VMM may be in a better position to manage such heterogeneous memory
+for the guest if it knows the capabilities of the slots (e.g. some DAX
+mmap() vs anonymous mmap()). This would require the VMM replacing a page
+within a slot from one memory type to another (while preserving the
+data). I don't think we have a concrete use-case yet to be worth the
+hassle.
+
+> That's not the point. Tagged memory doesn't have to cover the whole of
+> physical memory, and it can be statically allocated. The architecture
+> doesn't mandate that all of the memory is MTE-capable.
+
+There's some vague wording that general purpose memory should be MTE
+capable if FEAT_MTE2 or later is advertised. But that's not well defined
+and one can have other types of memory in the physical space (e.g. CXL)
+that don't support tags. Last time I looked we still haven't got a way
+to describe memory capabilities in firmware.
+
+For the time being, I think a real use-case for FEAT_MTE_PERM is in the
+context of cacheable MMIO (there are some patches around from Nvidia to
+do this with VFIO). That memory, if exposed to guest as WB and the guest
+enables MTE, may trigger some SErrors. With FEAT_MTE_PERM KVM could trap
+and inject a fault back into the guest - maybe SEA. Is it easier to do
+this from KVM itself or we would rather exit to the VMM and let it
+handle? The latter allows room for other fancier things in the future
+but the former may be quicker, in the absence of other strong use-cases.
+
+> > This patchset is not looking at that feature. Instead, it can be used to
+> > enable MTE in configurations that currently won't allow MTE. One such
+> > example is libkrun which includes linux kernel as firmware in a
+> > dynamically linked library (libkrunfw). libkrun can insert the kernel
+> > region which got mmaped as part of the library load, directly into the
+> > guest memory map instead of copying the kernel. Such a guest config
+> > can't enable MTE currently even though we will never use the newly
+> > inserted memory regions as tag access memory.
+
+I've never played with libkrunfw. Does it handle inserting a Linux
+kernel? Such approach may not work well with MTE. The kernel frees the
+init text/data sections back into the page allocator. With MTE
+advertised as present, the guest will try to reuse that memory,
+potentially as tagged. However, since the VMM mmap'ed the guest kernel
+from a file, VM_MTE is not supported in the VMM address space. Even if
+the mapping is MAP_PRIVATE and the page copied on write, the vma remains
+the original one associated with the file, so VM_MTE_ALLOWED not set.
+
+We could revisit this and allow mprotect(PROT_MTE) to force the CoW on
+private file mappings but we'd need some strong requirement for this
+(MTE+libkrunfw could be such thing if people need this combination).
+
+> > Similarly, virtiofs dax support can use a page cache region as
+> > virtio-shm region. We can use MTE_PERM to enable MTE in this config.
+> 
+> And this use case doesn't contradict what I am stating above. But it
+> definitely contradicts what you wrote: "In most cases, VMM will kill
+> the guest".
+
+To simplify things, I think whatever is presented to the VM as standard
+RAM (typically present at the VM boot) should either support MTE or MTE
+will be disabled for the guest. For other types of memory, whether WB
+MMIO or RAM presented as virtio-(pmem, shm etc.) backed by files in the
+VMM, the VM should be aware it is not standard RAM and should not
+attempt to enable MTE on it. If it does (either by mistake or malice),
+FEAT_MTE_PERM should trap and inject a fault back into the guest (or
+kill it altogether but for debugging, I'd rather inject a fault if
+possible).
+
 -- 
-2.39.5
-
+Catalin
 
