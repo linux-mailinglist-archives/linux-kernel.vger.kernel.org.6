@@ -1,64 +1,78 @@
-Return-Path: <linux-kernel+bounces-410149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CA019CD523
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 02:46:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 686229CD526
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 02:47:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83471283F18
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 01:46:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31192284695
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 01:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B4B13C918;
-	Fri, 15 Nov 2024 01:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517A342A82;
+	Fri, 15 Nov 2024 01:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U1HXVmgW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ynZoiBwW"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414A33211;
-	Fri, 15 Nov 2024 01:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC95C43156
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 01:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731635176; cv=none; b=WxBzT2z82P2aMlY0Q0Rm7/dNBp9spzknLZFAL4D8hNTL5cQ7C330qahOSTE1sc4C5UzJ59/ZnyJ7SHAs9F3dOyvl5lGlEOCaCD0kQzB5oZVJAzuQ6JBzIJ5eQ+dd5pyki+fwUKJf1nxvPmrlFOC0Jk1dUBcqhe/P9+1A/f/UE5Q=
+	t=1731635234; cv=none; b=hOQTOukzuzjzIaOYyeFvWhPFP6tQ/ru+NyHUELAFuxB3a4g1LjvP6VI0rA1OmB9hcYL3gDmQuTcEONQNuTBRveUyy9WlnDXLLexhRJNtUGngD+sIJmWZu5iALJ4qHHLnE9l4VVfWHmW/HK8oAJkbgaLWTQaIc+3ZWC6Vwkh+zXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731635176; c=relaxed/simple;
-	bh=m5vc2Wizx2rJbKoJg3DIZCEwDfTT1ErdANobu7oKqtg=;
+	s=arc-20240116; t=1731635234; c=relaxed/simple;
+	bh=Vt5BKSGnVSO1wERPKQPDulTkD92E+F5ePSF0pjjU0rQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rZiCsE4wGVtlDXnie2Zoo1a6JTKA8r46kHH0bexOt0h7ReP6aQa/Chx0WXRqJWJA6VDHtoeOvzWlG+e1CNurcL+P+9vOx/ZtUUvO3PXZISQKHo28Dc5uAS+KA+TuvxXdxIuKGct3QOplC4odNrltCEZB2PQYJGnLcAUvEgRj/Ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U1HXVmgW; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731635175; x=1763171175;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=m5vc2Wizx2rJbKoJg3DIZCEwDfTT1ErdANobu7oKqtg=;
-  b=U1HXVmgWvkxkK2UNWVgFDd1wQfG8Imsl1E/dML+bE3G0hOPOWLz0Za9J
-   CTrLDj4mgf72ijAx/cSjTkr/McmkmQuyFgb7FbbnSfYxj2kwAZ+tShItz
-   CxllunPogJLyZoxlV5ozkV3qeeo63z7Cuv16W/6wHGQS3SLxQmOgwFMew
-   Gny4YDKmKjisj84VBdQeWm7nRONv9GP8QuileNCQSGXtIWIdS7a/ninPj
-   CCy5pnnBAEq0bI6yW2GtrAk3W9YNPfUSMocBLMlYcAE3eSzel/EchbeD4
-   ORtHjEbZjuuNWTdAImgrPmDSMc06jK7U4Dq9Nlks8x7X6CQZXw6AxSvsT
-   Q==;
-X-CSE-ConnectionGUID: kApCyZCkT5+0zs+74UEDLw==
-X-CSE-MsgGUID: ovvIFsGuSZOXMZ/3BJQAnA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11256"; a="31028346"
-X-IronPort-AV: E=Sophos;i="6.12,155,1728975600"; 
-   d="scan'208";a="31028346"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 17:46:13 -0800
-X-CSE-ConnectionGUID: 5je70P8PRcmZc2W8TeLARg==
-X-CSE-MsgGUID: RJOEMptXRAm1HGWlvPOq5Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,155,1728975600"; 
-   d="scan'208";a="89153309"
-Received: from choongyo-mobl.gar.corp.intel.com (HELO [10.247.75.68]) ([10.247.75.68])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 17:46:09 -0800
-Message-ID: <6c023200-5e81-432c-b21d-d7a9cf1bfc92@linux.intel.com>
-Date: Fri, 15 Nov 2024 09:46:07 +0800
+	 In-Reply-To:Content-Type; b=COaSsNLxFbaNdwPuAPC+Gd9J1QWYk1TqbSEJRwZtPog4QYjraFF+p4qyNBeGY3rNZuTs6IyraIFR4zpnJyu929WSbH6SG7zMT6f3Cqra/ynQRbJHqO0nSkUvTRLYDYmOOJHxbFZuU+yarpqC0677XI31TNe8drT0x2QQ4iTuWA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ynZoiBwW; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539e4824917so108456e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 17:47:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731635231; x=1732240031; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WlZtJEFuE3UKpvbYIEqSVLfZBwjcDIGJk/mPflIrqmI=;
+        b=ynZoiBwWQgRaGjpRMP2rwT4iu9RuPw2jNDFkDUPTXMXv15PNhvy6RfjcOVhdTHvW6G
+         4+CKwo8Pf/uTqJ4h8HT37DC0FuHFZl4lcgKPApBgbWvE+QZ3LxXHbrbYTjgoJG1cVKGV
+         NcG1WgY8S4+Gqx1QRFIgbYhCSbOFBhiNG837RLbUr9OEAjxavXo+NGPbK948/Qbcf52h
+         Ry/QSHO1TfjhUeEqhlWb3Yv90qufORUHTY2YWE1S1Y12L+7JaZcOb6XxSURh+VbP2MAn
+         Ph8Sk5Nu8cHzBjzV6B8I0jXitQ4ii+1/G4+O9V7vewm+tHN5SxhuiDwsjjGD4/qsx+3N
+         5lSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731635231; x=1732240031;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WlZtJEFuE3UKpvbYIEqSVLfZBwjcDIGJk/mPflIrqmI=;
+        b=MVEWxA5vKpUe5JhEyf8W0eOOfy/aygM5Cb51lJvsyaJKEPnZDB4f4wXnUrE19tqII0
+         pkrgBVU9k6CUSjmAHBhrFY+ToUCZiAyMMrZRN7cvimtDNLVaoR4O+1z1+W71KYlPxbrr
+         6KHO0Z0udUvlP4zVll3WXxxf16yOMlvvn4vRk0XPLSJDZe8h2QtFuBDd7AwWYw4RaL3P
+         ooi0Qt8fB+QvRDuRNzDftP5UxBVIM9AdHDpUz6H5w8qlOLOXW6khc+nGT1LAFJ9QaMHi
+         6/y89VlqMjVMm1y+lS8lJF4i8PI1QdDg6zpD8dqAjbV9DK/Xo0O/mHMBM/IATH1sx3n+
+         a9zA==
+X-Forwarded-Encrypted: i=1; AJvYcCVql97zEgKS0oxzmtVvDn9TJeUTBtlaeWHcZuHEI96I+9fyqK5KyTnkkKvy4R4c3vKsDokW603GovXeucs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywu8TGG8FQBtw8vrZg4fC6h0t4qs6hB5W3HGDkiQJOmVf6muuYc
+	lLXbUudpee5v5gi+v5VEDSlH9yIoXO7QSW+Vwx8YSle4AfHXhkEQ0rb3U94x3go=
+X-Gm-Gg: ASbGncs3YSZ6OIO2pTwCh4S2Jv3ypPVpltXSHSXsEkbrFvy828A1bShrSaSGyxX3c8U
+	IYzxggBh2+St4F8aJOTVlJFOVmT2kcYyLUsMICDlKRvRfM9qggzgAE6NaWO2sx2XJMptJRaRKBv
+	GVuQloDuUvXezDF3Qt1Rb4o5juOi0R/t1bxyR84khu+DXoEoGo25zE5vjE2Hr5dcZ4mkT2vN8va
+	7J/WW+gxKP4QclM+3V0O6iM+PYxooPVm0IVEmoQpmOlqkIFA8puOVHBrhzhTX7gnBiF92jhljB1
+	WnRaWkvlHW3IlkGMIYR2X97J8VLv
+X-Google-Smtp-Source: AGHT+IEQjqO83cHFzO/xhdQPIAupPGyCJ6+MgojLBINDYK0Ken0N/7ofXhoTPAECXylvuwdADYNyGg==
+X-Received: by 2002:a05:6512:3c87:b0:53d:a5f3:a561 with SMTP id 2adb3069b0e04-53dab25bbc3mr106471e87.0.1731635230804;
+        Thu, 14 Nov 2024 17:47:10 -0800 (PST)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da6530b41sm376971e87.136.2024.11.14.17.47.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Nov 2024 17:47:10 -0800 (PST)
+Message-ID: <b3e38b04-0ca9-4022-af73-9feab6f151f1@linaro.org>
+Date: Fri, 15 Nov 2024 03:47:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,116 +80,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v1 1/2] net: phy: set eee_cfg based on PHY
- configuration
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org
-References: <20241114081653.3939346-1-yong.liang.choong@linux.intel.com>
- <20241114081653.3939346-2-yong.liang.choong@linux.intel.com>
- <ZzXBpEHs0y2_elqK@shell.armlinux.org.uk>
- <ZzXLgEjElnJD1445@shell.armlinux.org.uk>
- <ZzXOAvc__iQscSb4@shell.armlinux.org.uk>
+Subject: Re: [PATCH] clk: qcom: camcc-x1e80100: Set titan_top_gdsc as the
+ parent GDSC of subordinate GDSCs
 Content-Language: en-US
-From: Choong Yong Liang <yong.liang.choong@linux.intel.com>
-In-Reply-To: <ZzXOAvc__iQscSb4@shell.armlinux.org.uk>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Abel Vesa <abel.vesa@linaro.org>,
+ Rajendra Nayak <quic_rjendra@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20241114-b4-linux-next-master-24-11-14-titan-gdsc-v1-1-ef2533d487dc@linaro.org>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20241114-b4-linux-next-master-24-11-14-titan-gdsc-v1-1-ef2533d487dc@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 14/11/2024 6:16 pm, Russell King (Oracle) wrote:
-> On Thu, Nov 14, 2024 at 10:05:52AM +0000, Russell King (Oracle) wrote:
->> On Thu, Nov 14, 2024 at 09:23:48AM +0000, Russell King (Oracle) wrote:
->>> On Thu, Nov 14, 2024 at 04:16:52PM +0800, Choong Yong Liang wrote:
->>>> Not all PHYs have EEE enabled by default. For example, Marvell PHYs are
->>>> designed to have EEE hardware disabled during the initial state, and it
->>>> needs to be configured to turn it on again.
->>>>
->>>> This patch reads the PHY configuration and sets it as the initial value for
->>>> eee_cfg.tx_lpi_enabled and eee_cfg.eee_enabled instead of having them set to
->>>> true by default.
->>>
->>> eee_cfg.tx_lpi_enabled is something phylib tracks, and it merely means
->>> that LPI needs to be enabled at the MAC if EEE was negotiated:
->>>
->>>   * @tx_lpi_enabled: Whether the interface should assert its tx lpi, given
->>>   *      that eee was negotiated.
->>>
->>> eee_cfg.eee_enabled means that EEE mode was enabled - which is user
->>> configuration:
->>>
->>>   * @eee_enabled: EEE configured mode (enabled/disabled).
->>>
->>> phy_probe() reads the initial PHY state and sets things up
->>> appropriately.
->>>
->>> However, there is a point where the EEE configuration (advertisement,
->>> and therefore eee_enabled state) is written to the PHY, and that should
->>> be config_aneg(). Looking at the Marvell driver, it's calling
->>> genphy_config_aneg() which eventually calls
->>> genphy_c45_an_config_eee_aneg() which does this (via
->>> __genphy_config_aneg()).
->>>
->>> Please investigate why the hardware state is going out of sync with the
->>> software state.
->>
->> I think I've found the issue.
->>
->> We have phydev->eee_enabled and phydev->eee_cfg.eee_enabled, which looks
->> like a bug to me. We write to phydev->eee_cfg.eee_enabled in
->> phy_support_eee(), leaving phydev->eee_enabled untouched.
->>
->> However, most other places are using phydev->eee_enabled.
->>
->> This is (a) confusing and (b) wrong, and having the two members leads
->> to this confusion, and makes the code more difficult to follow (unless
->> one has already clocked that there are these two different things both
->> called eee_enabled).
->>
->> This is my untested prototype patch to fix this - it may cause breakage
->> elsewhere:
+On 11/15/24 01:32, Bryan O'Donoghue wrote:
+> The Titan TOP GDSC is the parent GDSC for all other GDSCs in the CAMCC
+> block. None of the subordinate blocks will switch on without the parent
+> GDSC switched on.
 > 
-> As mentioned in the other thread:
+> Fixes: 76126a5129b5 ("clk: qcom: Add camcc clock driver for x1e80100")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+>   drivers/clk/qcom/camcc-x1e80100.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
 > 
-> Without a call to phy_support_eee():
-> 
-> EEE settings for eth2:
->          EEE status: disabled
->          Tx LPI: disabled
->          Supported EEE link modes:  100baseT/Full
->                                     1000baseT/Full
->          Advertised EEE link modes:  Not reported
->          Link partner advertised EEE link modes:  100baseT/Full
->                                                   1000baseT/Full
-> 
-> With a call to phy_support_eee():
-> 
-> EEE settings for eth2:
->          EEE status: enabled - active
->          Tx LPI: 0 (us)
->          Supported EEE link modes:  100baseT/Full
->                                     1000baseT/Full
->          Advertised EEE link modes:  100baseT/Full
->                                      1000baseT/Full
->          Link partner advertised EEE link modes:  100baseT/Full
->                                                   1000baseT/Full
-> 
-> So the EEE status is now behaving correctly, and the Marvell PHY is
-> being programmed with the advertisement correctly.
+> diff --git a/drivers/clk/qcom/camcc-x1e80100.c b/drivers/clk/qcom/camcc-x1e80100.c
+> index 85e76c7712ad84c88decb62ccaed68533d8848de..b73524ae64b1b2b1ee94ceca88b5f3b46143f20b 100644
+> --- a/drivers/clk/qcom/camcc-x1e80100.c
+> +++ b/drivers/clk/qcom/camcc-x1e80100.c
+> @@ -2212,6 +2212,8 @@ static struct clk_branch cam_cc_sfe_0_fast_ahb_clk = {
+>   	},
+>   };
+>   
+> +static struct gdsc cam_cc_titan_top_gdsc;
+> +
+>   static struct gdsc cam_cc_bps_gdsc = {
+>   	.gdscr = 0x10004,
+>   	.en_rest_wait_val = 0x2,
+> @@ -2221,6 +2223,7 @@ static struct gdsc cam_cc_bps_gdsc = {
+>   		.name = "cam_cc_bps_gdsc",
+>   	},
+>   	.pwrsts = PWRSTS_OFF_ON,
+> +	.parent = &cam_cc_titan_top_gdsc.pd,
+>   	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+>   };
+>   
+> @@ -2233,6 +2236,7 @@ static struct gdsc cam_cc_ife_0_gdsc = {
+>   		.name = "cam_cc_ife_0_gdsc",
+>   	},
+>   	.pwrsts = PWRSTS_OFF_ON,
+> +	.parent = &cam_cc_titan_top_gdsc.pd,
+>   	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+>   };
+>   
+> @@ -2245,6 +2249,7 @@ static struct gdsc cam_cc_ife_1_gdsc = {
+>   		.name = "cam_cc_ife_1_gdsc",
+>   	},
+>   	.pwrsts = PWRSTS_OFF_ON,
+> +	.parent = &cam_cc_titan_top_gdsc.pd,
+>   	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+>   };
+>   
+> @@ -2257,6 +2262,7 @@ static struct gdsc cam_cc_ipe_0_gdsc = {
+>   		.name = "cam_cc_ipe_0_gdsc",
+>   	},
+>   	.pwrsts = PWRSTS_OFF_ON,
+> +	.parent = &cam_cc_titan_top_gdsc.pd,
+>   	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+>   };
+>   
+> @@ -2269,6 +2275,7 @@ static struct gdsc cam_cc_sfe_0_gdsc = {
+>   		.name = "cam_cc_sfe_0_gdsc",
+>   	},
+>   	.pwrsts = PWRSTS_OFF_ON,
+> +	.parent = &cam_cc_titan_top_gdsc.pd,
+>   	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+>   };
+>   
 > 
 
-Thank you for all the suggestions, the provided prototype, and the tested 
-results.
 
-I will study the suggestions in depth, test the provided prototype, and 
-provide more feedback.
+Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+
+--
+Best wishes,
+Vladimir
 
