@@ -1,210 +1,207 @@
-Return-Path: <linux-kernel+bounces-410323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EE199CD9E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:28:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B211D9CD9EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:28:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9F10B2844D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:28:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7229B28313C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB711898FB;
-	Fri, 15 Nov 2024 07:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C743185B78;
+	Fri, 15 Nov 2024 07:28:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="NxvIAIp3"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QESEqBpg"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177E2183CC7;
-	Fri, 15 Nov 2024 07:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C272C1885B3
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 07:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731655679; cv=none; b=CQ2001ifWVImnKAnfrHT/ECCLyofUZ/VUebOBnqIPwgRfJrDbHbO2TafBgd6M/j0uGZsinL53LQefSccQh46odJQ1j1w8UUDh46/v7XwlZFbtLCUsEYxI46v8U9WY56k/ItiMNVnoUq1WwoyjDT7oqLKIgHD4qs6NmusjddbzwU=
+	t=1731655710; cv=none; b=r6Ks3A5M/Uc+VItaASLdrl0gwlNIBWauspCanNYsipEE+P2/nc2Bq0kRuKmte2C+AZSUQcdtbeJGFG8YA0zxL6F52MZMIWYuMmSKAha1/PsVNOkU9yl4UKSrcXk7UfQiGLkz1ptiekbxWqkAwgjqDqvWgrNuF058wyvKd2he+Co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731655679; c=relaxed/simple;
-	bh=WwHB1f3gavVE9l2aZQ4WLcUSVZv8GqGUZZYPi6oRew8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hPIt1N/vXmjb7vCi+j+SWDHuejOlJj3LOHKf4LB3dlz2nQlhMmWmwhZahU1BEEVfWdh106L2oQGtUsa3twqUj7/3JOc76F3cATXP1wF5dZOibkRnWKsc2cu3hS8QD8iZp/XMfG1HJcVwwCerek73XxUfMjCyRQjL4mGD10KvVtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=NxvIAIp3; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1731655710; c=relaxed/simple;
+	bh=6BEPIqlBVHJZyi2Sf0fYAB4CnTBbuvd5Fhv964Cngnw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lIpKhJ5G2/++YeNzi7IjZjzUIiaO7OYNWsVpFWo2R5I1zBT8y62HU+p1njSzAAje8YMgXt7L583LYLlXgZ+keGLHMNp25wGNwMNBFfqI3oxWczuXUvS+B3BcgiQ3jaJXo6QfKPXI0kutR9jrx3jdqZXU11IDVNQBKjmafLcgL40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QESEqBpg; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb584a8f81so14477301fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 23:28:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1731655668;
-	bh=WwHB1f3gavVE9l2aZQ4WLcUSVZv8GqGUZZYPi6oRew8=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=NxvIAIp3CfTFgSECIk88TXnKOBfoHK4lkVwMqk+cBMbKKLmwvt3eZFGDCG3fwj1Gq
-	 M8ZkOHvQAJ8EjBx2GjihvRpMKTgvq/Qak9peinF1HTtksafRotVt3/puDaKZF3SJ27
-	 JRxuozlduDJjaF/N9hm5hW1pu4EPEBeezNKqliVJcEri2GoIE+yLwYAE7wNTp+MFvj
-	 y1dOX+XT9JO0hzZgTBix4uWtMq1NZ4A/xl1iilxNf2n30zQHF4uGad96782lhpqWqm
-	 0Xiv//jWDyGDmyF2COAUmG34MEbVue80QKQzoBgi1r9cEJXLH3HV7NHoAKGOnu2PPc
-	 0Vir4+0zm3XTA==
-Received: from pecola.lan (unknown [159.196.93.152])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id B8F3766537;
-	Fri, 15 Nov 2024 15:27:46 +0800 (AWST)
-Message-ID: <01be9950ef5591bd70685019cc56b7ffe0e3bce7.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v7 2/2] mctp pcc: Implement MCTP over PCC Transport
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: admiyo@os.amperecomputing.com, Matt Johnston
- <matt@codeconstruct.com.au>,  Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Sudeep Holla
-	 <sudeep.holla@arm.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Huisong Li <lihuisong@huawei.com>
-Date: Fri, 15 Nov 2024 15:27:46 +0800
-In-Reply-To: <20241114024928.60004-3-admiyo@os.amperecomputing.com>
-References: <20241114024928.60004-1-admiyo@os.amperecomputing.com>
-	 <20241114024928.60004-3-admiyo@os.amperecomputing.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+        d=linaro.org; s=google; t=1731655707; x=1732260507; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/GwN7axuFnJwGV4zNdR/K7IbEiX+PCDHxU+ABf832Zg=;
+        b=QESEqBpgmSYwJlWLppr9+Iwk7jG83lobN2S+0ERHf5ikJHdD4gVlzHbHHeoJco0Zj5
+         c/ywvkU+3rR1PWT64oVwlA01PjCrwmKWnKhyVg7Z02uv7iFizax4uxTuDxJpk1d79uwD
+         yTn63b5AT2hGqiUGVZ1Ib9cF4MlYv1UksJaqU3WfAMorDBk2rICM5TQY3pcAZ+j2CB0m
+         6vbWl8vfKCQ/2onQJ2WS/7kvExkpa73mKT97IIHS1/srOpBlT9HKxvI64SrIsxGqZBVU
+         7OoNtrS0lQlH+8A/BMEfhnT1M5EtQZx10tgLjqoiCIyBxr1KHeWTnOA7aoki2UeMMT/L
+         SHAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731655707; x=1732260507;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/GwN7axuFnJwGV4zNdR/K7IbEiX+PCDHxU+ABf832Zg=;
+        b=aR946jeTOx3ZAFKf/ObGKVr+ckqkPgiqFt9/htvNT2VtvikLaUgdiq62YBJwo8fgvK
+         iQj6Eg+8R9rLRdwnqVBZqSAnkMYZoD6dcpkVJKjrAMOTLQpCV5QwdW3GYl0CGDMHOOJq
+         qDHIsc18nzYsNFxMCS45Bs8lAp8IZQUL5AzwlWAwSEaRT49pavS03UFL4/WtVp2PmHoa
+         ok2UqgXOG67UDW8SGyDKPoGFhae1Vx3EEuOzAMTMJGKfQIuUQyRxodneR6tlZIBOlVtK
+         4PQ64O2tyywshh7FChp9hR4wspJs13NXm6BRAcIN28tjp6pB5kWi7uPdt+/xvkce2CC2
+         Jaig==
+X-Forwarded-Encrypted: i=1; AJvYcCUzPoob31XMC2eScaHmP0m+9J+DOjc8nfVoBDxg27BcMjf8B/7dMm1DMrni3BVo6R/03pRHuQV0sXcb6HA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHbQDhHa6FvIdl2erl8x0BbjpQSemmAgr17ICQt4VZceY2fj+k
+	OdYJ9uHa8OvMhzPbS0skrogGLeGT+v7kddA7Xjeb1ayKHQggoZ6spFRtHK2Cl4o=
+X-Google-Smtp-Source: AGHT+IHI9ax56yXePo1V9MbCWM4uPRipd+fXjT7Ug8imMQgOMNPQ6F5cq7l/TiXiyQtSP+9DaXDpmw==
+X-Received: by 2002:a05:651c:1551:b0:2fa:c014:4b6b with SMTP id 38308e7fff4ca-2ff609d868fmr7153221fa.41.1731655706847;
+        Thu, 14 Nov 2024 23:28:26 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff597a053bsm4547781fa.56.2024.11.14.23.28.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 23:28:25 -0800 (PST)
+Date: Fri, 15 Nov 2024 09:28:23 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>, 
+	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Bjorn Andersson <andersson@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Connor Abbott <cwabbott0@gmail.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH RFC 5/8] drm/msm: adreno: find bandwidth index of OPP and
+ set it along freq index
+Message-ID: <ith6te3m4cjwjyxrsxpjsvqsyjr3qrmlyyo7cucljuweuzn37b@lmd5b5mqwkbw>
+References: <20241113-topic-sm8x50-gpu-bw-vote-v1-0-3b8d39737a9b@linaro.org>
+ <20241113-topic-sm8x50-gpu-bw-vote-v1-5-3b8d39737a9b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241113-topic-sm8x50-gpu-bw-vote-v1-5-3b8d39737a9b@linaro.org>
 
-Hi Adam,
-
-All good with the hw addressing changes, but there are still things from
-my previous review that have either been ignored or discarded. In case
-of the latter, that still may be fine, but at least a note that you have
-done so would be helpful.
-
-Those inline again, and one new one ("Implementation [...]").
-
-> +config MCTP_TRANSPORT_PCC
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tristate "MCTP PCC transport"
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0select ACPI
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0help
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Provides a driver to ac=
-cess MCTP devices over PCC transport,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 A MCTP protocol network=
- device is created via ACPI for each
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 entry in the DST/SDST t=
-hat matches the identifier. The Platform
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 commuinucation channels=
- are selected from the corresponding
-
-typo: communication
-
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 entries in the PCCT.
+On Wed, Nov 13, 2024 at 04:48:31PM +0100, Neil Armstrong wrote:
+> The Adreno GMU Management Unit (GMU) can also scale the DDR Bandwidth
+> along the Frequency and Power Domain level, until now we left the OPP
+> core scale the OPP bandwidth via the interconnect path.
+> 
+> In order to enable bandwidth voting via the GPU Management
+> Unit (GMU), when an opp is set by devfreq we also look for
+> the corresponding bandwidth index in the previously generated
+> bw_table and pass this value along the frequency index to the GMU.
+> 
+> Since we now vote for all resources via the GMU, setting the OPP
+> is no more needed, so we can completely skip calling
+> dev_pm_opp_set_opp() in this situation.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 17 +++++++++++++++--
+>  drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  2 +-
+>  drivers/gpu/drm/msm/adreno/a6xx_hfi.c |  6 +++---
+>  3 files changed, 19 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> index 504a7c5d5a9df4c787951f2ae3a69d566d205ad5..1131c3521ebbb0d053aceb162052ed01e197726a 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> @@ -113,6 +113,7 @@ void a6xx_gmu_set_freq(struct msm_gpu *gpu, struct dev_pm_opp *opp,
+>  	struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
+>  	struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
+>  	u32 perf_index;
+> +	u32 bw_index = 0;
+>  	unsigned long gpu_freq;
+>  	int ret = 0;
+>  
+> @@ -125,6 +126,16 @@ void a6xx_gmu_set_freq(struct msm_gpu *gpu, struct dev_pm_opp *opp,
+>  		if (gpu_freq == gmu->gpu_freqs[perf_index])
+>  			break;
+>  
+> +	/* If enabled, find the corresponding DDR bandwidth index */
+> +	if ((adreno_gpu->info->quirks & ADRENO_QUIRK_GMU_BW_VOTE) && gmu->nr_gpu_bws) {
+> +		unsigned int bw = dev_pm_opp_get_bandwidth(opp, true, 0);
 > +
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Say y here if you need =
-to connect to MCTP endpoints over PCC. To
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compile as a module, us=
-e m; the module will be called mctp-pcc.
+> +		for (bw_index = 0; bw_index < gmu->nr_gpu_bws - 1; bw_index++) {
+> +			if (bw == gmu->gpu_bw_table[bw_index])
+> +				break;
+> +		}
+> +	}
 > +
-> =C2=A0endmenu
-> =C2=A0
-> =C2=A0endif
-> diff --git a/drivers/net/mctp/Makefile b/drivers/net/mctp/Makefile
-> index e1cb99ced54a..492a9e47638f 100644
-> --- a/drivers/net/mctp/Makefile
-> +++ b/drivers/net/mctp/Makefile
-> @@ -1,3 +1,4 @@
-> +obj-$(CONFIG_MCTP_TRANSPORT_PCC) +=3D mctp-pcc.o
-> =C2=A0obj-$(CONFIG_MCTP_SERIAL) +=3D mctp-serial.o
-> =C2=A0obj-$(CONFIG_MCTP_TRANSPORT_I2C) +=3D mctp-i2c.o
-> =C2=A0obj-$(CONFIG_MCTP_TRANSPORT_I3C) +=3D mctp-i3c.o
-> diff --git a/drivers/net/mctp/mctp-pcc.c b/drivers/net/mctp/mctp-pcc.c
-> new file mode 100644
-> index 000000000000..489f42849a24
-> --- /dev/null
-> +++ b/drivers/net/mctp/mctp-pcc.c
-> @@ -0,0 +1,324 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * mctp-pcc.c - Driver for MCTP over PCC.
-> + * Copyright (c) 2024, Ampere Computing LLC
-> + */
-> +
-> +/* Implelmentation of MCTP over PCC DMTF Specification 256
+>  	gmu->current_perf_index = perf_index;
+>  	gmu->freq = gmu->gpu_freqs[perf_index];
+>  
+> @@ -140,8 +151,10 @@ void a6xx_gmu_set_freq(struct msm_gpu *gpu, struct dev_pm_opp *opp,
+>  		return;
+>  
+>  	if (!gmu->legacy) {
+> -		a6xx_hfi_set_freq(gmu, perf_index);
+> -		dev_pm_opp_set_opp(&gpu->pdev->dev, opp);
+> +		a6xx_hfi_set_freq(gmu, perf_index, bw_index);
+> +		/* With Bandwidth voting, we now vote for all resources, so skip OPP set */
+> +		if (bw_index)
 
-"Implementation"
+if (!bw_index) ???
 
-(also, might be better to use the full spec ID ("DSP0256"), as it's
-easier to search)
+Also should there be a 0 vote too in case we are shutting down /
+suspending?
 
-> +struct mctp_pcc_hdr {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 signature;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 flags;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 length;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0char mctp_signature[MCTP_SIGNA=
-TURE_LENGTH];
-> +};
->
+> +			dev_pm_opp_set_opp(&gpu->pdev->dev, opp);
+>  		return;
+>  	}
+>  
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+> index 95c632d8987a517f067c48c61c6c06b9a4f61fc0..9b4f2b1a0c48a133cd5c48713bc321c74eaffce9 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+> @@ -205,7 +205,7 @@ void a6xx_hfi_init(struct a6xx_gmu *gmu);
+>  int a6xx_hfi_start(struct a6xx_gmu *gmu, int boot_state);
+>  void a6xx_hfi_stop(struct a6xx_gmu *gmu);
+>  int a6xx_hfi_send_prep_slumber(struct a6xx_gmu *gmu);
+> -int a6xx_hfi_set_freq(struct a6xx_gmu *gmu, int index);
+> +int a6xx_hfi_set_freq(struct a6xx_gmu *gmu, int perf_index, int bw_index);
+>  
+>  bool a6xx_gmu_gx_is_on(struct a6xx_gmu *gmu);
+>  bool a6xx_gmu_sptprac_is_on(struct a6xx_gmu *gmu);
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> index 9a89ba95843e7805d78f0e5ddbe328677b6431dd..e2325c15677f1a1194a811e6ecbb5931bdfb1ad9 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> @@ -752,13 +752,13 @@ static int a6xx_hfi_send_core_fw_start(struct a6xx_gmu *gmu)
+>  		sizeof(msg), NULL, 0);
+>  }
+>  
+> -int a6xx_hfi_set_freq(struct a6xx_gmu *gmu, int index)
+> +int a6xx_hfi_set_freq(struct a6xx_gmu *gmu, int freq_index, int bw_index)
+>  {
+>  	struct a6xx_hfi_gx_bw_perf_vote_cmd msg = { 0 };
+>  
+>  	msg.ack_type = 1; /* blocking */
+> -	msg.freq = index;
+> -	msg.bw = 0; /* TODO: bus scaling */
+> +	msg.freq = freq_index;
+> +	msg.bw = bw_index;
+>  
+>  	return a6xx_hfi_send_msg(gmu, HFI_H2F_MSG_GX_BW_PERF_VOTE, &msg,
+>  		sizeof(msg), NULL, 0);
+> 
+> -- 
+> 2.34.1
+> 
 
-These signature/flags/length still don't have the endian annotations
-(nor conversions on access). This was raised on v2, but looks like that
-got lost?
-
-> +static void
-> +mctp_pcc_net_stats(struct net_device *net_dev,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct rtnl_link_stats64 *stats)
-> +{
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0stats->rx_errors =3D 0;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0stats->rx_packets =3D net_dev-=
->stats.rx_packets;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0stats->tx_packets =3D net_dev-=
->stats.tx_packets;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0stats->rx_dropped =3D 0;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0stats->tx_bytes =3D net_dev->s=
-tats.tx_bytes;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0stats->rx_bytes =3D net_dev->s=
-tats.rx_bytes;
-> +}
-
-Is this missing the rx_dropped stat (which you're updating in
-_rx_callback)?
-
-If you like, there are some new tstats helpers available, meaning you
-wouldn't need the ndo_get_stats64 op at all. Let me know if you're
-interested in using those, and would like a hand doing so.
-
-> +static int mctp_pcc_driver_add(struct acpi_device *acpi_dev)
-> +{
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct mctp_pcc_lookup_context=
- context =3D {0, 0, 0};
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct mctp_pcc_ndev *mctp_pcc=
-_ndev;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct device *dev =3D &acpi_d=
-ev->dev;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct net_device *ndev;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0acpi_handle dev_handle;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0acpi_status status;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int mctp_pcc_mtu;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0char name[32];
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int rc;
-> +
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0dev_dbg(dev, "Adding mctp_pcc =
-device for HID=C2=A0 %s\n",
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0acpi_device_hid(acpi_dev));
-
-Super minor: double space before the %s here.
-
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0dev_handle =3D acpi_device_han=
-dle(acpi_dev);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0status =3D acpi_walk_resources=
-(dev_handle, "_CRS", lookup_pcct_indices,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &context);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!ACPI_SUCCESS(status)) {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0dev_err(dev, "FAILURE to lookup PCC indexes from CRS");
-
-+ trailing newline (on the error message).
-
-Other than that, all good!
-
-Cheers,
-
-
-Jeremy
+-- 
+With best wishes
+Dmitry
 
