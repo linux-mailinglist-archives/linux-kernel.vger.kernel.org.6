@@ -1,126 +1,169 @@
-Return-Path: <linux-kernel+bounces-410238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B9619CD6C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:58:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4D8B9CD6C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:58:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50E892832AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 05:58:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60DA11F22829
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 05:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C9217C7CB;
-	Fri, 15 Nov 2024 05:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06323183CD6;
+	Fri, 15 Nov 2024 05:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MrRdo6eK"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="tx/6EBiT"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022CB1632DA
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 05:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840781632DA;
+	Fri, 15 Nov 2024 05:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731650288; cv=none; b=eLwUPW3DBnflxH2lFH7t/f0sGrgBJVFlPyMxjcO01r8w9AEIpBkpBymlZnZgDeSFKqlNHDVD38ai3x8rcwDAVCH//k+fuwBe7GrYb8QEaCGaARxDP7wc1dgHjHzn12E4LomoLF1chxwQFj6a6Cv2vW/IhDo9Om1yXlbZIB9wIsc=
+	t=1731650312; cv=none; b=juJLMtAMcLwAMYw8FNt1a6BPDeIfHXngYCoBlHU7fSLe5+X48ZsZfcU9m3D8kv6Z7YwZ6ywwzbF1cJ2GEaW7leX4idlnGq4kcu/02vF0aWrsODA5pYkAWlHEZvbFk6WNhqhbiprETRsdnEFXPlWtpEl17rvnZIZpKFnx9HOvo5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731650288; c=relaxed/simple;
-	bh=kMxPLdg2xTIUu8NOMQWZJ6CNX2JXgroqulwSiKUnCPU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=FQBD+5AfLXsxaBgDI0eW7/O3YDnOdOCxqzQ+NAXs8lXmla4fUhd6fqMKZ4JAklqcaoWoDp/UTwkY4UViX2l4acagd0tuZL+IWZ/l0wvcI70/6AmoSlmor6IgMCw7JgY5AhfpUiCwKipL9FlOHOzeljRFFdFuX1/f+Fom2aWpGrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MrRdo6eK; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-288fec398f8so184605fac.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 21:58:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731650286; x=1732255086; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5FCEL5cvn/DmJs+eCH4aavMuPmImiCDAr4Q8vsptoYs=;
-        b=MrRdo6eKLz/yg9ZjYXOwrtJ58cyNfrN4SgSMTHSKeixFDVzEAg2lyHiFNfsOx9Ncxg
-         XWeHxYTqzez/5HdspQ8879gNOMhOmq0Wsz2TyL2x4YhrShufLPxj9hupGcn9wdG5dp9I
-         YRNytOVUtFiGxc6+MoO24z5TBfYrlZkqMj5QOWJEPWEFTlUeeMhbw468cU0ppBDCTIvE
-         ohCOrJqXj66rcTSrz9Ki6tqCS7yiFZxeqU6kMeh89ukR6DXKlwxq/YzSICWuOUXff5Ue
-         CTPBvy9eDPf9Vhj7KQNwmYtX6Ad61Ywgdj5l0xx+UdY/adPmZO26VcxKHvu8pPK7P8WD
-         lQnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731650286; x=1732255086;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5FCEL5cvn/DmJs+eCH4aavMuPmImiCDAr4Q8vsptoYs=;
-        b=MSnzuAmOkHR0zZIf20av/x85d9KBfQi/GBBQjrJro4ufTYMqaYUGobrznF5OuHOyR0
-         6PM0jy06eCltnL2IotG2SYGmhT6Lm2Ao6RI2LPO+v2g9kCTcYlpCHgp74ccTHZjHJ7s1
-         /Vq+VXSP+g+45g6PjSkhZhjLU3sfXVQ5f/+4qfrDV1fAdb+FokMCoQSThm2Drass2aP8
-         Hgttsa9sosoY4XMglWpNZ7+/AnIABA8MIoXuDq71DGCkS69oFTAcfXtoghiPxOjnVZ68
-         LfvfLNHnBPHfQpc3BB6LYTEIKeBwyAdlSuk/PkEBh1fyeT5sxecxDv6xIxPOudMgJXzz
-         4rKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVoH88ocdTVThxFh5sCiTZIJLCNYPgwb4hI6o3PpTHHor/htNGYVp5YHxFFFKPYAd2hqwayG0R85NmP0N0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyOfiWErti+UOpV0J1duei6+NPh55EU6MWtGM8Iy8UfGUAvO9q
-	DYunicGk/calLI6blfjPN9U62YxQuz1uXtH2t8OcclX9N9NWFtrOEcXWXhnmw13urZ76/1bMbiL
-	ckJFU5Iqcpytmji/wj/TUCiNedsZhU1E/aXbACA==
-X-Google-Smtp-Source: AGHT+IH08LKZaT/MNLlQJFmAnCHMH+5h4dFmcwDILxNxHwbbhWEamUPv8K0yf2DWpwhOv7gBw7hRU0rNhv2SZ1Q9U8g=
-X-Received: by 2002:a05:6871:aa01:b0:260:ccfd:1efe with SMTP id
- 586e51a60fabf-2962dd0882fmr263152fac.6.1731650284569; Thu, 14 Nov 2024
- 21:58:04 -0800 (PST)
+	s=arc-20240116; t=1731650312; c=relaxed/simple;
+	bh=VCCutfk2iGBCPuLDlRkfhLRgWuPJ6jrf85jhogNZpgI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Fw83VUzeQLRt6PhLujouCLaHYd3F9r0OTJGOa3Zdn21mWfneyVLGtwuJNOr0JmEdQpXTpU2IZdhw/zHD5nQJukQquSh4j1gcMORbQol6MEuFpXabOkIx6GniAnlBRa54ACxmzTRWPxp3hGAZsY54G1VitXbzEYftHuLgU2j1V/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=tx/6EBiT; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4AF5vuzV7010575, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1731650276; bh=VCCutfk2iGBCPuLDlRkfhLRgWuPJ6jrf85jhogNZpgI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=tx/6EBiTTZkgumKkyJVe/5zBR37mZOqnbf56/Z6gYUfge+zafo+Je5RjBcoiVcbJg
+	 aj+Z8jFBSoXlLcKIkX6vlIGRenZExpMdsXkL0p+m59QF6FsVWGlhBd5pfyGvltec9p
+	 LaokmD1pPRBWCFl1FkXH4d39Pjg8H2gRgxjYD0qN5kSBRC5uRdd0MyvSNyviIZW6PN
+	 FS4mhYjSG+iKgR8kkXvnMmNL5vh5qGl1X9Bvy2egGSIvXPVIp8KMaBSwFp9eL8AwcM
+	 tnEfbtzFuvoazvkXkibsQ0KhXyzgA0heMmumZEIPt5kj9rBw+HM4Qh14RodvhiL0Ps
+	 rlXj3lYD3sSzQ==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 4AF5vuzV7010575
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 15 Nov 2024 13:57:56 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 15 Nov 2024 13:57:56 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS04.realtek.com.tw (172.21.6.97) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Fri, 15 Nov 2024 13:57:55 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f]) by
+ RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f%11]) with mapi id
+ 15.01.2507.035; Fri, 15 Nov 2024 13:57:55 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: "kuba@kernel.org" <kuba@kernel.org>,
+        "davem@davemloft.net"
+	<davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "andrew+netdev@lunn.ch"
+	<andrew+netdev@lunn.ch>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>,
+        "horms@kernel.org" <horms@kernel.org>,
+        Ping-Ke Shih
+	<pkshih@realtek.com>,
+        Larry Chiu <larry.chiu@realtek.com>
+Subject: RE: [PATCH net 1/4] rtase: Refactor the rtase_check_mac_version_valid() function
+Thread-Topic: [PATCH net 1/4] rtase: Refactor the
+ rtase_check_mac_version_valid() function
+Thread-Index: AQHbNoZ3TgKh3vcPZkulu1daZxQDq7K2Yz8AgAFzo0A=
+Date: Fri, 15 Nov 2024 05:57:55 +0000
+Message-ID: <baeeea41621c4b87a2a5152f72874556@realtek.com>
+References: <20241114111443.375649-1-justinlai0215@realtek.com>
+ <20241114111443.375649-2-justinlai0215@realtek.com>
+ <2fac05ba-7766-4586-8676-e30f09cd2d09@lunn.ch>
+In-Reply-To: <2fac05ba-7766-4586-8676-e30f09cd2d09@lunn.ch>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021072626.15102-1-xiazhengqiao@huaqin.corp-partner.google.com>
- <20241021072626.15102-5-xiazhengqiao@huaqin.corp-partner.google.com>
-In-Reply-To: <20241021072626.15102-5-xiazhengqiao@huaqin.corp-partner.google.com>
-From: Zhengqiao Xia <xiazhengqiao@huaqin.corp-partner.google.com>
-Date: Fri, 15 Nov 2024 13:57:53 +0800
-Message-ID: <CADYyEwSjV=YQ2dJ7+RwQFif7WHU7PCDPxbh4OwuBNULsoQ7bkQ@mail.gmail.com>
-Subject: Re: [PATCH v3 RESEND 4/4] arm64: dts: mediatek: Modify audio codec
- name for pmic
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
-	wenst@chromium.org, hsinyi@chromium.org, sean.wang@mediatek.com, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.or, 
-	Doug Anderson <dianders@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi
+>=20
+> On Thu, Nov 14, 2024 at 07:14:40PM +0800, Justin Lai wrote:
+> > 1. Sets tp->hw_ver.
+> > 2. Changes the return type from bool to int.
+> >
+> > Signed-off-by: Justin Lai <justinlai0215@realtek.com>
+> > ---
+> >  drivers/net/ethernet/realtek/rtase/rtase.h    |  2 ++
+> >  .../net/ethernet/realtek/rtase/rtase_main.c   | 21 +++++++++++--------
+> >  2 files changed, 14 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/drivers/net/ethernet/realtek/rtase/rtase.h
+> > b/drivers/net/ethernet/realtek/rtase/rtase.h
+> > index 583c33930f88..547c71937b01 100644
+> > --- a/drivers/net/ethernet/realtek/rtase/rtase.h
+> > +++ b/drivers/net/ethernet/realtek/rtase/rtase.h
+> > @@ -327,6 +327,8 @@ struct rtase_private {
+> >       u16 int_nums;
+> >       u16 tx_int_mit;
+> >       u16 rx_int_mit;
+> > +
+> > +     u32 hw_ver;
+> >  };
+> >
+> >  #define RTASE_LSO_64K 64000
+> > diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> > b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> > index f8777b7663d3..33808afd588d 100644
+> > --- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> > +++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> > @@ -1972,20 +1972,21 @@ static void rtase_init_software_variable(struct
+> pci_dev *pdev,
+> >       tp->dev->max_mtu =3D RTASE_MAX_JUMBO_SIZE;  }
+> >
+> > -static bool rtase_check_mac_version_valid(struct rtase_private *tp)
+> > +static int rtase_check_mac_version_valid(struct rtase_private *tp)
+> >  {
+> > -     u32 hw_ver =3D rtase_r32(tp, RTASE_TX_CONFIG_0) &
+> RTASE_HW_VER_MASK;
+> > -     bool known_ver =3D false;
+> > +     int ret =3D -ENODEV;
+> >
+> > -     switch (hw_ver) {
+> > +     tp->hw_ver =3D rtase_r32(tp, RTASE_TX_CONFIG_0) &
+> > + RTASE_HW_VER_MASK;
+> > +
+> > +     switch (tp->hw_ver) {
+> >       case 0x00800000:
+> >       case 0x04000000:
+> >       case 0x04800000:
+>=20
+> Since these magic numbers are being used in more places, please add some
+> #define with sensible names.
 
-No one has responded to this patch for two weeks. Please help to review it.
+Ok, I will define these hardware version ID names.
+>=20
+> > -     if (!rtase_check_mac_version_valid(tp))
+> > -             return dev_err_probe(&pdev->dev, -ENODEV,
+> > -                                  "unknown chip version, contact
+> rtase maintainers (see MAINTAINERS file)\n");
+> > +     ret =3D rtase_check_mac_version_valid(tp);
+> > +     if (ret !=3D 0) {
+> > +             dev_err(&pdev->dev,
+> > +                     "unknown chip version, contact rtase maintainers
+> (see MAINTAINERS file)\n");
+> > +     }
+>=20
+> Since you are changing this, maybe include the hw_ver?
 
-thanks
-
-Zhengqiao Xia <xiazhengqiao@huaqin.corp-partner.google.com>
-=E4=BA=8E2024=E5=B9=B410=E6=9C=8821=E6=97=A5=E5=91=A8=E4=B8=80 15:27=E5=86=
-=99=E9=81=93=EF=BC=9A
->
-> change `codec` in pmic (in mt8186-corsola.dtsi) to `audio-codec`
->
-> Signed-off-by: Zhengqiao Xia <xiazhengqiao@huaqin.corp-partner.google.com=
->
-> ---
->  arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi b/arch/arm6=
-4/boot/dts/mediatek/mt8186-corsola.dtsi
-> index 943837f20377..13e464dac1be 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
-> @@ -1276,7 +1276,7 @@
->                 interrupts-extended =3D <&pio 201 IRQ_TYPE_LEVEL_HIGH>;
->                 #interrupt-cells =3D <2>;
->
-> -               mt6366codec: codec {
-> +               mt6366codec: audio-codec {
->                         compatible =3D "mediatek,mt6366-sound", "mediatek=
-,mt6358-sound";
->                         Avdd-supply =3D <&mt6366_vaud28_reg>;
->                         mediatek,dmic-mode =3D <1>; /* one-wire */
-> --
-> 2.17.1
->
+Thank you for your suggestion, I will add hw_ver to the error message.
+>=20
+>         Andrew
 
