@@ -1,115 +1,122 @@
-Return-Path: <linux-kernel+bounces-410596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FFC79CDDB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:49:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC80F9CDDBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:50:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A03CE1F22755
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:49:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A9FDB27774
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31EDB1B6D15;
-	Fri, 15 Nov 2024 11:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0861BB6BC;
+	Fri, 15 Nov 2024 11:49:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jWIQwZfd"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QsbfJqxz"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A74419CD08;
-	Fri, 15 Nov 2024 11:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46071B86F6;
+	Fri, 15 Nov 2024 11:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731671376; cv=none; b=nx0DV/kmwiAquiQGRFrPU4vWLx4PGkmCXIUE2XAguKuozX3iFDKpZ+hGAY71x2iw4mDzyuQX72yv756ocl8YK+I2oh5HQJJeH2L5q4CbnY4TZmb4NxPekQ2HJSTznfDulPtbRE/I2MySHX/DCQD6Bhls1GwnKeos14IksKC13hc=
+	t=1731671382; cv=none; b=PO8FlVolEg96zV85WT1i/VqzzZj+QSsgMo08rZ7u0d1/G12nD5wBhjx5e9lGCX9Dg5+fxBFb5p+hg22I97WGggYlGY0m2p1rL0fRiC5NPz2+Hb9XskirOlng9kUDrb0Y3a7sQy3rDUXhp1qPiqJ6OrXtTS9RUwhPLGmiZD49y0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731671376; c=relaxed/simple;
-	bh=4LLiP+VUFm3qOSVLMN2/ir4nxnih7Y21VZucPwfBf98=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Y9rPZy/iiNFwYD5JrH85ljAU34bn+V5HjE3b0hjqBnlNe5qzD2htKiquxqVM9lTauIuRJNEpFy2PJNEl9Dxq12Wa5m3Yo8VGneSfobclRDjFa9XsNaq8BH4XyVcFQH8dko2LnW5beP1MiDUMngI6gl/2cz8SNnfJ3vI+9vshbgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jWIQwZfd; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20cbcd71012so19329095ad.3;
-        Fri, 15 Nov 2024 03:49:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731671373; x=1732276173; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KtoZGAEyQBCnhyYoL/bdON4aQAbKow6V3dd3ML98XEo=;
-        b=jWIQwZfdTPDUDX74BUwXNAThgI2vhWZihy7tRr3XgHGjd9bpGB+tj9VFdU2HSoPEqD
-         OiPKlX/SBlrP81D2PDnmQKIk7vrUhM0MjnlHzDXwWvLJ8dLodJbgzlYVgZS4EpTVUecM
-         LB5X668zuIqerYSz3Wgb+AHGjRtH75UXfZuHzKWkUKIgrm2H1rhi2AHBdh1TWLpCtbmA
-         3uC9MxBoE3nD6YuPu86MFQ0kNOBwFFNn77dbi+/+77n9wyMY27Ou6Fl3QnUWdu/txA+z
-         9JqHlUDRJWlHjB0koC73b6KMndpxOWcuu8fmpR1iEs62zN7mM+idRqFtAgXCafnX275p
-         o9RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731671373; x=1732276173;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KtoZGAEyQBCnhyYoL/bdON4aQAbKow6V3dd3ML98XEo=;
-        b=Nz/LATwW6sAIpwsRNGAMe83ZcGsLk1bSvf6ueI1+RQtJmYu7GK8dGjv7c0gt4x2KSa
-         H/Ajjh36GTQ9breTGh6d0yUZNdeHa4n/tdoU3wUyzuD2cLucg1+VIQ/UEEFbDl3gqClE
-         gUtrp7lC8d75TTD7f+SITC7uGsPAyNh7RCFEg+RKshiwrQf3ygwraWfuoM+84kxpeCPs
-         eRSQL0lsgoxQ2i2TIbmhGdMHhFya07YGrs/vGZgCVfh/GryzyXKnc7pf+/wTHUZzHcqR
-         6UJ16b4Sfb5lWlBFdosMbLoccgNbtoR+IUDzccZhMx+z716MwUB5xQe8qx+1+kZdZafP
-         XB9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVQgxaZdqMwtWeekgLqmyRqaMYUph2lmXpRYypKruH0tEOFPLTVlcpgEHUljAqQ8DvakJQsJJ88lNMDWpw=@vger.kernel.org, AJvYcCXSGCl/D5FtasrvMLq7/PXna12PCrSfqaY5tmMb2lmUSfRz7JnNCZ8JirMv5Fes0noOfwrQ3ye28UMT9g0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwViNYQzsQCs10hhtQnNbmNtKzJOJIwHHzYH22TrQwu12f4BBT
-	oWiJeM5nOE0sUZ6H5AY7uSY7X1yWKZcf+zmz3JSxcbrCA3Kqo/Js4QI2fm3y
-X-Google-Smtp-Source: AGHT+IE5sTGzwQKuTH0On3cSqtf2nsawCLjUF0bcqmiQ/aTjp84Xc+l7NZt2tv8FVSZSvOI7ACAIyQ==
-X-Received: by 2002:a17:902:d50a:b0:20c:8331:cb6e with SMTP id d9443c01a7336-211d0d818c6mr34430995ad.19.1731671373536;
-        Fri, 15 Nov 2024 03:49:33 -0800 (PST)
-Received: from HOME-PC ([223.185.134.27])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f47b2csm10469315ad.219.2024.11.15.03.49.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 03:49:33 -0800 (PST)
-From: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
-To: frattaroli.nicolas@gmail.com,
-	linux-rockchip@lists.infradead.org
-Cc: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	heiko@sntech.de,
-	linux-sound@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
-Subject: [PATCH sound-next] ASoC: rockchip: i2s-tdm: Fix a useless call issue
-Date: Fri, 15 Nov 2024 17:19:24 +0530
-Message-Id: <20241115114924.23843-1-dheeraj.linuxdev@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731671382; c=relaxed/simple;
+	bh=MnBOKQ/+1AjbtPfmzW5O5Ib7vgDNVKV7lus2CXVLKWk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MKzlnGAzHyFbpyAHAvPBLK7c4Z2RTy2OuAMYa0VsvczA8QMH1iNicv0+03d7YhluhkZJGai16Sk+3EBlC8YFxf92v94A9cItmBsWsIcxbUFc1yY6vp3qgQ+Cfa8N6WcM0gzo6XXesAKNMCZNThRT928gD2dn4jJoDWDOUb8zqdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QsbfJqxz; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=D+xKiB8GWNnGuEpcIIELTeU/fw+jvTZ+eMA0hDrzAVw=; b=QsbfJqxzC1INeY0T215hijNnkV
+	cRtX0AQ5QFVKgcEIRfZ+k/U1II6iO/Rqu4YoH9aZ2X2mK5KMi265n81xUK5P9EG9LwaYTLtTbTLDq
+	uv043Iov+exZdtcYjRv7uRemm6MeY1+fZykY+qIi/Yi7YwkkU6yCs7s0QX1CaxjXcPVcxTIxHD5Ar
+	p0EloHF1pChjkNp2CSb/4FcqZgACMcVSj79cltilph9wlcYfeWRCwu1hTkRPUmm3n0/xMO/C376Po
+	4echqSnoTj6CTRJVnX4P3C+HSaFnRQv47+lQkOacgJyMFUFMYA8Xt4bxC88jojOBnvPFCpWYT7rXQ
+	iJRr/CRA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tBupM-00000001MIw-2WeB;
+	Fri, 15 Nov 2024 11:49:27 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D2F1530066A; Fri, 15 Nov 2024 12:49:26 +0100 (CET)
+Date: Fri, 15 Nov 2024 12:49:26 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: mcgrof@kernel.org, x86@kernel.org, hpa@zytor.com, petr.pavlu@suse.com,
+	samitolvanen@google.com, da.gomez@samsung.com, masahiroy@kernel.org,
+	nathan@kernel.org, nicolas@fjasle.eu, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	gregkh@linuxfoundation.org
+Subject: Re: [RFC][PATCH 1/8] module: Prepare for script
+Message-ID: <20241115114926.GH38972@noisy.programming.kicks-ass.net>
+References: <20241111105430.575636482@infradead.org>
+ <20241111111816.912388412@infradead.org>
+ <ZzHsOTLCZlUBN7iW@infradead.org>
+ <20241111125529.GF22801@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111125529.GF22801@noisy.programming.kicks-ass.net>
 
-This commit fixes a useless call issue detected by Coverity
-(CID 1507978). The call to rockchip_i2s_ch_to_io is unnecessary as its
-return value is never checked or used.
+On Mon, Nov 11, 2024 at 01:55:29PM +0100, Peter Zijlstra wrote:
+> On Mon, Nov 11, 2024 at 03:36:25AM -0800, Christoph Hellwig wrote:
+> > On Mon, Nov 11, 2024 at 11:54:31AM +0100, Peter Zijlstra wrote:
+> > > Since sed doesn't like multi-line make sure all EXPORT_SYMBOL_NS
+> > > things are a single line.
+> > 
+> > Eww.  Just use coccinelle or another tool not so simplistic.
+> 
+> Feel free to do so. I've never managed to get coccinelle to do anything.
 
-Signed-off-by: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
----
- sound/soc/rockchip/rockchip_i2s_tdm.c | 1 -
- 1 file changed, 1 deletion(-)
+So I put a little more effort in and got you this (awk needs to be
+gawk>=4.1)
 
-diff --git a/sound/soc/rockchip/rockchip_i2s_tdm.c b/sound/soc/rockchip/rockchip_i2s_tdm.c
-index d1f28699652f..10f46fbe5175 100644
---- a/sound/soc/rockchip/rockchip_i2s_tdm.c
-+++ b/sound/soc/rockchip/rockchip_i2s_tdm.c
-@@ -577,7 +577,6 @@ static int rockchip_i2s_io_multiplex(struct snd_pcm_substream *substream,
- 			return -EINVAL;
- 		}
- 
--		rockchip_i2s_ch_to_io(val, true);
- 	} else {
- 		struct snd_pcm_str *capture_str =
- 			&substream->pcm->streams[SNDRV_PCM_STREAM_CAPTURE];
--- 
-2.34.1
+git grep -l -e MODULE_IMPORT_NS -e EXPORT_SYMBOL_NS | while read file;
+do
+  awk -i inplace '
+    /^#define EXPORT_SYMBOL_NS/ {
+      gsub(/__stringify\(ns\)/, "ns");
+      print;
+      next;
+    }
+    /^#define MODULE_IMPORT_NS/ {
+      gsub(/__stringify\(ns\)/, "ns");
+      print;
+      next;
+    }
+    /MODULE_IMPORT_NS/ {
+      $0 = gensub(/MODULE_IMPORT_NS\(([^)]*)\)/, "MODULE_IMPORT_NS(\"\\1\")", "g");
+    }
+    /EXPORT_SYMBOL_NS/ {
+      if ($0 ~ /(EXPORT_SYMBOL_NS[^(]*)\(([^,]+),/) {
+        if ($0 !~ /(EXPORT_SYMBOL_NS[^(]*)\(([^,]+), ([^)]+)\)/ &&
+            $0 !~ /(EXPORT_SYMBOL_NS[^(]*)\(\)/ &&
+            $0 !~ /^my/) {
+          getline line;
+          gsub(/[[:space:]]*\\$/, "");
+          gsub(/[[:space:]]/, "", line);
+          $0 = $0 " " line;
+        }
 
+        $0 = gensub(/(EXPORT_SYMBOL_NS[^(]*)\(([^,]+), ([^)]+)\)/,
+                    "\\1(\\2, \"\\3\")", "g");
+      }
+    }
+    { print }' $file;
+done
+
+
+I'm sure that wasn't worth the time I spend on it though :/
 
