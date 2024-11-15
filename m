@@ -1,102 +1,481 @@
-Return-Path: <linux-kernel+bounces-410406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E8F9CDB1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:08:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B3E59CDB23
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:10:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 412E81F223FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:08:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B610EB2287C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F7A18CBF2;
-	Fri, 15 Nov 2024 09:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D787318E362;
+	Fri, 15 Nov 2024 09:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JiEFX/Ud"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mQirPTZI"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C84918BC36;
-	Fri, 15 Nov 2024 09:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B248718BC36
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731661721; cv=none; b=aMhCjFZ2xCdXSBWfXDYA4MHbsNzOrhORAvyUyofxN9DmyepTQzp1Bx6ocP9D2HDMfCcvLLqPAablqSFzFpKUX8p1exXoejieSGQh1HeCbPFxQ/0hArvRZRAia0aqowq0zZH94WZ9F6K2o4ICvAjY8FX/dadiPyNHwmGEoh09lpE=
+	t=1731661789; cv=none; b=SrWX75feEkrs78HjGFjSwChIolppz/SIuI3SFdQROuOpRQ9MKogtq6IyrTVePNSCbRABFEGi7Rsd4gpEebErNa9ResL6jKaIMrOBBaka4cVVvffPihi4xOfg+FIgxjbcvafnWI1ho++Sq5A4wFh/Cvnu+AOyT2g4BW4HrPQRvlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731661721; c=relaxed/simple;
-	bh=r3YLV+KiHAmSlOJ0CxwzIP4M4FT0zkB8q5+FWZmhaoc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lTrPkgTFBeD54tc8G+ZyZSYYa5b3UvB73+PF7ChBcdgK4L/aAoKDeVk8ovCe/zxmcPs3opbkX9SxKB8Ld6oBYHJaztjPxfluhrUMrD1ASLoBRJCe5HlpgJO1rbThU7PgvlDBlcEbdFwAgMgShBiE6q7dQpKLL3zXPXWoxAHldBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JiEFX/Ud; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A25D3C4CED0;
-	Fri, 15 Nov 2024 09:08:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731661720;
-	bh=r3YLV+KiHAmSlOJ0CxwzIP4M4FT0zkB8q5+FWZmhaoc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JiEFX/UddpK56W1+Ws+83khJWfSQnmAzzxT2yDx5X76v2tAIoPni5Z0vSLmAl252Y
-	 r27LJI8XHyyXChLTuvjPmbu14SUiWEJh27bbBbmdt8aY6k0Bit/Mi7EnV3MDoHwRJk
-	 uyB1ckMRSTMd6rm6x0e+Nz/uuLsT4+BrjPjyuIur+oLZu78m0s7X7vCgTwi2D0o84h
-	 2zVKJnF17DVPK1BaD5KyaJb9wuVC9N3OrUW0etxYk+rHvZGi327eZoV85qPQWvPkz4
-	 JwZuja0Bx7LlXwnF7oUu76egaUC4rujCm3iwiT7Z34Zm7CvIJ9BVXvOHEKsFrwNUce
-	 wGabiFpzf/zNw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tBsJb-00000000153-1zbU;
-	Fri, 15 Nov 2024 10:08:31 +0100
-Date: Fri, 15 Nov 2024 10:08:31 +0100
-From: Johan Hovold <johan@kernel.org>
-To: quic_zijuhu <quic_zijuhu@quicinc.com>
-Cc: Tim Jiang <quic_tjiang@quicinc.com>,
-	Janaki Ramaiah Thota <quic_janathot@quicinc.com>,
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: QCA NVM file for the X13s (WCN6855)
-Message-ID: <ZzcPj-br2qb_tiMf@hovoldconsulting.com>
-References: <ZjNxfFJmCgIyq8J6@hovoldconsulting.com>
- <5aea3149-ba44-400f-acc6-1a3eca8a7e72@quicinc.com>
- <ZjOUWqor4q1Efy0W@hovoldconsulting.com>
- <f1b45d7d-27e0-4ad7-976c-670a0e0d136b@quicinc.com>
- <ZjOfdK41yLwkH25T@hovoldconsulting.com>
- <5549d7e4-06cb-4305-8cec-10e93e5fbbff@quicinc.com>
+	s=arc-20240116; t=1731661789; c=relaxed/simple;
+	bh=VU0OEdAykD5KIsJea1P60KPCJQ1AjELe3XMgxNzy800=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=doguj/t0BqAY7KI9/czlKLVoSe9g1Xs0Xzl3K9SYAeHM7dp333bRXDFPdNFsiU+uOKcBnAD/eY/ZHXgGle98+xS/z+fED81Ygi4n+F9j0pQReL9t/G8VTVJ4/wkdIsgonShIuxq5TQjwFxz5SvqKGG1lv0Qu9H30fYEr+DP7xvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mQirPTZI; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53a007743e7so464989e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 01:09:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731661786; x=1732266586; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4QJxP3ruwFAgMJJzcgTZW3NemwYO/mQm81cR4flDsn0=;
+        b=mQirPTZIrMRlM5D9fAhqFj9aIduxKduGFxtbhDqd8CNw6k3EUVo6Dox5ovykEzSa3v
+         sIxkMDu19RmJkObDjYcEoYpjOyqDukts02QDqKpN6nIljNiSt0UVPGpulBJP8ESU/BBq
+         Gc2Al9zJ3J6q+hfrxVy8Tery9Q1JPZkOLfVD7ukMoEFSp1GQxS50nopyvWohDg90EEaG
+         EYqpAW4kE0/rX9+GfAlU4Lij7H/i/mGPtz5aJudESyAT5fNIo3Vs2pgLY4ISXQPUiRPD
+         ntl5TErmdizcdobC78AYb7VfabngnPPpEEG/9kinLz9kOq+/nSHosx+gsaBwsWIV3/Id
+         gZFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731661786; x=1732266586;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4QJxP3ruwFAgMJJzcgTZW3NemwYO/mQm81cR4flDsn0=;
+        b=WTplw+pDAPaW0f3yR2wQXsReOr4iMQGQVBHVaPaaEtLVSRE4m5uiAUjKUqrCrjUtU0
+         kktJ0YuBQTw/yFpr4eXENw62sVm5eHqWeqb9r2wwfm6xrMXntg57Oq9ZiNJ1EGQqDGqc
+         bS5c/KbLkENCBaSKf5sWut/ivbtMOUnibR7HBrjto8QjQPWM6CV9P98t6l2i/qRCm8LI
+         RD2RnmDcUEoolzx4ObPwpjDcRmueBpwB3aKJXFoe1Zthi2wzhfDh/r12TS6GqtCi4gmU
+         yiJXkVfypMZOIMFRRDKQTLpSn5VPu19t4j1G3I2ePKEXd0eS1S430tXsYyIl311xgQD2
+         AAZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWgdgv3SNQLeW7nqnCJRyd8H1OGoetJhOVuyPLg/jsifiBtitnrk05uItuYlutF6GCW+COUDAk4tDOZ2Pw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMTCIUMRn5r/rGITx245iIfXubN1wdmMES+bNCxdnEYZ57iPqp
+	GxS+HngYLlJXyuUexx5aLWIZsQ4pFEfxgMgGqwLy+eK9stHdFQoqj0Ehy3mtMWM=
+X-Google-Smtp-Source: AGHT+IFKAYSQIiT9HBCqqyFs63licEAgHI+G0N44+wSxeO7YX68r4FBHn5IodDz8hglcPImngCkpcA==
+X-Received: by 2002:a05:6512:1294:b0:53d:a9c1:ac62 with SMTP id 2adb3069b0e04-53dab2a6a42mr875544e87.28.1731661785606;
+        Fri, 15 Nov 2024 01:09:45 -0800 (PST)
+Received: from [192.168.7.189] ([212.114.21.58])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-382247849b0sm1849752f8f.97.2024.11.15.01.09.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 01:09:45 -0800 (PST)
+Message-ID: <dffb787f-7167-4027-a58d-34bba5f838ab@linaro.org>
+Date: Fri, 15 Nov 2024 10:09:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5549d7e4-06cb-4305-8cec-10e93e5fbbff@quicinc.com>
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH RFC 3/8] drm/msm: adreno: add plumbing to generate
+ bandwidth vote table for GMU
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>,
+ Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+ Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Connor Abbott <cwabbott0@gmail.com>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
+References: <20241113-topic-sm8x50-gpu-bw-vote-v1-0-3b8d39737a9b@linaro.org>
+ <20241113-topic-sm8x50-gpu-bw-vote-v1-3-3b8d39737a9b@linaro.org>
+ <p4x7rodp2qpwfb3hljtbi36mxjdrt5jr3xhad4rebsldlfxart@cz23of57gvrd>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <p4x7rodp2qpwfb3hljtbi36mxjdrt5jr3xhad4rebsldlfxart@cz23of57gvrd>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 14, 2024 at 02:57:45PM +0800, quic_zijuhu wrote:
-> On 5/2/2024 10:13 PM, Johan Hovold wrote:
-> > On Thu, May 02, 2024 at 09:46:38PM +0800, quic_zijuhu wrote:
-> >> On 5/2/2024 9:25 PM, Johan Hovold wrote:
-
-> >>> Lenovo has made requests for X13s firmware from Qualcomm and pushed it
-> >>> to linux-firmware [1], but they have not yet been able to get Qualcomm
-> >>> to provide an NVM configuration file for Bluetooth (I think the problem
-> >>> may be finding the right person to talk to inside Qualcomm).
-> >>>
-> >>> So I was hoping maybe you could help us with this since the difference
-> >>> between 'hpnv21.bin' that you pushed to linux-firmware and what came
-> >>> with Windows appears to be really small (e.g. just a few bytes).
-> >>>
-> >> let me try to find out the right person who will push this task at next
-> >> monday.
-> >> there are some other internal procedures before we can push BT firmware
-> >> into linux-firmware.
+On 15/11/2024 08:20, Dmitry Baryshkov wrote:
+> On Wed, Nov 13, 2024 at 04:48:29PM +0100, Neil Armstrong wrote:
+>> The Adreno GMU Management Unit (GMU) can also scale DDR Bandwidth along
+>> the Frequency and Power Domain level, but by default we leave the
+>> OPP core scale the interconnect ddr path.
+>>
+>> In order to get the vote values to be used by the GPU Management
+>> Unit (GMU), we need to parse all the possible OPP Bandwidths and
+>> create a vote value to be send to the appropriate Bus Control
+>> Modules (BCMs) declared in the GPU info struct.
+>>
+>> The vote array will be used to dynamically generate the GMU bw_table
+>> sent during the GMU power-up.
+>>
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
+>>   drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 163 ++++++++++++++++++++++++++++++++++
+>>   drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  12 +++
+>>   drivers/gpu/drm/msm/adreno/a6xx_gpu.h |   1 +
+>>   3 files changed, 176 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+>> index 14db7376c712d19446b38152e480bd5a1e0a5198..504a7c5d5a9df4c787951f2ae3a69d566d205ad5 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+>> @@ -9,6 +9,7 @@
+>>   #include <linux/pm_domain.h>
+>>   #include <linux/pm_opp.h>
+>>   #include <soc/qcom/cmd-db.h>
+>> +#include <soc/qcom/tcs.h>
+>>   #include <drm/drm_gem.h>
+>>   
+>>   #include "a6xx_gpu.h"
+>> @@ -1287,6 +1288,119 @@ static int a6xx_gmu_memory_probe(struct a6xx_gmu *gmu)
+>>   	return 0;
+>>   }
+>>   
+>> +struct a6xx_bcm_data {
+>> +	u32 buswidth;
+>> +	unsigned int unit;
+>> +	unsigned int width;
 > 
-> have up-streamed 22 NVM files which come from WOS into linux-firmware as
-> shown by below link, both hpnv21g.b8c and hpnv21.b8c are also contained.
+> In bits?
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/commit/?id=77a11ffc5a0aaaadc870793d02f6c6781ee9f598
+>> +	unsigned int vcd;
 > 
-> (^^)(^^).
+> What is this?
 
-This is really good news.
+I'll also copy the icc-rpmh.h doc associated with those fields
 
-Thanks a lot for your help with this, Zijun.
+> 
+>> +	bool fixed;
+> 
+> What does it mean?
 
-Johan
+I took it from downstream, but it's the same as qcom_icc_bcm enable_mask instead here the mask depends on the platform and OPP, this is why I specified it in perfmode.
+
+> 
+>> +	unsigned int perfmode;
+>> +	unsigned int perfmode_bw;
+>> +};
+>> +
+>> +struct bcm_db {
+>> +	__le32 unit;
+>> +	__le16 width;
+>> +	u8 vcd;
+>> +	u8 reserved;
+>> +};
+>> +
+>> +static int a6xx_gmu_rpmh_get_bcm_data(const struct a6xx_bcm *bcm,
+>> +				      struct a6xx_bcm_data *bcm_data)
+> 
+> Is there a reason to copy CMD DB and BCM data to the interim
+> representation instead of using those directly?
+
+I guess I can keep bcm_db & a6xx_bcm as-is and do the _to_cpu() in-place.
+
+> 
+>> +{
+>> +	const struct bcm_db *data;
+>> +	size_t count;
+>> +
+>> +	data = cmd_db_read_aux_data(bcm->name, &count);
+>> +	if (IS_ERR(data))
+>> +		return PTR_ERR(data);
+>> +
+>> +	if (!count)
+>> +		return -EINVAL;
+>> +
+>> +	bcm_data->unit = le32_to_cpu(data->unit);
+>> +	bcm_data->width = le16_to_cpu(data->width);
+>> +	bcm_data->vcd = data->vcd;
+>> +	bcm_data->fixed = bcm->fixed;
+>> +	bcm_data->perfmode = bcm->perfmode;
+>> +	bcm_data->perfmode_bw = bcm->perfmode_bw;
+>> +	bcm_data->buswidth = bcm->buswidth;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void a6xx_gmu_rpmh_calc_bw_vote(struct a6xx_bcm_data *bcms,
+>> +				       int count, u32 bw, u32 *data)
+>> +{
+>> +	int i;
+>> +
+>> +	for (i = 0; i < count; i++) {
+>> +		bool valid = true;
+>> +		bool commit = false;
+>> +		u64 peak, y;
+>> +
+>> +		if (i == count - 1 || bcms[i].vcd != bcms[i + 1].vcd)
+>> +			commit = true;
+>> +
+>> +		if (bcms[i].fixed) {
+>> +			if (!bw)
+>> +				data[i] = BCM_TCS_CMD(commit, false, 0x0, 0x0);
+>> +			else
+>> +				data[i] = BCM_TCS_CMD(commit, true, 0x0,
+>> +					bw >= bcms[i].perfmode_bw ?
+>> +						bcms[i].perfmode : 0x0);
+>> +			continue;
+>> +		}
+>> +
+>> +		/* Multiple the bandwidth by the width of the connection */
+> 
+> ... and divide by the bus width. However it's not clear why you are
+> multiplying bandwidth (bits or bytes per second) with the width
+> (probably also bits?). Or is it not a width but the number of paths
+> between units?
+
+So this is basically the same as in bcm_agregate:
+https://elixir.bootlin.com/linux/v6.12-rc6/source/drivers/interconnect/qcom/bcm-voter.c#L91
+
+Just done slightly differently since we don't aggregate stuff but we want
+to set the bandwidth directly here from the GMU.
+
+> 
+>> +		peak = (u64)bw * bcms[i].width;
+>> +		do_div(peak, bcms[i].buswidth);
+>> +
+>> +		/* Input bandwidth value is in KBps */
+> 
+> Input or OPP / Interconnect?
+
+I don't see the point, it's the input of the function which directly comes from OPP which is in KBps
+
+> 
+>> +		y = peak * 1000ULL;
+>> +		do_div(y, bcms[i].unit);
+>> +
+>> +		/*
+>> +		 * If a bandwidth value was specified but the calculation ends
+>> +		 * rounding down to zero, set a minimum level
+>> +		 */
+>> +		if (bw && y == 0)
+>> +			y = 1;
+> 
+> Is it a real usecase or just a safety net? If the bandwidth ends up
+> being very low, maybe we should warn the users about it?
+
+Probably a safety net, perhaps we could warn instead
+
+> 
+>> +
+>> +		y = min_t(u64, y, BCM_TCS_CMD_VOTE_MASK);
+>> +		if (!y)
+>> +			valid = false;
+> 
+> This can probably be coupled with the previous condition.
+
+Yeah I should probably refactor it and just avoid doing the
+calculation if bw == 0.
+
+> 
+>> +
+>> +		data[i] = BCM_TCS_CMD(commit, valid, y, y);
+>> +	}
+>> +}
+>> +
+>> +static int a6xx_gmu_rpmh_bw_votes_init(const struct a6xx_info *info, struct a6xx_gmu *gmu)
+>> +{
+>> +	struct a6xx_bcm_data bcms[3];
+>> +	unsigned int bcm_count = 0;
+>> +	int ret, index;
+>> +
+>> +	/* Retrieve BCM data from cmd-db and merge with a6xx_info bcm table */
+>> +	for (index = 0; index < 3; index++) {
+> 
+> Magic number 3.
+> 
+>> +		if (!info->bcm[index].name)
+>> +			continue;
+>> +
+>> +		ret = a6xx_gmu_rpmh_get_bcm_data(&info->bcm[index], &bcms[index]);
+>> +		if (ret)
+>> +			return ret;
+>> +
+>> +		++bcm_count;
+>> +	}
+>> +
+>> +	/* Generate BCM votes values for each bandwidth & bcm */
+>> +	for (index = 0; index < gmu->nr_gpu_bws; index++)
+>> +		a6xx_gmu_rpmh_calc_bw_vote(bcms, bcm_count, gmu->gpu_bw_table[index],
+>> +					   gmu->gpu_bw_votes[index]);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   /* Return the 'arc-level' for the given frequency */
+>>   static unsigned int a6xx_gmu_get_arc_level(struct device *dev,
+>>   					   unsigned long freq)
+>> @@ -1390,12 +1504,15 @@ static int a6xx_gmu_rpmh_arc_votes_init(struct device *dev, u32 *votes,
+>>    * The GMU votes with the RPMh for itself and on behalf of the GPU but we need
+>>    * to construct the list of votes on the CPU and send it over. Query the RPMh
+>>    * voltage levels and build the votes
+>> + * The GMU can also vote for DDR interconnects, use the OPP bandwidth entries
+>> + * and BCM parameters to build the votes.
+>>    */
+>>   
+>>   static int a6xx_gmu_rpmh_votes_init(struct a6xx_gmu *gmu)
+>>   {
+>>   	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
+>>   	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
+>> +	const struct a6xx_info *info = adreno_gpu->info->a6xx;
+>>   	struct msm_gpu *gpu = &adreno_gpu->base;
+>>   	int ret;
+>>   
+>> @@ -1407,6 +1524,10 @@ static int a6xx_gmu_rpmh_votes_init(struct a6xx_gmu *gmu)
+>>   	ret |= a6xx_gmu_rpmh_arc_votes_init(gmu->dev, gmu->cx_arc_votes,
+>>   		gmu->gmu_freqs, gmu->nr_gmu_freqs, "cx.lvl");
+>>   
+>> +	/* Build the interconnect votes */
+>> +	if (adreno_gpu->info->quirks & ADRENO_QUIRK_GMU_BW_VOTE)
+>> +		ret |= a6xx_gmu_rpmh_bw_votes_init(info, gmu);
+>> +
+>>   	return ret;
+>>   }
+>>   
+>> @@ -1442,6 +1563,38 @@ static int a6xx_gmu_build_freq_table(struct device *dev, unsigned long *freqs,
+>>   	return index;
+>>   }
+>>   
+>> +static int a6xx_gmu_build_bw_table(struct device *dev, unsigned long *bandwidths,
+>> +		u32 size)
+>> +{
+>> +	int count = dev_pm_opp_get_opp_count(dev);
+>> +	struct dev_pm_opp *opp;
+>> +	int i, index = 0;
+>> +	unsigned int bandwidth = 1;
+>> +
+>> +	/*
+>> +	 * The OPP table doesn't contain the "off" bandwidth level so we need to
+>> +	 * add 1 to the table size to account for it
+>> +	 */
+>> +
+>> +	if (WARN(count + 1 > size,
+>> +		"The GMU bandwidth table is being truncated\n"))
+>> +		count = size - 1;
+>> +
+>> +	/* Set the "off" bandwidth */
+>> +	bandwidths[index++] = 0;
+>> +
+>> +	for (i = 0; i < count; i++) {
+>> +		opp = dev_pm_opp_find_bw_ceil(dev, &bandwidth, 0);
+>> +		if (IS_ERR(opp))
+>> +			break;
+>> +
+>> +		dev_pm_opp_put(opp);
+>> +		bandwidths[index++] = bandwidth++;
+>> +	}
+>> +
+>> +	return index;
+>> +}
+>> +
+>>   static int a6xx_gmu_pwrlevels_probe(struct a6xx_gmu *gmu)
+>>   {
+>>   	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
+>> @@ -1472,6 +1625,16 @@ static int a6xx_gmu_pwrlevels_probe(struct a6xx_gmu *gmu)
+>>   
+>>   	gmu->current_perf_index = gmu->nr_gpu_freqs - 1;
+>>   
+>> +	/*
+>> +	 * The GMU also handles GPU Interconnect Votes so build a list
+>> +	 * of DDR bandwidths from the GPU OPP table
+>> +	 */
+>> +	if (adreno_gpu->info->quirks & ADRENO_QUIRK_GMU_BW_VOTE)
+>> +		gmu->nr_gpu_bws = a6xx_gmu_build_bw_table(&gpu->pdev->dev,
+>> +			gmu->gpu_bw_table, ARRAY_SIZE(gmu->gpu_bw_table));
+>> +
+>> +	gmu->current_perf_index = gmu->nr_gpu_freqs - 1;
+>> +
+>>   	/* Build the list of RPMh votes that we'll send to the GMU */
+>>   	return a6xx_gmu_rpmh_votes_init(gmu);
+>>   }
+>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+>> index b4a79f88ccf45cfe651c86d2a9da39541c5772b3..95c632d8987a517f067c48c61c6c06b9a4f61fc0 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+>> @@ -19,6 +19,14 @@ struct a6xx_gmu_bo {
+>>   	u64 iova;
+>>   };
+>>   
+>> +struct a6xx_bcm {
+>> +	char *name;
+>> +	unsigned int buswidth;
+>> +	bool fixed;
+>> +	unsigned int perfmode;
+>> +	unsigned int perfmode_bw;
+>> +};
+>> +
+>>   /*
+>>    * These define the different GMU wake up options - these define how both the
+>>    * CPU and the GMU bring up the hardware
+>> @@ -82,6 +90,10 @@ struct a6xx_gmu {
+>>   	unsigned long gpu_freqs[16];
+>>   	u32 gx_arc_votes[16];
+>>   
+>> +	int nr_gpu_bws;
+>> +	unsigned long gpu_bw_table[16];
+>> +	u32 gpu_bw_votes[16][3];
+> 
+> Is it is the same magic 16 as we have few lines above or is this 16 a
+> different magic 16? And also 3 is a pure dark secret.
+
+It's the same magic 16, since we use the same OPPs, the 3 is the actual number of BCMs we currently use, I wonder sure define should go, including the magic 16.
+
+> 
+>> +
+>>   	int nr_gmu_freqs;
+>>   	unsigned long gmu_freqs[4];
+>>   	u32 cx_arc_votes[4];
+>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
+>> index 4aceffb6aae89c781facc2a6e4a82b20b341b6cb..d779d700120cbd974ee87a67214739b1d85156e2 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
+>> @@ -44,6 +44,7 @@ struct a6xx_info {
+>>   	u32 gmu_chipid;
+>>   	u32 gmu_cgc_mode;
+>>   	u32 prim_fifo_threshold;
+>> +	const struct a6xx_bcm bcm[3];
+>>   };
+>>   
+>>   struct a6xx_gpu {
+>>
+>> -- 
+>> 2.34.1
+>>
+> 
+
 
