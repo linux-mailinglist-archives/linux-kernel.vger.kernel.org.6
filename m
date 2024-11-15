@@ -1,170 +1,137 @@
-Return-Path: <linux-kernel+bounces-411125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53CFE9CF367
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:56:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E1DE9CF362
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:56:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13CC628A877
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:56:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8216285EB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F061E0DEC;
-	Fri, 15 Nov 2024 17:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C701D61A3;
+	Fri, 15 Nov 2024 17:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hnid0Tz4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LM1NEdwj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437A01DD0C7;
-	Fri, 15 Nov 2024 17:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BCB1D63DA
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731693360; cv=none; b=DewSnIcUsIwCw5cAfZ6JtdTCuwcJQ3Xs5e+6dlEZaPwKGa8icuSq01s8E3xvhudStE0W62OraZiHb1Vo5Ske3A2pn6XpGiQhwf9d4dx1NgbcHEOZ1vzDxVJz4e5Zd6JhTUaq7knOJrUUXKwO+2Jpqaw95/FQDsAnYyvcZsCY9pI=
+	t=1731693356; cv=none; b=f3feP10CCwbsIzTQ1XixvKJlCsCL3iWRxdzlZWff7ndex/u1zBaC0aTvzv9nWpPE6u8squ/HHg1YyCNzUIeXrq4hU2WdPiq8D78exDPOC7cU4DvPkzGxohqKEN78PxIo894UwfYb7zWjmz8+eiTno669kYHrMLxSCL9EbB2FHrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731693360; c=relaxed/simple;
-	bh=c3U4vj1tROLjdAuqAJZu2zj7KvchIp+cFt3x1V4k2ao=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OFvv5efIS4gfoI/zdIdahm7XbQRB9vjNCG3XLYyMu3A0YCYFB22npOWAdISBKCQsimz1RJeoytkC3hHVY6V/1KLtypI1qJYPfFuYyHq0tsVy0WLtKwMlTAMrHAA91Vv76fSocnUSE9rgbpmgobv2k4EuV5R2m9UOoX2h2HzrSo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hnid0Tz4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFCFEC4CED7;
-	Fri, 15 Nov 2024 17:55:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731693359;
-	bh=c3U4vj1tROLjdAuqAJZu2zj7KvchIp+cFt3x1V4k2ao=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hnid0Tz4VjJqP6vBaw57fFeoLy18e5WwwDrI6xpkqtgxZHQXYtsivtlilEMqCLkP3
-	 HiCUxoNWmOfIf6xRAhP3c1oCPA0/rzbesUoJu3BRms5qdDhMKTClJdnbHzUGch2beR
-	 mAzyvYI8UmpmBr7Kv+hzwN5aN7TqsotIuFYNO0JlXr+KG62EFp44eAcgl+LYrnhmJY
-	 fZMvSpqPBIMJmRYAFPq5vR5lCaOkMhvW9dTdhYZM8spkWyuiZ58W5j9G6fZr84kq4a
-	 l5ZJrS2xGD8xzAmT4u5nKg7cwX/K6LQMlowb2Ti7YaMb+4DYMCLoxnyJW4SPxaJIOr
-	 v75U1nrR3wn8g==
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a3c00f2c75so7811765ab.2;
-        Fri, 15 Nov 2024 09:55:59 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUnNEvCtYECVPROSzz/hPpGIgG6ihKLwR+VJYhz6D7zsjiK+4Svc8Jt0kwIe8XFpTW8NkTjcvHqQElcqA==@vger.kernel.org, AJvYcCWRvwrElG0PaxMLzjJJIKIxK+bK69qr7sJNo3eEux6wJwIEVuFyo2KjjHxfJKxIC9mQBrS0zE/+JWi3HgM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4HdWt1Zsv8Ymab0HA1OlpvAvwffTduodz3g7MzdT0HE9OTtNH
-	ECFRsanYelEevW1UEmF7doszW6ejGHm01b4+YUj37Lbi2R2H70YdKq4KAvDvPZMOMJy9wlXy13Z
-	2+JEkLbNB6pmF3KhF5jJHVtXRwZk=
-X-Google-Smtp-Source: AGHT+IHGJmdnpKxhumbzS9QtvOcZ0iqM1DxeHPyIqCnLp5yzlaq0b6dxEWz3J8U2e4EBkL+PdFRHWNoA1ZSl3OGCV2g=
-X-Received: by 2002:a05:6e02:3202:b0:3a7:20d5:8157 with SMTP id
- e9e14a558f8ab-3a7480435bbmr34011075ab.11.1731693359044; Fri, 15 Nov 2024
- 09:55:59 -0800 (PST)
+	s=arc-20240116; t=1731693356; c=relaxed/simple;
+	bh=1UudV+Y/O2DT7CczE3lBShqjb8KX6ZN8X1AlHzhl9Bs=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=aXLNQ1O8v4iBHdZrMr3H+vEwzfzj7itKTE8WA8pHk35x0jcRDwlXBV44OyaT7nzKa1Y2x6lthQvrWKxf74LmQynvoZLug6ZtEtylJZHi0wnSMUzSzV6IrLXrPCUfZH+MPKidND6Zqv9x7fc2ptXqdbAaAia7qOPDVhDFMJ1czzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LM1NEdwj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731693353;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PZ9g+prF726DXSyYrdVv/0vVba01Lxcn9IJr7aD26Os=;
+	b=LM1NEdwjotbROG9W66wAkAY2BUEcObCe3O2NyB4rhDbYqfY0H7O2rrxFmvSUrLCro24mtZ
+	aXfBYm+oyokGZUAjhcsVClk3pVhZionQsLXJjAozAb9L42CeqUDhKnvlWjXGBWXOhW6dyz
+	eeOSDzBSxOtEdE8DZnibiJSBUcT1VbU=
+Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
+ [209.85.219.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-639-kihfwhFHPeiwmOUJPT5KSg-1; Fri, 15 Nov 2024 12:55:51 -0500
+X-MC-Unique: kihfwhFHPeiwmOUJPT5KSg-1
+X-Mimecast-MFC-AGG-ID: kihfwhFHPeiwmOUJPT5KSg
+Received: by mail-yb1-f200.google.com with SMTP id 3f1490d57ef6-e293150c2c6so1607855276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:55:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731693351; x=1732298151;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PZ9g+prF726DXSyYrdVv/0vVba01Lxcn9IJr7aD26Os=;
+        b=T48NymOrpDvvLTWWR+dzaRhoPQAmkFmSYeFMWqQ57ky08WR1yE+MUCLAWWcMpMV3g6
+         cBGfospBAb3thQn5GElhdAVE8QyBHDbn1Wqc4D1vFhXc6/nIJvoxIgGaouUXHewGcsuc
+         Z7G/ZqW91iTuZEmQt2vB2RsJ4YTx0WJ/uWUxPQtyzwnEzIPutuY3YfeLbTKK9oYmHxRG
+         FqxYtJiLP34AiZz9d4X8Q0nrXVCJvm7h60UHpej8f1a6sdAPTiga9WkM0MBOeFsSinWH
+         39s8VbsCye5iaOyONTQDGUCXG57ef0IIOephcwxyX5+CDZdUBp9XEEgfOj6sCTyhNDY2
+         iikA==
+X-Forwarded-Encrypted: i=1; AJvYcCXJ+9PxS+UCqR4Y/CBj8bScP7Jn6flcj3zMUQBSJH7ptj6w0q/sSOVMLlw95+3hRnNufOWkRamBhuDpzNI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbXc3QcJBD7ATekbKAttNHvniEEoywjdzEzL9HGvGMYAENN4Tw
+	0YXFP94WB36GYWT4QTo5S4F8HIBjy6ktS3GD/IFMfCnGTmr9H4afoAC+WPRDgWBJc8Gq0D6+L2l
+	SQhS47t9zSmu34aVO9nvyEYGW5uSef3KgSRvINNrQYw7fmPxpEGLw4vm0mFECdQ==
+X-Received: by 2002:a05:6902:c09:b0:e2b:ad82:e592 with SMTP id 3f1490d57ef6-e382639f2f9mr4089038276.36.1731693351360;
+        Fri, 15 Nov 2024 09:55:51 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG+1QWTBBsRsnWD7xEyBA7Byqtsr7Ze3dfkac9aauUWeB34a97OMqiAOUbZh5+RbEF8hgYARw==
+X-Received: by 2002:a05:6902:c09:b0:e2b:ad82:e592 with SMTP id 3f1490d57ef6-e382639f2f9mr4089016276.36.1731693351000;
+        Fri, 15 Nov 2024 09:55:51 -0800 (PST)
+Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3f5b4f2aasm17482756d6.104.2024.11.15.09.55.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 09:55:50 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <1515c439-32ef-4aee-9f69-c5af1fca79e3@redhat.com>
+Date: Fri, 15 Nov 2024 12:55:49 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0b579808e848171fc64e04f0629e24735d034d32.camel@sapience.com>
-In-Reply-To: <0b579808e848171fc64e04f0629e24735d034d32.camel@sapience.com>
-From: Song Liu <song@kernel.org>
-Date: Fri, 15 Nov 2024 09:55:47 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW4kNYbcXERCQFqO-r8Q_rCLxrkQPt777cB_8TwyBfy8FA@mail.gmail.com>
-Message-ID: <CAPhsuW4kNYbcXERCQFqO-r8Q_rCLxrkQPt777cB_8TwyBfy8FA@mail.gmail.com>
-Subject: Re: md-raid 6.11.8 page fault oops
-To: Genes Lists <lists@sapience.com>, dm-devel@lists.linux.dev, 
-	Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
-	Mikulas Patocka <mpatocka@redhat.com>
-Cc: yukuai3@huawei.com, linux-raid@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux@leemhuis.info
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cgroup/cpuset: Disable cpuset_cpumask_can_shrink() test
+ if not load balancing
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, cgroups@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Phil Auld <pauld@redhat.com>
+References: <20241114181915.142894-1-longman@redhat.com>
+ <ZzcoZj90XeYj3TzG@jlelli-thinkpadt14gen4.remote.csb>
+Content-Language: en-US
+In-Reply-To: <ZzcoZj90XeYj3TzG@jlelli-thinkpadt14gen4.remote.csb>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-+ dm folks
+On 11/15/24 5:54 AM, Juri Lelli wrote:
+> Hi Waiman,
+>
+> On 14/11/24 13:19, Waiman Long wrote:
+>> With some recent proposed changes [1] in the deadline server code,
+>> it has caused a test failure in test_cpuset_prs.sh when a change
+>> is being made to an isolated partition. This is due to failing
+>> the cpuset_cpumask_can_shrink() check for SCHED_DEADLINE tasks at
+>> validate_change().
+> What sort of change is being made to that isolated partition? Which test
+> is failing from the test_cpuset_prs.sh collection? Asking because I now
+> see "All tests PASSED" running that locally (with all my 3 patches on
+> top of cgroup/for-6.13 w/o this last patch from you).
 
-It appears the crash happens in dm.c:clone_endio. Commit
-aaa53168cbcc486ca1927faac00bd99e81d4ff04 made some
-changes to clone_endio, but I haven't looked into it.
+The failing test isn't an isolated partition. The actual test failure is
 
-Thanks,
-Song
+Test TEST_MATRIX[62] failed result check!
+C0-4:X2-4:S+ C1-4:X2-4:S+:P2 C2-4:X4:P1 . . X5 . . 0 
+A1:0-4,A2:1-4,A3:2-4 A1:P0,A2:P-2,A3:P-1
 
-On Fri, Nov 15, 2024 at 4:12=E2=80=AFAM Genes Lists <lists@sapience.com> wr=
-ote:
->
-> md-raid crashed with kernel NULL pointer deref on stable 6.11.8.
->
-> Happened with raid6 while rsync was writing (data was pulled over
-> network).
->
-> This rsync happens twice every day without a problem. This was the
-> second run after booting 6.11.8, so will see if/when it happens again -
-> and if frequent enough to make a bisect possible.
->
-> Nonetheless, reporting now in case it's helpful.
->
-> Full dmesg attached but the interesting part is:
->
-> [33827.216164] BUG: kernel NULL pointer dereference, address:
-> 0000000000000050
-> [33827.216183] #PF: supervisor read access in kernel mode
-> [33827.216193] #PF: error_code(0x0000) - not-present page
-> [33827.216203] PGD 0 P4D 0
-> [33827.216211] Oops: Oops: 0000 [#1] PREEMPT SMP PTI
-> [33827.216221] CPU: 4 UID: 0 PID: 793 Comm: md127_raid6 Not tainted
-> 6.11.8-stable-1 #21 1400000003000000474e5500ae13c727d476f9ab
-> [33827.216240] Hardware name: To Be Filled By O.E.M. To Be Filled By
-> O.E.M./Z370 Extreme4, BIOS P4.20 10/31/2019
-> [33827.216254] RIP: 0010:clone_endio+0x43/0x1f0 [dm_mod]
-> [33827.216279] Code: 4c 8b 77 e8 65 48 8b 1c 25 28 00 00 00 48 89 5c 24
-> 08 48 89 fb 88 44 24 07 4d 85 f6 0f 84 11 01 00 00 49 8b 56 08 4c 8b 6b
-> e0 <48> 8b 6a 50 4d 8b 65 38 3c 05 0f 84 0b 01 00 00 66 90 48 85 ed 74
-> [33827.216304] RSP: 0018:ffffb9610101bb40 EFLAGS: 00010282
-> [33827.216315] RAX: 0000000000000000 RBX: ffff9b15b8c5c598 RCX:
-> 000000000015000c
-> [33827.216326] RDX: 0000000000000000 RSI: ffffec17e1944200 RDI:
-> ffff9b15b8c5c598
-> [33827.216338] RBP: 0000000000000000 R08: ffff9b1825108c00 R09:
-> 000000000015000c
-> [33827.216349] R10: 000000000015000c R11: 00000000ffffffff R12:
-> ffff9b10da026000
-> [33827.216360] R13: ffff9b15b8c5c520 R14: ffff9b10ca024440 R15:
-> ffff9b1474cb33c0
-> [33827.216372] FS:  0000000000000000(0000) GS:ffff9b185ee00000(0000)
-> knlGS:0000000000000000
-> [33827.216385] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [33827.216394] CR2: 0000000000000050 CR3: 00000001f4e22005 CR4:
-> 00000000003706f0
-> [33827.216406] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
-> 0000000000000000
-> [33827.216417] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
-> 0000000000000400
-> [33827.216429] Call Trace:
-> [33827.216435]  <TASK>
-> [33827.216442]  ? __die_body.cold+0x19/0x27
-> [33827.216453]  ? page_fault_oops+0x15a/0x2d0
-> [33827.216465]  ? exc_page_fault+0x7e/0x180
-> [33827.216475]  ? asm_exc_page_fault+0x26/0x30
-> [33827.216486]  ? clone_endio+0x43/0x1f0 [dm_mod
-> 1400000003000000474e5500e90ca42f094c5280]
-> [33827.216510]  clone_endio+0x120/0x1f0 [dm_mod
-> 1400000003000000474e5500e90ca42f094c5280]
-> [33827.216533]  md_end_clone_io+0x42/0xa0 [md_mod
-> 1400000003000000474e55004ac7ec7b1ac1c22c]
-> [33827.216559]  handle_stripe_clean_event+0x1e6/0x430 [raid456
-> 1400000003000000474e550080acde909728c7a9]
-> [33827.216583]  handle_stripe+0x9a3/0x1c00 [raid456
-> 1400000003000000474e550080acde909728c7a9]
-> [33827.216606]  handle_active_stripes.isra.0+0x381/0x5b0 [raid456
-> 1400000003000000474e550080acde909728c7a9]
-> [33827.216625]  ? psi_task_switch+0xb7/0x200
-> [33827.216637]  raid5d+0x450/0x670 [raid456
-> 1400000003000000474e550080acde909728c7a9]
-> [33827.216655]  ? lock_timer_base+0x76/0xa0
-> [33827.216666]  md_thread+0xa2/0x190 [md_mod
-> 1400000003000000474e55004ac7ec7b1ac1c22c]
-> [33827.216689]  ? __pfx_autoremove_wake_function+0x10/0x10
-> [33827.216701]  ? __pfx_md_thread+0x10/0x10 [md_mod
-> 1400000003000000474e55004ac7ec7b1ac1c22c]
-> [33827.216723]  kthread+0xcf/0x100
-> [33827.216731]  ? __pfx_kthread+0x10/0x10
-> [33827.216740]  ret_from_fork+0x31/0x50
-> [33827.216749]  ? __pfx_kthread+0x10/0x10
-> [33827.216757]  ret_from_fork_asm+0x1a/0x30
-> [33827.216769]  </TASK>
->
-> --
-> Gene
->
+In this particular case, cgroup A3 has the following setting before the 
+X5 operation.
+
+A1/A2/A3/cpuset.cpus: 2-4
+A1/A2/A3/cpuset.cpus.exclusive: 4
+A1/A2/A3/cpuset.cpus.effective: 4
+A1/A2/A3/cpuset.cpus.exclusive.effective: 4
+A1/A2/A3/cpuset.cpus.partition: root
+
+I believe this is fixed by my other change in the commit to change 
+arguments of cpuset_cpumask_can_shrink() to use effective_cpus instead 
+as cpus_allowed may not represent what CPUs are currently used in the 
+partition.
+
+Cheers,
+Longman
+
 
