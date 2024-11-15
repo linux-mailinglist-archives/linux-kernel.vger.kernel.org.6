@@ -1,209 +1,266 @@
-Return-Path: <linux-kernel+bounces-411163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 931899CF3FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:32:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60C709CF468
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:58:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52688281074
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:32:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BD66B2E74F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3972F157A5C;
-	Fri, 15 Nov 2024 18:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2016183088;
+	Fri, 15 Nov 2024 18:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Su2F9OOx"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U9aAu6Ul"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FADB183088;
-	Fri, 15 Nov 2024 18:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F5017C219
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 18:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731695492; cv=none; b=AKGDvei2XPhfkl4cfiBHXTBJU1YcARRn71UkFJBvH5h03HD65EwtK7HmTgZkyuRzXRMcg/cCBpERLTiJ/oyw/WqGn7jYqjzrZ2iBeMWVRjU5Gy+HM5zkRmhl5s/zrQYwd0GHmy1i+gQu4Tkde7+63FoPvJlIBCwEmD5LPM1GoNs=
+	t=1731695651; cv=none; b=ngQJeFm2Z4p8FV7TH+sTZ2s0+Uh+0Y9PXB8mobbYHBLZiQGNnslLpOZc2l7/S8MtZcVeuawuJvrJNQzU5sxec8kPeb57ehy0Gy9z3CU9n7n0VbGlrxr1YbkmGfjJPw1HnOLGVGbjKTHdr2kaQrhtvgooo1Eyt1+mKX/fryRv9XQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731695492; c=relaxed/simple;
-	bh=T7owxCrmzL9B2p4ropXht/ugb0EmftLWvXL/zuJ4ZCk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bpras6NA04WBM3YogWQ5BkeA2O7+qCths2q94D9SXscLwOqWtLOev2At+5ohu4HCa7Cbcmi71bHYPxCRLmR57f0t5rbeEvvrssoXNYISzCvbYcBqEVPyUgaYEOxjitQsBzvio39TPJVr5ZbBHn/9YaYSyRDH457CLnKLs2haAZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Su2F9OOx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AFHoTLO018983;
-	Fri, 15 Nov 2024 18:31:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	eC/JeM9/eX7GjpRqMmFKay7Cio3ltqUn4yMJhvyMtqM=; b=Su2F9OOx0tB27Lvz
-	J9zb/XXsr6/zEWz9rcbUcH+Al4pTlha96ay7PO8Y3v2TkKSzss/F/Q1pLEKei5ZA
-	f7ItdbHxzAGrlxFErFtvzyLzazISbnoC7LHygRJjBtdxIwnR2Y9lZ9QdX3vX0GFV
-	lZFep/buT5ApKq2ThiO0TOJwL/uBNMJ2SxZqtlXnmhqYosqGWzX++QGXYlnfHxHO
-	MyciJWFl34FIyytCSFJHwTZuDDkHTTIFv1mxLKrfdSnlMoF7RlpIgt9/uQekPGZJ
-	PsfUshICXbZnw2mii0HAkdQcIiAqnMVbxMiSJzsEyodeDAcPZi8VCu9ZQJe+osOu
-	OW6Jfg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42wex8w11u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 18:31:20 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AFIVJ2X004593
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 18:31:19 GMT
-Received: from [10.110.68.79] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 15 Nov
- 2024 10:31:18 -0800
-Message-ID: <6e9db73e-0441-453c-978c-961f308f8a11@quicinc.com>
-Date: Fri, 15 Nov 2024 10:31:17 -0800
+	s=arc-20240116; t=1731695651; c=relaxed/simple;
+	bh=3h5kUMvphD9EcDhaC9fPuRm5yVEsbmXmzQxGBLAf1e4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ywd2YaWrKe6ii3hGrf3NHrIfv1+l21sc4Ea2WH6zLwkIop8uFUNSNPr7THovfZuLo+RAXo7dXBbt1fSUITgXC5+o/B9MDzMjOqfKgEwevbzFbR4IVTtP9BVPQcKeWtJzNUbugElcysPl25J7LlsQqFo0uifxmYo0KVFSp5rHy6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U9aAu6Ul; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e79f73aaeso1678437b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:34:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731695650; x=1732300450; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5iRzdScLNs2sJWthnnu9cg8AR50zZitK+3FhL3wS9Gk=;
+        b=U9aAu6UlGOYNdeiSe10hI6r/N4+gE4v+etBIdxYUTTxqWJsdgHaCMK9vZ8L47f6thm
+         Z3/0WCy7BDibxutC8ON/UDlKb8GvLYRSc5eyCYM1w/LQtVEb/fLV01Bebn/zEnf6w7j7
+         N3dBnDQpWtbcU5B5UvW5wpxmvgOE3o6t4nAyak8g+H/GUxbJDEYb1yKtg1C9I42bgZ7j
+         WXUxp+IghTvuLB4jtdoJUUYv2y7AEG9e1owqhQrQYpZste45nXvd65BKIh7/r0q7rYAF
+         wlZK/l5aSU1tAAo6wkmyebeJS+GrXjEsML5ssuayRcPP+UlbFaCNXT6MRewJhst/+jAG
+         0eHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731695650; x=1732300450;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5iRzdScLNs2sJWthnnu9cg8AR50zZitK+3FhL3wS9Gk=;
+        b=NjMfCPoVpM3GECtbXflzUT/xoZO15RYNwgNEhzLYDMz5Fjum+VCjzPn4026w0gTxkf
+         ERIdIfIDy/wYm2QqQBj8sW6WQNr1u8yCvc2+hJkBm/Mg1RSnbzsAZRaqLjDxAVNON9R8
+         R5vCOs6vCMulcMhBwLKXTP68NyDsgnUF664hWDAE9HoVCuaIQaC7pZ3qi7T4LG1uT3l9
+         6HK9vLngXV/N6/dJboiueeBCLC+eNiQ6JhqBGkf+d2/GfjfG9OWTq/6Q5IGxPlUQ3fku
+         bP+MFY4+RuaT70GjBIbRSjWdddBErYeNUoG+B8ALBhSqHrQjxESKMAwqBS3AylVpKgT7
+         1rZA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1dym9mAGtaE1VeFwI9F7FEPQa9Ivd60MTvS6EHqRWffTNqfogISKcE5kvowKQQWPCmedibr+gePRF/i0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9P7BxI5Dn4aQ4eH4RlVai/QoMacMaCTI8orHrluup5MwNF7zK
+	o66z08STfSv+oDeh6EwgzmzaCfoazgYMC/Gr8QXoUUzbxNjhRo+ot+RtgooFFqlLRDfKK2ADXGV
+	drjGxPCgo/guU/LbxnN1D7fUUCOa+mQwtwYRL
+X-Google-Smtp-Source: AGHT+IEH27SSGgcQkgj+0KAZtxEVpGt31YF9/pVru611lrbV81qCn04TUZu4o+aVejRR6yFwkAl6JtXd7N6MQGf4nNA=
+X-Received: by 2002:a05:6a00:3e12:b0:71e:7cb2:57e7 with SMTP id
+ d2e1a72fcca58-72476b96c11mr5186093b3a.10.1731695649277; Fri, 15 Nov 2024
+ 10:34:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/4] Add Qualcomm SA8255p based firmware managed PCIe
- root complex
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC: <jingoohan1@gmail.com>, <will@kernel.org>, <lpieralisi@kernel.org>,
-        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
-        <krzk@kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_krichai@quicinc.com>
-References: <20241106221341.2218416-1-quic_mrana@quicinc.com>
- <20241115112802.66xoxj4z5wsg4idl@thinkpad>
-Content-Language: en-US
-From: Mayank Rana <quic_mrana@quicinc.com>
-In-Reply-To: <20241115112802.66xoxj4z5wsg4idl@thinkpad>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Fq6JurJ4csMT-KotEN90S8nT27D7wtg9
-X-Proofpoint-ORIG-GUID: Fq6JurJ4csMT-KotEN90S8nT27D7wtg9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- phishscore=0 bulkscore=0 mlxlogscore=946 lowpriorityscore=0 suspectscore=0
- priorityscore=1501 malwarescore=0 spamscore=0 clxscore=1015 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411150156
+References: <20241114220921.2529905-1-saravanak@google.com>
+ <20241114220921.2529905-6-saravanak@google.com> <CAKfTPtDYdFQoFjF8zXxXEEcx3frXoSSKxnPonQ6R8eEAJWkVWQ@mail.gmail.com>
+In-Reply-To: <CAKfTPtDYdFQoFjF8zXxXEEcx3frXoSSKxnPonQ6R8eEAJWkVWQ@mail.gmail.com>
+From: Saravana Kannan <saravanak@google.com>
+Date: Fri, 15 Nov 2024 10:33:32 -0800
+Message-ID: <CAGETcx9d0DuxHyuvH4e3znHUdmxMCjih8NWSabjqDqJ+TXmduQ@mail.gmail.com>
+Subject: Re: [PATCH v1 5/5] PM: sleep: Spread out async kworker threads during
+ dpm_resume*() phases
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Marek Vasut <marex@denx.de>, 
+	Bird@google.com, Tim <Tim.Bird@sony.com>, kernel-team@android.com, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Nov 15, 2024 at 8:13=E2=80=AFAM Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
+>
+> On Thu, 14 Nov 2024 at 23:09, Saravana Kannan <saravanak@google.com> wrot=
+e:
+> >
+> > As of today, the scheduler doesn't spread out all the kworker threads
+> > across all the available CPUs during suspend/resume. This causes
+> > significant resume latency during the dpm_resume*() phases.
+> >
+> > System resume latency is a very user-visible event. Reducing the
+> > latency is more important than trying to be energy aware during that
+> > period.
+> >
+> > Since there are no userspace processes running during this time and
+> > this is a very short time window, we can simply disable EAS during
+> > resume so that the parallel resume of the devices is spread across all
+> > the CPUs.
+> >
+> > On a Pixel 6, averaging over 100 suspend/resume cycles, the new logic
+> > plus disabling EAS for resume yields significant improvements:
+> > +---------------------------+-----------+------------+-----------------=
+-+
+> > | Phase                     | Old full sync | New full async | % change=
+ |
+> > |                           |               | + EAS disabled |         =
+ |
+> > +---------------------------+-----------+------------+-----------------=
+-+
+> > | Total dpm_suspend*() time |        107 ms |          62 ms |     -42%=
+ |
+> > +---------------------------+-----------+------------+-----------------=
+-+
+> > | Total dpm_resume*() time  |         75 ms |          61 ms |     -19%=
+ |
+> > +---------------------------+-----------+------------+-----------------=
+-+
+> > | Sum                       |        182 ms |         123 ms |     -32%=
+ |
+> > +---------------------------+-----------+------------+-----------------=
+-+
+>
+> in cover letter you have figures for
+>  - Old full sync
+>  - New full async
+>  - New full async  + EAS disabled
+>
+> you should better use the figures for  New full async vs New full
+> async  + EAS disabled to show EAS disabled impact
 
+I do give those numbers in the commit text of each patch making the changes=
+.
 
-On 11/15/2024 3:28 AM, Manivannan Sadhasivam wrote:
-> On Wed, Nov 06, 2024 at 02:13:37PM -0800, Mayank Rana wrote:
->> Based on received feedback, this patch series adds support with existing
->> Linux qcom-pcie.c driver to get PCIe host root complex functionality on
->> Qualcomm SA8255P auto platform.
->>
->> 1. Interface to allow requesting firmware to manage system resources and
->> performing PCIe Link up (devicetree binding in terms of power domain and
->> runtime PM APIs is used in driver)
->>
->> 2. SA8255P is using Synopsys Designware PCIe controller which supports MSI
->> controller. Using existing MSI controller based functionality by exporting
->> important pcie dwc core driver based MSI APIs, and using those from
->> pcie-qcom.c driver.
->>
->> Below architecture is used on Qualcomm SA8255P auto platform to get ECAM
->> compliant PCIe controller based functionality. Here firmware VM based PCIe
->> driver takes care of resource management and performing PCIe link related
->> handling (D0 and D3cold). Linux pcie-qcom.c driver uses power domain to
->> request firmware VM to perform these operations using SCMI interface.
->> --------------------
->>
->>
->>                                     ┌────────────────────────┐
->>                                     │                        │
->>    ┌──────────────────────┐         │     SHARED MEMORY      │            ┌──────────────────────────┐
->>    │     Firmware VM      │         │                        │            │         Linux VM         │
->>    │ ┌─────────┐          │         │                        │            │    ┌────────────────┐    │
->>    │ │ Drivers │ ┌──────┐ │         │                        │            │    │   PCIE Qcom    │    │
->>    │ │ PCIE PHY◄─┤      │ │         │   ┌────────────────┐   │            │    │    driver      │    │
->>    │ │         │ │ SCMI │ │         │   │                │   │            │    │                │    │
->>    │ │PCIE CTL │ │      │ ├─────────┼───►    PCIE        ◄───┼─────┐      │    └──┬──────────▲──┘    │
->>    │ │         ├─►Server│ │         │   │    SHMEM       │   │     │      │       │          │       │
->>    │ │Clk, Vreg│ │      │ │         │   │                │   │     │      │    ┌──▼──────────┴──┐    │
->>    │ │GPIO,GDSC│ └─▲──┬─┘ │         │   └────────────────┘   │     └──────┼────┤PCIE SCMI Inst  │    │
->>    │ └─────────┘   │  │   │         │                        │            │    └──▲──────────┬──┘    │
->>    │               │  │   │         │                        │            │       │          │       │
->>    └───────────────┼──┼───┘         │                        │            └───────┼──────────┼───────┘
->>                    │  │             │                        │                    │          │
->>                    │  │             └────────────────────────┘                    │          │
->>                    │  │                                                           │          │
->>                    │  │                                                           │          │
->>                    │  │                                                           │          │
->>                    │  │                                                           │IRQ       │HVC
->>                IRQ │  │HVC                                                        │          │
->>                    │  │                                                           │          │
->>                    │  │                                                           │          │
->>                    │  │                                                           │          │
->> ┌─────────────────┴──▼───────────────────────────────────────────────────────────┴──────────▼──────────────┐
->> │                                                                                                          │
->> │                                                                                                          │
->> │                                      HYPERVISOR                                                          │
->> │                                                                                                          │
->> │                                                                                                          │
->> │                                                                                                          │
->> └──────────────────────────────────────────────────────────────────────────────────────────────────────────┘
->>                                                                                                              
->>    ┌─────────────┐    ┌─────────────┐  ┌──────────┐   ┌───────────┐   ┌─────────────┐  ┌────────────┐
->>    │             │    │             │  │          │   │           │   │  PCIE       │  │   PCIE     │
->>    │   CLOCK     │    │   REGULATOR │  │   GPIO   │   │   GDSC    │   │  PHY        │  │ controller │
->>    └─────────────┘    └─────────────┘  └──────────┘   └───────────┘   └─────────────┘  └────────────┘
->>                                                                                                              
-> 
-> Thanks a lot for working on this Mayank! This version looks good to me. I've
-> left some comments, nothing alarming though.
-Thanks for reviewing change. I would address those in next patchset.
+Patch 4 commit text shows how it's improving things compared to the
+older logic full sync (this is the baseline) - resume is 1% faster.
+Patch 5 commit text shows you how disabling EAS is improving numbers
+compared to baseline - resume 19% faster.
 
-> But I do want to hold up this series until we finalize the SCMI based design.
-ok. I want to send these changes which are prepared based on previously 
-provided feedback, to see if we have any major concern here in terms of 
-getting functionality.
+So, yeah, all the numbers are there in one of these emails. Patch 5
+(which is the only one touching EAS) is the one that has the
+comparison you are asking for.
 
-Regards,
-Mayank
-> - Mani
-> 
->> ----------
->> Changes in V3:
->> - Drop usage of PCIE host generic driver usage, and splitting of MSI functionality
->> - Modified existing pcie-qcom.c driver to add support for getting ECAM compliant and firmware managed
->> PCIe root complex functionality
->> Link to v2: https://lore.kernel.org/linux-arm-kernel/925d1eca-975f-4eec-bdf8-ca07a892361a@quicinc.com/T/
->>
->> Changes in V2:
->> - Drop new PCIe Qcom ECAM driver, and use existing PCIe designware based MSI functionality
->> - Add power domain based functionality within existing ECAM driver
->> Link to v1: https://lore.kernel.org/all/d10199df-5fb3-407b-b404-a0a4d067341f@quicinc.com/T/
->>
->> Tested:
->> - Validated NVME functionality with PCIe0 on SA8255P-RIDE platform
->>
->> Mayank Rana (3):
->>    PCI: dwc: Export dwc MSI controller related APIs
->>    PCI: qcom: Add firmware managed ECAM compliant PCIe root complex
->>      functionality
->>    dt-bindings: PCI: qcom,pcie-sa8255p: Document ECAM compliant PCIe root
->>      complex
->>
->>   .../devicetree/bindings/pci/qcom,pcie-sa8255p.yaml | 100 +++++++++++++++++++++
->>   drivers/pci/controller/dwc/Kconfig                 |   1 +
->>   drivers/pci/controller/dwc/pcie-designware-host.c  |  38 ++++----
->>   drivers/pci/controller/dwc/pcie-designware.h       |  14 +++
->>   drivers/pci/controller/dwc/pcie-qcom.c             |  69 ++++++++++++--
->>   5 files changed, 199 insertions(+), 23 deletions(-)
->>   create mode 100644 Documentation/devicetree/bindings/pci/qcom,pcie-sa8255p.yaml
->>
->> -- 
->> 2.7.4
->>
-> 
+> I would be interested to get figures about the impact of disabling it
+> during full suspend sequence as I'm not convince that it's worth the
+> complexity especially with fix OPP during suspend
+
+1. Device suspend actually got worse by 5ms or so. I already provided that.
+
+2. As I said in the Patch 5, suspend is more about reducing the energy
+going into suspend. It's a balance of how quick you can be to how much
+power you use to be quick. So, disabling EAS across all of
+suspend/resume will have a huge impact on power because userspace is
+still running, there are a ton of threads and userspace could get
+preempted between disabling suspend and kicking off suspend. Lots of
+obvious power concerns overall.
+
+Thanks,
+Saravana
+
+>
+> >
+> > Signed-off-by: Saravana Kannan <saravanak@google.com>
+> > ---
+> >  kernel/power/suspend.c  | 16 ++++++++++++++++
+> >  kernel/sched/topology.c | 13 +++++++++++++
+> >  2 files changed, 29 insertions(+)
+> >
+> > diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
+> > index 09f8397bae15..7304dc39958f 100644
+> > --- a/kernel/power/suspend.c
+> > +++ b/kernel/power/suspend.c
+> > @@ -393,6 +393,12 @@ void __weak arch_suspend_enable_irqs(void)
+> >         local_irq_enable();
+> >  }
+> >
+> > +/*
+> > + * Intentionally not part of a header file to avoid risk of abuse by o=
+ther
+> > + * drivers.
+> > + */
+> > +void sched_set_energy_aware(unsigned int enable);
+> > +
+> >  /**
+> >   * suspend_enter - Make the system enter the given sleep state.
+> >   * @state: System sleep state to enter.
+> > @@ -468,6 +474,15 @@ static int suspend_enter(suspend_state_t state, bo=
+ol *wakeup)
+> >
+> >   Platform_wake:
+> >         platform_resume_noirq(state);
+> > +       /*
+> > +        * We do this only for resume instead of suspend and resume for=
+ these
+> > +        * reasons:
+> > +        * - Performance is more important than power for resume.
+> > +        * - Power spent entering suspend is more important for suspend=
+. Also,
+> > +        *   stangely, disabling EAS was making suspent a few milliseco=
+nds
+> > +        *   slower in my testing.
+> > +        */
+> > +       sched_set_energy_aware(0);
+> >         dpm_resume_noirq(PMSG_RESUME);
+> >
+> >   Platform_early_resume:
+> > @@ -520,6 +535,7 @@ int suspend_devices_and_enter(suspend_state_t state=
+)
+> >   Resume_devices:
+> >         suspend_test_start();
+> >         dpm_resume_end(PMSG_RESUME);
+> > +       sched_set_energy_aware(1);
+>
+> If we end up having a special scheduling mode during suspend, we
+> should make the function more generic and not only EAS/ smartphone
+> specific
+>
+> Like a sched_suspend and sched_resume
+>
+> >         suspend_test_finish("resume devices");
+> >         trace_suspend_resume(TPS("resume_console"), state, true);
+> >         resume_console();
+> > diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> > index 9748a4c8d668..c069c0b17cbf 100644
+> > --- a/kernel/sched/topology.c
+> > +++ b/kernel/sched/topology.c
+> > @@ -284,6 +284,19 @@ void rebuild_sched_domains_energy(void)
+> >         mutex_unlock(&sched_energy_mutex);
+> >  }
+> >
+> > +void sched_set_energy_aware(unsigned int enable)
+>
+> This is a copy/paste of sched_energy_aware_handler() below, we should
+> have 1 helper for both
+>
+> > +{
+> > +       int state;
+> > +
+> > +       if (!sched_is_eas_possible(cpu_active_mask))
+> > +               return;
+> > +
+> > +       sysctl_sched_energy_aware =3D enable;
+> > +       state =3D static_branch_unlikely(&sched_energy_present);
+> > +       if (state !=3D sysctl_sched_energy_aware)
+> > +               rebuild_sched_domains_energy();
+> > +}
+> > +
+> >  #ifdef CONFIG_PROC_SYSCTL
+> >  static int sched_energy_aware_handler(const struct ctl_table *table, i=
+nt write,
+> >                 void *buffer, size_t *lenp, loff_t *ppos)
+> > --
+> > 2.47.0.338.g60cca15819-goog
+> >
 
