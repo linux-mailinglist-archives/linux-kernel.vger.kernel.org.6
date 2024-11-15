@@ -1,99 +1,143 @@
-Return-Path: <linux-kernel+bounces-410348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AFB09CDA3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:08:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ED9C9CDA42
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:11:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A44E283677
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:08:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0807B22C46
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691FA18BBAE;
-	Fri, 15 Nov 2024 08:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C2718A959;
+	Fri, 15 Nov 2024 08:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b="cOOLvVTv"
-Received: from a.mx.secunet.com (a.mx.secunet.com [62.96.220.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E63E16F851;
-	Fri, 15 Nov 2024 08:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.96.220.36
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731658092; cv=none; b=LtKOIMjXaKO7H/hO4vjUYr9ing/SfraXSQrEx/Z8KluH1WSCtiW4e1CqvvW//LcfdA73wOZ/qJL3jFdUVaaID7X6pkGvTI/zmwf+YHE5nHrFwpOy2HqOQP8ljcJ+fk6TDthEeNVtuYEI2CSOZ6wm3m+rIh/0pLITHt6meL6KPYM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731658092; c=relaxed/simple;
-	bh=KuZ8QQ0cN64s3FNYFRJncJ2EVtUJX2FM+AsdhOX+SQE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RwLMGzecNQ/ki8VsUjEUl2+HFz84oP2EbeD2kY4hZioxAOV0Ux7qQho5k+TY1LgXzsZ3/BOw9ZXGL4rcaUFYKHY+9ul422Fm/1vP6q5ZsgbC4YsavkYRaSyZan654x8Z13m9qAYtgKESy2ePFdhwOmxhkdNwLrx+E4FzVoUBpH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com; spf=pass smtp.mailfrom=secunet.com; dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b=cOOLvVTv; arc=none smtp.client-ip=62.96.220.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=secunet.com
-Received: from localhost (localhost [127.0.0.1])
-	by a.mx.secunet.com (Postfix) with ESMTP id 9FEFD20518;
-	Fri, 15 Nov 2024 09:08:08 +0100 (CET)
-X-Virus-Scanned: by secunet
-Received: from a.mx.secunet.com ([127.0.0.1])
-	by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id D-6HhHY6o4B4; Fri, 15 Nov 2024 09:08:08 +0100 (CET)
-Received: from cas-essen-02.secunet.de (rl2.secunet.de [10.53.40.202])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j7xyfClW"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by a.mx.secunet.com (Postfix) with ESMTPS id 27976201A7;
-	Fri, 15 Nov 2024 09:08:08 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 a.mx.secunet.com 27976201A7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=secunet.com;
-	s=202301; t=1731658088;
-	bh=ioc3w/ajVaSKxC3ChNCoi980p2KqNM5ThD83d1relDk=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To:From;
-	b=cOOLvVTv71G31D8lSGdeqTeACccZG7gOi5KjVrsfpbRVwVdVjZ9f//usYwlCAS+EQ
-	 zlvlmzUuw/n7elQBin7olwSQcdALuqG9k/fiGyqCdJcSgtwQZIGd7nOzLiGF6KarZh
-	 bvoBXkZnAa8b9p6hf5puJTPm50bBTtExaZB3nBs0UOPUD3RO4mmG/x66YJCRIbiDMo
-	 TJ518i2GjFXQJCDZ3wZJm2asvc2NwtuAb9qZe7r4omv/PD6b36CSdtXyoGyFGSxett
-	 Ut9/g4t08in/ULETh5SFYWlY7eahl+fsbF+6r7W4+XhqMQW6N578dYv1+ADA8FZTNR
-	 8eKJtKsHJ3EFA==
-Received: from mbx-essen-02.secunet.de (10.53.40.198) by
- cas-essen-02.secunet.de (10.53.40.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 15 Nov 2024 09:08:07 +0100
-Received: from gauss2.secunet.de (10.182.7.193) by mbx-essen-02.secunet.de
- (10.53.40.198) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 15 Nov
- 2024 09:08:07 +0100
-Received: by gauss2.secunet.de (Postfix, from userid 1000)
-	id 8532D3184210; Fri, 15 Nov 2024 09:08:07 +0100 (CET)
-Date: Fri, 15 Nov 2024 09:08:07 +0100
-From: Steffen Klassert <steffen.klassert@secunet.com>
-To: Daniel Yang <danielyangkang@gmail.com>
-CC: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
-	<horms@kernel.org>, "open list:NETWORKING [IPSEC]" <netdev@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net] xfrm: replace deprecated strncpy with strscpy_pad
-Message-ID: <ZzcBZ5gEhE1QX2d1@gauss3.secunet.de>
-References: <20241113092058.189142-1-danielyangkang@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428C352F71
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731658264; cv=none; b=UeBPkbdG8kM8LHLmNhG3nKU4puMWhcI4Q7AN9jjxYD02KW5HhlqQEHrvKxb8QGUL5X9ZV1NSmxsT0B00H2JecC2lBRjcseEqlKPXATLgqitGnM42TqtHv+lhZHx/W2BCX1FvFz8gw3ZLkDk1pzYaBMRqtvF2mz46rX+HgR18HoQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731658264; c=relaxed/simple;
+	bh=qk3hmhtdpBsHBnvy9h5X9Uw3DW+mJdAws0jCsCuUJeY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nu1HLChPbLnbwgPSeofMXr7SoyBHLU4wA3n+U9St9fQCnBD4b+IjzxkBbVj2/M66WF23v224Rl8gmUy07XErc1Vm32TNviB41MABtOHzSGbQ0Qj92H1G1MV9uMbDMEaPxOw6V2m4CojbZ2nh78Mys8FMp/tJM3kB1S9hyT/Vsdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j7xyfClW; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539e8607c2aso1566164e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 00:11:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731658260; x=1732263060; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kwh7u5xnnm/NWxOJAx++yyoRAoW1uEF+MIYvUvWu0a0=;
+        b=j7xyfClWZnqZFWuZnfZj4TTVF87cq0/SKyBaVyTlzubJzvFpVN2ys3WRQ87wwpSSA5
+         Zs9sJTFI0k1TLiBoIgUGIZZSRtIeVJOwX5yxJQeFysje1QqMkAAuO+QPem8c1fCLej1T
+         jG6EAiePJb8tMHp2VYMOK07Lcx9yyRbjvqajJ29iFDA0GpQD2MTTzRXrrQQLOcP5uqe6
+         obP0LTxfd8KWdFbhCBlTCsEpGJVyQvritSGAk68LUDiwIN69GsmUKpisCiyM6JK3EblI
+         PWRQ1HQyZmvg6ergH6+iAzMOAJT+dp/EsLM7TFiS5KEDYKw2++ko/ePk/nZpYawJCr0g
+         Md4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731658260; x=1732263060;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kwh7u5xnnm/NWxOJAx++yyoRAoW1uEF+MIYvUvWu0a0=;
+        b=b7sTucHvEMhd2MWC+p5qgM+I04iwyXAc9M4jIZZyfUZn34KXQZYD0rf95GQgW47IsX
+         OnXmSS/TCqXMxpy09qnbQ0ZHmBuGigkRUYNMXAJU/re4hYZIgRR/eMrfw5Yn9kNcG5yQ
+         /CBhs7HvKlAqJJtRkn8Uo6KD4boBVGFXn6qHbRbiHxjWYwj1khZeUbr1AFf+4c3uaXfr
+         TQeuQ7waDgIAWfUw70O9vOFHx9iR7/E0GkwZvGUIUqWpLhrKKEMLJzG28A9Et0hEDdKP
+         d63ed4cdSlj5cQWrc3s01m3ZEu8yXCUNgzf/g2H3r5FtBIC13Joca+Fw5X6WZYqZFLwD
+         Vx1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWWi0NwfS2FP53GNlUAICe63UMSI5nZ/ke6EZNg7BtEdAGnl05wzt47/CgwofbV3pYOn6FDDbwk/8K1daQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDRfc+tzQIDCxqbwqro4ggP/k3sWGTPjobDVmK+ONs9Lz7XcUt
+	hf52qGaPtcm8i6l6BzlbZOnSpKgutS87p1SBuDdg66qhLNa4jHUU0Y15iwj+nbs=
+X-Google-Smtp-Source: AGHT+IHxTCDUm2pw5A5a5bUpPHRsLv6nmhaSD0bEck6bFFxWDkqDt7K6yt+BTsbtTKUO/0vNYYpGoQ==
+X-Received: by 2002:a05:6512:3d23:b0:52e:f2a6:8e1a with SMTP id 2adb3069b0e04-53dab2a6feamr638144e87.29.1731658260231;
+        Fri, 15 Nov 2024 00:11:00 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da653e1a9sm477797e87.185.2024.11.15.00.10.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 00:10:58 -0800 (PST)
+Date: Fri, 15 Nov 2024 10:10:56 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Stefan Ekenberg <stefan.ekenberg@axis.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, kernel@axis.com
+Subject: Re: [PATCH] drm/bridge: adv7533: Reset DSI receiver logic
+Message-ID: <hukcjydehdbkk4xn3c62au4az4tlfjlkmxhq5db5xwabvxhyba@nf5tzddcbikv>
+References: <20241113-adv7533-dsi-reset-v1-1-6c1069e35fd3@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241113092058.189142-1-danielyangkang@gmail.com>
-X-ClientProxiedBy: cas-essen-01.secunet.de (10.53.40.201) To
- mbx-essen-02.secunet.de (10.53.40.198)
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+In-Reply-To: <20241113-adv7533-dsi-reset-v1-1-6c1069e35fd3@axis.com>
 
-On Wed, Nov 13, 2024 at 01:20:58AM -0800, Daniel Yang wrote:
-> The function strncpy is deprecated since it does not guarantee the
-> destination buffer is NULL terminated. Recommended replacement is
-> strscpy. The padded version was used to remain consistent with the other
-> strscpy_pad usage in the modified function.
+On Wed, Nov 13, 2024 at 08:40:15AM +0100, Stefan Ekenberg wrote:
+> Reset DSI receiver logic during power on. The need for this change was
+> discovered when investigating issue with ADV7535. The symptom of the
+> problem was that ADV7535 continuously outputs a black image. This
+> happened for about 10% of the times that ADV7535 was powered on. The
+> rest of the times the image was as expected.
 > 
-> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
+> The solution in this patch (placement of reset and sleep time of 200ms)
+> is implemented as outlined by the Analog Devices support team.
 
-Applied to ipsec-next, thanks!
+Is this reset sequence specific only to adv7535? Is it applicable to
+adv7533? adv7511?
+
+> 
+> Signed-off-by: Stefan Ekenberg <stefan.ekenberg@axis.com>
+> ---
+>  drivers/gpu/drm/bridge/adv7511/adv7533.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7533.c b/drivers/gpu/drm/bridge/adv7511/adv7533.c
+> index 4481489aaf5ebf164313c86cbf3447d2d7914ab9..93085c2b872ed98f4ee394236dc66c568c0e5ccf 100644
+> --- a/drivers/gpu/drm/bridge/adv7511/adv7533.c
+> +++ b/drivers/gpu/drm/bridge/adv7511/adv7533.c
+> @@ -67,6 +67,15 @@ void adv7533_dsi_power_on(struct adv7511 *adv)
+>  {
+>  	struct mipi_dsi_device *dsi = adv->dsi;
+>  
+> +	/*
+> +	 * Reset DSI receiver block logic to avoid ADV7535 startup problem.
+> +	 * Without this reset it sometimes continuously fails to receive
+> +	 * incoming DSI packets and outputs black image.
+> +	 */
+> +	regmap_write(adv->regmap_cec, 0x26, 0x18);
+> +	msleep(200);
+> +	regmap_write(adv->regmap_cec, 0x26, 0x38);
+> +
+>  	if (adv->use_timing_gen)
+>  		adv7511_dsi_config_timing_gen(adv);
+>  
+> 
+> ---
+> base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
+> change-id: 20241108-adv7533-dsi-reset-488c6fbb5e42
+> 
+> Best regards,
+> -- 
+> Stefan Ekenberg <stefan.ekenberg@axis.com>
+> 
+
+-- 
+With best wishes
+Dmitry
 
