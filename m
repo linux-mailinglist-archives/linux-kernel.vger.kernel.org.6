@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-411230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E61E19CF4F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:35:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D1E69CF4F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:36:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DF181F218F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:35:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DBD2B30577
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AFA1E1C1A;
-	Fri, 15 Nov 2024 19:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026D61E201D;
+	Fri, 15 Nov 2024 19:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j5UryV3L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YvrqaNCp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBBF13D297;
-	Fri, 15 Nov 2024 19:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4811E103B;
+	Fri, 15 Nov 2024 19:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731699301; cv=none; b=UiKKZUIhDHi2CapQR5xPz17qo2O7gcy/HnNJHpkFYIGM7E62tPjqdqUWQu2Mf+lEO69Bt8ZmZKnURUFv2yCGnUtKgqEa0rqGNXTR0RYKqQmsG0r527xa15DMv0usIt0YUSNE9xtvFL6fSQzTYbPJuumwHgY6glX4fdnSA61LezM=
+	t=1731699311; cv=none; b=aJBT64L01qDl0/QB6DX6DOWT4IpDoS6NqCtn68rXIi2INPvuwdsv2vBJdfcvf2chTlGL6jV04HoGgiBrAqzaF5StGH4shvL5UGbYXcLpuaj1OHLAfRM4f3XlJwoB1im2s5LaMAd3WaZlnnFAXeVEDHGD+4IlLvemn4VosNKfv0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731699301; c=relaxed/simple;
-	bh=cmST9DFI8ds26UZFq/m/WSYh7IDIxmikdV0lJCKC9ZA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TMY5xMOxcey2+PlWdxsRbiz6IsO4MtNdLzuKryNL9UwqQ6fmjzg0e+mMoi9GWYkJyPVj9AM7AOUxDPDUyEp2Eigy34P05aPNxg5vnvmt+nB24PGSxmzC0VzM6rAdISj92bljbiFgFVHh/McRc6Ks6qz/n1R5dHysANZQBejmIHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j5UryV3L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4C1BC4CECF;
-	Fri, 15 Nov 2024 19:35:00 +0000 (UTC)
+	s=arc-20240116; t=1731699311; c=relaxed/simple;
+	bh=IxUUtQsWk3PURpycsSmzgb1xBSlDbCJ37q6nf31dtYk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Faf5dirp7J70pv0jLjRJN8Qf5JcKzXc5CBomZJqddAUP2lVtIYuHdVXEsx3Z7oL+u8FWmeUo2MrTN3G+6WkVlQoIVAgioezoxV3FXkI1tPdaI1xuENtvytmyblQgqFGwlzMiUJpDPLE4JNFCnq6mcFmX0gm3HzcXSCbvzSPJTyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YvrqaNCp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDEE9C4CECF;
+	Fri, 15 Nov 2024 19:35:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731699300;
-	bh=cmST9DFI8ds26UZFq/m/WSYh7IDIxmikdV0lJCKC9ZA=;
+	s=k20201202; t=1731699310;
+	bh=IxUUtQsWk3PURpycsSmzgb1xBSlDbCJ37q6nf31dtYk=;
 	h=From:To:Cc:Subject:Date:From;
-	b=j5UryV3LaOLA3YOK0yVvdYTxviiVdsA1cYD4efiLanuX/gvQCUC3njDN24RsBQAQU
-	 8YiRBKYktuisyuLV0G12QIk2H3wK/lH3gQBSAkKT5N4NOSsL5xOHk3ewDwMGNxMXaO
-	 bTAovmY260amQh7gVegxljYAB9qS33Df606ajL3j7XFb04lXgQNjUED6eBqYk/1dmS
-	 l08WDgyVJHORcgbpYx2tyCq2eNT0Mj7+TyJgAn+Ya7FTpBLCoAZtapa9Q3+/F7q9i4
-	 LHFLyfqNnrQnkhB+jgiaKfRi4dlkA4sTqyvDw3rVpGIi2qH2RDZ+m24q7EAI3B3SuG
-	 Lac+eGQ1iBPRg==
+	b=YvrqaNCpK6PsNp0tlPJ6cpBhvBb8IfGZ8O4vbfTp43LaUKuT5UOyxwnbuDi1UMENf
+	 yak0kqkudR+KSp/CIk4mVnbr+yBxQaRw/3wrmC81mTBS+cbkRSBEb/Cmz5MhhuoC4Y
+	 U+bf71uyQqSz/JoMsUGcl0KeLnuIx2wwGWv7VdRzksIyWb7ResMfV2C0CRzvGZeeg4
+	 uVMLibsIEZ3M/BnBl5S8Gx21s1aEC8s3a5pwdczlV6nvH4YuYkM2OQFNZ/WKdGDJVr
+	 RtWwQg+ERnux8df2dlrlhlQbP9CZ6IusklRSMNa3twuuEvDVAPzIWUIBLiCwP7p1lM
+	 bXNktSRkLJekg==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Wei Xu <xuwei5@hisilicon.com>,
+To: Shawn Guo <shawnguo@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>
 Cc: linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: hisilicon: Remove unused and undocumented "enable-dma" property
-Date: Fri, 15 Nov 2024 13:34:53 -0600
-Message-ID: <20241115193454.3619297-1-robh@kernel.org>
+Subject: [PATCH] arm64: dts: freescale: Remove unused and undocumented "cooling-(min|max)-state" properties
+Date: Fri, 15 Nov 2024 13:35:03 -0600
+Message-ID: <20241115193504.3619533-1-robh@kernel.org>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -58,26 +58,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove "enable-dma" property which is both unused in the kernel and
-undocumented. Most likely they are leftovers from downstream.
+Remove "cooling-(min|max)-state" properties which are both unused in the
+kernel and undocumented. Most likely they are leftovers from downstream.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- arch/arm64/boot/dts/hisilicon/hi6220.dtsi | 1 -
- 1 file changed, 1 deletion(-)
+ .../boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts   | 2 --
+ arch/arm64/boot/dts/freescale/fsl-lx2160a-cex7.dtsi             | 2 --
+ 2 files changed, 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-index a589954c29e2..12f621cedf89 100644
---- a/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hi6220.dtsi
-@@ -728,7 +728,6 @@ spi0: spi@f7106000 {
- 			reg = <0x0 0xf7106000 0x0 0x1000>;
- 			interrupts = <0 50 4>;
- 			bus-id = <0>;
--			enable-dma = <0>;
- 			clocks = <&sys_ctrl HI6220_SPI_CLK>, <&sys_ctrl HI6220_SPI_CLK>;
- 			clock-names = "sspclk", "apb_pclk";
- 			pinctrl-names = "default";
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts
+index d9fac647f432..1d53b529af88 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts
+@@ -19,8 +19,6 @@ / {
+ 
+ 	pwm-fan {
+ 		compatible = "pwm-fan";
+-		cooling-min-state = <0>;
+-		cooling-max-state = <3>;
+ 		#cooling-cells = <2>;
+ 		pwms = <&sl28cpld_pwm0 0 4000000>;
+ 		cooling-levels = <1 128 192 255>;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-cex7.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a-cex7.dtsi
+index d32a52ab00a4..aef63a4f698c 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-lx2160a-cex7.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-cex7.dtsi
+@@ -94,8 +94,6 @@ i2c@1 {
+ 			fan-temperature-ctrlr@18 {
+ 				compatible = "ti,amc6821";
+ 				reg = <0x18>;
+-				cooling-min-state = <0>;
+-				cooling-max-state = <9>;
+ 				#cooling-cells = <2>;
+ 			};
+ 		};
 -- 
 2.45.2
 
