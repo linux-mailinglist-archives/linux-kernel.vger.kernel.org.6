@@ -1,91 +1,145 @@
-Return-Path: <linux-kernel+bounces-410559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49BD79CDD47
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:12:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 394DB9CDD58
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:19:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBBEFB22B44
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:12:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2319283892
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF411B6CF1;
-	Fri, 15 Nov 2024 11:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="LzcdeSTj"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B705018FC92;
-	Fri, 15 Nov 2024 11:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5141B6547;
+	Fri, 15 Nov 2024 11:19:18 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE83C1A3035;
+	Fri, 15 Nov 2024 11:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731669120; cv=none; b=r7OG7yJM1CSAuLVvrOQ2gvXD4s8Z38kif4SgQM1Z3Hb276JQ94ytrUg9/YeGeurLDHwxgSVe2nE4oh1I1/F6JLEewoCPbjKI9UustRDKJVspyhZ2qIMeB/xjvcUcIINnjPE+78AFcdWBj5uptNRwaOfs7gqXF7SFps538B6aVkI=
+	t=1731669558; cv=none; b=I0G0yGZZl3b2dxNB+LdvpJ6oSzsCFGs5HSj9QXAG/39Bv/wkjYJaoULKGYVJeEYnMKTmDtemUj3QgeAKfEksBdD4nkUybiNVAwa3LCZc2YBxr7wMIfhYxkVa9GoymkhsPk3IzFy44MuMrj5vEo23EJcJrWSki9dt9XXlV+NiUzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731669120; c=relaxed/simple;
-	bh=OHnVyO7UOQh4Loqrg+RCr6IzM4VC4Q9TApvlvp6AwMo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XmSIfA4bibYXIj93EP3aTr6mqcHxLvodZbRRxzzMjiTrWV6DyKc2gU2M1MlSWXGVxxS7dnOzNULfBuanoqkhpwbKO0hZxqpfH29uh/k/ZZy8ch+9xqI0Yumb6aX+YLAfFyx5+Y7Ivp4PlqQpMPleqgn6zSZFCXY/u7/fj3jcGro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=LzcdeSTj; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.96] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 5097E2FC0057;
-	Fri, 15 Nov 2024 12:11:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1731669114;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OHnVyO7UOQh4Loqrg+RCr6IzM4VC4Q9TApvlvp6AwMo=;
-	b=LzcdeSTjGz/B63rdmfERn24TiHGEdie+RsQXx8Z+/1NUNW7yQ5JNnd6HoKKfdAOql+8Mbc
-	r1u2F3sLRAMN0Mn9XGJ4Os6WUnY1XRw74n4xGRqoOXzPmmkhk0R6vNDbHZ0HcfA1HepdOV
-	T9Apaz/9+3VAPGlRwmP9W/7GsVsgQLE=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <635639b1-bb61-49dd-84b6-b2db82b7c24f@tuxedocomputers.com>
-Date: Fri, 15 Nov 2024 12:11:54 +0100
+	s=arc-20240116; t=1731669558; c=relaxed/simple;
+	bh=QVKpv5zpxOUM8qARMacSmN6G9pusrdKjXlUohyWSA38=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T7WzAdPIo+h7q/v3HIdEiDSIz/iFp+fkMjn1XVyHPmIPB0LHUkFmqUuLtjnPbsGi5jKDdPmK51+j6V44z4rVF7+yhlHNwbu0c5LKoXOi1MOUIR8aGmHqRqQ+ZCuzdmwg1T3CJuvXKIdZ1HxdAUuW3Z0NVLd/rQ3YZt/FSeEzzZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-IronPort-AV: E=Sophos;i="6.12,156,1728918000"; 
+   d="scan'208";a="228956408"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 15 Nov 2024 20:14:05 +0900
+Received: from Ubuntu-22.. (unknown [10.226.92.40])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id B25304007549;
+	Fri, 15 Nov 2024 20:13:48 +0900 (JST)
+From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Colton Lewis <coltonlewis@google.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-perf-users@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: [PATCH] riscv: perf: Drop defining `perf_instruction_pointer()` and `perf_misc_flags()`
+Date: Fri, 15 Nov 2024 11:13:45 +0000
+Message-ID: <20241115111345.17750-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs/licensing: Clarify wording about "GPL" and
- "Proprietary"
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-spdx@vger.kernel.org, workflows@vger.kernel.org
-References: <20241115103842.585207-2-ukleinek@kernel.org>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <20241115103842.585207-2-ukleinek@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Am 15.11.24 um 11:38 schrieb Uwe Kleine-König:
-> There are currently some doubts about out-of-tree kernel modules licensed
-> under GPLv3 and if they are supposed to be able to use symbols exported
-> using EXPORT_SYMBOL_GPL.
->
-> Clarify that "Proprietary" means anything non-GPL2 even though the
-> license might be an open source license. Also disambiguate "GPL
-> compatible" to "GPLv2 compatible".
->
-> Signed-off-by: Uwe Kleine-König <ukleinek@kernel.org>
+With commit 2c47e7a74f44 ("perf/core: Correct perf sampling with guest
+VMs"), the perf core now handles the functionality previously requiring
+arch-specific definitions of `perf_instruction_pointer()` and
+`perf_misc_flags()`. As these definitions are no longer necessary for
+RISC-V, this patch removes their implementation and declarations.
 
-Thanks for adding this clarification.
+This cleanup aligns the RISC-V architecture with the updated perf core
+mechanism, reducing code redundancy and improving maintainability.
 
-Kind regards,
+Fixes: 2c47e7a74f44 ("perf/core: Correct perf sampling with guest VMs")
+Reported-by: Chris Paterson <Chris.Paterson2@renesas.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ arch/riscv/include/asm/perf_event.h |  3 ---
+ arch/riscv/kernel/perf_callchain.c  | 28 ----------------------------
+ 2 files changed, 31 deletions(-)
 
-Werner Sembach
+diff --git a/arch/riscv/include/asm/perf_event.h b/arch/riscv/include/asm/perf_event.h
+index 38926b4a902d..bcc928fd3785 100644
+--- a/arch/riscv/include/asm/perf_event.h
++++ b/arch/riscv/include/asm/perf_event.h
+@@ -10,9 +10,6 @@
+ 
+ #ifdef CONFIG_PERF_EVENTS
+ #include <linux/perf_event.h>
+-extern unsigned long perf_instruction_pointer(struct pt_regs *regs);
+-extern unsigned long perf_misc_flags(struct pt_regs *regs);
+-#define perf_misc_flags(regs) perf_misc_flags(regs)
+ #define perf_arch_bpf_user_pt_regs(regs) (struct user_regs_struct *)regs
+ 
+ #define perf_arch_fetch_caller_regs(regs, __ip) { \
+diff --git a/arch/riscv/kernel/perf_callchain.c b/arch/riscv/kernel/perf_callchain.c
+index c2c81a80f816..b465bc9eb870 100644
+--- a/arch/riscv/kernel/perf_callchain.c
++++ b/arch/riscv/kernel/perf_callchain.c
+@@ -46,31 +46,3 @@ void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry,
+ 
+ 	walk_stackframe(NULL, regs, fill_callchain, entry);
+ }
+-
+-unsigned long perf_instruction_pointer(struct pt_regs *regs)
+-{
+-	if (perf_guest_state())
+-		return perf_guest_get_ip();
+-
+-	return instruction_pointer(regs);
+-}
+-
+-unsigned long perf_misc_flags(struct pt_regs *regs)
+-{
+-	unsigned int guest_state = perf_guest_state();
+-	unsigned long misc = 0;
+-
+-	if (guest_state) {
+-		if (guest_state & PERF_GUEST_USER)
+-			misc |= PERF_RECORD_MISC_GUEST_USER;
+-		else
+-			misc |= PERF_RECORD_MISC_GUEST_KERNEL;
+-	} else {
+-		if (user_mode(regs))
+-			misc |= PERF_RECORD_MISC_USER;
+-		else
+-			misc |= PERF_RECORD_MISC_KERNEL;
+-	}
+-
+-	return misc;
+-}
+-- 
+2.25.1
 
 
