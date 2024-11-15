@@ -1,132 +1,149 @@
-Return-Path: <linux-kernel+bounces-410687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FDFC9CDFC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:23:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 318079CDFD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:24:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD44B1F23A02
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:23:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2D1F283DD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112001BF7FC;
-	Fri, 15 Nov 2024 13:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573E11BDAB9;
+	Fri, 15 Nov 2024 13:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="PFvfaJ3x"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Ce/aq8wS"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739EB1B85EC;
-	Fri, 15 Nov 2024 13:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541311BB6A0
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 13:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731676993; cv=none; b=e5Vi0UmvC74Zc8hE1G1FdaDy7piICLpmHSctWgL8O62oXUJPGn61dRjivHiSAzbYJRPFlpaaeS56BOVBkqU/do1PoRtSoCbHQ8IcYbXM87ralK6f6cT2Y9Nu7pT0cm8XQqVnS2/MLfCznJTSnV1r60tKxV7d3fFc3MhEf2hCDLs=
+	t=1731677070; cv=none; b=HpSvpi0to1z01rqbRuanM50FFdUbCtFklVj1+pZe7zJcK53+kt2yxkjtWWLohe3w4Wf8DTUvX2T2vcmo1fcCwAe6axXos/dVSJPFHAmQlxDkQR1UH4HH/ePns2vlEN5x5ZqvsCUhk7w4FxQ+QIoqKu/GvKxd1ax/mmY/boHY9VY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731676993; c=relaxed/simple;
-	bh=aXmW/SlFuMTBx0uvUSkbp6nYdFZtT3GvPmQoFTxirQg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=to8O+AatVIu4rKtTbdX+McyCjGNcCcF+llWx9JPZqlW2fuQet0A2ITAytDWTquUW58gGueXgJzUbPQnI0KD37X7mKpvQ5UBrqS+xHo7qgJ0ebgG3GFGKym19rH+VVhiE2SHyfE91qlghQYXWjUyvUcC90I6Sg9ZMK1FDX2jCfEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=PFvfaJ3x; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id A63A9A03F3;
-	Fri, 15 Nov 2024 14:23:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:content-transfer-encoding:content-type:content-type:date:from
-	:from:in-reply-to:message-id:mime-version:references:reply-to
-	:subject:subject:to:to; s=mail; bh=t7g3cSkvm0PW3SmedMT5JjoODC5Qn
-	0jSLN8FBVFZMrc=; b=PFvfaJ3xeTl6gtIjREgawA/1osfrZCQzzu6svm3jRurrp
-	fwjOC+fWaTEmfeTKdVclPoqCPVufqzunplLFZ4QiOx8IcgMHpY0IBVnGkWHs1IcP
-	yWoQlZOno4gyYnQDE8epR1eLCjd7bk2DTu1QT4pYk0IqFBuWua5kxgyU+UpaHQq3
-	XdspBRA9GWnACidej7QHU6DaMLDWLsmi9CMPN4AX3EPNY4dnnLdmgxcNrMnlcBSZ
-	767l3vjFFtU2rkkM1ts7d7vJxzzPeCfPmObI7Z3kwfjgta/rMI/TxK77G2HBHEGJ
-	06tzFbkF9Z342iSRqe5RsSoZkdeuzOQIw+Shtf2uGIkaRybarLertzJncph+Tisb
-	lGvV1ZcL+cAo52Pj32xePQR1tkaSQZtPPYIMJMzj71De/LYh6TVveEikCy+rNsJj
-	sn/1kM7YfmK4r1YMXMCyXiDz+s7lUSMy11Gq05o8A1lnxKqqH9izS5PtSf+EzXvl
-	Ms6+FaVz+yiZA5qAnFZxytF82ozZNXc9Xvh0WXImhlW/84ClrkGfofOnDm/IpAls
-	xk4idtz+FFTchHwTCibhcYyW29glXBWh2t7+PvD/2e3XiUwwmTPRsNXYl9paXpkb
-	vkd+EDgBdtHVnSUtWkTy9FFQCTGgia1xnZ49jtIamnd6VtD6RUSB21LGisa4XY=
-Message-ID: <32a5c58c-f318-4c02-ae76-421b9cca0875@prolan.hu>
-Date: Fri, 15 Nov 2024 14:23:08 +0100
+	s=arc-20240116; t=1731677070; c=relaxed/simple;
+	bh=qQnysFRc9BeaYS/qXGTAWVan7gIzgnJHjeDujp1K8a4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YlROP9KC1jBznfymKQwe3DIvOuoJKYjufqZZZakwo1lkDjW0scJobsAFgQ1NqjlHh/qkFP141FcjtT+QDkyWf7OSvd68EX8fdxn2KtMToSXEALnxjA/CCyaWfIaHaySVeQ05F4M52PDqYAK8wFllvU+geW+jEgjngsfcSV1wCPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Ce/aq8wS; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4315c1c7392so16113895e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 05:24:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1731677066; x=1732281866; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JsmYkfI9SAlOdysNsS4+loYZlaU4nZ+pAyan3DcICaY=;
+        b=Ce/aq8wS9HF+9GTaqDsZWAyEeXjQkAxijnHuEUcT21rfUkEUT68BkD3ODljVa4ids+
+         lLhzP7tCTvACrZiFONjQbiED5UvVF6/BMp8PC35dJrq/lL7RlmpyHIq9eazH0DiK2ggq
+         1lx3xHyGqT5w5rnx2mvvaHe+SDPRknZWpEi1xsUrA819q2wkmEDNcoFZFHMDiqj5Jbrj
+         ym5lN0PrJ34lckF7XHD7w8qhRi2xYG0fnqDGuOkpYDOadn71MjxeXdBHSWQxQ1muwZ3E
+         QUPfxaBtKdjNDxFVOjvxtj/4zNMO606+Veh07Yc1wWtWm27tJ7t7sToCk+ZE3ky/qcln
+         oopA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731677066; x=1732281866;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JsmYkfI9SAlOdysNsS4+loYZlaU4nZ+pAyan3DcICaY=;
+        b=Sj79xamxQ8Schav9Rd7TmbaLatwwYcwAzaSaoyt82YF4FaOc3ryfqsRRf/AklXyLNj
+         F3oFh1iG2/DbHQIdbHUFqqzMejTgqCQ3yNVPK4MFwg0XxxmJq8xvsQ299QvQDf3yoVT/
+         ln6IMY+kRP7sI5DdMD3EAvySj5HAQAsG1YaxNLMFXY/A4Xn0SGRc/BD6kaXyOsT5HQoJ
+         QZI4EtkT3ZGcECHe+TyysPNfUQaBhz+mVMp05QwfNfSDpX1p/q9ZIaOn6XTuhz/tDSZA
+         MHOXtahY61+iHttwLEVAPxE4NFNNOPlun2XQrct1jpXD55FEmWVNBtG/5PFas6/gj6QO
+         WhJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWTYOV5+jB6NLFb9WQmu+lum4QmFG82XrACgJBBWveRONQnzswNZqzvc9xhAPGjsMpU8dKTx6b7qKRYhTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyK20grl181raAJqKrTCqNsPehd2OG+BntwEXFS0L+8K+cloTKV
+	m0UfLGJSu711f5W+pA3UK9SKUeFCpcSj3Y/STMqT3tTIjyT6y90wr4LktGD/Yy0=
+X-Google-Smtp-Source: AGHT+IF7XUW+P100edaXbGSm//he90Ln1D8fWPVA6iuq6Xwn8rQ18Ry0V4E1cmRJmi1XGnVwJ/UreQ==
+X-Received: by 2002:a5d:598d:0:b0:37d:4e80:516 with SMTP id ffacd0b85a97d-38225a2163cmr2191863f8f.34.1731677066346;
+        Fri, 15 Nov 2024 05:24:26 -0800 (PST)
+Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821d0ea3e2sm4023804f8f.109.2024.11.15.05.24.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 05:24:25 -0800 (PST)
+Date: Fri, 15 Nov 2024 14:24:24 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Anup Patel <anup@brainfault.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Atish Patra <atishp@rivosinc.com>, 
+	Palmer Dabbelt <palmer@rivosinc.com>, linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] cpuidle: riscv-sbi: fix device node release in early
+ exit of for_each_possible_cpu
+Message-ID: <20241115-20b5e02dd05173bfdc3a7d7f@orel>
+References: <20241031-cpuidle-riscv-sbi-cleanup-v2-1-aae62d383118@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] spi: atmel-quadspi: Create `atmel_qspi_ops` to support
- newer SoC families
-To: <Hari.PrasathGE@microchip.com>, <tudor.ambarus@linaro.org>,
-	<linux-spi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <Varshini.Rajendran@microchip.com>,
-	<alexandre.belloni@bootlin.com>, <broonie@kernel.org>,
-	<claudiu.beznea@tuxon.dev>, <Nicolas.Ferre@microchip.com>,
-	<Patrice.Vilchez@microchip.com>, <Cristian.Birsan@microchip.com>
-References: <20241030084445.2438750-1-csokas.bence@prolan.hu>
- <7cc95e52-7509-44eb-8e30-d518283e7d87@linaro.org>
- <2b310b54-c215-40fa-b6d4-81faf75a8c9e@prolan.hu>
- <20241104-vanilla-operating-de19b033f0a8@thorsis.com>
- <ad585127-9e3c-414a-84c2-c4ea3e6d3c7d@prolan.hu>
- <78f38031-1723-4474-9bea-1c23918a75f6@microchip.com>
-Content-Language: en-US
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <78f38031-1723-4474-9bea-1c23918a75f6@microchip.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D94855617C6B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241031-cpuidle-riscv-sbi-cleanup-v2-1-aae62d383118@gmail.com>
 
-Hi,
+On Thu, Oct 31, 2024 at 01:21:17PM +0100, Javier Carrasco wrote:
+> The 'np' device_node is initialized via of_cpu_device_node_get(), which
+> requires explicit calls to of_node_put() when it is no longer required
+> to avoid leaking the resource.
+> 
+> Instead of adding the missing calls to of_node_put() in all execution
+> paths, use the cleanup attribute for 'np' by means of the __free()
+> macro, which automatically calls of_node_put() when the variable goes
+> out of scope. Given that 'np' is only used within the
+> for_each_possible_cpu(), reduce its scope to release the nood after
+> every iteration of the loop.
+> 
+> Fixes: 6abf32f1d9c5 ("cpuidle: Add RISC-V SBI CPU idle driver")
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> ---
+> Changes in v2:
+> - Squash patches for mainline solution without intermediate steps.
+> - Link to v1: https://lore.kernel.org/r/20241030-cpuidle-riscv-sbi-cleanup-v1-0-5e08a22c9409@gmail.com
+> ---
+>  drivers/cpuidle/cpuidle-riscv-sbi.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/cpuidle/cpuidle-riscv-sbi.c b/drivers/cpuidle/cpuidle-riscv-sbi.c
+> index 14462c092039..3a78d6b7598b 100644
+> --- a/drivers/cpuidle/cpuidle-riscv-sbi.c
+> +++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
+> @@ -504,12 +504,13 @@ static int sbi_cpuidle_probe(struct platform_device *pdev)
+>  	int cpu, ret;
+>  	struct cpuidle_driver *drv;
+>  	struct cpuidle_device *dev;
+> -	struct device_node *np, *pds_node;
+> +	struct device_node *pds_node;
+>  
+>  	/* Detect OSI support based on CPU DT nodes */
+>  	sbi_cpuidle_use_osi = true;
+>  	for_each_possible_cpu(cpu) {
+> -		np = of_cpu_device_node_get(cpu);
+> +		struct device_node *np __free(device_node) =
+> +			of_cpu_device_node_get(cpu);
 
-On 2024. 11. 05. 8:47, Hari.PrasathGE@microchip.com wrote:
-> Hello Bence,
-> 
-> On 11/4/24 6:26 PM, Csókás Bence wrote:
->> EXTERNAL EMAIL: Do not click links or open attachments unless you know
->> the content is safe
->>
->> Hi!
->>
->> On 2024. 11. 04. 13:48, Alexander Dahl wrote:
->>> It would actually be better if vendor would bring their stuff
->>> upstream, so there's no need for a vendor kernel.  Did you talk to
->>> Microchip about their upstreaming efforts?  What was the answer?
->>>
->>> Greets
->>> Alex
->>
->> Agreed. Though in this case, the original patch *was* submitted by
->> Microchip (by Tudor, originally) for upstream inclusion, but it was not
->> merged. Hence this forward-port.
->> Link:
->> https://lore.kernel.org/linux-spi/20211214133404.121739-1-tudor.ambarus@microchip.com/
-> 
-> 
-> Thanks for your patch. We are planning to revive this work at the
-> earliest. While I don't have specific timeline for this, we at Microchip
-> are fully aware of this gap and doing everything we could to keep the
-> delta between the upstream kernel and vendor kernel as minimal as possible.
-> 
-> We will discuss internally and provide you the feedback. Thanks again
-> for your efforts.
-> 
-> Regards,
-> Hari
+nit: wrapping the line is unnecessary, we have 100 char width.
 
-Did you reach a conclusion internally regarding whether to support this 
-patch? Since then, I opened a ticket with Microchip, but haven't got a 
-response yet. I have also been in face-to-face contact with some of the 
-engineers from the Rousset office, and they have expressed their 
-support, and even the possibility of lending us a SAMA7G5 to test with. 
-So really, all I'm waiting for is this patch to be merged, and then I 
-can submit the SAMA7G5 parts, at worst as an RFC, if we don't get the 
-real hardware in time.
+>  		if (np &&
+>  		    of_property_present(np, "power-domains") &&
+>  		    of_property_present(np, "power-domain-names")) {
+> 
+> ---
+> base-commit: 6fb2fa9805c501d9ade047fc511961f3273cdcb5
+> change-id: 20241029-cpuidle-riscv-sbi-cleanup-e9b3cb96e16d
+> 
+> Best regards,
+> -- 
+> Javier Carrasco <javier.carrasco.cruz@gmail.com>
+>
 
-Bence
+Otherwise,
 
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
