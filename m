@@ -1,108 +1,115 @@
-Return-Path: <linux-kernel+bounces-410556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A4079CDD3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:07:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60CE29CDD40
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:07:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D8B6283044
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:07:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7441B25868
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F671B395C;
-	Fri, 15 Nov 2024 11:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28911B6CE1;
+	Fri, 15 Nov 2024 11:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SeFjPEgG"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X1IVOKUc"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF05C154C00;
-	Fri, 15 Nov 2024 11:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4EF18FC92;
+	Fri, 15 Nov 2024 11:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731668829; cv=none; b=ud2NkZW9O7F0MhNRIBsTLHuUnQoOk7foM2eYJHcYOZgqWPW2PjF6QHDiNkZHnaVDo7jVGxXhy1cIEwLXCBAu4UoxEcZW3/mtu/zkHFEEKXvB89RLYuz3lTniL4i7HFJSLVYXujMM0Oe5Mu0WvvUU2bdWAzap2eQ6bOeXtvXllLw=
+	t=1731668862; cv=none; b=PtRBxBdBbQQj0yBKglwOEnkkwfSjAiYHZr0C8dfVXYNuhiPVYaGCT3Y8eRazHTMiQBPICzWOcNo5XPwpcqaeJ1dgtMPYv30Dd1gaeEq/h18XwNGHNbMbo/z3KNIFmTDFDadBzpyNxJYfy5ZbAWlG9x9ThmAL2bxuipA20mUYaIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731668829; c=relaxed/simple;
-	bh=sxjUkrp2sY7Gfo6L3BtpQIWNGJIu5e/zmHa4vKadX08=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=OcKS6eD7Io+8nyuN7BXJM8tjanc4MuiWC6UL6W+KV/w4lcxnhgdQ7A3Gjtrkp9bdMas9FarU9WSIAPJwZEOYIaUaQ2wKXsQ3dA+XYtnQDoz1uh6imbDs3VEURMaT58jnmjirXPZXOXEhWOHx0KlVgKu/KNPbqaUpEjr3KuNgwB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SeFjPEgG; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9053EC0005;
-	Fri, 15 Nov 2024 11:06:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731668819;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V1r+porGWUKsy9GTMrdmavZUnF68ePErI4fI6DHmlT0=;
-	b=SeFjPEgGqfvR6d676Fe7UeowEhPzNjwd9lQcp8H1AMuRJcA0ftgo7z1RkHmjr1Hzj+4poe
-	tUzH9IL8BtasWVl8LK4n0Cb++FiP9jeVVaZNEMUj5W9yvErk3RyyBPshINiZS0vRv10CTx
-	+SWHdOCQEtF5V54EP/8t5kT9mNLrlVmeMtYD49wVMXoPrDobuW41kj/q0BrAflfb3LND0s
-	uSisXbuPz9V+ah5vbxJ4YCoOouKT7OrUU/VBg0EdW8TWbilagX5aUQEwi5zQcYfKunJGXm
-	hQTjldNsdH+ITrk9EgiVSuqarRddkZ1gIZddh46wl5KKiRQRvgB4/C9Qwt97jg==
+	s=arc-20240116; t=1731668862; c=relaxed/simple;
+	bh=F9IcBAH98/nD2miuExOgtqzna16ZxOdtVAV/XT4hAns=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oF/Xp3cvthFmMcs2vJzr0L6hUbAv/V6JkXHXbQJdXqdToHNqHqSQSPh8dntzzeNxX46P7KRQYqHwkgja7yhAH37gToEIEkOrpjoCRUUxbgtSKzdsp7DzU2xlV87cQ3C2ZRfSkdvI6yu/cJrXOXWUFjRuS05kHsifnYq0t8nE/6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X1IVOKUc; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7f12ba78072so1245275a12.2;
+        Fri, 15 Nov 2024 03:07:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731668860; x=1732273660; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+s7uyzZf8In4uLin49oKAReXMClKRobUSg+yMBzWuAs=;
+        b=X1IVOKUc8AtUqsF8efkQgjU942UU7rt5DZ3KF0HZ5DirnaANqREfYCXWkYOhcAB6Uc
+         4Z2EbjrI94U5zVS7nXP0O5YOtaz95auqTqvPKS9dXfRnyL7I0/4f2/NMbzOFDvUHKRaB
+         8ESaRb9hHHDJLHjsDWvN1pUSRFlZy6iQhF3f5hGZLy/aFTdyzPLYfob4TLo7hQy6djgI
+         xxDY6HlnMDJtgvG0XCRBsT05QZcC+r0jDFnNYqJ6SNirylf+m2Fpn/y0l42V3FKRH1CC
+         pbmGf/zTnFJkj+d6qVWc3HO2PDX7vaIJAkD0O8NOYnUlxsQ6G+wSqg3bWwDKa4/hd0pl
+         72bQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731668860; x=1732273660;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+s7uyzZf8In4uLin49oKAReXMClKRobUSg+yMBzWuAs=;
+        b=fG22sgrq2+W6Q14pKChkuthgLqwuwVvJE4f7lL2VABdmVxV/YW5XxXn++QKph+Udnm
+         Qg5zqG1fcFn7hIMtpOjHf63undDTSPdCgssTo30DG+pcCNYwl2j7KPIKvLeDqP2MyQlW
+         G5DSOQ1YIxtnh0hu5NbAYqbFfgPjh3Hgnke9Shgy+3Twcx9Ss3h+7ddb3/yyeqfTPwT4
+         /RrIrRJswYlBxls70E85pAHFTKU7H+cXAbE+82qC4dPpepGlyMf3ujmhiujX9+nCbsCU
+         xYQnRmGd85KU6lcW7vOARCtEFpMQP2jFUVRQTfrHgM5IppQeooal0xtjlPEY2c8XK9Do
+         0CRA==
+X-Forwarded-Encrypted: i=1; AJvYcCV3m71SVnfUX8+tLzXW2im6hpC+p6xIazmHdCGKwYKrv3lIiA64DTRWS1txC1np/dax4bYuUtfRO/qoR6g=@vger.kernel.org, AJvYcCVFOBPVyBn4Xq+85fTAoOnP3rm235NFsYcd+uDYDvXlkOOtNWT158wLsFx4tOUXNka2kca67k9s@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAJmbsPo5ZcWXGHJAoMaAQVobuDGRqAyptCZi3/zNU9KUy4T/M
+	9rVKR0d52jp/+bnijUcyCdyVcIfcRCROapPMIKKSaqEk64ty2yo4
+X-Google-Smtp-Source: AGHT+IE0jUvjlIv9ahz4VOxkviACSEPPm9XERK0CMbvsThmxdZ/es+hFfDJJtHURfB0yuoqlI2BAuQ==
+X-Received: by 2002:a05:6a20:7f9a:b0:1d9:8275:cd70 with SMTP id adf61e73a8af0-1dc90bee4e9mr3125851637.40.1731668859858;
+        Fri, 15 Nov 2024 03:07:39 -0800 (PST)
+Received: from HOME-PC ([223.185.134.27])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72477120bbdsm1100341b3a.78.2024.11.15.03.07.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 03:07:39 -0800 (PST)
+From: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
+To: Jason@zx2c4.com,
+	wireguard@lists.zx2c4.com
+Cc: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dheeraj.linuxdev@gmail.com
+Subject: [PATCH net-next] wireguard: allowedips: Fix useless call issue
+Date: Fri, 15 Nov 2024 16:37:21 +0530
+Message-Id: <20241115110721.22932-1-dheeraj.linuxdev@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 15 Nov 2024 12:06:58 +0100
-Message-Id: <D5MPD4TS05ML.12HKW12NG083W@bootlin.com>
-Subject: Re: [PATCH v2 00/10] Usable clocks on Mobileye EyeQ5 & EyeQ6H
-Cc: <linux-mips@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, "Stephen Boyd" <sboyd@kernel.org>, "Michael
- Turquette" <mturquette@baylibre.com>
-To: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20241106-mbly-clk-v2-0-84cfefb3f485@bootlin.com>
- <D5MN6O1SHWV7.31HDXZG3NEOCK@bootlin.com>
- <ZzcVlrbnMw7CXEC4@alpha.franken.de>
-In-Reply-To: <ZzcVlrbnMw7CXEC4@alpha.franken.de>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri Nov 15, 2024 at 10:34 AM CET, Thomas Bogendoerfer wrote:
-> On Fri, Nov 15, 2024 at 10:24:29AM +0100, Th=C3=A9o Lebrun wrote:
-> > On Wed Nov 6, 2024 at 5:03 PM CET, Th=C3=A9o Lebrun wrote:
-> > >  - MIPS:
-> > >    [PATCH v2 09/10] MIPS: mobileye: eyeq5: use OLB as provider for fi=
-xed factor clocks
-> > >    [PATCH v2 10/10] MIPS: mobileye: eyeq6h: add OLB nodes OLB and rem=
-ove fixed clocks
-> >=20
-> > Do you think we can make those two patches go in before the next merge
-> > window? Stephen just accepted the above patches. This makes both MIPS
-> > platforms usable on upstream kernels!
->
-> I've applied, but not pushed, because this
->
-> Error: /local/tbogendoerfer/korg/linux/arch/mips/boot/dts/mobileye/eyeq5.=
-dtsi:20.19-20 syntax error
-> FATAL ERROR: Unable to parse input treeo
->
-> My tree misses the new CLK defines.
->
-> I haven't decided whether I'll ignore that and push it now or put them
-> into a second request vor 6.13.
+This commit fixes a useless call issue detected
+by Coverity (CID 1508092). The call to
+horrible_allowedips_lookup_v4 is unnecessary as
+its return value is never checked.
 
-It was either breaking the driver build or the DTS builds. I preferred
-breaking DTS as that way no kernel robot would come yelling after me.
-Sorry it has to fall onto you to handle that.
+Signed-off-by: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
+---
+ drivers/net/wireguard/selftest/allowedips.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Thanks,
-
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+diff --git a/drivers/net/wireguard/selftest/allowedips.c b/drivers/net/wireguard/selftest/allowedips.c
+index 3d1f64ff2e12..25de7058701a 100644
+--- a/drivers/net/wireguard/selftest/allowedips.c
++++ b/drivers/net/wireguard/selftest/allowedips.c
+@@ -383,7 +383,6 @@ static __init bool randomized_test(void)
+ 		for (i = 0; i < NUM_QUERIES; ++i) {
+ 			get_random_bytes(ip, 4);
+ 			if (lookup(t.root4, 32, ip) != horrible_allowedips_lookup_v4(&h, (struct in_addr *)ip)) {
+-				horrible_allowedips_lookup_v4(&h, (struct in_addr *)ip);
+ 				pr_err("allowedips random v4 self-test: FAIL\n");
+ 				goto free;
+ 			}
+-- 
+2.34.1
 
 
