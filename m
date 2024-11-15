@@ -1,162 +1,167 @@
-Return-Path: <linux-kernel+bounces-410915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB61E9CF069
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:42:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 057439CF075
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:43:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7104828C3E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:42:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFD7428B1CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2DAE1E22F8;
-	Fri, 15 Nov 2024 15:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72491D5166;
+	Fri, 15 Nov 2024 15:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zzPKoX9d"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mV4Lb9aE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843861D54D6
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 15:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088541E571C;
+	Fri, 15 Nov 2024 15:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731684962; cv=none; b=dA3T9Vaf7Uaci78tDw/dyrk+8LVgu2lAff7X0PnMJmxFMd7AdRMvNBhIWQ/1ElYmx7B4+ogvNJCu1Hkv+VxRFmK5E7xL1+UlcoWVYvIO1ENSeGZhbs6MqAnPsViJeyASpXWbtq9pspzOrWQwA+wRXwOyABIQ5mIBrgmWbvh7uGU=
+	t=1731685011; cv=none; b=PD5U2OD1kiUi5ziiMmRK+SqWVVRqTG3zMYwvavs4dSVKk6OdZ/SkL9D60ua7OUsG9Bsfi8ApT5wNi0minIpuAvRzdrq5EIpgz9wYFClsIjuHPMKMaVhDwytliAWROjxR8lLmFXy+3ytudP7yJQxsWybyWUGqNtxuI4vXt5M/5/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731684962; c=relaxed/simple;
-	bh=rYvme6davXOV7S0ICIdnVJjQUxIQxCENktTfkU2/Km8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=R99zmNQTDA/Pgajz4b57dAyn0/Kssw1YsM0mcE1OEZIzfD0vHHVFVFPu5D6ouEY/13gERH4SJ9icS9ehjEghY3el6wzjGkkBtddnCqVewcjRmEo0pR4pckcWRcfXCxxCAAqlreAZiYBD/oDjR9odRAO58kfnbxBzPN0oiVY4o14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zzPKoX9d; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cf9cd1120bso656110a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 07:36:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731684959; x=1732289759; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=q1RpKflVF0bebbJaxQf/ZXjTfRFvkv41edCIwaQJcQs=;
-        b=zzPKoX9d3vNb5ippLrlXv5etR4FrC9zcSvcSOQni0LEaI4P88GCkH0/nLdS7UkFOPn
-         bQgiAd4GORZDHF8N81/6MP0CmPxvVblIdQTGzv31WWNEQxjfde9umNCPrY12zU5+i3Po
-         hbKlSM+Gacet/oE8hJnZPAATZEj0YymIxZjMI6Yp3NA/40tMhZlybAIPVOQZRSEte7+u
-         CQntrJt6lTCL9OJNu+dH8MWqDrPHAi2UU19opvXWMB71oD45uLEvFYi7jjyZypACdx+r
-         RGctr3CjrVYWdTufECMKdcEiOT7ECY7ylzvXug+RUIjtXaHfM0kdCnNR1yQHBQXSFbvw
-         BiLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731684959; x=1732289759;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q1RpKflVF0bebbJaxQf/ZXjTfRFvkv41edCIwaQJcQs=;
-        b=U6Rpq4oTU0GhELHoKA/TKSpqJm/K+ij5dmcLQ4B96pUpd8dyod9t9hCk2SWuJj/r6Q
-         434HBUQWchZqwy9ng0RzSJFOIKIbe2uiff467R8HPBW+6J5nWmyCk20YSNB3FRuNwRos
-         MkBIPTDLIymM9q8Ox5X9WIQauxe35OZmFS+8yUV3fpMm6P00KdryM2NoJ/bm/idJ4iMc
-         6eTHX9HkIY1CEpD/uO7WFZtJLRDgtkoZFyqrUYL0STpoW0pqM8/fggnNlGpgHdj4QYHJ
-         laLW+8PbibALCplr/ZtjqiWMQtfCUqf03im71GUnCD1iezggxQtrjr0tVAhHoJicWybZ
-         L7+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWfNdXL6vfx/S2sagqmrL//zaVf4ILHb7yDF8wuXVgmvbvFMrMqKZN9onqyqR4ETBWnE3uUC8lAbfTld74=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywjwexj8Pv7B/IVNI0iFwHzJByzSy6WBQsmv7ixweqmvq5Mznry
-	9/vINdrrVkUwhhEyEm+q1dnhkn/MUWqwWUGBG+pZYid4vIjtzkZeozhrw/F1A1k=
-X-Google-Smtp-Source: AGHT+IECuVoSF3cpPActYMtkLKV2qemZdHFkwL1b+NBlkRP5B3JvLdOGBczovm4O75t7YTAzxqF8NQ==
-X-Received: by 2002:a05:6402:34c4:b0:5cf:14fa:cd10 with SMTP id 4fb4d7f45d1cf-5cf754df234mr6631178a12.5.1731684958824;
-        Fri, 15 Nov 2024 07:35:58 -0800 (PST)
-Received: from [192.168.68.163] ([145.224.90.111])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf79c0ad15sm1676898a12.66.2024.11.15.07.35.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 07:35:58 -0800 (PST)
-Message-ID: <215ca9a2-0a63-4d0c-8402-5cb1f2bb0794@linaro.org>
-Date: Fri, 15 Nov 2024 15:35:55 +0000
+	s=arc-20240116; t=1731685011; c=relaxed/simple;
+	bh=HOki/LfePS3SL52MFsIPT+CWL2mahyk6mf98mYQcV+4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NCHwHPpRKfoZqnMq4dlR8i55GoDcUYj7ULiNCR63uokdOutmrY75CT60/jsldXzK385tOqE0u5+ElG856hKxDSMbHmMmLAGV/LEu3ez0lqYDc2F3nzANofsiv/BX5YJ0DYSShHU437neY/ppmH8VslFhJwcjOXvE3yEpr0dsBDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mV4Lb9aE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B2C8C4CED6;
+	Fri, 15 Nov 2024 15:36:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731685010;
+	bh=HOki/LfePS3SL52MFsIPT+CWL2mahyk6mf98mYQcV+4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=mV4Lb9aEKxDO9Twvwo1jYR2QfQKJqCpBXGAhw0xy/9UF3Ba4QITB7C7b83fiNr1ZB
+	 9EM5LJobEMSOIrObeUI13kblNB6QgAblJC3KMC4Yal4LZJzoAI78zYBvi9UxT23rdb
+	 Hvn55x2u76nVxeWvd68dbtdDycCFylInHX+tuNFhCodIpqUxzJDgAlXbQklf8sPCSK
+	 6eY07wbbAUYtU4nzeTt+UDojSGLK0hoAUWhD/ATYVOavmFNk0J3UhImW887DWsddts
+	 MCJPqOe1cBZ7yt36MMsMtQR4IPad7CI+NAPxHB80GBk6WgFrhZS2WUx+f91w6phbuf
+	 b0VNUt68UjVeA==
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Benjamin Peterson <benjamin@engflow.com>,
+	Howard Chu <howardchu95@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Clark Williams <williams@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 1/2] perf test shell trace_exit_race: Show what went wrong in verbose mode
+Date: Fri, 15 Nov 2024 12:36:33 -0300
+Message-ID: <20241115153634.314742-2-acme@kernel.org>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241115153634.314742-1-acme@kernel.org>
+References: <20241115153634.314742-1-acme@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/8] Refactor cpuid and metric table lookup code
-To: Ian Rogers <irogers@google.com>, Xu Yang <xu.yang_2@nxp.com>
-References: <20241107162035.52206-1-irogers@google.com>
-Content-Language: en-US
-Cc: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Huacai Chen <chenhuacai@kernel.org>, Bibo Mao <maobibo@loongson.cn>,
- Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
- Ben Zong-You Xie <ben717@andestech.com>,
- Alexandre Ghiti <alexghiti@rivosinc.com>, Sandipan Das
- <sandipan.das@amd.com>, Benjamin Gray <bgray@linux.ibm.com>,
- Ravi Bangoria <ravi.bangoria@amd.com>,
- =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>,
- Yicong Yang <yangyicong@hisilicon.com>,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- Dima Kogan <dima@secretsauce.net>, "Dr. David Alan Gilbert"
- <linux@treblig.org>, linux-arm-kernel@lists.infradead.org,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20241107162035.52206-1-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
+If it fails we need to check what was the reason, what were the lines
+that didn't match the expected format, so:
 
-On 07/11/2024 4:20 pm, Ian Rogers wrote:
-> Xu Yang <xu.yang_2@nxp.com> reported issues with the system metric
-> lookup:
-> https://lore.kernel.org/linux-perf-users/20241106085441.3945502-1-xu.yang_2@nxp.com/
-> These patches remove a lot of the logic relating CPUIDs to PMUs so
-> that the PMU isn't part of the question when finding a metric table.
-> For time reasons, it doesn't go as far as allowing system metrics
-> without a metric table as a metric table is needed for metrics to
-> refer to other metrics, and the refactoring of that resolution is a
-> hassle.
-> 
-> Ian Rogers (7):
->    perf header: Move is_cpu_online to numa bench
->    perf header: Refactor get_cpuid to take a CPU for ARM
->    perf arm64 header: Use cpu argument in get_cpuid
->    perf header: Avoid transitive PMU includes
->    perf header: Pass a perf_cpu rather than a PMU to get_cpuid_str
->    perf jevents: Add map_for_cpu
->    perf pmu: Move pmu_metrics_table__find and remove ARM override
-> 
-> Xu Yang (1):
->    perf jevents: fix breakage when do perf stat on system metric
-> 
->   tools/perf/arch/arm64/util/arm-spe.c     | 14 +---
->   tools/perf/arch/arm64/util/header.c      | 73 ++++++++++-----------
->   tools/perf/arch/arm64/util/pmu.c         | 20 ------
->   tools/perf/arch/loongarch/util/header.c  |  4 +-
->   tools/perf/arch/powerpc/util/header.c    |  4 +-
->   tools/perf/arch/riscv/util/header.c      |  4 +-
->   tools/perf/arch/s390/util/header.c       |  6 +-
->   tools/perf/arch/x86/util/auxtrace.c      |  3 +-
->   tools/perf/arch/x86/util/header.c        |  5 +-
->   tools/perf/bench/numa.c                  | 53 +++++++++++++++
->   tools/perf/builtin-kvm.c                 |  4 +-
->   tools/perf/pmu-events/empty-pmu-events.c | 39 ++++++-----
->   tools/perf/pmu-events/jevents.py         | 39 ++++++-----
->   tools/perf/pmu-events/pmu-events.h       |  2 +-
->   tools/perf/tests/expr.c                  |  5 +-
->   tools/perf/util/env.c                    |  4 +-
->   tools/perf/util/expr.c                   |  6 +-
->   tools/perf/util/header.c                 | 82 ++++++++----------------
->   tools/perf/util/header.h                 | 23 +++----
->   tools/perf/util/pmu.c                    | 25 --------
->   tools/perf/util/pmu.h                    |  2 -
->   tools/perf/util/probe-event.c            |  1 +
->   22 files changed, 189 insertions(+), 229 deletions(-)
-> 
+  root@number:~# perf test -v "trace exit race"
+  --- start ---
+  test child forked, pid 2028724
+  Lines not matching the expected regexp: ' +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$':
+       0.000 :2028750/2028750 syscalls:sys_enter_exit_group()
+  ---- end(-1) ----
+  110: perf trace exit race                                            : FAILED!
+  root@number:~#
 
-Reviewed-by: James Clark <james.clark@linaro.org>
+In this case we're not resolving the process COMM for some reason and
+fallback to printing just the pid/tid, this will be fixed in a followup
+patch.
+
+Howard Chu spotted a problem with single code surrounding a regexp, that
+made the test always fail, but since there were some failures when I
+tested (COMM not being resolved in some of the results) the end inverse
+grep would show some lines and thus didn't notice the single quote
+problem.
+
+He also provided a patch to test if less than the number of expected
+matches took place but all of them with the expected output, in which
+case the inverse grep wouldn't show anything, confusing the tester.
+
+Reviewed-by: Howard Chu <howardchu95@gmail.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Benjamin Peterson <benjamin@engflow.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lore.kernel.org/lkml/ZzdknoHqrJbojb6P@x1
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/tests/shell/trace_exit_race.sh | 24 +++++++++++++++++++++--
+ 1 file changed, 22 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/tests/shell/trace_exit_race.sh b/tools/perf/tests/shell/trace_exit_race.sh
+index 3cf2d71a5c3b9278..8ea24f4256bc8f5e 100755
+--- a/tools/perf/tests/shell/trace_exit_race.sh
++++ b/tools/perf/tests/shell/trace_exit_race.sh
+@@ -11,11 +11,19 @@
+ 
+ skip_if_no_perf_trace || exit 2
+ 
++if [ "$1" = "-v" ]; then
++	verbose="1"
++fi
++
++iter=10
++regexp=" +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$"
++
+ trace_shutdown_race() {
+-	for _ in $(seq 10); do
++	for _ in $(seq $iter); do
+ 		perf trace -e syscalls:sys_enter_exit_group true 2>>$file
+ 	done
+-	[ "$(grep -c -E ' +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$' $file)" = "10" ]
++	result="$(grep -c -E "$regexp" $file)"
++	[ $result = $iter ]
+ }
+ 
+ 
+@@ -27,5 +35,17 @@ export PERF_CONFIG=/dev/null
+ 
+ trace_shutdown_race
+ err=$?
++
++if [ $err != 0 ] && [ "${verbose}" = "1" ]; then
++	lines_not_matching=$(mktemp /tmp/temporary_file.XXXXX)
++	if grep -v -E "$regexp" $file > $lines_not_matching ; then
++		echo "Lines not matching the expected regexp: '$regexp':"
++		cat $lines_not_matching
++	else
++		echo "Missing output, expected $iter but only got $result"
++	fi
++	rm -f $lines_not_matching
++fi
++
+ rm -f ${file}
+ exit $err
+-- 
+2.47.0
 
 
