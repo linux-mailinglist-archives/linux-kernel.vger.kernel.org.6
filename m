@@ -1,136 +1,199 @@
-Return-Path: <linux-kernel+bounces-411088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE6F9CF3F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:30:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C327E9CF349
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:51:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63656B472EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:22:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F3CEB3C60D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E513E1E22FC;
-	Fri, 15 Nov 2024 17:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845E91D61AC;
+	Fri, 15 Nov 2024 16:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LcGGw/Fj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QWS+AALM"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MfBrMDNh"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9D81D90CB
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7771D61A2;
+	Fri, 15 Nov 2024 16:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731691250; cv=none; b=fQrX+UAbRzuxv8Ej652SNFRXpOaDapWsKxWHfRoUQF5zAwWVyvaX+FNshFdaHWprJOhprzSKsOnKkduhdbc0NGzY8EnnIs6FZBKcC4QFzvIplyYP4pnGCHlqMwNegEV03X206JQQkawEQitA7kww05IwOCAF1pMkjoS9RV907IU=
+	t=1731689959; cv=none; b=GLjeJz4U8G6IrtFoeTjoz8Mrr2+Qd/A+h2V8A2znXEJY8LkQXssbjNh25gLD9XcaTR2QiuMuZP2yuFFuf5VoZeWEoUe75jwa8qt6mPKQipT8VtvQxjyRdcpLfPfXCl5y4R+AOGTS742c6dkLMJatR4nq9SdXvEaO1Hl5wMmiygI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731691250; c=relaxed/simple;
-	bh=ve5F7c3o4tqOGVkj9LxUhARv+iEtJK7WSacclgv+XmQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GP/XsygY77Te8NB0gtVN3bXT/RXqGa/ucxqPbOgYilbMlQJx1mHHURQ2uuYzZyQrIglVIGGsjASFDIeyNhv2/HO6l88u44w2OUXdWHriWhfR1tlZiR9y689wDcHY5832NUJ1Hjg2Fiu+hNqepGz+b1MiqoJyxj6rkIT0QhCv7KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LcGGw/Fj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QWS+AALM; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731691245;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qfYUftPAgoBwjrcE4s1jVdEi2kaOhq8RayKWSl+bNvM=;
-	b=LcGGw/FjkYM9CM6ICi6VXyK4k5jluLMNxV4l3H35Qcty17bNcyyfUctfSc6jTrQwobGdSm
-	T8i4DUwUiCmQtPsMO6WFhxtGYKlSPCtoQruqzRd1d3TF8hK5U4VKxLN6pO1HmeTY80cx2/
-	65XqYR5EZ6iYT2UR3kf2Hf3OKqono653f1wVDzsboPIKmmbfSiyHAhDNeS5+EXCrH1Z8ss
-	B1oCNtgNOPIsQZj6CaTIkX43DkGvMvRXG1cria5eu3k5M9elGSVgVAKAiNJuM3o/SinxY4
-	IvD53ZbFe4zcZqi9PYZChwbRFVvpeH2IloTUfsAAdl5RPb1ABwCKqSB2jQsxNA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731691245;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qfYUftPAgoBwjrcE4s1jVdEi2kaOhq8RayKWSl+bNvM=;
-	b=QWS+AALMaeOvqDygPrYaQ4Iavx0lUs8qLQXHfOdejZjZgbVfMT41eqWsX+0+V9n6uAtMRH
-	jQMyQYsQ8n54gTDA==
-To: linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [RFC PATCH v3 9/9] tools/perf: Allocate futex locks on the local CPU-node.
-Date: Fri, 15 Nov 2024 17:58:50 +0100
-Message-ID: <20241115172035.795842-10-bigeasy@linutronix.de>
-In-Reply-To: <20241115172035.795842-1-bigeasy@linutronix.de>
-References: <20241115172035.795842-1-bigeasy@linutronix.de>
+	s=arc-20240116; t=1731689959; c=relaxed/simple;
+	bh=dOBnJCqCaWZUjhxd2LK7dRHfKa39/Gqlsuh+gHaHxMw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ec/U60H+ikblB8fiX+8YgydWb19M5RlId5sMU5XxqU6gLTcfgs6rEMywoV4O1KyTY9I5LdGsebgydPUtpqAL/hfYb+J+BmvBLZ6YwpIrqH26kK/YOo0XpsH0IIfXdLOi/a6k1i5o9FLnr19kSoMttAWmW6HwkRc+Dn6XFzgvPdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MfBrMDNh; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20cb47387ceso23545795ad.1;
+        Fri, 15 Nov 2024 08:59:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731689956; x=1732294756; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5My4RsjQqVpFcnn6C+E7zXPeOJ7hSHgTRe960WZ9eQ8=;
+        b=MfBrMDNhClqZrHKmuE2DI0IKpv6HbLQyixVGN7kiR/afbx49Sw2iTKezdtf7B8amQS
+         obqwhQujpPaVSfJA2pUHzHpkRqqgDPsa/YaoWMTIdlsH3vviiugXBIdFGKlVq5ELxJR5
+         W1KxvufTIgVVsLwH5C23nnH93sltuAIKTfe+Bx7yfPTz8tbTD6HjQW1XNS0f1hdOR1fm
+         r88m2rvhI0kmWr9xEc6986OT8b/ZEg4xoP3HNheJxDdaZhF0Tp6UzKNNwv60dguTWdaM
+         e69aQf+L0XRxwcOUSO3PqVPT1gJmB5KhajOtHWD5hjwpblsu/EPkBfH9NSrwXJgs/QmQ
+         cNiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731689956; x=1732294756;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5My4RsjQqVpFcnn6C+E7zXPeOJ7hSHgTRe960WZ9eQ8=;
+        b=YuAZqGI8zpvsOfQKGog3tm3+fljPP7pdiAVzPoSi4P1TmiJmO9Gwd9jQPS3V4ksJcK
+         wi9XZGcKm0C3f0LJz0vt2Fsongqd4xIi9zbQn78mScGu9AeDe395ZSJFhhoYbu/3zlKM
+         1tGWcLIMNaTA+qsHYQCRDmxyyvhz8/zjToj01x8EleSArPLy2Sp7H7mc05FXtBfvOjEz
+         zjow+njtKFvOxWQGCCJXxn2j1UUL444vBHKV4PTP7yztXRwd1PEM1za++2X7ebao+cQH
+         cWZvc6x38TUpW+vDtsZzoYXS8uErs2scnB8hYwh7CO6o6++1mqdWCZFhevogj2bT2E5p
+         L2Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCV6QFRY3zrKgqzNgbYiV5aG51gJB1NzheekOIgVuaSOsg5n1WXJCl7hLnQZ9+VhKvaasxwqXdPtaKA6@vger.kernel.org, AJvYcCW6UfWZ+54Ny9RX5dAWV5Hc47YuPoT8No6GT50bheUvbvXY5AivnO8ihmoXgSGAR+OVgFyS/CZFsE5e5BVb@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVF747mH387hpkEVBK6H6yzCfL1aPDzZmC47AO+exWHKxfFO35
+	NU/1NDDMB+wc//fJBZuMCHlBZXA5Q8UsU+aag7LBfnJinbo4fDwA
+X-Google-Smtp-Source: AGHT+IE89VkCeLragNsInNsnFoD3XvhKObDCdMphxIgayw0eyZC/oYovPrx7FAYAPhzN0nuu1Lrhzg==
+X-Received: by 2002:a17:902:d48e:b0:211:e693:90df with SMTP id d9443c01a7336-211e6939443mr9041615ad.46.1731689956450;
+        Fri, 15 Nov 2024 08:59:16 -0800 (PST)
+Received: from [192.168.0.198] ([14.139.108.62])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0eca2d9sm14520685ad.90.2024.11.15.08.59.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 08:59:15 -0800 (PST)
+Message-ID: <b686dd59-29a0-44ac-82e1-86c26abda915@gmail.com>
+Date: Fri, 15 Nov 2024 22:29:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] acpi: nfit: vmalloc-out-of-bounds Read in
+ acpi_nfit_ctl
+To: Dave Jiang <dave.jiang@intel.com>, dan.j.williams@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com
+Cc: rafael@kernel.org, lenb@kernel.org, nvdimm@lists.linux.dev,
+ linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
+References: <20241113125157.14390-1-surajsonawane0215@gmail.com>
+ <c69d74f7-4484-4fc6-9b95-d2ae86ead794@intel.com>
+ <1cab2343-8d74-4477-9046-7940917fa7be@gmail.com>
+ <f13b285d-cf5b-4edf-a7d5-933ccd20556a@intel.com>
+Content-Language: en-US
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+In-Reply-To: <f13b285d-cf5b-4edf-a7d5-933ccd20556a@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- tools/perf/bench/futex-hash.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+On 14/11/24 21:12, Dave Jiang wrote:
+> 
+> 
+> On 11/14/24 2:19 AM, Suraj Sonawane wrote:
+>> On 13/11/24 22:32, Dave Jiang wrote:
+>>>
+>>>
+>>> On 11/13/24 5:51 AM, Suraj Sonawane wrote:
+>>>> Fix an issue detected by syzbot with KASAN:
+>>>>
+>>>> BUG: KASAN: vmalloc-out-of-bounds in cmd_to_func drivers/acpi/nfit/
+>>>> core.c:416 [inline]
+>>>> BUG: KASAN: vmalloc-out-of-bounds in acpi_nfit_ctl+0x20e8/0x24a0
+>>>> drivers/acpi/nfit/core.c:459
+>>>>
+>>>> The issue occurs in cmd_to_func when the call_pkg->nd_reserved2
+>>>> array is accessed without verifying that call_pkg points to a buffer
+>>>> that is appropriately sized as a struct nd_cmd_pkg. This can lead
+>>>> to out-of-bounds access and undefined behavior if the buffer does not
+>>>> have sufficient space.
+>>>>
+>>>> To address this, a check was added in acpi_nfit_ctl() to ensure that
+>>>> buf is not NULL and that buf_len is greater than sizeof(*call_pkg)
+>>>> before casting buf to struct nd_cmd_pkg *. This ensures safe access
+>>>> to the members of call_pkg, including the nd_reserved2 array.
+>>>>
+>>>> Reported-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
+>>>> Closes: https://syzkaller.appspot.com/bug?extid=7534f060ebda6b8b51b3
+>>>> Tested-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
+>>>> Fixes: ebe9f6f19d80 ("acpi/nfit: Fix bus command validation")
+>>>> Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+>>>> ---
+>>>> V1: https://lore.kernel.org/lkml/20241111080429.9861-1-surajsonawane0215@gmail.com/
+>>>> V2: Initialized `out_obj` to `NULL` in `acpi_nfit_ctl()` to prevent
+>>>> potential uninitialized variable usage if condition is true.
+>>>> V3: Changed the condition to if (!buf || buf_len < sizeof(*call_pkg))
+>>>> and updated the Fixes tag to reference the correct commit.
+>>>>
+>>>>    drivers/acpi/nfit/core.c | 12 +++++++++---
+>>>>    1 file changed, 9 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+>>>> index 5429ec9ef..eb5349606 100644
+>>>> --- a/drivers/acpi/nfit/core.c
+>>>> +++ b/drivers/acpi/nfit/core.c
+>>>> @@ -439,7 +439,7 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
+>>>>    {
+>>>>        struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
+>>>>        struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
+>>>> -    union acpi_object in_obj, in_buf, *out_obj;
+>>>> +    union acpi_object in_obj, in_buf, *out_obj = NULL;
+>>>
+>>> Looking at the code later, out_obj is always assigned before access. I'm not seeing a path where out_obj would be accessed unitialized...
+>>
+>> I initialized out_obj to NULL to prevent potential issues where goto out might access an uninitialized pointer, ensuring ACPI_FREE(out_obj) handles NULL safely in the cleanup section. This covers cases where the condition !buf || buf_len < sizeof(*call_pkg) triggers an early exit, preventing unintended behavior.
+> 
+> ok
+> 
+>>
+>>>
+>>> https://elixir.bootlin.com/linux/v6.12-rc7/source/drivers/acpi/nfit/core.c#L538
+>>>   
+>>>>        const struct nd_cmd_desc *desc = NULL;
+>>>>        struct device *dev = acpi_desc->dev;
+>>>>        struct nd_cmd_pkg *call_pkg = NULL;
+>>>> @@ -454,8 +454,14 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
+>>>>        if (cmd_rc)
+>>>>            *cmd_rc = -EINVAL;
+>>>>    -    if (cmd == ND_CMD_CALL)
+>>>> -        call_pkg = buf;
+>>>> +    if (cmd == ND_CMD_CALL) {
+>>>> +        if (!buf || buf_len < sizeof(*call_pkg)) {
+>>>> +            rc = -EINVAL;
+>>>> +            goto out;
+>>>> +        }
+>>>> +        call_pkg = (struct nd_cmd_pkg *)buf;
+>>>
+>>> Is the casting needed? It wasn't in the old code
+>>>
+>>
+>> I tested the code both with and without the cast using syzbot, and it didn't result in any errors in either case. Since the buffer (buf) is being used as a pointer to struct nd_cmd_pkg, and the casting works in both scenarios, it appears that the cast may not be strictly necessary for this particular case.
+>>
+>> I can remove the cast and retain the original code structure, as it does not seem to affect functionality. However, the cast was added for clarity and type safety to ensure that buf is explicitly treated as a struct nd_cmd_pkg *.
+>>
+>> Would you prefer to remove the cast, or should I keep it as is for type safety and clarity?
+> 
+> I would just leave it as it was.
 
-diff --git a/tools/perf/bench/futex-hash.c b/tools/perf/bench/futex-hash.c
-index f40b7df6ef3d0..7c8f3cff3c611 100644
---- a/tools/perf/bench/futex-hash.c
-+++ b/tools/perf/bench/futex-hash.c
-@@ -122,6 +122,8 @@ static void print_summary(void)
- 	       (int)bench__runtime.tv_sec);
- }
-=20
-+#include <numa.h>
-+
- #define PR_FUTEX_HASH			74
- # define PR_FUTEX_HASH_SET_SLOTS	1
- # define PR_FUTEX_HASH_GET_SLOTS	2
-@@ -212,14 +214,19 @@ int bench_futex_hash(int argc, const char **argv)
- 	size =3D CPU_ALLOC_SIZE(4096);
-=20
- 	for (i =3D 0; i < params.nthreads; i++) {
-+		unsigned int cpu_num;
- 		worker[i].tid =3D i;
--		worker[i].futex =3D calloc(params.nfutexes, sizeof(*worker[i].futex));
--		if (!worker[i].futex)
--			goto errmem;
-=20
- 		CPU_ZERO_S(size, cpuset);
-+		cpu_num =3D get_cpu_bit(&cpuset_, sizeof(cpuset_), i % nrcpus);
-+		//worker[i].futex =3D calloc(params.nfutexes, sizeof(*worker[i].futex));
-=20
--		CPU_SET_S(get_cpu_bit(&cpuset_, sizeof(cpuset_), i % nrcpus), size, cpus=
-et);
-+		worker[i].futex =3D numa_alloc_onnode(params.nfutexes * sizeof(*worker[i=
-].futex),
-+						    numa_node_of_cpu(cpu_num));
-+		if (worker[i].futex =3D=3D MAP_FAILED || worker[i].futex =3D=3D NULL)
-+			goto errmem;
-+
-+		CPU_SET_S(cpu_num, size, cpuset);
-=20
- 		ret =3D pthread_attr_setaffinity_np(&thread_attr, size, cpuset);
- 		if (ret) {
-@@ -271,7 +278,7 @@ int bench_futex_hash(int argc, const char **argv)
- 				       &worker[i].futex[params.nfutexes-1], t);
- 		}
-=20
--		zfree(&worker[i].futex);
-+		numa_free(worker[i].futex, params.nfutexes * sizeof(*worker[i].futex));
- 	}
-=20
- 	print_summary();
---=20
-2.45.2
+I have submitted the patch with the original code unchanged(without 
+casting) by testing with syzbot. You can view it 
+here:https://lore.kernel.org/lkml/20241115164223.20854-1-surajsonawane0215@gmail.com/
+
+> 
+>>
+>>>> +    }
+>>>> +
+>>>>        func = cmd_to_func(nfit_mem, cmd, call_pkg, &family);
+>>>>        if (func < 0)
+>>>>            return func;
+>>>
+>>
+>> Thank you for your feedback and your time.
+> 
 
 
