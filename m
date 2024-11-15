@@ -1,74 +1,62 @@
-Return-Path: <linux-kernel+bounces-411161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 348139CF3F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:31:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 931899CF3FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:32:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE318283DFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:31:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52688281074
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E9A17BB32;
-	Fri, 15 Nov 2024 18:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3972F157A5C;
+	Fri, 15 Nov 2024 18:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="flOT2WFb"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Su2F9OOx"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CDE2D05D;
-	Fri, 15 Nov 2024 18:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FADB183088;
+	Fri, 15 Nov 2024 18:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731695475; cv=none; b=hVT/YbiokRiZYVd+t9jxVdhfdI6jSIH9AEWnU5X+5F6v4KZ3dkHqGBlGCek+THlFY72t2El+qecksHno1n125I/M8hbDtgmNNDlDDpXrxEoNQgT+SofSgbik/7sASYLM8hh1GcRXGcovm2wRbhEo0N6J7myht+lEjrsAwiZz04E=
+	t=1731695492; cv=none; b=AKGDvei2XPhfkl4cfiBHXTBJU1YcARRn71UkFJBvH5h03HD65EwtK7HmTgZkyuRzXRMcg/cCBpERLTiJ/oyw/WqGn7jYqjzrZ2iBeMWVRjU5Gy+HM5zkRmhl5s/zrQYwd0GHmy1i+gQu4Tkde7+63FoPvJlIBCwEmD5LPM1GoNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731695475; c=relaxed/simple;
-	bh=JODjRTpKBkPMRWH04neogGd2G8r3/CHT2IxPQRcwslY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GRwNCbWEcj7AYnL9XlxuQGVJxkwdW0wW/vwcnmvxQy8td3ozIl5+jZugrAm+r1ChBbCgcA6qT8yM7DIgTMc04ZuXf5E+D5xEiDynIQfwqCKbnLfRas7ZkJKsy1IBWKYCRp9znZvt7LM51vkAuU5yXbrebdgWYCHKWh/fHZuXo+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=flOT2WFb; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20c805a0753so22046575ad.0;
-        Fri, 15 Nov 2024 10:31:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731695473; x=1732300273; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=aHCcipxfzFCrkviPLeGLq9fyU+lj79SWu+62BAUE2uQ=;
-        b=flOT2WFbwUK8FN4I/Q0Q+BqLLxteNdntpqkcjjD2WRMBzUkGFLxku4SfLqTD6LgZQi
-         pt+CWFftGQh16sd+LAhv5wRxSEVe7B8Lh7XH53l2sri7YKuxXXMMkXCsThZPubnzflkh
-         VuAL29YvndNFGEEEYNuloEJUAuVhjYtEa2Jy68XK++xhpJs37vcYeqyJ/jsh/OCsD0C4
-         DDAe97/WqEkC78mjSVx5iHL4yWPlSP6HvxzAsYDLPzU1wR/srmKNFSzzGq8f5YaUojXD
-         Z5froeBjdKG44SFpZvLL/cKHKSM10CmkusYJupCYV2DOqzpTlH2Wi40NQKG3DUhn/KOr
-         0qqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731695473; x=1732300273;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aHCcipxfzFCrkviPLeGLq9fyU+lj79SWu+62BAUE2uQ=;
-        b=grxU8s1Zt4ugBCwiNUGiNWzVVSJhkVMBQljLhA6lEBymaTdFXigDZkV1rS9sDiBhB2
-         Lc9R2Ryg6YZGWJBhNLqj41q44HotmsCOZ8Y1xOzXZ2D1w8p3kJvrw8xheeXB43ij6rLf
-         Hs/k0+/LuQIvjeQgLGOYdj3cDgij5SpxHsosAYpXVD4EVoJCVMKOTo6gDmaUPofgaXee
-         s9LJ6mMMdPBpQorLix4L7LtzHMwwts6FzWH3nsW8iyRIsWcNMG2tE8rcKq5a+Mdescp8
-         yAGo8+3/5ANNU6Rz6eI9kCAlWmm8Eks/Fcb7WmjyZNrT3mLZ1M/Ask9EcRxuaYwcfsuX
-         HXwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUESE+PFtZDoKexyCVqI/JX8/xwE4IbZX2wug+E+B46EprREDk//eDRUN8icXJ0WcAtxkWXMF7l@vger.kernel.org, AJvYcCXIBDtVlaZyw7BHgyFd3jpkAgdCoESTsac5r4s27R0zyT/T0OhC1klsnuqyxzS6fPPtoJ0HGuOIDqfVVzU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoOLi4kLZZhM2HgzFLx4yRGddza0yx3VUEogbxCryTF8Lof+/D
-	4FFGPEQpO700F9wA6Laq/FaWbEvQYspTHSZrzCfywqkoz+TU/X1D
-X-Google-Smtp-Source: AGHT+IG+d9dIuZS3cXiCcQi6XH+olstsin3G0aBl9ePW5QCjcZvFlGfHUlTRpgQxEqXi5blVRhYH4w==
-X-Received: by 2002:a17:902:f683:b0:20c:b517:d715 with SMTP id d9443c01a7336-211d0d83b50mr51672155ad.25.1731695473254;
-        Fri, 15 Nov 2024 10:31:13 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f47a5dsm15397815ad.189.2024.11.15.10.31.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 10:31:12 -0800 (PST)
-Message-ID: <24bfa74d-11ed-4fdb-ade2-502a6bfaafd1@gmail.com>
-Date: Fri, 15 Nov 2024 10:31:10 -0800
+	s=arc-20240116; t=1731695492; c=relaxed/simple;
+	bh=T7owxCrmzL9B2p4ropXht/ugb0EmftLWvXL/zuJ4ZCk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bpras6NA04WBM3YogWQ5BkeA2O7+qCths2q94D9SXscLwOqWtLOev2At+5ohu4HCa7Cbcmi71bHYPxCRLmR57f0t5rbeEvvrssoXNYISzCvbYcBqEVPyUgaYEOxjitQsBzvio39TPJVr5ZbBHn/9YaYSyRDH457CLnKLs2haAZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Su2F9OOx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AFHoTLO018983;
+	Fri, 15 Nov 2024 18:31:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	eC/JeM9/eX7GjpRqMmFKay7Cio3ltqUn4yMJhvyMtqM=; b=Su2F9OOx0tB27Lvz
+	J9zb/XXsr6/zEWz9rcbUcH+Al4pTlha96ay7PO8Y3v2TkKSzss/F/Q1pLEKei5ZA
+	f7ItdbHxzAGrlxFErFtvzyLzazISbnoC7LHygRJjBtdxIwnR2Y9lZ9QdX3vX0GFV
+	lZFep/buT5ApKq2ThiO0TOJwL/uBNMJ2SxZqtlXnmhqYosqGWzX++QGXYlnfHxHO
+	MyciJWFl34FIyytCSFJHwTZuDDkHTTIFv1mxLKrfdSnlMoF7RlpIgt9/uQekPGZJ
+	PsfUshICXbZnw2mii0HAkdQcIiAqnMVbxMiSJzsEyodeDAcPZi8VCu9ZQJe+osOu
+	OW6Jfg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42wex8w11u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 18:31:20 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AFIVJ2X004593
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 18:31:19 GMT
+Received: from [10.110.68.79] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 15 Nov
+ 2024 10:31:18 -0800
+Message-ID: <6e9db73e-0441-453c-978c-961f308f8a11@quicinc.com>
+Date: Fri, 15 Nov 2024 10:31:17 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,77 +64,146 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.4 00/67] 5.4.286-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20241115120451.517948500@linuxfoundation.org>
+Subject: Re: [PATCH v3 0/4] Add Qualcomm SA8255p based firmware managed PCIe
+ root complex
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: <jingoohan1@gmail.com>, <will@kernel.org>, <lpieralisi@kernel.org>,
+        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
+        <krzk@kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_krichai@quicinc.com>
+References: <20241106221341.2218416-1-quic_mrana@quicinc.com>
+ <20241115112802.66xoxj4z5wsg4idl@thinkpad>
 Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
-In-Reply-To: <20241115120451.517948500@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Mayank Rana <quic_mrana@quicinc.com>
+In-Reply-To: <20241115112802.66xoxj4z5wsg4idl@thinkpad>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Fq6JurJ4csMT-KotEN90S8nT27D7wtg9
+X-Proofpoint-ORIG-GUID: Fq6JurJ4csMT-KotEN90S8nT27D7wtg9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ phishscore=0 bulkscore=0 mlxlogscore=946 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 malwarescore=0 spamscore=0 clxscore=1015 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411150156
 
-On 11/15/24 04:05, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.286 release.
-> There are 67 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 17 Nov 2024 12:04:36 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.286-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested with 
-BMIPS_GENERIC:
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+On 11/15/2024 3:28 AM, Manivannan Sadhasivam wrote:
+> On Wed, Nov 06, 2024 at 02:13:37PM -0800, Mayank Rana wrote:
+>> Based on received feedback, this patch series adds support with existing
+>> Linux qcom-pcie.c driver to get PCIe host root complex functionality on
+>> Qualcomm SA8255P auto platform.
+>>
+>> 1. Interface to allow requesting firmware to manage system resources and
+>> performing PCIe Link up (devicetree binding in terms of power domain and
+>> runtime PM APIs is used in driver)
+>>
+>> 2. SA8255P is using Synopsys Designware PCIe controller which supports MSI
+>> controller. Using existing MSI controller based functionality by exporting
+>> important pcie dwc core driver based MSI APIs, and using those from
+>> pcie-qcom.c driver.
+>>
+>> Below architecture is used on Qualcomm SA8255P auto platform to get ECAM
+>> compliant PCIe controller based functionality. Here firmware VM based PCIe
+>> driver takes care of resource management and performing PCIe link related
+>> handling (D0 and D3cold). Linux pcie-qcom.c driver uses power domain to
+>> request firmware VM to perform these operations using SCMI interface.
+>> --------------------
+>>
+>>
+>>                                     ┌────────────────────────┐
+>>                                     │                        │
+>>    ┌──────────────────────┐         │     SHARED MEMORY      │            ┌──────────────────────────┐
+>>    │     Firmware VM      │         │                        │            │         Linux VM         │
+>>    │ ┌─────────┐          │         │                        │            │    ┌────────────────┐    │
+>>    │ │ Drivers │ ┌──────┐ │         │                        │            │    │   PCIE Qcom    │    │
+>>    │ │ PCIE PHY◄─┤      │ │         │   ┌────────────────┐   │            │    │    driver      │    │
+>>    │ │         │ │ SCMI │ │         │   │                │   │            │    │                │    │
+>>    │ │PCIE CTL │ │      │ ├─────────┼───►    PCIE        ◄───┼─────┐      │    └──┬──────────▲──┘    │
+>>    │ │         ├─►Server│ │         │   │    SHMEM       │   │     │      │       │          │       │
+>>    │ │Clk, Vreg│ │      │ │         │   │                │   │     │      │    ┌──▼──────────┴──┐    │
+>>    │ │GPIO,GDSC│ └─▲──┬─┘ │         │   └────────────────┘   │     └──────┼────┤PCIE SCMI Inst  │    │
+>>    │ └─────────┘   │  │   │         │                        │            │    └──▲──────────┬──┘    │
+>>    │               │  │   │         │                        │            │       │          │       │
+>>    └───────────────┼──┼───┘         │                        │            └───────┼──────────┼───────┘
+>>                    │  │             │                        │                    │          │
+>>                    │  │             └────────────────────────┘                    │          │
+>>                    │  │                                                           │          │
+>>                    │  │                                                           │          │
+>>                    │  │                                                           │          │
+>>                    │  │                                                           │IRQ       │HVC
+>>                IRQ │  │HVC                                                        │          │
+>>                    │  │                                                           │          │
+>>                    │  │                                                           │          │
+>>                    │  │                                                           │          │
+>> ┌─────────────────┴──▼───────────────────────────────────────────────────────────┴──────────▼──────────────┐
+>> │                                                                                                          │
+>> │                                                                                                          │
+>> │                                      HYPERVISOR                                                          │
+>> │                                                                                                          │
+>> │                                                                                                          │
+>> │                                                                                                          │
+>> └──────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+>>                                                                                                              
+>>    ┌─────────────┐    ┌─────────────┐  ┌──────────┐   ┌───────────┐   ┌─────────────┐  ┌────────────┐
+>>    │             │    │             │  │          │   │           │   │  PCIE       │  │   PCIE     │
+>>    │   CLOCK     │    │   REGULATOR │  │   GPIO   │   │   GDSC    │   │  PHY        │  │ controller │
+>>    └─────────────┘    └─────────────┘  └──────────┘   └───────────┘   └─────────────┘  └────────────┘
+>>                                                                                                              
+> 
+> Thanks a lot for working on this Mayank! This version looks good to me. I've
+> left some comments, nothing alarming though.
+Thanks for reviewing change. I would address those in next patchset.
+
+> But I do want to hold up this series until we finalize the SCMI based design.
+ok. I want to send these changes which are prepared based on previously 
+provided feedback, to see if we have any major concern here in terms of 
+getting functionality.
+
+Regards,
+Mayank
+> - Mani
+> 
+>> ----------
+>> Changes in V3:
+>> - Drop usage of PCIE host generic driver usage, and splitting of MSI functionality
+>> - Modified existing pcie-qcom.c driver to add support for getting ECAM compliant and firmware managed
+>> PCIe root complex functionality
+>> Link to v2: https://lore.kernel.org/linux-arm-kernel/925d1eca-975f-4eec-bdf8-ca07a892361a@quicinc.com/T/
+>>
+>> Changes in V2:
+>> - Drop new PCIe Qcom ECAM driver, and use existing PCIe designware based MSI functionality
+>> - Add power domain based functionality within existing ECAM driver
+>> Link to v1: https://lore.kernel.org/all/d10199df-5fb3-407b-b404-a0a4d067341f@quicinc.com/T/
+>>
+>> Tested:
+>> - Validated NVME functionality with PCIe0 on SA8255P-RIDE platform
+>>
+>> Mayank Rana (3):
+>>    PCI: dwc: Export dwc MSI controller related APIs
+>>    PCI: qcom: Add firmware managed ECAM compliant PCIe root complex
+>>      functionality
+>>    dt-bindings: PCI: qcom,pcie-sa8255p: Document ECAM compliant PCIe root
+>>      complex
+>>
+>>   .../devicetree/bindings/pci/qcom,pcie-sa8255p.yaml | 100 +++++++++++++++++++++
+>>   drivers/pci/controller/dwc/Kconfig                 |   1 +
+>>   drivers/pci/controller/dwc/pcie-designware-host.c  |  38 ++++----
+>>   drivers/pci/controller/dwc/pcie-designware.h       |  14 +++
+>>   drivers/pci/controller/dwc/pcie-qcom.c             |  69 ++++++++++++--
+>>   5 files changed, 199 insertions(+), 23 deletions(-)
+>>   create mode 100644 Documentation/devicetree/bindings/pci/qcom,pcie-sa8255p.yaml
+>>
+>> -- 
+>> 2.7.4
+>>
+> 
 
