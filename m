@@ -1,80 +1,104 @@
-Return-Path: <linux-kernel+bounces-411130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A5409CF37C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:00:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DAC29CF384
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:01:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBDFF1F23F86
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:00:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17B0C1F24212
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:01:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772151D8E07;
-	Fri, 15 Nov 2024 18:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911B21D90A7;
+	Fri, 15 Nov 2024 18:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="u3asuL4I"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SmeIC7Vy"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309821CDA3F;
-	Fri, 15 Nov 2024 18:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37631CEE9F;
+	Fri, 15 Nov 2024 18:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731693622; cv=none; b=nScBcT1nT5nXoqIC2PNcNYpiY/hO6MUKFeDi8b4iPvNv7uZHAxuhVj4wphOiGslztZ1zpdpVw1MsgFz6YIpWLc94u4Ux9/bpg+C1cVWtK4kcJQc+3j7bqUdsl2IQZ406FK9IgAO/BtH2wBGsWe88SCQ7ymt9hrTeIDPVf/xytaw=
+	t=1731693639; cv=none; b=gfqpmcLa0VJAkP234/qJkENcSf5ndGHeGq5X83jvhHlVgkYAtYboLwYBH50rQhhe+S6Jn8EDh42Mcz3Oi458UN5mt/so/+CS+xwkhHeNpwWJvv8uKy5MhBw0sV+1RlqAyjt1sX7OL1E9kJ+b8KUDYlaEgvsSgq962cFjnHk5pCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731693622; c=relaxed/simple;
-	bh=kz1/rdO3MbFLFPxJLFU6eWzlgrxKAo09K7jT0P0w11g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=OI4ZU07j2EYVMSrzclZXiv5zYXT1M3Aa+ZLxPxG8PMkgb1kq9A+w6LexiI3Gr3WmazsVa1iHA+ivcEDjjm1sX//2nNmdyQhLo6pinFW5n2GUVXSqE3BmVYfyzrbZtaa5F4PXMEeF/yPyJRBT8DFOnEoEU0UYgTajOsyBGYns1zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=u3asuL4I; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XqlDG2dbbz6CmQyW;
-	Fri, 15 Nov 2024 18:00:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1731693611; x=1734285612; bh=kz1/rdO3MbFLFPxJLFU6eWzl
-	grxKAo09K7jT0P0w11g=; b=u3asuL4IjmGCidOmgRw8CoZ/sdtX+T472kDGpWYz
-	tncvLg4rUGZ/jxDgOdy7MUJvDF1ctKUzMYZvqF4+fPZQoABQbC0Y0p0bU4I90WTw
-	+iKSWU4WW44LgPGSnn5LNeSNT6ayUDFWnjWqdFKTysODqoe9H+txaj5PB0lSLT6h
-	384UaQbrY6xYkDQOMu3CPeafw2gkPRyF7NGPSHZEKhxVOL9Q/a1pGjUOpwaz4F7r
-	AMA2KmMZFvxqG4HdlKd32lz5nkP8yb8RCVmfpfgaedszfHDZmHAlsZsWPl9ttxod
-	MfNh9wluK9smCXLc/SvuY5QZKXIJpPFVjErUYSsI5tDaVg==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id h_RTI91TuQQ3; Fri, 15 Nov 2024 18:00:11 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XqlD971plz6CmQyV;
-	Fri, 15 Nov 2024 18:00:09 +0000 (UTC)
-Message-ID: <1e56d9f8-6e16-4f17-9fdb-5296bb308bdd@acm.org>
-Date: Fri, 15 Nov 2024 10:00:06 -0800
+	s=arc-20240116; t=1731693639; c=relaxed/simple;
+	bh=HD6EHe2dtbiS7iGX242qTl9rs76EJx0ol+5Hb4GXUdI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kgTQTlehEkTaDwG85XaBZ0sCAwlD5ta3PQd664B+gVKPrRRNHYwaXrbu1QCnpdtHCTxSgzQYxD/a9Y1n0Pd+MPfWcwbFUWNG+g01z8EZ0wEWBdpmj/LLkRr3STG3tx7KRoqIN0b2yicldnXvCpOIrzWBdO44AyztnlvHoo7aqH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SmeIC7Vy; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7eadb7f77e8so296273a12.1;
+        Fri, 15 Nov 2024 10:00:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731693637; x=1732298437; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+T/DTdOy6aMNB/YBpuF0zWWa9iIy4yJ/yJGqVpwd2Xk=;
+        b=SmeIC7VyIeiWYTy4Ruvr8ooUMSqJqlE2qCRhT1z1x57N1NY/B+goR0nBxsAvPrTW0i
+         fNUlkY6lcKGqxvJzm5f+ZMtackcyAAQFmzM0mgGfrtrYZjLTvqb5TxW24XbJwMZWEgLU
+         D1kV5/dezaUwcs9wTO4staW9DdFcYT1MN/2eqbV0qSA8MFYsE7v7lcpTjnhgGbKe268Z
+         /EIJ8D3H6kgy61UgkDzzsdT8evrjDfazx9JgUOq6M0E8AWz5qvaaNlnlKcwR1w/z2Ucm
+         y5oJo4EYmNcaZBWgVicLKt1Fv9rB/LOd8WysaenFTo6iAIr+Zosi3MS5HO9Gv8TGcap2
+         iN+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731693637; x=1732298437;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+T/DTdOy6aMNB/YBpuF0zWWa9iIy4yJ/yJGqVpwd2Xk=;
+        b=BEcUTij9iJUG8V3rjId3CtLBL+0Y6PmjD5fTxGcG5Ajtvq0v9UvuG21z0Ewt+WAUQW
+         i4KvKTuwm7jh9ek8QWTLbEi/IGrutvWIEvXTLdFp95Iv7MfvlMCDnEjca0W9XmyhoU2t
+         jAXs45CsQ7K1Hu5vR51QugOhTmSJzUMWrSOrWKtO1Q9Svemao0xxEPC2vOafXOROCdwp
+         cFMDPGwYxblhcgKUQWX6xizT/1W9zQvrByoviI5M0whvhuadXt9LZfTOQ/eszWPaqmyL
+         +syItimfuU+OWFA8zziPGyZhZnt3VcLp73r+XYxdE0sZykSYzidKASOdiVxJqCTTdHUG
+         /yAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVyq5S/kWMy1+EHos9kzs1anYRxLVOPI6DptA0YHzx8V4dAbtAt0OdooWK/rrXTn9EMvb8beT3cGFQv2lvk@vger.kernel.org, AJvYcCW34Q7XP/uq1JZAjXhBXrf2+6m8pY9oYCr56oiwTnAP6JH/u+I0mA2tYPWGWq/1HHN3tzbDH0Y5YGk=@vger.kernel.org, AJvYcCWJQ2akKyiIh2Z2JE1XWLfWAI1oLIruDDm4xTVswv9k64ENF6GaaStFxCbWJr1ZFeDbPyzAtFX5NV9t@vger.kernel.org, AJvYcCXbC/Kjcae7tUNzuytfUajJlpRszt1nml14jhB6UK0bnvmB8mf1SbN3R6YvHcuhn1usMYYDcfnSgDMgBTQKFl4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywz1YpttD0ysCMSx+88SEU/d2Jb76Wj8N1r8F4+0z+njFhimkjv
+	6Gm/3m2lyMRokb1X0rvE1ibSeo19YJSHwQlXj2PRQTBE8qRDDaG7tEbyUDq3uSDkrnnYtFmniSI
+	UXFiQnuDVzdRBAce+EiUwp9d4kcI=
+X-Google-Smtp-Source: AGHT+IHBWVGgm4NH0OavgO0mYdx8/AJ/4FG/ZcgImOHvrop0lwwqASHqFDarw7Q/bv3A4lK+O8D7zvDeOzSblr0zZs8=
+X-Received: by 2002:a17:902:d510:b0:20c:8ffa:7dd with SMTP id
+ d9443c01a7336-211d0ec3017mr21674865ad.11.1731693636804; Fri, 15 Nov 2024
+ 10:00:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [scsi?] [usb?] KASAN: slab-use-after-free Read in
- sg_release
-To: syzbot <syzbot+7efb5850a17ba6ce098b@syzkaller.appspotmail.com>,
- linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <672b574b.050a0220.2edce.1523.GAE@google.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <672b574b.050a0220.2edce.1523.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241115054616.1226735-2-alistair@alistair23.me> <20241115175346.GA2045933@bhelgaas>
+In-Reply-To: <20241115175346.GA2045933@bhelgaas>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 15 Nov 2024 19:00:23 +0100
+Message-ID: <CANiq72mzbZidoRZALCmO68efnigyxLf0Vv0pLYWVxD0PJPj1Vg@mail.gmail.com>
+Subject: Re: [RFC 1/6] rust: bindings: Support SPDM bindings
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Alistair Francis <alistair@alistair23.me>, lukas@wunner.de, Jonathan.Cameron@huawei.com, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	akpm@linux-foundation.org, bhelgaas@google.com, linux-pci@vger.kernel.org, 
+	linux-cxl@vger.kernel.org, bjorn3_gh@protonmail.com, ojeda@kernel.org, 
+	tmgross@umich.edu, boqun.feng@gmail.com, benno.lossin@proton.me, 
+	a.hindborg@kernel.org, wilfred.mallawa@wdc.com, alistair23@gmail.com, 
+	alex.gaynor@gmail.com, gary@garyguo.net, aliceryhl@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-#syz test: https://github.com/bvanassche/linux.git scsi-for-next
+On Fri, Nov 15, 2024 at 6:53=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org> =
+wrote:
+>
+> Usually an additional #include goes in the same patch that makes use
+> of the new .h file.  Maybe there's a different convention in rust/?
+
+I think doing it in the same patch makes more sense, i.e. please feel
+free to avoid a "rust: bindings: ..."-titled patch.
+
+It is also how it has been done in the past, e.g. see commit
+de6582833db0 ("rust: add firmware abstractions").
+
+Cheers,
+Miguel
 
