@@ -1,372 +1,186 @@
-Return-Path: <linux-kernel+bounces-410126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 202849CD4ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 02:16:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9E289CD4F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 02:18:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 178D9B23678
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 01:16:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 698F41F21D93
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 01:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1245241AAC;
-	Fri, 15 Nov 2024 01:15:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDAC42629D;
+	Fri, 15 Nov 2024 01:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mSHFceOy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b="mhpPy1pk"
+Received: from sender3-of-o57.zoho.com (sender3-of-o57.zoho.com [136.143.184.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA0E13A88A;
-	Fri, 15 Nov 2024 01:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731633351; cv=none; b=Y7IknP63UNP51y4ZF83Stf+ex6yxV3EZ36GzWfcPfT7moGmb/W6iOEZf4nnByGpYx/xdq9UpxDZeh7RB1VxQFEChqb+iGND5K9Qx5RsGSlttayaQBmDNGpk5UidZqCgfkF+nzN2bWFo0ktxRDdguwdrwDL7clfhZM4RP6si4yrQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731633351; c=relaxed/simple;
-	bh=2LF7NM83j9VDIN1dogfnDuobHKKvRNyBbh407AOlYHM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Imi1f9ZxbHoSSM5Vs+PGgXGJuUynODDNeC3Jv2+6Kf4bomT4bStfmiqSbrBjDThiNdGcy06blXiJmGYvLtGgebmlMNplw1FiZr4VXytuzbaoumIBDnNT6RWM+pQd5A0wp9vUK+Mb/zdZLrf2RQ0s6nqH9xpKOifY8rRGSmtAQmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mSHFceOy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AEHHxnJ022104;
-	Fri, 15 Nov 2024 01:15:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	96MgO3zE1oHyAS/1NoWggftC32/feb47kP20tAxRyLw=; b=mSHFceOyU4n0gL7B
-	ShN6kiBjygyjOKjZrRHwraawPPUXeCYv48ROQPH85WW8z0kchjZ3Vf5FA63cfdQx
-	YQmYwMmdVhKkZb3iXz+r/9ueSrDgp5Ma3b3uFUeVOsGRuOQpOrS1LCbbHrvUyDO3
-	jVJVBCfGDlUFo64D4WUFudS7gILU8E406EiaGdnhJbOGJled9EBt6GDmky4a6GX4
-	WN+lITHAiCprwAVFIUcwFsQ01Fnrp/kwp1U3WXoPcrd9HX51hn/pbJqzByWgAWCn
-	lAJ5YYrrCTG6/t1D3Il8V8ifDVEsNYGp4WYYovkzWTNjrsxHNYL51T5pujlzXKVL
-	Tyz1NQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42vsg56qf6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 01:15:41 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AF1FfeC009033
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 01:15:41 GMT
-Received: from hu-sibis-blr.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 14 Nov 2024 17:15:37 -0800
-From: Sibi Sankar <quic_sibis@quicinc.com>
-To: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_rgottimu@quicinc.com>,
-        <quic_kshivnan@quicinc.com>, <quic_sibis@quicinc.com>,
-        <arm-scmi@vger.kernel.org>, Amir Vajid <avajid@quicinc.com>
-Subject: [PATCH V5 2/2] firmware: arm_scmi: vendors: Add QCOM SCMI Generic Extensions
-Date: Fri, 15 Nov 2024 06:45:15 +0530
-Message-ID: <20241115011515.1313447-3-quic_sibis@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241115011515.1313447-1-quic_sibis@quicinc.com>
-References: <20241115011515.1313447-1-quic_sibis@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09C91EA73;
+	Fri, 15 Nov 2024 01:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731633513; cv=pass; b=SXD/GjqD/6tx+lJWyjKCpmiA486OuXliQMHvQumrvOvXfa4H/QVRjgTE6aXUojbsB7fexPi9xFTkcbWLR8aw/XkVTCAQUT0GDf6P89Lf//gQB5mzSbOybyboz1Ey8fuboYXJF9vOsInoc1V/7dXMPVCh/2/28e51JamEJPLebSU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731633513; c=relaxed/simple;
+	bh=FwqvCAt8Zg5L5tpyZOWp/OWDGqTnQXf5GTPksiCqOzE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=QqDu4tmSEOJYbzAk3Zz0gjVyRw52NlSYaWcYaK03LFetbbN1id5m3AO3PBJepLGHjXRE+9Owe2GVpTnsmaL8EsmckX5tPJrZ8r2INJIsxiXkb1GZab4Jf+a0CGm0cVZvAM4LhNc0Ys3ZaPftFkOgr2KdR1b8Wa8Mx339Um/UyD4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com; spf=pass smtp.mailfrom=apertussolutions.com; dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b=mhpPy1pk; arc=pass smtp.client-ip=136.143.184.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apertussolutions.com
+ARC-Seal: i=1; a=rsa-sha256; t=1731633431; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=HApsMMSmRc9YCIaxMUkJe0zltVO0dOBTierobYTK3H1mctcHyww8DwqrhC8w5GdZf6NC6DwbwZDAJuMEzTVPRXUDUItxS4QJ17p/tV6kz7j1fgbEhr8ZBdLd8f9rsImU1GTYB1rvqkSEOIBYrchHSHD98NeO+p2CChpRfgw9q+0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1731633431; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=MuBQEpSeYrVW5P897dVbSdSSTy2uYjy7xShRezu7W2k=; 
+	b=NpTuHv2RsFDLRF/2wLyPkQne8P5SbtKMElKK6Mr5iJgBiuu2V4yPF9Z9chpk5y9Yvy8MDQ1Pa+WqJm05Zpoq80TqWZz9rvgv17S6yueVCyrfcfBfvdFXBCYpIw8BcQJ6BwJRUuiTQOscs6oC/s5UJQEOrazWXDEjNLfVjQQF5lY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=apertussolutions.com;
+	spf=pass  smtp.mailfrom=dpsmith@apertussolutions.com;
+	dmarc=pass header.from=<dpsmith@apertussolutions.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1731633431;
+	s=zoho; d=apertussolutions.com; i=dpsmith@apertussolutions.com;
+	h=Message-ID:Date:Date:MIME-Version:From:From:Subject:Subject:To:To:Cc:Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=MuBQEpSeYrVW5P897dVbSdSSTy2uYjy7xShRezu7W2k=;
+	b=mhpPy1pkZZfw9Xv4SsFNA73xYZM58AZ6T6tnXjLz41i0gpDvH/DTN0MVOimmT0jg
+	EcAnCMDvMFWGfBpMmBnd8Y0PXCoNXN70fIVZFTLqOQzvtCt9J8vlcAhAJn3RJvwzjba
+	YugFNZ3m4CvIQbbEqIXJl+Kd1FYcuZb6NcWxOiz0=
+Received: by mx.zohomail.com with SMTPS id 173163342863043.69850969601737;
+	Thu, 14 Nov 2024 17:17:08 -0800 (PST)
+Message-ID: <5d1e41d6-b467-4013-a0d0-45f9511c15c6@apertussolutions.com>
+Date: Thu, 14 Nov 2024 20:17:04 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
+Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
+ early measurements
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+ Andy Lutomirski <luto@amacapital.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ "Eric W. Biederman" <ebiederm@xmission.com>,
+ Eric Biggers <ebiggers@kernel.org>,
+ Ross Philipson <ross.philipson@oracle.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org, linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+ linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
+ mingo@redhat.com, bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
+ ardb@kernel.org, mjg59@srcf.ucam.org, peterhuewe@gmx.de, jarkko@kernel.org,
+ jgg@ziepe.ca, nivedita@alum.mit.edu, herbert@gondor.apana.org.au,
+ davem@davemloft.net, corbet@lwn.net, dwmw2@infradead.org,
+ baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com,
+ andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
+References: <20240531010331.134441-1-ross.philipson@oracle.com>
+ <20240531010331.134441-7-ross.philipson@oracle.com>
+ <20240531021656.GA1502@sol.localdomain>
+ <874jaegk8i.fsf@email.froward.int.ebiederm.org>
+ <5b1ce8d3-516d-4dfd-a976-38e5cee1ef4e@apertussolutions.com>
+ <87ttflli09.ffs@tglx>
+ <CALCETrXQ7rChWLDqTG0+KY7rsfajSPguMnHO1G4VJi_mgwN9Zw@mail.gmail.com>
+ <1a1f0c41-70de-4f46-b91d-6dc7176893ee@apertussolutions.com>
+ <8a0b59a4-a5a2-42ae-bc1c-1ddc8f2aad16@apertussolutions.com>
+ <CALCETrX8caT5qvCUu24hQfxUF_wUC2XdGpS2YFP6SR++7FiM3Q@mail.gmail.com>
+ <c466ed57-35a8-41c0-9647-c70e588ad1d3@apertussolutions.com>
+ <CALCETrW9WNNGh1dEPKfQoeU+m5q6_m97d0_bzRkZsv2LxqB_ew@mail.gmail.com>
+ <ff0c8eed-8981-48c4-81d9-56b040ef1c7b@apertussolutions.com>
+ <446cf9c70184885e4cec6dd4514ae8daf7accdcb.camel@HansenPartnership.com>
+Content-Language: en-US
+In-Reply-To: <446cf9c70184885e4cec6dd4514ae8daf7accdcb.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Oz3U6D54__IsiiTY_ukFRP7zEVvWbH05
-X-Proofpoint-ORIG-GUID: Oz3U6D54__IsiiTY_ukFRP7zEVvWbH05
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 phishscore=0 malwarescore=0 lowpriorityscore=0
- mlxscore=0 mlxlogscore=999 impostorscore=0 bulkscore=0 adultscore=0
- suspectscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411150009
+X-ZohoMailClient: External
 
-The QCOM SCMI Generic Extensions Protocol provides a generic way of
-exposing a number of Qualcomm SoC specific features (like memory bus
-scaling) through a mixture of pre-determined algorithm strings and
-param_id pairs hosted on the SCMI controller.
+On 11/2/24 12:04, James Bottomley wrote:
+> On Sat, 2024-11-02 at 10:53 -0400, Daniel P. Smith wrote:
+>> Hi Luto,
+>>
+>> My apologies, I missed this response and the active on v11 cause me
+>> to
+>> get an inquiry why I hadn't responded.
+>>
+>> On 9/21/24 18:40, Andy Lutomirski wrote:
+> [...]
+>>> I assumed that "deliberately cap" meant that there was an actual
+>>> feature where you write something to the event log (if applicable)
+>>> and extend the PCR in a special way that *turns that PCR off*.
+>>> That is, it does something such that later-loaded software *can't*
+>>> use that PCR to attest or unseal anything, etc.
+>>>
+>>> But it sounds like you're saying that no such feature exists.  And
+>>> a quick skim of the specs doesn't come up with anything.  And the
+>>> SHA1 banks may well be susceptible to a collision attack.
+>>
+>> Correct, the only entity that can disable PCR banks is the firmware.
+> 
+> No, that's not correct.  Any user can use TPM_PCR_Allocate to activate
+> or deactivate individual banks.  The caveat is the change is not
+> implemented until the next TPM reset (which should involve a reboot).
+> BIOS also gets to the TPM before the kernel does, so it can, in theory,
+> check what banks a TPM has and call TPM_PCR_Allocate to change them.
+> In practice, because this requires a reboot, this is usually only done
+> from the BIOS menus not on a direct boot ... so you can be reasonably
+> sure that whatever changes were made will stick.
 
-Co-developed-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-Co-developed-by: Ramakrishna Gottimukkula <quic_rgottimu@quicinc.com>
-Signed-off-by: Ramakrishna Gottimukkula <quic_rgottimu@quicinc.com>
-Co-developed-by: Amir Vajid <avajid@quicinc.com>
-Signed-off-by: Amir Vajid <avajid@quicinc.com>
-Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
----
+Okay, since there is a desire for exactness. Any system software can 
+send the TPM_PCR_Allocate command, specifying which PCRs should be 
+activated on next _TPM_init. There are restrictions such that if 
+DRTM_PCR is defined, then at least one bank must have a D-RTM PCR 
+allocation. In agreement with my statement, this is the mechanism used 
+by firmware to select the banks. Depending on the firmware 
+implementation, the firmware request will likely override the request 
+sent by the system software.
 
-v4:
-* Splitting the series into vendor protocol and memlat client.
-  Also the move the memlat client implementation back to RFC
-  due to multiple opens.
-* Use common xfer helper to avoid code duplication [Dmitry]
-* Update enum documentation without duplicate enum info [Dmitry]
+This brings us back to an earlier point, if one disables the SHA1 banks 
+in BIOS menu, then TXT will not use them and thus neither will Secure 
+Launch. Secure Launch will only use the algorithms used by the CPU and 
+the ACM.
 
- drivers/firmware/arm_scmi/Kconfig             |   1 +
- drivers/firmware/arm_scmi/Makefile            |   1 +
- .../firmware/arm_scmi/vendors/qcom/Kconfig    |  15 ++
- .../firmware/arm_scmi/vendors/qcom/Makefile   |   2 +
- .../arm_scmi/vendors/qcom/qcom-generic-ext.c  | 139 ++++++++++++++++++
- include/linux/scmi_qcom_protocol.h            |  37 +++++
- 6 files changed, 195 insertions(+)
- create mode 100644 drivers/firmware/arm_scmi/vendors/qcom/Kconfig
- create mode 100644 drivers/firmware/arm_scmi/vendors/qcom/Makefile
- create mode 100644 drivers/firmware/arm_scmi/vendors/qcom/qcom-generic-ext.c
- create mode 100644 include/linux/scmi_qcom_protocol.h
+>> When it initializes the TPM, it can disable banks/algorithms. After
+>> that, when an extend operation is done, the TPM is expecting an entry
+>> for all active PCR banks and the TPM itself does the extend hash that
+>> is stored into the PCRs.
+> 
+> This, also, is not quite correct: an extend is allowed to specify banks
+> that don't exist (in which case nothing happens and no error is
+> reported) and miss banks that do (in which case no extend is done to
+> that bank).  In the early days of TPM2, some BIOS implementations only
+> extended sha1 for instance, meaning the sha256 banks were all zero when
+> the kernel started.
+> 
+> Even today, if you activate a bank the BIOS doesn't know about, it
+> likely won't extend it.  You can see this in VM boots with OVMF and
+> software TPMs having esoteric banks like SM3.
 
-diff --git a/drivers/firmware/arm_scmi/Kconfig b/drivers/firmware/arm_scmi/Kconfig
-index dabd874641d0..73128442d97b 100644
---- a/drivers/firmware/arm_scmi/Kconfig
-+++ b/drivers/firmware/arm_scmi/Kconfig
-@@ -71,6 +71,7 @@ config ARM_SCMI_DEBUG_COUNTERS
- 
- source "drivers/firmware/arm_scmi/transports/Kconfig"
- source "drivers/firmware/arm_scmi/vendors/imx/Kconfig"
-+source "drivers/firmware/arm_scmi/vendors/qcom/Kconfig"
- 
- endif #ARM_SCMI_PROTOCOL
- 
-diff --git a/drivers/firmware/arm_scmi/Makefile b/drivers/firmware/arm_scmi/Makefile
-index 9ac81adff567..58cf4d656cbb 100644
---- a/drivers/firmware/arm_scmi/Makefile
-+++ b/drivers/firmware/arm_scmi/Makefile
-@@ -12,6 +12,7 @@ scmi-module-objs := $(scmi-driver-y) $(scmi-protocols-y) $(scmi-transport-y)
- 
- obj-$(CONFIG_ARM_SCMI_PROTOCOL) += transports/
- obj-$(CONFIG_ARM_SCMI_PROTOCOL) += vendors/imx/
-+obj-$(CONFIG_ARM_SCMI_PROTOCOL) += vendors/qcom/
- 
- obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-core.o
- obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-module.o
-diff --git a/drivers/firmware/arm_scmi/vendors/qcom/Kconfig b/drivers/firmware/arm_scmi/vendors/qcom/Kconfig
-new file mode 100644
-index 000000000000..5dd9e8a6b75f
---- /dev/null
-+++ b/drivers/firmware/arm_scmi/vendors/qcom/Kconfig
-@@ -0,0 +1,15 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+menu "ARM SCMI QCOM Vendor Protocols"
-+
-+config QCOM_SCMI_GENERIC_EXT
-+	tristate "Qualcomm Technologies, Inc. Qcom SCMI vendor Protocol"
-+	depends on ARM_SCMI_PROTOCOL || COMPILE_TEST
-+	help
-+	  The QCOM SCMI vendor protocol provides a generic way of exposing
-+	  a number of Qualcomm SoC specific features (like memory bus scaling)
-+	  through a mixture of pre-determined algorithm strings and param_id
-+	  pairs hosted on the SCMI controller.
-+
-+	  This driver defines/documents the message ID's used for this
-+	  communication and also exposes the operations used by the clients.
-+endmenu
-diff --git a/drivers/firmware/arm_scmi/vendors/qcom/Makefile b/drivers/firmware/arm_scmi/vendors/qcom/Makefile
-new file mode 100644
-index 000000000000..6b98fabbebb8
---- /dev/null
-+++ b/drivers/firmware/arm_scmi/vendors/qcom/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+obj-$(CONFIG_QCOM_SCMI_GENERIC_EXT) += qcom-generic-ext.o
-diff --git a/drivers/firmware/arm_scmi/vendors/qcom/qcom-generic-ext.c b/drivers/firmware/arm_scmi/vendors/qcom/qcom-generic-ext.c
-new file mode 100644
-index 000000000000..1b209093d275
---- /dev/null
-+++ b/drivers/firmware/arm_scmi/vendors/qcom/qcom-generic-ext.c
-@@ -0,0 +1,139 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+#include <linux/scmi_qcom_protocol.h>
-+
-+#include "../../common.h"
-+
-+/**
-+ * enum qcom_generic_ext_protocol_cmd - vendor specific commands supported by SCMI Qualcomm
-+ *                                      generic vendor protocol.
-+ *
-+ * This protocol is intended as a generic way of exposing a number of Qualcomm SoC
-+ * specific features through a mixture of pre-determined algorithm string and param_id
-+ * pairs hosted on the SCMI controller.
-+ *
-+ * The QCOM SCMI Vendor Protocol has the protocol id as 0x80 and vendor id set to
-+ * Qualcomm and the implementation version set to 0x20000. The PROTOCOL_VERSION command
-+ * returns version 1.0.
-+ *
-+ * @QCOM_SCMI_SET_PARAM: is used to set the parameter of a specific algo_str hosted on
-+ *			 QCOM SCMI Vendor Protocol. The tx len depends on the algo_str used.
-+ * @QCOM_SCMI_GET_PARAM: is used to get parameter information of a specific algo_str
-+ *			 hosted on QCOM SCMI Vendor Protocol. The tx and rx len depends
-+ *			 on the algo_str used.
-+ * @QCOM_SCMI_START_ACTIVITY: is used to start the activity performed by the algo_str.
-+ * @QCOM_SCMI_STOP_ACTIVITY: is used to stop a pre-existing activity performed by the algo_str.
-+ */
-+enum qcom_generic_ext_protocol_cmd {
-+	QCOM_SCMI_SET_PARAM = 0x10,
-+	QCOM_SCMI_GET_PARAM = 0x11,
-+	QCOM_SCMI_START_ACTIVITY = 0x12,
-+	QCOM_SCMI_STOP_ACTIVITY = 0x13,
-+};
-+
-+/**
-+ * struct qcom_scmi_msg - represents the various parameters to be populated
-+ *                        for using the QCOM SCMI Vendor Protocol
-+ *
-+ * @ext_id: reserved, must be zero
-+ * @algo_low: lower 32 bits of the algo_str
-+ * @algo_high: upper 32 bits of the algo_str
-+ * @param_id: serves as token message id to the specific algo_str
-+ * @buf: serves as the payload to the specified param_id and algo_str pair
-+ */
-+struct qcom_scmi_msg {
-+	__le32 ext_id;
-+	__le32 algo_low;
-+	__le32 algo_high;
-+	__le32 param_id;
-+	__le32 buf[];
-+};
-+
-+static int qcom_scmi_common_xfer(const struct scmi_protocol_handle *ph,
-+				 enum qcom_generic_ext_protocol_cmd cmd_id, void *buf,
-+				 size_t buf_len, u64 algo_str, u32 param_id, size_t rx_size)
-+{
-+	struct scmi_xfer *t;
-+	struct qcom_scmi_msg *msg;
-+	int ret;
-+
-+	ret = ph->xops->xfer_get_init(ph, cmd_id, buf_len + sizeof(*msg), rx_size, &t);
-+	if (ret)
-+		return ret;
-+
-+	msg = t->tx.buf;
-+	msg->algo_low = cpu_to_le32(lower_32_bits(algo_str));
-+	msg->algo_high = cpu_to_le32(upper_32_bits(algo_str));
-+	msg->param_id = cpu_to_le32(param_id);
-+	memcpy(msg->buf, buf, buf_len);
-+
-+	ret = ph->xops->do_xfer(ph, t);
-+	if (rx_size)
-+		memcpy(buf, t->rx.buf, t->rx.len);
-+	ph->xops->xfer_put(ph, t);
-+
-+	return ret;
-+}
-+
-+static int qcom_scmi_set_param(const struct scmi_protocol_handle *ph, void *buf, size_t buf_len,
-+			       u64 algo_str, u32 param_id)
-+{
-+	return qcom_scmi_common_xfer(ph, QCOM_SCMI_SET_PARAM, buf, buf_len, algo_str,
-+				     param_id, 0);
-+}
-+
-+static int qcom_scmi_get_param(const struct scmi_protocol_handle *ph, void *buf, size_t buf_len,
-+			       u64 algo_str, u32 param_id, size_t rx_size)
-+{
-+	return qcom_scmi_common_xfer(ph, QCOM_SCMI_GET_PARAM, buf, buf_len, algo_str,
-+				     param_id, rx_size);
-+}
-+
-+static int qcom_scmi_start_activity(const struct scmi_protocol_handle *ph, void *buf,
-+				    size_t buf_len, u64 algo_str, u32 param_id)
-+{
-+	return qcom_scmi_common_xfer(ph, QCOM_SCMI_START_ACTIVITY, buf, buf_len, algo_str,
-+				     param_id, 0);
-+}
-+
-+static int qcom_scmi_stop_activity(const struct scmi_protocol_handle *ph, void *buf,
-+				   size_t buf_len, u64 algo_str, u32 param_id)
-+{
-+	return qcom_scmi_common_xfer(ph, QCOM_SCMI_STOP_ACTIVITY, buf, buf_len, algo_str,
-+				     param_id, 0);
-+}
-+
-+static struct qcom_generic_ext_ops qcom_proto_ops = {
-+	.set_param = qcom_scmi_set_param,
-+	.get_param = qcom_scmi_get_param,
-+	.start_activity = qcom_scmi_start_activity,
-+	.stop_activity = qcom_scmi_stop_activity,
-+};
-+
-+static int qcom_generic_ext_protocol_init(const struct scmi_protocol_handle *ph)
-+{
-+	u32 version;
-+
-+	ph->xops->version_get(ph, &version);
-+
-+	dev_dbg(ph->dev, "QCOM Generic Vendor Version %d.%d\n",
-+		PROTOCOL_REV_MAJOR(version), PROTOCOL_REV_MINOR(version));
-+
-+	return 0;
-+}
-+
-+static const struct scmi_protocol qcom_generic_ext = {
-+	.id = SCMI_PROTOCOL_QCOM_GENERIC,
-+	.owner = THIS_MODULE,
-+	.instance_init = &qcom_generic_ext_protocol_init,
-+	.ops = &qcom_proto_ops,
-+	.vendor_id = "Qualcomm",
-+	.impl_ver = 0x20000,
-+};
-+module_scmi_protocol(qcom_generic_ext);
-+
-+MODULE_DESCRIPTION("QCOM SCMI Generic Vendor protocol");
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/scmi_qcom_protocol.h b/include/linux/scmi_qcom_protocol.h
-new file mode 100644
-index 000000000000..465b2522ca29
---- /dev/null
-+++ b/include/linux/scmi_qcom_protocol.h
-@@ -0,0 +1,37 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * SCMI Message Protocol driver QCOM extension header
-+ *
-+ * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+#ifndef _LINUX_SCMI_QCOM_PROTOCOL_H
-+#define _LINUX_SCMI_QCOM_PROTOCOL_H
-+
-+#include <linux/types.h>
-+
-+#define SCMI_PROTOCOL_QCOM_GENERIC    0x80
-+
-+struct scmi_protocol_handle;
-+
-+/**
-+ * struct qcom_generic_ext_ops - represents the various operations provided
-+ *				 by QCOM Generic Vendor Protocol
-+ *
-+ * @set_param: set parameter specified by param_id and algo_str pair.
-+ * @get_param: retrieve parameter specified by param_id and algo_str pair.
-+ * @start_activity: initiate a specific activity defined by algo_str.
-+ * @stop_activity: halt previously initiated activity defined by algo_str.
-+ */
-+struct qcom_generic_ext_ops {
-+	int (*set_param)(const struct scmi_protocol_handle *ph, void *buf, size_t buf_len,
-+			 u64 algo_str, u32 param_id);
-+	int (*get_param)(const struct scmi_protocol_handle *ph, void *buf, size_t buf_len,
-+			 u64 algo_str, u32 param_id, size_t rx_size);
-+	int (*start_activity)(const struct scmi_protocol_handle *ph, void *buf, size_t buf_len,
-+			      u64 algo_str, u32 param_id);
-+	int (*stop_activity)(const struct scmi_protocol_handle *ph, void *buf, size_t buf_len,
-+			     u64 algo_str, u32 param_id);
-+};
-+
-+#endif /* _LINUX_SCMI_QCOM_PROTOCOL_H */
--- 
-2.34.1
+Let me correct myself here and again be extremely precise. When an 
+extend operation is done, the TPM driver expects to receive an array of 
+digests that is the same size as the number of allocated/active banks. 
+Specifically, it loops from 0 to chip->nr_allocated_banks, filling 
+TPML_DIGEST_VALUES with an entry for all the active banks, to include 
+SHA1 if it is active. Coming back to my response to Luto, we can either 
+populate it with 0 or a well-known value for each extend we send. 
+Regardless of what the value is, the TPM will use its implementation of 
+SHA1 to calculate the resulting extend value.
+
+Even with these clarifications, the conclusion does not change. If the 
+firmware enables SHA1, there is nothing that can be done to disable or 
+block its usage from the user. Linux Secure Launch sending measurements 
+to all the banks that the hardware used to start the DRTM chain does not 
+create a vulnerability in and of itself. The user is free to leverage 
+the SHA1 bank in any of the TPM's Integrity Collection suite of 
+operations, regardless of what Secure Launch sends for the SHA1 hash. 
+Whereas, neutering the solution of SHA1 breaks the ability for it to 
+support any hardware that has a TPM1.2, of which there are still many in 
+use.
+
+V/r,
+Daniel P. Smith
+
 
 
