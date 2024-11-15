@@ -1,407 +1,355 @@
-Return-Path: <linux-kernel+bounces-410521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3932A9CDCBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:38:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7793A9CDCB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:35:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D266B252EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:38:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA40FB291D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 644411AC43E;
-	Fri, 15 Nov 2024 10:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="fc3E8n+g"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A20838DD8;
+	Fri, 15 Nov 2024 10:35:27 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3886438DD8
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73B814A088
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731667104; cv=none; b=CxlJ3dl+pTJ8ICb3xI627+h6RAn+FSL0XywSTEWrUVMSBC925AJOGq9Xnq9mmqOjNe1RXuM8+9/URkyzEASpSlw5SU32HdOwzpuOkEbsyTLEiL63ZUzaMplk/duTuDMc3PLR6rDhC9+Cyb4FNtsartX7KNspMSfy2fGBLrguKuQ=
+	t=1731666926; cv=none; b=dpyO9JfPC5hgbwNVGB2Aw9XcARlqmttFHiY2SlqSXyJm4s9GGYbArkhElyC4Rh7bjbJlbML1Xs9Z4joUgYHYwagUBzdptb1Fg7IwSOl0HUarfD8C1cjCUUL8S0TaZmhB5lgicuKoxIGoIz3ES3DNioiQqYmJH+GF5ZbPqzS1ynM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731667104; c=relaxed/simple;
-	bh=a9Ci7wIoNIlUfqDLXVLFA0ucqR7miOS08awJuyxlED0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VTY6pSq4+pf7+iBV7dOJx2JZJkfqw9gJ10V6HrMfZGCZqs8Ikt2Ye1EZ8tivb2c8KfMCNT+c87DI7KSBMP7XSLimuXAq9pn1Efgt1dPTwrwDnuN9J+DUhB5xKgKyI99koNtK24SJ+yjjEodw6ukWvENI4ar0Wp8gVxAzoyty1ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=fc3E8n+g; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-381ee2e10dfso1016933f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 02:38:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731667099; x=1732271899; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Db1U4jpEK2AiiwKsw/5x+Bw04+ZGyA1cxWkjFENXZLY=;
-        b=fc3E8n+grWl2svRAzrpAUJNn/GNbUUI7nvU1qj3pUwKOpCDm1BAoNACM1IaUK5lOVN
-         SRm13hbPeGLNp2JBEq8SSoEs8Qu4F3e89J7gzey8nNKgLSby+T1zGivhim+f7h9ubxZ+
-         VFp54TkQGDyX6yLQny2/kFn3eGFOSubdochvsdw4MudrNS55FWTPyukv0e+E/WXlRCrX
-         O8qrRfTwt95Ls+FsAxBywz5SAnkci0DPlCi+rcwSDrVeBuQ5RVRBRhzxa70e2Ev8AADu
-         d6MAby1sRIMwk2FZIQ/+ejjnOMPCBGfWFxyqDzoPU6t77JUvE3uzJDxPkxkWna2/Ixs7
-         P2Jg==
+	s=arc-20240116; t=1731666926; c=relaxed/simple;
+	bh=KKmX3zPLqu8GcQIi5/bD3fvLtFEdzzQ3PrcUzvrYVXE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZFd3tPrLCSdUAbfoWNjUTlZgzZLrrdavqZvHElSiviZ/Z80/hmtFEKB9d66dEtsuoujxRZqlnAPxUxIxMPyyt67EenM6NYUPHP9I1J+MJHzAUUEjaEfwYqYcq6To2e9U2G0Uzj/Qbm2e3YooauKSfhu/LM72li1KqHNnn5bkoDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a71d035135so19700595ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 02:35:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731667099; x=1732271899;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Db1U4jpEK2AiiwKsw/5x+Bw04+ZGyA1cxWkjFENXZLY=;
-        b=gyvH5PaflAOztbY0W5Ro+LmRW5SIm0rzHvyJl07Kw6pf3lW19mJnVm7LVxZtPHjEvu
-         TIRccNpBRbD+tEEEDrf6Q/0mybKECu587EfiJuUd0mBLg28wHttLCUJmJgQJAFRAy45c
-         54BXaH+iyepaltSTT3cEcBjXvnI6hqZpa7MV9BqZDUv/5gixbWfZZqWfOgGVjfXWiOBd
-         rlF1HSVMhaMyDjt1Sk+IlALZgGtrSS9EhHDmTwxzWeaQPnTHdy8vQzeAJRbWdvIH3u1D
-         UjBQtzunay88kb9Q2Uw/snweuHv60vGsBQSmcoZ+IEmShxokZG6OsJIf9FGVHGGHEAD/
-         ShTw==
-X-Forwarded-Encrypted: i=1; AJvYcCV7NBkwbN1yM7KSWT6MGzN53gI8CValeu/J2qPc8PbXzVqbTqOzctn1yHupHgWVYW6/VNFBMS2MhkPn10M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKACngYu2+5TYPJLKTFJlHQsxSearEKExnr/AAEAh7CZxw15gB
-	SblYSsqAEuqkETa9CVrUKDYOUwwQB1WzaUhjfaLMrMSzO8M370i6WKOf+1Au7RI=
-X-Google-Smtp-Source: AGHT+IHs4KY4XzxNYlsXM+RtFDckmBr6pGD2/1eyNv2zRG7HjQp0QPampfN4h4i+u1UQn6If4vcBvg==
-X-Received: by 2002:a05:6000:3c6:b0:374:af19:7992 with SMTP id ffacd0b85a97d-38225a42f6dmr1710307f8f.7.1731667099414;
-        Fri, 15 Nov 2024 02:38:19 -0800 (PST)
-Received: from [127.0.0.1] (alille-653-1-300-114.w90-1.abo.wanadoo.fr. [90.1.180.114])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ae1617bsm4084163f8f.72.2024.11.15.02.38.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 02:38:18 -0800 (PST)
-From: Guillaume Ranquet <granquet@baylibre.com>
-Date: Fri, 15 Nov 2024 11:34:19 +0100
-Subject: [PATCH RFC] iio: adc: ad7173: add openwire detection support for
- single conversions
+        d=1e100.net; s=20230601; t=1731666924; x=1732271724;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lE5ryar0fVqLxzlPOEtRYMo6rfMf17zBcG3/O3u/ybQ=;
+        b=LX+s/zev2OGUcoSELhfZfDOu3u+ae8zcPIbQxDX6GJgZzxwK/qYoRF62YwZhdM09vi
+         IzFmv0/PhYbZqr63GqFKfaAyr4SczUIQBskZzADhSoqZKC0SSJJdmTfqIXr7lObYAbNm
+         p9ui4Kb0/drasUm1amNnUW8+k7KKdH0dD7WcVOMOiPVxn2UabvXElnKw9oqt5arPGl2t
+         xDihAEm62J9VxjsvKZkIGUqKY/PaF1lLfctkbaFmYTvtsoTVXBXIQMS5sxcapw/mj0ER
+         /QfmDvlIaO9CAxug0l1BHIPp7zUPICXnKu089JVUSSbHRXuyQJoO8r3pVtDIgwMjoQO3
+         oU9w==
+X-Forwarded-Encrypted: i=1; AJvYcCVjpv0g6RFJRgAAO9wRz2E2ospPdmRR1icvqOLvDRZzhoGtpmIB5/tquetFEtT0cU+Exrdg49dkhZohGW0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrVf4BIEfjbG0YOWsIboRghyED1ifzCA6qlbT6kiTY63HA0+Iy
+	haHDxjQWoSWxkqHrd/infttKvtkk36ZdiPaSBYiqXbdy0NzDpG3rmxDx5+hdgO9FFpttGGmVjzE
+	7uCPIzdNllhEHXaOi2nGS0Yz71hMbbc6STGFNhbb8TgHKsBkRUf6BfK0=
+X-Google-Smtp-Source: AGHT+IEbkPGcE177W56REAwGOYU+NklAaJRLbRr6EIqQcg0kF6J7D49fZ0iFgKzPw+j04RbsCOeK9fL0BOCJB8EzXZAjZCq+pG0u
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241115-ad4111_openwire-v1-1-db97ac8bf250@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAKojN2cC/1WOywrCMBBFfyXM2kgTDNYiIgh+gFspZdJONGAfJ
- rVWSv/dtOrC1XDmMmfuAJ6cJQ8JG8BRZ72tqwBiwSC/YnUhbovAICO5EkIojsU0s7qh6mkdcVK
- qII2x3KwNhKvGkbH9bDzD6XiA9LN0dH8Ee/tNSvIeZ3vCtv/yPsvxZrXDNnThneCCKxPLqDBa5
- XG01/iaYlrmdbmbXmr0xAOUtk1YRX3Lf0JIx/ENwwlFFOMAAAA=
-X-Change-ID: 20241115-ad4111_openwire-e55deba8297f
-To: Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Guillaume Ranquet <granquet@baylibre.com>
-X-Mailer: b4 0.15-dev
+X-Received: by 2002:a05:6e02:12cb:b0:39f:5e18:239d with SMTP id
+ e9e14a558f8ab-3a74807811cmr20358325ab.15.1731666923818; Fri, 15 Nov 2024
+ 02:35:23 -0800 (PST)
+Date: Fri, 15 Nov 2024 02:35:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673723eb.050a0220.1324f8.00a8.GAE@google.com>
+Subject: [syzbot] [btrfs?] KASAN: slab-use-after-free Read in free_block_entry
+From: syzbot <syzbot+7325f164162e200000c1@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Some chips of the ad7173 family supports open wire detection.
+Hello,
 
-Generate a threshold event whenever an external source is disconnected
-from the system input on single conversions.
+syzbot found the following issue on:
 
-Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
----
-Hi.
+HEAD commit:    2d5404caa8c7 Linux 6.12-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=141534e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d2aeec8c0b2e420c
+dashboard link: https://syzkaller.appspot.com/bug?extid=7325f164162e200000c1
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-This patch adds the openwire detection support for the ad4111 chip.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-The openwire detection is done in software and relies on comparing the
-results of two conversions on different channels.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-2d5404ca.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c68277f7b0f1/vmlinux-2d5404ca.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/161b075483b1/bzImage-2d5404ca.xz
 
-As presented here, the code sends a THRESH Rising event tied to the
-in_voltageX_raw channel on which it happened.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7325f164162e200000c1@syzkaller.appspotmail.com
 
-We think this is not correct but we can't seem to find an implementation
-that would be elegant.
+BTRFS error (device loop0 state EA):   Ref action 2, root 5, ref_root 0, parent 8564736, owner 0, offset 0, num_refs 18446744073709551615
+   __btrfs_mod_ref+0x7dd/0xac0 fs/btrfs/extent-tree.c:2523
+   update_ref_for_cow+0x9cd/0x11f0 fs/btrfs/ctree.c:512
+   btrfs_force_cow_block+0x9f6/0x1da0 fs/btrfs/ctree.c:594
+   btrfs_cow_block+0x35e/0xa40 fs/btrfs/ctree.c:754
+   btrfs_search_slot+0xbdd/0x30d0 fs/btrfs/ctree.c:2116
+   btrfs_insert_empty_items+0x9c/0x1a0 fs/btrfs/ctree.c:4314
+   btrfs_insert_empty_item fs/btrfs/ctree.h:669 [inline]
+   btrfs_insert_orphan_item+0x1f1/0x320 fs/btrfs/orphan.c:23
+   btrfs_orphan_add+0x6d/0x1a0 fs/btrfs/inode.c:3482
+   btrfs_unlink+0x267/0x350 fs/btrfs/inode.c:4293
+   vfs_unlink+0x365/0x650 fs/namei.c:4469
+   do_unlinkat+0x4ae/0x830 fs/namei.c:4533
+   __do_sys_unlinkat fs/namei.c:4576 [inline]
+   __se_sys_unlinkat fs/namei.c:4569 [inline]
+   __x64_sys_unlinkat+0xcc/0xf0 fs/namei.c:4569
+   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+BTRFS error (device loop0 state EA):   Ref action 1, root 5, ref_root 5, parent 0, owner 260, offset 0, num_refs 1
+   __btrfs_mod_ref+0x76b/0xac0 fs/btrfs/extent-tree.c:2521
+   update_ref_for_cow+0x96a/0x11f0
+   btrfs_force_cow_block+0x9f6/0x1da0 fs/btrfs/ctree.c:594
+   btrfs_cow_block+0x35e/0xa40 fs/btrfs/ctree.c:754
+   btrfs_search_slot+0xbdd/0x30d0 fs/btrfs/ctree.c:2116
+   btrfs_lookup_inode+0xdc/0x480 fs/btrfs/inode-item.c:411
+   __btrfs_update_delayed_inode+0x1e7/0xb90 fs/btrfs/delayed-inode.c:1030
+   btrfs_update_delayed_inode fs/btrfs/delayed-inode.c:1114 [inline]
+   __btrfs_commit_inode_delayed_items+0x2318/0x24a0 fs/btrfs/delayed-inode.c:1137
+   __btrfs_run_delayed_items+0x213/0x490 fs/btrfs/delayed-inode.c:1171
+   btrfs_commit_transaction+0x8a8/0x3740 fs/btrfs/transaction.c:2313
+   prepare_to_relocate+0x3c4/0x4c0 fs/btrfs/relocation.c:3586
+   relocate_block_group+0x16c/0xd40 fs/btrfs/relocation.c:3611
+   btrfs_relocate_block_group+0x77d/0xd90 fs/btrfs/relocation.c:4081
+   btrfs_relocate_chunk+0x12c/0x3b0 fs/btrfs/volumes.c:3377
+   __btrfs_balance+0x1b0f/0x26b0 fs/btrfs/volumes.c:4161
+   btrfs_balance+0xbdc/0x10c0 fs/btrfs/volumes.c:4538
+BTRFS error (device loop0 state EA):   Ref action 2, root 5, ref_root 0, parent 8564736, owner 0, offset 0, num_refs 18446744073709551615
+   __btrfs_mod_ref+0x7dd/0xac0 fs/btrfs/extent-tree.c:2523
+   update_ref_for_cow+0x9cd/0x11f0 fs/btrfs/ctree.c:512
+   btrfs_force_cow_block+0x9f6/0x1da0 fs/btrfs/ctree.c:594
+   btrfs_cow_block+0x35e/0xa40 fs/btrfs/ctree.c:754
+   btrfs_search_slot+0xbdd/0x30d0 fs/btrfs/ctree.c:2116
+   btrfs_lookup_inode+0xdc/0x480 fs/btrfs/inode-item.c:411
+   __btrfs_update_delayed_inode+0x1e7/0xb90 fs/btrfs/delayed-inode.c:1030
+   btrfs_update_delayed_inode fs/btrfs/delayed-inode.c:1114 [inline]
+   __btrfs_commit_inode_delayed_items+0x2318/0x24a0 fs/btrfs/delayed-inode.c:1137
+   __btrfs_run_delayed_items+0x213/0x490 fs/btrfs/delayed-inode.c:1171
+   btrfs_commit_transaction+0x8a8/0x3740 fs/btrfs/transaction.c:2313
+   prepare_to_relocate+0x3c4/0x4c0 fs/btrfs/relocation.c:3586
+   relocate_block_group+0x16c/0xd40 fs/btrfs/relocation.c:3611
+   btrfs_relocate_block_group+0x77d/0xd90 fs/btrfs/relocation.c:4081
+   btrfs_relocate_chunk+0x12c/0x3b0 fs/btrfs/volumes.c:3377
+   __btrfs_balance+0x1b0f/0x26b0 fs/btrfs/volumes.c:4161
+   btrfs_balance+0xbdc/0x10c0 fs/btrfs/volumes.c:4538
+==================================================================
+BUG: KASAN: slab-use-after-free in rb_first+0x69/0x70 lib/rbtree.c:473
+Read of size 8 at addr ffff888042d1af38 by task syz.0.0/5329
 
-The main idea would be to add a specific channel for openwire detection
-but we still would need to have the openwire enablement and threshold
-tied to the voltage channel.
+CPU: 0 UID: 0 PID: 5329 Comm: syz.0.0 Not tainted 6.12.0-rc7-syzkaller #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ rb_first+0x69/0x70 lib/rbtree.c:473
+ free_block_entry+0x78/0x230 fs/btrfs/ref-verify.c:248
+ btrfs_free_ref_cache+0xa3/0x100 fs/btrfs/ref-verify.c:917
+ btrfs_ref_tree_mod+0x139f/0x15e0 fs/btrfs/ref-verify.c:898
+ btrfs_free_extent+0x33c/0x380 fs/btrfs/extent-tree.c:3544
+ __btrfs_mod_ref+0x7dd/0xac0 fs/btrfs/extent-tree.c:2523
+ update_ref_for_cow+0x9cd/0x11f0 fs/btrfs/ctree.c:512
+ btrfs_force_cow_block+0x9f6/0x1da0 fs/btrfs/ctree.c:594
+ btrfs_cow_block+0x35e/0xa40 fs/btrfs/ctree.c:754
+ btrfs_search_slot+0xbdd/0x30d0 fs/btrfs/ctree.c:2116
+ btrfs_lookup_inode+0xdc/0x480 fs/btrfs/inode-item.c:411
+ __btrfs_update_delayed_inode+0x1e7/0xb90 fs/btrfs/delayed-inode.c:1030
+ btrfs_update_delayed_inode fs/btrfs/delayed-inode.c:1114 [inline]
+ __btrfs_commit_inode_delayed_items+0x2318/0x24a0 fs/btrfs/delayed-inode.c:1137
+ __btrfs_run_delayed_items+0x213/0x490 fs/btrfs/delayed-inode.c:1171
+ btrfs_commit_transaction+0x8a8/0x3740 fs/btrfs/transaction.c:2313
+ prepare_to_relocate+0x3c4/0x4c0 fs/btrfs/relocation.c:3586
+ relocate_block_group+0x16c/0xd40 fs/btrfs/relocation.c:3611
+ btrfs_relocate_block_group+0x77d/0xd90 fs/btrfs/relocation.c:4081
+ btrfs_relocate_chunk+0x12c/0x3b0 fs/btrfs/volumes.c:3377
+ __btrfs_balance+0x1b0f/0x26b0 fs/btrfs/volumes.c:4161
+ btrfs_balance+0xbdc/0x10c0 fs/btrfs/volumes.c:4538
+ btrfs_ioctl_balance+0x493/0x7c0 fs/btrfs/ioctl.c:3673
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f996df7e719
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f996ede7038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f996e135f80 RCX: 00007f996df7e719
+RDX: 0000000020000180 RSI: 00000000c4009420 RDI: 0000000000000004
+RBP: 00007f996dff139e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f996e135f80 R15: 00007fff79f32e68
+ </TASK>
 
-Any thought on this?
+Allocated by task 5329:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:257 [inline]
+ __kmalloc_cache_noprof+0x19c/0x2c0 mm/slub.c:4295
+ kmalloc_noprof include/linux/slab.h:878 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ btrfs_ref_tree_mod+0x264/0x15e0 fs/btrfs/ref-verify.c:701
+ btrfs_free_extent+0x33c/0x380 fs/btrfs/extent-tree.c:3544
+ __btrfs_mod_ref+0x7dd/0xac0 fs/btrfs/extent-tree.c:2523
+ update_ref_for_cow+0x9cd/0x11f0 fs/btrfs/ctree.c:512
+ btrfs_force_cow_block+0x9f6/0x1da0 fs/btrfs/ctree.c:594
+ btrfs_cow_block+0x35e/0xa40 fs/btrfs/ctree.c:754
+ btrfs_search_slot+0xbdd/0x30d0 fs/btrfs/ctree.c:2116
+ btrfs_lookup_inode+0xdc/0x480 fs/btrfs/inode-item.c:411
+ __btrfs_update_delayed_inode+0x1e7/0xb90 fs/btrfs/delayed-inode.c:1030
+ btrfs_update_delayed_inode fs/btrfs/delayed-inode.c:1114 [inline]
+ __btrfs_commit_inode_delayed_items+0x2318/0x24a0 fs/btrfs/delayed-inode.c:1137
+ __btrfs_run_delayed_items+0x213/0x490 fs/btrfs/delayed-inode.c:1171
+ btrfs_commit_transaction+0x8a8/0x3740 fs/btrfs/transaction.c:2313
+ prepare_to_relocate+0x3c4/0x4c0 fs/btrfs/relocation.c:3586
+ relocate_block_group+0x16c/0xd40 fs/btrfs/relocation.c:3611
+ btrfs_relocate_block_group+0x77d/0xd90 fs/btrfs/relocation.c:4081
+ btrfs_relocate_chunk+0x12c/0x3b0 fs/btrfs/volumes.c:3377
+ __btrfs_balance+0x1b0f/0x26b0 fs/btrfs/volumes.c:4161
+ btrfs_balance+0xbdc/0x10c0 fs/btrfs/volumes.c:4538
+ btrfs_ioctl_balance+0x493/0x7c0 fs/btrfs/ioctl.c:3673
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Thx,
-Guillaume.
----
- drivers/iio/adc/ad7173.c | 152 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 152 insertions(+)
+Freed by task 5329:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:230 [inline]
+ slab_free_hook mm/slub.c:2342 [inline]
+ slab_free mm/slub.c:4579 [inline]
+ kfree+0x1a0/0x440 mm/slub.c:4727
+ btrfs_ref_tree_mod+0x136c/0x15e0
+ btrfs_free_extent+0x33c/0x380 fs/btrfs/extent-tree.c:3544
+ __btrfs_mod_ref+0x7dd/0xac0 fs/btrfs/extent-tree.c:2523
+ update_ref_for_cow+0x9cd/0x11f0 fs/btrfs/ctree.c:512
+ btrfs_force_cow_block+0x9f6/0x1da0 fs/btrfs/ctree.c:594
+ btrfs_cow_block+0x35e/0xa40 fs/btrfs/ctree.c:754
+ btrfs_search_slot+0xbdd/0x30d0 fs/btrfs/ctree.c:2116
+ btrfs_lookup_inode+0xdc/0x480 fs/btrfs/inode-item.c:411
+ __btrfs_update_delayed_inode+0x1e7/0xb90 fs/btrfs/delayed-inode.c:1030
+ btrfs_update_delayed_inode fs/btrfs/delayed-inode.c:1114 [inline]
+ __btrfs_commit_inode_delayed_items+0x2318/0x24a0 fs/btrfs/delayed-inode.c:1137
+ __btrfs_run_delayed_items+0x213/0x490 fs/btrfs/delayed-inode.c:1171
+ btrfs_commit_transaction+0x8a8/0x3740 fs/btrfs/transaction.c:2313
+ prepare_to_relocate+0x3c4/0x4c0 fs/btrfs/relocation.c:3586
+ relocate_block_group+0x16c/0xd40 fs/btrfs/relocation.c:3611
+ btrfs_relocate_block_group+0x77d/0xd90 fs/btrfs/relocation.c:4081
+ btrfs_relocate_chunk+0x12c/0x3b0 fs/btrfs/volumes.c:3377
+ __btrfs_balance+0x1b0f/0x26b0 fs/btrfs/volumes.c:4161
+ btrfs_balance+0xbdc/0x10c0 fs/btrfs/volumes.c:4538
+ btrfs_ioctl_balance+0x493/0x7c0 fs/btrfs/ioctl.c:3673
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
-index 11ff148cb5a315d32485acf04b8d6f7d0fb6e5fa..f87f002cbd99cfabac2754559b3c6fc0a69f5b70 100644
---- a/drivers/iio/adc/ad7173.c
-+++ b/drivers/iio/adc/ad7173.c
-@@ -35,6 +35,7 @@
- #include <linux/units.h>
- 
- #include <linux/iio/buffer.h>
-+#include <linux/iio/events.h>
- #include <linux/iio/iio.h>
- #include <linux/iio/trigger_consumer.h>
- #include <linux/iio/triggered_buffer.h>
-@@ -102,6 +103,7 @@
- 
- #define AD7173_GPIO_PDSW	BIT(14)
- #define AD7173_GPIO_OP_EN2_3	BIT(13)
-+#define AD4111_GPIO_GP_OW_EN	BIT(12)
- #define AD7173_GPIO_MUX_IO	BIT(12)
- #define AD7173_GPIO_SYNC_EN	BIT(11)
- #define AD7173_GPIO_ERR_EN	BIT(10)
-@@ -149,6 +151,7 @@
- 
- #define AD7173_FILTER_ODR0_MASK		GENMASK(5, 0)
- #define AD7173_MAX_CONFIGS		8
-+#define AD4111_OW_DET_THRSH_MV		300
- 
- #define AD7173_MODE_CAL_INT_ZERO		0x4 /* Internal Zero-Scale Calibration */
- #define AD7173_MODE_CAL_INT_FULL		0x5 /* Internal Full-Scale Calibration */
-@@ -181,11 +184,15 @@ struct ad7173_device_info {
- 	bool has_int_ref;
- 	bool has_ref2;
- 	bool has_internal_fs_calibration;
-+	bool has_openwire_det;
- 	bool higher_gpio_bits;
- 	u8 num_gpios;
- };
- 
- struct ad7173_channel_config {
-+	/* Openwire detection threshold */
-+	unsigned int openwire_thrsh_raw;
-+	int openwire_comp_chan;
- 	u8 cfg_slot;
- 	bool live;
- 
-@@ -202,6 +209,7 @@ struct ad7173_channel {
- 	unsigned int chan_reg;
- 	unsigned int ain;
- 	struct ad7173_channel_config cfg;
-+	bool openwire_det_en;
- };
- 
- struct ad7173_state {
-@@ -280,6 +288,7 @@ static const struct ad7173_device_info ad4111_device_info = {
- 	.has_current_inputs = true,
- 	.has_int_ref = true,
- 	.has_internal_fs_calibration = true,
-+	.has_openwire_det = true,
- 	.clock = 2 * HZ_PER_MHZ,
- 	.sinc5_data_rates = ad7173_sinc5_data_rates,
- 	.num_sinc5_data_rates = ARRAY_SIZE(ad7173_sinc5_data_rates),
-@@ -616,6 +625,59 @@ static int ad7173_calibrate_all(struct ad7173_state *st, struct iio_dev *indio_d
- 	return 0;
- }
- 
-+static int openwire_ain_to_channel_pair[][2][2] = {
-+	[0] = { {0, 15},  {1, 2}   },
-+	[1] = { {1, 2},   {2, 1}   },
-+	[2] = { {3, 4},   {5, 6}   },
-+	[3] = { {5, 6},   {6, 5}   },
-+	[4] = { {7, 8},   {9, 10}  },
-+	[5] = { {9, 10},  {10, 9}  },
-+	[6] = { {11, 12}, {13, 14} },
-+	[7] = { {13, 14}, {14, 13} },
-+};
-+
-+static void ad4111_openwire_event(struct iio_dev *indio_dev,
-+				  const struct iio_chan_spec *chan)
-+{
-+	struct ad7173_state *st = iio_priv(indio_dev);
-+	struct ad7173_channel *adchan = &st->channels[chan->address];
-+	struct ad7173_channel_config *cfg = &adchan->cfg;
-+	int ret, val1, val2;
-+
-+	ret = regmap_set_bits(st->reg_gpiocon_regmap, AD7173_REG_GPIO, AD4111_GPIO_GP_OW_EN);
-+	if (ret)
-+		return;
-+
-+	adchan->cfg.openwire_comp_chan =
-+		openwire_ain_to_channel_pair[chan->channel][chan->differential][0];
-+
-+	ret = ad_sigma_delta_single_conversion(indio_dev, chan, &val1);
-+	if (ret < 0)
-+		goto out;
-+
-+	adchan->cfg.openwire_comp_chan =
-+		openwire_ain_to_channel_pair[chan->channel][chan->differential][1];
-+
-+	ret = ad_sigma_delta_single_conversion(indio_dev, chan, &val2);
-+	if (ret < 0)
-+		goto out;
-+
-+	if (abs(val1 - val2) > cfg->openwire_thrsh_raw)
-+		iio_push_event(indio_dev,
-+			       IIO_UNMOD_EVENT_CODE(IIO_VOLTAGE, chan->address,
-+						    IIO_EV_TYPE_THRESH, IIO_EV_DIR_RISING),
-+			       iio_get_time_ns(indio_dev));
-+	else
-+		iio_push_event(indio_dev,
-+			       IIO_UNMOD_EVENT_CODE(IIO_VOLTAGE, chan->address,
-+						    IIO_EV_TYPE_THRESH, IIO_EV_DIR_FALLING),
-+			       iio_get_time_ns(indio_dev));
-+
-+out:
-+	adchan->cfg.openwire_comp_chan = -1;
-+	regmap_clear_bits(st->reg_gpiocon_regmap, AD7173_REG_GPIO, AD4111_GPIO_GP_OW_EN);
-+}
-+
- static int ad7173_mask_xlate(struct gpio_regmap *gpio, unsigned int base,
- 			     unsigned int offset, unsigned int *reg,
- 			     unsigned int *mask)
-@@ -813,6 +875,9 @@ static int ad7173_set_channel(struct ad_sigma_delta *sd, unsigned int channel)
- 	      FIELD_PREP(AD7173_CH_SETUP_SEL_MASK, st->channels[channel].cfg.cfg_slot) |
- 	      st->channels[channel].ain;
- 
-+	if (st->channels[channel].cfg.openwire_comp_chan >= 0)
-+		channel = st->channels[channel].cfg.openwire_comp_chan;
-+
- 	return ad_sd_write_reg(&st->sd, AD7173_REG_CH(channel), 2, val);
- }
- 
-@@ -861,6 +926,11 @@ static int ad7173_disable_all(struct ad_sigma_delta *sd)
- 
- static int ad7173_disable_one(struct ad_sigma_delta *sd, unsigned int chan)
- {
-+	struct ad7173_state *st = ad_sigma_delta_to_ad7173(sd);
-+
-+	if (st->channels[chan].cfg.openwire_comp_chan >= 0)
-+		chan = st->channels[chan].cfg.openwire_comp_chan;
-+
- 	return ad_sd_write_reg(sd, AD7173_REG_CH(chan), 2, 0);
- }
- 
-@@ -968,6 +1038,9 @@ static int ad7173_read_raw(struct iio_dev *indio_dev,
- 		if (ret < 0)
- 			return ret;
- 
-+		if (ch->openwire_det_en)
-+			ad4111_openwire_event(indio_dev, chan);
-+
- 		return IIO_VAL_INT;
- 	case IIO_CHAN_INFO_SCALE:
- 
-@@ -1112,12 +1185,71 @@ static int ad7173_debug_reg_access(struct iio_dev *indio_dev, unsigned int reg,
- 	return ad_sd_write_reg(&st->sd, reg, reg_size, writeval);
- }
- 
-+static int ad7173_write_event_config(struct iio_dev *indio_dev,
-+				     const struct iio_chan_spec *chan,
-+				     enum iio_event_type type,
-+				     enum iio_event_direction dir,
-+				     int state)
-+{
-+	struct ad7173_state *st = iio_priv(indio_dev);
-+	struct ad7173_channel *adchan = &st->channels[chan->address];
-+
-+	adchan->openwire_det_en = state;
-+
-+	return 0;
-+}
-+
-+static int ad7173_write_event_value(struct iio_dev *indio_dev, const struct iio_chan_spec *chan,
-+				    enum iio_event_type type, enum iio_event_direction dir,
-+				    enum iio_event_info info, int val, int val2)
-+{
-+	struct ad7173_state *st = iio_priv(indio_dev);
-+	struct ad7173_channel *adchan = &st->channels[chan->address];
-+
-+	switch (info) {
-+	case IIO_EV_INFO_VALUE:
-+		adchan->cfg.openwire_thrsh_raw = val;
-+		return 0;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int ad7173_read_event_value(struct iio_dev *indio_dev, const struct iio_chan_spec *chan,
-+				   enum iio_event_type type, enum iio_event_direction dir,
-+				   enum iio_event_info info, int *val, int *val2)
-+{
-+	struct ad7173_state *st = iio_priv(indio_dev);
-+	struct ad7173_channel *adchan = &st->channels[chan->address];
-+
-+	switch (info) {
-+	case IIO_EV_INFO_VALUE:
-+		*val = adchan->cfg.openwire_thrsh_raw;
-+		return IIO_VAL_INT;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static const struct iio_event_spec ad4111_events[] = {
-+	{
-+		.type = IIO_EV_TYPE_THRESH,
-+		.dir = IIO_EV_DIR_EITHER,
-+		.mask_separate = BIT(IIO_EV_INFO_VALUE),
-+		.mask_shared_by_all = BIT(IIO_EV_INFO_ENABLE),
-+	},
-+};
-+
- static const struct iio_info ad7173_info = {
- 	.read_raw = &ad7173_read_raw,
- 	.write_raw = &ad7173_write_raw,
- 	.debugfs_reg_access = &ad7173_debug_reg_access,
- 	.validate_trigger = ad_sd_validate_trigger,
- 	.update_scan_mode = ad7173_update_scan_mode,
-+	.write_event_config = ad7173_write_event_config,
-+	.write_event_value = ad7173_write_event_value,
-+	.read_event_value = ad7173_read_event_value,
- };
- 
- static const struct iio_scan_type ad4113_scan_type = {
-@@ -1321,6 +1453,15 @@ static int ad7173_validate_reference(struct ad7173_state *st, int ref_sel)
- 	return 0;
- }
- 
-+static int ad7173_validate_openwire_ain_inputs(struct ad7173_state *st, bool differential,
-+					       unsigned int ain0, unsigned int ain1)
-+{
-+	if (differential)
-+		return (ain0 % 2) ?  (ain0 - 1) == ain1 : (ain0 + 1) == ain1;
-+
-+	return ain1 == AD4111_VINCOM_INPUT;
-+}
-+
- static int ad7173_fw_parse_channel_config(struct iio_dev *indio_dev)
- {
- 	struct ad7173_channel *chans_st_arr, *chan_st_priv;
-@@ -1375,6 +1516,7 @@ static int ad7173_fw_parse_channel_config(struct iio_dev *indio_dev)
- 		chan_st_priv->cfg.bipolar = false;
- 		chan_st_priv->cfg.input_buf = st->info->has_input_buf;
- 		chan_st_priv->cfg.ref_sel = AD7173_SETUP_REF_SEL_INT_REF;
-+		chan_st_priv->cfg.openwire_comp_chan = -1;
- 		st->adc_mode |= AD7173_ADC_MODE_REF_EN;
- 		if (st->info->data_reg_only_16bit)
- 			chan_arr[chan_index].scan_type = ad4113_scan_type;
-@@ -1442,6 +1584,7 @@ static int ad7173_fw_parse_channel_config(struct iio_dev *indio_dev)
- 		chan_st_priv->chan_reg = chan_index;
- 		chan_st_priv->cfg.input_buf = st->info->has_input_buf;
- 		chan_st_priv->cfg.odr = 0;
-+		chan_st_priv->cfg.openwire_comp_chan = -1;
- 
- 		chan_st_priv->cfg.bipolar = fwnode_property_read_bool(child, "bipolar");
- 		if (chan_st_priv->cfg.bipolar)
-@@ -1456,6 +1599,15 @@ static int ad7173_fw_parse_channel_config(struct iio_dev *indio_dev)
- 			chan_st_priv->cfg.input_buf = st->info->has_input_buf;
- 			chan->channel2 = ain[1];
- 			chan_st_priv->ain = AD7173_CH_ADDRESS(ain[0], ain[1]);
-+			if (st->info->has_openwire_det &&
-+			    ad7173_validate_openwire_ain_inputs(st, chan->differential, ain[0], ain[1])) {
-+				chan->event_spec = ad4111_events;
-+				chan->num_event_specs = ARRAY_SIZE(ad4111_events);
-+				chan_st_priv->cfg.openwire_thrsh_raw =
-+					BIT(chan->scan_type.realbits - !!(chan_st_priv->cfg.bipolar))
-+					* AD4111_OW_DET_THRSH_MV
-+					/ ad7173_get_ref_voltage_milli(st, chan_st_priv->cfg.ref_sel);
-+			}
- 		}
- 
- 		if (st->info->data_reg_only_16bit)
+The buggy address belongs to the object at ffff888042d1af00
+ which belongs to the cache kmalloc-64 of size 64
+The buggy address is located 56 bytes inside of
+ freed 64-byte region [ffff888042d1af00, ffff888042d1af40)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x42d1a
+anon flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 04fff00000000000 ffff88801ac418c0 0000000000000000 dead000000000001
+raw: 0000000000000000 0000000000200020 00000001f5000000 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52c40(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 5055, tgid 5055 (dhcpcd-run-hook), ts 40377240074, free_ts 40376848335
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1541
+ prep_new_page mm/page_alloc.c:1549 [inline]
+ get_page_from_freelist+0x3649/0x3790 mm/page_alloc.c:3459
+ __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4735
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ alloc_slab_page+0x6a/0x140 mm/slub.c:2412
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2578
+ new_slab mm/slub.c:2631 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3818
+ __slab_alloc+0x58/0xa0 mm/slub.c:3908
+ __slab_alloc_node mm/slub.c:3961 [inline]
+ slab_alloc_node mm/slub.c:4122 [inline]
+ __do_kmalloc_node mm/slub.c:4263 [inline]
+ __kmalloc_noprof+0x25a/0x400 mm/slub.c:4276
+ kmalloc_noprof include/linux/slab.h:882 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ tomoyo_encode2 security/tomoyo/realpath.c:45 [inline]
+ tomoyo_encode+0x26f/0x540 security/tomoyo/realpath.c:80
+ tomoyo_realpath_from_path+0x59e/0x5e0 security/tomoyo/realpath.c:283
+ tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
+ tomoyo_check_open_permission+0x255/0x500 security/tomoyo/file.c:771
+ security_file_open+0x777/0x990 security/security.c:3109
+ do_dentry_open+0x369/0x1460 fs/open.c:945
+ vfs_open+0x3e/0x330 fs/open.c:1088
+ do_open fs/namei.c:3774 [inline]
+ path_openat+0x2c84/0x3590 fs/namei.c:3933
+page last free pid 5055 tgid 5055 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1112 [inline]
+ free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2642
+ free_pipe_info+0x300/0x390 fs/pipe.c:860
+ put_pipe_info fs/pipe.c:719 [inline]
+ pipe_release+0x245/0x320 fs/pipe.c:742
+ __fput+0x23f/0x880 fs/file_table.c:431
+ __do_sys_close fs/open.c:1567 [inline]
+ __se_sys_close fs/open.c:1552 [inline]
+ __x64_sys_close+0x7f/0x110 fs/open.c:1552
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff888042d1ae00: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+ ffff888042d1ae80: 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc
+>ffff888042d1af00: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+                                        ^
+ ffff888042d1af80: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc
+ ffff888042d1b000: 00 00 00 00 00 fc fc 00 00 00 00 00 fc fc 00 00
+==================================================================
+
 
 ---
-base-commit: c849f534b9ea4688304f80f4571af75931dda7c1
-change-id: 20241115-ad4111_openwire-e55deba8297f
-prerequisite-message-id: <20241115-ad411x_calibration-v1-1-5f820dfb5c80@baylibre.com>
-prerequisite-patch-id: 26241903b8fee8c4243e73d11fb2872cd9f52a15
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Best regards,
--- 
-Guillaume Ranquet <granquet@baylibre.com>
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
