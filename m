@@ -1,94 +1,119 @@
-Return-Path: <linux-kernel+bounces-410927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 104DE9CF086
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:45:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D96C9CF08A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:46:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA44828F892
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:45:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13A0F29021C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F321D5CF2;
-	Fri, 15 Nov 2024 15:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A19C1D618E;
+	Fri, 15 Nov 2024 15:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mbBTNsRo"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TjdiOCR1"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BD21D5CC4;
-	Fri, 15 Nov 2024 15:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC381C75E2;
+	Fri, 15 Nov 2024 15:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731685157; cv=none; b=I1tpTnQk2EmbODzbQsfPrsJBJUtcQJyypmYXdY0Hf8VGh0aPx8BltBcV5E4c6yKy3zSgNPleeP878YJa9BvETB80cUVHyQM17c9vNBkvSHH6uSUMskvlXY905cMX8Vnr2+XUNUrk7QwbIKOtO76Dtu1h8RXixyvZZ1G9tHY0840=
+	t=1731685202; cv=none; b=m6qwWkuzgIgdjikUosArYUdGA6ploV2/Rof9zFu0Bot7h3gtGjmR36DWmJQYddEbCKj+llDsPaah4WfsCEPz3s714PnN7gFgcPsGTvThSjR1sEQamoZ5IxyNhu1zLRSwh+3g56YS/mVE0JRhQYllP8Zr+qsQszMlvvy3ixwOCcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731685157; c=relaxed/simple;
-	bh=bggjSsff92I5nfqkHZKLXAtnYfyMCNcWpoDAFa1s/UY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=r89/1TIjJLsWvMfVfQSwDKJE72BbaiCaUiBSF/yrzwWnIU+jnzIc/jPmH8zRF6ygTFsSfZh7B9KLp6c9Cgb/8pGWtn8h6CX9Ol28E9Nid3byMcCYOA9ufETYVrbydb4RhWE278V5J03/7PkZiXyYllK6BvhLiFqdmisNXF5g0kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mbBTNsRo; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DCCE16000C;
-	Fri, 15 Nov 2024 15:39:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731685154;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PWKzQLDi1P0e2NgDvgc4yHfOyzr35Ho5+wgbJLaL+w0=;
-	b=mbBTNsRo4uOpviUof5tlg8N5vrn3z8WqBteUnTJn9tFWx7hvVM8Q/vJYSlnQX6R+qhOLXb
-	KrSilBohe6lMJ2CUXbP1udDcxoAqOWVEgTXmGVBW386pGQcMc7xI36dDtu7QaVVUtLIWor
-	SOPj8z4tOvekXkQe827+v2knHX8AXyOiHZwhCg7KAOhXa199lekJ7XIp5KLTlXW001ijFC
-	WhMt0TOxnpDO+naemMJLkoN89rXGxFw3366hxRfXN0dIL4hSPiH4LP9Yp0mRe8VeKiZvH5
-	IWiv1z2aScTeg92PQUBpzk30GYNnm9l1i5MNHrQk+5mFMFbDp4357O2BoJNvVw==
-From: Thomas Richard <thomas.richard@bootlin.com>
-Date: Fri, 15 Nov 2024 16:39:09 +0100
-Subject: [PATCH v3 2/2] mfd: cgbc: add a hwmon cell
+	s=arc-20240116; t=1731685202; c=relaxed/simple;
+	bh=VYy5Z/F2SKHEKyEF2sWqcE3UJqYratJdw86SVPgNnLI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h/8J3rDOHff0TrD4xqTldyk1InPaSZkOAeKnVkLyDrri7f0QRo/TsQ0jTohJRvF0pcAjVZG53VlNQb4Zq772r88yZwAGQgoKMqUfM0K4RcjoLdD1UPtgAOf/DlU+ne4JXal06IEpexh9NVyIEg8NeH/GrEA6VW3OdszHcmGtcVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TjdiOCR1; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e9ecba5db0so1529924a91.2;
+        Fri, 15 Nov 2024 07:40:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731685201; x=1732290001; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tvgMmyLZQaJHTw5Hy6Dx7Hfozw7BNQ60DAzTrMshfo8=;
+        b=TjdiOCR1OK75K/1UZ1otICKC0vylhd2CORWgqkBc57cXGlnr2DMPuLtulMua/eyAir
+         tWTjMYp23DI/RGnqo0YimokEhGZvlZR7uRY9T/F1BMMlcN/Gdsc9Jlgoz38wVYbHmdYp
+         K/aQxhBqNbyo0ux7UvDIVC0/OUrl4FzCsWHlbRhkjkUCnBzJUYmS9eBCbZmOzYVyiH3r
+         Q9Sip7NWAAVn7eu8L1TatbINlI5A3D2igwm+bE/Y7g+4E5FYk4W45VhXu6F1kEALpgNe
+         QU2lTjGXBIzh09ke6jdEwoXom1VmTQ8cKyWzDFecni1FFdUoOB4/Q3St1C6qQ3qzSDBC
+         5SGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731685201; x=1732290001;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tvgMmyLZQaJHTw5Hy6Dx7Hfozw7BNQ60DAzTrMshfo8=;
+        b=HorHiFuWFzv3NxaVAfR2dTB8yxYH3Lkyx5kfm1XcH+CwXr1j/xPsc28WO/TMuh073W
+         Y5atHKtKpeKIwq7Qszovbx53T2JltirDdNMWHTct/VPMOTSmVjHs2L8cpB7J26U7o26D
+         QRXhOdKSjv+60TyWjkjs+lneoDukei0WruaYV3JmqBHvny5ARQiarR5aja3uZ3iSU/2w
+         OcesKFse6xUUojX+UxBq7BXFjIfabMbJAeFNawacgVm2hiEt1irbba4IDLZjprhtXpBl
+         U+CzXFJrnASEszCsJFVFWjo0m0hy+wP7A4DhysTH85H9l/pR4n03R8mPfBkTj9b4Ld0x
+         KdXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUKkSH4nJY3z7VgORpzsBhjnf7RB/VVBpuGofbXrm22E9Wn8LNSpRfeminUT8i8BGtNAOrHpbHX@vger.kernel.org, AJvYcCXDjWpU/XzHbHxDIROvnBqjMg9bRfVN2XPf+nhBlwXYX0PgHNCapEuHTQrIOqtFImZDH0a4Vf6XSmXx7FSmZJqU@vger.kernel.org, AJvYcCXkpu62zowRapeyFonLEDh3O00jpuDrYABvLyp3KaUxCjz8LX2MO1eNuJapM5yXnN75RGY=@vger.kernel.org, AJvYcCXnSOw1neDy0ixAzYfPmrKvgaaB4njFV1wdqlzo4Abq4+m3UF3aun3jJANCTAJDm0UPHUpZPaLiqAvLkVbx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa55KOc3Fert0XkYu1DYRzF1tKKymhOGDXHf+wSyITVTJ2Vd9Z
+	NMF8/DcXZ+JWczZXn0nWyLho0gKa85BdymD3Nf4X2kmjp5uldqk=
+X-Google-Smtp-Source: AGHT+IH9ZWeCw/lNubIqk1jjDJsSroUKoAIH0xi66bmklYnQSLVYg94H0OHQhU69Od2f8QbCO80hGA==
+X-Received: by 2002:a17:90b:3d87:b0:2e2:d175:5f8d with SMTP id 98e67ed59e1d1-2ea154dfa68mr4076574a91.10.1731685200714;
+        Fri, 15 Nov 2024 07:40:00 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea024ab569sm3049473a91.32.2024.11.15.07.40.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 07:40:00 -0800 (PST)
+Date: Fri, 15 Nov 2024 07:39:59 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Alexis =?utf-8?Q?Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>, ebpf@linuxfoundation.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Bastien Curutchet <bastien.curutchet@bootlin.com>,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH bpf-next v2 04/13] selftests/bpf: re-split main function
+ into dedicated tests
+Message-ID: <ZzdrT7wEUjUDNyGj@mini-arch>
+References: <20241114-flow_dissector-v2-0-ee4a3be3de65@bootlin.com>
+ <20241114-flow_dissector-v2-4-ee4a3be3de65@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241115-congatec-board-controller-hwmon-v3-2-1c45637c8266@bootlin.com>
-References: <20241115-congatec-board-controller-hwmon-v3-0-1c45637c8266@bootlin.com>
-In-Reply-To: <20241115-congatec-board-controller-hwmon-v3-0-1c45637c8266@bootlin.com>
-To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
- thomas.petazzoni@bootlin.com, blake.vermeer@keysight.com, 
- Thomas Richard <thomas.richard@bootlin.com>
-X-Mailer: b4 0.14.1
-X-GND-Sasl: thomas.richard@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241114-flow_dissector-v2-4-ee4a3be3de65@bootlin.com>
 
-The Board Controller has some internal sensors.
-Add a hwmon cell for the cgbc-hwmon driver which adds support for
-temperature, voltage, current and fan sensors.
+On 11/14, Alexis Lothoré (eBPF Foundation) wrote:
+> The flow_dissector runs plenty of tests over diffent kind of packets,
+> grouped into three categories: skb mode, non-skb mode with direct
+> attach, and non-skb with indirect attach.
+> 
+> Re-split the main function into dedicated tests. Each test now must have
+> its own setup/teardown, but for the advantage of being able to run them
+> separately. While at it, make sure that tests attaching the bpf programs
+> are run in a dedicated ns.
+> 
+> Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
 
-Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
----
- drivers/mfd/cgbc-core.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/mfd/cgbc-core.c b/drivers/mfd/cgbc-core.c
-index 93004a6b29c1..7cc2872235ac 100644
---- a/drivers/mfd/cgbc-core.c
-+++ b/drivers/mfd/cgbc-core.c
-@@ -236,6 +236,7 @@ static struct mfd_cell cgbc_devs[] = {
- 	{ .name = "cgbc-gpio"	},
- 	{ .name = "cgbc-i2c", .id = 1 },
- 	{ .name = "cgbc-i2c", .id = 2 },
-+	{ .name = "cgbc-hwmon"	},
- };
- 
- static int cgbc_map(struct cgbc_device_data *cgbc)
-
--- 
-2.39.5
-
+Acked-by: Stanislav Fomichev <sdf@fomichev.me>
 
