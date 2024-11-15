@@ -1,177 +1,86 @@
-Return-Path: <linux-kernel+bounces-411003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 008649CF2FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:33:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58FE29CF326
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:42:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BA8CB349AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:33:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E26BB362E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C192F1D5ADA;
-	Fri, 15 Nov 2024 16:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B771D5157;
+	Fri, 15 Nov 2024 16:34:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="xnBVRIOG"
-Received: from mout.perfora.net (mout.perfora.net [74.208.4.196])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Sjn+qhmh"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426191D5145;
-	Fri, 15 Nov 2024 16:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B96018E047;
+	Fri, 15 Nov 2024 16:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731688365; cv=none; b=fVmnRWaPvNmISG5je8xx36QFghFOdsdnN2heJzRE/H0B+1vet2BF7Oo/FOdYZX3NWoNB4/iFNU1PwDtpcJF10Df48EvxfROyOLR4xLj2uqgDMhJViaHf3HGDtKB+nJOT5L6kcIuNXnAJBugXTllz1i6Rsq3MCCdWv8AGl6vOFlo=
+	t=1731688442; cv=none; b=HcmBbTUh5g8LqsHsq1hY59n1RS03Hv9ZJPPccw7ixngQslWY7qOPCW6kfCQUQTfRgnnce70oKKGdgwVoVsZUJ0qf+E+X3H9HlG2r/+HBTqVvwqC2YWZ2UdBBo6S8DjGDzkacr/YpUd7nXbq0EKszHlQfDHyV9h0NpfeIXqqyQic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731688365; c=relaxed/simple;
-	bh=44CitaextXnu1ILSFB1a9ML5UnOt1Sb2DcliM8CoPhs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=POagfWcRBFKzuW4Pxd1UI1nI4pFhft2g45qtLlyueuxi0tgMZDZ8kC3EYrgepDD0krFwt+AXP9SDUjgIxWTlrjQasZeIsMTeKdPK43RJNm75xfZReb1izsU/zJtRQK6D2Ng8ErvsQ96yFku9ra37KCYN6/8d1QDD61ohGz9ISC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=xnBVRIOG; arc=none smtp.client-ip=74.208.4.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
-	s=s1-ionos; t=1731688335; x=1732293135; i=parker@finest.io;
-	bh=uqLyK5BAyRobHArlImG/r9aAsay7r535oaTceuLvVWA=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=xnBVRIOGI8OaKA4exA9SeQpb+LYIHH+KMuYJadA629P2GtPNTiNO7YFmBE7ciFx7
-	 zeXgf3WYBbjHU8gf6QPdLqkDvr+YQ1nkQOyfRIKRCLMcInfqVaEk1s7jXxA56B65Q
-	 Rb1PxxboshMxGS035BVNgvRXmDCla69kpstRIZN5NCNjs0HiQYCQZmK1qcLc14nDd
-	 GwMNAELO98aYsOcL7pzeyY+FDu/hPs5c+fcLhPF1MCR5Iu/WP6tudPp6RbW9QFnjJ
-	 nWcfwQ2/aGtbYdGqOO3PyatLeLI+o1YQiBvKqUPQjcI0nE1tguUnvvoybDi+gLgkz
-	 YclkJqPUAlyBeeZRXw==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from finest.io ([98.159.241.229]) by mrelay.perfora.net (mreueus002
- [74.208.5.2]) with ESMTPSA (Nemesis) id 0MVen3-1tGXho2JHb-00YACL; Fri, 15 Nov
- 2024 17:32:15 +0100
-From: Parker Newman <parker@finest.io>
-To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
+	s=arc-20240116; t=1731688442; c=relaxed/simple;
+	bh=EGdVkBicn6D66qIugbfFwGPESvPj0kk8Mw7IQ5GEbpg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i/GagURf9mQ0eWq5gUiBeebplXaKZ8Dt5uXaYIw8Erm5jENsa1PrTSr519XDioTaMitYZD4XCPIYPkbo9j4PtXk6Vhk+P7Lsz2lOH35AduINI5UlMCigJrjdaWTRT/3wI3kUWy1CQozi8wzbRhnjvqoY1RHxxGuo5yhDsS15K9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Sjn+qhmh; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1731688425;
+	bh=EGdVkBicn6D66qIugbfFwGPESvPj0kk8Mw7IQ5GEbpg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Sjn+qhmhGOD764rMI/myX1+sL9T9oDHvUnukT1x4QLD0LxEx0j/5WH0kN2iBKMSVa
+	 OfYqu+T/Su3Cg+O4kcpHubf2cIg5D3c4iuWcxnhGHcGfMMmWQJ77cYWR6GRgk/Gl/L
+	 tiZtGxraOCgC1Jp723XVdO6PBLllB18oNemT+AYU=
+Date: Fri, 15 Nov 2024 17:33:44 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Cc: Parker Newman <pnewman@connecttech.com>
-Subject: [PATCH v1 1/1] net: stmmac: dwmac-tegra: Read iommu stream id from device tree
-Date: Fri, 15 Nov 2024 11:31:08 -0500
-Message-ID: <f2a14edb5761d372ec939ccbea4fb8dfd1fdab91.1731685185.git.pnewman@connecttech.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <cover.1731685185.git.pnewman@connecttech.com>
-References: <cover.1731685185.git.pnewman@connecttech.com>
+Subject: Re: [PATCH] hwmon: (core) Avoid ifdef in C source file
+Message-ID: <dc879ed8-a8be-48c5-a4f3-18f09d3cbfb2@t-8ch.de>
+References: <20241113-hwmon-thermal-v1-1-71270be7f7a2@weissschuh.net>
+ <20fde375-a88a-4279-a849-520063217de9@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:EFHR/GxuAAa5dFNi+oZRXzYiBIwpE3rPxeJh+/FkXRvXXm7itFF
- UXMd+O9um5JibJVzw1g/XgNgJN7EDxWoeyxiexfxN0m1fWvTSnd36j87dSEMlDRz5OBwlKZ
- LAUwlF3Ys8apsMCFBFCyT6+z/tyw//46Sb5q6aY9qyhnYrn69cQwxKpMOsGpYyXM9ll61et
- SXILMIyjInJpxWBKNZy8Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Tv2BRfTO0HQ=;QVb4D09UbdCm/rsKF0sXi7TFSFH
- 4J9wN7jTYPM5rrW/1RBoiTtMy6Dp8MFNpVrzIg/D2Fwjx1Jy/UfANEapVOZKV1bLqvBET/hsa
- Fr/RfSST8zYc7p8OavWVQ9A6p8buhKDZFGTRgp/CIEO5KZbUpqG7sfftKit47oKAihCKSVCPX
- 0aGFjSNFmKirP6G8D9cJ5YZYIFBqehV1QKR94m2SpDvqOJ+NSmgojS76kCEJI3DYyXoOajMiS
- y6Vcgtv49jyCynbD4g5Fla2oKvW5pB+INaObEudq9U/V1AlcKaxLDqxJIIwJZPaA3n/dgTgLC
- BYiOr+n3j78h/omkOY3qpOynNo/OIjMZ/Lur3I6Rs+RjnQLp7m6xyYUXNVRCgMo4uC5hbDkwo
- YCwKEbItZKpYl0AHRlmDVmyNt27lZrad/kpYOylQ1STzLJ4Lw1HuQtVB5Krh2zjie9n2wSEr5
- 6xjPJb1wQQU7aAlEgiaQ/obrElj5BmUQGJJDpmeLcJOMRny3DhYDStlwn0yQSuWWI1629iKfl
- zVa4BitAIrtyqlPJjxS2X4DjaSVF8zgp9oNac3i4jyWskPsdW0DWUaWYg+2XAJ8m+olp03FR7
- d/+QlqLvd0vfSitF3+ZDUk8BwzK8xV7A7NR6rjZQCpCmfrIGyBmDzrd9HP/4/lICNedLOdmSg
- dlOfh9LopIscIr6kgGQcVoc4dxAZBv5TrjkogSjHSan7i9XZFDJKPJtaM11Aaz+1dep2mbFnu
- MugeX80VCXMJL9c/5xhahNr/bdDCV16x4po7o9B9+ncTHf7c5LMMY93m4/bicuTVZxDgCjWnX
- CKZzKNWZ80rZaoYbXqivcrkaEqkYh43VUyU4o30/Z/ijBwI+AUfKj7tkteE1uCn8Xf
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20fde375-a88a-4279-a849-520063217de9@roeck-us.net>
 
-From: Parker Newman <pnewman@connecttech.com>
+On 2024-11-15 08:31:27-0800, Guenter Roeck wrote:
+> Hi Thomas,
+> 
+> On Wed, Nov 13, 2024 at 05:39:16AM +0100, Thomas Weißschuh wrote:
+> > Using an #ifdef in a C source files to have different definitions
+> > of the same symbol makes the code harder to read and understand.
+> > Furthermore it makes it harder to test compilation of the different
+> > branches.
+> > 
+> > Replace the ifdeffery with IS_ENABLED() which is just a normal
+> > conditional.
+> > The resulting binary is still the same as before as the compiler
+> > optimizes away all the unused code and definitions.
+> > 
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > ---
+> 
+> I decided to apply the patch despite my concerns about the lack
+> of dummy functions. Let's see if it blows up in our face; if so,
+> I'll revert it.
 
-Read the iommu stream id from device tree rather than hard coding to mgbe0=
-.
-Fixes kernel panics when using mgbe controllers other than mgbe0.
+It will blow up because of the missing declaration/stub for
+thermal_zone_device_update()
 
-Tested with Orin AGX 64GB module on Connect Tech Forge carrier board.
 
-Signed-off-by: Parker Newman <pnewman@connecttech.com>
-=2D--
- drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c b/drivers/n=
-et/ethernet/stmicro/stmmac/dwmac-tegra.c
-index 3827997d2132..dc903b846b1b 100644
-=2D-- a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-@@ -1,4 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0-only
-+#include <linux/iommu.h>
- #include <linux/platform_device.h>
- #include <linux/of.h>
- #include <linux/module.h>
-@@ -19,6 +20,8 @@ struct tegra_mgbe {
- 	struct reset_control *rst_mac;
- 	struct reset_control *rst_pcs;
-
-+	u32 iommu_sid;
-+
- 	void __iomem *hv;
- 	void __iomem *regs;
- 	void __iomem *xpcs;
-@@ -50,7 +53,6 @@ struct tegra_mgbe {
- #define MGBE_WRAP_COMMON_INTR_ENABLE	0x8704
- #define MAC_SBD_INTR			BIT(2)
- #define MGBE_WRAP_AXI_ASID0_CTRL	0x8400
--#define MGBE_SID			0x6
-
- static int __maybe_unused tegra_mgbe_suspend(struct device *dev)
- {
-@@ -84,7 +86,7 @@ static int __maybe_unused tegra_mgbe_resume(struct devic=
-e *dev)
- 	writel(MAC_SBD_INTR, mgbe->regs + MGBE_WRAP_COMMON_INTR_ENABLE);
-
- 	/* Program SID */
--	writel(MGBE_SID, mgbe->hv + MGBE_WRAP_AXI_ASID0_CTRL);
-+	writel(mgbe->iommu_sid, mgbe->hv + MGBE_WRAP_AXI_ASID0_CTRL);
-
- 	value =3D readl(mgbe->xpcs + XPCS_WRAP_UPHY_STATUS);
- 	if ((value & XPCS_WRAP_UPHY_STATUS_TX_P_UP) =3D=3D 0) {
-@@ -241,6 +243,12 @@ static int tegra_mgbe_probe(struct platform_device *p=
-dev)
- 	if (IS_ERR(mgbe->xpcs))
- 		return PTR_ERR(mgbe->xpcs);
-
-+	/* get controller's stream id from iommu property in device tree */
-+	if (!tegra_dev_iommu_get_stream_id(mgbe->dev, &mgbe->iommu_sid)) {
-+		dev_err(mgbe->dev, "failed to get iommu stream id\n");
-+		return -EINVAL;
-+	}
-+
- 	res.addr =3D mgbe->regs;
- 	res.irq =3D irq;
-
-@@ -346,7 +354,7 @@ static int tegra_mgbe_probe(struct platform_device *pd=
-ev)
- 	writel(MAC_SBD_INTR, mgbe->regs + MGBE_WRAP_COMMON_INTR_ENABLE);
-
- 	/* Program SID */
--	writel(MGBE_SID, mgbe->hv + MGBE_WRAP_AXI_ASID0_CTRL);
-+	writel(mgbe->iommu_sid, mgbe->hv + MGBE_WRAP_AXI_ASID0_CTRL);
-
- 	plat->flags |=3D STMMAC_FLAG_SERDES_UP_AFTER_PHY_LINKUP;
-
-=2D-
-2.47.0
-
+Thomas
 
