@@ -1,105 +1,136 @@
-Return-Path: <linux-kernel+bounces-410129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4D5A9CD4F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 02:19:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5259A9CD4F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 02:20:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71B38B23735
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 01:19:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D0441F2215C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 01:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426EE41AAC;
-	Fri, 15 Nov 2024 01:18:56 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C3A2629D
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 01:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920D612F585;
+	Fri, 15 Nov 2024 01:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W2lHmIDj"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EDCF77F1B;
+	Fri, 15 Nov 2024 01:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731633535; cv=none; b=jmrhL6SD5Pk7vpOuWLG1MdjbAy85pvLWGX+QZlGWtAkK58OYMnIe5B2E3Mito9J9esjpXlcVOSbZFGKcJ59MsC9WJ+JGaSXedZTwCG8unM6zYWzC5VaqeOAdLia9aomUTnFvKw7Gbe5atjFSU1eJtAYZJAGGU/c+u8xOtIvd4tA=
+	t=1731633587; cv=none; b=cmdbcqyCJ0q+rMYxtBWPQPffyrcEmo5L5i0Xk9NtIKcMOfkD/j3fV6eFwTbf13BaEuAkYATPxkaXrOxOFarsX0LNLqZCJyKX+I2oeBPVjZmkT62hL3rJQ5OZaTEahFLFlxQP62v70FNSTIBOTzg8czW1kWupM5Jsyh0vqe67Y6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731633535; c=relaxed/simple;
-	bh=j3Yc9esCHcVJb2KmDLHstL0XXEqzdkKMJZMzq1aSNA8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=okJm3idbjNdFKa9AbkQ1wzGROPiAx47MigF5axVTQ7X5FPWUg9JGe5d4aC6cJRH4NbufsgpejlsGmFoC+l9oPiHGYQxEley1UdvZ043kl+KIzsxji369V6jkOy40ET035weNR6LrAZodcoashoqXv+60fCE4se06t0AnikioB9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app04-12004 (RichMail) with SMTP id 2ee46736a178827-f7130;
-	Fri, 15 Nov 2024 09:18:48 +0800 (CST)
-X-RM-TRANSID:2ee46736a178827-f7130
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.101])
-	by rmsmtp-syy-appsvr05-12005 (RichMail) with SMTP id 2ee56736a178f13-dc523;
-	Fri, 15 Nov 2024 09:18:48 +0800 (CST)
-X-RM-TRANSID:2ee56736a178f13-dc523
-From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-To: frank.li@nxp.com
-Cc: imx@lists.linux.dev,
-	jassisinghbrar@gmail.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	s.hauer@pengutronix.de,
-	shawnguo@kernel.org,
-	zhang jiao <zhangjiao2@cmss.chinamobile.com>,
-	Frank Li <Frank.Li@nxp.com>
-Subject: [PATCH v2] mailbox: imx: Modify the incorrect format specifier
-Date: Fri, 15 Nov 2024 09:18:46 +0800
-Message-Id: <20241115011846.2330-1-zhangjiao2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <ZzYoWFVhfNnAcAmy@lizhi-Precision-Tower-5810>
-References: <ZzYoWFVhfNnAcAmy@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1731633587; c=relaxed/simple;
+	bh=h7oRV1nbfjsFc00eUaw9KaflULdd94NiX150E/lhGig=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AhZoB4wz1v14a8/3E2WHxsGSm0iRkWodnR+yMgv806mP7cqu/GBtfV65kIyrjig/V2TPRgBP65/BC0AUjG4CsS5fCX+cQ9XSZqmmeiQ/UW1KyXZL2B6w7cOPMnnONSIo7RUHnJR2D9FYngDsTpLMSmYvoI0jNGId2xE1rRqnf9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W2lHmIDj; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c95a962c2bso350718a12.2;
+        Thu, 14 Nov 2024 17:19:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731633583; x=1732238383; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=OTJiLj8Cl/gid6IIoC6CA3YIEMl5qRRB8q0gUg2Qs+w=;
+        b=W2lHmIDjyUqglGGgfaMAYDQZ6bpE2T746VG19dns/YZu9JGZm9mobHocFVvqAywBwT
+         ZlPxWdKlV1V0jwknJRAl86pHhkJI3hnPGdwtmk1mLieXM62oCmJfNKac0zZ9modgrW0R
+         0AreC0LyvxfjklM30dlzhOf7SPxllnjcRRtfxnT9pLxa9XAL01Jlr6UmhuiVtTKaQm69
+         1X4Jo6rbwaJ9CkcxEuvQccRAn8QJsmlSCwXJ5ujRPcdn+9rZrhPpi3nO/m6RL72C1iwE
+         Yr23djfzEs5/TJeMjxllm/RnG0Lrlu+nbfGAoOIybyXphnSklUnhmC+qvE9AMDGgZStR
+         /Ntg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731633583; x=1732238383;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OTJiLj8Cl/gid6IIoC6CA3YIEMl5qRRB8q0gUg2Qs+w=;
+        b=ShY/thZ0lzxkDfzjrJIQr0BXii5w9/OX3C4EkzKZQwsmmcbW4m3LOKYEEv0oHf408O
+         ljROXXJBD1FGxj/6htS2z5Umw/vvg1Zmpmr95tVhxoqeY5KeVYwhAKc+L/FuNew5DsDm
+         4RSkMgrEGE/pClFMjv3RG62e42OLDnEC2kU9LHvNL1ImaEsKkEHbt0NK40aCzRr393+j
+         nNdFYSE751xw8DvYRUv7icod01Cd8Gkm8VMTQxKr+myZusBcW4QMGDd0QA1QJNVpH0I5
+         9hE/0B3jrC9ZKfNKkpCfwDiGQAy+dzgLsbXelSKe1kaDKBoSU7MtAfyYecmy3qRYp7w6
+         goRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8Yle7Pz4tIObXx0HPbmskgpOIuQCuUn07jI/tx/FdGtCR5iVEPt1L7L6yXUyWqmys1xo=@vger.kernel.org, AJvYcCUIG2KmewvUQhNM/UjxQDp3/8qUcroKTpDS2FU97Hjs+Tjt1WBBJvPYsLQdnr1OZhlh3B712L5g6wkhc7qn@vger.kernel.org, AJvYcCXUFsUnyX12++WSMsuW4Bt7IYvfM6hicB/tB81FYAZ5O0mV0kGOdalu0EbxK+tEqYw++2H7ibd9lU35@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkYGDeelDlv3W/L2ngD5NX24AOEVrunEmyLxYgucihNNdXVhVH
+	yt3D1yH2l0A6Q2cp5FOHeJiKA0xjmCm8Qup4+kHVvV3PYNl21RNz
+X-Google-Smtp-Source: AGHT+IGtW9iSQmpcrn6weGm5G253EH2j+gzOxZzvx687F8weem2GgXEiQKu5n+yi+N9etxW9vKM2UA==
+X-Received: by 2002:aa7:c3c9:0:b0:5cf:9004:bd4c with SMTP id 4fb4d7f45d1cf-5cf9004be90mr278753a12.29.1731633583291;
+        Thu, 14 Nov 2024 17:19:43 -0800 (PST)
+Received: from ?IPV6:2a01:e11:5400:7400:dc78:53a0:d8e6:28cd? ([2a01:e11:5400:7400:dc78:53a0:d8e6:28cd])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf79bb3b04sm1065585a12.42.2024.11.14.17.19.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Nov 2024 17:19:42 -0800 (PST)
+Message-ID: <d824d93d-8724-4e71-acb9-215010d8c3fb@gmail.com>
+Date: Fri, 15 Nov 2024 02:19:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation: kvm: fix tipo in api.rst
+To: Sean Christopherson <seanjc@google.com>
+Cc: corbet@lwn.net, pbonzini@redhat.com, kvm@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241114223738.290924-3-gianf.trad@gmail.com>
+ <ZzaE9dYmSqg3U33y@google.com>
+From: Gianfranco Trad <gianf.trad@gmail.com>
+Content-Language: en-US, it
+Autocrypt: addr=gianf.trad@gmail.com; keydata=
+ xjMEZyAY2RYJKwYBBAHaRw8BAQdA3W2zVEPRi03dmb95c7NkmFyBZi+VAplZZX9YVcsduG3N
+ JkdpYW5mcmFuY28gVHJhZCA8Z2lhbmYudHJhZEBnbWFpbC5jb20+wo8EExYIADcWIQRJFQhW
+ JFLZFapGQPDIleIjeBnIywUCZyAY2QUJA8JnAAIbAwQLCQgHBRUICQoLBRYCAwEAAAoJEMiV
+ 4iN4GcjL+JkA/RWGFWAqY06TH+ZZKuhNhvJhj2+dqgPF0QRjILpGSVJyAQCsvpKVS6H9ykYP
+ Qyi/UyxIKxa8tcdSP1oUj9YIAHUcC844BGcgGNkSCisGAQQBl1UBBQEBB0BlosN6xF2pP/d7
+ RVTlTFktASXfYhN0cghGG6dk5r47NgMBCAfCfgQYFggAJhYhBEkVCFYkUtkVqkZA8MiV4iN4
+ GcjLBQJnIBjZBQkDwmcAAhsMAAoJEMiV4iN4GcjLuIIBAJBEkfB4sVF7T46JBpJBP5jBHm4B
+ nmn274Qd7agQUZR4AQDfkC/p4qApuqZvZ3H0qOkexpf9swGV1UtmmzYQdmjyAw==
+In-Reply-To: <ZzaE9dYmSqg3U33y@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+On 15/11/24 00:17, Sean Christopherson wrote:
+> I must know.  Is the "tipo" in the shortlog intentional? :-)
+> 
+> On Thu, Nov 14, 2024, Gianfranco Trad wrote:
+>> Fix minor typo in api.rst where the word physical was misspelled
+>> as physcial.
+>>
+>> Signed-off-by: Gianfranco Trad <gianf.trad@gmail.com>
+>> ---
+>>   Documentation/virt/kvm/api.rst | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+>> index edc070c6e19b..4ed8f222478a 100644
+>> --- a/Documentation/virt/kvm/api.rst
+>> +++ b/Documentation/virt/kvm/api.rst
+>> @@ -5574,7 +5574,7 @@ KVM_XEN_ATTR_TYPE_SHARED_INFO_HVA
+>>     in guest physical address space. This attribute should be used in
+>>     preference to KVM_XEN_ATTR_TYPE_SHARED_INFO as it avoids
+>>     unnecessary invalidation of an internal cache when the page is
+>> -  re-mapped in guest physcial address space.
+>> +  re-mapped in guest physical address space.
+>>   
+>>     Setting the hva to zero will disable the shared_info page.
+>>   
+>> -- 
+>> 2.43.0
+>>
+Ouch... I wish it was, that would have been a hell of a story :,-).
+I might think of it for future patches *jokes*. But no, probably my 
+brain's italian side subconsciously kicked in (tipo is an existent word 
+in italian), in that moment...
 
-Replace %i with %u in snprintf() because it is "unsigned int".
+Thanks for noticing Sean, I'll send a v2 asap.
 
-Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
----
-v1->v2:
-	Modify commit info and add review tag.
-
- drivers/mailbox/imx-mailbox.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.c
-index f815dab3be50..3fe51b2de89e 100644
---- a/drivers/mailbox/imx-mailbox.c
-+++ b/drivers/mailbox/imx-mailbox.c
-@@ -782,7 +782,7 @@ static int imx_mu_init_generic(struct imx_mu_priv *priv)
- 		cp->chan = &priv->mbox_chans[i];
- 		priv->mbox_chans[i].con_priv = cp;
- 		snprintf(cp->irq_desc, sizeof(cp->irq_desc),
--			 "%s[%i-%i]", dev_name(priv->dev), cp->type, cp->idx);
-+			 "%s[%i-%u]", dev_name(priv->dev), cp->type, cp->idx);
- 	}
- 
- 	priv->mbox.num_chans = IMX_MU_CHANS;
-@@ -819,7 +819,7 @@ static int imx_mu_init_specific(struct imx_mu_priv *priv)
- 		cp->chan = &priv->mbox_chans[i];
- 		priv->mbox_chans[i].con_priv = cp;
- 		snprintf(cp->irq_desc, sizeof(cp->irq_desc),
--			 "%s[%i-%i]", dev_name(priv->dev), cp->type, cp->idx);
-+			 "%s[%i-%u]", dev_name(priv->dev), cp->type, cp->idx);
- 	}
- 
- 	priv->mbox.num_chans = num_chans;
--- 
-2.33.0
-
-
-
+--Gian
 
