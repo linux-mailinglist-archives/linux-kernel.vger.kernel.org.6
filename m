@@ -1,206 +1,183 @@
-Return-Path: <linux-kernel+bounces-411448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 552CC9CFA1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:37:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F33639CFAD1
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:04:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6DBDB3064E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:18:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1478B2F323
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDA81917E8;
-	Fri, 15 Nov 2024 22:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDB818FDC9;
+	Fri, 15 Nov 2024 22:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d0Dafu4o"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="WklE5d9Z"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B33042AA3;
-	Fri, 15 Nov 2024 22:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A67642AA3
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 22:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731708935; cv=none; b=OdBuA+pjcCQHW6MmevAeoWc8T8SY52enrbUaXVAslHOtRTr+4nZ+AX5H3HzT6xSeuI5tPW8FGxFTAsWiVwlhzyVLx2Nxy3caSuzHU2U4Fmi/42FmRDnszA/MRblvHhI3qjYgWbw7eFdw8f2ojcYb1AEzELPc40oLbWCb9c4KLEY=
+	t=1731709182; cv=none; b=SVqcVoocCz0hVhm299vQYqQCTZ6qca9OIaEctmzBf4pivet0ni4FIIUj2Q+JnavukhBwaZEN3x0Wm1CmMIoev50FM4iZHGjq9z055j0gl6JST+0X+NoSOtml773Is32/FW2rjCBUNbsV43o6ajeQS9bCK+IDKiWHUDovtTI+ypM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731708935; c=relaxed/simple;
-	bh=I+QtWGHRBD+4yemSKClWnFIJi0GIE4JSgJQS5uBerY8=;
+	s=arc-20240116; t=1731709182; c=relaxed/simple;
+	bh=3a8M3y0RglnuNdbyInuuBYOfLEdT4Ipkgz9qUFYmzBI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NvU+XKuL5qvZbOw4WYSZ+pDHxdNdYH1LF3Ukh6YN71caHlEihKiPklZQKa2TI0kPCtJyzHZUUA/1jgpYZSveLoMEv0YAbmtdsWcHlP7nzsSQzmVsGIF57qHRSh9zbDd4MUptNYfwLi5c22MnNV2NMM1Z9mrKib061n8GODmJ6V8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d0Dafu4o; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5cb6ca2a776so3798896a12.0;
-        Fri, 15 Nov 2024 14:15:32 -0800 (PST)
+	 To:Cc:Content-Type; b=LjyrQDVk5clyD7lxb/VE9NVFabNqSiLlM0RhoT5fyN2ftkNIAGrv9se+ubmJ/AvMBkEqfvWmjAUSt+GVv5YuHxyo/lQqrev/W/5YM+vHYYO+xVHC3Y6dDXI7bolpsvj+1FUthTIxRkbGOgpg007auYbXAFQP9LTB7Bz5UCAbT9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=WklE5d9Z; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c9c28c1ecbso3177855a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 14:19:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731708931; x=1732313731; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zM323IeHX5Wao0Wvn3Qxm0EBhrnoes7GmduEknVbsqI=;
-        b=d0Dafu4ozjILAK3vbT+OQSMzuwWQzZcLMiVwFQ53tCQ47QziJlFdwaM6TZ5GH2WXiK
-         +hbK3bOs3wYckNuOgOuSyr1iD+HVUyUhffi4lhBgyo2Rt2Qd1IvKNaZjmqaReqBKxKWJ
-         5a/xEbSjjlzA5mFH6ivyqTGSKD4ieW9677/ZK6WXS9f0hLX2ZHO0Ytvlw81vqj2WB4eK
-         Uc9id54FwPd7HeKEbRryrjB223ev61+ovEeJLXgFHsNR29UXct1hR+WrULjkQt4gcxz7
-         qLbSSWbPbObhUvsjmvi7DdvZAdRJb+PBBUWsW6sXg5S3kIStRpmB6z3u3TofG2yGxeNm
-         U2Jw==
+        d=broadcom.com; s=google; t=1731709179; x=1732313979; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6rW5HMgaLYI0RUrO2GlqubW98a1u9bDMxZbmQMlRs40=;
+        b=WklE5d9ZQ53+R0cBqximSrOab0JrOo4Y189SFhxVfr/dvSs+Pueeem1Dar6Zj4fXPd
+         I2tTEBaDmxb33UxVstpm7f5OhibrW969s93454G3g5ViBoYC5gFQHYmpAYxc05T904f8
+         cwi+rhE4aMqPtzYd4ig7kwkVr5SKa+p4bMqx4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731708931; x=1732313731;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zM323IeHX5Wao0Wvn3Qxm0EBhrnoes7GmduEknVbsqI=;
-        b=F/hnsSWk1U2N+48BjSGYwbg2tq49pSjXnvHBtP06uV3lLAIMwALHFYwbgsSmvdPYOC
-         EaJWWKLKmLTQT/VrBctieuxHiQMBnTdyKl1R3p2fE6+wVbSElkqQmRam62FVs+EWqGYa
-         kY4ns/0WF485Z1R3yDFpZt7U2EK110U0DC/ns6m7D9/xVMVlrpkE0T+i6mcByuVX6J/6
-         5p2eOCLpvWwUQA+GKSFWmKl0FwhCzgCVBjGTbEUYtdPDCpqO3nsOhQlnpTLHUA2UPzKr
-         AZDdo3tl1AekILbzaya9bmJUebd/oriTuyl/cJF/XW7dxYGD1s6oai54Zn85pmLIYLwq
-         aa6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVWnoCg38LGFiT4FWKzHn4O4jihF4oD60Hczj36jYJqeMY8KNYw+M4/UR2sLSHZQQz83loed0EtJ/DWMTY=@vger.kernel.org, AJvYcCWB7Ab6YjogfESXjr3wWXiT4Fnr/k+HG5GZGrqtfG8UWtBNgqUEorQsuvLWgfxjDJDveGHXlClV@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRhQziIR//ZkI/0u9q83FxoGRSMO4mSBtSkT+rB6udo5HuusKW
-	B8kEjB0bRaiKgRp7WMKBi00/jCZUyn71TWHSaV2UlBukh1CremFNL/33eAeVK4y/KRSe9douoU7
-	3YZHf4Did49KH999uHN5XG4OvU0E=
-X-Google-Smtp-Source: AGHT+IFpg42qBOE2i3RJF23Qu7bb0Wdl9LRB8XOn80l6Xa/542IJqFJwKaXgpinZsQaFtyqmA+qDNSpL9W8JJoFJzJw=
-X-Received: by 2002:a17:907:6e94:b0:a9e:c696:8f78 with SMTP id
- a640c23a62f3a-aa48354da39mr338250966b.51.1731708931183; Fri, 15 Nov 2024
- 14:15:31 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731709179; x=1732313979;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6rW5HMgaLYI0RUrO2GlqubW98a1u9bDMxZbmQMlRs40=;
+        b=Ylg87TK0DOos9Dfa/Rv1nbUXVKxqovOlDEy4gMD6td5ziHbijF+QFyJC1j3JVdamDt
+         TZ6aLi/OXRip2CSEOR7+/dUFdMHls02o2zSroj8hG4v2dkuQ0zcGLoDAQt4pFGz+BWQb
+         NRuihE+xagV5Fr9Z98r+je7qpNaWRQASKT9V+ca8o5aV8p5sgAFhQDCaSASpiTRUMFfE
+         dyIS/bOoIPax1EZSUuBKsj4sX8svhXqHWZ4ezUcfcDnwAStlyDRgYkh3YPE1Ark+0nbK
+         p3FDi+4z5i77+F5SlqtviuQ0blaPTM9LL4PQQs3q6/LJK35P9egwCkNMeOQ9IkAdXh15
+         rhVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNkZnA7Xknsp/SqYfTL4SP4V1aBHdd4S7F9XaAwCmwJu4mJdV9GMIzA0LmtvW8pFiWf1Hy5pkMm5Fy2/Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVhAV2g+8lGrIn18DVC2R5rdms+La9z87MJEG/aL8XofY50IPQ
+	KP1jgV9EyTDz3Qd7iiFl5K3GmPVlk99DXIgJm0b+ZZbygFodxqrGJa7Fi0gZmAIyUNQx0RgVorF
+	EgT41Ad1qo7zkwpxXyF1dZ9as6tNZxMX9KCSk
+X-Google-Smtp-Source: AGHT+IGQMTNmlSl5VNuqcvM+NPqGP9UrmjABKwuVhSQ7k24oUK02/mZg00xiFCnyyvjWdzJOSEYh+dB6vBxNIE6MSZs=
+X-Received: by 2002:a05:6402:254b:b0:5c9:62c3:e7fd with SMTP id
+ 4fb4d7f45d1cf-5cf8fc6464bmr3138653a12.16.1731709178646; Fri, 15 Nov 2024
+ 14:19:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241115215256.578125-1-kaleshsingh@google.com>
-In-Reply-To: <20241115215256.578125-1-kaleshsingh@google.com>
-From: Yang Shi <shy828301@gmail.com>
-Date: Fri, 15 Nov 2024 14:15:20 -0800
-Message-ID: <CAHbLzkrVoK-y4zc10+=0hDGZLi8+i73wSHciTUOWGDBsEcD0xw@mail.gmail.com>
-Subject: Re: [PATCH] mm: Respect mmap hint address when aligning for THP
-To: Kalesh Singh <kaleshsingh@google.com>
-Cc: kernel-team@android.com, android-mm@google.com, 
-	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	Yang Shi <yang@os.amperecomputing.com>, Rik van Riel <riel@surriel.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Minchan Kim <minchan@kernel.org>, Hans Boehm <hboehm@google.com>, 
-	Lokesh Gidra <lokeshgidra@google.com>, stable@vger.kernel.org, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Jann Horn <jannh@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20241115200412.1340286-1-wei.huang2@amd.com> <20241115200412.1340286-2-wei.huang2@amd.com>
+ <20241115140434.50457691@kernel.org>
+In-Reply-To: <20241115140434.50457691@kernel.org>
+From: Michael Chan <michael.chan@broadcom.com>
+Date: Fri, 15 Nov 2024 14:19:27 -0800
+Message-ID: <CACKFLimS-AV6qHVrghZdqRGU43po3=L+6UCF77-7XuxXV9BsXg@mail.gmail.com>
+Subject: Re: [PATCH V1 1/2] bnxt_en: Add TPH support in BNXT driver
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: bhelgaas@google.com, Wei Huang <wei.huang2@amd.com>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, helgaas@kernel.org, 
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
+	asml.silence@gmail.com, almasrymina@google.com, gospo@broadcom.com, 
+	ajit.khaparde@broadcom.com, somnath.kotur@broadcom.com, 
+	andrew.gospodarek@broadcom.com, manoj.panicker2@amd.com, 
+	Eric.VanTassell@amd.com
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="00000000000078f2380626faf62b"
+
+--00000000000078f2380626faf62b
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 15, 2024 at 1:52=E2=80=AFPM Kalesh Singh <kaleshsingh@google.co=
-m> wrote:
+On Fri, Nov 15, 2024 at 2:04=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
 >
-> Commit efa7df3e3bb5 ("mm: align larger anonymous mappings on THP
-> boundaries") updated __get_unmapped_area() to align the start address
-> for the VMA to a PMD boundary if CONFIG_TRANSPARENT_HUGEPAGE=3Dy.
->
-> It does this by effectively looking up a region that is of size,
-> request_size + PMD_SIZE, and aligning up the start to a PMD boundary.
->
-> Commit 4ef9ad19e176 ("mm: huge_memory: don't force huge page alignment
-> on 32 bit") opted out of this for 32bit due to regressions in mmap base
-> randomization.
->
-> Commit d4148aeab412 ("mm, mmap: limit THP alignment of anonymous
-> mappings to PMD-aligned sizes") restricted this to only mmap sizes that
-> are multiples of the PMD_SIZE due to reported regressions in some
-> performance benchmarks -- which seemed mostly due to the reduced spatial
-> locality of related mappings due to the forced PMD-alignment.
->
-> Another unintended side effect has emerged: When a user specifies an mmap
-> hint address, the THP alignment logic modifies the behavior, potentially
-> ignoring the hint even if a sufficiently large gap exists at the requeste=
-d
-> hint location.
->
-> Example Scenario:
->
-> Consider the following simplified virtual address (VA) space:
->
->     ...
->
->     0x200000-0x400000 --- VMA A
->     0x400000-0x600000 --- Hole
->     0x600000-0x800000 --- VMA B
->
->     ...
->
-> A call to mmap() with hint=3D0x400000 and len=3D0x200000 behaves differen=
-tly:
->
->   - Before THP alignment: The requested region (size 0x200000) fits into
->     the gap at 0x400000, so the hint is respected.
->
->   - After alignment: The logic searches for a region of size
->     0x400000 (len + PMD_SIZE) starting at 0x400000.
->     This search fails due to the mapping at 0x600000 (VMA B), and the hin=
-t
->     is ignored, falling back to arch_get_unmapped_area[_topdown]().
->
-> In general the hint is effectively ignored, if there is any
-> existing mapping in the below range:
->
->      [mmap_hint + mmap_size, mmap_hint + mmap_size + PMD_SIZE)
->
-> This changes the semantics of mmap hint; from ""Respect the hint if a
-> sufficiently large gap exists at the requested location" to "Respect the
-> hint only if an additional PMD-sized gap exists beyond the requested size=
-".
->
-> This has performance implications for allocators that allocate their heap
-> using mmap but try to keep it "as contiguous as possible" by using the
-> end of the exisiting heap as the address hint. With the new behavior
-> it's more likely to get a much less contiguous heap, adding extra
-> fragmentation and performance overhead.
->
-> To restore the expected behavior; don't use thp_get_unmapped_area_vmflags=
-()
-> when the user provided a hint address.
+> Bjorn, do you have a strong preference to have a user of the TPH code
+> merged as part of 6.13?  We're very close to the merge window, I'm not
+> sure build bots etc. will have enough time to hammer this code.
+> My weak preference would be to punt these driver changes to 6.14
+> avoid all the conflicts and risks (unless Linus gives us another week.)
 
-Thanks for fixing it. I agree we should respect the hint address. But
-this patch actually just fixed anonymous mapping and the file mappings
-which don't support thp_get_unmapped_area(). So I think you should
-move the hint check to __thp_get_unmapped_area().
+Driver changes going in through net-next for 6.14 sounds good to us.
 
-And Vlastimil's fix d4148aeab412 ("mm, mmap: limit THP alignment of
-anonymous mappings to PMD-aligned sizes") should be moved to there too
-IMHO.
+--00000000000078f2380626faf62b
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Yang Shi <yang@os.amperecomputing.com>
-> Cc: Rik van Riel <riel@surriel.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Suren Baghdasaryan <surenb@google.com>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Hans Boehm <hboehm@google.com>
-> Cc: Lokesh Gidra <lokeshgidra@google.com>
-> Cc: <stable@vger.kernel.org>
-> Fixes: efa7df3e3bb5 ("mm: align larger anonymous mappings on THP boundari=
-es")
-> Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
-> ---
->  mm/mmap.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 79d541f1502b..2f01f1a8e304 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -901,6 +901,7 @@ __get_unmapped_area(struct file *file, unsigned long =
-addr, unsigned long len,
->         if (get_area) {
->                 addr =3D get_area(file, addr, len, pgoff, flags);
->         } else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)
-> +                  && !addr /* no hint */
->                    && IS_ALIGNED(len, PMD_SIZE)) {
->                 /* Ensures that larger anonymous mappings are THP aligned=
-. */
->                 addr =3D thp_get_unmapped_area_vmflags(file, addr, len,
->
-> base-commit: 2d5404caa8c7bb5c4e0435f94b28834ae5456623
-> --
-> 2.47.0.338.g60cca15819-goog
->
+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
+OnaLEot1MoQO7BIe5S9H4AcCEXXcrJJiAtMCl47ARpyHmvQFQFFTrHgUYEd9V+9bOzY7MBIGSV1N
+/JfsT1sZw6HT0lJkSQefhPGpBniAob62DJP3qr11tu8CAwEAAaOCAdowggHWMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJAYDVR0R
+BB0wG4EZbWljaGFlbC5jaGFuQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
+HSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQU31rAyTdZweIF0tJTFYwfOv2w
+L4QwDQYJKoZIhvcNAQELBQADggEBACcuyaGmk0NSZ7Kio7O7WSZ0j0f9xXcBnLbJvQXFYM7JI5uS
+kw5ozATEN5gfmNIe0AHzqwoYjAf3x8Dv2w7HgyrxWdpjTKQFv5jojxa3A5LVuM8mhPGZfR/L5jSk
+5xc3llsKqrWI4ov4JyW79p0E99gfPA6Waixoavxvv1CZBQ4Stu7N660kTu9sJrACf20E+hdKLoiU
+hd5wiQXo9B2ncm5P3jFLYLBmPltIn/uzdiYpFj+E9kS9XYDd+boBZhN1Vh0296zLQZobLfKFzClo
+E6IFyTTANonrXvCRgodKS+QJEH8Syu2jSKe023aVemkuZjzvPK7o9iU7BKkPG2pzLPgxggJtMIIC
+aQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQD
+EyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgxeQGjDntHGb2iaQkIw
+DQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIM4BXn2KgcgEfOb1P0xBJsnZNHD7WkGz
+lShqWUa3rnRIMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTEx
+NTIyMTkzOVowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCG
+SAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQC
+ATANBgkqhkiG9w0BAQEFAASCAQB2CXuptJdCkDMcHmJB9PcuLW5qqJkVE3ga1pnljsILTFgahuEd
+GLP0X+xNYnwsBh5YgUSXk9cdRaT1/jnEoWR0E8uMnG/Bdwstr379hmrcUIBnbvwfbUXjwF5LRGIM
+5cNd11wuWENEZ8/zzi+JalGrhKlMwz0RLrjdJ36HFJFeITEi/Ahwr5bdLrqopX3xBPYFw3fjfpv/
+YUmzlH/RHwb7PxZVDIhw6z8JXkAiXfIUYDB67Oy6M/RRhCbsNXGwryWXtcFrXeU9dMjZ5pqhXhCa
+ZcHDycpEH2FKH6FQShPWoSC0qZ7m4VNaNrnSpQxVqJUxsE3v3ZwhqE3u0RMkp3rl
+--00000000000078f2380626faf62b--
 
