@@ -1,459 +1,312 @@
-Return-Path: <linux-kernel+bounces-410216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56A9B9CD66E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:07:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA0EF9CD67F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:11:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D42B91F22B7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 05:07:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D4321F22AEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 05:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10D013C8E2;
-	Fri, 15 Nov 2024 05:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06D217332B;
+	Fri, 15 Nov 2024 05:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gzcylA7x"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E229I3NX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303612F26;
-	Fri, 15 Nov 2024 05:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731647230; cv=none; b=TuKu/AtVWPJvQKsA1noi5jOjzyHeMrr0ZY645Oc+RcVx+jnka+epvURjWof+rvmYeTK2ur1+AC/+w1T5XAVHnpWV5Ezx1RwIelyAP82Bl9vWfBYf89R85pbbPW8aCyFfgJD7Zkucf5wvf6HDE5gFZsyOnBcvUz4O+4hzN8BOkVc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731647230; c=relaxed/simple;
-	bh=El/eeZvGnZ8uEhr+u283CTuXNW1Oe+4ae85gYVBx3pw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=spxT5uejhsUiYNtMi/MZsh7H2yWGWVtW+0aElGVBAIlHkoQUFJttdgk5zhGT3Pg0LocN320tCr35Z0ZihqfuCTsV2bUQqvuUBKgvKHInQ4UG0kir+AfUoJRCszmmqbm83BZUz/JWKRjQt/eEWbYyqZ4A4YmRQi01UV9fei8Ox9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gzcylA7x; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=N9aQtAImZopfyOv5zhJRxixkotiB87MZ1qMsusX6hHY=; b=gzcylA7x8RRn1kEXLhYmuvlIUy
-	qtmfBWH4oWgA2sfHuSo1u+A1KVsb2B5zLI/BkHHCXr7eM8ISH42udL2D1bTXVrL5Bz1urkBkHzfMQ
-	eH2WWLmhyQoQDmOK9nJcWItGq5615qcRnQbwQYwD7g5/EzSG69Zhid/CASyBVvvB/7T26KfSySASJ
-	9YsO2QjsQ5x24SF3bihpWkpI/OOuzhyYgMbbqkWbmK0ZpUvszX4wxPzlFWy1SEdlRt4zPyqIwuMRZ
-	gN/N9vvcvdP3ExvBuXetxClAYIXPCEQzDVO5CZ7gUkF65+ZmodUWCBD15sIra50WuPPISemIyfX17
-	D2fLzWvQ==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tBoXs-00000000tQv-2UVa;
-	Fri, 15 Nov 2024 05:07:00 +0000
-Message-ID: <5dbe1671-e5bd-44e1-b2cf-21ad30339024@infradead.org>
-Date: Thu, 14 Nov 2024 21:06:54 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941BB2F26;
+	Fri, 15 Nov 2024 05:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731647467; cv=fail; b=RK83siy+FSLADuJDrEeiDn8+DcJzEYGFSq0pUnaYhGyn6zhwjCIO+0Icif5ch190Ns+Ur97h/XAfOnxeEv+UWBw4qPZgmS2kyxyL/PWXeYq4kpX70s4jebT/+nGMSEpLn5COiyjxoHKOR5MnhUdI0z5rI8rLz+RNYrhHAgr83ds=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731647467; c=relaxed/simple;
+	bh=bMof4FIpL1SnyL4QAlpzk/ifKtARSJDzYtMMiyiNyEk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Cga044llyDVkaM5iGn5YsU7eZ05bfxL/4SAuY3cTy3F8V9tgkxK88Sy35eOI9u9UBSLCkdgRjIeRz4+tpk2o0V5+8XtXoHdCz1NzjAUWC+ftbkYYyakJeDW3QKw73PQe6U4F4c6tmNvP/Lxwm9p1tKRw+VpUIWqX1x5tId5t/kg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E229I3NX; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731647466; x=1763183466;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=bMof4FIpL1SnyL4QAlpzk/ifKtARSJDzYtMMiyiNyEk=;
+  b=E229I3NXWRDnic8ib49NMbc1B3hzDfxMEHYBzmizQ1T2/qnXw3YTdBwV
+   /MXMO7C4oUfhvQ856tJzMf7fftklPZzxNKy7Nb0bCfN2T47uXlZxDLx9K
+   T0TsF6nYJv0hJ5o+kJx8wnOgpJvDd8uUe5uBM9IsoY9Vjx7olpLQH8cWR
+   OY5aK1goIXyM8xSg/KVriE11XEUDjM00fgx5HUTo+FT2g4PX2i/yTnjYA
+   woGsUxb3aMGkyzqvougvQ1ak9BpIJZPTJwriFfurhSmlflABqeQiyOBRT
+   M/XodKpqOfT4IjAOv0vvdTkD0K3bc9EDUwnJr+zhdpvHK+4ctmJbe2fKf
+   A==;
+X-CSE-ConnectionGUID: QEA6eGciSx2sPhWDsSQJxA==
+X-CSE-MsgGUID: VAFrTKv2QhyL4AMgXPJIcw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11256"; a="57045736"
+X-IronPort-AV: E=Sophos;i="6.12,155,1728975600"; 
+   d="scan'208";a="57045736"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 21:11:05 -0800
+X-CSE-ConnectionGUID: eHZIYTz5QJGe3cNb8MhP8Q==
+X-CSE-MsgGUID: SG+XEOo6T8S804QRnmnKiQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,155,1728975600"; 
+   d="scan'208";a="88005708"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 Nov 2024 21:11:05 -0800
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 14 Nov 2024 21:11:04 -0800
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 14 Nov 2024 21:11:04 -0800
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.177)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 14 Nov 2024 21:11:03 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QW9dLXVmxCD3HspFW6ySV/o3bhUv59ODayFi7yTZsEcfUc75+GjBqlFL2NSFhB2WUCYIQqTYR8MRMFkI9N2y3kIE9YBDN0DmWtWYN9TPjGk8S2aS0h/w9XK9DiUHpCWYqhbkx/3S7qwWW2fNLfAZ8NgrjL53MXJSqY3Rjly4dfOUdXBTzt6cq86wKqMYWa7gfPBXjjjQRBSp3bPJ91YiMHc19lJSru4STBfhUjgZwnAwt9Y1e+B7IRMWXUijH67zOsknTzF8x583lhGAx/PYRGbTZ0AotUNXTs8kXxYnf+ttoYxbhbZjrTlaoe8OhV3rETx0PCpDJlDyUxYezY/PCQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bMof4FIpL1SnyL4QAlpzk/ifKtARSJDzYtMMiyiNyEk=;
+ b=rcanOf+cGH2NOCg3YUPYNPEj/bsp+hwuRnV8SQdegq73Y7hEAchyT+4wRxoDsmhCUozF8zeYLHTDyfc2U5uLmwAlWzywlnczyzu20ZO6kmG4xQ0KdVCEx3WDHzhIFok0K3cCEK2OHW1YES39E/7U90mqjtpzqGSnApmBvb0dAS5lKP+uNpgc2sv9DyEeVP3gDBKXpMmV4EiD1c2W75UJm7mDKWRz4GFFjOxttBbVc5FFaVCcTlvUiOwNiGxFfYTuOkcq+BbMl7mBMdPUAyOqEScuAxnZnbaXt1nyfODkoSuKiyH71UVLAElXzT3JGcGYqZ1sVfE0RuA3kwVPf12Z3g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from IA1PR11MB6098.namprd11.prod.outlook.com (2603:10b6:208:3d6::20)
+ by LV3PR11MB8484.namprd11.prod.outlook.com (2603:10b6:408:1b4::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.17; Fri, 15 Nov
+ 2024 05:10:55 +0000
+Received: from IA1PR11MB6098.namprd11.prod.outlook.com
+ ([fe80::cbbd:ed55:576c:fd55]) by IA1PR11MB6098.namprd11.prod.outlook.com
+ ([fe80::cbbd:ed55:576c:fd55%5]) with mapi id 15.20.8158.013; Fri, 15 Nov 2024
+ 05:10:55 +0000
+From: "Xu, Even" <even.xu@intel.com>
+To: Bagas Sanjaya <bagasdotme@gmail.com>, "jikos@kernel.org"
+	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>,
+	"corbet@lwn.net" <corbet@lwn.net>, "Aaron, Ma" <aaron.ma@canonical.com>
+CC: "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "Sun, Xinpeng"
+	<xinpeng.sun@intel.com>, Srinivas Pandruvada
+	<srinivas.pandruvada@linux.intel.com>
+Subject: RE: [PATCH v2 01/22] HID: THC: Add documentation
+Thread-Topic: [PATCH v2 01/22] HID: THC: Add documentation
+Thread-Index: AQHbNlbmu9jwsJUh506r8H8XRm+D8bK3ujCAgAASHmA=
+Date: Fri, 15 Nov 2024 05:10:55 +0000
+Message-ID: <IA1PR11MB6098EC67DEAA5336F4F47B19F4242@IA1PR11MB6098.namprd11.prod.outlook.com>
+References: <20241114053416.4085715-1-even.xu@intel.com>
+ <20241114053416.4085715-2-even.xu@intel.com> <ZzbIP7tOEns0Fy-U@archie.me>
+In-Reply-To: <ZzbIP7tOEns0Fy-U@archie.me>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA1PR11MB6098:EE_|LV3PR11MB8484:EE_
+x-ms-office365-filtering-correlation-id: ced54807-701e-4323-3d75-08dd0533e214
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?a3gxbS9OK2hwbWJ3M3NNQzhNT0lqTmJWR1luYUR6ZmRuSjlTS0FWeFpFaDRI?=
+ =?utf-8?B?Y3ltUlBQTm1obnFPbTlMaHoyS2F5Ly9pZFc4TnN1cDhVSFV2K3BqcnQ5VzBY?=
+ =?utf-8?B?UTZSWFk3dFFDbkF6bG1iSmZFZ1h1bDRSalR2OFpwNis5bkVKZFpmNTdselVo?=
+ =?utf-8?B?c3IyeFRIMlVwbTlkMEFxOVRIWE1LYU5MK1NYTzExRGlaaEI4bFdRcnp4UEgv?=
+ =?utf-8?B?a3JaTTYrSE9ocy9ZVzRYRjQ4UnY1dkl6UTRvWmR5Q1g3Qjg5RGdxM3ZhMXI5?=
+ =?utf-8?B?YUcwM25od2JkTU5Rd0haRVNaaHdhdVFEc0czTHdMRUFXWFBxMkViY0NUZ1hC?=
+ =?utf-8?B?cTY2TzN5c1JxVnF6ckxOeEtkZ2pLR3pFbzR1a1JkRFk2d1hFdUNVenFadTcr?=
+ =?utf-8?B?RVByRktKSVhxaUVKWXZ1MDY4bmNwV3VLSFIrY0M3eWdPcmV5ZTF5dGZZbjFX?=
+ =?utf-8?B?bFFNamFlK2xUMkx1MTZZeFJuZ2puZlZ6aW1EU0dXVWJOOVFUelhJMDNLOHh1?=
+ =?utf-8?B?L1BKZ3lYTzFFb3pQMkUvZisyYjBsRW1sTVpicXEzNS9aN3hFL1dEL2Y1MCtP?=
+ =?utf-8?B?YmRUUHE2cXlWYTFHL2NlVXQxc05FRnBRSlJkTGt6eXMwZ0p3VUlNd3B4Smlu?=
+ =?utf-8?B?MHgzQUV6SDRtNFpzU2VDbTJLZG95WDVkYkd0NjlZU0NHMDhIQUxUdEVXSkdT?=
+ =?utf-8?B?VlNqWEVPVy9rQlZOZS9NWklvcys5T0c4bzlxZTVYWitwU0I0Rm1MUStENFNu?=
+ =?utf-8?B?Z2tyUTBFZVBIUm8rb2pNb1dYcWVNZGZJd3Y5dkRyTjNkaDBlMXRGQmNKYzlm?=
+ =?utf-8?B?cmJSTlErOWo3dS9lRHJYc1VSQTZ1QjZwaEF2VmducXB6aFlISkFaR2JkbTg5?=
+ =?utf-8?B?dzA4VTk1VzgzbmpaekY3NHIxZ3dWRVlBMEhXYTV2Mi83c3RhOVpzbXJNV1BU?=
+ =?utf-8?B?c2JQRUJNZkVGMThIUnVEOHA5WWNiNjl4Y3dHYlRhKzlOTU1yTFhORXlybG1M?=
+ =?utf-8?B?NXZFNmdVcTJGak00cnpUVGg2VWNWWHorckl0WEx2dkg4N1dCSzlFMGJCS0Rl?=
+ =?utf-8?B?QVVxa0J4OTNadW00QXQwWHR5bkUzdkl4T0tqNTR4TG0yb3dpYTJFei9zT2hS?=
+ =?utf-8?B?am96dXdHZE5TTlIxL0RIVmhHaXpQdFlFUFF0TjJ0eWwrTFFiNHBEM1VQaVFF?=
+ =?utf-8?B?ak1SWjFqdnUrVUczTUF0Q0pQR1BJYkFYdjUzVENaWGRqaFh5c3ByRkNRMXJR?=
+ =?utf-8?B?VnlrUWVINjduY3hBWlJDNG1VbzAzdUo4bGFucmFVeHdQSnBnV3p2VkI4Y3Bm?=
+ =?utf-8?B?eXdSdWNoTThjVG1HWTZmeWw3eE5NUGh2cWlKcDlmZFJMSUpaSWFyaXdOVHg5?=
+ =?utf-8?B?VXhGVEFnMFRJVURuODFDNHBUdzg5dUtXVW1HZkdJbTBiVkROdW1HUFdONTVS?=
+ =?utf-8?B?dXZmYmxhWWtxYTZaMUFnQ1JSVTRxQ3NzVFJJYXBLL3dTZUNJYzN2dHJGekVl?=
+ =?utf-8?B?UE1heUJwb1puWkR5cjVqZlhTRGRRM1NEK3k3TG5MVzlCM3NDcWc5SGFUYUl1?=
+ =?utf-8?B?MC9Ba0dlUXhXR25IYWVVMGlrNlNCaFhhNGkwSHhXQUdZR2ZjNzVRaXRmSlNx?=
+ =?utf-8?B?cThzS255d1FRMUFLR0FpZFI1K0E4MjNWUFFKMFJkaGROZUczS25ya3RSOVlm?=
+ =?utf-8?B?K1BESVhKSGJKRzZIY0RKRW93RGhEdTZLUklxVEYzR2QrOTIySUJOVUpialV3?=
+ =?utf-8?B?bmJWUkFwQ0hHN3RmR3M5ZlFYYURWWDZzR3NhOXNXc3FGNFJDM3h3TTZmY2tH?=
+ =?utf-8?Q?9AUFsra2TR/F6bMZhDrcqU1ZBGwcQDLXhhUm0=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB6098.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ei82b0R5UGFpWTdkdWVBeTAvdHB4RXBReGc0VnFEaU1lOU1BYndsTSt3Vnlj?=
+ =?utf-8?B?YUxBVnlLQzk0VGxzMXpsUVA5cXRVcE9jeWFGS2sza2Q2a0V5NFFWenNUMENj?=
+ =?utf-8?B?eEwyM3NHcUZGcE1VTFVqSDRYQjBHOGZFREd1WDZIRmVoaHV6cE9WYWNWWTdi?=
+ =?utf-8?B?ejRwYW90dDN2OEpjTTJITVNVK3lQZVdyVVdSQWpsYlRYS1VRbGluOVRXUXFs?=
+ =?utf-8?B?NlBuSTRPS1VUVnpMT0xsL0FMYlREZ3RQZ1FOTUZEankxZ1VQWXhYbGhHUkZy?=
+ =?utf-8?B?UFF5UzlZVFpZajNKUVpSaWtPeXRoVWxSWXBtWlBacEMvZTc4QWhXMVZSTU5v?=
+ =?utf-8?B?ZDVnZGIxRllGQkUrT0h4cytWNTliU3MvK2Q3UGtmT2QxU2VKaUM0N2FWNjVR?=
+ =?utf-8?B?a3RZZWQwY2dweC9UMFBpaDZFQmQwRjJ0RlR3dUJ3Y2IrNnpPUVRxdjZHbG9z?=
+ =?utf-8?B?UUIxaytMeTYxTGVYZ21XN3FNQm1MQXFGYzgzRkZjTzhhWlRLMDl3bE0wQUdu?=
+ =?utf-8?B?L3E5d2hhQkhTeGxlK253RktCeG50c2VhTzNQYmV3NzkxMjE4SlRKODAwUUQw?=
+ =?utf-8?B?Qy9pWHhtcE1IeGVXNHM3bUZuRG5odXBsUG5iNVJxT3RDZFlRSXAvd1BSQVI2?=
+ =?utf-8?B?TTlrMVN2TnNzT20yV0l5d09EUC9KMHp4OVpBV1Myc1RiL2ZNd21PVlB5b3FP?=
+ =?utf-8?B?dTgrL1JVaTNaYVE5dDcwWEMvMGJkbkdnbE5ZSEpOdkdnVm0rUmNjL20rSTM0?=
+ =?utf-8?B?bWlUNDdvdExiMTJVY2lHK3BxdXRaM3FWeEprVDFtYzNYOElRUzhIM0hSL1pH?=
+ =?utf-8?B?ZEQxVmtlMEZXa3ROazNZMlFKSy95SVlnUmpiSVpHVStaUlpjY2tYNC9xYVlJ?=
+ =?utf-8?B?U1ZxaUtrcDltNWJidXEwbW43S2hVcDhGL1haY0d3QVA2dzl2UHFVdzhvbUdH?=
+ =?utf-8?B?TzFRRHBybnlaZmNLUUlJaEF2R1pKTGFtNDFsb1NEYy91ejhjU2tvNGJtaDdG?=
+ =?utf-8?B?YWhuZHYxZVoxaGo2VEZWSVpDdUltZ25mNmFkb0hoV1BHbFJwTk9nNjlvQzc3?=
+ =?utf-8?B?aEh6Q1BweUdkRWp5LzlVUjVuU2RkUnNFcFljQVZ6THFaVkdJVXhKeGtzck1x?=
+ =?utf-8?B?OEFWZGlCeFZDTHdMMmNvdnBRYWJvSG9ncXZ3dnJuUVlEOGxJeHlUUjJmTDNZ?=
+ =?utf-8?B?U3NCSHpVUFJSNWlkSDFpRU43emJvam4vdTNjMlhjeUUzcmxkb3BCZk9rVDhH?=
+ =?utf-8?B?ektPNzUveEhENHVyRHFiM2w0T2JTOVo2WGYrOElOS1JMWVkzbTd5VVVPV1Ux?=
+ =?utf-8?B?aWhHVDRYdkVlWmFoVUdrT2Y3RWpBL3Axa2cySk5qM2kzaUNTMUJJUVRwKzlV?=
+ =?utf-8?B?N1QzamFEcjNJZk5FemhHckdJTnQ1SGtKOVMxcFU2eFlRVXNlL1BkUmJaVk5V?=
+ =?utf-8?B?YnBldnR6OFJaOFU2NzFzQ1huWWt2Zkh1RjNpdjlyMDdxNmkxWmdhbTJ6KzAx?=
+ =?utf-8?B?djcxVWJ6UUpYdlYxWExWVXFXMnp0VmNlQnZBcS9NYU9MUXJ0OFJmc1hwRVEw?=
+ =?utf-8?B?NUpNWDZWV25hUVZmMnppd2RqamFqeHIySnd0QUpuWHlvVVBYaFlyMmdvNTN5?=
+ =?utf-8?B?dkVyQXUwVzZmcXpGSFowRFprUW5hVEx3SmdmZjVHQU1tL2VhTGlQUlp4cjJn?=
+ =?utf-8?B?Vm83T25MQ2phemJyMWJ2eFV3bGl0eXZQTXl4SFdoNUtSSUJHUFRnNnZaWnZm?=
+ =?utf-8?B?WEZnb2E4TzlpQ0NDUlg2TkxPN1ltaUdkQXdpbzZzVEwrYWJlZGI2d2NhQ2tu?=
+ =?utf-8?B?RUtFTjA0Z1paSytXZVVnN00wRC8vQmtuaUc5R0k0QzBLMkNYR0k0ZnE4UDlM?=
+ =?utf-8?B?SWRjVy9LQm9FQVY1Q2h6d25xYUc1NTVNa2hVeEd4MUs3ZjFXcXY0Y2FTa0hn?=
+ =?utf-8?B?TENkb3dLZ24vT3NhblJkd25JVkhwTGw3TzhQMXdKK0lmdFhmRGJXQ1c3SmdE?=
+ =?utf-8?B?WW9JMDg2emJZOWEyeGpoV2NIekU1ZjYzMFJhaTlJYTlabXJEMjdObVNUQUFQ?=
+ =?utf-8?B?VThrVmhkS2RmL1RMZXVkeWhtN1oxdEs4K2NxVjNhV1FTY1BwSTZIUU1saGQ0?=
+ =?utf-8?Q?Fakc=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] docs: Add debugging section to process
-To: Sebastian Fricke <sebastian.fricke@collabora.com>,
- Jonathan Corbet <corbet@lwn.net>
-Cc: bagasdotme@gmail.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- laurent.pinchart@ideasonboard.com, hverkuil-cisco@xs4all.nl,
- mchehab@kernel.org, kernel@collabora.com, bob.beckett@collabora.com,
- nicolas.dufresne@collabora.com
-References: <20241028-media_docs_improve_v3-v2-0-f1960ae22c5d@collabora.com>
- <20241028-media_docs_improve_v3-v2-1-f1960ae22c5d@collabora.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20241028-media_docs_improve_v3-v2-1-f1960ae22c5d@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB6098.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ced54807-701e-4323-3d75-08dd0533e214
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Nov 2024 05:10:55.0901
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: MWvtY76siHQ9mpqlPRO+mftpZw1QiXDx2I1pe2PsjxVl3cbfrv9+25SLLcqqYXPeh4Q4ZSF+xeV3G+MZfyvg+Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR11MB8484
+X-OriginatorOrg: intel.com
 
-
-
-On 11/13/24 3:17 AM, Sebastian Fricke wrote:
-> This idea was formed after noticing that new developers experience
-> certain difficulty to navigate within the multitude of different
-> debugging options in the Kernel and while there often is good
-> documentation for the tools, the developer has to know first that they
-> exist and where to find them.
-> Add a general debugging section to the Kernel documentation, as an
-> easily locatable entry point to other documentation and as a general
-> guideline for the topic.
-> 
-> Signed-off-by: Sebastian Fricke <sebastian.fricke@collabora.com>
-> ---
->  .../driver_development_debugging_guide.rst         | 214 ++++++++++++++++
->  Documentation/process/debugging/index.rst          |  65 +++++
->  .../debugging/userspace_debugging_guide.rst        | 278 +++++++++++++++++++++
->  Documentation/process/index.rst                    |   8 +-
->  4 files changed, 562 insertions(+), 3 deletions(-)
-> 
-
-
-> diff --git a/Documentation/process/debugging/userspace_debugging_guide.rst b/Documentation/process/debugging/userspace_debugging_guide.rst
-> new file mode 100644
-> index 000000000000..a7c94407bcae
-> --- /dev/null
-> +++ b/Documentation/process/debugging/userspace_debugging_guide.rst
-> @@ -0,0 +1,278 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +==========================
-> +Userspace debugging advice
-> +==========================
-> +
-> +A brief overview of common tools to debug the Linux Kernel from userspace.
-
-Make that a sentence?
-
-> +For debugging advice aimed at driver developer go :doc:`here
-> +</process/debugging/driver_development_debugging_guide>`.
-> +For general debugging advice, see :doc:`general advice document
-> +</process/debugging/index>`.
-> +
-> +.. contents::
-> +    :depth: 3
-> +
-> +The following sections show you the available tools.
-> +
-> +Dynamic debug
-> +-------------
-> +
-> +Mechanism to filter what ends up in the kernel log by dis-/en-abling log
-> +messages.
-> +
-> +Prerequisite: ``CONFIG_DYNAMIC_DEBUG``
-> +
-> +Dynamic debug is only able to target:
-> +
-> +- pr_debug()
-> +- dev_dbg()
-> +- print_hex_dump_debug()
-> +- print_hex_dump_bytes()
-> +
-> +Therefore the usability of this tool is, as of now, quite limited as there is
-> +no uniform rule for adding debug prints to the codebase, resulting in a variety
-> +of ways these prints are implemented.
-> +
-> +Also, note that most debug statements are implemented as a variation of
-> +dprintk(), which have to be activated via a parameter in respective module,
-
-                                                         in the respective module;
-
-> +dynamic debug is unable to do that step for you.
-> +
-> +Here is one example, that enables all available pr_debug() 's within the file::
-
-                                                    no space ^
-
-> +
-> +  $ alias ddcmd='echo $* > /proc/dynamic_debug/control'
-> +  $ ddcmd '-p; file v4l2-h264.c +p'
-> +  $ grep =p /proc/dynamic_debug/control
-> +   drivers/media/v4l2-core/v4l2-h264.c:372 [v4l2_h264]print_ref_list_b =p
-> +   "ref_pic_list_b%u (cur_poc %u%c) %s"
-> +   drivers/media/v4l2-core/v4l2-h264.c:333 [v4l2_h264]print_ref_list_p =p
-> +   "ref_pic_list_p (cur_poc %u%c) %s\n"
-> +
-> +**When should you use this over Ftrace ?**
-> +
-> +- When the code contains one of the valid print statements (see above) or when
-> +  you have added multiple pr_debug() statements during development
-> +- When timing is not an issue, meaning if multiple pr_debug() statements in
-> +  the code won't cause delays
-> +- When you care more about receiving specific log messages than tracing the
-> +  pattern of how a function is called
-> +
-> +For the full documentation see :doc:`/admin-guide/dynamic-debug-howto`
-> +
-> +Ftrace
-> +------
-> +
-> +Prerequisite: ``CONFIG_DYNAMIC_FTRACE``
-> +
-> +This tool uses the tracefs file system for the control files and output files,
-
-                                                                           files.
-
-> +that file system will be mounted as a ``tracing`` folder, which can be found in
-
-   That
-
-> +either ``/sys/kernel/`` or ``/sys/debug/kernel/``.
-> +
-> +Some of the most important operations for debugging are:
-> +
-> +- You can perform a function trace by adding a function name to the
-> +  ``set_ftrace_filter`` file (which accepts any function name found within the
-> +  ``available_filter_functions`` file) or you can specifically disable certain
-> +  functions by adding their names to the ``set_ftrace_notrace`` file (More info
-
-                                                                         more
-
-> +  at: :ref:`trace/ftrace:dynamic ftrace`).
-> +- In order to find out where the calls originates from you can activate the
-
-                          where calls originate from
-
-> +  ``func_stack_trace`` option under ``options/func_stack_trace``.
-> +- Tracing the children of a function call and showing the return values is
-
-                                                                           are
-
-> +  possible by adding the desired function in the ``set_graph_function`` file
-> +  (requires config ``FUNCTION_GRAPH_RETVAL``) more info at
-
-                                               );
-
-> +  :ref:`trace/ftrace:dynamic ftrace with the function graph tracer`.
-> +
-> +For the full Ftrace documentation see :doc:`/trace/ftrace`
-> +
-> +Or you could also trace for specific events by :ref:`using event tracing
-> +<trace/events:2. using event tracing>`, which can be defined as described here:
-> +:ref:`Creating a custom Ftrace tracepoint
-> +<process/debugging/driver_development_debugging_guide:ftrace>`.
-> +
-> +For the full Ftrace event tracing documentation see :doc:`/trace/events`
-> +
-> +.. _read_ftrace_log:
-> +
-> +Reading the ftrace log
-> +~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +The ``trace`` file can be read just like any other file (``cat``, ``tail``, ``head``,
-> +``vim``, etc.), the size of the file is limited by the ``buffer_size_kb`` (``echo
-> +1000 > buffer_size_kb``). The :ref:`trace/ftrace:trace_pipe` will behave
-> +similar to the ``trace`` file, but whenever you read from the file the content is
-
-   similarly
-IMO but not a big deal.
-
-> +consumed.
-> +
-> +Kernelshark
-> +~~~~~~~~~~~
-> +
-> +A GUI interface to visualize the traces as a graph and list view from the
-> +output of the `trace-cmd
-> +<https://git.kernel.org/pub/scm/utils/trace-cmd/trace-cmd.git/>`__ application.
-> +
-> +For the full documentation see `<https://kernelshark.org/Documentation.html>`__
-> +
-> +Perf & alternatives
-> +-------------------
-> +
-> +The tools mentioned above provide ways to inspect kernel code, results, variable values, etc.
-> +Sometimes you have to find out first where to look and for those cases, a box of
-> +performance tracking tools can help you to frame the issue.
-> +
-> +Why should you do a performance analysis?
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +A performance analysis is a good first step when among other reasons:
-> +
-> +- you cannot define the issue
-> +- you do not know where it occurs
-> +- the running system should not be interrupted or it is a remote system, where
-> +  you cannot install a new module/kernel
-> +
-> +How to do a simple analysis with linux tools?
-
-                                    Linux
-
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +For the start of a performance analysis, you can start with the usual tools
-> +like:
-> +
-> +- ``top`` / ``htop`` / ``atop`` (*get an overview of the system load, see spikes on
-> +  specific processes*)
-> +- ``mpstat -P ALL`` (*look at the load distribution among CPUs*)
-> +- ``iostat -x`` (*observe input and output devices utilization and performance*)
-> +- ``vmstat`` (*overview of memory usage on the system*)
-> +- ``pidstat`` (*similar to* ``vmstat`` *but per process, to dial it down to the
-> +  target*)
-> +- ``strace -tp $PID`` (*once you know the process, you can figure out how it
-> +  communicates with the Kernel*)
-> +
-> +These should help to narrow down the areas to look at sufficiently.
-> +
-> +Diving deeper with perf
-> +~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +The **perf** tool provides a series of metrics and events to further dial down
-> +on issues.
-> +
-> +Prerequisite: build or install perf on your system
-> +
-> +Gather statistics data for finding all files starting with ``gcc`` in ``/usr``::
-> +
-> +  # perf stat -d find /usr -name 'gcc*' | wc -l
-> +
-> +   Performance counter stats for 'find /usr -name gcc*':
-> +
-> +     1277.81 msec    task-clock             #    0.997 CPUs utilized
-> +     9               context-switches       #    7.043 /sec
-> +     1               cpu-migrations         #    0.783 /sec
-> +     704             page-faults            #  550.943 /sec
-> +     766548897       cycles                 #    0.600 GHz                         (97.15%)
-> +     798285467       instructions           #    1.04  insn per cycle              (97.15%)
-> +     57582731        branches               #   45.064 M/sec                       (2.85%)
-> +     3842573         branch-misses          #    6.67% of all branches             (97.15%)
-> +     281616097       L1-dcache-loads        #  220.390 M/sec                       (97.15%)
-> +     4220975         L1-dcache-load-misses  #    1.50% of all L1-dcache accesses   (97.15%)
-> +     <not supported> LLC-loads
-> +     <not supported> LLC-load-misses
-> +
-> +   1.281746009 seconds time elapsed
-> +
-> +   0.508796000 seconds user
-> +   0.773209000 seconds sys
-> +
-> +
-> +  52
-> +
-> +The availability of events and metrics depends on the system you are running.
-> +
-> +For the full documentation see
-> +`<https://perf.wiki.kernel.org/index.php/Main_Page>`__
-> +
-> +Perfetto
-> +~~~~~~~~
-> +
-> +A set of tools to measure and analyze how well applications and systems perform.
-> +You can use it to:
-> +
-> +* identify bottlenecks
-> +* optimize code
-> +* make software run faster and more efficiently.
-> +
-> +**What is the difference between perfetto and perf?**
-> +
-> +* perf is tool as part of and specialized for the Linux Kernel and has CLI user
-> +  interface.
-> +* perfetto cross-platform performance analysis stack, has extended
-> +  functionality into userspace and provides a WEB user interface.
-> +
-> +For the full documentation see `<https://perfetto.dev/docs/>`__
-
-config PSI
-	bool "Pressure stall information tracking"
-might also be useful here.
-
-> +
-> +Kernel panic analysis tools
-> +---------------------------
-> +
-> +  To capture the crash dump please use ``Kdump`` & ``Kexec``. Below you can find
-> +  some advice for analysing the data.
-> +
-> +  For the full documentation see the :doc:`/admin-guide/kdump/kdump`
-> +
-> +  In order to find the corresponding line in the code you can use `faddr2line
-> +  <https://elixir.bootlin.com/linux/v6.11.6/source/scripts/faddr2line>`__, note
-
-                                                                            ; note
-
-> +  that you need to enable ``CONFIG_DEBUG_INFO`` for that to work.
-> +
-> +  An alternative to using ``faddr2line`` is the use of ``objdump`` (and it's
-
-                                                                           its
-
-> +  derivatives for the different platforms like ``aarch64-linux-gnu-objdump``),
-
-                                                                               ).
-
-> +  take this line as an example:
-
-     Take
-
-> +
-> +  ``[  +0.000240]  rkvdec_device_run+0x50/0x138 [rockchip_vdec]``.
-> +
-> +  We can find the corresponding line of code by executing::
-> +
-> +    aarch64-linux-gnu-objdump -dS drivers/staging/media/rkvdec/rockchip-vdec.ko | grep rkvdec_device_run\>: -A 40
-> +    0000000000000ac8 <rkvdec_device_run>:
-> +     ac8:	d503201f 	nop
-> +     acc:	d503201f 	nop
-> +    {
-> +     ad0:	d503233f 	paciasp
-> +     ad4:	a9bd7bfd 	stp	x29, x30, [sp, #-48]!
-> +     ad8:	910003fd 	mov	x29, sp
-> +     adc:	a90153f3 	stp	x19, x20, [sp, #16]
-> +     ae0:	a9025bf5 	stp	x21, x22, [sp, #32]
-> +        const struct rkvdec_coded_fmt_desc *desc = ctx->coded_fmt_desc;
-> +     ae4:	f9411814 	ldr	x20, [x0, #560]
-> +        struct rkvdec_dev *rkvdec = ctx->dev;
-> +     ae8:	f9418015 	ldr	x21, [x0, #768]
-> +        if (WARN_ON(!desc))
-> +     aec:	b4000654 	cbz	x20, bb4 <rkvdec_device_run+0xec>
-> +        ret = pm_runtime_resume_and_get(rkvdec->dev);
-> +     af0:	f943d2b6 	ldr	x22, [x21, #1952]
-> +        ret = __pm_runtime_resume(dev, RPM_GET_PUT);
-> +     af4:	aa0003f3 	mov	x19, x0
-> +     af8:	52800081 	mov	w1, #0x4                   	// #4
-> +     afc:	aa1603e0 	mov	x0, x22
-> +     b00:	94000000 	bl	0 <__pm_runtime_resume>
-> +        if (ret < 0) {
-> +     b04:	37f80340 	tbnz	w0, #31, b6c <rkvdec_device_run+0xa4>
-> +        dev_warn(rkvdec->dev, "Not good\n");
-> +     b08:	f943d2a0 	ldr	x0, [x21, #1952]
-> +     b0c:	90000001 	adrp	x1, 0 <rkvdec_try_ctrl-0x8>
-> +     b10:	91000021 	add	x1, x1, #0x0
-> +     b14:	94000000 	bl	0 <_dev_warn>
-> +        *bad = 1;
-> +     b18:	d2800001 	mov	x1, #0x0                   	// #0
-> +     ...
-> +
-> +  Meaning, in this line from the crash dump::
-> +
-> +    [  +0.000240]  rkvdec_device_run+0x50/0x138 [rockchip_vdec]
-> +
-> +  I can take the ``0x50`` as offset, which I have to add to the base address
-> +  of the corresponding function, which I find in this line::
-> +
-> +    0000000000000ac8 <rkvdec_device_run>:
-> +
-> +  The result of ``0xac8 + 0x50 = 0xb18``
-> +  And when I search for that address within the function I get the
-> +  following line::
-> +
-> +    *bad = 1;
-> +    b18:      d2800001        mov     x1, #0x0
-> +
-> +**Copyright** ©2024 : Collabora
-> diff --git a/Documentation/process/index.rst b/Documentation/process/index.rst
-> index 6455eba3ef0c..aa12f2660194 100644
-> --- a/Documentation/process/index.rst
-> +++ b/Documentation/process/index.rst
-> @@ -72,13 +72,15 @@ beyond).
->  Dealing with bugs
->  -----------------
->  
-> -Bugs are a fact of life; it is important that we handle them properly.
-> -The documents below describe our policies around the handling of a couple
-> -of special classes of bugs: regressions and security problems.
-> +Bugs are a fact of life; it is important that we handle them properly. The
-> +documents below provide general advice about debugging and describe our
-> +policies around the handling of a couple of special classes of bugs:
-> +regressions and security problems.
->  
->  .. toctree::
->     :maxdepth: 1
->  
-> +   debugging/index
->     handling-regressions
->     security-bugs
->     cve
-> 
-
-Thanks.
-
--- 
-~Randy
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQmFnYXMgU2FuamF5YSA8
+YmFnYXNkb3RtZUBnbWFpbC5jb20+DQo+IFNlbnQ6IEZyaWRheSwgTm92ZW1iZXIgMTUsIDIwMjQg
+MTI6MDQgUE0NCj4gVG86IFh1LCBFdmVuIDxldmVuLnh1QGludGVsLmNvbT47IGppa29zQGtlcm5l
+bC5vcmc7IGJlbnRpc3NAa2VybmVsLm9yZzsNCj4gY29yYmV0QGx3bi5uZXQ7IEFhcm9uLCBNYSA8
+YWFyb24ubWFAY2Fub25pY2FsLmNvbT4NCj4gQ2M6IGxpbnV4LWlucHV0QHZnZXIua2VybmVsLm9y
+ZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtDQo+IGRvY0B2Z2VyLmtlcm5l
+bC5vcmc7IFN1biwgWGlucGVuZyA8eGlucGVuZy5zdW5AaW50ZWwuY29tPjsgU3Jpbml2YXMNCj4g
+UGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5jb20+DQo+IFN1Ympl
+Y3Q6IFJlOiBbUEFUQ0ggdjIgMDEvMjJdIEhJRDogVEhDOiBBZGQgZG9jdW1lbnRhdGlvbg0KPiAN
+Cj4gT24gVGh1LCBOb3YgMTQsIDIwMjQgYXQgMDE6MzM6NTVQTSArMDgwMCwgRXZlbiBYdSB3cm90
+ZToNCj4gPiArVG91Y2ggSG9zdCBDb250cm9sbGVyIGlzIHRoZSBuYW1lIG9mIHRoZSBJUCBibG9j
+ayBpbiBQQ0ggdGhhdCBpbnRlcmZhY2Ugd2l0aA0KPiBUb3VjaCBEZXZpY2VzIChleDoNCj4gPiAr
+dG91Y2hzY3JlZW4sIHRvdWNocGFkIGV0Yy4pLiBJdCBpcyBjb21wcmlzZWQgb2YgMyBrZXkgZnVu
+Y3Rpb25hbCBibG9ja3M6DQo+ID4gKy0gQSBuYXRpdmVseSBoYWxmLWR1cGxleCBRdWFkIEkvTyBj
+YXBhYmxlIFNQSSBtYXN0ZXINCj4gPiArLSBMb3cgbGF0ZW5jeSBJMkMgaW50ZXJmYWNlIHRvIHN1
+cHBvcnQgSElESTJDIGNvbXBsaWFudCBkZXZpY2VzDQo+ID4gKy0gQSBIVyBzZXF1ZW5jZXIgd2l0
+aCBSVyBETUEgY2FwYWJpbGl0eSB0byBzeXN0ZW0gbWVtb3J5DQo+IA0KPiBJIHNlZSBpbiBteSBo
+dG1sZG9jcyBvdXRwdXQgdGhhdCB0aGUgbGlzdCBhYm92ZSBpcyBsb25nIHJ1bm5pbmcgcGFyYWdy
+YXBoIGluc3RlYWQuDQoNCllvdSBhcmUgcmlnaHQsIGxldCBtZSBmaXggaXQgaW4gbmV4dCB2ZXJz
+aW9uLg0KDQo+IA0KPiA+ICtXaGVuIFRIQyBpcyBjb25maWd1cmVkIHRvIFNQSSBtb2RlLCBvcGNv
+ZGVzIGFyZSB1c2VkIGZvciBkZXRlcm1pbmluZyB0aGUNCj4gcmVhZC93cml0ZSBJTyBtb2RlLg0K
+PiA+ICtUaGVyZSBhcmUgc29tZSBPUENvZGUgZXhhbXBsZXMgZm9yIFNQSSBJTyBtb2RlOjoNCj4g
+PiArDQo+ID4gKyArLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tKw0K
+PiA+ICsgfCBvcGNvZGUgfCAgQ29ycmVzcG9uZGluZyBTUEkgY29tbWFuZCAgICAgIHwNCj4gPiAr
+ICs9PT09PT09PSs9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0rDQo+ID4gKyB8ICAw
+eDBCICB8IFJlYWQgU2luZ2xlIEkvTyAgICAgICAgICAgICAgICAgfA0KPiA+ICsgKy0tLS0tLS0t
+Ky0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsNCj4gPiArIHwgIDB4MDIgIHwgV3Jp
+dGUgU2luZ2xlIEkvTyAgICAgICAgICAgICAgICB8DQo+ID4gKyArLS0tLS0tLS0rLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tKw0KPiA+ICsgfCAgMHhCQiAgfCBSZWFkIER1YWwgSS9P
+ICAgICAgICAgICAgICAgICAgIHwNCj4gPiArICstLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0rDQo+ID4gKyB8ICAweEIyICB8IFdyaXRlIER1YWwgSS9PICAgICAgICAg
+ICAgICAgICAgfA0KPiA+ICsgKy0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLSsNCj4gPiArIHwgIDB4RUIgIHwgUmVhZCBRdWFkIEkvTyAgICAgICAgICAgICAgICAgICB8
+DQo+ID4gKyArLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tKw0KPiA+
+ICsgfCAgMHhFMiAgfCBXcml0ZSBRdWFkIEkvTyAgICAgICAgICAgICAgICAgIHwNCj4gPiArICst
+LS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rDQo+ID4gKw0KPiA+IDxz
+bmlwcGVkPi4uLg0KPiA+ICtXaGVuIFRIQyBpcyB3b3JraW5nIGluIEkyQyBtb2RlLCBvcGNvZGVz
+IGFyZSB1c2VkIHRvIHRlbGwgVEhDIHdoYXQncyB0aGUNCj4gbmV4dCBQSU8gdHlwZToNCj4gPiAr
+STJDIFN1YklQIEFQQiByZWdpc3RlciByZWFkLCBJMkMgU3ViSVAgQVBCIHJlZ2lzdGVyIHdyaXRl
+LCBJMkMgdG91Y2gNCj4gPiArSUMgZGV2aWNlIHJlYWQsIEkyQyB0b3VjaCBJQyBkZXZpY2Ugd3Jp
+dGUsIEkyQyB0b3VjaCBJQyBkZXZpY2Ugd3JpdGUgZm9sbG93ZWQNCj4gYnkgcmVhZC4NCj4gPiAr
+DQo+ID4gK0hlcmUgYXJlIHRoZSBUSEMgcHJlLWRlZmluZWQgb3Bjb2RlcyBmb3IgSTJDIG1vZGU6
+Og0KPiA+ICsNCj4gPiArICstLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0rDQo+ID4gKyB8IG9wY29kZSB8ICAgICAgIENvcnJlc3Bv
+bmRpbmcgSTJDIGNvbW1hbmQgICAgICAgICAgIHwgQWRkcmVzcyAgfA0KPiA+ICsNCj4gKz09PT09
+PT09Kz09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0rPT09PT09PT09
+PSsNCj4gPiArIHwgIDB4MTIgIHwgUmVhZCBJMkMgU3ViSVAgQVBCIGludGVybmFsIHJlZ2lzdGVy
+cyAgICAgfCAwaCAtIEZGaCB8DQo+ID4gKyArLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tKw0KPiA+ICsgfCAgMHgxMyAgfCBXcml0
+ZSBJMkMgU3ViSVAgQVBCIGludGVybmFsIHJlZ2lzdGVycyAgICB8IDBoIC0gRkZoIHwNCj4gPiAr
+ICstLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tKy0t
+LS0tLS0tLS0rDQo+ID4gKyB8ICAweDE0ICB8IFJlYWQgZXh0ZXJuYWwgVG91Y2ggSUMgdGhyb3Vn
+aCBJMkMgYnVzICAgIHwgTi9BICAgICAgfA0KPiA+ICsgKy0tLS0tLS0tKy0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLSsNCj4gPiArIHwgIDB4MTgg
+IHwgV3JpdGUgZXh0ZXJuYWwgVG91Y2ggSUMgdGhyb3VnaCBJMkMgYnVzICAgfCBOL0EgICAgICB8
+DQo+ID4gKyArLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLSstLS0tLS0tLS0tKw0KPiA+ICsgfCAgMHgxQyAgfCBXcml0ZSB0aGVuIHJlYWQgZXh0ZXJu
+YWwgVG91Y2ggSUMgdGhyb3VnaCB8IE4vQSAgICAgIHwNCj4gPiArIHwgICAgICAgIHwgSTJDIGJ1
+cyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgICAgICAgICB8DQo+ID4gKyAr
+LS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLS0t
+LS0tLS0tKw0KPiA+ICsNCj4gPiA8c25pcHBlZD4uLi4NCj4gPiArSW50ZWwgVEhDIHVzZXMgUFJE
+IGVudHJ5IGRlc2NyaXB0b3IgZm9yIGV2ZXJ5IFBSRCBlbnRyeS4gRXZlcnkgUFJEDQo+ID4gK2Vu
+dHJ5IGRlc2NyaXB0b3Igb2NjdXBpZXMNCj4gPiArMTI4IGJpdHMgbWVtb3JpZXM6Og0KPiA+ICsN
+Cj4gPiArICstLS0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rDQo+ID4gKyB8IHN0cnVjdCBmaWVsZCAgICAg
+IHwgYml0KHMpICB8IGRlc2NyaXB0aW9uICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgfA0KPiA+ICsNCj4gKz09PT09PT09PT09PT09PT09PT0rPT09PT09PT09Kz09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT0NCj4gPT09DQo+ID4gKyArPT09PT09PT09PT0rDQo+ID4g
+KyB8IGRlc3RfYWRkciAgICAgICAgIHwgNTMuLjAgICB8IGRlc3RpbmF0aW9uIG1lbW9yeSBhZGRy
+ZXNzLCBhcyBldmVyeSBlbnRyeSAgICAgfA0KPiA+ICsgfCAgICAgICAgICAgICAgICAgICB8ICAg
+ICAgICAgfCBpcyA0S0IsIGlnbm9yZSBsb3dlc3QgMTAgYml0cyBvZiBhZGRyZXNzLiAgICAgIHwN
+Cj4gPiArICstLS0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rDQo+ID4gKyB8IHJlc2VydmVkMSAgICAgICAg
+IHwgNTQuLjYyICB8IHJlc2VydmVkICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgfA0KPiA+ICsgKy0tLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsNCj4gPiArIHwgaW50X29uX2NvbXBs
+ZXRpb24gfCA2MyAgICAgIHwgY29tcGxldGlvbiBpbnRlcnJ1cHQgZW5hYmxlIGJpdCwgaWYgdGhp
+cyBiaXQgICB8DQo+ID4gKyB8ICAgICAgICAgICAgICAgICAgIHwgICAgICAgICB8IHNldCBpdCBt
+ZWFucyBUSEMgd2lsbCB0cmlnZ2VyIGEgY29tcGxldGlvbiAgICAgfA0KPiA+ICsgfCAgICAgICAg
+ICAgICAgICAgICB8ICAgICAgICAgfCBpbnRlcnJ1cHQuIFRoaXMgYml0IGlzIHNldCBieSBTVyBk
+cml2ZXIuICAgICAgIHwNCj4gPiArICstLS0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLSstLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rDQo+ID4gKyB8IGxl
+biAgICAgICAgICAgICAgIHwgODcuLjY0ICB8IGhvdyBtYW55IGJ5dGVzIG9mIGRhdGEgaW4gdGhp
+cyBlbnRyeS4gICAgICAgICAgfA0KPiA+ICsgKy0tLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0t
+Ky0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsNCj4gPiAr
+IHwgZW5kX29mX3ByZCAgICAgICAgfCA4OCAgICAgIHwgZW5kIG9mIFBSRCB0YWJsZSBiaXQsIGlm
+IHRoaXMgYml0IGlzIHNldCwgICAgICB8DQo+ID4gKyB8ICAgICAgICAgICAgICAgICAgIHwgICAg
+ICAgICB8IGl0IG1lYW5zIHRoaXMgZW50cnkgaXMgbGFzdCBlbnRyeSBpbiB0aGlzIFBSRCAgfA0K
+PiA+ICsgfCAgICAgICAgICAgICAgICAgICB8ICAgICAgICAgfCB0YWJsZS4gVGhpcyBiaXQgaXMg
+c2V0IGJ5IFNXIGRyaXZlci4gICAgICAgICAgIHwNCj4gPiArICstLS0tLS0tLS0tLS0tLS0tLS0t
+Ky0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0rDQo+ID4gKyB8IGh3X3N0YXR1cyAgICAgICAgIHwgOTAuLjg5ICB8IEhXIHN0YXR1cyBiaXRz
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfA0KPiA+ICsgKy0tLS0tLS0tLS0tLS0t
+LS0tLS0rLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLSsNCj4gPiArIHwgcmVzZXJ2ZWQyICAgICAgICAgfCAxMjcuLjkxIHwgcmVzZXJ2ZWQg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8DQo+ID4gKyArLS0tLS0tLS0t
+LS0tLS0tLS0tLSstLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tKw0KPiANCj4gU2hvdWxkbid0IHRoZXNlIHRhYmxlcyBiZSBmb3JtYXR0ZWQg
+YXMgdGFibGVzPw0KDQpHb29kIGlkZWEhDQpMZXQncyBmb3JtYXQgdGhlbS4NCg0KPiANCj4gVGhh
+bmtzLg0KDQpUaGFua3MgZm9yIHlvdXIgc3VnZ2VzdGlvbiENCg0KQmVzdCBSZWdhcmRzLA0KRXZl
+biBYdQ0KDQo+IA0KPiAtLQ0KPiBBbiBvbGQgbWFuIGRvbGwuLi4ganVzdCB3aGF0IEkgYWx3YXlz
+IHdhbnRlZCEgLSBDbGFyYQ0K
 
