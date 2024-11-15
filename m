@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-410702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2EB99CDFE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:28:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0815F9CDFEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:28:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CD26B27DE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:27:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C31402828B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD5E1C2DA2;
-	Fri, 15 Nov 2024 13:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E2C1C3F27;
+	Fri, 15 Nov 2024 13:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZynOMVZY"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LOPrsKU7"
 Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1C11C07EC
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 13:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847061C1AB1
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 13:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731677202; cv=none; b=YZt4Xd4PFzV5TOXh+2VL4O+yMZmJGKX1hU5V+vEhiAeO+l9M3Dtf90oczKtdbdoN0XiduzD8cWpNLkjwHVeaQ0e+e4hYY7h7lxhI8sbXLGr8i1STtfGLsjcIqGDIaZjnTogScDkxX25Ih9njSoSvsske/Mbg0wWS+GqGhxZv1X8=
+	t=1731677203; cv=none; b=E9tNrohsx9Qyv429gfmX61kECtT9v0xxTnwcgiOrKvb85QPv6ToGFOydairVl8pkGB6TXJVqUMahHnY4eTdcmX923B4ibG+7GQ54wjjaRbhkavEdxlH/FzFdTOVY/IMf6qO2t/kIHt8fkYt/wz0cPDOHZbhi6VSn3S3bRK5lxqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731677202; c=relaxed/simple;
-	bh=deaieWFiVONpNRlAhKMPRKsF7JDojpQ/DZGVZJ9W5Dg=;
+	s=arc-20240116; t=1731677203; c=relaxed/simple;
+	bh=jq/HxwUks//QkKP3ZJZNN0GtGvXs1KXTbgyq1k0z2kU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u4m+Ow/3zWtwvGvop6N81z9SZQ/KtoD0gk4aFRH1xs+lv3YXmPnZMr2NwrQtn1W7LKLwLs2UpyU0ZNSB/jgcMPQIvCjKz5v1sXYoCwZthZEEX2LejbFcM6jxQt7T9/Y2dqRiVwqJE5DSSsahA/bWUWzNA3ckENKNG4kk/dWFupY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZynOMVZY; arc=none smtp.client-ip=217.70.183.200
+	 MIME-Version; b=qsiGT+eS6qdm30PtBE53WiRnyWbPqrFeABjflMBKKe6R4alq9o7gmhwD7GGU7cJG+B/O6gqFNVVqZoomWK65wlrD4bl8eNirKypqC2r+x49WTbNLWzjkzqMSSOsHVzO2IOu8RoDIOFf3ShrDhYl/hLNxnJ1zpXprSnrPk4L3dxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LOPrsKU7; arc=none smtp.client-ip=217.70.183.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id C31252000C;
-	Fri, 15 Nov 2024 13:26:38 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPA id 789FE2000E;
+	Fri, 15 Nov 2024 13:26:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731677199;
+	t=1731677200;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=khZM5fFii6r1q+Z9uZi3Zgk6G9+0lCTuTox0qCES4xo=;
-	b=ZynOMVZYONl3nqhnxXedxdo+koInvhB99WVhHxixqXffEeAOqMJ424OiX/aiy1p9x5xm8l
-	JVHGqAf3YbhcY0aPRuTkG2+ymtVHaaB9C5TjYKTwbyKejt6x+46Ar8GCxyWOr9v9xL5tH3
-	I/1/Rv25ffbONC7afgOBleYVrRqo8dgfjJyDnilaTFvOmsgO/5YA8Z4lrEu2mZOEuO6nkl
-	uIOiB58q8wem4Y8kZ/JtWbZAkRVijpfXXEBUYdZ94YyR+TuH9QskbRXSwiMjLd4BUT7wqy
-	DROgIlPuE69uoZcGPnPHdMqUHZELPuxyByS5pY73NCSjtWeRNcCF/yfBfjJwNQ==
+	bh=ONE5RIDa+M5HrCVn5iTpaeEU6VZHpy9NTdUHLDL3hak=;
+	b=LOPrsKU7gTXIZaZmRF+IRCmbUd0+NVzRXSjTADyKtUipBc5z0VFcVRXW2mi6eH9LaS9c3m
+	fhv18d1YRJkJzHB3zP8u/eWuDRmcqZgIFLbzqy9oMWYZSv2cIGHsxt6OocGKby587vOLxb
+	lhPVmJgnM3zKSG60ll3ZtflV4IaxFVW5/bAKqz+wxi8Yqu+2oLkXE1AkOj1m2RzMtflQBT
+	8AxqObCZ4l12kFmMeuqczwS1H+JE1y7VxJBAM/iD7Ew2HWRYg6BpAAChQAsyXFZZl0HHw6
+	5cVrhegjUJZNAoo5hApMUp5kbThVKkzk80FcH1/VzINYUFrV1NFjiQn2tLWHDw==
 From: Bastien Curutchet <bastien.curutchet@bootlin.com>
 To: Santosh Shilimkar <ssantosh@kernel.org>,
 	Krzysztof Kozlowski <krzk@kernel.org>,
@@ -56,9 +56,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Herve Codina <herve.codina@bootlin.com>,
 	Christopher Cordahi <christophercordahi@nanometrics.ca>,
 	Bastien Curutchet <bastien.curutchet@bootlin.com>
-Subject: [PATCH v4 08/10] mtd: rawnand: davinci: Order headers alphabetically
-Date: Fri, 15 Nov 2024 14:26:29 +0100
-Message-ID: <20241115132631.264609-9-bastien.curutchet@bootlin.com>
+Subject: [PATCH v4 09/10] mtd: rawnand: davinci: Add clock resource
+Date: Fri, 15 Nov 2024 14:26:30 +0100
+Message-ID: <20241115132631.264609-10-bastien.curutchet@bootlin.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241115132631.264609-1-bastien.curutchet@bootlin.com>
 References: <20241115132631.264609-1-bastien.curutchet@bootlin.com>
@@ -71,37 +71,50 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: bastien.curutchet@bootlin.com
 
-Order headers alphabetically for better readability.
+NAND controller has a reference clock inherited from the AEMIF
+(cf. Documentation/devicetree/bindings/memory-controllers/ti-aemif.txt)
+This clock isn't used yet by the driver.
+
+Add a struct clock in the struct davinci_nand_info so it can be used
+to compute timings.
 
 Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
 ---
- drivers/mtd/nand/raw/davinci_nand.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/mtd/nand/raw/davinci_nand.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/drivers/mtd/nand/raw/davinci_nand.c b/drivers/mtd/nand/raw/davinci_nand.c
-index 392678143a36..3c0efbdd789e 100644
+index 3c0efbdd789e..563045c7ce08 100644
 --- a/drivers/mtd/nand/raw/davinci_nand.c
 +++ b/drivers/mtd/nand/raw/davinci_nand.c
-@@ -10,15 +10,15 @@
+@@ -10,6 +10,7 @@
   *   Dirk Behme <Dirk.Behme@gmail.com>
   */
  
--#include <linux/kernel.h>
--#include <linux/module.h>
--#include <linux/platform_device.h>
++#include <linux/clk.h>
  #include <linux/err.h>
  #include <linux/iopoll.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
- #include <linux/mtd/rawnand.h>
- #include <linux/mtd/partitions.h>
--#include <linux/slab.h>
- #include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
+ #include <linux/kernel.h>
+@@ -117,6 +118,8 @@ struct davinci_nand_info {
+ 	uint32_t		mask_cle;
  
- #define NRCSR_OFFSET		0x00
- #define NANDFCR_OFFSET		0x60
+ 	uint32_t		core_chipsel;
++
++	struct clk		*clk;
+ };
+ 
+ static DEFINE_SPINLOCK(davinci_nand_lock);
+@@ -822,6 +825,10 @@ static int nand_davinci_probe(struct platform_device *pdev)
+ 		return -EADDRNOTAVAIL;
+ 	}
+ 
++	info->clk = devm_clk_get_enabled(&pdev->dev, "aemif");
++	if (IS_ERR(info->clk))
++		return dev_err_probe(&pdev->dev, PTR_ERR(info->clk), "failed to get clock");
++
+ 	info->pdev		= pdev;
+ 	info->base		= base;
+ 	info->vaddr		= vaddr;
 -- 
 2.47.0
 
