@@ -1,87 +1,146 @@
-Return-Path: <linux-kernel+bounces-410956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E8F89CF0CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:58:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EEF19CF139
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:18:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53EE22867ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:58:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BEE8B2C37D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD4E1D131E;
-	Fri, 15 Nov 2024 15:58:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47641D5145;
+	Fri, 15 Nov 2024 15:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S3eI1y5N"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B98D1DA23
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 15:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7823B1CDFCE
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 15:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731686285; cv=none; b=JGO2OKlJEpFU/x2LS9U8UYJNu4wgp12xmsMaoR6cyzjVQNfN9FWrWVGl5cIc+VqJFqjoJ9V5sKNg+YJF46X6N/C3+Bz4zUHVcS/mg9xzv9M8fJvg2SQHkeUOGbuZKz4I72ql2kd4AQHBHahHiAS9gOyFK+9ScxmtLbaFgknDsfc=
+	t=1731686354; cv=none; b=tT2P0xfMyD+HwCaHmdrPdDM0m3lzFNRatKXh2CVd1x3Ymw5iPw1s3qlsKUypXzYyFWIjtqjtEZyDTcbt/bougEoFMWqccU3I7OoUA7OFsGtEWdURi+HHPRwfjGrPTH0+iHPKzqyBKCzlJyjQgBuT2nQS3gn1pL4QnNrVY9+IZcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731686285; c=relaxed/simple;
-	bh=xGy66TX/c5+zNfHIIz1es8bCQGWAaweO2q7JddCn+9k=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=akn2s98DHbC5toXrc2yCHWwo5hRkKj7LEsLyF68f8WsOV03TXnYHZdlI0zcrH8IF5ocHr+ZP3OWHwoRAZylw5yc1178DYrDPQ60/zsNmc3T0nJbO5Fe8obxSs5gLsTwARmRNJQItfnGmSC+10AnPGR2fUB0Mcwr/rojIwR5eOz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a6bce8a678so10010355ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 07:58:04 -0800 (PST)
+	s=arc-20240116; t=1731686354; c=relaxed/simple;
+	bh=AliMht6MUf2kRcQC+r9MBmkYM7mVB19mv+CzjTt4qc8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d17Q0tvpu9D6wtxEK549/15mShyj0mvMRZq9ez+KBReqSEoca3a8N8kcaUqanKeF2dabSYOx1tImypuZaKiBS3Qt5Wraeadp4K/R5yd9B29FjQ347m+5E+yRThd88iR+gU8BkLYX/dygMYygfxW821et5M7uTyFumBJZUYP0HG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S3eI1y5N; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53da5a27771so2288994e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 07:59:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731686351; x=1732291151; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gMfxO2Ju8vEjnQTSKznfl18LDxvCiGquG5jWu4YVQBI=;
+        b=S3eI1y5NnEf3Fm71IaxIL+/U75QPem/vapNJk7PYb761MBDTJsWS57bwidyTm3BXCV
+         JWFx9dCWk4wJgdxRd1PvX1dX367rAYvPBZ8N1Pe8lG4miGy5wBo9E+eCAEIJegCfB2Zi
+         rKk6YqN0mjUxNwa/4oxga/wLPXjIMNQhW0uRpoeNA17fbF6xfmw0+ZGyUlyz3bRxXTFV
+         oQX5COoSKcJfZDHiswdXqAaQl6eMQVMxTVKkU2gb7cvFQARBJiC50ePjUPKewLfqzWT6
+         MhkF9jpvDD6n46BsH4HZkHmo4p8q3yO6yxXUiBm66xW50n8hcnBCdyzxGZZUoqmU5OZb
+         2ADQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731686283; x=1732291083;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+cWlwXOusbqWeTNeMiSxvoCEQ/oVoW7J0lC9AaTbRlQ=;
-        b=Lv+vTqrX9nFS7urGRjE7fsZeQQCelFXgEYfDNsir81IC6hhI+xKKya3kxXlXudtmvS
-         TlwiYT7nGPC1zwBxqKZNMPVWfEIAjaLUTiaB9OueSmDMdi1und240Tj/h8w74x1i8Hwf
-         1nJm9TE/Z2ZcRlGmrMGKkh6R/LdO15mR7GyAPZ2nUNOXTop2Rz1rEY70WCAEOVGDZaJA
-         0VrLk0GYlukFd3u+MuYZ/VCNtctDRSqzHN3eVRU14Xc3pyGoZXtLNAAbQd4VW0ywRusk
-         mVs4pzbGfMQj5cQW9+LS9IngT9TERMRbFjGDvULG7mfpg0wkyzYY43HP20k0dSYhVVdp
-         aVmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHsfuIVWK1KJhLWwEaNvQtJVv9DuJSclSQGIQMMIVH+Vw7WZp0EuRfvF8oUbgoQHGMO6G9ebR0FNpwsVY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd2lOzV8wwkCer2RBdrA2suaAKBAxtOhcV6QaNc5D3zb3Bf70Y
-	IF4REfKQH3mM40m65EI/hIff9DYO4RftcBGomctmcHtwSZXa5/6n13kIy4uAgDKeE1GkTAvaFjN
-	mOygJrPBQyBTYq+P8saYFBGTVcDoDI+RQlrUH2GUMjwf5m3CsrgxUYvU=
-X-Google-Smtp-Source: AGHT+IHTGp3JV//+H9Q4bAD3I1/WpULVrsc+LPXF3Q0YlnSD7pZ7kHe7MTmUG58gGe/82saVTqj6uj79tFnqJi8zBqxBqx8e+/55
+        d=1e100.net; s=20230601; t=1731686351; x=1732291151;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gMfxO2Ju8vEjnQTSKznfl18LDxvCiGquG5jWu4YVQBI=;
+        b=n2Ddmq0twKE/Y4PnNigg7iyoBPvnCKNiKcTmHASyjC2uF+nlm21P7CyCY6ztOKvtx7
+         +Ia7QGj7m0rUMpQ/NV9/AnsGUiO0eX/xqJ7RG8oOwABqAP51Tc9LBxpk3asAbGXlDbTf
+         ZsLDdNEbwCR+DJuB0T1Tmr9qkJMVYzdK/KjB2TdtEUeqULiGsiqlf8XYez28Y9kYK/uV
+         CTGytGQ/J27JhAYbDJ1ViM+cKXTnxdJ+CylwocpNTl0c2mn5aIrmgk5zAvZO1DkK0aao
+         H0BkcJs9KF922N5pNEX/6aC6cLlY98cOB7fnTdma6BhV1oPPs3sp8ncYeffQZL3Ci7Wy
+         H39Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWnuSuOmoA3LFlkIHCtZSCebM4H6eOpwTyH4a61cr2WNKkdxbI8LfyvDZFwaLZLiygHY7irnQgIvkkHW5A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDm0SG3C530ZNBfu6QlIyHZR34FhZI7BFOYcyPdcivUOqaPVmg
+	G+DqZTQsJD+80QTarmutYRDcaft3YFA6z/pbB0NtmVnkI77syTnN1Ai1+6odEYfnC5IiEoEYcKi
+	o
+X-Google-Smtp-Source: AGHT+IGM7mU2Z7NRzQuZyYKrHQmac88PdjbXj6OEF7ihDrIv75j0NtxGn8TGk54rYau4nJmsS7JKLw==
+X-Received: by 2002:a05:6512:1594:b0:539:93e8:7eca with SMTP id 2adb3069b0e04-53dab2b3c5dmr1925115e87.35.1731686350401;
+        Fri, 15 Nov 2024 07:59:10 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da6548b79sm615903e87.242.2024.11.15.07.59.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 07:59:08 -0800 (PST)
+Date: Fri, 15 Nov 2024 17:59:06 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krishna Kurapati <quic_kriskura@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Andersson <quic_bjorande@quicinc.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Andy Gross <agross@kernel.org>, 
+	Stephen Boyd <swboyd@chromium.org>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-phy@lists.infradead.org, quic_ppratap@quicinc.com, quic_jackp@quicinc.com, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH 5.15.y] phy: qcom: qmp: Fix NULL pointer dereference for
+ USB Uni PHYs
+Message-ID: <ibh3n7gl5qcawpiyjgxy2yum6jsmfv5lpfefuun3m2ktldcswl@odhjnmkj5jre>
+References: <20241115091545.2358156-1-quic_kriskura@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1786:b0:3a7:3760:7314 with SMTP id
- e9e14a558f8ab-3a7480836a8mr35148725ab.20.1731686283657; Fri, 15 Nov 2024
- 07:58:03 -0800 (PST)
-Date: Fri, 15 Nov 2024 07:58:03 -0800
-In-Reply-To: <20241115152138.SNq2T%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67376f8b.050a0220.3bcb1c.0001.GAE@google.com>
-Subject: Re: [syzbot] [btrfs] KMSAN: uninit-value in __crc32c_le_base (4)
-From: syzbot <syzbot+549710bad9c798e25b15@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241115091545.2358156-1-quic_kriskura@quicinc.com>
 
-Hello,
+On Fri, Nov 15, 2024 at 02:45:45PM +0530, Krishna Kurapati wrote:
+> Commit [1] introduced DP support to QMP driver. While doing so, the
+> dp and usb configuration structures were added to a combo_phy_cfg
+> structure. During probe, the match data is used to parse and identify the
+> dp and usb configs separately. While doing so, the usb_cfg variable
+> represents the configuration parameters for USB part of the phy (whether
+> it is DP-Cobo or Uni). during probe, one corner case of parsing usb_cfg
+> for Uni PHYs is left incomplete and it is left as NULL. This NULL variable
+> further percolates down to qmp_phy_create() call essentially getting
+> de-referenced and causing a crash.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+The UNI PHY platforms don't have usb3-phy subnode. As such the usb_cfg
+variable should not be used in the for_each_available_child_of_node()
+loop.
 
-Reported-by: syzbot+549710bad9c798e25b15@syzkaller.appspotmail.com
-Tested-by: syzbot+549710bad9c798e25b15@syzkaller.appspotmail.com
+Please provide details for the platform on which you observe the crash
+and the backtrace.
 
-Tested on:
+> 
+> Subsequently, commit [2] split the driver into multiple files, each
+> handling a specific PHY type (USB, DP-Combo, UFS, PCIe). During this
+> refactoring, the probing process was modified, and the NULL pointer
+> dereference issue no longer showed up.
+> 
+> [1]: https://lore.kernel.org/all/20200916231202.3637932-8-swboyd@chromium.org/
+> [2]: https://lore.kernel.org/all/20220607213203.2819885-1-dmitry.baryshkov@linaro.org/
+> 
+> Fixes: 52e013d0bffa ("phy: qcom-qmp: Add support for DP in USB3+DP combo phy")
+> Cc: stable@vger.kernel.org # 5.15.y
+> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
+> ---
+>  drivers/phy/qualcomm/phy-qcom-qmp.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
+> index eef863108bfe..e22ee71aa060 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
+> @@ -5714,6 +5714,8 @@ static int qcom_qmp_phy_probe(struct platform_device *pdev)
+>  
+>  		usb_cfg = combo_cfg->usb_cfg;
+>  		cfg = usb_cfg; /* Setup clks and regulators */
+> +	} else {
+> +		usb_cfg = cfg;
+>  	}
+>  
+>  	/* per PHY serdes; usually located at base address */
+> -- 
+> 2.34.1
+> 
 
-commit:         cfaaa7d0 Merge tag 'net-6.12-rc8' of git://git.kernel...
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=14145130580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9d2d076474187685
-dashboard link: https://syzkaller.appspot.com/bug?extid=549710bad9c798e25b15
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1382b1a7980000
-
-Note: testing is done by a robot and is best-effort only.
+-- 
+With best wishes
+Dmitry
 
