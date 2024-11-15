@@ -1,109 +1,307 @@
-Return-Path: <linux-kernel+bounces-411132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 001A59CF385
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:03:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F2999CF38F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:04:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A22D01F222AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:03:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F754281440
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23DB1D89E4;
-	Fri, 15 Nov 2024 18:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5AD1D9339;
+	Fri, 15 Nov 2024 18:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="sz6b1Bi2"
-Received: from lichtman.org (lichtman.org [149.28.33.109])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CZIWAfl/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DD01D5CD4
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 18:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731693786; cv=none; b=PFP0glBJkyS1rt/3on4dtahw0TMcekYL653/HRY2roT1RqGfubdq1i0bmOzS5Fyr+FEv19PYfWXDAM4y6mINmeqtM1lbSB2Ngy8rnCF/yE/8KRCT9t1/28lNth74+H/RQYiK5AvZoiPO87ccrYAw1sHr9pOUv0LzvtOa8u5t42M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731693786; c=relaxed/simple;
-	bh=OR6cvZwHMTvSAZNQ/w8R8ZnSOAWIkAcQavcGcuXV3nA=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ni/Q5jZ0mH2Ns5eUc7zkFMqy7CwkGJO+nQlTvYS9rKMaypj8BB3g3376tmckLZZVP05FSjGSHJBy8Q6oppnL4ALHnHxdb/PF8E8L7SOEsRERiqqY66uV0HR9AezD5g/oXmo/fhxxuk2ciTF6uEm6wyCFzhcCMQfwx4sQCEyCPAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=sz6b1Bi2; arc=none smtp.client-ip=149.28.33.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
-Received: by lichtman.org (Postfix, from userid 1000)
-	id B65DF1770E5; Fri, 15 Nov 2024 18:03:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
-	t=1731693783; bh=OR6cvZwHMTvSAZNQ/w8R8ZnSOAWIkAcQavcGcuXV3nA=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=sz6b1Bi2mwGOq5jsiSHDSDqi/NyPQUqLD77RUQT6Kl5urEfWsDiqVXbOLLKIq6fJS
-	 iLMeFG4AU4SfMkRMcUAaLI2zER+865zeTRp8AT5bgSX999anQIsyp4yrXGwSXCF2ed
-	 aWxpjCMTw8R3366he3VwNivnUfVUaLe3UIgcRrDegyDMoFacDDno6EK8fezNsqWBnm
-	 9uT4aXEfdmXkwvkJiWqv3f2pnrjnGPbSE9lAwoJhAi0LO86ejI7sd3djh6MJ6chlf0
-	 ZDEMcOKwK0ohdPn/hyhBGZOXS8QONXF44of3FRGEfH0/dZgBXANYJgfj4vYqakf88q
-	 9GFYzVxvmfD2g==
-Date: Fri, 15 Nov 2024 18:03:03 +0000
-From: Nir Lichtman <nir@lichtman.org>
-To: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	ebiederm@xmission.com, kees@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] exec: fix no kernel module found error to be more clear
-Message-ID: <20241115180303.GA209620@lichtman.org>
-References: <20241115165541.GB209124@lichtman.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF19E1D63D7;
+	Fri, 15 Nov 2024 18:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731693858; cv=fail; b=UJ7wC8oLS3RMh06TPiYIXrKDwxOGr2VAk1PanvKxnvkHWpSXYT6KA83pmW95P1tfDa++1/WhKH5eZvDnwskh5bbMzKEZjebNiJVqzrki5ORhskWiFqX/9g/N/YmovzF7cUnYdadOog/TkM9RX9B/oHNGpl4B5xq0AzXKhfs0RmA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731693858; c=relaxed/simple;
+	bh=mN50RIYXX1ARr/rNVuYZQCVtzOTHPQlI5Oij0sMwZ7k=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=t+IDTJe9yTw6Zc6Hv6Ky4mrpTM+IBiQXF7cYVGaKeSG7o/F8TTaGwZjyb2iTt6XgYPUhL+SnAwuS6zfsver3zIrXkhhvd+Q5L6ttxsc3xqumwz3Pce2DWoXOLXn7aUgCOALNqGsN44lm8VbwS6PoaQxy7UbPFksANrnF53QRQjw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CZIWAfl/; arc=fail smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731693856; x=1763229856;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=mN50RIYXX1ARr/rNVuYZQCVtzOTHPQlI5Oij0sMwZ7k=;
+  b=CZIWAfl/80RaRFk5Hve/f5StJJ08ujTAoYQi1Mw8MkuxRKsDLpWw0l4H
+   Duy46JBUdSzCAnkHEGmPuN4KI7dZkimLJbel/CuWYIlPLZKW/7pcNgqXv
+   js3xC7WTx6n67DSarMG8PXqeQ/eKkfB0y4gXQsXU0qsz4rLQxS0vb+bQ7
+   PsSUjEUETMOD4QyCKNaSA79FiFN7nmrce12BForkgtHl/xTuf06Dq63FZ
+   z3Rhp2yrmcDPGQrBMDfErsbfSUvPcdaexFD2YAU9PPmDakaFFwDCvrfOd
+   9CjR0MerFsQn6b69mmsDUwzzHwxycTpMZhNb77fN4iW45y4Wna4TMcSrR
+   Q==;
+X-CSE-ConnectionGUID: DJHHMWYtS4GsBeSW8G+v5w==
+X-CSE-MsgGUID: q0wHy8LWRL6B4Nf5Yv/Uuw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11257"; a="31095192"
+X-IronPort-AV: E=Sophos;i="6.12,157,1728975600"; 
+   d="scan'208";a="31095192"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 10:04:08 -0800
+X-CSE-ConnectionGUID: ++6jkSkRS3ysRNjAvGsX9w==
+X-CSE-MsgGUID: j68TWkw0RsW22WFeeUGc8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,157,1728975600"; 
+   d="scan'208";a="92708522"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 15 Nov 2024 10:04:08 -0800
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 15 Nov 2024 10:04:07 -0800
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 15 Nov 2024 10:04:07 -0800
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.43) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 15 Nov 2024 10:04:07 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YlGQ8S3axwXROpNCTxEVE0NxkOj79049u+qlh2sz7ElgShXb/xdPKUWSsGaPVhtfRi9TWexcCPVM0xwzCepRqPt+9wBghO/2s2zIX0UPoz4/sVT9GTLPywbdENekVNo6WYFp0r8M9E122XbtHU9umebG2lYzh20Mc0DtwcyUMgZcI7oguh4AQR4YI5/CuRj4enQSpD4EemXI3AC5lR9KqcCX5DeZ3zXBY/nEri+X2DnWU7kQ7lyiY4MEQYD+MuLS3sDzkQuW9nz4QJb1txjN9mT1ez02NeeiP7THuSbsR2oFUo7OfzRBtpxKcIpvHQbDzUWf7hj+MhOROL01dJqQWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+lCbDgVBvMU65XY312NU73nW/BJz97hO77RcbKA1asw=;
+ b=aiJ9qsFRA+0nZKEQPYo2ji25rkmcEeIb3H9cpyvHjiXpVKV5GM433x5ogWqdlvrlKT/8iQfYu1Lmq2fKqgCswE8HNlAO2EhYZe+5/OZgoH0BD2k5tcjb82j8YhicLF8lgW8YU9V9VUxArvU79uwZILXHaaQ92eQQcQuw0vx2W6dkmKIA89sV8Kwmmn4q0xjaqnCbEoZSu33U7rhahq5X5HbVQGpNLiyj6QS7EY+NtgVPYXuDbI+PFs83IZ387IjzaiVE9eqtFoC2FXAcdnPyo/Xtpyh4EbF/H28QUwYTlgPBp/meLSVc3SfpqXpPuxTwjc8VOsSZ6+IDp9NBNxIEWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL3PR11MB6508.namprd11.prod.outlook.com (2603:10b6:208:38f::5)
+ by CH3PR11MB8187.namprd11.prod.outlook.com (2603:10b6:610:160::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.20; Fri, 15 Nov
+ 2024 18:04:03 +0000
+Received: from BL3PR11MB6508.namprd11.prod.outlook.com
+ ([fe80::1a0f:84e3:d6cd:e51]) by BL3PR11MB6508.namprd11.prod.outlook.com
+ ([fe80::1a0f:84e3:d6cd:e51%3]) with mapi id 15.20.8158.017; Fri, 15 Nov 2024
+ 18:04:02 +0000
+Date: Fri, 15 Nov 2024 10:04:35 -0800
+From: Matthew Brost <matthew.brost@intel.com>
+To: Su Hui <suhui@nfschina.com>
+CC: <balasubramani.vivekanandan@intel.com>, <lucas.demarchi@intel.com>,
+	<thomas.hellstrom@linux.intel.com>, <rodrigo.vivi@intel.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+	<nathan@kernel.org>, <ndesaulniers@google.com>, <morbo@google.com>,
+	<justinstitt@google.com>, <francois.dugast@intel.com>,
+	<intel-xe@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>,
+	<kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH v2] drm/xe/hw_engine_group: Fix bad free in
+ xe_hw_engine_setup_groups()
+Message-ID: <ZzeNM5dmKb22VoRw@lstrano-desk.jf.intel.com>
+References: <20241115024941.3737042-1-suhui@nfschina.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241115024941.3737042-1-suhui@nfschina.com>
+X-ClientProxiedBy: MW3PR06CA0003.namprd06.prod.outlook.com
+ (2603:10b6:303:2a::8) To BL3PR11MB6508.namprd11.prod.outlook.com
+ (2603:10b6:208:38f::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241115165541.GB209124@lichtman.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL3PR11MB6508:EE_|CH3PR11MB8187:EE_
+X-MS-Office365-Filtering-Correlation-Id: 18e3ed5b-d5d4-4d0e-9a34-08dd059fe31f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?YnNta25QZmJaeE1XdFplS2ZMV2NXS1E4Tlg0OEhqY2ZpcUVsUXAyS0dOMngw?=
+ =?utf-8?B?SHhtVEdpdWdCL1BqZndrbzZaQ2xmaGRycDRiYlMweGczakRUbW44VElrdHcy?=
+ =?utf-8?B?ZXUxZy96ZmhaZnl4R1dvc25Xc0lFdXF2Qm4yY1g3alNYcXRTN0ZwK05KWHln?=
+ =?utf-8?B?ajkwRExQbHhQc2RVd1hyTWxWYTk4alJENDJJRzBuVXJGZVYwdmhtdmYraXRL?=
+ =?utf-8?B?d0tZM2ZudEt0VmJnT1dVRWFqRGJIZWZTYmQ4TzZ4VVBFWEpYMWlhQU9KVC9Y?=
+ =?utf-8?B?dWtJRUlhVE1XaXYrYzlmQjJBQ29JQlhEcEtkL1I1Y0h4RHNUa1I5ZUIzbXRt?=
+ =?utf-8?B?VUxZYVBSZDNlaDFrRFBYSG9uWk9BY2U3RU42MkQ5amx1ME1sTUxEaGNrUVVT?=
+ =?utf-8?B?a1daeUhXM2dSNzFkZGZmaTJxQzRwQXR4TG1CYkhIS0s1SVdVS2VldHU0ZUxU?=
+ =?utf-8?B?ZWx0Q3FoaG9pSzJnUG1sc0hMdUg3djlkK1NQM1VzQk5iR3ZtUlU4UDJGM3l0?=
+ =?utf-8?B?Qm9KYVhXVVN6Y3pWd2NzNlkrR1M5aWd0dE1TaHRDRFk5cUxNOG9QRFA3ajBp?=
+ =?utf-8?B?L2RoU0l6TEFFUG1VdWJETzQ4cFN1ZlNUQ0o5K1NXVERBblFVVENMQ3NEemZQ?=
+ =?utf-8?B?Q2xCWm0yaWkyTzE2RzlTZnozUGJhdWxaMGo2VXF5QVNSa0dhamNyWm50cU9W?=
+ =?utf-8?B?OGJwRHY5UlNmZlF5Sk0zWnBpa2xDQlpQRnFFYjJDQzA0bkZ2aWJ6a1ZFQUhS?=
+ =?utf-8?B?WFRyclVDTTdQWCtxbGxBWm8wQzcwQnhyNVdtYmg2NGxmQlJTd0VKQjJ1OVdr?=
+ =?utf-8?B?YWdFVSs5SGk5V0QxdUhGVUFkTmk2N09OeFBiZ0tjNEV6NTBOY3RGS1BPNFRK?=
+ =?utf-8?B?UGxXa0swNnBBWk9EQldQN0paYkI2M0U4cEJnWnEvUGtUTmVSeSs0aERXck13?=
+ =?utf-8?B?YXJKYnczT0pLbXJPOVdiaTMwbmVUcDFnQVpVMmlaaThleEY0SUg4V3pCTTZr?=
+ =?utf-8?B?VGUrc0M2RG10cWhtVHp1dVpXRUJ6ZEgyelRjcTNJblk3Q0RnZjAxbjJwS1FJ?=
+ =?utf-8?B?Qk1KVUw5SGNSNCtha0ROL24xL1RzaExsQXdZVDNZQnBMclhRKysybDl4Sk5J?=
+ =?utf-8?B?RCtsMkJwa2JhaTZycVYzaXFPMExNY3R3UyttVm1kYkVYeFgycGdCQTNvajFC?=
+ =?utf-8?B?L3BCUDBPckNDSnQ5Wk5UNFljbW5QT291MS92bGtzZUNUU2pNMk5XVE1qY2xU?=
+ =?utf-8?B?WTkzT1crMVdSSTc1eFc3ZmFrRis5RzdZRkZDK1VhR0xsS3lQNE9hSElqYmNH?=
+ =?utf-8?B?Q0k5Ym93UHJ4ZUpNRXhMWDFGbE9HMmt4Ry9HOStmZHFHcGZZbllQUFBBbXRY?=
+ =?utf-8?B?U3NrN1N6VENPSW9TNnl6dS9rK2tpTms3R3JZSHJyQ094Wi9ZclBNaE8wck16?=
+ =?utf-8?B?TWFmZnNVSGd6TmVkV2hZQUtIb1BSQ20rZDV6WDdiQ21VaWptNXZHR2xTdFF5?=
+ =?utf-8?B?OFpUc3FzS0hPR25ocDlCL2k1ZmV2RDRwTGpPRHVVcnVkU3hmdTRSUU11NGhq?=
+ =?utf-8?B?cjNTTUQ4L3puN0hDajRxY3BWOTdDaDdLY1F1b0RVTkU2OFd1WGRraTRMcDhF?=
+ =?utf-8?B?MnQ1WnllL2ZzSk5wQmdXS2tFZDBIVEJ5L2t0MUhha1FwT1pYV01PcFBEbUVt?=
+ =?utf-8?B?RkEzNEVia0piMkJkS0ZHYnl5MFRNdWYxSjVSUmJ3dmYwalBscTZtakthcTdm?=
+ =?utf-8?Q?UqXv79gU1WNd4EdOfo+51M7QTtXCOXiNqPtNJ2O?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR11MB6508.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RWFlVmpNcm53bnp0dVFrU3RsdGN2dVY3cVlWckRQc0xKNzVORGMyVzRqRy9v?=
+ =?utf-8?B?Si9hS3U0TEZRa3R3L21FVm4zV0RmZi9ITDRTWmVhdm40N255dTRCcmZ3dWlW?=
+ =?utf-8?B?TURkcjJSOEhJaDNwOXpOL3BaOFZwK2tzNEFuR1JEM25UMzBGSWVaeTgrMUY5?=
+ =?utf-8?B?VWRiRU5rb3BJZld6b0pHa3JTdmFDRXZ3enZaMlRJUk1lTFo0OUR1Zzh2QXNl?=
+ =?utf-8?B?bm00UktINDlQemVpSCtIejR2cU5QdC9iOHlJODRzY3ZJc0NUNkRlY0VvWURF?=
+ =?utf-8?B?a3FNT3o4K0VZZmd5YkFSSituWTBtWVY0L2M5VWp0WkV0ZGN2VFAxd0tiTUha?=
+ =?utf-8?B?cVF3b2diM2tyUUJ2SXl4OEJ0WVdOWSt0Yk4vQzBQUzZEeXVaZ2Q5R2NuVmZI?=
+ =?utf-8?B?UjNwOG9WckVsaERMaUNmZ1A3dDAybTErTnZGRkIzWm5kdU9CVVhqenhKY3d4?=
+ =?utf-8?B?ekN4MU5sTE5GcmxzandNOEZzM1ZTbWVsbFFmZklEWHBXbEU4SWJiRHdkRjRS?=
+ =?utf-8?B?WnNvRGVoQlFqejFGekgwSDlFQ1ZrdytFSXZucjI5U1JKenR1RnhJamlsQVhu?=
+ =?utf-8?B?Z0xIdml2UncyRkd3OU9tcFo1MmlKcUJPaGQvMDZCamNTK09DdnVrSHk3WlBT?=
+ =?utf-8?B?TTdiZU1jUUg5MkZXaDdRZGtTRkZWazRMRUp1SVRKZjRCcFhGRVZQN0hlcEU2?=
+ =?utf-8?B?NGZPc1FERDVxRVczKzZZR0wvT3JFd0E3NlRaQ1VlTVNEekNyaDJzdzlLeGdq?=
+ =?utf-8?B?NjJSYW9laUV3b1RHeFY0aklGM1RBQUs3N0FIODFRdGd3Y2xIWkcrMjY1QUtR?=
+ =?utf-8?B?YnVvTDFIR2szRlVrM1Y0YkFEc2ljSlh3SlZBMmxvVDJOTFpRMEZlejVIdVJt?=
+ =?utf-8?B?ZG0zU3Y1SFVRcEZCRGNON3ZGK2ZvaUpyeHR2d0ZPdVlyb1E5ancyL094SVhM?=
+ =?utf-8?B?OE1LbEVWTDFuS2s2Q3FKNWF2aGR5eC91L2ZrMjZXckIxUkN6Sm80c2Y5SVd1?=
+ =?utf-8?B?TWhhUXk0ajNEMFh0VmR1N2I2QzhiSzRuN1pIWFcyaTZJNFVnZTdRbEtmNHhl?=
+ =?utf-8?B?aVFaRk1xNjVDb0tOd0RERFNjS1hVQTlrZkgzR0tSbFhrWWYydmpEVVFENGtm?=
+ =?utf-8?B?TXpKTTNoNTMwWjVGemladGJWbWRMT2N0OFcwVlZ2RGlOdVVkOGFzVEp5RGFa?=
+ =?utf-8?B?MnYvZDhGK21Nc0F2Z3hwclRUT2hzZEdjS2I5ZkhhdVJQd0tQeENCWHZoanRL?=
+ =?utf-8?B?L0FYN0dJV1RxTURjU2dCRzhuWmI3V1VBUkU4MUNHMEtVcEloZVZxOWRyU0po?=
+ =?utf-8?B?MzQzT3BmcGZvQXJQejQ2eTJuVWlTNTYrWlNqVDRvVWEwZVJDdmFVcDVaQXZk?=
+ =?utf-8?B?Zk1iQ3pHWmk4YWFsNDE1L3RJMk8rYmFWaGJBcTFBZEtzdTU3aW82bHZmT245?=
+ =?utf-8?B?WlNWNE9sdXk5NmVNTlFDNDlJdks5S3cwRHFHcVJmQUE5Y2U0bkk5UkdYZjlX?=
+ =?utf-8?B?cWZSa0hrOTdoY2VFdjgyMHpLeTVIMUxmWlJiL1JiOHhXclhDNEdrZWNDYWJR?=
+ =?utf-8?B?Y0d0N0IrWFptNTJjeloxVFZSaU9xdzFBNlVjN0t4SXRrY2M2RHRvVENYZ0ZX?=
+ =?utf-8?B?K3d5dUFPTXdtVGNlQWxOL0hVV2pLRmhXL05xYituRjFZSFRZUkVuQnBEaWxn?=
+ =?utf-8?B?ejE2WWF1dmF1Zmx3YXg3aFIwZUlnZDJGWkxhS3JQdmorK0h1QVBVcGpQeWpr?=
+ =?utf-8?B?Y1ErWEU0aVpCcTROR2FqMmFWY0hHSFI5N1dLbGZrb3ZUY3d0Y2VzR2s0cVlm?=
+ =?utf-8?B?V1p5cW84NHZxU2ZGYTJQS3ZES1ozRFZJUUdWcXUxQkxuaXZEejJnZU13OHkv?=
+ =?utf-8?B?ekpmdXZwTmtHVksxdE1ybXAwY3BaWnFqZmpFN0dDaWVEbUdmMDFtZlVlNHNr?=
+ =?utf-8?B?TlI2V0V1eU9wZDh0WE1vcDc3QjdFaWFwTlpXRXlmSnZlUVRwV0daMjUxSG1W?=
+ =?utf-8?B?eUNaTnZBQndiczV5c0h5by9tMDdBZ0xLVllOUWpKWVJrbWprdjFla0RlRzc5?=
+ =?utf-8?B?TTR0NytOZHV0QVM2a3dDbnY4NmJuY1VuKzdQSjQ4ZGl1S0pjQWpxRXdYdFZz?=
+ =?utf-8?B?aEtjOHYwMEw5VkpUaDdUTDdpay82ZkVaaFJrTDAzWFNHbkx2MDhXNFpic2xs?=
+ =?utf-8?B?Ync9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 18e3ed5b-d5d4-4d0e-9a34-08dd059fe31f
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR11MB6508.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2024 18:04:02.7357
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6QEkEc+3JFsjiQdsT3R8ax+5+29l8yjnmGdJCuNeVfsA9tKJMO4wqoP4A03Q9CjBbH5CkOyL9DKlCG0Q4ulTZQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8187
+X-OriginatorOrg: intel.com
 
-On Fri, Nov 15, 2024 at 04:55:41PM +0000, Nir Lichtman wrote:
-> Problem: Before starting the enumeration of the supported formats the
-> default return value is set to no entity which is misleading since if
-> the kernel module of the binary format is not found, it would return no
-> entity to user mode which is misleading since it is signaling that a
-> file was not found, but in this case the more suitable error is that the
-> executable has an unsupported format
-
-Disregard this, I have come to the conclusion that it is unnecessary,
-since at least one built-in binary format supported directly in the kernel 
-is required for loading kernel modules, this is because the kernel executes
-a user mode modprobe to load the module.
-
-Interestingly, placing a "modprobe" in /sbin/modprobe and adding 0
-supported formats in the kernel configuration, but adding module support,
-results in a loop of calls to the search_binary_handler function,
-since it keeps trying to load a module to load "modprobe", it does give up
-though at some point and just panics as expected, but it does result in some
-visible hold before hand.
-
-Thanks and sorry for the confusion,
-Nir
-
+On Fri, Nov 15, 2024 at 10:49:42AM +0800, Su Hui wrote:
+> Clang static checker(scan-build) warning：
+> drivers/gpu/drm/xe/xe_hw_engine_group.c: line 134, column 2
+> Argument to kfree() is a constant address (18446744073709551604), which
+> is not memory allocated by malloc().
 > 
-> Solution: Refactor to return no-exec error instead
+> kfree() can only handle NULL pointers instead of negitave error codes.
+> When hw_engine_group_alloc() failed, there is a bad kfree call for
+> negitave error codes in xe_hw_engine_setup_groups().
 > 
-> Signed-off-by: Nir Lichtman <nir@lichtman.org>
+> Free 'group' when alloc_workqueue() failed in hw_engine_group_alloc(), and
+> remove wrong kfree() in xe_hw_engine_setup_groups() to fix this problem.
+> It's safe to remove these kfree() because drmm_add_action_or_reset()
+> can free these by calling hw_engine_group_free().
+> 
+> Fixes: d16ef1a18e39 ("drm/xe/exec: Switch hw engine group execution mode upon job submission")
+> Fixes: f784750c670f ("drm/xe/hw_engine_group: Introduce xe_hw_engine_group")
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+
+Thanks for thr fix. Look correct to me.
+Reviewed-by: Matthew Brost <matthew.brost@intel.com>
+
 > ---
->  fs/exec.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> v2:
+>  - remove wrong destroy_workqueue() and kfree() in v1 patch
+> v1:
+>  - https://lore.kernel.org/all/20241114063942.3448607-1-suhui@nfschina.com/
 > 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 3394de5882af..6324f9546b09 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1740,7 +1740,7 @@ static int search_binary_handler(struct linux_binprm *bprm)
->  	if (retval)
->  		return retval;
+>  drivers/gpu/drm/xe/xe_hw_engine_group.c | 32 +++++++------------------
+>  1 file changed, 9 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/xe/xe_hw_engine_group.c b/drivers/gpu/drm/xe/xe_hw_engine_group.c
+> index 82750520a90a..3bfa002734ad 100644
+> --- a/drivers/gpu/drm/xe/xe_hw_engine_group.c
+> +++ b/drivers/gpu/drm/xe/xe_hw_engine_group.c
+> @@ -58,8 +58,10 @@ hw_engine_group_alloc(struct xe_device *xe)
+>  		return ERR_PTR(-ENOMEM);
 >  
-> -	retval = -ENOENT;
-> +	retval = -ENOEXEC;
->   retry:
->  	read_lock(&binfmt_lock);
->  	list_for_each_entry(fmt, &formats, lh) {
+>  	group->resume_wq = alloc_workqueue("xe-resume-lr-jobs-wq", 0, 0);
+> -	if (!group->resume_wq)
+> +	if (!group->resume_wq) {
+> +		kfree(group);
+>  		return ERR_PTR(-ENOMEM);
+> +	}
+>  
+>  	init_rwsem(&group->mode_sem);
+>  	INIT_WORK(&group->resume_work, hw_engine_group_resume_lr_jobs_func);
+> @@ -84,25 +86,18 @@ int xe_hw_engine_setup_groups(struct xe_gt *gt)
+>  	enum xe_hw_engine_id id;
+>  	struct xe_hw_engine_group *group_rcs_ccs, *group_bcs, *group_vcs_vecs;
+>  	struct xe_device *xe = gt_to_xe(gt);
+> -	int err;
+>  
+>  	group_rcs_ccs = hw_engine_group_alloc(xe);
+> -	if (IS_ERR(group_rcs_ccs)) {
+> -		err = PTR_ERR(group_rcs_ccs);
+> -		goto err_group_rcs_ccs;
+> -	}
+> +	if (IS_ERR(group_rcs_ccs))
+> +		return PTR_ERR(group_rcs_ccs);
+>  
+>  	group_bcs = hw_engine_group_alloc(xe);
+> -	if (IS_ERR(group_bcs)) {
+> -		err = PTR_ERR(group_bcs);
+> -		goto err_group_bcs;
+> -	}
+> +	if (IS_ERR(group_bcs))
+> +		return PTR_ERR(group_bcs);
+>  
+>  	group_vcs_vecs = hw_engine_group_alloc(xe);
+> -	if (IS_ERR(group_vcs_vecs)) {
+> -		err = PTR_ERR(group_vcs_vecs);
+> -		goto err_group_vcs_vecs;
+> -	}
+> +	if (IS_ERR(group_vcs_vecs))
+> +		return PTR_ERR(group_vcs_vecs);
+>  
+>  	for_each_hw_engine(hwe, gt, id) {
+>  		switch (hwe->class) {
+> @@ -125,15 +120,6 @@ int xe_hw_engine_setup_groups(struct xe_gt *gt)
+>  	}
+>  
+>  	return 0;
+> -
+> -err_group_vcs_vecs:
+> -	kfree(group_vcs_vecs);
+> -err_group_bcs:
+> -	kfree(group_bcs);
+> -err_group_rcs_ccs:
+> -	kfree(group_rcs_ccs);
+> -
+> -	return err;
+>  }
+>  
+>  /**
 > -- 
-> 2.39.2
+> 2.30.2
 > 
 
