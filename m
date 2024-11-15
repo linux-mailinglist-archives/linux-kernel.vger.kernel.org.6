@@ -1,126 +1,228 @@
-Return-Path: <linux-kernel+bounces-410174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0EE49CD5C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 04:14:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 427319CD5C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 04:17:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AFE71F220F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 03:14:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F459B22787
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 03:17:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8648414F9D9;
-	Fri, 15 Nov 2024 03:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6A414F104;
+	Fri, 15 Nov 2024 03:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ToduCgdN"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMvtc3MP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB64126C10;
-	Fri, 15 Nov 2024 03:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E59A2D;
+	Fri, 15 Nov 2024 03:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731640453; cv=none; b=Q3QkhxlSL0GdKhkpv/Kyy4cFKh2dbBndUIMG13tNsmO9pP8LHE74HYwl88SXD8THr5BKOKYok8QzhDmpLhX2mT2ncC8o5IVKNZm/DiMMhgp4QzcuSTG+rEKuY7z+t4k59z+lsYrBy+mzC8r8wnjw/cUXHOWXop3DACxxvZ14/N8=
+	t=1731640610; cv=none; b=J0PZporCCsRIaEF6TeVtIgAwsxOvRbAXS9zIlBqWShHDVulFxT2o1sQFycsBn8qFbJMZGVI4QtkOjcE8099j3mhpgN69gTI8ZMfGqVvsidgi/pb1H8/q9rUa4ypuJK7DZBU2X4LP4vPlVER+H+iywdf3YfGdhZo1kAnZzGlyrpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731640453; c=relaxed/simple;
-	bh=/l6IdxviicpZLYmAeqefRSiwgN5K0poQeDlPVgsCJis=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YxNHxTp1Gi6C5MEcZrIOK7BmLl2IGNo0rT99X9foMiS9xhHzqbYjLZgecbx6DaD1ymNhbJonxBs7QmOeehW2IVX7NnM8ycbS6UCGFZcIJfVpSbULP4w5icwImrG6NfUgnvrnObkxVNkJUhVIk6MJT8AK1/6u7Z2GiGMAXZekFiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ToduCgdN; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-83ab21c269eso45459039f.2;
-        Thu, 14 Nov 2024 19:14:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731640450; x=1732245250; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xCro3fmqeDuWdpLH9M0YZh3SiFmqpG56moMEi9XJsQM=;
-        b=ToduCgdNLGNHaIfNeRSeQs+j6klXTSzzFRRz+eUvspxWHjjVdVUp34H8EZSREUqtOK
-         awhvfqjWowRS7zEnqMSHoK+jx4t8Y102vz2bCAW08B+Wd/UTqxGgzzKD1ta6FOhMTyKQ
-         gj+75ptmfkEz4DVz/BdIYcXV6DRpBEqg39/2ZWqVzDckDWqs1Oi06b6IXvi2whItjbSG
-         kl2p2iXFndTtFYIr/rJvdv32EmzxB7a9tr/blSaNw1JPuv/PC9WCOw39vrhVLf9X1eU9
-         m0iYF+tQY7iFH3udUOrwx1yUfzE/nHZ2MgvK9awLSJWqP9MCPK+yg8gDXuKC5AhJxHu4
-         ahmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731640450; x=1732245250;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xCro3fmqeDuWdpLH9M0YZh3SiFmqpG56moMEi9XJsQM=;
-        b=XNV8jwyIBjXH3rExOwGCMmbSMDjuW573lxO2ARNT201H15miSXiz177hoQP8DcQYtA
-         GUxP6Y8aSAhtzMQMO5M/CZpPkskMEGvDnwVBjKJp1zNz/miA166bKZxylv2BuKXvsysP
-         wwppUoQcTn5P3g6rPC1DOARVe28IrFBZeb8Af0wwPEJ96EwCEfZjM83OvTny+Q5hWcmO
-         uMnVT6Z8eDil+er+tmqW8epNuFAly7Bzn4EMnarGaLIye/DaJQIS/qRl+pZlZ8DUZwNp
-         f74h6z7ONIkI0Nzy41xu2GtHq6uU2qjou4UHn/M8JYmWQ86XO5GQDsGAK6nPGjNEZpIx
-         EE/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUxwt5D8snOPqfjF5UUh9XiDFWCzV7w5MRjByNRBRWE+jHq3t7dqE3YfFPJi7tg62Op/GzN7rCYbphzqVZZ@vger.kernel.org, AJvYcCX+k3uS9x24wNk2DRXHv17H1OD0GtjvgYzWJKNEI3jRKk9s6OZcWTqwKj6XgsuQpAnWfXuffwrBDZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp9og0KhpwiArQwGAgCR/YMwp0c+DWOqaDwzboikZSvi4qH9SL
-	59SmGx/pS052B2p6vGKM54LVgeYW163lp2BwXtwdkYl0CBo/S0NjT23aDceWk7iF2Nfx7wb1Wqp
-	jJJs9VYXA7CC69L0hXkh3afBYgVk=
-X-Google-Smtp-Source: AGHT+IGakNHerU2OxullmdN7ZvD8921ch3v64i1UwmySjiuo3QMqELJFXW71OGYOz/AjpdHrTb2E49J9y4Mvui7ae/k=
-X-Received: by 2002:a05:6602:1686:b0:83a:b645:c902 with SMTP id
- ca18e2360f4ac-83e6c0c9d09mr170610539f.6.1731640450207; Thu, 14 Nov 2024
- 19:14:10 -0800 (PST)
+	s=arc-20240116; t=1731640610; c=relaxed/simple;
+	bh=CweFskFydMZSMmKGFlWiI4wa+2mH/KGQURwC4GCvO9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=poCZ9LoBY9K4JHTXTYYJxTdy3+8wugv1F08KqrrsowkhsR9cezcJ6RgL8/XGWx3MeFp8e3TPChuDlgPHACIHusfHg8x4ytOLuy+xRX2pEWzCVvL+E1VKxYfLUbGUja7u1ADoby0GMYF1+g/VR5MjjmtL7FP6wf9a/fuacEdXloQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMvtc3MP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19728C4CECD;
+	Fri, 15 Nov 2024 03:16:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731640609;
+	bh=CweFskFydMZSMmKGFlWiI4wa+2mH/KGQURwC4GCvO9s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cMvtc3MPGHlLGpEJrb2W2A4C22z0XZd6K0286IXIa1NprsmxZaIq9hzSfobOnsO92
+	 pKri2yjSZCD/5VM3FVQpEQuaDRsd34I9NzvtpPVrP76u4F8jWLicz0njx046FtUqKK
+	 13cjhAkI9jEg3+C1rHpbySmsePBtx7VZP2fjRYOTu3htG/45pVhM6QX17dr/Ij34PR
+	 LFO8ndLSmEhurijE4MFgWIw5ddvPDaxdYqu+riTozYxQTJZRsnJtYpjB9kv+zmSg4C
+	 b9kUtmVk/VDIfSU5FFdP3TJCBG3NUgtRY94RGecAbHjyYcZqmd6QZorrm/EKWkcqrK
+	 1EMdEh60Qt4OA==
+Date: Thu, 14 Nov 2024 19:16:48 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Shinas Rasheed <srasheed@marvell.com>
+Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <hgani@marvell.com>, <sedara@marvell.com>, <vimleshk@marvell.com>,
+ <thaller@redhat.com>, <wizhao@redhat.com>, <kheib@redhat.com>,
+ <egallen@redhat.com>, <konguyen@redhat.com>, <horms@kernel.org>,
+ <einstein.xue@synaxg.com>, Veerasenareddy Burru <vburru@marvell.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>
+Subject: Re: [PATCH net-next v2] octeon_ep: add ndo ops for VFs in PF driver
+Message-ID: <20241114191648.34410e79@kernel.org>
+In-Reply-To: <20241112185432.1152541-1-srasheed@marvell.com>
+References: <20241112185432.1152541-1-srasheed@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007132555.GA53279@francesco-nb> <20241112075958.GA8092@francesco-nb>
- <20241112092054.GA18139@francesco-nb>
-In-Reply-To: <20241112092054.GA18139@francesco-nb>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Fri, 15 Nov 2024 11:13:58 +0800
-Message-ID: <CAA+D8AO3a5WsZ4=V-9CDifDZYjJjwQmQQDDQM7ZKgZ6_-CNDPA@mail.gmail.com>
-Subject: Re: clk_imx8mp_audiomix_runtime_resume Kernel panic regression on v6.12
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, Frank Li <frank.li@nxp.com>, abelvesa@kernel.org, 
-	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
-	festevam@gmail.com, linux-imx@nxp.com, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	regressions@lists.linux.dev, Adam Ford <aford173@gmail.com>, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>, Mark Brown <broonie@kernel.org>, 
-	ulf.hansson@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 12, 2024 at 5:20=E2=80=AFPM Francesco Dolcini <francesco@dolcin=
-i.it> wrote:
->
-> On Tue, Nov 12, 2024 at 08:59:58AM +0100, Francesco Dolcini wrote:
-> > On Mon, Oct 07, 2024 at 03:25:55PM +0200, Francesco Dolcini wrote:
-> > > it seems that an old regression is back on v6.12, reproduced on -rc2
-> > > (not sure about rc1).
-> > >
-> > > The original report is from https://lore.kernel.org/all/2024042416472=
-5.GA18760@francesco-nb/
-> > > and it was fixed with https://lore.kernel.org/all/1715396125-3724-1-g=
-it-send-email-shengjiu.wang@nxp.com/.
-> > >
-> > > Is it now back?
-> >
-> > I was able to reproduce this issue once more, this time with 6.11.7.
-> > As I wrote in another email the issue is not systematic as it used to
-> > be.
-> >
-> > Any idea?
->
-> Frank, Shengjiu, could it be that the udelay(5) in imx_pgc_power_up() is
-> too short and therefore we have such non-systematic failures?
->
+On Tue, 12 Nov 2024 10:54:31 -0800 Shinas Rasheed wrote:
+> These APIs are needed to support applications that use netlink to get VF
+> information from a PF driver.
+> 
+> Signed-off-by: Shinas Rasheed <srasheed@marvell.com>
 
-Francesco,  it seems hard to reproduce it on my i.MX8MP-EVK board.
+> +static int octep_get_vf_config(struct net_device *dev, int vf, struct ifla_vf_info *ivi)
 
-If it is easy to reproduce on your side, you can try to enlarge the delay
-time to see if there is any improvement.
+Please don't go over 80 chars for no good reason.
+use checkpatch with --strict --max-line-length=80
 
-Thanks.
+> +{
+> +	struct octep_device *oct = netdev_priv(dev);
+> +
+> +	ivi->vf = vf;
+> +	ether_addr_copy(ivi->mac, oct->vf_info[vf].mac_addr);
+> +	ivi->vlan = 0;
+> +	ivi->qos = 0;
 
-Best regards
-Shengjiu Wang
+no need to clear these fields
+
+> +	ivi->spoofchk = 0;
+> +	ivi->linkstate = IFLA_VF_LINK_STATE_ENABLE;
+> +	ivi->trusted = true;
+
+so you set spoofchk to 0 and trusted to true, indicating no
+enforcement [1]
+
+> +	ivi->max_tx_rate = 10000;
+> +	ivi->min_tx_rate = 0;
+
+Why are you setting max rate to a fixed value?
+
+> +
+> +	return 0;
+> +}
+> +
+> +static int octep_set_vf_mac(struct net_device *dev, int vf, u8 *mac)
+> +{
+> +	struct octep_device *oct = netdev_priv(dev);
+> +	int err;
+> +
+> +	if (!is_valid_ether_addr(mac)) {
+> +		dev_err(&oct->pdev->dev, "Invalid  MAC Address %pM\n", mac);
+> +		return -EADDRNOTAVAIL;
+> +	}
+> +
+> +	dev_dbg(&oct->pdev->dev, "set vf-%d mac to %pM\n", vf, mac);
+> +	ether_addr_copy(oct->vf_info[vf].mac_addr, mac);
+> +	oct->vf_info[vf].flags |=  OCTEON_PFVF_FLAG_MAC_SET_BY_PF;
+
+double space
+
+> +
+> +	err = octep_ctrl_net_set_mac_addr(oct, vf, mac, true);
+> +	if (err)
+> +		dev_err(&oct->pdev->dev, "Set VF%d MAC address failed via host control Mbox\n", vf);
+> +
+> +	return err;
+> +}
+> +
+>  static const struct net_device_ops octep_netdev_ops = {
+>  	.ndo_open                = octep_open,
+>  	.ndo_stop                = octep_stop,
+> @@ -1146,6 +1184,9 @@ static const struct net_device_ops octep_netdev_ops = {
+>  	.ndo_set_mac_address     = octep_set_mac,
+>  	.ndo_change_mtu          = octep_change_mtu,
+>  	.ndo_set_features        = octep_set_features,
+> +	/* for VFs */
+
+what does this comment achieve? 
+
+> +	.ndo_get_vf_config       = octep_get_vf_config,
+> +	.ndo_set_vf_mac          = octep_set_vf_mac
+>  };
+>  
+>  /**
+> diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_main.h b/drivers/net/ethernet/marvell/octeon_ep/octep_main.h
+> index fee59e0e0138..3b56916af468 100644
+> --- a/drivers/net/ethernet/marvell/octeon_ep/octep_main.h
+> +++ b/drivers/net/ethernet/marvell/octeon_ep/octep_main.h
+> @@ -220,6 +220,7 @@ struct octep_iface_link_info {
+>  /* The Octeon VF device specific info data structure.*/
+>  struct octep_pfvf_info {
+>  	u8 mac_addr[ETH_ALEN];
+> +	u32 flags;
+
+the flags are u32 [2]
+
+>  	u32 mbox_version;
+>  };
+>  
+> diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c b/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c
+> index e6eb98d70f3c..26db2d34d1c0 100644
+> --- a/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c
+> +++ b/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c
+> @@ -156,12 +156,23 @@ static void octep_pfvf_set_mac_addr(struct octep_device *oct,  u32 vf_id,
+>  {
+>  	int err;
+>  
+> +	if (oct->vf_info[vf_id].flags & OCTEON_PFVF_FLAG_MAC_SET_BY_PF) {
+> +		dev_err(&oct->pdev->dev,
+> +			"VF%d attempted to override administrative set MAC address\n",
+> +			vf_id);
+> +		rsp->s_set_mac.type = OCTEP_PFVF_MBOX_TYPE_RSP_NACK;
+> +		return;
+> +	}
+
+[1] and yet you reject VF side changes. So is there enforcement or not?
+:S
+
+>  	err = octep_ctrl_net_set_mac_addr(oct, vf_id, cmd.s_set_mac.mac_addr, true);
+>  	if (err) {
+>  		rsp->s_set_mac.type = OCTEP_PFVF_MBOX_TYPE_RSP_NACK;
+> -		dev_err(&oct->pdev->dev, "Set VF MAC address failed via host control Mbox\n");
+> +		dev_err(&oct->pdev->dev, "Set VF%d MAC address failed via host control Mbox\n",
+> +			vf_id);
+>  		return;
+>  	}
+> +
+> +	ether_addr_copy(oct->vf_info[vf_id].mac_addr, cmd.s_set_mac.mac_addr);
+>  	rsp->s_set_mac.type = OCTEP_PFVF_MBOX_TYPE_RSP_ACK;
+>  }
+>  
+> @@ -171,10 +182,17 @@ static void octep_pfvf_get_mac_addr(struct octep_device *oct,  u32 vf_id,
+>  {
+>  	int err;
+>  
+> +	if (oct->vf_info[vf_id].flags & OCTEON_PFVF_FLAG_MAC_SET_BY_PF) {
+> +		dev_dbg(&oct->pdev->dev, "VF%d MAC address set by PF\n", vf_id);
+> +		ether_addr_copy(rsp->s_set_mac.mac_addr, oct->vf_info[vf_id].mac_addr);
+> +		rsp->s_set_mac.type = OCTEP_PFVF_MBOX_TYPE_RSP_ACK;
+> +		return;
+> +	}
+>  	err = octep_ctrl_net_get_mac_addr(oct, vf_id, rsp->s_set_mac.mac_addr);
+>  	if (err) {
+>  		rsp->s_set_mac.type = OCTEP_PFVF_MBOX_TYPE_RSP_NACK;
+> -		dev_err(&oct->pdev->dev, "Get VF MAC address failed via host control Mbox\n");
+> +		dev_err(&oct->pdev->dev, "Get VF%d MAC address failed via host control Mbox\n",
+> +			vf_id);
+>  		return;
+>  	}
+>  	rsp->s_set_mac.type = OCTEP_PFVF_MBOX_TYPE_RSP_ACK;
+> diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.h b/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.h
+> index 0dc6eead292a..339977c7131a 100644
+> --- a/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.h
+> +++ b/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.h
+> @@ -23,6 +23,9 @@ enum octep_pfvf_mbox_version {
+>  
+>  #define OCTEP_PFVF_MBOX_VERSION_CURRENT	OCTEP_PFVF_MBOX_VERSION_V2
+>  
+> +/* VF flags */
+> +#define OCTEON_PFVF_FLAG_MAC_SET_BY_PF  BIT_ULL(0) /* PF has set VF MAC address */
+
+[2] but the bit definition uses ULL ?
+
+>  enum octep_pfvf_mbox_opcode {
+>  	OCTEP_PFVF_MBOX_CMD_VERSION,
+>  	OCTEP_PFVF_MBOX_CMD_SET_MTU,
+-- 
+pw-bot: cr
 
