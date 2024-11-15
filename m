@@ -1,94 +1,257 @@
-Return-Path: <linux-kernel+bounces-411120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E69D9CF402
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:33:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE8219CF452
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:51:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB2A7B30AAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:54:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD459B34E48
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC581D6DA1;
-	Fri, 15 Nov 2024 17:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E24D1D6DC5;
+	Fri, 15 Nov 2024 17:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PX9jIUTe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QcBhrqqT"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC50171658;
-	Fri, 15 Nov 2024 17:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CEC1D5ADB;
+	Fri, 15 Nov 2024 17:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731693228; cv=none; b=NfymJ2Pc1TVyMKNHrA9PiH4YTsAJwxJJKxnEb1eVq75ppKISd8Woq0FP3P9Sjwzlp/7tO6z0oLGIz+mOAJMaZ2v2Y3hrpVZYic7ZUgAdpA2DFGWdIvPL7sKwca8G2eyPcvoqQlzyQSDQQK4zdxLU0ic5/EV44YIv+lZvvJbA/T4=
+	t=1731693294; cv=none; b=aHArceBDKrqYCodE8WUw7c7cmH1R6ez8tstmAmaVfbQoAK6vLL4cp4fOMphRw4DbHUDOgufgn4cf7CyDoHxdbbWq83v7g+l4n6k60xLJQ7PaHr7QVYZ1RGUA5PDblBeYNr5Dmf39bQ6KYu1h2O7q/+7X+k0rGiq5shRQ6IWyaHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731693228; c=relaxed/simple;
-	bh=rYI8EaYodfdmH37kAApuPQ41T6bd+YLA/SYg6lziQSA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=QdPBaMUUMBHn+1IaC4SV5eK/aLv1lBLUVOWxFPRmz4E8sSzBbPkynQGRRU+zBA0lttGvHxvRAiFJ7qimNY4LkjZtE+if2zg1Ct1S6vYRLXTcJGgLZBEtM3BawB02LaRhLLErQdxeYaNr+J/ViDmuDtpy7/9+OKQIxWOLTjykbhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PX9jIUTe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF801C4CECF;
-	Fri, 15 Nov 2024 17:53:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731693227;
-	bh=rYI8EaYodfdmH37kAApuPQ41T6bd+YLA/SYg6lziQSA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=PX9jIUTe7ymC63rKfXezkcocPgtH59QMjSU241aSWkZOl//7yF0Ub7KI6o104yvQw
-	 7/wlAdTO6o5bKlKfvNvkaDa39yUEqjr3FkeOin5SybrEn9Y7TPpMpTdOMQG6VSE2pu
-	 onij9pAsYR+P5GHw9NtQsMUlP+xAi4qz7axuo9jvWKCJWdlkhktWsSyVfY74xKG0G5
-	 jMLhEGgDrUlxNPfAN3DDVWYglgnHtC0+MKPvqvcwetXjUvCXx7HShpZxqnSAmox0az
-	 y7XYWiPhipHcJjjMjU1qTOxKbEyJDfzqWCsn9Wn81u1I/WxdWHjvwsAXJ6F37bJOlI
-	 uiRQCmiN5rQPg==
-Date: Fri, 15 Nov 2024 11:53:46 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Alistair Francis <alistair@alistair23.me>
-Cc: lukas@wunner.de, Jonathan.Cameron@huawei.com,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	akpm@linux-foundation.org, bhelgaas@google.com,
-	linux-pci@vger.kernel.org, linux-cxl@vger.kernel.org,
-	bjorn3_gh@protonmail.com, ojeda@kernel.org, tmgross@umich.edu,
-	boqun.feng@gmail.com, benno.lossin@proton.me, a.hindborg@kernel.org,
-	wilfred.mallawa@wdc.com, alistair23@gmail.com,
-	alex.gaynor@gmail.com, gary@garyguo.net, aliceryhl@google.com
-Subject: Re: [RFC 1/6] rust: bindings: Support SPDM bindings
-Message-ID: <20241115175346.GA2045933@bhelgaas>
+	s=arc-20240116; t=1731693294; c=relaxed/simple;
+	bh=OeD22HC7UgOFr/u5AOSQL220CWm2MZBkmT+EG5cZ7Gg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EMjh+1h+Qp6H4CLv7c5FxsJAoxoAr1zgFP0A8MGYLQ7EFN/e8ur8gOTTSNg+aNlDDFgoZ7d8Cbs3rY6q8L/7O5LEr9T4zavUjBcvOXWZk3OSpv11FSsLtbg4RM1m+ukwui+K/KMpORiqM+huTRmicLfuECucYcrg2dC6iUxGRaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QcBhrqqT; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AF9DfuV004807;
+	Fri, 15 Nov 2024 17:54:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Qbrw4vWiwwRaFmlC1s11hJAUI/iOQfAy7hYy+ugzIpY=; b=QcBhrqqT4TTzAwS6
+	fGGXwq/RhnXiBpAqGHvU1iA2fhp39tdxTvwyHkdCB1hq2Bwq2gOxeErFGRxecCRc
+	70gN2zG2gt5FaKU9zJ8pgfGD2F8RXksE9uECmejYnaqFjiAV/ykdgXgG3HiNEMLO
+	w3LbXJg6Ii9yifyHKCWzLuGgTTaANqAmF+BvdNoHHnfgHusgWxmfvm286hky6NmI
+	CxDfEfzg5vyD2PmbmgF7/3WTV9udXB4vYvGMDPa6tHSvtLZ+z+dVihrMKGQP7xlu
+	n8hSjn6PI6lx46aASx48Q0IkKlGerIMNLlhGuJtKzkJmk+ywWjgWW2Ci/i0zwmP8
+	YX3NtQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42x3g0scqw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 17:54:27 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AFHsQOV018050
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 17:54:26 GMT
+Received: from [10.206.104.82] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 15 Nov
+ 2024 09:54:19 -0800
+Message-ID: <f67c72c3-7393-47b0-9b9c-1bfadce13110@quicinc.com>
+Date: Fri, 15 Nov 2024 23:24:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241115054616.1226735-2-alistair@alistair23.me>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] dt-bindings: opp: Add v2-qcom-adreno vendor
+ bindings
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Krzysztof Kozlowski <krzk@kernel.org>, Rob Clark <robdclark@gmail.com>,
+        Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
+        "Abhinav
+ Kumar" <quic_abhinavk@quicinc.com>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon
+	<nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20241021-gpu-acd-v2-0-9c25a62803bc@quicinc.com>
+ <20241021-gpu-acd-v2-2-9c25a62803bc@quicinc.com>
+ <mz4zpcr4tqh2w7vt75f4ofxjzfve54ozzgpdbi2jjzk5pdxbk7@t36tlt3mmprt>
+ <d858dadb-4098-4c9f-b4f0-393dc988db5f@quicinc.com>
+ <4426b4kybtac6rc4twa5pgm3hvlegofemvqjcrvh6ni7f5z2h6@5dnlv3hgywh5>
+ <c5e868e1-2dae-466c-a6fc-ef0f247fa0ce@quicinc.com>
+ <278e62e1-02a4-4e33-8592-fb4fafcedf7e@quicinc.com>
+ <CAA8EJprgshjbNqNErOb06jqV__LmbWvocsK5eD8PQqL+FaLb1g@mail.gmail.com>
+Content-Language: en-US
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <CAA8EJprgshjbNqNErOb06jqV__LmbWvocsK5eD8PQqL+FaLb1g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: N4htPv4plm2XvnSzhfkVuCrgZqi_haRI
+X-Proofpoint-GUID: N4htPv4plm2XvnSzhfkVuCrgZqi_haRI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ lowpriorityscore=0 adultscore=0 bulkscore=0 priorityscore=1501
+ impostorscore=0 malwarescore=0 clxscore=1015 spamscore=0 mlxlogscore=999
+ mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411150151
 
-On Fri, Nov 15, 2024 at 03:46:11PM +1000, Alistair Francis wrote:
-> In preparation for a Rust SPDM library we need to include the SPDM
-> functions in the Rust bindings.
+On 11/15/2024 3:54 AM, Dmitry Baryshkov wrote:
+> Hello Akhil,
 > 
-> Signed-off-by: Alistair Francis <alistair@alistair23.me>
-> ---
->  rust/bindings/bindings_helper.h | 1 +
->  1 file changed, 1 insertion(+)
+> On Thu, 14 Nov 2024 at 20:50, Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
+>>
+>> On 11/1/2024 9:54 PM, Akhil P Oommen wrote:
+>>> On 10/25/2024 11:58 AM, Dmitry Baryshkov wrote:
+>>>> On Thu, Oct 24, 2024 at 12:56:58AM +0530, Akhil P Oommen wrote:
+>>>>> On 10/22/2024 11:19 AM, Krzysztof Kozlowski wrote:
+>>>>>> On Mon, Oct 21, 2024 at 05:23:43PM +0530, Akhil P Oommen wrote:
+>>>>>>> Add a new schema which extends opp-v2 to support a new vendor specific
+>>>>>>> property required for Adreno GPUs found in Qualcomm's SoCs. The new
+>>>>>>> property called "qcom,opp-acd-level" carries a u32 value recommended
+>>>>>>> for each opp needs to be shared to GMU during runtime.
+>>>>>>>
+>>>>>>> Cc: Rob Clark <robdclark@gmail.com>
+>>>>>>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>>>>>>> ---
+>>>>>>>  .../bindings/opp/opp-v2-qcom-adreno.yaml           | 96 ++++++++++++++++++++++
+>>>>>>>  1 file changed, 96 insertions(+)
+>>>>>>>
+>>>>>>> diff --git a/Documentation/devicetree/bindings/opp/opp-v2-qcom-adreno.yaml b/Documentation/devicetree/bindings/opp/opp-v2-qcom-adreno.yaml
+>>>>>>> new file mode 100644
+>>>>>>> index 000000000000..6d50c0405ef8
+>>>>>>> --- /dev/null
+>>>>>>> +++ b/Documentation/devicetree/bindings/opp/opp-v2-qcom-adreno.yaml
+>>>>>>> @@ -0,0 +1,96 @@
+>>>>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>>>>> +%YAML 1.2
+>>>>>>> +---
+>>>>>>> +$id: http://devicetree.org/schemas/opp/opp-v2-qcom-adreno.yaml#
+>>>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>>>>> +
+>>>>>>> +title: Qualcomm Adreno compatible OPP supply
+>>>>>>> +
+>>>>>>> +description:
+>>>>>>> +  Adreno GPUs present in Qualcomm's Snapdragon chipsets uses an OPP specific
+>>>>>>> +  ACD related information tailored for the specific chipset. This binding
+>>>>>>> +  provides the information needed to describe such a hardware value.
+>>>>>>> +
+>>>>>>> +maintainers:
+>>>>>>> +  - Rob Clark <robdclark@gmail.com>
+>>>>>>> +
+>>>>>>> +allOf:
+>>>>>>> +  - $ref: opp-v2-base.yaml#
+>>>>>>> +
+>>>>>>> +properties:
+>>>>>>> +  compatible:
+>>>>>>> +    items:
+>>>>>>> +      - const: operating-points-v2-adreno
+>>>>>>> +      - const: operating-points-v2
+>>>>>>> +
+>>>>>>> +patternProperties:
+>>>>>>> +  '^opp-?[0-9]+$':
+>>>>>>
+>>>>>> '-' should not be optional. opp1 is not expected name.
+>>>>>
+>>>>> Agree. Will change this to '^opp-[0-9]+$'
+>>>>>
+>>>>>>
+>>>>>>> +    type: object
+>>>>>>> +    additionalProperties: false
+>>>>>>> +
+>>>>>>> +    properties:
+>>>>>>> +      opp-hz: true
+>>>>>>> +
+>>>>>>> +      opp-level: true
+>>>>>>> +
+>>>>>>> +      opp-peak-kBps: true
+>>>>>>> +
+>>>>>>> +      opp-supported-hw: true
+>>>>>>> +
+>>>>>>> +      qcom,opp-acd-level:
+>>>>>>> +        description: |
+>>>>>>> +          A positive value representing the ACD (Adaptive Clock Distribution,
+>>>>>>> +          a fancy name for clk throttling during voltage droop) level associated
+>>>>>>> +          with this OPP node. This value is shared to a co-processor inside GPU
+>>>>>>> +          (called Graphics Management Unit a.k.a GMU) during wake up. It may not
+>>>>>>> +          be present for some OPPs and GMU will disable ACD while transitioning
+>>>>>>> +          to that OPP. This value encodes a voltage threshold and few other knobs
+>>>>>>> +          which are identified by characterization of the SoC. So, it doesn't have
+>>>>>>> +          any unit.
+>>>>>>
+>>>>>> Thanks for explanation and other updates. I am still not happy with this
+>>>>>> property. I do not see reason why DT should encode magic values in a
+>>>>>> quite generic piece of code. This creates poor ABI, difficult to
+>>>>>> maintain or understand.
+>>>>>>
+>>>>>
+>>>>> Configuring GPU ACD block with its respective value is a requirement for each OPP.
+>>>>> So OPP node seems like the natural place for this data.
+>>>>>
+>>>>> If it helps to resolve your concerns, I can elaborate the documentation with
+>>>>> details on the GMU HFI interface where this value should be passed on to the
+>>>>> hardware. Also replace "few other knobs" with "Delay cycles & Calibration margin"
+>>>>> in the above doc.
+>>>>
+>>>> Usually the preference for DT is to specify data in a sensible way
+>>>> rather than just the values being programmed to the register. Is it
+>>>> possible to implement this approach for ACD values?
+>>
+>> Krzysztof/Dmitry,
+>>
+>> BIT(0)-BIT(15) are static configurations which doesn't change between
+>> OPPs. We can move it to driver.
+>>
+>> BIT(16)-BIT(31) indicates a threshold margin which triggers ACD. We can
+>> keep this in the devicetree. And the driver can construct the final
+>> value from both data and send it to GMU.
+>>
+>> If this is acceptable, I will send the v3 revision.
 > 
-> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-> index 7847b2b3090b..8283e6a79ac9 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -24,6 +24,7 @@
->  #include <linux/sched/signal.h>
->  #include <linux/sched/task.h>
->  #include <linux/slab.h>
-> +#include <linux/spdm.h>
+> Can the upper bitfield have a sensible representation in DT (like uV
+> or something similar)?
 
-Usually an additional #include goes in the same patch that makes use
-of the new .h file.  Maybe there's a different convention in rust/?
+Closest approximation is quantized voltage steps. So, unit-less.
+Converting it to the exact voltage requires identifying the pmic voltage
+steps and other stuffs which are outside of my expertise.
 
->  #include <linux/uaccess.h>
->  #include <linux/wait.h>
->  #include <linux/workqueue.h>
-> -- 
-> 2.47.0
+It is convenient if we can abstract it as an integer which correlates
+with the voltage margin that should be maintained for each regulator corner.
+
+-Akhil.
+
 > 
+>>
+>> -Akhil.
+>>
+>>>
+>>> I am still checking about this. Will get back.
+>>>
+>>> -Akhil
+>>>
+>>>>
+>>>>>
+>>>>>>
+>>>>
+>>>
+>>
+> 
+> 
+
 
