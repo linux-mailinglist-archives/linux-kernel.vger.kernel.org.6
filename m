@@ -1,135 +1,157 @@
-Return-Path: <linux-kernel+bounces-411108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF1139CF383
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:01:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 183179CF3E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:28:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19346B39279
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:37:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B858B3D3E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922B81D63C9;
-	Fri, 15 Nov 2024 17:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174411D63E4;
+	Fri, 15 Nov 2024 17:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="PTOBeByM"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nDEZ+eFy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14401D61A1
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA78166307;
+	Fri, 15 Nov 2024 17:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731692244; cv=none; b=AKkQwkn6vwZOaLOg7yjMsWYJEI/EXxiVt71rkTpCTnlI1WWRUBYdWsgJVo6bV0nmg8/BkNaVFx2viHt4X1gECxy7+axFk5ann71u09GKWCeTVDg8BksoSdHwGOWsDsYmmlA111G+cSphzRnH+AmB14uGwURn509AKdNOsiy4CSU=
+	t=1731692219; cv=none; b=UlilDwCtXZMbJ8WUCzoPjLamzyD+jBMObhgs+8ll58kXTO+nweGfqOmPHlLWbXtqBeFHEYu3NhYRM67BuelHVjAN2GigY+jwhzcGRiSM8DP2a7tIRXV/BDxrJQOlC7eZwJoakRWl6catOfO1tDr0u7lzdaPeAsOBTEc9UscpNDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731692244; c=relaxed/simple;
-	bh=lxdMuJDoPhT7Q7+0NfYML3iNAiw1cd6bSRP5MItqQYQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uF4MV2nHsX5uMyQuy6gV5+54tGq7UeRg23EHE4Z3PILDmng/rJFqdc8E9qvKuCQN7lgFT/ABxG5zCiIh7r+b1FPDsSsjGn4ObqStHogoac4z54zi9bPX/k0aGtsrhVCWk24q6GU9DGf3294HxmOT9y+/AVyaGRzIssRq8Et6YKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=PTOBeByM; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1731692230; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=0C4zvkjgOBhm5nZYv4qVK0pKEHqWTMIfQl4q5rV5u+o=;
-	b=PTOBeByMqHlkITpHZdU3704jchnTI0hyTL7JQCuRnoPD23L7LOCnsvQZZ8M0H4JVIvYE4mhwnsCS72AYvAGc+TFxcjx3M264eg1hunloubc5rwgW/AIEJraMXNUEO+uMkHWcUTkERsZ7gxjuse5/B5Pk5e9Jn2C5yIy5rF0+6U4=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WJUJogH_1731692222 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sat, 16 Nov 2024 01:37:10 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	syzbot+6c0b301317aa0156f9eb@syzkaller.appspotmail.com
-Subject: [PATCH] erofs: handle NONHEAD !delta[1] lclusters gracefully
-Date: Sat, 16 Nov 2024 01:36:51 +0800
-Message-ID: <20241115173651.3339514-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1731692219; c=relaxed/simple;
+	bh=IcilZRqcLlz7smR2XW5euoYnS0/VzBgcCuJBGtNwkGA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E49VbdFQCuM37eTXfMC9MOy3rCch3NU08lUc1nJHokducYZp0FFxTS26WRs/4Jy8BPrRcl6hVLpGY0dX0fb2sp0d7xeElMgfkmvixmiDGXj4aaxrJQHfc9Gold7uatBblZyU2I1QKXJUbqBBeuBjH4AIBfHRjgxp1zkb/HcsvBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nDEZ+eFy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FD5AC4CECF;
+	Fri, 15 Nov 2024 17:36:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731692219;
+	bh=IcilZRqcLlz7smR2XW5euoYnS0/VzBgcCuJBGtNwkGA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nDEZ+eFyEgyFipvy9yImn1Cr33i4Euku8fTWKKAz5VHYTWXsB+dNKx+4NO2IUpeuu
+	 XmuN9j6dfUqRgWbnRikiVFeBIbaH6tq1DcJ0JAPqmdff5IzHGntlfcr79Jn6NtaOF3
+	 ssCF7gj1llWGF7gLL+lN9jkssGvZF+HqIwTxcvqLlH+EyfZBf31N2CIYAMafzBrdVE
+	 7NsNEEbyAYPNANyPRhhMoayLY52gKKb0Lw/af4VtrF9gifYvB2ygJrVVoXi1w8GrdL
+	 o+MdrDWatMe2/jn55+ZRkzbO3ZTYuIHxkQabx0hW+l9tYtvAF1Ue6j4UpZ3kYukQCx
+	 dM6IDUiBeMLog==
+Date: Fri, 15 Nov 2024 11:36:57 -0600
+From: Rob Herring <robh@kernel.org>
+To: "Sperling, Tobias" <Tobias.Sperling@softing.com>
+Cc: "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"jic23@kernel.org" <jic23@kernel.org>,
+	"lars@metafoo.de" <lars@metafoo.de>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: iio: adc: Introduce ADS7138
+Message-ID: <20241115173657.GA3440948-robh@kernel.org>
+References: <BE1P281MB24207662EAC941780807F88BEF5A2@BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BE1P281MB24207662EAC941780807F88BEF5A2@BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM>
 
-syzbot reported a WARNING in iomap_iter_done:
- iomap_fiemap+0x73b/0x9b0 fs/iomap/fiemap.c:80
- ioctl_fiemap fs/ioctl.c:220 [inline]
+On Wed, Nov 13, 2024 at 02:41:08PM +0000, Sperling, Tobias wrote:
+> >From 6a06973e1023ca6a128c8d426b4c87887117c084 Mon Sep 17 00:00:00 2001
+> From: Tobias Sperling <tobias.sperling@softing.com>
+> Date: Wed, 13 Nov 2024 14:52:49 +0100
+> Subject: [PATCH 1/2] dt-bindings: iio: adc: Introduce ADS7138
 
-Generally, NONHEAD lclusters won't have delta[1]==0, except for crafted
-images and filesystems created by pre-1.0 mkfs versions.
+Your patch is corrupted.
 
-Previously, it would immediately bail out if delta[1]==0, which led to
-inadequate decompressed lengths (thus FIEMAP is impacted).  Treat it as
-delta[1]=1 to work around these legacy mkfs versions.
+> 
+> Add documentation for the driver of ADS7128 and ADS7138 12-bit, 8-channel
+> analog-to-digital converters. These ADCs have a wide operating range and
+> a wide feature set. Communication is based on the I2C interface.
+> 
+> Signed-off-by: Tobias Sperling <tobias.sperling@softing.com>
+> ---
+>  .../bindings/iio/adc/ti,ads7138.yaml          | 60 +++++++++++++++++++
+>  1 file changed, 60 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/ti,ads7138.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/ti,ads7138.yaml b/Documentation/devicetree/bindings/iio/adc/ti,ads7138.yaml
+> new file mode 100644
+> index 000000000000..c70ad5747828
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/ti,ads7138.yaml
+> @@ -0,0 +1,60 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/ti,ads7138.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Texas Instruments ADS7128/ADS7138 Analog to Digital Converter (ADC)
+> +
+> +maintainers:
+> +  - Tobias Sperling <tobias.sperling@softing.com>
+> +
+> +description: |
+> +  The ADS7128 is 12-Bit, 8-Channel Sampling Analog to Digital Converter (ADC)
+> +  with an I2C interface.
+> +
+> +  Datasheets:
+> +    https://www.ti.com/product/ADS7128
+> +    https://www.ti.com/product/ADS7138
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ti,ads7128
+> +      - ti,ads7138
 
-`lclusterbits > 14` is illegal for compact indexes, error out too.
+What's the difference between the 2?
 
-Reported-by: syzbot+6c0b301317aa0156f9eb@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/r/67373c0c.050a0220.2a2fcc.0079.GAE@google.com
-Fixes: d95ae5e25326 ("erofs: add support for the full decompressed length")
-Fixes: 001b8ccd0650 ("erofs: fix compact 4B support for 16k block size")
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
- fs/erofs/zmap.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
-
-diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
-index a076cca1f547..4535f2f0a014 100644
---- a/fs/erofs/zmap.c
-+++ b/fs/erofs/zmap.c
-@@ -219,7 +219,7 @@ static int z_erofs_load_compact_lcluster(struct z_erofs_maprecorder *m,
- 	unsigned int amortizedshift;
- 	erofs_off_t pos;
- 
--	if (lcn >= totalidx)
-+	if (lcn >= totalidx || vi->z_logical_clusterbits > 14)
- 		return -EINVAL;
- 
- 	m->lcn = lcn;
-@@ -390,7 +390,7 @@ static int z_erofs_get_extent_decompressedlen(struct z_erofs_maprecorder *m)
- 	u64 lcn = m->lcn, headlcn = map->m_la >> lclusterbits;
- 	int err;
- 
--	do {
-+	while (1) {
- 		/* handle the last EOF pcluster (no next HEAD lcluster) */
- 		if ((lcn << lclusterbits) >= inode->i_size) {
- 			map->m_llen = inode->i_size - map->m_la;
-@@ -402,14 +402,16 @@ static int z_erofs_get_extent_decompressedlen(struct z_erofs_maprecorder *m)
- 			return err;
- 
- 		if (m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD) {
--			DBG_BUGON(!m->delta[1] &&
--				  m->clusterofs != 1 << lclusterbits);
-+			/* work around invalid d1 generated by pre-1.0 mkfs */
-+			if (unlikely(!m->delta[1])) {
-+				m->delta[1] = 1;
-+				DBG_BUGON(1);
-+			}
- 		} else if (m->type == Z_EROFS_LCLUSTER_TYPE_PLAIN ||
- 			   m->type == Z_EROFS_LCLUSTER_TYPE_HEAD1 ||
- 			   m->type == Z_EROFS_LCLUSTER_TYPE_HEAD2) {
--			/* go on until the next HEAD lcluster */
- 			if (lcn != headlcn)
--				break;
-+				break;	/* ends at the next HEAD lcluster */
- 			m->delta[1] = 1;
- 		} else {
- 			erofs_err(inode->i_sb, "unknown type %u @ lcn %llu of nid %llu",
-@@ -418,8 +420,7 @@ static int z_erofs_get_extent_decompressedlen(struct z_erofs_maprecorder *m)
- 			return -EOPNOTSUPP;
- 		}
- 		lcn += m->delta[1];
--	} while (m->delta[1]);
--
-+	}
- 	map->m_llen = (lcn << lclusterbits) + m->clusterofs - map->m_la;
- 	return 0;
- }
--- 
-2.43.5
-
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  avdd-supply:
+> +    description:
+> +      The regulator used as analog supply voltage as well as reference voltage.
+> +
+> +  interrupts:
+> +    description:
+> +      Interrupt on ALERT pin, triggers on low level.
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - avdd-supply
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        adc@10 {
+> +            compatible = "ti,ads7138";
+> +            reg = <0x10>;
+> +            avdd-supply = <&reg_stb_3v3>;
+> +            interrupt-parent = <&gpio2>;
+> +            interrupts = <12 IRQ_TYPE_LEVEL_LOW>;
+> +        };
+> +    };
+> +...
+> -- 
+> 2.34.1
+> 
 
