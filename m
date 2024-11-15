@@ -1,278 +1,263 @@
-Return-Path: <linux-kernel+bounces-410605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A099B9CDDF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:59:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFAE19CDDF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:00:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 304F41F22BDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:59:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B09C6282D25
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32EB31BBBD0;
-	Fri, 15 Nov 2024 11:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075C01BC09F;
+	Fri, 15 Nov 2024 12:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N6PfnwHS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="QSLtnUBF"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D5F1B2EEB
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8BD1BAED6
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 12:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731671963; cv=none; b=GQRwgxvaLJ6Tl0VU/3EouaAPKCcTIZhmlHNhlWvhClwS00QdsFdJSdgI3abN4XAc4oHqvZD4NthXvuBneprYwg1te1IO5lx2bwf2S8s8lGzeda5NwAiHdkgGanzbNeftKwP6SJA6jCz6lhkoVSxz4ccRgjNvb8Yug8VBx+OICOc=
+	t=1731672011; cv=none; b=UkIl6cPBJVU4pte1r8fJqdKecYGO/zH16Ve/aYEdX7mzXMBFLa09XEsRROc0ywRVDfCvFLYp7JQ4/DgqL62mEmmgxGp6xrYAk9AWGXxgePycyfndjN1YDGP5ajfR4B7TbYTohPCvALmP8i0/5m3yBY+aNl/uEN2OxfvmJfmnfi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731671963; c=relaxed/simple;
-	bh=2pulDDreteiHjL9r4qUGqKDhpqeb1HMkFOW42Xg7+Go=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kL+Gn7+blUGz8boPC2n6N/PvisTJyOs1exE7LCkiNeI47HRmHVnP9dk4aEEnUTZH/bFMfwwY7dZdXjghgXt5qVowGaDolZt+pXpsiHwqHG17nmc72wsfFjVtHjzby5hsCOUCEuD1BaJn9hUzULlONwp1m8Kl0u2OX6W92zRx874=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N6PfnwHS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731671960;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KWFhnUI/8u1MsI357oWFQrDLalvod+ZiB7DQP1zPYnA=;
-	b=N6PfnwHSnw8ElqvfDpbFO5/woGEVGcgDRt+1S449QeFmvCXlJhW4SMVh0FuV0LV0hHbivf
-	RB+pPjAqbBEjFjfnW0uGaOp06rAg3zSlm2nzVV7PbhTwFeo2V6oELqtLVYOTgOlcpH61Q3
-	lB3xEKGWbpkDm9c35pOcwa0R9weGW7Y=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-580-jBC3DywTNGuGnlnXER_3nw-1; Fri, 15 Nov 2024 06:59:19 -0500
-X-MC-Unique: jBC3DywTNGuGnlnXER_3nw-1
-X-Mimecast-MFC-AGG-ID: jBC3DywTNGuGnlnXER_3nw
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7b147855414so203871885a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 03:59:19 -0800 (PST)
+	s=arc-20240116; t=1731672011; c=relaxed/simple;
+	bh=kbx9VYnWmlvTMMs5Ll4X8oFALQ4tH8XIgm+2u4+yKhg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T+ErWDyOnONBFE2NybTAeM0rVFNWfJpI/9LvmeJCbqP4YKImMnMRZpXzxAFD6uooBUcsXUlfaSZlqJkPdNaQIH6tbc0+z0g++YMCnp4HBOtYt+ng18nLACOXHxTV3QsBCxL3/WbIyv342+T/6TPQtd7hZmk6Y7BHsTdvzcO//YA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=QSLtnUBF; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4609e784352so11429751cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 04:00:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1731672006; x=1732276806; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=brlXMznUgTmtgicpz9djNJEIMcRyJv2TirXu6v3ayi4=;
+        b=QSLtnUBFUIRYghBrupnAw/8eW+y6ZEcU5unSvJWRdTJk0Mfd3harkU6PKGKk/8xZp1
+         6FLKrquqszgSH0DtCAz4V/DFPa31SiKjIWh/UjqZRfneqEH5N/RHDwkb5aDqRa2ifpww
+         yZ/fOEKS4yzHnIgMmrCwXcizCd82UeFgiBMQU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731671959; x=1732276759;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KWFhnUI/8u1MsI357oWFQrDLalvod+ZiB7DQP1zPYnA=;
-        b=eAgKQ8tf+VNu6BnNY1S6wY7A167nviM53xlGWSpnawZ3VWwKUcQejQY85ifu84OHcG
-         f56aNISwZOBt0WgWqKX4UAEs+IID9g5ui7TbyfErEvojtMPangOX8ug3R2uU3jLROam9
-         0Uzxq4L8azWSkFpqekbmvreChVWVJlPmkP/rZ68l9CNV49xH8Pu7VUpaFZksQ2+xq0gG
-         HGU8O1WjxvtPGXfiJRM2n1DilYnfRDziqQNbffegUM91u42MRV/FAM0DD65VrzVCHiKh
-         kYMNzsq488CHPMmchdPwDvIFC+7jxXqW5RKg8hGsGxNeN2+MKmtbb4Y+Sy78xWKW4X3a
-         1T9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVvDx3NGAr1FZEfrWvK3GijH6y2i8HJC3QuMDSnN71GOdR9/kpq5+J1ZwzT3hlfkQtk+f/AzAvAbI4PFzA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWy4x8bc+ibALFzFkllNfvFZfwSvbYgOkpb9UVIeaQcYcJ9/IJ
-	76v5LBFjE1SY5agmwUaWqJlMrTilOs+zz35EySm65Yl0a03BvcGnQOOUWdv2GhMI8ZbA5iFEryg
-	F84WCW0Vgf5j+6rjNJC6jyS+QhPw5N3g0a50GlPGb4pWlZhHgVB0JcyWWsoK4WQ==
-X-Received: by 2002:a05:620a:179e:b0:7b3:56f4:6e09 with SMTP id af79cd13be357-7b3622bcab6mr264000185a.27.1731671958887;
-        Fri, 15 Nov 2024 03:59:18 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEfVKO66Y6rgNt/itCv3b+8Dv2NvBLsA25nUYuxO9qTqEw2uRmmntwxkoCY3pA5nCghXARiwg==
-X-Received: by 2002:a05:620a:179e:b0:7b3:56f4:6e09 with SMTP id af79cd13be357-7b3622bcab6mr263998485a.27.1731671958500;
-        Fri, 15 Nov 2024 03:59:18 -0800 (PST)
-Received: from sgarzare-redhat ([79.46.200.129])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b35c984691sm151968885a.2.2024.11.15.03.59.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 03:59:17 -0800 (PST)
-Date: Fri, 15 Nov 2024 12:59:07 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Alexander Graf <graf@amazon.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	virtualization@lists.linux.dev, kvm@vger.kernel.org, Asias He <asias@redhat.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, 
-	"David S. Miller" <davem@davemloft.net>, Stefan Hajnoczi <stefanha@redhat.com>
-Subject: Re: [PATCH] vsock/virtio: Remove queued_replies pushback logic
-Message-ID: <yjhfe5bsnfpqbnibxl2urrnuowzitxnrbodlihz4y5csig7e7p@drgxxxxgokfo>
-References: <20241115103016.86461-1-graf@amazon.com>
+        d=1e100.net; s=20230601; t=1731672006; x=1732276806;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=brlXMznUgTmtgicpz9djNJEIMcRyJv2TirXu6v3ayi4=;
+        b=TTmiI6TFikGVKs5nXAB1cOWQ6T9NfZZr2waI/oaZuFWWduNP+It7HFtOWRDzJIviUs
+         tKF+rjdBfXoLYvIu7EyIErHqajiWwXa8KkAHsX6wriPnNJaRk6DJxPe3tE6WCQHv8+ed
+         VgRZMqbbWb1iVBRBZbEesWwcZyQ2BSoFy7h4w/AUFEqlnz47pyGAXMJCf6Q4wu1x1VwU
+         i84X15EP9XG6aIfx9UPn7t4MDmOL6WGBk+Poqj+Z0mbVALUS5rIb/N/OuV8lSGwoTgzr
+         JQx87Fz7xqa4GIyuGKHOFVBmDS29BwRC0EQJxNZqMg366YUIdoPOLeBK770XmcuDfWJX
+         A8+A==
+X-Forwarded-Encrypted: i=1; AJvYcCX+Ct12W8My0uPmd6h+cCaIuvK2rrqu/FNiTnwbgXSeLZ3sB1PaRwLoBjo2qye1Wx9SjevE6xpOho9699g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3pXXEQeIQ9xY+efLmnyyj3yMqVEAt5uHM9qcjnzLOZ0KeS+Me
+	5LZUxxToCHC2wXcZwpSMPs2yGFG7JG2a2bOrTQFmAgxd68mso9MCeiOCaZGxmZ80FyPKdscYIyI
+	k2Cks9k5UizY2yZU+O5rjXrMEYuS+/WQjE7duaGPmNnvXsb52
+X-Google-Smtp-Source: AGHT+IF/qHONadJWYHH+WIIKAopg6niokdJFzl35adihxNbxleHpbM0Tg20wV6W+iVBzlcgYoetZDy1dbmCMAk96sao=
+X-Received: by 2002:a05:622a:11c9:b0:460:e7f5:1bf with SMTP id
+ d75a77b69052e-46363ec5cbdmr25913251cf.51.1731672005704; Fri, 15 Nov 2024
+ 04:00:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20241115103016.86461-1-graf@amazon.com>
+References: <20241114070905.48901-1-zhangtianci.1997@bytedance.com>
+In-Reply-To: <20241114070905.48901-1-zhangtianci.1997@bytedance.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 15 Nov 2024 12:59:54 +0100
+Message-ID: <CAJfpegsF9iYG04YkA0AOKvsrg0hua3JGw=Phq=qeOurgqk_OuA@mail.gmail.com>
+Subject: Re: [PATCH] fuse: check attributes staleness on fuse_iget()
+To: Zhang Tianci <zhangtianci.1997@bytedance.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	xieyongji@bytedance.com, Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+Content-Type: multipart/mixed; boundary="000000000000c4ca390626f24e6f"
 
-On Fri, Nov 15, 2024 at 10:30:16AM +0000, Alexander Graf wrote:
->Ever since the introduction of the virtio vsock driver, it included
->pushback logic that blocks it from taking any new RX packets until the
->TX queue backlog becomes shallower than the virtqueue size.
->
->This logic works fine when you connect a user space application on the
->hypervisor with a virtio-vsock target, because the guest will stop
->receiving data until the host pulled all outstanding data from the VM.
+--000000000000c4ca390626f24e6f
+Content-Type: text/plain; charset="UTF-8"
 
-So, why not skipping this only when talking with a sibling VM?
+On Thu, 14 Nov 2024 at 08:12, Zhang Tianci
+<zhangtianci.1997@bytedance.com> wrote:
+>
+> Function fuse_direntplus_link() might call fuse_iget() to initialize a new
+> fuse_inode and change its attributes. If fi->attr_version is always
+> initialized with 0, even if the attributes returned by the FUSE_READDIR
+> request is staled, as the new fi->attr_version is 0, fuse_change_attributes
+> will still set the staled attributes to inode. This wrong behaviour may
+> cause file size inconsistency even when there is no changes from
+> server-side.
 
->
->With Nitro Enclaves however, we connect 2 VMs directly via vsock:
->
->  Parent      Enclave
->
->    RX -------- TX
->    TX -------- RX
->
->This means we now have 2 virtio-vsock backends that both have the pushback
->logic. If the parent's TX queue runs full at the same time as the
->Enclave's, both virtio-vsock drivers fall into the pushback path and
->no longer accept RX traffic. However, that RX traffic is TX traffic on
->the other side which blocks that driver from making any forward
->progress. We're not in a deadlock.
->
->To resolve this, let's remove that pushback logic altogether and rely on
->higher levels (like credits) to ensure we do not consume unbounded
->memory.
+Thanks for working on this.
 
-I spoke quickly with Stefan who has been following the development from
-the beginning and actually pointed out that there might be problems
-with the control packets, since credits only covers data packets, so
-it doesn't seem like a good idea remove this mechanism completely.
+I have some comments, see below.
 
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -173,6 +173,7 @@ static void fuse_evict_inode(struct inode *inode)
+>                         fuse_cleanup_submount_lookup(fc, fi->submount_lookup);
+>                         fi->submount_lookup = NULL;
+>                 }
+> +               atomic64_inc(&fc->evict_ctr);
+
+I think this should only be done if (inode->i_nlink > 0), because if
+the file/directory was removed, then the race between another lookup
+cannot happen.
+
+> @@ -426,7 +427,8 @@ static int fuse_inode_set(struct inode *inode, void *_nodeidp)
 >
->Fixes: 0ea9e1d3a9e3 ("VSOCK: Introduce virtio_transport.ko")
+>  struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
+>                         int generation, struct fuse_attr *attr,
+> -                       u64 attr_valid, u64 attr_version)
+> +                       u64 attr_valid, u64 attr_version,
+> +                       u64 evict_ctr)
+>  {
+>         struct inode *inode;
+>         struct fuse_inode *fi;
+> @@ -488,6 +490,10 @@ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
+>         spin_unlock(&fi->lock);
+>  done:
+>         fuse_change_attributes(inode, attr, NULL, attr_valid, attr_version);
+> +       spin_lock(&fi->lock);
+> +       if (evict_ctr < fuse_get_evict_ctr(fc))
+> +               fuse_invalidate_attr(inode);
 
-I'm not sure we should add this Fixes tag, this seems very risky
-backporting on stable branches IMHO.
+Similarly, this should not be done on creation (attr_version == 0),
+since in case of a brand new inode the previous inode state cannot
+have any effect on it.
 
-If we cannot find a better mechanism to replace this with something
-that works both guest <-> host and guest <-> guest, I would prefer
-to do this just for guest <-> guest communication.
-Because removing this completely seems too risky for me, at least
-without a proof that control packets are fine.
+The other case that may be worth taking special care of is when the
+inode is already in the cache.  This happens for example on lookup of
+hard links.  This is the (fi->attr_version > 0) case where we can rely
+on the validity of attr_version.  I.e. the attr_version comparison in
+fuse_change_attributes() will make sure the attributes are only
+updated if necessary, no need to check evict_ctr.
+
+So the only case that needs evict_ctr verification is (attr_version !=
+0 && fi->attr_version == 0).
+
+One other thing: I don't like the fact that the invalid mask is first
+cleared in fuse_change_attributes_common(), then reset in
+fuse_invalidate_attr().  It would be cleaner to not clear the mask in
+the first place.
+
+Attaching an untested incremental patch.  Can you please review and test?
 
 Thanks,
-Stefano
+Miklos
 
->Signed-off-by: Alexander Graf <graf@amazon.com>
->---
-> net/vmw_vsock/virtio_transport.c | 51 ++------------------------------
-> 1 file changed, 2 insertions(+), 49 deletions(-)
->
->diff --git a/net/vmw_vsock/virtio_transport.c b/net/vmw_vsock/virtio_transport.c
->index 64a07acfef12..53e79779886c 100644
->--- a/net/vmw_vsock/virtio_transport.c
->+++ b/net/vmw_vsock/virtio_transport.c
->@@ -44,8 +44,6 @@ struct virtio_vsock {
-> 	struct work_struct send_pkt_work;
-> 	struct sk_buff_head send_pkt_queue;
->
->-	atomic_t queued_replies;
->-
-> 	/* The following fields are protected by rx_lock.  vqs[VSOCK_VQ_RX]
-> 	 * must be accessed with rx_lock held.
-> 	 */
->@@ -171,17 +169,6 @@ virtio_transport_send_pkt_work(struct work_struct *work)
->
-> 		virtio_transport_deliver_tap_pkt(skb);
->
->-		if (reply) {
->-			struct virtqueue *rx_vq = vsock->vqs[VSOCK_VQ_RX];
->-			int val;
->-
->-			val = atomic_dec_return(&vsock->queued_replies);
->-
->-			/* Do we now have resources to resume rx processing? */
->-			if (val + 1 == virtqueue_get_vring_size(rx_vq))
->-				restart_rx = true;
->-		}
->-
-> 		added = true;
-> 	}
->
->@@ -218,9 +205,6 @@ virtio_transport_send_pkt(struct sk_buff *skb)
-> 		goto out_rcu;
-> 	}
->
->-	if (virtio_vsock_skb_reply(skb))
->-		atomic_inc(&vsock->queued_replies);
->-
-> 	virtio_vsock_skb_queue_tail(&vsock->send_pkt_queue, skb);
-> 	queue_work(virtio_vsock_workqueue, &vsock->send_pkt_work);
->
->@@ -233,7 +217,7 @@ static int
-> virtio_transport_cancel_pkt(struct vsock_sock *vsk)
-> {
-> 	struct virtio_vsock *vsock;
->-	int cnt = 0, ret;
->+	int ret;
->
-> 	rcu_read_lock();
-> 	vsock = rcu_dereference(the_virtio_vsock);
->@@ -242,17 +226,7 @@ virtio_transport_cancel_pkt(struct vsock_sock *vsk)
-> 		goto out_rcu;
-> 	}
->
->-	cnt = virtio_transport_purge_skbs(vsk, &vsock->send_pkt_queue);
->-
->-	if (cnt) {
->-		struct virtqueue *rx_vq = vsock->vqs[VSOCK_VQ_RX];
->-		int new_cnt;
->-
->-		new_cnt = atomic_sub_return(cnt, &vsock->queued_replies);
->-		if (new_cnt + cnt >= virtqueue_get_vring_size(rx_vq) &&
->-		    new_cnt < virtqueue_get_vring_size(rx_vq))
->-			queue_work(virtio_vsock_workqueue, &vsock->rx_work);
->-	}
->+	virtio_transport_purge_skbs(vsk, &vsock->send_pkt_queue);
->
-> 	ret = 0;
->
->@@ -323,18 +297,6 @@ static void virtio_transport_tx_work(struct work_struct *work)
-> 		queue_work(virtio_vsock_workqueue, &vsock->send_pkt_work);
-> }
->
->-/* Is there space left for replies to rx packets? */
->-static bool virtio_transport_more_replies(struct virtio_vsock *vsock)
->-{
->-	struct virtqueue *vq = vsock->vqs[VSOCK_VQ_RX];
->-	int val;
->-
->-	smp_rmb(); /* paired with atomic_inc() and atomic_dec_return() */
->-	val = atomic_read(&vsock->queued_replies);
->-
->-	return val < virtqueue_get_vring_size(vq);
->-}
->-
-> /* event_lock must be held */
-> static int virtio_vsock_event_fill_one(struct virtio_vsock *vsock,
-> 				       struct virtio_vsock_event *event)
->@@ -581,14 +543,6 @@ static void virtio_transport_rx_work(struct work_struct *work)
-> 			struct sk_buff *skb;
-> 			unsigned int len;
->
->-			if (!virtio_transport_more_replies(vsock)) {
->-				/* Stop rx until the device processes already
->-				 * pending replies.  Leave rx virtqueue
->-				 * callbacks disabled.
->-				 */
->-				goto out;
->-			}
->-
-> 			skb = virtqueue_get_buf(vq, &len);
-> 			if (!skb)
-> 				break;
->@@ -735,7 +689,6 @@ static int virtio_vsock_probe(struct virtio_device *vdev)
->
-> 	vsock->rx_buf_nr = 0;
-> 	vsock->rx_buf_max_nr = 0;
->-	atomic_set(&vsock->queued_replies, 0);
->
-> 	mutex_init(&vsock->tx_lock);
-> 	mutex_init(&vsock->rx_lock);
->-- 
->2.40.1
->
->
->
->
->Amazon Web Services Development Center Germany GmbH
->Krausenstr. 38
->10117 Berlin
->Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
->Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
->Sitz: Berlin
->Ust-ID: DE 365 538 597
->
->
+--000000000000c4ca390626f24e6f
+Content-Type: text/x-patch; charset="US-ASCII"; name="fuse-evict-race-incremental.patch"
+Content-Disposition: attachment; 
+	filename="fuse-evict-race-incremental.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m3iorc5z0>
+X-Attachment-Id: f_m3iorc5z0
 
+ZGlmZiAtLWdpdCBhL2ZzL2Z1c2UvZGlyLmMgYi9mcy9mdXNlL2Rpci5jCmluZGV4IDdkMGEwZmFi
+NjkyMC4uNTliZTI4Nzc3ODZmIDEwMDY0NAotLS0gYS9mcy9mdXNlL2Rpci5jCisrKyBiL2ZzL2Z1
+c2UvZGlyLmMKQEAgLTY5Miw4ICs2OTIsNyBAQCBzdGF0aWMgaW50IGZ1c2VfY3JlYXRlX29wZW4o
+c3RydWN0IG1udF9pZG1hcCAqaWRtYXAsIHN0cnVjdCBpbm9kZSAqZGlyLAogCWZmLT5ub2RlaWQg
+PSBvdXRlbnRyeS5ub2RlaWQ7CiAJZmYtPm9wZW5fZmxhZ3MgPSBvdXRvcGVucC0+b3Blbl9mbGFn
+czsKIAlpbm9kZSA9IGZ1c2VfaWdldChkaXItPmlfc2IsIG91dGVudHJ5Lm5vZGVpZCwgb3V0ZW50
+cnkuZ2VuZXJhdGlvbiwKLQkJCSAgJm91dGVudHJ5LmF0dHIsIEFUVFJfVElNRU9VVCgmb3V0ZW50
+cnkpLCAwLAotCQkJICBmdXNlX2dldF9ldmljdF9jdHIoZm0tPmZjKSk7CisJCQkgICZvdXRlbnRy
+eS5hdHRyLCBBVFRSX1RJTUVPVVQoJm91dGVudHJ5KSwgMCwgMCk7CiAJaWYgKCFpbm9kZSkgewog
+CQlmbGFncyAmPSB+KE9fQ1JFQVQgfCBPX0VYQ0wgfCBPX1RSVU5DKTsKIAkJZnVzZV9zeW5jX3Jl
+bGVhc2UoTlVMTCwgZmYsIGZsYWdzKTsKQEAgLTgyNCw4ICs4MjMsNyBAQCBzdGF0aWMgaW50IGNy
+ZWF0ZV9uZXdfZW50cnkoc3RydWN0IG1udF9pZG1hcCAqaWRtYXAsIHN0cnVjdCBmdXNlX21vdW50
+ICpmbSwKIAkJZ290byBvdXRfcHV0X2ZvcmdldF9yZXE7CiAKIAlpbm9kZSA9IGZ1c2VfaWdldChk
+aXItPmlfc2IsIG91dGFyZy5ub2RlaWQsIG91dGFyZy5nZW5lcmF0aW9uLAotCQkJICAmb3V0YXJn
+LmF0dHIsIEFUVFJfVElNRU9VVCgmb3V0YXJnKSwgMCwKLQkJCSAgZnVzZV9nZXRfZXZpY3RfY3Ry
+KGZtLT5mYykpOworCQkJICAmb3V0YXJnLmF0dHIsIEFUVFJfVElNRU9VVCgmb3V0YXJnKSwgMCwg
+MCk7CiAJaWYgKCFpbm9kZSkgewogCQlmdXNlX3F1ZXVlX2ZvcmdldChmbS0+ZmMsIGZvcmdldCwg
+b3V0YXJnLm5vZGVpZCwgMSk7CiAJCXJldHVybiAtRU5PTUVNOwpAQCAtMjAzMSw3ICsyMDI5LDcg
+QEAgaW50IGZ1c2VfZG9fc2V0YXR0cihzdHJ1Y3QgbW50X2lkbWFwICppZG1hcCwgc3RydWN0IGRl
+bnRyeSAqZGVudHJ5LAogCiAJZnVzZV9jaGFuZ2VfYXR0cmlidXRlc19jb21tb24oaW5vZGUsICZv
+dXRhcmcuYXR0ciwgTlVMTCwKIAkJCQkgICAgICBBVFRSX1RJTUVPVVQoJm91dGFyZyksCi0JCQkJ
+ICAgICAgZnVzZV9nZXRfY2FjaGVfbWFzayhpbm9kZSkpOworCQkJCSAgICAgIGZ1c2VfZ2V0X2Nh
+Y2hlX21hc2soaW5vZGUpLCAwKTsKIAlvbGRzaXplID0gaW5vZGUtPmlfc2l6ZTsKIAkvKiBzZWUg
+dGhlIGNvbW1lbnQgaW4gZnVzZV9jaGFuZ2VfYXR0cmlidXRlcygpICovCiAJaWYgKCFpc193YiB8
+fCBpc190cnVuY2F0ZSkKZGlmZiAtLWdpdCBhL2ZzL2Z1c2UvZnVzZV9pLmggYi9mcy9mdXNlL2Z1
+c2VfaS5oCmluZGV4IGY5ZmYwZDAwMjlhYi4uYTk4ZmIyNDNiOTEzIDEwMDY0NAotLS0gYS9mcy9m
+dXNlL2Z1c2VfaS5oCisrKyBiL2ZzL2Z1c2UvZnVzZV9pLmgKQEAgLTExMzYsNyArMTEzNiw4IEBA
+IHZvaWQgZnVzZV9jaGFuZ2VfYXR0cmlidXRlcyhzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1Y3Qg
+ZnVzZV9hdHRyICphdHRyLAogCiB2b2lkIGZ1c2VfY2hhbmdlX2F0dHJpYnV0ZXNfY29tbW9uKHN0
+cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBmdXNlX2F0dHIgKmF0dHIsCiAJCQkJICAgc3RydWN0
+IGZ1c2Vfc3RhdHggKnN4LAotCQkJCSAgIHU2NCBhdHRyX3ZhbGlkLCB1MzIgY2FjaGVfbWFzayk7
+CisJCQkJICAgdTY0IGF0dHJfdmFsaWQsIHUzMiBjYWNoZV9tYXNrLAorCQkJCSAgIHU2NCBldmlj
+dF9jdHIpOwogCiB1MzIgZnVzZV9nZXRfY2FjaGVfbWFzayhzdHJ1Y3QgaW5vZGUgKmlub2RlKTsK
+IApkaWZmIC0tZ2l0IGEvZnMvZnVzZS9pbm9kZS5jIGIvZnMvZnVzZS9pbm9kZS5jCmluZGV4IDg3
+MmM2MWRkNTY2MS4uYzUxMDlkNWI4MDZmIDEwMDY0NAotLS0gYS9mcy9mdXNlL2lub2RlLmMKKysr
+IGIvZnMvZnVzZS9pbm9kZS5jCkBAIC0xNzMsNyArMTczLDE0IEBAIHN0YXRpYyB2b2lkIGZ1c2Vf
+ZXZpY3RfaW5vZGUoc3RydWN0IGlub2RlICppbm9kZSkKIAkJCWZ1c2VfY2xlYW51cF9zdWJtb3Vu
+dF9sb29rdXAoZmMsIGZpLT5zdWJtb3VudF9sb29rdXApOwogCQkJZmktPnN1Ym1vdW50X2xvb2t1
+cCA9IE5VTEw7CiAJCX0KLQkJYXRvbWljNjRfaW5jKCZmYy0+ZXZpY3RfY3RyKTsKKwkJLyoKKwkJ
+ICogRXZpY3Qgb2Ygbm9uLWRlbGV0ZWQgaW5vZGUgbWF5IHJhY2Ugd2l0aCBvdXRzdGFuZGluZwor
+CQkgKiBMT09LVVAvUkVBRERJUlBMVVMgcmVxdWVzdHMgYW5kIHJlc3VsdCBpbiBpbmNvbnNpc3Rl
+bmN5IHdoZW4KKwkJICogdGhlIHJlcXVlc3QgZmluaXNoZXMuICBEZWFsIHdpdGggdGhhdCBoZXJl
+IGJ5IGJ1bXBpbmcgYQorCQkgKiBjb3VudGVyIHRoYXQgY2FuIGJlIGNvbXBhcmVkIHRvIHRoZSBz
+dGFydGluZyB2YWx1ZS4KKwkJICovCisJCWlmIChpbm9kZS0+aV9ubGluayA+IDApCisJCQlhdG9t
+aWM2NF9pbmMoJmZjLT5ldmljdF9jdHIpOwogCX0KIAlpZiAoU19JU1JFRyhpbm9kZS0+aV9tb2Rl
+KSAmJiAhZnVzZV9pc19iYWQoaW5vZGUpKSB7CiAJCVdBUk5fT04oZmktPmlvY2FjaGVjdHIgIT0g
+MCk7CkBAIC0yMDcsNyArMjE0LDggQEAgc3RhdGljIGlub190IGZ1c2Vfc3F1YXNoX2lubyh1NjQg
+aW5vNjQpCiAKIHZvaWQgZnVzZV9jaGFuZ2VfYXR0cmlidXRlc19jb21tb24oc3RydWN0IGlub2Rl
+ICppbm9kZSwgc3RydWN0IGZ1c2VfYXR0ciAqYXR0ciwKIAkJCQkgICBzdHJ1Y3QgZnVzZV9zdGF0
+eCAqc3gsCi0JCQkJICAgdTY0IGF0dHJfdmFsaWQsIHUzMiBjYWNoZV9tYXNrKQorCQkJCSAgIHU2
+NCBhdHRyX3ZhbGlkLCB1MzIgY2FjaGVfbWFzaywKKwkJCQkgICB1NjQgZXZpY3RfY3RyKQogewog
+CXN0cnVjdCBmdXNlX2Nvbm4gKmZjID0gZ2V0X2Z1c2VfY29ubihpbm9kZSk7CiAJc3RydWN0IGZ1
+c2VfaW5vZGUgKmZpID0gZ2V0X2Z1c2VfaW5vZGUoaW5vZGUpOwpAQCAtMjE2LDggKzIyNCwyMCBA
+QCB2b2lkIGZ1c2VfY2hhbmdlX2F0dHJpYnV0ZXNfY29tbW9uKHN0cnVjdCBpbm9kZSAqaW5vZGUs
+IHN0cnVjdCBmdXNlX2F0dHIgKmF0dHIsCiAKIAlmaS0+YXR0cl92ZXJzaW9uID0gYXRvbWljNjRf
+aW5jX3JldHVybigmZmMtPmF0dHJfdmVyc2lvbik7CiAJZmktPmlfdGltZSA9IGF0dHJfdmFsaWQ7
+Ci0JLyogQ2xlYXIgYmFzaWMgc3RhdHMgZnJvbSBpbnZhbGlkIG1hc2sgKi8KLQlzZXRfbWFza19i
+aXRzKCZmaS0+aW52YWxfbWFzaywgU1RBVFhfQkFTSUNfU1RBVFMsIDApOworCisJLyoKKwkgKiBD
+bGVhciBiYXNpYyBzdGF0cyBmcm9tIGludmFsaWQgbWFzay4KKwkgKgorCSAqIERvbid0IGRvIHRo
+aXMgaWYgdGhpcyBpcyBjb21pbmcgZnJvbSBhIGZ1c2VfaWdldCgpIGNhbGwgYW5kIHRoZXJlCisJ
+ICogbWlnaHQgaGF2ZSBiZWVuIGEgcmFjaW5nIGV2aWN0IHdoaWNoIHdvdWxkJ3ZlIGludmFsaWRh
+dGVkIHRoZSByZXN1bHQKKwkgKiBpZiB0aGUgYXR0cl92ZXJzaW9uIHdvdWxkJ3ZlIGJlZW4gcHJl
+c2VydmVkLgorCSAqCisJICogIWV2aWN0X2N0ciAtPiB0aGlzIGlzIGNyZWF0ZQorCSAqIGZpLT5h
+dHRyX3ZlcnNpb24gIT0gMCAtPiB0aGlzIGlzIG5vdCBhIG5ldyBpbm9kZQorCSAqIGV2aWN0X2N0
+ciA9PSBmdXNlX2dldF9ldmljdF9jdHIoKSAtPiBubyBldmljdHMgd2hpbGUgZHVyaW5nIHJlcXVl
+c3QKKwkgKi8KKwlpZiAoIWV2aWN0X2N0ciB8fCBmaS0+YXR0cl92ZXJzaW9uIHx8IGV2aWN0X2N0
+ciA9PSBmdXNlX2dldF9ldmljdF9jdHIoZmMpKQorCQlzZXRfbWFza19iaXRzKCZmaS0+aW52YWxf
+bWFzaywgU1RBVFhfQkFTSUNfU1RBVFMsIDApOwogCiAJaW5vZGUtPmlfaW5vICAgICA9IGZ1c2Vf
+c3F1YXNoX2lubyhhdHRyLT5pbm8pOwogCWlub2RlLT5pX21vZGUgICAgPSAoaW5vZGUtPmlfbW9k
+ZSAmIFNfSUZNVCkgfCAoYXR0ci0+bW9kZSAmIDA3Nzc3KTsKQEAgLTI5Niw5ICszMTYsOSBAQCB1
+MzIgZnVzZV9nZXRfY2FjaGVfbWFzayhzdHJ1Y3QgaW5vZGUgKmlub2RlKQogCXJldHVybiBTVEFU
+WF9NVElNRSB8IFNUQVRYX0NUSU1FIHwgU1RBVFhfU0laRTsKIH0KIAotdm9pZCBmdXNlX2NoYW5n
+ZV9hdHRyaWJ1dGVzKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBmdXNlX2F0dHIgKmF0dHIs
+Ci0JCQkgICAgc3RydWN0IGZ1c2Vfc3RhdHggKnN4LAotCQkJICAgIHU2NCBhdHRyX3ZhbGlkLCB1
+NjQgYXR0cl92ZXJzaW9uKQorc3RhdGljIHZvaWQgZnVzZV9jaGFuZ2VfYXR0cmlidXRlc19pKHN0
+cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBmdXNlX2F0dHIgKmF0dHIsCisJCQkJICAgICBzdHJ1
+Y3QgZnVzZV9zdGF0eCAqc3gsIHU2NCBhdHRyX3ZhbGlkLAorCQkJCSAgICAgdTY0IGF0dHJfdmVy
+c2lvbiwgdTY0IGV2aWN0X2N0cikKIHsKIAlzdHJ1Y3QgZnVzZV9jb25uICpmYyA9IGdldF9mdXNl
+X2Nvbm4oaW5vZGUpOwogCXN0cnVjdCBmdXNlX2lub2RlICpmaSA9IGdldF9mdXNlX2lub2RlKGlu
+b2RlKTsKQEAgLTMzMiw3ICszNTIsOCBAQCB2b2lkIGZ1c2VfY2hhbmdlX2F0dHJpYnV0ZXMoc3Ry
+dWN0IGlub2RlICppbm9kZSwgc3RydWN0IGZ1c2VfYXR0ciAqYXR0ciwKIAl9CiAKIAlvbGRfbXRp
+bWUgPSBpbm9kZV9nZXRfbXRpbWUoaW5vZGUpOwotCWZ1c2VfY2hhbmdlX2F0dHJpYnV0ZXNfY29t
+bW9uKGlub2RlLCBhdHRyLCBzeCwgYXR0cl92YWxpZCwgY2FjaGVfbWFzayk7CisJZnVzZV9jaGFu
+Z2VfYXR0cmlidXRlc19jb21tb24oaW5vZGUsIGF0dHIsIHN4LCBhdHRyX3ZhbGlkLCBjYWNoZV9t
+YXNrLAorCQkJCSAgICAgIGV2aWN0X2N0cik7CiAKIAlvbGRzaXplID0gaW5vZGUtPmlfc2l6ZTsK
+IAkvKgpAQCAtMzczLDYgKzM5NCwxMyBAQCB2b2lkIGZ1c2VfY2hhbmdlX2F0dHJpYnV0ZXMoc3Ry
+dWN0IGlub2RlICppbm9kZSwgc3RydWN0IGZ1c2VfYXR0ciAqYXR0ciwKIAkJZnVzZV9kYXhfZG9u
+dGNhY2hlKGlub2RlLCBhdHRyLT5mbGFncyk7CiB9CiAKK3ZvaWQgZnVzZV9jaGFuZ2VfYXR0cmli
+dXRlcyhzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1Y3QgZnVzZV9hdHRyICphdHRyLAorCQkJICAg
+IHN0cnVjdCBmdXNlX3N0YXR4ICpzeCwgdTY0IGF0dHJfdmFsaWQsCisJCQkgICAgdTY0IGF0dHJf
+dmVyc2lvbikKK3sKKwlmdXNlX2NoYW5nZV9hdHRyaWJ1dGVzX2koaW5vZGUsIGF0dHIsIHN4LCBh
+dHRyX3ZhbGlkLCBhdHRyX3ZlcnNpb24sIDApOworfQorCiBzdGF0aWMgdm9pZCBmdXNlX2luaXRf
+c3VibW91bnRfbG9va3VwKHN0cnVjdCBmdXNlX3N1Ym1vdW50X2xvb2t1cCAqc2wsCiAJCQkJICAg
+ICAgdTY0IG5vZGVpZCkKIHsKQEAgLTQ4OSwxMiArNTE3LDggQEAgc3RydWN0IGlub2RlICpmdXNl
+X2lnZXQoc3RydWN0IHN1cGVyX2Jsb2NrICpzYiwgdTY0IG5vZGVpZCwKIAlmaS0+bmxvb2t1cCsr
+OwogCXNwaW5fdW5sb2NrKCZmaS0+bG9jayk7CiBkb25lOgotCWZ1c2VfY2hhbmdlX2F0dHJpYnV0
+ZXMoaW5vZGUsIGF0dHIsIE5VTEwsIGF0dHJfdmFsaWQsIGF0dHJfdmVyc2lvbik7Ci0Jc3Bpbl9s
+b2NrKCZmaS0+bG9jayk7Ci0JaWYgKGV2aWN0X2N0ciA8IGZ1c2VfZ2V0X2V2aWN0X2N0cihmYykp
+Ci0JCWZ1c2VfaW52YWxpZGF0ZV9hdHRyKGlub2RlKTsKLQlzcGluX3VubG9jaygmZmktPmxvY2sp
+OwotCisJZnVzZV9jaGFuZ2VfYXR0cmlidXRlc19pKGlub2RlLCBhdHRyLCBOVUxMLCBhdHRyX3Zh
+bGlkLCBhdHRyX3ZlcnNpb24sCisJCQkJIGV2aWN0X2N0cik7CiAJcmV0dXJuIGlub2RlOwogfQog
+Cg==
+--000000000000c4ca390626f24e6f--
 
