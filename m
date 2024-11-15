@@ -1,102 +1,173 @@
-Return-Path: <linux-kernel+bounces-410482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A586E9CDC22
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:06:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 749AF9CDC1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:05:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 592A11F22DC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:06:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A30A3B26825
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3611B3933;
-	Fri, 15 Nov 2024 10:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B361B3943;
+	Fri, 15 Nov 2024 10:05:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="F9t9nGM6"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gTDjr2QO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAA718FC91
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6231B3933
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731665109; cv=none; b=COChMuZuHS/+FnitNqCfanIzJZdbN64awswGaLEYtVLovstGM6POMFtg/0DL0BTTumWg/KblaCw8N/C7nn5EbA6s1/LrouCWZ2Xi1yp7oZnbZi+GDda+V6EGPyDjiNf1J7sawsRa76RN50ZZlIBtT/FepsM12K183I5aIy3CY6Y=
+	t=1731665107; cv=none; b=pXHGwsNORAYTtPJltPmuWGwunESrEEvwBRUXT5Pq/YHDE2O+1M5OfGhao2lgBawtAqSt5l2MvEv1mhDm1p01L9TVTAR6dLxTYGLXfru0xbrpUrXqEeccHEPk96wgOOJV+tBg6NXsvedUYHwNZkK7133jRiRmqUZCm9XxskvzNrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731665109; c=relaxed/simple;
-	bh=2Yrm9NsZNG2O5YXYCwAS6tiK/F4N4sWGIvFu1tZ5aZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B3qa8jUwpMnOe0JcDyKAj7IBCQjHKrKZVzjE8WTXGo55/3uYPRJ4azZP2qxmxPH+5yRjKn7oNt7Ss8+NyvUEXJwIQO7C6uBZiEsuHea0w4LCPwbXbs9jxive5tlcM+WsFJ9/5qvPw2X06+ZWS5TlPiddLMGqr1IbNlr03tZ1D8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=F9t9nGM6; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=vEKXm1Mo9tl1SFeLiTvA2Pt2EWYiAiGiFYXNoJkWNas=; b=F9t9nGM6EXbQS4NBMotsJjQHPK
-	0uCbAS9fZhvKuNVIFi/mLyW/mdvLszc+9uWDoXbndhWW1bhzP4Dk96gSN+131tDC7SKa/mGRnAfTD
-	29bfGQe9bww1rdaI0g69NEPRAyt856E/4E83wY8XnulZIrK2LrCKB5cDq32ZDoZdo0m424/Cc5Dhp
-	wutKko+ViKF1jZ14NjMfba3izwhn+0+7XcOhmZvOizuI6HHVsRR99tKuR+BKWdpfaG+tSyyF4VNZc
-	Jeuf1EZKkp74on+GiK9jEeCI2jRzLw9PSQ1CXToHQGo5SYAru2OXLtEx2tbJEgdLDXKiYKPllsnr+
-	597Mmijw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tBtCC-00000000DPh-23JS;
-	Fri, 15 Nov 2024 10:04:56 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 1E51330066A; Fri, 15 Nov 2024 11:04:56 +0100 (CET)
-Date: Fri, 15 Nov 2024 11:04:56 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Jon Kohler <jon@nutanix.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched/rt: use for_each_cpu_wrap to iterate over rto_mask
-Message-ID: <20241115100456.GX22801@noisy.programming.kicks-ass.net>
-References: <20241114220558.1842569-1-jon@nutanix.com>
+	s=arc-20240116; t=1731665107; c=relaxed/simple;
+	bh=UxggTA5vLInAIjYh1n0ydwNp3BO1gkE6PaUWMpgjedk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c9u1iM8lEXF/WksKkTb4Rh6kzVTektNpUge3F300Y7+EPZxsa4iJ4XjRDM4YdCDrUEvFzG8yE15y6RQItVszaCSQgZPbrxa1nWmP7ojgZ4DLLXg7MJz+njyxOLl9O0Kp6mKGUaqzb1kLTT/INv5e9A1gLEudVOlF+fibEvOsqiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gTDjr2QO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731665104;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=g1kAKAvwdmdjiltkVd6qbqhCfl7VUxLedhiq8NASCwc=;
+	b=gTDjr2QOCuxVoG5NX0rTmDbRQuiuW+c61jZh85nAB9QQx1Z5yRCwreUFZpcYmf2QE+DLSq
+	LA22RJUmRVcpGEliG1x6knzQLYSfFfHz9YltFuQIZR6TSqWerC1IsEi49uEEckqo+AnIsx
+	bbFFizD5Pj2g5wYyzPMIqi/H/9+dN/U=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-203-QGrCSOs5MfabunfMYAIP8w-1; Fri, 15 Nov 2024 05:05:02 -0500
+X-MC-Unique: QGrCSOs5MfabunfMYAIP8w-1
+X-Mimecast-MFC-AGG-ID: QGrCSOs5MfabunfMYAIP8w
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4314c6ca114so3813105e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 02:05:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731665101; x=1732269901;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=g1kAKAvwdmdjiltkVd6qbqhCfl7VUxLedhiq8NASCwc=;
+        b=K56KAZG1EC3jpjX/7aKFnl4O9O1cdmbSorA4sGL8XWDFOBkjyRWn8DTf//CJtKGXIw
+         L0kiN05omCtqybG8xiVYod5oWo3LvZidh1cc5x3Gf0M7CUBYl1VTKsix7XdlIgubSi9o
+         qGTKewolIZap2C9wMlGPh9p+QSKmAsx14Cc3svOThopwaGu+Ji7LP0H0KbouvJeL16DK
+         dyWHrZtMsrbLNxNM8iABa9Z3v+g4dfFrfj2mqFdsqdDrRpWZ0zGlPa/svc5j0PrwkL/r
+         d8+ou0U+HEYbkY6EKv5x7yTVlKkx0fl9/PFHX5m0WGKb1SDhJW1IKM+9D4lzq086XX60
+         qzFQ==
+X-Gm-Message-State: AOJu0YxSddh92OG4my06/FpGMRlI+sdFneHu9yUhOW1t522DhrWGqzsL
+	w09evk4SYA5cnxMkTsSBFm+ecN2h97+DujGXLNIxDzxS48QBaGLuRCtXErMRb54Ucs8lV4u9prD
+	tQZTc+/URLxWEeOSavv0T0RVbk/WRsnCvv4rGi0sgsgK4ZcYPJ8SnjKBdMg1CkrUzO7bX6A==
+X-Received: by 2002:a05:600c:3b2a:b0:431:6153:a246 with SMTP id 5b1f17b1804b1-432df726227mr16479535e9.13.1731665101478;
+        Fri, 15 Nov 2024 02:05:01 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEEz5+u3ZRZYo78oPclwnT1nZIiEdnYHBaxqmzIQBER+J7j/3O0koftmeu3voXxmbcw6vb7sQ==
+X-Received: by 2002:a05:600c:3b2a:b0:431:6153:a246 with SMTP id 5b1f17b1804b1-432df726227mr16479215e9.13.1731665101094;
+        Fri, 15 Nov 2024 02:05:01 -0800 (PST)
+Received: from ?IPV6:2003:cb:c721:8100:177e:1983:5478:64ec? (p200300cbc7218100177e1983547864ec.dip0.t-ipconnect.de. [2003:cb:c721:8100:177e:1983:5478:64ec])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da2444e7sm53797785e9.4.2024.11.15.02.04.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 02:04:59 -0800 (PST)
+Message-ID: <9160c6b4-f8a0-431d-8a21-ead510a887a1@redhat.com>
+Date: Fri, 15 Nov 2024 11:04:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241114220558.1842569-1-jon@nutanix.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 02/11] fs/proc/vmcore: replace vmcoredd_mutex by
+ vmcore_mutex
+To: Baoquan He <bhe@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+ kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+ Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>, Eric Farman
+ <farman@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>
+References: <20241025151134.1275575-1-david@redhat.com>
+ <20241025151134.1275575-3-david@redhat.com> <ZzcVGrUcgNMXPkqw@MiWiFi-R3L-srv>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZzcVGrUcgNMXPkqw@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 14, 2024 at 03:05:58PM -0700, Jon Kohler wrote:
-> When using NO_RT_PUSH_IPI, using for_each_cpu() over rto_mask may cause
-> many CPUs to attempt to pull load from the same CPU, causing RQ
-> lock contention.
+On 15.11.24 10:32, Baoquan He wrote:
+> On 10/25/24 at 05:11pm, David Hildenbrand wrote:
+>> Let's use our new mutex instead.
 > 
-> Use for_each_cpu_wrap instead to spread out which RQ gets evaluated
-> first, similar to how _nohz_idle_balance iterates over idle_cpus_mask.
-> This strategy is beneficial when there are many CPUs in rto_mask and
-> many other CPUs going in and out of schedule() at the same time.
-> 
-> Signed-off-by: Jon Kohler <jon@nutanix.com>
-> ---
->  kernel/sched/rt.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-> index 172c588de542..c883ff122f5d 100644
-> --- a/kernel/sched/rt.c
-> +++ b/kernel/sched/rt.c
-> @@ -2308,7 +2308,7 @@ static void pull_rt_task(struct rq *this_rq)
->  	}
->  #endif
->  
-> -	for_each_cpu(cpu, this_rq->rd->rto_mask) {
-> +	for_each_cpu_wrap(cpu, this_rq->rd->rto_mask, this_cpu+1) {
->  		if (this_cpu == cpu)
->  			continue;
+> Is there reason vmcoredd_mutex need be replaced and integrated with the
+> vmcore_mutex? Is it the reason the concurrent opening of vmcore could
+> happen with the old vmcoredd_mutex?
 
-Works for me I suppose, but as with that other rt patch, please do the
-matching change for dl too.
+Yes, see the next patch in this series. But I consider this valuable on 
+its own: there is no need to have two mutexes.
+
+I can make that clearer in the patch description.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
