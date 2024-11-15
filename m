@@ -1,103 +1,203 @@
-Return-Path: <linux-kernel+bounces-410600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B8C99CDDDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:55:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F6B09CDDE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:57:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E56112824ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:55:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A0281F22F46
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBBB1B6D1F;
-	Fri, 15 Nov 2024 11:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44891B3948;
+	Fri, 15 Nov 2024 11:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x58n/RLg"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dKZgfOol"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225EE18871E
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8611B6D15
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731671719; cv=none; b=iWQhF5SlGEO+nQCsWx9bcQrn1Bh+1NfTqzIKBf0xR9/FHL11SDKNCVBXvkrTKCyOInpOQvFw/VTLlnhIvbK65/xfQXzmyTsHyAifD/stP1nQlEYd04dXyQyjD4raDOuwbYoW2M3CyhI0JceP+xCRoZ1PH2xB25GQzn8RqLLC0so=
+	t=1731671862; cv=none; b=ZF3O3CdYvQvAi9TDM1LfGtpNCi7ow7J+4PCna+zt4b/xcfPYrco01lxSnVHLMZ2mjRRp/JcUAuXLJC6GUNtHeGOlLDFkil7/83Lpckk0HSzCO0gVmpz8JWxtgfFt4yEV/xq0FgbRtC170j8MyFvqKfgZ4fP1x4GRXUbu57kGY0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731671719; c=relaxed/simple;
-	bh=N0Dlcy4ODEyINkyFqZ4OExz3WI7d7VOMlLyb9BnaUkc=;
+	s=arc-20240116; t=1731671862; c=relaxed/simple;
+	bh=3PCLc6JHg+/COPy9QtRHjUbcpWaJsoK4fEGCaAkvl28=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rZfcX/79M6XIam5C93vN3bs1ONrweB/0w1//TI5BKNC+sjOtxncOYhr+jCQka6rcS0THDr4rOWxXZ7XR77Bt1KNmwTrpC6DS7P6r14JDqldIGT4pLn1JI7vDg+H9wAM2bBoOcMC7G89zFaFxuRKVVbxcSmzMCvbTBR6CaPUD9Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x58n/RLg; arc=none smtp.client-ip=209.85.221.48
+	 Content-Type:Content-Disposition:In-Reply-To; b=N2fN/jGXyzh2IIcsqHmRIsmsD5JRMjziSDsasdpqdsBM2kDE7njmnMl8sYylMulsbD2B7c4FfIDAzV28aQicseLqfF1qgH2uUm3O54Y/hs0pNHZ1UpCEG490f/7tCM/ZRK3k2HqFQmignf1mGWIsYwwK3vKOgopSdg4fbEfbxpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dKZgfOol; arc=none smtp.client-ip=209.85.215.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d518f9abcso1174599f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 03:55:17 -0800 (PST)
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ea8de14848so335145a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 03:57:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731671716; x=1732276516; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xNxG4xdSJv0mTSk+keMrkENbnyIHTmTRRxL8dSugZL0=;
-        b=x58n/RLgHNQVi8T8uD+0EkC3Uyd/vNRlfKMXlvxVhpGR5bPI5lASaWhDHQLsgOoz+p
-         hrvHf7KA92HiZH+wcCFUkLE0mBpwg1Foj7CEZzoDDwE39N5fqg1CITNAlqW+0iMoLrvJ
-         dlG4yq4GfAUam4qIBp74tGLUiULdz4oD2At2EW8+V3I6iT5KjA7AAhQVNoZCRj2WNdRW
-         V7yCmKQr5TydMyAOJYKzb37OoCPjwyspt2iwz2ur5+rn8RUHdf2exMT+s4CwiX93aVYC
-         MWRmIDO48IjE9laFA+3VcOIMA6gI7CTiW4r8EAUS/3+VD9AExaLMVC5eBT50A0z+RSHf
-         MNqQ==
+        d=linaro.org; s=google; t=1731671860; x=1732276660; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uCt9k+GAVMzvIuNpb03E3RgPTB9WFljhPlJF2v+aDCY=;
+        b=dKZgfOolO+c2bPmaE3brJcaom5ZDEDsc2gYXh6n6KNDTWh5xSvFvxZFoYYSUfs7O4X
+         vSfL4hHIDhVLv0k5dCV3dWgKgt75TpTY4Sk+nUDvDte04GR3EDNsvm/zlA8ZRBOe+W2K
+         qFVF0feAhtdzDsdDBFk3bbCRIF9+2W5F4giNBXcTvhPbAgIyp5+poMdEgt3v/MJy3201
+         QfPjBDj1KRKdzVs5kYEE8AF+eQje4PRTU7O+rpQVEavETShlpzJYvK+jjGISi8xi0lMI
+         dOHSERuZAxAsVB/Le1kjA4ky3ARKfCccWKseEJLUsyd6qE4DLogT74Ex3FhmQXyjAdxH
+         oByw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731671716; x=1732276516;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xNxG4xdSJv0mTSk+keMrkENbnyIHTmTRRxL8dSugZL0=;
-        b=cXrsUV/S9w9i6Ql0vGiXVBTymbxEM/mmmlfQjznWuwOG6C6VO0MVRXm+OdaWPVAvlW
-         RGXBNecjucjFz4MBwKk9OWcHWxkvKharU272NY6IouVu5I8chRrvUa8mHgW951KOXlUl
-         m7iMSBFXNHwtEYnxV+KmVWut1ZXmQ0xY6JO5YHi0+xwJjHe79REj32M/33eCaumqADh0
-         D29nGI3rFUCBpKiUqCtyA6iom5C2PnMCfpYSzVB490uAvkerl+yQHbfBrsT1t+emuUhw
-         2lUF12a3XuzGv5f/3aieUjpZdyGi1i+TTgIUvFXlglUIog0l0FQQwZCQiL82TMqGjM4e
-         lWoA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlgo0vgI3AfrRVeKajKQdUvByHY2+tT27ubJwkm1ar54dQ1tr6HOM+lRFt1pyRTdDVFsf4kXKnoB+fo/o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcK9SklKidh64wvvurYVbJhTzcfU/lCbIMMnBW0p+Io6t2Ire9
-	tu3dYUf5CS/eLd6aSP8nLvVT4Gc0ejJOvY4ItHF7Oclr/YLOTI4pytkeeRBKF2Q=
-X-Google-Smtp-Source: AGHT+IEDrFmWkNJyBlQfh9eLZ6iUWVe1jY5a4fTFgja8Q/hvy4vO1xvurXhI1C3fDweeY77TtX07yQ==
-X-Received: by 2002:a05:6000:1f8b:b0:37d:4fab:c194 with SMTP id ffacd0b85a97d-38225a29fe4mr1936660f8f.25.1731671716421;
-        Fri, 15 Nov 2024 03:55:16 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ae2f602sm4157425f8f.90.2024.11.15.03.55.15
+        d=1e100.net; s=20230601; t=1731671860; x=1732276660;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uCt9k+GAVMzvIuNpb03E3RgPTB9WFljhPlJF2v+aDCY=;
+        b=prMc6AZcVCoFBJzB7/ZZNul0HO25UTEC+Uj/rhG+/YtAw5v5mHSvDrGa4BakT3FUl1
+         acCVYx99IVXo71UloTQ3Gh/KajR3RJUzHBw9138kzZAl/tWBEjjpTwViTjGeMroaSJzc
+         2AIk1I8VIbN6MOlu7ABMxHMCmaOvsWDE0Gb2MikykuBbV0EEcR7twLYIRTZRz5IRvz/1
+         N/RfbZs3GkezvzyLvh9QBfmSJGwpOS8iKXNRsM8IFSR4Wg0GV04qqTrRJUXikbgHYe/H
+         HsOGAGbAxlX58FTHJlzQXFFRrkqFjAWhI17NhoYInparuiifJAGv/jgGcYXPPT70sLf+
+         5ztQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9byCzNdQlpdCxghrjDHDJ3zOwxKNlAwMSnpU7KO8s4rJRH9hX7DK5vhIX2BAi989x/F2clJpXydn4P7I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUs175cxfxd3Ih+F6+cUw01kWn86n1SfAtb3owKRVNzaMzpswX
+	J58R9qTdhJE+5r/Q+iiASu3A7MJNMiNDAm83d+b1FT4s+AvFyPehugdpmNeOGg==
+X-Google-Smtp-Source: AGHT+IGONxEz4Z0w25YthV6ZO/ymo1g7k+IQunHl1+xp1hq6h5Cgn3STyd9w9skNnOvequTxeJmjdg==
+X-Received: by 2002:a05:6a21:32a0:b0:1d9:4837:ada2 with SMTP id adf61e73a8af0-1dc90bf799bmr2982887637.35.1731671859863;
+        Fri, 15 Nov 2024 03:57:39 -0800 (PST)
+Received: from thinkpad ([117.193.208.47])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724770eef6csm1177542b3a.17.2024.11.15.03.57.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 03:55:15 -0800 (PST)
-Date: Fri, 15 Nov 2024 14:55:12 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Suraj Sonawane <surajsonawane0215@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: gpio-exar: replace division condition with direct
- comparison
-Message-ID: <f9daa71f-cba7-4086-a523-a2e6aa526ff3@stanley.mountain>
-References: <20241112201659.16785-1-surajsonawane0215@gmail.com>
- <ZzcWGJxqMJVYd4Tp@black.fi.intel.com>
+        Fri, 15 Nov 2024 03:57:39 -0800 (PST)
+Date: Fri, 15 Nov 2024 17:27:29 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Cc: andersson@kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	cros-qcom-dts-watchers@chromium.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicinc.com,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/6] PCI: qcom: Add support for host_stop_link() &
+ host_start_link()
+Message-ID: <20241115115729.wmcohbbc6sl4il3e@thinkpad>
+References: <20241112-qps615_pwr-v3-0-29a1e98aa2b0@quicinc.com>
+ <20241112-qps615_pwr-v3-5-29a1e98aa2b0@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZzcWGJxqMJVYd4Tp@black.fi.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241112-qps615_pwr-v3-5-29a1e98aa2b0@quicinc.com>
 
-Uh, I had to think back...  I had forgotten that I actually published that
-check.  I can unpublish it.
+On Tue, Nov 12, 2024 at 08:31:37PM +0530, Krishna chaitanya chundru wrote:
+> For the switches like QPS615 which needs to configure it before
+> the PCIe link is established.
+> 
+> If the link is up, the boatloader might powered and configured the
+> endpoint/switch already. In that case don't touch PCIe link else
+> assert the PERST# and disable LTSSM bit so that PCIe controller
+> will not participate in the link training as part of host_stop_link().
+> 
+> De-assert the PERST# and enable LTSSM bit back in host_start_link().
+> 
+> Introduce ltssm_disable function op to stop the link training.
+> 
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 39 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 39 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index ef44a82be058..048aea94e319 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -246,6 +246,7 @@ struct qcom_pcie_ops {
+>  	void (*host_post_init)(struct qcom_pcie *pcie);
+>  	void (*deinit)(struct qcom_pcie *pcie);
+>  	void (*ltssm_enable)(struct qcom_pcie *pcie);
+> +	void (*ltssm_disable)(struct qcom_pcie *pcie);
+>  	int (*config_sid)(struct qcom_pcie *pcie);
+>  };
+>  
+> @@ -617,6 +618,41 @@ static int qcom_pcie_post_init_1_0_0(struct qcom_pcie *pcie)
+>  	return 0;
+>  }
+>  
+> +static int qcom_pcie_host_start_link(struct dw_pcie *pci)
+> +{
+> +	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+> +
+> +	if (!dw_pcie_link_up(pcie->pci))  {
 
-I wrote it based on a real issue, and then when I looked at the warnings quite
-a few places wrote code like "if (x / 4)" where they had intended to write if
-if ((x % 4) == 0).  So it seemed like a good idea.
+I don't think the controller driver should worry about the bootloader
+initialization. You should export dw_pcie_link_up() as a callback and call
+start/stop link if only required (link not up) from the pwrctl driver.
 
-But in the two years since I published the warning, it has mostly been false
-positives.
+- Mani
 
-regards,
-dan carpenter
+> +		qcom_ep_reset_deassert(pcie);
+> +
+> +		if (pcie->cfg->ops->ltssm_enable)
+> +			pcie->cfg->ops->ltssm_enable(pcie);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void qcom_pcie_host_stop_link(struct dw_pcie *pci)
+> +{
+> +	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+> +
+> +	if (!dw_pcie_link_up(pcie->pci))  {
+> +		qcom_ep_reset_assert(pcie);
+> +
+> +		if (pcie->cfg->ops->ltssm_disable)
+> +			pcie->cfg->ops->ltssm_disable(pcie);
+> +	}
+> +}
+> +
+> +static void qcom_pcie_2_3_2_ltssm_disable(struct qcom_pcie *pcie)
+> +{
+> +	u32 val;
+> +
+> +	val = readl(pcie->parf + PARF_LTSSM);
+> +	val &= ~LTSSM_EN;
+> +	writel(val, pcie->parf + PARF_LTSSM);
+> +}
+> +
+>  static void qcom_pcie_2_3_2_ltssm_enable(struct qcom_pcie *pcie)
+>  {
+>  	u32 val;
+> @@ -1361,6 +1397,7 @@ static const struct qcom_pcie_ops ops_1_9_0 = {
+>  	.host_post_init = qcom_pcie_host_post_init_2_7_0,
+>  	.deinit = qcom_pcie_deinit_2_7_0,
+>  	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+> +	.ltssm_disable = qcom_pcie_2_3_2_ltssm_disable,
+>  	.config_sid = qcom_pcie_config_sid_1_9_0,
+>  };
+>  
+> @@ -1418,6 +1455,8 @@ static const struct qcom_pcie_cfg cfg_sc8280xp = {
+>  static const struct dw_pcie_ops dw_pcie_ops = {
+>  	.link_up = qcom_pcie_link_up,
+>  	.start_link = qcom_pcie_start_link,
+> +	.host_start_link = qcom_pcie_host_start_link,
+> +	.host_stop_link = qcom_pcie_host_stop_link,
+>  };
+>  
+>  static int qcom_pcie_icc_init(struct qcom_pcie *pcie)
+> 
+> -- 
+> 2.34.1
+> 
 
+-- 
+மணிவண்ணன் சதாசிவம்
 
