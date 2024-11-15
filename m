@@ -1,166 +1,123 @@
-Return-Path: <linux-kernel+bounces-410472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A6A19CDC03
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:00:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD459CDC05
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:01:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20592283DE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:00:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FD25B2315B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29965193067;
-	Fri, 15 Nov 2024 09:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13A51B0F25;
+	Fri, 15 Nov 2024 10:00:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HrhlFTU6";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NfwlmhTU";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="u9hXQfOV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="FT5/TzqE"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KJIUcDUY"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1E4192D64;
-	Fri, 15 Nov 2024 09:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADB71AF4F6
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731664785; cv=none; b=F0RdU9YhtqSx91I2IjIVkU1Vs85R171SYJuQZvm6UnVbt5QNNDEKD/vmZNVLD+JJFGBe+B7jbUvEATTUmgU0cLEKW2ZtF4119vn8qzkIYzHai7QDvL/nZCCXaZ9XaoYPYECKWdkfQiqAW/aQ3kUe7OI3Iz5MnxPObD3rETJtQno=
+	t=1731664854; cv=none; b=qwkB/0Boyb2lVZyBS/37Qt/69U1Xm5SVc3KKZMDATAAvZC1dYf3olZQbad1j6qik3TEnYuGM1ksmDb3qrjhfjVQ5nrbyTtmPlp/qyqg3RgYYTsP0rnsyJhTCO4cx+0xwZ+XEIqdS2c4aOMjvggOSnjaQC0ApfF8naDDN/AVDLXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731664785; c=relaxed/simple;
-	bh=aNneLhG6ndUm6PgWRzbt0kR8VVlFoKPdIhn59X2H178=;
-	h=Date:Message-ID:From:To:Cc:Subject:MIME-Version:Content-Type; b=gl30XBMkKUQNbGaCw3kB9ZJNxwhaNpj2P8UR8Exq3rGq800P72QnI8lttoqhSZ+LDyI0s172YUHQip/chn4AvJxRd2rrv0gD7sta3zRGupZfwQFGJ4pFB3WZ8jr1uYlRN4EIbl63aJIgkyEXYcoEBc4f03J3nZq3dzj2IAa/JT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HrhlFTU6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NfwlmhTU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=u9hXQfOV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=FT5/TzqE; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A283B1F7BF;
-	Fri, 15 Nov 2024 09:59:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731664781; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=gl/T2RQ1L4pDQg5cdpxUzjXA9Vs2o4SR+xWtc9Ju0zg=;
-	b=HrhlFTU6pCOX5mp9DgF+EA35v6NMVmt86LC25HsYsyvIxVoOkIk+PsB5DU3XYxkRuiSdnR
-	yMd/8dadeHdDl85HDaBmhV1+lnsviscqKBUTwgTxt8+JCv+a8SRN/qUAFoiihRNR1r7NJR
-	MTrMUPrKAB7+fg/FBhAT+XwpPCVs+Mk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731664781;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=gl/T2RQ1L4pDQg5cdpxUzjXA9Vs2o4SR+xWtc9Ju0zg=;
-	b=NfwlmhTUSdhs+eEi9rtPmBmyJrasS2T4AuFCDUpVNiUu/+VnB7zCaD91VE1x351FxnnOSB
-	5EDLiJ5bCvUa3UDw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731664780; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=gl/T2RQ1L4pDQg5cdpxUzjXA9Vs2o4SR+xWtc9Ju0zg=;
-	b=u9hXQfOV4U6ENkpkr7emNOQB9z9eKHxFO5DNLH8Um3xYU9AYeH57bm939t4VoWWlzn6IQc
-	rysKRlSPyap0eGABg0Rrqk9wa8omQvFA7QRnR2YzhWQubVks6JjjxGleyHe1oNOVp9bdND
-	LKTfv9M6TPg5qveoZ2kP3BPZlNWn+pw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731664780;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=gl/T2RQ1L4pDQg5cdpxUzjXA9Vs2o4SR+xWtc9Ju0zg=;
-	b=FT5/TzqEGlJnRndrp8/ZoegcbR5FPVaGetWzFlhWiQjLh8nCD/24+A3wC43Mo4YOcC1CxU
-	pYLPkpUWtNsbjNBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7B858134B8;
-	Fri, 15 Nov 2024 09:59:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id e+0EHYwbN2c6TgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 15 Nov 2024 09:59:40 +0000
-Date: Fri, 15 Nov 2024 10:59:40 +0100
-Message-ID: <877c94stpv.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] sound fixes for 6.12
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1731664854; c=relaxed/simple;
+	bh=Y0l6MYL9FxYgkAobyrV1dEFhx51cciq6fBBoBftTGmI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OK7C470ZATrQyzycUzf8FtKLJBeycZnhjOfsJCrO85zE92m/P7DNKqVdL+jtmkC59wGG3g1rPqYCmBwC5xfvC3FP8BCi2WOuupak0TB627lmVvQqpk2Oc5U0GtasC2Muy/096J2HspjP8WK74kRu2uZCCFt6sG3R/g0/663p3jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KJIUcDUY; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539e5c15fd3so1577568e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 02:00:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731664850; x=1732269650; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SJgKGB6f22K0gvP8aMMCcAaLzCd5tDQzwgfcDLV3EIs=;
+        b=KJIUcDUYnDJmflc7cRSKo+CRHyffV+LmGgiwE9ochJCLgHzc+EEsDarqDZIbnI7TeQ
+         qJBifzWJM8Xz1KhAbXEIWGTWAxvTSeWLuUMXM1VzmACzbhB7h6n7Grn0/5ymH8Siczo9
+         1L1tzJfdGIkbZicFZ9xo51NI+53UrdEq+/wx+pJ3me1d5wh+JTOeQKmx9CdLmJADAY7m
+         XtloV11IZdQW7ri3nwDGZeDb+FjU0BOAf6gvN95KVAEyaYwLAnJZRNODfAqSqeCNFFtg
+         tPrsn313gf0AwQngc0yq8Rw9lIJk008Fw0GLYTPtf6vBlm171ulyhfJ1E4BMFJSImRrq
+         SOHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731664850; x=1732269650;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SJgKGB6f22K0gvP8aMMCcAaLzCd5tDQzwgfcDLV3EIs=;
+        b=nWib3PfFU7LIgEhBkHFDpQdTyKxsO8nrCZUX5Djl8LR8KP0XFOM5795Fnc+wL2JsjZ
+         yk4da0BG8H2u9cKAmqu0H/WL/3COLzbtaviNI9LWIcDEk3SENqJGvAAtJEYPoG1cSGUM
+         TTXrxkrsdQMJDRxR63Fy70ipk9StGZnqVjrVmmUpNAHDcdd9LeEbbGgEcwABFjCjtnYk
+         FGgV0RzNHKuOI0mBDmZcdO0nJVTXPoD9Bn1Nt3WhsN5bmUgHIy7zqTL0UdX8u4VS/yj8
+         AUW25mGQgl7x+sJ7PtG6dTbN2rlP41OwbppG4owfZnwBidGZO5bD9HHb/dkiGmbaDl76
+         V33Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXD9w3PYgcj1udJd9zpcxGTJUJkuGuDlx9Tzwxjd3Fx3qBcPfQms2lh9USFaFq9ZvhCcZD05fPrk6Me2vI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFzanHhTf6KWYzEGzJTB3ErmKkupuvCIH0UolHy7AUYItEG0Eh
+	TR+NTFu5a5e/mufK5obqN6eyn6EvTopkdu2L/AmJz9LY0PdbHsxTsgo33JW+/KkY7rl5EH6Oti9
+	P
+X-Google-Smtp-Source: AGHT+IFjnu0mql1AWmnPV6lQab9zoQWnmE3byvz9cEBkk9nA7T4JGo1IHamARfz9EQEozoujyBSePA==
+X-Received: by 2002:a05:6512:3c95:b0:53d:a9c1:f6d with SMTP id 2adb3069b0e04-53dab29ba46mr831016e87.13.1731664845746;
+        Fri, 15 Nov 2024 02:00:45 -0800 (PST)
+Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da6548c3csm500950e87.261.2024.11.15.02.00.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 02:00:44 -0800 (PST)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Linus <torvalds@linux-foundation.org>,
+	linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [GIT PULL] MMC fixes for v6.12-rc8
+Date: Fri, 15 Nov 2024 11:00:42 +0100
+Message-ID: <20241115100042.116738-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -3.30
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Linus,
+Hi Linus,
 
-please pull sound fixes for v6.12 from:
+Here's a PR with a couple of MMC fixes intended for v6.12-rc8. Details about the
+highlights are as usual found in the signed tag.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.12
+Please pull this in!
 
-The topmost commit is 5ec23a1b53a98dbd7ea33954db5f0fe7110903aa
+Kind regards
+Ulf Hansson
+
+
+The following changes since commit c4dedaaeb3f78d3718e9c1b1e4d972a6b99073cd:
+
+  mmc: sdhci-pci-gli: GL9767: Fix low power mode in the SD Express process (2024-10-28 12:30:27 +0100)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v6.12-rc3-2
+
+for you to fetch changes up to 1635e407a4a64d08a8517ac59ca14ad4fc785e75:
+
+  Revert "mmc: dw_mmc: Fix IDMAC operation with pages bigger than 4K" (2024-11-12 19:40:40 +0100)
 
 ----------------------------------------------------------------
-
-sound fixes for 6.12
-
-A few last-minute fixes.  All changes are device-specific small
-fixes that should be pretty safe to apply.
+MMC host:
+ - dw_mmc: Revert fix for IDMAC operation with pages bigger than 4K
+ - sunxi-mmc: Fix A100 compatible description
 
 ----------------------------------------------------------------
+Andre Przywara (1):
+      mmc: sunxi-mmc: Fix A100 compatible description
 
-Deep Harsora (1):
-      ASoC: intel: sof_sdw: add quirk for Dell SKU
+Aurelien Jarno (1):
+      Revert "mmc: dw_mmc: Fix IDMAC operation with pages bigger than 4K"
 
-Eryk Zagorski (1):
-      ALSA: usb-audio: Fix Yamaha P-125 Quirk Entry
-
-John Watts (1):
-      ASoC: audio-graph-card2: Purge absent supplies for device tree nodes
-
-Kailang Yang (2):
-      ALSA: hda/realtek - Fixed Clevo platform headset Mic issue
-      ALSA: hda/realtek - update set GPIO3 to default for Thinkpad with ALC1318
-
-Maksym Glubokiy (1):
-      ALSA: hda/realtek: fix mute/micmute LEDs for a HP EliteBook 645 G10
-
-Mark Brown (1):
-      ASoC: max9768: Fix event generation for playback mute
-
----
- sound/pci/hda/patch_realtek.c         | 13 +++++++++++--
- sound/soc/codecs/max9768.c            | 11 +++++++++--
- sound/soc/generic/audio-graph-card2.c |  3 +++
- sound/soc/intel/boards/sof_sdw.c      |  8 ++++++++
- sound/usb/quirks-table.h              | 14 +++++++++++++-
- 5 files changed, 44 insertions(+), 5 deletions(-)
-
+ drivers/mmc/host/dw_mmc.c    | 4 ++--
+ drivers/mmc/host/sunxi-mmc.c | 6 +++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
