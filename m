@@ -1,116 +1,124 @@
-Return-Path: <linux-kernel+bounces-410715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AD079CE02D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:37:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FBBE9CE063
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:43:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00A6028248E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:37:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0CD21F27EE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C961CDA04;
-	Fri, 15 Nov 2024 13:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B15F1CDFC8;
+	Fri, 15 Nov 2024 13:37:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="kzHEM7fm"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Kl27prUP"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6EA51CCEE8;
-	Fri, 15 Nov 2024 13:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888FB1C5798;
+	Fri, 15 Nov 2024 13:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731677808; cv=none; b=AHRlDtWWvhFamPdAvs3z9JED+3PjHJPEOOxgv473Hu9EMXI4VUeqWhyqZ63WXyrvFvyWFgA6oluxtB80kSU0a3LnIeeRdl9EM7ych51MLJ5CMoz5SJSP6gHibw5nlj05CShRdmLAcRXLNzmwQz1Rx25ozrCBbuKCIcn5U7uAA3w=
+	t=1731677867; cv=none; b=BA5wcYv/cc3IfemfP4s6z4/MFACrn6dgEKMY/fodsmci7j0G5Phhuj/QibOpV00lbeQCnmeGzitk/cTzC2XXW1qtw4uWcV3eAtM3Rl1VunS9fM8bWYBv4sYlYUgOdP3sR2QhdANzfKeWK8d9CB6QAh07LYYRkij/2X6TIDQzuBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731677808; c=relaxed/simple;
-	bh=gd+fZnjtIrzZH8uRFuesecl8rg3R3bbNBsC0AcNkI2k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qCISEN4lx3XQs1obnGeVWE9dPcnU6LM56vg0RbeMrAmnjyDlJbDnFLZrVSWVu8FRTYhFYPUQNkh72DObMlLBnl/Qov25QFGTznmYunZV6Tz/TgwBMxWFJMdRbBdM3LLoy3WwsV5CR6h+WDszgeDrM9fkmLpJh12BzhAmJqxpaNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=kzHEM7fm; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4315839a7c9so15674375e9.3;
-        Fri, 15 Nov 2024 05:36:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1731677805; x=1732282605; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QFMEoy+VpYmS896YAj0P2dmeI7XvRACI2gkwVcDp1l0=;
-        b=kzHEM7fmloPhBc0IQt6/WezYsS9dIEmPFY/6WGhk1uq6MSlDzUPimMFh/xGmyXIlVi
-         s5sN52oZsTYDmher0sVWXHkPeeqwoZn7k6UFqJ9HznKAQpmWJrah0SpdKn8Yd9p/oNQp
-         g7gJ2V5WtP3apMl06QrR8bPragScVLWmDiX+ps+WjPb21+kLUeqpbRy2bEHRT7Ug/76c
-         HSkf2aXqa8LF28P8f9BXdcB6eL619lQv2L12ilB13Sx0/YpHWULMG6KZ5BXc0yACfTkE
-         uHEyj29aPBikhgq7FOtOK71kabaQbtDol9TtFIevACfjhE+FGynDbho1+S3eOBCGdd1b
-         oCkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731677805; x=1732282605;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QFMEoy+VpYmS896YAj0P2dmeI7XvRACI2gkwVcDp1l0=;
-        b=u0ZWqJWL32sQ0OSTMKm0wkTWYkZatjaWThU6ncgeLKfXEehmZPLpVG5LfBkCf8G+rH
-         MrnfSR4ePEnwQGA9GcU8wlNL+1V1CkKG5i//K7Z1FHE9Kzj10IMviqQrDvBAdrDF/Ntl
-         P/wosclA8GVKKj1DbM8pRqXdA+AUD23bfJ1xe1w75c5gPGEnG7COcjCvdEQ5eUdVW0jj
-         jHMdz5E7DK/x3vRoj+sRDVlFl03ccegzNRnHVRy9Cj3iTEbSOKzBRTbW9f2U1wK8ensE
-         BpbtPOAVAMbXyMCpPURD+9XL0foRCyu9Oa2t9mzrfH+qIH/OMG8ZeYDR/XMl76i6x/2d
-         0NTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9CVgj30+/UtG/cV0s1Qdp6FNUT7KRIZ+frqUJ8hosLXIA30parmHzKkpbgWrJGgSoNgBoi/ZR@vger.kernel.org, AJvYcCXx7ovJbyNfQNr/I+N9WPOPJxc5wUYkanvm+GtFr7JtfLeXVbvZ+V1aTlPFxHbzdDXdG0syzD1pIQIKLE4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2vvTK4ZmM3vyZ56jjF1DhfTMRD2zAlvMsGBnOH5f4RHJKjxoM
-	W3SmB27Q8kaArjnjRar5ADoD+fkr9Td81NllWaDLlQQC7fOQ600=
-X-Google-Smtp-Source: AGHT+IFCGOXPuKhEx3Wk5YE8y8nyvKH/XqNmBteJiALxBgwKZI2U4Vxx8yVSP4YuFlEM3MRere3Prg==
-X-Received: by 2002:a05:600c:4f06:b0:426:6455:f124 with SMTP id 5b1f17b1804b1-432df67783emr23283655e9.0.1731677804979;
-        Fri, 15 Nov 2024 05:36:44 -0800 (PST)
-Received: from [192.168.1.3] (p5b05792c.dip0.t-ipconnect.de. [91.5.121.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da27fc8esm58933775e9.21.2024.11.15.05.36.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 05:36:44 -0800 (PST)
-Message-ID: <c4cda9aa-bead-4ca3-8878-8f6d05953ba4@googlemail.com>
-Date: Fri, 15 Nov 2024 14:36:42 +0100
+	s=arc-20240116; t=1731677867; c=relaxed/simple;
+	bh=NQpWmVhFjCz/wptYBuBsug630baqpkCBgf4u+LxRKT8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jWVdU8/EiI4glciZ+N754uhMe7lXi8bTGpZiBuFF77NWSHMWk+4lHkdA+BcBBP9YpyuT8F0Syx3487Lj/MOw9ep/XqDsiPxA9WMcbrh+Cu5lBLrk2TeDPh1No8iOohr5/1ngLW4Inaa/olN86OhkhDHH5jp7t2IYitybV8ThxzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Kl27prUP; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=8+1mHkW5xeUn98DLU2MzEmZyX/j5XKeY/1cmO/2lLi0=; b=Kl27prUPtKYLoQ/s2vZBSQyK7n
+	io0y6C+YFo3TFcRYOPId/ovLvP0qnH4MTTmrLCxykNrMAgDlcjuEKYNVgmLD0AZp19EbK4AnN9AMQ
+	d2BNDZbM9fF77Uc96Q+nxoFC+wIz1pzysRw6sDoZzSa5/0QH/84rJz04uqaaf8eUUavgjq89VY10V
+	IDEScKjh1+tLlUHzQwe3Dcd/ZG9AUCz28wcHJEhUWDeaYKZjmqII/edIgVwkDKi5OuzyWvXADw4vR
+	KkpT5l5b86Q3467cLtrC48K/+RD+6P5FkGnwLWRNB6g+B3DsMoen12t09Pu66ZSTV8DuHSRput/f7
+	R8PShxVw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36000)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tBwVq-0001Pv-1F;
+	Fri, 15 Nov 2024 13:37:26 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tBwVk-00029i-1G;
+	Fri, 15 Nov 2024 13:37:20 +0000
+Date: Fri, 15 Nov 2024 13:37:20 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net v2 1/2] net: phy: replace phydev->eee_enabled with
+ eee_cfg.eee_enabled
+Message-ID: <ZzdOkE0lqpl6wx2d@shell.armlinux.org.uk>
+References: <20241115111151.183108-1-yong.liang.choong@linux.intel.com>
+ <20241115111151.183108-2-yong.liang.choong@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.6 00/48] 6.6.62-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20241115063722.962047137@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20241115063722.962047137@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241115111151.183108-2-yong.liang.choong@linux.intel.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Am 15.11.2024 um 07:37 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.6.62 release.
-> There are 48 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Fri, Nov 15, 2024 at 07:11:50PM +0800, Choong Yong Liang wrote:
+> Not all PHYs have EEE enabled by default. For example, Marvell PHYs are
+> designed to have EEE hardware disabled during the initial state.
+> 
+> In the initial stage, phy_probe() sets phydev->eee_enabled to be disabled.
+> Then, the MAC calls phy_support_eee() to set eee_cfg.eee_enabled to be
+> enabled. However, when phy_start_aneg() is called,
+> genphy_c45_an_config_eee_aneg() still refers to phydev->eee_enabled.
+> This causes the 'ethtool --show-eee' command to show that EEE is enabled,
+> but in actuality, the driver side is disabled.
+> 
+> This patch will remove phydev->eee_enabled and replace it with
+> eee_cfg.eee_enabled. When performing genphy_c45_an_config_eee_aneg(),
+> it will follow the master configuration to have software and hardware
+> in sync.
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+Hmm. I'm not happy with how you're handling my patch. I would've liked
+some feedback on it (thanks for spotting that the set_eee case needed
+to pass the state to genphy_c45_an_config_eee_aneg()).
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+However, what's worse is, that the bulk of this patch is my work, yet
+you've effectively claimed complete authorship of it in the way you
+are submitting this patch. Moreover, you are violating the kernel
+submission rules, as the Signed-off-by does not include one for me
+(which I need to explicitly give.) I was waiting for the results of
+your testing before finalising the patch.
 
-Beste Grüße,
-Peter Schneider
+The patch needs to be authored by me, the first sign-off needs to be
+me, then optionally Co-developed-by for you, and then your sign-off.
+
+See Documentation/process/submitting-patches.rst
+
+Thanks.
+
+pw-bot: cr
 
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
