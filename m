@@ -1,129 +1,142 @@
-Return-Path: <linux-kernel+bounces-411090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ED669CF40F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:36:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E18049CF420
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:40:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7A73B3A465
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:23:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05D5EB2E35E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521AA1D5AB7;
-	Fri, 15 Nov 2024 17:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70B31D6193;
+	Fri, 15 Nov 2024 17:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OF4TyBHW"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="AlhEc+Wr"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EDD51D5AAD
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5C284D02;
+	Fri, 15 Nov 2024 17:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731691369; cv=none; b=Q3bYvw9iYwQQl05Ac3a6KTXe9fL97+hf9c2TCJQlNj9CyyuWTWkm4bh/ty0BwactJ+UHH4KsR5V3cR3Epgo2Z92TZcoW4S3zpz0aw3qj72b9+vROfX7T6++UTPZFTJ+DTBmbdcMBg9ljsec/K4Cr/Ig8kmJs7G+QWIsk/JcxCl8=
+	t=1731691647; cv=none; b=gqUc/yFxo5AJZntN3qkZZoqTqUh5wQwtLjjHoAcUfMUW5L7jBr4Iwea0jAxKQzjZwKQztVoQAWpsnz8F5BXW1wpetv9pglFNfb6LLwvowjBjjWQusRiUPwBnNZXRChYsu7tcd31gUa5VEnUOZ9ZDpSGqIqEqOq149RDBZpH+b3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731691369; c=relaxed/simple;
-	bh=xv6EhGIjp0yNQhtdD5CT3ixx8ib+7RX5OoUHS2SRIGU=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Zhy5+Y9LUdNjIVvfmzq08CsHITvKGe4Pf2CtFAM2X3P6SE9MiZ9hVb8YovGtLKt9YOFlTgxajhb6ixaXTzA5eCpVGhfRxlBvmw58ClzXSUddFvEv+qhpDjzMqbQXkE2A8NqfdER5tet/ufJUUWxhR59noATaKvz7Nbf9qHAf3cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OF4TyBHW; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e3313b47a95so3762861276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:22:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731691367; x=1732296167; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BsyG1LXRA/7W+KV3OjFnPglA0evpVqXbyPXRpQQ0nGw=;
-        b=OF4TyBHWZGXYgTpTg9CQivL/MUGaG/q546anjfFwVzoMU5n4dTXmhjDyvtqS4g2yOq
-         wk9hvebZnlTFCek0af74CrkluLfpKt4CV6JDzPTgDHRSUVU+fQa2gFt3rIxTT68kzgNz
-         /OJtK2uCjsAcMOE3GP22dKLaUvRSz8ewx8IhFqtYYkgchHa3qh+/sLvIBokgKOuzwyM+
-         WEl4kurSnKW2kCfPSj1tQPnimhqm8wscQUvdU3jleSIrbwCAjEJK//1dIZqI4AtPFkWA
-         /r+3GcMw8fNcVTO1kGQaqf60KwW5cJCoZS+waIvJ2gTudevfqflM7cva151XxGjX6Wxt
-         Ms2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731691367; x=1732296167;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BsyG1LXRA/7W+KV3OjFnPglA0evpVqXbyPXRpQQ0nGw=;
-        b=mI/ia9LHPlbfii9Mf/mbdqZ4PedSSbOompaH1WRYUUjwFUGt/7FydMsSAkD7f5pqAB
-         uXATBzt+CIQgW5WwOgvce9BaQGYMtHs2dIsFRltLluPJcIYmSCcwdXDgY8+VcwRZeSR6
-         bOjB4L+yqaRD7Tn4aumjWY9vvo/I/rSyME1/2P2fmWqAaeZ9EYf6A4t2uhN/AQXj25Gf
-         x54PVHAqGmFG3oRuSr4kGuXWVOW1ZC5GUAkRqm4i1FrEgiqXdJ2t7qMKkdfe6Vww6YPd
-         A6y1T0HpxT+lwA3BaNawgUQ8b10T6QUSLRmN0OlKU3VJXQr3pcmPzR2ptNkT/7wGyiwo
-         o4XQ==
-X-Gm-Message-State: AOJu0YzM5A1p1g0N7O5wqhwOmW88wTVGNV1UWakv/ouuU1Ov+5MmkY/S
-	2UItm2XSTd6G8qPkGzFWdCU/jo/HdlQlgm9Phw7pK3wAQ+00pTSbMCvJ5QITuuJsn30cSinnH+c
-	KlqDjas9PRFHT2HTyDyTzfDC3olft8ltfwNZGFO5wCXpPzNLUw4kfrOTgiN4nKoLyF5pOetiVwq
-	uFNwSM+rrBFcIiXcSIKARYmv0E6gaE0DiR8MThMu4R5Ad52njD4B0=
-X-Google-Smtp-Source: AGHT+IGsNFjwDx3jzS5qgLurnITHUTNl+C7edx5Hcxb5uU5DHpf+5tuu5L5h4bcVjOQnEwH2ggCQphITmYa6kA==
-X-Received: from mostafa.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:333c])
- (user=smostafa job=sendgmr) by 2002:a25:660d:0:b0:e2e:2cba:ac1f with SMTP id
- 3f1490d57ef6-e3826395ad4mr76341276.6.1731691366807; Fri, 15 Nov 2024 09:22:46
- -0800 (PST)
-Date: Fri, 15 Nov 2024 17:22:35 +0000
+	s=arc-20240116; t=1731691647; c=relaxed/simple;
+	bh=YCufd6lrdaAozuR5N6Mh8z6A/7Gb2wGA+G5IB+FuBDA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R4yREIfmtgqX1IA6pF9N0bX8Rm8hEsNOWTQB5uSpPFbICG7Bp4kSvTr3Apap1qCRqqm9aMA6QpDi02ImYeLogRGLJdWCxN2F3gvpB7P+6CuFKHcaTpd7EpBPUGvS+cv9qDdEIPjQRVWStWI7He5qXvTSMwxdupWTCi0cH7HNOfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=AlhEc+Wr; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.96] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id D6BA62FC0057;
+	Fri, 15 Nov 2024 18:27:20 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1731691641;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1yJ9wk6LIx5dW8HlLVRa6cUdg5kgKWI4Glgx81OCOQQ=;
+	b=AlhEc+Wr8JjenunIwgBWl+XikhJAwbw1mm4EIeuJGjAvXwTb7zTgkiyObcrdHj+SKGyFur
+	hAgpCgCk2lIo7LiWAHDe1rzNyO6mWvUwvyFJMrHeiINdqGqMkHS6fx26ourtePxbG9O1w8
+	a1yrrNqzQDJhWGItc/0BoKoa6qC6yMU=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <4356a7f8-2c37-4d34-9e77-8af83d251cee@tuxedocomputers.com>
+Date: Fri, 15 Nov 2024 18:27:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241115172235.1493328-1-smostafa@google.com>
-Subject: [PATCH] drivers/io-pgtable-arm: Fix stage concatenation with 16K
-From: Mostafa Saleh <smostafa@google.com>
-To: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org
-Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, 
-	Mostafa Saleh <smostafa@google.com>, Daniel Mentz <danielmentz@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/2] module: Block some modules by TUXEDO from
+ accessing
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: mcgrof@kernel.org, petr.pavlu@suse.com, samitolvanen@google.com,
+ da.gomez@samsung.com, linux-modules@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux@leemhuis.info, vv@tuxedocomputers.com,
+ cs@tuxedo.de
+References: <20241115130139.1244786-1-wse@tuxedocomputers.com>
+ <3023bbda-0902-4e5c-aeb1-074623cd8ff0@tuxedocomputers.com>
+ <uedhiz7luybtelifxooii5efesmpuot3bsoifdutsvt4axyror@zq37gl3x7je2>
+Content-Language: en-US
+From: Werner Sembach <wse@tuxedocomputers.com>
+In-Reply-To: <uedhiz7luybtelifxooii5efesmpuot3bsoifdutsvt4axyror@zq37gl3x7je2>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-According to the Arm spec DDI0487 K.a, in:
-"Table D8-9 Implications of the effective minimum T0SZ value on the
-initial stage 2 lookup level"
+Hello,
 
-Some combinations of granule and input size with stage-2 would
-require to use initial lookup levels that can only be achieved
-with concatenated PGDs.
+Am 15.11.24 um 17:40 schrieb Uwe Kleine-König:
+> Hello Werner,
+>
+> On Fri, Nov 15, 2024 at 02:03:27PM +0100, Werner Sembach wrote:
+>> Am 15.11.24 um 13:58 schrieb Werner Sembach:
+>>> Following the meeting I wrote about yesterday, I now changed the license
+>>> of what we could change spontaniously to prove good faith.
+>>>
+>>> I still hope that the rest can be sorted out before anything gets merged.
+>>> We are working on it. A clear time window would still be helpfull.
+>>>
+>>> At Uwe. I don't know how it works if you modifiy someone elses code. I
+>>> removed the Signed-off-by: line and I guess you have to add it again?
+> The more usual thing would have been to reply to my mail saying
+> something like:
+>
+> 	All the code in tuxedo-drivers.git that Tuxedo owns the complete
+> 	copyright for was relicensed to GPLv2+ now. (See $link)
+> 	For the remaining code I'm working in the background towards
+> 	relicensing.
+>
+> 	So please drop
+>
+> 		$modulelist
+>
+> 	from your patch of modules to block.
+>
+> I'm sure with that feedback you don't risk that the original patch is
+> applied.
+After the prevailing discussion, I'm not so sure about this. I went with the 
+safe option of sending code, because code usually gets more attention on the 
+LKML in my experience.
+>
+> If you take someone else's patch and rework it (which IMHO should only
+> be done when the original submitter dropped following up to prevent
+> duplication of work), it's good style to explicitly mention the changes
+> you implemented since the patch was initially posted. And then don't
+> remove the S-o-b line. See 7602ffd1d5e8927fadd5187cb4aed2fdc9c47143 for
+> an example. I think this is (at least partly) also described in
+> Documentation/ somewhere.
+Thanks for the reference, I will come back to it when I need it in the future.
+>
+> Looking at
+> https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/dd34594ab880ed477bb75725176c3fb9352a07eb
+> (which would be $link mentioned above): If you switch to GPLv2, using
+> the SPDX-License-Identifier should be good enough (but INAL). For sure
+> don't put "51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA"
+> in your files,
+> https://www.fsf.org/blogs/community/fsf-office-closing-party. Just keep
+>
+> 	You should have received a copy of the GNU General Public License
+> 	along with this program; if not, see <https://www.gnu.org/licenses/>.
+>
+> which is also the current suggestion by the FSF,
+> https://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
+>
+> Thanks for working on this!
+> Uwe
 
-There was one missing case in the current implementation for 16K,
-which is 40-bits.
+TBH I would be more happy with an apology for being called a liar, as I was 
+already working on it starting Monday.
 
-Cc: Daniel Mentz <danielmentz@google.com>
+Best regards,
 
-Signed-off-by: Mostafa Saleh <smostafa@google.com>
----
- drivers/iommu/io-pgtable-arm.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-index 0e67f1721a3d..9a57874a5cb8 100644
---- a/drivers/iommu/io-pgtable-arm.c
-+++ b/drivers/iommu/io-pgtable-arm.c
-@@ -1044,10 +1044,18 @@ arm_64_lpae_alloc_pgtable_s2(struct io_pgtable_cfg *cfg, void *cookie)
- 		return NULL;
- 
- 	/*
--	 * Concatenate PGDs at level 1 if possible in order to reduce
--	 * the depth of the stage-2 walk.
-+	 * Some cases where concatenation is mandatory after de-ciphering RSRKBC
-+	 * in the Arm DDI0487 (K.a):
-+	 * - 40 bits with 4K: use 2 table at level 1 instead of level 0
-+	 * - 40 bits with 16K: use 16 tables at level 2 instead of level 1
-+	 * - 42 bits with 4K: use 8 tabels at level 1 instead of level 0
-+	 * - 48 bits with 16K: use 2 tabels at level 1 instead of level 0
-+	 * Looking at the possible valid input size, that concludes to always
-+	 * use level 1 with concatentation if possible or at level 2 only
-+	 * with 16K.
- 	 */
--	if (data->start_level == 0) {
-+	if ((data->start_level == 0) ||
-+	    ((data->start_level == 1) && (ARM_LPAE_GRANULE(data) == SZ_16K))) {
- 		unsigned long pgd_pages;
- 
- 		pgd_pages = ARM_LPAE_PGD_SIZE(data) / sizeof(arm_lpae_iopte);
--- 
-2.47.0.338.g60cca15819-goog
+Werner Sembach
 
 
