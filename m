@@ -1,173 +1,148 @@
-Return-Path: <linux-kernel+bounces-410712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 955969CE023
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:35:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C8579CE032
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:37:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A31FDB27403
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:35:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A948FB28151
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322E41B85D7;
-	Fri, 15 Nov 2024 13:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6A81CEAA2;
+	Fri, 15 Nov 2024 13:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UbAYQyAe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="mZ0E4jus"
+Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A17718C93C
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 13:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0D71CDFC1;
+	Fri, 15 Nov 2024 13:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731677732; cv=none; b=cQsZO4aIge98Biixwif4GAzIHFSDh1TQPJ1d3n63kBtxXKmdWfcA9bi7e+YKbvV9y2jLDcIMEzSfRG1x2xluRTseH+nka+jTRceuxCK3pk1kn91FyU6qwUSsDg/vH92/u3v0Vk/qM5gSOKrQDID9JVkBJ7dITlnyYc34mkFDTHg=
+	t=1731677817; cv=none; b=PccLF5fAWTA03qnpk2axEblUzDy3tTQ/zCsDkUeU0xPB46SrNXhaCyFnW5NldU95vT/YiSTbLPxORCheNvT9GipojPik0tpCqsbbT0l9t8aWQemUvAT68LzRk5vfkANMmJIHZvs3X7OLAg5x5QY/Ww9P/M4402C3aabyo9UZJ8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731677732; c=relaxed/simple;
-	bh=yfgEmQosCSvIdFtg2IQDtkIWFGos9iBy/cTJoCVj4kw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aVWW0fYpizb9P1sx3Hj/8+8bcC7Oey77vSRKKdAqoA9tCLIlqQzqFGF2ZYVWWS1MBnv0e+YigcMTRkIwSRnrul9VXeJt/k+4cVU2hubqRKeQklOLt/Es+uA+q7oS9fV3SXNdryZia2Qw64UH6CxEPGx2j1uT824oxUP6Ex+13hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UbAYQyAe; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731677729;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1731677817; c=relaxed/simple;
+	bh=ouHDODVJurRyJEOkOhCj9pVvwAvdaE9uDibnZlcGZN0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N281GkLV1LOVNeobR0xPZnTKNH0+cLn7168MJGPJQLZQrPnL7eZwzCFLFoHs27v5pH4F2vidJBXHAjxw3ZBf50mTnAnG2JIlD5lgBRGXdGgHE560gvDV8nUQwQm9RqydRMPJLIly0LyweKUtDpRlwasTalZGNFW4LMMoImrkVJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=mZ0E4jus; arc=none smtp.client-ip=168.119.48.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
+From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
+	s=2023072701; t=1731677812;
+	h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=BRPBbWpO8dlCNiPICJdzK2CCwCR8uej8lTMNly+xDjA=;
-	b=UbAYQyAeNEy2u5b5fw8SENTymkX85jmH2I3ncN6sqQFCAD68FLUMHfobPV9xFSin8YPgJY
-	LRA0hCzbBRewWPfNXaFkG0Hp//6KlrcPLV0FfNnzsFeReaePkHEIizAVr+8GJZRRMI42vP
-	t4KIZ8gRFmyiAFqlFftWN9Z8euGijgs=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-625-XDjqD6akOEeUh2WADwehJQ-1; Fri, 15 Nov 2024 08:35:27 -0500
-X-MC-Unique: XDjqD6akOEeUh2WADwehJQ-1
-X-Mimecast-MFC-AGG-ID: XDjqD6akOEeUh2WADwehJQ
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38218576e86so1006404f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 05:35:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731677726; x=1732282526;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BRPBbWpO8dlCNiPICJdzK2CCwCR8uej8lTMNly+xDjA=;
-        b=coAnpPeC3SFyDbmHtaDFM/FQJw3F8OrOFcxC92lxjlVRXbQBkueP385ovgQvXuJ1P9
-         OJhrRC5YjCOEbwsli4Es9LxoVoQPmwZhOLepK5MReGdqPr3G8XNV0cARjWrvXRROEMCL
-         8vH42vtP3gr3MxWsvbFKREAH1JZIBBPVgNBCquN3Y0S1+YPb6jJQ+bTUmX7ljfj/19My
-         EhFDosHzQfH4/qweAHs6oODd0/jU01HjUAnsCQJqhYJM4up2Z3RBMZQY+x2OVPrhy4qe
-         ep7fsVpT7ltb4MwQr6m3qrY3crSFSSXb/gxnOgiHwjn4SFEoUzi1ffR5kt301NzQdwHZ
-         rWuA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+qAdKbWnxKhbqmEZW4ZgTmGahh+WCHkL1V/QWIQrsI+CSOUplgIQ12Pdjn51Y1Gvl/5BHY3rEr9tIQI0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF7tqtyS0pqfKvGLPrl79uOz+VO/KmXnQuF40BKjoxwUHlVK3Z
-	TEQtvSw/Pz0Gft9J1OXVol3rc2BRQmjOwdJzoJ1U+LoRN+AB/w5IT0rbpgl9ZzGvwMKWEm1V5qF
-	d1ev8ArLU5zk8dXkVs1ir002Zvi6fk6jfzrazfZ0w3Suwuq+0e/MWUr3wmaoLPA==
-X-Received: by 2002:a05:6000:400d:b0:381:f0d0:ed2c with SMTP id ffacd0b85a97d-382140786c2mr5746929f8f.29.1731677726605;
-        Fri, 15 Nov 2024 05:35:26 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHVwfRMJ56OG7UUIxELoMcxyNnzIOKP53b/nqW9MISzIPUMs82k5Pfj9CvdXyJ+Umu/B5tU3w==
-X-Received: by 2002:a05:6000:400d:b0:381:f0d0:ed2c with SMTP id ffacd0b85a97d-382140786c2mr5746897f8f.29.1731677726158;
-        Fri, 15 Nov 2024 05:35:26 -0800 (PST)
-Received: from ?IPV6:2003:cb:c721:8100:177e:1983:5478:64ec? (p200300cbc7218100177e1983547864ec.dip0.t-ipconnect.de. [2003:cb:c721:8100:177e:1983:5478:64ec])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821adbbca7sm4470804f8f.47.2024.11.15.05.35.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 05:35:25 -0800 (PST)
-Message-ID: <3269e0a6-29a4-478b-842a-629efc8d5d59@redhat.com>
+	 in-reply-to:in-reply-to:references:references;
+	bh=R2g5Wk+CWFl28MX4lhzXMKz3Oz2ct6jAzT7+Bkx0DJg=;
+	b=mZ0E4jus303HZmXIXmo5nMnPfRfDAYpDKy3jlgD+9mdaySPZqngn9u/9AppSwmLg+3wRuI
+	aBpvcGL5bqDrgu3p7VHIjPz4TQrbITWCgWQY0WpuF390xZ4bPhoYk142VSJ+hb36EfIWKD
+	Oo1ArTkrVdSH5TFv5lSW9AQoDrbg45+Z/4mrWs2emkO7r5E8HBKDm1v3vYU4LtS2FQyHbv
+	c8M5QBaFcffmqG3oDyCj9abvMXckp5Kn8SnUboo8cEPZAHYeA00+BIthHl2K79ArTgxJq+
+	L7pSAolgEfZmIFhoNxsnNIci20Gl86oFh1TyKSVGgb1nO2a+ru2PXUGYDHb/MA==
+To: selinux@vger.kernel.org
+Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 05/22] selinux: avoid nontransitive comparison
 Date: Fri, 15 Nov 2024 14:35:24 +0100
+Message-ID: <20241115133619.114393-5-cgoettsche@seltendoof.de>
+In-Reply-To: <20241115133619.114393-1-cgoettsche@seltendoof.de>
+References: <20241115133619.114393-1-cgoettsche@seltendoof.de>
+Reply-To: cgzones@googlemail.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] Support large folios for tmpfs
-To: Daniel Gomez <da.gomez@samsung.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
- hughd@google.com
-Cc: willy@infradead.org, wangkefeng.wang@huawei.com, 21cnbao@gmail.com,
- ryan.roberts@arm.com, ioworker0@gmail.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <cover.1731397290.git.baolin.wang@linux.alibaba.com>
- <CGME20241115131634eucas1p2db22b75fcc768a4bb6aa47ee180110cc@eucas1p2.samsung.com>
- <D5MS4CMG4N8F.1M5WPZ1T5UT0I@samsung.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <D5MS4CMG4N8F.1M5WPZ1T5UT0I@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 15.11.24 14:16, Daniel Gomez wrote:
-> On Tue Nov 12, 2024 at 8:45 AM CET, Baolin Wang wrote:
->> Traditionally, tmpfs only supported PMD-sized huge folios. However nowadays
-> 
-> Nitpick:
-> We are mixing here folios/page, PMD-size huge. For anyone not aware of
-> Memory Folios conversion in the kernel I think this makes it confusing.
-> Tmpfs has never supported folios so, this is not true. Can we rephrase
-> it?
+From: Christian Göttsche <cgzones@googlemail.com>
 
-We had the exact same discussion when we added mTHP support to anonymous 
-memory.
+Avoid using nontransitive comparison to prevent unexpected sorting
+results due to (well-defined) overflows.
+See https://www.qualys.com/2024/01/30/qsort.txt for a related issue in
+glibc's qsort(3).
 
-I suggest you read:
+Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+---
+ security/selinux/ss/policydb.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-https://lkml.kernel.org/r/65dbdf2a-9281-a3c3-b7e3-a79c5b60b357@redhat.com
-
-Folios are an implementation detail on how we manage metadata. Nobody in 
-user space should even have to be aware of how we manage metadata for 
-larger chunks of memory ("huge pages") in the kernel.
-
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index 383f3ae82a73..d04d9ada3835 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -37,6 +37,8 @@
+ #include "mls.h"
+ #include "services.h"
+ 
++#define spaceship_cmp(a, b) (((a) > (b)) - ((a) < (b)))
++
+ #ifdef CONFIG_SECURITY_SELINUX_DEBUG
+ /* clang-format off */
+ static const char *const symtab_name[SYM_NUM] = {
+@@ -421,11 +423,11 @@ static int filenametr_cmp(const void *k1, const void *k2)
+ 	const struct filename_trans_key *ft2 = k2;
+ 	int v;
+ 
+-	v = ft1->ttype - ft2->ttype;
++	v = spaceship_cmp(ft1->ttype, ft2->ttype);
+ 	if (v)
+ 		return v;
+ 
+-	v = ft1->tclass - ft2->tclass;
++	v = spaceship_cmp(ft1->tclass, ft2->tclass);
+ 	if (v)
+ 		return v;
+ 
+@@ -456,15 +458,15 @@ static int rangetr_cmp(const void *k1, const void *k2)
+ 	const struct range_trans *key1 = k1, *key2 = k2;
+ 	int v;
+ 
+-	v = key1->source_type - key2->source_type;
++	v = spaceship_cmp(key1->source_type, key2->source_type);
+ 	if (v)
+ 		return v;
+ 
+-	v = key1->target_type - key2->target_type;
++	v = spaceship_cmp(key1->target_type, key2->target_type);
+ 	if (v)
+ 		return v;
+ 
+-	v = key1->target_class - key2->target_class;
++	v = spaceship_cmp(key1->target_class, key2->target_class);
+ 
+ 	return v;
+ }
+@@ -493,15 +495,15 @@ static int role_trans_cmp(const void *k1, const void *k2)
+ 	const struct role_trans_key *key1 = k1, *key2 = k2;
+ 	int v;
+ 
+-	v = key1->role - key2->role;
++	v = spaceship_cmp(key1->role, key2->role);
+ 	if (v)
+ 		return v;
+ 
+-	v = key1->type - key2->type;
++	v = spaceship_cmp(key1->type, key2->type);
+ 	if (v)
+ 		return v;
+ 
+-	return key1->tclass - key2->tclass;
++	return spaceship_cmp(key1->tclass, key2->tclass);
+ }
+ 
+ static const struct hashtab_key_params roletr_key_params = {
 -- 
-Cheers,
-
-David / dhildenb
+2.45.2
 
 
