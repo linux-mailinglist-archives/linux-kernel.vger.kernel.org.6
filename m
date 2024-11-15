@@ -1,112 +1,149 @@
-Return-Path: <linux-kernel+bounces-411062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE8429CF398
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:07:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D28A9CF34B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:51:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3657B44D5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:08:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B70E7B43454
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15A51D61A3;
-	Fri, 15 Nov 2024 17:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F7D1D5AAD;
+	Fri, 15 Nov 2024 17:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dc7e4+76"
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="KNNZC1KM"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D2D17C7CB
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760ED136341
 	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731690461; cv=none; b=b7whQKwgUoL6B6jEHk2YxzaTpVPnpYsy33yJ/WZMLR7us7/mQSGZvoLJjdJ4URcWBCPh+KEOwhKgaRFm1k7TvbwghCQkCCR/212zp5kvaH+p0xyI6svYLJowK9Q/rYRoBfWyVbTA0JvWklGh+cQOVcz+ItsBA0SSRa4AvIAqzK8=
+	t=1731690460; cv=none; b=Z3gjV71FTVfG38yfLdF5GoyZczmlW0QZ+i30WOnlq3hc1d+9DCqIf7ZsZQ716pRrMM9hJDR3A88unttk4e8YLb0KJkxvpLUfaYLs1yy6+sdGGQg4B67RVHXFIsB5Sa/0Ykl0uxIXazrCol1w+qUaIns0WWQPE3cobbwiG040s6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731690461; c=relaxed/simple;
-	bh=EzkkrgwX6QicJgrVFN8oP2t4q3QLUwJo1tmpaavTM5o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mzDW7HAj43ZkZjE9EbNcCt/9eNEiBkON3TmO3fuTHMHjAQGb21qRvv327MYrFcQC5OyLwq0gVpEfizj/ZhNlGEN1kzWcfgKsCoTXvWgIC9YQlYwPaX1K1obO7h+j9RlUWF3gsPhIMyY87fY+GjmksbQ3llBuw+mavcVmX6rGvxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dc7e4+76; arc=none smtp.client-ip=80.12.242.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id Bzn7tcTuub37CBzn8tOZyc; Fri, 15 Nov 2024 18:07:31 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731690451;
-	bh=8WTwIcAx6b/kVp2mWAiv865Zbjt0MpLRftMY+PnKZIs=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=dc7e4+76ZstjhkJ53J7ch6aKPYIK03+9FbWkQqqUMUjTq6dSi+6XrBwswztNDxalF
-	 LwRazKcLJ4WuuNgtkt+hTwrIAFeHqFjjZlULjnvlAaz/ZyL0220IIbTvbetZVytKVm
-	 fyYp2UtinkjrH+md0e14Siu4yqpqlQOuAOcrW2Qzl04oLSeEQt0p1PhhlMUGxVg4Ry
-	 jyGf6NcJTyEt1gV4cxii909ynqiOpreA091vf0ajLGQwTONqMY8B1qkXdY6XbJOObq
-	 stihS4myr9J4+G0kS0qOm2HJmpn0FM/n84brVo7OMXfJ9xOyiRxpzulRYHFhti4ZqM
-	 Qqa07O3FBfsJg==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 15 Nov 2024 18:07:31 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: linux@weissschuh.net,
-	broonie@kernel.org,
-	lee@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] const_structs.checkpatch: add i2c_device_id, pci_device_id, spi_device_id and usb_device_id
-Date: Fri, 15 Nov 2024 18:07:16 +0100
-Message-ID: <3b100aca94521c484c9c158897ab7ec139ab3334.1731690298.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731690460; c=relaxed/simple;
+	bh=RlgLCwt0pHAzO+8y8JHjzVJt2BMGqQLKA4J3pAJFt7A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BVtqcUEiEajdS0keewxFQ/HvmuYPe2HBGsD9QSIcObdMokVWn4tKVHXnKWnnwnnlW/Keoq66y6Zfi2t4RLqcJbe5SvxvK3Y7xwucUUh7Pmmui3gGr9Y3yvM78oHyIrISvOGVEw3P4VNOSzJMZwC4nD4ZmI0iOBQ/H9tlZaxs1YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=KNNZC1KM; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3e5fef69f2eso607427b6e.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:07:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731690457; x=1732295257; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0UZ4bmKiEfcrQ88X0EpormBgHcykEkWHrKLssaVp+ps=;
+        b=KNNZC1KMH//UilrDoY+W3OmZrVLJKwQnRxU9ErFB2vkIXGNrMrpsRSafWnd2LllDgY
+         glJOGGy3T+FWqE/5tlaK4JLxOtDPbdQ0/7WMpSaEWo6KGGnpBzQfH+mwS5G0EVRZKE1d
+         mkD9QEyUeVLdGBlNFC7HtPfY84iskgtUbAOD1VP1V6ByWHVJ4/Bt43ffaWWWwUA6/8aJ
+         /6Ewg1eZjmgvgGEJpdNExRx2NJB8awcKJobTHbf8IT0OgTKZC25hpZ7GKbvH4T5p23m5
+         HF+44VrzVUesHsbORPYf8A0oMDtzwzIqXJUSuW8qBFNwjDlX69v8CHQrWmmbCC7Q6M1X
+         0tdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731690457; x=1732295257;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0UZ4bmKiEfcrQ88X0EpormBgHcykEkWHrKLssaVp+ps=;
+        b=UGIwLsWjeJR/0EMvr6sdtaPexJ19YrakpbQ6MtnM7UcZcJv5YuQLt99XX3If87Hj4/
+         d+oCDC37LXi3dUIupd2CMiexxgmrpe0rpgP3DTnC/JZI9Acu90O1Jt7jTa7MS9gi5xNG
+         K3dBjQcmJV5O6MNwuNyfCSM8axL9xdqIlhpBt1npMUH0Hf4hqfzrtkreSDft7BQxglT+
+         wp3wzYqOzez1vzc+g29XJjdXC+28VIdv4X8gFrbSj+9SeU/HhyeWFik8Gxn2kbfMgSJL
+         gSveJPHSwFMcm/IOfJcGd9M62HKCnL0aS/2dT+W2alFM1DRHi0DppAXGjR2g9HWOVKuZ
+         xj7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUNfKHFJPCPCDiLWL5nysgmWjTjctem4T0SIqUPB5+E7zP7C+o8RLc44k27RdxLiofz72TDE9ULSezAAeE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSum4fCjb0vjiBDVWjlWuBI9Rti4WSkmVoNDodDOn/txO7l+Bs
+	YenJy9v35yhktJInYN3kGQLln4RwhsXFjVwBI0icSnpOP/qc8JW0mv8EyEOhMiI=
+X-Google-Smtp-Source: AGHT+IFFqGUcRPyBDjreOCcM1rzo3LgkxNVwNrVKyhxfFUltStJRCbjgMz5dV1Tl7g+Si9O2R8j5Zg==
+X-Received: by 2002:a05:6808:2020:b0:3e0:3ab7:d7ad with SMTP id 5614622812f47-3e7bc7d2f6fmr4048241b6e.22.1731690457623;
+        Fri, 15 Nov 2024 09:07:37 -0800 (PST)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e7bcd82997sm629389b6e.34.2024.11.15.09.07.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 09:07:36 -0800 (PST)
+Message-ID: <7e302a49-db5a-444d-aae1-3c80ab75b471@baylibre.com>
+Date: Fri, 15 Nov 2024 11:07:34 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] iio: adc: ad4000: Use device specific timing for SPI
+ transfers
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
+ Michael.Hennerich@analog.com, jic23@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, marcelo.schmitt1@gmail.com
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1731626099.git.marcelo.schmitt@analog.com>
+ <81370b043de208795738e5679c33de37439c0a2e.1731626099.git.marcelo.schmitt@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <81370b043de208795738e5679c33de37439c0a2e.1731626099.git.marcelo.schmitt@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-i2c_device_id, pci_device_id, spi_device_id and usb_device_id are common,
-help keeping them const.
+On 11/14/24 5:51 PM, Marcelo Schmitt wrote:
+> The SPI transfers for AD4020, AD4021, and AD4022 have slightly different
+> timing specifications. Use device specific timing constraints to set SPI
+> transfer parameters.
+> 
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> ---
+>  drivers/iio/adc/ad4000.c | 50 ++++++++++++++++++++++++++++++++--------
+>  1 file changed, 41 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad4000.c b/drivers/iio/adc/ad4000.c
+> index 21731c4d31ee..68ac77494263 100644
+> --- a/drivers/iio/adc/ad4000.c
+> +++ b/drivers/iio/adc/ad4000.c
+> @@ -35,10 +35,6 @@
+>  
+>  #define AD4000_SCALE_OPTIONS		2
+>  
+> -#define AD4000_TQUIET1_NS		190
+> -#define AD4000_TQUIET2_NS		60
+> -#define AD4000_TCONV_NS			320
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- scripts/const_structs.checkpatch | 4 ++++
- 1 file changed, 4 insertions(+)
+We are removing 3 but only adding 2 in the struct below?
 
-diff --git a/scripts/const_structs.checkpatch b/scripts/const_structs.checkpatch
-index e8609a03c3d8..725796a899a6 100644
---- a/scripts/const_structs.checkpatch
-+++ b/scripts/const_structs.checkpatch
-@@ -24,6 +24,7 @@ file_lock_operations
- file_operations
- hv_ops
- hwmon_ops
-+i2c_device_id
- ib_device_ops
- ide_dma_ops
- ide_port_ops
-@@ -54,6 +55,7 @@ nft_expr_ops
- nlmsvc_binding
- nvkm_device_chip
- of_device_id
-+pci_device_id
- pci_raw_ops
- phy_ops
- pinconf_ops
-@@ -92,10 +94,12 @@ snd_soc_dai_ops
- snd_soc_ops
- snd_soc_tplg_ops
- soc_pcmcia_socket_ops
-+spi_device_id
- stacktrace_ops
- sysfs_ops
- tty_operations
- uart_ops
-+usb_device_id
- usb_mon_operations
- v4l2_ctrl_ops
- v4l2_ioctl_ops
--- 
-2.47.0
+If one of these was unused, best to mention it in the commit message.
 
+> -
+>  #define __AD4000_DIFF_CHANNEL(_sign, _real_bits, _storage_bits, _reg_access)	\
+>  {										\
+>  	.type = IIO_VOLTAGE,							\
+> @@ -122,10 +118,30 @@ static const int ad4000_gains[] = {
+>  	454, 909, 1000, 1900,
+>  };
+>  
+> +struct ad4000_time_spec {
+> +	int t_conv_ns;
+> +	int t_quiet2_ns;
+> +};
+> +
+> +/*
+> + * Same timing specifications for all of AD4000, AD4001, ..., AD4008, AD4010,
+> + * ADAQ4001, and ADAQ4003.
+> + */
+> +static const struct ad4000_time_spec ad4000_t_spec = {
+> +	.t_conv_ns = 320,
+> +	.t_quiet2_ns = 60,
+> +};
+> +
+> +static const struct ad4000_time_spec ad4020_t_spec = {
+> +	.t_conv_ns = 350,
+> +	.t_quiet2_ns = 60,
+> +};
+
+t_quiet2_ns is the same in both cases, so do we actually need to
+add it here instead of using a common macro? Or if it is for future
+differences, mention that in the commit message.
 
