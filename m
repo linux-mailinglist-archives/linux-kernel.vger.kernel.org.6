@@ -1,227 +1,130 @@
-Return-Path: <linux-kernel+bounces-410591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF5709CDDA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:43:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 585D49CDDA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:45:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FAA628154F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:43:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1124F1F22508
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:45:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69C61B85E1;
-	Fri, 15 Nov 2024 11:43:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD881B6CEB;
+	Fri, 15 Nov 2024 11:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tjVse01e";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2jl2eHDo";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tjVse01e";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2jl2eHDo"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KbMjIjK8"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FD01B0F01;
-	Fri, 15 Nov 2024 11:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A7518871E;
+	Fri, 15 Nov 2024 11:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731671001; cv=none; b=GzQBt0ouwTWCUWJGmeupc84I0H2gF9JtraDa3hJc0LXQEFO4OPHoMqV8GG16oVD2lRceFv38X1/6DfvpxAiwQ2kxUcC0JknMQkHu2WMN+v+9zNP6ESG7gp69fWUji/aaBMR3P5JiZXDs3Up3DK/fYmPePDd2crKWvqb3wVqr4GE=
+	t=1731671132; cv=none; b=LloM1wp4NFa82ulw5ziK0GHDJr44qbvEww3m77SoJY5S+baecBE+3iwHZvmdVerlcjd//GnLLq0VIQeRxhLqCjl2ilcq1zskfe+NTiCDjLcqmuk7eeD6cej5Rdhbhp9YytjQUIGBvx0C44Kw4U7kmIR+At2jOKVmYoG6c3ykHuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731671001; c=relaxed/simple;
-	bh=GcLpIyPvJbNsw+NrTKj8LwVrdJQlG+ZNe2TcjmstYq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oTzqNu/77rsW5/75ES465G0es8vaC5pW1jQ+hEInINkIbNl3szroEkB9EHRsZ2rAUTOFnyZleaUUWRNrBNHgKM38C2Mn89WNW1xqkbNhs0c3blaDB0OO3r/tIkCJBUFT7gtWRh82jm+dGVJ0Lv4ueYV0HtX17GIgyoZcdcaNjPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tjVse01e; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2jl2eHDo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tjVse01e; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2jl2eHDo; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AE43D211D5;
-	Fri, 15 Nov 2024 11:43:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731670994; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K6g60W+2gZhvsDr9fUHhz3WwNsDPK21sc48It32UHeA=;
-	b=tjVse01eBLXmVrr2AOa50bY0G5E4KnuT0kUlzGAprjTX5Ayh2B0KBTsNAD8Up881IDLpIH
-	KTsWf1St+KcfKPhkx92mNw5jo0oAcCarc/Iuqv2oNhF+4mzLJ7bF5uzBUgLF1tUZ1hui7i
-	0ntbQIfQmoyhdAm1VTRgXCyZgimLv1A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731670994;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K6g60W+2gZhvsDr9fUHhz3WwNsDPK21sc48It32UHeA=;
-	b=2jl2eHDouD4ayn5dj7/o+6fICOU2BqOImSOaSl4zs3X2pfPAN+0XmFdYXGC1muAlYCqPmi
-	0UVE7Mw7IIEoUtCQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731670994; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K6g60W+2gZhvsDr9fUHhz3WwNsDPK21sc48It32UHeA=;
-	b=tjVse01eBLXmVrr2AOa50bY0G5E4KnuT0kUlzGAprjTX5Ayh2B0KBTsNAD8Up881IDLpIH
-	KTsWf1St+KcfKPhkx92mNw5jo0oAcCarc/Iuqv2oNhF+4mzLJ7bF5uzBUgLF1tUZ1hui7i
-	0ntbQIfQmoyhdAm1VTRgXCyZgimLv1A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731670994;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K6g60W+2gZhvsDr9fUHhz3WwNsDPK21sc48It32UHeA=;
-	b=2jl2eHDouD4ayn5dj7/o+6fICOU2BqOImSOaSl4zs3X2pfPAN+0XmFdYXGC1muAlYCqPmi
-	0UVE7Mw7IIEoUtCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A3082134B8;
-	Fri, 15 Nov 2024 11:43:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vjPFJ9IzN2f5cAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 15 Nov 2024 11:43:14 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 668E5A0986; Fri, 15 Nov 2024 12:43:06 +0100 (CET)
-Date: Fri, 15 Nov 2024 12:43:06 +0100
-From: Jan Kara <jack@suse.cz>
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com,
-	almaz.alexandrovich@paragon-software.com, brauner@kernel.org,
-	jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev,
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH] fs: add check for symlink corrupted
-Message-ID: <20241115114306.5sgqa3opc56rhu4x@quack3>
-References: <67363c96.050a0220.1324f8.009e.GAE@google.com>
- <20241115094908.3783952-1-lizhi.xu@windriver.com>
+	s=arc-20240116; t=1731671132; c=relaxed/simple;
+	bh=xGuzkMxDO+F3Rehl/23Ny+lunu3NLkrjLfDk/TbcNEI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MhjvljCI5fcSqHYd5LVrjVKR5eL0MmqyVaL4dhbfyozcZwHuBIic1A+S1EfCKEFrcnAsrzpQCBi4ZmqUs5F0pQFo3S27JGBDw9SVMbQr8NHO2jv1QUbQg6XgBI30ZURg/SAkqnaflRfOKRMRUUSiFQ8uGMp18tBEJa3mWOlidTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KbMjIjK8; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43169902057so14030785e9.0;
+        Fri, 15 Nov 2024 03:45:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731671129; x=1732275929; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mzc1r6b78LAiuytUC+As0bITf0u5NeHauNj5GmJJ8cs=;
+        b=KbMjIjK8xYBwbmxO/2TiSaL+rSI7wH50ZPZgy+uzX90kXynoNnvmYYMZwUf60CmgW+
+         P2lqQSmRPkzLQhEnXzXUI1LlSAnwawRqGERYl6gBx0akC6RRhJyuUrg4ycg1FjMiCaQo
+         aWjfDoteZq8kNHvlYYIY1KCPRo1MSPdh71lh3xqLz1ga2GxJZDvHASWFfh6ntDWpR7yn
+         kRvhn+rFaqGP3PNSGvK0IU0fbjts1p8cSDCLSv1QevKGg/QIqRFbTxpMfBuBjWSeOLMs
+         6OwWDAbwLtleaSvwpr/daM0H0lsD15tGj/SboNEheOqpi1t4oRhHU9fb2JLvnLdRlltz
+         NcLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731671129; x=1732275929;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mzc1r6b78LAiuytUC+As0bITf0u5NeHauNj5GmJJ8cs=;
+        b=OnTHCOdzjOKJrc/X6z9I1gJ1/rWMB9F7FJG2hoA4WCx3cUK0HsaIHACK4kMlltDB55
+         cgOrmhEp4Vspff3IuD0hhAMuXBMdKLafGPjNeKcJEDgXkk4qRLRL28HLceLwHd5kXun/
+         3wYUbqmU0F/VHYrDZlSyCuQUB+mqz1eLw/7Z2SWo07xl9r+V/pskWHRo3h0dNOvDARBB
+         uag8fc7EkNTQ4FXyj1x2ItZ8c90uQSAJRPk4lfNQu4WhuTIxthIu7Hl51EXbERtJT5wk
+         1gH8m1dVlqCwOSzx+bCkrS7q/y4t4K5tMJh24GLHcASKrwLVIU8Q5u1U3yezK51O1ogV
+         YqhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVCFnzm3KVWTlNEwPGnwnGzletsIFD126WppECd52EaWld74P4eHT0QRU7meXRUE8s0NTI=@vger.kernel.org, AJvYcCWDTrNGruUBgtVsAaMf5WecYfTSDo6xvLePLdZykTnOouIQbT8VrJ00EJy2kJU1/akvDrsA4XWigTwfja66@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxzt3KkqaMNu8sSsIQf0X6lx4T5fEF0EdxF5P4aGc34fRP6gqu/
+	Ii6qpjkLVehylB7HzXZdYUo0NlZqVTGx5Gsy8VpxeXiHS3PSpJM=
+X-Google-Smtp-Source: AGHT+IGPNwUnfCard+9TZO605jPVU79JEDGb94F5QQgc7VL7/oLVfn6eejgrFu6pxqfA3pKJKosKWQ==
+X-Received: by 2002:a05:600c:35d1:b0:431:6153:a258 with SMTP id 5b1f17b1804b1-432df72c1cfmr19249825e9.13.1731671128528;
+        Fri, 15 Nov 2024 03:45:28 -0800 (PST)
+Received: from qoroot.. ([2.181.242.206])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d4788a31sm50500545e9.0.2024.11.15.03.45.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 03:45:27 -0800 (PST)
+From: Amir Mohammadi <amirmohammadi1999.am@gmail.com>
+X-Google-Original-From: Amir Mohammadi <amiremohamadi@yahoo.com>
+To: qmo@kernel.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Amir Mohammadi <amiremohamadi@yahoo.com>
+Subject: [PATCH] bpftool: fix potential NULL pointer dereferencing in prog_dump()
+Date: Fri, 15 Nov 2024 15:15:07 +0330
+Message-ID: <20241115114507.1322910-1-amiremohamadi@yahoo.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241115094908.3783952-1-lizhi.xu@windriver.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[73d8fc29ec7cba8286fa];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,appspotmail.com:email,suse.com:email]
-X-Spam-Score: -2.30
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 7bit
 
-On Fri 15-11-24 17:49:08, Lizhi Xu wrote:
-> syzbot reported a null-ptr-deref in pick_link. [1]
-> When symlink's inode is corrupted, the value of the i_link is 2 in this case,
-> it will trigger null pointer deref when accessing *res in pick_link(). 
-> 
-> To avoid this issue, add a check for inode mode, return -EINVAL when it's
-> not symlink.
-> 
-> [1]
-> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-> CPU: 0 UID: 0 PID: 5310 Comm: syz-executor255 Not tainted 6.12.0-rc6-syzkaller-00318-ga9cda7c0ffed #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> RIP: 0010:pick_link+0x51c/0xd50 fs/namei.c:1864
+A NULL pointer dereference could occur if ksyms
+is not properly checked before usage in the prog_dump() function.
 
-Hum, based on line number is:
+Signed-off-by: Amir Mohammadi <amiremohamadi@yahoo.com>
+---
+ tools/bpf/bpftool/prog.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-        if (*res == '/') { <<<< HERE
-                error = nd_jump_root(nd);
-                if (unlikely(error))
-
-So res would be non-zero but a small number.
-
-> Code: c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 fc 00 e9 ff 48 8b 2b 48 85 ed 0f 84 92 00 00 00 e8 7b 36 7f ff 48 89 e8 48 c1 e8 03 <42> 0f b6 04 38 84 c0 0f 85 a2 05 00 00 0f b6 5d 00 bf 2f 00 00 00
-> RSP: 0018:ffffc9000d147998 EFLAGS: 00010246
-> RAX: 0000000000000000 RBX: ffff88804558dec8 RCX: ffff88801ec7a440
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: 0000000000000002 R08: ffffffff8215a35f R09: 1ffffffff203a13d
-> R10: dffffc0000000000 R11: fffffbfff203a13e R12: 1ffff92001a28f93
-> R13: ffffc9000d147af8 R14: 1ffff92001a28f5f R15: dffffc0000000000
-> FS:  0000555577611380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007fcc0a595ed8 CR3: 0000000035760000 CR4: 0000000000352ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  step_into+0xca9/0x1080 fs/namei.c:1923
->  lookup_last fs/namei.c:2556 [inline]
->  path_lookupat+0x16f/0x450 fs/namei.c:2580
->  filename_lookup+0x256/0x610 fs/namei.c:2609
->  user_path_at+0x3a/0x60 fs/namei.c:3016
->  do_mount fs/namespace.c:3844 [inline]
->  __do_sys_mount fs/namespace.c:4057 [inline]
->  __se_sys_mount+0x297/0x3c0 fs/namespace.c:4034
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f4b18ad5b19
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffc2e486c48 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 00007f4b18ad5b19
-> RDX: 0000000000000000 RSI: 00000000200000c0 RDI: 0000000000000000
-> RBP: 00007f4b18b685f0 R08: 0000000000000000 R09: 00005555776124c0
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc2e486c70
-> R13: 00007ffc2e486e98 R14: 431bde82d7b634db R15: 00007f4b18b1e03b
->  </TASK>
-> 
-> Reported-and-tested-by: syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=73d8fc29ec7cba8286fa
-> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> ---
->  fs/namei.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 4a4a22a08ac2..f5dbccb3aafc 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -1844,6 +1844,9 @@ static const char *pick_link(struct nameidata *nd, struct path *link,
->  	if (unlikely(error))
->  		return ERR_PTR(error);
->  
-> +	if (!S_ISLNK(inode->i_mode))
-> +		return ERR_PTR(-EINVAL);
-> +
-
-So I don't see how we can get here without inode being a symlink.
-pick_link() is called from step_into() which has among other things:
-
-if (likely(!d_is_symlink(path.dentry)) || ...)
-	do something and return
-
-so we are checking whether the inode is a symlink before calling
-pick_link(). And yes, the d_is_symlink() is using cached type in
-dentry->d_flags so they could mismatch. But inode is not supposed to change
-its type during its lifetime so if there is a mismatch that is the problem
-that needs to be fixed.
-
-								Honza
+diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
+index 2ff949ea8..8b5300103 100644
+--- a/tools/bpf/bpftool/prog.c
++++ b/tools/bpf/bpftool/prog.c
+@@ -822,11 +822,12 @@ prog_dump(struct bpf_prog_info *info, enum dump_mode mode,
+ 					printf("%s:\n", sym_name);
+ 				}
+ 
+-				if (disasm_print_insn(img, lens[i], opcodes,
+-						      name, disasm_opt, btf,
+-						      prog_linfo, ksyms[i], i,
+-						      linum))
+-					goto exit_free;
++				if (ksyms)
++					if (disasm_print_insn(img, lens[i], opcodes,
++							      name, disasm_opt, btf,
++							      prog_linfo, ksyms[i], i,
++							      linum))
++						goto exit_free;
+ 
+ 				img += lens[i];
+ 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.42.0
+
 
