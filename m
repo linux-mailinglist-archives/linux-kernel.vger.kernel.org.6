@@ -1,194 +1,302 @@
-Return-Path: <linux-kernel+bounces-410278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A9009CD75F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:41:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B8F69CD757
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:41:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2AE8B25633
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:41:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 271CAB252E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2401D18A92F;
-	Fri, 15 Nov 2024 06:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1721188737;
+	Fri, 15 Nov 2024 06:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="L7jFc/AT"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="b7TvoYUA";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xP1IImbW";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="czYKfMUn";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+2pEpGDx"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A626A18A6D4;
-	Fri, 15 Nov 2024 06:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA7A188713;
+	Fri, 15 Nov 2024 06:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731652834; cv=none; b=iXpG8zQO+v2LV8yL6DemkbfsINa8gis4EWw9zlFupNF7UmqBFFeFivypYue9cgX/mAaZbhzD4F0hA6PBqDsYxG5U9ux3Esg1W9lUDuRUFbHcBaVOqJcgxhQ8+UO+CF+de3C0C2ptSQ8lADGP/79exratv5So2sHgPNcdInNHHNY=
+	t=1731652827; cv=none; b=aRicTO7x0ajhyixOrpFgap98+s1Zxjdk1bmJf4NehnfgA6AEdlh/IPpCPXv/WF32IlKPGt9TwcEWz7vFRbOi4/gIQpwZ+uxoJG9nUDR7yNiTtIO2CfSNKGBaaNws3+8qozl2ZgoV8+9830Um/amy7+6setLhhnFi9kPRf7G6KtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731652834; c=relaxed/simple;
-	bh=RbL1epgOCMcJWsSwFVWb3i6X6KsJ0DLWG7rlGLapWoc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BOM8Mha/xn9W5ZNEFXVCm5Q0Ou1UJhF8UMOLRyWMno6Xo/tH/TTnCDbhUk+PQqHhvU+jPFPfR5u3McGP+M2SwdxnaW7m1+Ma4CYHADtGYzbgFfRj9Ar/DCkjWhCI0yDxBW2y76p5p9UgkK6rn+L5JgkEFXesUAaprTcG822Izh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=L7jFc/AT; arc=none smtp.client-ip=212.227.126.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=oldschoolsolutions.biz; s=s1-ionos; t=1731652804; x=1732257604;
-	i=jens.glathe@oldschoolsolutions.biz;
-	bh=RU84HVfLJgvCTtqnHy/8c+ZiPc9ztH45u7G+xHlBOMM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=L7jFc/ATWF427fCXUTHLnKtIGfLk+RlAfnru9aN/DMbYsItVC6UyLOEcDOMme+PQ
-	 UAqqEYR9tim3N6ftAMxzqwQWdH5yqrRy+uqo/Ub/BGDFzIagNPtwrjC5E70SkY+Nm
-	 RPfvAkYNLuM4KKZn2d5yIlVX3j11d+lV4EgCHsAybSNYTt3qk17xDdXxv0gkBVG0k
-	 aMAjNIkB78tDoWTgI79jNKxd4NIF2k0b1BKS2qDacp4etfoc/j8bsi03HfB7ZjQ8q
-	 fLWKudEpsSpLtMfIZ2/lIe1wHdNwQqE7lLTdqzySI6yvuNM7DTCg8fMrhVG5kj5JO
-	 n3KeHi2pGJNYdJHFjQ==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from [192.168.0.174] ([84.175.94.57]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MZjQl-1tEm8Z2gr9-00IsfX; Fri, 15 Nov 2024 07:40:04 +0100
-Message-ID: <41966d59-063f-4848-9776-399ee348069a@oldschoolsolutions.biz>
-Date: Fri, 15 Nov 2024 07:40:03 +0100
+	s=arc-20240116; t=1731652827; c=relaxed/simple;
+	bh=q1ua9vU4mVzTtv9yyz5T7Gx7G+GDgDdJrjpLAuqXChs=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=nfqoj1vOXLlfJG8LazBU9BZ4m9HvGlcqZfsLLyyMWln7j33t/y2gPGJw87wPMTRipQaCZU9TcECjFUQNaBtXtEnDDYD6e4GWj1cRYq+Nwp1DrDhaFxWgN5YSNLeEb5qHsCYjFv9lWDTartfq8ISFYUcr5P1meHCOtX1qAoUR06U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=b7TvoYUA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xP1IImbW; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=czYKfMUn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+2pEpGDx; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B7BEE1F7E8;
+	Fri, 15 Nov 2024 06:40:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731652823; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nqKjoGPVS0yHvQ0U7eCIW+aIKTW7r0WfcKI3m8mcFpk=;
+	b=b7TvoYUAQExHCUKPT2i7c5BOMTab5XR4BWOoXzfKGUVScnRAG1nao01PM6KEDzWw9PZ2cC
+	AkKVfhAppLMDcDh5JHjcbpkfWIsSxvPYq9XHf7mL7GyXLtImC3YHXOxo4ivW708aB/IFmZ
+	Kl9EBgTvQaRrRljhn9J1HrZBpYcMdCI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731652823;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nqKjoGPVS0yHvQ0U7eCIW+aIKTW7r0WfcKI3m8mcFpk=;
+	b=xP1IImbWLqyIF1gsnPTaExG6+eGj3NlJg0MiNK3GJFXUsg0dEyFohVlwgHReevitJc1fP3
+	ySTA6TG9GNMdaIDQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=czYKfMUn;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=+2pEpGDx
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731652821; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nqKjoGPVS0yHvQ0U7eCIW+aIKTW7r0WfcKI3m8mcFpk=;
+	b=czYKfMUnJ0pN8cZ0bk7pf4W8zxsY/1LmRryhFVdlcB0xzQR+4CUKkmB0I/oKlJn3XbreRJ
+	Hkk6bc1YYA3b6E8s2fUjQvgnxoAneR/V3cflEOdayNpu7fRZwnZOKZ1pO9MS5/Y5gq4llU
+	v0qOzrXv2B5dvTFDebHsubpYuRNfBn4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731652821;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nqKjoGPVS0yHvQ0U7eCIW+aIKTW7r0WfcKI3m8mcFpk=;
+	b=+2pEpGDxeBMRlmLvENgZinqp73+buXAfs/vrfHmmcEYFM5Yh41sUV9T/kMrhIHnFIUWWX7
+	fq/sqfDxENNzVwCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1A73F13485;
+	Fri, 15 Nov 2024 06:40:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id RwEZMtPsNmeKDwAAD6G6ig
+	(envelope-from <colyli@suse.de>); Fri, 15 Nov 2024 06:40:19 +0000
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Bluetooth: qca: Support downloading board id specific NVM
- for WCN6855
-To: Zijun Hu <quic_zijuhu@quicinc.com>, Marcel Holtmann
- <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-bluetooth@vger.kernel.org,
- linux-kernel@vger.kernel.org, Bjorn Andersson <bjorande@quicinc.com>,
- "Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>,
- Cheng Jiang <quic_chejiang@quicinc.com>, Johan Hovold <johan@kernel.org>,
- Steev Klimaszewski <steev@kali.org>
-References: <20241113-x13s_wcn6855_fix-v1-1-15af0aa2549c@quicinc.com>
-Content-Language: en-US
-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-In-Reply-To: <20241113-x13s_wcn6855_fix-v1-1-15af0aa2549c@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [PATCH] bcache:fix oops in cache_set_flush
+From: Coly Li <colyli@suse.de>
+In-Reply-To: <CAAsfc_r_6mZ2HesDOQWU-0F2KXhz=EJ_nHeR4bLanXNnAiduTg@mail.gmail.com>
+Date: Fri, 15 Nov 2024 14:40:05 +0800
+Cc: "mingzhe.zou@easystack.cn" <mingzhe.zou@easystack.cn>,
+ Kent Overstreet <kent.overstreet@gmail.com>,
+ linux-bcache <linux-bcache@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:mtSY/gdP/hTky6JTWjDsTQyDnhLG3IY2r1nME5X4f5HFKT9cmRE
- ypkLrwA76jtTJ3hJgMiiWP/3wImoej3Gg+uGXeGb3JlIgNRESiwPUf80i9c8/tRkQWhSsBd
- iZLGmNhXs7FSRQBHZz4xYCaKejdBb7/2vk30AhwSmGsswYz84ZYpM1p3aCQqrr44na4OSS+
- gvKFX/7asSLGzayJEvjNg==
+Message-Id: <D5D1CBD5-0031-4285-BE12-910D6898B465@suse.de>
+References: <CAAsfc_omvbgaSpmxqPPD9Jf4P2H-fEU97ADfRzJ0jULxGJehwg@mail.gmail.com>
+ <TYZPR02MB78424F31FF023102693D2DB2A65A2@TYZPR02MB7842.apcprd02.prod.outlook.com>
+ <15077D4C-8DE9-4751-9492-51D972B3E4C3@suse.de>
+ <CAAsfc_r_6mZ2HesDOQWU-0F2KXhz=EJ_nHeR4bLanXNnAiduTg@mail.gmail.com>
+To: liequan che <liequanche@gmail.com>
+X-Mailer: Apple Mail (2.3826.200.121)
+X-Rspamd-Queue-Id: B7BEE1F7E8
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[easystack.cn,gmail.com,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TAGGED_RCPT(0.00)[];
+	APPLE_MAILER_COMMON(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[run-fio-randrw.sh:url,gitee.com:url,inspur.com:email,suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:1XJSv05HMU0=;kh62fsZOMcw3Qx7HWd+pek2dfxR
- EKhl7RfuEuSsjAFIroLwb8W1M0CItKzc+gA8gKnT5oEQ7dn7+Im5XQJXRsIKHAY46kx7+LJsV
- 7WBGszjtrt7L7xVOzYiQY6+zk/naYKdEFiHX7nBGu6BUVpUoVKh4Kl067Kcs2gJwhciArX1oJ
- vdCsTnbNYIA+QCuENDKO8TJaH6Cnb7LPVKDE4f/bQf6wrSWAvKJ1LCxeIztSnGlb7+Lt8th7r
- UYQJZzi2G0mo2pDkrJiGVv8T6fskpeip/RLEB1FEMl/+0ju13D8HNX3JDKlgzR1GC2EUCPP1k
- SqU2obtDJ2etS3miSEcbAQSmpzhFg6IDPi5hPG+5HMaZqKCPFbMKtS0FTE32FPsHxc/Gm8pNR
- hjziCWncWZ0QQKTl35qjX6lN6w2yV34P4l1W3lb79pjIrGH+DY0wP6yWw8zWe5eCQeDYpfohv
- Vr0xPgLL2in/XlPL9QsTqY1zQx2p9gXqlOu95bKkYGek4oUY6TwGDmco6yiIq/xEgADjFfgFF
- gMwe4d1iuoJmhz6xP67iZBTeu1ZLZMU4edO4UOsWXCJgPNeicKYrwRANyIOH+9Pz8thIYnBIM
- jkY/pIFOYFcjU4L66eY4uE6ufKX8wsh/SrpGUYQGplHDDFMmEWeZ6NTe7CsmFvnMzjoKGeAOS
- pdkpA2NMdm9KPqmQAjVECBaD+ANlCO2gSH0WMLXd8VO672oBMB1w0+A8WxxVUtEpM/iIbSc1K
- 6e5zLZxqVbH6pS05tORmkB/MtrB812X603vcFqsA/5Mi+LEnJTgRkuPhAUM3+Tkfq6JudA3m8
- lxLD44y5fwaSzpFFbGyJd7TI9ivdfwx0IFsDizH6pNVrrKkf/q3PhC0tkPONhDpvCu
+X-Spam-Level: 
 
-On 14.11.24 07:26, Zijun Hu wrote:
-> Download board id specific NVM instead of default for WCN6855 if board
-> id is available, and that is required by Lenovo ThinkPad X13s.
->
-> Cc: Bjorn Andersson <bjorande@quicinc.com>
-> Cc: Aiqun Yu (Maria) <quic_aiquny@quicinc.com>
-> Cc: Cheng Jiang <quic_chejiang@quicinc.com>
-> Cc: Johan Hovold <johan@kernel.org>
-> Cc: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-> Cc: Steev Klimaszewski <steev@kali.org>
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+
+
+> 2024=E5=B9=B411=E6=9C=8814=E6=97=A5 21:10=EF=BC=8Cliequan che =
+<liequanche@gmail.com> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> Hi colyli and mingzhe.zou:
+>  I am trying to reproduce this problem, maybe it is a random problem.
+> It is triggered only when IO error reading priorities occurs.
+>  The same operation was performed on three servers, replacing the 12T
+> disk with a 16T disk. Only one server triggered the bug. The on-site
+
+What do you mean =E2=80=9Creplacing 12T disk with a 16T disk=E2=80=9D ?
+
+
+
+> operation steps are as follows:
+> 1. Create a bache device.
+> make-bcache -C /dev/nvme2n1p1 -B /dev/sda --writeback --force =
+--wipe-bcache
+> /dev/sda is a 12T SATA disk.
+> /dev/nvme2n1p1 is the first partition of the nvme disk. The partition
+> size is 1024G.
+> The partition command is parted -s --align optimal /dev/nvme2n1 mkpart
+> primary 2048s 1024GiB
+> 2. Execute fio test on bcache0
+>=20
+> cat /home/script/run-fio-randrw.sh
+> bcache_name=3D$1
+> if [ -z "${bcache_name}" ];then
+> echo bcache_name is empty
+> exit -1
+> fi
+>=20
+> fio --filename=3D/dev/${bcache_name} --ioengine=3Dlibaio --rw=3Drandrw
+> --bs=3D4k --size=3D100% --iodepth=3D128 --numjobs=3D4 --direct=3D1 =
+--name=3Drandrw
+> --group_reporting --runtime=3D30 --ramp_time=3D5 --lockmem=3D1G | tee =
+-a
+> ./randrw-iops_k1.log
+> Execute bash run-fio-randrw.sh multiple times bcache0
+> 2. Shutdown
+> poweroff
+> No bcache data clearing operation was performed
+
+What is the =E2=80=9Cbcache data clearing operation=E2=80=9D here?=20
+
+
+
+> 3. Replace the 12T SATA disk with a 16T SATA disk
+> After shutting down, unplug the 12T hard disk and replace it with a
+> 16T hard disk.
+
+It seems you did something bcache doesn=E2=80=99t support. Replace the =
+backing device...
+
+> 4. Adjust the size of the nvme2n1 partition to 1536G
+> parted -s --align optimal /dev/nvme2n1 mkpart primary 2048s 1536GiB
+> Kernel panic occurs after partitioning is completed
+
+Yes it is expected, bcache doesn=E2=80=99t support resize on cache =
+device. The operation will result a corrupted meta data layout, it is =
+expected.
+
+
+> 5. Restart the system, but cannot enter the system normally. It is
+> always in the restart state.
+> 6. Enter the rescue mode through the CD, clear the nvme2n1p1 super
+> block information. After restarting again, you can enter the system
+> normally.
+> wipefs -af /dev/nvme2n1p1
+
+OK, the cache device is cleared.
+
+
+> 7. Repartition again, triggering kernel panic again.
+> parted -s --align optimal /dev/nvme2n1 mkpart primary 2048s 1536GiB
+> The same operation was performed on the other two servers, and no
+> panic was triggered.
+
+I guess this is another undefine operation. I assume the cache device is =
+still references somewhere. A reboot should follow the wipefs.
+
+> The server with the problem was able to enter the system normally
+> after the root of the cache_set structure was determined to be empty.
+> I updated the description of the problem in the link below.
+
+No, if you clean up the partition, no cache device will exist. Cache =
+registration won=E2=80=99t treat it as a bcache device.
+
+OK, from the above description, I see you replace the backing device =
+(and I don=E2=80=99t know where the previous data was), then you extend =
+the cache device size. They are all unsupported operations.
+
+It is very possible that the unsupported operations results undefined =
+aftermath.
+
+> bugzilla: https://gitee.com/openeuler/kernel/issues/IB3YQZ
+> Your suggestion was correct. I removed the unnecessary btree_cache
+> iserr_or_null check.
+
+Here in the linux-bcache mailing list, we don=E2=80=99t handle =
+distribution specific bug. Unless it is in upstream too.
+
+But from the above description IHMO they are invalid operations, so I =
+don=E2=80=99t see there is a valid bug.
+
+
+>  ------------
+>  If the bcache cache disk contains damaged data,
+> when the bcache cache disk partition is directly operated,
+> the system-udevd service is triggered to call the bcache-register
+> program to register the bcache device,resulting in kernel oops.
+>=20
+> Signed-off-by: cheliequan  <cheliequan@inspur.com>
+>=20
 > ---
->   drivers/bluetooth/btqca.c | 35 ++++++++++++++++++++++++++++++++---
->   1 file changed, 32 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
-> index dfbbac92242a..4f8576cbbab9 100644
-> --- a/drivers/bluetooth/btqca.c
-> +++ b/drivers/bluetooth/btqca.c
-> @@ -717,6 +717,29 @@ static void qca_generate_hsp_nvm_name(char *fwname,=
- size_t max_size,
->   		snprintf(fwname, max_size, "qca/hpnv%02x%s.%x", rom_ver, variant, bi=
-d);
->   }
->
-> +static void qca_get_hsp_nvm_name_generic(struct qca_fw_config *cfg,
-> +					 struct qca_btsoc_version ver,
-> +					 u8 rom_ver, u16 bid)
-> +{
-> +	const char *variant;
-> +
-> +	/* hsp gf chip */
-> +	if ((le32_to_cpu(ver.soc_id) & QCA_HSP_GF_SOC_MASK) =3D=3D QCA_HSP_GF_=
-SOC_ID)
-> +		variant =3D "g";
-> +	else
-> +		variant =3D "";
-> +
-> +	if (bid =3D=3D 0x0)
-> +		snprintf(cfg->fwname, sizeof(cfg->fwname), "qca/hpnv%02x%s.bin",
-> +			 rom_ver, variant);
-> +	else if (bid & 0xff00)
-> +		snprintf(cfg->fwname, sizeof(cfg->fwname), "qca/hpnv%02x%s.b%x",
-> +			 rom_ver, variant, bid);
-> +	else
-> +		snprintf(cfg->fwname, sizeof(cfg->fwname), "qca/hpnv%02x%s.b%02x",
-> +			 rom_ver, variant, bid);
-> +}
-> +
->   static inline void qca_get_nvm_name_generic(struct qca_fw_config *cfg,
->   					    const char *stem, u8 rom_ver, u16 bid)
->   {
-> @@ -810,8 +833,15 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t ba=
-udrate,
->   	/* Give the controller some time to get ready to receive the NVM */
->   	msleep(10);
->
-> -	if (soc_type =3D=3D QCA_QCA2066 || soc_type =3D=3D QCA_WCN7850)
-> +	switch (soc_type) {
-> +	case QCA_QCA2066:
-> +	case QCA_WCN6855:
-> +	case QCA_WCN7850:
->   		qca_read_fw_board_id(hdev, &boardid);
-> +		break;
-> +	default:
-> +		break;
-> +	}
->
->   	/* Download NVM configuration */
->   	config.type =3D TLV_TYPE_NVM;
-> @@ -848,8 +878,7 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t bau=
-drate,
->   				 "qca/msnv%02x.bin", rom_ver);
->   			break;
->   		case QCA_WCN6855:
-> -			snprintf(config.fwname, sizeof(config.fwname),
-> -				 "qca/hpnv%02x.bin", rom_ver);
-> +			qca_get_hsp_nvm_name_generic(&config, ver, rom_ver, boardid);
->   			break;
->   		case QCA_WCN7850:
->   			qca_get_nvm_name_generic(&config, "hmt", rom_ver, boardid);
->
-> ---
-> base-commit: e88b020190bf5bc3e7ce5bd8003fc39b23cc95fe
-> change-id: 20241113-x13s_wcn6855_fix-53c573ff7878
->
-> Best regards,
+> drivers/md/bcache/super.c | 6 ++++--
+> 1 file changed, 4 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> index fd97730479d8..c72f5576e4da 100644
+> --- a/drivers/md/bcache/super.c
+> +++ b/drivers/md/bcache/super.c
+> @@ -1741,8 +1741,10 @@ static void cache_set_flush(struct closure *cl)
+>        if (!IS_ERR_OR_NULL(c->gc_thread))
+>                kthread_stop(c->gc_thread);
+>=20
+> -       if (!IS_ERR(c->root))
+> -               list_add(&c->root->list, &c->btree_cache);
+> +       if (!IS_ERR_OR_NULL(c->root)) {
+> +               if (!list_empty(&c->root->list))
+> +                       list_add(&c->root->list, &c->btree_cache);
+> +       }
+>=20
 
-Hi Zijun,
+The patch just avoid an explicit kernel panic of the undefined device =
+status. More damages are on the way even you try to veil this panic.=20
 
-I tested his patch on the HP Omnibook X14 and on the Windows Dev Kit
-2023, it works well. Thank you!
 
-Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Thanks.
 
-with best regards
+Coly Li
 
-Jens
+
+>        /*
+>         * Avoid flushing cached nodes if cache set is retiring
+> --=20
+> 2.33.0
 
 
