@@ -1,112 +1,136 @@
-Return-Path: <linux-kernel+bounces-410539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17D609CDCF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:49:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46BB09CDD06
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:51:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CDE2280EC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:49:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EC5A283358
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0618B1B6D02;
-	Fri, 15 Nov 2024 10:49:27 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67941B3F3D;
+	Fri, 15 Nov 2024 10:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ghHj80am"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307581B2196
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6EB1B3920
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731667766; cv=none; b=hYkDUqfAnAxzIPeivTbKV9Cw2HTbsI6VO/6LG0u9JnzYs5h1A0J02gHGO2wnFfYAPI9SZJLqJtevRsNRnOV5r6tQLw2QFt0pdVhB6zI3QNVZFFTAoDRTcc+UsjVF5DeWDreRtdDHc+P1cJOlwbeFzvDmPHVyJX3XA0zwYMDELI0=
+	t=1731667880; cv=none; b=OroY2tUVvHMQbeWBsTanAzJ1E6TDIy+yBII2IAQWH6NwHeTMDmAtpQzhI6XKjL5B0wx7Dm2LLvXQh39Z/cxTKdQWI7Vo/KGH5SzcHmJDSMFABVnmBSbwnFmlBSxracY7dCjehhHocQIkPjIbswqor6HEZchqj3Ts0/YAf+zQaOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731667766; c=relaxed/simple;
-	bh=ubEYGt1zvGVfg6XdBlBj7Ra+4IlQFTaDQuwvvEB7O90=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rl8fwU/AWdvJ6se1lboVP9+ctfnpYWRCn3hRElIgEzE8gDXkaYe1QhAFFxrpox7MR53+37yuaMiVZUrIAeqz6R1/VyC+0oudfnXLZ4hjwBuiCaPRpw4j7YCMG+K+e7osKZXRcyJbQ0cilKcPyhma6S9Km6OrUFlbcygjFcTPQuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a71d04c76dso6597195ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 02:49:24 -0800 (PST)
+	s=arc-20240116; t=1731667880; c=relaxed/simple;
+	bh=Qx4F0F461BzRVt5DGASUXEaOPXglVHaubs+hPumYIhQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cB51cJrIIQJTOQmKDrZErcXpzNxDR9ulh1zLCVICKmjzMDLhW9/jPPP2cGjN/8ylqQm3+i3fuzJtETqAjD4P4WBCOFPXtUwjUIaA1HNz7guMSpsAZqI9XRWnmyZve0caSmb46J7bl66CcDih1fVJ7SbYgq8OaXr8/XE8dlRrhdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ghHj80am; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4315eac969aso9470715e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 02:51:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731667876; x=1732272676; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qx4F0F461BzRVt5DGASUXEaOPXglVHaubs+hPumYIhQ=;
+        b=ghHj80amLuodM885jnFDpzZZId6U4zEf6JkFlhA9mrzvt8tVKjKVfQlTjslNv2xQid
+         a8ZB01IdS/yqGFrPif0/bmIdYnsSbxnORyh28jgiyF/QGudhAwdgLpzu7OUHXro89Ur5
+         TC6eiMQvxu8lbyScFHAJUSTMvYIk2ThCVs6U2yubFvp7QKBNT6URWKLdDBSEfPUHkTQM
+         ROn60oJ06X6mivXbRs4nhZE6COyiGxs//snCH352VtbSAfCG984AyD4oaPeFec8Q/uoa
+         qwk2T9g6vlVdhAy08koNLRutsUJG7F1j7e8f/bu6d3yILm+RVrCr9XZ6OoT19iDX2+xZ
+         /Z8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731667764; x=1732272564;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=f+rlxtKG2aGkvlFRBMhtlmvZbAbGNeSTd8P0PcCyJfE=;
-        b=IDMnddmWc0/UJ/esuZ0c5V7YK2MxBvY7x/4Wym4LdTTYrGWHbyvpaEjW5OfXU71Jdo
-         OawJVRJBFejagySf7g9y5G1tYtDOCqzFeJhEPccOWrvgB8aO6XJKjuwPj79wfXoAnSZS
-         4GllRq4mBcGPUmnttyo5GEWdR53JUtvoBZelwpq2oQLarf6bSo+U8K04es81CqGSQ1ZI
-         0kwEyrflw6aR99In4B6mRfGHHPfI9UTFoiAUJ1mmKIbEK5S0Ai/JeKjL7HVICBdQ68bg
-         4/RqCCwoFDugbiD1I3Q8YcaaQzNlcIAId9U7Cr2VnIB/9HdV4bc0Nx+ON2x3XbZNpyY5
-         eBEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXWtlE4cUMf5d657kzTCejCAPauvylKRcA8K67XF1Mk2XeLjgMwmr7bQyYYIROe13eGgo8COLDRkJroQw0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRUBV+sujd4wfkp8mXdD6qBuWAlbPZkOoc5USr6cmVOIGAyQVO
-	jhj0yev1f3N+XIjbDSNJOwr5JKZdwIiwhMoIJvJhQt4VoGUQ9RVwV8/VxrURHPZnmZ3CqPlM6Ls
-	kz3AY4mVYqVpQkyh1cqH8K2HH+dbqqoXQ627i32N6WvFVe9Ko333TlOA=
-X-Google-Smtp-Source: AGHT+IEk0v0Tl83Y60397ic2iMUG3lvC58jjO9vBypvdRBKMc5saVXpQ2Ag+VCBNGJAAvTQj/IvZnU8Dt/CXoZniX3Mq0+45VNtq
+        d=1e100.net; s=20230601; t=1731667876; x=1732272676;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qx4F0F461BzRVt5DGASUXEaOPXglVHaubs+hPumYIhQ=;
+        b=cLz/CmtZtIgmC+Xd33FxcrDN0VqLhxKdCXQSHJ57DHs8Ot2+P/R+DWhlR8bJiWmerB
+         XKcIu03iXRav7uTlR6iDz2HDVvFymVF65aydsGhhxaYSlpLt0JoONM55bCP7omZpYDNX
+         a3+y12vhEHa6u6dOWmmQhck+u3SdDfuLpqcazG2zmxm5dQ2G1PksdQnIoKK54+mkrDi9
+         AvwafQNEigkNcM3/x7oa/l9YKVGJz2EJ/oxrNuf3sn1K/21juAdo+6EbimSUgW4Q5lEY
+         XYHO1ppEpJAekqBpNnA6yueVgwFUSOSOjHUjtc5kO1cb2Hw4rmb0fj0cLZebdc2G4SJV
+         ad4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWyfvTmyrL8PojEjhg5wzy3sYHyEBfqrOXC/WKOwqobRBJgji4MRLo3dWhDIrag/Tx0HvzUMaAMGVM7JBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUAmWgiUGYm+UIvWAAqsT0IGA9mVY9UC/OOLEFTz6u78B0psVr
+	Mr1s7OVjSBRa8X20mSeCUJR1G+UKBgAglN5+RP8gM3I2IGPmYx4ddk46LvxdoQE=
+X-Google-Smtp-Source: AGHT+IEELQH215cT5HxQoVpbKazD1oIwR5e78Y6MuL4jy6qtS+rOi2RiLQuJVhCpA5LXSAg3YC4WLA==
+X-Received: by 2002:a05:600c:1c29:b0:431:4e33:98b6 with SMTP id 5b1f17b1804b1-432defd2398mr20383955e9.5.1731667876341;
+        Fri, 15 Nov 2024 02:51:16 -0800 (PST)
+Received: from localhost (p200300f65f28bb0063ffae39110fa2df.dip0.t-ipconnect.de. [2003:f6:5f28:bb00:63ff:ae39:110f:a2df])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dac223e6sm50118295e9.43.2024.11.15.02.51.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 02:51:15 -0800 (PST)
+Date: Fri, 15 Nov 2024 11:51:13 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Werner Sembach <wse@tuxedocomputers.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, tux@tuxedocomputers.com, Petr Pavlu <petr.pavlu@suse.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Thorsten Leemhuis <linux@leemhuis.info>, Vinzenz Vietzke <vv@tuxedocomputers.com>, 
+	Christoffer Sandberg <cs@tuxedo.de>
+Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
+ symbols
+Message-ID: <y3lspnzleavkgvujrf66rly65yw3sskjomcvbginijgexaybys@bg53hyadhcbw>
+References: <20241114103133.547032-4-ukleinek@kernel.org>
+ <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
+ <2024111557-unlighted-giggle-0d86@gregkh>
+ <6c1952bc-f58d-4c55-887e-6aa247daec5c@tuxedocomputers.com>
+ <h5q36ajuzgwf5yrjmqv46x62evifcgoi5imxhcvsv7oxauvxak@sj54oisawqnf>
+ <58b85a78-55aa-422c-a21d-254eb16cc8c6@tuxedocomputers.com>
+ <2024111522-brush-excusably-cae5@gregkh>
+ <3ea99d52-cafb-4c79-a78b-fdd1f9a9fcd5@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d88:b0:3a6:ac4e:2659 with SMTP id
- e9e14a558f8ab-3a74800f183mr23740335ab.6.1731667764204; Fri, 15 Nov 2024
- 02:49:24 -0800 (PST)
-Date: Fri, 15 Nov 2024 02:49:24 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67372734.050a0220.2a2fcc.0078.GAE@google.com>
-Subject: [syzbot] Monthly jfs report (Nov 2024)
-From: syzbot <syzbot+listf156ee00ba8a7b601a18@syzkaller.appspotmail.com>
-To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="urniyztjj4xzapin"
+Content-Disposition: inline
+In-Reply-To: <3ea99d52-cafb-4c79-a78b-fdd1f9a9fcd5@tuxedocomputers.com>
 
-Hello jfs maintainers/developers,
 
-This is a 31-day syzbot report for the jfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/jfs
+--urniyztjj4xzapin
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
+ symbols
+MIME-Version: 1.0
 
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 49 issues are still open and 47 have already been fixed.
+Hello Werner,
 
-Some of the still happening issues:
+On Fri, Nov 15, 2024 at 10:40:56AM +0100, Werner Sembach wrote:
+> Then why does the proprietary NVIDIA driver exist?
 
-Ref  Crashes Repro Title
-<1>  24478   Yes   kernel BUG in jfs_evict_inode
-                   https://syzkaller.appspot.com/bug?extid=9c0c58ea2e4887ab502e
-<2>  11810   Yes   kernel BUG in txUnlock
-                   https://syzkaller.appspot.com/bug?extid=a63afa301d1258d09267
-<3>  5816    Yes   WARNING in dbAdjTree
-                   https://syzkaller.appspot.com/bug?extid=ab18fa9c959320611727
-<4>  4529    Yes   general protection fault in lmLogSync (2)
-                   https://syzkaller.appspot.com/bug?extid=e14b1036481911ae4d77
-<5>  2536    Yes   KASAN: user-memory-access Write in __destroy_inode
-                   https://syzkaller.appspot.com/bug?extid=dcc068159182a4c31ca3
-<6>  2468    Yes   INFO: task hung in lock_metapage
-                   https://syzkaller.appspot.com/bug?extid=1d84a1682e4673d5c4fb
-<7>  2316    Yes   kernel BUG in dbFindLeaf
-                   https://syzkaller.appspot.com/bug?extid=dcea2548c903300a400e
-<8>  2206    Yes   general protection fault in write_special_inodes
-                   https://syzkaller.appspot.com/bug?extid=c732e285f8fc38d15916
-<9>  1085    Yes   KASAN: use-after-free Read in release_metapage
-                   https://syzkaller.appspot.com/bug?extid=f1521383cec5f7baaa94
-<10> 970     Yes   general protection fault in jfs_flush_journal
-                   https://syzkaller.appspot.com/bug?extid=194bfe3476f96782c0b6
+Please don't use NVIDIA's behaviour as a blueprint for your actions.
+INAL, but I would not recommend to deduce from "NVIDIA does it and
+wasn't tried to stop" (for any value of "it") that "it" is legal, honest
+and in line with the open source spirit.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Best regards
+Uwe
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+--urniyztjj4xzapin
+Content-Type: application/pgp-signature; name="signature.asc"
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+-----BEGIN PGP SIGNATURE-----
 
-You may send multiple commands in a single email message.
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmc3J58ACgkQj4D7WH0S
+/k7y+wgAoeHmj2+Ieb2/+7ZLcMqzAgTHIowWVwOoVKDhzeR/QR/KcGI/NpJy6+9d
+N8T7+pSTEZfckqr9kK37pjzX5bRFYnqAOdzKbi9z4qHL+8aTLRVn2nsi7kombrEZ
+0L+lRVzkXEB1bPndRdSGisMhKqLQu8FTf8hNXnPNv1oVoTR5CqJaYRUGVdLt0XJo
+8xQF88D47JhOCm37oMhLqfkAewQqJ0giSKSQKzsC7Z7OFcMUuj3m0alMALIiqJcH
+34J2igse0euzjP9oQ2eH4v+I9wk4nSB2rAWukYcDEUuDqYCg0xQRL2PpS8YrpQQX
+FwoHsvdf4LmLdh7SQrma+KylB9rNCw==
+=Kv05
+-----END PGP SIGNATURE-----
+
+--urniyztjj4xzapin--
 
