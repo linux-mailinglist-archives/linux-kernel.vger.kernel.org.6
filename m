@@ -1,53 +1,73 @@
-Return-Path: <linux-kernel+bounces-410252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36E6E9CD6ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:10:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64B419CD6F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:15:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAB96B249DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:10:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF00E1F222A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A6318593B;
-	Fri, 15 Nov 2024 06:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6DBF18785C;
+	Fri, 15 Nov 2024 06:15:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="Kts1Ttn5"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rqw+KIDH"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8381714C0;
-	Fri, 15 Nov 2024 06:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F5613AD39;
+	Fri, 15 Nov 2024 06:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731650996; cv=none; b=PdNT3HT5KnfhDzXNugnPw3/pD6DT10RkKl4d+e34/gfRItDnRMtnfkdS6ByUL5NT8bB9rduSbz27vRJ9yKQxKvlDjYSoWJ+kJZgB+oLZY4WfZMibfcXc3f2uuwW2I85R53cuz2tgAc+x1xKgdh150tpRRL8njF5QuOK6KYpiOS0=
+	t=1731651343; cv=none; b=EiYAf488l7LuzjIxystPhDgyCh/Y5HJDdjljcyLDOg2TaJWenGWFWxD6UFsZ1+KXFj+YrSFhlrwF9GrVORa2RPLxwwNdpFEz7xK2lWE93a2l1RdA7s9RZT0ZutU0morODrlh67Ldyq4H3E/qTCE0k/FrgGHaQVlClnWF2MO4NLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731650996; c=relaxed/simple;
-	bh=FGGNcx7I3mGtUqTVbToHaEKMQVbJ2MZmuzf2h0ZTS1Q=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=X9CCNpRnb+d+Q1J7i/XOBbiC8EUR6K1tAV8yweP5Z9ekURxoTTn/hTw+YGHR7uGgjgdReSBdeV9hjrq8WkggOHWieiJSeczVWq8RvJTMtYP/4mQLoesjmsPPt/fvXpBhVMJzkVFoNrbRuH0MEpv52Av8CmEQlpBMkD+5PtGikyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=Kts1Ttn5; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.96] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id B293F2FC0057;
-	Fri, 15 Nov 2024 07:09:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1731650990;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gVcTWV1ZxqzFsXWw2RidADJTa1JW3HgSR3aeNVGYKFY=;
-	b=Kts1Ttn5UtoSUvpNxkhfc0zu9x6jzGvTrerZCr5ImbF1lHTrM8RTLvGsVemP0Z8yZoiqbn
-	RpOF5Itv8Yk8Um2w/35eQRVuR2L1LEkxbOs5Hfca/gviXNBYn+mr4mYGQX+ZvZXCLkz3Xl
-	5u30x8GmNxSibPIu2g63P0U/SPQcWig=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <6c1952bc-f58d-4c55-887e-6aa247daec5c@tuxedocomputers.com>
-Date: Fri, 15 Nov 2024 07:09:49 +0100
+	s=arc-20240116; t=1731651343; c=relaxed/simple;
+	bh=5d6jZry6UDuTmcWeHJz3MavTR/E0aUEYRcBieiOzVH0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K+cpDU8BoeLHlvqi2Y/O7TOaeW0F779oQdFbyRK7uMfeCQO0Lbv6ISStgzhU86OQjgH1DcWlF2Oy5zZTBgJtyQ0d7Np72DtPnx6b8ZMF5zkt9uMuzx8IwEpVtU0whoVr3eF/0haGXdTN7QvQU5VxZNiv5CRxWB/9Bot0ITppLWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rqw+KIDH; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53da3b911b9so349934e87.2;
+        Thu, 14 Nov 2024 22:15:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731651340; x=1732256140; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lwl6jHaS+Rj/XSsr3HGpdPfbezQhvl6liiIsOcGm9T8=;
+        b=Rqw+KIDH17e9So1D93X4FRHYnDXg6x4UieEPfQw9ikvNZXgSsqSobDAVIa6EO2oViJ
+         RMqtY+oNxATKWu96e3HZkp8/F/7lRGGKsmAnlBV3Y5VEuIFw9Q2/5iudiAhA4pYSYIwl
+         EcDtwOvFruXtVb6KE7LkiACeFLpfayX8DvU5tsK2ve8IPzMRQPAENkTBjzoVFQMfV6td
+         ZKilJier80fsCtgC9vInSIkVVPvxzzJTlMoB806gukF8CPv6EcIA4pGiTi2rR2mEVDSS
+         6+TlydQIyNFQpBWmKnqMdSXinWoTdVeI04JeuZIfm+TQ8SoAokWZF3+gRmylLccW0Sjn
+         elrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731651340; x=1732256140;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lwl6jHaS+Rj/XSsr3HGpdPfbezQhvl6liiIsOcGm9T8=;
+        b=H2gjqhV0awf62GUHlJj20whe7Wez+eSe3WPzaY5/jiST9UyTGO0M9juStw7obvuam1
+         FkbzuMGTgK3sNtnNZUbWnYWZ4lpBYBv0uosea3aIJmAlWWrAlTjDLYwJ4QBPNpnp6wGe
+         AB+c2pPA9rslJOjp4nrgyrwvB5EotxKvlan6ejxA8IlJZUodUUerR8bPS/tmTpUTxH5h
+         G7zVsSnMjX79e0qSBgvYNs0sOaD54N3a+37bFJkPP50sSu80pAAEs4Q7R3D17DhV/wYu
+         Bv85IFFDDqhHd9bRwNrKf34YSgXw7USzas/WFr4wFNYcTYxVe/YQoY+OFpg2ImfUz1vr
+         M3bw==
+X-Forwarded-Encrypted: i=1; AJvYcCX3t19voD8oZBmlB/fv/XQi9z9aKEP/hZKmYYDJHR+tVky98lTAv6SG2XavfpOzZmDehSaUqTw9TM3k@vger.kernel.org, AJvYcCXHIvGWSOVpIXZMvq4JFuu69YKE3hMSl7d+4cnkn3LvxBbTWVghWi3kecTqUBD5MluAoB1TjpkTk8eJNLcG@vger.kernel.org, AJvYcCXNtyLAmxg9pspnPasZx9+0Lu4u8TotC/GgR4rQL8LIIReRCfR4zrXFpGgDnhzeVN7tKcJmjlphkXbi@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjDpdE2GTK0G5rSVw4Wl3XysJHlTXL2hFzt4RUYTxXQjhJXAc0
+	ouf6gLHjvfdcAaXXJK2zv7x6+MQo9/HBzeMeGBN5scf0ajGODldEEiXtYPut
+X-Google-Smtp-Source: AGHT+IFmlvIMrWcxxFlUrWMhPi154xUtaxwPA0GS2O60umHIFrpIaQuFVbW71LcjmRHrZd/zJwJncA==
+X-Received: by 2002:a05:6512:ba0:b0:539:f1ce:5fa8 with SMTP id 2adb3069b0e04-53dab3c4b42mr504127e87.49.1731651339269;
+        Thu, 14 Nov 2024 22:15:39 -0800 (PST)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da653e1edsm438220e87.183.2024.11.14.22.15.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Nov 2024 22:15:37 -0800 (PST)
+Message-ID: <be11e656-a8be-4603-bd8f-01e3bdc56677@gmail.com>
+Date: Fri, 15 Nov 2024 08:15:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,81 +75,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Werner Sembach <wse@tuxedocomputers.com>
-Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
- symbols
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>, tux@tuxedocomputers.com,
- Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>,
- Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
- linux-kernel@vger.kernel.org, Thorsten Leemhuis <linux@leemhuis.info>
-References: <20241114103133.547032-4-ukleinek@kernel.org>
- <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
- <2024111557-unlighted-giggle-0d86@gregkh>
-Content-Language: en-US
-In-Reply-To: <2024111557-unlighted-giggle-0d86@gregkh>
+Subject: Re: [PATCH 4/5] dt-bindings: ROHM KX134ACR-LBZ
+To: Conor Dooley <conor@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1731495937.git.mazziesaccount@gmail.com>
+ <d979a0a8160118d560ba2255346d05237f73b9ce.1731495937.git.mazziesaccount@gmail.com>
+ <20241114-afterlife-ride-08068767f1e4@spud>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20241114-afterlife-ride-08068767f1e4@spud>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 14/11/2024 22:10, Conor Dooley wrote:
+> On Wed, Nov 13, 2024 at 01:20:49PM +0200, Matti Vaittinen wrote:
+>> Add compatible and information for ROHM KX134ACR-LBZ accelerometer.
+> 
+> The commit message mention what makes this device incompatible - but
+> I'll let you away with it the description below contains it.
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Am 15.11.24 um 05:43 schrieb Greg KH:
-> On Thu, Nov 14, 2024 at 11:49:04AM +0100, Werner Sembach wrote:
->> Hello,
->>
->> Am 14.11.24 um 11:31 schrieb Uwe Kleine-König:
->>> Hello,
->>>
->>> the kernel modules provided by Tuxedo on
->>> https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers
->>> are licensed under GPLv3 or later. This is incompatible with the
->>> kernel's license and so makes it impossible for distributions and other
->>> third parties to support these at least in pre-compiled form and so
->>> limits user experience and the possibilities to work on mainlining these
->>> drivers.
->>>
->>> This incompatibility is created on purpose to control the upstream
->>> process. Seehttps://fosstodon.org/@kernellogger/113423314337991594 for
->>> a nice summary of the situation and some further links about the issue.
->>>
->>> Note that the pull request that fixed the MODULE_LICENSE invocations to
->>> stop claiming GPL(v2) compatibility was accepted and then immediately
->>> reverted "for the time being until the legal stuff is sorted out"
->>> (https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/a8c09b6c2ce6393fe39d8652d133af9f06cfb427).
->> As already being implied by that commit message, this is sadly not an issue
->> that can be sorted out over night.
->>
->> We ended up in this situation as MODULE_LICENSE("GPL") on its own does not
->> hint at GPL v2, if one is not aware of the license definition table in the
->> documentation.
-> That's why it is documented, to explain this very thing.  Please don't
-> suggest that documenting this is somehow not providing a hint.  That's
-> just not going to fly with any lawyer who reads any of this, sorry.
+Thanks for pointing it out Conor. I agree the commit message should 
+describe the KX134ACR-LBZ a bit better. I'll improve the commit message 
+to include the g-range difference if I re-spin this series - and try to 
+remember this if I get to support also some other variants :) A very 
+good head's up for me as I didn't even think of describing the 
+differences in commit message!
 
-You are right, that's why when I became aware of the situation this Monday 
-https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/9db67459510f18084694c597ff1ea57ef1842f4e 
-I got the gears to resolve this into moving (me playing devils advocate here is 
-directly related to this 
-https://lore.kernel.org/all/17276996-dcca-4ab5-a64f-0e76514c5dc7@tuxedocomputers.com/) 
-and then returned on working on the code rewrite for upstream ( 
-https://lore.kernel.org/all/8847423c-22ec-4775-9119-de3e0ddb5204@tuxedocomputers.com/ 
-is directly related to that), because I'm a developer not a lawyer.
+Yours,
+	-- Matti
 
-Then I get called a liar and hit with the nuclear option not even full 3 days 
-later, while I'm working on resolving the issue and in parallel working on 
-improving the code for it to be actually accepted by upstream.
-
-If you want prove of my blissful ignorance from just last week please take a 
-look at my comment here: 
-https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/merge_requests/21#note_2201702758
-
-Now trying to be constructive: Can you give me a timeframe to resolve the 
-license issue before this is merged?
-
-Kind regards,
-
-Werner Sembach
-
-> greg k-h
 
