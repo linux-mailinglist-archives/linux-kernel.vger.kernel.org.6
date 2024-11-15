@@ -1,125 +1,158 @@
-Return-Path: <linux-kernel+bounces-410933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A069CF096
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:48:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 035649CF097
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:48:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E4191F2A9B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:48:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD6A52918AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44061E1A34;
-	Fri, 15 Nov 2024 15:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3BA11D89E4;
+	Fri, 15 Nov 2024 15:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J09PLWlb"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="d0XsMaXF"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2301D514B;
-	Fri, 15 Nov 2024 15:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABD52F29
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 15:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731685280; cv=none; b=dxBLyIw5Ca5ti4DNXGYrz/DQ8u3Zv8NWjDVNBQ8KE+FCK2njHFUpS9rSWPTKZ6fxkq2vqH1SIlQYez99K/F+LuYytZbH0/iinmuzn1HXeq6OdJJ2dB8EBiVcLyKmA62vRTFn+iUFyaW3H2mUD0mysRWgR0+UQTupJ7o1FgtjmE8=
+	t=1731685394; cv=none; b=kwjCF+NBbmIdeVOK0qRKd3mgW7QvG1hFimMMCaeq6ePHjaJ/lV/zS4GIIfICAWAoI8GLIpC4yHUbkKKhKJeOKCnmp5E5QeWBlO+FmfprNLO71gcbRVA570zUEiHPDtmMOHEE40W0izKRKRM+upIpNggvGk9prsnFU6jUtPJ6wB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731685280; c=relaxed/simple;
-	bh=F0HrlOCDVc0tS4fkIk0rdPU7YPq64z4ioMtMs50nIss=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VK9MkuOMPrvpjhYzZsUmHQgRcWYZrjlhRnGLRZF4oXiTJ5cWSyu78sqYkrSEcr8TVAnPdkAiZ0J5M36wLr4hjNnrKsj3/9wv7gET7M0eJtpP6OTxnlwujw80GFPse4ZyEoIsZXK+G92feuD6O0itrlPm6yBj4/YCX5uk6bX/q1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J09PLWlb; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-21145812538so16278195ad.0;
-        Fri, 15 Nov 2024 07:41:18 -0800 (PST)
+	s=arc-20240116; t=1731685394; c=relaxed/simple;
+	bh=EXLc0jpq6XnQBAgm3skbwhVbzuai7fYvBIrsjMtEVIE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HOl0BTMROiHQrsA58PNbOeHMYY2/RQYCkzH6AUCOPEZjaJ9V6jSvSsArEEdZJTywfmqxchDFf5MeFIfIo4m76mPk+VI5UQMAMSTXfw7VQQ7M6QRwb7r76fkAsdcs4o/jFecGpL8/EyCpcqSJavgv+uETPjcmHnvM5a7JRne+VIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=d0XsMaXF; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53c779ef19cso1037765e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 07:43:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731685278; x=1732290078; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=mad4SOqK1QCQ4o/oex/SlfSeha24kQsA2ic3rSWilNk=;
-        b=J09PLWlbf62DCWJir0VuXSPzlwfs5QhZc2lwbS2bhnhkjlSKJwxpOCMPtMgf9U2tnA
-         NTmADYoHUU+CakC4ToxLLZ2teYd64oAZ38kYjjMEzvO2R7Afub8oZGPd3CjDKSdZ1tWR
-         MZDLA7iD+s1cjpv9EoAlPThABpnxCCnNlx6aWn2NnSK7G1Ay/hZqHsstmyUUccpueDwO
-         4h2h4waP1UNflakJQkmeZYyAOtc1sgd3I8yE7LpQb8g8dpvAF4mIgA2WvkV2hTk+BOeS
-         33Nzl8fsKfYB8E5oiiJ64qAuDhCemKP15KYOEknV8R61a5jBjTI/s55RjRDbtsbZvkf9
-         MJZQ==
+        d=ventanamicro.com; s=google; t=1731685390; x=1732290190; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=puWIlMfcycA4zPDYvHHQRG8tUppNKYPJEXaGKwVLLjk=;
+        b=d0XsMaXFX3DQYh8JzRqLkmdQ3CXl4cjwLBdlDCiUY5uubXBA5f6+ZAlGv4I+89xE+o
+         l830Hs1vjP0U6QHqwrBF2l1S6Ulums2bhenUA0851Rpaz3ZLkgW0M3DD3eHAh4X6Owk6
+         Kjmp2DQgT93UhaB3Pa1JQ5Pa11Rw0x4xTkQ2myOI7LqH5+U73SEcnL7+u3ue3jvmZG3C
+         9zK8UVNPR1335Z6KgruFIowH55VUX24gl9WDk2pK4sLF+UfVwYVYR/usEBqDw6v78xx+
+         R+gyaR2yltPp/63+8DSUBM9apwW9/sY1sMkUNqKs01vSeWouGqsTBZB9+qx4deK/DpcE
+         dp1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731685278; x=1732290078;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mad4SOqK1QCQ4o/oex/SlfSeha24kQsA2ic3rSWilNk=;
-        b=lr9uw5spI65kbFxW6Z5YrWn3XunTEvqzU4N1A2thpNnjaKUDEPmt7aItoyTjMvGFyA
-         HyjspCF4zqwH6X/8ZjXozIO5qs2h7hozWKxLL/WsPc1TZWwhlny91/h2corKnBc6hfu0
-         /xMmo9nTEiKy+FAlEBzoK1itsB2sOfhu/kG8KRyIk1/VQT6w+LgCr2OB84sSH4xItq45
-         IBvTXMbxIywnkGC+4s2Gx8QXbZdg23qGCnC4Dm8z+G9qtKXXN2s7G97K64QQm8b9Pg6m
-         psgMvV0/bIkj0TXRi22WHf5wJzz1NDYloXFm/L2ePCD/ZugLfCW2KEa9aQMc4FpZADDU
-         xNrA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJI8BwFZ+J0vRiqKdiC4L0vdV6E8tV7xvseYbMcUbdRidrLVpoMtgcc/KSJp5ASC/77S04Pqnu1yafKKdYA9qb@vger.kernel.org, AJvYcCUsPpvQarTLuKhq5Z46t2ZCYG6RTpJJJc65kExRR//9XrCRNfZ39TrF0sQDCEW46A/H1eFoT579@vger.kernel.org, AJvYcCVwPxo1WOXA7LdhAx7BOxI2UAZ9uBRIQeW7lhiG20yE1JYqjDtsySNuVgLS0O7LaA0039YwkgAb+Ze66+Um@vger.kernel.org, AJvYcCXps6fV4m4IxDeeW2l6hajksWjUPaK9Cwl72P+6ghwHlcyu95/MFf1Z/W92MCovEjNLubk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqIFmrIKfPnqbqBzbIbP1C1LTlsx20kSJ1vWAKPvYQqxORaUag
-	4RdfoGooyKUyYyHrc71/vkez4gxOXt3EiMgPrs55PMFhkxYtRgM=
-X-Google-Smtp-Source: AGHT+IFvSiKK5pXTnS4v7BMtZSxnBSDmRb4ts7GfpqHnQT1u8ZOxciaO6lEhrbKtEKbuENFeyhoGoQ==
-X-Received: by 2002:a17:902:e808:b0:20c:e6e4:9daf with SMTP id d9443c01a7336-211d0d65103mr39412615ad.13.1731685277965;
-        Fri, 15 Nov 2024 07:41:17 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f61372sm13526245ad.278.2024.11.15.07.41.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 07:41:17 -0800 (PST)
-Date: Fri, 15 Nov 2024 07:41:17 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Alexis =?utf-8?Q?Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>, ebpf@linuxfoundation.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH bpf-next v2 07/13] selftests/bpf: migrate flow_dissector
- namespace exclusivity test
-Message-ID: <ZzdrnYe0Jf6VwEqB@mini-arch>
-References: <20241114-flow_dissector-v2-0-ee4a3be3de65@bootlin.com>
- <20241114-flow_dissector-v2-7-ee4a3be3de65@bootlin.com>
+        d=1e100.net; s=20230601; t=1731685390; x=1732290190;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=puWIlMfcycA4zPDYvHHQRG8tUppNKYPJEXaGKwVLLjk=;
+        b=MlPzzJ7xEfhGhVh6ip3w4GTLOLwKpuzLoN1DQH5bMfdcCJ2uK9pRpn6I6iRL324DgZ
+         j20ZL/6fi3nqFqJw4w9NKpDzPEnlnKHu/nBqgopjxYt2tmHnBlyzgBq6bMgTFZueSumc
+         Lm4s+nfzUNq+RG5vrk58ZtSFUDFltcJOdRYEmByW0/MA1gS1kaFcHzloAyVbFqyi2f40
+         1Sq4cmfs+8LH6yXDO7BGtO6ZpnQx8cJEpKiSfsjT2NUR7O5KlFVIcXmSppOajaBWzUAP
+         nBU57IX4rvqnrpW0SQT/3z2qB41Y41OJ3d1k7W9jWL4Sz4yCQFoX63kqjO6BtKvdpCLR
+         Ys/w==
+X-Forwarded-Encrypted: i=1; AJvYcCV99aYHIhjLZ3bSUzXSg1ef7gPQ4pFJH5BQgmc23HoqnSpKMZTOC6D0eKQfrQfjXqh/fv6fIHdupZGmygY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzji9J7kZIhGO1jzbIA5TBU7Nk6YFwmxN11izxiU0/fwVVXw5Gg
+	bApCNuclUZfiZ2K4uKSC2/syga2gqF1yDkmV3CO8n5c7rMLhjmBHifHvks98+eVVlZNEXNolfLp
+	d0MXxPVeL8PGqfd7g0URQY09Gs2b3zrLdCSzinw==
+X-Google-Smtp-Source: AGHT+IGh6mrAa6jyGwF34tEwKQHXYbfcXfXM2tI9rQsPmNWrKq6I6ma5gBd835+q9M2zm5lVI5W52ISSAAlPrvmUzLc=
+X-Received: by 2002:a05:6512:128d:b0:53d:a077:1d0b with SMTP id
+ 2adb3069b0e04-53dab3bc61cmr1714211e87.44.1731685390293; Fri, 15 Nov 2024
+ 07:43:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241114-flow_dissector-v2-7-ee4a3be3de65@bootlin.com>
+References: <20241114200133.3069460-1-samuel.holland@sifive.com>
+In-Reply-To: <20241114200133.3069460-1-samuel.holland@sifive.com>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Fri, 15 Nov 2024 21:12:58 +0530
+Message-ID: <CAK9=C2UyfmHqtYYK-WeSRk3=6bjs5nzDmw9ntudbCnPOYxLtXg@mail.gmail.com>
+Subject: Re: [PATCH] irqchip/riscv-aplic: Fix crash when MSI domain is missing
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: Anup Patel <anup@brainfault.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Albert Ou <aou@eecs.berkeley.edu>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/14, Alexis Lothoré (eBPF Foundation) wrote:
-> Commit a11c397c43d5 ("bpf/flow_dissector: add mode to enforce global BPF
-> flow dissector") is currently tested in test_flow_dissector.sh, which is
-> not part of test_progs. Add the corresponding test to flow_dissector.c,
-> which is part of test_progs. The new test reproduces the behavior
-> implemented in its shell script counterpart:
-> - attach a  flow dissector program to the root net namespace, ensure
->   that we can not attach another flow dissector in any non-root net
->   namespace
-> - attach a flow dissector program to a non-root net namespace, ensure
->   that we can not attach another flow dissector in root namespace
-> 
-> Since the new test is performing operations in the root net namespace,
-> make sure to set it as a "serial" test to make sure not to conflict with
-> any other test.
-> 
-> Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
+On Fri, Nov 15, 2024 at 1:31=E2=80=AFAM Samuel Holland
+<samuel.holland@sifive.com> wrote:
+>
+> If the APLIC driver is probed before the IMSIC driver, the parent MSI
+> domain will be missing, which causes a NULL pointer dereference in
+> msi_create_device_irq_domain(). Avoid this by deferring probe until the
+> parent MSI domain is available. Use dev_err_probe() to avoid printing an
+> error message when returning -EPROBE_DEFER.
 
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+The -EPROBE_DEFER is not needed because we expect that platforms to
+use "msi-parent" DT property in APLIC DT node which in-turn allows Linux
+DD framework to re-order probing based on fw_devlink dependencies. The
+APLIC DT bindings mandates that any of "interrupt-extended" or "msi-parent"
+DT properties MUST be present.
+
+Can you elaborate a bit more on how you are hitting this issue ?
+
+Regards,
+Anup
+
+>
+> Fixes: ca8df97fe679 ("irqchip/riscv-aplic: Add support for MSI-mode")
+> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+> ---
+>
+>  drivers/irqchip/irq-riscv-aplic-main.c | 3 ++-
+>  drivers/irqchip/irq-riscv-aplic-msi.c  | 3 +++
+>  2 files changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/irqchip/irq-riscv-aplic-main.c b/drivers/irqchip/irq=
+-riscv-aplic-main.c
+> index 900e72541db9..93e7c51f944a 100644
+> --- a/drivers/irqchip/irq-riscv-aplic-main.c
+> +++ b/drivers/irqchip/irq-riscv-aplic-main.c
+> @@ -207,7 +207,8 @@ static int aplic_probe(struct platform_device *pdev)
+>         else
+>                 rc =3D aplic_direct_setup(dev, regs);
+>         if (rc)
+> -               dev_err(dev, "failed to setup APLIC in %s mode\n", msi_mo=
+de ? "MSI" : "direct");
+> +               dev_err_probe(dev, rc, "failed to setup APLIC in %s mode\=
+n",
+> +                             msi_mode ? "MSI" : "direct");
+>
+>  #ifdef CONFIG_ACPI
+>         if (!acpi_disabled)
+> diff --git a/drivers/irqchip/irq-riscv-aplic-msi.c b/drivers/irqchip/irq-=
+riscv-aplic-msi.c
+> index 945bff28265c..fb8d1838609f 100644
+> --- a/drivers/irqchip/irq-riscv-aplic-msi.c
+> +++ b/drivers/irqchip/irq-riscv-aplic-msi.c
+> @@ -266,6 +266,9 @@ int aplic_msi_setup(struct device *dev, void __iomem =
+*regs)
+>                         if (msi_domain)
+>                                 dev_set_msi_domain(dev, msi_domain);
+>                 }
+> +
+> +               if (!dev_get_msi_domain(dev))
+> +                       return -EPROBE_DEFER;
+>         }
+>
+>         if (!msi_create_device_irq_domain(dev, MSI_DEFAULT_DOMAIN, &aplic=
+_msi_template,
+> --
+> 2.45.1
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
