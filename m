@@ -1,130 +1,131 @@
-Return-Path: <linux-kernel+bounces-410331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C17BD9CDA04
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:46:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D9B9CDA09
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:47:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA45F1F21E85
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:46:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C52A28336B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4AF218872A;
-	Fri, 15 Nov 2024 07:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9591F188A0E;
+	Fri, 15 Nov 2024 07:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="OR1fsfO+"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mUjwnJHl"
+Received: from mail-pj1-f65.google.com (mail-pj1-f65.google.com [209.85.216.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A183B537FF
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 07:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9363317D354;
+	Fri, 15 Nov 2024 07:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731656804; cv=none; b=Eod9sFFsWhg6tKct+2aqnsddGEd+qqc6Iq6iqtOODd+0vPbPNq2HiB3uLxBDdaB7QmCqRjPm/c7RNXz2BxHUyYAdQIBLxwvjWegfEbaSlyWSGFs+0ZI7CiEFyFS+g6uZwGTyM6bvgDOc5GBLC9sbioxxlpW0qOnjoOVNCZnLy4I=
+	t=1731656819; cv=none; b=Ak0wt2a1XMnzV6O5wNzQLW/QIMkR4jQEStuPN+kI5EbUcRIdQPuo+tx07GOpfbxuCkVsmcvCAIXoUJ4Hf24DrKaGqRSyFdoQa+0dbz3X2Sl1KP9wa8bTYE1U29G0nuq1wpv+Ab4QTwHem2LSD8hYxSZs95SC8NKUbJ3mYeeU+Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731656804; c=relaxed/simple;
-	bh=jwRyJ0gTeE/nW7cLa60YtrJvyi2EbhJ/61+KBSicJz4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cmd5gaJ1hBTCfNoMx4CvbsQiHkWvonqyN73bsVUTAEectLxmurv9DdC63JS9kuQEUPMAC9aDPeYXcCmE9NTuXvEZXsm3XfyCoHvcnTbglEX2t8AfoXTNQErRUmwrL4WxIA3SV1smz3qcEoJCu2LbvtWa2jtTGVGvGf+EdSnZ5pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=OR1fsfO+; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1731656792; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=klSvFmmsqd9sENMEOR6smds4gtQMegD4wv7mVDkLMIg=;
-	b=OR1fsfO+bemXp5b8h6Kme8lqnTaK//FUal7TgatA92F5ItSdElXyh3C7NoBV7GkbfMjZCN91Xs4stJVhNwqlQQQqoa4xMd3s9Web2UioDokfJd3uuLDCYWl9T583+4ZgIloywE0EtbGjv2HNEPpBbrVGVKZG/agFVRDu+tU6FpY=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WJSN0YK_1731656787 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 15 Nov 2024 15:46:32 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH] erofs: clarify direct I/O support
-Date: Fri, 15 Nov 2024 15:46:25 +0800
-Message-ID: <20241115074625.2520728-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1731656819; c=relaxed/simple;
+	bh=Yn5H2K1hbNN2pRo3y5lGrHrmP1Raa0C4Moh+djHQYt4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dUtGQd6soIiwigkzDNrpEIcBFGJDiNP3K/0Ts1zEoBg88PzyhOOcx37sUhuHH51l8ELi35ElWIMU3Pv7KM9UkGX+0HrybLLVd9JuTpSXtW71Ms1CzRG/Qc7atvAshUF1XqLcPClIy+IKHwt5QeXG11BukS77RfhwQ0cvkohilzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mUjwnJHl; arc=none smtp.client-ip=209.85.216.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f65.google.com with SMTP id 98e67ed59e1d1-2ea0bd709c0so1067839a91.3;
+        Thu, 14 Nov 2024 23:46:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731656817; x=1732261617; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FZQ+Zr3Ocu23U0mYDZSaGtjvo9T3p9MWegkwHbx+FBA=;
+        b=mUjwnJHlZPaU0p3jk/53bhKxzMYF8Ll5Vzfg98h1h0HiGZLrCyz6uhzS4RH1KZ/I+z
+         Y0MC30j5SaPub88RPQajJKvlduslTXsF9i1uJ1oI53VM1FHRLOyv+vKSVT18x6XOWzsM
+         h5cYiPmv25nxMqiSYBuUjzYafvh4cHZvQa9m+TbqGyc7LCBBW38eszOeuaX1kA3Hf2rY
+         b0ge3lAeU6d0W/nIJ2Ca3HrBW5G/0dBG58yhiTzoAgm8H6dDZftLM6390FM5IHwGX7z2
+         40ePrwDzTfl0Tz6pVn8zDJ5gFUnfEFTgnI8aOYtBIUEJMovpglxyDKoKscNr/Gpp2987
+         I5XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731656817; x=1732261617;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FZQ+Zr3Ocu23U0mYDZSaGtjvo9T3p9MWegkwHbx+FBA=;
+        b=MBOGZQ58BG2cjUgZ/xvn/7CCgWsjth1yxdWf8S0YXhUvjhAeW0HLRAUWLTwsUPXWt1
+         CzqitepjAVdMXra6yoFtWX4EokdyOMzH0ZACeCuyirA1UzfRl+OwXVqmPEvFCx/z9q9k
+         cKJmqJTSuw90QR89tfRNeUFVADnQJbLMj7RuG9OYjUF/NHPFHNRvSzOM4iSrvsVNpyV0
+         Eo7wx3GJR7GrR8wT9uweuvR3j0YNV8u6Ml1Tz2yGK8TNmT7oIoneIzxTzA++4ITDm3D9
+         orMt2okLjV+EBs9KTU4z6iA7GpI4iZ3FppXqJinIyiEGx/ak7u3TduG467jl7SZGWkCs
+         Ua4w==
+X-Forwarded-Encrypted: i=1; AJvYcCVMyvqWfoMKDsb1EoexZKLl96CPuctc+/vE41gzqgH9qhYek/JL0gbE43/4UPS54YpMoaK2wUKdwN0jzXrN@vger.kernel.org, AJvYcCW0VHBqmTZLYkH3wQ8bVaX4iWqN3kLZpWIIaD9ApLRG+izk4T11PWCRPGVG8A8BtMoXZXa2mPFDnRxV@vger.kernel.org, AJvYcCWl1ZyNo25vVCfwN9a+AXejT9/JMun3BEy/Sc4iNhbEk/aPeIHxMhAwuNpaAt13gY1mVBOBiBK4J4pCfcf0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5Lxgc4KLQArYU4/28UAPAQ+2JGnfr9gnl8ChTdeeohgK+fHd0
+	mpBgKR/UuNFT+YBW2idFomX1FP4vXWotQamj88JcV3KCbxnVjZ8uncQDVr4zFObCSIBtZVXlNew
+	bnqwZAFan+oVGRgr6g/u+F9sYeJk=
+X-Google-Smtp-Source: AGHT+IFa5TVuuI7zGjEbWeGNLPDWke0uXRT8ztWH3KhLye10MaKUazSqhMGxJYhBjFNGrzc9q6a+UU6Kh75E3YCcyvk=
+X-Received: by 2002:a17:90b:4f4b:b0:2e9:5d94:5992 with SMTP id
+ 98e67ed59e1d1-2ea15596ca3mr2015547a91.31.1731656816889; Thu, 14 Nov 2024
+ 23:46:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241113110516.2166328-1-Wenhua.Lin@unisoc.com>
+ <20241113110516.2166328-2-Wenhua.Lin@unisoc.com> <3f89369f-7c0a-47c3-a22a-a125847edb98@linux.alibaba.com>
+In-Reply-To: <3f89369f-7c0a-47c3-a22a-a125847edb98@linux.alibaba.com>
+From: wenhua lin <wenhua.lin1994@gmail.com>
+Date: Fri, 15 Nov 2024 15:46:45 +0800
+Message-ID: <CAB9BWhdi2Q3gViCPjYAUYeYktBKR_rc4DN5PqXKvAvA44LDd9g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] serial: sprd: Add support for sc9632
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Wenhua Lin <Wenhua.Lin@unisoc.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Orson Zhai <orsonzhai@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Cixi Geng <cixi.geng@linux.dev>, linux-kernel@vger.kernel.org, 
+	linux-serial@vger.kernel.org, devicetree@vger.kernel.org, 
+	Xiongpeng Wu <xiongpeng.wu@unisoc.com>, Zhaochen Su <Zhaochen.Su@unisoc.com>, 
+	Zhirong Qiu <Zhirong.Qiu@unisoc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently, only filesystems backed by block devices support direct I/O.
-
-Also remove the unnecessary strict checks that can be supported with iomap.
-
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
- fs/erofs/data.c  | 15 +--------------
- fs/erofs/inode.c | 12 ++++++------
- 2 files changed, 7 insertions(+), 20 deletions(-)
-
-diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-index db4bde4c0852..bb9751f6dea8 100644
---- a/fs/erofs/data.c
-+++ b/fs/erofs/data.c
-@@ -413,22 +413,9 @@ static ssize_t erofs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 	if (IS_DAX(inode))
- 		return dax_iomap_rw(iocb, to, &erofs_iomap_ops);
- #endif
--	if (iocb->ki_flags & IOCB_DIRECT) {
--		struct block_device *bdev = inode->i_sb->s_bdev;
--		unsigned int blksize_mask;
+On Fri, Nov 15, 2024 at 1:47=E2=80=AFPM Baolin Wang
+<baolin.wang@linux.alibaba.com> wrote:
+>
+>
+>
+> On 2024/11/13 19:05, Wenhua Lin wrote:
+> > Due to the platform's new project uart ip upgrade,
+> > the new project's timeout interrupt needs to use bit17
+> > while other projects' timeout interrupt needs to use
+> > bit13, using private data to adapt and be compatible
+> > with all projects.
+> >
+> > Signed-off-by: Wenhua Lin <Wenhua.Lin@unisoc.com>
+> > ---
+> >   drivers/tty/serial/sprd_serial.c | 41 ++++++++++++++++++++++++++++---=
 -
--		if (bdev)
--			blksize_mask = bdev_logical_block_size(bdev) - 1;
--		else
--			blksize_mask = i_blocksize(inode) - 1;
--
--		if ((iocb->ki_pos | iov_iter_count(to) |
--		     iov_iter_alignment(to)) & blksize_mask)
--			return -EINVAL;
--
-+	if ((iocb->ki_flags & IOCB_DIRECT) && inode->i_sb->s_bdev)
- 		return iomap_dio_rw(iocb, to, &erofs_iomap_ops,
- 				    NULL, 0, NULL, 0);
--	}
- 	return filemap_read(iocb, to, 0);
- }
- 
-diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-index db29190656eb..d4b89407822a 100644
---- a/fs/erofs/inode.c
-+++ b/fs/erofs/inode.c
-@@ -318,6 +318,7 @@ int erofs_getattr(struct mnt_idmap *idmap, const struct path *path,
- 		  unsigned int query_flags)
- {
- 	struct inode *const inode = d_inode(path->dentry);
-+	struct block_device *bdev = inode->i_sb->s_bdev;
- 	bool compressed =
- 		erofs_inode_is_data_compressed(EROFS_I(inode)->datalayout);
- 
-@@ -330,15 +331,14 @@ int erofs_getattr(struct mnt_idmap *idmap, const struct path *path,
- 	/*
- 	 * Return the DIO alignment restrictions if requested.
- 	 *
--	 * In EROFS, STATX_DIOALIGN is not supported in ondemand mode and
--	 * compressed files, so in these cases we report no DIO support.
-+	 * In EROFS, STATX_DIOALIGN is only supported in bdev-based mode
-+	 * and uncompressed inodes, otherwise we report no DIO support.
- 	 */
- 	if ((request_mask & STATX_DIOALIGN) && S_ISREG(inode->i_mode)) {
- 		stat->result_mask |= STATX_DIOALIGN;
--		if (!erofs_is_fscache_mode(inode->i_sb) && !compressed) {
--			stat->dio_mem_align =
--				bdev_logical_block_size(inode->i_sb->s_bdev);
--			stat->dio_offset_align = stat->dio_mem_align;
-+		if (bdev && !compressed) {
-+			stat->dio_mem_align = bdev_dma_alignment(bdev) + 1;
-+			stat->dio_offset_align = bdev_logical_block_size(bdev);
- 		}
- 	}
- 	generic_fillattr(idmap, request_mask, inode, stat);
--- 
-2.43.5
+> >   1 file changed, 36 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd=
+_serial.c
+> > index 3fc54cc02a1f..882580c3cf37 100644
+> > --- a/drivers/tty/serial/sprd_serial.c
+> > +++ b/drivers/tty/serial/sprd_serial.c
+> > @@ -53,10 +53,12 @@
+> >   #define SPRD_IEN_TX_EMPTY   BIT(1)
+> >   #define SPRD_IEN_BREAK_DETECT       BIT(7)
+> >   #define SPRD_IEN_TIMEOUT    BIT(13)
+> > +#define SPRD_IEN_DATA_TIMEOUT        BIT(17)
+>
+> I don't know the meaning of 'DATA' in the new macro name. But I have no
+> better name now:) Otherwise look good to me.
+> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
+Hi baolin:
+  TIMEOUT means only timeout, DATA_TIMEOUT means timeout and fifo is not em=
+pty.
+  Therefore, the macro name is distinguished by adding DATA.
+
+Thanks
 
