@@ -1,154 +1,161 @@
-Return-Path: <linux-kernel+bounces-410786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6620D9CE0F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:08:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2894A9CE0F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:09:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C8B5284108
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:08:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1A55284AED
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276A61CDA3F;
-	Fri, 15 Nov 2024 14:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00E31CEAD6;
+	Fri, 15 Nov 2024 14:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ye+Hb/5G"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mpGlFiuu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1354C1CDA01
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 14:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B441CDA01;
+	Fri, 15 Nov 2024 14:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731679727; cv=none; b=n8M8ZGrosTXX6g6ABhETH7/Wzdry8aIhmYFIWywdjV+kt2b/ozFX3RZSvjlRSBzVLbxcfh4UlPgz/tkFPYStS4Z0snSuninfxC3a+pD/e4URrjdBOfPQGhqVEBwjIDGoQWpz+E0vWD5ne0oloisghxVXPapRiybc3O9Jyo/y3PM=
+	t=1731679769; cv=none; b=dXQA/dUULkdiXRqxsLJcUJiPJs0jvmgFqY5KBiCPNgxOvvekNFerHvtVdy6WsOlTCFhDNbOopS5MdMmwKF48rK5ewkys47LCBWnJl08iIlgMyEe1kLOxzR3RGVgp0dx+Dv1wgKih6J1SNKMEVgEcScmVGCbLER3uBeSVQ7gVBYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731679727; c=relaxed/simple;
-	bh=xKws5Q0o4CUmb4V5oZwIdg4rnXrBMpqWmbqe1P0JpKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JkrM+391pZMFgAJ9q3pMJgrQycAWhPiDMoJCk7SmgQxr/E9YeHwBni0LDKulwYYc8j5E8IfNLWsiJzzH5KKO+wRSoxd8/EfnsLjEehJpAWJ+T1JmyZUDPfs89dCY1wYXHXsqk8HFVUOGDX7q9R4jgC4IDXb8tYJhESZsIDFXLkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ye+Hb/5G; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20c693b68f5so8569985ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:08:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731679725; x=1732284525; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YoKAbJCqo7qQrbAphdCyAKp6bujOtKlKbGWGDDJbWRA=;
-        b=ye+Hb/5GHWLIhggbv59nQUe8sDEJFpqDS/poSYKi3afXi9F/zx22IkXyMpgmgB5DkT
-         JZoa8tCQIbua/teceod3kr2zCBrINCTR09Am8s+grDCfc1dH5cRV4hzxs+sfVEx8kfqu
-         v+FWPy1711MtySS3WPRI0Gf46meHTNsfPOJoE7lNG3UoQWaLBPvWuM2HBMCYXBJbmNlj
-         pMstWp0vfV7NOf4nSPf+ZxYpUKxBQ6vGD4uhzZAOHkwszExurnCBHpqDOZQFx9aH1ef8
-         J9QwfyfDetQIwV9UgGKSSc/b3hO/437qnC8+/caOPCtG0isBQrwkDpG89qNVv42w3O1v
-         460w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731679725; x=1732284525;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YoKAbJCqo7qQrbAphdCyAKp6bujOtKlKbGWGDDJbWRA=;
-        b=rZE1DyssfoN4XlwTkX/aY+ZF8EVQhLSWiUQTWOXmJgHruTwNKZLGfljehbqPme1499
-         Im3iLmQsiWfZthcAuQMuEtsulyYgfmEQbOb6d7VAb/tEzqnkw/DkvoqMkXeKh6MEXLFW
-         IN7deP3dt6MIKbz5GXpHIWWp9DIjdKnuJkV3Bj7f5gSAoeZfvwGWYekVw8l84OCfxCaV
-         1zIXziUWLh4Gz8KwJadsWPr2yl0CLi+fWw97Gn/oq+wa23rlnDigusy1s7ZSSYDJaR5h
-         6Axl10vdRgXFQK8ONZGYr4yQNWswtLEOlBsdcz+5How7Os2Fu2Zp29DjVBJFln3kMNGq
-         bkGg==
-X-Forwarded-Encrypted: i=1; AJvYcCXdERR9gsyugcZPnajo9cWHQleK/PKTCqA2kUQIQFlSkTc5/5pTQ8EEO0Hfj4XQVAzOKOLKfd/1d7cykPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdAz2fl6ASbPNpHGWqJuD4Qc5WAerLAW7mLXQEkLtnSyEzLFSS
-	pnrtbgvdOqkooJazO1uel3DFkrTY85Zp7GHuIJbgQxaArtYYH826gGtwARrQ9SttYUDRBVpoNCk
-	=
-X-Google-Smtp-Source: AGHT+IEqBDQQkEI9Z4A5hSXt4LEIhHr4FdA2+i1zXQxXIjMye1x3OLoASktaOIHTJpstuWkhM6cEBw==
-X-Received: by 2002:a17:902:eccf:b0:20c:bda8:3a10 with SMTP id d9443c01a7336-211d0ecb145mr37222735ad.37.1731679725382;
-        Fri, 15 Nov 2024 06:08:45 -0800 (PST)
-Received: from thinkpad ([117.193.215.93])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0dc5c94sm12679055ad.17.2024.11.15.06.08.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 06:08:45 -0800 (PST)
-Date: Fri, 15 Nov 2024 19:38:36 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Konrad Dybcio <konradybcio@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	quic_vbadigan@quicinc.com, quic_mrana@quicinc.com,
-	andersson@kernel.org
-Subject: Re: [PATCH v4 3/3] PCI: qcom: Update ICC and OPP values during link
- up event
-Message-ID: <20241115140836.3wjfnlslozexd2ic@thinkpad>
-References: <20241115-remove_wait1-v4-0-7e3412756e3d@quicinc.com>
- <20241115-remove_wait1-v4-3-7e3412756e3d@quicinc.com>
+	s=arc-20240116; t=1731679769; c=relaxed/simple;
+	bh=W6BOkKkAOh5aQ4X0OZSjyp8Bmd0wWiBq7TuVyPyaoOQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ptyv+QcZVOhcxk8VC1uP6ob1mG4sVODmFSE43MH3QO6A5MXLQFgeQtbZRKQS0QgrWBhMug+fEH65V74qXrILVw/dussIk0XsWEmI/RHzGNiZjnSHoY4Yf/ET/iiBW1WzY79w+JwKRmHUoop0sBXF1v578cditKD/ZeQY9F8acns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mpGlFiuu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6722FC4CECF;
+	Fri, 15 Nov 2024 14:09:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731679768;
+	bh=W6BOkKkAOh5aQ4X0OZSjyp8Bmd0wWiBq7TuVyPyaoOQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mpGlFiuuap959G0nKtJ/0PzGQZxXOdntvs+OaaqHz7DZSEUkJnzJCBK0M0Jcp2CuF
+	 GuRUQaFZl/ZFYLdgNCn9vRj7mPQzht7SAyLeSIeJdJE7FctbjAUzW/GxNdD7+hHHG5
+	 gtIglqEKZwwnqJ+jTdKaVBuxe2fv2cPgrIZiO8SNxUPyY1UqPC5SYkmP+MJHuaV6C3
+	 wZLxAkeCZ51WpDwaLC1PNpDWojXkFQGi9dGIqCbY8/pVoTMgiw+0eQcvpJWdGTD5qc
+	 1Z7mojh2UM7ZEqBiL0EX2M5jbpBbVn8pHNAyEs9hBajMe+B+RDakyT41cO/cMhKAa8
+	 KC/a6jIFWHC5w==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs untorn writes
+Date: Fri, 15 Nov 2024 15:09:21 +0100
+Message-ID: <20241115-vfs-untorn-writes-7229611aeacc@brauner>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3978; i=brauner@kernel.org; h=from:subject:message-id; bh=W6BOkKkAOh5aQ4X0OZSjyp8Bmd0wWiBq7TuVyPyaoOQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSbhwlVrpHm0p/eEn8/5E303Wv6k947XhA8cDf6+a9nH 3duL9n9oKOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAilkUM/yzuhkQcnhDm6mPp kB7w2vJN7ZzPK49U/RfL7b0ieEG0Sp6RoUnxeLe1+5XH0kfkHj98sbao4W6B6v55uWdvvsjk3G7 EygYA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241115-remove_wait1-v4-3-7e3412756e3d@quicinc.com>
 
-On Fri, Nov 15, 2024 at 04:00:23PM +0530, Krishna chaitanya chundru wrote:
-> As the wait for linkup is removed if there is a global IRQ support,
-> there is no guarantee that the correct icc and opp votes are updated
-> as part of probe.
-> 
-> And also global IRQ is being used as hotplug event in case link hasn't
-> come up as part probe, link up IRQ is the correct place to update the
-> ICC and OPP votes.
-> 
-> So, as part of the PCIe link up event, update ICC and OPP values.
-> 
+Hey Linus,
 
-How about,
+/* Summary */
 
-"The commit added the Link up based enumeration support failed to update the
-ICC/OPP vote once link is up. Earlier, the update happens during probe and the
-endpoints may or may not be enumerated at that time. So the ICC/OPP vote was not
-guaranteed to be accurate. Now with the Link up based enumeration support, the
-driver can request the accurate vote based on the PCIe link.
+An atomic write is a write issed with torn-write protection. This means
+for a power failure or any hardware failure all or none of the data from
+the write will be stored, never a mix of old and new data.
 
-So call qcom_pcie_icc_opp_update() in qcom_pcie_global_irq_thread() after
-enumerating the endpoints."
+This work is already supported for block devices. If a block device is
+opened with O_DIRECT and the block device supports atomic write, then
+FMODE_CAN_ATOMIC_WRITE is added to the file of the opened block device.
 
-> Fixes: 4581403f6792 ("PCI: qcom: Enumerate endpoints based on Link up event in 'global_irq' interrupt")
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+This pull request contains the work to expand atomic write support to
+filesystems, specifically ext4 and XFS. Currently, only support for
+writing exactly one filesystem block atomically is added.
 
-With above,
+Since it's now possible to have filesystem block size > page size for
+XFS, it's possible to write 4K+ blocks atomically on x86.
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+/* Testing */
 
-- Mani
+gcc version 14.2.0 (Debian 14.2.0-6)
+Debian clang version 16.0.6 (27+b1)
 
-> ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index c39d1c55b50e..39f5c782e2c3 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -1558,6 +1558,8 @@ static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
->  		pci_lock_rescan_remove();
->  		pci_rescan_bus(pp->bridge->bus);
->  		pci_unlock_rescan_remove();
-> +
-> +		qcom_pcie_icc_opp_update(pcie);
->  	} else {
->  		dev_WARN_ONCE(dev, 1, "Received unknown event. INT_STATUS: 0x%08x\n",
->  			      status);
-> 
-> -- 
-> 2.34.1
-> 
+All patches are based on v6.12-rc1 and have been sitting in linux-next.
+No build failures or warnings were observed.
 
--- 
-மணிவண்ணன் சதாசிவம்
+/* Conflicts */
+
+Merge conflicts with mainline
+=============================
+
+No known conflicts.
+
+Merge conflicts with other trees
+================================
+
+No known conflicts.
+
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.13.untorn.writes
+
+for you to fetch changes up to 54079430c5dbf041363ab39a0c254cd9e4f6aed5:
+
+  iomap: drop an obsolete comment in iomap_dio_bio_iter (2024-11-11 14:35:06 +0100)
+
+Please consider pulling these changes from the signed vfs-6.13.untorn.writes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.13.untorn.writes
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      Merge tag 'fs-atomic_2024-11-05' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into vfs.untorn.writes
+
+Christoph Hellwig (1):
+      iomap: drop an obsolete comment in iomap_dio_bio_iter
+
+John Garry (8):
+      block/fs: Pass an iocb to generic_atomic_write_valid()
+      fs/block: Check for IOCB_DIRECT in generic_atomic_write_valid()
+      block: Add bdev atomic write limits helpers
+      fs: Export generic_atomic_write_valid()
+      fs: iomap: Atomic write support
+      xfs: Support atomic write for statx
+      xfs: Validate atomic writes
+      xfs: Support setting FMODE_CAN_ATOMIC_WRITE
+
+Ritesh Harjani (IBM) (4):
+      ext4: Add statx support for atomic writes
+      ext4: Check for atomic writes support in write iter
+      ext4: Support setting FMODE_CAN_ATOMIC_WRITE
+      ext4: Do not fallback to buffered-io for DIO atomic write
+
+ Documentation/filesystems/iomap/operations.rst | 15 +++++++++
+ block/fops.c                                   | 22 +++++++------
+ fs/ext4/ext4.h                                 | 10 ++++++
+ fs/ext4/file.c                                 | 24 ++++++++++++++
+ fs/ext4/inode.c                                | 39 ++++++++++++++++++++---
+ fs/ext4/super.c                                | 31 +++++++++++++++++++
+ fs/iomap/direct-io.c                           | 43 ++++++++++++++++++++------
+ fs/iomap/trace.h                               |  3 +-
+ fs/read_write.c                                | 16 ++++++----
+ fs/xfs/xfs_buf.c                               |  7 +++++
+ fs/xfs/xfs_buf.h                               |  4 +++
+ fs/xfs/xfs_file.c                              | 16 ++++++++++
+ fs/xfs/xfs_inode.h                             | 15 +++++++++
+ fs/xfs/xfs_iops.c                              | 22 +++++++++++++
+ include/linux/blkdev.h                         | 16 ++++++++++
+ include/linux/fs.h                             |  2 +-
+ include/linux/iomap.h                          |  1 +
+ 17 files changed, 254 insertions(+), 32 deletions(-)
 
