@@ -1,145 +1,80 @@
-Return-Path: <linux-kernel+bounces-411129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 258959CF376
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:59:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A5409CF37C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:00:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C59431F216A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:58:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBDFF1F23F86
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEEDF1DDA0E;
-	Fri, 15 Nov 2024 17:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772151D8E07;
+	Fri, 15 Nov 2024 18:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CwqQXXfO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="u3asuL4I"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEE31D90BC;
-	Fri, 15 Nov 2024 17:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309821CDA3F;
+	Fri, 15 Nov 2024 18:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731693514; cv=none; b=NooMaRF3dcUySI1cyuTs0rJsqIcMX8HWmL2mGg12PtX0UCLhbI0xoOOeg1cStA4nrbzE5vv3weKsq9tOGnvciYtQK5wvdyEbm1fJ4x+3DhC0KjPbFeEwbN59eP8AYKIaW5KSbKFT1ppR9Jnq9/ro2tLwB1jhSC8kSagBZ5mUwu8=
+	t=1731693622; cv=none; b=nScBcT1nT5nXoqIC2PNcNYpiY/hO6MUKFeDi8b4iPvNv7uZHAxuhVj4wphOiGslztZ1zpdpVw1MsgFz6YIpWLc94u4Ux9/bpg+C1cVWtK4kcJQc+3j7bqUdsl2IQZ406FK9IgAO/BtH2wBGsWe88SCQ7ymt9hrTeIDPVf/xytaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731693514; c=relaxed/simple;
-	bh=ZGRCi8zZpH1Uctw/XTMyPaVtMQl4V2RnetddnPHqEyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=KlWgtAO/SaBv8R4pQBkKqAKKjSmUuiaGJjPXWLst62pWZqXlVLPaIGWv3FQTp2NLlGwU49j1ESvtdir2/aIGu9PqiQV3rKd03/NvQ51OnA5IT0dvzNpgrFVwkeLShSTz+OmMGBx7tQA3QLSzwAWI2Nfu/TMQpCaGdMJ1gtI4olg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CwqQXXfO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7616C4CED5;
-	Fri, 15 Nov 2024 17:58:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731693513;
-	bh=ZGRCi8zZpH1Uctw/XTMyPaVtMQl4V2RnetddnPHqEyU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=CwqQXXfOYKt/19FjBfzUtwWA+vQ+sfWs9jcfK40mafcm4pdVqMzz66zAa2c2o4RbG
-	 4bfky51b38tp/3hKJ91q9zEMi0XJE3c4hhOWUGo2y9HUf75TBm5AHyLgWEXrX9fvDr
-	 UMgcn56FtP9RETMp9auY6mCb4lLxO51XoHrct1FVOGtY3hcO1wskRPWOYftmz/u3QK
-	 NH0G+b0WMy3cTHGJG7uLf9Rkwz3qlz8K7IL2G5tlz38YVVqwf4VIYxBxkWbP6K/mIC
-	 NrQ/BKJfWDlClUfO4oYaXCKp44I55y26PZ+btkj2dlhVBTpCJo8wlaaanfFikUqemc
-	 cBBZFmVe4jj4g==
-Date: Fri, 15 Nov 2024 11:58:31 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Alistair Francis <alistair@alistair23.me>
-Cc: lukas@wunner.de, Jonathan.Cameron@huawei.com,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	akpm@linux-foundation.org, bhelgaas@google.com,
-	linux-pci@vger.kernel.org, linux-cxl@vger.kernel.org,
-	bjorn3_gh@protonmail.com, ojeda@kernel.org, tmgross@umich.edu,
-	boqun.feng@gmail.com, benno.lossin@proton.me, a.hindborg@kernel.org,
-	wilfred.mallawa@wdc.com, alistair23@gmail.com,
-	alex.gaynor@gmail.com, gary@garyguo.net, aliceryhl@google.com
-Subject: Re: [RFC 2/6] drivers: pci: Change CONFIG_SPDM to a dependency
-Message-ID: <20241115175831.GA2046032@bhelgaas>
+	s=arc-20240116; t=1731693622; c=relaxed/simple;
+	bh=kz1/rdO3MbFLFPxJLFU6eWzlgrxKAo09K7jT0P0w11g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=OI4ZU07j2EYVMSrzclZXiv5zYXT1M3Aa+ZLxPxG8PMkgb1kq9A+w6LexiI3Gr3WmazsVa1iHA+ivcEDjjm1sX//2nNmdyQhLo6pinFW5n2GUVXSqE3BmVYfyzrbZtaa5F4PXMEeF/yPyJRBT8DFOnEoEU0UYgTajOsyBGYns1zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=u3asuL4I; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XqlDG2dbbz6CmQyW;
+	Fri, 15 Nov 2024 18:00:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1731693611; x=1734285612; bh=kz1/rdO3MbFLFPxJLFU6eWzl
+	grxKAo09K7jT0P0w11g=; b=u3asuL4IjmGCidOmgRw8CoZ/sdtX+T472kDGpWYz
+	tncvLg4rUGZ/jxDgOdy7MUJvDF1ctKUzMYZvqF4+fPZQoABQbC0Y0p0bU4I90WTw
+	+iKSWU4WW44LgPGSnn5LNeSNT6ayUDFWnjWqdFKTysODqoe9H+txaj5PB0lSLT6h
+	384UaQbrY6xYkDQOMu3CPeafw2gkPRyF7NGPSHZEKhxVOL9Q/a1pGjUOpwaz4F7r
+	AMA2KmMZFvxqG4HdlKd32lz5nkP8yb8RCVmfpfgaedszfHDZmHAlsZsWPl9ttxod
+	MfNh9wluK9smCXLc/SvuY5QZKXIJpPFVjErUYSsI5tDaVg==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id h_RTI91TuQQ3; Fri, 15 Nov 2024 18:00:11 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XqlD971plz6CmQyV;
+	Fri, 15 Nov 2024 18:00:09 +0000 (UTC)
+Message-ID: <1e56d9f8-6e16-4f17-9fdb-5296bb308bdd@acm.org>
+Date: Fri, 15 Nov 2024 10:00:06 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241115054616.1226735-3-alistair@alistair23.me>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [scsi?] [usb?] KASAN: slab-use-after-free Read in
+ sg_release
+To: syzbot <syzbot+7efb5850a17ba6ce098b@syzkaller.appspotmail.com>,
+ linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <672b574b.050a0220.2edce.1523.GAE@google.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <672b574b.050a0220.2edce.1523.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 15, 2024 at 03:46:12PM +1000, Alistair Francis wrote:
-> In preparation for adding a Rust SPDM library change SPDM to a
-> dependency so that the user can select which SPDM library to use at
-> build time.
-
-Run "git log --oneline drivers/pci" and follow the existing
-subject line convention.
-
-> Signed-off-by: Alistair Francis <alistair@alistair23.me>
-> ---
->  drivers/pci/Kconfig |  2 +-
->  lib/Kconfig         | 30 +++++++++++++++---------------
->  2 files changed, 16 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
-> index f1c39a6477a5..690a2a38cb52 100644
-> --- a/drivers/pci/Kconfig
-> +++ b/drivers/pci/Kconfig
-> @@ -128,7 +128,7 @@ config PCI_CMA
->  	select CRYPTO_SHA256
->  	select CRYPTO_SHA512
->  	select PCI_DOE
-> -	select SPDM
-> +	depends on SPDM
->  	help
->  	  Authenticate devices on enumeration per PCIe r6.2 sec 6.31.
->  	  A PCI DOE mailbox is used as transport for DMTF SPDM based
-> diff --git a/lib/Kconfig b/lib/Kconfig
-> index 68f46e4a72a6..4db9bc8e29f8 100644
-> --- a/lib/Kconfig
-> +++ b/lib/Kconfig
-> @@ -739,6 +739,21 @@ config LWQ_TEST
->  	help
->            Run boot-time test of light-weight queuing.
->  
-> +config SPDM
-> +	bool "SPDM"
-
-If this appears in a menuconfig or similar menu, I think expanding
-"SPDM" would be helpful to users.
-
-> +	select CRYPTO
-> +	select KEYS
-> +	select ASYMMETRIC_KEY_TYPE
-> +	select ASYMMETRIC_PUBLIC_KEY_SUBTYPE
-> +	select X509_CERTIFICATE_PARSER
-> +	help
-> +	  The Security Protocol and Data Model (SPDM) allows for device
-> +	  authentication, measurement, key exchange and encrypted sessions.
-> +
-> +	  Crypto algorithms negotiated with SPDM are limited to those enabled
-> +	  in .config.  Drivers selecting SPDM therefore need to also select
-> +	  any algorithms they deem mandatory.
-> +
->  endmenu
->  
->  config GENERIC_IOREMAP
-> @@ -777,18 +792,3 @@ config POLYNOMIAL
->  
->  config FIRMWARE_TABLE
->  	bool
-> -
-> -config SPDM
-> -	tristate
-> -	select CRYPTO
-> -	select KEYS
-> -	select ASYMMETRIC_KEY_TYPE
-> -	select ASYMMETRIC_PUBLIC_KEY_SUBTYPE
-> -	select X509_CERTIFICATE_PARSER
-> -	help
-> -	  The Security Protocol and Data Model (SPDM) allows for device
-> -	  authentication, measurement, key exchange and encrypted sessions.
-> -
-> -	  Crypto algorithms negotiated with SPDM are limited to those enabled
-> -	  in .config.  Drivers selecting SPDM therefore need to also select
-> -	  any algorithms they deem mandatory.
-> -- 
-> 2.47.0
-> 
+#syz test: https://github.com/bvanassche/linux.git scsi-for-next
 
