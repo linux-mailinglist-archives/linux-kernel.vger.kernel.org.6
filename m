@@ -1,160 +1,181 @@
-Return-Path: <linux-kernel+bounces-410434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E4AD9CDB95
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:30:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 926AC9CDB97
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:30:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA023B2344E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:30:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F0AE1F233E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD4218FDA6;
-	Fri, 15 Nov 2024 09:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B812118D65E;
+	Fri, 15 Nov 2024 09:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pUi41dl3"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GvhZklWI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0402618F2FC
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8671D18D65F
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731662992; cv=none; b=vDFXPcD/rr0Yv/Nz7Gicx8G+Wv4P75aIk3ELscHLiCmyUCWsFbV+XnnOHZtLtvIg04WX8daJonUXEWsaMpkcz5F9gMzi7YI7JwXVSvpygT5oml47eLniAo6EtM2eBDtNrtrtTyYWvegQa37ZW75UX2tlquO5jl5uW24zpkUEw/o=
+	t=1731663030; cv=none; b=EqG7NgcUS30IURBgvhvhp9+VvDRnF290gAqhgXqEkDkJC7usa/w210NURYRMXt/w2ZTGmViEowchGlhfHGpaNDi9jG6ZA8x0ckSzIMRH+Jy7Klfyzlmp89D1oxleXAutljKqV/wMX4Bh2eka5sjUirKB7H522fEZhZUftqtHu60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731662992; c=relaxed/simple;
-	bh=G0zu/kxNxKcQtvKr/SX+SGJGenykagdf3bB7R8ypZfs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=otQNPU3Vlr/CwLvK2/Wbkk1vizmVczBWN5+RNu2TyuDvAEouUFV0hSwy3uJxZy0WvqrsfmTG9FR13ilaxmAsdFoA8e3E1oDmURKi8v/9sLZpBN5LAZbbW0x4cSa4OX2zKgM7S6trtxyRXcahsZGcYpYRWeXTtrVIoIHth59Tnsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pUi41dl3; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AF91rHH024652
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:29:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LRHknoPsbe6evKngpi5ETRwDISaYc4zV2stJIhrntjA=; b=pUi41dl3jqmaJKhe
-	43DYdcPjjN1CgQkiamqK+pLIzqh0w28DV4/tmzBplW5Xp9GxBMEk8X8RYD4vfe1x
-	PkBrv2FcP63HjjzIChgxWKlM0lD9RamzB4Bn9BbUEzMFapMEORrChZd5wCdZGvtf
-	3Z2cvvnY2KF+jH/Azr6hGT/v1gW2qEOveOJ1QXk4ds5kJdPZLkxuGAEWRG/6MzXw
-	dRFalRvWTLDU8HxNHwW1YI9pdq4nMkO44u9mcsD/u4P3PpUlvi2wmu11cc/6niIm
-	RQoWB8c6NVGU4TAFfjKHSTE43IbQTuD/3gBcQtw6AKIRdyLvbcjFZt60HZ46nRYY
-	0gAY9A==
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42x3acg3cd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:29:49 +0000 (GMT)
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83aae920bb7so35909139f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 01:29:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731662989; x=1732267789;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LRHknoPsbe6evKngpi5ETRwDISaYc4zV2stJIhrntjA=;
-        b=NGcJ3OKl5QqNe1P3XliNUVGoQU6nTiizB6VpADPCVe5wEuogvOwAk223cpBC4mx6xo
-         7hIEe9atM6qh4if9/3gN06DhMBgZJMm+z7SnMc/FzsBzbjogSEX87ruEYwcS3gM9QRU1
-         yi0fqmZCh2AD/1k0nW8uBw9vG8FnVo2VjSXUk/vpUjdREYtgY/cQLnL74bDgIYLwcTRd
-         n+hyE0NXY4P5W6kYUfZc3y8gl1i6ps3rLAal6WZ0S2VQnUsUaNTnsS9jsSJ++2i7K7MC
-         itQiBUPobuOQnUL5P9iVt6giANm5iPozezMVr9XfgHFlDU+pgzD4PoviGeKMn0ADbMId
-         rafw==
-X-Forwarded-Encrypted: i=1; AJvYcCVwbfrXCNtwpRhW5EFmX7dRG7kVlpacJpW7s9AYNpY9CPw4Uqm8fPG/k+tw6B1T/bkuoi+GCiA6a+rXtdA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHDkwvJxVFvXsJ01CZSV18tlBWjoSwg3Cfgb65FQUG7OIKBIGb
-	xrspV1G2UXlfyOYO1lUqEVH8kuORU3B9EIkLHz9Sb+8q1qmwHwZZUbkpyS8x0r1DsCee/f72DH2
-	mmGfBdTektt18cYjYihmJ1QaZJpgzJg1veRoMq4R4ABLfMAgTTnsv/q8yUAMy/sE=
-X-Received: by 2002:a05:6602:1684:b0:83a:abd1:6af2 with SMTP id ca18e2360f4ac-83e6c17c54emr62128139f.3.1731662988848;
-        Fri, 15 Nov 2024 01:29:48 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH29I4bw5bnOpuIKz+9weVZfbmKQVczvtIhJBNOsApQf7VuhYEIDAZw5lf4xCwR3nEjOv0H9w==
-X-Received: by 2002:a05:6602:1684:b0:83a:abd1:6af2 with SMTP id ca18e2360f4ac-83e6c17c54emr62127739f.3.1731662988407;
-        Fri, 15 Nov 2024 01:29:48 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20dffd782sm162167066b.129.2024.11.15.01.29.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 01:29:47 -0800 (PST)
-Message-ID: <eb511e4d-d5b2-4bde-8282-eadcd2eba018@oss.qualcomm.com>
-Date: Fri, 15 Nov 2024 10:29:43 +0100
+	s=arc-20240116; t=1731663030; c=relaxed/simple;
+	bh=HACz/QQAr11ooTsGg0yA/ndqu5JRoocgtgxYM6gKyDA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hXYjZn0FNpuMZid8hZiB/at1pUeYRLE+G7N51JWXnOQCVcqjVzJOcBrOJMlPSY0TJmXTciHmBoCPdPG/cx407I/sxvCTSOOfnDAFpCyBVQdTwWfF/EAEBAsRFgroZ8INQSgF+Q/uSMzLXRhzzWgFfnPvHKfCAGk61o/uERccYIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GvhZklWI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731663027;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nYyixuKVzYBcQTLRFxXlHciXBG+s7v14S0hRbAQwaNI=;
+	b=GvhZklWI02VHm6AuA3mrXnHTmJTyXQMmHd7mECnaKQdN5vUYpo6IQEex+8kNXIJwBuONAw
+	ppxkBklfqsqQq1AWOlJMG8T+u3M/dFnsjRunqdq9miAXm1TZ7Bkr4L5B8oVi6ZzHHv7Pam
+	QRoBMqBU4dg/tDlxjXpUnDPUes4SBKA=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-14-pEcRDYRUN_6afERbkTTXPQ-1; Fri,
+ 15 Nov 2024 04:30:23 -0500
+X-MC-Unique: pEcRDYRUN_6afERbkTTXPQ-1
+X-Mimecast-MFC-AGG-ID: pEcRDYRUN_6afERbkTTXPQ
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0AF361945114;
+	Fri, 15 Nov 2024 09:30:20 +0000 (UTC)
+Received: from localhost (unknown [10.72.113.10])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2783F1956089;
+	Fri, 15 Nov 2024 09:30:17 +0000 (UTC)
+Date: Fri, 15 Nov 2024 17:30:14 +0800
+From: Baoquan He <bhe@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Eric Farman <farman@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v1 01/11] fs/proc/vmcore: convert vmcore_cb_lock into
+ vmcore_mutex
+Message-ID: <ZzcUpoDJ2xPc3FzF@MiWiFi-R3L-srv>
+References: <20241025151134.1275575-1-david@redhat.com>
+ <20241025151134.1275575-2-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/4] arm64: dts: qcom: qcs615: add UFS node
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Xin Liu <quic_liuxin@quicinc.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>, Andy Gross <agross@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, quic_jiegan@quicinc.com,
-        quic_aiquny@quicinc.com, quic_tingweiz@quicinc.com,
-        quic_sayalil@quicinc.com
-References: <20241017042300.872963-1-quic_liuxin@quicinc.com>
- <20241017042300.872963-4-quic_liuxin@quicinc.com>
- <5fe37609-ed58-4617-bd5f-90edc90f5d8b@oss.qualcomm.com>
- <28069114-9893-486b-a8d8-4c8b9ada1b0c@quicinc.com>
- <20241113092716.h3mabw4bzgc5gcha@thinkpad>
- <c0b3bd36-6ec0-4d7d-9a65-5b8f02cd6c98@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <c0b3bd36-6ec0-4d7d-9a65-5b8f02cd6c98@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: JU-Yxv69gT4lTKfQni5pJRHU1TMM4ngz
-X-Proofpoint-ORIG-GUID: JU-Yxv69gT4lTKfQni5pJRHU1TMM4ngz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- clxscore=1015 bulkscore=0 impostorscore=0 adultscore=0 malwarescore=0
- mlxlogscore=849 lowpriorityscore=0 spamscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411150080
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025151134.1275575-2-david@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 14.11.2024 4:20 PM, Konrad Dybcio wrote:
-> On 13.11.2024 10:27 AM, Manivannan Sadhasivam wrote:
->> On Wed, Nov 13, 2024 at 05:19:49PM +0800, Xin Liu wrote:
->>>
->>>
->>> 在 2024/10/26 3:24, Konrad Dybcio 写道:
->>>> On 17.10.2024 6:22 AM, Xin Liu wrote:
->>>>> From: Sayali Lokhande <quic_sayalil@quicinc.com>	
->>>>> 	
->>>>> Add the UFS Host Controller node and its PHY for QCS615 SoC.
->>>>>
->>>>> Signed-off-by: Sayali Lokhande <quic_sayalil@quicinc.com>
->>>>> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
->>>>> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
->>>>> ---
-> 
-> [...]
-> 
-> 
->>>>> +
->>>>> +			status = "disabled";
->>>>> +		};
->>>>> +
->>>>> +		ufs_mem_phy: phy@1d87000 {
->>>>> +			compatible = "qcom,qcs615-qmp-ufs-phy", "qcom,sm6115-qmp-ufs-phy";
->>>>> +			reg = <0x0 0x01d87000 0x0 0xe00>;
->>>>
->>>> This register region is a bit longer
->>> I just confirmed again, there's no problem here.
-> 
-> I'd happen to disagree, please make it 0xe10-long
+On 10/25/24 at 05:11pm, David Hildenbrand wrote:
+> We want to protect vmcore modifications from concurrent opening of
+> the vmcore, and also serialize vmcore modiciations. Let's convert the
 
-Ignore, I was looking at the wrong SoC. Sorry.
 
-Konrad
+> spinlock into a mutex, because some of the operations we'll be
+> protecting might sleep (e.g., memory allocations) and might take a bit
+> longer.
+
+Could you elaborate this a little further. E.g the concurrent opening of
+vmcore is spot before this patchset or have been seen, and in which place
+the memory allocation is spot. Asking this becasue I'd like to learn and
+make clear if this is a existing issue and need be back ported into our
+old RHEL distros. Thanks in advance.
+
+
+> 
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  fs/proc/vmcore.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+> index b52d85f8ad59..110ce193d20f 100644
+> --- a/fs/proc/vmcore.c
+> +++ b/fs/proc/vmcore.c
+> @@ -62,7 +62,8 @@ core_param(novmcoredd, vmcoredd_disabled, bool, 0);
+>  /* Device Dump Size */
+>  static size_t vmcoredd_orig_sz;
+>  
+> -static DEFINE_SPINLOCK(vmcore_cb_lock);
+> +static DEFINE_MUTEX(vmcore_mutex);
+> +
+>  DEFINE_STATIC_SRCU(vmcore_cb_srcu);
+>  /* List of registered vmcore callbacks. */
+>  static LIST_HEAD(vmcore_cb_list);
+> @@ -72,7 +73,7 @@ static bool vmcore_opened;
+>  void register_vmcore_cb(struct vmcore_cb *cb)
+>  {
+>  	INIT_LIST_HEAD(&cb->next);
+> -	spin_lock(&vmcore_cb_lock);
+> +	mutex_lock(&vmcore_mutex);
+>  	list_add_tail(&cb->next, &vmcore_cb_list);
+>  	/*
+>  	 * Registering a vmcore callback after the vmcore was opened is
+> @@ -80,13 +81,13 @@ void register_vmcore_cb(struct vmcore_cb *cb)
+>  	 */
+>  	if (vmcore_opened)
+>  		pr_warn_once("Unexpected vmcore callback registration\n");
+> -	spin_unlock(&vmcore_cb_lock);
+> +	mutex_unlock(&vmcore_mutex);
+>  }
+>  EXPORT_SYMBOL_GPL(register_vmcore_cb);
+>  
+>  void unregister_vmcore_cb(struct vmcore_cb *cb)
+>  {
+> -	spin_lock(&vmcore_cb_lock);
+> +	mutex_lock(&vmcore_mutex);
+>  	list_del_rcu(&cb->next);
+>  	/*
+>  	 * Unregistering a vmcore callback after the vmcore was opened is
+> @@ -95,7 +96,7 @@ void unregister_vmcore_cb(struct vmcore_cb *cb)
+>  	 */
+>  	if (vmcore_opened)
+>  		pr_warn_once("Unexpected vmcore callback unregistration\n");
+> -	spin_unlock(&vmcore_cb_lock);
+> +	mutex_unlock(&vmcore_mutex);
+>  
+>  	synchronize_srcu(&vmcore_cb_srcu);
+>  }
+> @@ -120,9 +121,9 @@ static bool pfn_is_ram(unsigned long pfn)
+>  
+>  static int open_vmcore(struct inode *inode, struct file *file)
+>  {
+> -	spin_lock(&vmcore_cb_lock);
+> +	mutex_lock(&vmcore_mutex);
+>  	vmcore_opened = true;
+> -	spin_unlock(&vmcore_cb_lock);
+> +	mutex_unlock(&vmcore_mutex);
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.46.1
+> 
+
 
