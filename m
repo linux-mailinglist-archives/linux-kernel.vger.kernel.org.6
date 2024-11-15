@@ -1,94 +1,86 @@
-Return-Path: <linux-kernel+bounces-411207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7312B9CF499
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:11:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D729CF49C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:12:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 385B7287E4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:11:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C156C1F23D03
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8721D90BC;
-	Fri, 15 Nov 2024 19:11:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C5E1CDA3F;
+	Fri, 15 Nov 2024 19:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gWrTpi7F";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EkshnYP6";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gWrTpi7F";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EkshnYP6"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Twyiu6vh"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C143E186616;
-	Fri, 15 Nov 2024 19:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7C41D5146
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 19:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731697899; cv=none; b=V1dQ5Guispcvmnsd6U/e79iw/RE2pfvszWYKjRVRSUCiQvfFn3jcbngcWz7hGxrmj9zNn/PDNJoW+VZ6W7iXZxZG5Tccad2qx3QsfmiMwWG2BRc2EalqePG1RHoXl9QyjeNBrCltuZNBd7Ley64ooIgOlgGyXdWJjrvRNJpJrQo=
+	t=1731697916; cv=none; b=sCL7TSbRzKbqOTJaIP+0sAKFBAMiNsZFX+htl2mSvzgGeTM/HzPfVauvOfXzzYS+H8nywxtK76109bve2rVi7bH+leE3szDbzzx5sBuLDhNY7IMBFcPrnvVjLAxEvgJGx98dZ+HlQy5bHFH4hf4Ovmskqd0x2xrpKjakEDUV8CI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731697899; c=relaxed/simple;
-	bh=YdKw+lIBm3VX+Hn+UHR9zwoToZP6H0oG3ozUgzk28yU=;
+	s=arc-20240116; t=1731697916; c=relaxed/simple;
+	bh=1Krt92pNvWCnlz4ziZBq35cten9mPKPpoYmUs7vYb0I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UZeAJqLEo3zinCPE9j6wiE4yMz2Mfx3GNq27WW5IzHT+7gPUpS/dbacitPTGBuDagLHRk73j6aYwbs2Dhp1rKrvQZEBxX9JI2NL9dlL8ptIBPpaDkyWn1iX7IQbU23pb9qAeEEtrsZpeqa9lNpfNT+uBK6mVk4dKsRIxvBIo7vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gWrTpi7F; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EkshnYP6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gWrTpi7F; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EkshnYP6; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0E10321109;
-	Fri, 15 Nov 2024 19:11:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731697896; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=09Ssehw5TOmrUBMgX/2b8KWE1Gr/Av3Z6R+ja6H8aRM=;
-	b=gWrTpi7Fcy0S/0ZYvi4evWOLskn8IDtTrciVcyjE6P6fPSV3dWMZ+JMLQhBLOsZWlm6k8e
-	k9Qbt/kKm3bziNNisRAa2N0YntCY5Jly9Fpnc38UbJ464WhaVdBHfIPpIiJOIPgrlLEJ4t
-	1jKFIfGPAfVV8+BgZwBtmdU/va6ms6o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731697896;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=09Ssehw5TOmrUBMgX/2b8KWE1Gr/Av3Z6R+ja6H8aRM=;
-	b=EkshnYP6HFMSuUUP5rvqd/C2W0OpIgR1ErWPWYAgePjhhNqMj3p2uScRwSrgzcz2B82BQ7
-	5tNY3WIHaduvQUBw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731697896; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=09Ssehw5TOmrUBMgX/2b8KWE1Gr/Av3Z6R+ja6H8aRM=;
-	b=gWrTpi7Fcy0S/0ZYvi4evWOLskn8IDtTrciVcyjE6P6fPSV3dWMZ+JMLQhBLOsZWlm6k8e
-	k9Qbt/kKm3bziNNisRAa2N0YntCY5Jly9Fpnc38UbJ464WhaVdBHfIPpIiJOIPgrlLEJ4t
-	1jKFIfGPAfVV8+BgZwBtmdU/va6ms6o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731697896;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=09Ssehw5TOmrUBMgX/2b8KWE1Gr/Av3Z6R+ja6H8aRM=;
-	b=EkshnYP6HFMSuUUP5rvqd/C2W0OpIgR1ErWPWYAgePjhhNqMj3p2uScRwSrgzcz2B82BQ7
-	5tNY3WIHaduvQUBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DCC7C134B8;
-	Fri, 15 Nov 2024 19:11:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0VpMNeecN2c8fQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 15 Nov 2024 19:11:35 +0000
-Message-ID: <1fd407b1-c061-4f24-b78a-ab90fa5d78d5@suse.cz>
-Date: Fri, 15 Nov 2024 20:11:35 +0100
+	 In-Reply-To:Content-Type; b=t+hBCFLY39r+dMBwAp8+ejp7CxEIgd2SkNyHTqeabq3zV+nS27WZkPQWev3Fw/fypE1Jjelb72qARDgyZLlesBVIKBQlmyb1NuG25OiVFWT37nV9hptDKbdWkjGLYXMLh+53jpehEKEvXzdPBjM/prcn0qXnHVd/rPQiZuOWFM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Twyiu6vh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AF9E0cQ005146
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 19:11:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	oNWqqLzGcGPWlxdHygK3rqDNf1gWjTRbW1EXE3/TxDA=; b=Twyiu6vhsr06RU3z
+	2Vdf03X/OLVQALJcjwztkNLaaz4m6Z6B5UglV33OjAfN536yKZNCZ0k2cAB7kSLf
+	GNx8iJ323WU2tEt7fMZeIJXuvrLlTtycrxyOY0/mJEWuuncsb3yjOkPRFUeh8qC9
+	PFt4lBtUz+mH6FXqufn/8xsYR7fdLPaTOpQ8zYziIy8SdpwCwu94aUVCxzyFnwOF
+	w+Jd7Il22B7n1x2EEa8gGiSw/nDSL1wSJ9WZ2Qzu76UPHnixydY3h6lcOyyUlN0f
+	8kGzoRQaBgAyY517vJfXod+SzU6wiEYVASQ1hx4zeBEGlp4FpwLwuc63wpOi9mLU
+	8+DMGA==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42x3g0sjkn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 19:11:53 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4609c883bb6so4855801cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:11:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731697912; x=1732302712;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oNWqqLzGcGPWlxdHygK3rqDNf1gWjTRbW1EXE3/TxDA=;
+        b=GIe2qeHw0m1pSVtHao4TFRg9wGwCOjHV4EvdSJhBDQozqp3pNVQMH0Txs0P+E3oSV4
+         i78ilxdVq/SwLiGZR6xBOyIS2fjWB5WF5mWTv1mqYbFg8m+60pZHblmBJPrkYifdAJ0o
+         UnVZxGt+LYwRcJ70nU5+bZUrp9jwWS+UgEpcJGxj7KoNl6hZ4RZ3AzdLi7uKS08NjjeB
+         dAbHR1tngSiuNb9xek+iPvzhnIg/vZgBCt68dqj/EmNR9mztNNF10N54fcdBukntHmlt
+         DZO2QlfC1Pfut254fy7V3MZz4SlHMFaf+fUKhkknaVTHbOpZ5kP3H/ujVUpwGZAz7Ub9
+         B21Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWlJnXkAZ/pK9YPgip26DUlhIwnZ7SVJvqKa0vP2JGFGa/we3WCcmhRHReRvXUpymBaTe+xuJgacGo3xtk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywmjk+UnfMRz6Ulmir3GWO3TjxM/cbM6+VBwigZbi2re8WgWsUW
+	tRonkdNsRpinUhV8UkhaLfWUHOaqj0aUQVxBSIl9f/YmK0qVUqLG/eJ8bx4+GrqEL5T1NKAKk60
+	iPx3Yz1MBFuZtk3Lvk0pk+QeOWUadjx2LKOkUw0WjCu64c51wt3g7OxaHndWVtDk=
+X-Gm-Gg: ASbGncs6Nb4T9ooMBo+9b2Hq08BPA2ycndjdh6v6iBORTRyI9zzm/DlRjUvDRrX67BD
+	dqZ8bNy8jLXjBvvp6/n84cGDuFmam9MBHn4OWgsrBC/Aw2fCD0McKHvDaEAkVZnoWyrrQqi1/NK
+	1nV3+7dP2CoLSrRSFzN2ZADOGLca57t1C+JICuwwnuU5cvvgg+DOeZZdCxg9qKaEkYYNmN7z1fB
+	O3zHF/Q0bpPt8kaxaWNQXCgAH62WcYERsPte+OX/GcMthdKPSUPokEltRWMscbwYaQBrRgZB4+g
+	vvttoe93JkCKzHSsktqSEXorS9uMkhA=
+X-Received: by 2002:a05:622a:1442:b0:462:c24c:a3cd with SMTP id d75a77b69052e-46363de973fmr24011291cf.3.1731697912473;
+        Fri, 15 Nov 2024 11:11:52 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHoJ6uiVG4NDBcbXVF7hLurg6c/ZatD58ZGlI56wghztdbwU8rJbTRjRniZqH2vAHFmNo+WGg==
+X-Received: by 2002:a05:622a:1442:b0:462:c24c:a3cd with SMTP id d75a77b69052e-46363de973fmr24011081cf.3.1731697911951;
+        Fri, 15 Nov 2024 11:11:51 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df265bbsm207556866b.38.2024.11.15.11.11.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 11:11:51 -0800 (PST)
+Message-ID: <1e902d79-5dad-4d12-a80e-464dbcf851c3@oss.qualcomm.com>
+Date: Fri, 15 Nov 2024 20:11:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,145 +88,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1.y 0/4] fix error handling in mmap_region() and
- refactor (hotfixes)
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: qcs615: add ethernet node
+To: Yijie Yang <quic_yijiyang@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com
+References: <20241010-dts_qcs615-v1-0-05f27f6ac4d3@quicinc.com>
+ <20241010-dts_qcs615-v1-1-05f27f6ac4d3@quicinc.com>
 Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, stable@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jann Horn <jannh@google.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Linus Torvalds <torvalds@linux-foundation.org>, Peter Xu
- <peterx@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Mark Brown <broonie@kernel.org>,
- "David S . Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>,
- "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
- Helge Deller <deller@gmx.de>
-References: <cover.1731671441.git.lorenzo.stoakes@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <cover.1731671441.git.lorenzo.stoakes@oracle.com>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241010-dts_qcs615-v1-1-05f27f6ac4d3@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmx.de];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,oracle.com,google.com,vger.kernel.org,kvack.org,redhat.com,arm.com,kernel.org,davemloft.net,gaisler.com,HansenPartnership.com,gmx.de];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+X-Proofpoint-ORIG-GUID: LF40ydap0sjgEu1APNXwdgmQ2SpROQ9g
+X-Proofpoint-GUID: LF40ydap0sjgEu1APNXwdgmQ2SpROQ9g
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ lowpriorityscore=0 adultscore=0 bulkscore=0 priorityscore=1501
+ impostorscore=0 malwarescore=0 clxscore=1015 spamscore=0 mlxlogscore=999
+ mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411150162
 
-On 11/15/24 13:40, Lorenzo Stoakes wrote:
-> Critical fixes for mmap_region(), backported to 6.1.y.
+On 10.10.2024 5:05 AM, Yijie Yang wrote:
+> Add ethqos ethernet controller node for QCS615 SoC.
 > 
-> Some notes on differences from upstream:
+> Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs615.dtsi | 27 +++++++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
 > 
-> * We do NOT take commit 0fb4a7ad270b ("mm: refactor
->   map_deny_write_exec()"), as this refactors code only introduced in 6.2.
-> 
-> * We make reference in "mm: refactor arch_calc_vm_flag_bits() and arm64 MTE
->   handling" to parisc, but the referenced functionality does not exist in
->   this kernel.
-> 
-> * In this kernel is_shared_maywrite() does not exist and the code uses
->   VM_SHARED to determine whether mapping_map_writable() /
->   mapping_unmap_writable() should be invoked. This backport therefore
->   follows suit.
-> 
-> * The vma_dummy_vm_ops static global doesn't exist in this kernel, so we
->   use a local static variable in mmap_file() and vma_close().
+> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> index 0d8fb557cf48..ba737cd89679 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> @@ -420,6 +420,33 @@ soc: soc@0 {
+>  		#address-cells = <2>;
+>  		#size-cells = <2>;
+>  
+> +		ethernet: ethernet@20000 {
+> +			compatible = "qcom,qcs615-ethqos", "qcom,sm8150-ethqos";
+> +			reg = <0x0 0x20000 0x0 0x10000>,
+> +			      <0x0 0x36000 0x0 0x100>;
 
-Seems adding 9a9d0b829901 ("mm: move dummy_vm_ops out of a header") as
-prerequisity would have been less work, but I didn't find a bug in your
-adjustments so seems fine to me.
+Please pad the address part to 8 hex digits with leading zeroes
 
-> 
-> * Each version of these series is confronted by a slightly different
->   mmap_region(), so we must adapt the change for each stable version. The
->   approach remains the same throughout, however, and we correctly avoid
->   closing the VMA part way through any __mmap_region() operation.
-> 
-> * This version of the kernel uses mas_preallocate() rather than the
->   vma_iter_prealloc() wrapper and mas_destroy() rather than the
->   vma_iter_free() wrapper, however the logic of rearranging the positioning
->   of these remains the same, as well as avoiding the iterator leak we
->   previously had on some error paths.
-> 
-> Lorenzo Stoakes (4):
->   mm: avoid unsafe VMA hook invocation when error arises on mmap hook
->   mm: unconditionally close VMAs on error
->   mm: refactor arch_calc_vm_flag_bits() and arm64 MTE handling
->   mm: resolve faulty mmap_region() error path behaviour
+> +			reg-names = "stmmaceth", "rgmii";
+> +
+> +			clocks = <&gcc GCC_EMAC_AXI_CLK>,
+> +			         <&gcc GCC_EMAC_SLV_AHB_CLK>,
+> +			         <&gcc GCC_EMAC_PTP_CLK>,
+> +			         <&gcc GCC_EMAC_RGMII_CLK>;
+> +			clock-names = "stmmaceth", "pclk", "ptp_ref", "rgmii";
 
-Aside from the suspected memory leak I reported for 4/4,
+Please make this a vertical list, just like clocks
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-
->  arch/arm64/include/asm/mman.h |  10 ++-
->  include/linux/mman.h          |   7 +-
->  mm/internal.h                 |  19 ++++++
->  mm/mmap.c                     | 119 ++++++++++++++++++----------------
->  mm/nommu.c                    |   9 ++-
->  mm/shmem.c                    |   3 -
->  mm/util.c                     |  33 ++++++++++
->  7 files changed, 129 insertions(+), 71 deletions(-)
-> 
-> --
-> 2.47.0
-
+Konrad
 
