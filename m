@@ -1,128 +1,235 @@
-Return-Path: <linux-kernel+bounces-410422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2D4C9CDB5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:19:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44EFC9CDB67
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:20:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8D7D282C79
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:19:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEC67B22F3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227AA190063;
-	Fri, 15 Nov 2024 09:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2DB18B483;
+	Fri, 15 Nov 2024 09:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FY32VGOE"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cIMOEltr"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51DA190058;
-	Fri, 15 Nov 2024 09:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7C818C03B
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731662348; cv=none; b=m+L46/zeJVDFd1U/3ZekyQFssUMxaqqemFpl+ZcOOIUhNoE3vbVh+MX6Wod5AXBxbZ8TlUFRzuJGY2in7sEDDgu+g6FR4M/3hlNeqCJM2pCbdZynXJC0XiXsvt3B0PlpioxgjzEibca4kq1Ujvyu0n61vvvraFoMRWEH0b4A5fA=
+	t=1731662405; cv=none; b=hvCm6fOzPBtdtA5mPYN1ZQZlUEWoPXzO01PJY4Xjr2GO1QzYPAovYTHw5TP/N/Fx6Pc1SOBM6IEjsgEg/FJzX/imUdeoZMxLKu0dEyjXZI+F5C0bCgeMSabjwgzjOJFv5cJVfDAghM2kBxHdIT7E8kNWQ6wRRHM1F5qIepevcXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731662348; c=relaxed/simple;
-	bh=S5drF1oV5FxfoL12EEoVnvzEFIKne28+dZ0k/ixK8+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hlCdTfdKK+G9ERR3zyVdi4F9rXBTlO7tHM9n6ADPcN/6ieafs36ErH/b2nCF+y9Gpfg+6PgWXtl99hJnJE5ZgcieMJ0UBcv6faIYUT9HfXiSNmOXx13tws8kc6UnP4JundfClfXA2lURUh5GGDlxhP1uwz9Fj9QKZeM5XqCie8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FY32VGOE; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6B4CB60005;
-	Fri, 15 Nov 2024 09:19:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731662343;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3hKnaDNCKavlzw15fsl4Jlsp3Uh1eDda/YmchGWx7D0=;
-	b=FY32VGOEnBQu3yD8XPDiKjpTlOILg38R8D95tXngF6RKnRsiPVbKTOIycQsFy5D5/4Jp+c
-	G5HO5tmAURQZiTlEbRIUgPS137TNYk10dqFchg7YdSG4hvZPZqNh/5ED+/qEop6negVzia
-	fd+NtwXE06qifOBixx394CGYLkicStcCt74uiVq8PvnX4iOKkL4vXwfx8eWFs90dJohrAd
-	xNMZovmlUnwXmUdeW6nem+P722wsjpcomZJuiiUF4XI8yh7jWxdD9FrDmtP5EvsA2WSZBJ
-	I9nL/pMYsDJP3OcQqiARW42/oVBhkz6Bfrafo2LY7SzeZz+7AdHkhsTIactcGQ==
-Date: Fri, 15 Nov 2024 10:19:01 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Robert Joslyn <robert_joslyn@selinc.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "lee@kernel.org"
- <lee@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>, Herve Codina
- <herve.codina@bootlin.com>
-Subject: Re: [RFC PATCH 2/2] net: selpcimac: Add driver for SEL PCIe network
- adapter
-Message-ID: <20241115101901.4369e0da@fedora.home>
-In-Reply-To: <PH0PR22MB3809C7D39B332F0A9FECB11AE5242@PH0PR22MB3809.namprd22.prod.outlook.com>
-References: <20241028223509.935-1-robert_joslyn@selinc.com>
-	<20241028223509.935-3-robert_joslyn@selinc.com>
-	<20241029174939.1f7306df@fedora.home>
-	<PH0PR22MB3809C7D39B332F0A9FECB11AE5242@PH0PR22MB3809.namprd22.prod.outlook.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1731662405; c=relaxed/simple;
+	bh=PIPiBgDekzNsY8kndoFfWEQohXd+pQsQNR93/dg5O80=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=K2kuipeMxczR4f1tTncN54hofiFyLHzR2ktZQbKaUQTzteTE4w595UVs8XkQ/yOAIgoKKmpV9+ew7X0kl0NjG8q26G50iHeFxS/hFWGBZ6O2dvEo894qkInoymKnk5GV+Va1cGvxCblJkcjbsL8k4RPbrzBeOnn2Vc/lgsDJsBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cIMOEltr; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-431481433bdso3799625e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 01:20:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731662402; x=1732267202; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ues4xyA37ETlwX/C7Elrga6ZPm1K6RyzA1jQwswXoo0=;
+        b=cIMOEltrelRSZkbdr94AJMbZAlImHMMDLqi9kD5fxK70y1H4SzuHZ9OM9YKguASPiR
+         J+2QTkVxOiDH+qCCnjIU4Ghvch8LCiRNqJjf5tffHjGNmH337r9eQ0Jo0C5x5xgJLwlR
+         WvfsSWcmrX8pEaAMxdeMwq3fFDDPKA1ZHYVayjfpCFsDHqPg1ntosfb9Yw3wmfu/piAy
+         nxc9y/XQk1Fv4bfkCVoKbRT3XxFYiXbiO13poSp61Ir91w10MRfI1InH8ACHy8GAyA5G
+         kdgWP4RdSIRYHD9iUTqkuQ1kcsPROok94thJEyd9PNPAy06ptKylpku10as7zdvsuRHj
+         ex5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731662402; x=1732267202;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ues4xyA37ETlwX/C7Elrga6ZPm1K6RyzA1jQwswXoo0=;
+        b=c4cAvDObHrVFOYxOAupROqTxbO1rio5ZPBpSAYeF4IEjj9hC0KNI7hKNVDZf8WK3QX
+         vlvtHFtK6COcEh/kohA/HLqe65ms6vKOaFwbf+4ChXmwsUHUZ6GvGvCxm/KAXzUThwiw
+         jZsGLIuani6cXHItNwBQ9i5k69djSq4iJ80cbuGEpGLubyt2TxnxDbCdT86jFukecub3
+         rqGmzBXu0roZsZJyS8oQFuwMaEvcNLbJ9KEm4bTyctERpDe9LjGPnaf1UgYyc+6KQSWZ
+         IGFyZrSW+7fqMJkuaZ5S0S+2pJr6qpRntKKc4dANh+q40hlVbU+exft9xuqlZEzOZyOF
+         YPMA==
+X-Forwarded-Encrypted: i=1; AJvYcCWmrgNSMSdbrPhUJjk0CtuKzSVJiIoLaANIryka1fQf3Osv2KUayVTuSnnKYp+lR27q00IJWZYZdtUFL+k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpdnS8OvzYTmprnz+JozIOCmGc0B6UFh1aAeEIhm8Bc2IAMLI6
+	VnnMZ94kpkWomo+YwIHimiOSnd/MXRZKvgTcueLACjXedFz2WbnMwrnglOWppaU=
+X-Google-Smtp-Source: AGHT+IEMRiJgHRboWeRuXToZjO5EIApbqdd7iEqOjcikGRXbe4S9dfZlcZgZ4ZTnpSBowc+60fVXEA==
+X-Received: by 2002:a05:600c:4f02:b0:431:588a:44a2 with SMTP id 5b1f17b1804b1-432df725588mr16547725e9.12.1731662402428;
+        Fri, 15 Nov 2024 01:20:02 -0800 (PST)
+Received: from [192.168.7.189] ([212.114.21.58])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab78897sm47464945e9.16.2024.11.15.01.20.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 01:20:02 -0800 (PST)
+Message-ID: <8df952a8-3599-4198-9ff0-f7fac6d5feaf@linaro.org>
+Date: Fri, 15 Nov 2024 10:20:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH RFC 6/8] drm/msm: adreno: enable GMU bandwidth for A740
+ and A750
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>,
+ Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+ Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Connor Abbott <cwabbott0@gmail.com>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
+References: <20241113-topic-sm8x50-gpu-bw-vote-v1-0-3b8d39737a9b@linaro.org>
+ <20241113-topic-sm8x50-gpu-bw-vote-v1-6-3b8d39737a9b@linaro.org>
+ <nw2sqnxmhntvizzvygfho6nhiwfni4xfquwst5gd5g2tel6pnr@h66d4mw46jcf>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <nw2sqnxmhntvizzvygfho6nhiwfni4xfquwst5gd5g2tel6pnr@h66d4mw46jcf>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Hello Robert,
-
-> > 
-> > I haven't reviewed the code itself as this is a biiiiig patch, I suggest you try to
-> > split it into more digestable patches, focusing on individual aspects of the
-> > driver.
-> > 
-> > One thing is the PHY support as you mention in the cover-letter, in the current
-> > state this driver re-implements PHY drivers from what I understand. You
-> > definitely need to use the kernel infra for PHY handling.
-> > 
-> > As it seems this driver also re-implements SFP entirely, I suggest you look into
-> > phylink [1]. This will help you supporting the PHYs and SFPs.
-> > You can take a look at the mvneta.c and mvpp2 drivers for examples.  
+On 15/11/2024 08:33, Dmitry Baryshkov wrote:
+> On Wed, Nov 13, 2024 at 04:48:32PM +0100, Neil Armstrong wrote:
+>> Now all the DDR bandwidth voting via the GPU Management Unit (GMU)
+>> is in place, let's declare the Bus Control Modules (BCMs) and
 > 
-> I've been working through migrating to phylib and phylink, and I have the simple case of copper ports working. Where I've gotten stuck is in trying to handle SFPs due to how the hardware is implemented.
+> s/let's //g
 > 
-> This hardware is a PCIe card, either as a typical add-on card or embedded on the mainboard of an x86 computer. The card is setup as follows:
+>> it's parameters in the GPU info struct and add the GMU_BW_VOTE
+>> quirk to enable it.
 > 
-> PCIe Bus <--> FPGA MAC <--> PHY <--> Copper or SFP cage
+> Can we define a function that checks for info.bcm[0].name isntead of
+> adding a quirk?
+
+Probably, I'll need ideas to how design this better, perhaps a simple
+capability bitfield in a6xx_info ?
+There's other feature that are lacking, like ACD or BCL which are not supported
+on all a6xx/a7xx gpus.
+
 > 
-> The phy can be one of three different phys, a BCM5482, Marvell M88E1510, or a TI DP83869. The interface between MAC and PHY is always RGMII. The MAC doesn't know if the port is copper or SFP until an SFP is plugged in. The RFC patch, which has fully internal PHY/SFP handling, assumes the port is copper until an SFP is detected via an interrupt. When that interrupt is received, it probes the SFP over the I2C bus through the FPGA to determine the SFP type, then reconfigures the PHY as needed for that type of SFP.
+>>
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
+>>   drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 26 ++++++++++++++++++++++++--
+>>   1 file changed, 24 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>> index 0c560e84ad5a53bb4e8a49ba4e153ce9cf33f7ae..014a24256b832d8e03fe06a6516b5348a5c0474a 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>> @@ -1379,7 +1379,8 @@ static const struct adreno_info a7xx_gpus[] = {
+>>   		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
+>>   		.quirks = ADRENO_QUIRK_HAS_CACHED_COHERENT |
+>>   			  ADRENO_QUIRK_HAS_HW_APRIV |
+>> -			  ADRENO_QUIRK_PREEMPTION,
+>> +			  ADRENO_QUIRK_PREEMPTION |
+>> +			  ADRENO_QUIRK_GMU_BW_VOTE,
+>>   		.init = a6xx_gpu_init,
+>>   		.zapfw = "a740_zap.mdt",
+>>   		.a6xx = &(const struct a6xx_info) {
+>> @@ -1388,6 +1389,16 @@ static const struct adreno_info a7xx_gpus[] = {
+>>   			.pwrup_reglist = &a7xx_pwrup_reglist,
+>>   			.gmu_chipid = 0x7020100,
+>>   			.gmu_cgc_mode = 0x00020202,
+>> +			.bcm = {
+>> +				[0] = { .name = "SH0", .buswidth = 16 },
+>> +				[1] = { .name = "MC0", .buswidth = 4 },
+>> +				[2] = {
+>> +					.name = "ACV",
+>> +					.fixed = true,
+>> +					.perfmode = BIT(3),
+>> +					.perfmode_bw = 16500000,
+> 
+> Is it a platform property or GPU / GMU property? Can expect that there
+> might be several SoCs having the same GPU, but different perfmode_bw
+> entry?
 
-So do you have 2 different layouts possible, or are you in a situation
-where the RJ45 copper port AND the SFP are always wired to the PHY, and
-you perform media detection to chose the interface to use ?
+I presume this is SoC specific ? But today the XXX_build_bw_table() are
+already SoC specific, so where should this go ?
 
-> After porting to phylink, in the copper case, the PHY gets configured correctly and it works. In the SFP case, I don't know how to reconfigure the PHY to act as a media converter with the correct interface for whatever kind of SFP is attached. The M88E1510 driver, for example, seems to have support for this in the form of struct sfp_upstream_ops callbacks (https://elixir.bootlin.com/linux/v6.12-rc7/source/drivers/net/phy/marvell.c#L3611). It looks like phylink_create will make use of that by looking at the fwnode passed in, but I don't know how to use that to define the layout of my hardware. I assume this is mainly used with device tree and that would define the topology, but I'm using a PCI device on x86. The Broadcom and TI phys don't have the sfp_upstream_ops support as far as I can see, so I've focused on the Marvell phy for the time being.
+Downstream specifies this in the adreno-gpulist.h, which is the equivalent
+here.
 
-There's ongoing work to get the DP83869 to support SFP downstream
-interfaces done by Romain Gantois (in CC) :
-https://lore.kernel.org/netdev/20240701-b4-dp83869-sfp-v1-0-a71d6d0ad5f8@bootlin.com/
+Neil
 
-> How do I describe my hardware layout such that phylink can see that there is an SFP attached and communicate with it? Is there a way to manually create the fwnodes that phylink_create and other functions use? I think this would need to show the topology of the MAC -> PHY -> SFP interface, as well as the I2C bus to use to talk to the SFP (I would have to expose the I2C bus, it's presently internal to this driver).
+> 
+>> +				},
+>> +			},
+>>   		},
+>>   		.address_space_size = SZ_16G,
+>>   		.preempt_record_size = 4192 * SZ_1K,
+>> @@ -1424,7 +1435,8 @@ static const struct adreno_info a7xx_gpus[] = {
+>>   		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
+>>   		.quirks = ADRENO_QUIRK_HAS_CACHED_COHERENT |
+>>   			  ADRENO_QUIRK_HAS_HW_APRIV |
+>> -			  ADRENO_QUIRK_PREEMPTION,
+>> +			  ADRENO_QUIRK_PREEMPTION |
+>> +			  ADRENO_QUIRK_GMU_BW_VOTE,
+>>   		.init = a6xx_gpu_init,
+>>   		.zapfw = "gen70900_zap.mbn",
+>>   		.a6xx = &(const struct a6xx_info) {
+>> @@ -1432,6 +1444,16 @@ static const struct adreno_info a7xx_gpus[] = {
+>>   			.pwrup_reglist = &a7xx_pwrup_reglist,
+>>   			.gmu_chipid = 0x7090100,
+>>   			.gmu_cgc_mode = 0x00020202,
+>> +			.bcm = {
+>> +				[0] = { .name = "SH0", .buswidth = 16 },
+>> +				[1] = { .name = "MC0", .buswidth = 4 },
+>> +				[2] = {
+>> +					.name = "ACV",
+>> +					.fixed = true,
+>> +					.perfmode = BIT(2),
+>> +					.perfmode_bw = 10687500,
+>> +				},
+>> +			},
+>>   		},
+>>   		.address_space_size = SZ_16G,
+>>   		.preempt_record_size = 3572 * SZ_1K,
+>>
+>> -- 
+>> 2.34.1
+>>
+> 
 
-There are a few other devices in this case.
-
-One approach is to describe the SFP cage in your driver using the swnode
-API, such an approach was considered for the LAN743x in PCI mode :
-
-https://lore.kernel.org/netdev/20240911161054.4494-3-Raju.Lakkaraju@microchip.com/
-
-Another approach that is considered is to load a DT overlay that
-describes the hardware including mdio busses, i2c busses, PHYs, SFPs, etc. when the
-PCI driver is used. See this patchset here :
-
-https://lore.kernel.org/netdev/20241014124636.24221-1-herve.codina@bootlin.com/
-
-Hopefully this will help you a bit in the process of figuring this out,
-agreed that's not an easy task :)
-
-Best regards,
-
-Maxime
 
