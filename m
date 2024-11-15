@@ -1,107 +1,109 @@
-Return-Path: <linux-kernel+bounces-411040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C10AF9CF21B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:51:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB81A9CF226
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:52:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 644341F2B276
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:51:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D1B028260E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77F01D5ADA;
-	Fri, 15 Nov 2024 16:51:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021E11D517F;
+	Fri, 15 Nov 2024 16:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="BTIaINUq"
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+F3bJTR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4801D5166;
-	Fri, 15 Nov 2024 16:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E22D1CDA14;
+	Fri, 15 Nov 2024 16:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731689460; cv=none; b=Ffs4GcFyleUKWBW+e3ifWFTUJVaA/PFWX2LF6HfNkHOJHLpP/Q5hsfRuxV2tYaYnCe4efgXncMOtab2E8Z1cPhUiMEE1MB7uRjHfmo0OqU8+dhh3Tn/TSwf00AkWN6fBK7VQvhArTv6j5ilWHznQK4aY2TPN/zXL4J6pxerB8a8=
+	t=1731689568; cv=none; b=Ri5lgoSf4t5B3fmFOlmWrXipYB22VmrM14ghowrcv3U4p44pT/hDegxAcwZPJ5TgFcgP/gO/2LNPMmRox107JDJ0XfrWVyxVcL84JIEiuE7VPCuFTV3qUtxRZNHZT3GkXkzcD5HaQAIFAkgyNVfX/1w535eAp46ilzQUUBRW2A0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731689460; c=relaxed/simple;
-	bh=Dh6VoU9zwjMl9JckDaBsClwL1bYVAj7+lJHn/AxCiw4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l6Qotmgi4sdxLkst6YWeiXYyUfT7gBKL0Wgk/DZlfCrQOhkvtbKHHsRLrL4tW0QI8GMFPvB2SJc8TXxYJbHtPXUXha4e5TlZgx+22Nv31aXnWeKehQza059f+IbwnPw9hJtwcyyqw9vNA/bSTLW4LANccGCuTxNH0d7k08/k49Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=BTIaINUq; arc=none smtp.client-ip=80.12.242.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id BzWytmXWNNywhBzWztDLqn; Fri, 15 Nov 2024 17:50:49 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731689449;
-	bh=D7i3WbUAxo57vU5iXZm97MwKXkcrSqG2y+8GbDnWHjc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=BTIaINUqtp9cEkQwJZGcQiOyrwOtgL8ne+lKN3whF/Z942yR4P0uZukGX4WRQb+DM
-	 k8eBBPYH661yXWQt1tDRGOoS5YP0mFeQesq7fswBoq0XuVgse5jRwe/At5LFeae9Kn
-	 NmEIvI1LtLz6mwMueTrbcgmA498s4Oipnk/uAYZcubJL5BLwh4p6Q/gohmcVU2eL56
-	 McVLUwUoq1v0K/4iV6W3JV6QTpUMR/fGTjKRUKO3+V1AAVs/SeadAKS2gAaTB4fR+L
-	 nzp7qE6xuWgd3FcPczAn4DFnjjmYKoNkUlHSwIWqiQ0SPLpHo4wOo1Qod+HiUybMXm
-	 kvWs3PyAWgx3g==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 15 Nov 2024 17:50:49 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Yassine Oudjana <y.oudjana@protonmail.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-input@vger.kernel.org
-Subject: [PATCH] Input: cypress-sf - Constify struct i2c_device_id
-Date: Fri, 15 Nov 2024 17:50:37 +0100
-Message-ID: <4bc3e3b4d10223d9df850fe4ba48f1cefd197082.1731689418.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731689568; c=relaxed/simple;
+	bh=wJhmaIhoyc2bcieT7PTyq6TP4mqpolXYg20mo06tJQI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZrfD89iFpKfCNyZJfYJ3FuAPJVtnbinmQ1fNZJnbHOHTcV7ESDMeZXGDo/IeGFROs/UT2fD/X8AH7dvafI8BQan4CCsPD6hjUe0YUHxVid2PaHKW3MXh7/wPnMUghRsLnilyXNHZ2w7JRSiVMu0zs3EM2Sp3gVTIa8wrTW2G3AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W+F3bJTR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 790D2C4CECF;
+	Fri, 15 Nov 2024 16:52:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731689567;
+	bh=wJhmaIhoyc2bcieT7PTyq6TP4mqpolXYg20mo06tJQI=;
+	h=From:Subject:Date:To:Cc:From;
+	b=W+F3bJTRRbgWwty1WeFa7oLcTP2zfSkvlzIYvexs5Gt4R02n6I+wQY7P7kpSpRDPs
+	 H8wivok+rtwMsJjQMNO/naLzQWf4KOfoBAPwxgjUbZUcFWmakCZohyXONJklisODEy
+	 vq36kj+XLcfYtvmHp/1Q+EtbAsErAR5QoKaZ5RhwXhQozOk94zUraidpcefW5bUBqy
+	 zDgWrT3WZBX1RW3OGAKkv6hhNp+0Pnb0hH0NLdiYS+6Br5cgS1WzG9rLGXIKxGRqLm
+	 2k1MDghJNtrpUaGMXFaLsSqCJMggPycNYd4r1MXaZUmggVtKa3sGaJY5wIwsRIgXUy
+	 NGdwJFX0midHg==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH net-next 0/2] mptcp: pm: lockless list traversal and
+ cleanup
+Date: Fri, 15 Nov 2024 17:52:33 +0100
+Message-Id: <20241115-net-next-mptcp-pm-lockless-dump-v1-0-f4a1bcb4ca2c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFF8N2cC/zWNQQrDMAwEvxJ0rsAKNbT9SunBOEorGjvCckog5
+ O8xgR7mMIfZ3cC4CBs8ug0K/8Rkzk3o0kH8hPxmlKE59K6/EpHHzLWxVkxao6ImnOb4ndgMhyU
+ pBh+cY0/jje7QVrTwKOv58IR/DK99PwCQzhnHewAAAA==
+X-Change-ID: 20241115-net-next-mptcp-pm-lockless-dump-a5a00e51f819
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=782; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=wJhmaIhoyc2bcieT7PTyq6TP4mqpolXYg20mo06tJQI=;
+ b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBnN3xd3ZG2hgDG8ZszYlPQIBfmCnvijUEJ4J7+5
+ jIjykEb4tCJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZzd8XQAKCRD2t4JPQmmg
+ c393EADbO7Khhkxkg0Y+85y2WBNlH2mo5Jm9fSbd8aeV/lsOx1qYvrWvev5AJ/HH6gfalUhiqKC
+ TeBrxPEsgn/h9obWTjtwzh1sLiKvzPoQ+ZPg44fKiUDWvBAFqS2L0KmMXrxjHCjntB9JYIeYpLP
+ 7Lvr/DKu7OPQca2GTXtt6Fu8xNPf952Q4KYLCctuEnuhckTs/OgFQXgs1n2dRvfn+nnT4y+8ryq
+ bXhj7voYOF+k7rE5L4ju3YdenmJldCXE4qUMY0hJdF7ezITWbTf4fgSfbIHSlUbjHQoe4Ep/8ni
+ QOsjmHl+OjjFRb+tyMF6QqusG/6MdQde6SKa6Vyr+ET+8FoJ13TnNUgI1GJERB/AjupoASt70W9
+ gx/dOihdDfoccnk8t9IYQ/w5lwvAM0AWlw6UL/8uQ8KAUUvdj1a75bgnrF+GVa+Ypkwpa2BslaX
+ SAF/1owaMQ6nJH8DZGtTWFkXdx1JUb3132GMnNgmdtz9xY7I/IVZjJOlK/fPp4PzH9SKLjedo6o
+ EfmtQV7UC/6h2H6vv5zLT6zq/gMwOTt0tt6RUS+neLlAscDAaGEGXXybB7Dsw071Kk5vR0jPFBV
+ 8A2RqQW8bzW9byznuXqlzuv66fyaotQ/TMspNa2yPXGEmFQk9+Wfh2NPrzWxFxP7p8BlmDowCdI
+ 5Q1e8Uh6nEsjvDQ==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-'struct i2c_device_id' is not modified in this driver.
+Here are two patches improving the MPTCP in-kernel path-manager.
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
+- Patch 1: the get and dump endpoints operations are iterating over the
+  endpoints list in a lockless way.
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   6438	    618	      0	   7056	   1b90	drivers/input/keyboard/cypress-sf.o
+- Patch 2: reduce the code duplication to lookup an endpoint.
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-   6502	    554	      0	   7056	   1b90	drivers/input/keyboard/cypress-sf.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 ---
-Compile tested-only.
----
- drivers/input/keyboard/cypress-sf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Geliang Tang (1):
+      mptcp: pm: avoid code duplication to lookup endp
 
-diff --git a/drivers/input/keyboard/cypress-sf.c b/drivers/input/keyboard/cypress-sf.c
-index eb1d0720784d..335b72efc5aa 100644
---- a/drivers/input/keyboard/cypress-sf.c
-+++ b/drivers/input/keyboard/cypress-sf.c
-@@ -208,7 +208,7 @@ static int cypress_sf_resume(struct device *dev)
- static DEFINE_SIMPLE_DEV_PM_OPS(cypress_sf_pm_ops,
- 				cypress_sf_suspend, cypress_sf_resume);
- 
--static struct i2c_device_id cypress_sf_id_table[] = {
-+static const struct i2c_device_id cypress_sf_id_table[] = {
- 	{ CYPRESS_SF_DEV_NAME },
- 	{ }
- };
+Matthieu Baerts (NGI0) (1):
+      mptcp: pm: lockless list traversal to dump endp
+
+ net/mptcp/pm_netlink.c | 33 +++++++++++++--------------------
+ 1 file changed, 13 insertions(+), 20 deletions(-)
+---
+base-commit: dfc14664794a4706e0c2186a0c082386e6b14c4d
+change-id: 20241115-net-next-mptcp-pm-lockless-dump-a5a00e51f819
+
+Best regards,
 -- 
-2.47.0
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
 
