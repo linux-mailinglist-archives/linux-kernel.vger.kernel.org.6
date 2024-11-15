@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-410875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B698C9CF001
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:33:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA219CEC5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:14:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70165B3A10C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:14:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9743A1F2900B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:14:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5DD1D5CC5;
-	Fri, 15 Nov 2024 15:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F30D1D5CEA;
+	Fri, 15 Nov 2024 15:13:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y2OuknJs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qtXe5RO6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCF51D5AAE;
-	Fri, 15 Nov 2024 15:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827B41D5CC9;
+	Fri, 15 Nov 2024 15:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731683590; cv=none; b=VaAVSBfssyajUPLPHdc3pA34C4ebIIPlUPp5F7sEoYIwGVtLMPHIt5nPmHX7VcjO2nRzUC+d9N6F6jYbx3z8v+bKJ/25qoZQnYL27nc8b09nbf/WvC4MfTQvDvlkijmuxqoSpq6NZox3ALyea4EW7216XJ2sIPAhYA5t9aQxu2k=
+	t=1731683591; cv=none; b=frtVBVO47iR52Qtn68X2Ds3hrozWf1xEPn4Z9LJO9y9dyK/6SfJ/pqpNW1JWcmGiPyEWAl1YfTXNanpni1BrZHBiCVuV7q217HOF79tt+LYCxLm/RGfgCwrRHW51Ah7SpeoWkFQis6Ptv/lStw05z+BJYAHomqNqD4Fd730rNeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731683590; c=relaxed/simple;
-	bh=klAyE4yJ7Pn0JVsn2LEXwcXJbbb9kRKwa/irKLMf2T4=;
+	s=arc-20240116; t=1731683591; c=relaxed/simple;
+	bh=tkkm3Dprf75KMyhZXFHRBmbpABU0uYoMcD94+1XAHDk=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Qwqk4NfIK64+HAregbVHSzbJbjOkrXNQYffuR03R7VpFWbUGpUFb48wxHythcf2C9EyShCsGiE9Jajp9+3hFkl7QuNJyvrqZsk6z72/fRPoaXovaGJuH+yHwIDOYJxcYkXKQ1RsEJjuGTuV4Nql1twuRIbsrwuuznHEU8TDh4B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y2OuknJs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 711A0C4CECF;
-	Fri, 15 Nov 2024 15:13:09 +0000 (UTC)
+	 Message-Id:Subject; b=HIquh4mJ7VwOavIrQfW0q95ePUlxupDoY3q/lFEhEzTgFMbVodYYusnQbPVmx5HKzfKBTBwQ/rE3pi7+cPnlygVCHMNFHZA3c2uRCdlYU+QiDoBStElji/VIAbHWBnyR/eD7CSD6LJ/jk8MMESNb8+Gm87Ag+q0GEmGjjeoV8nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qtXe5RO6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3967CC4CED5;
+	Fri, 15 Nov 2024 15:13:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731683589;
-	bh=klAyE4yJ7Pn0JVsn2LEXwcXJbbb9kRKwa/irKLMf2T4=;
+	s=k20201202; t=1731683591;
+	bh=tkkm3Dprf75KMyhZXFHRBmbpABU0uYoMcD94+1XAHDk=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Y2OuknJsoQAQB5m7vthDedO97fOYrfqPfuhYnNLlKVzFW7tZk9IRd+A1mUc7AYKSJ
-	 PbyyduVPzN2oe+HqLk4I4d6Oe5V/AHzXht4DMRL0s99krwOsFnG7buZMdrloTcpeWj
-	 2P1u2t7iCC6o3us+6BQars4uiZo1ddxYYDq6KLslps0O26EgkkLwJ1PFNnUSLuHdT1
-	 H7jtP/DfTPZv0p+TEgJ/LISYJwjFrpD1TSPmFSu42OgVifnAhOGTlDIl9iqB4rqvgI
-	 taQSFHcUReld+K139G1fP8NQ/wovMoB1ZOLFOgXoSlRPM1xcGOjD7TnJrJrKu1vny9
-	 sOG8lk1AC/+Hw==
-Date: Fri, 15 Nov 2024 09:13:07 -0600
+	b=qtXe5RO6h48pceWkqHcf35A2h7vrGZqYQ/O4nQ31pt22c0QHmx+KRzgF+epWHY/U1
+	 BO3+5Y6IUYrqYDP1XZn4f1YU3lQNbGwlELat7rbDK64mFpGzpDi0tePB+Uiu/lkrY9
+	 wt/NtJStU8MNvFQbY5Ec5wC9Ag0vHR9cwMiTsbQPfk7QgQusnlxRWW0p2OKoy/NsAO
+	 +bJA7k1vqzlOEKinHq01TgfnGAL/GMTh4Hx4J3rgA1A1mRHVyEpDszLxv+8LWEft0a
+	 Cw1etht4SDocG16D/ffFvzyn5Qb7DQOpJtgQKURsJDBoQebJyEzeh2nRdYvwIxm/PY
+	 r6Si50wdvMkLA==
+Date: Fri, 15 Nov 2024 09:13:09 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,116 +50,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: iommu@lists.linux.dev, Zhang Rui <rui.zhang@intel.com>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Amit Kucheria <amitk@kernel.org>, 
- Thara Gopinath <thara.gopinath@gmail.com>, Will Deacon <will@kernel.org>, 
- linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, devicetree@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, Lukasz Luba <lukasz.luba@arm.com>, 
- Joerg Roedel <joro@8bytes.org>, Conor Dooley <conor+dt@kernel.org>, 
- Robin Murphy <robin.murphy@arm.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>, Dang Huynh <danct12@riseup.net>, 
- linux-gpio@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
- linux-pm@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, 
- =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-In-Reply-To: <20241113-msm8917-v6-0-c348fb599fef@mainlining.org>
-References: <20241113-msm8917-v6-0-c348fb599fef@mainlining.org>
-Message-Id: <173168321268.2749739.14402170098343790318.robh@kernel.org>
-Subject: Re: [PATCH v6 00/10] Add MSM8917/PM8937/Redmi 5A
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Hsin-Yi Wang <hsinyi@chromium.org>, linux-arm-kernel@lists.infradead.org, 
+ devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>
+To: Hsin-Te Yuan <yuanhsinte@chromium.org>
+In-Reply-To: <20241113-damu-v4-1-6911b69610dd@chromium.org>
+References: <20241113-damu-v4-1-6911b69610dd@chromium.org>
+Message-Id: <173168321208.2749684.5154968423883102453.robh@kernel.org>
+Subject: Re: [PATCH RESEND v4] arm64: dts: mt8183: set DMIC one-wire mode
+ on Damu
 
 
-On Wed, 13 Nov 2024 16:11:41 +0100, Barnabás Czémán wrote:
-> This patch series add support for MSM8917 soc with PM8937 and
-> Xiaomi Redmi 5A (riva).
+On Wed, 13 Nov 2024 16:16:53 +0800, Hsin-Te Yuan wrote:
+> From: Hsin-Yi Wang <hsinyi@chromium.org>
 > 
-> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+> Sets DMIC one-wire mode on Damu.
+> 
+> Fixes: cabc71b08eb5 ("arm64: dts: mt8183: Add kukui-jacuzzi-damu board")
+> Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
 > ---
-> Changes in v6:
-> - msm8917:
->   - Consolidate SDC pins, remove sdc2-cd-on/off pins.
->   - Remove cluster-sleep-0 and cluster-sleep-1
->   and rename cluster-sleep-2 to cluster-sleep-0.
->   - Fix spi, i2c and related pinctrl namings.
-> - msm8917-xiaomi-riva: follow i2c name changes.
-> - Link to v5: https://lore.kernel.org/r/20241112-msm8917-v5-0-3ca34d33191b@mainlining.org
-> 
-> Changes in v5:
-> - msm8917:
->   - Remove aliases.
->   - Rename spi, i2c labels and pins.
->   - Remove clock-frequency from timers
->   - Remove unused mpss_mem region.
->   - Use mboxes where it can be used, only smd-edge uses qcom,ipc.
-> - msm8917-xiaomi-riva: Follow i2c label changes.
-> - Link to v4: https://lore.kernel.org/r/20241109-msm8917-v4-0-8be9904792ab@mainlining.org
-> 
 > Changes in v4:
-> - msm8917 pinctrl: Fix gpio regexp in the schema.
-> - msm8937 tsens: Rename ops_msm8976 to ops_common and use it for msm8937.
-> - msm8917: fix address padding, naming and ordering, remove polling-delays.
-> - Remove applied patches from the series.
-> - Link to v3: https://lore.kernel.org/r/20241107-msm8917-v3-0-6ddc5acd978b@mainlining.org
+> - Add Reviewed-by tag back, which is dropped in v3
+> - Link to v3: https://lore.kernel.org/r/20241009-damu-v3-1-1294c8e16829@chromium.org
 > 
 > Changes in v3:
-> - msm8917-xiaomi-riva: Fix issues addressed by Konrad.
-> - msm8917: Fix node addresses, orders of some properties.
-> - pm8937: simplify vadc channels.
-> - msm8917 pinctrl: Fix schema issues addressed by Krzysztof.
-> - Remove applied tcsr patch from this series.
-> - Reword some commit title.
-> - Link to v2: https://lore.kernel.org/r/20241031-msm8917-v2-0-8a075faa89b1@mainlining.org
+> - Add missing Sign-off-by tag
+> - Link to v2: https://lore.kernel.org/r/20240910-one-wire-v2-1-2bb40d5a3cf8@chromium.org
 > 
 > Changes in v2:
-> - Add msm8937 tsens support.
-> - Fix issues addressed by reviews.
-> - Link to v1: https://lore.kernel.org/r/20241019-msm8917-v1-0-f1f3ca1d88e5@mainlining.org
-> 
+> - Add fixes tag
+> - Link to v1: https://lore.kernel.org/r/20240910-one-wire-v1-1-d25486a6ba6d@chromium.org
 > ---
-> Barnabás Czémán (7):
->       dt-bindings: pinctrl: qcom: Add MSM8917 pinctrl
->       dt-bindings: thermal: tsens: Add MSM8937
->       thermal/drivers/qcom/tsens-v1: Add support for MSM8937 tsens
->       dt-bindings: iommu: qcom,iommu: Add MSM8917 IOMMU to SMMUv1 compatibles
->       dt-bindings: nvmem: Add compatible for MS8917
->       dt-bindings: arm: qcom: Add Xiaomi Redmi 5A
->       arm64: dts: qcom: Add Xiaomi Redmi 5A
-> 
-> Dang Huynh (1):
->       arm64: dts: qcom: Add PM8937 PMIC
-> 
-> Otto Pflüger (2):
->       pinctrl: qcom: Add MSM8917 tlmm pinctrl driver
->       arm64: dts: qcom: Add initial support for MSM8917
-> 
->  Documentation/devicetree/bindings/arm/qcom.yaml    |    7 +
->  .../devicetree/bindings/iommu/qcom,iommu.yaml      |    1 +
->  .../devicetree/bindings/nvmem/qcom,qfprom.yaml     |    1 +
->  .../bindings/pinctrl/qcom,msm8917-pinctrl.yaml     |  160 ++
->  .../devicetree/bindings/thermal/qcom-tsens.yaml    |    1 +
->  arch/arm64/boot/dts/qcom/Makefile                  |    1 +
->  arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts   |  297 +++
->  arch/arm64/boot/dts/qcom/msm8917.dtsi              | 1946 ++++++++++++++++++++
->  arch/arm64/boot/dts/qcom/pm8937.dtsi               |  152 ++
->  drivers/pinctrl/qcom/Kconfig.msm                   |    6 +
->  drivers/pinctrl/qcom/Makefile                      |    1 +
->  drivers/pinctrl/qcom/pinctrl-msm8917.c             | 1620 ++++++++++++++++
->  drivers/thermal/qcom/tsens-v1.c                    |   21 +-
->  drivers/thermal/qcom/tsens.c                       |    3 +
->  drivers/thermal/qcom/tsens.h                       |    2 +-
->  15 files changed, 4211 insertions(+), 8 deletions(-)
-> ---
-> base-commit: 6d59cab07b8d74d0f0422b750038123334f6ecc2
-> change-id: 20241019-msm8917-17c3d0ff4a52
-> 
-> Best regards,
-> --
-> Barnabás Czémán <barnabas.czeman@mainlining.org>
-> 
+>  arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
 
 
@@ -177,27 +105,55 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y qcom/msm8917-xiaomi-riva.dtb' for 20241113-msm8917-v6-0-c348fb599fef@mainlining.org:
+New warnings running 'make CHECK_DTBS=y mediatek/mt8183-kukui-jacuzzi-damu.dtb' for 20241113-damu-v4-1-6911b69610dd@chromium.org:
 
-arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dtb: /soc@0/syscon@1937000: failed to match any schema with compatible: ['qcom,tcsr-msm8917', 'syscon']
-arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dtb: pmic@0: gpio@c000:compatible:0: 'qcom,pm8937-gpio' is not one of ['qcom,pm2250-gpio', 'qcom,pm660-gpio', 'qcom,pm660l-gpio', 'qcom,pm6125-gpio', 'qcom,pm6150-gpio', 'qcom,pm6150l-gpio', 'qcom,pm6350-gpio', 'qcom,pm6450-gpio', 'qcom,pm7250b-gpio', 'qcom,pm7325-gpio', 'qcom,pm7550ba-gpio', 'qcom,pm8005-gpio', 'qcom,pm8018-gpio', 'qcom,pm8019-gpio', 'qcom,pm8038-gpio', 'qcom,pm8058-gpio', 'qcom,pm8150-gpio', 'qcom,pm8150b-gpio', 'qcom,pm8150l-gpio', 'qcom,pm8226-gpio', 'qcom,pm8350-gpio', 'qcom,pm8350b-gpio', 'qcom,pm8350c-gpio', 'qcom,pm8450-gpio', 'qcom,pm8550-gpio', 'qcom,pm8550b-gpio', 'qcom,pm8550ve-gpio', 'qcom,pm8550vs-gpio', 'qcom,pm8916-gpio', 'qcom,pm8917-gpio', 'qcom,pm8921-gpio', 'qcom,pm8941-gpio', 'qcom,pm8950-gpio', 'qcom,pm8953-gpio', 'qcom,pm8994-gpio', 'qcom,pm8998-gpio', 'qcom,pma8084-gpio', 'qcom,pmc8180-gpio', 'qcom,pmc8180c-gpio', 'qcom,pmc8380-gpio', 'qcom,pmd8028-gpio', 'qcom,pmi632-gpio', 'qcom,pmi8950-gpio', 'qc
- om,pmi8994-gpio', 'qcom,pmi8998-gpio', 'qcom,pmih0108-gpio', 'qcom,pmk8350-gpio', 'qcom,pmk8550-gpio', 'qcom,pmm8155au-gpio', 'qcom,pmm8654au-gpio', 'qcom,pmp8074-gpio', 'qcom,pmr735a-gpio', 'qcom,pmr735b-gpio', 'qcom,pmr735d-gpio', 'qcom,pms405-gpio', 'qcom,pmx55-gpio', 'qcom,pmx65-gpio', 'qcom,pmx75-gpio', 'qcom,pmxr2230-gpio']
-	from schema $id: http://devicetree.org/schemas/mfd/qcom,spmi-pmic.yaml#
-arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dtb: pmic@0: mpps@a000:compatible: 'oneOf' conditional failed, one must be fixed:
-	'qcom,pm8937-mpp' is not one of ['qcom,pm8019-mpp', 'qcom,pm8226-mpp', 'qcom,pm8841-mpp', 'qcom,pm8916-mpp', 'qcom,pm8941-mpp', 'qcom,pm8950-mpp', 'qcom,pmi8950-mpp', 'qcom,pm8994-mpp', 'qcom,pma8084-mpp', 'qcom,pmi8994-mpp']
-	'qcom,pm8937-mpp' is not one of ['qcom,pm8018-mpp', 'qcom,pm8038-mpp', 'qcom,pm8058-mpp', 'qcom,pm8821-mpp', 'qcom,pm8901-mpp', 'qcom,pm8917-mpp', 'qcom,pm8921-mpp']
-	'qcom,ssbi-mpp' was expected
-	from schema $id: http://devicetree.org/schemas/mfd/qcom,spmi-pmic.yaml#
-arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dtb: gpio@c000: compatible:0: 'qcom,pm8937-gpio' is not one of ['qcom,pm2250-gpio', 'qcom,pm660-gpio', 'qcom,pm660l-gpio', 'qcom,pm6125-gpio', 'qcom,pm6150-gpio', 'qcom,pm6150l-gpio', 'qcom,pm6350-gpio', 'qcom,pm6450-gpio', 'qcom,pm7250b-gpio', 'qcom,pm7325-gpio', 'qcom,pm7550ba-gpio', 'qcom,pm8005-gpio', 'qcom,pm8018-gpio', 'qcom,pm8019-gpio', 'qcom,pm8038-gpio', 'qcom,pm8058-gpio', 'qcom,pm8150-gpio', 'qcom,pm8150b-gpio', 'qcom,pm8150l-gpio', 'qcom,pm8226-gpio', 'qcom,pm8350-gpio', 'qcom,pm8350b-gpio', 'qcom,pm8350c-gpio', 'qcom,pm8450-gpio', 'qcom,pm8550-gpio', 'qcom,pm8550b-gpio', 'qcom,pm8550ve-gpio', 'qcom,pm8550vs-gpio', 'qcom,pm8916-gpio', 'qcom,pm8917-gpio', 'qcom,pm8921-gpio', 'qcom,pm8941-gpio', 'qcom,pm8950-gpio', 'qcom,pm8953-gpio', 'qcom,pm8994-gpio', 'qcom,pm8998-gpio', 'qcom,pma8084-gpio', 'qcom,pmc8180-gpio', 'qcom,pmc8180c-gpio', 'qcom,pmc8380-gpio', 'qcom,pmd8028-gpio', 'qcom,pmi632-gpio', 'qcom,pmi8950-gpio', 'qcom,pmi8
- 994-gpio', 'qcom,pmi8998-gpio', 'qcom,pmih0108-gpio', 'qcom,pmk8350-gpio', 'qcom,pmk8550-gpio', 'qcom,pmm8155au-gpio', 'qcom,pmm8654au-gpio', 'qcom,pmp8074-gpio', 'qcom,pmr735a-gpio', 'qcom,pmr735b-gpio', 'qcom,pmr735d-gpio', 'qcom,pms405-gpio', 'qcom,pmx55-gpio', 'qcom,pmx65-gpio', 'qcom,pmx75-gpio', 'qcom,pmxr2230-gpio']
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,pmic-gpio.yaml#
-arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dtb: /soc@0/spmi@200f000/pmic@0/gpio@c000: failed to match any schema with compatible: ['qcom,pm8937-gpio', 'qcom,spmi-gpio']
-arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dtb: mpps@a000: compatible: 'oneOf' conditional failed, one must be fixed:
-	'qcom,pm8937-mpp' is not one of ['qcom,pm8019-mpp', 'qcom,pm8226-mpp', 'qcom,pm8841-mpp', 'qcom,pm8916-mpp', 'qcom,pm8941-mpp', 'qcom,pm8950-mpp', 'qcom,pmi8950-mpp', 'qcom,pm8994-mpp', 'qcom,pma8084-mpp', 'qcom,pmi8994-mpp']
-	'qcom,pm8937-mpp' is not one of ['qcom,pm8018-mpp', 'qcom,pm8038-mpp', 'qcom,pm8058-mpp', 'qcom,pm8821-mpp', 'qcom,pm8901-mpp', 'qcom,pm8917-mpp', 'qcom,pm8921-mpp']
-	'qcom,ssbi-mpp' was expected
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,pmic-mpp.yaml#
-arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dtb: /soc@0/spmi@200f000/pmic@0/mpps@a000: failed to match any schema with compatible: ['qcom,pm8937-mpp', 'qcom,spmi-mpp']
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: pinctrl@10005000: mmc0-pins-default:pins-clk:mediatek,pull-down-adv: 10 is not one of [0, 1, 2, 3]
+	from schema $id: http://devicetree.org/schemas/pinctrl/mediatek,mt8183-pinctrl.yaml#
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: pinctrl@10005000: mmc0-pins-uhs:pins-clk:mediatek,pull-down-adv: 10 is not one of [0, 1, 2, 3]
+	from schema $id: http://devicetree.org/schemas/pinctrl/mediatek,mt8183-pinctrl.yaml#
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: pinctrl@10005000: mmc0-pins-uhs:pins-ds:mediatek,pull-down-adv: 10 is not one of [0, 1, 2, 3]
+	from schema $id: http://devicetree.org/schemas/pinctrl/mediatek,mt8183-pinctrl.yaml#
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: pinctrl@10005000: mmc1-pins-default:pins-cmd-dat:mediatek,pull-up-adv: 10 is not one of [0, 1, 2, 3]
+	from schema $id: http://devicetree.org/schemas/pinctrl/mediatek,mt8183-pinctrl.yaml#
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: pinctrl@10005000: mmc1-pins-default:pins-clk:mediatek,pull-down-adv: 10 is not one of [0, 1, 2, 3]
+	from schema $id: http://devicetree.org/schemas/pinctrl/mediatek,mt8183-pinctrl.yaml#
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: pinctrl@10005000: mmc1-pins-uhs:pins-cmd-dat:mediatek,pull-up-adv: 10 is not one of [0, 1, 2, 3]
+	from schema $id: http://devicetree.org/schemas/pinctrl/mediatek,mt8183-pinctrl.yaml#
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: pinctrl@10005000: mmc1-pins-uhs:pins-clk:mediatek,pull-down-adv: 10 is not one of [0, 1, 2, 3]
+	from schema $id: http://devicetree.org/schemas/pinctrl/mediatek,mt8183-pinctrl.yaml#
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: pinctrl@10005000: panel-pins-default: 'panel-reset' does not match any of the regexes: '^pins', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/pinctrl/mediatek,mt8183-pinctrl.yaml#
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: pinctrl@10005000: pp3300-panel-pins: 'panel-3v3-enable' does not match any of the regexes: '^pins', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/pinctrl/mediatek,mt8183-pinctrl.yaml#
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: pinctrl@10005000: touchscreen-pins: 'touch-int-odl', 'touch-rst-l' do not match any of the regexes: '^pins', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/pinctrl/mediatek,mt8183-pinctrl.yaml#
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: pinctrl@10005000: trackpad-pins: 'trackpad-int' does not match any of the regexes: '^pins', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/pinctrl/mediatek,mt8183-pinctrl.yaml#
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: pinctrl@10005000: volume-button-pins: 'voldn-btn-odl', 'volup-btn-odl' do not match any of the regexes: '^pins', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/pinctrl/mediatek,mt8183-pinctrl.yaml#
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: pinctrl@10005000: 'audiopins', 'audiotdmoutoff', 'audiotdmouton', 'da7219_pins', 'ec-ap-int-odl', 'gpio-line-names', 'h1-int-od-l', 'i2c0', 'i2c1', 'i2c2', 'i2c3', 'i2c4', 'i2c5', 'i2c6', 'pp1000-mipibrdg-en', 'pp1800-mipibrdg-en', 'pp3300-mipibrdg-en', 'ppvarn-lcd-en', 'ppvarp-lcd-en', 'pwm0-pin-default', 'scp', 'spi0', 'spi1', 'spi2', 'spi3', 'spi4', 'spi5' do not match any of the regexes: '-pins(-[a-z]+)?$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/pinctrl/mediatek,mt8183-pinctrl.yaml#
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: touchscreen@10: 'reset-gpios' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/input/hid-over-i2c.yaml#
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: /soc/audio-controller@11220000: failed to match any schema with compatible: ['mediatek,mt8183-audiosys', 'syscon']
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: /soc/audio-controller@11220000/mt8183-afe-pcm: failed to match any schema with compatible: ['mediatek,mt8183-audio']
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: syscon@13000000: 'power-domains' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/clock/mediatek,syscon.yaml#
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: dsi@14014000: ports: 'port@0' is a required property
+	from schema $id: http://devicetree.org/schemas/display/mediatek/mediatek,dsi.yaml#
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: dsi@14014000: ports: 'port@1' is a required property
+	from schema $id: http://devicetree.org/schemas/display/mediatek/mediatek,dsi.yaml#
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: dsi@14014000: Unevaluated properties are not allowed ('ports' was unexpected)
+	from schema $id: http://devicetree.org/schemas/display/mediatek/mediatek,dsi.yaml#
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: vcodec@17020000: 'assigned-clocks' is a required property
+	from schema $id: http://devicetree.org/schemas/media/mediatek,vcodec-encoder.yaml#
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: vcodec@17020000: 'assigned-clock-parents' is a required property
+	from schema $id: http://devicetree.org/schemas/media/mediatek,vcodec-encoder.yaml#
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: thermal-zones: 'tboard1', 'tboard2' do not match any of the regexes: '^[a-zA-Z][a-zA-Z0-9\-]{1,10}-thermal$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/thermal/thermal-zones.yaml#
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: /mt8183-sound: failed to match any schema with compatible: ['mediatek,mt8183_da7219_max98357']
+arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb: bt-sco: '#sound-dai-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/sound/linux,bt-sco.yaml#
 
 
 
