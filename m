@@ -1,109 +1,94 @@
-Return-Path: <linux-kernel+bounces-410469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 053AC9CDBFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:59:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E0C29CDBFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:59:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BAEF1F223E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:59:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A4EFB212FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A524192D8B;
-	Fri, 15 Nov 2024 09:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E41193073;
+	Fri, 15 Nov 2024 09:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KB5fmgGO"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA8018C332
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="1pgplZ3T"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1680318FC75;
+	Fri, 15 Nov 2024 09:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731664739; cv=none; b=rkwpl9ysROU3cCShcyb3x8uNVcOzjStxAt+Toyy1czxc0mZlxkGb8pWXqPChTcxi1y8ZfvayQAFdB4yU5Bv8gS7w6ZE8zJjzfb545OpcYQLFBuXDJOzIG8iFazO9pmoxOXDj86UJXPphGFpudG+96Rw9ELZloPPu8jj4SIGUAnM=
+	t=1731664755; cv=none; b=qY54mJBIWUz7jgqHkRFmVX/L/Nnu3VXhapcssF0QjFZ5gZZD+HCpQYQ8wxX1BfaWjubqiGtwCTmYskU9s0ppCNDhs0dwKp9ujywpYmjGStH80TsbhhXq01y6ZcPXJRrXmB/EAxyXkCRiO7TyLabpDCyIcutcXUm+S9kLcYbtQRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731664739; c=relaxed/simple;
-	bh=G73iQpDiWeQ7xhsGEavDA1r+16LDSvVblsG/yj4oiPk=;
+	s=arc-20240116; t=1731664755; c=relaxed/simple;
+	bh=jzOCG6o7wnXXvzyLVUeR4gputvCjuP86WlWF8hmaU5A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H3ulhmHX1ua2dUmhZ/VwKdHvKUf7B5isBlTI2W9aDI5liVmkedWrUAhSY3yLAWqBiz3F8FlGsFMINe5H6sSdg5cNyVnbcj9k1cbVrVoobJ7fDtvKcMRMpSZyqSYJtqer/jlBTaiPZETKPlcVf+04yAaXyhOHIPxEXd/MD0o3GKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KB5fmgGO; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=8NkXEpID0JPQnOTUEaJmZRqqzsJTZpzdAGLfJBOOSuA=; b=KB5fmgGOilnZcUfAhTjxBvN8th
-	0G4o7Nbm7W9espH1dQyxxUv+9fEqj/wUy9o+hOuGGAm6psAPI0g+HQaOxRJQLWZnpqwT0wMHSVELO
-	1aL6Jy8MNaolXeL3vr4NDk9NXdbH5idfF+St7YHunsupQX0XotXKTz/bTv4/mWvxtiI6iLHt6z61j
-	IJb/oCBFHqtAT37jGHt0zXSaH5DcMsC5vpzU9UCwFAJWUApPYatDhOEe9uZGy4gZSi+OOf4W22bw4
-	k4Vqg3BH4d6m+NHebu5f68QbV3PNfhcCn1bv+f7iVUc/2i3f57YgKyAjOZrwNjnpWPV9i6Pk+jgWU
-	XoFHMzFQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tBt6H-00000001D5V-0eVt;
-	Fri, 15 Nov 2024 09:58:48 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id D911B30066A; Fri, 15 Nov 2024 10:58:47 +0100 (CET)
-Date: Fri, 15 Nov 2024 10:58:47 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Phil Auld <pauld@redhat.com>
-Cc: Jon Kohler <jon@nutanix.com>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] sched: hoist ASSERT_EXCLUSIVE_WRITER(p->on_rq) above
- WRITE_ONCE
-Message-ID: <20241115095847.GV22801@noisy.programming.kicks-ass.net>
-References: <20241114165352.1824956-1-jon@nutanix.com>
- <20241114185755.GG471026@pauld.westford.csb>
- <0C4B7BAD-04EA-4F60-B6D2-A7B2C14E52B7@nutanix.com>
- <20241114192056.GI471026@pauld.westford.csb>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RHmEtO67gp9eWWSXZusvn3GgZ38YHZDhHp62K8pRA47dZe1FCQfskTZnYiy9j5zCvqfpWiBFKRDAIZHYMhZXimaI769aN/U/cpEGhiMpeXC7erPOY5YJ2hVMPGFcfHXGNW6aNrw6+VaVYWUoRSSvn3+z/MYf3ryElfC4CYVKsVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=1pgplZ3T; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 17A2514C1E1;
+	Fri, 15 Nov 2024 10:59:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1731664751;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=h106Ml7abfvdmPSs7cdnzPNClvb4af5TQOQi0UsQtY0=;
+	b=1pgplZ3TLcCZfJjMIf2Hm100HsbpbdO36HJ6g5JO6cYliLJMGhv0y/wiipOWgJAl03H4wJ
+	pRs0+cauDuQ60Ig7q7A1zAYY12GK4jYSOnd3c7yazJ/44Zpwl4f9GaRWbZBNM2v4BhHm2R
+	S/iSwVYUv3+vVA+tL2toO1/fwY+CzLpVX8ErBmbk0/rgvwfiiZrhv2KOl7k0sUOmYy9//g
+	58XcdCd7ulUYaVO4f3aLO9vs4PKE6YFQ4Hwj1VYA7oUNfQFGwL2m9/GrQwSvtUsDJPrFjC
+	mcnpuyPUlpwm3uKIKf+kKrIDRf5KWgvAgIdQZyZgwdh9Ldym6zO2bcGCRSgaGQ==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 8136a238;
+	Fri, 15 Nov 2024 09:59:04 +0000 (UTC)
+Date: Fri, 15 Nov 2024 18:58:49 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 5.10 00/82] 5.10.230-rc1 review
+Message-ID: <ZzcbWa2Bak_7vvUo@codewreck.org>
+References: <20241115063725.561151311@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241114192056.GI471026@pauld.westford.csb>
+In-Reply-To: <20241115063725.561151311@linuxfoundation.org>
 
-On Thu, Nov 14, 2024 at 02:20:56PM -0500, Phil Auld wrote:
-
-> I don't know. I don't think it matters much since the assert is really
-> independent of the actual write. Like I said it makes sense to have it
-> first to me but others may see it as just moving code around for no strong
-> reason.  Peter may or may not decide to pick this one up. Other "mis-ordered"
-> uses are in code maintained by different folks.
+Greg Kroah-Hartman wrote on Fri, Nov 15, 2024 at 07:37:37AM +0100:
+> This is the start of the stable review cycle for the 5.10.230 release.
+> There are 82 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> You can see if anyone else weighs in...
+> Responses should be made by Sun, 17 Nov 2024 06:37:07 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.230-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
 
-So I'm not entirely about this patch... :-)
+Tested d7359abfa20d ("Linux 5.10.230-rc1") on:
+- arm i.MX6ULL (Armadillo 640)
+- arm64 i.MX8MP (Armadillo G4)
 
-Per commit b55945c500c5 ("sched: Fix pick_next_task_fair() vs try_to_wake_up() race")
-we can see that this placement is not equivalent.
-
-Placing it before the store means that nobody else will store to it
-until you've done your store.
-
-Placing it after means that nobody else will attempt the store,
-irrespective of the store you just did.
-
-That is, the ASSERT after the store is a stronger assert.
-
-In case of activate_task(), we mark the task as on_rq, and this state is
-protected by rq->lock (which we hold), so there must not be any stores
-for as long as we hold that lock. So after is the right place.
-
-In case of deactivate_task(), this is a hand-off, but the handoff
-doesn't happen until after dequeue_task() and set_task_cpu(). So at this
-point, again, nobody should be modifying it.
-
-
+No obvious regression in dmesg or basic tests:
+Tested-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
+-- 
+Dominique Martinet
 
