@@ -1,58 +1,63 @@
-Return-Path: <linux-kernel+bounces-410717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C8579CE032
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:37:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D6E39CE03C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:38:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A948FB28151
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:37:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38EC2B22821
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6A81CEAA2;
-	Fri, 15 Nov 2024 13:36:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC331CF7B7;
+	Fri, 15 Nov 2024 13:37:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="mZ0E4jus"
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="BxbKMoKu"
 Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0D71CDFC1;
-	Fri, 15 Nov 2024 13:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473A81CCEE8;
+	Fri, 15 Nov 2024 13:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731677817; cv=none; b=PccLF5fAWTA03qnpk2axEblUzDy3tTQ/zCsDkUeU0xPB46SrNXhaCyFnW5NldU95vT/YiSTbLPxORCheNvT9GipojPik0tpCqsbbT0l9t8aWQemUvAT68LzRk5vfkANMmJIHZvs3X7OLAg5x5QY/Ww9P/M4402C3aabyo9UZJ8I=
+	t=1731677822; cv=none; b=NMT0ksTbNEYlST8pbL0wLRpp06/1QpoUN7m3DrpRz5/VcYalCt9hfZPriZqhHoBWyexZhg40s61bqIHCzWGWbBx6/c9KmLfWV8utnGjUj6LYEZuXDKbOLq2Naa+zbYPdlshwY9RlquWrzoE96L9gAhdGO+d5ZKzRVjwJQF8QNOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731677817; c=relaxed/simple;
-	bh=ouHDODVJurRyJEOkOhCj9pVvwAvdaE9uDibnZlcGZN0=;
+	s=arc-20240116; t=1731677822; c=relaxed/simple;
+	bh=Ib45uRot1acwKbGhYZdqeNpKRjT3L8tCv8MVfkCt1e0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N281GkLV1LOVNeobR0xPZnTKNH0+cLn7168MJGPJQLZQrPnL7eZwzCFLFoHs27v5pH4F2vidJBXHAjxw3ZBf50mTnAnG2JIlD5lgBRGXdGgHE560gvDV8nUQwQm9RqydRMPJLIly0LyweKUtDpRlwasTalZGNFW4LMMoImrkVJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=mZ0E4jus; arc=none smtp.client-ip=168.119.48.163
+	 MIME-Version:Content-Type; b=pzcZzFRTkeoeIu2Oas90JAjJ8oIMjvzRd+Y1Eo7Rv4+H1dLqrkalfpQdrz6IiinqDJF9bjUn4JZH8xlzwO6MdiJBUFS4GNiZ1CPcWMfViUcUVy0ovv80Yv6ZjVsbB7pK6dLHdva8e7r+aaGI/VqnlOqxldoo7+Fh/pfJtkDs9Fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=BxbKMoKu; arc=none smtp.client-ip=168.119.48.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
 From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1731677812;
+	s=2023072701; t=1731677814;
 	h=from:from:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=R2g5Wk+CWFl28MX4lhzXMKz3Oz2ct6jAzT7+Bkx0DJg=;
-	b=mZ0E4jus303HZmXIXmo5nMnPfRfDAYpDKy3jlgD+9mdaySPZqngn9u/9AppSwmLg+3wRuI
-	aBpvcGL5bqDrgu3p7VHIjPz4TQrbITWCgWQY0WpuF390xZ4bPhoYk142VSJ+hb36EfIWKD
-	Oo1ArTkrVdSH5TFv5lSW9AQoDrbg45+Z/4mrWs2emkO7r5E8HBKDm1v3vYU4LtS2FQyHbv
-	c8M5QBaFcffmqG3oDyCj9abvMXckp5Kn8SnUboo8cEPZAHYeA00+BIthHl2K79ArTgxJq+
-	L7pSAolgEfZmIFhoNxsnNIci20Gl86oFh1TyKSVGgb1nO2a+ru2PXUGYDHb/MA==
+	bh=/JSE9gS3/yAfd/yBjndcFF5XzOkcsUtlbyZdS90wDAQ=;
+	b=BxbKMoKuSFXJvCqzFp8vMVTWvzWQStdS3dj5vjnsHbKOdEutd+wwtUWrdIQsYDVnlPRyj6
+	Tlt+qKARSgLBqgxFBDOGUdxeWa3hKuRCAljFJ0rPv5+wdVQZ+rrXHUw/rFKfIvPiRn2V61
+	Vs+XE5we36DX4EJxlau1rfqYASk0WTyqZHmpVes2RdExRRCZYUacm+8Jy0rWahovFAZtsW
+	8hLnRvVuEdIrwb4xrM6Ijjy8P8qopX3wTWntG8kgqj/62aslrY0kNGMQZxIY7JeGSGYUik
+	hbCUgu/K2K992GVJlgJStNJguDHANN388Gy8t0fXcW4zEcUHUW4RVGWvj1Wd1g==
 To: selinux@vger.kernel.org
 Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
 	Paul Moore <paul@paul-moore.com>,
 	Stephen Smalley <stephen.smalley.work@gmail.com>,
 	Ondrej Mosnacek <omosnace@redhat.com>,
+	John Johansen <john.johansen@canonical.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	=?UTF-8?q?Thi=C3=A9baud=20Weksteen?= <tweek@google.com>,
+	Canfeng Guo <guocanfeng@uniontech.com>,
+	GUO Zihua <guozihua@huawei.com>,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 05/22] selinux: avoid nontransitive comparison
-Date: Fri, 15 Nov 2024 14:35:24 +0100
-Message-ID: <20241115133619.114393-5-cgoettsche@seltendoof.de>
+Subject: [RFC PATCH 06/22] selinux: rename comparison functions for clarity
+Date: Fri, 15 Nov 2024 14:35:25 +0100
+Message-ID: <20241115133619.114393-6-cgoettsche@seltendoof.de>
 In-Reply-To: <20241115133619.114393-1-cgoettsche@seltendoof.de>
 References: <20241115133619.114393-1-cgoettsche@seltendoof.de>
 Reply-To: cgzones@googlemail.com
@@ -67,81 +72,91 @@ Content-Transfer-Encoding: 8bit
 
 From: Christian Göttsche <cgzones@googlemail.com>
 
-Avoid using nontransitive comparison to prevent unexpected sorting
-results due to (well-defined) overflows.
-See https://www.qualys.com/2024/01/30/qsort.txt for a related issue in
-glibc's qsort(3).
+The functions context_cmp() and mls_context_cmp() are not traditional
+C style compare functions returning -1, 0, and 1 for less than, equal,
+and greater than; they only return whether their arguments are equal.
 
 Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 ---
- security/selinux/ss/policydb.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ security/selinux/ss/context.c  |  2 +-
+ security/selinux/ss/context.h  | 10 +++++-----
+ security/selinux/ss/services.c |  2 +-
+ security/selinux/ss/sidtab.c   |  2 +-
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index 383f3ae82a73..d04d9ada3835 100644
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -37,6 +37,8 @@
- #include "mls.h"
- #include "services.h"
- 
-+#define spaceship_cmp(a, b) (((a) > (b)) - ((a) < (b)))
-+
- #ifdef CONFIG_SECURITY_SELINUX_DEBUG
- /* clang-format off */
- static const char *const symtab_name[SYM_NUM] = {
-@@ -421,11 +423,11 @@ static int filenametr_cmp(const void *k1, const void *k2)
- 	const struct filename_trans_key *ft2 = k2;
- 	int v;
- 
--	v = ft1->ttype - ft2->ttype;
-+	v = spaceship_cmp(ft1->ttype, ft2->ttype);
- 	if (v)
- 		return v;
- 
--	v = ft1->tclass - ft2->tclass;
-+	v = spaceship_cmp(ft1->tclass, ft2->tclass);
- 	if (v)
- 		return v;
- 
-@@ -456,15 +458,15 @@ static int rangetr_cmp(const void *k1, const void *k2)
- 	const struct range_trans *key1 = k1, *key2 = k2;
- 	int v;
- 
--	v = key1->source_type - key2->source_type;
-+	v = spaceship_cmp(key1->source_type, key2->source_type);
- 	if (v)
- 		return v;
- 
--	v = key1->target_type - key2->target_type;
-+	v = spaceship_cmp(key1->target_type, key2->target_type);
- 	if (v)
- 		return v;
- 
--	v = key1->target_class - key2->target_class;
-+	v = spaceship_cmp(key1->target_class, key2->target_class);
- 
- 	return v;
- }
-@@ -493,15 +495,15 @@ static int role_trans_cmp(const void *k1, const void *k2)
- 	const struct role_trans_key *key1 = k1, *key2 = k2;
- 	int v;
- 
--	v = key1->role - key2->role;
-+	v = spaceship_cmp(key1->role, key2->role);
- 	if (v)
- 		return v;
- 
--	v = key1->type - key2->type;
-+	v = spaceship_cmp(key1->type, key2->type);
- 	if (v)
- 		return v;
- 
--	return key1->tclass - key2->tclass;
-+	return spaceship_cmp(key1->tclass, key2->tclass);
+diff --git a/security/selinux/ss/context.c b/security/selinux/ss/context.c
+index e39990f494dd..a528b7f76280 100644
+--- a/security/selinux/ss/context.c
++++ b/security/selinux/ss/context.c
+@@ -20,7 +20,7 @@ u32 context_compute_hash(const struct context *c)
+ 	 * context struct with only the len & str set (and vice versa)
+ 	 * under a given policy. Since context structs from different
+ 	 * policies should never meet, it is safe to hash valid and
+-	 * invalid contexts differently. The context_cmp() function
++	 * invalid contexts differently. The context_equal() function
+ 	 * already operates under the same assumption.
+ 	 */
+ 	if (c->len)
+diff --git a/security/selinux/ss/context.h b/security/selinux/ss/context.h
+index 7ccab2e6965f..e1307f6f7f50 100644
+--- a/security/selinux/ss/context.h
++++ b/security/selinux/ss/context.h
+@@ -132,8 +132,8 @@ static inline int mls_context_glblub(struct context *dst,
+ 	return rc;
  }
  
- static const struct hashtab_key_params roletr_key_params = {
+-static inline int mls_context_cmp(const struct context *c1,
+-				  const struct context *c2)
++static inline bool mls_context_equal(const struct context *c1,
++				     const struct context *c2)
+ {
+ 	return ((c1->range.level[0].sens == c2->range.level[0].sens) &&
+ 		ebitmap_cmp(&c1->range.level[0].cat, &c2->range.level[0].cat) &&
+@@ -188,15 +188,15 @@ static inline void context_destroy(struct context *c)
+ 	mls_context_destroy(c);
+ }
+ 
+-static inline int context_cmp(const struct context *c1,
+-			      const struct context *c2)
++static inline bool context_equal(const struct context *c1,
++				 const struct context *c2)
+ {
+ 	if (c1->len && c2->len)
+ 		return (c1->len == c2->len && !strcmp(c1->str, c2->str));
+ 	if (c1->len || c2->len)
+ 		return 0;
+ 	return ((c1->user == c2->user) && (c1->role == c2->role) &&
+-		(c1->type == c2->type) && mls_context_cmp(c1, c2));
++		(c1->type == c2->type) && mls_context_equal(c1, c2));
+ }
+ 
+ u32 context_compute_hash(const struct context *c);
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+index 261a512528d5..2b155f22a0f4 100644
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -3327,7 +3327,7 @@ int security_net_peersid_resolve(u32 nlbl_sid, u32 nlbl_type,
+ 		       __func__, xfrm_sid);
+ 		goto out;
+ 	}
+-	rc = (mls_context_cmp(nlbl_ctx, xfrm_ctx) ? 0 : -EACCES);
++	rc = (mls_context_equal(nlbl_ctx, xfrm_ctx) ? 0 : -EACCES);
+ 	if (rc)
+ 		goto out;
+ 
+diff --git a/security/selinux/ss/sidtab.c b/security/selinux/ss/sidtab.c
+index c8848cbba81f..c74353672dcf 100644
+--- a/security/selinux/ss/sidtab.c
++++ b/security/selinux/ss/sidtab.c
+@@ -66,7 +66,7 @@ static u32 context_to_sid(struct sidtab *s, struct context *context, u32 hash)
+ 	hash_for_each_possible_rcu(s->context_to_sid, entry, list, hash) {
+ 		if (entry->hash != hash)
+ 			continue;
+-		if (context_cmp(&entry->context, context)) {
++		if (context_equal(&entry->context, context)) {
+ 			sid = entry->sid;
+ 			break;
+ 		}
 -- 
 2.45.2
 
