@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-411491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B2029CFAE0
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:10:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 186BE9CFB23
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:26:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 132561F23F07
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:10:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87255B3338A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3171953B0;
-	Fri, 15 Nov 2024 23:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3210A1AF0A3;
+	Fri, 15 Nov 2024 23:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qwmNNnBq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kyWaAKKW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD83E7346D;
-	Fri, 15 Nov 2024 23:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875D81922F9;
+	Fri, 15 Nov 2024 23:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731712220; cv=none; b=In/Ch0Hzndtdhzyg3xGtUZijicgLqTC9s5mN1ra6A7twk8+98Fr0amJJkr4FVfN9a4IucxmExS5VXJLLfEJIwJiP2PL3CDXeZxKjAoYfkYrWqzJKfLTYvlAxlFllPK8XQa7UU8/qdJoU1xP2SBFNsXq6Jr0M0WJni435gV3r5EY=
+	t=1731712228; cv=none; b=k5Xp9Xb1VX3X1j9gdge41gdjypZKKFvW59Q/qCQ+QLDLHxuHu6RLNS3Xxh4sfbFW0AJfgLgqN73j2FSL+ESFcPgbJ2SHYQx53nDc/JGq52THKrguF6t9WVk2Pfmy9WDkpmEHXw2xxh0HBvR85iKa7bZOXmavt9VTEnjMs0FMJEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731712220; c=relaxed/simple;
-	bh=nUvU/2T1UyMMWOr6LAGSyFuqlEniOp8vxKesdl1aUbk=;
+	s=arc-20240116; t=1731712228; c=relaxed/simple;
+	bh=NQBnITOZNi1vFSfccm0jyqvLbG+YaclL2jPy1WOI0xE=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=n8YHBcfJF8b/dz4vjmEwOg1W9lbvyfhKJiC5shlCcaHy5L8euFPB5RtZmyuclXq5BLXaO5cwvp411l+DafzX71zYfhLC/s0Ihp4uAleuh32p+8YmcXLre5U4ee3K0ACM1Mrm7sPWYb8NtX+oPOFCiRy3wnse8mD1Z4xMoMt36SI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qwmNNnBq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E45BC4CECF;
-	Fri, 15 Nov 2024 23:10:19 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=mlXo/LgFNyaJnNfy8gj44hJ4AdIXeeobba9Eo2iNyr71WNyiuQ2QSt++v9aPEKIBhiLLy3ZkE7XLvJWBvfpudV+X2rR6WUx3sKrOFoPOf0Xj/BUqDLdwCTVgpd/YTbqHp+PwhgFfjSn7TcHwHW+j+CHFb6Ygarfi6mD3Towv9Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kyWaAKKW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2828FC4CECF;
+	Fri, 15 Nov 2024 23:10:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731712219;
-	bh=nUvU/2T1UyMMWOr6LAGSyFuqlEniOp8vxKesdl1aUbk=;
+	s=k20201202; t=1731712227;
+	bh=NQBnITOZNi1vFSfccm0jyqvLbG+YaclL2jPy1WOI0xE=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=qwmNNnBqftIRHZ08KSrggV9SHpggIhc4vRHRzj6MAtL8K1xPeqBxeY52Swu7n3RgB
-	 M3RThjYu8kagjD9FURY+wa3RGvg07v1tXGbsDC+kP3Vm1ApbpRWkXnKVfI9Jn0eEeg
-	 2wnDGkl8UibXDe4nxFSLZjwyTeIEgAvVtvvd1Pe/YzftXmiwh0hbIq8skKLFTdaCy1
-	 ND0u7tKxs2B3ymnONmEv+UOhTUDCIULJd8V4FSvg3rPhnEedyDqtUnbqDSBIT0jBcb
-	 hYuVkuWY0U5taLRvBH0gW5oFPZ1EnuLpyBic5UpDeD9s3bOOUygEbjUBBlBVweviK3
-	 kDxomrTDjBzyg==
+	b=kyWaAKKWG0nLqyA4SS233UbhQvFJJ7XBpsXQxrvMjQkyYxJfFvaCQq8WGzQbjWIz4
+	 eXGXQVy5ikUxNT18S0Goj7Ojenn9icKziLGqBC7ozYAZOZVSPPGzqc0NGt9ROFooLU
+	 xhBS7Ebm5It5Q1JXL7RAWyVzzyAngwg2c6utGQIT4v7Eqf/te0pGpmg3kqhV5ZJJZP
+	 tx1Ij4Ski07gifLM0GPX7xdFqH1WszGnlXpwCZZ9+RgphI97J8IoKQY/4KC8BL08YO
+	 TAGM6BcH5KkfyAGFXWgXhLEerlq9qXH7QLJcnPYKVRrDyshLQ3Hh8UO0l00vKujTbk
+	 VOBcabP6LDniw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C483809A80;
-	Fri, 15 Nov 2024 23:10:31 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 340273809A80;
+	Fri, 15 Nov 2024 23:10:39 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,38 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v3] netdev-genl: Hold rcu_read_lock in napi_get
+Subject: Re: [PATCH net-next] dt-bindings: net: dsa: microchip,ksz: Drop
+ undocumented "id"
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <173171223026.2762542.16202293496452130532.git-patchwork-notify@kernel.org>
-Date: Fri, 15 Nov 2024 23:10:30 +0000
-References: <20241114175157.16604-1-jdamato@fastly.com>
-In-Reply-To: <20241114175157.16604-1-jdamato@fastly.com>
-To: Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, pabeni@redhat.com, edumazet@google.com,
- amritha.nambiar@intel.com, sridhar.samudrala@intel.com, kuba@kernel.org,
- mkarsten@uwaterloo.ca, stable@vger.kernel.org, davem@davemloft.net,
- horms@kernel.org, almasrymina@google.com, xuanzhuo@linux.alibaba.com,
- sdf@fomichev.me, linux-kernel@vger.kernel.org
+ <173171223773.2762542.1275950515020254098.git-patchwork-notify@kernel.org>
+Date: Fri, 15 Nov 2024 23:10:37 +0000
+References: <20241113225642.1783485-2-robh@kernel.org>
+In-Reply-To: <20241113225642.1783485-2-robh@kernel.org>
+To: Rob Herring (Arm) <robh@kernel.org>
+Cc: woojung.huh@microchip.com, UNGLinuxDriver@microchip.com, andrew@lunn.ch,
+ f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, krzk+dt@kernel.org,
+ conor+dt@kernel.org, marex@denx.de, Woojung.Huh@microchip.com,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Thu, 14 Nov 2024 17:51:56 +0000 you wrote:
-> Hold rcu_read_lock in netdev_nl_napi_get_doit, which calls napi_by_id
-> and is required to be called under rcu_read_lock.
+On Wed, 13 Nov 2024 16:56:43 -0600 you wrote:
+> "id" is not a documented property, so drop it.
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: 27f91aaf49b3 ("netdev-genl: Add netlink framework functions for napi")
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
-> 
-> [...]
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml | 1 -
+>  1 file changed, 1 deletion(-)
 
 Here is the summary with links:
-  - [net,v3] netdev-genl: Hold rcu_read_lock in napi_get
-    https://git.kernel.org/netdev/net/c/c53bf100f686
+  - [net-next] dt-bindings: net: dsa: microchip,ksz: Drop undocumented "id"
+    https://git.kernel.org/netdev/net-next/c/6bbdb903db08
 
 You are awesome, thank you!
 -- 
