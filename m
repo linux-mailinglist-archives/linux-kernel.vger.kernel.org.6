@@ -1,131 +1,239 @@
-Return-Path: <linux-kernel+bounces-410547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF06A9CDD1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:59:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C58C9CDD1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:58:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BC78B21DD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:59:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86EB6B27143
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17AF51B4F24;
-	Fri, 15 Nov 2024 10:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15FB1B3920;
+	Fri, 15 Nov 2024 10:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YNCBS4pC"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PDHfK5/V"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE95B1B6CFA
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57AA1B3957
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731668321; cv=none; b=mJYJ/dEAfYOZ6nVMH1mpH5UVQLZMNaB+F6hlKz5sIkw+AJGv3AJfxJbYm30NhY8Foo218O1JRAqZwxkzLYFJiU49LlzoWvcI3GKSDR3nCMeRrZwLvtKUSgODQxhhuLGA0gpTrthwfR78Tp6aECWkRKJ73XlWpTYrf3gMwitmg2k=
+	t=1731668317; cv=none; b=Psn0Azide5oF0iPTnxWJJBHrd132QWsNfkIVIM4RmnaQbePWT+fLcmIxKaU6Jhki5oU7QS0m2Ye5SGxiwLiv/AJORSj9zrpS72PPYQLyJHiQeZD/3w0peSLfcKk732n1IW9WaYMMNdlUak++UuX3vF4h6Z9q8oMqKv3oR4oTITE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731668321; c=relaxed/simple;
-	bh=KeO9xmAr8xW7IJL8rOvn/GP3RENPi2I6iCoPv1qFA8w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t6bmo8YIN44F3Kuw1PiutSTWULlXLIUsp6BMv9ka6oZT2elGI00Qxnre4UEEF9PgluEKepur5vKJLM4urI6S9MnyJhlfdj+PGwiO1dgdXngfsse0nRZDl1JMpY0zmrNMaK7bhNz07Ky+ADvE+YIly+PXHPwKVtAR2k2PdVcIne0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YNCBS4pC; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aa20944ce8cso316969966b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 02:58:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731668317; x=1732273117; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=G4hZnzTlNhqS+EnW+1fU6zOMxAZ7jqUOVpxiFS42KLI=;
-        b=YNCBS4pC4oEKAqRkGBq6hil7KrNHvNABvnRur7uOZdtbkSb7BtJRKVSqrTCVPl0vvV
-         Eh9dBQCSBSN1/dGAUq0NagJ7ar/WxshqgZPkbIricOOIwS9LTlIuG5IDpuzFsEr+oOrs
-         NhV4M3eBE8lOYeMSE8ioK8VZLt09GTXWmyw30oA4V1UeNnwD35nGCfaSi/jFJQw4r+Hg
-         qFEfHC5QnedxSdmvwH7rcjimn5zc+FycNXAd+1n5FTTv5Ty6AVB01UJtwI6g5m72T7RW
-         +cEvDDlFz3amp2CllPT8XDGZwoz2Pui+MfmQseyASrFIeSDPjsVDWFDJc5bOW4BOi4JV
-         TpvA==
+	s=arc-20240116; t=1731668317; c=relaxed/simple;
+	bh=Wv2+WJTNfLtEOqPpwa9LRPNUyq3pvlT10UxWln989a8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CAcRCkINuvQZc8QMMYdGte7pOKni3Vqeo1MgAAF1zLpHrRk3PqdW6DPtabFR6fHO3IZkOnGxuu2NVAdqHAGg2ItRXQO1W0zwakjWhIwyQR7hufTGsCh99JY/30Fvof1q2uLpr5iFdqxuWfXK+4w52GVM4jL+ElXjn55G4Vzp8hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PDHfK5/V; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731668313;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=U1H3xY/YVT4Puc6217CC7kEEv4K9yKGJJ/vieW0xbho=;
+	b=PDHfK5/VYE0OPgQNTV+HQ6TBzE3F3LqrrX8ZSMksmqW+IIPs3ICKay7o/OGHuC1aAEt4Q3
+	IjusgmvzZt9a8YoydBwfKYIApARTjw7E7pbDi1B5vavd157xi5zLMzw6Kkb99D/MfyZvnO
+	VBky2MEev8179Dl2SP9253mCHi9Cac4=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-115-qdqh8qTuN0miVS61-RzfNg-1; Fri, 15 Nov 2024 05:58:32 -0500
+X-MC-Unique: qdqh8qTuN0miVS61-RzfNg-1
+X-Mimecast-MFC-AGG-ID: qdqh8qTuN0miVS61-RzfNg
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4315f48bd70so4105065e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 02:58:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731668317; x=1732273117;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G4hZnzTlNhqS+EnW+1fU6zOMxAZ7jqUOVpxiFS42KLI=;
-        b=alirJIJleBLq5o+Maxf/KyAEv/UdSnxk23hyE48e48j1BgHkzP4Ono9ZfqKvi7Kky2
-         Sn1zaa/RVgkYikbpLO+UFteY5zPAlZNNU2MqAItd2bxiGXawIEyvQ3cD9FkoRX0Kztrd
-         oD1xSejxZlC2L0JuDLXkZ7FALl+inBqgpqbihp3Ovrhsd8O4ZxhIgt9Z9AQiWayxPVOp
-         s9NURjoQJIhNAvb3pLpUzJo1UkX029rohA563yuulxwfYyTuQogHsn1XVJDuqEMmLWb+
-         iNTYi1Tf6oXYEFGw+6BT7TecWZ8y4Prdrh+B+HJlpMR+LvF8GtcYo2F8y33tV2wPf8al
-         ExtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWxcCFX9vj+Ai55ghxYsSHfzOmMs/ybPIE5LU4CSLNLyjXUmWxHuPU8NvRch4+7a1GOW6FeWkiWIJHH6bE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmfgZv3L18IIg7GXqSELJmIZujutGOlrwWNTrM1rOCLaKykGYO
-	FxjI6fJLc77OvT1TDtXwJPe2TU+ZAEtwBdy5mqBKy6DL35YCsBWr6fQDgPNtjba9w2unib9KzNM
-	ecwt9nUXKeW12NMEF7bE6fqZv8EKuH1N0fvrfiw==
-X-Google-Smtp-Source: AGHT+IGSVYiUhsWj6zeltJjcNWqHnW6GPQb1Itj/wJyDtSuZKguUH81kjOYfKW/cySwbACmp91nXvMM6OFlu/bFyHhI=
-X-Received: by 2002:a17:907:2d29:b0:a9a:8042:cb9b with SMTP id
- a640c23a62f3a-aa481a08499mr187630866b.20.1731668317082; Fri, 15 Nov 2024
- 02:58:37 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731668311; x=1732273111;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=U1H3xY/YVT4Puc6217CC7kEEv4K9yKGJJ/vieW0xbho=;
+        b=J28IY99eNu6PFmV+NskN1sluJ/pJhiEiIzfAHBcqqA/fKeQoGrxYDODiaPCiV7uuga
+         m16fib68mWlpe0uFYedn/alg4F3frGi+L4ao3mbd8sc69FoyEdsCH0ERzL6mdIXRXfTp
+         QE5YrolW10rS4ZvJWpA1gg0X59mJ7L6n1hkoAaqRMyR8GlHqcOMvBAjeVyT6MnmwqF07
+         ZsEawjlbmJ210bK5S8xMsLBG6UWASMtrogls5rkl+vWgNRwEONbsgAh/2swgw81z7od2
+         wXB5PzNJCBFpwkUzPHEO25CaEwOjMhHnRu0DZ2d0HN8ab1oYHgBe/G40YWWrMYe7nKWN
+         IMKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW9744biJREAHnaAYpxMpccXNkDW8eFjtM6SugAtU5lonKycGjgluQdgeQP782J9sh3cPK/uMxe8jMLXWs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXeVjtetv3HRKLbWNrJ/XGlf9oS4ZsM3mWOs3oxVaFfgd+kMiX
+	rvNkV8rygECVkXtW26esyozRBYuD2mp2eZh0Oju0oBNOJ2244sncS8uTyn6MwhdK99EYC3YsHUJ
+	+cyxvUGaHUwcbP7U7XhZTf6MqG0npLfPeWBTHQ0vMo1onxFpL9PxjAwLJiKP0Kw==
+X-Received: by 2002:a05:600c:1d8f:b0:431:5a27:839c with SMTP id 5b1f17b1804b1-432df71eb8fmr18283045e9.5.1731668310993;
+        Fri, 15 Nov 2024 02:58:30 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFhrrEAweB2PmlhHWhuh1n8ewPor0nB7TNkC/BFGeIIh1rkY+M6HWsjFGdaOhCWJwpgU2cS6Q==
+X-Received: by 2002:a05:600c:1d8f:b0:431:5a27:839c with SMTP id 5b1f17b1804b1-432df71eb8fmr18282775e9.5.1731668310580;
+        Fri, 15 Nov 2024 02:58:30 -0800 (PST)
+Received: from ?IPV6:2003:cb:c721:8100:177e:1983:5478:64ec? (p200300cbc7218100177e1983547864ec.dip0.t-ipconnect.de. [2003:cb:c721:8100:177e:1983:5478:64ec])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da27ffafsm53416215e9.22.2024.11.15.02.58.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 02:58:29 -0800 (PST)
+Message-ID: <c650066d-18c8-4711-ae22-3c6c660c713e@redhat.com>
+Date: Fri, 15 Nov 2024 11:58:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104060722.10642-1-quic_sartgarg@quicinc.com>
-In-Reply-To: <20241104060722.10642-1-quic_sartgarg@quicinc.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 15 Nov 2024 11:58:00 +0100
-Message-ID: <CAPDyKFrYkKFJ=+4t4ad=a4GJUCBVO7FuaRqdxSTUWtHOWgUA_w@mail.gmail.com>
-Subject: Re: [PATCH V1] mmc: sdhci-msm: Enable MMC_CAP_AGGRESSIVE_PM for
- qualcomm controllers
-To: Sarthak Garg <quic_sartgarg@quicinc.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	quic_cang@quicinc.com, quic_nguyenb@quicinc.com, quic_rampraka@quicinc.com, 
-	quic_pragalla@quicinc.com, quic_sayalil@quicinc.com, 
-	quic_nitirawa@quicinc.com, quic_sachgupt@quicinc.com, 
-	quic_bhaskarv@quicinc.com, quic_narepall@quicinc.com, kernel@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v3 1/2] KVM: guest_memfd: Convert .free_folio() to
+ .release_folio()
+To: Elliot Berman <quic_eberman@quicinc.com>,
+ Paolo Bonzini <pbonzini@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Sean Christopherson <seanjc@google.com>, Fuad Tabba <tabba@google.com>,
+ Ackerley Tng <ackerleytng@google.com>, Mike Rapoport <rppt@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>
+Cc: James Gowans <jgowans@amazon.com>, linux-fsdevel@vger.kernel.org,
+ kvm@vger.kernel.org, linux-coco@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20241113-guestmem-library-v3-0-71fdee85676b@quicinc.com>
+ <20241113-guestmem-library-v3-1-71fdee85676b@quicinc.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20241113-guestmem-library-v3-1-71fdee85676b@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 4 Nov 2024 at 07:07, Sarthak Garg <quic_sartgarg@quicinc.com> wrote:
->
-> Enable MMC_CAP_AGGRESSIVE_PM for qualcomm controllers.
-> This enables runtime PM for eMMC/SD card.
->
-> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
+On 13.11.24 23:34, Elliot Berman wrote:
+> When guest_memfd becomes a library, a callback will need to be made to
+> the owner (KVM SEV) to transition pages back to hypervisor-owned/shared
+> state. This is currently being done as part of .free_folio() address
+> space op, but this callback shouldn't assume that the mapping still
+> exists. guest_memfd library will need the mapping to still exist to look
+> up its operations table.
 
-In general I think using MMC_CAP_AGGRESSIVE_PM needs to be carefully
-selected. I am not saying it's a bad idea to use it, but the commit
-message above kind of indicates that this has only been enabled to
-make sure we avoid wasting energy at any cost. Maybe I am wrong?
+I assume you mean, that the mapping is no longer set for the folio (it 
+sure still exists, because we are getting a callback from it :) )?
 
-Today the default autosuspend timeout is set to 3000 ms, which means
-that beyond this idle-period the card internally will no longer be
-able to manage "garbage collect". For a poorly behaving SD card, for
-example, that could hurt future read/writes. Or maybe that isn't such
-a big problem after all?
+Staring at filemap_remove_folio(), this is exactly what happens:
 
-Also note that userspace via sysfs is able to change the autosuspend
-timeout and even disable runtime PM for the card, if that is needed.
+We remember folio->mapping, call __filemap_remove_folio(), and then call 
+filemap_free_folio() where we zap folio->mapping via page_cache_delete().
 
-Kind regards
-Uffe
+Maybe it's easier+cleaner to also forward the mapping to the 
+free_folio() callback, just like we do with filemap_free_folio()? Would 
+that help?
 
+CCing Willy if that would be reasonable extension of the free_folio 
+callback.
+
+
+> 
+> .release_folio() and .invalidate_folio() address space ops can serve the
+> same purpose here. The key difference between release_folio() and
+> free_folio() is whether the mapping is still valid at time of the
+> callback. This approach was discussed in the link in the footer, but not
+> taken because free_folio() was easier to implement.
+> 
+> Link: https://lore.kernel.org/kvm/20231016115028.996656-1-michael.roth@amd.com/
+> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
 > ---
->  drivers/mmc/host/sdhci-msm.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> index e00208535bd1..6657f7db1b8e 100644
-> --- a/drivers/mmc/host/sdhci-msm.c
-> +++ b/drivers/mmc/host/sdhci-msm.c
-> @@ -2626,6 +2626,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
->                 goto clk_disable;
->         }
->
-> +       msm_host->mmc->caps |= MMC_CAP_AGGRESSIVE_PM;
->         msm_host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY | MMC_CAP_NEED_RSP_BUSY;
->
->         /* Set the timeout value to max possible */
-> --
-> 2.17.1
->
+>   virt/kvm/guest_memfd.c | 19 ++++++++++++++++---
+>   1 file changed, 16 insertions(+), 3 deletions(-)
+> 
+> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+> index 47a9f68f7b247f4cba0c958b4c7cd9458e7c46b4..13f83ad8a4c26ba82aca4f2684f22044abb4bc19 100644
+> --- a/virt/kvm/guest_memfd.c
+> +++ b/virt/kvm/guest_memfd.c
+> @@ -358,22 +358,35 @@ static int kvm_gmem_error_folio(struct address_space *mapping, struct folio *fol
+>   }
+>   
+>   #ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE
+> -static void kvm_gmem_free_folio(struct folio *folio)
+> +static bool kvm_gmem_release_folio(struct folio *folio, gfp_t gfp)
+>   {
+>   	struct page *page = folio_page(folio, 0);
+>   	kvm_pfn_t pfn = page_to_pfn(page);
+>   	int order = folio_order(folio);
+>   
+>   	kvm_arch_gmem_invalidate(pfn, pfn + (1ul << order));
+> +
+> +	return true;
+> +}
+> +
+> +static void kvm_gmem_invalidate_folio(struct folio *folio, size_t offset,
+> +				      size_t len)
+> +{
+> +	WARN_ON_ONCE(offset != 0);
+> +	WARN_ON_ONCE(len != folio_size(folio));
+> +
+> +	if (offset == 0 && len == folio_size(folio))
+> +		filemap_release_folio(folio, 0);
+>   }
+>   #endif
+>   
+>   static const struct address_space_operations kvm_gmem_aops = {
+>   	.dirty_folio = noop_dirty_folio,
+> -	.migrate_folio	= kvm_gmem_migrate_folio,
+> +	.migrate_folio = kvm_gmem_migrate_folio,
+>   	.error_remove_folio = kvm_gmem_error_folio,
+>   #ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE
+> -	.free_folio = kvm_gmem_free_folio,
+> +	.release_folio = kvm_gmem_release_folio,
+> +	.invalidate_folio = kvm_gmem_invalidate_folio,
+>   #endif
+>   };
+>   
+> 
+
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
