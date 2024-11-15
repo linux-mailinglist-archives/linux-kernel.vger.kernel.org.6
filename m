@@ -1,269 +1,187 @@
-Return-Path: <linux-kernel+bounces-410760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBB0E9CE0AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:54:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E60F9CE0B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:54:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A91E1F228CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:54:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EF9928E463
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BCE71CDA19;
-	Fri, 15 Nov 2024 13:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42161CDA04;
+	Fri, 15 Nov 2024 13:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kOycL75T"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Xhqf/Rjo"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D21518D65E
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 13:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5F21B85EB
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 13:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731678832; cv=none; b=j7Ft8OOM66cadDedrmcgVRamb8wepi2WSHhiQ6AenqYiT7QT6DtG49rmZl0u1NX8BtxQCOz/Z2YFLMzvZxhQMcaDK2M5qj6qBlVP9XYqOzfaQgRm3r5Un8mDmUSmTMmU3GZDbAQWUyTYNcQ8MY/dQP43kA3fUunyiYbIOQFEMVg=
+	t=1731678873; cv=none; b=EttZRsUpZ0zJDGoHEsv7QD7IFhRzNSZDxKovpa2gD6FJbatZImF5bGaamEE8520ddpzeLaTkQ62OMbL2k3eXqruYTM5X3MvF6V+SH1N83kxPs+lacZRr88Bs7Cnj++tTrser9Bs5vfG7Pv8aNEalUzss07ihlCmeD65aKj+DbZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731678832; c=relaxed/simple;
-	bh=4qumaI7ptH00McolFCVEKnaTAY+7DPmWzG7P062ShR4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rEElTj/n5vP8njE70KHUQJAEHZ9B0L5CPipbH+GatabaMbItFGYspClzU7ZE3r3tOmLvfyDmuPxWf7mDXpy7O3FT1TPPvtL7O5F6ljcrhyDleEzJM7aGqUtW7bx0hHizhXV44dkwnKAKTg/OHPMj8xip/ISjMQc+M5DNVyQX5WQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kOycL75T; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53b34ed38easo1863003e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 05:53:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731678829; x=1732283629; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V0Zrfl7hfIDnjLVKBKJHLo1lv4aBeXmkkwaBhD0FEIQ=;
-        b=kOycL75TdlaqbSaly3EPb8lgMleURVf3tfK4VIsmOzHqpoV9LowvWpYi/IEx3BVMNG
-         8GK2TGDkL3tt+oGErGIl9cdKHceaM682tQAtYlK+K7ATVBbybt8TapuDtTAnSR1/D+61
-         YaJ7w+uWVLBB6s+vAP2DNQXAsd/X9SF6/hmYQZOaXEk98nXhWo5A+fOZEZmvMyhBTwpj
-         fsIzpcuTCsnEuveTXtHYpMVnHpao2740WRorZBETsenesp3618Q95x/uwU3bkVMIjPg+
-         7XQV5Ja2qJyU7SCim2E/gbxIyCyeuj/tctSqj0v/RuH0QhscFqBAjfrM4aianljMg0gd
-         395Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731678829; x=1732283629;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V0Zrfl7hfIDnjLVKBKJHLo1lv4aBeXmkkwaBhD0FEIQ=;
-        b=jPOH7wlYziaHGZVLS0eWsom5NrBLGhrjEjnvWIwHXd3554wFu5i4fwQPeOWgVAaTa8
-         TZ/9j5T7cZT5LTWuB8gjNZbib9L8oflkM6YGfHv9xULoV8yeOwoyz43/oMh97B+F5x1n
-         zJ0qRBUc3+n2quSlnAH+uMvk/I47Bca1ikki8yZoFPQU2kSxZ5onFTc02FITj2e0FI28
-         lELd9GzuuKIJHvqQWoApNWo7YCIOxYcHYcBW3+6a4GYq6pr7GaAMRlY/AJYbLm3GZCAn
-         b3bZrO2HnjDu0rL/any9S2BuDc3zfScU+8qNcwZun9h3ipuOHSMGcA5gOcbU0JAg1s51
-         cOjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYT4uao+EThdwRT94LOQMwKe3yM/NES4fStDvU1ol1/KRC4Ztz/wRe5w4XpdB2RDqw7yfweDB5fPKG61Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVAV0+QaZP0uXLTGQdNkk3M7Tg9myvi8K49kxxqK4DwG4mhtYo
-	X6D6d88AsT2tI0eIZGWr2ac2K6Qn7Alx3Joz/xjdeRUzEKrrIYOBdpdfaMtU3CFHH6JbcB1m4ST
-	9zjCk7EysqxBswKF1V/37/qiAGxR4hYiYeGjQ
-X-Google-Smtp-Source: AGHT+IE5r1M8lPK23nhZrFSkC0KnHUFhExjhrYeKILxAVz++Uu1eERvaqetOP5p6iE0686w8MVDqLqhr2kQswQHInhw=
-X-Received: by 2002:a05:6512:3b23:b0:53d:9ff8:ea08 with SMTP id
- 2adb3069b0e04-53dab2a0776mr1451926e87.16.1731678828533; Fri, 15 Nov 2024
- 05:53:48 -0800 (PST)
+	s=arc-20240116; t=1731678873; c=relaxed/simple;
+	bh=nf4yWog6XTYGEGzuDqGqrURMaLEh+ETes95vDmGXy/U=;
+	h=MIME-Version:Content-Type:Date:Message-ID:Subject:CC:To:From:
+	 In-Reply-To:References; b=ZqQRBlfi7Tzinaqjwyr56ew9f967ywuBJNN+QyzUqG482AjrPt2eVOMZUTwKGu+gEQojziHftztFog6e0KRlEhqTj6Pyb2UwQ651mxMqEoY2YH/+u1m4em4y9oV+IpFUOGW+KvYfNMV7xoG6b6ZJKTgiKKzfvDvpwgoMoqwQIRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Xhqf/Rjo; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241115135429euoutp028cee5563b55bd85250383421d3c4b3ce~IKMG20GK90927709277euoutp02H
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 13:54:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241115135429euoutp028cee5563b55bd85250383421d3c4b3ce~IKMG20GK90927709277euoutp02H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1731678869;
+	bh=EjRzgJOOBbr/Yf3XScGiAqFlns7wVl0GfI2Gqifa78Q=;
+	h=Date:Subject:CC:To:From:In-Reply-To:References:From;
+	b=Xhqf/RjogMdGmnjBkSaFpk6lYH/N8ALlOEV1VDGl6CxCGsYo2i4myCooZzsF3qP+f
+	 5CiROl9yDSKvb2Vwd6Cxpiy1BSKBddbbJjPlIcF8b/ht8+tL7Q0Cy0mDCNVg2n+D+8
+	 YA1gFfpOc4swqGuTlWRb7Go8IWwyFbztDqYlKxMo=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20241115135428eucas1p2413a743917dc62d53e35bf70096bd3cd~IKMGk8XCT1382213822eucas1p2M;
+	Fri, 15 Nov 2024 13:54:28 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id CE.46.20397.49257376; Fri, 15
+	Nov 2024 13:54:28 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241115135428eucas1p2b266175fadfb08cad9264c89fd395407~IKMGB2DrO2839028390eucas1p27;
+	Fri, 15 Nov 2024 13:54:28 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241115135428eusmtrp1b4a426a4598f32f9a315c3a31dc2405a~IKMGBR3x20931009310eusmtrp1A;
+	Fri, 15 Nov 2024 13:54:28 +0000 (GMT)
+X-AuditID: cbfec7f5-ed1d670000004fad-dd-67375294f5fe
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id F8.5F.19654.49257376; Fri, 15
+	Nov 2024 13:54:28 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20241115135428eusmtip14ee0d0e098ddba1c5239c6caaeae20e0~IKMF0S6z22532925329eusmtip1t;
+	Fri, 15 Nov 2024 13:54:28 +0000 (GMT)
+Received: from localhost (106.110.32.87) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Fri, 15 Nov 2024 13:54:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114001712.80315-1-tony.luck@intel.com> <20241114001712.80315-5-tony.luck@intel.com>
-In-Reply-To: <20241114001712.80315-5-tony.luck@intel.com>
-From: Peter Newman <peternewman@google.com>
-Date: Fri, 15 Nov 2024 14:53:37 +0100
-Message-ID: <CALPaoCgFRFgQqG00Uc0GhMHK47bsbtFw6Bxy5O9A_HeYmGa5sA@mail.gmail.com>
-Subject: Re: [PATCH v9 4/9] x86/resctrl: Compute memory bandwidth for all
- supported events
-To: Tony Luck <tony.luck@intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	Jonathan Corbet <corbet@lwn.net>, x86@kernel.org, James Morse <james.morse@arm.com>, 
-	Jamie Iles <quic_jiles@quicinc.com>, Babu Moger <babu.moger@amd.com>, 
-	Randy Dunlap <rdunlap@infradead.org>, "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Date: Fri, 15 Nov 2024 14:54:26 +0100
+Message-ID: <D5MSXD4BK3E4.2IN0397LA1BWB@samsung.com>
+Subject: Re: [PATCH v2 1/5] mm: factor out the order calculation into a new
+ helper
+CC: <willy@infradead.org>, <david@redhat.com>, <wangkefeng.wang@huawei.com>,
+	<21cnbao@gmail.com>, <ryan.roberts@arm.com>, <ioworker0@gmail.com>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>,
+	<akpm@linux-foundation.org>, <hughd@google.com>
+From: Daniel Gomez <da.gomez@samsung.com>
+X-Mailer: aerc 0.18.2-67-g7f69618ac1fd
+In-Reply-To: <582997bd09b17a292124ea47dabc2ea5642daade.1731397290.git.baolin.wang@linux.alibaba.com>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJKsWRmVeSWpSXmKPExsWy7djPc7pTgszTDfa8MLD4fFfIYs76NWwW
+	//ceY7T4uv4Xs8XTT30sFot+G1tc3jWHzeLemv+sFj27pzJaNH6+z2jx+8ccNgdujzXz1jB6
+	7Jx1l91jwaZSj5Yjb1k9Nq/Q8tj0aRK7x4kZv1k8dj609Hi/7yqbx+dNcgFcUVw2Kak5mWWp
+	Rfp2CVwZv7vmMhYs5K14tuctUwPjLa4uRg4OCQETia/LjLsYOTmEBFYwShzvZO5i5AKyvzBK
+	/PjdwQ7hfGaUOLr7LhtIFUjDtZ1rWCASyxkl5p1czgxXdfHQQyYIZzOjxJ2GiewgLbwCghIn
+	Zz5hAbGZBbQlli18zQxha0q0bv8NVsMioCrR3LyYDeQmXqAVXTsqQcLCAiESfXPvsYLMZBY4
+	ySgx634T2BkiAkkSjXN3gM1hA5qz7+Qmdojz1CT+908E28UpkCLx581ZqLiixIyJK1kg7FqJ
+	U1tugR0qIbCaU2LxZZgiF4kH3Y8YIWxhiVfHt0DFZSROT+6Bak6XWLJuFpRdILHn9ixWSEBa
+	S/SdyYEIO0q03epngwjzSdx4KwjxLp/EpG3TmSHCvBIdbUITGFVmIQXQLKQAmoUUQAsYmVcx
+	iqeWFuempxYb56WW6xUn5haX5qXrJefnbmIEpq7T/45/3cG44tVHvUOMTByMhxglOJiVRHgv
+	uZqnC/GmJFZWpRblxxeV5qQWH2KU5mBREudVTZFPFRJITyxJzU5NLUgtgskycXBKNTA5Ohgw
+	SOwMD39iNeFTe8jCsA85mUoL+o5omIkEhMx4askw/X+k3QSFV7Xng3hesq23XmBzZucktuIX
+	+2XLtE6FVl8o1s1N7FG4y3+4PGHuIs2aqx3rWVw0BYUjShgFYooEmqf76lbdmNs5+7U25xId
+	vfYo0af+1hXhzC5i7QyrZ+3RfProBtMz0cZprx8pn2hnFbSedbRGy9i5LHLtg2/3d2gcY7+b
+	ftL9ysT1H5eeE4/Ku1U4/WHz7v4nWYZCSlGTLFXdWYSd1jI/CS2bdeqjdpWM8qqJfy4px0Zd
+	TkmOF2HLz/ONrDRzZDKK9hCZ6R8bdKb091HW38FWH2x2XnXvKEqZvMDXsa3HPSZCiaU4I9FQ
+	i7moOBEAukJBA8wDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGIsWRmVeSWpSXmKPExsVy+t/xu7pTgszTDVbP5LH4fFfIYs76NWwW
+	//ceY7T4uv4Xs8XTT30sFot+G1tc3jWHzeLemv+sFj27pzJaNH6+z2jx+8ccNgdujzXz1jB6
+	7Jx1l91jwaZSj5Yjb1k9Nq/Q8tj0aRK7x4kZv1k8dj609Hi/7yqbx+dNcgFcUXo2RfmlJakK
+	GfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZv7vmMhYs5K14tuct
+	UwPjLa4uRk4OCQETiWs717B0MXJxCAksZZSY+mMeK0RCRmLjl6tQtrDEn2tdbBBFHxkl1rU+
+	ZIRwNjNK3Dy7gRGkildAUOLkzCcsIDazgLbEsoWvmSFsTYnW7b/ZQWwWAVWJ5ubFQJM4gOpN
+	JLp2VIKEhQVCJPrm3mMFmckscJJRYtb9JjaQhIhAksS9PTvBZrIBzdl3chM7xEVqEv/7J0Kd
+	PYtR4sGSDiaQBKdAisSfN2ehihQlZkxcyQJh10p8/vuMcQKjyCwkt85CcussJLcuYGRexSiS
+	Wlqcm55bbKRXnJhbXJqXrpecn7uJERjh24793LKDceWrj3qHGJk4GA8xSnAwK4nwXnI1Txfi
+	TUmsrEotyo8vKs1JLT7EaAr09ERmKdHkfGCKySuJNzQzMDU0MbM0MLU0M1YS52W7cj5NSCA9
+	sSQ1OzW1ILUIpo+Jg1Oqgam2T9eGW8IjPkFoA2Oq1l8OXtP6I8anFS7r3xJfcYyx5PPGrAq7
+	j2J7vFhU/q0q/x3cdz72ZZLBkcWq8SfLn+4qFj634N2cdL+qlws0twV+O/Xx6WqFas53GtZ6
+	sy3dNv1ZdWqFq+ZDjsTny3a/vXB1/hmj1WqJF356Myp++lhz+PC5PY4RIk23FZ3sDYUb3no5
+	8q/iTsp//brqepKfeJmRoYHJ6hI+8S1fT7MvzPI7L+ZaKB6S77OIvzjaIdHgJlt6ysSpSk99
+	Vt49cnDBmWtZq6VvahxkZVbaH1oh51l2/aGwu5qe7MGzqXfm7apIa18ex3DxwKt7HlUa3kqB
+	vtrzlLbJF6i8awqbs3u1jBJLcUaioRZzUXEiAMOCWsN5AwAA
+X-CMS-MailID: 20241115135428eucas1p2b266175fadfb08cad9264c89fd395407
+X-Msg-Generator: CA
+X-RootMTR: 20241115135428eucas1p2b266175fadfb08cad9264c89fd395407
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20241115135428eucas1p2b266175fadfb08cad9264c89fd395407
+References: <cover.1731397290.git.baolin.wang@linux.alibaba.com>
+	<582997bd09b17a292124ea47dabc2ea5642daade.1731397290.git.baolin.wang@linux.alibaba.com>
+	<CGME20241115135428eucas1p2b266175fadfb08cad9264c89fd395407@eucas1p2.samsung.com>
 
-Hi Tony,
+On Tue Nov 12, 2024 at 8:45 AM CET, Baolin Wang wrote:
+> Factor out the order calculation into a new helper, which can be reused
+> by shmem in the following patch.
+>
+> Suggested-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Reviewed-by: Barry Song <baohua@kernel.org>
+> Reviewed-by: David Hildenbrand <david@redhat.com>
 
-On Thu, Nov 14, 2024 at 1:17=E2=80=AFAM Tony Luck <tony.luck@intel.com> wro=
-te:
->
-> Computing the bandwidth for an event is cheap, and only done once
-> per second. Doing so simplifies switching between events and allows
-> choosing different events per ctrl_mon group.
->
-> Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
+Reviewed-by: Daniel Gomez <da.gomez@samsung.com>
+
 > ---
->  arch/x86/kernel/cpu/resctrl/monitor.c | 72 ++++++++++++---------------
->  1 file changed, 33 insertions(+), 39 deletions(-)
+>  include/linux/pagemap.h | 16 +++++++++++++---
+>  1 file changed, 13 insertions(+), 3 deletions(-)
 >
-> diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/=
-resctrl/monitor.c
-> index 2176e355e864..da4ae21350c8 100644
-> --- a/arch/x86/kernel/cpu/resctrl/monitor.c
-> +++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-> @@ -663,9 +663,12 @@ static int __mon_event_count(u32 closid, u32 rmid, s=
-truct rmid_read *rr)
->   */
->  static void mbm_bw_count(u32 closid, u32 rmid, struct rmid_read *rr)
->  {
-> -       u32 idx =3D resctrl_arch_rmid_idx_encode(closid, rmid);
-> -       struct mbm_state *m =3D &rr->d->mbm_local[idx];
->         u64 cur_bw, bytes, cur_bytes;
-> +       struct mbm_state *m;
-> +
-> +       m =3D get_mbm_state(rr->d, closid, rmid, rr->evtid);
-> +       if (WARN_ON_ONCE(!m))
-> +               return;
->
->         cur_bytes =3D rr->val;
->         bytes =3D cur_bytes - m->prev_bw_bytes;
-> @@ -826,54 +829,45 @@ static void update_mba_bw(struct rdtgroup *rgrp, st=
-ruct rdt_mon_domain *dom_mbm)
->         resctrl_arch_update_one(r_mba, dom_mba, closid, CDP_NONE, new_msr=
-_val);
->  }
->
-> -static void mbm_update(struct rdt_resource *r, struct rdt_mon_domain *d,
-> -                      u32 closid, u32 rmid)
-> +static void mbm_update_one_event(struct rdt_resource *r, struct rdt_mon_=
-domain *d,
-> +                                u32 closid, u32 rmid, enum resctrl_event=
-_id evtid)
->  {
->         struct rmid_read rr =3D {0};
->
->         rr.r =3D r;
->         rr.d =3D d;
-> +       rr.evtid =3D evtid;
-> +       rr.arch_mon_ctx =3D resctrl_arch_mon_ctx_alloc(rr.r, rr.evtid);
-> +       if (IS_ERR(rr.arch_mon_ctx)) {
-> +               pr_warn_ratelimited("Failed to allocate monitor context: =
-%ld",
-> +                                   PTR_ERR(rr.arch_mon_ctx));
-> +               return;
-> +       }
-> +
-> +       __mon_event_count(closid, rmid, &rr);
->
->         /*
-> -        * This is protected from concurrent reads from user
-> -        * as both the user and we hold the global mutex.
-> +        * If the software controller is enabled, compute the
-> +        * bandwidth for this event id.
->          */
-> -       if (is_mbm_total_enabled()) {
-> -               rr.evtid =3D QOS_L3_MBM_TOTAL_EVENT_ID;
-> -               rr.val =3D 0;
-> -               rr.arch_mon_ctx =3D resctrl_arch_mon_ctx_alloc(rr.r, rr.e=
-vtid);
-> -               if (IS_ERR(rr.arch_mon_ctx)) {
-> -                       pr_warn_ratelimited("Failed to allocate monitor c=
-ontext: %ld",
-> -                                           PTR_ERR(rr.arch_mon_ctx));
-> -                       return;
-> -               }
-> -
-> -               __mon_event_count(closid, rmid, &rr);
-> +       if (is_mba_sc(NULL))
-> +               mbm_bw_count(closid, rmid, &rr);
->
-> -               resctrl_arch_mon_ctx_free(rr.r, rr.evtid, rr.arch_mon_ctx=
-);
-> -       }
-> -       if (is_mbm_local_enabled()) {
-> -               rr.evtid =3D QOS_L3_MBM_LOCAL_EVENT_ID;
-> -               rr.val =3D 0;
-> -               rr.arch_mon_ctx =3D resctrl_arch_mon_ctx_alloc(rr.r, rr.e=
-vtid);
-> -               if (IS_ERR(rr.arch_mon_ctx)) {
-> -                       pr_warn_ratelimited("Failed to allocate monitor c=
-ontext: %ld",
-> -                                           PTR_ERR(rr.arch_mon_ctx));
-> -                       return;
-> -               }
-> -
-> -               __mon_event_count(closid, rmid, &rr);
-> +       resctrl_arch_mon_ctx_free(rr.r, rr.evtid, rr.arch_mon_ctx);
-> +}
->
-> -               /*
-> -                * Call the MBA software controller only for the
-> -                * control groups and when user has enabled
-> -                * the software controller explicitly.
-> -                */
-> -               if (is_mba_sc(NULL))
-> -                       mbm_bw_count(closid, rmid, &rr);
-> +static void mbm_update(struct rdt_resource *r, struct rdt_mon_domain *d,
-> +                      u32 closid, u32 rmid)
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index bcf0865a38ae..d796c8a33647 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -727,6 +727,16 @@ typedef unsigned int __bitwise fgf_t;
+> =20
+>  #define FGP_WRITEBEGIN		(FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE)
+> =20
+> +static inline unsigned int filemap_get_order(size_t size)
 > +{
-> +       /*
-> +        * This is protected from concurrent reads from user
-> +        * as both the user and we hold the global mutex.
-> +        */
-> +       if (is_mbm_total_enabled())
-> +               mbm_update_one_event(r, d, closid, rmid, QOS_L3_MBM_TOTAL=
-_EVENT_ID);
->
-> -               resctrl_arch_mon_ctx_free(rr.r, rr.evtid, rr.arch_mon_ctx=
-);
-> -       }
-> +       if (is_mbm_local_enabled())
-> +               mbm_update_one_event(r, d, closid, rmid, QOS_L3_MBM_LOCAL=
-_EVENT_ID);
+> +	unsigned int shift =3D ilog2(size);
+> +
+> +	if (shift <=3D PAGE_SHIFT)
+> +		return 0;
+> +
+> +	return shift - PAGE_SHIFT;
+> +}
+> +
+>  /**
+>   * fgf_set_order - Encode a length in the fgf_t flags.
+>   * @size: The suggested size of the folio to create.
+> @@ -740,11 +750,11 @@ typedef unsigned int __bitwise fgf_t;
+>   */
+>  static inline fgf_t fgf_set_order(size_t size)
+>  {
+> -	unsigned int shift =3D ilog2(size);
+> +	unsigned int order =3D filemap_get_order(size);
+> =20
+> -	if (shift <=3D PAGE_SHIFT)
+> +	if (!order)
+>  		return 0;
+> -	return (__force fgf_t)((shift - PAGE_SHIFT) << 26);
+> +	return (__force fgf_t)(order << 26);
 >  }
->
->  /*
-> --
-> 2.47.0
->
+> =20
+>  void *filemap_get_entry(struct address_space *mapping, pgoff_t index);
 
-I experimented with all-groups, per-domain counter aggregation files
-prototype using this change as a starting point.
-
-I'm happy to report that the values reported looked fairly reasonable.
-
-Tested-by: Peter Newman <peternewman@google.com>
-
-I also did a quick experiment to see how close to 1 second apart the
-readings were:
-
-@@ -664,6 +664,7 @@ static int __mon_event_count(u32 closid, u32 rmid,
-struct rmid_read *rr)
- static void mbm_bw_count(u32 closid, u32 rmid, struct rmid_read *rr)
- {
-        u64 cur_bw, bytes, cur_bytes;
-        struct mbm_state *m;
-+       u64 ts;
-
-        m =3D get_mbm_state(rr->d, closid, rmid, rr->evtid);
-@@ -680,6 +681,10 @@ static void mbm_bw_count(u32 closid, u32 rmid,
-struct rmid_read *rr)
-        cur_bw =3D bytes / SZ_1M;
-
-        m->prev_bw =3D cur_bw;
-+
-+       ts =3D jiffies;
-+       m->latency =3D ts - m->last_update_jiffies;
-+       m->last_update_jiffies =3D ts;
- }
-
-On an AMD EPYC 7B12 64-Core Processor, I saw a consistent 1.021-1.026
-second period. Is this enough error that you would want to divide by
-the actual period instead of assuming a denominator of 1 exactly?
-We're mainly concerned with the relative bandwidth of jobs, so this
-error isn't much concern as long as it doesn't favor any group.
-
-The only thing I'd worry about is if the user is using setitimer() to
-keep a consistent 1 second period for reading the bandwidth rate, the
-window of the resctrl updates would drift away from the userspace
-consumer over time.
-
-Thanks!
--Peter
 
