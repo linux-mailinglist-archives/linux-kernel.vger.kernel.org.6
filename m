@@ -1,126 +1,108 @@
-Return-Path: <linux-kernel+bounces-410796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 978BE9CE10F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:15:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 989849CE114
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:17:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D2691F2314E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:15:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50DCF1F21359
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385031CEAD5;
-	Fri, 15 Nov 2024 14:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE521CEE92;
+	Fri, 15 Nov 2024 14:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b="Wb87ZJO/"
-Received: from ksmg02.maxima.ru (ksmg02.maxima.ru [81.200.124.39])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WfV5XcJK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686A91B3941
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 14:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E7454769;
+	Fri, 15 Nov 2024 14:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731680131; cv=none; b=ZxlHXZ7uKzX7JWsb96E6+BOekzS50ZSGm/LPUWaY/WYKy03fiiis2Txook3JgsAQgf7MTpvM/CgyBe5bfn9D7WW5tQsV1lmNVM3h9Jp2DCiyHOs6muTDuhBqqm2syT0j8GIDc701NYEiKRzjpwMZSqrNKigx1BKuEAfLKrRTjnI=
+	t=1731680230; cv=none; b=RrlJdOiiKp+yMJKi9/TooSUk5BtxUvyYzGB81yvop/TINrwyePXf0j+MN0TuqmttWFeyC3aoHUYvDI4HF+eVcLThbPzAGKE9LPRPyNDTDVN0/n4Mkat/NO55Flz29VYiZWWMfrweSaflrCi5YJoD26gtxvjamMpuZeSYPHYK9os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731680131; c=relaxed/simple;
-	bh=arEggmByvJYBvxAneP8vQKa+rr5ZyyUB0VtJm7t8wB4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TWjEXLaF8+8rjiNBWPykccsoVMpY5961htyY4umWqQ6x3bBcWDmTwMjSOrM8Xt/QsuvqsJdm0vxCTpPEHSt+n3NKeRTnM6qkGfndnwfNX5Bxc9Y1pWdsVtSaN8SGlUKmAQLCUF8ILa5EJD+gIOGvh8mz9iZYtNKoGOTHj9O73PU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru; spf=pass smtp.mailfrom=maxima.ru; dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b=Wb87ZJO/; arc=none smtp.client-ip=81.200.124.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maxima.ru
-Received: from ksmg02.maxima.ru (localhost [127.0.0.1])
-	by ksmg02.maxima.ru (Postfix) with ESMTP id 17E2A1E0005;
-	Fri, 15 Nov 2024 17:15:18 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg02.maxima.ru 17E2A1E0005
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxima.ru; s=sl;
-	t=1731680118; bh=nZPWpuA/5JZSHtMUrPOIwDnX0BrrRbE0L8Z5sJogdHw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=Wb87ZJO/rwT0HuTjLpR9S0II3ZUFqQyQ66WWlm4QtK9GTSWpuPxupgKBW5pPn907m
-	 xyObQfQ9zOd0bk2kGmF1ocCEBHK4ri5dqItKAU5TrWLC6AmAMbMa3W6IyY5cjxfUJk
-	 rhXz9dCWscnrHbQ38/kcQ4PpYBCx2Qh1VF2Qb42EwmKZcGnUXojii1RWGKKvUbMvca
-	 V8OLUKNVZeL1PnTLsrPibdCrVIN+mHIrPi/D+gMylKdthPnPjwg9Xwc66Occ6oqnEf
-	 61aKqcLzyA3dIoguAcQEgGe7Xz9458kMU3eAYcOPGWKTI/PyVTf6gEGOKsJZzAK2XH
-	 bXPzobvmyI+Rw==
-Received: from ksmg02.maxima.ru (autodiscover.maxima.ru [81.200.124.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg02.maxima.ru (Postfix) with ESMTPS;
-	Fri, 15 Nov 2024 17:15:17 +0300 (MSK)
-Received: from GS-NOTE-190.mt.ru (10.0.246.114) by mmail-p-exch02.mt.ru
- (81.200.124.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Fri, 15 Nov
- 2024 17:15:16 +0300
-From: Murad Masimov <m.masimov@maxima.ru>
-To: Dave Airlie <airlied@redhat.com>
-CC: Murad Masimov <m.masimov@maxima.ru>, Thomas Zimmermann
-	<tzimmermann@suse.de>, Jocelyn Falempe <jfalempe@redhat.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, Mathieu Larouche <mathieu.larouche@matrox.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH v3] drm/mgag200: Apply upper limit for clock variable
-Date: Fri, 15 Nov 2024 17:14:47 +0300
-Message-ID: <20241115141449.709-1-m.masimov@maxima.ru>
-X-Mailer: git-send-email 2.46.0.windows.1
+	s=arc-20240116; t=1731680230; c=relaxed/simple;
+	bh=HP/LLNxTqSLz65CS/4iA5UL8Oz/x3YGp0q3jfnGXKlI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qZW61cqMZNyp9xit/fF7yQLQQh4P/tHiq8xWDBqlETYjoQIV2d+wk6s1vVfYbha59ORyw38MOJoLKo9beDtmyVjx4pjbh1Ig8dvWtG9bGlf7ySnLomqLLroWtNRDWIq0QZ2YGU0Jcvm3o2hhn/KKtseiEYXdcKoMFvk7KktyGFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WfV5XcJK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B629EC4CECF;
+	Fri, 15 Nov 2024 14:17:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731680229;
+	bh=HP/LLNxTqSLz65CS/4iA5UL8Oz/x3YGp0q3jfnGXKlI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WfV5XcJKDmGWFh4lkZBC8kBelonPUhXL3drsEkc4Jen9fe7iTXgHxDpveUHYEcULs
+	 +fyx5pi3uIWIdnINdrVk01jmjpo4ZRmNkYNW0P8A3g5GgA2oTh48+cTLEChyarf24G
+	 sQAjLCDlkU5KrIf3YvhzdImklaTGx18c5+wWdJ1Ldg+9If5ewdYqixwEOfcwgOvodS
+	 vILDDn0aUFcB5Zbto3S+YDcNJKOCyj9uiLGkUex+N7cX0YZ2NUu8E7H72jQIK8fpZB
+	 brieNpMDEnnjFWFijAIZFnKC3dXmGvIYoxnKYWw5iDlfl5enhHu/F2RAGD6Uc9R8DL
+	 gY/GXDaboGlCg==
+Date: Fri, 15 Nov 2024 14:17:06 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+	"hpa@zytor.com" <hpa@zytor.com>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"vbabka@suse.cz" <vbabka@suse.cz>, "arnd@arndb.de" <arnd@arndb.de>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH RFC/RFT v2 0/2] Converge common flows for cpu assisted
+ shadow stack
+Message-ID: <ZzdX4nHHhEXuq_uU@finisterre.sirena.org.uk>
+References: <20241016-shstk_converge-v2-0-c41536eb5c3b@rivosinc.com>
+ <964caf1797be61001901b92e3b71259443d3196f.camel@intel.com>
+ <ZzaEnVpBUhZsp7qB@debug.ba.rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch02.mt.ru
- (81.200.124.62)
-X-KSMG-Rule-ID: 7
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 189206 [Nov 15 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.7
-X-KSMG-AntiSpam-Envelope-From: m.masimov@maxima.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=maxima.ru;spf=none smtp.mailfrom=maxima.ru;dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, ksmg02.maxima.ru:7.1.1;81.200.124.62:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;maxima.ru:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.62
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/11/15 06:07:00 #26858754
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="L9nCg6ar8vnxAdyu"
+Content-Disposition: inline
+In-Reply-To: <ZzaEnVpBUhZsp7qB@debug.ba.rivosinc.com>
+X-Cookie: Editing is a rewording activity.
 
-If the value of the clock variable is higher than 800000, the value of the
-variable m, which is used as a divisor, will remain zero, because
-(clock * testp) will be higher than vcomax in every loop iteration, which
-leads to skipping every iteration and leaving variable m unmodified.
 
-Return -EINVAL just after the loop, if m is still 0.
+--L9nCg6ar8vnxAdyu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+On Thu, Nov 14, 2024 at 03:15:41PM -0800, Deepak Gupta wrote:
 
-Fixes: e829d7ef9f17 ("drm/mgag200: Add support for a new rev of G200e")
-Signed-off-by: Murad Masimov <m.masimov@maxima.ru>
----
- drivers/gpu/drm/mgag200/mgag200_g200se.c | 3 +++
- 1 file changed, 3 insertions(+)
+> Alternatively I can send a v3 with above patch.
 
-diff --git a/drivers/gpu/drm/mgag200/mgag200_g200se.c b/drivers/gpu/drm/mgag200/mgag200_g200se.c
-index 7a32d3b1d226..4d65ead63d66 100644
---- a/drivers/gpu/drm/mgag200/mgag200_g200se.c
-+++ b/drivers/gpu/drm/mgag200/mgag200_g200se.c
-@@ -249,6 +249,9 @@ static int mgag200_g200se_04_pixpllc_atomic_check(struct drm_crtc *crtc,
- 		}
- 	}
+I guess at this point it's probably as well to just rebase onto
+v6.13-rc1 when that appears, that should have the GCS series in it and
+it's probably worth rebasing/resending when that comes out anyway.
 
-+	if (m == 0)
-+		return -EINVAL;
-+
- 	fvv = pllreffreq * n / m;
- 	fvv = (fvv - 800000) / 50000;
- 	if (fvv > 15)
---
-2.39.2
+--L9nCg6ar8vnxAdyu
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmc3V+EACgkQJNaLcl1U
+h9CfVQf+OAgeFa6MBqjV441HPKid5+FQHo6s2BZCyC9biJb+Vtrcr78aFR99jY8E
+atsKuBkZZQrkiuAQFDMRjnwJw+1bKtqjYYZfLLhgqEtSjMBYBK4mjtDrRSwGiMOS
+UqK925Duaw3/fG52vAyfBtj5o0/0rL/rWCXXB17j7wucftzw1WlE3Tg49sxAxorn
+yKKE2afGpRoLFpX4qNoAwOzineO/T2eSenfpL8byDOhlL1F4vxBqUlzXBI9OdXV7
+6c7u21/K6xw4taAKJ4yd0gOANmeWykdPG1m5v1Hffz03DWUPkNp9SEedHcVYoYSD
+/qDN1VT+WxTmnsn9g1shd3a1dGuvzg==
+=PFAo
+-----END PGP SIGNATURE-----
+
+--L9nCg6ar8vnxAdyu--
 
