@@ -1,238 +1,162 @@
-Return-Path: <linux-kernel+bounces-410511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A62429CDC8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:30:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 506389CDC93
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:31:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C66E1F21EAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:30:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 040DB1F222DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0081B3958;
-	Fri, 15 Nov 2024 10:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011051B2EEB;
+	Fri, 15 Nov 2024 10:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="lDPVSNrB"
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aTHuBZy2"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A55818950A;
-	Fri, 15 Nov 2024 10:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5F318950A;
+	Fri, 15 Nov 2024 10:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731666625; cv=none; b=h8/rewGa8A3qBPihJGuChtyF8SBlnURpQTzc7NR8LvncvPQ57t047dor1DBNJ9zlPotTvhtGGlHnGNoyoVMYpBRTDfPfcGpHh8/nyNxoaYfGOkp4Zoqns9hrZfRirJGxIcwIhPc1dRUIimpAbtLtqmXzwc3YP1s6deLnuXAdE+U=
+	t=1731666645; cv=none; b=eHEdjQa7meaczO7Cb1qq91rnhLvYDlz7mZPmKwEiIGJOEhXzOcrZMxowP4y0EY1k7WQKtfdlJU/XTG0H+uHb0lUgZSw9nf2QkDMhiDcXUtsgc1xIChL+rU3JzXq9ajcZz9t77o+MiGLNkkcpK+IQbyZ1ZUqU5h9wCHRMROW2ho0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731666625; c=relaxed/simple;
-	bh=4vNgn+SsJajunpKXuBkZ//5pvqR9w+o+EcfCWsemrGQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o+4H83ducNF5wmlIvDgT3Pgibbh8TtyO5Y4OHaDtmF5AwH+sxnjdrP3uSpWUZ5OkWyLWjavneV/Hh06d1lFIBcd+Za9dSEUGgzurCgNsjRRO79WZnxnF1sY+mhn21KFEvYWVPGw82OC5la0bd7WjXDLVyEPcyq2qCa3eWMydtIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=lDPVSNrB; arc=none smtp.client-ip=99.78.197.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1731666622; x=1763202622;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Nj6S1uQvHPGOTiJGqSfDYPUjpMdCEBMRTMmFsqU5FDo=;
-  b=lDPVSNrBXdMuOD1p54HCK/AYRlgHaF7Oezqy2DNnhMTSxiZuMD0FnUaw
-   rVyfctIZ76Jykt06ElF9ED+z4FFwpfxQV3RrFAHxK5gd4Gt6gGGRjUNEp
-   odLAH+L7nvZ64WE2qd63Ch7iCtPoekF6/yOv5u+0EXpegGdQvPHv1XeFX
-   M=;
-X-IronPort-AV: E=Sophos;i="6.12,156,1728950400"; 
-   d="scan'208";a="147826196"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 10:30:20 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:15220]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.43.2:2525] with esmtp (Farcaster)
- id e0f35240-8bc2-40ae-9f40-746d1c98b040; Fri, 15 Nov 2024 10:30:20 +0000 (UTC)
-X-Farcaster-Flow-ID: e0f35240-8bc2-40ae-9f40-746d1c98b040
-Received: from EX19D020UWC004.ant.amazon.com (10.13.138.149) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Fri, 15 Nov 2024 10:30:20 +0000
-Received: from ip-10-253-83-51.amazon.com (10.253.83.51) by
- EX19D020UWC004.ant.amazon.com (10.13.138.149) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Fri, 15 Nov 2024 10:30:18 +0000
-From: Alexander Graf <graf@amazon.com>
-To: <netdev@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <virtualization@lists.linux.dev>,
-	<kvm@vger.kernel.org>, Asias He <asias@redhat.com>, "Michael S. Tsirkin"
-	<mst@redhat.com>, Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski
-	<kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, "David S. Miller"
-	<davem@davemloft.net>, Stefano Garzarella <sgarzare@redhat.com>, "Stefan
- Hajnoczi" <stefanha@redhat.com>
-Subject: [PATCH] vsock/virtio: Remove queued_replies pushback logic
-Date: Fri, 15 Nov 2024 10:30:16 +0000
-Message-ID: <20241115103016.86461-1-graf@amazon.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1731666645; c=relaxed/simple;
+	bh=EpdEiIMl6ZRBhz+fEn11/ebqi8FroM95B5oRWx/T7Ds=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=Y19QWSFfh3ye8kFrR7rKSGHGxZUXjCKTWHk32PGuIftSSVwR2lTIM714DMVFgjVDe/FQcaGfhOA1ttZvgzXBawyzuLyaSOY87M+kjlKVPGaHgg+Y6QVfe+b8XU/781k9dSPRRLJeg11WClhRM52FgkqvI4hmYJUsM4bURei6oa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aTHuBZy2; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AF23c4k002257;
+	Fri, 15 Nov 2024 10:30:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=5SXAJ5lb9FNKaW0xwt5j9h
+	LPgMBwIi1YfFvZn5sO1aU=; b=aTHuBZy2Q4N7HA/t05CPlWTO89520ltWqn4+Zn
+	g8FNw89AE+DDCwMdfjg9osg25t65KSgx0uAK4MliUVlf6E8m6bzNo5UNtQczAdkE
+	2EdsbeYPx1QGjjHeq/BeSsR4vPqxBFiaOUYvYLJFc9a5X1TsohzlYoBc9mFg2nHC
+	xtxgenLLZTW/Fs3HJ7743dNgqZgD8QMs4bsXnbIT4kXscmc6sljvFMCbgAojU9LY
+	rm1jB27cC1w3vEpYevbp5DzTj6KtGDyBXz6v0ILxbCJxoqEunws7ouoXqvJFcFF0
+	djNXztq9NxiKzueJE6gWPt3+7k9zxuWn0YKRpCUMII8Zl/5Q==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ww6ds8ns-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 10:30:33 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AFAUW4n001028
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 10:30:32 GMT
+Received: from hu-krichai-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 15 Nov 2024 02:30:27 -0800
+From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Subject: [PATCH v4 0/3] PCI: dwc: Skip waiting for link up if vendor
+ drivers can detect Link up event
+Date: Fri, 15 Nov 2024 16:00:20 +0530
+Message-ID: <20241115-remove_wait1-v4-0-7e3412756e3d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EX19D040UWA001.ant.amazon.com (10.13.139.22) To
- EX19D020UWC004.ant.amazon.com (10.13.138.149)
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL0iN2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyTHQUlJIzE
+ vPSU3UzU4B8JSMDIxNDQ0MT3aLU3Pyy1PjyxMwSQ10jC8uk1NSkRENLC0sloJaCotS0zAqwcdG
+ xtbUA52Fbe14AAAA=
+To: Jingoo Han <jingoohan1@gmail.com>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>,
+        =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
+	<kw@linux.com>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas
+	<bhelgaas@google.com>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
+	<kwilczynski@kernel.org>,
+        <quic_vbadigan@quicinc.com>, <quic_mrana@quicinc.com>,
+        <andersson@kernel.org>,
+        Krishna chaitanya chundru
+	<quic_krichai@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731666627; l=2144;
+ i=quic_krichai@quicinc.com; s=20230907; h=from:subject:message-id;
+ bh=EpdEiIMl6ZRBhz+fEn11/ebqi8FroM95B5oRWx/T7Ds=;
+ b=PdHm+7JAzkpuX3VUgYRhQRjtgy5TBo9aeeho2EFd8gYct/pOkwoAuYuSpSaaucBT9aZFz14/O
+ qUMYVvclxNIBULco/sXAL0i5yMiWlpG6VSeuJTXRdU9z2cI9cOvSosR
+X-Developer-Key: i=quic_krichai@quicinc.com; a=ed25519;
+ pk=10CL2pdAKFyzyOHbfSWHCD0X0my7CXxj8gJScmn1FAg=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: L2JG8irrCwzK7rx9S89UiXRdregN1Lgl
+X-Proofpoint-GUID: L2JG8irrCwzK7rx9S89UiXRdregN1Lgl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ phishscore=0 malwarescore=0 lowpriorityscore=0 impostorscore=0
+ suspectscore=0 clxscore=1011 adultscore=0 mlxlogscore=508 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411150089
 
-Ever since the introduction of the virtio vsock driver, it included
-pushback logic that blocks it from taking any new RX packets until the
-TX queue backlog becomes shallower than the virtqueue size.
+If the vendor drivers can detect the Link up event using mechanisms
+such as Link up IRQ, then waiting for Link up during probe is not
+needed. if the drivers can be notified when the link comes up,
+vendor driver can enumerate downstream devices instead of waiting
+here, which optimizes the boot time.
 
-This logic works fine when you connect a user space application on the
-hypervisor with a virtio-vsock target, because the guest will stop
-receiving data until the host pulled all outstanding data from the VM.
+So skip waiting for link to be up if the driver supports 'linkup_irq'.
 
-With Nitro Enclaves however, we connect 2 VMs directly via vsock:
+Currently, only Qcom RC driver supports the 'linkup_irq' as it can detect
+the Link Up event using its own 'global IRQ' interrupt. So set
+'linkup_irq' flag for QCOM drivers.
 
-  Parent      Enclave
+As part of the PCIe link up event, the ICC and OPP values are updated.
 
-    RX -------- TX
-    TX -------- RX
-
-This means we now have 2 virtio-vsock backends that both have the pushback
-logic. If the parent's TX queue runs full at the same time as the
-Enclave's, both virtio-vsock drivers fall into the pushback path and
-no longer accept RX traffic. However, that RX traffic is TX traffic on
-the other side which blocks that driver from making any forward
-progress. We're not in a deadlock.
-
-To resolve this, let's remove that pushback logic altogether and rely on
-higher levels (like credits) to ensure we do not consume unbounded
-memory.
-
-Fixes: 0ea9e1d3a9e3 ("VSOCK: Introduce virtio_transport.ko")
-Signed-off-by: Alexander Graf <graf@amazon.com>
+Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
 ---
- net/vmw_vsock/virtio_transport.c | 51 ++------------------------------
- 1 file changed, 2 insertions(+), 49 deletions(-)
+Changes in v4:
+- change the linkup_irq name to use_linkup_irq a suggested by (bjorn
+  andresson)
+- update commit text as suggested by bjorn andresson.
+- Link to v3: https://lore.kernel.org/r/linux-arm-msm/20241101-remove_wait-v3-0-7accf27f7202@quicinc.com/T/
+Changes in v3:
+- seperate dwc changes and qcom changes as suggested (mani)
+- update commit & comments as suggested (mani & bjorn)
+- Link to v2: https://lore.kernel.org/linux-pci/20240920-remove_wait-v2-0-7c0fcb3b581d@quicinc.com/T/
+Changes in v2:
+- Updated the bypass_link_up_wait name to linkup_irq  & added comment as
+  suggested (mani).
+- seperated the icc and opp update patch (mani).
+- Link to v1: https://lore.kernel.org/r/20240917-remove_wait-v1-1-456d2551bc50@quicinc.com
 
-diff --git a/net/vmw_vsock/virtio_transport.c b/net/vmw_vsock/virtio_transport.c
-index 64a07acfef12..53e79779886c 100644
---- a/net/vmw_vsock/virtio_transport.c
-+++ b/net/vmw_vsock/virtio_transport.c
-@@ -44,8 +44,6 @@ struct virtio_vsock {
- 	struct work_struct send_pkt_work;
- 	struct sk_buff_head send_pkt_queue;
- 
--	atomic_t queued_replies;
--
- 	/* The following fields are protected by rx_lock.  vqs[VSOCK_VQ_RX]
- 	 * must be accessed with rx_lock held.
- 	 */
-@@ -171,17 +169,6 @@ virtio_transport_send_pkt_work(struct work_struct *work)
- 
- 		virtio_transport_deliver_tap_pkt(skb);
- 
--		if (reply) {
--			struct virtqueue *rx_vq = vsock->vqs[VSOCK_VQ_RX];
--			int val;
--
--			val = atomic_dec_return(&vsock->queued_replies);
--
--			/* Do we now have resources to resume rx processing? */
--			if (val + 1 == virtqueue_get_vring_size(rx_vq))
--				restart_rx = true;
--		}
--
- 		added = true;
- 	}
- 
-@@ -218,9 +205,6 @@ virtio_transport_send_pkt(struct sk_buff *skb)
- 		goto out_rcu;
- 	}
- 
--	if (virtio_vsock_skb_reply(skb))
--		atomic_inc(&vsock->queued_replies);
--
- 	virtio_vsock_skb_queue_tail(&vsock->send_pkt_queue, skb);
- 	queue_work(virtio_vsock_workqueue, &vsock->send_pkt_work);
- 
-@@ -233,7 +217,7 @@ static int
- virtio_transport_cancel_pkt(struct vsock_sock *vsk)
- {
- 	struct virtio_vsock *vsock;
--	int cnt = 0, ret;
-+	int ret;
- 
- 	rcu_read_lock();
- 	vsock = rcu_dereference(the_virtio_vsock);
-@@ -242,17 +226,7 @@ virtio_transport_cancel_pkt(struct vsock_sock *vsk)
- 		goto out_rcu;
- 	}
- 
--	cnt = virtio_transport_purge_skbs(vsk, &vsock->send_pkt_queue);
--
--	if (cnt) {
--		struct virtqueue *rx_vq = vsock->vqs[VSOCK_VQ_RX];
--		int new_cnt;
--
--		new_cnt = atomic_sub_return(cnt, &vsock->queued_replies);
--		if (new_cnt + cnt >= virtqueue_get_vring_size(rx_vq) &&
--		    new_cnt < virtqueue_get_vring_size(rx_vq))
--			queue_work(virtio_vsock_workqueue, &vsock->rx_work);
--	}
-+	virtio_transport_purge_skbs(vsk, &vsock->send_pkt_queue);
- 
- 	ret = 0;
- 
-@@ -323,18 +297,6 @@ static void virtio_transport_tx_work(struct work_struct *work)
- 		queue_work(virtio_vsock_workqueue, &vsock->send_pkt_work);
- }
- 
--/* Is there space left for replies to rx packets? */
--static bool virtio_transport_more_replies(struct virtio_vsock *vsock)
--{
--	struct virtqueue *vq = vsock->vqs[VSOCK_VQ_RX];
--	int val;
--
--	smp_rmb(); /* paired with atomic_inc() and atomic_dec_return() */
--	val = atomic_read(&vsock->queued_replies);
--
--	return val < virtqueue_get_vring_size(vq);
--}
--
- /* event_lock must be held */
- static int virtio_vsock_event_fill_one(struct virtio_vsock *vsock,
- 				       struct virtio_vsock_event *event)
-@@ -581,14 +543,6 @@ static void virtio_transport_rx_work(struct work_struct *work)
- 			struct sk_buff *skb;
- 			unsigned int len;
- 
--			if (!virtio_transport_more_replies(vsock)) {
--				/* Stop rx until the device processes already
--				 * pending replies.  Leave rx virtqueue
--				 * callbacks disabled.
--				 */
--				goto out;
--			}
--
- 			skb = virtqueue_get_buf(vq, &len);
- 			if (!skb)
- 				break;
-@@ -735,7 +689,6 @@ static int virtio_vsock_probe(struct virtio_device *vdev)
- 
- 	vsock->rx_buf_nr = 0;
- 	vsock->rx_buf_max_nr = 0;
--	atomic_set(&vsock->queued_replies, 0);
- 
- 	mutex_init(&vsock->tx_lock);
- 	mutex_init(&vsock->rx_lock);
+---
+Krishna chaitanya chundru (3):
+      PCI: dwc: Skip waiting for link up if vendor drivers can detect Link up event
+      PCI: qcom: Set linkup_irq if global IRQ handler is present
+      PCI: qcom: Update ICC and OPP values during link up event
+
+ drivers/pci/controller/dwc/pcie-designware-host.c | 10 ++++++++--
+ drivers/pci/controller/dwc/pcie-designware.h      |  1 +
+ drivers/pci/controller/dwc/pcie-qcom.c            |  7 ++++++-
+ 3 files changed, 15 insertions(+), 3 deletions(-)
+---
+base-commit: 624ce1863d33298cd1623e51006147e4076ed2ca
+change-id: 20241114-remove_wait1-289beeba1989
+
+Best regards,
 -- 
-2.40.1
-
-
-
-
-Amazon Web Services Development Center Germany GmbH
-Krausenstr. 38
-10117 Berlin
-Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
-Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
-Sitz: Berlin
-Ust-ID: DE 365 538 597
+Krishna chaitanya chundru <quic_krichai@quicinc.com>
 
 
