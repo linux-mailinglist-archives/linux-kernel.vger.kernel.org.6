@@ -1,99 +1,93 @@
-Return-Path: <linux-kernel+bounces-410186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E8D9CD5EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 04:39:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C7339CD5F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 04:40:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C1ED282D3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 03:39:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9511B2367E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 03:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B53C157E9F;
-	Fri, 15 Nov 2024 03:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513D9166307;
+	Fri, 15 Nov 2024 03:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qX3UxvD9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fP1L7zSp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A7533997;
-	Fri, 15 Nov 2024 03:38:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B6715CD49;
+	Fri, 15 Nov 2024 03:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731641938; cv=none; b=dF9wYxh5N06PULXXOa4wB74eUWKnzzE+U+rBVVB4Nmc7afz7ji1PTlBkmIQ/h+YueBR5Ru5NQtRRR6KYBXBWPpL9SlF/G4ntL+REAMuqI4e/kQQnTZpvhXRp2u37j+YiPcPDbGNXkghy8vbKGm0dnqftpPlW58dfhUbXygkvDSU=
+	t=1731642021; cv=none; b=Mvry0rqcE1v1anO7CDcegj6e6ofRufjHkb0K+6UVhResO/kaQ7dmgdbvRAXua9OUUr7xIKrB/uQjljrCAsxrku/aQ1EojECu9JuzfllUXLyzIKHHWvXe86WEHcDN/mCzUDubJNMnqatnAmn9gvPFig9pUjNSVeZmGrKmJ9R0yDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731641938; c=relaxed/simple;
-	bh=9HzmVJP4oHruyDz99UWxbbz6B5JZ98GftxutXSPlUEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OoEsWHLJXON2Fl6M56IOoHuXTAfQX/PoUu1yEGMU0vLRe1ZH6N8oatdIFrRTmO010UeBs/0+Y5Gvj7wn3EjOPrFJ6C6kRHo+RX3wMEFB7fvprmR3S3gA356gf0CDf547nHXvjecUQXrkIdh5nQBttj7FPtwshUQpPgl4QHTaibM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qX3UxvD9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6967C4CECF;
-	Fri, 15 Nov 2024 03:38:56 +0000 (UTC)
+	s=arc-20240116; t=1731642021; c=relaxed/simple;
+	bh=ElqMo7Uyg7vjfrP+p+Vu5wcMB897kki8e7dpMrhh2LE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=mgpuPbiXL63PGG5Oq3W+YSZlCyN3FnodgdRrcjZmADLQNw42j1JI5yOBvcQkR6Lyoineb1Ks+hPwxagRmyWO4Xs87GR7OXDn0/NHH6KqAJKs8iAUyWHjvp8VVL7yBIjfwNLP4oR2kum+PlkcNDjzRqgKiwlMqjnI7LugNnw1hTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fP1L7zSp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E0B8C4CECF;
+	Fri, 15 Nov 2024 03:40:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731641937;
-	bh=9HzmVJP4oHruyDz99UWxbbz6B5JZ98GftxutXSPlUEQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qX3UxvD9h7XljW4poktyFxR10c1V4DW/BXt78AjTUsrWRP1ury+I9Bbevzebmjl1v
-	 AsbgONjPLblTm3Ja9Xi15bkG165zAXiLs1WCkrn6g85zbSPzEvMJwc3UuVwTI4O4ak
-	 UZgn36f82jdn6Mos8rp6GSXeyYwAsYE4gI7RMesZxSn/NUAqGy+xYnW4bDQdo27L/R
-	 FTP0xEaFRNeqtPM0D54QqZVa1wWKuY4bGWlVtyy3WK893tljjWZAwlKUnCrYP96yw9
-	 tdCvUz7VLwlurXyJzw+KIs0egFglXrzSNzx0kh/EEbsxGdsgaGOlBy2RuN669kMPr7
-	 FwHGA3/x22QpQ==
-Date: Thu, 14 Nov 2024 19:38:55 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
-Cc: Ronak Doshi <ronak.doshi@broadcom.com>, Broadcom internal kernel review
- list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Andy King
- <acking@vmware.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Raphael Isemann <teemperor@gmail.com>
-Subject: Re: [PATCH 0/2] vmxnet3: Fix inconsistent DMA accesses
-Message-ID: <20241114193855.058f337f@kernel.org>
-In-Reply-To: <20241113200001.3567479-1-bjohannesmeyer@gmail.com>
-References: <20241113200001.3567479-1-bjohannesmeyer@gmail.com>
+	s=k20201202; t=1731642021;
+	bh=ElqMo7Uyg7vjfrP+p+Vu5wcMB897kki8e7dpMrhh2LE=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=fP1L7zSpyogcByfaCHrlELW1alKUAL41b2RP1YShHRlNC0ZM5a8TD5p6zCIjk0hvA
+	 izS2aXoPWvzX/SbDoS1oNnfMXVaIbnH4M6SDa59yTQY4ibh1yPrmj/U5wx3BWR61TZ
+	 kbTdlcTMMiUIh3dcXAC+qkvcEf9P03/TELXI6M6Zq6LMOE3dHu2BurqtTUgJ9/QUEl
+	 YK/Bt+0qh5jSwJdp3/+vwau8Kb/qe8linHEH+7An7Ctv3xlQb9JC6mQS6Xy9r4kKCz
+	 7j2rDwSKLTN8/tJFxNGD+Pud/+JFW07TZhPbT1Jq6mbdThsyvXOz22kv1fl03GFm1X
+	 mYLca+rG+93oA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB2BD3809A80;
+	Fri, 15 Nov 2024 03:40:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] dt-bindings: net: sff,sfp: Fix "interrupts" property
+ typo
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173164203148.2141101.13732070093827071857.git-patchwork-notify@kernel.org>
+Date: Fri, 15 Nov 2024 03:40:31 +0000
+References: <20241113225825.1785588-2-robh@kernel.org>
+In-Reply-To: <20241113225825.1785588-2-robh@kernel.org>
+To: Rob Herring (Arm) <robh@kernel.org>
+Cc: linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, krzk+dt@kernel.org, conor+dt@kernel.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Wed, 13 Nov 2024 20:59:59 +0100 Brian Johannesmeyer wrote:
-> We found hundreds of inconsistent DMA accesses in the VMXNET3 driver. This
-> patch series aims to fix them. (For a nice summary of the rules around
-> accessing streaming DMA --- which, if violated, result in inconsistent
-> accesses --- see Figure 4a of this paper [0]).
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Wed, 13 Nov 2024 16:58:25 -0600 you wrote:
+> The example has "interrupt" property which is not a defined property. It
+> should be "interrupts" instead. "interrupts" also should not contain a
+> phandle.
 > 
-> The inconsistent accesses occur because the `adapter` object is mapped into
-> streaming DMA. However, when it is mapped into streaming DMA, it is then
-> "owned" by the device. Hence, any access to `adapter` thereafter, if not
-> preceded by a CPU-synchronization operation (e.g.,
-> `dma_sync_single_for_cpu()`), may cause unexpected hardware behaviors.
-> 
-> This patch series consists of two patches:
-> - Patch 1 adds synchronization operations into `vmxnet3_probe_device()`, to
->   mitigate the inconsistent accesses when `adapter` is initialized.
-> However, this unfortunately does not mitigate all inconsistent accesses to
-> it, because `adapter` is accessed elsewhere in the driver without proper
-> synchronization.
-> - Patch 2 removes `adapter` from streaming DMA, which entirely mitigates
->   the inconsistent accesses to it. It is not clear to me why `adapter` was
-> mapped into DMA in the first place (in [1]), because it seems that before
-> [1], it was not mapped into DMA. (However, I am not very familiar with the
-> VMXNET3 internals, so someone is welcome to correct me here). Alternatively
-> --- if `adapter` should indeed remain mapped in DMA --- then
-> synchronization operations should be added throughout the driver code (as
-> Patch 1 begins to do).
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/net/sff,sfp.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-I guess we need to hear from vmxnet3 maintainers to know whether DMA
-mapping is necessary for this virt device. But committing patch 1 just
-to completely revert it in patch 2 seems a little odd.
+Here is the summary with links:
+  - [net-next] dt-bindings: net: sff,sfp: Fix "interrupts" property typo
+    https://git.kernel.org/netdev/net-next/c/b52a8deea530
 
-Also trivial note, please checkpatch with --strict --max-line-length=80
+You are awesome, thank you!
 -- 
-pw-bot: cr
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
