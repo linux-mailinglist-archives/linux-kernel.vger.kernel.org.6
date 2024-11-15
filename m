@@ -1,212 +1,188 @@
-Return-Path: <linux-kernel+bounces-411317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44D679CF626
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:32:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AD4A9CF639
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:39:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC9982878D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:32:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F515B2E6CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE14B1E25E1;
-	Fri, 15 Nov 2024 20:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D1DCA5B;
+	Fri, 15 Nov 2024 20:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b="QeHMhT4Z"
-Received: from bout3.ijzerbout.nl (bout3.ijzerbout.nl [136.144.140.114])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313621B6D1A;
-	Fri, 15 Nov 2024 20:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.140.114
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rsW2616o"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623EE1E32B0
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 20:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731702731; cv=none; b=WW8Bq5ox8XMAvkL8eyHZFm/DGwMVAu9V1PCeTeHzW1/vbAYMKKszeTOTAx8ei7Ok+ha+zWLBEOWFrUK5dt100l9SxBhTMBBcci6gNx0J8ZJGEvX/zqXGr9u8O0njcBNgfdLX/eisEApKcQdTufeAtx0pEmEOYKpP9+L4lgizN7A=
+	t=1731702738; cv=none; b=Gw8dGjBpq4jSfh8eWPwOOMC8LPHslWnb9hq/BrXuIc/aS73WzWseSnSna4ah4hwZ9xpkVv4YQxtLObmidRz93Xga2I63Ya3TIoqgIrZ6BmzM0iF+kpQmJNIwN9zhiw9nuEtSGfHrMis/EbuVK+XpMbUIBYlezgOKmPZmg8MCp1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731702731; c=relaxed/simple;
-	bh=aW0kZXCjwMJkAvO9eGrMTuU564xR45DjHMlx+V4e670=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hyjlswXoYki45WxyZc8QkAs3T86Qh1/ud60S6pDMGHznzbbOxKnb6uuMHaR5JdYb4kLO6lMJjLUpyKUOGg6JUcwuCQ57I/KYZgM20M0aDI4+BOzS2Fpq6lpM2sMAJTs53CzzEt90yZMXQ4JC2fLrxwaNGF3ST0HIgQNv3CnBfh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl; spf=pass smtp.mailfrom=ijzerbout.nl; dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b=QeHMhT4Z; arc=none smtp.client-ip=136.144.140.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ijzerbout.nl
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ijzerbout.nl; s=key;
-	t=1731702725; bh=aW0kZXCjwMJkAvO9eGrMTuU564xR45DjHMlx+V4e670=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QeHMhT4Zs6fgL1xTGbR5gC4hQqUmKKeyRJFxO6CGGf7WsIf7m4fxhFOcKeoK0KrMa
-	 HWuLBlIm2hXivW4vyOHHsZ2R8gfLbGyax+8HF4AMY+G+vp0ly7uX4qMLmxVMNdIfsw
-	 GN3/MV1yHiHGsVhiAly54eawmHiD1EC1TV5rvt3zKe3oSvjRgqbiMGzox+AgYKiICK
-	 p/pa8VsdyE7qHc4SiqawWHBxzK89GtQsK12xNh+Y3ZriJNsJ/LyH3dI9kHt7bau2uJ
-	 VlIJ5dQncKjSE9lG+ShI7oYB7LmpwL1zbScAmtVxtPMd1SQxtKSJ7zUavRnC1kWV+/
-	 j0lhNwUHsLyQKY0k8s/okKEBXRAoP2rr0D09L0WvH+hO+0ERvYy/SWvKzYsPFz8VX8
-	 s/mKq4LASMQ8xdNuxbwaMkuJ12rn8YpFb1iSSd8giG5FP/5jm5c918mouNSkD2/91Q
-	 OcLS182MwxzqpojOVoINTZ5JXbG/tl5qMcKIfPKlvMCAy0myE6EC3Q5FZKzvpXhZyX
-	 i8O8Q47umz52anLbdpycCdz7+f5pd4+Egishgq9vRBTJCK4CKl8BX1nIYlVJh1IYCT
-	 D6tQyiAKznHrv/y2Bjui8nj+WkPgHsSkEyGN7GNJEtc1Z09bFtiJg0VUioI3mV8Eq8
-	 UFg72HmB4pDw9/qKIJBxNRiE=
-Received: from [IPV6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a] (racer.ijzerbout.nl [IPv6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a])
-	by bout3.ijzerbout.nl (Postfix) with ESMTPSA id D88A216029D;
-	Fri, 15 Nov 2024 21:32:04 +0100 (CET)
-Message-ID: <17eb79fc-ccd9-4c85-bd23-e08380825c41@ijzerbout.nl>
-Date: Fri, 15 Nov 2024 21:32:02 +0100
+	s=arc-20240116; t=1731702738; c=relaxed/simple;
+	bh=J8Fypl/nHA6mOU3d05af11z0XoG0PP92s4ikw4P8RT0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=COHwjpDooPQpO9yptfFi0Zm/+WMmDxWgL6SGY63CWCjylUk18gVJfm94SZIcMTIERyEAA5ziIoEN31WQcBm2zURT0ARL6bvAlSxK7fcSd8oLIID1mwty/xPEKucd9N4T1mbvwC6x8JMH7Gth8YJ4RuySn9BdICjS+qK6/3ZtPUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rsW2616o; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a745f61654so22525ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 12:32:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731702735; x=1732307535; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4M7ecWGpU+eDVcuuUaD1x2bJbWrzX8lMZn28D9fpPpM=;
+        b=rsW2616o15njWbj3hhotEDVR+CRYcDvhrJ8WWeYbkJImw1K4yabAS6M9d7ebqe+lhN
+         cW22kHvKSFrGonn/112V6bWnBBhv2kLdQKz3uSGU356sAse2/UQwa2T8mYDcp2PVzBag
+         8LQy9wikv+erSEPVu+gQu5aw7aRi+LJg03/zNrtYusueuueNWK222UFGc6T1XP5hQX8P
+         7cPJ4R0Vbd7nf8ixKl3MJfc/b5IR3mlUOfdbdRhcr++1bswhmEU9bwSKz3y0RjXdiA0W
+         /3Nw5boxBkegmIgaiyT+64u/LJj8fdsXzfpSookYUBqYoVSXWCtBfmTYp5dUvIylE8DT
+         4+gQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731702735; x=1732307535;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4M7ecWGpU+eDVcuuUaD1x2bJbWrzX8lMZn28D9fpPpM=;
+        b=d03do2kNeDJUwk8EzeZFhOUzCljMAQjvf9yAgRyscoy4Oc3xgDs7iTUNOgf8p6Mw2k
+         012eOxcePiqtPdAvcn/Ubfrj8N5SunYWVVDsjBT/qj13YYsi9D/FaGJ5heSfOObjx/rv
+         jD/nIp5SVEGdhsJ82O+BYqLcEUpLpUFmjsz/JTT0NcBAhIxSlp5+uLz8DyaJtngJA4d3
+         Iey0aXO0qax2rvtrtbNT6Qa7npI+lcQwhGVY8si2nTmhulFng9XAbnyK8qEmJ1i0aBYz
+         clICO4aCAxSggz+l01JKG7tIIYm0Aol3w2AP95CcYtfKtWy6nIs9lQWnjjt1Fjy4GFhr
+         1FSA==
+X-Forwarded-Encrypted: i=1; AJvYcCXa7TrLZOBc2TtNCqk5rpXY814GKDg4HGrN0WpV+L7q3CCtlMsTgPKM/pAVOmH1ujdQBJw19SpoafgA898=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNTuFu7iuJybx03CVnXutAFUsRSaZmaJxB4DK09WhSZXeH/dAA
+	IfLOgPJWd6MKPS9hfn0N14TEYo8ycdgZOKK5VvvdHZD7S0kW0NL2DxKQ5DPjQ9/rzn8bLIicLVm
+	CuWjQsF7nzVZuZYcKM4gihxjMv7C7Quk+yZ77
+X-Gm-Gg: ASbGncsB9CUKH2jHvHAUIb+8sg3z2b55vRMO7A8T5sTuGGJrCjq+8QXPSEI/VUYVhCl
+	AnyCPxvmTonQpiM8KrJqclQIqf1dCEQ==
+X-Google-Smtp-Source: AGHT+IEJVkL40vr/KwtP72+84+9C2eLd6jMnb993S3m9bvsUDB728wp1kJC/DoxXCVSrzUHKinSx/W6F5kS6U4TI+Ds=
+X-Received: by 2002:a92:c561:0:b0:3a7:4f26:bb63 with SMTP id
+ e9e14a558f8ab-3a750de887fmr436945ab.9.1731702735384; Fri, 15 Nov 2024
+ 12:32:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 23/33] afs: Use netfslib for directories
-To: David Howells <dhowells@redhat.com>,
- Christian Brauner <christian@brauner.io>, Steve French <smfrench@gmail.com>,
- Matthew Wilcox <willy@infradead.org>
-Cc: Jeff Layton <jlayton@kernel.org>, Gao Xiang
- <hsiangkao@linux.alibaba.com>, Dominique Martinet <asmadeus@codewreck.org>,
- Marc Dionne <marc.dionne@auristor.com>, Paulo Alcantara <pc@manguebit.com>,
- Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
- Eric Van Hensbergen <ericvh@kernel.org>, Ilya Dryomov <idryomov@gmail.com>,
- netfs@lists.linux.dev, linux-afs@lists.infradead.org,
- linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
- ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241108173236.1382366-1-dhowells@redhat.com>
- <20241108173236.1382366-24-dhowells@redhat.com>
-Content-Language: en-US
-From: Kees Bakker <kees@ijzerbout.nl>
-In-Reply-To: <20241108173236.1382366-24-dhowells@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241113133042.702340-1-davydov-max@yandex-team.ru>
+ <20241113133042.702340-3-davydov-max@yandex-team.ru> <2813ba0d-7e5d-03d4-26df-d5283b9c0549@amd.com>
+In-Reply-To: <2813ba0d-7e5d-03d4-26df-d5283b9c0549@amd.com>
+From: Jim Mattson <jmattson@google.com>
+Date: Fri, 15 Nov 2024 12:32:04 -0800
+Message-ID: <CALMp9eT2RMe9ej_UbbeoKb+1hqWypxWswqg2aGodZHC0Vgoc=Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] x86: KVM: Advertise AMD's speculation control features
+To: babu.moger@amd.com
+Cc: Maksim Davydov <davydov-max@yandex-team.ru>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, seanjc@google.com, 
+	sandipan.das@amd.com, bp@alien8.de, mingo@redhat.com, tglx@linutronix.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, pbonzini@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Op 08-11-2024 om 18:32 schreef David Howells:
-> In the AFS ecosystem, directories are just a special type of file that is
-> downloaded and parsed locally.  Download is done by the same mechanism as
-> ordinary files and the data can be cached.  There is one important semantic
-> restriction on directories over files: the client must download the entire
-> directory in one go because, for example, the server could fabricate the
-> contents of the blob on the fly with each download and give a different
-> image each time.
+On Fri, Nov 15, 2024 at 12:13=E2=80=AFPM Moger, Babu <bmoger@amd.com> wrote=
+:
 >
-> So that we can cache the directory download, switch AFS directory support
-> over to using the netfslib single-object API, thereby allowing directory
-> content to be stored in the local cache.
+> Hi Maksim,
 >
-> To make this work, the following changes are made:
 >
->   (1) A directory's contents are now stored in a folio_queue chain attached
->       to the afs_vnode (inode) struct rather than its associated pagecache,
->       though multipage folios are still used to hold the data.  The folio
->       queue is discarded when the directory inode is evicted.
+> On 11/13/2024 7:30 AM, Maksim Davydov wrote:
+> > It seems helpful to expose to userspace some speculation control featur=
+es
+> > from 0x80000008_EBX function:
+> > * 16 bit. IBRS always on. Indicates whether processor prefers that
+> >    IBRS is always on. It simplifies speculation managing.
 >
->       This also helps with the phasing out of ITER_XARRAY.
+> Spec say bit 16 is reserved.
 >
->   (2) Various directory operations are made to use and unuse the cache
->       cookie.
+> 16 Reserved
 >
->   (3) The content checking, content dumping and content iteration are now
->       performed with a standard iov_iter iterator over the contents of the
->       folio queue.
+> https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/prog=
+rammer-references/57238.zip
+
+The APM volume 3 ( 24594=E2=80=94Rev. 3.36=E2=80=94March 2024) declares thi=
+s bit as
+"Processor prefers that STIBP be left on." Once a bit has been
+documented like that, you have to assume that software has been
+written that expects those semantics. AMD does not have the option of
+undocumenting the bit.  You can deprecate it, but it now has the
+originally documented semantics until the end of time.
+
+> > * 18 bit. IBRS is preferred over software solution. Indicates that
+> >    software mitigations can be replaced with more performant IBRS.
+> > * 19 bit. IBRS provides Same Mode Protection. Indicates that when IBRS
+> >    is set indirect branch predictions are not influenced by any prior
+> >    indirect branches.
+> > * 29 bit. BTC_NO. Indicates that processor isn't affected by branch typ=
+e
+> >    confusion. It's used during mitigations setting up.
+> > * 30 bit. IBPB clears return address predictor. It's used during
+> >    mitigations setting up.
+> >
+> > Signed-off-by: Maksim Davydov <davydov-max@yandex-team.ru>
+> > ---
+> >   arch/x86/include/asm/cpufeatures.h | 3 +++
+> >   arch/x86/kvm/cpuid.c               | 5 +++--
+> >   2 files changed, 6 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/=
+cpufeatures.h
+> > index 2f8a858325a4..f5491bba75fc 100644
+> > --- a/arch/x86/include/asm/cpufeatures.h
+> > +++ b/arch/x86/include/asm/cpufeatures.h
+> > @@ -340,7 +340,10 @@
+> >   #define X86_FEATURE_AMD_IBPB                (13*32+12) /* Indirect Br=
+anch Prediction Barrier */
+> >   #define X86_FEATURE_AMD_IBRS                (13*32+14) /* Indirect Br=
+anch Restricted Speculation */
+> >   #define X86_FEATURE_AMD_STIBP               (13*32+15) /* Single Thre=
+ad Indirect Branch Predictors */
+> > +#define X86_FEATURE_AMD_IBRS_ALWAYS_ON       (13*32+16) /* Indirect Br=
+anch Restricted Speculation always-on preferred */
 >
->   (4) Iteration and modification must be done with the vnode's validate_lock
->       held.  In conjunction with (1), this means that the iteration can be
->       done without the need to lock pages or take extra refs on them, unlike
->       when accessing ->i_pages.
+> You might have to remove this.
+
+No; it's fine. The bit can never be used for anything else.
+
+> >   #define X86_FEATURE_AMD_STIBP_ALWAYS_ON     (13*32+17) /* Single Thre=
+ad Indirect Branch Predictors always-on preferred */
+> > +#define X86_FEATURE_AMD_IBRS_PREFERRED       (13*32+18) /* Indirect Br=
+anch Restricted Speculation is preferred over SW solution */
+> > +#define X86_FEATURE_AMD_IBRS_SMP     (13*32+19) /* Indirect Branch Res=
+tricted Speculation provides Same Mode Protection */
+> >   #define X86_FEATURE_AMD_PPIN                (13*32+23) /* "amd_ppin" =
+Protected Processor Inventory Number */
+> >   #define X86_FEATURE_AMD_SSBD                (13*32+24) /* Speculative=
+ Store Bypass Disable */
+> >   #define X86_FEATURE_VIRT_SSBD               (13*32+25) /* "virt_ssbd"=
+ Virtualized Speculative Store Bypass Disable */
+> > diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> > index 30ce1bcfc47f..5b2d52913b18 100644
+> > --- a/arch/x86/kvm/cpuid.c
+> > +++ b/arch/x86/kvm/cpuid.c
+> > @@ -754,8 +754,9 @@ void kvm_set_cpu_caps(void)
+> >       kvm_cpu_cap_mask(CPUID_8000_0008_EBX,
+> >               F(CLZERO) | F(XSAVEERPTR) |
+> >               F(WBNOINVD) | F(AMD_IBPB) | F(AMD_IBRS) | F(AMD_SSBD) | F=
+(VIRT_SSBD) |
+> > -             F(AMD_SSB_NO) | F(AMD_STIBP) | F(AMD_STIBP_ALWAYS_ON) |
+> > -             F(AMD_PSFD)
+> > +             F(AMD_SSB_NO) | F(AMD_STIBP) | F(AMD_IBRS_ALWAYS_ON) |
+> > +             F(AMD_STIBP_ALWAYS_ON) | F(AMD_IBRS_PREFERRED) |
+> > +             F(AMD_IBRS_SMP) | F(AMD_PSFD) | F(BTC_NO) | F(AMD_IBPB_RE=
+T)
+> >       );
+> >
+> >       /*
 >
->   (5) Convert to using netfs_read_single() to read data.
+> --
+> - Babu Moger
 >
->   (6) Provide a ->writepages() to call netfs_writeback_single() to save the
->       data to the cache according to the VM's scheduling whilst holding the
->       validate_lock read-locked as (4).
->
->   (7) Change local directory image editing functions:
->
->       (a) Provide a function to get a specific block by number from the
->       	 folio_queue as we can no longer use the i_pages xarray to locate
->       	 folios by index.  This uses a cursor to remember the current
->       	 position as we need to iterate through the directory contents.
->       	 The block is kmapped before being returned.
->
->       (b) Make the function in (a) extend the directory by an extra folio if
->       	 we run out of space.
->
->       (c) Raise the check of the block free space counter, for those blocks
->       	 that have one, higher in the function to eliminate a call to get a
->       	 block.
->
->       (d) Remove the page unlocking and putting done during the editing
->       	 loops.  This is no longer necessary as the folio_queue holds the
->       	 references and the pages are no longer in the pagecache.
->
->       (e) Mark the inode dirty and pin the cache usage till writeback at the
->       	 end of a successful edit.
->
->   (8) Don't set the large_folios flag on the inode as we do the allocation
->       ourselves rather than the VM doing it automatically.
->
->   (9) Mark the inode as being a single object that isn't uploaded to the
->       server.
->
-> (10) Enable caching on directories.
->
-> (11) Only set the upload key for writeback for regular files.
->
-> Notes:
->
->   (*) We keep the ->release_folio(), ->invalidate_folio() and
->       ->migrate_folio() ops as we set the mapping pointer on the folio.
->
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Marc Dionne <marc.dionne@auristor.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: linux-afs@lists.infradead.org
-> cc: netfs@lists.linux.dev
-> cc: linux-fsdevel@vger.kernel.org
-> ---
->   fs/afs/dir.c               | 742 +++++++++++++++++++------------------
->   fs/afs/dir_edit.c          | 183 ++++-----
->   fs/afs/file.c              |   8 +
->   fs/afs/inode.c             |  21 +-
->   fs/afs/internal.h          |  16 +
->   fs/afs/super.c             |   2 +
->   fs/afs/write.c             |   4 +-
->   include/trace/events/afs.h |   6 +-
->   8 files changed, 512 insertions(+), 470 deletions(-)
->
-> [...]
-> +/*
-> + * Iterate through the directory folios under RCU conditions.
-> + */
-> +static int afs_dir_iterate_contents(struct inode *dir, struct dir_context *ctx)
-> +{
-> +	struct afs_vnode *dvnode = AFS_FS_I(dir);
-> +	struct iov_iter iter;
-> +	unsigned long long i_size = i_size_read(dir);
-> +	int ret = 0;
->   
-> -		do {
-> -			dblock = kmap_local_folio(folio, offset);
-> -			ret = afs_dir_iterate_block(dvnode, ctx, dblock,
-> -						    folio_pos(folio) + offset);
-> -			kunmap_local(dblock);
-> -			if (ret != 1)
-> -				goto out;
-> +	/* Round the file position up to the next entry boundary */
-> +	ctx->pos = round_up(ctx->pos, sizeof(union afs_xdr_dirent));
->   
-> -		} while (offset += sizeof(*dblock), offset < size);
-> +	if (i_size <= 0 || ctx->pos >= i_size)
-> +		return 0;
->   
-> -		ret = 0;
-> -	}
-> +	iov_iter_folio_queue(&iter, ITER_SOURCE, dvnode->directory, 0, 0, i_size);
-> +	iov_iter_advance(&iter, round_down(ctx->pos, AFS_DIR_BLOCK_SIZE));
-> +
-> +	iterate_folioq(&iter, iov_iter_count(&iter), dvnode, ctx,
-> +		       afs_dir_iterate_step);
-> +
-> +	if (ret == -ESTALE)
-This is dead code because `ret` is set to 0 and never changed.
-> +		afs_invalidate_dir(dvnode, afs_dir_invalid_iter_stale);
-> +	return ret;
-> +}
-> [...]
 
