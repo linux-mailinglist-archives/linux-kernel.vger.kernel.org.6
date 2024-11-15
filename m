@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-411190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D659CF4B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:20:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D7E89CF46D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:59:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7343CB34542
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:59:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E72DF287D24
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:59:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32701D5148;
-	Fri, 15 Nov 2024 18:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2901E2311;
+	Fri, 15 Nov 2024 18:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G9g54Qma"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WG9QKv8c"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507531E104C
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 18:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371851D9663;
+	Fri, 15 Nov 2024 18:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731697140; cv=none; b=QEYhvWtzUmsehfBBQ/cZyoU73uPHbqy/KmcXserAIkfxDLSpJBLfcbsIQXHHAZii4xL+j2dNNqGbBfn+s//AN0PPSv0wrZdZPL9K4+9DVS2B4O6QQ8n5SNhBqZwHZoGTKEmh3aART0XIhiYPCFtP+moF5I6C+tBRCZAj14PiqpU=
+	t=1731697145; cv=none; b=muBAtsakTTn6EF2xW4yBNTGKd36eVPBYZ++HRQauIfIEj2zgizR9yCzT5LXcjdfCdaryJESNEckIXo1m+eq/EnBWpj17aYDV3S0YI0C00YlQ+HPioKp4nNc85RgD2ctaSeCe0oL+q/igH+Cqdj80GKfKm8zVjKJnro5wMT5sHx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731697140; c=relaxed/simple;
-	bh=08qx2vorwQoE+dyyKyA2lthxHsKd312kYHHidqKZcXQ=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=XnAlDoniRix6X6iEAu+BPrgbV4vNhutBbDPudMizti5jBVft8u0TMHIBQ/yVzAArGJjv283I9l5fNVs5N7MMY+s3NLbjELWMXahTV796Lgj39hRBy2P9NE+MJTuVLYCyJ/u1g2GlP0zegNbdZKaH8mkiNtAqG9zPteEB7PfWuyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G9g54Qma; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 315A0C4CECF;
-	Fri, 15 Nov 2024 18:59:00 +0000 (UTC)
+	s=arc-20240116; t=1731697145; c=relaxed/simple;
+	bh=VoL9QAjzZoyo11W7X2QGJX+KFhZqxNNuuyRX7ng7k04=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=hOqnNH0/f/N5MqDv2T0OQTlOEhYZPN7a1XDSRbBsVJ3oNcrDudx/KyTM8TyIoIWZH6WrtjbnnAwkMMvT62Bs40UVr3USn2C5KrQcXbLCJamjVPBnvCT2/Kndu71JAjn2NjzOJ/+OSd2lbmnReswO9IZ1tTAlp1g9pOcd4bqNCrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WG9QKv8c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB91CC4CECF;
+	Fri, 15 Nov 2024 18:59:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731697140;
-	bh=08qx2vorwQoE+dyyKyA2lthxHsKd312kYHHidqKZcXQ=;
+	s=k20201202; t=1731697144;
+	bh=VoL9QAjzZoyo11W7X2QGJX+KFhZqxNNuuyRX7ng7k04=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=G9g54QmaWmxtcy1cw1m8eqcEoJ3GfnQfuOsJkYuQYOSZFVg4eXckMBWqFZnTRLNJb
-	 IwAwiwVGPEjO51fMdTSRJLJiOVRLI0EDun9DYdVdq7ROyVVmFlCzPzB8iMY9WQRKB6
-	 LCgDmOq5PeAAdlzOFC1cYwMOD3I828MwMcEEWV+d2HFT/MhhddUTdKAAhNUUhywTcS
-	 ALO0eBfa9R0p8KuZXtFf/gy2Tzo18gSsSAeo7wsQoAYY/avbsEiPUxQX8cgEHV7WGJ
-	 jph0pAmq9S/rxWzf+m3hkHpFV9So/NcgEPK9hFOYvVdwzpRljsXvSV0FQmDPs9zrSW
-	 mZo7tUExmv2fw==
+	b=WG9QKv8cNDA1LQvELcFsog+ELv6JKPodpjEjjwrXqhmMbK8jeX6S8CPbXODrwKtJe
+	 jz3Etfy7Qc3YZIH/Xr+ltq7XQ6YpJasF1m7rg/zPLGcj3TwuSDv328uc/Y3XNyat3l
+	 mqtTW9/3QsbtGS2ld2crVBT76xhzdh2IpX5VFkfg0+/e3MzHIsMzXsvfxHuEuO9Yuq
+	 RaLgJZGYh7Bg8I5uw6T54axdNrcNugmYIJ3S5SJQwy5PTOtb8d6AvJTAoxwE/DCwjd
+	 OtsQno3Zg4e/F98hbaxRaa8XSQ18np0YgAMvb3aSS3pUIsFjOQDat3PWU6H0fARJYU
+	 Enzr2a2MPKZpQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34EBB3809A80;
-	Fri, 15 Nov 2024 18:59:12 +0000 (UTC)
-Subject: Re: [git pull] drm fixes for 6.12-rc8
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE903809A80;
+	Fri, 15 Nov 2024 18:59:16 +0000 (UTC)
+Subject: Re: [GIT PULL] pmdomain/arm_scmi fixes for v6.12-rc8
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAPM=9tyjNNXJ-UZryHaGhapXqhPHB=SWH5v0tR_BF3iZOL873g@mail.gmail.com>
-References: <CAPM=9tyjNNXJ-UZryHaGhapXqhPHB=SWH5v0tR_BF3iZOL873g@mail.gmail.com>
-X-PR-Tracked-List-Id: Direct Rendering Infrastructure - Development
- <dri-devel.lists.freedesktop.org>
-X-PR-Tracked-Message-Id: <CAPM=9tyjNNXJ-UZryHaGhapXqhPHB=SWH5v0tR_BF3iZOL873g@mail.gmail.com>
-X-PR-Tracked-Remote: https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2024-11-16
-X-PR-Tracked-Commit-Id: 21c1c6c7d732c2f6f4c5ffc77e103aa3ae8bff1d
+In-Reply-To: <20241115104029.119226-1-ulf.hansson@linaro.org>
+References: <20241115104029.119226-1-ulf.hansson@linaro.org>
+X-PR-Tracked-List-Id: <linux-arm-kernel.lists.infradead.org>
+X-PR-Tracked-Message-Id: <20241115104029.119226-1-ulf.hansson@linaro.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.12-rc1-2
+X-PR-Tracked-Commit-Id: d2fab3fc27cbca7ba65c539a2c5fc7f941231983
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f868cd2517763c66783c6000b29d97f0b966b311
-Message-Id: <173169715083.2685462.9543357655578271455.pr-tracker-bot@kernel.org>
-Date: Fri, 15 Nov 2024 18:59:10 +0000
-To: Dave Airlie <airlied@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Sima Vetter <sima@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+X-PR-Merge-Commit-Id: 1b597e1cf0a226ff1a3b0e117238cfe6c5168de9
+Message-Id: <173169715530.2685462.6684041644643108974.pr-tracker-bot@kernel.org>
+Date: Fri, 15 Nov 2024 18:59:15 +0000
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Linus <torvalds@linux-foundation.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, linux-arm-kernel@lists.infradead.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Sat, 16 Nov 2024 04:43:28 +1000:
+The pull request you sent on Fri, 15 Nov 2024 11:40:29 +0100:
 
-> https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2024-11-16
+> git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.12-rc1-2
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f868cd2517763c66783c6000b29d97f0b966b311
+https://git.kernel.org/torvalds/c/1b597e1cf0a226ff1a3b0e117238cfe6c5168de9
 
 Thank you!
 
