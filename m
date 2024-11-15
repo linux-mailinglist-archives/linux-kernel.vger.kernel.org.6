@@ -1,363 +1,214 @@
-Return-Path: <linux-kernel+bounces-410766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EAB29CE109
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:14:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C373C9CE1E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:49:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED1DCB2F7A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:56:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 336D6B2C5CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4071CDA1A;
-	Fri, 15 Nov 2024 13:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593781D45F0;
+	Fri, 15 Nov 2024 13:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eDKU36J5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="VD12j1cX"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2077.outbound.protection.outlook.com [40.107.223.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F221DA23;
-	Fri, 15 Nov 2024 13:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731678982; cv=none; b=mr9mSlfTKXR+Efywu5lDvWm2CEvCXN4Ek3/u3YxpE9A3NgPBVfYzrmHjLQ7fQ38pDu+ShCTEx42NH0MfHE4HMgYWP8GvrSpnsbSbPvgmW8k9+Y+k44rswzhZA+YuhluKAnFqAgXirb4wr38s0GcS+KFAiBeYvdQ/jKO6LeHiY2g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731678982; c=relaxed/simple;
-	bh=/cevQFwDTvNo+uJkwYE0n872P1XEhsk8uP72d1/YrcQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UDoVkPW0Zu4RPDfiok9iZvYfWMNx9zaiqG2R/gaqFRDdMAr1at98A4DDeOsHb5bPe+a6tT+JA+mRqSp8gZflirAzGQdUhZdpBBW2xZWHysv8eylWMdjgcKgFuBKsJjiO/oml36v2ZgLODC5XaGnuYdR5qKS/EA2lnS0oxA/JxgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eDKU36J5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FFAAC4CECF;
-	Fri, 15 Nov 2024 13:56:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731678981;
-	bh=/cevQFwDTvNo+uJkwYE0n872P1XEhsk8uP72d1/YrcQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=eDKU36J5r9zgOhZK/TspavATQri3KSi8r5R60CW1i3XnHfVE2pB80VEMzARFkAuDL
-	 gQn/Hcf6vEpNk9DN731Ged/0Lvlw/Pjebv+y5eJRUrn+An3tJGjZjwkTNcwhhdVL4C
-	 qqZVGtJ9IL2YcGGmf1+TvlHFcGZbdziVtiCf0wTuT2rCiBrv5/Gpf6qkwLk43065if
-	 l5VeqG5TxTYRIcFqxvOIGCsxGFu6yNFc8G2SI+I7XVcs2qhg72DR1G0HLExQ20Fswe
-	 jb8HSbgaFgwk0gz/bsfcJlbc3CtLiP3l+t94VQw+JyJs5v6D7Y8wuhYTdQXTkDw/GL
-	 kVT+xm8N50JPA==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs misc
-Date: Fri, 15 Nov 2024 14:56:11 +0100
-Message-ID: <20241115-vfs-misc-aa344b85076a@brauner>
-X-Mailer: git-send-email 2.45.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7781CEAD3;
+	Fri, 15 Nov 2024 13:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731678991; cv=fail; b=BKE2XtahWXV4bVsoW8QkP5tIzgISe89LrixJS3/LLOyHhhXvJPc/x53J3tmhCeG4ztzvNHwufRuv6yO5Y3IYDx7wRoCxrOLuvgaEWbECdctTmn2UssEhmsHbDOysnnHiaMXysgx868v0ckP162WQ0ilsn7EhXN2ceBVTgBBBx3Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731678991; c=relaxed/simple;
+	bh=/iwCfhcb7vAXLlFKKarUKfNCrfdhjTrVjZO74IsUmGA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=A2NsJJClSVm8LTH6OH/cV6FOsmlE3bcJw8TeepxprenOcTROve0ueRpY2I/xu2N3N53pbCUIDrIFQX2EYEfW9clau9k/6yseiyZdWroOF5hsHZ2bpnEtUZxgdcso9rlhn48p7mYTrcsevXEg4Iq+od3MRv03PIPRDQ/MvFK44IY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=VD12j1cX; arc=fail smtp.client-ip=40.107.223.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Q0Ie2l8XHo/W4L2k0bdhl5iv6G0y7SLNlVMNaMsVmTSg/WpVIJrhplckLAZwCxNgChxA6mIAWUZWE73PLP76qJ0Htycie6j9ugdisgLElTgswck7D8ETGVvxiIFsU8Y2ntOMMz7D8hLycLr+/YK5ATwZLceGhg9k7BLygZuZ7nKFGOowwslP4HrXLUnttlOI6nioJUWeIC0sE4W8tULQGgH5CR4HIaTz88QA6xwCa7C2pG0ENcvcaEYCsnOmir/T6EJ1jMGziWE+nYnQ3uxelvPvHlxFNpVA0pq7J3HZP5ToBzyinphtzE+L9zApE6DJXqcIrP44CKeOaaeHBjv16Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4yoi1C1bYEPoc2T5KrD38JKWPsGvEmW1P60dCt2Roug=;
+ b=mhsf5TxPrSSMQOcZLFal0aIE4GUHMU9dQhniZkvUHouRPxMmS1E1v1aYBF+uYfgPt7QbDeKlKIRBnywXlyp+tjBfJnGA3kKTB1JquZksGF6uwH/YiUXM1IZf8stxp+vgRXrR1x6m/jxe+mzK45rSE3Mhz8AQCWSa26OfqGSSYUv6o088cG97GYUN2wyoWEuD1KaLlEYeiZoMM20CJ7pi0QIA/q9Jr5XmEgFXlZW95dI3hBThLdt87VviBAp9hW22JsHN331ewYoMIWap1KyuInpoSvS4miN/H0dgvRhUIVzZf5K28kwQ87Ls2WTm98UrbiT3Sig0xvR/q2a3QX8pMg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4yoi1C1bYEPoc2T5KrD38JKWPsGvEmW1P60dCt2Roug=;
+ b=VD12j1cXzvgqqcGF4Ko+uT9flhB2MkaV3fIEeBoERW5qpilYG/IcvUbI4pt+xMESsrek7hs5BbqrPVMBBRt2wFvXdQ8j19yETDpzRIxYbn0bxEfPRh4U+bjOC3VzwqPPhKyxblRz5O/1OnWmpBqara5/vbJfgMVc0VsJtQyKMlo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB6390.namprd12.prod.outlook.com (2603:10b6:8:ce::7) by
+ SA0PR12MB7004.namprd12.prod.outlook.com (2603:10b6:806:2c0::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8158.19; Fri, 15 Nov 2024 13:56:26 +0000
+Received: from DS0PR12MB6390.namprd12.prod.outlook.com
+ ([fe80::38ec:7496:1a35:599f]) by DS0PR12MB6390.namprd12.prod.outlook.com
+ ([fe80::38ec:7496:1a35:599f%3]) with mapi id 15.20.8158.017; Fri, 15 Nov 2024
+ 13:56:26 +0000
+Message-ID: <7e1085e1-e6d8-4593-9299-3b4e273ff1f4@amd.com>
+Date: Fri, 15 Nov 2024 07:56:23 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 05/15] PCI/AER: Add CXL PCIe port correctable error
+ support in AER service driver
+To: Lukas Wunner <lukas@wunner.de>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, nifan.cxl@gmail.com, ming4.li@intel.com,
+ dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
+ alison.schofield@intel.com, vishal.l.verma@intel.com,
+ dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
+ ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
+ rrichter@amd.com, nathan.fontenot@amd.com,
+ Smita.KoralahalliChannabasappa@amd.com
+References: <20241113215429.3177981-1-terry.bowman@amd.com>
+ <20241113215429.3177981-6-terry.bowman@amd.com> <ZzYo5hNkcIjKAZ4i@wunner.de>
+ <7cfb4733-73a6-4a07-8afa-9c432f771bb0@amd.com> <ZzcLe3tDPa6TYs1h@wunner.de>
+Content-Language: en-US
+From: "Bowman, Terry" <terry.bowman@amd.com>
+In-Reply-To: <ZzcLe3tDPa6TYs1h@wunner.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7PR04CA0233.namprd04.prod.outlook.com
+ (2603:10b6:806:127::28) To DS0PR12MB6390.namprd12.prod.outlook.com
+ (2603:10b6:8:ce::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11649; i=brauner@kernel.org; h=from:subject:message-id; bh=/cevQFwDTvNo+uJkwYE0n872P1XEhsk8uP72d1/YrcQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSbB/1lnfMgr6vp417W4BWl9+zaflnas+89lKY1ie3c+ 5Sjp0wnd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzEO5CR4fzld8d60xYnLYrX 7rv1fr3I04CopB5jdq+/m6sULY1PsjIyTPy3MmZ6QIbWpp++5x9FLsoVuRvgYClnuK02sFXyYuF vFgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-
-Hey Linus,
-
-/* Summary */
-
-Features:
-
-    - Fixup and improve NLM and kNFSD file lock callbacks.
-
-      Last year both GFS2 and OCFS2 had some work done to make their
-      locking more robust when exported over NFS. Unfortunately, part of
-      that work caused both NLM (for NFS v3 exports) and kNFSD (for
-      NFSv4.1+ exports) to no longer send lock notifications to clients.
-
-      This in itself is not a huge problem because most NFS clients will
-      still poll the server in order to acquire a conflicted lock.
-
-      Its important for NLM and kNFSD that they do not block their
-      kernel threads inside filesystem's file_lock implementations
-      because that can produce deadlocks. We used to make sure of this
-      by only trusting that posix_lock_file() can correctly handle
-      blocking lock calls asynchronously, so the lock managers would
-      only setup their file_lock requests for async callbacks if the
-      filesystem did not define its own lock() file operation.
-
-      However, when GFS2 and OCFS2 grew the capability to correctly
-      handle blocking lock requests asynchronously, they started
-      signalling this behavior with EXPORT_OP_ASYNC_LOCK, and the check
-      for also trusting posix_lock_file() was inadvertently dropped, so
-      now most filesystems no longer produce lock notifications when
-      exported over NFS.
-
-      Fix this by using an fop_flag which greatly simplifies the problem
-      and grooms the way for future uses by both filesystems and lock
-      managers alike.
-
-    -  Add a sysctl to delete the dentry when a file is removed instead
-       of making it a negative dentry.
-
-       Commit 681ce8623567 ("vfs: Delete the associated dentry when
-       deleting a file") introduced an unconditional deletion of the
-       associated dentry when a file is removed. However, this led to
-       performance regressions in specific benchmarks, such as
-       ilebench.sum_operations/s, prompting a revert in commit
-       4a4be1ad3a6e ("Revert "vfs: Delete the associated dentry when
-       deleting a file""). This reintroduces the concept conditionally
-       through a sysctl.
-
-    - Expand the statmount() system call:
-
-	  * Report the filesystem subtype in a new fs_subtype field to
-	    e.g., report fuse filesystem subtypes.
-
-          * Report the superblock source in a new sb_source field.
-
-	  * Add a new way to return filesystem specific mount options in
-	    an option array that returns filesystem specific mount
-	    options separated by zero bytes and unescaped. This allows
-	    caller's to retrieve filesystem specific mount options and
-	    immediately pass them to e.g., fsconfig() without having to
-	    unescape or split them.
-
-	  * Report security (LSM) specific mount options in a separate
-	    security option array. We don't lump them together with
-	    filesystem specific mount options as security mount options
-	    are generic and most users aren't interested in them.
-
-	    The format is the same as for the filesystem specific mount
-	    option array.
-
-    - Support relative paths in fsconfig()'s FSCONFIG_SET_STRING command.
-
-    - Optimize acl_permission_check() to avoid costly {g,u}id ownership
-      checks if possible.
-
-    - Use smp_mb__after_spinlock() to avoid full smp_mb() in evict().
-
-    - Add synchronous wakeup support for ep_poll_callback.
-      Currently, epoll only uses wake_up() to wake up task. But
-      sometimes there are epoll users which want to use
-      the synchronous wakeup flag to give a hint to the scheduler, e.g.,
-      the Android binder driver. So add a wake_up_sync() define, and use
-      wake_up_sync() when sync is true in ep_poll_callback().
-
-Fixes:
-
-    - Fix kernel documentation for inode_insert5() and iget5_locked().
-
-    - Annotate racy epoll check on file->f_ep.
-
-    - Make F_DUPFD_QUERY associative.
-
-    - Avoid filename buffer overrun in initramfs.
-
-    - Don't let statmount() return empty strings.
-
-    - Add a cond_resched() to dump_user_range() to avoid hogging the CPU.
-
-    - Don't query the device logical blocksize multiple times for hfsplus.
-
-    - Make filemap_read() check that the offset is positive or zero.
-
-Cleanups:
-
-    - Various typo fixes.
-
-    - Cleanup wbc_attach_fdatawrite_inode().
-
-    - Add __releases annotation to wbc_attach_and_unlock_inode().
-
-    - Add hugetlbfs tracepoints.
-
-    - Fix various vfs kernel doc parameters.
-
-    - Remove obsolete TODO comment from io_cancel().
-
-    - Convert wbc_account_cgroup_owner() to take a folio.
-
-    - Fix comments for BANDWITH_INTERVAL and wb_domain_writeout_add().
-
-    - Reorder struct posix_acl to save 8 bytes.
-
-    - Annotate struct posix_acl with __counted_by().
-
-    - Replace one-element array with flexible array member in freevxfs.
-
-    - Use idiomatic atomic64_inc_return() in alloc_mnt_ns().
-
-/* Testing */
-
-gcc version 14.2.0 (Debian 14.2.0-6)
-Debian clang version 16.0.6 (27+b1)
-
-All patches are based on v6.12-rc1 and have been sitting in linux-next.
-No build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-No known conflicts.
-
-(1) linux-next: manual merge of the vfs-brauner tree with the nfsd tree
-    https://lore.kernel.org/r/20241024081515.1cd254a0@canb.auug.org.au
-
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
-
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.13.misc
-
-for you to fetch changes up to aefff51e1c2986e16f2780ca8e4c97b784800ab5:
-
-  statmount: retrieve security mount options (2024-11-14 17:03:25 +0100)
-
-Please consider pulling these changes from the signed vfs-6.13.misc tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.13.misc
-
-----------------------------------------------------------------
-Andreas Gruenbacher (1):
-      vfs: inode insertion kdoc corrections
-
-Andrew Kreimer (1):
-      fs/inode: Fix a typo
-
-Benjamin Coddington (4):
-      fs: Introduce FOP_ASYNC_LOCK
-      gfs2/ocfs2: set FOP_ASYNC_LOCK
-      NLM/NFSD: Fix lock notifications for async-capable filesystems
-      exportfs: Remove EXPORT_OP_ASYNC_LOCK
-
-Christian Brauner (7):
-      Merge patch series "Fixup NLM and kNFSD file lock callbacks"
-      Merge patch series "Introduce tracepoint for hugetlbfs"
-      epoll: annotate racy check
-      fcntl: make F_DUPFD_QUERY associative
-      Merge patch series "fs: allow statmount to fetch the fs_subtype and sb_source"
-      Merge patch series "two little writeback cleanups v2"
-      statmount: retrieve security mount options
-
-Christoph Hellwig (2):
-      writeback: add a __releases annoation to wbc_attach_and_unlock_inode
-      writeback: wbc_attach_fdatawrite_inode out of line
-
-David Disseldorp (1):
-      initramfs: avoid filename buffer overrun
-
-Hongbo Li (3):
-      hugetlbfs: support tracepoint
-      hugetlbfs: use tracepoints in hugetlbfs functions.
-      fs: support relative paths with FSCONFIG_SET_STRING
-
-Jeff Layton (3):
-      fs: don't let statmount return empty strings
-      fs: add the ability for statmount() to report the fs_subtype
-      fs: add the ability for statmount() to report the sb_source
-
-Julia Lawall (1):
-      fs: Reorganize kerneldoc parameter names
-
-Linus Torvalds (1):
-      fs: optimize acl_permission_check()
-
-Mateusz Guzik (1):
-      vfs: make evict() use smp_mb__after_spinlock instead of smp_mb
-
-Miklos Szeredi (1):
-      statmount: add flag to retrieve unescaped options
-
-Mohammed Anees (1):
-      fs:aio: Remove TODO comment suggesting hash or array usage in io_cancel()
-
-Pankaj Raghav (1):
-      fs/writeback: convert wbc_account_cgroup_owner to take a folio
-
-Rik van Riel (1):
-      coredump: add cond_resched() to dump_user_range
-
-Tang Yizhou (2):
-      mm/page-writeback.c: Update comment for BANDWIDTH_INTERVAL
-      mm/page-writeback.c: Fix comment of wb_domain_writeout_add()
-
-Thadeu Lima de Souza Cascardo (1):
-      hfsplus: don't query the device logical block size multiple times
-
-Thorsten Blum (3):
-      acl: Realign struct posix_acl to save 8 bytes
-      acl: Annotate struct posix_acl with __counted_by()
-      freevxfs: Replace one-element array with flexible array member
-
-Trond Myklebust (1):
-      filemap: filemap_read() should check that the offset is positive or zero
-
-Uros Bizjak (1):
-      namespace: Use atomic64_inc_return() in alloc_mnt_ns()
-
-Xuewen Yan (1):
-      epoll: Add synchronous wakeup support for ep_poll_callback
-
-Yafang Shao (1):
-      vfs: Add a sysctl for automated deletion of dentry
-
- Documentation/admin-guide/cgroup-v2.rst     |   2 +-
- Documentation/admin-guide/sysctl/fs.rst     |   5 +
- Documentation/filesystems/nfs/exporting.rst |   7 --
- MAINTAINERS                                 |   1 +
- fs/aio.c                                    |   1 -
- fs/btrfs/extent_io.c                        |   7 +-
- fs/btrfs/inode.c                            |   2 +-
- fs/buffer.c                                 |   4 +-
- fs/char_dev.c                               |   2 +-
- fs/coredump.c                               |   1 +
- fs/dcache.c                                 |  16 ++-
- fs/eventpoll.c                              |  11 +-
- fs/ext4/page-io.c                           |   2 +-
- fs/f2fs/data.c                              |   9 +-
- fs/fcntl.c                                  |   3 +
- fs/freevxfs/vxfs_dir.h                      |   2 +-
- fs/fs-writeback.c                           |  40 +++++--
- fs/fs_parser.c                              |   1 +
- fs/gfs2/export.c                            |   1 -
- fs/gfs2/file.c                              |   2 +
- fs/hfsplus/hfsplus_fs.h                     |   3 +-
- fs/hfsplus/wrapper.c                        |   2 +
- fs/hugetlbfs/inode.c                        |  17 ++-
- fs/inode.c                                  |  29 +++--
- fs/iomap/buffered-io.c                      |   2 +-
- fs/lockd/svclock.c                          |   7 +-
- fs/mpage.c                                  |   2 +-
- fs/namei.c                                  |  41 +++++++
- fs/namespace.c                              | 161 ++++++++++++++++++++++++++--
- fs/nfsd/nfs4state.c                         |  19 +---
- fs/ocfs2/export.c                           |   1 -
- fs/ocfs2/file.c                             |   2 +
- fs/posix_acl.c                              |  13 ++-
- fs/seq_file.c                               |   2 +-
- include/linux/eventpoll.h                   |   2 +-
- include/linux/exportfs.h                    |  13 ---
- include/linux/filelock.h                    |   5 +
- include/linux/fs.h                          |   2 +
- include/linux/posix_acl.h                   |   6 +-
- include/linux/wait.h                        |   1 +
- include/linux/writeback.h                   |  32 +-----
- include/trace/events/hugetlbfs.h            | 156 +++++++++++++++++++++++++++
- include/uapi/linux/mount.h                  |  14 ++-
- init/initramfs.c                            |  15 +++
- mm/filemap.c                                |   2 +
- mm/page-writeback.c                         |   4 +-
- 46 files changed, 531 insertions(+), 141 deletions(-)
- create mode 100644 include/trace/events/hugetlbfs.h
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6390:EE_|SA0PR12MB7004:EE_
+X-MS-Office365-Filtering-Correlation-Id: 00ee6e02-583f-4b20-bd1d-08dd057d4c60
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?N0piQnVwTHF3RDlBaWhHME8wV3JXTkpETXlDZUJkbllIR3VySnlBcHQ2OHV0?=
+ =?utf-8?B?alM5cHdMTEFOLzRodURiNWhHT29ONk9yU1dDbExGeFJXTkhMajR2SFdoa3Q0?=
+ =?utf-8?B?Y2lROFQxUDRVR3o3TEk5NFVGQW80VDg5c3M0UHhpTitVSWY5TExoMkM0RGhs?=
+ =?utf-8?B?WHozWDMrSUgyem1jMXFHdUQyNjRuQ01RTW1XQnBueEhNc3FQYTFjWk1GNXRL?=
+ =?utf-8?B?V29Db0drZ21raU15T09FVUlHdEw1N1VZRHUreWV3YzFTQnFqSG5UQ2tjZ3pr?=
+ =?utf-8?B?bDRMaTljRC9oRVRUQnlmS04rUW8xUnE5K2d1MnJqem81V1BsRHlHQTJpSDFO?=
+ =?utf-8?B?VitNb3JHWkQxVmJEbUxoYW9HQWFrTDVGSUZYcTlXT0dWUG1FU2ZhVjVSWklx?=
+ =?utf-8?B?ZnhzcExLQi9pTGlEM2VxUk5rSjZIMHpjSW5USTUxblFaR2VWZkMzdEZaWG5u?=
+ =?utf-8?B?d1c1RC8xVFlrMEIyZ214em5QcWxENnlZQ3Y3MWMzMEIxZmdLUWR4QWJyNDJD?=
+ =?utf-8?B?YnI4NjlCbnVsamg3UUk5RDF1OFU5OG9UOTl5Q2U2c2hjY002a3RodndSaDFK?=
+ =?utf-8?B?ekF5QVNRMTI5TTFCYktqY0VzNDcrdzN0VGtSNFJhUzNsQnlzYTRhKzBXNzM0?=
+ =?utf-8?B?eXMzNlQ1Qy9kanNzRDQvNy9nQlR4bXVyWXI1YUc2S0U5L296bGs3MCtFV3Vw?=
+ =?utf-8?B?WVhjOEdWSk03V1pGNjhYb2dLN0FFaWZHc0xMMEYvSDIzTlFSekFQV3ZrMmhM?=
+ =?utf-8?B?WUg0eFlWMldKWVordHd2UmRjQ1g3REFCRkdxSURYblc2VDBUSkdLMVF2dnZD?=
+ =?utf-8?B?cksxakxiMjBHTUlTeG9xaVlOQUo1UWNOeEgxZStRSnNFUVlFUXhyMXoxVHJS?=
+ =?utf-8?B?SG13MitkWmtYTmZ2L05Uei9YNVZVdHhnK0hnOVdKczVnUXp0UkdlSDVDc1lV?=
+ =?utf-8?B?REh4dGVMajZHdFordC82dkZ2L1ZSMTA2U0Z2WDRtam1Hb3BPdCtkNmplbjY1?=
+ =?utf-8?B?TDBlNFNaaUUrRExoUlBRWi9paWRySWdDbmRWWHQ4UzFZcHo2MXorTTZVSjNM?=
+ =?utf-8?B?WXo0c1RxT1d0VWhON3FPWWFyZXAwKzJUNjhWa0FPTW82TlJTWk1YVDlTbEwr?=
+ =?utf-8?B?THNCNGUwR1VnRU9peElqb2NuVmdIS3k3WXhDYWZvNi9LcHI5ckpUS0l4WjJD?=
+ =?utf-8?B?dzlzU3l6dUN5SVJtMVdLcGIxcWlFS2M5b3Q0c2RLUUJhQzVpNkVwdlFMSUdU?=
+ =?utf-8?B?MUdZRGVKTHhFbDJucFIvbzkycWRLbXMwUERMUVJ2RHltK1RxWGhCcEJwMmRm?=
+ =?utf-8?B?Rnl5WVNVdzh2dHJZL1RwOVlKaVZadGk5cGhyeTFpamJoOEtFR01MeU84ck1J?=
+ =?utf-8?B?UE9qVkl0clNETGlZS2Q2Y0IyRUlLaDl0QnNTTGhNWUM3L2ZhZkY1TlA3Qk40?=
+ =?utf-8?B?dnZGL0hhZXNLdk4veFkxbnJpS1owTFRRNytlK3pyb1VlamZGNWRORzF0V09p?=
+ =?utf-8?B?VzJkKzh4OHJZRnFsRWVBbDJzY0hrQjdhcTZpamNQQ3krQktIbGdHZXdMc3l3?=
+ =?utf-8?B?OHJpenE5ekovbTlSemQxVzBnNWpNWHpjS3Q5YkhnL2dkcHJWdjZPby83Ni9m?=
+ =?utf-8?B?NW9KeGx6NVV2YjR2Qlh6VnkzMEtKMTBESmRNNVVsTlV0M2Q4NzMxV1NUL2hY?=
+ =?utf-8?B?Qml0anpVcDlsR2V1ak55TzFDcGYvRVFiZXdJYzEvaGF1NG11ZmNRU2Q5eGhs?=
+ =?utf-8?Q?z5aFVzwBc7w0g1WrpBECSUSdBNLF2ptd73Ur/gi?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6390.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?b2hPTlVtUWI1WTlMMEN3M3g0WnRzMnJ2RGtIOFZYMEgxTEluSncyMEFNMDZm?=
+ =?utf-8?B?Zis1Wmg3SXFqeW51SENybHJzYjIxOTY4RURwWFdLM2ZwcStleW5jb0t1aHFM?=
+ =?utf-8?B?UFcrY0NQUVRROEtxa2hiYkZVWFZWck5QMms0NTF1cndtMVlUbmhMcHlWWFkx?=
+ =?utf-8?B?dW5CRlBmNnY5dTh5UVB6RXZsVWt0dDl0eU5EbXFJb1R1blFsc2pTM3I1ekZI?=
+ =?utf-8?B?a21FRk8xUm5ES0ZWUEZLTkNHZ0pMbm9PWDVqYUR4aktNakR3RXIwdHJwdk50?=
+ =?utf-8?B?OWovL3lrTlU0d2Z5eXNQUWQ1VnhOVUdidnVtekc0amM0T2tWMjFENlVKMTFa?=
+ =?utf-8?B?cjMveVcwQUVDTzVMNmZUc2NqcDNlMnFOeXdma0szeGR6OGVsV3lLYnVkSVlj?=
+ =?utf-8?B?S2laUUl5TUROZHJVMi9Zc01OMGZHQmdBdVNiU3VJYnBPYWJWKys2NkpYTWY0?=
+ =?utf-8?B?cFNnaVNmTDBBdVBQWnBBREt1d1RoY3kxWVAvT1JiZ21rZnVoakxoUThob2xv?=
+ =?utf-8?B?WWh3Smw4SGxqbW92VTJ4OTlxUHF0bG4zRWQvZG44eUZsNnhSdTF6U3hvRjQ3?=
+ =?utf-8?B?eDFHZHZUZlhZVEZyZERYNGN2bTlqcG94YkdLelBHemZleWlhT0F3cXVOanox?=
+ =?utf-8?B?MkNBWkN2dUVqcUlDSzQwWUpCWktDby9qZ29XN0h3YkhPNDFhQ2JNeDlLaHRj?=
+ =?utf-8?B?a2dJUytRTHQ5TWE3Z0ZlTEFEQVhDUkRIczQzeW9VQ0NwcUpLM29BNXRlVmJL?=
+ =?utf-8?B?TUJQUEJQT3RJdGVYMkF4bHVZSHhHVXpiL3Iyck1QdUVlZUtxWXpSL0svOHAr?=
+ =?utf-8?B?OUo2ekFUVFgwZE5sRTVOcmR0S1lPRDVJdVprVk9ubFV3MTM5N0szanBMQWRq?=
+ =?utf-8?B?eDNSMFdOOEFVQVZvOUQ3UkI4WWhqZERwbS9BU1Axc0pQUWlpd2FNbmNsMktQ?=
+ =?utf-8?B?MlFGTmNBTXNqK0ZuZ2dFRTMwQnQvb084MG8vRk13blhMSCtvN1lnMWU5bTU3?=
+ =?utf-8?B?MHFaZ2E4WXo5WUxadk5WdUgyOXk5cDJhNGkzcWZOVmsrUU5BYUNMUC9GWXJD?=
+ =?utf-8?B?U2JWYW4zUzI0TGExR2tsMXFVT1BXVDFUV3pVcE1DaXZZdDZRSC9QU3hPWm42?=
+ =?utf-8?B?YW9DZm9DNjlWOTk0SFovRUhoNXlFUEhCMkkyRmNNUTd5OGNENEhQQ1JXWHJX?=
+ =?utf-8?B?OW1ualJGTWJTczZkU3Y4ak5MMlJYSTFWMlo1aWpjdGJaOVc0QnY4bjNHaUJH?=
+ =?utf-8?B?Z0xmcDB0K3ZQWFlTcWtUVGEySkVBLzUzbFBHdU9GbWJlWXNwYUE5QmpsbzdE?=
+ =?utf-8?B?YVIyN1owU3pTc1A3ZWlyc2dmeGZNL2t6anJLeC9kdktVc2ZXZUlrS0V4aSta?=
+ =?utf-8?B?QjdGZG41SlkvVmE2OStDcFV4Ui84Q0lRa2hiblQra0NTRklYNnhZTXV0WTJx?=
+ =?utf-8?B?Z3UzZmZlRXVqZit3ZGZ6dVUrc1BFSmF2UmFiMTFxY056T2JjcVRKbTUxRy9T?=
+ =?utf-8?B?dmdodFgrdjFPVUZ6WkN4ZE5CbU9mdzR3emxjNTZxWDE3MGorTXBLaHh5cmZk?=
+ =?utf-8?B?TVYycXZDTXRZUldxWjcwd0M1M2dqQlN0VkN4YUlkbGRSeGtOd1NONmQvL1Vh?=
+ =?utf-8?B?TENFRUZIMnp4TXoxYjVxaVB5bEFHaEdFV00rckpKQ0tJU0lPL1NIdW04eWtx?=
+ =?utf-8?B?UGkzVEZjL1lEMSt2alVXMldVdmxvWFJIMzJpbFNHbENLR2Y1SmI5bHB5dnMy?=
+ =?utf-8?B?eHViVXhFbXVIWjNmdi94a1E2K2RBa0dWcHE0bU5sUTdEWmdKOEU4b3JGcW9N?=
+ =?utf-8?B?eEhsYjI1bTBTallLbE4xWWpCRXhDc0dpc2ZCMzIzYVVER1lEdC9uMm1wd0t2?=
+ =?utf-8?B?K2Y0alJ2akVJKzdFUStVYVZIVWNQK05QOVBsckNjdzNyRlFHcFpGakFPWHZq?=
+ =?utf-8?B?SUZ6Qm1uNVVGTTdzWm5BN3NETkxaRnlZci9NZ24rQlBSWENOQmJHM0t0bjRh?=
+ =?utf-8?B?cEI2RGF6S3VhTVZiMFRWaVRuTTdyTUZ4TlJEdnF3SFltNDM4VEVJaStWeHRW?=
+ =?utf-8?B?UGpzZGlFQ3hDMC90NHBjeUI4VCswMWRKOXpIOTZ6ci9EalJNTkc1TEtvRFdo?=
+ =?utf-8?Q?p2l+HxMR9H4e1RiMPOvbZqcAa?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 00ee6e02-583f-4b20-bd1d-08dd057d4c60
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6390.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2024 13:56:26.8710
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dXeF7PVEGt3rqUCbaXyqA/AoOYTbSo/ucIEHNq5fCzNyYm1ae/UwY/f6xWR4Qf2d4PuecGWowDKGSoWRVnLEcA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB7004
+
+
+
+On 11/15/2024 2:51 AM, Lukas Wunner wrote:
+> On Thu, Nov 14, 2024 at 12:41:13PM -0600, Bowman, Terry wrote:
+>> On 11/14/2024 10:44 AM, Lukas Wunner wrote:
+>>> On Wed, Nov 13, 2024 at 03:54:19PM -0600, Terry Bowman wrote:
+>>>> @@ -1115,8 +1131,11 @@ static void pci_aer_handle_error(struct pci_dev *dev, struct aer_err_info *info)
+>>>>  
+>>>>  static void handle_error_source(struct pci_dev *dev, struct aer_err_info *info)
+>>>>  {
+>>>> -	cxl_handle_error(dev, info);
+>>>> -	pci_aer_handle_error(dev, info);
+>>>> +	if (is_internal_error(info) && handles_cxl_errors(dev))
+>>>> +		cxl_handle_error(dev, info);
+>>>> +	else
+>>>> +		pci_aer_handle_error(dev, info);
+>>>> +
+>>>>  	pci_dev_put(dev);
+>>>>  }
+>>> If you just do this at the top of cxl_handle_error()...
+>>>
+>>> 	if (!is_internal_error(info))
+>>> 		return;
+>>>
+>>> ...you avoid the need to move is_internal_error() around and the
+>>> patch becomes simpler and easier to review.
+>> If is_internal_error()==0, then pci_aer_handle_error() should be called
+>> to process the PCIe error.
+> You're absolutely right, I missed that, sorry for the noise.
+>
+> Thanks,
+>
+> Lukas
+Thanks for taking the time to review.
+
+Regards,
+Terry
 
