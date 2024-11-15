@@ -1,136 +1,103 @@
-Return-Path: <linux-kernel+bounces-410443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A9A19CDBB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:37:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB03F9CDBBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:38:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1294B22F4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:37:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C72B28374B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD7818FDAE;
-	Fri, 15 Nov 2024 09:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1D318FDAA;
+	Fri, 15 Nov 2024 09:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="XljWqPfu"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fs2VRPji"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28FA2189F39;
-	Fri, 15 Nov 2024 09:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F9C189F39
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731663468; cv=none; b=QF02qZTtssB7XbO81SpsJ7ObUlhBhpKBhRqYgb8QaZQ4+jQSfaZzogLTejBeMs5KvcrMp+IIwCd55uTgJf2Gt31Lbr51ClfSeA//mHh4nwk7czAcz73gB1RDM7CJZryJXALtEzcfWWWk9kkcg2k/qujj6FPy77D/nui6NSN3woQ=
+	t=1731663518; cv=none; b=BppM4/GHN3/Fr4ii0aPr1jGuiUmyMDXekN3lG2YBLGzdTA9KQvMJ4RvhRJz87GVVfTbXcjCWPsoq0lDMSp8C7p0Uu4v9g2lX8XtqfQq2nJPwjyqSZ3poRixKJ04/JCYysdtPcV3eOBHMjfTv66VT6wA23Vr1sf4zQF3g03p5oGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731663468; c=relaxed/simple;
-	bh=+xNK8TNGFAMAR16Vqo8z38gow29xtTPT2/t8VQXloz4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kwi/EGyYP4WVq3OBe1W0PqBRwbuQgax74DpsNAU7HMqxnaLEtfUEB1Nh6WVR10EmV8kxaJUfS3vOFZaHfWz7675k8hRlXQRWlB5UYkZMfCPIV7XWRFRvkCzeox+jGRwXASFACGwRTXaK8x3wP62oOmHQJxD+/CJarXZFDveNpiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=XljWqPfu; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1731663464;
-	bh=+xNK8TNGFAMAR16Vqo8z38gow29xtTPT2/t8VQXloz4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XljWqPfu5ux7IXHlV8basHYOCWkP/L5ylGzWWvnlYIOAFXmfkQpP/Gjvsz/K1bACV
-	 0PnWq/jKHRnG6YwL7azT8CI3L2wz1CJnjckxvP2Z0pDeelEp3xAaLhWY5Ha165Zg/5
-	 MvqjokjTF9slJsHbqJsayXjFmEqo2TxgclbxCuv+j9Ir5kyuXNQUbc84vNZq+e0cad
-	 YFVxIAis5FTGauXaWXnsYbWJFamR9yGmaGTUbQSzg//OZs2N6V9Xy4OKGcTRkb/ogF
-	 77aFgOkWSeloZN7gNBnU7XCVxhiWoQtzAXshmnyXwZOU5DSj96dDCJkUxP9vPquyB/
-	 P0WPmuQsbM53g==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id B81A917E35D8;
-	Fri, 15 Nov 2024 10:37:43 +0100 (CET)
-Message-ID: <191cf67b-8a47-4dd7-a96f-640bf8155d9c@collabora.com>
-Date: Fri, 15 Nov 2024 10:37:43 +0100
+	s=arc-20240116; t=1731663518; c=relaxed/simple;
+	bh=YYysRYtvQy0q1YE+IIP4G0gf6yUYEBbUKM9dwLw5Bz0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qZaf7rDe1lmCO/cvGkQC1s437wqykt3U7U3q21WwHHBKdrTWOyMnw6vf8QPStlGKRjEDstx3ljHiX0QbK2bo+irWEmZCyVRh/mccRdwPYTV8FFLXC9dK50dlMoil1vGn4TbR5fswjAQ3MUaNMYyMFfmAp3eF9o/vplzZEO+9juA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fs2VRPji; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF8C2C4CED7
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:38:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731663518;
+	bh=YYysRYtvQy0q1YE+IIP4G0gf6yUYEBbUKM9dwLw5Bz0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Fs2VRPjinGAMEdi5Rh7G+TlO2iLPvRlxq1o9syXN2uRGCv28u6KobRl/uZiyWX4q3
+	 OSmOG97V6FZfnKIG95m1CxHsYJMI0QfHwrNmmW7R3QRWjtZk0M2r6iDf2Wsy9JnDiY
+	 KS6lHeoB54+qe1F6IIgiBOc5f4dLniXQ1u2bJFSjCwz4T/8LUOP0nqpGXsbLPAhy+r
+	 k0BsQuxU8cHWkhZ8ytOqGJenJkrCDQI8k/OeClzKxq6uWwAz9TQ6y4aNf24+j7hIU2
+	 pae9Sr5/8458dQMv9RYCaH8RQ2c8E1IjVp8F4JLePDeCKjR22N8FU+7KoE9G1POG+S
+	 uq4QSazF7dARQ==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53da4fd084dso1586597e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 01:38:37 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUGzltkEwDa4AO56DzQTkAO3+Hd1Jm6ZThEDKC8cHsQo9SJz5nwziZMpRmv1Q27qVKQKJHZmwzYC48Tcc8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwGUFtuh9uCmJW2nK6zRic1GYo1NO4y/YmYMx326cRcXITXH2D
+	gtKfO9o/YU1MxCTOYQSn/unjDlMZAtCoZkwyVMLatNYc0cSQtWq4ZBJDcUAkMnPW2hZfYQau3i+
+	A2A2PLS+2ufk0ENwkgYk08ZdgAME=
+X-Google-Smtp-Source: AGHT+IH73d+9THQbzwUoYsoeCx3epRujR0P8MgqQvHPDtQGZ9qZm/e6/fnvhYd36ViCB2QWThdX1O5NPm1HMbThelho=
+X-Received: by 2002:ac2:5449:0:b0:53d:abc4:820f with SMTP id
+ 2adb3069b0e04-53dabc48279mr403956e87.6.1731663516323; Fri, 15 Nov 2024
+ 01:38:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v2 0/4] Using i2c-hid-of-elan driver instead of
- i2c-hid-of driver
-To: Hsin-Te Yuan <yuanhsinte@chromium.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Enric Balletbo i Serra <eballetbo@kernel.org>,
- Hsin-Yi Wang <hsinyi@chromium.org>, Benjamin Tissoires <bentiss@kernel.org>,
- Hans de Goede <hdegoede@redhat.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20241105-post-reset-v2-0-c1dc94b65017@chromium.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241105-post-reset-v2-0-c1dc94b65017@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241115093456.7310-1-zhujun2@cmss.chinamobile.com>
+In-Reply-To: <20241115093456.7310-1-zhujun2@cmss.chinamobile.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 15 Nov 2024 10:38:25 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXGgLp3vWd8jqN=NaB=YkqQgdFvoP_u-Kkt20NPjodLQ6g@mail.gmail.com>
+Message-ID: <CAMj1kXGgLp3vWd8jqN=NaB=YkqQgdFvoP_u-Kkt20NPjodLQ6g@mail.gmail.com>
+Subject: Re: [PATCH] arm64: asm: Fix the cacography in pgtable.h
+To: Zhu Jun <zhujun2@cmss.chinamobile.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, peterx@redhat.com, 
+	joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Il 05/11/24 04:08, Hsin-Te Yuan ha scritto:
-> After commit 2be404486c05 ("HID: i2c-hid-of: Add reset GPIO support to
-> i2c-hid-of"), i2c-hid-of driver resets the touchscreen without having
-> proper post-reset delay on OF platform.  From the commit message of that
-> commit, not to decribe poset-reset delay in device tree is intended.
-> Instead, describing the delay in platform data and changing to use
-> specialized driver is more preferable solution.
-> 
-> Also workaround the race condition of pinctrl used by touchscreen and
-> trackpad in this series to avoid merge conflict.
-> 
-> Adding other second source touchscreen used by some mt8183 devices in
-> this series since this should be based on the workaround of pinctrl
-> issue.
-> 
-> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
-
-The switch to i2c-hid-of-elan is okay, but the pinctrl hack is not necessary
-anymore, as it does get resolved with the hwprober from Chen-Yu
-
-https://lore.kernel.org/all/20241106093335.1582205-1-wenst@chromium.org/
-
-Please redo the second source TS addition based on that series instead.
-
-Thanks,
-Angelo
-
+On Fri, 15 Nov 2024 at 10:35, Zhu Jun <zhujun2@cmss.chinamobile.com> wrote:
+>
+> The word 'trasferring' is wrong, so fix it.
+>
+> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
 > ---
-> Changes in v2:
-> - Add second source touchscreen patches since they should based on the
->    first patch of this series.
-> - Link to v1: https://lore.kernel.org/r/20241018-post-reset-v1-0-5aadb7550037@chromium.org
-> 
-> ---
-> Hsin-Te Yuan (4):
->        arm64: dts: mediatek: mt8183: Fix race condition of pinctrl
->        arm64: dts: mediatek: mt8183: Switch to Elan touchscreen driver
->        arm64: dts: mediatek: mt8183: kenzo: Support second source touchscreen
->        arm64: dts: mediatek: mt8183: willow: Support second source touchscreen
-> 
->   arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-burnet.dts |  2 --
->   arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cozmo.dts  |  3 ---
->   arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts   | 12 +++---------
->   .../boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku1.dts   | 11 ++---------
->   .../boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku6.dts   | 11 ++---------
->   .../boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku7.dts   | 11 ++---------
->   .../arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel.dtsi |  3 ---
->   .../boot/dts/mediatek/mt8183-kukui-jacuzzi-juniper.dtsi      |  3 ---
->   arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-pico.dts   |  3 ---
->   arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-pico6.dts  |  3 ---
->   .../arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-willow.dtsi |  3 ---
->   arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi       | 10 +++-------
->   12 files changed, 12 insertions(+), 63 deletions(-)
-> ---
-> base-commit: eca631b8fe808748d7585059c4307005ca5c5820
-> change-id: 20241018-post-reset-ac66b0351613
-> 
-> Best regards,
+>  arch/arm64/include/asm/pgtable.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+
+Please stop using the word 'cacography' - just use 'typo' or 'spelling'
 
 
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index c329ea061dc9..4a5acf522c82 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -1338,7 +1338,7 @@ static inline void ___ptep_set_wrprotect(struct mm_struct *mm,
+>  }
+>
+>  /*
+> - * __ptep_set_wrprotect - mark read-only while trasferring potential hardware
+> + * __ptep_set_wrprotect - mark read-only while transferring potential hardware
+>   * dirty status (PTE_DBM && !PTE_RDONLY) to the software PTE_DIRTY bit.
+>   */
+>  static inline void __ptep_set_wrprotect(struct mm_struct *mm,
+> --
+> 2.17.1
+>
+>
+>
 
