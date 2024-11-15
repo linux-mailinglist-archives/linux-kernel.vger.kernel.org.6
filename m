@@ -1,127 +1,123 @@
-Return-Path: <linux-kernel+bounces-410665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B601C9CDEAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:52:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DFC19CDEB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:53:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FB46B25AC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:52:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA1BAB22107
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605511BE226;
-	Fri, 15 Nov 2024 12:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 108071BD014;
+	Fri, 15 Nov 2024 12:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="urKl7sWC"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="PUZD5uU1"
+Received: from forward103b.mail.yandex.net (forward103b.mail.yandex.net [178.154.239.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89281BBBFE;
-	Fri, 15 Nov 2024 12:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE090558BB;
+	Fri, 15 Nov 2024 12:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731675098; cv=none; b=c+8FoP+2WWL6ffqZGtdf52IMjyRpy3gCbrQ763vkxVZpDCpEA2VbwtiegR1o1Ew2vOuRRmhwrqL2EpAjOMBYZcmQQ9yyrgw13K4QPLzKXt4FeqaA3lLDRyOwCutPap0+SOlT8COXEqFrjOTsB7dCZLbxfMFbDSjzRns6AmW/RiY=
+	t=1731675170; cv=none; b=PegACFTB0M4stgukUEm7VMe+ownyRTmW5NY6CC3ceLm6PgXdIitSeL+mVeYZIHxYDJPkeOgw7XR4PgC3V8WY2tN1pibe2TcHfuNx6ewIUHAPxIGXn5FX2Lz2+9FLBJlevUtCexkrMV+dNy3lN30999PU3FNR1Bo0wokpdSVEXVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731675098; c=relaxed/simple;
-	bh=cKFDZRbLAsD+HU2hNoRZtN6nZnKyYpbXJngT5aLrxbA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lzbs/8Ycky4wjCg2DxVjrXOGt8IisDpRv5XKenM005op60GLHC4UrELL7UUvZv9ltjHhE3g1Ku10AF11C2tzAgW7qlE7jqWB0kSJ0C8zjVd37HAn2iagCczO98AqhGsojdMsNm1bbrHY8DyzXoAUxyLiQW3CA/AfSZfMrS7Ik7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=urKl7sWC; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from wse.fritz.box (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPA id 0107B2FC005B;
-	Fri, 15 Nov 2024 13:51:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1731675089;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4MHsbl+M+GIK9whBqhnhf0aHDdPHEL8Hcvpfaf/hkeU=;
-	b=urKl7sWCBLesLxUZYLTdL76Q8uhjVk61I+u1cp6ld+NJ8VPgk/stWDFx44U9Lbjf/frT2Z
-	bUS1KvUl51JU8OcUF8XBgAbjUOFjihT6Le9/qPC6CZnRnvMTD442stDFG2seho+6jNIhpZ
-	91LwqhiGYED8/cT1aYhQYG8py1HGK1Q=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-From: Werner Sembach <wse@tuxedocomputers.com>
-To: u.kleine-koenig@baylibre.com,
-	mcgrof@kernel.org,
-	petr.pavlu@suse.com,
-	samitolvanen@google.com,
-	da.gomez@samsung.com,
-	linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@leemhuis.info,
-	vv@tuxedocomputers.com,
-	cs@tuxedo.de
-Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Werner Sembach <wse@tuxedocomputers.com>
-Subject: [PATCH v2 2/2] module: Block some modules by TUXEDO from accessing GPL symbols
-Date: Fri, 15 Nov 2024 13:49:40 +0100
-Message-ID: <20241115125121.1242871-3-wse@tuxedocomputers.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241115125121.1242871-1-wse@tuxedocomputers.com>
-References: <20241115125121.1242871-1-wse@tuxedocomputers.com>
+	s=arc-20240116; t=1731675170; c=relaxed/simple;
+	bh=2juy4Ylv4MaM8LY8xJ4un4V+EwF5mFscetSWP49J2vM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=u8B8MsZFYc/uE6hpzkU9VpHsYlxvSpJm4PgILmur0coNKKdFzMZIfPZ9WstxpNXyLr7cWYG/ytRKlv9fZFt/GB+jEkKoBKvn3KKGV8VnzP6MkTxF+zskDL4XiVZMhytGSHEAEiqmRLK4Qc0xaTkRbV/pNAyQ8tpvZ3tIyqEsleg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=PUZD5uU1; arc=none smtp.client-ip=178.154.239.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-46.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-46.sas.yp-c.yandex.net [IPv6:2a02:6b8:c07:109:0:640:efe1:0])
+	by forward103b.mail.yandex.net (Yandex) with ESMTPS id 7B33B60912;
+	Fri, 15 Nov 2024 15:52:37 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-46.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id aqMiAU8Or0U0-2DXNa1et;
+	Fri, 15 Nov 2024 15:52:36 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1731675157; bh=Loh55YzRdUYifYSRVv6NI6kFX5r8vY1rNPibfZfJwAU=;
+	h=Subject:From:Cc:To:Date:Message-ID;
+	b=PUZD5uU1cHz8jBZUDFEaHPYeF9fuR3S84Dli4uWkLaEjJ3RvNohXFcfj8CS7blT80
+	 cKDxtkXLb/iJQZj6SqSqnYmIWWqUKwHQjuYhavFAAIWhuYeBJjVtgBYG7YI2F7bQl0
+	 nE4dKhVk0bDvP2nVI2FNzpf6NzoXUjAiP2LsXpkE=
+Authentication-Results: mail-nwsmtp-smtp-production-main-46.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <1f9e278a-6590-4ede-a74a-3923ebe4d154@yandex.ru>
+Date: Fri, 15 Nov 2024 15:52:36 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: netdev <netdev@vger.kernel.org>
+Cc: Linux kernel <linux-kernel@vger.kernel.org>,
+ "Eric W. Biederman" <ebiederm@xmission.com>,
+ "Andrew Bird (Sphere Systems)" <ajb@spheresystems.co.uk>
+From: stsp <stsp2@yandex.ru>
+Subject: tun: group check overrides user, is this intentional?
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Uwe Kleine-König <ukleinek@kernel.org>
+Hello.
 
-TUXEDO has not yet relicend all modules for GPLv2+ as former contributer
-need to be contacted that comited code under GPLv3+.
+I've found that the user that is an owner
+of tun device, can't access it if it is not
+in the tun's group.
+I.e. the following command:
+$ sudo tunctl -u stas -g root
 
-So teach the module loader that these modules are proprietary despite
-their declaration to be GPLv2 compatible until the relicensing is complete.
+is insufficient for the user "stas"
+to access tun, unless he has group
+"root" in his supplementary list.
+This is somewhat very strange, as
+the group check usually enlarges
+the scope, not restricts it.
 
-Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
----
- kernel/module/main.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+I am going to send the patch below,
+but I'd like to ask if maybe this is
+intentional?
 
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 905d7b60dd709..3f391183aaf97 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -2029,6 +2029,29 @@ static const char *module_license_offenders[] = {
- 
- 	/* lve claims to be GPL but upstream won't provide source */
- 	"lve",
-+
-+	/*
-+	 * Tuxedo distributes their kernel modules under GPLv3, but intentially
-+	 * lies in their MODULE_LICENSE() calls.
-+	 * See https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/a8c09b6c2ce6393fe39d8652d133af9f06cfb427
-+	 */
-+	"tuxedo_io",
-+	"tuxedo_nb04_keyboard",
-+	"tuxedo_nb04_wmi_ab",
-+	"tuxedo_nb04_wmi_bs",
-+	"tuxedo_nb04_sensors",
-+	"tuxedo_nb04_power_profiles",
-+	"tuxedo_nb04_kbd_backlight",
-+	"tuxedo_nb05_keyboard",
-+	"tuxedo_nb05_kbd_backlight",
-+	"tuxedo_nb05_power_profiles",
-+	"tuxedo_nb05_ec",
-+	"tuxedo_nb05_sensors",
-+	"tuxedo_nb05_fan_control",
-+	"clevo_wmi",
-+	"tuxedo_keyboard",
-+	"clevo_acpi",
-+	"uniwill_wmi",
- };
- 
- /*
--- 
-2.43.0
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index 9a0f6eb32016..d35b6a48d138 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -574,14 +574,18 @@ static u16 tun_select_queue(struct net_device 
+*dev, struct sk_buff *skb,
+         return ret;
+  }
+
+-static inline bool tun_not_capable(struct tun_struct *tun)
++static inline bool tun_capable(struct tun_struct *tun)
+  {
+         const struct cred *cred = current_cred();
+         struct net *net = dev_net(tun->dev);
+
+-       return ((uid_valid(tun->owner) && !uid_eq(cred->euid, 
+tun->owner)) ||
+-                 (gid_valid(tun->group) && !in_egroup_p(tun->group))) &&
+-               !ns_capable(net->user_ns, CAP_NET_ADMIN);
++       if (ns_capable(net->user_ns, CAP_NET_ADMIN))
++               return 1;
++       if (uid_valid(tun->owner) && uid_eq(cred->euid, tun->owner))
++               return 1;
++       if (gid_valid(tun->group) && in_egroup_p(tun->group))
++               return 1;
++       return 0;
+  }
+
+  static void tun_set_real_num_queues(struct tun_struct *tun)
+@@ -2778,7 +2782,7 @@ static int tun_set_iff(struct net *net, struct 
+file *file, struct ifreq *ifr)
+                     !!(tun->flags & IFF_MULTI_QUEUE))
+                         return -EINVAL;
+
+-               if (tun_not_capable(tun))
++               if (!tun_capable(tun))
+                         return -EPERM;
+                 err = security_tun_dev_open(tun->security);
+                 if (err < 0)
 
 
