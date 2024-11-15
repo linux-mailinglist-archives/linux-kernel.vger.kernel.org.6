@@ -1,182 +1,135 @@
-Return-Path: <linux-kernel+bounces-410254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 014049CD6EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:10:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36E6E9CD6ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:10:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B0C71F21577
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:10:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAB96B249DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D17EB188734;
-	Fri, 15 Nov 2024 06:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A6318593B;
+	Fri, 15 Nov 2024 06:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ACr0ydcQ"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="Kts1Ttn5"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95FBF188722
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8381714C0;
+	Fri, 15 Nov 2024 06:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731651004; cv=none; b=UVJeYbhV1tiiojhENVOa8Jg/JC9aZHJ2cCnGx//l/Aw3tLMEwGIn0OCnaKf5n8RNk8xPGYNPnFylYwK3qxJcXU3iWJzx5asTiPodru2INCptLofN5gMrhN/iyY/BEY/b6pRanvg9PSMC2T1XjKgNGei9/EiawGnnZSlmPSBENnQ=
+	t=1731650996; cv=none; b=PdNT3HT5KnfhDzXNugnPw3/pD6DT10RkKl4d+e34/gfRItDnRMtnfkdS6ByUL5NT8bB9rduSbz27vRJ9yKQxKvlDjYSoWJ+kJZgB+oLZY4WfZMibfcXc3f2uuwW2I85R53cuz2tgAc+x1xKgdh150tpRRL8njF5QuOK6KYpiOS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731651004; c=relaxed/simple;
-	bh=4Js0j3dEAXVPgmPNSWcoJsDJFN6YRI9vWNB59uQKGHM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P35DprTVrvkO/YrOWh23Ql2oSh4meVhr3hRznX/Ikhy1TXguXddq/llq0zEhSEXJtu17Sa3TOwQcSWRVFgP71RceE8TdMDZ9J9gKPc8xej+OgipTtwCCtggSDmL6B9ZZvOHFCyJKfIIps2U+VLjmZVBr7YdyLlW2IEA8QEKUi3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ACr0ydcQ; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2113da91b53so10919515ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:10:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731651002; x=1732255802; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sfiS9F6Hcq/jOnOhJuAuLR9CMW5tSMbCI2yp2GqSd5k=;
-        b=ACr0ydcQN2jH20BOhxmFV5E5w5m46tQ0R90RQB59oAwPFCk3LHcUe3JjKp4Yvp/lV/
-         wHAC5CiBu2SoIT7BS7VQMHdr/5R8RJomdoQT8O62NWRNnFJ6afiBpq6qpL8Q+Cc46oxS
-         PVQcX/29u3BR9UXUil9pJBuITPww6BksxP32w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731651002; x=1732255802;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sfiS9F6Hcq/jOnOhJuAuLR9CMW5tSMbCI2yp2GqSd5k=;
-        b=wi+Dg1F8DIRlqBFZQq8B3ji/jDZ4xs6UvDFtKoSE626pEMdWFXx1TIX+UmVb0BMFZb
-         MB1fMPQCDF9WcbrqcOBCBPlxuTJN+TfuAomY1BD1eeXZ1YiXq7Q/T+2OLVOegb+wjeP6
-         VWC5Cd5v5rgIJlTMF4LlwarNHTqM90sBjVQ1xTCdkBLaiU939rbqSVhnmsuaUx8HPNa0
-         fXs7Ou10M1ouriPNJTag1JWB9IpFX2m0B41STFtniZ2Smbq9cKjY0vid5CrYwUcY8IAa
-         hChbytAWn+Y4SfcLdOXvvR9ZjmhUZ48MeNsRp2MGBUjr/IGbdW+4va2GT+GtM5R2/X1m
-         iIcA==
-X-Forwarded-Encrypted: i=1; AJvYcCWz8lQh6Zn6PD8/3L5TyxnycMfEaP+cA7xc1SyXcogYJyZ4myCRsnBnJFoePcOHDSP/GsW4QKy/fHCXA5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPsR5FOdFej8VrjR/J9vdCf3MwLF0Sqc1GcJ8LqT5r8E48tmxk
-	w9mzF8hqR7j8Pyr3V6mmC2HPzvAfu27ZT3MFmEZ+ct3cZxSScZrx3CM4Ne1X5A==
-X-Google-Smtp-Source: AGHT+IG3MgzXr+sGffv4+81XM+WNGMDpl8O4NITOvbxUBE45iPRqhS4W1V0XRk1A0H8HYEiWMnQR3w==
-X-Received: by 2002:a17:902:e54b:b0:20c:d578:d72d with SMTP id d9443c01a7336-211d0d62b4amr19545335ad.7.1731651001787;
-        Thu, 14 Nov 2024 22:10:01 -0800 (PST)
-Received: from localhost ([2401:fa00:8f:203:142f:6cb4:e895:7127])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-211d0dc5c94sm5721815ad.17.2024.11.14.22.10.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 22:10:01 -0800 (PST)
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: stable@vger.kernel.org
-Cc: Jan Kara <jack@suse.cz>,
-	linux-kernel@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCHv2 5.15] udf: Allocate name buffer in directory iterator on heap
-Date: Fri, 15 Nov 2024 15:08:48 +0900
-Message-ID: <20241115060859.2453211-1-senozhatsky@chromium.org>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+	s=arc-20240116; t=1731650996; c=relaxed/simple;
+	bh=FGGNcx7I3mGtUqTVbToHaEKMQVbJ2MZmuzf2h0ZTS1Q=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=X9CCNpRnb+d+Q1J7i/XOBbiC8EUR6K1tAV8yweP5Z9ekURxoTTn/hTw+YGHR7uGgjgdReSBdeV9hjrq8WkggOHWieiJSeczVWq8RvJTMtYP/4mQLoesjmsPPt/fvXpBhVMJzkVFoNrbRuH0MEpv52Av8CmEQlpBMkD+5PtGikyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=Kts1Ttn5; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.96] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id B293F2FC0057;
+	Fri, 15 Nov 2024 07:09:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1731650990;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gVcTWV1ZxqzFsXWw2RidADJTa1JW3HgSR3aeNVGYKFY=;
+	b=Kts1Ttn5UtoSUvpNxkhfc0zu9x6jzGvTrerZCr5ImbF1lHTrM8RTLvGsVemP0Z8yZoiqbn
+	RpOF5Itv8Yk8Um2w/35eQRVuR2L1LEkxbOs5Hfca/gviXNBYn+mr4mYGQX+ZvZXCLkz3Xl
+	5u30x8GmNxSibPIu2g63P0U/SPQcWig=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <6c1952bc-f58d-4c55-887e-6aa247daec5c@tuxedocomputers.com>
+Date: Fri, 15 Nov 2024 07:09:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Werner Sembach <wse@tuxedocomputers.com>
+Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
+ symbols
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, tux@tuxedocomputers.com,
+ Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>,
+ Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Thorsten Leemhuis <linux@leemhuis.info>
+References: <20241114103133.547032-4-ukleinek@kernel.org>
+ <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
+ <2024111557-unlighted-giggle-0d86@gregkh>
+Content-Language: en-US
+In-Reply-To: <2024111557-unlighted-giggle-0d86@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Jan Kara <jack@suse.cz>
+Hi,
 
-[ Upstream commit 0aba4860b0d0216a1a300484ff536171894d49d8 ]
+Am 15.11.24 um 05:43 schrieb Greg KH:
+> On Thu, Nov 14, 2024 at 11:49:04AM +0100, Werner Sembach wrote:
+>> Hello,
+>>
+>> Am 14.11.24 um 11:31 schrieb Uwe Kleine-König:
+>>> Hello,
+>>>
+>>> the kernel modules provided by Tuxedo on
+>>> https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers
+>>> are licensed under GPLv3 or later. This is incompatible with the
+>>> kernel's license and so makes it impossible for distributions and other
+>>> third parties to support these at least in pre-compiled form and so
+>>> limits user experience and the possibilities to work on mainlining these
+>>> drivers.
+>>>
+>>> This incompatibility is created on purpose to control the upstream
+>>> process. Seehttps://fosstodon.org/@kernellogger/113423314337991594 for
+>>> a nice summary of the situation and some further links about the issue.
+>>>
+>>> Note that the pull request that fixed the MODULE_LICENSE invocations to
+>>> stop claiming GPL(v2) compatibility was accepted and then immediately
+>>> reverted "for the time being until the legal stuff is sorted out"
+>>> (https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/a8c09b6c2ce6393fe39d8652d133af9f06cfb427).
+>> As already being implied by that commit message, this is sadly not an issue
+>> that can be sorted out over night.
+>>
+>> We ended up in this situation as MODULE_LICENSE("GPL") on its own does not
+>> hint at GPL v2, if one is not aware of the license definition table in the
+>> documentation.
+> That's why it is documented, to explain this very thing.  Please don't
+> suggest that documenting this is somehow not providing a hint.  That's
+> just not going to fly with any lawyer who reads any of this, sorry.
 
-Currently we allocate name buffer in directory iterators (struct
-udf_fileident_iter) on stack. These structures are relatively large
-(some 360 bytes on 64-bit architectures). For udf_rename() which needs
-to keep three of these structures in parallel the stack usage becomes
-rather heavy - 1536 bytes in total. Allocate the name buffer in the
-iterator from heap to avoid excessive stack usage.
+You are right, that's why when I became aware of the situation this Monday 
+https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/9db67459510f18084694c597ff1ea57ef1842f4e 
+I got the gears to resolve this into moving (me playing devils advocate here is 
+directly related to this 
+https://lore.kernel.org/all/17276996-dcca-4ab5-a64f-0e76514c5dc7@tuxedocomputers.com/) 
+and then returned on working on the code rewrite for upstream ( 
+https://lore.kernel.org/all/8847423c-22ec-4775-9119-de3e0ddb5204@tuxedocomputers.com/ 
+is directly related to that), because I'm a developer not a lawyer.
 
-Link: https://lore.kernel.org/all/202212200558.lK9x1KW0-lkp@intel.com
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-[ senozhatsky: explicitly include slab.h to address build
-  failure reported by sashal@ ]
-Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
----
- fs/udf/directory.c | 24 ++++++++++++++++--------
- fs/udf/udfdecl.h   |  2 +-
- 2 files changed, 17 insertions(+), 9 deletions(-)
+Then I get called a liar and hit with the nuclear option not even full 3 days 
+later, while I'm working on resolving the issue and in parallel working on 
+improving the code for it to be actually accepted by upstream.
 
-diff --git a/fs/udf/directory.c b/fs/udf/directory.c
-index e97ffae07833..a30898debdd1 100644
---- a/fs/udf/directory.c
-+++ b/fs/udf/directory.c
-@@ -19,6 +19,7 @@
- #include <linux/bio.h>
- #include <linux/crc-itu-t.h>
- #include <linux/iversion.h>
-+#include <linux/slab.h>
- 
- static int udf_verify_fi(struct udf_fileident_iter *iter)
- {
-@@ -248,9 +249,14 @@ int udf_fiiter_init(struct udf_fileident_iter *iter, struct inode *dir,
- 	iter->elen = 0;
- 	iter->epos.bh = NULL;
- 	iter->name = NULL;
-+	iter->namebuf = kmalloc(UDF_NAME_LEN_CS0, GFP_KERNEL);
-+	if (!iter->namebuf)
-+		return -ENOMEM;
- 
--	if (iinfo->i_alloc_type == ICBTAG_FLAG_AD_IN_ICB)
--		return udf_copy_fi(iter);
-+	if (iinfo->i_alloc_type == ICBTAG_FLAG_AD_IN_ICB) {
-+		err = udf_copy_fi(iter);
-+		goto out;
-+	}
- 
- 	if (inode_bmap(dir, iter->pos >> dir->i_blkbits, &iter->epos,
- 		       &iter->eloc, &iter->elen, &iter->loffset) !=
-@@ -260,17 +266,17 @@ int udf_fiiter_init(struct udf_fileident_iter *iter, struct inode *dir,
- 		udf_err(dir->i_sb,
- 			"position %llu not allocated in directory (ino %lu)\n",
- 			(unsigned long long)pos, dir->i_ino);
--		return -EFSCORRUPTED;
-+		err = -EFSCORRUPTED;
-+		goto out;
- 	}
- 	err = udf_fiiter_load_bhs(iter);
- 	if (err < 0)
--		return err;
-+		goto out;
- 	err = udf_copy_fi(iter);
--	if (err < 0) {
-+out:
-+	if (err < 0)
- 		udf_fiiter_release(iter);
--		return err;
--	}
--	return 0;
-+	return err;
- }
- 
- int udf_fiiter_advance(struct udf_fileident_iter *iter)
-@@ -307,6 +313,8 @@ void udf_fiiter_release(struct udf_fileident_iter *iter)
- 	brelse(iter->bh[0]);
- 	brelse(iter->bh[1]);
- 	iter->bh[0] = iter->bh[1] = NULL;
-+	kfree(iter->namebuf);
-+	iter->namebuf = NULL;
- }
- 
- static void udf_copy_to_bufs(void *buf1, int len1, void *buf2, int len2,
-diff --git a/fs/udf/udfdecl.h b/fs/udf/udfdecl.h
-index f764b4d15094..d35aa42bb577 100644
---- a/fs/udf/udfdecl.h
-+++ b/fs/udf/udfdecl.h
-@@ -99,7 +99,7 @@ struct udf_fileident_iter {
- 	struct extent_position epos;	/* Position after the above extent */
- 	struct fileIdentDesc fi;	/* Copied directory entry */
- 	uint8_t *name;			/* Pointer to entry name */
--	uint8_t namebuf[UDF_NAME_LEN_CS0]; /* Storage for entry name in case
-+	uint8_t *namebuf;		/* Storage for entry name in case
- 					 * the name is split between two blocks
- 					 */
- };
--- 
-2.47.0.338.g60cca15819-goog
+If you want prove of my blissful ignorance from just last week please take a 
+look at my comment here: 
+https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/merge_requests/21#note_2201702758
 
+Now trying to be constructive: Can you give me a timeframe to resolve the 
+license issue before this is merged?
+
+Kind regards,
+
+Werner Sembach
+
+> greg k-h
 
