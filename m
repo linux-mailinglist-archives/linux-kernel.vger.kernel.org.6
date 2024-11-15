@@ -1,212 +1,264 @@
-Return-Path: <linux-kernel+bounces-411359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 082049CF6E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:15:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA989CF6E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:17:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C4F51F26943
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:15:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 983A51F2321E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBBB1D63FB;
-	Fri, 15 Nov 2024 21:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D7C18D63A;
+	Fri, 15 Nov 2024 21:17:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gK7bl69G"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hr9rGUS9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0C1174EE4
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 21:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731705330; cv=none; b=VzhjGA8Fv2D5HNTM4mf85zOETWy78woLJmKmU/YibO9wscS6l8xeJeDRChkEvd9ZfOXyvjtaM70aI5qAiadLwhah9S2l4YOpW5nyc8kprTSsX3nT0wShl58MT/erxXA8QgMkUsbrACI7VIyluVqR96VeQRvi8h+OsnQh/rBsrxk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731705330; c=relaxed/simple;
-	bh=trwmvmbAnZgaQ6EZSEOh8Une0rIcrMhZwDzqFcj8pxg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SqMfDGvsNb2gcNVisYs/nqbXCunS6j7lfOiqi/LY52+VJG2DCTjypMWtd9MEULQjRk820H9dBS6K68RsUpcwc2yzgX8jHsG6yQubIVJFUYDK4ht/Wj35+XSvobGYvcVuyI7FyalTW4fAe5qCZxrEx+bZVnxeHrLULDFCSFbblc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gK7bl69G; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20ca4877690so2775ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 13:15:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731705328; x=1732310128; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nM0MnCaJJLmdERpqY9PV6u9+AmwEyhjWFW3qkZDsAPA=;
-        b=gK7bl69GId3r0X7PUijoBLLiddfYPjpJU8MqocSjDPGFFkNCq793cCVxJxT7OQgxWO
-         SfP14NPt79PsC4pPH1CObk0+LCVKifzrQ+I0A3iD//0H19WaTVOz5h8Di1r9KVGJ9JxJ
-         SijKzQla+EAdpz3qKcbU4m0NzL+8qLiOs0wUEw06WrdUZ4ZJunmCPcctx1FEzL4ymZAU
-         o92gtkg5rz6WnRAo2ulCXFaobXyXA9A06HCjS8HyVGpOSj1teOeV2Pn3v0NO/wKN1G37
-         4vloJpJjR2XRy40Ml4THqdunhA4KPgiofMEXKN30e1SpME3w2+M8l2xGfNxqaTtHvjdM
-         EEbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731705328; x=1732310128;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nM0MnCaJJLmdERpqY9PV6u9+AmwEyhjWFW3qkZDsAPA=;
-        b=o/Mp0PHSVWYFmUDgW52Fo5PQkdyASve5eR+i8xwj66rlVHBTJqPGcuOPWrofSUWbIx
-         zRdwjbcUWGI/xOZHhEWZnEQot8Udq168fjjLDwlMkopKMpLoSg9Jy2/WrekHDxkAEYh0
-         TqEg1NHIwcIRNNeBVN+f2A/KZPt2mhXgPOEcfHMXkp9c2EQZqW4Wl7c/avcPGyap9raL
-         uMwFaU53SqykO0yvuVxOuMzp/4fKll2tvT2fl7AcRaRHVHwuCMSNWngFFCBZhmNdFsdW
-         R6pXD4Ycc1PHAVj8m8clwxiWyhQI510F5o09lsDZ1fY23fYSsdTXFzHRJAlgao1gewWn
-         Vv6A==
-X-Forwarded-Encrypted: i=1; AJvYcCW2tj0rwOcQ+zvCLUoW4GP6cGNitYQnCMko+MqEIMRdQRtMu20WDPtInRq76PctWNJH7sGHgy/CueFX500=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzjw6q494MNueTqmQx4WuFwGQhN1LjBVzLtZxEILTVqc7CsZqpQ
-	ZA/uAqCMJqz3i3uE+AFg/Au5V2CfInNVzU/j+Vliigl88QSjlEmTYJjdZ6c+Ag==
-X-Gm-Gg: ASbGnct/iHnQjTCMtTlNeV7XUpio14M64v2XjpBtJxB3/YcJbP4eL4pzjiPmKPJ1IVS
-	6aVIIpAI+pH9RrtED8SvJWKzV2iT9fd2AgiN4q4x2/dK0n+MfAsIPZoocg80qsd7rk2+QFoEF33
-	igaXdDz+F+k7y2kFHC4/dtjXhsMdxYVoilkiG0qDsqZpKbZr5fwvxmKRe5D3g6kQBEyiEQotk/O
-	BrfOUsU2uCjfq0Kel9BjPJ2HW5yBOBGG0OvWlPxGmwRGpY5WIEqc4b12o6iwEjc/l6aw2gMu1x6
-	RPBW88jM
-X-Google-Smtp-Source: AGHT+IG54m6rEFmImb5DSUuRdJgzvPLf5+rPUGSAVLO9hy0QHwDB3d2opaLJ5cQwhz6bZyjkGDS1Kw==
-X-Received: by 2002:a17:902:f68d:b0:206:a87c:2873 with SMTP id d9443c01a7336-211ee1f5f05mr310055ad.5.1731705327532;
-        Fri, 15 Nov 2024 13:15:27 -0800 (PST)
-Received: from google.com (60.89.247.35.bc.googleusercontent.com. [35.247.89.60])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1c2deb3sm1746337a12.23.2024.11.15.13.15.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 13:15:26 -0800 (PST)
-Date: Fri, 15 Nov 2024 13:15:23 -0800
-From: Vipin Sharma <vipinsh@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Andrew Jones <ajones@ventanamicro.com>, kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev, kvm-riscv@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Anup Patel <anup@brainfault.org>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/1] KVM selftests runner for running more than just
- default
-Message-ID: <20241115211523.GB599524.vipinsh@google.com>
-References: <20240821223012.3757828-1-vipinsh@google.com>
- <CAHVum0eSxCTAme8=oV9a=cVaJ9Jzu3-W-3vgbubVZ2qAWVjfJA@mail.gmail.com>
- <CAHVum0fWJW7V5ijtPcXQAtPSdoQSKjzYwMJ-XCRH2_sKs=Kg7g@mail.gmail.com>
- <ZyuiH_CVQqJUoSB-@google.com>
- <20241108-eaacad12f1eef31481cf0c6c@orel>
- <ZzY2iAqNfeiiIGys@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B219C1DA23;
+	Fri, 15 Nov 2024 21:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731705431; cv=fail; b=AKsnzwyzBzUatfDXvJ5w3QQbOYVXlTmb0ZXhVaa6CJxtnqCP/aPsUzqlHzI1F1lP2K5cPCxOlxxfk2iSHaNvxLdexALs88NrKIpwZTOrmQDrKgeyvgzVwWcRCaSpDz4LZY1zarcKnA0XnRzu6SwQZ6J4TVcTjqucSrjLToe9X+E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731705431; c=relaxed/simple;
+	bh=rCAUGtlspUnk8Qu0Bde/3P2u89kSMyEOTfAY4InD1uI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=QgVBUPtp5KYRgpig4Uh+YokhBJRBXPsy7K+JyO7piaQysHCRDuDH8pw14CM/DHGz7U9trlYKQCyJSUAGzmIZjTKBJo+UBsrxM3vNQms1K8ec9JmxeR6KoL+7NmMfAjBnQbk5BfTdcczEwaR4Zdz4D7Fm2rqi0T0q9utzlh6ga1Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hr9rGUS9; arc=fail smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731705430; x=1763241430;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=rCAUGtlspUnk8Qu0Bde/3P2u89kSMyEOTfAY4InD1uI=;
+  b=Hr9rGUS9G7TofhlM5uZZvRo1bWuuoq3syfFeiBTxkU+rA4oBF7lzUxt7
+   xK1Dz107mNE81sA4zbfgro3lds2vp/YZb5gDBa6WG5GnetFIfAAftLBmS
+   Z8yxtk/jLqkpT3EXTnRB/+JvMkQdcVQnBBI22RXOAYfvOK6hCUVrLY5B5
+   nqV6N3D86HRiK7kTFIPNMfBAcz8kccjB7RxVbtxN7NYERTqRUfIz+rWUY
+   /4DgmqjZ5vHtuDAqgtc513wQcj1yhvVVFzShZDBMI/ax8DRVZkjLSrzvO
+   nVp98J8QCzbT9VFbS8uP4CzenKJ1kGehlSQ5HHzMaVtmoqU8yv1c96o+D
+   w==;
+X-CSE-ConnectionGUID: NQdqOvzSR+SXWaEAWdxd8w==
+X-CSE-MsgGUID: 9CsFnrw1RhSLKRNdTsrL+A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11257"; a="31483650"
+X-IronPort-AV: E=Sophos;i="6.12,157,1728975600"; 
+   d="scan'208";a="31483650"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 13:17:09 -0800
+X-CSE-ConnectionGUID: RO+WPZwNTlKhQWttqry0Ow==
+X-CSE-MsgGUID: AL/LSft0StCBdzy2r3DI7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,157,1728975600"; 
+   d="scan'208";a="89077411"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 15 Nov 2024 13:17:09 -0800
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 15 Nov 2024 13:17:08 -0800
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 15 Nov 2024 13:17:08 -0800
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (104.47.73.44) by
+ edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 15 Nov 2024 13:17:02 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MpfdAGBocf8+KPkG/SDXoqYghYcD80r85BtwXAfU4APZkD21uLj8OHdwn/i9oae4O3zHROx0+eAEbkG6SP7tGLtgawhcEiG6OJ/wD5EYPN0UR/bjtqgRVZDqfiNZF6HCKBB07QbjR/X1AD7gN13k6UpcA+Vmm5k+G6ZVdN5XFpKVq40PyzQt8RzUF6LMTQIrZ6p3EVUgZ7W1Z2BFqUKchRollMFgxb490p7BFy6ag5N/wPAGsCwm8+izQz+8GuqVMO7J2/Zd1kOfnBeaXbomUCn4XzyQ+fV3qFS47jCV5jisyAl51SyZ5IWpE/EV5Zmy0kuo0EfR9fkS9avLXoCuVQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NDQYVh6t7bSTyXkoh5FZIUk11BkNLneNoGTb0pGc7w4=;
+ b=Jpyws9FJBKxvqe1u2HFn3GrVGfBKXTupKoaHZ/XmSB4aFUpq3b/9MMYcyM9P4Yffs0Y7LhvU20sVkpzXEhN2Q7K5IHZQrIp2yH6ChuqucXmWZCj9d6Gv5qZb1/oxGk4dFqe/XBZ/lQGFTaj0OqL88/OQR6hXEri6vxyhp4lSKgMwODH5u169+/TAu32hlYn61rdyHwqAaZkk0xG43luY9+oV9pwk1k9FeXuHYG4SpaVQ1ipDuuhFosNcPC2LTQSUq0Bo/xTib5iMfXeKZaf+8Q5vTcZzV7zyht0iD+NAN7GF63lNLZW9SJhz3TvTAcZwRbrO1idHyABI2/8M4H20LQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SJ0PR11MB5678.namprd11.prod.outlook.com (2603:10b6:a03:3b8::22)
+ by SA0PR11MB4672.namprd11.prod.outlook.com (2603:10b6:806:96::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.19; Fri, 15 Nov
+ 2024 21:16:55 +0000
+Received: from SJ0PR11MB5678.namprd11.prod.outlook.com
+ ([fe80::812:6f53:13d:609c]) by SJ0PR11MB5678.namprd11.prod.outlook.com
+ ([fe80::812:6f53:13d:609c%4]) with mapi id 15.20.8158.017; Fri, 15 Nov 2024
+ 21:16:54 +0000
+From: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "hannes@cmpxchg.org"
+	<hannes@cmpxchg.org>, "yosryahmed@google.com" <yosryahmed@google.com>,
+	"nphamcs@gmail.com" <nphamcs@gmail.com>, "chengming.zhou@linux.dev"
+	<chengming.zhou@linux.dev>, "usamaarif642@gmail.com"
+	<usamaarif642@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"Huang, Ying" <ying.huang@intel.com>, "21cnbao@gmail.com"
+	<21cnbao@gmail.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"davem@davemloft.net" <davem@davemloft.net>, "clabbe@baylibre.com"
+	<clabbe@baylibre.com>, "ardb@kernel.org" <ardb@kernel.org>,
+	"ebiggers@google.com" <ebiggers@google.com>, "surenb@google.com"
+	<surenb@google.com>, "Accardi, Kristen C" <kristen.c.accardi@intel.com>,
+	"zanussi@kernel.org" <zanussi@kernel.org>, "Feghali, Wajdi K"
+	<wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>,
+	"Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+Subject: RE: [PATCH v2 01/13] crypto: acomp - Define two new interfaces for
+ compress/decompress batching.
+Thread-Topic: [PATCH v2 01/13] crypto: acomp - Define two new interfaces for
+ compress/decompress batching.
+Thread-Index: AQHbLZ96S6+VCFtXz0CZAeW0BLMs07K4SPaAgACiuhA=
+Date: Fri, 15 Nov 2024 21:16:54 +0000
+Message-ID: <SJ0PR11MB5678647BE6A60744D07977D7C9242@SJ0PR11MB5678.namprd11.prod.outlook.com>
+References: <20241103032111.333282-1-kanchana.p.sridhar@intel.com>
+ <20241103032111.333282-2-kanchana.p.sridhar@intel.com>
+ <ZzcxY8P8NdfwvxB_@gondor.apana.org.au>
+In-Reply-To: <ZzcxY8P8NdfwvxB_@gondor.apana.org.au>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ0PR11MB5678:EE_|SA0PR11MB4672:EE_
+x-ms-office365-filtering-correlation-id: 4e586b3f-8ec3-4703-6101-08dd05bad4d5
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|10070799003|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?JAbxQlcfTO31BPC09xOViAkdn3qFDwpBtilC7Rwi2eE41+1bYuHjqzHQSnUY?=
+ =?us-ascii?Q?STzYxq9xIC4tCvPsOklK0v7/uOlqNalcp226XH5kBdElSNXq1xn/sNKFOt5f?=
+ =?us-ascii?Q?ER4nIpLVg5gVXv8gZ9BBV43NklPN9IZxni0xMDT2G4jl491nHppXhcx8iMVl?=
+ =?us-ascii?Q?UetLFSF4/QqTIZ08uNiZnKSIq08ONv+kPDO3/TWSy2MtwuWge70yGB6bY11C?=
+ =?us-ascii?Q?tpa6WBn2rl8/O5Sle3lWv8xDBY08Q2ASO/VBPS5BbTXrfPOqocWq6YiKEEU4?=
+ =?us-ascii?Q?sQIeJ6O2AG3T8bcyvcMRK/K4wRyweVHXhPsC2F8ODhSXicuLKRPkQvvB2cq7?=
+ =?us-ascii?Q?SvFzrxqp3gt/XN5la/JCURozuV7hFV7O793f2ldQovtKPliX+HUiTF9FX6X4?=
+ =?us-ascii?Q?mq6UBtr2bW8kf5IHg4e3NqtA7Sh1prL4W4CKhMcJjbNSZ6yo3ePDfPFztaGn?=
+ =?us-ascii?Q?8KPHuTlG/hgruu1GmPkcSSoQDhn+QNiEWngYnWM8+/X9AWPbl5kQTNX79pON?=
+ =?us-ascii?Q?8T32ncvq3HtD1Dxv5+6AfHcYm5KQmAI7ywa4PZ7cgLY8CbT1pC0VfJzofnlh?=
+ =?us-ascii?Q?kq6wgkWu6a1rCXYog2EVm/E77PBcu/dyQoujK18LTdhXmJtN+9UFBTabXrKl?=
+ =?us-ascii?Q?Ypy3udk4pzqQ2rIhixNcMMlEl4nIGDZtqEdeW2ATvOMYFbyw5WzJMhaxrDlV?=
+ =?us-ascii?Q?vOGD24MC97i8m6X0pf4zl/DfgJ2LDHZIoVcnBE95ABVZD0tGCHvf+8LvwQo5?=
+ =?us-ascii?Q?V0eHaDCxLjcr/uHhA7Iot3eZbe5v+IB+f9cRNqeqMOcJioMA+Zl4cpKYLrMx?=
+ =?us-ascii?Q?FVZArhleGfM15+Y8+37pyj4hhqPFe3HuzgC6drXTxcuIzbBN0Bp42Gq6twnR?=
+ =?us-ascii?Q?VRLC5NPv4c22a9UQClHUwhjxiEsQXp4L4C3xDrImlrB79j092L+QXmt2zPq9?=
+ =?us-ascii?Q?510s13daJ8yhsQhT5+KDbORGbnWvfqGigZQjRjMjFkbfI/fqgV22TmriWOQq?=
+ =?us-ascii?Q?sLVytkjFCReIzVKiBWG5IUiX6okHGOGf2E8/CRmUI7klord2RyipeoMJeG+Y?=
+ =?us-ascii?Q?F4QoyB2DT+1Y/vbPGQbA8Icr1DURQy8lBd8BtlgB6ezYVG4umWFvuUSkCfe5?=
+ =?us-ascii?Q?dcmSW3heAElmWZTNdnldFeNH7SYohQdNdhKoSI/bVO3yLQkK8hqPA/G1ZwnL?=
+ =?us-ascii?Q?KLgP9+2l8Pj/rk/LE2k51P+uctvJPoquqbDfN3AZ35dTjpgfiowplIgYpsbs?=
+ =?us-ascii?Q?HC1hRk9ou9X9kGCTwyzKxmLU635NC48RKy/Jkc1j4biMiuJIev8lf9zrylla?=
+ =?us-ascii?Q?xACNDBDtcoZvkiqmDPjEon6B?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB5678.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(10070799003)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?3Sx7ceGNDXnnvk4Pvg2rEzsusLJxMsZ1UDVfdZX0r5k7/j8YZl4TnWyT5NqO?=
+ =?us-ascii?Q?8KDe+egglLqmbesDFz13CVC+EWfEYFFuK10/Mg+6AGU3sRyKKolsBzHZFhoL?=
+ =?us-ascii?Q?avXF2AuFw4DosMz/g6+Ua+7Ho3Pm1GUSndz2ZK98ogGEPB0MysXbVctyMnSh?=
+ =?us-ascii?Q?Tm7SdtiGLriLx+vyqypi6YRKLANpAYHaTSzjjDnzgWs4M7bhcSSAPsfHzwJp?=
+ =?us-ascii?Q?ZhmU5LWABEEXIl6aRrZ/4UJTnoR4wwLjT4Fi4O6As3vBCo4UNRxbVt/Hi7Bt?=
+ =?us-ascii?Q?JBjwhh7T7ed5I2ZJtTwOjKR/uz4gSaSN592pCNu4LbpLBh9C4WVUcjsPaipF?=
+ =?us-ascii?Q?E5PNW5ZmLsA1y5br0+VMBeXnnlyh9jXfDdvVXEz5nP1zdzK4nClhyeISe9rW?=
+ =?us-ascii?Q?YruqPNICj2XI5dVQcobcvS30MdLE5AfgQrVktAkpbTmf5ZoBKjrYTHW96Kt/?=
+ =?us-ascii?Q?VvKLKy/kHt8iEcmuCcbZVvhC9AhbWyNq11lMbyQdH11SFEdYng4NHEOfBwi5?=
+ =?us-ascii?Q?Y5tHg40OZmbOJIPqRzy5QMSAfrTJNRj1qClpkEUSEImCWsqYa0Uw2zpz9QWI?=
+ =?us-ascii?Q?Lb5CWDhrhrUUfErshafp6xmXZFRiNzZ+gVR5ZLXzWfTFzzD8hOwlFSF2n9r/?=
+ =?us-ascii?Q?0BYTX+Inu2mDwFYzqlHRAL6xHSvfmi+FEeM8FO1V7io0GiptlAz6ZyiYRnKu?=
+ =?us-ascii?Q?ZTRf4t5XkITs2Tw46ScTM27VSo1U5zrQajQLSEGRsXBT4Ua92VN1gyvjXqr7?=
+ =?us-ascii?Q?XP5C0uZn6IZuPMNFceQgNDQIwLK8lRBSNNNyJIM56I1TZjBLvqoYUPs5+0Ds?=
+ =?us-ascii?Q?mcF6xcKliaimbvtrTYQzWXjkwIebTbFlt0YD6x2kGP0os9rLmfa9AesycvWk?=
+ =?us-ascii?Q?mP7k9GV7/AWw7Gz1Fc2SO+70hrAU2cNyeKZZ3oURGYwKtFijwCIrdanhZrXd?=
+ =?us-ascii?Q?k+h0Q8SaHscH5NlEMofxjjHSMeC4w/Ool3UaJa3eouGHTYPJTTHqtCrcRDir?=
+ =?us-ascii?Q?SNstnY0fl7qiyloeOW1KSXOIxoRhQYaoqIr3E0omjKBYLTttamZxGiqjs0c6?=
+ =?us-ascii?Q?pohZCL5ITrIClfj6UBWm8NHTXVtd6NT3GkQqCYsN4ZhPwk3tG++5gNZd+aVk?=
+ =?us-ascii?Q?Xg05rSat+1JfBXfuI539XpJxdDdYO0tmSJb0TsoTX5Z470yAw66NxLG9HqgX?=
+ =?us-ascii?Q?YN7PTE+QyyEamXrOmyfNpGBIr0vNHvYd+pdN4/oN3TQjg93VBZ2dHRYAtrnB?=
+ =?us-ascii?Q?/YbkjMcSlV3ZirwRjK0l9ZSGmD0YVXVUfVOffgAXMIrHMKhH5jcd3p0haCxZ?=
+ =?us-ascii?Q?UwLpnMytpKMfalxVc3Cel0ONKnOVkQLoDpZvSl9206a/Rmu8f9g1IatAOGm+?=
+ =?us-ascii?Q?B27UxZhQpdOduYpo65PWToLYN6JhuM2W1FWE0KIHuoMmA78n3NSeDRlFnTZN?=
+ =?us-ascii?Q?6A6PxdStfh3WgNBiREM6xv2rKcoYSz6zoax1E6f6tjPnTU8h4mGqDNAYIrJu?=
+ =?us-ascii?Q?xwH5FtzkRS0W/ogHbI1iWNeeTRM34ZmkBeqsstJM8XLzzblaNZFzpvVuVJfa?=
+ =?us-ascii?Q?vT+obAY3+16QcOLbU25C9LyL3Ag0UnNsgNbUlQMb1ykvgqFy1XObNey4lBeW?=
+ =?us-ascii?Q?Ublp2M1gP9lomaxKyQNLWmzjqX0qqNgY3MeQHzi4SaPDz109YszLx3EFfzdT?=
+ =?us-ascii?Q?PNjRBQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZzY2iAqNfeiiIGys@google.com>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB5678.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4e586b3f-8ec3-4703-6101-08dd05bad4d5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Nov 2024 21:16:54.9239
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Pz7Rxwkyr9mZgnWoiQ34OOxtSKIH/LsJMEFk+hUKtt9Rsz7GI5DWLQMBkm783E/hN2ahRZTaJsSOGnIaWRX6u/2SkNNHdjMXTDfLQzNis5k=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB4672
+X-OriginatorOrg: intel.com
 
-On 2024-11-14 09:42:32, Sean Christopherson wrote:
-> On Fri, Nov 08, 2024, Andrew Jones wrote:
-> > On Wed, Nov 06, 2024 at 09:06:39AM -0800, Sean Christopherson wrote:
-> > > On Fri, Nov 01, 2024, Vipin Sharma wrote:
-> > > > Phase 3: Provide collection of interesting configurations
-> > > > 
-> > > > Specific individual constructs can be combined in a meaningful way to
-> > > > provide interesting configurations to run on a platform. For example,
-> > > > user doesn't need to specify each individual configuration instead,
-> > > > some prebuilt configurations can be exposed like
-> > > > --stress_test_shadow_mmu, --test_basic_nested
-> > > 
-> > > IMO, this shouldn't be baked into the runner, i.e. should not surface as dedicated
-> > > command line options.  Users shouldn't need to modify the runner just to bring
-> > > their own configuration.  I also think configurations should be discoverable,
-> > > e.g. not hardcoded like KUT's unittest.cfg.  A very real problem with KUT's
-> > > approach is that testing different combinations is frustratingly difficult,
-> > > because running a testcase with different configuration requires modifying a file
-> > > that is tracked by git.
 
-I was thinking of folks who send upstream patches, they might not have
-interesting configurations to run to test. If we don't provide an option
-then they might not be able to test different scenarios.
+> -----Original Message-----
+> From: Herbert Xu <herbert@gondor.apana.org.au>
+> Sent: Friday, November 15, 2024 3:33 AM
+> To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
+> Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
+> hannes@cmpxchg.org; yosryahmed@google.com; nphamcs@gmail.com;
+> chengming.zhou@linux.dev; usamaarif642@gmail.com;
+> ryan.roberts@arm.com; Huang, Ying <ying.huang@intel.com>;
+> 21cnbao@gmail.com; akpm@linux-foundation.org; linux-
+> crypto@vger.kernel.org; davem@davemloft.net; clabbe@baylibre.com;
+> ardb@kernel.org; ebiggers@google.com; surenb@google.com; Accardi,
+> Kristen C <kristen.c.accardi@intel.com>; zanussi@kernel.org; Feghali, Waj=
+di K
+> <wajdi.k.feghali@intel.com>; Gopal, Vinodh <vinodh.gopal@intel.com>
+> Subject: Re: [PATCH v2 01/13] crypto: acomp - Define two new interfaces f=
+or
+> compress/decompress batching.
+>=20
+> On Sat, Nov 02, 2024 at 08:20:59PM -0700, Kanchana P Sridhar wrote:
+> > This commit adds batch_compress() and batch_decompress() interfaces to:
+> >
+> >   struct acomp_alg
+> >   struct crypto_acomp
+> >
+> > This allows the iaa_crypto Intel IAA driver to register implementation =
+for
+> > batch_compress() and batch_decompress() API, that can subsequently be
+> > invoked from the kernel zswap/zram swap modules to
+> compress/decompress
+> > up to CRYPTO_BATCH_SIZE (i.e. 8) pages in parallel in the IAA hardware
+> > accelerator to improve swapout/swapin performance.
+> >
+> > Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+> > ---
+> >  crypto/acompress.c                  |  2 +
+> >  include/crypto/acompress.h          | 82 +++++++++++++++++++++++++++++
+> >  include/crypto/internal/acompress.h | 16 ++++++
+> >  3 files changed, 100 insertions(+)
+>=20
+> Please take a look at the request chaining patch that I created
+> for crypto_ahash.  It should be applicable to acomp as well.
+>=20
+> https://lore.kernel.org/all/677614fbdc70b31df2e26483c8d2cd1510c8af91.1
+> 730021644.git.herbert@gondor.apana.org.au/
 
-I do agree command line option might not be a great choice here, we
-should keep them granular.
+Thanks for sharing this, Herbert. I will take a look at this as I work on
+updates to the IAA compress batching series.
 
-What if there is a shell script which has some runner commands with
-different combinations? There should be a default configuration provided
-to ease testing of patches for folks who might not be aware of the
-configurations which maintainers generally use.
+Thanks,
+Kanchana
 
-End goal is to provide good confidence to the patch submitter that they have
-done good testing.
-
-> > 
-> > We have support in KUT for environment variables (which are stored in an
-> > initrd). The feature hasn't been used too much, but x86 applies it to
-> > configuration parameters needed to execute tests from grub, arm uses it
-> > for an errata framework allowing tests to run on kernels which may not
-> > include fixes to host-crashing bugs, and riscv is using them quite a bit
-> > for providing test parameters and test expected results in order to allow
-> > SBI tests to be run on a variety of SBI implementations. The environment
-> > variables are provided in a text file which is not tracked by git. kvm
-> > selftests can obviously also use environment variables by simply sourcing
-> > them first in wrapper scripts for the tests.
-> 
-> Oh hell no! :-)
-> 
-> For reproducibility, transparency, determinism, environment variables are pure
-> evil.  I don't want to discover that I wasn't actually testing what I thought I
-> was testing because I forgot to set/purge an environment variable.  Ditto for
-> trying to reproduce a failure reported by someone.
-> 
-> KUT's usage to adjust to the *system* environment is somewhat understandable
-> But for KVM selftests, there should be absolutely zero reason to need to fall
-> back to environment variables.  Unlike KUT, which can run in a fairly large variety
-> of environments, e.g. bare metal vs. virtual, different VMMs, different firmware,
-> etc., KVM selftests effectively support exactly one environment.
-> 
-> And unlike KUT, KVM selftests are tightly coupled to the kernel.  Yes, it's very
-> possible to run selftests against different kernels, but I don't think we should
-> go out of our way to support such usage.  And if an environment needs to skip a
-> test, it should be super easy to do so if we decouple the test configuration
-> inputs from the test runner.
-
-Also, keeping things out of tree won't help other developers much. I want
-majority of that configurations which maintainers/regular contributors
-maintain locally to be upstreamed and consolidated.
-
-> 
-> > > There are underlying issues with KUT that essentially necessitate that approach,
-> > > e.g. x86 has several testcases that fail if run without the exact right config.
-> > > But that's just another reason to NOT follow KUT's pattern, e.g. to force us to
-> > > write robust tests.
-> > > 
-> > > E.g. instead of per-config command line options, let the user specify a file,
-> > > and/or a directory (using a well known filename pattern to detect configs).
-> > 
-> > Could also use an environment variable to specify a file which contains
-> > a config in a test-specific format if parsing environment variables is
-> > insufficient or awkward for configuring a test.
-> 
-> There's no reason to use a environment variable for this.  If we want to support
-> "advanced" setup via a test configuration, then that can simply go in configuration
-> file that's passed to the runner.
-
-Can you guys specify What does this test configuration file/directory
-will look like? Also, is it gonna be a one file for one test? This might
-become ugly soon.
-
-This brings the question on how to handle the test execution when we are using
-different command line parameters for individual tests which need some
-specific environmnet?
-
-Some parameters will need a very specific module or sysfs setting which
-might conflict with other tests. This is why I had "test_suite" in my
-json, which can provide some module, sysfs, or other host settings. But
-this also added cost of duplicating tests for each/few suites.
-
-I guess the shell script I talked about few paragraphs above, can have
-some specific runner invocations which will set specific requirements of
-the test and execute that specific test (RFC runner has the capabilty to execute
-specific test).
-
-Open to suggestions on a better approach.
-
+>=20
+> Thanks,
+> --
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
