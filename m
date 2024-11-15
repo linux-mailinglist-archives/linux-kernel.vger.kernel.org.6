@@ -1,114 +1,148 @@
-Return-Path: <linux-kernel+bounces-410100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F0D9C967D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:57:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA7279C9683
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 01:00:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9E5B283B3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Nov 2024 23:57:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9690D1F22697
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2011AAE33;
-	Thu, 14 Nov 2024 23:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2771B2183;
+	Fri, 15 Nov 2024 00:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=castellotti.net header.i=@castellotti.net header.b="ccDvCUP0"
-Received: from qs51p00im-qukt01072301.me.com (qs51p00im-qukt01072301.me.com [17.57.155.12])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="KIb6hzSj"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5114F1B392B
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 23:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.57.155.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77EC433FE;
+	Fri, 15 Nov 2024 00:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731628639; cv=none; b=XYJjW9X+nlaqB6SX4doOEQnjUu8xbJeFrAZHoRc2w0lrSJmv2BTw6IJBS3OYTw9Wf6dR2xEasJsgbSRPUsMuDkkA/yJVCvwDJoQweHCU/FxknZNMqgI1Bgfijw2x9vD16cAXYyPSxdZSzG8U11jFSeVXiTgTImtxQ7lXSyYMnDA=
+	t=1731628831; cv=none; b=ktF9svBolv/4SLZZqlPenc/a1MZ7B79MeJWSAedsOwNR/0IRaHB8WQavQtW9HUPwBdM3qxMD9lpCHsyCrVjAKV8pIQ9yv8UUW4Fk+JJs69sWCQ21k9HCRxl7FJGWscIuk7AMO216yq3ohjBbfSHcQyHFsbNoDHCWZLDg6NBmDhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731628639; c=relaxed/simple;
-	bh=4lFOEw1Cuwl0/qLgmCJe5RhGno98lXHPUYNOJ0IfpX8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BxhMGAbpGSQST8ZWFedytSDaCo2t/w6VW3JEW3gVWc+BVEep8nWbkytQiAdUTVGXh0gA3FCgkLtwxP4nkQY5KO5bClS4fnRaykC4JG15AVRlc528IV3pzRQaMN/XPQ0Ep4N6kutkEgw+rW5BRWAk0FyNNAIHV36LFSRU8JUxpEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=castellotti.net; spf=pass smtp.mailfrom=castellotti.net; dkim=pass (2048-bit key) header.d=castellotti.net header.i=@castellotti.net header.b=ccDvCUP0; arc=none smtp.client-ip=17.57.155.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=castellotti.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=castellotti.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=castellotti.net;
-	s=sig1; t=1731628636;
-	bh=iSCE/Qi+tv7NDRxH+x0UHfkFAYCL1dJiR18XFW4tY80=;
-	h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version:
-	 x-icloud-hme;
-	b=ccDvCUP0SWQJCXe6CnHMGpX9Lipo3GhPS/7nfjEkeW8sLC2vvSeQ5zoA/pdiFGrBd
-	 MzX626s6TvubZk5CHJjE1slrOlDMa0Cm5aQ3QuXZ2JdPzuhX4W06Rh1Tx8JYcBKJht
-	 zFzKlZX8mMytx8ZlZHfcj9EzyYXF3uAoEuEbj7JHGO6VjtY4HBDUhAprjJmpYef/Lr
-	 xeoljcOU3SXxUEwBupEsM6BVHasVzamEoqinhYEaGs02rznrsh69NdAA9EmubHlDGb
-	 xFefMwOG6UOmCE/zzMsq+813l1Vtn3wZorBtB3PoJV8uWQS63SV/K8SveLxEV2suwz
-	 z8TWWL4QFpSxA==
-Received: from MSI-Laptop.local (qs51p00im-dlb-asmtp-mailmevip.me.com [17.57.155.28])
-	by qs51p00im-qukt01072301.me.com (Postfix) with ESMTPSA id 99FDD25401B4;
-	Thu, 14 Nov 2024 23:57:12 +0000 (UTC)
-Message-ID: <799753305484d74cb9d194347743ff986da071d5.camel@castellotti.net>
-Subject: Re: [Intel-wired-lan] [PATCH v2 1/1] ixgbe: Correct BASE-BX10
- compliance code
-From: Erny <ernesto@castellotti.net>
-Reply-To: 20241114195047.533083-2-tore@amundsen.org
-To: Tore Amundsen <tore@amundsen.org>
-Cc: andrew+netdev@lunn.ch, anthony.l.nguyen@intel.com, davem@davemloft.net, 
-	edumazet@google.com, ernesto@castellotti.net,
- intel-wired-lan@lists.osuosl.org, 	kuba@kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 	pabeni@redhat.com,
- pmenzel@molgen.mpg.de, przemyslaw.kitszel@intel.com
-Date: Fri, 15 Nov 2024 00:57:10 +0100
-In-Reply-To: <20241114195047.533083-2-tore@amundsen.org>
-References: <ec66b579-90b7-42cc-b4d4-f4c2e906aeb9@molgen.mpg.de>
-	 <20241114195047.533083-1-tore@amundsen.org>
-	 <20241114195047.533083-2-tore@amundsen.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 
+	s=arc-20240116; t=1731628831; c=relaxed/simple;
+	bh=seximQ95TY/KDhb+vB8Hrmxf7e199hCpmjuNkdXkuG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DfreFOlnaw39s94MV3zMg9r0ODWmHtmwXQun0VN3Nhm5X8CFYKGUmk6ha6bBjZXameOJr+NaJx44TQ9X6vU9upZCRUpa7zrZ1BA3uMnFivoJUqruH/nbWgKoZRKCDISH8kthj/DzuUwNUYO0ucOExfh/Kmk7esaW8IrsaEJKSes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=KIb6hzSj; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A70BBFF1;
+	Fri, 15 Nov 2024 01:00:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1731628811;
+	bh=seximQ95TY/KDhb+vB8Hrmxf7e199hCpmjuNkdXkuG0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KIb6hzSjvZi+J215tZhJkpOSoFXv9XqPGhABEBwjpXQ4B6N+OPgaj15PQGDZO4pgG
+	 pKW5P8w1nGcKc5bGr2PBfR7q5jQey9fnnYvZSfTfFtY41ijd0Ze6hX8Q+iawcm0wIh
+	 XZ3nwvYYRJhkMlpoqSZ5EaeR/3UouV089nRb9ztc=
+Date: Fri, 15 Nov 2024 02:00:17 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/3] media: i2c: imx290: Limit analogue gain according to
+ module
+Message-ID: <20241115000017.GH31681@pendragon.ideasonboard.com>
+References: <20241114-media-imx290-imx462-v1-0-c538a2e24786@raspberrypi.com>
+ <20241114-media-imx290-imx462-v1-1-c538a2e24786@raspberrypi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-GUID: Spi5FdVucACLcYERu8XdpffBqfSFfqS6
-X-Proofpoint-ORIG-GUID: Spi5FdVucACLcYERu8XdpffBqfSFfqS6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-14_05,2024-11-14_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=876 bulkscore=0 mlxscore=0
- phishscore=0 adultscore=0 spamscore=0 suspectscore=0 clxscore=1030
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2411140190
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241114-media-imx290-imx462-v1-1-c538a2e24786@raspberrypi.com>
 
-On Thu, 2024-11-14 at 19:50 +0000, Tore Amundsen wrote:
-> The current value in the source code is 0x64, which appears to be a
-> mix-up of hex and decimal values. A value of 0x64 (binary 01100100)
-> incorrectly sets bit 2 (1000BASE-CX) and bit 5 (100BASE-FX) as well.
+Hi Dave,
+
+Thank you for the patch.
+
+On Thu, Nov 14, 2024 at 04:01:13PM +0000, Dave Stevenson wrote:
+> The imx327 only supports up to 29.4dB of analogue gain, vs
+> the imx290 going up to 30dB. Both are in 0.3dB steps.
+> 
+> As we now have model specific config, fix this mismatch,
+> and delete the comment referencing it.
+> 
+> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
 > ---
-> =C2=A0drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
-> b/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
-> index 14aa2ca51f70..81179c60af4e 100644
-> --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
-> +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
-> @@ -40,7 +40,7 @@
-> =C2=A0#define IXGBE_SFF_1GBASESX_CAPABLE		0x1
-> =C2=A0#define IXGBE_SFF_1GBASELX_CAPABLE		0x2
-> =C2=A0#define IXGBE_SFF_1GBASET_CAPABLE		0x8
-> -#define IXGBE_SFF_BASEBX10_CAPABLE		0x64
-> +#define IXGBE_SFF_BASEBX10_CAPABLE		0x40
-> =C2=A0#define IXGBE_SFF_10GBASESR_CAPABLE		0x10
-> =C2=A0#define IXGBE_SFF_10GBASELR_CAPABLE		0x20
-> =C2=A0#define IXGBE_SFF_SOFT_RS_SELECT_MASK		0x8
+>  drivers/media/i2c/imx290.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/imx290.c b/drivers/media/i2c/imx290.c
+> index ee698c99001d..da654deb444a 100644
+> --- a/drivers/media/i2c/imx290.c
+> +++ b/drivers/media/i2c/imx290.c
+> @@ -176,6 +176,7 @@ struct imx290_model_info {
+>  	enum imx290_colour_variant colour_variant;
+>  	const struct cci_reg_sequence *init_regs;
+>  	size_t init_regs_num;
+> +	unsigned int max_analog_gain;
+>  	const char *name;
+>  };
+>  
+> @@ -876,14 +877,10 @@ static int imx290_ctrl_init(struct imx290 *imx290)
+>  	 * up to 72.0dB (240) add further digital gain. Limit the range to
+>  	 * analog gain only, support for digital gain can be added separately
+>  	 * if needed.
+> -	 *
+> -	 * The IMX327 and IMX462 are largely compatible with the IMX290, but
+> -	 * have an analog gain range of 0.0dB to 29.4dB and 42dB of digital
+> -	 * gain. When support for those sensors gets added to the driver, the
+> -	 * gain control should be adjusted accordingly.
+>  	 */
+>  	v4l2_ctrl_new_std(&imx290->ctrls, &imx290_ctrl_ops,
+> -			  V4L2_CID_ANALOGUE_GAIN, 0, 100, 1, 0);
+> +			  V4L2_CID_ANALOGUE_GAIN, 0,
+> +			  imx290->model->max_analog_gain, 1, 0);
+>  
+>  	/*
+>  	 * Correct range will be determined through imx290_ctrl_update setting
+> @@ -1441,18 +1438,21 @@ static const struct imx290_model_info imx290_models[] = {
+>  		.colour_variant = IMX290_VARIANT_COLOUR,
+>  		.init_regs = imx290_global_init_settings_290,
+>  		.init_regs_num = ARRAY_SIZE(imx290_global_init_settings_290),
+> +		.max_analog_gain = 100,
+>  		.name = "imx290",
+>  	},
+>  	[IMX290_MODEL_IMX290LLR] = {
+>  		.colour_variant = IMX290_VARIANT_MONO,
+>  		.init_regs = imx290_global_init_settings_290,
+>  		.init_regs_num = ARRAY_SIZE(imx290_global_init_settings_290),
+> +		.max_analog_gain = 100,
+>  		.name = "imx290",
+>  	},
+>  	[IMX290_MODEL_IMX327LQR] = {
+>  		.colour_variant = IMX290_VARIANT_COLOUR,
+>  		.init_regs = imx290_global_init_settings_327,
+>  		.init_regs_num = ARRAY_SIZE(imx290_global_init_settings_327),
+> +		.max_analog_gain = 98,
+>  		.name = "imx327",
+>  	},
+>  };
+> 
 
-LGMT.
+-- 
+Regards,
 
-Acked-by: Ernesto Castellotti <ernesto@castellotti.net>
-
-Kind regards,
-
-Ernesto
-
-
+Laurent Pinchart
 
