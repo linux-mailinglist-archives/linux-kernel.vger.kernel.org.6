@@ -1,68 +1,87 @@
-Return-Path: <linux-kernel+bounces-410451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12FE19CDBCE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:45:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E38C9CDBD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:49:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AD621F2337C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:45:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE42F283212
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625D918FDCC;
-	Fri, 15 Nov 2024 09:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B5D19006B;
+	Fri, 15 Nov 2024 09:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="H+rlJYCa"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GboblNsl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5483218C039;
-	Fri, 15 Nov 2024 09:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E3718CC10
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731663922; cv=none; b=OPxn8H18h1XWgyeeG9pF1DhI+aoQx5dCZCnhfLxxQhQrxLjL0TMpECaj7PxnYpcvadsBn/Ajc8lVt7S9o6cXsO31mb1DF89NwI4l+TBYTxwov0QWRdseYkNkSbmy5V7KfDHpYNBSjl9c4pO5XsjHccL0j9/3/M4NkOoCRBrgGvc=
+	t=1731664150; cv=none; b=oRxbq+aaG4Xd5wl0M5mLO5N3qX5bKWBxfi6OHG+M3rXK4EgwuYcGNxXt8/UBo4RVa7YkyOCc1iHJ7p2+rlcqtdtULjXPnHmOSk9ryU8c5dsp32HtfTDCD0Jn3+ds4sDZT0Zy4PcmDkRCn4nV7tK5/0GD2YN21q5BV4+TC0WUrb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731663922; c=relaxed/simple;
-	bh=0Ua1gEH83HMJfF8a0QbWXqH0PMnUV9EK2uLfKohST4w=;
+	s=arc-20240116; t=1731664150; c=relaxed/simple;
+	bh=5JV+Q8/uDzvNYDwkc+mCN1HUPeABFq9Hs2oXi52V+FA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eE2s6E3k49uoVZ9gAtMu7dSjlZeTszXRRzqD1D+bXLLtEmLegr3lr8anVEhePtYAm4FtHiH6WzjvFCwLU+/4ZSwS2rh2MlAvWog2j3279ws/fAjkFEnWigYXQRKwfJi+cJRUXVUmKtzZjCkS+JPFW2o3QIxiWWtQSddpLE/ayD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=H+rlJYCa; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 9516B1F9C1;
-	Fri, 15 Nov 2024 10:45:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1731663916;
-	bh=fXgpNCrCg0QJFZPc/cMFrQdCG+CEBjUIdZW8CrlxJRc=;
-	h=Received:From:To:Subject;
-	b=H+rlJYCaVhZDM2yw4dLNeax0ScF4CKrvIwUI5LWN2KJAXyBIBrzz7vE2LA+f07bkN
-	 oloiYB65LBojBojUg/VFIZHNn+aSvPW6oYtRMgmio8B62LfeRUxxUppBefSCvF4fvW
-	 ddfOY4cCdebrIQ0Pt8u7qxSrsGQyAEuqXwpSlsAEkBSiB5vLNmvJy0my8YlHDOBa7/
-	 cwx7f0vzWHGrAFttAg+4m5m2QB1zHRQCplvKJiILJvrAd1HEfkBf4D8fBMl3R+9M7/
-	 U4A+uXIcR++NqTNUypl6l59ib1YQeUoGkbmkxhUmQO57s2fFV04eADR2MYxCd4aF/y
-	 eZh0K3QnrXqaQ==
-Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
-	id 398B57F949; Fri, 15 Nov 2024 10:45:16 +0100 (CET)
-Date: Fri, 15 Nov 2024 10:45:16 +0100
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Greg KH <gregkh@linuxfoundation.org>,
-	Masahiro Yamada <masahiroy@kernel.org>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Parth Pancholi <parth105105@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Parth Pancholi <parth.pancholi@toradex.com>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v2] kbuild: switch from lz4c to lz4 for compression
-Message-ID: <ZzcYLAFqTSlFm2uF@gaggiata.pivistrello.it>
-References: <20241114145645.563356-1-parth105105@gmail.com>
- <2024111442-yeast-flail-fcea@gregkh>
- <20241115083940.GA3971@francesco-nb>
- <2024111541-antiquity-footpath-e221@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=R70yILrMY+told6jmoioLV0VhZNpwLI3owAPJq97I9W56e3lc54PUs/8FCjp5PggSQPvFUMpvkK0V/IWAhW9+MtTy2CpHdch4KadXvKVOzJ5dUo8TG5lil2oqIh2DvydiAvDV8oCRFfZgbBUEw0Y9SXXU3XtYhpnECA0KDQ0J+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GboblNsl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731664147;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e5/Gv1K21sheGKIrlLPLsT5HVFSu0SIwMyx7mgZQnuI=;
+	b=GboblNslEO9AJtSq4jN//JCSaiCO6lHIOmgGANpzVQz13xa+fL8NuTeEzFPjQ5xeakAmEi
+	vfLm7yhCgQ9mTznl+JOFc19QpjGLwsG0XUpY8ozW1ZVlupk1F0Y2pMLqYTpWFNWw06JaCl
+	ppiqsS6vL5JkKNQGVuLIU+ANGi0FA9E=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-348-YdO3XG1bNzqs4Bb4j1wJcg-1; Fri,
+ 15 Nov 2024 04:49:02 -0500
+X-MC-Unique: YdO3XG1bNzqs4Bb4j1wJcg-1
+X-Mimecast-MFC-AGG-ID: YdO3XG1bNzqs4Bb4j1wJcg
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DE9CB1955E92;
+	Fri, 15 Nov 2024 09:48:59 +0000 (UTC)
+Received: from localhost (unknown [10.72.113.10])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3935D3003B71;
+	Fri, 15 Nov 2024 09:48:58 +0000 (UTC)
+Date: Fri, 15 Nov 2024 17:48:53 +0800
+From: Baoquan He <bhe@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Eric Farman <farman@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v1 00/11] fs/proc/vmcore: kdump support for virtio-mem on
+ s390
+Message-ID: <ZzcZBU0USDP/CHcv@MiWiFi-R3L-srv>
+References: <20241025151134.1275575-1-david@redhat.com>
+ <ZzcKY8hap3OMqTjC@MiWiFi-R3L-srv>
+ <d7353fde-f560-4925-8ef8-0fe10654e87f@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,71 +90,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2024111541-antiquity-footpath-e221@gregkh>
+In-Reply-To: <d7353fde-f560-4925-8ef8-0fe10654e87f@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Fri, Nov 15, 2024 at 10:22:13AM +0100, Greg KH wrote:
-> On Fri, Nov 15, 2024 at 09:39:40AM +0100, Francesco Dolcini wrote:
-> > On Thu, Nov 14, 2024 at 05:02:01PM +0100, Greg KH wrote:
-> > > On Thu, Nov 14, 2024 at 03:56:44PM +0100, Parth Pancholi wrote:
-> > > > From: Parth Pancholi <parth.pancholi@toradex.com>
-> > > > 
-> > > > Replace lz4c with lz4 for kernel image compression.
-> > > > Although lz4 and lz4c are functionally similar, lz4c has been deprecated
-> > > > upstream since 2018. Since as early as Ubuntu 16.04 and Fedora 25, lz4
-> > > > and lz4c have been packaged together, making it safe to update the
-> > > > requirement from lz4c to lz4.
-> > > > 
-> > > > Consequently, some distributions and build systems, such as OpenEmbedded,
-> > > > have fully transitioned to using lz4. OpenEmbedded core adopted this
-> > > > change in commit fe167e082cbd ("bitbake.conf: require lz4 instead of
-> > > > lz4c"), causing compatibility issues when building the mainline kernel
-> > > > in the latest OpenEmbedded environment, as seen in the errors below.
-> > > > 
-> > > > This change also updates the LZ4 compression commands to make it backward
-> > > > compatible by replacing stdin and stdout with the '-' option, due to some
-> > > > unclear reason, the stdout keyword does not work for lz4 and '-' works for
-> > > > both. In addition, this modifies the legacy '-c1' with '-9' which is also
-> > > > compatible with both. This fixes the mainline kernel build failures with
-> > > > the latest master OpenEmbedded builds associated with the mentioned
-> > > > compatibility issues.
-> > > > 
-> > > > LZ4     arch/arm/boot/compressed/piggy_data
-> > > > /bin/sh: 1: lz4c: not found
-> > > > ...
-> > > > ...
-> > > > ERROR: oe_runmake failed
-> > > > 
-> > > > Cc: stable@vger.kernel.org
+On 11/15/24 at 09:55am, David Hildenbrand wrote:
+> On 15.11.24 09:46, Baoquan He wrote:
+> > On 10/25/24 at 05:11pm, David Hildenbrand wrote:
+> > > This is based on "[PATCH v3 0/7] virtio-mem: s390 support" [1], which adds
+> > > virtio-mem support on s390.
 > > > 
-> > > What bug does this resolve that it needs to be backported to stable
-> > > kernels?
-> > 
-> > This is not solving any existing actual bug, and therefore there is no
-> > fixes tag.
-> > 
-> > The issue here is that the kernel build system is using lz4c, that is
-> > deprecated since 2018, and now distributions are actively moving away from it. 
-> > 
-> > openSUSE Tumbleweed and OE already removed it, so you would not be able
-> > to compile a stable kernel on such distribution when using lz4 unless we
-> > backport such a patch.
-> > 
-> > Everything should be properly documented in the commit message already.
-> > 
-> > My understanding is that something like that would be a reason for
-> > backporting to stable, if my understanding is not correct we'll remove
-> > the cc:stable and send a v3.
+> > > The only "different than everything else" thing about virtio-mem on s390
+> > > is kdump: The crash (2nd) kernel allocates+prepares the elfcore hdr
+> > > during fs_init()->vmcore_init()->elfcorehdr_alloc(). Consequently, the
+> > > crash kernel must detect memory ranges of the crashed/panicked kernel to
+> > > include via PT_LOAD in the vmcore.
+> > > 
+> > > On other architectures, all RAM regions (boot + hotplugged) can easily be
+> > > observed on the old (to crash) kernel (e.g., using /proc/iomem) to create
+> > > the elfcore hdr.
+> > > 
+> > > On s390, information about "ordinary" memory (heh, "storage") can be
+> > > obtained by querying the hypervisor/ultravisor via SCLP/diag260, and
+> > > that information is stored early during boot in the "physmem" memblock
+> > > data structure.
+> > > 
+> > > But virtio-mem memory is always detected by as device driver, which is
+> > > usually build as a module. So in the crash kernel, this memory can only be
+> >                                         ~~~~~~~~~~~
+> >                                         Is it 1st kernel or 2nd kernel?
+> > Usually we call the 1st kernel as panicked kernel, crashed kernel, the
+> > 2nd kernel as kdump kernel.
 > 
-> Please read:
->     https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-> for what meets stable kernel requirements.  I don't think that this
-> patch is that.
+> It should have been called "kdump (2nd) kernel" here indeed.
+> 
+> > > properly detected once the virtio-mem driver started up.
+> > > 
+> > > The virtio-mem driver already supports the "kdump mode", where it won't
+> > > hotplug any memory but instead queries the device to implement the
+> > > pfn_is_ram() callback, to avoid reading unplugged memory holes when reading
+> > > the vmcore.
+> > > 
+> > > With this series, if the virtio-mem driver is included in the kdump
+> > > initrd -- which dracut already takes care of under Fedora/RHEL -- it will
+> > > now detect the device RAM ranges on s390 once it probes the devices, to add
+> > > them to the vmcore using the same callback mechanism we already have for
+> > > pfn_is_ram().
+> > 
+> > Do you mean on s390 virtio-mem memory region will be detected and added
+> > to vmcore in kdump kernel when virtio-mem driver is initialized? Not
+> > sure if I understand it correctly.
+> 
+> Yes exactly. In the kdump kernel, the driver gets probed and registers the
+> vmcore callbacks. From there, we detect and add the device regions.
 
-Greg, ack.
-
-Masahiro, can you please let me know if we should send a v3 with the stable
-tag removed or you can remove it yourself when applying?
-
-Francesco
+I see now, thanks for your confirmation.
 
 
