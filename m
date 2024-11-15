@@ -1,263 +1,109 @@
-Return-Path: <linux-kernel+bounces-410465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAFED9CDBF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:56:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 053AC9CDBFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:59:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C901280C50
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:56:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BAEF1F223E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714F719CC0F;
-	Fri, 15 Nov 2024 09:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A524192D8B;
+	Fri, 15 Nov 2024 09:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="R3Oo6Gwq"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KB5fmgGO"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2C7192D61
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA8018C332
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731664554; cv=none; b=pHcSosEvYGJjheHuUqSrYCTWv8KgrNB6WGZsPkVWPMR2iZRNBTkSncI0B0iTI8hPh3IIePuko95lt0r5c8uDsn2kiw0DXcUyg3WkMoub4mawjc7CyZWoR8gURyJF2CYJajNu3ACVuo/EHeiKMgCmJ85McNsH0GVgVeZL/fH460A=
+	t=1731664739; cv=none; b=rkwpl9ysROU3cCShcyb3x8uNVcOzjStxAt+Toyy1czxc0mZlxkGb8pWXqPChTcxi1y8ZfvayQAFdB4yU5Bv8gS7w6ZE8zJjzfb545OpcYQLFBuXDJOzIG8iFazO9pmoxOXDj86UJXPphGFpudG+96Rw9ELZloPPu8jj4SIGUAnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731664554; c=relaxed/simple;
-	bh=yV9t0i2OAbdtyzVgIEVQZ5/RABRgy/1LtmNo/oxFyUY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m9Lc5yMMiPmrUE2Jr0xY1neP5yu8kVWQuGPngZJejAdk5gEdyD8Fquy/V/+vLo+ulv7k3iO5pnmKhYwJOenc8o3OggKSgNqljEQpcDGC7vDAJpYvXwj1EFHzgcx7GkphR4/SWZS66lc58m6d5qL8oQ6pNbID/yI9WvyuEnvLiEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=R3Oo6Gwq; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa2099efdc3so314900666b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 01:55:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1731664550; x=1732269350; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=LDM6dMgcaC3v448VH63QMEiug+aWbjvsWjmvgNSRweA=;
-        b=R3Oo6Gwqtx4pMr+TmTFQtPPQYPooYWDWaXsvGo2X54ysmfdk/KZ/fgoKspBfQ4L39e
-         E2xd0sNwS9Q/wk0nfwFq6LD2yBu0sG3KIkwJvG2PpvIHOeobxpEw1nRENVP0DEZFqnVF
-         8G5fPAjf5PUMG/spzhifqF2+NsxuafOqmrv+DCY94ibVaB9VhY2iOffh7CyT/4sn3zkp
-         PfuibpU+htDq6xEMbcxlFlARlz7Kx2PeaiTwpqK5smis8nfS0lIjpl0Knie5Dc4mQVrm
-         Y3/kbaO1gU76YEBnV0gXwQv0NxBaLSZ6WgW+IUiY1dGVF45055ksOD3mFI1tZGoTEbrq
-         QcMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731664550; x=1732269350;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LDM6dMgcaC3v448VH63QMEiug+aWbjvsWjmvgNSRweA=;
-        b=vwfiK3YIETaEKbqZ96u31fX0T7gh76f2za4RKuyT75vQ1fqHG/8XWD8CqH6kQ7EbSW
-         Jz8r3XE5RF7gci6R2qp48xQjk5x+VzNtFCMe6E/BdngqdPeWWejCRJqumQj+w1TyFPYQ
-         R2hBog4z5AEvGa8UuO9F5RMhk4Oi4awGQHyeWv1XtNlyNx9e2Yx/8Xvq9bUBnKU1vspg
-         nUVnZw2WNRyoBNFACUocNqLhYNiXI0Yiwd84Fw2XR7clfaEf+9IQi1p9cmozdHGZw8DS
-         Os1gPvw0r8O98e1axAy1FTaCvYvm5fylaLcD02vCoF00YYLRiX0c4eKiZMGRXGvMCOK3
-         0a4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX2dmIwYITSJGkD5TmS1aM4+O8qprU147t94kdxWPEBrkNJqn9uTi0L2U5AAUP863UPz14O6K/Txc4Xh9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU+YBpQoygeWMo0p5vSI2+I8AsAhTGRCNWpKElqqSNXahlzGTX
-	cRTiZKxDoYnsQoOjrpFxbZsqoV8AHhKq+He3e+nLoF8f/KSO4fyceZjFdY8VnJo=
-X-Google-Smtp-Source: AGHT+IHZzR8bnr9F+1dU3YpKAnm3Vdx9mXd1Kt96KJN2YXVxQxnkavsm2Eb1FazEBQ/yL7xWma74lQ==
-X-Received: by 2002:a17:906:6a0f:b0:a9a:597:8cc9 with SMTP id a640c23a62f3a-aa4818a9875mr209386966b.12.1731664550379;
-        Fri, 15 Nov 2024 01:55:50 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:59f4:10be:886a:27eb? ([2001:67c:2fbc:1:59f4:10be:886a:27eb])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20e042ed1sm161437066b.134.2024.11.15.01.55.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 01:55:48 -0800 (PST)
-Message-ID: <466ec41a-24b7-43a9-b75f-94556785800a@openvpn.net>
-Date: Fri, 15 Nov 2024 10:56:13 +0100
+	s=arc-20240116; t=1731664739; c=relaxed/simple;
+	bh=G73iQpDiWeQ7xhsGEavDA1r+16LDSvVblsG/yj4oiPk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H3ulhmHX1ua2dUmhZ/VwKdHvKUf7B5isBlTI2W9aDI5liVmkedWrUAhSY3yLAWqBiz3F8FlGsFMINe5H6sSdg5cNyVnbcj9k1cbVrVoobJ7fDtvKcMRMpSZyqSYJtqer/jlBTaiPZETKPlcVf+04yAaXyhOHIPxEXd/MD0o3GKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KB5fmgGO; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=8NkXEpID0JPQnOTUEaJmZRqqzsJTZpzdAGLfJBOOSuA=; b=KB5fmgGOilnZcUfAhTjxBvN8th
+	0G4o7Nbm7W9espH1dQyxxUv+9fEqj/wUy9o+hOuGGAm6psAPI0g+HQaOxRJQLWZnpqwT0wMHSVELO
+	1aL6Jy8MNaolXeL3vr4NDk9NXdbH5idfF+St7YHunsupQX0XotXKTz/bTv4/mWvxtiI6iLHt6z61j
+	IJb/oCBFHqtAT37jGHt0zXSaH5DcMsC5vpzU9UCwFAJWUApPYatDhOEe9uZGy4gZSi+OOf4W22bw4
+	k4Vqg3BH4d6m+NHebu5f68QbV3PNfhcCn1bv+f7iVUc/2i3f57YgKyAjOZrwNjnpWPV9i6Pk+jgWU
+	XoFHMzFQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tBt6H-00000001D5V-0eVt;
+	Fri, 15 Nov 2024 09:58:48 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D911B30066A; Fri, 15 Nov 2024 10:58:47 +0100 (CET)
+Date: Fri, 15 Nov 2024 10:58:47 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Phil Auld <pauld@redhat.com>
+Cc: Jon Kohler <jon@nutanix.com>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] sched: hoist ASSERT_EXCLUSIVE_WRITER(p->on_rq) above
+ WRITE_ONCE
+Message-ID: <20241115095847.GV22801@noisy.programming.kicks-ass.net>
+References: <20241114165352.1824956-1-jon@nutanix.com>
+ <20241114185755.GG471026@pauld.westford.csb>
+ <0C4B7BAD-04EA-4F60-B6D2-A7B2C14E52B7@nutanix.com>
+ <20241114192056.GI471026@pauld.westford.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v11 02/23] net: introduce OpenVPN Data Channel
- Offload (ovpn)
-To: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, sd@queasysnail.net,
- Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, steffen.klassert@secunet.com,
- antony.antony@secunet.com
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-2-de4698c73a25@openvpn.net>
- <f35c2ec2-ef00-442d-94cd-fa695268c4f2@gmail.com>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <f35c2ec2-ef00-442d-94cd-fa695268c4f2@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241114192056.GI471026@pauld.westford.csb>
 
-On 06/11/2024 01:31, Sergey Ryazanov wrote:
-[...]
+On Thu, Nov 14, 2024 at 02:20:56PM -0500, Phil Auld wrote:
 
->> Both UDP and TCP sockets ae supported.
+> I don't know. I don't think it matters much since the assert is really
+> independent of the actual write. Like I said it makes sense to have it
+> first to me but others may see it as just moving code around for no strong
+> reason.  Peter may or may not decide to pick this one up. Other "mis-ordered"
+> uses are in code maintained by different folks.
 > 
-> s/ae/are/
+> You can see if anyone else weighs in...
 
-ACK
+So I'm not entirely about this patch... :-)
 
-> 
->> As explained above, in case of P2MP mode, OpenVPN will use the main 
->> system
->> routing table to decide which packet goes to which peer. This implies
->> that no routing table was re-implemented in the `ovpn` kernel module.
->>
->> This kernel module can be enabled by selecting the CONFIG_OVPN entry
->> in the networking drivers section.
-> 
-> Most of the above text has no relation to the patch itself. Should it be 
-> moved to the cover letter?
-> 
+Per commit b55945c500c5 ("sched: Fix pick_next_task_fair() vs try_to_wake_up() race")
+we can see that this placement is not equivalent.
 
-I think this needs to be in the git history.
-We are introducing a new kernel module and this is the presentation, so 
-I expect this to live in git.
+Placing it before the store means that nobody else will store to it
+until you've done your store.
 
-This was the original text when ovpn was a 1/1 patch.
-I can better clarify what this patch is doing and what comes in 
-following patches, if that can help.
+Placing it after means that nobody else will attempt the store,
+irrespective of the store you just did.
 
-[...]
+That is, the ASSERT after the store is a stronger assert.
 
->> --- a/drivers/net/Kconfig
->> +++ b/drivers/net/Kconfig
->> @@ -115,6 +115,19 @@ config WIREGUARD_DEBUG
->>         Say N here unless you know what you're doing.
->> +config OVPN
->> +    tristate "OpenVPN data channel offload"
->> +    depends on NET && INET
->> +    select NET_UDP_TUNNEL
->> +    select DST_CACHE
->> +    select CRYPTO
->> +    select CRYPTO_AES
->> +    select CRYPTO_GCM
->> +    select CRYPTO_CHACHA20POLY1305
-> 
-> nit: Options from NET_UDP_TUNNEL to CRYPTO_CHACHA20POLY1305 are not 
-> required for changes introduced in this patch. Should they be moved to 
-> corresponding patches?
+In case of activate_task(), we mark the task as on_rq, and this state is
+protected by rq->lock (which we hold), so there must not be any stores
+for as long as we hold that lock. So after is the right place.
 
-Originally I wanted to introduce all deps with patch 1, but then I added 
-STREAM_PARSER to the TCP patch.
+In case of deactivate_task(), this is a hand-off, but the handoff
+doesn't happen until after dequeue_task() and set_task_cpu(). So at this
+point, again, nobody should be modifying it.
 
-I will do the same with the others and add deps only when needed.
-
-[...]
-
->> +/* Driver info */
->> +#define DRV_DESCRIPTION    "OpenVPN data channel offload (ovpn)"
->> +#define DRV_COPYRIGHT    "(C) 2020-2024 OpenVPN, Inc."
-> 
-> nit: these strings are used only once for MODULE_{DESCRIPTION,AUTHOR} 
-> below. Can we directly use strings to avoid levels of indirection?
-
-I liked to have these defines at the top as if they were some form of 
-greeting :) But I can move them down and drop the constants.
-
-> 
->> +
->> +/**
->> + * ovpn_dev_is_valid - check if the netdevice is of type 'ovpn'
->> + * @dev: the interface to check
->> + *
->> + * Return: whether the netdevice is of type 'ovpn'
->> + */
->> +bool ovpn_dev_is_valid(const struct net_device *dev)
->> +{
->> +    return dev->netdev_ops->ndo_start_xmit == ovpn_net_xmit;
-> 
-> You can directly check for the ops matching saving one dereferencing 
-> operation:
-> 
-> return dev->netdev_ops == &ovpn_netdev_ops;
-> 
-
-I see all net drivers do what you are suggesting.
-Will do the same, thanks
-
-> You can define an empty ovpn_netdev_ops struct for this purpose in this 
-> patch and fill ops later with next patches. This way you can even move 
-> the ovpn_net_xmit() definition to the interface creation/destruction patch.
-
-It's a device driver, so having a placeholder xmit() in the first patch 
-doesn't sound that bad :-)
-And xmit is more about packet flow rather than creation/destruction.
-
-I prefer to keep the stub here.
-
-[...]
-
->> --- a/include/uapi/linux/udp.h
->> +++ b/include/uapi/linux/udp.h
->> @@ -43,5 +43,6 @@ struct udphdr {
->>   #define UDP_ENCAP_GTP1U        5 /* 3GPP TS 29.060 */
->>   #define UDP_ENCAP_RXRPC        6
->>   #define TCP_ENCAP_ESPINTCP    7 /* Yikes, this is really xfrm encap 
->> types. */
->> +#define UDP_ENCAP_OVPNINUDP    8 /* OpenVPN traffic */
-> 
-> nit: this specific change does not belong to this specific patch.
-
-Right. Like for the Kconfig, I wanted to keep "general" changes and 
-things that touch the rest of the kernel in this patch.
-
-But since we are moving other things to related patches, I will also 
-move this to the UDP patch.
-
-Thanks!
-
-Regards,
-
-
--- 
-Antonio Quartulli
-OpenVPN Inc.
 
 
