@@ -1,118 +1,132 @@
-Return-Path: <linux-kernel+bounces-411345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44CF49CF68A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:03:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C66129CF687
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:03:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21119B28E5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:02:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AC1BB2B9C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A76171E1C0D;
-	Fri, 15 Nov 2024 21:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1C118DF7C;
+	Fri, 15 Nov 2024 21:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VgDUrqx3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d+eh6d5J"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E723187876;
-	Fri, 15 Nov 2024 21:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CA0187876
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 21:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731704540; cv=none; b=W/F50oxGYMQV5xvfmgINKyI8LbvhyH+hBlO3cUQTiN6rjkdIl81iPeeMw5A2Rwr+UrfWoVRhr6sPBxd0wAq3nHC7PsEGiH+b5hcuRaCing1lfLUQ6VioGq67bwR/gIrD8hIkXOE0BZ9ykf3VyOQaleiDCZ36gC0pZSNE/IYZHa4=
+	t=1731704555; cv=none; b=sJxaEJqi0tVwvZoxdB9i5yBt539ck2DyT59hx6yod2bNoM7Zv1Xu2SnVG/YebiBK+TXqL5DRSB6ey8baVHTyOpNbwhjcFNas01Z6KmLmyIMiD9maAtWuy1hgrzWKpK3mt3QH5uYo4fHg1cq7CtxGECzwwkGRZrioQtqWJKX5RuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731704540; c=relaxed/simple;
-	bh=Ew1PhCixV+cuNmjEbrNSMuBFjg84CIjjuovjx8h8bX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=OZ2cLYBCxN8icRK+OULdRl9LSr3kZ18IvXnuOYdKClDsEHtDOsoYVs6MSXWuxBMlHfVSeWhtVYrc5GwEEitjAqjLIWdOC4gQ/Gc8B0z6CtYh26yBBTUKzfQnScbSMj3iRFP7EcTMJzfbj8gxNA+Xk86T/eWPcYvtpfyDTdjp7/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VgDUrqx3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67E5FC4CECF;
-	Fri, 15 Nov 2024 21:02:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731704539;
-	bh=Ew1PhCixV+cuNmjEbrNSMuBFjg84CIjjuovjx8h8bX0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=VgDUrqx3HNiQFjxrmU/rFSuneJja4Eey3brpwM0Ga2uhTz162OUOQdEUkZqlUw+zc
-	 2uucFFvvu9eXK51/YjaeoPXbiCWsEMbqA4l227f6Ggr5S2ZCcXwkwsunCfU7qXBtrg
-	 phXc8LgCgg1yHEDghqf+5B08I52etkks3oobTuEglcXWuyssDrorO+vYCC4+0Hd0+4
-	 poGqxUMARsxd8PkExJoJSwzOG93cIScCpwGfEFYCETeQ2mZ8gfv/MMnAHutTubiXfx
-	 eWOjHhg/ANs4AXWUYUa4Q2jlLa4zAgRM0H6RzkRVjEIFM6rSdjTLYiofMpBZUVki0m
-	 96ChGHPJW1B9Q==
-Date: Fri, 15 Nov 2024 15:02:17 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: Stefan Wahren <wahrenst@gmx.net>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <bhelgaas@google.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] PCI/bwctrl: Remove IRQF_ONESHOT and handle hardirqs
- instead
-Message-ID: <20241115210217.GA2057245@bhelgaas>
+	s=arc-20240116; t=1731704555; c=relaxed/simple;
+	bh=hNHMQs9ow68HPWHLd2pAa3VU9M+ilyIItmmCsn6c/XE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Stxeibr3gKMbsXxiSYwKAiXZ2nyjF/+RL4FWibWifXbtFVhdKEeRXdoT3ph2B3G1A0uckdDt1oJCLJXLPQ0EjRYT8MMPegd65EN7LL4c9mexQsCZH278oZkfjFhj8+x3HqUjPOp5YcOV0KZoAK83kywd5Qb0i/PXhC3yGzw5syo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d+eh6d5J; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7ede82dbb63so41708a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 13:02:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731704553; x=1732309353; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=y3nmcDybv1iDK+XRgIQNqXoAP01L04JMwHupW9XQYb0=;
+        b=d+eh6d5JJQoa4F5ew7kx2gN+/IFPV/IntlapWtzfZswFsZSyGFTvoAHxPj3gBPdRsa
+         TRS/cgHlvFZ3kCD8u79zSKdSRDur8KoGlILLayWUwhIKC4Vz6md0uqtceKDJ0lILIvV4
+         kLTtpIYmoqdZMiQz+nBECAI5Lh2uA17C6Y1gNSxkQ+onGIXB7ohngPEVTqnyEPJ3/ItQ
+         rwIHvQz7+hi6gmbmN3qWbmGQlviAMYHEkGdwjP7IMqfntYrGjuKxSQKUK2tk6Jew6V7v
+         GuVgtgQOIIapvmFhHX1m66qOSN1PQu9QmWQM9G+8SiJaOVdpfh+vcBGode+NohKlFdha
+         Waog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731704553; x=1732309353;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y3nmcDybv1iDK+XRgIQNqXoAP01L04JMwHupW9XQYb0=;
+        b=EJd8txyf5EQVKa6xtuPrZzfh0NI3p9N7o9PsIwBlbCMM7lAJoG+1uB2RMb+ZSd3zE7
+         4uEtQ53ZXLqLGOkPZsflEvQ26zWnD1mb1myZ70hUWdUxvFPz7aCj3TqFk7jF6x2Mf8XB
+         KkpQzMALGN4WnNQCgF7ajfrs2oQTaJjU78q75TLQWqRyuylAnAm3Er2/0BoDia25Ek1X
+         eirUa184HwRvKnJLhAuEEcTW1vhklbG9IDBXQNKTYdZ/oKKekodT2EN8ktouuKQifhOU
+         +th+mh+RCT9QrxqVIWKL4SJEzrAqAgjRqCG9YPICKiVGKdyx3IrfDWutwbCv6LPlUfgM
+         Wj9w==
+X-Forwarded-Encrypted: i=1; AJvYcCW11OTvn40iQRZtTXP6Deh5iXTnaGKp4Zi/aYHxGEnHzcWrVoYgsui5RLoPsyN4JTAYFZs24Q7HacT7l0w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSRRl3aOxn2kgOrKLctrRyclmTgx6spGCkec03MbH8hIGppEgB
+	s/bmlmRF8RzpqRw+y2vgKCdzkaOM8yn4bhlNW8bW3MWFV5RVE3BL
+X-Google-Smtp-Source: AGHT+IGJqVGCRTuFW1P0i+q46RJnr42tgVRfolV2Vlrc6rBapb4P15XQdTD1CKpZh3ms6e6qK4lRmQ==
+X-Received: by 2002:a05:6a20:2444:b0:1db:e536:158e with SMTP id adf61e73a8af0-1dc90b47e50mr5884745637.22.1731704552903;
+        Fri, 15 Nov 2024 13:02:32 -0800 (PST)
+Received: from desktop ([38.141.211.103])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1c176b0sm1757295a12.2.2024.11.15.13.02.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 13:02:32 -0800 (PST)
+Date: Fri, 15 Nov 2024 13:02:28 -0800
+From: "Ragavendra B.N." <ragavendra.bn@gmail.com>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Ingo Molnar <mingo@kernel.org>, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+	ardb@kernel.org, ashish.kalra@amd.com, tzimmermann@suse.de,
+	bhelgaas@google.com, x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arch:x86:coco:sev: Initialize ctxt variable
+Message-ID: <Zze25GF2nJbM70ZF@desktop>
+References: <20241115003505.9492-2-ragavendra.bn@gmail.com>
+ <Zzcp75p3KTFRfW5O@gmail.com>
+ <ZzeU_OXCAzMSOU1G@desktop>
+ <b243110f-d233-0b62-864e-2b6181663d29@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241115165717.15233-1-ilpo.jarvinen@linux.intel.com>
+In-Reply-To: <b243110f-d233-0b62-864e-2b6181663d29@amd.com>
 
-On Fri, Nov 15, 2024 at 06:57:17PM +0200, Ilpo Järvinen wrote:
-> bwctrl cannot use IRQF_ONESHOT because it shares interrupt with other
-> service drivers that are not using IRQF_ONESHOT nor compatible with it.
+On Fri, Nov 15, 2024 at 01:20:15PM -0600, Tom Lendacky wrote:
+> On 11/15/24 12:37, Ragavendra B.N. wrote:
+> > On Fri, Nov 15, 2024 at 12:01:03PM +0100, Ingo Molnar wrote:
+> >>
+> >> * Ragavendra <ragavendra.bn@gmail.com> wrote:
+> >>
+> >>> Updating the ctxt value to NULL in the svsm_perform_ghcb_protocol as
+> >>> it was not initialized.
+> >>>
+> >>> Fixes: 2e1b3cc9d7f7 (grafted) Merge tag 'arm-fixes-6.12-2' of git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc
+> >>
+> >> This 'Fixes' tag looks bogus.
+> >>
+> >> Thanks,
+> >>
+> >> 	Ingo
+> > Please feel free to suggest the valid tag as the file was renamed and I am not able to fetch the correct commit id.
+> > git log --oneline arch/x86/coco/sev/shared.c
+> > f50cd034d24d (HEAD -> 1594023) arch:x86:coco:sev: Initialize ctxt variable
+> > 2e1b3cc9d7f7 (grafted) Merge tag 'arm-fixes-6.12-2' of git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc
 > 
-> Remove IRQF_ONESHOT from bwctrl and convert the irq thread to hardirq
-> handler. Rename the handler to pcie_bwnotif_irq() to indicate its new
-> purpose.
+> A quick git annotate arch/x86/coco/sev/shared.c shows that function was
+> created with:
 > 
-> The IRQ handler is simple enough to not require not require other
-> changes.
+> 34ff65901735 ("x86/sev: Use kernel provided SVSM Calling Areas")
 > 
-> Fixes: 058a4cb11620 ("PCI/bwctrl: Re-add BW notification portdrv as PCIe BW controller")
-> Reported-by: Stefan Wahren <wahrenst@gmx.net>
-> Link: https://lore.kernel.org/linux-pci/dcd660fd-a265-4f47-8696-776a85e097a0@gmx.net/
-> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> Thanks,
+> Tom
+> 
+> > 
+> > --
+> > Thanks,
+> > Ragavendra
+Thanks a lot Tom.
 
-Squashed into 058a4cb11620, thanks!
+I figured why I ran into it in the first place. When I cloned, I cloned with --depth 1 as I had less free space in that partition. The annotate flag certainly helped to retrieve the exact commit id.
 
-Also added your tested-by, Stefan, thanks very much for doing that!
-
-> ---
->  drivers/pci/pcie/bwctrl.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/pci/pcie/bwctrl.c b/drivers/pci/pcie/bwctrl.c
-> index ff5d12e01f9c..a6c65bbe3735 100644
-> --- a/drivers/pci/pcie/bwctrl.c
-> +++ b/drivers/pci/pcie/bwctrl.c
-> @@ -230,7 +230,7 @@ static void pcie_bwnotif_disable(struct pci_dev *port)
->  				   PCI_EXP_LNKCTL_LBMIE | PCI_EXP_LNKCTL_LABIE);
->  }
->  
-> -static irqreturn_t pcie_bwnotif_irq_thread(int irq, void *context)
-> +static irqreturn_t pcie_bwnotif_irq(int irq, void *context)
->  {
->  	struct pcie_device *srv = context;
->  	struct pcie_bwctrl_data *data = srv->port->link_bwctrl;
-> @@ -302,10 +302,8 @@ static int pcie_bwnotif_probe(struct pcie_device *srv)
->  	if (ret)
->  		return ret;
->  
-> -	ret = devm_request_threaded_irq(&srv->device, srv->irq, NULL,
-> -					pcie_bwnotif_irq_thread,
-> -					IRQF_SHARED | IRQF_ONESHOT,
-> -					"PCIe bwctrl", srv);
-> +	ret = devm_request_irq(&srv->device, srv->irq, pcie_bwnotif_irq,
-> +			       IRQF_SHARED, "PCIe bwctrl", srv);
->  	if (ret)
->  		return ret;
->  
-> -- 
-> 2.39.5
-> 
+--
+Regards,
+Ragavendra N
+,
 
