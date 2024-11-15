@@ -1,86 +1,181 @@
-Return-Path: <linux-kernel+bounces-410147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 306639CD51D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 02:45:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CA019CD523
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 02:46:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A36C283098
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 01:45:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83471283F18
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 01:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F88130A54;
-	Fri, 15 Nov 2024 01:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B4B13C918;
+	Fri, 15 Nov 2024 01:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YXkZUGLF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U1HXVmgW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46C53307B
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 01:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414A33211;
+	Fri, 15 Nov 2024 01:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731635143; cv=none; b=WisbgJzPIkK7wgjyvQRz1nUajxi4oGHuwY3kCZTeOO/Dk7QnqMx4CXfetcULQikbM9mLfX76NaHg4rHURE0nnlaqEy9srg6dnq3jPzYoFeOsFD0CliytrSiDgG9WjAkOH8iUDXX5hapoNd9/UVNIr3p2vZ/Jdy0JRTWjGw4vNfo=
+	t=1731635176; cv=none; b=WxBzT2z82P2aMlY0Q0Rm7/dNBp9spzknLZFAL4D8hNTL5cQ7C330qahOSTE1sc4C5UzJ59/ZnyJ7SHAs9F3dOyvl5lGlEOCaCD0kQzB5oZVJAzuQ6JBzIJ5eQ+dd5pyki+fwUKJf1nxvPmrlFOC0Jk1dUBcqhe/P9+1A/f/UE5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731635143; c=relaxed/simple;
-	bh=t0raWHDJz1Uphre6I/cYKzrzoueC9YFL2e8Dr84DiKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EMvRJJ6LMLRDmG6cC20vbuBV97Weeh6tfj4+IC5wGTwzSsxfI91Y/+pQIAUry0Zjc/8XdoKif7cIPUXjUnPM9L6U1qsKK1TfNGZklzDhq6fqX5ZCIZTz4OJhDNZ+6OCBrUEHO4T/moTfYN+chpK3lh3G7J+8Uyt45W98uNhluic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YXkZUGLF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34E26C4CECD;
-	Fri, 15 Nov 2024 01:45:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731635143;
-	bh=t0raWHDJz1Uphre6I/cYKzrzoueC9YFL2e8Dr84DiKk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=YXkZUGLF3pNNYCyDYsPijekWAIO9Wzk67CC3cH7mn2db9e1heVCZyZoELWps2lkKh
-	 IM0DieLqi1S3S5TiG/j/VK6SbDrmQKkFw8A8bHplUqc8vWgyY5qyX5slVKatdXK/CS
-	 PHJb/X3nlr2LdYzCBqt7iFBqQjlLNnwxu5OgbfzCxadXivPFcWXbYNRxf1MyaJyGQJ
-	 xNWb/sSnBDf82B8Ud+omcLY0GhuyvguYlbrQV+TSCUOr1Njvv4DsGqPGQkewva+KsI
-	 8R9l9KaXUoWY773fMQLECWmiPbGb3t/U0xIP5vHSQQelbiNq/oqkduLimhrKIz0jtx
-	 nrKpTsJmTfWxw==
-Date: Thu, 14 Nov 2024 15:45:42 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>
-Subject: [GIT PULL] sched_ext: One more fix for v6.12-rc7
-Message-ID: <ZzanxsRGoDnxxa2x@slm.duckdns.org>
+	s=arc-20240116; t=1731635176; c=relaxed/simple;
+	bh=m5vc2Wizx2rJbKoJg3DIZCEwDfTT1ErdANobu7oKqtg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rZiCsE4wGVtlDXnie2Zoo1a6JTKA8r46kHH0bexOt0h7ReP6aQa/Chx0WXRqJWJA6VDHtoeOvzWlG+e1CNurcL+P+9vOx/ZtUUvO3PXZISQKHo28Dc5uAS+KA+TuvxXdxIuKGct3QOplC4odNrltCEZB2PQYJGnLcAUvEgRj/Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U1HXVmgW; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731635175; x=1763171175;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=m5vc2Wizx2rJbKoJg3DIZCEwDfTT1ErdANobu7oKqtg=;
+  b=U1HXVmgWvkxkK2UNWVgFDd1wQfG8Imsl1E/dML+bE3G0hOPOWLz0Za9J
+   CTrLDj4mgf72ijAx/cSjTkr/McmkmQuyFgb7FbbnSfYxj2kwAZ+tShItz
+   CxllunPogJLyZoxlV5ozkV3qeeo63z7Cuv16W/6wHGQS3SLxQmOgwFMew
+   Gny4YDKmKjisj84VBdQeWm7nRONv9GP8QuileNCQSGXtIWIdS7a/ninPj
+   CCy5pnnBAEq0bI6yW2GtrAk3W9YNPfUSMocBLMlYcAE3eSzel/EchbeD4
+   ORtHjEbZjuuNWTdAImgrPmDSMc06jK7U4Dq9Nlks8x7X6CQZXw6AxSvsT
+   Q==;
+X-CSE-ConnectionGUID: kApCyZCkT5+0zs+74UEDLw==
+X-CSE-MsgGUID: ovvIFsGuSZOXMZ/3BJQAnA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11256"; a="31028346"
+X-IronPort-AV: E=Sophos;i="6.12,155,1728975600"; 
+   d="scan'208";a="31028346"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 17:46:13 -0800
+X-CSE-ConnectionGUID: 5je70P8PRcmZc2W8TeLARg==
+X-CSE-MsgGUID: RJOEMptXRAm1HGWlvPOq5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,155,1728975600"; 
+   d="scan'208";a="89153309"
+Received: from choongyo-mobl.gar.corp.intel.com (HELO [10.247.75.68]) ([10.247.75.68])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Nov 2024 17:46:09 -0800
+Message-ID: <6c023200-5e81-432c-b21d-d7a9cf1bfc92@linux.intel.com>
+Date: Fri, 15 Nov 2024 09:46:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v1 1/2] net: phy: set eee_cfg based on PHY
+ configuration
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Oleksij Rempel <o.rempel@pengutronix.de>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+References: <20241114081653.3939346-1-yong.liang.choong@linux.intel.com>
+ <20241114081653.3939346-2-yong.liang.choong@linux.intel.com>
+ <ZzXBpEHs0y2_elqK@shell.armlinux.org.uk>
+ <ZzXLgEjElnJD1445@shell.armlinux.org.uk>
+ <ZzXOAvc__iQscSb4@shell.armlinux.org.uk>
+Content-Language: en-US
+From: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+In-Reply-To: <ZzXOAvc__iQscSb4@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The following changes since commit a6250aa251eacaf3ebfcfe152a96a727fd483ecd:
 
-  sched_ext: Handle cases where pick_task_scx() is called without preceding balance_scx() (2024-11-09 10:43:55 -1000)
 
-are available in the Git repository at:
+On 14/11/2024 6:16 pm, Russell King (Oracle) wrote:
+> On Thu, Nov 14, 2024 at 10:05:52AM +0000, Russell King (Oracle) wrote:
+>> On Thu, Nov 14, 2024 at 09:23:48AM +0000, Russell King (Oracle) wrote:
+>>> On Thu, Nov 14, 2024 at 04:16:52PM +0800, Choong Yong Liang wrote:
+>>>> Not all PHYs have EEE enabled by default. For example, Marvell PHYs are
+>>>> designed to have EEE hardware disabled during the initial state, and it
+>>>> needs to be configured to turn it on again.
+>>>>
+>>>> This patch reads the PHY configuration and sets it as the initial value for
+>>>> eee_cfg.tx_lpi_enabled and eee_cfg.eee_enabled instead of having them set to
+>>>> true by default.
+>>>
+>>> eee_cfg.tx_lpi_enabled is something phylib tracks, and it merely means
+>>> that LPI needs to be enabled at the MAC if EEE was negotiated:
+>>>
+>>>   * @tx_lpi_enabled: Whether the interface should assert its tx lpi, given
+>>>   *      that eee was negotiated.
+>>>
+>>> eee_cfg.eee_enabled means that EEE mode was enabled - which is user
+>>> configuration:
+>>>
+>>>   * @eee_enabled: EEE configured mode (enabled/disabled).
+>>>
+>>> phy_probe() reads the initial PHY state and sets things up
+>>> appropriately.
+>>>
+>>> However, there is a point where the EEE configuration (advertisement,
+>>> and therefore eee_enabled state) is written to the PHY, and that should
+>>> be config_aneg(). Looking at the Marvell driver, it's calling
+>>> genphy_config_aneg() which eventually calls
+>>> genphy_c45_an_config_eee_aneg() which does this (via
+>>> __genphy_config_aneg()).
+>>>
+>>> Please investigate why the hardware state is going out of sync with the
+>>> software state.
+>>
+>> I think I've found the issue.
+>>
+>> We have phydev->eee_enabled and phydev->eee_cfg.eee_enabled, which looks
+>> like a bug to me. We write to phydev->eee_cfg.eee_enabled in
+>> phy_support_eee(), leaving phydev->eee_enabled untouched.
+>>
+>> However, most other places are using phydev->eee_enabled.
+>>
+>> This is (a) confusing and (b) wrong, and having the two members leads
+>> to this confusion, and makes the code more difficult to follow (unless
+>> one has already clocked that there are these two different things both
+>> called eee_enabled).
+>>
+>> This is my untested prototype patch to fix this - it may cause breakage
+>> elsewhere:
+> 
+> As mentioned in the other thread:
+> 
+> Without a call to phy_support_eee():
+> 
+> EEE settings for eth2:
+>          EEE status: disabled
+>          Tx LPI: disabled
+>          Supported EEE link modes:  100baseT/Full
+>                                     1000baseT/Full
+>          Advertised EEE link modes:  Not reported
+>          Link partner advertised EEE link modes:  100baseT/Full
+>                                                   1000baseT/Full
+> 
+> With a call to phy_support_eee():
+> 
+> EEE settings for eth2:
+>          EEE status: enabled - active
+>          Tx LPI: 0 (us)
+>          Supported EEE link modes:  100baseT/Full
+>                                     1000baseT/Full
+>          Advertised EEE link modes:  100baseT/Full
+>                                      1000baseT/Full
+>          Link partner advertised EEE link modes:  100baseT/Full
+>                                                   1000baseT/Full
+> 
+> So the EEE status is now behaving correctly, and the Marvell PHY is
+> being programmed with the advertisement correctly.
+> 
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/ tags/sched_ext-for-6.12-rc7-fixes-2
+Thank you for all the suggestions, the provided prototype, and the tested 
+results.
 
-for you to fetch changes up to a4af89cc50f3c1035c1e0dfb50948a23107f3e95:
-
-  sched_ext: ops.cpu_acquire() should be called with SCX_KF_REST (2024-11-14 08:50:58 -1000)
-
-----------------------------------------------------------------
-sched_ext: One more fix for v6.12-rc7
-
-ops.cpu_acquire() was being invoked with the wrong kfunc mask allowing the
-operation to call kfuncs which shouldn't be allowed. Fix it by using
-SCX_KF_REST instead, which is trivial and low risk.
-
-----------------------------------------------------------------
-Tejun Heo (1):
-      sched_ext: ops.cpu_acquire() should be called with SCX_KF_REST
-
- kernel/sched/ext.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
--- 
-tejun
+I will study the suggestions in depth, test the provided prototype, and 
+provide more feedback.
 
