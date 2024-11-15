@@ -1,116 +1,162 @@
-Return-Path: <linux-kernel+bounces-410918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73A9D9CF073
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:43:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB61E9CF069
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:42:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39B6728CB9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:43:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7104828C3E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 882791E32BD;
-	Fri, 15 Nov 2024 15:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2DAE1E22F8;
+	Fri, 15 Nov 2024 15:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WCdsVACM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zzPKoX9d"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E376D1E25F4;
-	Fri, 15 Nov 2024 15:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843861D54D6
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 15:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731684967; cv=none; b=P71/uOb67X9+izQVNQRCM9i2TYoG1lfoH2Fi4wPGLFDZMAoUJeqk+g8JkEVIu75jrpzKIQENqzommsmyeDIDYndf0J3syCcuXhg7LGwLzPD6fYZrnDYeuO4QKjy5txvXwJy3wS6scgTN9zDQE/DH8kOLCJm1vphoAGMW58Kw2ww=
+	t=1731684962; cv=none; b=dA3T9Vaf7Uaci78tDw/dyrk+8LVgu2lAff7X0PnMJmxFMd7AdRMvNBhIWQ/1ElYmx7B4+ogvNJCu1Hkv+VxRFmK5E7xL1+UlcoWVYvIO1ENSeGZhbs6MqAnPsViJeyASpXWbtq9pspzOrWQwA+wRXwOyABIQ5mIBrgmWbvh7uGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731684967; c=relaxed/simple;
-	bh=oDpNykEdHsgFfr9bC5cHpPrw94tYPUkakhRHDzB3los=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rp6MXqDUchh/nAvT0kQkTElx/Fgd/TCgW3GspcKl8W56h/ivN4Gb1NbUZ4djpIoB8H3NNuIvZgSA/voZRG5HFqOpxWMoM2kSmYOLUqiEbN6GapMIc++62l7G3GJHvZhJbv3ZVbIN+r+xnSa86ooJGnj9Kw666V1vR4ZRdtNx5Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WCdsVACM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D8B8C4CED7;
-	Fri, 15 Nov 2024 15:36:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731684966;
-	bh=oDpNykEdHsgFfr9bC5cHpPrw94tYPUkakhRHDzB3los=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=WCdsVACMe6DJrja1FEx57gPZ8PiwXkzO19dBgWpPP8K+KQyA3ZSgftTvqZzsdZrkQ
-	 jr8mCyLdjPi95eBuL6IU36d96D9jcc8Dd8EIP0PEDKYjgFpVp4tQaXV0fSr6S3u7zi
-	 Clt8N2vhjdK375iAsKpyvGR8XUWiHK8EBtBN6Ac0qS5SxK6wsai0kXjmuue9WD46ar
-	 QbWeVf6d7Wcq/exp219waJtf9G+ezYqPftTnpqkeWXCNlNAjb0Ef6HOBDqiAdMpKy1
-	 NnwC9fVLjz0ur2D+tgCdF9wXuJf9+SXIDlRAHqqgM6sqkrLVxGdHccdEtkOGnEQViI
-	 SQCyyYWF1hETA==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Fri, 15 Nov 2024 10:35:53 -0500
-Subject: [PATCH v2 2/2] fs: prepend statmount.mnt_opts string with
- security_sb_mnt_opts()
+	s=arc-20240116; t=1731684962; c=relaxed/simple;
+	bh=rYvme6davXOV7S0ICIdnVJjQUxIQxCENktTfkU2/Km8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=R99zmNQTDA/Pgajz4b57dAyn0/Kssw1YsM0mcE1OEZIzfD0vHHVFVFPu5D6ouEY/13gERH4SJ9icS9ehjEghY3el6wzjGkkBtddnCqVewcjRmEo0pR4pckcWRcfXCxxCAAqlreAZiYBD/oDjR9odRAO58kfnbxBzPN0oiVY4o14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zzPKoX9d; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cf9cd1120bso656110a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 07:36:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731684959; x=1732289759; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=q1RpKflVF0bebbJaxQf/ZXjTfRFvkv41edCIwaQJcQs=;
+        b=zzPKoX9d3vNb5ippLrlXv5etR4FrC9zcSvcSOQni0LEaI4P88GCkH0/nLdS7UkFOPn
+         bQgiAd4GORZDHF8N81/6MP0CmPxvVblIdQTGzv31WWNEQxjfde9umNCPrY12zU5+i3Po
+         hbKlSM+Gacet/oE8hJnZPAATZEj0YymIxZjMI6Yp3NA/40tMhZlybAIPVOQZRSEte7+u
+         CQntrJt6lTCL9OJNu+dH8MWqDrPHAi2UU19opvXWMB71oD45uLEvFYi7jjyZypACdx+r
+         RGctr3CjrVYWdTufECMKdcEiOT7ECY7ylzvXug+RUIjtXaHfM0kdCnNR1yQHBQXSFbvw
+         BiLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731684959; x=1732289759;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q1RpKflVF0bebbJaxQf/ZXjTfRFvkv41edCIwaQJcQs=;
+        b=U6Rpq4oTU0GhELHoKA/TKSpqJm/K+ij5dmcLQ4B96pUpd8dyod9t9hCk2SWuJj/r6Q
+         434HBUQWchZqwy9ng0RzSJFOIKIbe2uiff467R8HPBW+6J5nWmyCk20YSNB3FRuNwRos
+         MkBIPTDLIymM9q8Ox5X9WIQauxe35OZmFS+8yUV3fpMm6P00KdryM2NoJ/bm/idJ4iMc
+         6eTHX9HkIY1CEpD/uO7WFZtJLRDgtkoZFyqrUYL0STpoW0pqM8/fggnNlGpgHdj4QYHJ
+         laLW+8PbibALCplr/ZtjqiWMQtfCUqf03im71GUnCD1iezggxQtrjr0tVAhHoJicWybZ
+         L7+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWfNdXL6vfx/S2sagqmrL//zaVf4ILHb7yDF8wuXVgmvbvFMrMqKZN9onqyqR4ETBWnE3uUC8lAbfTld74=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywjwexj8Pv7B/IVNI0iFwHzJByzSy6WBQsmv7ixweqmvq5Mznry
+	9/vINdrrVkUwhhEyEm+q1dnhkn/MUWqwWUGBG+pZYid4vIjtzkZeozhrw/F1A1k=
+X-Google-Smtp-Source: AGHT+IECuVoSF3cpPActYMtkLKV2qemZdHFkwL1b+NBlkRP5B3JvLdOGBczovm4O75t7YTAzxqF8NQ==
+X-Received: by 2002:a05:6402:34c4:b0:5cf:14fa:cd10 with SMTP id 4fb4d7f45d1cf-5cf754df234mr6631178a12.5.1731684958824;
+        Fri, 15 Nov 2024 07:35:58 -0800 (PST)
+Received: from [192.168.68.163] ([145.224.90.111])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf79c0ad15sm1676898a12.66.2024.11.15.07.35.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 07:35:58 -0800 (PST)
+Message-ID: <215ca9a2-0a63-4d0c-8402-5cb1f2bb0794@linaro.org>
+Date: Fri, 15 Nov 2024 15:35:55 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/8] Refactor cpuid and metric table lookup code
+To: Ian Rogers <irogers@google.com>, Xu Yang <xu.yang_2@nxp.com>
+References: <20241107162035.52206-1-irogers@google.com>
+Content-Language: en-US
+Cc: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Huacai Chen <chenhuacai@kernel.org>, Bibo Mao <maobibo@loongson.cn>,
+ Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+ Ben Zong-You Xie <ben717@andestech.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>, Sandipan Das
+ <sandipan.das@amd.com>, Benjamin Gray <bgray@linux.ibm.com>,
+ Ravi Bangoria <ravi.bangoria@amd.com>,
+ =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>,
+ Yicong Yang <yangyicong@hisilicon.com>,
+ "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+ Dima Kogan <dima@secretsauce.net>, "Dr. David Alan Gilbert"
+ <linux@treblig.org>, linux-arm-kernel@lists.infradead.org,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20241107162035.52206-1-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241115-statmount-v2-2-cd29aeff9cbb@kernel.org>
-References: <20241115-statmount-v2-0-cd29aeff9cbb@kernel.org>
-In-Reply-To: <20241115-statmount-v2-0-cd29aeff9cbb@kernel.org>
-To: Christian Brauner <brauner@kernel.org>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Cc: Josef Bacik <josef@toxicpanda.com>, Miklos Szeredi <miklos@szeredi.hu>, 
- Ian Kent <raven@themaw.net>, David Howells <dhowells@redhat.com>, 
- Amir Goldstein <amir73il@gmail.com>, Paul Moore <paul@paul-moore.com>, 
- Karel Zak <kzak@redhat.com>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=995; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=oDpNykEdHsgFfr9bC5cHpPrw94tYPUkakhRHDzB3los=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnN2pikMDGYDnUPJ03jterlj4wqQpSN9W9dlAVS
- 2rVHVLWKIyJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZzdqYgAKCRAADmhBGVaC
- FclqD/oDGK4LvXLz1x7dv30DbVcb+rcd4wGgnXOIZrOme1EbR3ildGYYsJ1DQiwQGn6UQSQSg0M
- KBRWSxe/rl3zUFWU+Lecc5jqMSTQAuqdkk6JbsT11NQZTrhWa83eBYCGhLxldzx5y8o9KWBk/ri
- StrHYBkM3163pEdY7ByXFWebcvctmdz0IkTZJBqi+yNR2w/4Af1XGUFRf0N0HlUxpFH3pEsnGOb
- uS2wIEXnOpwG6hPzVU166mqAs8doMoB+pkVKFCXMm4gqLiDukwHP9dSq+alGfgkDi+9v9yxZFRB
- QsU/9jg9s4hNoBk0ab6aE+gBsjQIlq5yLl/vr/I+fP85abLNCQcw8WIef7nNqbUToe+EBPVRo1k
- XEITxSPijyR5cVNQn+rhbEMf3kicHSuYZ9NF2x/0eWwGdUIYHlNz+IR8gHsTozLraLSUv0+Ilsx
- NqeUAItLfIWs5eYr3k1dA1V2NX+vokdMljzwXKPQ6kymwvXqhTS2Xggir3VzULvpHX7LlnBi5cY
- /AcrksAP8tYeI5PDR+lhYot9zNIYvglb7/3qnxtRxtcGAcQOcJYKqRstfhUTK4YnxrsNf2+6+/E
- GO3ifWtDUvAnPDzYNr1uffb+JuGyCPdAjS72ib+1kD/Dq/fOGzGROx/Gjg9UEeFhr30hPp7wX3Q
- cWznYW5VlhFIsRg==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Currently these mount options aren't accessible via statmount().
 
-The read handler for /proc/#/mountinfo calls security_sb_show_options()
-to emit the security options after emitting superblock flag options, but
-before calling sb->s_op->show_options.
 
-Have statmount_mnt_opts() call security_sb_show_options() before
-calling ->show_options.
+On 07/11/2024 4:20 pm, Ian Rogers wrote:
+> Xu Yang <xu.yang_2@nxp.com> reported issues with the system metric
+> lookup:
+> https://lore.kernel.org/linux-perf-users/20241106085441.3945502-1-xu.yang_2@nxp.com/
+> These patches remove a lot of the logic relating CPUIDs to PMUs so
+> that the PMU isn't part of the question when finding a metric table.
+> For time reasons, it doesn't go as far as allowing system metrics
+> without a metric table as a metric table is needed for metrics to
+> refer to other metrics, and the refactoring of that resolution is a
+> hassle.
+> 
+> Ian Rogers (7):
+>    perf header: Move is_cpu_online to numa bench
+>    perf header: Refactor get_cpuid to take a CPU for ARM
+>    perf arm64 header: Use cpu argument in get_cpuid
+>    perf header: Avoid transitive PMU includes
+>    perf header: Pass a perf_cpu rather than a PMU to get_cpuid_str
+>    perf jevents: Add map_for_cpu
+>    perf pmu: Move pmu_metrics_table__find and remove ARM override
+> 
+> Xu Yang (1):
+>    perf jevents: fix breakage when do perf stat on system metric
+> 
+>   tools/perf/arch/arm64/util/arm-spe.c     | 14 +---
+>   tools/perf/arch/arm64/util/header.c      | 73 ++++++++++-----------
+>   tools/perf/arch/arm64/util/pmu.c         | 20 ------
+>   tools/perf/arch/loongarch/util/header.c  |  4 +-
+>   tools/perf/arch/powerpc/util/header.c    |  4 +-
+>   tools/perf/arch/riscv/util/header.c      |  4 +-
+>   tools/perf/arch/s390/util/header.c       |  6 +-
+>   tools/perf/arch/x86/util/auxtrace.c      |  3 +-
+>   tools/perf/arch/x86/util/header.c        |  5 +-
+>   tools/perf/bench/numa.c                  | 53 +++++++++++++++
+>   tools/perf/builtin-kvm.c                 |  4 +-
+>   tools/perf/pmu-events/empty-pmu-events.c | 39 ++++++-----
+>   tools/perf/pmu-events/jevents.py         | 39 ++++++-----
+>   tools/perf/pmu-events/pmu-events.h       |  2 +-
+>   tools/perf/tests/expr.c                  |  5 +-
+>   tools/perf/util/env.c                    |  4 +-
+>   tools/perf/util/expr.c                   |  6 +-
+>   tools/perf/util/header.c                 | 82 ++++++++----------------
+>   tools/perf/util/header.h                 | 23 +++----
+>   tools/perf/util/pmu.c                    | 25 --------
+>   tools/perf/util/pmu.h                    |  2 -
+>   tools/perf/util/probe-event.c            |  1 +
+>   22 files changed, 189 insertions(+), 229 deletions(-)
+> 
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/namespace.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 206fc54feeba3e782f49778bcc99774d5a9d50a4..aae04aa10f984c69090bd1017112be17aa709d0c 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -5055,6 +5055,10 @@ static int statmount_mnt_opts(struct kstatmount *s, struct seq_file *seq)
- 	if (sb->s_op->show_options) {
- 		size_t start = seq->count;
- 
-+		err = security_sb_show_options(seq, sb);
-+		if (err)
-+			return err;
-+
- 		err = sb->s_op->show_options(seq, mnt->mnt_root);
- 		if (err)
- 			return err;
-
--- 
-2.47.0
+Reviewed-by: James Clark <james.clark@linaro.org>
 
 
