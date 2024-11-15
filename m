@@ -1,141 +1,129 @@
-Return-Path: <linux-kernel+bounces-410322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E52E99CD9E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:27:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 038C49CD9D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:24:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E877A1F2195F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:27:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7F82282FE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0133F188917;
-	Fri, 15 Nov 2024 07:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D6E18A922;
+	Fri, 15 Nov 2024 07:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="Q1e3Rx9K"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.187])
+	dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="SG0WR2Up"
+Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3416D183CC7;
-	Fri, 15 Nov 2024 07:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E306C523A;
+	Fri, 15 Nov 2024 07:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731655652; cv=none; b=mgJXYsatIzmKu+mwjZsh3UkJA76Gc07MY1T5C0fmrJ6A2M5z31zNgv8MYHTBXXUnENHSEOTmjtTyVCt6kXOS1GN5j5MHkrl/HBPefwjRe7X1BSH6/G7A2e+67ZCKZll+q53Y7GzzC1xgzuGE0SIW1XVsDFpKBlnlgAvH6oa5lnI=
+	t=1731655379; cv=none; b=EHguPAKAum+9S+FpgzoQOxQLkVaV492naNSszniQj01OwEMEwPsIWQjOyTlxSu4zhuwoXDkWiJC6lElqn4tO3qCGUqpMvZdtO2rqS7K+v9gbCjnVSJISWzYyAPIr39rQYKKYCnrFsKgx1C86fV0y12XYEpUJPEjYmFasbQnxK2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731655652; c=relaxed/simple;
-	bh=Sa90FOF3ZCw78OsaCzV54IiZx5tvk9l7aqFRB3SmkUQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EykTs0vntOBKOTv38HDTWOPbYrURYYVNgEwdqJ7yUG2zVfzaXs7sFVzrSNuOTts9F4IoGtfm6vu0GWRxxqBairE7U2ToOIWqHAvQD5GVlEyLqHGNj5HJvced0glbsUzvZuuj36xdprW9yDu/CMBeUfekc9iZXTmdgdqCtIeJdkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=Q1e3Rx9K; arc=none smtp.client-ip=212.227.126.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=oldschoolsolutions.biz; s=s1-ionos; t=1731655648; x=1732260448;
-	i=jens.glathe@oldschoolsolutions.biz;
-	bh=Sa90FOF3ZCw78OsaCzV54IiZx5tvk9l7aqFRB3SmkUQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Q1e3Rx9Kpp7Np1ZBlW8Uyx7NOTSmlC6vaA64lW5ldq/bmVyYR1NxUoDDQlQwzs4I
-	 dEHbZcIVEe0ev7EDBCSB1izrRYuHa6EvAIXK06EPjNHdOYdqGBvJcLXw7e4kwLdkV
-	 ftrss57TJNNJFaEZjUqkUOsjNMUkqLmNI7zLQi+Bo8ToGOaT3NC9+fHvAnax4YIoH
-	 xgpYyyzXm4A0sqzZaUKXstYBw0SJ+m1HAmH9MoPkjJw89CkouZim58Bb72g4BJIG4
-	 KC4lueLXWNsxGI0gIYdt6pHGkElINS+hUeXtsdllE+1LBrNXLexW484oOd5NbC8zz
-	 xyMvzrKFOb8lKUSBsA==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from [192.168.0.174] ([91.64.229.215]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1N17gw-1tvGN43tPO-00vjPP; Fri, 15 Nov 2024 08:13:57 +0100
-Message-ID: <4186566a-0aa5-4413-96df-fb1b7ebd9db2@oldschoolsolutions.biz>
-Date: Fri, 15 Nov 2024 08:13:55 +0100
+	s=arc-20240116; t=1731655379; c=relaxed/simple;
+	bh=N/BiYXgE9Jhe3HGAW2Ch4Co0N6fmwewtwH683zofX10=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VmiavrPTO+6pASGQ/BbMPJ53XyrOTBEKlBNcOj9EnU5fTniOE+A525A6nsM8oCo7+Ael0Ytonoxvo2a9LiITxOOJIjyiGHycOnxaM7rXBPzSrg32WuflprDJqjOJD5cY0HcaVI6mL/iPz48LLRaz+u0C5gQkLdsTj55zJATHocU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org; spf=pass smtp.mailfrom=narfation.org; dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b=SG0WR2Up; arc=none smtp.client-ip=213.160.73.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=narfation.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
+	s=20121; t=1731654886;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9pgoHLWj9VbX/NrQJnb29ZRcPNXEydueCcQO0bd/UTE=;
+	b=SG0WR2UpAqHzUaQRKm+gP7+Zc8GGYDTVxn3e5ZVXw36iLlm4UsX9RrwAHnkBpr2F1c0ZTC
+	31GUNdD/c1Ct33/szlga0McFaQZ9l0O/0s6SEIzccdw0qi0dI73e4aUX3awT8DZlY3WyjG
+	15ULoyZV9cz6NXchMMgftYzkSM2Xdls=
+From: Sven Eckelmann <sven@narfation.org>
+To: mareklindner@neomailbox.ch, sw@simonwunderlich.de, a@unstable.cc,
+ Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, b.a.t.m.a.n@lists.open-mesh.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
+Subject: Re: [PATCH-net] batman-adv: Fix "Arguments in wrong order" issue
+Date: Fri, 15 Nov 2024 08:14:40 +0100
+Message-ID: <2963697.e9J7NaK4W3@ripper>
+In-Reply-To: <20241115045637.15481-1-dheeraj.linuxdev@gmail.com>
+References: <20241115045637.15481-1-dheeraj.linuxdev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Bluetooth: qca: Support downloading board id specific NVM
- for WCN6855
-To: Paul Menzel <pmenzel@molgen.mpg.de>, Zijun Hu <quic_zijuhu@quicinc.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Zijun Hu
- <zijun_hu@icloud.com>, linux-bluetooth@vger.kernel.org,
- linux-kernel@vger.kernel.org, Bjorn Andersson <bjorande@quicinc.com>,
- Aiqun Yu <quic_aiquny@quicinc.com>, Cheng Jiang <quic_chejiang@quicinc.com>,
- Johan Hovold <johan@kernel.org>, Steev Klimaszewski <steev@kali.org>
-References: <20241113-x13s_wcn6855_fix-v1-1-15af0aa2549c@quicinc.com>
- <4d973d61-27be-4830-880a-a3d74c4bbbc7@molgen.mpg.de>
-Content-Language: en-US
-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-In-Reply-To: <4d973d61-27be-4830-880a-a3d74c4bbbc7@molgen.mpg.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:QDF4apY+T0AwDVjXuiNCoEElOEv+7nq3WiS9e1Fp3AABbpXrT9G
- Z2r9/6StBxLD62oJpV2slEIQwyl3f6EULx9tsIj3flXbhiKShNooQFNg+n30M/zyc7bDnGm
- 0JRDZyvXpWNRECY+I2/HGQ6ceh5ZNMi8Hue54miymrXpy+NqDBdHiuerZdL/8YD5/AzTgD3
- rXS8WfxOOnfzb84iQ05sw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:gCTczlT7cqc=;zWMK2h1h0R4eXYwxZ/1gW8gJF4n
- G+FFA66si+X7oxppRLwT8p1IkMuKQWBNM6dsbjAeKDlhxeDUWXJEQgOKkeEv7pNIXWZ8neV20
- vhanKMXxteoqvtLUGo+BYEGbYoFlYpLYcmoNj93sLw51CldF3qr49Pwg3FdirK+9L8+8xEMfK
- 5B1YOM782XNRczBs/JD1QgP/d5tggDBIko82nLGxLhsA5jpAQRA4BB4ewuvmlYT6vNjvunbJ5
- ePtMSABkFXu/FNDTXEm90z0pNQdAnr+uUkc2HF9IoZMAbSuiqSpf5iQViOUhiWH8t6BpILaAy
- ZtwseP3jBYBwp9kyaY738VdS33VmeDqS5kn7V6XQDUUpM1q1bbi/Y7ElifR0o0ZAKQkud7qyk
- vFi/Ro5Ymx2DDBIKiyDvMJJ0U5Gm/JkbKTsjyBnshHIMFz7UA8jue4zCedGxluHGkZA0pP3iS
- /a6esTh05G7ZNQb4yJ9Vf8ebdQskdSB1diBvKGkDrjCOcAD0gcvSIZ/egJYppHXPxzZZ46r+K
- VVj0vsX6QlO8EOTAbEcDh3LVdMs58Vdx22pyMiMo+gSjHAq/jUjR3/QkrhXRM5tjWCfZqOICn
- wVQQS92zXcMrIKvoigaBQdzhotRGiKgU8K4oKTuRaLinWgZ8uAtM5/uHUCPHW6gZbmVYJAG+t
- jXhikkn2QnxsLtT1zJ3aiuMb5RumCEIeHRanFmb7VT3Vr8aOyhVLdHcYJYOT1+E8xc4oqR8Or
- 3QxLjO9iGYtFliSvCYtQXpZ6Co/xyDA2NUZJZkOSrsdfEuOlGtx4Hdskln5xOX6VhKmy7/DHf
- jsDjW34URN+OUYACrWTXFJEMdWml85RlLbx8+FG0jT2GLMVXGJU9UUVKJONeXD66gh
+Content-Type: multipart/signed; boundary="nextPart3320950.aeNJFYEL58";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
 
-On 14.11.24 10:49, Paul Menzel wrote:
-> Dear Zijun,
->
->
-> Thank you for your patch.
->
-> Am 14.11.24 um 07:26 schrieb Zijun Hu:
->> Download board id specific NVM instead of default for WCN6855 if board
->> id is available, and that is required by Lenovo ThinkPad X13s.
->
-> Could you please start by describing the problem/motivation. What does
-> not work with the Lenovo ThinkPad X13s before your pacth.
->
-> What is variant *g*?
->
-> Maybe also describe the file naming convention in the commit message.
->
->
-Hi Paul,
+--nextPart3320950.aeNJFYEL58
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Sven Eckelmann <sven@narfation.org>
+Date: Fri, 15 Nov 2024 08:14:40 +0100
+Message-ID: <2963697.e9J7NaK4W3@ripper>
+In-Reply-To: <20241115045637.15481-1-dheeraj.linuxdev@gmail.com>
+References: <20241115045637.15481-1-dheeraj.linuxdev@gmail.com>
+MIME-Version: 1.0
 
-Zijun was so kind to review my RFC patch [1] and post an alternate
-implementation. The problem is/was that the default firmware patch files
-for WCN6855 don't enable the possible quality and range that you get
-with board specific files, which are now [2] available in
-linux-firmware. It is not only the Lenovo Thinkpad X13s that is
-affected, it is quite a range of devices.
+On Friday, 15 November 2024 05:56:37 CET Dheeraj Reddy Jonnalagadda wrote:
+> This commit fixes an "Arguments in wrong order" issue detected by
+> Coverity (CID 1376875).
+> 
+> Signed-off-by: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
+> ---
+>  net/batman-adv/distributed-arp-table.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/net/batman-adv/distributed-arp-table.c b/net/batman-adv/
+distributed-arp-table.c
+> index 801eff8a40e5..781a5118d441 100644
+> --- a/net/batman-adv/distributed-arp-table.c
+> +++ b/net/batman-adv/distributed-arp-table.c
+> @@ -1195,7 +1195,7 @@ bool batadv_dat_snoop_outgoing_arp_request(struct 
+batadv_priv *bat_priv,
+>  			goto out;
+>  		}
+>  
+> -		skb_new = batadv_dat_arp_create_reply(bat_priv, ip_dst, 
+ip_src,
+> +		skb_new = batadv_dat_arp_create_reply(bat_priv, ip_src, 
+ip_dst,
+>  						      
+dat_entry->mac_addr,
+>  						      
+hw_src, vid);
+>  		if (!skb_new)
+> 
 
-The variant *g* is a SoC variant with some extended capabilities as it
-seems. The X13s doesn't have it, the Windows Dev Kit 2023 and the HP
-Omnibook X14 have it. I have no real information about what the
-difference is, but there is code in btqca.c to generate distinct
-firmware names.
+Sorry, but this is wrong. We send an answer here ("ARP request 
+replied locally") and of course we must then switch src and destination. 
+Otherwise we would send the ARP response to the entity which didn't requested 
+it.
 
-with best regards
+This was already marked as false positive in Coverity a long time ago.
 
-Jens
+Kind regards,
+	Sven
+--nextPart3320950.aeNJFYEL58
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
-[1]
-https://lore.kernel.org/all/20241003-bt-nvm-firmware-v1-1-79028931214f@old=
-schoolsolutions.biz/
+-----BEGIN PGP SIGNATURE-----
 
-[2]
-https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.gi=
-t/commit/qca?id=3D77a11ffc5a0aaaadc870793d02f6c6781ee9f598
+iHUEABYKAB0WIQS81G/PswftH/OW8cVND3cr0xT1ywUCZzb04AAKCRBND3cr0xT1
+yzM0AQCBQ1es0wPjpvjM/8+1H+eeP4x7a8mHMiUCI0cuKxT8yQEAmrAsexf+nPGA
+Z1QV0TNZe100S6Fib9mpVuTh3xXCjAU=
+=Orm4
+-----END PGP SIGNATURE-----
+
+--nextPart3320950.aeNJFYEL58--
+
+
 
 
