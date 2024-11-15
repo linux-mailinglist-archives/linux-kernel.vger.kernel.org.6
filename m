@@ -1,165 +1,115 @@
-Return-Path: <linux-kernel+bounces-410972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F7D9CF2C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:23:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 017FA9CF116
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:08:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EA49B355B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:06:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CE9F293604
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0E354769;
-	Fri, 15 Nov 2024 16:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A8E1D618C;
+	Fri, 15 Nov 2024 16:07:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oKqPJApF"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=thaumatec-com.20230601.gappssmtp.com header.i=@thaumatec-com.20230601.gappssmtp.com header.b="ZOgUr6iZ"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77005184523
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 16:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B4754769
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 16:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731686787; cv=none; b=EDKrTtAY8jOjeWBZexA/vDxjF8z3798AmawnjlmuSNyhUckfgbDbMNmVf6eEz4LfDsknu5iV4N9NMEHMYOa3FQqU3gkaZb4aUNeVjkisY6RDlMK/ZBFpwLyY6DN75wjJY/MKWXUb+sQ1XU88JfreTqOZhG8IMqDUhQKfmWbbFTo=
+	t=1731686876; cv=none; b=t3mpbIJjnCoCDjgvE4fJm1TKX6Ieeqsfv/k9od77VuPL7pOC8/Um4l+fIBncYUjasQATL8zd3w/+P+Dg77IpnmpSk7MbS58fFg7wEN+wa9iQ9+24X7MVYrLwHJMbq9Y6ZECwFWRSplM9sFt0GIL96Ni6jTLkJZ6W6VvOlviFc1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731686787; c=relaxed/simple;
-	bh=ZbTFOQ0tu9jpLuN3aOlmQmhywJfbuOazqfG8l18HUes=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tJxy3Ufb933y1Ntzd3ETsQUcBT9UsGStQAdgqZ4DDidk+ASSgh9a7AAwJ/QnWJjr9SeedTokzGN7JxfF6Jlk5pUFG2acP4wyAtQdQm6hd9I0tjzOE8TL/5SSwcjMbs9TFdkDUjXwmyoosruaqDaIpRjrdPtMlvz5ejx/XQE5UsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oKqPJApF; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb584a8f81so19635841fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:06:25 -0800 (PST)
+	s=arc-20240116; t=1731686876; c=relaxed/simple;
+	bh=05IfYTZuXYrdK+PM/II/qXo61EkwAOLliQaq1yjcvAA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LQjRCtroj72BOUh4joNXdgVs43Tg4RIkkgEPlKXIaB4+i/2A/2luIIAWmHF4Zxu3GAehucjcjLKAZBj/q+wgrv27f/J6eqpK7GT1F9pvsgXv0IxtOfyhR1xiCjBTFY7aVtKbdO7/DiCHkol5tRWzKox6PHqZlK9oYuoOMVtU60A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thaumatec.com; spf=pass smtp.mailfrom=thaumatec.com; dkim=pass (2048-bit key) header.d=thaumatec-com.20230601.gappssmtp.com header.i=@thaumatec-com.20230601.gappssmtp.com header.b=ZOgUr6iZ; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thaumatec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thaumatec.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aa20944ce8cso369568266b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:07:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731686783; x=1732291583; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RkOpglpa6RYq7HagW+3ltYZgbYvD8bQG1K6VYv8lpyI=;
-        b=oKqPJApFW6bVz5I9ZamP0GvqQqIQyhGL1A+PChoup+77poF0Di4tuoPfq3hywDJrrH
-         DU/s13zKsnzgAH4LwDyGeTedflheU0cWVGvgn+pj9iDDkLQ4VkFb+9x+pdi3fFFOBgYP
-         aSlot/Upy0/WtB/ymx94nGQ7EaIrc5q9lrA5Rfc9e8ZA9whAivvs1A2iMP3g2TBVvHdt
-         aOAJwe2miK9CX34hcda11eK9itxBWf9ndy3OfswlWHQleaJSjOxxtLAh/Yh78HQNjZCx
-         g2xzxBMaVdWc5KQq56TTJkkuu3bAFTxJRG4XLFZEcVhSJJtTV8Q/0wLI81fYuVVhIXJ5
-         IIsQ==
+        d=thaumatec-com.20230601.gappssmtp.com; s=20230601; t=1731686873; x=1732291673; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PtX/norJpaur8PMRuPUdwbYS7QJAjkVDPPrL5lAuhMA=;
+        b=ZOgUr6iZr8hwwYpqkgNDr0UAQ0vrBHRwvGA39I2vHXmOAanYyA+BIKdFQOokAoVdzj
+         8AJ4/tWwGtznCu7qZC5lW3c7vtSIN7dqH2jRYy/GOUbqetqkTC639ruwqMp2JTNgPIVz
+         cRGghbgDnr9aK2iEPlnuawmv6i43CK6+Bx1xev/vkumliL/S9FzYGAb8LdV6R2rbuLqG
+         k14BvJpSOnZB/fUzQKEGnF5V0Iv0d9Zpp+iHriDICGbbocEAq7vVohF/LOeEQvPeN8S/
+         ihzmZ0GrWPIlZT7YT/Q54ZYQlATdjjQosuceHI/LHCCxFTuUfbCfMoeRVNg9J1Rxc71l
+         HXiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731686783; x=1732291583;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RkOpglpa6RYq7HagW+3ltYZgbYvD8bQG1K6VYv8lpyI=;
-        b=iz9f1hDrHuLAMsznsWHZgnwIp++MYcmPL/2F8ED1+vAfTCx71AjXoQim8uh7y342ea
-         1w0KHVP8ViMxDOcotZcg8l/3HHE/lei6L05mwcCK3XMzI627vtfFjaFnhiBd6GqiOZ9T
-         /JlL3s8tN/vpEaeLWOGAH3OPG1UvuSN7lI5PvgAlaJMebZG2RmCKgw6nWC0aCfAJ661q
-         GSf58fUMca6y9sWuY3Uek+06gCRBLCwwXZP/zO8PZzUvAELQ0QZJVns18+aj5uBDq9YZ
-         V1BQ8O181SKdTfOrQrBeBaVLqPN9REZP007ocMDET0rh1BR+yc1VmzZzeFo4mGKK+Rfu
-         FmgA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgjskNTreO4NKVxCAH+4AZscYUB4BtBVpClUN87I9OP1zjj9IKvxKDLfJuRmjdeiVsQUvppBhgCWA2WZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRzjD6q5/gL3mfi1UOakITTzcFUYRqtD+pqRf1dVJbh974pFOO
-	GNhL3jVk/qXdBci5im6xil69u7IIvfaW0znRHmQNYGN7+mBo07VUDOrowv392eE=
-X-Google-Smtp-Source: AGHT+IElnUOputmitANVcZV1TQDDXbsTqGLu9jNL2IXWhSe3IF2xUaBXBxHzE9YdvSxevJ2eJMge0g==
-X-Received: by 2002:a2e:b889:0:b0:2fb:5014:aca0 with SMTP id 38308e7fff4ca-2ff609b4c8fmr20448251fa.25.1731686783497;
-        Fri, 15 Nov 2024 08:06:23 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff59859fd5sm5846881fa.71.2024.11.15.08.06.21
+        d=1e100.net; s=20230601; t=1731686873; x=1732291673;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PtX/norJpaur8PMRuPUdwbYS7QJAjkVDPPrL5lAuhMA=;
+        b=JQ50w9CbKZU+Z13kseYbf3yRPpKm0kvS/unf0TO+KlShziDO3AOuYM6u32D7bEvrzQ
+         oXvY2AP3AQwLJdJkYjPw3sTmFNzhPUwPl6LqSvr36nJtIXSqG8WvA58po4ntkhVSaTK6
+         wuwiNlRqMh8lwL+pKAuBZGCb97QV4zDNNfST9vm0PsqOYn7WK5ZUwkl+TQwTXUsZWY/w
+         HuojbSD+BGZtU2fssNH1Ect6R7bZJ0citXDzT7fQlTEh6/ZM9RR9zHbOaAjIsFuf/Odw
+         zjmsLlxbp9N0LSJUOiw73on5hxXzO05TFq9Ser1s4glh0YgUGSxAFAktvwzcqpn4R6u9
+         SPKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXlO6UdxOhkiAuq6WwsCA0+kdZEKL6GC51d8U69zkEMNinzr1O3w/AXHHweOKhNm2nQC1hKjSc7azlmC2A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyA+MFfQ2Y+qBKrZySIfg15zC+X+NASWYi7nP5Htp7IYI5A3NMv
+	Ze1R+7uxxswhvKaOyaCBamJu9ztURFQHuauNVtycQpKO7lG4BaK5nnNmfCEK8u4=
+X-Google-Smtp-Source: AGHT+IGMEJPIOdwyAkahoo7NqqbmqWg7xlpnqGonb4ULg0DWOVjLuXCFtaBswEHbbxRDLFj0tsBV9Q==
+X-Received: by 2002:a17:907:1c0d:b0:a9a:170d:67b2 with SMTP id a640c23a62f3a-aa481a5cf4amr243941766b.29.1731686872580;
+        Fri, 15 Nov 2024 08:07:52 -0800 (PST)
+Received: from fedora.. ([91.90.172.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20e00172dsm194948266b.120.2024.11.15.08.07.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 08:06:22 -0800 (PST)
-Date: Fri, 15 Nov 2024 18:06:19 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Wasim Nazir <quic_wasimn@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] arm64: dts: qcom: Add support for QCS9075 Ride &
- Ride-r3
-Message-ID: <w43u62ikaixw6pkianhnnmlqutkkzsjomhnj7szgxriuh3jvvn@x5mhnnigrnls>
-References: <20241110145339.3635437-1-quic_wasimn@quicinc.com>
- <20241110145339.3635437-6-quic_wasimn@quicinc.com>
+        Fri, 15 Nov 2024 08:07:52 -0800 (PST)
+From: Daniel Semkowicz <dse@thaumatec.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>
+Cc: Daniel Semkowicz <dse@thaumatec.com>,
+	David Airlie <airlied@gmail.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Michael Walle <mwalle@kernel.org>,
+	Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Tony Lindgren <tony@atomide.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/1] drm/bridge: tc358775: Remove burst mode support
+Date: Fri, 15 Nov 2024 17:06:31 +0100
+Message-ID: <20241115160641.74074-1-dse@thaumatec.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241110145339.3635437-6-quic_wasimn@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 10, 2024 at 08:23:39PM +0530, Wasim Nazir wrote:
-> Add device tree support for QCS9075 Ride & Ride-r3 boards.
-> QCS9075 Ride & Ride-r3 are similar to QCS9100 Ride and Ride-r3
-> boards but without safety monitoring feature of SAfety-IsLand
-> subsystem.
+DSI operation mode is configured to support burst mode, but bridge
+driver does not correctly implement it. This results in bad LVDS timings
+when bridge is connected to DSI host that sets higher transmission rate
+on DSI link, than indicated by CRTC pixel clock.
 
-What is the difference between Ride and Ride-r3 which requires a
-separate DT for the -r3 variant?
+TC358775 power up sequence is still broken. This change was tested with
+Michael's Walle series:
+https://lore.kernel.org/all/20240506-tc358775-fix-powerup-v1-0-545dcf00b8dd@kernel.org/
 
-> 
-> Signed-off-by: Wasim Nazir <quic_wasimn@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/Makefile            |  2 ++
->  arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts | 12 ++++++++++++
->  arch/arm64/boot/dts/qcom/qcs9075-ride.dts    | 12 ++++++++++++
->  3 files changed, 26 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
->  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-ride.dts
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> index 5d9847119f2e..91c811aca2ca 100644
-> --- a/arch/arm64/boot/dts/qcom/Makefile
-> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> @@ -116,6 +116,8 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9075-rb8.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)	+= qcs9075-ride.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)	+= qcs9075-ride-r3.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride-r3.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= qdu1000-idp.dtb
-> diff --git a/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts b/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
-> new file mode 100644
-> index 000000000000..a04c8d1fa258
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
-> @@ -0,0 +1,12 @@
-> +// SPDX-License-Identifier: BSD-3-Clause
-> +/*
-> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +/dts-v1/;
-> +
-> +#include "sa8775p-ride-r3.dts"
-> +
-> +/ {
-> +	model = "Qualcomm Technologies, Inc. QCS9075 Ride Rev3";
-> +	compatible = "qcom,qcs9075-ride-r3", "qcom,qcs9075", "qcom,sa8775p";
-> +};
-> diff --git a/arch/arm64/boot/dts/qcom/qcs9075-ride.dts b/arch/arm64/boot/dts/qcom/qcs9075-ride.dts
-> new file mode 100644
-> index 000000000000..9ffab74fb1a8
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/qcs9075-ride.dts
-> @@ -0,0 +1,12 @@
-> +// SPDX-License-Identifier: BSD-3-Clause
-> +/*
-> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +/dts-v1/;
-> +
-> +#include "sa8775p-ride.dts"
-> +
-> +/ {
-> +	model = "Qualcomm Technologies, Inc. QCS9075 Ride";
-> +	compatible = "qcom,qcs9075-ride", "qcom,qcs9075", "qcom,sa8775p";
-> +};
-> --
-> 2.47.0
-> 
+
+Daniel Semkowicz (1):
+  drm/bridge: tc358775: Remove burst mode support
+
+ drivers/gpu/drm/bridge/tc358775.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 -- 
-With best wishes
-Dmitry
+2.47.0
+
 
