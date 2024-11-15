@@ -1,103 +1,120 @@
-Return-Path: <linux-kernel+bounces-410388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F8C9CDAD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:47:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B2119CDADB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:49:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A8FE1F215D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:47:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 303E32834E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC9618C345;
-	Fri, 15 Nov 2024 08:47:35 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4981018C03A;
+	Fri, 15 Nov 2024 08:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GmXhVevz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D4418BBB0;
-	Fri, 15 Nov 2024 08:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE03174EE4;
+	Fri, 15 Nov 2024 08:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731660455; cv=none; b=eSdcZ6GkBnZ1IGUeVohx0+PpjgRQ8N6lytWnVz4gJPbC9InGElU6bz8kP6jf8BsNOsE/aijhmmUDlCiujwxzuiV9zcFJqGYUFnQskpHf+bsBp7C7AHe+EUSlswTvVRrGg13yKpoQU2RYLThtD/7U60FEF0e7XZMVre64MEkNI4M=
+	t=1731660551; cv=none; b=Iwl5r3sk4KMQlN18KfjyuJe1G3nQlEywmlQMUYjqMmtwsHsACy+xxHl62XbQIRFnD6mWxb6qj7Ljew2cftIlsqxNldnB/pJWrANTUjdyyNlCtCg6JzgHaZv7qHzlaxKNnsJraBcaq4uh4MFcNHBXZkkTg7b/hl9wDdcQ8qvik9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731660455; c=relaxed/simple;
-	bh=/DsROywAvHAkFdPe88DuYC+yrn7Ej88+9wfbHxvbTrU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ze5YE3qbTH73XebPqVNxOEeYiPRIdYSwFITLseekTa2ySpw4p+wgHDZJQEtAw6hsZASkicJXsKxYjqKvBv6aIx1J69kZi2EdANOEq96wfvaAWQAZbCMUoHrdwLmeaN//u7cgyON9OOr3Q4A1Jp1epeLXmsXPBJ3tQBeruWJizaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 45E122800C7FC;
-	Fri, 15 Nov 2024 09:47:28 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 2E7BC3D0537; Fri, 15 Nov 2024 09:47:28 +0100 (CET)
-Date: Fri, 15 Nov 2024 09:47:28 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: "Bowman, Terry" <terry.bowman@amd.com>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, nifan.cxl@gmail.com, ming4.li@intel.com,
-	dave@stgolabs.net, jonathan.cameron@huawei.com,
-	dave.jiang@intel.com, alison.schofield@intel.com,
-	vishal.l.verma@intel.com, dan.j.williams@intel.com,
-	bhelgaas@google.com, mahesh@linux.ibm.com, ira.weiny@intel.com,
-	oohall@gmail.com, Benjamin.Cheatham@amd.com, rrichter@amd.com,
-	nathan.fontenot@amd.com, Smita.KoralahalliChannabasappa@amd.com
-Subject: Re: [PATCH v3 03/15] cxl/pci: Introduce PCIe helper functions
- pcie_is_cxl() and pcie_is_cxl_port()
-Message-ID: <ZzcKoOXTVVj3bTnE@wunner.de>
-References: <20241113215429.3177981-1-terry.bowman@amd.com>
- <20241113215429.3177981-4-terry.bowman@amd.com>
- <ZzYbHZvU_RFXZuk0@wunner.de>
- <ffd740e5-235a-4b74-8bf9-91331b619a7f@amd.com>
- <ZzYq2GIUoD2kkUyK@wunner.de>
- <e686016d-2670-4431-ad9d-3c189a48b1e4@amd.com>
+	s=arc-20240116; t=1731660551; c=relaxed/simple;
+	bh=Bn9p2f4x838RbxuIp6/3keJ5yvXCNdZc7B0nzOHhsvE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Fm89Ci8fYjEG6Ibo+xOEui4W1fpDHTVulcrvVFR0d6Avld+eTFyJJmnlEO0TEkBmVKNZuq2clmfms1ZOag0ehDrjrJmjDmfna+CP9gfDd/x6mvf/c7UWI+T3bUtWZ5ywCileF1SFQCXvyxVvoamBnax3gQqLrLP5EtW5RN6QWBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GmXhVevz; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731660550; x=1763196550;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=Bn9p2f4x838RbxuIp6/3keJ5yvXCNdZc7B0nzOHhsvE=;
+  b=GmXhVevzw4s3Ujv2NfzDVykR0CHL0d3GRPOrhMigrKJsjZzvdnlNBAd9
+   j2iox4fDYtWuoo512HzQUxyjYg5IVgOHtsWdJ0aHUsfyM7ExAwu6knm4P
+   127NAFvAk+HuTFI1mEoqVlbWG5yGmeNPeXb0Y8226A7zJuSi+OjVhXio+
+   9lw2aLpcHpG90zBXO3q6N5TjgLifouqU8l7rXoI9vY6tpo+qK0b75c5Rq
+   8hixQEDYBLVphznTwDPU26UhA7K6DjrI1BHzMfkh6bUznGRcNLLn4rIJQ
+   ZczZwc64ZnsHUhMfxU4BgW0UuTaKGUnFwduC6n9D3otZVLdQXIfvkuFom
+   Q==;
+X-CSE-ConnectionGUID: +MiBm0cUSQidLsMGYkTbaw==
+X-CSE-MsgGUID: MIgLJTtcTlSA+sSVsYCprw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11256"; a="43062589"
+X-IronPort-AV: E=Sophos;i="6.12,156,1728975600"; 
+   d="scan'208";a="43062589"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 00:49:09 -0800
+X-CSE-ConnectionGUID: rgeU7d7bQ5ywd08aH7h1Bw==
+X-CSE-MsgGUID: F/vZsQPdRIyY8RJLtKG1dA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,156,1728975600"; 
+   d="scan'208";a="88491133"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 00:49:05 -0800
+Message-ID: <a584b2da-7463-41c4-885c-1ff13e69b08a@intel.com>
+Date: Fri, 15 Nov 2024 10:49:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e686016d-2670-4431-ad9d-3c189a48b1e4@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] perf cpumap: Add checking for reference counter
+To: Leo Yan <leo.yan@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, "Liang, Kan" <kan.liang@linux.intel.com>,
+ James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241107125308.41226-1-leo.yan@arm.com>
+ <20241107125308.41226-4-leo.yan@arm.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20241107125308.41226-4-leo.yan@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 14, 2024 at 11:07:26AM -0600, Bowman, Terry wrote:
-> > Can you have a CXL port that is not a CXL device?
-> >
-> > If not, it would seem to me that checking for Flexbus DVSEC presence
-> > *is* redundant.  Or do you anticipate broken devices which lack the
-> > Flexbus DVSEC and that you explicitly want to exclude?
+On 7/11/24 14:53, Leo Yan wrote:
+> For the CPU map merging test, add an extra check for the reference
+> counter before releasing the last CPU map.
 > 
-> No, the CXL port device is always a CXL device per spec.
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+
+Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
+
+> ---
+>  tools/perf/tests/cpumap.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 > 
-> This was added to short-circuit the function by returning immediately
-> if the device is _not_ a CXL device. Otherwise for PCIe Port devices,
-> the CXL Port DVSEC will be searched. I was trying to avoid the unnecessary
-> CXL port DVSEC search unless the other criteria are met.
-> And I expect most cases will not be a CXL device.
-> 
-> I will remove the "if (!pcie_is_cxl(dev))" block as you suggested.
+> diff --git a/tools/perf/tests/cpumap.c b/tools/perf/tests/cpumap.c
+> index f8187a801b8e..5ed7ff072ea3 100644
+> --- a/tools/perf/tests/cpumap.c
+> +++ b/tools/perf/tests/cpumap.c
+> @@ -167,6 +167,15 @@ static int __test__cpu_map_merge(const char *lhs, const char *rhs, int nr, const
+>  	cpu_map__snprint(a, buf, sizeof(buf));
+>  	TEST_ASSERT_VAL("failed to merge map: bad result", !strcmp(buf, expected));
+>  	perf_cpu_map__put(b);
+> +
+> +	/*
+> +	 * If 'b' is a superset of 'a', 'a' points to the same map with the
+> +	 * map 'b'. In this case, the owner 'b' has released the resource above
+> +	 * but 'a' still keeps the ownership, the reference counter should be 1.
+> +	 */
+> +	TEST_ASSERT_VAL("unexpected refcnt: bad result",
+> +			refcount_read(perf_cpu_map__refcnt(a)) == 1);
+> +
+>  	perf_cpu_map__put(a);
+>  	return 0;
+>  }
 
-Ah, this is meant as a speed-up.  Actually that makes sense,
-so feel free to keep it.
-
-If you do remove it, I think you'll have to move the cxl_port_dvsec()
-invocation up in the function, in front of the pci_pcie_type() checks.
-The latter require that one first checks that the device is PCIe.
-That's done implicitly by cxl_port_dvsec() because it returns 0 in
-the non-PCIe case.  (Due to the "if (dev->cfg_size <= PCI_CFG_SPACE_SIZE)"
-check in pci_find_next_ext_capability().)
-
-Another idea would be to put a "if (!pcie_is_cxl(dev)) return 0;" speed-up
-in cxl_port_dvsec() so that the other caller benefits from it as well.
-
-Thanks,
-
-Lukas
 
