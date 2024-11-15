@@ -1,227 +1,196 @@
-Return-Path: <linux-kernel+bounces-410195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD099CD61B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 05:04:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CC329CD61D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 05:05:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF149B219DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 04:04:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90C43B240DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 04:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968B015F3F9;
-	Fri, 15 Nov 2024 04:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597B315CD49;
+	Fri, 15 Nov 2024 04:05:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ad9RttXd"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TG9FGm2P"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6221D70825;
-	Fri, 15 Nov 2024 04:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3EB4F218;
+	Fri, 15 Nov 2024 04:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731643463; cv=none; b=pccg+g7Wa9Idpd6+uQ+4wGrUvXyNKS/Kh6aEYZan1tsxlD3yZ4dN9YnEYWWaCo2igCDhqITaZZU/5JzWkYNM77pO72KTgvFp82Ik/TtN9qAR+0sYzuhLUL2Sm1LhglkT9Mjt0JFOGWlAAcLE6E8TIU9vB3OtCa4WKR6VKMMbfqA=
+	t=1731643510; cv=none; b=PoCeeCpXwikd1WuOmjLRlZkYRLGfQOAzHlhxLsdOOFHAoifB5I4TG+aKdWHpz4YCUQLSag7ugUXKLHZZXCqYB/RN5CiYqSNrV7yzwHBUtUJieQ3Wsz3bTNb4onlCwo/gGvB9A4+s6s1QT9+SNKfEkBfj5BBzyS0kMlAG7QlYrD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731643463; c=relaxed/simple;
-	bh=NizCT+tSnidLGl3lX3u1R9GPfILFYC10IVWM6EiqJzM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ASLzXnh9g5KkNk1mcSDuJJX4bA43p8uNr/3eo5ljCZp704+ssvlpvE1enk8mlBfZR0t9eemEX7eiZg3k8LnkmdtYzu74tLksFN7TvC3+1SSs3pQztiL2Zl1cWMh1fIUJcet+TIyHGNk41lqpCY37M8/7MR9N9pTTNZoKdQocJ3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ad9RttXd; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3e606cba08eso732336b6e.0;
-        Thu, 14 Nov 2024 20:04:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731643461; x=1732248261; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=emojFDyC5THYctRB8h2dNWU9LntN4EFXJ8X/4es3IsY=;
-        b=ad9RttXduwLl7gxSG/BeJKVI4T+vW9E/sncXkqr65DwzSwZ4doQ0O2vICSPjq5S8ox
-         kmH/5nLAxNfzl2DtFkRYntyDMr3MY6qXx4R5TvUegFvn3lHgB4Abya17iHXnXZXX+Kxu
-         2A9izUSTkrIGvk8Vj2mJKd5nfg00XS74vqgAgWTqUSAmEEHPQsWL0BJRREnAbyuUO4eu
-         dIwYqgogxTSSs3q2KXB0xGr2uXmvsbxiEyDakmCE2y5++/7/L3qbsvD0JRmixXvXgW+R
-         FiLupRzfFCygz9HwXbV5dxR9WVlUkPoghYiEIrxT4HkNoY0y66DFviKHExf5E42igQWM
-         bDZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731643461; x=1732248261;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=emojFDyC5THYctRB8h2dNWU9LntN4EFXJ8X/4es3IsY=;
-        b=N0rDxJEUB+WCAVgPeRx3dLajSobEiojcH+VY2uc5jqmpJixkap2x1/FtBPcF1rZ22y
-         Avm0Z01lN8ZJKJaiYxr0Ui1losEjSnLLOqNJWQja48b27PRBvxshH1zToAtIwEfFHI26
-         yS8WY0RWscrAumI+HaGeA8FNYI6IybMYQTtJFWAWczzwGrLLmOVg6DpBE8isw89Vz0Cf
-         54KpAHD851ZDmJ6pn1zUeRUotBQAzNBoJdpZWxpMg2MdaPeQOEGAWrX5tsoY2+fx+WY7
-         1fUU4QOmCqpLGCrhrG3cT/sHB0YLKP79bv3Wsykkc6GInOUI0ZOvqtg/PVcbvEeGJRCp
-         klBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqh2/VyB85oOhfA9Q09Zst78EF7Im0dwXy4ZY06tTpQKmKbjRV2ibOYBKMvjFK/fkcRELeyVmJKPyOA1y+@vger.kernel.org, AJvYcCWw6IzetQxzAjY3i+eRh28j49WuWoDDm7jk8phXfUHvLctgTN6Sg6FwpJa83n2ShajbnnlO1L0wAWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0bVwjY1OEJq5Lmm1AIvvgzmF+DoZlymVpDCQGAN++NSI29VrQ
-	3eORw/h73/nf6KtxKMSCvmybri4WrhPLseds4jWkwKhZX0OOJ9RI
-X-Google-Smtp-Source: AGHT+IHuBFjOb5Kq/9DaxbneOjXofrfO3qrUevNBS60m3FabPhPkgQzYrXh5l6Dd6Jyq+3fV27DtpQ==
-X-Received: by 2002:a05:6870:1d1:b0:278:3de:c8de with SMTP id 586e51a60fabf-2962deabde2mr1107297fac.24.1731643461270;
-        Thu, 14 Nov 2024 20:04:21 -0800 (PST)
-Received: from archie.me ([103.124.138.80])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1dade0esm399915a12.66.2024.11.14.20.04.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 20:04:19 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id E5F9644D87F4; Fri, 15 Nov 2024 11:04:15 +0700 (WIB)
-Date: Fri, 15 Nov 2024 11:04:15 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Even Xu <even.xu@intel.com>, jikos@kernel.org, bentiss@kernel.org,
-	corbet@lwn.net, aaron.ma@canonical.com
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, Sun Xinpeng <xinpeng.sun@intel.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: Re: [PATCH v2 01/22] HID: THC: Add documentation
-Message-ID: <ZzbIP7tOEns0Fy-U@archie.me>
-References: <20241114053416.4085715-1-even.xu@intel.com>
- <20241114053416.4085715-2-even.xu@intel.com>
+	s=arc-20240116; t=1731643510; c=relaxed/simple;
+	bh=tTwfv8XsCYbK7dWH3i159FcEK0AX2R5ZuAyys/XOCjQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pMEKtO0Ho7IjtE6ltWDDdQ3yMHzbFNLQJOpvBbs8rJ4zHQ32J4YqIpnSk35Y8EmPTlrvRa+sSugSgDxsmtojhDRPOi3ZftD844oYq7nKv3+ftXTRXAXLyLAgCS52hXn2u57u3uYdVLYM/sxlKlqR39wgcIkN+q8C6t3DiX7xKH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TG9FGm2P; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=tqy59bhN+bRxyH4lFjsJcTP5KL0/JrPof3mp/Jpj2g4=; b=TG9FGm2PeuDQxlcZj4jgkYPEdi
+	7B91v60bgnzVJ8En8e7/d5qEYnHy3eAxIMM+pYKNwJSA1FqTUfU+sezDx5m8kpA+Gq2BQbaZtFYL6
+	QNgunF55YeVgclB3xyKXbtQQ0r54LGBVpffC5AdRooNUCJCKnVc6/+/8iNmfyjbm3mAUQSq7SWPCo
+	HZ0nQo5txwm3symssSQQXzfH8NUxCw1/UjsYFLMwaKJtubO0NDPHoe46aIz6Lz2f/VEesuclrb52f
+	ckucXdLEn0YwhXsNZ1Cn3yiWqrCB7MytPb+DDP8COFG/sBCMieWgQQRhhO+ieSB/ADLHeWaonNcdW
+	+LQJPxhQ==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tBnZe-00000000oRN-0Vj3;
+	Fri, 15 Nov 2024 04:04:45 +0000
+Message-ID: <66ab2ee4-bef3-4969-a14e-7804b62dca78@infradead.org>
+Date: Thu, 14 Nov 2024 20:04:40 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="piiGGXBvEqKZuoLP"
-Content-Disposition: inline
-In-Reply-To: <20241114053416.4085715-2-even.xu@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: drivers/video/fbdev/sh7760fb.c:363:31: sparse: sparse: incorrect
+ type in argument 3 (different address spaces)
+To: kernel test robot <lkp@intel.com>, linux-renesas-soc@vger.kernel.org,
+ Nobuhiro Iwamatsu <iwamatsu.nobuhiro@renesas.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Helge Deller <deller@gmx.de>
+References: <202411082014.qSQ9A5ho-lkp@intel.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <202411082014.qSQ9A5ho-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi robot,
 
---piiGGXBvEqKZuoLP
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 11/8/24 4:27 AM, kernel test robot wrote:
+> Hi Randy,
+> 
+> First bad commit (maybe != root cause):
+> 
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   906bd684e4b1e517dd424a354744c5b0aebef8af
+> commit: 51084f89d687e14d96278241e5200cde4b0985c7 fbdev: sh7760fb: allow modular build
 
-On Thu, Nov 14, 2024 at 01:33:55PM +0800, Even Xu wrote:
-> +Touch Host Controller is the name of the IP block in PCH that interface =
-with Touch Devices (ex:
-> +touchscreen, touchpad etc.). It is comprised of 3 key functional blocks:
-> +- A natively half-duplex Quad I/O capable SPI master
-> +- Low latency I2C interface to support HIDI2C compliant devices
-> +- A HW sequencer with RW DMA capability to system memory
+The same warnings happen without this patch applied, so I suggest that you
+backtrack to the commit that is listed near the end of your email. Thanks so much. :)
 
-I see in my htmldocs output that the list above is long running paragraph
-instead.
+> date:   7 months ago
+> config: sh-randconfig-r132-20241108 (https://download.01.org/0day-ci/archive/20241108/202411082014.qSQ9A5ho-lkp@intel.com/config)
+> compiler: sh4-linux-gcc (GCC) 14.2.0
+> reproduce: (https://download.01.org/0day-ci/archive/20241108/202411082014.qSQ9A5ho-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202411082014.qSQ9A5ho-lkp@intel.com/
+> 
+> sparse warnings: (new ones prefixed by >>)
+>>> drivers/video/fbdev/sh7760fb.c:363:31: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void *cpu_addr @@     got char [noderef] __iomem *screen_base @@
+>    drivers/video/fbdev/sh7760fb.c:363:31: sparse:     expected void *cpu_addr
+>    drivers/video/fbdev/sh7760fb.c:363:31: sparse:     got char [noderef] __iomem *screen_base
+>>> drivers/video/fbdev/sh7760fb.c:423:27: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected char [noderef] __iomem *screen_base @@     got void *[assigned] fbmem @@
+>    drivers/video/fbdev/sh7760fb.c:423:27: sparse:     expected char [noderef] __iomem *screen_base
+>    drivers/video/fbdev/sh7760fb.c:423:27: sparse:     got void *[assigned] fbmem
+>    drivers/video/fbdev/sh7760fb.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/xarray.h, ...):
+>    include/linux/page-flags.h:242:46: sparse: sparse: self-comparison always evaluates to false
+>    include/linux/page-flags.h:242:46: sparse: sparse: self-comparison always evaluates to false
+> 
+> vim +363 drivers/video/fbdev/sh7760fb.c
+> 
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  354  
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  355  static void sh7760fb_free_mem(struct fb_info *info)
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  356  {
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  357  	struct sh7760fb_par *par = info->par;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  358  
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  359  	if (!info->screen_base)
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  360  		return;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  361  
+> 8404e56f4bc1d1 drivers/video/fbdev/sh7760fb.c Thomas Zimmermann 2023-06-13  362  	dma_free_coherent(info->device, info->screen_size,
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23 @363  			  info->screen_base, par->fbdma);
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  364  
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  365  	par->fbdma = 0;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  366  	info->screen_base = NULL;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  367  	info->screen_size = 0;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  368  }
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  369  
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  370  /* allocate the framebuffer memory. This memory must be in Area3,
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  371   * (dictated by the DMA engine) and contiguous, at a 512 byte boundary.
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  372   */
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  373  static int sh7760fb_alloc_mem(struct fb_info *info)
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  374  {
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  375  	struct sh7760fb_par *par = info->par;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  376  	void *fbmem;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  377  	unsigned long vram;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  378  	int ret, bpp;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  379  
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  380  	if (info->screen_base)
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  381  		return 0;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  382  
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  383  	/* get color info from register value */
+> f08c6c53b8e157 drivers/video/fbdev/sh7760fb.c Thomas Zimmermann 2023-06-13  384  	ret = sh7760fb_get_color_info(info, par->pd->lddfr, &bpp, NULL);
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  385  	if (ret) {
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  386  		printk(KERN_ERR "colinfo\n");
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  387  		return ret;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  388  	}
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  389  
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  390  	/* min VRAM: xres_min = 16, yres_min = 1, bpp = 1: 2byte -> 1 page
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  391  	   max VRAM: xres_max = 1024, yres_max = 1024, bpp = 16: 2MB */
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  392  
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  393  	vram = info->var.xres * info->var.yres;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  394  	if (info->var.grayscale) {
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  395  		if (bpp == 1)
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  396  			vram >>= 3;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  397  		else if (bpp == 2)
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  398  			vram >>= 2;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  399  		else if (bpp == 4)
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  400  			vram >>= 1;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  401  	} else if (bpp > 8)
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  402  		vram *= 2;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  403  	if ((vram < 1) || (vram > 1024 * 2048)) {
+> 46d86f3b3b1d22 drivers/video/fbdev/sh7760fb.c Thomas Zimmermann 2023-06-13  404  		fb_dbg(info, "too much VRAM required. Check settings\n");
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  405  		return -ENODEV;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  406  	}
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  407  
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  408  	if (vram < PAGE_SIZE)
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  409  		vram = PAGE_SIZE;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  410  
+> 8404e56f4bc1d1 drivers/video/fbdev/sh7760fb.c Thomas Zimmermann 2023-06-13  411  	fbmem = dma_alloc_coherent(info->device, vram, &par->fbdma, GFP_KERNEL);
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  412  
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  413  	if (!fbmem)
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  414  		return -ENOMEM;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  415  
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  416  	if ((par->fbdma & SH7760FB_DMA_MASK) != SH7760FB_DMA_MASK) {
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  417  		sh7760fb_free_mem(info);
+> 8404e56f4bc1d1 drivers/video/fbdev/sh7760fb.c Thomas Zimmermann 2023-06-13  418  		dev_err(info->device, "kernel gave me memory at 0x%08lx, which is"
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  419  			"unusable for the LCDC\n", (unsigned long)par->fbdma);
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  420  		return -ENOMEM;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  421  	}
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  422  
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23 @423  	info->screen_base = fbmem;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  424  	info->screen_size = vram;
+> 537a1bf059fa31 drivers/video/sh7760fb.c       Krzysztof Helt    2009-06-30  425  	info->fix.smem_start = (unsigned long)info->screen_base;
+> 537a1bf059fa31 drivers/video/sh7760fb.c       Krzysztof Helt    2009-06-30  426  	info->fix.smem_len = info->screen_size;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  427  
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  428  	return 0;
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  429  }
+> 4a25e41831ee85 drivers/video/sh7760fb.c       Nobuhiro Iwamatsu 2008-07-23  430  
+> 
+> :::::: The code at line 363 was first introduced by commit
+> :::::: 4a25e41831ee851c1365d8b41decc22493b18e6d video: sh7760fb: SH7760/SH7763 LCDC framebuffer driver
 
-> +When THC is configured to SPI mode, opcodes are used for determining the=
- read/write IO mode.
-> +There are some OPCode examples for SPI IO mode::
-> +
-> + +--------+---------------------------------+
-> + | opcode |  Corresponding SPI command      |
-> + +=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+
-> + |  0x0B  | Read Single I/O                 |
-> + +--------+---------------------------------+
-> + |  0x02  | Write Single I/O                |
-> + +--------+---------------------------------+
-> + |  0xBB  | Read Dual I/O                   |
-> + +--------+---------------------------------+
-> + |  0xB2  | Write Dual I/O                  |
-> + +--------+---------------------------------+
-> + |  0xEB  | Read Quad I/O                   |
-> + +--------+---------------------------------+
-> + |  0xE2  | Write Quad I/O                  |
-> + +--------+---------------------------------+
-> +
-> <snipped>...
-> +When THC is working in I2C mode, opcodes are used to tell THC what's the=
- next PIO type:
-> +I2C SubIP APB register read, I2C SubIP APB register write, I2C touch IC =
-device read,
-> +I2C touch IC device write, I2C touch IC device write followed by read.
-> +
-> +Here are the THC pre-defined opcodes for I2C mode::
-> +
-> + +--------+-------------------------------------------+----------+
-> + | opcode |       Corresponding I2C command           | Address  |
-> + +=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+
-> + |  0x12  | Read I2C SubIP APB internal registers     | 0h - FFh |
-> + +--------+-------------------------------------------+----------+
-> + |  0x13  | Write I2C SubIP APB internal registers    | 0h - FFh |
-> + +--------+-------------------------------------------+----------+
-> + |  0x14  | Read external Touch IC through I2C bus    | N/A      |
-> + +--------+-------------------------------------------+----------+
-> + |  0x18  | Write external Touch IC through I2C bus   | N/A      |
-> + +--------+-------------------------------------------+----------+
-> + |  0x1C  | Write then read external Touch IC through | N/A      |
-> + |        | I2C bus                                   |          |
-> + +--------+-------------------------------------------+----------+
-> +
-> <snipped>...
-> +Intel THC uses PRD entry descriptor for every PRD entry. Every PRD entry=
- descriptor occupies
-> +128 bits memories::
-> +
-> + +-------------------+---------+----------------------------------------=
---------+
-> + | struct field      | bit(s)  | description                            =
-        |
-> + +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D+
-> + | dest_addr         | 53..0   | destination memory address, as every en=
-try     |
-> + |                   |         | is 4KB, ignore lowest 10 bits of addres=
-s.      |
-> + +-------------------+---------+----------------------------------------=
---------+
-> + | reserved1         | 54..62  | reserved                               =
-        |
-> + +-------------------+---------+----------------------------------------=
---------+
-> + | int_on_completion | 63      | completion interrupt enable bit, if thi=
-s bit   |
-> + |                   |         | set it means THC will trigger a complet=
-ion     |
-> + |                   |         | interrupt. This bit is set by SW driver=
-=2E       |
-> + +-------------------+---------+----------------------------------------=
---------+
-> + | len               | 87..64  | how many bytes of data in this entry.  =
-        |
-> + +-------------------+---------+----------------------------------------=
---------+
-> + | end_of_prd        | 88      | end of PRD table bit, if this bit is se=
-t,      |
-> + |                   |         | it means this entry is last entry in th=
-is PRD  |
-> + |                   |         | table. This bit is set by SW driver.   =
-        |
-> + +-------------------+---------+----------------------------------------=
---------+
-> + | hw_status         | 90..89  | HW status bits                         =
-        |
-> + +-------------------+---------+----------------------------------------=
---------+
-> + | reserved2         | 127..91 | reserved                               =
-        |
-> + +-------------------+---------+----------------------------------------=
---------+
+This one ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 
+> :::::: TO: Nobuhiro Iwamatsu <iwamatsu.nobuhiro@renesas.com>
+> :::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
+> 
 
-Shouldn't these tables be formatted as tables?
+-- 
+~Randy
 
-Thanks.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---piiGGXBvEqKZuoLP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZzbIOgAKCRD2uYlJVVFO
-oz6LAP99VEDsehlAPR+X9zgwEkcCE1Mko2zX3n4bSOBlpayWiAEA/hRSe5+cRDaQ
-lkGYtBq5mXgsRyz54qqxWBPELSNZNA0=
-=thPG
------END PGP SIGNATURE-----
-
---piiGGXBvEqKZuoLP--
 
