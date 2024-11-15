@@ -1,225 +1,194 @@
-Return-Path: <linux-kernel+bounces-410430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 234369CDB82
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:25:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E899CDB85
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:26:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DA901F2269D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:25:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4CE2B2277F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8AF18FC70;
-	Fri, 15 Nov 2024 09:25:20 +0000 (UTC)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80DDE18FC8C;
+	Fri, 15 Nov 2024 09:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dk/ckOrE"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D45186295;
-	Fri, 15 Nov 2024 09:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902B518C322;
+	Fri, 15 Nov 2024 09:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731662720; cv=none; b=XxawebfF4HW1LCQBJRHr46pY3uZbtx6NZ0Ir4zoX/rpjG5N30Rb0utUmFfPrXmuaIFxKgvGjoWPyNPOjWuDh7eCpAhJITjqHVNAx62FCwl9SEKVqPHrjQKfIECjoGse5fsdTOlrYeRHlLR3qGKtfvuEGxNtec0GbYYeDo/LfxDw=
+	t=1731662785; cv=none; b=c/Kp3QqNTI9zMb5y60OjPtl3bgMb93o9ANnidGbRGiaJZtT0Q1cT68GLx38ZaW/DSNoMNw/YJFsyyZxOoyarmq2vvj/w6uekYbuv0jEbtOcm3NEvpoyNP1XGqUnSmDD4cjkzyhD0l/vqCC6uRDb/BaAR+fKmeQmxUj1V9XgclM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731662720; c=relaxed/simple;
-	bh=ERa5WYGTtwx3L0zJjASxr5QfIVoE8Q4QH+boOQoZ0hA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fFUNRI1rzV2m5D/+eLrYVkuB9xNEg6BFGOOVZMGtJ3vJac4sOcJyjN0CbHri7I4y9zPIaHt5ISToKaCQfobcL52VOK1kgAxtgXyEcWKBYqDUg0inHSV8Uu6cO9smx7IwXAfVogKR3POYJZRZAPYpqLaj3h2IVsNi1ytnG6rd4mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6ea7c9226bbso17434167b3.3;
-        Fri, 15 Nov 2024 01:25:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731662716; x=1732267516;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5NIljxAt/VoeNXqks0tIuucyMvh7o2GfuF/8F2vXkhM=;
-        b=rPK99qUUQMTZvW6vKbNMa4X+tjpCRA/cd403W87xeLn3ULm0JVG4xjDV/kOQKzOQj5
-         TBzJ00t8HokgjWs9OiKPYv2auLLu0xD1VDXyuNB8/AZdaTr1SsDTI+66+a29n6ZQ7vZ4
-         pfWdX5s4fYMUzxYlpjOot7QLc2YDp8u8od866Lu+QiqbkWbHOW1SpSTbjaIducXm10cN
-         9v6htHpAIGpK0NMwLYFyJ1c2rOxXX9E8KJEJQe2F/3HtYj07WpRftl8JSeKi8uYHt48v
-         921LyN/9eNd8D7cKob0Hnq1SjW0uw7KsTPlVUNWRDLTxm9airRgFayNd/KAjVqNhUwEo
-         bmAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUVqErmqmoS+ALHWbm9MndpmprdtVt9UoCq+9miPx8HhzvlFtWj7HAjYeedmJp072wHMRF2rAx891U=@vger.kernel.org, AJvYcCV7PiL+wUub3AKVdu0yuR9Rz6sgr6906VqzJfN+1gWn6wRhYg6i9cgwtDMJPafAS0/O+bwat9/cGkxp4v0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1NbaOMyZMMAgmLKrdh8k13qgbSzeQVTCES/Qa2SyDyk0bmQfR
-	MnIRq3XqdpxUuqNWkR/N0Wr0S2cnDD86nDzioC7yw9NpMVgD9HLUU5weUZTw
-X-Google-Smtp-Source: AGHT+IFus39Wv/bZT0T7FhydQJCjm9QXoxPiVWbf+EatqsLkjRI8B77U+jMPnvCZNPvAmbn8WgMgFA==
-X-Received: by 2002:a05:690c:4444:b0:6e2:7dd:af66 with SMTP id 00721157ae682-6ee55c1dce0mr20812357b3.19.1731662716109;
-        Fri, 15 Nov 2024 01:25:16 -0800 (PST)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ee4404661esm6533557b3.31.2024.11.15.01.25.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 01:25:15 -0800 (PST)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6ea07d119b7so13706367b3.0;
-        Fri, 15 Nov 2024 01:25:14 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUws5XNFmqeXyPji4ra3H1KIlIbDolOkjnPfQR4VcD5do1QRtCTZZDt0yjntARpw8KeWefGmHZwrk8cSOI=@vger.kernel.org, AJvYcCWiwDcdyZYma4FePfEYRMkmJD8k3wqt1Y6dP8rX9P5Fa1w0cw/yc9dtEJXoX8vXa9BWPl0Qx+eaiyc=@vger.kernel.org
-X-Received: by 2002:a05:690c:6806:b0:6ea:86b6:f703 with SMTP id
- 00721157ae682-6ee55b95922mr25021017b3.1.1731662713877; Fri, 15 Nov 2024
- 01:25:13 -0800 (PST)
+	s=arc-20240116; t=1731662785; c=relaxed/simple;
+	bh=Guw0XR5d0BgTLqHT6YoapFxf8RK2MKtxRUr39yYdodE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f/swisNbej9wqzgPRmwzY4ZrDsDlKdET9Y2TmniWGb0LgemlzE+FWuAu1LNOf13R8uKOaZ5RYg3TusI/qOzFNghrRn61c/lP5WQwXxH1+AhqjYWdNQQUKErtRZPk9IvpbN/tkC21GGfCT+qPhLuM6GQexXLWa97AHhFV/77JIxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dk/ckOrE; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1731662781;
+	bh=Guw0XR5d0BgTLqHT6YoapFxf8RK2MKtxRUr39yYdodE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dk/ckOrE/DWFWJW2vFRsRgMJ4FhMTQHBkF0Bi4nB+DpsWTTjAmh9Q9kjgGJH7cQDu
+	 9lwZwx4FUcJ3AgkXiTSlKhM4aK+cvrd8ghAok0SA0WFCWI+UP3qk1dNVoFRyNCmHKI
+	 lzn4f3P+bsYz0ekZ4OJAnrTTo30iuGgyIIqXEmTaQg05KbQOKuT9Nx7qLpNJJVNlSn
+	 cYCZYf4afyyG1Jy5Tb1XqEMf2k3ieULQd1mI/gBeQrpGVS/LQv83IL64YbqE6PPJ3z
+	 0DUFF9OpXm3FyEe3ZgRRqSihuGp6Vxn/nMYcGkC8XwXIeJEUa27WVZWZkmJX6SdZom
+	 7bgfL8C5k/7SA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8C76117E35D1;
+	Fri, 15 Nov 2024 10:26:20 +0100 (CET)
+Message-ID: <c681604b-d439-4815-b1d9-ad435b85b5be@collabora.com>
+Date: Fri, 15 Nov 2024 10:26:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114220921.2529905-1-saravanak@google.com>
- <20241114220921.2529905-6-saravanak@google.com> <CAGETcx8xni1vyoNts=C=dgEaMcfhsfo0B5Ef02jD3in0QqCB1w@mail.gmail.com>
-In-Reply-To: <CAGETcx8xni1vyoNts=C=dgEaMcfhsfo0B5Ef02jD3in0QqCB1w@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 15 Nov 2024 10:25:02 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUVj8m8JkKgH0fYQ=55F8GCcW=GA6ftbqsOJn34NLS_YQ@mail.gmail.com>
-Message-ID: <CAMuHMdUVj8m8JkKgH0fYQ=55F8GCcW=GA6ftbqsOJn34NLS_YQ@mail.gmail.com>
-Subject: Re: [PATCH v1 5/5] PM: sleep: Spread out async kworker threads during
- dpm_resume*() phases
-To: Saravana Kannan <saravanak@google.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Marek Vasut <marex@denx.de>, Bird@google.com, 
-	Tim <Tim.Bird@sony.com>, kernel-team@android.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] arm64: dts: mediatek: Set mediatek,mac-wol on
+ DWMAC node for all boards
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
+Cc: Michael Walle <mwalle@kernel.org>, kernel@collabora.com,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Biao Huang <biao.huang@mediatek.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Andrew Halaney <ahalaney@redhat.com>, Simon Horman <horms@kernel.org>
+References: <20241109-mediatek-mac-wol-noninverted-v2-0-0e264e213878@collabora.com>
+ <20241109-mediatek-mac-wol-noninverted-v2-2-0e264e213878@collabora.com>
+ <bdbfb1db-1291-4f95-adc9-36969bb51eb4@collabora.com>
+ <d441b614-0b71-410f-af4e-30cb164d9cd5@notapiano>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <d441b614-0b71-410f-af4e-30cb164d9cd5@notapiano>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Saravana,
+Il 14/11/24 20:22, Nícolas F. R. A. Prado ha scritto:
+> On Thu, Nov 14, 2024 at 10:26:34AM +0100, AngeloGioacchino Del Regno wrote:
+>> Il 09/11/24 16:16, Nícolas F. R. A. Prado ha scritto:
+>>> Due to the mediatek,mac-wol property previously being handled backwards
+>>> by the dwmac-mediatek driver, its use in the DTs seems to have been
+>>> inconsistent.
+>>>
+>>> Now that the driver has been fixed, correct this description. All the
+>>> currently upstream boards support MAC WOL, so add the mediatek,mac-wol
+>>> property to the missing ones.
+>>>
+>>> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+>>> ---
+>>>    arch/arm64/boot/dts/mediatek/mt2712-evb.dts                   | 1 +
+>>>    arch/arm64/boot/dts/mediatek/mt8195-demo.dts                  | 1 +
+>>>    arch/arm64/boot/dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dts | 1 +
+>>>    3 files changed, 3 insertions(+)
+>>>
+>>
+>> ..snip..
+>>
+>>> diff --git a/arch/arm64/boot/dts/mediatek/mt8195-demo.dts b/arch/arm64/boot/dts/mediatek/mt8195-demo.dts
+>>> index 31d424b8fc7cedef65489392eb279b7fd2194a4a..c12684e8c449b2d7b3b3a79086925bfe5ae0d8f8 100644
+>>> --- a/arch/arm64/boot/dts/mediatek/mt8195-demo.dts
+>>> +++ b/arch/arm64/boot/dts/mediatek/mt8195-demo.dts
+>>> @@ -109,6 +109,7 @@ &eth {
+>>>    	pinctrl-names = "default", "sleep";
+>>>    	pinctrl-0 = <&eth_default_pins>;
+>>>    	pinctrl-1 = <&eth_sleep_pins>;
+>>> +	mediatek,mac-wol;
+>>
+>> The demo board has the same WoL capability as the EVK, so you can avoid adding the
+>> mac-wol property here.
+> 
+> Not sure I follow... If we omit the property here it will use PHY WOL instead,
+> while the genio 1200 EVK has the property, so it will be using MAC WOL, so
+> they're already the same and omitting will make them behave differently...
+> 
+> Let me recap to make sure we're all on the same page:
+> 
+> This was the WOL configuration for each board before this series:
+> MAC mt2712-evb.dts
+> MAC mt8195-demo.dts
+> PHY mt8395-genio-1200-evk.dts
+> MAC mt8395-kontron-3-5-sbc-i1200.dts
+> PHY mt8395-radxa-nio-12l.dts
+> PHY mt8390-genio-700-evk.dts
+> 
+> After patch 1, they all get inverted:
+> PHY mt2712-evb.dts
+> PHY mt8195-demo.dts
+> MAC mt8395-genio-1200-evk.dts
+> PHY mt8395-kontron-3-5-sbc-i1200.dts
+> MAC mt8395-radxa-nio-12l.dts
+> MAC mt8390-genio-700-evk.dts
+> 
+> And after patch 2, the remaining PHY ones are set to MAC:
+> MAC mt2712-evb.dts
+> MAC mt8195-demo.dts
+> MAC mt8395-genio-1200-evk.dts
+> MAC mt8395-kontron-3-5-sbc-i1200.dts
+> MAC mt8395-radxa-nio-12l.dts
+> MAC mt8390-genio-700-evk.dts
+> 
+> The only board I have in hands and am able to test is mt8390-genio-700-evk.dts,
+> which requires MAC WOL to work. For the others, your feedback on v1 was that
+> they should all be set to MAC WOL. Except for mt2712, which you were not sure
+> about, but it was already set to MAC WOL so we're keeping the same behavior.
+> 
+> That's how we got to adding mediatek,mac-wol to mt8195-demo.dts,
+> mt8395-kontron-3-5-sbc-i1200.dts and mt2712-evb.dts. Let me know if there has
+> been some misunderstanding.
+> 
 
-On Fri, Nov 15, 2024 at 6:25=E2=80=AFAM Saravana Kannan <saravanak@google.c=
-om> wrote:
-> On Thu, Nov 14, 2024 at 2:09=E2=80=AFPM Saravana Kannan <saravanak@google=
-.com> wrote:
-> > As of today, the scheduler doesn't spread out all the kworker threads
-> > across all the available CPUs during suspend/resume. This causes
-> > significant resume latency during the dpm_resume*() phases.
-> >
-> > System resume latency is a very user-visible event. Reducing the
-> > latency is more important than trying to be energy aware during that
-> > period.
-> >
-> > Since there are no userspace processes running during this time and
-> > this is a very short time window, we can simply disable EAS during
-> > resume so that the parallel resume of the devices is spread across all
-> > the CPUs.
-> >
-> > On a Pixel 6, averaging over 100 suspend/resume cycles, the new logic
-> > plus disabling EAS for resume yields significant improvements:
-> > +---------------------------+-----------+------------+-----------------=
--+
-> > | Phase                     | Old full sync | New full async | % change=
- |
-> > |                           |               | + EAS disabled |         =
- |
-> > +---------------------------+-----------+------------+-----------------=
--+
-> > | Total dpm_suspend*() time |        107 ms |          62 ms |     -42%=
- |
-> > +---------------------------+-----------+------------+-----------------=
--+
-> > | Total dpm_resume*() time  |         75 ms |          61 ms |     -19%=
- |
-> > +---------------------------+-----------+------------+-----------------=
--+
-> > | Sum                       |        182 ms |         123 ms |     -32%=
- |
-> > +---------------------------+-----------+------------+-----------------=
--+
-> >
-> > Signed-off-by: Saravana Kannan <saravanak@google.com>
-> > ---
-> >  kernel/power/suspend.c  | 16 ++++++++++++++++
-> >  kernel/sched/topology.c | 13 +++++++++++++
-> >  2 files changed, 29 insertions(+)
-> >
-> > diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-> > index 09f8397bae15..7304dc39958f 100644
-> > --- a/kernel/power/suspend.c
-> > +++ b/kernel/power/suspend.c
-> > @@ -393,6 +393,12 @@ void __weak arch_suspend_enable_irqs(void)
-> >         local_irq_enable();
-> >  }
-> >
-> > +/*
-> > + * Intentionally not part of a header file to avoid risk of abuse by o=
-ther
-> > + * drivers.
-> > + */
-> > +void sched_set_energy_aware(unsigned int enable);
-> > +
-> >  /**
-> >   * suspend_enter - Make the system enter the given sleep state.
-> >   * @state: System sleep state to enter.
-> > @@ -468,6 +474,15 @@ static int suspend_enter(suspend_state_t state, bo=
-ol *wakeup)
-> >
-> >   Platform_wake:
-> >         platform_resume_noirq(state);
-> > +       /*
-> > +        * We do this only for resume instead of suspend and resume for=
- these
-> > +        * reasons:
-> > +        * - Performance is more important than power for resume.
-> > +        * - Power spent entering suspend is more important for suspend=
-. Also,
-> > +        *   stangely, disabling EAS was making suspent a few milliseco=
-nds
-> > +        *   slower in my testing.
-> > +        */
-> > +       sched_set_energy_aware(0);
-> >         dpm_resume_noirq(PMSG_RESUME);
-> >
-> >   Platform_early_resume:
-> > @@ -520,6 +535,7 @@ int suspend_devices_and_enter(suspend_state_t state=
-)
-> >   Resume_devices:
-> >         suspend_test_start();
-> >         dpm_resume_end(PMSG_RESUME);
-> > +       sched_set_energy_aware(1);
-> >         suspend_test_finish("resume devices");
-> >         trace_suspend_resume(TPS("resume_console"), state, true);
-> >         resume_console();
-> > diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> > index 9748a4c8d668..c069c0b17cbf 100644
-> > --- a/kernel/sched/topology.c
-> > +++ b/kernel/sched/topology.c
-> > @@ -284,6 +284,19 @@ void rebuild_sched_domains_energy(void)
-> >         mutex_unlock(&sched_energy_mutex);
-> >  }
-> >
-> > +void sched_set_energy_aware(unsigned int enable)
->
->   CC      kernel/sched/build_utility.o
-> In file included from kernel/sched/build_utility.c:88:
-> kernel/sched/topology.c:287:6: warning: no previous prototype for
-> =E2=80=98sched_set_energy_aware=E2=80=99 [-Wmissing-prototypes]
->   287 | void sched_set_energy_aware(unsigned int enable)
->       |      ^~~~~~~~~~~~~~~~~~~~~~
->
-> Peter/Vincent,
->
-> I noticed that I'm getting a warning for this line. But I'm not sure
-> what to do about it. I intentionally didn't put this in a header file
-> because I'm guessing we don't want to make this available to
-> drivers/frameworks in general.
->
-> Let me know how you want me to handle this.
+No, it's me getting confused about the current status - and I'm sorry about that.
 
-Put the prototype in kernel/sched/sched.h, and include
-../sched/sched.h from kernel/power/suspend.c?
+So just ignore me saying "we can avoid adding" - we can't.
+This commit is definitely needed.
 
-Gr{oetje,eeting}s,
+Cheers,
+Angelo
 
-                        Geert
+> Thanks,
+> Nícolas
+> 
+>>
+>>>    	status = "okay";
+>>>    	mdio {
+>>> diff --git a/arch/arm64/boot/dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dts b/arch/arm64/boot/dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dts
+>>> index e2e75b8ff91880711c82f783c7ccbef4128b7ab4..4985b65925a9ed10ad44a6e58b9657a9dd48751f 100644
+>>> --- a/arch/arm64/boot/dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dts
+>>> +++ b/arch/arm64/boot/dts/mediatek/mt8395-kontron-3-5-sbc-i1200.dts
+>>> @@ -271,6 +271,7 @@ &eth {
+>>>    	pinctrl-names = "default", "sleep";
+>>>    	pinctrl-0 = <&eth_default_pins>;
+>>>    	pinctrl-1 = <&eth_sleep_pins>;
+>>> +	mediatek,mac-wol;
+>>
+>> I'm mostly sure that Kontron's i1200 works the same as the EVK in regards to WoL.
+>>
+>> Michael, I recall you worked on this board - can you please confirm?
+>>
+>> Thanks,
+>> Angelo
+>>
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+
 
