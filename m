@@ -1,71 +1,85 @@
-Return-Path: <linux-kernel+bounces-411177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E33089CF46C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:59:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBE969CF40B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:35:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCFE5B37DDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:42:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B15F0283FE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96061E0E0A;
-	Fri, 15 Nov 2024 18:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA7E1E0DEC;
+	Fri, 15 Nov 2024 18:35:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tk154.de header.i=@tk154.de header.b="jKCUZPxn"
-Received: from smtp10.goneo.de (smtp10.goneo.de [85.220.189.106])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ji28jsis"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034B31D90A5;
-	Fri, 15 Nov 2024 18:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.220.189.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C0C1D90A5;
+	Fri, 15 Nov 2024 18:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731696072; cv=none; b=kOrarhlFfE4ogScGntEWRvRR0fig1qBsEW1KNeLb8iolo8Pse3VrbjSO2T94GXJ7f8E73+Vwu04STUBb7RxA6u5tfdQd1u0FuZkE4TP1KfmFMFh2f3mGNQYc0R1bfXTdCVEEyJVYx37ZqKFTxQTALHPLmNnnyNniOFtNjxbVFnY=
+	t=1731695700; cv=none; b=s2pskIxYbMFoeSP6FTzUvxKs0w1y0B0A1MlDRktnS0cPNVwKQDtIt5kznicRBPe9g/1krXipj6Fc4OQ/VfOdVSqzbeKcE5jFqYx7g7ddUWFU54dHL6B/RCUBw9xmhmQD+R6XiIX7pSMFOsL/2lY1D6VsPw3Kdh7v12pkqENIfRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731696072; c=relaxed/simple;
-	bh=OBPrvQaPcar7MS8LqlU9mzk5qR9eZBNCOKDdcvghSXw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T2+eAAKTRbWSLAvzQ/5a/Lo8tG5tuIklZsnKh5fLHjKXh+8P5adsQHxYAKsib7pQEd248ZqUqPCOe67h3oFPEyW2Mn97EsThpqiV41H0XTVv5KsrRDZaRw8rjHIjul8/QnbYn3EZcU3aVlYlQ7+6mmDM8J/Kryc3pdA3hbpj2b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tk154.de; spf=pass smtp.mailfrom=tk154.de; dkim=pass (2048-bit key) header.d=tk154.de header.i=@tk154.de header.b=jKCUZPxn; arc=none smtp.client-ip=85.220.189.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tk154.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tk154.de
-Received: from hub1.goneo.de (hub1.goneo.de [IPv6:2001:1640:5::8:52])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	by smtp10.goneo.de (Postfix) with ESMTPS id 3B346240127;
-	Fri, 15 Nov 2024 19:33:51 +0100 (CET)
-Received: from hub1.goneo.de (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	by hub1.goneo.de (Postfix) with ESMTPS id 90403240239;
-	Fri, 15 Nov 2024 19:33:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tk154.de; s=DKIM001;
-	t=1731695629;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=CLEjcCfwVCSaZMP2cJOPRIQuUntKjUDmrMW+O9uBkF4=;
-	b=jKCUZPxnXk8nPslhnK93h9eeE+wRKQ34jqEcCXo2t0bfIyA2xmXdbm94aNGsTM6mv0Jjri
-	uSGOO9dYCsLBLL4oG9VWLDNtbZYoxDlwaCy9BxpTs+TCJSUfTMCLSyxr92Ci+/WoCs2w8w
-	j4yVaz6RfFH1fSDOdojGYwHW8oAbbTxlA9qIz5aI8SF2qYwMTOh4GN124bI2kS1YY2IL86
-	R7OUeSvC1dKdXIrMwRZzAt3t4YPm4+j/mZ7wF+1ofjmfQFd++x1XKAaHQz5pTnuaGYMS6I
-	/GMTg5AW2uNXPPO2Wn7IirYrhuCohyOQykmKuSx0gP5rt6U/V1tON/DRqfsDfA==
-Received: from Til-Notebook.hs-nordhausen.de (unknown [195.37.89.195])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by hub1.goneo.de (Postfix) with ESMTPSA id 0CE5E240565;
-	Fri, 15 Nov 2024 19:33:48 +0100 (CET)
-From: Til Kaiser <mail@tk154.de>
-To: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Til Kaiser <mail@tk154.de>
-Subject: [PATCH net-next] net: uevent: also pass network device driver
-Date: Fri, 15 Nov 2024 19:33:46 +0100
-Message-ID: <20241115183346.597503-1-mail@tk154.de>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731695700; c=relaxed/simple;
+	bh=lXQz7wy56AGz3YhdfTia7HvsBEdDjKSuSrGoAlkUh1k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bl3gwgK6CUTKsp6TBTqzIDJw1FYM1LJbQnUlQhEJ7W9HjWe++aGZ61e1y5rhP7TLfySa1IL7cf+XFFDO1iJv+zZV5kFJBeia3MgPE6rDmB1ChaE7fSiYzm5mipC8aili9yQlCW5xZjaATC6JcnQxcfA6jibJmLbYMdcRdTIbJro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ji28jsis; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AFAYZVD017758;
+	Fri, 15 Nov 2024 18:34:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=CXvP+XzCQ3zQcG4pDpZchG89wmh8EwXBycr5MMRTU
+	9M=; b=ji28jsisIPVFerdupBGQVDoSsZQETxnwqJZ4BF8L4q8ODlnG2FqetBT2j
+	QNwbQrzuXFFGkQVmIwCFBOf4HoIk683XIMSeYzo2ZZFlmjg5DCqwijAqf6Qet/EN
+	sKhc4lnif6wyiQ5utQzrz6vDaL07ZZJHiSwkz1uvfpepVwByZkzByar6+F++BwYv
+	rvECIcw28EvUNwPFX6c8GC8ISRpIRWMMYI5C5k7fx9HgQ9a891N8OkffIm+fvAx/
+	atRpB68iof7gPrb9DpZQgNjrovCd6VEsoxyZX1VXpEi0NXlyRH226XOCxORzzHsQ
+	2X0zk6uOsXk1PUZfWbE+UF3ErdeQg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42wuvc4qk5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 18:34:56 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AFIQbC7004104;
+	Fri, 15 Nov 2024 18:34:55 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42wuvc4qk3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 18:34:55 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AFHHPnw029689;
+	Fri, 15 Nov 2024 18:34:55 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42tkjmvh37-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 18:34:55 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AFIYq7F55574858
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 15 Nov 2024 18:34:52 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C40D520049;
+	Fri, 15 Nov 2024 18:34:52 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A462620040;
+	Fri, 15 Nov 2024 18:34:51 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com.com (unknown [9.39.26.153])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 15 Nov 2024 18:34:51 +0000 (GMT)
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: linux-ext4@vger.kernel.org, Jan Kara <jack@suse.com>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/1] Fix generic/390 failure due to quota release after freeze
+Date: Sat, 16 Nov 2024 00:04:48 +0530
+Message-ID: <20241115183449.2058590-1-ojaswin@linux.ibm.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,46 +87,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-UID: ecce65
-X-Rspamd-UID: 3adc96
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: EF1ioymXVt52NrmqoNwPC_Z40tCgWmYP
+X-Proofpoint-ORIG-GUID: btOZyRtVpSP2AHZRZxuT0yXlERGnIuIt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ priorityscore=1501 clxscore=1011 suspectscore=0 mlxscore=0 bulkscore=0
+ lowpriorityscore=0 impostorscore=0 spamscore=0 adultscore=0 phishscore=0
+ mlxlogscore=797 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411150156
 
-Currently, for uevent, the interface name and
-index are passed via shell variables.
+Recently we noticed generic/390 failing on powerpc systems. This test
+basically does a freeze-unfreeze loop in parallel with fsstress on the
+FS to detect any races in the code paths.
 
-This commit also passes the network device
-driver as a shell variable to uevent.
+We noticed that the test started failing due to kernel WARN_ONs because
+quota_release_work workqueue started executing while the FS was frozen
+which led to creating new transactions in ext4_release_quota. 
 
-Signed-off-by: Til Kaiser <mail@tk154.de>
----
- net/core/net-sysfs.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Most of the details are in the bug however I'd just like to add that
+I'm completely new to quota code so the patch, although fixing the
+issue, might be not be logically the right thing to do. So reviews and
+suggestions are welcome. 
 
-diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-index 05cf5347f25e..67aad5ca82f8 100644
---- a/net/core/net-sysfs.c
-+++ b/net/core/net-sysfs.c
-@@ -2000,6 +2000,7 @@ EXPORT_SYMBOL_GPL(net_ns_type_operations);
- static int netdev_uevent(const struct device *d, struct kobj_uevent_env *env)
- {
- 	const struct net_device *dev = to_net_dev(d);
-+	const char *driver = netdev_drivername(dev);
- 	int retval;
- 
- 	/* pass interface to uevent. */
-@@ -2012,6 +2013,12 @@ static int netdev_uevent(const struct device *d, struct kobj_uevent_env *env)
- 	 * and is what RtNetlink uses natively.
- 	 */
- 	retval = add_uevent_var(env, "IFINDEX=%d", dev->ifindex);
-+	if (retval)
-+		goto exit;
-+
-+	if (driver[0])
-+		/* pass driver to uevent. */
-+		retval = add_uevent_var(env, "DRIVER=%s", driver);
- 
- exit:
- 	return retval;
+Also, I can only replicate this race on one of my machines reliably and
+does not appear on others.  I've tested with with fstests -g quota and
+don't see any new failures.
+
+Ojaswin Mujoo (1):
+  quota: flush quota_release_work upon quota writeback
+
+ fs/quota/dquot.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
 -- 
-2.47.0
+2.43.5
 
 
