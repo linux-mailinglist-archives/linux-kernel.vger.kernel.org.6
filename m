@@ -1,122 +1,188 @@
-Return-Path: <linux-kernel+bounces-410882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28A449CF135
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:17:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B61849CF12D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:13:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEBB8B28D22
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:24:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1624B30E51
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8221D47AD;
-	Fri, 15 Nov 2024 15:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32301D47B4;
+	Fri, 15 Nov 2024 15:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o8XkM5qv"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PHQxPfOg"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73FC416F282
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 15:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6607A1CDA26
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 15:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731684261; cv=none; b=JAGUyQyqRMK4TlaN5HAHczixixVhuIMqeMKZ2ATrE1e4RsHcNTTsuq6Y/v0/yCDV7hm0qQpjV+qhQNcvfu8PJu8RjrvHqznfU/RyGsMGQTC9Ygbb9ZtoFUF7OWbVG+VhfALv8avTBCt+3KJCp2SWEsbTeg5RyJWc0PIgHZloCmw=
+	t=1731684470; cv=none; b=Dox0v6BzEQRlcMW7j2FtWZo83CXlkXOAusRTdXA8A8zgB5r5P1gNofFF4i/jnja2Yza9fSDA7zOS6eDN240JwdipK1Xn7p6HnLAxLWqMK6PEJBpzQrbN6UZuuOf0BnP8eDJEwt6Ax4f3dje0xWGfXkdkx5LfxTDiZO2LEeJHTLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731684261; c=relaxed/simple;
-	bh=6CbonmGIEt1LytS/5LcyBBLPi6YyB8nOYoG0UOl1eSo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=i35KbERSVfNAgmUQf2lQ6nfbbDbTlPaJGySoJOaDJ2H6N7iyAcfyeanQBoE93g1vB1BCVSkbWZr78NwtIPfxILtnAnbQcVh/spvjr/8rriaj7soHPnhQgpBcJLe5AdxbGkG55L6KKpCQkJbZL5gNzQZRdpxAxQ0HbiYbr09xoPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o8XkM5qv; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5cf6f5d4939so8396a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 07:24:19 -0800 (PST)
+	s=arc-20240116; t=1731684470; c=relaxed/simple;
+	bh=bVXjOnsWx/iYY5FZ/kXZfHu8Jl/8iTaixZb5j49sBB0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tWmaE3wW5qCT0LDYBQR/5RwtFoSSdqR5SvA1PdfdDXsetUzYfEwkPBbaPnbbQwI5hfDzNbLnoAGxFt1RgGSQHJmr8nukVIah8pzPXhKGxeTWl+9iSCZwuat/WI+mXfBXdUIPA1u6wTFd5mtE/cSUJac2mcNS1Q9oWzWidSU5FX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PHQxPfOg; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fb3da341c9so17403751fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 07:27:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731684258; x=1732289058; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6CbonmGIEt1LytS/5LcyBBLPi6YyB8nOYoG0UOl1eSo=;
-        b=o8XkM5qvbh075Uxc2K2mtMtNsVyw7BiPNlOuqhrVio2ScvdzsW/b0MBXbzmk5ALw1N
-         jOndOlkPX626cmSWkbKGw6aTSseYiNtqd4agM1VYHlbmPCbfIJyhpQ/SmOaWuKPuBLNM
-         o0DaLznaak8QvQI8JJr4kmYegsFr03hyGgUHl1+0TgyTbA4q00EcMrN/0zwkFY0otmX9
-         xrBhoFT/mi/XmyIYQZ3Hwd6OxsG3cbatESd41UWirqw668WToqlSEOuhJY90vAoXxnK5
-         F8hMef3+7fAWHVzIW+bxwcWeFfO/pOy81najLVPM4Oa4xoMPIrQh1hR8qvldRMUpJOZB
-         mTuQ==
+        d=linaro.org; s=google; t=1731684467; x=1732289267; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PMXuggpYjesVA4FmUllH/mkqHpozoEMNcx85tFh/IDc=;
+        b=PHQxPfOgCu3d/K2wupcKv9NYWljNv//C5GXZw7WrG7VyZBKWnxpBUEWo55schv/EEE
+         DaCsv81Xkk/i1ACbTyZTE3XdZZU9uQhHFpLqS3Im6bNp2I51qq17ISDMFkl9xlWIKUc5
+         amB8noXqdIKtUaoW8O7C/TkWp6X/G/0n4wNFcSEWhavRu4fJtxak4jAsEVgsq7Yw3jPG
+         7Q3C4CmvzkmWkB5Ek1IKy81wPgBroQAwG3BUM3XasCCWHtgdQjgFnaCGzhMKBPp/0klw
+         VW+T/XDS822rrWwJ2ot6FuDTmY7IO655cOwH5v2HuKbkBfDMvU1cc2v2n8kg/IWDfrgx
+         ALCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731684258; x=1732289058;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6CbonmGIEt1LytS/5LcyBBLPi6YyB8nOYoG0UOl1eSo=;
-        b=gpAoW8sHe4RRVyzdgLPxm27/0jvoa0IUrFrj9J8fUr5ogybi2nVZoAAb89BxEZQpTf
-         09i6b0srmGa+rF30MXbs0SpFVIipwM1dC7Qn6EYTazuUb6Q2jsAdHsnmv9XmdiZxnxLz
-         dwQrc2pvn2RyQRoVeD7W2nxDYNX+8xTy4E0N1xSUCU1Qgt3IzykWQhrU7iON+VyhOSfq
-         D3UaOKI42xCghwFDQ4lGdvY8NtHWkVNquLW29rjurHcCk6+2e5h3Nyy8e78zMLRtsE9a
-         Jxdw71JXkyxjbIZ2X7G2vRsn0Nr3o5BdCdhQ0EjpFod0eP76myU+OWdxv6W3soGdhMvn
-         tA/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVABaESuqWIcb5+ckLNWbCZdIfCp22qrmUG6mCtWszicPVy2LsNcesnltgLzX2iidLZOtxGVZ4dSDO8R9k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXQRhJQ8PRfxrIefiYxqLBL8kLLNhawe1INdPMJwZZl+fEhREx
-	osW+fOx30awh/V9ew3bTkpEaeHoj5P+iY6SUvWWLXWx/XxO1ZAHubHAh7TrWJZcO2hOSUIyJu8m
-	PghwFru13Nz5qlH2UYvdZuntiuhx7u33Ywq3O
-X-Gm-Gg: ASbGncvLBIdb8qle2a6amu0nnjihq+dk3998bCp5WyqJ8qNHVpMGaPFIR0rAoXXk2C6
-	mClIieJwPysan5ep4CHgVVy0WkV2vVsY=
-X-Google-Smtp-Source: AGHT+IE0eFPESw33JfWkreHkpBmuXVgMQWpYruE4CtoQxvuEgukCXd5q+5EAuID/wRomZNlf7jXpJVGQwrxqMyn7stw=
-X-Received: by 2002:a50:8e51:0:b0:5cf:968d:f807 with SMTP id
- 4fb4d7f45d1cf-5cfa069dcddmr30a12.6.1731684257447; Fri, 15 Nov 2024 07:24:17
- -0800 (PST)
+        d=1e100.net; s=20230601; t=1731684467; x=1732289267;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PMXuggpYjesVA4FmUllH/mkqHpozoEMNcx85tFh/IDc=;
+        b=mNheHsWvUKPW23C2kstEEp0e5I9fLrbSrWzOhxs9vbKn9GkeYsRg+Edr0rC+vleoXu
+         VOE0TriS3TejI9Ll1bJnNRp0qNosZ6ORwZdYwrjni8+ho39+5jEkedXkXmzngqFNMNoY
+         CoI0Z8BORYQWs+SUpCxyrfMwUnGHXPua1SbCwiTFUBZFaoGty6DnI6OGA6FiTTD9cJo6
+         OQRysK6Aym4mmjCe1F8ExRmW7ahIoDX493il3WEtK51pqabkIUWlZf6Tz4TNKorJl9vS
+         jROKE51wpayPQbYHOe+UdlfjPMOAoo1VVDrnGphhMMObc6uB+wjKD0Ho+EPmcKq/1pFW
+         GHDA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/UmjPn47qSGXXdbw1e4aWDeu/+VEqsGpfA8GOYZ8fWyS+aw/Bz6uEBbZZIRZ8wOFj/7y7zdLUuKxJmWQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOa0ZQwi9AxYXc36CDKLPPW69zOSvLZRpyadmwf544K2SwZ3KR
+	FEtDSrJTnh34ASt4a2lBbYxt/FyuArR3ESIPFve+s81ESIFdItPjAYk7U0kkYZY=
+X-Google-Smtp-Source: AGHT+IHdzjVyEhzeFfshpDNdqomTi8OW4O+yNGDbt9rQbjkJS5VK0ycCp1yfl5ev+Ig7t+lEe2ruWQ==
+X-Received: by 2002:a05:651c:2122:b0:2fb:5035:7e4 with SMTP id 38308e7fff4ca-2ff60621cf1mr17333551fa.5.1731684466569;
+        Fri, 15 Nov 2024 07:27:46 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff59763d43sm5824821fa.9.2024.11.15.07.27.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 07:27:45 -0800 (PST)
+Date: Fri, 15 Nov 2024 17:27:42 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Melody Olvera <quic_molvera@quicinc.com>
+Cc: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Adam Skladowski <a39.skl@gmail.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Sibi Sankar <quic_sibis@quicinc.com>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Vladimir Lypak <vladimir.lypak@gmail.com>, Danila Tikhonov <danila@jiaxyga.com>, 
+	Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Rajendra Nayak <quic_rjendra@quicinc.com>, Mike Tipton <quic_mdtipton@quicinc.com>, 
+	Abel Vesa <abel.vesa@linaro.org>, Trilok Soni <quic_tsoni@quicinc.com>, 
+	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] interconnect: qcom: Add interconnect provider
+ driver for SM8750
+Message-ID: <em4vkg4totsg435s4usu7kqn45vfqfot2j7sikzmnof2kkyidi@26b6kkpz7z4c>
+References: <20241112003017.2805670-1-quic_molvera@quicinc.com>
+ <20241112003017.2805670-3-quic_molvera@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241115044303.50877-1-brendanhiggins@google.com> <ZzcPJ9sweqxLZOGf@ninjato>
-In-Reply-To: <ZzcPJ9sweqxLZOGf@ninjato>
-From: Brendan Higgins <brendanhiggins@google.com>
-Date: Fri, 15 Nov 2024 10:24:05 -0500
-Message-ID: <CAFd5g47+y0JH4StoKRTwJTQ2TsUCqmjdxqg=3cxY64Kous73=w@mail.gmail.com>
-Subject: Re: [RFC v1] MAINTAINERS: transfer i2c-aspeed maintainership from
- Brendan to Ryan
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Brendan Higgins <brendanhiggins@google.com>, tommy_huang@aspeedtech.com, 
-	benh@kernel.crashing.org, joel@jms.id.au, andi.shyti@kernel.org, 
-	andrew@codeconstruct.com.au, wsa@kernel.org, ryan_chen@aspeedtech.com, 
-	linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org, 
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	BMC-SW@aspeedtech.com, brendan.higgins@linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112003017.2805670-3-quic_molvera@quicinc.com>
 
-On Fri, Nov 15, 2024 at 4:06=E2=80=AFAM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
-> On Fri, Nov 15, 2024 at 04:43:03AM +0000, Brendan Higgins wrote:
-> > Remove Brendan Higgins <brendanhiggins@google.com> from i2c-aspeed entr=
-y
-> > and replace with Ryan Chen <ryan_chen@aspeedtech.com>.
-> >
-> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> > ---
-> > I am leaving Google and am going through and cleaning up my @google.com
->
-> Thanks for your work on this driver.
->
-> > address in the relevant places. I was just going to remove myself from
-> > the ASPEED I2C DRIVER since I haven't been paying attention to it, but
-> > then I saw Ryan is adding a file for the I2C functions on 2600, which
-> > made my think: Should I replace myself with Ryan as the maintainer?
-> >
-> > I see that I am the only person actually listed as the maintainer at th=
-e
-> > moment, and I don't want to leave this in an unmaintained state. What
-> > does everyone think? Are we cool with Ryan as the new maintainer?
->
-> I am fine, depends on Ryan as far as I am concerned.
+On Mon, Nov 11, 2024 at 04:30:17PM -0800, Melody Olvera wrote:
+> From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+> 
+> Introduce SM8750 interconnect provider driver using the interconnect
+> framework.
+> 
+> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+> ---
+>  drivers/interconnect/qcom/Kconfig  |    9 +
+>  drivers/interconnect/qcom/Makefile |    2 +
+>  drivers/interconnect/qcom/sm8750.c | 1585 ++++++++++++++++++++++++++++
+>  drivers/interconnect/qcom/sm8750.h |  132 +++
+>  4 files changed, 1728 insertions(+)
+>  create mode 100644 drivers/interconnect/qcom/sm8750.c
+>  create mode 100644 drivers/interconnect/qcom/sm8750.h
+> 
+> diff --git a/drivers/interconnect/qcom/Kconfig b/drivers/interconnect/qcom/Kconfig
+> index 362fb9b0a198..1219f4f23d40 100644
+> --- a/drivers/interconnect/qcom/Kconfig
+> +++ b/drivers/interconnect/qcom/Kconfig
+> @@ -337,6 +337,15 @@ config INTERCONNECT_QCOM_SM8650
+>  	  This is a driver for the Qualcomm Network-on-Chip on SM8650-based
+>  	  platforms.
+>  
+> +config INTERCONNECT_QCOM_SM8750
+> +	tristate "Qualcomm SM8750 interconnect driver"
+> +	depends on INTERCONNECT_QCOM_RPMH_POSSIBLE
+> +	select INTERCONNECT_QCOM_RPMH
+> +	select INTERCONNECT_QCOM_BCM_VOTER
+> +	help
+> +	  This is a driver for the Qualcomm Network-on-Chip on SM8750-based
+> +	  platforms.
+> +
+>  config INTERCONNECT_QCOM_X1E80100
+>  	tristate "Qualcomm X1E80100 interconnect driver"
+>  	depends on INTERCONNECT_QCOM_RPMH_POSSIBLE
+> diff --git a/drivers/interconnect/qcom/Makefile b/drivers/interconnect/qcom/Makefile
+> index 9997728c02bf..7887b1e8d69b 100644
+> --- a/drivers/interconnect/qcom/Makefile
+> +++ b/drivers/interconnect/qcom/Makefile
+> @@ -40,6 +40,7 @@ qnoc-sm8350-objs			:= sm8350.o
+>  qnoc-sm8450-objs			:= sm8450.o
+>  qnoc-sm8550-objs			:= sm8550.o
+>  qnoc-sm8650-objs			:= sm8650.o
+> +qnoc-sm8750-objs			:= sm8750.o
+>  qnoc-x1e80100-objs			:= x1e80100.o
+>  icc-smd-rpm-objs			:= smd-rpm.o icc-rpm.o icc-rpm-clocks.o
+>  
+> @@ -80,5 +81,6 @@ obj-$(CONFIG_INTERCONNECT_QCOM_SM8350) += qnoc-sm8350.o
+>  obj-$(CONFIG_INTERCONNECT_QCOM_SM8450) += qnoc-sm8450.o
+>  obj-$(CONFIG_INTERCONNECT_QCOM_SM8550) += qnoc-sm8550.o
+>  obj-$(CONFIG_INTERCONNECT_QCOM_SM8650) += qnoc-sm8650.o
+> +obj-$(CONFIG_INTERCONNECT_QCOM_SM8750) += qnoc-sm8750.o
+>  obj-$(CONFIG_INTERCONNECT_QCOM_X1E80100) += qnoc-x1e80100.o
+>  obj-$(CONFIG_INTERCONNECT_QCOM_SMD_RPM) += icc-smd-rpm.o
+> diff --git a/drivers/interconnect/qcom/sm8750.c b/drivers/interconnect/qcom/sm8750.c
+> new file mode 100644
+> index 000000000000..bc72954d54ff
+> --- /dev/null
+> +++ b/drivers/interconnect/qcom/sm8750.c
+> @@ -0,0 +1,1585 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+> + *
+> + */
+> +
+> +#include <linux/device.h>
+> +#include <linux/interconnect.h>
+> +#include <linux/interconnect-provider.h>
+> +#include <linux/module.h>
+> +#include <linux/of_platform.h>
+> +#include <dt-bindings/interconnect/qcom,sm8750-rpmh.h>
+> +
+> +#include "bcm-voter.h"
+> +#include "icc-rpmh.h"
+> +#include "sm8750.h"
 
-One thing I forgot to note in my previous email: today - Friday,
-November 15th is my last day at Google, so after today I won't have
-access to this account. If future replies or patch updates are needed,
-they will come from my brendan.higgins@linux.dev account.
+Nit: please merge sm8750.h here, there is no need to have a separate
+header, there are no other users.
+
+Also, is there QoS support? I see no qcom_icc_qosbox entries.
+
+Other than that:
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+
+-- 
+With best wishes
+Dmitry
 
