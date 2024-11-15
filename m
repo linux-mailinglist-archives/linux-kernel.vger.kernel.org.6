@@ -1,119 +1,111 @@
-Return-Path: <linux-kernel+bounces-410929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D96C9CF08A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:46:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C349E9CF08E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:47:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13A0F29021C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:46:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8389B29095E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A19C1D618E;
-	Fri, 15 Nov 2024 15:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1E01DDC0D;
+	Fri, 15 Nov 2024 15:41:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TjdiOCR1"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="TC9LE44L"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC381C75E2;
-	Fri, 15 Nov 2024 15:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF901DA23
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 15:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731685202; cv=none; b=m6qwWkuzgIgdjikUosArYUdGA6ploV2/Rof9zFu0Bot7h3gtGjmR36DWmJQYddEbCKj+llDsPaah4WfsCEPz3s714PnN7gFgcPsGTvThSjR1sEQamoZ5IxyNhu1zLRSwh+3g56YS/mVE0JRhQYllP8Zr+qsQszMlvvy3ixwOCcQ=
+	t=1731685259; cv=none; b=GYQUFQIL7roOjyKSO3VzvBpQGJI7x4/ozF79/3sQzZFIL8ZmF8pphC5tliDjQZ4s9abUwQLQv2cG1vpyuRjexwirWo48h4wirumnX2as//IdgTaRsw0JFAiUQX9AhoDTvELJBBHjZisu6klPbZEpzV5k/OkgUQrdiBGX196YA80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731685202; c=relaxed/simple;
-	bh=VYy5Z/F2SKHEKyEF2sWqcE3UJqYratJdw86SVPgNnLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h/8J3rDOHff0TrD4xqTldyk1InPaSZkOAeKnVkLyDrri7f0QRo/TsQ0jTohJRvF0pcAjVZG53VlNQb4Zq772r88yZwAGQgoKMqUfM0K4RcjoLdD1UPtgAOf/DlU+ne4JXal06IEpexh9NVyIEg8NeH/GrEA6VW3OdszHcmGtcVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TjdiOCR1; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e9ecba5db0so1529924a91.2;
-        Fri, 15 Nov 2024 07:40:01 -0800 (PST)
+	s=arc-20240116; t=1731685259; c=relaxed/simple;
+	bh=jdr8qNxy+Jo1gsIHbtkxZqlHxWm+kUlA4DWc5Z9WKtw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CqJ8hXyqL5eXJr6pqFMcH37/N6OUyN93FNAe14fLqpEgY5/ywLUk/6sedhagT2Lulb2aJ6RHrso/T8mH/mF6TTopkCwmHH2m2PVTLROkWaLSUr19blutTC8TDMyhAgDoP3FNCoAvhwfKxCv9huk98W2/6zHTUOXgMc+pLDvks68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=TC9LE44L; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2689e7a941fso490598fac.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 07:40:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731685201; x=1732290001; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tvgMmyLZQaJHTw5Hy6Dx7Hfozw7BNQ60DAzTrMshfo8=;
-        b=TjdiOCR1OK75K/1UZ1otICKC0vylhd2CORWgqkBc57cXGlnr2DMPuLtulMua/eyAir
-         tWTjMYp23DI/RGnqo0YimokEhGZvlZR7uRY9T/F1BMMlcN/Gdsc9Jlgoz38wVYbHmdYp
-         K/aQxhBqNbyo0ux7UvDIVC0/OUrl4FzCsWHlbRhkjkUCnBzJUYmS9eBCbZmOzYVyiH3r
-         Q9Sip7NWAAVn7eu8L1TatbINlI5A3D2igwm+bE/Y7g+4E5FYk4W45VhXu6F1kEALpgNe
-         QU2lTjGXBIzh09ke6jdEwoXom1VmTQ8cKyWzDFecni1FFdUoOB4/Q3St1C6qQ3qzSDBC
-         5SGQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731685256; x=1732290056; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qoZnHCDbvEhSS1c5SRWBNLiOwRUEY61DZ2aXp4JDEYc=;
+        b=TC9LE44LpmuaBUF2ni7msJ+oK51W1D83PnHgzYUlflAY+cERqgR0vE3LBLWk9TxC7a
+         p1jISsurUq6S59DUx37zcfpMiJCv0awylLruPYU+YwApwtBUxVxZlHm1bI/POjy+BFtn
+         lqh86KHsj+bVsS2fy/299PTkWQB9HX+9Ha/fgfEhvLbFblmNostVlEjJU99Lbx3adXJ/
+         rznhtFl0LPcslGWEQYTRdzLVPEzO2z0r3kxqHWvZUO87CGUO8Jp5zg4tjqakkUGRNgu2
+         avNFass9dSjg0z0AhbOJfrmY5zTcAI8aw8srkccowzVXjare5LgxZaCh3lNhUyep4inO
+         JgFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731685201; x=1732290001;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1731685256; x=1732290056;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tvgMmyLZQaJHTw5Hy6Dx7Hfozw7BNQ60DAzTrMshfo8=;
-        b=HorHiFuWFzv3NxaVAfR2dTB8yxYH3Lkyx5kfm1XcH+CwXr1j/xPsc28WO/TMuh073W
-         Y5atHKtKpeKIwq7Qszovbx53T2JltirDdNMWHTct/VPMOTSmVjHs2L8cpB7J26U7o26D
-         QRXhOdKSjv+60TyWjkjs+lneoDukei0WruaYV3JmqBHvny5ARQiarR5aja3uZ3iSU/2w
-         OcesKFse6xUUojX+UxBq7BXFjIfabMbJAeFNawacgVm2hiEt1irbba4IDLZjprhtXpBl
-         U+CzXFJrnASEszCsJFVFWjo0m0hy+wP7A4DhysTH85H9l/pR4n03R8mPfBkTj9b4Ld0x
-         KdXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKkSH4nJY3z7VgORpzsBhjnf7RB/VVBpuGofbXrm22E9Wn8LNSpRfeminUT8i8BGtNAOrHpbHX@vger.kernel.org, AJvYcCXDjWpU/XzHbHxDIROvnBqjMg9bRfVN2XPf+nhBlwXYX0PgHNCapEuHTQrIOqtFImZDH0a4Vf6XSmXx7FSmZJqU@vger.kernel.org, AJvYcCXkpu62zowRapeyFonLEDh3O00jpuDrYABvLyp3KaUxCjz8LX2MO1eNuJapM5yXnN75RGY=@vger.kernel.org, AJvYcCXnSOw1neDy0ixAzYfPmrKvgaaB4njFV1wdqlzo4Abq4+m3UF3aun3jJANCTAJDm0UPHUpZPaLiqAvLkVbx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa55KOc3Fert0XkYu1DYRzF1tKKymhOGDXHf+wSyITVTJ2Vd9Z
-	NMF8/DcXZ+JWczZXn0nWyLho0gKa85BdymD3Nf4X2kmjp5uldqk=
-X-Google-Smtp-Source: AGHT+IH9ZWeCw/lNubIqk1jjDJsSroUKoAIH0xi66bmklYnQSLVYg94H0OHQhU69Od2f8QbCO80hGA==
-X-Received: by 2002:a17:90b:3d87:b0:2e2:d175:5f8d with SMTP id 98e67ed59e1d1-2ea154dfa68mr4076574a91.10.1731685200714;
-        Fri, 15 Nov 2024 07:40:00 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea024ab569sm3049473a91.32.2024.11.15.07.40.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 07:40:00 -0800 (PST)
-Date: Fri, 15 Nov 2024 07:39:59 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Alexis =?utf-8?Q?Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>, ebpf@linuxfoundation.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH bpf-next v2 04/13] selftests/bpf: re-split main function
- into dedicated tests
-Message-ID: <ZzdrT7wEUjUDNyGj@mini-arch>
-References: <20241114-flow_dissector-v2-0-ee4a3be3de65@bootlin.com>
- <20241114-flow_dissector-v2-4-ee4a3be3de65@bootlin.com>
+        bh=qoZnHCDbvEhSS1c5SRWBNLiOwRUEY61DZ2aXp4JDEYc=;
+        b=OavksFTp09as8eK/LzEGKu1+lNtUDj8wFVPAnklJmhT2b25r0CEgFC59ODhtwoB+IS
+         e1ngiNbzLk5gCSqOqpUZ3bf7epFLcoeWIsyJrpHx3M9q8j6AAkbF+3HDM89KaKTknsMA
+         KGkL/u5oLe9Jm8jPLdHRDtGZF079gdPaFDO4bkvana1ZldmVLo+ldN2zfrcqSD9V0wH9
+         a6Vw7rWvcAyKaWFZrqk7oAoV9Tfu9T1nVVfHmonvk7IQ3/dYR0srld1u7RM7bTfOqmHE
+         QLYUoyL64jLQiEafqUHPXqUoCJBxbYU8MU2acY3kHe9Ea4V6r+8TxEuHd9rvnxeM2AY5
+         jJ1g==
+X-Forwarded-Encrypted: i=1; AJvYcCV7U9iu+ejdsBDxbAngci6AfRyiHLwjvZvaQC9Bk7V6S6cTMaYFs7h8FXQ6g4dbRfPu0TkcMZt5O23QDIc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yynf5yvJdbqifkjpSrsdG1iDw17pVR1YYinxDzHu7xUdsnZ1QLA
+	Fsw5S5zPdBNXJdoW9sRt5iU34+mqWziF28kKuBAeqNNVLjytbZAm1ZkQPmAkxX4=
+X-Google-Smtp-Source: AGHT+IFdUS8uN49tDNf746ur2SPDst9sm3KOAJaU1AK84+5cj7rnDzwIuOtF3souY+5wecSwvnATWA==
+X-Received: by 2002:a05:6870:e38a:b0:288:a00e:92dc with SMTP id 586e51a60fabf-2962deeacdamr3161996fac.2.1731685256497;
+        Fri, 15 Nov 2024 07:40:56 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29610949b12sm1516348fac.26.2024.11.15.07.40.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 07:40:55 -0800 (PST)
+Message-ID: <7b1ed2bb-dc06-41ea-ba48-85c25d085dd8@kernel.dk>
+Date: Fri, 15 Nov 2024 08:40:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241114-flow_dissector-v2-4-ee4a3be3de65@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH liburing] test: add test cases for hybrid iopoll
+To: hexue <xue01.he@samsung.com>
+Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <3aada5a2-074a-45e8-882c-0302cae4c41b@kernel.dk>
+ <CGME20241115033450epcas5p10bdbbfa584b483d8822535d43da868d2@epcas5p1.samsung.com>
+ <20241115033445.742464-1-xue01.he@samsung.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20241115033445.742464-1-xue01.he@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 11/14, Alexis Lothoré (eBPF Foundation) wrote:
-> The flow_dissector runs plenty of tests over diffent kind of packets,
-> grouped into three categories: skb mode, non-skb mode with direct
-> attach, and non-skb with indirect attach.
+On 11/14/24 8:34 PM, hexue wrote:
+>> The kernel should already do this, no point duplicating it in liburing.
+>>
+>> The test bits look much better now, way simpler. I'll just need to
+>> double check that they handle EINVAL on setup properly, and EOPNOTSUPP
+>> at completion time will turn off further testing of it. Did you run it
+>> on configurations where hybrid io polling will both fail at setup time,
+>> and at runtime (eg the latter where the kernel supports it, but the
+>> device/fs does not)?
 > 
-> Re-split the main function into dedicated tests. Each test now must have
-> its own setup/teardown, but for the advantage of being able to run them
-> separately. While at it, make sure that tests attaching the bpf programs
-> are run in a dedicated ns.
-> 
-> Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
+> Yes, I have run both of these error configurations. The running cases are: 
+> hybrid poll without IORING_SETUP_IOPOLL and device with incorrect queue
+> configuration, EINVAL and EOPNOTSUPP are both identified.
 
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+I figured that was the case, as the existing test case should already
+cover both of those cases. I'll get this applied once you send the
+updated version.
+
+-- 
+Jens Axboe
 
