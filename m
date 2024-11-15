@@ -1,90 +1,71 @@
-Return-Path: <linux-kernel+bounces-410155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC47F9CD544
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 03:09:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 424E79CD552
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 03:21:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C1A928301B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 02:09:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4D8EB23156
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 02:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C234513C67C;
-	Fri, 15 Nov 2024 02:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CC61459EA;
+	Fri, 15 Nov 2024 02:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="ZWq9X+Wh"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHpFN8nq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9566A291E;
-	Fri, 15 Nov 2024 02:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F260810F2;
+	Fri, 15 Nov 2024 02:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731636581; cv=none; b=grlBvYRDYYuzAz/WE/uKGgrZ3bp5qxv1u4Y2NO4wQxfk7s7k6yXJX8T1rqUtoeBvO4DK9u1feEC8QOTOebGSliv95A8zMp67kjyfDQF4A08Kfh7gzxJO633anwgus4l4S3/K1utURR9/TxoGJXDnojXqpWbDCJ8yrzFHLYrzqDA=
+	t=1731637292; cv=none; b=SNrYopF7NP4dwJFg3IGoaLIPU5e3KUyC+IVGhK4+n3gHtczEcDFRrkablY5McuE+MWgCIsdlWeEjHB0XR2Evy4iU9hrOqOqHa/LVJjy90Y4maJLB5WOCgr13btBCYyoVhPzvifqZ7/Q1jUNjvw13xqT5llnv3NZX1QHOdwp6xVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731636581; c=relaxed/simple;
-	bh=Y6ygmlK/kdjAD3oqVmbz+Gbbz7FixEkEpT0MnFz63OM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=amm5GuSXs0kTS+nO4Ju8jwpZrMDQclTpKbfDnF7MMiDVpBK9pvVtZ25MzGQ2QOmfmU+jhhW2Xms7dkH6Mz1fRkiGVfZ1vFYXV3UHkT+2Wsnxy6RsAg4tiGxPXdBOfw3g7XjqIvHWHs6RkBzvB7R+KBWQ7Wt2tMW87EMVjSG0h6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=ZWq9X+Wh; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=SLrj4kmPTr3S2klGwW0Y2NFxxZbhgyNOjJxc8PvqMX4=; b=ZWq9X+WhW+rp5YBgSKh7Dx7gaJ
-	DhdMvLF2tcvqPqCNStgPrRaBytrhwMhewMFQ51E/PQ/t6MsH1lTEoiEdwRs2jFer4NWQDHpANnVot
-	DFijXh8QRr+FLEPGqDQ6UeWtCh0HP2ntpBsyigBCBkxrVfOb9JKjMDutlppyFyjUzawRHs+ZxeBuI
-	wtbO8hEkCeSZzIKsGkahDcBEynjHjLyQvEQ/8c01mGb5077Ms2h84rk3bNr5INh9/3mOre2cIYZ41
-	40vXRPw0c4KvBBPCn9BB3cOr+4X8h+cuGch11IY9p3W5qBjGIWbIxzplssgtiBad1TmfDyeaBTzrU
-	plDOzGdw==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tBlm4-00GwXt-2r;
-	Fri, 15 Nov 2024 10:09:29 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 15 Nov 2024 10:09:28 +0800
-Date: Fri, 15 Nov 2024 10:09:28 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: "linwenkai (C)" <linwenkai6@hisilicon.com>
-Cc: Chenghai Huang <huangchenghai2@huawei.com>, davem@davemloft.net,
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-	liulongfang@huawei.com, qianweili@huawei.com,
-	wangzhou1@hisilicon.com
-Subject: Re: [PATCH v3 2/2] crypto: hisilicon/sec2 - fix for aead invalid
- authsize
-Message-ID: <ZzatWBNAyjsuaRP6@gondor.apana.org.au>
-References: <20241102025559.2256734-1-huangchenghai2@huawei.com>
- <20241102025559.2256734-3-huangchenghai2@huawei.com>
- <ZzAqQhiebKSuRzOm@gondor.apana.org.au>
- <b67cecd0-e50c-40bd-99b7-b85482e55696@hisilicon.com>
+	s=arc-20240116; t=1731637292; c=relaxed/simple;
+	bh=Q8Ybzo1fId6IBFRGK6t66WdQaQjuTFAu8RDFlvU8oD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QBLZxeEYnA1b7CHgt4/yehR4vCIj3La2MJXxdsLnri62IVQajQ5TrC2BQxSm4zQmUYabnYqyCqKImOyixA74aHjkPWzJ85uZf0jnDo8/l63+JbXbGHCH7MqH2yFeEYUiMqriGVjI4aTzkkHgecMEyX1uUQUSHaTdrKXFzo5EzzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHpFN8nq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB8F0C4CECD;
+	Fri, 15 Nov 2024 02:21:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731637291;
+	bh=Q8Ybzo1fId6IBFRGK6t66WdQaQjuTFAu8RDFlvU8oD0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VHpFN8nqYC6JJlCK4yIe/fqJyowZ6Byk1Lo9qxkQf0fcrAP58M9VCoUo1PotuNYDR
+	 pTyafyT3Nrus8GdJHxugAx+A9drmBh30nC01feya6EQYkQ5mwMW7JnX6rZoQF4bV66
+	 4gsi0tTs8U5UsCmi122jDnA7FlMRcd+tbucropIGjJcBlT9xUe4L0fu4ku6v6W9bKp
+	 8Qqej+eA0T/7MPy9QqetE7DbiQBWgiXU8cUJhWTs+Kc0ThmdW5/Ewtf+VWygWZIqYy
+	 EqLswuxRjlC9fs6wfZvqlUPoqJF6gw9nTG3YrGQDhmmNxMQv7+qo55DyZlbuuOY8MA
+	 jVySonrl4/aPg==
+Date: Thu, 14 Nov 2024 18:21:29 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: <jiang.kun2@zte.com.cn>
+Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+ <horms@kernel.org>, <corbet@lwn.net>, <jmaloy@redhat.com>,
+ <lucien.xin@gmail.com>, <netdev@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <tu.qiang35@zte.com.cn>, <xu.xin16@zte.com.cn>
+Subject: Re: [PATCH linux-next] Documentation: ticp: fix formatting issue in
+ tipc.rst
+Message-ID: <20241114182129.0b24d293@kernel.org>
+In-Reply-To: <20241114200611368_vpMExu265JwdZuArEo_D@zte.com.cn>
+References: <20241114200611368_vpMExu265JwdZuArEo_D@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b67cecd0-e50c-40bd-99b7-b85482e55696@hisilicon.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 14, 2024 at 08:47:11PM +0800, linwenkai (C) wrote:
->
-> I have found another setup for fallback in the sec_aead_param_check
-> function, so I need to fix it right too.
+On Thu, 14 Nov 2024 20:06:11 +0800 (CST) jiang.kun2@zte.com.cn wrote:
+> Subject: [PATCH linux-next] Documentation: ticp: fix formatting issue in tipc.rst
 
-So you want to determine whether to use the fallback based on
-the parameters of the request.  In that case I think you should
-create a new fallback field in the request context.  Set its
-initial value to that of the tfm context fallback variable, and
-then modify it based on the request parameters.
-
-Cheers,
+typo in the subject ticp -> tipc
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+pw-bot: cr
 
