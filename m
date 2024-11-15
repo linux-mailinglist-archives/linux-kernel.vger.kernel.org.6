@@ -1,111 +1,112 @@
-Return-Path: <linux-kernel+bounces-410550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF1089CDD29
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:00:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 644449CDD2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:00:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 696D5B27A18
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:00:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29AC12816B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F491B6D08;
-	Fri, 15 Nov 2024 10:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D791B532F;
+	Fri, 15 Nov 2024 11:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="K7yEh3pX"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCB0qj0v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2631885BF;
-	Fri, 15 Nov 2024 10:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62731192B94;
+	Fri, 15 Nov 2024 11:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731668395; cv=none; b=Ky/xiLuS4r+Z7oOCWKYFUIBetams8Nizh0VjHNI/lWLcnq3tvE3gg/IavC2tWcJVwI0W0cz5lR7dTxlrPU5cA536UPG+KZ5XFgrpU74O+MO15LAOEgELeTUgTjEHiaoY6jv3bBGXaTygwFCTjVFC3S9cKT9zdk3P+oR9o6iZVsY=
+	t=1731668426; cv=none; b=U9CJNJv62CyDkNfM0JxXzXJ7FEmZ9tmuo65tXi6v5NfrW3ZqOetVPW/XihqACFCL1FQqzXIF+KoKO6DZvAZOmr08BYbI8ibXkVImINDioWJBXVKhhYfYJo1/GxSNwP6IAK4EBc7tnSd5daV8ak0tQ6xMzWPANmzXL1H8o7QGZxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731668395; c=relaxed/simple;
-	bh=KPPxSUlglSB1qHziPJ8WC9R7TbOyfCrf4T3tNsWVcHE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=auQmZxA5L5wFkkylqkLMdUF/xSD6x0N1ODIcf2ZypSB2y1YHvTJmBf9hXHvMsifgXJkWrweJ1X5UBsejnXLL/TKPd8R8IkYqJ96rg8Ho2XO++W+QwZa81wnsgfSSg/TmT+592K61JOzey15XQo4+RgJdK+blopoEGN6BI0Kcro8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=K7yEh3pX; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.96] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 25EBF2FC0057;
-	Fri, 15 Nov 2024 11:59:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1731668388;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MbaHCdErIiwuDwefIUo/nmxCO9zrzvR9WvqIorv/FfI=;
-	b=K7yEh3pXs/RNYbj3dG5RS0Hybw7C4ttrWfe4BY/AO/8tKkSDqXQ16XTLOCFrAUNZxtC6dt
-	lhsQLzGfj1NG2u3aaAvgi8/3/Bx6rLh99ReJb0xh8z+7tOqXHDd6j+nQEWJoZ1TgflWJzX
-	3DWD3ldw3k4Gy+1QqI/SeS3ncmGIE6A=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <459e15ff-4f1f-4d7c-b49d-ccae540eaa4f@tuxedocomputers.com>
-Date: Fri, 15 Nov 2024 11:59:47 +0100
+	s=arc-20240116; t=1731668426; c=relaxed/simple;
+	bh=uv6Tugb0FyVdARW47Hj8ctsIKq72UmaOcD/cqo6KJmE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pL+1YuWKZxRYQHCRmDYl5U/9i8RM+TWPpQiM8oNf4pwqURovzM+6MLYyanFa7M/3cM6HJQdD2AoA6wfv52AIc9i+xqJEddY1D4hSMNyFOETt+4/bhy9OrPXckEXe7VDopt1wqFEgnzkVv8rybskkmKqmRksnlXH1OB6vuPJZipw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCB0qj0v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1677C4CECF;
+	Fri, 15 Nov 2024 11:00:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731668425;
+	bh=uv6Tugb0FyVdARW47Hj8ctsIKq72UmaOcD/cqo6KJmE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UCB0qj0vU80l/6+YptCo9AJ7kOm9CVNs8xnzAkqLLs6aZlbE1uhsFPUk29AANlNB5
+	 xEPPq/AUufVz58M8k7r/yjcUzu8uhmZwaEl/9gd2pOUQfVNal8IylkVCGmv1iCuacf
+	 k9nJ9QHMcYTVxTwhxL7GtD3cay+mgX0eYskaGzdqyMf14FeYYUDHFUqOYMGNKzcNF9
+	 BBtcQ/T+S+/I4N29yRkakaml+k2aGTtkpSPJ+gbxr9C4+Jy3+oVE0nYpnAC/tNAnFa
+	 sWv7Re77pGX7M7Oqshd/4iVjVTbyw71+DtG9+oMNuTMSXJ1K/PfscCGnueUEePTTbF
+	 E8tPiv1GHqWFA==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kartik Rajput <kkartik@nvidia.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	kernel test robot <lkp@intel.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	=?UTF-8?q?Th=C3=A9o=20Lebrun?= <theo.lebrun@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: [PATCH] serial: amba-pl011: fix build regression
+Date: Fri, 15 Nov 2024 11:59:54 +0100
+Message-Id: <20241115110021.744332-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
- symbols
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Luis Chamberlain <mcgrof@kernel.org>, tux@tuxedocomputers.com,
- Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>,
- Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
- linux-kernel@vger.kernel.org, Thorsten Leemhuis <linux@leemhuis.info>,
- Vinzenz Vietzke <vv@tuxedocomputers.com>, Christoffer Sandberg <cs@tuxedo.de>
-References: <20241114103133.547032-4-ukleinek@kernel.org>
- <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
- <2024111557-unlighted-giggle-0d86@gregkh>
- <6c1952bc-f58d-4c55-887e-6aa247daec5c@tuxedocomputers.com>
- <h5q36ajuzgwf5yrjmqv46x62evifcgoi5imxhcvsv7oxauvxak@sj54oisawqnf>
- <58b85a78-55aa-422c-a21d-254eb16cc8c6@tuxedocomputers.com>
- <2024111522-brush-excusably-cae5@gregkh>
- <3ea99d52-cafb-4c79-a78b-fdd1f9a9fcd5@tuxedocomputers.com>
- <2024111558-albatross-vice-2a73@gregkh>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <2024111558-albatross-vice-2a73@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Arnd Bergmann <arnd@arndb.de>
 
-Am 15.11.24 um 11:22 schrieb Greg KH:
-> On Fri, Nov 15, 2024 at 10:40:56AM +0100, Werner Sembach wrote:
->> Am 15.11.24 um 10:18 schrieb Greg KH:
->>> On Fri, Nov 15, 2024 at 10:00:23AM +0100, Werner Sembach wrote:
->>>> I guess what I try to convince you and others is that we _are_ taking Open
->>>> Source licenses seriously, but still there are mistakes to be made,
->>>> especially with complex projects like the Linux kernel, e.g. I'm not aware
->>>> of any other project that uses a similar construct to
->>>> EXPORT_SYMBOL_GPL()/MODULE_LICENSE().
->>> The Linux kernel is very simple from a license point of view, your code
->>> has to be GPLv2 compatible.  That's it, nothing complex or odd about
->>> that at all.
->> Then why does the proprietary NVIDIA driver exist?
-> You will have to discuss that with that company's lawyers.  That was
-> their business decision to make, and in my opinion, the contracts they
-> wrote around that thing were a mastery of license law in "how to pass
-> the liability onto someone else."
-But you see where there is complexity, and where my misconception stems from?
->
-> Luckily we now have open drivers for almost all of that hardware, so
-> it's not so much of an issue anymore.
->
-> Again, talk about this with your company lawyers, they can explain it
-> all much better than I can.
->
-> thanks,
->
-> greg k-h
+When CONFIG_DMA_ENGINE is disabled, the driver now fails to build:
+
+drivers/tty/serial/amba-pl011.c: In function 'pl011_unthrottle_rx':
+drivers/tty/serial/amba-pl011.c:1822:16: error: 'struct uart_amba_port' has no member named 'using_rx_dma'
+ 1822 |         if (uap->using_rx_dma) {
+      |                ^~
+drivers/tty/serial/amba-pl011.c:1823:20: error: 'struct uart_amba_port' has no member named 'dmacr'
+ 1823 |                 uap->dmacr |= UART011_RXDMAE;
+      |                    ^~
+drivers/tty/serial/amba-pl011.c:1824:32: error: 'struct uart_amba_port' has no member named 'dmacr'
+ 1824 |                 pl011_write(uap->dmacr, uap, REG_DMACR);
+      |                                ^~
+
+Add the missing #ifdef check around these field accesses, matching
+what other parts of this driver do.
+
+Fixes: 2bcacc1c87ac ("serial: amba-pl011: Fix RX stall when DMA is used")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202411140617.nkjeHhsK-lkp@intel.com/
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/tty/serial/amba-pl011.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
+index f0db65bb8b6f..214bfbf03a97 100644
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -1819,10 +1819,12 @@ static void pl011_unthrottle_rx(struct uart_port *port)
+ 
+ 	pl011_write(uap->im, uap, REG_IMSC);
+ 
++#ifdef CONFIG_DMA_ENGINE
+ 	if (uap->using_rx_dma) {
+ 		uap->dmacr |= UART011_RXDMAE;
+ 		pl011_write(uap->dmacr, uap, REG_DMACR);
+ 	}
++#endif
+ 
+ 	uart_port_unlock_irqrestore(&uap->port, flags);
+ }
+-- 
+2.39.5
+
 
