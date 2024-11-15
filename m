@@ -1,139 +1,238 @@
-Return-Path: <linux-kernel+bounces-410370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 285E89CDA7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:31:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9DEA9CDA85
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:32:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C14F61F231F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:31:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C5DE1F23ACA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA0918A6C5;
-	Fri, 15 Nov 2024 08:31:36 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768B118C03F;
+	Fri, 15 Nov 2024 08:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f8N1XZMx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4A71442F4
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA9918990C
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731659496; cv=none; b=DJBTmHssWNp7ASFELYG/3BRYPSiUrC0Mv5gnQlZYQDkvQ5s1Vtl3cdo37m9NXk8pcooLJRv6Jt4PJBdhep4NJ2WBQn2V6j2a/F1DrOw94FSrAtBFr5n1Z5VvuFcWGzQWNay+oRqBiXx6Egf3JgUgwNEnETcmt5U9tA0wFYJILsY=
+	t=1731659546; cv=none; b=Efb3Z8qxLWSa6G8rMaHCmUtzh6mjrhRn780L5bKwWNyBbxaAQGfdw2lwtbVnnyDVD3NSAhmQR6Pm+h5T1CVLYZw6FDcRZEFLsJScqm5eewB7iGxyHBgpyeWjm1OQUzZhrSF8dB35H3Q83jNpR0iX1dAkk3me8rrWZuI80y6+fn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731659496; c=relaxed/simple;
-	bh=xcdtrxcwpTnLEPaXSmZR3NuiRhTzoRvMbIOYl8cGGsY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H7UdTtNmqadKBr2QHWR8ok/RMVRlwCvC2ZC0lFWuIsQoJ60w9bnc/f+p/f6l1RJS81/A1K/B24eGS86P16OcWQj+x14j4GhcHaCda1vkzBLwv+QDgyKhgsqB+yKqztwPeN+vMXi3La7QpmRk+Yg5RBI/WOJ+Gz2j8KOza14Kstg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tBrjF-0000SB-St; Fri, 15 Nov 2024 09:30:57 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tBrjD-000sSC-07;
-	Fri, 15 Nov 2024 09:30:55 +0100
-Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id AA09D373AB0;
-	Fri, 15 Nov 2024 08:30:54 +0000 (UTC)
-Date: Fri, 15 Nov 2024 09:30:54 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Jeremy Kerr <jk@codeconstruct.com.au>, 
-	Jian Zhang <zhangjian.3032@bytedance.com>, netdev@vger.kernel.org, openbmc@lists.ozlabs.org, 
-	Matt Johnston <matt@codeconstruct.com.au>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] mctp i2c: notify user space on TX failure
-Message-ID: <20241115-scrupulous-mantis-of-purring-1c41fe-mkl@pengutronix.de>
-References: <20241108094206.2808293-1-zhangjian.3032@bytedance.com>
- <20241113190920.0ceaddf2@kernel.org>
- <da9b94909dcda3f0f7e48865e63d118c3be09a8d.camel@codeconstruct.com.au>
- <20241113191909.10cf495e@kernel.org>
- <42761fa6276dcfc64f961d25ff7a46b764d35851.camel@codeconstruct.com.au>
- <20241114070235.79f9a429@kernel.org>
+	s=arc-20240116; t=1731659546; c=relaxed/simple;
+	bh=KwwtRZveGMe16US76kOe+Iauo+yTFHTCMml6hFlPRTY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rjYIEpAaU0qWrh3IkZfj5HyshF/X1mvCYZKFxhZy01vA2SpTsvNhVwqJj8PdgG0KHuwtygB03yGZsGFeJmnG/bLHunVvy5/cDYIe8HhNLv8DuBfIM8b5aek2Iwe7ZqARyTgTYueL/YI1mtxgRwFbKG+ew8J4HqqLCTu+mxKBPB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f8N1XZMx; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731659544;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KwwtRZveGMe16US76kOe+Iauo+yTFHTCMml6hFlPRTY=;
+	b=f8N1XZMxBN9C3i3Z2uPoHDfCCYGDGhzCAwc8eWU9L3bEJYRP8K47Fj5TIp7Hb8FT3efy30
+	jPW+tsZVyrCLQy7CjsxUgmhSW+R16/IozujoP39igvyH0jDWjGtdhSrz1o8s2KiEMCu6A6
+	hkr63THX/zhIFF9/5ZbE3oPlqWCwAr4=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-277-wVa4pSyMNFyUpv8clL8Twg-1; Fri, 15 Nov 2024 03:32:22 -0500
+X-MC-Unique: wVa4pSyMNFyUpv8clL8Twg-1
+X-Mimecast-MFC-AGG-ID: wVa4pSyMNFyUpv8clL8Twg
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d3e8dccc9so260545f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 00:32:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731659540; x=1732264340;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KwwtRZveGMe16US76kOe+Iauo+yTFHTCMml6hFlPRTY=;
+        b=fPAjdU4xRZBZueOOf6aAN1DhZnW1mS1CVxELw7AqtS6dXPXwtzEEpAy7vzhLGNlsUr
+         UtpO280Dzar6tV4ZkCLoLMYKLi57nbCLZJQIoiO69iDU5hHa/y5F/9EOSYLrUDVfN2jg
+         1E561jUwuYp3twXNjEo3kpazlydg4tVRSiU13ry9GdCF/y7tp3OP1EkOWWbDbHoWP1F0
+         iRQfwlIqEky7JXgyrM5XJfCxUPqk+IU97pzVQ3I7cCpa3H1Y7KYJmKW/4NwH/oJKlsEW
+         6XHfWMO6NCGpy2wyVNfoTKtQC5fcQnOU7SfRrjeahskWgFN3djpF5cvM0ghJbhbYDWre
+         C7JA==
+X-Forwarded-Encrypted: i=1; AJvYcCXns6jxnwclaeytbahvukinGIcbOYwOmaCFBXWYi41G+bpGF7873civATQXA8zGYLjHWf9yhGeGLSR2h1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgdYuaeLlf0or4h72HCKo+8WDcTESFSpQ+AEWFKsbHMZLnIi1E
+	mdHruSs922Og2ZvJ2bPt38JI3937CvEZIH1NvW/Qvz1BQ7ntfN4I4sqQJ6MK8ddtXTH2Pgxc5RT
+	U0rvvdRU0JRyacz8s0ZSVKSOmQgAL095idFBymTsVCqxIn3EyL+o8sZ4E+dPpcg==
+X-Received: by 2002:a5d:64c9:0:b0:37d:5173:7a54 with SMTP id ffacd0b85a97d-38225aafc0bmr1382369f8f.52.1731659540159;
+        Fri, 15 Nov 2024 00:32:20 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGdh/kmNlYkC/WQKFf2J1h1Btsr4ZUjp0WRHuv0DJX0wKMjNySBXwoM4GCHyqPFiIGeYI7IOw==
+X-Received: by 2002:a5d:64c9:0:b0:37d:5173:7a54 with SMTP id ffacd0b85a97d-38225aafc0bmr1382314f8f.52.1731659539626;
+        Fri, 15 Nov 2024 00:32:19 -0800 (PST)
+Received: from [10.200.68.91] (nat-pool-muc-u.redhat.com. [149.14.88.27])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ada2da2sm3716393f8f.15.2024.11.15.00.32.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 00:32:19 -0800 (PST)
+Message-ID: <ff7f7358cec4bb03423879a2e4efd16d0a3e8ed7.camel@redhat.com>
+Subject: Re: [PATCH v2 11/11] Remove devres from pci_intx()
+From: Philipp Stanner <pstanner@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Damien Le Moal
+ <dlemoal@kernel.org>,  Niklas Cassel <cassel@kernel.org>, Basavaraj Natikar
+ <basavaraj.natikar@amd.com>, Jiri Kosina <jikos@kernel.org>,  Benjamin
+ Tissoires <bentiss@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Dubov <oakad@yahoo.com>,
+ Sudarsana Kalluru <skalluru@marvell.com>, Manish Chopra
+ <manishc@marvell.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rasesh Mody
+ <rmody@marvell.com>,  GR-Linux-NIC-Dev@marvell.com, Igor Mitsyanko
+ <imitsyanko@quantenna.com>,  Sergey Matyukevich <geomatsi@gmail.com>, Kalle
+ Valo <kvalo@kernel.org>, Sanjay R Mehta <sanju.mehta@amd.com>, Shyam Sundar
+ S K <Shyam-sundar.S-k@amd.com>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
+ <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, Alex Williamson <alex.williamson@redhat.com>,
+ Juergen Gross <jgross@suse.com>, Stefano Stabellini
+ <sstabellini@kernel.org>, Oleksandr Tyshchenko
+ <oleksandr_tyshchenko@epam.com>, Mario Limonciello
+ <mario.limonciello@amd.com>, Chen Ni <nichen@iscas.ac.cn>, Ricky Wu
+ <ricky_wu@realtek.com>,  Al Viro <viro@zeniv.linux.org.uk>, Breno Leitao
+ <leitao@debian.org>, Kevin Tian <kevin.tian@intel.com>, Mostafa Saleh
+ <smostafa@google.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>, Kunwu Chan
+ <chentao@kylinos.cn>, Ankit Agrawal <ankita@nvidia.com>, Christian Brauner
+ <brauner@kernel.org>, Reinette Chatre <reinette.chatre@intel.com>, Eric
+ Auger <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-input@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-wireless@vger.kernel.org, ntb@lists.linux.dev,
+ linux-pci@vger.kernel.org,  kvm@vger.kernel.org,
+ xen-devel@lists.xenproject.org
+Date: Fri, 15 Nov 2024 09:32:16 +0100
+In-Reply-To: <8734jtl3xm.ffs@tglx>
+References: <20241113124158.22863-2-pstanner@redhat.com>
+	 <20241113124158.22863-13-pstanner@redhat.com> <87msi3ksru.ffs@tglx>
+	 <49bb6fc9ebff3cae844da0465ceadeef8d3217c7.camel@redhat.com>
+	 <8734jtl3xm.ffs@tglx>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vt3m2lwmvec4zdoq"
-Content-Disposition: inline
-In-Reply-To: <20241114070235.79f9a429@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-
---vt3m2lwmvec4zdoq
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH net-next] mctp i2c: notify user space on TX failure
-MIME-Version: 1.0
-
-On 14.11.2024 07:02:35, Jakub Kicinski wrote:
-> On Thu, 14 Nov 2024 14:48:57 +0800 Jeremy Kerr wrote:
-> > > routing isn't really my forte, TBH, what eats the error so that it
-> > > doesn't come out of mctp_local_output() ? Do you use qdiscs on top
-> > > of the MCTP devices? =20
+On Fri, 2024-11-15 at 01:46 +0100, Thomas Gleixner wrote:
+> On Thu, Nov 14 2024 at 10:05, Philipp Stanner wrote:
+> > On Wed, 2024-11-13 at 17:22 +0100, Thomas Gleixner wrote:
+> > > On Wed, Nov 13 2024 at 13:41, Philipp Stanner wrote:
+> > > > pci_intx() is a hybrid function which can sometimes be managed
+> > > > through
+> > > > devres. This hybrid nature is undesirable.
+> > > >=20
+> > > > Since all users of pci_intx() have by now been ported either to
+> > > > always-managed pcim_intx() or never-managed
+> > > > pci_intx_unmanaged(),
+> > > > the
+> > > > devres functionality can be removed from pci_intx().
+> > > >=20
+> > > > Consequently, pci_intx_unmanaged() is now redundant, because
+> > > > pci_intx()
+> > > > itself is now unmanaged.
+> > > >=20
+> > > > Remove the devres functionality from pci_intx(). Have all users
+> > > > of
+> > > > pci_intx_unmanaged() call pci_intx(). Remove
+> > > > pci_intx_unmanaged().
+> > > >=20
+> > > > Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> > > > ---
+> > > > =C2=A0drivers/misc/cardreader/rtsx_pcr.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
+> > > > =C2=A0drivers/misc/tifm_7xx1.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0 6 +--
+> > > > =C2=A0.../net/ethernet/broadcom/bnx2x/bnx2x_main.c=C2=A0 |=C2=A0 2 =
++-
+> > > > =C2=A0drivers/net/ethernet/brocade/bna/bnad.c=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0 2 +-
+> > > > =C2=A0drivers/ntb/hw/amd/ntb_hw_amd.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 4 +-
+> > > > =C2=A0drivers/ntb/hw/intel/ntb_hw_gen1.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
+> > > > =C2=A0drivers/pci/devres.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 4 +-
+> > > > =C2=A0drivers/pci/msi/api.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
+> > > > =C2=A0drivers/pci/msi/msi.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
+> > > > =C2=A0drivers/pci/pci.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 43 +----------
+> > > > ----
+> > > > ----
+> > > > =C2=A0drivers/vfio/pci/vfio_pci_core.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
+> > > > =C2=A0drivers/vfio/pci/vfio_pci_intrs.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 10 ++---
+> > > > =C2=A0drivers/xen/xen-pciback/conf_space_header.c=C2=A0=C2=A0 |=C2=
+=A0 2 +-
+> > > > =C2=A0include/linux/pci.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 -
+> > > > =C2=A014 files changed, 22 insertions(+), 62 deletions(-)
+> > >=20
+> > > Now I'm utterly confused. This undoes the pci_intx_unmanaged()
+> > > churn
+> > > which you carefully split into several patches first.
 > >=20
-> > There are no qdiscs involved at this stage, as we need to preserve
-> > packet ordering in most cases. The route output functions will end up
-> > in a dev_queue_xmit, so any tx error would have been decoupled from the
-> > route output at that stage.
+> > Have you read the email I have linked?
+> >=20
+> > There is also the cover-letter (does anyone in the community ever
+> > read
+> > those?) which explicitly states:
+> >=20
+> > "Patch "Remove devres from pci_intx()" obviously reverts the
+> > previous
+> > patches that made drivers use pci_intx_unmanaged(). But this way
+> > it's
+> > easier to review and approve. It also makes sure that each checked
+> > out
+> > commit should provide correct behavior, not just the entire series
+> > as a
+> > whole."
 >=20
-> Ah, it's the driver eating the errors, it puts the packet on a local
-> queue and returns OK no matter what. The I2C transfer happens from=20
-> a thread.
+> I read it and I assume your intention was to force an eye on every
+> use
+> case of pci_intx() and not just on those which need to be converted
+> to
+> pcim_intx().
 >=20
-> I wonder if there is precedent, let's ask CAN experts.
->=20
-> Mark, MCTP would like to report errors from the drivers all the way=20
-> to the socket. Do CAN drivers do something along these lines?
+> I'm not convinced that this is needed, but fair enough.
 
-On CAN_RAW we send fixed size messages (struct can_frame) and there is a
-bit left to mark a can_frame as an error frame. This basically means we
-send the error notification inline.
+Whether pcim_enable_device() is really not used could have been
+overlooked, or the driver could move to "managed mode" in parallel for
+v6.13 for example. Then a bug would be silently introduced into those
+drivers.
 
-What about using sock_queue_err_skb()? We do this in CAN_J1939.
+Besides, me touching pci_intx() unfortunately caused a few explosions
+in the past already, in
 
-regards,
-Marc
+fc8c818e756991f5f50b8dfab07f970a18da2556 and
+00f89ae4e759a7eef07e4188e1534af7dd2c7e9c
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+So this time I prefer to be rather safe than sorry.
 
---vt3m2lwmvec4zdoq
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+BTW, if you can review the MSI patch and check whether removing devres
+from there really is fine, that would be helpful.
 
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmc3BrsACgkQKDiiPnot
-vG+fYgf/Va/T2YBUFonO4TuAsteq+Vjzg37H/7ok0NZCvgSfZ8QqVGaI54B/ByJH
-fdknhCQ6xHUH0ov7SkK7I8TS2LZHQ3N092ApMCtENsfCTg5ZybIiibPS2Teb+lPP
-lKbktQqtS/5UX/ZJdstAl43zm/MYrNMHnfV2D+BUXDMpr3JvMFX6B6/jeUwZ/lAS
-6r5QAne4+DWNfWf+1S+YWsYHqI1r5cuzN1ZcVPM2WhTM0LdksgkojKAvV5t7zDes
-zwlUtToIF6nfehDyeue5wjMy0WrPOZQs8cTVi0GK3Z2petxKnGFWAvn5mkVg6T0k
-Wc7MKFi1s015Oh1cjnxV6VwvambeUg==
-=XgKe
------END PGP SIGNATURE-----
 
---vt3m2lwmvec4zdoq--
+Regards,
+P.
+
 
