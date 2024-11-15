@@ -1,277 +1,197 @@
-Return-Path: <linux-kernel+bounces-410290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD4DC9CD8A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:53:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB63F9CD72B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:38:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BDF7283C6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:53:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 186C228366F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE728188926;
-	Fri, 15 Nov 2024 06:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D83185B5B;
+	Fri, 15 Nov 2024 06:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="o3Qti4FJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D/8S7oQ2"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27AB1185949;
-	Fri, 15 Nov 2024 06:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC41185924
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731653558; cv=none; b=m1q5SM+eY+K14CKt6gc5Gt+b5tbh8U7YvgiTJwOrbMJdeH4Dhvs/cpHUt4RrI8BT7AlPw26d2Bn2h5jkUUwe23ZTvYemqXMsS//31WD5WwzWBD0n2Lmk36OCwylvBbSba+/UAhBGdhg38Z5S4U9KicwTXcWIAEMiLkFhtO5wpDE=
+	t=1731652709; cv=none; b=Qav6x94ZDaREgxqw8eoQTKQuSCaBI/amAltD6vTSR/iJ/UJ81fLff2DmxBKClL/JhDMIGH8GAKOvnNXZ253cHVFUZPauMk4Xy6PQ+dtRaRKa3P909kWl2wgjS9XbzyzzequxAbyrWckDhw1IqOsH8QebXR2HN9+4IxERhVydA9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731653558; c=relaxed/simple;
-	bh=tPCZ1ZkUl+MQMg9jAZFGjJstm7Lnf2YW82dtfB4mTnM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VvqPQDs4d5VH7BEeqhuIPC4l5eVdkZ0D3U1vjgwKN0D5IHhZgJqzXGfM4+ELnXDPYxLmag8M2cHki44eTth3egKc4AlRknchQjwHXKUCz7SuuPPs9CaOHMIjY1Wn+eS74FUJbA+MZnMi9SJlLFaPhVg+pctdepZj/PjTl57UWqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=o3Qti4FJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62122C4CECF;
-	Fri, 15 Nov 2024 06:52:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731653558;
-	bh=tPCZ1ZkUl+MQMg9jAZFGjJstm7Lnf2YW82dtfB4mTnM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=o3Qti4FJRDpl3a1owhzMKR/Rr7Txnj1zNmUFDXV47p30oxdPfEGnK1HJtxfbnq5re
-	 yRZ2IVDjXeEc9p3wk7MhUeCps6Bgdny/CCYOvtKQ/hvyG3N35qo+ewqk0y4xI/e8YX
-	 BESinn1sLPwlrK9po1K3Y3HyChNoi7c4ftnZJ2Kw=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org
-Subject: [PATCH 6.1 00/39] 6.1.118-rc1 review
-Date: Fri, 15 Nov 2024 07:38:10 +0100
-Message-ID: <20241115063722.599985562@linuxfoundation.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731652709; c=relaxed/simple;
+	bh=rNXtr4YimcmppNnAP0ClgueGOcouCPS66vY3HdKZhcA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ChPuSkcgfsJwrLLjHRACOYeagji0+jQXHv3AtSN9c4uI602ydziY2xe9XyCzMTOlni1twgrJyhL+Bo+VDrBgvy1rCglhAS6/srTvMp1Fwt4a7FcHf0jJ67T40EUzhIVRVW4NkPojBJPoTXJFt+YBW1qaH65oX6NsGiyDqMJbCdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D/8S7oQ2; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20caccadbeeso4093465ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:38:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731652707; x=1732257507; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3ASYot59pnFaxW/GHMyz8Y0KBxe3S70/tiXkzx5jQ+Y=;
+        b=D/8S7oQ2CUyMbx5SNleM3iK5SKXdEl+ryUHH3mI+wSImOGNoIAON8i3rn/OzsUyJws
+         y3Iaijyv8h7IklSnb8jJov9CgZ1wAPnJlZSO7mMWCzD/BqkpIrBaNMoHs8QT2n/9jbh8
+         ikOQ+Hh+gM0frWEomec6LP25Isk1fYw6CrZzJqbPkDQFijLpIh5tZcq4jxrDDLsXIRaa
+         EqKyce8XU22gYCK3ZUDJCjRDX/lp1Bgudoa3ObJJHbkvQPfcLVz+yg3pFpRl0cfD6i71
+         s/K6VlF7i6ajoghIKOctxik9HOM5i2DvBXyCaLWsd16xdNLh0F4Fs7MNgjvWh6/0nK35
+         jqAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731652707; x=1732257507;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3ASYot59pnFaxW/GHMyz8Y0KBxe3S70/tiXkzx5jQ+Y=;
+        b=C1Bmzib/nGVPWTijRqPmkNAV7fG16MBPaj2JaP5hBaAAWo0CBbLTKO1geIQ1jj+y5y
+         uAVHSXPwzgpzA0JyGye+dSMUt+ZxF8cUVsUd7jHokvx7yvitZyztx4/2TYuzUHejXPSj
+         NOfLDyJ6g1nt0JTQA7ZZsccSw70W3oCfPyeWHyH6eyOR4j2qYZCT6pyJAnfDXueroo+o
+         84Bi2RiHQiILeOlbO0HJg81XdCDKCjo4+45wW79al2vI4MxPJDJHi5l79iZ0Je4OAP8i
+         QgVMPqXwfKAocJUiG+jsky1Nn3B/sXrXttgeWpVB7vnrI5AANzwI5FUWSuT/uZB9Aap3
+         FEHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAxTGQfe4VHDW4/+CLF9H+TpoVnfB7O+XCqfs8Ri5WM/tRxsHKSPH7homzjz4hfvLOpox+MsQ0AAi2D0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKWGtkE8MEiF9/6aS+h/SXVuRdqiML0jY4Ao0R5D7glw5Tmuxb
+	7UM1TSCTLk2ophsmMgifLjBoUkBAvE6mIDsZAMb2I2xdGRZEFja559xns7FDug==
+X-Google-Smtp-Source: AGHT+IHmK/K9KtNXF8MAKgzWlqq1Xbvw08TMatRS4xdoCN6jQH4adnR3wRNRA42mwN6r478Ju/K5qw==
+X-Received: by 2002:a17:902:ecc1:b0:20c:c631:d81f with SMTP id d9443c01a7336-211d0d71690mr17005295ad.21.1731652707497;
+        Thu, 14 Nov 2024 22:38:27 -0800 (PST)
+Received: from thinkpad ([117.193.208.47])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0ec7bc7sm6089015ad.68.2024.11.14.22.38.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 22:38:27 -0800 (PST)
+Date: Fri, 15 Nov 2024 12:08:16 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: l.stach@pengutronix.de, bhelgaas@google.com, lpieralisi@kernel.org,
+	kw@linux.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, shawnguo@kernel.org, frank.li@nxp.com,
+	s.hauer@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
+	kernel@pengutronix.de, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 02/10] PCI: imx6: Add ref clock for i.MX95 PCIe
+Message-ID: <20241115063816.xpjqgm2j34enhe7s@thinkpad>
+References: <20241101070610.1267391-1-hongxing.zhu@nxp.com>
+ <20241101070610.1267391-3-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.118-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-6.1.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 6.1.118-rc1
-X-KernelTest-Deadline: 2024-11-17T06:37+00:00
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241101070610.1267391-3-hongxing.zhu@nxp.com>
 
-This is the start of the stable review cycle for the 6.1.118 release.
-There are 39 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+On Fri, Nov 01, 2024 at 03:06:02PM +0800, Richard Zhu wrote:
+> Add "ref" clock to enable reference clock. To avoid the DT
+> compatibility, i.MX95 REF clock might be optional.
 
-Responses should be made by Sun, 17 Nov 2024 06:37:07 +0000.
-Anything received after that time might be too late.
+Your wording is not correct. Perhaps you wanted to say, "To avoid breaking DT
+backwards compatibility"?
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.118-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-and the diffstat can be found below.
+> Replace the
+> devm_clk_bulk_get() by devm_clk_bulk_get_optional() to fetch
+> i.MX95 PCIe optional clocks in driver.
+> 
+> If use external clock, ref clock should point to external reference.
+> 
+> If use internal clock, CREF_EN in LAST_TO_REG controls reference output,
+> which implement in drivers/clk/imx/clk-imx95-blk-ctl.c.
+> 
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 19 +++++++++++++------
+>  1 file changed, 13 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 808d1f105417..bc8567677a67 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -82,6 +82,7 @@ enum imx_pcie_variants {
+>  #define IMX_PCIE_FLAG_HAS_SERDES		BIT(6)
+>  #define IMX_PCIE_FLAG_SUPPORT_64BIT		BIT(7)
+>  #define IMX_PCIE_FLAG_CPU_ADDR_FIXUP		BIT(8)
+> +#define IMX_PCIE_FLAG_CUSTOM_PME_TURNOFF	BIT(9)
+>  
+>  #define imx_check_flag(pci, val)	(pci->drvdata->flags & val)
+>  
+> @@ -98,6 +99,7 @@ struct imx_pcie_drvdata {
+>  	const char *gpr;
+>  	const char * const *clk_names;
+>  	const u32 clks_cnt;
+> +	const u32 clks_optional_cnt;
+>  	const u32 ltssm_off;
+>  	const u32 ltssm_mask;
+>  	const u32 mode_off[IMX_PCIE_MAX_INSTANCES];
+> @@ -1278,9 +1280,8 @@ static int imx_pcie_probe(struct platform_device *pdev)
+>  	struct device_node *np;
+>  	struct resource *dbi_base;
+>  	struct device_node *node = dev->of_node;
+> -	int ret;
+> +	int ret, i, req_cnt;
+>  	u16 val;
+> -	int i;
+>  
+>  	imx_pcie = devm_kzalloc(dev, sizeof(*imx_pcie), GFP_KERNEL);
+>  	if (!imx_pcie)
+> @@ -1330,7 +1331,10 @@ static int imx_pcie_probe(struct platform_device *pdev)
+>  		imx_pcie->clks[i].id = imx_pcie->drvdata->clk_names[i];
+>  
+>  	/* Fetch clocks */
+> -	ret = devm_clk_bulk_get(dev, imx_pcie->drvdata->clks_cnt, imx_pcie->clks);
+> +	req_cnt = imx_pcie->drvdata->clks_cnt - imx_pcie->drvdata->clks_optional_cnt;
+> +	ret = devm_clk_bulk_get(dev, req_cnt, imx_pcie->clks);
+> +	ret |= devm_clk_bulk_get_optional(dev, imx_pcie->drvdata->clks_optional_cnt,
+> +					  imx_pcie->clks + req_cnt);
 
-thanks,
+Why do you need to use 'clk_bulk' API to get a single reference clock? Just use
+devm_clk_get_optional(dev, "ref")
 
-greg k-h
+And who is going to supply the reference clock in the absence of this clockn in
+DT?
 
--------------
-Pseudo-Shortlog of commits:
+- Mani
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 6.1.118-rc1
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -1480,6 +1484,7 @@ static const char * const imx8mm_clks[] = {"pcie_bus", "pcie", "pcie_aux"};
+>  static const char * const imx8mq_clks[] = {"pcie_bus", "pcie", "pcie_phy", "pcie_aux"};
+>  static const char * const imx6sx_clks[] = {"pcie_bus", "pcie", "pcie_phy", "pcie_inbound_axi"};
+>  static const char * const imx8q_clks[] = {"mstr", "slv", "dbi"};
+> +static const char * const imx95_clks[] = {"pcie_bus", "pcie", "pcie_phy", "pcie_aux", "ref"};
+>  
+>  static const struct imx_pcie_drvdata drvdata[] = {
+>  	[IMX6Q] = {
+> @@ -1592,9 +1597,11 @@ static const struct imx_pcie_drvdata drvdata[] = {
+>  	},
+>  	[IMX95] = {
+>  		.variant = IMX95,
+> -		.flags = IMX_PCIE_FLAG_HAS_SERDES,
+> -		.clk_names = imx8mq_clks,
+> -		.clks_cnt = ARRAY_SIZE(imx8mq_clks),
+> +		.flags = IMX_PCIE_FLAG_HAS_SERDES |
+> +			 IMX_PCIE_FLAG_SUPPORTS_SUSPEND,
+> +		.clk_names = imx95_clks,
+> +		.clks_cnt = ARRAY_SIZE(imx95_clks),
+> +		.clks_optional_cnt = 1,
+>  		.ltssm_off = IMX95_PE0_GEN_CTRL_3,
+>  		.ltssm_mask = IMX95_PCIE_LTSSM_EN,
+>  		.mode_off[0]  = IMX95_PE0_GEN_CTRL_1,
+> -- 
+> 2.37.1
+> 
 
-Linus Torvalds <torvalds@linux-foundation.org>
-    9p: fix slab cache name creation for real
-
-Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-    fs/ntfs3: Fix general protection fault in run_is_mapped_full
-
-Hans de Goede <hdegoede@redhat.com>
-    platform/x86: x86-android-tablets: Fix use after free on platform_device_register() errors
-
-Qun-Wei Lin <qun-wei.lin@mediatek.com>
-    mm: krealloc: Fix MTE false alarm in __do_krealloc
-
-Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-    Bluetooth: L2CAP: Fix uaf in l2cap_connect
-
-Xiaxi Shen <shenxiaxi26@gmail.com>
-    ext4: fix timer use-after-free on failed mount
-
-Philip Yang <Philip.Yang@amd.com>
-    drm/amdkfd: amdkfd_free_gtt_mem clear the correct pointer
-
-Qiao Ma <mqaio@linux.alibaba.com>
-    uprobe: avoid out-of-bounds memory access of fetching args
-
-Andrii Nakryiko <andrii@kernel.org>
-    uprobes: encapsulate preparation of uprobe args buffer
-
-Hagar Hemdan <hagarhem@amazon.com>
-    io_uring: fix possible deadlock in io_register_iowq_max_workers()
-
-Li Nan <linan122@huawei.com>
-    md/raid10: improve code of mrdev in raid10_sync_request
-
-Reinhard Speyerer <rspmn@arcor.de>
-    net: usb: qmi_wwan: add Fibocom FG132 0x0112 composition
-
-Yanteng Si <siyanteng@cqsoftware.com.cn>
-    LoongArch: Use "Exception return address" to comment ERA
-
-Hans de Goede <hdegoede@redhat.com>
-    HID: lenovo: Add support for Thinkpad X1 Tablet Gen 3 keyboard
-
-Kenneth Albanowski <kenalba@chromium.org>
-    HID: multitouch: Add quirk for Logitech Bolt receiver w/ Casa touchpad
-
-Alessandro Zanni <alessandro.zanni87@gmail.com>
-    fs: Fix uninitialized value issue in from_kuid and from_kgid
-
-Jiawei Ye <jiawei.ye@foxmail.com>
-    bpf: Fix mismatched RCU unlock flavour in bpf_out_neigh_v6
-
-Yuan Can <yuancan@huawei.com>
-    vDPA/ifcvf: Fix pci_read_config_byte() return code handling
-
-Nilay Shroff <nilay@linux.ibm.com>
-    nvme: make keep-alive synchronous operation
-
-Michael Ellerman <mpe@ellerman.id.au>
-    powerpc/powernv: Free name on error in opal_event_init()
-
-Keith Busch <kbusch@kernel.org>
-    nvme-multipath: defer partition scanning
-
-Will Deacon <will@kernel.org>
-    kasan: Disable Software Tag-Based KASAN with GCC
-
-Ian Forbes <ian.forbes@broadcom.com>
-    drm/vmwgfx: Limit display layout ioctl array size to VMWGFX_NUM_DISPLAY_UNITS
-
-Julian Vetter <jvetter@kalrayinc.com>
-    sound: Make CONFIG_SND depend on INDIRECT_IOMEM instead of UML
-
-Herbert Xu <herbert@gondor.apana.org.au>
-    crypto: marvell/cesa - Disable hash algorithms
-
-Herbert Xu <herbert@gondor.apana.org.au>
-    crypto: api - Fix liveliness check in crypto_alg_tested
-
-Rik van Riel <riel@surriel.com>
-    bpf: use kvzmalloc to allocate BPF verifier environment
-
-Greg Joyce <gjoyce@linux.ibm.com>
-    nvme: disable CC.CRIME (NVME_CC_CRIME)
-
-WangYuli <wangyuli@uniontech.com>
-    HID: multitouch: Add quirk for HONOR MagicBook Art 14 touchpad
-
-Stefan Blum <stefanblum2004@gmail.com>
-    HID: multitouch: Add support for B2402FVA track point
-
-SurajSonawane2415 <surajsonawane0215@gmail.com>
-    block: Fix elevator_get_default() checking for NULL q->tag_set
-
-Hannes Reinecke <hare@suse.de>
-    nvme: tcp: avoid race between queue_lock lock and destroy
-
-Sergey Matsievskiy <matsievskiysv@gmail.com>
-    irqchip/ocelot: Fix trigger register address
-
-Pedro Falcato <pedro.falcato@gmail.com>
-    9p: Avoid creating multiple slab caches with the same name
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Revert "Bluetooth: hci_conn: Consolidate code for aborting connections"
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Revert "Bluetooth: hci_core: Fix possible buffer overflow"
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Revert "Bluetooth: af_bluetooth: Fix deadlock"
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Revert "Bluetooth: hci_sync: Fix overwriting request callback"
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Revert "Bluetooth: fix use-after-free in accessing skb after sending it"
-
-
--------------
-
-Diffstat:
-
- Makefile                                           |   4 +-
- arch/loongarch/include/asm/loongarch.h             |   2 +-
- arch/powerpc/platforms/powernv/opal-irqchip.c      |   1 +
- block/elevator.c                                   |   4 +-
- crypto/algapi.c                                    |   2 +-
- drivers/crypto/marvell/cesa/hash.c                 |  12 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c         |  14 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.h         |   2 +-
- drivers/gpu/drm/amd/amdkfd/kfd_chardev.c           |   2 +-
- drivers/gpu/drm/amd/amdkfd/kfd_device.c            |   4 +-
- .../gpu/drm/amd/amdkfd/kfd_device_queue_manager.c  |   2 +-
- drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.c       |   2 +-
- drivers/gpu/drm/amd/amdkfd/kfd_process.c           |   2 +-
- .../gpu/drm/amd/amdkfd/kfd_process_queue_manager.c |   4 +-
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.h                |   4 +-
- drivers/gpu/drm/vmwgfx/vmwgfx_kms.c                |   4 +-
- drivers/gpu/drm/vmwgfx/vmwgfx_kms.h                |   3 -
- drivers/hid/hid-ids.h                              |   1 +
- drivers/hid/hid-lenovo.c                           |   8 ++
- drivers/hid/hid-multitouch.c                       |  13 ++
- drivers/irqchip/irq-mscc-ocelot.c                  |   4 +-
- drivers/md/raid10.c                                |  23 +--
- drivers/net/usb/qmi_wwan.c                         |   1 +
- drivers/nvme/host/core.c                           |  31 ++--
- drivers/nvme/host/multipath.c                      |  33 +++++
- drivers/nvme/host/nvme.h                           |   1 +
- drivers/nvme/host/tcp.c                            |   7 +-
- drivers/platform/x86/x86-android-tablets.c         |   3 +-
- drivers/vdpa/ifcvf/ifcvf_base.c                    |   2 +-
- fs/ext4/super.c                                    |   2 +-
- fs/ntfs3/inode.c                                   |   9 ++
- fs/ocfs2/file.c                                    |   9 +-
- include/net/bluetooth/hci_core.h                   |   3 +-
- io_uring/io_uring.c                                |   5 +
- kernel/bpf/verifier.c                              |   4 +-
- kernel/trace/trace_uprobe.c                        |  86 +++++------
- lib/Kconfig.kasan                                  |   7 +-
- mm/slab_common.c                                   |   2 +-
- net/9p/client.c                                    |  12 +-
- net/bluetooth/af_bluetooth.c                       |  10 +-
- net/bluetooth/hci_conn.c                           | 158 ++++++++++++++++-----
- net/bluetooth/hci_core.c                           |  50 +++----
- net/bluetooth/hci_event.c                          |  20 +--
- net/bluetooth/hci_sync.c                           |  44 ++----
- net/bluetooth/l2cap_core.c                         |   9 --
- net/bluetooth/mgmt.c                               |  15 +-
- net/core/filter.c                                  |   2 +-
- sound/Kconfig                                      |   2 +-
- 48 files changed, 401 insertions(+), 243 deletions(-)
-
-
+-- 
+மணிவண்ணன் சதாசிவம்
 
