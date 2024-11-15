@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-410182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 765BF9CD5DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 04:30:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D222E9CD5E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 04:31:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60733B23404
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 03:30:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 899421F22228
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 03:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9D8156962;
-	Fri, 15 Nov 2024 03:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E8F176FA4;
+	Fri, 15 Nov 2024 03:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RB81Qvaj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E9NOXVfI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0022B33997;
-	Fri, 15 Nov 2024 03:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3C8173357;
+	Fri, 15 Nov 2024 03:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731641419; cv=none; b=MQAOcwQ/FElYGZ12kZMDjUCSgSCgzvOpeB6X1QmLNbcWl1G12D/fCN8OEhHpUpuyuK2Ty9rP4V9FXBgOnb3JqyO3/W7AtxbPwVCZ2XzR6Yc0Y1I8/RBrcb6f4oty9KRA5qqjWNZVEsI37/DDutH05uoXJlzpIv5mNTQJ+jlHNns=
+	t=1731641427; cv=none; b=gDY0W15DyMrHzy66YGBBKxPBAYujx5dOgobEEGRJ5H3RV25fS7FxGn1V0ms68VlOhbHfcKNtmEKcfFCA58nD/m8/CYBwWlXJJUsehCx2BkoMAdNk/Zr1o5yhobRlxGhQB3CIgOcMBP09CkIG/vIhL2J8KnHjRoDEUYe3v8GjFQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731641419; c=relaxed/simple;
-	bh=Him8nl8FyzNVEHA1o0Xazwb9egJOQ5O9TgMHjAoDCoU=;
+	s=arc-20240116; t=1731641427; c=relaxed/simple;
+	bh=JV/05U3NhZxJjiMzxnBuMp3VCFi+787aOaBvpWeQEh0=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=RnEM2hEyuyye5vUhwkk9T/GqPhxDSwQ24BN/sLIqyIv0xH+aSymC+bOfAbc2yrRemTwyWf0f0tuUeHJ8o5qNDrpldIu9oVABxZpMvMB7Hb2eLVx7W4zTMx7Dl2/LMUZDk2WxFVIcOwdxy4OY2UgtHdY3n8jbEGWEZibXRVPovvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RB81Qvaj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55ACCC4CECD;
-	Fri, 15 Nov 2024 03:30:18 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=PGJG2leYQYZs7rOnOYFiGJoCXvkAVaI8KsGVC+f2MRI8JDXVHhgmKoREhUb8epSPZ1E7//SIH90U4CBs9XroAFLz00iPJ636gI2NfOb2EFR+xt01LbTmx5g2W+nFTmGjOnHTH0YPOppv4yJVdJWdYG3kwnxBL6Wdvs3jh165ouk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E9NOXVfI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE150C4CECF;
+	Fri, 15 Nov 2024 03:30:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731641418;
-	bh=Him8nl8FyzNVEHA1o0Xazwb9egJOQ5O9TgMHjAoDCoU=;
+	s=k20201202; t=1731641426;
+	bh=JV/05U3NhZxJjiMzxnBuMp3VCFi+787aOaBvpWeQEh0=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=RB81Qvaj5V0+kVVcbRM37PGyVbmJG5F258/uituX3OPjEmQXTPkMc69NeFD9ynAwl
-	 7r2HwsSa9FjTrCtBOukCojjx4TEQJSaTVPLGe7ADIfjZDezXjNybL9KM801jh9FbyX
-	 uEo6ZcnlH5+WRzQw1HClGsD6JCsxnrzK6W4euGBzetdKlpMqiiwJLsu0j8fvYJ8DTt
-	 D9vDNVLmth5RdAU86P+pkt6ZN+7uzqg95cWFIvGNe9hsXxLMni/lXan2LPhW3Fz3V7
-	 iXcp422k+TYSxrY0evK195nOa+RF4BOF3t8asbx1N8rEeDoy8OPzFIkxC1iWziNZDs
-	 zve2dlxT/HSTg==
+	b=E9NOXVfIzPAlP+Nr8dhoMVk03F3w3huF0Pb55FCFkVS96J6pTAPCmbMNO+GQgkJkW
+	 KDB0KuAkTVEqGOzsS3zvOsK59H7WGMfz4YXS+U0scvpL9wykefAFxPnqda1c19zq2G
+	 FzKfFbNQ6z1gAUdzM/rkTSCY+bvqR5CLQ+njiFNGyvUIaN01Y7p4rMPT7lWRzfY9tJ
+	 E2Go0Qt/4M2lcWJ5/vagHShT9FUh6wEZJ80s6IoPvno1IY6+nJxyQ8PhXm/2cdCEHc
+	 QkM9gmSsSiOdfdrw++dmP1L9Dfgp4iHXzkrvuhB5/X4J/C9yUdvcdm3lxvillyV7fe
+	 i+mwoTboM/HTQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33B623809A80;
-	Fri, 15 Nov 2024 03:30:30 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD283809A80;
+	Fri, 15 Nov 2024 03:30:38 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,41 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v3] net: phy: dp83869: fix status reporting for
- 1000base-x autonegotiation
+Subject: Re: [PATCH 1/2] include: mdio: Remove mdio45_ethtool_gset()
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <173164142900.2139249.18179517007808850405.git-patchwork-notify@kernel.org>
-Date: Fri, 15 Nov 2024 03:30:29 +0000
-References: <20241112-dp83869-1000base-x-v3-1-36005f4ab0d9@bootlin.com>
-In-Reply-To: <20241112-dp83869-1000base-x-v3-1-36005f4ab0d9@bootlin.com>
-To: Romain Gantois <romain.gantois@bootlin.com>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- dmurphy@ti.com, f.fainelli@gmail.com, thomas.petazzoni@bootlin.com,
- maxime.chevallier@bootlin.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
+ <173164143724.2139249.14310287581673930566.git-patchwork-notify@kernel.org>
+Date: Fri, 15 Nov 2024 03:30:37 +0000
+References: <20241112105430.438491-1-alistair@alistair23.me>
+In-Reply-To: <20241112105430.438491-1-alistair@alistair23.me>
+To: Alistair Francis <alistair@alistair23.me>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux@armlinux.org.uk, hkallweit1@gmail.com, andrew@lunn.ch,
+ alistair23@gmail.com, alistair.francis@wdc.com
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This series was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Tue, 12 Nov 2024 15:06:08 +0100 you wrote:
-> The DP83869 PHY transceiver supports converting from RGMII to 1000base-x.
-> In this operation mode, autonegotiation can be performed, as described in
-> IEEE802.3.
+On Tue, 12 Nov 2024 20:54:29 +1000 you wrote:
+> From: Alistair Francis <alistair.francis@wdc.com>
 > 
-> The DP83869 has a set of fiber-specific registers located at offset 0xc00.
-> When the transceiver is configured in RGMII-to-1000base-x mode, these
-> registers are mapped onto offset 0, which should make reading the
-> autonegotiation status transparent.
+> mdio45_ethtool_gset() is never called, so let's remove it.
 > 
-> [...]
+> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+> ---
+>  include/linux/mdio.h | 16 ----------------
+>  1 file changed, 16 deletions(-)
 
 Here is the summary with links:
-  - [net,v3] net: phy: dp83869: fix status reporting for 1000base-x autonegotiation
-    https://git.kernel.org/netdev/net/c/378e8feea9a7
+  - [1/2] include: mdio: Remove mdio45_ethtool_gset()
+    https://git.kernel.org/netdev/net-next/c/e7cb7cf43afb
+  - [2/2] mdio: Remove mdio45_ethtool_gset_npage()
+    https://git.kernel.org/netdev/net-next/c/575092a7f0ce
 
 You are awesome, thank you!
 -- 
