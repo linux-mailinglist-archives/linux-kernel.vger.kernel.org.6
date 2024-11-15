@@ -1,176 +1,206 @@
-Return-Path: <linux-kernel+bounces-411447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D0269CFA74
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:54:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 552CC9CFA1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:37:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E697BB42FDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:18:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6DBDB3064E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFB119066E;
-	Fri, 15 Nov 2024 22:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDA81917E8;
+	Fri, 15 Nov 2024 22:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="N1g55SdN"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95D418801A;
-	Fri, 15 Nov 2024 22:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d0Dafu4o"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B33042AA3;
+	Fri, 15 Nov 2024 22:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731708913; cv=none; b=d5mwFry7xPy638MBJ6WFHmDGtUXbpSdbU6j90rcI9eX98LiErim7E8z77mrSC+ggVHkToyzixVAUIozfnITIuDCvvANRRwDCC1lUAwCJVqeg4xRuV+eb4a3xBTj/XlZt4Fx5OirNPVRoDG9OGWvuXe3Pc3w3XW8Dnu7hebmk+o4=
+	t=1731708935; cv=none; b=OdBuA+pjcCQHW6MmevAeoWc8T8SY52enrbUaXVAslHOtRTr+4nZ+AX5H3HzT6xSeuI5tPW8FGxFTAsWiVwlhzyVLx2Nxy3caSuzHU2U4Fmi/42FmRDnszA/MRblvHhI3qjYgWbw7eFdw8f2ojcYb1AEzELPc40oLbWCb9c4KLEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731708913; c=relaxed/simple;
-	bh=/gM5S2JpghDM0ugec1ktyfCAqRVYpBpjvyLdIODChSQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=DCi0vMXQQNvWBwWPqW5lylvzY1Y5mijf6PaVmTesdKttTR4QwDaNvyQqyIdgqT35CzJ7uKHkhlV8p1cRaDaIGNSzRQY7bQWAEFPIoDo+SBUFqbp9mi7yUWqhXzIZLRMeSUtpld0m+Mi51PwZV21lQcijDUI2UhYJY+eRTexUNp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=N1g55SdN; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.35.166] (c-73-118-245-227.hsd1.wa.comcast.net [73.118.245.227])
-	by linux.microsoft.com (Postfix) with ESMTPSA id C2E092064AEB;
-	Fri, 15 Nov 2024 14:15:08 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C2E092064AEB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1731708911;
-	bh=3z7ywabUJ27i2rb14B4LEGDccer8KYu9+MGXqf4uX30=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=N1g55SdNOAVrXtoAUWPnvUkB3x2fHI9b6jafO92eRdbbD4Gte6s/kvOokfmkgYHJe
-	 Frz5kbgdiLksPpFFaWRXGFZ7VcwJJIP77+3HbEyB4bGSyYhL140G+m7AP2fdg7ax7k
-	 BFhXHlM0RPRrW6JGtgd18IntrfjEtsdFiu0GVoGc=
-Message-ID: <8127a2e6-fa62-4c85-b7ed-24748cc9e285@linux.microsoft.com>
-Date: Fri, 15 Nov 2024 14:15:08 -0800
+	s=arc-20240116; t=1731708935; c=relaxed/simple;
+	bh=I+QtWGHRBD+4yemSKClWnFIJi0GIE4JSgJQS5uBerY8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NvU+XKuL5qvZbOw4WYSZ+pDHxdNdYH1LF3Ukh6YN71caHlEihKiPklZQKa2TI0kPCtJyzHZUUA/1jgpYZSveLoMEv0YAbmtdsWcHlP7nzsSQzmVsGIF57qHRSh9zbDd4MUptNYfwLi5c22MnNV2NMM1Z9mrKib061n8GODmJ6V8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d0Dafu4o; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5cb6ca2a776so3798896a12.0;
+        Fri, 15 Nov 2024 14:15:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731708931; x=1732313731; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zM323IeHX5Wao0Wvn3Qxm0EBhrnoes7GmduEknVbsqI=;
+        b=d0Dafu4ozjILAK3vbT+OQSMzuwWQzZcLMiVwFQ53tCQ47QziJlFdwaM6TZ5GH2WXiK
+         +hbK3bOs3wYckNuOgOuSyr1iD+HVUyUhffi4lhBgyo2Rt2Qd1IvKNaZjmqaReqBKxKWJ
+         5a/xEbSjjlzA5mFH6ivyqTGSKD4ieW9677/ZK6WXS9f0hLX2ZHO0Ytvlw81vqj2WB4eK
+         Uc9id54FwPd7HeKEbRryrjB223ev61+ovEeJLXgFHsNR29UXct1hR+WrULjkQt4gcxz7
+         qLbSSWbPbObhUvsjmvi7DdvZAdRJb+PBBUWsW6sXg5S3kIStRpmB6z3u3TofG2yGxeNm
+         U2Jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731708931; x=1732313731;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zM323IeHX5Wao0Wvn3Qxm0EBhrnoes7GmduEknVbsqI=;
+        b=F/hnsSWk1U2N+48BjSGYwbg2tq49pSjXnvHBtP06uV3lLAIMwALHFYwbgsSmvdPYOC
+         EaJWWKLKmLTQT/VrBctieuxHiQMBnTdyKl1R3p2fE6+wVbSElkqQmRam62FVs+EWqGYa
+         kY4ns/0WF485Z1R3yDFpZt7U2EK110U0DC/ns6m7D9/xVMVlrpkE0T+i6mcByuVX6J/6
+         5p2eOCLpvWwUQA+GKSFWmKl0FwhCzgCVBjGTbEUYtdPDCpqO3nsOhQlnpTLHUA2UPzKr
+         AZDdo3tl1AekILbzaya9bmJUebd/oriTuyl/cJF/XW7dxYGD1s6oai54Zn85pmLIYLwq
+         aa6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVWnoCg38LGFiT4FWKzHn4O4jihF4oD60Hczj36jYJqeMY8KNYw+M4/UR2sLSHZQQz83loed0EtJ/DWMTY=@vger.kernel.org, AJvYcCWB7Ab6YjogfESXjr3wWXiT4Fnr/k+HG5GZGrqtfG8UWtBNgqUEorQsuvLWgfxjDJDveGHXlClV@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRhQziIR//ZkI/0u9q83FxoGRSMO4mSBtSkT+rB6udo5HuusKW
+	B8kEjB0bRaiKgRp7WMKBi00/jCZUyn71TWHSaV2UlBukh1CremFNL/33eAeVK4y/KRSe9douoU7
+	3YZHf4Did49KH999uHN5XG4OvU0E=
+X-Google-Smtp-Source: AGHT+IFpg42qBOE2i3RJF23Qu7bb0Wdl9LRB8XOn80l6Xa/542IJqFJwKaXgpinZsQaFtyqmA+qDNSpL9W8JJoFJzJw=
+X-Received: by 2002:a17:907:6e94:b0:a9e:c696:8f78 with SMTP id
+ a640c23a62f3a-aa48354da39mr338250966b.51.1731708931183; Fri, 15 Nov 2024
+ 14:15:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: eahariha@linux.microsoft.com, netfilter-devel@vger.kernel.org,
- coreteam@netfilter.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, cocci@inria.fr,
- linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
- dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- linux-scsi@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-block@vger.kernel.org, linux-wireless@vger.kernel.org,
- ath11k@lists.infradead.org, linux-mm@kvack.org,
- linux-bluetooth@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-rpi-kernel@lists.infradead.org, ceph-devel@vger.kernel.org,
- live-patching@vger.kernel.org, linux-sound@vger.kernel.org,
- etnaviv@lists.freedesktop.org, oss-drivers@corigine.com,
- linuxppc-dev@lists.ozlabs.org, Anna-Maria Behnsen
- <anna-maria@linutronix.de>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Naveen N Rao <naveen@kernel.org>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Louis Peens <louis.peens@corigine.com>, Nicholas Piggin <npiggin@gmail.com>,
- Michael Ellerman <mpe@ellerman.id.au>,
- Christian Gmeiner <christian.gmeiner@gmail.com>,
- Russell King <linux+etnaviv@armlinux.org.uk>,
- Lucas Stach <l.stach@pengutronix.de>, Takashi Iwai <tiwai@suse.com>,
- Jaroslav Kysela <perex@perex.cz>, Petr Mladek <pmladek@suse.com>,
- Joe Lawrence <joe.lawrence@redhat.com>, Miroslav Benes <mbenes@suse.cz>,
- Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Johan Hedberg <johan.hedberg@gmail.com>, Jens Axboe <axboe@kernel.dk>,
- Marcel Holtmann <marcel@holtmann.org>, Kalle Valo <kvalo@kernel.org>,
- Jeff Johnson <jjohnson@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, =?UTF-8?Q?Roger_Pau_Monn=C3=A9?=
- <roger.pau@citrix.com>, Jack Wang <jinpu.wang@cloud.ionos.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Praveen Kaligineedi <pkaligineedi@google.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, James Smart <james.smart@broadcom.com>,
- Dick Kennedy <dick.kennedy@broadcom.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Jeroen de Borst <jeroendb@google.com>,
- Shailend Chand <shailend@google.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Lucas De Marchi <lucas.demarchi@intel.com>, Oded Gabbay
- <ogabbay@kernel.org>, Ofir Bitton <obitton@habana.ai>,
- Sven Schnelle <svens@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>, Vasily Gorbik
- <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
- Russell King <linux@armlinux.org.uk>, Robert Jarzmik
- <robert.jarzmik@free.fr>, Haojian Zhuang <haojian.zhuang@gmail.com>,
- Daniel Mack <daniel@zonque.org>, Nicolas Palix <nicolas.palix@imag.fr>,
- Julia Lawall <Julia.Lawall@inria.fr>, Simon Horman <horms@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
- Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>,
- Jozsef Kadlecsik <kadlec@netfilter.org>,
- Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: Re: [PATCH v2 00/21] Converge on using secs_to_jiffies()
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
- Thomas Gleixner <tglx@linutronix.de>
-References: <20241115-converge-secs-to-jiffies-v2-0-911fb7595e79@linux.microsoft.com>
- <10ee4e8f-d8b4-4502-a5e2-0657802aeb11@linux.microsoft.com>
- <3ac480f5-549b-4449-baa9-f766e074c409@quicinc.com>
-Content-Language: en-US
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-In-Reply-To: <3ac480f5-549b-4449-baa9-f766e074c409@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241115215256.578125-1-kaleshsingh@google.com>
+In-Reply-To: <20241115215256.578125-1-kaleshsingh@google.com>
+From: Yang Shi <shy828301@gmail.com>
+Date: Fri, 15 Nov 2024 14:15:20 -0800
+Message-ID: <CAHbLzkrVoK-y4zc10+=0hDGZLi8+i73wSHciTUOWGDBsEcD0xw@mail.gmail.com>
+Subject: Re: [PATCH] mm: Respect mmap hint address when aligning for THP
+To: Kalesh Singh <kaleshsingh@google.com>
+Cc: kernel-team@android.com, android-mm@google.com, 
+	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Yang Shi <yang@os.amperecomputing.com>, Rik van Riel <riel@surriel.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Minchan Kim <minchan@kernel.org>, Hans Boehm <hboehm@google.com>, 
+	Lokesh Gidra <lokeshgidra@google.com>, stable@vger.kernel.org, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Jann Horn <jannh@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/15/2024 1:41 PM, Jeff Johnson wrote:
-> On 11/15/2024 1:29 PM, Easwar Hariharan wrote:
->> On 11/15/2024 1:26 PM, Easwar Hariharan wrote:
->>> This is a series that follows up on my previous series to introduce
->>> secs_to_jiffies() and convert a few initial users.[1] In the review for
->>> that series, Anna-Maria requested converting other users with
->>> Coccinelle. This is part 1 that converts users of msecs_to_jiffies()
->>> that use the multiply pattern of either of:
->>> - msecs_to_jiffies(N*1000), or
->>> - msecs_to_jiffies(N*MSEC_PER_SEC)
->>>
->>> The entire conversion is made with Coccinelle in the script added in
->>> patch 2. Some changes suggested by Coccinelle have been deferred to
->>> later parts that will address other possible variant patterns.
->>>
->>> CC: Anna-Maria Behnsen <anna-maria@linutronix.de>
->>> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
->>>
->>> [1] https://lore.kernel.org/all/20241030-open-coded-timeouts-v3-0-9ba123facf88@linux.microsoft.com/
->>> [2] https://lore.kernel.org/all/8734kngfni.fsf@somnus/
->>>
->>> ---
->>> Changes in v2:
->>> - EDITME: describe what is new in this series revision.
->>> - EDITME: use bulletpoints and terse descriptions.
->>> - Link to v1: https://lore.kernel.org/r/20241115-converge-secs-to-jiffies-v1-0-19aadc34941b@linux.microsoft.com
->>>
->>
->> Apologies, I missed out on editing the changelog here. v1 included a
->> patch that's already been accepted, there are no other changes in v2.
->>
->> Thanks,
->> Easwar
-> 
-> How do you expect this series to land since it overlaps a large number of
-> maintainer trees? Do you have a maintainer who has volunteered to take the
-> series and the maintainers should just ack? Or do you want the maintainers to
-> take the individual patches that are applicable to them?
-> 
-> /jeff
+On Fri, Nov 15, 2024 at 1:52=E2=80=AFPM Kalesh Singh <kaleshsingh@google.co=
+m> wrote:
+>
+> Commit efa7df3e3bb5 ("mm: align larger anonymous mappings on THP
+> boundaries") updated __get_unmapped_area() to align the start address
+> for the VMA to a PMD boundary if CONFIG_TRANSPARENT_HUGEPAGE=3Dy.
+>
+> It does this by effectively looking up a region that is of size,
+> request_size + PMD_SIZE, and aligning up the start to a PMD boundary.
+>
+> Commit 4ef9ad19e176 ("mm: huge_memory: don't force huge page alignment
+> on 32 bit") opted out of this for 32bit due to regressions in mmap base
+> randomization.
+>
+> Commit d4148aeab412 ("mm, mmap: limit THP alignment of anonymous
+> mappings to PMD-aligned sizes") restricted this to only mmap sizes that
+> are multiples of the PMD_SIZE due to reported regressions in some
+> performance benchmarks -- which seemed mostly due to the reduced spatial
+> locality of related mappings due to the forced PMD-alignment.
+>
+> Another unintended side effect has emerged: When a user specifies an mmap
+> hint address, the THP alignment logic modifies the behavior, potentially
+> ignoring the hint even if a sufficiently large gap exists at the requeste=
+d
+> hint location.
+>
+> Example Scenario:
+>
+> Consider the following simplified virtual address (VA) space:
+>
+>     ...
+>
+>     0x200000-0x400000 --- VMA A
+>     0x400000-0x600000 --- Hole
+>     0x600000-0x800000 --- VMA B
+>
+>     ...
+>
+> A call to mmap() with hint=3D0x400000 and len=3D0x200000 behaves differen=
+tly:
+>
+>   - Before THP alignment: The requested region (size 0x200000) fits into
+>     the gap at 0x400000, so the hint is respected.
+>
+>   - After alignment: The logic searches for a region of size
+>     0x400000 (len + PMD_SIZE) starting at 0x400000.
+>     This search fails due to the mapping at 0x600000 (VMA B), and the hin=
+t
+>     is ignored, falling back to arch_get_unmapped_area[_topdown]().
+>
+> In general the hint is effectively ignored, if there is any
+> existing mapping in the below range:
+>
+>      [mmap_hint + mmap_size, mmap_hint + mmap_size + PMD_SIZE)
+>
+> This changes the semantics of mmap hint; from ""Respect the hint if a
+> sufficiently large gap exists at the requested location" to "Respect the
+> hint only if an additional PMD-sized gap exists beyond the requested size=
+".
+>
+> This has performance implications for allocators that allocate their heap
+> using mmap but try to keep it "as contiguous as possible" by using the
+> end of the exisiting heap as the address hint. With the new behavior
+> it's more likely to get a much less contiguous heap, adding extra
+> fragmentation and performance overhead.
+>
+> To restore the expected behavior; don't use thp_get_unmapped_area_vmflags=
+()
+> when the user provided a hint address.
 
-I am hoping for tglx to take it through his tree since the patch
-introducing secs_to_jiffies() is in his tree, so sequencing of
-dependencies would not be an issue.
+Thanks for fixing it. I agree we should respect the hint address. But
+this patch actually just fixed anonymous mapping and the file mappings
+which don't support thp_get_unmapped_area(). So I think you should
+move the hint check to __thp_get_unmapped_area().
 
-But if tglx won't, we could push it out another cycle and individual
-maintainers can take the patches that are applicable to their tree for
-the series.
+And Vlastimil's fix d4148aeab412 ("mm, mmap: limit THP alignment of
+anonymous mappings to PMD-aligned sizes") should be moved to there too
+IMHO.
 
-Thanks,
-Easwar
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Yang Shi <yang@os.amperecomputing.com>
+> Cc: Rik van Riel <riel@surriel.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: Hans Boehm <hboehm@google.com>
+> Cc: Lokesh Gidra <lokeshgidra@google.com>
+> Cc: <stable@vger.kernel.org>
+> Fixes: efa7df3e3bb5 ("mm: align larger anonymous mappings on THP boundari=
+es")
+> Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
+> ---
+>  mm/mmap.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 79d541f1502b..2f01f1a8e304 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -901,6 +901,7 @@ __get_unmapped_area(struct file *file, unsigned long =
+addr, unsigned long len,
+>         if (get_area) {
+>                 addr =3D get_area(file, addr, len, pgoff, flags);
+>         } else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)
+> +                  && !addr /* no hint */
+>                    && IS_ALIGNED(len, PMD_SIZE)) {
+>                 /* Ensures that larger anonymous mappings are THP aligned=
+. */
+>                 addr =3D thp_get_unmapped_area_vmflags(file, addr, len,
+>
+> base-commit: 2d5404caa8c7bb5c4e0435f94b28834ae5456623
+> --
+> 2.47.0.338.g60cca15819-goog
+>
 
