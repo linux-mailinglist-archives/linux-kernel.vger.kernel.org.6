@@ -1,93 +1,137 @@
-Return-Path: <linux-kernel+bounces-410365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E30199CDA6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:26:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45AA89CDA70
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:27:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8FBC283990
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:26:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2CF31F22E69
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427EA18A6D5;
-	Fri, 15 Nov 2024 08:26:35 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3D418A6D5;
+	Fri, 15 Nov 2024 08:27:17 +0000 (UTC)
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40560189528
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6EF8189528;
+	Fri, 15 Nov 2024 08:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731659194; cv=none; b=qcJINmp+2ENlyFy1QfcOvJKDjoPhztoE9VXXcT3Z/lA+fEffjbQKuhaygZdY592XbTEKRYk5B6uKKERrt3GlakNIZ8YF6+/WnnMWT5b5NxNcSCiJl7JKUF+rYHeHqEfj1w1yr4gL8dvBGSYe3efnShyAy6SyTT95xAlQczecIAI=
+	t=1731659237; cv=none; b=T/KHOsDFDB/BS30f8xSxtklRGzppuwV9+HBWRH4wAYI85iqBb8E8UXdMIqKak/uuAFA/kHGNoyy1lVn+SD0fY/ePPQSpmuvCDv/j8gWzxfQo1VTm5gq485g4riVQoKyP+Vx6AQ6TfHsBfPwljl8PiXtXHXcGAVff2pLlhn0rnRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731659194; c=relaxed/simple;
-	bh=8wKPhUOT9T5aGZCbzbxqrv3QLs4wnqUJO893p2oXsQ0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=TRLm9k8Azgc5voEdaG3ovjMmOi+H6/KrKjb4bvGHxfNxYH8NfPTd2gpVECbUFC7D6XIJkJT83JsocHxEJ9qXXPu7Ji1HdvAS+tXAjzxg2+DgB9eaiv6HIUDsUgLMGhtNJ9Durnmga6/hx4Nmh7b/BstMDcFlGLP5E8xTQojU2uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83abad6594fso55411539f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 00:26:32 -0800 (PST)
+	s=arc-20240116; t=1731659237; c=relaxed/simple;
+	bh=o8nIyJkuzItCALeJbV66s26MolutOjCijCbhPspD4Ws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qa9OZ/0T7TYAJLfYlPNC1aBtZW1aUeo/6wEi1SxHNk2QuruaRKDRwyJh6tPMYM58A0RROLcOFfO8JwnDg9jM1PQB6QzyuFC0oBaudO3i+sKOA34o0GIDzZv3IpjAIWBi65aeP/g1l9zk/npX8kkwyVZbnxWo38L/7SgNwH5kkrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=geekplace.eu; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=geekplace.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4315eeb2601so16506025e9.2;
+        Fri, 15 Nov 2024 00:27:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731659192; x=1732263992;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gj1kT6DNIxpoEsuPOvZYFOXRj3E43iQAQpFVr6sujoE=;
-        b=t88zEu7ZptxqpUGidQ5Rj6TlKR3Q1k+TOsPlbA+vZF5D60GrzSZSmiloFonRCX5S38
-         LoGonvrV6/z2TOmXNxhMSltBC4jrTk409N4gQXf/uf9gSJs/kLriSA0Cf4ZOlhYRlcaK
-         sqYQjCp76rS2PWg11HYUFpt7uF9R/f06mA5ddGgzLF96uGecytn7JpNpARvjiNsTWLq5
-         ShyEaYcAS8jY4Ro6tj5BJydSjWa5JzmWeI39/4pA8oth1147X4xr2/R1DCHGny3QvyUY
-         k8FzXH0750ZAV9peIg5Z6S2Tyea8CSqd4HfbofA+D02mkG7SPy+s2iyEbG4EH1yupWk8
-         Bndg==
-X-Gm-Message-State: AOJu0YwjvuGQIzkh/rYFgy300J+7B9OKCvaXNf35tjNn6vRpOryltHth
-	gixqLAIZp06GvBC6SQ21m0cVJn+I6GkvZGvz+lR8Hs4b3Z9Cw5Ln37PsalbM6lwNkBd4Qv2nD6l
-	1sFIenwccNPEJ74b9uTrECU+D+bh2dabl7uGRnGOkpVw/eQMUvUbJLCk=
-X-Google-Smtp-Source: AGHT+IFYIz71zAVSOkkFYtOsCFDIjhU+6t7lx5ow5wnR/6/zMKmJorVSoVxcsuK7J3o4An+8d4zwex0/5elDR04W0RVzci1GfXhO
+        d=1e100.net; s=20230601; t=1731659223; x=1732264023;
+        h=in-reply-to:from:content-language:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=o8nIyJkuzItCALeJbV66s26MolutOjCijCbhPspD4Ws=;
+        b=tp6nifwiLXkRdsH0L4LULiJdCtNPgeJHr8znl9/ytBN23uy/ObDrU+WNuyC1RY4JyB
+         0QMbHpkm/y+0Ja1oGDIdimfaiFdVDXpypiXQNGXmJz2T94RA+tSO4MhNZ3ROcHQ2Yaq4
+         uIMy53LfagDY7qjKfHt3HIyz8FMNFKAIKkEjAOz5i/VT4kyd/vHi9Jl6ChuB6dfg5Dlp
+         b1W4GolCbtiM0HZf/0a860huWYBxHExBXk4qFFn5ZwTNyPBAnYCBv7F8o4jM/WBGLAzF
+         Dnkt/qJTWqRlKvUYjWpZAJZM6n5/r4xTipKp82x1PNPytHjeSuquyCXHOK0fEhYeF1S8
+         /VIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXK74wrz2KFdcVFq/DJ3JHGF++Id4dhES1nqtEtTvnb10qK6EZq/laDLZG287YM91DL2eCRjaUS1dfA09s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypGrlxF3lqwC8aCQHnymELYU76Xhk7L/1W6bE5RN563/0iQRr5
+	upyLgfWnPTrDTKQehGhg628fCiheS63SWExvWAqrOfUHxHjPvF4ynn1bw9k+
+X-Google-Smtp-Source: AGHT+IH/f12vAPRislm673eISgjINdIGmF89I7seSRP7QcD2GJSIitawye+dyoCh8yJa/pqkymQRVQ==
+X-Received: by 2002:a05:600c:19c6:b0:431:5533:8f0d with SMTP id 5b1f17b1804b1-432df793dd5mr17166385e9.30.1731659222644;
+        Fri, 15 Nov 2024 00:27:02 -0800 (PST)
+Received: from ?IPV6:2001:4090:a247:82fb:34fb:50ff:feac:591b? ([2001:4090:a247:82fb:34fb:50ff:feac:591b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab80a28sm46404765e9.24.2024.11.15.00.27.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 00:27:01 -0800 (PST)
+Message-ID: <7a4a39f0-2694-42a0-b26d-b1e337eb3afc@geekplace.eu>
+Date: Fri, 15 Nov 2024 09:26:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cda3:0:b0:3a0:a070:b81 with SMTP id
- e9e14a558f8ab-3a748084dcdmr21174345ab.23.1731659192256; Fri, 15 Nov 2024
- 00:26:32 -0800 (PST)
-Date: Fri, 15 Nov 2024 00:26:32 -0800
-In-Reply-To: <67363c96.050a0220.1324f8.009e.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673705b8.050a0220.1324f8.00a2.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [ntfs3?] general protection fault in pick_link
-From: syzbot <syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] bcachefs: Set rebalance thread to SCHED_BATCH and
+ nice 19
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241114210649.71377-1-flo@geekplace.eu>
+ <20241114210649.71377-2-flo@geekplace.eu>
+ <kycrjg4nlgwxb6b6wph3uolmh45t7ivmoi5jpy4pakvh74wnoo@wp7hlbcbtwyw>
+Content-Language: en-US
+From: Florian Schmaus <flo@geekplace.eu>
+In-Reply-To: <kycrjg4nlgwxb6b6wph3uolmh45t7ivmoi5jpy4pakvh74wnoo@wp7hlbcbtwyw>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------NQh0VyCdSM9kOJIS0Omdz4Og"
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------NQh0VyCdSM9kOJIS0Omdz4Og
+Content-Type: multipart/mixed; boundary="------------SSth0S6U9OM1ccsA5Ervezib";
+ protected-headers="v1"
+From: Florian Schmaus <flo@geekplace.eu>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <7a4a39f0-2694-42a0-b26d-b1e337eb3afc@geekplace.eu>
+Subject: Re: [PATCH 2/2] bcachefs: Set rebalance thread to SCHED_BATCH and
+ nice 19
+References: <20241114210649.71377-1-flo@geekplace.eu>
+ <20241114210649.71377-2-flo@geekplace.eu>
+ <kycrjg4nlgwxb6b6wph3uolmh45t7ivmoi5jpy4pakvh74wnoo@wp7hlbcbtwyw>
+In-Reply-To: <kycrjg4nlgwxb6b6wph3uolmh45t7ivmoi5jpy4pakvh74wnoo@wp7hlbcbtwyw>
 
-***
+--------------SSth0S6U9OM1ccsA5Ervezib
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-Subject: Re: [syzbot] [ntfs3?] general protection fault in pick_link
-Author: lizhi.xu@windriver.com
+T24gMTUvMTEvMjAyNCAwNi40MywgS2VudCBPdmVyc3RyZWV0IHdyb3RlOg0KPiBPbiBUaHUs
+IE5vdiAxNCwgMjAyNCBhdCAxMDowNjo0OFBNICswMTAwLCBGbG9yaWFuIFNjaG1hdXMgd3Jv
+dGU6DQo+PiBTZXQgdGhlIHJlYmFsYW5jZSB0aHJlYWQncyBzY2hlZHVsaW5nIGNsYXNzIHRv
+IEJBVENILCB3aGljaCBtZWFucyBpdA0KPj4gY291bGQgZXhwZXJpZW5jZSBhIGhpZ2hlciBz
+Y2hlZHVsaW5nIGxhdGVuY3kuIEhvd2V2ZXIsIGl0IHJlZHVjZXMNCj4+IHByZWVtcHRpb24g
+ZXZlbnRzIG9mIHJ1bm5pbmcgdGhyZWFkcy4NCj4+DQo+PiBBbmQgd2hpbGUgdGhlIHJlYmFs
+YW5jZSB0aHJlYWQgaXMgdWFsbHkgbm90IGNvbXB1dGUgYm91bmQsIGl0IGRvZXMNCj4+IGNh
+dXNlIGEgY29uc2lkZXJhYmxlIGFtb3VudCBvZiBJL08uIEJ5IGluY3JlYXNpbmcgaXRzIG5p
+Y2UgbGV2ZWwgZnJvbQ0KPj4gMCB0byAxOSB3ZSBhbHNvIGltcGxpY2l0bHkgcmVkdWNlIHRo
+ZSB0aHJlYWQncyBiZXN0LWVmZm9ydCBJL08NCj4+IHNjaGVkdWxpbmcgY2xhc3MgbGV2ZWwg
+ZnJvbSA0IHRvIDcuIFRoZXJlZm9yZSwgdGhlIHJlYmFsYW5jZSB0aHJlYWQncw0KPj4gSS9P
+IG9wZXJhdGlvbnMgd2lsbCBiZSBkZXByaW9yaXRpemVkIG92ZXIgc3RhbmRhcmQgSS9PIG9w
+ZXJhdGlvbnMuDQo+IA0KPiBJcyB0aGVyZSBhIHBhdGNoIDEvMj8NCg0KU29ycnksIHBhdGNo
+IDEvMiB3YXMgdW5mb3J0dW5hdGVseSBub3Qgc2VuZCB0byBsaW51eC1iY2FjaGVmc0AuIFlv
+dSBjYW4gDQpmaW5kIGl0IGF0DQoNCmh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xrbWwvMjAy
+NDExMTQyMTA2NDkuNzEzNzctMS1mbG9AZ2Vla3BsYWNlLmV1Lw0KDQotIEZsb3JpYW4NCg0K
+DQo=
 
-the symlink inode is corrupted.
+--------------SSth0S6U9OM1ccsA5Ervezib--
 
-#syz test
+--------------NQh0VyCdSM9kOJIS0Omdz4Og
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 4a4a22a08ac2..f5dbccb3aafc 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1844,6 +1844,9 @@ static const char *pick_link(struct nameidata *nd, struct path *link,
- 	if (unlikely(error))
- 		return ERR_PTR(error);
- 
-+	if (!S_ISLNK(inode->i_mode))
-+		return ERR_PTR(-EINVAL);
-+
- 	res = READ_ONCE(inode->i_link);
- 	if (!res) {
- 		const char * (*get)(struct dentry *, struct inode *,
+-----BEGIN PGP SIGNATURE-----
+
+iQGTBAEBCgB9FiEEl3UFnzoh3OFr5PuuIjmn6PWFIFIFAmc3BdFfFIAAAAAALgAo
+aXNzdWVyLWZwckBub3RhdGlvbnMub3BlbnBncC5maWZ0aGhvcnNlbWFuLm5ldDk3
+NzUwNTlGM0EyMURDRTE2QkU0RkJBRTIyMzlBN0U4RjU4NTIwNTIACgkQIjmn6PWF
+IFLncwgAkg2maj40YKOztZ6JH6GIdjO/XS74BuwOxFSmv7hnVL7m5Usm/gWGa9Ui
+EScGLrLvVid9kfrPVDMPDWrXY94bgIm+Xd1q73Z0MVeWBUnrSAgctaS1JssJ1sGf
+ElrsOq/BPtwJcNe6qRnNhnVdqze0Xs8u4QP0AbsxKGQFy/k11oUcizpwFpO3jcmg
+TCLtSrSZIqwPX5NQwLQ5SCv4fg3xnxUYpy30CkGTp4PGu3rBVRUt7XzT4fWXPXdM
+TNkUpYkZoy7FmNJDtqpaVu5uvMIVCjtdAzNHT+g6wBT6ZjNtsz8ArxAXR1BJBYJa
+zhiu8jzKIOB4cgSqhBZoXebACdAlSA==
+=x1zA
+-----END PGP SIGNATURE-----
+
+--------------NQh0VyCdSM9kOJIS0Omdz4Og--
 
