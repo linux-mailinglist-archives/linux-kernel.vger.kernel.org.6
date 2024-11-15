@@ -1,131 +1,99 @@
-Return-Path: <linux-kernel+bounces-411442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31FB99CF98A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:16:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FFDB9CF98E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:16:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEDC31F28028
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:16:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 062C428C9F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B101FAC45;
-	Fri, 15 Nov 2024 22:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160671FAC5E;
+	Fri, 15 Nov 2024 22:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mandelbit.com header.i=@mandelbit.com header.b="Jwu9VcWR"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nNapsh+n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D5D1E6329
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 22:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 669931E412A;
+	Fri, 15 Nov 2024 22:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731708124; cv=none; b=gnd+VsOa9/FeGjLh+AJsEc/HTmqU5LmDu/tBLMT8DynO3FR/7CQcNSlvl7BbqlLU2wdXb612d1NuAkglSyYbe5Vna7XOuhTRcVk0+Mc+z6+wOi5ntjA/NeMKd3VoyTkAsHhPOA353qcz+nCwdVay844dSrpl9+uiriSm4eWsJiI=
+	t=1731708276; cv=none; b=HobFAlnVVxHucs2U2uYAW0JICWlHNWgR4ZM0CW+f+fbb8PrVBImPA3bs54ug5DMAOhfUGliQJYcg5onEsBKJkNoDUSNSnshOOIpn3xOlUGjDecGBtO2Y9IcNqCgyuSAU2AT4RHUwa8HFm610zBQo9AbtLKwZGXtwmB2SBtvQ6EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731708124; c=relaxed/simple;
-	bh=mjXdxM/krU+P7U58TYMn8wwGLeOHGr9wU0Hfmf9pmZI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bOL+eIHZCXb4avKwCminZ4UjANbXA0PR0AB04g/njT8XUoBImgfog1mg11uhZRWQQcRua1MEIeA2eFNIZYRepg+eRsB6im2j4S3jz1h0sHKma+gzHOIADo6yY/Rqa/V4XP8Ia1TeLmOZAmoyi8QKC+FMSb0YcRLqMQSOwfKsQ3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mandelbit.com; spf=pass smtp.mailfrom=mandelbit.com; dkim=pass (2048-bit key) header.d=mandelbit.com header.i=@mandelbit.com header.b=Jwu9VcWR; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mandelbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mandelbit.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-38221306992so31523f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 14:02:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mandelbit.com; s=google; t=1731708119; x=1732312919; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=d7BXM9uHlPL6jMEU0OEeFrxwAP6qySqgpEWYWoYZaXg=;
-        b=Jwu9VcWRN4CQIEPopY8AW7jgr+bsbJoJ0Q5t83X3YoQzYFiBzhUwCdPbS8hrajwgGe
-         51fk9KCmxsuRZNOLCXeXh09sel02Gl9GoqpDTNtlnQU70hVH79HuFW/IExmExIhALtxr
-         moolgVJ0Hq4pGTobVV1AAoP+ubuk6cT4HqgKHv5GYUtEhoRJEBKZ0K7YAW4s7z5eV/se
-         cdGl+go7O5c1VYH8dsGT62o68WAuD0nP4Qt9V1j+cJ6Dn3byeeDME6ZIosM4/xtp+LJp
-         hxaZemGg1I0MGC+aU8kooM/aRmQ7PVk7XyR6pclf8ZIzC9zQ5iLDzIsXq1xMXk2Zk++y
-         deuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731708119; x=1732312919;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d7BXM9uHlPL6jMEU0OEeFrxwAP6qySqgpEWYWoYZaXg=;
-        b=lBf7pZtEV1Pepg70UK9INrMzEZH1oCczI69bdYhFs1Un8ikd3Zeigaev1cUgPS4PJl
-         AIxjCo8qZDauUMpRQhJhtAwG3OrJHU4gvc9esVlzQ5pF5g8Gmvpr5/nbo+gc6q1c0jgp
-         MDJmoayoURX2jk+ZFOLMpexZf9SYn/5oXnRH/UiN77jaUi7Hp+bvYB1JYV0MdEBgU4r4
-         97YZOcaVse2awGTZHiBbRZtxUFaJ7xQFzqA0Cm69r//3gSbVpKCxjUmSVgymZ8M5Igw2
-         5qK/Olan++MSSKemI/JDgouYT5zE/30FoxyOv6l3PG6LBteXmIiD7UQljbU0I/7/qI6K
-         KU/g==
-X-Forwarded-Encrypted: i=1; AJvYcCU5k6U1PSY/DV/+zuvC1A388JsK1otPSnqoeOvSM430swFz9c419lEf9fnOWa5trO5v+Xs4+251uDCuw1I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQ/CRA2bMR2/xxYtzn/Jvel6ZV4MZXyBxSq1NrZ4P7peWF/h72
-	pgzX8uCgGYMkxky6cw+ku7HN3ZoI05uePQyd4I3flurJCe1KSDXjML8n/5oCdeM=
-X-Google-Smtp-Source: AGHT+IGjkzoAQXFxARiQrL8p/xLqSrw6wqKEEJ3PXcTvMHBD/NA7oyekerT58FzZoi2a9uv8ptBRRg==
-X-Received: by 2002:a5d:6d83:0:b0:382:2e9e:d68c with SMTP id ffacd0b85a97d-3822e9eda85mr2141749f8f.38.1731708119172;
-        Fri, 15 Nov 2024 14:01:59 -0800 (PST)
-Received: from serenity.mandelbit.com ([2001:67c:2fbc:1:1b94:c354:f504:96f9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ada2e35sm5470537f8f.5.2024.11.15.14.01.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 14:01:58 -0800 (PST)
-From: Antonio Quartulli <antonio@mandelbit.com>
-To: linux-spi@vger.kernel.org
-Cc: Antonio Quartulli <antonio@mandelbit.com>,
-	Mark Brown <broonie@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] spi-imx: prevent overflow when estimating transfer time
-Date: Fri, 15 Nov 2024 23:02:02 +0100
-Message-ID: <20241115220202.31086-1-antonio@mandelbit.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1731708276; c=relaxed/simple;
+	bh=s/oaTJ92LOLtErWBpsl2hcdFm5LunYXQJfDrYlkVx/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Twh+kPxOwhfFAEL2SmH/KA+HJKR6iGJgAkr0kgDS3wcxu2ZptCKdByhJPLq/Vj3aXHd206QEE6l+EZFQ2MdSxRHXiIBF7bZvvIlahjCPhWx5z2mfiKvVoM0HQKU/wF7zA51m3Flj7dePqN10QHfXucvll+mYKZ3mM1Ca8IKA7Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nNapsh+n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 377E9C4CECF;
+	Fri, 15 Nov 2024 22:04:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731708275;
+	bh=s/oaTJ92LOLtErWBpsl2hcdFm5LunYXQJfDrYlkVx/o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nNapsh+nIWwnrX72qvT/6FhSVUcKj26uVVnjtQG0JnoproZt03ReaeI7JP099JFGF
+	 mmQT7aq9E0wZ6WeTgWmth3OT11bGXB+OmGl4fmbrjBYInMoZ1FGpReR+JW48DD05tX
+	 Yz1bm0K87do35tnBWyxBmaHhQzALsRpf7wCYvrD/DNBosrCbN1xpjtesCRSzwTx1XG
+	 3PpfjbM+yewf9Znw0zlGKZxYLhYnI8WrAmI3XbUKSS9v4Mwuf0/Gz/vUHEB9TOT4z1
+	 3QyGu4LXoTConxzGWKAbjxOPdo8949jeRGEyl9r27oZnvHtHDpMD0n1bIMGQ8MevMy
+	 y0y0RSuX9G4lw==
+Date: Fri, 15 Nov 2024 14:04:34 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: <bhelgaas@google.com>
+Cc: Wei Huang <wei.huang2@amd.com>, <linux-pci@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+ <helgaas@kernel.org>, <davem@davemloft.net>, <edumazet@google.com>,
+ <pabeni@redhat.com>, <asml.silence@gmail.com>, <almasrymina@google.com>,
+ <gospo@broadcom.com>, <michael.chan@broadcom.com>,
+ <ajit.khaparde@broadcom.com>, <somnath.kotur@broadcom.com>,
+ <andrew.gospodarek@broadcom.com>, <manoj.panicker2@amd.com>,
+ <Eric.VanTassell@amd.com>
+Subject: Re: [PATCH V1 1/2] bnxt_en: Add TPH support in BNXT driver
+Message-ID: <20241115140434.50457691@kernel.org>
+In-Reply-To: <20241115200412.1340286-2-wei.huang2@amd.com>
+References: <20241115200412.1340286-1-wei.huang2@amd.com>
+	<20241115200412.1340286-2-wei.huang2@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The words delay is computed by multiplying two unsigned ints
-and by adding up the result to a u64 variable.
+On Fri, 15 Nov 2024 14:04:11 -0600 Wei Huang wrote:
+> +static void bnxt_irq_affinity_release(struct kref __always_unused *ref)
 
-The multiplication, however, is performed with 32bit math
-thus losing data when the actual result is larger than UINT32_MAX.
+unused? you're using it now
 
-Fix the operation by casting the first operand to u64, thus forcing
-the multiplication to be performed with 64bit math.
+> +{
+> +	struct irq_affinity_notify *notify =
+> +		(struct irq_affinity_notify *)
+> +		container_of(ref, struct irq_affinity_notify, kref);
 
-This fixes 1 OVERFLOW_BEFORE_WIDEN issue reported by Coverity
-Report: CID 1601859:  Integer handling issues  (OVERFLOW_BEFORE_WIDEN)
+this is ugly, and cast is unnecessary.
 
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: imx@lists.linux.dev
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Antonio Quartulli <antonio@mandelbit.com>
----
- drivers/spi/spi-imx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +	struct bnxt_irq *irq;
+> +
+> +	irq = container_of(notify, struct bnxt_irq, affinity_notify);
 
-diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c
-index 0b6b0151b3a3..eeb7d082c247 100644
---- a/drivers/spi/spi-imx.c
-+++ b/drivers/spi/spi-imx.c
-@@ -1685,7 +1685,7 @@ static unsigned int spi_imx_transfer_estimate_time_us(struct spi_transfer *trans
- 		words = DIV_ROUND_UP(transfer->len * BITS_PER_BYTE, transfer->bits_per_word);
- 		word_delay_us = DIV_ROUND_CLOSEST(spi_delay_to_ns(&transfer->word_delay, transfer),
- 						  NSEC_PER_USEC);
--		result += words * word_delay_us;
-+		result += (u64)words * word_delay_us;
- 	}
- 
- 	return min(result, U32_MAX);
+since you init irq out of line you can as well init notify here
+
+> +	if (pcie_tph_set_st_entry(irq->bp->pdev, irq->msix_nr, 0)) {
+
+You checked this function can sleep, right? Because rtnl_lock()
+will sleep.
+
+
+Bjorn, do you have a strong preference to have a user of the TPH code
+merged as part of 6.13?  We're very close to the merge window, I'm not
+sure build bots etc. will have enough time to hammer this code.
+My weak preference would be to punt these driver changes to 6.14
+avoid all the conflicts and risks (unless Linus gives us another week.)
 -- 
-2.45.2
-
+pw-bot: nap
 
