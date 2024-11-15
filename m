@@ -1,167 +1,127 @@
-Return-Path: <linux-kernel+bounces-411309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 552B89CF605
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:28:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC8529CF587
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:12:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C4A71F23BC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:28:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D1E5B2F6FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D016C1E231D;
-	Fri, 15 Nov 2024 20:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5594C17E010;
+	Fri, 15 Nov 2024 20:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="SwHqjAkB"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pv7U7p/p"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CA818BBB4;
-	Fri, 15 Nov 2024 20:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629941DA23
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 20:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731702228; cv=none; b=ohfFrp4cWVYY7vioj8pE42pzYqlwW4uZKBG/IhU8EVCiL3Tr5zh9T+X+85GLRBCqjOKxQX4cc1qD+GMPY1Z+F4rwHpLTfmpf5uUmCNJ7DK6Y7nzKrCGhc/H8E9y7oPwKu5oJuf/WQ4v8yt24hiURRsxoAziANR/G/cfQDGTWnsU=
+	t=1731701336; cv=none; b=CpKuI9itI8ftrBTTEQOTAq6BIn4a9EkUkxf/NEfYivtmrKLIkPmwaqCplNQHwwfYr1Uk4wnmRC4lRuQ3ao1Eut4RnCA/NTosTSZlLWWyNTTGRKhoyR/0z7eFVxzENn0RUmd3lDt2LA2/jmE8XmVMa6hIC9l2peq+DLFbmq0ajvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731702228; c=relaxed/simple;
-	bh=8ojz8AkGcjSHxh3VejqBKCWYDfc/mr3/2GB7b09HBgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aEaqHHSvETm/Tpim4c4jyQSPBSqp6GHULWsHfBOMpjGy5Q0SmvuAFKmT/i3Hl8iGTalCyFTdnhOWqcZrqkS9/JJXNbDy7KOJIZ8ZC0HzB9caXUmnhNTmWTmSxXGYw6biRBZ9YqsUgLtIpKOKGvjK9BjY0bq/7lWyyIPJ965lruE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=SwHqjAkB; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=RoMTJSxUCqwV3jHpR4yN3f93otmQPhOIxK2FMmhdpg8=; b=SwHqjAkBobiRQyfAfc717iWPbd
-	x9rtotNxRsOmv2kxJJO+WkzCrQ1Pn8Rfi2IPyQPHdpYb6ShHXsTmFaRh0KrIrSAi8f5uqmfxOGbFp
-	pHxO4BIVNy/R7tfKWRXD69gD5d736dcpPmeCiPbVIrtVE+YTKM/HOWIlte2/thswYUZhW855DO8RH
-	RlL+HexA17N0ypo6w6WChupdOgdNB3shFc7ArXueAt8GVgp41sVAoqAy8/H8arWJxiXG9z2C71vyJ
-	aupgt8JsWX8wwNHA1w5buMMabjMbEjCc9P9z3Pt9nt8MreJYtgsozFk9gUqUvoY08y6WKIkSgASZ1
-	neyAIrNQ==;
-Date: Fri, 15 Nov 2024 21:05:43 +0100
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Karol Przybylski <karprzy7@gmail.com>
-Cc: lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, rogerq@kernel.org, skhan@linuxfoundation.org
-Subject: Re: [PATCH] dt-bindings: mfd: omap-usb-tll: convert to YAML
-Message-ID: <20241115210543.7cfcd7ba@akair>
-In-Reply-To: <20241114185830.10025-1-karprzy7@gmail.com>
-References: <20241114185830.10025-1-karprzy7@gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731701336; c=relaxed/simple;
+	bh=AFzwwS3G3AU3lK0XY8whHtEnhR0/cIoT3roEoHg19bM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=iNkqv6TiQjPM2s1YyhvvphjXB6W1qWQMTqF2Ns2Tvoo+uwodGyuYEZUhr6AiBdoS4sgGEdYr3nY8s82BpUrRLcA7EifnZzM5jFLd92q68J/qG4M6es/Ia6pk6Y2oEQu4qmOPXCOf1x21U1ekcDnEE9MwGCV8ZyWhdUEGaNIJjbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pv7U7p/p; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AFGrrCA010420
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 20:08:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Hse3Mlbw04uR0im4BpBbm+MAHd9CqxyZme6biBeqk5s=; b=pv7U7p/pd6mh0f0s
+	0mq3tHolBEYgTLvG+Ht7fyLphRXsq3Fyw4gk9Ss94b2PWjFeNWcoOvVTHfb79HxH
+	bBRRJuy2r58cBAKy1/ylYCY/5hwIvbOy9pxT7vJFNSwr+IKfQ9ZXsdZEPnNtp7Qo
+	cAxPGfPO7Ory6NWJtevFD9/uZTaYIZeMHc3z2BVv28tZ409WtnpgFt8MZfQXwKEw
+	FozcXr5E0TlJogNxY/3C1ZmMeBjKNuRwm/SlTd3baR3C1AiEKHK5igUVKmV92ZHZ
+	HWULZ+0kFafMwc4L4IcjG1CJkICMWM3skAEQ6Ma2v3S8kObqlee2DsJWPyUy//SO
+	aXeqww==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42xa7nges4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 20:08:54 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-462c15afdb6so4727471cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 12:08:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731701333; x=1732306133;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hse3Mlbw04uR0im4BpBbm+MAHd9CqxyZme6biBeqk5s=;
+        b=pWYRAuAc1sVRaIlJm/nF/7J1Dw7M2yCMyId3v6iRRl5FU0la+bHLZpm8/+e3GgzUrj
+         5X149fGN/MWvzrgQ689GOJZvkEL966g6cnX2f5A04tClO2K5xxUDJtmrXFL+KQseR+fm
+         WjG0si5v14hnPislfDJeev1h46plw/wOhA8LLZq2IjMVR48vypUcS+8/02Xa76PDaq8O
+         WOpmQ+ViOf+sTkwk2T/6SWIylUJD65hWGzHsGRqpVL0xGubCJ067TjXEIkS0vHRRQqJp
+         HJPEPZTlI9pI4L/fnoOchTq3tyG+eiufxJA9USxvF6SiT7LW7zmEiTQs57/QOtPa7euF
+         FQpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbTM6VXRF0DSFlrKrlnyDpySl6jeGE6GxPczEvDqIc2Q7RmGnajPviQfv7lnYWojbNWIv8fwQkRLD2iJc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDH/Ygzs2nl4uRyKpKp4hP9YpgdqrXVdZcxerM7VQnJCrfC6wE
+	9+qDHkW4j7vFu8xIqvvCnAc6QILID8J0PdEvIeU8hWP5WxOuApiwze+V8uhNGX6ru11OruZrhbt
+	tkNUuT0WKPp2a3lPaocQVRd31sa59ExtSzEzniTKThx0/qtR3gWRnbWlgZLSInvo=
+X-Received: by 2002:ac8:5984:0:b0:460:bb96:dd02 with SMTP id d75a77b69052e-46363debc44mr23042201cf.2.1731701333251;
+        Fri, 15 Nov 2024 12:08:53 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEzrql8SdyFYE2oqYQwCh+1FtfpAe7+KdSR1TE46c/4hpWbrSrrGvXWcLnK+FVQbmvWkQKBxw==
+X-Received: by 2002:ac8:5984:0:b0:460:bb96:dd02 with SMTP id d75a77b69052e-46363debc44mr23042081cf.2.1731701332896;
+        Fri, 15 Nov 2024 12:08:52 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df50b65sm212562066b.54.2024.11.15.12.08.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 12:08:52 -0800 (PST)
+Message-ID: <cd31a99f-569f-45ba-8f57-777f71541f82@oss.qualcomm.com>
+Date: Fri, 15 Nov 2024 21:08:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] soc: qcom: llcc: Update configuration data for
+ IPQ5424
+To: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org,
+        konradybcio@kernel.org, conor@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241105102210.510025-1-quic_varada@quicinc.com>
+ <20241105102210.510025-3-quic_varada@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241105102210.510025-3-quic_varada@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: FkHHYzMPx2UL8zolSZhu_pIT6CxCYZaz
+X-Proofpoint-GUID: FkHHYzMPx2UL8zolSZhu_pIT6CxCYZaz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ adultscore=0 mlxlogscore=999 suspectscore=0 spamscore=0 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 mlxscore=0 clxscore=1015 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411150169
 
-Am Thu, 14 Nov 2024 19:58:30 +0100
-schrieb Karol Przybylski <karprzy7@gmail.com>:
-
-> Conversion of omap-usb-tll.txt into yaml format, inspired by discussion in [1]
+On 5.11.2024 11:22 AM, Varadarajan Narayanan wrote:
+> The 'broadcast' register space is present only in chipsets that
+> have multiple instances of LLCC IP. Since IPQ5424 has only one
+> instance, both the LLCC and LLCC_BROADCAST points to the same
+> register space.
 > 
-> All feedback greatly appreciated, especially about what to put in 'maintainer'
-> 
-> 1 - https://lore.kernel.org/all/cd915c18-7230-4c38-a860-d2a777223147@kernel.org/
-> 
-> Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 > ---
->  .../devicetree/bindings/mfd/omap-usb-tll.txt  | 27 ----------
->  .../devicetree/bindings/mfd/omap-usb-tll.yaml | 51 +++++++++++++++++++
->  2 files changed, 51 insertions(+), 27 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/mfd/omap-usb-tll.txt
->  create mode 100644 Documentation/devicetree/bindings/mfd/omap-usb-tll.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/omap-usb-tll.txt b/Documentation/devicetree/bindings/mfd/omap-usb-tll.txt
-> deleted file mode 100644
-> index c58d70437fce..000000000000
-> --- a/Documentation/devicetree/bindings/mfd/omap-usb-tll.txt
-> +++ /dev/null
-> @@ -1,27 +0,0 @@
-> -OMAP HS USB Host TLL (Transceiver-Less Interface)
-> -
-> -Required properties:
-> -
-> -- compatible : should be "ti,usbhs-tll"
-> -- reg : should contain one register range i.e. start and length
-> -- interrupts : should contain the TLL module's interrupt
-> -- ti,hwmod : must contain "usb_tll_hs"
-> -
-> -Optional properties:
-> -
-> -- clocks: a list of phandles and clock-specifier pairs, one for each entry in
-> -  clock-names.
-> -
-> -- clock-names: should include:
-> -  * "usb_tll_hs_usb_ch0_clk" - USB TLL channel 0 clock
-> -  * "usb_tll_hs_usb_ch1_clk" - USB TLL channel 1 clock
-> -  * "usb_tll_hs_usb_ch2_clk" - USB TLL channel 2 clock
-> -
-> -Example:
-> -
-> -	usbhstll: usbhstll@4a062000 {
-> -		compatible = "ti,usbhs-tll";
-> -		reg = <0x4a062000 0x1000>;
-> -		interrupts = <78>;
-> -		ti,hwmods = "usb_tll_hs";
-> -	  };
-> diff --git a/Documentation/devicetree/bindings/mfd/omap-usb-tll.yaml b/Documentation/devicetree/bindings/mfd/omap-usb-tll.yaml
-> new file mode 100644
-> index 000000000000..f49417d1faf7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/omap-usb-tll.yaml
-> @@ -0,0 +1,51 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/omap-usb-tll.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: OMAP HS USB Host TLL (Transceiver-Less Interface)
-> +
-> +maintainers:
-> +  - <maintainer@kernel.org>
-> +
-Roger? 
+> v2: Use 'true/false' instead of '1/0' for boolean variables.
+>     Add 'no_broadcast_register' to qcom_llcc_config structure
+>     to identify SoC without LLCC_BROADCAST register space instead
+>     of using 'num_banks'.
+> ---
+This looks good now. Please rebase on next as there have been
+some changes to the driver in meantime.
 
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - ti,usbhs-tll
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  ti,hwmod:
-> +    const: usb_tll_hs
-> +
-> +  clocks:
-> +    minItems: 2
-> +
-> +  clock-names:
-> +    items:
-> +      - const: usb_tll_hs_usb_ch0_clk
-> +      - const: usb_tll_hs_usb_ch1_clk
-> +      - const: usb_tll_hs_usb_ch2_clk
-> +    minItems: 2
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - ti,hwmod
-
-keeping the binding in pace with reality... ti,hwmod should
-be deprecated. 
-
-Regards,
-Andreas
+Konrad
 
