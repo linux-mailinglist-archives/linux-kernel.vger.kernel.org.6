@@ -1,182 +1,95 @@
-Return-Path: <linux-kernel+bounces-410783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC43B9CE5D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:58:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F02C9CE15D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:35:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4409B34227
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:07:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BAFEB34674
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84B31CEAD4;
-	Fri, 15 Nov 2024 14:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60C21CEADD;
+	Fri, 15 Nov 2024 14:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i/FB86j2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Afj5+xRl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE8C1B2EEB;
-	Fri, 15 Nov 2024 14:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9031CD210;
+	Fri, 15 Nov 2024 14:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731679628; cv=none; b=LEn1LOuq60MGuH42GwXXjeHqvI5KripOEl4SbeyWIM3GC7KdcKIJX0kwn+HyMoeHzCb/G/nU8Wt/oL5A/6e/LPK9w/LWbamSKdmtLMHIOIZR+hqM3tn84ilCfUJ/yEN9j/KVwxlkSQZNyG3Xf8kQf8ObVbbPA/69UN57nwzlFp0=
+	t=1731679640; cv=none; b=gunTIfUqACB5uPt9aJylvN2s/vWqbbJ83Xbz+RRzmcpV80w545Qjaa0wTi6GGszjkK6Pgmsgn5ZA7UFaxZJUebxV3PkomkWV44kot2SCnCVRV/Jaq8OM6KjCSv7U0AcCJeUj49uNCFK3j3N2hWzEuFXPI6qVvMDQeLm5nnGK1CE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731679628; c=relaxed/simple;
-	bh=RkTFKO6z/WdNArxgzUdqGkoMijACjNagUaJaGPZzzYA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A5VjnYeiiKQaaM3Tb2AfVOMtoK90q99vc/BShdUQXU8bfT+l4hKzKRkzUYaJoAodliiTNkx3vnOJFk2crTfShqVsimFKkdHdgMaHqds/55oPVtGSMjGlC/S6AQkGRN0OthMwNIVn+luUMrd0znf949FMbGJKUfUiW3irvCGU91A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i/FB86j2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46CCEC4CECF;
-	Fri, 15 Nov 2024 14:07:05 +0000 (UTC)
+	s=arc-20240116; t=1731679640; c=relaxed/simple;
+	bh=KdMIxf58FVxdssgvDJJk+WJcQuA3LMVt3GbRlC1HMdM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h6FEYXqMMSrChAbl24FdNS9DBcJq2Igw4fhI+M80ihjm58xPvB19NoEXSQSsGKBEPdfSWI6TQbH4EuthDIJ1iknP19qvuYEVAdRSEqFY2SyFK7NRnrL7qza71fRLd6v3MK+r43T11MOuH/sX9tOX4+e9HoUBZZzmqM/r1MU5w1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Afj5+xRl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C1BCC4CED2;
+	Fri, 15 Nov 2024 14:07:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731679626;
-	bh=RkTFKO6z/WdNArxgzUdqGkoMijACjNagUaJaGPZzzYA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=i/FB86j2Zw/cXtXYi5hKp8tf5TARedXUBNU9Jxq85Rj4uyEb5L+rki+z0d9p1qs7Y
-	 0Z2bniNF4b8lQgHJtDk8smgLm7pB1ktxKnzx3Relhhqe15A8h1auAud0qEqikWam+6
-	 tNFaTmBE982PCbciFjlxI2s25jeijp6HD93KWU2Qsu8ZkaxWculk02jrHb64opOfEw
-	 COLlrmmv2Sc0LsNUUXyte3t5KMYBMDKqmy3UVTJbhDUwXiwIN0pPcgSTKywycHf5X2
-	 daaspjXPxgee/+/n6BGBHPQVWbnZF4vMeCbxs8WP4FI8NygAtlBydx/LztjHoE/Da/
-	 lmRUPY5K4MmRw==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs tmpfs
-Date: Fri, 15 Nov 2024 15:06:58 +0100
-Message-ID: <20241115-vfs-tmpfs-d443d413eb26@brauner>
-X-Mailer: git-send-email 2.45.2
+	s=k20201202; t=1731679639;
+	bh=KdMIxf58FVxdssgvDJJk+WJcQuA3LMVt3GbRlC1HMdM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Afj5+xRl8ACHgc4JUB4c9SG1vHnrTzXpVUOnphosQF18zyQjDG4EtWjP1YOP933Y/
+	 gcJwGRLDe1sbAzvJ2BWLyty+mszyT7R7k5ar6Zij3gdysE0IKMA5P86qkgGjsOtMiR
+	 mJb+CZ7a+9imayitmhmAAIFDh5eyI8kcqJeH68RhY7z2PKAl7jul80eBFF7bL1B/kS
+	 0gTCgWg1C/dlBRvqNNp6SYOlvI6UEqfSgHPIJlQa8Q6lLgva0KRBvMvzrtgpClDrUV
+	 0SXPuG1urCvUSJ/a9AjdRJaIKDrJrT71eeZeww8pjW6GhRXHewzTDMP8kDXZnD8arj
+	 3YNrSY0ZZz9pQ==
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6eb0c2dda3cso19624147b3.1;
+        Fri, 15 Nov 2024 06:07:19 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVgZ3vcK7r7sD4/2OEwPzHuZN+/q9x/X5S5FY2WbmLgBwlXHGxWWq4xfxORN1qocQWQEO+RlU+Vo4iB@vger.kernel.org, AJvYcCXQFuxWN0Fqa9NyU2+pJTEcZPtO8oHCg+OezndFu22cag9VuLqCCDBn7qyA4x88RWyh3fp1ClrTsnkb@vger.kernel.org, AJvYcCXvLvTqN0YRjxE1hrQaOinb3OD7Aido8cI/qlmKMSFKEl8UO6IQQecBqf6+S6KG8bslQSpij6wkSOKOHRdB@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnwNfOPNdKFKNcg/cSSI+6OAs8o6VhF9FT5bX8Mx2WJ4pnkSTN
+	Q5R9qnXwwmvt2yvsMVriAgvRSIcQ2D5pURmFR2E0Ei2AneOYWaYKQQXYe13FxazHWMPVLzdLV8w
+	w0whaDdDXu3m4MdzxtxW0LIW/CQ==
+X-Google-Smtp-Source: AGHT+IFWmkCE81Tm2mvoVRJxeqLoR9tdqo2XQ+AgyKoHV9ZxQbPCvQG2HQklBmvrrBvGmQduTiT9sYVt/gndesa7n/U=
+X-Received: by 2002:a05:690c:4484:b0:6ee:664e:8c33 with SMTP id
+ 00721157ae682-6ee664e92a2mr12401047b3.9.1731679638893; Fri, 15 Nov 2024
+ 06:07:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4454; i=brauner@kernel.org; h=from:subject:message-id; bh=RkTFKO6z/WdNArxgzUdqGkoMijACjNagUaJaGPZzzYA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSbh7a6dzXIfe6c93BB6KwPggYBMdvyvoXXJ223v1ljv nln4NOajlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIl802FkOH9x0yyhwON1z2xW nBKbdvDZtFMiq98X7N70+KrzFN6vTFMY/md0LDwsOuNAs2rA7RdFGx5u0shiqtzjb/w8ZPNNxmi pbXwA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241105213217.442809-1-robh@kernel.org> <20241115072604.yre2d7yiclt5d3w5@thinkpad>
+In-Reply-To: <20241115072604.yre2d7yiclt5d3w5@thinkpad>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 15 Nov 2024 08:07:07 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLkVUSgL-r1YvdSOTQGeN0r4Co=NRxvX1WL6q6yt0zN6g@mail.gmail.com>
+Message-ID: <CAL_JsqLkVUSgL-r1YvdSOTQGeN0r4Co=NRxvX1WL6q6yt0zN6g@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: PCI: snps,dw-pcie: Drop "#interrupt-cells"
+ from example
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Jingoo Han <jingoohan1@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Gustavo Pimentel <gustavo.pimentel@synopsys.com>, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hey Linus,
+On Fri, Nov 15, 2024 at 1:26=E2=80=AFAM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> On Tue, Nov 05, 2024 at 03:32:16PM -0600, Rob Herring (Arm) wrote:
+> > "#interrupt-cells" is not valid without a corresponding "interrupt-map"
+> > or "interrupt-controller" property. As the example has neither, drop
+> > "#interrupt-cells". This fixes a dtc interrupt_provider warning.
+> >
+>
+> But the DWC controllers have an in-built MSI controller. Shouldn't we add
+> 'interrrupt-controller' property then?
 
-/* Summary */
+Why? Is that needed for the MSI controller to function? I don't think so.
 
-This adds case-insensitive support for tmpfs.
+Now we do have "interrupt-controller" present for a number of MSI
+providers. I suspect that's there to get OF_DECLARE to work, but I
+doubt we really need MSI controllers initialized early.
 
-The work contained in here adds support for case-insensitive file names
-lookups in tmpfs. The main difference from other casefold filesystems is
-that tmpfs has no information on disk, just on RAM, so we can't use mkfs
-to create a case-insensitive tmpfs. For this implementation, there's a
-mount option for casefolding. The rest of the patchset follows a similar
-approach as ext4 and f2fs.
-
-The use case for this feature is similar to the use case for ext4, to
-better support compatibility layers (like Wine), particularly in
-combination with sandboxing/container tools (like Flatpak).
-
-Those containerization tools can share a subset of the host filesystem
-with an application. In the container, the root directory and any parent
-directories required for a shared directory are on tmpfs, with the
-shared directories bind-mounted into the container's view of the
-filesystem.
-
-If the host filesystem is using case-insensitive directories, then the
-application can do lookups inside those directories in a
-case-insensitive way, without this needing to be implemented in
-user-space. However, if the host is only sharing a subset of a
-case-insensitive directory with the application, then the parent
-directories of the mount point will be part of the container's root
-tmpfs. When the application tries to do case-insensitive lookups of
-those parent directories on a case-sensitive tmpfs, the lookup will
-fail.
-
-/* Testing */
-
-gcc version 14.2.0 (Debian 14.2.0-6)
-Debian clang version 16.0.6 (27+b1)
-
-All patches are based on v6.12-rc4 and have been sitting in linux-next.
-No build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-No known conflicts.
-
-This will have a minor merge conflict with the vfs-6.13.file pull request I
-sent as:
-
-https://lore.kernel.org/r/20241115-vfs-file-f2297d7c58ee@brauner
-
-The resolution for the conflict should look like this:
-
-diff --cc include/linux/fs.h
-index 3e53ba079f17,001d580af862..eae7ce884030
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@@ -45,7 -45,7 +45,8 @@@
-  #include <linux/slab.h>
-  #include <linux/maple_tree.h>
-  #include <linux/rw_hint.h>
- +#include <linux/file_ref.h>
-+ #include <linux/unicode.h>
-
-The following changes since commit 42f7652d3eb527d03665b09edac47f85fb600924:
-
-  Linux 6.12-rc4 (2024-10-20 15:19:38 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.13.tmpfs
-
-for you to fetch changes up to 552b15103db404c7971d4958e6e28d4e7123a325:
-
-  Merge patch series "tmpfs: Casefold fixes" (2024-11-06 11:22:30 +0100)
-
-Please consider pulling these changes from the signed vfs-6.13.tmpfs tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.13.tmpfs
-
-----------------------------------------------------------------
-André Almeida (12):
-      libfs: Create the helper function generic_ci_validate_strict_name()
-      ext4: Use generic_ci_validate_strict_name helper
-      unicode: Export latest available UTF-8 version number
-      unicode: Recreate utf8_parse_version()
-      libfs: Export generic_ci_ dentry functions
-      tmpfs: Add casefold lookup support
-      tmpfs: Add flag FS_CASEFOLD_FL support for tmpfs dirs
-      tmpfs: Expose filesystem features via sysfs
-      docs: tmpfs: Add casefold options
-      libfs: Fix kernel-doc warning in generic_ci_validate_strict_name
-      tmpfs: Fix type for sysfs' casefold attribute
-      tmpfs: Initialize sysfs during tmpfs init
-
-Christian Brauner (2):
-      Merge patch series "tmpfs: Add case-insensitive support for tmpfs"
-      Merge patch series "tmpfs: Casefold fixes"
-
- Documentation/filesystems/tmpfs.rst |  24 ++++
- fs/ext4/namei.c                     |   5 +-
- fs/libfs.c                          |  12 +-
- fs/unicode/utf8-core.c              |  26 ++++
- fs/unicode/utf8-selftest.c          |   3 -
- include/linux/fs.h                  |  49 +++++++
- include/linux/shmem_fs.h            |   6 +-
- include/linux/unicode.h             |   4 +
- mm/shmem.c                          | 265 ++++++++++++++++++++++++++++++++++--
- 9 files changed, 371 insertions(+), 23 deletions(-)
+Rob
 
