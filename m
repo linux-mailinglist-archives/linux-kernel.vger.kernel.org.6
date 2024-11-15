@@ -1,114 +1,146 @@
-Return-Path: <linux-kernel+bounces-410302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91B3A9CD99C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:02:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C77D9CD89F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:52:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24892B2719E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:02:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D777B2818AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A0C185949;
-	Fri, 15 Nov 2024 07:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3086B186294;
+	Fri, 15 Nov 2024 06:52:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="U40jpFcQ"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KxDKISF6"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8141F95A;
-	Fri, 15 Nov 2024 07:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092D2188015
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731654134; cv=none; b=NoBFNldc+TlLWUtoUkFXJtfu1FgapFNRzDRXCWVrOwreGwiGNk/OCZayybgKij1EYosJ7ZKcQGx2fRtnV9da8/DAAxhTDXXJ5GdxVu82FlitVAYNInioYxveGzPnx2oHHGxC97p+d8QWWx71XcagagiACVMrwWuVVBeaja4GbXA=
+	t=1731653552; cv=none; b=Q/UF3EDd809sADs+lmExjKS2dw4EbyjEpLZKT4Qh6HqkENxmo633Lad6lXquUbos/s61XP0FUYns4kOMnuplDh3ZCjQn8cEGkfSJZx4kxD1n90JwLAL1mRSx3zcT0NH6pPQhoLQZH7RMEyJhPMom4nzCfvAcDbBuMii06P0WQgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731654134; c=relaxed/simple;
-	bh=5tGM067wa+AlamSiUyUvtOdtPcUbA7Xj4tjlcN8ACzY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=InJGiU0FJikL6oVfbQxFwDoU3azef3L5YdiH94opUr/MQQML4bumGwB9/ltIbgNigu5g7QO1lT3rUNRqWDyKdAbjlmthpTMFR2Lgp3HsMJ2qCN06k9srUIsDb/1Spik6NCgyAJKRl1XLElOya6BcgCZ1SyKEhZGC8LQWV1Up7XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=U40jpFcQ; arc=none smtp.client-ip=212.227.126.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
+	s=arc-20240116; t=1731653552; c=relaxed/simple;
+	bh=CEMXhu2MGYVzDLJ2Eh1N2Pyu48lfVTlo3bSjDF1UB9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FJEoR5GPZeQpUNBgJZXNoYQD4cfNizvhDY9MSU01iJBIllwNhUlg2IDeQ7yr1wTh54+sDnYC0Lin0D/040eimfOFb+QDRgNbRPlFKp8r+XLv3kM4DMC/s8pRy5NLjOeFANk87KfuXozBqwypIU0YyzSKAoVTlVtWNM5ZbRMcBRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KxDKISF6; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-720be27db27so1224015b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:52:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=oldschoolsolutions.biz; s=s1-ionos; t=1731654130; x=1732258930;
-	i=jens.glathe@oldschoolsolutions.biz;
-	bh=5tGM067wa+AlamSiUyUvtOdtPcUbA7Xj4tjlcN8ACzY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=U40jpFcQkDmDy7VO+9uK1dBRbMvylijWgJQmVu/0DqXKrePCE3Hkw4n4VZd8xPQJ
-	 6ZuA6VzS0y2UuKK4wEQP/4oVjJFoNnJuKVx+GYbv0hZFkKTUk9yLFpx65gxAjhsqk
-	 wgVGN+MOD2Y00/1ECPB1PENhuVLVq9owgcV/Zczcxlf8I6qfssiKBFg6o5pUhWGgg
-	 q+EQPwaPYt/7RhsWfRthfQhHIhBaC05z2QMyea7Mq5ebx9oQ3GSlA6aJgts1vs+Gg
-	 bydnDYRiN9F9tg0MWjx0nesaaJMB56zAEUbthZCyalbX0QmWz6aIhKUZ002PSs7Jm
-	 IeoOWST4Dd3XT3vFDg==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from [192.168.0.174] ([91.64.229.215]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MnaTt-1tbEnz3qC5-00dzeD; Fri, 15 Nov 2024 07:49:03 +0100
-Message-ID: <8d26f1f2-8d75-4dec-ae77-28e4cae81ab3@oldschoolsolutions.biz>
-Date: Fri, 15 Nov 2024 07:49:01 +0100
+        d=linaro.org; s=google; t=1731653550; x=1732258350; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4/1UwVe3Qsy2MB0A1h4O60dSR7MLmU1E1u1iWJ0FEAI=;
+        b=KxDKISF6z7WtvEguG/bF7HGMPm9QJzwIgENY/iGpjnNCjSZEP0rltrG8nkvjv/VTWf
+         /A3rXQTcYWs/YGagPadlomJ6Sw8ztq/mI/9g12x0dvAVL6s6F3EIHRsgjNRuLzSYjlt4
+         nkwkkakh/Iwv+L7xbBIwP6LyohQ6ZD2RgVKVfXQqatSlRQ8j8d/yDtNZAu0PH8dYsoMX
+         n5rbdCC1MljlkujGrYWwOYizx4U6JckxdhygoRKNDUCZPtjDNiCmFq64SXr1slwDeX4u
+         qrmQlZA6O2agC3KA+4BWc5dkWf+QuShrE+Uy18LeSQRl6gGCO0KQeoio5JWbUJ3PyrhH
+         bELQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731653550; x=1732258350;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4/1UwVe3Qsy2MB0A1h4O60dSR7MLmU1E1u1iWJ0FEAI=;
+        b=aueODREi0ZOF73bVDc3t29DyOHJFiF//sD7dXGwL1TZXoL6xJ5kiEGJuLION+8t6G/
+         Xgrir3x8c0bVaLAa8nwSvZp8ChZM2CyvsKrkqM0sKqTf/u/bBaw9AJqAzHuuC4YKiXqQ
+         xJQknAIokt+huWMc2YyzLSLIK9v3KsbmBnirABhViC//S1JZ6PHfQ/7rJGH9u3lZbtuc
+         mfw9j0OBnHAN6u58YJpiL9HHaJe8V4LdZxuxQf3UYQdDqrIBZLZHiqMLDbUb1D2vWybo
+         JZQWw573KyxaU7At8OYh4/HjCL3VWAxxatFFrZJtQ+sTivMVXXEc5fgFdliVaBFz/52d
+         F3IA==
+X-Forwarded-Encrypted: i=1; AJvYcCXokISYHiYRD/RhcEbAr7x3J1UhAfVxlWzUU6Ufx7+GTByMhShvBmDELPQ5UzC4tRgth13IVpI1TFG3d2Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+ReYFteiOU/jtl8XOq+cfPFtk7B/8qSVW8XkbWIQFDHdgRdTM
+	PDKEjLJi0JJcG7wOidlZQ43AX6OnCYaWlecHpr7GGUe6dhVpfz/Mk7yv+ivAGQ==
+X-Google-Smtp-Source: AGHT+IE/YBLChBCuslucF1k1xTrQEVYs0lhSpDpzi5LeohRmyIqqfR8TDB+1oTszXaCrfQURCH52AQ==
+X-Received: by 2002:a05:6a00:998:b0:71e:44f6:6900 with SMTP id d2e1a72fcca58-72476cfc9a9mr1771780b3a.16.1731653550107;
+        Thu, 14 Nov 2024 22:52:30 -0800 (PST)
+Received: from thinkpad ([117.193.208.47])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7247711c0cfsm690383b3a.51.2024.11.14.22.52.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 22:52:29 -0800 (PST)
+Date: Fri, 15 Nov 2024 12:22:21 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: l.stach@pengutronix.de, bhelgaas@google.com, lpieralisi@kernel.org,
+	kw@linux.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, shawnguo@kernel.org, frank.li@nxp.com,
+	s.hauer@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
+	kernel@pengutronix.de, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 05/10] PCI: imx6: Make core reset assertion
+ deassertion symmetric
+Message-ID: <20241115065221.scfb2chnoetpdzu6@thinkpad>
+References: <20241101070610.1267391-1-hongxing.zhu@nxp.com>
+ <20241101070610.1267391-6-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] bluetooth: qca: generate nvm fw name from boardid for
- WCN6855
-To: quic_zijuhu <quic_zijuhu@quicinc.com>,
- Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- Steev Klimaszewski <steev@kali.org>, Bjorn Andersson <bjorande@quicinc.com>
-References: <20241003-bt-nvm-firmware-v1-1-79028931214f@oldschoolsolutions.biz>
- <8500baf7-59e4-4d8c-8485-3ef7aa106f16@quicinc.com>
-Content-Language: en-US
-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-In-Reply-To: <8500baf7-59e4-4d8c-8485-3ef7aa106f16@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:POfjw7Ee0aU2xz7lJI3a/GQzJrRzifurxdY8BMePB2PZiBu1j0w
- Ccg89dA5BmAXcFc2TRjTnIvWyU39/k0qaSXecRigNltvACYIMzLXaPs/RM4kGsQStGzDZu0
- 4ycQkIURY+pzODHIMzoPm/LXUxV0orwagOqk8PI7RaZr6G6ifNAf3jrm1dPxMKd0lANMYu/
- izCeNoTINn548QnMf/uAA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ed7+KrzYIys=;IdcJCvQvXnw/JnCBr4vd9ruLI7R
- vHWNwSyKYZahVU/3+ltzESoZ6cNxajac3IRVEVf4iVyXRo1ttpXpRui0K+0lrKSBRN0wCIHUu
- PeyklkO7d1S6buOLjsgkpC9qivP/Ox2sQpeb7vYzUD1TCao66mgcI+cc5u24H5zzuk/0ZBhi8
- YyK3VJV+bFaIgLRhHiXVkqVHhnHO3PbmDTcHhDVtj9ObgNb8+B5Wf6FHVhmP7Spz8xE53X152
- XA2TmxM1opdiFkGi+HbiZShCz5i2pBIT8bloGNXgSC+lVpzeOBz+Kablwb1uuIDCNMnfSA5Zt
- IiAVN/hqgCXGE97G3qG+gJWZBEifOLqyRZg1+FIIYEY9zZFOw+12EFGgnoism7IAjt/QzJP9x
- B5Co5ViAgxAOE98jmPb5lFSve9TncUDCu6wdmJjHX/yikr75T4WdizmZFnzS3UBTvzgD3VJPK
- QuyqOlYFErAorpQ39MieX07jF5SfFZSRsTGU2Pkesn7fkSPw5Ai17j9m/cYq0Vy5PiLSsLhpr
- zLRO87Q5P8PCc4sjvZUq1u+KGQNmbnjFNcW+3D+jE95A3GcRobj9JfU3lLdSsdJyfl5KQ1QKZ
- 98y/S1mS5+lEl3FTohwI/NZxQ0BfKsMEHiyRve78HreZ8H2z4KLFZ8Pq0z9EzyoURsFQiG8Nt
- iKlI5appWnBsuILNdCL0kwvDkRixppZHxtkXCbgut1U/dBrg6canXxeICx2GNCEECxKJ01Roq
- oJcchHLbqBPzS9VFkIpktWKWJi5seTp8Z/SnML+Ses9Xq7cEw9AdsSWALLYPQQdD2/y9JvvuH
- ugk/1weUxksGNjaa2xDxuGsnGWsJWsXkUiWmhkcsz7JSJhsGXBx9mcy90/aiuXdT9M
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241101070610.1267391-6-hongxing.zhu@nxp.com>
 
-On 14.11.24 07:17, quic_zijuhu wrote:
-> On 10/4/2024 3:21 AM, Jens Glathe wrote:
-> why not to refer to existing qca_get_nvm_name_generic().
->
-> i will post a patch and cc you.
->
-Hi Ziju,
+On Fri, Nov 01, 2024 at 03:06:05PM +0800, Richard Zhu wrote:
+> Add apps_reset deassertion in the imx_pcie_deassert_core_reset(). Let it be
+> symmetric with imx_pcie_assert_core_reset().
+> 
+> In the commit first introduced apps_reset, apps_reset is asserted in
+> imx6_pcie_assert_core_reset(), but it is de-asserted in another place, in
 
-tested the patch [1] and works nicely. It is the cleaner solution
-(having dedicated fw name generator functions) than the one I proposed.
-Future-proof.
+I'd suggest rewording like below to make it easy to understand,
 
-with best regards
+"PCI: imx6: Deassert apps_reset in imx_pcie_assert_core_reset()
 
-Jens
+Since the apps_reset is asserted in imx_pcie_assert_core_reset(), it should be
+deasserted in imx_pcie_deassert_core_reset()."
 
-[1]
-https://lore.kernel.org/all/20241113-x13s_wcn6855_fix-v1-1-15af0aa2549c@qu=
-icinc.com/
+> stead of the according symmetric function imx6_pcie_deassert_core_reset().
+> 
+> Use this patch to fix it, and make core reset assertion deasertion
+> symmetric.
+> 
+> Fixes: 9b3fe6796d7c ("PCI: imx6: Add code to support i.MX7D")
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
 
+With above change,
+
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 996333e9017d..54039d2760d5 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -772,6 +772,7 @@ static void imx_pcie_assert_core_reset(struct imx_pcie *imx_pcie)
+>  static int imx_pcie_deassert_core_reset(struct imx_pcie *imx_pcie)
+>  {
+>  	reset_control_deassert(imx_pcie->pciephy_reset);
+> +	reset_control_deassert(imx_pcie->apps_reset);
+>  
+>  	if (imx_pcie->drvdata->core_reset)
+>  		imx_pcie->drvdata->core_reset(imx_pcie, false);
+> -- 
+> 2.37.1
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
