@@ -1,97 +1,129 @@
-Return-Path: <linux-kernel+bounces-411201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE2BE9CF47F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:03:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A8339CF44C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:50:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9565C1F2B3EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:03:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C81BE1F27542
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C821D9359;
-	Fri, 15 Nov 2024 19:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D125B1E0DEC;
+	Fri, 15 Nov 2024 18:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b="WI9UFpQB"
-Received: from bout3.ijzerbout.nl (bout3.ijzerbout.nl [136.144.140.114])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E32838DD8
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 19:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.140.114
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y+LzpIoo"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCB518FC89
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 18:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731697408; cv=none; b=pBenjrufGgh6F5SZjnJSjoFaRHA8Qm7rSLvPR15b1nof/028/7kgkgr3va1UimdMV58RWLzwW+5J813GP57sv/R+d/aj2vjJ2Z+Gpu8HEB0CDqqBF/AT38D1wnH1y2b4NAx6KnmS0Q+3pSA65PphI/Q1+t1Cd6VRvdMfcXhaoRo=
+	t=1731696598; cv=none; b=luf2tPvo1kZlmHeRisWI2qKYmGCjZawNoRvFn+o0G1vQmevJDwpq89g2lgejmH+bCJQH3PeiIk3ilN4HoF5JG1gZCUzLrCEbTi7FANC8azRMMVpyQLRY1xlvJnaF5/uBulcu3e70+IeJMbEdRWeL1RBBsSsSuMfE+BZI5cJomwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731697408; c=relaxed/simple;
-	bh=cQsa020sv4AfeIBGhI4RU27/jPbQNmEs2q8pSQu/7HI=;
-	h=From:Date:Subject:To:Cc:Message-Id; b=LUbzVY0FQAta6pSQyzzo9u+wbYdvtPPXERvlGw7ML2JordoGISA0ldooSNtU2nVWv5iLKNlBky8GG95ssmJf38uY0xwLHKasN7BUQezwssiBKraplh2UfI5hocHp2o+IFQxFTfX6mRtP4sdxT32CFM83FxwW9sCbKAgVoDH9zgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl; spf=none smtp.mailfrom=bout3.ijzerbout.nl; dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b=WI9UFpQB; arc=none smtp.client-ip=136.144.140.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bout3.ijzerbout.nl
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ijzerbout.nl; s=key;
-	t=1731697396; bh=cQsa020sv4AfeIBGhI4RU27/jPbQNmEs2q8pSQu/7HI=;
-	h=From:Date:Subject:To:Cc:From;
-	b=WI9UFpQBHXOh9erTjL5rKRmlSEebYKAoMVW4C+Mn9AHisJH4w8I7XHCu4Om3pCTxH
-	 6APiVTy4UOkGqm21hE3eWJORSbHg8LVNAJ+PMsJ4eSsL65G9F8F2+iftYlmwE9TK1z
-	 Q8oXfkLf8/lBPQDlCvW+IqQKXBd8RS8y4+HqjYWrMfksNOVmG0gZ2OQijVo1cz3r0R
-	 w3Fb9uG9ezk7JYX8QJ2gflM6Dq11FnGBIuIqrpX6pOqie60stOKOqR5FDXfQ+d3miD
-	 gC2+irmrKg3bouCnbspkM9fr4HtsK64CQRXMK3yGq9rtII9BpE8ByNXe/lLdxk7wTe
-	 FFODOs2/LBjJT910jiCUUeAW5Sd76mDNlRvksAOsesXt7ooNNbdnzVIwmrwdsPDccY
-	 /sy7D4PG+LutsYd0KyKjnlfXgW/A/n9ifbfuxM3yGJLwjchPz9hd9xtxaY8caJROjq
-	 MutaCxdqkomlc59lHJbKgpRqHljmLG+QdvMJSuyX35DcIdbvChJ50UkIjl5ryktOX2
-	 zm3EGv3plxShEgQl6Utvnz1t5kqo9uhK+iCVso1PFs6ZAkN8iyT6mxjdotMsAfQiRo
-	 r2iRgajuF4IHk/WztEyF9i300yAr3vz2kl0yxZVejpByra3IcHVOikkrtmpU1gZ8Cn
-	 lG93vv7pLgjEmEMGKSRQlpzw=
-Received: by bout3.ijzerbout.nl (Postfix, from userid 1000)
-	id 28A6B18DFF2; Fri, 15 Nov 2024 20:03:16 +0100 (CET)
-From: Kees Bakker <kees@ijzerbout.nl>
-Date: Fri, 15 Nov 2024 19:46:25 +0100
-Subject: [PATCH v1] iommu: Avoid use of NULL after WARN_ON_ONCE
-To: Baolu Lu <baolu.lu@linux.intel.com>,
-    iommu@lists.linux.dev,
-    Tian Kevin <kevin.tian@intel.com>,
-    Joerg Roedel <joro@8bytes.org>,
-    Will Deacon <will@kernel.org>,
-    Robin Murphy <robin.murphy@arm.com>
-Cc: linux-kernel@vger.kernel.org
-Message-Id: <20241115190316.28A6B18DFF2@bout3.ijzerbout.nl>
+	s=arc-20240116; t=1731696598; c=relaxed/simple;
+	bh=Om7YxPHmwZq2QQ/5gr2pqCjY3zJBC5S+xdrZjk/11j0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cWUXtrbHvgK230PCWevTOHRwqupbYQxCdYIFrZPic5xaBi9L6RYGG4hX9iQ66HQpRNFsTNvUvCWbLdv85CmixJ0CQUJU6fqAagESzudK/vt0j1HDENkEJO9SjxQd+JOxqDHlsPD3u2beKSF9PrcRTbq0oM9CGT94+mwCHDtIkno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y+LzpIoo; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a71ef98bc4so4435ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:49:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731696595; x=1732301395; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xcYHSX3eSDOwYJlyrykU5iDBubtq2D6dUMemXp5e0I0=;
+        b=Y+LzpIoouOLzWZobAV3pFlDimIuwiH9fsEl7KMjscoXFGlWHd7iVbATLTOqtJTo6/r
+         PEsn8X2z8zj/SHwEDyj64kQNZucPl4DUWWTESZBEUSg2xKSpv3jy9ahYlfbkbPTuFa+1
+         aux/yttXjWBlx0EqhkmSFotWzF36nmS41scpXi5eFtDWDhqVtqRxhZHGgXZA/OWmbT8y
+         xZ9AYYA/m5k9F+Nq+9Ebr70xUNO90fdVyoWvJhvDki8QdPYsWP0EYEAZtZapx5UQl8+o
+         TqjaVI/NTh2DZcV2bGHxbTiEZVy9Ju6fxshXXCCznuNG5VfDjY5Oc1FNs/eUQ7a/Briu
+         c8kA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731696595; x=1732301395;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xcYHSX3eSDOwYJlyrykU5iDBubtq2D6dUMemXp5e0I0=;
+        b=VcLVZgrJs6Ubm+A3y4yooeMT0fKgjc5Oppm4B5XW3EHmrpRN0UUMto9XkWLyRrLuEF
+         sSyJ0jTFCwJwC8fa9aUZmfOTnd3w/kcrcd6sevknu9ok0zwRaDtZWRB8+FN3dTEfMQp/
+         7FswW6OsNu0ktj9ddYWDQQf6Vu+pCAYkjtg0f933MB1iK7T++6Bkn5aYBgmoB6dOlEaw
+         AWD7txrGnD9pPVX3Zh+W86uulOZb1FEtW5dN3Rli+4lClPJr6tk5AOm+1wkHm0TYEdkN
+         h2w7/+zC5R8drDe5mmM6eGQYNH92QEJy0hBWciQ5ES5iySDYznSy8gJGpiBg4h1gPF0l
+         3lHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfvuwwNbKKsRec4qBXjLJMsb5+2inuBDzeywUXPOCciJV4er7k1yLoU9bftfpg+H9qCw9mI47+Drty6Oo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVrNSkANud5OXr80ohUqglNmSRHcwh3xs97Aukz5L6GN6bVRIv
+	IwwLWAv5cbdEobIn8MAsTg8BwAW1wvPPqZ49QDqiqu9g5ZX9Mc8U1SaYRZgui3iI/2l67hwGKE/
+	5ZN0QheK+b1ym+9mVw9A8K/6bMCMMgzczVkdG
+X-Gm-Gg: ASbGncsF1Uqc6Lkfi6AlA8udEz3tAYLAkM0dIaveXR10tRwCFRVxoug30PCteCu7SdA
+	+6Og2cdEeV94U8+T8C1FlYsxc8ucF6w==
+X-Google-Smtp-Source: AGHT+IEhu1BH+cd1vIZd8xbAt/mAqKxv62ZcAyQ4CJgMWhaBBDisA56AaUhZRVzAvuHocnDLaxzWybCfvXvkAWw+wcQ=
+X-Received: by 2002:a05:6e02:13a1:b0:3a7:493a:59ab with SMTP id
+ e9e14a558f8ab-3a74f7b097dmr980945ab.17.1731696594832; Fri, 15 Nov 2024
+ 10:49:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <39d41335-dd4d-48ed-8a7f-402c57d8ea84@stanley.mountain>
+In-Reply-To: <39d41335-dd4d-48ed-8a7f-402c57d8ea84@stanley.mountain>
+From: Andrei Vagin <avagin@google.com>
+Date: Fri, 15 Nov 2024 10:49:44 -0800
+Message-ID: <CAEWA0a5vMq4vGRj4FVQXUR2unN-xAmsFt5ymi4SL+H0yfNpdfw@mail.gmail.com>
+Subject: Re: [PATCH] fs/proc/task_mmu: prevent integer overflow in pagemap_scan_get_args()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
+	Oscar Salvador <osalvador@suse.de>, Andrii Nakryiko <andrii@kernel.org>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Peter Xu <peterx@redhat.com>, 
+	=?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, 
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is a WARN_ON_ONCE to catch an unlikely situation when
-domain_remove_dev_pasid can't find the `pasid`. In case it nevertheless
-happens we must avoid using a NULL pointer.
+On Thu, Nov 14, 2024 at 12:59=E2=80=AFAM Dan Carpenter <dan.carpenter@linar=
+o.org> wrote:
+>
+> The "arg->vec_len" variable is a u64 that comes from the user at the
+> start of the function.  The "arg->vec_len * sizeof(struct page_region))"
+> multiplication can lead to integer wrapping.  Use size_mul() to avoid
+> that.
+>
+> Also the size_add/mul() functions work on unsigned long so for 32bit
+> systems we need to ensure that "arg->vec_len" fits in an unsigned long.
+>
+> Fixes: 52526ca7fdb9 ("fs/proc/task_mmu: implement IOCTL to get and option=
+ally clear info about PTEs")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Signed-off-by: Kees Bakker <kees@ijzerbout.nl>
----
- drivers/iommu/intel/iommu.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Acked-by: Andrei Vagin <avagin@google.com>
 
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index 527f6f89d8a1..204873976ef3 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -4096,13 +4096,14 @@ void domain_remove_dev_pasid(struct iommu_domain *domain,
- 			break;
- 		}
- 	}
--	WARN_ON_ONCE(!dev_pasid);
- 	spin_unlock_irqrestore(&dmar_domain->lock, flags);
- 
- 	cache_tag_unassign_domain(dmar_domain, dev, pasid);
- 	domain_detach_iommu(dmar_domain, iommu);
--	intel_iommu_debugfs_remove_dev_pasid(dev_pasid);
--	kfree(dev_pasid);
-+	if (!WARN_ON_ONCE(!dev_pasid)) {
-+		intel_iommu_debugfs_remove_dev_pasid(dev_pasid);
-+		kfree(dev_pasid);
-+	}
- }
- 
- static void intel_iommu_remove_dev_pasid(struct device *dev, ioasid_t pasid,
--- 
-2.47.0
+> ---
+>  fs/proc/task_mmu.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index f57ea9b308bb..38a5a3e9cba2 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -2665,8 +2665,10 @@ static int pagemap_scan_get_args(struct pm_scan_ar=
+g *arg,
+>                 return -EFAULT;
+>         if (!arg->vec && arg->vec_len)
+>                 return -EINVAL;
+> +       if (UINT_MAX =3D=3D SIZE_MAX && arg->vec_len > SIZE_MAX)
 
+nit: arg->vec_len > SIZE_MAX / sizeof(struct page_region)
+
+Thanks,
+Andrei
 
