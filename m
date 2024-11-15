@@ -1,161 +1,129 @@
-Return-Path: <linux-kernel+bounces-411086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D4F49CF2B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:22:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97A649CF325
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:42:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CAF91F22FB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:22:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2916B33320
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323051E1A3D;
-	Fri, 15 Nov 2024 17:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E3B1D5AA8;
+	Fri, 15 Nov 2024 16:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lAxdx/Gu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="knwb9IIN"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ASBh0v9U"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994861D8DE0
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444C2762E0
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 16:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731691249; cv=none; b=hi4MI0uJCMJ2i8NBIuLUhnVs5C55497PRGtCZS9Cu54bjrabnuWxHc3GvccSZhTqVbhU0vnzjtn0q/DgK6xc2eBaEvMAFMxUrIGUQCNK3DPFRJjFNYyQsgiw7aSAB7IIXsR5M3Ii5gTEfVwqqbXT74S4fAjIDxfwf7a2vGjkCqU=
+	t=1731689953; cv=none; b=DkOYt2YxwN3kxbZInK+Vs06CYgDlNN2Zn/f3LDIj0MdNvmjE7uXd6ubMPpCRmxqOj+WCaikFEIMDrd4Ql1ycvP6j10PRAyS6WQSk2J5mDhaUj3atuHo1oSuvMhFaSLeU267nUIhMJBXzEtxUaYw3cvx6WyzeGBjseR0ynmE54LM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731691249; c=relaxed/simple;
-	bh=IVK4Dsc/GpAtVlvaa/UZo/8T7lHRrgN1aJSTQfnI5OY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gjY1BtLYIzUKNdNpxEv0JmECoiEwA6L292asKFPpy7fREcP/4dxY/RrDFtNTqcKcbYLYlT1LwZ+C61yKYcPMMSP2HPWv3GRg0GyFBFt1+SwcBDdRKgPkz/G9TejjcOsttmLZw97d6vc2LxPbiQbXQMFdG7zqGouWm1n3mdttcqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lAxdx/Gu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=knwb9IIN; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731691245;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PaWwegc6n6sICWXGqXLO2VC/9Q5mBnHbY++fhoom6jY=;
-	b=lAxdx/Gurfqf9CaFhtNojG8ANvxlf09NXaPUAHy5yIx/ctjhmPfg7ShZE7unpobae6t+NJ
-	mmZd+ZtDeefCVnBUm0KhO89Epb+bRvPV/O9DLy+n93rulfmimXdirg/UdFzZccpm4JLobe
-	h6NKNW5ejQ9HBIM2PKoZmWdvEYE8g03GQzJkfnSNQnn8snsPUOVNxCD/TrdMyNZDV8DFwy
-	i3tOCLIOzQZ3EedHvjTwLg6s2BFAhwxGpVa89aOfnf0+RGKZTMKPUIPHrGlvmQGKpVZ36H
-	CuXGSGpJLcEk7F6OwRlvBPlF7892BQQuynNUIkHkCO1hm7mwDhB/mW7dcl8W7A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731691245;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PaWwegc6n6sICWXGqXLO2VC/9Q5mBnHbY++fhoom6jY=;
-	b=knwb9IINridXiNY0mdsR/4MgkNmjWhRuYP0VNkUaygZpPT18wYu2i5LrB83Cs6fAu+KuqY
-	2dQsoMR7Fup7OnBw==
-To: linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [RFC PATCH v3 8/9] tools/perf: The the current affinity for CPU pinning in futex-hash.
-Date: Fri, 15 Nov 2024 17:58:49 +0100
-Message-ID: <20241115172035.795842-9-bigeasy@linutronix.de>
-In-Reply-To: <20241115172035.795842-1-bigeasy@linutronix.de>
-References: <20241115172035.795842-1-bigeasy@linutronix.de>
+	s=arc-20240116; t=1731689953; c=relaxed/simple;
+	bh=yHOMbE84YtfH5uC+q9caQcOf+DY/ybChcSTqNATeIQw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YycABBCchOhrmSQgrv5EWn6jCXhia6qlzr9du7Mll9e5MkO5mAAD1mRoIj9/FVaZsghI504nYH5bh27jUgjNElkyKUdK/1iZd+GupkLhpWDUhq7X/mjxr1um5zeWKB0Yy0DKMSjUPDPqPy0Pxa7tfQiWsZabwQ4TydWUy46xVNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ASBh0v9U; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb5111747cso9916881fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:59:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1731689949; x=1732294749; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aTgs6TZBBW/K4G459g2+GAIO1jZq9pvrwSvsxsKJTe4=;
+        b=ASBh0v9UWDqMVQxXlFERHecAM7vBX+dj3m5xV58SP2fio8ApBsoJR8WD9qb9hAxKhU
+         AUfagJ/11h6GUQgFPobS7gAk9QKSwmhTQ6PtjW17x8+2VPpamFRqAFxAYW500ROCbzIQ
+         L00v+34jw8PBjga9d2H7fvo0FgPs3pZBBCxNWwlZOPwLAeyAtbSV2gllGF/ZhJWGNsuB
+         fJDC4+XF54btSV3paPrwgRRF3fu7Rtps0fwg7sZ+E8dHS+5nP0rzaT1m90+Kde1wFqlv
+         6MCOBmCRadI3EcGy5vQpC2iHHVG5jMNwMyPNh9KBrzkamLRsOiRq2eqfDP3QNu/YIusm
+         OUNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731689949; x=1732294749;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aTgs6TZBBW/K4G459g2+GAIO1jZq9pvrwSvsxsKJTe4=;
+        b=rkR2rnp7hDH+CZikyncWbo9cRlxOtkRm9WelmngFceL1MWYjWG/2uG7+6t7pow/Cil
+         Zlfi1gbB88cTU5LsynN8UQvLtfuQ16R6dIIcheJxE1ITTVZya+dkWsfhlmMA6XF8ZMm6
+         pLv7+sWpJzuavKBeZsbhWIW7f8ZXGDu2Yb2pgY1GWar3ssRfaC1VW+tiY2EsBJo/uu93
+         kb+S189VXPAZN0TBeKOjbnrA+VcQN5vD/LQklIwyHshnpmZESvV4+MD75UrApvEQwARt
+         e0chTFpidNoxw7a0BEDSGawyWNn2YYnD3vgKCbzhQja/tjOOJd5lISYWNFCd6ARappri
+         w5xQ==
+X-Gm-Message-State: AOJu0YxczX6NXrxTbFHbJ4Wp/iNkmn+LESFoHcHcg38/5TJRINWlkZVj
+	u10RiotbiPvu7vHvsqv9EpTwZtwSjqHTFPFiUXva0zZhPHDv4jcgkX1OBt0HVO4=
+X-Google-Smtp-Source: AGHT+IGtHvkZQxyNHW5vvtvrdH78obaDRIKxfmQKkuiMNoCQMJrT7GFgCHyX+vc9p/jfB9gLvRH6IA==
+X-Received: by 2002:a05:651c:90b:b0:2fe:e44d:6162 with SMTP id 38308e7fff4ca-2ff6070e052mr22040961fa.26.1731689949282;
+        Fri, 15 Nov 2024 08:59:09 -0800 (PST)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da298a41sm63691485e9.38.2024.11.15.08.59.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 08:59:08 -0800 (PST)
+Date: Fri, 15 Nov 2024 17:59:07 +0100
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	michael.christie@oracle.com, Tejun Heo <tj@kernel.org>, Luca Boccassi <bluca@debian.org>
+Subject: Re: [PATCH] KVM: x86: switch hugepage recovery thread to vhost_task
+Message-ID: <rl5s5eykuzs4dgp23vpbagb4lntyl3uptwh54jzjjgfydynqvx@6xbbcjvb7zpn>
+References: <20241108130737.126567-1-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="d2tiinorxtz5cpzu"
+Content-Disposition: inline
+In-Reply-To: <20241108130737.126567-1-pbonzini@redhat.com>
 
-In order to simplify NUMA local testing, let futex-hash use the current
-affinity mask and pin the individual threads based on that mask.
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- tools/perf/bench/futex-hash.c | 30 ++++++++++++++++++++++++------
- 1 file changed, 24 insertions(+), 6 deletions(-)
+--d2tiinorxtz5cpzu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/tools/perf/bench/futex-hash.c b/tools/perf/bench/futex-hash.c
-index 1f7a33f8d078e..f40b7df6ef3d0 100644
---- a/tools/perf/bench/futex-hash.c
-+++ b/tools/perf/bench/futex-hash.c
-@@ -126,10 +126,24 @@ static void print_summary(void)
- # define PR_FUTEX_HASH_SET_SLOTS	1
- # define PR_FUTEX_HASH_GET_SLOTS	2
-=20
-+static unsigned int get_cpu_bit(cpu_set_t *set, size_t set_size, unsigned =
-int r_cpu)
-+{
-+	unsigned int cpu =3D 0;
-+
-+	do {
-+		if (CPU_ISSET_S(cpu, set_size, set)) {
-+			if (!r_cpu)
-+				return cpu;
-+			r_cpu--;
-+		}
-+		cpu++;
-+	} while (1);
-+}
-+
- int bench_futex_hash(int argc, const char **argv)
- {
- 	int ret =3D 0;
--	cpu_set_t *cpuset;
-+	cpu_set_t *cpuset, cpuset_;
- 	struct sigaction act;
- 	unsigned int i;
- 	pthread_attr_t thread_attr;
-@@ -167,8 +181,12 @@ int bench_futex_hash(int argc, const char **argv)
- 			err(EXIT_FAILURE, "mlockall");
- 	}
-=20
-+	ret =3D pthread_getaffinity_np(pthread_self(), sizeof(cpuset_), &cpuset_);
-+	BUG_ON(ret);
-+	nrcpus =3D CPU_COUNT(&cpuset_);
-+
- 	if (!params.nthreads) /* default to the number of CPUs */
--		params.nthreads =3D perf_cpu_map__nr(cpu);
-+		params.nthreads =3D nrcpus;
-=20
- 	worker =3D calloc(params.nthreads, sizeof(*worker));
- 	if (!worker)
-@@ -189,10 +207,9 @@ int bench_futex_hash(int argc, const char **argv)
- 	pthread_attr_init(&thread_attr);
- 	gettimeofday(&bench__start, NULL);
-=20
--	nrcpus =3D cpu__max_cpu().cpu;
--	cpuset =3D CPU_ALLOC(nrcpus);
-+	cpuset =3D CPU_ALLOC(4096);
- 	BUG_ON(!cpuset);
--	size =3D CPU_ALLOC_SIZE(nrcpus);
-+	size =3D CPU_ALLOC_SIZE(4096);
-=20
- 	for (i =3D 0; i < params.nthreads; i++) {
- 		worker[i].tid =3D i;
-@@ -202,7 +219,8 @@ int bench_futex_hash(int argc, const char **argv)
-=20
- 		CPU_ZERO_S(size, cpuset);
-=20
--		CPU_SET_S(perf_cpu_map__cpu(cpu, i % perf_cpu_map__nr(cpu)).cpu, size, c=
-puset);
-+		CPU_SET_S(get_cpu_bit(&cpuset_, sizeof(cpuset_), i % nrcpus), size, cpus=
-et);
-+
- 		ret =3D pthread_attr_setaffinity_np(&thread_attr, size, cpuset);
- 		if (ret) {
- 			CPU_FREE(cpuset);
---=20
-2.45.2
+On Fri, Nov 08, 2024 at 08:07:37AM GMT, Paolo Bonzini <pbonzini@redhat.com> wrote:
+> Since the worker kthread is tied to a user process, it's better if
+> it behaves similarly to user tasks as much as possible, including
+> being able to send SIGSTOP and SIGCONT.
 
+Do you mean s/send/receive/?
+
+Consequently, it's OK if a (possibly unprivileged) user stops this
+thread forever (they only harm themselves, not the rest of the system),
+correct?
+
+
+> In fact, vhost_task is all that kvm_vm_create_worker_thread() wanted
+> to be and more: not only it inherits the userspace process's cgroups,
+> it has other niceties like being parented properly in the process
+> tree.  Use it instead of the homegrown alternative.
+
+It is nice indeed.
+I think the bugs we saw are not so serious to warrant
+Fixes: c57c80467f90e ("kvm: Add helper function for creating VM worker threads")
+.
+(But I'm posting it here so that I can find the reference later.)
+
+Thanks,
+Michal
+
+--d2tiinorxtz5cpzu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZzd92AAKCRAt3Wney77B
+SWFPAP9dPqCzcXL6RlNlluM/CfPHLz5sv1Jmpn502SqVOAetLwEAlNXghQXLJed+
+v8hEXumZRnfpYF2VtL9rRKeMOx60Tw0=
+=UK3X
+-----END PGP SIGNATURE-----
+
+--d2tiinorxtz5cpzu--
 
