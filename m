@@ -1,112 +1,76 @@
-Return-Path: <linux-kernel+bounces-410551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 644449CDD2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:00:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF3F79CDD2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:01:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29AC12816B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:00:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C8C5B27F84
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D791B532F;
-	Fri, 15 Nov 2024 11:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A801A9B43;
+	Fri, 15 Nov 2024 11:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCB0qj0v"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K771JKmu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62731192B94;
-	Fri, 15 Nov 2024 11:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AD7154C00
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731668426; cv=none; b=U9CJNJv62CyDkNfM0JxXzXJ7FEmZ9tmuo65tXi6v5NfrW3ZqOetVPW/XihqACFCL1FQqzXIF+KoKO6DZvAZOmr08BYbI8ibXkVImINDioWJBXVKhhYfYJo1/GxSNwP6IAK4EBc7tnSd5daV8ak0tQ6xMzWPANmzXL1H8o7QGZxY=
+	t=1731668469; cv=none; b=NCL8wKJDTjWn7QUdpgwvpME0Erh9fos9dWmqd9l2qz8hGIJ8gX31IZr7BrWR9z/D/pFxUuy81ii5MMiS+aPqFR38Z/7UNjOcavGnAPgc+N2A60G5XjS7iUa3ZSaMxoC7NXQ3LvVb+DaLu6wm4IPL7etv1aQvhOpJjI9moXaNTkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731668426; c=relaxed/simple;
-	bh=uv6Tugb0FyVdARW47Hj8ctsIKq72UmaOcD/cqo6KJmE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pL+1YuWKZxRYQHCRmDYl5U/9i8RM+TWPpQiM8oNf4pwqURovzM+6MLYyanFa7M/3cM6HJQdD2AoA6wfv52AIc9i+xqJEddY1D4hSMNyFOETt+4/bhy9OrPXckEXe7VDopt1wqFEgnzkVv8rybskkmKqmRksnlXH1OB6vuPJZipw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCB0qj0v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1677C4CECF;
-	Fri, 15 Nov 2024 11:00:23 +0000 (UTC)
+	s=arc-20240116; t=1731668469; c=relaxed/simple;
+	bh=nl63oeeKgFgZWDzlfNV7petR5YratFleF7vbHWBYqEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uimDFIb54IqdM4FQhPK6zvlzECbecljgOHIS7rty2Zq77u65vVEOEpGIUlfCc44WJcWqYB/WgYGsqQv6xAsqa6Wqg+08RfNkBmIQgLa8kzPTzNjWK3b/upg426BZhWIcMEHkgbV/y4OwJLzCwpWwYR2bzI4eoZZZpcP8BGw8v/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K771JKmu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AACAC4CECF;
+	Fri, 15 Nov 2024 11:01:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731668425;
-	bh=uv6Tugb0FyVdARW47Hj8ctsIKq72UmaOcD/cqo6KJmE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=UCB0qj0vU80l/6+YptCo9AJ7kOm9CVNs8xnzAkqLLs6aZlbE1uhsFPUk29AANlNB5
-	 xEPPq/AUufVz58M8k7r/yjcUzu8uhmZwaEl/9gd2pOUQfVNal8IylkVCGmv1iCuacf
-	 k9nJ9QHMcYTVxTwhxL7GtD3cay+mgX0eYskaGzdqyMf14FeYYUDHFUqOYMGNKzcNF9
-	 BBtcQ/T+S+/I4N29yRkakaml+k2aGTtkpSPJ+gbxr9C4+Jy3+oVE0nYpnAC/tNAnFa
-	 sWv7Re77pGX7M7Oqshd/4iVjVTbyw71+DtG9+oMNuTMSXJ1K/PfscCGnueUEePTTbF
-	 E8tPiv1GHqWFA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kartik Rajput <kkartik@nvidia.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	kernel test robot <lkp@intel.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	=?UTF-8?q?Th=C3=A9o=20Lebrun?= <theo.lebrun@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: [PATCH] serial: amba-pl011: fix build regression
-Date: Fri, 15 Nov 2024 11:59:54 +0100
-Message-Id: <20241115110021.744332-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=k20201202; t=1731668469;
+	bh=nl63oeeKgFgZWDzlfNV7petR5YratFleF7vbHWBYqEA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K771JKmur8mNdBLkvEDVbbSGEM66u+7NYPt+AuoIcoX6RR/vmt1po8k+lIgUO4fSw
+	 J+fZ8wR/IcsIeMWBPNYmdahQDDOsW4+hwgjRXwK6PSaFRykQ7GqfhNvowOPQPNoMW+
+	 gNQvZs5cTV/mUUUt537qV94bxC2ntp1IvMT1ngB9+a790znTWobPdsTeZ4fCZrvow7
+	 KvZEg9yj0NFt3+w6Va+rPMFsgZG+5Bmwr8UoXWi2361feagcvUjxo52Hy+XdjscUzh
+	 4MnI9+ZhmtR77f/USCIVxfJFJ5HHCbXhC0GbrSg4HqUqQbfdta+PKVJUiqcpPHvrZ+
+	 GlTqDzp9JhLhA==
+Date: Fri, 15 Nov 2024 12:01:03 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Ragavendra <ragavendra.bn@gmail.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, hpa@zytor.com, thomas.lendacky@amd.com,
+	ardb@kernel.org, ashish.kalra@amd.com, tzimmermann@suse.de,
+	bhelgaas@google.com, x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arch:x86:coco:sev: Initialize ctxt variable
+Message-ID: <Zzcp75p3KTFRfW5O@gmail.com>
+References: <20241115003505.9492-2-ragavendra.bn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241115003505.9492-2-ragavendra.bn@gmail.com>
 
-From: Arnd Bergmann <arnd@arndb.de>
 
-When CONFIG_DMA_ENGINE is disabled, the driver now fails to build:
+* Ragavendra <ragavendra.bn@gmail.com> wrote:
 
-drivers/tty/serial/amba-pl011.c: In function 'pl011_unthrottle_rx':
-drivers/tty/serial/amba-pl011.c:1822:16: error: 'struct uart_amba_port' has no member named 'using_rx_dma'
- 1822 |         if (uap->using_rx_dma) {
-      |                ^~
-drivers/tty/serial/amba-pl011.c:1823:20: error: 'struct uart_amba_port' has no member named 'dmacr'
- 1823 |                 uap->dmacr |= UART011_RXDMAE;
-      |                    ^~
-drivers/tty/serial/amba-pl011.c:1824:32: error: 'struct uart_amba_port' has no member named 'dmacr'
- 1824 |                 pl011_write(uap->dmacr, uap, REG_DMACR);
-      |                                ^~
+> Updating the ctxt value to NULL in the svsm_perform_ghcb_protocol as
+> it was not initialized.
+> 
+> Fixes: 2e1b3cc9d7f7 (grafted) Merge tag 'arm-fixes-6.12-2' of git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc
 
-Add the missing #ifdef check around these field accesses, matching
-what other parts of this driver do.
+This 'Fixes' tag looks bogus.
 
-Fixes: 2bcacc1c87ac ("serial: amba-pl011: Fix RX stall when DMA is used")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202411140617.nkjeHhsK-lkp@intel.com/
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/tty/serial/amba-pl011.c | 2 ++
- 1 file changed, 2 insertions(+)
+Thanks,
 
-diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
-index f0db65bb8b6f..214bfbf03a97 100644
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -1819,10 +1819,12 @@ static void pl011_unthrottle_rx(struct uart_port *port)
- 
- 	pl011_write(uap->im, uap, REG_IMSC);
- 
-+#ifdef CONFIG_DMA_ENGINE
- 	if (uap->using_rx_dma) {
- 		uap->dmacr |= UART011_RXDMAE;
- 		pl011_write(uap->dmacr, uap, REG_DMACR);
- 	}
-+#endif
- 
- 	uart_port_unlock_irqrestore(&uap->port, flags);
- }
--- 
-2.39.5
-
+	Ingo
 
