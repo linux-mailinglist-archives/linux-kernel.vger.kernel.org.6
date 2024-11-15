@@ -1,171 +1,107 @@
-Return-Path: <linux-kernel+bounces-410598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E05C9CDDC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:51:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D96899CDDC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:52:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA4C31F2301C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:51:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CE8C2825E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87FA01B6D12;
-	Fri, 15 Nov 2024 11:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8D01B81B8;
+	Fri, 15 Nov 2024 11:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vMzID8m6"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="s+Y20BAD"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872F51B218E
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4160B18871E;
+	Fri, 15 Nov 2024 11:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731671474; cv=none; b=MJTpviXonftTfzybG8keh++4ibDREYrsf3ADkdEUfLo5Q5u6oK6QUd0xyYqJKXaeqtJgezKuEEfA16GkQgRSVkymXZ0pSdkb3AVjjs9huHclnLBQM17V6DcxOR2CtD3ZIOMi75MCsSUtqwPWrH1crGV0ZZxyfH1mDgQbCIUpydo=
+	t=1731671529; cv=none; b=FiW2fraAKmTJMfvgdWS4mZwZiYgi1c9DhP4w240yaKVfpxV76g5eTIHQKn+HAk6o1G5x0WBHVuYFrF8lNCWSH+1+mUa/mkM9g6u/QYclBZbOQwd+F+5YCBlM2tWyQC8Sl6FxfzxAEPBkqKL1tad3dyFK44MF0nP8yntl4JbN9es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731671474; c=relaxed/simple;
-	bh=sZdR9W40s3IqCSaLvH1Sa+P9DP69302jesYf4sRn+2g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OPqc6J4guOArNqmIjsXqCFZt+FlPi1SYtJwSonBhEBuyr9rozpsu7BXrWQDJfJWY7/Er2GwK3ZOJIjHgCd1GgmB1hLFaSfsu0vIUWYCcOSj2l01/bcPYdubzKwhIyIE2pBGHdEXbjR0Y+x3/Q+tvoBDeEijy7hs9lA2n40Zopt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vMzID8m6; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7f450f7f11dso1195075a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 03:51:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731671473; x=1732276273; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0qz4zjxYN8EsB1sVFFLtbfHvdqNPBMDPqRlMkCvciKQ=;
-        b=vMzID8m6K3DMLchGm5z3M2nR5eVE8wC23baG//7YndEYtxnDR+Zh7u8NGd4uw5yNEF
-         vjxZDAZWxpCjbro5IEog6XXVzpQ1S+f1LlCyyhBlB1iG4XkQqMUjUp82BK2mjbHU6u0f
-         7+9FUPwlhuj+TQabd/D17p73qCHrSacflcYMpd/uSexbFL+WDcUvwZBfUlxXwKG+uYHf
-         Ocd/2jyjGUIPmZRFl6smiLW4yeEK3VdFEKLzcdElxKV1IhdsX7MlUcvk2atcPXnWHC8y
-         Xv1UaHOuQ9VT9vYSkv0kgm5xBQo6Bp+olbwLGtvyX6blL6Qfh3El0WKoFquEpFHgNcz/
-         vumw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731671473; x=1732276273;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0qz4zjxYN8EsB1sVFFLtbfHvdqNPBMDPqRlMkCvciKQ=;
-        b=h6sGEkuLPytN3xafEGBii/LC7eftG4d0G7ibmjcyZ9hSik+sbpAoTZKHmOwBI98GiW
-         bnVenOKCe2JHlYZ6NDFrPU2gTYLXcJrVEx0fSLCjnU+iK3UdWFbTnYPxfpbcr9H/GOLl
-         mFuJQql3+DUQRgTOx9/KFS5vgYrz1gi9993YL379TUmzGofeNicdDw+aAQGxsK34Kf9g
-         6sRP58/WC34FtKx9on6hsSK4EcBLZRyOHnOTHH9DBf2EcHoiNuhXdNmUTvk+l6Eh75Fl
-         mqrnGGApKG6WY7H+tvemRtTfIyHXELIPidJrNK8OscWZgHOmNq10X7Cicf7Q+kRMMEel
-         cTZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVuUfoxZ3lSuNvyfmuyX6OQ1niyWxeUPF7SdWzTwVoVG8PI91oBxe5ndnlgcVT2vmKw4sXMEsMwd7Ne930=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSnoFt4eLUa5DcLsMY2idXgqiVQKIwLQHlJodqJ68r9c7sEQVF
-	luBylxXcgsXQpqQMfWKUSwNgromEEjv0sXYPuhg0o16o2M3z+FcgPGb61M5IzQ==
-X-Google-Smtp-Source: AGHT+IHpT8ZeMKed/s/RPDlK9VLqV5kI+HNUu4iV8muOdZoUPUkSFT36NhvQLuLYGoL5BZzy2K3vgw==
-X-Received: by 2002:a05:6a20:3946:b0:1d9:1045:3ed5 with SMTP id adf61e73a8af0-1dc90b23572mr2838926637.11.1731671472789;
-        Fri, 15 Nov 2024 03:51:12 -0800 (PST)
-Received: from thinkpad ([117.193.208.47])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724770eea1asm1200047b3a.28.2024.11.15.03.51.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 03:51:12 -0800 (PST)
-Date: Fri, 15 Nov 2024 17:21:04 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-	andersson@kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicinc.com,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/6] PCI: Add new start_link() & stop_link function ops
-Message-ID: <20241115115104.hsa4udzkhhavahgi@thinkpad>
-References: <20241112-qps615_pwr-v3-3-29a1e98aa2b0@quicinc.com>
- <20241112234149.GA1868239@bhelgaas>
+	s=arc-20240116; t=1731671529; c=relaxed/simple;
+	bh=7d07MOtJA5T28dl4jE2qkLrkDhHazd6IdjA9Ok4D52Q=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XKVyguBuOCkTqEuT4clgRNhNIHXZYUqgT9tkMm28Yggi/gBVsqF7c8DzXHkSxSfU93+T6hriZ36FYWVUnxpza2PF5Xy8sMFAec7dJm6iNrfdATNXpuDABh8xZSYcGRxerMwCTldguDO7bevT9ceGDM3ZYL1cElHk0ljeQFOgU/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=s+Y20BAD; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=xg2gWNXSG2k2cejhKXt/rqKvl8xor5hlZe+I7Qifmso=; b=s+Y20BADM5B6qEMOlS459kuxMr
+	Kb+kTbN4fuaHKlHI9CX1Jik6KOfpebncbPo4VmKsC2Fmg9aizeVmN/TCzWb4rheUflVRWa77gVZNg
+	Yj4UUkI6IUn2msbY9Fi82Eh5Xyz9N+wdMBba94pihXtwQSA/4Xe8uky4zL/FVCkb2HaHuasXfylO2
+	+GAF/hJ6saLXeP0mCLEi8etwp2gepcMr2LshDL9y5+Ae5iOMCJRCuhGmayW/xdmPC8blnDYo0uG3i
+	Vp/COQj20m4Pq9AQnNBKTQ5mxwWF/utXTO9T2dW+edu6V6dHaj7d1WEBZYXBRzK2twpE3jhd59QAF
+	TCcQ9Ilg==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tBurm-00H1sM-1u;
+	Fri, 15 Nov 2024 19:51:59 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 15 Nov 2024 19:51:58 +0800
+Date: Fri, 15 Nov 2024 19:51:58 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: [GIT PULL] Crypto Fixes for 6.12
+Message-ID: <Zzc13mpEUC-BblD4@gondor.apana.org.au>
+References: <ZJ0RSuWLwzikFr9r@gondor.apana.org.au>
+ <ZOxnTFhchkTvKpZV@gondor.apana.org.au>
+ <ZUNIBcBJ0VeZRmT9@gondor.apana.org.au>
+ <ZZ3F/Pp1pxkdqfiD@gondor.apana.org.au>
+ <ZbstBewmaIfrFocE@gondor.apana.org.au>
+ <ZgFIP3x1w294DIxQ@gondor.apana.org.au>
+ <ZkrC8u1NmwpldTOH@gondor.apana.org.au>
+ <ZvDbn6lSNdWG9P6f@gondor.apana.org.au>
+ <Zw9RM_jNu9vqp9T8@gondor.apana.org.au>
+ <ZxXqbFAO9VN3ugIR@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241112234149.GA1868239@bhelgaas>
+In-Reply-To: <ZxXqbFAO9VN3ugIR@gondor.apana.org.au>
 
-On Tue, Nov 12, 2024 at 05:41:49PM -0600, Bjorn Helgaas wrote:
-> On Tue, Nov 12, 2024 at 08:31:35PM +0530, Krishna chaitanya chundru wrote:
-> > Certain devices like QPS615 which uses PCI pwrctl framework
-> > needs to configure the device before PCI link is up.
-> > 
-> > If the controller driver already enables link training as part of
-> > its probe, after the device is powered on, controller and device
-> > participates in the link training and link can come up immediately
-> > and maynot have time to configure the device.
-> > 
-> > So we need to stop the link training by using stop_link() and enable
-> > them back after device is configured by using start_link().
-> 
-> s/maynot/may not/
-> 
-> I think I'm missing the point here.  My assumption is this:
-> 
+Hi Linus:
 
-First controller driver probes, enables link training and scans the bus. When
-the PCI bridge is found, its child DT nodes will be scanned and pwrctl devices
-will be created if needed.
+The following changes since commit cd843399d706411ff80520fb7883afeeefa76e98:
 
->   - device starts as powered off
->   - pwrctl turns on the power
->   - link trains automatically
->   - qcom driver claims device
+  crypto: lib/mpi - Fix an "Uninitialized scalar variable" issue (2024-10-16 13:38:16 +0800)
 
-QPS615 driver will claim this device not controller driver.
+are available in the Git repository at:
 
->   - qcom needs to configure things that need to happen before link
->     train
-> 
+  git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git v6.12-p5 
 
-QPS615 driver needs to configure the switch before link training. So at this
-point, it stops the link training, configures the switch and starts it again.
+for you to fetch changes up to dd41b283ef2f028e414312706b48f2880b7050b5:
 
-Patch description could be improved.
+  crypto: mips/crc32 - fix the CRC32C implementation (2024-10-26 14:39:30 +0800)
 
-- Mani
+----------------------------------------------------------------
+This push fixes a regression in the MIPS CRC32C code.
+----------------------------------------------------------------
 
-> but that can't be quite right because you wouldn't be able to fix it
-> by changing the qcom driver because it's not in the picture until the
-> link is already trained.
-> 
-> So maybe you can add a little more context here?
-> 
-> > Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> > ---
-> >  include/linux/pci.h | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/include/linux/pci.h b/include/linux/pci.h
-> > index 573b4c4c2be6..fe6a9b4b22ee 100644
-> > --- a/include/linux/pci.h
-> > +++ b/include/linux/pci.h
-> > @@ -806,6 +806,8 @@ struct pci_ops {
-> >  	void __iomem *(*map_bus)(struct pci_bus *bus, unsigned int devfn, int where);
-> >  	int (*read)(struct pci_bus *bus, unsigned int devfn, int where, int size, u32 *val);
-> >  	int (*write)(struct pci_bus *bus, unsigned int devfn, int where, int size, u32 val);
-> > +	int (*start_link)(struct pci_bus *bus);
-> > +	void (*stop_link)(struct pci_bus *bus);
-> >  };
-> >  
-> >  /*
-> > 
-> > -- 
-> > 2.34.1
-> > 
+Eric Biggers (1):
+      crypto: mips/crc32 - fix the CRC32C implementation
 
+ arch/mips/crypto/crc32-mips.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+Thanks,
 -- 
-மணிவண்ணன் சதாசிவம்
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
