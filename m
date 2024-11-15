@@ -1,141 +1,85 @@
-Return-Path: <linux-kernel+bounces-411339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 790789CF66A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:54:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 526729CF66B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:55:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E614B2B662
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:53:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48441B252A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D3A1E1C0C;
-	Fri, 15 Nov 2024 20:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728B3153800;
+	Fri, 15 Nov 2024 20:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b="FxT85VUv"
-Received: from bout3.ijzerbout.nl (bout3.ijzerbout.nl [136.144.140.114])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B5C1D5CF1;
-	Fri, 15 Nov 2024 20:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.140.114
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SivHPTv7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D176F1DA23
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 20:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731704006; cv=none; b=DePzEL/8rZgHTkr0Z5WfH/5Omv4nx3u6XwplGfYBqctNlKvCiGSR3EnzMzarT5oOdl8fKkSZQW2laYLT+Y5SYrdGyjOr2APbrygBrPRYiAhN99iCZmGKhVNvEVs2nmkIYq2HW2b4i55679nAGRVjLWrfjJCne8AX8N62tcHZoZo=
+	t=1731704105; cv=none; b=SWynVTgyaTpgD8OBaDQqSWcz0ISix9LinRDHweL2pP63kI8eosAx8yW3t/igsW2qO62tJPwj6ffbRp+wtfzZshDCYkewdjyjQ6t8JfYzVq6410pFn7tuhdbGd/80NUa83oW9ygJ25+zHqcHeXYivCYbOspz1Mp54B1lZW3DVvco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731704006; c=relaxed/simple;
-	bh=8V1VAweJBdHvycsiKdURAzqcW5AbmpAsGaJpU+BRN+k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V7DRhyZx2JGdJSWZ69Obk3pQ4NIQ4v+PO9HfrGH06Qi7RonUDBTAV0InNIsiNh+iouRgbULGBHTbKxLGJZAw+VHbVbrfim4imXXxaa0RwgAws6a+3kUHv46zHWL+vYYrvfd9nqF6IwdoDzJ75q3hJ5mbd7rCspYHFMhLWUBsXV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl; spf=pass smtp.mailfrom=ijzerbout.nl; dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b=FxT85VUv; arc=none smtp.client-ip=136.144.140.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ijzerbout.nl
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ijzerbout.nl; s=key;
-	t=1731704002; bh=8V1VAweJBdHvycsiKdURAzqcW5AbmpAsGaJpU+BRN+k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FxT85VUvAvnBZxJUw8cR7SQLknea/P9K4cXoHocsR1MJlkRiZ2xHpvX/4XbpKRcYd
-	 GK0gvGGwchRs5OXGixhyc9QsiSrqBVUY3b/JMSfjqeKg3nJAk+bZnzpno3QFCyyM5E
-	 ZaHUXXA1OjI9Fn97bd8PgoLa0hRwoGesM9/Rya7bagv4zwaytRgwZaTJVh/TpFzqhu
-	 0cquQjGeU3btotzTjm+2u3MtV1/x3A20Q4rgyftTe/gs0lKmyFC2JKlR+YaVz04NgE
-	 uc5bPtFnX8mGjeZWH5h7gc6lTw9gt9wDXnjQca32xwENtuXH890suAxi6qD0YFTqej
-	 S+TVT8OOsBPt9NkIUZ5IhvG4tFrL23ETXdLSNsh0LrQW8bKbruuuQ6RclrQeSR6vbC
-	 u6orXfyxHe8tzm07GzZGPFcvdM66KH4i4MCTQteVUe+zNw98EQ/fLtgWnPxdDQfdSB
-	 OQY12tZu1iicFJ47U6xN3yxWQjVzhRVaA0jf0YgROG5OVcx1Io4trI2Zf5HyTmpy29
-	 /xlEjHl8xSwpLSLZiBUoU8TJBZZWc0JPUiAOuldhX/VTGm3dbDQOV8oTRxahAXuakp
-	 RMjYhHwUwbHV+XpLbiY07Efy2ae3jRGmLP+vtsK1TB8/OPPZV3FfBMiqU+4Px7hxry
-	 GlqTGaEIgaG9pIj3f3LZ9tIY=
-Received: from [IPV6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a] (racer.ijzerbout.nl [IPv6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a])
-	by bout3.ijzerbout.nl (Postfix) with ESMTPSA id DF1ED18E000;
-	Fri, 15 Nov 2024 21:53:21 +0100 (CET)
-Message-ID: <01c3b716-1450-4e15-85f5-76985ccf3f13@ijzerbout.nl>
-Date: Fri, 15 Nov 2024 21:53:19 +0100
+	s=arc-20240116; t=1731704105; c=relaxed/simple;
+	bh=JqaGaa4vu+2We5DLOwGHmvuDksUulja8ThUNLcvTB4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=azHx40bWR/upZypU7gieKArUJcGVycKSmogHhfRuvL4OOvLaMQ+TjX3Ygzs8eRvvhZr/MR4NM20IyfSn5UUF/1D224Vkj3XpNa2mcMlVFsDcQcTQoriGsjkIOAOiaXOo87xuYYZAZIn7ZyqYjn4cCc2blPLvwfe92jeVZcuZUe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SivHPTv7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25FDDC4CECF;
+	Fri, 15 Nov 2024 20:55:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731704105;
+	bh=JqaGaa4vu+2We5DLOwGHmvuDksUulja8ThUNLcvTB4Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SivHPTv7lgVNbV/6iOwRXTiGVxmRYmgVlWu2IvNM7DdqmQHApOB6b2t42gb+ku3FV
+	 riNGW9glvQITZpvthdBckCDi1jz954ZqJdcLRkS2IImCNjbcJMWHgD8JeqVP5NOXvk
+	 BEPdsZYNA7gXV4Lbk6QBaqtZcHEwhmpN+DK4GknYBPe+usagAF2KkhI1IdmUZsPRLy
+	 qXOjfiJjkZ0zYwmvRfrlDOvfIrvxuZ85rF0OsuMl6OYFIO5wneqZs+11fLqjTMfq3u
+	 gqmwhYttJ6CmoTIKxCUyrn8ZeUIMO9vCYVDGEu0I4PF316JlEEalWmVOPKXA7G2VgL
+	 n5zmSHoq0d3bg==
+Date: Fri, 15 Nov 2024 21:55:02 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: syzbot <syzbot+852e935b899bde73626e@syzkaller.appspotmail.com>
+Cc: hdanton@sina.com, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Subject: Re: [syzbot] [kernel?] WARNING in posixtimer_send_sigqueue
+Message-ID: <Zze1Jj4_pzOL1bzp@pavilion.home>
+References: <20241115115401.3701-1-hdanton@sina.com>
+ <673738b2.050a0220.1324f8.00ac.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next PATCH v12 11/12] octeontx2-pf: Adds TC offload support
-To: Geetha sowjanya <gakula@marvell.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: kuba@kernel.org, davem@davemloft.net, pabeni@redhat.com,
- jiri@resnulli.us, edumazet@google.com, sgoutham@marvell.com,
- sbhatta@marvell.com, hkelam@marvell.com
-References: <20241107160839.23707-1-gakula@marvell.com>
- <20241107160839.23707-12-gakula@marvell.com>
-Content-Language: en-US
-From: Kees Bakker <kees@ijzerbout.nl>
-In-Reply-To: <20241107160839.23707-12-gakula@marvell.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <673738b2.050a0220.1324f8.00ac.GAE@google.com>
 
-Op 07-11-2024 om 17:08 schreef Geetha sowjanya:
-> Implements tc offload support for rvu representors.
->
-> Usage example:
->
->   - Add tc rule to drop packets with vlan id 3 using port
->     representor(Rpf1vf0).
->
-> 	# tc filter add dev Rpf1vf0 protocol 802.1Q parent ffff: flower
-> 	   vlan_id 3 vlan_ethtype ipv4 skip_sw action drop
->
-> - Redirect packets with vlan id 5 and IPv4 packets to eth1,
->    after stripping vlan header.
->
-> 	# tc filter add dev Rpf1vf0 ingress protocol 802.1Q flower vlan_id 5
-> 	  vlan_ethtype ipv4 skip_sw action vlan pop action mirred ingress
-> 	  redirect dev eth1
->
-> Signed-off-by: Geetha sowjanya <gakula@marvell.com>
-> ---
->   .../marvell/octeontx2/af/rvu_npc_fs.c         |  14 ++-
->   .../ethernet/marvell/octeontx2/af/rvu_rep.c   |   4 +
->   .../marvell/octeontx2/nic/otx2_common.h       |   7 ++
->   .../marvell/octeontx2/nic/otx2_flows.c        |   5 -
->   .../ethernet/marvell/octeontx2/nic/otx2_tc.c  |  25 ++--
->   .../net/ethernet/marvell/octeontx2/nic/rep.c  | 115 ++++++++++++++++++
->   .../net/ethernet/marvell/octeontx2/nic/rep.h  |   1 +
->   7 files changed, 154 insertions(+), 17 deletions(-)
->
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-> index 150635de2bd5..9d08fd466a43 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-> @@ -1416,6 +1416,7 @@ int rvu_mbox_handler_npc_install_flow(struct rvu *rvu,
->   				      struct npc_install_flow_rsp *rsp)
->   {
->   	bool from_vf = !!(req->hdr.pcifunc & RVU_PFVF_FUNC_MASK);
-> +	bool from_rep_dev = !!is_rep_dev(rvu, req->hdr.pcifunc);
->   	struct rvu_switch *rswitch = &rvu->rswitch;
->   	int blkaddr, nixlf, err;
->   	struct rvu_pfvf *pfvf;
-> @@ -1472,14 +1473,19 @@ int rvu_mbox_handler_npc_install_flow(struct rvu *rvu,
->   	/* AF installing for a PF/VF */
->   	if (!req->hdr.pcifunc)
-(1)
->   		target = req->vf;
-> +
->   	/* PF installing for its VF */
-> -	else if (!from_vf && req->vf) {
-> +	if (!from_vf && req->vf && !from_rep_dev) {
-(2)
->   		target = (req->hdr.pcifunc & ~RVU_PFVF_FUNC_MASK) | req->vf;
->   		pf_set_vfs_mac = req->default_rule &&
->   				(req->features & BIT_ULL(NPC_DMAC));
->   	}
-> -	/* msg received from PF/VF */
-> +
-> +	/* Representor device installing for a representee */
-> +	if (from_rep_dev && req->vf)
-> +		target = req->vf;
-This now makes all previous assignments to `target` useless. See (1) and (2)
-You created an if-else construct with an assignment to `target` in both 
-paths.
-Can you please check the logic again?
->   	else
-> +		/* msg received from PF/VF */
->   		target = req->hdr.pcifunc;
->   
->   	/* ignore chan_mask in case pf func is not AF, revisit later */
-> [...]
+Le Fri, Nov 15, 2024 at 04:04:02AM -0800, syzbot a écrit :
+> Hello,
+> 
+> syzbot tried to test the proposed patch but the build/boot failed:
+> 
+> security/apparmor/domain.c:695:3: error: expected expression
+> security/apparmor/domain.c:697:3: error: use of undeclared identifier 'new_profile'
+> security/apparmor/domain.c:699:8: error: use of undeclared identifier 'new_profile'
+> security/apparmor/domain.c:704:11: error: use of undeclared identifier 'new_profile'
+> 
+> Tested on:
+> 
+> commit:         744cf71b Add linux-next specific files for 20241115
+> git tree:       linux-next
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=75175323f2078363
+> dashboard link: https://syzkaller.appspot.com/bug?extid=852e935b899bde73626e
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> patch:          https://syzkaller.appspot.com/x/patch.diff?x=17c582e8580000
+> 
+
+Can you test on git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
+timers/core instead?
 
