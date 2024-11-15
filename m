@@ -1,124 +1,114 @@
-Return-Path: <linux-kernel+bounces-410409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D628D9CDB35
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:13:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 604B19CDB39
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:14:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CE041F2110D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:13:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BB411F21B20
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCE118E362;
-	Fri, 15 Nov 2024 09:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB14E18CBF2;
+	Fri, 15 Nov 2024 09:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="APVQaXVj"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R5I9e5Co"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C36188CD8;
-	Fri, 15 Nov 2024 09:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722FE188CD8
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731661986; cv=none; b=e13/q+dbS2JqazEIBhghxj+ESdzOCpLJx3I8Jgv0CdHM9CR4DpWH7jVlo1oSywwzb+u9CiUgOahLOGRiYZIPbe0mSY+k62+vXYMI9xu+qwwLj+B1oTo3PVibeT1aIlNnY69gmSwBCFV/XbhI/cGE89bTRYzqsO1PyJXZUOAHOdk=
+	t=1731662034; cv=none; b=RlR56MA9oQKaA0R7I97nwud9Wxqui4frHHGP7EmEOWSY4ozrTnTNP+MwNstAl7oW/3T4eZzYbxBifiAsDSftMI9ahejjrDBC2tRXCkFYjqVvUkxrL5BbFjf94adnpMpFUab05iqhoGJcULEXOSre4qBxF8dUjpUd4pDfTjwsqVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731661986; c=relaxed/simple;
-	bh=QsI/3Ha5rhxQCj1sLq7ej0Wjb7E9/WTx/ofKg1hjq/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dNFbQSI5nyEiE/F6ZFbJDTPOuVP4rK8r3+E/R41tBH0MxyJ564iVPUBLxFMqSjVJNLH9VlZbo9J0xjUcdRB0cz1ZqVwVfcJr3doIWshh9vf71la67h3pXI2C8/4o4U9/rpBk4jPWAxXdTeJm4DRKfOZoC51wlV+2up/ay2UMyqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=APVQaXVj; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id EBB591C000A;
-	Fri, 15 Nov 2024 09:12:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731661981;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1tCKgsw5mO3MHwzTtn95V8anwpIV8qQqwPzP1acmtXQ=;
-	b=APVQaXVjo/LSYd4+xRqmFl1A9WBWKDlAY1a9/agm4vbBS3KaoxD8ikVoIpRrwIwTmy80n7
-	ThId5bX78yYvD9yD90A+O05zV77U96jV22rR+KShYZPADaddte5vpti6H5IYBvORI/8nCF
-	Z8z37D0FGNraVvBCiThYmrk9T1Woyk99cKt7kbQicq+J2xjJguh93vt3BvZRdi9EfKOI+O
-	2WqO7clzSL+zUnAtzS9S+AVjDXPDIeChP29wy3pZCesTXL0oxssPvpXizjVzI8EzhK2kg1
-	KFFuXx8fwk8Kmw4MRzM8Gkkh2W/9/T4uY3GyGHpt5RjC/etOSdtS6Zlz44+EGg==
-Date: Fri, 15 Nov 2024 10:12:56 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal
- kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
- <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Richard
- Cochran <richardcochran@gmail.com>, Radu Pirea
- <radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh <j.vosburgh@gmail.com>, Andy
- Gospodarek <andy@greyhouse.net>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, Horatiu Vultur <horatiu.vultur@microchip.com>,
- UNGLinuxDriver@microchip.com, Simon Horman <horms@kernel.org>, Vladimir
- Oltean <vladimir.oltean@nxp.com>, donald.hunter@gmail.com,
- danieller@nvidia.com, ecree.xilinx@gmail.com, Andrew Lunn
- <andrew+netdev@lunn.ch>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, Maxime Chevallier
- <maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>,
- Willem de Bruijn <willemb@google.com>, Shannon Nelson
- <shannon.nelson@amd.com>, Alexandra Winter <wintera@linux.ibm.com>, Jacob
- Keller <jacob.e.keller@intel.com>
-Subject: Re: [PATCH net-next v19 03/10] ptp: Add phc source and helpers to
- register specific PTP clock or get information
-Message-ID: <20241115101256.34300900@kmaincent-XPS-13-7390>
-In-Reply-To: <20241114173906.71e9e6fb@kernel.org>
-References: <20241030-feature_ptp_netnext-v19-0-94f8aadc9d5c@bootlin.com>
-	<20241030-feature_ptp_netnext-v19-3-94f8aadc9d5c@bootlin.com>
-	<20241111150609.2b0425f6@kernel.org>
-	<20241112111232.1637f814@kmaincent-XPS-13-7390>
-	<20241112182226.2a6c8bab@kernel.org>
-	<20241113113808.4f8c5a0b@kmaincent-XPS-13-7390>
-	<20241113163925.7b3bd3d9@kernel.org>
-	<20241114114610.1eb4a5da@kmaincent-XPS-13-7390>
-	<20241114173906.71e9e6fb@kernel.org>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731662034; c=relaxed/simple;
+	bh=1gpbH+F/EyAt7/qdUtEQNzUhRagbx8xAr7oPVt5RjTg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ufKPQoSIGsyPdQwE2VuAy8BT+K/XLMERvvP35eMb3MI0EGkkRI7NBQjvmgK9FoCpaG9ltesPcl4F8EyZkk0P3cDvHCTFT7Hxh3e+73fgA4ghYMuKKt1IGeX8ky41iuzYsAAbRe+G+HM8KRWEtp2Z1DLbW+s8FLY/vkic+/JVNXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R5I9e5Co; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-431616c23b5so8904275e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 01:13:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731662030; x=1732266830; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B8COCFgpNqgb0Y7Anvsa8b6bhjh2JHm033ij5t0kw0Q=;
+        b=R5I9e5CoPM/aQPgX41XFKdbka73yFh+88oqZ/9hJqCCj+0y9MQRtJIX9f+wRfDaHLv
+         KiVC8C4n77YvLqMopfeX8Lk6JS/QuXvG0llSlpBBZAcqvZkr1fkLFjj+UtGw83XLgpCI
+         Obw0F1/nuX9CdXbq/YplY36vIqKtuDzmtMa8nuNocUaNnqOcBs41UxHVP1b20xoSkZY/
+         t2MOCoWP8/Ff3xRbxSafG0g6mKXekMr5mzPGmns7nljistl59aD3RKjWsR/B0+FZA3mJ
+         514/v9ROijofCtf/w/U0ifxdYgyeh3QXNzXdCPhVfnpvDd3oqbphHkDNfhw0eT/ipqD1
+         QV9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731662030; x=1732266830;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B8COCFgpNqgb0Y7Anvsa8b6bhjh2JHm033ij5t0kw0Q=;
+        b=M3GA0RJuMF9v7cZSapZhJEgoKuPlTVz9bXUY6j8oTqdsLuxTZHdeq3WWT+JPbAcIvH
+         Kelq2C1IJTpgnIKW7rdZBfUq6tXVw2xU/K7QC8JKPc8faZuHrBfA5TDzuz70XwCwypR3
+         YYGSszwyeVLXGrd4d/UaSIGnB5PBx3oxatI3IQpyX0svUF9FZlQqh0Klt6glrqp5KyoU
+         Y2k2xtxDZ6dDQ/hIjtfnvToV1YJ7/K+uPzCcWpMVX6ctxK14BlihLErweAJLPPpFJ5L0
+         Tgo6ImmsjvJ7xxPP4PsMYUry8Flp35QxrUMspHQdbGDzRDSRWeXAFpVK/Pq4EIYmSfa5
+         9agA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5vfbUcCtFXDFMpzfBzNHOSU3souRrtorLCF3iPWLreVSo4J4omaOSLQF0rRJoVUzXHgIOYSs1hCAREAI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiGEe5kWWWg7g8bU8Sn/07o2v+o1QOkmYeVy5lc2IRCSXXItvL
+	EFDUZz62wgUJSYt8dwWpFVt4S9lZgOoO24SN2t55qj0n4OoLXbLiZ1aHfD6eeSw=
+X-Google-Smtp-Source: AGHT+IFDwyeF9NdbO3uA8WPZbwIsipDKiK7gl4rjQvHP2ciMl3NTCJLQxQXZjpw4OVLXp1FI70A9Yw==
+X-Received: by 2002:a05:600c:a4c:b0:42c:b991:98bc with SMTP id 5b1f17b1804b1-432d95ad53cmr54878725e9.0.1731662029843;
+        Fri, 15 Nov 2024 01:13:49 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da298c81sm51915835e9.39.2024.11.15.01.13.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 01:13:49 -0800 (PST)
+Date: Fri, 15 Nov 2024 12:13:46 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] netfs: Remove duplicate check in
+ netfs_cache_read_terminated()
+Message-ID: <dfc4ac23-88eb-4293-b4dd-e617779ee7ac@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On Thu, 14 Nov 2024 17:39:06 -0800
-Jakub Kicinski <kuba@kernel.org> wrote:
+There are two checks for "if (transferred_or_error > 0)".  Delete
+the second check.
 
-> On Thu, 14 Nov 2024 11:46:10 +0100 Kory Maincent wrote:
->  [...] =20
-> > >=20
-> > > In net_device? Yes, I think so.   =20
-> > =20
-> > Also as the "user" is not described in the ptp_clock structure the only=
- way
-> > to find it is to roll through all the PTP of the concerned net device
-> > topology. This find ptp loop will not be in the hotpath but only when
-> > getting the tsinfo of a PHC or changing the current PHC. Is it ok for y=
-ou? =20
->=20
-> I think so :) We need to be able to figure out if it's the MAC PHC
-> quickly, because MAC timestamping can be high rate. But IIUC PHY
-> timestamping will usually involve async work and slow buses, so
-> walking all PHYs of a netdev should be fine. Especially that 99%
-> of the time there will only be one. Hope I understood the question..
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ fs/netfs/read_collect.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Yes, thanks for the confirmation.=20
+diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
+index 7f3a3c056c6e..431166d4f103 100644
+--- a/fs/netfs/read_collect.c
++++ b/fs/netfs/read_collect.c
+@@ -597,10 +597,8 @@ void netfs_cache_read_terminated(void *priv, ssize_t transferred_or_error, bool
+ 
+ 	if (transferred_or_error > 0) {
+ 		subreq->error = 0;
+-		if (transferred_or_error > 0) {
+-			subreq->transferred += transferred_or_error;
+-			__set_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags);
+-		}
++		subreq->transferred += transferred_or_error;
++		__set_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags);
+ 	} else {
+ 		subreq->error = transferred_or_error;
+ 	}
+-- 
+2.45.2
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
 
