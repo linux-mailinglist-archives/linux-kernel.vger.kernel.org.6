@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-411228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AC809CF4EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:35:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 448EE9CF4EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:35:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16CD51F23A3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:35:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1A161F21215
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB201E1C08;
-	Fri, 15 Nov 2024 19:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999C31E231A;
+	Fri, 15 Nov 2024 19:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GBo4Mi74"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V7SsUaBe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09361D460E;
-	Fri, 15 Nov 2024 19:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1411D79A5;
+	Fri, 15 Nov 2024 19:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731699282; cv=none; b=apCQsqTBn2FZ1+X3qs/gyJ06IItiJYPfXogICBUBvaogtQRTtwxPO2F4HNf4Wn1xoXxy0TJU7iQCtZtml10AK2r3bqFQJsVZpk/CqhlPSWHkwkEd+icOjGugBBed/aBBjyw2BHiaeO54RPKcAzj2p/Hnhqy75mPgkpPxODbuOhE=
+	t=1731699291; cv=none; b=BPr7SfJ0jPL2Sz3Usy9xJsexZrNy0ChpmQVTU8e+QR0MHIB1BitHJ+b1LkRkLhCZEIuUgnJN55XjZFXC9T2zFFj3drrbfVuGKVYZS0jlYYr3ATX3PEJqvdABB4oNybr+IkF1wkjjX93BpxHJzR7tzMBI86cF2SStyUzyuHVyDYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731699282; c=relaxed/simple;
-	bh=uDr9R5z1oVqKmrmb6zNl6rYSFhIlSqch6AMIcIbyUBQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MUYAR8jMvTJp7y8WQe+ppN6Eue4wq5wgj1ypdsOwJOzAlyytH8KM42+fD8V0ejx9IjUzfGTzZ/3Zjf4tjseTiuKaF8zwgD1ZobxAewreSZgXbMxmrOGvwdynXjYz/e4c8Qj6sg2lZs3ttN0YbV6LYnzjTcALKvEiss+3c6xAAqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GBo4Mi74; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74841C4CECF;
-	Fri, 15 Nov 2024 19:34:41 +0000 (UTC)
+	s=arc-20240116; t=1731699291; c=relaxed/simple;
+	bh=5Q9fb8YDBxlFGYuLZvt1DcCGk2Ua47pSnRgtP5m+60M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LRHEOkzozmKwtHe74i2ywbbHWPxj/NAOt9rq9JbFYE585+QUCOLSAT3ecpLeNPKV8xsSWpmxh1sVxho8I1jIZhrOb4MCQj3sivkgKLAPt8ZMbPNWN+mDcLIFq7w7vXZ4nRwU1U/+QrLcYPmiKJR0TOwFJpWFXHeQ2kCOKzb4Pgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V7SsUaBe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57922C4CED4;
+	Fri, 15 Nov 2024 19:34:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731699281;
-	bh=uDr9R5z1oVqKmrmb6zNl6rYSFhIlSqch6AMIcIbyUBQ=;
+	s=k20201202; t=1731699290;
+	bh=5Q9fb8YDBxlFGYuLZvt1DcCGk2Ua47pSnRgtP5m+60M=;
 	h=From:To:Cc:Subject:Date:From;
-	b=GBo4Mi748usO07oqRjVO2b1icnlBY0lidYAgcxkTgeCclZ0F6y/71KSaNJX9P9zC9
-	 lhGprp0879Q4M/xUTKIMPOR0iqppM/pBiDMi04s6FC1iEHhAx1g/IY5qk96aFl/zq+
-	 oYBM/7uCn1oS6A0dZvmPXuW9wPVRgPurZXJPvDQj4Q7wktOifMMgPDlLuE/+vv5TiB
-	 LewZG3nITgBBWcPzMtyjicGVxWFuba3TZKfyVdKSlAfOEqFJ3iLmqNLS1JSj/RuoZY
-	 fD/hdlM4rhhiAmQAgH5Hj87uKZL7ceBTdHAaS0ndMDgmvtfQoUNV41CjK3KMFTXYC6
-	 PyoJFDUELmzVA==
+	b=V7SsUaBe5yRM1mlp0O37yz41ODpSVlqeplh947rtxHuP2+M8YTemu/akhXBwCds0d
+	 UVjwZsHFnoeyPYrcKtxlt5LgBzXammuHPxhv9lk2/iFl+q36eTS+ITzmw9inqVA4Vc
+	 MPURP2Ddx+GhFYVBVc3oPiaQpxi9erQcYB/pDGbB1Y2F5VIQ+k0meL9XullVTMMJ3S
+	 Aml5kYX4LvZM2KVi4zg6JYSyE0esp5tD0+RQ3+spfItb8zrkCdRDZbAHmZLER39yrD
+	 2LFr/OSxE9nd5ALx9G1fG1YRmz575sx3ThxACdP4JO732t+i1gdXPqZhz0RMA22hB/
+	 BP56aOCe3haPA==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: qcom: Remove unused and undocumented properties
-Date: Fri, 15 Nov 2024 13:34:34 -0600
-Message-ID: <20241115193435.3618831-1-robh@kernel.org>
+Subject: [PATCH] arm64: dts: nvidia: Remove unused and undocumented "regulator-ramp-delay-scale" property
+Date: Fri, 15 Nov 2024 13:34:44 -0600
+Message-ID: <20241115193445.3619074-1-robh@kernel.org>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -59,43 +59,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove properties which are both unused in the kernel and undocumented.
-Most likely they are leftovers from downstream.
+Remove "regulator-ramp-delay-scale" property which is both unused in the
+kernel and undocumented. Most likely they are leftovers from downstream.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- arch/arm64/boot/dts/qcom/msm8994-msft-lumia-octagon.dtsi | 5 -----
- arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts        | 1 -
- 2 files changed, 6 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8994-msft-lumia-octagon.dtsi b/arch/arm64/boot/dts/qcom/msm8994-msft-lumia-octagon.dtsi
-index 10cd244dea4f..4c983b10dd92 100644
---- a/arch/arm64/boot/dts/qcom/msm8994-msft-lumia-octagon.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8994-msft-lumia-octagon.dtsi
-@@ -387,11 +387,6 @@ sideinteraction: touch@2c {
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+index c56824d7f4d8..0ecdd7243b2e 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+@@ -266,7 +266,6 @@ vdd_soc: sd0 {
+ 					regulator-max-microvolt = <1170000>;
+ 					regulator-enable-ramp-delay = <146>;
+ 					regulator-ramp-delay = <27500>;
+-					regulator-ramp-delay-scale = <300>;
+ 					regulator-always-on;
+ 					regulator-boot-on;
  
- 		interrupts = <&tlmm 96 IRQ_TYPE_EDGE_FALLING>;
+@@ -281,7 +280,6 @@ vdd_ddr: sd1 {
+ 					regulator-max-microvolt = <1150000>;
+ 					regulator-enable-ramp-delay = <176>;
+ 					regulator-ramp-delay = <27500>;
+-					regulator-ramp-delay-scale = <300>;
+ 					regulator-always-on;
+ 					regulator-boot-on;
  
--		button_num = <8>;
--		touchpad_num = <0>;
--		wheel_num = <0>;
--		slider_num = <0>;
--
- 		vcc-supply = <&vreg_l18a_2p85>;
- 	};
+@@ -296,7 +294,6 @@ vdd_pre: sd2 {
+ 					regulator-max-microvolt = <1350000>;
+ 					regulator-enable-ramp-delay = <176>;
+ 					regulator-ramp-delay = <27500>;
+-					regulator-ramp-delay-scale = <350>;
+ 					regulator-always-on;
+ 					regulator-boot-on;
  
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts b/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts
-index 486ce175e6bc..ddb82ecb0a92 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts
-@@ -452,7 +452,6 @@ touchscreen@38 {
- 		irq-gpio = <&tlmm 125 GPIO_TRANSITORY>;
- 		touchscreen-size-x = <1080>;
- 		touchscreen-size-y = <2160>;
--		focaltech,max-touch-number = <5>;
- 	};
- };
+@@ -311,7 +308,6 @@ vdd_1v8: sd3 {
+ 					regulator-max-microvolt = <1800000>;
+ 					regulator-enable-ramp-delay = <242>;
+ 					regulator-ramp-delay = <27500>;
+-					regulator-ramp-delay-scale = <360>;
+ 					regulator-always-on;
+ 					regulator-boot-on;
  
+@@ -326,7 +322,6 @@ vdd_sys_1v2: ldo0 {
+ 					regulator-max-microvolt = <1200000>;
+ 					regulator-enable-ramp-delay = <26>;
+ 					regulator-ramp-delay = <100000>;
+-					regulator-ramp-delay-scale = <200>;
+ 					regulator-always-on;
+ 					regulator-boot-on;
+ 
+@@ -341,7 +336,6 @@ vdd_pex_1v05: ldo1 {
+ 					regulator-max-microvolt = <1050000>;
+ 					regulator-enable-ramp-delay = <22>;
+ 					regulator-ramp-delay = <100000>;
+-					regulator-ramp-delay-scale = <200>;
+ 
+ 					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
+ 					maxim,active-fps-power-up-slot = <0>;
+@@ -354,7 +348,6 @@ vddio_sdmmc: ldo2 {
+ 					regulator-max-microvolt = <3300000>;
+ 					regulator-enable-ramp-delay = <62>;
+ 					regulator-ramp-delay = <100000>;
+-					regulator-ramp-delay-scale = <200>;
+ 
+ 					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
+ 					maxim,active-fps-power-up-slot = <0>;
+@@ -371,7 +364,6 @@ vdd_rtc: ldo4 {
+ 					regulator-max-microvolt = <1100000>;
+ 					regulator-enable-ramp-delay = <22>;
+ 					regulator-ramp-delay = <100000>;
+-					regulator-ramp-delay-scale = <200>;
+ 					regulator-disable-active-discharge;
+ 					regulator-always-on;
+ 					regulator-boot-on;
+@@ -395,7 +387,6 @@ avdd_1v05_pll: ldo7 {
+ 					regulator-max-microvolt = <1050000>;
+ 					regulator-enable-ramp-delay = <24>;
+ 					regulator-ramp-delay = <100000>;
+-					regulator-ramp-delay-scale = <200>;
+ 
+ 					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
+ 					maxim,active-fps-power-up-slot = <3>;
+@@ -408,7 +399,6 @@ avdd_1v05: ldo8 {
+ 					regulator-max-microvolt = <1050000>;
+ 					regulator-enable-ramp-delay = <22>;
+ 					regulator-ramp-delay = <100000>;
+-					regulator-ramp-delay-scale = <200>;
+ 
+ 					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
+ 					maxim,active-fps-power-up-slot = <6>;
 -- 
 2.45.2
 
