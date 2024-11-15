@@ -1,60 +1,88 @@
-Return-Path: <linux-kernel+bounces-410678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D729CDF92
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:06:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F529CDF98
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:07:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 094D01F23782
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:06:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 602BF1F2370F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81FC1BD038;
-	Fri, 15 Nov 2024 13:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB831BDA99;
+	Fri, 15 Nov 2024 13:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="CWyYMyPC"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OeR7N49F"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F7D1B6CF9;
-	Fri, 15 Nov 2024 13:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5597D1BBBE5
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 13:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731675984; cv=none; b=D+Kkwa0poWv4HA2sWl/aOTCTE2Mk+bL7tbqEZUzzHo8Tb+mvQT3M4bkKZB/qUffYO/dXIzXp3iQHIv00L4srHXwwL9NZlNz5UY+DZ/CxPdbtsrha/qUB2cD9hNUHRL3M4K6dCLSs/3r6okIebWqDyabkVS2iwyW4Zk06xRDsdrg=
+	t=1731676060; cv=none; b=qhvm7aUrRdavdn8PGuKfJUaDBnqIiVpYsRYJFy1HO9FkyAzu//iPwhF9bcrWRW0W6JlUhiUlhaekkqjlD3DRdh+iO+kHr35mg6R3A8HBGqpuVxa1QBdy77kHIwuPiI7DNQe8MJjPE3BClkMdeJKmtkNZ0wWfTcEOVHqHnw3sdWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731675984; c=relaxed/simple;
-	bh=0eF0vOaGssguAoiMP21XSAJfT0Z42HQ/ac9qHzQxDVQ=;
+	s=arc-20240116; t=1731676060; c=relaxed/simple;
+	bh=dEY4bMcfjN2jDnrT5hwQmo7mPSnSCSRep4/jww4nqDk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FY2qMzO5Z/0L+oISaaqYe+lltn29IK3HUU5UNHhTaSLHcUEHxFiE7ECFlGyS8zQAyzDtrHS28fS3OWinO6AT7MEKOyT1ecoql2qvJxif/pO1LjHX/hQN9tZkVrgUkMBdiJVXo3Z6Fp0Xs5AQp3VnKHm95wrSYB1bnI0nX76Engg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=CWyYMyPC; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Vv0FLUCJEZyjB6cbqruzLtbW2MikMqFy044j2M/d6aU=; b=CWyYMyPCEcS1TpR6j4uVmAfJYy
-	QGlk1K9V+JCR1c2LCqvwqBq1ybvkxd/fPnXNVFDTJpSj1ZNYZvY0WlMs7I7aaGi7Gj+GjwUgvNOnm
-	r3VeSFom1sT9qJKCP3zDdsbyhcKCy8PiLMypcIqX/9A+BHM7/MGNpKzTPeLusH0Re8WyECUjIUF7g
-	fmPufO1107YjyXiZtkE5UEwtX2gxyQW7VyJYWQnPtDhqIcZKihgs3iKxPdRtQ4wPzrPvXTnnXSccq
-	QIVsK8bvP+w5k2OtEHORSbX5hXAyFKqoe4PbIKDfYvIoGrLBL6hcfcYp4xR4Dq9QnNF1xJqwrKCZv
-	GQf+cTFA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tBw1f-0000000FRQP-2Nbs;
-	Fri, 15 Nov 2024 13:06:15 +0000
-Date: Fri, 15 Nov 2024 13:06:15 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com,
-	almaz.alexandrovich@paragon-software.com, brauner@kernel.org,
-	jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] fs: add check for symlink corrupted
-Message-ID: <20241115130615.GR3387508@ZenIV>
-References: <67363c96.050a0220.1324f8.009e.GAE@google.com>
- <20241115094908.3783952-1-lizhi.xu@windriver.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FGhThStthGS0E0iT36Q19QaDGHPkZY8GdyAGaWPEhqKv/9oE91yEDCoDfD4YBxwDSBkiKXnL+NfQ3bU/8smHDDaq8ld1L3vS063GEcuF9DBKLnKi3flOBmj8HNqcDvXXQfmnEiW2VgPLcfnFwXTw+97dAeVyELm34uSgN+SgbR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OeR7N49F; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-432d9b8558aso11192385e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 05:07:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731676058; x=1732280858; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZiAfY0lvd8epGAfG9vNvMumF0065glHRGxW52XCXbkY=;
+        b=OeR7N49FEZcEypjrT2B5wTO9I0SN3XO19ljXjY1GToDAbiwQtlcD3w86yI+MpGbKex
+         G5D7T8Y9KKY9bXAEDXwYdQCCN9Oq9mchRtSPp5bdUkaNKpADhVkRIX7+nSXQJYicmUCq
+         YZSUK0CB+cQRz0V1k/mdDKqHgrkpEU5Ospsp70McnQruzWO12wovDQ5hH5ofJ8lVGlwY
+         HGNH9IiDTspUNqHrYVjogxryBXOGHgLVCsUEpsQuHeidNTd9kgapVSj4dH+YSfwjwsJr
+         bcl/pfyC7Ox3HJUHiJm9fpmDWc+DfrCQkluNlmUMSC6FqRLEZkYHPV4A7oEnSkVI5tNH
+         M/8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731676058; x=1732280858;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZiAfY0lvd8epGAfG9vNvMumF0065glHRGxW52XCXbkY=;
+        b=j0lvFKnSP0ajDec8iQh3skJxDvAjwlRlVA+sJf35fIXTgoiZXcVuNVlKtIUNeEhmZ7
+         b5nmnfD8AzYAyvhYeZbHiax9nCiRO7AbgMjRt5VCC/ZkxIkQVphJa73i94JfoUeLkAZV
+         jC2accLNzDzk5S4KaFM+P3BayKKoKqzwW3Qz9rtYqLQWwUqsdSXLRB+cJWdiyYLmpYyE
+         dWAegJPfKmgVj/Lv7j8j7r8sFzZWlMe+hTkSph78P1Djsf5TY0SV+1nMrqQvOXrczR6K
+         l8W83+6saZmug1icsQLdAV0KUyP6I+OZ3/UcpW6Hupmkwbdx2cNHKtWBW0CSqIzU3ScY
+         hl1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV5YbHE3eZB7RVgEEsZB5TyPQmjRsAMD6XqhfQwxOjeBlDtsD2BEYJW5iDiC54sFsIagKvdi46ITanvggY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/hn2hSKQoEyglw1MDWmke5zWJDLzkBMpvGq0/gn/acmStaJLQ
+	H6RiCaqloHtJPTT2RGat88/rE84PjhFaY0VdTVVNg6xt3jSSagQwTN6Bz2tKkMQ=
+X-Google-Smtp-Source: AGHT+IFLypSUXKMXZQokl7jiW1yVHZc6DmXrur69Qui95mFW1vmj5vxRjJRCT3fWilyBKdsvE8W84w==
+X-Received: by 2002:a05:600c:1c95:b0:431:416e:2603 with SMTP id 5b1f17b1804b1-432d9726874mr70098235e9.3.1731676057729;
+        Fri, 15 Nov 2024 05:07:37 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab7878esm54044435e9.14.2024.11.15.05.07.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 05:07:37 -0800 (PST)
+Date: Fri, 15 Nov 2024 16:07:33 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Shuah Khan <shuah@kernel.org>,
+	Linux Kernel Functional Testing <lkft@linaro.org>,
+	Kernel Selftests <linux-kselftest@vger.kernel.org>,
+	Netdev <netdev@vger.kernel.org>,
+	Linux Kernel <linux-kernel@vger.kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Willem de Bruijn <willemb@google.com>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Ido Schimmel <idosch@nvidia.com>, stable@vger.kernel.org
+Subject: Re: LKFT CI: improving Networking selftests results when validating
+ stable kernels
+Message-ID: <226bc28f-d720-4bf9-90c9-ebdd4e711079@stanley.mountain>
+References: <ff870428-6375-4125-83bd-fc960b3c109b@kernel.org>
+ <1bda012e-817a-45be-82e2-03ac78c58034@stanley.mountain>
+ <c4ed1f88-e43b-4b12-bffc-faf27879042c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,17 +91,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241115094908.3783952-1-lizhi.xu@windriver.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <c4ed1f88-e43b-4b12-bffc-faf27879042c@kernel.org>
 
-On Fri, Nov 15, 2024 at 05:49:08PM +0800, Lizhi Xu wrote:
-> syzbot reported a null-ptr-deref in pick_link. [1]
-> When symlink's inode is corrupted, the value of the i_link is 2 in this case,
-> it will trigger null pointer deref when accessing *res in pick_link(). 
+On Fri, Nov 15, 2024 at 01:43:14PM +0100, Matthieu Baerts wrote:
+> Regarding the other questions from my previous email -- skipped tests
+> (e.g. I think Netfilter tests are no longer validated), KVM,
+> notifications -- do you know who at Linaro could eventually look at them?
 > 
-> To avoid this issue, add a check for inode mode, return -EINVAL when it's
-> not symlink.
 
-NAK.  Don't paper over filesystem bugs at pathwalk time - it's the wrong
-place for that.  Fix it at in-core inode creation time.
+The skip tests were because they lead to hangs.  We're going to look at those
+again to see if they're still an issue.  And we're also going to try enable the
+other tests you mentioned.
+
+regards,
+dan carpenter
+
 
