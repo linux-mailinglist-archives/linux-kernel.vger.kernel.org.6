@@ -1,57 +1,43 @@
-Return-Path: <linux-kernel+bounces-411055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 708969CF250
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:03:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BBFE9CF252
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:04:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2896E1F210A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:03:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 083351F2135A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B321D516B;
-	Fri, 15 Nov 2024 17:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TvAiwS/E"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B8A1CEE9F;
+	Fri, 15 Nov 2024 17:04:17 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15854163;
-	Fri, 15 Nov 2024 17:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BF9824BD
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731690207; cv=none; b=KcHBP45kc24xQ9Gba7iP8PxrmEwOA3ElSvcPtWNSk0bFKwbxk1afbatZ5b0WILE197O5Uz8RBbqJy7O6KZMVkG3f7dSlbHAYQmhx8kHRjaAt1nlf8wXxhJLgtyuDWekc6hYjIWI/01Qv5I95ciqm5jfIzGjD+Ie2USSfkQC3HP0=
+	t=1731690257; cv=none; b=c3Hxi9TDudoL19PeTMBg7m65uAMCqrmI5iBEfcWs8NAG6hcaTnQo5pOHHICVZ67gLXJiGriTyr9MrFxj2ViaktbR66k+toD8TrKF98YX6PkUSvxdO8Q3xAOozgu8w8XNL9HBfsJO3mvj85F0nWeH+nk4mFO44YMy55KDbvzPkls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731690207; c=relaxed/simple;
-	bh=ugQtQNrTRgu0hoK5Nnku/3CrqPXtkQCqjUnpyQHX4oU=;
+	s=arc-20240116; t=1731690257; c=relaxed/simple;
+	bh=18TjxhQb+YKXZD251KG3svx1YFfN87EPwE3g63hQQsE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CvII6w457uPWgLMzZ2rRKsLa+x6Xcy4hLOUwsN8y1qSE09/cKoyof9hRnFXFqlz+7hwoEzJmuPquoeSMtO7vVblmmwK3NWc2HnTou9VC03LOVKJ5c+g156HrXvQ6jt3Ci+7cc4r/gvy/mAM/rTt1UHbri+5gcUXj/7Nx6PGvsP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TvAiwS/E; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=K7zEdA/GzcTPZjE4/1GuhRRBG5KqT+kHRTv9twkHvWc=; b=TvAiwS/EV/jX3qrud/O99k1nKI
-	NjJxvKfabJMbBitmzQWIM68kxPvWp1akGfKbmPixhigy3efSIoTgI125qI5SfYQ1emjVlJOkb3KqH
-	HPlATuVJplJkaEWAg7RDshEYgRR9PlB7Cfi0lXjZdNanPUOc0Kcks39YaxJ8c98WWikvgxIi0RIVf
-	pMOQ9jkcKE7AU4XNukakqSomhGJaTNxRkq3cT4EBwS7fqoWN6+lQoZouEHCN5v7fBGWtBVQtJe/YX
-	Q53GgGRU3SeZRcpdkoWMjmN2cVkzQhnGNRS17545qXK+hWNvQDE8oj0eGNj3XElyeXUZdLcV0b0k7
-	8OjrMIsw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tBzj8-000000007JN-2Jo1;
-	Fri, 15 Nov 2024 17:03:22 +0000
-Date: Fri, 15 Nov 2024 17:03:22 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Suraj Sonawane <surajsonawane0215@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzbot+18dd03a3fcf0ffe27da0@syzkaller.appspotmail.com
-Subject: Re: [PATCH] hfs: Fix uninitialized value issue in hfs_iget
-Message-ID: <Zzd-2iVB2AtJaxR8@casper.infradead.org>
-References: <20240923180050.11158-1-surajsonawane0215@gmail.com>
- <e43ec7eb-6acf-41e3-b7f9-f0391bf4cb65@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gpz2Y46mIVWuLKWOQwsKa8OXXYrCpLyyd74QJM1UxyYF/9EjEgWyP7vlVu96pTg5IJglckZ0a65ZR4YW9QSsCFiXjxDXQSBc2/32HXv1X/86B4TpCbRQmVG1JQ1itq8pkgFRNEG2f4ikIPJBOxpkgcTqUzneKGiY5W/dReVpPBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 374C868D0A; Fri, 15 Nov 2024 18:04:11 +0100 (CET)
+Date: Fri, 15 Nov 2024 18:04:11 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: "brookxu.cn" <brookxu.cn@gmail.com>
+Cc: kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] nvme-core: auto add the new ns while UUID changed
+Message-ID: <20241115170411.GA23437@lst.de>
+References: <20241115083727.30005-1-brookxu.cn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,26 +46,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e43ec7eb-6acf-41e3-b7f9-f0391bf4cb65@gmail.com>
+In-Reply-To: <20241115083727.30005-1-brookxu.cn@gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Fri, Nov 15, 2024 at 09:22:31PM +0530, Suraj Sonawane wrote:
-> On 23/09/24 23:30, SurajSonawane2415 wrote:
-> > Fix uninitialized value issue in hfs_iget by initializing the hfs_cat_rec
-> > structure in hfs_lookup.
+On Fri, Nov 15, 2024 at 04:37:27PM +0800, brookxu.cn wrote:
+> From: "Chunguang.xu" <chunguang.xu@shopee.com>
+> 
+> Now spdk will change UUID of ns while restarted if we have not
+> specified one. At this time, while host try to reconnected to target,
+> as UUID have changed, we will remove the old ns, but not add the ns
+> with the new UUID.
 
-This doesn't make sense to me.  I don't see how we get to hfs_iget()
-with an uninit "rec".
-
-        hfs_cat_rec rec;
-...
-        res = hfs_brec_read(&fd, &rec, sizeof(rec));
-        if (res) {
-...
-        } else {
-                inode = hfs_iget(dir->i_sb, &fd.search_key->cat, &rec);
-
-Unless there's a path in hfs_brec_read() which returns 'success' while
-not actually filling in all of 'rec', in which case that's the bug which
-needs to be fixed.
+And that is broken behavior.  The host must assume the namespace has
+been deleted and recreated when the eui/nguid/uuid change, and we need
+to catch this.  Fix your broken target code instead.
 
 
