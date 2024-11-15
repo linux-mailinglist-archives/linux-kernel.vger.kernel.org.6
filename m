@@ -1,114 +1,96 @@
-Return-Path: <linux-kernel+bounces-410416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33DB49CDB4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:16:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93D069CDB41
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:15:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251C9281B29
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:16:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F36C1F22074
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E24018FC67;
-	Fri, 15 Nov 2024 09:16:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920AD18CC1C;
+	Fri, 15 Nov 2024 09:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="nYx/xMnS"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KhTFDEyp"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDDF18E023;
-	Fri, 15 Nov 2024 09:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059EC18A6AF;
+	Fri, 15 Nov 2024 09:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731662177; cv=none; b=rqxhdtb0w1+PWClbVjYeXCYuhuA5r1GoYGlq+iZB4E0J4h3QoShTf9PPNt0sZuLkkLb3oY7L22wtyU2puHvjOn5MxNEYA+GsdkWTG6P7wHineP9NMuUs14pFflRk9xVqyQU0DwBDqn6Mkyc2oHMq2sPRT9aSP6VPTJoYyPKi8bA=
+	t=1731662145; cv=none; b=EoMWzRcwoXRJ5Zb1po1tOcdn/Ie6SPhSc2UvQ53hIBQSueTYTw2ioeYccDMC5YKnN6GkxcMzRKN0/moPYUtF5UPcyk5AC56kL9QM64odvwc1fQ5dv1GGObuwOMNC4wENgLPdAeu4ulelz/gYZ9//wDPrpfDIOdbzYWFKO+xdo4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731662177; c=relaxed/simple;
-	bh=mnLqYpfwXtTq4fXllzCQ+RGjySFJ4lzVvQWl4EZjpfc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n5j7daEaTy04cG4kVcAl36ECjNWoWWd0Vm96r0tyAdnunMKJc5EBEBP2qeaLES8niULaQ0kMayJaM8JAB50wRvzi6UaNs/S8NvMgdGyjI3w1bKnNoLOw1PMJKwWZMMO8Yi53ZmiAlRpZIxT775acIsJfewaE+eFPDVCS1FJh5gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=nYx/xMnS; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1731662130; x=1732266930; i=markus.elfring@web.de;
-	bh=E+Icr/aX3ElCH1MMRCRUs3gMV8SMIiG9vSLedfc9yu0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=nYx/xMnSvPSPoDWsDSuuiCjnlk6K6hYB7SF+Ps56ywpnLjH7N/mmvL/vaOHQjMje
-	 kk6RQCd0bkoyXEUhy5fhzZh9ojCLXuUxFw6Kx8v0rgxO9mJMkzaMfHsAo6IIzAgt/
-	 p4xTOC8E1QAe4PnwH4n1mp/qUz/GdlO7bTqPX1OZZSEkUlgEwGGINWuktEGuMdZBg
-	 ZePGZGyasax0MRhVtceIZ5n0FO/KxUcQcrcSEXcVVMWKVXfmrWJQ3bVgRSxMpQm9m
-	 SDClsjJS6t1uvBSRUDNpiEl3iE6WpTiFr35lYE2/zx5yaNPBQoLnQqNAuxW+Sd+i/
-	 TfOv8JIlb/SFN48xPA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MZSBQ-1tEie42w6g-00PhiA; Fri, 15
- Nov 2024 10:15:30 +0100
-Message-ID: <80f19f8c-b520-494d-b087-407f1455e6ca@web.de>
-Date: Fri, 15 Nov 2024 10:15:20 +0100
+	s=arc-20240116; t=1731662145; c=relaxed/simple;
+	bh=LYj0ZplyG9Vo0EPIMvcwA1YhtRdMisOa3iNrdZWcQIA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Zsuk2aeN5/LicPs8pwq4CJ0tvnfASwIzstKzbVjpmtQekxrFG2+TQ0t0ngNWZn/6z13YXZF4mMb3fSdCNHmmtffBuhQ21vxIXh4aYDcHftwX5sjQ329ifZvgCABu2ofWeDJGjC4Uqh7t6BbOUZ1fwBa6dyix1eJSR/0UzaYE+XM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KhTFDEyp; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1731662134; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=bXirQB7Wpqqf9oweOV3ntUvN9WtR57BGS51ClJ8dkgs=;
+	b=KhTFDEyp4PZxmb7CrXN2AIKJvxHBbAB00lGs/jRE5dN4QDbq7JesQ53HdOXphS7PFAh7ohfn0f84ttzyFlKm9uGWOHxUvHf98jRVcw0SQjEkwAScvSRrPvvM8m6opR/eDY/91zVBcylDks0YXvKWJcUIU3TH1y8XT5Lxa9xE4EM=
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WJT6t0I_1731662128 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 15 Nov 2024 17:15:33 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: peterz@infradead.org
+Cc: mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] perf tests: Fix an incorrect type in append_script()
+Date: Fri, 15 Nov 2024 17:15:27 +0800
+Message-Id: <20241115091527.128923-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: chcr_ktls: fix a possible null-pointer dereference in
- chcr_ktls_dev_add()
-To: Tuo Li <islituo@gmail.com>, netdev@vger.kernel.org,
- Andrew Lunn <andrew@lunn.ch>, Ayush Sawal <ayush.sawal@chelsio.com>,
- "David S. Miller" <davem@davemloft.net>, Dragos Tatulea
- <dtatulea@nvidia.com>, Eric Dumazet <edumazet@google.com>,
- Jacob Keller <jacob.e.keller@intel.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Mina Almasry <almasrymina@google.com>,
- Simon Horman <horms@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Jia-Ju Bai <baijiaju1990@gmail.com>
-References: <20241030132352.154488-1-islituo@gmail.com>
- <55a08c90-df62-41cd-8ab9-89dc8199fbfb@web.de>
- <1fcd2645-e280-4505-aa75-f5a6510b5940@gmail.com>
- <7f5b2359-c549-4de2-b4c3-977e66a1c1fa@web.de>
- <a33a3a58-ae24-464e-874b-bb924fa32f69@gmail.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <a33a3a58-ae24-464e-874b-bb924fa32f69@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:KL8Rx4sT1ddO0a31FlJ6HMHi7uh2c54kv64cutPxW/Rc/ecJIGf
- XfyT93xnL598M6HsPez6jdluGaVbyK9tQil+bRpf2we735HPX/ahPortF16pyatDOU74fCd
- por3m1KVu7p8TgJi/mb+S84DplamYC0v4B7nFv2GRgJ63laeO3/RpWi94CLchSIeWdQxmQ1
- /U9Fgjfv7ykrouDtfHf7g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ThLgTY+wA8g=;et2047jeaIxfbwB36BT8uilVD6q
- AgVaeWRWGaTjQwE39vonXPSAItyvVIzXkzDdJ4eDxDCFvr/duo9Z/l3LFIzrD70pg/ECiwbCD
- qCcO+5I/xh/OhahOokoEJ/bZCoQJq+cmEq7FVBWxqExSXNhl1fRZjtwQY6kZu7WTiIFblpj9+
- yqZgl1P6FpIo9TEQ/j1fKzCEbvPcAQxYGl+HwciXZ17a4iQZF5EQBg4aFQxXEMOzq1tCkueXD
- orpE9N+83GSlUc/3FcXYvgnYT+ssFsLBLVO89aqZ91cRriClIDNWQwOwnZ3qI9YyNABxvPUDJ
- bWuciINJ/IkxhBuK9oYu/TaptD3YPyILlWtnd/3jKe32LTb8EVvPZjggCXb8fxxCA3mTT2n3l
- om1+riXNNUk+aQ9II3LGPfV7m7p8p2fElwWv3oKKInDIpZDl0A9Q9zjPPrn5l6avEw/8FSVE6
- MFhMlH3co3JMVXLPVpLQdVlIt/r+2xAnjRv1ni2RIiMtCbd4pEPVJVEd3QzB094wMhnG+2IWj
- EBAs5i24bCOgF3UU4kr3iZpE9THgm3Ic58VuXmyARqKuhL3hYQfBfZcPxEA2tuaAVivowFEbP
- GvvVjmo6KEB7QHJfbFusZ/dbHPCvwd7uTbhdrPF00LIbwg8L3B/E1EAa6u0PtJ/0IbX5NcM5G
- HXX1rxRKnfevjBs/Qy+UA9FR4iYA1M8cgnJtFN0aYdZXakoCgsbFKaAY+lt1ddeoBXR2KpQLa
- Co1Z8P0mKSVzmy3aHBjnchsSwqBqUAzOpGTekn1heaPb3xEUXm8jG2T/L7CeEwh41hPU26A82
- eBi+Oueu10crXAVHEUyfxEoZJdrjdyaipXYiuHI8KT93aTT5FbmwH2kZIH35P7N/JNQ3nmOpo
- 3xBCLt8eOQ4ZXBFCx1/BgXnOV0vep83E2MGwYiFxvcRQja7i0V4X9mv28
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
->   chcr_ktls_cpl_act_open_rpl()   //641
-=E2=80=A6
->   chcr_ktls_dev_add()  //412=E2=80=A6
+The return value from the call to readlink() is ssize_t. However, the
+return value is being assigned to an size_t variable 'len', so making
+'len' an ssize_t.
 
-* How do you think about to improve your change description another bit?
+./tools/perf/tests/tests-scripts.c:182:5-8: WARNING: Unsigned expression compared with zero: len < 0.
 
-* Why do you try to refer to two different function implementations here?
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11909
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+ tools/perf/tests/tests-scripts.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-* Will further adjustment possibilities become interesting?
+diff --git a/tools/perf/tests/tests-scripts.c b/tools/perf/tests/tests-scripts.c
+index cf3ae0c1d871..1d5759d08141 100644
+--- a/tools/perf/tests/tests-scripts.c
++++ b/tools/perf/tests/tests-scripts.c
+@@ -174,7 +174,7 @@ static void append_script(int dir_fd, const char *name, char *desc,
+ 	char filename[PATH_MAX], link[128];
+ 	struct test_suite *test_suite, **result_tmp;
+ 	struct test_case *tests;
+-	size_t len;
++	ssize_t len;
+ 	char *exclusive;
+ 
+ 	snprintf(link, sizeof(link), "/proc/%d/fd/%d", getpid(), dir_fd);
+-- 
+2.32.0.3.g01195cf9f
 
-
-Regards,
-Markus
 
