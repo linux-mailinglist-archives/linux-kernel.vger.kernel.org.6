@@ -1,107 +1,88 @@
-Return-Path: <linux-kernel+bounces-410541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D00579CDD0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:54:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F072B9CDD0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:54:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43366B22985
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:54:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BEA8282FA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6141B6CE3;
-	Fri, 15 Nov 2024 10:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33901B3920;
+	Fri, 15 Nov 2024 10:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="LxD2iVQS"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jg9JOtXn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683491B393C
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FC4136338
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731668028; cv=none; b=tfr9yUIqgwI1G7Gf4OrcLoQBnnocURiUgjRZ36iJv+GIgu3Jl6AqPBGfmi38MhQuO71WAyf4Ik2YgtGJszcwQwjMFQghQHQCHyWHG4gFt0lUUEwCZRcj+Q1vZgY5WUjOOnLVs8uX6bBoyLZVgfqn6heWZiQNVtAOMuijuI7/+Qo=
+	t=1731668078; cv=none; b=L8jkwk2SKsdOHF2UDzun6BSfRfpgI4OEZpNZ935hGF0sUDEYRn6+ruSRAhfSyyr2ZkbeklrIwo2ZoH3i1hmP9mwebf9JkpUh/sTODy+UhGmW9+52Rhi4VbeSPIRcs2vK0rDp1/epuTGfD4qAzmACxO1BJIY8CHeghMtQscnx1Nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731668028; c=relaxed/simple;
-	bh=Aze8ubsJfw20CCAheENnV0TxOaVpLIudKLyqB1mUmWs=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TkeydevKseACiQ/8SqBAaQhiCkZAd5zTsjYcuhzXEcI33gf2ysZx1AeJ1/JL4got/2gKPGiXn9+IW2Fkkxj1uS0PGCZhVojsySpP0hFmSAUcYlu3PrVCfbicoy8CK2DbIyi65kK8tTJL/K9NpYpflyDFiklulT3fsyGJFlgWKBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=LxD2iVQS; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb56cb61baso4509241fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 02:53:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731668023; x=1732272823; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kqEZZaXWIaNRK9OLE5Wx827F0bUtvaOZcgVtTnimPxg=;
-        b=LxD2iVQSWDliHa7Qm3U3T/EF+DEPxdk9Ry8F7GTgz3VvaNne5Bk1xmuxG6LqbmMXDz
-         5rlp5x3XY53Lq88fHFqXPax4sm/eWCl63dMf8NDRiPHsqBmsRNFtnIaJS9g7oygJahmr
-         yOXnNQlESkzsmaTIhRvy97jxtpiq4j8KaBGB/cREmFctrM/vwQzXRsKMoMV9q46oy8gz
-         miY6W2t5FL5k1Xzc6cQ1NVZEzOOn17TiwTYFlTubfSdjVbzgWUPzhfMeXCOLE2ULq2HA
-         WyCXiqEGTDgOU277xMcpAN87RLgbLg5KBgZ6NI90hAMsIuBXhXrWI9+t7wkIVZ9nBY0y
-         sgZA==
+	s=arc-20240116; t=1731668078; c=relaxed/simple;
+	bh=kJYUB7rGj6m30IJq7NMeEAdvdHtt/hMzg8P+2e0dRhc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iT/TyEgmbi+ZfxRHirQstSJ+BFFI5+X37A5qAMid0Gem0A6j/Cf2saqrolI7T5QaGFL5HntvgVpGRkctguKmsy7Q/W3nggINJVfRsWv9gXOWMv49vqOjo1PCGOmlYXyDKehyJOVM0aud2uu2GXpCReny+9hPaZDOrNDgxk/jZeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jg9JOtXn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731668075;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kJYUB7rGj6m30IJq7NMeEAdvdHtt/hMzg8P+2e0dRhc=;
+	b=Jg9JOtXnpxWY23wa69Xy9kFb3SIy/ng7WCzh/VeYffflRBKvjojwRvMVG7vKdC4ui1KvVL
+	ZP2q/8kOe4eg2NIT/7dbHEzkxZFySepoMwfRyJQ9LFesLnRJ5uhzhM4Hwyxlv0na4LWDt0
+	JUiSCfSpJ4vm/QDpOzNXYoRrVTY8HPQ=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-682-3m-zchwuNBaJsGtbBtIKBg-1; Fri, 15 Nov 2024 05:54:34 -0500
+X-MC-Unique: 3m-zchwuNBaJsGtbBtIKBg-1
+X-Mimecast-MFC-AGG-ID: 3m-zchwuNBaJsGtbBtIKBg
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3822ec50b64so27862f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 02:54:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731668023; x=1732272823;
+        d=1e100.net; s=20230601; t=1731668073; x=1732272873;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kqEZZaXWIaNRK9OLE5Wx827F0bUtvaOZcgVtTnimPxg=;
-        b=qxG/QkUCnoY9SNSO5mNWmB5rxEjzi0be7X/FDBM7IoL1NgPIQ7TCgp1DX99nCwFJ5P
-         8w5HN+XX7GYemRqsNzvHUw8gPn9MpV8VVrVMB1MwVAsE5Txa8R9BzaIW7kTSm2zcKYrc
-         XtdirCwybCQMxrwIUlg7Krzy6a+0jKvOKPexf2MEnQkl/5sNz6Z0C38fBc2sJwrxUdH7
-         DXdDXjwcPLuvHjVLE7Cb+BOOP47GTjfGd2Arx7TCMRK20nSGQStPB9DyWArgJ7lCDjtd
-         QbwsWrI61OqnDDKqcs1iDjy3dVeHeNFoXT2NRLDvy4r4Vz3t4hf5snHBNEzEeJ6+98hq
-         gXIA==
-X-Forwarded-Encrypted: i=1; AJvYcCVpkqEYBoFLjaQJES0cD2mnszQzbODbbh88Ib97zXQtg4gbxLR6I0L9MoC68dm2phkamQNlJoiQjeqvVKU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmQDLQy79SHvl5RiJxnZSMDtNWtbt69L/g2FsOlR9HVI9/Jm6a
-	eBqSWk8BHQHqZ999El/48OG+aQborndWaCnF09pbrQ4jAKEvvOaDMHkdbprmXGE=
-X-Google-Smtp-Source: AGHT+IFHVLZ9JHkGOvekL5vmiZxKEfDLHTUYv8vjzg0FSLM0sIjZA/dYE3eiUJZBbLbHkNSDwDDmVw==
-X-Received: by 2002:a05:651c:245:b0:2fa:c59d:1af3 with SMTP id 38308e7fff4ca-2ff606933a3mr12846531fa.20.1731668023447;
-        Fri, 15 Nov 2024 02:53:43 -0800 (PST)
-Received: from localhost (host-79-19-144-50.retail.telecomitalia.it. [79.19.144.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf9010b12bsm531260a12.41.2024.11.15.02.53.42
+        bh=kJYUB7rGj6m30IJq7NMeEAdvdHtt/hMzg8P+2e0dRhc=;
+        b=OODRv0Zk4UkKDxHj+UAhmBQrmfJ7hAfYB5gcBu/SvCMml+vnKytoI8pPksgfsBmYAO
+         71gwQteXaDwJ/awfGHH//vYlmWoq1ekNEEqsDSbuQAB6DxHSCID6n35kK9N2OQfHlkqq
+         bvgtvF9YbNg7ds6USd0Zlmg+WUzDcVHkP7bNhdq1YDqSCQQXdoLYA5ojOMlL0HjJ+c/3
+         yR2bOJ+0OvvZWhK+sAeFNI34Xl3yQoU+bakO0u9ham9MRtsukpdt0vfwEsGbU56NB99e
+         RO9fLVjKYJFWA4m3vt+4T9EBevN58EymOyv107lslr20HYkOh6QCAb22cIQC+OpAYTBI
+         ZW7g==
+X-Forwarded-Encrypted: i=1; AJvYcCWISqTYFuxP6fj5hOENUXpllCAOHMHT8AkwMMXfbGMH8MZ5aLZTFqdatrhd3SFla6nbdLWUmLhAA/Q+mow=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvjIXyriaBHoTVcIjVHC9Tm1bfPxblgomhbk32JEf8ym0oojv5
+	0cp2ifEKFDgEkoefL0Zs7/gDA3sWHk+LjUafHV/B168wEdCL5ouD3WDNjby8s14e02kiRqLI/rJ
+	NQ4ouxvx9vReH94fh4UG0OV4EiJeXH9+36NwFIxK445xaztk3Y0OYizhxeycARA==
+X-Received: by 2002:a05:6000:2c6:b0:382:1c58:5787 with SMTP id ffacd0b85a97d-38225a89fe4mr1992784f8f.46.1731668072814;
+        Fri, 15 Nov 2024 02:54:32 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGMLLahLve2i85NSHyBQknYctxJFodWGkT2mc+GIqMJNAdazw+5Xuwbvgn0mTfJ/qu2SQDiMw==
+X-Received: by 2002:a05:6000:2c6:b0:382:1c58:5787 with SMTP id ffacd0b85a97d-38225a89fe4mr1992766f8f.46.1731668072454;
+        Fri, 15 Nov 2024 02:54:32 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-47-4-194.as13285.net. [80.47.4.194])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821adad619sm4022252f8f.27.2024.11.15.02.54.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 02:53:43 -0800 (PST)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Fri, 15 Nov 2024 11:54:11 +0100
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>, stable@vger.kernel.org
-Subject: Re: [PATCH 2/2] of: address: Preserve the flags portion on 1:1
- dma-ranges mapping
-Message-ID: <ZzcoU8ckE7wXWC8w@apocalypse>
-References: <ae3363eb212b356d526e9cfa7775c6dfea33e372.1731060031.git.andrea.porta@suse.com>
- <20241108165654.GA1665761@bhelgaas>
+        Fri, 15 Nov 2024 02:54:31 -0800 (PST)
+Date: Fri, 15 Nov 2024 10:54:30 +0000
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Waiman Long <longman@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Phil Auld <pauld@redhat.com>
+Subject: Re: [PATCH] cgroup/cpuset: Disable cpuset_cpumask_can_shrink() test
+ if not load balancing
+Message-ID: <ZzcoZj90XeYj3TzG@jlelli-thinkpadt14gen4.remote.csb>
+References: <20241114181915.142894-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -110,64 +91,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241108165654.GA1665761@bhelgaas>
+In-Reply-To: <20241114181915.142894-1-longman@redhat.com>
 
-Hi Bjorn,
+Hi Waiman,
 
-On 10:56 Fri 08 Nov     , Bjorn Helgaas wrote:
-> On Fri, Nov 08, 2024 at 11:39:21AM +0100, Andrea della Porta wrote:
-> > A missing or empty dma-ranges in a DT node implies a 1:1 mapping for dma
-> > translations. In this specific case, the current behaviour is to zero out
-> > the entire specifier so that the translation could be carried on as an
-> > offset from zero.  This includes address specifier that has flags (e.g.
-> > PCI ranges).
-> > Once the flags portion has been zeroed, the translation chain is broken
-> > since the mapping functions will check the upcoming address specifier
-> > against mismatching flags, always failing the 1:1 mapping and its entire
-> > purpose of always succeeding.
-> > Set to zero only the address portion while passing the flags through.
-> 
-> Add blank lines between paragraphs.
+On 14/11/24 13:19, Waiman Long wrote:
+> With some recent proposed changes [1] in the deadline server code,
+> it has caused a test failure in test_cpuset_prs.sh when a change
+> is being made to an isolated partition. This is due to failing
+> the cpuset_cpumask_can_shrink() check for SCHED_DEADLINE tasks at
+> validate_change().
 
-Ack.
+What sort of change is being made to that isolated partition? Which test
+is failing from the test_cpuset_prs.sh collection? Asking because I now
+see "All tests PASSED" running that locally (with all my 3 patches on
+top of cgroup/for-6.13 w/o this last patch from you).
 
-> 
-> > Fixes: dbbdee94734b ("of/address: Merge all of the bus translation code")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > Tested-by: Herve Codina <herve.codina@bootlin.com>
-> > ---
-> >  drivers/of/address.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/of/address.c b/drivers/of/address.c
-> > index 286f0c161e33..72b6accff21c 100644
-> > --- a/drivers/of/address.c
-> > +++ b/drivers/of/address.c
-> > @@ -455,7 +455,8 @@ static int of_translate_one(struct device_node *parent, struct of_bus *bus,
-> >  	}
-> >  	if (ranges == NULL || rlen == 0) {
-> >  		offset = of_read_number(addr, na);
-> > -		memset(addr, 0, pna * 4);
-> > +		/* copy the address while preserving the flags */
-> 
-> Not knowing the surrounding code, it seems strange to say "copy the
-> address" when the memset() fills with zero and does no copying.
-> 
-> The commit log says "set address to zero, pass flags through," and I
-> could believe *that* matches the memset().
+Thanks,
+Juri
 
-Ack.
-
-Many thanks,
-Andrea
-
-> 
-> > +		memset(addr + pbus->flag_cells, 0, (pna - pbus->flag_cells) * 4);
-> >  		pr_debug("empty ranges; 1:1 translation\n");
-> >  		goto finish;
-> >  	}
-> > -- 
-> > 2.35.3
-> > 
 
