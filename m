@@ -1,454 +1,188 @@
-Return-Path: <linux-kernel+bounces-410520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C76CC9CDCB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:36:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6CBB9CDCC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:39:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DB461F238CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:36:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 781FE282EE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9E619CD08;
-	Fri, 15 Nov 2024 10:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3ACD1B3921;
+	Fri, 15 Nov 2024 10:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hCNtK54i"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XYP+2N0F"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E1518950A
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7654E38DD8;
+	Fri, 15 Nov 2024 10:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731666976; cv=none; b=NlWBLhftuw2uwUphMI7mFzww0RRqBicGrtr6m1OphTg8YyoucPxO9dCONXIDqEranRlszpwaNfE+8EXqFf0K4SwU+QvPAkSV0XeLq1SPC7AkZFPm6Tk4OJIsDOrXBLwVvIPT8KVHMSQe8PGgj9ArUIHzpnSqLj7BD9Ht833TDfc=
+	t=1731667124; cv=none; b=o5BNWsce0nsnASzIHjvTyb3naihMZGzpWxgSDWaEDKrzR9S9ewScMDyHYv8k9zhOQgEtAWluWSezmXF5Imi6giMQE7j9yTz3ymcZoZKFx1Sz9aIzGnLNHmEwGb0RAz1nvTkcPrkZmLgHIo5hfq1SBzN4lSsUEdEIzu0EI7PCZ/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731666976; c=relaxed/simple;
-	bh=0ICS41chj1IXvCClZepPcoSop9V6lyZFbioF8sspHl8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=edroXKFasP0qFQ4YLZJnweTiu7NX8xu+OugYLoKw2VFn3gc6kbERAUIGDNQXyQwe/wmsUrM1JK8xcS0dB8XVLwY5XYWZL1YQjrOVthS7PBG48FgMgvc16wYKP5bfsw36Nwurf9pRpb46tgNjEmk8g9PRiZINQJdu6gdjBxM3Aw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hCNtK54i; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731666972;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=cHQ6htVX/G4IOPWLSuJ9JMewXYWtm+ZQ8nEDgpbt6UU=;
-	b=hCNtK54i3TYHSj/NqC54Th8d1gAXny2OpzpayQUjAp3JdbNW0uUlgs/x0eFJtwn6xyfn03
-	WB/LqPkyPjAIzjtUUr6mQp+sqn8o8Xvi2IkDAOI1VjFU0ScXP6TDSCkUbkfO/n+VK7mI7v
-	0bKDAF1yMWj/YAAN2oZ+dimm7DEx2DM=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-561-jYMQ0L5ENc-t2UhLxW__QA-1; Fri, 15 Nov 2024 05:36:10 -0500
-X-MC-Unique: jYMQ0L5ENc-t2UhLxW__QA-1
-X-Mimecast-MFC-AGG-ID: jYMQ0L5ENc-t2UhLxW__QA
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4315afcae6cso9818165e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 02:36:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731666969; x=1732271769;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cHQ6htVX/G4IOPWLSuJ9JMewXYWtm+ZQ8nEDgpbt6UU=;
-        b=RZb96NP1c2t4sYNN91aYV3YGg3T4jDrlfp6pmVBPsQmHlTFmr9AQuofM7rWQTVPdIi
-         dLKdGPxzr4T6uJ8CJymLuK6cdFkdNuPNzgr9GPqnLpRtGBE65KjzLMxofFZ8XP87lZam
-         gVa55fdUdXB4CkidxWrYyuYWlyt5EMGl/+/gjkb6kw8U65gCdLLz+0Hfjkn3kHIrZWzC
-         ZanVxQAzSavcz1lp8+BuOYFzBoTqUSapG/72TiW/zmknlRCU80pNV47FB9IwTn5TQTPE
-         aqu8D1897V5oIGNz+xIOGK1unLp8ux4PMk9wXCiM04lFbkhVAYhjENQq832JxsTvvl+u
-         Jh0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUrJxhjigLZ21OvV7OVNcSlJhP/mxRJEFyW4ffEliZpCGNntFZtrTup1aADXZUI1crplRsV6u8NHfcjYtk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6S+EGFeqGkqHJ3i+vE7sNG/E7sg1xjJIr5X+lVGAQxwE8M0r8
-	/Mt27/ygcahLYfeY4nelpZHP+jXMywZyhLx28N1vgGdsvsGbGwamAspwsOXxY2L2nhWx0uzuG50
-	C9WSyw1N9Axz3rObWypHnVjvcGy3AeQVPyRIIaBqwizxG4UtQUr+TsDiHYoufuw==
-X-Received: by 2002:a05:600c:5120:b0:42c:b603:422 with SMTP id 5b1f17b1804b1-432defe3438mr20297365e9.8.1731666969256;
-        Fri, 15 Nov 2024 02:36:09 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFEAkw+4KtGxbqXPVgexI1Pjg6wJXQXTINQOuPgRiGfGfHR44ozYnEiMr598/WBPOjUAipBZw==
-X-Received: by 2002:a05:600c:5120:b0:42c:b603:422 with SMTP id 5b1f17b1804b1-432defe3438mr20296985e9.8.1731666968771;
-        Fri, 15 Nov 2024 02:36:08 -0800 (PST)
-Received: from eisenberg.redhat.com (nat-pool-muc-u.redhat.com. [149.14.88.27])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dac1f94asm49265375e9.39.2024.11.15.02.36.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 02:36:08 -0800 (PST)
-From: Philipp Stanner <pstanner@redhat.com>
-To: David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Luben Tuikov <ltuikov89@gmail.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Philipp Stanner <pstanner@redhat.com>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-Subject: [PATCH] drm/sched: Extend and update documentation
-Date: Fri, 15 Nov 2024 11:35:49 +0100
-Message-ID: <20241115103548.90605-2-pstanner@redhat.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731667124; c=relaxed/simple;
+	bh=H0boV9wNcUaUvCupA60cDstG/1gsv7QE+nR0hEYIg5M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=q/YfCc5h9xrk49RatsgvTkRQy4Y44NyBFUR3jO3CCJAKjfReFCKrTMVqjUJJAQV87sOlOoEXUFyMY6AAvwX46n/skyrgfTdfS5D4YR+igeIu21RJMdjzZO0VI1k56rv1REn9lur8cTMq6gxaTyzSoK0OKT4+vSr2cvhEwyXKO+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XYP+2N0F; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AF8Txkh000925;
+	Fri, 15 Nov 2024 10:38:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lDwx/1QgYatgC+hjwnNrOs23Jwv/LxH8QR2w7LLcHWc=; b=XYP+2N0FXLEqUkIn
+	zNTtCw2ekwWP7t0EFPoL1qu5vFFB60aC/kTIUKhJ5PjjNxPljNqydpL1P3LO4bIh
+	SRlurFdifDzGwLH7Oo+yh4GKMknaSK8RJGbfVpcOM2Cr9uSrsDWXCmRqg9y3meQv
+	LzGOTc1W9+hyem8qDtzoCO63Xk+t0il7PlM7xQQ4gK56L48s/riPP2+jnuMxpET9
+	XRgECqkxLDFHbc5Vh5MNPeLDJfSV7aG4lub9i1PRMTiuH02eS340i0jgXPDxs3k3
+	KGHk3pRjO6NY/qlmZmBeJ8wjh0iB83QE3PaxdlLQRbwe3S1nFyIYtF/22XVT6rpA
+	VbYobg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42w9sv5kc6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 10:38:34 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AFAcXbF008339
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 10:38:33 GMT
+Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 15 Nov
+ 2024 02:38:27 -0800
+Message-ID: <dbcb01e8-9f5f-4e54-bfe4-e7be8185c7aa@quicinc.com>
+Date: Fri, 15 Nov 2024 16:08:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 7/7] arm64: dts: qcom: ipq5424: Add thermal zone nodes
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Konrad Dybcio
+	<konradybcio@gmail.com>,
+        <srinivas.kandagatla@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <amitk@kernel.org>,
+        <thara.gopinath@gmail.com>, <rafael@kernel.org>,
+        <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
+References: <20241104124413.2012794-1-quic_mmanikan@quicinc.com>
+ <20241104124413.2012794-8-quic_mmanikan@quicinc.com>
+ <91ea0f03-9bbe-491d-9056-ebd9fdc73bfa@oss.qualcomm.com>
+ <8cb665f5-4885-4853-804a-7313decc719c@quicinc.com>
+ <2c7ece9d-95e8-4d01-a9da-c1d5d7388771@gmail.com>
+ <fc676574-ffac-40d2-aa47-8d7cb61b5e3f@quicinc.com>
+ <9bd3d4e2-aba1-423c-946a-f5c60da71497@oss.qualcomm.com>
+ <f5ceee66-9d09-44f9-9217-3abd467d1086@quicinc.com>
+ <6565a4ec-6db6-4442-a07f-ace467c47395@oss.qualcomm.com>
+Content-Language: en-US
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <6565a4ec-6db6-4442-a07f-ace467c47395@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: muIduWTVexMo6APGjOVLJ_AIR6Oi6xe5
+X-Proofpoint-GUID: muIduWTVexMo6APGjOVLJ_AIR6Oi6xe5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ lowpriorityscore=0 impostorscore=0 adultscore=0 bulkscore=0 clxscore=1015
+ mlxlogscore=999 priorityscore=1501 phishscore=0 malwarescore=0
+ suspectscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411150090
 
-The various objects defined and used by the GPU scheduler are currently
-not fully documented. Furthermore, there is no documentation yet
-informing drivers about how they should handle timeouts.
 
-Add documentation describing the scheduler's objects and timeout
-procedure. Consistently, update drm_sched_backend_ops.timedout_job()'s
-documentation.
 
-Co-developed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
----
-I shamelessly stole- ahm, borrowed this documentation patch that
-Christian had submitted a year ago:
+On 11/12/2024 4:32 PM, Konrad Dybcio wrote:
+> 
+> 
+> On 11-Nov-24 12:51, Manikanta Mylavarapu wrote:
+>>
+>>
+>> On 11/7/2024 8:17 PM, Konrad Dybcio wrote:
+>>> On 6.11.2024 11:25 AM, Manikanta Mylavarapu wrote:
+>>>>
+>>>>
+>>>> On 11/6/2024 2:42 PM, Konrad Dybcio wrote:
+>>>>>
+>>>>>
+>>>>> On 11/6/24 09:47, Manikanta Mylavarapu wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 11/4/2024 7:21 PM, Konrad Dybcio wrote:
+>>>>>>> On 4.11.2024 1:44 PM, Manikanta Mylavarapu wrote:
+>>>>>>>> Add thermal zone nodes for sensors present in IPQ5424.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>>>>>>>> ---
+>>>>>>> [...]
+>>>>>>>
+>>>>>>>> +
+>>>>>>>> +        cpu3-thermal {
+>>>>>>>> +            polling-delay-passive = <0>;
+>>>>>>>> +            polling-delay = <0>;
+>>>>>>>> +            thermal-sensors = <&tsens 13>;
+>>>>>>>> +
+>>>>>>>> +            trips {
+>>>>>>>> +                cpu-critical {
+>>>>>>>> +                    temperature = <120000>;
+>>>>>>>> +                    hysteresis = <9000>;
+>>>>>>>> +                    type = "critical";
+>>>>>>>> +                };
+>>>>>>>> +
+>>>>>>>> +                cpu-passive {
+>>>>>>>> +                    temperature = <110000>;
+>>>>>>>> +                    hysteresis = <9000>;
+>>>>>>>> +                    type = "passive";
+>>>>>>>
+>>>>>>> You have a passive trip point without passive polling
+>>>>>>>
+>>>>>>
+>>>>>> Okay, will remove this.
+>>>>>
+>>>>> You most likely want to preserve it, while keeping a sensible
+>>>>> polling frequency, so that userspace will be aware of the current
+>>>>> CPU temperature. <100> sounds like a sensible value here.
+>>>>>
+>>>>> Konrad
+>>>>
+>>>> Temperature sensor's present in IPQ5424 supports interrupts.
+>>>
+>>> Correct.
+>>>
+>>>> Hence no need to configure polling frequency.
+>>>
+>>> No, that interrupt firing signifies crossing the temp threshold (meaning
+>>> no updates beyond that) or the tsens watchdog barking.
+>>>
+>>> Konrad
+>>
+>> An interrupt fires when the temperature crosses a threshold.
+> 
+> Which means you can't monitor the temperature at runtime
+> without polling..
+> 
+> Konrad
 
-https://lore.kernel.org/dri-devel/20231116141547.206695-1-christian.koenig@amd.com/
+Hi Konrad,
 
-I took feedback from last year into account where applicable, but it's
-probably a good idea if you all take a close look again.
+I got the point. Will configure polling-delay-passive with 100.
 
-P.
----
- Documentation/gpu/drm-mm.rst           |  36 +++++
- drivers/gpu/drm/scheduler/sched_main.c | 200 ++++++++++++++++++++++---
- include/drm/gpu_scheduler.h            |  16 +-
- 3 files changed, 225 insertions(+), 27 deletions(-)
-
-diff --git a/Documentation/gpu/drm-mm.rst b/Documentation/gpu/drm-mm.rst
-index d55751cad67c..95ee95fd987a 100644
---- a/Documentation/gpu/drm-mm.rst
-+++ b/Documentation/gpu/drm-mm.rst
-@@ -556,12 +556,48 @@ Overview
- .. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
-    :doc: Overview
- 
-+Job Object
-+----------
-+
-+.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
-+   :doc: Job Object
-+
-+Entity Object
-+-------------
-+
-+.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
-+   :doc: Entity Object
-+
-+Hardware Fence Object
-+---------------------
-+
-+.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
-+   :doc: Hardware Fence Object
-+
-+Scheduler Fence Object
-+----------------------
-+
-+.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
-+   :doc: Scheduler Fence Object
-+
-+Scheduler and Run Queue Objects
-+-------------------------------
-+
-+.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
-+   :doc: Scheduler and Run Queue Objects
-+
- Flow Control
- ------------
- 
- .. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
-    :doc: Flow Control
- 
-+Error and Timeout handling
-+--------------------------
-+
-+.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
-+   :doc: Error and Timeout handling
-+
- Scheduler Function References
- -----------------------------
- 
-diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-index e97c6c60bc96..76eb46281985 100644
---- a/drivers/gpu/drm/scheduler/sched_main.c
-+++ b/drivers/gpu/drm/scheduler/sched_main.c
-@@ -24,28 +24,155 @@
- /**
-  * DOC: Overview
-  *
-- * The GPU scheduler provides entities which allow userspace to push jobs
-- * into software queues which are then scheduled on a hardware run queue.
-- * The software queues have a priority among them. The scheduler selects the entities
-- * from the run queue using a FIFO. The scheduler provides dependency handling
-- * features among jobs. The driver is supposed to provide callback functions for
-- * backend operations to the scheduler like submitting a job to hardware run queue,
-- * returning the dependencies of a job etc.
-+ * The GPU scheduler is shared infrastructure intended to help drivers managing
-+ * command submission to their hardware.
-  *
-- * The organisation of the scheduler is the following:
-+ * To do so, it offers a set of scheduling facilities that interact with the
-+ * driver through callbacks which the latter can register.
-  *
-- * 1. Each hw run queue has one scheduler
-- * 2. Each scheduler has multiple run queues with different priorities
-- *    (e.g., HIGH_HW,HIGH_SW, KERNEL, NORMAL)
-- * 3. Each scheduler run queue has a queue of entities to schedule
-- * 4. Entities themselves maintain a queue of jobs that will be scheduled on
-- *    the hardware.
-+ * In particular, the scheduler takes care of:
-+ *   - Ordering command submissions
-+ *   - Signalling DMA fences, e.g., for finished commands
-+ *   - Taking dependencies between command submissions into account
-+ *   - Handling timeouts for command submissions
-  *
-- * The jobs in a entity are always scheduled in the order that they were pushed.
-+ * All callbacks the driver needs to implement are restricted by DMA-fence
-+ * signaling rules to guarantee deadlock free forward progress. This especially
-+ * means that for normal operation no memory can be allocated in a callback.
-+ * All memory which is needed for pushing the job to the hardware must be
-+ * allocated before arming a job. It also means that no locks can be taken
-+ * under which memory might be allocated as well.
-  *
-- * Note that once a job was taken from the entities queue and pushed to the
-- * hardware, i.e. the pending queue, the entity must not be referenced anymore
-- * through the jobs entity pointer.
-+ * Memory which is optional to allocate, for example for device core dumping or
-+ * debugging, *must* be allocated with GFP_NOWAIT and appropriate error
-+ * handling if that allocation fails. GFP_ATOMIC should only be used if
-+ * absolutely necessary since dipping into the special atomic reserves is
-+ * usually not justified for a GPU driver.
-+ *
-+ * Note especially the following about the scheduler's historic background that
-+ * lead to sort of a double role it plays today:
-+ *
-+ * In classic setups N entities share one scheduler, and the scheduler decides
-+ * which job to pick from which entity and move it to the hardware ring next
-+ * (that is: "scheduling").
-+ *
-+ * Many (especially newer) GPUs, however, can have an almost arbitrary number
-+ * of hardware rings and it's a firmware scheduler which actually decides which
-+ * job will run next. In such setups, the GPU scheduler is still used (e.g., in
-+ * Nouveau) but does not "schedule" jobs in the classical sense anymore. It
-+ * merely serves to queue and dequeue jobs and resolve dependencies. In such a
-+ * scenario, it is recommended to have one scheduler per entity.
-+ */
-+
-+/**
-+ * DOC: Job Object
-+ *
-+ * The base job object (drm_sched_job) contains submission dependencies in the
-+ * form of DMA-fence objects. Drivers can also implement an optional
-+ * prepare_job callback which returns additional dependencies as DMA-fence
-+ * objects. It's important to note that this callback can't allocate memory or
-+ * grab locks under which memory is allocated.
-+ *
-+ * Drivers should use this as base class for an object which contains the
-+ * necessary state to push the command submission to the hardware.
-+ *
-+ * The lifetime of the job object needs to last at least from submitting it to
-+ * the scheduler (through drm_sched_job_arm()) until the scheduler has invoked
-+ * drm_sched_backend_ops.free_job() and, thereby, has indicated that it does
-+ * not need the job anymore. Drivers can of course keep their job object alive
-+ * for longer than that, but that's outside of the scope of the scheduler
-+ * component.
-+ *
-+ * Job initialization is split into two stages:
-+ *   1. drm_sched_job_init() which serves for basic preparation of a job.
-+ *      Drivers don't have to be mindful of this function's consequences and
-+ *      its effects can be reverted through drm_sched_job_cleanup().
-+ *   2. drm_sched_job_arm() which irrevokably arms a job for execution. This
-+ *      activates the job's fence, i.e., it registers the callbacks. Thus,
-+ *      inevitably, the callbacks will access the job and its memory at some
-+ *      point in the future. This means that once drm_sched_job_arm() has been
-+ *      called, the job structure has to be valid until the scheduler invoked
-+ *      drm_sched_backend_ops.free_job().
-+ *
-+ * It's important to note that after arming a job drivers must follow the
-+ * DMA-fence rules and can't easily allocate memory or takes locks under which
-+ * memory is allocated.
-+ */
-+
-+/**
-+ * DOC: Entity Object
-+ *
-+ * The entity object (drm_sched_entity) which is a container for jobs which
-+ * should execute sequentially. Drivers should create an entity for each
-+ * individual context they maintain for command submissions which can run in
-+ * parallel.
-+ *
-+ * The lifetime of the entity *should not* exceed the lifetime of the
-+ * userspace process it was created for and drivers should call the
-+ * drm_sched_entity_flush() function from their file_operations.flush()
-+ * callback. It is possible that an entity object is not alive anymore
-+ * while jobs previously fetched from it are still running on the hardware.
-+ *
-+ * This is done because all results of a command submission should become
-+ * visible externally even after a process exits. This is normal POSIX
-+ * behavior for I/O operations.
-+ *
-+ * The problem with this approach is that GPU submissions contain executable
-+ * shaders enabling processes to evade their termination by offloading work to
-+ * the GPU. So when a process is terminated with a SIGKILL the entity object
-+ * makes sure that jobs are freed without running them while still maintaining
-+ * correct sequential order for signaling fences.
-+ */
-+
-+/**
-+ * DOC: Hardware Fence Object
-+ *
-+ * The hardware fence object is a DMA-fence provided by the driver as result of
-+ * running jobs. Drivers need to make sure that the normal DMA-fence semantics
-+ * are followed for this object. It's important to note that the memory for
-+ * this object can *not* be allocated in drm_sched_backend_ops.run_job() since
-+ * that would violate the requirements for the DMA-fence implementation. The
-+ * scheduler maintains a timeout handler which triggers if this fence doesn't
-+ * signal within a configurable amount of time.
-+ *
-+ * The lifetime of this object follows DMA-fence refcounting rules. The
-+ * scheduler takes ownership of the reference returned by the driver and
-+ * drops it when it's not needed any more.
-+ */
-+
-+/**
-+ * DOC: Scheduler Fence Object
-+ *
-+ * The scheduler fence object (drm_sched_fence) which encapsulates the whole
-+ * time from pushing the job into the scheduler until the hardware has finished
-+ * processing it. This is internally managed by the scheduler, but drivers can
-+ * grab additional reference to it after arming a job. The implementation
-+ * provides DMA-fence interfaces for signaling both scheduling of a command
-+ * submission as well as finishing of processing.
-+ *
-+ * The lifetime of this object also follows normal DMA-fence refcounting rules.
-+ * The finished fence is the one normally exposed to the outside world, but the
-+ * driver can grab references to both the scheduled as well as the finished
-+ * fence when needed for pipelining optimizations.
-+ */
-+
-+/**
-+ * DOC: Scheduler and Run Queue Objects
-+ *
-+ * The scheduler object itself (drm_gpu_scheduler) does the actual work of
-+ * selecting a job and pushing it to the hardware. Both FIFO and RR selection
-+ * algorithm are supported, but FIFO is preferred for many use cases.
-+ *
-+ * The lifetime of the scheduler is managed by the driver using it. Before
-+ * destroying the scheduler the driver must ensure that all hardware processing
-+ * involving this scheduler object has finished by calling for example
-+ * disable_irq(). It is *not* sufficient to wait for the hardware fence here
-+ * since this doesn't guarantee that all callback processing has finished.
-+ *
-+ * The run queue object (drm_sched_rq) is a container for entities of a certain
-+ * priority level. This object is internally managed by the scheduler and
-+ * drivers shouldn't touch it directly. The lifetime of a run queue is bound to
-+ * the scheduler's lifetime.
-  */
- 
- /**
-@@ -72,6 +199,43 @@
-  * limit.
-  */
- 
-+/**
-+ * DOC: Error and Timeout handling
-+ *
-+ * Errors schould be signaled by using dma_fence_set_error() on the hardware
-+ * fence object before signaling it. Errors are then bubbled up from the
-+ * hardware fence to the scheduler fence.
-+ *
-+ * The entity allows querying errors on the last run submission using the
-+ * drm_sched_entity_error() function which can be used to cancel queued
-+ * submissions in drm_sched_backend_ops.run_job()  as well as preventing
-+ * pushing further ones into the entity in the driver's submission function.
-+ *
-+ * When the hardware fence doesn't signal within a configurable amount of time
-+ * drm_sched_backend_ops.timedout_job() gets invoked. The driver should then
-+ * follow the procedure described in that callback's documentation.
-+ * (TODO: The timeout handler should probably switch to using the hardware
-+ * fence as parameter instead of the job. Otherwise the handling will always
-+ * race between timing out and signaling the fence).
-+ *
-+ * The scheduler also used to provided functionality for re-submitting jobs
-+ * and, thereby, replaced the hardware fence during reset handling. This
-+ * functionality is now marked as deprecated. This has proven to be
-+ * fundamentally racy and not compatible with DMA-fence rules and shouldn't be
-+ * used in new code.
-+ *
-+ * Additionally, there is the function drm_sched_increase_karma() which tries
-+ * to find the entity which submitted a job and increases its 'karma' atomic
-+ * variable to prevent resubmitting jobs from this entity. This has quite some
-+ * overhead and resubmitting jobs is now marked as deprecated. Thus, using this
-+ * function is discouraged.
-+ *
-+ * Drivers can still recreate the GPU state in case it should be lost during
-+ * timeout handling *if* they can guarantee that forward progress will be made
-+ * and this doesn't cause another timeout. But this is strongly hardware
-+ * specific and out of the scope of the general GPU scheduler.
-+ */
-+
- #include <linux/wait.h>
- #include <linux/sched.h>
- #include <linux/completion.h>
-diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
-index 9c437a057e5d..c52363453861 100644
---- a/include/drm/gpu_scheduler.h
-+++ b/include/drm/gpu_scheduler.h
-@@ -417,8 +417,8 @@ struct drm_sched_backend_ops {
- 	struct dma_fence *(*run_job)(struct drm_sched_job *sched_job);
- 
- 	/**
--	 * @timedout_job: Called when a job has taken too long to execute,
--	 * to trigger GPU recovery.
-+	 * @timedout_job: Called when a hardware fence didn't signal within a
-+	 * configurable amount of time. Triggers GPU recovery.
- 	 *
- 	 * This method is called in a workqueue context.
- 	 *
-@@ -429,9 +429,8 @@ struct drm_sched_backend_ops {
- 	 *    scheduler thread and cancel the timeout work, guaranteeing that
- 	 *    nothing is queued while we reset the hardware queue
- 	 * 2. Try to gracefully stop non-faulty jobs (optional)
--	 * 3. Issue a GPU reset (driver-specific)
--	 * 4. Re-submit jobs using drm_sched_resubmit_jobs()
--	 * 5. Restart the scheduler using drm_sched_start(). At that point, new
-+	 * 3. Issue a GPU or context reset (driver-specific)
-+	 * 4. Restart the scheduler using drm_sched_start(). At that point, new
- 	 *    jobs can be queued, and the scheduler thread is unblocked
- 	 *
- 	 * Note that some GPUs have distinct hardware queues but need to reset
-@@ -447,16 +446,15 @@ struct drm_sched_backend_ops {
- 	 * 2. Try to gracefully stop non-faulty jobs on all queues impacted by
- 	 *    the reset (optional)
- 	 * 3. Issue a GPU reset on all faulty queues (driver-specific)
--	 * 4. Re-submit jobs on all schedulers impacted by the reset using
--	 *    drm_sched_resubmit_jobs()
--	 * 5. Restart all schedulers that were stopped in step #1 using
-+	 * 4. Restart all schedulers that were stopped in step #1 using
- 	 *    drm_sched_start()
- 	 *
- 	 * Return DRM_GPU_SCHED_STAT_NOMINAL, when all is normal,
- 	 * and the underlying driver has started or completed recovery.
- 	 *
- 	 * Return DRM_GPU_SCHED_STAT_ENODEV, if the device is no longer
--	 * available, i.e. has been unplugged.
-+	 * available, for example if it has been unplugged or failed to
-+	 * recover.
- 	 */
- 	enum drm_gpu_sched_stat (*timedout_job)(struct drm_sched_job *sched_job);
- 
--- 
-2.47.0
-
+Thanks & Regards,
+Manikanta.
 
