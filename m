@@ -1,200 +1,176 @@
-Return-Path: <linux-kernel+bounces-411446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 280209CFA60
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:51:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D0269CFA74
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:54:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BD62B631F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:17:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E697BB42FDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:18:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68BFE1FB3FC;
-	Fri, 15 Nov 2024 22:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFB119066E;
+	Fri, 15 Nov 2024 22:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ocEo32kT"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2055.outbound.protection.outlook.com [40.107.236.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96B618FC85;
-	Fri, 15 Nov 2024 22:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731708471; cv=fail; b=PfB1VkpjS42OpyD/qiU54RZ8xi3xSEMzLwY2Y/JzUjCdPQfOtvI3NM5sEIQSdztNDX6e9a5P/OW8yEKQFqy7+U52nVQgCPto7VyF3SNFUZvYbze1WYQpkcFlX7XCa+kfO6ylWuZd4DANo9lxLmXMh+R7hOgEenb82Q4bZS5CQcM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731708471; c=relaxed/simple;
-	bh=nyODJze3mDc7/HVEB+B0kaPDBpiucJtoIuHo61wYeQo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lrHtbflseVNfCgesyj8xvKyjxLQH9O3gTfEbIiK1sUeFILSS2auEoKiv911NYt0loFBYCIaD0svGzFanR5uupSeE5crCzFsO0YSC6sE1y7yAcN7lprPTbFXSoEpizh3i2IvvI4T3/OH7C4EZ1SK23jEd6rAh3qJFWX7T0czc1iI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ocEo32kT; arc=fail smtp.client-ip=40.107.236.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=I9MiPUdDABoKZbTmq2afLvWwiKpDeQcHTZwOT4pgk3QLl/PyLc/0Q4CNepTGvtHizlunZUbtqk/meATNx9iLKpkUKBTz8sTineAFsQQ16xua17shJtalMzpHW/FnDXASoADLeDOEWiOjaR+sipXz3TYuSPE+XKgMdj14GMiYr+e6vJyH7TwmYiqoHYnypet67ZvSRrdPL8nkPZyoje065zkRUueWprJsNByfTCa90JeH3aISVRFS40AQ8YcXVhn23yVEqOwnDvAOPdtAgiRLfqlNtRWNpc8D1K1fIG8UQwKKwjSBX1yxADs52/PqRuQH0l/ToRYgx3WimGqUIr4BHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=S9YCAIyUXuiy3ZA3JcO80lK2jziJI6MXACvAflD25BQ=;
- b=WQj7qcuSoqal1dKG35NSUdanwS2ltm4Kn7ntZMni6YGfqAhP49xCcjYYXJpljQK2F2mugPqvJuU94t+jJNxbJAp40HXzo1C0CaqCAwyGmv0foiF6I/UIWZhvQv1RYKbxNvSABfJq4qhuN0u837UBvWd4ENjLso7UGNA/ppglPzL0wndXTbCAKeTsm+f9X/7lc36AMgGNjqrv92DCy1HxOA89LsG1BYqN8BBVsIhyYGrBiZqxj/HsZcLiXRHZP3R8vKfmIaAoUi45hyNUX+JBO3VhGnYpbQa8p822Ikazv8+s47H0lCtgOckCJqii0/6D3ND/EqhVXEb33/jsKEzCWA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S9YCAIyUXuiy3ZA3JcO80lK2jziJI6MXACvAflD25BQ=;
- b=ocEo32kTu9Vyd4erMCZ/FVvL8amakx3A1wN+EqBDrctjfBGEVlF1tShR1embtH61hx2bHOu8pDXslh8ADD1MbsdFfAGjV+rAdRYd7P+emt5JWk+ecbprIBrn9m3tfevC7KnZnen78lVPhZFc2uTOmwEv4rC6/mEXzW0G1cFPKWqZ7Kn4i292nkhCqNY6xY6ENxByLAnH9S2nVg5NlL8dnnj3fkvUj6K0EyXvkN02Sl/xwQ0/bEvEX1ZkNcPxrmyz7akTU5XkInRzwRssiW44BsPw6Ai45DPXtUlP+jZHoezE8PV6CSVp3aTGg5kdV8qzKIp9NY72Cn1WbOBoLP+Cqg==
-Received: from SN1PR12CA0112.namprd12.prod.outlook.com (2603:10b6:802:21::47)
- by MW4PR12MB5601.namprd12.prod.outlook.com (2603:10b6:303:168::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.17; Fri, 15 Nov
- 2024 22:07:45 +0000
-Received: from SN1PEPF0002529F.namprd05.prod.outlook.com
- (2603:10b6:802:21:cafe::2f) by SN1PR12CA0112.outlook.office365.com
- (2603:10b6:802:21::47) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.17 via Frontend
- Transport; Fri, 15 Nov 2024 22:07:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- SN1PEPF0002529F.mail.protection.outlook.com (10.167.242.6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8158.14 via Frontend Transport; Fri, 15 Nov 2024 22:07:45 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 15 Nov
- 2024 14:07:44 -0800
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 15 Nov 2024 14:07:43 -0800
-Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Fri, 15 Nov 2024 14:07:42 -0800
-Date: Fri, 15 Nov 2024 14:07:41 -0800
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: Yi Liu <yi.l.liu@intel.com>, <kevin.tian@intel.com>, <corbet@lwn.net>,
-	<joro@8bytes.org>, <suravee.suthikulpanit@amd.com>, <will@kernel.org>,
-	<robin.murphy@arm.com>, <dwmw2@infradead.org>, <shuah@kernel.org>,
-	<iommu@lists.linux.dev>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<baolu.lu@linux.intel.com>, <eric.auger@redhat.com>,
-	<jean-philippe@linaro.org>, <mdf@kernel.org>, <mshavit@google.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <smostafa@google.com>, <aik@amd.com>,
-	<zhangfei.gao@linaro.org>, <patches@lists.linux.dev>
-Subject: Re: [PATCH v7 13/13] Documentation: userspace-api: iommufd: Update
- vIOMMU
-Message-ID: <ZzfGLdgykZ0M3jy5@Asurada-Nvidia>
-References: <cover.1730836219.git.nicolinc@nvidia.com>
- <7e4302064e0d02137c1b1e139342affc0485ed3f.1730836219.git.nicolinc@nvidia.com>
- <f0c45d5b-b8cd-4f75-a9d7-21808f18583d@intel.com>
- <ZzVB7Fun48rGztuV@Asurada-Nvidia>
- <8f6cdd11-3bd3-4c4c-9424-c0d52eaa6f93@intel.com>
- <ZzVsEmzc1UyDdi//@Asurada-Nvidia>
- <20241114162010.GP35230@nvidia.com>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="N1g55SdN"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95D418801A;
+	Fri, 15 Nov 2024 22:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731708913; cv=none; b=d5mwFry7xPy638MBJ6WFHmDGtUXbpSdbU6j90rcI9eX98LiErim7E8z77mrSC+ggVHkToyzixVAUIozfnITIuDCvvANRRwDCC1lUAwCJVqeg4xRuV+eb4a3xBTj/XlZt4Fx5OirNPVRoDG9OGWvuXe3Pc3w3XW8Dnu7hebmk+o4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731708913; c=relaxed/simple;
+	bh=/gM5S2JpghDM0ugec1ktyfCAqRVYpBpjvyLdIODChSQ=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=DCi0vMXQQNvWBwWPqW5lylvzY1Y5mijf6PaVmTesdKttTR4QwDaNvyQqyIdgqT35CzJ7uKHkhlV8p1cRaDaIGNSzRQY7bQWAEFPIoDo+SBUFqbp9mi7yUWqhXzIZLRMeSUtpld0m+Mi51PwZV21lQcijDUI2UhYJY+eRTexUNp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=N1g55SdN; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.35.166] (c-73-118-245-227.hsd1.wa.comcast.net [73.118.245.227])
+	by linux.microsoft.com (Postfix) with ESMTPSA id C2E092064AEB;
+	Fri, 15 Nov 2024 14:15:08 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C2E092064AEB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1731708911;
+	bh=3z7ywabUJ27i2rb14B4LEGDccer8KYu9+MGXqf4uX30=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=N1g55SdNOAVrXtoAUWPnvUkB3x2fHI9b6jafO92eRdbbD4Gte6s/kvOokfmkgYHJe
+	 Frz5kbgdiLksPpFFaWRXGFZ7VcwJJIP77+3HbEyB4bGSyYhL140G+m7AP2fdg7ax7k
+	 BFhXHlM0RPRrW6JGtgd18IntrfjEtsdFiu0GVoGc=
+Message-ID: <8127a2e6-fa62-4c85-b7ed-24748cc9e285@linux.microsoft.com>
+Date: Fri, 15 Nov 2024 14:15:08 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241114162010.GP35230@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002529F:EE_|MW4PR12MB5601:EE_
-X-MS-Office365-Filtering-Correlation-Id: 686b2038-7892-492e-4357-08dd05c1ef13
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?V5Tex3tYQ2fhxkQyY/ErxcCo8S/7JqzQCtNvjRHB1sptL7HRHReqk8NKxgMv?=
- =?us-ascii?Q?4XAk6CRL5ri4iCsECVqg1OjL6nCVnCy8cmzWznxaw9b7gx/DQwE5z9UUItrO?=
- =?us-ascii?Q?ieiVXjWnGx0QsINZx4vIlwdRtY4kZ25m5mxFELk5EvMZa4X/WI2GAC1b1Kz/?=
- =?us-ascii?Q?7WnYCTpCapfeiUbeA7jA42Dtmgd5hSaYedlZk66DxFhDL0Gp1xNjA0ikvBQO?=
- =?us-ascii?Q?HeDQ4vBbpglW91jsnJM/Sq9cNJmhxQ4IBoMcwnEGC3vGoUUHVWN+93ZUYkZL?=
- =?us-ascii?Q?tNobHEO2hGMggfi8yMuflE/F5Qh0KNhsgOiaEDztkI04Hs5VWxU5J4sNEtQC?=
- =?us-ascii?Q?a9g+YHt3+LOyYr7jTiahz8r+El7u+oTvGi4l0DSVRLp38u2eL4lEzwNl/YIC?=
- =?us-ascii?Q?QLyQr1PudbWNbEe6c4zLjywBT6hcsWtKF4yr98qcDYxqPk7dLurVmFRFO2ab?=
- =?us-ascii?Q?8a+SwArW0UzCkkRCxMLwpqeUDFsKi6C3kzd5HqTLGzCDZqRgoluLbreQEVcJ?=
- =?us-ascii?Q?vLz22ihATiwwgnNtWvz/FLl8Mhk6M6+7S0O+ovy9nCEdSzyjvy1V6e7mnTu+?=
- =?us-ascii?Q?8FI2dZAS16kjreTllpGO16Ya5XTwI2yll8WphMyg8m1+9Qvfet29tbsSTjn8?=
- =?us-ascii?Q?7QrUWbQwHevGr41wdBm/TdNHU8aGtjvtP23VTO894ykrT/KW7+ODMy4WwOvf?=
- =?us-ascii?Q?hus9tpFPUrVu+RIqzPjL/ZiWPcmCTut1nHyg8XDJpwubCFSuibhuh1JQ34JM?=
- =?us-ascii?Q?a8SqRcJFZyk/Q6wlZRU9+uzHQyGf3z7VMXgCPWDoDlHM/WLWzxFz/1/rHrer?=
- =?us-ascii?Q?TDZdoAdFL/afXkoW1GQTJo23I98wJVIvf3dLaKOvG6YVyi67V27upJ/cAfV3?=
- =?us-ascii?Q?iUFaolnXhVxwKFYYcCHF7ukEz/5GYx6F2Fs88jcB8Ec9XSWBkZHvI+Y7IS1C?=
- =?us-ascii?Q?N14OUYgZEznoxjki6kN908AnkwRY6QRUxfosW7/8/v7qWvFeDhuA14uHAQ/M?=
- =?us-ascii?Q?Wn4U5NbPozgLS/p3nHXQUzQQ73eLbW6s6btUmY+Qq1PbscZ/LouRZV92TPcu?=
- =?us-ascii?Q?utGhxAQZ42vmoBMaJagC1ENjXJ5IKQr5sFDjlG4oIxuFTL8nXA9zPwmxqvCC?=
- =?us-ascii?Q?xZbfGNUwiBJi0HTCwELgFloe8e78ybcImCPCg/N6hTBRdY8d5mWVgv70y1C/?=
- =?us-ascii?Q?SD7G9GOrJv7oi5HiHESdB+oXDeb/0bA7b2sVighnz10m37OhAezinXYpDcYF?=
- =?us-ascii?Q?agoKq9sbHXfz5PbuR97o3ruDNNXc1sTEk7SfDt7b5yfBrnoIZP6qy7Qv5n2o?=
- =?us-ascii?Q?6oozMb2gfFR6lPHPcfWUlot60aZ0T9lj0ScLdhwpJVQz0ia1h4KhUu7xlThy?=
- =?us-ascii?Q?X47KxXT4Khx7leXwUc2OKNSVpOzPk86tqoOHVYK017Hm1Mh8rg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2024 22:07:45.2916
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 686b2038-7892-492e-4357-08dd05c1ef13
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002529F.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB5601
+User-Agent: Mozilla Thunderbird
+Cc: eahariha@linux.microsoft.com, netfilter-devel@vger.kernel.org,
+ coreteam@netfilter.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, cocci@inria.fr,
+ linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ linux-scsi@vger.kernel.org, xen-devel@lists.xenproject.org,
+ linux-block@vger.kernel.org, linux-wireless@vger.kernel.org,
+ ath11k@lists.infradead.org, linux-mm@kvack.org,
+ linux-bluetooth@vger.kernel.org, linux-staging@lists.linux.dev,
+ linux-rpi-kernel@lists.infradead.org, ceph-devel@vger.kernel.org,
+ live-patching@vger.kernel.org, linux-sound@vger.kernel.org,
+ etnaviv@lists.freedesktop.org, oss-drivers@corigine.com,
+ linuxppc-dev@lists.ozlabs.org, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Naveen N Rao <naveen@kernel.org>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Louis Peens <louis.peens@corigine.com>, Nicholas Piggin <npiggin@gmail.com>,
+ Michael Ellerman <mpe@ellerman.id.au>,
+ Christian Gmeiner <christian.gmeiner@gmail.com>,
+ Russell King <linux+etnaviv@armlinux.org.uk>,
+ Lucas Stach <l.stach@pengutronix.de>, Takashi Iwai <tiwai@suse.com>,
+ Jaroslav Kysela <perex@perex.cz>, Petr Mladek <pmladek@suse.com>,
+ Joe Lawrence <joe.lawrence@redhat.com>, Miroslav Benes <mbenes@suse.cz>,
+ Jiri Kosina <jikos@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Johan Hedberg <johan.hedberg@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+ Marcel Holtmann <marcel@holtmann.org>, Kalle Valo <kvalo@kernel.org>,
+ Jeff Johnson <jjohnson@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, =?UTF-8?Q?Roger_Pau_Monn=C3=A9?=
+ <roger.pau@citrix.com>, Jack Wang <jinpu.wang@cloud.ionos.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Praveen Kaligineedi <pkaligineedi@google.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, James Smart <james.smart@broadcom.com>,
+ Dick Kennedy <dick.kennedy@broadcom.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Jeroen de Borst <jeroendb@google.com>,
+ Shailend Chand <shailend@google.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ Lucas De Marchi <lucas.demarchi@intel.com>, Oded Gabbay
+ <ogabbay@kernel.org>, Ofir Bitton <obitton@habana.ai>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>, Vasily Gorbik
+ <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
+ Russell King <linux@armlinux.org.uk>, Robert Jarzmik
+ <robert.jarzmik@free.fr>, Haojian Zhuang <haojian.zhuang@gmail.com>,
+ Daniel Mack <daniel@zonque.org>, Nicolas Palix <nicolas.palix@imag.fr>,
+ Julia Lawall <Julia.Lawall@inria.fr>, Simon Horman <horms@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>,
+ Jozsef Kadlecsik <kadlec@netfilter.org>,
+ Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: Re: [PATCH v2 00/21] Converge on using secs_to_jiffies()
+To: Jeff Johnson <quic_jjohnson@quicinc.com>,
+ Thomas Gleixner <tglx@linutronix.de>
+References: <20241115-converge-secs-to-jiffies-v2-0-911fb7595e79@linux.microsoft.com>
+ <10ee4e8f-d8b4-4502-a5e2-0657802aeb11@linux.microsoft.com>
+ <3ac480f5-549b-4449-baa9-f766e074c409@quicinc.com>
+Content-Language: en-US
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+In-Reply-To: <3ac480f5-549b-4449-baa9-f766e074c409@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 14, 2024 at 12:20:10PM -0400, Jason Gunthorpe wrote:
-> On Wed, Nov 13, 2024 at 07:18:42PM -0800, Nicolin Chen wrote:
-> > > so the user would try to create vDevices with a given viommu_obj until
-> > > failure, then it would allocate another viommu_obj for the failed device.
-> > > is it? sounds reasonable.
-> > 
-> > Yes. It is the same as previously dealing with a nesting parent:
-> > test and allocate if fails. The virtual IOMMU driver in VMM can
-> > keep a list of the vIOMMU objects for each device to test.
+On 11/15/2024 1:41 PM, Jeff Johnson wrote:
+> On 11/15/2024 1:29 PM, Easwar Hariharan wrote:
+>> On 11/15/2024 1:26 PM, Easwar Hariharan wrote:
+>>> This is a series that follows up on my previous series to introduce
+>>> secs_to_jiffies() and convert a few initial users.[1] In the review for
+>>> that series, Anna-Maria requested converting other users with
+>>> Coccinelle. This is part 1 that converts users of msecs_to_jiffies()
+>>> that use the multiply pattern of either of:
+>>> - msecs_to_jiffies(N*1000), or
+>>> - msecs_to_jiffies(N*MSEC_PER_SEC)
+>>>
+>>> The entire conversion is made with Coccinelle in the script added in
+>>> patch 2. Some changes suggested by Coccinelle have been deferred to
+>>> later parts that will address other possible variant patterns.
+>>>
+>>> CC: Anna-Maria Behnsen <anna-maria@linutronix.de>
+>>> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+>>>
+>>> [1] https://lore.kernel.org/all/20241030-open-coded-timeouts-v3-0-9ba123facf88@linux.microsoft.com/
+>>> [2] https://lore.kernel.org/all/8734kngfni.fsf@somnus/
+>>>
+>>> ---
+>>> Changes in v2:
+>>> - EDITME: describe what is new in this series revision.
+>>> - EDITME: use bulletpoints and terse descriptions.
+>>> - Link to v1: https://lore.kernel.org/r/20241115-converge-secs-to-jiffies-v1-0-19aadc34941b@linux.microsoft.com
+>>>
+>>
+>> Apologies, I missed out on editing the changelog here. v1 included a
+>> patch that's already been accepted, there are no other changes in v2.
+>>
+>> Thanks,
+>> Easwar
 > 
-> The viommu object should be tied to the VMM's vIOMMU vHW object that
-> it is paravirtualizing toward the VM.
+> How do you expect this series to land since it overlaps a large number of
+> maintainer trees? Do you have a maintainer who has volunteered to take the
+> series and the maintainers should just ack? Or do you want the maintainers to
+> take the individual patches that are applicable to them?
 > 
-> So we shouldn't be creating viommu objects on demand, it should be
-> created when the vIOMMU is created, and the presumably the qemu
-> command line will describe how to link vPCI/VFIO functions to vIOMMU
-> instances. If they kernel won't allow the user's configuration then it
-> should fail, IMHO.
+> /jeff
 
-Intel's virtual IOMMU in QEMU has one instance but could create
-two vIOMMU objects for devices behind two different pIOMMUs. So,
-in this case, it does the on-demand (or try-and-fail) approach?
+I am hoping for tglx to take it through his tree since the patch
+introducing secs_to_jiffies() is in his tree, so sequencing of
+dependencies would not be an issue.
 
-One corner case that Yi reminded me of was that VMM having two
-virtual IOMMUs for two devices that are behind the same pIOMMU,
-then these two virtual IOMMUs don't necessarily share the same
-vIOMMU object, i.e. VMM is allowed to allocate two vIOMMU objs?
+But if tglx won't, we could push it out another cycle and individual
+maintainers can take the patches that are applicable to their tree for
+the series.
 
-> Some try-and-fail might be interesting to auto-provision vIOMMU's and
-> provision vPCI functions. Though I suspect we will be providing
-> information in other ioctls so something like libvirt can construct
-> the correct configuration directly.
-
-By "auto-provision", you mean libvirt assigning devices to the
-correct virtual IOMMUs corresponding to the physical instances?
-If so, we can just match the "iommu" sysfs node of devices with
-the iommu node(s) under /sys/class/iommu/, right?
-
-Thanks
-Nicolin
+Thanks,
+Easwar
 
