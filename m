@@ -1,85 +1,128 @@
-Return-Path: <linux-kernel+bounces-410421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3202E9CDB5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:19:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2D4C9CDB5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:19:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA7EB281723
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:19:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8D7D282C79
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261D318FC91;
-	Fri, 15 Nov 2024 09:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227AA190063;
+	Fri, 15 Nov 2024 09:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qzf5wSPS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FY32VGOE"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5B418FC74;
-	Fri, 15 Nov 2024 09:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51DA190058;
+	Fri, 15 Nov 2024 09:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731662342; cv=none; b=E1mlWBp5Q2jEU0kjSaU76+cYZhRFbTvm8weKnI1ASF97KEpa8n3qOL4jMTDF0QUwW/2zs7trLP2WgLJKtmOhUJGP1zligNEm4t32aJkhQl4XeaHF9f1gtveqGpvoi2FyjAQ62Npji25tnXBE9qVSJXb9kHNYvcv+3B3QdnpuBpU=
+	t=1731662348; cv=none; b=m+L46/zeJVDFd1U/3ZekyQFssUMxaqqemFpl+ZcOOIUhNoE3vbVh+MX6Wod5AXBxbZ8TlUFRzuJGY2in7sEDDgu+g6FR4M/3hlNeqCJM2pCbdZynXJC0XiXsvt3B0PlpioxgjzEibca4kq1Ujvyu0n61vvvraFoMRWEH0b4A5fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731662342; c=relaxed/simple;
-	bh=2CrEnw4sm8gG9cJ/ZIRSkl7D/V40SW+5nE+VvtAcwgg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jazGoiqe5d+lIoFGKoOnQZyC6LsQL+YhrjzdVo3HwzqVSr6HerTelTF8viARzzU6CF20W2gIuxkEAycQztcS5ucJgpgA+iN2DMYbQutQk6Tjh273uCGqLdXCxpjaf7nSuAV4z5PL7BHrXKUEwqVUl2cb5uErBULCdo0q9W/vda4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qzf5wSPS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FB36C4CED4;
-	Fri, 15 Nov 2024 09:19:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731662341;
-	bh=2CrEnw4sm8gG9cJ/ZIRSkl7D/V40SW+5nE+VvtAcwgg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qzf5wSPSqM0Du5+dIZzmcCCAc+BrBHKg7DDRB1wmD6UcTrOIgg7M6Wp6EGLWMQzo8
-	 91zVR4v9Hp9bzHDx3y406C00p5ykL/fe97e28G9ZyBNVrB/E6fbDu3OWJslDsP5sW2
-	 Bg9uZOhM83aTRxnQQ2fas93JXfMD1GSHQyXtf4ls=
-Date: Fri, 15 Nov 2024 10:18:58 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Werner Sembach <wse@tuxedocomputers.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Luis Chamberlain <mcgrof@kernel.org>, tux@tuxedocomputers.com,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Leemhuis <linux@leemhuis.info>,
-	Vinzenz Vietzke <vv@tuxedocomputers.com>,
-	Christoffer Sandberg <cs@tuxedo.de>
-Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
- symbols
-Message-ID: <2024111522-brush-excusably-cae5@gregkh>
-References: <20241114103133.547032-4-ukleinek@kernel.org>
- <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
- <2024111557-unlighted-giggle-0d86@gregkh>
- <6c1952bc-f58d-4c55-887e-6aa247daec5c@tuxedocomputers.com>
- <h5q36ajuzgwf5yrjmqv46x62evifcgoi5imxhcvsv7oxauvxak@sj54oisawqnf>
- <58b85a78-55aa-422c-a21d-254eb16cc8c6@tuxedocomputers.com>
+	s=arc-20240116; t=1731662348; c=relaxed/simple;
+	bh=S5drF1oV5FxfoL12EEoVnvzEFIKne28+dZ0k/ixK8+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hlCdTfdKK+G9ERR3zyVdi4F9rXBTlO7tHM9n6ADPcN/6ieafs36ErH/b2nCF+y9Gpfg+6PgWXtl99hJnJE5ZgcieMJ0UBcv6faIYUT9HfXiSNmOXx13tws8kc6UnP4JundfClfXA2lURUh5GGDlxhP1uwz9Fj9QKZeM5XqCie8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FY32VGOE; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6B4CB60005;
+	Fri, 15 Nov 2024 09:19:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731662343;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3hKnaDNCKavlzw15fsl4Jlsp3Uh1eDda/YmchGWx7D0=;
+	b=FY32VGOEnBQu3yD8XPDiKjpTlOILg38R8D95tXngF6RKnRsiPVbKTOIycQsFy5D5/4Jp+c
+	G5HO5tmAURQZiTlEbRIUgPS137TNYk10dqFchg7YdSG4hvZPZqNh/5ED+/qEop6negVzia
+	fd+NtwXE06qifOBixx394CGYLkicStcCt74uiVq8PvnX4iOKkL4vXwfx8eWFs90dJohrAd
+	xNMZovmlUnwXmUdeW6nem+P722wsjpcomZJuiiUF4XI8yh7jWxdD9FrDmtP5EvsA2WSZBJ
+	I9nL/pMYsDJP3OcQqiARW42/oVBhkz6Bfrafo2LY7SzeZz+7AdHkhsTIactcGQ==
+Date: Fri, 15 Nov 2024 10:19:01 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Robert Joslyn <robert_joslyn@selinc.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "lee@kernel.org"
+ <lee@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>, Herve Codina
+ <herve.codina@bootlin.com>
+Subject: Re: [RFC PATCH 2/2] net: selpcimac: Add driver for SEL PCIe network
+ adapter
+Message-ID: <20241115101901.4369e0da@fedora.home>
+In-Reply-To: <PH0PR22MB3809C7D39B332F0A9FECB11AE5242@PH0PR22MB3809.namprd22.prod.outlook.com>
+References: <20241028223509.935-1-robert_joslyn@selinc.com>
+	<20241028223509.935-3-robert_joslyn@selinc.com>
+	<20241029174939.1f7306df@fedora.home>
+	<PH0PR22MB3809C7D39B332F0A9FECB11AE5242@PH0PR22MB3809.namprd22.prod.outlook.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <58b85a78-55aa-422c-a21d-254eb16cc8c6@tuxedocomputers.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Fri, Nov 15, 2024 at 10:00:23AM +0100, Werner Sembach wrote:
-> I guess what I try to convince you and others is that we _are_ taking Open
-> Source licenses seriously, but still there are mistakes to be made,
-> especially with complex projects like the Linux kernel, e.g. I'm not aware
-> of any other project that uses a similar construct to
-> EXPORT_SYMBOL_GPL()/MODULE_LICENSE().
+Hello Robert,
 
-The Linux kernel is very simple from a license point of view, your code
-has to be GPLv2 compatible.  That's it, nothing complex or odd about
-that at all.
+> > 
+> > I haven't reviewed the code itself as this is a biiiiig patch, I suggest you try to
+> > split it into more digestable patches, focusing on individual aspects of the
+> > driver.
+> > 
+> > One thing is the PHY support as you mention in the cover-letter, in the current
+> > state this driver re-implements PHY drivers from what I understand. You
+> > definitely need to use the kernel infra for PHY handling.
+> > 
+> > As it seems this driver also re-implements SFP entirely, I suggest you look into
+> > phylink [1]. This will help you supporting the PHYs and SFPs.
+> > You can take a look at the mvneta.c and mvpp2 drivers for examples.  
+> 
+> I've been working through migrating to phylib and phylink, and I have the simple case of copper ports working. Where I've gotten stuck is in trying to handle SFPs due to how the hardware is implemented.
+> 
+> This hardware is a PCIe card, either as a typical add-on card or embedded on the mainboard of an x86 computer. The card is setup as follows:
+> 
+> PCIe Bus <--> FPGA MAC <--> PHY <--> Copper or SFP cage
+> 
+> The phy can be one of three different phys, a BCM5482, Marvell M88E1510, or a TI DP83869. The interface between MAC and PHY is always RGMII. The MAC doesn't know if the port is copper or SFP until an SFP is plugged in. The RFC patch, which has fully internal PHY/SFP handling, assumes the port is copper until an SFP is detected via an interrupt. When that interrupt is received, it probes the SFP over the I2C bus through the FPGA to determine the SFP type, then reconfigures the PHY as needed for that type of SFP.
 
-thanks,
+So do you have 2 different layouts possible, or are you in a situation
+where the RJ45 copper port AND the SFP are always wired to the PHY, and
+you perform media detection to chose the interface to use ?
 
-greg k-h
+> After porting to phylink, in the copper case, the PHY gets configured correctly and it works. In the SFP case, I don't know how to reconfigure the PHY to act as a media converter with the correct interface for whatever kind of SFP is attached. The M88E1510 driver, for example, seems to have support for this in the form of struct sfp_upstream_ops callbacks (https://elixir.bootlin.com/linux/v6.12-rc7/source/drivers/net/phy/marvell.c#L3611). It looks like phylink_create will make use of that by looking at the fwnode passed in, but I don't know how to use that to define the layout of my hardware. I assume this is mainly used with device tree and that would define the topology, but I'm using a PCI device on x86. The Broadcom and TI phys don't have the sfp_upstream_ops support as far as I can see, so I've focused on the Marvell phy for the time being.
+
+There's ongoing work to get the DP83869 to support SFP downstream
+interfaces done by Romain Gantois (in CC) :
+https://lore.kernel.org/netdev/20240701-b4-dp83869-sfp-v1-0-a71d6d0ad5f8@bootlin.com/
+
+> How do I describe my hardware layout such that phylink can see that there is an SFP attached and communicate with it? Is there a way to manually create the fwnodes that phylink_create and other functions use? I think this would need to show the topology of the MAC -> PHY -> SFP interface, as well as the I2C bus to use to talk to the SFP (I would have to expose the I2C bus, it's presently internal to this driver).
+
+There are a few other devices in this case.
+
+One approach is to describe the SFP cage in your driver using the swnode
+API, such an approach was considered for the LAN743x in PCI mode :
+
+https://lore.kernel.org/netdev/20240911161054.4494-3-Raju.Lakkaraju@microchip.com/
+
+Another approach that is considered is to load a DT overlay that
+describes the hardware including mdio busses, i2c busses, PHYs, SFPs, etc. when the
+PCI driver is used. See this patchset here :
+
+https://lore.kernel.org/netdev/20241014124636.24221-1-herve.codina@bootlin.com/
+
+Hopefully this will help you a bit in the process of figuring this out,
+agreed that's not an easy task :)
+
+Best regards,
+
+Maxime
 
