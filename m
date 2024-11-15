@@ -1,124 +1,87 @@
-Return-Path: <linux-kernel+bounces-411267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68A6C9CF557
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:57:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C8479CF559
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:58:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0D5B1F21E7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:57:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 352A81F21665
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EA01E1C1F;
-	Fri, 15 Nov 2024 19:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0EA1E1A34;
+	Fri, 15 Nov 2024 19:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aUT0tYdg"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oN/OXCB2"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D46616D4E6;
-	Fri, 15 Nov 2024 19:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF03816D4E6
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 19:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731700658; cv=none; b=DjGYx+0oqh+HNtPs1Xm0QIkkFsIafiSD5u+HftcJhu0FEn+Eni6htsEKUzBZQfKAjYW68/dQQq6AXNnPXVwe5VtUhe/V71Cg7OLK+mfhDC1Z06NnD80P4DWYBKDiZJEVwGdiZ0A6TQWc7j8rjQbyIWx2FTwW1+WP6NJvdoxF4aA=
+	t=1731700710; cv=none; b=P8k9mY7KMXYkRpcL2GCyPYJDmSjQQvCk8cDbzdGuGu4ouKVbQMYuGBsvAzqA8iawmSVrBSKGPnV1VmvtNwxNZMb8Bx5vILLUQNt9FWK12Zd8c/n/1xnvvBxUaSDYLdrzvZrLGFh0GlQZcglbR5XzWeayzaEXrOIetkz3gNPWBMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731700658; c=relaxed/simple;
-	bh=EHiLgshycf1eieqiOpzzDDPKAvfiKoyQOr9THsKU62w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GwUDWz+gE0nMzObfA33ty9VevvhxTRGiEY/IvFscjF5SqcNnGuVoqrIWwwkwRnTV24bVCwJfoZMcnqirUtl0IESn+lkAAu8o5h77TBiBi+nzGfvGTbS1ACMaf/EIQypbjHDpkNSC9lgQrOw5vWobPeo6pg7iSV0c0+jS8N2GuRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aUT0tYdg; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-723db2798caso1947549b3a.0;
-        Fri, 15 Nov 2024 11:57:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731700656; x=1732305456; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8xwg26uJqyJJNoApjHYibPOjhnbtOYqw9dx9vp0pAww=;
-        b=aUT0tYdgWd3lOGZiPCJo2v9N1AfX84d/1fM3m0su0CzvAdS3/y9MAKm0EfO/x6wolq
-         HIPc7qWVKQ0G7ojG9YBJYKvz5y8bQyQxL+myvUBhatPjBL9pXE6/lr4PzYuaiJcSN6nR
-         YYGKwZ3nY/YV2fDfJx4Y+eifNylURBB92WRnIHEslioXBliusvoXS18PgNJdbiFWcuyc
-         gYAOFRUpxJQNKNTgUFTGsN9Ldz8JspLUfP0HVCfI7pvvBPtSPjwl199Yk7q0MGA3EDKb
-         OBsaUCABdVWyb6VTBWlLUpd/L5rSwURZrCgpA6GajW2F76R4mABBSJ8RxxT+MDr8kBIv
-         IW/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731700656; x=1732305456;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8xwg26uJqyJJNoApjHYibPOjhnbtOYqw9dx9vp0pAww=;
-        b=qFAr56M6BbSW9OFn04E/2IdIwGDJesemGwjTFU5uE07tl8XCHg6kUW6mybaZccsyDC
-         HW7/W1SgmXS04p+kutzmt1U38dX+mA09ZvZgzGqBZoaJhBz5WCA2qh46SjkX4i5CTUQX
-         ErB0EK85ZIpRXuoZI9WG3zezSJjIPxfe2JecDGCo0+tEUjJcHb5Zt95p/Pks9F3Q5o/K
-         1XOnBcTi0/qb2npP1AWNPr8kkv04xFDva4S4vl2w1GA6Ptp00ln4u/FQKEspzPhA3Fc8
-         NeNIfiAwpxcUAs9OdAGsM3Q3PLLjEOwU4qk7JAHxdpDOWLLKQcQPDMNwFr0IDRVS+wFx
-         l3nw==
-X-Forwarded-Encrypted: i=1; AJvYcCX4fnTx97lFhvWKE0P3OZtSSdSNfUYu1L7hcfAtYgO73feW948B4ixNQLZHXanaUxeSi5X/+38vzCIftFJq@vger.kernel.org, AJvYcCXveXJrCEp93hAbJBRpkuLBLpPk004bmbK/gDgZqlTDlb9cghjzlUgrfidoExmwQJ2b6gI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfKBNHmTRTpJ5ZH+lfWohsW/dktWasaY/rK+d6DQLUl01IaCRw
-	b7mvyNkFGQJGv8zqMQ1HSLB8w9y7hYVvectw7397n8R2Sueb/uTWB8VjZxa6pPrR6BuBLKZ7EHt
-	JZcgEIt7z2eVgCxOwomOhRtWh9x8=
-X-Google-Smtp-Source: AGHT+IGtcGamPjh1CkOd9RJI6X+OCqPljcJPXvqCzPOoiRWyDCtXN7lFmzHEouLVnuO65mUnUDFdkVpMbo1BeACEEPA=
-X-Received: by 2002:a17:90b:4d86:b0:2d8:dd14:79ed with SMTP id
- 98e67ed59e1d1-2ea155943cbmr4259464a91.31.1731700656505; Fri, 15 Nov 2024
- 11:57:36 -0800 (PST)
+	s=arc-20240116; t=1731700710; c=relaxed/simple;
+	bh=LCcNL9j+JHpEUWwQ1+V/y6fhBw9ANCI49Cstw5j3pro=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=KIPelCbt7fpm71EvUaMB2YDqGlUgX3DbgYE+1G2R/87kWOn1dQsgZoAtcfFHGWhyLzppOep+BDFna0n7F2sh+KeGYDCfiXD9orVjnSlrRHQUi1YSc8Fi2TheQuvuS22508DPHW1624VL14ULKMObeYiA535+9tzE0HBMIf/jXFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oN/OXCB2; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DCEA9E0002;
+	Fri, 15 Nov 2024 19:58:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731700700;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T6fzcxagWyMTwXuJJwuCweyoeq3e4Jn/aH3kJkkVikk=;
+	b=oN/OXCB2lWBwrp2SmLeOnPni2S2XVS25+JTSJaJbjqKOu+EJrX9l0CaafNc2yfLPzpIHNL
+	vA/521AiTIvtmGYkozCUK32I+qDBbsiyuU6ptcNT6dqJgxBVdgg2/V/s4kIQA9yE1wHjWN
+	a0RE9gBWXw/T6KKFdva7DTWlJ2BS9rwirLg38FPDQhHppOJ2PLZECv2+zT1t2uTqCnkQB5
+	7T9mvYqsSHgAWx5QVPZ9i1MF4ELLERQ6aqRA6vkEGdo8zvUHg0bmXo/BAI8suEpefWiFn2
+	pF+D/0/40ccM44Qjgti0Tdo/6gCaPS/bvcXKP02bglbf58JqYlDv3b4O3idBKw==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Bastien Curutchet <bastien.curutchet@bootlin.com>
+Cc: Santosh Shilimkar <ssantosh@kernel.org>,  Krzysztof Kozlowski
+ <krzk@kernel.org>,  Richard Weinberger <richard@nod.at>,  Vignesh
+ Raghavendra <vigneshr@ti.com>,  linux-kernel@vger.kernel.org,
+  linux-mtd@lists.infradead.org,  Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>,  Herve Codina <herve.codina@bootlin.com>,
+  Christopher Cordahi <christophercordahi@nanometrics.ca>
+Subject: Re: [PATCH v4 04/10] memory: ti-aemif: Create aemif_check_cs_timings()
+In-Reply-To: <20241115132631.264609-5-bastien.curutchet@bootlin.com> (Bastien
+	Curutchet's message of "Fri, 15 Nov 2024 14:26:25 +0100")
+References: <20241115132631.264609-1-bastien.curutchet@bootlin.com>
+	<20241115132631.264609-5-bastien.curutchet@bootlin.com>
+User-Agent: mu4e 1.12.1; emacs 29.4
+Date: Fri, 15 Nov 2024 20:58:17 +0100
+Message-ID: <8734jsmfqe.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241115103422.55040-1-sidong.yang@furiosa.ai>
-In-Reply-To: <20241115103422.55040-1-sidong.yang@furiosa.ai>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 15 Nov 2024 11:57:24 -0800
-Message-ID: <CAEf4BzYape9gtc7k1NQMD5BrfakzDXV_9SHNqZeamcaSKn744Q@mail.gmail.com>
-Subject: Re: [RFC PATCH] libbpf: Change hash_combine parameters from long to __u32
-To: Sidong Yang <sidong.yang@furiosa.ai>
-Cc: Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Fri, Nov 15, 2024 at 2:51=E2=80=AFAM Sidong Yang <sidong.yang@furiosa.ai=
-> wrote:
->
-> The hash_combine() could be trapped when compiled with sanitizer like "zi=
-g cc".
-> This patch changes parameters to __u32 to fix it.
+On 15/11/2024 at 14:26:25 +01, Bastien Curutchet <bastien.curutchet@bootlin.com> wrote:
 
-Can you please elaborate? What exactly are you fixing? "Undefined"
-signed integer overflow? I can consider changing long to unsigned
-long, but I don't think we should downgrade from long all the way to
-32-bit u32. I'd rather keep all those 64 bits for hash.
+> aemif_calc_rate() check the validity of a new computed timing against a
 
-pw-bot: cr
+                    checks
 
+> 'max' value given as input. This isn't convenient if we want to check
+> the CS timing configuration somewhere else in the code.
 >
-> Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> ---
->  tools/lib/bpf/btf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Wrap the verification of all the chip select's timing configuration into a
+> single function to ease its exportation in upcoming patches.
+> Remove the 'max' input from aemif_calc_rate() as it's no longer used.
 >
-> diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
-> index 8befb8103e32..11ccb5aa4958 100644
-> --- a/tools/lib/bpf/btf.c
-> +++ b/tools/lib/bpf/btf.c
-> @@ -3548,7 +3548,7 @@ struct btf_dedup {
->         struct strset *strs_set;
->  };
->
-> -static long hash_combine(long h, long value)
-> +static __u32 hash_combine(__u32 h, __u32 value)
->  {
->         return h * 31 + value;
->  }
-> --
-> 2.42.0
->
->
+> Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
+
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
