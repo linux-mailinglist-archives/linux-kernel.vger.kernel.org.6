@@ -1,136 +1,124 @@
-Return-Path: <linux-kernel+bounces-410131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5259A9CD4F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 02:20:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28EE89CD4FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 02:21:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D0441F2215C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 01:20:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BFBEB232BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 01:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920D612F585;
-	Fri, 15 Nov 2024 01:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862A22D7BF;
+	Fri, 15 Nov 2024 01:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W2lHmIDj"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G/AphG99"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EDCF77F1B;
-	Fri, 15 Nov 2024 01:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E79028366
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 01:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731633587; cv=none; b=cmdbcqyCJ0q+rMYxtBWPQPffyrcEmo5L5i0Xk9NtIKcMOfkD/j3fV6eFwTbf13BaEuAkYATPxkaXrOxOFarsX0LNLqZCJyKX+I2oeBPVjZmkT62hL3rJQ5OZaTEahFLFlxQP62v70FNSTIBOTzg8czW1kWupM5Jsyh0vqe67Y6I=
+	t=1731633655; cv=none; b=UErT6tRogaMtlo+Q7tLUC3PKcNvMxYN4VHHDQruE+DhghfsvwerN5DoHe2viNN4WiK1hpcpAFPoYdHhkWfLt5NFFchzfJ9BPCjXVKeTrv3cue4pHYCZxy5qfpLINxUA2DVvNK7KvDf0jkewMMHDbOT0zsjPqqowhxCpRS2gwUHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731633587; c=relaxed/simple;
-	bh=h7oRV1nbfjsFc00eUaw9KaflULdd94NiX150E/lhGig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AhZoB4wz1v14a8/3E2WHxsGSm0iRkWodnR+yMgv806mP7cqu/GBtfV65kIyrjig/V2TPRgBP65/BC0AUjG4CsS5fCX+cQ9XSZqmmeiQ/UW1KyXZL2B6w7cOPMnnONSIo7RUHnJR2D9FYngDsTpLMSmYvoI0jNGId2xE1rRqnf9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W2lHmIDj; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c95a962c2bso350718a12.2;
-        Thu, 14 Nov 2024 17:19:45 -0800 (PST)
+	s=arc-20240116; t=1731633655; c=relaxed/simple;
+	bh=xFupdPanBMLI+ABKya55+UjriRVNgH8ZIVix4PbWMgw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HvDQNyq1F0SDVK1FMaWN8tdMWnuDoFW4cM6+95b3iwunVrGqTr3CJNl0CJzxGTXazfaBKMy4w0eZWx6a3gUcf+kp+LncdhIy/ZzJa4asfOJkTHFFQLbcnE96wJMhK//R+IYxcFleE2975NwsI6qOEk3vAewqvKF0THb4GRyIVok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=G/AphG99; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-718123ec383so659502a34.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 17:20:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731633583; x=1732238383; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=OTJiLj8Cl/gid6IIoC6CA3YIEMl5qRRB8q0gUg2Qs+w=;
-        b=W2lHmIDjyUqglGGgfaMAYDQZ6bpE2T746VG19dns/YZu9JGZm9mobHocFVvqAywBwT
-         ZlPxWdKlV1V0jwknJRAl86pHhkJI3hnPGdwtmk1mLieXM62oCmJfNKac0zZ9modgrW0R
-         0AreC0LyvxfjklM30dlzhOf7SPxllnjcRRtfxnT9pLxa9XAL01Jlr6UmhuiVtTKaQm69
-         1X4Jo6rbwaJ9CkcxEuvQccRAn8QJsmlSCwXJ5ujRPcdn+9rZrhPpi3nO/m6RL72C1iwE
-         Yr23djfzEs5/TJeMjxllm/RnG0Lrlu+nbfGAoOIybyXphnSklUnhmC+qvE9AMDGgZStR
-         /Ntg==
+        d=chromium.org; s=google; t=1731633653; x=1732238453; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2O2T+qVNNUEKkj7Tqgh2CcsQdUVXnIL4zFWqjYgwwmY=;
+        b=G/AphG993JqWh2gEevkwILgBJpsYaFQmwS+365XUSqVCfO5GIKnNs8y8Y2H20yymzz
+         rlstd17WRXi1DC2C71SpTiHCKpi6Hw4skhGaQZeedCRNR0Ol11yeMwZ5AEdV8p2uxNAt
+         ZVhjQXUvP3BOxJOzhbU9j/wN2AR/r1L6tUET8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731633583; x=1732238383;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OTJiLj8Cl/gid6IIoC6CA3YIEMl5qRRB8q0gUg2Qs+w=;
-        b=ShY/thZ0lzxkDfzjrJIQr0BXii5w9/OX3C4EkzKZQwsmmcbW4m3LOKYEEv0oHf408O
-         ljROXXJBD1FGxj/6htS2z5Umw/vvg1Zmpmr95tVhxoqeY5KeVYwhAKc+L/FuNew5DsDm
-         4RSkMgrEGE/pClFMjv3RG62e42OLDnEC2kU9LHvNL1ImaEsKkEHbt0NK40aCzRr393+j
-         nNdFYSE751xw8DvYRUv7icod01Cd8Gkm8VMTQxKr+myZusBcW4QMGDd0QA1QJNVpH0I5
-         9hE/0B3jrC9ZKfNKkpCfwDiGQAy+dzgLsbXelSKe1kaDKBoSU7MtAfyYecmy3qRYp7w6
-         goRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8Yle7Pz4tIObXx0HPbmskgpOIuQCuUn07jI/tx/FdGtCR5iVEPt1L7L6yXUyWqmys1xo=@vger.kernel.org, AJvYcCUIG2KmewvUQhNM/UjxQDp3/8qUcroKTpDS2FU97Hjs+Tjt1WBBJvPYsLQdnr1OZhlh3B712L5g6wkhc7qn@vger.kernel.org, AJvYcCXUFsUnyX12++WSMsuW4Bt7IYvfM6hicB/tB81FYAZ5O0mV0kGOdalu0EbxK+tEqYw++2H7ibd9lU35@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkYGDeelDlv3W/L2ngD5NX24AOEVrunEmyLxYgucihNNdXVhVH
-	yt3D1yH2l0A6Q2cp5FOHeJiKA0xjmCm8Qup4+kHVvV3PYNl21RNz
-X-Google-Smtp-Source: AGHT+IGtW9iSQmpcrn6weGm5G253EH2j+gzOxZzvx687F8weem2GgXEiQKu5n+yi+N9etxW9vKM2UA==
-X-Received: by 2002:aa7:c3c9:0:b0:5cf:9004:bd4c with SMTP id 4fb4d7f45d1cf-5cf9004be90mr278753a12.29.1731633583291;
-        Thu, 14 Nov 2024 17:19:43 -0800 (PST)
-Received: from ?IPV6:2a01:e11:5400:7400:dc78:53a0:d8e6:28cd? ([2a01:e11:5400:7400:dc78:53a0:d8e6:28cd])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf79bb3b04sm1065585a12.42.2024.11.14.17.19.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 17:19:42 -0800 (PST)
-Message-ID: <d824d93d-8724-4e71-acb9-215010d8c3fb@gmail.com>
-Date: Fri, 15 Nov 2024 02:19:41 +0100
+        d=1e100.net; s=20230601; t=1731633653; x=1732238453;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2O2T+qVNNUEKkj7Tqgh2CcsQdUVXnIL4zFWqjYgwwmY=;
+        b=a5nz8w3mBJ5K0KISM9QtyjNe1NMxyte5zxc53mxHfegaC8IHU9JW9iLQF+1TlOFdah
+         DjioALXWgiDQLNXhsDr/oM8nRhkKTsE3sXVvbXJaTmh1I4GqkvVqAotJJ87qSlioe9dd
+         veHriZxnRHHv6Lahfc2AYZd8X+figS6/H/TqBBNfXs6gq45gVU5RM95UZKJ1q+YevC8P
+         JdrR0mHMZg6CldQD01xWt7/eMZLfU5wJr9EYzDAi6xOjnEppeaIUlZbjHcW7RZ2oAfdb
+         7T4wot5c2kTuIw5OEVJK9jSk7TrIScE6iCWqplyG/Ci5HOP473YOAYbMsqGzcFml/0HR
+         YylQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVh6U7ZLZw0vSo7oP58Ze2MAyAQ7ACY4brgt4Q91Kr1/DzPfJkrs/dlENaFlthhHN4kQp2ke04fxTf/zbs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY+uVKV6T15m/a6+xl92gxETMlC283Ci9C325XVBqJBl33w4uA
+	mH2sAj837vf/b1T+3QdBf74DqL+tjZ1aUX5ZSn4bX5ICpz5F1yQcQ+fYRs0aUg==
+X-Google-Smtp-Source: AGHT+IGirkxddJ67bwjyV5yqtTRTNRwP6Jl33D77JprOQQfPM28upKVhV1Mcl5w+rVeXg7rv+U3Xew==
+X-Received: by 2002:a05:6830:4708:b0:718:83f7:9df4 with SMTP id 46e09a7af769-71a779e3720mr1017143a34.23.1731633653545;
+        Thu, 14 Nov 2024 17:20:53 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:f2ec:a79f:1362:3ac3])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1ddbca3sm258701a12.84.2024.11.14.17.20.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 17:20:53 -0800 (PST)
+Date: Fri, 15 Nov 2024 10:20:48 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH 5.15] udf: Allocate name buffer in directory iterator on
+ heap
+Message-ID: <20241115012048.GK1458936@google.com>
+References: <20241113043050.1975303-1-senozhatsky@chromium.org>
+ <ZzZB9-DX7IWbfSXs@sashalap>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: kvm: fix tipo in api.rst
-To: Sean Christopherson <seanjc@google.com>
-Cc: corbet@lwn.net, pbonzini@redhat.com, kvm@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241114223738.290924-3-gianf.trad@gmail.com>
- <ZzaE9dYmSqg3U33y@google.com>
-From: Gianfranco Trad <gianf.trad@gmail.com>
-Content-Language: en-US, it
-Autocrypt: addr=gianf.trad@gmail.com; keydata=
- xjMEZyAY2RYJKwYBBAHaRw8BAQdA3W2zVEPRi03dmb95c7NkmFyBZi+VAplZZX9YVcsduG3N
- JkdpYW5mcmFuY28gVHJhZCA8Z2lhbmYudHJhZEBnbWFpbC5jb20+wo8EExYIADcWIQRJFQhW
- JFLZFapGQPDIleIjeBnIywUCZyAY2QUJA8JnAAIbAwQLCQgHBRUICQoLBRYCAwEAAAoJEMiV
- 4iN4GcjL+JkA/RWGFWAqY06TH+ZZKuhNhvJhj2+dqgPF0QRjILpGSVJyAQCsvpKVS6H9ykYP
- Qyi/UyxIKxa8tcdSP1oUj9YIAHUcC844BGcgGNkSCisGAQQBl1UBBQEBB0BlosN6xF2pP/d7
- RVTlTFktASXfYhN0cghGG6dk5r47NgMBCAfCfgQYFggAJhYhBEkVCFYkUtkVqkZA8MiV4iN4
- GcjLBQJnIBjZBQkDwmcAAhsMAAoJEMiV4iN4GcjLuIIBAJBEkfB4sVF7T46JBpJBP5jBHm4B
- nmn274Qd7agQUZR4AQDfkC/p4qApuqZvZ3H0qOkexpf9swGV1UtmmzYQdmjyAw==
-In-Reply-To: <ZzaE9dYmSqg3U33y@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZzZB9-DX7IWbfSXs@sashalap>
 
-On 15/11/24 00:17, Sean Christopherson wrote:
-> I must know.  Is the "tipo" in the shortlog intentional? :-)
+On (24/11/14 13:31), Sasha Levin wrote:
+> On Wed, Nov 13, 2024 at 01:30:35PM +0900, Sergey Senozhatsky wrote:
+> > From: Jan Kara <jack@suse.cz>
+> > 
+> > [ Upstream commit 0aba4860b0d0216a1a300484ff536171894d49d8 ]
+> > 
+> > Currently we allocate name buffer in directory iterators (struct
+> > udf_fileident_iter) on stack. These structures are relatively large
+> > (some 360 bytes on 64-bit architectures). For udf_rename() which needs
+> > to keep three of these structures in parallel the stack usage becomes
+> > rather heavy - 1536 bytes in total. Allocate the name buffer in the
+> > iterator from heap to avoid excessive stack usage.
+> > 
+> > Link: https://lore.kernel.org/all/202212200558.lK9x1KW0-lkp@intel.com
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Signed-off-by: Jan Kara <jack@suse.cz>
 > 
-> On Thu, Nov 14, 2024, Gianfranco Trad wrote:
->> Fix minor typo in api.rst where the word physical was misspelled
->> as physcial.
->>
->> Signed-off-by: Gianfranco Trad <gianf.trad@gmail.com>
->> ---
->>   Documentation/virt/kvm/api.rst | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
->> index edc070c6e19b..4ed8f222478a 100644
->> --- a/Documentation/virt/kvm/api.rst
->> +++ b/Documentation/virt/kvm/api.rst
->> @@ -5574,7 +5574,7 @@ KVM_XEN_ATTR_TYPE_SHARED_INFO_HVA
->>     in guest physical address space. This attribute should be used in
->>     preference to KVM_XEN_ATTR_TYPE_SHARED_INFO as it avoids
->>     unnecessary invalidation of an internal cache when the page is
->> -  re-mapped in guest physcial address space.
->> +  re-mapped in guest physical address space.
->>   
->>     Setting the hva to zero will disable the shared_info page.
->>   
->> -- 
->> 2.43.0
->>
-Ouch... I wish it was, that would have been a hell of a story :,-).
-I might think of it for future patches *jokes*. But no, probably my 
-brain's italian side subconsciously kicked in (tipo is an existent word 
-in italian), in that moment...
+> Your S-O-B is missing, but also it doesn't build:
 
-Thanks for noticing Sean, I'll send a v2 asap.
+OK, didn't know that I need to add my SoB.
 
---Gian
+> fs/udf/directory.c: In function 'udf_fiiter_init':
+> fs/udf/directory.c:251:25: error: implicit declaration of function 'kmalloc'; did you mean 'kvmalloc'? [-Werror=implicit-function-declaration]
+>   251 |         iter->namebuf = kmalloc(UDF_NAME_LEN_CS0, GFP_KERNEL);
+>       |                         ^~~~~~~
+>       |                         kvmalloc
+> fs/udf/directory.c:251:23: warning: assignment to 'uint8_t *' {aka 'unsigned char *'} from 'int' makes pointer from integer without a cast [-Wint-conversion]
+>   251 |         iter->namebuf = kmalloc(UDF_NAME_LEN_CS0, GFP_KERNEL);
+>       |                       ^
+> fs/udf/directory.c: In function 'udf_fiiter_release':
+> fs/udf/directory.c:315:9: error: implicit declaration of function 'kfree'; did you mean 'kvfree'? [-Werror=implicit-function-declaration]
+>   315 |         kfree(iter->namebuf);
+>       |         ^~~~~
+>       |         kvfree
+
+Hmm.  Upstream fs/udf/directory.c doesn't include slab.h and 5.15
+with this patch applied "builds on my computer".  So I can amend
+Jan's patch to include slab.h, I guess?  Is that okay?
 
