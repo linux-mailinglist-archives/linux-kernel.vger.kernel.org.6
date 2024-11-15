@@ -1,122 +1,171 @@
-Return-Path: <linux-kernel+bounces-410597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC80F9CDDBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:50:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E05C9CDDC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:51:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A9FDB27774
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:49:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA4C31F2301C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0861BB6BC;
-	Fri, 15 Nov 2024 11:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87FA01B6D12;
+	Fri, 15 Nov 2024 11:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QsbfJqxz"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vMzID8m6"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46071B86F6;
-	Fri, 15 Nov 2024 11:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872F51B218E
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731671382; cv=none; b=PO8FlVolEg96zV85WT1i/VqzzZj+QSsgMo08rZ7u0d1/G12nD5wBhjx5e9lGCX9Dg5+fxBFb5p+hg22I97WGggYlGY0m2p1rL0fRiC5NPz2+Hb9XskirOlng9kUDrb0Y3a7sQy3rDUXhp1qPiqJ6OrXtTS9RUwhPLGmiZD49y0Q=
+	t=1731671474; cv=none; b=MJTpviXonftTfzybG8keh++4ibDREYrsf3ADkdEUfLo5Q5u6oK6QUd0xyYqJKXaeqtJgezKuEEfA16GkQgRSVkymXZ0pSdkb3AVjjs9huHclnLBQM17V6DcxOR2CtD3ZIOMi75MCsSUtqwPWrH1crGV0ZZxyfH1mDgQbCIUpydo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731671382; c=relaxed/simple;
-	bh=MnBOKQ/+1AjbtPfmzW5O5Ib7vgDNVKV7lus2CXVLKWk=;
+	s=arc-20240116; t=1731671474; c=relaxed/simple;
+	bh=sZdR9W40s3IqCSaLvH1Sa+P9DP69302jesYf4sRn+2g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MKzlnGAzHyFbpyAHAvPBLK7c4Z2RTy2OuAMYa0VsvczA8QMH1iNicv0+03d7YhluhkZJGai16Sk+3EBlC8YFxf92v94A9cItmBsWsIcxbUFc1yY6vp3qgQ+Cfa8N6WcM0gzo6XXesAKNMCZNThRT928gD2dn4jJoDWDOUb8zqdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QsbfJqxz; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=D+xKiB8GWNnGuEpcIIELTeU/fw+jvTZ+eMA0hDrzAVw=; b=QsbfJqxzC1INeY0T215hijNnkV
-	cRtX0AQ5QFVKgcEIRfZ+k/U1II6iO/Rqu4YoH9aZ2X2mK5KMi265n81xUK5P9EG9LwaYTLtTbTLDq
-	uv043Iov+exZdtcYjRv7uRemm6MeY1+fZykY+qIi/Yi7YwkkU6yCs7s0QX1CaxjXcPVcxTIxHD5Ar
-	p0EloHF1pChjkNp2CSb/4FcqZgACMcVSj79cltilph9wlcYfeWRCwu1hTkRPUmm3n0/xMO/C376Po
-	4echqSnoTj6CTRJVnX4P3C+HSaFnRQv47+lQkOacgJyMFUFMYA8Xt4bxC88jojOBnvPFCpWYT7rXQ
-	iJRr/CRA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tBupM-00000001MIw-2WeB;
-	Fri, 15 Nov 2024 11:49:27 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id D2F1530066A; Fri, 15 Nov 2024 12:49:26 +0100 (CET)
-Date: Fri, 15 Nov 2024 12:49:26 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: mcgrof@kernel.org, x86@kernel.org, hpa@zytor.com, petr.pavlu@suse.com,
-	samitolvanen@google.com, da.gomez@samsung.com, masahiroy@kernel.org,
-	nathan@kernel.org, nicolas@fjasle.eu, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	gregkh@linuxfoundation.org
-Subject: Re: [RFC][PATCH 1/8] module: Prepare for script
-Message-ID: <20241115114926.GH38972@noisy.programming.kicks-ass.net>
-References: <20241111105430.575636482@infradead.org>
- <20241111111816.912388412@infradead.org>
- <ZzHsOTLCZlUBN7iW@infradead.org>
- <20241111125529.GF22801@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OPqc6J4guOArNqmIjsXqCFZt+FlPi1SYtJwSonBhEBuyr9rozpsu7BXrWQDJfJWY7/Er2GwK3ZOJIjHgCd1GgmB1hLFaSfsu0vIUWYCcOSj2l01/bcPYdubzKwhIyIE2pBGHdEXbjR0Y+x3/Q+tvoBDeEijy7hs9lA2n40Zopt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vMzID8m6; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7f450f7f11dso1195075a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 03:51:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731671473; x=1732276273; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=0qz4zjxYN8EsB1sVFFLtbfHvdqNPBMDPqRlMkCvciKQ=;
+        b=vMzID8m6K3DMLchGm5z3M2nR5eVE8wC23baG//7YndEYtxnDR+Zh7u8NGd4uw5yNEF
+         vjxZDAZWxpCjbro5IEog6XXVzpQ1S+f1LlCyyhBlB1iG4XkQqMUjUp82BK2mjbHU6u0f
+         7+9FUPwlhuj+TQabd/D17p73qCHrSacflcYMpd/uSexbFL+WDcUvwZBfUlxXwKG+uYHf
+         Ocd/2jyjGUIPmZRFl6smiLW4yeEK3VdFEKLzcdElxKV1IhdsX7MlUcvk2atcPXnWHC8y
+         Xv1UaHOuQ9VT9vYSkv0kgm5xBQo6Bp+olbwLGtvyX6blL6Qfh3El0WKoFquEpFHgNcz/
+         vumw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731671473; x=1732276273;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0qz4zjxYN8EsB1sVFFLtbfHvdqNPBMDPqRlMkCvciKQ=;
+        b=h6sGEkuLPytN3xafEGBii/LC7eftG4d0G7ibmjcyZ9hSik+sbpAoTZKHmOwBI98GiW
+         bnVenOKCe2JHlYZ6NDFrPU2gTYLXcJrVEx0fSLCjnU+iK3UdWFbTnYPxfpbcr9H/GOLl
+         mFuJQql3+DUQRgTOx9/KFS5vgYrz1gi9993YL379TUmzGofeNicdDw+aAQGxsK34Kf9g
+         6sRP58/WC34FtKx9on6hsSK4EcBLZRyOHnOTHH9DBf2EcHoiNuhXdNmUTvk+l6Eh75Fl
+         mqrnGGApKG6WY7H+tvemRtTfIyHXELIPidJrNK8OscWZgHOmNq10X7Cicf7Q+kRMMEel
+         cTZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVuUfoxZ3lSuNvyfmuyX6OQ1niyWxeUPF7SdWzTwVoVG8PI91oBxe5ndnlgcVT2vmKw4sXMEsMwd7Ne930=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSnoFt4eLUa5DcLsMY2idXgqiVQKIwLQHlJodqJ68r9c7sEQVF
+	luBylxXcgsXQpqQMfWKUSwNgromEEjv0sXYPuhg0o16o2M3z+FcgPGb61M5IzQ==
+X-Google-Smtp-Source: AGHT+IHpT8ZeMKed/s/RPDlK9VLqV5kI+HNUu4iV8muOdZoUPUkSFT36NhvQLuLYGoL5BZzy2K3vgw==
+X-Received: by 2002:a05:6a20:3946:b0:1d9:1045:3ed5 with SMTP id adf61e73a8af0-1dc90b23572mr2838926637.11.1731671472789;
+        Fri, 15 Nov 2024 03:51:12 -0800 (PST)
+Received: from thinkpad ([117.193.208.47])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724770eea1asm1200047b3a.28.2024.11.15.03.51.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 03:51:12 -0800 (PST)
+Date: Fri, 15 Nov 2024 17:21:04 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	andersson@kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	cros-qcom-dts-watchers@chromium.org,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicinc.com,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/6] PCI: Add new start_link() & stop_link function ops
+Message-ID: <20241115115104.hsa4udzkhhavahgi@thinkpad>
+References: <20241112-qps615_pwr-v3-3-29a1e98aa2b0@quicinc.com>
+ <20241112234149.GA1868239@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241111125529.GF22801@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241112234149.GA1868239@bhelgaas>
 
-On Mon, Nov 11, 2024 at 01:55:29PM +0100, Peter Zijlstra wrote:
-> On Mon, Nov 11, 2024 at 03:36:25AM -0800, Christoph Hellwig wrote:
-> > On Mon, Nov 11, 2024 at 11:54:31AM +0100, Peter Zijlstra wrote:
-> > > Since sed doesn't like multi-line make sure all EXPORT_SYMBOL_NS
-> > > things are a single line.
+On Tue, Nov 12, 2024 at 05:41:49PM -0600, Bjorn Helgaas wrote:
+> On Tue, Nov 12, 2024 at 08:31:35PM +0530, Krishna chaitanya chundru wrote:
+> > Certain devices like QPS615 which uses PCI pwrctl framework
+> > needs to configure the device before PCI link is up.
 > > 
-> > Eww.  Just use coccinelle or another tool not so simplistic.
+> > If the controller driver already enables link training as part of
+> > its probe, after the device is powered on, controller and device
+> > participates in the link training and link can come up immediately
+> > and maynot have time to configure the device.
+> > 
+> > So we need to stop the link training by using stop_link() and enable
+> > them back after device is configured by using start_link().
 > 
-> Feel free to do so. I've never managed to get coccinelle to do anything.
+> s/maynot/may not/
+> 
+> I think I'm missing the point here.  My assumption is this:
+> 
 
-So I put a little more effort in and got you this (awk needs to be
-gawk>=4.1)
+First controller driver probes, enables link training and scans the bus. When
+the PCI bridge is found, its child DT nodes will be scanned and pwrctl devices
+will be created if needed.
 
-git grep -l -e MODULE_IMPORT_NS -e EXPORT_SYMBOL_NS | while read file;
-do
-  awk -i inplace '
-    /^#define EXPORT_SYMBOL_NS/ {
-      gsub(/__stringify\(ns\)/, "ns");
-      print;
-      next;
-    }
-    /^#define MODULE_IMPORT_NS/ {
-      gsub(/__stringify\(ns\)/, "ns");
-      print;
-      next;
-    }
-    /MODULE_IMPORT_NS/ {
-      $0 = gensub(/MODULE_IMPORT_NS\(([^)]*)\)/, "MODULE_IMPORT_NS(\"\\1\")", "g");
-    }
-    /EXPORT_SYMBOL_NS/ {
-      if ($0 ~ /(EXPORT_SYMBOL_NS[^(]*)\(([^,]+),/) {
-        if ($0 !~ /(EXPORT_SYMBOL_NS[^(]*)\(([^,]+), ([^)]+)\)/ &&
-            $0 !~ /(EXPORT_SYMBOL_NS[^(]*)\(\)/ &&
-            $0 !~ /^my/) {
-          getline line;
-          gsub(/[[:space:]]*\\$/, "");
-          gsub(/[[:space:]]/, "", line);
-          $0 = $0 " " line;
-        }
+>   - device starts as powered off
+>   - pwrctl turns on the power
+>   - link trains automatically
+>   - qcom driver claims device
 
-        $0 = gensub(/(EXPORT_SYMBOL_NS[^(]*)\(([^,]+), ([^)]+)\)/,
-                    "\\1(\\2, \"\\3\")", "g");
-      }
-    }
-    { print }' $file;
-done
+QPS615 driver will claim this device not controller driver.
 
+>   - qcom needs to configure things that need to happen before link
+>     train
+> 
 
-I'm sure that wasn't worth the time I spend on it though :/
+QPS615 driver needs to configure the switch before link training. So at this
+point, it stops the link training, configures the switch and starts it again.
+
+Patch description could be improved.
+
+- Mani
+
+> but that can't be quite right because you wouldn't be able to fix it
+> by changing the qcom driver because it's not in the picture until the
+> link is already trained.
+> 
+> So maybe you can add a little more context here?
+> 
+> > Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> > ---
+> >  include/linux/pci.h | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/include/linux/pci.h b/include/linux/pci.h
+> > index 573b4c4c2be6..fe6a9b4b22ee 100644
+> > --- a/include/linux/pci.h
+> > +++ b/include/linux/pci.h
+> > @@ -806,6 +806,8 @@ struct pci_ops {
+> >  	void __iomem *(*map_bus)(struct pci_bus *bus, unsigned int devfn, int where);
+> >  	int (*read)(struct pci_bus *bus, unsigned int devfn, int where, int size, u32 *val);
+> >  	int (*write)(struct pci_bus *bus, unsigned int devfn, int where, int size, u32 val);
+> > +	int (*start_link)(struct pci_bus *bus);
+> > +	void (*stop_link)(struct pci_bus *bus);
+> >  };
+> >  
+> >  /*
+> > 
+> > -- 
+> > 2.34.1
+> > 
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
