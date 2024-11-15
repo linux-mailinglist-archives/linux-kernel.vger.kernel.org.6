@@ -1,161 +1,210 @@
-Return-Path: <linux-kernel+bounces-410321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1B979CD9E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:26:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EE199CD9E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:28:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 616AE282E8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:26:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9F10B2844D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6041189BA2;
-	Fri, 15 Nov 2024 07:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB711898FB;
+	Fri, 15 Nov 2024 07:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C01/zWLd"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="NxvIAIp3"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED3D523A;
-	Fri, 15 Nov 2024 07:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177E2183CC7;
+	Fri, 15 Nov 2024 07:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731655604; cv=none; b=m7357zmzPNfXaY0t0vfnX3jIZzJ9wQgIL4tjJA+F/NRUr2JeRHf9Xd3btthNImO8UXzIeew7R1xTiLE3b/ZnyFFgILb6fAOiQ9nfmYIwpJLi8njikHHNGZhzE4K6ae8psHbtcQFvwJqvAbZf9/EzIPb/QqZnKI9Gablwv/ojm5k=
+	t=1731655679; cv=none; b=CQ2001ifWVImnKAnfrHT/ECCLyofUZ/VUebOBnqIPwgRfJrDbHbO2TafBgd6M/j0uGZsinL53LQefSccQh46odJQ1j1w8UUDh46/v7XwlZFbtLCUsEYxI46v8U9WY56k/ItiMNVnoUq1WwoyjDT7oqLKIgHD4qs6NmusjddbzwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731655604; c=relaxed/simple;
-	bh=H5go3CSHFDvv97STC33zwmw/ZiDdwPPvJhjZM8cCTNo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OAXgW4OqDDH8eOuKyajOPxYhOt29SXL8SOQrB98x9nTTse+9o6VkVGKr4k5jZmQMhlhp/m8ndB4o2JScTlRkWp/U8Jfb6JEMcpvZwFjrp3rqOakH8Zw8qWfXSCKEewH4LOanUj3xHZuYHoyBkf2NtXb8Vj7MW8AEUgA9yx8zQAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C01/zWLd; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5cf8593ca4bso1383743a12.1;
-        Thu, 14 Nov 2024 23:26:42 -0800 (PST)
+	s=arc-20240116; t=1731655679; c=relaxed/simple;
+	bh=WwHB1f3gavVE9l2aZQ4WLcUSVZv8GqGUZZYPi6oRew8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hPIt1N/vXmjb7vCi+j+SWDHuejOlJj3LOHKf4LB3dlz2nQlhMmWmwhZahU1BEEVfWdh106L2oQGtUsa3twqUj7/3JOc76F3cATXP1wF5dZOibkRnWKsc2cu3hS8QD8iZp/XMfG1HJcVwwCerek73XxUfMjCyRQjL4mGD10KvVtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=NxvIAIp3; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731655601; x=1732260401; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4HJY4DnCd4JaTTdiuzlxUyMGg9/JMjaTBkeusliEvn0=;
-        b=C01/zWLdHyPzq7HdWoZGukZ6/Kl6NnhoYAs8PUBBlUxVJHPjYHhMeHlbaHunzINpzE
-         jPf07kwhXZNQ5J7NkO/xp+U7GUSM/2ysIBfxkZvM1wIi8ROtPyRYFvjGVCRId3+XZBDo
-         20IhnaDfoqsrApk4gsy+lZq+f+BVwbPRTslYv4ZtfYicgNnmGKUKmfjnh1c2YbaNyDiy
-         al4MLuynNfY2uyqFmdg7Cbdqr9nFQyXy3zzI7inqxyJH7affAcSTZxpglsxVfP7liLDH
-         jVgdZhtEPJVmY2jgOSvpdSzbjTaeSCDOLV1lf52t6MWB3q7HnH4toNm4A8fS7C/owR3q
-         yKtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731655601; x=1732260401;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4HJY4DnCd4JaTTdiuzlxUyMGg9/JMjaTBkeusliEvn0=;
-        b=vB6H/WIRGNj6Lopwo9Ab1V8bUSyUxH3Ighu6TdZc3GW8adJfjGdO559CJHMcIqhlYA
-         hyVIeWb4lcvrlhC56cZvWG9oQg3sScwP7qt29zJHHzYSkZR5qfM6/lLkOFW+9OuygI0q
-         +0BjQnRXYM0Hv3aAUb2cOM64xl4qj4WusL7tK97FW63xwZxsvzPzpNPK1yIprnzeCN52
-         7e478CJ0mV+G27IsGwJthCHRaWGbtcAHp0J1DWrrq+xL3TGLlfZIVyLIKsha9kZjR1o5
-         Ouu46A58i75iPj0VlYTuPBoWNp3Frge83MA3OL9Lw3BE+SHXoS5MyTffgNkj+uEy2qdS
-         00Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCVGWVHLzEQcYcgMnC8N5+xAwKhslWVyV8YD0wcXqzdmtL20fI77O6/rG79ZHEHjHKWzcrVYavlUU4SIQmoZ@vger.kernel.org, AJvYcCVNZnzkxusd5L5iX4X2r2C56cqVm07941UB4SqrdmzsaHCinv8/TTB/CDqkKpXf1tNU0BiR/hhbbAi9IYS6Zh79yqqpqk5o@vger.kernel.org, AJvYcCW2msMKMsCfBxmCtXIdqkPF1C93SVqFL9Q8UdhdzP7huiQuwct6W6sGUOpvfYWBRb2XSTA=@vger.kernel.org, AJvYcCXnnOggJp5LNLZzqYrVfHuqwy8bNIF0zSXTbRmiVtP3lMmRHxiSYk+pDmhE0prUE/6Ty1dGAcCVzcv4bW0lEQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9S2ETDGS/OwAPVSg9u/I0OUibBmgDPTS14CKeF2njSgfBW2nU
-	MlVE1uZdJJjO0wemCNCepmZhdPuv2w+UzjEKbqDNMTS/Jviwl2NtTQitrKrItvUDu1b/ytrcgCd
-	xV3vz8PkM25zFYkngqzPYRCTer/M=
-X-Google-Smtp-Source: AGHT+IECnxX84rmDYRbGoACKCtzyjmf9T/Bx+Ja9+VuTlkmw+cp/0WfDRxRiUouh39hBJbR/b14OXUe2YjAz0OT1iE4=
-X-Received: by 2002:a17:906:9c82:b0:aa3:49b6:243 with SMTP id
- a640c23a62f3a-aa4833f66dbmr118929766b.9.1731655599606; Thu, 14 Nov 2024
- 23:26:39 -0800 (PST)
+	d=codeconstruct.com.au; s=2022a; t=1731655668;
+	bh=WwHB1f3gavVE9l2aZQ4WLcUSVZv8GqGUZZYPi6oRew8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=NxvIAIp3CfTFgSECIk88TXnKOBfoHK4lkVwMqk+cBMbKKLmwvt3eZFGDCG3fwj1Gq
+	 M8ZkOHvQAJ8EjBx2GjihvRpMKTgvq/Qak9peinF1HTtksafRotVt3/puDaKZF3SJ27
+	 JRxuozlduDJjaF/N9hm5hW1pu4EPEBeezNKqliVJcEri2GoIE+yLwYAE7wNTp+MFvj
+	 y1dOX+XT9JO0hzZgTBix4uWtMq1NZ4A/xl1iilxNf2n30zQHF4uGad96782lhpqWqm
+	 0Xiv//jWDyGDmyF2COAUmG34MEbVue80QKQzoBgi1r9cEJXLH3HV7NHoAKGOnu2PPc
+	 0Vir4+0zm3XTA==
+Received: from pecola.lan (unknown [159.196.93.152])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id B8F3766537;
+	Fri, 15 Nov 2024 15:27:46 +0800 (AWST)
+Message-ID: <01be9950ef5591bd70685019cc56b7ffe0e3bce7.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v7 2/2] mctp pcc: Implement MCTP over PCC Transport
+From: Jeremy Kerr <jk@codeconstruct.com.au>
+To: admiyo@os.amperecomputing.com, Matt Johnston
+ <matt@codeconstruct.com.au>,  Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Sudeep Holla
+	 <sudeep.holla@arm.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Huisong Li <lihuisong@huawei.com>
+Date: Fri, 15 Nov 2024 15:27:46 +0800
+In-Reply-To: <20241114024928.60004-3-admiyo@os.amperecomputing.com>
+References: <20241114024928.60004-1-admiyo@os.amperecomputing.com>
+	 <20241114024928.60004-3-admiyo@os.amperecomputing.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114084345.1564165-1-song@kernel.org> <20241114084345.1564165-8-song@kernel.org>
- <CAADnVQK6YyPUzQoPKkXptLHoHXJZ50A8vNPfpDAk8Jc3Z6+iRw@mail.gmail.com>
-In-Reply-To: <CAADnVQK6YyPUzQoPKkXptLHoHXJZ50A8vNPfpDAk8Jc3Z6+iRw@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 15 Nov 2024 08:26:28 +0100
-Message-ID: <CAOQ4uxhnBRs2Wtr7QsEzxHrkqOtkh9+xxDuNRHxxFY0ih-543g@mail.gmail.com>
-Subject: Re: [RFC/PATCH v2 bpf-next fanotify 7/7] selftests/bpf: Add test for
- BPF based fanotify fastpath handler
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, repnop@google.com, 
-	Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, gnoack@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 14, 2024 at 9:14=E2=80=AFPM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
+Hi Adam,
+
+All good with the hw addressing changes, but there are still things from
+my previous review that have either been ignored or discarded. In case
+of the latter, that still may be fine, but at least a note that you have
+done so would be helpful.
+
+Those inline again, and one new one ("Implementation [...]").
+
+> +config MCTP_TRANSPORT_PCC
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tristate "MCTP PCC transport"
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0select ACPI
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0help
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Provides a driver to ac=
+cess MCTP devices over PCC transport,
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 A MCTP protocol network=
+ device is created via ACPI for each
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 entry in the DST/SDST t=
+hat matches the identifier. The Platform
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 commuinucation channels=
+ are selected from the corresponding
+
+typo: communication
+
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 entries in the PCCT.
+> +
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Say y here if you need =
+to connect to MCTP endpoints over PCC. To
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compile as a module, us=
+e m; the module will be called mctp-pcc.
+> +
+> =C2=A0endmenu
+> =C2=A0
+> =C2=A0endif
+> diff --git a/drivers/net/mctp/Makefile b/drivers/net/mctp/Makefile
+> index e1cb99ced54a..492a9e47638f 100644
+> --- a/drivers/net/mctp/Makefile
+> +++ b/drivers/net/mctp/Makefile
+> @@ -1,3 +1,4 @@
+> +obj-$(CONFIG_MCTP_TRANSPORT_PCC) +=3D mctp-pcc.o
+> =C2=A0obj-$(CONFIG_MCTP_SERIAL) +=3D mctp-serial.o
+> =C2=A0obj-$(CONFIG_MCTP_TRANSPORT_I2C) +=3D mctp-i2c.o
+> =C2=A0obj-$(CONFIG_MCTP_TRANSPORT_I3C) +=3D mctp-i3c.o
+> diff --git a/drivers/net/mctp/mctp-pcc.c b/drivers/net/mctp/mctp-pcc.c
+> new file mode 100644
+> index 000000000000..489f42849a24
+> --- /dev/null
+> +++ b/drivers/net/mctp/mctp-pcc.c
+> @@ -0,0 +1,324 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * mctp-pcc.c - Driver for MCTP over PCC.
+> + * Copyright (c) 2024, Ampere Computing LLC
+> + */
+> +
+> +/* Implelmentation of MCTP over PCC DMTF Specification 256
+
+"Implementation"
+
+(also, might be better to use the full spec ID ("DSP0256"), as it's
+easier to search)
+
+> +struct mctp_pcc_hdr {
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 signature;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 flags;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 length;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0char mctp_signature[MCTP_SIGNA=
+TURE_LENGTH];
+> +};
 >
-> On Thu, Nov 14, 2024 at 12:44=E2=80=AFAM Song Liu <song@kernel.org> wrote=
-:
-> >
-> > +
-> > +       if (bpf_is_subdir(dentry, v->dentry))
-> > +               ret =3D FAN_FP_RET_SEND_TO_USERSPACE;
-> > +       else
-> > +               ret =3D FAN_FP_RET_SKIP_EVENT;
->
-> It seems to me that all these patches and feature additions
-> to fanotify, new kfuncs, etc are done just to do the above
-> filtering by subdir ?
->
-> If so, just hard code this logic as an extra flag to fanotify ?
-> So it can filter all events by subdir.
-> bpf programmability makes sense when it needs to express
-> user space policy. Here it's just a filter by subdir.
-> bpf hammer doesn't look like the right tool for this use case.
 
-Good question.
+These signature/flags/length still don't have the endian annotations
+(nor conversions on access). This was raised on v2, but looks like that
+got lost?
 
-Speaking as someone who has made several attempts to design
-efficient subtree filtering in fanotify, it is not as easy as it sounds.
+> +static void
+> +mctp_pcc_net_stats(struct net_device *net_dev,
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct rtnl_link_stats64 *stats)
+> +{
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0stats->rx_errors =3D 0;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0stats->rx_packets =3D net_dev-=
+>stats.rx_packets;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0stats->tx_packets =3D net_dev-=
+>stats.tx_packets;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0stats->rx_dropped =3D 0;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0stats->tx_bytes =3D net_dev->s=
+tats.tx_bytes;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0stats->rx_bytes =3D net_dev->s=
+tats.rx_bytes;
+> +}
 
-I recently implemented a method that could be used for "practical"
-subdir filtering in userspace, not before Jan has questioned if we
-should go directly to subtree filtering with bpf [1].
+Is this missing the rx_dropped stat (which you're updating in
+_rx_callback)?
 
-This is not the only filter that was proposed for fanotify, where bpf
-filter came as an alternative proposal [2], but subtree filtering is by far
-the most wanted filter.
+If you like, there are some new tstats helpers available, meaning you
+wouldn't need the ndo_get_stats64 op at all. Let me know if you're
+interested in using those, and would like a hand doing so.
 
-The problem with implementing a naive is_subtree() filter in fanotify
-is the unbounded cost to be paid by every user for every fs access
-when M such filters are installed deep in the fs tree.
+> +static int mctp_pcc_driver_add(struct acpi_device *acpi_dev)
+> +{
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct mctp_pcc_lookup_context=
+ context =3D {0, 0, 0};
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct mctp_pcc_ndev *mctp_pcc=
+_ndev;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct device *dev =3D &acpi_d=
+ev->dev;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct net_device *ndev;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0acpi_handle dev_handle;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0acpi_status status;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int mctp_pcc_mtu;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0char name[32];
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int rc;
+> +
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0dev_dbg(dev, "Adding mctp_pcc =
+device for HID=C2=A0 %s\n",
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0acpi_device_hid(acpi_dev));
 
-Making this more efficient then becomes a matter of trading of
-memory (inode/path cache size) and performance and depends
-on the size and depth of the watched filesystem.
-This engineering decision *is* the userspace policy that can be
-expressed by a bpf program.
+Super minor: double space before the %s here.
 
-As you may know, Linux is lagging behind Win and MacOS w.r.t
-subtree filtering for fs events.
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0dev_handle =3D acpi_device_han=
+dle(acpi_dev);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0status =3D acpi_walk_resources=
+(dev_handle, "_CRS", lookup_pcct_indices,
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &context);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!ACPI_SUCCESS(status)) {
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0dev_err(dev, "FAILURE to lookup PCC indexes from CRS");
 
-MacOS/FreeBSD took the userspace approach with fseventsd [3].
-If you Google "fseventsd", you will get results with "High CPU and
-Memory Usage" for as far as the browser can scroll.
++ trailing newline (on the error message).
 
-I hope the bpf-aided early subtree filtering technology would be
-able to reduce some of this overhead to facilitate a better engineering
-solution, but that remains to be proven...
+Other than that, all good!
 
-Thanks,
-Amir.
+Cheers,
 
-[1] https://lore.kernel.org/linux-fsdevel/20220228140556.ae5rhgqsyzm5djbp@q=
-uack3.lan/
-[2] https://lore.kernel.org/linux-fsdevel/20200828084603.GA7072@quack2.suse=
-.cz/
-[3] https://developer.apple.com/library/archive/documentation/Darwin/Concep=
-tual/FSEvents_ProgGuide/TechnologyOverview/TechnologyOverview.html#//apple_=
-ref/doc/uid/TP40005289-CH3-SW1
+
+Jeremy
 
