@@ -1,83 +1,61 @@
-Return-Path: <linux-kernel+bounces-410689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 318079CDFD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:24:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8102F9CDFD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:25:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2D1F283DD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:24:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37CB51F23AFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573E11BDAB9;
-	Fri, 15 Nov 2024 13:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38591BDAAA;
+	Fri, 15 Nov 2024 13:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Ce/aq8wS"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="YLN6x8dF"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541311BB6A0
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 13:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1880F1BC9EB;
+	Fri, 15 Nov 2024 13:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731677070; cv=none; b=HpSvpi0to1z01rqbRuanM50FFdUbCtFklVj1+pZe7zJcK53+kt2yxkjtWWLohe3w4Wf8DTUvX2T2vcmo1fcCwAe6axXos/dVSJPFHAmQlxDkQR1UH4HH/ePns2vlEN5x5ZqvsCUhk7w4FxQ+QIoqKu/GvKxd1ax/mmY/boHY9VY=
+	t=1731677101; cv=none; b=YLEZbp0l7i3dMKn/PvhrgtHIwvvIBQmi90S7hu1SnLUZeLGo6kknZLvo2Ssafpgg9Fjq4jJlurDIfV6OT/swcJirQV5HnXlfUkpIOThq3RujD37LEnPHmofT29BBuBAPTKGRz/KwVGj/x6NL2nta8c9MtUZGC3YzKnptMXwMBmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731677070; c=relaxed/simple;
-	bh=qQnysFRc9BeaYS/qXGTAWVan7gIzgnJHjeDujp1K8a4=;
+	s=arc-20240116; t=1731677101; c=relaxed/simple;
+	bh=1sC65UPckwoGdZANOi4eNDL7lWUJjWMV59vad2f5J1g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YlROP9KC1jBznfymKQwe3DIvOuoJKYjufqZZZakwo1lkDjW0scJobsAFgQ1NqjlHh/qkFP141FcjtT+QDkyWf7OSvd68EX8fdxn2KtMToSXEALnxjA/CCyaWfIaHaySVeQ05F4M52PDqYAK8wFllvU+geW+jEgjngsfcSV1wCPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Ce/aq8wS; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4315c1c7392so16113895e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 05:24:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1731677066; x=1732281866; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JsmYkfI9SAlOdysNsS4+loYZlaU4nZ+pAyan3DcICaY=;
-        b=Ce/aq8wS9HF+9GTaqDsZWAyEeXjQkAxijnHuEUcT21rfUkEUT68BkD3ODljVa4ids+
-         lLhzP7tCTvACrZiFONjQbiED5UvVF6/BMp8PC35dJrq/lL7RlmpyHIq9eazH0DiK2ggq
-         1lx3xHyGqT5w5rnx2mvvaHe+SDPRknZWpEi1xsUrA819q2wkmEDNcoFZFHMDiqj5Jbrj
-         ym5lN0PrJ34lckF7XHD7w8qhRi2xYG0fnqDGuOkpYDOadn71MjxeXdBHSWQxQ1muwZ3E
-         QUPfxaBtKdjNDxFVOjvxtj/4zNMO606+Veh07Yc1wWtWm27tJ7t7sToCk+ZE3ky/qcln
-         oopA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731677066; x=1732281866;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JsmYkfI9SAlOdysNsS4+loYZlaU4nZ+pAyan3DcICaY=;
-        b=Sj79xamxQ8Schav9Rd7TmbaLatwwYcwAzaSaoyt82YF4FaOc3ryfqsRRf/AklXyLNj
-         F3oFh1iG2/DbHQIdbHUFqqzMejTgqCQ3yNVPK4MFwg0XxxmJq8xvsQ299QvQDf3yoVT/
-         ln6IMY+kRP7sI5DdMD3EAvySj5HAQAsG1YaxNLMFXY/A4Xn0SGRc/BD6kaXyOsT5HQoJ
-         QZI4EtkT3ZGcECHe+TyysPNfUQaBhz+mVMp05QwfNfSDpX1p/q9ZIaOn6XTuhz/tDSZA
-         MHOXtahY61+iHttwLEVAPxE4NFNNOPlun2XQrct1jpXD55FEmWVNBtG/5PFas6/gj6QO
-         WhJw==
-X-Forwarded-Encrypted: i=1; AJvYcCWTYOV5+jB6NLFb9WQmu+lum4QmFG82XrACgJBBWveRONQnzswNZqzvc9xhAPGjsMpU8dKTx6b7qKRYhTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyK20grl181raAJqKrTCqNsPehd2OG+BntwEXFS0L+8K+cloTKV
-	m0UfLGJSu711f5W+pA3UK9SKUeFCpcSj3Y/STMqT3tTIjyT6y90wr4LktGD/Yy0=
-X-Google-Smtp-Source: AGHT+IF7XUW+P100edaXbGSm//he90Ln1D8fWPVA6iuq6Xwn8rQ18Ry0V4E1cmRJmi1XGnVwJ/UreQ==
-X-Received: by 2002:a5d:598d:0:b0:37d:4e80:516 with SMTP id ffacd0b85a97d-38225a2163cmr2191863f8f.34.1731677066346;
-        Fri, 15 Nov 2024 05:24:26 -0800 (PST)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821d0ea3e2sm4023804f8f.109.2024.11.15.05.24.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 05:24:25 -0800 (PST)
-Date: Fri, 15 Nov 2024 14:24:24 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Anup Patel <anup@brainfault.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Atish Patra <atishp@rivosinc.com>, 
-	Palmer Dabbelt <palmer@rivosinc.com>, linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] cpuidle: riscv-sbi: fix device node release in early
- exit of for_each_possible_cpu
-Message-ID: <20241115-20b5e02dd05173bfdc3a7d7f@orel>
-References: <20241031-cpuidle-riscv-sbi-cleanup-v2-1-aae62d383118@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QiXDeEmPTuq3ZTmJQA0PnkyHv4bkwX0ODS5Oio9cb6DHe0ClEdCtSv9qy8iXSc7u9x+77Dzdu2E6bLxWuTL1BAuW0fJFTgqDWUVtruqqmRvTs5ev9MzQYoEBYwhnPFzzdX0I5DPSJmHmXF9HnhmTsQwfqMkPoEUZDEVhT8iHeVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=YLN6x8dF; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=hNqKvJTpie3Ajr77T+vAD+bCkr/nJuJuP6IDC3W+j+8=; b=YLN6x8dF3jFtJf5j3Q3nP4MZql
+	Tqw65qjJAcxcyODHcBoIly0VawxXU9ImKoM0w8G76SQFYvGK5CoJAgk4GkFwXUSlsluMhsfvAxbbV
+	9w7cjj6ESK0SWUWSqesR68NYWTYikjKrXPvVXKdeDas8648q99M6x2VUAya2OipwdwMsA4bQXB9ui
+	y7MH7zZrH0NlKlOVrXdizp9YqHbmioRWBUz1eODFUsF1XKhFTWDQMrXqUM0jDu3s5V7S7mXJyjjRM
+	JNHibU1rbB1zeHpMc8J/XJaWJaU0fe1qPSkchDL5uSG8Cdtvz4++/IptOUIKiZ52cBy+goEXHn/sn
+	7RPd9yWA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tBwJj-0000000FRfO-2G61;
+	Fri, 15 Nov 2024 13:24:55 +0000
+Date: Fri, 15 Nov 2024 13:24:55 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com,
+	almaz.alexandrovich@paragon-software.com, brauner@kernel.org,
+	jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] fs: add check for symlink corrupted
+Message-ID: <20241115132455.GS3387508@ZenIV>
+References: <67363c96.050a0220.1324f8.009e.GAE@google.com>
+ <20241115094908.3783952-1-lizhi.xu@windriver.com>
+ <20241115130615.GR3387508@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,64 +64,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241031-cpuidle-riscv-sbi-cleanup-v2-1-aae62d383118@gmail.com>
+In-Reply-To: <20241115130615.GR3387508@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, Oct 31, 2024 at 01:21:17PM +0100, Javier Carrasco wrote:
-> The 'np' device_node is initialized via of_cpu_device_node_get(), which
-> requires explicit calls to of_node_put() when it is no longer required
-> to avoid leaking the resource.
+On Fri, Nov 15, 2024 at 01:06:15PM +0000, Al Viro wrote:
+> On Fri, Nov 15, 2024 at 05:49:08PM +0800, Lizhi Xu wrote:
+> > syzbot reported a null-ptr-deref in pick_link. [1]
+> > When symlink's inode is corrupted, the value of the i_link is 2 in this case,
+> > it will trigger null pointer deref when accessing *res in pick_link(). 
+> > 
+> > To avoid this issue, add a check for inode mode, return -EINVAL when it's
+> > not symlink.
 > 
-> Instead of adding the missing calls to of_node_put() in all execution
-> paths, use the cleanup attribute for 'np' by means of the __free()
-> macro, which automatically calls of_node_put() when the variable goes
-> out of scope. Given that 'np' is only used within the
-> for_each_possible_cpu(), reduce its scope to release the nood after
-> every iteration of the loop.
-> 
-> Fixes: 6abf32f1d9c5 ("cpuidle: Add RISC-V SBI CPU idle driver")
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
-> Changes in v2:
-> - Squash patches for mainline solution without intermediate steps.
-> - Link to v1: https://lore.kernel.org/r/20241030-cpuidle-riscv-sbi-cleanup-v1-0-5e08a22c9409@gmail.com
-> ---
->  drivers/cpuidle/cpuidle-riscv-sbi.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cpuidle/cpuidle-riscv-sbi.c b/drivers/cpuidle/cpuidle-riscv-sbi.c
-> index 14462c092039..3a78d6b7598b 100644
-> --- a/drivers/cpuidle/cpuidle-riscv-sbi.c
-> +++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
-> @@ -504,12 +504,13 @@ static int sbi_cpuidle_probe(struct platform_device *pdev)
->  	int cpu, ret;
->  	struct cpuidle_driver *drv;
->  	struct cpuidle_device *dev;
-> -	struct device_node *np, *pds_node;
-> +	struct device_node *pds_node;
->  
->  	/* Detect OSI support based on CPU DT nodes */
->  	sbi_cpuidle_use_osi = true;
->  	for_each_possible_cpu(cpu) {
-> -		np = of_cpu_device_node_get(cpu);
-> +		struct device_node *np __free(device_node) =
-> +			of_cpu_device_node_get(cpu);
+> NAK.  Don't paper over filesystem bugs at pathwalk time - it's the wrong
+> place for that.  Fix it at in-core inode creation time.
 
-nit: wrapping the line is unnecessary, we have 100 char width.
-
->  		if (np &&
->  		    of_property_present(np, "power-domains") &&
->  		    of_property_present(np, "power-domain-names")) {
-> 
-> ---
-> base-commit: 6fb2fa9805c501d9ade047fc511961f3273cdcb5
-> change-id: 20241029-cpuidle-riscv-sbi-cleanup-e9b3cb96e16d
-> 
-> Best regards,
-> -- 
-> Javier Carrasco <javier.carrasco.cruz@gmail.com>
->
-
-Otherwise,
-
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+BTW, seeing that ntfs doesn't even touch ->i_link, you are dealing
+with aftermath of memory corruption, so it's definitely papering over
+the actual bug here.
 
