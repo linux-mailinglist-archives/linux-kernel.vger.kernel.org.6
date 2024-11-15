@@ -1,185 +1,210 @@
-Return-Path: <linux-kernel+bounces-410819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF0809CE14D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:32:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D236A9CE071
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:45:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A049A284D3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:32:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 620D01F23F9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58CBA1D516F;
-	Fri, 15 Nov 2024 14:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496191CEEAB;
+	Fri, 15 Nov 2024 13:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gMIROa4f"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V6i5qnmO"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28ABF1D516D
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 14:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE281CDA39
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 13:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731681049; cv=none; b=cbD6Uv6/c77sIOLxQNgMQeDtKI6eTbNo85xbtnGopahh1o+1EtkwxUuSL95NGE0vQxZB7J/yLLi5tNMCv3ua5Vod7eHI3S5T515o9Teop+2skL5DxhFWzcKR3f0+LpssEamt4vPabRXfaeEiYp2+0hjvY1BizWMTnkNWpYJ8Pe8=
+	t=1731678158; cv=none; b=oj6XlognRjm6S/27BT/YcmyBd/EKoy+9ondGFpr0DEzOOZspFEJlPbSzWFhlvHpqKCj2WRqKT1yAvXu3Tecacy7+NYnQpvK+LkplJlT98guFU9UiaZCIkAMIJk0036OrjayV0qt4meuvoW/0/R1k4pbvoyq0nl9F6iUqNV6l1K4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731681049; c=relaxed/simple;
-	bh=OU21ApnNbV8Kqt1uorvQvv3ybr2kudyBCw6xHh19yLc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sX5UMhAvFsDzHLL/kI+TnCDZVxlkD+V9aox1EJsDBWthBqB7x30SElemFAtbHAYjQCDrbDCkbCrkyKZeRp2lZQTGR6GBWPw7BAxmnweUOiOxQ6sEegMi96W7MaLZwK1ieJhJA5AQ3tYBf/mSM0w0cNpd1gHQyuhe9aLn9gNjevo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gMIROa4f; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731681046;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4DrMYfoorXtk6yqJ/XxMMeM8b1EMvTXjkTKpuBuDzrQ=;
-	b=gMIROa4fVo0odnzY4R6gMhaSIdYWV0+e0NJ8SRn2+jfunXzFBzgLiw9ZnN39RonSPRfv/P
-	X1NGsU5BkfSslkk7I2xERV65zwCUTH+97iDyj/Cw7vj9Pc39UB80FuIimjT+H3Kas2ivOl
-	0G3d6WcmswGloC9LOsUhZypKF7xiFrM=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-307-abLefCklM0WkP_uyB4zeoA-1; Fri,
- 15 Nov 2024 09:30:42 -0500
-X-MC-Unique: abLefCklM0WkP_uyB4zeoA-1
-X-Mimecast-MFC-AGG-ID: abLefCklM0WkP_uyB4zeoA
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9DE8B19560AE;
-	Fri, 15 Nov 2024 14:30:40 +0000 (UTC)
-Received: from hydra.redhat.com (unknown [10.39.194.181])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C54751956089;
-	Fri, 15 Nov 2024 14:30:36 +0000 (UTC)
-From: Jocelyn Falempe <jfalempe@redhat.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	John Ogness <john.ogness@linutronix.de>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	"Guilherme G . Piccoli" <gpiccoli@igalia.com>,
-	bluescreen_avenger@verizon.net,
-	Caleb Connolly <caleb.connolly@linaro.org>,
-	Petr Mladek <pmladek@suse.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: Jocelyn Falempe <jfalempe@redhat.com>
-Subject: [PATCH v8 6/6] drm/log: Add integer scaling support
-Date: Fri, 15 Nov 2024 14:40:43 +0100
-Message-ID: <20241115142950.1758007-7-jfalempe@redhat.com>
-In-Reply-To: <20241115142950.1758007-1-jfalempe@redhat.com>
-References: <20241115142950.1758007-1-jfalempe@redhat.com>
+	s=arc-20240116; t=1731678158; c=relaxed/simple;
+	bh=mW3MuLmfbgIMEqgVEGW9baS2AV3fJYbovPzK3y5vOSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L+hJczLeGPvpnJqQe0Z/nKTCBoFxiZPwyVs0TfE1XWqtu9//Xuaaq7B6nqZYVt5n9iYZ5DxgMugGNDJtuViHrVc6SWArSvZoTlkx7GWeU9C+Zff2FQXnaOw+GlL+HbpIg+Dy3ee8fxNHM3cs0zW6zg9vvDeTf17LoOEwazG474I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V6i5qnmO; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7ea8de14848so447415a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 05:42:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731678156; x=1732282956; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=1FkyVdlsRATShGE8GfRS5lqV1OLED0nfmhN50QSZ3W4=;
+        b=V6i5qnmOEksL3X37vmLJT+98Tr24N10KWRVNBSW4ulKU9POP2zVc+v/3+7RwwpRCPk
+         fWaz3fsJHONVmf+6lP0933+wva7g9M3gR/4ytjlOJOCSwU0NOCZ9CftSP1gyfjgNCqOJ
+         t3FOr9kkL+GzqWlTsgnBYx+WydaL2KNybDEXVzorDBBkdJXClZErMEWn78qxr42IEkv1
+         I5ZSMbHwKd3zXBJPqK5aeQ11e2kjOwKdOGro12dBgnNU0PFtcB0UAiF/CoDgwCpt8gGT
+         s67mCcH0/WYC4PiRy5b3Fdol/O26WXr1ulUwX2dlEyhVsEq7+Koq5q5Bmt+r0Gu/0PCE
+         vSuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731678156; x=1732282956;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1FkyVdlsRATShGE8GfRS5lqV1OLED0nfmhN50QSZ3W4=;
+        b=ZGOE5tTMqeuPk4RlVoMntQRiYtUIU+sDNj/02mG66CKcBOA5Pk9pTetbyO0SFZDFZe
+         88uZQ++EuvLQPFtFckcm3IW5vMyRooPD/VpI/+jGGlAyxkYy3SHnx/8mO/D2AnpIO4uC
+         7/xXwO3gBfcYHnOWf3pEZDvywYHndHrCF39hQ48GfYmqBY4hUUCtLUZHNREbDWre+1zO
+         h7z2BA36mouYjVMLOBrTMXCNh7p/eOY0HJv+NjnlUa6aGFwYJFq4v+mcT/3BWxaKuEOk
+         UF77ss3sBEhjbxM291/3nJU0gsZ2z7i6B0SFx6SdLj7Q7eo7/B8VJ4MgWVfpGwuXFvAs
+         uuZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnRK2yGuqEYSlHJBPixVxjZPpmGT3Rmlv+w4mnuPu3Qk9v/eheRgXSZ7PyKzsh6p9x6XXki6BUNthEfAA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO78yEtJny5IroQN7N4h00V/DvXLDEL/FabaSkptcAUR08Xf4K
+	9ONp7dlL7GHk8ZLGSI3J0uQlWuD882AIT2g9r5tWMY89jKCVJy6PkwaLXfnD6Q==
+X-Google-Smtp-Source: AGHT+IGp/OjSmn7NxjC0IsG1rKt5fpJ1gFFvGf7ngcn+SVF2YiP5ayY+G6aeEVN7i6XGfOtMHxDk0Q==
+X-Received: by 2002:a05:6a20:12d1:b0:1c6:fb66:cfe with SMTP id adf61e73a8af0-1dc90b51f1fmr2758521637.21.1731678155980;
+        Fri, 15 Nov 2024 05:42:35 -0800 (PST)
+Received: from thinkpad ([117.193.215.93])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724771c0cb9sm1360035b3a.121.2024.11.15.05.42.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 05:42:35 -0800 (PST)
+Date: Fri, 15 Nov 2024 19:12:26 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: jingoohan1@gmail.com, bhelgaas@google.com, lpieralisi@kernel.org,
+	kw@linux.com, robh@kernel.org, frank.li@nxp.com,
+	imx@lists.linux.dev, kernel@pengutronix.de,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] PCI: dwc: Clean up some unnecessary codes in
+ dw_pcie_suspend_noirq()
+Message-ID: <20241115134226.w27n244spddoavqt@thinkpad>
+References: <20241115090321.527694-1-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+In-Reply-To: <20241115090321.527694-1-hongxing.zhu@nxp.com>
 
-Add a module parameter, to increase the font size for HiDPI screen.
-Even with CONFIG_FONT_TER16x32, it can still be a bit small to read.
-In this case, adding drm_log.scale=2 to your kernel command line will
-double the character size.
+On Fri, Nov 15, 2024 at 05:03:21PM +0800, Richard Zhu wrote:
+> Before sending PME_TURN_OFF, don't test the LTSSM stat. Since it's safe
 
-Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
----
+s/stat/state
 
-v5:
- * Change scale parameter to unsigned int (Jani Nikula)
+here and below
 
- drivers/gpu/drm/clients/drm_log.c | 27 ++++++++++++++++++---------
- 1 file changed, 18 insertions(+), 9 deletions(-)
+> to send PME_TURN_OFF message regardless of whether the link is up or
+> down. So, there would be no need to test the LTSSM stat before sending
+> PME_TURN_OFF message.
+> 
+> Only dump the message when ltssm_stat is not in DETECT and POLL.
 
-diff --git a/drivers/gpu/drm/clients/drm_log.c b/drivers/gpu/drm/clients/drm_log.c
-index 03c59784c829f..f9f8becf7f96a 100644
---- a/drivers/gpu/drm/clients/drm_log.c
-+++ b/drivers/gpu/drm/clients/drm_log.c
-@@ -25,6 +25,10 @@ MODULE_AUTHOR("Jocelyn Falempe");
- MODULE_DESCRIPTION("DRM boot logger");
- MODULE_LICENSE("GPL");
- 
-+static unsigned int scale = 1;
-+module_param(scale, uint, 0444);
-+MODULE_PARM_DESC(scale, "Integer scaling factor for drm_log, default is 1");
-+
- /**
-  * DOC: overview
-  *
-@@ -38,6 +42,8 @@ struct drm_log_scanout {
- 	const struct font_desc *font;
- 	u32 rows;
- 	u32 columns;
-+	u32 scaled_font_h;
-+	u32 scaled_font_w;
- 	u32 line;
- 	u32 format;
- 	u32 px_width;
-@@ -66,7 +72,7 @@ static struct drm_log *console_to_drm_log(struct console *con)
- 
- static void drm_log_blit(struct iosys_map *dst, unsigned int dst_pitch,
- 			 const u8 *src, unsigned int src_pitch,
--			 u32 height, u32 width, u32 scale, u32 px_width, u32 color)
-+			 u32 height, u32 width, u32 px_width, u32 color)
- {
- 	switch (px_width) {
- 	case 2:
-@@ -86,7 +92,7 @@ static void drm_log_blit(struct iosys_map *dst, unsigned int dst_pitch,
- static void drm_log_clear_line(struct drm_log_scanout *scanout, u32 line)
- {
- 	struct drm_framebuffer *fb = scanout->buffer->fb;
--	unsigned long height = scanout->font->height;
-+	unsigned long height = scanout->scaled_font_h;
- 	struct iosys_map map;
- 	struct drm_rect r = DRM_RECT_INIT(0, line * height, fb->width, height);
- 
-@@ -106,8 +112,8 @@ static void drm_log_draw_line(struct drm_log_scanout *scanout, const char *s,
- 	size_t font_pitch = DIV_ROUND_UP(font->width, 8);
- 	const u8 *src;
- 	u32 px_width = fb->format->cpp[0];
--	struct drm_rect r = DRM_RECT_INIT(0, scanout->line * font->height,
--					  fb->width, (scanout->line + 1) * font->height);
-+	struct drm_rect r = DRM_RECT_INIT(0, scanout->line * scanout->scaled_font_h,
-+					  fb->width, (scanout->line + 1) * scanout->scaled_font_h);
- 	u32 i;
- 
- 	if (drm_client_buffer_vmap_local(scanout->buffer, &map))
-@@ -117,9 +123,10 @@ static void drm_log_draw_line(struct drm_log_scanout *scanout, const char *s,
- 	for (i = 0; i < len && i < scanout->columns; i++) {
- 		u32 color = (i < prefix_len) ? scanout->prefix_color : scanout->front_color;
- 		src = drm_draw_get_char_bitmap(font, s[i], font_pitch);
--		drm_log_blit(&map, fb->pitches[0], src, font_pitch, font->height, font->width,
--			     1, px_width, color);
--		iosys_map_incr(&map, font->width * px_width);
-+		drm_log_blit(&map, fb->pitches[0], src, font_pitch,
-+			     scanout->scaled_font_h, scanout->scaled_font_w,
-+			     px_width, color);
-+		iosys_map_incr(&map, scanout->scaled_font_w * px_width);
- 	}
- 
- 	scanout->line++;
-@@ -204,8 +211,10 @@ static int drm_log_setup_modeset(struct drm_client_dev *client,
- 		return -ENOMEM;
- 	}
- 	mode_set->fb = scanout->buffer->fb;
--	scanout->rows = height / scanout->font->height;
--	scanout->columns = width / scanout->font->width;
-+	scanout->scaled_font_h = scanout->font->height * scale;
-+	scanout->scaled_font_w = scanout->font->width * scale;
-+	scanout->rows = height / scanout->scaled_font_h;
-+	scanout->columns = width / scanout->scaled_font_w;
- 	scanout->front_color = drm_draw_color_from_xrgb8888(0xffffff, format);
- 	scanout->prefix_color = drm_draw_color_from_xrgb8888(0x4e9a06, format);
- 	return 0;
+s/dump/print
+
+> In the other words, there isn't a notification when no endpoint is
+
+s/notification/error message
+
+> connected at all.
+> 
+> When the endpoint is connected and after PME_TURN_OFF is issued. Just
+> print out one information instead of an error and exit, if the link
+> doesn't entry DW_PCIE_LTSSM_L2_IDLE stat. Since the recovery would be
+> done in the following closely dw_pcie_resume_noirq().
+> 
+
+How about,
+
+"Also, when the endpoint is connected and PME_TURN_OFF is sent, do not return
+error if the link doesn't enter L2. Just print a warning and continue with the
+suspend as the link will be recovered in dw_pcie_resume_noirq(). "
+
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> ---
+>  .../pci/controller/dwc/pcie-designware-host.c | 37 ++++++++++---------
+>  drivers/pci/controller/dwc/pcie-designware.h  |  1 +
+>  2 files changed, 21 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index f7ceeb785fb0..c2053555c44b 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -927,23 +927,26 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
+>  	if (dw_pcie_readw_dbi(pci, offset + PCI_EXP_LNKCTL) & PCI_EXP_LNKCTL_ASPM_L1)
+>  		return 0;
+>  
+> -	if (dw_pcie_get_ltssm(pci) > DW_PCIE_LTSSM_DETECT_ACT) {
+> -		/* Only send out PME_TURN_OFF when PCIE link is up */
+> -		if (pci->pp.ops->pme_turn_off)
+> -			pci->pp.ops->pme_turn_off(&pci->pp);
+> -		else
+> -			ret = dw_pcie_pme_turn_off(pci);
+> -
+> -		if (ret)
+> -			return ret;
+> +	if (pci->pp.ops->pme_turn_off)
+> +		pci->pp.ops->pme_turn_off(&pci->pp);
+> +	else
+> +		ret = dw_pcie_pme_turn_off(pci);
+> +	if (ret)
+> +		return ret;
+>  
+> -		ret = read_poll_timeout(dw_pcie_get_ltssm, val, val == DW_PCIE_LTSSM_L2_IDLE,
+> -					PCIE_PME_TO_L2_TIMEOUT_US/10,
+> -					PCIE_PME_TO_L2_TIMEOUT_US, false, pci);
+> -		if (ret) {
+> -			dev_err(pci->dev, "Timeout waiting for L2 entry! LTSSM: 0x%x\n", val);
+> -			return ret;
+> -		}
+> +	ret = read_poll_timeout(dw_pcie_get_ltssm, val, val == DW_PCIE_LTSSM_L2_IDLE,
+> +				PCIE_PME_TO_L2_TIMEOUT_US/10,
+> +				PCIE_PME_TO_L2_TIMEOUT_US, false, pci);
+> +	if (ret && (val > DW_PCIE_LTSSM_DETECT_WAIT))
+> +		/* Only dump message when ltssm_stat isn't in DETECT and POLL */
+> +		dev_info(pci->dev, "Timeout waiting for L2 entry! LTSSM: 0x%x\n", val);
+
+dev_warn() would be more appropriate.
+
+- Mani
+
+> +	else
+> +		/*
+> +		 * Refer to r6.0, sec 5.3.3.2.1, software should wait at least
+> +		 * 100ns after L2/L3 Ready before turning off refclock and
+> +		 * main power. It's harmless too when no endpoint connected.
+> +		 */
+> +		udelay(1);
+>  	}
+>  
+>  	dw_pcie_stop_link(pci);
+> @@ -952,7 +955,7 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
+>  
+>  	pci->suspended = true;
+>  
+> -	return ret;
+> +	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(dw_pcie_suspend_noirq);
+>  
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 347ab74ac35a..bf036e66717e 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -330,6 +330,7 @@ enum dw_pcie_ltssm {
+>  	/* Need to align with PCIE_PORT_DEBUG0 bits 0:5 */
+>  	DW_PCIE_LTSSM_DETECT_QUIET = 0x0,
+>  	DW_PCIE_LTSSM_DETECT_ACT = 0x1,
+> +	DW_PCIE_LTSSM_DETECT_WAIT = 0x6,
+>  	DW_PCIE_LTSSM_L0 = 0x11,
+>  	DW_PCIE_LTSSM_L2_IDLE = 0x15,
+>  
+> -- 
+> 2.37.1
+> 
+> 
+
 -- 
-2.47.0
-
+மணிவண்ணன் சதாசிவம்
 
