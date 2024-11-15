@@ -1,156 +1,127 @@
-Return-Path: <linux-kernel+bounces-411091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2D719CF2C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:24:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3FD99CF2D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:25:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B869D290C97
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:24:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88D0D291558
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70861D63C9;
-	Fri, 15 Nov 2024 17:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4B31D63C6;
+	Fri, 15 Nov 2024 17:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="v1fzfTTl"
-Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WcXaPIm6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696F2166307;
-	Fri, 15 Nov 2024 17:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.184.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879CD84D02;
+	Fri, 15 Nov 2024 17:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731691449; cv=none; b=KbG9bMmZ0ctPdjzSBJfOwZkF4htW3dVfIi1oos9zgHiXOhUf/5CZEoewVvGYwq+B8U5lQ+xuyInEFdz49CqejtzN/zHVo0n81fyD9jtiXu79hKzcFJJYvE19uqfGLh2q/pstThpf9WyLeb+0PXtfGfH1yVyLcXQzIFJ4x39fjCs=
+	t=1731691538; cv=none; b=h6SFhldbPj5i8ggZs0+V2tjhEDS1Am+mZt0HCDPFs+dph/XKHQ8C1d2x5wkzFAr18l5lTuD2/L1GgA2g/2m5m66DkUwHonmlUKU6uMNefc8uvSOJyJNR5Xe1erYLZg7JgSe7jHKoqRFXcisAgrcxoyNuPgBa5xMxx9kKsUg7ILM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731691449; c=relaxed/simple;
-	bh=lEyWvGX0JG+Yw319+gafXH1ELjZoKnONXw/B9hTbf6Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NaGOdLh6HTV/hxI2GHaeQ/0rMvidvdSwV8IDUAA+fH51YmgZ0LIK7TCjfDsxOHPSMzcsp6WdMwzo3GzMtdrTg4zejFTPn6psLQWSUUUF1ihKbVbHrE+U8IeM4Qle9lZvqxO1cUx2DRJPF+gIy8j4v5qE+ACHz4h7JrWlC57mAMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=v1fzfTTl; arc=none smtp.client-ip=207.171.184.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazon201209; t=1731691448; x=1763227448;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Bk0JymAs/OEj+UcEvmUanxee/ezdfeE24i85gdC/NwU=;
-  b=v1fzfTTlLMnu2X5WPNwFdXUd4FV7OEHW4KP4gun3bkygP8S0+6gcKbdN
-   QSD5K95IgXGpA8vvie3KAMk+oAVOQulG0xKJkitMjf2Qv8O+Ka7BoRhdu
-   gIOT2ZkR5UMhMOJwYZypYGNcxAY8A9d7nGydqluZu3GrRXKqHBHwmIUs9
-   o=;
-X-IronPort-AV: E=Sophos;i="6.12,157,1728950400"; 
-   d="scan'208";a="470536855"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 17:24:02 +0000
-Received: from EX19MTAUWB001.ant.amazon.com [10.0.38.20:38135]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.52.223:2525] with esmtp (Farcaster)
- id 5ff6a4b3-184c-4e50-9e2d-e5baf28ad41c; Fri, 15 Nov 2024 17:24:01 +0000 (UTC)
-X-Farcaster-Flow-ID: 5ff6a4b3-184c-4e50-9e2d-e5baf28ad41c
-Received: from EX19D003UWB004.ant.amazon.com (10.13.138.24) by
- EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Fri, 15 Nov 2024 17:23:56 +0000
-Received: from EX19MTAUWC002.ant.amazon.com (10.250.64.143) by
- EX19D003UWB004.ant.amazon.com (10.13.138.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Fri, 15 Nov 2024 17:23:56 +0000
-Received: from email-imr-corp-prod-pdx-all-2b-a57195ef.us-west-2.amazon.com
- (10.25.36.210) by mail-relay.amazon.com (10.250.64.149) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1258.34 via Frontend Transport; Fri, 15 Nov 2024 17:23:56 +0000
-Received: from [127.0.0.1] (dev-dsk-roypat-1c-dbe2a224.eu-west-1.amazon.com [172.19.88.180])
-	by email-imr-corp-prod-pdx-all-2b-a57195ef.us-west-2.amazon.com (Postfix) with ESMTPS id AE0FAA04A5;
-	Fri, 15 Nov 2024 17:23:48 +0000 (UTC)
-Message-ID: <81d14448-29eb-4496-b876-ef6de526a840@amazon.co.uk>
-Date: Fri, 15 Nov 2024 17:23:47 +0000
+	s=arc-20240116; t=1731691538; c=relaxed/simple;
+	bh=B5HD6FNYjbwvelKHX9O/ZdMyYIKdSlEvRVWHBFf74j8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=IhoWxrCvGUMEc9oMLP/lCgnvFt4dAPy7peiGQ2E4w7qlQTxGqTxVaL17GTAxa7hoF6l2FB+WZFwRoD/Emr/xu1ElQ3S0iPkHKrfNl21CMcjJ+KR7o0L1Nuw4Spd7wAwNTv6tCVSRtcwIb7yyZP6soP6HTtdVxXWlgLO8TRt4n6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WcXaPIm6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7167C4CECF;
+	Fri, 15 Nov 2024 17:25:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731691537;
+	bh=B5HD6FNYjbwvelKHX9O/ZdMyYIKdSlEvRVWHBFf74j8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=WcXaPIm6WdUXfZSjMdG+JVztfyMit+f2yPV6YeN1NZzQXkpO0wmt1PgI3au1RF50R
+	 LHUBGZ0Cvt86wCrxygPt98TmAcFHPzMWjkT3D1CDHcOtALCHGLjhUqBMq2esM83LRq
+	 dC66w/GliM5szwN6wE+X7c/6i3JYnQuI/lnIZY+ygQMmilIqVDGWBQ0s7jdMYZPnhZ
+	 LGzZEKSxuQVpXUUyDg6A0Nff5ZAb+Z2yKW0E2cNDRAc4xifpGzAGBPW56dlr5j/X/S
+	 hRyM4fl66Rjw6Ohf2wPWaNZLQ3guLNCoFS6Dfkw4CK7FEwjGTwli+8n9i49ABjNtR7
+	 cN9Lq0wdTNFLw==
+Date: Fri, 15 Nov 2024 11:25:34 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Andrea della Porta <andrea.porta@suse.com>,
+	Rob Herring <robh@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>, stable@vger.kernel.org
+Subject: Re: [PATCH] PCI: of_property: Assign PCI instead of CPU bus address
+ to dynamic PCI nodes
+Message-ID: <20241115172534.GA2044163@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 0/6] Direct Map Removal for guest_memfd
-To: David Hildenbrand <david@redhat.com>, <tabba@google.com>,
-	<quic_eberman@quicinc.com>, <seanjc@google.com>, <pbonzini@redhat.com>,
-	<jthoughton@google.com>, <ackerleytng@google.com>, <vannapurve@google.com>,
-	<rppt@kernel.org>
-CC: <graf@amazon.com>, <jgowans@amazon.com>, <derekmn@amazon.com>,
-	<kalyazin@amazon.com>, <xmarcalx@amazon.com>, <linux-mm@kvack.org>,
-	<corbet@lwn.net>, <catalin.marinas@arm.com>, <will@kernel.org>,
-	<chenhuacai@kernel.org>, <kernel@xen0n.name>, <paul.walmsley@sifive.com>,
-	<palmer@dabbelt.com>, <aou@eecs.berkeley.edu>, <hca@linux.ibm.com>,
-	<gor@linux.ibm.com>, <agordeev@linux.ibm.com>, <borntraeger@linux.ibm.com>,
-	<svens@linux.ibm.com>, <gerald.schaefer@linux.ibm.com>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, <hpa@zytor.com>, <luto@kernel.org>, <peterz@infradead.org>,
-	<rostedt@goodmis.org>, <mhiramat@kernel.org>,
-	<mathieu.desnoyers@efficios.com>, <shuah@kernel.org>, <kvm@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <loongarch@lists.linux.dev>,
-	<linux-riscv@lists.infradead.org>, <linux-s390@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<faresx@amazon.com>
-References: <20241030134912.515725-1-roypat@amazon.co.uk>
- <4aa0ccf4-ebbe-4244-bc85-8bc8dcd14e74@redhat.com>
- <27646c08-f724-49f7-9f45-d03bad500219@amazon.co.uk>
- <d1a69eb7-85d5-4ffa-88e2-f4841713c1d7@redhat.com>
- <90c9d8c0-814e-4c86-86ef-439cb5552cb6@amazon.co.uk>
- <10e4d078-3cdb-4d1c-a1a3-80e91b247217@redhat.com>
- <02f77d32-e2a1-431b-bb67-33d36c06acd3@amazon.co.uk>
- <f4c5d0a6-a582-44e3-8949-c199cc0bfba7@redhat.com>
- <f1f34ac0-d505-4982-aad9-86a0db9f4a35@amazon.co.uk>
- <dcdce8e1-51da-42da-a892-59c6ccd9de23@redhat.com>
-From: Patrick Roy <roypat@amazon.co.uk>
-Content-Language: en-US
-Autocrypt: addr=roypat@amazon.co.uk; keydata=
- xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
- NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
- wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
- CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
- AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
- AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
- IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
- 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
- 8hlxFQM=
-In-Reply-To: <dcdce8e1-51da-42da-a892-59c6ccd9de23@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108094256.28933-1-andrea.porta@suse.com>
 
-
-
-On Fri, 2024-11-15 at 17:10 +0000, David Hildenbrand wrote:
->> [...]
->>
->> I've talked to Fares internally, and it seems that generally doing
->> mm-local mappings of guest memory would work for us. We also figured out
->> what the "interrupt problem" is, namely that if we receive an interrupt
->> while executing in a context that has mm-local mappings available, those
->> mappings will continue to be available while the interrupt is being
->> handled.
+On Fri, Nov 08, 2024 at 10:42:56AM +0100, Andrea della Porta wrote:
+> When populating "ranges" property for a PCI bridge or endpoint,
+> of_pci_prop_ranges() incorrectly use the CPU bus address of the resource.
+> In such PCI nodes, the window should instead be in PCI address space. Call
+> pci_bus_address() on the resource in order to obtain the PCI bus
+> address.
 > 
-> Isn't that likely also the case with secretmem where we removed the
-> directmap, but have an effective per-mm mapping in the (user-space
-> portion) of the page table?
+> Fixes: 407d1a51921e ("PCI: Create device tree node for bridge")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> Tested-by: Herve Codina <herve.codina@bootlin.com>
 
-Mh, that's an excellent point, I never thought of that. But with
-secretmem, the memory would still be protected by SMAP (admittedly, I
-have no idea how much this is worth in the face of all these speculative
-issues), right?
+I picked this up on pci/of for v6.13, thanks!  Rob, let me know if
+you'd prefer to take it or ack/review it.
 
->> I'm talking to my security folks to see how much of a concern
->> this is for the speculation hardening we're trying to achieve. Will keep
->> you in the loop there :)
+> ---
+> This patch, originally preparatory for a bigger patchset (see [1]), has
+> been splitted in a standalone one for better management and because it
+> contains a bugfix which is probably of interest to stable branch.
 > 
-> Thanks!
+>  drivers/pci/of_property.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/drivers/pci/of_property.c b/drivers/pci/of_property.c
+> index 5a0b98e69795..886c236e5de6 100644
+> --- a/drivers/pci/of_property.c
+> +++ b/drivers/pci/of_property.c
+> @@ -126,7 +126,7 @@ static int of_pci_prop_ranges(struct pci_dev *pdev, struct of_changeset *ocs,
+>  		if (of_pci_get_addr_flags(&res[j], &flags))
+>  			continue;
+>  
+> -		val64 = res[j].start;
+> +		val64 = pci_bus_address(pdev, &res[j] - pdev->resource);
+>  		of_pci_set_address(pdev, rp[i].parent_addr, val64, 0, flags,
+>  				   false);
+>  		if (pci_is_bridge(pdev)) {
 > -- 
-> Cheers,
+> 2.35.3
 > 
-> David / dhildenb
-
-Best,
-Patrick
 
