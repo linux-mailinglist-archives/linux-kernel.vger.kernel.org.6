@@ -1,128 +1,107 @@
-Return-Path: <linux-kernel+bounces-411038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7872B9CF32C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:44:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C10AF9CF21B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:51:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC057B63A06
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:48:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 644341F2B276
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678EC1D79B7;
-	Fri, 15 Nov 2024 16:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77F01D5ADA;
+	Fri, 15 Nov 2024 16:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1+QRTKPw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="BTIaINUq"
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14ED1D47C7;
-	Fri, 15 Nov 2024 16:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4801D5166;
+	Fri, 15 Nov 2024 16:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731689183; cv=none; b=E/yNdCGjLrvAlVJc2twJkCIdLfwtdRCxqlA/2cY2e6Dz2Wwy2VHUE5WHzlqWEYw+t6sRB6mQFX+Ajd9LbEKa+t6+I0hauWqpX0ngk4aEeUyXdGtAxEaBVUA0G+nWRWK9qWP5eDVAC3/zeuF0vEjGnHJvJEcokbNI1i315dc/CWs=
+	t=1731689460; cv=none; b=Ffs4GcFyleUKWBW+e3ifWFTUJVaA/PFWX2LF6HfNkHOJHLpP/Q5hsfRuxV2tYaYnCe4efgXncMOtab2E8Z1cPhUiMEE1MB7uRjHfmo0OqU8+dhh3Tn/TSwf00AkWN6fBK7VQvhArTv6j5ilWHznQK4aY2TPN/zXL4J6pxerB8a8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731689183; c=relaxed/simple;
-	bh=BNhqGmZpGO18Kd9qsEPWforINqkenKitF4CgQOg2lxI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ARHggsGDgAOT72PHc5BCvh0/WQEoHtjB6CzuVVN3JGlk5y0ckHaR6oN/EQU9IO+YgFm3/pMhAjpjkE9G22uraxZmlwpF3zjKFeFOkSY4GCpkdJzuRsW+og48w4k9YivXRufc4lGij8QLCZOki0MU0x/1Iochv/lZkgHN4llARR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1+QRTKPw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2D15C4CECF;
-	Fri, 15 Nov 2024 16:46:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731689183;
-	bh=BNhqGmZpGO18Kd9qsEPWforINqkenKitF4CgQOg2lxI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=1+QRTKPwF59OSlWmutPUUMxLR3dn6KMf2xjO+Vr7EA6svw1+Rjw0kJHvbHdmlmX5A
-	 CEeKQ5j10QBGboByplZX+7sISRSajE12hvs7OVOANGKoMbL5LbGTsCzT8mEf5bwR/v
-	 0QUySnfmWNFFM8weHxtN7IBecUxTNJmo2RYSlaXo=
-Date: Fri, 15 Nov 2024 17:46:00 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: linux-usb@vger.kernel.org, stern@rowland.harvard.edu,
-	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Grant Grundler <grundler@chromium.org>,
-	Oliver Neukum <oneukum@suse.com>, Yajun Deng <yajun.deng@linux.dev>
-Subject: Re: [PATCH v2 1/2] USB: make single lock for all usb dynamic id lists
-Message-ID: <2024111554-elves-crumpled-0a24@gregkh>
-References: <2024111322-kindly-finalist-d247@gregkh>
- <CAD=FV=XGBfkLQ2N3dr3smhMDb+ze-XpbHjd7EChAByGNwJOnOw@mail.gmail.com>
+	s=arc-20240116; t=1731689460; c=relaxed/simple;
+	bh=Dh6VoU9zwjMl9JckDaBsClwL1bYVAj7+lJHn/AxCiw4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l6Qotmgi4sdxLkst6YWeiXYyUfT7gBKL0Wgk/DZlfCrQOhkvtbKHHsRLrL4tW0QI8GMFPvB2SJc8TXxYJbHtPXUXha4e5TlZgx+22Nv31aXnWeKehQza059f+IbwnPw9hJtwcyyqw9vNA/bSTLW4LANccGCuTxNH0d7k08/k49Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=BTIaINUq; arc=none smtp.client-ip=80.12.242.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id BzWytmXWNNywhBzWztDLqn; Fri, 15 Nov 2024 17:50:49 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1731689449;
+	bh=D7i3WbUAxo57vU5iXZm97MwKXkcrSqG2y+8GbDnWHjc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=BTIaINUqtp9cEkQwJZGcQiOyrwOtgL8ne+lKN3whF/Z942yR4P0uZukGX4WRQb+DM
+	 k8eBBPYH661yXWQt1tDRGOoS5YP0mFeQesq7fswBoq0XuVgse5jRwe/At5LFeae9Kn
+	 NmEIvI1LtLz6mwMueTrbcgmA498s4Oipnk/uAYZcubJL5BLwh4p6Q/gohmcVU2eL56
+	 McVLUwUoq1v0K/4iV6W3JV6QTpUMR/fGTjKRUKO3+V1AAVs/SeadAKS2gAaTB4fR+L
+	 nzp7qE6xuWgd3FcPczAn4DFnjjmYKoNkUlHSwIWqiQ0SPLpHo4wOo1Qod+HiUybMXm
+	 kvWs3PyAWgx3g==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 15 Nov 2024 17:50:49 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Yassine Oudjana <y.oudjana@protonmail.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-input@vger.kernel.org
+Subject: [PATCH] Input: cypress-sf - Constify struct i2c_device_id
+Date: Fri, 15 Nov 2024 17:50:37 +0100
+Message-ID: <4bc3e3b4d10223d9df850fe4ba48f1cefd197082.1731689418.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=XGBfkLQ2N3dr3smhMDb+ze-XpbHjd7EChAByGNwJOnOw@mail.gmail.com>
 
-On Thu, Nov 14, 2024 at 02:37:10PM -0800, Doug Anderson wrote:
-> Hi,
-> 
-> On Tue, Nov 12, 2024 at 10:49 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > There are a number of places where we accidentally pass in a constant
-> > structure to later cast it off to a dynamic one, and then attempt to
-> > grab a lock on it, which is not a good idea.  To help resolve this, move
-> > the dynamic id lock out of the dynamic id structure for the driver and
-> > into one single lock for all USB dynamic ids.  As this lock should never
-> > have any real contention (it's only every accessed when a device is
-> 
-> nit: s/every/ever/
-> 
-> 
-> > added or removed, which is always serialized) there should not be any
-> > difference except for some memory savings.
-> >
-> > Note, this just converts the existing use of the dynamic id lock to the
-> > new static lock, there is one place that is accessing the dynamic id
-> > list without grabbing the lock, that will be fixed up in a follow-on
-> > change.
-> >
-> > Cc: Johan Hovold <johan@kernel.org>
-> > Cc: Herve Codina <herve.codina@bootlin.com>
-> > Cc: Rob Herring <robh@kernel.org>
-> > Cc: Alan Stern <stern@rowland.harvard.edu>
-> > Cc: Grant Grundler <grundler@chromium.org>
-> > Cc: Oliver Neukum <oneukum@suse.com>
-> > Cc: Yajun Deng <yajun.deng@linux.dev>
-> > Cc: Douglas Anderson <dianders@chromium.org>
-> > Cc: linux-usb@vger.kernel.org
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > ---
-> > v2: - change to a mutex
-> >     - strip out of larger series
-> >
-> >  drivers/usb/common/common.c     |  3 +++
-> >  drivers/usb/core/driver.c       | 15 +++++----------
-> >  drivers/usb/serial/bus.c        |  4 +---
-> >  drivers/usb/serial/usb-serial.c |  4 +---
-> >  include/linux/usb.h             |  2 +-
-> >  5 files changed, 11 insertions(+), 17 deletions(-)
-> 
-> I'm not familiar enough with the code to confirm with 100% certainty
-> your assertions that there won't be any contention problems with this
-> lock. However, your argument sounds reasonable to me and, since you
-> are much more familiar with the subsystem, I'll believe you. :-)
-> 
-> I would have a slight concern that you are changing a "spin_lock" to a
-> "mutex", which doesn't seem to be talked about in the patch
-> description. This is likely to be fine given that all of the users are
-> "spin_lock" and not "spin_lock_irq" or "spin_lock_irqsave", but it
-> still makes me worried that there's some random bit of code somewhere
-> that calls one of these functions while sleeping is disabled. I guess
-> that's not likely.
-> 
-> In any case, this seems OK to me assuming it tests well.
-> 
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> 
+'struct i2c_device_id' is not modified in this driver.
 
-THanks for the reviews!
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
+
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   6438	    618	      0	   7056	   1b90	drivers/input/keyboard/cypress-sf.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   6502	    554	      0	   7056	   1b90	drivers/input/keyboard/cypress-sf.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only.
+---
+ drivers/input/keyboard/cypress-sf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/input/keyboard/cypress-sf.c b/drivers/input/keyboard/cypress-sf.c
+index eb1d0720784d..335b72efc5aa 100644
+--- a/drivers/input/keyboard/cypress-sf.c
++++ b/drivers/input/keyboard/cypress-sf.c
+@@ -208,7 +208,7 @@ static int cypress_sf_resume(struct device *dev)
+ static DEFINE_SIMPLE_DEV_PM_OPS(cypress_sf_pm_ops,
+ 				cypress_sf_suspend, cypress_sf_resume);
+ 
+-static struct i2c_device_id cypress_sf_id_table[] = {
++static const struct i2c_device_id cypress_sf_id_table[] = {
+ 	{ CYPRESS_SF_DEV_NAME },
+ 	{ }
+ };
+-- 
+2.47.0
+
 
