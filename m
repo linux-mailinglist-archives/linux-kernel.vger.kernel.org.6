@@ -1,192 +1,125 @@
-Return-Path: <linux-kernel+bounces-411019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A5E9CF1D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:42:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B81F29CF236
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:55:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2F692842F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:42:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79B30B60D22
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A301D5CC4;
-	Fri, 15 Nov 2024 16:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA471D63C5;
+	Fri, 15 Nov 2024 16:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AP/GnWwj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kODFfmSE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46A918E047;
-	Fri, 15 Nov 2024 16:39:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425131D61A3;
+	Fri, 15 Nov 2024 16:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731688783; cv=none; b=WTvXDjC+495dDDD9QISkBk7UOpRseNRnA2o+hG3lD/3COP0V+IPFGAXRjiMQ8vaStJvITgLD363/Vh0DRRkk2WoeyOyAEHEetwZA/b2gM0GePxIvxOpiXYNZ2bGghqgCrmH2tSkeYIPB/u5vbbBqqpWwrJs1I6o6c4Wlpc84Ohg=
+	t=1731688798; cv=none; b=sDb8DzWyFIXEvj91Gctkpz4qQw3jHvSjurgA5bkiq0ajalEcZmtgUezJcixAg85W/9u+SUxEh8QHQYU1fHiIU/rFzCdE1rrhkxz+Vc0g+fb0427QtKWjpuImubBl9zUw5wAIiFZu4qziizgU3s+4Ws5KQghTNUdK5CJeJnQR+7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731688783; c=relaxed/simple;
-	bh=iRr3qC8xf3SocAeyPSOv4BEKnzUJ3YHOuClfGqNnj3o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WVjbW8zTM32g1Oy4tzz+m3iHctRiZT1jmphbHuBEomCeR/cuR0BK93IgoGxs9sajontM4keF/KHLL4bk6u/2R42sOHBB43r/UxoiSaeMxksyfmWjEmkhh9Vmvm1mND9bXZ3EeCATQapvBchrR6nak5Z04oMGIo3Ps15gbY28FrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AP/GnWwj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EC12C4CECF;
-	Fri, 15 Nov 2024 16:39:43 +0000 (UTC)
+	s=arc-20240116; t=1731688798; c=relaxed/simple;
+	bh=t1mHSIeHwWXgRLmkrrmBgqlQYmk5zzZwd34nRRtso6o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pc/vBjne8z/LtG01oxVxYxS8/2ktkobVWj6XFUQKdE//KxWneBL+LhnwOGc/qTEofQjscp2IVsJQZFf40Es9cngs2CU8m0xphC1xmlm29BG/c/XlQPhOCxzmR2mpg+Fs1dVb6pEs4X6XckWb/buxpnrk4hs3c36EPuD2LPcnk2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kODFfmSE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24E77C4CED5;
+	Fri, 15 Nov 2024 16:39:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731688783;
-	bh=iRr3qC8xf3SocAeyPSOv4BEKnzUJ3YHOuClfGqNnj3o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AP/GnWwjAUJLjLFoxgVufPIRcVQsuuCixNyxHBMNXq00d0lDhi+r0CB0ZJyC99XZi
-	 sglwDivb/koS7axFD0SOzdC8byWidw6FjVRON36PCqYXjefKXEypjAo1Ut5Tw3b3t1
-	 21q5Vn5Rb9IiF+fSp1XkK4qrm1FqkLpuidYcI+JgbOwnIrm9OxK7PxNJCVNfp07vdN
-	 0+g/2/cgwY+a8Dck3dFLWhcc4o3yUAGyz9kkLlXx1e/UELEajk5UaqMar2+KG8ZSUy
-	 eSKBCwOH2KxJ5A9fhdO0qtf9YW0ajNRR2cBP/vRBSJJyeZwvEaU8jtIcQQz8vSIV6o
-	 48KUb5iGtj3gg==
-Date: Fri, 15 Nov 2024 10:39:41 -0600
-From: Rob Herring <robh@kernel.org>
-To: Christian Bruel <christian.bruel@foss.st.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
-	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-	p.zabel@pengutronix.de, cassel@kernel.org,
-	quic_schintav@quicinc.com, fabrice.gasnier@foss.st.com,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] dt-bindings: PCI: Add STM32MP25 PCIe endpoint
- bindings
-Message-ID: <20241115163941.GA3324312-robh@kernel.org>
-References: <20241112161925.999196-1-christian.bruel@foss.st.com>
- <20241112161925.999196-4-christian.bruel@foss.st.com>
+	s=k20201202; t=1731688798;
+	bh=t1mHSIeHwWXgRLmkrrmBgqlQYmk5zzZwd34nRRtso6o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=kODFfmSEDCffQECaHSSMMg50IhTVq8FxxtH+YcScfmllBgDrqQVxS8dKrV1crrlUP
+	 Fmrc9StfUxoQ33m4RcZDFamAbzMJT9pacgugwYQYydD5fGcRXTgMJ50U7rl6r/nLWz
+	 5N5PXhs1+qsL/f+r5jOLtU+iaRXZM9Z4JBG7RK2ZQDs7iYiwLN6xM5GlTCbKO74U9/
+	 L/IIDsHcvouGBokmAYgRxxi/zP47uWxrj+znvYKyfI0lw8etxD1gZSIU/ayMc9CdGT
+	 OJ4/02Ww6N5awcEDmoUbSvvfAk4V3IpMzI9PD9qXJelbHNvnYHevrKm662M+wkP2M7
+	 VApSEY43o0FBA==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53da5a27771so2352942e87.2;
+        Fri, 15 Nov 2024 08:39:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUIZAnbEIqZGGLnYujafiCEtRn4ctkY6MbUKKTbVoYF8GzRYfj8zhuWen3MKTbmqZFagzvynMJifa9gN2aZ@vger.kernel.org, AJvYcCV8sKgmjm4haVuN16JjH7IlZoXKIGb2zZsJtVwczUo+Q2v2WJvHok5ca2uBzJHnpq3KJAylYufiN4U=@vger.kernel.org, AJvYcCWiNJZuDoYJeS/4tswCCm6p1Yn73vxHwPH2T03gpMItMOT0TUM5dtmQeEHlVmmWIDGQIf6RsTav@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvXR9y3lE6Xa9zUt4tlag35j0wPreVfFzg/j80KECnwXl5X2X/
+	TSWP8612dmgPew5sjqCSGM9vmB8DkGYEK0U4k2bx/RQa+mKKECPFKpnpzsz9BYs6Vk5MBOoRnSd
+	gNk/aBAGMfyr1LzCX/o+hoDpOyhY=
+X-Google-Smtp-Source: AGHT+IFLsie8pokR3jzGTAZqEFIhmQehBwU5ZZj22RDpZvJo+/+0M2kyNHP4E9apz6b9Okiyf78iEXFW/nZqzt0La7g=
+X-Received: by 2002:a05:6512:398f:b0:539:f827:2fbc with SMTP id
+ 2adb3069b0e04-53dab2a21dcmr1494682e87.26.1731688796514; Fri, 15 Nov 2024
+ 08:39:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112161925.999196-4-christian.bruel@foss.st.com>
+References: <20241112185217.48792-1-nsaenz@amazon.com> <20241112185217.48792-2-nsaenz@amazon.com>
+In-Reply-To: <20241112185217.48792-2-nsaenz@amazon.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 15 Nov 2024 17:39:45 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXGopsux6+xnsXW6vvQDJH9Y3_Ofq_QYvDa-SGt8AJ0nWQ@mail.gmail.com>
+Message-ID: <CAMj1kXGopsux6+xnsXW6vvQDJH9Y3_Ofq_QYvDa-SGt8AJ0nWQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] x86/efi: Apply EFI Memory Attributes after kexec
+To: Nicolas Saenz Julienne <nsaenz@amazon.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H . Peter Anvin" <hpa@zytor.com>, Matt Fleming <matt@codeblueprint.co.uk>, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stanspas@amazon.de, nh-open-source@amazon.com, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 12, 2024 at 05:19:23PM +0100, Christian Bruel wrote:
-> STM32MP25 PCIe Controller is based on the DesignWare core configured as
-> end point mode from the SYSCFG register.
-> 
-> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+On Tue, 12 Nov 2024 at 19:53, Nicolas Saenz Julienne <nsaenz@amazon.com> wrote:
+>
+> Kexec bypasses EFI's switch to virtual mode. In exchange, it has its own
+> routine, kexec_enter_virtual_mode(), which replays the mappings made by
+> the original kernel. Unfortunately, that function fails to reinstate
+> EFI's memory attributes, which would've otherwise been set after
+> entering virtual mode. Remediate this by calling
+> efi_runtime_update_mappings() within kexec's routine.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 18141e89a76c ("x86/efi: Add support for EFI_MEMORY_ATTRIBUTES_TABLE")
+> Signed-off-by: Nicolas Saenz Julienne <nsaenz@amazon.com>
+>
 > ---
->  .../bindings/pci/st,stm32-pcie-ep.yaml        | 97 +++++++++++++++++++
->  1 file changed, 97 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/st,stm32-pcie-ep.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/st,stm32-pcie-ep.yaml b/Documentation/devicetree/bindings/pci/st,stm32-pcie-ep.yaml
-> new file mode 100644
-> index 000000000000..f0d215982794
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/st,stm32-pcie-ep.yaml
-> @@ -0,0 +1,97 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/st,stm32-pcie-ep.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: STM32MP25 PCIe endpoint driver
-> +
-> +maintainers:
-> +  - Christian Bruel <christian.bruel@foss.st.com>
-> +
-> +description:
-> +  PCIe endpoint controller based on the Synopsys DesignWare PCIe core.
-> +
-> +allOf:
-> +  - $ref: /schemas/pci/snps,dw-pcie-common.yaml#
+>
+> Notes:
+> - Tested with QEMU/OVMF.
+>
 
-snps,dw-pcie-ep.yaml
 
-> +
-> +properties:
-> +  compatible:
-> +    const: st,stm32mp25-pcie-ep
-> +
-> +  reg:
-> +    items:
-> +      - description: Data Bus Interface (DBI) registers.
-> +      - description: PCIe configuration registers.
-> +
-> +  reg-names:
-> +    items:
-> +      - const: dbi
-> +      - const: addr_space
-> +
-> +  clocks:
-> +    maxItems: 1
-> +    description: PCIe system clock
-> +
-> +  clock-names:
-> +    const: core
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  reset-names:
-> +    const: core
-> +
-> +  phys:
-> +    maxItems: 1
-> +
-> +  phy-names:
-> +    const: pcie-phy
-> +
-> +  reset-gpios:
-> +    description: GPIO controlled connection to PERST# signal
-> +    maxItems: 1
-> +
-> +  access-controllers:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    maxItems: 1
+I'll queue these up, but I am going drop the cc stable: the memory
+attributes table is an overlay of the EFI memory map with restricted
+permissions for EFI runtime services regions, which are only mapped
+while a EFI runtime call is in progress.
 
-All these properties common between RC and EP modes should be in 
-a shared schema.
+So if the table is not taken into account after kexec, the runtime
+code and data mappings will all be RWX but I think this is a situation
+we can live with. If nothing breaks, we can always revisit this later
+if there is an actual need.
 
-> +
-> +required:
-> +  - resets
-> +  - reset-names
-> +  - clocks
-> +  - clock-names
-> +  - phys
-> +  - phy-names
-> +  - reset-gpios
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/st,stm32mp25-rcc.h>
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/phy/phy.h>
-> +    #include <dt-bindings/reset/st,stm32mp25-rcc.h>
-> +
-> +    pcie-ep@48400000 {
-> +        compatible = "st,stm32mp25-pcie-ep";
-> +        num-lanes = <1>;
-> +        reg = <0x48400000 0x400000>,
-> +              <0x10000000 0x8000000>;
-> +        reg-names = "dbi", "addr_space";
-> +        clocks = <&rcc CK_BUS_PCIE>;
-> +        clock-names = "core";
-> +        phys = <&combophy PHY_TYPE_PCIE>;
-> +        phy-names = "pcie-phy";
-> +        resets = <&rcc PCIE_R>;
-> +        reset-names = "core";
-> +        pinctrl-names = "default", "init";
-> +        pinctrl-0 = <&pcie_pins_a>;
-> +        pinctrl-1 = <&pcie_init_pins_a>;
-> +        reset-gpios = <&gpioj 8 GPIO_ACTIVE_LOW>;
-> +        power-domains = <&CLUSTER_PD>;
-> +        access-controllers = <&rifsc 68>;
-> +    };
-> -- 
-> 2.34.1
-> 
+Thanks,
+
+
+>  arch/x86/platform/efi/efi.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
+> index 375ebd78296a..a7ff189421c3 100644
+> --- a/arch/x86/platform/efi/efi.c
+> +++ b/arch/x86/platform/efi/efi.c
+> @@ -765,6 +765,7 @@ static void __init kexec_enter_virtual_mode(void)
+>
+>         efi_sync_low_kernel_mappings();
+>         efi_native_runtime_setup();
+> +       efi_runtime_update_mappings();
+>  #endif
+>  }
+>
+> --
+> 2.40.1
+>
 
