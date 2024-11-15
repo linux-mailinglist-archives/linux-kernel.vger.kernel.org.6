@@ -1,152 +1,692 @@
-Return-Path: <linux-kernel+bounces-411209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0C939CF4A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:14:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A3E89CF4A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:15:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 582791F23D38
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:14:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF04F1F22AF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6851D90C8;
-	Fri, 15 Nov 2024 19:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA94D1DD0EC;
+	Fri, 15 Nov 2024 19:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iWldKBGe"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="jYUlFeCC"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C527F186616;
-	Fri, 15 Nov 2024 19:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731698046; cv=none; b=KRGMOBxatMNUCPL1+Pzj/MlT1ob4h/MPDl4ZvknpagKeiQUl48jMuTNMn/qOLRDd8/6N2wzLtXaNYEuiPm4K6bcC7bj/P6JX9mvMGVI4J83VY5gCjSyPJPwuWcU6/+i154STFPa/a9oBc7w968mLV/18dqD6aDZ+2VFSIx9kBTM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731698046; c=relaxed/simple;
-	bh=KPbmz5SqIipMwmAMKTRiJ2kA5U+2yePk8oLqSar0eLk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nPk1RlAPzQKfaG5iRZ/EJdzi7hIZTxshCrIfOTHYEwvSGmqf0IRqdWe9BwdtYcLDrLKHDD1MIq2UNAxhtJ3R16P6bSzdYBxzDMjQlKw6cqfQ9BhDGF/YEp7+3ACZonCEdIvtwZgwSzKPjdAfckLIXBHJfChcR8sI4JEUZEEgKr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iWldKBGe; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2ea304ce809so121053a91.2;
-        Fri, 15 Nov 2024 11:14:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731698044; x=1732302844; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=QHxA0+Bnf4JxfvQgVc+gVUejuLgMFQRm4jTFDJjVaKg=;
-        b=iWldKBGeo946EIrsejRART2Z1jQqIpvqzaCFwjlz3r8zqAnRsM0M0LANi5VYflWcWr
-         5lcKDVL4mP1mKQ6DixZoJNh0IXovU86W4uNbBSXKHKSrDxiZypRFabtLqW/5B1TLTrPD
-         eB2SMeED3cnfIdeMcy7Z1X+tVdnFlxa7s61aMCAIqXrKwY5zyZqhg3qhXJUhE5ijwcKM
-         YvQFn7XerX8Js4y/R9tAjj6j/GJAcha2PgcgjUVy/X4CymMReT3B4XZSvYaijvW1MYXl
-         JhWGHBZLq76OBN+Gyd7B+f5mB6cqDj3wqTo8i63HnCFnJIZhYWzU8XByfy+J9iavPSdT
-         XBPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731698044; x=1732302844;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QHxA0+Bnf4JxfvQgVc+gVUejuLgMFQRm4jTFDJjVaKg=;
-        b=WXUNZqj9CwFqB+bTqMeqDTZBe4FjDpoB6ejWOFaSCJbI91PgclRM+raKzRq8ob88bV
-         kiSFG2624MLbaH4UADGKR4m8Oa4uiwbWnZY1aoZkjU+GfpMvV0JBfp5JrsszsuDv4F/Y
-         vkRRF8bAPfANbH2WwKCF/Ex+kquYP2X6a1Kq1CLsw4fWsTosatuNaRhTH/a9lAnaLRlg
-         EAezfKks2VzAFsfLPvEUoD/hOJY/f8oBF9HcXwaiFo/Fy5wgGHipr0ubsIDEwah42Hfz
-         fxnnJXSWiwmOT0xPOJY7ELmT1+1pJFUURhXZPq/g6W3xK9fL7oX/fNwgUmuQtIjbOH9b
-         Xh0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUZzCM+wVNLEIPwSM+/NEipgG/wGeY3yx+YG1sm8ykavTq3PbgjuG0x4ICOBNg1RlL2ol2DuMBI@vger.kernel.org, AJvYcCWAb9i5BLakAUQWP/9omhbo4wkxM6dQwHf+PQODtCIArsM0BF2I3CwlsTz/uCjsEFfTzHAcmzAtU5ax4YY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLC1IwwmNyoA318O8xK/Aqzixc50wphiZYVve63nuPonYbOvVP
-	dh6DBs0v8bNJ3hgV5BA4HeVeSwiAhR/GaTqsDbsPApd2MhvYVE9z
-X-Google-Smtp-Source: AGHT+IEIeUgX4L8rJ9ZrjnLjjCk3/zmBMlQIsZPeV8HrFNK2SC4ggKpaRUH2iNn9ZWn/pmDUcXvxZQ==
-X-Received: by 2002:a17:90a:e70c:b0:2e0:894f:198e with SMTP id 98e67ed59e1d1-2ea1557e899mr4637060a91.30.1731698044060;
-        Fri, 15 Nov 2024 11:14:04 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea06fbc909sm3195625a91.53.2024.11.15.11.14.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 11:14:03 -0800 (PST)
-Message-ID: <70eed34e-67f6-47ff-a5fc-792bcb09c282@gmail.com>
-Date: Fri, 15 Nov 2024 11:14:01 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EB21D63CD
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 19:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731698104; cv=pass; b=oqj+77cJ39Ca2Dph2smbgBJ6qaeuIdn5T7TT/65jMlIyy1scrPcylkfeF8F0hX9LtCWO0vvv++xvl+nhNLFLHaMKfk330pESMtU/yBp50bRO1NCfa4dhufBW9uFRJBm28nLdYu69Vt07Fy4nuWvEREpoIsQaKWc/zNnyaoYjzu0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731698104; c=relaxed/simple;
+	bh=2ZKheI3QW2RwlkGEU0dp7/VbHWJO705yOLuA2JOs+Vc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P4eeowKp/wyNOyecdB2AYERMRO6i3nCsrsXhF8MNoDUWFjbuVqjmu5xiWgDxaaWW5vKHp5mIvk3VQnCJ0tJYd0449dhEZmyb/9cZCAhWl1gEy6RwyVo+fMCrIozR/0HcKQC0mwuzvBcg3yKcDio04qYRA6O1YaneFUriJG2BBqs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=jYUlFeCC; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1731698085; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Uq/e9j8eq0HMrt9xiqAtH/8/0zfi3H90xTqX7GvNNvAX2/1m2YHmWBRw1sxk99pV4SmLV0CRYmaO13L56N9S2JAgVImy99PG/SvEGRHBNNfsx6AgxrHHGXVkyAPdh2157st8ESM2PqOnscGzlv+QdtkLZT75z/tNBei3WqMJ/HM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1731698085; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=jMzqbsE1Y0NZAjkPHPSz6a6xjvTC+JKAI7L6oPb/vF0=; 
+	b=kA0vis3My7PoMYub1Gwn4X1VQkydRD2pUEjcfpibNdzt+p631tT2IBQ9rpmTCzN573XF0JWPZuCbU2rqKFG+6GgSTjLb5fXF2i6vW4FFGcqGR/nzaH9AkddAHtiwBDkkNQXU6U4AWQhOiFG60tnchnTJl1Z5JgyfO3TMX/MqIcs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1731698085;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=jMzqbsE1Y0NZAjkPHPSz6a6xjvTC+JKAI7L6oPb/vF0=;
+	b=jYUlFeCCwTCzEKEhjvzkiQPI/WGrqVJ81x2LrfIM1A+ECv01k1oN84AEkIs+Yyz+
+	t6eFZ0Ojs32RNbKDYENDIrUCjrrwuiy+4+APFi4csnFhdIMzeCm28tpNG0ZdP5RHzqV
+	m6xmcOww/RwZGbwuHWia/i2s3da6IQb7YZaCJVq4=
+Received: by mx.zohomail.com with SMTPS id 1731698083214270.67764713734925;
+	Fri, 15 Nov 2024 11:14:43 -0800 (PST)
+From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: kernel@collabora.com,
+	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drm/panthor: register size of internal objects through fdinfo
+Date: Fri, 15 Nov 2024 19:14:18 +0000
+Message-ID: <20241115191426.3101123-1-adrian.larumbe@collabora.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 00/39] 6.1.118-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20241115063722.599985562@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- xsDiBEjPuBIRBACW9MxSJU9fvEOCTnRNqG/13rAGsj+vJqontvoDSNxRgmafP8d3nesnqPyR
- xGlkaOSDuu09rxuW+69Y2f1TzjFuGpBk4ysWOR85O2Nx8AJ6fYGCoeTbovrNlGT1M9obSFGQ
- X3IzRnWoqlfudjTO5TKoqkbOgpYqIo5n1QbEjCCwCwCg3DOH/4ug2AUUlcIT9/l3pGvoRJ0E
- AICDzi3l7pmC5IWn2n1mvP5247urtHFs/uusE827DDj3K8Upn2vYiOFMBhGsxAk6YKV6IP0d
- ZdWX6fqkJJlu9cSDvWtO1hXeHIfQIE/xcqvlRH783KrihLcsmnBqOiS6rJDO2x1eAgC8meAX
- SAgsrBhcgGl2Rl5gh/jkeA5ykwbxA/9u1eEuL70Qzt5APJmqVXR+kWvrqdBVPoUNy/tQ8mYc
- nzJJ63ng3tHhnwHXZOu8hL4nqwlYHRa9eeglXYhBqja4ZvIvCEqSmEukfivk+DlIgVoOAJbh
- qIWgvr3SIEuR6ayY3f5j0f2ejUMYlYYnKdiHXFlF9uXm1ELrb0YX4GMHz80nRmxvcmlhbiBG
- YWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+wn0EExECACYCGyMGCwkIBwMCBBUCCAME
- FgIDAQIeAQIXgAUCZyzoUwUJMSthbgAhCRBhV5kVtWN2DhYhBP5PoW9lJh2L2le8vWFXmRW1
- Y3YOiy4AoKaKEzMlk0vfG76W10qZBKa9/1XcAKCwzGTbxYHbVXmFXeX72TVJ1s9b2c7DTQRI
- z7gSEBAAv+jT1uhH0PdWTVO3v6ClivdZDqGBhU433Tmrad0SgDYnR1DEk1HDeydpscMPNAEB
- yo692LtiJ18FV0qLTDEeFK5EF+46mm6l1eRvvPG49C5K94IuqplZFD4JzZCAXtIGqDOdt7o2
- Ci63mpdjkNxqCT0uoU0aElDNQYcCwiyFqnV/QHU+hTJQ14QidX3wPxd3950zeaE72dGlRdEr
- 0G+3iIRlRca5W1ktPnacrpa/YRnVOJM6KpmV/U/6/FgsHH14qZps92bfKNqWFjzKvVLW8vSB
- ID8LpbWj9OjB2J4XWtY38xgeWSnKP1xGlzbzWAA7QA/dXUbTRjMER1jKLSBolsIRCerxXPW8
- NcXEfPKGAbPu6YGxUqZjBmADwOusHQyho/fnC4ZHdElxobfQCcmkQOQFgfOcjZqnF1y5M84d
- nISKUhGsEbMPAa0CGV3OUGgHATdncxjfVM6kAK7Vmk04zKxnrGITfmlaTBzQpibiEkDkYV+Z
- ZI3oOeKKZbemZ0MiLDgh9zHxveYWtE4FsMhbXcTnWP1GNs7+cBor2d1nktE7UH/wXBq3tsvO
- awKIRc4ljs02kgSmSg2gRR8JxnCYutT545M/NoXp2vDprJ7ASLnLM+DdMBPoVXegGw2DfGXB
- TSA8re/qBg9fnD36i89nX+qo186tuwQVG6JJWxlDmzcAAwUP/1eOWedUOH0Zf+v/qGOavhT2
- 0Swz5VBdpVepm4cppKaiM4tQI/9hVCjsiJho2ywJLgUI97jKsvgUkl8kCxt7IPKQw3vACcFw
- 6Rtn0E8k80JupTp2jAs6LLwC5NhDjya8jJDgiOdvoZOu3EhQNB44E25AL+DLLHedsv+VWUdv
- Gvi1vpiSGQ7qyGNeFCHudBvfcWMY7g9ZTXU2v2L+qhXxAKjXYxASjbjhFEDpUy53TrL8Tjj2
- tZkVJPAapvQVLSx5Nxg2/G3w8HaLNf4dkDxIvniPjv25vGF+6hO7mdd20VgWPkuPnHfgso/H
- symACaPQftIOGkVYXYXNwLVuOJb2aNYdoppfbcDC33sCpBld6Bt+QnBfZjne5+rw2nd7Xnja
- WHf+amIZKKUKxpNqEQascr6Ui6yXqbMmiKX67eTTWh+8kwrRl3MZRn9o8xnXouh+MUD4w3Fa
- tkWuRiaIZ2/4sbjnNKVnIi/NKIbaUrKS5VqD4iKMIiibvw/2NG0HWrVDmXBmnZMsAmXP3YOY
- XAGDWHIXPAMAONnaesPEpSLJtciBmn1pTZ376m0QYJUk58RbiqlYIIs9s5PtcGv6D/gfepZu
- zeP9wMOrsu5Vgh77ByHL+JcQlpBV5MLLlqsxCiupMVaUQ6BEDw4/jsv2SeX2LjG5HR65XoMK
- EOuC66nZolVTwk8EGBECAA8CGwwFAlRf0vEFCR5cHd8ACgkQYVeZFbVjdg6PhQCfeesUs9l6
- Qx6pfloP9qr92xtdJ/IAoLjkajRjLFUca5S7O/4YpnqezKwn
-In-Reply-To: <20241115063722.599985562@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 11/14/24 22:38, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.118 release.
-> There are 39 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 17 Nov 2024 06:37:07 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.118-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+This includes both DRM objects created to support queues, groups and heaps,
+and also objects whose pages are shared between the GPU and the MCU.
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested with 
-BMIPS_GENERIC:
+However, this doesn't include objects that hold the firmware's binary
+regions, since these aren't owned by a render context and are allocated
+only once at driver's initialisation time.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+This will display four key:value pairs which exist beyond the drm fdinfo
+standard, and that record the sizes of internal objects:
+
+drm-total-internal, drm-shared-internal, drm-active-internal and
+drm-resident-internal.
+
+Currently, drm-shared-internal and drm-active-internal are unutilised, but
+in a future revision of the patch 'drm-shared-internal' could register the
+size of the firmware regions (since they aren't specific to a single render
+context), and 'drm-active-internal' could be updated every time a group is
+made active by the GPU scheduler or a queue has jobs ready for execution.
+
+Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+---
+ drivers/gpu/drm/panthor/panthor_device.c |  2 +
+ drivers/gpu/drm/panthor/panthor_device.h |  6 +++
+ drivers/gpu/drm/panthor/panthor_drv.c    | 15 +++++--
+ drivers/gpu/drm/panthor/panthor_fw.c     | 14 ++++--
+ drivers/gpu/drm/panthor/panthor_fw.h     |  6 ++-
+ drivers/gpu/drm/panthor/panthor_gem.c    | 57 ++++++++++++++++++++++--
+ drivers/gpu/drm/panthor/panthor_gem.h    | 13 +++++-
+ drivers/gpu/drm/panthor/panthor_heap.c   | 20 ++++++---
+ drivers/gpu/drm/panthor/panthor_heap.h   |  6 ++-
+ drivers/gpu/drm/panthor/panthor_mmu.c    |  7 ++-
+ drivers/gpu/drm/panthor/panthor_mmu.h    |  3 +-
+ drivers/gpu/drm/panthor/panthor_sched.c  | 19 ++++----
+ 12 files changed, 136 insertions(+), 32 deletions(-)
+
+diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
+index 4082c8f2951d..868fa9aba570 100644
+--- a/drivers/gpu/drm/panthor/panthor_device.c
++++ b/drivers/gpu/drm/panthor/panthor_device.c
+@@ -179,6 +179,8 @@ int panthor_device_init(struct panthor_device *ptdev)
+ 	if (ret)
+ 		return ret;
+ 
++	drmm_mutex_init(&ptdev->base, &ptdev->private_obj_list_lock);
++
+ 	/*
+ 	 * Set the dummy page holding the latest flush to 1. This will cause the
+ 	 * flush to avoided as we know it isn't necessary if the submission
+diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
+index 0e68f5a70d20..414822b35a23 100644
+--- a/drivers/gpu/drm/panthor/panthor_device.h
++++ b/drivers/gpu/drm/panthor/panthor_device.h
+@@ -190,6 +190,9 @@ struct panthor_device {
+ 
+ 	/** @fast_rate: Maximum device clock frequency. Set by DVFS */
+ 	unsigned long fast_rate;
++
++	/** @private_obj_list_lock: Lock around per-file lists of internal GEM objects */
++	struct mutex private_obj_list_lock;
+ };
+ 
+ struct panthor_gpu_usage {
+@@ -212,6 +215,9 @@ struct panthor_file {
+ 
+ 	/** @stats: cycle and timestamp measures for job execution. */
+ 	struct panthor_gpu_usage stats;
++
++	/** @private_file_list: File's list of private GEM objects. */
++	struct list_head private_file_list;
+ };
+ 
+ int panthor_device_init(struct panthor_device *ptdev);
+diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+index ac7e53f6e3f0..1b86f4110e32 100644
+--- a/drivers/gpu/drm/panthor/panthor_drv.c
++++ b/drivers/gpu/drm/panthor/panthor_drv.c
+@@ -1128,13 +1128,13 @@ static int panthor_ioctl_tiler_heap_create(struct drm_device *ddev, void *data,
+ 	if (!vm)
+ 		return -EINVAL;
+ 
+-	pool = panthor_vm_get_heap_pool(vm, true);
++	pool = panthor_vm_get_heap_pool(vm, true, pfile);
+ 	if (IS_ERR(pool)) {
+ 		ret = PTR_ERR(pool);
+ 		goto out_put_vm;
+ 	}
+ 
+-	ret = panthor_heap_create(pool,
++	ret = panthor_heap_create(pool, pfile,
+ 				  args->initial_chunk_count,
+ 				  args->chunk_size,
+ 				  args->max_chunks,
+@@ -1174,7 +1174,7 @@ static int panthor_ioctl_tiler_heap_destroy(struct drm_device *ddev, void *data,
+ 	if (!vm)
+ 		return -EINVAL;
+ 
+-	pool = panthor_vm_get_heap_pool(vm, false);
++	pool = panthor_vm_get_heap_pool(vm, false, NULL);
+ 	if (IS_ERR(pool)) {
+ 		ret = PTR_ERR(pool);
+ 		goto out_put_vm;
+@@ -1348,6 +1348,8 @@ panthor_open(struct drm_device *ddev, struct drm_file *file)
+ 
+ 	pfile->ptdev = ptdev;
+ 
++	INIT_LIST_HEAD(&pfile->private_file_list);
++
+ 	ret = panthor_vm_pool_create(pfile);
+ 	if (ret)
+ 		goto err_free_file;
+@@ -1375,6 +1377,12 @@ panthor_postclose(struct drm_device *ddev, struct drm_file *file)
+ {
+ 	struct panthor_file *pfile = file->driver_priv;
+ 
++	/*
++	 * Group's internal BO's are destroyed asynchronously in a separate worker thread,
++	 * so there's a chance by the time BO release happens, the file is already gone.
++	 */
++	panthor_gem_dettach_internal_bos(pfile);
++
+ 	panthor_group_pool_destroy(pfile);
+ 	panthor_vm_pool_destroy(pfile);
+ 
+@@ -1465,6 +1473,7 @@ static void panthor_show_fdinfo(struct drm_printer *p, struct drm_file *file)
+ 	panthor_gpu_show_fdinfo(ptdev, file->driver_priv, p);
+ 
+ 	drm_show_memory_stats(p, file);
++	panthor_show_internal_memory_stats(p, file);
+ }
+ 
+ static const struct file_operations panthor_drm_driver_fops = {
+diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
+index ecca5565ce41..40505bf77729 100644
+--- a/drivers/gpu/drm/panthor/panthor_fw.c
++++ b/drivers/gpu/drm/panthor/panthor_fw.c
+@@ -449,6 +449,7 @@ static void panthor_fw_init_section_mem(struct panthor_device *ptdev,
+  */
+ struct panthor_kernel_bo *
+ panthor_fw_alloc_queue_iface_mem(struct panthor_device *ptdev,
++				 struct panthor_file *pfile,
+ 				 struct panthor_fw_ringbuf_input_iface **input,
+ 				 const struct panthor_fw_ringbuf_output_iface **output,
+ 				 u32 *input_fw_va, u32 *output_fw_va)
+@@ -456,11 +457,12 @@ panthor_fw_alloc_queue_iface_mem(struct panthor_device *ptdev,
+ 	struct panthor_kernel_bo *mem;
+ 	int ret;
+ 
+-	mem = panthor_kernel_bo_create(ptdev, ptdev->fw->vm, SZ_8K,
++	mem = panthor_kernel_bo_create(ptdev, pfile, ptdev->fw->vm, SZ_8K,
+ 				       DRM_PANTHOR_BO_NO_MMAP,
+ 				       DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC |
+ 				       DRM_PANTHOR_VM_BIND_OP_MAP_UNCACHED,
+ 				       PANTHOR_VM_KERNEL_AUTO_VA);
++
+ 	if (IS_ERR(mem))
+ 		return mem;
+ 
+@@ -487,9 +489,12 @@ panthor_fw_alloc_queue_iface_mem(struct panthor_device *ptdev,
+  * Return: A valid pointer in case of success, an ERR_PTR() otherwise.
+  */
+ struct panthor_kernel_bo *
+-panthor_fw_alloc_suspend_buf_mem(struct panthor_device *ptdev, size_t size)
++panthor_fw_alloc_suspend_buf_mem(struct panthor_file *pfile,
++				 struct panthor_device *ptdev,
++				 size_t size)
+ {
+-	return panthor_kernel_bo_create(ptdev, panthor_fw_vm(ptdev), size,
++	return panthor_kernel_bo_create(ptdev, pfile,
++					panthor_fw_vm(ptdev), size,
+ 					DRM_PANTHOR_BO_NO_MMAP,
+ 					DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC,
+ 					PANTHOR_VM_KERNEL_AUTO_VA);
+@@ -609,7 +614,8 @@ static int panthor_fw_load_section_entry(struct panthor_device *ptdev,
+ 		if (cache_mode != CSF_FW_BINARY_IFACE_ENTRY_RD_CACHE_MODE_CACHED)
+ 			vm_map_flags |= DRM_PANTHOR_VM_BIND_OP_MAP_UNCACHED;
+ 
+-		section->mem = panthor_kernel_bo_create(ptdev, panthor_fw_vm(ptdev),
++		section->mem = panthor_kernel_bo_create(ptdev, NULL,
++							panthor_fw_vm(ptdev),
+ 							section_size,
+ 							DRM_PANTHOR_BO_NO_MMAP,
+ 							vm_map_flags, va);
+diff --git a/drivers/gpu/drm/panthor/panthor_fw.h b/drivers/gpu/drm/panthor/panthor_fw.h
+index 22448abde992..552db0e03e7b 100644
+--- a/drivers/gpu/drm/panthor/panthor_fw.h
++++ b/drivers/gpu/drm/panthor/panthor_fw.h
+@@ -7,6 +7,7 @@
+ #include <linux/types.h>
+ 
+ struct panthor_device;
++struct panthor_file;
+ struct panthor_kernel_bo;
+ 
+ #define MAX_CSGS				31
+@@ -476,11 +477,14 @@ void panthor_fw_ring_csg_doorbells(struct panthor_device *ptdev, u32 csg_slot);
+ 
+ struct panthor_kernel_bo *
+ panthor_fw_alloc_queue_iface_mem(struct panthor_device *ptdev,
++				 struct panthor_file *pfile,
+ 				 struct panthor_fw_ringbuf_input_iface **input,
+ 				 const struct panthor_fw_ringbuf_output_iface **output,
+ 				 u32 *input_fw_va, u32 *output_fw_va);
+ struct panthor_kernel_bo *
+-panthor_fw_alloc_suspend_buf_mem(struct panthor_device *ptdev, size_t size);
++panthor_fw_alloc_suspend_buf_mem(struct panthor_file *pfile,
++				 struct panthor_device *ptdev,
++				 size_t size);
+ 
+ struct panthor_vm *panthor_fw_vm(struct panthor_device *ptdev);
+ 
+diff --git a/drivers/gpu/drm/panthor/panthor_gem.c b/drivers/gpu/drm/panthor/panthor_gem.c
+index 8244a4e6c2a2..76e8e5bb11b0 100644
+--- a/drivers/gpu/drm/panthor/panthor_gem.c
++++ b/drivers/gpu/drm/panthor/panthor_gem.c
+@@ -5,6 +5,7 @@
+ #include <linux/dma-buf.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/err.h>
++#include <linux/mutex.h>
+ #include <linux/slab.h>
+ 
+ #include <drm/panthor_drm.h>
+@@ -24,6 +25,20 @@ static void panthor_gem_free_object(struct drm_gem_object *obj)
+ 	drm_gem_object_put(vm_root_gem);
+ }
+ 
++void panthor_gem_dettach_internal_bos(struct panthor_file *pfile)
++{
++	struct panthor_kernel_bo *kbo, *tmp;
++
++	mutex_lock(&pfile->ptdev->private_obj_list_lock);
++	list_for_each_entry_safe(kbo, tmp,
++				 &pfile->private_file_list,
++				 private_obj) {
++		list_del(&kbo->private_obj);
++		INIT_LIST_HEAD(&kbo->private_obj);
++	}
++	mutex_unlock(&pfile->ptdev->private_obj_list_lock);
++}
++
+ /**
+  * panthor_kernel_bo_destroy() - Destroy a kernel buffer object
+  * @bo: Kernel buffer object to destroy. If NULL or an ERR_PTR(), the destruction
+@@ -31,12 +46,22 @@ static void panthor_gem_free_object(struct drm_gem_object *obj)
+  */
+ void panthor_kernel_bo_destroy(struct panthor_kernel_bo *bo)
+ {
++	struct panthor_device *ptdev;
+ 	struct panthor_vm *vm;
+ 	int ret;
+ 
+ 	if (IS_ERR_OR_NULL(bo))
+ 		return;
+ 
++	ptdev = container_of(bo->obj->dev, struct panthor_device, base);
++
++	mutex_lock(&ptdev->private_obj_list_lock);
++	if (!list_empty(&bo->private_obj)) {
++		list_del(&bo->private_obj);
++		INIT_LIST_HEAD(&bo->private_obj);
++	}
++	mutex_unlock(&ptdev->private_obj_list_lock);
++
+ 	vm = bo->vm;
+ 	panthor_kernel_bo_vunmap(bo);
+ 
+@@ -56,6 +81,22 @@ void panthor_kernel_bo_destroy(struct panthor_kernel_bo *bo)
+ 	kfree(bo);
+ }
+ 
++void panthor_show_internal_memory_stats(struct drm_printer *p, struct drm_file *file)
++{
++	struct panthor_file *pfile = file->driver_priv;
++	struct drm_memory_stats status = {0};
++	struct panthor_kernel_bo *kbo;
++
++	mutex_lock(&pfile->ptdev->private_obj_list_lock);
++	list_for_each_entry(kbo, &pfile->private_file_list, private_obj) {
++		status.resident += kbo->obj->size;
++		status.private += kbo->obj->size;
++	}
++	mutex_unlock(&pfile->ptdev->private_obj_list_lock);
++
++	drm_print_memory_stats(p, &status, DRM_GEM_OBJECT_RESIDENT, "internal");
++}
++
+ /**
+  * panthor_kernel_bo_create() - Create and map a GEM object to a VM
+  * @ptdev: Device.
+@@ -71,9 +112,9 @@ void panthor_kernel_bo_destroy(struct panthor_kernel_bo *bo)
+  * Return: A valid pointer in case of success, an ERR_PTR() otherwise.
+  */
+ struct panthor_kernel_bo *
+-panthor_kernel_bo_create(struct panthor_device *ptdev, struct panthor_vm *vm,
+-			 size_t size, u32 bo_flags, u32 vm_map_flags,
+-			 u64 gpu_va)
++panthor_kernel_bo_create(struct panthor_device *ptdev, struct panthor_file *pfile,
++			 struct panthor_vm *vm, size_t size, u32 bo_flags,
++			 u32 vm_map_flags, u64 gpu_va)
+ {
+ 	struct drm_gem_shmem_object *obj;
+ 	struct panthor_kernel_bo *kbo;
+@@ -116,6 +157,16 @@ panthor_kernel_bo_create(struct panthor_device *ptdev, struct panthor_vm *vm,
+ 	bo->exclusive_vm_root_gem = panthor_vm_root_gem(vm);
+ 	drm_gem_object_get(bo->exclusive_vm_root_gem);
+ 	bo->base.base.resv = bo->exclusive_vm_root_gem->resv;
++
++	INIT_LIST_HEAD(&kbo->private_obj);
++
++	/* Only FW regions are not bound to an open file */
++	if (pfile) {
++		mutex_lock(&ptdev->private_obj_list_lock);
++		list_add(&kbo->private_obj, &pfile->private_file_list);
++		mutex_unlock(&ptdev->private_obj_list_lock);
++	}
++
+ 	return kbo;
+ 
+ err_free_va:
+diff --git a/drivers/gpu/drm/panthor/panthor_gem.h b/drivers/gpu/drm/panthor/panthor_gem.h
+index e43021cf6d45..b308680859d0 100644
+--- a/drivers/gpu/drm/panthor/panthor_gem.h
++++ b/drivers/gpu/drm/panthor/panthor_gem.h
+@@ -12,6 +12,8 @@
+ #include <linux/rwsem.h>
+ 
+ struct panthor_vm;
++struct panthor_file;
++struct panthor_device;
+ 
+ /**
+  * struct panthor_gem_object - Driver specific GEM object.
+@@ -75,6 +77,9 @@ struct panthor_kernel_bo {
+ 	 * @kmap: Kernel CPU mapping of @gem.
+ 	 */
+ 	void *kmap;
++
++	/** @private_node: Link to driver's list of private GEM objects. */
++	struct list_head private_obj;
+ };
+ 
+ static inline
+@@ -137,10 +142,14 @@ panthor_kernel_bo_vunmap(struct panthor_kernel_bo *bo)
+ }
+ 
+ struct panthor_kernel_bo *
+-panthor_kernel_bo_create(struct panthor_device *ptdev, struct panthor_vm *vm,
+-			 size_t size, u32 bo_flags, u32 vm_map_flags,
++panthor_kernel_bo_create(struct panthor_device *ptdev, struct panthor_file *pfile,
++			 struct panthor_vm *vm, size_t size,
++			 u32 bo_flags, u32 vm_map_flags,
+ 			 u64 gpu_va);
+ 
+ void panthor_kernel_bo_destroy(struct panthor_kernel_bo *bo);
+ 
++void panthor_show_internal_memory_stats(struct drm_printer *p, struct drm_file *file);
++void panthor_gem_dettach_internal_bos(struct panthor_file *pfile);
++
+ #endif /* __PANTHOR_GEM_H__ */
+diff --git a/drivers/gpu/drm/panthor/panthor_heap.c b/drivers/gpu/drm/panthor/panthor_heap.c
+index 3796a9eb22af..fd68257061ae 100644
+--- a/drivers/gpu/drm/panthor/panthor_heap.c
++++ b/drivers/gpu/drm/panthor/panthor_heap.c
+@@ -86,6 +86,9 @@ struct panthor_heap_pool {
+ 	/** @ptdev: Device. */
+ 	struct panthor_device *ptdev;
+ 
++	/** @pfile: Pointer to Panfrost file struct */
++	struct panthor_file *pfile;
++
+ 	/** @vm: VM this pool is bound to. */
+ 	struct panthor_vm *vm;
+ 
+@@ -132,6 +135,7 @@ static void panthor_free_heap_chunk(struct panthor_vm *vm,
+ }
+ 
+ static int panthor_alloc_heap_chunk(struct panthor_device *ptdev,
++				    struct panthor_file *pfile,
+ 				    struct panthor_vm *vm,
+ 				    struct panthor_heap *heap,
+ 				    bool initial_chunk)
+@@ -144,7 +148,7 @@ static int panthor_alloc_heap_chunk(struct panthor_device *ptdev,
+ 	if (!chunk)
+ 		return -ENOMEM;
+ 
+-	chunk->bo = panthor_kernel_bo_create(ptdev, vm, heap->chunk_size,
++	chunk->bo = panthor_kernel_bo_create(ptdev, pfile, vm, heap->chunk_size,
+ 					     DRM_PANTHOR_BO_NO_MMAP,
+ 					     DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC,
+ 					     PANTHOR_VM_KERNEL_AUTO_VA);
+@@ -201,6 +205,7 @@ static void panthor_free_heap_chunks(struct panthor_vm *vm,
+ }
+ 
+ static int panthor_alloc_heap_chunks(struct panthor_device *ptdev,
++				     struct panthor_file *pfile,
+ 				     struct panthor_vm *vm,
+ 				     struct panthor_heap *heap,
+ 				     u32 chunk_count)
+@@ -209,7 +214,7 @@ static int panthor_alloc_heap_chunks(struct panthor_device *ptdev,
+ 	u32 i;
+ 
+ 	for (i = 0; i < chunk_count; i++) {
+-		ret = panthor_alloc_heap_chunk(ptdev, vm, heap, true);
++		ret = panthor_alloc_heap_chunk(ptdev, pfile, vm, heap, true);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -265,6 +270,7 @@ int panthor_heap_destroy(struct panthor_heap_pool *pool, u32 handle)
+  * Return: a positive handle on success, a negative error otherwise.
+  */
+ int panthor_heap_create(struct panthor_heap_pool *pool,
++			struct panthor_file *pfile,
+ 			u32 initial_chunk_count,
+ 			u32 chunk_size,
+ 			u32 max_chunks,
+@@ -308,7 +314,7 @@ int panthor_heap_create(struct panthor_heap_pool *pool,
+ 	heap->max_chunks = max_chunks;
+ 	heap->target_in_flight = target_in_flight;
+ 
+-	ret = panthor_alloc_heap_chunks(pool->ptdev, vm, heap,
++	ret = panthor_alloc_heap_chunks(pool->ptdev, pfile, vm, heap,
+ 					initial_chunk_count);
+ 	if (ret)
+ 		goto err_free_heap;
+@@ -466,7 +472,7 @@ int panthor_heap_grow(struct panthor_heap_pool *pool,
+ 	 * further jobs in this queue fail immediately instead of having to
+ 	 * wait for the job timeout.
+ 	 */
+-	ret = panthor_alloc_heap_chunk(pool->ptdev, pool->vm, heap, false);
++	ret = panthor_alloc_heap_chunk(pool->ptdev, pool->pfile, pool->vm, heap, false);
+ 	if (ret)
+ 		goto out_unlock;
+ 
+@@ -526,7 +532,9 @@ panthor_heap_pool_get(struct panthor_heap_pool *pool)
+  * Return: A valid pointer on success, a negative error code otherwise.
+  */
+ struct panthor_heap_pool *
+-panthor_heap_pool_create(struct panthor_device *ptdev, struct panthor_vm *vm)
++panthor_heap_pool_create(struct panthor_device *ptdev,
++			 struct panthor_vm *vm,
++			 struct panthor_file *pfile)
+ {
+ 	size_t bosize = ALIGN(MAX_HEAPS_PER_POOL *
+ 			      panthor_heap_ctx_stride(ptdev),
+@@ -547,7 +555,7 @@ panthor_heap_pool_create(struct panthor_device *ptdev, struct panthor_vm *vm)
+ 	xa_init_flags(&pool->xa, XA_FLAGS_ALLOC);
+ 	kref_init(&pool->refcount);
+ 
+-	pool->gpu_contexts = panthor_kernel_bo_create(ptdev, vm, bosize,
++	pool->gpu_contexts = panthor_kernel_bo_create(ptdev, pfile, vm, bosize,
+ 						      DRM_PANTHOR_BO_NO_MMAP,
+ 						      DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC,
+ 						      PANTHOR_VM_KERNEL_AUTO_VA);
+diff --git a/drivers/gpu/drm/panthor/panthor_heap.h b/drivers/gpu/drm/panthor/panthor_heap.h
+index 25a5f2bba445..1d1b409064e3 100644
+--- a/drivers/gpu/drm/panthor/panthor_heap.h
++++ b/drivers/gpu/drm/panthor/panthor_heap.h
+@@ -9,8 +9,10 @@
+ struct panthor_device;
+ struct panthor_heap_pool;
+ struct panthor_vm;
++struct panthor_file;
+ 
+ int panthor_heap_create(struct panthor_heap_pool *pool,
++			struct panthor_file *pfile,
+ 			u32 initial_chunk_count,
+ 			u32 chunk_size,
+ 			u32 max_chunks,
+@@ -20,7 +22,9 @@ int panthor_heap_create(struct panthor_heap_pool *pool,
+ int panthor_heap_destroy(struct panthor_heap_pool *pool, u32 handle);
+ 
+ struct panthor_heap_pool *
+-panthor_heap_pool_create(struct panthor_device *ptdev, struct panthor_vm *vm);
++panthor_heap_pool_create(struct panthor_device *ptdev,
++			 struct panthor_vm *vm,
++			 struct panthor_file *pfile);
+ void panthor_heap_pool_destroy(struct panthor_heap_pool *pool);
+ 
+ struct panthor_heap_pool *
+diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+index 8ca85526491e..67cc112451a7 100644
+--- a/drivers/gpu/drm/panthor/panthor_mmu.c
++++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+@@ -1914,16 +1914,19 @@ struct panthor_vm *panthor_vm_get(struct panthor_vm *vm)
+  *
+  * Return: A valid pointer on success, an ERR_PTR() otherwise.
+  */
+-struct panthor_heap_pool *panthor_vm_get_heap_pool(struct panthor_vm *vm, bool create)
++struct panthor_heap_pool *panthor_vm_get_heap_pool(struct panthor_vm *vm, bool create,
++						   struct panthor_file *pfile)
+ {
+ 	struct panthor_heap_pool *pool;
+ 
++	drm_WARN_ON(&vm->ptdev->base, (!create && pfile));
++
+ 	mutex_lock(&vm->heaps.lock);
+ 	if (!vm->heaps.pool && create) {
+ 		if (vm->destroyed)
+ 			pool = ERR_PTR(-EINVAL);
+ 		else
+-			pool = panthor_heap_pool_create(vm->ptdev, vm);
++			pool = panthor_heap_pool_create(vm->ptdev, vm, pfile);
+ 
+ 		if (!IS_ERR(pool))
+ 			vm->heaps.pool = panthor_heap_pool_get(pool);
+diff --git a/drivers/gpu/drm/panthor/panthor_mmu.h b/drivers/gpu/drm/panthor/panthor_mmu.h
+index 8d21e83d8aba..ceb31e7045ae 100644
+--- a/drivers/gpu/drm/panthor/panthor_mmu.h
++++ b/drivers/gpu/drm/panthor/panthor_mmu.h
+@@ -14,6 +14,7 @@ struct panthor_heap_pool;
+ struct panthor_vm;
+ struct panthor_vma;
+ struct panthor_mmu;
++struct panthor_file;
+ 
+ int panthor_mmu_init(struct panthor_device *ptdev);
+ void panthor_mmu_unplug(struct panthor_device *ptdev);
+@@ -35,7 +36,7 @@ int panthor_vm_as(struct panthor_vm *vm);
+ int panthor_vm_flush_all(struct panthor_vm *vm);
+ 
+ struct panthor_heap_pool *
+-panthor_vm_get_heap_pool(struct panthor_vm *vm, bool create);
++panthor_vm_get_heap_pool(struct panthor_vm *vm, bool create, struct panthor_file *pfile);
+ 
+ struct panthor_vm *panthor_vm_get(struct panthor_vm *vm);
+ void panthor_vm_put(struct panthor_vm *vm);
+diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+index ef4bec7ff9c7..5a537a4ca281 100644
+--- a/drivers/gpu/drm/panthor/panthor_sched.c
++++ b/drivers/gpu/drm/panthor/panthor_sched.c
+@@ -1435,7 +1435,7 @@ static int group_process_tiler_oom(struct panthor_group *group, u32 cs_id)
+ 		struct panthor_fw_cs_iface *cs_iface;
+ 
+ 		cs_iface = panthor_fw_get_cs_iface(ptdev, csg_id, cs_id);
+-		heaps = panthor_vm_get_heap_pool(group->vm, false);
++		heaps = panthor_vm_get_heap_pool(group->vm, false, NULL);
+ 		heap_address = cs_iface->output->heap_address;
+ 		vt_start = cs_iface->output->heap_vt_start;
+ 		vt_end = cs_iface->output->heap_vt_end;
+@@ -3268,7 +3268,8 @@ static u32 calc_profiling_ringbuf_num_slots(struct panthor_device *ptdev,
+ }
+ 
+ static struct panthor_queue *
+-group_create_queue(struct panthor_group *group,
++group_create_queue(struct panthor_file *pfile,
++		   struct panthor_group *group,
+ 		   const struct drm_panthor_queue_create *args)
+ {
+ 	struct drm_gpu_scheduler *drm_sched;
+@@ -3295,7 +3296,7 @@ group_create_queue(struct panthor_group *group,
+ 
+ 	queue->priority = args->priority;
+ 
+-	queue->ringbuf = panthor_kernel_bo_create(group->ptdev, group->vm,
++	queue->ringbuf = panthor_kernel_bo_create(group->ptdev, pfile, group->vm,
+ 						  args->ringbuf_size,
+ 						  DRM_PANTHOR_BO_NO_MMAP,
+ 						  DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC |
+@@ -3310,7 +3311,7 @@ group_create_queue(struct panthor_group *group,
+ 	if (ret)
+ 		goto err_free_queue;
+ 
+-	queue->iface.mem = panthor_fw_alloc_queue_iface_mem(group->ptdev,
++	queue->iface.mem = panthor_fw_alloc_queue_iface_mem(group->ptdev, pfile,
+ 							    &queue->iface.input,
+ 							    &queue->iface.output,
+ 							    &queue->iface.input_fw_va,
+@@ -3324,7 +3325,7 @@ group_create_queue(struct panthor_group *group,
+ 		calc_profiling_ringbuf_num_slots(group->ptdev, args->ringbuf_size);
+ 
+ 	queue->profiling.slots =
+-		panthor_kernel_bo_create(group->ptdev, group->vm,
++		panthor_kernel_bo_create(group->ptdev, pfile, group->vm,
+ 					 queue->profiling.slot_count *
+ 					 sizeof(struct panthor_job_profiling_data),
+ 					 DRM_PANTHOR_BO_NO_MMAP,
+@@ -3427,7 +3428,7 @@ int panthor_group_create(struct panthor_file *pfile,
+ 	}
+ 
+ 	suspend_size = csg_iface->control->suspend_size;
+-	group->suspend_buf = panthor_fw_alloc_suspend_buf_mem(ptdev, suspend_size);
++	group->suspend_buf = panthor_fw_alloc_suspend_buf_mem(pfile, ptdev, suspend_size);
+ 	if (IS_ERR(group->suspend_buf)) {
+ 		ret = PTR_ERR(group->suspend_buf);
+ 		group->suspend_buf = NULL;
+@@ -3435,14 +3436,14 @@ int panthor_group_create(struct panthor_file *pfile,
+ 	}
+ 
+ 	suspend_size = csg_iface->control->protm_suspend_size;
+-	group->protm_suspend_buf = panthor_fw_alloc_suspend_buf_mem(ptdev, suspend_size);
++	group->protm_suspend_buf = panthor_fw_alloc_suspend_buf_mem(pfile, ptdev, suspend_size);
+ 	if (IS_ERR(group->protm_suspend_buf)) {
+ 		ret = PTR_ERR(group->protm_suspend_buf);
+ 		group->protm_suspend_buf = NULL;
+ 		goto err_put_group;
+ 	}
+ 
+-	group->syncobjs = panthor_kernel_bo_create(ptdev, group->vm,
++	group->syncobjs = panthor_kernel_bo_create(ptdev, pfile, group->vm,
+ 						   group_args->queues.count *
+ 						   sizeof(struct panthor_syncobj_64b),
+ 						   DRM_PANTHOR_BO_NO_MMAP,
+@@ -3462,7 +3463,7 @@ int panthor_group_create(struct panthor_file *pfile,
+ 	       group_args->queues.count * sizeof(struct panthor_syncobj_64b));
+ 
+ 	for (i = 0; i < group_args->queues.count; i++) {
+-		group->queues[i] = group_create_queue(group, &queue_args[i]);
++		group->queues[i] = group_create_queue(pfile, group, &queue_args[i]);
+ 		if (IS_ERR(group->queues[i])) {
+ 			ret = PTR_ERR(group->queues[i]);
+ 			group->queues[i] = NULL;
 -- 
-Florian
+2.46.2
+
 
