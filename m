@@ -1,182 +1,363 @@
-Return-Path: <linux-kernel+bounces-410767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9C9B9CE0BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:57:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EAB29CE109
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:14:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FAC3284C2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:57:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED1DCB2F7A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB2B1CF7B7;
-	Fri, 15 Nov 2024 13:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4071CDA1A;
+	Fri, 15 Nov 2024 13:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UnOAfArd"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eDKU36J5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24BC1CEAD3;
-	Fri, 15 Nov 2024 13:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F221DA23;
+	Fri, 15 Nov 2024 13:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731678985; cv=none; b=kjwgSBXyk6lT2/Sg8A1HZ/nWnpjjsXCDSWb02JoRMP+SItkdlSJoJSOcDAALd/0aF5UkJSrNyPDcsH4gREbRzZdPTvS2WgZ1lwjxVhoXPj/Tm2bHVOIl+RbMPejNtQqwM5HgKTBNufhLFtiH/mLPRIMBKiO+mMLGR+yPF6YU0d8=
+	t=1731678982; cv=none; b=mr9mSlfTKXR+Efywu5lDvWm2CEvCXN4Ek3/u3YxpE9A3NgPBVfYzrmHjLQ7fQ38pDu+ShCTEx42NH0MfHE4HMgYWP8GvrSpnsbSbPvgmW8k9+Y+k44rswzhZA+YuhluKAnFqAgXirb4wr38s0GcS+KFAiBeYvdQ/jKO6LeHiY2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731678985; c=relaxed/simple;
-	bh=JI8YdmdDuxzVT7VJan0710NwIlBYfBa4zQXHL369xJU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cOc6lsGwD1aFzyLhjbUXIu7H3XrqSXWbV9r66rYVtghRj2TrWzAlO0aS48+kd4FNU7vNoiifeBj9ugLmifdPvm15fGkLybchLDHdqfus2U8x/7vy5wLypd87kl47BL5ZqvBr+Clu4icnU1As1HiyXDi6RJ8QrCMMSJijs4UXNgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UnOAfArd; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AFAYZot004840;
-	Fri, 15 Nov 2024 13:56:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=jMG5e+eCpRAtlTm2d3DZi6QRFLOEn0rnI4AP5D0dp
-	Fs=; b=UnOAfArdlq5GPygU7ECA9cbFYg1a/6v0/ZkOyS0UIyzuwP9mI1OMakmvP
-	35IHv7Q7V33q7lBAkFRpDyqJ3kdKE4ll+a5G12qYC1nMkR5d/K8p7976ejXt3/Tw
-	sYO8TOV8KRvU82OKby1KhIL2Jo1qmgZOUWigZbSXZAEGk97t0O5FmUZC0U2vtNvu
-	F+0+8tfq4j3M0hrBWT1nC5clLn+YN8al0yc5o1IR4nAAimz3Tb0s/J3ea8iQE3mg
-	wG71KkeROhGDLGwpnVVon6lvcv5uOj6jXRraVN4tuVHrF+czn1YDE4M1FduvOT0S
-	mn4tHJzhmmrHpABYTYGwcrkhlsIyA==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42wren40vb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 13:56:22 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AFDo6oo029734;
-	Fri, 15 Nov 2024 13:56:21 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42tkjmt84a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 13:56:21 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AFDuHJ256623476
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 15 Nov 2024 13:56:17 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BD2C220043;
-	Fri, 15 Nov 2024 13:56:17 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CF03720040;
-	Fri, 15 Nov 2024 13:56:16 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.171.57.75])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 15 Nov 2024 13:56:16 +0000 (GMT)
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        akrowiak@linux.ibm.com, pasic@linux.ibm.com, jjherne@linux.ibm.com,
-        freude@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@de.ibm.com, svens@linux.ibm.com,
-        frankja@linux.ibm.com, nrb@linux.ibm.com, nsg@linux.ibm.com,
-        seiden@linux.ibm.com
-Subject: [PATCH v1 1/1] s390/vfio-ap: remove gmap_convert_to_secure from vfio_ap_ops
+	s=arc-20240116; t=1731678982; c=relaxed/simple;
+	bh=/cevQFwDTvNo+uJkwYE0n872P1XEhsk8uP72d1/YrcQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UDoVkPW0Zu4RPDfiok9iZvYfWMNx9zaiqG2R/gaqFRDdMAr1at98A4DDeOsHb5bPe+a6tT+JA+mRqSp8gZflirAzGQdUhZdpBBW2xZWHysv8eylWMdjgcKgFuBKsJjiO/oml36v2ZgLODC5XaGnuYdR5qKS/EA2lnS0oxA/JxgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eDKU36J5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FFAAC4CECF;
+	Fri, 15 Nov 2024 13:56:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731678981;
+	bh=/cevQFwDTvNo+uJkwYE0n872P1XEhsk8uP72d1/YrcQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=eDKU36J5r9zgOhZK/TspavATQri3KSi8r5R60CW1i3XnHfVE2pB80VEMzARFkAuDL
+	 gQn/Hcf6vEpNk9DN731Ged/0Lvlw/Pjebv+y5eJRUrn+An3tJGjZjwkTNcwhhdVL4C
+	 qqZVGtJ9IL2YcGGmf1+TvlHFcGZbdziVtiCf0wTuT2rCiBrv5/Gpf6qkwLk43065if
+	 l5VeqG5TxTYRIcFqxvOIGCsxGFu6yNFc8G2SI+I7XVcs2qhg72DR1G0HLExQ20Fswe
+	 jb8HSbgaFgwk0gz/bsfcJlbc3CtLiP3l+t94VQw+JyJs5v6D7Y8wuhYTdQXTkDw/GL
+	 kVT+xm8N50JPA==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs misc
 Date: Fri, 15 Nov 2024 14:56:11 +0100
-Message-ID: <20241115135611.87836-1-imbrenda@linux.ibm.com>
-X-Mailer: git-send-email 2.47.0
+Message-ID: <20241115-vfs-misc-aa344b85076a@brauner>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11649; i=brauner@kernel.org; h=from:subject:message-id; bh=/cevQFwDTvNo+uJkwYE0n872P1XEhsk8uP72d1/YrcQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSbB/1lnfMgr6vp417W4BWl9+zaflnas+89lKY1ie3c+ 5Sjp0wnd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzEO5CR4fzld8d60xYnLYrX 7rv1fr3I04CopB5jdq+/m6sULY1PsjIyTPy3MmZ6QIbWpp++5x9FLsoVuRvgYClnuK02sFXyYuF vFgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: rkl9u0x4CB4cOvPko5K6OP-HjVXKbYrM
-X-Proofpoint-ORIG-GUID: rkl9u0x4CB4cOvPko5K6OP-HjVXKbYrM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 suspectscore=0 priorityscore=1501 mlxscore=0 spamscore=0
- mlxlogscore=999 phishscore=0 adultscore=0 clxscore=1015 lowpriorityscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411150116
 
-If the page has been exported, do not re-import it. Imports should
-only be triggered by the guest. The guest will import the page
-automatically when it will need it again, there is no advantage in
-importing it manually.
+Hey Linus,
 
-Moreover, vfio_pin_pages() will take an extra reference on the page and
-thus will cause the import to always fail. The extra reference would be
-dropped only after pointlessly trying to import the page.
+/* Summary */
 
-Fixes: f88fb1335733 ("s390/vfio-ap: make sure nib is shared")
-Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
----
- drivers/s390/crypto/vfio_ap_ops.c | 32 +++++++++++++++++++++----------
- 1 file changed, 22 insertions(+), 10 deletions(-)
+Features:
 
-diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-index 9f76f2d7b66e..ace1b332c930 100644
---- a/drivers/s390/crypto/vfio_ap_ops.c
-+++ b/drivers/s390/crypto/vfio_ap_ops.c
-@@ -360,10 +360,26 @@ static int vfio_ap_validate_nib(struct kvm_vcpu *vcpu, dma_addr_t *nib)
- 	return 0;
- }
- 
--static int ensure_nib_shared(unsigned long addr, struct gmap *gmap)
-+/**
-+ * ensure_nib_shared() - Ensure the address of the NIB is secure and shared
-+ * @addr: the physical (absolute) address of the NIB
-+ *
-+ * This function checks whether the NIB page, which has been pinned with
-+ * vfio_pin_pages(), is a shared page belonging to a secure guest.
-+ *
-+ * It will call uv_pin_shared() on it; if the page was already pinned shared
-+ * (i.e. if the NIB belongs to a secure guest and is shared), then 0
-+ * (success) is returned. If the NIB was not shared, vfio_pin_pages() had
-+ * exported it and now it does not belong to the secure guest anymore. In
-+ * that case, an error is returned.
-+ *
-+ * Context: the NIB (at physical address @addr) has to be pinned with
-+ *          vfio_pin_pages() before calling this function.
-+ *
-+ * Return: 0 in case of success, otherwise an error < 0.
-+ */
-+static int ensure_nib_shared(unsigned long addr)
- {
--	int ret;
--
- 	/*
- 	 * The nib has to be located in shared storage since guest and
- 	 * host access it. vfio_pin_pages() will do a pin shared and
-@@ -374,12 +390,7 @@ static int ensure_nib_shared(unsigned long addr, struct gmap *gmap)
- 	 *
- 	 * If the page is already pinned shared the UV will return a success.
- 	 */
--	ret = uv_pin_shared(addr);
--	if (ret) {
--		/* vfio_pin_pages() likely exported the page so let's re-import */
--		gmap_convert_to_secure(gmap, addr);
--	}
--	return ret;
-+	return uv_pin_shared(addr);
- }
- 
- /**
-@@ -425,6 +436,7 @@ static struct ap_queue_status vfio_ap_irq_enable(struct vfio_ap_queue *q,
- 		return status;
- 	}
- 
-+	/* The pin will probably be successful even if the NIB was not shared */
- 	ret = vfio_pin_pages(&q->matrix_mdev->vdev, nib, 1,
- 			     IOMMU_READ | IOMMU_WRITE, &h_page);
- 	switch (ret) {
-@@ -447,7 +459,7 @@ static struct ap_queue_status vfio_ap_irq_enable(struct vfio_ap_queue *q,
- 
- 	/* NIB in non-shared storage is a rc 6 for PV guests */
- 	if (kvm_s390_pv_cpu_is_protected(vcpu) &&
--	    ensure_nib_shared(h_nib & PAGE_MASK, kvm->arch.gmap)) {
-+	    ensure_nib_shared(h_nib & PAGE_MASK)) {
- 		vfio_unpin_pages(&q->matrix_mdev->vdev, nib, 1);
- 		status.response_code = AP_RESPONSE_INVALID_ADDRESS;
- 		return status;
--- 
-2.47.0
+    - Fixup and improve NLM and kNFSD file lock callbacks.
 
+      Last year both GFS2 and OCFS2 had some work done to make their
+      locking more robust when exported over NFS. Unfortunately, part of
+      that work caused both NLM (for NFS v3 exports) and kNFSD (for
+      NFSv4.1+ exports) to no longer send lock notifications to clients.
+
+      This in itself is not a huge problem because most NFS clients will
+      still poll the server in order to acquire a conflicted lock.
+
+      Its important for NLM and kNFSD that they do not block their
+      kernel threads inside filesystem's file_lock implementations
+      because that can produce deadlocks. We used to make sure of this
+      by only trusting that posix_lock_file() can correctly handle
+      blocking lock calls asynchronously, so the lock managers would
+      only setup their file_lock requests for async callbacks if the
+      filesystem did not define its own lock() file operation.
+
+      However, when GFS2 and OCFS2 grew the capability to correctly
+      handle blocking lock requests asynchronously, they started
+      signalling this behavior with EXPORT_OP_ASYNC_LOCK, and the check
+      for also trusting posix_lock_file() was inadvertently dropped, so
+      now most filesystems no longer produce lock notifications when
+      exported over NFS.
+
+      Fix this by using an fop_flag which greatly simplifies the problem
+      and grooms the way for future uses by both filesystems and lock
+      managers alike.
+
+    -  Add a sysctl to delete the dentry when a file is removed instead
+       of making it a negative dentry.
+
+       Commit 681ce8623567 ("vfs: Delete the associated dentry when
+       deleting a file") introduced an unconditional deletion of the
+       associated dentry when a file is removed. However, this led to
+       performance regressions in specific benchmarks, such as
+       ilebench.sum_operations/s, prompting a revert in commit
+       4a4be1ad3a6e ("Revert "vfs: Delete the associated dentry when
+       deleting a file""). This reintroduces the concept conditionally
+       through a sysctl.
+
+    - Expand the statmount() system call:
+
+	  * Report the filesystem subtype in a new fs_subtype field to
+	    e.g., report fuse filesystem subtypes.
+
+          * Report the superblock source in a new sb_source field.
+
+	  * Add a new way to return filesystem specific mount options in
+	    an option array that returns filesystem specific mount
+	    options separated by zero bytes and unescaped. This allows
+	    caller's to retrieve filesystem specific mount options and
+	    immediately pass them to e.g., fsconfig() without having to
+	    unescape or split them.
+
+	  * Report security (LSM) specific mount options in a separate
+	    security option array. We don't lump them together with
+	    filesystem specific mount options as security mount options
+	    are generic and most users aren't interested in them.
+
+	    The format is the same as for the filesystem specific mount
+	    option array.
+
+    - Support relative paths in fsconfig()'s FSCONFIG_SET_STRING command.
+
+    - Optimize acl_permission_check() to avoid costly {g,u}id ownership
+      checks if possible.
+
+    - Use smp_mb__after_spinlock() to avoid full smp_mb() in evict().
+
+    - Add synchronous wakeup support for ep_poll_callback.
+      Currently, epoll only uses wake_up() to wake up task. But
+      sometimes there are epoll users which want to use
+      the synchronous wakeup flag to give a hint to the scheduler, e.g.,
+      the Android binder driver. So add a wake_up_sync() define, and use
+      wake_up_sync() when sync is true in ep_poll_callback().
+
+Fixes:
+
+    - Fix kernel documentation for inode_insert5() and iget5_locked().
+
+    - Annotate racy epoll check on file->f_ep.
+
+    - Make F_DUPFD_QUERY associative.
+
+    - Avoid filename buffer overrun in initramfs.
+
+    - Don't let statmount() return empty strings.
+
+    - Add a cond_resched() to dump_user_range() to avoid hogging the CPU.
+
+    - Don't query the device logical blocksize multiple times for hfsplus.
+
+    - Make filemap_read() check that the offset is positive or zero.
+
+Cleanups:
+
+    - Various typo fixes.
+
+    - Cleanup wbc_attach_fdatawrite_inode().
+
+    - Add __releases annotation to wbc_attach_and_unlock_inode().
+
+    - Add hugetlbfs tracepoints.
+
+    - Fix various vfs kernel doc parameters.
+
+    - Remove obsolete TODO comment from io_cancel().
+
+    - Convert wbc_account_cgroup_owner() to take a folio.
+
+    - Fix comments for BANDWITH_INTERVAL and wb_domain_writeout_add().
+
+    - Reorder struct posix_acl to save 8 bytes.
+
+    - Annotate struct posix_acl with __counted_by().
+
+    - Replace one-element array with flexible array member in freevxfs.
+
+    - Use idiomatic atomic64_inc_return() in alloc_mnt_ns().
+
+/* Testing */
+
+gcc version 14.2.0 (Debian 14.2.0-6)
+Debian clang version 16.0.6 (27+b1)
+
+All patches are based on v6.12-rc1 and have been sitting in linux-next.
+No build failures or warnings were observed.
+
+/* Conflicts */
+
+Merge conflicts with mainline
+=============================
+
+No known conflicts.
+
+Merge conflicts with other trees
+================================
+
+No known conflicts.
+
+(1) linux-next: manual merge of the vfs-brauner tree with the nfsd tree
+    https://lore.kernel.org/r/20241024081515.1cd254a0@canb.auug.org.au
+
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.13.misc
+
+for you to fetch changes up to aefff51e1c2986e16f2780ca8e4c97b784800ab5:
+
+  statmount: retrieve security mount options (2024-11-14 17:03:25 +0100)
+
+Please consider pulling these changes from the signed vfs-6.13.misc tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.13.misc
+
+----------------------------------------------------------------
+Andreas Gruenbacher (1):
+      vfs: inode insertion kdoc corrections
+
+Andrew Kreimer (1):
+      fs/inode: Fix a typo
+
+Benjamin Coddington (4):
+      fs: Introduce FOP_ASYNC_LOCK
+      gfs2/ocfs2: set FOP_ASYNC_LOCK
+      NLM/NFSD: Fix lock notifications for async-capable filesystems
+      exportfs: Remove EXPORT_OP_ASYNC_LOCK
+
+Christian Brauner (7):
+      Merge patch series "Fixup NLM and kNFSD file lock callbacks"
+      Merge patch series "Introduce tracepoint for hugetlbfs"
+      epoll: annotate racy check
+      fcntl: make F_DUPFD_QUERY associative
+      Merge patch series "fs: allow statmount to fetch the fs_subtype and sb_source"
+      Merge patch series "two little writeback cleanups v2"
+      statmount: retrieve security mount options
+
+Christoph Hellwig (2):
+      writeback: add a __releases annoation to wbc_attach_and_unlock_inode
+      writeback: wbc_attach_fdatawrite_inode out of line
+
+David Disseldorp (1):
+      initramfs: avoid filename buffer overrun
+
+Hongbo Li (3):
+      hugetlbfs: support tracepoint
+      hugetlbfs: use tracepoints in hugetlbfs functions.
+      fs: support relative paths with FSCONFIG_SET_STRING
+
+Jeff Layton (3):
+      fs: don't let statmount return empty strings
+      fs: add the ability for statmount() to report the fs_subtype
+      fs: add the ability for statmount() to report the sb_source
+
+Julia Lawall (1):
+      fs: Reorganize kerneldoc parameter names
+
+Linus Torvalds (1):
+      fs: optimize acl_permission_check()
+
+Mateusz Guzik (1):
+      vfs: make evict() use smp_mb__after_spinlock instead of smp_mb
+
+Miklos Szeredi (1):
+      statmount: add flag to retrieve unescaped options
+
+Mohammed Anees (1):
+      fs:aio: Remove TODO comment suggesting hash or array usage in io_cancel()
+
+Pankaj Raghav (1):
+      fs/writeback: convert wbc_account_cgroup_owner to take a folio
+
+Rik van Riel (1):
+      coredump: add cond_resched() to dump_user_range
+
+Tang Yizhou (2):
+      mm/page-writeback.c: Update comment for BANDWIDTH_INTERVAL
+      mm/page-writeback.c: Fix comment of wb_domain_writeout_add()
+
+Thadeu Lima de Souza Cascardo (1):
+      hfsplus: don't query the device logical block size multiple times
+
+Thorsten Blum (3):
+      acl: Realign struct posix_acl to save 8 bytes
+      acl: Annotate struct posix_acl with __counted_by()
+      freevxfs: Replace one-element array with flexible array member
+
+Trond Myklebust (1):
+      filemap: filemap_read() should check that the offset is positive or zero
+
+Uros Bizjak (1):
+      namespace: Use atomic64_inc_return() in alloc_mnt_ns()
+
+Xuewen Yan (1):
+      epoll: Add synchronous wakeup support for ep_poll_callback
+
+Yafang Shao (1):
+      vfs: Add a sysctl for automated deletion of dentry
+
+ Documentation/admin-guide/cgroup-v2.rst     |   2 +-
+ Documentation/admin-guide/sysctl/fs.rst     |   5 +
+ Documentation/filesystems/nfs/exporting.rst |   7 --
+ MAINTAINERS                                 |   1 +
+ fs/aio.c                                    |   1 -
+ fs/btrfs/extent_io.c                        |   7 +-
+ fs/btrfs/inode.c                            |   2 +-
+ fs/buffer.c                                 |   4 +-
+ fs/char_dev.c                               |   2 +-
+ fs/coredump.c                               |   1 +
+ fs/dcache.c                                 |  16 ++-
+ fs/eventpoll.c                              |  11 +-
+ fs/ext4/page-io.c                           |   2 +-
+ fs/f2fs/data.c                              |   9 +-
+ fs/fcntl.c                                  |   3 +
+ fs/freevxfs/vxfs_dir.h                      |   2 +-
+ fs/fs-writeback.c                           |  40 +++++--
+ fs/fs_parser.c                              |   1 +
+ fs/gfs2/export.c                            |   1 -
+ fs/gfs2/file.c                              |   2 +
+ fs/hfsplus/hfsplus_fs.h                     |   3 +-
+ fs/hfsplus/wrapper.c                        |   2 +
+ fs/hugetlbfs/inode.c                        |  17 ++-
+ fs/inode.c                                  |  29 +++--
+ fs/iomap/buffered-io.c                      |   2 +-
+ fs/lockd/svclock.c                          |   7 +-
+ fs/mpage.c                                  |   2 +-
+ fs/namei.c                                  |  41 +++++++
+ fs/namespace.c                              | 161 ++++++++++++++++++++++++++--
+ fs/nfsd/nfs4state.c                         |  19 +---
+ fs/ocfs2/export.c                           |   1 -
+ fs/ocfs2/file.c                             |   2 +
+ fs/posix_acl.c                              |  13 ++-
+ fs/seq_file.c                               |   2 +-
+ include/linux/eventpoll.h                   |   2 +-
+ include/linux/exportfs.h                    |  13 ---
+ include/linux/filelock.h                    |   5 +
+ include/linux/fs.h                          |   2 +
+ include/linux/posix_acl.h                   |   6 +-
+ include/linux/wait.h                        |   1 +
+ include/linux/writeback.h                   |  32 +-----
+ include/trace/events/hugetlbfs.h            | 156 +++++++++++++++++++++++++++
+ include/uapi/linux/mount.h                  |  14 ++-
+ init/initramfs.c                            |  15 +++
+ mm/filemap.c                                |   2 +
+ mm/page-writeback.c                         |   4 +-
+ 46 files changed, 531 insertions(+), 141 deletions(-)
+ create mode 100644 include/trace/events/hugetlbfs.h
 
