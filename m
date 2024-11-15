@@ -1,55 +1,85 @@
-Return-Path: <linux-kernel+bounces-411336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0982D9CF65A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:48:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59B5B9CF65C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:49:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5161283027
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:48:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 009C3281992
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5B61E105A;
-	Fri, 15 Nov 2024 20:48:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B410B18C031;
+	Fri, 15 Nov 2024 20:49:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lzg7cmjT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z4vbMYJY"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7CB7153800;
-	Fri, 15 Nov 2024 20:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663311891AB
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 20:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731703710; cv=none; b=pXVG+rVM/YvM61adG+tBf9KnF0687mPtbPEWkufuTVnzKHEWyS67Xnl8WnTTIIyJ26I36OhLHjZJ7HXzq+Gx1yjhOsCjBojJjKx+QlfGpC91ifFdnQGPIqbdnBIjS7Kr6ZmokIUeb9d3HycrpiwVNzWvvExtK1sE+Y3fN0iaOYg=
+	t=1731703783; cv=none; b=I6SGrd1RtyuqZ/cEzbbJYwakRtqFM2gzAnzowaNAwB9K88lCHA8LbAhwvIcOejOT9/bgUHoIVQDimIvAZM+Eg5VVnugJF/GTSi4b2UCXizLQ3CQPXdwcOlsZg5KtO2KLYbQkxJDBbwdE5L69Mq2itfoYR5U/rdHxolc3xQzlGjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731703710; c=relaxed/simple;
-	bh=qfzvl/GY/RKrYmzxqMtJHuR/sB55o8od60nWBjLqjxY=;
+	s=arc-20240116; t=1731703783; c=relaxed/simple;
+	bh=wCqpy51QFTJAUw9DssWd0FEM1AkBOeMV4Pd0fnFJ9pw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JzBgM0cNFeZKkghKUG+t7Oxgv0xZ4G9Y2Bdj7s7mWYfi//o5rN6F6zuB3CzGidsMaNVNiKTKdHWhDe7vx1R8FealRdkeZFCLrczqAkDdzxAFOoEXLlWH0tYUfTElZidHo6hWMjJGgFjCuZIiIoagPAhQZy/55w+QR0U5vQyxqJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lzg7cmjT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2146DC4CECF;
-	Fri, 15 Nov 2024 20:48:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731703710;
-	bh=qfzvl/GY/RKrYmzxqMtJHuR/sB55o8od60nWBjLqjxY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lzg7cmjTGyC1uLwc3ZgvSzGMcQ+7lwP1/taovqdAMRKfnn2nr5VQregW6qHNtiYYu
-	 8ZCXVKAiqbvTyvyqIQFFmjDD4ZUSD+h5N/utJa7cqlkGbpfqBV7Vn5hcNGWzD4P2ZM
-	 DOW1/R5Soz1MUJik8brLkDK2/otG45ez+TreZQCDH/YPYlORZyzNnKIKwhvL8UvaDT
-	 GlPIXEzL72ikLPVnvIArQ4bZDzpVpJBmh6LnO0spOFXO2zkvP6PuI11j6Cs9FEm2Gm
-	 1bR9aTsEC4aKmYxx0M53Xw+0ruQweLj7HA91ECaKiTt7o0xGQUuz4PzIUkwuov+GV0
-	 1633flqFIXqew==
-Date: Fri, 15 Nov 2024 12:48:27 -0800
-From: Kees Cook <kees@kernel.org>
-To: Philipp Reisner <philipp.reisner@linbit.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	linux-sparse@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] compiler.h: Fix undefined BUILD_BUG_ON_ZERO()
-Message-ID: <202411151247.280F316C83@keescook>
-References: <CAHk-=wiPZmd1hrsUoP+9vPg2=E0Jj6Li77_BZcV9GocbJg8fag@mail.gmail.com>
- <20241115204602.249590-1-philipp.reisner@linbit.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TnM7OwtZYnWr3TUqs8Q39j0wtuxh72rAasfhXXsb7usH9Bm2WSFUVpjXqlJlF1l03cHOy8E4eP4HJGXNYSni8AdKikFcW044CCFjiaZDEcIWpVCWgQ8q2K9bW/t6N8LrqNFhICJ1V+dQfRGMwdZcTT3bgJi9XbsUeOPrQsEQBpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z4vbMYJY; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb56cb61baso9312791fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 12:49:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731703779; x=1732308579; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CjYoXr1c/e18FI2TdM2K5pasMyhee97taoyWD1KNeJE=;
+        b=Z4vbMYJYiQFfNWOl9MgftjDFHmhYf4z5Xa46SmqzrVd6TjKelaXEZKwLVEpxl7GMMT
+         ISacNxipuUqWoYkCtCDAOpBMofXEelMMBvo4QFWbnomz3jB5pl4AnK/raU3GMVihxZA4
+         s23fFAjCI7fHal3JHY4ZtcMj/qdQt5nMTgdosZiuZrgaqWag4c5OA7dYJMYpKNVhcB4L
+         gFfOV+6cpqbHQUodvgKr4GzUvaIFDnvsr4dT6qJzKFxjwdLPrNot+OVdbL/gfikqhTDL
+         p2+TSVJWSdt1X3snzb/XNrkulcGs4BuytNyk4FiZxMi5IJLYwNPHMxYGAbmPufh8AnsR
+         9ydQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731703779; x=1732308579;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CjYoXr1c/e18FI2TdM2K5pasMyhee97taoyWD1KNeJE=;
+        b=vGqw2Aq812NMWbvbENZPCv7LqKWXrkTTt9cTwpGK/HI32mQoPRAKUkQUxymyyyryQR
+         K1+RGSNMmw8gYHU4HTjk+bYm0dkzJ9eh5Yk0aqN89oplGfza076Y6qkjjHuaJKb0azgH
+         5E+H4YQoWo5RhcWGAS5t+0UwSE928+FlV1QOGA24N/ctrxCYYsRdXqZhI4BBxUVcnzZD
+         +mip8qSNvOMdaRA7YnfLOclnvwbOmr7/JJBeYHEzz7TeVAvUCgMA70Acz9BKBvskRQh2
+         c7cYtlxaLuz02DVnqQ8nZZDP2KfyF27E56A4vA75TEf9kOOSlkz7kZFh1wyETOxUJcMk
+         aCtA==
+X-Forwarded-Encrypted: i=1; AJvYcCVViS1WdN9HYLGUGktGnK5JIr/KXtG3pjWvWdi/eOqbXEnt6YEaBa7vO+4uFTbR88X7hRN0/L/IsO5IqLo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySMAtRoY3y9NjLCj594xWc9i0VuyX4PnforzMQJpy5eYze1zQW
+	M4YgOG2Vzfu3rH3jPE4JvZRQ/Uz1ib4NJUtT5nrw7nJa7r3bzTQNa7Dxcn3ZXVA=
+X-Google-Smtp-Source: AGHT+IHDw1nSJp6JrS4UrDhL1uYX+VrsqdWEdSsG7SMPlrb85ao1TsV+hOPLPValyHydklEGSDOhZg==
+X-Received: by 2002:a05:651c:12c8:b0:2fb:8920:99c6 with SMTP id 38308e7fff4ca-2ff606944f8mr26665191fa.23.1731703779420;
+        Fri, 15 Nov 2024 12:49:39 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff6995980bsm229991fa.41.2024.11.15.12.49.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 12:49:38 -0800 (PST)
+Date: Fri, 15 Nov 2024 22:49:35 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org, 
+	manivannan.sadhasivam@linaro.org, bhelgaas@google.com, kw@linux.com, lpieralisi@kernel.org, 
+	quic_qianyu@quicinc.com, conor+dt@kernel.org, neil.armstrong@linaro.org, 
+	andersson@kernel.org, konradybcio@kernel.org, quic_shashim@quicinc.com, 
+	quic_kaushalk@quicinc.com, quic_tdas@quicinc.com, quic_tingweiz@quicinc.com, 
+	quic_aiquny@quicinc.com, kernel@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
+Subject: Re: [PATCH 2/5] phy: qcom-qmp-pcie: add dual lane PHY support for
+ QCS8300
+Message-ID: <vfl3mvq7wn5f4ke2df3hsdd65cmhb6lw4kbzpharo75ufzmayt@e4w76fjipy2m>
+References: <20241114095409.2682558-1-quic_ziyuzhan@quicinc.com>
+ <20241114095409.2682558-3-quic_ziyuzhan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,63 +88,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241115204602.249590-1-philipp.reisner@linbit.com>
+In-Reply-To: <20241114095409.2682558-3-quic_ziyuzhan@quicinc.com>
 
-On Fri, Nov 15, 2024 at 09:46:02PM +0100, Philipp Reisner wrote:
-> <linux/compiler.h> defines __must_be_array() and __must_be_cstr() and
-> both expand to BUILD_BUG_ON_ZERO(), but <linux/build_bug.h> defines
-> BUILD_BUG_ON_ZERO(). Including <linux/build_bug.h> in
-> <linux/compiler.h> would create a cyclic dependency as
-> <linux/build_bug.h> already includes <linux/compiler.h>.
+On Thu, Nov 14, 2024 at 05:54:06PM +0800, Ziyue Zhang wrote:
+> The PCIe Gen4x2 PHY for qcs8300 has a lot of difference with sa8775p.
+> So the qcs8300_qmp_gen4x2_pcie_rx_alt_tbl for qcs8300 is added.
 > 
-> Fix that by defining __BUILD_BUG_ON_ZERO_MSG() in <linux/compiler.h>
-> and using that for __must_be_array() and __must_be_cstr().
-> 
-> Signed-off-by: Philipp Reisner <philipp.reisner@linbit.com>
-
-Thanks for finding a simple way to make this work sanely. :)
-
-Acked-by: Kees Cook <kees@kernel.org>
-
-Linus, do you want a PR for this, or will you apply it directly?
-
-Thanks!
-
--Kees
-
+> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
 > ---
->  include/linux/compiler.h | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
+>  drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 89 ++++++++++++++++++++++++
+>  1 file changed, 89 insertions(+)
 > 
-> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> index 4d4e23b6e3e7..469a64dd6495 100644
-> --- a/include/linux/compiler.h
-> +++ b/include/linux/compiler.h
-> @@ -239,11 +239,18 @@ static inline void *offset_to_ptr(const int *off)
->  
->  #endif /* __ASSEMBLY__ */
->  
-> +#ifdef __CHECKER__
-> +#define __BUILD_BUG_ON_ZERO_MSG(e, msg) (0)
-> +#else /* __CHECKER__ */
-> +#define __BUILD_BUG_ON_ZERO_MSG(e, msg) ((int)sizeof(struct {_Static_assert(!(e), msg);}))
-> +#endif /* __CHECKER__ */
-> +
->  /* &a[0] degrades to a pointer: a different type from an array */
-> -#define __must_be_array(a)	BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
-> +#define __must_be_array(a)	__BUILD_BUG_ON_ZERO_MSG(__same_type((a), &(a)[0]), "must be array")
->  
->  /* Require C Strings (i.e. NUL-terminated) lack the "nonstring" attribute. */
-> -#define __must_be_cstr(p)	BUILD_BUG_ON_ZERO(__annotated(p, nonstring))
-> +#define __must_be_cstr(p) \
-> +	__BUILD_BUG_ON_ZERO_MSG(__annotated(p, nonstring), "must be cstr (NUL-terminated)")
->  
->  /*
->   * This returns a constant expression while determining if an argument is
-> -- 
-> 2.47.0
-> 
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
-Kees Cook
+With best wishes
+Dmitry
 
