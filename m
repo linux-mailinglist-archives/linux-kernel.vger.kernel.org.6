@@ -1,167 +1,126 @@
-Return-Path: <linux-kernel+bounces-410921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39DFC9CF076
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:44:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 071089CF078
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:44:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00BD028B41E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:44:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2D3C1F22BFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81FF1E6DFC;
-	Fri, 15 Nov 2024 15:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59CA11E7670;
+	Fri, 15 Nov 2024 15:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qqZv7Vrt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rUqFnNaR";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="h5M+Vos+"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9721E571C;
-	Fri, 15 Nov 2024 15:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588161D54D1;
+	Fri, 15 Nov 2024 15:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731685015; cv=none; b=Vt+9y5jAmlkS3uh/fr6yAdgtoeZHjLfKKPobjzOby70Gj3Vl4cpdnZ+uRU5OWX3jkXFKwDy3jfM7YhjL0mtUhXT9Yqg+H/7gU5h55jPeobLlsz6G777aYt6kZ1QotDjhKC3LBU58GeLMomybBG+HAXEkBxoqpj/Eumu9AhI4X0Q=
+	t=1731685039; cv=none; b=aav7+dc04JgLt/Srab7Y1hy079jGxvt3qPRbvnApDUMtlDtGZT6aCYdPBMfu+9J3AoP81p95d8Fd3ivqsRYdpBaunJN61ynvdKruWllMhNK5GsLeYsAmCovEMMbSz17uM+X3KyYMvZaOe43XdLuJLZHijYLhUz7aPO3wwE9O7eI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731685015; c=relaxed/simple;
-	bh=sPivoQA+PBNweizbL3Q8DLYK7FpWRO7exlwdr/7WVFM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Dd+ZCthTCNj7DGcFVZVYUBgd1pNNANnhzluJBDd4/U4pLF/SIQ6XmeI6Zw3oeCmbLq+V5yR4cBT+9dydymSL1TeJ9fnkNI+F88635kb/ybRKDrLHKdxub3PZvVAninTb6z1Etgtql2gNSzcCMtURKqWzdJrXunqgckhSBJM+/3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qqZv7Vrt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5599DC4CED5;
-	Fri, 15 Nov 2024 15:36:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731685015;
-	bh=sPivoQA+PBNweizbL3Q8DLYK7FpWRO7exlwdr/7WVFM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qqZv7VrtIOzYfdUAYAAE2oXbvnQFr9SsU9/Lk+jIOV9nTFRBtSNUTBGiyJMTaczQM
-	 LOoqBAKwUJweARgSIOhLI3Sgcio6mHtgMd40M0tiF4YW5R1NhJRTSnqIzPGcTqpYNg
-	 NkGryPxCDSwQKsoOhKuBQhkgIkdrCrHf9biG3ybbiRmTPhzefpjNw2YhoI31jxeja9
-	 psATW9WOI6qV9zEHVnlSKtj29RTrJ/PDHL/0Tn9IqmmQ0JLjxArVi46cYZHrV1ma3K
-	 EFwWYOzPP7Jfpz9eSEQoclzNn9KPg9ticIMgG/C0oj2xsNA9s8U+eHjqpPYZHq6lzj
-	 O7V79MZHRxf0A==
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Benjamin Peterson <benjamin@engflow.com>,
-	Howard Chu <howardchu95@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Clark Williams <williams@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 2/2] perf test shell trace_exit_race: Use --no-comm to avoid cases where COMM isn't resolved
-Date: Fri, 15 Nov 2024 12:36:34 -0300
-Message-ID: <20241115153634.314742-3-acme@kernel.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241115153634.314742-1-acme@kernel.org>
-References: <20241115153634.314742-1-acme@kernel.org>
+	s=arc-20240116; t=1731685039; c=relaxed/simple;
+	bh=cXVCtUbGzIkTTN/XwtMSYoetWzTGDbhh2EMBZ2OCA+4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RQr82F0k9ut92afCWekAyvRj5uBkqR3vFVK61c/QqkPQziqWE7BRWtX2EWVIclrAv1LFp+Ike9+220kxtV+VSPxDo8EMhISWzmLnq3W+H+LlVyjBYbcZORg9+M7a28NsTcO9qqs4b6fIL22ZLiTNv3/VMPA6dRypiQqR3ZJ4SCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rUqFnNaR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=h5M+Vos+; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731685036;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TZmbPLii/137z/6quztj4vH5r9RCU/WYr4Ns5mxJ32Y=;
+	b=rUqFnNaRwAZBvK8DtimLbd8eSt66jTJ/R1aTD0dXMx0Cyjuc7WvEVPbGh6UgYeKgLrwYOz
+	mWVAx5oBdDdWtpVsNZjCK9PGfmPXWABpY3vtapSmaXNYzHRt7bF2qLA0B8b4wteeYPGzpz
+	cDEcapHB7SN9dhiZXPhodlbutpre5sgHc6BXJqniKIEQ+12WVYIXeC6NInUjIoV6PbqSm2
+	hsl0uvhQfbxCwkRVSe/5B3qSUkStnter2viUskl6ZK4FlZs45YfcIoyjRwEGiD1A1PVx9E
+	h8sZZRXR+3eJipHmGidhmUHAIipGgFCvBkelSoDo39ROpuzb/Vo98oVLyAHn1w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731685036;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TZmbPLii/137z/6quztj4vH5r9RCU/WYr4Ns5mxJ32Y=;
+	b=h5M+Vos+tPGG0k+sH/lGYoWH3Fwxz2HWZTX3f5uBFr8MX4zey7Df1CMUXoE6LXeelvF86b
+	d6rXb06p4IpGw0Cg==
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ rafael.j.wysocki@intel.com, len.brown@intel.com,
+ dave.hansen@linux.intel.com
+Subject: Re: [PATCH v3 2/3] x86/smp native_play_dead: Prefer
+ cpuidle_play_dead() over mwait_play_dead()
+In-Reply-To: <20241115100718.GY22801@noisy.programming.kicks-ass.net>
+References: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
+ <20241108122909.763663-3-patryk.wlazlyn@linux.intel.com>
+ <20241112114743.GQ22801@noisy.programming.kicks-ass.net>
+ <CAJZ5v0ivAk1xrcJgiJnDWnL3GdijSdsuV4K_4ORjnsjPUVAEnA@mail.gmail.com>
+ <20241112121843.GF6497@noisy.programming.kicks-ass.net>
+ <0ecea0e5be59e63b7827f4db368f2aa3322fb71d.camel@linux.intel.com>
+ <20241112140127.GH6497@noisy.programming.kicks-ass.net>
+ <20241114120315.GG38972@noisy.programming.kicks-ass.net>
+ <871pzd1ecw.ffs@tglx>
+ <20241115100718.GY22801@noisy.programming.kicks-ass.net>
+Date: Fri, 15 Nov 2024 16:37:28 +0100
+Message-ID: <87v7wozex3.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+On Fri, Nov 15 2024 at 11:07, Peter Zijlstra wrote:
+> On Fri, Nov 15, 2024 at 02:21:19AM +0100, Thomas Gleixner wrote:
+>> On Thu, Nov 14 2024 at 13:03, Peter Zijlstra wrote:
+>> > On Tue, Nov 12, 2024 at 03:01:27PM +0100, Peter Zijlstra wrote:
+>> >
+>> >> No, not mwait hint. We need an instruction that:
+>> >> 
+>> >>  - goes to deepest C state
+>> >>  - drops into WAIT-for-Start-IPI (SIPI)
+>> >> 
+>> >> Notably, it should not wake from:
+>> >> 
+>> >>  - random memory writes
+>> >>  - NMI, MCE, SMI and other such non-maskable thingies
+>> >>  - anything else -- the memory pointed to by RIP might no longer exist
+>> >> 
+>> >> Lets call the instruction: DEAD.
+>> >
+>> > So, turns out that when you send INIT to an AP it does the whole drop
+>> > into Wait-for-SIPI and ignore non-maskable crap.
+>> >
+>> > The reason we don't do that is because INIT to CPU0 (BP) is somewhat
+>> > fatal, but since Thomas killed all that CPU0 hotplug crap, I think we
+>> > can actually go do that.
+>> 
+>> Instead of playing dead or to kick out CPUs from whatever dead play
+>> routine they are in?
+>> 
+>> playimg dead is to stay because INIT will bring back the MCE broadcast
+>> problem, which we try to avoid by bringing SMT siblings up just to shut
+>> them down again by playing dead.
+>> 
+>> You need a MCE broadcast free system and/or some sensible BIOS bringup
+>> code for that to work...
+>
+> Isn't INIT a better state to be in during kexec than HLT?
 
-The purpose of this test is to test for races in the exit of 'perf
-trace' missing the last events, it was failing when the COMM wasn't
-resolved either because we missed some PERF_RECORD_COMM or somehow
-raced on getting it from procfs.
+For the kexec transition I agree that INIT is better. We just need to be
+careful for a crash kexec when the crashing CPU is not CPU0...
 
-Add --no-comm to the 'perf trace' command line so that we get a
-consistent, pid only output, which allows the test to achieve its goal.
+Thanks,
 
-This is the output from
-'perf trace --no-comm -e syscalls:sys_enter_exit_group':
-
-     0.000 21953 syscalls:sys_enter_exit_group()
-     0.000 21955 syscalls:sys_enter_exit_group()
-     0.000 21957 syscalls:sys_enter_exit_group()
-     0.000 21959 syscalls:sys_enter_exit_group()
-     0.000 21961 syscalls:sys_enter_exit_group()
-     0.000 21963 syscalls:sys_enter_exit_group()
-     0.000 21965 syscalls:sys_enter_exit_group()
-     0.000 21967 syscalls:sys_enter_exit_group()
-     0.000 21969 syscalls:sys_enter_exit_group()
-     0.000 21971 syscalls:sys_enter_exit_group()
-
-Now it passes:
-
-  root@number:~# perf test "trace exit race"
-  110: perf trace exit race                                            : Ok
-  root@number:~#
-  root@number:~# perf test -v "trace exit race"
-  110: perf trace exit race                                            : Ok
-  root@number:~#
-
-If we artificially make it run just 9 times instead of the 10 it runs,
-i.e. by manually doing:
-
-	trace_shutdown_race() {
-		for _ in $(seq 9); do
-
-that 9 is $iter, 10 in the patch, we get:
-
-  root@number:~# vim ~acme/libexec/perf-core/tests/shell/trace_exit_race.sh
-  root@number:~# perf test -v "trace exit race"
-  --- start ---
-  test child forked, pid 24629
-  Missing output, expected 10 but only got 9
-  ---- end(-1) ----
-  110: perf trace exit race                                            : FAILED!
-  root@number:~#
-
-I.e. 9 'perf trace' calls produced the expected output, the inverse grep
-didn't show anything, so the patch provided by Howard for the previous
-patch kicks in and shows a more informative message.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Benjamin Peterson <benjamin@engflow.com>
-Cc: Howard Chu <howardchu95@gmail.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/lkml/ZzdknoHqrJbojb6P@x1
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/tests/shell/trace_exit_race.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/tests/shell/trace_exit_race.sh b/tools/perf/tests/shell/trace_exit_race.sh
-index 8ea24f4256bc8f5e..fbb0adc33a889516 100755
---- a/tools/perf/tests/shell/trace_exit_race.sh
-+++ b/tools/perf/tests/shell/trace_exit_race.sh
-@@ -16,11 +16,11 @@ if [ "$1" = "-v" ]; then
- fi
- 
- iter=10
--regexp=" +[0-9]+\.[0-9]+ +true/[0-9]+ syscalls:sys_enter_exit_group\(\)$"
-+regexp=" +[0-9]+\.[0-9]+ [0-9]+ syscalls:sys_enter_exit_group\(\)$"
- 
- trace_shutdown_race() {
- 	for _ in $(seq $iter); do
--		perf trace -e syscalls:sys_enter_exit_group true 2>>$file
-+		perf trace --no-comm -e syscalls:sys_enter_exit_group true 2>>$file
- 	done
- 	result="$(grep -c -E "$regexp" $file)"
- 	[ $result = $iter ]
--- 
-2.47.0
-
+        tglx
 
