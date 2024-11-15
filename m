@@ -1,143 +1,141 @@
-Return-Path: <linux-kernel+bounces-410308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F8779CD9B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:13:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E52E99CD9E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:27:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ECD81F2148F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:13:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E877A1F2195F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532AA14A82;
-	Fri, 15 Nov 2024 07:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0133F188917;
+	Fri, 15 Nov 2024 07:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fgnh4i6C"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="Q1e3Rx9K"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D42185949
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 07:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3416D183CC7;
+	Fri, 15 Nov 2024 07:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731654790; cv=none; b=qE6VsvvchdW4aX/tWxVe+zk5GmAWFmmcDLeu8NKAXbHE7IgoF8jzwdLB3C9DV7z0NJ61sgZew2Ei1qGa9VyZxJyZTzEBd+IzaOR0/eCv0fIFnhdxgOeqjL7ud8+ZwQepfXlOMummdAJJVS+bGUPX6za12SxEj5GpZInkdfq0pCM=
+	t=1731655652; cv=none; b=mgJXYsatIzmKu+mwjZsh3UkJA76Gc07MY1T5C0fmrJ6A2M5z31zNgv8MYHTBXXUnENHSEOTmjtTyVCt6kXOS1GN5j5MHkrl/HBPefwjRe7X1BSH6/G7A2e+67ZCKZll+q53Y7GzzC1xgzuGE0SIW1XVsDFpKBlnlgAvH6oa5lnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731654790; c=relaxed/simple;
-	bh=hW+xKYnvERyaDsTFLZMZ1tONEaJp5t202N+XMS1PyZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DMdzLhuzIwTBYHR/HInLfFFkw4E4frJby8xriMqJy2A+lf7JlyIwoumCSmutA9IU2cydIYdSQB84ockYFXr7hn7f83aP2X/FK5+8vdQTVCdPfXmbic4cX1R2g/gYBZnogecuBxi+y8AwqQngeecJhIBp22rj0JqbgGsCdMvHLhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fgnh4i6C; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20c803787abso12642925ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 23:13:09 -0800 (PST)
+	s=arc-20240116; t=1731655652; c=relaxed/simple;
+	bh=Sa90FOF3ZCw78OsaCzV54IiZx5tvk9l7aqFRB3SmkUQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EykTs0vntOBKOTv38HDTWOPbYrURYYVNgEwdqJ7yUG2zVfzaXs7sFVzrSNuOTts9F4IoGtfm6vu0GWRxxqBairE7U2ToOIWqHAvQD5GVlEyLqHGNj5HJvced0glbsUzvZuuj36xdprW9yDu/CMBeUfekc9iZXTmdgdqCtIeJdkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=Q1e3Rx9K; arc=none smtp.client-ip=212.227.126.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731654788; x=1732259588; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+1Dz/OYJenLwT42NvbYgc5y6jl1Qc/DY1ubS7Ysj0ds=;
-        b=fgnh4i6CBkH0XuzUq7QfxiKTzpAIKK+ByAXda6eyrKt8fosdq6vQ2K5Jv6ddLSbx2I
-         o9PnFQFfjUvXZ2m8BtTUVcFnxvHxLA+FdXQtAbF4w//UMRDnLNZf63cxtaMTDYlzu3W5
-         SD3sUCwD5uoxqJuKhJWLrSjdPoao4rHxfBzj/j1s6XtBSnAqje3cDGdbZl4DaJds8m9/
-         Xv1dRyiOflKA5IHKKLiDHGbFCUq1RMqYs3D9g+3C7Cz5OznroLP9IIrsUlh0h6l1MyZn
-         EV8oczbpnWtVJX07nlFr551iB0XyTptUdEJkzFPiJRwziDPD09nDsFhzpV9geBlXHBLk
-         qmSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731654788; x=1732259588;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+1Dz/OYJenLwT42NvbYgc5y6jl1Qc/DY1ubS7Ysj0ds=;
-        b=gnBuHpwOfIKUndLdFkG7Rog0WSEsL4P7frPX99QtlDHLEycIzTeLUnXKzhUWj+dOoU
-         XM82lf7V8iDZxHxDGWc0ZxWLQhW7XC8Vj0TjX7SYxmh+6QE37LUur6pWNcDX37MeZBRN
-         rUe/JzC3PiSVZOPlMQ95ur9Lzyd5NKssJe4h0Py36N24C8pq4Z1FtjnOtNV0fl6kCT47
-         +BxCe901RJyzc6nCiLrtRaVYYX8Z0H8UZGIdoGvO7hQ51x6GFeBLKM0CI4XAr+hnRL7K
-         lUwSN7HttVEsfhkXOGFhDumo7Rap0KsiKNWf97spanJ/bodvZyZ/no7GTmWWgF/IhfAW
-         ka7w==
-X-Forwarded-Encrypted: i=1; AJvYcCWs8Eu9RvVkMZjtYbAOCFoaJbnaSNmRqTVFqhomU4jroxUHoi01tKkDcRr2Z3l+V6Y6w4xani3Ar0smW7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyGC4xKlV2/PQlGC3ayAaPPbHWpZ4TxRL0JSdjVBao4kZmlFEb
-	zZjQok3Wrbs2BqT+EQWVXrPCzus+qCXTrH+9pVFKlBK6pIfNoocGe5xu73DwBA==
-X-Google-Smtp-Source: AGHT+IGXzZZGlt+G0O4qFrwjzRuyPJCE0eMc4484n4Is2j1zfs167pZc2pf+Scw0xdwwWEA3jG14tw==
-X-Received: by 2002:a17:903:2282:b0:20c:7196:a1e9 with SMTP id d9443c01a7336-211d06f44acmr34058055ad.13.1731654788551;
-        Thu, 14 Nov 2024 23:13:08 -0800 (PST)
-Received: from thinkpad ([117.193.208.47])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f56dd3sm6529845ad.263.2024.11.14.23.13.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 23:13:08 -0800 (PST)
-Date: Fri, 15 Nov 2024 12:42:57 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: l.stach@pengutronix.de, bhelgaas@google.com, lpieralisi@kernel.org,
-	kw@linux.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, shawnguo@kernel.org, frank.li@nxp.com,
-	s.hauer@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
-	kernel@pengutronix.de, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 09/10] PCI: imx6: Add i.MX8MQ i.MX8Q and i.MX95 PCIe
- PM support
-Message-ID: <20241115071257.ihticiqzmyn5c3lu@thinkpad>
-References: <20241101070610.1267391-1-hongxing.zhu@nxp.com>
- <20241101070610.1267391-10-hongxing.zhu@nxp.com>
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1731655648; x=1732260448;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=Sa90FOF3ZCw78OsaCzV54IiZx5tvk9l7aqFRB3SmkUQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Q1e3Rx9Kpp7Np1ZBlW8Uyx7NOTSmlC6vaA64lW5ldq/bmVyYR1NxUoDDQlQwzs4I
+	 dEHbZcIVEe0ev7EDBCSB1izrRYuHa6EvAIXK06EPjNHdOYdqGBvJcLXw7e4kwLdkV
+	 ftrss57TJNNJFaEZjUqkUOsjNMUkqLmNI7zLQi+Bo8ToGOaT3NC9+fHvAnax4YIoH
+	 xgpYyyzXm4A0sqzZaUKXstYBw0SJ+m1HAmH9MoPkjJw89CkouZim58Bb72g4BJIG4
+	 KC4lueLXWNsxGI0gIYdt6pHGkElINS+hUeXtsdllE+1LBrNXLexW484oOd5NbC8zz
+	 xyMvzrKFOb8lKUSBsA==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.0.174] ([91.64.229.215]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1N17gw-1tvGN43tPO-00vjPP; Fri, 15 Nov 2024 08:13:57 +0100
+Message-ID: <4186566a-0aa5-4413-96df-fb1b7ebd9db2@oldschoolsolutions.biz>
+Date: Fri, 15 Nov 2024 08:13:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241101070610.1267391-10-hongxing.zhu@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Bluetooth: qca: Support downloading board id specific NVM
+ for WCN6855
+To: Paul Menzel <pmenzel@molgen.mpg.de>, Zijun Hu <quic_zijuhu@quicinc.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Zijun Hu
+ <zijun_hu@icloud.com>, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Bjorn Andersson <bjorande@quicinc.com>,
+ Aiqun Yu <quic_aiquny@quicinc.com>, Cheng Jiang <quic_chejiang@quicinc.com>,
+ Johan Hovold <johan@kernel.org>, Steev Klimaszewski <steev@kali.org>
+References: <20241113-x13s_wcn6855_fix-v1-1-15af0aa2549c@quicinc.com>
+ <4d973d61-27be-4830-880a-a3d74c4bbbc7@molgen.mpg.de>
+Content-Language: en-US
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <4d973d61-27be-4830-880a-a3d74c4bbbc7@molgen.mpg.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:QDF4apY+T0AwDVjXuiNCoEElOEv+7nq3WiS9e1Fp3AABbpXrT9G
+ Z2r9/6StBxLD62oJpV2slEIQwyl3f6EULx9tsIj3flXbhiKShNooQFNg+n30M/zyc7bDnGm
+ 0JRDZyvXpWNRECY+I2/HGQ6ceh5ZNMi8Hue54miymrXpy+NqDBdHiuerZdL/8YD5/AzTgD3
+ rXS8WfxOOnfzb84iQ05sw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:gCTczlT7cqc=;zWMK2h1h0R4eXYwxZ/1gW8gJF4n
+ G+FFA66si+X7oxppRLwT8p1IkMuKQWBNM6dsbjAeKDlhxeDUWXJEQgOKkeEv7pNIXWZ8neV20
+ vhanKMXxteoqvtLUGo+BYEGbYoFlYpLYcmoNj93sLw51CldF3qr49Pwg3FdirK+9L8+8xEMfK
+ 5B1YOM782XNRczBs/JD1QgP/d5tggDBIko82nLGxLhsA5jpAQRA4BB4ewuvmlYT6vNjvunbJ5
+ ePtMSABkFXu/FNDTXEm90z0pNQdAnr+uUkc2HF9IoZMAbSuiqSpf5iQViOUhiWH8t6BpILaAy
+ ZtwseP3jBYBwp9kyaY738VdS33VmeDqS5kn7V6XQDUUpM1q1bbi/Y7ElifR0o0ZAKQkud7qyk
+ vFi/Ro5Ymx2DDBIKiyDvMJJ0U5Gm/JkbKTsjyBnshHIMFz7UA8jue4zCedGxluHGkZA0pP3iS
+ /a6esTh05G7ZNQb4yJ9Vf8ebdQskdSB1diBvKGkDrjCOcAD0gcvSIZ/egJYppHXPxzZZ46r+K
+ VVj0vsX6QlO8EOTAbEcDh3LVdMs58Vdx22pyMiMo+gSjHAq/jUjR3/QkrhXRM5tjWCfZqOICn
+ wVQQS92zXcMrIKvoigaBQdzhotRGiKgU8K4oKTuRaLinWgZ8uAtM5/uHUCPHW6gZbmVYJAG+t
+ jXhikkn2QnxsLtT1zJ3aiuMb5RumCEIeHRanFmb7VT3Vr8aOyhVLdHcYJYOT1+E8xc4oqR8Or
+ 3QxLjO9iGYtFliSvCYtQXpZ6Co/xyDA2NUZJZkOSrsdfEuOlGtx4Hdskln5xOX6VhKmy7/DHf
+ jsDjW34URN+OUYACrWTXFJEMdWml85RlLbx8+FG0jT2GLMVXGJU9UUVKJONeXD66gh
 
-On Fri, Nov 01, 2024 at 03:06:09PM +0800, Richard Zhu wrote:
+On 14.11.24 10:49, Paul Menzel wrote:
+> Dear Zijun,
+>
+>
+> Thank you for your patch.
+>
+> Am 14.11.24 um 07:26 schrieb Zijun Hu:
+>> Download board id specific NVM instead of default for WCN6855 if board
+>> id is available, and that is required by Lenovo ThinkPad X13s.
+>
+> Could you please start by describing the problem/motivation. What does
+> not work with the Lenovo ThinkPad X13s before your pacth.
+>
+> What is variant *g*?
+>
+> Maybe also describe the file naming convention in the commit message.
+>
+>
+Hi Paul,
 
-In subject, do not use "PCIe PM" as it could imply "PCI-PM". Just use "PM"
-instead. Prefix already mentioned that it is a PCIe driver.
+Zijun was so kind to review my RFC patch [1] and post an alternate
+implementation. The problem is/was that the default firmware patch files
+for WCN6855 don't enable the possible quality and range that you get
+with board specific files, which are now [2] available in
+linux-firmware. It is not only the Lenovo Thinkpad X13s that is
+affected, it is quite a range of devices.
 
-> Add iMX8MQ i.MX8Q and i.MX95 PCIe suspend/resume support.
-> 
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+The variant *g* is a SoC variant with some extended capabilities as it
+seems. The X13s doesn't have it, the Windows Dev Kit 2023 and the HP
+Omnibook X14 have it. I have no real information about what the
+difference is, but there is code in btqca.c to generate distinct
+firmware names.
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+with best regards
 
-- Mani
+Jens
 
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  drivers/pci/controller/dwc/pci-imx6.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 3c074cc2605f..cf2a9918537e 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -1498,7 +1498,8 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  	[IMX8MQ] = {
->  		.variant = IMX8MQ,
->  		.flags = IMX_PCIE_FLAG_HAS_APP_RESET |
-> -			 IMX_PCIE_FLAG_HAS_PHY_RESET,
-> +			 IMX_PCIE_FLAG_HAS_PHY_RESET |
-> +			 IMX_PCIE_FLAG_SUPPORTS_SUSPEND,
->  		.gpr = "fsl,imx8mq-iomuxc-gpr",
->  		.clk_names = imx8mq_clks,
->  		.clks_cnt = ARRAY_SIZE(imx8mq_clks),
-> @@ -1536,7 +1537,8 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  	[IMX8Q] = {
->  		.variant = IMX8Q,
->  		.flags = IMX_PCIE_FLAG_HAS_PHYDRV |
-> -			 IMX_PCIE_FLAG_CPU_ADDR_FIXUP,
-> +			 IMX_PCIE_FLAG_CPU_ADDR_FIXUP |
-> +			 IMX_PCIE_FLAG_SUPPORTS_SUSPEND,
->  		.clk_names = imx8q_clks,
->  		.clks_cnt = ARRAY_SIZE(imx8q_clks),
->  	},
-> -- 
-> 2.37.1
-> 
+[1]
+https://lore.kernel.org/all/20241003-bt-nvm-firmware-v1-1-79028931214f@old=
+schoolsolutions.biz/
 
--- 
-மணிவண்ணன் சதாசிவம்
+[2]
+https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.gi=
+t/commit/qca?id=3D77a11ffc5a0aaaadc870793d02f6c6781ee9f598
+
 
