@@ -1,160 +1,153 @@
-Return-Path: <linux-kernel+bounces-411219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B66C9CF4CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:29:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E9E49CF4DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:30:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E062628A04F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:29:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8B1928A387
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28331D63F7;
-	Fri, 15 Nov 2024 19:28:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBE61E104E;
+	Fri, 15 Nov 2024 19:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HrhQI1IT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lIhIc/KC"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887F11D63DD
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 19:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C151D5CD4
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 19:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731698935; cv=none; b=c3IiA8vgtMD0L0P2h9UE2J766DYlGPVQfl0ZvW4ieIOv4dOM0QTfiHiMxZx3ONCAR4IcF2SqfpKi+OxFNV+0c3/ZF7+nAiV4ioj1RafwGDwFljfOw7oJdP83I6bXAJtSTDHfoH6Msx3eU3AAOO7SsQsAEqCCYEUT/O716TiMMiU=
+	t=1731699000; cv=none; b=RlihSn1JZvLaGfcyeLmi9GaiTxhD5HBfFIQWDTXzWB+kjLy/mi/Arj6nNLky6cSBU7bTl7Q+pu2MkE6f6P6iLIb8WiRZC+fDAqdJevpNu2ErE7C/l+1IYFZLp9KEjgzHGUQRxpRDLZnrC4dgsNTB8JaoA0kqMQAFSV6pCDe5TPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731698935; c=relaxed/simple;
-	bh=60Z6eQAK6arTz7rOBFww9ucWpkpHIWcEIkLq3DISFaM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FIzJ4gqnjXLJ6XirwicVpZnfJsdXhZ4D6VC18f0cpedEL/kw3j0xaKGMBQsvPzjczuX1eZg59BJp2UjadUIOgD0JCCAxFfFprCypHoTJwjR1YTC0OQBrzP+wegMrcJb9z3NwQSC9kCD7wV3vbKJNS9hnNwcOk4Snz3nYu4zeZqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HrhQI1IT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AF91ldS023983
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 19:28:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FNvszKg9/8s4V9MEKOWqs+69mosPf7tGPtGaCjpPmk4=; b=HrhQI1ITxqDIOMhb
-	7ADnbsn6L9eJap8TahwUeStxcJDF8hkB5SraTNvR9kuDIoJ+1FO1gcIKbP82RebJ
-	QlyUCDhS+uu0RXjFO2fSg+j38SCXRtrjdahESCoZdq62kNgluFNryC9IfdIRnm8y
-	TITvMovTVb7Rf2sUaGY4L1v4qwu+l3UgM2jC4NvCnmzMCWayOHrlnDiSocU77vi7
-	VbSQu9NDSY32HNgZaJY7YsINsF+DGZ0tNdn3vNcE5pdQEXdc0v/ePwxc3VmZ1ebH
-	ANW4TzfraEYl6lWPJlyom/kuVDzxM9FSZ/oXbIrfFD1LyLNF/KUpbPb09BOSjfWx
-	xZS5mw==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42x3achmyw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 19:28:52 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-46093edbf1fso2958561cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:28:52 -0800 (PST)
+	s=arc-20240116; t=1731699000; c=relaxed/simple;
+	bh=1XEUtNvHfg77z1g9UMh9UlUWx/tdrIc8gqmOJJbuZng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iIK5poE0WBS3jROLNFNSZpAO/+78PZWBSGP7ePSGm4jDKVKGDH5eaU3P9wESmcmT6JpJTLX5o1jIImXX5TstEcFUriFxzMNnf5GOMQupcdVKx7CxZxrTvuWu1XHISbsg0eR1OeMdY7NpH4pejyMavDsIZQnqG3fZRrsX5HXw56U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lIhIc/KC; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4315c1c7392so39815e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:29:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731698996; x=1732303796; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=GhfIN+LkULB+WZf5fU16xjb/0U+SgdFkvvrswJbNuZE=;
+        b=lIhIc/KCL41sC8FSnei7bZKiCkrY1UWV58TjqjwDbD2gKUmy+cW1zHOyJBVG3xT0q9
+         Icfo5E7THYogf3bNGlztqqYNDC1VIvO4REopB4ROLktgzHoxigmc4YoikVkCk6FmX9ac
+         mkb5WEBp8mW+JYxjdIJKw8TI26YcadCrAZwsNAYSGL/Y8S0Llp86PEVcy03+xv7vsHcR
+         IS7XwK3HJQOsAffpUbnRXVCY1Imvm9lveBnej6IINMJ6mD7rsf/OJq24+kRTxGYzEBUe
+         Mv0fLB0ECwwNvLXwSiRhLvpv0BQiP21YAzH9SogWnf8gPZSpaZNl/ki7KeBWEUnRiouL
+         u6gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731698931; x=1732303731;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1731698996; x=1732303796;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FNvszKg9/8s4V9MEKOWqs+69mosPf7tGPtGaCjpPmk4=;
-        b=IjRPjK9/WQuWBe7PWNk1LQJGTPouQKxUi2MoLDNObaJPqwYMavRelvyfsbQecgbwOa
-         PNQqigsI3dWD47glJi5bqdGwhnYJv0n4GQDBlXMHId46O8iTJppT512gDai6LT8MtnHF
-         jGcz7YY5nTr8FiEqjF0CaGItgAhGZ+MxNwwAwE8IzStIdwZtqTBQqQdEpgYbivihh49k
-         TuJUzTd9B/IBfdfINX4LrrKVNKBigtv/1CNPSCAf2HU+hZKS7+ed0Dth8XF7go7RdDgE
-         3bvIW+IQzD/Hg7qyih/hbyLVnpO+lx1IhUxyL5YQyJ2IYEgIT7OcVmdlRP2UmpCs4QX3
-         eFWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcRcfGA5gbpYPP2wjbmaCxAs4SXMJJrB44Ui9YerIMPZclrqDXmPMhqe5U/JHyw2rXrKBTlbfacKo2s/Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAXfOawFi+KHMl0q+vLO0IAK5NDWQp9FI92w5bNm7nbDN3ziVf
-	jTQJht3Xp1JbosDvCK68aqABZhXV3azLbiRWK3Jh3RmdD+Gselq/rovIoJMoB5WYlN4zwIMkJwI
-	yD7ckocl/YWzd8DNLZvssjSr8koFeGEHDOwFboKvDty+xlgr7geAiEEL/jqOPg9o=
-X-Received: by 2002:ac8:5984:0:b0:460:9669:f01 with SMTP id d75a77b69052e-46363de963bmr23184661cf.2.1731698931559;
-        Fri, 15 Nov 2024 11:28:51 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE/4Fp2AJaWIGIPBmMcmEXMPY3/bfBLpK7G5uCiUydNPQ6PeJOcwSsFrZEmstXfXX8TVczzug==
-X-Received: by 2002:ac8:5984:0:b0:460:9669:f01 with SMTP id d75a77b69052e-46363de963bmr23184351cf.2.1731698931149;
-        Fri, 15 Nov 2024 11:28:51 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf79b9e059sm1823667a12.19.2024.11.15.11.28.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 11:28:50 -0800 (PST)
-Message-ID: <37762281-4903-4b2d-8f44-3cc4d988558d@oss.qualcomm.com>
-Date: Fri, 15 Nov 2024 20:28:47 +0100
+        bh=GhfIN+LkULB+WZf5fU16xjb/0U+SgdFkvvrswJbNuZE=;
+        b=YGDb4CgCEbOmgHtqPD8UaT/Wq1fQBhuRXjO5mkPZqbdGcHuUqg0mTWXe9naI2gfIoJ
+         l7ZNPT8lHySi6NaGEnfJo40ZDY+9UO70XQ6Wj8+S18uS0B7Mxn+Al9zIy9TpkO7FUO+v
+         fFXpeodivxgNTiFozBETHFJFmt+HtfIXBb/PgyWopKG+dBahlNbSBm3oiFXvVn9L3gn6
+         yxrGw+LoqtfjGquPfenwSolSf20aSkejpLdXHnkhw0hxc0zEwtgjNsxkwcAU1zg8I872
+         n+Bj/xYn5oOZ1vgV8mAcRRj+VWvSk87f+tDCPGrAFxMG2L1Xq25riXcpNLylzBqR/UBR
+         HXpA==
+X-Forwarded-Encrypted: i=1; AJvYcCVyNviQNL/hWaEbRVoT6CdBQfj4FuyZvv0/1oG7wJN87SpTf+uFO+qfOcbMC3uPZNvMsRf8ZK7Y5XU3faY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSxxvJrRfYMl23xVv7+Mw5PypVkYgwxjEsTzqz9CqsOrG/x06l
+	3+gaEH6pJhFAtbwoRwswPy+mniZoCBbv7K7csrapJwV3jYqtTzPw9F752h9DOtg=
+X-Google-Smtp-Source: AGHT+IFgDEsfELXvXpNZVepQwwAa4PnvGopmuOtuOA/DhVT4j0RCdFmy14xA8QRUdvZzCjPcHhp82Q==
+X-Received: by 2002:a5d:584f:0:b0:381:e771:dc98 with SMTP id ffacd0b85a97d-38225a10a03mr2749825f8f.33.1731698996088;
+        Fri, 15 Nov 2024 11:29:56 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ae3128bsm5050408f8f.102.2024.11.15.11.29.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 11:29:55 -0800 (PST)
+Date: Fri, 15 Nov 2024 22:29:52 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Andrei Vagin <avagin@google.com>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Oscar Salvador <osalvador@suse.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>, Peter Xu <peterx@redhat.com>,
+	=?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] fs/proc/task_mmu: prevent integer overflow in
+ pagemap_scan_get_args()
+Message-ID: <1b18cec7-3d58-4cdc-b653-fb5790d04879@stanley.mountain>
+References: <39d41335-dd4d-48ed-8a7f-402c57d8ea84@stanley.mountain>
+ <CAEWA0a5vMq4vGRj4FVQXUR2unN-xAmsFt5ymi4SL+H0yfNpdfw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] i2c: i2c-qcom-geni: Enable i2c controller sharing
- between two subsystems
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
-        konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
-        linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        conor+dt@kernel.org, agross@kernel.org, devicetree@vger.kernel.org,
-        vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org,
-        Frank.Li@nxp.com, konradybcio@kernel.org, bryan.odonoghue@linaro.org,
-        krzk+dt@kernel.org, robh@kernel.org
-Cc: quic_vdadhani@quicinc.com
-References: <20241113161413.3821858-1-quic_msavaliy@quicinc.com>
- <20241113161413.3821858-5-quic_msavaliy@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241113161413.3821858-5-quic_msavaliy@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: t5eGPGrWc2h0Ntt9FqQ2QuddJ_ugnKum
-X-Proofpoint-ORIG-GUID: t5eGPGrWc2h0Ntt9FqQ2QuddJ_ugnKum
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- clxscore=1015 bulkscore=0 impostorscore=0 adultscore=0 malwarescore=0
- mlxlogscore=999 lowpriorityscore=0 spamscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411150163
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEWA0a5vMq4vGRj4FVQXUR2unN-xAmsFt5ymi4SL+H0yfNpdfw@mail.gmail.com>
 
-On 13.11.2024 5:14 PM, Mukesh Kumar Savaliya wrote:
-> Add support to share I2C controller in multiprocessor system in a mutually
-> exclusive way. Use "qcom,shared-se" flag in a particular i2c instance node
-> if the usecase requires i2c controller to be shared.
-
-Can we read back some value from the registers to know whether such sharing
-takes place?
-
-> Sharing of I2C SE(Serial engine) is possible only for GSI mode as client
-> from each processor can queue transfers over its own GPII Channel. For
-> non GSI mode, we should force disable this feature even if set by user
-> from DT by mistake.
-
-The DT is to be taken authoritatively
-
+On Fri, Nov 15, 2024 at 10:49:44AM -0800, Andrei Vagin wrote:
+> On Thu, Nov 14, 2024 at 12:59 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> >
+> > The "arg->vec_len" variable is a u64 that comes from the user at the
+> > start of the function.  The "arg->vec_len * sizeof(struct page_region))"
+> > multiplication can lead to integer wrapping.  Use size_mul() to avoid
+> > that.
+> >
+> > Also the size_add/mul() functions work on unsigned long so for 32bit
+> > systems we need to ensure that "arg->vec_len" fits in an unsigned long.
+> >
+> > Fixes: 52526ca7fdb9 ("fs/proc/task_mmu: implement IOCTL to get and optionally clear info about PTEs")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > 
-> I2C driver just need to mark first_msg and last_msg flag to help indicate
-> GPI driver to take lock and unlock TRE there by protecting from concurrent
-> access from other EE or Subsystem.
+> Acked-by: Andrei Vagin <avagin@google.com>
 > 
-> gpi_create_i2c_tre() function at gpi.c will take care of adding Lock and
-> Unlock TRE for the respective transfer operations.
+> > ---
+> >  fs/proc/task_mmu.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > index f57ea9b308bb..38a5a3e9cba2 100644
+> > --- a/fs/proc/task_mmu.c
+> > +++ b/fs/proc/task_mmu.c
+> > @@ -2665,8 +2665,10 @@ static int pagemap_scan_get_args(struct pm_scan_arg *arg,
+> >                 return -EFAULT;
+> >         if (!arg->vec && arg->vec_len)
+> >                 return -EINVAL;
+> > +       if (UINT_MAX == SIZE_MAX && arg->vec_len > SIZE_MAX)
 > 
-> Since the GPIOs are also shared between two SS, do not unconfigure them
-> during runtime suspend. This will allow other SS to continue to transfer
-> the data without any disturbance over the IO lines.
-> 
-> For example, Assume an I2C EEPROM device connected with an I2C controller.
-> Each client from ADSP and APPS processor can perform i2c transactions
-> without any disturbance from each other.
-> 
-> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-> ---
+> nit: arg->vec_len > SIZE_MAX / sizeof(struct page_region)
 
-[...]
+I don't like open coding integer overflow checks now that we have size_add().
+Historically, we've done a poor job writing them correctly.
 
->  	} else {
->  		gi2c->gpi_mode = false;
-> +
-> +		/* Force disable shared SE case for non GSI mode */
-> +		gi2c->se.shared_geni_se = false;
+Probably the right thing is to add the > SIZE_MAX check to size_add/mul().
 
-Doing this silently sounds rather odd..
+#define size_add(a, b) ({							\
+	typeof(a) __a = (a);							\
+	typeof(b) __b = (b);							\
+	unsigned long __res;							\
+	if (__a >= SIZE_MAX || __b >= SIZE_MAX)					\
+		__res = ULONG_MAX;						\
+	else									\
+		__res = __size_add(__a, __b);					\
+	__res;									\
+})
 
-Konrad
+But I think you'd trigger compiler warnings if a or b were a u32 so probably
+we'd need to use a _Generic() or something.
+
+regards,
+dan carpenter
+
 
