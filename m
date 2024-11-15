@@ -1,227 +1,204 @@
-Return-Path: <linux-kernel+bounces-410543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E71C9CDD13
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:56:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7758E9CDD15
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:57:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C086B253B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:56:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 396E928120D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E470136338;
-	Fri, 15 Nov 2024 10:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7C81B5EDC;
+	Fri, 15 Nov 2024 10:57:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SmiIuDwd"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="MPEUwo3p"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2047.outbound.protection.outlook.com [40.107.20.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B33F1B3957
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731668156; cv=none; b=Kbp5IDwAmz994kr3Heh73DjrSFbBVo6kw/aF41T4OhP/qLjmKdZxZLBJNdIWsoALK+ZrvpltgW/hK4SuKc3Dn1AOIjK1I0CTi0QKuEwtFjJ3z9E0WZy0360R/scEaNHBVYBbk2VUImyJHbjJhSVl8NVjctQvfhdy0i18Y6ma58k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731668156; c=relaxed/simple;
-	bh=yv+L77fsMXdJZp8xBmhx5sk4NgH78Eg0JH6adSKr6Rw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SOuC4uqioyMwBphnGO7vKYR2sA4qSt7do+wgy/ow3ZzXo3LZ8gZb+QTI1LrQMbYXKWsL7T7aPhQW8Mu6d8vwmSjMdaRpu8bk6QJm1RUHZJEkQCvWHh/byLCzGXDBhUQquNiDxB0WsuV5cMep2oE2kBLom/LOYHnLpRo995Iucbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SmiIuDwd; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7f3e30a43f1so1071350a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 02:55:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731668154; x=1732272954; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Fyp6Vv06X8QaJJQ2SCE2o27IO66FeYIB5lx0bKBn09o=;
-        b=SmiIuDwdBp+gcwFc18mSWjWhq7ImCAHJnh8MS0Kz2E09EPQdkejbYiV5vk+X4eCl3L
-         s3ux7a414JbKw91kQm7AKwLB5eyJKNYXe4K3p6a07AI2ATMtZdXuGiadG9kocs9biTnA
-         W3qtpbXjvGf0AmbRbgV1VYWBbu6by54xW9ieVXwt5c+oPJBf+DxYSwnoUc5tikgri65E
-         uAtx9+928NHkIRrgNQzBE5SCHVhMdLC+WoPhIEAA+3pfugLpa83uToETb2IlzOzxSlig
-         kVs4V6FZYeAGecDHJoI8oKQE608Q39UY5xzJTlBF/l9+iT8sU3SUUUgLUQSEiA7Umt9A
-         Xjwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731668154; x=1732272954;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fyp6Vv06X8QaJJQ2SCE2o27IO66FeYIB5lx0bKBn09o=;
-        b=Nr6LJcGF6m3UIYFN63DDwOFeROznkdlPhfyes+3WKHUzO/Mmje4y7GpT4iJEWK8tgy
-         9M9pJ2MN2Mk6v7halyqhjRiAvN+Mu0N8YG30iHURU/vSNdF31bQuEnycyL7+bGDND+pJ
-         dpdSOTmczSpvP+Qdu/+U2fcoEEXlcnenMRsk65zwAnBGckMx/0kf8V2PIn7VDigDEMiS
-         FTCbTzxC2msUe+h0VA35EIPvW98aWgd/OQv7lGbRCAPD5GHIoNg3CtSoJwH0HV1WHL0f
-         F8E/y/5wgbpka9Q1vE0xRp6n9fa4uxVL30NA+u4KuAAcXQgwel7IcClFxoHeY7fqI9Oa
-         ujJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMlNjTrWSDu9XGoRm3xwdVYivc3qo0FJNjQVat7PsOZmmCcwU7peACK+2ZzKMhRkshg6wJXMv0vtCtEIM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyChbZ8YuQq2WRvTr9+ibJJysWD7uf05N+iZUWpRKpcQlfUK9PT
-	IWZUwXNcw3r6ZPrWMUjCHKVoXi0JiHxOn3LbVyE2nDsQHytUHxIUrW56S0kvTg==
-X-Google-Smtp-Source: AGHT+IFKHjiwYWUryAJnXc6viXkuytymPjZ05zS1fGUIKdRqFJ+LJl9Co7F7n3NkThimaKRfh0K2GA==
-X-Received: by 2002:a05:6a20:9c91:b0:1dc:32a:d409 with SMTP id adf61e73a8af0-1dc90bf4683mr2847893637.39.1731668154657;
-        Fri, 15 Nov 2024 02:55:54 -0800 (PST)
-Received: from thinkpad ([117.193.208.47])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea024c06fbsm2672588a91.43.2024.11.15.02.55.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 02:55:54 -0800 (PST)
-Date: Fri, 15 Nov 2024 16:25:46 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Mayank Rana <quic_mrana@quicinc.com>
-Cc: jingoohan1@gmail.com, will@kernel.org, lpieralisi@kernel.org,
-	kw@linux.com, robh@kernel.org, bhelgaas@google.com, krzk@kernel.org,
-	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, quic_krichai@quicinc.com
-Subject: Re: [PATCH v3 3/4] dt-bindings: PCI: qcom,pcie-sa8255p: Document
- ECAM compliant PCIe root complex
-Message-ID: <20241115105546.77l3ie5iuajpbuof@thinkpad>
-References: <20241106221341.2218416-1-quic_mrana@quicinc.com>
- <20241106221341.2218416-4-quic_mrana@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47339136338;
+	Fri, 15 Nov 2024 10:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731668221; cv=fail; b=UaE5F59ZEjriACz0UcfiQfo1iCz5t64wIuHJb2RE06s9oio6YkLGBG1g/aARB71UdYFmL07Tn1uWfZQV0ujdE0lXwFojE4diy0TkmarzEl5eqwGrbFA97ZxyKK1R6+hUbbjDNw3FCEopdoWql6jD8aBfUXUaJdBS+DSq5S1Ndjg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731668221; c=relaxed/simple;
+	bh=idej7V0ylHHgdF9SsDu3wLBwFBwH6tLD3x2Wy6eJkac=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Ky1gf5myTXOTJGWEVmnHPH+2oucJ1/f5cw7CEFg/QJbF7By4FaZ0IAozUmwR1R8wVH3DBCHci7mMXNHuliFSYOtlRAkN0bVCy3njbFiAmgSBIf6yawLleafhnGFdcYVl4XGlh8kJgAwUMeAIj8DsT5RbxDD2NnyD1ThoyASXDi4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=MPEUwo3p; arc=fail smtp.client-ip=40.107.20.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AtzZjv9sPjk0Ud66KYfVRiwDSgECpzSyIWQjuIaVR89g2A4iTj9HxDKj+nC4wyjlkoyo+YpTUVKk4uthGtaFnrYJWhGnkl7oIqw3fk01ZXgEIjv8eEmbfpj2zXgePLMA8U8ejSaE5LasCUOykB8StqIdI/eyYM4aiRbPL3lXEKs+N6OaAOoDV7NzId2wVGVvA96pEYqWUU1vp7Sde0sR6A3TXc0lczUwubTC+aJx6BBl3b3c3rMjS0Qw2nfsM3LGAWjXSyFI9I6F6ebhkcecumCGd6OTBCkdMHamN6h1j8YdyjUDYrvlYm1/Tygy4FrMFGy9N07nBZNnZnhaGvIdNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=N1KV7aI61MGC2nTtRCRB5TVlCBfpV4dZUl6F9lJX2ok=;
+ b=YNFMiTFGurRRkea3mAY7Ztbp5SxCn/WKaIiPqtYdYAA3M9z67uD0vHP14B5wJ/4rwh/Hgiq77ANEa9w7MEjOmL3czCvM/G47zs9SJKlLiMHOEA7CgOCma1zPYd/D8d9jjOAu2OQJIHeTmgUoX+dIj3Nw5prMs8lEhbD8zZQ5rIqplm5JacTA15OZSeag/msGwmEoW6PVZXUguPUyGakumdPRssr7UWA/z0dUtTfWgpkH3yEztcyJvS6VbMnrJh995CaJ/HNT9h9oW/JOCNpj/ZZrqopsDP8/ctZNXWbe58R9SGz+BXGB1NqC6csZ+IhFZr9aDYr+ou18j2+1J8Lh9A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=N1KV7aI61MGC2nTtRCRB5TVlCBfpV4dZUl6F9lJX2ok=;
+ b=MPEUwo3p5PV0eq510CLxVpQgclezswbIWZSD9uvtT1/2ffujxApeMjK2OgNw/2Hx9PRymRxUxoL4shtN1cEXi8eXiFvRWo/zhkydya2iIXysL9m1y6TyG/c81f4Lom2ST1NuCNPGNXxSUk7RTMaRI6JwOV7CU/5GXuq3LOC87QgwKfp1lyUR13NevwLm0JB8nZoqu8kHb5dqju7Joo2j+Vs9Llqp2gkw8ejTK8CaTncvWgnzzV6b36YKyZdYCGUkibR5ShnG+aqRnPFg2ezhWBBB0VyJUUIYF4Zv6d5nMDNL/Al1WVfzlq47FcW9cj3SgMCbfsby10srSKbFLX+Yxg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AM9PR04MB8416.eurprd04.prod.outlook.com (2603:10a6:20b:3b7::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.19; Fri, 15 Nov
+ 2024 10:56:55 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%6]) with mapi id 15.20.8158.017; Fri, 15 Nov 2024
+ 10:56:55 +0000
+From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To: Frank Li <Frank.Li@nxp.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	imx@lists.linux.dev (open list:FREESCALE eDMA DRIVER),
+	dmaengine@vger.kernel.org (open list:FREESCALE eDMA DRIVER),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V3 1/2] dmaengine: fsl-edma: cleanup chan after dma_async_device_unregister
+Date: Fri, 15 Nov 2024 18:56:28 +0800
+Message-Id: <20241115105629.748390-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2P153CA0011.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:140::14) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241106221341.2218416-4-quic_mrana@quicinc.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|AM9PR04MB8416:EE_
+X-MS-Office365-Filtering-Correlation-Id: 47f9031d-d241-435b-f3ed-08dd05643814
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?sbd//TdgQa4EfgyLo3zC5ERtfev214c7uB0t9FfoU9LiyiK3pBnVJnS9q8fv?=
+ =?us-ascii?Q?Te9ZD5oX4AmrFSXLtefVoR4C7z3sYLhFYyuooyr48ZuVoNAtJqqesdBxHPed?=
+ =?us-ascii?Q?vIqrJYPYnnXh+QgOqBlvviVO6uhVUBumazCph8JfVwqBeQhOpSaKzIhXb4Zf?=
+ =?us-ascii?Q?8C6asH+gsXOFN8hLAjpXNlpps/Oa5QKDo5b8dqSBEjSKeoCCoC6ZosXLXV15?=
+ =?us-ascii?Q?ior1XHLMYQeCjYnbVRKwqe0vQ/0fmgr5nFmGNU9E8isYXAlRtTWxqE+GWo8T?=
+ =?us-ascii?Q?5ZQU+nERIIMku4LiiFjn8QGiDMnM6BcPW6xTNhYY61iQkNQDII7DX/gJ74de?=
+ =?us-ascii?Q?+22Kpsy90emmTTW8gblVBIcKRv0QlzLQUo0OHGGohkVCElVgrS5Y3IBF9GdJ?=
+ =?us-ascii?Q?YTxb0adL9AOF9hxClBbWjNRl4EKsFFtuFqqKrtNScVB0qaGFzuFBMQl2NsCK?=
+ =?us-ascii?Q?A6sx72I+ZOHrtQNxowIBTp/Vs8InYIaiqyoThcMmvEO+hBIdljBksNla6xD2?=
+ =?us-ascii?Q?3KZqryY846f1pGo2br2GXAwKWEBdA9FFV9jeQdsW+RI1I55cZpTsGjch5a3V?=
+ =?us-ascii?Q?dwO27fdb/cWuUzgS3Xmz7z2Dx20A+gyZePl6TBo40PVxYuSq+3Xp/R89CiB8?=
+ =?us-ascii?Q?e+0/+hSIDQQITgZ0yRbULQ7njFoW0+CWSHefs8435Aiw58yynxi0W6hGK4LH?=
+ =?us-ascii?Q?n3D+qv+eaDBSid04nGyL19OcpPub9TEFwL069/Yyb6DvntPembOkwm2n6XGN?=
+ =?us-ascii?Q?1Z2Su38KOhDfm9NXYE+3IqUnO2NJpLfAEGnTFqbh9ABHd/maV0XXvLpWxheZ?=
+ =?us-ascii?Q?x2L6Xc7u9IXdS1yT+i4uJwrYLmIJZxaola3+uOdycGw4EN7lIfx1CYN6Cqxx?=
+ =?us-ascii?Q?GY0dZkwjxR3/s+vRAsfj8I/VFGIhgzyeN+2nEsUaHgHU9XaAzPiq5JQ7IGZm?=
+ =?us-ascii?Q?FPwG9xsFRzPgD2KP36G7kXhwqGAZwHJbJYo2xoDYgnmSpJNzCwJi57J+irHb?=
+ =?us-ascii?Q?PpiTkmEXkzRr9xf/GoHXU1JbQTW084os3qV8zyYohLsEQSjoSZ3NFQC+h8cX?=
+ =?us-ascii?Q?HuzKzHHTgeyvM4JXRIrpQHNJRFnYq7D72h9bSOarUDwMHrqS0HLUk/+cw7Am?=
+ =?us-ascii?Q?msFTkDteudL4ZfAyo2RI8KzUvJTeYkk3bu9BHHL2pkY0Smt4rmSGim8gKaiF?=
+ =?us-ascii?Q?VsUQQ9S8OnZgOUJ3zvO4kVMZlzP3Q3+QdpYQxP1lqFMkGfVvEB6HKVI4iXj0?=
+ =?us-ascii?Q?iQfYbqSxyktcgHakCWAT5Gjf02klG6YwHUYy7XxKX5VyVaVb8SR4Y/regxNU?=
+ =?us-ascii?Q?ZZLK0hzsRgdQOVHbgbI8kCzcLFtNVxDM6IE9Eod/CIy3f+MvJD8tT2McmKKb?=
+ =?us-ascii?Q?JJ7rR/g=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?7oHRWrUwS+bNQnrMACQfG8GScQcW+CkNvub8kLZ+z4cgpQw2HXcgnU1ZIFEA?=
+ =?us-ascii?Q?GbX4jGQtHU+/TVhSRQa3EHAbUekuYfopEkDzuoDWy3K1VgfwbEZfACETbdm+?=
+ =?us-ascii?Q?XLAPZigsU6bHX+/SzlM/ADvNDRlDIpHs/32fFeVwyF5LSd5NP6+ANNkLMELR?=
+ =?us-ascii?Q?osMMajF0czRhXHN93XnNC3+VNIwMZPL+tVqO/+QtklwGN++WNkqsIaI5VOpE?=
+ =?us-ascii?Q?ZK8ilhyubMu59G9k3FgnLHeev0ksrIai77Je6I1ND5oqZXsIsKjgNF7XLcr7?=
+ =?us-ascii?Q?tu98h86O7ox8eONT1WDI+KWd1CCcYobjeiH5U7oGS1PVK2ZHAbQURtMXrNE5?=
+ =?us-ascii?Q?yQEzM+6ikJl3ZYxy4iEaEjcC6D5hKpLwaKXvDcKNaAN3Wv/PcPXOd6k0GLi9?=
+ =?us-ascii?Q?Ds2HvxS9ljqa+44+DV35GlzfltAhfmqg23LixEP38WNHO7Wyw5EjEckICxex?=
+ =?us-ascii?Q?AP6QAgEC/EEfakuNCws5YnGdCdsXv2MYbGrYDrKrnWNUbXq7afBY/Y4iS9Cu?=
+ =?us-ascii?Q?X2vBBmiEawmQ1HzgZLsLeklnTRO8y6f53QBsP/Ggrd6ZJY4bgrZbvQiYvp/U?=
+ =?us-ascii?Q?3eB7O+DgI2g1mkSWvhikALHsbZ22ENGUmIkXB9zpYhPLa1/pGZ2S/oR+87pb?=
+ =?us-ascii?Q?imCu0kHBfDy1lWUrNIyDfLrKUOBLLGGtRXFr9iTJLCiLzV34Ol3ztFl2nFw3?=
+ =?us-ascii?Q?wH8a4CeyCaFVIJq0mMnrXjV3FVDFYKbnM+6hfE1zr14jTF+mIvb32ND9Wla1?=
+ =?us-ascii?Q?OBLuIgtnD4Qthe0YBbrWloqQd6tf927VkUMyruM+jieyHnMdvBjzUB9SMMIH?=
+ =?us-ascii?Q?ylJ4Lih0QGk9Zp8nK8pJKmHVgtZKLBA0AqV7kAl7wkRPbOpqGzcG0o0EWrDm?=
+ =?us-ascii?Q?UkSzmvD37ZI82bvckCnDe7JuAQ9tHYdBq9HrKnPKHjz28TniO9OiuCvlfveF?=
+ =?us-ascii?Q?+3B9+3TT3h/UYMWRA2cjx/oyChUpXRo/WS869wA580hOvZy9XsEyiivojN+C?=
+ =?us-ascii?Q?jud+ZNdz7mynIcSLXUEt98M1yEI1PWoIcZSm863EQFFTMuWBwMJofG1/Z+Xj?=
+ =?us-ascii?Q?ccQulMI2klAE82YwuKLekVnf/vQefZF9/80DIlLrUj3GvdfOImIlZIfOH+VH?=
+ =?us-ascii?Q?w6QEOy0lCW5EIhxLNwKvI+f3zpEN1go2mEsX1QDu7qz1ktR7EnhelcqT0pr/?=
+ =?us-ascii?Q?NoTY/3u1hHNcKBQ8COqGDO6AWrxM5eDc+i4zRliHpgCf+c3VwqvIGSAfOX+7?=
+ =?us-ascii?Q?XwBaZURpkgR4JXuzvAFoc408WXvtQ58f5MMtD1dHpsQ1nbbdKYdzQuyGkLMg?=
+ =?us-ascii?Q?sgZsBjbkPNnMzXQp8a6myf5xisigiKgAcpb85LNc/YDMxUlRjPkX9KhJ/lEC?=
+ =?us-ascii?Q?WR2yBAxaYRkqNbZwmC6Hgn6ynMlNRhEg/YSVBfF8kp4frqHF8VnYr9+91ZFR?=
+ =?us-ascii?Q?oYcX87w/CYiwIz/pA0MvFCb8IA0MGjFaNjOolUapCdncHvicy5jotKWcQT+P?=
+ =?us-ascii?Q?GihhDxXxS8vcwA0JwgP0SSwNCh2GtJYKnqqAZHbndvG7WR9TM8a6e7thX+3L?=
+ =?us-ascii?Q?2cXlnqss5KwPhU2BwRtuHgmsCV2DGlgiKFpXk2Ai?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 47f9031d-d241-435b-f3ed-08dd05643814
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2024 10:56:55.5569
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EHSW7yDLGdLTGpZmpkLI0cvUJ0VHl2NI/hEKvEzhXrNGSYxJjU1d79pyJDvTxAcjnfJVjD1RApQUvTmBWhF6aQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8416
 
-On Wed, Nov 06, 2024 at 02:13:40PM -0800, Mayank Rana wrote:
-> On SA8255p, PCIe root complex is managed by firmware using power-domain
-> based handling. This root complex is configured as ECAM compliant.
-> Document required configuration to enable PCIe root complex.
-> 
-> Signed-off-by: Mayank Rana <quic_mrana@quicinc.com>
-> ---
->  .../bindings/pci/qcom,pcie-sa8255p.yaml       | 103 ++++++++++++++++++
->  1 file changed, 103 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/qcom,pcie-sa8255p.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-sa8255p.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-sa8255p.yaml
-> new file mode 100644
-> index 000000000000..9b09c3923ba0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-sa8255p.yaml
-> @@ -0,0 +1,103 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/qcom,pcie-sa8255p.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm SA8255p based firmware managed and ECAM compliant PCIe Root Complex
-> +
-> +maintainers:
-> +  - Bjorn Andersson <andersson@kernel.org>
-> +  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> +
-> +description:
-> +  Qualcomm SA8255p SoC PCIe root complex controller is based on the Synopsys
-> +  DesignWare PCIe IP which is managed by firmware, and configured in ECAM mode.
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,pcie-sa8255p
-> +
-> +  reg:
-> +    description:
-> +      The Configuration Space base address and size, as accessed from the parent
-> +      bus. The base address corresponds to the first bus in the "bus-range"
-> +      property. If no "bus-range" is specified, this will be bus 0 (the
-> +      default).
+From: Peng Fan <peng.fan@nxp.com>
 
-I don't think the 'no bus-range' configuration is supported. You can get rid if
-this statement.
+There is kernel dump when do module test:
+sysfs: cannot create duplicate filename
+/devices/platform/soc@0/44000000.bus/44000000.dma-controller/dma/dma0chan0
+ __dma_async_device_channel_register+0x128/0x19c
+ dma_async_device_register+0x150/0x454
+ fsl_edma_probe+0x6cc/0x8a0
+ platform_probe+0x68/0xc8
 
-> +    maxItems: 1
-> +
-> +  ranges:
-> +    description:
-> +      As described in IEEE Std 1275-1994, but must provide at least a
-> +      definition of non-prefetchable memory. One or both of prefetchable Memory
-> +      may also be provided.
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  interrupts:
-> +    minItems: 8
-> +    maxItems: 8
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: msi0
-> +      - const: msi1
-> +      - const: msi2
-> +      - const: msi3
-> +      - const: msi4
-> +      - const: msi5
-> +      - const: msi6
-> +      - const: msi7
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  dma-coherent: true
-> +  iommu-map: true
+fsl_edma_cleanup_vchan will unlink vchan.chan.device_node, while
+dma_async_device_unregister  needs the link to do
+__dma_async_device_channel_unregister. So need move fsl_edma_cleanup_vchan
+after dma_async_device_unregister to make sure channel could be freed.
 
-Can't you add 'msi-map' also since the hardware supports it?
+So clean up chan after dma_async_device_unregister to address this.
 
-- Mani
+Fixes: 6f93b93b2a1b ("dmaengine: fsl-edma: kill the tasklets upon exit")
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+V3:
+ Add R-b
+V2:
+ Update commit log
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - ranges
-> +  - power-domains
-> +
-> +allOf:
-> +  - $ref: /schemas/pci/pci-host-bridge.yaml#
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        pci@1c00000 {
-> +           compatible = "qcom,pcie-sa8255p";
-> +           reg = <0x4 0x00000000 0 0x10000000>;
-> +           device_type = "pci";
-> +           #address-cells = <3>;
-> +           #size-cells = <2>;
-> +           ranges = <0x02000000 0x0 0x40100000 0x0 0x40100000 0x0 0x1ff00000>,
-> +                    <0x43000000 0x4 0x10100000 0x4 0x10100000 0x0 0x40000000>;
-> +           bus-range = <0x00 0xff>;
-> +           dma-coherent;
-> +           linux,pci-domain = <0>;
-> +           power-domains = <&scmi5_pd 0>;
-> +           iommu-map = <0x0 &pcie_smmu 0x0000 0x1>,
-> +                       <0x100 &pcie_smmu 0x0001 0x1>;
-> +           interrupt-parent = <&intc>;
-> +           interrupts = <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH>,
-> +                        <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>,
-> +                        <GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH>,
-> +                        <GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH>,
-> +                        <GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH>,
-> +                        <GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH>,
-> +                        <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>,
-> +                        <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
-> +           interrupt-names = "msi0", "msi1", "msi2", "msi3",
-> +                                  "msi4", "msi5", "msi6", "msi7";
-> +        };
-> +    };
-> -- 
-> 2.25.1
-> 
+ drivers/dma/fsl-edma-main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/dma/fsl-edma-main.c b/drivers/dma/fsl-edma-main.c
+index 60de1003193a..3966320c3d73 100644
+--- a/drivers/dma/fsl-edma-main.c
++++ b/drivers/dma/fsl-edma-main.c
+@@ -668,9 +668,9 @@ static void fsl_edma_remove(struct platform_device *pdev)
+ 	struct fsl_edma_engine *fsl_edma = platform_get_drvdata(pdev);
+ 
+ 	fsl_edma_irq_exit(pdev, fsl_edma);
+-	fsl_edma_cleanup_vchan(&fsl_edma->dma_dev);
+ 	of_dma_controller_free(np);
+ 	dma_async_device_unregister(&fsl_edma->dma_dev);
++	fsl_edma_cleanup_vchan(&fsl_edma->dma_dev);
+ 	fsl_disable_clocks(fsl_edma, fsl_edma->drvdata->dmamuxs);
+ }
+ 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.37.1
+
 
