@@ -1,136 +1,307 @@
-Return-Path: <linux-kernel+bounces-410567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DC659CDD61
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:22:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 460D49CDD5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:21:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 532FD283827
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:22:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82B1FB2526D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C773E1B85D3;
-	Fri, 15 Nov 2024 11:21:37 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51681ABEDF;
+	Fri, 15 Nov 2024 11:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cNurve2y"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0D61B218E;
-	Fri, 15 Nov 2024 11:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A72E7D3F4
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731669697; cv=none; b=uXaGuKwosNQQze9z4NcZUR7EiIi2tOkqQaHy+PQn0IDTKMT20ZodpALyGC4F7vLZ52e3ZZoE+w9eRVkyLQEByuLIu/8j7LWWcP7tI26nfFnImoeH07xf/36QsENXS5wB0TtA/RC+Ts9v0pZVYHq0azlhYuH3XRz2p+c3ACJ6eJM=
+	t=1731669694; cv=none; b=cPu+UWrWVWkRGaeVaKc3cnc10S/3/SFSuvHUivL11KhJ84GfkEuo/ThZjMLPBCWAM8StDoAVDwTzeDjdEoMhdhO16EEJGV0AxiQNk4F3ZOwCqYO6ZUxe8Th6VI4ixpIzc7i7DVRXOUKo6qimYbtreXAuNF+mAcc3HPSJ+BwFS3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731669697; c=relaxed/simple;
-	bh=KTIoMi/r1hTENNKL0/G/hsDkGqPwoHDgtpul7a9ld2w=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NoOglhZdTJxcnlBxFiF5V4ByM1/UFO4HnYws4shEvQrZtGn8fLstdSsnLKmd+CKNe4VQADn14CjOh34w1ydSKIUtO3bkIBwCJHVuVEErmZ3mlVOGHSQgXj/Lloa2NKyLx+c4mIDy2xR3sn0k/0aRVzD4DfmMe+jNTHLg3fxP7yE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XqZL1286qz2GZhG;
-	Fri, 15 Nov 2024 19:19:37 +0800 (CST)
-Received: from dggpemf500017.china.huawei.com (unknown [7.185.36.126])
-	by mail.maildlp.com (Postfix) with ESMTPS id E370518002B;
-	Fri, 15 Nov 2024 19:21:29 +0800 (CST)
-Received: from localhost (10.175.112.188) by dggpemf500017.china.huawei.com
- (7.185.36.126) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 15 Nov
- 2024 19:21:29 +0800
-Date: Fri, 15 Nov 2024 19:20:09 +0800
-From: Long Li <leo.lilong@huawei.com>
-To: Dave Chinner <dchinner@redhat.com>
-CC: John Garry <john.g.garry@oracle.com>, Dave Chinner <david@fromorbit.com>,
-	Ritesh Harjani <ritesh.list@gmail.com>, <chandan.babu@oracle.com>,
-	<djwong@kernel.org>, <hch@lst.de>, <viro@zeniv.linux.org.uk>,
-	<brauner@kernel.org>, <jack@suse.cz>, <linux-xfs@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<catherine.hoang@oracle.com>, <martin.petersen@oracle.com>
-Subject: Re: [PATCH v4 00/14] forcealign for xfs
-Message-ID: <ZzcuaYVuFuhknNs_@localhost.localdomain>
-References: <Ztom6uI0L4uEmDjT@dread.disaster.area>
- <ce87e4fb-ab5f-4218-aeb8-dd60c48c67cb@oracle.com>
- <Zt4qCLL6gBQ1kOFj@dread.disaster.area>
- <84b68068-e159-4e28-bf06-767ea7858d79@oracle.com>
- <ZufBMioqpwjSFul+@dread.disaster.area>
- <0e9dc6f8-df1b-48f3-a9e0-f5f5507d92c1@oracle.com>
- <ZuoCafOAVqSN6AIK@dread.disaster.area>
- <1394ceeb-ce8c-4d0f-aec8-ba93bf1afb90@oracle.com>
- <ZzXxlf6RWeX3e-3x@localhost.localdomain>
- <ZzZYmTuSsHN-M0Of@rh>
+	s=arc-20240116; t=1731669694; c=relaxed/simple;
+	bh=Oel/o/pW5Ic84c83r4MHOLLopdqVgBINoGKIro0WqD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=muuLboLVN96cg4FW8KDywp+cjn3xlmNcwLw5ZW8eEcSPwEHZOEJAZJyrNX1fsk8tTUZoYPBKdvc654GKcNElHjiXHgWESTjigl/BJsa31QrhPnd07KE4NS3Qn6m0CyDNlvrzY44vDgRX2qjJzqX+vsefXzmb3c0xsDrwBzG+8K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cNurve2y; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20c767a9c50so18678095ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 03:21:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731669692; x=1732274492; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ELW/N7HfoGdxV6J9AGnGqxhIM8EvK/dKl/phitL0z0A=;
+        b=cNurve2yQe2PMr1efnphbIdd0uECxbxmy0cdzFdf3ytquLYNpxDfxmxU55TkxNgoes
+         lDA7xirahjMwcDKUVSTCf4SAyG86dLke/T0GJ0lqnUXMCGKG7dsMdZ6TQJJ8qbcievhk
+         M2ww6GzkH/pFIkQyXNVOX1IJjOr/uzMnYzN7ZDGpAmBwR9r3P7Q9AuWga0qAQWUjBMsj
+         h+tg12ZImvkZEr/t5xAThILWSGBt0aIR++rIba9Y/f0tPRACVH3BW920ihbKT2T/I2O7
+         lSoWn/qrsSwTPG15H30D9kakzi80vSUFayJ9zL6DyAlXvZH7CHn7jcKUS39q3iSyES+U
+         +vEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731669692; x=1732274492;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ELW/N7HfoGdxV6J9AGnGqxhIM8EvK/dKl/phitL0z0A=;
+        b=cWclQewND41dFlK8b6oJErjyKVIhOS4cTrvMx8ifpIBr8jYWrj4kN5Yys5AojVWoB5
+         HEn/NiWVObh9qYWKHVKDOp0fi29hm62734y/oJQdft98nmsQkGoWWFaLIH7RgpzlyQsm
+         18PlwMEmo89SlT22TNIvVjgAkEyeGJbtnKQIqVRLf56dv3FUwMsDHN/i/KPqL6t23SU7
+         +BB3guq8niOu5ay6NwhLrg1KC/3dX+oUDeiLCCMsJ5ayfqowO4D0JFpOt3V6NWgU31EP
+         IzabEEegK2FPVyz7NDx9QQKOnaK48ciKj0G7qjEwe9liDpcfTUPod9xFyZUT49lVJNK4
+         UVQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrp5wVAEHmygzl8Q0/c7ShuPniIOUanJrc+eXwWBKP1Xcp/hET9rUo1emjPao9hzPLxo0dFjLoQdad608=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6ocn33GnQlQtUoXhLPEySX47O+o5vyc6TOleZw95rkAqtLUSC
+	e0oI72ofDUjgQAHFiYgCB+KpJBNxdOr7f2u5ZPiRagmRQFDYZ7zv2OiDy2kItg==
+X-Google-Smtp-Source: AGHT+IFBuRI2q499WkqkjhRflq+dioVOzwcbh2YEfCg5bgRA39VJrPTlEU6z8cnSBvV06mnHdqpyAA==
+X-Received: by 2002:a17:902:dac9:b0:20c:a189:c006 with SMTP id d9443c01a7336-211d0ebf0b8mr25896145ad.45.1731669691615;
+        Fri, 15 Nov 2024 03:21:31 -0800 (PST)
+Received: from thinkpad ([117.193.208.47])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f34698sm10046475ad.133.2024.11.15.03.21.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 03:21:31 -0800 (PST)
+Date: Fri, 15 Nov 2024 16:51:23 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: neil.armstrong@linaro.org
+Cc: Mayank Rana <quic_mrana@quicinc.com>, jingoohan1@gmail.com,
+	will@kernel.org, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, bhelgaas@google.com, krzk@kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, quic_krichai@quicinc.com
+Subject: Re: [PATCH v3 4/4] PCI: qcom: Add Qualcomm SA8255p based PCIe root
+ complex functionality
+Message-ID: <20241115112123.ktv7ge3mfm6lavlj@thinkpad>
+References: <20241106221341.2218416-1-quic_mrana@quicinc.com>
+ <20241106221341.2218416-5-quic_mrana@quicinc.com>
+ <a1f03a33-22b2-4023-8185-d15abc72bc8a@linaro.org>
+ <7cfc0657-e8f4-45a8-95e2-668476ffce17@quicinc.com>
+ <dffb4a49-9295-4ce3-af96-802f10c600e1@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZzZYmTuSsHN-M0Of@rh>
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemf500017.china.huawei.com (7.185.36.126)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dffb4a49-9295-4ce3-af96-802f10c600e1@linaro.org>
 
-On Fri, Nov 15, 2024 at 07:07:53AM +1100, Dave Chinner wrote:
-> On Thu, Nov 14, 2024 at 08:48:21PM +0800, Long Li wrote:
-> > On Wed, Sep 18, 2024 at 11:12:47AM +0100, John Garry wrote:
-> > > On 17/09/2024 23:27, Dave Chinner wrote:
-> > > > > # xfs_bmap -vvp  mnt/file
-> > > > > mnt/file:
-> > > > > EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
-> > > > >    0: [0..15]:         384..399          0 (384..399)          16 010000
-> > > > >    1: [16..31]:        400..415          0 (400..415)          16 000000
-> > > > >    2: [32..127]:       416..511          0 (416..511)          96 010000
-> > > > >    3: [128..255]:      256..383          0 (256..383)         128 000000
-> > > > > FLAG Values:
-> > > > >     0010000 Unwritten preallocated extent
-> > > > > 
-> > > > > Here we have unaligned extents wrt extsize.
-> > > > > 
-> > > > > The sub-alloc unit zeroing would solve that - is that what you would still
-> > > > > advocate (to solve that issue)?
-> > > > Yes, I thought that was already implemented for force-align with the
-> > > > DIO code via the extsize zero-around changes in the iomap code. Why
-> > > > isn't that zero-around code ensuring the correct extent layout here?
+On Fri, Nov 08, 2024 at 11:22:52AM +0100, neil.armstrong@linaro.org wrote:
+> On 07/11/2024 18:45, Mayank Rana wrote:
+> > 
+> > 
+> > On 11/7/2024 12:45 AM, neil.armstrong@linaro.org wrote:
+> > > Hi,
 > > > 
-> > > I just have not included the extsize zero-around changes here. They were
-> > > just grouped with the atomic writes support, as they were added specifically
-> > > for the atomic writes support. Indeed - to me at least - it is strange that
-> > > the DIO code changes are required for XFS forcealign implementation. And,
-> > > even if we use extsize zero-around changes for DIO path, what about buffered
-> > > IO?
+> > > On 06/11/2024 23:13, Mayank Rana wrote:
+> > > > On SA8255p ride platform, PCIe root complex is firmware managed as well
+> > > > configured into ECAM compliant mode. This change adds functionality to
+> > > > enable resource management (system resource as well PCIe controller and
+> > > > PHY configuration) through firmware, and enumerating ECAM compliant root
+> > > > complex.
+> > > > 
+> > > > Signed-off-by: Mayank Rana <quic_mrana@quicinc.com>
+> > > > ---
+> > > >   drivers/pci/controller/dwc/Kconfig     |   1 +
+> > > >   drivers/pci/controller/dwc/pcie-qcom.c | 116 +++++++++++++++++++++++--
+> > > >   2 files changed, 108 insertions(+), 9 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+> > > > index b6d6778b0698..0fe76bd39d69 100644
+> > > > --- a/drivers/pci/controller/dwc/Kconfig
+> > > > +++ b/drivers/pci/controller/dwc/Kconfig
+> > > > @@ -275,6 +275,7 @@ config PCIE_QCOM
+> > > >       select PCIE_DW_HOST
+> > > >       select CRC8
+> > > >       select PCIE_QCOM_COMMON
+> > > > +    select PCI_HOST_COMMON
+> > > >       help
+> > > >         Say Y here to enable PCIe controller support on Qualcomm SoCs. The
+> > > >         PCIe controller uses the DesignWare core plus Qualcomm-specific
+> > > > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> > > > index ef44a82be058..2cb74f902baf 100644
+> > > > --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> > > > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> > > > @@ -21,7 +21,9 @@
+> > > >   #include <linux/limits.h>
+> > > >   #include <linux/init.h>
+> > > >   #include <linux/of.h>
+> > > > +#include <linux/of_pci.h>
+> > > >   #include <linux/pci.h>
+> > > > +#include <linux/pci-ecam.h>
+> > > >   #include <linux/pm_opp.h>
+> > > >   #include <linux/pm_runtime.h>
+> > > >   #include <linux/platform_device.h>
+> > > > @@ -254,10 +256,12 @@ struct qcom_pcie_ops {
+> > > >     * @ops: qcom PCIe ops structure
+> > > >     * @override_no_snoop: Override NO_SNOOP attribute in TLP to enable cache
+> > > >     * snooping
+> > > > +  * @firmware_managed: Set if PCIe root complex is firmware managed
+> > > >     */
+> > > >   struct qcom_pcie_cfg {
+> > > >       const struct qcom_pcie_ops *ops;
+> > > >       bool override_no_snoop;
+> > > > +    bool firmware_managed;
+> > > >       bool no_l0s;
+> > > >   };
+> > > > @@ -1415,6 +1419,10 @@ static const struct qcom_pcie_cfg cfg_sc8280xp = {
+> > > >       .no_l0s = true,
+> > > >   };
+> > > > +static const struct qcom_pcie_cfg cfg_fw_managed = {
+> > > > +    .firmware_managed = true,
+> > > > +};
+> > > > +
+> > > >   static const struct dw_pcie_ops dw_pcie_ops = {
+> > > >       .link_up = qcom_pcie_link_up,
+> > > >       .start_link = qcom_pcie_start_link,
+> > > > @@ -1566,6 +1574,51 @@ static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
+> > > >       return IRQ_HANDLED;
+> > > >   }
+> > > > +static void qcom_pci_free_msi(void *ptr)
+> > > > +{
+> > > > +    struct dw_pcie_rp *pp = (struct dw_pcie_rp *)ptr;
+> > > > +
+> > > > +    if (pp && pp->has_msi_ctrl)
+> > > > +        dw_pcie_free_msi(pp);
+> > > > +}
+> > > > +
+> > > > +static int qcom_pcie_ecam_host_init(struct pci_config_window *cfg)
+> > > > +{
+> > > > +    struct device *dev = cfg->parent;
+> > > > +    struct dw_pcie_rp *pp;
+> > > > +    struct dw_pcie *pci;
+> > > > +    int ret;
+> > > > +
+> > > > +    pci = devm_kzalloc(dev, sizeof(*pci), GFP_KERNEL);
+> > > > +    if (!pci)
+> > > > +        return -ENOMEM;
+> > > > +
+> > > > +    pci->dev = dev;
+> > > > +    pp = &pci->pp;
+> > > > +    pci->dbi_base = cfg->win;
+> > > > +    pp->num_vectors = MSI_DEF_NUM_VECTORS;
+> > > > +
+> > > > +    ret = dw_pcie_msi_host_init(pp);
+> > > > +    if (ret)
+> > > > +        return ret;
+> > > > +
+> > > > +    pp->has_msi_ctrl = true;
+> > > > +    dw_pcie_msi_init(pp);
+> > > > +
+> > > > +    ret = devm_add_action_or_reset(dev, qcom_pci_free_msi, pp);
+> > > > +    return ret;
+> > > > +}
+> > > > +
+> > > > +/* ECAM ops */
+> > > > +const struct pci_ecam_ops pci_qcom_ecam_ops = {
+> > > > +    .init        = qcom_pcie_ecam_host_init,
+> > > > +    .pci_ops    = {
+> > > > +        .map_bus    = pci_ecam_map_bus,
+> > > > +        .read        = pci_generic_config_read,
+> > > > +        .write        = pci_generic_config_write,
+> > > > +    }
+> > > > +};
+> > > > +
+> > > >   static int qcom_pcie_probe(struct platform_device *pdev)
+> > > >   {
+> > > >       const struct qcom_pcie_cfg *pcie_cfg;
+> > > > @@ -1580,11 +1633,52 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+> > > >       char *name;
+> > > >       pcie_cfg = of_device_get_match_data(dev);
+> > > > -    if (!pcie_cfg || !pcie_cfg->ops) {
+> > > > -        dev_err(dev, "Invalid platform data\n");
+> > > > +    if (!pcie_cfg) {
+> > > > +        dev_err(dev, "No platform data\n");
+> > > > +        return -EINVAL;
+> > > > +    }
+> > > > +
+> > > > +    if (!pcie_cfg->firmware_managed && !pcie_cfg->ops) {
+> > > > +        dev_err(dev, "No platform ops\n");
+> > > >           return -EINVAL;
+> > > >       }
+> > > > +    pm_runtime_enable(dev);
+> > > > +    ret = pm_runtime_get_sync(dev);
+> > > > +    if (ret < 0)
+> > > > +        goto err_pm_runtime_put;
+> > > > +
+> > > > +    if (pcie_cfg->firmware_managed) {
+> > > > +        struct pci_host_bridge *bridge;
+> > > > +        struct pci_config_window *cfg;
+> > > > +
+> > > > +        bridge = devm_pci_alloc_host_bridge(dev, 0);
+> > > > +        if (!bridge) {
+> > > > +            ret = -ENOMEM;
+> > > > +            goto err_pm_runtime_put;
+> > > > +        }
+> > > > +
+> > > > +        of_pci_check_probe_only();
+> > > > +        /* Parse and map our Configuration Space windows */
+> > > > +        cfg = gen_pci_init(dev, bridge, &pci_qcom_ecam_ops);
+> > > > +        if (IS_ERR(cfg)) {
+> > > > +            ret = PTR_ERR(cfg);
+> > > > +            goto err_pm_runtime_put;
+> > > > +        }
+> > > > +
+> > > > +        bridge->sysdata = cfg;
+> > > > +        bridge->ops = (struct pci_ops *)&pci_qcom_ecam_ops.pci_ops;
+> > > > +        bridge->msi_domain = true;
+> > > > +
+> > > > +        ret = pci_host_probe(bridge);
+> > > > +        if (ret) {
+> > > > +            dev_err(dev, "pci_host_probe() failed:%d\n", ret);
+> > > > +            goto err_pm_runtime_put;
+> > > > +        }
+> > > > +
+> > > > +        return ret;
+> > > > +    }
+> > > > +
+> > > >       pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
+> > > >       if (!pcie)
+> > > >           return -ENOMEM;
+> > > > @@ -1593,11 +1687,6 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+> > > >       if (!pci)
+> > > >           return -ENOMEM;
+> > > > -    pm_runtime_enable(dev);
+> > > > -    ret = pm_runtime_get_sync(dev);
+> > > > -    if (ret < 0)
+> > > > -        goto err_pm_runtime_put;
+> > > > -
+> > > >       pci->dev = dev;
+> > > >       pci->ops = &dw_pcie_ops;
+> > > >       pp = &pci->pp;
+> > > > @@ -1739,9 +1828,13 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+> > > >   static int qcom_pcie_suspend_noirq(struct device *dev)
+> > > >   {
+> > > > -    struct qcom_pcie *pcie = dev_get_drvdata(dev);
+> > > > +    struct qcom_pcie *pcie;
+> > > >       int ret = 0;
+> > > > +    if (of_device_is_compatible(dev->of_node, "qcom,pcie-sa8255p"))
+> > > 
+> > > Can't you use if (pcie_cfg->firmware_managed) here instead ?
+> > yes, although with firmware managed mode, struct qcom_pcie *pcie is not allocated, and just
+> > to get access to pcie_cfg for this check, I took this approach. I am thiking to do allocating struct qcom_pcie *pcie and using it in future if we need more other related functionality which needs usage of this structure for functionality like global interrupt etc.
 > > 
-> > 
-> > I've been reviewing and testing the XFS atomic write patch series. Since
-> > there haven't been any new responses to the previous discussions on this
-> > issue, I'd like to inquire about the buffered IO problem with force-aligned
-> > files, which is a scenario we might encounter.
-> > 
-> > Consider a case where the file supports force-alignment with a 64K extent size,
-> > and the system page size is 4K. Take the following commands as an example:
-> > 
-> > xfs_io  -c "pwrite 64k 64k" mnt/file
-> > xfs_io  -c "pwrite 8k 8k" mnt/file
-> > 
-> > If unaligned unwritten extents are not permitted, we need to zero out the
-> > sub-allocation units for ranges [0, 8K] and [16K, 64K] to prevent stale
-> > data. While this can be handled relatively easily in direct I/O scenarios,
-> > it presents significant challenges in buffered I/O operations. The main
-> > difficulty arises because the extent size (64K) is larger than the page
-> > size (4K), and our current code base has substantial limitations in handling
-> > such cases.
-> > 
-> > Any thoughts on this?
+> > Although if you still prefer to allocate struct qcom_pcie based memory to access pcie_cfg, then I can consider to update in next patchset. Please suggest.
 > 
-> Large folios in the page cache solve this problem. i.e. it's the
-> same problem that block size > page size support had to solve.
+> I understand, but running of_device_is_compatible() in runtime PM is not something we should do,
+> so either allocate pcie_cfg, or add a firmware_managed bool to qcom_pcie copied from pcie_cfg,
+> or move runtime pm callbacks in qcom_pcie_ops and don't declare any in cfg_fw_managed->ops.
 > 
+> I think the latter would be more scalable so we could add runtime pm variant handling
+> for each IP versions. But it may be quite quite useless for now.
 > 
 
-Thanks for your reply, it cleared up my confusion. So maybe we need
-to set a minimum folio order for force-aligned inodes, just
-like Large block sizes (LBS).
+Or just bail out if dev_get_drvdata() return NULL?
 
-Thanks,
-Long Li
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
