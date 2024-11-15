@@ -1,144 +1,169 @@
-Return-Path: <linux-kernel+bounces-411113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A41E9CF33D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:47:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9E739CF41D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:40:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 254FCB2E643
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:45:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EA89B2C7E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628531D8E1E;
-	Fri, 15 Nov 2024 17:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8427D1D61A3;
+	Fri, 15 Nov 2024 17:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="P5pZgxis"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fiEZlS1z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5100E1D5ADB;
-	Fri, 15 Nov 2024 17:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237711A3035
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731692708; cv=none; b=RWIj+i9H11b4ZMkLfXJgkgaJFBXZVYZWGUKHteTUYzz6cfys7CRAXpwJI2ufI+Wp4fn7eXXDEOLg30KrVNDSJzCH5TzsL0zwikqjKNF8/pAO9ecxGWHq47UC18ljN4zJksesSjR6m+Wq7+If8eqJj9MGGV9bUNDO7vhNzHnDdyI=
+	t=1731692844; cv=none; b=Zjy8Vs1kHICwLFoKWUUY2JzljWcPqAlgpDREXqNdWSDzcDWasU3fN270RWkNxHJyfg00xB/7o4D/4Auqznd+nACSsdN+A/SmZ6LiKBeEbYrv1woCqYJqdgl9ESnadWl8yxEnRcXtWpv6gxKK4mWSOz05qXGQDmN0Jahjm9Fr90k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731692708; c=relaxed/simple;
-	bh=QTWbwD3DKt0zr3HVsMrLQMkox5w7tN0rnElVWEnMM14=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OvimdVVK4oUWB/mfjAg9eFYRsY/fmj9xovm82dQPGMtreRRc9dpromr6ZCFuddZom4pMcAY5qdatcYvqrAocql/9ha7xvM27YTm2JIqSQxvjiUuqPJLX3pirNL8/ijagOVVr0UQqBZcIodEWyT7LTNllL/ExgabqfmUHPBa4LIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=P5pZgxis; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AFAYcWY008123;
-	Fri, 15 Nov 2024 17:45:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=9bwZzCyAvLguoe37pSaNCSSBT7z9
-	wKmcx4So1GTdFbs=; b=P5pZgxisEBU6TpexMjXjUUJAS4jxH9jyXTNIdgwdJ+l5
-	MmiOXh2qqtn11eBm6Ym3R+u+SyZ0o5u/bRJgTcoIvmcOdR3xG14U2FzUgKO6TO5O
-	2oAJWk+z1HvRX6lH1i9AMYLcoPcgHymjKabaDAnAsXWGUQXUYekVQ5p+Nj8rkppG
-	d9c6psyCrmoVLUfFoBhNX5vttE9gfp8hnfjOWCaYgiMNdNjYmL515FF1cNtfm0jH
-	l+WywwQhLRACCO6Yk5cwjuzZDAvo2zfAsAjylClZcNnI8k3amBmhCmuCOK4Hgfj2
-	gZELWBG9DMdCmLCdk2KAe5FbOdWV+VwYQNGdN07npg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42wu2vvsn5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 17:45:04 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AFHfs7v009421;
-	Fri, 15 Nov 2024 17:45:04 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42wu2vvsn1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 17:45:04 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AF8H6dM017821;
-	Fri, 15 Nov 2024 17:45:02 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42tk2n2se9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 17:45:02 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AFHiwZb19726688
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 15 Nov 2024 17:44:58 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 438C32004D;
-	Fri, 15 Nov 2024 17:44:58 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1CD2820040;
-	Fri, 15 Nov 2024 17:44:58 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 15 Nov 2024 17:44:58 +0000 (GMT)
-From: Gerd Bayer <gbayer@linux.ibm.com>
-Date: Fri, 15 Nov 2024 18:44:57 +0100
-Subject: [PATCH net-next] net/smc: Run patches also by RDMA ML
+	s=arc-20240116; t=1731692844; c=relaxed/simple;
+	bh=M8pwNvD9B/yuT7abi8lk/RZ9h5awT0wqPUfRZxaGERk=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=eBVC2S2CGW4inFB38eVPFXPnG1EiYazkk1yjCXxxrfG0dr+2aCkqGmoHUSNn+rNhJCst3jDVKT7KNC/5a9Rhx+2jzsSbHGgj5409jqR5kGEOF8YdyYJESqogvxtwvA6oKoGPWV39d3S2gN+m8cHmW/1CeJ2jRjX0R50LAyR9tfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fiEZlS1z; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731692842;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m9Ta/CtP5pjWn4bPuxT4gm+0qsnrJMxo3ASMZDuEf1k=;
+	b=fiEZlS1zD79FITznVNlHWreyMuuZngJiPnzb4HMr4xv3uhABCtojmTlpMqqrmtCDfKpAZc
+	D4qffqC8EaI2npBIwBvQdfoaqoUIZgu/fVrSl5INOkvpEnm2gTd+fVFs5wFjIOdB/pywOu
+	6aKo50x4r2mvc4JnvopNOFdMXjw8ueA=
+Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
+ [209.85.210.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-612--GAgoSitNvGo-3TngoPUOQ-1; Fri, 15 Nov 2024 12:47:20 -0500
+X-MC-Unique: -GAgoSitNvGo-3TngoPUOQ-1
+X-Mimecast-MFC-AGG-ID: -GAgoSitNvGo-3TngoPUOQ
+Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-71a491ce5f4so1901689a34.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:47:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731692840; x=1732297640;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=m9Ta/CtP5pjWn4bPuxT4gm+0qsnrJMxo3ASMZDuEf1k=;
+        b=Xt80OSqw7yLiYDtQf2u6W1egkxUynbPCDtC4GT9dO/AQR03/DboqMBLt5JBdjhEaiV
+         RsJD7HQdazwlH+Dp8a8ufwRWTzWx2TzVDXcZJIRFXl8CzI1lJxvm5soNS8sA6w604a2w
+         Ji1B/smLAmkMLd06u1m7ayCTlqPNr9j3+Jm0Qg7XynMWe/CTp6E4Nmob7mJhku3j8UpV
+         uqMkkgjTSV2uqzFCoV1tOM9RWoL/VukuXu8pXhBcwAJGwWKUCJqJRm+vtrznItNFegM5
+         ax5I9zUksGkwIk5n/U4EgSn11E9SlMKqyTrbP+D99M/hSB3JlsOrC4oqI4lexp+m+WYP
+         /xeA==
+X-Gm-Message-State: AOJu0YynI1OVYwdiq9FzdRocmetaE/g65clTLyKp0IxYp89yx4GcD3qx
+	3PEX/XOLvo/budWseKYQEOZ7w3PUO9HTXjznQzI0Y2dI6Y3UIQXZPw0IVxRYpyNhcV8oVv5VSRh
+	D2BiIeLmALKSqJlu1XcJsGd1ugT0IVpSAdUv1sCEOCu/t9y0IScLi30fEG/8QCA==
+X-Received: by 2002:a05:6359:7996:b0:1aa:c492:1d34 with SMTP id e5c5f4694b2df-1c6cd297293mr274638455d.23.1731692840152;
+        Fri, 15 Nov 2024 09:47:20 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHbQZYj5r/0Y4qwHog4+zSYSxfUMed5vkN6uvv9z59ZF8VnJ2WLqn2tQa49TSKP40O4bTNprA==
+X-Received: by 2002:a05:6359:7996:b0:1aa:c492:1d34 with SMTP id e5c5f4694b2df-1c6cd297293mr274635855d.23.1731692839820;
+        Fri, 15 Nov 2024 09:47:19 -0800 (PST)
+Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3ee7d207csm19972696d6.70.2024.11.15.09.47.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 09:47:19 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <bfbedc6a-9f04-472f-afe9-828efe0387e6@redhat.com>
+Date: Fri, 15 Nov 2024 12:47:18 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: Additional issue with cpuset isolated partitions?
+To: Juri Lelli <juri.lelli@redhat.com>, Tejun Heo <tj@kernel.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, Michal Koutny <mkoutny@suse.com>
+Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+References: <Zzd3G67_UwBUJaRt@jlelli-thinkpadt14gen4.remote.csb>
+Content-Language: en-US
+In-Reply-To: <Zzd3G67_UwBUJaRt@jlelli-thinkpadt14gen4.remote.csb>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241115-smc_lists-v1-1-a0a438125f13@linux.ibm.com>
-X-B4-Tracking: v=1; b=H4sIAJiIN2cC/22NywqDMBBFf0Vm3YiTFh9d9T+KFJOMdUATSVKxi
- P/ekHWXh3s494BAninAvTjA08aBnU2AlwL0NNg3CTaJQVbyhljVIiz6NXOIQaiupbqVnbqihuS
- vnkbec+sJlqKwtEfo0zIl3/lvPtkw7396GwoUXWO0GWmoGlSPme1nL1ktpXYL9Od5/gCTMqTIs
- AAAAA==
-X-Change-ID: 20241106-smc_lists-b98e6829b31c
-To: Wenjia Zhang <wenjia@linux.ibm.com>, Jan Karcher <jaka@linux.ibm.com>,
-        "D. Wythe" <alibuda@linux.alibaba.com>,
-        Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
-        Leon Romanovsky <leon@kernel.org>
-Cc: Halil Pasic <pasic@linux.ibm.com>, linux-rdma@vger.kernel.org,
-        netdev@vger.kernel.org, linux390-list@tuxmaker.boeblingen.de.ibm.com,
-        linux-kernel@vger.kernel.org, Gerd Bayer <gbayer@linux.ibm.com>
-X-Mailer: b4 0.14.2
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: m24rJp-3g8Idy14-TaxmhZLjBXES-qUQ
-X-Proofpoint-GUID: LpD6NkObD4_44A3ElA8ZqYQXW7Vrk1nW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 suspectscore=0 bulkscore=0 mlxlogscore=999 impostorscore=0
- malwarescore=0 mlxscore=0 clxscore=1011 adultscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411150148
 
-Commits for the SMC protocol usually get carried through the netdev
-mailing list. Some portions use InfiniBand verbs that are discussed on
-the RDMA mailing list. So run patches by that list too to increase the
-likelihood that all interested parties can see them.
+On 11/15/24 11:30 AM, Juri Lelli wrote:
+> Hello,
+>
+> While working on the recent cpuset/deadline fixes [1], I encountered
+> what looks like an issue to me. What I'm doing is (based on one of the
+> tests of test_cpuset_prs.sh):
+>
+> # echo Y >/sys/kernel/debug/sched/verbose
+> # echo +cpuset >cgroup/cgroup.subtree_control
+> # mkdir cgroup/A1
+> # echo 0-3 >cgroup/A1/cpuset.cpus
+> # echo +cpuset >cgroup/A1/cgroup.subtree_control
+> # mkdir cgroup/A1/A2
+> # echo 1-3 >cgroup/A1/A2/cpuset.cpus
+> # echo +cpuset >cgroup/A1/A2/cgroup.subtree_control
+> # mkdir cgroup/A1/A2/A3
+> # echo 2-3 >cgroup/A1/A2/A3/cpuset.cpus
+> # echo 2-3 >cgroup/A1/cpuset.cpus.exclusive
+> # echo 2-3 >cgroup/A1/A2/cpuset.cpus.exclusive
+> # echo 2-3 >cgroup/A1/A2/A3/cpuset.cpus.exclusive
+> # echo isolated >cgroup/A1/A2/A3/cpuset.cpus.partition
+>
+> and with this, on my 8 CPUs system, I correctly get a root domain for
+> 0-1,4-7 and 2,3 are left isolated (attached to default root domain).
+>
+> I now put the shell into the A1/A2/A3 cpuset
+>
+> # echo $$ >cgroup/A1/A2/A3/cgroup.procs
+>
+> and hotplug CPU 2,3
+>
+> # echo 0 >/sys/devices/system/cpu/cpu2/online
+> # echo 0 >/sys/devices/system/cpu/cpu3/online
+>
+> guess the shell is moved to the non-isolated domain. So far so good
+> then, only that if I turn CPUs 2,3 back on they are attached to the root
+> domain containing the non-isolated cpus
+A valid partition must have CPUs associated with it. If no CPU is 
+available, it becomes invalid and fall back to use the CPUs from the 
+parent cgroup.
+>
+> # echo 1 >/sys/devices/system/cpu/cpu2/online
+> ...
+> [  990.133593] root domain span: 0-2,4-7
+> [  990.134480] rd 0-2,4-7
+>
+> # echo 1 >/sys/devices/system/cpu/cpu3/online
+> ...
+> [ 1082.858992] root domain span: 0-7
+> [ 1082.859530] rd 0-7
+>
+> And now the A1/A2/A3 partition is not valid anymore
+>
+> # cat cgroup/A1/A2/A3/cpuset.cpus.partition
+> isolated invalid (Invalid cpu list in cpuset.cpus.exclusive)
+>
+> Is this expected? It looks like one need to put at least one process in
+> the partition before hotplugging its cpus for the above to reproduce
+> (hotpluging w/o processes involved leaves CPUs 2,3 in the default domain
+> and isolated).
 
-Signed-off-by: Gerd Bayer <gbayer@linux.ibm.com>
----
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+Once a partition becomes invalid, there is no self recovery if the CPUs 
+become online again. Users have to explicitly re-enable it. It is really 
+a very rare case and so we don't spend effort to do that.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 32d157621b44fb919307e865e2481ab564eb17df..16024268b5fc1feb6c0d01eab3048bd9255d0bf9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20943,6 +20943,7 @@ M:	Jan Karcher <jaka@linux.ibm.com>
- R:	D. Wythe <alibuda@linux.alibaba.com>
- R:	Tony Lu <tonylu@linux.alibaba.com>
- R:	Wen Gu <guwen@linux.alibaba.com>
-+L:	linux-rdma@vger.kernel.org
- L:	linux-s390@vger.kernel.org
- S:	Supported
- F:	net/smc/
+If only one of 2 CPUs are offline and then online again, the full 2-CPU 
+isolated partition can be recovered.
 
----
-base-commit: 519b790af22e705ee3fae7d598f1afbb3d1cfdd5
-change-id: 20241106-smc_lists-b98e6829b31c
+Please let me know if you have further question.
 
-Best regards,
--- 
-Gerd Bayer <gbayer@linux.ibm.com>
+Cheers,
+Longman
 
 
