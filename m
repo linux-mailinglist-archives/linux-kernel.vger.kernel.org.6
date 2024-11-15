@@ -1,183 +1,152 @@
-Return-Path: <linux-kernel+bounces-410292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F2AE9CD8E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:55:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A5339CD91C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:57:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD487B2417F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:55:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26C771F2106A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456FD189BAC;
-	Fri, 15 Nov 2024 06:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA43185949;
+	Fri, 15 Nov 2024 06:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cssjMrsB"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JitGXi/u"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75D11885AA
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4780A188015
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731653695; cv=none; b=G7HWoqlQX05XWGj2xWU7AiyL5VxWdNTc/44B/RCpXzkVntETBqEEjiFZLiX0XySDtVcVenrHIvsqdp/+87+7aQyLZWtzTd1pOkPDRhDjNjtLbVmRix2vUtvhiwUEmb5H43XkFtXlX21JO44AqIe6beuOEJncY1+vcm5n14JBfBs=
+	t=1731653831; cv=none; b=dv+NEvRZSII7/5jwP+inNqnNz2u8lC5ykWMSNIgmBqC407haxjqW9mDQUSeoT0/HXfR8RHh4jPiU6oli3dTDyoLn8RYHyeX6CuXXKH1Svs0GzLC1ZKmLOAy02h6+Z5ZOy/Xz9VAu0kjcTbEyqwjJ9q4DdD9PiXoYFgRnHFO6ZFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731653695; c=relaxed/simple;
-	bh=wcimBfT4KdslFpSdb7Mnrzgcs31Xrk5aFoelt2AivPQ=;
+	s=arc-20240116; t=1731653831; c=relaxed/simple;
+	bh=dpza+eGWv/xmHMp57zlEEJfK0Yeu8rMvSSrLh34VFDc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DZvAXyOOMfN8tKaYrvJC71E3Ip0BkfetsK+9g0/FI0G9P5GgYVhmFWTudhMGcS739ZBD90+HYGoo7QwOrnoiOJhg5Ol5Yamztv+s2YIWHh8ClSTwCnSfQJXtPNj6ZFo7/lsH1TMd+ziTv8MuOl5og6sBXSnkc0rbnFA1PcGr1Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cssjMrsB; arc=none smtp.client-ip=209.85.167.49
+	 Content-Type:Content-Disposition:In-Reply-To; b=U9Sb+XJxuJiMsaaWnTLWiWqMwdGyHwmC5zNKTKRG9s7eW2tsdufbCM+cKN8sTFFdzsnH2c5ijcNSxOlsRs5id2WKMp4jBIn5HHuukhotUCRINQz6DUQ+UWdJC8P/2PVRAaq2jIRjU0x3N0fF+sw2g858lf1MLEDKUIgHIc4PyxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JitGXi/u; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539e59dadebso1632998e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:54:53 -0800 (PST)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20c805a0753so15113315ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:57:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731653692; x=1732258492; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MjKLBvWETSBADZGUV6yqhakCmIaLRuQjCHp/Lt9M3AA=;
-        b=cssjMrsBLmM4fuB1gxR6lBwHNDLFni1ZVgPu/TbhlRN6Abd45Hqv6os9vWOjpoRyE3
-         DI20WIN8WYqYP/mZvCGBCTiX2KCx+ZxEFmXUBlb0Dj0b3ofQRSavHuv4I5n9HcKcbx/u
-         UL8+7SWQGcILQsVUf1JPLEqlEoUiZudk+nCFdNOoqRcsoHaV10wtZNuBW0isd7R72Yxf
-         tLgRd4eOTroka/AEdQ1oTucahlMvdzIXAmli8lp2qkRYvJNRzvLvOpy+kmiNRJxmlBVw
-         KRkqUIKqJZjB85EuTWMsjMNcPXAW871ZGvrdQlVg/cp0RrMGmEdRFB0s1XcfuW+Xs6jq
-         218g==
+        d=linaro.org; s=google; t=1731653829; x=1732258629; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=UUnANkLZ+cRlOTdO0AUsRhtlxHbXsgSkLLst9mQNAEg=;
+        b=JitGXi/u/it8tPmt2uOffpcJAhZ1XPE2T9k84e7JbXJstvimJeKlZkKQ1S5PQ3vHmM
+         W/3KEvY+l//FOw18pAVM9uw5c6FPbrXQdGcwZAVQurpvVZM5vnouYTXMIyh+dmL8V6Mn
+         F32DFDL3kzc6iv3ER2/xl/BH3ok9YCkbBI64Iyfkt0RhGUMTdJyvs5B9Sm7nSTk9vcdJ
+         YJ/eWUsbvkkOOJ0RHhdEFh97dmv7rgB0fXUj6JrUIGvTukKkNUQ/xixkF+BQAYOMWju2
+         saSv2KvqW19v6AqYkWBaiyzuWuLuSnbOFZIahinCGlAS2ec4FDdYDDiVZ8CghEMouz7s
+         M97A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731653692; x=1732258492;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MjKLBvWETSBADZGUV6yqhakCmIaLRuQjCHp/Lt9M3AA=;
-        b=AojtPt3U3dbQTOQVLiFmgsR/sZW2LKF2LXXImo9FUeUTv+HJ5JTxYUv18EeqgmtrFS
-         3N3kDsQRu42ocosYhP8Kt3osfCFPn7UZwDstXeTZHBtL3r2/WOQqaGohN3PYUsJh5mPq
-         D6qtKDpeKl8pJF59/QeGq9YB/glG9njIAVeNE6YeqsJW1ta01I1z13GwElWwoR4+CNd4
-         j7bRcxBmKvMIdvQXXfxdCohj/97cAtHTBPtk9E06oWvFrs2a2TQq5TXR2bDcHeKbqhbg
-         7JQ+rFS7PtNh9HrjGGClNMBxp6W7TINb70zVVT4w2GDw3xxRr5ckSFq9sB86gXcpUOo4
-         LodQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVi+xr7ZgCHKGPKYxjYuuRxWmeZ+KKoZwdmiu9u4q06sxZTBZeizojBMh21VUBwqeOKAbPdKpVSKa/zySY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTtsPbfM9lGREe/05PvozAvVcywnEafWBmg6OdXrLYSnM80d86
-	psn3OHEgSqWdST6lUIYngoZH0DEbLPJ96i/0y4YrGp21nJEO+TXhiOOa8Po1Xrw=
-X-Google-Smtp-Source: AGHT+IFYT9QcCK1sZ7kStHf5ogo5eN6v02g0qjiZW9C6KciiPEArLV3TRbiCPgAuKP6fFkQC+XS51w==
-X-Received: by 2002:a05:6512:3ba1:b0:53b:1f90:576f with SMTP id 2adb3069b0e04-53dab2a6022mr601193e87.22.1731653691696;
-        Thu, 14 Nov 2024 22:54:51 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da6548eb8sm457776e87.255.2024.11.14.22.54.49
+        d=1e100.net; s=20230601; t=1731653829; x=1732258629;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UUnANkLZ+cRlOTdO0AUsRhtlxHbXsgSkLLst9mQNAEg=;
+        b=cF0yx9JNhtKUhJ4B9F4JJcMQR3Cgqg07fsOgPUa2hrP5PWih2E+xnm1vMWaZ5otnaY
+         WEmtp8F8dyXHX3ShfQGrCnw1ITlusVM20ndoZ+OqrpYNNJww/8Boos5rxZFKl57lrTMY
+         6dOvSBZKNUuikaMf52yMjy2mAwirlIZc77IQOe6DBi/w3rbfuMackzwm3SfllKl7g3xF
+         5zXN3u8th/I8aNaS4mF/XoNL9hcAvM6V49K4oHZABvs8Ra0UJVx1ATo0f03yISM8BQGw
+         QPWIWUFtuUVA3mv15XrvwvL4OyrQSD6jPcZAf6/SiXYnKSGQz2AwjQMT8+z7gUUlxvrc
+         P4WA==
+X-Forwarded-Encrypted: i=1; AJvYcCXxKp33Q53CiGVU3JQfUz6RAJE/W7QgYnChcTk4t9k1M1l+6/IEv9DLBwEuvl5Yn1J6OTN1uHky777pXVs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMr2+c1T2KmyxZrOAQvvQPn1dZxcy5jW4GGtWHcQ4aDT6a1Ivg
+	kSkvmtIo4EBga6EwnC/5lXHv3EGtsTLvW0Iun98Kbdr1KxjEJkRySULvxW8vCA==
+X-Google-Smtp-Source: AGHT+IGyxlQ3XKDLt3Kpg+bOwQr2O6U0ym9WxGmFcCu7LdeG9Tf0de/64JRmH23hKPfODvd+Dxxf8w==
+X-Received: by 2002:a17:902:d48c:b0:20c:94f6:3e03 with SMTP id d9443c01a7336-211d0ed2e36mr24090375ad.47.1731653829586;
+        Thu, 14 Nov 2024 22:57:09 -0800 (PST)
+Received: from thinkpad ([117.193.208.47])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f34698sm6210935ad.133.2024.11.14.22.57.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 22:54:50 -0800 (PST)
-Date: Fri, 15 Nov 2024 08:54:47 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, gregkh@linuxfoundation.org, 
-	andersson@kernel.org, konradybcio@kernel.org, mantas@8devices.com, 
-	quic_kbajaj@quicinc.com, quic_kriskura@quicinc.com, quic_rohiagar@quicinc.com, 
-	abel.vesa@linaro.org, quic_wcheng@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH v3 6/6] arm64: dts: qcom: Add USB controller and phy
- nodes for IPQ5424
-Message-ID: <qx22rgezkym3guofdxwmvhrjjwjzshngb4cvpdhqahlykeeqhg@wc4zy3gicrsb>
-References: <20241114074722.4085319-1-quic_varada@quicinc.com>
- <20241114074722.4085319-7-quic_varada@quicinc.com>
- <CAA8EJpr6xb=TPPgk7ERhKVp7OnYdPGCK6+1_2TBRLBt_eWM43A@mail.gmail.com>
- <ZzbZGnKEovwoDPrP@hu-varada-blr.qualcomm.com>
+        Thu, 14 Nov 2024 22:57:08 -0800 (PST)
+Date: Fri, 15 Nov 2024 12:27:00 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: l.stach@pengutronix.de, bhelgaas@google.com, lpieralisi@kernel.org,
+	kw@linux.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, shawnguo@kernel.org, frank.li@nxp.com,
+	s.hauer@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
+	kernel@pengutronix.de, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 07/10] PCI: imx6: Clean up codes by removing
+ imx7d_pcie_init_phy()
+Message-ID: <20241115065700.gfz7dmoijhh43lhd@thinkpad>
+References: <20241101070610.1267391-1-hongxing.zhu@nxp.com>
+ <20241101070610.1267391-8-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZzbZGnKEovwoDPrP@hu-varada-blr.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241101070610.1267391-8-hongxing.zhu@nxp.com>
 
-On Fri, Nov 15, 2024 at 10:46:10AM +0530, Varadarajan Narayanan wrote:
-> On Thu, Nov 14, 2024 at 03:28:36PM +0200, Dmitry Baryshkov wrote:
-> > On Thu, 14 Nov 2024 at 09:48, Varadarajan Narayanan
-> > <quic_varada@quicinc.com> wrote:
-> > >
-> > > The IPQ5424 SoC has both USB2.0 and USB3.0 controllers. The USB3.0
-> > > can connect to either of USB2.0 or USB3.0 phy and operate in the
-> > > respective mode.
-> > >
-> > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > > ---
-> > > v3: Regulator node names, labels and 'regulator-name' changed per review suggestions
-> > >     Stray newline removed
-> > >
-> > > v2: Add dm/dp_hs_phy_irq to usb3@8a00000 node
-> > >     Add u1/u2-entry quirks to usb@8a00000 node
-> > > ---
-> > >  arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts |  66 ++++++++
-> > >  arch/arm64/boot/dts/qcom/ipq5424.dtsi       | 159 ++++++++++++++++++++
-> > >  2 files changed, 225 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-> > > index d4d31026a026..859e15befb3f 100644
-> > > --- a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-> > > +++ b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-> > > @@ -16,12 +16,70 @@ / {
-> > >         aliases {
-> > >                 serial0 = &uart1;
-> > >         };
-> > > +
-> > > +       vreg_misc_3p3: regulator-3300000 {
-> >
-> > Technically these names are correct. However they don't match the
-> > approach that Qualcomm DT files have been using up to now.
-> > You can compare your data with the output of `git grep :.regulator-
-> > arch/arm64/boot/dts/qcom/`
-> 
-> Dmitry,
-> 
-> This name was suggested by Rob Herring [1]. Shall I rename them as follows
-> 
-> 	regulator-usb-3p3
-> 	regulator-usb-1p8
-> 	regulator-usb-0p925
+On Fri, Nov 01, 2024 at 03:06:07PM +0800, Richard Zhu wrote:
 
-I'd say so. Rob clearly stated that this is not a strict rule. It's
-always better to follow the customs of the particular platform, it helps
-other developers. Also in _many_ cases just defining the voltage is not
-enough, usually there are multiple networks providing 0.925 V or 1.8 V.
+> Remove the duplicate imx7d_pcie_init_phy() function as it is the same as
+> imx7d_pcie_enable_ref_clk().
+> 
 
+How about.
+
+"PCI: imx6: Remove imx7d_pcie_init_phy() function"
+
+This function essentially duplicates imx7d_pcie_enable_ref_clk(). So remove it."
+
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+
+With above change,
+
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 8 --------
+>  1 file changed, 8 deletions(-)
 > 
-> Thanks
-> Varada
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index bb130c84c016..fde2f4eaf804 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -390,13 +390,6 @@ static int imx8mq_pcie_init_phy(struct imx_pcie *imx_pcie)
+>  	return 0;
+>  }
+>  
+> -static int imx7d_pcie_init_phy(struct imx_pcie *imx_pcie)
+> -{
+> -	regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR12, IMX7D_GPR12_PCIE_PHY_REFCLK_SEL, 0);
+> -
+> -	return 0;
+> -}
+> -
+>  static int imx_pcie_init_phy(struct imx_pcie *imx_pcie)
+>  {
+>  	regmap_update_bits(imx_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> @@ -1526,7 +1519,6 @@ static const struct imx_pcie_drvdata drvdata[] = {
+>  		.clks_cnt = ARRAY_SIZE(imx6q_clks),
+>  		.mode_off[0] = IOMUXC_GPR12,
+>  		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
+> -		.init_phy = imx7d_pcie_init_phy,
+>  		.enable_ref_clk = imx7d_pcie_enable_ref_clk,
+>  		.core_reset = imx7d_pcie_core_reset,
+>  	},
+> -- 
+> 2.37.1
 > 
-> 1 - https://lore.kernel.org/linux-arm-msm/20241113181138.GA1011553-robh@kernel.org/
-> 
-> > > +               compatible = "regulator-fixed";
-> > > +               regulator-min-microvolt = <3300000>;
-> > > +               regulator-max-microvolt = <3300000>;
-> > > +               regulator-boot-on;
-> > > +               regulator-always-on;
-> > > +               regulator-name = "usb_hs_vdda_3p3";
-> > > +       };
-> > > +
-> > > +       vreg_misc_1p8: regulator-1800000 {
-> > > +               compatible = "regulator-fixed";
-> > > +               regulator-min-microvolt = <1800000>;
-> > > +               regulator-max-microvolt = <1800000>;
-> > > +               regulator-boot-on;
-> > > +               regulator-always-on;
-> > > +               regulator-name = "vdda_1p8_usb";
-> > > +       };
-> > > +
-> > > +       vreg_misc_0p925: regulator-0925000 {
-> > > +               compatible = "regulator-fixed";
-> > > +               regulator-min-microvolt = <925000>;
-> > > +               regulator-max-microvolt = <925000>;
-> > > +               regulator-boot-on;
-> > > +               regulator-always-on;
-> > > +               regulator-name = "vdd_core_usb";
-> > > +       };
-> > > +};
-> 
-> [. . .]
 
 -- 
-With best wishes
-Dmitry
+மணிவண்ணன் சதாசிவம்
 
