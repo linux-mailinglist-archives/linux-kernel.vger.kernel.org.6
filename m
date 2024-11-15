@@ -1,282 +1,272 @@
-Return-Path: <linux-kernel+bounces-411116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78D289CF342
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:49:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38AD39CF455
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:52:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A33A28804E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:49:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EDFBB254F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB6B1D619D;
-	Fri, 15 Nov 2024 17:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726571D63FB;
+	Fri, 15 Nov 2024 17:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OydrwV6Y";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="lngPrnER"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lHzpx8F+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF9E1D5ABF
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731692987; cv=fail; b=iBAt/iOzr+DeUEldoo10NZdvc1yeD0mbTSOgCj2jj9tzd9Mi/CR3AdKZ122B3YOq494no0kvUU/AmNZbwUR87XmF0yI7iBBbbm1ixBsQWhm6Htj5qjYGFfhcj5H2ZzlfVXxZBeaL/OreEXQBRduER537gPCVkLpQBg4Y0NUAqDo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731692987; c=relaxed/simple;
-	bh=VPts7YV4j+VO46UooSl819VdlN939NlwCgHTdDp0/jU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=dfp8/VaCd16FZk4Fnb1JVrgbCNdjhnVLu5BK6x69ZcBy0PZK1q+ls/XxuZMa9ryAiWAIabcQxA8VddGXwRCL/0EGxISdzb/UEQ/9f6MllirSSvtgNPMOisIZSo47OAeKxEgVtu0K8ArETsW19VDjTZTa+x9MZJduz8CR+bB/MXQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=OydrwV6Y; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=lngPrnER; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AFGMw56006318;
-	Fri, 15 Nov 2024 17:49:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=VPts7YV4j+VO46UooSl819VdlN939NlwCgHTdDp0/jU=; b=
-	OydrwV6YKTdY8Hc/NURqMoVE9aNSNtWdMV/fUGP91Qlh7e2V7YIEJDrlJ4mcUDOu
-	b1eobHLp3c6qGlVXN5CYXRL+VASYRWiR+4QEOntD7gEHTup3/Da8HFqARpsf2egV
-	2oElmGB4dF4ycVNi5WD9zJtNOuV7J9bcdpkjSyhU7TR6EE4HkX3H698kKrp6APW3
-	iScnI5ZQdnTrp7FZ3xBfpIbe8w+Z9tG8qsX4vxgFNuur2288yJZZ9ZtAFyMujczY
-	VxZtDJ8QNyy9BcUJWZlp5pVTPRFHAKoeqdPi44RTGKCFYQRbY4MfhRv1ksgq8Sve
-	7AkCtUh4dmvwt2hgOL1DeA==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42t0heusf1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 15 Nov 2024 17:49:36 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4AFGHp9P022699;
-	Fri, 15 Nov 2024 17:49:36 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2042.outbound.protection.outlook.com [104.47.55.42])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42vuw2yqgk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 15 Nov 2024 17:49:35 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ITECJDrigklLJY6DLKy24CU2XG/y4Cqo6qFfV8WF6y6rMd1gkKgZCIgxecqv5jfm+yUP57tvMJ11mUoL2wB6yVcq33csjedRVIUv5/keB2rNghr/2Fdhd0XVBoWA2F6ReocqVGJVmmtGOaD+gzY1R72Me0uT2zhmFUVzBg40c55DeiXYsBZArYG6GBiYpKtHg3bP4snUaWy2L7GTSwEnUinYz8rMxmPihbMMW4hRF344zAoEk6Gk1aIWGvkS+CIqdMlqWSVjVn3HjV2ELfAtiYy6fdcARwHBxy5lItym+gtKg0rNE74MrzEa28jdxYtTwJtuy/R94wJurSeZNwNQiA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VPts7YV4j+VO46UooSl819VdlN939NlwCgHTdDp0/jU=;
- b=chwBtX043Q7hGq+naIMKYNQdFjLqzNVEqVF8E8IidNPZdtQa0tsf4puuTZxmdG4g6IXsHIV8me/UyGE4FBudjRgP8qqyC3XbfzTSesw4wLqvtja9lkMvuew6tOUpSYXarTKFXlh8wyJH7Iua6AWSyEW2V5X/6gMbJvON4NCnzIOaewNYUauUge/UGO0Jmr4LCGMvIuT6Zy1KcfFnad+aD0CsauTt+iQQv4l/O3ghRRaDlrKKLlU3yV9ILWf3wIE2upWgJHfD/VaZh548pmze5a4JAY9TLiL9AHrKA+gzd3rdW5Bjas3lbIxOtO+gM95ePo3Oj/lNTig4f4ZmPYri0w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VPts7YV4j+VO46UooSl819VdlN939NlwCgHTdDp0/jU=;
- b=lngPrnERHbUsxQ2Be+tj4hyrVFLFGn4egL5csBGgXiO7tvQgoJREA2ezhtbxjVLwXoZ5dFs04ONy8pYwaWLEH0ISu9MNh3L4UlWz0kwzJF2nn6VN9E2YyLs6NK6MHJwkOsAJdQYwgwWG2OZUz71r1JBNeyAtk2/cgy07zHodmD4=
-Received: from IA1PR10MB7309.namprd10.prod.outlook.com (2603:10b6:208:3fe::13)
- by DS7PR10MB7297.namprd10.prod.outlook.com (2603:10b6:8:d8::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.19; Fri, 15 Nov
- 2024 17:49:31 +0000
-Received: from IA1PR10MB7309.namprd10.prod.outlook.com
- ([fe80::818c:4ed2:2a1a:757a]) by IA1PR10MB7309.namprd10.prod.outlook.com
- ([fe80::818c:4ed2:2a1a:757a%2]) with mapi id 15.20.8158.013; Fri, 15 Nov 2024
- 17:49:29 +0000
-From: Prakash Sangappa <prakash.sangappa@oracle.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: Peter Zijlstra <peterz@infradead.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        Daniel Jordan
-	<daniel.m.jordan@oracle.com>
-Subject: Re: [RFC PATCH 0/4] Scheduler time slice extension
-Thread-Topic: [RFC PATCH 0/4] Scheduler time slice extension
-Thread-Index: AQHbNV85xP8mG8bGMUONwn7IqXYau7K1jv+AgAANEACAAPVMgIAB3O8AgAA0WgA=
-Date: Fri, 15 Nov 2024 17:49:29 +0000
-Message-ID: <71164940-E45A-4572-9F8D-4CE7189514E4@oracle.com>
-References: <20241113000126.967713-1-prakash.sangappa@oracle.com>
- <20241113185013.GA22571@noisy.programming.kicks-ass.net>
- <f0f681a0-22b4-45f4-85a1-18f140286cbe@efficios.com>
- <20241114101455.GL6497@noisy.programming.kicks-ass.net>
- <939a3bba-9e9e-4eb9-8040-e1447718b341@efficios.com>
-In-Reply-To: <939a3bba-9e9e-4eb9-8040-e1447718b341@efficios.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-mailer: Apple Mail (2.3776.700.51.11.1)
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA1PR10MB7309:EE_|DS7PR10MB7297:EE_
-x-ms-office365-filtering-correlation-id: d36abb74-b3ca-430b-6a2a-08dd059dda99
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|10070799003|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?cGcvS3NPV1JDQmxCL2N6YWVxVjRhWFcxYitXaHZCcG1WVTVoYmVhcWxuanM5?=
- =?utf-8?B?ZmhYUHlRUGFXY0hoNlJpUlluZk9rZUhpQmRHRE9ORlBrNlY0bVNoV2l0dUJB?=
- =?utf-8?B?WFFLTS9QL3dIUlNuWmhBaUxKYzBMVUpkeG5MNVBDZzQwSGpqc1FmT0htVCtJ?=
- =?utf-8?B?VmFUWHFlNmxCYzl4TjlEZG91RHJTV1dYRVBrMnJMWWpSVWIzdDNkUFdIa2dV?=
- =?utf-8?B?a29PdUg5djFWL3hLSlVhdlc5bnZOVW5wRU9VRks3cUg3ZzhhL3RxZm9pekNQ?=
- =?utf-8?B?UTRISkRPa0UxWHlhM1MvQWVTSENDM3QxNGIvbkVqck9VRnlKOUpRQ0MvdlRW?=
- =?utf-8?B?djJmb0ptdm9nditlT2NZT251d0VQYXZHeU5sVGNmSXB6WmJHTG9SalNCOWNY?=
- =?utf-8?B?QU5nZnFwK2RkTzlnZXFHSGxqRVdqdWtKUTJqd1ZUTXJJbkdaM0VoTE1yTWRy?=
- =?utf-8?B?UFhjYVEyUzM3Rm9BZFgrZmpFZ0puOEdWWVQ4bTVFZHpRYTZkMU9oM3VBQ2wy?=
- =?utf-8?B?ZWlERlBnN3BDZThic0o3Y3FiQ1VlS25rV1RxTXZWMGxCZ0czNnp4SVBmcUE0?=
- =?utf-8?B?d2ViaTJOY255ajBkZGlsRkptM1NlbzRPcHVZWm9PdHVhdEFDLzVMTE1oOHlH?=
- =?utf-8?B?NExlVTFRcHMwYWhjUjh5NDRNd3JJVzdIT2RZUHlmb01XNlRsUnIxYVFONWwz?=
- =?utf-8?B?ck44TVBuUHhkeWhmOHNWczk3bjZZZWhieitobGkwRVZhWjZCcEJxdUZySGls?=
- =?utf-8?B?ZnYrSWp1VytkUmozRml2cTBON1VjT3dHTjM5NzE0YVltS1ZKUDlpVkY5Y3lK?=
- =?utf-8?B?aHpIMkpIYk1zeDFIckNab0JFR0M5ZDlScXV3MkpRcnZTR3ZjNnMwRUtNQVhX?=
- =?utf-8?B?bEJoTFV1azVpNTY1WXY2NDBOVzhkTkRGS3dLSTVxRzBhNkdWc1NvNEhkakI3?=
- =?utf-8?B?dzhYdEdMSDM3ZFlPK283NjVwVGNuWFlWTjlFY3FpZW03TzdHTEJaWDA2NVVj?=
- =?utf-8?B?TnQwV3pvM1NNQjZOOUF0bi9lSnZBUmhPRk5Hb1VZM2p4cHhxU3NuVXdzZ1Rk?=
- =?utf-8?B?b0ZmWWpGME1EMkFpelNoMzVDdDFnUjU5cG02NzMzTnJpN3NUbTBRVW5yd2JL?=
- =?utf-8?B?R251VUNZUlFJU1ArYW5WMkJ6NDhNSEVFcDUxSWVad0VXSmo4blRYQTgzc3Z6?=
- =?utf-8?B?aERKeG84VTdZeS9PUTcrc0ZUQWJ1c1JJQ2tIb2pKNFlnMGwyZDJUSkRjNTEw?=
- =?utf-8?B?R3k0TnM0UWlhTm1UQmptWk5ueFJWL0Y0bzBZTWc3aXA2encyZzE2Q2RkekFN?=
- =?utf-8?B?MkIyY2NZSXQxdStLZVdlYmFDSmx5TWsrMHkrQll2U0x1TlNRSTFNWnpuOHB5?=
- =?utf-8?B?SncvZGNDNXRTTjVOc1BoTlJzcW1PVXpoT2pOYlpZV2VjNjFTUXdyZU93dXJZ?=
- =?utf-8?B?UHFBL2g4L3ZDWFZnTDdCR04rT2x0STVQNzJkdFBwUndZYlVzOWRaZkhRaGgy?=
- =?utf-8?B?ekxUaDZmM0xtWXJaZm9nYVYycmRHWG1Nb2JNQncyVGhaSUtOZTBGdjhvZWdO?=
- =?utf-8?B?am1QNjI3ZXFKK3RvNXM0RDJ2OHh6VjlWUzJFY0RIYVI4SkIrYXcvbjUzL3Ay?=
- =?utf-8?B?c3B1aEdMQ1AvYnpVMXFlUVY0TmVVK3hCSXBQb0lWUlNwNzMvQU5pR3BtSE9i?=
- =?utf-8?B?L1pPVlZqNFFTS2xHSkIybE0yM1o3QW1Rc0ZRS2RCcXZoNjl0T0tTRTVISGM2?=
- =?utf-8?Q?vUxdkY0mPE1RAriA9oGmkrIidRx+aFd6ceSl48G?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR10MB7309.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(10070799003)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?L0x5QjUxUUFFY1VMWkxnbG1zd2J6V3pNb2VFRzBSMzYwNkdTQXJCYStwL2hs?=
- =?utf-8?B?anhQMGc5VUIwSy9WS3Y1VXNSWldvbW1MWjFTTityR004cC9lZVdVTCtSRm5O?=
- =?utf-8?B?NzBNZDM1MHN4T0NTRjlDbGwyZGhFS3RWZHpJRmxxUWpUZVVnZVVGbVg0Y2o4?=
- =?utf-8?B?SElNcXVOU0s3SFRjWnRQWm9uMldwUFZLOHMvc1JpeXNrZTBwN2ZWVWV0bTNw?=
- =?utf-8?B?QWdGRk9tdk8yTnE5NEtBTi9HUmhyUUpFc1U4UG9GaWw2Umw1SVN6QkFJSkNi?=
- =?utf-8?B?WEJQV3FseVhkZzc2bTNvQ1JVUEVQMjRNUFg0RnV3RnFoMklUblByNXlzSWEz?=
- =?utf-8?B?Y2lRM2xsTkNHREtYZDNHTGVwUjBQWlhzM21jQmlyTjg0eWhlUmFaTC8zTys5?=
- =?utf-8?B?NzhNRkRpR3crUHRsSFNsTmpwQkZEN0FweUs4aXFrMk9mWjlhSGxoM1l3VzNH?=
- =?utf-8?B?dzJRRzJBNkhhRkZ3NXRwKzZFYWZTdWNKTUY4LzlHVDBOZU1SK1VPMGMwbXNI?=
- =?utf-8?B?MmNuOXdMNjZWVHlnWndoTzY2YSs1ZHErR3hCcWhRZHdtVjlWTjgwTWtGS3RP?=
- =?utf-8?B?ZjZ5Y2ZlVkpDQTYzc0dvYXBsY0paUjVwWk10VXZ2b1N6UDczNFpYeTM1SHlx?=
- =?utf-8?B?YXJEWms0RUNPeUx0VWpvZFNTN0tNWVkwcEI0TTRaTzRTR1pBVDl5dDMrWDNo?=
- =?utf-8?B?Q0xJMGNTV1FXeUMraHlYZzJRK1NZdFUyZHVaZkVxVlc2ZG1pVDVmTndVNms3?=
- =?utf-8?B?L0gxTmcrYWZIZmhCTlh1RVp1RHFBY2paRjlHa0JDL0NQdVRuamI2b2I3Rklw?=
- =?utf-8?B?QVViZmtjUjgvWG9abUp2UVJzaW5MeWp6NEhCZGRFU0J2eFVMajBBWjdrcmNl?=
- =?utf-8?B?cHVSV3ZFL3pSTHMwUU1qdTVIb002MjBabjZKM0dTNW9JNWxqblBXbXJHYzhZ?=
- =?utf-8?B?UEpRQXE5Mkt5TkN4dHFMeGYrS29id01qSDg4VUFkRndaK2RSZmhpNk8rUHdq?=
- =?utf-8?B?SFFZczdOUlFUbENhSHUwSnZ4OUhkSTRnZ1o0SHF0QUd2QS8veEwrMUNFQUdt?=
- =?utf-8?B?OWJVTTI1bzF0TTYvYnpQbE5QTXZaajFuQWR0S0cwNjNjOXVMTEVFRkVxdEcv?=
- =?utf-8?B?NEo3ZTUyS3ByV055eW5vZ3RCTSsrd2JGTmtMakRRbmFwcWcwUjdsM0R3MXpp?=
- =?utf-8?B?ZVJsSm10YW5yeE04Q09jYUNBK0ZmNmVFM3JoYjNRVENEN3R1MzViR0RoQjFX?=
- =?utf-8?B?SmNwR05qTUpZU08xcHJFTWVidzF6QUVwSDNTY0k0bFc3T2FQcExtd1hDUzM4?=
- =?utf-8?B?QkJQZ0xyVzM3MFZBREJ6ZFVxb0kyR2VKYWNaakZsWE96b1BTMGc1MzBsZE1W?=
- =?utf-8?B?WHJLNVZoTDErakI0dHg0dmlwN1p0dWE5SXJ1RktmSURhWjlid2RibE1Jc28w?=
- =?utf-8?B?Uk1ybXZ0RHhySndqTVY5L1BnMXdiTkpTQ3ZualpFcDJNTXlNTlJWL2ppQlRR?=
- =?utf-8?B?aDVqWnhsM3g4UEZjVFB2T3JzWGFIT2FlU0R4RmNzUnd4bHlkSDBuNENQNzlV?=
- =?utf-8?B?VDJHL0ViRUgrQWxrTEUrWVpUNGV5VjJMeWlJMFlCRHJVeXVRSjRLVG9qcVhD?=
- =?utf-8?B?SjZrSFdXZlc3c0xVMmNWYm82NEZRYklxM0k5NC9aSnRPQnpnK3gyK2llckxm?=
- =?utf-8?B?bmJBNjZBdElOcnBTVG1sNkNYRHZRNnU0Y0JWZzlOcUdQb2gybU1JMGpCYjVF?=
- =?utf-8?B?VXU1NnltdmhEeEV1N3pBQW01dmplSENFVlkxaU1aSmxNcGhpQXJpZjBZZnAw?=
- =?utf-8?B?OW1vMWU0WnJmYW92NFdyKzNMYmZhUFFjZWdjYU9VWk4veGxSZlBtc2loL1Rq?=
- =?utf-8?B?QVZXeHd1QzNwcVB5blA0by9Zd0JoNzdrVVBxVktRV1pVMnpKcW1NQis2S0ZW?=
- =?utf-8?B?RlB3a0FaU2NXMGoxTnFwSnZ1R0xBTFJFOWMzeGVUNUtmUFFOSVludWFyTzZE?=
- =?utf-8?B?ZWNQSmFQc00vWi9aRzdIQ1hRRkRnZExpTlZMNG85SFliRGwvcCtYRTFldUdW?=
- =?utf-8?B?NVNSclJnVVAxdkh3RmlES0t2ZUZoWVREc3o2c3RnK2VlT0FHd3hzWXl4bExK?=
- =?utf-8?B?cmh2N1Avcy9lS2xoeWpPTElUTXZNZmhrMEdCQTdpYlBQM0ZrdmZXb2FDcmxS?=
- =?utf-8?Q?m+AmBP5oMjJvmwnRnNpT8NPuhwvqRh2QkWM1c3ubTkyG?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6A45B15849C21841A510C577335A93D3@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C066F1D5ABF;
+	Fri, 15 Nov 2024 17:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731693062; cv=none; b=cFCmabh5cOirWszsD1vhJ5iTeLmgILkeLnxxoBH6Ae4/t0kwUsaU9IcUGOQIMpRpbweRbssPcVRbLTt/yzQJnDBtxExC492iEs2E6mfhdzfGxoszoZig3U0/SlmWUAnkpudUN3Ws8pPBBLxDDbQhbrN/7beNSOhQdeKV09FipTE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731693062; c=relaxed/simple;
+	bh=eOClkgrOVtMDm45l3c+YNZVXOx9yYAT8GkXLpLBSVLk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XwXfsiU9KRg0OHN6txgZ8h3DeijFI0ebkeyL6dz5stxdscyQ6AH7eEBaaKd4xajnXrilgcoYg3DUZWmp8z7FtpnsCVteTR92vx8ANzfjVjuIWTs9QgD6b5/LNgoW5X0pv9YBGigDGrGZyBeY24n4c05RNE0Q1BsNc+9l6Jfk5/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lHzpx8F+; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731693061; x=1763229061;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=eOClkgrOVtMDm45l3c+YNZVXOx9yYAT8GkXLpLBSVLk=;
+  b=lHzpx8F+nIml8OxrDKnd/kRvm7MR6lax+XpWrVyQ2d5Byf06klZHWOdQ
+   U+IgTdyPKYPhWpm1ZapKNBbAdAD7seOWtpmo7MAo4asQcKidYe4Hk5jAB
+   S4eplyZLVqf6TpoA7vdB/ukx+wMIcrnW2qDjbOmHPmkNUQgtN9Q6Z+KiQ
+   oyCqglXV48F70KGM4Qzi27hKZk7mvnkIgTSXOFoZnDUcJIAK2YKwM3Yzz
+   32QeQJfad6i90o1EFHyO2z/qLsaSWE7LbVOGyKDZ9NT6KinD0vyELZMzn
+   7llkPuOInnyObSk1JXXkLp0mCBQdZQ08gaeBmmo1MthWDtYo18auMxO0M
+   w==;
+X-CSE-ConnectionGUID: fT3isI6dT9C2KXelWCsUNA==
+X-CSE-MsgGUID: 8+Fyc/vlQXKKjX7plPlPPg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11257"; a="31552189"
+X-IronPort-AV: E=Sophos;i="6.12,157,1728975600"; 
+   d="scan'208";a="31552189"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 09:51:00 -0800
+X-CSE-ConnectionGUID: /PICrEOzSBOkM4HFyehSMw==
+X-CSE-MsgGUID: s1Pp92IeQPyEIC0WsvzYXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,157,1728975600"; 
+   d="scan'208";a="88386465"
+Received: from howardworkpc.ccr.corp.intel.com (HELO desk) ([10.125.145.119])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 09:50:58 -0800
+Date: Fri, 15 Nov 2024 09:50:47 -0800
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>, Amit Shah <amit@kernel.org>,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+	linux-doc@vger.kernel.org, amit.shah@amd.com,
+	thomas.lendacky@amd.com, bp@alien8.de, tglx@linutronix.de,
+	peterz@infradead.org, corbet@lwn.net, mingo@redhat.com,
+	dave.hansen@linux.intel.com, hpa@zytor.com, seanjc@google.com,
+	pbonzini@redhat.com, daniel.sneddon@linux.intel.com,
+	kai.huang@intel.com, sandipan.das@amd.com,
+	boris.ostrovsky@oracle.com, Babu.Moger@amd.com,
+	david.kaplan@amd.com, dwmw@amazon.co.uk
+Subject: Re: [RFC PATCH v2 1/3] x86: cpu/bugs: update SpectreRSB comments for
+ AMD
+Message-ID: <20241115175047.bszpeakeodajczav@desk>
+References: <20241111163913.36139-2-amit@kernel.org>
+ <20241111193304.fjysuttl6lypb6ng@jpoimboe>
+ <564a19e6-963d-4cd5-9144-2323bdb4f4e8@citrix.com>
+ <20241112014644.3p2a6te3sbh5x55c@jpoimboe>
+ <20241112214241.fzqq6sqszqd454ei@desk>
+ <20241113202105.py5imjdy7pctccqi@jpoimboe>
+ <20241114015505.6kghgq33i4m6jrm4@desk>
+ <20241114023141.n4n3zl7622gzsf75@jpoimboe>
+ <20241114075403.7wxou7g5udaljprv@desk>
+ <20241115054836.oubgh4jbyvjum4tk@jpoimboe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	oP2Ziy5FjLCoUJWd0d9z5HqaLJrvBTe3hkPZlpZl6mlIVyIWOgPD424mOXYeE0NHb0fS6tgFbe2h9dBldgzpUeUGpIsLKsfVC1mgvSgDQq+tYqp8DsTxv/6kEqu+Swqz5BPRhxWGI24byqkXQKDu/evDm69F1GhGNhmTdLnrRDEC9FIRavt17g81sO0yO7OvPn95CvIz8NZK6WjGRm7fwEei7lWWkQ1nMdDMmHQGurCiu2AqX9nyR4uRk+NmrN/iux7/eQ/Zbvjrf6mJMZoBBW1m+3qXg6rPQLamS2PYIuLwQ7s3u9A7Y5xgqPKMnkgJndySIYavvPS+y0y82HrkUvtunpopFP7budqJcctwiNUGqvMmxB5H6vGbbX5GlGaSF7eJDrsDQ0sOlty3wAaM1klWB2G6M0Rwn/o5b6SHFP7aY5FRkGVuPTdBoRpPSMnff1Pg5MddeAsLAnlURtkweKxq5ep7Pk+HoTHonQeGo4bXsbUj3AH2hkYf7vo+Gcb2uLoS50zoQgWoXpOKV7M7T/9Jr0RP214pXKSQz+qrAtvVtcBT0i2LKgXgl2EcZWdcHSLg85hcrImd1Vhq8rGlGJoSRH9+A3K4zOPbBUOCwI0=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR10MB7309.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d36abb74-b3ca-430b-6a2a-08dd059dda99
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Nov 2024 17:49:29.1713
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xSyPo74qYTDgTkN5JL82S+mBtiIRPhW8NOKOO793w5pjMPcDFE0yMg0VXHQceC6NgPKQzZzbNO1tqbD18fqmxwOwwJ65KwQM9QLP6q7MKH0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB7297
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-15_04,2024-11-14_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 spamscore=0
- adultscore=0 phishscore=0 malwarescore=0 mlxlogscore=999 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2411150150
-X-Proofpoint-ORIG-GUID: ht0xUWt6oYfYL8EN02OWnmZCG9qG5vVp
-X-Proofpoint-GUID: ht0xUWt6oYfYL8EN02OWnmZCG9qG5vVp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241115054836.oubgh4jbyvjum4tk@jpoimboe>
 
-DQoNCj4gT24gTm92IDE1LCAyMDI0LCBhdCA2OjQx4oCvQU0sIE1hdGhpZXUgRGVzbm95ZXJzIDxt
-YXRoaWV1LmRlc25veWVyc0BlZmZpY2lvcy5jb20+IHdyb3RlOg0KPiANCj4gT24gMjAyNC0xMS0x
-NCAwNToxNCwgUGV0ZXIgWmlqbHN0cmEgd3JvdGU6DQo+PiBPbiBXZWQsIE5vdiAxMywgMjAyNCBh
-dCAwMjozNjo1OFBNIC0wNTAwLCBNYXRoaWV1IERlc25veWVycyB3cm90ZToNCj4+PiBPbiAyMDI0
-LTExLTEzIDEzOjUwLCBQZXRlciBaaWpsc3RyYSB3cm90ZToNCj4+Pj4gT24gV2VkLCBOb3YgMTMs
-IDIwMjQgYXQgMTI6MDE6MjJBTSArMDAwMCwgUHJha2FzaCBTYW5nYXBwYSB3cm90ZToNCj4+Pj4g
-DQo+Pj4+PiBUaGlzIHBhdGNoIHNldCBpbXBsZW1lbnRzIHRoZSBhYm92ZSBtZW50aW9uZWQgNTB1
-cyBleHRlbnNpb24gdGltZSBhcyBwb3N0ZWQNCj4+Pj4+IGJ5IFBldGVyLiBCdXQgaW5zdGVhZCBv
-ZiB1c2luZyByZXN0YXJ0YWJsZSBzZXF1ZW5jZXMgYXMgQVBJIHRvIHNldCB0aGUgZmxhZw0KPj4+
-Pj4gdG8gcmVxdWVzdCB0aGUgZXh0ZW5zaW9uLCB0aGlzIHBhdGNoIHByb3Bvc2VzIGEgbmV3IEFQ
-SSB3aXRoIHVzZSBvZiBhIHBlcg0KPj4+Pj4gdGhyZWFkIHNoYXJlZCBzdHJ1Y3R1cmUgaW1wbGVt
-ZW50YXRpb24gZGVzY3JpYmVkIGJlbG93LiBUaGlzIHNoYXJlZCBzdHJ1Y3R1cmUNCj4+Pj4+IGlz
-IGFjY2Vzc2libGUgaW4gYm90aCB1c2VycyBwYWNlIGFuZCBrZXJuZWwuIFRoZSB1c2VyIHRocmVh
-ZCB3aWxsIHNldCB0aGUNCj4+Pj4+IGZsYWcgaW4gdGhpcyBzaGFyZWQgc3RydWN0dXJlIHRvIHJl
-cXVlc3QgZXhlY3V0aW9uIHRpbWUgZXh0ZW5zaW9uLg0KPj4+PiANCj4+Pj4gQnV0IHdoeSAtLSB3
-ZSBhbHJlYWR5IGhhdmUgcnNlcSwgZ2xpYmMgdXNlcyBpdCBieSBkZWZhdWx0LiBXaHkgYWRkIHll
-dA0KPj4+PiBhbm90aGVyIHRoaW5nPw0KPj4+IA0KPj4+IEluZGVlZCwgd2hhdCBJJ20gbm90IHNl
-ZWluZyBpbiB0aGlzIFJGQyBwYXRjaCBzZXJpZXMgY292ZXIgbGV0dGVyIGlzIGFuDQo+Pj4gZXhw
-bGFuYXRpb24gdGhhdCBqdXN0aWZpZXMgYWRkaW5nIHlldCBhbm90aGVyIHBlci10aHJlYWQgbWVt
-b3J5IGFyZWENCj4+PiBzaGFyZWQgYmV0d2VlbiBrZXJuZWwgYW5kIHVzZXJzcGFjZSB3aGVuIHdl
-IGhhdmUgZXh0ZW5zaWJsZSByc2VxDQo+Pj4gYWxyZWFkeS4NCj4+PiANCj4+PiBQZXRlciwgd2Fz
-IHRoZXJlIGFueXRoaW5nIGZ1bmRhbWVudGFsbHkgd3Jvbmcgd2l0aCB5b3VyIGFwcHJvYWNoIGJh
-c2VkDQo+Pj4gb24gcnNlcSA/IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xrbWwvMjAyMzEwMzAx
-MzI5NDkuR0EzODEyM0Bub2lzeS5wcm9ncmFtbWluZy5raWNrcy1hc3MubmV0DQo+PiBOb3QgdGhh
-dCBJIGNhbiByZW1lbWJlciwgYnV0IGl0J3MgYSBsb25nIHRpbWUgYWdvIDotKQ0KPj4+IFRoZSBt
-YWluIHRoaW5nIEkgd29uZGVyIGlzIHdoZXRoZXIgbG9hZGluZyB0aGUgcnNlcSBkZWxheSByZXNj
-aGVkIGZsYWcNCj4+PiBvbiByZXR1cm4gdG8gdXNlcnNwYWNlIGlzIHRvbyBsYXRlIGluIHlvdXIg
-cGF0Y2guDQo+PiBUb28gbGF0ZSBob3c/IEl0IG9ubHkgbG9hZHMgaXQgYXQgdGhlIHBvaW50IHdl
-IHdvdWxkJ3ZlIGNhbGxlZA0KPj4gc2NoZWR1bGUoKSAtLSBubyBwb2ludCBpbiBsb29raW5nIGF0
-IGl0IG90aGVyd2lzZSwgcmlnaHQ/DQo+IA0KPiBbLi4uXQ0KPiANCj4gRm9yIHRoZSBzcGVjaWZp
-YyByZXR1cm4tdG8tdXNlcnNwYWNlIHBhdGgsIEkgdGhpbmsgd2hlcmUgeW91J3ZlIHBsYWNlZA0K
-PiB0aGUgZGVsYXktcmVzY2hlZCBmbGFnIGNoZWNrIGlzIGZpbmUuDQo+IA0KPiBJJ20gY29uY2Vy
-bmVkIGFib3V0IG90aGVyIGNvZGUgcGF0aHMgdGhhdCBpbnZva2Ugc2NoZWR1bGUoKSBiZXNpZGVz
-DQo+IHJldHVybi10by11c2Vyc3BhY2UuIEZvciBpbnN0YW5jZToNCj4gDQo+IHJhd19pcnFlbnRy
-eV9leGl0X2NvbmRfcmVzY2hlZCgpOg0KPiANCj4gICAgICAgIGlmICghcHJlZW1wdF9jb3VudCgp
-KSB7DQo+IFsuLi5dDQo+ICAgICAgICAgICAgICAgIGlmIChuZWVkX3Jlc2NoZWQoKSkNCj4gICAg
-ICAgICAgICAgICAgICAgICAgICBwcmVlbXB0X3NjaGVkdWxlX2lycSgpOw0KPiAgICAgICAgfQ0K
-PiANCj4gQUZBSVUsIHRoaXMgY291bGQgYmUgdHJpZ2dlcmVkIGJ5IGFuIGludGVycnVwdCBoYW5k
-bGVyIGV4aXQgd2hlbiBuZXN0ZWQNCj4gb3ZlciBhIHBhZ2UgZmF1bHQgaGFuZGxlciwgZXhjZXB0
-aW9uIGhhbmRsZXIsIG9yIHN5c3RlbSBjYWxsLg0KPiANCj4gV2UgbWF5IGRlY2lkZSB0aGF0IHdl
-IGNhbm5vdCBjYXJlIGxlc3MgYWJvdXQgdGhvc2Ugc2NlbmFyaW9zLCBhbmQganVzdA0KPiBpZ25v
-cmUgdGhlIGRlbGF5LXJlc2NoZWQgZmxhZywgYnV0IGl0J3MgcmVsZXZhbnQgdG8gdGFrZSB0aG9z
-ZSBpbnRvDQo+IGNvbnNpZGVyYXRpb24gYW5kIGNsZWFybHkgZG9jdW1lbnQgdGhlIHJhdGlvbmFs
-ZSBiZWhpbmQgb3VyIGRlY2lzaW9uLg0KDQpEb27igJl0IHRoaW5rIHRoZSBkZWxheS1yZXNjaGVk
-IHdpbGwgYWRkcmVzcyBhbGwgc2NlbmFyaW9zIHdoZXJlIHByZWVtcHRpb24gY2FuIA0Kb2NjdXIg
-d2hlbiBpbiBjcml0aWNhbCBzZWN0aW9uLiAgV2UgY291bGQgYWltIHRvIGFkZHJlc3MgZnJlcXVl
-bnQgcGF0aHMgd2hlcmUNCmEgdGFzayBjYW4gZ2V0IHByZWVtcHRlZC4gIEluaXRpYWxseSB0aGUg
-aW50ZW50IHdhcyB0byBwcmV2ZW50IHByZWVtcHRpb24gbWFpbmx5DQphdCB0aGUgZW5kIG9mIHRp
-bWUgc2xpY2UsIGlmIHRoZSB0aHJlYWQgaXMgaW4gYSBjcml0aWNhbCBzZWN0aW9uIGluIHRoZSB1
-c2VyIHNwYWNlIGFuZCANCmhhcyByZXF1ZXN0ZWQgZGVsYXlpbmcgcmVzY2hlZHVsZS4uIA0KDQpB
-bm90aGVyIHBhdGggdG8gY29uc2lkZXIgaXMgdGhlIHdha2V1cHMgb2NjdXJyaW5nIG9uIGEgZGlm
-ZmVyZW50IGNwdSB3aGljaCBjb3VsZCANCmVucXVldWUgIGEgdGhyZWFkIGFuZCBhdHRlbXB0IHRv
-IHByZWVtcHQgdGhpcyB0aHJlYWQgd2hlbiBpdCBpcyBydW5uaW5nIGluIHRoZQ0KY3JpdGljYWwg
-c2VjdGlvbi4gU2hvdWxkIGl0IGNoZWNrIGlmIHRoZSB0aHJlYWQgcnVubmluZyBoYXMgYmVlbiBn
-cmFudGVkIGV4dHJhIHRpbWUgDQppLmUgdGhlIOKAmHRhc2tzaHJkX3NjaGVkX2RlbGF54oCZIGhh
-cyBiZWVuIHNldCBmb3IgdGhlIHJ1bm5pbmcgdGhyZWFkLCBhdm9pZCBzZXR0aW5nIA0KVElGX05F
-RURfUkVTQ0hFRCBpbiByZXNjaGVkX2N1cnIoKSBhbmQgc2VuZGluZyBJUEksIGllIGxpa2UgbGF6
-eSBwcmVlbXB0aW9uPyANCklmIOKAmXRhc2tzaHJkX3NjaGVkX2RlbGF54oCZIGhhcyBiZWVuIHNl
-dCB3ZSBrbm93IGl0IHdpbGwgZ2V0IHByZWVtcHRlZCAgZHVlIHRvIHRoZSANCnRpbWVyIHNvb24s
-IG9yIHRoZSB0YXNrIHdvdWxkIHNjaGVkX3lpZWxkKGlmIGl0IGlzIGEgd2VsbCBiZWhhdmluZyBh
-cHBsaWNhdGlvbikuDQoNCj4gDQo+IFRoYW5rcywNCj4gDQo+IE1hdGhpZXUNCj4gDQo+IC0tIA0K
-PiBNYXRoaWV1IERlc25veWVycw0KPiBFZmZpY2lPUyBJbmMuDQo+IGh0dHBzOi8vd3d3LmVmZmlj
-aW9zLmNvbQ0KPiANCg0K
+On Thu, Nov 14, 2024 at 09:48:36PM -0800, Josh Poimboeuf wrote:
+> According to the docs, classic IBRS also needs RSB filling at context
+> switch to protect against corrupt RSB entries (as opposed to RSB
+> underflow).
+
+Correct.
+
+> Something like so...
+> 
+> 
+> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> index 47a01d4028f6..7b9c0a21e478 100644
+> --- a/arch/x86/kernel/cpu/bugs.c
+> +++ b/arch/x86/kernel/cpu/bugs.c
+> @@ -1579,27 +1579,44 @@ static void __init spec_ctrl_disable_kernel_rrsba(void)
+>  	rrsba_disabled = true;
+>  }
+>  
+> -static void __init spectre_v2_determine_rsb_fill_type_at_vmexit(enum spectre_v2_mitigation mode)
+> +static void __init spectre_v2_mitigate_rsb(enum spectre_v2_mitigation mode)
+>  {
+>  	/*
+> -	 * Similar to context switches, there are two types of RSB attacks
+> -	 * after VM exit:
+> +	 * In general there are two types of RSB attacks:
+>  	 *
+> -	 * 1) RSB underflow
+> +	 * 1) RSB underflow ("Intel Retbleed")
+> +	 *
+> +	 *    Some Intel parts have "bottomless RSB".  When the RSB is empty,
+> +	 *    speculated return targets may come from the branch predictor,
+> +	 *    which could have a user-poisoned BTB or BHB entry.
+> +	 *
+> +	 *    user->user attacks are mitigated by IBPB on context switch.
+> +	 *
+> +	 *    user->kernel attacks via context switch are mitigated by IBRS,
+> +	 *    eIBRS, or RSB filling.
+> +	 *
+> +	 *    user->kernel attacks via kernel entry are mitigated by IBRS,
+> +	 *    eIBRS, or call depth tracking.
+> +	 *
+> +	 *    On VMEXIT, guest->host attacks are mitigated by IBRS, eIBRS, or
+> +	 *    RSB filling.
+>  	 *
+>  	 * 2) Poisoned RSB entry
+>  	 *
+> -	 * When retpoline is enabled, both are mitigated by filling/clearing
+> -	 * the RSB.
+> +	 *    On a context switch, the previous task can poison RSB entries
+> +	 *    used by the next task, controlling its speculative return
+> +	 *    targets.  Poisoned RSB entries can also be created by "AMD
+> +	 *    Retbleed" or SRSO.
+>  	 *
+> -	 * When IBRS is enabled, while #1 would be mitigated by the IBRS branch
+> -	 * prediction isolation protections, RSB still needs to be cleared
+> -	 * because of #2.  Note that SMEP provides no protection here, unlike
+> -	 * user-space-poisoned RSB entries.
+> +	 *    user->user attacks are mitigated by IBPB on context switch.
+>  	 *
+> -	 * eIBRS should protect against RSB poisoning, but if the EIBRS_PBRSB
+> -	 * bug is present then a LITE version of RSB protection is required,
+> -	 * just a single call needs to retire before a RET is executed.
+> +	 *    user->kernel attacks via context switch are prevented by
+> +	 *    SMEP+eIBRS+SRSO mitigations, or RSB clearing.
+> +	 *
+> +	 *    guest->host attacks are mitigated by eIBRS or RSB clearing on
+> +	 *    VMEXIT.  eIBRS implementations with X86_BUG_EIBRS_PBRSB still
+> +	 *    need "lite" RSB filling which retires a CALL before the first
+> +	 *    RET.
+>  	 */
+>  	switch (mode) {
+>  	case SPECTRE_V2_NONE:
+> @@ -1608,8 +1625,8 @@ static void __init spectre_v2_determine_rsb_fill_type_at_vmexit(enum spectre_v2_
+>  	case SPECTRE_V2_EIBRS_LFENCE:
+>  	case SPECTRE_V2_EIBRS:
+>  		if (boot_cpu_has_bug(X86_BUG_EIBRS_PBRSB)) {
+> -			setup_force_cpu_cap(X86_FEATURE_RSB_VMEXIT_LITE);
+>  			pr_info("Spectre v2 / PBRSB-eIBRS: Retire a single CALL on VMEXIT\n");
+> +			setup_force_cpu_cap(X86_FEATURE_RSB_VMEXIT_LITE);
+>  		}
+>  		return;
+>  
+> @@ -1617,12 +1634,13 @@ static void __init spectre_v2_determine_rsb_fill_type_at_vmexit(enum spectre_v2_
+>  	case SPECTRE_V2_RETPOLINE:
+>  	case SPECTRE_V2_LFENCE:
+>  	case SPECTRE_V2_IBRS:
+> +		pr_info("Spectre v2 / SpectreRSB : Filling RSB on context switch and VMEXIT\n");
+> +		setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
+>  		setup_force_cpu_cap(X86_FEATURE_RSB_VMEXIT);
+> -		pr_info("Spectre v2 / SpectreRSB : Filling RSB on VMEXIT\n");
+>  		return;
+>  	}
+>  
+> -	pr_warn_once("Unknown Spectre v2 mode, disabling RSB mitigation at VM exit");
+> +	pr_warn_once("Unknown Spectre v2 mode, disabling RSB mitigation\n");
+>  	dump_stack();
+>  }
+>  
+> @@ -1817,48 +1835,7 @@ static void __init spectre_v2_select_mitigation(void)
+>  	spectre_v2_enabled = mode;
+>  	pr_info("%s\n", spectre_v2_strings[mode]);
+>  
+> -	/*
+> -	 * If Spectre v2 protection has been enabled, fill the RSB during a
+> -	 * context switch.  In general there are two types of RSB attacks
+> -	 * across context switches, for which the CALLs/RETs may be unbalanced.
+> -	 *
+> -	 * 1) RSB underflow
+> -	 *
+> -	 *    Some Intel parts have "bottomless RSB".  When the RSB is empty,
+> -	 *    speculated return targets may come from the branch predictor,
+> -	 *    which could have a user-poisoned BTB or BHB entry.
+> -	 *
+> -	 *    AMD has it even worse: *all* returns are speculated from the BTB,
+> -	 *    regardless of the state of the RSB.
+> -	 *
+> -	 *    When IBRS or eIBRS is enabled, the "user -> kernel" attack
+> -	 *    scenario is mitigated by the IBRS branch prediction isolation
+> -	 *    properties, so the RSB buffer filling wouldn't be necessary to
+> -	 *    protect against this type of attack.
+> -	 *
+> -	 *    The "user -> user" attack scenario is mitigated by RSB filling.
+> -	 *
+> -	 * 2) Poisoned RSB entry
+> -	 *
+> -	 *    If the 'next' in-kernel return stack is shorter than 'prev',
+> -	 *    'next' could be tricked into speculating with a user-poisoned RSB
+> -	 *    entry.
+> -	 *
+> -	 *    The "user -> kernel" attack scenario is mitigated by SMEP and
+> -	 *    eIBRS.
+> -	 *
+> -	 *    The "user -> user" scenario, also known as SpectreBHB, requires
+> -	 *    RSB clearing.
+> -	 *
+> -	 * So to mitigate all cases, unconditionally fill RSB on context
+> -	 * switches.
+> -	 *
+> -	 * FIXME: Is this pointless for retbleed-affected AMD?
+> -	 */
+> -	setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
+> -	pr_info("Spectre v2 / SpectreRSB mitigation: Filling RSB on context switch\n");
+> -
+> -	spectre_v2_determine_rsb_fill_type_at_vmexit(mode);
+> +	spectre_v2_mitigate_rsb(mode);
+>  
+>  	/*
+>  	 * Retpoline protects the kernel, but doesn't protect firmware.  IBRS
+
+This LGTM.
+
+I think SPECTRE_V2_EIBRS_RETPOLINE is placed in the wrong leg, it
+doesn't need RSB filling on context switch, and only needs VMEXIT_LITE.
+Does below change on top of your patch look okay?
+
+---
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 7b9c0a21e478..d3b9a0d7a2b5 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -1622,6 +1622,7 @@ static void __init spectre_v2_mitigate_rsb(enum spectre_v2_mitigation mode)
+ 	case SPECTRE_V2_NONE:
+ 		return;
+ 
++	case SPECTRE_V2_EIBRS_RETPOLINE:
+ 	case SPECTRE_V2_EIBRS_LFENCE:
+ 	case SPECTRE_V2_EIBRS:
+ 		if (boot_cpu_has_bug(X86_BUG_EIBRS_PBRSB)) {
+@@ -1630,7 +1631,6 @@ static void __init spectre_v2_mitigate_rsb(enum spectre_v2_mitigation mode)
+ 		}
+ 		return;
+ 
+-	case SPECTRE_V2_EIBRS_RETPOLINE:
+ 	case SPECTRE_V2_RETPOLINE:
+ 	case SPECTRE_V2_LFENCE:
+ 	case SPECTRE_V2_IBRS:
 
