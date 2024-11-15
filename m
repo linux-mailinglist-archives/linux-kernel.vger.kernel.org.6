@@ -1,143 +1,109 @@
-Return-Path: <linux-kernel+bounces-411452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A2059CF9BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:27:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2BC59CF9C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:28:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 226861F24B66
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:27:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 353942823A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4248519004B;
-	Fri, 15 Nov 2024 22:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A9519006B;
+	Fri, 15 Nov 2024 22:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bkwDMOyC"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="KSvdt2+v"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A50E186E56;
-	Fri, 15 Nov 2024 22:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F3F187876
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 22:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731709669; cv=none; b=pjz39AEWtFJGGDXIcifGybfaHof0zZra/zgoQGwfwWDy9BGTtYbpflYScCCM8LCiMPx9NNLpL601biBIeAfEWTqwe2AmS9GfQaOKPym1SEyf+g8C0ubg9OWEHLpPIEJEyLikf1CBMuyqHa5Cns9cx+8/Z//jOTY9fjNX1ljyBRo=
+	t=1731709723; cv=none; b=Y/AXEIruG6IOm1xO23UgmuRTsIZ4yFGr2Q75o4o8MIaVVGOm8uWle/MNlQwxS/mED3mqORic0QGYQuGfNn+ILOAhLSZ/osAoMS95S8rOY1hoVKSJ7fJ/px3hfUthSozOWYOEscXHLtpoPfNh9LCIpd7Ryp3kH5jZrmx5Vij1mXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731709669; c=relaxed/simple;
-	bh=sKTA+y2N6NtmY9ipmfTfJK99DKc9W0SoDGDw2WjdHaQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dGJVl3H4Riwp2Mg3/IB3j6ODwKnIIJeTa5xCfCk0AS6lcoC054Fz/supYYyP1/LG7JP2SahCMCagrNFQCy9QKaiVa2uEu/oufhgbVKCd3RlTLHp9ihe3QDmlcpSJNYMz99OvoIrzktgxDO1YHc3xGltOtl16eJeNZimqW/71glA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bkwDMOyC; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AFLQIiq003900;
-	Fri, 15 Nov 2024 22:27:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=qF+mrQmSnUbowuzaVvbuJVUuttwpmgemw8P54JHvW
-	pM=; b=bkwDMOyC2ZStTUq3RCfq6jBWOqf3MIwUkQi2feVIVV+jMnzpQRSQOyyyL
-	5TOwYrvO6YuOsOI/8KTq3iXhGEy/r903MTUCqDlp1TL7Kb6qTQ9f+kBOduvOuTgl
-	i7SjUFWlqeKmANnUF84Wb3t6vTxq3C8uxl1V/qCxdVPft/BwgY8FsOsvvH4BlUIO
-	g5ipC/9LZsFLu3AEuVEuxZymQywmFF46c1qiIsxnPxDYhmg1Cw3ysht5twKQpIfP
-	ByYMCJnktw0TrbvxATE8p0ZBCzUmbQMcSWqrXBAVWhUj3++SEFbg6QJSvKqZafcN
-	zAaVTN3lDvUluwAPTRQNAfIzhEp2A==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42wuy1nth8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 22:27:25 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AFLRhAg029721;
-	Fri, 15 Nov 2024 22:27:23 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42tkjmxccu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 22:27:23 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AFMRN2j48300424
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 15 Nov 2024 22:27:23 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 200F85805E;
-	Fri, 15 Nov 2024 22:27:23 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E347858051;
-	Fri, 15 Nov 2024 22:27:22 +0000 (GMT)
-Received: from slate16.aus.stglabs.ibm.com (unknown [9.61.159.220])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 15 Nov 2024 22:27:22 +0000 (GMT)
-From: Eddie James <eajames@linux.ibm.com>
-To: linux-aspeed@lists.ozlabs.org
-Cc: andrew@codeconstruct.com.au, joel@jms.id.au, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Eddie James <eajames@linux.ibm.com>
-Subject: [PATCH v2] arm: dts: aspeed: Blueridge and Rainer: Add VRM presence GPIOs
-Date: Fri, 15 Nov 2024 16:27:21 -0600
-Message-ID: <20241115222721.1564735-1-eajames@linux.ibm.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1731709723; c=relaxed/simple;
+	bh=i2IhHfulyS75UGsF7/PqW4S9kdXZVMBDzqNzBpLvNdI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=smCC+9yPOxvJBn1/zsyYKjbyoXtVP5lckWQU8W/myrbjxKKoQ5wRvZz7jSr4llYgAwka7cqeP7vTyG+xemLnAyL3dBxa7NRhJySYkA54dpxexCzbu8gl2xuzqhrUwgHAH7F986frOrU9ZfPU91DoBri0n6UGPta/cJxRQ3ahh9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=KSvdt2+v; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7b18da94ba9so194374785a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 14:28:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1731709720; x=1732314520; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=J+8l3D//FSODytWJh9ARkg7rtz2NFPnk8CFXEo496Tk=;
+        b=KSvdt2+vnepVepyfsLWSDLRaUI0/1H1+KPbWPaDa0UtWEIny2rkZ9zFN8bTvapJ1PZ
+         PfjSRzrq2HgtaaR8hZK2WAf/OFAAPlt/xBywBuDhU5JUAvUU9qbqkHUCkSuhXdD0xDEC
+         Z2tkB3HZhP3ZwhUa3KFiuIW/X0MhJ3iNBW3UY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731709720; x=1732314520;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J+8l3D//FSODytWJh9ARkg7rtz2NFPnk8CFXEo496Tk=;
+        b=hdddbBmAYcdzZMV9F0I7ytJpuDBoDOU1jeQmtJieoifJ28LCE/nLUqVpsBPQtoFkL4
+         moDdMDDmEfgLLD5UgT90GKj5Md2whVG+QMQoCB4rrmhGmiPm+EZn15WW3ujIEdneM6j9
+         IIvauwfHBk8OcZghaKXikZC7G+5dZqrLi2I8i/DRNd2DtbPHQzORAU8jCkp1djsqPUJo
+         shH2RWDSC5m98D9WBBsfG1HehtR/9FhoR+D4YV/5ee9E7SEO3on3mX5JAn5JRbiw32Wq
+         fG8l4SxZpaqZOFADG2g+NUAd2DxdJ3witIb0AY5+FZam6tReMhLxTEzTFCvSv4QrD9pC
+         R1Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCUiR404yKCBNRQrAkElgUiaVfwMbIj/dQePEPBoXagRws5wuIhP65p28o8XOtb8NTLD4hQjSC+Qx72MXmQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs1pSTER5tosTN/v9OrZmpoqs7EZ/Eo7xSGAEnbo8TJO60n/TM
+	HYDd+IZ3nSI5efBgBVDJeEmetiy4pX6zXm8m7iO7cglNX1d7OPKJXMb4EEEBBQ==
+X-Google-Smtp-Source: AGHT+IHEJRVcqkSvSHdB5vLd3VF5G5QTq3MPd7V7tt3ym0x6SbftfZEGWwJgBwj4lbxJ2I1pfgtbmQ==
+X-Received: by 2002:a05:620a:1a9d:b0:7ac:e8bf:894a with SMTP id af79cd13be357-7b35a51f0d2mr1310167785a.20.1731709720684;
+        Fri, 15 Nov 2024 14:28:40 -0800 (PST)
+Received: from JRM7P7Q02P.dhcp.broadcom.net ([192.19.144.250])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4635a9eefd0sm24560391cf.27.2024.11.15.14.28.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 14:28:40 -0800 (PST)
+From: Andy Gospodarek <andrew.gospodarek@broadcom.com>
+X-Google-Original-From: Andy Gospodarek <gospo@broadcom.com>
+Date: Fri, 15 Nov 2024 17:28:37 -0500
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Jakub Kicinski <kuba@kernel.org>, bhelgaas@google.com,
+	Wei Huang <wei.huang2@amd.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	asml.silence@gmail.com, almasrymina@google.com,
+	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
+	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
+	manoj.panicker2@amd.com, Eric.VanTassell@amd.com
+Subject: Re: [PATCH V1 1/2] bnxt_en: Add TPH support in BNXT driver
+Message-ID: <ZzfLFSvHCaPgVPzH@JRM7P7Q02P.dhcp.broadcom.net>
+References: <20241115140434.50457691@kernel.org>
+ <20241115222038.GA2063216@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: MSJwhyRl3RV_-5CFans8ZY7eUkqKx3kg
-X-Proofpoint-GUID: MSJwhyRl3RV_-5CFans8ZY7eUkqKx3kg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 spamscore=0 priorityscore=1501 mlxscore=0 impostorscore=0
- clxscore=1015 adultscore=0 mlxlogscore=435 malwarescore=0 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411150186
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241115222038.GA2063216@bhelgaas>
 
-Add GPIO line names to the GPIO expander to describe DCM and
-VRM presence detection lines.
+On Fri, Nov 15, 2024 at 04:20:38PM -0600, Bjorn Helgaas wrote:
+> On Fri, Nov 15, 2024 at 02:04:34PM -0800, Jakub Kicinski wrote:
+> > ...
+> > Bjorn, do you have a strong preference to have a user of the TPH code
+> > merged as part of 6.13?  We're very close to the merge window, I'm not
+> > sure build bots etc. will have enough time to hammer this code.
+> > My weak preference would be to punt these driver changes to 6.14
+> > avoid all the conflicts and risks (unless Linus gives us another week.)
+> 
+> I do not have a preference.  The PCI core changes are queued for
+> v6.13, so driver changes will be able to go the normal netdev route
+> for v6.14.
+> 
+> I agree it seems late to add significant things for v6.13.
+> 
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
----
-Changes since v1:
- - Fix lines that were too long
-
- arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge.dts | 5 +++--
- arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier.dts   | 5 +++--
- 2 files changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge.dts
-index 5f9a46c2abb8..bc4c46235421 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge.dts
-@@ -1232,8 +1232,9 @@ led-controller@60 {
- 		#gpio-cells = <2>;
- 
- 		gpio-line-names =
--			"", "", "", "", "", "", "", "",
--			"", "", "", "", "", "", "power-config-full-load", "";
-+			"", "", "", "", "", "", "P10_DCM0_PRES", "P10_DCM1_PRES",
-+			"", "", "", "", "PRESENT_VRM_DCM0_N", "PRESENT_VRM_DCM1_N",
-+			"power-config-full-load", "";
- 	};
- 
- 	led-controller@61 {
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier.dts
-index a4aec3010456..638a2c1c7892 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier.dts
-@@ -1280,8 +1280,9 @@ pca_pres3: pca9552@60 {
- 		#gpio-cells = <2>;
- 
- 		gpio-line-names =
--			"", "", "", "", "", "", "", "",
--			"", "", "", "", "", "", "power-config-full-load", "";
-+			"", "", "", "", "", "", "P10_DCM0_PRES", "P10_DCM1_PRES",
-+			"", "", "", "", "PRESENT_VRM_DCM0_N", "PRESENT_VRM_DCM1_N",
-+			"power-config-full-load", "";
- 	};
- 
- 	pca_pres2: pca9552@61 {
--- 
-2.43.5
+Excellent.  Thank you!
 
 
