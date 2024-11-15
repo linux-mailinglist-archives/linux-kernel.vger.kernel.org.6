@@ -1,93 +1,91 @@
-Return-Path: <linux-kernel+bounces-411505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 517ED9CFB3F
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:35:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 273999CFB46
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:40:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17822285545
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:35:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39A95B25DD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AB71AE009;
-	Fri, 15 Nov 2024 23:35:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E341ADFF9;
+	Fri, 15 Nov 2024 23:40:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SWd4Fyxc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LMNdaGS6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC5216631C;
-	Fri, 15 Nov 2024 23:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DAC1AAE1E;
+	Fri, 15 Nov 2024 23:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731713728; cv=none; b=BOv/nfrJNV5J0AB0LdLgzQ9y8Sau2Kuey+i55pi+Xm9GIRRDEI8aBlpqearghPLCezsISwccNrcFhO5VFsAIKw7OQaR6G+FNbev+CP8gQOEDf626oJidpD+msQUMqf37lL4fNVq7d3IkyBbRljd9KP1o4V6viWjbKmPmC3o7HfM=
+	t=1731714021; cv=none; b=hUIX6UNDER4RTdcJq16Ab8pj38UuWEyGtiPlUaEMtqV4NnWs2m51QfROlaiQ96Upijm9qQrVxcjzXH9RMH1YLgGqBTjRWe0slR8i2RO6bKppHP/IEt14r3YuPEk7QFeqXl3Ovq9AfwsUKJYlIqMUAEFZiwQjLO9eSxnHk8eQI/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731713728; c=relaxed/simple;
-	bh=+0nSqXJMNPJie6Agi0DCflpUksVQqJLNIcznPm67J68=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pzWJtHq4vv1JbdBbp338G1ATWPxqT0zYhS6MQQ4nBW+a/ydVEA9MP3/VTKSYZdcc8+inR/P3q6DWGf6KtTB4OerM4ajRPMUUzczEFZEQKCcT4h6WyuAAwwuUcJphUvZPdxme75H0BwZKTO4JvJCpePHYHIS2Xi4c4f0qQ1c9+r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SWd4Fyxc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 018E7C4CECF;
-	Fri, 15 Nov 2024 23:35:26 +0000 (UTC)
+	s=arc-20240116; t=1731714021; c=relaxed/simple;
+	bh=7aZ+QLZkMJD7SSoh7nu8VDLzts57ruPUVHaX0ERm+vc=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=LJEfD3pYeWBCnVxDlJDkDRxoLjJjd3DlU7X4majGsfXwEIOGYk5DEITeXnmpbxUh79MBPSXMt1NTbcZkII9scrtV2dLU+zCl2jgLLAyjuT6n3PiOAlTrAon8impvKgbj+liHQQ1/A+a7SaR1BqKe79wH9c3OsCC8jqkrfP7/0kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LMNdaGS6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27B8DC4CECF;
+	Fri, 15 Nov 2024 23:40:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731713727;
-	bh=+0nSqXJMNPJie6Agi0DCflpUksVQqJLNIcznPm67J68=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SWd4Fyxcy6vkPAs/DoAyKv+eu9nnqiy9VDr1E7w6DAOPjGk3sTNyu3CQVJ1ftQ1Vl
-	 KQx7V76ZwBrflcMdU07dZ08pvCiVuMniy4GhDYMkJ/3vahjg0pawSvaX+3JhHfGywU
-	 5B5tE+7wI6tq8XfAriVL28lj/YBhGHcMmGeFVzCIrjSd9YzsgSS8omaH0MLx3DWaMn
-	 /8V/Hup5AfF5QtyTL3sde4ia3ZIuFa+PC0Cl0GrtcqcB8u0C+PbGN/aNnGXfwN1oRZ
-	 wKyFrTPI/2pLhWCxOGsAbPXDBSZL+32gxSUIudNzbcxe8lV0SDX6LcluNtG1LiyPmb
-	 wMVTTXTFPHQrg==
-Date: Fri, 15 Nov 2024 15:35:26 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Xiao Liang <shaw.leon@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, Kuniyuki
- Iwashima <kuniyu@amazon.com>, Donald Hunter <donald.hunter@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Ido
- Schimmel <idosch@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>, Simon
- Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>, Jiri Pirko
- <jiri@resnulli.us>, Hangbin Liu <liuhangbin@gmail.com>,
- linux-rdma@vger.kernel.org, linux-can@vger.kernel.org,
- osmocom-net-gprs@lists.osmocom.org, bpf@vger.kernel.org,
- linux-ppp@vger.kernel.org, wireguard@lists.zx2c4.com,
- linux-wireless@vger.kernel.org, b.a.t.m.a.n@lists.open-mesh.org,
- bridge@lists.linux.dev, linux-wpan@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 4/6] rtnetlink: Decouple net namespaces in
- rtnl_newlink_create()
-Message-ID: <20241115153526.3582ebcd@kernel.org>
-In-Reply-To: <20241113125715.150201-5-shaw.leon@gmail.com>
-References: <20241113125715.150201-1-shaw.leon@gmail.com>
-	<20241113125715.150201-5-shaw.leon@gmail.com>
+	s=k20201202; t=1731714021;
+	bh=7aZ+QLZkMJD7SSoh7nu8VDLzts57ruPUVHaX0ERm+vc=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=LMNdaGS6AZUuqq6wqUrQ5/wWZslOwaQMhuzzJsnh8UhYPjPp0HaF8Wzi3IGNLGpsJ
+	 UhVn7vEHgjJ9VbXwv62WFXFRg7Ey79wZBWL3S/5Iufd0osb5J0isQ8H7v/+UiB/qMV
+	 fxXlNM8ngQkG6zYh1P6+Pmie2PDGSk88iXxdHtdG8WGiBOg89Iag6RRiDnH7CXEnI7
+	 5cFayrMSns5Clam43dbxVh7R88uoftJLutRkAwUWoviJZcfEXyOVgSBkcQWsrjQ3of
+	 FL/XcUySybRXeVd+RluGJAfSFcM4/+ymfU146Nbe5YJy/UJDYam2wIWDss1NuYutJG
+	 fwvypXvvz+5fA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E6F3809A80;
+	Fri, 15 Nov 2024 23:40:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: phy: microchip_t1: Clause-45 PHY loopback
+ support for LAN887x
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173171403198.2770408.408499941921229541.git-patchwork-notify@kernel.org>
+Date: Fri, 15 Nov 2024 23:40:31 +0000
+References: <20241114101951.382996-1-Tarun.Alle@microchip.com>
+In-Reply-To: <20241114101951.382996-1-Tarun.Alle@microchip.com>
+To: Tarun Alle <tarun.alle@microchip.com>
+Cc: arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com, andrew@lunn.ch,
+ hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 13 Nov 2024 20:57:13 +0800 Xiao Liang wrote:
-> +/**
-> + *	struct rtnl_link_nets - net namespace context of newlink.
-> + *
-> + *	@src_net: Source netns of rtnetlink socket
-> + *	@link_net: Link netns by IFLA_LINK_NETNSID, NULL if not specified.
-> + */
-> +struct rtnl_link_nets {
-> +	struct net *src_net;
-> +	struct net *link_net;
-> +};
+Hello:
 
-Let's not limit ourselves to passing just netns via this struct.
-Let's call it rtnl_newlink_args or params.
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-The first patch of the series got merged independently so you'll
-need to respin.
+On Thu, 14 Nov 2024 15:49:51 +0530 you wrote:
+> Adds support for clause-45 PHY loopback for the Microchip LAN887x driver.
+> 
+> Signed-off-by: Tarun Alle <Tarun.Alle@microchip.com>
+> ---
+>  drivers/net/phy/microchip_t1.c | 1 +
+>  1 file changed, 1 insertion(+)
+
+Here is the summary with links:
+  - [net-next] net: phy: microchip_t1: Clause-45 PHY loopback support for LAN887x
+    https://git.kernel.org/netdev/net-next/c/025b2bbc5ab1
+
+You are awesome, thank you!
 -- 
-pw-bot: cr
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
