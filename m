@@ -1,122 +1,101 @@
-Return-Path: <linux-kernel+bounces-410206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2264C9CD645
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 05:43:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E3819CD642
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 05:43:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C144F1F2232E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 04:43:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDC64B231F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 04:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651E1176AB7;
-	Fri, 15 Nov 2024 04:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E978174EF0;
+	Fri, 15 Nov 2024 04:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4j7+AppQ"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dGiwoA9G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0E542ABD
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 04:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7329B42ABD;
+	Fri, 15 Nov 2024 04:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731645812; cv=none; b=YbpLsiPdEpVPFNt6bH7mVnlNF5alAyQtHAw/ZT/l7LzCVIgu/XJM9CPCzyeXL98Fah1vM+fZtfrKkcdIo4tB/iBRYXyFfO0VorEtVv/jc+ilKQVOHeyubVn6kCrLQGnUA9UmXPKe+nsy0no65vkXzy4+j9/UZimDhbsnfmI9y0w=
+	t=1731645801; cv=none; b=dgEVWN5lymCh0ZronN0wa+UR1C4GBozzymGQg7OTImPZ7kImfNpHGlZRIbbr7kDnOBB3gSDsrFlOSg2ieER7J/rJZGpY16ID7jVREQO9m7FzcnbnCep0LWgrzDeZHyqvTdit6jPlIr/ugXnRwRcuTiIiNoe5Wtah3iWR9Gh+nQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731645812; c=relaxed/simple;
-	bh=Eb8fbw9GSmaI50VtSRzTOM9uZerZsPdO3Ji/RvA9dqo=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=hGXp9HxFvdcSkfyyu9Qjlb72Hj7BD/7O5Vx7R+stiePAlfPKgsXoDzwIWcr1VxcCQHQQmmUNcM/Bm4pltwxa8eqiw30B5Ur7ooCiwg3W/tWDhzq73vyNYFaNH4TWzmJc/a50TAcI5On9IDWl5lUbdZWrSMpJZmLz2xZnsNCCLtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--brendanhiggins.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4j7+AppQ; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--brendanhiggins.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e59dc7df64so15453927b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 20:43:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731645810; x=1732250610; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=SWTmFeTgm2VLDhjQCMJox51wxvKAPwETC9oW5QsHWQ8=;
-        b=4j7+AppQ41RQnSzcFQvq1Lj4J+1Y75wwuXb1iuMrhKtxA8RYq5CqAAVUo8TKD+g1Ku
-         OFmODR85ko/v5BEquB2qUVLCsvqSgktM1gG2BrwjORKx58En5PuR7i0fRoP7BIYbeZAt
-         yeCQ1THncC4sx47/wDmlXM6vmMfwjhxUwx7UomJ+VlVAPvdH9fo0d9ayV3avm6HbLcKR
-         z0XxpdTx4hzDZJ7JsBD1GXEsqDiL/U5mujjWnLkaPlHHImul5nio6SC4hp4xvDcAr28K
-         V56lm/zXg+V5DVTZ7V/THNRbrtzCidqCUvuaWqYY0tJ8sffMc4fcbiUBflkoJWXLv6dt
-         g7zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731645810; x=1732250610;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SWTmFeTgm2VLDhjQCMJox51wxvKAPwETC9oW5QsHWQ8=;
-        b=ZR2hyQFniK7eQCVLvQOpKNFjb1Xm7K2/2crTb63PUbzkp2x51OCTJzVSe5sDRtmff5
-         S2XwSs7rGmrr66vO8FJGqT/f41ai4dp5eOPT9ovksZrd12LIvEvgbMdkaA7/2hsJ+cD1
-         jrtrCt/fuENvDdDCexggcVCdNGlJ8x3SWCSMXDmOUGBFICHGZxHokkEFz54CnA7lzXW4
-         5kprCJFDfosYNv/YWEANZWUtY3a2mQreJHu4J7rO8JCyZINUhTvito6UeTj3AO72CzkI
-         mqxusdNvpwagn9//ZbQbyLlGmwcVyaiMTmJD75ZCQOMiAhzmc2wb9up1iTlc5JKj1MDL
-         KEpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWgKVSoIocx4bJGNXDxI+50HEWvCI+m7pVFYbtyzuRk+hbWMdcZRc/sstDhTqciZwXhlstFMfHL3ldBMaE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNlIpEN5wsAP9+a4VEEGI4Gql/rCwC90aqsw5dO+/q7ymvaecr
-	/Ss8m229T4MgrYeBoWNSAl94hFWxybjvhyChg0XlsYAfnCqf9GWBvInI/kT7MBaJrAY9IC2hfvd
-	Y3nYhc3QXZg6WKpuYgkxP8XhG5/RNNz4nvQ==
-X-Google-Smtp-Source: AGHT+IEJ4NE2/XuDDDNAEKvda+FMnKUt6iMnc1swX3o47JMptB20Xn++7Qkq+lJu0qkPYYpm82OXCWt2SDYG5Lf2Rsq/yA==
-X-Received: from brendan-cloud.c.googlers.com ([fda3:e722:ac3:cc00:141:be02:ac12:7acb])
- (user=brendanhiggins job=sendgmr) by 2002:a05:690c:fca:b0:6ec:b10d:5745 with
- SMTP id 00721157ae682-6ee55017265mr1428467b3.3.1731645810171; Thu, 14 Nov
- 2024 20:43:30 -0800 (PST)
-Date: Fri, 15 Nov 2024 04:43:03 +0000
+	s=arc-20240116; t=1731645801; c=relaxed/simple;
+	bh=DlEsP+R7bMUbur9zCqIgTBikFKZDRZbyJP2pLEJLiHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mCv+WpbMcGdYlntkkIGBpHgX/lbEdDY3YbIpIeYE4RkBQQdUqehQQvBbQPWPFgE7DV3mxHsOMyRKeIXy9CnqSFlPO1BYAv8cg5MCD1T1tyZFGdjmNRHgdPw5kSiIgCNVZXUVGXxZlpHNebhoR873sDCL6Te/e6DhHyyWoDCOgiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dGiwoA9G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52AD2C4CECF;
+	Fri, 15 Nov 2024 04:43:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1731645800;
+	bh=DlEsP+R7bMUbur9zCqIgTBikFKZDRZbyJP2pLEJLiHM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dGiwoA9G0C49ECkaww/j82gV3tokxBo19EFieLL5RBQsC4Watl9yAjAYx8f3Y/IUT
+	 cDzT1Nz5RPs6nHCVzE7QJMQLXECQgwHvZWfMxB6+rqUn7xUP+iTrzBQTwN1vWstNT/
+	 dXIRbeKLXrMAIscwovqfoAGOhBrx5RMzuNtXgJeg=
+Date: Fri, 15 Nov 2024 05:43:16 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Werner Sembach <wse@tuxedocomputers.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>, tux@tuxedocomputers.com,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Leemhuis <linux@leemhuis.info>
+Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
+ symbols
+Message-ID: <2024111557-unlighted-giggle-0d86@gregkh>
+References: <20241114103133.547032-4-ukleinek@kernel.org>
+ <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241115044303.50877-1-brendanhiggins@google.com>
-Subject: [RFC v1] MAINTAINERS: transfer i2c-aspeed maintainership from Brendan
- to Ryan
-From: Brendan Higgins <brendanhiggins@google.com>
-To: tommy_huang@aspeedtech.com, benh@kernel.crashing.org, joel@jms.id.au, 
-	andi.shyti@kernel.org, andrew@codeconstruct.com.au, wsa@kernel.org, 
-	ryan_chen@aspeedtech.com
-Cc: linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org, 
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	BMC-SW@aspeedtech.com, brendan.higgins@linux.dev, 
-	Brendan Higgins <brendanhiggins@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
 
-Remove Brendan Higgins <brendanhiggins@google.com> from i2c-aspeed entry
-and replace with Ryan Chen <ryan_chen@aspeedtech.com>.
+On Thu, Nov 14, 2024 at 11:49:04AM +0100, Werner Sembach wrote:
+> Hello,
+> 
+> Am 14.11.24 um 11:31 schrieb Uwe Kleine-König:
+> > Hello,
+> > 
+> > the kernel modules provided by Tuxedo on
+> > https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers
+> > are licensed under GPLv3 or later. This is incompatible with the
+> > kernel's license and so makes it impossible for distributions and other
+> > third parties to support these at least in pre-compiled form and so
+> > limits user experience and the possibilities to work on mainlining these
+> > drivers.
+> > 
+> > This incompatibility is created on purpose to control the upstream
+> > process. See https://fosstodon.org/@kernellogger/113423314337991594 for
+> > a nice summary of the situation and some further links about the issue.
+> > 
+> > Note that the pull request that fixed the MODULE_LICENSE invocations to
+> > stop claiming GPL(v2) compatibility was accepted and then immediately
+> > reverted "for the time being until the legal stuff is sorted out"
+> > (https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/a8c09b6c2ce6393fe39d8652d133af9f06cfb427).
+> 
+> As already being implied by that commit message, this is sadly not an issue
+> that can be sorted out over night.
+> 
+> We ended up in this situation as MODULE_LICENSE("GPL") on its own does not
+> hint at GPL v2, if one is not aware of the license definition table in the
+> documentation.
 
-Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
----
-I am leaving Google and am going through and cleaning up my @google.com
-address in the relevant places. I was just going to remove myself from
-the ASPEED I2C DRIVER since I haven't been paying attention to it, but
-then I saw Ryan is adding a file for the I2C functions on 2600, which
-made my think: Should I replace myself with Ryan as the maintainer?
+That's why it is documented, to explain this very thing.  Please don't
+suggest that documenting this is somehow not providing a hint.  That's
+just not going to fly with any lawyer who reads any of this, sorry.
 
-I see that I am the only person actually listed as the maintainer at the
-moment, and I don't want to leave this in an unmaintained state. What
-does everyone think? Are we cool with Ryan as the new maintainer?
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b878ddc99f94e..e7fba34947f5f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2195,7 +2195,7 @@ F:	drivers/mmc/host/usdhi6rol0.c
- F:	drivers/pinctrl/pinctrl-artpec*
- 
- ARM/ASPEED I2C DRIVER
--M:	Brendan Higgins <brendanhiggins@google.com>
-+M:	Ryan Chen <ryan_chen@aspeedtech.com>
- R:	Benjamin Herrenschmidt <benh@kernel.crashing.org>
- R:	Joel Stanley <joel@jms.id.au>
- L:	linux-i2c@vger.kernel.org
-
-base-commit: cfaaa7d010d1fc58f9717fcc8591201e741d2d49
--- 
-2.47.0.338.g60cca15819-goog
-
+greg k-h
 
