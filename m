@@ -1,125 +1,349 @@
-Return-Path: <linux-kernel+bounces-411118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B3779CF34C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:51:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63A8C9CF3C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:18:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B6421F23BA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:51:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 739A9B2BA9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB7E1D90B3;
-	Fri, 15 Nov 2024 17:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49821D6DDC;
+	Fri, 15 Nov 2024 17:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ehg5mtzN"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DZzArRzj"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A4017BB38;
-	Fri, 15 Nov 2024 17:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E233D1D435C
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731693072; cv=none; b=P+E1EBR4ntuQKcYfumLGgN35xuokm1oVC/05fL4T8nWf+k6/QASSNIFYVZ5DZfw57CWX4V8aNBnA2oEX0D/xRLsBUkdWTq9+KesjC6ytFACXpXwWFDJZL0x+mS7yJif5E0Cp7Ks308AXCnq9SXMQc2HeDBrqnYMeQWblelThuRA=
+	t=1731693121; cv=none; b=gbf2OZh9j4BgjttNTd3T3zpNokyIO3U3DWZCdVEox2SJhOqeM6dlAUnLZmnOe13eUJNzg7EXWJRuHUGOG/PVc/K16xMgLr3UV5W2c3SscqTmtKb5uSFooupqh+hu7sG80J1GbMaP7DLwS+uoFgX7OqQTFwg3FXSRdNN1GXL8HeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731693072; c=relaxed/simple;
-	bh=uJgYjJE0jR1lchCHkVbwdJluL2aX0+r1z+kOxGVkbHM=;
+	s=arc-20240116; t=1731693121; c=relaxed/simple;
+	bh=09hYKCgXyDUZhuZQR4UkViK/zC1/odV9u3WUWthEMVw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cU03d7znpczkfw6hmK4mDTLRa2/q9cnid2+dAnJGKKYvLQ8RfoeYsd8OfRYTSUvMb/WimuRbNheqWwxGtSpL4J/yHHLpUdYP2Wz3ChGNyzR+w39RjAdrCkB1mLUQqYJuayGkOMI0jbE6DaXv6cPX55TU+3uwZAsHej4MQX6UZiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ehg5mtzN; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=GYQEl1wUEVXzOH0/nz8Ab4ikFSAxUZbnN5Q7yZ/M1Rs=; b=ehg5mtzNUmZnnTL99vDMrVL9ql
-	0+X3kc11AJyC6U7ptYtxyJfmF8Tx3t/YdXLcg/9nT+xqyXrOxs2plmE5Ea6ykEGlKbM7VIYtWP9hG
-	IDc6qv5bve8eijwyxeoLW0fe5qJyhMRdcOfjhn2ncyoTa1BEtCAwVdsJetgQ6Lxr/stQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tC0TE-00DRrf-U8; Fri, 15 Nov 2024 18:51:00 +0100
-Date: Fri, 15 Nov 2024 18:51:00 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Tristram Ha <tristram.ha@microchip.com>
-Subject: Re: [PATCH net-next] net: phylink: improve phylink_sfp_config_phy()
- error message with empty supported
-Message-ID: <26b6ff38-68b2-4c9a-be20-99769cba07c4@lunn.ch>
-References: <20241114165348.2445021-1-vladimir.oltean@nxp.com>
- <54332f43-7811-426a-a756-61d63b54c725@lunn.ch>
- <ZzZCXMFRP5ulI1AD@shell.armlinux.org.uk>
- <20241115161401.2pfnbnsl2zv3euap@skbuf>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l4e19pyZBzb9Gn8QJTFpvzyaWpbpGJ7ElmtWOUdN5A/GxoJgiACKJ6Gb7Ew3hMlyo2p2BPd1yhYQ9G9CopQXbNTFIhX/QZA72cAD/eJlBw9YCMDuux9wNjPd6htOK2sNB/xfxzOl1zKqw4lmIJ0//x0UPAK8v8S9X/biq9BfcO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DZzArRzj; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20c8b557f91so22144695ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:51:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731693118; x=1732297918; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HsIDulqPVm11kvME4lSY/OQMyOCr+gV0M7N3MMcJtZE=;
+        b=DZzArRzjpv+EzQ+Dd0SnZz1mUJeC/aINbsFGuspjjcZzODFNwTE7qEXWWBhI7+PzQR
+         XfVX+NaAXdqSPM/s1sNxM1pcvwCOqjZeg+9a9mpHsoVt9J9TQday8GDbgzaOS8usoMIJ
+         cJYa+rreLAeJL/FpgbXgDHITH+d+4RftPjFBNTykik3CjyVdoywNvA83/kPowqJEaQIF
+         EPn30NwmuOQJEPqiFW0N8o87b+FMcDSqiXcqa++X7sofjmBdvR4Jj/yqn78oOPvIzCBK
+         S6K/DrVUf0grGI6ctsImb3TzZI1efFOowv/QlJxjvsU4VIEB3GsAj/k19ukT4Jm6jRWg
+         PvSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731693118; x=1732297918;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HsIDulqPVm11kvME4lSY/OQMyOCr+gV0M7N3MMcJtZE=;
+        b=LNKpuXbRMdFVPcwxkZA5C/0u3gUPg8XCw9mnA/Dus1QKrNHOm3icZ2UbqfM8gFc2eA
+         XSu19gl/BaT0VwePisbKup+CS2QWlkGv8Fbcw/RJe/7jAUkksDfdNN4AaAxeR1+VOq0t
+         8dBwmFoL47mvUYw3l08r7FCadpl5wI74sgoYvL495UYajpQvqJ/A9rRxx1UH7DNufgvD
+         rIVG2lccFq0O+O8pZn7rqTruWDHXpP68awjL8xGkVsHlZS+YWXtmjcZenTl0MpiyhgWQ
+         AeuL9o7WdgsLHUlKZzmRX+CXSrASNYjcrkVpdo6BpnC17yljO9M39vJs02sg7ElVVCIn
+         PEow==
+X-Forwarded-Encrypted: i=1; AJvYcCWTXnsN/SIh3zQz+iGG03tA6aCTuFWQPxVLb1mb/HZQx8C9jrpMAiL3dN1l3jnEJUhNwlRzjAuGqQe6n14=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIv248+xPFUEMesePx9FmXg7imPRABDuF4MMhGAIXxZF43XFg8
+	8oblnZnJkUhT4qIVf2Xr7tkEf2zSAoylXrBD44Mn7+pL6pIcUAPSg3ZP/T2Rig==
+X-Google-Smtp-Source: AGHT+IEo8KIx+IDClFIGzyYawx9wyWhggQfWSS3I5L/7qTi+6XFaoyQ//P5mcasYulpv7qLH/9m62A==
+X-Received: by 2002:a17:902:d4ca:b0:20c:f3cf:50e6 with SMTP id d9443c01a7336-211d0ebc492mr54783415ad.38.1731693118199;
+        Fri, 15 Nov 2024 09:51:58 -0800 (PST)
+Received: from thinkpad ([117.193.215.93])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211e9d0c389sm793705ad.161.2024.11.15.09.51.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 09:51:57 -0800 (PST)
+Date: Fri, 15 Nov 2024 23:21:48 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev
+Subject: Re: [PATCH v7 2/7] PCI: dwc: Using parent_bus_addr in of_range to
+ eliminate cpu_addr_fixup()
+Message-ID: <20241115175148.tqzqiv53mccz52tq@thinkpad>
+References: <20241029-pci_fixup_addr-v7-0-8310dc24fb7c@nxp.com>
+ <20241029-pci_fixup_addr-v7-2-8310dc24fb7c@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241115161401.2pfnbnsl2zv3euap@skbuf>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241029-pci_fixup_addr-v7-2-8310dc24fb7c@nxp.com>
 
-On Fri, Nov 15, 2024 at 06:14:01PM +0200, Vladimir Oltean wrote:
-> On Thu, Nov 14, 2024 at 06:33:00PM +0000, Russell King (Oracle) wrote:
-> > On Thu, Nov 14, 2024 at 06:38:13PM +0100, Andrew Lunn wrote:
-> > > > [   64.738270] mv88e6085 d0032004.mdio-mii:12 sfp: PHY i2c:sfp:16 (id 0x01410cc2) supports no link modes. Maybe its specific PHY driver not loaded?
-> > > > [   64.769731] sfp sfp: sfp_add_phy failed: -EINVAL
-> > > > 
-> > > > Of course, there may be other reasons due to which phydev->supported is
-> > > > empty, thus the use of the word "maybe", but I think the lack of a
-> > > > driver would be the most common.
-> > > 
-> > > I think this is useful.
-> > > 
-> > > I only have a minor nitpick, maybe in the commit message mention which
-> > > PHY drivers are typically used by SFPs, to point somebody who gets
-> > > this message in the right direction. The Marvell driver is one. at803x
-> > > i think is also used. Are then any others?
-> > 
-> > bcm84881 too. Not sure about at803x - the only SFP I know that uses
-> > that PHY doesn't make the PHY available to the host.
+On Tue, Oct 29, 2024 at 12:36:35PM -0400, Frank Li wrote:
+
+Please reword the subject as:
+
+PCI: dwc: Use devicetree 'ranges' property to get rid of cpu_addr_fixup() callback
+
+> parent_bus_addr in struct of_range can indicate address information just
+> ahead of PCIe controller. Most system's bus fabric use 1:1 map between
+> input and output address. but some hardware like i.MX8QXP doesn't use 1:1
+> map. See below diagram:
 > 
-> So which Kconfig options should I put down for v2? CONFIG_BCM84881_PHY
-> and CONFIG_MARVELL_PHY?
+>             ┌─────────┐                    ┌────────────┐
+>  ┌─────┐    │         │ IA: 0x8ff8_0000    │            │
+>  │ CPU ├───►│   ┌────►├─────────────────┐  │ PCI        │
+>  └─────┘    │   │     │ IA: 0x8ff0_0000 │  │            │
+>   CPU Addr  │   │  ┌─►├─────────────┐   │  │ Controller │
+> 0x7ff8_0000─┼───┘  │  │             │   │  │            │
+>             │      │  │             │   │  │            │   PCI Addr
+> 0x7ff0_0000─┼──────┘  │             │   └──► IOSpace   ─┼────────────►
+>             │         │             │      │            │    0
+> 0x7000_0000─┼────────►├─────────┐   │      │            │
+>             └─────────┘         │   └──────► CfgSpace  ─┼────────────►
+>              BUS Fabric         │          │            │    0
+>                                 │          │            │
+>                                 └──────────► MemSpace  ─┼────────────►
+>                         IA: 0x8000_0000    │            │  0x8000_0000
+>                                            └────────────┘
 > 
-> To avoid this "Please insert the name of your sound card" situation
-> reminiscent of the 90s, another thing which might be interesting to
-> explore would be for each PHY driver to have a stub portion always built
-> into the kernel, keeping an association between the phy_id/phy_id_mask
-> and the Kconfig information associated with it (Kconfig option, and
-> whether it was enabled or not).
+> bus@5f000000 {
+> 	compatible = "simple-bus";
+> 	#address-cells = <1>;
+> 	#size-cells = <1>;
+> 	ranges = <0x80000000 0x0 0x70000000 0x10000000>;
+> 
+> 	pcie@5f010000 {
+> 		compatible = "fsl,imx8q-pcie";
+> 		reg = <0x5f010000 0x10000>, <0x8ff00000 0x80000>;
+> 		reg-names = "dbi", "config";
+> 		#address-cells = <3>;
+> 		#size-cells = <2>;
+> 		device_type = "pci";
+> 		bus-range = <0x00 0xff>;
+> 		ranges = <0x81000000 0 0x00000000 0x8ff80000 0 0x00010000>,
+> 			 <0x82000000 0 0x80000000 0x80000000 0 0x0ff00000>;
+> 	...
+> 	};
+> };
+> 
+> Term internal address (IA) here means the address just before PCIe
+> controller. After ATU use this IA instead CPU address, cpu_addr_fixup() can
+> be removed.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Add a resource_size_t parent_bus_addr local varible to fix 32bit build
+> error.
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202410291546.kvgEWJv7-lkp@intel.com/
+> 
+> Chagne from v5 to v6
+> -add comments for of_property_read_reg().
+> 
+> Change from v4 to v5
+> - remove confused 0x5f00_0000 range in sample dts.
+> - reorder address at above diagram.
+> 
+> Change from v3 to v4
+> - none
+> 
+> Change from v2 to v3
+> - %s/cpu_untranslate_addr/parent_bus_addr/g
+> - update diagram.
+> - improve commit message.
+> 
+> Change from v1 to v2
+> - update because patch1 change get untranslate address method.
+> - add using_dtbus_info in case break back compatibility for exited platform.
+> ---
+>  drivers/pci/controller/dwc/pcie-designware-host.c | 55 ++++++++++++++++++++++-
+>  drivers/pci/controller/dwc/pcie-designware.h      |  8 ++++
+>  2 files changed, 62 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index 3e41865c72904..ea01b7bda0a76 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -418,6 +418,34 @@ static void dw_pcie_host_request_msg_tlp_res(struct dw_pcie_rp *pp)
+>  	}
+>  }
+>  
+> +static int dw_pcie_get_untranslate_addr(struct dw_pcie *pci, resource_size_t pci_addr,
+> +					resource_size_t *i_addr)
 
-This might be useful in other ways, if we can make it work for every
-driver. genphy somewhat breaks the usual device model, and that causes
-us pain at times. fw_devlink gets confused by genphy, and users as
-well. We have the issue of not knowing if genphy is to be used, or we
-should wait around longer for the correct driver to load.
+dw_pcie_get_parent_addr()? Since this function is anyway reading the parent
+address from DT.
 
-So i can see three use cases:
+> +{
+> +	struct device *dev = pci->dev;
+> +	struct device_node *np = dev->of_node;
+> +	struct of_range_parser parser;
+> +	struct of_range range;
+> +	int ret;
+> +
+> +	if (!pci->using_dtbus_info) {
+> +		*i_addr = pci_addr;
+> +		return 0;
+> +	}
+> +
+> +	ret = of_range_parser_init(&parser, np);
+> +	if (ret)
+> +		return ret;
+> +
+> +	for_each_of_pci_range(&parser, &range) {
+> +		if (pci_addr == range.bus_addr) {
+> +			*i_addr = range.parent_bus_addr;
+> +			break;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  int dw_pcie_host_init(struct dw_pcie_rp *pp)
+>  {
+>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> @@ -427,6 +455,7 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
+>  	struct resource_entry *win;
+>  	struct pci_host_bridge *bridge;
+>  	struct resource *res;
+> +	int index;
+>  	int ret;
+>  
+>  	raw_spin_lock_init(&pp->lock);
+> @@ -440,6 +469,20 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
+>  		pp->cfg0_size = resource_size(res);
+>  		pp->cfg0_base = res->start;
+>  
+> +		if (pci->using_dtbus_info) {
+> +			index = of_property_match_string(np, "reg-names", "config");
+> +			if (index < 0)
+> +				return -EINVAL;
+> +			/*
+> +			 * Retrieve the parent bus address of PCI config space.
+> +			 * If the parent bus ranges in the device tree provide
+> +			 * the correct address conversion information, set
+> +			 * 'using_dtbus_info' to true, The 'cpu_addr_fixup()'
+> +			 * can be eliminated.
+> +			 */
 
-1) There is a driver for this hardware, it is just not being built
+Nobody will switch to 'ranges' property if you mention it in comments. We
+usually add dev_warn_once() to print a warning for broken DT so that the users
+will try to fix it. You can use below diff (as a separate patch ofc):
 
-2) There is a driver for this hardware, it is being built, it has not
-loaded yet.
+```
+diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+index 6d6cbc8b5b2c..d1e5395386fe 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.c
++++ b/drivers/pci/controller/dwc/pcie-designware.c
+@@ -844,6 +844,9 @@ void dw_pcie_iatu_detect(struct dw_pcie *pci)
+                 dw_pcie_cap_is(pci, IATU_UNROLL) ? "T" : "F",
+                 pci->num_ob_windows, pci->num_ib_windows,
+                 pci->region_align / SZ_1K, (pci->region_limit + 1) / SZ_1G);
++
++       if (pci->ops && pci->ops->cpu_addr_fixup)
++               dev_warn_once(pci->dev, "Broken \"ranges\" property detected. Please fix DT!\n");
+ }
+ 
+ static u32 dw_pcie_readl_dma(struct dw_pcie *pci, u32 reg)
+```
 
-3) There is no driver for this hardware, genphy is the fallback.
+> +			of_property_read_reg(np, index, &pp->cfg0_base, NULL);
 
-I would actually say 1) is not something we should solve at the PHY
-driver layer, it is a generic problem for all drivers. We want some
-Makefile support for extracting the MODULE_DEVICE_TABLE() for modules
-which are not enabled, and some way to create a modules.disabled.alias
-which module loading can look at and issue a warning. 2) i also think
-is a generic problem. 3) is probably PHY specific, because i don't
-know of any other case where there is a fallback driver.
+Can you explain what is going on here?
 
-	Andrew
+> +		}
+> +
+>  		pp->va_cfg0_base = devm_pci_remap_cfg_resource(dev, res);
+>  		if (IS_ERR(pp->va_cfg0_base))
+>  			return PTR_ERR(pp->va_cfg0_base);
+> @@ -462,6 +505,9 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
+>  		pp->io_base = pci_pio_to_address(win->res->start);
+>  	}
+>  
+> +	if (dw_pcie_get_untranslate_addr(pci, pp->io_bus_addr, &pp->io_base))
+> +		return -ENODEV;
+
+Use actual return value here and below.
+
+> +
+>  	/* Set default bus ops */
+>  	bridge->ops = &dw_pcie_ops;
+>  	bridge->child_ops = &dw_child_pcie_ops;
+> @@ -722,6 +768,8 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
+>  
+>  	i = 0;
+>  	resource_list_for_each_entry(entry, &pp->bridge->windows) {
+> +		resource_size_t parent_bus_addr;
+> +
+>  		if (resource_type(entry->res) != IORESOURCE_MEM)
+>  			continue;
+>  
+> @@ -730,9 +778,14 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
+>  
+>  		atu.index = i;
+>  		atu.type = PCIE_ATU_TYPE_MEM;
+> -		atu.cpu_addr = entry->res->start;
+> +		parent_bus_addr = entry->res->start;
+>  		atu.pci_addr = entry->res->start - entry->offset;
+>  
+> +		if (dw_pcie_get_untranslate_addr(pci, entry->res->start, &parent_bus_addr))
+> +			return -EINVAL;
+> +
+> +		atu.cpu_addr = parent_bus_addr;
+> +
+>  		/* Adjust iATU size if MSG TLP region was allocated before */
+>  		if (pp->msg_res && pp->msg_res->parent == entry->res)
+>  			atu.size = resource_size(entry->res) -
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 347ab74ac35aa..f8067393ad35a 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -463,6 +463,14 @@ struct dw_pcie {
+>  	struct reset_control_bulk_data	core_rsts[DW_PCIE_NUM_CORE_RSTS];
+>  	struct gpio_desc		*pe_rst;
+>  	bool			suspended;
+> +	/*
+> +	 * Use device tree 'ranges' property of bus node instead using
+> +	 * cpu_addr_fixup(). Some old platform dts 'ranges' in bus node may not
+> +	 * reflect real hardware's behavior. In case break these platform back
+> +	 * compatibility, add below flags. Set it true if dts already correct
+> +	 * indicate bus fabric address convert.
+
+	/*
+	 * This flag indicates that the vendor driver uses devicetree 'ranges'
+	 * property to allow iATU to use the Intermediate Address (IA) for
+	 * outbound mapping. Using this flag also avoids the usage of
+	 * 'cpu_addr_fixup' callback implementation in the driver.
+	 */
+
+> +	 */
+> +	bool			using_dtbus_info;
+
+'use_dt_ranges'?
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
