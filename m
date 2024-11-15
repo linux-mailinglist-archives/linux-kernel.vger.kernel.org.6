@@ -1,257 +1,262 @@
-Return-Path: <linux-kernel+bounces-411121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE8219CF452
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:51:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 934099CF35B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:55:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD459B34E48
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:55:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5386F287B9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E24D1D6DC5;
-	Fri, 15 Nov 2024 17:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C7E1D61A1;
+	Fri, 15 Nov 2024 17:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QcBhrqqT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dvehh1DR"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CEC1D5ADB;
-	Fri, 15 Nov 2024 17:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3F01D619D
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731693294; cv=none; b=aHArceBDKrqYCodE8WUw7c7cmH1R6ez8tstmAmaVfbQoAK6vLL4cp4fOMphRw4DbHUDOgufgn4cf7CyDoHxdbbWq83v7g+l4n6k60xLJQ7PaHr7QVYZ1RGUA5PDblBeYNr5Dmf39bQ6KYu1h2O7q/+7X+k0rGiq5shRQ6IWyaHE=
+	t=1731693310; cv=none; b=Lm19SnR2yHc8hw3h8UMqxlAo/GDDacVZ24pAt4JRWCEODHp9uBu+r6eR+78m7wqZOH/AeqgOs9u53cAN9NHjKgLLSW+5GuEICMwlU/ruJJ19H9Nn8eOfEmyGylsFJ0R1exDm2td6kA13NKpwP/hdLZ8oViroiFan3HdM9PHY8O0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731693294; c=relaxed/simple;
-	bh=OeD22HC7UgOFr/u5AOSQL220CWm2MZBkmT+EG5cZ7Gg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EMjh+1h+Qp6H4CLv7c5FxsJAoxoAr1zgFP0A8MGYLQ7EFN/e8ur8gOTTSNg+aNlDDFgoZ7d8Cbs3rY6q8L/7O5LEr9T4zavUjBcvOXWZk3OSpv11FSsLtbg4RM1m+ukwui+K/KMpORiqM+huTRmicLfuECucYcrg2dC6iUxGRaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QcBhrqqT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AF9DfuV004807;
-	Fri, 15 Nov 2024 17:54:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Qbrw4vWiwwRaFmlC1s11hJAUI/iOQfAy7hYy+ugzIpY=; b=QcBhrqqT4TTzAwS6
-	fGGXwq/RhnXiBpAqGHvU1iA2fhp39tdxTvwyHkdCB1hq2Bwq2gOxeErFGRxecCRc
-	70gN2zG2gt5FaKU9zJ8pgfGD2F8RXksE9uECmejYnaqFjiAV/ykdgXgG3HiNEMLO
-	w3LbXJg6Ii9yifyHKCWzLuGgTTaANqAmF+BvdNoHHnfgHusgWxmfvm286hky6NmI
-	CxDfEfzg5vyD2PmbmgF7/3WTV9udXB4vYvGMDPa6tHSvtLZ+z+dVihrMKGQP7xlu
-	n8hSjn6PI6lx46aASx48Q0IkKlGerIMNLlhGuJtKzkJmk+ywWjgWW2Ci/i0zwmP8
-	YX3NtQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42x3g0scqw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 17:54:27 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AFHsQOV018050
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 17:54:26 GMT
-Received: from [10.206.104.82] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 15 Nov
- 2024 09:54:19 -0800
-Message-ID: <f67c72c3-7393-47b0-9b9c-1bfadce13110@quicinc.com>
-Date: Fri, 15 Nov 2024 23:24:11 +0530
+	s=arc-20240116; t=1731693310; c=relaxed/simple;
+	bh=Dc/5CWn5I9oj0IhCuyvb47QZKddMSwNPrXDwm06esJ0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sFmBNkK2TxUzyyIuBTJ/PCB+tYbYPUQBtAA1tpdWbi6x4ukF5oXqSoR1TCkyuehX8lb/hMVMALFVBGmnwYlIcz0cWzyKkKF5SqwS5AoDEEGF3vDV5N0JfMIdcYrh44moeSlcLasSsEeCuE3lcgX5KReLfNDGucLfpBnW3u2Gtso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dvehh1DR; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a716d74c28so184625ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:55:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731693308; x=1732298108; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hnHS6ipKNUUpXk/6JmH9J/OJBc1PBR+N05vgPQHYS08=;
+        b=dvehh1DR0/Di6XWMW+AmghMfE2Fk/Se9bNDiGSmgRjO16FUideu/VZKrJNKvxCgYKz
+         0RPB+0SslcB9C9IQuhYsg/Q0lK1sYXw0DkvR2RVAqwjEkGK5u3BLE7NHN7OPyN40IcDh
+         moMNd+v+v0uyVcnM3rKb6JyIN0Wp1JOR8EgmoE4jHcm0WN4ljT78XFPA1zjMvYea599t
+         FvVvuukHCeiXAStKphDMgjW538oVpQKQ3fxk5NHOlHO+s3aztNJlMaYa0vwRI6RrBjEy
+         sGHdQMcahXZQuFW4tR736xzcLwg8vs35OXZ87hA0a5nVdEXKBroL1p+h6heJ077ApVT1
+         DDbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731693308; x=1732298108;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hnHS6ipKNUUpXk/6JmH9J/OJBc1PBR+N05vgPQHYS08=;
+        b=aSI7Ul40RzBZjE6hGhbbG8zQTGKcZ8YZGLwVOrLnvLHayFLiD6S6k9rUZ1H1IP6xUj
+         /TEKj3XObwq3omY7QyGA/l1u+4oTGL7nD8HzUnQ7hKSMdhP8ytS7bJwwc9n3O9CPmy3x
+         fg40TL3s1Drg7R9iZ9XCYZQvG2Zw4BF+IUVTnt8SMa03C4cvLfEKJHmy+/5auNEnSy22
+         8H9E4Wb3BW3vNXuAo8s+95h2QV+iewqOigk8GpRAbTSJrpVpY+w4d5XxQ+3rpSrueug2
+         HFaBB9wFl7vHtBimUV6WrpmiFXCcZKkqmSr2NUKOqJkoEE2iE7bFo6X4ktA5z598zOMN
+         u6ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGxjFeTA4UYNKMNxRUp/CyUy/7l//AKvGZgmVGNW4pBz41ZWjysyIb3pwjk8KZEfpZ+kJpL5v2mh/2Q30=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5SqN/f03VO9PliuVIXIVXFC9DsP/It9E6kvudhtNZc0GYqguJ
+	q+BkV+4RQqN2XLdGTLRLA944dSzEmiQJckJA0Htg27u5Wr12vvlrNerri2+xYKdfZL1tgT30lsQ
+	uICsrI28MxH/T02weRxHOFmfeKLbZ/QafMwFz
+X-Gm-Gg: ASbGnct/EMkWfzoYk6cpPPMtFon6MAgKSXX9vCP0mpHPl6s5E9dyvSsRagQYzh0mlIC
+	A+XzNC71fllgoOru8v8/+L+0Oxk2TAh1O
+X-Google-Smtp-Source: AGHT+IGFQN2nBXFYab64aGS4JtOZbQ+HWAGUOdHNwbOsju2UCSDpdaV9yh5k0nEy6/NghsRYHkioIry2Xz7RaFY58EI=
+X-Received: by 2002:a05:6e02:1a0a:b0:3a7:319f:e486 with SMTP id
+ e9e14a558f8ab-3a74f776eefmr581795ab.7.1731693308209; Fri, 15 Nov 2024
+ 09:55:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: opp: Add v2-qcom-adreno vendor
- bindings
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Krzysztof Kozlowski <krzk@kernel.org>, Rob Clark <robdclark@gmail.com>,
-        Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
-        "Abhinav
- Kumar" <quic_abhinavk@quicinc.com>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon
-	<nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20241021-gpu-acd-v2-0-9c25a62803bc@quicinc.com>
- <20241021-gpu-acd-v2-2-9c25a62803bc@quicinc.com>
- <mz4zpcr4tqh2w7vt75f4ofxjzfve54ozzgpdbi2jjzk5pdxbk7@t36tlt3mmprt>
- <d858dadb-4098-4c9f-b4f0-393dc988db5f@quicinc.com>
- <4426b4kybtac6rc4twa5pgm3hvlegofemvqjcrvh6ni7f5z2h6@5dnlv3hgywh5>
- <c5e868e1-2dae-466c-a6fc-ef0f247fa0ce@quicinc.com>
- <278e62e1-02a4-4e33-8592-fb4fafcedf7e@quicinc.com>
- <CAA8EJprgshjbNqNErOb06jqV__LmbWvocsK5eD8PQqL+FaLb1g@mail.gmail.com>
-Content-Language: en-US
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-In-Reply-To: <CAA8EJprgshjbNqNErOb06jqV__LmbWvocsK5eD8PQqL+FaLb1g@mail.gmail.com>
+References: <Zzdtj0PEWEX3ATwL@x1>
+In-Reply-To: <Zzdtj0PEWEX3ATwL@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 15 Nov 2024 09:54:56 -0800
+Message-ID: <CAP-5=fX7JZNmiaNDezExqGk9FMXdHihxvLNmnD8HHB3YCehemg@mail.gmail.com>
+Subject: Re: perf test failures with tmp.perf-tools-next
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Kan Liang <kan.liang@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, 
+	James Clark <james.clark@linaro.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: N4htPv4plm2XvnSzhfkVuCrgZqi_haRI
-X-Proofpoint-GUID: N4htPv4plm2XvnSzhfkVuCrgZqi_haRI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 adultscore=0 bulkscore=0 priorityscore=1501
- impostorscore=0 malwarescore=0 clxscore=1015 spamscore=0 mlxlogscore=999
- mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411150151
+Content-Transfer-Encoding: quoted-printable
 
-On 11/15/2024 3:54 AM, Dmitry Baryshkov wrote:
-> Hello Akhil,
-> 
-> On Thu, 14 Nov 2024 at 20:50, Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
->>
->> On 11/1/2024 9:54 PM, Akhil P Oommen wrote:
->>> On 10/25/2024 11:58 AM, Dmitry Baryshkov wrote:
->>>> On Thu, Oct 24, 2024 at 12:56:58AM +0530, Akhil P Oommen wrote:
->>>>> On 10/22/2024 11:19 AM, Krzysztof Kozlowski wrote:
->>>>>> On Mon, Oct 21, 2024 at 05:23:43PM +0530, Akhil P Oommen wrote:
->>>>>>> Add a new schema which extends opp-v2 to support a new vendor specific
->>>>>>> property required for Adreno GPUs found in Qualcomm's SoCs. The new
->>>>>>> property called "qcom,opp-acd-level" carries a u32 value recommended
->>>>>>> for each opp needs to be shared to GMU during runtime.
->>>>>>>
->>>>>>> Cc: Rob Clark <robdclark@gmail.com>
->>>>>>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
->>>>>>> ---
->>>>>>>  .../bindings/opp/opp-v2-qcom-adreno.yaml           | 96 ++++++++++++++++++++++
->>>>>>>  1 file changed, 96 insertions(+)
->>>>>>>
->>>>>>> diff --git a/Documentation/devicetree/bindings/opp/opp-v2-qcom-adreno.yaml b/Documentation/devicetree/bindings/opp/opp-v2-qcom-adreno.yaml
->>>>>>> new file mode 100644
->>>>>>> index 000000000000..6d50c0405ef8
->>>>>>> --- /dev/null
->>>>>>> +++ b/Documentation/devicetree/bindings/opp/opp-v2-qcom-adreno.yaml
->>>>>>> @@ -0,0 +1,96 @@
->>>>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>>>>> +%YAML 1.2
->>>>>>> +---
->>>>>>> +$id: http://devicetree.org/schemas/opp/opp-v2-qcom-adreno.yaml#
->>>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>>>>> +
->>>>>>> +title: Qualcomm Adreno compatible OPP supply
->>>>>>> +
->>>>>>> +description:
->>>>>>> +  Adreno GPUs present in Qualcomm's Snapdragon chipsets uses an OPP specific
->>>>>>> +  ACD related information tailored for the specific chipset. This binding
->>>>>>> +  provides the information needed to describe such a hardware value.
->>>>>>> +
->>>>>>> +maintainers:
->>>>>>> +  - Rob Clark <robdclark@gmail.com>
->>>>>>> +
->>>>>>> +allOf:
->>>>>>> +  - $ref: opp-v2-base.yaml#
->>>>>>> +
->>>>>>> +properties:
->>>>>>> +  compatible:
->>>>>>> +    items:
->>>>>>> +      - const: operating-points-v2-adreno
->>>>>>> +      - const: operating-points-v2
->>>>>>> +
->>>>>>> +patternProperties:
->>>>>>> +  '^opp-?[0-9]+$':
->>>>>>
->>>>>> '-' should not be optional. opp1 is not expected name.
->>>>>
->>>>> Agree. Will change this to '^opp-[0-9]+$'
->>>>>
->>>>>>
->>>>>>> +    type: object
->>>>>>> +    additionalProperties: false
->>>>>>> +
->>>>>>> +    properties:
->>>>>>> +      opp-hz: true
->>>>>>> +
->>>>>>> +      opp-level: true
->>>>>>> +
->>>>>>> +      opp-peak-kBps: true
->>>>>>> +
->>>>>>> +      opp-supported-hw: true
->>>>>>> +
->>>>>>> +      qcom,opp-acd-level:
->>>>>>> +        description: |
->>>>>>> +          A positive value representing the ACD (Adaptive Clock Distribution,
->>>>>>> +          a fancy name for clk throttling during voltage droop) level associated
->>>>>>> +          with this OPP node. This value is shared to a co-processor inside GPU
->>>>>>> +          (called Graphics Management Unit a.k.a GMU) during wake up. It may not
->>>>>>> +          be present for some OPPs and GMU will disable ACD while transitioning
->>>>>>> +          to that OPP. This value encodes a voltage threshold and few other knobs
->>>>>>> +          which are identified by characterization of the SoC. So, it doesn't have
->>>>>>> +          any unit.
->>>>>>
->>>>>> Thanks for explanation and other updates. I am still not happy with this
->>>>>> property. I do not see reason why DT should encode magic values in a
->>>>>> quite generic piece of code. This creates poor ABI, difficult to
->>>>>> maintain or understand.
->>>>>>
->>>>>
->>>>> Configuring GPU ACD block with its respective value is a requirement for each OPP.
->>>>> So OPP node seems like the natural place for this data.
->>>>>
->>>>> If it helps to resolve your concerns, I can elaborate the documentation with
->>>>> details on the GMU HFI interface where this value should be passed on to the
->>>>> hardware. Also replace "few other knobs" with "Delay cycles & Calibration margin"
->>>>> in the above doc.
->>>>
->>>> Usually the preference for DT is to specify data in a sensible way
->>>> rather than just the values being programmed to the register. Is it
->>>> possible to implement this approach for ACD values?
->>
->> Krzysztof/Dmitry,
->>
->> BIT(0)-BIT(15) are static configurations which doesn't change between
->> OPPs. We can move it to driver.
->>
->> BIT(16)-BIT(31) indicates a threshold margin which triggers ACD. We can
->> keep this in the devicetree. And the driver can construct the final
->> value from both data and send it to GMU.
->>
->> If this is acceptable, I will send the v3 revision.
-> 
-> Can the upper bitfield have a sensible representation in DT (like uV
-> or something similar)?
+On Fri, Nov 15, 2024 at 7:49=E2=80=AFAM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> With what is in tmp.perf-tools-next I'm getting:
+>
+>  11: Hwmon PMU                                                       :
+>  11.1: Basic parsing test                                            : Ok
+>  11.2: Parsing without PMU name                                      : FA=
+ILED!
+>  11.3: Parsing with PMU name                                         : FA=
+ILED!
+>  84: perftool-testsuite_probe                                        : FA=
+ILED!
+>  86: probe libc's inet_pton & backtrace it with ping                 : FA=
+ILED!
+>  96: perf stat tests                                                 : FA=
+ILED!
+>  97: perf all metricgroups test                                      : FA=
+ILED!
+>  98: perf all metrics test                                           : FA=
+ILED!
+> 117: perftool-testsuite_report                                       : FA=
+ILED!
+> 118: Add vfs_getname probe to get syscall args filenames             : FA=
+ILED!
+> 119: Use vfs_getname probe to get syscall args filenames             : FA=
+ILED!
+> 120: perf record tests                                               : FA=
+ILED!
+> 121: perf record LBR tests                                           : FA=
+ILED!
+> 128: Test data symbol                                                : FA=
+ILED!
+>
+> root@x1:~# perf test -vv 11
+>  11: Hwmon PMU                                                       :
+>  11.1: Basic parsing test:
+> --- start ---
+> test child forked, pid 391389
+> hwmon_pmu: not a hwmon type 'badtype' in file name 'badtype5_baditem'
+> hwmon_pmu: not a hwmon item 'baditem' in file name 'humidity6_baditem'
+> ---- end(0) ----
+>  11.1: Basic parsing test                                            : Ok
+>  11.2: Parsing without PMU name:
+> --- start ---
+> test child forked, pid 391390
+> Testing 'temp_test_hwmon_event1'
+> Using CPUID GenuineIntel-6-BA-3
+> hwmon_pmu: not a hwmon file 'uevent'
+> Not a hwmon file 'uevent'
+> hwmon_pmu: not a hwmon file 'name'
+> Not a hwmon file 'name'
+> hwmon_pmu: not a hwmon file 'uevent'
+> Not a hwmon file 'uevent'
+> hwmon_pmu: not a hwmon file 'name'
+> Not a hwmon file 'name'
+> hwmon_pmu: not a hwmon file 'uevent'
+> Not a hwmon file 'uevent'
+> hwmon_pmu: not a hwmon file 'name'
+> Not a hwmon file 'name'
+> hwmon_pmu: not a hwmon file 'uevent'
+> Not a hwmon file 'uevent'
+> hwmon_pmu: not a hwmon file 'name'
+> Not a hwmon file 'name'
+> hwmon_pmu: not a hwmon file 'uevent'
+> Not a hwmon file 'uevent'
+> hwmon_pmu: not a hwmon file 'name'
+> Not a hwmon file 'name'
+> hwmon_pmu: not a hwmon file 'uevent'
+> Not a hwmon file 'uevent'
+> hwmon_pmu: not a hwmon file 'name'
+> Not a hwmon file 'name'
+> hwmon_pmu: not a hwmon file 'uevent'
+> Not a hwmon file 'uevent'
+> hwmon_pmu: not a hwmon file 'pwm1'
+> Not a hwmon file 'pwm1'
+> hwmon_pmu: not a hwmon file 'name'
+> Not a hwmon file 'name'
+> hwmon_pmu: removing event 'pwm1' that has no input file
+> hwmon_pmu: not a hwmon file 'uevent'
+> Not a hwmon file 'uevent'
+> hwmon_pmu: not a hwmon file 'name'
+> Not a hwmon file 'name'
+> hwmon_pmu: not a hwmon file 'uevent'
+> Not a hwmon file 'uevent'
+> hwmon_pmu: not a hwmon file 'name'
+> Not a hwmon file 'name'
+> FAILED tests/hwmon_pmu.c:160 failed to parse event 'temp_test_hwmon_event=
+1', err 1
+> event syntax error: 'temp_test_hwmon_event1'
+>                      \___ Bad event name
+>
+> Unable to find event on a PMU of 'temp_test_hwmon_event1'
+> free(): invalid pointer
+>
+> ---- unexpected signal (6) ----
+>  11.2: Parsing without PMU name                                      : FA=
+ILED!
+>  11.3: Parsing with PMU name:
+> --- start ---
+> test child forked, pid 391391
+> Testing 'temp_test_hwmon_event1'
+> Using CPUID GenuineIntel-6-BA-3
+> hwmon_pmu: not a hwmon file 'uevent'
+> Not a hwmon file 'uevent'
+> hwmon_pmu: not a hwmon file 'name'
+> Not a hwmon file 'name'
+> hwmon_pmu: not a hwmon file 'uevent'
+> Not a hwmon file 'uevent'
+> hwmon_pmu: not a hwmon file 'name'
+> Not a hwmon file 'name'
+> hwmon_pmu: not a hwmon file 'uevent'
+> Not a hwmon file 'uevent'
+> hwmon_pmu: not a hwmon file 'name'
+> Not a hwmon file 'name'
+> hwmon_pmu: not a hwmon file 'uevent'
+> Not a hwmon file 'uevent'
+> hwmon_pmu: not a hwmon file 'name'
+> Not a hwmon file 'name'
+> hwmon_pmu: not a hwmon file 'uevent'
+> Not a hwmon file 'uevent'
+> hwmon_pmu: not a hwmon file 'name'
+> Not a hwmon file 'name'
+> hwmon_pmu: not a hwmon file 'uevent'
+> Not a hwmon file 'uevent'
+> hwmon_pmu: not a hwmon file 'name'
+> Not a hwmon file 'name'
+> hwmon_pmu: not a hwmon file 'uevent'
+> Not a hwmon file 'uevent'
+> hwmon_pmu: not a hwmon file 'pwm1'
+> Not a hwmon file 'pwm1'
+> hwmon_pmu: not a hwmon file 'name'
+> Not a hwmon file 'name'
+> hwmon_pmu: removing event 'pwm1' that has no input file
+> hwmon_pmu: not a hwmon file 'uevent'
+> Not a hwmon file 'uevent'
+> hwmon_pmu: not a hwmon file 'name'
+> Not a hwmon file 'name'
+> hwmon_pmu: not a hwmon file 'uevent'
+> Not a hwmon file 'uevent'
+> hwmon_pmu: not a hwmon file 'name'
+> Not a hwmon file 'name'
+> FAILED tests/hwmon_pmu.c:160 failed to parse event 'temp_test_hwmon_event=
+1', err 1
+> event syntax error: 'temp_test_hwmon_event1'
+>                      \___ Bad event name
+>
+> Unable to find event on a PMU of 'temp_test_hwmon_event1'
+>
+> ---- unexpected signal (11) ----
+>  11.3: Parsing with PMU name                                         : FA=
+ILED!
+> root@x1:~#
+>
+>
+>
+> I'm working on removing the vfs_getname code from 'perf trace' so those
+> will go away, probably there are patches fixing some of the other ones,
+> I'll try and look after those, but probably later today I'll push what I
+> have so that it gets exposure on linux-next.
 
-Closest approximation is quantized voltage steps. So, unit-less.
-Converting it to the exact voltage requires identifying the pmic voltage
-steps and other stuffs which are outside of my expertise.
+I'm trying to repro the hwmon issue on tmp.perf-tools-next, with asan
+root/non-root I get:
+```
+ 11: Hwmon PMU                                                       :
+11.1: Basic parsing test                                            : Ok
+11.2: Parsing without PMU name                                      : Ok
+11.3: Parsing with PMU name                                         : Ok
+```
+I'm trying more machines to try to get a reproduction.
 
-It is convenient if we can abstract it as an integer which correlates
-with the voltage margin that should be maintained for each regulator corner.
-
--Akhil.
-
-> 
->>
->> -Akhil.
->>
->>>
->>> I am still checking about this. Will get back.
->>>
->>> -Akhil
->>>
->>>>
->>>>>
->>>>>>
->>>>
->>>
->>
-> 
-> 
-
+Thanks,
+Ian
 
