@@ -1,118 +1,160 @@
-Return-Path: <linux-kernel+bounces-410112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7EB39CD46B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 01:36:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78F539CD4AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 01:38:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE67A282589
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:36:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2333B2276C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 00:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F293C2C697;
-	Fri, 15 Nov 2024 00:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2ECB24B26;
+	Fri, 15 Nov 2024 00:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S99dTrdj"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="n06gKXqP"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16BFF63B9
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 00:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E45863B9
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 00:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731630956; cv=none; b=oCN5elDKG6YtvQE7I/VmuMDDAkIDufp0YvrdlTRoS0WdGiEanroFbSuQ83OaZF+PEENc8XIvDDWv7q4GWzjK42VWhvRPXhtcW7stuY1ZxnsG/IQCwAvMmnsj3b7AI3Ixm2xgxgK/ZpGae+XMXWyiGs+8+iRghpcUYdGl6Rs+eOM=
+	t=1731631096; cv=none; b=X8YeOcICOdnVNjViJmp9IJWYbYJHGAPrSz6DIYJ0tVw3iq0NkI6qEo8u7jqez+Hf5igkn4oV/ApO5irlsvIwqWkpy28FjOjUmuxaV9MBKyPdhAURNe8m78tiQwV7VSEGbOReMrqpx4rjzX6++xGjU/1lq+Mec7wTHctmrwMixkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731630956; c=relaxed/simple;
-	bh=nR6/NyKUAiIKZ9I4nwODoJQiiqfBOquORStgReTB9Kc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qSUjT6jr9A/1jwLeXgHm7cS6KVnzgs+n4WSLJWHqFgFA8d6CG41vd8435PjGoNoKmFEDLCE8eIDOCwZsuKroxAFIAoCui3XlifhgNFiTyTx6Y+6dCkmioBoeZisvv8DFA9d49gCz/qrkQ5sq9+1Uv7OOoKBsloOsMEuQa8w0Yw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S99dTrdj; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7eab7622b61so927560a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 16:35:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731630954; x=1732235754; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=j+9I2J/x0vPlH5/faHdyczL/jxLpsFKPtH3tWrVfXK4=;
-        b=S99dTrdjpHwwHR4OVvIFCGKMYnC2qixGa+Wxvus+oLPVELB/pYB/RWu3WkT8ZvL/lI
-         1A0aPG2AXqBGeJ8+w2MLbLAdGvlKa2lUMPbVR3kYQq44nSEAc+zAaMT4peV06yUjhHwr
-         w7i538Ed8bASTyZZaQ6Edy99Ewz8P+zIfKdIRMGnug7rYIAI2JLYGHuhppo9YlWToTJd
-         7mClQ9CV4kmWBo3wG6jixyg7lH08h1f00xdR3llDSYizB1gZiJXts2qSX740/lAOTupG
-         xkgE0WD6d2pD9jxeQXWmLI54YsD6vFnwY45OBvrlWzwq6AsD5Nzw3NRKQeums2WBVCiZ
-         g6XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731630954; x=1732235754;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j+9I2J/x0vPlH5/faHdyczL/jxLpsFKPtH3tWrVfXK4=;
-        b=SllbKUk6+T/HuTCGyS01RMCvN7/2kx3stVzCGNrnRBKUVD2o6dObTcORmgcf9gt27o
-         rZkLT1TNh1/KnznFmge86+9wxLgIoKN18Da+FH/B9GoxXWrksu/efS/fE+SjAPuV/nST
-         1/b+U9hTjHoR+8IBqHI4olXeHyMkGpT3CZ64553NR7U2VNSpwDlDiCO/u4kc7s5BxGhP
-         Nz7N4yYgzrAxzPMhpaaPSgl+ADxQpEv6XFWSx16KhKSjll1cDUppKbk0GMSXwLneOAn+
-         llZLjRhwdmNp2MFqSaeu/GOLqyrdgOL9vjWeWQm5O5WL5QD0ZowteQYqGTI6ZNYhdPdz
-         eP5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVJqO+ppv6dgE4WRD5NcY2H7snCAomdzDK0fkY7Vxb0tifCAKrdjJmiWb0qkM0D3q4SB3H28V0XbgyexQs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEIHKFFHsw20McSI2fIJbA0G1D/N+boFT9Tz6o5QWCZO9GG7+K
-	VFTjAPkQaZCaHFrKJFUkfQK+6JJEvRXr9SSkHySWqobuUXjeGisu
-X-Google-Smtp-Source: AGHT+IHco/rQIlfnf2henOLsItUG2Dxmz58iIeFzYDZrO/TXQIO6YXMv5apCwI+3qat8bqhncnB/cg==
-X-Received: by 2002:a05:6a20:3d8d:b0:1db:ef91:2e51 with SMTP id adf61e73a8af0-1dc90baa5a4mr1122722637.28.1731630954217;
-        Thu, 14 Nov 2024 16:35:54 -0800 (PST)
-Received: from localhost ([38.141.211.103])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724770ee889sm261519b3a.20.2024.11.14.16.35.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 16:35:53 -0800 (PST)
-From: Ragavendra <ragavendra.bn@gmail.com>
-To: tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	thomas.lendacky@amd.com,
-	ardb@kernel.org,
-	ashish.kalra@amd.com,
-	tzimmermann@suse.de,
-	bhelgaas@google.com
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ragavendra <ragavendra.bn@gmail.com>
-Subject: [PATCH] arch:x86:coco:sev: Initialize ctxt variable
-Date: Thu, 14 Nov 2024 16:35:06 -0800
-Message-ID: <20241115003505.9492-2-ragavendra.bn@gmail.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1731631096; c=relaxed/simple;
+	bh=2QTg3uMImeU66RhLX3/5YsxnFUoi2i1VFQyshj8WnNg=;
+	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
+	 Content-Type:References; b=lSYTyGI0NTbsH/1OUvDudTpYiA8pOzoz4c6+TWJeVgV6J8UmdlUZC9NprHKIewaox5loqN00yJcFql1nL68wEy2ox0+OXD4Tb8e24ZYjZKO5iy+Bv6FhzR2I3LXgyXIYmpWz6q9k5XW4s9rVsM1/VOINjICxcKiuAm8RBiL1KDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=n06gKXqP; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241115003812epoutp04e0575f8275a923a035120a081c7f2482~H-U3A9l_p2980629806epoutp04Q
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 00:38:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241115003812epoutp04e0575f8275a923a035120a081c7f2482~H-U3A9l_p2980629806epoutp04Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1731631092;
+	bh=2QTg3uMImeU66RhLX3/5YsxnFUoi2i1VFQyshj8WnNg=;
+	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+	b=n06gKXqPozK50JkoDvZxhWPYFMHiJ42WNvPnwMZN8BAK263oS3OVs3pVRKW8HHMhd
+	 ADQmtmQKRs4YIMW/2Qo6KRB1O3mRqYdTEs800lHJey/7RF4jnfadrFd72zbrtaslUN
+	 Ric0aukVmj07r38UNfFhV/UJeh/fysvD+C1nw27s=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20241115003811epcas1p2b96da2b129d9027364eef77e96486f1b~H-U2XwYY-2573625736epcas1p2C;
+	Fri, 15 Nov 2024 00:38:11 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.36.144]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4XqJ5t2gq8z4x9Q2; Fri, 15 Nov
+	2024 00:38:10 +0000 (GMT)
+X-AuditID: b6c32a35-6c7ff70000023fb3-78-673697f2e2ec
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+	epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	19.41.16307.2F796376; Fri, 15 Nov 2024 09:38:10 +0900 (KST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Subject: RE: Re: [PATCH V4 4/5] soc: qcom: Introduce SCMI based Memlat
+ (Memory Latency) governor
+Reply-To: myungjoo.ham@samsung.com
+Sender: MyungJoo Ham <myungjoo.ham@samsung.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+To: Sibi Sankar <quic_sibis@quicinc.com>, Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>, Kyungmin Park <Kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>
+CC: "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+	"cristian.marussi@arm.com" <cristian.marussi@arm.com>,
+	"andersson@kernel.org" <andersson@kernel.org>, "konrad.dybcio@linaro.org"
+	<konrad.dybcio@linaro.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "quic_rgottimu@quicinc.com"
+	<quic_rgottimu@quicinc.com>, "quic_kshivnan@quicinc.com"
+	<quic_kshivnan@quicinc.com>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>, Amir Vajid
+	<avajid@quicinc.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <ac655bdc-5ccf-c6c6-3203-659f1916c53c@quicinc.com>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20241115003809epcms1p518df149458f3023d33ec6d87a315e8f6@epcms1p5>
+Date: Fri, 15 Nov 2024 09:38:09 +0900
+X-CMS-MailID: 20241115003809epcms1p518df149458f3023d33ec6d87a315e8f6
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCJsWRmVeSWpSXmKPExsWy7bCmnu6n6WbpBgt/8Fps67CxOHflKrvF
+	+Sv9bBZr9p5jsjjY9pPN4vqX56wW84+cY7WYeB7I7Zi8ncWi78VDZouzTW/YLTY9vgaU2H+W
+	3eLyrjlsFp83b2G3eHl7G5tF86LfbBate4+wWyw/tYPFYuNXDwcRjzXz1jB6bFrVyeZx59oe
+	No/NS+o9Ju6p8+jbsorR4/MmuQD2qGybjNTElNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sL
+	cyWFvMTcVFslF58AXbfMHKBvlBTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkFpgV6
+	xYm5xaV56Xp5qSVWhgYGRqZAhQnZGf8WvmcuaOOoOPdrH3sD41a2LkZODgkBE4mfvz+wdzFy
+	cQgJ7GCUuHDkPXMXIwcHr4CgxN8dwiCmsECSRNeuHJByIQEliYab+5hBbGEBfYmOB9sYQWw2
+	AV2JrRvusoCMERG4yigxc/pZMIdZ4C6bROe+q6wQy3glZrQ/ZYGwpSW2L98K1s0pYC/xb/5i
+	qLioxM3Vb9lh7PfH5jNC2CISrffOMkPYghIPfu6GiktK9N3ZywSyTEJgG6PEjiNz2CCc/YwS
+	Ux62QU3Slzgz9yTYy7wCvhI7mw6BXcQioCrR0twNDQoXiZafEHFmAXmJ7W/ngEOCWUBTYv0u
+	fYgwn8S7rz1wz+yY94QJwlaTOLR7CdQqGYnT0xdCHeohcfHDRVZI0K1mlti1MW4Co/wsRPjO
+	QrJsFsKyBYzMqxjFUguKc9NTiw0LDOFRmpyfu4kRnJy1THcwTnz7Qe8QIxMH4yFGCQ5mJRHe
+	U87G6UK8KYmVValF+fFFpTmpxYcYTYHenMgsJZqcD8wPeSXxhiaWBiZmRsYmFoZmhkrivGeu
+	lKUKCaQnlqRmp6YWpBbB9DFxcEo1MOl+iFI6bSJ5aZ7T8ou7bZ/+/ym7evZNST7DCXEVc39N
+	XNCT5+qwa/MuQc3sO2uPpL1J1K68ru7hcLpa+VH9JOmgb5vjiucaTTt3Nlx2pvdZ3g/TNunM
+	2vtHRXrDN8FPPTuenKsJ3cSVOmvBj9pjj36eLtdnb/uzJ8Fm2QYd/tt1vet/RFQ4qk/8avC+
+	dV5r39r+aJccvs+1i6J4rlmYTZ8gzOMXvMvC7hJD6Y/n/nHqmmcWd/XP+i38ZO0pxQWNgh33
+	rlp56j78POt46gbZyRb8vqXvVmhMna144YHpessbcoHyUaLTjpUsN1S8d/Sn+o0Paumdd/aa
+	q/vWX3h+zlJnp/qmwyc23T/XxXTRo0hZiaU4I9FQi7moOBEA2uwez1cEAAA=
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241114041419epcas1p3b52bb9795ffd9efa568bb106ba268e02
+References: <ac655bdc-5ccf-c6c6-3203-659f1916c53c@quicinc.com>
+	<20241007061023.1978380-1-quic_sibis@quicinc.com>
+	<20241007061023.1978380-5-quic_sibis@quicinc.com>
+	<2aycrvnvivcrqctqmweadcgenwugafdr6ub3bzkscterpenz32@bzabln2hkral>
+	<29eef87e-96f6-5105-6f7a-a8e01efcb4a3@quicinc.com>
+	<k4lpzxtrq3x6riyv6etxiobn7nbpczf2bp3m4oc752nhjknlit@uo53kbppzim7>
+	<CGME20241114041419epcas1p3b52bb9795ffd9efa568bb106ba268e02@epcms1p5>
 
-Updating the ctxt value to NULL in the svsm_perform_ghcb_protocol as
-it was not initialized.
+>
+>Hey Dmitry,
+>
+>Thanks for taking time to review the series.
+>
+>+ Devfreq maintainers to comment (I thought you already added
+>them by name)
+>
+>
+>Hey MyungJoo/Kyungmin/Chanwoo,
+>
+>Can you weigh in here? Does it make sense to add a new
+>class of devfreq devices that don't have governors
+>associated with them just for them to export a few
+>essential data to userspace? In this scenario the
+>scaling algorithm is in a SCP and we just start
+>them from the kernel. We do have ways to get the
+>current frequency of various buses but does this
+>warrant adding a new class of governor less devices?
+>
+>-Sibi
 
-Fixes: 2e1b3cc9d7f7 (grafted) Merge tag 'arm-fixes-6.12-2' of git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc
-Signed-off-by: Ragavendra Nagraj <ragavendra.bn@gmail.com>
----
- arch/x86/coco/sev/shared.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If voltage/frequency is controlled by SCP
+(it's an SoC's internal hardware IP, right?),
+it's good to have a userspace governer
+with the driver not accepting updates from userspace.
 
-diff --git a/arch/x86/coco/sev/shared.c b/arch/x86/coco/sev/shared.c
-index 71de53194089..a0fe7fc9bdc7 100644
---- a/arch/x86/coco/sev/shared.c
-+++ b/arch/x86/coco/sev/shared.c
-@@ -335,7 +335,7 @@ static int svsm_perform_msr_protocol(struct svsm_call *call)
- 
- static int svsm_perform_ghcb_protocol(struct ghcb *ghcb, struct svsm_call *call)
- {
--	struct es_em_ctxt ctxt;
-+	struct es_em_ctxt ctxt = NULL;
- 	u8 pending = 0;
- 
- 	vc_ghcb_invalidate(ghcb);
--- 
-2.46.1
+E.g., Let "target" callback not update the frequency value,
+ or let "target" callback always return an error with
+ a dev_err message that you don't accept frequency changes
+ from userspace.
 
+Cheers,
+MyungJoo.
 
