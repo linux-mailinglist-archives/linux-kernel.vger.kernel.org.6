@@ -1,136 +1,173 @@
-Return-Path: <linux-kernel+bounces-410540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46BB09CDD06
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:51:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D00579CDD0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:54:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EC5A283358
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:51:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43366B22985
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67941B3F3D;
-	Fri, 15 Nov 2024 10:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6141B6CE3;
+	Fri, 15 Nov 2024 10:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ghHj80am"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="LxD2iVQS"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6EB1B3920
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683491B393C
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731667880; cv=none; b=OroY2tUVvHMQbeWBsTanAzJ1E6TDIy+yBII2IAQWH6NwHeTMDmAtpQzhI6XKjL5B0wx7Dm2LLvXQh39Z/cxTKdQWI7Vo/KGH5SzcHmJDSMFABVnmBSbwnFmlBSxracY7dCjehhHocQIkPjIbswqor6HEZchqj3Ts0/YAf+zQaOw=
+	t=1731668028; cv=none; b=tfr9yUIqgwI1G7Gf4OrcLoQBnnocURiUgjRZ36iJv+GIgu3Jl6AqPBGfmi38MhQuO71WAyf4Ik2YgtGJszcwQwjMFQghQHQCHyWHG4gFt0lUUEwCZRcj+Q1vZgY5WUjOOnLVs8uX6bBoyLZVgfqn6heWZiQNVtAOMuijuI7/+Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731667880; c=relaxed/simple;
-	bh=Qx4F0F461BzRVt5DGASUXEaOPXglVHaubs+hPumYIhQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cB51cJrIIQJTOQmKDrZErcXpzNxDR9ulh1zLCVICKmjzMDLhW9/jPPP2cGjN/8ylqQm3+i3fuzJtETqAjD4P4WBCOFPXtUwjUIaA1HNz7guMSpsAZqI9XRWnmyZve0caSmb46J7bl66CcDih1fVJ7SbYgq8OaXr8/XE8dlRrhdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ghHj80am; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4315eac969aso9470715e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 02:51:17 -0800 (PST)
+	s=arc-20240116; t=1731668028; c=relaxed/simple;
+	bh=Aze8ubsJfw20CCAheENnV0TxOaVpLIudKLyqB1mUmWs=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TkeydevKseACiQ/8SqBAaQhiCkZAd5zTsjYcuhzXEcI33gf2ysZx1AeJ1/JL4got/2gKPGiXn9+IW2Fkkxj1uS0PGCZhVojsySpP0hFmSAUcYlu3PrVCfbicoy8CK2DbIyi65kK8tTJL/K9NpYpflyDFiklulT3fsyGJFlgWKBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=LxD2iVQS; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb56cb61baso4509241fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 02:53:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731667876; x=1732272676; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1731668023; x=1732272823; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qx4F0F461BzRVt5DGASUXEaOPXglVHaubs+hPumYIhQ=;
-        b=ghHj80amLuodM885jnFDpzZZId6U4zEf6JkFlhA9mrzvt8tVKjKVfQlTjslNv2xQid
-         a8ZB01IdS/yqGFrPif0/bmIdYnsSbxnORyh28jgiyF/QGudhAwdgLpzu7OUHXro89Ur5
-         TC6eiMQvxu8lbyScFHAJUSTMvYIk2ThCVs6U2yubFvp7QKBNT6URWKLdDBSEfPUHkTQM
-         ROn60oJ06X6mivXbRs4nhZE6COyiGxs//snCH352VtbSAfCG984AyD4oaPeFec8Q/uoa
-         qwk2T9g6vlVdhAy08koNLRutsUJG7F1j7e8f/bu6d3yILm+RVrCr9XZ6OoT19iDX2+xZ
-         /Z8Q==
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kqEZZaXWIaNRK9OLE5Wx827F0bUtvaOZcgVtTnimPxg=;
+        b=LxD2iVQSWDliHa7Qm3U3T/EF+DEPxdk9Ry8F7GTgz3VvaNne5Bk1xmuxG6LqbmMXDz
+         5rlp5x3XY53Lq88fHFqXPax4sm/eWCl63dMf8NDRiPHsqBmsRNFtnIaJS9g7oygJahmr
+         yOXnNQlESkzsmaTIhRvy97jxtpiq4j8KaBGB/cREmFctrM/vwQzXRsKMoMV9q46oy8gz
+         miY6W2t5FL5k1Xzc6cQ1NVZEzOOn17TiwTYFlTubfSdjVbzgWUPzhfMeXCOLE2ULq2HA
+         WyCXiqEGTDgOU277xMcpAN87RLgbLg5KBgZ6NI90hAMsIuBXhXrWI9+t7wkIVZ9nBY0y
+         sgZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731667876; x=1732272676;
+        d=1e100.net; s=20230601; t=1731668023; x=1732272823;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Qx4F0F461BzRVt5DGASUXEaOPXglVHaubs+hPumYIhQ=;
-        b=cLz/CmtZtIgmC+Xd33FxcrDN0VqLhxKdCXQSHJ57DHs8Ot2+P/R+DWhlR8bJiWmerB
-         XKcIu03iXRav7uTlR6iDz2HDVvFymVF65aydsGhhxaYSlpLt0JoONM55bCP7omZpYDNX
-         a3+y12vhEHa6u6dOWmmQhck+u3SdDfuLpqcazG2zmxm5dQ2G1PksdQnIoKK54+mkrDi9
-         AvwafQNEigkNcM3/x7oa/l9YKVGJz2EJ/oxrNuf3sn1K/21juAdo+6EbimSUgW4Q5lEY
-         XYHO1ppEpJAekqBpNnA6yueVgwFUSOSOjHUjtc5kO1cb2Hw4rmb0fj0cLZebdc2G4SJV
-         ad4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWyfvTmyrL8PojEjhg5wzy3sYHyEBfqrOXC/WKOwqobRBJgji4MRLo3dWhDIrag/Tx0HvzUMaAMGVM7JBw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUAmWgiUGYm+UIvWAAqsT0IGA9mVY9UC/OOLEFTz6u78B0psVr
-	Mr1s7OVjSBRa8X20mSeCUJR1G+UKBgAglN5+RP8gM3I2IGPmYx4ddk46LvxdoQE=
-X-Google-Smtp-Source: AGHT+IEELQH215cT5HxQoVpbKazD1oIwR5e78Y6MuL4jy6qtS+rOi2RiLQuJVhCpA5LXSAg3YC4WLA==
-X-Received: by 2002:a05:600c:1c29:b0:431:4e33:98b6 with SMTP id 5b1f17b1804b1-432defd2398mr20383955e9.5.1731667876341;
-        Fri, 15 Nov 2024 02:51:16 -0800 (PST)
-Received: from localhost (p200300f65f28bb0063ffae39110fa2df.dip0.t-ipconnect.de. [2003:f6:5f28:bb00:63ff:ae39:110f:a2df])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dac223e6sm50118295e9.43.2024.11.15.02.51.15
+        bh=kqEZZaXWIaNRK9OLE5Wx827F0bUtvaOZcgVtTnimPxg=;
+        b=qxG/QkUCnoY9SNSO5mNWmB5rxEjzi0be7X/FDBM7IoL1NgPIQ7TCgp1DX99nCwFJ5P
+         8w5HN+XX7GYemRqsNzvHUw8gPn9MpV8VVrVMB1MwVAsE5Txa8R9BzaIW7kTSm2zcKYrc
+         XtdirCwybCQMxrwIUlg7Krzy6a+0jKvOKPexf2MEnQkl/5sNz6Z0C38fBc2sJwrxUdH7
+         DXdDXjwcPLuvHjVLE7Cb+BOOP47GTjfGd2Arx7TCMRK20nSGQStPB9DyWArgJ7lCDjtd
+         QbwsWrI61OqnDDKqcs1iDjy3dVeHeNFoXT2NRLDvy4r4Vz3t4hf5snHBNEzEeJ6+98hq
+         gXIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVpkqEYBoFLjaQJES0cD2mnszQzbODbbh88Ib97zXQtg4gbxLR6I0L9MoC68dm2phkamQNlJoiQjeqvVKU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmQDLQy79SHvl5RiJxnZSMDtNWtbt69L/g2FsOlR9HVI9/Jm6a
+	eBqSWk8BHQHqZ999El/48OG+aQborndWaCnF09pbrQ4jAKEvvOaDMHkdbprmXGE=
+X-Google-Smtp-Source: AGHT+IFHVLZ9JHkGOvekL5vmiZxKEfDLHTUYv8vjzg0FSLM0sIjZA/dYE3eiUJZBbLbHkNSDwDDmVw==
+X-Received: by 2002:a05:651c:245:b0:2fa:c59d:1af3 with SMTP id 38308e7fff4ca-2ff606933a3mr12846531fa.20.1731668023447;
+        Fri, 15 Nov 2024 02:53:43 -0800 (PST)
+Received: from localhost (host-79-19-144-50.retail.telecomitalia.it. [79.19.144.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf9010b12bsm531260a12.41.2024.11.15.02.53.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 02:51:15 -0800 (PST)
-Date: Fri, 15 Nov 2024 11:51:13 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Werner Sembach <wse@tuxedocomputers.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, tux@tuxedocomputers.com, Petr Pavlu <petr.pavlu@suse.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Thorsten Leemhuis <linux@leemhuis.info>, Vinzenz Vietzke <vv@tuxedocomputers.com>, 
-	Christoffer Sandberg <cs@tuxedo.de>
-Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
- symbols
-Message-ID: <y3lspnzleavkgvujrf66rly65yw3sskjomcvbginijgexaybys@bg53hyadhcbw>
-References: <20241114103133.547032-4-ukleinek@kernel.org>
- <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
- <2024111557-unlighted-giggle-0d86@gregkh>
- <6c1952bc-f58d-4c55-887e-6aa247daec5c@tuxedocomputers.com>
- <h5q36ajuzgwf5yrjmqv46x62evifcgoi5imxhcvsv7oxauvxak@sj54oisawqnf>
- <58b85a78-55aa-422c-a21d-254eb16cc8c6@tuxedocomputers.com>
- <2024111522-brush-excusably-cae5@gregkh>
- <3ea99d52-cafb-4c79-a78b-fdd1f9a9fcd5@tuxedocomputers.com>
+        Fri, 15 Nov 2024 02:53:43 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Fri, 15 Nov 2024 11:54:11 +0100
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>, stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] of: address: Preserve the flags portion on 1:1
+ dma-ranges mapping
+Message-ID: <ZzcoU8ckE7wXWC8w@apocalypse>
+References: <ae3363eb212b356d526e9cfa7775c6dfea33e372.1731060031.git.andrea.porta@suse.com>
+ <20241108165654.GA1665761@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="urniyztjj4xzapin"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3ea99d52-cafb-4c79-a78b-fdd1f9a9fcd5@tuxedocomputers.com>
+In-Reply-To: <20241108165654.GA1665761@bhelgaas>
 
+Hi Bjorn,
 
---urniyztjj4xzapin
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
- symbols
-MIME-Version: 1.0
+On 10:56 Fri 08 Nov     , Bjorn Helgaas wrote:
+> On Fri, Nov 08, 2024 at 11:39:21AM +0100, Andrea della Porta wrote:
+> > A missing or empty dma-ranges in a DT node implies a 1:1 mapping for dma
+> > translations. In this specific case, the current behaviour is to zero out
+> > the entire specifier so that the translation could be carried on as an
+> > offset from zero.  This includes address specifier that has flags (e.g.
+> > PCI ranges).
+> > Once the flags portion has been zeroed, the translation chain is broken
+> > since the mapping functions will check the upcoming address specifier
+> > against mismatching flags, always failing the 1:1 mapping and its entire
+> > purpose of always succeeding.
+> > Set to zero only the address portion while passing the flags through.
+> 
+> Add blank lines between paragraphs.
 
-Hello Werner,
+Ack.
 
-On Fri, Nov 15, 2024 at 10:40:56AM +0100, Werner Sembach wrote:
-> Then why does the proprietary NVIDIA driver exist?
+> 
+> > Fixes: dbbdee94734b ("of/address: Merge all of the bus translation code")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > Tested-by: Herve Codina <herve.codina@bootlin.com>
+> > ---
+> >  drivers/of/address.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/of/address.c b/drivers/of/address.c
+> > index 286f0c161e33..72b6accff21c 100644
+> > --- a/drivers/of/address.c
+> > +++ b/drivers/of/address.c
+> > @@ -455,7 +455,8 @@ static int of_translate_one(struct device_node *parent, struct of_bus *bus,
+> >  	}
+> >  	if (ranges == NULL || rlen == 0) {
+> >  		offset = of_read_number(addr, na);
+> > -		memset(addr, 0, pna * 4);
+> > +		/* copy the address while preserving the flags */
+> 
+> Not knowing the surrounding code, it seems strange to say "copy the
+> address" when the memset() fills with zero and does no copying.
+> 
+> The commit log says "set address to zero, pass flags through," and I
+> could believe *that* matches the memset().
 
-Please don't use NVIDIA's behaviour as a blueprint for your actions.
-INAL, but I would not recommend to deduce from "NVIDIA does it and
-wasn't tried to stop" (for any value of "it") that "it" is legal, honest
-and in line with the open source spirit.
+Ack.
 
-Best regards
-Uwe
+Many thanks,
+Andrea
 
---urniyztjj4xzapin
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmc3J58ACgkQj4D7WH0S
-/k7y+wgAoeHmj2+Ieb2/+7ZLcMqzAgTHIowWVwOoVKDhzeR/QR/KcGI/NpJy6+9d
-N8T7+pSTEZfckqr9kK37pjzX5bRFYnqAOdzKbi9z4qHL+8aTLRVn2nsi7kombrEZ
-0L+lRVzkXEB1bPndRdSGisMhKqLQu8FTf8hNXnPNv1oVoTR5CqJaYRUGVdLt0XJo
-8xQF88D47JhOCm37oMhLqfkAewQqJ0giSKSQKzsC7Z7OFcMUuj3m0alMALIiqJcH
-34J2igse0euzjP9oQ2eH4v+I9wk4nSB2rAWukYcDEUuDqYCg0xQRL2PpS8YrpQQX
-FwoHsvdf4LmLdh7SQrma+KylB9rNCw==
-=Kv05
------END PGP SIGNATURE-----
-
---urniyztjj4xzapin--
+> 
+> > +		memset(addr + pbus->flag_cells, 0, (pna - pbus->flag_cells) * 4);
+> >  		pr_debug("empty ranges; 1:1 translation\n");
+> >  		goto finish;
+> >  	}
+> > -- 
+> > 2.35.3
+> > 
 
