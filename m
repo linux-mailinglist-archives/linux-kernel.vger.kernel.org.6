@@ -1,132 +1,152 @@
-Return-Path: <linux-kernel+bounces-410999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5359B9CF177
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:27:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A1689CF181
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:30:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19A9F29348A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:27:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3DBE1F243B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944DE1D4610;
-	Fri, 15 Nov 2024 16:27:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4121D47C7;
+	Fri, 15 Nov 2024 16:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cf10LL0X"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W01u209Y"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDF5126C10;
-	Fri, 15 Nov 2024 16:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFBE166307
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 16:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731688062; cv=none; b=bDL/DoDqlmfujaD7pUjR425Uuch5ER8q+JgmLd0hJMW8Y7KMzUyXtbz9mIiNghWvwkkMQCbF48ly0VTxiCpD162SlU/4/ac79ppMZMJu1s+fEJDmidzZ1HRqZ3T2IXY3xV3DeKHms0xG5KWwAh/zANBeZMsGADu0GjosSLOg/D0=
+	t=1731688231; cv=none; b=VtPN22xku12rISBcZv00NBTH/aPh8SwCNl9EEc6PnTHTuSzPMcS9kiy7yxhoGjUIOWBysTBtoiSXIgyCULLOr/rFoXw3E8FmXGtJnMc9U+DFjoH3ZdwWk570wn9EN9+Q8HmbwgfbmJH00pm1cezait+yEAG8aDyeT0ioCxTHIQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731688062; c=relaxed/simple;
-	bh=oK/ecY8SVQjsxicQV/tUD92mrzRYTPcQsFmw2JJDW/g=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=rixBU9WD/6vCU+jfTnEwvG/rV1QF9DmQF4xKmP3jfnShrW2emny6iSQY7CqoTGqsB+2K4elMpmchwPSsN7g7HKy9/UqZxYlf3QzPdvgn5qBPxPbsHTHVoAC5/ufzdMk4ZC9nB7W/PVPIgaUdNxCVeSJhDAiAIepIgZRlv/w6w98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cf10LL0X; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731688060; x=1763224060;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=oK/ecY8SVQjsxicQV/tUD92mrzRYTPcQsFmw2JJDW/g=;
-  b=cf10LL0XK2t2PBGZug6VNrNrtMZ2t4Ddg634UObpVj+SzQMwTH5fwDMj
-   iH/U2kdwvRl7GknQEgkvx3qX7VovkRZKAs4N20Q6M3+o98+k6Sr+durt7
-   E0HY+UdCJJqrbfuul7WcLIyfBmkPcyfOuNYtDTiz+g2WUITtLf+EvnJ3s
-   IuomxpNfDRmSBFl7NCcZBXDolVXwjx7TA3bS47gta92KYQnM5fncfcUFi
-   OfsUaIhUyIo19MDrHYAdmiUzPtOqQkIieJfAMNx/OGSmxuQMjSe+nY7tU
-   p2ybh9Qr9PUST6wAqskVrP+o/Bl8LGtQ9Vc35WyFHQi83hynZcOFBR1Mu
-   A==;
-X-CSE-ConnectionGUID: +yi6HbtlRgqw8evKt9zwoQ==
-X-CSE-MsgGUID: q6fC0XTISfi+NZ8HhNzXGw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11257"; a="34572018"
-X-IronPort-AV: E=Sophos;i="6.12,157,1728975600"; 
-   d="scan'208";a="34572018"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 08:27:39 -0800
-X-CSE-ConnectionGUID: H0U1k8MRTRSwIU8xkOKmwA==
-X-CSE-MsgGUID: GK+31EqdRk2Tz36M3cEF8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,157,1728975600"; 
-   d="scan'208";a="93545937"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.142])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 08:27:38 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 15 Nov 2024 18:27:34 +0200 (EET)
-To: Lukas Wunner <lukas@wunner.de>
-cc: Stefan Wahren <wahrenst@gmx.net>, 
-    Florian Fainelli <florian.fainelli@broadcom.com>, 
-    Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, 
-    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] PCI/PME+pciehp: Request IRQF_ONESHOT because bwctrl
- shares IRQ
-In-Reply-To: <ZzdF1zrgQNNRlkgP@wunner.de>
-Message-ID: <ca3008f1-d4ba-a68e-5a3c-a9e2e075eaa0@linux.intel.com>
-References: <20241114142034.4388-1-ilpo.jarvinen@linux.intel.com> <ZzdF1zrgQNNRlkgP@wunner.de>
+	s=arc-20240116; t=1731688231; c=relaxed/simple;
+	bh=23WwRG9YMIrdOINPp98oIY1pU+b7asr/HtZ9Lb7K10Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=F4igolprMs4du7+4PpfL6AAC2Me18plQg5XQqNRFcvfcvaMdtbO0gHfcNILrJ4vFPIVWY8G/YbJZUcXN2MevUxaK502bxYUXNoJyyYfiMXoXop38evYE1IoIcYNCPSfLwwzXdKTfDt+0nIU61IQYCyxNycA49NC4Kh4H1/Ia2nE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W01u209Y; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731688228;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=CWuLwX1NW+1DyPKTMhME1vJOYG/j4m1+TWZHBmu4nbA=;
+	b=W01u209Y5hH+UR19vgz4FlzAHYgNz4X1hbT2jaCETZaxQCfIx2knMQ0IvxDBV3a4QaBn12
+	0npZxQY04R0wxy+bwnfP2yDuZnzv/RHNS4gwLxPZkwVO1zich2egIeFcISFqclULhN+DLA
+	uw7DxFM3kztBYxl9sLunCS0rPB6LBik=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-153-wBxC1R4qMqu_dhReoxRBVg-1; Fri, 15 Nov 2024 11:30:25 -0500
+X-MC-Unique: wBxC1R4qMqu_dhReoxRBVg-1
+X-Mimecast-MFC-AGG-ID: wBxC1R4qMqu_dhReoxRBVg
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6d3a07b63e6so26040786d6.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:30:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731688225; x=1732293025;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CWuLwX1NW+1DyPKTMhME1vJOYG/j4m1+TWZHBmu4nbA=;
+        b=Vok0jly/mS/iGMUdAK4FvG6/aohy8kLK6085mpgDvL4ujvVlaygGilBS96g4D56cv6
+         Qm4UeLHQILFJlxHdc7y8gCp+ney2TwDd0odWBEkswDkrV9OGuwurrrIGUOo3r/5AjDfq
+         4PugZ05EuGiSi5mQQZCYaO2r6ZOaOAA2JAEcFgaavteo8VBgaaM+zJeQ7zwJbuv0AWKH
+         Fdb1SrI5aRfFCcBuXBb7V+tIHo9OAl9pFDsaCyJY+RCruBvOMgVkBnxsDCIP3vuH0YP5
+         tq76bqQgLh9WccFxTkXU80ZtWSZ+4UuNMNdkejk85siNV3lbxg5YapaSmsmoZawb2nlh
+         rsqw==
+X-Gm-Message-State: AOJu0YyXBX1Ck85y8DbAe867RBcWtzURrbpaNUujnsqatXQ02CXDR0vT
+	j/Uj2ZeNbgitVDPhmg0hYScwDC4H5/VIM3Lec8h8h9Hq1jFIpK/jsEmwnvVOm3vshu4wVnW0A0z
+	jVHFcdfhGaPlmtbJb2oZCWDeE4KKBeXOqaxKYlVKk7dtjAMpSIAtkopJPfGNhcg==
+X-Received: by 2002:a05:6214:3992:b0:6d3:f904:5359 with SMTP id 6a1803df08f44-6d3fb821c77mr44867256d6.33.1731688224824;
+        Fri, 15 Nov 2024 08:30:24 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFJdcgA20MMlQvFTg5eHsqs/sPveryXiK7wPJsLZuT6HmgM/b7XQecSuNE+S749+ckIL3iYRQ==
+X-Received: by 2002:a05:6214:3992:b0:6d3:f904:5359 with SMTP id 6a1803df08f44-6d3fb821c77mr44866866d6.33.1731688224360;
+        Fri, 15 Nov 2024 08:30:24 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-47-4-194.as13285.net. [80.47.4.194])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3ee77386fsm19197606d6.6.2024.11.15.08.30.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 08:30:23 -0800 (PST)
+Date: Fri, 15 Nov 2024 16:30:19 +0000
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Koutny <mkoutny@suse.com>
+Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Additional issue with cpuset isolated partitions?
+Message-ID: <Zzd3G67_UwBUJaRt@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-269478299-1731688054=:940"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hello,
 
---8323328-269478299-1731688054=:940
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+While working on the recent cpuset/deadline fixes [1], I encountered
+what looks like an issue to me. What I'm doing is (based on one of the
+tests of test_cpuset_prs.sh):
 
-On Fri, 15 Nov 2024, Lukas Wunner wrote:
+# echo Y >/sys/kernel/debug/sched/verbose
+# echo +cpuset >cgroup/cgroup.subtree_control
+# mkdir cgroup/A1
+# echo 0-3 >cgroup/A1/cpuset.cpus
+# echo +cpuset >cgroup/A1/cgroup.subtree_control
+# mkdir cgroup/A1/A2
+# echo 1-3 >cgroup/A1/A2/cpuset.cpus
+# echo +cpuset >cgroup/A1/A2/cgroup.subtree_control
+# mkdir cgroup/A1/A2/A3
+# echo 2-3 >cgroup/A1/A2/A3/cpuset.cpus
+# echo 2-3 >cgroup/A1/cpuset.cpus.exclusive
+# echo 2-3 >cgroup/A1/A2/cpuset.cpus.exclusive
+# echo 2-3 >cgroup/A1/A2/A3/cpuset.cpus.exclusive
+# echo isolated >cgroup/A1/A2/A3/cpuset.cpus.partition
 
-> On Thu, Nov 14, 2024 at 04:20:34PM +0200, Ilpo J=E4rvinen wrote:
-> > --- a/drivers/pci/hotplug/pciehp_hpc.c
-> > +++ b/drivers/pci/hotplug/pciehp_hpc.c
-> > @@ -68,7 +68,8 @@ static inline int pciehp_request_irq(struct controlle=
-r *ctrl)
-> > =20
-> >  =09/* Installs the interrupt handler */
-> >  =09retval =3D request_threaded_irq(irq, pciehp_isr, pciehp_ist,
-> > -=09=09=09=09      IRQF_SHARED, "pciehp", ctrl);
-> > +=09=09=09=09      IRQF_SHARED | IRQF_ONESHOT,
-> > +=09=09=09=09      "pciehp", ctrl);
-> >  =09if (retval)
-> >  =09=09ctrl_err(ctrl, "Cannot get irq %d for the hotplug controller\n",
-> >  =09=09=09 irq);
->=20
-> I don't think this will work.  The IRQ thread pciehp_ist() may write
-> to the Slot Control register and await a Command Completed event,
-> e.g. when turning Slot Power on/off, changing LEDs, etc.
->=20
-> What happens then is, the hardware sets the Command Completed bit in
-> the Slot Status register and signals an interrupt.  The hardirq handler
-> pciehp_isr() reads the Slot Status register, acknowledges the
-> Command Completed event, sets "ctrl->cmd_busy =3D 0" and wakes up the
-> waiting IRQ thread.
->=20
-> In other words, pciehp does need the interrupt to stay enabled while
-> the IRQ thread is running so that the hardirq handler can receive
-> Command Completed interrupts.
->=20
-> Note that DPC also does not use IRQF_ONESHOT, so you'd have to change
-> that as well in this patch.  The Raspberry Pi happens to not support
-> DPC, so Stefan didn't see an error related to it.
->=20
-> I'm afraid you need to amend bwctrl to work without IRQF_ONESHOT rather
-> than changing all the others.
+and with this, on my 8 CPUs system, I correctly get a root domain for
+0-1,4-7 and 2,3 are left isolated (attached to default root domain).
 
-That isn't complicated. The current irq thread handler is simple enough=20
-that it will just work as hardirq handler without any changes.
+I now put the shell into the A1/A2/A3 cpuset
 
---=20
- i.
+# echo $$ >cgroup/A1/A2/A3/cgroup.procs
 
---8323328-269478299-1731688054=:940--
+and hotplug CPU 2,3
+
+# echo 0 >/sys/devices/system/cpu/cpu2/online
+# echo 0 >/sys/devices/system/cpu/cpu3/online
+
+guess the shell is moved to the non-isolated domain. So far so good
+then, only that if I turn CPUs 2,3 back on they are attached to the root
+domain containing the non-isolated cpus
+
+# echo 1 >/sys/devices/system/cpu/cpu2/online
+...
+[  990.133593] root domain span: 0-2,4-7
+[  990.134480] rd 0-2,4-7
+
+# echo 1 >/sys/devices/system/cpu/cpu3/online
+...
+[ 1082.858992] root domain span: 0-7
+[ 1082.859530] rd 0-7
+
+And now the A1/A2/A3 partition is not valid anymore
+
+# cat cgroup/A1/A2/A3/cpuset.cpus.partition
+isolated invalid (Invalid cpu list in cpuset.cpus.exclusive)
+
+Is this expected? It looks like one need to put at least one process in
+the partition before hotplugging its cpus for the above to reproduce
+(hotpluging w/o processes involved leaves CPUs 2,3 in the default domain
+and isolated).
+
+Thanks,
+Juri
+
+1 - https://lore.kernel.org/lkml/20241114142810.794657-1-juri.lelli@redhat.com/
+    https://lore.kernel.org/lkml/20241110025023.664487-1-longman@redhat.com/
+
 
