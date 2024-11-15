@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-410546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C58C9CDD1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:58:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99CCD9CDD21
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:59:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86EB6B27143
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:58:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EBA82816B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15FB1B3920;
-	Fri, 15 Nov 2024 10:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFA01B6CF2;
+	Fri, 15 Nov 2024 10:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PDHfK5/V"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ai7N5Vyk"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57AA1B3957
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2AC1B5EDC
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731668317; cv=none; b=Psn0Azide5oF0iPTnxWJJBHrd132QWsNfkIVIM4RmnaQbePWT+fLcmIxKaU6Jhki5oU7QS0m2Ye5SGxiwLiv/AJORSj9zrpS72PPYQLyJHiQeZD/3w0peSLfcKk732n1IW9WaYMMNdlUak++UuX3vF4h6Z9q8oMqKv3oR4oTITE=
+	t=1731668347; cv=none; b=M0uMCGtwwDu9vjeUaOH4b8fxpVdDgdIHN5VU8oGpUY9HQ76Rv0tHgQsklgr3GBUjnAR6h3NktmneE53u+YfufVCqBRul1oGoDW/BoGD3cRCoa/AwAeGr2XpiXYPJ/WAnMhg7hFkf8rBsPnBxXXieZYc8rxOI3iUuiwXgffdDgHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731668317; c=relaxed/simple;
-	bh=Wv2+WJTNfLtEOqPpwa9LRPNUyq3pvlT10UxWln989a8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CAcRCkINuvQZc8QMMYdGte7pOKni3Vqeo1MgAAF1zLpHrRk3PqdW6DPtabFR6fHO3IZkOnGxuu2NVAdqHAGg2ItRXQO1W0zwakjWhIwyQR7hufTGsCh99JY/30Fvof1q2uLpr5iFdqxuWfXK+4w52GVM4jL+ElXjn55G4Vzp8hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PDHfK5/V; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1731668347; c=relaxed/simple;
+	bh=xk5IraDmxNndGfJynhHEOWE4Z0wHW2Kmk6du6iWp3R4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Yw7G3juQfahf9OI4cpZtI7zmB26ojVHoylWelxXnIMgd/ZgTGQOMmG2tI8TsUkAkY70Xaof4ulscb6xIFkxvmp7SJjJ2F8jrD93x4O2EHG+jnlg6WIImSe90bZ6ldPWTVPCkDUhZs/cwirO4xJiEMf0bV6eBB0fR+zXvoBc9r5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ai7N5Vyk; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731668313;
+	s=mimecast20190719; t=1731668344;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=U1H3xY/YVT4Puc6217CC7kEEv4K9yKGJJ/vieW0xbho=;
-	b=PDHfK5/VYE0OPgQNTV+HQ6TBzE3F3LqrrX8ZSMksmqW+IIPs3ICKay7o/OGHuC1aAEt4Q3
-	IjusgmvzZt9a8YoydBwfKYIApARTjw7E7pbDi1B5vavd157xi5zLMzw6Kkb99D/MfyZvnO
-	VBky2MEev8179Dl2SP9253mCHi9Cac4=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=LZA42ddjo8PCNzqC2RzA/0ngU7rvGCooWJ2X5VJm9io=;
+	b=Ai7N5Vyk6eAaCuoy2L+Yxq6kvqZ2KHUowXhtwman9+kfHtjGEPu/I75LddWk5vdOOvgjln
+	c7GwNUsaogxBmJpL/7fdXWWrXF+YsFxRDJRAEttFYoVa0/psGTBlo7/e65hsHC6EVfhppH
+	YeN1eDFLH83IeY2DSf2fphL6+TnCY2I=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-115-qdqh8qTuN0miVS61-RzfNg-1; Fri, 15 Nov 2024 05:58:32 -0500
-X-MC-Unique: qdqh8qTuN0miVS61-RzfNg-1
-X-Mimecast-MFC-AGG-ID: qdqh8qTuN0miVS61-RzfNg
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4315f48bd70so4105065e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 02:58:32 -0800 (PST)
+ us-mta-563-xYlIPQPeM9Gk3KJB6gLDeg-1; Fri, 15 Nov 2024 05:59:02 -0500
+X-MC-Unique: xYlIPQPeM9Gk3KJB6gLDeg-1
+X-Mimecast-MFC-AGG-ID: xYlIPQPeM9Gk3KJB6gLDeg
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4314a22ed8bso4142475e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 02:59:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731668311; x=1732273111;
+        d=1e100.net; s=20230601; t=1731668341; x=1732273141;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
+         :content-language:references:cc:to:from:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=U1H3xY/YVT4Puc6217CC7kEEv4K9yKGJJ/vieW0xbho=;
-        b=J28IY99eNu6PFmV+NskN1sluJ/pJhiEiIzfAHBcqqA/fKeQoGrxYDODiaPCiV7uuga
-         m16fib68mWlpe0uFYedn/alg4F3frGi+L4ao3mbd8sc69FoyEdsCH0ERzL6mdIXRXfTp
-         QE5YrolW10rS4ZvJWpA1gg0X59mJ7L6n1hkoAaqRMyR8GlHqcOMvBAjeVyT6MnmwqF07
-         ZsEawjlbmJ210bK5S8xMsLBG6UWASMtrogls5rkl+vWgNRwEONbsgAh/2swgw81z7od2
-         wXB5PzNJCBFpwkUzPHEO25CaEwOjMhHnRu0DZ2d0HN8ab1oYHgBe/G40YWWrMYe7nKWN
-         IMKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9744biJREAHnaAYpxMpccXNkDW8eFjtM6SugAtU5lonKycGjgluQdgeQP782J9sh3cPK/uMxe8jMLXWs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXeVjtetv3HRKLbWNrJ/XGlf9oS4ZsM3mWOs3oxVaFfgd+kMiX
-	rvNkV8rygECVkXtW26esyozRBYuD2mp2eZh0Oju0oBNOJ2244sncS8uTyn6MwhdK99EYC3YsHUJ
-	+cyxvUGaHUwcbP7U7XhZTf6MqG0npLfPeWBTHQ0vMo1onxFpL9PxjAwLJiKP0Kw==
-X-Received: by 2002:a05:600c:1d8f:b0:431:5a27:839c with SMTP id 5b1f17b1804b1-432df71eb8fmr18283045e9.5.1731668310993;
-        Fri, 15 Nov 2024 02:58:30 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFhrrEAweB2PmlhHWhuh1n8ewPor0nB7TNkC/BFGeIIh1rkY+M6HWsjFGdaOhCWJwpgU2cS6Q==
-X-Received: by 2002:a05:600c:1d8f:b0:431:5a27:839c with SMTP id 5b1f17b1804b1-432df71eb8fmr18282775e9.5.1731668310580;
-        Fri, 15 Nov 2024 02:58:30 -0800 (PST)
+        bh=LZA42ddjo8PCNzqC2RzA/0ngU7rvGCooWJ2X5VJm9io=;
+        b=sKHu4CDnTp8pD53m79Kd+o8HlpfY9onwCa5MMydBB3MuclUjq7az1xJOzJRm36xq67
+         LsNbSoU8QT91MiQ1eb69k7YBxbHo+oPlzcH3aeBCzKcTTqVUgacyMJGX2Fmtf7BEuUtP
+         1JrQXTrFCtANehch1Gw7/fmnbWkbAi30870yiUclzwKNYyi/VH/ksy3TNsnOeu7dndrt
+         nloS2Km1LsuuLkvIkcKSkCsc+BdCtwPQ4LPbXp3IDH6oNhcL2xZw+lFdqJvZUJy+lVAz
+         glkD6xmkzn8QcNJ35us/NgKPS6xr32pfsYk5uDiX7+BqyyvP8h0XVjI7aHDZkC2LoWQ7
+         rIcg==
+X-Forwarded-Encrypted: i=1; AJvYcCX2U/8xt7CWwY9Fe0lA3V/RR7PUtrIcc6eZaWfRRYPoHBTCTMpxPJxOq71n8NxVr0AKQg8OAfePc2spSSQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7OLFcVlWJNH6xnKgI6TYKL8YBkhDerBTRKvzp5MFpzxxwc/5F
+	ImOaW9VMDZAYHUm4sEc9dN4EsxKd3vwdadXUPdFpeiWEoeiom4y/4QbQDptHybd8h5rqgvlQFi4
+	ogQP7jcesS7CsQT+u+MxQwsYDH/Nc/Uqrl9TNIcdRus3OXrAb0GeTJ/NOLlGciQ==
+X-Received: by 2002:a05:600c:1548:b0:431:6060:8b16 with SMTP id 5b1f17b1804b1-432df792d1fmr19751735e9.30.1731668341636;
+        Fri, 15 Nov 2024 02:59:01 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHEV+H1DNqNgOXQeADtTDfnSZodbTJi6jL/FAZvevlXL9pc+wfCJzI7z7EhCdXSHK1J85QtjQ==
+X-Received: by 2002:a05:600c:1548:b0:431:6060:8b16 with SMTP id 5b1f17b1804b1-432df792d1fmr19751485e9.30.1731668341187;
+        Fri, 15 Nov 2024 02:59:01 -0800 (PST)
 Received: from ?IPV6:2003:cb:c721:8100:177e:1983:5478:64ec? (p200300cbc7218100177e1983547864ec.dip0.t-ipconnect.de. [2003:cb:c721:8100:177e:1983:5478:64ec])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da27ffafsm53416215e9.22.2024.11.15.02.58.28
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d48baa42sm66969915e9.1.2024.11.15.02.59.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 02:58:29 -0800 (PST)
-Message-ID: <c650066d-18c8-4711-ae22-3c6c660c713e@redhat.com>
-Date: Fri, 15 Nov 2024 11:58:28 +0100
+        Fri, 15 Nov 2024 02:59:00 -0800 (PST)
+Message-ID: <d2147b7c-bb2e-4434-aa10-40cacac43d4f@redhat.com>
+Date: Fri, 15 Nov 2024 11:58:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,19 +85,20 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH RFC v3 1/2] KVM: guest_memfd: Convert .free_folio() to
  .release_folio()
+From: David Hildenbrand <david@redhat.com>
 To: Elliot Berman <quic_eberman@quicinc.com>,
  Paolo Bonzini <pbonzini@redhat.com>,
  Andrew Morton <akpm@linux-foundation.org>,
  Sean Christopherson <seanjc@google.com>, Fuad Tabba <tabba@google.com>,
  Ackerley Tng <ackerleytng@google.com>, Mike Rapoport <rppt@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>
+ "H. Peter Anvin" <hpa@zytor.com>, Matthew Wilcox <willy@infradead.org>
 Cc: James Gowans <jgowans@amazon.com>, linux-fsdevel@vger.kernel.org,
  kvm@vger.kernel.org, linux-coco@lists.linux.dev,
  linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-mm@kvack.org
 References: <20241113-guestmem-library-v3-0-71fdee85676b@quicinc.com>
  <20241113-guestmem-library-v3-1-71fdee85676b@quicinc.com>
-From: David Hildenbrand <david@redhat.com>
+ <c650066d-18c8-4711-ae22-3c6c660c713e@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
@@ -144,90 +145,96 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20241113-guestmem-library-v3-1-71fdee85676b@quicinc.com>
+In-Reply-To: <c650066d-18c8-4711-ae22-3c6c660c713e@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 13.11.24 23:34, Elliot Berman wrote:
-> When guest_memfd becomes a library, a callback will need to be made to
-> the owner (KVM SEV) to transition pages back to hypervisor-owned/shared
-> state. This is currently being done as part of .free_folio() address
-> space op, but this callback shouldn't assume that the mapping still
-> exists. guest_memfd library will need the mapping to still exist to look
-> up its operations table.
+On 15.11.24 11:58, David Hildenbrand wrote:
+> On 13.11.24 23:34, Elliot Berman wrote:
+>> When guest_memfd becomes a library, a callback will need to be made to
+>> the owner (KVM SEV) to transition pages back to hypervisor-owned/shared
+>> state. This is currently being done as part of .free_folio() address
+>> space op, but this callback shouldn't assume that the mapping still
+>> exists. guest_memfd library will need the mapping to still exist to look
+>> up its operations table.
+> 
+> I assume you mean, that the mapping is no longer set for the folio (it
+> sure still exists, because we are getting a callback from it :) )?
+> 
+> Staring at filemap_remove_folio(), this is exactly what happens:
+> 
+> We remember folio->mapping, call __filemap_remove_folio(), and then call
+> filemap_free_folio() where we zap folio->mapping via page_cache_delete().
+> 
+> Maybe it's easier+cleaner to also forward the mapping to the
+> free_folio() callback, just like we do with filemap_free_folio()? Would
+> that help?
+> 
+> CCing Willy if that would be reasonable extension of the free_folio
+> callback.
+> 
 
-I assume you mean, that the mapping is no longer set for the folio (it 
-sure still exists, because we are getting a callback from it :) )?
-
-Staring at filemap_remove_folio(), this is exactly what happens:
-
-We remember folio->mapping, call __filemap_remove_folio(), and then call 
-filemap_free_folio() where we zap folio->mapping via page_cache_delete().
-
-Maybe it's easier+cleaner to also forward the mapping to the 
-free_folio() callback, just like we do with filemap_free_folio()? Would 
-that help?
-
-CCing Willy if that would be reasonable extension of the free_folio 
-callback.
-
+Now really CCing him. :)
 
 > 
-> .release_folio() and .invalidate_folio() address space ops can serve the
-> same purpose here. The key difference between release_folio() and
-> free_folio() is whether the mapping is still valid at time of the
-> callback. This approach was discussed in the link in the footer, but not
-> taken because free_folio() was easier to implement.
+>>
+>> .release_folio() and .invalidate_folio() address space ops can serve the
+>> same purpose here. The key difference between release_folio() and
+>> free_folio() is whether the mapping is still valid at time of the
+>> callback. This approach was discussed in the link in the footer, but not
+>> taken because free_folio() was easier to implement.
+>>
+>> Link: https://lore.kernel.org/kvm/20231016115028.996656-1-michael.roth@amd.com/
+>> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+>> ---
+>>    virt/kvm/guest_memfd.c | 19 ++++++++++++++++---
+>>    1 file changed, 16 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+>> index 47a9f68f7b247f4cba0c958b4c7cd9458e7c46b4..13f83ad8a4c26ba82aca4f2684f22044abb4bc19 100644
+>> --- a/virt/kvm/guest_memfd.c
+>> +++ b/virt/kvm/guest_memfd.c
+>> @@ -358,22 +358,35 @@ static int kvm_gmem_error_folio(struct address_space *mapping, struct folio *fol
+>>    }
+>>    
+>>    #ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE
+>> -static void kvm_gmem_free_folio(struct folio *folio)
+>> +static bool kvm_gmem_release_folio(struct folio *folio, gfp_t gfp)
+>>    {
+>>    	struct page *page = folio_page(folio, 0);
+>>    	kvm_pfn_t pfn = page_to_pfn(page);
+>>    	int order = folio_order(folio);
+>>    
+>>    	kvm_arch_gmem_invalidate(pfn, pfn + (1ul << order));
+>> +
+>> +	return true;
+>> +}
+>> +
+>> +static void kvm_gmem_invalidate_folio(struct folio *folio, size_t offset,
+>> +				      size_t len)
+>> +{
+>> +	WARN_ON_ONCE(offset != 0);
+>> +	WARN_ON_ONCE(len != folio_size(folio));
+>> +
+>> +	if (offset == 0 && len == folio_size(folio))
+>> +		filemap_release_folio(folio, 0);
+>>    }
+>>    #endif
+>>    
+>>    static const struct address_space_operations kvm_gmem_aops = {
+>>    	.dirty_folio = noop_dirty_folio,
+>> -	.migrate_folio	= kvm_gmem_migrate_folio,
+>> +	.migrate_folio = kvm_gmem_migrate_folio,
+>>    	.error_remove_folio = kvm_gmem_error_folio,
+>>    #ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE
+>> -	.free_folio = kvm_gmem_free_folio,
+>> +	.release_folio = kvm_gmem_release_folio,
+>> +	.invalidate_folio = kvm_gmem_invalidate_folio,
+>>    #endif
+>>    };
+>>    
+>>
 > 
-> Link: https://lore.kernel.org/kvm/20231016115028.996656-1-michael.roth@amd.com/
-> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
-> ---
->   virt/kvm/guest_memfd.c | 19 ++++++++++++++++---
->   1 file changed, 16 insertions(+), 3 deletions(-)
-> 
-> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> index 47a9f68f7b247f4cba0c958b4c7cd9458e7c46b4..13f83ad8a4c26ba82aca4f2684f22044abb4bc19 100644
-> --- a/virt/kvm/guest_memfd.c
-> +++ b/virt/kvm/guest_memfd.c
-> @@ -358,22 +358,35 @@ static int kvm_gmem_error_folio(struct address_space *mapping, struct folio *fol
->   }
->   
->   #ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE
-> -static void kvm_gmem_free_folio(struct folio *folio)
-> +static bool kvm_gmem_release_folio(struct folio *folio, gfp_t gfp)
->   {
->   	struct page *page = folio_page(folio, 0);
->   	kvm_pfn_t pfn = page_to_pfn(page);
->   	int order = folio_order(folio);
->   
->   	kvm_arch_gmem_invalidate(pfn, pfn + (1ul << order));
-> +
-> +	return true;
-> +}
-> +
-> +static void kvm_gmem_invalidate_folio(struct folio *folio, size_t offset,
-> +				      size_t len)
-> +{
-> +	WARN_ON_ONCE(offset != 0);
-> +	WARN_ON_ONCE(len != folio_size(folio));
-> +
-> +	if (offset == 0 && len == folio_size(folio))
-> +		filemap_release_folio(folio, 0);
->   }
->   #endif
->   
->   static const struct address_space_operations kvm_gmem_aops = {
->   	.dirty_folio = noop_dirty_folio,
-> -	.migrate_folio	= kvm_gmem_migrate_folio,
-> +	.migrate_folio = kvm_gmem_migrate_folio,
->   	.error_remove_folio = kvm_gmem_error_folio,
->   #ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE
-> -	.free_folio = kvm_gmem_free_folio,
-> +	.release_folio = kvm_gmem_release_folio,
-> +	.invalidate_folio = kvm_gmem_invalidate_folio,
->   #endif
->   };
->   
 > 
 
 
