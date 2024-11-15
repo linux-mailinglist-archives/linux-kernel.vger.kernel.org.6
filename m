@@ -1,104 +1,194 @@
-Return-Path: <linux-kernel+bounces-410275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A00D9CD749
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:40:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A9009CD75F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:41:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA6F91F21FCC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:40:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2AE8B25633
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4FE18734F;
-	Fri, 15 Nov 2024 06:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2401D18A92F;
+	Fri, 15 Nov 2024 06:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uniPW9aT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="L7jFc/AT"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092A71632DA;
-	Fri, 15 Nov 2024 06:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A626A18A6D4;
+	Fri, 15 Nov 2024 06:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731652811; cv=none; b=r+SbXTCAchN2yJ6d9hHU0kZQzWB4dOcMiwS0u2Dns3aHqZTDIaKEbVUm5x3lkrXY8K7sPoQMJEZ6/HkF+1muopp+eA0L2k24KGeqkO7fbISeDymTnjCm8NqUTT5Fz20jzjK0eCXbFcQh6oN5pTMQdbv7e31E1DanVcek0TmVhIQ=
+	t=1731652834; cv=none; b=iXpG8zQO+v2LV8yL6DemkbfsINa8gis4EWw9zlFupNF7UmqBFFeFivypYue9cgX/mAaZbhzD4F0hA6PBqDsYxG5U9ux3Esg1W9lUDuRUFbHcBaVOqJcgxhQ8+UO+CF+de3C0C2ptSQ8lADGP/79exratv5So2sHgPNcdInNHHNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731652811; c=relaxed/simple;
-	bh=l1659v1Vhgg9Kq1j8Tk9tX5+AzvH84h16fnYGbm8WC0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hn/RLyn/PzZMnj9oFYpPQLQoDPZRIY9OHUxN+CT40z3VCbhf84NWDsouIFj2PY4DxLAi558wgFiy0X/r8mEfBtVaJ09OgErWkRC0X6B4Uug8EfURKxndpgzOWD2zSBZM6gS2NgieG1dfo/mVy4Pa3G+AXBDHAA6Nj3eJyzI3fAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uniPW9aT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5BD9C4CED0;
-	Fri, 15 Nov 2024 06:40:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731652810;
-	bh=l1659v1Vhgg9Kq1j8Tk9tX5+AzvH84h16fnYGbm8WC0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=uniPW9aTg9/jnLrtt45iCX7+ixFHW9bFtualDvSC43a4rET07uSm0EmPFeLFqz1ku
-	 0d/hCdx9AV49RykBtfu50qyYPojBdij58fDrBsOZTV1R0wdjAiu1NTj3N/JPNkjbJS
-	 VN+Ma3vvSy8SYwbv4swjKbAt39xrPE/V35KFVnE30HHPQzEFJ7YJJsqT07+0GyJMuK
-	 BuU0KSLEDJA7YclnuPYBhRZjwYxf6SH2+cBbFWjda3MrYZHPIGFOkOl2w7bCb658vS
-	 B8Zk9qpeUyLwjqQu/havUuJZsxGKPicpCO9McqEW3efcdsAEYttPcpKCmCS/ePTcvo
-	 3/UaecDBVfo+A==
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5cf8ef104a8so575347a12.2;
-        Thu, 14 Nov 2024 22:40:10 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUGcRoY+LGuLDCQqFXAYGco/v/Mck7Gbj/VxzO3Lsxb0j/aniWPQgEbSFUPM5uZT0qGFP/sPTk/3BgWyWrX@vger.kernel.org, AJvYcCWFnWlkgsBDU17fYLNSzZwb1TyBZRTVz3DkDHgwb/HrA/0TOXQWmudJCg8/nrtV1jeK5U/ADEcYuPPk@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkFjur3op4N3K+XFolvBPjSz18NveWlZgDt9Bfv4QrPYQixXEw
-	nvzYXrmwUmwXn5hUwtDmfkjt0MIYPXt6nhclty3QeyKPP8CA4jWgjkcGrGNhHEuKW9So2RrG1vL
-	Ip4QUcGYtbNsbra8H/K/m31/aYK4=
-X-Google-Smtp-Source: AGHT+IGmsPBnMUtgVMjP+KjPC48xzioF5vWMgugaO+nmVaot/QUTnUueJ3XtlR2QrHu1DgZm0f2HTsNWOPrU2ZPH3hM=
-X-Received: by 2002:a17:907:318b:b0:a99:f0f4:463d with SMTP id
- a640c23a62f3a-aa483440a08mr126645766b.26.1731652809288; Thu, 14 Nov 2024
- 22:40:09 -0800 (PST)
+	s=arc-20240116; t=1731652834; c=relaxed/simple;
+	bh=RbL1epgOCMcJWsSwFVWb3i6X6KsJ0DLWG7rlGLapWoc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BOM8Mha/xn9W5ZNEFXVCm5Q0Ou1UJhF8UMOLRyWMno6Xo/tH/TTnCDbhUk+PQqHhvU+jPFPfR5u3McGP+M2SwdxnaW7m1+Ma4CYHADtGYzbgFfRj9Ar/DCkjWhCI0yDxBW2y76p5p9UgkK6rn+L5JgkEFXesUAaprTcG822Izh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=L7jFc/AT; arc=none smtp.client-ip=212.227.126.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1731652804; x=1732257604;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=RU84HVfLJgvCTtqnHy/8c+ZiPc9ztH45u7G+xHlBOMM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=L7jFc/ATWF427fCXUTHLnKtIGfLk+RlAfnru9aN/DMbYsItVC6UyLOEcDOMme+PQ
+	 UAqqEYR9tim3N6ftAMxzqwQWdH5yqrRy+uqo/Ub/BGDFzIagNPtwrjC5E70SkY+Nm
+	 RPfvAkYNLuM4KKZn2d5yIlVX3j11d+lV4EgCHsAybSNYTt3qk17xDdXxv0gkBVG0k
+	 aMAjNIkB78tDoWTgI79jNKxd4NIF2k0b1BKS2qDacp4etfoc/j8bsi03HfB7ZjQ8q
+	 fLWKudEpsSpLtMfIZ2/lIe1wHdNwQqE7lLTdqzySI6yvuNM7DTCg8fMrhVG5kj5JO
+	 n3KeHi2pGJNYdJHFjQ==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.0.174] ([84.175.94.57]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MZjQl-1tEm8Z2gr9-00IsfX; Fri, 15 Nov 2024 07:40:04 +0100
+Message-ID: <41966d59-063f-4848-9776-399ee348069a@oldschoolsolutions.biz>
+Date: Fri, 15 Nov 2024 07:40:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113124857.1959435-1-chenhuacai@loongson.cn>
- <CAADWXX9-LY7aaMax6KdtDV+vOkm_WKE76Qmy4n3UHN61O=-2Lg@mail.gmail.com>
- <CAAhV-H6=_Nv0N-zXNad2TgOzTgG_BU6TPhN+U4u=+SMQ98BPJw@mail.gmail.com> <CAHk-=wgC===Qx3STDjBWGHuzJ0SNP16gEz3iSc6Ebo_bM-yZtw@mail.gmail.com>
-In-Reply-To: <CAHk-=wgC===Qx3STDjBWGHuzJ0SNP16gEz3iSc6Ebo_bM-yZtw@mail.gmail.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Fri, 15 Nov 2024 14:39:58 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H74QH66JG0SrrYzYmKTazMWMs5gxp9kGCfC46B4AQtS8A@mail.gmail.com>
-Message-ID: <CAAhV-H74QH66JG0SrrYzYmKTazMWMs5gxp9kGCfC46B4AQtS8A@mail.gmail.com>
-Subject: Re: [GIT PULL] LoongArch fixes for v6.12-final
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Huacai Chen <chenhuacai@loongson.cn>, Arnd Bergmann <arnd@arndb.de>, loongarch@lists.linux.dev, 
-	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Guo Ren <guoren@kernel.org>, Xuerui Wang <kernel@xen0n.name>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Bluetooth: qca: Support downloading board id specific NVM
+ for WCN6855
+To: Zijun Hu <quic_zijuhu@quicinc.com>, Marcel Holtmann
+ <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Bjorn Andersson <bjorande@quicinc.com>,
+ "Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>,
+ Cheng Jiang <quic_chejiang@quicinc.com>, Johan Hovold <johan@kernel.org>,
+ Steev Klimaszewski <steev@kali.org>
+References: <20241113-x13s_wcn6855_fix-v1-1-15af0aa2549c@quicinc.com>
+Content-Language: en-US
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <20241113-x13s_wcn6855_fix-v1-1-15af0aa2549c@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:mtSY/gdP/hTky6JTWjDsTQyDnhLG3IY2r1nME5X4f5HFKT9cmRE
+ ypkLrwA76jtTJ3hJgMiiWP/3wImoej3Gg+uGXeGb3JlIgNRESiwPUf80i9c8/tRkQWhSsBd
+ iZLGmNhXs7FSRQBHZz4xYCaKejdBb7/2vk30AhwSmGsswYz84ZYpM1p3aCQqrr44na4OSS+
+ gvKFX/7asSLGzayJEvjNg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:1XJSv05HMU0=;kh62fsZOMcw3Qx7HWd+pek2dfxR
+ EKhl7RfuEuSsjAFIroLwb8W1M0CItKzc+gA8gKnT5oEQ7dn7+Im5XQJXRsIKHAY46kx7+LJsV
+ 7WBGszjtrt7L7xVOzYiQY6+zk/naYKdEFiHX7nBGu6BUVpUoVKh4Kl067Kcs2gJwhciArX1oJ
+ vdCsTnbNYIA+QCuENDKO8TJaH6Cnb7LPVKDE4f/bQf6wrSWAvKJ1LCxeIztSnGlb7+Lt8th7r
+ UYQJZzi2G0mo2pDkrJiGVv8T6fskpeip/RLEB1FEMl/+0ju13D8HNX3JDKlgzR1GC2EUCPP1k
+ SqU2obtDJ2etS3miSEcbAQSmpzhFg6IDPi5hPG+5HMaZqKCPFbMKtS0FTE32FPsHxc/Gm8pNR
+ hjziCWncWZ0QQKTl35qjX6lN6w2yV34P4l1W3lb79pjIrGH+DY0wP6yWw8zWe5eCQeDYpfohv
+ Vr0xPgLL2in/XlPL9QsTqY1zQx2p9gXqlOu95bKkYGek4oUY6TwGDmco6yiIq/xEgADjFfgFF
+ gMwe4d1iuoJmhz6xP67iZBTeu1ZLZMU4edO4UOsWXCJgPNeicKYrwRANyIOH+9Pz8thIYnBIM
+ jkY/pIFOYFcjU4L66eY4uE6ufKX8wsh/SrpGUYQGplHDDFMmEWeZ6NTe7CsmFvnMzjoKGeAOS
+ pdkpA2NMdm9KPqmQAjVECBaD+ANlCO2gSH0WMLXd8VO672oBMB1w0+A8WxxVUtEpM/iIbSc1K
+ 6e5zLZxqVbH6pS05tORmkB/MtrB812X603vcFqsA/5Mi+LEnJTgRkuPhAUM3+Tkfq6JudA3m8
+ lxLD44y5fwaSzpFFbGyJd7TI9ivdfwx0IFsDizH6pNVrrKkf/q3PhC0tkPONhDpvCu
 
-On Fri, Nov 15, 2024 at 1:21=E2=80=AFAM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On 14.11.24 07:26, Zijun Hu wrote:
+> Download board id specific NVM instead of default for WCN6855 if board
+> id is available, and that is required by Lenovo ThinkPad X13s.
 >
-> On Wed, 13 Nov 2024 at 22:23, Huacai Chen <chenhuacai@kernel.org> wrote:
-> >
-> > Maybe the root cause is that "From" in my patch is loongson.cn but I
-> > use kernel.org's SMTP server?
+> Cc: Bjorn Andersson <bjorande@quicinc.com>
+> Cc: Aiqun Yu (Maria) <quic_aiquny@quicinc.com>
+> Cc: Cheng Jiang <quic_chejiang@quicinc.com>
+> Cc: Johan Hovold <johan@kernel.org>
+> Cc: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> Cc: Steev Klimaszewski <steev@kali.org>
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+>   drivers/bluetooth/btqca.c | 35 ++++++++++++++++++++++++++++++++---
+>   1 file changed, 32 insertions(+), 3 deletions(-)
 >
-> Ahh, yes, I didn't even notice that you went through mail.kernel.org,
-> I only noticed that loongson.cn did SPF but not DKIM.
+> diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+> index dfbbac92242a..4f8576cbbab9 100644
+> --- a/drivers/bluetooth/btqca.c
+> +++ b/drivers/bluetooth/btqca.c
+> @@ -717,6 +717,29 @@ static void qca_generate_hsp_nvm_name(char *fwname,=
+ size_t max_size,
+>   		snprintf(fwname, max_size, "qca/hpnv%02x%s.%x", rom_ver, variant, bi=
+d);
+>   }
 >
-> Yeah, if loongson had had DKIM and DMARC set up to match, it would
-> have been an even noisier failure about DKIM actively failing, rather
-> than not having DKIM at all.
+> +static void qca_get_hsp_nvm_name_generic(struct qca_fw_config *cfg,
+> +					 struct qca_btsoc_version ver,
+> +					 u8 rom_ver, u16 bid)
+> +{
+> +	const char *variant;
+> +
+> +	/* hsp gf chip */
+> +	if ((le32_to_cpu(ver.soc_id) & QCA_HSP_GF_SOC_MASK) =3D=3D QCA_HSP_GF_=
+SOC_ID)
+> +		variant =3D "g";
+> +	else
+> +		variant =3D "";
+> +
+> +	if (bid =3D=3D 0x0)
+> +		snprintf(cfg->fwname, sizeof(cfg->fwname), "qca/hpnv%02x%s.bin",
+> +			 rom_ver, variant);
+> +	else if (bid & 0xff00)
+> +		snprintf(cfg->fwname, sizeof(cfg->fwname), "qca/hpnv%02x%s.b%x",
+> +			 rom_ver, variant, bid);
+> +	else
+> +		snprintf(cfg->fwname, sizeof(cfg->fwname), "qca/hpnv%02x%s.b%02x",
+> +			 rom_ver, variant, bid);
+> +}
+> +
+>   static inline void qca_get_nvm_name_generic(struct qca_fw_config *cfg,
+>   					    const char *stem, u8 rom_ver, u16 bid)
+>   {
+> @@ -810,8 +833,15 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t ba=
+udrate,
+>   	/* Give the controller some time to get ready to receive the NVM */
+>   	msleep(10);
 >
-> If you use mail.kernel.org, using a "From:" with a kernel.org address
-> too to get the full email verification is likely the best option.
-OK, and another option is use loongson.cn for both "From:" and SMTP.
+> -	if (soc_type =3D=3D QCA_QCA2066 || soc_type =3D=3D QCA_WCN7850)
+> +	switch (soc_type) {
+> +	case QCA_QCA2066:
+> +	case QCA_WCN6855:
+> +	case QCA_WCN7850:
+>   		qca_read_fw_board_id(hdev, &boardid);
+> +		break;
+> +	default:
+> +		break;
+> +	}
+>
+>   	/* Download NVM configuration */
+>   	config.type =3D TLV_TYPE_NVM;
+> @@ -848,8 +878,7 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t bau=
+drate,
+>   				 "qca/msnv%02x.bin", rom_ver);
+>   			break;
+>   		case QCA_WCN6855:
+> -			snprintf(config.fwname, sizeof(config.fwname),
+> -				 "qca/hpnv%02x.bin", rom_ver);
+> +			qca_get_hsp_nvm_name_generic(&config, ver, rom_ver, boardid);
+>   			break;
+>   		case QCA_WCN7850:
+>   			qca_get_nvm_name_generic(&config, "hmt", rom_ver, boardid);
+>
+> ---
+> base-commit: e88b020190bf5bc3e7ce5bd8003fc39b23cc95fe
+> change-id: 20241113-x13s_wcn6855_fix-53c573ff7878
+>
+> Best regards,
 
-Huacai
+Hi Zijun,
 
->
-> That said, I went back and looked, and you've clearly been using this
-> mail.kernel.org + loongson.cn model for a long time, and it hasn't
-> been problematic. So your pull request being marked as spam might have
-> been just a one-off.
->
->            Linus
+I tested his patch on the HP Omnibook X14 and on the Windows Dev Kit
+2023, it works well. Thank you!
+
+Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+
+with best regards
+
+Jens
+
 
