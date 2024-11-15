@@ -1,178 +1,131 @@
-Return-Path: <linux-kernel+bounces-410897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 584769CEFE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:30:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 181FB9CEFF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:32:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D19161F214EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:30:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1D9D288C27
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B13A1D63E8;
-	Fri, 15 Nov 2024 15:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB841D61A5;
+	Fri, 15 Nov 2024 15:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tIW9LHDA"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="R3f/sIlL"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D321D54E1
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 15:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075EE1DA23;
+	Fri, 15 Nov 2024 15:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731684514; cv=none; b=Du+sbCofzmpcc5533fZeMVuv9RoZrKetaI1WkCq7ZG8P0wl7svCeCqDjUXzp+LQVIcKIohjUVY8f94NdgQ5vuPMJ2SJ8zYlcQvFZ/5aBR1KA9cjrKpM1dMgFC59cPRZTGDqlOpyWUxUyJpWohMnTUD3aV0VvjllVTS5Acc6Y4Yo=
+	t=1731684619; cv=none; b=hZ4eIlVxEhyerQNZU4J4ffJpZo3AQt7/yI8mN8vqf5et+GGxy2hwhWUliWDMXz1IqH8WROYarrN1iYvTsTCwDYYcC+bG4ZIcXeAHsBt1D91EIuI2CABHDJCZXLk9FGIjlXey1gulXNsa+ZsYLip7i4SHLlw2PRKm36T+0NKPIXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731684514; c=relaxed/simple;
-	bh=zurmVu6jD5Ns3rQKh121ALIw2zxYEWs6An8fSAI+csc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=peVqS770P1duxY3eI2IxLEMFrAwQBkdbhYKUJnbgQJaRbXxQ1lxZhS7GmDBvcUVpsObTA02JWzzntwAU/QcyRNyUSFHb7sNGvzW+hZc9eWnvzSX6sWeCMWPhgzgFPv+RFKxtQjfRxHltttqSYheP012fRoqLcEZQahbNcJTThVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tIW9LHDA; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-382219ceaacso940120f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 07:28:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731684511; x=1732289311; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w9xxBkuOGfjMnpE8th+U2edWWxzoieKyXlSmx0+ZyMI=;
-        b=tIW9LHDA3km7dMRb8E9x+Gi5KBztd9UejIb6fH6mvQ7Pvkt/qSQLUdj011VqXPJFxX
-         S1Bipu0lsDNT4SEG+bEhWSqMD5SW8WafmdbLVWZLdmVd+odkqDA/HWemFyKr0Z2vPu5d
-         SjHnb5tptwaa0z7s0bmALRibjkBLn0ds3acv1mmcxDrlAuFtW//lGsNcoxvcC7aOPFBT
-         mF2r41wiT9Kn/jhUws0o09fMMt5yiUWo8ckc5EB7lnHA1sM857eC9580NrIKX5pGJIsJ
-         uv+TLzUfBQ0y/1XFQuTqMS18AFV511ULPJddnmDAPsMasSrn0OCOyjTJUuKxotOcHhrW
-         ggSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731684511; x=1732289311;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=w9xxBkuOGfjMnpE8th+U2edWWxzoieKyXlSmx0+ZyMI=;
-        b=aet1mhtbIctqjelU8XKjuDBZUDzDW9gc3Rc18Q6VmAtPaHoOz1pdPSIbciiomOgTaQ
-         BF0d0z2JVfTzUO0BaR5hEsUjgCKvBjNs9gQbt0Vz9XLBwSeILE5V8bdJAx+R2m9ZgU6Z
-         2aK1XROtIvEA5s5iPAhyd/N3wZK3fQ0eaDY+NUQbBRz3d/vUpYW/PKzWo3eFgYMymLtU
-         QX/ZD1AcXoJlyFUpP6LfyT5KLwdR0m0J9mJFGyrekk1fcNydsgkk5gdnx0YS6O7SaW3G
-         oFoOUEUkqx5s/lUdjP3JMicxUfXl7abbsoMx7kcEXmAWfkEgWTBkSDRgf+V/S2gL8cPK
-         KVNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWmIDl7XE73DjHi9bor0FWtyDwZ5bJgmmLdEk1+K16c/naYvoDrUxD+rewEpHb5uT5UCyroG4T7jp7faKM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz28h7WpdAitu/Uyxpqkg6xY7VQMpvsZj2M84TBJIh7XrtpODHt
-	o6isod1DULnW5QaiKmUM3i1J41Lgef8g5vXOThZ9BcV/8hWhSXfchHzCrELy/IY=
-X-Google-Smtp-Source: AGHT+IFE1m0PhvEE6X08D1MwP6KX2yhrXvWSidacGzSURnRLln0zDAOvKce6/l9aWa2qCaOvjt8d2w==
-X-Received: by 2002:a5d:6dab:0:b0:37e:d965:4e04 with SMTP id ffacd0b85a97d-38225a8ab23mr3000039f8f.36.1731684510986;
-        Fri, 15 Nov 2024 07:28:30 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:8512:42be:302f:f436? ([2a01:e0a:982:cbb0:8512:42be:302f:f436])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3822f6afc20sm576134f8f.81.2024.11.15.07.28.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 07:28:30 -0800 (PST)
-Message-ID: <73fd6d04-e965-4524-8d63-5e2c67677f52@linaro.org>
-Date: Fri, 15 Nov 2024 16:28:29 +0100
+	s=arc-20240116; t=1731684619; c=relaxed/simple;
+	bh=7cKWxnI2OZqFbQorTshJhiFbBdgQ7Za0qIySvryeVTw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BFqo34In+/pxlSw32Nhxt/f3AlixiMn7SeO7XfuTFdNtkBq2eSc9cpPbCgFh545CvIPZ2NxhTnw0a9QhX7YwmTJKDuNBCVz4aiPgMC8cvn+NVSPMcZeicr0WVdiKI/28OtyC/6owLhsb6rqBfToGEtWQcJGJK1yNQNdI5T1wKUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=R3f/sIlL; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id AB166FF807;
+	Fri, 15 Nov 2024 15:30:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731684608;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=QEG8U0t5YDcfuRT+zXtJR9s+sxFLAhMTdN/JlCoLu8U=;
+	b=R3f/sIlL9qiB9OdA3rxDg/kMJQKwQMxQfC35RWKO2VGsr5NUXwwwWCK4VlmTiOW1cqBfUV
+	CllbDlYXNsaiojjQ00gHw4OzaW2ZsLdAjN0PvAr1Z8ELdxfgSm9YoUWfDpAjLPgUN+K1Aw
+	uJ/m7u+d151yW4gKUkZlKG98aiAK+XHmnAuQuB40zDt97tHFROY5Nthhm40X1Q/zuqS1hl
+	SH8XYE/rUzzUoaY82g61R1+GC2BU879+l+gvCeKN1JPtaeDMIAUsfhPJfZC+/QJv5gDe9g
+	bX+iGnF3RRJcLaFlOXcwLiXipUc/23aVdJq5VYDFZvVRsN0Ka2QZ7BHMQvqIdg==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+Subject: [PATCH 0/5] MIPS: Allow using multi-cluster with a broken HCI.
+Date: Fri, 15 Nov 2024 16:29:53 +0100
+Message-Id: <20241115-cluster-hci-broken-v1-0-00636800611d@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH RFC 2/8] drm/msm: adreno: add GMU_BW_VOTE quirk
-To: Rob Clark <robdclark@gmail.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>,
- Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
- Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Connor Abbott <cwabbott0@gmail.com>,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
-References: <20241113-topic-sm8x50-gpu-bw-vote-v1-0-3b8d39737a9b@linaro.org>
- <20241113-topic-sm8x50-gpu-bw-vote-v1-2-3b8d39737a9b@linaro.org>
- <sgz4h6rlmekiwypaisjbnej326wv4vaqt3mgspp4fs4tg3mdfx@cwmdqcu6gwbf>
- <63a2b391-8b71-41cb-bed2-3bc7fd2154ab@linaro.org>
- <CAA8EJpoFm8EjfBq70RTPtwR7Y7Rm24kHO20NukGiLGRYD0p9Tg@mail.gmail.com>
- <CAF6AEGty1fcA13rDOOJQbhT4o=CTtBYtGFspowZbxD1c-VE9Bw@mail.gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <CAF6AEGty1fcA13rDOOJQbhT4o=CTtBYtGFspowZbxD1c-VE9Bw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAPFoN2cC/x3MQQqAIBBA0avErBtQMYyuEi3MphoKi7EiiO6et
+ HyL/x9IJEwJmuIBoYsTbzFDlwWE2ceJkIdsMMpYrXWFYT3TQYJzYOxlWyhibZV39eiM9wQ53IV
+ Gvv9p273vB1Wac6ZkAAAA
+X-Change-ID: 20241115-cluster-hci-broken-840a78f72aae
+To: Aleksandar Rikalo <arikalo@gmail.com>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Jiaxun Yang <jiaxun.yang@flygoat.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-mips@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Gregory CLEMENT <gregory.clement@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-Sasl: gregory.clement@bootlin.com
 
-On 15/11/2024 16:10, Rob Clark wrote:
-> On Fri, Nov 15, 2024 at 6:18 AM Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
->>
->> On Fri, 15 Nov 2024 at 11:21, Neil Armstrong <neil.armstrong@linaro.org> wrote:
->>>
->>> On 15/11/2024 08:07, Dmitry Baryshkov wrote:
->>>> On Wed, Nov 13, 2024 at 04:48:28PM +0100, Neil Armstrong wrote:
->>>>> The Adreno GMU Management Unit (GNU) can also scale the DDR Bandwidth
->>>>> along the Frequency and Power Domain level, but by default we leave the
->>>>> OPP core vote for the interconnect ddr path.
->>>>>
->>>>> While scaling via the interconnect path was sufficient, newer GPUs
->>>>> like the A750 requires specific vote paremeters and bandwidth to
->>>>> achieve full functionality.
->>>>>
->>>>> Add a new Quirk enabling DDR Bandwidth vote via GMU.
->>>>
->>>> Please describe, why this is defined as a quirk rather than a proper
->>>> platform-level property. From my experience with 6xx and 7xx, all the
->>>> platforms need to send some kind of BW data to the GMU.
->>>
->>> Well APRIV, CACHED_COHERENT & PREEMPTION are HW features, why this can't be part of this ?
->>>
->>> Perhaps the "quirks" bitfield should be features instead ?
->>
->> Sounds like that.
-> 
-> But LMLOADKILL_DISABLE and TWO_PASS_USE_WFI are quirks.. so it is kind
-> of a mix of quirks and features.  So meh
+Hello,
 
-Well I can do a split and move the features into a clean .features bitfield, would it be ok ?
+Some CM3.5 reports indicate that Hardware Cache Initialization is
+complete, but in reality it's not the case. They also incorrectly show
+that Hardware Cache Initialization is supported. Unfortunately, it is
+not possible to detect this issue at runtime and the information has
+to be passed by the device tree.
 
-Neil
+I initially proposed to add this information as a CPU property, but as
+rightfully pointed out by Jiaxun, it should be more of a Coherence
+Manager property. A few months ago, Jiaxun proposed a series to pass
+the address of the CM through the device tree when it was not possible
+to get it at runtime. This series introduced the binding for the CM
+that I reused. However, there were some parts of this series that were
+commented on and needed to be addressed, and I don't have the hardware
+for it. Therefore, I've kept only the binding and relaxed the need for
+the reg property.
 
-> 
-> BR,
-> -R
-> 
->>
->> --
->> With best wishes
->> Dmitry
+My initial proposal was integrated into the series set by Aleksandar
+here [1]. And the series adding the CM binding was here: [2]. The
+patches 1,2,3, and 5 have no dependencies while patch 4 should depend
+on this series [1]. Actually, those five patches should replace
+patches 10, 11, and 12.
+
+Gregory
+
+[1]: https://lore.kernel.org/all/20241028175935.51250-1-arikalo@gmail.com/
+[2]: https://lore.kernel.org/all/20240612-cm_probe-v2-5-a5b55440563c@flygoat.com/
+
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+---
+Gregory CLEMENT (4):
+      dt-bindings: mips: mips-cm: Add property for broken HCI information
+      MIPS: cm: Detect CM quirks from device tree
+      MIPS: CPS: Support broken HCI for multicluster
+      MIPS: mobileye: dts: eyeq6h: Enable cluster support
+
+Jiaxun Yang (1):
+      dt-bindings: mips: Document mti,mips-cm
+
+ .../devicetree/bindings/mips/mti,mips-cm.yaml      | 43 ++++++++++++++++++++++
+ arch/mips/boot/dts/mobileye/eyeq6h.dtsi            |  5 +++
+ arch/mips/include/asm/mips-cm.h                    | 22 +++++++++++
+ arch/mips/kernel/mips-cm.c                         | 16 ++++++++
+ arch/mips/kernel/smp-cps.c                         |  5 ++-
+ 5 files changed, 90 insertions(+), 1 deletion(-)
+---
+base-commit: e87100a0b90df5f239e6b290f7db67e16bcda85f
+change-id: 20241115-cluster-hci-broken-840a78f72aae
+
+Best regards,
+-- 
+Grégory CLEMENT, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
