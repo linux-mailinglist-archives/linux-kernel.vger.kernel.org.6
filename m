@@ -1,152 +1,118 @@
-Return-Path: <linux-kernel+bounces-411000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A1689CF181
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:30:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 516359CF337
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:46:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3DBE1F243B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:30:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7142B2F8C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4121D47C7;
-	Fri, 15 Nov 2024 16:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58431D515A;
+	Fri, 15 Nov 2024 16:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W01u209Y"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="KfE+ZoVJ"
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFBE166307
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 16:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344161E4A6;
+	Fri, 15 Nov 2024 16:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731688231; cv=none; b=VtPN22xku12rISBcZv00NBTH/aPh8SwCNl9EEc6PnTHTuSzPMcS9kiy7yxhoGjUIOWBysTBtoiSXIgyCULLOr/rFoXw3E8FmXGtJnMc9U+DFjoH3ZdwWk570wn9EN9+Q8HmbwgfbmJH00pm1cezait+yEAG8aDyeT0ioCxTHIQ0=
+	t=1731688362; cv=none; b=W95CLPStOt6WlkRPIPUagOObr6wxMrm76YsWI/yIBoo+dqRJY4FJy9jZhpH1qKgff9nvBf3pSK7Yij8ZUXTYEf8l2a7wbgdDs5OKm12+pVV1K82EFQ8jB8QHwqZLrnU9U4GuY6F/+9+viHHJF8LueD7RHAiLHgeBsxZS7/V9VYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731688231; c=relaxed/simple;
-	bh=23WwRG9YMIrdOINPp98oIY1pU+b7asr/HtZ9Lb7K10Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=F4igolprMs4du7+4PpfL6AAC2Me18plQg5XQqNRFcvfcvaMdtbO0gHfcNILrJ4vFPIVWY8G/YbJZUcXN2MevUxaK502bxYUXNoJyyYfiMXoXop38evYE1IoIcYNCPSfLwwzXdKTfDt+0nIU61IQYCyxNycA49NC4Kh4H1/Ia2nE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W01u209Y; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731688228;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=CWuLwX1NW+1DyPKTMhME1vJOYG/j4m1+TWZHBmu4nbA=;
-	b=W01u209Y5hH+UR19vgz4FlzAHYgNz4X1hbT2jaCETZaxQCfIx2knMQ0IvxDBV3a4QaBn12
-	0npZxQY04R0wxy+bwnfP2yDuZnzv/RHNS4gwLxPZkwVO1zich2egIeFcISFqclULhN+DLA
-	uw7DxFM3kztBYxl9sLunCS0rPB6LBik=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-153-wBxC1R4qMqu_dhReoxRBVg-1; Fri, 15 Nov 2024 11:30:25 -0500
-X-MC-Unique: wBxC1R4qMqu_dhReoxRBVg-1
-X-Mimecast-MFC-AGG-ID: wBxC1R4qMqu_dhReoxRBVg
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6d3a07b63e6so26040786d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:30:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731688225; x=1732293025;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CWuLwX1NW+1DyPKTMhME1vJOYG/j4m1+TWZHBmu4nbA=;
-        b=Vok0jly/mS/iGMUdAK4FvG6/aohy8kLK6085mpgDvL4ujvVlaygGilBS96g4D56cv6
-         Qm4UeLHQILFJlxHdc7y8gCp+ney2TwDd0odWBEkswDkrV9OGuwurrrIGUOo3r/5AjDfq
-         4PugZ05EuGiSi5mQQZCYaO2r6ZOaOAA2JAEcFgaavteo8VBgaaM+zJeQ7zwJbuv0AWKH
-         Fdb1SrI5aRfFCcBuXBb7V+tIHo9OAl9pFDsaCyJY+RCruBvOMgVkBnxsDCIP3vuH0YP5
-         tq76bqQgLh9WccFxTkXU80ZtWSZ+4UuNMNdkejk85siNV3lbxg5YapaSmsmoZawb2nlh
-         rsqw==
-X-Gm-Message-State: AOJu0YyXBX1Ck85y8DbAe867RBcWtzURrbpaNUujnsqatXQ02CXDR0vT
-	j/Uj2ZeNbgitVDPhmg0hYScwDC4H5/VIM3Lec8h8h9Hq1jFIpK/jsEmwnvVOm3vshu4wVnW0A0z
-	jVHFcdfhGaPlmtbJb2oZCWDeE4KKBeXOqaxKYlVKk7dtjAMpSIAtkopJPfGNhcg==
-X-Received: by 2002:a05:6214:3992:b0:6d3:f904:5359 with SMTP id 6a1803df08f44-6d3fb821c77mr44867256d6.33.1731688224824;
-        Fri, 15 Nov 2024 08:30:24 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFJdcgA20MMlQvFTg5eHsqs/sPveryXiK7wPJsLZuT6HmgM/b7XQecSuNE+S749+ckIL3iYRQ==
-X-Received: by 2002:a05:6214:3992:b0:6d3:f904:5359 with SMTP id 6a1803df08f44-6d3fb821c77mr44866866d6.33.1731688224360;
-        Fri, 15 Nov 2024 08:30:24 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-47-4-194.as13285.net. [80.47.4.194])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3ee77386fsm19197606d6.6.2024.11.15.08.30.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 08:30:23 -0800 (PST)
-Date: Fri, 15 Nov 2024 16:30:19 +0000
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Koutny <mkoutny@suse.com>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Additional issue with cpuset isolated partitions?
-Message-ID: <Zzd3G67_UwBUJaRt@jlelli-thinkpadt14gen4.remote.csb>
+	s=arc-20240116; t=1731688362; c=relaxed/simple;
+	bh=ZHG5EGAzu3WVkmxq6N3DCYqty4k9LxnL4j4F+Dt19Ig=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pHCcA7cGnF7ipoR0JI3ZmuMf4Jbtub70WquJ4nl0nMYIVRwtiQ4zR492/3yKI51oEBH7rnDl1gauwclMBKMGPr3jT4Qi6l/fm25vIgxedu1VqScbB54ZsNC3y2wXjqIGcHWTCUFogT7ZwiF6zvjsoLbYJ6GZ2dQ+p19AzLwmkyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=KfE+ZoVJ; arc=none smtp.client-ip=74.208.4.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
+	s=s1-ionos; t=1731688325; x=1732293125; i=parker@finest.io;
+	bh=X5FKveEGFoRtJToEkzkSd7Mwk8gc6fAM/LYYJdowFdM=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=KfE+ZoVJrzgHUkqYMokK6Euaw4ywuIeNeOLTNCJjmgdeU+k1252QIw9LNYTY8im+
+	 zEW+pit0E+FH/9T3lEZI8wTjqAeQ0FMZiWKAgUzLLvjUqNvpaAwvXVjocOiJnqNYU
+	 +YbUY5IRFprQA13XLV4g3ZgTmrFnzrfg5SAx8b5a3yZVhKt2aplieOCuCMEMdGgYJ
+	 2uKzINzqxRAKkW7Ksr8pnarTMtJcwcLzxkXJCnDEvtOZqINhV1CMtCm2SXGCFlpXL
+	 A7pHy6jjUSJPsWuso63m9tvOXhISs8JxMrA56SWg1UtvIrr53731UZuAYHzwKgTUk
+	 8XPwj1ij8Ywebo+lTA==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from finest.io ([98.159.241.229]) by mrelay.perfora.net (mreueus002
+ [74.208.5.2]) with ESMTPSA (Nemesis) id 0MDzNh-1sz0p93pR1-00GdLZ; Fri, 15 Nov
+ 2024 17:32:05 +0100
+From: Parker Newman <parker@finest.io>
+To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Parker Newman <pnewman@connecttech.com>
+Subject: [PATCH v1 0/1] net: stmmac: dwmac-tegra: Read iommu stream id from device tree
+Date: Fri, 15 Nov 2024 11:31:07 -0500
+Message-ID: <cover.1731685185.git.pnewman@connecttech.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:VmMzWfMuiUIonudG8UECAGKTtEGicIuJhmmOO1QaBA8Qx1KyLJB
+ wEy22iYL30pHd39L68ZkWkpgK3f91L6r7nr17yp6487cxmF8x797lm+/A2kSN+nUJeDFU0f
+ TUu07BRkGBlZRFr92mVbbQt0b42wwSutsA6gHHnyYkhIdLRDQCmtwivXqtNG4TKsA8V7eWZ
+ vWDhDZwGpz4iZXHdUFetQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:xwSDuaQ0gg8=;anf8cpo65zssXb+qsXoVC7Gn4ZT
+ z6T42O9ZoV7+aLb7gPqddT/uK1LNOz+3IKggCrdMLZF+Pt4qf5/q1JCJ4ZKgIGGLXNyGeRNLl
+ W+LEy39cb0VVUw60tPQaTgh5V0iRepbK3kzf3aMqaUejTgwitiX0nrA68z0nwQKbK5HsE6Y+u
+ JlGnDTvwt1HfQwT8Jyhh5GXnKMjzGHrkanu7U5T8Rp1cwowA74iNssF2aNVxPg+YjdB2ZqP9w
+ o/DuFwU1BjDObwuU8Rn6uEJ2hfMGCQ5KrYMktudss14g8RHjDoeo+713WCYS6eKiwTg6gjn7H
+ JNjcPNbrRflwID4vvZEH0gRFfNeIGUkfzDZvoKYDQe6bnOHql2mfQ9rYoP6WNV0sP+Fs2yMYW
+ Lb0dAPxYfL2IVUU8NKolroSAaxr0ierboIEDlEUj+qPfzJQ7lq40NN1rcxSIeyibnJReKoB5O
+ PeT26HKnk85EZ9PNZIm6LmqL3SUxQsTbfH1eeXoyudE/dN4bsShrBb9XKhymDHwbQheLRXIG5
+ wFzA5PIZV54GPM6tlfU/jk1hdZUwEr2UNV9LVmVGVuBr9Vf6QOcg58hTb2V+b3YdKjSDiQ5un
+ VmMofI4/cFjOPsULZ+yD7SBaOY9prvZYU9AZDOs1aGRNFHbE+QEO2n343fIRVBFrGhwFSJdZL
+ Q7+MAna4HmeX3hxyW++tbx+bOTM1rNJF2Ro6glHgW0JcfiHOCiJcTexRoFQ87uvyBuET8f0em
+ CGctAqmm3ayJMCPFYh0eM22gfEArvVZZq+PyQ/kOENNPdgKhFnyRCVPDKBYt1I+AkvdU6K3hz
+ 5pUyLd7tg16fvqr5MsjW87SGCVQI64a9XqmJbm222/SgKi6mJ0Qt6yKor02D3um8xO
 
-Hello,
+From: Parker Newman <pnewman@connecttech.com>
 
-While working on the recent cpuset/deadline fixes [1], I encountered
-what looks like an issue to me. What I'm doing is (based on one of the
-tests of test_cpuset_prs.sh):
+Nvidia Tegra MGBE controllers require the iommu "Stream ID" (SID) to be
+written to a register for proper operation.
+The current driver is hard coded to mgbe0's SID, causing the other mgbe
+controller instances to not work.
 
-# echo Y >/sys/kernel/debug/sched/verbose
-# echo +cpuset >cgroup/cgroup.subtree_control
-# mkdir cgroup/A1
-# echo 0-3 >cgroup/A1/cpuset.cpus
-# echo +cpuset >cgroup/A1/cgroup.subtree_control
-# mkdir cgroup/A1/A2
-# echo 1-3 >cgroup/A1/A2/cpuset.cpus
-# echo +cpuset >cgroup/A1/A2/cgroup.subtree_control
-# mkdir cgroup/A1/A2/A3
-# echo 2-3 >cgroup/A1/A2/A3/cpuset.cpus
-# echo 2-3 >cgroup/A1/cpuset.cpus.exclusive
-# echo 2-3 >cgroup/A1/A2/cpuset.cpus.exclusive
-# echo 2-3 >cgroup/A1/A2/A3/cpuset.cpus.exclusive
-# echo isolated >cgroup/A1/A2/A3/cpuset.cpus.partition
+This patch enables the other mgbe controllers by reading the SID from the
+iommus property in the device tree using the existing
+tegra_dev_iommu_get_stream_id() function in linux/iommu.h.
 
-and with this, on my 8 CPUs system, I correctly get a root domain for
-0-1,4-7 and 2,3 are left isolated (attached to default root domain).
+Parker Newman (1):
+  net: stmmac: dwmac-tegra: Read iommu stream id from device tree
 
-I now put the shell into the A1/A2/A3 cpuset
+ drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-# echo $$ >cgroup/A1/A2/A3/cgroup.procs
 
-and hotplug CPU 2,3
-
-# echo 0 >/sys/devices/system/cpu/cpu2/online
-# echo 0 >/sys/devices/system/cpu/cpu3/online
-
-guess the shell is moved to the non-isolated domain. So far so good
-then, only that if I turn CPUs 2,3 back on they are attached to the root
-domain containing the non-isolated cpus
-
-# echo 1 >/sys/devices/system/cpu/cpu2/online
-...
-[  990.133593] root domain span: 0-2,4-7
-[  990.134480] rd 0-2,4-7
-
-# echo 1 >/sys/devices/system/cpu/cpu3/online
-...
-[ 1082.858992] root domain span: 0-7
-[ 1082.859530] rd 0-7
-
-And now the A1/A2/A3 partition is not valid anymore
-
-# cat cgroup/A1/A2/A3/cpuset.cpus.partition
-isolated invalid (Invalid cpu list in cpuset.cpus.exclusive)
-
-Is this expected? It looks like one need to put at least one process in
-the partition before hotplugging its cpus for the above to reproduce
-(hotpluging w/o processes involved leaves CPUs 2,3 in the default domain
-and isolated).
-
-Thanks,
-Juri
-
-1 - https://lore.kernel.org/lkml/20241114142810.794657-1-juri.lelli@redhat.com/
-    https://lore.kernel.org/lkml/20241110025023.664487-1-longman@redhat.com/
+base-commit: 37c5695cb37a20403947062be8cb7e00f6bed353
+=2D-
+2.47.0
 
 
