@@ -1,56 +1,73 @@
-Return-Path: <linux-kernel+bounces-410681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E46B9CDF9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:10:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B522D9CDFA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:12:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B5051F22DD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:10:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D893FB22B18
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A4F1C07C5;
-	Fri, 15 Nov 2024 13:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2665E1BDA8D;
+	Fri, 15 Nov 2024 13:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="D3Hh6YsX"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GU5guTR/"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD3F1BE871;
-	Fri, 15 Nov 2024 13:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4D81B85F0;
+	Fri, 15 Nov 2024 13:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731676231; cv=none; b=q7DjhB4WeQeuWjpFtfJwEKgaxxMeIELqm1jVDMeboT+5GeAaU1H5L9gCZw5oA/wbTiKG5MiATP1bkVAiMrdNE42//FSORsP9T73cnA1UNYDsZpi9Lhtx6bA+2Siu40W7NMVtGRPK9SoGAjFIJkl7ho0wf1BVet3rRaUp6jc41aY=
+	t=1731676355; cv=none; b=W7XF8shSh/PytvyxI/sy/bXA6NaknkjYNMMRb00zIJWtsMRWYL4b2wDnXzQ5+t2s9bBovr9Q+pOjVuqeX3eAKOgEvLPNQYNTNr75pzX+bp+XB8419LpiTb2WK7Tk6scyqPBkokTdknKt4MDlLX3UGcz7q92gfXs46b7+0nxnAdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731676231; c=relaxed/simple;
-	bh=YWWv8XRqDyTMxPK9th3Gjlbl6D4b52dcqf1sIGOyhjQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VaSU7mZ2GYY9VL+wG6gXKHsWsO1cOJgibXiOap0SA+XDi1JPYHg2ZQcVP6pwBtQiQCJgtfiwblj49z2PBTYSyTmHLTjzXf59oaz01dy6JSbn6P1XLCHZHfbFUAUoHcbBGMP7JkV08MYJB5DfTkyHOuG6SgWhbx34B/lx/kcvZ+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=D3Hh6YsX; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 8E891A03F3;
-	Fri, 15 Nov 2024 14:10:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=NLb7/7MPArmAXwhvn/nb
-	ETdJKG+sBfotx0epRnf772U=; b=D3Hh6YsXVmldwd00F0xnlFbvCldf8nptR4ML
-	VFfjs7I1othA8hMb7lgf16ZHQ8tNiocGolWZVWWaeNwIw1CDPp8gEWlx0T+c6gqE
-	Z4Uh3wVA7GdXs39/VfUQ2pAot3ytdBL0rIKxIl4G0VPMZqUSeXXgHb/zNeav7rIL
-	PNse3NGlSwhDS4ttXJSU0qGoo6niaaV1AWgmA3ZO2MI3FfCfxGv56Ut38J/BRH7r
-	Vey14L90aLkODZ2SaUjrzkxs9/OC4nTre0yoEYHiIpfvQmD0GB++vTeaqmChWdns
-	kvjpuO/ippfyAV6yq24Ct5qToOSkkgte8YCh7JF+UbW7RX4hFHzUa2FHgfoKtePf
-	97UdNkHZEMMjvDpTrHfAsr4EQDEK8klGtF7CYrrVCp0ypyacKI3vXMN3Ep+rjKC1
-	jFK+MOw2t952uD58CkcbtNT6MchfiQgq+ZeiA2sOdSWZSJ4gugnq5WCmRYAfHH9W
-	xkHv/XttlUZVMYI0duL5cE93D3T2C/5d9ryJD6zWVbffEw53zGPvmEEZfxEy8Aea
-	p0SlGg+8+gfPd4bojZw+xS0GxwWeaPQrnNhlVvs7SLoFQg/0by3DrVNbS5Ye3lf0
-	C7LCEIYxogg4ZuYKgLFBVVrTaM+xC4FWpG+KQg6jwDZlAIt4Uh8ovnJSLTLKLwvs
-	GBhSjH0=
-Message-ID: <594b2929-f7ab-4d30-a97c-1b1b31258d25@prolan.hu>
-Date: Fri, 15 Nov 2024 14:10:18 +0100
+	s=arc-20240116; t=1731676355; c=relaxed/simple;
+	bh=t32cxctacNgjHuwnZ8VnqC6ly1Bchl/QOwPC9P7ZlR4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CZXmyZeuP+XylyNE8Vf+T2EPs9xRuVH76FhJbTvUXQ9lYPZ0rL/WZTt/d81D6CmiBGREXTTqUhtobi1P0m08c18Q4q+2wrkNm6dZnFyB5pj6JiRjoxS4Z1DmFWX0Qb3y1O2VaDPWT+Ee0246Wtyi2NbUf7jCpZB0Vd/xC4W7UxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GU5guTR/; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e2fb304e7dso1540099a91.1;
+        Fri, 15 Nov 2024 05:12:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731676353; x=1732281153; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LGEvwwkAr2aRQ6piezavR8P7IeH13bFGESYh7zT6n3Q=;
+        b=GU5guTR/orVWp2D5Byx8IhOgSXON3QYVo/5koR5rjd6cfnIi/1YZX5J6cblIXRxQqq
+         Q2rJ3lWTqL1CXZC+gzWqz2z5emuwL/L071ZQNIKheuFlUFTRabgcZhK8DRECqEkb+fnv
+         pXgwhQl8RA4qkDRybQkd3Riem6kCS4rfbKspDmlNLTjBFII4GyLiaF+1UB2hOv7/yrJE
+         0h/X8zXHF3Cx+V0EZn2k1ljKVOaV2tam85xhX4gYcuWBa8yhakNp6tI2fIn9k4PHYLv1
+         UT5KIIfDCYeyio7MymHC+u0zpTeIIp44qLZg2cbR/kQvBxchzSmajNZGN+d0L5hdEtbI
+         ZPnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731676353; x=1732281153;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LGEvwwkAr2aRQ6piezavR8P7IeH13bFGESYh7zT6n3Q=;
+        b=PvNDkGUddVpi6tr5yasC916nqBaR00cXpYqgKzl1E/M9dzW2TdPo7v/1YaysJuvIJK
+         JSCSdeCCUobgqGdBZMvKpETSOofeVg/YxF8H2qGZesT7DP/QActyLe9Y1WE3V2HGCab6
+         kVOZnCDRQBXcseq+bHKvQnuJs521kFQs78/EPGOwI1uKXHTaKi6PxUbOihTADCNR2XrR
+         8oOeh9OmiiFSCO8wJGR/xf/jxQlVvh3DcAdDY7CE7iGIpzPjWXyfVwNAzb21GcnFDrIl
+         wQR+te2CN5n7vsxyxder2yxr+x5PCxBGUlMUcXsqBe8EWrDK76Wwt8rm9gmG9rcaQ/pI
+         HUXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2haUYJ1EhNuqOYPFj5oAab/1bthy4rOeRG1Bnlp3uGZyEw8vgbO8KhbrTO+Cvq+au9MPdr6SXBRIH3v4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxydyqVoHmvkLobqtimALmHu5MdmAOov0FcQLqIX05RBFJw6kO
+	NkjhVHLGjis3A6hCoTGjE38dELF51Q0nAw/4ZgvgK1WdFtHSvO72
+X-Google-Smtp-Source: AGHT+IHiKmEPUcAwcTE7fjNZOdCEXpjeKSD795z8uynKB32CMsSboNyZ64DeBwOHh2qCU3Qne8r25Q==
+X-Received: by 2002:a17:90b:1e0d:b0:2e9:5004:2502 with SMTP id 98e67ed59e1d1-2ea154f7469mr2960960a91.13.1731676353255;
+        Fri, 15 Nov 2024 05:12:33 -0800 (PST)
+Received: from ?IPV6:2409:40c0:48:969e:e221:9e2d:e416:1b41? ([2409:40c0:48:969e:e221:9e2d:e416:1b41])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea06ef6a7esm2734394a91.4.2024.11.15.05.12.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 05:12:32 -0800 (PST)
+Message-ID: <333658df-a767-437f-9566-857e8ff5867f@gmail.com>
+Date: Fri, 15 Nov 2024 18:42:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,58 +75,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/3] Add support for codec of F1C100s
-To: <linux-sound@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-CC: Mesih Kilinc <mesihkilinc@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, "Takashi
- Iwai" <tiwai@suse.com>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
-	<jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Maxime Ripard <mripard@kernel.org>
-References: <20241102125712.2647325-1-csokas.bence@prolan.hu>
+Subject: Re: [PATCH] video: fbdev: metronomefb: Fix buffer overflow in
+ load_waveform()
+To: Helge Deller <deller@gmx.de>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20241112202825.17322-1-surajsonawane0215@gmail.com>
+ <7de29a8c-3325-4654-8afd-81f3f9a8d113@gmx.de>
 Content-Language: en-US
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <20241102125712.2647325-1-csokas.bence@prolan.hu>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+In-Reply-To: <7de29a8c-3325-4654-8afd-81f3f9a8d113@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D94855617C6B
 
-So, if there's no further remarks, can this be merged? The next window 
-is coming up, and there's the DT addition still waiting in the pipe.
-Bence
+On 14/11/24 20:13, Helge Deller wrote:
+> On 11/12/24 21:28, Suraj Sonawane wrote:
+>> Fix an error detected by the Smatch tool:
+>>
+>> drivers/video/fbdev/metronomefb.c:220 load_waveform() error:
+>> buffer overflow 'wfm_hdr->stuff2a' 2 <= 4
+>> drivers/video/fbdev/metronomefb.c:220 load_waveform() error:
+>> buffer overflow 'wfm_hdr->stuff2a' 2 <= 4
+>>
+>> The access to wfm_hdr->stuff2a in the loop can lead to a buffer
+>> overflow if stuff2a is not large enough. To fix this, a check was
+>> added to ensure that stuff2a has sufficient space before accessing
+>> it. This prevents the overflow and improves the safety of the code.
+>>
+>> Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+>> ---
+>>   drivers/video/fbdev/metronomefb.c | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/drivers/video/fbdev/metronomefb.c 
+>> b/drivers/video/fbdev/metronomefb.c
+>> index 6f0942c6e..9da55cef2 100644
+>> --- a/drivers/video/fbdev/metronomefb.c
+>> +++ b/drivers/video/fbdev/metronomefb.c
+>> @@ -210,6 +210,12 @@ static int load_waveform(u8 *mem, size_t size, 
+>> int m, int t,
+>>       }
+>>       wfm_hdr->mc += 1;
+>>       wfm_hdr->trc += 1;
+>> +
+>> +    if (sizeof(wfm_hdr->stuff2a) < 5) {
+>> +        dev_err(dev, "Error: insufficient space in stuff2a\n");
+>> +        return -EINVAL;
+>> +    }
+>> +
+>>       for (i = 0; i < 5; i++) {
+>>           if (*(wfm_hdr->stuff2a + i) != 0) {
+>>               dev_err(dev, "Error: unexpected value in padding\n");
+> 
+> That patch is completely wrong.
+> There is
+> /* the waveform structure that is coming from userspace firmware */
+> struct waveform_hdr {
+>          ....
+>          u8 stuff2a[2];
+>          u8 stuff2b[3];
+> 
+> So, I *believe* the for-next loop wants to walk acrosss stuff2a and 
+> stuff2b,
+> which have 5 entries together. So, basically the original code isn't nice
+> but still correct.
+> Your "sizeof()" check will always be false and is the wrong patch.
+> 
+> If at all, I think the stuff2a and stuff 2b arrays should be joined.
+> Something like
+>          u8 stuff2[5]; /* this is actually 2-entry stuff2a and 3-entry 
+> stuff2b */
+> But again, I don't know much about this driver.
+> 
+> Helge
 
-On 2024. 11. 02. 13:57, Csókás, Bence wrote:
-> Support for Allwinner F1C100s/200s series audio was
-> submitted in 2018 as an RFC series, but was not merged,
-> despite having only minor errors. However, this is
-> essential for having audio on these SoCs.
-> This series was forward-ported/rebased to the best of
-> my abilities, on top of Linus' tree as of now:
-> commit c2ee9f594da8 ("KVM: selftests: Fix build on on non-x86 architectures")
-> 
-> Link: https://lore.kernel.org/all/cover.1543782328.git.mesihkilinc@gmail.com/
-> 
-> As requested by many, this series will now be split in 2, the DMA and the
-> ALSA/ASoC codec driver. This is the codec part of the series.
-> The first part (DMA) can be seen here. This series can be applied and
-> built without the former, but for working audio you need them both,
-> plus add it to Device Tree.
-> Link: https://lore.kernel.org/linux-kernel/20241102093140.2625230-2-csokas.bence@prolan.hu/
-> 
-> Csókás, Bence (1):
->    dt-bindings: sound: Add Allwinner suniv F1C100s Audio Codec
-> 
-> Mesih Kilinc (2):
->    ASoC: sun4i-codec: Add DMA Max Burst field
->    ASoC: sun4i-codec: Add support for Allwinner suniv F1C100s
-> 
->   .../sound/allwinner,sun4i-a10-codec.yaml      |  31 ++
->   sound/soc/sunxi/sun4i-codec.c                 | 365 +++++++++++++++++-
->   2 files changed, 394 insertions(+), 2 deletions(-)
-> 
+Thank you for the brief feedback. I see your point regarding stuff2a and 
+stuff2b. I’ll study this approach and revise the patch if I find it to 
+be the correct solution.
 
+Best regards,
+Suraj Sonawane
 
