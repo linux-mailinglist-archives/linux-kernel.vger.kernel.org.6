@@ -1,85 +1,115 @@
-Return-Path: <linux-kernel+bounces-410426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D32B9CDB78
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:22:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E04B9CDB7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:23:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7E042832FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:22:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BDC7B24D03
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A263518E750;
-	Fri, 15 Nov 2024 09:22:40 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F7F186295
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60BD118E750;
+	Fri, 15 Nov 2024 09:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="MaskqfJ6"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC29A18CC1C;
+	Fri, 15 Nov 2024 09:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731662560; cv=none; b=gIWFLnjfyTO6RWhQfQp9bZlQuPfTQYQi0OY2H4lyHhuPlFc/A4MLgtO/gdiNDWhO/4KZrRVwXEQgxQCiRRbOowyvyrBh5yc60H2QR8RXrpeitoD0bVQjHWyfrxxJnbbR4HVTRH+05vd5da2iN+sDc3czQzWnOBmeYYLGdkhb5kY=
+	t=1731662590; cv=none; b=IPHkrS0l0P9D16BxsXKx2aEnlMapEYIwcXEgJtDlOp1xlsVmGylp8UFrZWDGOtFDXjgAcvwPWfQozVG5gF/XTwJGI08tk9XOWLa7ZFHiwhsXa7MvsuIvMDqvoPrISTfdw3n+VDv3dHHi4Ao3/sRhB6BjFU0QjG2rGWLxOc8iQ0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731662560; c=relaxed/simple;
-	bh=6ByCyMOMgJx8D+jmwctbBGWt3ri3RV66FIe/7mkoPLo=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=c5WcAqxjV0XuPjEU8CyCjmBWDh6XaND0+xdnpf18v2RAnRUPm2GCjnik3Hq/Xi1Krt/RCVpp1HeiFwIaCFhe67SIGceP+ZKsLm1Fhcfhw95oRFyJDG/+rM8AwNjdnBh7nZFlfr0WDwKxK2L51oLJCTndVW4XPsKt9XVrcVmJX/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee5673712d8b99-2bbaf;
-	Fri, 15 Nov 2024 17:22:33 +0800 (CST)
-X-RM-TRANSID:2ee5673712d8b99-2bbaf
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from ubuntu.localdomain (unknown[10.55.1.70])
-	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea673712d773c-f4007;
-	Fri, 15 Nov 2024 17:22:32 +0800 (CST)
-X-RM-TRANSID:2eea673712d773c-f4007
-From: Zhu Jun <zhujun2@cmss.chinamobile.com>
-To: arnd@arndb.de
-Cc: gregkh@linuxfoundation.org,
-	W_Armin@gmx.de,
-	linux-kernel@vger.kernel.org,
-	zhujun2@cmss.chinamobile.com
-Subject: [PATCH] eeprom: Fix the cacography in Kconfig
-Date: Fri, 15 Nov 2024 01:22:30 -0800
-Message-Id: <20241115092230.7051-1-zhujun2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1731662590; c=relaxed/simple;
+	bh=nbuhk+CaUW9mRbVIzoPXH9V8FF1V83ATXwEiP9WhI7A=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FBIYCNYnasEx1brar6uF6ABHrp/PEztpRROgZKmZAygbCra+rj2AyJOWOW8ze7U9w+fN40MJht7mwJuJ7YSpQmHga9tkNMR65RwHo4Ov7ZiAAb+DyplTNHOi9bS3X2qYOlJ17LrSj6M1VPJyiOvwX5Xa3bg2lcubN5XUpbnB/zI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=MaskqfJ6; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1731662588; x=1763198588;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nbuhk+CaUW9mRbVIzoPXH9V8FF1V83ATXwEiP9WhI7A=;
+  b=MaskqfJ67K2+glak12R0FZIScSkTWIf2VDDFz5Xk7DNJEbGIErQVdTg5
+   91cUxNRe8eidh9X58nPx8K/oPuOJmKyLXFWyl9uDMEaRBQrvec87wNVvV
+   QAZ/4JaEyuKKZFQf0IzNPfzpWUukMWqoG1Ir1X8XOrLHt3ngtKZId0uD1
+   jw+eQ6TV00cwq7sBkz5dWWdXFG+gv79dlVnisOqzst+kDtAaYcIZ5TAbp
+   5OU9oNoYAlQJL7FnOBj+4pszq6ukcYzQysjOAS8PWFtpRKHROv65nipWq
+   XeWpMpKWP1cRSjjwJ26R0DFc82J2SNk3JntBoAMY5SRk8GAqr1zAJHDdY
+   g==;
+X-CSE-ConnectionGUID: sSmUfU85Rbizj9448fniyw==
+X-CSE-MsgGUID: sf/zJ0QfQIWXKVwBjtgE9A==
+X-IronPort-AV: E=Sophos;i="6.12,156,1728975600"; 
+   d="scan'208";a="34091113"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 15 Nov 2024 02:23:07 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 15 Nov 2024 02:22:41 -0700
+Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Fri, 15 Nov 2024 02:22:38 -0700
+Date: Fri, 15 Nov 2024 09:22:37 +0000
+From: Daniel Machon <daniel.machon@microchip.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: <UNGLinuxDriver@microchip.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Lars
+ Povlsen" <lars.povlsen@microchip.com>, Steen Hegelund
+	<Steen.Hegelund@microchip.com>, Horatiu Vultur
+	<horatiu.vultur@microchip.com>, Russell King <linux@armlinux.org.uk>,
+	<jacob.e.keller@intel.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH net-next v2 8/8] dt-bindings: net: sparx5: document RGMII
+ MAC delays
+Message-ID: <20241115092237.gzpat4x6kjipb2x7@DEN-DL-M70577>
+References: <20241113-sparx5-lan969x-switch-driver-4-v2-0-0db98ac096d1@microchip.com>
+ <20241113-sparx5-lan969x-switch-driver-4-v2-8-0db98ac096d1@microchip.com>
+ <29ddbe38-3aac-4518-b9f3-4d228de08360@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <29ddbe38-3aac-4518-b9f3-4d228de08360@lunn.ch>
 
-The word 'swtich' is wrong, so fix it.
+Hi Andrew,
 
-Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
----
- drivers/misc/eeprom/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> > The lan969x switch device supports two RGMII port interfaces that can be
+> > configured for MAC level rx and tx delays.
+> >
+> > Document two new properties {rx,tx}-internal-delay-ps. Make them
+> > required properties, if the phy-mode is one of: rgmii, rgmii_id,
+> > rgmii-rxid or rgmii-txid. Also specify accepted values.
+> 
+> This is unusual if you look at other uses of {rt}x-internal-delay-ps.
+> It is generally an optional parameter, and states it defaults to 0 if
+> missing, and is ignored by the driver if phy-mode is not an rgmii
+> variant.
 
-diff --git a/drivers/misc/eeprom/Kconfig b/drivers/misc/eeprom/Kconfig
-index 9df12399bda3..cb1c4b8e7fd3 100644
---- a/drivers/misc/eeprom/Kconfig
-+++ b/drivers/misc/eeprom/Kconfig
-@@ -97,11 +97,11 @@ config EEPROM_DIGSY_MTC_CFG
- 	  If unsure, say N.
- 
- config EEPROM_IDT_89HPESX
--	tristate "IDT 89HPESx PCIe-swtiches EEPROM / CSR support"
-+	tristate "IDT 89HPESx PCIe-switches EEPROM / CSR support"
- 	depends on I2C && SYSFS
- 	help
- 	  Enable this driver to get read/write access to EEPROM / CSRs
--	  over IDT PCIe-swtich i2c-slave interface.
-+	  over IDT PCIe-switch i2c-slave interface.
- 
- 	  This driver can also be built as a module. If so, the module
- 	  will be called idt_89hpesx.
--- 
-2.17.1
+Is unusual bad? :-) I thought that requiring the properties would make
+misconfigurations (mismatching phy-modes and MAC delays) more obvious,
+as you were forced to specify exactly what combination you want in the
+DT.  Maybe not. I can change it,  no problem.
+
+/Daniel
+
+
+> 
+>         Andrew
 
 
 
