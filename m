@@ -1,59 +1,64 @@
-Return-Path: <linux-kernel+bounces-410366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45AA89CDA70
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:27:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F4FE9CDA7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:30:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2CF31F22E69
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:27:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2476B24663
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3D418A6D5;
-	Fri, 15 Nov 2024 08:27:17 +0000 (UTC)
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53281632E7;
+	Fri, 15 Nov 2024 08:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="baiy+g4p"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6EF8189528;
-	Fri, 15 Nov 2024 08:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490DC1E522;
+	Fri, 15 Nov 2024 08:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731659237; cv=none; b=T/KHOsDFDB/BS30f8xSxtklRGzppuwV9+HBWRH4wAYI85iqBb8E8UXdMIqKak/uuAFA/kHGNoyy1lVn+SD0fY/ePPQSpmuvCDv/j8gWzxfQo1VTm5gq485g4riVQoKyP+Vx6AQ6TfHsBfPwljl8PiXtXHXcGAVff2pLlhn0rnRc=
+	t=1731659427; cv=none; b=Rr6iaX58wkpjq2TzAQvlqXFCL+JjKBNJ2yddo/P5wAGEBhd/iWCmqnjPQlXm74KFyYVEALIl8Gw5V/pemL2Pn2XuyPdw0UAqsfVSwBzRIVkUnGpXQi0sEkq0rAWiZmaPcSTsR1Nf6td6geNuTAk7Q+a6l43nsygLFYUc6IJktVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731659237; c=relaxed/simple;
-	bh=o8nIyJkuzItCALeJbV66s26MolutOjCijCbhPspD4Ws=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qa9OZ/0T7TYAJLfYlPNC1aBtZW1aUeo/6wEi1SxHNk2QuruaRKDRwyJh6tPMYM58A0RROLcOFfO8JwnDg9jM1PQB6QzyuFC0oBaudO3i+sKOA34o0GIDzZv3IpjAIWBi65aeP/g1l9zk/npX8kkwyVZbnxWo38L/7SgNwH5kkrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=geekplace.eu; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=geekplace.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4315eeb2601so16506025e9.2;
-        Fri, 15 Nov 2024 00:27:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731659223; x=1732264023;
-        h=in-reply-to:from:content-language:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=o8nIyJkuzItCALeJbV66s26MolutOjCijCbhPspD4Ws=;
-        b=tp6nifwiLXkRdsH0L4LULiJdCtNPgeJHr8znl9/ytBN23uy/ObDrU+WNuyC1RY4JyB
-         0QMbHpkm/y+0Ja1oGDIdimfaiFdVDXpypiXQNGXmJz2T94RA+tSO4MhNZ3ROcHQ2Yaq4
-         uIMy53LfagDY7qjKfHt3HIyz8FMNFKAIKkEjAOz5i/VT4kyd/vHi9Jl6ChuB6dfg5Dlp
-         b1W4GolCbtiM0HZf/0a860huWYBxHExBXk4qFFn5ZwTNyPBAnYCBv7F8o4jM/WBGLAzF
-         Dnkt/qJTWqRlKvUYjWpZAJZM6n5/r4xTipKp82x1PNPytHjeSuquyCXHOK0fEhYeF1S8
-         /VIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXK74wrz2KFdcVFq/DJ3JHGF++Id4dhES1nqtEtTvnb10qK6EZq/laDLZG287YM91DL2eCRjaUS1dfA09s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypGrlxF3lqwC8aCQHnymELYU76Xhk7L/1W6bE5RN563/0iQRr5
-	upyLgfWnPTrDTKQehGhg628fCiheS63SWExvWAqrOfUHxHjPvF4ynn1bw9k+
-X-Google-Smtp-Source: AGHT+IH/f12vAPRislm673eISgjINdIGmF89I7seSRP7QcD2GJSIitawye+dyoCh8yJa/pqkymQRVQ==
-X-Received: by 2002:a05:600c:19c6:b0:431:5533:8f0d with SMTP id 5b1f17b1804b1-432df793dd5mr17166385e9.30.1731659222644;
-        Fri, 15 Nov 2024 00:27:02 -0800 (PST)
-Received: from ?IPV6:2001:4090:a247:82fb:34fb:50ff:feac:591b? ([2001:4090:a247:82fb:34fb:50ff:feac:591b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab80a28sm46404765e9.24.2024.11.15.00.27.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 00:27:01 -0800 (PST)
-Message-ID: <7a4a39f0-2694-42a0-b26d-b1e337eb3afc@geekplace.eu>
-Date: Fri, 15 Nov 2024 09:26:56 +0100
+	s=arc-20240116; t=1731659427; c=relaxed/simple;
+	bh=AwNaowL+z3r5T3Dhk/DjATV1Gtv4vvKbU0QkuO3KiTk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SqtYvrSDoTtqQXFPh5b5TukQXuU67fRJkbEetqUlVWOYd5IFwPMXPr9WpHpzc1VHm1puCxD4vBs4Ws4nCIGoqJHoHPUpu49f8J9S8uRdPCoBAJEnsy/s86RCzCzH3JDAWjewbKc7L/u+nCVuX5VYGW88LlofsX53g4obSfEjk8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=baiy+g4p; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AF80KYe008356;
+	Fri, 15 Nov 2024 09:29:48 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	hV7BxhQ3eifJYS/TNyu+Lmhdj2uo69md9n/Ratf2lvI=; b=baiy+g4pS4xqJe22
+	Z6PA5mWy2Cs7RSvM4GWc/IW5XjATX0WHk5aElMwUw/pwK9CpSSscsnc7jsM9CeyR
+	QEq2GV4QxD8TyYOW181ziqZmw5yhaaKydrpjuzIVukdoM1LOLT0M00b6LSK7BYDs
+	l0thJ4hekFeNA/SvfdvacMOkRUulYxED4boG5uqMuo4yk7hHl7HXMUpn0cIjjpwI
+	+AeXVvV9dd+rpoicCf30pqcuLp99gFd68FH9DmP7HITTjjpB2UuzfThRd+DJ3TGQ
+	/7eA1+kCT+AI7u9NVgv5359Vsk7melk4XVMB2WrFp7D29rfd+TjSf/eepa2oNHaZ
+	DeVOwg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42whe9ukqu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 09:29:48 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 5632340053;
+	Fri, 15 Nov 2024 09:28:22 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 31155263566;
+	Fri, 15 Nov 2024 09:27:14 +0100 (CET)
+Received: from [10.129.178.212] (10.129.178.212) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 15 Nov
+ 2024 09:27:13 +0100
+Message-ID: <2b52093a-103f-4dd4-bb6d-c04dc9f68e98@foss.st.com>
+Date: Fri, 15 Nov 2024 09:27:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,77 +66,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] bcachefs: Set rebalance thread to SCHED_BATCH and
- nice 19
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241114210649.71377-1-flo@geekplace.eu>
- <20241114210649.71377-2-flo@geekplace.eu>
- <kycrjg4nlgwxb6b6wph3uolmh45t7ivmoi5jpy4pakvh74wnoo@wp7hlbcbtwyw>
+Subject: Re: [PATCH 1/5] dt-bindings: PCI: Add STM32MP25 PCIe root complex
+ bindings
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: <lpieralisi@kernel.org>, <kw@linux.com>,
+        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <p.zabel@pengutronix.de>, <cassel@kernel.org>,
+        <quic_schintav@quicinc.com>, <fabrice.gasnier@foss.st.com>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20241112182809.GA1853254@bhelgaas>
 Content-Language: en-US
-From: Florian Schmaus <flo@geekplace.eu>
-In-Reply-To: <kycrjg4nlgwxb6b6wph3uolmh45t7ivmoi5jpy4pakvh74wnoo@wp7hlbcbtwyw>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------NQh0VyCdSM9kOJIS0Omdz4Og"
+From: Christian Bruel <christian.bruel@foss.st.com>
+In-Reply-To: <20241112182809.GA1853254@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------NQh0VyCdSM9kOJIS0Omdz4Og
-Content-Type: multipart/mixed; boundary="------------SSth0S6U9OM1ccsA5Ervezib";
- protected-headers="v1"
-From: Florian Schmaus <flo@geekplace.eu>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <7a4a39f0-2694-42a0-b26d-b1e337eb3afc@geekplace.eu>
-Subject: Re: [PATCH 2/2] bcachefs: Set rebalance thread to SCHED_BATCH and
- nice 19
-References: <20241114210649.71377-1-flo@geekplace.eu>
- <20241114210649.71377-2-flo@geekplace.eu>
- <kycrjg4nlgwxb6b6wph3uolmh45t7ivmoi5jpy4pakvh74wnoo@wp7hlbcbtwyw>
-In-Reply-To: <kycrjg4nlgwxb6b6wph3uolmh45t7ivmoi5jpy4pakvh74wnoo@wp7hlbcbtwyw>
 
---------------SSth0S6U9OM1ccsA5Ervezib
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
 
-T24gMTUvMTEvMjAyNCAwNi40MywgS2VudCBPdmVyc3RyZWV0IHdyb3RlOg0KPiBPbiBUaHUs
-IE5vdiAxNCwgMjAyNCBhdCAxMDowNjo0OFBNICswMTAwLCBGbG9yaWFuIFNjaG1hdXMgd3Jv
-dGU6DQo+PiBTZXQgdGhlIHJlYmFsYW5jZSB0aHJlYWQncyBzY2hlZHVsaW5nIGNsYXNzIHRv
-IEJBVENILCB3aGljaCBtZWFucyBpdA0KPj4gY291bGQgZXhwZXJpZW5jZSBhIGhpZ2hlciBz
-Y2hlZHVsaW5nIGxhdGVuY3kuIEhvd2V2ZXIsIGl0IHJlZHVjZXMNCj4+IHByZWVtcHRpb24g
-ZXZlbnRzIG9mIHJ1bm5pbmcgdGhyZWFkcy4NCj4+DQo+PiBBbmQgd2hpbGUgdGhlIHJlYmFs
-YW5jZSB0aHJlYWQgaXMgdWFsbHkgbm90IGNvbXB1dGUgYm91bmQsIGl0IGRvZXMNCj4+IGNh
-dXNlIGEgY29uc2lkZXJhYmxlIGFtb3VudCBvZiBJL08uIEJ5IGluY3JlYXNpbmcgaXRzIG5p
-Y2UgbGV2ZWwgZnJvbQ0KPj4gMCB0byAxOSB3ZSBhbHNvIGltcGxpY2l0bHkgcmVkdWNlIHRo
-ZSB0aHJlYWQncyBiZXN0LWVmZm9ydCBJL08NCj4+IHNjaGVkdWxpbmcgY2xhc3MgbGV2ZWwg
-ZnJvbSA0IHRvIDcuIFRoZXJlZm9yZSwgdGhlIHJlYmFsYW5jZSB0aHJlYWQncw0KPj4gSS9P
-IG9wZXJhdGlvbnMgd2lsbCBiZSBkZXByaW9yaXRpemVkIG92ZXIgc3RhbmRhcmQgSS9PIG9w
-ZXJhdGlvbnMuDQo+IA0KPiBJcyB0aGVyZSBhIHBhdGNoIDEvMj8NCg0KU29ycnksIHBhdGNo
-IDEvMiB3YXMgdW5mb3J0dW5hdGVseSBub3Qgc2VuZCB0byBsaW51eC1iY2FjaGVmc0AuIFlv
-dSBjYW4gDQpmaW5kIGl0IGF0DQoNCmh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xrbWwvMjAy
-NDExMTQyMTA2NDkuNzEzNzctMS1mbG9AZ2Vla3BsYWNlLmV1Lw0KDQotIEZsb3JpYW4NCg0K
-DQo=
+On 11/12/24 19:28, Bjorn Helgaas wrote:
+> On Tue, Nov 12, 2024 at 05:19:21PM +0100, Christian Bruel wrote:
+>> Document the bindings for STM32MP25 PCIe Controller configured in
+>> root complex mode.
+>> Supports 4 legacy interrupts and MSI interrupts from the ARM
+>> GICv2m controller.
+>>
+>> Allow tuning to change payload (default 128B) thanks to the
+>> st,max-payload-size entry.
+>> Can also limit the Maximum Read Request Size on downstream devices to the
+>> minimum possible value between 128B and 256B.
+>>
+>> STM32 PCIE may be in a power domain which is the case for the STM32MP25
+>> based boards.
+>> Supports wake# from wake-gpios
+> 
+>> +  st,limit-mrrs:
+>> +    description: If present limit downstream MRRS to 256B
+>> +    type: boolean
+>> +
+>> +  st,max-payload-size:
+>> +    description: Maximum Payload size to use
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    enum: [128, 256]
+>> +    default: 128
+> 
+> MRRS and MPS are not specific to this device.  Not sure why you need
+> them, but if you do need them, I think they should be generic.
 
---------------SSth0S6U9OM1ccsA5Ervezib--
+Agree. On a second thought, this was to fix an old errata and can be 
+dropped now, as well as the associated quirks.
 
---------------NQh0VyCdSM9kOJIS0Omdz4Og
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+Will re-post as generic if needed later on
 
------BEGIN PGP SIGNATURE-----
+thanks,
 
-iQGTBAEBCgB9FiEEl3UFnzoh3OFr5PuuIjmn6PWFIFIFAmc3BdFfFIAAAAAALgAo
-aXNzdWVyLWZwckBub3RhdGlvbnMub3BlbnBncC5maWZ0aGhvcnNlbWFuLm5ldDk3
-NzUwNTlGM0EyMURDRTE2QkU0RkJBRTIyMzlBN0U4RjU4NTIwNTIACgkQIjmn6PWF
-IFLncwgAkg2maj40YKOztZ6JH6GIdjO/XS74BuwOxFSmv7hnVL7m5Usm/gWGa9Ui
-EScGLrLvVid9kfrPVDMPDWrXY94bgIm+Xd1q73Z0MVeWBUnrSAgctaS1JssJ1sGf
-ElrsOq/BPtwJcNe6qRnNhnVdqze0Xs8u4QP0AbsxKGQFy/k11oUcizpwFpO3jcmg
-TCLtSrSZIqwPX5NQwLQ5SCv4fg3xnxUYpy30CkGTp4PGu3rBVRUt7XzT4fWXPXdM
-TNkUpYkZoy7FmNJDtqpaVu5uvMIVCjtdAzNHT+g6wBT6ZjNtsz8ArxAXR1BJBYJa
-zhiu8jzKIOB4cgSqhBZoXebACdAlSA==
-=x1zA
------END PGP SIGNATURE-----
-
---------------NQh0VyCdSM9kOJIS0Omdz4Og--
+Christian
 
