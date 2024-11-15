@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-411384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F066D9CF805
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:39:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D270F9CF842
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:46:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A80B11F243DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:39:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2424B2A9E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78AFB20A5F6;
-	Fri, 15 Nov 2024 21:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C66020C038;
+	Fri, 15 Nov 2024 21:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SFgsUzV2"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="iplUk1Nd"
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F302202F7E;
-	Fri, 15 Nov 2024 21:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50091204F7E;
+	Fri, 15 Nov 2024 21:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731705777; cv=none; b=R5bHB+ZZNqws97OlRNeAdraY6HhUr7y/xF0M6D+7L3CcP03KxvBksagCzACFM0jibeF52r9YuCV/W2V9zWWL9GvsXfvE30yG9NcGvqV0SzV/GbGS9cru5yEdgmJIQDstMghPXtU1r9Pgd8MGVwLxPYfRy4D10Bn+YRQ4XE/iJPU=
+	t=1731705778; cv=none; b=DpJYieQTxTEtih5lQawUm6140rkwMEAjbS+ViPO+BMQugTVtzAcKUC1Q8DCHR+6R2QNzr3OLNzsgU3sQssCFurZIcnuDq+3mn4WTmbgojyLhVpIUuy3me/tDEtkH5BooC/WiX/Ha5pOhSfQXp2xRl7U9LpWxeOCDK72sjojxahw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731705777; c=relaxed/simple;
-	bh=kd8m5Fkh+RCrm1/6q/g2xlfYUzdWXOZRTZSgnA96OPo=;
+	s=arc-20240116; t=1731705778; c=relaxed/simple;
+	bh=4MLVon0D3a+9sKIpFIEboNUwxMWMLmjuuaYwxOlrS+E=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gcXC8WUotnUvyPjOG3Fr9pRMJIdGDFoicHw6VZAwLH5/QBdDmPEmneOxM4W0qrItiqZyL87tL4h1WA6jVlW201megphhwk7XUyO6UcVlNKIztn0QbKp18D0SEgtr2orHpKjVm6sf13Ztnw+LfKbQLMpO4Bb3BRaFrLkredGr7gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=SFgsUzV2; arc=none smtp.client-ip=13.77.154.182
+	 In-Reply-To:To:Cc; b=NGvJFYFDBoswyylO9RiRKd0wAmaVRzQcEUFwN3zbsWsfzhZDOHoDL2D/YMD02O5DkZdCZBou0Sm8LHxrCoWo4LUlVEpmcJjH3I9D8hgc4sZtcOWk4pLNiyClHzfeG70f/GAq6pObOwqaUvn+ZaqYr8dkbvQlpPRmLZ0VmXekU7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=iplUk1Nd; arc=none smtp.client-ip=13.77.154.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Received: from eahariha-devbox.internal.cloudapp.net (unknown [40.91.112.99])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 391A4206BCED;
+	by linux.microsoft.com (Postfix) with ESMTPSA id A22AA206BCEE;
 	Fri, 15 Nov 2024 13:22:46 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 391A4206BCED
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A22AA206BCEE
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
 	s=default; t=1731705766;
-	bh=94UWkQUgIE+TIBJCr3TB9bjXju243wFFlCrw1pjugTo=;
+	bh=8an4FgjBOt1s+5Gzupd7mugSuJBcUUHR7ha3x9HR0Ag=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=SFgsUzV2pr+7sgkN9ckclI41KlvZ5rbgTJNvcYfQiJkXt/zfibxMELK/nTIaeiHDO
-	 ea+s5uVXRp6XFAaIO7MmvRCgTW3Xe5hl6IpUNHPKOVjiYfv0tTkJJCNkRHRjEL8vOu
-	 pgAUpMsv2jfhmvY7krwkZWjWRsRmTp18YKKkcVMM=
+	b=iplUk1Nduoh9asilHgzn6HQycVN1VFv/mFBOdW0Mpd4aq8sOOirOgItcWBMTidM3Q
+	 FvxfPpyBxEWdptBjBV3AGgplTOjNGMgWDICXRk9fFUvguk5wrwqFw5sjChgX9PZPt7
+	 /h1a1SkEI1LPNYXASotI6c+cUqHfSyHVemxnfBAU=
 From: Easwar Hariharan <eahariha@linux.microsoft.com>
-Date: Fri, 15 Nov 2024 21:22:50 +0000
-Subject: [PATCH 20/22] ALSA: line6: Convert timeouts to secs_to_jiffies()
+Date: Fri, 15 Nov 2024 21:22:52 +0000
+Subject: [PATCH 22/22] jiffies: Define secs_to_jiffies()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,7 +50,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241115-converge-secs-to-jiffies-v1-20-19aadc34941b@linux.microsoft.com>
+Message-Id: <20241115-converge-secs-to-jiffies-v1-22-19aadc34941b@linux.microsoft.com>
 References: <20241115-converge-secs-to-jiffies-v1-0-19aadc34941b@linux.microsoft.com>
 In-Reply-To: <20241115-converge-secs-to-jiffies-v1-0-19aadc34941b@linux.microsoft.com>
 To: Pablo Neira Ayuso <pablo@netfilter.org>, 
@@ -117,39 +117,70 @@ Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
  etnaviv@lists.freedesktop.org, oss-drivers@corigine.com, 
  linuxppc-dev@lists.ozlabs.org, 
  Anna-Maria Behnsen <anna-maria@linutronix.de>, 
- Easwar Hariharan <eahariha@linux.microsoft.com>
+ Easwar Hariharan <eahariha@linux.microsoft.com>, 
+ Michael Kelley <mhklinux@outlook.com>, Thomas Gleixner <tglx@linutronix.de>, 
+ Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
 X-Mailer: b4 0.14.2
 
-Changes made with the following Coccinelle rules:
+secs_to_jiffies() is defined in hci_event.c and cannot be reused by
+other call sites. Hoist it into the core code to allow conversion of the
+~1150 usages of msecs_to_jiffies() that either:
 
-@@ constant C; @@
+ - use a multiplier value of 1000 or equivalently MSEC_PER_SEC, or
+ - have timeouts that are denominated in seconds (i.e. end in 000)
 
-- msecs_to_jiffies(C * 1000)
-+ secs_to_jiffies(C)
+It's implemented as a macro to allow usage in static initializers.
 
-@@ constant C; @@
+This will also allow conversion of yet more sites that use (sec * HZ)
+directly, and improve their readability.
 
-- msecs_to_jiffies(C * MSEC_PER_SEC)
-+ secs_to_jiffies(C)
-
+Suggested-by: Michael Kelley <mhklinux@outlook.com>
 Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Link: https://lore.kernel.org/all/20241030-open-coded-timeouts-v3-1-9ba123facf88@linux.microsoft.com
 ---
- sound/usb/line6/toneport.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/jiffies.h   | 13 +++++++++++++
+ net/bluetooth/hci_event.c |  2 --
+ 2 files changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/sound/usb/line6/toneport.c b/sound/usb/line6/toneport.c
-index ca2c6f5de407ece21ab69a39ed603e3f10069039..c073b38cd6738176fc6a276d05ed553526573341 100644
---- a/sound/usb/line6/toneport.c
-+++ b/sound/usb/line6/toneport.c
-@@ -386,7 +386,7 @@ static int toneport_setup(struct usb_line6_toneport *toneport)
- 		toneport_update_led(toneport);
- 
- 	schedule_delayed_work(&toneport->line6.startup_work,
--			      msecs_to_jiffies(TONEPORT_PCM_DELAY * 1000));
-+			      secs_to_jiffies(TONEPORT_PCM_DELAY));
- 	return 0;
+diff --git a/include/linux/jiffies.h b/include/linux/jiffies.h
+index 1220f0fbe5bf9fb6c559b4efd603db3e97db9b65..0a7382753c6b636fe285599953e314fb7479ea01 100644
+--- a/include/linux/jiffies.h
++++ b/include/linux/jiffies.h
+@@ -526,6 +526,19 @@ static __always_inline unsigned long msecs_to_jiffies(const unsigned int m)
+ 	}
  }
  
++/**
++ * secs_to_jiffies: - convert seconds to jiffies
++ * @_secs: time in seconds
++ *
++ * Conversion is done by simple multiplication with HZ
++ *
++ * secs_to_jiffies() is defined as a macro rather than a static inline
++ * function so it can be used in static initializers.
++ *
++ * Return: jiffies value
++ */
++#define secs_to_jiffies(_secs) ((_secs) * HZ)
++
+ extern unsigned long __usecs_to_jiffies(const unsigned int u);
+ #if !(USEC_PER_SEC % HZ)
+ static inline unsigned long _usecs_to_jiffies(const unsigned int u)
+diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+index 0bbad90ddd6f87e87c03859bae48a7901d39b634..7b35c58bbbeb79f2b50a02212771fb283ba5643d 100644
+--- a/net/bluetooth/hci_event.c
++++ b/net/bluetooth/hci_event.c
+@@ -42,8 +42,6 @@
+ #define ZERO_KEY "\x00\x00\x00\x00\x00\x00\x00\x00" \
+ 		 "\x00\x00\x00\x00\x00\x00\x00\x00"
+ 
+-#define secs_to_jiffies(_secs) msecs_to_jiffies((_secs) * 1000)
+-
+ /* Handle HCI Event packets */
+ 
+ static void *hci_ev_skb_pull(struct hci_dev *hdev, struct sk_buff *skb,
 
 -- 
 2.34.1
