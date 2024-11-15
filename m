@@ -1,178 +1,132 @@
-Return-Path: <linux-kernel+bounces-410998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F749CF16F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:23:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5359B9CF177
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:27:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A04BB2958AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:23:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19A9F29348A
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1EA1D516D;
-	Fri, 15 Nov 2024 16:23:35 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944DE1D4610;
+	Fri, 15 Nov 2024 16:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cf10LL0X"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DA5126C10;
-	Fri, 15 Nov 2024 16:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDF5126C10;
+	Fri, 15 Nov 2024 16:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731687815; cv=none; b=tkQ93B8qppqR5sKsUMxTh5ApJNZxCJaC24WErY5yWUmK/8/az73oUwSov1E4RXDpqygXyrHXmlFUvpb2+rr40Z4ZuJXZiZZHXxKP2Rf71CXl9G58YKeWhzEmHHl7HHwVN6p0yBjDZEgdwbvdX2MepLnVJkszMzBlfT50QdWWRn4=
+	t=1731688062; cv=none; b=bDL/DoDqlmfujaD7pUjR425Uuch5ER8q+JgmLd0hJMW8Y7KMzUyXtbz9mIiNghWvwkkMQCbF48ly0VTxiCpD162SlU/4/ac79ppMZMJu1s+fEJDmidzZ1HRqZ3T2IXY3xV3DeKHms0xG5KWwAh/zANBeZMsGADu0GjosSLOg/D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731687815; c=relaxed/simple;
-	bh=DM27c+y+WOBeLHMhqrwMS7rn3rHMwv1YhipdWe80R8Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KH5Ldu5lfT8eaxJOXguv+w/cqTJPtI2BvPlwaPY3nhl8om9A81A5UIYdRb4CDDj4/kXs+qoIXWwVZHwXSw46AcR6hBTAvYzUmW8W0xeGETULayuzuqKo5UOFoAg/jHPFDUwxu1NPuwbEtDZVWkOfs7H6Q/uECK3iD9Uc9UQbYhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 745ABC4CED5;
-	Fri, 15 Nov 2024 16:23:32 +0000 (UTC)
-Date: Fri, 15 Nov 2024 16:23:30 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>, Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>, Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [PATCH 4/4] arm64: mte: Use stage-2 NoTagAccess memory attribute
- if supported
-Message-ID: <Zzd1giMm-bzUiZgA@arm.com>
-References: <20241028094014.2596619-1-aneesh.kumar@kernel.org>
- <20241028094014.2596619-5-aneesh.kumar@kernel.org>
- <87o734ts4m.wl-maz@kernel.org>
- <yq5ar080cq5x.fsf@kernel.org>
- <87jzdst6os.wl-maz@kernel.org>
- <yq5a34k2rw9o.fsf@kernel.org>
- <86ldxozn3i.wl-maz@kernel.org>
+	s=arc-20240116; t=1731688062; c=relaxed/simple;
+	bh=oK/ecY8SVQjsxicQV/tUD92mrzRYTPcQsFmw2JJDW/g=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=rixBU9WD/6vCU+jfTnEwvG/rV1QF9DmQF4xKmP3jfnShrW2emny6iSQY7CqoTGqsB+2K4elMpmchwPSsN7g7HKy9/UqZxYlf3QzPdvgn5qBPxPbsHTHVoAC5/ufzdMk4ZC9nB7W/PVPIgaUdNxCVeSJhDAiAIepIgZRlv/w6w98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cf10LL0X; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731688060; x=1763224060;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=oK/ecY8SVQjsxicQV/tUD92mrzRYTPcQsFmw2JJDW/g=;
+  b=cf10LL0XK2t2PBGZug6VNrNrtMZ2t4Ddg634UObpVj+SzQMwTH5fwDMj
+   iH/U2kdwvRl7GknQEgkvx3qX7VovkRZKAs4N20Q6M3+o98+k6Sr+durt7
+   E0HY+UdCJJqrbfuul7WcLIyfBmkPcyfOuNYtDTiz+g2WUITtLf+EvnJ3s
+   IuomxpNfDRmSBFl7NCcZBXDolVXwjx7TA3bS47gta92KYQnM5fncfcUFi
+   OfsUaIhUyIo19MDrHYAdmiUzPtOqQkIieJfAMNx/OGSmxuQMjSe+nY7tU
+   p2ybh9Qr9PUST6wAqskVrP+o/Bl8LGtQ9Vc35WyFHQi83hynZcOFBR1Mu
+   A==;
+X-CSE-ConnectionGUID: +yi6HbtlRgqw8evKt9zwoQ==
+X-CSE-MsgGUID: q6fC0XTISfi+NZ8HhNzXGw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11257"; a="34572018"
+X-IronPort-AV: E=Sophos;i="6.12,157,1728975600"; 
+   d="scan'208";a="34572018"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 08:27:39 -0800
+X-CSE-ConnectionGUID: H0U1k8MRTRSwIU8xkOKmwA==
+X-CSE-MsgGUID: GK+31EqdRk2Tz36M3cEF8Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,157,1728975600"; 
+   d="scan'208";a="93545937"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.142])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 08:27:38 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 15 Nov 2024 18:27:34 +0200 (EET)
+To: Lukas Wunner <lukas@wunner.de>
+cc: Stefan Wahren <wahrenst@gmx.net>, 
+    Florian Fainelli <florian.fainelli@broadcom.com>, 
+    Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, 
+    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] PCI/PME+pciehp: Request IRQF_ONESHOT because bwctrl
+ shares IRQ
+In-Reply-To: <ZzdF1zrgQNNRlkgP@wunner.de>
+Message-ID: <ca3008f1-d4ba-a68e-5a3c-a9e2e075eaa0@linux.intel.com>
+References: <20241114142034.4388-1-ilpo.jarvinen@linux.intel.com> <ZzdF1zrgQNNRlkgP@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86ldxozn3i.wl-maz@kernel.org>
+Content-Type: multipart/mixed; boundary="8323328-269478299-1731688054=:940"
 
-(joining the thread as well, though not sure I'm bringing anything new)
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On Tue, Nov 12, 2024 at 11:51:45AM +0000, Marc Zyngier wrote:
-> On Fri, 08 Nov 2024 07:59:31 +0000, Aneesh Kumar K.V <aneesh.kumar@kernel.org> wrote:
-> > Marc Zyngier <maz@kernel.org> writes:
-> > > On Mon, 28 Oct 2024 13:28:42 +0000, Aneesh Kumar K.V <aneesh.kumar@kernel.org> wrote:
-> > >> Marc Zyngier <maz@kernel.org> writes:
-> > >> > On Mon, 28 Oct 2024 09:40:14 +0000, "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
-> > >> >> Currently, the kernel won't start a guest if the MTE feature is enabled
-> > >> >> and the guest RAM is backed by memory which doesn't support access tags.
-> > >> >> Update this such that the kernel uses the NoTagAccess memory attribute
-> > >> >> while mapping pages from VMAs for which MTE is not allowed. The fault
-> > >> >> from accessing the access tags with such pages is forwarded to VMM so
-> > >> >> that VMM can decide to kill the guest or remap the pages so that
-> > >> >> access tag storage is allowed.
-> > >> >
-> > >> > I only have questions here:
-> > >> >
-> > >> > - what is the benefit of such approach? why shouldn't that be the
-> > >> >   kernel's job to fix it?
-> > >>
-> > >> IMHO leaving that policy decision to VMM makes the kernel changes
-> > >> simpler. In most cases, VMM will kill the guest, because these
-> > >> restrictions of MTE_ALLOWED are applied at the memslot/vma.
-> > >
-> > > Where is that captured? The whole idea behind FEAT_MTE_PERM was that
-> > > it would be the hypervisor's task to lazily allocate MTE-capable
-> > > memory as tagged-access would occur.
-> > 
-> > Lazily allocating MTE-capable memory requires changes to different
-> > kernel subsystems and previous attempts got dropped [1] because it
-> > was not clear whether the benefit of saving 3% memory overhead was worth
-> > the complexity we add to the kernel.
+--8323328-269478299-1731688054=:940
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-I'd say the most complex part in Alex's approach was the need to reuse
-the tag storage for classic data and kick the pages around when some
-other page needs to store tags in there. That approach is pretty much
-dead.
+On Fri, 15 Nov 2024, Lukas Wunner wrote:
 
-In theory, having MTE and non-MTE memory (heterogeneous) without a
-carveout reuse would be a bit more manageable - not that far from the
-NUMA migration and at least you only migrate the page being accessed
-rather than unrelated ones where the tags need to go. But this was not
-Alex's goal for Android since people were asking for the reuse of the 3%
-carveout rather than a smaller carveout.
+> On Thu, Nov 14, 2024 at 04:20:34PM +0200, Ilpo J=E4rvinen wrote:
+> > --- a/drivers/pci/hotplug/pciehp_hpc.c
+> > +++ b/drivers/pci/hotplug/pciehp_hpc.c
+> > @@ -68,7 +68,8 @@ static inline int pciehp_request_irq(struct controlle=
+r *ctrl)
+> > =20
+> >  =09/* Installs the interrupt handler */
+> >  =09retval =3D request_threaded_irq(irq, pciehp_isr, pciehp_ist,
+> > -=09=09=09=09      IRQF_SHARED, "pciehp", ctrl);
+> > +=09=09=09=09      IRQF_SHARED | IRQF_ONESHOT,
+> > +=09=09=09=09      "pciehp", ctrl);
+> >  =09if (retval)
+> >  =09=09ctrl_err(ctrl, "Cannot get irq %d for the hotplug controller\n",
+> >  =09=09=09 irq);
+>=20
+> I don't think this will work.  The IRQ thread pciehp_ist() may write
+> to the Slot Control register and await a Command Completed event,
+> e.g. when turning Slot Power on/off, changing LEDs, etc.
+>=20
+> What happens then is, the hardware sets the Command Completed bit in
+> the Slot Status register and signals an interrupt.  The hardirq handler
+> pciehp_isr() reads the Slot Status register, acknowledges the
+> Command Completed event, sets "ctrl->cmd_busy =3D 0" and wakes up the
+> waiting IRQ thread.
+>=20
+> In other words, pciehp does need the interrupt to stay enabled while
+> the IRQ thread is running so that the hardirq handler can receive
+> Command Completed interrupts.
+>=20
+> Note that DPC also does not use IRQF_ONESHOT, so you'd have to change
+> that as well in this patch.  The Raspberry Pi happens to not support
+> DPC, so Stefan didn't see an error related to it.
+>=20
+> I'm afraid you need to amend bwctrl to work without IRQF_ONESHOT rather
+> than changing all the others.
 
-Other future deployments, CXL-attached memory etc. may benefit from a
-new scheme but I wouldn't rush in implementing anything in the kernel
-for now.
+That isn't complicated. The current irq thread handler is simple enough=20
+that it will just work as hardirq handler without any changes.
 
-The VMM may be in a better position to manage such heterogeneous memory
-for the guest if it knows the capabilities of the slots (e.g. some DAX
-mmap() vs anonymous mmap()). This would require the VMM replacing a page
-within a slot from one memory type to another (while preserving the
-data). I don't think we have a concrete use-case yet to be worth the
-hassle.
+--=20
+ i.
 
-> That's not the point. Tagged memory doesn't have to cover the whole of
-> physical memory, and it can be statically allocated. The architecture
-> doesn't mandate that all of the memory is MTE-capable.
-
-There's some vague wording that general purpose memory should be MTE
-capable if FEAT_MTE2 or later is advertised. But that's not well defined
-and one can have other types of memory in the physical space (e.g. CXL)
-that don't support tags. Last time I looked we still haven't got a way
-to describe memory capabilities in firmware.
-
-For the time being, I think a real use-case for FEAT_MTE_PERM is in the
-context of cacheable MMIO (there are some patches around from Nvidia to
-do this with VFIO). That memory, if exposed to guest as WB and the guest
-enables MTE, may trigger some SErrors. With FEAT_MTE_PERM KVM could trap
-and inject a fault back into the guest - maybe SEA. Is it easier to do
-this from KVM itself or we would rather exit to the VMM and let it
-handle? The latter allows room for other fancier things in the future
-but the former may be quicker, in the absence of other strong use-cases.
-
-> > This patchset is not looking at that feature. Instead, it can be used to
-> > enable MTE in configurations that currently won't allow MTE. One such
-> > example is libkrun which includes linux kernel as firmware in a
-> > dynamically linked library (libkrunfw). libkrun can insert the kernel
-> > region which got mmaped as part of the library load, directly into the
-> > guest memory map instead of copying the kernel. Such a guest config
-> > can't enable MTE currently even though we will never use the newly
-> > inserted memory regions as tag access memory.
-
-I've never played with libkrunfw. Does it handle inserting a Linux
-kernel? Such approach may not work well with MTE. The kernel frees the
-init text/data sections back into the page allocator. With MTE
-advertised as present, the guest will try to reuse that memory,
-potentially as tagged. However, since the VMM mmap'ed the guest kernel
-from a file, VM_MTE is not supported in the VMM address space. Even if
-the mapping is MAP_PRIVATE and the page copied on write, the vma remains
-the original one associated with the file, so VM_MTE_ALLOWED not set.
-
-We could revisit this and allow mprotect(PROT_MTE) to force the CoW on
-private file mappings but we'd need some strong requirement for this
-(MTE+libkrunfw could be such thing if people need this combination).
-
-> > Similarly, virtiofs dax support can use a page cache region as
-> > virtio-shm region. We can use MTE_PERM to enable MTE in this config.
-> 
-> And this use case doesn't contradict what I am stating above. But it
-> definitely contradicts what you wrote: "In most cases, VMM will kill
-> the guest".
-
-To simplify things, I think whatever is presented to the VM as standard
-RAM (typically present at the VM boot) should either support MTE or MTE
-will be disabled for the guest. For other types of memory, whether WB
-MMIO or RAM presented as virtio-(pmem, shm etc.) backed by files in the
-VMM, the VM should be aware it is not standard RAM and should not
-attempt to enable MTE on it. If it does (either by mistake or malice),
-FEAT_MTE_PERM should trap and inject a fault back into the guest (or
-kill it altogether but for debugging, I'd rather inject a fault if
-possible).
-
--- 
-Catalin
+--8323328-269478299-1731688054=:940--
 
