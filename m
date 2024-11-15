@@ -1,145 +1,244 @@
-Return-Path: <linux-kernel+bounces-411223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A1579CF4E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:32:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 552799CF4E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:33:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0DC3289DA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:32:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA6A21F21D13
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51FFC188A0C;
-	Fri, 15 Nov 2024 19:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD241D79B6;
+	Fri, 15 Nov 2024 19:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gVKtw5H0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="WVMAhXAo"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2064.outbound.protection.outlook.com [40.107.223.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D13513D297
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 19:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731699159; cv=none; b=RjsbBdbb5ZqMt5owiYdG02aUn+dKyEomXxftRUjGT6fLQ+MbSC7Ukf7HOm166I8b+fjgvooVAekxjkv9DvNwmoXqEhmZX1lgEE3wyK8x0qouum55AeCScMLXAKJFPt0OL85fVPGvF/E3pb9F9XwkgsG2TKZvQO1ElF3v8OI8pY8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731699159; c=relaxed/simple;
-	bh=c0rTn/rXsByA0NkcYM5XAnL46RC+LOk8WkweuOvIGLA=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=u9oiS157Jlh5gRaOVyYwbLQxFhbJTe1yr8SCuBaesXgbSbJSPnAyxppMGdp59nySI7/4s2iAmgqQhJbPD1vDwn+/4rywjIgKVvCivgewa/7Y/ToOJ87ewTCIIJ+2VaG4qNRfx5tQwavY9TjGdeHQJaoMK+oV7MQ2y1tdYtBQhOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gVKtw5H0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731699157;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TbKfYu0v/mbY0H40hf9EqMzGfpBc6Gg5nFpCpRsNZO4=;
-	b=gVKtw5H0eT+FPa5I4GVLso535aX31Qi8g5eF04Vgqn4Dn/AHAVye5jckd9OogCgGqkNyGU
-	lkfqbOOjqBSzH7oYfsGXlQXsRS9yGspf1RIpzQ5id091iYy7drolm15xV8OTw9dUL5kk+t
-	YD+3Fgpj76Qri5dsnEWo1JPU5ffDF+k=
-Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
- [209.85.210.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-108-LDw59a8lPKuePX4HZIw4pA-1; Fri, 15 Nov 2024 14:32:35 -0500
-X-MC-Unique: LDw59a8lPKuePX4HZIw4pA-1
-X-Mimecast-MFC-AGG-ID: LDw59a8lPKuePX4HZIw4pA
-Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-71807a67145so1634549a34.2
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:32:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731699155; x=1732303955;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TbKfYu0v/mbY0H40hf9EqMzGfpBc6Gg5nFpCpRsNZO4=;
-        b=DM4CdTfnV7rtAAXwDzp96X7Knubj3JghH+g/R4PEpH0LQw2bbNGAsO0DlCswVp/VVS
-         NXdnGAUC9UBAvx7oTrp25b6bsXYsAo9tuYnDfoLRvD9Qnxpdy5Gzai3vo2OVdvIx3bew
-         aNN7XNkydcJ4SWJprvZzx0Ik9MXpReRCeowm1Z5zaf0tJvfpC3pXN1Nd5Gi5YtmDDp4X
-         yJ1CyYFvkD5dWqPW7+pdFZaElNDSKH9dif/sZ5Gn3tu3ujjKjdC4YJ+h11CRi6nKCfbJ
-         aizQ1fQA2SLnJbsudKgauXqQDLI9v9uIIEzGLL/wMq0A6lJJIjQFIJeY2iVCMCPUPifz
-         asGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXVOrmNAxPnEMyaecV7PSYSaUJscytVqvh4S9hY0LU/Hs8skGPb0dPZRvvf8RZ7fhT4j3BP1407cB3IJLw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj/AIAV9zc+MBCl37FUdfq89MByiBQfEY6/KDWD/kAevNBHsmj
-	gzaNuDrcsdwCNvETyfXUZtc/0O89dL5R/urR71u3oCmXc+UoUPxZfQ/UqVAD1Sk/J9pgfCaf/tM
-	Z/6IfUVyHvSEzmU8o2BvSf6whfOeWO1373TkOvPYJ6B1aDzJBeR8dwA985sNd4A==
-X-Received: by 2002:a05:6358:c83:b0:1c3:7157:2868 with SMTP id e5c5f4694b2df-1c6cd108afdmr278400555d.20.1731699155187;
-        Fri, 15 Nov 2024 11:32:35 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHVPdVLptDuazM1NNoZrkjuPzGhK5FMMX7JeiPLEJJnbItrqikYMtuJBNQtcYMdED7s5//dng==
-X-Received: by 2002:a05:6358:c83:b0:1c3:7157:2868 with SMTP id e5c5f4694b2df-1c6cd108afdmr278396655d.20.1731699154842;
-        Fri, 15 Nov 2024 11:32:34 -0800 (PST)
-Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d40ddd1003sm696d6.123.2024.11.15.11.32.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 11:32:34 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <f5241a1d-9753-4c95-b633-067ecda50c10@redhat.com>
-Date: Fri, 15 Nov 2024 14:32:32 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91E813D297;
+	Fri, 15 Nov 2024 19:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731699217; cv=fail; b=PO0TSS7gqirTIYIrM/R9m/FSsvZRjAMskM2kXLH0vq6x12uv4h99OsorCRAIZShVK4y1FKkH+vdjPfkHRWvokKbp7DO2I4K3szs5+3NF1M4QVOeR5ugHCFxZeet4Up2fe0gzJrHIym6pQwsH6BdrjTyTfhmd16YLZTCU0s46pEs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731699217; c=relaxed/simple;
+	bh=eag+PddWfDyZto7eki+kbPHUdwcouxF08JMtjvLpaec=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=iaAb2ab9ityruimY1aKtwFAi8hKUfgG6dgCWg13HtyXpbo/w8i/DBo00o1sQo96EK8ePwElQfIYMZL3enekgxA2vLuSzm4S6r0G981zKAYtHoUFiIDnRS/28zEX4zsxSQ2eHoOkoQmsdaaTd6biaSjcFGo/n2NcfMhyodtnbO+w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WVMAhXAo; arc=fail smtp.client-ip=40.107.223.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=A0od030tqLwhqXpNuuPIggQf1B8CpBPo/Up6UTSatKcYFZtHKiNehaYsX4+LQOtUqNE3zxIMGlby6zsS5GSAyNdEXAA7It/7UjnDYPSFTWNq6f5R/BNB6S892kvR/bAid3MDIE1uzwQ8Zpr2xMWCQzOUYBJsrU5tFTqaPgtQVz9bOKvGP6WAC+FvbgPriT3j4AGNyFKlMMqAWPwaidjPz1yGa6Sbz6UOOHY+q+CIo0xizT+3uPqVLgEwlWk56YP2bBxZ/oVn6B5S8YFEaUGbBHwtZH7QFCzlWb0nQ5+Hjv7BmySaQJm7n0hcwIrdnbc4fKwzZwWoFIr74zXklRoNbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HCDHhZlokSo/tK0JqX794sFOgwDaBOu7MzF2Vxv/uQo=;
+ b=Oyz5VOTwxAJtSjjVGLmQAI4o7SDEtV1IYIeREwLdl/kZgllZr1F7jKw0SmlANY8k7FauGTyd0RJpCUY4oM9LX62QLRW0V+7c4YhdOLReFbiv9gdm7kemTNKiZwscCadbRn/ahx/xP7/Ynh7MNjDEPKj7HEQoKWTb/zNHVrfl2TYOseORwSaN7ojxs98rGO8p8dT7aRj7TsHJ8Tw9eTy4MSJzddTVhVFLTtxJVdugJ5dtPnZ1jFLoa/Z+NxSn1eXAhBuC24jg7pgAMKmttA3BO2nD2rN9xRA4mvfqj9rydznuRSUkUO2+jrjtkaBC7xkpze+vV/gCetR6CwVJp7umbw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HCDHhZlokSo/tK0JqX794sFOgwDaBOu7MzF2Vxv/uQo=;
+ b=WVMAhXAol/XnRk5nBhDEpvIFikMw/Z40G+WYWtdmmUFW2hDpMl4xrQVZcr7IGx5zsk/mSXEAM1W86PKsSBhtTA3bHTtdPIBgGhNqJ/7+U2BO7jNvqKymifasuV04jG+OsDmMx+FbdQHhQvWSgyzaP20sZyDwglHFwoQ/k+PeX8E=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB6390.namprd12.prod.outlook.com (2603:10b6:8:ce::7) by
+ PH7PR12MB7185.namprd12.prod.outlook.com (2603:10b6:510:201::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.29; Fri, 15 Nov
+ 2024 19:33:29 +0000
+Received: from DS0PR12MB6390.namprd12.prod.outlook.com
+ ([fe80::38ec:7496:1a35:599f]) by DS0PR12MB6390.namprd12.prod.outlook.com
+ ([fe80::38ec:7496:1a35:599f%3]) with mapi id 15.20.8158.017; Fri, 15 Nov 2024
+ 19:33:28 +0000
+Message-ID: <33ba3ef6-6dde-4425-9965-73e40d07d4d7@amd.com>
+Date: Fri, 15 Nov 2024 13:33:25 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 08/15] cxl/pci: Map CXL PCIe root port and downstream
+ switch port RAS registers
+To: Li Ming <ming4.li@outlook.com>, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ nifan.cxl@gmail.com, ming4.li@intel.com, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, dave.jiang@intel.com,
+ alison.schofield@intel.com, vishal.l.verma@intel.com,
+ dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
+ ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
+ rrichter@amd.com, nathan.fontenot@amd.com,
+ Smita.KoralahalliChannabasappa@amd.com, lukas@wunner.de
+References: <20241113215429.3177981-1-terry.bowman@amd.com>
+ <20241113215429.3177981-9-terry.bowman@amd.com>
+ <VI1PR10MB2016F4C71BB315D61076ECD7CE242@VI1PR10MB2016.EURPRD10.PROD.OUTLOOK.COM>
+Content-Language: en-US
+From: "Bowman, Terry" <terry.bowman@amd.com>
+In-Reply-To: <VI1PR10MB2016F4C71BB315D61076ECD7CE242@VI1PR10MB2016.EURPRD10.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA0PR12CA0030.namprd12.prod.outlook.com
+ (2603:10b6:806:6f::35) To DS0PR12MB6390.namprd12.prod.outlook.com
+ (2603:10b6:8:ce::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] sched/isolation: Exclude dynamically isolated CPUs
- from housekeeping masks
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Frederic Weisbecker <frederic@kernel.org>, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, Costa Shulyupin <cshulyup@redhat.com>,
- Daniel Wagner <dwagner@suse.de>
-References: <qicmttz6sqccty6jha7s22wi6bc2agps44qrqwhm4hhorcluyp@nl734io7qnl5>
-Content-Language: en-US
-In-Reply-To: <qicmttz6sqccty6jha7s22wi6bc2agps44qrqwhm4hhorcluyp@nl734io7qnl5>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6390:EE_|PH7PR12MB7185:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5cbf335d-9e9f-45f3-6dc6-08dd05ac6181
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QzFxYVAwbTJoUENTazFiSFRqYWJVN3dRbkV6eGMxU091Y1JyckMwMGwyVWoy?=
+ =?utf-8?B?YUlVZ2hJeFlwdHVIUU9XNi9DTFdmYjJhbWhtU3l4NEk2Q3ZaeHd4Lzh2azFi?=
+ =?utf-8?B?NDBYLzFER0UxM1hVMUd6YmJ0eE4vb2lSRUxNY3N4Rm9mYm1pSWMxTWdyVzZY?=
+ =?utf-8?B?eXVQcmxBaFdBUlJWenM5QXp6Z0tWclZlQy9LU3F4WkRtbHlMeVFxMzE5c3Nk?=
+ =?utf-8?B?bXhDQkxLdG9MNXBJMjJrME5HMW90VC90VXdpZFczSWUwT2dWQ3BlS2srNCtn?=
+ =?utf-8?B?ZUx5NFB4YXNUZ0xaTHVDNmVRZ0dKbnF6YlhCMTFtRjBDR200anhyZW5PRnJr?=
+ =?utf-8?B?RGo3RnAzYkRMRkx5bkgyNUUwblB4VTg2VmFNRXBCcnFQUGhlKzdiZUxGMjh2?=
+ =?utf-8?B?RkNCZVhxdHVJUDZBRmJvM01xazg0L2lmemx4VFJsRmpMeGZOaWZENThUZ1Nq?=
+ =?utf-8?B?MXlQbC9PMVJBUjBsTDN6TVpiVXFnQXdialJZOG9wSlJIbmdoeVNXampoVEtD?=
+ =?utf-8?B?RlBQMmJRUCtBTWZzVHd2SkVpWXFQeFpBc2RndFpaWVEveEVLNDh0QlFUNjls?=
+ =?utf-8?B?N3YrdHd1bEFXQkhzUVVBT2NCbVNQTzNBdHFRS1JnUGloWlNQbndmNmEvb1ZC?=
+ =?utf-8?B?c1FYakFLemQxMzRMVzgyN3A0WXdVZmNHSGFSdnVVR3NieUM4YldEYjNCd1ln?=
+ =?utf-8?B?YUtIbDVNeWhMeVJBZUR1ZmVsaDNMRjN0TTFBNGFMdmF2bVdrbkkrdmtZL2lE?=
+ =?utf-8?B?ZDhzd1lKV1JKYWIzTk5ZaDNYandib2FlZjF2MFlOZE0yVFZoWUJycXlWTGtM?=
+ =?utf-8?B?UkxDN056QVZhemxTYldoSC9veHBPUGM2dW9DOGxUa3IxNlo1STNGRWhaVW4x?=
+ =?utf-8?B?ZjN2UDBGZis3OWc0Qm13YmxZR3lyYTV2VlY0T0IxVEZJWnBQaEFBbjdoU2ZH?=
+ =?utf-8?B?TWFCb245Zm9IQ3lKdFlNNnpHZ0V5cWFIcDdjZmZVby9EcHlHa0toL2pkQzZO?=
+ =?utf-8?B?ejZyeC9PZ3ljdy9SYnZyMHk3MUowWTYwZ01lU3pRN1hJWE9ONmVZTnNVUXZN?=
+ =?utf-8?B?QzNvOGdmeThldDBKeU5mNE12bUc4V1IxbXMrbWZTRDFQOGZ1Y016d3hwUy8w?=
+ =?utf-8?B?M01KYzlEMEFmWVdINmlNcEVWNWhQdGJkQTVoSUx0eVhrYW12ZjVPdlBCOTRE?=
+ =?utf-8?B?N25jcWl0cU1WbTVYRmNERVlabXB3T2VZc3oyQ3Q2WTVTWHk2U2YwZlM2QjlN?=
+ =?utf-8?B?Y29FZmphc0RXYUYwQTlVZ0lITUpOV2h0R2dRbmlSMFNjaDJPanVHay90Wnhl?=
+ =?utf-8?B?MEZXWjBiZ2ZmZDU1ZVEvYWd3MkJyZ295SnVPcXVUUHI0citPKzF4dE8xbDhn?=
+ =?utf-8?B?UWtBS1hQa2hSQ2xjajJyNThFL0NMbm13UmZncVo4NnFKcENKWWJ6ZW5XR3pj?=
+ =?utf-8?B?MDg0RGlpNDlzWlVESElLRXhYQWg3WXZkbGxqUFN1a1NVcTBhaDJrQkxqQSts?=
+ =?utf-8?B?MlFTTEcrRUtzWFVYMnozWmhlY2FSVWVLT2VrM0xzdVZ3UG5jdjM2VXJpLzRZ?=
+ =?utf-8?B?d1VMcW44Mklldmp5SXRlZjhPTkdQdXR2elRoQXpjZWRGR1RZZyt3MTBXRDN4?=
+ =?utf-8?B?d3ptODRNTStyN1lDNE9mbWVjZ1FqQlpOWEovYVViVzNKbXErQWMvcUx3VmRU?=
+ =?utf-8?B?bkN4QnFlODc0NnNLb0hEWGlhenpMTFRHRnJWSm56cnBTdFVFUTNSZXQ5THho?=
+ =?utf-8?B?U1BEcG4yS1BEZW9iNFZyRzNDSldhb2NLeVU3ckJodldzOHRFVUVFRFFwUEN5?=
+ =?utf-8?Q?yRCRdQf9VMUr7V9kCefbpGjwtIkXywQc12/Gk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6390.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YUZKc2htQ3hUTUFLaFN5OFZtVnl5V3ljY1hweU1lSXl4ZC9LWG1OVWkxNDlr?=
+ =?utf-8?B?dnRiOGUrcHpWa2hvL0FFTzg3S0pBMlNxd3I2UVQ2dXVxZ0ZrbE1yYlBxRHNm?=
+ =?utf-8?B?elFTdVRURkNoNi96S0lSSGduWnpkRzZRRitpZjVoUVFjSzhNamZud2Rycm9V?=
+ =?utf-8?B?ekRxMENLTm9SNncvaDBsakJiUUFpYTZodDJzOHkyZksxUytGOWhORVNxVWNU?=
+ =?utf-8?B?YkM1NkFlMFFPdHJEdkNmYkwxZmpaYXdsN3Y2Q3BoaFRGcDJEZ3liT2p3a20y?=
+ =?utf-8?B?UEc3QXQ2N1lzTWJqUVlSNDgxVyt3OU9ob0hXaTdaeE9kdFdiQStVUGg2VlJy?=
+ =?utf-8?B?ZEYvdU4yTlIyYTdsemo5SVU5cHpsbHRGc0xVSnN3MU1LNWJmMDhRRTFXcFUx?=
+ =?utf-8?B?bHQwNHp1UkxFUlNBaFp4NUpvdlorMXVxRVBSclpGbDNkZUZmYmU0YlVvQmZH?=
+ =?utf-8?B?UVpJYWZMVEZ2ay9WbXFNUmNpRmF5NEI1SFJUUmRiMENLaktKRWg0K0NXalFu?=
+ =?utf-8?B?NHdOMjJjNEUrTGltNUdtaHA0REcyVVVxVE56aXdiNVgwT3RqbmRVa1BZczFH?=
+ =?utf-8?B?dDkvSDY4NWRNMW5wcmNLNWdjeHNhdUlqOE8zL1RMTlNyOFhHbnhGRmNDTklT?=
+ =?utf-8?B?ckFvaDE3L1NORTVRbkI4SDhLUnZjRzBWczNYRG9UTXNOdG5MNkVsSFRidnd2?=
+ =?utf-8?B?MkZrQzYvUDNqZzlFa293Ni92ZVlCTWpSMkVGUDltbWIzdVlLS29Bc0doc3F0?=
+ =?utf-8?B?Y1daN3IvWFYxei8vRVFlbWdmaHVHQzU2K2k5dHcvRCtoQTF1RXh2VmFyT2xx?=
+ =?utf-8?B?ZVpqSDN6c0c2MWk1V2ZEK0NRRTU1NXlXNWc1ZmMyRFJxSG0wRHlleTVMSFZE?=
+ =?utf-8?B?V3VUdFU0YXp4dkZ2alNhaFh2Z2JxZllUeU8rNWZsZmVXV3ZHWlQrb1dkdGx4?=
+ =?utf-8?B?YUplY2JzZGJRK3pTZytJenZnT3g3YkIwNFRxMlJodXphSUt2Zzk0eGQwdDFR?=
+ =?utf-8?B?ajZPbURVbnZTWHB3QTA3dEdNZnhoWTRFVkk5WERmTi9lb3ROcDd3NFhtd2lP?=
+ =?utf-8?B?YnpYV0x3R29SNW5BVWVrSDJweG5lSGFUU0xFYk5Ob2R3OUFaTy8wN2lhSmg3?=
+ =?utf-8?B?U0RrYmVMbGp6ZGsweHB3TWtqZEZScWppd3BhdldoNXpQVFRmclFxcEEwYlZE?=
+ =?utf-8?B?THFjRDBrbmtTVm4xdnZhRTBkblRDQlZZbVR4TTJkN09IL25XZnJYcnorNEFt?=
+ =?utf-8?B?YVFVbHNWWGdkc0pVVHhLc1F4QmN1cFpGeWtRVTBacTNGNTI1SGxxQUxYeWt6?=
+ =?utf-8?B?ZEo2Zk1aOFpiRGM5NGkzLzJoeHRFS3E3U0xTd3RzYkhCNWRWVW9IRGtkQmpS?=
+ =?utf-8?B?OWJqc3dEVC92cXQwOER1WWFzSFdOUWRFL2hsVEFnc013VFB4ejBRQnE5Y2Jt?=
+ =?utf-8?B?NWdRaGk4QjVuOE1QdFpoWEJCMzJnZlJZMStHWGwyRVJ3NUhpWWk1ZXhlcmJM?=
+ =?utf-8?B?NVNWTWZrUndLT2ZQVDIxbmlGNDVMQk4wbTJ1VnNTeWZwN05pZHJRSnBydGEv?=
+ =?utf-8?B?ellmVVlRKzZ1NUpTa1hCOXl1NzgvdlNrdTEvVWNQQmc0Qmg4UUFHNmdXWnZP?=
+ =?utf-8?B?ZmxBUlQ4WFhOcm5hc05jTUZLa3l6VmlFS28yb2YwZkNPL1hjVjVVVXJQQmYy?=
+ =?utf-8?B?NHplVElucWNYLzY5NzZZdXJDK0hGdVNSODlLeFJDVUcrSTV6eCt6UTZWbitx?=
+ =?utf-8?B?K2JQb3B1S1lGeGpObmZxNGdSTXpZa2loWWNOM0MvWlVRdm44YitPSkV0cGFn?=
+ =?utf-8?B?TG0vQ05pakU4UTd1QXdia0U5Ukh5eDdYZ3Z6U2Zvc0Z5RFhQVm1FeWs4ZER4?=
+ =?utf-8?B?ajJyMnBuWjZuRU1kYlZUR1lQM1lVL1YwdGQrQWRqTXB2RENYL2RZUXNhd0I1?=
+ =?utf-8?B?SjJ3a2FHWmVlU1J4S2FIV3REMHlWcUw0eUtJaDBOZ2dZem5oZ3VYdWJhaFk2?=
+ =?utf-8?B?OVpoYVhENU5nNHJjYjFmL1E0WjJtZ2QrTlhJZTJiTXo4WE9DbHczQkJjZGsr?=
+ =?utf-8?B?UjF0K0wvTUNjTlhrclorY0tUNTdSVy9TUkdvUDh5bGRqOFhoOEs3YWJLZUVC?=
+ =?utf-8?Q?/bq0m7kh19nViEwChEe2eH+sg?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5cbf335d-9e9f-45f3-6dc6-08dd05ac6181
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6390.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2024 19:33:28.6725
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ggTmhSJdBl1KBF7jovN9YCoiZpsMBwieZdCJ4xORl4R4+SYv3M2YHZ6e9q8J69pDvKJxKSjjq3636xbE2bdp9w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7185
 
-On 11/15/24 10:45 AM, Michal Koutný wrote:
-> Hello.
+
+
+On 11/15/2024 9:28 AM, Li Ming wrote:
 >
-> I recently liked the idea of considering isolated CPUs a static (boot
-> time) resource and only use cpusets to place (or remove) sensitive
-> workload from those selected CPUs depending on current needs. (Yes, this
-> may not efficiently utilize the isolated CPUs when reserve them based on
-> maximum needs of a node.)
-
-Thanks for taking a look at this.
-
-Yes, I am moving in this direction too. Boot time statically isolated 
-CPUs have better isolation than is currently possible if we do it 
-dynamically at run time, though we are trying to close the gap.
-
+> On 2024/11/14 5:54, Terry Bowman wrote:
+>> The CXL mem driver (cxl_mem) currently maps and caches a pointer to RAS
+>> registers for the endpoint's root port. The same needs to be done for
+>> each of the CXL downstream switch ports and CXL root ports found between
+>> the endpoint and CXL host bridge.
+>>
+>> Introduce cxl_init_ep_ports_aer() to be called for each port in the
+>> sub-topology between the endpoint and the CXL host bridge. This function
+>> will determine if there are CXL downstream switch ports or CXL root ports
+>> associated with this port. The same check will be added in the future for
+>> upstream switch ports.
+>>
+>> Move the RAS register map logic from cxl_dport_map_ras() into
+>> cxl_dport_init_ras_reporting(). This eliminates the need for the helper
+>> function, cxl_dport_map_ras().
+>>
+>> cxl_init_ep_ports_aer() calls cxl_dport_init_ras_reporting() to map
+>> the RAS registers for CXL downstream switch ports and CXL root ports.
+>>
+>> cxl_dport_init_ras_reporting() must check for previously mapped registers
+>> before mapping. This is necessary because endpoints under a CXL switch
+>> may share CXL downstream switch ports or CXL root ports. Ensure the port
+>> registers are only mapped once.
+>>
+>> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> [snip]
 >
+>> +static bool dev_is_cxl_pci(struct device *dev, u32 pcie_type)
+>> +{
+>> +	struct pci_dev *pdev;
+>> +
+>> +	if (!dev || !dev_is_pci(dev))
+>> +		return false;
+>> +
+>> +	pdev = to_pci_dev(dev);
+>> +
+>> +	return (pci_pcie_type(pdev) == pcie_type);
+>> +}
+>> +
+>> +static void cxl_init_ep_ports_aer(struct cxl_ep *ep)
+>> +{
+>> +	struct cxl_dport *dport = ep->dport;
+>> +
+>> +	if (dport) {
+>> +		struct device *dport_dev = dport->dport_dev;
+>> +
+>> +		if (dev_is_cxl_pci(dport_dev, PCI_EXP_TYPE_DOWNSTREAM) ||
+>> +		    dev_is_cxl_pci(dport_dev, PCI_EXP_TYPE_ROOT_PORT))
+>> +			cxl_dport_init_ras_reporting(dport);
+> I think cxl_dport_init_ras_reporting() is needed for both VH case and 
+> RCH case. My understanding is that dport_dev could not be a DSP nor a RP 
+> in RCH case.
 >
-> On Wed, Aug 21, 2024 at 10:23:11AM GMT, Waiman Long <longman@redhat.com> wrote:
->> This patch is a step in that direction by making the housekeeping CPU
->> mask APIs exclude the dynamically isolated CPUs when they are called
->> at run time. The housekeeping CPU masks will fall back to the bootup
->> default when all the dynamically isolated CPUs are released.
-> But when I look at it with the dynamism in mind, I would expect that
-> some API like housekeeping_setup_type(), i.e. modify the set of isolated
-> CPUs are requested and leave it up to the isolation implementation to
-> propagate any changes to respective subsystems. And return an error of
-> type contains a flag for which dynamism isn't implemented yet or not
-> possible.
+> Ming
 
-There are currently 9 different hk_type's defined in 
-include/linux/sched/isolation.h. We are now trying to reduce their 
-number as some of them cannot be set independently. See [1]. I am 
-thinking about doing dynamism in the best effort basis. Of course, we 
-could expose some information about what aspect of dynamic isolation can 
-be enabled at the moment, if necessary.
+Good point. I'll look into that. Thanks Ming!
 
-Cheers,
-Longman
+Regards,
+Terry
 
 
