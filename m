@@ -1,141 +1,166 @@
-Return-Path: <linux-kernel+bounces-410979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18FB39CF117
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:08:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FED89CF327
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:42:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8DD91F2945E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:08:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E11F3B3A053
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D221D61A4;
-	Fri, 15 Nov 2024 16:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020F01D5158;
+	Fri, 15 Nov 2024 16:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thaumatec-com.20230601.gappssmtp.com header.i=@thaumatec-com.20230601.gappssmtp.com header.b="t6yRHl8l"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S+u4lta3"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474CE1D45FB
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 16:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F1654769;
+	Fri, 15 Nov 2024 16:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731686877; cv=none; b=fZvvs7/OnFE2RM5MarxnDlEd3+MTGkXylyv/37o1BnE5R/GCfZ7PWooVhi+yMNd4NjOncUlehsDoHmTOF6v3toIKyHKlXQgKVSjG9btCLzD33S5U9tj5zM4uwefIQAugrWlqjHtSS+JL71hiikgVmfCky2JgwJjAJ3dgzOvL4Zs=
+	t=1731686839; cv=none; b=nyvHiF6R6ZYp/bzLdWGsuUjuCMUUCHhwqmUYF1G9WkTsLyWhibI8Y9hThnhjoAEZ2M5v2/yODJOJlzUvtSXVab7Le7KRYOOkwYlz3Ol6E7QI4U9KaYA3reooqV8tCilohnuGHYxOhn4ZSKvrVEn/hCEMqeApKpNC/bW2qetQSQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731686877; c=relaxed/simple;
-	bh=oyIFfv6hbzfl2CcNXovdbt4pHCPK8ip4Z0gc+H04Rq8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YbR4t4t2Mq6A66ui70m3TZ+ES4w4a2mAA+ZWOQlq5lC3yHDFys8wR4asP+dna9xzqG1/ussg9+n1h1yh5p/pZYe/3lxRqoGQET3+jT1sN+oiZCuxk2pdlIsXZWj+kVdF5jghV1Cvnry0/O0ePC9NErlzYsUf6hGtq+5ehipqp74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thaumatec.com; spf=pass smtp.mailfrom=thaumatec.com; dkim=pass (2048-bit key) header.d=thaumatec-com.20230601.gappssmtp.com header.i=@thaumatec-com.20230601.gappssmtp.com header.b=t6yRHl8l; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thaumatec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thaumatec.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c95a962c2bso1423169a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:07:55 -0800 (PST)
+	s=arc-20240116; t=1731686839; c=relaxed/simple;
+	bh=QidJsVEDsV7iTfjHWunC7E7BKbrRE5HrjsN3+lOKs+0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M4ey9LZR/o4Dv5/+3xte9wuy4Kpm4SzOshfddMaI0nHnUUdsK3cyBfimiq2jvvYbDjYgt3TxeRh2/O4syFQLtxekFb2RDUkinhrlRHNH52Vj13gFiJ0cHS7OyU7Ae2dpmOcoCmIzLtsHb03bdirmwpAvkxHddnr7LwgZQuXeexM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S+u4lta3; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7f8c7ca7f3cso471008a12.2;
+        Fri, 15 Nov 2024 08:07:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thaumatec-com.20230601.gappssmtp.com; s=20230601; t=1731686874; x=1732291674; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5CycAJx3idmdsvb2oboF200n+heMzv/tQjcKECgs/uw=;
-        b=t6yRHl8lSAdJxmMEgmOrM1gc6R9+eFQdMQUUiTeRdVTulAITklS3tHCH5LMo/aI3on
-         OJQys4sde8Y7u3XpvAgpW7sDYJ3FTw7YntRSh5L4ox3SvFda3Wdsn9Dfxi25N9kPBeh3
-         tOORnTfjf8C7nzGi6djQZMbE1G/2WA3D/rTjZtdckPq5ZnewnymZQfYeXtia2B34ZGWx
-         klLniue0SygLXNl62rKrg3aBc5o2QnXXrtfrFRkLATh0uF8QKqEsC9q5uXao2CGgph6V
-         9YEFjqjWpsC7VHB9PahmGVIhkQKJnIXNiE4WAJu+PSFRqhRUR8Hsxe2rCr7VL1SqKXLX
-         jwiA==
+        d=gmail.com; s=20230601; t=1731686836; x=1732291636; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=20D1PWGk03rV5COuXCsG0W7radE26VyHx9rRuiqEHTc=;
+        b=S+u4lta3arbU+rou+BSHS88lZ4muhvENDb3HdmMWLZKfeaUXVw/AL5hQm3HJKiGhJu
+         OniPLDNarp/mQM3quBaJy8r8CWbQyMv/iFTRIlUQa4/YQtVFrTYgF8RuWf8qHrzMWZj1
+         iAHheCUb69BAX5hLHPEOvrLRgSrB2P+XQ745fTno8iUVJujuRSJXK7nWHPluxgUsQjL2
+         /29440ezIAgM9UsYFUf4V1Pl82GKfxuDsPle1GAgn5Zu4IB61Z3x7XS/O2REIXSPOzm7
+         ycXggExds79Y5EjYM+gOzkGQJHiaRmk8AI6j9J9T4DkkmOsTgoQKNuyWpYztkXQNA+aW
+         Ow0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731686874; x=1732291674;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5CycAJx3idmdsvb2oboF200n+heMzv/tQjcKECgs/uw=;
-        b=MkmD06k0i8A/BaZd9ISxmzmP4TpmCYcfl76YG234g+qMZzT/7zxEGmjDNrFCTwUBTu
-         1l0zbGywEUepnflCF5Kv9KNIO6XjNXzCc77g7W/OY3u6biO8n9zYgwyuPYpFqgvzDpZ/
-         n2sptNBKO64inJYVktxD7on8wtfQn4lnj7qHPVPdGfT7uhNw+9qxoSErBvw+1CFdsory
-         vxS7RWHE0Zl9MD+eoUONsbeof6qDutYj2496xt8Ie89ySsBoQd3XBpz/gYsBxv0wWqXv
-         cyITsW/F9vqb2bdruJgToB7Nn22/KiNEA6FZ/yV7WA5UxUI12x/bvIK81pTHptoZtjCe
-         4qZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWfhmNEUobf/Grkleopw5JVnupAMfhLrGmBTpYkTiCHzuNjrFnqmZQIFmSjvkXw1/n/PFco+sXQ1UoZvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdoS7Ek+e9nXv0xpw/5DWsNb2//6TQjJC6IYSVaIndZuKX92xa
-	/Mt692zsFXRXJ1AMmmkTvkjQe+ApuO/EGcULCD7L8B2VtMHGWAfvItfjl5vgIQ4=
-X-Google-Smtp-Source: AGHT+IH2U0OnUfhXO3qxZuHhXGmKJ4U2QgdglEBHh3If9IMSL3DAHUNYch3+DhBSltB9S39eUaStfg==
-X-Received: by 2002:a05:6402:50d3:b0:5cf:707f:a123 with SMTP id 4fb4d7f45d1cf-5cf8fc1406bmr2607951a12.5.1731686873609;
-        Fri, 15 Nov 2024 08:07:53 -0800 (PST)
-Received: from fedora.. ([91.90.172.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20e00172dsm194948266b.120.2024.11.15.08.07.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 08:07:53 -0800 (PST)
-From: Daniel Semkowicz <dse@thaumatec.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>
-Cc: Daniel Semkowicz <dse@thaumatec.com>,
-	David Airlie <airlied@gmail.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Simona Vetter <simona@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tony Lindgren <tony@atomide.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] drm/bridge: tc358775: Remove burst mode support
-Date: Fri, 15 Nov 2024 17:06:32 +0100
-Message-ID: <20241115160641.74074-2-dse@thaumatec.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241115160641.74074-1-dse@thaumatec.com>
-References: <20241115160641.74074-1-dse@thaumatec.com>
+        d=1e100.net; s=20230601; t=1731686836; x=1732291636;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=20D1PWGk03rV5COuXCsG0W7radE26VyHx9rRuiqEHTc=;
+        b=n41PLS+MjQrslAtzUAZI7c0xIBMdBxslAq9ShLza1/opEMlwcHZQ5Jaiz6L9dmxEil
+         7n9aYyO2BAluQdKJGg/DtA0lmcGd+AQqbJad6i1LkeWDB0QViEfg5poSR+8KMU+gUGst
+         2piE4usKs1lS/SBvAGLrrS4i30VNHzVmw4u4SoboobS3S8sGNUF+ffNXzsIn4wVumopM
+         cCoMu+E2Or9j+1ugSN6ArkM8yoqZ/7hy1cPyeJNn4Ac515bBhL2FQLGlbGSGJ36WXcQj
+         2D9N8DEMc7lOYASGa+yPlT5dQRWsHXxx/Ud28Kz3ZXYSEEZURCfM0h9/fx50bFrqv/XD
+         IHWA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3hD4kDsVql5qQKMMINe74EJeri0xqz931bPKZ9njYppS4YSXSABmn0PhL7WHH0qX5Mner1RdjLLlyyzY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC3op3y+iasuFx+waY3wqNRFcTiWrizHopZtujnTVddSaEUwS2
+	rZO9i7xisCTywCV4C0UMFiCH7eF0JjJnDA1KoIZzJVH9etHl5iYHjrl+J0LVclc=
+X-Google-Smtp-Source: AGHT+IGTxCjRkoF28Yc9OCPVjH319LHep5KM45/j/IMvA7HJmJ4iBQZTz59clttfjpoYmxMXuRTc6g==
+X-Received: by 2002:a05:6a20:158e:b0:1db:e481:3274 with SMTP id adf61e73a8af0-1dc90bc8e52mr4682121637.31.1731686836177;
+        Fri, 15 Nov 2024 08:07:16 -0800 (PST)
+Received: from [192.168.0.198] ([14.139.108.62])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724770ee95csm1560062b3a.27.2024.11.15.08.07.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 08:07:15 -0800 (PST)
+Message-ID: <70996029-be8a-4f97-88fc-a27cff4f5df4@gmail.com>
+Date: Fri, 15 Nov 2024 21:37:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] block: Fix uninitialized symbol 'bio' in
+ blk_rq_prep_clone
+To: axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ hch@infradead.org
+References: <20241004100842.9052-1-surajsonawane0215@gmail.com>
+ <20241008175215.23975-1-surajsonawane0215@gmail.com>
+Content-Language: en-US
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+In-Reply-To: <20241008175215.23975-1-surajsonawane0215@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Current tc358775 bridge driver implementation assumes that DSI clock
-is used as a source for LVDS pixel clock. Moreover, clock divider
-PCLKDIV has a hard-coded value. This means that driver expects DSI
-clock to always match a panel pixel clock. With such assumption, LVDS
-pixel clock is configured to be (DSI pixel clock / 3) for single link.
-This is true for DSI non-burst video modes. In burst mode, DSI host
-is allowed to set transmission rate higher than pixel clock to allow
-shorter data bursts. When the transmission rate is higher than expected
-by the bridge, LVDS output timings are still configured for the lower
-frequency, but the output is clocked with the higher one. In most cases,
-bad LVDS timings cause incorrect panel operation.
+On 08/10/24 23:22, SurajSonawane2415 wrote:
+> Fix the uninitialized symbol 'bio' in the function blk_rq_prep_clone
+> to resolve the following error:
+> block/blk-mq.c:3199 blk_rq_prep_clone() error: uninitialized symbol 'bio'.
+> 
+> Signed-off-by: SurajSonawane2415 <surajsonawane0215@gmail.com>
+> ---
+> V1 - Initialize 'bio' to NULL.
+> V2 - Move bio_put(bio) into the bio_ctr error handling block,
+> ensuring memory cleanup occurs only when the bio_ctr fail.
+> V3 - Moved the bio declaration into the loop scope, eliminating
+> the need to set it to NULL at the end of the loop.
+> V4 - Adjusted position of arguments of bio_alloc_clone.
+> 
+>   block/blk-mq.c | 13 ++++++-------
+>   1 file changed, 6 insertions(+), 7 deletions(-)
+> 
+> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> index 4b2c8e940..89c9a6c4d 100644
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -3156,19 +3156,21 @@ int blk_rq_prep_clone(struct request *rq, struct request *rq_src,
+>   		      int (*bio_ctr)(struct bio *, struct bio *, void *),
+>   		      void *data)
+>   {
+> -	struct bio *bio, *bio_src;
+> +	struct bio *bio_src;
+>   
+>   	if (!bs)
+>   		bs = &fs_bio_set;
+>   
+>   	__rq_for_each_bio(bio_src, rq_src) {
+> -		bio = bio_alloc_clone(rq->q->disk->part0, bio_src, gfp_mask,
+> -				      bs);
+> +		struct bio *bio = bio_alloc_clone(rq->q->disk->part0, bio_src,
+> +					gfp_mask, bs);
+>   		if (!bio)
+>   			goto free_and_out;
+>   
+> -		if (bio_ctr && bio_ctr(bio, bio_src, data))
+> +		if (bio_ctr && bio_ctr(bio, bio_src, data)) {
+> +			bio_put(bio);
+>   			goto free_and_out;
+> +		}
+>   
+>   		if (rq->bio) {
+>   			rq->biotail->bi_next = bio;
+> @@ -3176,7 +3178,6 @@ int blk_rq_prep_clone(struct request *rq, struct request *rq_src,
+>   		} else {
+>   			rq->bio = rq->biotail = bio;
+>   		}
+> -		bio = NULL;
+>   	}
+>   
+>   	/* Copy attributes of the original request to the clone request. */
+> @@ -3196,8 +3197,6 @@ int blk_rq_prep_clone(struct request *rq, struct request *rq_src,
+>   	return 0;
+>   
+>   free_and_out:
+> -	if (bio)
+> -		bio_put(bio);
+>   	blk_rq_unprep_clone(rq);
+>   
+>   	return -ENOMEM;
 
-Remove support for burst mode, so the non-burst mode is used by DSI
-host by default. Burst mode is supported by the bridge itself,
-but requires proper implementation in the driver to operate correctly
-in all scenarios.
+Hello Jens!
 
-Fixes: a4ed72e85c46 ("drm/bridge: tc358775: Add burst and low-power modes")
-Signed-off-by: Daniel Semkowicz <dse@thaumatec.com>
----
+I wanted to follow up on this patch I submitted. I have done all the 
+suggested changes till v4. I was wondering if you had a chance to review 
+it and if there are any comments or feedback.
 
- drivers/gpu/drm/bridge/tc358775.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Thank you for your time and consideration. I look forward to your response.
 
-diff --git a/drivers/gpu/drm/bridge/tc358775.c b/drivers/gpu/drm/bridge/tc358775.c
-index 0b4efaca6d682..7496681c7b883 100644
---- a/drivers/gpu/drm/bridge/tc358775.c
-+++ b/drivers/gpu/drm/bridge/tc358775.c
-@@ -632,8 +632,7 @@ static int tc_attach_host(struct tc_data *tc)
- 
- 	dsi->lanes = tc->num_dsi_lanes;
- 	dsi->format = MIPI_DSI_FMT_RGB888;
--	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
--			  MIPI_DSI_MODE_LPM;
-+	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_LPM;
- 
- 	/*
- 	 * The hs_rate and lp_rate are data rate values. The HS mode is
--- 
-2.47.0
-
+Best regards,
+Suraj Sonawane
 
