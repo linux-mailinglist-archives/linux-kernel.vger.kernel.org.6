@@ -1,49 +1,53 @@
-Return-Path: <linux-kernel+bounces-410189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C57E9CD5F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 04:41:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FBDE9CD607
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 04:57:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48CA71F225BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 03:41:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6E6EB2113C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 03:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67D817BED0;
-	Fri, 15 Nov 2024 03:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dz/QCJTk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4D815C140;
+	Fri, 15 Nov 2024 03:56:59 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A21C17A596;
-	Fri, 15 Nov 2024 03:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382E142ABD;
+	Fri, 15 Nov 2024 03:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731642024; cv=none; b=SBiG/n/8h1C9uNZI8P7snO8bXpg8Od1dGFPcdXDHaEgejSqUou0BTRc6+tXQKgRMXBvdI1N10RcgxRnp3tkluuXhondWsO+sf6iM9a2PpCB3+dpSUZFFbJcPsSRJxV/UGxC5qtXts+qxn7iT6IWhh4VQ2MDtignXOi9Y4woYpGY=
+	t=1731643019; cv=none; b=PbvH7kWl/TOmbg2fou4lBCsfLJG2fZ/THc59KJ8Nr4vsBXdaU/EtvpyxyoKQmnnhPf41yEzvqh7o8/Dz/cUFtWq4zqhVcMT2THVqxiqk5acH2DzSvHasZKEbDNBcWEAvfJJxvNYZBq/qSrFqFQEVx3iUESpYxoQQkkDlY4Ham0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731642024; c=relaxed/simple;
-	bh=f0ZQsNAzzD5s1aH0RpbD7imVYadO9+UqQZvmGcVGCNw=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=RIDhykX8Y1sRS0LsXtRgavn1EtCF7ExvQVr2gEBCPITklNkFvY5BnCdrLN1FfAyjV68YhaGNYLp8RVUAWx41/MBod0QPhCJixLKeMgmKh6rkUjHB5cqaDOXnrcnhYOmbRayKHP+LWRBYfR2W8CNGvLickWykfeq+SnSnavs1XPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dz/QCJTk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D08CEC4AF09;
-	Fri, 15 Nov 2024 03:40:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731642023;
-	bh=f0ZQsNAzzD5s1aH0RpbD7imVYadO9+UqQZvmGcVGCNw=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=dz/QCJTkz8kQNoEOJCyPWN5ndC8Rh8nS+XhkQHWVp3d947FQh2FyrWTvRQdNzhroG
-	 iTygW/apJ5mMLFgT6d3nbyzkyA3oNikggmdG9Y/fnUcF0Irs/9aSuF/rY98ZP4uySf
-	 Kqgb4+dLLrfn5hRypQce0g6XC8/ne6MEjxoGU3PA7cVDJPGPjiHSQnWgHGeOMyEF/d
-	 Xpi6k3GvlRRPzMk9sxksedlx9hHuYGxuLNwoskxMH5buxD3Oa7gVuwUBioHL4tpUs3
-	 8g0+pfKR5wlagkEdbwtSMP9/9n1yjx9yKehLohFD8yU+lDMBv4UcP6pIFOnaatX6oU
-	 MLKyED1y5AzAA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AECEA3809A80;
-	Fri, 15 Nov 2024 03:40:35 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1731643019; c=relaxed/simple;
+	bh=Z48OJDprdK0O2rEHXZ/21zaG1g01OxpBlpO9Tj7hztk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LVfrIL9RtQWlfpAKqU15tRrT+IEqbI0z0279SjOFzYSVmyO1ujY8bZgi66y8UUoQTHaOAXxOK5iqAu1DrTGEOdQp8Qi9w394xUq6i/hfS53fzqs0s29cBwaRLVQgSmuMXTjirPGt6s6SrSScsynZ0reRA4adXItTBd2ysLUbNDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XqNSv1R6dz1jyhs;
+	Fri, 15 Nov 2024 11:54:55 +0800 (CST)
+Received: from dggpemf200009.china.huawei.com (unknown [7.185.36.246])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3C3FD1401F0;
+	Fri, 15 Nov 2024 11:56:47 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ dggpemf200009.china.huawei.com (7.185.36.246) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 15 Nov 2024 11:56:46 +0800
+From: Xiaofei Tan <tanxiaofei@huawei.com>
+To: <rafael@kernel.org>, <lenb@kernel.org>
+CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<jonathan.cameron@huawei.com>, <M.Chehab@huawei.com>,
+	<roberto.sassu@huawei.com>, <shiju.jose@huawei.com>,
+	<prime.zeng@hisilicon.com>, <linuxarm@huawei.com>, Xiaofei Tan
+	<tanxiaofei@huawei.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH] acpi: Fix hed module initialization order when it is built-in
+Date: Fri, 15 Nov 2024 11:50:14 +0800
+Message-ID: <20241115035014.1339256-1-tanxiaofei@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,44 +55,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: sparx5: add missing lan969x Kconfig dependency
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173164203424.2141101.17831622786298437732.git-patchwork-notify@kernel.org>
-Date: Fri, 15 Nov 2024 03:40:34 +0000
-References: <20241113115513.4132548-1-arnd@kernel.org>
-In-Reply-To: <20241113115513.4132548-1-arnd@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: daniel.machon@microchip.com, UNGLinuxDriver@microchip.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, Steen.Hegelund@microchip.com,
- arnd@arndb.de, jensemil.schulzostergaard@microchip.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf200009.china.huawei.com (7.185.36.246)
 
-Hello:
+When the module hed is built-in, the init order is determined by
+Makefile order. That order violates expectations. Because the module
+hed init is behind evged. RAS records can't be handled in the
+special time window that evged has initialized while hed not.
+If the number of such RAS records is more than the APEI HEST error
+source number, the HEST resources could be occupied all, and then
+could affect subsequent RAS error reporting.
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
+---
+ drivers/acpi/Makefile | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-On Wed, 13 Nov 2024 12:55:08 +0100 you wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The sparx5 switchdev driver can be built either with or without support
-> for the Lan969x switch. However, it cannot be built-in when the lan969x
-> driver is a loadable module because of a link-time dependency:
-> 
-> arm-linux-gnueabi-ld: drivers/net/ethernet/microchip/sparx5/sparx5_main.o:(.rodata+0xd44): undefined reference to `lan969x_desc'
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next] net: sparx5: add missing lan969x Kconfig dependency
-    https://git.kernel.org/netdev/net-next/c/4c54e9497d9a
-
-You are awesome, thank you!
+diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
+index 61ca4afe83dc..54f60b7922ad 100644
+--- a/drivers/acpi/Makefile
++++ b/drivers/acpi/Makefile
+@@ -15,6 +15,13 @@ endif
+ 
+ obj-$(CONFIG_ACPI)		+= tables.o
+ 
++#
++# The hed.o needs to be in front of evged.o to avoid the problem that
++# RAS errors cannot be handled in the special time window of startup
++# phase that evged has initialized while hed not.
++#
++obj-$(CONFIG_ACPI_HED)		+= hed.o
++
+ #
+ # ACPI Core Subsystem (Interpreter)
+ #
+@@ -95,7 +102,6 @@ obj-$(CONFIG_ACPI_HOTPLUG_IOAPIC) += ioapic.o
+ obj-$(CONFIG_ACPI_BATTERY)	+= battery.o
+ obj-$(CONFIG_ACPI_SBS)		+= sbshc.o
+ obj-$(CONFIG_ACPI_SBS)		+= sbs.o
+-obj-$(CONFIG_ACPI_HED)		+= hed.o
+ obj-$(CONFIG_ACPI_EC_DEBUGFS)	+= ec_sys.o
+ obj-$(CONFIG_ACPI_BGRT)		+= bgrt.o
+ obj-$(CONFIG_ACPI_CPPC_LIB)	+= cppc_acpi.o
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.33.0
 
 
