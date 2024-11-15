@@ -1,102 +1,88 @@
-Return-Path: <linux-kernel+bounces-410609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C8949CDDFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:02:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D2229CDE01
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:04:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53D891F23070
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:02:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19AF6B27C83
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD192AE77;
-	Fri, 15 Nov 2024 12:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="svlS5zaI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4761B6CEB;
+	Fri, 15 Nov 2024 12:04:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B7A6F30F;
-	Fri, 15 Nov 2024 12:02:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6622AE77
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 12:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731672122; cv=none; b=ghyqwf/8IHrghOVMEDIxxuMC4SVkyHOF8iRMy2CraDWoD3liiWQBuMQTlet1Be6yRqlHh66wjzHpbohBsxVtqkqdFm0joK94h1LWiMw/RTp8EXKd/ubH6utl924n2cMYtNmT2+vrAqph74xdrT6H2U/zGld+nW81tAsBJj2ebyo=
+	t=1731672244; cv=none; b=L/+GflakEO46cNDKidq5tKmVdNaacgvPla0xRv2jwd9uq1tqfXupn2Fsw2h7YUzSZhAEHCdHBcTP16wmK4rzXQI2MlQhg841OXkNwX7VqbCmmFSN+LskE/VOgSj1E+/V80LG7elpzjMGT7yzXnfKUtfRUkwFCIjGtUdolJ29fDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731672122; c=relaxed/simple;
-	bh=9+qERUFS0AA2LpaZdeMa2icf2BqLd698AI0JTy8nXZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ewrZJDImSN8Ztz1WBW4rU0pbyOjKdNtdz6yNSBEu+WM4wCNaOh/2BgCZLwZjtRGX1vnx0asI7OV9V61WeQELRbO7vVj56Ew17rne1WcQVM9qQo/d4+rK/8k+Ggpgas+TAS3/TsZGWImk4YkJ8aHSA4DuBTe5V1Hf/tFmpWJqDWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=svlS5zaI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 932AFC4CECF;
-	Fri, 15 Nov 2024 12:02:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731672122;
-	bh=9+qERUFS0AA2LpaZdeMa2icf2BqLd698AI0JTy8nXZo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=svlS5zaIeu/Yhm0GOEbycxIIFfQ/72UYqfx0WpeIPvF3jsSj2FG1Aw7Yi57oRDh3R
-	 mtgEDqPYzfNh8RRYoCcOd4WAESfT+ocuYkyqPQ4+oArL/GvWu3sSlToTl9xnFFqwIm
-	 IK7GTPatQzF1FzSowO5RIFkMJqr2OeTGovVbsMsw=
-Date: Fri, 15 Nov 2024 13:01:58 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Werner Sembach <wse@tuxedocomputers.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Luis Chamberlain <mcgrof@kernel.org>, tux@tuxedocomputers.com,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Leemhuis <linux@leemhuis.info>,
-	Vinzenz Vietzke <vv@tuxedocomputers.com>,
-	Christoffer Sandberg <cs@tuxedo.de>
-Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
- symbols
-Message-ID: <2024111530-angles-celestial-2d5e@gregkh>
-References: <20241114103133.547032-4-ukleinek@kernel.org>
- <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
- <2024111557-unlighted-giggle-0d86@gregkh>
- <6c1952bc-f58d-4c55-887e-6aa247daec5c@tuxedocomputers.com>
- <h5q36ajuzgwf5yrjmqv46x62evifcgoi5imxhcvsv7oxauvxak@sj54oisawqnf>
- <58b85a78-55aa-422c-a21d-254eb16cc8c6@tuxedocomputers.com>
- <2024111522-brush-excusably-cae5@gregkh>
- <3ea99d52-cafb-4c79-a78b-fdd1f9a9fcd5@tuxedocomputers.com>
- <2024111558-albatross-vice-2a73@gregkh>
- <459e15ff-4f1f-4d7c-b49d-ccae540eaa4f@tuxedocomputers.com>
+	s=arc-20240116; t=1731672244; c=relaxed/simple;
+	bh=imz49qVmIpYNdCj67Yfa4mg25zzKMy5jk7DiVh6bm2s=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=BfeWO6wqdcksVUB8Q+vpQ52r3Jeny6gpUPwmO/DP/d5dyl5OF61SWFCc6nhyLtB17x7f1gmg2ldPppDPfThAdRImbLDZ/xS+XRTwdIkpBBCQqUg820UTtTaIDWtkQsWDe0uxcIPRcqVuICFDk6BSdx6eSVgWEhqCXt8xKadJrHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3fa97f09cso20083385ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 04:04:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731672242; x=1732277042;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9pah0ki5MLIYmabcITeBEMnCIwaCDw+o42JRXBY/OmQ=;
+        b=GwkUD9DwTEvfpfu2n5xFEPYXGPnEOh9QLDgPDJWEOUeskxPEWBBN6cwWSoqbX5gkFJ
+         HW92Cu4Hvr8HH3KW6T0cVff8KrzfjnYoegTkpoThUAoTiK35vHKWFW4mVosunCCvQ3vR
+         ZOmHoCZzlRCjDeVOue3BucqTdsSv0TsopyyIo+sBXvXSOCVaPzakSQaDz2D4LPfNUIxQ
+         XC7AxBpe3ZWkMmBos+M9sLKuFidWXzTr17DaYDRBZfXMFh5mqcQURUtuF3n8FWoXcCqL
+         eiK0fcxY9kqxFj1d6fIHmoUBK7jOrY3eYxuH8+AR8HuyAjnpYiK8w0Kv62BdS0WVUGS7
+         8j8A==
+X-Forwarded-Encrypted: i=1; AJvYcCWcviFhKGtJCG3hr0XZCBs4hQN1qtbRKMZuB3XwXVUfwFhtbYCIUcVUtPHGgcXYW5ZozIJjfQkEmvjOYzE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6trNJqM3nARkqKyoVQ9gArTgA8UKgY3HfkAPfHm782utm4bed
+	X7ReTViFhwyrH//A7LaLvwV3zPu5tHKkgClEuiQg42c/epiDKYAHkH7JUL4DGKxHvi83jqQNXPc
+	kg4klcH9S64S2ClUJsrNQAsCtm+YpXVt9NmacqX8bAxjyXNL+7bZKU3o=
+X-Google-Smtp-Source: AGHT+IFsS6mZZM1uHew9julXnvtdF8LfW1GkYQHzHZQuJWN6t731MEWh5+TeuvnzOHEhLMh2wQPqyGR7OkOnU7miUm5SDcUH+55/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <459e15ff-4f1f-4d7c-b49d-ccae540eaa4f@tuxedocomputers.com>
+X-Received: by 2002:a05:6e02:1a8d:b0:3a4:da7a:15a2 with SMTP id
+ e9e14a558f8ab-3a747ff9c5fmr27880305ab.5.1731672242390; Fri, 15 Nov 2024
+ 04:04:02 -0800 (PST)
+Date: Fri, 15 Nov 2024 04:04:02 -0800
+In-Reply-To: <20241115115401.3701-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673738b2.050a0220.1324f8.00ac.GAE@google.com>
+Subject: Re: [syzbot] [kernel?] WARNING in posixtimer_send_sigqueue
+From: syzbot <syzbot+852e935b899bde73626e@syzkaller.appspotmail.com>
+To: frederic@kernel.org, hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 15, 2024 at 11:59:47AM +0100, Werner Sembach wrote:
-> 
-> Am 15.11.24 um 11:22 schrieb Greg KH:
-> > On Fri, Nov 15, 2024 at 10:40:56AM +0100, Werner Sembach wrote:
-> > > Am 15.11.24 um 10:18 schrieb Greg KH:
-> > > > On Fri, Nov 15, 2024 at 10:00:23AM +0100, Werner Sembach wrote:
-> > > > > I guess what I try to convince you and others is that we _are_ taking Open
-> > > > > Source licenses seriously, but still there are mistakes to be made,
-> > > > > especially with complex projects like the Linux kernel, e.g. I'm not aware
-> > > > > of any other project that uses a similar construct to
-> > > > > EXPORT_SYMBOL_GPL()/MODULE_LICENSE().
-> > > > The Linux kernel is very simple from a license point of view, your code
-> > > > has to be GPLv2 compatible.  That's it, nothing complex or odd about
-> > > > that at all.
-> > > Then why does the proprietary NVIDIA driver exist?
-> > You will have to discuss that with that company's lawyers.  That was
-> > their business decision to make, and in my opinion, the contracts they
-> > wrote around that thing were a mastery of license law in "how to pass
-> > the liability onto someone else."
-> But you see where there is complexity, and where my misconception stems from?
+Hello,
 
-No, not at all.  nvidia adds complexity in their contracts with vendors
-in order to attempt to circumvent the very simple license rules that we
-have.  Again, talk to your lawyers about this, they are the ones that
-know this type of thing.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-greg k-h
+security/apparmor/domain.c:695:3: error: expected expression
+security/apparmor/domain.c:697:3: error: use of undeclared identifier 'new_profile'
+security/apparmor/domain.c:699:8: error: use of undeclared identifier 'new_profile'
+security/apparmor/domain.c:704:11: error: use of undeclared identifier 'new_profile'
+
+
+Tested on:
+
+commit:         744cf71b Add linux-next specific files for 20241115
+git tree:       linux-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=75175323f2078363
+dashboard link: https://syzkaller.appspot.com/bug?extid=852e935b899bde73626e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17c582e8580000
+
 
