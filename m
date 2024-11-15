@@ -1,111 +1,125 @@
-Return-Path: <linux-kernel+bounces-410931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C349E9CF08E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:47:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1A069CF096
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:48:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8389B29095E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:47:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E4191F2A9B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1E01DDC0D;
-	Fri, 15 Nov 2024 15:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44061E1A34;
+	Fri, 15 Nov 2024 15:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="TC9LE44L"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J09PLWlb"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF901DA23
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 15:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2301D514B;
+	Fri, 15 Nov 2024 15:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731685259; cv=none; b=GYQUFQIL7roOjyKSO3VzvBpQGJI7x4/ozF79/3sQzZFIL8ZmF8pphC5tliDjQZ4s9abUwQLQv2cG1vpyuRjexwirWo48h4wirumnX2as//IdgTaRsw0JFAiUQX9AhoDTvELJBBHjZisu6klPbZEpzV5k/OkgUQrdiBGX196YA80=
+	t=1731685280; cv=none; b=dxBLyIw5Ca5ti4DNXGYrz/DQ8u3Zv8NWjDVNBQ8KE+FCK2njHFUpS9rSWPTKZ6fxkq2vqH1SIlQYez99K/F+LuYytZbH0/iinmuzn1HXeq6OdJJ2dB8EBiVcLyKmA62vRTFn+iUFyaW3H2mUD0mysRWgR0+UQTupJ7o1FgtjmE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731685259; c=relaxed/simple;
-	bh=jdr8qNxy+Jo1gsIHbtkxZqlHxWm+kUlA4DWc5Z9WKtw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CqJ8hXyqL5eXJr6pqFMcH37/N6OUyN93FNAe14fLqpEgY5/ywLUk/6sedhagT2Lulb2aJ6RHrso/T8mH/mF6TTopkCwmHH2m2PVTLROkWaLSUr19blutTC8TDMyhAgDoP3FNCoAvhwfKxCv9huk98W2/6zHTUOXgMc+pLDvks68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=TC9LE44L; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2689e7a941fso490598fac.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 07:40:57 -0800 (PST)
+	s=arc-20240116; t=1731685280; c=relaxed/simple;
+	bh=F0HrlOCDVc0tS4fkIk0rdPU7YPq64z4ioMtMs50nIss=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VK9MkuOMPrvpjhYzZsUmHQgRcWYZrjlhRnGLRZF4oXiTJ5cWSyu78sqYkrSEcr8TVAnPdkAiZ0J5M36wLr4hjNnrKsj3/9wv7gET7M0eJtpP6OTxnlwujw80GFPse4ZyEoIsZXK+G92feuD6O0itrlPm6yBj4/YCX5uk6bX/q1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J09PLWlb; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-21145812538so16278195ad.0;
+        Fri, 15 Nov 2024 07:41:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731685256; x=1732290056; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qoZnHCDbvEhSS1c5SRWBNLiOwRUEY61DZ2aXp4JDEYc=;
-        b=TC9LE44LpmuaBUF2ni7msJ+oK51W1D83PnHgzYUlflAY+cERqgR0vE3LBLWk9TxC7a
-         p1jISsurUq6S59DUx37zcfpMiJCv0awylLruPYU+YwApwtBUxVxZlHm1bI/POjy+BFtn
-         lqh86KHsj+bVsS2fy/299PTkWQB9HX+9Ha/fgfEhvLbFblmNostVlEjJU99Lbx3adXJ/
-         rznhtFl0LPcslGWEQYTRdzLVPEzO2z0r3kxqHWvZUO87CGUO8Jp5zg4tjqakkUGRNgu2
-         avNFass9dSjg0z0AhbOJfrmY5zTcAI8aw8srkccowzVXjare5LgxZaCh3lNhUyep4inO
-         JgFQ==
+        d=gmail.com; s=20230601; t=1731685278; x=1732290078; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=mad4SOqK1QCQ4o/oex/SlfSeha24kQsA2ic3rSWilNk=;
+        b=J09PLWlbf62DCWJir0VuXSPzlwfs5QhZc2lwbS2bhnhkjlSKJwxpOCMPtMgf9U2tnA
+         NTmADYoHUU+CakC4ToxLLZ2teYd64oAZ38kYjjMEzvO2R7Afub8oZGPd3CjDKSdZ1tWR
+         MZDLA7iD+s1cjpv9EoAlPThABpnxCCnNlx6aWn2NnSK7G1Ay/hZqHsstmyUUccpueDwO
+         4h2h4waP1UNflakJQkmeZYyAOtc1sgd3I8yE7LpQb8g8dpvAF4mIgA2WvkV2hTk+BOeS
+         33Nzl8fsKfYB8E5oiiJ64qAuDhCemKP15KYOEknV8R61a5jBjTI/s55RjRDbtsbZvkf9
+         MJZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731685256; x=1732290056;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1731685278; x=1732290078;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qoZnHCDbvEhSS1c5SRWBNLiOwRUEY61DZ2aXp4JDEYc=;
-        b=OavksFTp09as8eK/LzEGKu1+lNtUDj8wFVPAnklJmhT2b25r0CEgFC59ODhtwoB+IS
-         e1ngiNbzLk5gCSqOqpUZ3bf7epFLcoeWIsyJrpHx3M9q8j6AAkbF+3HDM89KaKTknsMA
-         KGkL/u5oLe9Jm8jPLdHRDtGZF079gdPaFDO4bkvana1ZldmVLo+ldN2zfrcqSD9V0wH9
-         a6Vw7rWvcAyKaWFZrqk7oAoV9Tfu9T1nVVfHmonvk7IQ3/dYR0srld1u7RM7bTfOqmHE
-         QLYUoyL64jLQiEafqUHPXqUoCJBxbYU8MU2acY3kHe9Ea4V6r+8TxEuHd9rvnxeM2AY5
-         jJ1g==
-X-Forwarded-Encrypted: i=1; AJvYcCV7U9iu+ejdsBDxbAngci6AfRyiHLwjvZvaQC9Bk7V6S6cTMaYFs7h8FXQ6g4dbRfPu0TkcMZt5O23QDIc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yynf5yvJdbqifkjpSrsdG1iDw17pVR1YYinxDzHu7xUdsnZ1QLA
-	Fsw5S5zPdBNXJdoW9sRt5iU34+mqWziF28kKuBAeqNNVLjytbZAm1ZkQPmAkxX4=
-X-Google-Smtp-Source: AGHT+IFdUS8uN49tDNf746ur2SPDst9sm3KOAJaU1AK84+5cj7rnDzwIuOtF3souY+5wecSwvnATWA==
-X-Received: by 2002:a05:6870:e38a:b0:288:a00e:92dc with SMTP id 586e51a60fabf-2962deeacdamr3161996fac.2.1731685256497;
-        Fri, 15 Nov 2024 07:40:56 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29610949b12sm1516348fac.26.2024.11.15.07.40.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 07:40:55 -0800 (PST)
-Message-ID: <7b1ed2bb-dc06-41ea-ba48-85c25d085dd8@kernel.dk>
-Date: Fri, 15 Nov 2024 08:40:54 -0700
+        bh=mad4SOqK1QCQ4o/oex/SlfSeha24kQsA2ic3rSWilNk=;
+        b=lr9uw5spI65kbFxW6Z5YrWn3XunTEvqzU4N1A2thpNnjaKUDEPmt7aItoyTjMvGFyA
+         HyjspCF4zqwH6X/8ZjXozIO5qs2h7hozWKxLL/WsPc1TZWwhlny91/h2corKnBc6hfu0
+         /xMmo9nTEiKy+FAlEBzoK1itsB2sOfhu/kG8KRyIk1/VQT6w+LgCr2OB84sSH4xItq45
+         IBvTXMbxIywnkGC+4s2Gx8QXbZdg23qGCnC4Dm8z+G9qtKXXN2s7G97K64QQm8b9Pg6m
+         psgMvV0/bIkj0TXRi22WHf5wJzz1NDYloXFm/L2ePCD/ZugLfCW2KEa9aQMc4FpZADDU
+         xNrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJI8BwFZ+J0vRiqKdiC4L0vdV6E8tV7xvseYbMcUbdRidrLVpoMtgcc/KSJp5ASC/77S04Pqnu1yafKKdYA9qb@vger.kernel.org, AJvYcCUsPpvQarTLuKhq5Z46t2ZCYG6RTpJJJc65kExRR//9XrCRNfZ39TrF0sQDCEW46A/H1eFoT579@vger.kernel.org, AJvYcCVwPxo1WOXA7LdhAx7BOxI2UAZ9uBRIQeW7lhiG20yE1JYqjDtsySNuVgLS0O7LaA0039YwkgAb+Ze66+Um@vger.kernel.org, AJvYcCXps6fV4m4IxDeeW2l6hajksWjUPaK9Cwl72P+6ghwHlcyu95/MFf1Z/W92MCovEjNLubk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqIFmrIKfPnqbqBzbIbP1C1LTlsx20kSJ1vWAKPvYQqxORaUag
+	4RdfoGooyKUyYyHrc71/vkez4gxOXt3EiMgPrs55PMFhkxYtRgM=
+X-Google-Smtp-Source: AGHT+IFvSiKK5pXTnS4v7BMtZSxnBSDmRb4ts7GfpqHnQT1u8ZOxciaO6lEhrbKtEKbuENFeyhoGoQ==
+X-Received: by 2002:a17:902:e808:b0:20c:e6e4:9daf with SMTP id d9443c01a7336-211d0d65103mr39412615ad.13.1731685277965;
+        Fri, 15 Nov 2024 07:41:17 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f61372sm13526245ad.278.2024.11.15.07.41.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 07:41:17 -0800 (PST)
+Date: Fri, 15 Nov 2024 07:41:17 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Alexis =?utf-8?Q?Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>, ebpf@linuxfoundation.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Bastien Curutchet <bastien.curutchet@bootlin.com>,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH bpf-next v2 07/13] selftests/bpf: migrate flow_dissector
+ namespace exclusivity test
+Message-ID: <ZzdrnYe0Jf6VwEqB@mini-arch>
+References: <20241114-flow_dissector-v2-0-ee4a3be3de65@bootlin.com>
+ <20241114-flow_dissector-v2-7-ee4a3be3de65@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH liburing] test: add test cases for hybrid iopoll
-To: hexue <xue01.he@samsung.com>
-Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <3aada5a2-074a-45e8-882c-0302cae4c41b@kernel.dk>
- <CGME20241115033450epcas5p10bdbbfa584b483d8822535d43da868d2@epcas5p1.samsung.com>
- <20241115033445.742464-1-xue01.he@samsung.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241115033445.742464-1-xue01.he@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241114-flow_dissector-v2-7-ee4a3be3de65@bootlin.com>
 
-On 11/14/24 8:34 PM, hexue wrote:
->> The kernel should already do this, no point duplicating it in liburing.
->>
->> The test bits look much better now, way simpler. I'll just need to
->> double check that they handle EINVAL on setup properly, and EOPNOTSUPP
->> at completion time will turn off further testing of it. Did you run it
->> on configurations where hybrid io polling will both fail at setup time,
->> and at runtime (eg the latter where the kernel supports it, but the
->> device/fs does not)?
+On 11/14, Alexis Lothoré (eBPF Foundation) wrote:
+> Commit a11c397c43d5 ("bpf/flow_dissector: add mode to enforce global BPF
+> flow dissector") is currently tested in test_flow_dissector.sh, which is
+> not part of test_progs. Add the corresponding test to flow_dissector.c,
+> which is part of test_progs. The new test reproduces the behavior
+> implemented in its shell script counterpart:
+> - attach a  flow dissector program to the root net namespace, ensure
+>   that we can not attach another flow dissector in any non-root net
+>   namespace
+> - attach a flow dissector program to a non-root net namespace, ensure
+>   that we can not attach another flow dissector in root namespace
 > 
-> Yes, I have run both of these error configurations. The running cases are: 
-> hybrid poll without IORING_SETUP_IOPOLL and device with incorrect queue
-> configuration, EINVAL and EOPNOTSUPP are both identified.
+> Since the new test is performing operations in the root net namespace,
+> make sure to set it as a "serial" test to make sure not to conflict with
+> any other test.
+> 
+> Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
 
-I figured that was the case, as the existing test case should already
-cover both of those cases. I'll get this applied once you send the
-updated version.
-
--- 
-Jens Axboe
+Acked-by: Stanislav Fomichev <sdf@fomichev.me>
 
