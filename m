@@ -1,118 +1,178 @@
-Return-Path: <linux-kernel+bounces-410800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7148B9CE148
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:32:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2861A9CE123
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:20:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01B57B388E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:20:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC9531F21F64
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687EE1B3942;
-	Fri, 15 Nov 2024 14:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF931CEEB6;
+	Fri, 15 Nov 2024 14:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XhaFh2Yi"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Y3Ot+vuR"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311261B218E
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 14:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BADAF1B6D04
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 14:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731680425; cv=none; b=A1sHqQneys2N3SZhAT3dgBTf+lVY4IQM59Tbn28/iWls8wBvBncl+1WT9KKC3SUlmTHEpSczpVlFJRUaM/XHc9g7c5GFL2yadtuH52zH4e41/DcLOnLZWfpsKC+6te0pX/vSJjKTGMsDtVC6PyIr+NFDyU3FuR/ZHwHAxyghb4Y=
+	t=1731680438; cv=none; b=ofpLa+oCARrJRqb+0HES6FgdaOdSSKnuul9KfrrMA7otNeLNlAeiZtVc4HETr855LtzHBMUr44yf7gH9tHEEX+f/RETP6gIi+ipRjUSDimIp6F71JK2KLiqQFDRkEn+fodt2+2C4O929B3iwoLfokrr6LCZde/ToYxtiJ5amC3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731680425; c=relaxed/simple;
-	bh=E+N7hANlUNnWzMAxdQP13OfBphSSO9L7QTGOneJcRxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gSbcABmPiQUxyk2NujCYzu3phUx9rz0JqXsY1nsq32IMom2d5jAmWXr4muERmrM6uw+ceONPYqsO4ft78dVPmjwQa/FNDzEWg+d8ahDP0U1eHlFM5OVq5emevEn6Sq82D0m4LPo3fFLrZT6cFZdJhHKws+I/RCqvq8ySeVOwoNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XhaFh2Yi; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539f84907caso2012277e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:20:24 -0800 (PST)
+	s=arc-20240116; t=1731680438; c=relaxed/simple;
+	bh=IRY4TKgYIngjwiomEX5pc4yFOPLHntpa9jNskIceRCg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MfaOYpZjhyokCs8KvTu8uKZ4d9FBHxnCYYV6SsVnaaX38qi/waC1ukYTHyfEGS3skuJyQBJhH2GqjuOblqATCc3f5CRAOsgvV19kH5PxBjV8xVx+VB6TqXXR/xHS6YWRguSwdCGG/WL7Gr5sWJzfLmhWxOg5mM+VQoS2+Zx6Krs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Y3Ot+vuR; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4316cce103dso19939825e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:20:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731680422; x=1732285222; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9kxLZh7oIW/Qu6MO9UxZ5HRBg1gE82+4pLIY8QLKtus=;
-        b=XhaFh2Yi3+XTMP/pWXhSckGwjpIJPYO8RF1/ae5fapU+l2o5ZDXYcsaKtx7c8+9stJ
-         2gZ81gmL+dehmuqKWcbXkrKNnNlgo6j/KY7WtFMzX/FWaEYelZXM02W4sTT2lSHGHi3m
-         x94V1hwUu3mscnpcfhCrsIsI28D2b/iWa4W4ZRJ8G/LRPslX5/J8IRio0pYGja14QErR
-         PrjqJHlLrUd6bylrra7KtdPdCTdwx2Gxh0zrjKjdySs3viQJpBlt3TgiS9QLiCS/JXmN
-         CUZU0l1pr1kbXHxCEj+mgpCfgLh4miriMV+K66OWmUe8jY0RfQWWXUSQuIPP7/LojFyh
-         C8og==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731680433; x=1732285233; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PC6ojwcKypt78PEVjf5QTEeMWWwDjNFd5KxCzoy0bYI=;
+        b=Y3Ot+vuRWQbtTLHCkGFwLZWzyk6MCaX8pC172EkcZitD6EzudplafconIcAJwL28yG
+         38Bv9sXnPN+/hsXEZbxNyOWT+PncrTfNlI2AUb9J+v9uW5tmMC/g4Bkr1f7GL9rFJs5Y
+         pqdsaRzYapGHfdEnMSLzoPjAGCIgbP5JIeouDH5omhgscux1YawOmhP3ASr4rIsrG0Vo
+         14U8q2SPh91SyGiQfAbG5E/aHMrZNfjhOUM8OUahDg01F2jy+gT7vNOYPaWxCQbl/ArQ
+         1KIRnZq9W0I5Q8xM3XjSPG5qtHDeOHQHfTu/l+A6zfX9H4jrczRwOnVQ7XPrswCbxTcP
+         KpSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731680422; x=1732285222;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9kxLZh7oIW/Qu6MO9UxZ5HRBg1gE82+4pLIY8QLKtus=;
-        b=J6jPM6EWt/Y/n45jRHT3hnbON5KP4UodkWMQ4G3/mo/07rAlSXG7v0wJ7OzdMnZHRa
-         mPEpRR2oWtOAIwz60GecL+YUM8XBY2CFTekR9BzfISg0A1GivP3HUWFFNkAq5aJhOvNr
-         jnuk4WrgXGEZwNkege6EgHQU5GGPUfrOLX6nPH9ZUs7aLWQ2VG5+SychpiyvW8TGdo5E
-         xxT9TiuYLbTn74lrceXZS+S8cdNZR32LB5ZbmnD1ZgaYpcBPZJo8ItR9N4Vy8RE8UU8F
-         wkQF3VbDxCZwgZHmLuct/vTuGEZetsr/IOTDUZezm2Lezit9gvSHL0xs239191C5rbJi
-         YSqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUj0u4aJkew1AexYK/fN4apm6bbWaE4g54m5LxQpCyrqEpInpYBnSkk2UeN9zYY3gNmyjjXbO274aYfnFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4F6mdaik6AblhOF7JStjqv5V3QE1wMNNVMUOq1FarAQZOvwl4
-	RoVq3Dhd/sckqz4vZAoMMIEYstn70gy1dC9ruzv9ede6XJb2rFFNknjlk3lOr0Y=
-X-Google-Smtp-Source: AGHT+IEBU8A15vScg0ia4WplSofYKJIuXC0KSALSXA7EzvPsyMeCtNrpJisnibjIPA6EZmUQQ6oJwQ==
-X-Received: by 2002:a05:6512:3a88:b0:539:96a1:e4cf with SMTP id 2adb3069b0e04-53dab2ab63fmr1545621e87.32.1731680422383;
-        Fri, 15 Nov 2024 06:20:22 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da6549034sm584101e87.272.2024.11.15.06.20.19
+        d=1e100.net; s=20230601; t=1731680433; x=1732285233;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PC6ojwcKypt78PEVjf5QTEeMWWwDjNFd5KxCzoy0bYI=;
+        b=pDOvsEsAMtp6Eh/RAgL8+8yzBlrPSO7lya/mn4ixNd7ZZNUFAIMHNh/Vq9hQY6DFTZ
+         bvETquKsMwvvPRn67bbUVrrpWjsklNT4V00YsTEr0+JJia+qBobtrn25yS1BmL2tLFFK
+         2/YEj7YqJONpkIJsLxDUkQxVxV8ewJU6v28h8X3VxJRoKqFeSySbSl0k361ONfyB6cpu
+         fpHm8m0PsNnik+sDfSr3yXlZzkZhpPmXqKltlntOYObxC58c12E/92Jw4sEzgA75zDzw
+         zgGMcEU4TEa1G5sNzdN6KHDACZ/PDf4ckZ8lwMVc22EKlPKmJDJb6XrlHyv2BGP39kze
+         PHew==
+X-Gm-Message-State: AOJu0Yx8Kl27xl4kpNe1G6qRMSHEiVvSWDkkDgTB224apZhwGze/cVZ8
+	T1wH2Xx/t0h9Ztzj8+rKwjcWJer9abqCO38ysThAtNDMLKf4CLvodhDQVcUzSAUdbGF4djCJZ4d
+	Y
+X-Google-Smtp-Source: AGHT+IHqz3B3rbSjsLJHK1tkocPEUyscZ7eHb+Kl+ZNxGPst/8bolXxZdFoa23wULqg80uGvnYinzg==
+X-Received: by 2002:a5d:5f43:0:b0:37d:2ea4:bfcc with SMTP id ffacd0b85a97d-38225a40809mr3084086f8f.13.1731680432107;
+        Fri, 15 Nov 2024 06:20:32 -0800 (PST)
+Received: from localhost.localdomain ([188.27.128.50])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ae3102asm4509686f8f.93.2024.11.15.06.20.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 06:20:21 -0800 (PST)
-Date: Fri, 15 Nov 2024 16:20:18 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Johan Hovold <johan@kernel.org>, stable@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/dpu: fix x1e80100 intf_6 underrun/vsync interrupt
-Message-ID: <7qx65y6o4fvnnnspof2exzk7xru4bgpda43655deeu7hw6wowt@zcnpzyw2xutm>
-References: <20241115-x1e80100-dp2-fix-v1-1-727b9fe6f390@linaro.org>
+        Fri, 15 Nov 2024 06:20:31 -0800 (PST)
+From: Alexandru Ardelean <aardelean@baylibre.com>
+To: linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org
+Cc: laurent.pinchart@ideasonboard.com,
+	manivannan.sadhasivam@linaro.org,
+	sakari.ailus@linux.intel.com,
+	mchehab@kernel.org,
+	Alexandru Ardelean <alex@shruggie.ro>,
+	Alexandru Ardelean <aardelean@baylibre.com>
+Subject: [PATCH] media: i2c: imx296: Implement simple retry for model identification
+Date: Fri, 15 Nov 2024 16:20:21 +0200
+Message-ID: <20241115142021.574402-1-aardelean@baylibre.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241115-x1e80100-dp2-fix-v1-1-727b9fe6f390@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 15, 2024 at 01:55:13PM +0100, Stephan Gerhold wrote:
-> The IRQ indexes for the intf_6 underrun/vsync interrupts are swapped.
-> DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 16) is the actual underrun interrupt and
-> DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 17) is the vsync interrupt.
-> 
-> This causes timeout errors when using the DP2 controller, e.g.
->   [dpu error]enc37 frame done timeout
->   *ERROR* irq timeout id=37, intf_mode=INTF_MODE_VIDEO intf=6 wb=-1, pp=2, intr=0
->   *ERROR* wait disable failed: id:37 intf:6 ret:-110
-> 
-> Correct them to fix these errors and make DP2 work properly.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: e3b1f369db5a ("drm/msm/dpu: Add X1E80100 support")
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
+From: Alexandru Ardelean <alex@shruggie.ro>
 
-This matches other DPU hardware, so
+On a cold boot of the device (and sensor), and when using the 'sony,imx296'
+compatible string, it often seems that I get 'invalid device model 0x0000'.
+After doing a soft reboot, it seems to work fine.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+After applying this change (to do several retries), the sensor is
+identified on the first cold boot. The assumption here would be that the
+wake-up from standby takes too long. But even trying a 'udelay(100)' after
+writing register IMX296_CTRL00 doesn't seem to help (100 microseconds
+should be a reasonable fixed time).
 
+However, after implementing the retry loop (as this patch does it), seems
+to resolve the issue on the cold boot, and the device is identified.
 
+When using the 'sony,imx296ll' and 'sony,imx296lq' compatible strings, the
+device identification process isn't happening, and the sensor works fine.
+
+Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
+---
+ drivers/media/i2c/imx296.c | 44 ++++++++++++++++++++++----------------
+ 1 file changed, 26 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/media/i2c/imx296.c b/drivers/media/i2c/imx296.c
+index 83149fa729c4..9c3641c005a4 100644
+--- a/drivers/media/i2c/imx296.c
++++ b/drivers/media/i2c/imx296.c
+@@ -931,7 +931,7 @@ static int imx296_read_temperature(struct imx296 *sensor, int *temp)
+ static int imx296_identify_model(struct imx296 *sensor)
+ {
+ 	unsigned int model;
+-	int temp = 0;
++	int temp = 0, retries;
+ 	int ret;
+ 
+ 	model = (uintptr_t)of_device_get_match_data(sensor->dev);
+@@ -943,25 +943,33 @@ static int imx296_identify_model(struct imx296 *sensor)
+ 		return 0;
+ 	}
+ 
+-	/*
+-	 * While most registers can be read when the sensor is in standby, this
+-	 * is not the case of the sensor info register :-(
+-	 */
+-	ret = imx296_write(sensor, IMX296_CTRL00, 0, NULL);
+-	if (ret < 0) {
+-		dev_err(sensor->dev,
+-			"failed to get sensor out of standby (%d)\n", ret);
+-		return ret;
+-	}
++	retries = 0;
++	do {
++		/*
++		 * While most registers can be read when the sensor is in
++		 * standby, this is not the case of the sensor info register :-(
++		 */
++		ret = imx296_write(sensor, IMX296_CTRL00, 0, NULL);
++		if (ret < 0) {
++			dev_err(sensor->dev,
++				"failed to get sensor out of standby (%d)\n",
++				ret);
++			return ret;
++		}
+ 
+-	ret = imx296_read(sensor, IMX296_SENSOR_INFO);
+-	if (ret < 0) {
+-		dev_err(sensor->dev, "failed to read sensor information (%d)\n",
+-			ret);
+-		goto done;
+-	}
++		udelay(10);
++
++		ret = imx296_read(sensor, IMX296_SENSOR_INFO);
++		if (ret < 0) {
++			dev_err(sensor->dev,
++				"failed to read sensor information (%d)\n",
++				ret);
++			goto done;
++		}
++
++		model = (ret >> 6) & 0x1ff;
++	} while (model == 0 && retries++ < 3);
+ 
+-	model = (ret >> 6) & 0x1ff;
+ 
+ 	switch (model) {
+ 	case 296:
 -- 
-With best wishes
-Dmitry
+2.46.1
+
 
