@@ -1,151 +1,184 @@
-Return-Path: <linux-kernel+bounces-411160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE4CA9CF493
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:10:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 006A79CF443
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:48:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACF54B37F53
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:30:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84B4AB3C605
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E561D9346;
-	Fri, 15 Nov 2024 18:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BC116A956;
+	Fri, 15 Nov 2024 18:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="HJt7jFjv"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BsKOm78Z"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2067.outbound.protection.outlook.com [40.107.100.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7BA17C7CA;
-	Fri, 15 Nov 2024 18:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731695410; cv=none; b=lgiHAO13zbUCNdN3TVV9r5lan6IWcPx1ZfLxFIyHiJxII3iMC/XTRMSpJj6IEF8u2lYFBAU1yp7AkfM6oQSDAuIJeeIE66JgH3C5FkYBwYCr3Ufy148rrcp7cNCy4Z9d4jEafYJ61ZTY9nw6GlP3aCX89rxNj3k6vLW6jDJAx7A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731695410; c=relaxed/simple;
-	bh=qQq/vi9e6m6ETqXrfSVF09C0+hl8OYr1A0nE5CcOm/w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=sh2gwPkY/vmAK1Ky036sUYK23lMWdBBeZ6SjN8LmSKjMrklWgbKluTF6caKu1gIXlKqJLIL2G6Egoft2VP5kWphD2EPQOcKwqN6WP2edeJDf/A5WkeZBPK7ytPwh7nZGW6HujZUBMOF7CgzN5ToEsZaJycwjp/7gsLVZnwY+jI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=HJt7jFjv; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1731695375; x=1732300175; i=wahrenst@gmx.net;
-	bh=vvYnkM/MjUNPD+tFi1nKdoNje94Yno5pUUbs2o5pcls=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=HJt7jFjv4FAGS/B0DvOzK4BzXII+HQHUpKbLrnd9N53IgdAt6cG6PE3MqFVGAa16
-	 47F6uRn/YPLE9m2WZtroVqFTE/+rgiwDbKaA+anIeML+/Ao14l6A3fUpx4/Z8Uy4Y
-	 t8ZtqCwnTOjmIlEsOJi60caJixxP1lZlPI1KshHTCj0kz9ErTgyPTVtG3iFYvZ2Z/
-	 2bGEqztgGqbnT1ZoBZpRDr5B9dcc23whPr4nd43PEpX1DZLAloeCnSGkpCRFhvkfA
-	 5/EPKGVgKWmUaIsBuoDCpOKtiXsaMDjZtCDa4mE+ayVTtr9y5egozJwrh/c88QbN4
-	 BjiHgIZAS0c+5Jn4Dw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.105] ([37.4.248.43]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N0G1n-1twP841BiB-00zHUJ; Fri, 15
- Nov 2024 19:29:35 +0100
-Message-ID: <eb1da92d-b7b7-43ae-959e-3f02c6e2c91d@gmx.net>
-Date: Fri, 15 Nov 2024 19:29:31 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB4C17C219;
+	Fri, 15 Nov 2024 18:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731695476; cv=fail; b=TSAngbmXARF3WGUZzzrClAIA8WBIisB22uyxme5xCdtsNxVgIhMoiuQ9q3wxSTycnBemuQWNIfc1MIKwVHJhAK+RoZ3Lidy5/jIcxBtYTVWhAvPzEZWlS2J+CPJ4av3P5d9vvYdsW1ioknbMUvn0CJStak1isZ8uK+1TuTgnW8E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731695476; c=relaxed/simple;
+	bh=0ugU788vk7Fb62AEGTI7mZh359w91op68HqwObrcctA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G+Dn3T8TobjX/bKnanyak9FCjpZhicXFdZCWrtbmo3/qjb4y0eJnF9ZZzFFN4mNw182RDeEpdkzwmXWobzcSEqHZQ1v70Y1YQVFc5hLBGHflyF3RhWOQAg0fHC7ByKicVq/lsuqMvmEGVATKsGc/nhipDGPMc8tZ9bmaQ6RagwY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BsKOm78Z; arc=fail smtp.client-ip=40.107.100.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xkNxq0GLFfvO2AiNtNlhpA7SI6CsWlbnq6V2ub2JD50l0x1L790RNBAP4xKkt5ZxpRfRFbHitaFjh5g7/2SCSIo4AaYLIP/UniI5ZOMMqWUo1JR1nj8SfUULtLnOYKCpY0obaBZ2HmS2JKVQveGfHacVvAo7giE1Kp0fLXmcjO+40Qvv/Il1Y+cOgCoNkjDUk03RCKhEy403Hra+OjNqmKgrPKY5tGaeGL4I0RJWW8PAluDP9GT1yvMpfN5Dmz3R7nOEuxECPeNpB+xORjiU0KEhpaNtH0QBYtWdHDsabcp2uhkFF3MvwpbfFK0LidccBC7YcYcI86oqYf0F2rrouQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UDhn6omm2PDSvjgVva+Q//55lVdH7bDG6FPk8U1Yjnc=;
+ b=lXeGQM0SR5g226bqfYNdafm0Mil0GAYuLKvQJss3siZ1uII3IxtD/keKAM0Av7iTKt/9MX7vkV0dox5Ww3LaQI/X4+w2MG7LfN1npEGfECmJUieYgFhm2G6H8dxV4pajQRqPfC38qjRs9vUSdhBim/0Dpsu1hN7ofg7olsyHdOxjIGootV8IZ7uiPmA9i018eI9kIckfVJ3K9F+//t7Cqc2iVTkhVyk8MYH4yncBHRLVLHkWoddNMgXj93ZNgS+I8K4qCyhwwP0rolpyz+LuUcNs0ilpeRXJWiKbLgAC3ZA0PWKmH2+PHGtWNP10mYaQfPMVaIDHAbXMGuWiE31I5Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=synopsys.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UDhn6omm2PDSvjgVva+Q//55lVdH7bDG6FPk8U1Yjnc=;
+ b=BsKOm78Z/kGHrlAYNYJ4A2oFTvhD+a4UBAJalp2IbmhvS94gdLlC4/GVGhj6/s1HNjKAjczqmOA/loMfDXmxcG0mEhf8m4us+uug/w65Sv8wAfHrFOhigRCryUk0Vxn12C2mTi6+HAy3akn3COKGsmwn/Xfuetgjy0noThVr90Y=
+Received: from BYAPR02CA0071.namprd02.prod.outlook.com (2603:10b6:a03:54::48)
+ by CY5PR12MB6598.namprd12.prod.outlook.com (2603:10b6:930:42::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.18; Fri, 15 Nov
+ 2024 18:31:10 +0000
+Received: from SJ1PEPF00002315.namprd03.prod.outlook.com
+ (2603:10b6:a03:54:cafe::da) by BYAPR02CA0071.outlook.office365.com
+ (2603:10b6:a03:54::48) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.16 via Frontend
+ Transport; Fri, 15 Nov 2024 18:31:10 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ SJ1PEPF00002315.mail.protection.outlook.com (10.167.242.169) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8158.14 via Frontend Transport; Fri, 15 Nov 2024 18:31:10 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 15 Nov
+ 2024 12:31:09 -0600
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 15 Nov
+ 2024 12:31:08 -0600
+Received: from xhdradheys41.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Fri, 15 Nov 2024 12:31:05 -0600
+From: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+To: <Thinh.Nguyen@synopsys.com>, <gregkh@linuxfoundation.org>,
+	<michal.simek@amd.com>, <robert.hancock@calian.com>
+CC: <linux-usb@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <git@amd.com>, Neal Frager
+	<neal.frager@amd.com>, Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Subject: [PATCH] usb: dwc3: xilinx: make sure pipe clock is deselected in usb2 only mode
+Date: Sat, 16 Nov 2024 00:01:00 +0530
+Message-ID: <1731695460-1814409-1-git-send-email-radhey.shyam.pandey@amd.com>
+X-Mailer: git-send-email 2.1.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] PCI/bwctrl: Remove IRQF_ONESHOT and handle hardirqs
- instead
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <bhelgaas@google.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241115165717.15233-1-ilpo.jarvinen@linux.intel.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <20241115165717.15233-1-ilpo.jarvinen@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:y8BOJwtYO3G/ANwm5CtFwOlPqscFlQ7Olc0lsAOfwe1+65GAPUA
- fpesKh7PrSU8eDdbRI5XEOpT+zIzgowbJeWNbF0AOBFst1ApmF6jouPcU0DwatmDUiQ1Yv2
- 3nzgTQ8Wi2lULemRbpXDWwlJ/r2VXFALczzILsWMi8sPKQqI8CHa1W+HVLTl7vYvuGhlmW0
- IbrQpuGkPz7bHCyluXm8Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:pvVA6SMA3xg=;gAgsQ+bjUu1ieqEqIdbmBx5+GJ2
- n2mv3yvAaJJ+hmZn/36ldRNl4Yt8ZAT6Wzm1DeQe5nev5z8wGugcongNClTpDV7e7RHdsDktk
- umOYQSFTx2QhmSQkDaU9xZJ9U9fcvQ6bgi8TqClujMdxMrdFxGJSanjx2HV6zsVoKOsx9X1VD
- 5lbgKqHvTetoNRN78jVRqF+PWAaIuB0dyfXsVhiVBUPDyazyeTfLbFCqUuIETnpTGrodk8jX9
- L8zRi5D4okVtI8XuvgVcgyg7fhQBqBpVKDdha4A+vbQtIJZUx3zEFKKH3MmsO2+uoCclgGt9T
- EmIz1lYN7rDe4Vdsx0ijBf2zcFc2QE2Ze1ckx8uOQ0lqBlwRS+4Gjzis4nl0FNq1T0DMlyEoM
- WGDcmG16bQSzqjZPUq1QcD32/0DFT95PDXtmV8WgI3FWs1GFrjeEAUSnsAWUDddAHywztDjFg
- bpqX0rUpOdbJ3KM3DrKr3RMuwQKbNSCW4Juehi/7S3q0tuxdQvVea0zb1BckwcEzAQDdiXPOI
- uPCYFnuL2A3xrwJrf1jLGvIAubsg5Jc8EVD6QB8LY0zfs4C0WaMvcRQIsoYUrlkrmWFMg4o7L
- qxvZrcMyefJ0eWFOXlz1xXVIKXVWF8UPfOBUpCpVI5q0yDBu7JpCcDv/Y4L3fLUXM0oOTJSAM
- tRqaTZGuzbh5jMg1y19PvggJEk6IWMIi4RX6qorDkDITHLdpXWgGS/9+8no3fg49bP+yx/hyw
- /wVM/FxQ2nli95Jn9dF5iwOO7sS/rgZY4eCbueC8LYd/KYVOj5/1FUx/27ICRQBurTMbJ5E5D
- 2NVI31Gk4cU15A2rT4cd/aPUF+M7wjNR2x7mPgaGiSr3y+o+nYOjaYPeRuld8oqA8CbIY1grs
- s1XCk2k4LgIR0Ia089XtohSraVNx35cWS4/E8vmfgsnu+VTzTDboBls3w
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB05.amd.com: radhey.shyam.pandey@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002315:EE_|CY5PR12MB6598:EE_
+X-MS-Office365-Filtering-Correlation-Id: d37f9438-61a2-4e2a-3676-08dd05a3ad9c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dJm3/uaImGQOdcfySngY3jjlyqUqeElHPL1wf/ISYTQ/7g6FgPhA4WjodsN0?=
+ =?us-ascii?Q?ubBrv7/dKEcuTqYix90E4zLRFdRkX/rO6VpSDgpSp7UDKyeg7JmKcQSFerEA?=
+ =?us-ascii?Q?XQHFbO99OvfMCTifnaVMFMmwuK0gMnewquIOjG27o8BQAgoFkMpq0KMXhzd0?=
+ =?us-ascii?Q?/LMCCDk2uBtDXuvru/+190EkFMCOsJTAfE4WAfaK7siWVlWub+4cHpnSr/0j?=
+ =?us-ascii?Q?8TSWCXTeMNSSsEqMX1GAW50mIaKeNbUvn1C3r5omKZGQKJmNfQwHaHCdAt+A?=
+ =?us-ascii?Q?VcROdExYtgU6MUTEiX6vlq/0393j/Glkktn7buVuKx9Dw/hDZGv07RFu6mSY?=
+ =?us-ascii?Q?MnvVYpGFktxE7Xon8Nmt0pGQ+sWbJ5XG4V2dy4rlPqSEwQO5I1X6LjKoCVi8?=
+ =?us-ascii?Q?M82LXJwpO5BaDtbxQQKMx7/GAxCfoeTl8MD1nQOOhY3PHeEyaY7GzfNOOMT3?=
+ =?us-ascii?Q?eIqI+exM/Er5npk/aEi9xAsg1qpCQdAJRH+Gy/nA5Jr4s5b/MEk4kAhHATzs?=
+ =?us-ascii?Q?Of3kaSvtLuHotKgtwjPwgGcXSBZ4QxqjROu2jB+vtYMpxNkUIpi4FMBGu9nL?=
+ =?us-ascii?Q?J/FcYYUL6nygHZrc9jsPoF8pMQIk9GaUzYcHRReLApqs+VsmyKx7/8EUe0KW?=
+ =?us-ascii?Q?ma5knuYdfWCAVs0cax6yCxPyGARc0YKF33OHSwknIygh0+C1IwwHnrXViQmL?=
+ =?us-ascii?Q?my+4+qBFyLb+DaylH6vF+H5NgmLbMeqlZhXMFfImm96YD0HGxirg006yYiTW?=
+ =?us-ascii?Q?GTc2pKq0jktmMBsESI+awtMQVPYplBhrdEyuorZ1bM0QOF9rFed9J6Y+y/WA?=
+ =?us-ascii?Q?68W8KZkUJYUz4ttaooZGHEEeOFdqjbeeDmcxiJvPcgUMLI385M7Swq1ff6SR?=
+ =?us-ascii?Q?+lzIhNKjJdA2RiOdoG9Uvwr22SVPRAivWLAniRyda3Ca23zmQ6/5pLU1qxRC?=
+ =?us-ascii?Q?+FWmW2oHkrBESHONMbdXUJXNqCRpd77HX0WXQJdf7j4gXyaaovByvNK9R6rX?=
+ =?us-ascii?Q?ejs+fHx8EnlFoQqCno+xPKFI0ZwOstr6ICvzQUfOFBq7rjIhcXsRBHDQbaD9?=
+ =?us-ascii?Q?zAuGs2ChcuSAgLt48E5CrX6hpEcJ8YCGvwUX+d+ZruB9AbSIl5D1dNedi4KZ?=
+ =?us-ascii?Q?cX7ZzuYWxKX3arC/pqVgjsH9GrgFkBUQULPcxsBR8/VyqDF5XRuy7ST4ZjJA?=
+ =?us-ascii?Q?TrhSaBndlG0+UzU5oe3LF+QARu8G2DT0SQS0KHmRBz8oKHt0y1jEe40yzBan?=
+ =?us-ascii?Q?7yT8sN3y2rjH0k8lSw6QmOX5wIhodLpId8L6JBMLCagP3IAYteWq+7PiM7jS?=
+ =?us-ascii?Q?okyoosfhhlg9id9hrTwqyUZW+n7lr/quF3IfaZ65Q00irMx9kYe8dmTqiq18?=
+ =?us-ascii?Q?fasKAKRyEUWd8Q1FTa0HO76icZCpi0/mY5dDBfowP0K6op7zTw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2024 18:31:10.5263
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d37f9438-61a2-4e2a-3676-08dd05a3ad9c
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002315.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6598
 
-Hi,
+From: Neal Frager <neal.frager@amd.com>
 
-Am 15.11.24 um 17:57 schrieb Ilpo J=C3=A4rvinen:
-> bwctrl cannot use IRQF_ONESHOT because it shares interrupt with other
-> service drivers that are not using IRQF_ONESHOT nor compatible with it.
->
-> Remove IRQF_ONESHOT from bwctrl and convert the irq thread to hardirq
-> handler. Rename the handler to pcie_bwnotif_irq() to indicate its new
-> purpose.
->
-> The IRQ handler is simple enough to not require not require other
-> changes.
->
-> Fixes: 058a4cb11620 ("PCI/bwctrl: Re-add BW notification portdrv as PCIe=
- BW controller")
-> Reported-by: Stefan Wahren <wahrenst@gmx.net>
-> Link: https://lore.kernel.org/linux-pci/dcd660fd-a265-4f47-8696-776a85e0=
-97a0@gmx.net/
-> Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-this fixed the probing issue. Thanks
+When the USB3 PHY is not defined in the Linux device tree, there could
+still be a case where there is a USB3 PHY is active on the board and
+enabled by the first stage bootloader.  If serdes clock is being used
+then the USB will fail to enumerate devices in 2.0 only mode.
 
-Tested-by: Stefan Wahren <wahrenst@gmx.net>
+To solve this, make sure that the PIPE clock is deselected whenever the
+USB3 PHY is not defined and guarantees that the USB2 only mode will work
+in all cases.
 
-Is there anything more I can/should test?
+Fixes: 9678f3361afc ("usb: dwc3: xilinx: Skip resets and USB3 register settings for USB2.0 mode")
+Signed-off-by: Neal Frager <neal.frager@amd.com>
+Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+---
+ drivers/usb/dwc3/dwc3-xilinx.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> ---
->   drivers/pci/pcie/bwctrl.c | 8 +++-----
->   1 file changed, 3 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/pci/pcie/bwctrl.c b/drivers/pci/pcie/bwctrl.c
-> index ff5d12e01f9c..a6c65bbe3735 100644
-> --- a/drivers/pci/pcie/bwctrl.c
-> +++ b/drivers/pci/pcie/bwctrl.c
-> @@ -230,7 +230,7 @@ static void pcie_bwnotif_disable(struct pci_dev *por=
-t)
->   				   PCI_EXP_LNKCTL_LBMIE | PCI_EXP_LNKCTL_LABIE);
->   }
->
-> -static irqreturn_t pcie_bwnotif_irq_thread(int irq, void *context)
-> +static irqreturn_t pcie_bwnotif_irq(int irq, void *context)
->   {
->   	struct pcie_device *srv =3D context;
->   	struct pcie_bwctrl_data *data =3D srv->port->link_bwctrl;
-> @@ -302,10 +302,8 @@ static int pcie_bwnotif_probe(struct pcie_device *s=
-rv)
->   	if (ret)
->   		return ret;
->
-> -	ret =3D devm_request_threaded_irq(&srv->device, srv->irq, NULL,
-> -					pcie_bwnotif_irq_thread,
-> -					IRQF_SHARED | IRQF_ONESHOT,
-> -					"PCIe bwctrl", srv);
-> +	ret =3D devm_request_irq(&srv->device, srv->irq, pcie_bwnotif_irq,
-> +			       IRQF_SHARED, "PCIe bwctrl", srv);
->   	if (ret)
->   		return ret;
->
+diff --git a/drivers/usb/dwc3/dwc3-xilinx.c b/drivers/usb/dwc3/dwc3-xilinx.c
+index e3738e1610db..a33a42ba0249 100644
+--- a/drivers/usb/dwc3/dwc3-xilinx.c
++++ b/drivers/usb/dwc3/dwc3-xilinx.c
+@@ -121,8 +121,11 @@ static int dwc3_xlnx_init_zynqmp(struct dwc3_xlnx *priv_data)
+ 	 * in use but the usb3-phy entry is missing from the device tree.
+ 	 * Therefore, skip these operations in this case.
+ 	 */
+-	if (!priv_data->usb3_phy)
++	if (!priv_data->usb3_phy) {
++		/* Deselect the PIPE Clock Select bit in FPD PIPE Clock register */
++		writel(PIPE_CLK_DESELECT, priv_data->regs + XLNX_USB_FPD_PIPE_CLK);
+ 		goto skip_usb3_phy;
++	}
+ 
+ 	crst = devm_reset_control_get_exclusive(dev, "usb_crst");
+ 	if (IS_ERR(crst)) {
+
+base-commit: 744cf71b8bdfcdd77aaf58395e068b7457634b2c
+-- 
+2.34.1
 
 
