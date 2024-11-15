@@ -1,146 +1,111 @@
-Return-Path: <linux-kernel+bounces-410908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25689CF047
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:39:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 872A99CF049
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:39:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E97C1F2999D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:39:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3371D1F299BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCC81F8934;
-	Fri, 15 Nov 2024 15:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00F81D61A4;
+	Fri, 15 Nov 2024 15:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eEafp7xh"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="REjxyaZK"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B12A1D5CEA;
-	Fri, 15 Nov 2024 15:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE841D5AA3
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 15:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731684732; cv=none; b=ta8hwlHXgYBdbPsUUIarvS1VUGiZOKf5vqUnZK3WeOD6F4oDQbNGs5BSiSlmVQKRzPeqkD3U5LRc6l3Xbbu/irUYuSg02Bu6htBL+l7LBsmg+ZWimiVCEWtXvzd6RX6QmWinLGY690FuTJKcjKhyM47Xr9kz3E9S30NEBis5eGk=
+	t=1731684753; cv=none; b=l95RelY3OzJ6/hjGtPM2EVylG1CjEs1X149C49NI/iKqy6f7riyH0ncEyO1R43rpRKMw5ILDLKmFesopXM/zH1XAhh1UqbTnDSSm1+eCaOeZR4ZHhQKnx0w+EhLzzorFcstzAZ6T75fijcFDp/tdACxUnJPtm318cqiSh9J8TaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731684732; c=relaxed/simple;
-	bh=RN9Jj7cHogNrffiEZA8NFS52iMspRx44QQcFduM5dms=;
+	s=arc-20240116; t=1731684753; c=relaxed/simple;
+	bh=0CFhd8gfYGRHeZj0ByvFZpXsFu0N3YQu237d8fhG4ps=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YVK2C3tABR3rCadjwXHPGkpmr34L2xFUQKCJP4/Op817g5GoSZQIYxnDd2J6E+RL0f7Hy0pSpSSMzAbYwPqyERy/XMez0kGKPWLiscou260Flp5vaDtD14+4zJ1Q3e5TKfLFuNDyNoxIU1MCNDmVIZuE/SRWCV39nrw5o0B5Isk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eEafp7xh; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20cf3e36a76so9927115ad.0;
-        Fri, 15 Nov 2024 07:32:11 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=amzgDx2cCC+kiM9QT7g1zsyVegawnfTnX+E/eG38DW8E948f0gwDchNRDHaR+PvKvzahtDxpAqV9TCqFtQ+A4YKbaQ2aqC0L55uGhfZkW/bzIDiElUlC8j6h4dCK4QlrMAnkPBOYAYlCeuFWXL67frwOkoUOrgPyMe4Xy8Yekao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=REjxyaZK; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb599aac99so19480601fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 07:32:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731684730; x=1732289530; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=t3mL9zxHm0hXSKqka75HzWuRbkoD06vFkDW9uQg2MYc=;
-        b=eEafp7xho7mW/TqWwIm3E9+O8bxECQQvyFVwUbroSysVMLDmxVefETVyMYuNq4Luxn
-         rE/PSydY6fToZ9tNPYr3DcyI4EmBvHio0g0+fyp0fTTIymf11jQE6+J+Kpj/zzvFtc3s
-         B682m6NBk7U5Ptnm9f/aoLekeVmwwhVFVQ7gh+Nx1dW1dDR0T1GGInBAKdFqSqLPSfSb
-         ggf+yA2wql1pLNRlm9oCd1jojUJSjhuwP4BZDqhVSQFWLCBrAneM+xezP40e7y/8xLEC
-         x2DtSFdXYrkscPyZge4s6Ak8v7eIvjEBgXubHP34ML+SmX6Tj7GJq6/3n/VDGtW7U3dK
-         QATg==
+        d=linaro.org; s=google; t=1731684750; x=1732289550; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BkWrPNuDCUOgiYdmMeZjioo9w/PMDYBkhAbCp9A1kgY=;
+        b=REjxyaZKBXgOI3oeiOMv6CDC+LPiDlF9MsVsQGdr6/nMo1tvEnFG/aXb7EhfCnzP/B
+         gBBOPXS+kwjJVlIWbZ1p9w8FTIKnLcIVXuvlFkePjO4/wFPQbhV9SfmZT+Sv8pQJjBEL
+         Cw6cSZ75LMEkYJ6YRZiEf93SIW1tf1OQj6wbCWBF5QaUoRVHFn8sa8hicdmi5bv/GmZx
+         yqVArvqqO4dOy+hWtA8Xh7NB9aiDARXTvO6O9KkMxdvZgfX+UTeZx5K4oO5Uw3G5A9r/
+         YeBZe1p3S6R6Y1IoCN9ESRzfb2IhvTEsyJuY92ZoB6MMw9T2jUe/JuA4VFBOzlkMAO17
+         +QVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731684730; x=1732289530;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t3mL9zxHm0hXSKqka75HzWuRbkoD06vFkDW9uQg2MYc=;
-        b=djDQqWeLOLjQFR45vl45nXt0rjeWPAtMFJiSU7dKhLobj+GbBei+dhCW0J2oGIXRgt
-         fYGR0uSY+A5L9iPmifs3nTLtK6oVwLP8+hcNV3xutpbT4JFRLCmR3FTmE9vGpzAMhOBs
-         77eBHTRX5HywHIRBllIaxEXAJD14aVUU3qoYIC4wZLAE/RzPQEBdW66f+8hUFxMNk7it
-         RRhO/KLIhKUkUcgqVqxI7thptfSZP6vl/ZMLLjPIcTxtlbsPRy8XuqgEOlQB8U5w2Y7T
-         wMypI9/aLb3lXjzIU8ESZKRk779Rh6p4Q4D/VPJympmidNhoE+kHg7IMECtSFRIjF7Lf
-         R+qw==
-X-Forwarded-Encrypted: i=1; AJvYcCVFspe4MReIPGRbfe/wivX/uaUJZuX7/bTPeQnOuG8DfGzOETzblMoZ75yAfEnlDdgST/ShefI9@vger.kernel.org, AJvYcCVPKXm5kpk+QyYpR29yJuK3vRJ5HLSukcMUbico36uYnDOT57SZUBKnW1cf1xUEbon9vaaoc/kNEa9tSR/g@vger.kernel.org, AJvYcCVUjP7HjbeA2yzudtGKoe+XOIS5HkuFHzzQjCANkem57kRwp4pieGZeYfhLV7kSbs61vAU=@vger.kernel.org, AJvYcCVbUVAbEHpfhiQZvpOOCMBs5uHOh7HpaX4Uu1ecHob87/CAQiS2TH7Iky8OhG1tEJk3Y40XJ32NUUwQCByGb8pa@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVRI4MkVx3PZcEdubOzdqnv+tMqBF7+VcIZjdAzbgIiM/3pbIB
-	2lP/Ar7k/uM0EJK3XBUHxCOvMQgIaHPMI4hIx+Fi1bjiNLZfoJ4=
-X-Google-Smtp-Source: AGHT+IFu+wWBbSvilK2OnzkPoK8R5vT66fi/p1DGzyvRqcs8PA0GgHoXEk/ABVqi78aUUYcKl9It+w==
-X-Received: by 2002:a17:903:22c5:b0:207:6fb:b04f with SMTP id d9443c01a7336-211d0d7f99amr39921495ad.17.1731684729575;
-        Fri, 15 Nov 2024 07:32:09 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea06f1a634sm2983489a91.14.2024.11.15.07.32.08
+        d=1e100.net; s=20230601; t=1731684750; x=1732289550;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BkWrPNuDCUOgiYdmMeZjioo9w/PMDYBkhAbCp9A1kgY=;
+        b=wUv/r9Z16spI0EKw8tLYei1SGn3Ah4/Z/X/1oYl9Hf9SJVBhKq6+zBwyySMiBkS8JM
+         wgtqBFyFbGNN6xSQAwkaYk/li/o1R52tEU4hOuMYsitf2W+Wjjuwuv8O9YQ8EjksJngy
+         I6BP7IeBIdsAYBSuaCxF9Nm5aGJiI1lckxUKhSrSVBJu+0j1pIkVlWizExnXSkwZ20on
+         QdZoW7idSBISqswzDnnNyuT4aV7gafFFZGjIwTdYQ5gSogYeAE5QdqSdr/UVb/Ae5i0+
+         L4F9A1THtU/6abHKd+MI6KI8w2SiYZIZjcP4qbIO5nq0Gvzbvy9/o8JjXtcma7EC41Cx
+         JPpg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4wdbYIjXoIzC48bjeuwsfDkS2jwyNxLQ790tRVfuXjmv7tic1hJ5TzdrHGgwA4UVLBooxddVrFD9XUc4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5OQ9iyCG2FrhVf2pQ2GaetEDJYvqwziAE9UYZQl1ko/J7nNPD
+	1Mk6R3VtfH7i0Mk+WUZwmSAsld6QGdFDlOhqo0L2lyO+Lx9uFNwcbKGOmeXzobE=
+X-Google-Smtp-Source: AGHT+IGwLJ7C85eX9ZxZjDgyQVwDz8bkc8hUQciSKzJsl8DWhYz3jPoa/azEUS8h57Jj8O3ZjWfgxg==
+X-Received: by 2002:a05:651c:1144:b0:2fb:3e01:b2bd with SMTP id 38308e7fff4ca-2ff606a8b78mr21256531fa.21.1731684749655;
+        Fri, 15 Nov 2024 07:32:29 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff59896e30sm5836551fa.115.2024.11.15.07.32.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 07:32:09 -0800 (PST)
-Date: Fri, 15 Nov 2024 07:32:08 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Alexis =?utf-8?Q?Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>, ebpf@linuxfoundation.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH bpf-next v2 09/13] selftests/bpf: move ip checksum helper
- to network helpers
-Message-ID: <ZzdpeMsHGh1zCZei@mini-arch>
-References: <20241114-flow_dissector-v2-0-ee4a3be3de65@bootlin.com>
- <20241114-flow_dissector-v2-9-ee4a3be3de65@bootlin.com>
+        Fri, 15 Nov 2024 07:32:28 -0800 (PST)
+Date: Fri, 15 Nov 2024 17:32:25 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Melody Olvera <quic_molvera@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, Trilok Soni <quic_tsoni@quicinc.com>, 
+	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/7] clk: qcom: clk-alpha-pll: Add support for
+ controlling Taycan PLLs
+Message-ID: <iupphuswrncjbkopirlodb4d45qvvu65cl4vyyqqmuv3zouq2a@cnvooym4ouh2>
+References: <20241112002807.2804021-1-quic_molvera@quicinc.com>
+ <20241112002807.2804021-4-quic_molvera@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241114-flow_dissector-v2-9-ee4a3be3de65@bootlin.com>
+In-Reply-To: <20241112002807.2804021-4-quic_molvera@quicinc.com>
 
-On 11/14, Alexis Lothoré (eBPF Foundation) wrote:
-> xdp_metadata test has a small helper computing ipv checksums to allow
-> manually building packets.
+On Mon, Nov 11, 2024 at 04:28:03PM -0800, Melody Olvera wrote:
+> From: Taniya Das <quic_tdas@quicinc.com>
 > 
-> Move this helper to network_helpers to share it with other tests.
+> Add clock ops for Taycan PLL, add the register offsets for supporting
+> the PLL.
 > 
-> Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
 > ---
-> Changes in v2:
-> - new patch
-> ---
->  tools/testing/selftests/bpf/network_helpers.h      | 23 ++++++++++++++++++++++
->  .../selftests/bpf/prog_tests/xdp_metadata.c        | 19 +-----------------
->  2 files changed, 24 insertions(+), 18 deletions(-)
+>  drivers/clk/qcom/clk-alpha-pll.c | 14 ++++++++++++++
+>  drivers/clk/qcom/clk-alpha-pll.h |  7 +++++++
+>  2 files changed, 21 insertions(+)
 > 
-> diff --git a/tools/testing/selftests/bpf/network_helpers.h b/tools/testing/selftests/bpf/network_helpers.h
-> index c72c16e1aff825439896b38e59962ffafe92dc71..c9b72960c651ab9fb249f6eb9e153b8416b7a488 100644
-> --- a/tools/testing/selftests/bpf/network_helpers.h
-> +++ b/tools/testing/selftests/bpf/network_helpers.h
-> @@ -104,6 +104,29 @@ static __u16 csum_fold(__u32 csum)
->  	return (__u16)~csum;
->  }
->  
 
-[..]
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-> +static unsigned long add_csum_hword(const __u16 *start, int num_u16)
-> +{
-> +	unsigned long sum = 0;
-> +	int i;
-> +
-> +	for (i = 0; i < num_u16; i++)
-> +		sum += start[i];
-> +
-> +	return sum;
-> +}
-
-Sorry for nitpicking, but can we call it csum_partial? And match
-kernel's prototype with extra sum argument? Should be more greppable
-for the future test cases that might want to use it...
+-- 
+With best wishes
+Dmitry
 
