@@ -1,169 +1,195 @@
-Return-Path: <linux-kernel+bounces-411052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A11E9CF245
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:00:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F0379CF24C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:02:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0690C285310
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:00:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BA6C2879BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F3E01D618A;
-	Fri, 15 Nov 2024 16:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA121CEE9F;
+	Fri, 15 Nov 2024 17:02:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="laRjnFn2"
-Received: from smtp-fw-52003.amazon.com (smtp-fw-52003.amazon.com [52.119.213.152])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tn4akfEV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6552E1D54EE;
-	Fri, 15 Nov 2024 16:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF16558BB;
+	Fri, 15 Nov 2024 17:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731689976; cv=none; b=c3f0dQSiDuYCLIRhIEpI2UQaMUr2w5ruYy/GF5Ixx3pyg2WePPzB1AFGpeKWj0QnXL0iT7aVfkmUXj9GeYfzDG4KRhuhmAfxZ7b1GkrREdYlEfsRMU1CDJCGWu1AT14MyAfury46J0Vej2MfSyNPF0oBSl99yK4lcaYITwzxQUg=
+	t=1731690141; cv=none; b=Dy0/6naaSRZWohjdFVetd1qRTb2We5P1aGW8gTBiZgkib5b1OcaOFmPscJCq4/ho2gy54p59NIaXor1rwvw8iqVH9sVBKZT2Y9hl9xerFt0b3Kqhk+5r7QGiib8tskVnMTjBGorXUGGmPknJGwycs25YfGseVt+UpoK9+HddjPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731689976; c=relaxed/simple;
-	bh=rCAZGrHxyMi8ZWuiy4vrVoFB/o2px9eAtNm57vvTsD8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SsDVMS2flgMqeIz2wCnZ98Otmpkiqlk5pfhOtbdGTSda9DgmkTH2UkU6L6u5bW/jLq6EJwM6XYFj4d2ly7fheOcHwtNlO2v7RlusuH3y2WTFXmekCCh5ffG1ANCZgyBNMRI5xYUozWp2YYaJr7yM44OC4ZARA+tFfKi4FstE22w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=laRjnFn2; arc=none smtp.client-ip=52.119.213.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazon201209; t=1731689975; x=1763225975;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=r+ZYPqHoQHDHwa2VIgKNI6m+YZlhrBPHGnCuiE8lbJI=;
-  b=laRjnFn27m05OXCz4NDYoKnyJotVUhNXpiqr37/6cIAgT7qM9EXC1TSv
-   YSeSukdPhRyZZADPPTv+vDu8nWQZI9Lav4tQYJdQmZCbdgN2J3X3eMCT+
-   LncSUJOoIm2prNnxDsLQgVpj8DkNV529UDntfc8qj6f07T+aWkTXvMyHb
-   o=;
-X-IronPort-AV: E=Sophos;i="6.12,157,1728950400"; 
-   d="scan'208";a="41628339"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.124.125.6])
-  by smtp-border-fw-52003.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 16:59:29 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.38.20:9599]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.61.54:2525] with esmtp (Farcaster)
- id 2d14af0a-2929-4c9e-8d1e-34cbf239d5b8; Fri, 15 Nov 2024 16:59:28 +0000 (UTC)
-X-Farcaster-Flow-ID: 2d14af0a-2929-4c9e-8d1e-34cbf239d5b8
-Received: from EX19D003UWB004.ant.amazon.com (10.13.138.24) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.217) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Fri, 15 Nov 2024 16:59:20 +0000
-Received: from EX19MTAUWB001.ant.amazon.com (10.250.64.248) by
- EX19D003UWB004.ant.amazon.com (10.13.138.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Fri, 15 Nov 2024 16:59:20 +0000
-Received: from email-imr-corp-prod-iad-all-1b-85daddd1.us-east-1.amazon.com
- (10.25.36.214) by mail-relay.amazon.com (10.250.64.254) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1258.34 via Frontend Transport; Fri, 15 Nov 2024 16:59:19 +0000
-Received: from [127.0.0.1] (dev-dsk-roypat-1c-dbe2a224.eu-west-1.amazon.com [172.19.88.180])
-	by email-imr-corp-prod-iad-all-1b-85daddd1.us-east-1.amazon.com (Postfix) with ESMTPS id 3F35B404E4;
-	Fri, 15 Nov 2024 16:59:14 +0000 (UTC)
-Message-ID: <f1f34ac0-d505-4982-aad9-86a0db9f4a35@amazon.co.uk>
-Date: Fri, 15 Nov 2024 16:59:13 +0000
+	s=arc-20240116; t=1731690141; c=relaxed/simple;
+	bh=3txChuxb2FgIOc2ar5fiDhSZp5OI4cSfiC+btm7Sw6Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lak2+nxBmkiKr0eNN9OY2ED3l1aVvsbTuNAqsmTrsKAGnMUR/kvlO/VAPgrBQalE5wYAf2FWOGGN9e5M3R3cHuphJ8tj1/kEe3u1yiKLB5aMZ4Y8c/shbhZCsSQcZDdkMZOIP03Zj7vSH+e9yR1HIxtJ9TXCCfGdpK4fjLAXZDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tn4akfEV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF280C4CECF;
+	Fri, 15 Nov 2024 17:02:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731690139;
+	bh=3txChuxb2FgIOc2ar5fiDhSZp5OI4cSfiC+btm7Sw6Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Tn4akfEV/3Pjb5eV9kmast/UbydSLSJ4nA9q6HVmlYVzuxNoKqAGbdYwSAAhrLEb2
+	 3xZyFabtN9kOMz5aG+wEpnVPjx1/hvBuRQZLUmiL7jF5/cxrgK77dfqNTwG8mM4VQ3
+	 tcejpXBd3GIuGSO9ghgPOP9TQ5XM/JDVo3LpiuC7dOjsS6ykRgQ4ZOe4P2OyCIQUdJ
+	 D49rI65MptlxZ3RpXFkL3SfvcQQW8rpB7DTQQQXzvOEkP24h0Rp0GWCiS4Y60/2a2F
+	 hs5owwuXhPBeBp3qWdsBSEo217JmibK2HC44W0O8EY+79ycwuXLLzCryJyL0A48yTq
+	 mIx8fn09c8ERQ==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb3da341c9so18316011fa.2;
+        Fri, 15 Nov 2024 09:02:19 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUp81sIA5b5OaGc2KE2eHMXDN3voe6hQUYuOFlBiPuwTk9bmHsQWGPzQLWN01CwSFa7DtvCXlBqvig=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbiJdk367X2oQ0wMiHKcP1Z4o+VoAwdnP/KOxtOkRXlgo+biq/
+	VedJplKVgDLLzmuMf0LxTUFYsN2KUoHHR4FuONq6zpQnwVREWG7LAwmvJWlv00XinlI6A/9H+Xe
+	Tpd1uWUgUARPsDvBumXm/3n3ty5s=
+X-Google-Smtp-Source: AGHT+IF+bn6lQVsV9JHm431U6oqIpcRAhQAC2udhvS++3ivuiWPWYBh/3DUt4ctADgmhM2HVsc9ybhQYPsRrp+tuDuk=
+X-Received: by 2002:a2e:bc22:0:b0:2fa:ce00:3689 with SMTP id
+ 38308e7fff4ca-2ff60621cfcmr22308601fa.6.1731690138028; Fri, 15 Nov 2024
+ 09:02:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 0/6] Direct Map Removal for guest_memfd
-To: David Hildenbrand <david@redhat.com>, <tabba@google.com>,
-	<quic_eberman@quicinc.com>, <seanjc@google.com>, <pbonzini@redhat.com>,
-	<jthoughton@google.com>, <ackerleytng@google.com>, <vannapurve@google.com>,
-	<rppt@kernel.org>
-CC: <graf@amazon.com>, <jgowans@amazon.com>, <derekmn@amazon.com>,
-	<kalyazin@amazon.com>, <xmarcalx@amazon.com>, <linux-mm@kvack.org>,
-	<corbet@lwn.net>, <catalin.marinas@arm.com>, <will@kernel.org>,
-	<chenhuacai@kernel.org>, <kernel@xen0n.name>, <paul.walmsley@sifive.com>,
-	<palmer@dabbelt.com>, <aou@eecs.berkeley.edu>, <hca@linux.ibm.com>,
-	<gor@linux.ibm.com>, <agordeev@linux.ibm.com>, <borntraeger@linux.ibm.com>,
-	<svens@linux.ibm.com>, <gerald.schaefer@linux.ibm.com>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, <hpa@zytor.com>, <luto@kernel.org>, <peterz@infradead.org>,
-	<rostedt@goodmis.org>, <mhiramat@kernel.org>,
-	<mathieu.desnoyers@efficios.com>, <shuah@kernel.org>, <kvm@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <loongarch@lists.linux.dev>,
-	<linux-riscv@lists.infradead.org>, <linux-s390@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<faresx@amazon.com>
-References: <20241030134912.515725-1-roypat@amazon.co.uk>
- <4aa0ccf4-ebbe-4244-bc85-8bc8dcd14e74@redhat.com>
- <27646c08-f724-49f7-9f45-d03bad500219@amazon.co.uk>
- <d1a69eb7-85d5-4ffa-88e2-f4841713c1d7@redhat.com>
- <90c9d8c0-814e-4c86-86ef-439cb5552cb6@amazon.co.uk>
- <10e4d078-3cdb-4d1c-a1a3-80e91b247217@redhat.com>
- <02f77d32-e2a1-431b-bb67-33d36c06acd3@amazon.co.uk>
- <f4c5d0a6-a582-44e3-8949-c199cc0bfba7@redhat.com>
-From: Patrick Roy <roypat@amazon.co.uk>
-Content-Language: en-US
-Autocrypt: addr=roypat@amazon.co.uk; keydata=
- xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
- NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
- wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
- CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
- AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
- AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
- IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
- 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
- 8hlxFQM=
-In-Reply-To: <f4c5d0a6-a582-44e3-8949-c199cc0bfba7@redhat.com>
+References: <ZyizcvscUWIyZYdE@grain> <Zyi11v-6V_ivKS5x@grain> <Zyi6g8W0OqKcng6S@grain>
+In-Reply-To: <Zyi6g8W0OqKcng6S@grain>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 15 Nov 2024 18:02:07 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXEujWSOLjtwqSrmeP8yxuYof_Vn-vPVFi+gA2m=p64sEw@mail.gmail.com>
+Message-ID: <CAMj1kXEujWSOLjtwqSrmeP8yxuYof_Vn-vPVFi+gA2m=p64sEw@mail.gmail.com>
+Subject: Re: [PATCH v2] efi: Fix memory leak in efivar_ssdt_load
+To: Cyrill Gorcunov <gorcunov@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-efi@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+
+On Mon, 4 Nov 2024 at 13:14, Cyrill Gorcunov <gorcunov@gmail.com> wrote:
+>
+> When we load ssdt from efi variable (specified with efivar_ssdt=something
+> boot command line argument) a name for the variable is allocated
+> dynamically because we traverse all efi variables. Unlike an acpi table
+> data, which is later used by acpi engine, the name is no longer needed
+> once traverse is complete -- don't forget to free this memory.
+>
+> Same time we silently ignore any errors happened here lets print
+> a message if something went wrong (but do not exit since this is
+> not a critical error and the system should continue to boot).
+>
+> Also while here -- add a note why we keep ssdt table on success.
+>
+> Signed-off-by: Cyrill Gorcunov <gorcunov@gmail.com>
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> ---
+> It is still unclear for me why we don't exit with error if acpi_load_table
+> failed but continue to iterate keys and don't report a caller with error
+> instead. I didn't change this logic for backward compatibility sake but
+> still looks suspicious.
+>
+
+I've queued this up now.
+
+I think there may be cases where it might make sense, or at least,
+where currently, we might rely on the behavior where acpi_load_table()
+failures are ignored. If a table references an object that does not
+exist in the namespace (e.g., because some I2C controller is
+disabled), it might still make sense to load remaining SSDTs if they
+describe things that are unrelated.
+
+But frankly, I think this is a very niche feature, and I'm not sure
+supporting more than one table is that useful to begin with. You can
+always merge SSDTs into a single one if needed (and things like this
+are not the job of the OS imho)
 
 
-
-On Tue, 2024-11-12 at 14:52 +0000, David Hildenbrand wrote:
-> On 12.11.24 15:40, Patrick Roy wrote:
->> I remember talking to someone at some point about whether we could reuse
->> the proc-local stuff for guest memory, but I cannot remember the outcome
->> of that discussion... (or maybe I just wanted to have a discussion about
->> it, but forgot to follow up on that thought?).  I guess we wouldn't use
->> proc-local _allocations_, but rather just set up proc-local mappings of
->> the gmem allocations that have been removed from the direct map.
-> 
-> Yes. And likely only for memory we really access / try access, if possible.
-
-Well, if we start on-demand mm-local mapping the things we want to
-access, we're back in TLB flush hell, no? And we can't know
-ahead-of-time what needs to be mapped, so everything would need to be
-mapped (unless we do something like mm-local mapping a page on first
-access, and then just never unmapping it again, under the assumption
-that establishing the mapping won't be expensive)
-
->>
->> I'm wondering, where exactly would be the differences to Sean's idea
->> about messing with the CR3 register inside KVM to temporarily install
->> page tables that contain all the gmem stuff, conceptually? Wouldn't we
->> run into the same interrupt problems that Sean foresaw for the CR3
->> stuff? (which, admittedly, I still don't quite follow what these are :(
->> ).
-> 
-> I'd need some more details on that. If anything would rely on the direct
-> mapping (from IRQ context?) than ... we obviously cannot remove the
-> direct mapping :)
-
-I've talked to Fares internally, and it seems that generally doing
-mm-local mappings of guest memory would work for us. We also figured out
-what the "interrupt problem" is, namely that if we receive an interrupt
-while executing in a context that has mm-local mappings available, those
-mappings will continue to be available while the interrupt is being
-handled. I'm talking to my security folks to see how much of a concern
-this is for the speculation hardening we're trying to achieve. Will keep
-you in the loop there :)
-
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
-
-Best, 
-Patrick
+>  drivers/firmware/efi/efi.c |   41 ++++++++++++++++++++++++++++-------------
+>  1 file changed, 28 insertions(+), 13 deletions(-)
+>
+> Index: linux-tip.git/drivers/firmware/efi/efi.c
+> ===================================================================
+> --- linux-tip.git.orig/drivers/firmware/efi/efi.c
+> +++ linux-tip.git/drivers/firmware/efi/efi.c
+> @@ -273,6 +273,7 @@ static __init int efivar_ssdt_load(void)
+>         efi_char16_t *name = NULL;
+>         efi_status_t status;
+>         efi_guid_t guid;
+> +       int ret = 0;
+>
+>         if (!efivar_ssdt[0])
+>                 return 0;
+> @@ -294,8 +295,8 @@ static __init int efivar_ssdt_load(void)
+>                         efi_char16_t *name_tmp =
+>                                 krealloc(name, name_size, GFP_KERNEL);
+>                         if (!name_tmp) {
+> -                               kfree(name);
+> -                               return -ENOMEM;
+> +                               ret = -ENOMEM;
+> +                               goto out;
+>                         }
+>                         name = name_tmp;
+>                         continue;
+> @@ -309,26 +310,38 @@ static __init int efivar_ssdt_load(void)
+>                 pr_info("loading SSDT from variable %s-%pUl\n", efivar_ssdt, &guid);
+>
+>                 status = efi.get_variable(name, &guid, NULL, &data_size, NULL);
+> -               if (status != EFI_BUFFER_TOO_SMALL || !data_size)
+> -                       return -EIO;
+> +               if (status != EFI_BUFFER_TOO_SMALL || !data_size) {
+> +                       ret = -EIO;
+> +                       goto out;
+> +               }
+>
+>                 data = kmalloc(data_size, GFP_KERNEL);
+> -               if (!data)
+> -                       return -ENOMEM;
+> +               if (!data) {
+> +                       ret = -ENOMEM;
+> +                       goto out;
+> +               }
+>
+>                 status = efi.get_variable(name, &guid, NULL, &data_size, data);
+>                 if (status == EFI_SUCCESS) {
+> -                       acpi_status ret = acpi_load_table(data, NULL);
+> -                       if (ret)
+> -                               pr_err("failed to load table: %u\n", ret);
+> -                       else
+> +                       acpi_status acpi_ret = acpi_load_table(data, NULL);
+> +                       if (ACPI_FAILURE(acpi_ret)) {
+> +                               pr_err("efivar_ssdt: failed to load table: %u\n",
+> +                                      acpi_ret);
+> +                       } else {
+> +                               /*
+> +                                * The @data will be in use by ACPI engine,
+> +                                * do not free it!
+> +                                */
+>                                 continue;
+> +                       }
+>                 } else {
+> -                       pr_err("failed to get var data: 0x%lx\n", status);
+> +                       pr_err("efivar_ssdt: failed to get var data: 0x%lx\n", status);
+>                 }
+>                 kfree(data);
+>         }
+> -       return 0;
+> +out:
+> +       kfree(name);
+> +       return ret;
+>  }
+>  #else
+>  static inline int efivar_ssdt_load(void) { return 0; }
+> @@ -433,7 +446,9 @@ static int __init efisubsys_init(void)
+>                 error = generic_ops_register();
+>                 if (error)
+>                         goto err_put;
+> -               efivar_ssdt_load();
+> +               error = efivar_ssdt_load();
+> +               if (error)
+> +                       pr_err("efi: failed to load SSDT, error %d.\n", error);
+>                 platform_device_register_simple("efivars", 0, NULL, 0);
+>         }
+>
+>
 
