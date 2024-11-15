@@ -1,161 +1,322 @@
-Return-Path: <linux-kernel+bounces-410693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC7DF9CDFDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:25:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97D399CDFF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:31:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73C261F23AD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:25:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4488B25CB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A871BE871;
-	Fri, 15 Nov 2024 13:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004B11B6CF1;
+	Fri, 15 Nov 2024 13:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H2RVY6Yl"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sernet.de header.i=@sernet.de header.b="Pkr/HS73";
+	dkim=permerror (0-bit key) header.d=sernet.de header.i=@sernet.de header.b="DN28LtbG"
+Received: from mail.sernet.de (mail.sernet.de [185.199.217.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005511B85EC;
-	Fri, 15 Nov 2024 13:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065852629D;
+	Fri, 15 Nov 2024 13:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.199.217.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731677149; cv=none; b=LIv2A5wQwgQSZbThuOBa6ibHdLalucaiu1STASTCU6xEQxDWwnq2u3h9rgHkgSZSwfr4Wv3Art7g57ZI6Qw0KeBJf5lbfTwDZlvgHgDqqpaBEDQG/Wt6HmaEmEldv0zp39hYceWXDGB7290agqttg2IIvTcbO56j7sK5IWIrpC4=
+	t=1731677502; cv=none; b=bOXVEkYYx7FnkxAWfQnMaVBr8i8fEAHrmYSguviN1V7cy1pYyFtmuMRmc8DGq4FWj28qoolzZPHt3K1guBTb8L78AJdEDhttSx/Xi/D7eJud4On0+OP42tK/RhLDxsuu1DtPCJ+o5RoAa+qfdVMYIFt08PkeOKlT546VsDHptCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731677149; c=relaxed/simple;
-	bh=4B5oeUK6/jbemP4QwIO7GYzG5tkdJuJsHjYt3C78Gl8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aejMVstkQgvOXtdKCd9ymCTbNanzr2RoLNhDySzLF9964VNSyIc+NzHjaCToeA04hBa/XIWY/1A6x3EMv/g6Xic0b41lKR0ObSSjgUKZG5Llj2oWw8ff4zy7KEN8Dvff+44FdN+gcZbVYMZ/JllsO9D//2pkaYnURoInN2JTOVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H2RVY6Yl; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71e953f4e7cso1460572b3a.3;
-        Fri, 15 Nov 2024 05:25:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731677147; x=1732281947; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ucy62BZOJLWyZBpQLjqHTc1f1/F23x403Dd196TgvE4=;
-        b=H2RVY6YlIG+Q9n8gglAadGHvsiHfXkU+tL35n9BoPtQX2MjmNLZDXjjcr43lZrOnxS
-         IcWYTOCopuH3bZihDqZeSxahomz1VyATCTrul8S7zFQe2cd84WfYzHSjSDZVPk1zHv1x
-         kfnK0f1KYqs6rpkmX8yfgp/PBqKJ0smz74pBWI0xXU7KoN6ILvTB7oxeHT1EO4IZT+6U
-         oSwIiUrGwbAqhs9NwTfuM6MpVT/h/mm+ij0aayFn4a52fQTtDANwPfLpdoSSzRkdkBvN
-         QY9CnEOha65ry8SAiZLRmGtrm0cYWNxU1wMf9pevgR4WJQSbkK0XKU3+yWzASyrrBuuU
-         Ep4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731677147; x=1732281947;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ucy62BZOJLWyZBpQLjqHTc1f1/F23x403Dd196TgvE4=;
-        b=shtb0vEIHLSy58LOv+AY4mCGNbtdMkwiHZFl/g3PBeJyDarT0C9Z4xgBDj9vZY0Tgc
-         ODK43LwPR16fhIn2/EH1TVbI5N675ZwJnuqB6k5I1fyDWH3MEigteTydLXpGZPwpsceB
-         jGPZX4Br3in1AhWQwRjbH4aRanGAZ3yWqmTmjrGXtrRlv1sDMNqc2lajAep5bBKqMveJ
-         VpSEf6aZ95cLo/KgOBqxD3JfiCt0GhjTN5rLkVKxCPVEmxgl1h6/pQjIRF6tRoljbsKq
-         sPMY17oK53E5kMgAfWguIWA6+OvvF0EtKqRK/pyiIJhzc6EUVFatjvstdpEcHxRpVuJ0
-         hs9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUlHOFNm/3YZb5dtRnIq4O0ma1lhe0p5FRJ6sA1WDUQDaB8EXg4a8fvI3xzGOkAp85kvaj2uauRPI26@vger.kernel.org, AJvYcCV5YSpM5I/F4PXOz35aYgDREzaEj4GN4M6Mo7bMX7ujnHTG2/odzkhLe+05e1QYkAY8mptts1iIG9FgtDDl@vger.kernel.org
-X-Gm-Message-State: AOJu0YypDKwwM+Vc4wRcTg1oMzZLg8lBEqqvmXZYD8csk9nK6N0CWXR3
-	h+O0BfucWRQvNtYxiLEqWIR4Af+BXL5glup95pW2Wo9ZZEZb30pb
-X-Google-Smtp-Source: AGHT+IF0jlNXXc3zGvbQG4ypYJEla/PXxxiW6xj1VKhzYV4SFOwlaXUfIWAdDmA37lLspv8Us4pQMw==
-X-Received: by 2002:a05:6a00:853:b0:71e:66b:c7eb with SMTP id d2e1a72fcca58-72476cdc9f1mr3317158b3a.23.1731677147165;
-        Fri, 15 Nov 2024 05:25:47 -0800 (PST)
-Received: from ?IPV6:2409:40c0:48:969e:e221:9e2d:e416:1b41? ([2409:40c0:48:969e:e221:9e2d:e416:1b41])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7247711e39esm1314426b3a.77.2024.11.15.05.25.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 05:25:46 -0800 (PST)
-Message-ID: <090f78b1-88c9-44e5-959f-07b4f97cd1bc@gmail.com>
-Date: Fri, 15 Nov 2024 18:55:41 +0530
+	s=arc-20240116; t=1731677502; c=relaxed/simple;
+	bh=8dH40fHeAB8mPKH36k3YfaWAQFM8Z8o4mBCVOtAw02s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EK9EVYcrfSBbrwXzh1tY++BUQ7DxHZjuD9CMUQMDWvC9EbO16YdAZ38d/W7PWTSg0oUtWWQrpc42M9JcPMXJOzVsQEmt3QBuO+ARRv8W23OTNTgMH7SJwoaohY+f1JUiTW+Vf8Vmcc5hiEDPcJTD11eERCt5j5kj0EnP3ALpGRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=SerNet.DE; spf=pass smtp.mailfrom=sernet.de; dkim=pass (2048-bit key) header.d=sernet.de header.i=@sernet.de header.b=Pkr/HS73; dkim=permerror (0-bit key) header.d=sernet.de header.i=@sernet.de header.b=DN28LtbG; arc=none smtp.client-ip=185.199.217.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=SerNet.DE
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sernet.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sernet.de;
+	s=20210621-rsa; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ScSxaEuZD9+t/9IPOrO9gPFXrhTL//cUtOGatP2bKnU=; b=Pkr/HS73g+lmekF2MNc+/palfC
+	ETltO/AnSQ0M5VY9Gsp03DYXx42eHmnbHXvq/4/x+5YtteJlwFHGRknSDPdAOZVIoq/2yoRXHk9aT
+	DxFjzvHL3M2bmDQbfXryI8mraw1PS6K4JbHrGtNhDHYO6EapZ3SbYUX2HMCshLHOszbJ3c164ENAf
+	VA+W6rCigrqQTf0Sene9MFPJSwvNT4MCnQ36ziCKvdIIqfg09TsnN2Lfm/XypHX9bwamlFVRRiZpi
+	SPg2ngizIwdvzmh2A3iLnl4QK226izdmDSNpx3B0OLkTG5FKPJ7quroqdC8fAvVDTF/Rk7DQ+JPv3
+	LYHf8rcA==;
+DKIM-Signature: v=1; a=ed25519-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sernet.de; s=20210621-ed25519; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ScSxaEuZD9+t/9IPOrO9gPFXrhTL//cUtOGatP2bKnU=; b=DN28LtbGfx2FuM/UQTlP0GPG6Y
+	qeJQUTFj7y9HoqmrFLOrKjnyuKmOY8cEI0Y2GQpizEodkqZWn+wgIII3bvDw==;
+Date: Fri, 15 Nov 2024 14:26:19 +0100
+From: =?iso-8859-1?Q?Bj=F6rn?= JACKE <bjacke@SerNet.DE>
+To: Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] cifs: Add new mount option -o nounicode to disable
+ SMB1 UNICODE mode
+Message-ID: <20241115132619.GA581468@sernet.de>
+References: <20241028110340.29911-1-pali@kernel.org>
+ <20241028110340.29911-2-pali@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] gpio: gpio-exar: replace division condition with direct
- comparison
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241112201659.16785-1-surajsonawane0215@gmail.com>
- <ZzcWGJxqMJVYd4Tp@black.fi.intel.com>
-Content-Language: en-US
-From: Suraj Sonawane <surajsonawane0215@gmail.com>
-In-Reply-To: <ZzcWGJxqMJVYd4Tp@black.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241028110340.29911-2-pali@kernel.org>
+X-Q: Die Schriftsteller koennen nicht so schnell schreiben, wie die
+ Regierungen Kriege machen; denn das Schreiben verlangt Denkarbeit. - Brecht
 
-On 15/11/24 15:06, Andy Shevchenko wrote:
-> + Dan
-> 
-> I have to comment on this change as it's a bit controversial.
-> 
-> TL;DR: this patch is not more than a (harmless?) noise.
-> 
-> On Wed, Nov 13, 2024 at 01:46:59AM +0530, Suraj Sonawane wrote:
->> Fix an issue detected by the Smatch tool:
->>
->> drivers/gpio/gpio-exar.c:52 exar_offset_to_sel_addr() warn:
->> replace divide condition 'pin / 8' with 'pin >= 8'
->> drivers/gpio/gpio-exar.c:62 exar_offset_to_lvl_addr() warn:
->> replace divide condition 'pin / 8' with 'pin >= 8'
-> 
-> This message does not really explain why.
-> 
->> The division 'pin / 8' was used to check if the pin number is 8 or greater,
->> which can be confusing and less readable.
-> 
-> It's inaccurate description. Everyone who is familiar with GPIO HW is
-> also familiar with line grouping in banks. Here is the clear statement
-> "get the bank number (where 8 lines per bank), and if it's 0 do this,
-> else do that". It might be in the future that (new version of) HW will
-> gain more banks and we would return to "division".
-> 
->> Replacing it with 'pin >= 8' makes the code clearer by directly
->> comparing the pin number.
-> 
-> I don't think this statement is fully true. See above.
-> 
->> This also removes reliance on integer division,
-> 
-> On top of that "division" here uses power-of-two divisor, which any
-> optimizing (and this code I think won't ever be built without
-> optimization turned on) compiler (I think from the very beginning of
-> the Linux kernel project) knows how to convert to right shifts on
-> the platforms that support that (and how many do not nowadays? 0?).
-> 
-> Additionally in the cases when we have a / 8; a % 8 type of expressions
-> coupled together, the compiler actually may issue an integer division
-> assembly instructions on some ISAs where it gives two values in one
-> go. Replacing like the above might break that (if the compiler is old
-> or not clever enough).
-> 
->> which can be harder to understand
-> 
-> No, "division" by power-of-two numbers is very well understandble.
-> 
->> and may introduce subtle bugs in the future.
-> 
-> What bugs?
-> 
-> The bottom line is that: I recommend to work with smatch developers
-> to amend smatch instead.
-> 
-> P.S. I wouldn't like to see similar patches to other GPIO drivers,
-> especially those that use a / 8; a % 8 type of expressions together.
-> 
+you can  simply use iocharset=iso8859-1 mount option if you want to get legacy
+charsets on the client side to work. I don't think that it's a good idea to
+mess with the ancient non-unicode flag of SMB.
 
-I understand your points about the familiarity of line grouping in GPIO 
-hardware and the optimization behavior of compilers for power-of-two 
-division. I initially thought this could be a good fix as I have seen 
-similar changes before. Thank you for the feedbackâ€”I will keep this in 
-mind before submitting such patches in the future.
+Björn
 
-Best regards,
-Suraj Sonawane
+On 2024-10-28 at 12:03 +0100 Pali Rohár sent off:
+> SMB1 protocol supports non-UNICODE (8-bit OEM character set) and
+> UNICODE (UTF-16) modes.
+> 
+> Linux SMB1 client implements both of them but currently does not allow to
+> choose non-UNICODE mode when SMB1 server announce UNICODE mode support.
+> 
+> This change adds a new mount option -o nounicode to disable UNICODE mode
+> and force usage of non-UNICODE (8-bit OEM character set) mode.
+> 
+> This allows to test non-UNICODE implementation of Linux SMB1 client against
+> any SMB1 server, including modern and recent Windows SMB1 server.
+> 
+> Signed-off-by: Pali Rohár <pali@kernel.org>
+> ---
+>  fs/smb/client/cifsfs.c     |  4 ++++
+>  fs/smb/client/cifsglob.h   |  2 ++
+>  fs/smb/client/cifssmb.c    |  5 ++++-
+>  fs/smb/client/connect.c    | 32 +++++++++++++++++++++++++++++---
+>  fs/smb/client/fs_context.c | 11 +++++++++++
+>  fs/smb/client/fs_context.h |  2 ++
+>  fs/smb/client/sess.c       |  1 +
+>  fs/smb/client/smb1ops.c    |  1 +
+>  8 files changed, 54 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
+> index 1decf91d3f61..447ed7831f2c 100644
+> --- a/fs/smb/client/cifsfs.c
+> +++ b/fs/smb/client/cifsfs.c
+> @@ -611,6 +611,10 @@ cifs_show_options(struct seq_file *s, struct dentry *root)
+>  					   cifs_sb->ctx->dir_mode);
+>  	if (cifs_sb->ctx->iocharset)
+>  		seq_printf(s, ",iocharset=%s", cifs_sb->ctx->iocharset);
+> +	if (tcon->ses->unicode == 0)
+> +		seq_puts(s, ",nounicode");
+> +	else if (tcon->ses->unicode == 1)
+> +		seq_puts(s, ",unicode");
+>  	if (tcon->seal)
+>  		seq_puts(s, ",seal");
+>  	else if (tcon->ses->server->ignore_signature)
+> diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
+> index dcee43889358..2f77b558abe8 100644
+> --- a/fs/smb/client/cifsglob.h
+> +++ b/fs/smb/client/cifsglob.h
+> @@ -651,6 +651,7 @@ struct smb_version_values {
+>  	unsigned int	cap_unix;
+>  	unsigned int	cap_nt_find;
+>  	unsigned int	cap_large_files;
+> +	unsigned int	cap_unicode;
+>  	__u16		signing_enabled;
+>  	__u16		signing_required;
+>  	size_t		create_lease_size;
+> @@ -1124,6 +1125,7 @@ struct cifs_ses {
+>  	bool sign;		/* is signing required? */
+>  	bool domainAuto:1;
+>  	bool expired_pwd;  /* track if access denied or expired pwd so can know if need to update */
+> +	int unicode;
+>  	unsigned int flags;
+>  	__u16 session_flags;
+>  	__u8 smb3signingkey[SMB3_SIGN_KEY_SIZE];
+> diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
+> index c6f15dbe860a..6218b59b9da7 100644
+> --- a/fs/smb/client/cifssmb.c
+> +++ b/fs/smb/client/cifssmb.c
+> @@ -423,7 +423,10 @@ CIFSSMBNegotiate(const unsigned int xid,
+>  		return rc;
+>  
+>  	pSMB->hdr.Mid = get_next_mid(server);
+> -	pSMB->hdr.Flags2 |= (SMBFLG2_UNICODE | SMBFLG2_ERR_STATUS);
+> +	pSMB->hdr.Flags2 |= SMBFLG2_ERR_STATUS;
+> +
+> +	if (ses->unicode != 0)
+> +		pSMB->hdr.Flags2 |= SMBFLG2_UNICODE;
+>  
+>  	if (should_set_ext_sec_flag(ses->sectype)) {
+>  		cifs_dbg(FYI, "Requesting extended security\n");
+> diff --git a/fs/smb/client/connect.c b/fs/smb/client/connect.c
+> index 612816ec71f5..3d9d736b6e58 100644
+> --- a/fs/smb/client/connect.c
+> +++ b/fs/smb/client/connect.c
+> @@ -2338,6 +2338,7 @@ cifs_get_smb_ses(struct TCP_Server_Info *server, struct smb3_fs_context *ctx)
+>  	ses->cred_uid = ctx->cred_uid;
+>  	ses->linux_uid = ctx->linux_uid;
+>  
+> +	ses->unicode = ctx->unicode;
+>  	ses->sectype = ctx->sectype;
+>  	ses->sign = ctx->sign;
+>  	ses->local_nls = load_nls(ctx->local_nls->charset);
+> @@ -3928,7 +3929,7 @@ cifs_setup_session(const unsigned int xid, struct cifs_ses *ses,
+>  		   struct TCP_Server_Info *server,
+>  		   struct nls_table *nls_info)
+>  {
+> -	int rc = -ENOSYS;
+> +	int rc = 0;
+>  	struct TCP_Server_Info *pserver = SERVER_IS_CHAN(server) ? server->primary_server : server;
+>  	struct sockaddr_in6 *addr6 = (struct sockaddr_in6 *)&pserver->dstaddr;
+>  	struct sockaddr_in *addr = (struct sockaddr_in *)&pserver->dstaddr;
+> @@ -3980,6 +3981,26 @@ cifs_setup_session(const unsigned int xid, struct cifs_ses *ses,
+>  		if (!linuxExtEnabled)
+>  			ses->capabilities &= (~server->vals->cap_unix);
+>  
+> +		/*
+> +		 * Check if the server supports specified encoding mode.
+> +		 * Zero value in vals->cap_unicode indidcates that chosen
+> +		 * protocol dialect does not support non-UNICODE mode.
+> +		 */
+> +		if (ses->unicode == 1 && server->vals->cap_unicode != 0 &&
+> +		    !(server->capabilities & server->vals->cap_unicode)) {
+> +			cifs_dbg(VFS, "Server does not support mounting in UNICODE mode\n");
+> +			rc = -EOPNOTSUPP;
+> +		} else if (ses->unicode == 0 && server->vals->cap_unicode == 0) {
+> +			cifs_dbg(VFS, "Server does not support mounting in non-UNICODE mode\n");
+> +			rc = -EOPNOTSUPP;
+> +		} else if (ses->unicode == 0) {
+> +			/*
+> +			 * When UNICODE mode was explicitly disabled then
+> +			 * do not announce client UNICODE capability.
+> +			 */
+> +			ses->capabilities &= (~server->vals->cap_unicode);
+> +		}
+> +
+>  		if (ses->auth_key.response) {
+>  			cifs_dbg(FYI, "Free previous auth_key.response = %p\n",
+>  				 ses->auth_key.response);
+> @@ -3992,8 +4013,12 @@ cifs_setup_session(const unsigned int xid, struct cifs_ses *ses,
+>  	cifs_dbg(FYI, "Security Mode: 0x%x Capabilities: 0x%x TimeAdjust: %d\n",
+>  		 server->sec_mode, server->capabilities, server->timeAdj);
+>  
+> -	if (server->ops->sess_setup)
+> -		rc = server->ops->sess_setup(xid, ses, server, nls_info);
+> +	if (!rc) {
+> +		if (server->ops->sess_setup)
+> +			rc = server->ops->sess_setup(xid, ses, server, nls_info);
+> +		else
+> +			rc = -ENOSYS;
+> +	}
+>  
+>  	if (rc) {
+>  		cifs_server_dbg(VFS, "Send error in SessSetup = %d\n", rc);
+> @@ -4063,6 +4088,7 @@ cifs_construct_tcon(struct cifs_sb_info *cifs_sb, kuid_t fsuid)
+>  	ctx->seal = master_tcon->seal;
+>  	ctx->witness = master_tcon->use_witness;
+>  	ctx->dfs_root_ses = master_tcon->ses->dfs_root_ses;
+> +	ctx->unicode = master_tcon->ses->unicode;
+>  
+>  	rc = cifs_set_vol_auth(ctx, master_tcon->ses);
+>  	if (rc) {
+> diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
+> index 7dd46cfc9fb3..d970b66e529c 100644
+> --- a/fs/smb/client/fs_context.c
+> +++ b/fs/smb/client/fs_context.c
+> @@ -127,6 +127,7 @@ const struct fs_parameter_spec smb3_fs_parameters[] = {
+>  	fsparam_flag("rootfs", Opt_rootfs),
+>  	fsparam_flag("compress", Opt_compress),
+>  	fsparam_flag("witness", Opt_witness),
+> +	fsparam_flag_no("unicode", Opt_unicode),
+>  
+>  	/* Mount options which take uid or gid */
+>  	fsparam_uid("backupuid", Opt_backupuid),
+> @@ -930,6 +931,10 @@ static int smb3_verify_reconfigure_ctx(struct fs_context *fc,
+>  		cifs_errorf(fc, "can not change iocharset during remount\n");
+>  		return -EINVAL;
+>  	}
+> +	if (new_ctx->unicode != old_ctx->unicode) {
+> +		cifs_errorf(fc, "can not change unicode during remount\n");
+> +		return -EINVAL;
+> +	}
+>  
+>  	return 0;
+>  }
+> @@ -1520,6 +1525,10 @@ static int smb3_fs_context_parse_param(struct fs_context *fc,
+>  		ctx->witness = true;
+>  		pr_warn_once("Witness protocol support is experimental\n");
+>  		break;
+> +	case Opt_unicode:
+> +		ctx->unicode = !result.negated;
+> +		cifs_dbg(FYI, "unicode set to %d\n", ctx->unicode);
+> +		break;
+>  	case Opt_rootfs:
+>  #ifndef CONFIG_CIFS_ROOT
+>  		cifs_dbg(VFS, "rootfs support requires CONFIG_CIFS_ROOT config option\n");
+> @@ -1816,6 +1825,8 @@ int smb3_init_fs_context(struct fs_context *fc)
+>  	ctx->symlink_type = CIFS_SYMLINK_TYPE_DEFAULT;
+>  	ctx->nonativesocket = 0;
+>  
+> +	ctx->unicode = -1; /* autodetect, but prefer UNICODE mode */
+> +
+>  /*
+>   *	short int override_uid = -1;
+>   *	short int override_gid = -1;
+> diff --git a/fs/smb/client/fs_context.h b/fs/smb/client/fs_context.h
+> index 18d39d457145..1514e05e6629 100644
+> --- a/fs/smb/client/fs_context.h
+> +++ b/fs/smb/client/fs_context.h
+> @@ -127,6 +127,7 @@ enum cifs_param {
+>  	Opt_multichannel,
+>  	Opt_compress,
+>  	Opt_witness,
+> +	Opt_unicode,
+>  
+>  	/* Mount options which take numeric value */
+>  	Opt_backupuid,
+> @@ -296,6 +297,7 @@ struct smb3_fs_context {
+>  	bool compress; /* enable SMB2 messages (READ/WRITE) de/compression */
+>  	bool rootfs:1; /* if it's a SMB root file system */
+>  	bool witness:1; /* use witness protocol */
+> +	int unicode;
+>  	char *leaf_fullpath;
+>  	struct cifs_ses *dfs_root_ses;
+>  	bool dfs_automount:1; /* set for dfs automount only */
+> diff --git a/fs/smb/client/sess.c b/fs/smb/client/sess.c
+> index c88e9657f47a..6a92db287843 100644
+> --- a/fs/smb/client/sess.c
+> +++ b/fs/smb/client/sess.c
+> @@ -529,6 +529,7 @@ cifs_ses_add_channel(struct cifs_ses *ses,
+>  	ctx->password = ses->password;
+>  	ctx->sectype = ses->sectype;
+>  	ctx->sign = ses->sign;
+> +	ctx->unicode = ses->unicode;
+>  
+>  	/* UNC and paths */
+>  	/* XXX: Use ses->server->hostname? */
+> diff --git a/fs/smb/client/smb1ops.c b/fs/smb/client/smb1ops.c
+> index abca214f923c..b0fb4a5c586d 100644
+> --- a/fs/smb/client/smb1ops.c
+> +++ b/fs/smb/client/smb1ops.c
+> @@ -1189,6 +1189,7 @@ struct smb_version_values smb1_values = {
+>  	.cap_unix = CAP_UNIX,
+>  	.cap_nt_find = CAP_NT_SMBS | CAP_NT_FIND,
+>  	.cap_large_files = CAP_LARGE_FILES,
+> +	.cap_unicode = CAP_UNICODE,
+>  	.signing_enabled = SECMODE_SIGN_ENABLED,
+>  	.signing_required = SECMODE_SIGN_REQUIRED,
+>  };
+> -- 
+> 2.20.1
+> 
+> 
 
