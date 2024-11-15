@@ -1,171 +1,293 @@
-Return-Path: <linux-kernel+bounces-410343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 471469CDA24
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:01:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CDD09CDAB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:39:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0696A2831A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:01:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7622BB25B2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD26617BED0;
-	Fri, 15 Nov 2024 08:01:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CEED18C03B;
+	Fri, 15 Nov 2024 08:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OZ4q4fdb"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IrfZjzEl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2EE2AF05
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654E82B9B9;
+	Fri, 15 Nov 2024 08:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731657712; cv=none; b=rOCChvb+8svb1NJsyGhtp1XnjwAKQbSiOZec8RyYVgcEodFz930HQNJX3fU/nQKMpvjMufhzUyuZ6MFRX8lENYsqrdc0fQVGjnOpV4+8XUmZQ/knG0eb4/nUr2vtZnPOnyB0YKlsAuQjfKRs7damQJ3+Is3vtxr9w6XgALA3lBg=
+	t=1731659930; cv=none; b=mGPFa6NbK70UOgVOBME7sOeaizm4i71r3WIlxqC97ymwbsCCmbaqbtkft+52haOoz7UIarLSpr3nD6klpmueveWbFD1/PXB0QVfUopKe3tBETZ9KAowcWO41MNktkQF2c3FMKvnUazkH7frHbazRIlhAHYpey4dljPe6wpYf3vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731657712; c=relaxed/simple;
-	bh=eJdvgbWglYc64SjuPYn4iCjmk5B07aJPPbFGx0gCFq0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=C8iUSj5CNiN/L4GXGtH/j2Yt57Q1s9qonmQu4Qu8Hfn/bQZ7f0EDGjoBKVl1NvUrKHzCS3p17nkadl/Hl9Cls/lZ8Dk+HmNlmn4tP0VCNVu74lYPEGRT4p3a07j+9lbZFL3W3bv/eKwYQZtuOinUTn2VvqrEDXXLIBH0nHOhoJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OZ4q4fdb; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7ee020ec76dso1106838a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 00:01:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731657710; x=1732262510; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YQPyex0bJfNxoqNLhhDYmIY7JYJjX/+VF6K867de6e4=;
-        b=OZ4q4fdbd+XkpgTapmXhdWPd5m95Ef9MGuZS1+C8X0NEoytGhMMoq5CeqSo9LD35RY
-         OXp/ogqA9nUtyRzUkq4fGZbXZyTEfwr62r1kP1ZCbLdPT7jJjmvdKh9Amxagtjjp0a3A
-         XiWPmEPS484E+3u3c/96EZC3jgQrw5Nv67H+ixxt1X13mAn0K5nUcl3fWTp0mY95tUYn
-         zUk54LwZuVMvUpTPyX7QQ71x4eaH2yVUf/nAYTRmokkUzazAdPrNiMTfzfSWuKTpXebp
-         mhBeCPxZDm1FLuWEDDQ0BLChNT6VJzKTzdaspTxjCZ+BGP5GZhv+JI2i3lwPymX3slqw
-         UVlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731657710; x=1732262510;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YQPyex0bJfNxoqNLhhDYmIY7JYJjX/+VF6K867de6e4=;
-        b=rYeiLUZFBSKKIc6CRpuvpDrjUrHE9i7t4yGeENvDo9r37ZNm4AF9S+1n0M5lPT9ovf
-         vpr9+suovTY+RKf0gn0abazI/4oWXEzSR1A7y2agU1NFeKrptgSq8QyjbaB6+aR1e6HA
-         6srcttyWC+kLXNCGFeGkeEX3ZPICMuLVrChSM75WbZB/Yk63Vtu7LYiXkUEgSN0mZXZV
-         LNi8P81h7bV/wFhT+B0ucCvzsnOxUx6j4Ydik33x92kYgo2Bjux+2ZH4YtX9zbzWaX7Z
-         ET3hbOc/nC472zr5oH+S7wd97YvePi1J0s+fjpJmmxT/6UGHpq5/2KTJJQNKwIx1dh6f
-         XsfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaoIx4dDazk+pK3ap7Ehh6pknwSZSCy1aWo34kG1f29Mmckeyvtite16J2udHCNGoDabTSO8XJ+0H0AHI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO73rXsEteXWg3/vT9iis7freGxd9qDkMT+YZBZGqF1g3BnPiR
-	NvHqtJIi/J5Uq8zEA8s//nvKGvgG5EtoW2US0LQ4A3FKrkRhygAU
-X-Google-Smtp-Source: AGHT+IGlhh57+NslnLvNLqxVjyA+6H7jQH044HGNOiok6gSn8PT1nNDQvtUE2sWpcRVgeOAlla5AXA==
-X-Received: by 2002:a05:6a20:6a1a:b0:1d9:239b:a125 with SMTP id adf61e73a8af0-1dc90b1cd64mr2503739637.15.1731657710079;
-        Fri, 15 Nov 2024 00:01:50 -0800 (PST)
-Received: from localhost.localdomain ([143.92.64.18])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724770eefe7sm788871b3a.31.2024.11.15.00.01.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 00:01:49 -0800 (PST)
-From: "brookxu.cn" <brookxu.cn@gmail.com>
-To: kbusch@kernel.org,
-	axboe@kernel.dk,
-	hch@lst.de,
-	sagi@grimberg.me
-Cc: linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] nvme-core: auto add the new ns while UUID changed
-Date: Fri, 15 Nov 2024 16:37:27 +0800
-Message-Id: <20241115083727.30005-1-brookxu.cn@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1731659930; c=relaxed/simple;
+	bh=Tn9VJuRMe2xlv96wKod4QuzhvPY8JAA97LpI/hU7H1U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=WG1M3M+p1LDYuSo0EU3FNIR0FVahgYGzXthFnAODonMs5tB/4VmFskPqwEhw95dapQZI7+MhKfAnDQZlZDdm8kntb0H9zJ4fIwpryKB37LGyesI6Jy13VnQ7vzLixIUvHSirhcKFpVrlnNMJ4fFvM5fxCHCFvMZLHIGKgmqEYys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IrfZjzEl; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731659928; x=1763195928;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=Tn9VJuRMe2xlv96wKod4QuzhvPY8JAA97LpI/hU7H1U=;
+  b=IrfZjzElpPPSLKkl+2k1ZHU1A6utFDcAjIpze+PlTteQ/EbFT+5ZQltn
+   WKiFE/cZbMn5n+xxZj7jzTdBa7wtERBjDNinypWTi/Hm2XZTV8T1Bn4aa
+   342O8bMo5NlTOTyf5zHlkm5KTAnEDpjz3m7G2PvWAk90GJjwq5oruZXqC
+   1/B9S2YzQeWblvgVqJdGted2SQHyAf+8k+H3/4BEftWQEceOo0em7EKOT
+   WxozFzPSMVymvmetMFGXBGdiboUwAjUBtpZ6eeemYXRzp/HsL1J4qKLfk
+   TWUtiAp3WXR99+W9Zp+EkOB+W8t1e8/6cdI5H7YPrsDLKt8T3WqQLT0KK
+   Q==;
+X-CSE-ConnectionGUID: I3ztPHXfQXWiLDKBiCviLA==
+X-CSE-MsgGUID: aHiDu4CLT8aneG2Ts7mcDQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11256"; a="19268729"
+X-IronPort-AV: E=Sophos;i="6.12,156,1728975600"; 
+   d="scan'208";a="19268729"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 00:38:24 -0800
+X-CSE-ConnectionGUID: k40xVWqFTwyCyYHhCW1H+A==
+X-CSE-MsgGUID: JDixOTL5QsuiG6FuyZ+j0w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,156,1728975600"; 
+   d="scan'208";a="119428133"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 00:38:15 -0800
+Message-ID: <d133fc97-e4d7-4970-933f-2762c25ae50e@intel.com>
+Date: Fri, 15 Nov 2024 10:38:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] libperf cpumap: Refactor perf_cpu_map__merge()
+To: Leo Yan <leo.yan@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, "Liang, Kan" <kan.liang@linux.intel.com>,
+ James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241107125308.41226-1-leo.yan@arm.com>
+ <20241107125308.41226-2-leo.yan@arm.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20241107125308.41226-2-leo.yan@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: "Chunguang.xu" <chunguang.xu@shopee.com>
+On 7/11/24 14:53, Leo Yan wrote:
+> The perf_cpu_map__merge() function has two arguments, 'orig' and
+> 'other'.  The function definition might cause confusion as it could give
+> the impression that the CPU maps in the two arguments are copied into a
+> new allocated structure, which is then returned as the result.
+> 
+> The purpose of the function is to merge the CPU map 'other' into the CPU
+> map 'orig'.  This commit changes the 'orig' argument to a pointer to
+> pointer, so the new result will be updated into 'orig'.
+> 
+> The return value is changed to an int type, as an error number or 0 for
+> success.
+> 
+> Update callers and tests for the new function definition.
+> 
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
 
-Now spdk will change UUID of ns while restarted if we have not
-specified one. At this time, while host try to reconnected to target,
-as UUID have changed, we will remove the old ns, but not add the ns
-with the new UUID. As a result ctrl with no ns, and we need to
-disconnect and connect to get the new ns. Here try to add ns with the
-new UUID automatically.
+Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Reported-by: Yingfu.zhou <yingfu.zhou@shopee.com>
-Signed-off-by: Chunguang.xu <chunguang.xu@shopee.com>
----
- drivers/nvme/host/core.c | 45 ++++++++++++++++++----------------------
- 1 file changed, 20 insertions(+), 25 deletions(-)
-
-V2: Add missed reporter
-
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 855b42c92284..425f59fc80d5 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -3991,28 +3991,6 @@ static void nvme_ns_remove_by_nsid(struct nvme_ctrl *ctrl, u32 nsid)
- 	}
- }
- 
--static void nvme_validate_ns(struct nvme_ns *ns, struct nvme_ns_info *info)
--{
--	int ret = NVME_SC_INVALID_NS | NVME_STATUS_DNR;
--
--	if (!nvme_ns_ids_equal(&ns->head->ids, &info->ids)) {
--		dev_err(ns->ctrl->device,
--			"identifiers changed for nsid %d\n", ns->head->ns_id);
--		goto out;
--	}
--
--	ret = nvme_update_ns_info(ns, info);
--out:
--	/*
--	 * Only remove the namespace if we got a fatal error back from the
--	 * device, otherwise ignore the error and just move on.
--	 *
--	 * TODO: we should probably schedule a delayed retry here.
--	 */
--	if (ret > 0 && (ret & NVME_STATUS_DNR))
--		nvme_ns_remove(ns);
--}
--
- static void nvme_scan_ns(struct nvme_ctrl *ctrl, unsigned nsid)
- {
- 	struct nvme_ns_info info = { .nsid = nsid };
-@@ -4051,11 +4029,28 @@ static void nvme_scan_ns(struct nvme_ctrl *ctrl, unsigned nsid)
- 
- 	ns = nvme_find_get_ns(ctrl, nsid);
- 	if (ns) {
--		nvme_validate_ns(ns, &info);
-+		if (!nvme_ns_ids_equal(&ns->head->ids, &info.ids)) {
-+			dev_err(ns->ctrl->device,
-+				"identifiers changed for nsid %d\n", ns->head->ns_id);
-+			nvme_ns_remove(ns);
-+			nvme_put_ns(ns);
-+			goto alloc;
-+		}
-+
-+		ret = nvme_update_ns_info(ns, &info);
-+		/*
-+		 * Only remove the namespace if we got a fatal error back from the
-+		 * device, otherwise ignore the error and just move on.
-+		 *
-+		 * TODO: we should probably schedule a delayed retry here.
-+		 */
-+		if (ret > 0 && (ret & NVME_STATUS_DNR))
-+			nvme_ns_remove(ns);
- 		nvme_put_ns(ns);
--	} else {
--		nvme_alloc_ns(ctrl, &info);
-+		return;
- 	}
-+ alloc:
-+	nvme_alloc_ns(ctrl, &info);
- }
- 
- /**
--- 
-2.25.1
+> ---
+>  tools/lib/perf/cpumap.c              | 49 +++++++++++++++-------------
+>  tools/lib/perf/evlist.c              |  2 +-
+>  tools/lib/perf/include/perf/cpumap.h |  4 +--
+>  tools/perf/tests/cpumap.c            | 13 ++++----
+>  tools/perf/util/mem-events.c         |  5 ++-
+>  5 files changed, 40 insertions(+), 33 deletions(-)
+> 
+> diff --git a/tools/lib/perf/cpumap.c b/tools/lib/perf/cpumap.c
+> index cae799ad44e1..a36e90d38142 100644
+> --- a/tools/lib/perf/cpumap.c
+> +++ b/tools/lib/perf/cpumap.c
+> @@ -1,4 +1,5 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+> +#include <errno.h>
+>  #include <perf/cpumap.h>
+>  #include <stdlib.h>
+>  #include <linux/refcount.h>
+> @@ -436,46 +437,49 @@ bool perf_cpu_map__is_subset(const struct perf_cpu_map *a, const struct perf_cpu
+>  }
+>  
+>  /*
+> - * Merge two cpumaps
+> + * Merge two cpumaps.
+>   *
+> - * orig either gets freed and replaced with a new map, or reused
+> - * with no reference count change (similar to "realloc")
+> - * other has its reference count increased.
+> + * If 'other' is subset of '*orig', '*orig' keeps itself with no reference count
+> + * change (similar to "realloc").
+> + *
+> + * If '*orig' is subset of 'other', '*orig' reuses 'other' with its reference
+> + * count increased.
+> + *
+> + * Otherwise, '*orig' gets freed and replaced with a new map.
+>   */
+> -
+> -struct perf_cpu_map *perf_cpu_map__merge(struct perf_cpu_map *orig,
+> -					 struct perf_cpu_map *other)
+> +int perf_cpu_map__merge(struct perf_cpu_map **orig, struct perf_cpu_map *other)
+>  {
+>  	struct perf_cpu *tmp_cpus;
+>  	int tmp_len;
+>  	int i, j, k;
+>  	struct perf_cpu_map *merged;
+>  
+> -	if (perf_cpu_map__is_subset(orig, other))
+> -		return orig;
+> -	if (perf_cpu_map__is_subset(other, orig)) {
+> -		perf_cpu_map__put(orig);
+> -		return perf_cpu_map__get(other);
+> +	if (perf_cpu_map__is_subset(*orig, other))
+> +		return 0;
+> +	if (perf_cpu_map__is_subset(other, *orig)) {
+> +		perf_cpu_map__put(*orig);
+> +		*orig = perf_cpu_map__get(other);
+> +		return 0;
+>  	}
+>  
+> -	tmp_len = __perf_cpu_map__nr(orig) + __perf_cpu_map__nr(other);
+> +	tmp_len = __perf_cpu_map__nr(*orig) + __perf_cpu_map__nr(other);
+>  	tmp_cpus = malloc(tmp_len * sizeof(struct perf_cpu));
+>  	if (!tmp_cpus)
+> -		return NULL;
+> +		return -ENOMEM;
+>  
+>  	/* Standard merge algorithm from wikipedia */
+>  	i = j = k = 0;
+> -	while (i < __perf_cpu_map__nr(orig) && j < __perf_cpu_map__nr(other)) {
+> -		if (__perf_cpu_map__cpu(orig, i).cpu <= __perf_cpu_map__cpu(other, j).cpu) {
+> -			if (__perf_cpu_map__cpu(orig, i).cpu == __perf_cpu_map__cpu(other, j).cpu)
+> +	while (i < __perf_cpu_map__nr(*orig) && j < __perf_cpu_map__nr(other)) {
+> +		if (__perf_cpu_map__cpu(*orig, i).cpu <= __perf_cpu_map__cpu(other, j).cpu) {
+> +			if (__perf_cpu_map__cpu(*orig, i).cpu == __perf_cpu_map__cpu(other, j).cpu)
+>  				j++;
+> -			tmp_cpus[k++] = __perf_cpu_map__cpu(orig, i++);
+> +			tmp_cpus[k++] = __perf_cpu_map__cpu(*orig, i++);
+>  		} else
+>  			tmp_cpus[k++] = __perf_cpu_map__cpu(other, j++);
+>  	}
+>  
+> -	while (i < __perf_cpu_map__nr(orig))
+> -		tmp_cpus[k++] = __perf_cpu_map__cpu(orig, i++);
+> +	while (i < __perf_cpu_map__nr(*orig))
+> +		tmp_cpus[k++] = __perf_cpu_map__cpu(*orig, i++);
+>  
+>  	while (j < __perf_cpu_map__nr(other))
+>  		tmp_cpus[k++] = __perf_cpu_map__cpu(other, j++);
+> @@ -483,8 +487,9 @@ struct perf_cpu_map *perf_cpu_map__merge(struct perf_cpu_map *orig,
+>  
+>  	merged = cpu_map__trim_new(k, tmp_cpus);
+>  	free(tmp_cpus);
+> -	perf_cpu_map__put(orig);
+> -	return merged;
+> +	perf_cpu_map__put(*orig);
+> +	*orig = merged;
+> +	return 0;
+>  }
+>  
+>  struct perf_cpu_map *perf_cpu_map__intersect(struct perf_cpu_map *orig,
+> diff --git a/tools/lib/perf/evlist.c b/tools/lib/perf/evlist.c
+> index c6d67fc9e57e..94b7369f3efe 100644
+> --- a/tools/lib/perf/evlist.c
+> +++ b/tools/lib/perf/evlist.c
+> @@ -75,7 +75,7 @@ static void __perf_evlist__propagate_maps(struct perf_evlist *evlist,
+>  		evsel->threads = perf_thread_map__get(evlist->threads);
+>  	}
+>  
+> -	evlist->all_cpus = perf_cpu_map__merge(evlist->all_cpus, evsel->cpus);
+> +	perf_cpu_map__merge(&evlist->all_cpus, evsel->cpus);
+>  }
+>  
+>  static void perf_evlist__propagate_maps(struct perf_evlist *evlist)
+> diff --git a/tools/lib/perf/include/perf/cpumap.h b/tools/lib/perf/include/perf/cpumap.h
+> index 90457d17fb2f..c83bfb2c36ff 100644
+> --- a/tools/lib/perf/include/perf/cpumap.h
+> +++ b/tools/lib/perf/include/perf/cpumap.h
+> @@ -39,8 +39,8 @@ LIBPERF_API struct perf_cpu_map *perf_cpu_map__new_online_cpus(void);
+>  LIBPERF_API struct perf_cpu_map *perf_cpu_map__new(const char *cpu_list);
+>  LIBPERF_API struct perf_cpu_map *perf_cpu_map__read(FILE *file);
+>  LIBPERF_API struct perf_cpu_map *perf_cpu_map__get(struct perf_cpu_map *map);
+> -LIBPERF_API struct perf_cpu_map *perf_cpu_map__merge(struct perf_cpu_map *orig,
+> -						     struct perf_cpu_map *other);
+> +LIBPERF_API int perf_cpu_map__merge(struct perf_cpu_map **orig,
+> +				    struct perf_cpu_map *other);
+>  LIBPERF_API struct perf_cpu_map *perf_cpu_map__intersect(struct perf_cpu_map *orig,
+>  							 struct perf_cpu_map *other);
+>  LIBPERF_API void perf_cpu_map__put(struct perf_cpu_map *map);
+> diff --git a/tools/perf/tests/cpumap.c b/tools/perf/tests/cpumap.c
+> index 2f0168b2a5a9..7f189d57232f 100644
+> --- a/tools/perf/tests/cpumap.c
+> +++ b/tools/perf/tests/cpumap.c
+> @@ -160,14 +160,14 @@ static int test__cpu_map_merge(struct test_suite *test __maybe_unused, int subte
+>  {
+>  	struct perf_cpu_map *a = perf_cpu_map__new("4,2,1");
+>  	struct perf_cpu_map *b = perf_cpu_map__new("4,5,7");
+> -	struct perf_cpu_map *c = perf_cpu_map__merge(a, b);
+>  	char buf[100];
+>  
+> -	TEST_ASSERT_VAL("failed to merge map: bad nr", perf_cpu_map__nr(c) == 5);
+> -	cpu_map__snprint(c, buf, sizeof(buf));
+> +	perf_cpu_map__merge(&a, b);
+> +	TEST_ASSERT_VAL("failed to merge map: bad nr", perf_cpu_map__nr(a) == 5);
+> +	cpu_map__snprint(a, buf, sizeof(buf));
+>  	TEST_ASSERT_VAL("failed to merge map: bad result", !strcmp(buf, "1-2,4-5,7"));
+>  	perf_cpu_map__put(b);
+> -	perf_cpu_map__put(c);
+> +	perf_cpu_map__put(a);
+>  	return 0;
+>  }
+>  
+> @@ -233,9 +233,8 @@ static int test__cpu_map_equal(struct test_suite *test __maybe_unused, int subte
+>  	}
+>  
+>  	/* Maps equal made maps. */
+> -	tmp = perf_cpu_map__merge(perf_cpu_map__get(one), two);
+> -	TEST_ASSERT_VAL("pair", perf_cpu_map__equal(pair, tmp));
+> -	perf_cpu_map__put(tmp);
+> +	perf_cpu_map__merge(&two, one);
+> +	TEST_ASSERT_VAL("pair", perf_cpu_map__equal(pair, two));
+>  
+>  	tmp = perf_cpu_map__intersect(pair, one);
+>  	TEST_ASSERT_VAL("one", perf_cpu_map__equal(one, tmp));
+> diff --git a/tools/perf/util/mem-events.c b/tools/perf/util/mem-events.c
+> index bf5090f5220b..3692e988c86e 100644
+> --- a/tools/perf/util/mem-events.c
+> +++ b/tools/perf/util/mem-events.c
+> @@ -258,6 +258,7 @@ int perf_mem_events__record_args(const char **rec_argv, int *argv_nr)
+>  	const char *s;
+>  	char *copy;
+>  	struct perf_cpu_map *cpu_map = NULL;
+> +	int ret;
+>  
+>  	while ((pmu = perf_pmus__scan_mem(pmu)) != NULL) {
+>  		for (int j = 0; j < PERF_MEM_EVENTS__MAX; j++) {
+> @@ -283,7 +284,9 @@ int perf_mem_events__record_args(const char **rec_argv, int *argv_nr)
+>  			rec_argv[i++] = "-e";
+>  			rec_argv[i++] = copy;
+>  
+> -			cpu_map = perf_cpu_map__merge(cpu_map, pmu->cpus);
+> +			ret = perf_cpu_map__merge(&cpu_map, pmu->cpus);
+> +			if (ret < 0)
+> +				return ret;
+>  		}
+>  	}
+>  
 
 
