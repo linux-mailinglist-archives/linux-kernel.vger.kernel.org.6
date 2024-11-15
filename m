@@ -1,113 +1,227 @@
-Return-Path: <linux-kernel+bounces-410542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F072B9CDD0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:54:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E71C9CDD13
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:56:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BEA8282FA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:54:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C086B253B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33901B3920;
-	Fri, 15 Nov 2024 10:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E470136338;
+	Fri, 15 Nov 2024 10:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jg9JOtXn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SmiIuDwd"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FC4136338
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B33F1B3957
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731668078; cv=none; b=L8jkwk2SKsdOHF2UDzun6BSfRfpgI4OEZpNZ935hGF0sUDEYRn6+ruSRAhfSyyr2ZkbeklrIwo2ZoH3i1hmP9mwebf9JkpUh/sTODy+UhGmW9+52Rhi4VbeSPIRcs2vK0rDp1/epuTGfD4qAzmACxO1BJIY8CHeghMtQscnx1Nc=
+	t=1731668156; cv=none; b=Kbp5IDwAmz994kr3Heh73DjrSFbBVo6kw/aF41T4OhP/qLjmKdZxZLBJNdIWsoALK+ZrvpltgW/hK4SuKc3Dn1AOIjK1I0CTi0QKuEwtFjJ3z9E0WZy0360R/scEaNHBVYBbk2VUImyJHbjJhSVl8NVjctQvfhdy0i18Y6ma58k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731668078; c=relaxed/simple;
-	bh=kJYUB7rGj6m30IJq7NMeEAdvdHtt/hMzg8P+2e0dRhc=;
+	s=arc-20240116; t=1731668156; c=relaxed/simple;
+	bh=yv+L77fsMXdJZp8xBmhx5sk4NgH78Eg0JH6adSKr6Rw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iT/TyEgmbi+ZfxRHirQstSJ+BFFI5+X37A5qAMid0Gem0A6j/Cf2saqrolI7T5QaGFL5HntvgVpGRkctguKmsy7Q/W3nggINJVfRsWv9gXOWMv49vqOjo1PCGOmlYXyDKehyJOVM0aud2uu2GXpCReny+9hPaZDOrNDgxk/jZeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jg9JOtXn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731668075;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kJYUB7rGj6m30IJq7NMeEAdvdHtt/hMzg8P+2e0dRhc=;
-	b=Jg9JOtXnpxWY23wa69Xy9kFb3SIy/ng7WCzh/VeYffflRBKvjojwRvMVG7vKdC4ui1KvVL
-	ZP2q/8kOe4eg2NIT/7dbHEzkxZFySepoMwfRyJQ9LFesLnRJ5uhzhM4Hwyxlv0na4LWDt0
-	JUiSCfSpJ4vm/QDpOzNXYoRrVTY8HPQ=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-682-3m-zchwuNBaJsGtbBtIKBg-1; Fri, 15 Nov 2024 05:54:34 -0500
-X-MC-Unique: 3m-zchwuNBaJsGtbBtIKBg-1
-X-Mimecast-MFC-AGG-ID: 3m-zchwuNBaJsGtbBtIKBg
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3822ec50b64so27862f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 02:54:33 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=SOuC4uqioyMwBphnGO7vKYR2sA4qSt7do+wgy/ow3ZzXo3LZ8gZb+QTI1LrQMbYXKWsL7T7aPhQW8Mu6d8vwmSjMdaRpu8bk6QJm1RUHZJEkQCvWHh/byLCzGXDBhUQquNiDxB0WsuV5cMep2oE2kBLom/LOYHnLpRo995Iucbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SmiIuDwd; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7f3e30a43f1so1071350a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 02:55:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731668154; x=1732272954; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Fyp6Vv06X8QaJJQ2SCE2o27IO66FeYIB5lx0bKBn09o=;
+        b=SmiIuDwdBp+gcwFc18mSWjWhq7ImCAHJnh8MS0Kz2E09EPQdkejbYiV5vk+X4eCl3L
+         s3ux7a414JbKw91kQm7AKwLB5eyJKNYXe4K3p6a07AI2ATMtZdXuGiadG9kocs9biTnA
+         W3qtpbXjvGf0AmbRbgV1VYWBbu6by54xW9ieVXwt5c+oPJBf+DxYSwnoUc5tikgri65E
+         uAtx9+928NHkIRrgNQzBE5SCHVhMdLC+WoPhIEAA+3pfugLpa83uToETb2IlzOzxSlig
+         kVs4V6FZYeAGecDHJoI8oKQE608Q39UY5xzJTlBF/l9+iT8sU3SUUUgLUQSEiA7Umt9A
+         Xjwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731668073; x=1732272873;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kJYUB7rGj6m30IJq7NMeEAdvdHtt/hMzg8P+2e0dRhc=;
-        b=OODRv0Zk4UkKDxHj+UAhmBQrmfJ7hAfYB5gcBu/SvCMml+vnKytoI8pPksgfsBmYAO
-         71gwQteXaDwJ/awfGHH//vYlmWoq1ekNEEqsDSbuQAB6DxHSCID6n35kK9N2OQfHlkqq
-         bvgtvF9YbNg7ds6USd0Zlmg+WUzDcVHkP7bNhdq1YDqSCQQXdoLYA5ojOMlL0HjJ+c/3
-         yR2bOJ+0OvvZWhK+sAeFNI34Xl3yQoU+bakO0u9ham9MRtsukpdt0vfwEsGbU56NB99e
-         RO9fLVjKYJFWA4m3vt+4T9EBevN58EymOyv107lslr20HYkOh6QCAb22cIQC+OpAYTBI
-         ZW7g==
-X-Forwarded-Encrypted: i=1; AJvYcCWISqTYFuxP6fj5hOENUXpllCAOHMHT8AkwMMXfbGMH8MZ5aLZTFqdatrhd3SFla6nbdLWUmLhAA/Q+mow=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvjIXyriaBHoTVcIjVHC9Tm1bfPxblgomhbk32JEf8ym0oojv5
-	0cp2ifEKFDgEkoefL0Zs7/gDA3sWHk+LjUafHV/B168wEdCL5ouD3WDNjby8s14e02kiRqLI/rJ
-	NQ4ouxvx9vReH94fh4UG0OV4EiJeXH9+36NwFIxK445xaztk3Y0OYizhxeycARA==
-X-Received: by 2002:a05:6000:2c6:b0:382:1c58:5787 with SMTP id ffacd0b85a97d-38225a89fe4mr1992784f8f.46.1731668072814;
-        Fri, 15 Nov 2024 02:54:32 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGMLLahLve2i85NSHyBQknYctxJFodWGkT2mc+GIqMJNAdazw+5Xuwbvgn0mTfJ/qu2SQDiMw==
-X-Received: by 2002:a05:6000:2c6:b0:382:1c58:5787 with SMTP id ffacd0b85a97d-38225a89fe4mr1992766f8f.46.1731668072454;
-        Fri, 15 Nov 2024 02:54:32 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-47-4-194.as13285.net. [80.47.4.194])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821adad619sm4022252f8f.27.2024.11.15.02.54.31
+        d=1e100.net; s=20230601; t=1731668154; x=1732272954;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fyp6Vv06X8QaJJQ2SCE2o27IO66FeYIB5lx0bKBn09o=;
+        b=Nr6LJcGF6m3UIYFN63DDwOFeROznkdlPhfyes+3WKHUzO/Mmje4y7GpT4iJEWK8tgy
+         9M9pJ2MN2Mk6v7halyqhjRiAvN+Mu0N8YG30iHURU/vSNdF31bQuEnycyL7+bGDND+pJ
+         dpdSOTmczSpvP+Qdu/+U2fcoEEXlcnenMRsk65zwAnBGckMx/0kf8V2PIn7VDigDEMiS
+         FTCbTzxC2msUe+h0VA35EIPvW98aWgd/OQv7lGbRCAPD5GHIoNg3CtSoJwH0HV1WHL0f
+         F8E/y/5wgbpka9Q1vE0xRp6n9fa4uxVL30NA+u4KuAAcXQgwel7IcClFxoHeY7fqI9Oa
+         ujJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMlNjTrWSDu9XGoRm3xwdVYivc3qo0FJNjQVat7PsOZmmCcwU7peACK+2ZzKMhRkshg6wJXMv0vtCtEIM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyChbZ8YuQq2WRvTr9+ibJJysWD7uf05N+iZUWpRKpcQlfUK9PT
+	IWZUwXNcw3r6ZPrWMUjCHKVoXi0JiHxOn3LbVyE2nDsQHytUHxIUrW56S0kvTg==
+X-Google-Smtp-Source: AGHT+IFKHjiwYWUryAJnXc6viXkuytymPjZ05zS1fGUIKdRqFJ+LJl9Co7F7n3NkThimaKRfh0K2GA==
+X-Received: by 2002:a05:6a20:9c91:b0:1dc:32a:d409 with SMTP id adf61e73a8af0-1dc90bf4683mr2847893637.39.1731668154657;
+        Fri, 15 Nov 2024 02:55:54 -0800 (PST)
+Received: from thinkpad ([117.193.208.47])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea024c06fbsm2672588a91.43.2024.11.15.02.55.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 02:54:31 -0800 (PST)
-Date: Fri, 15 Nov 2024 10:54:30 +0000
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Waiman Long <longman@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Phil Auld <pauld@redhat.com>
-Subject: Re: [PATCH] cgroup/cpuset: Disable cpuset_cpumask_can_shrink() test
- if not load balancing
-Message-ID: <ZzcoZj90XeYj3TzG@jlelli-thinkpadt14gen4.remote.csb>
-References: <20241114181915.142894-1-longman@redhat.com>
+        Fri, 15 Nov 2024 02:55:54 -0800 (PST)
+Date: Fri, 15 Nov 2024 16:25:46 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Mayank Rana <quic_mrana@quicinc.com>
+Cc: jingoohan1@gmail.com, will@kernel.org, lpieralisi@kernel.org,
+	kw@linux.com, robh@kernel.org, bhelgaas@google.com, krzk@kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, quic_krichai@quicinc.com
+Subject: Re: [PATCH v3 3/4] dt-bindings: PCI: qcom,pcie-sa8255p: Document
+ ECAM compliant PCIe root complex
+Message-ID: <20241115105546.77l3ie5iuajpbuof@thinkpad>
+References: <20241106221341.2218416-1-quic_mrana@quicinc.com>
+ <20241106221341.2218416-4-quic_mrana@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241114181915.142894-1-longman@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241106221341.2218416-4-quic_mrana@quicinc.com>
 
-Hi Waiman,
+On Wed, Nov 06, 2024 at 02:13:40PM -0800, Mayank Rana wrote:
+> On SA8255p, PCIe root complex is managed by firmware using power-domain
+> based handling. This root complex is configured as ECAM compliant.
+> Document required configuration to enable PCIe root complex.
+> 
+> Signed-off-by: Mayank Rana <quic_mrana@quicinc.com>
+> ---
+>  .../bindings/pci/qcom,pcie-sa8255p.yaml       | 103 ++++++++++++++++++
+>  1 file changed, 103 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/qcom,pcie-sa8255p.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-sa8255p.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-sa8255p.yaml
+> new file mode 100644
+> index 000000000000..9b09c3923ba0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-sa8255p.yaml
+> @@ -0,0 +1,103 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pci/qcom,pcie-sa8255p.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm SA8255p based firmware managed and ECAM compliant PCIe Root Complex
+> +
+> +maintainers:
+> +  - Bjorn Andersson <andersson@kernel.org>
+> +  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> +
+> +description:
+> +  Qualcomm SA8255p SoC PCIe root complex controller is based on the Synopsys
+> +  DesignWare PCIe IP which is managed by firmware, and configured in ECAM mode.
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,pcie-sa8255p
+> +
+> +  reg:
+> +    description:
+> +      The Configuration Space base address and size, as accessed from the parent
+> +      bus. The base address corresponds to the first bus in the "bus-range"
+> +      property. If no "bus-range" is specified, this will be bus 0 (the
+> +      default).
 
-On 14/11/24 13:19, Waiman Long wrote:
-> With some recent proposed changes [1] in the deadline server code,
-> it has caused a test failure in test_cpuset_prs.sh when a change
-> is being made to an isolated partition. This is due to failing
-> the cpuset_cpumask_can_shrink() check for SCHED_DEADLINE tasks at
-> validate_change().
+I don't think the 'no bus-range' configuration is supported. You can get rid if
+this statement.
 
-What sort of change is being made to that isolated partition? Which test
-is failing from the test_cpuset_prs.sh collection? Asking because I now
-see "All tests PASSED" running that locally (with all my 3 patches on
-top of cgroup/for-6.13 w/o this last patch from you).
+> +    maxItems: 1
+> +
+> +  ranges:
+> +    description:
+> +      As described in IEEE Std 1275-1994, but must provide at least a
+> +      definition of non-prefetchable memory. One or both of prefetchable Memory
+> +      may also be provided.
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  interrupts:
+> +    minItems: 8
+> +    maxItems: 8
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: msi0
+> +      - const: msi1
+> +      - const: msi2
+> +      - const: msi3
+> +      - const: msi4
+> +      - const: msi5
+> +      - const: msi6
+> +      - const: msi7
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  dma-coherent: true
+> +  iommu-map: true
 
-Thanks,
-Juri
+Can't you add 'msi-map' also since the hardware supports it?
 
+- Mani
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - ranges
+> +  - power-domains
+> +
+> +allOf:
+> +  - $ref: /schemas/pci/pci-host-bridge.yaml#
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        pci@1c00000 {
+> +           compatible = "qcom,pcie-sa8255p";
+> +           reg = <0x4 0x00000000 0 0x10000000>;
+> +           device_type = "pci";
+> +           #address-cells = <3>;
+> +           #size-cells = <2>;
+> +           ranges = <0x02000000 0x0 0x40100000 0x0 0x40100000 0x0 0x1ff00000>,
+> +                    <0x43000000 0x4 0x10100000 0x4 0x10100000 0x0 0x40000000>;
+> +           bus-range = <0x00 0xff>;
+> +           dma-coherent;
+> +           linux,pci-domain = <0>;
+> +           power-domains = <&scmi5_pd 0>;
+> +           iommu-map = <0x0 &pcie_smmu 0x0000 0x1>,
+> +                       <0x100 &pcie_smmu 0x0001 0x1>;
+> +           interrupt-parent = <&intc>;
+> +           interrupts = <GIC_SPI 307 IRQ_TYPE_LEVEL_HIGH>,
+> +                        <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>,
+> +                        <GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH>,
+> +                        <GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH>,
+> +                        <GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH>,
+> +                        <GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH>,
+> +                        <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>,
+> +                        <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
+> +           interrupt-names = "msi0", "msi1", "msi2", "msi3",
+> +                                  "msi4", "msi5", "msi6", "msi7";
+> +        };
+> +    };
+> -- 
+> 2.25.1
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
