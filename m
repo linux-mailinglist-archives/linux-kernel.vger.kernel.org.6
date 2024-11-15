@@ -1,54 +1,89 @@
-Return-Path: <linux-kernel+bounces-411034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79B709CF1FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:47:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 671BC9CF1FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:47:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EF302954AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:47:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27BB52958A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4B51DD0E1;
-	Fri, 15 Nov 2024 16:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B851E22F3;
+	Fri, 15 Nov 2024 16:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKBSI3XD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hagLj4hw"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474531D54E2
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 16:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDFC1E1A32
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 16:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731689070; cv=none; b=TKVLAsaJaMif5DGyONObj6cCorbTsK4EnujuksstuKwdmk31D/0HHqgK+bCCJAJjpGUxyW0TjYPwZtkGjeEj7XPbZC4x0Fi11201cKXMyk+2Ol7WbknZ95WLDqLYqS4w5ErwYYEwoh+MXO+qjf0UwV8wwI8ARv02IIuyO3xFX+A=
+	t=1731689082; cv=none; b=g8QzGhvRtFoFVxup67CwqGmytrUqDiGrSkWSfnkzTx7p/ItzG7AggCb0FfyRsDHXAjnk9Lb2IkV1vRxu94WrO6D/taa6nIFscsakGORAb7TrC9AKmcbg9Jrk/N55IzwmNBwpcLLsGGkBUnkjcH/81NfsoHK1xnrwF7g1jWEqMtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731689070; c=relaxed/simple;
-	bh=akiNJQx+ZCZjtwKblHx8WJ6hGg5i2uj18CmiFXB4DZc=;
+	s=arc-20240116; t=1731689082; c=relaxed/simple;
+	bh=w1FTAecBOFTmyqoMAH2DfbSi1/WWutIqszTuyzR8ob0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lXrXwuedS0Mokn1kNJIbW60DPuJpS8ON5Zfbs6iIF5ZCr+I5/0Jef6XqI8tvtOAI2FPBXUj9wGs7iO7ON5z3IOPDf5RM94S/j6ALw1Holi8XaoxsA1FRfxaZE+UM9T6LYMwC8jt8ldhn1k0A8RzY6KAgjehrBSlVe+qtKunPnqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UKBSI3XD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEA1CC4CECF;
-	Fri, 15 Nov 2024 16:44:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731689069;
-	bh=akiNJQx+ZCZjtwKblHx8WJ6hGg5i2uj18CmiFXB4DZc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UKBSI3XDFVeA0419fxIPf58B3e72boVbPHKT4lcACEhgkoa6jhgXTfh1yKCMq1wpv
-	 KMlLDHXVSUMlGZVHcP4vQ32HKFDKzPQs6KyQKnJ+JiokrA4er3m8IzHQNdsRjGJR7T
-	 eOregjxv5OcoBq3rSw1wvniqVCsiWevfgLvbXlx07NXB+CYJWp+smDu+b0rg/MqTEq
-	 sQJ0H1aStk9fqM/zM1X44o2WpRnxoyn5ys0cLK6A+VVBArOksLCqDRYTp+Chg1i+qp
-	 cwNDYfztxqZNqo0H/2DRdC3G7EsEH4CMyrji9ifOUGVv2+AgZ7T86NqTa7tV9+ND1a
-	 YJK/mGq7wwWag==
-Date: Fri, 15 Nov 2024 06:44:28 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Wangyang Guo <wangyang.guo@intel.com>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org,
-	Tim Chen <tim.c.chen@linux.intel.com>, tianyou.li@intel.com,
-	pan.deng@intel.com
-Subject: Re: [PATCH] workqueue: Reduce expensive locks for unbound workqueue
-Message-ID: <Zzd6bLND-dwE-xZb@slm.duckdns.org>
-References: <20241115054936.113567-1-wangyang.guo@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=s0jDhWcSHsuziRirXyI+NSGRdNQkl70TWUeVSIVwumG3VCO3n8VJSbrz2zX74j7Ix87YJgoh1T7nAS471uQZy65DKuJ+feGZuKZimSnkJOtEMXqgI4jIeevlO6uPZ9DHavR1cWAcqH+hRbdJVgKvTShFqOXD/qcIcEI/K4eTsOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hagLj4hw; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fb559b0b00so17591871fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:44:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731689078; x=1732293878; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tvSbr212wnBXWgkPqBMZFxm+xf5y5TiTLHopInfDcas=;
+        b=hagLj4hwjBJ6cOEPXcyzU57D7AXQkt4DTrdYQQn7J7uLCTgQWPCebeRWZ7eAdOuk1V
+         YqmBCj7e72NzazEGrmhIulvdZjuqZmCE9MUNv4knJp/1r3/gyu7EW2OWg9Fs9Q15DvAB
+         WLqYBLJgt2C1LsR5+pkkbEM4SbKREWKbXyhvjuUoYn4KycSQj9izrseEHoy1OWlZdwO8
+         sNCj4qsxz2QfIUBJMJCoydyo/ZHd3cllhElRTpdx+Z3e4sSpY3OAN0KBKCCFYexo2kpn
+         siQj6wGdeuXq5YPih8ctDScLwZz1HMt9FFF/te0pjPj5gIceh7/51a4LnYZN764pPLnF
+         dfyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731689078; x=1732293878;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tvSbr212wnBXWgkPqBMZFxm+xf5y5TiTLHopInfDcas=;
+        b=nJHGEOc4QeejuB0U6XiiPWlrQ8HDDdfnV9YakyJ5DNseqKr/druYciNzORiIxr58MR
+         LipfK5Tv+k7CCbc6c+gLxdGTdYnNbdL0M1cMojzu2lqwNmLmvIJtI24LfZ8jK6t0Ob0G
+         j0t6S+c2hr0sGlZaiIeGogcgPfsG5D1uW6i+87ivlVG/mqLoCKOjhMlJl3t5X1GWO2Jh
+         Ct1mSIIEJ00Nmna/8Aoqs5GjcEdYjiEDo/x3b6korRiauk/dwPaPg0j5TRabqmR1qync
+         bMTRndADZtiGR1Rotaueej/TGLipka0iTER9Z1tP7qMjbMXbtX+rdb8PCyFAbFxaAM3m
+         usKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUyfCJ7z9TRSqC5hgiUzhwbLZsrYDXEnxIIbdAnfLVq46rU+oEddW230PwvDHFoM9vJLAwUZoNEXSAz6zo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsfX7YlWpgEdDcLZD8CbYwuWmJ4pXGMwxomYeHINrVOgfSXRwo
+	9A7rqO5qJLMBkSyNsdYQomZZM7yioq0zHV3o8nf+dIwZ68ErwwbWFd3hBQIRKzg=
+X-Google-Smtp-Source: AGHT+IFgzXgQ4IjxGhewB1vh2xQBTf7ORjLEOV0LXbis36gnE75+Wti65ULJO+Xnk5bUahD0MBiHug==
+X-Received: by 2002:a2e:b8cf:0:b0:2fb:34dc:7beb with SMTP id 38308e7fff4ca-2ff6067407bmr19160471fa.12.1731689078308;
+        Fri, 15 Nov 2024 08:44:38 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff5988f321sm6038021fa.95.2024.11.15.08.44.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 08:44:37 -0800 (PST)
+Date: Fri, 15 Nov 2024 18:44:34 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jishnu Prakash <quic_jprakash@quicinc.com>
+Cc: jic23@kernel.org, robh+dt@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, agross@kernel.org, andersson@kernel.org, 
+	konrad.dybcio@linaro.org, daniel.lezcano@linaro.org, sboyd@kernel.org, 
+	quic_subbaram@quicinc.com, quic_collinsd@quicinc.com, quic_amelende@quicinc.com, 
+	quic_kamalw@quicinc.com, amitk@kernel.org, lee@kernel.org, rafael@kernel.org, 
+	rui.zhang@intel.com, lukasz.luba@arm.com, lars@metafoo.de, quic_skakitap@quicinc.com, 
+	neil.armstrong@linaro.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	cros-qcom-dts-watchers@chromium.org
+Subject: Re: [PATCH V4 2/4] dt-bindings: iio: adc: Add support for QCOM PMIC5
+ Gen3 ADC
+Message-ID: <i7opxhkgukcshdcc7j6ai6jt62egag3jgfiqsghakjhgt2ikg6@eap7l64amcci>
+References: <20241030185854.4015348-1-quic_jprakash@quicinc.com>
+ <20241030185854.4015348-3-quic_jprakash@quicinc.com>
+ <ag3wqsjdec7ujcba2jpvhzgcbbc5vnyjyes5ljyyf5b4edw7j3@rj23a25wvoyd>
+ <ee8f0b70-77a2-4a5e-85c8-715fd02d4437@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,37 +92,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241115054936.113567-1-wangyang.guo@intel.com>
+In-Reply-To: <ee8f0b70-77a2-4a5e-85c8-715fd02d4437@quicinc.com>
 
-On Fri, Nov 15, 2024 at 01:49:36PM +0800, Wangyang Guo wrote:
-> For unbound workqueue, pwqs usually map to just a few pools. Most of
-> the time, pwqs will be linked sequentially to wq->pwqs list by cpu
-> index.  Usually, consecutive CPUs have the same workqueue attribute
-> (e.g. belong to the same NUMA node). This makes pwqs with the same
-> pool cluster together in the pwq list.
+On Wed, Nov 13, 2024 at 07:36:13PM +0530, Jishnu Prakash wrote:
+> Hi Dmitry,
 > 
-> Only do lock/unlock if the pool has changed in flush_workqueue_prep_pwqs().
-> This reduces the number of expensive lock operations.
+> On 10/31/2024 11:27 PM, Dmitry Baryshkov wrote:
+> > On Thu, Oct 31, 2024 at 12:28:52AM +0530, Jishnu Prakash wrote:
+> >> For the PMIC5-Gen3 type PMICs, ADC peripheral is present in HW for the
+> >> following PMICs: PMK8550, PM8550, PM8550B and PM8550VX PMICs.
+> >>
+> >> It is similar to PMIC5-Gen2, with SW communication to ADCs on all PMICs
+> >> going through PBS(Programmable Boot Sequence) firmware through a single
+> >> register interface. This interface is implemented on an SDAM (Shared
+> >> Direct Access Memory) peripheral on the master PMIC PMK8550 rather
+> >> than a dedicated ADC peripheral.
+> >>
+> >> Add documentation for PMIC5 Gen3 ADC and macro definitions for ADC
+> >> channels and virtual channels (combination of ADC channel number and
+> >> PMIC SID number) per PMIC, to be used by clients of this device.
+> >>
+> >> Co-developed-by: Anjelique Melendez <quic_amelende@quicinc.com>
+> >> Signed-off-by: Anjelique Melendez <quic_amelende@quicinc.com>
+> >> Signed-off-by: Jishnu Prakash <quic_jprakash@quicinc.com>
+> >> ---
+> >> Changes since v3:
+> >> - Added ADC5 Gen3 documentation changes in existing qcom,spmi-vadc.yaml file
+> >>   instead of adding separate file and updated top-level constraints in documentation
+> >>   file based on discussion with reviewers.
+> > 
+> > I think it has been better, when it was a separate file. Krzysztof asked
+> > for rationale, not for merging it back. Two different things.
 > 
-> The performance data shows this change boosts FIO by 65x in some cases
-> when multiple concurrent threads write to xfs mount points with fsync.
+> Actually I made that change in a separate file due to a misunderstanding at that time - 
+> I thought a separate file was the only way to accommodate a change in the top-level 'reg' and 'interrupts'
+> constraints, but I realized later that they could be updated.
 > 
-> FIO Benchmark Details
-> - FIO version: v3.35
-> - FIO Options: ioengine=libaio,iodepth=64,norandommap=1,rw=write,
->   size=128M,bs=4k,fsync=1
-> - FIO Job Configs: 64 jobs in total writing to 4 mount points (ramdisks
->   formatted as xfs file system).
-> - Kernel Codebase: v6.12-rc5
-> - Test Platform: Xeon 8380 (2 sockets)
-> 
-> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-> Signed-off-by: Wangyang Guo <wangyang.guo@intel.com>
+> From our side, we would prefer to add ADC5 Gen3 documentation in the same file, as it is
+> mostly the same functionality which reuses all the existing properties present in this file.
 
-Applied to wq/for-6.13.
+Export the existing properties and reuse them in the new file. Gen3 (in
+my opinion) changed the hardware too much. Having all the differences
+via conditionals bloats the schema and makes it significantly unreadable
+in my opinion.
 
-Thanks.
+But please refer to DT maintainers (Rob/Krzysztof/Conor) for the final
+opinion.
 
 -- 
-tejun
+With best wishes
+Dmitry
 
