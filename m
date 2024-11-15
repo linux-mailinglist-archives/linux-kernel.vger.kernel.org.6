@@ -1,109 +1,112 @@
-Return-Path: <linux-kernel+bounces-411060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84DA19CF354
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:54:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE8429CF398
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:07:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E0FFB3A87A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:07:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3657B44D5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31EF11BD4FD;
-	Fri, 15 Nov 2024 17:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15A51D61A3;
+	Fri, 15 Nov 2024 17:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Np7RgKo1"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dc7e4+76"
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B851CDA19
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D2D17C7CB
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731690437; cv=none; b=CJb4KpMhuGq7P0befW+sIDK9G4f7av4M/m91RCc9dnkwi77urpgKLJv64OPaJnPaqnI27G8lr1fodLW3Ie/amMX9JEPPxmzKl9wRIUO7k7BJ7nkwbaGWOiZ8nTmp7y58vmYkV7oMHxfQ062LFzhivHMxFHANFYgOAMK7RkPhGEU=
+	t=1731690461; cv=none; b=b7whQKwgUoL6B6jEHk2YxzaTpVPnpYsy33yJ/WZMLR7us7/mQSGZvoLJjdJ4URcWBCPh+KEOwhKgaRFm1k7TvbwghCQkCCR/212zp5kvaH+p0xyI6svYLJowK9Q/rYRoBfWyVbTA0JvWklGh+cQOVcz+ItsBA0SSRa4AvIAqzK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731690437; c=relaxed/simple;
-	bh=VP5vVhv/E2Y9dOFCdX2eV4YEEIPdv/+NzGTYjjBhXXE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uJRs6FogGtuCmJWVbx7MpKouj291W5hVk8zj+a5MW7xnpqxDK4Is7RStKZdM2/LFpInb9JN+wRni6Bavcm2/0EwAaUVRCvd8H4OsiLX49PW9H3zmhK8ZZ47aPjrpm47nrTTAyi0z9mhFTJ4NFj10CZEVMEpj9BzYZCS0ouJgZak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Np7RgKo1; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2689e7a941fso560042fac.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:07:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731690435; x=1732295235; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lIPj5iTtlFyQJqlZm+85SaZXLuC8DmA/9Z4Q3D6vdXI=;
-        b=Np7RgKo1YcGDYcgTSDDc7wOCuSgvPuhPwOAc1b3toVS/ha6aggQprjDkPFt61vMOjA
-         i9TFnG4PnUqYJ42m7gdlZxeM6KaC/2Fspz4dgMY5b3r6B4haWCqK2geGCdsivVQ0Bpbw
-         TIE37tOaAPeHyXgyELIsQv9/2ITR9zsoVkrr8tdxFn/cW6lAIvfithAzkT8gXcG8LZg9
-         9vBtWr8e8Cuiju3Jpv5T2OmfEslWQsz3ww7z96xHwSHJx2YDcbUs1eniU9a1iJrl3YyK
-         HwR0+niJSfk1vAIOKAjUrtJ3cObiuZDh30gtUdDQ0rqyy9lKCgbPObawSLWBM3ysoMU9
-         /iSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731690435; x=1732295235;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lIPj5iTtlFyQJqlZm+85SaZXLuC8DmA/9Z4Q3D6vdXI=;
-        b=S8DNayFrOT0WPuRkXofQJ0V0uMH1+I7izxbbX9+s5vkM3XYAbzII35Z5JphZF84CPN
-         X2MDkUTl2vE4IiSno7HbqF4Ol37CG4Ax6N8N1d93UIlDweDO0TyQPQyVx5Z9aSSBEBzO
-         aJEGH/P+fhBwcSQgiu3EnK6btc7S6qlAkmUzlOWwP98YUVghoQBUjbqWIBmfsjiSGt/j
-         NXxS4R+oDrF+MhSTvNlNERkoAu0jaG2QqZwWFdsfK7SHpvDqHUL2TLrMzxwrWikylNPz
-         8qyJDJjVFIX2rRgNI5z9NkmXaKl1ySvJPk93a8/fVrTNu9IdRdyJ+Klh78pqu4aAACP/
-         ABQg==
-X-Forwarded-Encrypted: i=1; AJvYcCWinDXjOzFGJcP09BcehcL8fOELvkwXdDIgws2SIp9OPZIKPXEMJPgfOmCG/435jrylsZhvH4VFpxCgykI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOUM3iedQRtJQWpRaTUV7zyH/sVhXCkyrUZIK6w/2u/9dSF3U4
-	4f+WJ3egiJzqhrYoaSX310hwQk2jQ61VKhgmgGPwrUMkCl/E1x8/rTK2q8aTQ5k=
-X-Google-Smtp-Source: AGHT+IGmNhCU4u7yKLh3JMDA/eM7n90+e2YJXKklUJKbTQ3RFU6rgLWGqmASlbfMjQJ+Y4NdR0ldLQ==
-X-Received: by 2002:a05:6871:e492:b0:277:f5de:210f with SMTP id 586e51a60fabf-2962e01d395mr3385839fac.19.1731690435082;
-        Fri, 15 Nov 2024 09:07:15 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5eeabcc1d4fsm604521eaf.26.2024.11.15.09.07.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 09:07:13 -0800 (PST)
-Message-ID: <c42a5815-78b0-46d0-8592-e9bbeac12e16@baylibre.com>
-Date: Fri, 15 Nov 2024 11:07:11 -0600
+	s=arc-20240116; t=1731690461; c=relaxed/simple;
+	bh=EzkkrgwX6QicJgrVFN8oP2t4q3QLUwJo1tmpaavTM5o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mzDW7HAj43ZkZjE9EbNcCt/9eNEiBkON3TmO3fuTHMHjAQGb21qRvv327MYrFcQC5OyLwq0gVpEfizj/ZhNlGEN1kzWcfgKsCoTXvWgIC9YQlYwPaX1K1obO7h+j9RlUWF3gsPhIMyY87fY+GjmksbQ3llBuw+mavcVmX6rGvxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dc7e4+76; arc=none smtp.client-ip=80.12.242.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id Bzn7tcTuub37CBzn8tOZyc; Fri, 15 Nov 2024 18:07:31 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1731690451;
+	bh=8WTwIcAx6b/kVp2mWAiv865Zbjt0MpLRftMY+PnKZIs=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=dc7e4+76ZstjhkJ53J7ch6aKPYIK03+9FbWkQqqUMUjTq6dSi+6XrBwswztNDxalF
+	 LwRazKcLJ4WuuNgtkt+hTwrIAFeHqFjjZlULjnvlAaz/ZyL0220IIbTvbetZVytKVm
+	 fyYp2UtinkjrH+md0e14Siu4yqpqlQOuAOcrW2Qzl04oLSeEQt0p1PhhlMUGxVg4Ry
+	 jyGf6NcJTyEt1gV4cxii909ynqiOpreA091vf0ajLGQwTONqMY8B1qkXdY6XbJOObq
+	 stihS4myr9J4+G0kS0qOm2HJmpn0FM/n84brVo7OMXfJ9xOyiRxpzulRYHFhti4ZqM
+	 Qqa07O3FBfsJg==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 15 Nov 2024 18:07:31 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: linux@weissschuh.net,
+	broonie@kernel.org,
+	lee@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] const_structs.checkpatch: add i2c_device_id, pci_device_id, spi_device_id and usb_device_id
+Date: Fri, 15 Nov 2024 18:07:16 +0100
+Message-ID: <3b100aca94521c484c9c158897ab7ec139ab3334.1731690298.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] iio: adc: ad4000: Add timestamp channel
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
- Michael.Hennerich@analog.com, jic23@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, marcelo.schmitt1@gmail.com
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1731626099.git.marcelo.schmitt@analog.com>
- <7cb2f4f5ca6980e0e5ff4591fb8b7f53124e13bb.1731626099.git.marcelo.schmitt@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <7cb2f4f5ca6980e0e5ff4591fb8b7f53124e13bb.1731626099.git.marcelo.schmitt@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/14/24 5:50 PM, Marcelo Schmitt wrote:
-> The ADC data is pushed to the IIO buffer along with timestamp but no
-> timestamp channel was provided to retried the time data.
-> Add a timestamp channel to provide sample capture time.
-> 
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> ---
-> I was about to reply to the patches the other week but waited thinking I
-> would be able to test them on time.
-> My initial intent was to provide timestamps for ADC readings, but I didn't
-> realize an IIO timestamp channel would be needed (silly me).
-> David, do you want a Suggested-by tag in this one?
+i2c_device_id, pci_device_id, spi_device_id and usb_device_id are common,
+help keeping them const.
 
-I supposed that would make more sense than Reported-by: if we are
-calling this a feature rather than a bug. Also,
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ scripts/const_structs.checkpatch | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Reviewed-by: David Lechner <dlechner@baylibre.com>
+diff --git a/scripts/const_structs.checkpatch b/scripts/const_structs.checkpatch
+index e8609a03c3d8..725796a899a6 100644
+--- a/scripts/const_structs.checkpatch
++++ b/scripts/const_structs.checkpatch
+@@ -24,6 +24,7 @@ file_lock_operations
+ file_operations
+ hv_ops
+ hwmon_ops
++i2c_device_id
+ ib_device_ops
+ ide_dma_ops
+ ide_port_ops
+@@ -54,6 +55,7 @@ nft_expr_ops
+ nlmsvc_binding
+ nvkm_device_chip
+ of_device_id
++pci_device_id
+ pci_raw_ops
+ phy_ops
+ pinconf_ops
+@@ -92,10 +94,12 @@ snd_soc_dai_ops
+ snd_soc_ops
+ snd_soc_tplg_ops
+ soc_pcmcia_socket_ops
++spi_device_id
+ stacktrace_ops
+ sysfs_ops
+ tty_operations
+ uart_ops
++usb_device_id
+ usb_mon_operations
+ v4l2_ctrl_ops
+ v4l2_ioctl_ops
+-- 
+2.47.0
+
 
