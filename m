@@ -1,164 +1,222 @@
-Return-Path: <linux-kernel+bounces-410756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A0449CE0B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:55:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 045A99CE0C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:57:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D60BCB2B9AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:51:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBC3DB27A74
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351C71D8E12;
-	Fri, 15 Nov 2024 13:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5571D6DAA;
+	Fri, 15 Nov 2024 13:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y/cJFaTG"
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="Qk0judhr"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D8D1D8A14
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 13:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F571CF2A6
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 13:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731678335; cv=none; b=UhXnffRPCepcJs/pgG6ZdUejmA8kc1++4/EY8r51ToG9VjPaifB26fSvk6kB35SqB3fM5rns/E1dTs4fHPlXpLKVY20As7ETcBpQCwLxILgviaK17O8GtWV9MHxe2DLOqI6JfoZDCdgQV680zOT56C5aSFerV3wJ0bsCuuURMHg=
+	t=1731678321; cv=none; b=N5a0Hbk39NYs+EE47bxnln4CeNe/ngCpy89m53iTm34hrFw08w3BVzJdK6vaNi6vm8ukbbUk2ieGzXp4t6HjkykkrKUcLLEP1Na/FYfQ4VMVBIelroFheerbXvTYWajbv5cEIpwXNrE0v044m9ob6lJTD5eyR4O/feGl1Ct8riQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731678335; c=relaxed/simple;
-	bh=VoybBsY7RTKWBqvK6p4BNsS1WLVg3nffE+yaujNmtgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UMtecLTYpw7YawAhKPlNkCx7GK7yXfnzcw7k6GDv3AOYauppYZi+FV0nTwGhRKdR7XodzAp2cCpwTgECd+b0I5gcmxT+0PTTx2ZdNM+tiBSO/k7ypdqR9tYW+2qxW3wwhPpTnoernbPE+EZZbJQEktFDjEeDxTjjI3apOzJJ0q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y/cJFaTG; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-715716974baso1017568a34.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 05:45:33 -0800 (PST)
+	s=arc-20240116; t=1731678321; c=relaxed/simple;
+	bh=wEvihj3FaG6q6yux4Sp4g9xT2J7CX9ZO0jrhysEVxMQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cxKxIUJIAjqxFwxhIKJdxuqZnzrQRWnZTw6REQGYxHLt04XKgf+QAv/p1kFYmeWP9iZAvkcQPBbrMT/SG1hibAt/4h2wNAa5x09N2iMWV7eEmh2erw7D+QwxXKAD5AZenwos6RTkfJoANl1btFWAV7DU6bhp3AOfWr4SreIZPoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=Qk0judhr; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539f84907caso1959661e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 05:45:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731678333; x=1732283133; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LuZ9h9BNFcT5uL/Q7ZM7GD2SJeFPeGTf27xjtupqSCo=;
-        b=Y/cJFaTGTLHY/LURlE0iRlI3Lv3bxom7+r3lcgn193aSi7b6A/Uc8SYoUl/0PHmw/s
-         LH8dLfDH8VbR60ozfym0ur1+tdRuDmcwLGl/chCMFRE4hQlnhskvyPy0NC0fsHvvApL0
-         0b22DsCGz/JFUjZXTqggb5PO/qXn0b8Q1S1LQ832iJ/wIilX8AeIEl54IiJYoBouKWmV
-         B/3+uAtubmcXO2blSLFLzgnjRMsY6tD4Q0D0BMXns7Ga39Bj4BhWLh6XhrBf5CkTSTd9
-         F/22PXm3nzk+TiiQNe0oatLigMz2M9mFSYt/lA8GnaROwcjLnBrUl31s+XTGQXZHQOTb
-         hYCw==
+        d=openvpn.net; s=google; t=1731678316; x=1732283116; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ov+3BoKnMSe11D0SkLhwSbXFmwsCCeFQwOwZmC0xFp8=;
+        b=Qk0judhrAu4hBwxj3IlkDvz/6ABn9lsTR2VNmgCTykDrHpPAVC6JYOUzJ4Tt05z9Ez
+         vn9rh9+H+m42hn9rdJNdy1PHlQIb3u4vOIomYs+oaSn2PASDS8a0x6YLO4Prree3x5FL
+         GQpDjm+0jSUdRRzEaOKOC0Hlv4OKNZSKzC7Pk58oJqyc0EaS/U3IVaCvkKD3rh8eZSdj
+         KEDtC9Dfh1beK93j6E8AUyJObbk1J8/IpxJB2Zpv4UdBKRd/vCZgoNla+vzwjpij9WB3
+         xxGXKSYdDbC+p1SQ3rqLyaafyPyOOzzlpEucWMOF0mJtHBCPYJaLmoboJ8Vn993+bWGC
+         4kHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731678333; x=1732283133;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LuZ9h9BNFcT5uL/Q7ZM7GD2SJeFPeGTf27xjtupqSCo=;
-        b=P6gIkQIxGw62E5pXcq9ETQruPAddOc2j0Iy5Qa+Tt5xh9UzZy9XTaR9neXNQ48YKAt
-         lZY1Xp3SijVeCzLm4Z/XAmtZbmFSJJ0NBdalPtippMo9b40BB3kuUx2pxAKMuOhmOZ/Q
-         Z2oFtKlbU6sl/GOlPtggJY595YGo8XiWflLtcLI03aOCKO4Zj9qH7vbpAd8TNilanshP
-         b51LKESDDRII/C1DqbcHtxb4QcGIgFzJhiwu+Q+3afO+S5JnQWFB/AMaLZ1zmknfmufp
-         Tu2fSEVWUYsig4tpQMb7LKtnSiKTu5QSp95hZ8ZuAhuN1d6IAB636OTCZ0xBYRqmve1n
-         ir/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVODJOkGz/I3nYh9gfa0A/DgZ6TWmxRJ6oln8i0t9mmcfEAYj64l3MERtoEERubsVWRFFn1qkD1DAm83lc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNqcGt3lskMJtmav4asxGP/ZpCNfJiLa0zJKjzndihB4xRZJ1C
-	r9Bl/S/AcKZnXnZ8PRqC13CDS1c9byGQStC7Q7YsYUkmPwVf3fjbPFXBjHu0ww==
-X-Google-Smtp-Source: AGHT+IGIbW1tQeXnBuOqrUpxgNtqWmpwlGGiTVcd4WBp0pbssH/vd69ZwPhiHwTkU1GfRxG6/U7bqg==
-X-Received: by 2002:a05:6830:700a:b0:716:ab1b:6473 with SMTP id 46e09a7af769-71a77a24391mr3208834a34.30.1731678332904;
-        Fri, 15 Nov 2024 05:45:32 -0800 (PST)
-Received: from thinkpad ([117.193.215.93])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1c2c505sm1268434a12.18.2024.11.15.05.45.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 05:45:32 -0800 (PST)
-Date: Fri, 15 Nov 2024 19:15:24 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Konrad Dybcio <konradybcio@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	quic_vbadigan@quicinc.com, quic_mrana@quicinc.com,
-	andersson@kernel.org
-Subject: Re: [PATCH v4 1/3] PCI: dwc: Skip waiting for link up if vendor
- drivers can detect Link up event
-Message-ID: <20241115134524.xbjgrutbpp7ehjsn@thinkpad>
-References: <20241115-remove_wait1-v4-0-7e3412756e3d@quicinc.com>
- <20241115-remove_wait1-v4-1-7e3412756e3d@quicinc.com>
+        d=1e100.net; s=20230601; t=1731678316; x=1732283116;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ov+3BoKnMSe11D0SkLhwSbXFmwsCCeFQwOwZmC0xFp8=;
+        b=AfWU7NZpp9wxoZ+szxYdbYf2LBPsYrcLAVTSN+LBUUY2oxTJYf1nAN1YiCpZEJuxts
+         wHCq4tVpCyTo51iw7WWqIbzF88JEPAV3J1gVCECyTv9VUu1Vh0oGSKWqrlucNya5QW8Q
+         n0/vohI68qPsUG6oeOOC7xinKrG2hyM0GLnJRrE6fAg/oYIS24z9lmA+X2z6iHsBIs+5
+         j02bSM5qcWaQX/5YB7zchUA6Sq/nwp18I3khugV/7BUtZ6gvcZ/SkjRMMw/dpg/IYheh
+         2KOgiOmHKB3BxUIc7pOxqilGRFVgaYo13MRIAkOXb7Nw4+t4v+I5SIan0k4KkzP9TEeC
+         /5Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCU56vF0FqpAgPbKJrKerXMy0/gDMpTXVdGfoA9VfaNxqTFAtM497fIAbXz61NHlpb3Vpty3gKTaPIil+JE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9LWVRB+2z03+Vj1ayTeiItehB/eYe8pwdUMN/NzNKZD4vY+wT
+	nTW3d2LFMJyPEzKKNm/R0/VHckFOQcuFd84g+skdZcJ4lR/gJrv0AtnBfq+TaPY=
+X-Google-Smtp-Source: AGHT+IHfp6211N2zJyxWAZDS/FNeL1B2lIvzVzZiH4FMGRoWJY7Lr3+gfzb1/aQAr6d75eCnF/HSqA==
+X-Received: by 2002:a05:6512:2823:b0:535:3ca5:daa with SMTP id 2adb3069b0e04-53dab2919f6mr1543586e87.7.1731678316391;
+        Fri, 15 Nov 2024 05:45:16 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:59f4:10be:886a:27eb? ([2001:67c:2fbc:1:59f4:10be:886a:27eb])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da244cb6sm58968975e9.0.2024.11.15.05.45.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 05:45:15 -0800 (PST)
+Message-ID: <353a7ffd-852a-4da6-b382-ea1714c69dc1@openvpn.net>
+Date: Fri, 15 Nov 2024 14:45:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v11 04/23] ovpn: add basic interface
+ creation/destruction/management routines
+To: Sergey Ryazanov <ryazanov.s.a@gmail.com>,
+ Sabrina Dubroca <sd@queasysnail.net>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-4-de4698c73a25@openvpn.net>
+ <2fd3dc9c-9d6a-494c-a4d8-a45221bf250d@gmail.com> <ZzOGqP9AAGSN2E7y@hog>
+ <3da3a4a6-f88d-4b60-be99-42860e1b8b2d@openvpn.net>
+ <7ba4b3a0-06ca-4273-aaf0-19f92b4de3e9@gmail.com>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <7ba4b3a0-06ca-4273-aaf0-19f92b4de3e9@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241115-remove_wait1-v4-1-7e3412756e3d@quicinc.com>
 
-On Fri, Nov 15, 2024 at 04:00:21PM +0530, Krishna chaitanya chundru wrote:
-> If the vendor drivers can detect the Link up event using mechanisms
-> such as Link up IRQ and can the driver can enumerate downstream devices
-
-"if the driver can..."
-
-> instead of waiting here, then waiting for Link up during probe is not
-> needed here, which optimizes the boot time.
+On 14/11/2024 23:57, Sergey Ryazanov wrote:
+> On 14.11.2024 10:07, Antonio Quartulli wrote:
+>> On 12/11/2024 17:47, Sabrina Dubroca wrote:
+>>> 2024-11-09, 03:01:21 +0200, Sergey Ryazanov wrote:
+>>>> On 29.10.2024 12:47, Antonio Quartulli wrote:
+>>>>> +/* When the OpenVPN protocol is ran in AEAD mode, use
+>>>>> + * the OpenVPN packet ID as the AEAD nonce:
+>>>>> + *
+>>>>> + *    00000005 521c3b01 4308c041
+>>>>> + *    [seq # ] [  nonce_tail   ]
+>>>>> + *    [     12-byte full IV    ] -> NONCE_SIZE
+>>>>> + *    [4-bytes                   -> NONCE_WIRE_SIZE
+>>>>> + *    on wire]
+>>>>> + */
+>>>>
+>>>> Nice diagram! Can we go futher and define the OpenVPN packet header 
+>>>> as a
+>>>> stucture? Referencing the structure instead of using magic sizes and 
+>>>> offsets
+>>>> can greatly improve the code readability. Especially when it comes 
+>>>> to header
+>>>> construction/parsing in the encryption/decryption code.
+>>>>
+>>>> E.g. define a structures like this:
+>>>>
+>>>> struct ovpn_pkt_hdr {
+>>>>    __be32 op;
+>>>>    __be32 pktid;
+>>>>    u8 auth[];
+>>>> } __attribute__((packed));
+>>>>
+>>>> struct ovpn_aead_iv {
+>>>>    __be32 pktid;
+>>>>    u8 nonce[OVPN_NONCE_TAIL_SIZE];
+>>>> } __attribute__((packed));
+>>>
+>>> __attribute__((packed)) should not be needed here as the fields in
+>>> both structs look properly aligned, and IIRC using packed can cause
+>>> the compiler to generate worse code.
+>>
+>> Agreed. Using packed will make certain architecture read every field 
+>> byte by byte (I remember David M. biting us on this in batman-adv :))
 > 
-> So skip waiting for link to be up if the driver supports 'linkup_irq'.
+> Still curious to see an example of that strange architecture/compiler 
+> combination. Anyway, as Sabrina mentioned, the header is already pretty 
+> aligned. So it's up to you how to document the structure.
+
+IIRC MIPS was one of those, but don't take my word for granted.
+
+> 
+>> This said, I like the idea of using a struct, but I don't feel 
+>> confident enough to change the code now that we are hitting v12.
+>> This kind of change will be better implemented later and tested 
+>> carefully. (and patches are always welcome! :))
+> 
+> The main reason behind the structure introduction is to improve the code 
+> readability. To reduce a shadow, where bugs can reside. I wonder how 
+> many people have invested their time to dig through the encryption 
+> preparation function?
+> 
+> As for risk of breaking something I should say that it can be addressed 
+> by connecting the kernel implementation to pure usespace implementation, 
+> which can be assumed the reference. And, I believe, it worth the benefit 
+> of merging easy to understand code.
 > 
 
-s/linkup_irq/use_linkup_irq
+I understand your point, but this is something I need to spend time on 
+because the openvpn packet format is not "very stable", as in "it can 
+vary depending on negotiated features".
 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+When implementing ovpn I decided what was the supported set of features 
+so to create a stable packet header, but this may change moving forward 
+(there is already some work going on in userspace regarding new features 
+that ovpn will have to support).
+Therefore I want to take some time thinking about what's best.
 
-With above,
+Regards,
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
-> ---
->  drivers/pci/controller/dwc/pcie-designware-host.c | 10 ++++++++--
->  drivers/pci/controller/dwc/pcie-designware.h      |  1 +
->  2 files changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 3e41865c7290..c8208a6c03d1 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -530,8 +530,14 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
->  			goto err_remove_edma;
->  	}
->  
-> -	/* Ignore errors, the link may come up later */
-> -	dw_pcie_wait_for_link(pci);
-> +	/*
-> +	 * Note: The link up delay is skipped only when a link up IRQ is present.
-> +	 * This flag should not be used to bypass the link up delay for arbitrary
-> +	 * reasons.
-> +	 */
-> +	if (!pp->use_linkup_irq)
-> +		/* Ignore errors, the link may come up later */
-> +		dw_pcie_wait_for_link(pci);
->  
->  	bridge->sysdata = pp;
->  
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index 347ab74ac35a..1d0ec47e1986 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -379,6 +379,7 @@ struct dw_pcie_rp {
->  	bool			use_atu_msg;
->  	int			msg_atu_index;
->  	struct resource		*msg_res;
-> +	bool			use_linkup_irq;
->  };
->  
->  struct dw_pcie_ep_ops {
-> 
-> -- 
-> 2.34.1
-> 
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Antonio Quartulli
+OpenVPN Inc.
+
 
