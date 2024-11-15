@@ -1,207 +1,224 @@
-Return-Path: <linux-kernel+bounces-410397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A506A9CDAF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:55:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B237A9CDB00
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:00:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BA831F21A32
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:55:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69B67280A0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B9A18C332;
-	Fri, 15 Nov 2024 08:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C545718BC26;
+	Fri, 15 Nov 2024 09:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D9Sq/c1U"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="gEIaLEfR"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994E51632E7
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB2E1898EA;
+	Fri, 15 Nov 2024 09:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731660945; cv=none; b=qeupLCgRl7TLUNgswtt3ge//2I96/tyJbxuLtcpzog2xl06ScaOWE/t8qINy9RlbNxwGjSo9fbnTruGy3N99cIZUjOdlRw+/5oJp2fBgefl0Ipv8IELo74FHEJc0KrCrYXYXtimUFF3hGofTyaG4OyWiRSfRavhw0xfWfZ8yY3c=
+	t=1731661230; cv=none; b=amjEkA9t8Lakilm+PlRltn4Zf3WJVHB0FfWPholimq47uA6hupoSJhIcbUhzQuWPCo95654zdCYokkRhSPjEm/m9Q7eQQb1u+OEpfOJvkbdJJRwMrV/wBJoxCI+/xx+U/lh/TUwllTzZBwxavOBN+2nBiKjKOeyX7MDYuBNvq+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731660945; c=relaxed/simple;
-	bh=I9uYl41QRGR34kBf2jcXMhn8f5XxhdA7gzLic0SNu1I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d416k62tC6hAn2HFbcJ8iy/B9aQ7b3hgc5/ZpT3+sVZonvUOTHymT9PN0jTiXF/axRTvslJYprsN1Xh/zn+FnV9c2O7orKWgEKIzdB4t8kT9YXbKklzQf9XBAuxjcAxvrrnjmRZ/OCVkbtgUzLRAGWlBblS52AOkMXSPW9l++go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D9Sq/c1U; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5ceca0ec4e7so1944701a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 00:55:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731660942; x=1732265742; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WwPfvv1Vu4fpClWF94s2/7ENJKbUW5Fs/yycbUbmmqg=;
-        b=D9Sq/c1UziaoygEsyes+KzG/Zk5nn1E8xFciEm/12WYOidRUizTKP4CcvzutbLfRDr
-         BwQqPaYVHSSnBOcWTtpZ97AHXIoiKu9Ii3G3vt64w+RTQ1bwvRcZRzW3A14GrkZAIQP4
-         PsVpk4P9KmF4wrZU5R14NJld/3MQWayfkL7l5g7ZCDY6/dil5SwYIwjbqTTqaBao9oLu
-         9JfsyaR4naYqHi84jbhGnbd2Y4yFhrVtPy7P62rCqBEvCsiMVdV/ptYn4fWrPoG0728t
-         cpLnTMF5U0mSqAiW3d4MI4b/uECQTgUS/z4EBQ4zmUQWX/9zEfPSxDqpBcTI69b/72zL
-         VjXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731660942; x=1732265742;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WwPfvv1Vu4fpClWF94s2/7ENJKbUW5Fs/yycbUbmmqg=;
-        b=Y2Iu4XB+nkCi6fLYtDQD0nlG+TpBwSDRcWGnAHi/ATNmAZwlLettbcaNOlGNQw4HSw
-         Osj+/ls+rw7v/Iir9xASI57QA42Huhlk7KcLv6BAYLym/SKf9kkq2u1o7oPFZqxHcCeK
-         IvWi7M4/9EUb7+nSkk0UniJB5s/9sV9iuPIcZDLbb44eI2FxgL24plGNyFflqrL781wb
-         MS1K/L3kXi1tnYHXKZZ4s0Ouee7vVeBIWlbNGm1ShePYy1Zgov+u1W7D6uiOjMWrQVBL
-         g5ZTpthm7rftV31n/J5TWD1FhqiyyfbYknkoyWpOiVycAHkj2QOTomadfRGzl3hgLn8c
-         DT+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXJK1sYgmFker8RnBQq8AeLjoeMy386Q0VN3b8wkOyccaP/RaTVZBJIpJ8H5yCRwg/xBXYZG9zDgIRHixw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIOE5e+eQP05YZQa1tT3OGi48XGg+1XX1L7BLcHGpDtjTbL1Li
-	+REoaaXvnc6IjXnr7lMZHP+qPL3nKW1qvdTa+7wNHvTrK+9IkjZJ
-X-Google-Smtp-Source: AGHT+IFpqTwtMjV+8xffCCbPSZs9XUvm9no//pS9duGs/44wrGoUxnGCitypnV5+QD7w0Kza5jeVVQ==
-X-Received: by 2002:a17:907:844:b0:a9a:13dd:2734 with SMTP id a640c23a62f3a-aa483489f26mr173860666b.36.1731660941639;
-        Fri, 15 Nov 2024 00:55:41 -0800 (PST)
-Received: from enno-kaukura.lan ([147.161.234.125])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20e081574sm157714866b.179.2024.11.15.00.55.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 00:55:41 -0800 (PST)
-From: Andreas Oetken <ennoerlangen@gmail.com>
-X-Google-Original-From: Andreas Oetken <andreas.oetken@siemens-energy.com>
-To: 
-Cc: Andreas Oetken <andreas.oetken@siemens-energy.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] mtd: core/part: trying to delete partition with usecount > 0 corrupt partition
-Date: Fri, 15 Nov 2024 09:55:13 +0100
-Message-ID: <20241115085516.1852668-1-andreas.oetken@siemens-energy.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1731661230; c=relaxed/simple;
+	bh=0nwQEzD9oM38WKhLrCWGJCjvZHn0WdmUqf5eGFcbjoU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lGNs3hxHcEQ9fCBFXz2zGMTIFfmP971P1j1IgOVfkz4QqUTXWDldbisEA9eyvxFD2L2KX39b45TE8gHp0vz0emiuJc340gC0W3NfCFmEX8F3ezyLXmidnFclRXpV9/b5v5G7VeBt6UnVy9hu2czxG7ro5Xd1BDQ75r+py2jWjJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=gEIaLEfR; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.96] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 892052FC0055;
+	Fri, 15 Nov 2024 10:00:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1731661224;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C7yJpDy9PapnyIZwSb/TtFCIBUwleiucaBEmlb/DtGE=;
+	b=gEIaLEfRt18hqTOn5ApqTSzh7GXWKwDwBzxdDo3saNVD1dXYtI6aKPGt2hOrn+FcSiuQU0
+	2Lm296yMH782FJNSb1iaWfSTbjaDLf4/ece7Qx76o4Rf6HFBjzmuO56GRSfauXGD+YolBs
+	vPfkq0jCZssAgMxfTbfkCIVryhp9VGk=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <58b85a78-55aa-422c-a21d-254eb16cc8c6@tuxedocomputers.com>
+Date: Fri, 15 Nov 2024 10:00:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
+ symbols
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Luis Chamberlain
+ <mcgrof@kernel.org>, tux@tuxedocomputers.com,
+ Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>,
+ Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Thorsten Leemhuis <linux@leemhuis.info>,
+ Vinzenz Vietzke <vv@tuxedocomputers.com>, Christoffer Sandberg <cs@tuxedo.de>
+References: <20241114103133.547032-4-ukleinek@kernel.org>
+ <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
+ <2024111557-unlighted-giggle-0d86@gregkh>
+ <6c1952bc-f58d-4c55-887e-6aa247daec5c@tuxedocomputers.com>
+ <h5q36ajuzgwf5yrjmqv46x62evifcgoi5imxhcvsv7oxauvxak@sj54oisawqnf>
+Content-Language: en-US
+From: Werner Sembach <wse@tuxedocomputers.com>
+In-Reply-To: <h5q36ajuzgwf5yrjmqv46x62evifcgoi5imxhcvsv7oxauvxak@sj54oisawqnf>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Check for usecount before deleting debugfs and sysfs entries.
-Otherwise deleting the partition a second time leads to a kernel panic.
+Hello Uwe,
 
-Signed-off-by: Andreas Oetken <andreas.oetken@siemens-energy.com>
----
- drivers/mtd/mtdcore.c | 25 ++++++++++++++-----------
- drivers/mtd/mtdcore.h |  2 +-
- drivers/mtd/mtdpart.c |  7 +++----
- 3 files changed, 18 insertions(+), 16 deletions(-)
+Am 15.11.24 um 08:29 schrieb Uwe Kleine-König:
+> Hello Werner,
+>
+> On Fri, Nov 15, 2024 at 07:09:49AM +0100, Werner Sembach wrote:
+>> Am 15.11.24 um 05:43 schrieb Greg KH:
+>>> On Thu, Nov 14, 2024 at 11:49:04AM +0100, Werner Sembach wrote:
+>>>> Am 14.11.24 um 11:31 schrieb Uwe Kleine-König:
+>>>>> the kernel modules provided by Tuxedo on
+>>>>> https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers
+>>>>> are licensed under GPLv3 or later. This is incompatible with the
+>>>>> kernel's license and so makes it impossible for distributions and other
+>>>>> third parties to support these at least in pre-compiled form and so
+>>>>> limits user experience and the possibilities to work on mainlining these
+>>>>> drivers.
+>>>>>
+>>>>> This incompatibility is created on purpose to control the upstream
+>>>>> process. Seehttps://fosstodon.org/@kernellogger/113423314337991594 for
+>>>>> a nice summary of the situation and some further links about the issue.
+>>>>>
+>>>>> Note that the pull request that fixed the MODULE_LICENSE invocations to
+>>>>> stop claiming GPL(v2) compatibility was accepted and then immediately
+>>>>> reverted "for the time being until the legal stuff is sorted out"
+>>>>> (https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/a8c09b6c2ce6393fe39d8652d133af9f06cfb427).
+>>>> As already being implied by that commit message, this is sadly not an issue
+>>>> that can be sorted out over night.
+>>>>
+>>>> We ended up in this situation as MODULE_LICENSE("GPL") on its own does not
+>>>> hint at GPL v2, if one is not aware of the license definition table in the
+>>>> documentation.
+>>> That's why it is documented, to explain this very thing.  Please don't
+>>> suggest that documenting this is somehow not providing a hint.  That's
+>>> just not going to fly with any lawyer who reads any of this, sorry.
+>> You are right, that's why when I became aware of the situation this Monday https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/9db67459510f18084694c597ff1ea57ef1842f4e
+> We should differentiate two situations here: The one is from Monday
+> when you realised that a non-GPL2 compatible kernel module is unable to
+> use many functions. The other (and IMHO more relevant) is when GPLv3 was
+> chosen knowing it's incompatible with the kernel's license. I would
+> argue that you were aware of that since at least March this year
+> (https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/issues/137#note_1807179414).
 
-diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-index 1c8c40728678..19ade7e53024 100644
---- a/drivers/mtd/mtdcore.c
-+++ b/drivers/mtd/mtdcore.c
-@@ -714,30 +714,33 @@ int add_mtd_device(struct mtd_info *mtd)
-  *	if the requested device does not appear to be present in the list.
-  */
- 
--int del_mtd_device(struct mtd_info *mtd)
-+int del_mtd_device(struct mtd_info *mtd, const struct attribute *mtd_partition_attrs[])
- {
- 	int ret;
- 	struct mtd_notifier *not;
- 
- 	mutex_lock(&mtd_table_mutex);
--
--	debugfs_remove_recursive(mtd->dbg.dfs_dir);
--
- 	if (idr_find(&mtd_idr, mtd->index) != mtd) {
- 		ret = -ENODEV;
- 		goto out_error;
- 	}
- 
--	/* No need to get a refcount on the module containing
--		the notifier, since we hold the mtd_table_mutex */
--	list_for_each_entry(not, &mtd_notifiers, list)
--		not->remove(mtd);
--
- 	if (mtd->usecount) {
- 		printk(KERN_NOTICE "Removing MTD device #%d (%s) with use count %d\n",
- 		       mtd->index, mtd->name, mtd->usecount);
- 		ret = -EBUSY;
- 	} else {
-+		/* No need to get a refcount on the module containing
-+		 * the notifier, since we hold the mtd_table_mutex
-+		 */
-+		debugfs_remove_recursive(mtd->dbg.dfs_dir);
-+
-+		list_for_each_entry(not, &mtd_notifiers, list)
-+			not->remove(mtd);
-+
-+		if (mtd_partition_attrs != NULL)
-+			sysfs_remove_files(&mtd->dev.kobj, mtd_partition_attrs);
-+
- 		/* Try to remove the NVMEM provider */
- 		if (mtd->nvmem)
- 			nvmem_unregister(mtd->nvmem);
-@@ -852,7 +855,7 @@ int mtd_device_parse_register(struct mtd_info *mtd, const char * const *types,
- 
- out:
- 	if (ret && device_is_registered(&mtd->dev))
--		del_mtd_device(mtd);
-+		del_mtd_device(mtd, NULL);
- 
- 	return ret;
- }
-@@ -878,7 +881,7 @@ int mtd_device_unregister(struct mtd_info *master)
- 	if (!device_is_registered(&master->dev))
- 		return 0;
- 
--	return del_mtd_device(master);
-+	return del_mtd_device(master, NULL);
- }
- EXPORT_SYMBOL_GPL(mtd_device_unregister);
- 
-diff --git a/drivers/mtd/mtdcore.h b/drivers/mtd/mtdcore.h
-index b5eefeabf310..0f8e815e99b2 100644
---- a/drivers/mtd/mtdcore.h
-+++ b/drivers/mtd/mtdcore.h
-@@ -9,7 +9,7 @@ extern struct backing_dev_info *mtd_bdi;
- 
- struct mtd_info *__mtd_next_device(int i);
- int __must_check add_mtd_device(struct mtd_info *mtd);
--int del_mtd_device(struct mtd_info *mtd);
-+int del_mtd_device(struct mtd_info *mtd, const struct attribute *mtd_partition_attrs[]);
- int add_mtd_partitions(struct mtd_info *, const struct mtd_partition *, int);
- int del_mtd_partitions(struct mtd_info *);
- 
-diff --git a/drivers/mtd/mtdpart.c b/drivers/mtd/mtdpart.c
-index 5725818fa199..96d4deb4d9b5 100644
---- a/drivers/mtd/mtdpart.c
-+++ b/drivers/mtd/mtdpart.c
-@@ -307,12 +307,11 @@ static int __mtd_del_partition(struct mtd_info *mtd)
- 			return err;
- 	}
- 
--	sysfs_remove_files(&mtd->dev.kobj, mtd_partition_attrs);
--
--	err = del_mtd_device(mtd);
-+	err = del_mtd_device(mtd, mtd_partition_attrs);
- 	if (err)
- 		return err;
- 
-+
- 	list_del(&mtd->part.node);
- 	free_partition(mtd);
- 
-@@ -334,7 +333,7 @@ static int __del_mtd_partitions(struct mtd_info *mtd)
- 			__del_mtd_partitions(child);
- 
- 		pr_info("Deleting %s MTD partition\n", child->name);
--		ret = del_mtd_device(child);
-+		ret = del_mtd_device(child, mtd_partition_attrs);
- 		if (ret < 0) {
- 			pr_err("Error when deleting partition \"%s\" (%d)\n",
- 			       child->name, ret);
--- 
-2.45.2
+Yes I was aware of this for in-tree modules, I was not aware of this for out of 
+tree modules: 
+https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/issues/137#note_2066858305
 
+Sadly I did not get corrected on my mistake back then, otherwise I would have 
+started then to get things moving and not only last Monday.
+
+>
+> And in my opinion
+> https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/a8c09b6c2ce6393fe39d8652d133af9f06cfb427
+> was a wrong reaction. I received this as a statement that your company's
+> goals are important enough to not adhere to the kernel's license and the
+> open source spirit. This was what triggered me to create the patch under
+> discussion.
+
+The revert was done not to block the release of the fan control for the Sirius, 
+and as already mentioned in the commit: It is a temporary action.
+
+I hoped to gain more time. TBH I feel a little bit of regret doing this 
+experimentation in public now, as I would have had probably more time if i 
+didn't (no offense).
+
+>
+>> I got the gears to resolve this into moving (me playing devils advocate here
+>> is directly related to this https://lore.kernel.org/all/17276996-dcca-4ab5-a64f-0e76514c5dc7@tuxedocomputers.com/)
+>> and then returned on working on the code rewrite for upstream ( https://lore.kernel.org/all/8847423c-22ec-4775-9119-de3e0ddb5204@tuxedocomputers.com/
+>> is directly related to that), because I'm a developer not a lawyer.
+> I agree that it's unlucky that MODULE_LICENSE("GPL") doesn't apply for
+> GPLv3. Not sure if it's sensible to deprecate "GPL" and mandate "GPL v2"
+> though.
+>
+>> Then I get called a liar
+> I guess you mean me here saying "That statement isn't consistent with
+> you saying to pick GPLv3 as an explicitly incompatible license to
+> control the mainlining process. So you knew that it's legally at least
+> questionable to combine these licenses."? If so: I understand that this
+> is discomfortable suggestion. However with my current understanding it's
+> true. If this is a problem with my understanding, please point out where
+> I'm wrong.
+It's about that second sentence "So you knew that it's legally [...]" which I 
+explicitly stated that I was not e.g. 
+https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/issues/137#note_2066858305 
+from back in august.
+>
+>> and hit with the nuclear option not even full 3 days later,
+> For now we're in the discussion period for this "option". I would expect
+> that this patch doesn't go in before 6.12. So 6.13-rc1 should be the
+> earliest broken ("enforcing") kernel which probably starts to affect
+> your users starting with 6.13 final. The actual decision if and when to
+> apply this patch isn't mine though. But you should have at least a few
+> weeks to work on resolving the licensing.
+
+Knowing the issue tracker too well, I know that day one of 6.13-rc1 release a 
+discussion will might break loose that binds resources not invested in other stuff.
+
+Also can you guarantee that it's not landing in 6.12(.0)?
+
+That's why I asked for a clear timeframe to work with but I don't know if I can 
+get one.
+
+>
+>> while I'm working on resolving the issue
+> This is good. You have my support to revert the patch under discussion
+> as soon as this is resolved.
+>
+>> and in parallel working on improving the code for it to be actually
+>> accepted by upstream.
+>>
+>> If you want prove of my blissful ignorance from just last week please take a
+>> look at my comment here: https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/merge_requests/21#note_2201702758
+> I indeed wondered about your reaction.
+>
+>> Now trying to be constructive: Can you give me a timeframe to resolve the
+>> license issue before this is merged?
+> I would wish that in people's mind open source licensing would be taken
+> as serious as for example fiscal laws. If my company was caught as tax
+> evader the officials would rather shut down the company's operation than
+> to allow another month with unclean bookkeeping.
+>
+> So if you ask for my opinion, the right thing to do would be to stop
+> distributing tuxedo-drivers until this is resolved. Then I'd guess it's
+> your company's officials who would tell you about a time frame. But I'm
+> aware that I'm on the strong side of the spectrum of possibilities here.
+
+This would break linux installations on many devices and not only fall back on 
+TUXEDO I honestly fear.
+
+I was not around when the decision to license tuxedo-drivers (back then called 
+tuxedo-cc-wmi) under GPL v3 was made, but I trust the people here that is was 
+not done knowingly violating the GPL v2. And you did agree above that 
+MODULE_LICENSE("GPL") is somewhat unluckily named.
+
+I guess what I try to convince you and others is that we _are_ taking Open 
+Source licenses seriously, but still there are mistakes to be made, especially 
+with complex projects like the Linux kernel, e.g. I'm not aware of any other 
+project that uses a similar construct to EXPORT_SYMBOL_GPL()/MODULE_LICENSE().
+
+Best regards,
+
+Werner Sembach
+
+>
+> Best regards
+> Uwe
 
