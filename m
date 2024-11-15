@@ -1,169 +1,116 @@
-Return-Path: <linux-kernel+bounces-410269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25C369CD719
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:29:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A3A79CD71C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:31:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 898BBB241D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:29:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41526281894
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB7F188015;
-	Fri, 15 Nov 2024 06:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93AE185B5B;
+	Fri, 15 Nov 2024 06:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nm6tlNze"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vrBRiE3m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617DF18785C
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B22126C17;
+	Fri, 15 Nov 2024 06:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731652174; cv=none; b=a4dChp3SEXbIJBQ8ero3UvKfMD+d7dVptgWysNFXdQraP6UXeGIAULORUDad3OHqNh2f+67w4MPZyC/cKxPA/n15ge6mHKQeGLGLzBlDm5oO/T38Zy5Wwx1CPeJGavuWCv+jiTLUb75p7znQjc5TrKAyIe+HJXG9+ubCVuLF2Io=
+	t=1731652257; cv=none; b=LtyyWjMa7B4gi0Z+sdILNgwTBzj1QFfn9hIHmt7L0SairnDFqsvpZMitHgkT7Doa6s7K6NyfkDr2Gmd7ALuL5Z6VWykf/GThECpL0b1ew9DqMTAmbx4SVRn9SJC11xDAn7dZnFGuUfkQWXWsQvfwmeTtcopsDkb8KMK4fBV5xjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731652174; c=relaxed/simple;
-	bh=7lut310HhPch7yHLBDvFuhFDjs3W6c+xKnwc8hJfXnI=;
+	s=arc-20240116; t=1731652257; c=relaxed/simple;
+	bh=jE+fcubQiJTZYuRKvwt2hu15vk3aNy0fI5FIkyuJ1V4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W0shzdtbShMo9eQQr3kAT3vZJ2VcwDCbl2EvFxInsxciblT5fQaKqUWXBaadQ7oKbLlb3/0wvTKlUViTr4CjY6QHXuM/DNgKGUYNWjueijHS7I+qkHlLBbKVsGiPeS4FVPdnhr8Ck9cfz4AK6o5TWtHatdtM8yfhhqhePRuGjp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Nm6tlNze; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7205b6f51f3so1002245b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:29:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731652173; x=1732256973; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LAe/9vyquMdCBhByhmO/XPb3+AC0FRNm60dHRdsUA0k=;
-        b=Nm6tlNze+X+9F9uaykd7XmCAeOhFbfkLs1as54LBYvWZuY3axYLA9wzJt5XDJon3Sb
-         1QPjJSOXp3kMNzfbukczx57YsCGlmWg3Ki1pervuZ/8pmaKrMASLyqY76BsgSBPBAYQz
-         C5WwendQKKW1FS2axsaTxnXTb0vVA8Yrtp+UINuKC/Xhz4OqYhsyAt6Oym04fJtl5lhF
-         FGxBB+kOwg9FGl9oAQaH13tJV1ar8iBmsI5ZYh5gaZ9pLeJ9eb0z5ysvKwaZ/UrtOvPJ
-         LzNu5cDx5qcATTRjMXFTpfRgeb9wT3MSfxzRmlcMql2/y81EUwff8V2yRrhsdDQ4sTF8
-         8BNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731652173; x=1732256973;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LAe/9vyquMdCBhByhmO/XPb3+AC0FRNm60dHRdsUA0k=;
-        b=MgCSvedAD67WP9zqmNnJSw6NzIrdijyJrNiJbHZsdK83uQx/bEzophdD1mcMmnKmiZ
-         EzRhv7MLQn+BaaUfdIQaaOog560FqMCM6+Irbegyw76jlz9Ad+V6e0WUTorNrTOrAECY
-         4U1msvu0IlOvD2+EViV7ppKodChz/PcxAllGR23cijm46RTAxEqO8frwC8yqy76GpBgK
-         6GE85ZpIP8M3sS+txwRPT3juCK/0y1UI2p4p7nKVZhKee6yGgo/G1dlgtYjRAlfk3JhJ
-         jpF+E/r5+qoLewxh1vDXqU7TchmpOFzH0qSmhfhC68SsHsVd2A11Yioebagn7zvCfFyW
-         X36Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWAWSHEHCu9sByxw2/JFGA/7Q1rWwvlosi12OxLNvSUjO7Q9RFAO0Nqotj+90IUJp0A2m7xdmUlVx5PyCE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2Xq7rs0bWX9ZSJItYiKQfk1lIquPv2LAVGuC1FFvFqIS/j+2I
-	Yu+2E7r+Odq81Z0YM03ZmRO2gwa9J+Xyk8NEFSNhxNeA3rAtGZ/fQgTSsNqZOg==
-X-Google-Smtp-Source: AGHT+IFTHBUtXrdQ+eigXtiosvUhCPGu8P0GD6HEmTLFrUEv4hE86FppOeovnfYq2mBU9cj8n0bajQ==
-X-Received: by 2002:a05:6a00:2e27:b0:71e:e3:608 with SMTP id d2e1a72fcca58-72476cfcbccmr2044429b3a.26.1731652172623;
-        Thu, 14 Nov 2024 22:29:32 -0800 (PST)
-Received: from thinkpad ([117.193.208.47])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7247720120fsm637787b3a.193.2024.11.14.22.29.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 22:29:32 -0800 (PST)
-Date: Fri, 15 Nov 2024 11:59:25 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, quic_mrana@quicinc.com,
-	quic_vbadigan@quicinc.com
-Subject: Re: [PATCH v3 1/3] PCI: dwc: Skip waiting for link up if vendor
- drivers can detect Link up event
-Message-ID: <20241115062925.kuclg4w5wnticyvd@thinkpad>
-References: <20241101-remove_wait-v3-0-7accf27f7202@quicinc.com>
- <20241101-remove_wait-v3-1-7accf27f7202@quicinc.com>
- <ywuqtydbapfumelfu66237h65q2xb3rmvjtstiwvd24whn7rju@bcxldl2l4bv2>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mrhdLvKb4NLNQuRSCokAvV/qNUS9gaONQmfV8uY6wCHJwhp8XWhtzEi9AvDprr5ChHhyo/bPYnXq8VIe+n0akDvnJqt93UL2mnYURo2Hk6TazKud6bGEsjcH61nIJTMM6G5zw+lFOtT/gQkD/kwyvEaV36aDBz8BlCybDrNinG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vrBRiE3m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7422C4CED2;
+	Fri, 15 Nov 2024 06:30:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1731652256;
+	bh=jE+fcubQiJTZYuRKvwt2hu15vk3aNy0fI5FIkyuJ1V4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vrBRiE3mUalIe8T51KZHKXNwub6M4lwjy4kYvgmbdj14qR7dVu9EC1MnHEt9X3A4T
+	 rf6ZueEJZXGqwnIQWFNvTZiXmlKOkVjgQQmWs9Qk36B4eFl+LvMjtiHoAeRUZhPIn2
+	 mZcOw7O0Zz3GCrEcNfPiywFcEA3z0A2r+hzugQyY=
+Date: Fri, 15 Nov 2024 07:30:53 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Werner Sembach <wse@tuxedocomputers.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>, tux@tuxedocomputers.com,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Leemhuis <linux@leemhuis.info>
+Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
+ symbols
+Message-ID: <2024111517-booting-grafted-8c4c@gregkh>
+References: <20241114103133.547032-4-ukleinek@kernel.org>
+ <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
+ <2024111557-unlighted-giggle-0d86@gregkh>
+ <6c1952bc-f58d-4c55-887e-6aa247daec5c@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ywuqtydbapfumelfu66237h65q2xb3rmvjtstiwvd24whn7rju@bcxldl2l4bv2>
+In-Reply-To: <6c1952bc-f58d-4c55-887e-6aa247daec5c@tuxedocomputers.com>
 
-On Fri, Nov 01, 2024 at 10:26:38AM -0500, Bjorn Andersson wrote:
-> On Fri, Nov 01, 2024 at 05:04:12PM GMT, Krishna chaitanya chundru wrote:
-> > If the vendor drivers can detect the Link up event using mechanisms
-> > such as Link up IRQ and can the driver can enumerate downstream devices
-> > instead of waiting here, then waiting for Link up during probe is not
-> > needed here, which optimizes the boot time.
-> > 
-> > So skip waiting for link to be up if the driver supports 'linkup_irq'.
-> > 
-> > Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> > ---
-> >  drivers/pci/controller/dwc/pcie-designware-host.c | 10 ++++++++--
-> >  drivers/pci/controller/dwc/pcie-designware.h      |  1 +
-> >  2 files changed, 9 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> > index 3e41865c7290..26418873ce14 100644
-> > --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> > +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> > @@ -530,8 +530,14 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
-> >  			goto err_remove_edma;
-> >  	}
-> >  
-> > -	/* Ignore errors, the link may come up later */
-> > -	dw_pcie_wait_for_link(pci);
-> > +	/*
-> > +	 * Note: The link up delay is skipped only when a link up IRQ is present.
-> > +	 * This flag should not be used to bypass the link up delay for arbitrary
-> > +	 * reasons.
+On Fri, Nov 15, 2024 at 07:09:49AM +0100, Werner Sembach wrote:
+> Hi,
 > 
-> Perhaps by improving the naming of the variable, you don't need 3 lines
-> of comment describing the conditional.
+> Am 15.11.24 um 05:43 schrieb Greg KH:
+> > On Thu, Nov 14, 2024 at 11:49:04AM +0100, Werner Sembach wrote:
+> > > Hello,
+> > > 
+> > > Am 14.11.24 um 11:31 schrieb Uwe Kleine-K�nig:
+> > > > Hello,
+> > > > 
+> > > > the kernel modules provided by Tuxedo on
+> > > > https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers
+> > > > are licensed under GPLv3 or later. This is incompatible with the
+> > > > kernel's license and so makes it impossible for distributions and other
+> > > > third parties to support these at least in pre-compiled form and so
+> > > > limits user experience and the possibilities to work on mainlining these
+> > > > drivers.
+> > > > 
+> > > > This incompatibility is created on purpose to control the upstream
+> > > > process. Seehttps://fosstodon.org/@kernellogger/113423314337991594 for
+> > > > a nice summary of the situation and some further links about the issue.
+> > > > 
+> > > > Note that the pull request that fixed the MODULE_LICENSE invocations to
+> > > > stop claiming GPL(v2) compatibility was accepted and then immediately
+> > > > reverted "for the time being until the legal stuff is sorted out"
+> > > > (https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/a8c09b6c2ce6393fe39d8652d133af9f06cfb427).
+> > > As already being implied by that commit message, this is sadly not an issue
+> > > that can be sorted out over night.
+> > > 
+> > > We ended up in this situation as MODULE_LICENSE("GPL") on its own does not
+> > > hint at GPL v2, if one is not aware of the license definition table in the
+> > > documentation.
+> > That's why it is documented, to explain this very thing.  Please don't
+> > suggest that documenting this is somehow not providing a hint.  That's
+> > just not going to fly with any lawyer who reads any of this, sorry.
 > 
-> > +	 */
-> > +	if (!pp->linkup_irq)
-> > +		/* Ignore errors, the link may come up later */
-> 
-> Does this mean that we will be able to start handling these errors?
-> 
-> > +		dw_pcie_wait_for_link(pci);
-> >  
-> >  	bridge->sysdata = pp;
-> >  
-> > diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> > index 347ab74ac35a..539c6d106bb0 100644
-> > --- a/drivers/pci/controller/dwc/pcie-designware.h
-> > +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> > @@ -379,6 +379,7 @@ struct dw_pcie_rp {
-> >  	bool			use_atu_msg;
-> >  	int			msg_atu_index;
-> >  	struct resource		*msg_res;
-> > +	bool			linkup_irq;
-> 
-> Please name this for what it is, rather than some property from which
-> some other decision should be derived. (And then you need a comment to
-> describe how people should interpret and use it)
-> 
-> Also, "linkup_irq" sound like an int carrying the interrupt number, not
-> a boolean.
-> 
-> 
-> Please call it "use_async_linkup", "use_linkup_irq" or something.
-> 
+> You are right, that's why when I became aware of the situation this Monday https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/9db67459510f18084694c597ff1ea57ef1842f4e
+> I got the gears to resolve this into moving (me playing devils advocate here
+> is directly related to this https://lore.kernel.org/all/17276996-dcca-4ab5-a64f-0e76514c5dc7@tuxedocomputers.com/)
+> and then returned on working on the code rewrite for upstream ( https://lore.kernel.org/all/8847423c-22ec-4775-9119-de3e0ddb5204@tuxedocomputers.com/
+> is directly related to that), because I'm a developer not a lawyer.
 
-"use_linkup_irq" sounds good to me. But I do like to keep the note above as
-there were incidents that people tried to avoid this delay as a "workaround" to
-unrelated problems.
+I would strongly suggest you work with your lawyers now as they are the
+ones that need to resolve this properly.
 
-- Mani
+thanks,
 
--- 
-மணிவண்ணன் சதாசிவம்
+greg k-h
 
