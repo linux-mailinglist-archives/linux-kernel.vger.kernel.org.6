@@ -1,160 +1,152 @@
-Return-Path: <linux-kernel+bounces-411198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B80699CF478
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:01:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB3379CF496
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:10:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA4072894B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:01:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2662CB2FE87
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF5E1E231D;
-	Fri, 15 Nov 2024 19:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01CAD1E133E;
+	Fri, 15 Nov 2024 18:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="P72VuWdk"
-Received: from mout.perfora.net (mout.perfora.net [74.208.4.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ExGC9WKn"
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E2F38DD8;
-	Fri, 15 Nov 2024 19:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BC41D90BC;
+	Fri, 15 Nov 2024 18:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731697227; cv=none; b=g+zcQxN/Zcwc1twcE1QSbqekWCcHUCH7S3YIgsbo7v5FgeBIuBsJkaLWEeswN/vb1sKk1tdO0I5CG5xniL1cr8/0Zw5UlSJN2+bRuNYPUU9TwVX/OwWd+72aTi/nL2nOPmpDDh0gPT395BR0v59jf5bIwg38IU1AKi39dGTWtRU=
+	t=1731697192; cv=none; b=RSwywMffLWyAIK4y8RFq9yi2/ismgvacMs4kZgqz8X4LnU3fxBDISjVlbcl1fjfWFJkxdYdCxwJxzCvAYnX9sQbX2uYIz5wixOXzWmKOu6JgqQ/5wVQbxUbCYrgB7jJWZq0KYNNjrauBNhpoxAzlJciPOGdkGHmqJf59yNPfGyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731697227; c=relaxed/simple;
-	bh=23begWSDDl4iIx9POFzZxCxj6ntLAe1he+76sDlWA88=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EnaVgBI9rirBDBTok26Q9mkT71QL1/2dzsUKaLK1P+XyibQvVUl2GUoUx3yJYecYAiSj/mgfF3i3f/+y6P8lzRNgdZ19xhkJxzh3z2qwNhrkE0NjiRnl8JxowJ06/P7Z3JmftSLBsw444iU8Hlpggif8CosuLzrfbVdr3QUUzEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=P72VuWdk; arc=none smtp.client-ip=74.208.4.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
-	s=s1-ionos; t=1731697183; x=1732301983; i=parker@finest.io;
-	bh=JjVpzz7rrwn9sD/anIgIO4Wd5itVBXvna3LVl+1VzIE=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=P72VuWdkg8flIDByk8mejscF1bP8JOMM8wQMJ/Ujq6JbK1A+EOGNDHy0bnI9aM/C
-	 gsmQucY0TlIsVwjuGmcd90VN/bCz1Rg52+ZRoaXovo8a87/W8FANQcwPNLAYlVA3p
-	 PXMUR93e0idikezocrKr+6ecYNq4kokWyqL5LpvwgpvtxLO4Fi1xG+Snu5ZhbZb+z
-	 m2nCVrephyEmlLUDduzGsjs6rYxkGbkSGivDHHztOLtlNf36xEEKx9WG+Ht6e7hMe
-	 DmfgYzizqeEx9RG4iQnInMq5fkpYFlt0VdwGMRhh2UKyRHVogD5ZHWJ29tnpTRiim
-	 xtJ1xUZMnV+1z0iUGQ==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from SWDEV2.connecttech.local ([98.159.241.229]) by
- mrelay.perfora.net (mreueus004 [74.208.5.2]) with ESMTPSA (Nemesis) id
- 1MXpU8-1tHbbH21Ea-00WOVK; Fri, 15 Nov 2024 19:59:43 +0100
-Date: Fri, 15 Nov 2024 13:59:40 -0500
-From: Parker Newman <parker@finest.io>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu
- <joabreu@synopsys.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
- <jonathanh@nvidia.com>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, Parker Newman <pnewman@connecttech.com>
-Subject: Re: [PATCH v1 1/1] net: stmmac: dwmac-tegra: Read iommu stream id
- from device tree
-Message-ID: <20241115135940.5f898781.parker@finest.io>
-In-Reply-To: <ed2ec1c2-65c7-4768-99f1-987e5fa39a54@redhat.com>
-References: <cover.1731685185.git.pnewman@connecttech.com>
-	<f2a14edb5761d372ec939ccbea4fb8dfd1fdab91.1731685185.git.pnewman@connecttech.com>
-	<ed2ec1c2-65c7-4768-99f1-987e5fa39a54@redhat.com>
-Organization: Connect Tech Inc.
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731697192; c=relaxed/simple;
+	bh=n9+a9T3An2Vs616Bb5R2LqSM4stXWcCq8tqyVKqzd+c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NysySub4TMMxMF9QXDpHskv+xelaxpDW4h9oWsAvxE4A/FboGbSLBF/wfqOwM/DqySDvMwjbxEB2DlFyJuKxmJPJJBZwxVOMS4cksfPzV84f6SIAL+7YuEknPg9mDnKtOdhYsy9+vXzbRiJhtJ64xJnLZpWhxpsElPUnvZ0xAa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ExGC9WKn; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-5146e5fad69so752524e0c.0;
+        Fri, 15 Nov 2024 10:59:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731697190; x=1732301990; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=QoaaKwW84BX63DmcjxQs54uTuCYKl1olgWQUqa39PLw=;
+        b=ExGC9WKngJ8sexVI36ADFwIGCvxrckSG7pwig7yWfUSgaFtWYLkUxYzEst4AkR2Bf2
+         3qWOoox1P3OXuVjZqwidpDIGR1bdVS3pmSiXZlviE1H+vd9pFljmYCX7qXXIGBl+eCYK
+         Dgd+mxRZzA9tX3T8vK7vfwbLY5mnWCIrIp2kIQJDhpirBnmtzxYg5+CAvum8NQgCUObo
+         O5p0nLxmqxgYXe/Uon9hHRAOkvESBAknFdWB3GggkJIxeSDrIM/QOLArO/yeYNiwNG6c
+         /yeAANprPAWRcQS9VWIp0Sr8H5oPLBs7a4CIYkmz0R6ZXIs+YmGQeSD+VJ5iyPlSBGT8
+         /gTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731697190; x=1732301990;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QoaaKwW84BX63DmcjxQs54uTuCYKl1olgWQUqa39PLw=;
+        b=G5/yKbgSirMLZfLsOjasVlv5W1X6C/NPOyOTEQVIL5bitKFjSoBtw12WOWaPuVBkFV
+         5SHAKQp7BAq1V7BQJJZ9pg4mQLqfApLspmSebOdIqqXax8LgsNbvfRhOmLzDB28Z4wDs
+         f74S7u0KHUpHNgg8qcx68dpFw9GwzykQVqWifNvLeUCi0Wjn1Fptll8eLxOF2UeXvItr
+         BwhzUpfyzzIA2vRAGu5/fEBqUvfR2Ndve0iu7fAry1fVKLMonOZZ9BN/Mz8lT2HRIyhr
+         0mE9ze0+xyJqMA/mXp4JvSjmSXjjFFvXZVU+iyrwfxLUyj6rzpfyY1ZqjUM/cFNba5wz
+         OxFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVDtU6dakk18Fo1b8MPpokpBBgjovxWEeuhNkyhfMNRoKabSZVMshYHZGAP8Oj2bth+oGBlUgmd@vger.kernel.org, AJvYcCVu2ajouFFBXFaXgSmzfw8cAHm1mp+VMqOJkZVWfeqaZ9ZjjXc8EaPWxkmTH/TUBoZ7XQWRF3ZGJUxWzkc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztD4sUSG2jh3wDh9eoA18HE0iTt/ilW5dEwJB3QlvnOQx5zg5q
+	Z23uw5RN4b01aKUxcTxO4WYEm57YfkvKNKISMPgTnzNFo9fFzm7W
+X-Google-Smtp-Source: AGHT+IEulHvSV/YCoaAoSDuTypjrLtgHaof3w/fcX6mRrVW6q0tFMi3vbWen52lzpPNHpjYfsB8vmA==
+X-Received: by 2002:a05:6122:1dac:b0:50d:4cb8:5afd with SMTP id 71dfb90a1353d-51477eeac94mr4621120e0c.4.1731697189578;
+        Fri, 15 Nov 2024 10:59:49 -0800 (PST)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3ee8f3640sm21071066d6.91.2024.11.15.10.59.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 10:59:48 -0800 (PST)
+Message-ID: <583e643e-9c41-4cd6-b63d-0ce283a1a86e@gmail.com>
+Date: Fri, 15 Nov 2024 10:59:46 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:SFy/NKLNIwSILLteMFW/RS4w4hsJ0Lq5clxhKWhdd5K4p2oB9I7
- 9E9yNKCESFsfEU0sj+5Y9V+rZNMMQFjkMFnnYmmhyhhtXpf+Lg5IH4+6SdB2u4yxJPhoy59
- aSUqUXK8ay7+Nvwtd9u0LH4v948NFr9VXi4995v9PaDbK6ftWGEYEL0r6aFdA+cDnsjk0pM
- b5HC5M3cqWpsKjRB+Smmg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:O1wAl8LMaVo=;D2BnCpZbxQfWSIkE7z45IOy7zNg
- U8Alp9c6UVr5okWRhEhSL5n1pbeO+AzORuE9RDkpCYpVAsgPM7L67Q0Qi0nTVWQxX34+n+BB3
- lgERJ0pDZil5xYIRQHMzkmfxoXVZcxdbj9Q2A4a5RZ6kt4s6Jv/MCCCxw1YhXHA4jitgO/5gn
- 0AZalep2Uf/1ufOfpn6uk1QhDtd3CkNG8lwZObGj7GZYBJIQp+IBsAf8ktRZandaNFT+ujPVk
- ZIyU1+Scy3sEqoG3RZ5oyIlV6qrxs2UrYIAp3ltvgpoqHtFFNBZVAX6ut4LQmlpoKL9yWC/oI
- iR+k9jTuMXK19Kip/rMVuePCDxIBFi/ezcuWHxRw1kjUZSZtnS/9C7JrD3uFpCmHek7Zvtyub
- pbWjxGS5D92HBqkjzSr9cfhNn4KvoTltDTEKjjf2KZn8TAyfqa049znfSxKqr63+necLfE1Cn
- GWHWds9/wOxpRjPFQL8w7mBXZG6466J0XxBltikARJuJyk5T3gp1MzKya8Z5mIpbUblOb4qGy
- A2cwd8QSzccGq8WikGeAHjz59XF7QWZI3yXTyrRmxzMW2fpm8MJbGm9twncq0JosZ4jJL3Hnm
- wJPFUGeTL7C7ZJlsbdzab/7wjSx0lECOBZLfElOOVxqFWzM1lvwXPwGc4QeEk3ro1Aa4GmZAR
- 3N1jYmURAZmnrqTA+yS2g3rYBS36H/lT6yNhkUA6c63TgeeFB3Hv/1aQzNr0yHyD4ckfSwh7E
- JlWAIUpkgxiuI5g5BGtfbP8TOet0DQU4gUU7T9RNE2jnnCqgtFC3GorvcXHDdENqoHaoqwHuX
- mA2DL+v2o77sT+qfM087IugzDMUJ3o80LXH5T10ButyS9p6jhR1zuX9VJXM+cJc8y0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.10 00/82] 5.10.230-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20241115063725.561151311@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+In-Reply-To: <20241115063725.561151311@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 15 Nov 2024 18:17:07 +0100
-Paolo Abeni <pabeni@redhat.com> wrote:
+On 11/14/24 22:37, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.230 release.
+> There are 82 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun, 17 Nov 2024 06:37:07 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.230-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-> On 11/15/24 17:31, Parker Newman wrote:
-> > From: Parker Newman <pnewman@connecttech.com>
-> >
-> > Read the iommu stream id from device tree rather than hard coding to m=
-gbe0.
-> > Fixes kernel panics when using mgbe controllers other than mgbe0.
->
-> It's better to include the full Oops backtrace, possibly decoded.
->
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested with 
+BMIPS_GENERIC:
 
-Will do, there are many different ones but I can add the most common.
-
-> > Tested with Orin AGX 64GB module on Connect Tech Forge carrier board.
->
-> Since this looks like a fix, you should include a suitable 'Fixes' tag
-> here, and specify the 'net' target tree in the subj prefix.
->
-
-Sorry I missed the "net" tag.
-
-The bug has existed since dwmac-tegra.c was added. I can add a Fixes tag b=
-ut
-in the past I was told they aren't needed in that situation?
-
-> > @@ -241,6 +243,12 @@ static int tegra_mgbe_probe(struct platform_devic=
-e *pdev)
-> >  	if (IS_ERR(mgbe->xpcs))
-> >  		return PTR_ERR(mgbe->xpcs);
-> >
-> > +	/* get controller's stream id from iommu property in device tree */
-> > +	if (!tegra_dev_iommu_get_stream_id(mgbe->dev, &mgbe->iommu_sid)) {
-> > +		dev_err(mgbe->dev, "failed to get iommu stream id\n");
-> > +		return -EINVAL;
-> > +	}
->
-> I *think* it would be better to fallback (possibly with a warning or
-> notice) to the previous default value when the device tree property is
-> not available, to avoid regressions.
->
-
-I debated this as well... In theory the iommu must be setup for the
-mgbe controller to work anyways. Doing it this way means the worst case is
-probe() fails and you lose an ethernet port.
-
-Having it fall back to mgbe0's SID adds the risk of the entire system cras=
-hing.
-
-I can see arguments for both methods. I can add the fallback to mgbe0's SI=
-D
-and change the message to a warning when I send V2 if you like.
-
-Thanks!
-Parker
-
-> Thanks,
->
-> Paolo
->
-
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
