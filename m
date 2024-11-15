@@ -1,355 +1,1418 @@
-Return-Path: <linux-kernel+bounces-411347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD689CF690
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:05:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D6A29CF694
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:06:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DA1B287007
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:05:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 271EDB2BF76
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF191E2610;
-	Fri, 15 Nov 2024 21:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="d7cSSLc7"
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9215712F585;
+	Fri, 15 Nov 2024 21:05:46 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D429E12F585;
-	Fri, 15 Nov 2024 21:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.153.30
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731704738; cv=fail; b=RO3SnB7NmhKfZ63l7zpzIxfDRg0WsYZsBFWj5fC6q7N4GLO4OB4tZsp4zCMaIdZb+ySnjq5lY5Nkk/L0JSfaD5ADJjzn0nbV0VrF96g/NM3xh8D6URGgadBu/yuE3+y4vWcjw+t7f9WFc6rKoGefPi8TskbaypQ6DKlRa70J+aY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731704738; c=relaxed/simple;
-	bh=lm7TeXkhMc05SjOk+OR7PxWDnnCGZ60x6Npz8AoZLX0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=eCb6Q8Dt09/f1O3GS6jwM9d8jMSIqZpqyewfTkMtDY1J5nqXYnayjRbt+MUTzSeQYJ0SuZR+l+CuSN55Mn1gGIsyZqhE1welyZZnUt8fWhDpreo3HNOX68/Ft5ubF2wmwvFwrpj82/3K/1KJX1wTvaxhYNf64fvlK9LdyGi4jkU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=d7cSSLc7; arc=fail smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-	by m0001303.ppops.net (8.18.1.2/8.18.1.2) with ESMTP id 4AFKMb9G014869;
-	Fri, 15 Nov 2024 13:05:35 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	s2048-2021-q4; bh=lm7TeXkhMc05SjOk+OR7PxWDnnCGZ60x6Npz8AoZLX0=; b=
-	d7cSSLc7jxifd0wLRON7qOyLHTw2KauC6Vxx7czRAyF93FZFjrbn96wRdS5JpVNZ
-	+boWzZBgjqqG2S69LRchktCfR8hxZREeMSdLoUvxoiqFEE/o6+rEcE9JUS4HqFO+
-	1aDGOY1juUzDS2gstTZg/Zi0F2iq5H80MRcujSo6Ifb1wSRFr0GVN7TfOd44OVRG
-	a3fWzigJ7m/xG8bsETeLoMmAmY0qpjEnGtKfLr5Bx/cGD7kFG9yeLM04Xt9rA75G
-	JyALY3ZdJvpqCkwgWwI47yqT57nZ9KR1wPtqJba8gn+CMp0Cv4DzC6+N6UBUdPZN
-	HQT9K/4A2zRJlbxZjcOSOQ==
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2176.outbound.protection.outlook.com [104.47.55.176])
-	by m0001303.ppops.net (PPS) with ESMTPS id 42x4pkm44m-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 13:05:35 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AfYbAHh7DcGHPkuemaU3iw7aPs51lOO+XfQ/T9liB0Xys8mqujwDH+kWWCPbL/0NFFdUEhaqI8e3ortwzJ77IVtQjUGYzqoBscVwkzuL0bPizV0PjZAdEdlxWijsanSYkdC2yAk4SglW1jx0QsxLKcYC8TeSvvTX4aHJI5AXtCOmYbzeYYpCk/eUFxB/UsyolPQIq4icm8FCjHqy1DRgyRgTBs1ZodREhlXBtMUaz8zHvJ0lCp4hcr2ADvg+nADrd19GO4Smjq2EP4uVcJMloAUT+19X+GqyzoZG6vmd1RQ3BAcM+2Qa7C4iYdBp/TuyeY6WapYmoZ/1eC/Yb+93KQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lm7TeXkhMc05SjOk+OR7PxWDnnCGZ60x6Npz8AoZLX0=;
- b=ungEqgtIlBFOw3ujLASJgmuqkwyKlQjAH6+AzmUaxpkpUB7g3aPX5vSgkUfCtICMclsyn+1hHw9Nj1m9SHcxSwk23WIeHHmoESRl/PNiC5p1LpTsc7d7aWoBQCSkDz4DV888WJjunqQYDR7fMHLjd4cRSQ+Ma+n5jj+ggLlVwG25v6zhBRiuqt3a+jXtrK+n8+J9dusZE4gn4J7QSnnYMzT9uVs6Cqn5i1VeIyGq8oqO/rNucOUyTgfqxSEVCUai8x7mS4Sc4cdojqoQegj/zIBjJGH5uH+LOm/8gSByhmezcyvvsk4m6RzRVpY/XyD7Usi5otNJAfwON83Kd8wfAg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
- dkim=pass header.d=meta.com; arc=none
-Received: from SA1PR15MB5109.namprd15.prod.outlook.com (2603:10b6:806:1dc::10)
- by BLAPR15MB4019.namprd15.prod.outlook.com (2603:10b6:208:274::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.19; Fri, 15 Nov
- 2024 21:05:31 +0000
-Received: from SA1PR15MB5109.namprd15.prod.outlook.com
- ([fe80::662b:d7bd:ab1b:2610]) by SA1PR15MB5109.namprd15.prod.outlook.com
- ([fe80::662b:d7bd:ab1b:2610%3]) with mapi id 15.20.8158.017; Fri, 15 Nov 2024
- 21:05:31 +0000
-From: Song Liu <songliubraving@meta.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-CC: Song Liu <songliubraving@meta.com>, Song Liu <song@kernel.org>,
-        bpf
-	<bpf@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML
-	<linux-kernel@vger.kernel.org>,
-        LSM List
-	<linux-security-module@vger.kernel.org>,
-        Kernel Team <kernel-team@meta.com>,
-        Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>,
-        Alexei
- Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin
- KaFai Lau <martin.lau@linux.dev>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        KP Singh
-	<kpsingh@kernel.org>,
-        Matt Bobrowski <mattbobrowski@google.com>,
-        Amir
- Goldstein <amir73il@gmail.com>,
-        "repnop@google.com" <repnop@google.com>,
-        Jeff
- Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
-        =?utf-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        "gnoack@google.com"
-	<gnoack@google.com>
-Subject: Re: [RFC/PATCH v2 bpf-next fanotify 7/7] selftests/bpf: Add test for
- BPF based fanotify fastpath handler
-Thread-Topic: [RFC/PATCH v2 bpf-next fanotify 7/7] selftests/bpf: Add test for
- BPF based fanotify fastpath handler
-Thread-Index:
- AQHbNnGAryo3J6mFf0ePhnT/vr0UcrK3NqIAgAAvFgCAABuhgIAACBOAgAAGAICAAFv2AIAA1H4AgAAXZQA=
-Date: Fri, 15 Nov 2024 21:05:31 +0000
-Message-ID: <968F7C58-691D-4636-AA91-D0EA999EE3FD@fb.com>
-References: <20241114084345.1564165-1-song@kernel.org>
- <20241114084345.1564165-8-song@kernel.org>
- <CAADnVQK6YyPUzQoPKkXptLHoHXJZ50A8vNPfpDAk8Jc3Z6+iRw@mail.gmail.com>
- <E5457BFD-F7B9-4077-9EAC-168DA5C271E4@fb.com>
- <CAADnVQJ1um9u4cBpAEw83CS8xZJN=iP8WXdG0Ops5oTP-_NDFg@mail.gmail.com>
- <DCE25AB7-E337-4E11-9D57-2880F822BF33@fb.com>
- <CAADnVQ+bRO+UakzouzR5OfmvJAcyOs7VqCJKiLsjnfW1xkPZOg@mail.gmail.com>
- <C7C15985-2560-4D52-ADF9-C7680AF10E90@fb.com>
- <CAADnVQK2mhS0RLN7fEpn=zuLMT0D=QFMuibLAvc42Td0eU=eaQ@mail.gmail.com>
-In-Reply-To:
- <CAADnVQK2mhS0RLN7fEpn=zuLMT0D=QFMuibLAvc42Td0eU=eaQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-mailer: Apple Mail (2.3826.200.121)
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR15MB5109:EE_|BLAPR15MB4019:EE_
-x-ms-office365-filtering-correlation-id: 2a21ca3f-2b23-4a3a-3840-08dd05b93db0
-x-fb-source: Internal
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|10070799003|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?VEtjOEIxVHNVcjZSVStPVVN2Ym5aTDY1MXROY3paTTRVZWZKNDhzVlp2c0Zo?=
- =?utf-8?B?MFl1eWtpVDczNXZKRDBQRExtTm0zZksrRy9tWHdBbmdvOXl3QTlUcVhsVUM4?=
- =?utf-8?B?eFU5UHN1Y1ozRERyaldsbFpIU1h0NWlYQTNrTnJWcXNmUURVMWt6UGZLdE1p?=
- =?utf-8?B?cEFtT2tGM2xtRlRlTGx1ZmYxMWJUZGIzWlBnWWEzNFlkeVdYcTlhU09kZ2Vk?=
- =?utf-8?B?WHBQSHA5bnBXUFhnZmROOEJxcWJiVldCTHRKNi9LWWQ0U0QvbW1TZi9LSHVn?=
- =?utf-8?B?SytJZUJQOTRvdGhUYjFTVWZvUVZPQ3JaaGVudDdtNGdSckNjNjRkdW1uSDlN?=
- =?utf-8?B?Y3hXVGhHbG5jQTZmWG53bnphWmlCY1Y3RmhXR3VqTjgyRC9ac2ZEUlpaMU9H?=
- =?utf-8?B?TGJKMW44YzlNVGZuVCtIR1BRSVVWMUJSSDhkQUhsSXZvcnFtaEFpVk9WQm9v?=
- =?utf-8?B?SXF6S1l2cDhZaXptRkhCMWQ4eUlldnp5bEJlQXNyRnhReDk1MWM2MHI0blVL?=
- =?utf-8?B?WC9jbFpWaVI2MFB0VW1oWFEvMGt5aUVESWIzN1Q4Mi9CN3VYYlNYakdvRjAw?=
- =?utf-8?B?cWFhQlp0alpIMlFNenFwSEZKR01EOFp4azIzNk8zT05OV1gxcERuZ3FQVWg4?=
- =?utf-8?B?eDJsd3NKbW10NmdxZ09VM1l5c3ZHbGw4dGpicTZSbHFYcXpVRWVuQTVHQXRz?=
- =?utf-8?B?dXpOTkNCUDZKTkxIN0c2RE9LS0tBYi9tM3FPRUtmRjdUcW9GNk1IY2ZFQ0dQ?=
- =?utf-8?B?aFptU1NqQ3RZRHlLdUFEK1hWVFBCR1BMb0ZPQUd2ajExeUw1cy9nTEJDdWt3?=
- =?utf-8?B?M0ZoaHVvQXN5OWVpcjIxVkZxUVZXR01LWEQ5bXVlZnpOQWR2Tlg2TmorMHc3?=
- =?utf-8?B?MC83OWpiNGJHdzgrdHBaM1hpcThuU2VxRE11akdqUzNKTmYwMFEzZXhlNGpw?=
- =?utf-8?B?cWU5WVVaOXVvM09LR0J4REZOaTBHTG1OVi9VNDEyVlE2ZkZKdmQ0MHlSTmJL?=
- =?utf-8?B?Z0g0QzJ6cUZCRG8xSmpEcFdsTlpkdWxDRStxbkdDeDA3OU8ybjhZVGpHc2dJ?=
- =?utf-8?B?SFBqUHk4UU9YM0FBeFMrK1dVZXhSWVBLb3U5YlF6SGRIcG1tUU0wTVBjV2hV?=
- =?utf-8?B?VnhoOUFBeHoxTDYyaDA0eW5TYlVTTDlremxJSXBwYm9GaEw2TWdyaXFaaTcy?=
- =?utf-8?B?RVhydXVzM2xVWW5FZ0FIRDFmQnM3MXEvZVQ4Sm12R2NMNmxmc21sYklRQi9I?=
- =?utf-8?B?akhwdUp6b2ovRkhiUlBGeVFuajZScFJmcmdtZHd0K0NIdm50Q0NRVXpLVm9F?=
- =?utf-8?B?SEdTVFliM3V5dVRoVGVWOG9SWkpmQldLZkd2M0xyYmVTaG1TeU8wYnRpR3BM?=
- =?utf-8?B?TGhBdFJ6bkVSVTg4bTJLTTEzeEdGaFZjZTVvdkZKYnl6OC9oZE1BSS82a2Zs?=
- =?utf-8?B?M0ozSXJDRTJsVy9rS2tBaEdBMkM5RWpDcFhmU2JDTTJHc3BhbzV2dUxFZnUz?=
- =?utf-8?B?MWZLVDdGRnIwSzREZzVRSGZ2WjdXSlkvYjJKNnAvVWVHZU0yTlRsOXVtNmQ5?=
- =?utf-8?B?WWpxQXZTblBUaFR4TTZ1NGdMTWptU3MwbUtSVjVka2tPY1Y3RmxhVVg5ZDhk?=
- =?utf-8?B?SlBTZHd6V3hFWVdGOU5oYWRrVnVYaDNPM2pXczlCTHN0WTZDVWl2SXFrM0U2?=
- =?utf-8?B?Y08zRlZmTnBxYjhNQVFKeXFlY0p2MG85UHkzZ3hIQlhXUnFTaUdXRnZTM1o1?=
- =?utf-8?Q?vyxPisz2LvntdGuSc5Ol9htNf1lGui7WZCm55EI?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5109.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(10070799003)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?U0tGa3ZObGI0M1hxRHJPT2NsQ2p2ZDU3Qk5JcDdvbjllVGQrYUZlKzhNZG9L?=
- =?utf-8?B?M0hDai8vam81TlhQWEIxWTFTcjk5emFXMDBobkRtMDF3cUY4YnpLSFdHZXh0?=
- =?utf-8?B?VEJ4VGQwbGpBb3Vqam9RMmRHa0xBMm1JL012QmdmNUpoVkcydEEzdGZNTmZh?=
- =?utf-8?B?S3lERXBSZ2dnaVBHUGU3TnRHUE56WmoxTjRMbWlNZmFmRklNSG8zUDZqT3ZW?=
- =?utf-8?B?WHBSZnFNZEZlSHZUMjFFSTlBQ3cvUlBYS1Jtb2ZoSWQ3R3diUGswQmVZNzQx?=
- =?utf-8?B?ajU3SE9mTHBNaWVRa2daV0NrZXExNDZZRmF5bUV6Sm1EVTZaOFY2cXU1ZHUx?=
- =?utf-8?B?am5QMm9OTWNQSExiMDcvWWI1VUdWcmhFNHIycStEQ0xjMkVCYytaaUF5NWcr?=
- =?utf-8?B?dmpza3dPNVdkVElNNndBOG01YmUwK3lwWUdLT3d1alROeVJGYXIwU3dXcE1H?=
- =?utf-8?B?ZSs1N1dVdTF5UFJ5MEZLUFBWem5RUUtNcERSbG13ZGdienRYV1p0Z2dnTm1X?=
- =?utf-8?B?Y1NMWWJKOUJ0d1RNbm4vTnpaYVFpK3VhR1hYcUdBczl5OGU2UWo5cWMxVUZY?=
- =?utf-8?B?b00yajRneEJ3TUl2MUk5c0RzUnV6YS8rTXFndlQvdks2UGZHZ2FFNlJaSTlI?=
- =?utf-8?B?eFE0UzZHNk1weThtQlBIMTlQNGduZHNwcXZuTVpENWRPYmR6bkR1NUhUam1n?=
- =?utf-8?B?YnZZTEFrdy9iMWM4bTVBN20wWGpEZjBrOWFETUtYaWtNR3c0NjZEa0poMHNR?=
- =?utf-8?B?blpMbnpUNGoxWUFEOERmb2F4cVVKdzFXVDlLem0xTnd3a3c2dGJ0VENxT0gw?=
- =?utf-8?B?cWxoZkhwTWhLUVZUZXZXbGQ2WUFscmFyZ1ZVNFBvbkZ3VzU0K2VJT3VucU54?=
- =?utf-8?B?Y3NzSHJINTNQQmFEekFPNmlNSzRxY01vdWc0Nk9UT3lXMDFtWFZKeE1pS1Fl?=
- =?utf-8?B?SjFvMXlKYzJsSGVRRi90VGdoYzUrRW5zK001UU5hYTVhVHA5N1Y0cjQ5bDBM?=
- =?utf-8?B?MTBxSDlmaS9reHhmamVWUW9aUXhCZmhkdHhXOEZ3TVZWLzhXdURtYzJDVEdO?=
- =?utf-8?B?amptZU9aeEloTUkrdFBTMUQzUk5hTzZLcGVqVkJLY2tXcjdraFhIMWd3YmZz?=
- =?utf-8?B?NG5RWHdwV3ZYQVVLNWl3cHRKUkVRZkg0dGNDcytaQlRybFNsbURTWENVa0RJ?=
- =?utf-8?B?UUxtSStqMlVyNENLU3NmOGVoQmRRcmRqazRzV3pIUEJYS01RSXVaZTlpNkRv?=
- =?utf-8?B?VUNvTWNWVHc2cFRYRzVKWm92eThucmE2UFd3LzUwUjF2QitOWVRVOWhNVFRn?=
- =?utf-8?B?bTd5c00rYllvM0VXSm1YVmlTUFM2VWZQTTYrZFFHaFFabytQMm9EcVJQb2c5?=
- =?utf-8?B?M1N6Mm5NdUgxNVpYV0NwMmczYU8vT0czZDBOdHRWMWxMRzR1RldpL05CN1dF?=
- =?utf-8?B?UGxJSGFkTUxZUm15eWQzL3pPZHNReW9zdlNNVFZYTXpISWYrVzVPRlVMNmRr?=
- =?utf-8?B?U0dOR1RMelUxVUw3TFV2UnF4WkNmdlJwb2NYZXVRRS9nYXlpSXhPM283SCtH?=
- =?utf-8?B?d1RZSjNkK3A2Q1Y0b3dBOTFQcW54ZElMVTN1ZGJrTUxlSVJjY0w4MzNvM0xx?=
- =?utf-8?B?akNmNHVyY3FzdWphb3ZLS2VQNTJRTkVWVXBmWmp4cGw2REUzelVaQm9sUGpJ?=
- =?utf-8?B?REkraExkRFdlbXlVV2ZmMnNGUVN0UkFpb3R2YThUbkQ0QVhsM2pYeE44TXJn?=
- =?utf-8?B?d1hiSnREL3NYUi9vNlM2aFJaL0xWQ1IzRDBtWktKZVRCS2RWcHp2M25GRHNl?=
- =?utf-8?B?cU85VjIwV09XSURCMmZyTitWM0EweGVjV1gybXJsUjhpNXFjbFpzNExKS2xv?=
- =?utf-8?B?K3dLVnBOM09zY2liMWRvb01UWW95NFRNMGJHYjdyc1M0dlhvRjZ5OFlza3Fm?=
- =?utf-8?B?eVNTZTd1MlZxU1VCWW1xQnl6VExDcGgvd2VSaHJFTGozcW1FLy9rYXBiNUdK?=
- =?utf-8?B?RFQ5cFBacjZseVgwOW9uaHI0OENiNERkTlBSUjNUeUhJUXR2SWVxQWVBMG9x?=
- =?utf-8?B?VUdrcGk4QVRIRUVRVWx5Um8vb3htSVlPQms0SGFXOE5BMkY3aXM1Kzk4bFc0?=
- =?utf-8?B?VUVsU215MEFnQy82YnFNNE03azY2UDd3NkdCK3M5VUpzSjZ6RVR3c3FYN2VD?=
- =?utf-8?Q?CwK/czxClFazPHmXuAJ1LXw=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <982136111313284495C47790CEE71EF4@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC0F1E25FA
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 21:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731704743; cv=none; b=hw/IHtya5req14V/QnXs/rkpy9khZF22eezY2eNnsi9JSLaCqdCr0lLsr8HA3dakEd0b2VSQcaNflUi+EnjSdfVHagMg+NxBFcGZF2an8lVhpVj05RCGua1sGdkVy94FxMI5u/isaocqZZDpeVlGdHf/C+kDPBvwyfjZOIuHE+U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731704743; c=relaxed/simple;
+	bh=t7Shf2W40c0vMfGShaTckrM/onShicQX3QBbfNNI1eU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=IAef1643hoyT3ftCrfwdq9Vns+59GQ0JpMWJTgxNw6RqonILTUkmu5k3hggYR2zEEEX45j/QlJE6bift2E9ZRetLQxx5CajxgZY3R4+6Gzh1AE4U4X+AKGoTO1itVQeKf8QH6/D8EaD24Lx0q2MyGl5w8wPKKpzGSkFPNaI49xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3da2d46b9so27679415ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 13:05:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731704739; x=1732309539;
+        h=content-transfer-encoding:to:from:subject:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eFPvOF8Hd8JRqV8xE2Dh6av8Zbj2KHnyeLK3X4e7WJ4=;
+        b=TsgfVjTJbUpGo2MqQST+07TwwWi3ZvtfaQet249VBWPkqknx98k9HckUtmkav3zqyL
+         nQMGOwC8X2W83NVuQNMetWfKBdPWLDDwa3hzqg6GUtdVC680UO7ukObhTRb+tmPwlN90
+         aTNi+Obnvo5cQj28UkjTOpVvJqlNBACHyVXXudHuEuZ+Lh70vOIlOQozz/nNwdzpgGgL
+         ot2VejU+6kcy44BQxa9kRRfrGYTfmUmHVfRvgHDqcBXn7neCjJrnGbpMcMiDU+tr+1Aq
+         5/cow4/FBpRkCzHefdmM7N6pq+Ty2EwZ28291OkYIB4bL6JMnOBY2Y2BpSS1MA+Qs+Pk
+         kEcg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5VSiSO+flMEQOtdS7GpBwykdMNVwxmOtvwLjMQq4D1ZyzsodI4o7WC8ALjOvF9Y7GCGrFcvDtvkg01bc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyROdwyriExjtX++X5bWwTJ6fTMjJXukE51D7+aXY+Bmv37KskN
+	KMu4GJEF5bXKqDjbmThwfTTS3ZkLhUD9bv3YNVDoeta6vElcXEKdotLIBCqcsJ0m6YlOfZhkk5m
+	h7CzlaSfbtwiLwCNO4qCJdYdLJMKnK4yxvtxj94CENA8YggnV3AwIuIM=
+X-Google-Smtp-Source: AGHT+IFOjKaRnZ4sVjY0/ooGeEBB+bZg/L0lYo2LocI6byDn19V0TdrTXYpM3q+caHORvZSGDRY8BD7cl5G9e3gi5L/wXRtJjQoA
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: meta.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5109.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2a21ca3f-2b23-4a3a-3840-08dd05b93db0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Nov 2024 21:05:31.7981
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Jj3P1OF9QSNxbwg7klo/kM9IgsetuqAMntq/LE/ZQGaTHbi6VIANNesicxy1BSrC0NpA7Bytic9q38SsHqRgcA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR15MB4019
-X-Proofpoint-ORIG-GUID: L6DcXOiPmUWucWbqXFIg6nuuWpSdJUdb
-X-Proofpoint-GUID: L6DcXOiPmUWucWbqXFIg6nuuWpSdJUdb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
+X-Received: by 2002:a05:6e02:18cc:b0:3a5:e57c:58d4 with SMTP id
+ e9e14a558f8ab-3a74808ea4dmr47776405ab.20.1731704738630; Fri, 15 Nov 2024
+ 13:05:38 -0800 (PST)
+Date: Fri, 15 Nov 2024 13:05:38 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6737b7a2.050a0220.85a0.0004.GAE@google.com>
+Subject: [syzbot] [net?] WARNING: suspicious RCU usage in on
+From: syzbot <syzbot+917bd189260e9ec185fc@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	jhs@mojatatu.com, jiri@resnulli.us, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-DQoNCj4gT24gTm92IDE1LCAyMDI0LCBhdCAxMTo0MeKAr0FNLCBBbGV4ZWkgU3Rhcm92b2l0b3Yg
-PGFsZXhlaS5zdGFyb3ZvaXRvdkBnbWFpbC5jb20+IHdyb3RlOg0KPiANCj4gT24gVGh1LCBOb3Yg
-MTQsIDIwMjQgYXQgMTE6MDHigK9QTSBTb25nIExpdSA8c29uZ2xpdWJyYXZpbmdAbWV0YS5jb20+
-IHdyb3RlOg0KPj4gDQo+Pj4gDQo+Pj4gSSB0aGluayBicGYtbHNtIGhvb2sgZmlyZXMgYmVmb3Jl
-IGZhbm90aWZ5LCBzbyBicGYtbHNtIHByb2cNCj4+PiBpbXBsZW1lbnRpbmcgc29tZSBzZWN1cml0
-eSBwb2xpY3kgaGFzIHRvIGRlY2lkZSByaWdodA0KPj4+IGF0IHRoZSBtb21lbnQgd2hhdCB0byBk
-byB3aXRoLCBzYXksIHNlY3VyaXR5X2ZpbGVfb3BlbigpLg0KPj4+IGZhbm90aWZ5IHdpdGggb3Ig
-d2l0aG91dCBicGYgZmFzdHBhdGggaXMgdG9vIGxhdGUuDQo+PiANCj4+IEFjdHVhbGx5LCBmYW5v
-dGlmeSBpbiBwZXJtaXNzaW9uIG1vZGUgY2FuIHN0b3AgYSBmaWxlIG9wZW4uDQo+IA0KPiBUaGUg
-cHJvcG9zZWQgcGF0Y2ggMSBkaWQ6DQo+IA0KPiArLyogUmV0dXJuIHZhbHVlIG9mIGZwX2hhbmRs
-ZXIgKi8NCj4gK2VudW0gZmFub3RpZnlfZmFzdHBhdGhfcmV0dXJuIHsNCj4gKyAvKiBUaGUgZXZl
-bnQgc2hvdWxkIGJlIHNlbnQgdG8gdXNlciBzcGFjZSAqLw0KPiArIEZBTl9GUF9SRVRfU0VORF9U
-T19VU0VSU1BBQ0UgPSAwLA0KPiArIC8qIFRoZSBldmVudCBzaG91bGQgTk9UIGJlIHNlbnQgdG8g
-dXNlciBzcGFjZSAqLw0KPiArIEZBTl9GUF9SRVRfU0tJUF9FVkVOVCA9IDEsDQo+ICt9Ow0KPiAN
-Cj4gSXQgbG9va2VkIGxpa2UgYSByZWFkLW9ubHkgbm90aWZpY2F0aW9uIHRvIHVzZXIgc3BhY2UN
-Cj4gd2hlcmUgYnBmIHByb2cgaXMgbWVyZWx5IGEgZmlsdGVyLg0KDQpZZXAuIEFzIEFtaXIgYWxz
-byBwb2ludGVkIG91dCwgdGhpcyBwYXJ0IG5lZWRzIG1vcmUgd29yayBhbmQNCmNsYXJpZmljYXRp
-b25zLiANCg0KPiANCj4+IEluIGN1cnJlbnQgdXBzdHJlYW0gY29kZSwgZnNub3RpZnkgaG9vayBm
-c25vdGlmeV9vcGVuX3Blcm0NCj4+IGlzIGFjdHVhbGx5IHBhcnQgb2Ygc2VjdXJpdHlfZmlsZV9v
-cGVuKCkuIEl0IHdpbGwgYmUgbW92ZWQNCj4+IHRvIGRvX2RlbnRyeV9vcGVuKCksIHJpZ2h0IGFm
-dGVyIHNlY3VyaXR5X2ZpbGVfb3BlbigpLiBUaGlzDQo+PiBtb3ZlIGlzIGRvbmUgYnkgMWNkYTUy
-ZjFiNDYxIGluIGxpbnV4LW5leHQuDQo+IA0KPiBTZXBhcmF0aW5nIGZzbm90aWZ5IGZyb20gTFNN
-IG1ha2VzIHNlbnNlLg0KPiANCj4+IEluIHByYWN0aWNlLCB3ZSBhcmUgbm90IGxpa2VseSB0byB1
-c2UgQlBGIExTTSBhbmQgZmFub3RpZnkNCj4+IG9uIHRoZSBzYW1lIGhvb2sgYXQgdGhlIHNhbWUg
-dGltZS4gSW5zdGVhZCwgd2UgY2FuIHVzZQ0KPj4gQlBGIExTTSBob29rcyB0byBnYXRoZXIgaW5m
-b3JtYXRpb24gYW5kIHVzZSBmYW5vdGlmeSB0bw0KPj4gbWFrZSBhbGxvdy9kZW55IGRlY2lzaW9u
-LCBvciB2aWNlIHZlcnNhLg0KPiANCj4gUGljayBvbmUuDQo+IElmIHRoZSBwcm9wb3NhbCBpcyBj
-aGFuZ2luZyB0byBsZXQgZnNub3RpZnktYnBmIHByb2cgdG8gZGVueQ0KPiBmaWxlX29wZW4gdGhl
-biBpdCdzIGEgY29tcGxldGVseSBkaWZmZXJlbnQgZGlzY3Vzc2lvbi4NCj4gDQo+IEluIHN1Y2gg
-YSBjYXNlIG1ha2UgaXQgY2xlYXIgdXBmcm9udCB0aGF0IGZzbm90aWZ5IHdpbGwNCj4gcmVseSBv
-biBDT05GSUdfRkFOT1RJRllfQUNDRVNTX1BFUk1JU1NJT05TIGFuZA0KDQpJIGFtIG5vdCBzdXJl
-IHdoZXRoZXIgd2Ugc2hvdWxkIGxpbWl0IGZzbm90aWZ5LWJwZiB0byANCm9ubHkgd29yayB3aXRo
-IENPTkZJR19GQU5PVElGWV9BQ0NFU1NfUEVSTUlTU0lPTlMuIEkgc3RpbGwgDQp0aGluayBpdCBj
-YW4gYmUgdXNlZnVsIGp1c3QgYXMgYSBmaWx0ZXIuIEJ1dCBJIGd1ZXNzIHdlIGNhbg0Kc3RhcnQg
-d2l0aCB0aGlzIGRlcGVuZGVuY3kuIA0KDQo+IGJwZi1sc20gcGFydCBvZiBmaWxlIGFjY2VzcyB3
-aWxsIG5vdCBiZSB1c2VkLA0KPiBzaW5jZSBpbnRlcmFjdGlvbiBvZiB0d28gY2FsbGJhY2tzIGF0
-IGZpbGVfb3BlbiBtYWtlcyBsaXR0bGUgc2Vuc2UuDQoNCkFncmVlZCB0aGF0IGhhdmluZyB0d28g
-aG9va3Mgb24gZmlsZV9vcGVuIGRvZXNuJ3QgbWFrZSBzZW5zZS4gDQpJIHdhcyBhY3R1YWxseSB0
-aGlua2luZyBhYm91dCBjb21iaW5pbmcgZnNub3RpZnktYnBmIHdpdGggDQpvdGhlciBMU00gaG9v
-a3MuIEJ1dCBJIGFncmVlIHdlIHNob3VsZCBzdGFydCBhcyBzaW1wbGUgYXMNCnBvc3NpYmxlLiAN
-Cg0KPiANCj4+PiBJbiBnZW5lcmFsIGZhbm90aWZ5IGlzIG5vdCBmb3Igc2VjdXJpdHkuIEl0J3Mg
-bm90aWZ5aW5nDQo+Pj4gdXNlciBzcGFjZSBvZiBldmVudHMgdGhhdCBhbHJlYWR5IGhhcHBlbmVk
-LCBzbyBJIGRvbid0IHNlZQ0KPj4+IGhvdyB0aGVzZSB0d28gY2FuIGJlIGNvbWJpbmVkLg0KPj4g
-DQo+PiBmYW5vdGlmeSBpcyBhY3R1YWxseSB1c2VkIGJ5IEFudGlWaXJ1cyBzb2Z0d2FyZXMuIEZv
-cg0KPj4gZXhhbXBsZSwgQ2FsbUFWIChodHRwczovL3VybGRlZmVuc2UuY29tL3YzL19faHR0cHM6
-Ly93d3cuY2xhbWF2Lm5ldC9fXzshIUJ0OFJaVW05YXchNHA3SkJfRThSdU5MbGR6X1RZUjA3am5X
-NWtIYnI0SDJGTW05dkxiU2hLT0JNem5Yd0VTN0RsdDVfUjZCXy1ITXpnVjNRa185V0tsaG1qSFNw
-WUhSaFRiMldNM2hJZyQgKSB1c2VzIGZhbm90aWZ5DQo+PiBmb3IgaXRzIExpbnV4IHZlcnNpb24g
-KGl0IGFsc28gc3VwcG9ydHMgV2luZG93IGFuZCBNYWNPUykuDQo+IA0KPiBJdCdzIHJlbHlpbmcg
-b24gdXNlciBzcGFjZSB0byBzZW5kIGJhY2sgRkFOT1RJRllfUEVSTV9FVkVOVFMgPw0KDQpZZXMs
-IGl0IGdvZXMgYWxsIHRoZSB3YXkgdG8gYW5vdGhlciBwcm9jZXNzLCBhbmQgY29tZXMgYmFjay4g
-DQoNCj4gDQo+IGZzbm90aWZ5X29wZW5fcGVybS0+ZnNub3RpZnktPnNlbmRfdG9fZ3JvdXAtPmZh
-bm90aWZ5X2hhbmRsZV9ldmVudC4NCj4gDQo+IGlzIGEgcHJldHR5IGxvbmcgcGF0aCB0byBjYWxs
-IGJwZiBwcm9nIGFuZA0KPiBwcmVwYXJpbmcgYSBnaWFudCAnc3RydWN0IGZhbm90aWZ5X2Zhc3Rw
-YXRoX2V2ZW50Jw0KPiBpcyBub3QgZ29pbmcgdG8gZmFzdCBlaXRoZXIuDQo+IA0KPiBJZiB3ZSB3
-YW50IHRvIGFjY2VsZXJhdGUgdGhhdCB3aXRoIGJwZiBpdCBuZWVkcyB0byBiZSBkb25lDQo+IHNv
-b25lciB3aXRoIG5lZ2xpZ2libGUgb3ZlcmhlYWQuDQoNCkFncmVlZC4gVGhpcyBpcyBhY3R1YWxs
-eSBzb21ldGhpbmcgSSBoYXZlIGJlZW4gdGhpbmtpbmcgDQpzaW5jZSB0aGUgYmVnaW5uaW5nIG9m
-IHRoaXMgd29yazogU2hhbGwgaXQgYmUgZmFub3RpZnktYnBmIA0Kb3IgZnNub3RpZnktYnBmLiBH
-aXZlbiB3ZSBoYXZlIG1vcmUgbWF0ZXJpYWxzLCB0aGlzIGlzIGEgDQpnb29kIHRpbWUgdG8gaGF2
-ZSBicm9hZGVyIGRpc2N1c3Npb25zIG9uIHRoaXMuIA0KDQpAYWxsLCBwbGVhc2UgY2hpbWUgaW4g
-d2hldGhlciB3ZSBzaG91bGQgcmVkbyB0aGlzIGFzDQpmc25vdGlmeS1icGYuIEFGQUlDVDoNCg0K
-UHJvcyBvZiBmYW5vdGlmeS1icGY6IA0KLSBUaGVyZSBpcyBleGlzdGluZyB1c2VyIHNwYWNlIHRo
-YXQgd2UgY2FuIGxldmVyYWdlL3JldXNlLg0KDQpQcm9zIG9mIGZzbm90aWZ5LWJwZjogDQotIEZh
-c3RlciBmYXN0IHBhdGguIA0KDQpBbm90aGVyIG1ham9yIHByb3MvY29ucyBkaWQgSSBtaXNzPw0K
-DQo+IA0KPj4gSSBndWVzcyBJIGRpZG4ndCBzdGF0ZSB0aGUgbW90aXZhdGlvbiBjbGVhcmx5LiBT
-byBsZXQgbWUNCj4+IHRyeSBpdCBub3cuDQo+PiANCj4+IFRyYWNpbmcgaXMgYSBjcml0aWNhbCBw
-YXJ0IG9mIGEgc2VjdXJpdHkgc29sdXRpb24uIFdpdGgNCj4+IExTTSwgYmxvY2tpbmcgYW4gb3Bl
-cmF0aW9uIGlzIHN0cmFpZ2h0Zm9yd2FyZC4gSG93ZXZlciwNCj4+IGtub3dpbmcgd2hpY2ggb3Bl
-cmF0aW9uIHNob3VsZCBiZSBibG9ja2VkIGlzIG5vdCBhbHdheXMNCj4+IGVhc3kuIEFsc28sIHNl
-Y3VyaXR5IGhvb2tzIChMU00gb3IgZmFub3RpZnkpIHNpdCBpbiB0aGUNCj4+IGNyaXRpY2FsIHBh
-dGggb2YgdXNlciByZXF1ZXN0cy4gSXQgaXMgdmVyeSBpbXBvcnRhbnQgdG8NCj4+IG9wdGltaXpl
-IHRoZSBsYXRlbmN5IG9mIGEgc2VjdXJpdHkgaG9vay4gSWRlYWxseSwgdGhlDQo+PiB0cmFjaW5n
-IGxvZ2ljIHNob3VsZCBnYXRoZXIgYWxsIHRoZSBpbmZvcm1hdGlvbiBhaGVhZA0KPj4gb2YgdGlt
-ZSwgYW5kIG1ha2UgdGhlIGFjdHVhbCBob29rIGZhc3QuDQo+PiANCj4+IEZvciBleGFtcGxlLCBp
-ZiBzZWN1cml0eV9maWxlX29wZW4oKSBvbmx5IG5lZWRzIHRvIHJlYWQNCj4+IGEgZmxhZyBmcm9t
-IGlub2RlIGxvY2FsIHN0b3JhZ2UsIHRoZSBvdmVyaGVhZCBpcyBtaW5pbWFsDQo+PiBhbmQgcHJl
-ZGljdGFibGUuIElmIHNlY3VyaXR5X2ZpbGVfb3BlbigpIGhhcyB0byB3YWxrIHRoZQ0KPj4gZGVu
-dHJ5IHRyZWUsIG9yIGNhbGwgZF9wYXRoKCksIHRoZSBvdmVyaGVhZCB3aWxsIGJlDQo+PiBtdWNo
-IGhpZ2hlci4gZmFub3RpZnlfZmlsZV9wZXJtKCkgcHJvdmlkZXMgYW5vdGhlcg0KPj4gbGV2ZWwg
-b2Ygb3B0aW1pemF0aW9uIG92ZXIgc2VjdXJpdHlfZmlsZV9vcGVuKCkuIElmIGENCj4+IGZpbGUg
-aXMgbm90IGJlaW5nIG1vbml0b3JlZCwgZmFub3RpZnkgd2lsbCBub3QgZ2VuZXJhdGUNCj4+IHRo
-ZSBldmVudC4NCj4gDQo+IEkgYWdyZWUgd2l0aCBtb3RpdmF0aW9uLCBidXQgZG9uJ3Qgc2VlIHRo
-aXMgaW4gdGhlIHBhdGNoZXMuDQoNCkFncmVlZC4gSSBzaG91bGQgZGVmaW5pdGVseSBkbyBiZXR0
-ZXIgam9iIGluIHRoaXMuIA0KDQo+IFRoZSBvdmVyaGVhZCB0byBjYWxsIGludG8gYnBmIHByb2cg
-aXMgYmlnLg0KPiBFdmVuIGlmIHByb2cgZG9lcyBub3RoaW5nIGl0J3Mgc3RpbGwgZ29pbmcgdG8g
-YmUgc2xvd2VyLg0KPiANCj4+IFNlY3VyaXR5IHNvbHV0aW9ucyBob2xkIGhpZ2hlciBiYXJzIGZv
-ciB0aGUgdHJhY2luZyBsb2dpYzoNCj4+IA0KPj4gLSBJdCBuZWVkcyB0byBiZSBhY2N1cmF0ZSwg
-YXMgZmFsc2UgcG9zaXRpdmVzIGFuZCBmYWxzZQ0KPj4gIG5lZ2F0aXZlcyBjYW4gYmUgdmVyeSBh
-bm5veWluZyBhbmQvb3IgaGFybWZ1bC4NCj4+IC0gSXQgbmVlZHMgdG8gYmUgZWZmaWNpZW50LCBh
-cyBzZWN1cml0eSBkYWVtb25zIHJ1biAyNC83Lg0KPj4gDQo+PiBHaXZlbiB0aGVzZSByZXF1aXJl
-bWVudHMgb2Ygc2VjdXJpdHkgc29sdXRpb25zLCBJIGJlbGlldmUNCj4+IGl0IGlzIGltcG9ydGFu
-dCB0byBvcHRpbWl6ZSB0cmFjaW5nIGxvZ2ljIGFzIG11Y2ggYXMNCj4+IHBvc3NpYmxlLiBBbmQg
-QlBGIGJhc2VkIGZhbm90aWZ5IGZhc3RwYXRoIGhhbmRsZXIgY2FuDQo+PiBicmluZyBub24tdHJp
-dmlhbHMgYmVuZWZpdCB0byBCUEYgYmFzZWQgc2VjdXJpdHkgc29sdXRpb25zLg0KPiANCj4gRG9p
-bmcgZXZlcnl0aGluZyBpbiB0aGUga2VybmVsIGlzIGNlcnRhaW5seSBmYXN0ZXIgdGhhbg0KPiBn
-b2luZyBiYWNrIGFuZCBmb3J0aCB0byB1c2VyIHNwYWNlLA0KPiBidXQgYnBmLWxzbSBzaG91bGQg
-YmUgYWJsZSB0byBkbyB0aGUgc2FtZSBhbHJlYWR5Lg0KPiANCj4gV2l0aG91dCBwYXRjaCAxIGFu
-ZCBvbmx5IHBhdGNoZXMgNCw1IHRoYXQgYWRkIGZldyBrZnVuY3MsDQo+IGJwZi1sc20gcHJvZyB3
-aWxsIGJlIGFibGUgdG8gcmVtZW1iZXIgc3VidHJlZSBkZW50cnkgYW5kDQo+IGRvIHRoZSBzYW1l
-IGlzX3N1YmRpcigpIHRvIGRlbnkuDQo+IFRoZSBwYXRjaCA3IHN0YXlzIHByZXR0eSBtdWNoIGFz
-LWlzLiBBbGwgaW4gYnBmLWxzbS4NCj4gQ2xvc2UgdG8gemVybyBvdmVyaGVhZCB3aXRob3V0IGxv
-bmcgY2hhaW4gb2YgZnNub3RpZnkgY2FsbGJhY2tzLg0KDQpPbmUgb2YgdGhlIGFkdmFudGFnZXMg
-b2YgZmFub3RpZnktYnBmIG9yIGZzbm90aWZ5LWJwZiBpcyANCnRoYXQgaXQgb25seSBjYWxscyB0
-aGUgQlBGIHByb2dyYW0gZm9yIGJlaW5nIG1vbml0b3JlZA0KZmlsZXMuIE9UT0gsIEJQRiBMU00g
-cHJvZ3JhbSBpcyBhbHdheXMgZ2xvYmFsLiANCg0KPiANCj4+IGZhbm90aWZ5IGFsc28gaGFzIGEg
-ZmVhdHVyZSB0aGF0IExTTSBkb2Vzbid0IHByb3ZpZGUuDQo+PiBXaGVuIGEgZmlsZSBpcyBhY2Nl
-c3NlZCwgdXNlciBzcGFjZSBkYWVtb24gY2FuIGdldCBhDQo+PiBmZCBvbiB0aGlzIGZpbGUgZnJv
-bSBmYW5vdGlmeS4gT1RPSCwgTFNNIGNhbiBvbmx5IHNlbmQNCj4+IGFuIGlubyBvciBhIHBhdGgg
-dG8gdXNlciBzcGFjZSwgd2hpY2ggaXMgbm90IGFsd2F5cw0KPj4gcmVsaWFibGUuDQo+IA0KPiBU
-aGF0IHNvdW5kcyB1c2VmdWwsIGJ1dCB3ZSdyZSBtaXhpbmcgdG9vIG1hbnkgdGhpbmdzLg0KPiBJ
-ZiB1c2VyIHNwYWNlIGNhcmVzIGFib3V0IGZkIGl0IHdpbGwgYmUgdXNpbmcgdGhlIGV4aXN0aW5n
-DQo+IG1lY2hhbmlzbSB3aXRoIGFsbCBhY2NvbXBhbmllZCBvdmVyaGVhZC4gZnNub3RpZnktYnBm
-IGNhbg0KPiBiYXJlbHkgYWNjZWxlcmF0ZSBhbnl0aGluZywgc2luY2UgdXNlciBzcGFjZSBtYWtl
-cw0KPiB1bHRpbWF0ZSBkZWNpc2lvbnMuDQo+IElmIHVzZXIgc3BhY2UgaXMgbm90IGluIHRoZSBk
-cml2aW5nIHNlYXQgdGhlbiBleGlzdGluZyBicGYtbHNtDQo+IHBsdXMgZmV3IGtmdW5jcyB0byBy
-ZW1lbWJlciBkZW50cnkgYW5kIGNhbGwgaXNfc3ViZGlyKCkNCj4gd2lsbCBkbyB0aGUgam9iIGFu
-ZCBubyBuZWVkIGZvciBwYXRjaCAxLg0KDQpJbiBtYW55IGNhc2VzLCB3ZSBvbmx5IG5lZWQgdGhl
-IHVzZXIgc3BhY2UgdG8gbG9vayBpbnRvIA0KdGhlIGZpbGUgd2hlbiBuZWNlc3NhcnkuIEZvciBl
-eGFtcGxlLCB3aGVuIGEgYmluYXJ5IGlzIA0KZmlyc3Qgd3JpdHRlbiwgdGhlIHVzZXIgc3BhY2Ug
-ZGFlbW9uIHdpbGwgc2NhbiB0aHJvdWdoDQppdCAoZm9yIHZpcnVzLCBldGMuKSBhbmQgbWFyayBp
-dCBhcyBzYWZlL2Rhbmdlcm91cyBpbiANCnNvbWUgQlBGIG1hcHMuIExhdGVyLCB3aGVuIHRoZSBm
-aWxlIGlzIG9wZW5lZCBmb3IgDQpleGVjdXRpb24sIGZbc3xhXW5vdGlmeS1icGYgY2FuIG1ha2Ug
-dGhlIGFsbG93L2RlbnkNCmRlY2lzaW9uIGJhc2VkIG9uIHRoZSBpbmZvcm1hdGlvbiBpbiBCUEYg
-bWFwcy4gDQoNClRoYW5rcyBhZ2FpbiBmb3IgeW91ciByZXZpZXcgYW5kIGlucHV0cyENCg0KU29u
-Zw0KDQoNCg0K
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    2d5404caa8c7 Linux 6.12-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=3D1120d35f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D327b6119dd928cb=
+c
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D917bd189260e9ec18=
+5fc
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7fe=
+b34a89c2a/non_bootable_disk-2d5404ca.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1bbbfa50cb5f/vmlinux-=
+2d5404ca.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a5bcdede1c8a/bzI=
+mage-2d5404ca.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit=
+:
+Reported-by: syzbot+917bd189260e9ec185fc@syzkaller.appspotmail.com
+
+ce
+Nov 11 21:02[   96.032192][    C1] bridge0: topology change detected, propa=
+gating
+:32 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL de[   96.0356=
+15][ T6232]=20
+vice
+Nov 11 21:[   96.036689][ T6232] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+02:32 syzkaller [   96.038573][ T6232] WARNING: suspicious RCU usage
+daemon.err dhcpc[   96.038591][ T6232] 6.12.0-rc7-syzkaller #0 Not tainted
+d[5661]: libudev[   96.038621][ T6232] -----------------------------
+: received NULL [   96.038627][ T6232] net/sched/sch_generic.c:1256 suspici=
+ous rcu_dereference_protected() usage!
+device
+Nov 11 2[   96.049502][ T6232]=20
+1:02:32 syzkalle[   96.053504][ T6232]=20
+r daemon.err dhc[   96.053520][ T6232] 3 locks held by kworker/u32:32/6232:
+pcd[5661]: libud[   96.053532][ T6232]  #0: ffff88804b8f2948 ((wq_completio=
+n)bond0#3){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue=
+.c:3204
+ev: received NUL[   96.061723][ T6232]  #1: ffffc900033c7d80 ((work_complet=
+ion)(&(&bond->mii_work)->work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1=
+ba0 kernel/workqueue.c:3205
+L device
+Nov 11 21:02:32 syzkal[   96.066284][ T6232]  #2: ffffffff8e1b8340 (rcu_rea=
+d_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inl=
+ine]
+Nov 11 21:02:32 syzkal[   96.066284][ T6232]  #2: ffffffff8e1b8340 (rcu_rea=
+d_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline=
+]
+Nov 11 21:02:32 syzkal[   96.066284][ T6232]  #2: ffffffff8e1b8340 (rcu_rea=
+d_lock){....}-{1:2}, at: bond_mii_monitor+0x140/0x2d90 drivers/net/bonding/=
+bond_main.c:2937
+ler daemon.err d[   96.070840][ T6232]=20
+hcpcd[5661]: lib[   96.070871][ T6232] Hardware name: QEMU Standard PC (Q35=
+ + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+udev: received N[   96.070884][ T6232] Workqueue: bond0 bond_mii_monitor
+ULL device
+Nov [   96.082763][ T6232] Call Trace:
+11 21:02:32 syzkaller daemon.errNov 11 21:02:32 syzkaller daemon.err dhcpcd=
+[5661]: libudev: receNov 11 21:02:32 [   96.088151][ T6232]  __dump_stack l=
+ib/dump_stack.c:94 [inline]
+11 21:02:32 syzkaller daemon.errNov 11 21:02:32 syzkaller daemon.err dhcpcd=
+[5661]: libudev: receNov 11 21:02:32 [   96.088151][ T6232]  dump_stack_lvl=
++0x16c/0x1f0 lib/dump_stack.c:120
+syzkaller daemon[   96.090269][ T6232]  lockdep_rcu_suspicious+0x210/0x3c0 =
+kernel/locking/lockdep.c:6821
+.err dhcpcd[5661[   96.092560][ T6232]  dev_activate+0x457/0x12b0 net/sched=
+/sch_generic.c:1256
+]: libudev: rece[   96.094641][ T6232]  ? spin_unlock_irqrestore include/li=
+nux/spinlock.h:406 [inline]
+]: libudev: rece[   96.094641][ T6232]  ? linkwatch_sync_dev+0x179/0x210 ne=
+t/core/link_watch.c:261
+ived NULL device[   96.096940][ T6232]  ? __pfx_lock_release+0x10/0x10 kern=
+el/locking/lockdep.c:5346
+
+Nov 11 21:02:3[   96.096954][ T6232]  ? __pfx_dev_activate+0x10/0x10 net/sc=
+hed/sch_generic.c:1016
+2 syzkaller daem[   96.102894][ T6232]  linkwatch_do_dev+0x13d/0x160 net/co=
+re/link_watch.c:173
+on.err dhcpcd[56[   96.104843][ T6232]  linkwatch_sync_dev+0x181/0x210 net/=
+core/link_watch.c:263
+61]: libudev: re[   96.107045][ T6232]  ? __pfx_ethtool_op_get_link+0x10/0x=
+10 net/ethtool/ioctl.c:2712
+ceived NULL devi[   96.111265][ T6232]  bond_check_dev_link+0x197/0x490 dri=
+vers/net/bonding/bond_main.c:873
+ce
+Nov 11 21:02[   96.113653][ T6232]  ? __pfx_bond_check_dev_link+0x10/0x10 d=
+rivers/net/bonding/bond_main.c:4594
+:32 syzkaller da[   96.113678][ T6232]  ? rcu_is_watching_curr_cpu include/=
+linux/context_tracking.h:128 [inline]
+:32 syzkaller da[   96.113678][ T6232]  ? rcu_is_watching+0x12/0xc0 kernel/=
+rcu/tree.c:737
+emon.err dhcpcd[[   96.117725][ T6232]  bond_miimon_inspect drivers/net/bon=
+ding/bond_main.c:2717 [inline]
+emon.err dhcpcd[[   96.117725][ T6232]  bond_mii_monitor+0x3c1/0x2d90 drive=
+rs/net/bonding/bond_main.c:2939
+5661]: libudev: [   96.119909][ T6232]  ? __pfx_bond_mii_monitor+0x10/0x10 =
+drivers/net/bonding/bond_main.c:2806
+received NULL de[   96.122254][ T6232]  ? rcu_is_watching_curr_cpu include/=
+linux/context_tracking.h:128 [inline]
+received NULL de[   96.122254][ T6232]  ? rcu_is_watching+0x12/0xc0 kernel/=
+rcu/tree.c:737
+vice
+Nov 11 21:[   96.124595][ T6232]  ? trace_lock_acquire+0x14a/0x1d0 include/=
+trace/events/lock.h:24
+02:32 syzkaller [   96.124617][ T6232]  ? process_one_work+0x921/0x1ba0 ker=
+nel/workqueue.c:3205
+daemon.err dhcpc[   96.130226][ T6232]  ? process_one_work+0x921/0x1ba0 ker=
+nel/workqueue.c:3205
+d[5661]: libudev[   96.132210][ T6232]  process_one_work+0x9c5/0x1ba0 kerne=
+l/workqueue.c:3229
+: received NULL [   96.134128][ T6232]  ? __pfx_macvlan_process_broadcast+0=
+x10/0x10 drivers/net/macvlan.c:309
+device
+Nov 11 2[   96.134151][ T6232]  ? __pfx_process_one_work+0x10/0x10 include/=
+linux/list.h:153
+1:02:32 syzkalle[   96.139713][ T6232]  process_scheduled_works kernel/work=
+queue.c:3310 [inline]
+1:02:32 syzkalle[   96.139713][ T6232]  worker_thread+0x6c8/0xf00 kernel/wo=
+rkqueue.c:3391
+r daemon.err dhc[   96.142406][ T6232]  kthread+0x2c1/0x3a0 kernel/kthread.=
+c:389
+pcd[5661]: libudev: received NULL device
+Nov 11 21:02:32 syzkal[   96.145163][ T6232]  ? __pfx_kthread+0x10/0x10 inc=
+lude/linux/list.h:373
+ler daemon.err d[   96.145178][ T6232]  ret_from_fork+0x45/0x80 arch/x86/ke=
+rnel/process.c:147
+hcpcd[5661]: lib[   96.145188][ T6232]  ? __pfx_kthread+0x10/0x10 include/l=
+inux/list.h:373
+udev: received N[   96.145219][ T6232]  </TASK>
+ULL device
+Nov [   96.145391][ T6232] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+11 21:02:32 syzk[   96.145405][ T6232] -----------------------------
+aller daemon.err[   96.145416][ T6232]=20
+ dhcpcd[5661]: l[   96.145420][ T6232]=20
+ibudev: received[   96.145426][ T6232] 3 locks held by kworker/u32:32/6232:
+ NULL device
+No[   96.145433][ T6232]  #0: ffff88804b8f2948 ((wq_completion)bond0#3){+.+=
+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
+v 11 21:02:32 sy[   96.145466][ T6232]  #1: ffffc900033c7d80 ((work_complet=
+ion)(&(&bond->mii_work)->work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1=
+ba0 kernel/workqueue.c:3205
+zkaller daemon.e[   96.145562][ T6232]=20
+rr dhcpcd[5661]:[   96.145566][ T6232] CPU: 2 UID: 0 PID: 6232 Comm: kworke=
+r/u32:32 Not tainted 6.12.0-rc7-syzkaller #0
+ libudev: receiv[   96.145577][ T6232] Hardware name: QEMU Standard PC (Q35=
+ + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+ed NULL device
+Nov 11 21:02:32 [   96.145598][ T6232] Call Trace:
+syzkaller daemon[   96.145601][ T6232]  <TASK>
+.err dhcpcd[5661[   96.145605][ T6232]  __dump_stack lib/dump_stack.c:94 [i=
+nline]
+.err dhcpcd[5661[   96.145605][ T6232]  dump_stack_lvl+0x16c/0x1f0 lib/dump=
+_stack.c:120
+]: libudev: rece[   96.145617][ T6232]  lockdep_rcu_suspicious+0x210/0x3c0 =
+kernel/locking/lockdep.c:6821
+ived NULL device[   96.145633][ T6232]  transition_one_qdisc+0x1d4/0x210 ne=
+t/sched/sch_generic.c:1234
+
+Nov 11 21:02:3[   96.145647][ T6232]  netdev_for_each_tx_queue include/linu=
+x/netdevice.h:2504 [inline]
+Nov 11 21:02:3[   96.145647][ T6232]  dev_activate+0x211/0x12b0 net/sched/s=
+ch_generic.c:1264
+2 syzkaller daem[   96.145661][ T6232]  ? __pfx_lock_release+0x10/0x10 kern=
+el/locking/lockdep.c:5346
+on.err dhcpcd[56[   96.145671][ T6232]  ? __pfx_dev_activate+0x10/0x10 net/=
+sched/sch_generic.c:1016
+61]: libudev: re[   96.145684][ T6232]  ? __sanitizer_cov_trace_switch+0x54=
+/0x90 kernel/kcov.c:351
+ceived NULL devi[   96.145701][ T6232]  linkwatch_do_dev+0x13d/0x160 net/co=
+re/link_watch.c:173
+ce
+Nov 11 21:02[   96.145714][ T6232]  linkwatch_sync_dev+0x181/0x210 net/core=
+/link_watch.c:263
+:32 syzkaller da[   96.145727][ T6232]  ? __pfx_ethtool_op_get_link+0x10/0x=
+10 net/ethtool/ioctl.c:2712
+emon.err dhcpcd[[   96.145737][ T6232]  ethtool_op_get_link+0x1d/0x70 net/e=
+thtool/ioctl.c:62
+5661]: libudev: [   96.145746][ T6232]  bond_check_dev_link+0x197/0x490 dri=
+vers/net/bonding/bond_main.c:873
+received NULL de[   96.145758][ T6232]  ? __pfx_bond_check_dev_link+0x10/0x=
+10 drivers/net/bonding/bond_main.c:4594
+vice
+Nov 11 21:[   96.145769][ T6232]  ? rcu_is_watching_curr_cpu include/linux/=
+context_tracking.h:128 [inline]
+Nov 11 21:[   96.145769][ T6232]  ? rcu_is_watching+0x12/0xc0 kernel/rcu/tr=
+ee.c:737
+02:32 syzkaller [   96.145787][ T6232]  bond_miimon_inspect drivers/net/bon=
+ding/bond_main.c:2717 [inline]
+02:32 syzkaller [   96.145787][ T6232]  bond_mii_monitor+0x3c1/0x2d90 drive=
+rs/net/bonding/bond_main.c:2939
+daemon.err dhcpc[   96.145803][ T6232]  ? __pfx_bond_mii_monitor+0x10/0x10 =
+drivers/net/bonding/bond_main.c:2806
+d[5661]: libudev[   96.145816][ T6232]  ? rcu_is_watching_curr_cpu include/=
+linux/context_tracking.h:128 [inline]
+d[5661]: libudev[   96.145816][ T6232]  ? rcu_is_watching+0x12/0xc0 kernel/=
+rcu/tree.c:737
+: received NULL [   96.145827][ T6232]  ? trace_lock_acquire+0x14a/0x1d0 in=
+clude/trace/events/lock.h:24
+device
+Nov 11 2[   96.145839][ T6232]  ? process_one_work+0x921/0x1ba0 kernel/work=
+queue.c:3205
+1:02:32 syzkalle[   96.145850][ T6232]  ? lock_acquire+0x2f/0xb0 kernel/loc=
+king/lockdep.c:5796
+r daemon.err dhc[   96.145858][ T6232]  ? process_one_work+0x921/0x1ba0 ker=
+nel/workqueue.c:3205
+pcd[5661]: libud[   96.145869][ T6232]  process_one_work+0x9c5/0x1ba0 kerne=
+l/workqueue.c:3229
+ev: received NUL[   96.145882][ T6232]  ? __pfx_macvlan_process_broadcast+0=
+x10/0x10 drivers/net/macvlan.c:309
+L device
+Nov 11[   96.145894][ T6232]  ? __pfx_process_one_work+0x10/0x10 include/li=
+nux/list.h:153
+ 21:02:32 syzkal[   96.145907][ T6232]  ? assign_work+0x1a0/0x250 kernel/wo=
+rkqueue.c:1200
+ler daemon.err d[   96.145922][ T6232]  process_scheduled_works kernel/work=
+queue.c:3310 [inline]
+ler daemon.err d[   96.145922][ T6232]  worker_thread+0x6c8/0xf00 kernel/wo=
+rkqueue.c:3391
+hcpcd[5661]: lib[   96.145937][ T6232]  ? __pfx_worker_thread+0x10/0x10 inc=
+lude/linux/list.h:183
+udev: received N[   96.145946][ T6232]  kthread+0x2c1/0x3a0 kernel/kthread.=
+c:389
+ULL device
+Nov [   96.145957][ T6232]  ? __raw_spin_unlock_irq include/linux/spinlock_=
+api_smp.h:159 [inline]
+Nov [   96.145957][ T6232]  ? _raw_spin_unlock_irq+0x23/0x50 kernel/locking=
+/spinlock.c:202
+11 21:02:32 syzk[   96.145969][ T6232]  ? __pfx_kthread+0x10/0x10 include/l=
+inux/list.h:373
+aller daemon.err[   96.145981][ T6232]  ret_from_fork+0x45/0x80 arch/x86/ke=
+rnel/process.c:147
+ dhcpcd[5661]: l[   96.145990][ T6232]  ? __pfx_kthread+0x10/0x10 include/l=
+inux/list.h:373
+ibudev: received[   96.146001][ T6232]  ret_from_fork_asm+0x1a/0x30 arch/x8=
+6/entry/entry_64.S:244
+ NULL device
+No[   96.146020][ T6232]  </TASK>
+v 11 21:02:32 sy[   96.146025][ T6232]=20
+zkaller daemon.e[   96.146028][ T6232] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+rr dhcpcd[5661]:[   96.146031][ T6232] WARNING: suspicious RCU usage
+ libudev: receiv[   96.146034][ T6232] 6.12.0-rc7-syzkaller #0 Not tainted
+ed NULL device
+Nov 11 21:02:32 [   96.146043][ T6232] include/linux/rtnetlink.h:100 suspic=
+ious rcu_dereference_protected() usage!
+syzkaller daemon[   96.146050][ T6232]=20
+.err dhcpcd[5661[   96.146053][ T6232]=20
+]: libudev: rece[   96.146060][ T6232] 3 locks held by kworker/u32:32/6232:
+ived NULL device[   96.146066][ T6232]  #0: ffff88804b8f2948 ((wq_completio=
+n)bond0#3){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue=
+.c:3204
+
+Nov 11 21:02:3[   96.146095][ T6232]  #1: ffffc900033c7d80 ((work_completio=
+n)(&(&bond->mii_work)->work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba=
+0 kernel/workqueue.c:3205
+2 syzkaller daem[   96.146122][ T6232]  #2: ffffffff8e1b8340 (rcu_read_lock=
+){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+2 syzkaller daem[   96.146122][ T6232]  #2: ffffffff8e1b8340 (rcu_read_lock=
+){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+2 syzkaller daem[   96.146122][ T6232]  #2: ffffffff8e1b8340 (rcu_read_lock=
+){....}-{1:2}, at: bond_mii_monitor+0x140/0x2d90 drivers/net/bonding/bond_m=
+ain.c:2937
+on.err dhcpcd[56[   96.146151][ T6232]=20
+61]: libudev: re[   96.146155][ T6232] CPU: 2 UID: 0 PID: 6232 Comm: kworke=
+r/u32:32 Not tainted 6.12.0-rc7-syzkaller #0
+ceived NULL devi[   96.146165][ T6232] Hardware name: QEMU Standard PC (Q35=
+ + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+ce
+Nov 11 21:02[   96.146171][ T6232] Workqueue: bond0 bond_mii_monitor
+:32 syzkaller da[   96.146184][ T6232] Call Trace:
+emon.err dhcpcd[[   96.146187][ T6232]  <TASK>
+5661]: libudev: [   96.146191][ T6232]  __dump_stack lib/dump_stack.c:94 [i=
+nline]
+5661]: libudev: [   96.146191][ T6232]  dump_stack_lvl+0x16c/0x1f0 lib/dump=
+_stack.c:120
+received NULL de[   96.146201][ T6232]  lockdep_rcu_suspicious+0x210/0x3c0 =
+kernel/locking/lockdep.c:6821
+vice
+Nov 11 21:[   96.146216][ T6232]  dev_ingress_queue include/linux/rtnetlink=
+.h:100 [inline]
+Nov 11 21:[   96.146216][ T6232]  dev_activate+0x7eb/0x12b0 net/sched/sch_g=
+eneric.c:1265
+02:32 syzkaller [   96.146230][ T6232]  ? __pfx_lock_release+0x10/0x10 kern=
+el/locking/lockdep.c:5346
+daemon.err dhcpc[   96.146239][ T6232]  ? __pfx_dev_activate+0x10/0x10 net/=
+sched/sch_generic.c:1016
+d[5661]: libudev[   96.146253][ T6232]  ? __sanitizer_cov_trace_switch+0x54=
+/0x90 kernel/kcov.c:351
+: received NULL [   96.146270][ T6232]  linkwatch_do_dev+0x13d/0x160 net/co=
+re/link_watch.c:173
+device
+Nov 11 2[   96.146282][ T6232]  linkwatch_sync_dev+0x181/0x210 net/core/lin=
+k_watch.c:263
+1:02:32 syzkalle[   96.146295][ T6232]  ? __pfx_ethtool_op_get_link+0x10/0x=
+10 net/ethtool/ioctl.c:2712
+r daemon.err dhc[   96.146304][ T6232]  ethtool_op_get_link+0x1d/0x70 net/e=
+thtool/ioctl.c:62
+pcd[5661]: libud[   96.146313][ T6232]  bond_check_dev_link+0x197/0x490 dri=
+vers/net/bonding/bond_main.c:873
+ev: received NUL[   96.146325][ T6232]  ? __pfx_bond_check_dev_link+0x10/0x=
+10 drivers/net/bonding/bond_main.c:4594
+L device
+Nov 11[   96.146336][ T6232]  ? rcu_is_watching_curr_cpu include/linux/cont=
+ext_tracking.h:128 [inline]
+Nov 11[   96.146336][ T6232]  ? rcu_is_watching+0x12/0xc0 kernel/rcu/tree.c=
+:737
+ 21:02:32 syzkal[   96.146352][ T6232]  bond_miimon_inspect drivers/net/bon=
+ding/bond_main.c:2717 [inline]
+ 21:02:32 syzkal[   96.146352][ T6232]  bond_mii_monitor+0x3c1/0x2d90 drive=
+rs/net/bonding/bond_main.c:2939
+ler daemon.err d[   96.146369][ T6232]  ? __pfx_bond_mii_monitor+0x10/0x10 =
+drivers/net/bonding/bond_main.c:2806
+hcpcd[5661]: lib[   96.146385][ T6232]  ? rcu_is_watching_curr_cpu include/=
+linux/context_tracking.h:128 [inline]
+hcpcd[5661]: lib[   96.146385][ T6232]  ? rcu_is_watching+0x12/0xc0 kernel/=
+rcu/tree.c:737
+udev: received N[   96.146396][ T6232]  ? trace_lock_acquire+0x14a/0x1d0 in=
+clude/trace/events/lock.h:24
+ULL device
+Nov [   96.146408][ T6232]  ? process_one_work+0x921/0x1ba0 kernel/workqueu=
+e.c:3205
+11 21:02:32 syzk[   96.146418][ T6232]  ? lock_acquire+0x2f/0xb0 kernel/loc=
+king/lockdep.c:5796
+aller daemon.err[   96.146427][ T6232]  ? process_one_work+0x921/0x1ba0 ker=
+nel/workqueue.c:3205
+ dhcpcd[5661]: l[   96.146437][ T6232]  process_one_work+0x9c5/0x1ba0 kerne=
+l/workqueue.c:3229
+ibudev: received[   96.146451][ T6232]  ? __pfx_macvlan_process_broadcast+0=
+x10/0x10 drivers/net/macvlan.c:309
+ NULL device
+No[   96.146461][ T6232]  ? __pfx_process_one_work+0x10/0x10 include/linux/=
+list.h:153
+v 11 21:02:32 sy[   96.146474][ T6232]  ? assign_work+0x1a0/0x250 kernel/wo=
+rkqueue.c:1200
+zkaller daemon.e[   96.146489][ T6232]  process_scheduled_works kernel/work=
+queue.c:3310 [inline]
+zkaller daemon.e[   96.146489][ T6232]  worker_thread+0x6c8/0xf00 kernel/wo=
+rkqueue.c:3391
+rr dhcpcd[5661]:[   96.146503][ T6232]  ? __pfx_worker_thread+0x10/0x10 inc=
+lude/linux/list.h:183
+ libudev: receiv[   96.146513][ T6232]  kthread+0x2c1/0x3a0 kernel/kthread.=
+c:389
+ed NULL device
+Nov 11 21:02:32 [   96.146536][ T6232]  ? __pfx_kthread+0x10/0x10 include/l=
+inux/list.h:373
+syzkaller daemon[   96.146547][ T6232]  ret_from_fork+0x45/0x80 arch/x86/ke=
+rnel/process.c:147
+.err dhcpcd[5661[   96.146555][ T6232]  ? __pfx_kthread+0x10/0x10 include/l=
+inux/list.h:373
+]: libudev: rece[   96.146567][ T6232]  ret_from_fork_asm+0x1a/0x30 arch/x8=
+6/entry/entry_64.S:244
+ived NULL device[   96.146585][ T6232]  </TASK>
+
+Nov 11 21:02:32 syzkaller daem[   96.333328][ T6232] BUG: sleeping function=
+ called from invalid context at kernel/locking/rwsem.c:1523
+on.err dhcpcd[56[   96.335759][ T6232] in_atomic(): 0, irqs_disabled(): 0, =
+non_block: 0, pid: 6232, name: kworker/u32:32
+61]: libudev: re[   96.338277][ T6232] preempt_count: 0, expected: 0
+ceived NULL devi[   96.339800][ T6232] RCU nest depth: 1, expected: 0
+ce
+Nov 11 21:02[   96.341338][ T6232] 3 locks held by kworker/u32:32/6232:
+:32 syzkaller da[   96.342995][ T6232]  #0: ffff88804b8f2948 ((wq_completio=
+n)bond0#3){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue=
+.c:3204
+emon.err dhcpcd[[   96.345823][ T6232]  #1: ffffc900033c7d80 ((work_complet=
+ion)(&(&bond->mii_work)->work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1=
+ba0 kernel/workqueue.c:3205
+5661]: libudev: [   96.348943][ T6232]  #2: ffffffff8e1b8340 (rcu_read_lock=
+){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+5661]: libudev: [   96.348943][ T6232]  #2: ffffffff8e1b8340 (rcu_read_lock=
+){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+5661]: libudev: [   96.348943][ T6232]  #2: ffffffff8e1b8340 (rcu_read_lock=
+){....}-{1:2}, at: bond_mii_monitor+0x140/0x2d90 drivers/net/bonding/bond_m=
+ain.c:2937
+received NULL de[   96.351636][ T6232] CPU: 2 UID: 0 PID: 6232 Comm: kworke=
+r/u32:32 Not tainted 6.12.0-rc7-syzkaller #0
+vice
+Nov 11 21:[   96.354069][ T6232] Hardware name: QEMU Standard PC (Q35 + ICH=
+9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+02:32 syzkaller [   96.356965][ T6232] Workqueue: bond0 bond_mii_monitor
+daemon.err dhcpc[   96.359016][ T6232] Call Trace:
+d[5661]: libudev[   96.360510][ T6232]  <TASK>
+: received NULL [   96.361644][ T6232]  __dump_stack lib/dump_stack.c:94 [i=
+nline]
+: received NULL [   96.361644][ T6232]  dump_stack_lvl+0x16c/0x1f0 lib/dump=
+_stack.c:120
+device
+Nov 11 2[   96.363142][ T6232]  __might_resched+0x3c0/0x5e0 kernel/sched/co=
+re.c:8653
+1:02:32 syzkalle[   96.364728][ T6232]  ? __pfx___might_resched+0x10/0x10 k=
+ernel/sched/core.c:5828
+r daemon.err dhc[   96.366340][ T6232]  down_read+0x73/0x330 kernel/locking=
+/rwsem.c:1523
+pcd[5661]: libud[   96.367925][ T6232]  ? __pfx_down_read+0x10/0x10
+ev: received NUL[   96.369905][ T6232]  ? dev_map_notification+0x6a/0xaf0 k=
+ernel/bpf/devmap.c:1153
+L device
+Nov 11[   96.371941][ T6232]  ? __sanitizer_cov_trace_switch+0x54/0x90 kern=
+el/kcov.c:351
+ 21:02:32 syzkal[   96.373845][ T6232]  wireless_nlevent_flush+0x1b/0x100 n=
+et/wireless/wext-core.c:351
+ler daemon.err d[   96.375498][ T6232]  wext_netdev_notifier_call+0xe/0x20 =
+net/wireless/wext-core.c:371
+hcpcd[5661]: lib[   96.377128][ T6232]  notifier_call_chain+0xb9/0x410 kern=
+el/notifier.c:93
+udev: received N[   96.378697][ T6232]  ? __pfx_wext_netdev_notifier_call+0=
+x10/0x10 net/wireless/wext-core.c:352
+ULL device
+Nov [   96.380780][ T6232]  call_netdevice_notifiers_info+0xbe/0x140 net/co=
+re/dev.c:1996
+11 21:02:32 syzk[   96.382471][ T6232]  netdev_state_change net/core/dev.c:=
+1378 [inline]
+11 21:02:32 syzk[   96.382471][ T6232]  netdev_state_change+0x115/0x150 net=
+/core/dev.c:1371
+aller daemon.err[   96.383984][ T6232]  ? __pfx_netdev_state_change+0x10/0x=
+10 include/net/net_namespace.h:383
+ dhcpcd[5661]: l[   96.385693][ T6232]  ? __sanitizer_cov_trace_switch+0x54=
+/0x90 kernel/kcov.c:351
+ibudev: received[   96.387526][ T6232]  linkwatch_do_dev+0x12b/0x160 net/co=
+re/link_watch.c:177
+ NULL device
+No[   96.389577][ T6232]  linkwatch_sync_dev+0x181/0x210 net/core/link_watc=
+h.c:263
+v 11 21:02:32 sy[   96.391355][ T6232]  ? __pfx_ethtool_op_get_link+0x10/0x=
+10 net/ethtool/ioctl.c:2712
+zkaller daemon.e[   96.393047][ T6232]  ethtool_op_get_link+0x1d/0x70 net/e=
+thtool/ioctl.c:62
+rr dhcpcd[5661]:[   96.394857][ T6232]  bond_check_dev_link+0x197/0x490 dri=
+vers/net/bonding/bond_main.c:873
+ libudev: receiv[   96.396472][ T6232]  ? __pfx_bond_check_dev_link+0x10/0x=
+10 drivers/net/bonding/bond_main.c:4594
+ed NULL device
+Nov 11 21:02:32 [   96.399965][ T6232]  bond_miimon_inspect drivers/net/bon=
+ding/bond_main.c:2717 [inline]
+Nov 11 21:02:32 [   96.399965][ T6232]  bond_mii_monitor+0x3c1/0x2d90 drive=
+rs/net/bonding/bond_main.c:2939
+syzkaller daemon[   96.401543][ T6232]  ? __pfx_bond_mii_monitor+0x10/0x10 =
+drivers/net/bonding/bond_main.c:2806
+.err dhcpcd[5661[   96.403142][ T6232]  ? rcu_is_watching_curr_cpu include/=
+linux/context_tracking.h:128 [inline]
+.err dhcpcd[5661[   96.403142][ T6232]  ? rcu_is_watching+0x12/0xc0 kernel/=
+rcu/tree.c:737
+]: libudev: rece[   96.404629][ T6232]  ? trace_lock_acquire+0x14a/0x1d0 in=
+clude/trace/events/lock.h:24
+ived NULL device[   96.406212][ T6232]  ? process_one_work+0x921/0x1ba0 ker=
+nel/workqueue.c:3205
+
+Nov 11 21:02:3[   96.407857][ T6232]  ? lock_acquire+0x2f/0xb0 kernel/locki=
+ng/lockdep.c:5796
+2 syzkaller daem[   96.409307][ T6232]  ? process_one_work+0x921/0x1ba0 ker=
+nel/workqueue.c:3205
+on.err dhcpcd[56[   96.410910][ T6232]  process_one_work+0x9c5/0x1ba0 kerne=
+l/workqueue.c:3229
+61]: libudev: re[   96.412468][ T6232]  ? __pfx_macvlan_process_broadcast+0=
+x10/0x10 drivers/net/macvlan.c:309
+ceived NULL devi[   96.414179][ T6232]  ? __pfx_process_one_work+0x10/0x10 =
+include/linux/list.h:153
+ce
+Nov 11 21:02[   96.415769][ T6232]  ? assign_work+0x1a0/0x250 kernel/workqu=
+eue.c:1200
+:32 syzkaller da[   96.417321][ T6232]  process_scheduled_works kernel/work=
+queue.c:3310 [inline]
+:32 syzkaller da[   96.417321][ T6232]  worker_thread+0x6c8/0xf00 kernel/wo=
+rkqueue.c:3391
+emon.err dhcpcd[[   96.418756][ T6232]  ? __pfx_worker_thread+0x10/0x10 inc=
+lude/linux/list.h:183
+5661]: libudev: [   96.420279][ T6232]  kthread+0x2c1/0x3a0 kernel/kthread.=
+c:389
+received NULL de[   96.421514][ T6232]  ? __raw_spin_unlock_irq include/lin=
+ux/spinlock_api_smp.h:159 [inline]
+received NULL de[   96.421514][ T6232]  ? _raw_spin_unlock_irq+0x23/0x50 ke=
+rnel/locking/spinlock.c:202
+vice
+Nov 11 21:[   96.423050][ T6232]  ? __pfx_kthread+0x10/0x10 include/linux/l=
+ist.h:373
+02:32 syzkaller [   96.424425][ T6232]  ret_from_fork+0x45/0x80 arch/x86/ke=
+rnel/process.c:147
+daemon.err dhcpc[   96.425840][ T6232]  ? __pfx_kthread+0x10/0x10 include/l=
+inux/list.h:373
+d[5661]: libudev[   96.427212][ T6232]  ret_from_fork_asm+0x1a/0x30 arch/x8=
+6/entry/entry_64.S:244
+: received NULL [   96.428635][ T6232]  </TASK>
+device
+Nov 11 2[   96.429829][ T6232]=20
+1:02:32 syzkalle[   96.430587][ T6232] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+r daemon.err dhc[   96.432112][ T6232] [ BUG: Invalid wait context ]
+pcd[5661]: libud[   96.433560][ T6232] 6.12.0-rc7-syzkaller #0 Tainted: G  =
+      W        =20
+ev: received NUL[   96.435434][ T6232] -----------------------------
+L device
+Nov 11[   96.436843][ T6232] kworker/u32:32/6232 is trying to lock:
+ 21:02:32 syzkal[   96.438550][ T6232] ffffffff8fecdad0 (net_rwsem){++++}-{=
+3:3}, at: wireless_nlevent_flush+0x1b/0x100 net/wireless/wext-core.c:351
+ler daemon.err d[   96.440935][ T6232] other info that might help us debug =
+this:
+hcpcd[5661]: lib[   96.442701][ T6232] context-{4:4}
+udev: received N[   96.443914][ T6232] 3 locks held by kworker/u32:32/6232:
+ULL device
+Nov [   96.445534][ T6232]  #0: ffff88804b8f2948 ((wq_completion)bond0#3){+=
+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
+11 21:02:32 syzk[   96.448198][ T6232]  #1: ffffc900033c7d80 ((work_complet=
+ion)(&(&bond->mii_work)->work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1=
+ba0 kernel/workqueue.c:3205
+aller daemon.err[   96.451227][ T6232]  #2: ffffffff8e1b8340 (rcu_read_lock=
+){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+aller daemon.err[   96.451227][ T6232]  #2: ffffffff8e1b8340 (rcu_read_lock=
+){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+aller daemon.err[   96.451227][ T6232]  #2: ffffffff8e1b8340 (rcu_read_lock=
+){....}-{1:2}, at: bond_mii_monitor+0x140/0x2d90 drivers/net/bonding/bond_m=
+ain.c:2937
+ dhcpcd[5661]: l[   96.453823][ T6232] stack backtrace:
+ibudev: received[   96.455014][ T6232] CPU: 2 UID: 0 PID: 6232 Comm: kworke=
+r/u32:32 Tainted: G        W          6.12.0-rc7-syzkaller #0
+ NULL device
+No[   96.457827][ T6232] Tainted: [W]=3DWARN
+v 11 21:02:32 sy[   96.459117][ T6232] Hardware name: QEMU Standard PC (Q35=
+ + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+zkaller daemon.e[   96.461987][ T6232] Workqueue: bond0 bond_mii_monitor
+rr dhcpcd[5661]:[   96.463607][ T6232] Call Trace:
+ libudev: receiv[   96.464778][ T6232]  <TASK>
+ed NULL device
+Nov 11 21:02:32 [   96.467375][ T6232]  print_lock_invalid_wait_context ker=
+nel/locking/lockdep.c:4802 [inline]
+Nov 11 21:02:32 [   96.467375][ T6232]  check_wait_context kernel/locking/l=
+ockdep.c:4874 [inline]
+Nov 11 21:02:32 [   96.467375][ T6232]  __lock_acquire+0x13db/0x3ce0 kernel=
+/locking/lockdep.c:5152
+syzkaller daemon[   96.468900][ T6232]  ? mark_held_locks+0x9f/0xe0 kernel/=
+locking/lockdep.c:4321
+.err dhcpcd[5661[   96.470608][ T6232]  ? __pfx___lock_acquire+0x10/0x10 ke=
+rnel/locking/lockdep.c:4387
+]: libudev: rece[   96.472353][ T6232]  ? irqentry_exit+0x3b/0x90 kernel/en=
+try/common.c:357
+ived NULL device[   96.473939][ T6232]  ? lockdep_hardirqs_on+0x7c/0x110 ke=
+rnel/locking/lockdep.c:4468
+
+Nov 11 21:02:3[   96.475727][ T6232]  lock_acquire.part.0+0x11b/0x380 kerne=
+l/locking/lockdep.c:5825
+2 syzkaller daem[   96.477482][ T6232]  ? wireless_nlevent_flush+0x1b/0x100=
+ net/wireless/wext-core.c:351
+on.err dhcpcd[56[   96.479319][ T6232]  ? __pfx_lock_acquire.part.0+0x10/0x=
+10 kernel/locking/lockdep.c:122
+61]: libudev: re[   96.481159][ T6232]  ? rcu_is_watching_curr_cpu include/=
+linux/context_tracking.h:128 [inline]
+61]: libudev: re[   96.481159][ T6232]  ? rcu_is_watching+0x12/0xc0 kernel/=
+rcu/tree.c:737
+ceived NULL devi[   96.482838][ T6232]  ? trace_lock_acquire+0x14a/0x1d0 in=
+clude/trace/events/lock.h:24
+ce
+Nov 11 21:02[   96.484636][ T6232]  ? __might_resched+0x3cc/0x5e0 kernel/sc=
+hed/core.c:8654
+:32 syzkaller da[   96.486190][ T6232]  ? wireless_nlevent_flush+0x1b/0x100=
+ net/wireless/wext-core.c:351
+emon.err dhcpcd[[   96.487877][ T6232]  ? lock_acquire+0x2f/0xb0 kernel/loc=
+king/lockdep.c:5796
+5661]: libudev: [   96.489445][ T6232]  ? wireless_nlevent_flush+0x1b/0x100=
+ net/wireless/wext-core.c:351
+received NULL de[   96.491234][ T6232]  down_read+0x9a/0x330 kernel/locking=
+/rwsem.c:1524
+vice
+Nov 11 21:[   96.492596][ T6232]  ? wireless_nlevent_flush+0x1b/0x100 net/w=
+ireless/wext-core.c:351
+02:32 syzkaller [   96.494426][ T6232]  ? __pfx_down_read+0x10/0x10
+daemon.err dhcpc[   96.496124][ T6232]  ? dev_map_notification+0x6a/0xaf0 k=
+ernel/bpf/devmap.c:1153
+d[5661]: libudev[   96.498338][ T6232]  ? __sanitizer_cov_trace_switch+0x54=
+/0x90 kernel/kcov.c:351
+: received NULL [   96.500581][ T6232]  wireless_nlevent_flush+0x1b/0x100 n=
+et/wireless/wext-core.c:351
+device
+Nov 11 2[   96.502354][ T6232]  wext_netdev_notifier_call+0xe/0x20 net/wire=
+less/wext-core.c:371
+1:02:32 syzkalle[   96.504180][ T6232]  notifier_call_chain+0xb9/0x410 kern=
+el/notifier.c:93
+r daemon.err dhc[   96.505918][ T6232]  ? __pfx_wext_netdev_notifier_call+0=
+x10/0x10 net/wireless/wext-core.c:352
+pcd[5661]: libud[   96.508156][ T6232]  call_netdevice_notifiers_info+0xbe/=
+0x140 net/core/dev.c:1996
+ev: received NUL[   96.510059][ T6232]  netdev_state_change net/core/dev.c:=
+1378 [inline]
+ev: received NUL[   96.510059][ T6232]  netdev_state_change+0x115/0x150 net=
+/core/dev.c:1371
+L device
+Nov 11[   96.511811][ T6232]  ? __pfx_netdev_state_change+0x10/0x10 include=
+/net/net_namespace.h:383
+ 21:02:32 syzkal[   96.513492][ T6232]  ? __sanitizer_cov_trace_switch+0x54=
+/0x90 kernel/kcov.c:351
+ler daemon.err d[   96.515426][ T6232]  linkwatch_do_dev+0x12b/0x160 net/co=
+re/link_watch.c:177
+hcpcd[5661]: lib[   96.517111][ T6232]  linkwatch_sync_dev+0x181/0x210 net/=
+core/link_watch.c:263
+udev: received N[   96.518862][ T6232]  ? __pfx_ethtool_op_get_link+0x10/0x=
+10 net/ethtool/ioctl.c:2712
+ULL device
+Nov [   96.520713][ T6232]  ethtool_op_get_link+0x1d/0x70 net/ethtool/ioctl=
+.c:62
+11 21:02:32 syzk[   96.522257][ T6232]  bond_check_dev_link+0x197/0x490 dri=
+vers/net/bonding/bond_main.c:873
+aller daemon.err[   96.523862][ T6232]  ? __pfx_bond_check_dev_link+0x10/0x=
+10 drivers/net/bonding/bond_main.c:4594
+ dhcpcd[5661]: l[   96.525553][ T6232]  ? rcu_is_watching_curr_cpu include/=
+linux/context_tracking.h:128 [inline]
+ dhcpcd[5661]: l[   96.525553][ T6232]  ? rcu_is_watching+0x12/0xc0 kernel/=
+rcu/tree.c:737
+ibudev: received[   96.527071][ T6232]  bond_miimon_inspect drivers/net/bon=
+ding/bond_main.c:2717 [inline]
+ibudev: received[   96.527071][ T6232]  bond_mii_monitor+0x3c1/0x2d90 drive=
+rs/net/bonding/bond_main.c:2939
+ NULL device
+No[   96.528841][ T6232]  ? __pfx_bond_mii_monitor+0x10/0x10 drivers/net/bo=
+nding/bond_main.c:2806
+v 11 21:02:32 sy[   96.530573][ T6232]  ? rcu_is_watching_curr_cpu include/=
+linux/context_tracking.h:128 [inline]
+v 11 21:02:32 sy[   96.530573][ T6232]  ? rcu_is_watching+0x12/0xc0 kernel/=
+rcu/tree.c:737
+zkaller daemon.e[   96.532252][ T6232]  ? trace_lock_acquire+0x14a/0x1d0 in=
+clude/trace/events/lock.h:24
+rr dhcpcd[5661]:[   96.533854][ T6232]  ? process_one_work+0x921/0x1ba0 ker=
+nel/workqueue.c:3205
+ libudev: receiv[   96.535566][ T6232]  ? lock_acquire+0x2f/0xb0 kernel/loc=
+king/lockdep.c:5796
+ed NULL device
+Nov 11 21:02:32 [   96.538918][ T6232]  process_one_work+0x9c5/0x1ba0 kerne=
+l/workqueue.c:3229
+syzkaller daemon[   96.540589][ T6232]  ? __pfx_macvlan_process_broadcast+0=
+x10/0x10 drivers/net/macvlan.c:309
+.err dhcpcd[5661[   96.542543][ T6232]  ? __pfx_process_one_work+0x10/0x10 =
+include/linux/list.h:153
+]: libudev: rece[   96.544227][ T6232]  ? assign_work+0x1a0/0x250 kernel/wo=
+rkqueue.c:1200
+ived NULL device[   96.545695][ T6232]  process_scheduled_works kernel/work=
+queue.c:3310 [inline]
+ived NULL device[   96.545695][ T6232]  worker_thread+0x6c8/0xf00 kernel/wo=
+rkqueue.c:3391
+
+Nov 11 21:02:3[   96.547183][ T6232]  ? __pfx_worker_thread+0x10/0x10 inclu=
+de/linux/list.h:183
+2 syzkaller daem[   96.548759][ T6232]  kthread+0x2c1/0x3a0 kernel/kthread.=
+c:389
+on.err dhcpcd[56[   96.550159][ T6232]  ? __raw_spin_unlock_irq include/lin=
+ux/spinlock_api_smp.h:159 [inline]
+on.err dhcpcd[56[   96.550159][ T6232]  ? _raw_spin_unlock_irq+0x23/0x50 ke=
+rnel/locking/spinlock.c:202
+61]: libudev: re[   96.551902][ T6232]  ? __pfx_kthread+0x10/0x10 include/l=
+inux/list.h:373
+ceived NULL devi[   96.553553][ T6232]  ret_from_fork+0x45/0x80 arch/x86/ke=
+rnel/process.c:147
+ce
+Nov 11 21:02[   96.555156][ T6232]  ? __pfx_kthread+0x10/0x10 include/linux=
+/list.h:373
+:32 syzkaller da[   96.556740][ T6232]  ret_from_fork_asm+0x1a/0x30 arch/x8=
+6/entry/entry_64.S:244
+emon.err dhcpcd[[   96.558272][ T6232]  </TASK>
+5661]: libudev: received NULL device
+Nov 11 21:02:32 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:32 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:32 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov [   96.567245][ T6232] bond0: (slave bridge0): link status up, enabling=
+ it in 4 ms
+11 21:02:32 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL devic=
+e
+Nov 11 21:02:32 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:32 syzkaller kern.info kernel: [   96.025634][    C1] bridge0:=
+ port 2(bridge_slave_1) entered forwarding state
+Nov 11 21:02:32 syzkaller kern.info kernel: [   96.027878][    C1] bridge0:=
+ topology change detected, propagating
+Nov 11 21:02:32 syzkaller kern.info kernel: [   96.030078][    C1] bridge0:=
+ port[   96.585912][ T6232] bond0: (slave bridge0): link status up, enablin=
+g it in 4 ms
+ 1(bridge_slave_0) entered forwarding state
+Nov 11 21:02:32 syzkaller kern.info kernel: [   96.032192][    C1] bridge0:=
+ topology change detected, propagating
+Nov 11 21:02:32 syzkaller kern.warn kernel: [   96.035615][ T6232]=20
+Nov 11 21:02:32 syzkaller kern.warn kernel: [   96.036689][ T6232] =3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+Nov 11 21:02:32 syzkaller kern.warn kernel: [   96.038573][ T6232] WARNING:=
+ suspicious RCU usage
+Nov 11 21:02:32 syzkaller kern.warn kernel: [   96.038591][ T6232] 6.12.0-r=
+c7-syzkaller[   96.605864][ T6232] bond0: (slave bridge0): link status up, =
+enabling it in 4 ms
+ #0 Not tainted
+Nov 11 21:02:32 syzkaller kern.warn kernel: [   96.038621][ T6232] --------=
+---------------------
+Nov 11 21:02:32 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:32 syzkaller kern.warn kernel: [   96.038627][ T6232] net/sche=
+d/sch_generic.c:1256 suspicious rcu_dereference_protected() usage!
+Nov 11 21:02:32 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.049502][ T6232]=20
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.049502][ T6232] other in=
+fo that might help us debug this:
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.049502][ T6232]=20
+Nov 11 [   96.625731][ T1133] bond0: (slave bridge0): link status up, enabl=
+ing it in 4 ms
+21:02:33 syzkaller kern.warn kernel: [   96.053504][ T6232]=20
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.053504][ T6232] rcu_sche=
+duler_active =3D 2, debug_locks =3D 1
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.053520][ T6232] 3 locks =
+held by kworker/u32:32/6232:
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.053532][ T6232]  #0: fff=
+f88804b8f2948 ((wq_completion)bond0#3){+.+.}-{0:0}, at: process_one_work+0x=
+129b/0x1ba0 kernel/workqueue.c:3204
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.061723][ T6232]  #1: fff=
+fc900033c7d80 ((work_completion)(&(&bond->mii_work)->work)){+.+.}-{0:0}, at=
+: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.066284][ T6232]  #2: fff=
+fffff8e1b8340 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/lin=
+ux/rcupdate.h:337 [inline]
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.066284][ T6232]  #2: fff=
+fffff8e1b8340 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/=
+rcupdate.h:849 [inline]
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.066284][ T6232]  #2: fff=
+fffff8e1b8340 (rcu_read_lock){....}-{1:2}, at: bond_mii_monitor+0x140/0x2d9=
+0 drivers/net/bonding/bond_main.c:2937
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.070840][ T6232]=20
+Nov 11 21:02:33[   96.662826][   T77] bond0: (slave bridge0): link status u=
+p, enabling it in 4 ms
+ syzkaller kern.warn kernel: [   96.070840][ T6232] stack backtrace:
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.070852][ T6232] CPU: 2 U=
+ID: 0 PID: 6232 Comm: kworker/u32:32 Not tainted 6.12.0-rc7-syzkaller #0
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.070871][ T6232] Hardware=
+ name: QEMU Standard PC (Q[   96.675998][   T77] bond0: (slave bridge0): li=
+nk status up, enabling it in 4 ms
+35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.070884][ T6232] Workqueu=
+e: bond0 bond_mii_monitor
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.082763][ T6232] Call Tra=
+ce:
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.084507][ T6232]  <TASK>
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.088151][ T6232]  __dump_=
+stack lib/dump_stack.c:94 [inline]
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.088151][ T6232]  dump_st=
+ack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.090269][ T6232]  lockdep=
+_rcu_suspicious+0[   96.695552][   T77] bond0: (slave bridge0): link status=
+ up, enabling it in 4 ms
+x210/0x3c0
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.092560][ T6232]  dev_act=
+ivate+0x457/0x12b0 net/sched/sch_generic.c:1256
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.094641][ T6232]  ? spin_=
+unlock_irqrestore include/linux/spinlock.h:406 [inline]
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.094641][ T6232]  ? linkw=
+atch_sync_dev+0x179/0x210 net/core/link_watch.c:261
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.096940][ T6232]  ? __pfx=
+_lock_release+0x10/0x10 kernel/locking/lockdep.c:5346
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.096954][ T6232]  ? __pfx=
+_dev_activate+0x10/0x10 net/sched/sch_generic.c:1016
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.096969][ T6232]  ? __san=
+itizer_cov_trace_switch+0x54/0x90 kernel/kcov.c:351
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.102894][ T6232]  linkw[ =
+  96.715869][   T77] bond0: (slave bridge0): link status up, enabling it in=
+ 4 ms
+atch_do_dev+0x13d/0x160
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.104843][ T6232]  linkwat=
+ch_sync_dev+0x181/0x210 net/core/link_watch.c:263
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.107045][ T6232]  ? __pfx=
+_ethtool_op_get_link+0x10/0x10 net/ethtool/ioctl.c:2712
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.109510][ T6232]  ethtool=
+_op_get_link+0x1d/0x70 net/ethtool/ioctl.c:62
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.111265][ T6232]  bond_ch=
+eck_dev_link+0x197/0x490 drivers/net/bonding/bond_main.c:873
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.113653][ T6232]  ? __pfx=
+_bond_check_dev_link+0x10/0x10 drivers/net/bonding/bond_main.c:4594
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.113678][ T6232]  ? rcu_i=
+s_watching_curr_cpu include/linux/context_tracking.h:128 [inline]
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.113678][ T6232]  ? rcu_i=
+s_watching+0x12/0xc0 kernel/rcu/tree.c:737
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.117725][ T6232]  bond_mi=
+imon_inspect drivers/net/bonding/bond_main.c:2717 [inline]
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.117725][ T6232]  bond_mi=
+i_monitor+0x3c1/0x2d90 drivers/net/bonding/bond_main.c:2939
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.119909][ T6232]  ? __pfx=
+_bond_mii_monitor+0x10/0x10 drivers/net/bonding/bond_main.c:2806
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.122254][ T6232]  ? rcu_i=
+s_watching_curr_cpu include/linux/context_tracking.h:128 [inline]
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.122254][ T6232]  ? rcu_i=
+s_watching+0x12/0xc0 kernel/rcu/tree.c:737
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.124595][ T6232]  ? trace=
+_lock_acquire+0x14a/0x1d0 include/trace/events/lock.h:24
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.124617][ T6232]  ? proce=
+ss_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.124632][ T6232]  ? lock_=
+acquire+0x2f/0xb0 kernel/locking/lockdep.c:5796
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.130226][ T6232]  ? proce=
+ss_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.132210][ T6232]  process=
+_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.134128][ T6232]  ? __pfx=
+_macvlan_process_broadcast+0x10/0x10 drivers/net/macvlan.c:309
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.134151][ T6232]  ? __pfx=
+_process_one_work+0x10/0x10 include/linux/list.h:153
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.134181][ T6232]  ? assig=
+n_work+0x1a0/0x250 kernel/workqueue.c:1200
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.139713][ T6232]  process=
+_scheduled_works kernel/workqueue.c:3310 [inline]
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.139713][ T6232]  worker_=
+thread+0x6c8/0xf00 kernel/workqueue.c:3391
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.141162][ T6232]  ? __pfx=
+_worker_thread+0x10/0x10 include/linux/list.h:183
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.142406][ T6232]  kthread=
++0x2c1/0x3a0 kernel/kthread.c:389
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.143917][ T6232]  ? __raw=
+_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.143917][ T6232]  ? _raw_=
+spin_unlock_irq+0x23/0x50 kernel/locking/spinlock.c:202
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145163][ T6232]  ? __pfx=
+_kthread+0x10/0x10 include/linux/list.h:373
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145178][ T6232]  ret_fro=
+m_fork+0x45/0x80 arch/x86/kernel/process.c:147
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145188][ T6232]  ? __pfx=
+_kthread+0x10/0x10 include/linux/list.h:373
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145199][ T6232]  ret_fro=
+m_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145219][ T6232]  </TASK>
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145386][ T6232]=20
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145391][ T6232] =3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145395][ T6232] WARNING:=
+ suspicious RCU usage
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145399][ T6232] 6.12.0-r=
+c7-syzkalleNov 11 21:02:33 Nov 11 21:02:33 Nov 11 21:02:33 Nov 11 21:02:33 =
+Nov 11 21:02:33 Nov 11 21:02:33 syzkaller kern.wNov 11 21:02:33 Nov 11 21:0=
+2:33 syzkaller kern.wNov 11 21:02:33 syzkaller kern.warn kernel: [   96.145=
+433][ T6232]  #0: ffff88804b8f2948 ((wq_completion)bond0#3){+.+.}-{0:0}, at=
+: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
+Nov 11 21:02:33 syzkaller kerNov 11 21:02:33 Nov 11 21:02:33 syzkaller kern=
+.warn kernel: [   Nov 11 21:02:33 Nov 11 21:02:33 Nov 11 21:02:33 Nov 11 21=
+:02:33 Nov 11 21:02:33 Nov 11 21:02:33 syzkaller kern.wNov 11 21:02:33 syzk=
+aller kern.warn kernel: [   96.145605][ T623Nov 11 21:02:33 syzkaller kern.=
+wNov 11 21:02:33 Nov 11 21:02:33 Nov 11 21:02:33 Nov 11 21:02:33 Nov 11 21:=
+02:33 Nov 11 21:02:33 syzkaller kern.wNov 11 21:02:33 Nov 11 21:02:33 syzka=
+ller kern.wNov 11 21:02:33 syzkaller kern.wNov 11 21:02:33 syzkaller kern.w=
+Nov 11 21:02:33 syzkaller kern.wNov 11 21:02:33 syzkaller kern.wNov 11 21:0=
+2:33 syzkaller kern.wNov 11 21:02:33 [   96.829369][ T6232] bond0: (slave b=
+ridge0): link status up, enabling it in 4 ms
+syzkaller kern.warn kernel: [   96.145803][ T6232]  ? __pfx_bond_mii_monito=
+r+0x10/0x10 drivers/net/bonding/bond_main.c:2806
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145816][ T6232]  ? rcu_i=
+s_watching_curr_cpu include/linux/context_tracking.h:128 [inline]
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145816][ T6232]  ? rcu_i=
+s_watching+0x12/0xc0 kernel/rcu/tree.c:737
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145827][ T6232]  ? trace=
+_lock_acquire+0x14a/0x1d0 include/trace/events/lock.h:24
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145839][ T6232]  ? proce=
+ss_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145850][ T6232]  ? lock_=
+acquire+0x2f/0xb0 kernel/locking/lockdep.c:5796
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145858][ T6232]  ? proce=
+ss_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145869][ T6232]  process=
+_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145882][ T6232]  ? __pfx=
+_macvlan_process_broadcast+0x10/0x10 drivers/net/macvlan.c:309
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145894][ T6232]  ? __pfx=
+_process_one_work+0x10/0x10 include/linux/list.h:153
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145907][ T6232]  ? assig=
+n_work+0x1a0/0x250 kernel/workqueue.c:1200
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145922][ T6232]  process=
+_scheduled_works kernel/workqueue.c:3310 [inline]
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145922][ T6232]  worker_=
+thread+0x6c8/0xf00 kernel/workqueue.c:3391
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145937][ T6232]  ? __pfx=
+_worker_thread+0x10/0x10 include/linux/list.h:183
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[9035]: ps_bpf_start_bpf: bpf_op=
+en: Invalid argument
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[9035]: ps_root_recvmsg: Invalid=
+ argument
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145946][ T6232]  kthread=
++0x2c1/0x3a0 kernel/kthread.c:389
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[9030]: ps_bpf_start_bpf: bpf_op=
+en: Invalid argument
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145957][ T6232]  ? __raw=
+_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145957][ T6232]  ? _raw_=
+spin_unlock_irq+0x23/0x50 kernel/locking/spinlock.c:202
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[9030]: ps_root_recvmsg: Invalid=
+ argument
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145969][ T6232]  ? __pfx=
+_kthread+0x10/0x10 include/linux/list.h:373
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145981][ T6232]  ret_fro=
+m_fork+0x45/0x80 arch/x86/kernel/process.c:147
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.145990][ T6232]  ? __pfx=
+_kthread+0x10/0x10 include/linux/list.h:373
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146001][ T6232]  ret_fro=
+m_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146020][ T6232]  </TASK>
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146025][ T6232]=20
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146028][ T6232] =3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146031][ T6232] WARNING:=
+ suspicious RCU usage
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146034][ T6232] 6.12.0-r=
+c7-syzkaller #0 Not tainted
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146040][ T6232] --------=
+---------------------
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146043][ T6232] include/=
+linux/rtnetlink.h:100 suspicious rcu_dereference_protected() usage!
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146050][ T6232]=20
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146050][ T6232] other in=
+fo that might help us debug this:
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146050][ T6232]=20
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146053][ T6232]=20
+Nov 11 21:02:33 syzkaller daemon.err dhcNov 11 21:02:33 syzkaller kern.wNov=
+ 11 21:02:33 Nov 11 21:02:33 syzkaller kern.wNov 11 21:02:33 syzkaller daem=
+onNov 11 21:02:33 syzkaller kern.wNov 11 21:02:33 syzkaller daemonNov 11 21=
+:02:33 syzkaller kern.wNov 11 21:02:33 syzkaller daemonNov 11 21:02:33 syzk=
+aller kern.wNov 11 21:02:33 Nov 11 21:02:33 syzkaller kern.warn kernel: [  =
+ 96.146151][ T623Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev=
+: receNov 11 21:02:33 syzkaller kern.wNov 11 21:02:33 syzkaller daemonNov 1=
+1 21:02:33 syzkaller kern.wNov 11 21:02:33 syzkaller daemonNov 11 21:02:33 =
+syzkaller kern.wNov 11 21:02:33 syzkaller daemonNov 11 21:02:33 syzkaller k=
+ern.wNov 11 21:02:33 syzkaller daemonNov 11 21:02:33 syzkaller kern.warn ke=
+rnel: [   Nov 11 21:02:33 syzkaller daemonNov 11 21:02:33 syzkaller kern.wN=
+ov 11 21:02:33 syzkaller daemonNov 11 21:02:33 syzkaller kern.wNov 11 21:02=
+:33 syzkaller daemonNov 11 21:02:33 syzkaller kern.wNov 11 21:02:33 syzkall=
+er daemonNov 11 21:02:33 syzkaller kern.wNov 11 21:02:33 syzkaller daemonNo=
+v 11 21:02:33 syzkaller kern.wNov 11 21:02:33 syzkaller daemonNov 11 21:02:=
+33 syzkaller kern.wNov 11 21:02:33 syzkaller daemon.err dhcpcd[5661Nov 11 2=
+1:02:33 syzkaller kern.wNov 11 21:02:33 syzkaller daemon.err dhcpcd[5661Nov=
+ 11 21:02:33 syzkaller kern.wNov 11 21:02:33 syzkaller daemonNov 11 21:02:3=
+3 Nov 11 21:02:33 syzkaller daemonNov 11 21:02:33 syzkaller kern.wNov 11 21=
+:02:33 syzkaller daemonNov 11 21:02:33 syzkaller kern.wNov 11 21:02:33 syzk=
+aller daemonNov 11 21:02:33 syzkaller kern.wNov 11 21:02:33 syzkaller daemo=
+nNov 11 21:02:33 syzkaller kern.wNov 11 21:02:33 syzkaller daemon.err dhcpc=
+d[5661]: libudev: receNov 11 21:02:33 syzkaller kern.wNov 11 21:02:33 Nov 1=
+1 21:02:33 syzkaller kern.wNov 11 21:02:33 syzkaller daemonNov 11 21:02:33 =
+syzkaller kern.wNov 11 21:02:33 syzkaller daemonNov 11 21:02:33 syzkaller k=
+ern.wNov 11 21:02:33 syzkaller daemonNov 11 21:02:33 syzkaller kern.warn ke=
+rnel: [   96.146396][ T6232]  ? trace_lockNov 11 21:02:33 syzkaller daemonN=
+ov 11 21:02:33 syzkaller kern.wNov 11 21:02:33 syzkaller daemonNov 11 21:02=
+:33 syzkaller kern.wNov 11 21:02:33 syzkaller daemonNov 11 21:02:33 syzkall=
+er kern.wNov 11 21:02:33 syzkaller daemonNov 11 21:02:33 syzkaller kern.wNo=
+v 11 21:02:33 syzkaller daemonNov 11 21:02:33 syzkaller kern.wNov 11 21:02:=
+33 syzkaller daemonNov 11 21:02:33 syzkaller kern.warn kernel: [   96.14646=
+1][ T6232]  ? __pfx_process_one_work+0x10/0x10 include/linux/list.h:153
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146474][ T6232]  ? assig=
+n_work+0x1a0/0x250 kernel/workqueue.c:1200
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146489][ T6232]  process=
+_scheduled_works kernel/workqueue.c:3310 [inline]
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146489][ T6232]  worker_=
+thread+0x6c8/0xf00 kernel/workqueue.c:3391
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146503][ T6232]  ? __pfx=
+_worker_thread+0x10/0x10 include/linux/list.h:183
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146513][ T6232]  kthread=
++0x2c1/0x3a0 kernel/kthread.c:389
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146523][ T6232]  ? __raw=
+_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146523][ T6232]  ? _raw_=
+spin_unlock_irq+0x23/0x50 kernel/locking/spinlock.c:202
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146536][ T6232]  ? __pfx=
+_kthread+0x10/0x10 include/linux/list.h:373
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146547][ T6232]  ret_fro=
+m_fork+0x45/0x80 arch/x86/kernel/process.c:147
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146555][ T6232]  ? __pfx=
+_kthread+0x10/0x10 include/linux/list.h:373
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146567][ T6232]  ret_fro=
+m_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.146585][ T6232]  </TASK>
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.err kernel: [   96.333328][ T6232] BUG: slee=
+ping function called from invalid context at kernel/locking/rwsem.c:1523
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.err kernel: [   96.335759][ T6232] in_atomic=
+(): 0, irqs_disabled(): 0, non_block: 0, pid: 6232, name: kworker/u32:32
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.err kernel: [   96.338277][ T6232] preempt_c=
+ount: 0, expected: 0
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.err kernel: [   96.339800][ T6232] RCU nest =
+depth: 1, expected: 0
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.341338][ T6232] 3 locks =
+held by kworker/u32:32/6232:
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.342995][ T6232]  #0: fff=
+f88804b8f2948 ((wq_completion)bond0#3){+.+.}-{0:0}, at: process_one_work+0x=
+129b/0x1ba0 kernel/workqueue.c:3204
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.345823][ T6232]  #1: fff=
+fc900033c7d80 ((work_completion)(&(&bond->mii_work)->work)){+.+.}-{0:0}, at=
+: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.348943][ T6232]  #Nov 11=
+ 21:02:33 Nov 11 21:02:33 syzkaller kern.wNov 11 21:02:33 Nov 11 21:02:33 N=
+ov 11 21:02:33 Nov 11 21:02:33 Nov 11 21:02:33 syzkaller daemonNov 11 21:02=
+:33 syzkaller kern.wNov 11 21:02:33 Nov 11 21:02:33 Nov 11 21:02:33 Nov 11 =
+21:02:33 Nov 11 21:02:33 Nov 11 21:02:33 Nov 11 21:02:33 Nov 11 21:02:33 No=
+v 11 21:02:33 Nov 11 21:02:33 syzkaller kern.wNov 11 21:02:33 syzkaller dae=
+mon.err dhcpcd[5661Nov 11 21:02:33 Nov 11 21:02:33 Nov 11 21:02:33 syzkalle=
+r kern.wNov 11 21:02:33 Nov 11 21:02:33 Nov 11 21:02:33 Nov 11 21:02:33 Nov=
+ 11 21:02:33 Nov 11 21:02:33 Nov 11 21:02:33 Nov 11 21:02:33 syzkaller daem=
+onNov 11 21:02:33 syzkaller kern.wNov 11 21:02:33 syzkaller daemonNov 11 21=
+:02:33 Nov 11 21:02:33 Nov 11 21:02:33 syzkaller kern.wNov 11 21:02:33 Nov =
+11 21:02:33 syzkaller kern.wNov 11 21:02:33 syzkaller daemonNov 11 21:02:33=
+ syzkaller kern.wNov 11 21:02:33 Nov 11 21:02:33 Nov 11 21:02:33 syzkaller =
+daemonNov 11 21:02:33 syzkaller kern.wNov 11 21:02:33 Nov 11 21:02:33 syzka=
+ller kern.wNov 11 21:02:33 syzkaller daemonNov 11 21:02:33 syzkaller kern.w=
+Nov 11 21:02:33 syzkaller daemonNov 11 21:02:33 syzkaller kern.warn kernel:=
+ [   96.391355][ T6232]  ? __pfx_ethtool_op_get_link+0x10/0x10 net/ethtool/=
+ioctl.c:2712
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.393047][ T6232]  ethtool=
+_op_get_link+0x1d/0x70 net/ethtool/ioctl.c:62
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.394857][ T6232]  bond_ch=
+eck_dev_link+0x197/0x490 drivers/net/bonding/bond_main.c:873
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.396472][ T6232]  ? __pfx=
+_bond_check_dev_link+0x10/0x10 drivers/net/bonding/bond_main.c:4594
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.398445][ T6232]  ? rcu_i=
+s_watching_curr_cpu include/linux/context_tracking.h:128 [inline]
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.398445][ T6232]  ? rcu_i=
+s_watching+0x12/0xc0 kernel/rcu/tree.c:737
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.399965][ T6232]  bond_mi=
+imon_inspect drivers/net/bonding/bond_main.c:2717 [inline]
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.399965][ T6232]  bond_mi=
+i_monitor+0x3c1/0x2d90 drivers/net/bonding/bond_main.c:2939
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.401543][ T6232]  ? __pfx=
+_bond_mii_monitor+0x10/0x10 drivers/net/bonding/bond_main.c:2806
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.403142][ T6232]  ? rcu_i=
+s_watching_curr_cpu include/linux/context_tracking.h:128 [inline]
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.403142][ T6232]  ? rcu_i=
+s_watching+0x12/0xc0 kernel/rcu/tree.c:737
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.404629][ T6232]  ? trace=
+_lock_acquire+0x14a/0x1d0 include/trace/events/lock.h:24
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.406212][ T6232]  ? proce=
+ss_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.407857][ T6232]  ? lock_=
+acquire+0x2f/0xb0 kernel/locking/lockdep.c:5796
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.409307][ T6232]  ? proce=
+ss_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.410910][ T6232]  process=
+_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.412468][ T6232]  ? __pfx=
+_macvlan_process_broadcast+0x10/0x10 drivers/net/macvlan.c:309
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.414179][ T6232]  ? __pfx=
+_process_one_work+0x10/0x10 include/linux/list.h:153
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.415769][ T6232]  ? assig=
+n_work+0x1a0/0x250 kernel/workqueue.c:1200
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.417321][ T6232]  process=
+_scheduled_works kernel/workqueue.c:3310 [inline]
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.417321][ T6232]  worker_=
+thread+0x6c8/0xf00 kernel/workqueue.c:3391
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.418756][ T6232]  ? __pfx=
+_worker_thread+0x10/0x10 include/linux/list.h:183
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.420279][ T6232]  kthread=
++0x2c1/0x3a0 kernel/kthread.c:389
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.421514][ T6232]  ? __raw=
+_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.421514][ T6232]  ? _raw_=
+spin_unlock_irq+0x23/0x50 kernel/locking/spinlock.c:202
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.423050][ T6232]  ? __pfx=
+_kthread+0x10/0x10 include/linux/list.h:373
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.424425][ T6232]  ret_fro=
+m_fork+0x45/0x80 arch/x86/kernel/process.c:147
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.425840][ T6232]  ? __pfx=
+_kthread+0x10/0x10 include/linux/list.h:373
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.427212][ T6232]  ret_fro=
+m_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.428635][ T6232]  </TASK>
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.429829][ T6232]=20
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.430587][ T6232] =3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+Nov 11 21:02:33 syzkaller daemon.err dhcpcd[5661]: libudev: received NULL d=
+evice
+Nov 11 21:02:33 syzkaller kern.warn kernel: [   96.4
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
