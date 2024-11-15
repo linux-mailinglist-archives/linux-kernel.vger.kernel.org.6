@@ -1,164 +1,147 @@
-Return-Path: <linux-kernel+bounces-410282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB4B79CD7A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:43:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B6059CD7B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:44:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 608FD1F22F5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:43:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF0B51F230AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83EE9188CAE;
-	Fri, 15 Nov 2024 06:43:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74538188CDB;
+	Fri, 15 Nov 2024 06:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EiGEL29y"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kyOdYdH4"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6232817E015;
-	Fri, 15 Nov 2024 06:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CC61885AA
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731652991; cv=none; b=cgRn7T3TdF3dOFGLH1tuiDkB06gPN5Q9okfyRx1Mask5mUeIG8vV7y1pUuNWmg3HViTL9DvPCD4sooB577n07WEYGwjnGRKPN10tdQeNFcd8yO7iLX68i9pNUAAXuHEtXgJB3L1XDVTgvXoHT0MRwOk1VF/noHzKKxYmn/fsLw8=
+	t=1731653013; cv=none; b=cwCCcFBjeu7Uqna12UYJJGxkH22pbaa8mX8y6ISUGDkVjuchUFP5HgqR8RwYiaajHMGAiwkmi3dwM2gq/sWja+s4zEShRria9gYwj/KmPN01wlV1bIwyLYij4G398UyxUhpx3r+r2H9KpjeC4gwTcRk4MJo5tIX8KZQDoAYi+KI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731652991; c=relaxed/simple;
-	bh=LO6M/7x2j01/pPdvUPY2zzBjhuQ0Zp/0fWcg4PLzzr8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=erwpbOS8BzZJCerKaPE+kVkp7Ij9LzkgOdAOhl71MBJO+Swwq0I8E7LLTq04gAcWJEFRteKhBy0FNzD6itw3R5td4LtiYxbWnKXyNYBmRmM34o8qbCQ3gJnVXLdv4aGP+sUQF0dTiPGE4bT6SXMSb7k0f1oWKRhpxWouMeOou1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EiGEL29y; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AEHHxGo023742;
-	Fri, 15 Nov 2024 06:43:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wdCqxFgKYBBW+wSh2Dq7JpS+yUVwsYdQXDlP9OW1jYc=; b=EiGEL29yT7AbHxRf
-	iUodtjZ0d40Rs3KPoNEuOjyN1qptflhK6khqaDZAbnK+Y8Rpp38GKFnlAJ1L2/ca
-	gQ8P0NuJf2lPbcGecOUuNyjaqkn4NdlYsDii18HeRabuaDMTMylhqpDaHJEEfSn8
-	EEDL5WY2JM/jW4ZXsjSDzcq3Ms6x/hwBg1KMPQmosq/Q6IeRAT739OJtNawm2BbY
-	r+5FBJeTrKMECNPJMrxbg1g8h2jAaU6IH4KCOVRNXcEj+IfulaWaTrvj6YuqvfE4
-	arZJt17MKHafOGSqSGpNx+TpD/9zfC6PqHAKUu9rWCqTdIi/CFWjEo17HLdc4kIe
-	El0oEA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42w66gwbw6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 06:43:01 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AF6h0xX014079
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 06:43:00 GMT
-Received: from [10.233.17.145] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 14 Nov
- 2024 22:42:50 -0800
-Message-ID: <bb6ae010-5dbf-455c-a53c-6c0e688f0ebc@quicinc.com>
-Date: Fri, 15 Nov 2024 14:42:47 +0800
+	s=arc-20240116; t=1731653013; c=relaxed/simple;
+	bh=yFaqn0TM8DwaMrQ+sb2LpKFQLJb2yjVSUuadb+2rd5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ovi+z5oAreU7uNHlMgxdenZgIS2MvBq7HgkTTTO3ci3R4FZchThaY5znnE1WUx66KWus1zNHfOBiqnnBhmTrslSGlqBRHpOU3de9XrrLlxIZPCnJKpIHeVoaAwMabAUEamZwGXu+5VsRuYPrn5rgxcMNX/z6+HcZOBCG6tOCePU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kyOdYdH4; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-723f37dd76cso403092b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:43:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731653011; x=1732257811; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3MYYRbyHSKnkKj/U1ajnAZh9FgwdbjyrEbwmDmiOJ74=;
+        b=kyOdYdH4FVy8vMZ56AMJxMs4RtvvScdwPMENwzkxhZccHSGf//BLvjBa+yu23R4Dc3
+         yfOOhIA5Sh1+xV01rwVt3iWmYxUsbRvFVK4beqZTPbknq/y4cOrkRpV+9Ob/mFfTzZyS
+         WUp0673qb4kYWaZwl6G05bky3lByzWmbrad8hNajaKRII4vUa9uzAlTR4WYGbf3BYm3H
+         fDtycpnE4Xn2v8iwJOAP3/Obq1mTdY2pxmcpmjbDMi71opciRjopHIKhG/mIpIpkWYSo
+         2mE/akYEFdYHDVT2x71XBU69QW/q/wX2HIyzt8AX6N32wooRpQE9FLOic7ruJ6t0LTyD
+         Poug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731653011; x=1732257811;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3MYYRbyHSKnkKj/U1ajnAZh9FgwdbjyrEbwmDmiOJ74=;
+        b=n8btJENF4S2MJTLu4ulcAfWi68awkv0lMTrcLvcLDg0L5l3p7tluicV7YgQIioauB8
+         TkcPDv4sY9WDRp2ZDxiF08olCk7nEmOt3WB8+LVbh9TiA3h65tPEs6TU98OyCbXiEp9E
+         5U7F8POP5DWgIQO5O70V4tV+voz1dmGfCEYFCDWrj58bZkwlXqDSA4Szbnj9akUUs4JR
+         tdGo+MVHFO9EfZTGC8al28TQD7ZhOSCSK+cSYXvsWSd/MjlCGKMmM+dfb4c9grGIRwMh
+         ATv2Xz/uqJuYCVv0Yat48rzd7HyfUN1TRntaS0jqoKd3n/87vgJdiVcM/nYDwYjR6eBm
+         V1AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSDUvD3bTcp5JH2U3yjg1nB3rdNR7jnF8JygY+w0HCY1PyHNw8YJCimqrM0xWQPeg0em9WRL1KXsJIZU8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLYKUgzWwpBEyKEB99xHaDeq8PRi9KSQ04lIC3XfHncUpMUtTJ
+	jfyo2+pIF/Wau2nZQogYY0KP8WVbSG4sEhWP8IKX48ZbPQRCS5RV0kI01y1VYgJ2DDxR3uWvUOA
+	=
+X-Google-Smtp-Source: AGHT+IHY6v9j5fvHwvuygpXSp/ldJste9oxVxyRTDqgsgbIZ7G245t9I6FYAct4vrO9HjSZAZqBz4Q==
+X-Received: by 2002:a05:6a00:22c8:b0:71e:4930:162c with SMTP id d2e1a72fcca58-72476b872c4mr2212375b3a.6.1731653011440;
+        Thu, 14 Nov 2024 22:43:31 -0800 (PST)
+Received: from thinkpad ([117.193.208.47])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724770ee7d3sm673330b3a.38.2024.11.14.22.43.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2024 22:43:31 -0800 (PST)
+Date: Fri, 15 Nov 2024 12:13:21 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: l.stach@pengutronix.de, bhelgaas@google.com, lpieralisi@kernel.org,
+	kw@linux.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, shawnguo@kernel.org, frank.li@nxp.com,
+	s.hauer@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
+	kernel@pengutronix.de, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 04/10] PCI: imx6: Correct controller_id generation
+ logic for i.MX7D
+Message-ID: <20241115064321.3cuqng7bzmphiomw@thinkpad>
+References: <20241101070610.1267391-1-hongxing.zhu@nxp.com>
+ <20241101070610.1267391-5-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] arm64: dts: qcom: qcs8300: enable pcie0 for QCS8300
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Ziyue Zhang
-	<quic_ziyuzhan@quicinc.com>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <robh+dt@kernel.org>,
-        <manivannan.sadhasivam@linaro.org>, <bhelgaas@google.com>,
-        <kw@linux.com>, <lpieralisi@kernel.org>, <quic_qianyu@quicinc.com>,
-        <conor+dt@kernel.org>, <neil.armstrong@linaro.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>,
-        <quic_shashim@quicinc.com>, <quic_kaushalk@quicinc.com>,
-        <quic_tdas@quicinc.com>, <quic_aiquny@quicinc.com>,
-        <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>
-References: <20241114095409.2682558-1-quic_ziyuzhan@quicinc.com>
- <20241114095409.2682558-5-quic_ziyuzhan@quicinc.com>
- <rg4isufmnhnbsiljm34rfdsn46gfpatbsiscynaqtsnykbhnm3@ovcaulkfj4nk>
- <26943ea3-109c-473d-818b-2a08dba859ab@oss.qualcomm.com>
- <288be342-952b-4210-afe7-6e194dfd54a9@quicinc.com>
- <cp2g6j43zlx2njou5qz5tmwsnnzahqtk2hsxkj2ftrzbcmy742@ysca5ica4mvr>
-From: Tingwei Zhang <quic_tingweiz@quicinc.com>
-In-Reply-To: <cp2g6j43zlx2njou5qz5tmwsnnzahqtk2hsxkj2ftrzbcmy742@ysca5ica4mvr>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: B-EQsEH5OUakbYjiFEDH5wuxrJBqyiqs
-X-Proofpoint-ORIG-GUID: B-EQsEH5OUakbYjiFEDH5wuxrJBqyiqs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=923
- mlxscore=0 malwarescore=0 suspectscore=0 impostorscore=0
- priorityscore=1501 bulkscore=0 clxscore=1015 lowpriorityscore=0
- adultscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411150055
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241101070610.1267391-5-hongxing.zhu@nxp.com>
 
-On 11/15/2024 2:26 PM, Dmitry Baryshkov wrote:
-> On Fri, Nov 15, 2024 at 12:59:12PM +0800, Tingwei Zhang wrote:
->> On 11/14/2024 9:03 PM, Konrad Dybcio wrote:
->>> On 14.11.2024 1:10 PM, Dmitry Baryshkov wrote:
->>>> On Thu, Nov 14, 2024 at 05:54:08PM +0800, Ziyue Zhang wrote:
->>>>> Add configurations in devicetree for PCIe0, including registers, clocks,
->>>>> interrupts and phy setting sequence.
->>>>>
->>>>> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
->>>>> ---
->>>>>    arch/arm64/boot/dts/qcom/qcs8300-ride.dts |  44 +++++-
->>>>>    arch/arm64/boot/dts/qcom/qcs8300.dtsi     | 176 ++++++++++++++++++++++
->>>>>    2 files changed, 219 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
->>>>> index 7eed19a694c3..9d7c8555ed38 100644
->>>>> --- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
->>>>> +++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
->>>>> @@ -213,7 +213,7 @@ vreg_l9c: ldo9 {
->>>>>    &gcc {
->>>>
->>>> The patch doesn't seem to update the gcc node in qcs8300.dtsi. Is there
->>>> any reason to have the clocks property in the board data file?
->>>
->>> Definitely not. Ziyue, please move that change to the soc dtsi
->>
->> Gcc node is updated in board device tree due to sleep_clk is defined in
->> board device tree. Sleep_clk is from PMIC instead SoC so we were requested
->> to move sleep_clk to board device tree in previous review [1].
-> 
-> Note, the review doesn't talk about sleep_clk at all. The recent
-> examples (sm8650, x1e80100, sa8775p) still pull the clocks into the SoC
-> dtsi, but without the freq.
-> 
-It's begining of the discussion of the PMIC clock for SoC. Sleep clock 
-specific discussion is here [2].
-[2]https://lore.kernel.org/all/be8b573c-db4e-4eec-a9a6-3cd83d04156d@kernel.org/
->>
->> [1]https://lore.kernel.org/all/10914199-1e86-4a2e-aec8-2a48cc49ef14@kernel.org/
->>>
->>> Konrad
->>
->>
->> -- 
->> Thanks,
->> Tingwei
->>
->> -- 
->> linux-phy mailing list
->> linux-phy@lists.infradead.org
->> https://lists.infradead.org/mailman/listinfo/linux-phy
+On Fri, Nov 01, 2024 at 03:06:04PM +0800, Richard Zhu wrote:
+> i.MX7D only has one PCIe controller, so controller_id should always be 0.
+> The previous code is incorrect although yielding the correct result. Fix by
+> removing IMX7D from the switch case branch.
 > 
 
+Worth adding a fixes tag?
+
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> "This is just *wrong*. You cannot hardcode the MMIO address in the driver.
+> Even though this code is old, you should fix it instead of building on top
+> of it.
+> 
+> - Mani"
+> 
+> IMX7D here is wrong athough check IMX8MQ_PCIE2_BASE_ADDR is not good
+> method. Previously try to use 'linux,pci-domain' to replace this check
+> logic. Need more discussion to improve it and keep old compatiblity.
+> Let's fix this code error firstly.
+
+I really hope that you'll fix it asap.
+
+- Mani
+
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 462decd1d589..996333e9017d 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -1342,7 +1342,6 @@ static int imx_pcie_probe(struct platform_device *pdev)
+>  	switch (imx_pcie->drvdata->variant) {
+>  	case IMX8MQ:
+>  	case IMX8MQ_EP:
+> -	case IMX7D:
+>  		if (dbi_base->start == IMX8MQ_PCIE2_BASE_ADDR)
+>  			imx_pcie->controller_id = 1;
+>  		break;
+> -- 
+> 2.37.1
+> 
 
 -- 
-Thanks,
-Tingwei
+மணிவண்ணன் சதாசிவம்
 
