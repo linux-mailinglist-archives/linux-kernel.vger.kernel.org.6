@@ -1,114 +1,243 @@
-Return-Path: <linux-kernel+bounces-410411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06E7F9CDB3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:14:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 363DA9CDB3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:14:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0754282E74
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:14:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9D05282F7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7880188CD8;
-	Fri, 15 Nov 2024 09:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4B318A922;
+	Fri, 15 Nov 2024 09:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TeRfDmx0"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JCRM5k72"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6960C18DF8D
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0852A18B484
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731662045; cv=none; b=SPXvnasRpAoPV8hLBcU9oY8HW28pZoAb7iCOQ1M4opToClk6bg/ZWIwodtY9MZ2RDw44LX/Ej9j+LXlkHBTrm+ZUCi2nnVHph1RjJydSAabFjL6qbFRLK8yyQ5lBtHvEiv5bULif+/O29sPm8LWWf+qWB5EmZF0mGxDdNxkySWo=
+	t=1731662070; cv=none; b=BA7/amNxcMiqDYp/3lE8tq9VKvpaIEoXk0CcyFUSxrMSliQk88bnd9urlA/OkFAveSp+0nQ+Y+imAB7E82Cx8BgVJD9vyla3GbSZWvicTephxmk2ouLg9T72lAIxIM4Um9fGz303JKl2vZ2zHYDf5uAi5HnlEJ9D55LwnLPGheU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731662045; c=relaxed/simple;
-	bh=oL0UzlFZqjOr/6ocBd/mXCjQcqAFgGA2jsO52+VBifQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LsOOklxV36aERFrGECQ7zlAb9LkcGnjyVpgU97JLdg2Km9Yjs7nKs8BVad6cRVAfFsAz2WDyxBAuk1nhmKrcDL0dxysJNl1PFpUNqtnvhneN9i+MBRifd47B+ay+47Hda/3mx/RqxtClkiSMerZqYfiFJNnX5jdY9tkecf9u++E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TeRfDmx0; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1731662070; c=relaxed/simple;
+	bh=hwecmHve4AYzi3zhdSgFcUIpqnu5U8ofdUi5RzOnxe4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dZ7ItCqrtfDshvN1/QlACz0HkTaJNiBIH24kukZoxSk7nyvEvuqPwpf9xnMmq+A++5+9I53J5/U6eTddOjxkJxhjg4sa5jRoJx3rEyG8sZ1KielXjT7zZzKP7syVbVX6beAtWhS504HGYB0vrJZdBRlVgd/ZYcxMfVJbVSC+msM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JCRM5k72; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4314f38d274so16984995e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 01:14:03 -0800 (PST)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20cf6eea3c0so17259265ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 01:14:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731662042; x=1732266842; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7YuB/szIEkMxlq3tPJ1z9SjBnVW4504PF0OtGMyd9Ts=;
-        b=TeRfDmx0sSznIaXIO832QZ3lrjOKmsmr3ZuKVWR6RfILfEReImRvSg153NjPKvpLwg
-         IdV/y/y8iPPUjb50MApxbLOeit1/zbKduAGAIappbfVINE7FvemoiPteUN/mfF/BfMJx
-         pEDv71PQO9/RNOegrxJdhrTmjcgSurepFk0rr1uscrB1JPhTOujk1ESuAUpS8T+Mwt1I
-         +ApDcfd/zwyaOxw//N/SkdEq+Ayl61MtwiBxJAZ1vx1K4br3M3Mup7cAjpGqQlfegirE
-         oROduPYLOv3vPOf5wnlSaZGABEQy6HpUDu9cpPqAfiYvBOLSTaL8Av6BC5lRjEsAoafo
-         XwAw==
+        d=linaro.org; s=google; t=1731662068; x=1732266868; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=N+Mfi619jV2ZU2LxquMSToNnF3nnJZBbCZyP7JQTlA0=;
+        b=JCRM5k72LIDRgFmhxvVVkKD+eub55ZNmi5KEiLJJQpMuAGauuAdXpZS/kxqY3V5PtH
+         MXHuxabF97/OjoE2GrC18EvkOuy2xQlW74ssbo9/QLXep/piQ4cYM2RxnuHEi5glg0Jd
+         cQk5gB0Jeb4/nHqh+JjUjZIH5GOkP7/qx+TkkuFsYHlbqlRGTtIb53LAwBPq1tmb4BAB
+         nuLFsd0W9A2MiolEONZBIPj8oz3oQYPbHV+pfUEj3uQZMUMxJ27AwztiAmGNgluy2XiQ
+         T/Q93BRzBs8T8ZU1i7NKV9qmjJLUn6Qdi7GzEg3hYps/WBLuEhZT5TkAmTTDKtDyZF0J
+         MV6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731662042; x=1732266842;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1731662068; x=1732266868;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7YuB/szIEkMxlq3tPJ1z9SjBnVW4504PF0OtGMyd9Ts=;
-        b=d5HWIKL3bVX8JQs+4a69jYoEiS7OS2DwUu7MTIp/lu4b8+TU3MPHqn44lkDTlav+E4
-         JriqGIfgN0fyF1G/wVs2hxaJeRjbmIy0mLTehEYqNggrASXaa8yyB2nsp5iQyV6nbfGt
-         reJ3DwSVYkJLITqSiJlTRf1P7B7hxJ8pqx63+efu5aFmd4B14VSJ+0AlyiqrYZHXek+E
-         dXCst5HYgmsQ0vL9adPXRNKzOcSF6Ea1X5h85JxbiBzg5KA4DQ4jd+aDWb1xtLI6hABs
-         n5TPW4rIC7l5DIB+aK8v9eVdY6dhqmUOlNlWW79WBO7GChq8DHoQO6x6XZQUZb8D5ysC
-         uIkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTBQagYZ7nNyV6LTQH+p81WSS7k+D9kNEAfeAWgAMUY+Km8q4mcMlmpXhVrVJr9urjf0BakDoA/qQ7Koc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyX1ipLAAGR4nmTOm5RlmtxSXZ5Vw3tk0LqtRKlFw7V8+uJbJhx
-	uoDi0OB1EjZF9CKF1V/HqArBmrjrMbNMIdWB2pcrg5coQS25m3fFPwAKQxOtYSw=
-X-Google-Smtp-Source: AGHT+IG/yzx2BrirfQLi4fTkAmm6tdWmADdgYhJai5mJ+OObY3rJiGs8gvXT6Hvgka4TOkojxVFw+g==
-X-Received: by 2002:a05:600c:198b:b0:431:4b88:d407 with SMTP id 5b1f17b1804b1-432df723048mr17674985e9.5.1731662041725;
-        Fri, 15 Nov 2024 01:14:01 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dac0ae04sm46823735e9.33.2024.11.15.01.14.00
+        bh=N+Mfi619jV2ZU2LxquMSToNnF3nnJZBbCZyP7JQTlA0=;
+        b=m5kHMx0j/1NzKknBx2bJ9PswoICXmr5JsRVQaXfBD2XUj9/98brZALBsyUWtSFwih5
+         DUluhRnjCQR9kDTydFPQgvGJRxE/um96UBaaitT2zO1uej9BWWa71HzikkHHA6rqXzZ8
+         EyQx0JIXQWbdzezK9HfNNYbwueDkcWkfjs5BxqTJ5+/VNV69ax4Pn0fZT8wBOPC5RcMa
+         ClWOLbgdby7XdhuVldIJPSEVoEIQVs9xGcqzk9d4FK5yQBMCiOHfv+rkfIh6LA/ijcyM
+         ApYF4l3pEsb4XkSwFfreFCr9ogjuuF0KhmR9NIBg02ot1mpZr0IIepN8jdUG4d06spp9
+         dbAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVFnaFfsyUPRkVEaVSrSz6Ex/vxz1LM/FZkWBSlwYRZ6ukviIk1GwouXd0Jzao19AkRm9xzqD0Ulj1XUzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGu91Ddg2ksH6MpaZhpBmfQD6de4k+8n8IWk8x04wsSoBcfUCg
+	7vwF3g+Czs3gLolX4bNmxz+fggRpZs/8Kr1JLfnVwMBwq8w5PYkDL2Bw4HZIGA==
+X-Google-Smtp-Source: AGHT+IFalRU+mwBU4W5KvAkQCdFoplxq4VGGIkYCsSP88HNIjh6dZDKwbkVdM9Nbr+j7d3y1wA/5bQ==
+X-Received: by 2002:a17:902:d505:b0:20c:cf39:fe3c with SMTP id d9443c01a7336-211d0ebf209mr26364095ad.41.1731662067691;
+        Fri, 15 Nov 2024 01:14:27 -0800 (PST)
+Received: from thinkpad ([117.193.208.47])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f346e2sm8163945ad.141.2024.11.15.01.14.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 01:14:01 -0800 (PST)
-Date: Fri, 15 Nov 2024 12:13:58 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Shyam Prasad N <sprasad@microsoft.com>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>,
-	Meetakshi Setiya <msetiya@microsoft.com>,
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] cifs: unlock on error in smb3_reconfigure()
-Message-ID: <e4ea558b-5124-4f3b-83a1-267097d067f4@stanley.mountain>
+        Fri, 15 Nov 2024 01:14:27 -0800 (PST)
+Date: Fri, 15 Nov 2024 14:44:19 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Mayank Rana <quic_mrana@quicinc.com>
+Cc: jingoohan1@gmail.com, will@kernel.org, lpieralisi@kernel.org,
+	kw@linux.com, robh@kernel.org, bhelgaas@google.com, krzk@kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, quic_krichai@quicinc.com
+Subject: Re: [PATCH v3 1/4] PCI: dwc: Export dwc MSI controller related APIs
+Message-ID: <20241115091419.tc4p2jwukjdo56of@thinkpad>
+References: <20241106221341.2218416-1-quic_mrana@quicinc.com>
+ <20241106221341.2218416-2-quic_mrana@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241106221341.2218416-2-quic_mrana@quicinc.com>
 
-Unlock before returning if smb3_sync_session_ctx_passwords() fails.
+On Wed, Nov 06, 2024 at 02:13:38PM -0800, Mayank Rana wrote:
+> To allow dwc PCIe controller based MSI functionality from ECAM pcie
+> driver, export dw_pcie_msi_host_init(), dw_pcie_msi_init() and
+> dw_pcie_msi_free() APIs. Also move MSI IRQ related initialization code
+> into dw_pcie_msi_init() as this code executes before dw_pcie_msi_init()
+> API to use with ECAM driver.
+> 
+> Signed-off-by: Mayank Rana <quic_mrana@quicinc.com>
+> ---
+>  .../pci/controller/dwc/pcie-designware-host.c | 38 ++++++++++---------
+>  drivers/pci/controller/dwc/pcie-designware.h  | 14 +++++++
+>  2 files changed, 34 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index 3e41865c7290..25020a090db8 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -250,7 +250,7 @@ int dw_pcie_allocate_domains(struct dw_pcie_rp *pp)
+>  	return 0;
+>  }
+>  
+> -static void dw_pcie_free_msi(struct dw_pcie_rp *pp)
+> +void dw_pcie_free_msi(struct dw_pcie_rp *pp)
+>  {
+>  	u32 ctrl;
+>  
+> @@ -263,19 +263,34 @@ static void dw_pcie_free_msi(struct dw_pcie_rp *pp)
+>  	irq_domain_remove(pp->msi_domain);
+>  	irq_domain_remove(pp->irq_domain);
+>  }
+> +EXPORT_SYMBOL_GPL(dw_pcie_free_msi);
+>  
+> -static void dw_pcie_msi_init(struct dw_pcie_rp *pp)
+> +void dw_pcie_msi_init(struct dw_pcie_rp *pp)
+>  {
+>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>  	u64 msi_target = (u64)pp->msi_data;
+> +	u32 ctrl, num_ctrls;
+>  
+>  	if (!pci_msi_enabled() || !pp->has_msi_ctrl)
+>  		return;
+>  
+> +	num_ctrls = pp->num_vectors / MAX_MSI_IRQS_PER_CTRL;
+> +
+> +	/* Initialize IRQ Status array */
+> +	for (ctrl = 0; ctrl < num_ctrls; ctrl++) {
+> +		dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_MASK +
+> +				    (ctrl * MSI_REG_CTRL_BLOCK_SIZE),
+> +				    pp->irq_mask[ctrl]);
+> +		dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_ENABLE +
+> +				    (ctrl * MSI_REG_CTRL_BLOCK_SIZE),
+> +				    ~0);
+> +	}
+> +
+>  	/* Program the msi_data */
+>  	dw_pcie_writel_dbi(pci, PCIE_MSI_ADDR_LO, lower_32_bits(msi_target));
+>  	dw_pcie_writel_dbi(pci, PCIE_MSI_ADDR_HI, upper_32_bits(msi_target));
+>  }
+> +EXPORT_SYMBOL_GPL(dw_pcie_msi_init);
+>  
+>  static int dw_pcie_parse_split_msi_irq(struct dw_pcie_rp *pp)
+>  {
+> @@ -317,7 +332,7 @@ static int dw_pcie_parse_split_msi_irq(struct dw_pcie_rp *pp)
+>  	return 0;
+>  }
+>  
+> -static int dw_pcie_msi_host_init(struct dw_pcie_rp *pp)
+> +int dw_pcie_msi_host_init(struct dw_pcie_rp *pp)
+>  {
+>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>  	struct device *dev = pci->dev;
+> @@ -391,6 +406,7 @@ static int dw_pcie_msi_host_init(struct dw_pcie_rp *pp)
+>  
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL_GPL(dw_pcie_msi_host_init);
+>  
+>  static void dw_pcie_host_request_msg_tlp_res(struct dw_pcie_rp *pp)
+>  {
+> @@ -802,7 +818,7 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
+>  int dw_pcie_setup_rc(struct dw_pcie_rp *pp)
+>  {
+>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> -	u32 val, ctrl, num_ctrls;
+> +	u32 val;
+>  	int ret;
+>  
+>  	/*
+> @@ -813,20 +829,6 @@ int dw_pcie_setup_rc(struct dw_pcie_rp *pp)
+>  
+>  	dw_pcie_setup(pci);
+>  
+> -	if (pp->has_msi_ctrl) {
+> -		num_ctrls = pp->num_vectors / MAX_MSI_IRQS_PER_CTRL;
+> -
+> -		/* Initialize IRQ Status array */
+> -		for (ctrl = 0; ctrl < num_ctrls; ctrl++) {
+> -			dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_MASK +
+> -					    (ctrl * MSI_REG_CTRL_BLOCK_SIZE),
+> -					    pp->irq_mask[ctrl]);
+> -			dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_ENABLE +
+> -					    (ctrl * MSI_REG_CTRL_BLOCK_SIZE),
+> -					    ~0);
+> -		}
+> -	}
+> -
+>  	dw_pcie_msi_init(pp);
+>  
+>  	/* Setup RC BARs */
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 347ab74ac35a..ef748d82c663 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -679,6 +679,9 @@ static inline enum dw_pcie_ltssm dw_pcie_get_ltssm(struct dw_pcie *pci)
+>  
+>  #ifdef CONFIG_PCIE_DW_HOST
+>  irqreturn_t dw_handle_msi_irq(struct dw_pcie_rp *pp);
+> +void dw_pcie_msi_init(struct dw_pcie_rp *pp);
+> +int dw_pcie_msi_host_init(struct dw_pcie_rp *pp);
+> +void dw_pcie_free_msi(struct dw_pcie_rp *pp);
+>  int dw_pcie_setup_rc(struct dw_pcie_rp *pp);
+>  int dw_pcie_host_init(struct dw_pcie_rp *pp);
+>  void dw_pcie_host_deinit(struct dw_pcie_rp *pp);
+> @@ -691,6 +694,17 @@ static inline irqreturn_t dw_handle_msi_irq(struct dw_pcie_rp *pp)
+>  	return IRQ_NONE;
+>  }
+>  
+> +static void dw_pcie_msi_init(struct dw_pcie_rp *pp)
 
-Fixes: 7e654ab7da03 ("cifs: during remount, make sure passwords are in sync")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- fs/smb/client/fs_context.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Missing 'inline' here and below?
 
-diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
-index c614c5d8b15e..49123f458d0c 100644
---- a/fs/smb/client/fs_context.c
-+++ b/fs/smb/client/fs_context.c
-@@ -1008,8 +1008,10 @@ static int smb3_reconfigure(struct fs_context *fc)
- 	 * later stage
- 	 */
- 	rc = smb3_sync_session_ctx_passwords(cifs_sb, ses);
--	if (rc)
-+	if (rc) {
-+		mutex_unlock(&ses->session_mutex);
- 		return rc;
-+	}
- 
- 	/*
- 	 * now that allocations for passwords are done, commit them
+- Mani
+
+> +{ }
+> +
+> +static int dw_pcie_msi_host_init(struct dw_pcie_rp *pp)
+> +{
+> +	return -ENODEV;
+> +}
+> +
+> +static void dw_pcie_free_msi(struct dw_pcie_rp *pp)
+> +{ }
+> +
+>  static inline int dw_pcie_setup_rc(struct dw_pcie_rp *pp)
+>  {
+>  	return 0;
+> -- 
+> 2.25.1
+> 
+
 -- 
-2.45.2
-
+மணிவண்ணன் சதாசிவம்
 
