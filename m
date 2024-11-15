@@ -1,126 +1,165 @@
-Return-Path: <linux-kernel+bounces-411212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BE109CF4AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:17:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 886949CF4AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:18:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60FF32816AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:17:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DA292811B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6201E0DD6;
-	Fri, 15 Nov 2024 19:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB5F1D90BC;
+	Fri, 15 Nov 2024 19:18:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D5B3RBOA"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2XNC3gEm"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64828153800;
-	Fri, 15 Nov 2024 19:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF6B166307
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 19:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731698252; cv=none; b=ohH3wywhSdn9d+Ck/9VbBvRr1u27bW/Cg8HKIWT9+j5AYVHRwOdp0Prwgm9KhRsNMWyUsIjt3YdJoT1nYWO7DgwWF8Dnu2v/zqgjhiBneHBhCN+vRk9d0hjAr/KPdSimgNYITRDx+nVHbq5+CWPAY6DnE+BrZxDE/z7GeRTrwWo=
+	t=1731698325; cv=none; b=hfd1l4GIBnAg0sdWgp6DYd6HuaNl+BvqCkdGzZLteVcrnM/gTD0g9CdRqNhWo0572Nu849vvec+Qj1CaaePLOWfoKAJs0pLT+7Fbmx823HlQMcGF+yJv9vOHueFYREsjy9SwS8PZ5nqdkl607TWEQCod6M7o369yne5KhJaYNbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731698252; c=relaxed/simple;
-	bh=8koZbwPC2H4bLC9frGSUx9pbezudIhUhODD7e1SHI/I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z0SXJ/8W1F448ishiK2Fxu8X4Na0EXtAe6TgaLa7tGqReehxSkILUWCmR0QfbOC3X0nslhJBXZtq5EKAPj2jwOsflxETkBP8G44w3nfR5LJNNevebElvRjBKSjKqyr0q0W7OIhZpz6fj4AxiEinpXPsSI9UZXHnhzVhwKRzqweM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D5B3RBOA; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7ae3d7222d4so736072a12.3;
-        Fri, 15 Nov 2024 11:17:31 -0800 (PST)
+	s=arc-20240116; t=1731698325; c=relaxed/simple;
+	bh=t3HGFRzcc7qSh3ekvRAyGEjFsPeneuzZNWnlcjmaNIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KNrVhE5x1s/wFGwLwxOvchXuWJcPD49wahrcxsdIz7dQbW2GvmEMYGCxwCdliEcoDTrXyMxVVtbvEId8B1Fi9HlxxQHYgieXtvSNAwsWuBfCcEX+RM0UwT+2m8nGUvLZadYG0wmVyHYXewSIZJp83vuIqqhfsLcVvhTCFbpiK/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2XNC3gEm; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4315ee633dcso3895e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:18:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731698251; x=1732303051; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=e0aUmyk+GZprbUmfNA9/OPdlp/BkuZ7LGGSu0baTK0k=;
-        b=D5B3RBOAZyz2iqcZ/XyS2Z80wNEkWX1UyfljFvHzTMB2psi0+UCHea2hDUuOU78UfG
-         fErh1gENcvelcITM9yXWIlQFB1y+RS7PZIVywMTObNryO3YBBdEw9FY+EStzwgLNfvbm
-         nXyOqF1FpXPJdGoubjH829Pi60L4GhUDSSl/m2KLXoLkyLXDt8iY4EoHGSxuhKSJWh9u
-         jedNMZl9gfmrc53DGIZ4qTAQS0kG+hvIGDp8z8OlyhlfVC5oX6H8YWXMJbPBg9QInD/h
-         I0mUxjISa9uhCHcuKQM3zGmk/aBXLQ9ek3pEjKRVCYuBMU1BqfBBZpKgGjkw3zx8U01c
-         8DLQ==
+        d=google.com; s=20230601; t=1731698322; x=1732303122; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gb7hmFy/0l+JpT17zGKACyUketzLohMMo6Nszps9h8Q=;
+        b=2XNC3gEm4NEq7WoHYLJHSLXLP9jxKFhzohIjo4z5GgiGub6uZZ3r4zmm8hJSmTSsB8
+         DVeWocx+7saXhTiX9wOmAmgmLIQVEnAYFMQX+oGGe3GTl1DmHsLNoOt8mxLSbBJMdpNH
+         h/P8RdMj0T17qwHUJAk7L/7N60CwElDAIYZCD9ftfAV7L+W7DXuFB6TalYXyYH5ui336
+         3EEivBpEAIYCdatrc99TizrFv/b9cYuCjg+BgKJYDpT0yBc+VyrjKOBV2QwXmEGFontP
+         NHNBxkN/eR/VkAjBxBal5FapwW2AAwREoFpSyk8lfHFDxWPcvTvmfGhAp9cjC2va1HpR
+         083Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731698251; x=1732303051;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e0aUmyk+GZprbUmfNA9/OPdlp/BkuZ7LGGSu0baTK0k=;
-        b=htOoCHYflI0Wd8eur9zxB5HyCOKPIlK67Lqe70Sv44ZrfwyL/Y38VC3JD3wZSOE+4A
-         F/x2JSQcWWbDxLxJo8p9prfPA08Oq7huPHl3CgwpmX33le+7Q3/FpZfIy+PKBUo81u0A
-         /vzSfQjdV2EtXIUtOOJs0WaFJBEBPczy/cb8E+jX1M/5ubYc/SUVfQzbDaxHyNW7t5Bd
-         sR/b8wBF7g3KA4kPusptkChvLMqbJLi7dbBrt7t4eNnowhs604FId9QIGV2vnqwZxY85
-         97qsomjT1+KaEF2esNV5Fx3inzECWSHecus6/po3bbH2FlJ5kCz2ChMhB//CMP6omYRU
-         1ujQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVb1nRN53hDSppxB0QSCJj0igRpLLLOLD3016lugCzuAIF+wMRYgj3CXgUJcltMm6l+pTgEBxF2TWCRs0g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8qzIDGfaNiDdAM9uS3Dhdanu2FL0WC74Agp74wdsjjaNiJ+J7
-	fsf88xpQioFX3BeEFbI9CyJ1ChC8kvWgzvxAjt0AzxqdiVf8hRfnk7fp/a6/
-X-Google-Smtp-Source: AGHT+IGBvGPvvMltDvpHe8Qj1dm9O9e20uFbsTypjKqOmO0NS9OtLFmAZhfD/tHSrHtA1OKDjysGhA==
-X-Received: by 2002:a05:6a20:43ab:b0:1db:e3b6:e4df with SMTP id adf61e73a8af0-1dc90b4bed7mr4604560637.21.1731698250655;
-        Fri, 15 Nov 2024 11:17:30 -0800 (PST)
-Received: from localhost.localdomain ([116.73.78.102])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7247711d2f0sm1726181b3a.52.2024.11.15.11.17.28
+        d=1e100.net; s=20230601; t=1731698322; x=1732303122;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gb7hmFy/0l+JpT17zGKACyUketzLohMMo6Nszps9h8Q=;
+        b=iBIholBquRJTI9+KyR/9wHEz7Scl7Nisda4UuQH9jOZdnIorDMOHTMSAm7ysrJHulH
+         kTZZqzrY8fzOYpIZtZRgcT+VpG4xgtzG1xnmnKmnSfmeNCZ5wZVrCa3pCKN0slj3MbXU
+         BUKrsnhVcSwHlgZUcgx/zYXEa6O6co5y51dlXUEhIp7Lc4s3bFQYDajHxXOW1VWrzkY0
+         Dve4I5SMjmiq0ShwUgsMuW/+WcdqLQhIT1TWJ0xQJv96jfiVW0108owR1HocBVZJ/8lQ
+         x2zwXKdFjlYWOSAp4nicf/AVyPHmB5Zwi64s0P8Qzwb8qhdu1cLDM/ljkA8/LtvcOW3o
+         vy5g==
+X-Gm-Message-State: AOJu0YyN75n2HzuOz6fsQpuEgEBUxQIwtT1ZjX+V0O/T5tIoKhfr5Iv+
+	GkgtWJruZxbf1oB9bpspOT0BZmxX9QA3SmWAog+8D5Jfnu8n2HXoO9NRLTCvNA==
+X-Gm-Gg: ASbGncuLwj/15LdOVJA6KAJ4rG5wruju8t/PCLgzf8TkMu5BqDKgpilOUlbHkK3DYcy
+	uNkSH8b6bqtIbJUf8jvJ0Dn/ZjNXetCBckY7ZRBOeYGlg61qg7anmAUHNpG8gxpM7C8SQIEqEKD
+	z7DYjR6Uu5kUXTwaV/MZ+6B6Q8DGs1982uvEyuFZfNz2ibBhBmgdN8ZiPl0Mvab5RzUpBOgHHRz
+	jQgqMSIw+SlxDRa/IQbEt48peo4wL7VqAIDdz68QVn1KGm6Ffpekt0PG5Rr3NFxbd2ced8M4zbW
+	auRVFUUmOD6Y
+X-Google-Smtp-Source: AGHT+IG+0JQ95//Ajrq0lgO/WvKJa6AW6bqohkm2IbIyY8g9NlthrnZKtmPcJ0NxaAiAhUmfbGf1Ng==
+X-Received: by 2002:a05:600c:3512:b0:426:66a0:6df6 with SMTP id 5b1f17b1804b1-432e609ec5dmr52285e9.0.1731698321726;
+        Fri, 15 Nov 2024 11:18:41 -0800 (PST)
+Received: from google.com (158.100.79.34.bc.googleusercontent.com. [34.79.100.158])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab78918sm61906695e9.17.2024.11.15.11.18.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 11:17:30 -0800 (PST)
-From: Shivam Chaudhary <cvam0000@gmail.com>
-To: shuah@kernel.org,
-	abdulrasaqolawani@gmail.com
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Shivam Chaudhary <cvam0000@gmail.com>
-Subject: [PATCH] selftests: acct: Add ksft_exit_fail if not running as root
-Date: Sat, 16 Nov 2024 00:47:21 +0530
-Message-ID: <20241115191721.621381-1-cvam0000@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        Fri, 15 Nov 2024 11:18:40 -0800 (PST)
+Date: Fri, 15 Nov 2024 19:18:36 +0000
+From: Mostafa Saleh <smostafa@google.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, will@kernel.org,
+	joro@8bytes.org, Daniel Mentz <danielmentz@google.com>
+Subject: Re: [PATCH] drivers/io-pgtable-arm: Fix stage concatenation with 16K
+Message-ID: <ZzeejJL3Tt4OlFdr@google.com>
+References: <20241115172235.1493328-1-smostafa@google.com>
+ <888e6542-2aa4-43f1-b31e-79432c1ad199@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <888e6542-2aa4-43f1-b31e-79432c1ad199@arm.com>
 
-If the selftest is not running as root, it should fail and
-give an appropriate warning to the user. This patch adds
-ksft_exit_fail_msg() if the test is not running as root.
+Hi Robin,
 
-Logs:
+On Fri, Nov 15, 2024 at 06:29:20PM +0000, Robin Murphy wrote:
+> On 2024-11-15 5:22 pm, Mostafa Saleh wrote:
+> > According to the Arm spec DDI0487 K.a, in:
+> > "Table D8-9 Implications of the effective minimum T0SZ value on the
+> > initial stage 2 lookup level"
+> > 
+> > Some combinations of granule and input size with stage-2 would
+> > require to use initial lookup levels that can only be achieved
+> > with concatenated PGDs.
+> > 
+> > There was one missing case in the current implementation for 16K,
+> > which is 40-bits.
+> > 
+> > Cc: Daniel Mentz <danielmentz@google.com>
+> > 
+> > Signed-off-by: Mostafa Saleh <smostafa@google.com>
+> > ---
+> >   drivers/iommu/io-pgtable-arm.c | 14 +++++++++++---
+> >   1 file changed, 11 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+> > index 0e67f1721a3d..9a57874a5cb8 100644
+> > --- a/drivers/iommu/io-pgtable-arm.c
+> > +++ b/drivers/iommu/io-pgtable-arm.c
+> > @@ -1044,10 +1044,18 @@ arm_64_lpae_alloc_pgtable_s2(struct io_pgtable_cfg *cfg, void *cookie)
+> >   		return NULL;
+> >   	/*
+> > -	 * Concatenate PGDs at level 1 if possible in order to reduce
+> > -	 * the depth of the stage-2 walk.
+> > +	 * Some cases where concatenation is mandatory after de-ciphering RSRKBC
+> > +	 * in the Arm DDI0487 (K.a):
+> > +	 * - 40 bits with 4K: use 2 table at level 1 instead of level 0
+> > +	 * - 40 bits with 16K: use 16 tables at level 2 instead of level 1
+> > +	 * - 42 bits with 4K: use 8 tabels at level 1 instead of level 0
+> > +	 * - 48 bits with 16K: use 2 tabels at level 1 instead of level 0
+> 
+> This confused me, since per R_DXBSH, that last one is the only one which is
+> actually mandatory in general; the others may be valid per R_PZFHQ and
+> R_FBHPY. The additional R_SRKBC constraints come from the PA size, not the
+> choice of T0SZ (and thus ultimately start_level) itself, so although I guess
+> this probably works out true in practice based on how the SMMU drivers
+> happen to behave today, it's none too obvious why.
 
-Before change:
+Ah, you are right, I got a bit confused, it's not actually about the
+input size, but the fact that the SMMUv3 driver uses IAS = OAS for
+stage-2.
+And constraint R_SRKBC is about the OAS size.
 
-TAP version 13
-1..1
-ok 1 # SKIP This test needs root to run!
+So in case we change that IAS = OAS for stage-2, we could end up using
+concatenation when it's not mandatory.
+I don't think that's a bad thing (I was actually thinking of changing
+the code to always use concatenation if possible)
+But, I can re-write the code in terms of OAS + granule instead so it's
+more robust incase we change the stage-2 config in the future.
 
-After change:
-
-TAP version 13
-1..1
-Bail out! Error : Need to run as root# Planned tests != run tests (1 != 0)
-Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-
-Signed-off-by: Shivam Chaudhary <cvam0000@gmail.com>
----
- tools/testing/selftests/acct/acct_syscall.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/acct/acct_syscall.c b/tools/testing/selftests/acct/acct_syscall.c
-index e44e8fe1f4a3..7c65deef54e3 100644
---- a/tools/testing/selftests/acct/acct_syscall.c
-+++ b/tools/testing/selftests/acct/acct_syscall.c
-@@ -24,8 +24,7 @@ int main(void)
- 
- 	// Check if test is run a root
- 	if (geteuid()) {
--		ksft_test_result_skip("This test needs root to run!\n");
--		return 1;
-+		ksft_exit_fail_msg("Error : Need to run as root");
- 	}
- 
- 	// Create file to log closed processes
--- 
-2.45.2
-
+Thanks,
+Mostafa
+> 
+> Thanks,
+> Robin.
+> 
+> > +	 * Looking at the possible valid input size, that concludes to always
+> > +	 * use level 1 with concatentation if possible or at level 2 only
+> > +	 * with 16K.
+> >   	 */
+> > -	if (data->start_level == 0) {
+> > +	if ((data->start_level == 0) ||
+> > +	    ((data->start_level == 1) && (ARM_LPAE_GRANULE(data) == SZ_16K))) {
+> >   		unsigned long pgd_pages;
+> >   		pgd_pages = ARM_LPAE_PGD_SIZE(data) / sizeof(arm_lpae_iopte);
+> 
 
