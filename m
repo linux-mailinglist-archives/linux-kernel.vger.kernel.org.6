@@ -1,100 +1,114 @@
-Return-Path: <linux-kernel+bounces-411329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A1969CF64B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:44:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 894FC9CF65D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:50:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B68B8282B5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:44:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CCA1B33501
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9C11E261B;
-	Fri, 15 Nov 2024 20:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28591E5021;
+	Fri, 15 Nov 2024 20:43:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lfOJ4TEi"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KgnXoeXy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623C818A6D4
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 20:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29BC61E284B;
+	Fri, 15 Nov 2024 20:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731703387; cv=none; b=ZkrFzcGvY6PDe4j/VD/OFJhIOyt1xpRVHptLnUwxspqWUjiJ1Scpr3XFPxxIQuOsqjzQ3b7ryju1eXbC3YJ3F+ghAKjuYTUlC/lQH7x0XMrr+Dh4mL6SXIofjonhHkVaIqKLpIKdQrR2D1QbmSYuu0kkjylDbMSYtNMwRAov+Dw=
+	t=1731703392; cv=none; b=Z/EEsM8J2UXwsFwGlb93HEV5ov/WvgKjJEuKjwIyv1lBT5B3C9sr+28HI5PoVjYoUiTcnjn16O8qkJ7SGSV/4SD1kypBvldz3Ir5Zc7f/qpT1sN+zRoYNtP7Cz/ji1SK+IoLdQc7s6PevMAWPDIjd1jGxsqseFHlGVUUrIoKyg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731703387; c=relaxed/simple;
-	bh=AuLk6ZDWnAgHzz1Z5kk82BySN7z3ukRjQTiROtBqJJo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cD7MHxWGTYh4103M+qhgHe0tbhamx7cEbCRxFUT//PWfrOLlsonzWZSplRN5yk7zoFrLse7Yfikkv8sRmmUegRUxYnvH9sd4bGMsUTMXB3HrjBfiJT8IVZqIUIvNm81cxq+pGT8os4auToYzKQfgTbivtOg1TeWZWoV4ZtgQq04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lfOJ4TEi; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 15 Nov 2024 15:42:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1731703377;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V9OO0mPEzvGbr8DN7Ba70sKGPV9LdaZ3PrYb6DUPS+Q=;
-	b=lfOJ4TEiwNZHKuEa0y7bvmjr5Po2XwyXnIqEt9YqMGyTdfLFUPjvcdzSzcQXVhDbindsCZ
-	1YalySt2XnSFfhrF6rxpjmkc3MD9ZwAlidRhEWe6j/yL9Xp4BvsQG9ojbll62Iv9an+N9c
-	Gbc/TbzmRFs2fCdoybwyCXDeJmyap/0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Florian Schmaus <flo@geekplace.eu>
-Subject: Re: [PATCH 2/2] bcachefs: Set rebalance thread to SCHED_BATCH and
- nice 19
-Message-ID: <lnk2cwutkjihjie4cdvpitbymdp25pyeurf3pegkvzlvrwdwwq@faeqbabjlwpq>
-References: <20241114210649.71377-1-flo@geekplace.eu>
- <20241114210649.71377-2-flo@geekplace.eu>
- <kycrjg4nlgwxb6b6wph3uolmh45t7ivmoi5jpy4pakvh74wnoo@wp7hlbcbtwyw>
- <7a4a39f0-2694-42a0-b26d-b1e337eb3afc@geekplace.eu>
+	s=arc-20240116; t=1731703392; c=relaxed/simple;
+	bh=Ccs4+fxbEG0SXm2z2piX1zTfr7x8e6ZLDBkf7LQCW0A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ACVH3rqAV6HSBkZkHxyiu6h/LxPU6mvArFNAdpHcLvMjFs0s/1nEXJ4WNUUVEyyP+CZyM72ED3P9kPSlh+iOi3jmC9KC/zWUTiEVxaWLUJObKPuLqUxEDty5MKN9lGoKZHQJSW/+MzrQZeBVibWwTgU6nXG7jood59FQkF7nRHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KgnXoeXy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9D32C4CED4;
+	Fri, 15 Nov 2024 20:43:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731703391;
+	bh=Ccs4+fxbEG0SXm2z2piX1zTfr7x8e6ZLDBkf7LQCW0A=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KgnXoeXyOJo2ZDRajin/E3J7ga/4Y72rL6+Oio1pyTuJArJsxFTfbzL+uRUbO0Rey
+	 /nUwu50ecx70AEdAn3UO0Cg8AtZlK4uYqKucFzUIk3pLMf4c/7SjDX4RanolvPYXok
+	 4XNh6cI3GmJwKqNIQ3yCioEXnBr9OeZOOUmjka6hIdFTEJHnOmhSJtLG3QC60ETbcN
+	 lAiVpXJmPS8oQth4ITqqj7pULcSk8JlqptS3N+W/+Dz1/oc/U4iQZWW4l8AA20MAif
+	 DtSDnaLvsRZmB8hFk71Msmf2t7cfVyE2DY1AQjEX32RTQzw8b7L4e9tTkFZKhUwVBg
+	 bREL38GLX1izg==
+From: Kees Cook <kees@kernel.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	"Kory Maincent (Dent Project)" <kory.maincent@bootlin.com>,
+	Michael Chan <michael.chan@broadcom.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Potnuri Bharat Teja <bharat@chelsio.com>,
+	Christian Benvenuti <benve@cisco.com>,
+	Satish Kharat <satishkh@cisco.com>,
+	Manish Chopra <manishc@marvell.com>,
+	Simon Horman <horms@kernel.org>,
+	Edward Cree <ecree.xilinx@gmail.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Ahmed Zaki <ahmed.zaki@intel.com>,
+	Rahul Rameshbabu <rrameshbabu@nvidia.com>,
+	Ido Schimmel <idosch@nvidia.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Takeru Hayasaka <hayatake396@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH 0/3] UAPI: ethtool: Avoid flex-array in struct ethtool_link_settings
+Date: Fri, 15 Nov 2024 12:43:02 -0800
+Message-Id: <20241115204115.work.686-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7a4a39f0-2694-42a0-b26d-b1e337eb3afc@geekplace.eu>
-X-Migadu-Flow: FLOW_OUT
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1101; i=kees@kernel.org; h=from:subject:message-id; bh=Ccs4+fxbEG0SXm2z2piX1zTfr7x8e6ZLDBkf7LQCW0A=; b=owGbwMvMwCVmps19z/KJym7G02pJDOnmmyKKYlbuD2BQyuOW2RWzxnWZtJ+M3Qz1lZt09tiJR ZvFbCztKGVhEONikBVTZAmyc49z8XjbHu4+VxFmDisTyBAGLk4BmMhqUYa/ssfXyZ/s3ae/ZFGU 8xn95deMgyQda/0T5gXkHpLxFVDqY/gfyF204Jj5EtXzfHGKtpuSF+6cz3In5wPv/V2Z00/WP+f mAAA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 15, 2024 at 09:26:56AM +0100, Florian Schmaus wrote:
-> On 15/11/2024 06.43, Kent Overstreet wrote:
-> > On Thu, Nov 14, 2024 at 10:06:48PM +0100, Florian Schmaus wrote:
-> > > Set the rebalance thread's scheduling class to BATCH, which means it
-> > > could experience a higher scheduling latency. However, it reduces
-> > > preemption events of running threads.
-> > > 
-> > > And while the rebalance thread is ually not compute bound, it does
-> > > cause a considerable amount of I/O. By increasing its nice level from
-> > > 0 to 19 we also implicitly reduce the thread's best-effort I/O
-> > > scheduling class level from 4 to 7. Therefore, the rebalance thread's
-> > > I/O operations will be deprioritized over standard I/O operations.
-> > 
-> > Is there a patch 1/2?
-> 
-> Sorry, patch 1/2 was unfortunately not send to linux-bcachefs@. You can find
-> it at
-> 
-> https://lore.kernel.org/lkml/20241114210649.71377-1-flo@geekplace.eu/
+Hi,
 
-2/2: https://lore.kernel.org/lkml/20241114210649.71377-2-flo@geekplace.eu/
+This reverts the tagged struct group in struct ethtool_link_settings and
+instead just removes the flexible array member from Linux's view as it
+is entirely unused.
 
-Ingo, for sanity could we keep these two patches together? your tree or
-mine is fine with me, if patch 1/2 is acceptable to you
+-Kees
 
-Florian also had another idea I wanted to mention for giving userspace
-control over sched policy - exposing the pids of our
-rebalance/copygc/etc. threads in /sys/fs/bcachefs.
+Kees Cook (3):
+  Revert "net: ethtool: Avoid thousands of
+    -Wflex-array-member-not-at-end warnings"
+  Revert "UAPI: ethtool: Use __struct_group() in struct
+    ethtool_link_settings"
+  UAPI: ethtool: Avoid flex-array in struct ethtool_link_settings
 
-I'm liking it, do we have precedent elsewhere in the kernel for that?
+ .../net/ethernet/broadcom/bnxt/bnxt_ethtool.c |  6 +--
+ .../ethernet/chelsio/cxgb4/cxgb4_ethtool.c    |  4 +-
+ .../ethernet/chelsio/cxgb4vf/cxgb4vf_main.c   |  2 +-
+ .../net/ethernet/cisco/enic/enic_ethtool.c    |  2 +-
+ .../net/ethernet/qlogic/qede/qede_ethtool.c   |  4 +-
+ include/linux/ethtool.h                       |  2 +-
+ include/uapi/linux/ethtool.h                  | 40 ++++++++++---------
+ net/ethtool/ioctl.c                           |  2 +-
+ net/ethtool/linkinfo.c                        |  8 ++--
+ net/ethtool/linkmodes.c                       | 18 ++++-----
+ 10 files changed, 44 insertions(+), 44 deletions(-)
+
+-- 
+2.34.1
+
 
