@@ -1,81 +1,119 @@
-Return-Path: <linux-kernel+bounces-411450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 698F59CF9AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:20:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F22E39CFA7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:58:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 169361F24E27
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:20:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAA19B25AA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DED824BD;
-	Fri, 15 Nov 2024 22:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B641818FDD2;
+	Fri, 15 Nov 2024 22:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rAS5yure"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=mandelbit.com header.i=@mandelbit.com header.b="aAe2jjqK"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5234218DF6E;
-	Fri, 15 Nov 2024 22:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA54187876
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 22:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731709240; cv=none; b=RkuFgcDaNVFJXnarPTWImWvwitxYMf635r44IrVXPwtsjZfDa25wazAufUBlp1BEuivmxhTocxNWA3TOvHyR8zGyxmMJHgfDvbgHuCCzdBKfa9/I2xYeayXiZvJvWaK1/kLDIlJEyJkvKZ6UFz/3JS7SU7iRthe5Du1TSnR4r88=
+	t=1731709584; cv=none; b=SL4Yxd5oHCaYuvHlhmRK5HLrJ72NaJPVtaCoLkkJWRnQ81ZtXHe+oiohFQmQPjHuaY2d4YmO975sqWvLhgHN3WJR/3slKBDj6VwXSb3IM1djeIelpzGVF9hPmTWK6AwgFfCnItrAVDpIxiSyFYoKAazYbUpNrSuKtS3BNK+ktHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731709240; c=relaxed/simple;
-	bh=YEbIVo1wJQ4C/7AYDnCrmqFUNPjdBkHWoZanVZOmc4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=nFTaT59eCQEnvSkG5UIOlFj4ipGVPolPcLkfcyB+4gU29Vo5cjAcEcSPGHhhFJiw3YA49jmRrxaj+ZfYxBBipNzfQw83eJL4mJBinMPZ3JqoPpYfXJvTcbdnWMhWfMiw/94SoJowJW4RU55xufEq0Ij9By5yvrJcl3hKDgzIclk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rAS5yure; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00B00C4CECF;
-	Fri, 15 Nov 2024 22:20:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731709240;
-	bh=YEbIVo1wJQ4C/7AYDnCrmqFUNPjdBkHWoZanVZOmc4E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=rAS5yureYW4EChvqhEnR8hiiiPxSFVks7f31D0nZSHKh2zZto53j/IxYwczEZIWfq
-	 w2v1fZJWSKc34TQ9XODi0t9of+rp24bH3GmwV0rSPgPQXHcIlek5Jx08V+xGvzAByb
-	 efMGANqdLUFsru74uhL0yprtruElrdzhNEw2k/2bxTgIoGVdU+zrtt6fdq8jCcnzS8
-	 9LBul4Fcw/Hte1+sXAabn4zSQ/AlM5df6bhtkaEUDhh6ARkXhmdl8OHb+0DhhwkI6g
-	 armbR+bukhe2nQwi4CXk+st/0kkY+zqcRlzJy5xMB4LL1JxjTtY+Sqy0o0RWRa8V+Q
-	 s/ZyybgkE7nqg==
-Date: Fri, 15 Nov 2024 16:20:38 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: bhelgaas@google.com, Wei Huang <wei.huang2@amd.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, asml.silence@gmail.com, almasrymina@google.com,
-	gospo@broadcom.com, michael.chan@broadcom.com,
-	ajit.khaparde@broadcom.com, somnath.kotur@broadcom.com,
-	andrew.gospodarek@broadcom.com, manoj.panicker2@amd.com,
-	Eric.VanTassell@amd.com
-Subject: Re: [PATCH V1 1/2] bnxt_en: Add TPH support in BNXT driver
-Message-ID: <20241115222038.GA2063216@bhelgaas>
+	s=arc-20240116; t=1731709584; c=relaxed/simple;
+	bh=zv2kRmZ0zwfoCSsullziMlgUgBWI3MPelQST3WNVw2k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j2d3QEbzNGlmld2E4y/6FGW91DrgdrfKE/uu122H90PAGfUVT75zBWWNRlstasSPFz8iWJw3PzjQmz0jz1AMqVEPDel9Wj5zqG4us6/ILtA7a8vrXtk+vm6fDVWTrWszBQFk2Oo1CZdq3+MdG63zPJBGUSWfwXiQZwMEA8U8LMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mandelbit.com; spf=pass smtp.mailfrom=mandelbit.com; dkim=pass (2048-bit key) header.d=mandelbit.com header.i=@mandelbit.com header.b=aAe2jjqK; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mandelbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mandelbit.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43155abaf0bso1296725e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 14:26:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mandelbit.com; s=google; t=1731709579; x=1732314379; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C8Xp5DchzBLMx2DW4umYiCSRYu9AVer3xBbdskCBDnE=;
+        b=aAe2jjqK3RwoMGlpC9shwHAlmxbvT8XglF9/mkIe5WkSboH6RSbsrHGbkiJx4ZkvHx
+         XFaBIoek1+dG3pjMXabGYvD8N7oNuTsCkEfvMBtLVY0e5G+oA42UyowjwjrzBYODanef
+         hWu5TqJeKeTqqYtVZe9gDr2zX1rcWBp02k1AQmZiCzjI20qjA24JCDIZNZ6qoZy5cki/
+         ABbXFtQfOp7OjDk9/0OxfbSaeicywKpeJhjV9CYYQSNzhwaQ2jq+n4Gn46Ot2+EE+Af+
+         H3Edrs2aEfsc4jGIpOUOw8HOx05ivxfhE60babq9Rr7/0yb5vjXxgipv/RcnPzQygN/n
+         OOdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731709579; x=1732314379;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C8Xp5DchzBLMx2DW4umYiCSRYu9AVer3xBbdskCBDnE=;
+        b=UjmLjYpTGyA8NbETFDcl1W/qn8Tn0cNyAXeXuz+YBsvDvon292o4+VUshbxeeLi50g
+         0Awsn6iEKiCYeZXcklwoVjInOpHb9Ys8tLjSFtRTdpWTzaW9H/Qvb9wIwfZ185QqY0PH
+         OiwrA++Le8ay2qy8qrWMH0sU1W4V9v/VLUGti8N99cytp0YlHzpAasxnoEnCNk54n3To
+         /9pHCx3XBMhKWdHS0QE3GyZZiCFs2CBXTCWm78gSHWyBErM+mKDi122lZH+UE9s5MqVV
+         q3yobgmxRMmR3pMcsB3Z5ulztDIfpB4kdajmiMvWhxRg7K/kyLaNea9u86JeE+h1MPD9
+         yo+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVK2FoFXwsrs69OgTQdAJQg+8KS934Cv9v1wMHqRSHSZdkgl81GSiyW1UEW7h5zCtkk1yB6DsDsNorAglY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPQKfU+g9YoQl3eOTQ86Y7yKN0YaZMwQlVWs9oFw5+caKCmc/h
+	Nb6pqc/f9MMfUVlopgCdUrpc9Qi5HMOTMJyMHah4+bLK9UxNgIDjk961fd+m1H4=
+X-Google-Smtp-Source: AGHT+IHeJP49UiLk1+A21zLZ9ga84quFsvsfDwLTyueK66j1t98EbwAOHupzp6aQwxL0DRmf+jG8zw==
+X-Received: by 2002:a05:600c:1ca2:b0:42b:a7c7:5667 with SMTP id 5b1f17b1804b1-432df7876d4mr35648385e9.25.1731709579711;
+        Fri, 15 Nov 2024 14:26:19 -0800 (PST)
+Received: from serenity.mandelbit.com ([2001:67c:2fbc:1:1b94:c354:f504:96f9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821d0ea3e2sm5115774f8f.109.2024.11.15.14.26.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 14:26:19 -0800 (PST)
+From: Antonio Quartulli <antonio@mandelbit.com>
+To: linux-mtd@lists.infradead.org
+Cc: Antonio Quartulli <antonio@mandelbit.com>,
+	Richard Weinberger <richard@nod.at>,
+	Zhihao Cheng <chengzhihao1@huawei.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ubifs: fix uninitialized variable usage
+Date: Fri, 15 Nov 2024 23:26:34 +0100
+Message-ID: <20241115222634.32259-1-antonio@mandelbit.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241115140434.50457691@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 15, 2024 at 02:04:34PM -0800, Jakub Kicinski wrote:
-> ...
-> Bjorn, do you have a strong preference to have a user of the TPH code
-> merged as part of 6.13?  We're very close to the merge window, I'm not
-> sure build bots etc. will have enough time to hammer this code.
-> My weak preference would be to punt these driver changes to 6.14
-> avoid all the conflicts and risks (unless Linus gives us another week.)
+In ubifs_jnl_write_inode(), when an inode cannot be deleted
+due to too many xattrs, err is passed to ubifs_ro_mode()
+uninitialized, thus leading to bogus error reporting.
 
-I do not have a preference.  The PCI core changes are queued for
-v6.13, so driver changes will be able to go the normal netdev route
-for v6.14.
+Fix this case by passing -EPERM, which is the same value that
+ubifs_jnl_write_inode() is going to return to the caller.
 
-I agree it seems late to add significant things for v6.13.
+This fixes 1 UNINIT issue reported by Coverity
+Report: CID 1601860: Uninitialized scalar variable (UNINIT)
 
-Bjorn
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Zhihao Cheng <chengzhihao1@huawei.com>
+Cc: linux-kernel@vger.kernel.org (open list)
+Signed-off-by: Antonio Quartulli <antonio@mandelbit.com>
+---
+ fs/ubifs/journal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ubifs/journal.c b/fs/ubifs/journal.c
+index 8e98be642371..5eedf511880c 100644
+--- a/fs/ubifs/journal.c
++++ b/fs/ubifs/journal.c
+@@ -983,7 +983,7 @@ int ubifs_jnl_write_inode(struct ubifs_info *c, const struct inode *inode)
+ 
+ 	if (kill_xattrs && ui->xattr_cnt > ubifs_xattr_max_cnt(c)) {
+ 		ubifs_err(c, "Cannot delete inode, it has too much xattrs!");
+-		ubifs_ro_mode(c, err);
++		ubifs_ro_mode(c, -EPERM);
+ 		return -EPERM;
+ 	}
+ 
+-- 
+2.45.2
+
 
