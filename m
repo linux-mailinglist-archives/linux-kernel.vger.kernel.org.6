@@ -1,108 +1,137 @@
-Return-Path: <linux-kernel+bounces-410437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F18EF9CDBA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:33:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 822D39CDBAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:34:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A94641F2350B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:33:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EED78B232B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65AC919049B;
-	Fri, 15 Nov 2024 09:32:28 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C524F18FC81;
+	Fri, 15 Nov 2024 09:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lj5jP3Cm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80DC018FDDE
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29886161328;
+	Fri, 15 Nov 2024 09:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731663148; cv=none; b=IUkjPgRLpSeJtKdrf51D+aMTFBFkw3QDpO9yrI6NxQwfisGt/T0k7tv7SCiTO9M080BpGDYPaM5YfyVyYMbV2cyhmovs3OAKugfrqzqOJygdgmW0l9XGBFUMOB60cngl55MCsMHgA+Qg1zJEd1dRWwYQ8eJXWkyhcn6p2xv5AwM=
+	t=1731663277; cv=none; b=rNhYc8uQ2EZFWF2tdaBda2AomuPPv5fp1F14KpDayqvVX2VV5hdDUI6oXwR/jW+l3g9OPV1T8GMFqNZHa8fuhhSe6E7U4I27tdT64KpHcVODyl6AEqUp+C6nLZgckwSDVxEsqfTPYmdKkGjPjRVgIh7XR069iAMUhrak10/5s84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731663148; c=relaxed/simple;
-	bh=pLEcRY782n6JBEDsQYEF4qteqYuuy8RnY6roI1WU2Vw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BJ5qrUFdJP3J4ntkrELtJGqyLsQ+BwV6VAunRJyXcPDSIrOsCjSOBWLql5qVSNGd4EIQJtLfhD0lv0T5I1idYZIVvXTb3sXLN89s/84cuvUzRH78vZouslyPTtemyA7XRL66RKtkzHuEwitX3SjIbHqn1wJ4gOXMOSryHxIFbaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a743d76ed9so10393415ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 01:32:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731663146; x=1732267946;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=f/4JedLJscdKRq4iXzIJ827KeB/EVhqHO4lJWwOuHEs=;
-        b=d6SnRg3bsZiyuoEj6raABY2SHyvrrDP4XpG4LTCpzxWJASQDsXQ5gwsZALlSIkQjoa
-         VSS3WVSr3XHtAArV5ExohZhFnym02h8PYyPpfShODjVOlZCEXNt//n56dAHYojQbkFX5
-         wyK9dE9O74xx51zQSc+924G0Z53E7jvzrOtqjogCk8iXj7nrGUb5JpFRo+RWUrYrKRvm
-         M7VfMVPatuzFGsT3ZDpRanWl+joYXH4a2b7bAfdLKomCD1eePgYUKjLdSx6TGtqy7JHD
-         AMC2uJX0cnopldS9OJoI9fGpyImPQDAs/jY3tPRvlgHwKwKdR8VIQMqM4Q2cVJib92eK
-         W+AA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzHOZMkXflbYnzmfR7zJwaYOtaETpwHdt+tc6Mf6fdmX9GeSXZhWBlvKxoZUSEL1jVAGMDTM6KOf5rne8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhTzmSJz7gmkCbTz9NCgwqrFsiH7SQqLkL/nT871DhXhb7RyzJ
-	l3eNVHozoNqQIUjV2+nG3Ypo+d5j5E7YY6+sWqQSOmpEe8soGzq1tUKvLuwaqARzCrgWjbDC9Ts
-	tBt3b7XtcH5MYJKsya3zgXp4vUktmfXsZOtDLuDs5kLX1wUjl4w0YLuk=
-X-Google-Smtp-Source: AGHT+IFkNe6EY2UatPnRjrWl19SBY6KFPRa82qL/NArf+bDN37oMD9QNRnFcCmaGnthLHYlddNNg1sf4yBsqhf9D+XhJrXlzqckf
+	s=arc-20240116; t=1731663277; c=relaxed/simple;
+	bh=JQlPKqTpFyA0j2thumzbxP70BwmQdn+q21TxSdA55Zc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ccwe8+WETFsnelMiMdgcRBRwi6K5yFQx+7QJ3YUeGB7YOAS3CN8xV0qkc+/9BwNnD5qCwrLxOFfX5F9QvqAFnnwdmJYbLJYseD4NCwEyahH0ZS+d7RpPMuq6U64Nc7ALgFRbZSey/MjnSj11Bl4wmcMpKh6vauFe90rzMlAUHvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lj5jP3Cm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7E6EC4CED6;
+	Fri, 15 Nov 2024 09:34:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731663276;
+	bh=JQlPKqTpFyA0j2thumzbxP70BwmQdn+q21TxSdA55Zc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=lj5jP3CmUlDRlrVBOLX7TGO2SKqkmRA230KTRUPbG5DYl/r0PRUhTg5pgevx4GBb/
+	 I3zxGppJodNo9iZdqcCkwYmnZHYasg8GA8UYNzBxZzbHijme+hh86tVLKem31WPPdp
+	 4ybxWlwwhrTc2rseuURFZnriMrWNYcHuPkhN3MOekdOVx9quqXC4vbwiwepgiWR916
+	 NM5cMM1IG+s3NUC97aFoEt9rBZPgLUcbGH5wQhB7o/82iXnon1qzZs3jLoZtb48Am4
+	 emZmBqd7NdZ9MuQmqhdfHCOVu8vNG62+6/m2eJ6oZ31VABaiKNqJwM3W7sOSqPskk7
+	 px/yW0C4JB9Zg==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53c779ef19cso531535e87.3;
+        Fri, 15 Nov 2024 01:34:36 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUtqWBK+radAfIIP0VhltZAyvNPOXrY+SisbrNqGhx7ELK1v9g8O5NHoo6+yFeMrfYx6RXaRPlNHts=@vger.kernel.org, AJvYcCW7s3FzcNt6IdFEinuofQKYBjC+LQ9yIewqsQssdP0GtEe7uFBimnnrtORLZb/Nawb7fP859xB4y5CO4Qve@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFL2QV5nKzzI2dVQYkaHcoZ6MKMIaK0pVZDjJj6JS5yNtywIGK
+	+vungim6q3M1SVmJsZfxXTK/SiWqzv8wa4BrTiQtqm9xKy/6G53O+dyJFXIhEwIKRWZISbI1xMo
+	brqBoAXMDpVhvj4GbcoFMkLCkLSo=
+X-Google-Smtp-Source: AGHT+IHpyqw2Jkp7a3n7b6aXQH6kbbyi+avVgVFVLmvDxKCUf6uJ6IogfuMUe0NMe5QbqJH3axf02kJIjxgrXsFSU4M=
+X-Received: by 2002:a05:6512:3c87:b0:53d:a2cb:349e with SMTP id
+ 2adb3069b0e04-53dab291a9amr840915e87.4.1731663275009; Fri, 15 Nov 2024
+ 01:34:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3420:b0:3a6:b26f:a5c4 with SMTP id
- e9e14a558f8ab-3a746ffdb14mr17585525ab.8.1731663145709; Fri, 15 Nov 2024
- 01:32:25 -0800 (PST)
-Date: Fri, 15 Nov 2024 01:32:25 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67371529.050a0220.1324f8.00a4.GAE@google.com>
-Subject: [syzbot] linux-next build error (18)
-From: syzbot <syzbot+a521f132f5a83d10ab40@syzkaller.appspotmail.com>
-To: apparmor@lists.ubuntu.com, jmorris@namei.org, john.johansen@canonical.com, 
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
-	sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com
+References: <20241026070228.3240177-1-zengheng4@huawei.com>
+In-Reply-To: <20241026070228.3240177-1-zengheng4@huawei.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 15 Nov 2024 10:34:23 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXETHkWvHEs9TuRxB61KvFr11SrLnQGuQTiVtupeAvFCMA@mail.gmail.com>
+Message-ID: <CAMj1kXETHkWvHEs9TuRxB61KvFr11SrLnQGuQTiVtupeAvFCMA@mail.gmail.com>
+Subject: Re: [PATCH v2] efi: sysfb_efi: Fix unused const variable 'efifb_fwnode_ops'
+To: Zeng Heng <zengheng4@huawei.com>
+Cc: tzimmermann@suse.de, javierm@redhat.com, andriy.shevchenko@intel.com, 
+	bp@suse.de, simona.vetter@ffwll.ch, bobo.shaobowang@huawei.com, 
+	linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Sat, 26 Oct 2024 at 08:48, Zeng Heng <zengheng4@huawei.com> wrote:
+>
+> Fix the following compilation warning:
+>
+> drivers/firmware/efi/sysfb_efi.c:345:39: warning:
+> =E2=80=98efifb_fwnode_ops=E2=80=99 defined but not used [-Wunused-const-v=
+ariable=3D]
+>   345 | static const struct fwnode_operations efifb_fwnode_ops =3D {
+>
+> drivers/firmware/efi/sysfb_efi.c:238:35: warning:
+> =E2=80=98efifb_dmi_swap_width_height=E2=80=99 defined but not used
+> [-Wunused-const-variable=3D]
+>   238 | static const struct dmi_system_id
+>         efifb_dmi_swap_width_height[] __initconst =3D {
+>
+> drivers/firmware/efi/sysfb_efi.c:188:35: warning:
+> =E2=80=98efifb_dmi_system_table=E2=80=99 defined but not used
+> [-Wunused-const-variable=3D]
+>   188 | static const struct dmi_system_id
+>         efifb_dmi_system_table[] __initconst =3D {
+>
+> In addition to the above warning messages, a series of unused warnings
+> because of cascading dependencies were found. The variables and functions
+> related to warnings are only used after CONFIG_EFI enabled. Therefore,
+> these warnings are addressed and fixed in this commit.
+>
+> Fixes: 8633ef82f101 ("drivers/firmware: consolidate EFI framebuffer setup=
+ for all arches")
+> Signed-off-by: Zeng Heng <zengheng4@huawei.com>
+> ---
+>  drivers/firmware/efi/sysfb_efi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
 
-syzbot found the following issue on:
+Is there any reason to build this file in the first place if
+CONFIG_EFI is disabled? Should we fix this in the Makefile instead?
 
-HEAD commit:    744cf71b8bdf Add linux-next specific files for 20241115
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=10525cc0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ada879778ea11d6f
-dashboard link: https://syzkaller.appspot.com/bug?extid=a521f132f5a83d10ab40
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a521f132f5a83d10ab40@syzkaller.appspotmail.com
-
-security/apparmor/domain.c:695:3: error: expected expression
-security/apparmor/domain.c:697:3: error: use of undeclared identifier 'new_profile'
-security/apparmor/domain.c:699:8: error: use of undeclared identifier 'new_profile'
-security/apparmor/domain.c:704:11: error: use of undeclared identifier 'new_profile'
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> diff --git a/drivers/firmware/efi/sysfb_efi.c b/drivers/firmware/efi/sysf=
+b_efi.c
+> index cc807ed35aed..0cfc11ecc98b 100644
+> --- a/drivers/firmware/efi/sysfb_efi.c
+> +++ b/drivers/firmware/efi/sysfb_efi.c
+> @@ -82,6 +82,7 @@ void efifb_setup_from_dmi(struct screen_info *si, const=
+ char *opt)
+>         }
+>  }
+>
+> +#ifdef CONFIG_EFI
+>  #define choose_value(dmivalue, fwvalue, field, flags) ({       \
+>                 typeof(fwvalue) _ret_ =3D fwvalue;                \
+>                 if ((flags) & (field))                          \
+> @@ -346,7 +347,6 @@ static const struct fwnode_operations efifb_fwnode_op=
+s =3D {
+>         .add_links =3D efifb_add_links,
+>  };
+>
+> -#ifdef CONFIG_EFI
+>  static struct fwnode_handle efifb_fwnode;
+>
+>  __init void sysfb_apply_efi_quirks(void)
+> --
+> 2.25.1
+>
 
