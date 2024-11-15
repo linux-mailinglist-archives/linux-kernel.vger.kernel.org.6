@@ -1,93 +1,147 @@
-Return-Path: <linux-kernel+bounces-411492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 186BE9CFB23
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:26:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EAEE9CFAEB
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:11:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87255B3338A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:11:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E84E1287F3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3210A1AF0A3;
-	Fri, 15 Nov 2024 23:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kyWaAKKW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76E31991A9;
+	Fri, 15 Nov 2024 23:11:33 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875D81922F9;
-	Fri, 15 Nov 2024 23:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C733414F9D9;
+	Fri, 15 Nov 2024 23:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731712228; cv=none; b=k5Xp9Xb1VX3X1j9gdge41gdjypZKKFvW59Q/qCQ+QLDLHxuHu6RLNS3Xxh4sfbFW0AJfgLgqN73j2FSL+ESFcPgbJ2SHYQx53nDc/JGq52THKrguF6t9WVk2Pfmy9WDkpmEHXw2xxh0HBvR85iKa7bZOXmavt9VTEnjMs0FMJEo=
+	t=1731712293; cv=none; b=QLjQblsfk4EGfQisYbQPC8l3rkBW5Ad5cXMG+zLJ2vWFiYMMLOLxAFolnZv5o1OeaB1KjNeQ/E4/KzOvuLO41KQaF1VzME9FwGe4H6iDivNmZmP6RblbnouXaKPGKluuUoE1O6p0i123hU/T8CK5mLn0iLUcGapoWy1sWqkVnRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731712228; c=relaxed/simple;
-	bh=NQBnITOZNi1vFSfccm0jyqvLbG+YaclL2jPy1WOI0xE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=mlXo/LgFNyaJnNfy8gj44hJ4AdIXeeobba9Eo2iNyr71WNyiuQ2QSt++v9aPEKIBhiLLy3ZkE7XLvJWBvfpudV+X2rR6WUx3sKrOFoPOf0Xj/BUqDLdwCTVgpd/YTbqHp+PwhgFfjSn7TcHwHW+j+CHFb6Ygarfi6mD3Towv9Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kyWaAKKW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2828FC4CECF;
-	Fri, 15 Nov 2024 23:10:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731712227;
-	bh=NQBnITOZNi1vFSfccm0jyqvLbG+YaclL2jPy1WOI0xE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=kyWaAKKWG0nLqyA4SS233UbhQvFJJ7XBpsXQxrvMjQkyYxJfFvaCQq8WGzQbjWIz4
-	 eXGXQVy5ikUxNT18S0Goj7Ojenn9icKziLGqBC7ozYAZOZVSPPGzqc0NGt9ROFooLU
-	 xhBS7Ebm5It5Q1JXL7RAWyVzzyAngwg2c6utGQIT4v7Eqf/te0pGpmg3kqhV5ZJJZP
-	 tx1Ij4Ski07gifLM0GPX7xdFqH1WszGnlXpwCZZ9+RgphI97J8IoKQY/4KC8BL08YO
-	 TAGM6BcH5KkfyAGFXWgXhLEerlq9qXH7QLJcnPYKVRrDyshLQ3Hh8UO0l00vKujTbk
-	 VOBcabP6LDniw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 340273809A80;
-	Fri, 15 Nov 2024 23:10:39 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1731712293; c=relaxed/simple;
+	bh=X2uV+UlO+oeyFtpTc37ncoYBy0ncSnOv9AW0Udtr1Sw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RGdRHHiCFkqw7f0hNGIYhgefgAJF4eeDKawl6R0NAcyhe26ZHQeRpv9a4KbmkWqnPrGuNYahIDV0bpPRdrD1wvzfvH7QF2lSIX3toMexfoZGFS1Oq3JdEvLz9xTl3OIEZ1d7Gr4rwi04WcHo+UgStmSCQrEZgN/IFqjWnBfhCUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: fS/R+NUcSEOLb7sKlcNqOA==
+X-CSE-MsgGUID: 3wzlmOXjTQSDY9VKTxIn9Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11257"; a="35499991"
+X-IronPort-AV: E=Sophos;i="6.12,158,1728975600"; 
+   d="scan'208";a="35499991"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 15:11:31 -0800
+X-CSE-ConnectionGUID: 1o93KFeCQwyDEy9ptvPpIA==
+X-CSE-MsgGUID: VXddfeRZQx2L/9zWnIh/Cg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,158,1728975600"; 
+   d="scan'208";a="88694780"
+Received: from gargmani-mobl1.amr.corp.intel.com (HELO lenb-Thinkpad-T16-Gen-3.mynetworksettings.com) ([10.124.221.226])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 15:11:28 -0800
+From: Len Brown <lenb@kernel.org>
+To: rafael@kernel.org
+Cc: anna-maria@linutronix.de,
+	tglx@linutronix.de,
+	peterz@infradead.org,
+	frederic@kernel.org,
+	corbet@lwn.net,
+	akpm@linux-foundation.org,
+	linux-acpi@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Len Brown <len.brown@intel.com>,
+	Arjan van de Ven <arjan@linux.intel.com>,
+	Todd Brandt <todd.e.brandt@intel.com>
+Subject: [PATCH v2] ACPI: Replace msleep() with usleep_range() in acpi_os_sleep().
+Date: Fri, 15 Nov 2024 18:11:13 -0500
+Message-ID: <c7db7e804c453629c116d508558eaf46477a2d73.1731708405.git.len.brown@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Reply-To: Len Brown <lenb@kernel.org>
+Organization: Intel Open Source Technology Center
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] dt-bindings: net: dsa: microchip,ksz: Drop
- undocumented "id"
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173171223773.2762542.1275950515020254098.git-patchwork-notify@kernel.org>
-Date: Fri, 15 Nov 2024 23:10:37 +0000
-References: <20241113225642.1783485-2-robh@kernel.org>
-In-Reply-To: <20241113225642.1783485-2-robh@kernel.org>
-To: Rob Herring (Arm) <robh@kernel.org>
-Cc: woojung.huh@microchip.com, UNGLinuxDriver@microchip.com, andrew@lunn.ch,
- f.fainelli@gmail.com, olteanv@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, krzk+dt@kernel.org,
- conor+dt@kernel.org, marex@denx.de, Woojung.Huh@microchip.com,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
 
-Hello:
+From: Len Brown <len.brown@intel.com>
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Replace msleep() with usleep_range() in acpi_os_sleep().
 
-On Wed, 13 Nov 2024 16:56:43 -0600 you wrote:
-> "id" is not a documented property, so drop it.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml | 1 -
->  1 file changed, 1 deletion(-)
+This has a significant user-visible performance benefit
+on some ACPI flows on some systems.  eg. Kernel resume
+time of a Dell XPS-13-9300 drops from 1943ms to 1127ms (42%).
 
-Here is the summary with links:
-  - [net-next] dt-bindings: net: dsa: microchip,ksz: Drop undocumented "id"
-    https://git.kernel.org/netdev/net-next/c/6bbdb903db08
+usleep_range(min, min) is used because there is scant
+opportunity for timer coalescing during ACPI flows
+related to system suspend, resume (or initialization).
 
-You are awesome, thank you!
+ie. During these flows usleep_range(min, max) is observed to
+be effectvely be the same as usleep_range(max, max).
+
+Similarly, msleep() for long sleeps is not considered because
+these flows almost never have opportunities to coalesce
+with other activity on jiffie boundaries, leaving no
+measurably benefit to rounding up to jiffie boundaries.
+
+Background:
+
+acpi_os_sleep() supports the ACPI AML Sleep(msec) operator,
+and it must not return before the requested number of msec.
+
+Until Linux-3.13, this contract was sometimes violated by using
+schedule_timeout_interruptible(j), which could return early.
+
+Since Linux-3.13, acpi_os_sleep() uses msleep(),
+which doesn't return early, but is still subject
+to long delays due to the low resolution of the jiffie clock.
+
+Linux-6.12 removed a stray jiffie from msleep: commit 4381b895f544
+("timers: Remove historical extra jiffie for timeout in msleep()")
+The 4ms savings is material for some durations,
+but msleep is still generally too course. eg msleep(5)
+on a 250HZ system still takes 11.9ms.
+
+System resume performance of a Dell XPS 13 9300:
+
+Linux-6.11:
+msleep HZ 250	2460 ms
+
+Linux-6.12:
+msleep HZ 250	1943 ms
+msleep HZ 1000	1233 ms
+usleep HZ 250	1127 ms
+usleep HZ 1000	1130 ms
+
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=216263
+Signed-off-by: Len Brown <len.brown@intel.com>
+Suggested-by: Arjan van de Ven <arjan@linux.intel.com>
+Tested-by: Todd Brandt <todd.e.brandt@intel.com>
+---
+ drivers/acpi/osl.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+index 70af3fbbebe5..daf87e33b8ea 100644
+--- a/drivers/acpi/osl.c
++++ b/drivers/acpi/osl.c
+@@ -607,7 +607,9 @@ acpi_status acpi_os_remove_interrupt_handler(u32 gsi, acpi_osd_handler handler)
+ 
+ void acpi_os_sleep(u64 ms)
+ {
+-	msleep(ms);
++	u64 us = ms * USEC_PER_MSEC;
++
++	usleep_range(us, us);
+ }
+ 
+ void acpi_os_stall(u32 us)
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.43.0
 
 
