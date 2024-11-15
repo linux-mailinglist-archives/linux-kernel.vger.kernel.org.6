@@ -1,188 +1,133 @@
-Return-Path: <linux-kernel+bounces-411386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D270F9CF842
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:46:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 850569CF81C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:43:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2424B2A9E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:41:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 314161F223DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C66020C038;
-	Fri, 15 Nov 2024 21:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812A133997;
+	Fri, 15 Nov 2024 21:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="iplUk1Nd"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50091204F7E;
-	Fri, 15 Nov 2024 21:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="sXW1ZkB2"
+Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB8D18DF64
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 21:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731705778; cv=none; b=DpJYieQTxTEtih5lQawUm6140rkwMEAjbS+ViPO+BMQugTVtzAcKUC1Q8DCHR+6R2QNzr3OLNzsgU3sQssCFurZIcnuDq+3mn4WTmbgojyLhVpIUuy3me/tDEtkH5BooC/WiX/Ha5pOhSfQXp2xRl7U9LpWxeOCDK72sjojxahw=
+	t=1731705890; cv=none; b=N5xOa48o8wJH7I2ISCP9wWhsbP97br5T4XTIo72hOhU8SwmacToSCS6BnJtoazh8PdHCBDq+dfCCIHcMFz7jq9SdG0QfYZ3Jyqf2cKjQuCGVgfBrND70kVE6/WgyFALC4HMKXNwX3pWhbTfBsPtKziI5svO9FTxpUQCu5/CXtYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731705778; c=relaxed/simple;
-	bh=4MLVon0D3a+9sKIpFIEboNUwxMWMLmjuuaYwxOlrS+E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NGvJFYFDBoswyylO9RiRKd0wAmaVRzQcEUFwN3zbsWsfzhZDOHoDL2D/YMD02O5DkZdCZBou0Sm8LHxrCoWo4LUlVEpmcJjH3I9D8hgc4sZtcOWk4pLNiyClHzfeG70f/GAq6pObOwqaUvn+ZaqYr8dkbvQlpPRmLZ0VmXekU7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=iplUk1Nd; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from eahariha-devbox.internal.cloudapp.net (unknown [40.91.112.99])
-	by linux.microsoft.com (Postfix) with ESMTPSA id A22AA206BCEE;
-	Fri, 15 Nov 2024 13:22:46 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A22AA206BCEE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1731705766;
-	bh=8an4FgjBOt1s+5Gzupd7mugSuJBcUUHR7ha3x9HR0Ag=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=iplUk1Nduoh9asilHgzn6HQycVN1VFv/mFBOdW0Mpd4aq8sOOirOgItcWBMTidM3Q
-	 FvxfPpyBxEWdptBjBV3AGgplTOjNGMgWDICXRk9fFUvguk5wrwqFw5sjChgX9PZPt7
-	 /h1a1SkEI1LPNYXASotI6c+cUqHfSyHVemxnfBAU=
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-Date: Fri, 15 Nov 2024 21:22:52 +0000
-Subject: [PATCH 22/22] jiffies: Define secs_to_jiffies()
+	s=arc-20240116; t=1731705890; c=relaxed/simple;
+	bh=Bgs/12PtZuTnrvMeWK5ZWfYat10JaNSvHluJaDBzt2Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d35UyThVCgr+OyFsZPJ6r6s0ZKLTsV1blmTkzTqcS4G8k8eYet/zAaDGY5S/VEIeb72LrG1/3K55D9pARDJJP522EHdZfaZXMb0k2YGzZYvl5yOZ0IX+jjt00rv3Rra4YrWj/LjxfsC9V5WJi0wKac+bTg0EyAqkUtVZ9VGb9fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=sXW1ZkB2; arc=none smtp.client-ip=80.12.242.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id C3mwtFV0AeGuUC3mxtsoiA; Fri, 15 Nov 2024 22:23:35 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1731705815;
+	bh=Hs/wZDfKXx3ShBLaY4pSoUha6GqQ4qK+FdcROdbUR3o=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=sXW1ZkB2a1904wsfA+dXdNNvVC5/+Q3NlyOKX6RxWyt7VipMhR20sWwrck/u81oBX
+	 8EPnl28rnZPHvmUOPT0fRY9+VTeMLvj4TXP1hEn9YyvHXnKSoHjTUveXNiKZcfWU1u
+	 OLxIHAaNhqjmyKjtOEbwa4j849DWDuwqlEduxJIkfpSAaPZGxtW2mWQ+wqipEmgz4B
+	 gzuzJvpndLaVjVvYBc1tw7H+nehgfjhqriwLVnAU90GgU+N3lPeJWJBpRnhWRfeWQ2
+	 IJwwVDaSVRfNMWjE1OeFN5AfVaCx6PKeeXDTV1tq5on/V5soxFuy2ILeVHSePdBgYY
+	 zVat3qTHOayYg==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 15 Nov 2024 22:23:35 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] parport: parport_serial: Constify some structures
+Date: Fri, 15 Nov 2024 22:23:21 +0100
+Message-ID: <d658d87078312fd2860a91a167eaa7ca5365ea23.1731705791.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241115-converge-secs-to-jiffies-v1-22-19aadc34941b@linux.microsoft.com>
-References: <20241115-converge-secs-to-jiffies-v1-0-19aadc34941b@linux.microsoft.com>
-In-Reply-To: <20241115-converge-secs-to-jiffies-v1-0-19aadc34941b@linux.microsoft.com>
-To: Pablo Neira Ayuso <pablo@netfilter.org>, 
- Jozsef Kadlecsik <kadlec@netfilter.org>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>, 
- Nicolas Palix <nicolas.palix@imag.fr>, Daniel Mack <daniel@zonque.org>, 
- Haojian Zhuang <haojian.zhuang@gmail.com>, 
- Robert Jarzmik <robert.jarzmik@free.fr>, 
- Russell King <linux@armlinux.org.uk>, Heiko Carstens <hca@linux.ibm.com>, 
- Vasily Gorbik <gor@linux.ibm.com>, 
- Alexander Gordeev <agordeev@linux.ibm.com>, 
- Christian Borntraeger <borntraeger@linux.ibm.com>, 
- Sven Schnelle <svens@linux.ibm.com>, Ofir Bitton <obitton@habana.ai>, 
- Oded Gabbay <ogabbay@kernel.org>, 
- Lucas De Marchi <lucas.demarchi@intel.com>, 
- =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
- Rodrigo Vivi <rodrigo.vivi@intel.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jeroen de Borst <jeroendb@google.com>, 
- Praveen Kaligineedi <pkaligineedi@google.com>, 
- Shailend Chand <shailend@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- James Smart <james.smart@broadcom.com>, 
- Dick Kennedy <dick.kennedy@broadcom.com>, 
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- =?utf-8?q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>, 
- Jens Axboe <axboe@kernel.dk>, Kalle Valo <kvalo@kernel.org>, 
- Jeff Johnson <jjohnson@kernel.org>, 
- Catalin Marinas <catalin.marinas@arm.com>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- Jack Wang <jinpu.wang@cloud.ionos.com>, 
- Marcel Holtmann <marcel@holtmann.org>, 
- Johan Hedberg <johan.hedberg@gmail.com>, 
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, 
- Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
- Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>, 
- Joe Lawrence <joe.lawrence@redhat.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Lucas Stach <l.stach@pengutronix.de>, 
- Russell King <linux+etnaviv@armlinux.org.uk>, 
- Christian Gmeiner <christian.gmeiner@gmail.com>, 
- Louis Peens <louis.peens@corigine.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, cocci@inria.fr, 
- linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
- linux-scsi@vger.kernel.org, xen-devel@lists.xenproject.org, 
- linux-block@vger.kernel.org, linux-wireless@vger.kernel.org, 
- ath11k@lists.infradead.org, linux-mm@kvack.org, 
- linux-bluetooth@vger.kernel.org, linux-staging@lists.linux.dev, 
- linux-rpi-kernel@lists.infradead.org, ceph-devel@vger.kernel.org, 
- live-patching@vger.kernel.org, linux-sound@vger.kernel.org, 
- etnaviv@lists.freedesktop.org, oss-drivers@corigine.com, 
- linuxppc-dev@lists.ozlabs.org, 
- Anna-Maria Behnsen <anna-maria@linutronix.de>, 
- Easwar Hariharan <eahariha@linux.microsoft.com>, 
- Michael Kelley <mhklinux@outlook.com>, Thomas Gleixner <tglx@linutronix.de>, 
- Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
-secs_to_jiffies() is defined in hci_event.c and cannot be reused by
-other call sites. Hoist it into the core code to allow conversion of the
-~1150 usages of msecs_to_jiffies() that either:
+'struct parport_pc_pci, 'struct pci_device_id' and 'struct pciserial_board'
+are not modified in this driver.
 
- - use a multiplier value of 1000 or equivalently MSEC_PER_SEC, or
- - have timeouts that are denominated in seconds (i.e. end in 000)
+Constifying these structures moves some data to a read-only section, so
+increase overall security.
 
-It's implemented as a macro to allow usage in static initializers.
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   8125	   5232	      0	  13357	   342d	drivers/parport/parport_serial.o
 
-This will also allow conversion of yet more sites that use (sec * HZ)
-directly, and improve their readability.
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  12272	   1072	      0	  13344	   3420	drivers/parport/parport_serial.o
 
-Suggested-by: Michael Kelley <mhklinux@outlook.com>
-Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-Link: https://lore.kernel.org/all/20241030-open-coded-timeouts-v3-1-9ba123facf88@linux.microsoft.com
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- include/linux/jiffies.h   | 13 +++++++++++++
- net/bluetooth/hci_event.c |  2 --
- 2 files changed, 13 insertions(+), 2 deletions(-)
+Compile tested-only.
+---
+ drivers/parport/parport_serial.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/jiffies.h b/include/linux/jiffies.h
-index 1220f0fbe5bf9fb6c559b4efd603db3e97db9b65..0a7382753c6b636fe285599953e314fb7479ea01 100644
---- a/include/linux/jiffies.h
-+++ b/include/linux/jiffies.h
-@@ -526,6 +526,19 @@ static __always_inline unsigned long msecs_to_jiffies(const unsigned int m)
- 	}
+diff --git a/drivers/parport/parport_serial.c b/drivers/parport/parport_serial.c
+index 3644997a8342..9ffbd69a32d9 100644
+--- a/drivers/parport/parport_serial.c
++++ b/drivers/parport/parport_serial.c
+@@ -118,7 +118,7 @@ static int netmos_parallel_init(struct pci_dev *dev, struct parport_pc_pci *par,
+ 	return 0;
  }
  
-+/**
-+ * secs_to_jiffies: - convert seconds to jiffies
-+ * @_secs: time in seconds
-+ *
-+ * Conversion is done by simple multiplication with HZ
-+ *
-+ * secs_to_jiffies() is defined as a macro rather than a static inline
-+ * function so it can be used in static initializers.
-+ *
-+ * Return: jiffies value
-+ */
-+#define secs_to_jiffies(_secs) ((_secs) * HZ)
-+
- extern unsigned long __usecs_to_jiffies(const unsigned int u);
- #if !(USEC_PER_SEC % HZ)
- static inline unsigned long _usecs_to_jiffies(const unsigned int u)
-diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
-index 0bbad90ddd6f87e87c03859bae48a7901d39b634..7b35c58bbbeb79f2b50a02212771fb283ba5643d 100644
---- a/net/bluetooth/hci_event.c
-+++ b/net/bluetooth/hci_event.c
-@@ -42,8 +42,6 @@
- #define ZERO_KEY "\x00\x00\x00\x00\x00\x00\x00\x00" \
- 		 "\x00\x00\x00\x00\x00\x00\x00\x00"
+-static struct parport_pc_pci cards[] = {
++static const struct parport_pc_pci cards[] = {
+ 	/* titan_110l */		{ 1, { { 3, -1 }, } },
+ 	/* titan_210l */		{ 1, { { 3, -1 }, } },
+ 	/* netmos_9xx5_combo */		{ 1, { { 2, -1 }, }, netmos_parallel_init },
+@@ -168,7 +168,7 @@ static struct parport_pc_pci cards[] = {
+ 	/* brainboxes_px263 */	{ 1, { { 3, -1 }, } },
+ };
  
--#define secs_to_jiffies(_secs) msecs_to_jiffies((_secs) * 1000)
--
- /* Handle HCI Event packets */
+-static struct pci_device_id parport_serial_pci_tbl[] = {
++static const struct pci_device_id parport_serial_pci_tbl[] = {
+ 	/* PCI cards */
+ 	{ PCI_VENDOR_ID_TITAN, PCI_DEVICE_ID_TITAN_110L,
+ 	  PCI_ANY_ID, PCI_ANY_ID, 0, 0, titan_110l },
+@@ -328,7 +328,7 @@ MODULE_DEVICE_TABLE(pci,parport_serial_pci_tbl);
+  * Cards not tested are marked n/t
+  * If you have one of these cards and it works for you, please tell me..
+  */
+-static struct pciserial_board pci_parport_serial_boards[] = {
++static const struct pciserial_board pci_parport_serial_boards[] = {
+ 	[titan_110l] = {
+ 		.flags		= FL_BASE1 | FL_BASE_BARS,
+ 		.num_ports	= 1,
+@@ -619,7 +619,7 @@ struct parport_serial_private {
+ static int serial_register(struct pci_dev *dev, const struct pci_device_id *id)
+ {
+ 	struct parport_serial_private *priv = pci_get_drvdata (dev);
+-	struct pciserial_board *board;
++	const struct pciserial_board *board;
+ 	struct serial_private *serial;
  
- static void *hci_ev_skb_pull(struct hci_dev *hdev, struct sk_buff *skb,
-
+ 	board = &pci_parport_serial_boards[id->driver_data];
 -- 
-2.34.1
+2.47.0
 
 
