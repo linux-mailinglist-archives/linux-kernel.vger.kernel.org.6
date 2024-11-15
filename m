@@ -1,127 +1,101 @@
-Return-Path: <linux-kernel+bounces-410675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21D549CDED2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:02:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD7A9CDECB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:00:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D786C283A9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:02:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E70F71F23774
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8A21BFE00;
-	Fri, 15 Nov 2024 13:01:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="B5AAxyUs"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4D31C07C3;
+	Fri, 15 Nov 2024 13:00:13 +0000 (UTC)
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E6B18C034;
-	Fri, 15 Nov 2024 13:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F97D76035;
+	Fri, 15 Nov 2024 13:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731675707; cv=none; b=EAlEn8LO0gcsKhwpPJI3PfY5PL6+NFrI8PkQHAL7YHJyxiYQJ4MdmNoTZ0GViVZ+X3hn9LlVodaQElcpkBau/HZjuJC5nDXoAAT8A9PGJJvg2JafkPazQSKy0K3Ju2vsjmsYHWrL9safcJ27wLa0C/ntqtq1ZZOMKx8JmybT+5I=
+	t=1731675613; cv=none; b=YeKSdTByp9UmgM5WI2ceJBqoT0CHBxnxnl58cWuU2+I1dPdkNOyp7KrzAwa9xjaOksyF071P3MqjliLfdKHOA5AF5GNjqIFXoelDdO+VyiG+fsUtKnSiHuNog5BlIZJVI1/pKA0uOJt4EpP1bA52yXy2tsqmDEYiZXqSv//p/GM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731675707; c=relaxed/simple;
-	bh=1lqXTJ5LEuxXFklhwIpxvIBS1wTM/RN1yjPv/nA7NCo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QuRQ9LfmVEO9vVaVmlV7/r2UmZqftAB/2EZh2VPzMifskS6th+5wAI2Of2WwgIx0FUJoo8QMX4aHrDMKUj9BWVx6wq/TQzTT7LBGrKL4pT+vp6qFf0GRtXcXWOHSsHNXskbJFCXsTMqUdff3Y6hta1rfbeZevaCiDrJlU/+zGh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=B5AAxyUs; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from wse.fritz.box (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPA id F01FB2FC005D;
-	Fri, 15 Nov 2024 14:01:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1731675703;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kvTGolRSXKQu3OPFCUVk1lx0gdMkUUzStzWSVGW9QVE=;
-	b=B5AAxyUsOFUN8HUwuP5XTtnwTBHKqdocbSmJxx4FjigJjLOzJFBdt2WCd0dhQxU+y/CCdf
-	P+v/DkhcpPeBDQuZOIHYeAqIf+f6he9cvgYtz1QfGWDJIHFNtqJ51ZKi++VCTUWJJExmDv
-	pDO9WvP8GAIn6s3h4AtyI0Lhlrkrp8A=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-From: Werner Sembach <wse@tuxedocomputers.com>
-To: u.kleine-koenig@baylibre.com,
-	mcgrof@kernel.org,
-	petr.pavlu@suse.com,
-	samitolvanen@google.com,
-	da.gomez@samsung.com,
-	linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@leemhuis.info,
-	vv@tuxedocomputers.com,
-	cs@tuxedo.de,
-	wse@tuxedocomputers.com
-Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Subject: [PATCH v3 2/2] module: Block some modules by TUXEDO from accessing GPL symbols
-Date: Fri, 15 Nov 2024 13:58:42 +0100
-Message-ID: <20241115130139.1244786-3-wse@tuxedocomputers.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241115130139.1244786-1-wse@tuxedocomputers.com>
-References: <20241115130139.1244786-1-wse@tuxedocomputers.com>
+	s=arc-20240116; t=1731675613; c=relaxed/simple;
+	bh=mCnRWVyekBUyqxkFbvRf5JlXVVEgALUqhJyS4P78EI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kVHOAcigGunD9pGeUNAk0uB19cWTgAkemKrEiQIn05wMgVHUJNZSs92dCPsDhP0c/nsNOv/DtHnEIpcGzNHbjSe7lKj77R5iESBbeYasbaz3NHc/rRCLygtip3aKTdmqf3g+uYhZmXrd3JINx/Fdr9WYZFomnt46ZlzkhkBVEMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 147642800BBF3;
+	Fri, 15 Nov 2024 14:00:07 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 0DC5D3D0A2F; Fri, 15 Nov 2024 14:00:07 +0100 (CET)
+Date: Fri, 15 Nov 2024 14:00:07 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Stefan Wahren <wahrenst@gmx.net>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] PCI/PME+pciehp: Request IRQF_ONESHOT because bwctrl
+ shares IRQ
+Message-ID: <ZzdF1zrgQNNRlkgP@wunner.de>
+References: <20241114142034.4388-1-ilpo.jarvinen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241114142034.4388-1-ilpo.jarvinen@linux.intel.com>
 
-From: Uwe Kleine-KÃ¶nig <ukleinek@kernel.org>
+On Thu, Nov 14, 2024 at 04:20:34PM +0200, Ilpo Järvinen wrote:
+> --- a/drivers/pci/hotplug/pciehp_hpc.c
+> +++ b/drivers/pci/hotplug/pciehp_hpc.c
+> @@ -68,7 +68,8 @@ static inline int pciehp_request_irq(struct controller *ctrl)
+>  
+>  	/* Installs the interrupt handler */
+>  	retval = request_threaded_irq(irq, pciehp_isr, pciehp_ist,
+> -				      IRQF_SHARED, "pciehp", ctrl);
+> +				      IRQF_SHARED | IRQF_ONESHOT,
+> +				      "pciehp", ctrl);
+>  	if (retval)
+>  		ctrl_err(ctrl, "Cannot get irq %d for the hotplug controller\n",
+>  			 irq);
 
-TUXEDO has not yet relicensed all modules for GPLv2+ as former contributer
-need to be contacted that comited code under GPLv3+.
+I don't think this will work.  The IRQ thread pciehp_ist() may write
+to the Slot Control register and await a Command Completed event,
+e.g. when turning Slot Power on/off, changing LEDs, etc.
 
-So teach the module loader that these modules are proprietary despite
-their declaration to be GPLv2 compatible until the relicensing is complete.
+What happens then is, the hardware sets the Command Completed bit in
+the Slot Status register and signals an interrupt.  The hardirq handler
+pciehp_isr() reads the Slot Status register, acknowledges the
+Command Completed event, sets "ctrl->cmd_busy = 0" and wakes up the
+waiting IRQ thread.
 
-Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
----
- kernel/module/main.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+In other words, pciehp does need the interrupt to stay enabled while
+the IRQ thread is running so that the hardirq handler can receive
+Command Completed interrupts.
 
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 905d7b60dd709..3f391183aaf97 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -2029,6 +2029,29 @@ static const char *module_license_offenders[] = {
- 
- 	/* lve claims to be GPL but upstream won't provide source */
- 	"lve",
-+
-+	/*
-+	 * Tuxedo distributes their kernel modules under GPLv3, but intentially
-+	 * lies in their MODULE_LICENSE() calls.
-+	 * See https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/a8c09b6c2ce6393fe39d8652d133af9f06cfb427
-+	 */
-+	"tuxedo_io",
-+	"tuxedo_nb04_keyboard",
-+	"tuxedo_nb04_wmi_ab",
-+	"tuxedo_nb04_wmi_bs",
-+	"tuxedo_nb04_sensors",
-+	"tuxedo_nb04_power_profiles",
-+	"tuxedo_nb04_kbd_backlight",
-+	"tuxedo_nb05_keyboard",
-+	"tuxedo_nb05_kbd_backlight",
-+	"tuxedo_nb05_power_profiles",
-+	"tuxedo_nb05_ec",
-+	"tuxedo_nb05_sensors",
-+	"tuxedo_nb05_fan_control",
-+	"clevo_wmi",
-+	"tuxedo_keyboard",
-+	"clevo_acpi",
-+	"uniwill_wmi",
- };
- 
- /*
--- 
-2.43.0
+Note that DPC also does not use IRQF_ONESHOT, so you'd have to change
+that as well in this patch.  The Raspberry Pi happens to not support
+DPC, so Stefan didn't see an error related to it.
 
+I'm afraid you need to amend bwctrl to work without IRQF_ONESHOT rather
+than changing all the others.
+
+Thanks,
+
+Lukas
 
