@@ -1,84 +1,110 @@
-Return-Path: <linux-kernel+bounces-410440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49D059CDBB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:35:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F1AA9CDBB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:35:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D92528328B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:35:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91854B25107
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F1618FC84;
-	Fri, 15 Nov 2024 09:35:05 +0000 (UTC)
-Received: from cmccmta3.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662CE189F39
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401AD18FDC8;
+	Fri, 15 Nov 2024 09:35:20 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1DB189F39;
+	Fri, 15 Nov 2024 09:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731663305; cv=none; b=agw4acqVUEc4xf0aMlaZTVvzNmDPbiazRzqDen1rHoyCNFWRQA8q4Tohj/R2gV/q8OjPhiB3IlLSmIoz/RlPDupKCJoZmpJAxnpit4jAFsevnF1Wkxz8MwGo+o9GjnOeM+j9yIpOcqNYCmwPi9m9MkZsllYBBMYHlwnAAkQqZcY=
+	t=1731663319; cv=none; b=GJ4ENXaNZbYg7pavTwsSHmEEQeZMBMiKxYiz0oMHTMrkvSt9eE3gPh21g1GisiwNWDVhtiX55/lvOIvE87IRyIqPw5WwUJJLavXJYyqiBc/VpU/elYzPyNeYBUjqPL7r1NjboQhxaP4HZAUNMO1Rtx1Ed+T+JSIXfzchJ1mMRYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731663305; c=relaxed/simple;
-	bh=hs9pSwBhmBSMbVF9K3iLga+M+zHCahCzTFy61YS6nkY=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=Fljfca/6k0AH+3gjOB+bNq5Oqu7/n5j6GNviTUWv/rFTgZVlu2spVnwobbeabQHEjlxyFKTIEWZnRACDPvg2JnmB6pxD+gi2wK13PugQNWPsbZ/nQms1MWJHx4KJoIsxr5hXOjkI1EaX8IZ/B98pvZX0K0zkzzCT5JG8X0uw9Bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app09-12009 (RichMail) with SMTP id 2ee9673715c170c-32722;
-	Fri, 15 Nov 2024 17:34:58 +0800 (CST)
-X-RM-TRANSID:2ee9673715c170c-32722
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from ubuntu.localdomain (unknown[10.55.1.70])
-	by rmsmtp-syy-appsvr01-12001 (RichMail) with SMTP id 2ee1673715c2037-f4c40;
-	Fri, 15 Nov 2024 17:34:58 +0800 (CST)
-X-RM-TRANSID:2ee1673715c2037-f4c40
-From: Zhu Jun <zhujun2@cmss.chinamobile.com>
-To: catalin.marinas@arm.com
-Cc: will@kernel.org,
-	ardb@kernel.org,
-	peterx@redhat.com,
-	joey.gouly@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	zhujun2@cmss.chinamobile.com
-Subject: [PATCH] arm64: asm: Fix the cacography in pgtable.h
-Date: Fri, 15 Nov 2024 01:34:56 -0800
-Message-Id: <20241115093456.7310-1-zhujun2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1731663319; c=relaxed/simple;
+	bh=FqFc6TLGuxk07hm5TrVP+dHDlEr4YWXsWODFt2U9+xo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mdtvirYAg/aLai3XSQV94yUsN3fvH5Sw47q0QH5xnywyhkG2q/HLpe7wINrG1ibPqrzXsbC0/ycbQETmJvZ9wy4w4bU35Za7Mpg1wPO+Xy6RnCS749D4jr8m+VPjPhS+Xwp/oA2gob7zNtgcPxfHAT2ccJQsn/svl/5AZfwA4DE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 905D43000A0D2;
+	Fri, 15 Nov 2024 10:35:10 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 7E4703D0A00; Fri, 15 Nov 2024 10:35:10 +0100 (CET)
+Date: Fri, 15 Nov 2024 10:35:10 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Terry Bowman <terry.bowman@amd.com>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, nifan.cxl@gmail.com, ming4.li@intel.com,
+	dave@stgolabs.net, jonathan.cameron@huawei.com,
+	dave.jiang@intel.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, dan.j.williams@intel.com,
+	bhelgaas@google.com, mahesh@linux.ibm.com, ira.weiny@intel.com,
+	oohall@gmail.com, Benjamin.Cheatham@amd.com, rrichter@amd.com,
+	nathan.fontenot@amd.com, Smita.KoralahalliChannabasappa@amd.com,
+	Shuai Xue <xueshuai@linux.alibaba.com>,
+	Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCH v3 06/15] PCI/AER: Change AER driver to read UCE fatal
+ status for all CXL PCIe port devices
+Message-ID: <ZzcVzpCXk2IpR7U3@wunner.de>
+References: <20241113215429.3177981-1-terry.bowman@amd.com>
+ <20241113215429.3177981-7-terry.bowman@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241113215429.3177981-7-terry.bowman@amd.com>
 
-The word 'trasferring' is wrong, so fix it.
+On Wed, Nov 13, 2024 at 03:54:20PM -0600, Terry Bowman wrote:
+> The AER service driver's aer_get_device_error_info() function doesn't read
+> uncorrectable (UCE) fatal error status from PCIe upstream port devices,
+> including CXL upstream switch ports. As a result, fatal errors are not
+> logged or handled as needed for CXL PCIe upstream switch port devices.
+> 
+> Update the aer_get_device_error_info() function to read the UCE fatal
+> status for all CXL PCIe port devices. Make the change to not affect
+> non-CXL PCIe devices.
+> 
+> The fatal error status will be used in future patches implementing
+> CXL PCIe port uncorrectable error handling and logging.
+[...]
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -1250,7 +1250,8 @@ int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info)
+>  	} else if (type == PCI_EXP_TYPE_ROOT_PORT ||
+>  		   type == PCI_EXP_TYPE_RC_EC ||
+>  		   type == PCI_EXP_TYPE_DOWNSTREAM ||
+> -		   info->severity == AER_NONFATAL) {
+> +		   info->severity == AER_NONFATAL ||
+> +		   (pcie_is_cxl(dev) && type == PCI_EXP_TYPE_UPSTREAM)) {
+>  
+>  		/* Link is still healthy for IO reads */
+>  		pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_STATUS,
 
-Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
----
- arch/arm64/include/asm/pgtable.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Just a heads-up, there's another patch pending by Shuai Xue (+cc)
+which touches the same code lines.  It re-enables error reporting
+for PCIe Upstream Ports (as well as Endpoints) under certain
+conditions:
 
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index c329ea061dc9..4a5acf522c82 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -1338,7 +1338,7 @@ static inline void ___ptep_set_wrprotect(struct mm_struct *mm,
- }
- 
- /*
-- * __ptep_set_wrprotect - mark read-only while trasferring potential hardware
-+ * __ptep_set_wrprotect - mark read-only while transferring potential hardware
-  * dirty status (PTE_DBM && !PTE_RDONLY) to the software PTE_DIRTY bit.
-  */
- static inline void __ptep_set_wrprotect(struct mm_struct *mm,
--- 
-2.17.1
+https://lore.kernel.org/all/20241112135419.59491-3-xueshuai@linux.alibaba.com/
 
+That was originally disabled by Keith Busch (+cc) with commit
+9d938ea53b26 ("PCI/AER: Don't read upstream ports below fatal errors").
 
+There's some merge conflict potential here if your series goes into
+the cxl tree and Shuai's patch into the pci tree in the next cycle.
 
+Thanks,
+
+Lukas
 
