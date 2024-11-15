@@ -1,377 +1,221 @@
-Return-Path: <linux-kernel+bounces-410222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98CEB9CD692
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:27:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FC079CD696
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:38:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8EF4B2401A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 05:27:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F07D12831B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 05:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8087917C220;
-	Fri, 15 Nov 2024 05:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jn/vDlmL"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD6F17C22F;
+	Fri, 15 Nov 2024 05:38:41 +0000 (UTC)
+Received: from MA0PR01CU009.outbound.protection.outlook.com (mail-southindiaazon11020094.outbound.protection.outlook.com [52.101.227.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D744B17B50B
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 05:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A541547CC
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 05:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.227.94
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731648448; cv=fail; b=KBg4HsSAjEXdVMLOR2aOCh+UEtS0OKFTjzuwRGYQELZg2kgGA4ZalxjUg9mE4Xt+lKcvVKxjLZGUv9DGlsFj4/mouWEyp/414scq1UvDHXjDRHn7pMdeFWe8XA6cXDsyoIeRbP0XPhKoSp/gnxrzVpyuT9yhK+xg6DxYl+C9asA=
+	t=1731649121; cv=fail; b=BHYRKWh3p2uGbabK4koKqFUScUJzlBN5GKDRB5WnGLCNDANJb7LAOKhADUMS0Gx7BBxjSHSrJK6rL/f6/uRHer9rW5E5YP9ZNAgmbU5QvO5FidaHuIfItj5uCmy9iOBu6ydIdpWawL9YhUhvSWg+ahrNgKNUpFCU2+Eda7HfDHQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731648448; c=relaxed/simple;
-	bh=D0olgV1sOl9tpm7C+pdV4ZXLA8OZN0Wq+6JQU1/aQ/Q=;
-	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
-	 MIME-Version:Subject; b=UCh5WGMNbT2T6kN7z7gzlC1YKD5JBsuSpofiylI3EbRQpHANioyQDqQDihM8gW2KkZGRmJVpDgK5SLn1zHezkU7B54Ewtm00wQNk9U01plLVrdLEM/Bj7DpntoZVp0iqBtu0AWOOiCkmCdruTupiie/I93U2N8pYNopaSDYLZps=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jn/vDlmL; arc=fail smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AF0k3hR015087
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 05:27:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	pp1; bh=eHkws7WAptNxcNASQ6jdHBmHoEnh1SI8hXytTv4AH2A=; b=jn/vDlmL
-	BT5KXf+2IKmzwd0mH/MYx7VXS55xFZLBdftvwt65SKgQ9zUyfxjNYCWH29u1YcvK
-	Q8GjX3fV3uEG/QXu2x9d1ovJNqDP8pyJk/m9/q/Xqi4mByIIc/hLZOhL/FrOEO38
-	nGDCIP411ru2mvZ8U+evjuT1cA1bb0w3VWNaeS8/gjWxMwi7mKPLZmgr6nElMA/f
-	OOlb2t5f0Gol30XNFoSLPdCXw6IpK1xbm07Mv8PP6gKr7ToFRIgZkZ7I+DZngZOk
-	zL7/WwpIAKdPusHPniOmurAiDioYHtrA42pOATJdChZOsfe+yc2Wytr7/Vgd+z67
-	vyH6MiNLtTSGCQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42wuvc123u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 05:27:25 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AF5RPgx013254
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 05:27:25 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42wuvc123n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 05:27:24 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AF5Md4D003652;
-	Fri, 15 Nov 2024 05:27:24 GMT
-Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2043.outbound.protection.outlook.com [104.47.51.43])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42wuvc123j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 15 Nov 2024 05:27:24 +0000 (GMT)
+	s=arc-20240116; t=1731649121; c=relaxed/simple;
+	bh=loRQlqDZOltf3awVlj26WRMGGe1Mc0lH/LnfiJscb64=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=CrRvjl0enq79ovlWGKgWDxaglHCPogTDNV1LPY7Uwx3YZoSpSKHpTmslxVV8fWXIpV6Klm3kOkvIZqPDnVR7SYipisQQuP9qh93/53H2yIm6jZbaHjCAauDd0OhFK+TyoLLpr8qHLmrMU9gCls0JOVnsnl+0our0HJXm1LsZp/4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=pass smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=52.101.227.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siliconsignals.io
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=diDTuxBQnr6LTKHuVDCvRa8K464MLz9AXzpI/1R7V89jeUiRbOVGQxtfAetTlUwFbFjD7gW0HtUFKAEMYj2yICkhnS+PLJ1pLwo1hNxjj3F5HpeKhnfqwuC6Eh1xHCCApzYPCzBwzoqcSpPcwhiBJDp/nl0ZayTXSgwKgShKLRvKqc7ihpGbmspsSFKdn8YG2IlP+i0fU4z3RsI4lHsCb5yKtXyjrV/hj2gAuFDTcgpDOiY4ArUcyLVK1t+wYs9yG5aKuVhpAvx4AMCaW6fsxZrn9fuj7uM8GXLOYSoi2REbYjUENiUnKBRfHvM+xzH0Kqd8oBidM9wKX6JOkGjSmw==
+ b=MxZ8ZTYuIIN8H0GKNmUbI0Q3s0AekLcK4WN02L+C/WzJ5J5XdV2miiHz926y8+zU+//CNRYEi3QqWWjCaU/+v6zpk0nUgXpTicrrXlBAmK2LfjQ6pZL1XNmQjuvgtlRXou+RqJOx5msbf5HIFP/2ba/63dqqMtel4idtSqeGnL/d4tq9katEIqKZColhTtoSUfvPCjqe5XhAWPRFi0ds5H1zwJSujJwwJkNZ+/A171PvH7RF1V4dxAqwDbTDyBmcCJW9Xh7TLbFSdMe6W3bjtJaMyBa/fksao7RLPF+NcCnofvp9k16fIkj7exs9qXKUTxltyP6SOZ5KeX2h58GQqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=St4GYHrgOaPL6F7ZAqlvCEeUzrscxB50ihyefk6sdUM=;
- b=J0wJdBySJK5H2iIYUIAAzZdkm80SmJJpGlnwE0ADzY+yr11t9p4QlfdJprxG8OM5RKDUC3zwRAE1uJ4EQjqKHdOmoga8c6lff6bnvL6qD/Ov4AbKjO1Dsu5hfDnFudicE3Xvjy1PlueCA0GA4TUxQZT1LVL5kMpKsGCg3436vT+kPWmLjIXUzDNneXR6szunJtLTtR+ZZCHNHcxU8c64AtlerzBFPFqQhSvj9susV6TpHxdPMgBwxox3aMvj5l4mZvTN1qLP0YbguuSob+J34822ghjc2nblDG79mnSZIR4eboOh+xLqk0HgN74bE0dN0+LGHERGg1HfpKVrFb+jvw==
+ bh=SVz4AKcMAuwonFvZ/Gp9Ev2rF/JsS/L1xWYm5V4XvyY=;
+ b=DaqU8T4d0Kejv8mBUIlg4Lqy2pgoaxcOefi/BgQHC7UcV6q3cBpkQUfuM0VPAVEQEjvhWJUBe4oyhTT2sGkZElrUYJ9Lyn0opWO6xcrjDoh4nXr5HMDX+x6IjqaW1Kf+z3mOIBp7hx7sybvcGX5LHdV3YWOIeQiNNZlCgnDbR54F5hG56iHy23ZhY+39bM07J5PJdWuX86WiPYc5igr8UnFSCtWUYxIiuXHb+oRhffenDmbjQP+cR+6iv3BK8cSDtxAhBEUubyQA9taMmYT0TAMB5fATskfOJORll21Ifvhiyi/wGSanYaqxDGWwQ30POuSS/0zMv/a9mJ3MeWNWuw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
- header.d=ibm.com; arc=none
-Received: from SA1PR15MB4839.namprd15.prod.outlook.com (2603:10b6:806:1e2::11)
- by BLAPR15MB3921.namprd15.prod.outlook.com (2603:10b6:208:27f::23) with
+ smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
+ header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siliconsignals.io;
+Received: from PN0P287MB2843.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:204::8)
+ by PN0P287MB1589.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:180::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.18; Fri, 15 Nov
- 2024 05:27:21 +0000
-Received: from SA1PR15MB4839.namprd15.prod.outlook.com
- ([fe80::c3e4:66da:7486:d945]) by SA1PR15MB4839.namprd15.prod.outlook.com
- ([fe80::c3e4:66da:7486:d945%3]) with mapi id 15.20.8158.017; Fri, 15 Nov 2024
- 05:27:21 +0000
-From: Aditya Bodkhe <Aditya.Bodkhe1@ibm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-CC: Masami Hiramatsu <mhiramat@kernel.org>,
-        Namhyung Kim
-	<namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner
-	<tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>,
-        Ian Rogers
-	<irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang
-	<kan.liang@linux.intel.com>,
-        Clark Williams <williams@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        Arnaldo Melo <acme@redhat.com>,
-        Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-        "Steinar H. Gunderson" <sesse@google.com>
-Thread-Topic: [EXTERNAL] [PATCH 2/3] perf disasm: Define stubs for the LLVM
- and capstone disassemblers
-Thread-Index: AQHbNx8LfX3As4X4hk+ixApc9pjOPQ==
-Date: Fri, 15 Nov 2024 05:27:21 +0000
-Message-ID: <6847C738-D2EB-4637-873C-20DF5FC64605@ibm.com>
-References: <20241111151734.1018476-1-acme@kernel.org>
- <20241111151734.1018476-3-acme@kernel.org>
- <B78FB6DF-24E9-4A3C-91C9-535765EC0E2A@ibm.com> <ZzT9oHzYdfLZwmJ_@x1>
-In-Reply-To: <ZzT9oHzYdfLZwmJ_@x1>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR15MB4839:EE_|BLAPR15MB3921:EE_
-x-ms-office365-filtering-correlation-id: 1bef3767-2fe9-4cd4-9e60-08dd05362dc9
-x-ld-processed: fcf67057-50c9-4ad4-98f3-ffca64add9e9,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?LzlkVWpyRk1WZ3RQblpqek5sRWRvMjQvam1Tc2VVU0hzOHorQk1HSlZxaERL?=
- =?utf-8?B?aUpFOENaSTZ1ZmtKMUowdElXMEVoRFpPZzM5U21QbktFdUhMN1lIY0ZuRHR5?=
- =?utf-8?B?WnE0NHMrT2lhUGkrWEQyM1lpM1JZcnMzVW5VMENXd1pjK0pzZzltNXQxUVJG?=
- =?utf-8?B?MGUrQUNyZ3J1dFJjcDhkSTJlaXZvYmZjY3VRNXZjM2xkbTh1MGNteXZOSU9G?=
- =?utf-8?B?amNmOFNYSUZZUGkzSTkvVCtiRy9qRFpKYWZsejZlOFRpbWExRm9iRW1oMlFq?=
- =?utf-8?B?cXc5OHNpRElaUDdkdlZKMFlaZlNNa1BTcXN5eFdkTkhoYllCSWppaGZtSzVL?=
- =?utf-8?B?RkoyK0svSEY2THdrY2x4UUtBYVpzVHE2b2ZOWGZ1akwrVkJQdlhrZUdmbk02?=
- =?utf-8?B?b1VIMzJOUU1OcWRFemNDV3kydmlabS9TdWtwOU5QN1gyajhhYWRpTlFoalpM?=
- =?utf-8?B?Zi9TWHI5bklQSTBPMVJ5QkZxSjNHa2ZjQitRWWZXdURkY3hMRHF3YWhMZzVR?=
- =?utf-8?B?OHFPd2NLdUFIN1dxK0M2U2hFcWtBYzZra3ErK1U1a0dvQjZLUnBEMlMwdW10?=
- =?utf-8?B?OEZQb05adEV5SnFRUk5ZQnk1VWZOU0lPdm0vdWJHS0NFLzRhSGdwQnVVMUJQ?=
- =?utf-8?B?bFo3WGthQy9kd0Z1Qml4ckg1OHZOYmhOTkh1cVd0ZTM2ZDIzSzZMR3I1S1kz?=
- =?utf-8?B?MHgyQUUyVC9sRVhneWdNK2dyci9hcG91djhXUEJ5OFBHalFSQy9qanl3NnRB?=
- =?utf-8?B?ai80U3RNOGdKdDdwRVF5Qzd3SGRWK2x6T28vb3FRbVNyLzd5U2lXZy8zSDBP?=
- =?utf-8?B?RnRndDBGWmhUNm94c3d6SGgrQ2lHOXVnTE5xTTBGRUZheGdnWFN6QUFrR0Fw?=
- =?utf-8?B?L0d2L2puWDBLeEtFdG9GZHNSNTBJT1d0WUZxUkY0OFg2YjdBNG9ZdzVFT1Jj?=
- =?utf-8?B?UStrUjRYcjZSc2ZHOW5BVWZOU0VScUlESVk4MDROMFdjYXlJZHo1YVlSZith?=
- =?utf-8?B?ZFZCODVlM0UvWE0zRE50cnhDVWRsaGdGWGtCYjZuVlJyZmZPb1cwNUZ4Wms2?=
- =?utf-8?B?ZWJWZVRjNjlYSDdDcjRpREhFTmxRZk9TbnRPL3ZoNElGemliaVVST2pxZkJz?=
- =?utf-8?B?SDdCTFk0WGJiRUNmZHNCSGhlaDdWbUJkVUFITHM5bUo5ZkFnVUZwTmZwMEVP?=
- =?utf-8?B?R3lyeDFjTWEvem01YkpGZER5TFBuQ214eXIzREplNVBpelgyNHloeUc3SGxm?=
- =?utf-8?B?cGNmYWFGYWRpckFPaEpzbUgvV2JubWFIamhvdWhRb25XWFJHY3U0Y1E2QXNO?=
- =?utf-8?B?WjRUdjM5SjlaWWEweGttYXlNYkYwWC8xcElDNmIyOHMwTG9yZnJiRnk3eUdk?=
- =?utf-8?B?RG9FODV6bWEydHNVQkI1VTVtbjhjQXJrNlJsaXpPTzNjekJvcngxMDlYYXFm?=
- =?utf-8?B?Q09QSUVnNlBPa1NicHFiZHlGcEtPVXB0cDdQeE4zSms4NVo0bnZ1U0dEZkJS?=
- =?utf-8?B?eXFydTkwbkVocXhsMEYvTW9aNFBSZVhzK2lLUlp2UFBCMExQZjlyOTlYZGFp?=
- =?utf-8?B?VzdMQmpPL2ZhU0x0NkQ2R3ZmeWNsSjQrZkQ5ZGErSVlYVHpua3U4OE9xdDZB?=
- =?utf-8?B?cHJoVlpxTHFKNE9mN1JxUCtyVFZac1JZK1kzSThHZGFyVll5OHBxZXdBbDJN?=
- =?utf-8?B?a1lRUENoaTY4aE1ScnJHeU5RcXZha1hBYU5KMlRySllWZDN6b3N6d3NKR1pM?=
- =?utf-8?B?blBTTjdwVHI2SmFOWXA3K00zVmZ6SjhYVlFYOWZwYmFKYXFTZGcxbG5DYkR5?=
- =?utf-8?B?ZE01Z0NtR2pRbTZJMXZpQlllQ0tTM1A2bUU3Zjh1Q0pTSUIxRFNxOERmbE1U?=
- =?utf-8?Q?QJ7Au5xa4YYaG?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB4839.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?OFFVd0N2M1JHWWtteVJsQVhjajgyK3lqQjRWTytNVyt6Y0ZjYzV4UEJsODlt?=
- =?utf-8?B?cjlKd0JYYzBVNVNYc0d3ZjJ4Yk8xYlE0TUFrdXp3ZUlhM2FHN1lpaFBpeHFH?=
- =?utf-8?B?eCtSRjV6aE8rckxZdEhaS2R3SUxHSnNiYkljQTJoTU5vbTR0QUFmZy9oanhO?=
- =?utf-8?B?ck5oMUFUUCt4cjdCdEVibVJKdFBpTWh2ZFRkZlJOUVN4RmhxY21VcDB0SWtS?=
- =?utf-8?B?UFk0WXUrVjhtbmtOZUoxd016empSbTFMSXAvKy9jUnZtWWxoK3h2S3MwU1I5?=
- =?utf-8?B?QlRCblVFWEI0M0h4QnpTcDU1dnBzdjhyWk1RdHA3VENyVmdVWVluczBoSkJu?=
- =?utf-8?B?emtaTEhnS0grRXhOWENvUWJTcXNjNnR4R3dYMkxMYk1xTk9rSldwUG4xcWw0?=
- =?utf-8?B?M1lESDBXQWpaTGpFYnVrOEVzYTN2YjhsL0ZNckQvUlV6cHlXK0tQbzVoQ1Vu?=
- =?utf-8?B?UUduQllZMXg2SWNwNWJlQjc3NExZV0tOa3RDeTVqb1ZCVlVPRWsyL2pKa1Bt?=
- =?utf-8?B?SVpSZ3c1QUdSUlJoVEtoZVdCS2FxenpvTm8xYUl6THV6dzUzMU94bUo3WTVK?=
- =?utf-8?B?ZmEvTTZJU1poZXowQmM0Tmt3ekZHbzZDL214d3dSaHNtV3dGWERxWlFpVm1k?=
- =?utf-8?B?OG5ENjIyeFQ2Wm1pN0h1aWRveUhUNXdxdUR1N0pPSkl5MDZNdEJscFJ0YjNk?=
- =?utf-8?B?RlJvTkxDZkZIT283V1lpUmpZaStyYmRKK1hDejBVdDZwT3JzaVhTYTFiLzha?=
- =?utf-8?B?SHl4c0hSUjBGb0swb2V0YnlkdlFMTi9vV212L1F5ODJMaWNxRWZncXdROGNB?=
- =?utf-8?B?QlZqSGp0OU5QUjlON0xxcDBKVGNpNUhDQmlQVXptM1VJMklrd29hdXZsY01J?=
- =?utf-8?B?VXFYOW1sdEZoNlA1UHlJdlFramRXRGFma0FiVEV1N3ZBNVJmMGZyTmMrSklI?=
- =?utf-8?B?VTVVaUs4MXVmRldnU1ZjMXVCVmRabTVZbC9nTHc5RXZnV2Q3bThERmE2ZjdD?=
- =?utf-8?B?cG5SSHBoZ0N1K2ZmZ0F0bmNzVHk4RWoramtFaFRwMlNDK2JOalQ5cGFGclIx?=
- =?utf-8?B?Z3lqc044aFhCNkM3OW5mdlBiV28yMFlGNTM4STh3b0VaTDNYaCtrb2RraWJH?=
- =?utf-8?B?S1pPU3FLTjNRWUNZUWNPT2dUNWdGNmg0bnBIWWU2VHVheVVxbkNSY3p5YmRO?=
- =?utf-8?B?RTgxVG9hQXFzL3ZoQ2xiMVhRYTJoYm54QmNZaVNEc1ZURVpaMWxucXFCVGhk?=
- =?utf-8?B?MWFpYkZVSEw1SEdVYmF3UlptOW8vbUh1blFxTG1LVXNvZXJWYnNRYzRCTDFt?=
- =?utf-8?B?cUNLTlloZ0Z3bmM1cTlSUnhVOEdnQ1NmY0N1ZjJyejl1S0cwbUdRM0owOXR2?=
- =?utf-8?B?WXpOVlhDSnc5N0NHQUZIaFZ6YVdYZzVTZXgxNWMrLzJpa0lJNzlON0xrTGZs?=
- =?utf-8?B?dC9mUEZJNlJRR0tDWCtHQjN6UFUzSEUwakIxeFduRTZMOHpzNFlSMVlGbWhq?=
- =?utf-8?B?eWhTOURLVGk3aFRHZXJqOFFHNjF6V3FzRXpXeDZkUU8yaGJJMlorOVRzT1hX?=
- =?utf-8?B?ZnJWcG41WXJDUnlqWm5HUmJIY3kxbUhhUGxBK1ZGYVV4bjAwVGFjVnh0WjVT?=
- =?utf-8?B?enVNQUkvM1Z5eCtscmlIdGk2Z01ZTk4vNVUrSVRFSU1qMExwV3Z3Q2NnVHhw?=
- =?utf-8?B?aVNNRkxFUWx1UklVVWhxRFFLYXJ5K2Vzd2J0S29wWUFGbGxhTkR0K3Q0YVFG?=
- =?utf-8?B?KzM5UGV1cFJCSGh6ci9sdUhpUmNYUHc3UmNmR3BVSnRPbzZ0TVg1enpQamxw?=
- =?utf-8?B?UkVOYi9teDRGUmpZMUZocDR3NW1LT3VtWEJyL3dDK2NDVlEzakhrS2ptYjJ6?=
- =?utf-8?B?MDg1L2wwcE5odTlXUkRnTG0ra1BwZDEvbzcyNDZnRzVrQlFlR0hzZmRvczJ2?=
- =?utf-8?B?eVBYWkptLzBxaEhZazFnS3Mxd1dwTmYvK3RDYVo5MnpHaUduTWliYVpwSW13?=
- =?utf-8?B?TWdHN3d4S2M2eWFpc3FvWE9GUDVQdDFhNDhoNDdvK2NSWlAzbmVEU2JBZnNV?=
- =?utf-8?B?RzdFSHR1TSttUDNwYThQL2NhNk9YWTBIZXV0NGtJOE9CeElCaVZJNkJhSXJK?=
- =?utf-8?B?NnJOOHJwL252YmdQZFlCRUR5K1RteTdBeFFDRGRYUGp6MXhlck13dkV3dXJu?=
- =?utf-8?B?ZVE9PQ==?=
-X-OriginatorOrg: ibm.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB4839.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1bef3767-2fe9-4cd4-9e60-08dd05362dc9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Nov 2024 05:27:21.0790
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: qwlS8RDuMqoQU5yw6c5XdXpDeTBtBas87pBw3hHzgKWrY9aJEm6j96nafyaWsmrvDBgDIdtCYqZaL/12LVKoqQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR15MB3921
-X-Proofpoint-GUID: 26owafF4oXIxHUoJFvaK8fxyXSaJ5YlS
-X-Proofpoint-ORIG-GUID: QncXRo8RyHn_y8NPHgZ6diH3W7PlGxeN
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F1B70FE0EC7FD04497D549A7A57BF5C5@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.29; Fri, 15 Nov
+ 2024 05:38:35 +0000
+Received: from PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
+ ([fe80::1134:92d7:1f68:2fac]) by PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
+ ([fe80::1134:92d7:1f68:2fac%3]) with mapi id 15.20.8158.017; Fri, 15 Nov 2024
+ 05:38:35 +0000
+From: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+To: will@kernel.org,
+	broonie@kernel.org,
+	anshuman.khandual@arm.com
+Cc: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4] arm64/cpufeature: Refactor conditional logic in init_cpu_ftr_reg()
+Date: Fri, 15 Nov 2024 11:06:35 +0530
+Message-ID: <20241115053740.20523-1-hardevsinh.palaniya@siliconsignals.io>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PN3PR01CA0140.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:bf::12) To PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:204::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re:  [PATCH 2/3] perf disasm: Define stubs for the LLVM and capstone
- disassemblers
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- priorityscore=1501 clxscore=1011 suspectscore=0 mlxscore=0 bulkscore=0
- lowpriorityscore=0 impostorscore=0 spamscore=0 adultscore=0 phishscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=2
- engine=8.19.0-2409260000 definitions=main-2411150041
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PN0P287MB2843:EE_|PN0P287MB1589:EE_
+X-MS-Office365-Filtering-Correlation-Id: 611c1095-92f6-4060-e250-08dd0537bf9f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?sSXezjCdTyPadODL68QLivLQtbmdClSTTGSY/2pYHCUxHnuAy9w0etKjqxgJ?=
+ =?us-ascii?Q?CG34/cW3z+9RTlvG9Pk68khuw3mAdAfPW/WhmZGz9ElyRoAuoVSIRuDdDQBx?=
+ =?us-ascii?Q?UMT4c9BHUl5JX6+q7AKSemyL7/ZFL4yDcMMT0XjtW3zqdmCtr23PO/2mKh+3?=
+ =?us-ascii?Q?gxsOkAyWaPnJmmGMy++gaBtaDnPDFnwottOfQRjOIT0bepc5ubAcbcP+djLb?=
+ =?us-ascii?Q?xP7hj36W6QZdnGXMjLS9eiv/TdzzOlrhxBT+vxxAWp9c0puSsFVX+Nr/wa7/?=
+ =?us-ascii?Q?ir5Ju4XlneRvbfW6+nOp4m8TtAkjDU8Fvkqtk8bQzGzFvr1DWiP7XtUXTVbp?=
+ =?us-ascii?Q?81LL4nm8WzqzgbQJQb4YEr0b9HUnmwjsRlm8BUabyrpvED6vcrn43NdUYaNt?=
+ =?us-ascii?Q?PDlsXs2DN3Nu0LRa8bfyyi7cw0fY5h6RBVn6SpomFxGlfG6srjiGxrpuCg3d?=
+ =?us-ascii?Q?gzbiNR8IUNMkakv0aQuV7AZOj4OsbAm4r0C8RjvNKVZNpQWScGV+cRCcJBe3?=
+ =?us-ascii?Q?UqTOdYJu3QSg8rcR2HDOuwkh9MFkaGDfM7dqDswFRXZjdFoKzRqHISAdGSnU?=
+ =?us-ascii?Q?dXcTJDInLpTOLQ/RZkodVXt+xdeO0H5UkPo7RsBic7y6wOAjQRmhMe06i6xr?=
+ =?us-ascii?Q?BALN09t80kGkNdu9txsB9OPPllX50eJp03+Pp+nfjOBhMTYRQaYoVhv/mBxQ?=
+ =?us-ascii?Q?L/DgS4eLFTd8HexDng1r/3o5+Rg/WiXs+Yeya7qgYZT1wYeZatYHSTgxUoVp?=
+ =?us-ascii?Q?U9tZPshfDuLH2S1xVpGkqohXwuc9cRxU/ryyJywudCz1QjvlL5oxY5VRU1D+?=
+ =?us-ascii?Q?P26okhvMa25Uya/ZjaWRH14dlSZTtS6gr05MAvAGKZN0RR+hLE7Moaau7KMA?=
+ =?us-ascii?Q?lQ/GZwOsr84EncFIOu+rEvnkWsEPmFwBkJTKbFKZFhE/Zl3bi7PEcF8rSZjf?=
+ =?us-ascii?Q?ZNXK3vMhJTGiowca/DadTFmRY1BCunpgiAG0l142tNRHK6XqcA0eVaTyymGq?=
+ =?us-ascii?Q?Pi23v19RFjgu6levFx8zDjQsOcqpitj0Qa1xOcmCDZcU4M7GgAJQNQ6midsx?=
+ =?us-ascii?Q?yNXMcae9yzUrEDQujJpWHtbWFhhRTfihRpOlOCWIOk0CckctKRdPhYrJSle7?=
+ =?us-ascii?Q?PSx562AWjpb+h9xbjcg1k0Wu9yeoolVWTsTtLROyCtWhVn18BPanz4PhDSAU?=
+ =?us-ascii?Q?OCczXvMWn2kTDMQuwJuSa3QX4tHY2NRhw8TNeVHBuqjLOtD1AN0SibwAQ8Ne?=
+ =?us-ascii?Q?uOjHphZbmt23MQvOglWpcIkSCIzz5PsSa4JfF/JEKvXV1PsKR+HKQbzvbZPJ?=
+ =?us-ascii?Q?TjQiLjJsMLWthbM/0cbvgNHmKkqL/ty6ap2C0Prtfrkuu/xIs6fVG+q2ntv+?=
+ =?us-ascii?Q?YcECr3E=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN0P287MB2843.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?tS6nOd1PySjMeQXcLIb0gHgI19IhLgf12VS4L1CORpzqfNb/7XeB/ctom8rr?=
+ =?us-ascii?Q?kC+g//ALO2oDVc2gf+VxU5g309H3qfdZnc1Puf7uL+AhAaYVbxRZeFYVN7n8?=
+ =?us-ascii?Q?rrdKriNrwXC5uKWCcjnNdCzNxfVqaDx3TfzmxwPMvWDn6i8iHlx24vmddn8w?=
+ =?us-ascii?Q?KSIK1FDOPSagc1yOAB2FhFXeNx94g2ra65zA//gTN0ILHmzzRs04p6MyrCwC?=
+ =?us-ascii?Q?71CYzwWGmPs2e8ZOaOZhlSAxe1d7UBNzqX0e+nfmNglVbkpS/oA90OpIWArS?=
+ =?us-ascii?Q?ATlyhVYKS1XjWkXU+zudtLX9Sr3GHSgWQybV/O93+8o9F4TO5m7auED9xX2u?=
+ =?us-ascii?Q?p+rKk4ehM+BriHllQR6jGIg+y8G+27nWy7PLVgHAcetZFFSRQzbp5+wchZHE?=
+ =?us-ascii?Q?wOmPGGSo8gV/pfMAYEXoC33CLh5bPJQczDaCRtv3A92mIm/lB+5n0QQIObnU?=
+ =?us-ascii?Q?cRODhYMauVgQa4Yqn5ySfjH6aGrTI6flM+8Qa9ba8UT0L06ERfNZq446M8Yz?=
+ =?us-ascii?Q?Ygi1qo7DDmuuvGHN8F+pchsFBLD75Yw46DYZ7xqAFPQiBGBgDcsGawPvfsdE?=
+ =?us-ascii?Q?jZjjs7H0a5CxJdyf+aEEinpWbqvaZ7tI6KX7xRH+k7Q+qhOrpkJz2Z3xoqK2?=
+ =?us-ascii?Q?m4WBDgnUYmERHEe1emBocvtopjm3B3OB7DFKpfMGf5mbyB0tfy8j1Tyd3W8r?=
+ =?us-ascii?Q?4gSiT9KJKIWX4y6X9AvD46EOz2IREXYbyBJ3zE4aBq3XY0R8DS0nXz5L0yfF?=
+ =?us-ascii?Q?VZy2Sme8xE/SNM+LzH0cThrFTB1V9VxaIVZoshM2ZJF+yLj3JNw0LqZil+55?=
+ =?us-ascii?Q?K4Tn2ZmpWjB7INgbeBlG8t7B/AxblWR5aUnv3fzCtYPasMAgaoRi2Olb/Mzz?=
+ =?us-ascii?Q?2zffx+zL02Pg+VEwOUVEq/Hx/UegKejeoBQbYtR8VOfmYYb+dvuFdIPCciMl?=
+ =?us-ascii?Q?+WxU416Y8dQJtMi6/UjQrFzwsGbF9GtGovl/oY1yMLvOPBjUplcCBlkDntxT?=
+ =?us-ascii?Q?i1cDqwreEVJuDmDGhgGd7jWeqRQiauYbn5k3XkYAtlXphK/AiHtMLbSiDG4M?=
+ =?us-ascii?Q?yi9aCd3Ce2xjVxcclpGCmdjdybgAAZ/gf3ZlTEMUV+d4w1MjeHrTXRdW38rr?=
+ =?us-ascii?Q?UM55h7aU8IM2BfYac/Q0F00lMVxszw+lYFgernN//MJn1YH/6UpwJcLWwWiy?=
+ =?us-ascii?Q?cQT1+pTQsjZ+Nh+W325QeaEfPTx/BSYCa3dyVPehoU41oczgaQ6PMeq983Gi?=
+ =?us-ascii?Q?5Hq0+DiRbsvhOhCGgaxVYjGJcMIXb6b0uCB1d9Qj1oeSoBFDaLNN1Fx+gaZd?=
+ =?us-ascii?Q?hEsi9necC/N0HrgQIjTzgAQNJ7PPrX/TpY5hmNZ5kZiTrXbWfhOD4rm4UdON?=
+ =?us-ascii?Q?RsrnTF7APGluj1oBLz0jEFJXhH3iwo7Sh/0vJunOZVC2q8ZbznNlG+metBz7?=
+ =?us-ascii?Q?uNmJlQMYRlj+xtGm30k17qRL11GD28pmfDtylmmd/4wSfk20rkUD97sVioXS?=
+ =?us-ascii?Q?13dGUiqxfHMdCiBBI+bx4I9g8HcPZID0ePdaeumMRXOQx+CLqDT1BqQzq8Ql?=
+ =?us-ascii?Q?9SHUlWfLJOjmeCEmynpCrK6hB97TJ4Xtp+7ksuWS7j25z1YdQAcwVWbm8pDB?=
+ =?us-ascii?Q?SDGawY5mMryc5dSO/km8PBzWHmVTRGqd4oKnOCQ+bLfq?=
+X-OriginatorOrg: siliconsignals.io
+X-MS-Exchange-CrossTenant-Network-Message-Id: 611c1095-92f6-4060-e250-08dd0537bf9f
+X-MS-Exchange-CrossTenant-AuthSource: PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2024 05:38:35.3904
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YLR2S4L0uYawDQx5qaCKvlZlCC0+G5M01RjZnTUzpYvW1RdagV3/PRFgf6vL9z/uv1qGkWDbVLZDuOerC40ppXhxLUubo4qhnrK09zysW0Vn7wHZHXR1EeN78e4iq0e3
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB1589
 
+Unnecessarily checks ftr_ovr == tmp in an extra else if, which is not
+needed because that condition would already be true by default if the
+previous conditions are not satisfied.
 
+		if (ftr_ovr != tmp) {
+		} else if (ftr_new != tmp) {
+		} else if (ftr_ovr == tmp) {
 
-> On 14 Nov 2024, at 12:57=E2=80=AFAM, Arnaldo Carvalho de Melo <acme@kerne=
-l.org> wrote:
->=20
-> On Wed, Nov 13, 2024 at 03:24:08PM +0000, Aditya Bodkhe wrote:
->> Hi Arnaldo
->> I was testing this change in powerpc setup I see below compilation error
->>=20
->> CC   util/disasm.o
->> util/disasm.c: In function =E2=80=98symbol__disassemble_capstone=E2=80=
-=99:
->> util/disasm.c:1728:9: error: expected declaration specifiers before =E2=
-=80=98symbol__disassembler_missing=E2=80=99
->> 1728 |     symbol__disassembler_missing("capstone", filename, sym);
->>   |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> util/disasm.c:1729:9: error: expected declaration specifiers before =E2=
-=80=98return=E2=80=99
->> 1729 |     return -1;
->>   |     ^~~~~~
->> util/disasm.c:1730:1: error: expected declaration specifiers before =E2=
-=80=98}=E2=80=99 token
->> 1730 | }
->>=20
->> Below patch fixes the issue
->=20
-> Thanks, I've folded your fix into the patch since it is still in the
-> tmp.perf-tools-next branch, added a note to the patch to give you
-> and Masami credit, both sent fixes that I had to slightly adjust:
->=20
-> ----
-> perf disasm: Define stubs for the LLVM and capstone disassemblers
->=20
-> This reduces the number of ifdefs in the main symbol__disassemble()
-> method and paves the way for allowing the user to configure the
-> disassemblers of preference.
->=20
-Hi Arnaldo
+Logic: The first and last conditions are inverses of each other, so
+the last condition must be true if the first two conditions are false.
 
-Thanks for adding the fixes. I tested with tmp.perf-tools-next and it compi=
-les fine
+Additionally, all branches set the variable str, making the subsequent
+"if (str)" check redundant
 
-Tested-by: Aditya Bodkhe <adityab1@linux.ibm.com <mailto:adityab1@linux.ibm=
-.com>>
-> Acked-by: Ian Rogers <irogers@google.com>
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Aditya Bodkhe <Aditya.Bodkhe1@ibm.com>
-> Cc: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Kan Liang <kan.liang@linux.intel.com>
-> Cc: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Steinar H. Gunderson <sesse@google.com>
-> Link: https://lore.kernel.org/r/20241111151734.1018476-3-acme@kernel.org=
-=20
-> [ Applied fixes from Masami Hiramatsu and Aditya Bodkhe for when capstone=
- devel files are not available ]
-> Link: https://lore.kernel.org/r/B78FB6DF-24E9-4A3C-91C9-535765EC0E2A@ibm.=
-com=20
-> Link: https://lore.kernel.org/r/173145729034.2747044.453926054000880254.s=
-tgit@mhiramat.roam.corp.google.com=20
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> ----
->=20
->> diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
->> index df6c172c9c7f..da22b6ab9ecf 100644
->> --- a/tools/perf/util/disasm.c
->> +++ b/tools/perf/util/disasm.c
->> @@ -1724,7 +1724,8 @@ static int symbol__disassemble_capstone(char *file=
-name, struct symbol *sym,
->> }
->> #else // HAVE_LIBCAPSTONE_SUPPORT
->> static int symbol__disassemble_capstone(char *filename, struct symbol *s=
-ym,
->> -                    struct annotate_args *args)
->> +                    struct annotate_args *args __maybe_unused)
->> +{
->>    symbol__disassembler_missing("capstone", filename, sym);
->>    return -1;
->> }
->>=20
->> I tried with tmp.perf-tools-next , I have tested the above patch fixes t=
-he compilation error
->>=20
->> Thanks=20
->> Aditya Bodkhe
->>> +
->>> +static int symbol__disassemble_capstone_powerpc(char *filename, struct=
- symbol *sym,
->>> + struct annotate_args *args __maybe_unused)
->>> +{
->>> + symbol__disassembler_missing("capstone powerpc", filename, sym);
->>> + return -1;
->>> +}
->>> +#endif // HAVE_LIBCAPSTONE_SUPPORT
->>>=20
->>> static int symbol__disassemble_raw(char *filename, struct symbol *sym,
->>> struct annotate_args *args)
->>> @@ -1983,7 +2003,14 @@ static int symbol__disassemble_llvm(char *filena=
-me, struct symbol *sym,
->>> free(line_storage);
->>> return ret;
->>> }
->>> -#endif
->>> +#else // HAVE_LIBLLVM_SUPPORT
->>> +static int symbol__disassemble_llvm(char *filename, struct symbol *sym,
->>> +     struct annotate_args *args __maybe_unused)
->>> +{
->>> + symbol__disassembler_missing("LLVM", filename, sym);
->>> + return -1;
->>> +}
->>> +#endif // HAVE_LIBLLVM_SUPPORT
->>>=20
->>> /*
->>> * Possibly create a new version of line with tabs expanded. Returns the
->>> @@ -2242,24 +2269,21 @@ int symbol__disassemble(struct symbol *sym, str=
-uct annotate_args *args)
->>> err =3D symbol__disassemble_raw(symfs_filename, sym, args);
->>> if (err =3D=3D 0)
->>> goto out_remove_tmp;
->>> -#ifdef HAVE_LIBCAPSTONE_SUPPORT
->>> +
->>> err =3D symbol__disassemble_capstone_powerpc(symfs_filename, sym, args);
->>> if (err =3D=3D 0)
->>> goto out_remove_tmp;
->>> -#endif
->>> }
->>> }
->>>=20
->>> -#ifdef HAVE_LIBLLVM_SUPPORT
->>> err =3D symbol__disassemble_llvm(symfs_filename, sym, args);
->>> if (err =3D=3D 0)
->>> goto out_remove_tmp;
->>> -#endif
->>> -#ifdef HAVE_LIBCAPSTONE_SUPPORT
->>> +
->>> err =3D symbol__disassemble_capstone(symfs_filename, sym, args);
->>> if (err =3D=3D 0)
->>> goto out_remove_tmp;
->>> -#endif
->>> +
->>> err =3D symbol__disassemble_objdump(symfs_filename, sym, args);
->>>=20
->>> out_remove_tmp:
->>> --=20
->>> 2.47.0
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Signed-off-by: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+---
+Changelog in V2:
 
+- remove str check
 
+Change in V3:
+
+- Add logic in commit msg
+- Add review tag
+
+Change in V4:
+
+- Change subject line
+- Add review tag
+---
+ arch/arm64/kernel/cpufeature.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 718728a85430..728709483fb7 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -989,17 +989,16 @@ static void init_cpu_ftr_reg(u32 sys_reg, u64 new)
+ 				/* Override was valid */
+ 				ftr_new = tmp;
+ 				str = "forced";
+-			} else if (ftr_ovr == tmp) {
++			} else {
+ 				/* Override was the safe value */
+ 				str = "already set";
+ 			}
+ 
+-			if (str)
+-				pr_warn("%s[%d:%d]: %s to %llx\n",
+-					reg->name,
+-					ftrp->shift + ftrp->width - 1,
+-					ftrp->shift, str,
+-					tmp & (BIT(ftrp->width) - 1));
++			pr_warn("%s[%d:%d]: %s to %llx\n",
++				reg->name,
++				ftrp->shift + ftrp->width - 1,
++				ftrp->shift, str,
++				tmp & (BIT(ftrp->width) - 1));
+ 		} else if ((ftr_mask & reg->override->val) == ftr_mask) {
+ 			reg->override->val &= ~ftr_mask;
+ 			pr_warn("%s[%d:%d]: impossible override, ignored\n",
+-- 
+2.43.0
 
