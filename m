@@ -1,98 +1,204 @@
-Return-Path: <linux-kernel+bounces-411022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E4C9CF3A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:10:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EB1D9CF33E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:48:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E85D6B48037
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:43:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F5B7B619B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0421DDC07;
-	Fri, 15 Nov 2024 16:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974281E2311;
+	Fri, 15 Nov 2024 16:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="slEGHZr3"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I1oc5JNk"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B37C1D63ED;
-	Fri, 15 Nov 2024 16:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA1E1D54EE;
+	Fri, 15 Nov 2024 16:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731688838; cv=none; b=aDKQZouT2wCJHfLgE4Bn3SfAicc7u/66Y38NpZeoKHcbzN3sSTdz4+7JwQUKi6I34XpVbBBKAKVMwztdW4gnoQJYGwC+mBLNXu5z06+UTIDsD4nbIYBtGESY9J5xmxPKeJDj7oSVP832WKtyJj0IPG0R1fvM9Zjqd6TEwKgO2Ac=
+	t=1731688856; cv=none; b=dhceJw0ZAHF4eZt9WKxRKVtXL3bH+1h/9cje/7Wj681QEK6DXYX+2F66vlpzGjKQWM3EaxIseKPBnVW/PefhtUVZBlQJSaEwnky16hMliaiRHqpC8GqldN0Y84ZFEhhy+D0Zd/mgKLpV32kbdMgtbDMgjJB/qtXA8BGmdCOkY7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731688838; c=relaxed/simple;
-	bh=ReJ9dLJkmJ51yM3qtvDgNGGTzsQWCETDqLee/2ZGECU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QfviTu993UlkGHM8jX5lJH8JhYZLvYP844NqLE0lXfI8OXzney75WUJ15xue8uCaUNrwBnotj4+zAfUW1yQFIlPVQBZKM+9J7G/QbhUTGCsgcOuF+muX76u5vd9rodvDZilG7jFAt9WwB/TUagi0IN0D4n7llstYn9MoZAnltnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=slEGHZr3; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1731688833;
-	bh=ReJ9dLJkmJ51yM3qtvDgNGGTzsQWCETDqLee/2ZGECU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=slEGHZr3q5L3EQXl9KA6zoJ0gygaovxX3gl9AQ9v7dhqZNuBRGodaiFT0QReAqa81
-	 fkdsNyC6mDKjTt7UepodSw1tmiDFqmmmd+ybxPwM6mLYf+UG1woSp5YzcLOwreI+YA
-	 o7oFigGABVMwEqAabgXKblItwGs7jTVJ9TgUFPz0=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Fri, 15 Nov 2024 17:40:21 +0100
-Subject: [PATCH v2 1/2] thermal: core: Add stub for
- thermal_zone_device_update()
+	s=arc-20240116; t=1731688856; c=relaxed/simple;
+	bh=E5iRXdzyicHiAPnJsHv4IUWYR3Ho3H41AOg7TUPVqXs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iecL8EN4zB31cx/ogr2AYQQo5mhJOmSznkGYgPUwNC0Abks/j1MXswonc6EnFt8wSdWSSAvYnnLnHcqEZyyxntfop1VCVCnw3RCIl2yvUyl+mdILri0TyDxsURJeHygdf2eqD1s0CI1eg8RD8nc+H5sAOKIPd67BD0iNhCnUuoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I1oc5JNk; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb56cb61baso7488811fa.1;
+        Fri, 15 Nov 2024 08:40:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731688853; x=1732293653; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MWM1zhBUaIEICsvvUOeD60alRnVicILRnIGqkspauLA=;
+        b=I1oc5JNkYusY7EgB5KkhCj5Jqlse7V7N8yAbKNXr/JwcHgF9f06aXudr5QlsuYsYdn
+         GmaJ9y01GV8xMLeWPczq9NMNXBmft7uPqaNb1rHLoDJPf33iXZpyNduF5YavJjaI6kGa
+         r/rdgcVrRpv9NKwNZ+AU9H+W6b9roGkVeTfAQIUiYs2Eoi4S8K+9iN9DU+mfo7RQJ0MB
+         JJCzN9hX+JNlA3VF62NSuQW0vbbMmb+Rcg+umuXgfjZeZkOGKrw1rcIH8s/3upThWxjQ
+         V2KLBYDazmZAZc8dQ4i0FUwqznnYz2/rP16ajODUGmDhA3bh0PI15TIpDWSUOw5oxtDo
+         +nJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731688853; x=1732293653;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MWM1zhBUaIEICsvvUOeD60alRnVicILRnIGqkspauLA=;
+        b=YROBGBi0nY21H6HjtwOFAuIyMj4BbOr4sssyHtF/B2SIs52JUPOPLBHj0J5a+MzgK+
+         kw3096S056mYZeSwLutUsKQzveUGEeyvIruAB8oE14D/beVinh5OlfxP3ZYDf33vpixp
+         bmzXS/58KkYPcTm9yaowAl8T/Xc0gawsogNm61HFpYTGJG+RMDPaiGcUF2qv6DqXszVO
+         /t4R+HA4G/dA6+bshYYUtf4qTrxIvCQVQmBCgaSiEeuFb19FvMLwFlycwpwascedvcIP
+         LjK4CRppTnkftMqc87DpqOzC2Rf7G29nS75TcL/76pRlDpfKFnGG+O/mB8m7mN6Q9HAY
+         ZiRg==
+X-Forwarded-Encrypted: i=1; AJvYcCUDGkjUWqwAYUzqemJqyWYhBm/4O20DPt8ZNNaZQSx0R1Ruv1JkVta2eIECBQT8x5p2ZuZ2wRukljmDCUH+@vger.kernel.org, AJvYcCVUzCEL7bCS3/AwcgVtPT6V0+6noDe2zHkhOoE5OlGRr3deKaS6N6+j9N/obqZKKxshNIfAfj16PcNpU324h94=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzlc8Nz+56Y1Dc61w87z2fAXZy1a0MU9PZP/gm8SWnW62x0pIgL
+	58cEy5nrshFz1pIPgw6OVbu9Gth5mrsIBJ5daCDfHNqVAtc8qCArxCWn9qslYmzUmCyfGCIEJuC
+	8Ms3inBxKhiQuZDxAf2TdV/DrmTc=
+X-Google-Smtp-Source: AGHT+IEfHFXTrkX4iU2zxXCc93wTO6nasnQ1J9wNeeFUeckOF1/IPATFBdPtOSE1zu0AQdyczMDScHT12VmyJrYxFB4=
+X-Received: by 2002:a05:651c:400a:b0:2ff:6298:ecc0 with SMTP id
+ 38308e7fff4ca-2ff6298ed90mr9510421fa.18.1731688851618; Fri, 15 Nov 2024
+ 08:40:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241115-hwmon-thermal-v2-1-c96f0c0984b2@weissschuh.net>
-References: <20241115-hwmon-thermal-v2-0-c96f0c0984b2@weissschuh.net>
-In-Reply-To: <20241115-hwmon-thermal-v2-0-c96f0c0984b2@weissschuh.net>
-To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731688832; l=979;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=ReJ9dLJkmJ51yM3qtvDgNGGTzsQWCETDqLee/2ZGECU=;
- b=2cRIq3RMhZMNSp+W/2tI2ZAdtQSuWltRIMZ43F5qnGgb3jPt6HKBTKeqgAat97HQ4pU5ne5bv
- xQJN6T4RnQkB4rlhuIogobSfYvQlpFXu0KjV9JpieFyARKvBCsw6DqF
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+References: <20241113-x13s_wcn6855_fix-v1-1-15af0aa2549c@quicinc.com>
+In-Reply-To: <20241113-x13s_wcn6855_fix-v1-1-15af0aa2549c@quicinc.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Fri, 15 Nov 2024 11:40:39 -0500
+Message-ID: <CABBYNZJQGCnsKtdKaByLJkgV715oOorOQLLK8Z+g1BYz9YovNQ@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: qca: Support downloading board id specific NVM
+ for WCN6855
+To: Zijun Hu <quic_zijuhu@quicinc.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Zijun Hu <zijun_hu@icloud.com>, 
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bjorn Andersson <bjorande@quicinc.com>, "Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>, 
+	Cheng Jiang <quic_chejiang@quicinc.com>, Johan Hovold <johan@kernel.org>, 
+	Jens Glathe <jens.glathe@oldschoolsolutions.biz>, Steev Klimaszewski <steev@kali.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-To simplify the !CONFIG_THERMAL case in the hwmon core,
-add a !CONFIG_THERMAL stub for thermal_zone_device_update().
+Hi Zijun,
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- include/linux/thermal.h | 4 ++++
- 1 file changed, 4 insertions(+)
+On Thu, Nov 14, 2024 at 1:27=E2=80=AFAM Zijun Hu <quic_zijuhu@quicinc.com> =
+wrote:
+>
+> Download board id specific NVM instead of default for WCN6855 if board
+> id is available, and that is required by Lenovo ThinkPad X13s.
+>
+> Cc: Bjorn Andersson <bjorande@quicinc.com>
+> Cc: Aiqun Yu (Maria) <quic_aiquny@quicinc.com>
+> Cc: Cheng Jiang <quic_chejiang@quicinc.com>
+> Cc: Johan Hovold <johan@kernel.org>
+> Cc: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> Cc: Steev Klimaszewski <steev@kali.org>
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
 
-diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-index 25ea8fe2313e6d0a53192974a80d92f50f0ff03e..93880b7bd7d92df5a631f297664b9ba37146fd6a 100644
---- a/include/linux/thermal.h
-+++ b/include/linux/thermal.h
-@@ -289,6 +289,10 @@ static inline struct thermal_zone_device *thermal_tripless_zone_device_register(
- static inline void thermal_zone_device_unregister(struct thermal_zone_device *tz)
- { }
- 
-+static inline void thermal_zone_device_update(struct thermal_zone_device *,
-+					      enum thermal_notify_event)
-+{ }
-+
- static inline struct thermal_cooling_device *
- thermal_cooling_device_register(const char *type, void *devdata,
- 	const struct thermal_cooling_device_ops *ops)
+How about adding the following:
 
--- 
-2.47.0
+Fixes: 095327fede00 ("Bluetooth: hci_qca: Add support for QTI
+Bluetooth chip wcn6855")
 
+Not sure if this would be simple to backport given that there are
+things like 691d54d0f7cb ("Bluetooth: qca: use switch case for soc
+type behavior") that may have to be backported as well.
+
+> ---
+>  drivers/bluetooth/btqca.c | 35 ++++++++++++++++++++++++++++++++---
+>  1 file changed, 32 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+> index dfbbac92242a..4f8576cbbab9 100644
+> --- a/drivers/bluetooth/btqca.c
+> +++ b/drivers/bluetooth/btqca.c
+> @@ -717,6 +717,29 @@ static void qca_generate_hsp_nvm_name(char *fwname, =
+size_t max_size,
+>                 snprintf(fwname, max_size, "qca/hpnv%02x%s.%x", rom_ver, =
+variant, bid);
+>  }
+>
+> +static void qca_get_hsp_nvm_name_generic(struct qca_fw_config *cfg,
+> +                                        struct qca_btsoc_version ver,
+> +                                        u8 rom_ver, u16 bid)
+> +{
+> +       const char *variant;
+> +
+> +       /* hsp gf chip */
+> +       if ((le32_to_cpu(ver.soc_id) & QCA_HSP_GF_SOC_MASK) =3D=3D QCA_HS=
+P_GF_SOC_ID)
+> +               variant =3D "g";
+> +       else
+> +               variant =3D "";
+> +
+> +       if (bid =3D=3D 0x0)
+> +               snprintf(cfg->fwname, sizeof(cfg->fwname), "qca/hpnv%02x%=
+s.bin",
+> +                        rom_ver, variant);
+> +       else if (bid & 0xff00)
+> +               snprintf(cfg->fwname, sizeof(cfg->fwname), "qca/hpnv%02x%=
+s.b%x",
+> +                        rom_ver, variant, bid);
+> +       else
+> +               snprintf(cfg->fwname, sizeof(cfg->fwname), "qca/hpnv%02x%=
+s.b%02x",
+> +                        rom_ver, variant, bid);
+> +}
+> +
+>  static inline void qca_get_nvm_name_generic(struct qca_fw_config *cfg,
+>                                             const char *stem, u8 rom_ver,=
+ u16 bid)
+>  {
+> @@ -810,8 +833,15 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t bau=
+drate,
+>         /* Give the controller some time to get ready to receive the NVM =
+*/
+>         msleep(10);
+>
+> -       if (soc_type =3D=3D QCA_QCA2066 || soc_type =3D=3D QCA_WCN7850)
+> +       switch (soc_type) {
+> +       case QCA_QCA2066:
+> +       case QCA_WCN6855:
+> +       case QCA_WCN7850:
+>                 qca_read_fw_board_id(hdev, &boardid);
+> +               break;
+> +       default:
+> +               break;
+> +       }
+>
+>         /* Download NVM configuration */
+>         config.type =3D TLV_TYPE_NVM;
+> @@ -848,8 +878,7 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baud=
+rate,
+>                                  "qca/msnv%02x.bin", rom_ver);
+>                         break;
+>                 case QCA_WCN6855:
+> -                       snprintf(config.fwname, sizeof(config.fwname),
+> -                                "qca/hpnv%02x.bin", rom_ver);
+> +                       qca_get_hsp_nvm_name_generic(&config, ver, rom_ve=
+r, boardid);
+>                         break;
+>                 case QCA_WCN7850:
+>                         qca_get_nvm_name_generic(&config, "hmt", rom_ver,=
+ boardid);
+>
+> ---
+> base-commit: e88b020190bf5bc3e7ce5bd8003fc39b23cc95fe
+> change-id: 20241113-x13s_wcn6855_fix-53c573ff7878
+>
+> Best regards,
+> --
+> Zijun Hu <quic_zijuhu@quicinc.com>
+>
+
+
+--=20
+Luiz Augusto von Dentz
 
