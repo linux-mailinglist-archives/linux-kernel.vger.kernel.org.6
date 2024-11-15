@@ -1,167 +1,115 @@
-Return-Path: <linux-kernel+bounces-410628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 901969CDE40
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:29:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64F3B9CDE44
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:30:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDF7AB21F5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:29:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E722EB21A65
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F7B1BBBE5;
-	Fri, 15 Nov 2024 12:29:27 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4B41B6D15;
+	Fri, 15 Nov 2024 12:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="asciRo2P"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73931B6D18
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 12:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0A5CA5B;
+	Fri, 15 Nov 2024 12:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731673766; cv=none; b=r4HafPQPLVlTvovRzrBiPWd7yNNdpcrAkk0gLugqfS5QioOoXcD59o08MApfrMbTt5l8Aa3nfhIQ1PGiLdZdLIxv+kAqp+0jb1u5B/XR7SNZEgMxQqNIGBnb4oz9nW7Bm8axVAGlqZ2UMnsM27SRcY6uYsUmKHeWlTT6H+W3GwU=
+	t=1731673835; cv=none; b=Pkg+E9WepDWvMgQOyE4mjtJ9YiiVDBlhNeq8QPhyfVr4pPLYTcL0LqUatfUrIOKP19qVmh79L9xsIkSud3ZtmtDt7Eu27vfqr4MT1WEmH+k/6kQ3o7x5LORoaQU8b/mNBn6nolc1ajBk+jq4Y6zreQeqxgCO0bWtj34+cjt12pM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731673766; c=relaxed/simple;
-	bh=NHWC6Ve82wlWY9YJNTS4xN8tJlqZPM855tSImF2HueU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Li/NyeCl0pORW5B6O2UsZHE/2HMTJld8qXrY/NhvLdS4zMFeiyllZrtNTgUkPdo1foJYngnGwuzwLCtTSs7TF4qoTPTkGymFDC4b06MiOCMPkGu/vWQqGYI+q1Q3uegTQ6Exow97hkKzRp+skCA2efhLYTpyxA7NxecsJHoVl5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a6ca616500so19227615ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 04:29:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731673764; x=1732278564;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=A0dpNKRxwoLls+j4kum3KUu9yYY5rELajDHXG4WCsHU=;
-        b=eZlbo87afICIwmC/CMiFPXM4zQFjQHuclBODGjxvNzcUxwIZuWLwjVa1yph8s6YwwV
-         XgsHIzXfgyPSq4SfEoFSS0En5UiT2JQQB+iBZMfGwgiT/Hx3TnrNrwIM23Vs0jGsVVaG
-         LX+JlVKAHbTXcT4XcMWORkEqP2sxVmxiGA1FudOlJLKGc3N8M27zQvmZYFaKd0szAQDf
-         aV8RWMY7yw4uQoeo1JtbLwfowE05csHT56iFcK1h2VIdSIfY7kOWkWjPz9Zin8nYxYJa
-         m1uKLEWrMrdWmrc89VrMgliibdbrfzyDgTkzccuIdfzsatHaS+VBHBfeasDYHIZ1S5WC
-         mdNg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKOAvwI6B4ma8JvMhEP+JFyZvq+OkgaOtzjJs4Zw0C46SDKQYqwS0iZ/nofQxdg8qXJXm1YEHIyDHAurw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzO1bUIxZZvUZ5cyPMS6AySOZb0ajqe7ZYhWw9tbCsV8z7PxdTf
-	hatSAY4iZHkayAIU9twH1BBEDlI8GW5NJQzb2Xwhg0c+uAq6mDwqdp/OwL9OlCTvY1qiAidIRnf
-	tQ40nVHcRVk9ZNUyPueIGrnbH4og2X35VLCVbB45NrcyyU48cGEKhAoE=
-X-Google-Smtp-Source: AGHT+IHMYT/WmM5CU8Z8NS4U0VLiygFqh7sbivZJ+S/zXXjQ9IQFYOpBnexIPeXK9nbJECM360/fusOGt0GO/YFWk6MUL+Iml/+f
+	s=arc-20240116; t=1731673835; c=relaxed/simple;
+	bh=NaxNLBeCp7ye0quQ7CtXuUKXt6V/1rAQduCHa/H3SX4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fd2lF7OeJAfQHp7eZn18RC3tLdI+5/42q/BPx52zLIryw9P+QpD7k0hJY1E/oxB9gz9SisDhWCHq43qWE9l/tqqcot0tF28vYfiey9o9rg+/jCXVm2wWbyXC9MqC6OBT4RTfXWOJsPXjzf8P5TU72sbUHKm2kKUF2uuWVAfwzls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=asciRo2P; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731673834; x=1763209834;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=NaxNLBeCp7ye0quQ7CtXuUKXt6V/1rAQduCHa/H3SX4=;
+  b=asciRo2PTWyXwglXlDuzn8hoxubNaljUn2PJJ4qfIlsCR8uvPTAF5kAe
+   i2mSM641s2q3kxB4/E3EIRt6TrjzAms955P74BBkzBh9vIK6egNBT0q+t
+   NtFTRygGprO38U3jWjQc7l2e98aY5ezAFRFB/g6w7cg22cPXS69KAmkfs
+   u3HtlxXFAQf/CCLaIBoIXX2kQ5IWy5E5Sx+H2hb0fFnK01mEsmBzw+rNQ
+   X2S6fcJySJ4xhaecLsmiVuzSkQW9SKsDXS+rJ8iVjeDbMacmcGx42giGG
+   0IrgqihF6YlsJh3LGONJ22a9JubmM0rvOaePpol0UYHr8ovNnYWzmDzTO
+   g==;
+X-CSE-ConnectionGUID: e3Ts+XT7Sx6ps1Tdpv5p7A==
+X-CSE-MsgGUID: fnsMXwLRT7GXAfBuO00VNA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11256"; a="43077365"
+X-IronPort-AV: E=Sophos;i="6.12,156,1728975600"; 
+   d="scan'208";a="43077365"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 04:30:33 -0800
+X-CSE-ConnectionGUID: PJBs1wj9TQOp12NFmvbjlw==
+X-CSE-MsgGUID: gA5j0lUrS9+Fnv97A0XQGQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,156,1728975600"; 
+   d="scan'208";a="126090615"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa001.jf.intel.com with ESMTP; 15 Nov 2024 04:30:31 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 3525F1AC; Fri, 15 Nov 2024 14:30:30 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Mun Yew Tham <mun.yew.tham@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v1 1/1] gpio: altera: Add missed base and label initialisations
+Date: Fri, 15 Nov 2024 14:29:46 +0200
+Message-ID: <20241115123028.3904126-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d1c:b0:3a7:2b12:78dd with SMTP id
- e9e14a558f8ab-3a7480234f3mr22222805ab.11.1731673763964; Fri, 15 Nov 2024
- 04:29:23 -0800 (PST)
-Date: Fri, 15 Nov 2024 04:29:23 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67373ea3.050a0220.1324f8.00ad.GAE@google.com>
-Subject: [syzbot] [bcachefs?] WARNING: locking bug in rcu_pending_enqueue
-From: syzbot <syzbot+b63566ef71c0f462e815@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+During conversion driver to modern APIs the base field initial value
+of the GPIO chip was moved from -1 to 0, which triggers a warning.
+Add missed base initialisation as it was in the original code.
 
-syzbot found the following issue on:
+Also initialise the GPIO chip label correctly.
 
-HEAD commit:    563047e691f2 Merge remote-tracking branch 'tip/irq/core' i..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=10513ea7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1d1ed5ebe7f28fe9
-dashboard link: https://syzkaller.appspot.com/bug?extid=b63566ef71c0f462e815
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/09130b543284/disk-563047e6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/76ce58c74487/vmlinux-563047e6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e39916627eee/Image-563047e6.gz.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b63566ef71c0f462e815@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-Looking for class "p->lock" with key rcu_pending_init.__key, but found a different class "&p->lock" with the same key
-WARNING: CPU: 0 PID: 44 at kernel/locking/lockdep.c:939 look_up_lock_class+0xec/0x160 kernel/locking/lockdep.c:936
-Modules linked in:
-CPU: 0 UID: 0 PID: 44 Comm: kworker/u8:3 Not tainted 6.12.0-rc6-syzkaller-g563047e691f2 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: btree_update btree_interior_update_work
-pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : look_up_lock_class+0xec/0x160 kernel/locking/lockdep.c:936
-lr : look_up_lock_class+0xec/0x160 kernel/locking/lockdep.c:936
-sp : ffff800097fe6fa0
-x29: ffff800097fe6fa0 x28: dfff800000000000 x27: 0000000000000000
-x26: ffff8000973358c0 x25: ffff800097335000 x24: 0000000000000001
-x23: 0000000000000000 x22: 1ffff00011f020ba x21: ffff8000974dc7a0
-x20: fffffdffbf6f0340 x19: ffff800092e82b80 x18: 0000000000000008
-x17: 747562202c79656b x16: ffff8000830cb670 x15: 0000000000000001
-x14: 1fffe000366c6ce2 x13: 0000000000000000 x12: 0000000000000000
-x11: 0000000000000003 x10: 0000000000ff0100 x9 : 2e0fef016daf9f00
-x8 : 2e0fef016daf9f00 x7 : 0000000000000001 x6 : 0000000000000001
-x5 : ffff800097fe66d8 x4 : ffff80008f8fd0c0 x3 : ffff80008062728c
-x2 : 0000000000000001 x1 : 0000000100000001 x0 : 0000000000000000
-Call trace:
- look_up_lock_class+0xec/0x160 kernel/locking/lockdep.c:936 (P)
- look_up_lock_class+0xec/0x160 kernel/locking/lockdep.c:936 (L)
- register_lock_class+0x8c/0x6b4 kernel/locking/lockdep.c:1290
- __lock_acquire+0x18c/0x77c8 kernel/locking/lockdep.c:5077
- lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5825
- __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
- _raw_spin_lock+0x48/0x60 kernel/locking/spinlock.c:154
- spin_lock include/linux/spinlock.h:351 [inline]
- __rcu_pending_enqueue fs/bcachefs/rcu_pending.c:418 [inline]
- rcu_pending_enqueue+0x164/0x898 fs/bcachefs/rcu_pending.c:515
- bkey_cached_free+0xb8/0x214 fs/bcachefs/btree_key_cache.c:115
- bch2_btree_key_cache_drop+0x104/0x210 fs/bcachefs/btree_key_cache.c:586
- bch2_trans_commit_write_locked fs/bcachefs/btree_trans_commit.c:824 [inline]
- do_bch2_trans_commit fs/bcachefs/btree_trans_commit.c:900 [inline]
- __bch2_trans_commit+0x4d64/0x6604 fs/bcachefs/btree_trans_commit.c:1121
- bch2_trans_commit fs/bcachefs/btree_update.h:184 [inline]
- btree_update_nodes_written fs/bcachefs/btree_update_interior.c:728 [inline]
- btree_interior_update_work+0xd40/0x1e00 fs/bcachefs/btree_update_interior.c:866
- process_one_work+0x7bc/0x1600 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x97c/0xeec kernel/workqueue.c:3391
- kthread+0x288/0x310 kernel/kthread.c:389
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
-irq event stamp: 938478
-hardirqs last  enabled at (938477): [<ffff800080ac7d3c>] kasan_quarantine_put+0x1a0/0x1c8 mm/kasan/quarantine.c:234
-hardirqs last disabled at (938478): [<ffff800082a539e8>] __rcu_pending_enqueue fs/bcachefs/rcu_pending.c:416 [inline]
-hardirqs last disabled at (938478): [<ffff800082a539e8>] rcu_pending_enqueue+0xe4/0x898 fs/bcachefs/rcu_pending.c:515
-softirqs last  enabled at (938018): [<ffff8000866510a8>] spin_unlock_bh include/linux/spinlock.h:396 [inline]
-softirqs last  enabled at (938018): [<ffff8000866510a8>] nsim_dev_trap_report drivers/net/netdevsim/dev.c:820 [inline]
-softirqs last  enabled at (938018): [<ffff8000866510a8>] nsim_dev_trap_report_work+0x620/0x938 drivers/net/netdevsim/dev.c:851
-softirqs last disabled at (938016): [<ffff800086651024>] spin_lock_bh include/linux/spinlock.h:356 [inline]
-softirqs last disabled at (938016): [<ffff800086651024>] nsim_dev_trap_report drivers/net/netdevsim/dev.c:816 [inline]
-softirqs last disabled at (938016): [<ffff800086651024>] nsim_dev_trap_report_work+0x59c/0x938 drivers/net/netdevsim/dev.c:851
----[ end trace 0000000000000000 ]---
-
-
+Fixes: 50dded8d9d62 ("gpio: altera: Drop legacy-of-mm-gpiochip.h header")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Can be folded into the mentioned change, up to you and sorry for missing
+these in the first place.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+ drivers/gpio/gpio-altera.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+diff --git a/drivers/gpio/gpio-altera.c b/drivers/gpio/gpio-altera.c
+index 039fef26546e..73e660c5e38a 100644
+--- a/drivers/gpio/gpio-altera.c
++++ b/drivers/gpio/gpio-altera.c
+@@ -261,6 +261,11 @@ static int altera_gpio_probe(struct platform_device *pdev)
+ 	altera_gc->gc.set		= altera_gpio_set;
+ 	altera_gc->gc.owner		= THIS_MODULE;
+ 	altera_gc->gc.parent		= &pdev->dev;
++	altera_gc->gc.base		= -1;
++
++	altera_gc->gc.label = devm_kasprintf(dev, GFP_KERNEL, "%pfw", dev_fwnode(dev));
++	if (!altera_gc->gc.label)
++		return -ENOMEM;
+ 
+ 	altera_gc->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(altera_gc->regs))
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
