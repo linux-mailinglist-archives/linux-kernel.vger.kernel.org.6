@@ -1,158 +1,223 @@
-Return-Path: <linux-kernel+bounces-410682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B522D9CDFA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:12:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 197689CDFB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:16:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D893FB22B18
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:12:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9602283AFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2665E1BDA8D;
-	Fri, 15 Nov 2024 13:12:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6A31BBBDD;
+	Fri, 15 Nov 2024 13:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GU5guTR/"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JpozrPti"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4D81B85F0;
-	Fri, 15 Nov 2024 13:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD861B6CE0
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 13:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731676355; cv=none; b=W7XF8shSh/PytvyxI/sy/bXA6NaknkjYNMMRb00zIJWtsMRWYL4b2wDnXzQ5+t2s9bBovr9Q+pOjVuqeX3eAKOgEvLPNQYNTNr75pzX+bp+XB8419LpiTb2WK7Tk6scyqPBkokTdknKt4MDlLX3UGcz7q92gfXs46b7+0nxnAdo=
+	t=1731676606; cv=none; b=tfuXiE1yXgWu1fOT3icvIgJbyFQZnjUyCBsfsUBR6HzuC2uCKcFlLsd2DWd/hIcjttdfQkTOika5p9Zxc7iezXux9ROrsrA7jlnsGmIY8nQN+sbKWSaF7c274AT02tqyMf5R0lpkuaKu+H6wTCKb+3HksQ5UsbDPG55cxUBo9eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731676355; c=relaxed/simple;
-	bh=t32cxctacNgjHuwnZ8VnqC6ly1Bchl/QOwPC9P7ZlR4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CZXmyZeuP+XylyNE8Vf+T2EPs9xRuVH76FhJbTvUXQ9lYPZ0rL/WZTt/d81D6CmiBGREXTTqUhtobi1P0m08c18Q4q+2wrkNm6dZnFyB5pj6JiRjoxS4Z1DmFWX0Qb3y1O2VaDPWT+Ee0246Wtyi2NbUf7jCpZB0Vd/xC4W7UxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GU5guTR/; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e2fb304e7dso1540099a91.1;
-        Fri, 15 Nov 2024 05:12:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731676353; x=1732281153; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LGEvwwkAr2aRQ6piezavR8P7IeH13bFGESYh7zT6n3Q=;
-        b=GU5guTR/orVWp2D5Byx8IhOgSXON3QYVo/5koR5rjd6cfnIi/1YZX5J6cblIXRxQqq
-         Q2rJ3lWTqL1CXZC+gzWqz2z5emuwL/L071ZQNIKheuFlUFTRabgcZhK8DRECqEkb+fnv
-         pXgwhQl8RA4qkDRybQkd3Riem6kCS4rfbKspDmlNLTjBFII4GyLiaF+1UB2hOv7/yrJE
-         0h/X8zXHF3Cx+V0EZn2k1ljKVOaV2tam85xhX4gYcuWBa8yhakNp6tI2fIn9k4PHYLv1
-         UT5KIIfDCYeyio7MymHC+u0zpTeIIp44qLZg2cbR/kQvBxchzSmajNZGN+d0L5hdEtbI
-         ZPnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731676353; x=1732281153;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LGEvwwkAr2aRQ6piezavR8P7IeH13bFGESYh7zT6n3Q=;
-        b=PvNDkGUddVpi6tr5yasC916nqBaR00cXpYqgKzl1E/M9dzW2TdPo7v/1YaysJuvIJK
-         JSCSdeCCUobgqGdBZMvKpETSOofeVg/YxF8H2qGZesT7DP/QActyLe9Y1WE3V2HGCab6
-         kVOZnCDRQBXcseq+bHKvQnuJs521kFQs78/EPGOwI1uKXHTaKi6PxUbOihTADCNR2XrR
-         8oOeh9OmiiFSCO8wJGR/xf/jxQlVvh3DcAdDY7CE7iGIpzPjWXyfVwNAzb21GcnFDrIl
-         wQR+te2CN5n7vsxyxder2yxr+x5PCxBGUlMUcXsqBe8EWrDK76Wwt8rm9gmG9rcaQ/pI
-         HUXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX2haUYJ1EhNuqOYPFj5oAab/1bthy4rOeRG1Bnlp3uGZyEw8vgbO8KhbrTO+Cvq+au9MPdr6SXBRIH3v4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxydyqVoHmvkLobqtimALmHu5MdmAOov0FcQLqIX05RBFJw6kO
-	NkjhVHLGjis3A6hCoTGjE38dELF51Q0nAw/4ZgvgK1WdFtHSvO72
-X-Google-Smtp-Source: AGHT+IHiKmEPUcAwcTE7fjNZOdCEXpjeKSD795z8uynKB32CMsSboNyZ64DeBwOHh2qCU3Qne8r25Q==
-X-Received: by 2002:a17:90b:1e0d:b0:2e9:5004:2502 with SMTP id 98e67ed59e1d1-2ea154f7469mr2960960a91.13.1731676353255;
-        Fri, 15 Nov 2024 05:12:33 -0800 (PST)
-Received: from ?IPV6:2409:40c0:48:969e:e221:9e2d:e416:1b41? ([2409:40c0:48:969e:e221:9e2d:e416:1b41])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea06ef6a7esm2734394a91.4.2024.11.15.05.12.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 05:12:32 -0800 (PST)
-Message-ID: <333658df-a767-437f-9566-857e8ff5867f@gmail.com>
-Date: Fri, 15 Nov 2024 18:42:27 +0530
+	s=arc-20240116; t=1731676606; c=relaxed/simple;
+	bh=EIwoXzsQHOVgmvX5r0YyrQJ0kBDcpOvRVXNODIrKk0w=;
+	h=MIME-Version:Content-Type:Date:Message-ID:Subject:CC:To:From:
+	 In-Reply-To:References; b=ZishLxxP/Grv7iYkGS0vwrG5Mb4LXX+4jr3nvFPHWr70XvIeyKi5+9JL1Wv22QMiivoTcq1otylogTbqraSAwue5hsu7KDn/GZ22DNDVUwza91VB3hc9AeBvY/AOV77UIny0ucuPWbkH6KSGZOI26Za0XjPw3TC/V2NiDVPVJ4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=JpozrPti; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241115131635euoutp02e068c1f2761ddd90c8aeaef940c2e09f~IJrBp4Xya3070830708euoutp02Y
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 13:16:35 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241115131635euoutp02e068c1f2761ddd90c8aeaef940c2e09f~IJrBp4Xya3070830708euoutp02Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1731676595;
+	bh=oKtBlcg+Xk0nMe89sjRussk1NGC8X6gMBOv0pcE62OE=;
+	h=Date:Subject:CC:To:From:In-Reply-To:References:From;
+	b=JpozrPtiGlJ5ssxv/Ln0+D+V98//lbmBBTemU3rPXoGzsazjO5HEkfZTV9NXZZzdH
+	 KN4HVsrWT7e63Z66KD8sQS1AWD5tTe9j+0HcrNT4LPI8BOkvPq3By/30xjCS791ZXv
+	 TcvLgKiZujyWwSLnolOI5yCrN4vbvBit1B/+MeFk=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20241115131635eucas1p11c362344e28e0c34c0cb1c990cef95c7~IJrBPiWLy2565925659eucas1p1n;
+	Fri, 15 Nov 2024 13:16:35 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 32.A0.20409.3B947376; Fri, 15
+	Nov 2024 13:16:35 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241115131634eucas1p2db22b75fcc768a4bb6aa47ee180110cc~IJrA0RIZy2411724117eucas1p2E;
+	Fri, 15 Nov 2024 13:16:34 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241115131634eusmtrp1b4622e731af2f59b0ff4f7cd6e4deebc~IJrAzpubZ1966419664eusmtrp1_;
+	Fri, 15 Nov 2024 13:16:34 +0000 (GMT)
+X-AuditID: cbfec7f4-c39fa70000004fb9-58-673749b37ee2
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 32.AD.19920.2B947376; Fri, 15
+	Nov 2024 13:16:34 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241115131634eusmtip205bf655c0e2988b21bc90d482630c7c6~IJrAnu3g-1697916979eusmtip2z;
+	Fri, 15 Nov 2024 13:16:34 +0000 (GMT)
+Received: from localhost (106.110.32.87) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Fri, 15 Nov 2024 13:16:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] video: fbdev: metronomefb: Fix buffer overflow in
- load_waveform()
-To: Helge Deller <deller@gmx.de>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20241112202825.17322-1-surajsonawane0215@gmail.com>
- <7de29a8c-3325-4654-8afd-81f3f9a8d113@gmx.de>
-Content-Language: en-US
-From: Suraj Sonawane <surajsonawane0215@gmail.com>
-In-Reply-To: <7de29a8c-3325-4654-8afd-81f3f9a8d113@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Date: Fri, 15 Nov 2024 14:16:33 +0100
+Message-ID: <D5MS4CMG4N8F.1M5WPZ1T5UT0I@samsung.com>
+Subject: Re: [PATCH v2 0/5] Support large folios for tmpfs
+CC: <willy@infradead.org>, <david@redhat.com>, <wangkefeng.wang@huawei.com>,
+	<21cnbao@gmail.com>, <ryan.roberts@arm.com>, <ioworker0@gmail.com>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>,
+	<akpm@linux-foundation.org>, <hughd@google.com>
+From: Daniel Gomez <da.gomez@samsung.com>
+X-Mailer: aerc 0.18.2-67-g7f69618ac1fd
+In-Reply-To: <cover.1731397290.git.baolin.wang@linux.alibaba.com>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNKsWRmVeSWpSXmKPExsWy7djPc7qbPc3TDbqmi1p8vitkMWf9GjaL
+	/3uPMVp8Xf+L2eLppz4Wi0W/jS0u75rDZnFvzX9Wi57dUxktGj/fZ7T4/WMOmwO3x5p5axg9
+	ds66y+6xYFOpR8uRt6wem1doeWz6NInd48SM3yweOx9aerzfd5XN4/MmuQCuKC6blNSczLLU
+	In27BK6MSdMnMxdMkK6YP/suewPjdNEuRk4OCQETiVOHN7F0MXJxCAmsYJTYuuA9G4TzhVFi
+	zsnrzBDOZ0aJg9+/ssG0fF4ylR0isZxRYt3a6UxwVRtbZ0BlNjNKTPrymxGkhVdAUOLkzCcs
+	IDazgLbEsoWvmSFsTYnW7b/ZQWwWAVWJT4vOsUDUm0jM/X+ctYuRg0NYwEri6QdtkJnMAicZ
+	JWbdbwI7Q0QgSaJx7g6wOWxAc/ad3MQOcZ6axP/+iWBzOAUcJV5NvcICEVeUmDFxJZRdK3Fq
+	yy2wqyUEVnNKTO06xwqRcJG4e/4y1CBhiVfHt0DZMhKnJ/dANadLLFk3C8oukNhzexbYoRIC
+	1hJ9Z3Igwo4Sy7bNY4cI80nceCsI8S6fxKRt05khwrwSHW1CExhVZiEF0CykAJqFFEALGJlX
+	MYqnlhbnpqcWG+WllusVJ+YWl+al6yXn525iBKav0/+Of9nBuPzVR71DjEwcjIcYJTiYlUR4
+	L7mapwvxpiRWVqUW5ccXleakFh9ilOZgURLnVU2RTxUSSE8sSc1OTS1ILYLJMnFwSjUwTVYS
+	SGETN7yyc66H/9P3T0v9+o/Psp7yUJLda/lCrz3Lbt3ZwaZvWnLtx8tpUvlRHQuDsnXCmdb7
+	c62taV0zQejPktA2aR3THrWgvCfzj0898+jKrsiHPb5Cd7R5VCL+VpRMqXxm23rB/ODJip1Z
+	Nx6ct6nNn7yFze9iRJLRG4+qLuufgTeuPF228rQeh6DD8TTlfBPTBVv8eHKaXd65h1Rs67u6
+	bwkfk3GM1Yyu5Wukv1hu2jTn7Mc7nx4tuf3qZsYHi1btmNuas2e9VHgleZz3qHLcfYukx5Mf
+	sTJqHlJ1qMhdv23ZvKwswyoLnrmhnHuX8+Y/75wzd3JgfnzAuhdbX996yKI9T0plfZ7OaSWW
+	4oxEQy3mouJEABJ/YGXOAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKIsWRmVeSWpSXmKPExsVy+t/xe7qbPM3TDSadMrH4fFfIYs76NWwW
+	//ceY7T4uv4Xs8XTT30sFot+G1tc3jWHzeLemv+sFj27pzJaNH6+z2jx+8ccNgdujzXz1jB6
+	7Jx1l91jwaZSj5Yjb1k9Nq/Q8tj0aRK7x4kZv1k8dj609Hi/7yqbx+dNcgFcUXo2RfmlJakK
+	GfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZk6ZPZi6YIF0xf/Zd
+	9gbG6aJdjJwcEgImEp+XTGXvYuTiEBJYyijx/9dbRoiEjMTGL1dZIWxhiT/Xutggij4ySry+
+	9oYFwtnMKPH42nQ2kCpeAUGJkzOfsIDYzALaEssWvmaGsDUlWrf/ZgexWQRUJT4tOscCUW8i
+	Mff/caANHBzCAlYSTz9og8xkFjjJKDHrfhPYTBGBJIl7e3aC1bMBzdl3chM7xEVqEv/7J4LF
+	hQQcJLbuPgtmcwo4SryaeoUFokZRYsbElVB2rcTnv88YJzCKzEJy6iwkp85CcuoCRuZVjCKp
+	pcW56bnFhnrFibnFpXnpesn5uZsYgfG97djPzTsY5736qHeIkYmD8RCjBAezkgjvJVfzdCHe
+	lMTKqtSi/Pii0pzU4kOMpkA/T2SWEk3OByaYvJJ4QzMDU0MTM0sDU0szYyVxXrfL59OEBNIT
+	S1KzU1MLUotg+pg4OKUamIxKN7Z5Ob95niVkKbxz6fOFPtuE3rfw/jKKXG7sl9pS9qav+nW+
+	A/MXntQ1Qj9OaixqS16r5yfBeDfohdSvSUYlO4T3cgXbT1Cz+l0fyW/W8yPL+t/uc/1RQT16
+	xrGv3n22EHIo7wwoX9Eh9ZXxepxLpsaWv8Lry3cEq+beea7Ilq+c31jJ81Lz9RuxnTfLOfiE
+	4/fyrp8Yprr99C7ec3b/Xz8+fWGSenT3yQcK4QU7Az5MF/xyYs/kJRnz2BPrgrzeTuxJt1et
+	3XipjJt3U+PMh6KpDxXsJrtK7s7n/1pRkyRXvnvZj0itxgcHzoTIN3wrKF9uErzC4YHX7BOi
+	ktr/pz6wWPhtNfu1PQLLlFiKMxINtZiLihMBCRvQL3gDAAA=
+X-CMS-MailID: 20241115131634eucas1p2db22b75fcc768a4bb6aa47ee180110cc
+X-Msg-Generator: CA
+X-RootMTR: 20241115131634eucas1p2db22b75fcc768a4bb6aa47ee180110cc
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20241115131634eucas1p2db22b75fcc768a4bb6aa47ee180110cc
+References: <cover.1731397290.git.baolin.wang@linux.alibaba.com>
+	<CGME20241115131634eucas1p2db22b75fcc768a4bb6aa47ee180110cc@eucas1p2.samsung.com>
 
-On 14/11/24 20:13, Helge Deller wrote:
-> On 11/12/24 21:28, Suraj Sonawane wrote:
->> Fix an error detected by the Smatch tool:
->>
->> drivers/video/fbdev/metronomefb.c:220 load_waveform() error:
->> buffer overflow 'wfm_hdr->stuff2a' 2 <= 4
->> drivers/video/fbdev/metronomefb.c:220 load_waveform() error:
->> buffer overflow 'wfm_hdr->stuff2a' 2 <= 4
->>
->> The access to wfm_hdr->stuff2a in the loop can lead to a buffer
->> overflow if stuff2a is not large enough. To fix this, a check was
->> added to ensure that stuff2a has sufficient space before accessing
->> it. This prevents the overflow and improves the safety of the code.
->>
->> Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
->> ---
->>   drivers/video/fbdev/metronomefb.c | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/drivers/video/fbdev/metronomefb.c 
->> b/drivers/video/fbdev/metronomefb.c
->> index 6f0942c6e..9da55cef2 100644
->> --- a/drivers/video/fbdev/metronomefb.c
->> +++ b/drivers/video/fbdev/metronomefb.c
->> @@ -210,6 +210,12 @@ static int load_waveform(u8 *mem, size_t size, 
->> int m, int t,
->>       }
->>       wfm_hdr->mc += 1;
->>       wfm_hdr->trc += 1;
->> +
->> +    if (sizeof(wfm_hdr->stuff2a) < 5) {
->> +        dev_err(dev, "Error: insufficient space in stuff2a\n");
->> +        return -EINVAL;
->> +    }
->> +
->>       for (i = 0; i < 5; i++) {
->>           if (*(wfm_hdr->stuff2a + i) != 0) {
->>               dev_err(dev, "Error: unexpected value in padding\n");
-> 
-> That patch is completely wrong.
-> There is
-> /* the waveform structure that is coming from userspace firmware */
-> struct waveform_hdr {
->          ....
->          u8 stuff2a[2];
->          u8 stuff2b[3];
-> 
-> So, I *believe* the for-next loop wants to walk acrosss stuff2a and 
-> stuff2b,
-> which have 5 entries together. So, basically the original code isn't nice
-> but still correct.
-> Your "sizeof()" check will always be false and is the wrong patch.
-> 
-> If at all, I think the stuff2a and stuff 2b arrays should be joined.
-> Something like
->          u8 stuff2[5]; /* this is actually 2-entry stuff2a and 3-entry 
-> stuff2b */
-> But again, I don't know much about this driver.
-> 
-> Helge
+On Tue Nov 12, 2024 at 8:45 AM CET, Baolin Wang wrote:
+> Traditionally, tmpfs only supported PMD-sized huge folios. However nowada=
+ys
 
-Thank you for the brief feedback. I see your point regarding stuff2a and 
-stuff2b. I’ll study this approach and revise the patch if I find it to 
-be the correct solution.
+Nitpick:
+We are mixing here folios/page, PMD-size huge. For anyone not aware of
+Memory Folios conversion in the kernel I think this makes it confusing.
+Tmpfs has never supported folios so, this is not true. Can we rephrase
+it?
 
-Best regards,
-Suraj Sonawane
+Below you are also mixing terms huge/large folios etc. Can we be
+consistent? I'd stick with folios (for order-0), and large folios (!
+order-0). I'd use huge term only when referring to PMD-size pages.
+
+> with other file systems supporting any sized large folios, and extending
+> anonymous to support mTHP, we should not restrict tmpfs to allocating onl=
+y
+> PMD-sized huge folios, making it more special. Instead, we should allow
+
+Again here.
+
+> tmpfs can allocate any sized large folios.
+>
+> Considering that tmpfs already has the 'huge=3D' option to control the hu=
+ge
+> folios allocation, we can extend the 'huge=3D' option to allow any sized =
+huge
+
+'huge=3D' has never controlled folios.
+
+> folios. The semantics of the 'huge=3D' mount option are:
+>
+> huge=3Dnever: no any sized huge folios
+> huge=3Dalways: any sized huge folios
+> huge=3Dwithin_size: like 'always' but respect the i_size
+> huge=3Dadvise: like 'always' if requested with fadvise()/madvise()
+>
+> Note: for tmpfs mmap() faults, due to the lack of a write size hint, stil=
+l
+> allocate the PMD-sized huge folios if huge=3Dalways/within_size/advise is=
+ set.
+>
+> Moreover, the 'deny' and 'force' testing options controlled by
+> '/sys/kernel/mm/transparent_hugepage/shmem_enabled', still retain the sam=
+e
+> semantics. The 'deny' can disable any sized large folios for tmpfs, while
+> the 'force' can enable PMD sized large folios for tmpfs.
+>
+> Any comments and suggestions are appreciated. Thanks.
+>
+> Changes from v1:
+>  - Add reviewed tag from Barry and David. Thanks.
+>  - Fix building warnings reported by kernel test robot.
+>  - Add a new patch to control the default huge policy for tmpfs.
+>
+> Changes from RFC v3:
+>  - Drop the huge=3Dwrite_size option.
+>  - Allow any sized huge folios for 'hgue' option.
+>  - Update the documentation, per David.
+>
+> Changes from RFC v2:
+>  - Drop mTHP interfaces to control huge page allocation, per Matthew.
+>  - Add a new helper to calculate the order, suggested by Matthew.
+>  - Add a new huge=3Dwrite_size option to allocate large folios based on
+>    the write size.
+>  - Add a new patch to update the documentation.
+>
+> Changes from RFC v1:
+>  - Drop patch 1.
+>  - Use 'write_end' to calculate the length in shmem_allowable_huge_orders=
+().
+>  - Update shmem_mapping_size_order() per Daniel.
+>
+> Baolin Wang (4):
+>   mm: factor out the order calculation into a new helper
+>   mm: shmem: change shmem_huge_global_enabled() to return huge order
+>     bitmap
+>   mm: shmem: add large folio support for tmpfs
+>   mm: shmem: add a kernel command line to change the default huge policy
+>     for tmpfs
+>
+> David Hildenbrand (1):
+>   docs: tmpfs: update the huge folios policy for tmpfs and shmem
+>
+>  .../admin-guide/kernel-parameters.txt         |   7 +
+>  Documentation/admin-guide/mm/transhuge.rst    |  64 ++++++--
+>  include/linux/pagemap.h                       |  16 +-
+>  mm/shmem.c                                    | 148 ++++++++++++++----
+>  4 files changed, 183 insertions(+), 52 deletions(-)
+
 
