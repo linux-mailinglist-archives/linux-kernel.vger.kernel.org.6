@@ -1,66 +1,68 @@
-Return-Path: <linux-kernel+bounces-410373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0C079CDA8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:33:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C78A9CDA91
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:33:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8707D282E99
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:33:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33C341F246BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5238118C332;
-	Fri, 15 Nov 2024 08:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEC518D63A;
+	Fri, 15 Nov 2024 08:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="GTtEJuxQ"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="IBZudi5C"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B689718C004
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD96218C004
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731659571; cv=none; b=cqOiHeosgdVjnlHclFTKWqplTC50AFF9JJ2VhQbrUA6kwHFrHmDrptnypPhxbc9ebsSajvX1YOeloyRxVIktkemZQf3rfnq/GqX0v7psP8Hs20gQYNk56pOcVssQM5XGUSGfpCnIt9OA9aNmd1/+ULgBxIjUn8SHxG5SXfrlDXM=
+	t=1731659579; cv=none; b=loF178UhIWcviQoXkelllJ8c5lofmvZmfvQqXnyDgLk/DD/qqEhS+qICS+zy4KdYgFNLvOxf/ZXGxAOPmnEnTiMtqxH+ZJZKoo7qu/gOd3lbiIJL3tNFCpB0vBdj3uCSHz9u5N5zzL7LOmpMhIQoYX9TSQeOqevPllVZIimo1xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731659571; c=relaxed/simple;
-	bh=bwKXMZ/CqyKVXHRWjad7VNJ99PRPhanXO2k0v/9eehs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LJz+4F196KADCUyZ6i8WB8f7ppl5qb0oNOb2tgxN50HxiZ1SEMIRxPIZAm2J7NYuUfkz0Fg7koKZKt23OOqGPCZKmBwwDw8WYVJxpXICvZQjpJr/Zjh/xGknCcZtUZmwGccroEPzTIzq/Y9K8IBCE2HbqahE4RWIEelKCY4yw00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=GTtEJuxQ; arc=none smtp.client-ip=209.85.160.178
+	s=arc-20240116; t=1731659579; c=relaxed/simple;
+	bh=54mni3iTajw4DR3xdzQsdu/Chh5F48gsSo9KvuOjIDE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=DTebO57kfGNr1Irtsfr+JuW73yLHvjaFnlR9Q9607aR2gFAvXlsnTblJBx/uyA2443DmO0itU1gm+AQyDRmKyKyXsg4O/03tKBHoq/1Il5chlzYLLt7EbXYLbU7dBUvQ1gfEZPuk1G40/u7t8Db8my7eyTyUO6ZSH9Jw9q3tN9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=IBZudi5C; arc=none smtp.client-ip=209.85.128.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-460a415633fso3085951cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 00:32:48 -0800 (PST)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6e9ed5e57a7so4042707b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 00:32:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1731659567; x=1732264367; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+oyM45fO7kqXMoRRUsCsV2dgNjzQvpxBqm/zmpiRHXg=;
-        b=GTtEJuxQtRSaBvciE0/O4V34pZ7STyPdVt2dMCpwWrN1Bp+jAL6Dm048ct+xkbpfB+
-         1XDNUdpqYfz4eS6KwONDWy2BhpftlINR4rF1NLU7vnKuFWydHUZ0UYh6Yk20CAhcRSmO
-         L3XpjPMfAI39c9Y+JI34YvXxEpzPU3/A9TnfQ=
+        d=broadcom.com; s=google; t=1731659577; x=1732264377; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kVk+wA7Hzqqbm+HZtE5Q8quohvyj63w+EnDU9/WQw68=;
+        b=IBZudi5C/S5fTYrNYlC/CG4jdL59Prhrbz/3F0dqoqjrOABZ0y5QQiGgZQs1VOTKuj
+         5UmMGu7u67sjEe3Xy6Bc3KR6LMphhUDAlva0Wh1APjx9SXT6ZWK+Xqa0E0fmFmUA5bL1
+         /edbV3sbT2TPb+XbHERqbyMd1l47JUYI20CwQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731659567; x=1732264367;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+oyM45fO7kqXMoRRUsCsV2dgNjzQvpxBqm/zmpiRHXg=;
-        b=H+tgoOFgwEIxAIYLo3Pittf2yIguQehvT9SPkzm6DU8L3uewlD5zs3L1Bj+Q+gEvPN
-         +k6wVj8JUzK4We5j3HI/74l/V2RtpFiff1bd/+Nrb4iTnZ3bAfN7QLIBVFcaFlaO9ed8
-         1MwRfZQYwz4ehPdXWJNSlkDOGbtxMK4AEeeOK4DmmRa4af9uFQwkG7k/Uo/ZEvO8Z8Xd
-         22cUBVDVcDGyo5rnxncNprrzdh7URhFMbGw6Ibwzl0pUD8Ca8PAo4Oh8dhmW1lEFJuAd
-         cCV49IcLn6ZJPKBHg0G5yMpLcL5EI0VgDuInXfh6tfyzoW8d8A12v45OkN82c7Hj1UJF
-         hwtw==
-X-Forwarded-Encrypted: i=1; AJvYcCWzaieYEcVcjpkJ3N+CY51O36CuOwhhPv3hUwBQRltDRViR0jReXdn986tsbGviNa3URrQvze3FggrlFLA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzKwBKWCAAO0F43vZeeWRsywVAPZ9twOFAMR/HGy6PzoZh1LmI
-	DAOlR38q76Ub3TqODyY2F36aOLb4l9PJFIEqVB/Z3lLevF4lbptizNug/+7Ohw==
-X-Google-Smtp-Source: AGHT+IEIC73NXLt7bHwh/TMQ6UkI0zrz/RHhFfkxb8RIMOzTdzyOAiIAIfCgAfuhcrXgqjJXvnY2dQ==
-X-Received: by 2002:a05:622a:5187:b0:460:9ac7:8fcd with SMTP id d75a77b69052e-46363de864bmr26095761cf.1.1731659567548;
-        Fri, 15 Nov 2024 00:32:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731659577; x=1732264377;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kVk+wA7Hzqqbm+HZtE5Q8quohvyj63w+EnDU9/WQw68=;
+        b=lux6mgyMTp2jnBxWzVBCjtNo8HdDNtC4KkS5vza8Dm7IyvDHn5bVLqUU/1Kw5xBz0C
+         dvlj4fpVjs1s79bfvlsc/vNXmNTcrxGi9J4DoBHujE1WLFVx2gY7e7Xty/jJraar2Xnp
+         F0gczqL3bCBEAcv0Cys+0eV+SSraGOf8Q3eBKAGvTa6K3cp358ApFwHhD8P6Baxv3bPb
+         Idm+c0sjuG+J+vm8DoTpdPf3FIkCQgOBFez++RG0l+Atme3ngGaxiGJxwh6Rkvum4kXs
+         xDBrCcHUJKCjxggfKFJ+t2uvKSRpID/qpFaGXDd53MvTZkxt3zfit9rhIXYJrCUGlYiu
+         BDRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKVslZQ4JQXENJB3xIwYvuqL8dV9fJpVxXkuH0WD3Ua/yB03Kz0ily+wkhrLKJTuKPSSdJF1n9AsAguV4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb3fLv5yx/82OMFIozN68yyCEsnLb0jtccdYHWKbZF6QbJATMz
+	+tOn/0eRIug8xYP+g1V4dkoW03BF7r5ZBh9Xif1h+KrSpdutDIkF4VGxI5WsJw==
+X-Google-Smtp-Source: AGHT+IGhoGxCNZRH1MLfMJH1sClc2oTWPqp7sgf+UUkz9D2SciqwrZP1OjWUqLdY7aFalNaYgAhmHg==
+X-Received: by 2002:a05:690c:7005:b0:6ea:84e9:1612 with SMTP id 00721157ae682-6ee55c615d5mr24358737b3.29.1731659576809;
+        Fri, 15 Nov 2024 00:32:56 -0800 (PST)
 Received: from vb004028-vm1.. ([192.19.161.250])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4635aa37c54sm16584231cf.53.2024.11.15.00.32.45
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4635aa37c54sm16584231cf.53.2024.11.15.00.32.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 00:32:47 -0800 (PST)
+        Fri, 15 Nov 2024 00:32:56 -0800 (PST)
 From: Vamsi Krishna Brahmajosyula <vamsi-krishna.brahmajosyula@broadcom.com>
 To: stable@vger.kernel.org,
 	gregkh@linuxfoundation.org
@@ -76,10 +78,12 @@ Cc: yuxuanzhe@outlook.com,
 	alexey.makhalov@broadcom.com,
 	vasavi.sirnapalli@broadcom.com,
 	Vamsi Krishna Brahmajosyula <vamsi-krishna.brahmajosyula@broadcom.com>
-Subject: [PATCH v6.1 0/2] ksmbd: fix potencial out-of-bounds when buffer offset is invalid
-Date: Fri, 15 Nov 2024 08:32:38 +0000
-Message-Id: <20241115083240.230361-1-vamsi-krishna.brahmajosyula@broadcom.com>
+Subject: [PATCH v6.1 1/2] ksmbd: fix slab-out-of-bounds in smb_strndup_from_utf16()
+Date: Fri, 15 Nov 2024 08:32:39 +0000
+Message-Id: <20241115083240.230361-2-vamsi-krishna.brahmajosyula@broadcom.com>
 X-Mailer: git-send-email 2.39.4
+In-Reply-To: <20241115083240.230361-1-vamsi-krishna.brahmajosyula@broadcom.com>
+References: <20241115083240.230361-1-vamsi-krishna.brahmajosyula@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,17 +92,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The dependent patch (slab-out-of-bounds) is backported from 6.7 instead of 6.6.
-In the 6.6 commit (9e4937cbc150f), the upstream commit id points to an incorrect one.
+From: Namjae Jeon <linkinjeon@kernel.org>
 
-Namjae Jeon (2):
-  ksmbd: fix slab-out-of-bounds in smb_strndup_from_utf16()
-  ksmbd: fix potencial out-of-bounds when buffer offset is invalid
+[ Upstream commit a80a486d72e20bd12c335bcd38b6e6f19356b0aa ]
 
- fs/smb/server/smb2misc.c | 26 ++++++++++++++++------
- fs/smb/server/smb2pdu.c  | 48 ++++++++++++++++++++++------------------
- 2 files changed, 45 insertions(+), 29 deletions(-)
+If ->NameOffset of smb2_create_req is smaller than Buffer offset of
+smb2_create_req, slab-out-of-bounds read can happen from smb2_open.
+This patch set the minimum value of the name offset to the buffer offset
+to validate name length of smb2_create_req().
 
+Cc: stable@vger.kernel.org
+Reported-by: Xuanzhe Yu <yuxuanzhe@outlook.com>
+Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+Stable-dep-of: c6cd2e8d2d9a ("ksmbd: fix potencial out-of-bounds when buffer offset is invalid")
+Signed-off-by: Vamsi Krishna Brahmajosyula <vamsi-krishna.brahmajosyula@broadcom.com>
+---
+ fs/smb/server/smb2misc.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/fs/smb/server/smb2misc.c b/fs/smb/server/smb2misc.c
+index 03dded29a980..7c872ffb4b0a 100644
+--- a/fs/smb/server/smb2misc.c
++++ b/fs/smb/server/smb2misc.c
+@@ -107,7 +107,10 @@ static int smb2_get_data_area_len(unsigned int *off, unsigned int *len,
+ 	case SMB2_CREATE:
+ 	{
+ 		unsigned short int name_off =
+-			le16_to_cpu(((struct smb2_create_req *)hdr)->NameOffset);
++			max_t(unsigned short int,
++			      le16_to_cpu(((struct smb2_create_req *)hdr)->NameOffset),
++			      offsetof(struct smb2_create_req, Buffer));
++
+ 		unsigned short int name_len =
+ 			le16_to_cpu(((struct smb2_create_req *)hdr)->NameLength);
+ 
 -- 
 2.39.4
 
