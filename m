@@ -1,140 +1,139 @@
-Return-Path: <linux-kernel+bounces-410369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 346189CDA7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:31:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 285E89CDA7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:31:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE0AC2835DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:31:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C14F61F231F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A7D18B492;
-	Fri, 15 Nov 2024 08:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lYH503cF"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA0918A6C5;
+	Fri, 15 Nov 2024 08:31:36 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD1D1442F4;
-	Fri, 15 Nov 2024 08:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4A71442F4
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 08:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731659463; cv=none; b=h7tAg5tO5/3buii3Ocl0VebMR7Xo8MP+Upyz57wx5VdlSeE91GM0jqTRlMK9qoaaRn09YzmBa6Ka8g46giyFek7E3DvdfefVqwQb2e5tlSxr8ZQNTuwuD6hUwiDd0d3LuTdBafHwYDr0GN93EzkVCUh3kdIqwSSu6Oj4YpJYzKI=
+	t=1731659496; cv=none; b=DJBTmHssWNp7ASFELYG/3BRYPSiUrC0Mv5gnQlZYQDkvQ5s1Vtl3cdo37m9NXk8pcooLJRv6Jt4PJBdhep4NJ2WBQn2V6j2a/F1DrOw94FSrAtBFr5n1Z5VvuFcWGzQWNay+oRqBiXx6Egf3JgUgwNEnETcmt5U9tA0wFYJILsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731659463; c=relaxed/simple;
-	bh=aepKhY3q7EiZgbqSDNNifX5wqjXSYMCFZqfrRtPFLRs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZxSSohYVILUyNK+s+sv/C2ZA3434iE7gCNplPoyvi51zkYIaX3PzetUoyrdAkkIQgVzKbBFx4JWMody+yEev3W5CHly7YkEvv37XnFsSVan4KPq/xqS98xQH8f2TINIZGftQFsGuQy5yCIbTF9euByZVLSxDo7wVdxRmrnz+aTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lYH503cF; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e383bbcef9dso183012276.3;
-        Fri, 15 Nov 2024 00:31:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731659460; x=1732264260; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EHL/ci9VxK9VKzFDJdgaWG+Fff8ppDWDOwB2XTtPdQQ=;
-        b=lYH503cF7yphphttilW9IPOeUujw712ork4A+xIwAX2l9cdgdsjhUeNMXCOJYAlZWY
-         3Z3WnsZC/dw0jHdtNgE5tdwFtFbazLc3woHQiXBJo8HLBEsdba56giWIHI6GP+cqStxc
-         7XmqagHCRtjg2zwouVEiTnCVSxxGRkPePwBfgPmBbO2+Ilbc/ILy85j/TGPmUMa42hxU
-         nDhrEiD7+UA1dV9TGeAYusvANf6zeSXYzKvNpkuqJz1ZcXdyQTlhhDx8ADYyWXPzih1a
-         XFlpTzOOII3KVV6B+rEch6qyn/u72xLPDrByzZN4uEzYCvvM3imBLoWfTkut5agpmT7o
-         H4CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731659460; x=1732264260;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EHL/ci9VxK9VKzFDJdgaWG+Fff8ppDWDOwB2XTtPdQQ=;
-        b=dDFMJGfUgbmn/mWlSIoQit+HMvVGNcnOAnjtmJmWMt+Zc/hYKsEdEillVVFh+L4Ls3
-         3Nfn3QKSm/N0ncf1dEJLiuF1/aN0otm2pJmb8m80/2h1EILsI3Cd4IVDO55N6UekegDR
-         yynf2hSsH5Cr+DkQc8MvwiCDNyO4hc+ZcGk2b1Yfkoh8g+e9nvcouZ5IjS+j13fvswQ1
-         5MrAsprh6S/0eWcqxWzHYLZ8vFRcd5lEClYfOkuaXw6f99gvTHKqZiEwMAn9jwnID1sp
-         ph/6a0YfXSWr+RH9wifl48wZj+f+3N234SVu7qg2kwTHgXdIexWcXvUalHN8goTjpnu2
-         4dZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXmTOhPjHVwRfuEx9TEBbx0DjuEgYcuz2O0I99gVSZKG1rM62qvVKFgfLhYyHxCHavcFv5tbxUB+Dh4b5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwB83nXwtNgdm32NnQ4hoMWmb/rx/zm1Ge8iy4xkZv2AdE0uCoT
-	JiMfT6bODyJdqF/HgYG19S3U8i2tKBRtImv4I7igJ9XhUzVLoW/w4tjMVejqc1vURxmY0Ydo48F
-	zraZX4ncxggPKLcXku6KK+FyWvzStKg==
-X-Google-Smtp-Source: AGHT+IEeIlTtLPul9ftiLGdznxoImq9rc+LVtgWtMqUBcyddRPwn4tya2o7Mj6XYFvro68rkyBJ1w/oHKEVmL/Vnk/4=
-X-Received: by 2002:a05:6902:1001:b0:e2e:472d:b107 with SMTP id
- 3f1490d57ef6-e38265e0a6dmr1770716276.52.1731659460580; Fri, 15 Nov 2024
- 00:31:00 -0800 (PST)
+	s=arc-20240116; t=1731659496; c=relaxed/simple;
+	bh=xcdtrxcwpTnLEPaXSmZR3NuiRhTzoRvMbIOYl8cGGsY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H7UdTtNmqadKBr2QHWR8ok/RMVRlwCvC2ZC0lFWuIsQoJ60w9bnc/f+p/f6l1RJS81/A1K/B24eGS86P16OcWQj+x14j4GhcHaCda1vkzBLwv+QDgyKhgsqB+yKqztwPeN+vMXi3La7QpmRk+Yg5RBI/WOJ+Gz2j8KOza14Kstg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tBrjF-0000SB-St; Fri, 15 Nov 2024 09:30:57 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tBrjD-000sSC-07;
+	Fri, 15 Nov 2024 09:30:55 +0100
+Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id AA09D373AB0;
+	Fri, 15 Nov 2024 08:30:54 +0000 (UTC)
+Date: Fri, 15 Nov 2024 09:30:54 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Jeremy Kerr <jk@codeconstruct.com.au>, 
+	Jian Zhang <zhangjian.3032@bytedance.com>, netdev@vger.kernel.org, openbmc@lists.ozlabs.org, 
+	Matt Johnston <matt@codeconstruct.com.au>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] mctp i2c: notify user space on TX failure
+Message-ID: <20241115-scrupulous-mantis-of-purring-1c41fe-mkl@pengutronix.de>
+References: <20241108094206.2808293-1-zhangjian.3032@bytedance.com>
+ <20241113190920.0ceaddf2@kernel.org>
+ <da9b94909dcda3f0f7e48865e63d118c3be09a8d.camel@codeconstruct.com.au>
+ <20241113191909.10cf495e@kernel.org>
+ <42761fa6276dcfc64f961d25ff7a46b764d35851.camel@codeconstruct.com.au>
+ <20241114070235.79f9a429@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHXL5pfQjhpANBxNY1YjURhWwU17WD9gX4rDqi4ezYOKeFs=gQ@mail.gmail.com>
- <2024111339-monogram-refried-f189@gregkh> <CAHXL5pdW-3P4vJf8wmUHc=VBzXsFYkHXw=6yVc-hqfY-mE8wWA@mail.gmail.com>
-In-Reply-To: <CAHXL5pdW-3P4vJf8wmUHc=VBzXsFYkHXw=6yVc-hqfY-mE8wWA@mail.gmail.com>
-From: Jason fab <siliconfab@gmail.com>
-Date: Fri, 15 Nov 2024 14:00:49 +0530
-Message-ID: <CAHXL5pfiy-yyDfhXnBjPREQULP4UFqTZHhOM9OXFxA07Q9LUpQ@mail.gmail.com>
-Subject: Re: VTIO support on USB
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vt3m2lwmvec4zdoq"
+Content-Disposition: inline
+In-Reply-To: <20241114070235.79f9a429@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+
+--vt3m2lwmvec4zdoq
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH net-next] mctp i2c: notify user space on TX failure
+MIME-Version: 1.0
 
-On Wed, Nov 13, 2024 at 12:24=E2=80=AFPM Jason fab <siliconfab@gmail.com> w=
-rote:
->
-> On Wed, Nov 13, 2024 at 11:48=E2=80=AFAM Greg KH <gregkh@linuxfoundation.=
-org> wrote:
-> >
-> > On Wed, Nov 13, 2024 at 11:27:47AM +0530, Jason fab wrote:
-> > > Hello,
-> > >
-> > > I would like to know if the linux kernel usb subsystem supports
-> > > Virtualization based Trusted IO Management (USB VTIO)?
-> >
-> > What exactly is that, I can't seem to search for it and have not heard
-> > of it before.  Do you have a link to it somewhere?  Is there a USB.org
-> > specification published for it?
->
-> I came across the below xHCI document and am wondering if the
-> Linux kernel already supports it.
->
-> Here is the link to the document:
-> https://www.intel.com/content/dam/www/public/us/en/documents/technical-sp=
-ecifications/extensible-host-controler-interface-usb-xhci.pdf
-> Section 4.5 USB Virtualization Based Trusted IO Management (USB VTIO):
+On 14.11.2024 07:02:35, Jakub Kicinski wrote:
+> On Thu, 14 Nov 2024 14:48:57 +0800 Jeremy Kerr wrote:
+> > > routing isn't really my forte, TBH, what eats the error so that it
+> > > doesn't come out of mctp_local_output() ? Do you use qdiscs on top
+> > > of the MCTP devices? =20
+> >=20
+> > There are no qdiscs involved at this stage, as we need to preserve
+> > packet ordering in most cases. The route output functions will end up
+> > in a dev_queue_xmit, so any tx error would have been decoupled from the
+> > route output at that stage.
+>=20
+> Ah, it's the driver eating the errors, it puts the packet on a local
+> queue and returns OK no matter what. The I2C transfer happens from=20
+> a thread.
+>=20
+> I wonder if there is precedent, let's ask CAN experts.
+>=20
+> Mark, MCTP would like to report errors from the drivers all the way=20
+> to the socket. Do CAN drivers do something along these lines?
 
-I would like to know if Linux Kernel supports the above USB VTIO
-feature. If yes, appreciate if someone can share steps/documents to
-enable it.
+On CAN_RAW we send fixed size messages (struct can_frame) and there is a
+bit left to mark a can_frame as an error frame. This basically means we
+send the error notification inline.
 
--Thanks
+What about using sock_queue_err_skb()? We do this in CAN_J1939.
 
->
-> The USB Virtualization based Trusted IO Management capability provided
-> by the xHC is optional functionality that enables a multi SW/HW function
-> ownership and access model for the various XHCI defined memory structures
-> and messages. As an example we can view a PCI based xHC implementation
-> as using the PCI defined function as the method to comply with the USB VT=
-IO
-> requirements.
->
-> The PCI Bus/Device/Function (BDF) for a given PCI function is determined =
-during
-> the standard PCI enumeration of devices. PCI controllers captures its BDF=
- when
-> it receives a downstream Type-0 Config Write (CfgWr0) cycle targeting its
-> Configuration header. This latched value is used as a "Requester ID" or
-> =E2=80=9CDMA Identification=E2=80=9D for all transactions initiated by th=
-e controller.
-> The PCI BDF
-> which is determined by the standard PCI discovery/enumeration process wil=
-l be
-> referred to as the Primary DMA-ID.
-> >
-> > thanks,
-> >
-> > greg k-h
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--vt3m2lwmvec4zdoq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmc3BrsACgkQKDiiPnot
+vG+fYgf/Va/T2YBUFonO4TuAsteq+Vjzg37H/7ok0NZCvgSfZ8QqVGaI54B/ByJH
+fdknhCQ6xHUH0ov7SkK7I8TS2LZHQ3N092ApMCtENsfCTg5ZybIiibPS2Teb+lPP
+lKbktQqtS/5UX/ZJdstAl43zm/MYrNMHnfV2D+BUXDMpr3JvMFX6B6/jeUwZ/lAS
+6r5QAne4+DWNfWf+1S+YWsYHqI1r5cuzN1ZcVPM2WhTM0LdksgkojKAvV5t7zDes
+zwlUtToIF6nfehDyeue5wjMy0WrPOZQs8cTVi0GK3Z2petxKnGFWAvn5mkVg6T0k
+Wc7MKFi1s015Oh1cjnxV6VwvambeUg==
+=XgKe
+-----END PGP SIGNATURE-----
+
+--vt3m2lwmvec4zdoq--
 
