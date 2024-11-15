@@ -1,109 +1,101 @@
-Return-Path: <linux-kernel+bounces-411453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2BC59CF9C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:28:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33DA89CF9D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:34:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 353942823A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:28:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47596B250D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A9519006B;
-	Fri, 15 Nov 2024 22:28:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12CBA19006B;
+	Fri, 15 Nov 2024 22:29:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="KSvdt2+v"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U3I++ZB0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NevTVyC+"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F3F187876
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 22:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E553F187876;
+	Fri, 15 Nov 2024 22:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731709723; cv=none; b=Y/AXEIruG6IOm1xO23UgmuRTsIZ4yFGr2Q75o4o8MIaVVGOm8uWle/MNlQwxS/mED3mqORic0QGYQuGfNn+ILOAhLSZ/osAoMS95S8rOY1hoVKSJ7fJ/px3hfUthSozOWYOEscXHLtpoPfNh9LCIpd7Ryp3kH5jZrmx5Vij1mXg=
+	t=1731709770; cv=none; b=E15lMKGC2zslyqN4lvO/66LxMb27LUjvMKo7ImAiHA86kldcxxtLYqg5nTRnQ5sc8zLwH4Rp009bNUKsqwcLHUulfGaxydpBA5+HDZjMe7HewsArk5UkYjq4PFLAjV61kW//pooFj01vE9w8FIPG6akPgghcyne4+ZuJ25pHwKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731709723; c=relaxed/simple;
-	bh=i2IhHfulyS75UGsF7/PqW4S9kdXZVMBDzqNzBpLvNdI=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=smCC+9yPOxvJBn1/zsyYKjbyoXtVP5lckWQU8W/myrbjxKKoQ5wRvZz7jSr4llYgAwka7cqeP7vTyG+xemLnAyL3dBxa7NRhJySYkA54dpxexCzbu8gl2xuzqhrUwgHAH7F986frOrU9ZfPU91DoBri0n6UGPta/cJxRQ3ahh9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=KSvdt2+v; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7b18da94ba9so194374785a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 14:28:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1731709720; x=1732314520; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=J+8l3D//FSODytWJh9ARkg7rtz2NFPnk8CFXEo496Tk=;
-        b=KSvdt2+vnepVepyfsLWSDLRaUI0/1H1+KPbWPaDa0UtWEIny2rkZ9zFN8bTvapJ1PZ
-         PfjSRzrq2HgtaaR8hZK2WAf/OFAAPlt/xBywBuDhU5JUAvUU9qbqkHUCkSuhXdD0xDEC
-         Z2tkB3HZhP3ZwhUa3KFiuIW/X0MhJ3iNBW3UY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731709720; x=1732314520;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J+8l3D//FSODytWJh9ARkg7rtz2NFPnk8CFXEo496Tk=;
-        b=hdddbBmAYcdzZMV9F0I7ytJpuDBoDOU1jeQmtJieoifJ28LCE/nLUqVpsBPQtoFkL4
-         moDdMDDmEfgLLD5UgT90GKj5Md2whVG+QMQoCB4rrmhGmiPm+EZn15WW3ujIEdneM6j9
-         IIvauwfHBk8OcZghaKXikZC7G+5dZqrLi2I8i/DRNd2DtbPHQzORAU8jCkp1djsqPUJo
-         shH2RWDSC5m98D9WBBsfG1HehtR/9FhoR+D4YV/5ee9E7SEO3on3mX5JAn5JRbiw32Wq
-         fG8l4SxZpaqZOFADG2g+NUAd2DxdJ3witIb0AY5+FZam6tReMhLxTEzTFCvSv4QrD9pC
-         R1Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCUiR404yKCBNRQrAkElgUiaVfwMbIj/dQePEPBoXagRws5wuIhP65p28o8XOtb8NTLD4hQjSC+Qx72MXmQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs1pSTER5tosTN/v9OrZmpoqs7EZ/Eo7xSGAEnbo8TJO60n/TM
-	HYDd+IZ3nSI5efBgBVDJeEmetiy4pX6zXm8m7iO7cglNX1d7OPKJXMb4EEEBBQ==
-X-Google-Smtp-Source: AGHT+IHEJRVcqkSvSHdB5vLd3VF5G5QTq3MPd7V7tt3ym0x6SbftfZEGWwJgBwj4lbxJ2I1pfgtbmQ==
-X-Received: by 2002:a05:620a:1a9d:b0:7ac:e8bf:894a with SMTP id af79cd13be357-7b35a51f0d2mr1310167785a.20.1731709720684;
-        Fri, 15 Nov 2024 14:28:40 -0800 (PST)
-Received: from JRM7P7Q02P.dhcp.broadcom.net ([192.19.144.250])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4635a9eefd0sm24560391cf.27.2024.11.15.14.28.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 14:28:40 -0800 (PST)
-From: Andy Gospodarek <andrew.gospodarek@broadcom.com>
-X-Google-Original-From: Andy Gospodarek <gospo@broadcom.com>
-Date: Fri, 15 Nov 2024 17:28:37 -0500
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Jakub Kicinski <kuba@kernel.org>, bhelgaas@google.com,
-	Wei Huang <wei.huang2@amd.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	asml.silence@gmail.com, almasrymina@google.com,
-	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
-	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
-	manoj.panicker2@amd.com, Eric.VanTassell@amd.com
-Subject: Re: [PATCH V1 1/2] bnxt_en: Add TPH support in BNXT driver
-Message-ID: <ZzfLFSvHCaPgVPzH@JRM7P7Q02P.dhcp.broadcom.net>
-References: <20241115140434.50457691@kernel.org>
- <20241115222038.GA2063216@bhelgaas>
+	s=arc-20240116; t=1731709770; c=relaxed/simple;
+	bh=YgvT79iBaGBVWiBS65XCwTu/ttnEG6uZDj9Sw5C75WE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=eu/9JJ6GV/aYMpUEUHH5lHIEPRUGHPxSA5VwBtOKW0sE2BzaxLar9o5K+pylsqKIlUUHyy1DDrBySBT7PZ4OOAz6rojBtbbpiirPEvh6GasPx9l9JIOpWhRaUUBFFg+Zg+8iKda4CYQWssXsKVbVJHvhfEbDycixSzP50GYlnAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U3I++ZB0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NevTVyC+; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731709766;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qfxggv6ATdS6g6AFs0Huv/ja/7B7Fu4yoi78sTHWDUo=;
+	b=U3I++ZB0s6lN0p4TkOIgmA1yjiODb5Y9A1GaqCxFsxFW4mqs2HYhzfWKU++XOQkT92j8XL
+	vAxQIX80LscbhZvInxbQXzXb+EfeDTx5/9QQC8G1g6baWWxuSN1OL3s2UTzrGe3T+mWTdo
+	NiY4VV03eMMl8TCD3JmW+c6fSwT1CEyHQK3jnDrYd8Qjq0TtdYEDwRqXo8M2SOIIITQBtv
+	n13c4P511Bh+Wicdb/TZgBMZjdcvT1fcc16oIAdiKzg4Jn9/tmZ3cgwV/lMdlt5uqA7A4a
+	aDuBU9ReSaF8cqBdOdOHQDKQKiQGI5vreZ6pTuJZCDTSOEO7U9VDNc1wditIOQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731709766;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qfxggv6ATdS6g6AFs0Huv/ja/7B7Fu4yoi78sTHWDUo=;
+	b=NevTVyC+yzwxBAKjaZgOegdnzziOjLg6+tEWAGDzSXnrWodcqre3bNcInnQ+nHhgzlUOlj
+	AT5OXB5dOkQ5caDg==
+To: Kunwu Chan <kunwu.chan@linux.dev>, Kunwu Chan <kunwu.chan@linux.dev>,
+ ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+ bigeasy@linutronix.de, clrkwllms@kernel.org, rostedt@goodmis.org
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rt-devel@lists.linux.dev,
+ syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com
+Subject: Re: [PATCH] bpf: Convert lpm_trie::lock to 'raw_spinlock_t'
+In-Reply-To: <1e5910b1-ea54-4b7a-a68b-a02634a517dd@linux.dev>
+References: <20241108063214.578120-1-kunwu.chan@linux.dev>
+ <87v7wsmqv4.ffs@tglx> <1e5910b1-ea54-4b7a-a68b-a02634a517dd@linux.dev>
+Date: Fri, 15 Nov 2024 23:29:31 +0100
+Message-ID: <87sersyvuc.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241115222038.GA2063216@bhelgaas>
+Content-Type: text/plain
 
-On Fri, Nov 15, 2024 at 04:20:38PM -0600, Bjorn Helgaas wrote:
-> On Fri, Nov 15, 2024 at 02:04:34PM -0800, Jakub Kicinski wrote:
-> > ...
-> > Bjorn, do you have a strong preference to have a user of the TPH code
-> > merged as part of 6.13?  We're very close to the merge window, I'm not
-> > sure build bots etc. will have enough time to hammer this code.
-> > My weak preference would be to punt these driver changes to 6.14
-> > avoid all the conflicts and risks (unless Linus gives us another week.)
-> 
-> I do not have a preference.  The PCI core changes are queued for
-> v6.13, so driver changes will be able to go the normal netdev route
-> for v6.14.
-> 
-> I agree it seems late to add significant things for v6.13.
-> 
+On Thu, Nov 14 2024 at 10:43, Kunwu Chan wrote:
+> On 2024/11/12 23:08, Thomas Gleixner wrote:
+>>> @@ -330,7 +330,7 @@ static long trie_update_elem(struct bpf_map *map,
+>>>   	if (key->prefixlen > trie->max_prefixlen)
+>>>   		return -EINVAL;
+>>>   
+>>> -	spin_lock_irqsave(&trie->lock, irq_flags);
+>>> +	raw_spin_lock_irqsave(&trie->lock, irq_flags);
+>>>   
+>>>   	/* Allocate and fill a new node */
+>> Making this a raw spinlock moves the problem from the BPF trie code into
+>> the memory allocator. On RT the memory allocator cannot be invoked under
+>> a raw spinlock.
+> I'am newbiee in this field. But actually when i change it to a raw 
+> spinlock, the problem syzbot reported dispeared.
 
-Excellent.  Thank you!
+Yes, because the actual code path which is going to trigger this, is not
+reached. But it will be reached at some point.
 
+IIRC, BPF has it's own allocator which can be used everywhere.
+
+Thanks,
+
+        tglx
 
