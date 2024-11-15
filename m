@@ -1,239 +1,164 @@
-Return-Path: <linux-kernel+bounces-410899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B84BB9CF0CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:56:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6CD59CF256
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:05:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3087AB2DEFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:31:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37A06B3F721
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42887847C;
-	Fri, 15 Nov 2024 15:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D9F1E1C2F;
+	Fri, 15 Nov 2024 15:44:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="llCfQuEo"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jWyzlZB6"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8A11C75E2
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 15:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0091E1D90BD
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 15:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731684615; cv=none; b=HlotS9jAc6vGGW6XVUlGhP4hNKvbzW16bofuuEcz4YwNI1w5Yy8t9GpYLjvnMvQMPxDejDGCIlXTFuxibN5jqL4/dGoFlf/mNllViBS1ZCplWgqJX9PPSCchfbsPoUur1xJttvdE7n2t88J2ZzFXD3wYRvEdWxrNA8iUK1nxmuc=
+	t=1731685461; cv=none; b=VoZX12/RD9JIUc8IneR4KrmhKkFudwfd0lC7Kz1M8ALCLjzdJRgvYIfq4EKD6JUl/V9OqaLcut9+ugh6ImO45PpWDd6mKR1fNauQSqoCHiMjfWz5hYMnBU9jv0XSUJPapjDTlu0eqM7k0sM8PkDcVUP3dRg7K6+Hnzpd+ZTkJTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731684615; c=relaxed/simple;
-	bh=BTJWNGbpl5KvD6H+VDgOWo2Yq5EF8KYra7F4VvHtP7M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FC2+O1iHPo08eJQyW3ddHxVz+FFS30CGWObK0hDiPV9r2pYQglt2uMcPSzuTzks6bdKMX9r4zPI3xrCv07I3LKwUUVSMf5cmCKUGfivh94wxPeFaTjqNVLYUJ65X3RJzFbuV/7Kh5h5AASWEkLM0z4H562cvpOycANprqviTcPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=llCfQuEo; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e2ed59a35eso1685293a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 07:30:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731684613; x=1732289413; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SmJxOZsK/WTy1TwXxhvCivxQcUc93pFDymw3BaVCfLw=;
-        b=llCfQuEoChGIMnRdPKBRn4pxI/jgngEe9olxAAFvIQZA92bWVh4FoMMKYOT96qVAkm
-         CYsGYfqMdy2mRb72p4rM3uDj4ZNNTtBNrZzY8LD7wVzrrrENq8+0ywUP5U7Hlqg5sXo6
-         PkrLnkYwDw8I04yq3/m7KLTBmLijwM2fwzrFwtk0GM5ynlWi6otmUTzZvC5R5U5nQ+/z
-         VE1kETpE3VWjf8A2GUDQDAH8lSRxCq7Ww6PjRpF9OYBjfVM532wIbq32x7T3bsBlFOBI
-         dfJc8jMYXfVv5DxoWHp9EznIt4gD66ZWAWV5IJdYiFmKSA5WOuWLHQMoYunPhxFj6RDl
-         swuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731684613; x=1732289413;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SmJxOZsK/WTy1TwXxhvCivxQcUc93pFDymw3BaVCfLw=;
-        b=eXxqV4iVYnpt6dv8UyQwDYcaB9cR/y010lQCH3DJyrTcjr5iWXS+S7lfJ8CeIQwCeV
-         sthEyQK5YW/A9Zk0UT3PUTe9d3Z+3tCP5wsYT7CENBKs36GK3iDxMSrozpF627Q0Ebdl
-         cuLTBEbbmo3wlMTqjq4ooJzjRHimpuivNX4yfVhlyvRFLM7I29BWP5FrRlJu6PX2Le9q
-         9+FPwOV9uWyQ6LGE6Y6M6hmu6hBu2XsEj+UXEwNG5gKCY/0jDjC18bEusagoZHQ4WDRM
-         CBqiaLh2KJ9NuHZIpkkBqbppC1y06Ci3ef+WNfb0eoB2xoyeTlB+q0acGE8WiOqdmKTR
-         bIMg==
-X-Forwarded-Encrypted: i=1; AJvYcCWcZa7JSwCeGNbYYBd6jLvbWlPtnvV1LCMUhez+aHAkGjR9JuxXq2PmW9jrrRdhqBBTLDelxX+qyBRYhzY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbYVPrRPq78KnU8N99KsXnMqJnvW6qa7hTLtBsKalb89W9bb00
-	oZY6FzPULKSKK0Ug9BVmXIao1tXVEsxw+SPpQ0yYsbJPhJrk8vKZUFDs7Z3Ts5wngNU/TScR8Ds
-	YuPoXdJaB5R3QiXZq1MIdW/5+qjL1Aon2bdRcHA==
-X-Google-Smtp-Source: AGHT+IG+PpsGMG3D9PHGUTyU+b4ehE7tPO3iApsCyt2WZs25ja3VpgyyqO4OP9BJpQwEMK+Fcj307W6uEdNaV+/TXgM=
-X-Received: by 2002:a17:90b:4c52:b0:2e2:cef9:4d98 with SMTP id
- 98e67ed59e1d1-2ea155a23bcmr3340237a91.25.1731684612942; Fri, 15 Nov 2024
- 07:30:12 -0800 (PST)
+	s=arc-20240116; t=1731685461; c=relaxed/simple;
+	bh=90wvJYUA6LdxZ4DonNt9wUlHi5YGTteo3uhsbizZ4y0=;
+	h=MIME-Version:Content-Type:Date:Message-ID:CC:To:From:Subject:
+	 In-Reply-To:References; b=DBAqBWTtFdAjQJdil+b+Z0QZyZmeW4AbLG2QAwrm0DLgufvGT4M4LPOPTuIYeRd3rX2mUGY7PLgrU8JF9iESTi6NM2hii+YbjrRuqKuNXgrgEVexxa/sbxi6PC2Ciw40ARRbOTTwrtRojgfCPBRKZfJIAe0d+xLVrUAgdnqWW4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=jWyzlZB6; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20241115153513euoutp0164fb31744c2a7b84407523da98090a5e~ILkEIoJCR1654816548euoutp01o
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 15:35:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20241115153513euoutp0164fb31744c2a7b84407523da98090a5e~ILkEIoJCR1654816548euoutp01o
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1731684913;
+	bh=90wvJYUA6LdxZ4DonNt9wUlHi5YGTteo3uhsbizZ4y0=;
+	h=Date:CC:To:From:Subject:In-Reply-To:References:From;
+	b=jWyzlZB6270/Lp2CZCZmK3Yt8jfZnwi1Z/Uc3FLGX4kUxCj2ToeeSHBhL9m9bQjXU
+	 NvW98YfOlsJHfVfIu35gp1AZLSZQo8Ega3m8z2kn9KwLRgdUl1IHCQ3UvhlVSCdnsB
+	 mi1SHQF/oz5RNINNRBJWTq98WwRCUkavm7BUg4qA=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20241115153513eucas1p2ce7d7035f7ca3f6d47eebd338f62df04~ILkD4pqes1281912819eucas1p27;
+	Fri, 15 Nov 2024 15:35:13 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 9B.E2.20821.13A67376; Fri, 15
+	Nov 2024 15:35:13 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241115153512eucas1p2e40f67965a69d86223f6dfbd6909248d~ILkDetjyS2159321593eucas1p2N;
+	Fri, 15 Nov 2024 15:35:12 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241115153512eusmtrp2a1810c5d11b6f55c8df9f9049a1ddaa3~ILkDeC_-H0665206652eusmtrp2V;
+	Fri, 15 Nov 2024 15:35:12 +0000 (GMT)
+X-AuditID: cbfec7f2-b11c470000005155-e5-67376a31de6c
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id EB.92.19920.03A67376; Fri, 15
+	Nov 2024 15:35:12 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241115153512eusmtip24c5b9f345dbcd388e2c09a0702fdd073~ILkDSkTej3024530245eusmtip2U;
+	Fri, 15 Nov 2024 15:35:12 +0000 (GMT)
+Received: from mail.scsc.local (106.110.32.87) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Fri, 15 Nov 2024 15:35:11 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114220921.2529905-1-saravanak@google.com>
- <20241114220921.2529905-6-saravanak@google.com> <CAGETcx8xni1vyoNts=C=dgEaMcfhsfo0B5Ef02jD3in0QqCB1w@mail.gmail.com>
-In-Reply-To: <CAGETcx8xni1vyoNts=C=dgEaMcfhsfo0B5Ef02jD3in0QqCB1w@mail.gmail.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Fri, 15 Nov 2024 16:30:01 +0100
-Message-ID: <CAKfTPtBZVKXoJPz0w2-WxOddfq5k+mNCB3H_Kay6Y9OgB9Y-GQ@mail.gmail.com>
-Subject: Re: [PATCH v1 5/5] PM: sleep: Spread out async kworker threads during
- dpm_resume*() phases
-To: Saravana Kannan <saravanak@google.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Marek Vasut <marex@denx.de>, 
-	Bird@google.com, Tim <Tim.Bird@sony.com>, kernel-team@android.com, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Date: Fri, 15 Nov 2024 16:35:11 +0100
+Message-ID: <D5MV2HU1QPLI.1P2HM7OTCR997@samsung.com>
+CC: <willy@infradead.org>, <wangkefeng.wang@huawei.com>,
+	<21cnbao@gmail.com>, <ryan.roberts@arm.com>, <ioworker0@gmail.com>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+To: David Hildenbrand <david@redhat.com>, Baolin Wang
+	<baolin.wang@linux.alibaba.com>, <akpm@linux-foundation.org>,
+	<hughd@google.com>
+From: Daniel Gomez <da.gomez@samsung.com>
+Subject: Re: [PATCH v2 0/5] Support large folios for tmpfs
+X-Mailer: aerc 0.18.2-67-g7f69618ac1fd
+In-Reply-To: <3269e0a6-29a4-478b-842a-629efc8d5d59@redhat.com>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm2znbzmar4zJ8sdJa90xNsjpaSFHaydAk0qKgWu2wWfPSjpcM
+	ogvdEDE1TFur7IItnWkrtWlpmc5mgqVEl3UxUlNLrC3LGmq6Y+G/530uPO/38hGYtIrvQcTE
+	JTKaOLlaJhDj5ebfzT7+e5crFzcVu1D2d1JKV2IQUMMPzIjqL/mDUR22DJy66lhCtVbqBNR7
+	wzCfSq/KQdRR+wdEOQZ0glUutOGSAdEm7TshnW9Moo/X9fLpO/qFtNGWLaSf5Dlw2vQxkO6r
+	fiGg7UbPSPE28UoFo45JZjR+wbvEqt62SizhJXGgNPMiOoIGBWlIRAAZAPqHXcI0JCakpB7B
+	+fRXfG74gUCfU4i4wY6gMK+N/y9S9iabxwk3EFTdaeX/d9U1VI8NJgSZnX34aERCuoLlfLsT
+	Y6Q3FFz5gnF4AZyocIy0EwROzgH9OZKzB4CuNMfZgJFlCM7qLM4N3UZkaO/P4426BCPhaovR
+	GZ5MBkHHN29uvbkwfCbL2SUig+HzresYx8+EvKybOIcPQePdN84CIItE0JlrGhPWQm7foJDD
+	k6Gn4e4YngbDpss8Divh+i3tmD8B7lu1/NEdgFwBGU1qjl4NBeWXhBw9EV71unLPnQjZ5bkY
+	R0vg9ElpJpqtHXcg7bgDaccdKB9hhcidSWJjlQzrH8ek+LLyWDYpTum7Jz7WiEb+19OhBts9
+	dLHnu28t4hGoFgGBydwkLSHLlVKJQp56kNHE79QkqRm2Fk0lcJm7ZI7Ci5GSSnkis49hEhjN
+	P5VHiDyO8NiHZfik+EF90VndYTfttGjbfM+DUf1vzY+aQ5+rv5a8uFcujEr1OVR6rHfq9HkF
+	XV5WSfGmpi3PlQMB84rSf1pTQqv2tgypimNabvtFzNrdSb2eyZgcXQekHSERGbW6NZaCL6eC
+	Fy21bLeqEsOChLtqfGuWPQjs2dx9csPjT0+jiyXea2Ueik2P/NXqE0q/C4U7UgJ+hTq0la37
+	XR5Hbp+d3Nwd1Bb5q+JCh3jSwEbD8fwcc0OF3HqNtyW5je2uv79uf01/UWOUiz1raBVK8xpU
+	hcU0/Y5YE95oC5en1q8nc+0ak9czT9H7HVtdQxTtO8NLzKGByYunnD5lnxE9IXNdmKsMZ1Vy
+	/4WYhpX/BVFW4NrOAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKIsWRmVeSWpSXmKPExsVy+t/xe7oGWebpBvdP61t8vitkMWf9GjaL
+	/3uPMVp8Xf+L2eLppz4Wi0W/jS0u75rDZnFvzX9Wi57dUxktGj/fZ7T4/WMOmwO3x5p5axg9
+	ds66y+6xYFOpR8uRt6wem1doeWz6NInd48SM3yweOx9aerzfd5XN4/MmuQCuKD2bovzSklSF
+	jPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2Mtw92MRdc56jYMGEu
+	YwPjX7YuRk4OCQETia23JjF1MXJxCAksZZQ4tmEXE0RCRmLjl6usELawxJ9rXWANQgIfGSVa
+	vxdCNOxklJjevJ0dJMErIChxcuYTFhCbWUBbYtnC18wQtqZE6/bfQDUcHCwCqhIrpglAlJtI
+	zNkwFWwxs8BWRomXl+ewgTgiQGmJJ19ngF3BBtS87+QmsGZhASuJpx+0IQ5Sk/jfP5EF4oj3
+	jBJTH/aDXcopYCfxfN0SZogiRYkZE1eyQNi1Ep//PmOcwCgyC8mts5DcOgvJrQsYmVcxiqSW
+	Fuem5xYb6hUn5haX5qXrJefnbmIExve2Yz8372Cc9+qj3iFGJg7GQ4wSHMxKIryXXM3ThXhT
+	EiurUovy44tKc1KLDzGaAj09kVlKNDkfmGDySuINzQxMDU3MLA1MLc2MlcR53S6fTxMSSE8s
+	Sc1OTS1ILYLpY+LglGpgEm4JaD/rGvUhXP68wJQ1m8pcGaP0zz/uc1eo2cRqH28hODNPuaHm
+	dQ7rRI/bhYaam1Y+P3pCektMnRfT521brZjtEr8IPbjm7RK67fzLSUuCU7uiKvIX2v4qCV6W
+	8WSHxpeyRfxH1F1m2X68usJEru7JJTPlo695fBbsiUxNYReodL/qfGzppcB1Sr2P3laHf86f
+	XPrmkLjhTOGSSS7SMrwHvgtWdHS5b2LyZA6QEGpfErbfI+ToEQaGRWtOGW/5oyT60fKaw4v/
+	mrKNErUdj5kc92lVFdX8ur1i2ce9FqLfb/PNmpsYd6DFe+FhrZRZYrxlS3eelBNyYXj8UGne
+	pNBHZYJHX/9xSStcELZZiaU4I9FQi7moOBEACyOUongDAAA=
+X-CMS-MailID: 20241115153512eucas1p2e40f67965a69d86223f6dfbd6909248d
+X-Msg-Generator: CA
+X-RootMTR: 20241115131634eucas1p2db22b75fcc768a4bb6aa47ee180110cc
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20241115131634eucas1p2db22b75fcc768a4bb6aa47ee180110cc
+References: <cover.1731397290.git.baolin.wang@linux.alibaba.com>
+	<CGME20241115131634eucas1p2db22b75fcc768a4bb6aa47ee180110cc@eucas1p2.samsung.com>
+	<D5MS4CMG4N8F.1M5WPZ1T5UT0I@samsung.com>
+	<3269e0a6-29a4-478b-842a-629efc8d5d59@redhat.com>
 
-On Fri, 15 Nov 2024 at 06:25, Saravana Kannan <saravanak@google.com> wrote:
+On Fri Nov 15, 2024 at 2:35 PM CET, David Hildenbrand wrote:
+> On 15.11.24 14:16, Daniel Gomez wrote:
+>> On Tue Nov 12, 2024 at 8:45 AM CET, Baolin Wang wrote:
+>>> Traditionally, tmpfs only supported PMD-sized huge folios. However nowa=
+days
+>>=20
+>> Nitpick:
+>> We are mixing here folios/page, PMD-size huge. For anyone not aware of
+>> Memory Folios conversion in the kernel I think this makes it confusing.
+>> Tmpfs has never supported folios so, this is not true. Can we rephrase
+>> it?
 >
-> On Thu, Nov 14, 2024 at 2:09=E2=80=AFPM Saravana Kannan <saravanak@google=
-.com> wrote:
-> >
-> > As of today, the scheduler doesn't spread out all the kworker threads
-> > across all the available CPUs during suspend/resume. This causes
-> > significant resume latency during the dpm_resume*() phases.
-> >
-> > System resume latency is a very user-visible event. Reducing the
-> > latency is more important than trying to be energy aware during that
-> > period.
-> >
-> > Since there are no userspace processes running during this time and
-> > this is a very short time window, we can simply disable EAS during
-> > resume so that the parallel resume of the devices is spread across all
-> > the CPUs.
-> >
-> > On a Pixel 6, averaging over 100 suspend/resume cycles, the new logic
-> > plus disabling EAS for resume yields significant improvements:
-> > +---------------------------+-----------+------------+-----------------=
--+
-> > | Phase                     | Old full sync | New full async | % change=
- |
-> > |                           |               | + EAS disabled |         =
- |
-> > +---------------------------+-----------+------------+-----------------=
--+
-> > | Total dpm_suspend*() time |        107 ms |          62 ms |     -42%=
- |
-> > +---------------------------+-----------+------------+-----------------=
--+
-> > | Total dpm_resume*() time  |         75 ms |          61 ms |     -19%=
- |
-> > +---------------------------+-----------+------------+-----------------=
--+
-> > | Sum                       |        182 ms |         123 ms |     -32%=
- |
-> > +---------------------------+-----------+------------+-----------------=
--+
-> >
-> > Signed-off-by: Saravana Kannan <saravanak@google.com>
-> > ---
-> >  kernel/power/suspend.c  | 16 ++++++++++++++++
-> >  kernel/sched/topology.c | 13 +++++++++++++
-> >  2 files changed, 29 insertions(+)
-> >
-> > diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-> > index 09f8397bae15..7304dc39958f 100644
-> > --- a/kernel/power/suspend.c
-> > +++ b/kernel/power/suspend.c
-> > @@ -393,6 +393,12 @@ void __weak arch_suspend_enable_irqs(void)
-> >         local_irq_enable();
-> >  }
-> >
-> > +/*
-> > + * Intentionally not part of a header file to avoid risk of abuse by o=
-ther
-> > + * drivers.
-> > + */
-> > +void sched_set_energy_aware(unsigned int enable);
+> We had the exact same discussion when we added mTHP support to anonymous=
+=20
+> memory.
+>
+> I suggest you read:
+>
+> https://lkml.kernel.org/r/65dbdf2a-9281-a3c3-b7e3-a79c5b60b357@redhat.com
+>
+> Folios are an implementation detail on how we manage metadata. Nobody in=
+=20
+> user space should even have to be aware of how we manage metadata for=20
+> larger chunks of memory ("huge pages") in the kernel.
 
-extern void sched_set_energy_aware(unsigned int enable);
-
-clear the warning
-
-> > +
-> >  /**
-> >   * suspend_enter - Make the system enter the given sleep state.
-> >   * @state: System sleep state to enter.
-> > @@ -468,6 +474,15 @@ static int suspend_enter(suspend_state_t state, bo=
-ol *wakeup)
-> >
-> >   Platform_wake:
-> >         platform_resume_noirq(state);
-> > +       /*
-> > +        * We do this only for resume instead of suspend and resume for=
- these
-> > +        * reasons:
-> > +        * - Performance is more important than power for resume.
-> > +        * - Power spent entering suspend is more important for suspend=
-. Also,
-> > +        *   stangely, disabling EAS was making suspent a few milliseco=
-nds
-> > +        *   slower in my testing.
-> > +        */
-> > +       sched_set_energy_aware(0);
-> >         dpm_resume_noirq(PMSG_RESUME);
-> >
-> >   Platform_early_resume:
-> > @@ -520,6 +535,7 @@ int suspend_devices_and_enter(suspend_state_t state=
-)
-> >   Resume_devices:
-> >         suspend_test_start();
-> >         dpm_resume_end(PMSG_RESUME);
-> > +       sched_set_energy_aware(1);
-> >         suspend_test_finish("resume devices");
-> >         trace_suspend_resume(TPS("resume_console"), state, true);
-> >         resume_console();
-> > diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> > index 9748a4c8d668..c069c0b17cbf 100644
-> > --- a/kernel/sched/topology.c
-> > +++ b/kernel/sched/topology.c
-> > @@ -284,6 +284,19 @@ void rebuild_sched_domains_energy(void)
-> >         mutex_unlock(&sched_energy_mutex);
-> >  }
-> >
-> > +void sched_set_energy_aware(unsigned int enable)
->
->   CC      kernel/sched/build_utility.o
-> In file included from kernel/sched/build_utility.c:88:
-> kernel/sched/topology.c:287:6: warning: no previous prototype for
-> =E2=80=98sched_set_energy_aware=E2=80=99 [-Wmissing-prototypes]
->   287 | void sched_set_energy_aware(unsigned int enable)
->       |      ^~~~~~~~~~~~~~~~~~~~~~
->
-> Peter/Vincent,
->
-> I noticed that I'm getting a warning for this line. But I'm not sure
-> what to do about it. I intentionally didn't put this in a header file
-> because I'm guessing we don't want to make this available to
-> drivers/frameworks in general.
->
-> Let me know how you want me to handle this.
->
-> -Saravana
->
-> > +{
-> > +       int state;
-> > +
-> > +       if (!sched_is_eas_possible(cpu_active_mask))
-> > +               return;
-> > +
-> > +       sysctl_sched_energy_aware =3D enable;
-> > +       state =3D static_branch_unlikely(&sched_energy_present);
-> > +       if (state !=3D sysctl_sched_energy_aware)
-> > +               rebuild_sched_domains_energy();
-> > +}
-> > +
-> >  #ifdef CONFIG_PROC_SYSCTL
-> >  static int sched_energy_aware_handler(const struct ctl_table *table, i=
-nt write,
-> >                 void *buffer, size_t *lenp, loff_t *ppos)
-> > --
-> > 2.47.0.338.g60cca15819-goog
-> >
+I read it and I can't find where the use of "PMD-size huge folios" could
+be a valid term. Tmpfs has never supported "folios", so I think using
+"PMD-size huge pages" is more appropiate.
 
