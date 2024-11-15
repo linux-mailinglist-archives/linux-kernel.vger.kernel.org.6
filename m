@@ -1,167 +1,278 @@
-Return-Path: <linux-kernel+bounces-411202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B72A9CF483
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:04:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D0E49CF4C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:23:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B4A228338A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:04:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F367B2DF5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF68B1D90BC;
-	Fri, 15 Nov 2024 19:04:34 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801C01D61A2;
+	Fri, 15 Nov 2024 19:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U8hd3uMR"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CA614A088
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 19:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B44126C10
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 19:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731697474; cv=none; b=LJ7fhCSydaudMwdAp6LnHEIfGla5yUJlEogH4A/LGOULzVEDOS8x5+HaxDoeZX2VGKtYX637xPdPj8a2sQphSSKemtLP0En0GYkNo205DF8qaocOjoSDxnhrQuJlXJSA53Ijcy8FjAgYkQBKVE+28WzhSOF6pEj2GU5hFlNlqoo=
+	t=1731697532; cv=none; b=HpkrdABpWfiwqzsjUgl/StLMbCg0Znyv6EJ5DBKFmGbxfGZ9WlgEHxL6YOv313KCjPdzQ+zrg3sR1I6tw3RhSfzZIA7vz0mjc8h3K/GutgaUHiIfretKhGKWiJIBg8jVkekzLSWwTAgy24h2Te4uNwZrtJIoc0gBFlg5VClmJJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731697474; c=relaxed/simple;
-	bh=RqoaPyle6AhgXj44zMAywhohYrVIBDR1YleC07B2gzI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KbFN11Ypbtw79Y3P/Q3i0v1WgwUZyXaIl2oU9/ozKeKOj5KrcVITlsYISCEVTqpELNiaOrkOy9Uy05C56EGH0QGcZXiZ1+r0f3f/7hnNEif7Gd3/OFE4a25fkvi48b91UJdktP8pK+rIqnAZ65jvD/85tC3GMt2XS1XuaAqj9d4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83a9bd80875so109446539f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:04:32 -0800 (PST)
+	s=arc-20240116; t=1731697532; c=relaxed/simple;
+	bh=GmgfIh5oKShk2Li2+R08NSkfoXUqiD4RPd7S43qB+ZY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L0qwQIg2X+SAM8r/NE5tmSYwngcPSFFuET7+vpvRqGN3s0lRkISE0fE2J7DE+H1FdxILhXPiEasxzjTT8ewSaFtVW4Snm5jBHl7ILEU7/4MSk5c7Wx1UWAP8xqUHNNG0mmFLV1CRBCpGBKdCTngMSymVRpSwtPcg1TpTTzSmlSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U8hd3uMR; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c934b2c991so758a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:05:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731697529; x=1732302329; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gDWuaRLf4nb/ylGZiblUFCFUDRY0JX9/yactR3zSqMM=;
+        b=U8hd3uMRkuI+KQUwZzJ39FjopAWDJS1I/0vLwd7e+C6UgUyEs8zHtD5Pgi5HIFr20K
+         k8FGZJF1kqXXb+HCnj266N4CHWCpsQAdKfPRzxE8ThLa/F6dY2u2rnWRmv3kgZpKUQMu
+         kNpnJ/LPg2r4HATQFj4/JWFsGFWFNctr6NuKSCMwJxPmIwI6eP4cgfEskeo9dflvdo7p
+         9l0KWBVtQ8a5oCz5h6/m44tbxg6pBddemUEbTZweKM0o61GvvkJBr2Rok/SIF7LZSKLI
+         ig4D4ECkb0yyTVUlSHHhmN6sQHXyeWpP5jwQiJOuqR9KwL+TUr4+bMo+4ERnUlNv3XET
+         395w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731697472; x=1732302272;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yp5h//oLzoC6374LvAAklgUbuPJM8OxXuxClcyxNTnk=;
-        b=vubRERP86Td9SCLilvdb9OV0OV7mXOPdsqj5g2KF0R582IMtQ8yY25Xn3j3nMGJ+il
-         ycWRj0Frx+JfKDuWn25HDpXXqs4ZJvW7I1X8mWGzjWVb7btiXo26rIQ5gR06ZyUebm7c
-         2wf8wfEU6drG6fSHvfGANfoS96sVyd0hIy+DCJd4vkatk+f3fqf2/YtkDiQLshi4K+nL
-         VMFJMGFPSntlkDeJ0LntoNXWA0sxXj1M2yK64R+Y463UpV4AVafJWsdj9WBvmZrTLVve
-         qc+VchYDmReinrhnJKPoun6Tg9yO2e0JQVnt/NUxMdjt4lpJigHsX6PwF1jTkGgHvzT6
-         xkSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHqFfIjMYPtt1YtFmC0koJvKPvtpVh8RTdHOPk3/YVwp2lmhBS+6AAEltshuJ4RNd2FWY/swh6aEDe5Hc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFq1lPyRS7yCJ9mioU57CTaazGvOYt2giUlLGtaUY8PszQBFER
-	KiuGThCoskCdSq+wJydcPYuWvZ9Y0Xp9tawfLV3ANsVldY3VZgw3bnMaOkv9OIhCwI8m+fOxihX
-	ErWhUzpV36D6qdo0vUcSuPWIKHkN9Fuyyk5lbMIgFxftkyCsTBt0O/Dk=
-X-Google-Smtp-Source: AGHT+IFfsYlt4YiX3VHukn8Jmu357hVqEqTkJGzU/XPze01Kk/BIvCVPvVT2NjY6bEmFbr6a4/P+seFK6PbnCxvmG+vJq1DsGvFX
+        d=1e100.net; s=20230601; t=1731697529; x=1732302329;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gDWuaRLf4nb/ylGZiblUFCFUDRY0JX9/yactR3zSqMM=;
+        b=NckbwqeEZ4oFwnurM1+cjVN6Iyc0nYg7W4hyqN+YcBXezN0RYbCDtGRE58uW2NMT1I
+         UkybhQE9oI9kzHJ0O2ntA42imSq9+eyi0DpKIqB/EFmtoN62LQ/OlOCyaPxhPzwZ43Fy
+         7QL7teWmnHhUzCa6FCWXVAjq3zlb+2Y8QC6CSy2nChbjJgrVhkR803ekfRs2UFtaLpu5
+         yJhsOwYMm2+jVdQn5H81/iog5DuDo9QLrVAqWSWT3orVIzgEU4fMwtFm3n/IF3vYINwC
+         pAnnDt9rXHPt/fHFv0cJ/a4+vzpAcWAWO0LodVT8jB5/iEMRUzdjdse2PqMn79NOAS0m
+         yXDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGicb/H0IjWb1pDz35yRvqQhz5g6/ZwzLgelOn8Yjq0qX0Wq3tbOWm+rWYs5dFVIZouQbzhSADfl/5ffg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI8MAqQJGz8c0Xs2HP0zC0GGTjud9u0cq8tTP8Q6xerki4LBye
+	5UGTRGMTIsWvbkd3DfPbiqmDgsUsD9nGOFsi0MtM0fkebHToWzNTwC9/WNCiccVgzMOV6MR9eN0
+	HDRJhDf5qb//qq2e1rXbPbyGZsLZpKIJmJIyl
+X-Gm-Gg: ASbGncv9I26BHIwi1NVM/I+Ro1n7HWQKJUaJMnRlmfMzgDnxFDHztQ8q5iD8f8W7sxi
+	DZY2D4reAl6V+ZNLP4QTm+0OBm+11VvUl9b6kvjAywrqFnmsWSfV1Vxjp9+NV
+X-Google-Smtp-Source: AGHT+IH2FVzAeIWK86Xx4AyI4g2VPcmvGFZpyALoloI/Iew2ZIYilnXSKG0ndR3wDy/v+PfdpX7vaVXBwljNuB74B30=
+X-Received: by 2002:a05:6402:1a25:b0:5cf:7b8f:3ec0 with SMTP id
+ 4fb4d7f45d1cf-5cfa28a8ef0mr1074a12.0.1731697528635; Fri, 15 Nov 2024 11:05:28
+ -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:218e:b0:3a4:e4d0:9051 with SMTP id
- e9e14a558f8ab-3a74808cc3emr41775455ab.24.1731697471800; Fri, 15 Nov 2024
- 11:04:31 -0800 (PST)
-Date: Fri, 15 Nov 2024 11:04:31 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67379b3f.050a0220.85a0.0001.GAE@google.com>
-Subject: [syzbot] [lsm?] WARNING in get_mode_access
-From: syzbot <syzbot+360866a59e3c80510a62@syzkaller.appspotmail.com>
-To: gnoack@google.com, jmorris@namei.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, mic@digikod.net, paul@paul-moore.com, 
-	serge@hallyn.com, syzkaller-bugs@googlegroups.com
+References: <20241114-vma-docs-addition1-onv3-v1-1-ff177a0a2994@google.com> <61f84216-75fa-477b-a9df-6f24476ecd8d@lucifer.local>
+In-Reply-To: <61f84216-75fa-477b-a9df-6f24476ecd8d@lucifer.local>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 15 Nov 2024 20:04:52 +0100
+Message-ID: <CAG48ez31XxOa=OJO-H8b4cEeSGjx50403+BejPvDFwvV3vdpMw@mail.gmail.com>
+Subject: Re: [PATCH] docs/mm: add more warnings around page table access
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Hillf Danton <hdanton@sina.com>, 
+	Qi Zheng <zhengqi.arch@bytedance.com>, SeongJae Park <sj@kernel.org>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Matteo Rizzo <matteorizzo@google.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, Nov 15, 2024 at 7:02=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+> On Thu, Nov 14, 2024 at 10:12:00PM +0100, Jann Horn wrote:
+> > Make it clearer that holding the mmap lock in read mode is not enough
+> > to traverse page tables, and that just having a stable VMA is not enoug=
+h
+> > to read PTEs.
+> >
+> > Suggested-by: Matteo Rizzo <matteorizzo@google.com>
+> > Signed-off-by: Jann Horn <jannh@google.com>
+>
+> Have some queries before we move forward so would like a little more
+> clarification/perhaps putting some extra meat on the bones first.
+>
+> Broadly very glad you have done this however so it's just sorting details
+> first! :>)
+>
+> > ---
+> > @akpm: Please don't put this in your tree before Lorenzo has replied.
+> >
+> > @Lorenzo:
+> > This is intended to go on top of your documentation patch.
+> > If you think this is a sensible change, do you prefer to squash it into
+> > your patch or do you prefer having akpm take this as a separate patch?
+> > IDK what works better...
+>
+> I think a new patch is better, as I'd like the original to settle down no=
+w
+> and the whole point of this doc is that it's a living thing that many
+> people can contribute to, update, etc.
+>
+> For instance, Suren is updating as part of one of his series to correct
+> things that he changes in that series, which is really nice.
+>
+> > ---
+> >  Documentation/mm/process_addrs.rst | 21 +++++++++++++++++++--
+> >  1 file changed, 19 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/Documentation/mm/process_addrs.rst b/Documentation/mm/proc=
+ess_addrs.rst
+> > index 1bf7ad010fc063d003bb857bb3b695a3eafa0b55..9bdf073d0c3ebea17078125=
+08a309aa4a6163660 100644
+> > --- a/Documentation/mm/process_addrs.rst
+> > +++ b/Documentation/mm/process_addrs.rst
+> > @@ -339,6 +339,16 @@ When **installing** page table entries, the mmap o=
+r VMA lock must be held to
+> >  keep the VMA stable. We explore why this is in the page table locking =
+details
+> >  section below.
+> >
+> > +.. warning:: Taking the mmap lock in read mode **is not sufficient** f=
+or
+> > +             traversing page tables; you must also ensure that a VMA e=
+xists that
+> > +             covers the range being accessed.
+>
+> Hm, but we say later we don't need _any_ locks for traversal, and here we
+> say we need mmap read lock. Do you mean installing page table entries?
+>
+> Or do you mean to say, that if you don't span a VMA, you must acquire a
+> write lock at least to preclude this?
 
-syzbot found the following issue on:
+Yeah, this is what I meant with the "you must also ensure that a VMA
+exists" part. (Context is that I was looking at some non-upstream code
+that was trying to do exactly this - take a userspace-supplied address
+and walk down the page tables at that address. Upstream also once had
+a UAF in pagemap_walk() because walk_page_range() was used while
+holding only the mmap read lock, see
+<https://project-zero.issues.chromium.org/42451485>.)
 
-HEAD commit:    2d5404caa8c7 Linux 6.12-rc7
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1592d35f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c3a3896a92fb300b
-dashboard link: https://syzkaller.appspot.com/bug?extid=360866a59e3c80510a62
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16f0b8c0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16c87ea7980000
+> This seems quite unclear.
+>
+> I kind of didn't want to touch on the horrors of fiddling about without a
+> VMA, so I'd rather this very clearly say something like 'it is unusual to
+> manipulate page tables wihch are not spanned by a VMA, and there are
+> special requirements for this operation' etc. et.c otherwise this just ad=
+ds
+> more noise and confusion I think.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f7fdf3a28c09/disk-2d5404ca.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/37016caab507/vmlinux-2d5404ca.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ee15f845ad51/bzImage-2d5404ca.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/2518ff26b7ab/mount_0.gz
+I guess maybe we could replace this entire warning block with
+something like this?
 
-Bisection is inconclusive: the first bad commit could be any of:
+".. warning:: Page tables are normally only traversed in regions
+covered by VMAs. If you want to traverse page tables in areas that
+might not be covered by VMAs, heavier locking is required. See
+:c:func:`!walk_page_range_novma` for details."
 
-385975dca53e landlock: Set up the security framework and manage credentials
-afe81f754117 landlock: Add ptrace restrictions
-1aea7808372e LSM: Infrastructure management of the superblock
-ae271c1b14de landlock: Add ruleset and domain management
-90945448e983 landlock: Add object management
-cb2c7d1a1776 landlock: Support filesystem access-control
-83e804f0bfee fs,security: Add sb_delete hook
+And walk_page_range_novma() already has a comment block talking about
+why an mmap read lock isn't enough to traverse user virtual address
+space outside VMAs.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11f60ce8580000
+> > +             This ensures you can't race with concurrent page table re=
+moval
+> > +             which happens with the mmap lock in read mode, in regions=
+ whose
+> > +             VMAs are no longer present in the VMA tree.
+> > +
+> > +             (Alternatively, the mmap lock can be taken in write mode,=
+ but that
+> > +             is heavy-handed and almost never the right choice.)
+>
+> You kind of need to expand on why that is I think!
+>
+> > +
+> >  **Freeing** page tables is an entirely internal memory management oper=
+ation and
+> >  has special requirements (see the page freeing section below for more =
+details).
+> >
+> > @@ -450,6 +460,9 @@ the time of writing of this document.
+> >  Locking Implementation Details
+> >  ------------------------------
+> >
+> > +.. warning:: Locking rules for PTE-level page tables are very differen=
+t from
+> > +             locking rules for page tables at other levels.
+> > +
+> >  Page table locking details
+> >  --------------------------
+> >
+> > @@ -470,8 +483,12 @@ additional locks dedicated to page tables:
+> >  These locks represent the minimum required to interact with each page =
+table
+> >  level, but there are further requirements.
+> >
+> > -Importantly, note that on a **traversal** of page tables, no such lock=
+s are
+> > -taken. Whether care is taken on reading the page table entries depends=
+ on the
+> > +Importantly, note that on a **traversal** of page tables, sometimes no=
+ such
+> > +locks are taken. However, at the PTE level, at least concurrent page t=
+able
+> > +deletion must be prevented (using RCU) and the page table must be mapp=
+ed into
+> > +high memory, see below.
+>
+> Ugh I really do hate that we have to think about high memory. I'd like to
+> sort of deny it exists. But I suppose that's not an option.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+360866a59e3c80510a62@syzkaller.appspotmail.com
+(FWIW from a quick look I think only arm and x86 actually have this behavio=
+r.)
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5839 at security/landlock/fs.c:971 get_mode_access security/landlock/fs.c:971 [inline]
-WARNING: CPU: 0 PID: 5839 at security/landlock/fs.c:971 get_mode_access+0xae/0xc0 security/landlock/fs.c:951
-Modules linked in:
-CPU: 0 UID: 0 PID: 5839 Comm: syz-executor461 Not tainted 6.12.0-rc7-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-RIP: 0010:get_mode_access security/landlock/fs.c:971 [inline]
-RIP: 0010:get_mode_access+0xae/0xc0 security/landlock/fs.c:951
-Code: c2 66 81 fb 00 10 75 1c bd 00 04 00 00 eb b4 66 81 fb 00 80 75 0e bd 00 01 00 00 eb a6 bd 00 08 00 00 eb 9f e8 a3 0e 3c fd 90 <0f> 0b 90 31 ed eb 92 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90
-RSP: 0018:ffffc900040d7b58 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 000000000000f000 RCX: ffffffff84516b24
-RDX: ffff888034d40000 RSI: ffffffff84516bad RDI: 0000000000000003
-RBP: 0000000000001000 R08: 0000000000000003 R09: 000000000000c000
-R10: 000000000000f000 R11: 0000000000000000 R12: 0000000000000001
-R13: ffff888075ce1478 R14: 0000000000400000 R15: ffff888079c0d608
-FS:  000055558f349380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000066c7e0 CR3: 0000000031b8c000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- current_check_refer_path+0x253/0x710 security/landlock/fs.c:1127
- security_path_rename+0x160/0x3c0 security/security.c:2022
- do_renameat2+0x7a0/0xdd0 fs/namei.c:5157
- __do_sys_renameat2 fs/namei.c:5204 [inline]
- __se_sys_renameat2 fs/namei.c:5201 [inline]
- __x64_sys_renameat2+0xe7/0x130 fs/namei.c:5201
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f48877e0679
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffcbfbffbf8 EFLAGS: 00000246 ORIG_RAX: 000000000000013c
-RAX: ffffffffffffffda RBX: 00007ffcbfbffdc8 RCX: 00007f48877e0679
-RDX: 00000000ffffff9c RSI: 0000000020000780 RDI: 00000000ffffff9c
-RBP: 00007f4887854610 R08: 0000000000000002 R09: 00007ffcbfbffdc8
-R10: 00000000200007c0 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffcbfbffdb8 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
+I mean... we could try to just make userspace page tables live in
+non-high-memory based on the assumption that nobody nowadays is going
+to run a 32-bit kernel on a device with significantly more than 4G or
+8G or so of RAM, and probably most memory is used for stuff like
+anon/file pages, not for page tables... but I don't think it actually
+matters much for code complexity now that we need RCU for page table
+access anyway.
 
+> As for the RCU thing, I guess this is why pte_offset_map_lock() is taking
+> it? Maybe worth mentioning something there or updating that 'interestingl=
+y'
+> block... :>)
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Yeah, and not just pte_offset_map_lock() but also pte_offset_map() and
+such which don't lock the page table.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> Or am I mistaken? I wasn't aware of this requirement, is this sort of
+> implied by the gup_fast() IRQ disabling stuff?
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+This is to protect against khugepaged/MADV_COLLAPSE deleting page
+tables while holding only an rmap lock (in read mode), the pmd lock,
+and the pte lock. So a concurrent call to MADV_COLLAPSE (potentially
+in another process) can (via retract_page_tables()) remove the page
+table while we're traversing it, but the page table will only actually
+be freed via RCU (thanks to pte_free_defer), and so this doesn't cause
+use-after-free. pte_offset_map_lock() ensures that on success, it has
+locked the current page table (holding the pte lock prevents the page
+table being removed in the future, and rechecking the pmd entry
+ensures it hasn't already been removed), so we never end up installing
+PTEs into page tables that have already been removed. pte_offset_map()
+does not ensure that you always see the latest page table; it could be
+that by the time you're looking at a PTE inside it, the page table
+you're looking at has been removed, and a new page table has been
+installed in its place and populated with PTEs. But removed page
+tables are always empty, so the only possible consequence of such a
+race is that you wrongly think that there is no PTE at a given
+address.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+The fourth paragraph of the comment block above
+__pte_offset_map_lock() sorta explains this.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> Please expand :)
 
