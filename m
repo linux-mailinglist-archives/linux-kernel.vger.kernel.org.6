@@ -1,266 +1,118 @@
-Return-Path: <linux-kernel+bounces-411164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60C709CF468
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:58:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E33089CF46C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:59:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BD66B2E74F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:34:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCFE5B37DDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2016183088;
-	Fri, 15 Nov 2024 18:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96061E0E0A;
+	Fri, 15 Nov 2024 18:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U9aAu6Ul"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tk154.de header.i=@tk154.de header.b="jKCUZPxn"
+Received: from smtp10.goneo.de (smtp10.goneo.de [85.220.189.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F5017C219
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 18:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034B31D90A5;
+	Fri, 15 Nov 2024 18:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.220.189.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731695651; cv=none; b=ngQJeFm2Z4p8FV7TH+sTZ2s0+Uh+0Y9PXB8mobbYHBLZiQGNnslLpOZc2l7/S8MtZcVeuawuJvrJNQzU5sxec8kPeb57ehy0Gy9z3CU9n7n0VbGlrxr1YbkmGfjJPw1HnOLGVGbjKTHdr2kaQrhtvgooo1Eyt1+mKX/fryRv9XQ=
+	t=1731696072; cv=none; b=kOrarhlFfE4ogScGntEWRvRR0fig1qBsEW1KNeLb8iolo8Pse3VrbjSO2T94GXJ7f8E73+Vwu04STUBb7RxA6u5tfdQd1u0FuZkE4TP1KfmFMFh2f3mGNQYc0R1bfXTdCVEEyJVYx37ZqKFTxQTALHPLmNnnyNniOFtNjxbVFnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731695651; c=relaxed/simple;
-	bh=3h5kUMvphD9EcDhaC9fPuRm5yVEsbmXmzQxGBLAf1e4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ywd2YaWrKe6ii3hGrf3NHrIfv1+l21sc4Ea2WH6zLwkIop8uFUNSNPr7THovfZuLo+RAXo7dXBbt1fSUITgXC5+o/B9MDzMjOqfKgEwevbzFbR4IVTtP9BVPQcKeWtJzNUbugElcysPl25J7LlsQqFo0uifxmYo0KVFSp5rHy6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U9aAu6Ul; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e79f73aaeso1678437b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 10:34:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731695650; x=1732300450; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5iRzdScLNs2sJWthnnu9cg8AR50zZitK+3FhL3wS9Gk=;
-        b=U9aAu6UlGOYNdeiSe10hI6r/N4+gE4v+etBIdxYUTTxqWJsdgHaCMK9vZ8L47f6thm
-         Z3/0WCy7BDibxutC8ON/UDlKb8GvLYRSc5eyCYM1w/LQtVEb/fLV01Bebn/zEnf6w7j7
-         N3dBnDQpWtbcU5B5UvW5wpxmvgOE3o6t4nAyak8g+H/GUxbJDEYb1yKtg1C9I42bgZ7j
-         WXUxp+IghTvuLB4jtdoJUUYv2y7AEG9e1owqhQrQYpZste45nXvd65BKIh7/r0q7rYAF
-         wlZK/l5aSU1tAAo6wkmyebeJS+GrXjEsML5ssuayRcPP+UlbFaCNXT6MRewJhst/+jAG
-         0eHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731695650; x=1732300450;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5iRzdScLNs2sJWthnnu9cg8AR50zZitK+3FhL3wS9Gk=;
-        b=NjMfCPoVpM3GECtbXflzUT/xoZO15RYNwgNEhzLYDMz5Fjum+VCjzPn4026w0gTxkf
-         ERIdIfIDy/wYm2QqQBj8sW6WQNr1u8yCvc2+hJkBm/Mg1RSnbzsAZRaqLjDxAVNON9R8
-         R5vCOs6vCMulcMhBwLKXTP68NyDsgnUF664hWDAE9HoVCuaIQaC7pZ3qi7T4LG1uT3l9
-         6HK9vLngXV/N6/dJboiueeBCLC+eNiQ6JhqBGkf+d2/GfjfG9OWTq/6Q5IGxPlUQ3fku
-         bP+MFY4+RuaT70GjBIbRSjWdddBErYeNUoG+B8ALBhSqHrQjxESKMAwqBS3AylVpKgT7
-         1rZA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1dym9mAGtaE1VeFwI9F7FEPQa9Ivd60MTvS6EHqRWffTNqfogISKcE5kvowKQQWPCmedibr+gePRF/i0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9P7BxI5Dn4aQ4eH4RlVai/QoMacMaCTI8orHrluup5MwNF7zK
-	o66z08STfSv+oDeh6EwgzmzaCfoazgYMC/Gr8QXoUUzbxNjhRo+ot+RtgooFFqlLRDfKK2ADXGV
-	drjGxPCgo/guU/LbxnN1D7fUUCOa+mQwtwYRL
-X-Google-Smtp-Source: AGHT+IEH27SSGgcQkgj+0KAZtxEVpGt31YF9/pVru611lrbV81qCn04TUZu4o+aVejRR6yFwkAl6JtXd7N6MQGf4nNA=
-X-Received: by 2002:a05:6a00:3e12:b0:71e:7cb2:57e7 with SMTP id
- d2e1a72fcca58-72476b96c11mr5186093b3a.10.1731695649277; Fri, 15 Nov 2024
- 10:34:09 -0800 (PST)
+	s=arc-20240116; t=1731696072; c=relaxed/simple;
+	bh=OBPrvQaPcar7MS8LqlU9mzk5qR9eZBNCOKDdcvghSXw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T2+eAAKTRbWSLAvzQ/5a/Lo8tG5tuIklZsnKh5fLHjKXh+8P5adsQHxYAKsib7pQEd248ZqUqPCOe67h3oFPEyW2Mn97EsThpqiV41H0XTVv5KsrRDZaRw8rjHIjul8/QnbYn3EZcU3aVlYlQ7+6mmDM8J/Kryc3pdA3hbpj2b4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tk154.de; spf=pass smtp.mailfrom=tk154.de; dkim=pass (2048-bit key) header.d=tk154.de header.i=@tk154.de header.b=jKCUZPxn; arc=none smtp.client-ip=85.220.189.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tk154.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tk154.de
+Received: from hub1.goneo.de (hub1.goneo.de [IPv6:2001:1640:5::8:52])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	by smtp10.goneo.de (Postfix) with ESMTPS id 3B346240127;
+	Fri, 15 Nov 2024 19:33:51 +0100 (CET)
+Received: from hub1.goneo.de (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	by hub1.goneo.de (Postfix) with ESMTPS id 90403240239;
+	Fri, 15 Nov 2024 19:33:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tk154.de; s=DKIM001;
+	t=1731695629;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=CLEjcCfwVCSaZMP2cJOPRIQuUntKjUDmrMW+O9uBkF4=;
+	b=jKCUZPxnXk8nPslhnK93h9eeE+wRKQ34jqEcCXo2t0bfIyA2xmXdbm94aNGsTM6mv0Jjri
+	uSGOO9dYCsLBLL4oG9VWLDNtbZYoxDlwaCy9BxpTs+TCJSUfTMCLSyxr92Ci+/WoCs2w8w
+	j4yVaz6RfFH1fSDOdojGYwHW8oAbbTxlA9qIz5aI8SF2qYwMTOh4GN124bI2kS1YY2IL86
+	R7OUeSvC1dKdXIrMwRZzAt3t4YPm4+j/mZ7wF+1ofjmfQFd++x1XKAaHQz5pTnuaGYMS6I
+	/GMTg5AW2uNXPPO2Wn7IirYrhuCohyOQykmKuSx0gP5rt6U/V1tON/DRqfsDfA==
+Received: from Til-Notebook.hs-nordhausen.de (unknown [195.37.89.195])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hub1.goneo.de (Postfix) with ESMTPSA id 0CE5E240565;
+	Fri, 15 Nov 2024 19:33:48 +0100 (CET)
+From: Til Kaiser <mail@tk154.de>
+To: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Til Kaiser <mail@tk154.de>
+Subject: [PATCH net-next] net: uevent: also pass network device driver
+Date: Fri, 15 Nov 2024 19:33:46 +0100
+Message-ID: <20241115183346.597503-1-mail@tk154.de>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114220921.2529905-1-saravanak@google.com>
- <20241114220921.2529905-6-saravanak@google.com> <CAKfTPtDYdFQoFjF8zXxXEEcx3frXoSSKxnPonQ6R8eEAJWkVWQ@mail.gmail.com>
-In-Reply-To: <CAKfTPtDYdFQoFjF8zXxXEEcx3frXoSSKxnPonQ6R8eEAJWkVWQ@mail.gmail.com>
-From: Saravana Kannan <saravanak@google.com>
-Date: Fri, 15 Nov 2024 10:33:32 -0800
-Message-ID: <CAGETcx9d0DuxHyuvH4e3znHUdmxMCjih8NWSabjqDqJ+TXmduQ@mail.gmail.com>
-Subject: Re: [PATCH v1 5/5] PM: sleep: Spread out async kworker threads during
- dpm_resume*() phases
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Marek Vasut <marex@denx.de>, 
-	Bird@google.com, Tim <Tim.Bird@sony.com>, kernel-team@android.com, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Rspamd-UID: ecce65
+X-Rspamd-UID: 3adc96
 
-On Fri, Nov 15, 2024 at 8:13=E2=80=AFAM Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
->
-> On Thu, 14 Nov 2024 at 23:09, Saravana Kannan <saravanak@google.com> wrot=
-e:
-> >
-> > As of today, the scheduler doesn't spread out all the kworker threads
-> > across all the available CPUs during suspend/resume. This causes
-> > significant resume latency during the dpm_resume*() phases.
-> >
-> > System resume latency is a very user-visible event. Reducing the
-> > latency is more important than trying to be energy aware during that
-> > period.
-> >
-> > Since there are no userspace processes running during this time and
-> > this is a very short time window, we can simply disable EAS during
-> > resume so that the parallel resume of the devices is spread across all
-> > the CPUs.
-> >
-> > On a Pixel 6, averaging over 100 suspend/resume cycles, the new logic
-> > plus disabling EAS for resume yields significant improvements:
-> > +---------------------------+-----------+------------+-----------------=
--+
-> > | Phase                     | Old full sync | New full async | % change=
- |
-> > |                           |               | + EAS disabled |         =
- |
-> > +---------------------------+-----------+------------+-----------------=
--+
-> > | Total dpm_suspend*() time |        107 ms |          62 ms |     -42%=
- |
-> > +---------------------------+-----------+------------+-----------------=
--+
-> > | Total dpm_resume*() time  |         75 ms |          61 ms |     -19%=
- |
-> > +---------------------------+-----------+------------+-----------------=
--+
-> > | Sum                       |        182 ms |         123 ms |     -32%=
- |
-> > +---------------------------+-----------+------------+-----------------=
--+
->
-> in cover letter you have figures for
->  - Old full sync
->  - New full async
->  - New full async  + EAS disabled
->
-> you should better use the figures for  New full async vs New full
-> async  + EAS disabled to show EAS disabled impact
+Currently, for uevent, the interface name and
+index are passed via shell variables.
 
-I do give those numbers in the commit text of each patch making the changes=
-.
+This commit also passes the network device
+driver as a shell variable to uevent.
 
-Patch 4 commit text shows how it's improving things compared to the
-older logic full sync (this is the baseline) - resume is 1% faster.
-Patch 5 commit text shows you how disabling EAS is improving numbers
-compared to baseline - resume 19% faster.
+Signed-off-by: Til Kaiser <mail@tk154.de>
+---
+ net/core/net-sysfs.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-So, yeah, all the numbers are there in one of these emails. Patch 5
-(which is the only one touching EAS) is the one that has the
-comparison you are asking for.
+diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
+index 05cf5347f25e..67aad5ca82f8 100644
+--- a/net/core/net-sysfs.c
++++ b/net/core/net-sysfs.c
+@@ -2000,6 +2000,7 @@ EXPORT_SYMBOL_GPL(net_ns_type_operations);
+ static int netdev_uevent(const struct device *d, struct kobj_uevent_env *env)
+ {
+ 	const struct net_device *dev = to_net_dev(d);
++	const char *driver = netdev_drivername(dev);
+ 	int retval;
+ 
+ 	/* pass interface to uevent. */
+@@ -2012,6 +2013,12 @@ static int netdev_uevent(const struct device *d, struct kobj_uevent_env *env)
+ 	 * and is what RtNetlink uses natively.
+ 	 */
+ 	retval = add_uevent_var(env, "IFINDEX=%d", dev->ifindex);
++	if (retval)
++		goto exit;
++
++	if (driver[0])
++		/* pass driver to uevent. */
++		retval = add_uevent_var(env, "DRIVER=%s", driver);
+ 
+ exit:
+ 	return retval;
+-- 
+2.47.0
 
-> I would be interested to get figures about the impact of disabling it
-> during full suspend sequence as I'm not convince that it's worth the
-> complexity especially with fix OPP during suspend
-
-1. Device suspend actually got worse by 5ms or so. I already provided that.
-
-2. As I said in the Patch 5, suspend is more about reducing the energy
-going into suspend. It's a balance of how quick you can be to how much
-power you use to be quick. So, disabling EAS across all of
-suspend/resume will have a huge impact on power because userspace is
-still running, there are a ton of threads and userspace could get
-preempted between disabling suspend and kicking off suspend. Lots of
-obvious power concerns overall.
-
-Thanks,
-Saravana
-
->
-> >
-> > Signed-off-by: Saravana Kannan <saravanak@google.com>
-> > ---
-> >  kernel/power/suspend.c  | 16 ++++++++++++++++
-> >  kernel/sched/topology.c | 13 +++++++++++++
-> >  2 files changed, 29 insertions(+)
-> >
-> > diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-> > index 09f8397bae15..7304dc39958f 100644
-> > --- a/kernel/power/suspend.c
-> > +++ b/kernel/power/suspend.c
-> > @@ -393,6 +393,12 @@ void __weak arch_suspend_enable_irqs(void)
-> >         local_irq_enable();
-> >  }
-> >
-> > +/*
-> > + * Intentionally not part of a header file to avoid risk of abuse by o=
-ther
-> > + * drivers.
-> > + */
-> > +void sched_set_energy_aware(unsigned int enable);
-> > +
-> >  /**
-> >   * suspend_enter - Make the system enter the given sleep state.
-> >   * @state: System sleep state to enter.
-> > @@ -468,6 +474,15 @@ static int suspend_enter(suspend_state_t state, bo=
-ol *wakeup)
-> >
-> >   Platform_wake:
-> >         platform_resume_noirq(state);
-> > +       /*
-> > +        * We do this only for resume instead of suspend and resume for=
- these
-> > +        * reasons:
-> > +        * - Performance is more important than power for resume.
-> > +        * - Power spent entering suspend is more important for suspend=
-. Also,
-> > +        *   stangely, disabling EAS was making suspent a few milliseco=
-nds
-> > +        *   slower in my testing.
-> > +        */
-> > +       sched_set_energy_aware(0);
-> >         dpm_resume_noirq(PMSG_RESUME);
-> >
-> >   Platform_early_resume:
-> > @@ -520,6 +535,7 @@ int suspend_devices_and_enter(suspend_state_t state=
-)
-> >   Resume_devices:
-> >         suspend_test_start();
-> >         dpm_resume_end(PMSG_RESUME);
-> > +       sched_set_energy_aware(1);
->
-> If we end up having a special scheduling mode during suspend, we
-> should make the function more generic and not only EAS/ smartphone
-> specific
->
-> Like a sched_suspend and sched_resume
->
-> >         suspend_test_finish("resume devices");
-> >         trace_suspend_resume(TPS("resume_console"), state, true);
-> >         resume_console();
-> > diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> > index 9748a4c8d668..c069c0b17cbf 100644
-> > --- a/kernel/sched/topology.c
-> > +++ b/kernel/sched/topology.c
-> > @@ -284,6 +284,19 @@ void rebuild_sched_domains_energy(void)
-> >         mutex_unlock(&sched_energy_mutex);
-> >  }
-> >
-> > +void sched_set_energy_aware(unsigned int enable)
->
-> This is a copy/paste of sched_energy_aware_handler() below, we should
-> have 1 helper for both
->
-> > +{
-> > +       int state;
-> > +
-> > +       if (!sched_is_eas_possible(cpu_active_mask))
-> > +               return;
-> > +
-> > +       sysctl_sched_energy_aware =3D enable;
-> > +       state =3D static_branch_unlikely(&sched_energy_present);
-> > +       if (state !=3D sysctl_sched_energy_aware)
-> > +               rebuild_sched_domains_energy();
-> > +}
-> > +
-> >  #ifdef CONFIG_PROC_SYSCTL
-> >  static int sched_energy_aware_handler(const struct ctl_table *table, i=
-nt write,
-> >                 void *buffer, size_t *lenp, loff_t *ppos)
-> > --
-> > 2.47.0.338.g60cca15819-goog
-> >
 
