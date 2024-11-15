@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-411516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EABA9CFB5F
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:58:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 061A99CFB61
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:58:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7A6A1F2471C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:58:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAA34284CA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5AE1AF0B5;
-	Fri, 15 Nov 2024 23:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3108B1B85C5;
+	Fri, 15 Nov 2024 23:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LUXB8PkW"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D2Zj4AtC"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94B11AF0A3
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 23:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBCE1B6D07
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 23:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731715079; cv=none; b=FYxIYLO/i1SEfaD4tv66y44cZf6TcNchVep6xdTKtApBXfCXgP9TEgKy/yeMa9DkPRytMxxhxzpwBF6IzHH6Pk0xsHOXGU7+VBOouAXCObWjdtznWZvLiw2DnMkqserKsunOnXOjf6jRGyuB/HDo9pHSopRw+jc9O18cb/CM9Kg=
+	t=1731715084; cv=none; b=nSf4ySrvcjpFGiC0KbxURKbQa46SEht20mEaq78rVxg9UnkzV2fI2Y0uXdwIIotjyD6jRR8RqPBE8onv61v2Gh+7juim0iOSG7grr7vh0gjpfTR6s595A6z6QycpNTOu1xoCm4pbATrs7Zmwzk7aRRRHu1RTn65zshCkZwl0ZuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731715079; c=relaxed/simple;
-	bh=U5OvCqcfqrzZtkEXj5rehLA6GV4QaIif1hwP802Uifc=;
+	s=arc-20240116; t=1731715084; c=relaxed/simple;
+	bh=aP9KdYcSoNMdOUbsyZNNuuKycbYgRNHovCSpVZzhg2g=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=QiusE1OrLJr6d9rNx9B5y18KT2tg58dMU2iDWkNRJnRsX2fwUxPPQebJL7ITTJmjZ8aWDi9TiBxagjsKxmNfbK/JnoNQUWASZnIY+Uh/F8vzVE3VlR8FCrnVBR7vtHvFvROsDLdstYZbSgcY2c6C6UglPt22fKO3eygWg9IP6lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kerensun.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LUXB8PkW; arc=none smtp.client-ip=209.85.219.202
+	 To:Cc:Content-Type; b=jQrcwZXBwy8jlDS/1+0Lwzqw2n5eo6kbU23rdAVVRpBVtMDxH3Hf7DmBWUDd5c+56ai2BV6hZxWu7nZNV298XaGh7an/nU9LxlWxf0vBjWHMpzqpgIk34TkvR4DF9MVjbHemNEnjTtCAaYI/PFVPh39fD9uOHMprt9aiThNHkHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kerensun.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D2Zj4AtC; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kerensun.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e3877744e45so1195807276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 15:57:57 -0800 (PST)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e35a643200so21784127b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 15:58:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731715076; x=1732319876; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1731715082; x=1732319882; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8v8w47B/bBInLDR9iMbQaYJ5893IHUb3TRGhZ/es2aI=;
-        b=LUXB8PkWISG9v/p4/ZNWDiQn7I+5NHYAVQI3Dttgni8aLyuteeOGhTlj3WJiSVOCqp
-         +Pf0+nFKLHrn9GAICHynkXhbCmnTIyp89Jyfh8ZAkH4E5A3RtynNHsr2MnI73bBDIVWy
-         ivVih/ALmRItWeGVTV5JJu+7jRHNQHIssXI2FVcVCWHepgoiTxQFtNBmKLhhzoEVtVKe
-         t245eEdyDgvcUJQtCiulCwX5vLcKNSTPNT7vhNwPliiwQKfarPMfD90XCC+9H23cdsom
-         mccw/vnGvIepsWTn7bMSoll2+ax7yBhUS0b1L/410PxqiyMO08we9nExEhVjGrTNp1CC
-         yDwA==
+        bh=LrEBNSRkiEojOqX+4gfP8RZsafc+q1NaKoMa79m2RXU=;
+        b=D2Zj4AtCb6dY8/k3/pIhW1LX2c6hDVNX7sHTsb318hb+1GMrULOZOfqaGON0fCkFCB
+         9jFf9WLr8oGE5RUgfdXhm5bwRKBVuwOKs1/N100GfpbYyEA2rfEziCFXv/Gr1Nq6NoiU
+         62T3ytB+WiDlWeyhORJAKWyvSXw0OE+zcjfFi0jbFD0l7pW2i6aiqtGn6YpHsU4S+gJc
+         Afvpoj62oO5yTc4vaCfWT3942OGeNn4POKowR6YJwCF+zVcB3s8UT3ZwB3X23UdD/l3S
+         Xwe50Noeavgvn2kHJr0tjwNk/nxoaby4Ka/FYtpFSj/WzDKi2ao2LpEbD0ftvO0f1Y7A
+         o4qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731715076; x=1732319876;
+        d=1e100.net; s=20230601; t=1731715082; x=1732319882;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8v8w47B/bBInLDR9iMbQaYJ5893IHUb3TRGhZ/es2aI=;
-        b=Dr//S6owos5KWDpYRNE2vmsqqZ2kM1I19vNr7EZiDI+goSwdgKc1uAN1caI+GeutkJ
-         vN1WspTkEeouqilk0CeZoTaLeqAlA9IskTXOz3SVLL/slNlhiu2DY91yqy6OJ58iLFbh
-         b2ZJehHcvtCr1pFITc8ONLliqOuNyMzj26XGSeAJvmUQZPKh7uIyMquuWY/EuI5aGzH+
-         W1Wqr6hL6/6W69eui6Dd4lHLkyKq7o4OQq0CsXY8MdLol8YX1vWpwba36wHsIUA8Scar
-         nqnfKsxngO7l+XgiuKyfmXu5+KGHtcGOgX0BtS3j0jnUESHk0Q1Hafi76FknXb/YZhM3
-         PMtA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6SezZXY31eS741U0GU7buD3bgtTA7BISR1D28qePkchRIRg9KsMm9Grqemuc6BVSfVOkMG9f/l4ooIDA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaEGwjBxzZLh6wS8CRWk3ePzK+Ci6CBv5oDjJ9OUJKRT/LxC5V
-	vj3Z/8M7IkGOPTIzFR5SXjOu0ucAfN6gXiJYqOWEEaLEqDWCoSLhVOS1PyEAupT5+VTCIuQsC6j
-	eJ/otqIg/4w==
-X-Google-Smtp-Source: AGHT+IH4TgoU+sKXZ0e1vdMN9iVrwBlb5RZLub5gn85SQYiErjlQ2PRdfhYiBYV7ArscR5hQT2dD43dztdIdSA==
+        bh=LrEBNSRkiEojOqX+4gfP8RZsafc+q1NaKoMa79m2RXU=;
+        b=G0SF9YQUxEIpRRJGcVHQvPnCWhof5Q0L2Fw4+bS6nSmLA877+Khqos+S9006QAYIYF
+         6rH25PJYlgRVAwXkV0QnNgZIjA2WCrqtsnDIlQd2rRdzn3lxqoTgDUQje27OvNZeSkJL
+         etpOuQJS78EIYISTuUA+ZG08PTWWn4jsEQkOmi2CGAo+46CuBiExywt/oGgUuOPhZELN
+         HKwpsWZBfI1irs1cLOXF9i9zE1M4MZhM00xNO8GQs4tj2J51ueatkxp9Xotob+V685/T
+         pK7iGXxxu3uN2jeswTq1GogB7p8jlyXdfJy4Gbr6N+gwvmP3RgE4jPE1SgN2FV4GWZeH
+         sg/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXMWmEWxHVqryvnQdytQS6Co9iRztir0o18Y+/6MOGbQtfVd6BqCmpsR3GT1XZ+hMVbxw48wgpA8vq1BBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4yzilRiD6h9fvzIMIy7SYHO7o5OhwORndbrHHuxYixSZ9upea
+	f7bPYccZfD8VBxKZVQXZtINc2HmH46WMYEMIeOKL2GwVmK3wQq1OROOXoIDKvT1IhWzZ16FIMfw
+	XpE0DtMwEaw==
+X-Google-Smtp-Source: AGHT+IEj4KClsgSqXktbEj+ARf/VjHaKN8ZOK6NA9iO0b53n0H+SstnU5eqFIIEUIzmZZO9P0LaXRT13p0uoWw==
 X-Received: from kerensun.svl.corp.google.com ([2620:15c:2c5:11:f2d6:8e6c:5a90:ef1e])
- (user=kerensun job=sendgmr) by 2002:a25:bb0e:0:b0:e38:2136:9482 with SMTP id
- 3f1490d57ef6-e3826614e75mr3788276.10.1731715076563; Fri, 15 Nov 2024 15:57:56
+ (user=kerensun job=sendgmr) by 2002:a25:b001:0:b0:e33:104c:fac8 with SMTP id
+ 3f1490d57ef6-e38263b7b7emr3194276.7.1731715082063; Fri, 15 Nov 2024 15:58:02
  -0800 (PST)
-Date: Fri, 15 Nov 2024 15:57:42 -0800
+Date: Fri, 15 Nov 2024 15:57:43 -0800
 In-Reply-To: <20241115235744.1419580-1-kerensun@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241115235744.1419580-1-kerensun@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241115235744.1419580-2-kerensun@google.com>
-Subject: [PATCH 1/3] mm: prefer 'unsigned int' to bare use of 'unsigned'
+Message-ID: <20241115235744.1419580-3-kerensun@google.com>
+Subject: [PATCH 2/3] mm: remove unnecessary whitespace before a quoted newline
 From: Keren Sun <kerensun@google.com>
 To: akpm@linux-foundation.org
 Cc: roman.gushchin@linux.dev, hannes@cmpxchg.org, mhocko@kernel.org, 
@@ -83,47 +83,42 @@ Cc: roman.gushchin@linux.dev, hannes@cmpxchg.org, mhocko@kernel.org,
 	Keren Sun <kerensun@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Change the param 'mode' from type 'unsigned' to 'unsigned int' in
-memcg_event_wake() and memcg_oom_wake_function(), and for the param
-'nid' in VM_BUG_ON().
+Remove whitespaces before newlines for strings in pr_warn_once()
 
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
 Signed-off-by: Keren Sun <kerensun@google.com>
 ---
  mm/memcontrol-v1.c | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
-index 539ceefa9d2d..465201ef40b7 100644
+index 465201ef40b7..4cbbced0c8a1 100644
 --- a/mm/memcontrol-v1.c
 +++ b/mm/memcontrol-v1.c
-@@ -899,7 +899,7 @@ static void memcg_event_remove(struct work_struct *work)
-  *
-  * Called with wqh->lock held and interrupts disabled.
-  */
--static int memcg_event_wake(wait_queue_entry_t *wait, unsigned mode,
-+static int memcg_event_wake(wait_queue_entry_t *wait, unsigned int mode,
- 			    int sync, void *key)
- {
- 	struct mem_cgroup_event *event =
-@@ -1216,7 +1216,7 @@ struct oom_wait_info {
- };
+@@ -1043,13 +1043,13 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
+ 	} else if (!strcmp(name, "memory.oom_control")) {
+ 		pr_warn_once("oom_control is deprecated and will be removed. "
+ 			     "Please report your usecase to linux-mm-@kvack.org"
+-			     " if you depend on this functionality. \n");
++			     " if you depend on this functionality.\n");
+ 		event->register_event = mem_cgroup_oom_register_event;
+ 		event->unregister_event = mem_cgroup_oom_unregister_event;
+ 	} else if (!strcmp(name, "memory.pressure_level")) {
+ 		pr_warn_once("pressure_level is deprecated and will be removed. "
+ 			     "Please report your usecase to linux-mm-@kvack.org "
+-			     "if you depend on this functionality. \n");
++			     "if you depend on this functionality.\n");
+ 		event->register_event = vmpressure_register_event;
+ 		event->unregister_event = vmpressure_unregister_event;
+ 	} else if (!strcmp(name, "memory.memsw.usage_in_bytes")) {
+@@ -1895,7 +1895,7 @@ static int mem_cgroup_oom_control_write(struct cgroup_subsys_state *css,
  
- static int memcg_oom_wake_function(wait_queue_entry_t *wait,
--	unsigned mode, int sync, void *arg)
-+	unsigned int mode, int sync, void *arg)
- {
- 	struct mem_cgroup *wake_memcg = (struct mem_cgroup *)arg;
- 	struct mem_cgroup *oom_wait_memcg;
-@@ -1658,7 +1658,7 @@ static unsigned long mem_cgroup_node_nr_lru_pages(struct mem_cgroup *memcg,
- 	unsigned long nr = 0;
- 	enum lru_list lru;
+ 	pr_warn_once("oom_control is deprecated and will be removed. "
+ 		     "Please report your usecase to linux-mm-@kvack.org if you "
+-		     "depend on this functionality. \n");
++		     "depend on this functionality.\n");
  
--	VM_BUG_ON((unsigned)nid >= nr_node_ids);
-+	VM_BUG_ON((unsigned int)nid >= nr_node_ids);
- 
- 	for_each_lru(lru) {
- 		if (!(BIT(lru) & lru_mask))
+ 	/* cannot set to root cgroup and only 0 and 1 are allowed */
+ 	if (mem_cgroup_is_root(memcg) || !((val == 0) || (val == 1)))
 -- 
 2.47.0.338.g60cca15819-goog
 
