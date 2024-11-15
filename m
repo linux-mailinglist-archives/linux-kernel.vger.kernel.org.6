@@ -1,126 +1,198 @@
-Return-Path: <linux-kernel+bounces-411072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF449CF28F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:15:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A4379CF296
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:16:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 015E628E34E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:15:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE2FC1F216A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A469A1D63CA;
-	Fri, 15 Nov 2024 17:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B1C1D6193;
+	Fri, 15 Nov 2024 17:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jf7YoCl1"
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J59Euu/g"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E441D5AB7
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3654C15573A;
+	Fri, 15 Nov 2024 17:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731690902; cv=none; b=rP1zFCvB+86WiWyBWLBEmXCDz4FCWD+QgKG3g1tI6vSnVwqHJb3zY4nq49OMRcJIomdEneknnlxrLxwNyRK4oboAz/j0oSqmjdkTFueD5Qgq2D2mYlyQ4PmiyxV1OyarvfWJQtF7kvlTWFfOv9Hm1VvvDKoP0kkupJkfGeFtGGA=
+	t=1731690952; cv=none; b=cs+QxDjQnAbYVlPj88oCKX0iolNNvc/vG2RpMiW8BfhQei84je73v2ShhHYqOyua8KA7dIBjlZITvQvQmyg9R9bWH/PVoAxEznkZahN04RyyRUPo+hHbREC7YCXgQbYAaR2JfPEZYuupEyxICthnqWAbP6fSzMl64oi1Ehh3L/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731690902; c=relaxed/simple;
-	bh=MLVGdOKUHWHTbWRLhDF0MToJ/PEyDmhqvew3tWWi1Ro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oWWNHxRgihcZYYroCbdT/OrGkfXN6xWtPoNecJoeaw4HcpgF/Oz+E7OAdK+oxiZ7pM/IZY/pnHvfT8v+b9MJKd+7xmU4+tq3Pk74X9mCZIsWRjLQrC6iImlRGsm8EDwEbG8STqAHRWpqC8eUCgpeVJmLqps4Z6kdf65YzGx93d0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jf7YoCl1; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3e7b706b966so1037650b6e.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:15:00 -0800 (PST)
+	s=arc-20240116; t=1731690952; c=relaxed/simple;
+	bh=5MnfwGwjjZ5e3fIepXk3xCVSfgNw+NvODegrk9C883E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rb20zSPWS45CaWW92JrQq07dIW/l7evwraYc/jzkOm1geXeTBVRkPK/KmyQOP9sKTxCghZD5dzv9kuxv+Wwu8Axq7sImkGf3XafkFohe/9so9KabMgWZdAs9fsMuiAR0FyrLOfxEphN4/5OdzJmTUBwjem6q1473fbocMGkzWVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J59Euu/g; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2e9ecb67701so303349a91.1;
+        Fri, 15 Nov 2024 09:15:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731690899; x=1732295699; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+t5QbplXWf+OH1Spy65VnQjon5zvVtjuq4EZhXbiI6U=;
-        b=jf7YoCl1czhp9aIYVRd2MzNKpL36C9ZX28iPoA3EgyKzI1957EqTomkM5f6wolaoGc
-         YLzbroZxa/kd4bgZ4rjrYyCwzywk5Rfp8Dla61+daYEmbgb8XCb3TLfAqcZPHp3wq6sq
-         rhHImRt9KPEOoqKn+FmhcjVysB829MWnErku45PtntwN7VErqfWg1iDLqR103+lYeKCJ
-         6RdWra6ki2RmBmd2JrXn7BPOJIE467IZmM/2lgvXHdsw92fyn/jkqM/9yoiH6u9Gum+0
-         /fr+kvl0iK+bJLPq+M8iimZWe1nApQYFY17dtegNBei0VO+NzvINVHhjfFOEMWfGkHmG
-         nQ5w==
+        d=gmail.com; s=20230601; t=1731690950; x=1732295750; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BwEDCmCjDAFPLessQ1VxzKc/71Q2iWV02aJqLKUeeu8=;
+        b=J59Euu/glW/c2OAo+cyEYK+gtMxkpHiVLtd5Eb1uOc/qGrhAPIp1LSFQ84MArrmxmK
+         HHXegIkVUSsgWGW29OBrFXg1mr8A+EIb7zmrbQLxnIloj5rWpX7zCoT33r1UNFgxAEno
+         uM0OSOz77QSVmUkjA7zEOOJU4EKrd4qRFgqXRIUgnyjJbvlTeZKhHDUXkwKrOWZMVhIO
+         BinPMsSvivVV6e6Ww6vkeVz2zbpZ64Ch+VjXZGq++yNSSby6WNGV1wsvgj3FpT1YjYpP
+         SwFJXf55SUogCUGdJLg/FMVhY9y+v/De3TZEM4OeSWh4PX8r7O9BMzgW0g42QLfhzi23
+         xt9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731690899; x=1732295699;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+t5QbplXWf+OH1Spy65VnQjon5zvVtjuq4EZhXbiI6U=;
-        b=h5bkANMMeRmX5jeNyNUXJrYn/RslPeodkTLAxrX/a6i+vkAIepwGlAdsoaH5XK4uLZ
-         3v0iMeabYDkZ5SnhDIsZ8RuKa0rlUgdteZfz7dr58i02wt5XB3CwxsRjsMap68py/7to
-         CDogYAwdfqmQPuajSClffZFpCpyDZRUiGqhvQ75aQ3Qeox2FGvJSmij1LF0mp4K9M0cg
-         1OzHFfPVfkv/t71ZGFc8TK1zNQRhWA8ET6CywshAMR7Kcfr4U+cgK6/MwIc0fTpJW0nf
-         KmM1VfgPZwPOh/wkmlGnF79d1WwivBMtUH03k+BYK63DwrJABbZKuQJ1FrJGSq5DBczw
-         aI+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWGL/MABmgvaNCFjC8OzYD1pOIFyEjWeunjOqXp8DWqUvBqkXi3TqhozZ81A3/DKnJipq455HOqj+O22jY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFnYU7a5ZWTm4xtUnC9LUcZKT4TPMtSDU1u20QYDXG3bppAFDu
-	tw9dcyYOEQRbh0yWUXPsq7Ye/ljDmq8JOBElJMFVRpaZ+gR2Hogzym9HAf9WpO8=
-X-Google-Smtp-Source: AGHT+IFA6j1bD6Ro4mlGCDGX37IVHQawFAOECWLhe4iMVSQfihiezYooSzpr0q3F9esVAzQwmh3qAQ==
-X-Received: by 2002:a05:6808:3a0a:b0:3e6:22ce:d1c4 with SMTP id 5614622812f47-3e7b66c64e1mr4790001b6e.12.1731690897961;
-        Fri, 15 Nov 2024 09:14:57 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a780feccasm592983a34.28.2024.11.15.09.14.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 09:14:57 -0800 (PST)
-Message-ID: <a1852540-eeb4-4d92-a381-185014c828ac@baylibre.com>
-Date: Fri, 15 Nov 2024 11:14:56 -0600
+        d=1e100.net; s=20230601; t=1731690950; x=1732295750;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BwEDCmCjDAFPLessQ1VxzKc/71Q2iWV02aJqLKUeeu8=;
+        b=e0X+YQB6ckIVkwmkeOqEutxyOYnq/N1imW+KgnRMcsLNUiu2KedX/YKIA+R7CzpojR
+         Pct9nIMMpmwEOp5JxZB5W7Jnq4nCIcyOJ5wSs6TdozkLcjcAObgsgxGN0cQwcx/NiM9j
+         qA33Y4mTOhE99qwJb5ve1ii5lOLxgy5YW2P2s6AJJB8mnZ6RrkuHmVSMdhgSe74BBSWm
+         xvXSz7WEVI1rgfOxdSizmT/7OxIM73BylrSL3YNx2WZ+wL5pU+J2coYHi2Nlku35d5dp
+         Xw05SVu6veOCtChVBYIqmz6j96snA/Ka7li/DBRDaSGjzE8GCPDniF2A+pfeCHunXAKN
+         kSMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU74ZsfOXf2JHpmRhIZ6cFvQc2106rKFRxd3QqpGPD9AwCEp6MbrvXeurwzEVoGwZ0OXa0PXsjwekFhtFEL@vger.kernel.org, AJvYcCVq3dIubsi2ti3u73Zo3tZvrk+Jwb5A71FS8+ioN31Eswgl1Cov7AgJ2JliOFcURu2P8G14cT4gOMM=@vger.kernel.org, AJvYcCWxw4+bUvb+LNt+LIR9W0x7yJcKWy5qViyyNpk3bLwd+Acv6jXbNIxds/z6o+Yl4yYuRMeUtTUis3NQ@vger.kernel.org, AJvYcCXayCpZIC7HP0SljoWJ/BNd8rXUJ4eslzvBPP7ZPmNdVGpGbolc9M+1H4pNRBcGjzRqOasdQy5USsxAYW9wYpg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2Hh8epHaCDdlJ15OPpbojIZcExXv23DLntsWS2EADP65Aeu/O
+	y3GrleMT3xTgnuicJoEuYz+UpB2kc/OkNKaHf2EitRT3Z1oOBXJ6K3m3FY4B0lXUuiEPojMj5U6
+	jz5zZYJWV9D+amfzWZgApMVv2JE8=
+X-Gm-Gg: ASbGnctpYznuc+kj2pnCk/9TREK80b+yugDCrXSsiF7Vl7CqTtwURbVpm6JptOzdp1s
+	nSRJ6nOL4B52YZ8DXMcKunevDRiEsHQ==
+X-Google-Smtp-Source: AGHT+IEMA27ToWetHcKHOD4q2Ez8uWpsjU80vnlXvxOsubs0bToSiqQ3t/nzHMIQrl7xRONsJLIJF1jxXEKP5JlZ0mo=
+X-Received: by 2002:a17:90b:1a91:b0:2e2:abab:c456 with SMTP id
+ 98e67ed59e1d1-2ea154c3e0dmr1848576a91.1.1731690950377; Fri, 15 Nov 2024
+ 09:15:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] iio: adc: ad4000: Add support for PulSAR devices
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
- Michael.Hennerich@analog.com, jic23@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, marcelo.schmitt1@gmail.com
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1731626099.git.marcelo.schmitt@analog.com>
- <a2a1bb929a83f5906a9c1fd9ba76889a3682cf95.1731626099.git.marcelo.schmitt@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <a2a1bb929a83f5906a9c1fd9ba76889a3682cf95.1731626099.git.marcelo.schmitt@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241115054616.1226735-1-alistair@alistair23.me> <20241115054616.1226735-4-alistair@alistair23.me>
+In-Reply-To: <20241115054616.1226735-4-alistair@alistair23.me>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 15 Nov 2024 18:15:38 +0100
+Message-ID: <CANiq72=3p50vyA5MsqZD6_Ma53DSLyrqyKYUwH9o-+Bq=REaQQ@mail.gmail.com>
+Subject: Re: [RFC 3/6] lib: rspdm: Initial commit of Rust SPDM
+To: Alistair Francis <alistair@alistair23.me>
+Cc: lukas@wunner.de, Jonathan.Cameron@huawei.com, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, akpm@linux-foundation.org, 
+	bhelgaas@google.com, linux-pci@vger.kernel.org, linux-cxl@vger.kernel.org, 
+	bjorn3_gh@protonmail.com, ojeda@kernel.org, tmgross@umich.edu, 
+	boqun.feng@gmail.com, benno.lossin@proton.me, a.hindborg@kernel.org, 
+	wilfred.mallawa@wdc.com, alistair23@gmail.com, alex.gaynor@gmail.com, 
+	gary@garyguo.net, aliceryhl@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/14/24 5:51 PM, Marcelo Schmitt wrote:
-> The AD4000 series and the single-channel PulSAR series of devices have
-> similar SPI transfer specifications and wiring configurations.
-> Single-channel PulSAR devices are slower than AD4000, and don't have a
-> configuration register. That taken into account, single-channel PulSARs can
-> be supported by the ad4000 driver without any increase in code complexity.
-> 
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> ---
->  drivers/iio/adc/ad4000.c | 163 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 163 insertions(+)
-> 
-> diff --git a/drivers/iio/adc/ad4000.c b/drivers/iio/adc/ad4000.c
-> index 68ac77494263..8e31b42534f5 100644
-> --- a/drivers/iio/adc/ad4000.c
-> +++ b/drivers/iio/adc/ad4000.c
-> @@ -137,6 +137,41 @@ static const struct ad4000_time_spec ad4020_t_spec = {
->  	.t_quiet2_ns = 60,
->  };
->  
-> +/* AD7983, AD7984 */
-> +static const struct ad4000_time_spec ad7983_t_spec = {
-> +	.t_conv_ns = 500,
+Hi Alistair,
 
-I'm sure there are diffing opinions on this but I would prefer
-an explicit .t_quiet2_ns = 0, so we know that it wasn't omitted
-on accident. Or a group comment to say that these chips don't need
-any quite time.
+It is nice to see more Rust, thanks!
 
-In any case...
+Some quick consistency nits I noticed for future non-RFC versions (I
+didn't check the code). Some apply in several cases.
 
-Reviewed-by: David Lechner <dlechner@baylibre.com>
+On Fri, Nov 15, 2024 at 6:46=E2=80=AFAM Alistair Francis <alistair@alistair=
+23.me> wrote:
+>
+> +#[allow(dead_code)]
 
+It may be possible to use `expect` here instead of `allow` -- e.g. if
+it does not depend on conditional compilation.
 
+Also, later in the series, is it used? (I imagine it is a temporary
+`allow`? If so, please delete it when you introduce the first use.
+`expect` can help here to not forget to delete it.
+
+> +#[repr(u8)]
+
+It is probably a good idea to mention why it needs this `repr`. I
+imagine it is related to `SpdmErrorRsp` being `packed` and so on, but
+it wouldn't hurt documenting it.
+
+> +    InvalidRequest =3D 0x01,
+
+Please feel free to ignore this one (especially if the idea is to
+replace the C implementation eventually, or to just showcase how it
+would look like if the C one was removed), but one idea here would be
+to pick the values from a common C header? i.e. moving that `enum` to
+its own header that both use.
+
+> +//! Top level library, including C compatible public functions to be cal=
+led
+> +//! from other subsytems.
+
+Typo.
+
+> +/// spdm_create() - Allocate SPDM session
+
+I think these are copied from the C one, so it is fine for the RFC,
+but the subsystem ends up accepting this, then please use the usual
+Markdown style of the rest of the Rust code, instead of kernel-doc
+style. While we don't render the docs of these just yet, we will start
+doing it at some point, and e.g. IDEs may do so too. Even if we
+didn't, the comments could be copied into other docs at some point, so
+it is always useful to have them formatted properly.
+
+> +    /* Negotiated state */
+> +    pub(crate) version: u8,
+
+Please use `//`.
+
+> +                bindings::EINVAL
+> +            }
+> +        };
+> +
+> +        to_result(-(ret as i32))
+
+These are errors you create directly, so you can do directly e.g.
+`Err(EINVAL)`, i.e. please avoid `bindings::`.
+
+> +        let length =3D unsafe {
+
+Missing `SAFETY` comment.
+
+If you based this on top of `rust-next` as you noted in the cover
+letter, you should be getting a warning under `CLIPPY=3D1`. There may be
+other cleanups under `CLIPPY=3D1` if you weren't using it so far.
+
+> +            return Ok(length); /* Truncated response is handled by calle=
+rs */
+
+Please use `//` for comments.
+
+> +// SPDX-License-Identifier: GPL-2.0
+
+New line between SPDX and the crate docs.
+
+> +//! Rust implementation of the DMTF Security Protocol and Data Model (SP=
+DM)
+> +//! https://www.dmtf.org/dsp/DSP0274
+
+This should be a link (using <>) or a link for the "DMTF Security
+Protocol and Data Model (SPDM)" text.
+
+> +//! Rust sysfs helper functions
+
+This should be the title, at the top. In Rust the first paragraph
+(which typically should be short, e.g. a single line) is considered
+the "short description"  and used e.g. for lists.
+
+> +//! Copyright (C) 2024 Western Digital
+
+This should be a comment (likely near the SPDX), rather than part of
+the documentation -- see e.g. how it is done in `rust/kernel/list.rs`.
+
+> +pub unsafe extern "C" fn rust_authenticated_show(
+
+`unsafe` functions should have a `# Safety` section.
+
+Thanks again!
+
+Cheers,
+Miguel
 
