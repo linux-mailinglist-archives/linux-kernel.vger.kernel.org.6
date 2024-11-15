@@ -1,197 +1,134 @@
-Return-Path: <linux-kernel+bounces-410273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB63F9CD72B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:38:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0694A9CD730
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:39:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 186C228366F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:38:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1E561F225A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D83185B5B;
-	Fri, 15 Nov 2024 06:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A24185B5B;
+	Fri, 15 Nov 2024 06:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D/8S7oQ2"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R7X5ZCLA"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC41185924
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C08817BEC5
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731652709; cv=none; b=Qav6x94ZDaREgxqw8eoQTKQuSCaBI/amAltD6vTSR/iJ/UJ81fLff2DmxBKClL/JhDMIGH8GAKOvnNXZ253cHVFUZPauMk4Xy6PQ+dtRaRKa3P909kWl2wgjS9XbzyzzequxAbyrWckDhw1IqOsH8QebXR2HN9+4IxERhVydA9c=
+	t=1731652734; cv=none; b=om1Bh+PdvTYDY4xRzo+/nt+M17MkPq+4Yye4UQv/bvOW4kD+WIrMAYDlN7WF9LiNySzt2IxImkopO2OyW8j0YRa4qaPQfosqoKE0Sbt13zzWiQAWJfTxTzdzMeXok0j0rIl6QnQcp6kLc+0AyM7+1UObN/rJqLo5D184A/tXw6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731652709; c=relaxed/simple;
-	bh=rNXtr4YimcmppNnAP0ClgueGOcouCPS66vY3HdKZhcA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ChPuSkcgfsJwrLLjHRACOYeagji0+jQXHv3AtSN9c4uI602ydziY2xe9XyCzMTOlni1twgrJyhL+Bo+VDrBgvy1rCglhAS6/srTvMp1Fwt4a7FcHf0jJ67T40EUzhIVRVW4NkPojBJPoTXJFt+YBW1qaH65oX6NsGiyDqMJbCdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D/8S7oQ2; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20caccadbeeso4093465ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:38:27 -0800 (PST)
+	s=arc-20240116; t=1731652734; c=relaxed/simple;
+	bh=ZeWryhIAPEAd274GWiRj2SxvjKD/sJo0720ArcqeGBY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CDNbJXJucmBH58EjGLNYF8pDE8raNLEFCmwXu6+KCnky9miCfHFJlC82oaz7qL9W+rGk4f9JBkz7T5K9723Xd17oP0kxNfq1agdQLHuh6o08EIMesX1A0ArLlhbTHsNYpaFjgUHz971QtR6qFdqEQynfwVqCx4T7OvtcSf1Eat4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R7X5ZCLA; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7f71f2b1370so1008381a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:38:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731652707; x=1732257507; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3ASYot59pnFaxW/GHMyz8Y0KBxe3S70/tiXkzx5jQ+Y=;
-        b=D/8S7oQ2CUyMbx5SNleM3iK5SKXdEl+ryUHH3mI+wSImOGNoIAON8i3rn/OzsUyJws
-         y3Iaijyv8h7IklSnb8jJov9CgZ1wAPnJlZSO7mMWCzD/BqkpIrBaNMoHs8QT2n/9jbh8
-         ikOQ+Hh+gM0frWEomec6LP25Isk1fYw6CrZzJqbPkDQFijLpIh5tZcq4jxrDDLsXIRaa
-         EqKyce8XU22gYCK3ZUDJCjRDX/lp1Bgudoa3ObJJHbkvQPfcLVz+yg3pFpRl0cfD6i71
-         s/K6VlF7i6ajoghIKOctxik9HOM5i2DvBXyCaLWsd16xdNLh0F4Fs7MNgjvWh6/0nK35
-         jqAQ==
+        d=gmail.com; s=20230601; t=1731652732; x=1732257532; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=56X8BgBkivT5wkK96qVoAkc6Emo/mlq4sGR9REwolaw=;
+        b=R7X5ZCLA+ArYEYJGNbmlOSzm401w3lXlMTd1fCUVzeT+mR1sdIwJhzlPylFC5QwPyr
+         mnXkJhP/CFRiKb9BJvPiWOm9PnfGvmcISh98LwBdztwjZ3s96BkpinfK04ZuBypWQjZ4
+         MMPRNI85fCBm56vSQgqEErOkOMcr18nOdi6DQFCpX2kX5X9ytjFoKHddKg5XlIPcBnwc
+         Q5f606Sb2WeaxK/RMZNVqj3/PdcKslPCUqirRqlge0o+LzOPwjEO5dwx7eSXWUAWHWGE
+         BFwEU3ap7VvePnz3jPcPwazYFmSmDm8AmhhM7NumrNeHpgXV5biIhzAmMsLiziSz+c7r
+         avXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731652707; x=1732257507;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3ASYot59pnFaxW/GHMyz8Y0KBxe3S70/tiXkzx5jQ+Y=;
-        b=C1Bmzib/nGVPWTijRqPmkNAV7fG16MBPaj2JaP5hBaAAWo0CBbLTKO1geIQ1jj+y5y
-         uAVHSXPwzgpzA0JyGye+dSMUt+ZxF8cUVsUd7jHokvx7yvitZyztx4/2TYuzUHejXPSj
-         NOfLDyJ6g1nt0JTQA7ZZsccSw70W3oCfPyeWHyH6eyOR4j2qYZCT6pyJAnfDXueroo+o
-         84Bi2RiHQiILeOlbO0HJg81XdCDKCjo4+45wW79al2vI4MxPJDJHi5l79iZ0Je4OAP8i
-         QgVMPqXwfKAocJUiG+jsky1Nn3B/sXrXttgeWpVB7vnrI5AANzwI5FUWSuT/uZB9Aap3
-         FEHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAxTGQfe4VHDW4/+CLF9H+TpoVnfB7O+XCqfs8Ri5WM/tRxsHKSPH7homzjz4hfvLOpox+MsQ0AAi2D0s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKWGtkE8MEiF9/6aS+h/SXVuRdqiML0jY4Ao0R5D7glw5Tmuxb
-	7UM1TSCTLk2ophsmMgifLjBoUkBAvE6mIDsZAMb2I2xdGRZEFja559xns7FDug==
-X-Google-Smtp-Source: AGHT+IHmK/K9KtNXF8MAKgzWlqq1Xbvw08TMatRS4xdoCN6jQH4adnR3wRNRA42mwN6r478Ju/K5qw==
-X-Received: by 2002:a17:902:ecc1:b0:20c:c631:d81f with SMTP id d9443c01a7336-211d0d71690mr17005295ad.21.1731652707497;
-        Thu, 14 Nov 2024 22:38:27 -0800 (PST)
-Received: from thinkpad ([117.193.208.47])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0ec7bc7sm6089015ad.68.2024.11.14.22.38.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 22:38:27 -0800 (PST)
-Date: Fri, 15 Nov 2024 12:08:16 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: l.stach@pengutronix.de, bhelgaas@google.com, lpieralisi@kernel.org,
-	kw@linux.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, shawnguo@kernel.org, frank.li@nxp.com,
-	s.hauer@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
-	kernel@pengutronix.de, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 02/10] PCI: imx6: Add ref clock for i.MX95 PCIe
-Message-ID: <20241115063816.xpjqgm2j34enhe7s@thinkpad>
-References: <20241101070610.1267391-1-hongxing.zhu@nxp.com>
- <20241101070610.1267391-3-hongxing.zhu@nxp.com>
+        d=1e100.net; s=20230601; t=1731652732; x=1732257532;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=56X8BgBkivT5wkK96qVoAkc6Emo/mlq4sGR9REwolaw=;
+        b=QlnoneTR9v/Amtyb7ORcvTggyF4l8uJYyUlltFQyDgckErYX0KetrQKVV1Mi0WyU10
+         VcPCWcD1/05Fi5ijPnz54qBtoxPc/9o4MlWZLqn+8mv/LMzRQ3BiJEAPU4v1r9c+0ftG
+         WB/+vrNqO42wsp3mR0wN7VpR7yvO/7oxP9u0fcMlByzLz2i4PyVlqx6K5hGxORTpXr1x
+         O0fJ7bJMthY6nNXtQxCWbVnhA+nkSSd6MLcsbKZr2ERN6X6vI4Tv5eS1CmRSOcsyxpn7
+         wnn0tetuS68ItnYdYh1efqEvQUbiVkhOV84dFjfguyWSQAUdebCDY72G60UQfXzx5Y8n
+         +M4A==
+X-Forwarded-Encrypted: i=1; AJvYcCURhiBSUSY86zN7I3PnmYFQkdVOEIbxTLNv6Fy60471kxwfNiPjXx1URMUhl0oVs+tgXGW9dxkbEzoUb9c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWnyhvFqqTKfZavTzWelbYV6OHhU4QXmtxJR9vt3FJfkoYdO9W
+	hVHNFHumYTRN+4/ASttoyTMhYq4jObSFgVq4g/epW/QPCxRQp1nJf7j0OcH0GBOSzqC2AWrNq6r
+	JdABE0yc7hNlkluMTXxlMRNTAqzs=
+X-Google-Smtp-Source: AGHT+IEHmbCGkxfuYxBbp5w9bJbGzBcjKIH78G3/w4OoaBqCYkg78xiX+9n4CvsR3ySueptW/YWVUMRwTGv0fi/kg50=
+X-Received: by 2002:a05:6a21:205:b0:1db:ff57:562b with SMTP id
+ adf61e73a8af0-1dc90be4502mr1557905637.31.1731652732323; Thu, 14 Nov 2024
+ 22:38:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241101070610.1267391-3-hongxing.zhu@nxp.com>
+References: <20241115054936.113567-1-wangyang.guo@intel.com>
+In-Reply-To: <20241115054936.113567-1-wangyang.guo@intel.com>
+From: Lai Jiangshan <jiangshanlai@gmail.com>
+Date: Fri, 15 Nov 2024 14:38:40 +0800
+Message-ID: <CAJhGHyBbhJHqAyfQ6x9BSkLdkMr0P5Fqx8T_2XoW-+X1AQobhg@mail.gmail.com>
+Subject: Re: [PATCH] workqueue: Reduce expensive locks for unbound workqueue
+To: Wangyang Guo <wangyang.guo@intel.com>
+Cc: Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org, 
+	Tim Chen <tim.c.chen@linux.intel.com>, tianyou.li@intel.com, pan.deng@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 01, 2024 at 03:06:02PM +0800, Richard Zhu wrote:
-> Add "ref" clock to enable reference clock. To avoid the DT
-> compatibility, i.MX95 REF clock might be optional.
-
-Your wording is not correct. Perhaps you wanted to say, "To avoid breaking DT
-backwards compatibility"?
-
-> Replace the
-> devm_clk_bulk_get() by devm_clk_bulk_get_optional() to fetch
-> i.MX95 PCIe optional clocks in driver.
-> 
-> If use external clock, ref clock should point to external reference.
-> 
-> If use internal clock, CREF_EN in LAST_TO_REG controls reference output,
-> which implement in drivers/clk/imx/clk-imx95-blk-ctl.c.
-> 
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+On Fri, Nov 15, 2024 at 2:00=E2=80=AFPM Wangyang Guo <wangyang.guo@intel.co=
+m> wrote:
+>
+> For unbound workqueue, pwqs usually map to just a few pools. Most of
+> the time, pwqs will be linked sequentially to wq->pwqs list by cpu
+> index.  Usually, consecutive CPUs have the same workqueue attribute
+> (e.g. belong to the same NUMA node). This makes pwqs with the same
+> pool cluster together in the pwq list.
+>
+> Only do lock/unlock if the pool has changed in flush_workqueue_prep_pwqs(=
+).
+> This reduces the number of expensive lock operations.
+>
+> The performance data shows this change boosts FIO by 65x in some cases
+> when multiple concurrent threads write to xfs mount points with fsync.
+>
+> FIO Benchmark Details
+> - FIO version: v3.35
+> - FIO Options: ioengine=3Dlibaio,iodepth=3D64,norandommap=3D1,rw=3Dwrite,
+>   size=3D128M,bs=3D4k,fsync=3D1
+> - FIO Job Configs: 64 jobs in total writing to 4 mount points (ramdisks
+>   formatted as xfs file system).
+> - Kernel Codebase: v6.12-rc5
+> - Test Platform: Xeon 8380 (2 sockets)
+>
+> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+> Signed-off-by: Wangyang Guo <wangyang.guo@intel.com>
 > ---
->  drivers/pci/controller/dwc/pci-imx6.c | 19 +++++++++++++------
->  1 file changed, 13 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 808d1f105417..bc8567677a67 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -82,6 +82,7 @@ enum imx_pcie_variants {
->  #define IMX_PCIE_FLAG_HAS_SERDES		BIT(6)
->  #define IMX_PCIE_FLAG_SUPPORT_64BIT		BIT(7)
->  #define IMX_PCIE_FLAG_CPU_ADDR_FIXUP		BIT(8)
-> +#define IMX_PCIE_FLAG_CUSTOM_PME_TURNOFF	BIT(9)
->  
->  #define imx_check_flag(pci, val)	(pci->drvdata->flags & val)
->  
-> @@ -98,6 +99,7 @@ struct imx_pcie_drvdata {
->  	const char *gpr;
->  	const char * const *clk_names;
->  	const u32 clks_cnt;
-> +	const u32 clks_optional_cnt;
->  	const u32 ltssm_off;
->  	const u32 ltssm_mask;
->  	const u32 mode_off[IMX_PCIE_MAX_INSTANCES];
-> @@ -1278,9 +1280,8 @@ static int imx_pcie_probe(struct platform_device *pdev)
->  	struct device_node *np;
->  	struct resource *dbi_base;
->  	struct device_node *node = dev->of_node;
-> -	int ret;
-> +	int ret, i, req_cnt;
->  	u16 val;
-> -	int i;
->  
->  	imx_pcie = devm_kzalloc(dev, sizeof(*imx_pcie), GFP_KERNEL);
->  	if (!imx_pcie)
-> @@ -1330,7 +1331,10 @@ static int imx_pcie_probe(struct platform_device *pdev)
->  		imx_pcie->clks[i].id = imx_pcie->drvdata->clk_names[i];
->  
->  	/* Fetch clocks */
-> -	ret = devm_clk_bulk_get(dev, imx_pcie->drvdata->clks_cnt, imx_pcie->clks);
-> +	req_cnt = imx_pcie->drvdata->clks_cnt - imx_pcie->drvdata->clks_optional_cnt;
-> +	ret = devm_clk_bulk_get(dev, req_cnt, imx_pcie->clks);
-> +	ret |= devm_clk_bulk_get_optional(dev, imx_pcie->drvdata->clks_optional_cnt,
-> +					  imx_pcie->clks + req_cnt);
+>  kernel/workqueue.c | 22 ++++++++++++++++++----
+>  1 file changed, 18 insertions(+), 4 deletions(-)
 
-Why do you need to use 'clk_bulk' API to get a single reference clock? Just use
-devm_clk_get_optional(dev, "ref")
+Reviewed-by: Lai Jiangshan <jiangshanlai@gmail.com>
 
-And who is going to supply the reference clock in the absence of this clockn in
-DT?
+This is a problem caused by 636b927eba5b("workqueue: Make unbound
+workqueues to use per-cpu pool_workqueues").
 
-- Mani
+Before the said commit, there is much less likely that two or more PWQs
+in the same WQs share the same pool. After the commit, it becomes a common =
+case.
 
->  	if (ret)
->  		return ret;
->  
-> @@ -1480,6 +1484,7 @@ static const char * const imx8mm_clks[] = {"pcie_bus", "pcie", "pcie_aux"};
->  static const char * const imx8mq_clks[] = {"pcie_bus", "pcie", "pcie_phy", "pcie_aux"};
->  static const char * const imx6sx_clks[] = {"pcie_bus", "pcie", "pcie_phy", "pcie_inbound_axi"};
->  static const char * const imx8q_clks[] = {"mstr", "slv", "dbi"};
-> +static const char * const imx95_clks[] = {"pcie_bus", "pcie", "pcie_phy", "pcie_aux", "ref"};
->  
->  static const struct imx_pcie_drvdata drvdata[] = {
->  	[IMX6Q] = {
-> @@ -1592,9 +1597,11 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  	},
->  	[IMX95] = {
->  		.variant = IMX95,
-> -		.flags = IMX_PCIE_FLAG_HAS_SERDES,
-> -		.clk_names = imx8mq_clks,
-> -		.clks_cnt = ARRAY_SIZE(imx8mq_clks),
-> +		.flags = IMX_PCIE_FLAG_HAS_SERDES |
-> +			 IMX_PCIE_FLAG_SUPPORTS_SUSPEND,
-> +		.clk_names = imx95_clks,
-> +		.clks_cnt = ARRAY_SIZE(imx95_clks),
-> +		.clks_optional_cnt = 1,
->  		.ltssm_off = IMX95_PE0_GEN_CTRL_3,
->  		.ltssm_mask = IMX95_PCIE_LTSSM_EN,
->  		.mode_off[0]  = IMX95_PE0_GEN_CTRL_1,
-> -- 
-> 2.37.1
-> 
+I planned to make the PWQs shared for different CPUs if possible.
+But the patch[1] has a problem which is easy to fix.
+I will update it if it is needed.
 
--- 
-மணிவண்ணன் சதாசிவம்
+Thanks
+Lai
+
+[1] https://lore.kernel.org/lkml/20231227145143.2399-3-jiangshanlai@gmail.c=
+om/
 
