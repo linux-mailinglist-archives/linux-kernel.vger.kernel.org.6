@@ -1,194 +1,164 @@
-Return-Path: <linux-kernel+bounces-410754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25E59CE09A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:50:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A0449CE0B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:55:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6305F1F2269E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:50:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D60BCB2B9AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCB61D63D6;
-	Fri, 15 Nov 2024 13:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351C71D8E12;
+	Fri, 15 Nov 2024 13:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Tt9M//b3"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y/cJFaTG"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33531D619D
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 13:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D8D1D8A14
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 13:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731678269; cv=none; b=PxnFEpIgJIjTxBN8x8AUUlyeHvl/n8/I7PZusEYmWHzaUVdRHRn3L/sxYS6j0jG6ZQfNO38T4xkIE+j4j2I1+H4dZh8ty4DSDbDB6P6RVIZ4RWId3tcnyE34SJQo5F7ZGMxEr4yVKNMDpnk58q6iIXaWL/6VZlvtw1PPOHKXzSY=
+	t=1731678335; cv=none; b=UhXnffRPCepcJs/pgG6ZdUejmA8kc1++4/EY8r51ToG9VjPaifB26fSvk6kB35SqB3fM5rns/E1dTs4fHPlXpLKVY20As7ETcBpQCwLxILgviaK17O8GtWV9MHxe2DLOqI6JfoZDCdgQV680zOT56C5aSFerV3wJ0bsCuuURMHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731678269; c=relaxed/simple;
-	bh=oorGJmvA6xzxLnok/YZN4p2VL6lLlYylm2VtoiEqIdc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ax6WuZ3y24h9WejyFQX2mQ2qrWEm5s//R4hwYa+fCWQ9p1T9J+tdIAO0j7by0fiPMZ35kes/e2REC4bqpv/MkjNsfy7lQWmkHsZoEox5/xn3S56A3/ZlY0nT9KoXsSQcXzITBxvFmqKQuDrSkOqqJz29B9Q2tnaEC5IwuFq+H1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Tt9M//b3; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3821e0b2262so1001209f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 05:44:27 -0800 (PST)
+	s=arc-20240116; t=1731678335; c=relaxed/simple;
+	bh=VoybBsY7RTKWBqvK6p4BNsS1WLVg3nffE+yaujNmtgc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UMtecLTYpw7YawAhKPlNkCx7GK7yXfnzcw7k6GDv3AOYauppYZi+FV0nTwGhRKdR7XodzAp2cCpwTgECd+b0I5gcmxT+0PTTx2ZdNM+tiBSO/k7ypdqR9tYW+2qxW3wwhPpTnoernbPE+EZZbJQEktFDjEeDxTjjI3apOzJJ0q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y/cJFaTG; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-715716974baso1017568a34.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 05:45:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1731678266; x=1732283066; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cy6rRM40DC0Xnuy+hKTJ1gL87RxFIFWLdj3y1evJaag=;
-        b=Tt9M//b3hgiUITu4GtEnVIA00UnqaXtoE5ioJo3RRiRdI8ZkZUJwDWFGc90uDE9HY5
-         57GC6UX0A6dCNOoqhzx/JAz6hKPeE14DFzP6JBxFwqdKTJ11jYeQQ+hAtPYzjigIv6Y+
-         +D1gsYAb0+2Jn5kx76TEVtsPYjcEXnbYPzTC1BEmxEUqIJXULnAI7tSYJk67g0mzI32O
-         bbuuNSDIhYMKgn/D9SnoBbyybb+anNhWWEcLp5gC2GNMcKQRW7lV2CwryKL4ME4bK35s
-         sGkKAsR07qhWNya0gGwW8LTCB9BCUs9ICm8z6DLzhepypRIJcp8dslUm8794Hde2RNUf
-         pGOw==
+        d=linaro.org; s=google; t=1731678333; x=1732283133; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=LuZ9h9BNFcT5uL/Q7ZM7GD2SJeFPeGTf27xjtupqSCo=;
+        b=Y/cJFaTGTLHY/LURlE0iRlI3Lv3bxom7+r3lcgn193aSi7b6A/Uc8SYoUl/0PHmw/s
+         LH8dLfDH8VbR60ozfym0ur1+tdRuDmcwLGl/chCMFRE4hQlnhskvyPy0NC0fsHvvApL0
+         0b22DsCGz/JFUjZXTqggb5PO/qXn0b8Q1S1LQ832iJ/wIilX8AeIEl54IiJYoBouKWmV
+         B/3+uAtubmcXO2blSLFLzgnjRMsY6tD4Q0D0BMXns7Ga39Bj4BhWLh6XhrBf5CkTSTd9
+         F/22PXm3nzk+TiiQNe0oatLigMz2M9mFSYt/lA8GnaROwcjLnBrUl31s+XTGQXZHQOTb
+         hYCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731678266; x=1732283066;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cy6rRM40DC0Xnuy+hKTJ1gL87RxFIFWLdj3y1evJaag=;
-        b=sZdihRoF2mIq/TRqVlREyeKLocpLvqnDV6HVXEgyCatzJLJjAy0/fTfcgzzMaJCi+i
-         bxdSq9xZRyp+MerdlWdWS77Dq50W8mH7T0g2SmXeSxSxove+YMz7SvpRCxZrBGl0RNuh
-         z2wmihqYCuikt0fpNkT78Fz33oLlaDc+L1eYbok9HO9EQF+UurutyywJZRCR1xMvHjOb
-         VIawqDI+D/zkuTAphDrdr75VrqRJsqnDsNNssihPSI8wUviLpJWe5xZWImjRGX2D9kis
-         DuhV/7vC7ewM4Bdobsk33yQUQNLbavYlziKx9ghnib/8SOfCa99aKjn+vIZEZUQ10Gwy
-         6vEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBCS7KIb/DWfcluh/HZKyRAKNOq3iDeF8lpRISA1M6NUAtWTQl3gssGbKMoYehiqbLQPhuT6qGOBZLpzY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtDZ1opEnDufSSbIA9kFmzQlEI/A2K0i/EFbBPH6Usc7aueaRz
-	b4pKz5jdQcbJ/wMnOp10NzFwDvagABmbC3Wnx6ZZaPerL5zOy6mly4ByoLtZZck=
-X-Google-Smtp-Source: AGHT+IElpc/J6dLBHzyye+AXHa2deiO6rAp8errU88VFUq6AVzjbCez9Ff6hHaovJQpzUHSProQ5aA==
-X-Received: by 2002:a5d:588b:0:b0:382:1e06:fa3 with SMTP id ffacd0b85a97d-38225acf926mr2344326f8f.47.1731678266107;
-        Fri, 15 Nov 2024 05:44:26 -0800 (PST)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ada3fc9sm4378016f8f.20.2024.11.15.05.44.24
+        d=1e100.net; s=20230601; t=1731678333; x=1732283133;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LuZ9h9BNFcT5uL/Q7ZM7GD2SJeFPeGTf27xjtupqSCo=;
+        b=P6gIkQIxGw62E5pXcq9ETQruPAddOc2j0Iy5Qa+Tt5xh9UzZy9XTaR9neXNQ48YKAt
+         lZY1Xp3SijVeCzLm4Z/XAmtZbmFSJJ0NBdalPtippMo9b40BB3kuUx2pxAKMuOhmOZ/Q
+         Z2oFtKlbU6sl/GOlPtggJY595YGo8XiWflLtcLI03aOCKO4Zj9qH7vbpAd8TNilanshP
+         b51LKESDDRII/C1DqbcHtxb4QcGIgFzJhiwu+Q+3afO+S5JnQWFB/AMaLZ1zmknfmufp
+         Tu2fSEVWUYsig4tpQMb7LKtnSiKTu5QSp95hZ8ZuAhuN1d6IAB636OTCZ0xBYRqmve1n
+         ir/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVODJOkGz/I3nYh9gfa0A/DgZ6TWmxRJ6oln8i0t9mmcfEAYj64l3MERtoEERubsVWRFFn1qkD1DAm83lc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNqcGt3lskMJtmav4asxGP/ZpCNfJiLa0zJKjzndihB4xRZJ1C
+	r9Bl/S/AcKZnXnZ8PRqC13CDS1c9byGQStC7Q7YsYUkmPwVf3fjbPFXBjHu0ww==
+X-Google-Smtp-Source: AGHT+IGIbW1tQeXnBuOqrUpxgNtqWmpwlGGiTVcd4WBp0pbssH/vd69ZwPhiHwTkU1GfRxG6/U7bqg==
+X-Received: by 2002:a05:6830:700a:b0:716:ab1b:6473 with SMTP id 46e09a7af769-71a77a24391mr3208834a34.30.1731678332904;
+        Fri, 15 Nov 2024 05:45:32 -0800 (PST)
+Received: from thinkpad ([117.193.215.93])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1c2c505sm1268434a12.18.2024.11.15.05.45.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 05:44:25 -0800 (PST)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	p.zabel@pengutronix.de,
-	lethal@linux-sh.org,
-	g.liakhovetski@gmx.de
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	claudiu.beznea@tuxon.dev,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v3 8/8] arm64: dts: renesas: r9a08g045s33-smarc-pmod: Add overlay for SCIF1
-Date: Fri, 15 Nov 2024 15:44:01 +0200
-Message-Id: <20241115134401.3893008-9-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com>
+        Fri, 15 Nov 2024 05:45:32 -0800 (PST)
+Date: Fri, 15 Nov 2024 19:15:24 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Konrad Dybcio <konradybcio@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	quic_vbadigan@quicinc.com, quic_mrana@quicinc.com,
+	andersson@kernel.org
+Subject: Re: [PATCH v4 1/3] PCI: dwc: Skip waiting for link up if vendor
+ drivers can detect Link up event
+Message-ID: <20241115134524.xbjgrutbpp7ehjsn@thinkpad>
+References: <20241115-remove_wait1-v4-0-7e3412756e3d@quicinc.com>
+ <20241115-remove_wait1-v4-1-7e3412756e3d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241115-remove_wait1-v4-1-7e3412756e3d@quicinc.com>
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Fri, Nov 15, 2024 at 04:00:21PM +0530, Krishna chaitanya chundru wrote:
+> If the vendor drivers can detect the Link up event using mechanisms
+> such as Link up IRQ and can the driver can enumerate downstream devices
 
-Add DT overlay for SCIF1 (of the Renesas RZ/G3S SoC) routed through the
-PMOD1_3A interface available on the Renesas RZ SMARC Carrier II board.
+"if the driver can..."
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
+> instead of waiting here, then waiting for Link up during probe is not
+> needed here, which optimizes the boot time.
+> 
+> So skip waiting for link to be up if the driver supports 'linkup_irq'.
+> 
 
-Changes in v3:
-- none
+s/linkup_irq/use_linkup_irq
 
-Changes in v2:
-- none
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
 
- arch/arm64/boot/dts/renesas/Makefile          |  3 ++
- .../dts/renesas/r9a08g045s33-smarc-pmod.dtso  | 48 +++++++++++++++++++
- 2 files changed, 51 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r9a08g045s33-smarc-pmod.dtso
+With above,
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 97228a3cb99c..7ad52630d350 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -137,6 +137,9 @@ r9a07g054l2-smarc-cru-csi-ov5645-dtbs := r9a07g054l2-smarc.dtb r9a07g054l2-smarc
- dtb-$(CONFIG_ARCH_R9A07G054) += r9a07g054l2-smarc-cru-csi-ov5645.dtb
- 
- dtb-$(CONFIG_ARCH_R9A08G045) += r9a08g045s33-smarc.dtb
-+dtb-$(CONFIG_ARCH_R9A07G043) += r9a08g045s33-smarc-pmod.dtbo
-+r9a08g045s33-smarc-pmod-dtbs := r9a08g045s33-smarc.dtb r9a08g045s33-smarc-pmod.dtbo
-+dtb-$(CONFIG_ARCH_R9A07G043) += r9a08g045s33-smarc-pmod.dtb
- 
- dtb-$(CONFIG_ARCH_R9A09G011) += r9a09g011-v2mevk2.dtb
- 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g045s33-smarc-pmod.dtso b/arch/arm64/boot/dts/renesas/r9a08g045s33-smarc-pmod.dtso
-new file mode 100644
-index 000000000000..7d637ab110e1
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a08g045s33-smarc-pmod.dtso
-@@ -0,0 +1,48 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the RZ/G3S SMARC Carrier II EVK PMOD parts
-+ *
-+ * Copyright (C) 2024 Renesas Electronics Corp.
-+ *
-+ *
-+ * [Connection]
-+ *
-+ * SMARC Carrier II EVK
-+ * +--------------------------------------------+
-+ * |PMOD1_3A (PMOD1 PIN HEADER)			|
-+ * |	SCIF1_CTS# (pin1)  (pin7)  PMOD1_GPIO10	|
-+ * |	SCIF1_TXD  (pin2)  (pin8)  PMOD1_GPIO11	|
-+ * |	SCIF1_RXD  (pin3)  (pin9)  PMOD1_GPIO12	|
-+ * |	SCIF1_RTS# (pin4)  (pin10) PMOD1_GPIO13	|
-+ * |	GND	   (pin5)  (pin11) GND		|
-+ * |	PWR_PMOD1  (pin6)  (pin12) GND		|
-+ * +--------------------------------------------+
-+ *
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
-+
-+&{/} {
-+	aliases {
-+		serial0 = "/soc/serial@1004bc00";
-+	};
-+};
-+
-+&pinctrl {
-+	scif1_pins: scif1-pins {
-+		pinmux = <RZG2L_PORT_PINMUX(14, 0, 1)>, /* TXD */
-+			 <RZG2L_PORT_PINMUX(14, 1, 1)>, /* RXD */
-+			 <RZG2L_PORT_PINMUX(16, 0, 1)>, /* CTS */
-+			 <RZG2L_PORT_PINMUX(16, 1, 1)>; /* RTS */
-+	};
-+};
-+
-+&scif1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&scif1_pins>;
-+	uart-has-rtscts;
-+	status = "okay";
-+};
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
+> ---
+>  drivers/pci/controller/dwc/pcie-designware-host.c | 10 ++++++++--
+>  drivers/pci/controller/dwc/pcie-designware.h      |  1 +
+>  2 files changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index 3e41865c7290..c8208a6c03d1 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -530,8 +530,14 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
+>  			goto err_remove_edma;
+>  	}
+>  
+> -	/* Ignore errors, the link may come up later */
+> -	dw_pcie_wait_for_link(pci);
+> +	/*
+> +	 * Note: The link up delay is skipped only when a link up IRQ is present.
+> +	 * This flag should not be used to bypass the link up delay for arbitrary
+> +	 * reasons.
+> +	 */
+> +	if (!pp->use_linkup_irq)
+> +		/* Ignore errors, the link may come up later */
+> +		dw_pcie_wait_for_link(pci);
+>  
+>  	bridge->sysdata = pp;
+>  
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 347ab74ac35a..1d0ec47e1986 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -379,6 +379,7 @@ struct dw_pcie_rp {
+>  	bool			use_atu_msg;
+>  	int			msg_atu_index;
+>  	struct resource		*msg_res;
+> +	bool			use_linkup_irq;
+>  };
+>  
+>  struct dw_pcie_ep_ops {
+> 
+> -- 
+> 2.34.1
+> 
+
 -- 
-2.39.2
-
+மணிவண்ணன் சதாசிவம்
 
