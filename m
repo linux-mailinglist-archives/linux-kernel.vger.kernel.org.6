@@ -1,121 +1,108 @@
-Return-Path: <linux-kernel+bounces-410589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CE859CDD9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:41:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CFA89CDDA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:43:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0ED92B23F66
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:41:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BC4AB24FA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ADB71B6D16;
-	Fri, 15 Nov 2024 11:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CSu2Km9X"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95CF31B6D15;
+	Fri, 15 Nov 2024 11:42:56 +0000 (UTC)
+Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D221B218E
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0BD52F9E
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731670886; cv=none; b=rd3dZ3lUiE+GfRVKku9UaGzYm0BmntnbWx4yhzH8djqdBq7yFY5Xklfje0U2b8ti37FaHscNwLmEyVpQAQdYB3vKmQy611eYvOOluDuBzhoTKQDEulAVvFldR1Z/CFuwx87apWanrfrsECX7r45n0Jiap5BWUb+lphaieA/ZRso=
+	t=1731670976; cv=none; b=Z211lBtfQ3UGIRqrf1AkRMgE/Dw7tcAPygWNuwBFBaKJum+I3lzCUXXT9103BxiFQBALkv9OAGAr5uGDXuIKICqleIm9B9/9LAonc6HJ3oIx24g5BtaBvUyt9bPlO67gczy3SEJxQYtrxiLw59rNOOHSqmPsbF9iiXvlal0spzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731670886; c=relaxed/simple;
-	bh=zOyo5COq+8myjBE0eOo62YLhO2AXFGHDP+G+EWr+RTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U4YTSo5OY71wHQTu8xQJPSUPdmvUf0Z2bNEZS07FJx7xhBnlni+MgY67EJ3GFz0l6SIHtxBCCcSTRjrJoiRCdHJa5RuLYm76JjvRKnVUX5utoonzTNWNIePWqfBm3xmnQtpYl/xoQD6gtjvMmG1RZcJz4kf6gAFcMYiiZ+jKnf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CSu2Km9X; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d3e8d923fso1198303f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 03:41:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731670883; x=1732275683; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xF053wpgtdzr8IcutMD9B2cfG2Nm2K0eZSa9yjvefU4=;
-        b=CSu2Km9XPhASLswTyxhNLc8KuwU9IrFz2sJ0rBl3WlcrpgkCBT3RC/Tcd1rsvXUi+/
-         KbQvEbnbHxeQ2gFM5T5hg2QcxrhH0pOfqFepm3fp49jTbz83tUxEARY5yvwgG8UTJ1CH
-         SYyg2tN/chWE3f9IEu6WlsZGQ86pGhvyEYzrqAfu8SFPVV18lpBCoJLz/QtuOZOzxuUy
-         CHaYsFfkff1oINppE/zCQKtKx33fVIoUM6d6sXK/dyNjC8vm2/zFyU9WoynQ+hsei3QJ
-         ms9SdH787yCqLV+DULC1DdOvz1+uoter/W1ox9Pew0OGonnPApFbtlsQSivEdJyER/w0
-         2RtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731670883; x=1732275683;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xF053wpgtdzr8IcutMD9B2cfG2Nm2K0eZSa9yjvefU4=;
-        b=WqOTbuy7Xt3awG/0YAVgD57chBYkRWBNCw4VolkJrzSNlz0M/yGr6s1J7y7tFKn9xo
-         FqftCSJpe/n/J5ljae3w7fSyBRQyn35N5z4uWexNhbVtmoTjiPebufhWtuTIk/XpKNiG
-         2XSQ/zVHZu2JMHAPfG3D9zzhfnpJEhLKDWjCidvjXPXiy2b3UtkHWmbdPpZaYRXK4oG/
-         XnDv2wdYBKJG4YAcXfN2qxinhyK8mRZtS8FjlguaRMH6xg74enP5kL7zeQC9D8nlEkUK
-         oq99h9UGtelEDpCb+Hr+RgeN+ge9PKjTXCUS44RtstnOkgR9kbQKp2csc0Pmell9F5qa
-         tY5Q==
-X-Gm-Message-State: AOJu0YxWUDdtSj0UUz3J5bVfR+Pul6fuujsyxJNsLaAnev9Po6SXMcvr
-	HStCYpjUgq2IutT7+91DTf/97jbE4sBhIVasE0xIqlgsPW7uHFo1GsPGhuUcUes=
-X-Google-Smtp-Source: AGHT+IGbyKqIEk1xK44OLQSqjB0z5tzBl+LgtQnO+9w0M0pvjwyYpLAS6wVhLG18oxscMEUsMoqBaw==
-X-Received: by 2002:a5d:6d05:0:b0:374:c8e5:d56a with SMTP id ffacd0b85a97d-38225ab7bf0mr1521623f8f.48.1731670882950;
-        Fri, 15 Nov 2024 03:41:22 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ada2f25sm4238395f8f.9.2024.11.15.03.41.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 03:41:22 -0800 (PST)
-Date: Fri, 15 Nov 2024 12:41:20 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Chris Down <chris@chrisdown.name>
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Tony Lindgren <tony.lindgren@linux.intel.com>, kernel-team@fb.com
-Subject: Re: Conflict with FORCE_CON: Re: [PATCH v6 04/11] printk: Support
- toggling per-console loglevel via syslog() and cmdline
-Message-ID: <ZzczYMMePV3oWFON@pathway.suse.cz>
-References: <cover.1730133890.git.chris@chrisdown.name>
- <07141a533c4071c364c4f2eda6d97a9a89797e67.1730133890.git.chris@chrisdown.name>
- <ZzM0T5b4uKIN0PM7@pathway.suse.cz>
- <ZzZPVp8_ZHbGgn5z@chrisdown.name>
+	s=arc-20240116; t=1731670976; c=relaxed/simple;
+	bh=dqUHp0K8+Qu//0hhMfdsiLORn6fHR8S3gPMKkfAbYUc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=WWsP7g05Vkm0TTr6UVWlMeQoAYYAgMmkGPdljhwI2TpW4WiS2mlt+vyhlkDxG9y0kd+iBq2rF9NC8e84P4D35dsLdjPeHY+srn8H4fnp8PPtcxKdZOJU4yOfQHiqNhKJkpuCX+kOae8Rv1/x2WSpVCqjW4mARA0yeVfd6IxpHSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=walle.cc; arc=none smtp.client-ip=159.69.201.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
+Received: from localhost (unknown [IPv6:2a02:810b:4320:1000:4685:ff:fe12:5967])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3ffe.de (Postfix) with ESMTPSA id 300383B8;
+	Fri, 15 Nov 2024 12:33:02 +0100 (CET)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZzZPVp8_ZHbGgn5z@chrisdown.name>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 15 Nov 2024 12:32:53 +0100
+Message-Id: <D5MPWZF8NUW9.1VVRAD59LVVV2@kernel.org>
+Subject: Re: [PATCH v3] mtd: spi-nor: atmel: add at25sf321 entry
+Cc: <linux-mtd@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Marcus Folkesson" <marcus.folkesson@gmail.com>, "Tudor Ambarus"
+ <tudor.ambarus@linaro.org>, "Pratyush Yadav" <pratyush@kernel.org>, "Miquel
+ Raynal" <miquel.raynal@bootlin.com>, "Richard Weinberger" <richard@nod.at>,
+ "Vignesh Raghavendra" <vigneshr@ti.com>, "Nicolas Ferre"
+ <nicolas.ferre@microchip.com>, "Alexandre Belloni"
+ <alexandre.belloni@bootlin.com>, "Claudiu Beznea"
+ <claudiu.beznea@tuxon.dev>
+X-Mailer: aerc 0.16.0
+References: <20241115-spi-nor-v3-1-93ec584177cb@gmail.com>
+In-Reply-To: <20241115-spi-nor-v3-1-93ec584177cb@gmail.com>
 
-On Thu 2024-11-14 14:28:22, Chris Down wrote:
-> Petr Mladek writes:
-> > On Mon 2024-10-28 16:45:40, Chris Down wrote:
-> > > A new module parameter (ignore_per_console_loglevel) is added, which can
-> > > be set via the kernel command line or at runtime through
-> > > /sys/module/printk/parameters/ignore_per_console_loglevel. When set, the
-> > > per-console loglevels are ignored, and the global console loglevel
-> > > (console_loglevel) is used for all consoles.
-> > > 
-> > > During sysrq, we temporarily disable per-console loglevels to ensure all
-> > > requisite messages are printed to the console. This is necessary because
-> > > sysrq is often used in dire circumstances where access to
-> > > /sys/class/console may not be trivially possible.
-> > 
-> > I have just pushed a patchset which removed the console_loglevel
-> > manipulation from sysrq, see
-> > https://lore.kernel.org/r/20241105-printk-loud-con-v2-0-bd3ecdf7b0e4@suse.com
->   Noted, so would you like me to change this to be based on current
-> printk/for-next, or is another branch preferred?
+Hi Marcus,
 
-Please, make v7 based on linux-next. It seems that the merge window
-for 6.13 opens the following week. So that the other patchset should
-reach the mainline in 6.13. The per-console loglevels would need to
-wait for 6.14.
+On Fri Nov 15, 2024 at 12:21 PM CET, Marcus Folkesson wrote:
+> Add entry for the at25sf321 32Mbit SPI flash.
+>
+> This flash is populated on a custom board and was tested at
+> 10MHz frequency using the "ti,da830-spi" SPI controller.
+>
+> Link:
+> https://www.renesas.com/en/document/dst/at25sf321-datasheet?r=3D1608801
+>
 
-Best Regards,
-Petr
+Please put the URL into the same line as the link and no empty line
+between your SoB and the link.
+
+> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+
+..
+
+> diff --git a/drivers/mtd/spi-nor/atmel.c b/drivers/mtd/spi-nor/atmel.c
+> index 45d1153a04a07b7c61f46b117311b24ab695038f..ff9462d9b8ed83f44ee99a7f3=
+b70b99b4d455e9b 100644
+> --- a/drivers/mtd/spi-nor/atmel.c
+> +++ b/drivers/mtd/spi-nor/atmel.c
+> @@ -238,6 +238,11 @@ static const struct flash_info atmel_nor_parts[] =3D=
+ {
+>  		.flags =3D SPI_NOR_HAS_LOCK,
+>  		.no_sfdp_flags =3D SECT_4K,
+>  		.fixups =3D &at25fs_nor_fixups
+> +	}, {
+> +		.id =3D SNOR_ID(0x1f, 0x87, 0x01),
+> +		.name =3D "at25sf321",
+
+No name please. As you've already found out the ID will be reused
+and the name is just misleading.
+
+> +		.size =3D SZ_4M,
+> +		.no_sfdp_flags =3D SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+>  	},
+>  };
+
+Otherwise looks good and with that above fixed:
+
+Reviewed-by: Michael Walle <mwalle@kernel.org>
+
+-michael
 
