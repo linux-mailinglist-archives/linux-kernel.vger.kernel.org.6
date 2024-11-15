@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-410930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4858C9CF258
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:06:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F23189CF2B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:19:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5892FB3EB0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:47:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 066E3B30EFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFA91C75E2;
-	Fri, 15 Nov 2024 15:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425DF1D63E2;
+	Fri, 15 Nov 2024 15:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dm8f46Do"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qm1PMV7m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCE71DA23
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 15:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969592F29;
+	Fri, 15 Nov 2024 15:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731685250; cv=none; b=oCEbttI3fvjGIINnLCy8PKtKQNNN2sCuRn3N9m0iNa0cfpR2aINaJskw8FLHGPJVvH1gsOflI8P7bbxlrEohGJxTkcrLG3CsxYAYYL8nrRrzfrbQX09eB7fR/gi1kl+Lcd22UHVIdq/JVfwlpEPWvH5IZd548s7opCXnMFTl2ww=
+	t=1731685388; cv=none; b=HupIaeqEY2X3VRHqUc9ma3kcHQQoVVYba+69x7/HkXEjxTo3V9GmK4Vrb8GK1b2A8OBFvF75Ji0Wv868csnYLV90ePFGPE/GySGsO1EtdAloRvsG4s/s2b0hjNUGsI/Jfe78PvhBR3Loy3sNQYxIJaBHZ2EJFF64VzX4Zdk916A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731685250; c=relaxed/simple;
-	bh=e1BsjWrK/kzNf9cCgD7tXTxvlV9QNmyd9j9wKC1xxNc=;
+	s=arc-20240116; t=1731685388; c=relaxed/simple;
+	bh=/dcFxhHKBWLL34nz7gEKNRpldABlavWv3YKIJYlie4s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CAioW8blzXRvTDQL8c2LIy8L8wyCW2hvBBlRofE/FPz9iQcR53aAa0D4X+dU280veGQUXsYQCUtlxTmk+tuvHNFTbHLjsstNH711qAg21HdVgMmc59PucoI3oSLOAnjDAiltzKa2bl4lqOxypiDwanhBJmAwEypyjInlGqcqtpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dm8f46Do; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53d9ff92b14so2099952e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 07:40:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731685246; x=1732290046; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ddEutbtPWg1KmTucj3taFQtrXu2EJy6K8zzDaRFp7s0=;
-        b=dm8f46Do7FgLGA9b6rp+XaBdYQIk7A46lrz1H3RQLWehUfA9+NZh/jkJM1TXfdtz5G
-         MtbUkoBKrCX8MeCluRISLAsvLWEe0y/c2tiiSk17eqYkp/xpGtbLxve25C9TcmRtcf6z
-         9waVoMMOA1ZT0ehskotBFdJCv9jlpebaIjkACl95+hh5pUBRRgsz8SM3mHykPqdyO5DH
-         Msj4k/vPQ4Pky4VZ27CGmOdw4wiYsfov0exVsj1UpDeTL1JL49DBcBB3RAT7JYg4v5NW
-         vxSsEEQKyD901XT4LHsS5YP8FvtDFKrlzMVEJ8V9tc/0QGlQwZiQl329BXTq8YvOKV/k
-         PU2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731685246; x=1732290046;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ddEutbtPWg1KmTucj3taFQtrXu2EJy6K8zzDaRFp7s0=;
-        b=AUrsGyyJIZwfeX4W3Xnr2rwZFO8DgQgaS+XlGgQhSg/cd4KvLhRGroKgfjXgZ0xzPH
-         LdqEH1iRjyg4GcHP+b60b8I8Dx53Q3ogBcmbWa3kB9Lh2iuhE3EgsB+5QjXRYjMcObS6
-         JMxDtGD3G2dlqetcU9KcxU9v94+XvdFwKBcsPAhS4odo6weNVRchYJx0kQVeOJVeM9zB
-         Ii/tZyEpAys76e3Kb7CtXVWuacx4kHCyy6EuvEYPOxYzyeez1M4k/q84Ky9aTbKMHZLj
-         FE1xHcKLQIMZq2HQZtS2U+AcdqM1igOYg9sm2pYLs/DriTE6y2llduAQarfRITqbrUC+
-         RmjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhnDxIiZ40Z9iY5KvqvP9lrF12Q5D1QCSKhK22rqydSchJce7skEodesXIhgCuEW+shFZRiL9eNNJu1y4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0c09Q4SHf+yJHTSdDI2xzgYdEZoMM8pMXMZ/dPXXHVm5MVYmJ
-	RUwf35ZbPHgEgzT6AvdXaHpKhT8HVFyjUa7UYpksvhe5o3lESZCzAf3IHzG7zYrocL+JKTtsz2N
-	Z
-X-Google-Smtp-Source: AGHT+IGiWuk5Q66NHJ3LjXN67sEupBz252YAxeBkL4RX4XijCDZTBhhYO6iJP7cDergE3QFssvqbkw==
-X-Received: by 2002:a05:6512:3b85:b0:533:44e7:1b2a with SMTP id 2adb3069b0e04-53dab3b261fmr1703126e87.40.1731685246352;
-        Fri, 15 Nov 2024 07:40:46 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da653104esm609956e87.131.2024.11.15.07.40.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 07:40:45 -0800 (PST)
-Date: Fri, 15 Nov 2024 17:40:42 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Melody Olvera <quic_molvera@quicinc.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Trilok Soni <quic_tsoni@quicinc.com>, Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] regulator: qcom-rpmh: Update ranges for FTSMPS525
-Message-ID: <d7zkmr3kdgrtyxettnhnt4cscxodsxertmocsgtpqdokjhi7z4@ox32a25ekbfv>
-References: <20241112002645.2803506-1-quic_molvera@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HTZTHV9IWyw99jSGnU5GOx36MR6J8CO5c29UmM5I2HSL8Yo9NwSGbfQbMtMxthEMLHvZu2AFMmFwIuE97E+G+wb5Af0TcK2CmfB2/sXNkDJPoyi4pVgXi8nkFWju10ZQ0DzhzaeDhgSk1NVS1B+psrC+YyBxJp2qmb8m8eG7dDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qm1PMV7m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD7FBC4CECF;
+	Fri, 15 Nov 2024 15:43:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731685388;
+	bh=/dcFxhHKBWLL34nz7gEKNRpldABlavWv3YKIJYlie4s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qm1PMV7mxCVMp40wyrDL58hCCRzwWaEgCxfDMIQCylAkVlFcaqG1PQjKLkYZ6T4w6
+	 PtrbyzmY7Cr+ZCdNByLnjTLya3JOwjOUvKFYKJSssn4qvV3m6aVcopLdRF4dOe1plP
+	 KiUnUk70zxZU1VrcbybGJoZHHZXv1tVy+Akx3aZkmpsfa9Ts+RLnyLg/pG7GT7ckII
+	 nXdO4J9hI0hHh6rRSUMdn9ybG5cO2a8tvRxWI1yBwVKP8olyJbokl1crJTE9P7Gndk
+	 2v0KRcW1+Mmueo1wMvdR7lEN9Y71VQKa9jw6CORkFBmpD8dUp87BNaMYrqS0UtiRDm
+	 qLeAuWMKjMXBQ==
+Date: Fri, 15 Nov 2024 12:43:05 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: Ian Rogers <irogers@google.com>, Xu Yang <xu.yang_2@nxp.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Huacai Chen <chenhuacai@kernel.org>, Bibo Mao <maobibo@loongson.cn>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Ben Zong-You Xie <ben717@andestech.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Sandipan Das <sandipan.das@amd.com>,
+	Benjamin Gray <bgray@linux.ibm.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	=?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Dima Kogan <dima@secretsauce.net>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 0/8] Refactor cpuid and metric table lookup code
+Message-ID: <ZzdsCWpAULCe839R@x1>
+References: <20241107162035.52206-1-irogers@google.com>
+ <215ca9a2-0a63-4d0c-8402-5cb1f2bb0794@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,37 +83,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241112002645.2803506-1-quic_molvera@quicinc.com>
+In-Reply-To: <215ca9a2-0a63-4d0c-8402-5cb1f2bb0794@linaro.org>
 
-On Mon, Nov 11, 2024 at 04:26:45PM -0800, Melody Olvera wrote:
-> All FTSMPS525 regulators support LV and MV ranges; however,
-> the boot loader firmware will determine which range to use as
-> the device boots.
->     
-> Nonetheless, the driver cannot determine which range was selected,
-> so hardcoding the ranges as either LV or MV will not cover all cases
-> as it's possible for the firmware to select a range not supported by
-> the driver's current hardcoded values.
->     
-> To this end, combine the ranges for the FTSMPS525s into one struct
-> and point all regulators to the updated combined struct. This should
-> work on all boards regardless of which range is selected by the firmware
-> and more accurately caputres the capability of this regulator on a
-> hardware level.
+On Fri, Nov 15, 2024 at 03:35:55PM +0000, James Clark wrote:
 > 
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-> ---
-> Changes in V2:
-> - merged FTSMPS525 lv and mv into one
-> - updated all regulator structs
-> ---
->  drivers/regulator/qcom-rpmh-regulator.c | 83 +++++++++++--------------
->  1 file changed, 36 insertions(+), 47 deletions(-)
 > 
+> On 07/11/2024 4:20 pm, Ian Rogers wrote:
+> > Xu Yang <xu.yang_2@nxp.com> reported issues with the system metric
+> > lookup:
+> > https://lore.kernel.org/linux-perf-users/20241106085441.3945502-1-xu.yang_2@nxp.com/
+> > These patches remove a lot of the logic relating CPUIDs to PMUs so
+> > that the PMU isn't part of the question when finding a metric table.
+> > For time reasons, it doesn't go as far as allowing system metrics
+> > without a metric table as a metric table is needed for metrics to
+> > refer to other metrics, and the refactoring of that resolution is a
+> > hassle.
+> > 
+> > Ian Rogers (7):
+> >    perf header: Move is_cpu_online to numa bench
+> >    perf header: Refactor get_cpuid to take a CPU for ARM
+> >    perf arm64 header: Use cpu argument in get_cpuid
+> >    perf header: Avoid transitive PMU includes
+> >    perf header: Pass a perf_cpu rather than a PMU to get_cpuid_str
+> >    perf jevents: Add map_for_cpu
+> >    perf pmu: Move pmu_metrics_table__find and remove ARM override
+> > 
+> > Xu Yang (1):
+> >    perf jevents: fix breakage when do perf stat on system metric
+> > 
+> >   tools/perf/arch/arm64/util/arm-spe.c     | 14 +---
+> >   tools/perf/arch/arm64/util/header.c      | 73 ++++++++++-----------
+> >   tools/perf/arch/arm64/util/pmu.c         | 20 ------
+> >   tools/perf/arch/loongarch/util/header.c  |  4 +-
+> >   tools/perf/arch/powerpc/util/header.c    |  4 +-
+> >   tools/perf/arch/riscv/util/header.c      |  4 +-
+> >   tools/perf/arch/s390/util/header.c       |  6 +-
+> >   tools/perf/arch/x86/util/auxtrace.c      |  3 +-
+> >   tools/perf/arch/x86/util/header.c        |  5 +-
+> >   tools/perf/bench/numa.c                  | 53 +++++++++++++++
+> >   tools/perf/builtin-kvm.c                 |  4 +-
+> >   tools/perf/pmu-events/empty-pmu-events.c | 39 ++++++-----
+> >   tools/perf/pmu-events/jevents.py         | 39 ++++++-----
+> >   tools/perf/pmu-events/pmu-events.h       |  2 +-
+> >   tools/perf/tests/expr.c                  |  5 +-
+> >   tools/perf/util/env.c                    |  4 +-
+> >   tools/perf/util/expr.c                   |  6 +-
+> >   tools/perf/util/header.c                 | 82 ++++++++----------------
+> >   tools/perf/util/header.h                 | 23 +++----
+> >   tools/perf/util/pmu.c                    | 25 --------
+> >   tools/perf/util/pmu.h                    |  2 -
+> >   tools/perf/util/probe-event.c            |  1 +
+> >   22 files changed, 189 insertions(+), 229 deletions(-)
+> > 
+> 
+> Reviewed-by: James Clark <james.clark@linaro.org>
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Thanks for reviewing James, I'm doing a round of tests to push what I
+have in tmp.perf-tools-next to perf-tools-next so that it gets test
+merged on linux-next and later today I'll escape from the holiday and
+take a last look on this series, apply and test.
 
--- 
-With best wishes
-Dmitry
+- Arnaldo
 
