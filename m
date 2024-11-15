@@ -1,173 +1,263 @@
-Return-Path: <linux-kernel+bounces-410586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE4929CDD94
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:37:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D3B49CDD98
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:38:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59937B24462
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:37:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A49861F23C89
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB9BA1B6D0C;
-	Fri, 15 Nov 2024 11:37:31 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90131B6D15;
+	Fri, 15 Nov 2024 11:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJYOwv0L"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D74018622;
-	Fri, 15 Nov 2024 11:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C281B218E;
+	Fri, 15 Nov 2024 11:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731670651; cv=none; b=N3uRhMlv0hzbzP/Z1g5hRAkEDF97Qkx7u8r8q9H4pT5dVeLawWKVyzw2L3V9rb0hUMoJSFZcC+mCLYy0aHh/G8g/H9rDTO03CYjJbKHytix9MhXFEh9Q7Px6YYv+fM/KL8nRfSFlRAnnrRdUqdzkMdGz0wsgPWY7RCaGQu2OwZ0=
+	t=1731670724; cv=none; b=dqhJrm2eLyLloGLARVaTNoYQE39PM45r+cMQKj07d2HoaGv3dvulvBxtXLDUMRyqmWRv9fNNjfWzPmazbbMsn2l3b6Lw0tTWoOdr0nXMQ+F173BJuqNl2DTwiOXH4DKQfM6aVJrL8XkWa6WAsX3Qf0u7oSZ0vXVRahaOR2qIckM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731670651; c=relaxed/simple;
-	bh=dOalgTtg/bwqmLEZLE2g2dxJ45h6yNkggGcJMwBqGTI=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PHlfDYF/9q86abYjXxOkiWjxudG8ms6BCjxeEBBKoZJoTbkMt6m7IQLuu2iM6DaJE9v5iatlGSEHKnyt456vhPeKLu5l/twQImQsHcqbOWhMdgaCT7l7pZQ0mvUxmNXSf29cc4Yj0wA47dNMCDKk1gqtctroLuCjpUP5mGBs0xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XqZk81n4tz6LCyH;
-	Fri, 15 Nov 2024 19:37:04 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id F11D1140A46;
-	Fri, 15 Nov 2024 19:37:19 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 15 Nov
- 2024 12:37:19 +0100
-Date: Fri, 15 Nov 2024 11:37:18 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Li Huafei <lihuafei1@huawei.com>
-CC: <gregkh@linuxfoundation.org>, <tiantao6@hisilicon.com>,
-	<rafael@kernel.org>, <baohua@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<stable@vger.kernel.org>
-Subject: Re: [PATCH v2] topology: Keep the cpumask unchanged when printing
- cpumap
-Message-ID: <20241115113718.00000c31@huawei.com>
-In-Reply-To: <20241114110141.94725-1-lihuafei1@huawei.com>
-References: <20241114110141.94725-1-lihuafei1@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1731670724; c=relaxed/simple;
+	bh=KA1wJ8unO7gPRX1lcC6ak5FwkDhI3tExJbWL518o/kc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PSfWsqKwMqy/T1XlqVn9IcrQrLnSXlJFWWDiZLaHoFbq+0LKAoWJlrx1xBrw0qL1xZFlt3H4KN9vUUSmGC8LB9d8jRbXojl80/OlBleaH/VsHP8K3GQoykb2xxHdRpRAsoAL0LjODu/MJ52ZjchPFrdnjkDv0AwbhlvDMC6scLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QJYOwv0L; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20cf3e36a76so6515385ad.0;
+        Fri, 15 Nov 2024 03:38:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731670720; x=1732275520; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JHPIeC3XGFKioJ4g6h+B7X6zDc+M6pjQLoDjxJwdy7w=;
+        b=QJYOwv0L7g79AmHm+80N2KzaUPGPO5PrpuAvpDZzsVPEYBj0wiv21UCypn0odFFy1P
+         PI5QYSdW9FZBjZOy18nKsutYy+dt1u66RAcqtECdvb4pTD5cBG+hWqaAYd9MKzObtqno
+         /8Ea8DAldzj6EB1i99YQH30lTDvqOonuv67Lh4R5J9ep5aYrS60frE8G5zfPpotII3qB
+         3Zn2yiKde+lME7w1XrKpDr56wscrAvHg/hPybq6oY2I66MQlojkWoE5huChbbT9RauHl
+         lASqxADwDkw1tSb4qGolVDu19DtZdy47l/dM/Em748QQrVsa47feGhyJBlHK8lKJqHXW
+         JbEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731670720; x=1732275520;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JHPIeC3XGFKioJ4g6h+B7X6zDc+M6pjQLoDjxJwdy7w=;
+        b=Q2CaXrGdw01g4sl0i7WupeUpiVUHLF6EW2VVEiK8eg+0pwcQLI5n7lTfYFiJ7nj6XP
+         QaDEe0IR3/repxHG2E7t4dGfhEJk8OG3/LYnXCJzUwtFpe12rmrd11bgiVESRyiHDV98
+         mX+5JXExK24kV/NF1lUlTX6INnSeGVlpRQ1kzlbTcaE+ZGnC1GdJ8thcoo4Gzd/h2Bf+
+         c3QWXg8tcbsMrV3zd70qc2cH6IM0sDy1cma9JcRcXKnChlLxo6wpkCHHfLR9Ax/Ot5O2
+         6gnFiV685typT9iObegMzjRfX31O2WITPzMqRravGeHNKmkpsYRkE8CVZ4ICmAyyhaiU
+         GNGw==
+X-Forwarded-Encrypted: i=1; AJvYcCXRGSwaLaYwDbGaYweBH5gigH+5netrnDxRgJGDgYH737POZ3qQCWvIhjwktXWG3r5fmWL1FHoaYROsF87M@vger.kernel.org, AJvYcCXUrNZP5n/EujeErtjFwRuSu2c7ipzGzXI9HpxKji6dLOCqYtPWrDRTbn2Hyg2kMBcSMqFWBcwGloU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1Qbu+lxKne6VfqVLfMN4VleyCWBROFq4LJXdck0DE06UBAqMP
+	P0/Mg+bNEuc1qXm8dgkGArPrs7vW1lsQQ29VVK0hvzSJGijTuB1R
+X-Google-Smtp-Source: AGHT+IG6OHx3pW59jhrT6WLGuyOxnUCn1Rlxtmzsn+sFxvxMITfwdreCtBKGFAMVWodO4RvRARs93g==
+X-Received: by 2002:a17:903:11c9:b0:20b:5645:d860 with SMTP id d9443c01a7336-211d0ecc3f0mr30942445ad.36.1731670719922;
+        Fri, 15 Nov 2024 03:38:39 -0800 (PST)
+Received: from archie.me ([103.124.138.80])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea06ef6a7esm2600102a91.4.2024.11.15.03.38.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 03:38:38 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id A34A443FF37D; Fri, 15 Nov 2024 18:38:36 +0700 (WIB)
+Date: Fri, 15 Nov 2024 18:38:36 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: "Xu, Even" <even.xu@intel.com>, "jikos@kernel.org" <jikos@kernel.org>,
+	"bentiss@kernel.org" <bentiss@kernel.org>,
+	"corbet@lwn.net" <corbet@lwn.net>,
+	"Aaron, Ma" <aaron.ma@canonical.com>
+Cc: "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"Sun, Xinpeng" <xinpeng.sun@intel.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: Re: [PATCH v2 01/22] HID: THC: Add documentation
+Message-ID: <ZzcyvPjkhCutD9ER@archie.me>
+References: <20241114053416.4085715-1-even.xu@intel.com>
+ <20241114053416.4085715-2-even.xu@intel.com>
+ <ZzbIP7tOEns0Fy-U@archie.me>
+ <IA1PR11MB6098EC67DEAA5336F4F47B19F4242@IA1PR11MB6098.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- frapeml500008.china.huawei.com (7.182.85.71)
-
-On Thu, 14 Nov 2024 19:01:41 +0800
-Li Huafei <lihuafei1@huawei.com> wrote:
-
-> During fuzz testing, the following warning was discovered:
-> 
->  different return values (15 and 11) from vsnprintf("%*pbl
->  ", ...)
-> 
->  test:keyward is WARNING in kvasprintf
->  WARNING: CPU: 55 PID: 1168477 at lib/kasprintf.c:30 kvasprintf+0x121/0x130
->  Call Trace:
->   kvasprintf+0x121/0x130
->   kasprintf+0xa6/0xe0
->   bitmap_print_to_buf+0x89/0x100
->   core_siblings_list_read+0x7e/0xb0
->   kernfs_file_read_iter+0x15b/0x270
->   new_sync_read+0x153/0x260
->   vfs_read+0x215/0x290
->   ksys_read+0xb9/0x160
->   do_syscall_64+0x56/0x100
->   entry_SYSCALL_64_after_hwframe+0x78/0xe2
-> 
-> The call trace shows that kvasprintf() reported this warning during the
-> printing of core_siblings_list. kvasprintf() has several steps:
-> 
->  (1) First, calculate the length of the resulting formatted string.
-> 
->  (2) Allocate a buffer based on the returned length.
-> 
->  (3) Then, perform the actual string formatting.
-> 
->  (4) Check whether the lengths of the formatted strings returned in
->      steps (1) and (2) are consistent.
-> 
-> If the core_cpumask is modified between steps (1) and (3), the lengths
-> obtained in these two steps may not match. Indeed our test includes cpu
-> hotplugging, which should modify core_cpumask while printing.
-> 
-> To fix this issue, cache the cpumask into a temporary variable before
-> calling cpumap_print_{list, cpumask}_to_buf(), to keep it unchanged
-> during the printing process.
-> 
-> Fixes: bb9ec13d156e ("topology: use bin_attribute to break the size limitation of cpumap ABI")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Li Huafei <lihuafei1@huawei.com>
-Makes sense. Trivial comment inline.
-
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-
-> ---
-> Changes in v2:
->  - Return an error when calling alloc_cpumask_var() fails instead of
->    returning a size of 0. 
->  - Add Cc (to stable) tag.
-> ---
->  drivers/base/topology.c | 24 ++++++++++++++++++++----
->  1 file changed, 20 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/base/topology.c b/drivers/base/topology.c
-> index 89f98be5c5b9..d293cbd253e4 100644
-> --- a/drivers/base/topology.c
-> +++ b/drivers/base/topology.c
-> @@ -27,9 +27,17 @@ static ssize_t name##_read(struct file *file, struct kobject *kobj,		\
->  			   loff_t off, size_t count)				\
->  {										\
->  	struct device *dev = kobj_to_dev(kobj);                                 \
-> +	cpumask_var_t mask;							\
-> +	ssize_t n;								\
->  										\
-> -	return cpumap_print_bitmask_to_buf(buf, topology_##mask(dev->id),	\
-> -					   off, count);                         \
-> +	if (!alloc_cpumask_var(&mask, GFP_KERNEL))				\
-> +		return -ENOMEM;							\
-Good catch.
-Could use __free(free_cpumask_var) but that is a bit messy given it's not a conventional
-allocation that returns a pointer.  So probably not worth doing just to save a single
-manual free call.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="uVNSzdUheHG0hrK6"
+Content-Disposition: inline
+In-Reply-To: <IA1PR11MB6098EC67DEAA5336F4F47B19F4242@IA1PR11MB6098.namprd11.prod.outlook.com>
 
 
-> +										\
-> +	cpumask_copy(mask, topology_##mask(dev->id));				\
-> +	n = cpumap_print_bitmask_to_buf(buf, mask, off, count);			\
-> +	free_cpumask_var(mask);							\
-> +										\
-> +	return n;								\
->  }										\
->  										\
->  static ssize_t name##_list_read(struct file *file, struct kobject *kobj,	\
-> @@ -37,9 +45,17 @@ static ssize_t name##_list_read(struct file *file, struct kobject *kobj,	\
->  				loff_t off, size_t count)			\
->  {										\
->  	struct device *dev = kobj_to_dev(kobj);					\
-> +	cpumask_var_t mask;							\
-> +	ssize_t n;								\
-> +										\
-> +	if (!alloc_cpumask_var(&mask, GFP_KERNEL))				\
-> +		return -ENOMEM;							\
-> +										\
-> +	cpumask_copy(mask, topology_##mask(dev->id));				\
-> +	n = cpumap_print_list_to_buf(buf, mask, off, count);			\
-> +	free_cpumask_var(mask);							\
->  										\
-> -	return cpumap_print_list_to_buf(buf, topology_##mask(dev->id),		\
-> -					off, count);				\
-> +	return n;								\
->  }
->  
->  define_id_show_func(physical_package_id, "%d");
+--uVNSzdUheHG0hrK6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Nov 15, 2024 at 05:10:55AM +0000, Xu, Even wrote:
+>=20
+>=20
+> > -----Original Message-----
+> > From: Bagas Sanjaya <bagasdotme@gmail.com>
+> > Sent: Friday, November 15, 2024 12:04 PM
+> > To: Xu, Even <even.xu@intel.com>; jikos@kernel.org; bentiss@kernel.org;
+> > corbet@lwn.net; Aaron, Ma <aaron.ma@canonical.com>
+> > Cc: linux-input@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+> > doc@vger.kernel.org; Sun, Xinpeng <xinpeng.sun@intel.com>; Srinivas
+> > Pandruvada <srinivas.pandruvada@linux.intel.com>
+> > Subject: Re: [PATCH v2 01/22] HID: THC: Add documentation
+> >=20
+> > On Thu, Nov 14, 2024 at 01:33:55PM +0800, Even Xu wrote:
+> > > +Touch Host Controller is the name of the IP block in PCH that interf=
+ace with
+> > Touch Devices (ex:
+> > > +touchscreen, touchpad etc.). It is comprised of 3 key functional blo=
+cks:
+> > > +- A natively half-duplex Quad I/O capable SPI master
+> > > +- Low latency I2C interface to support HIDI2C compliant devices
+> > > +- A HW sequencer with RW DMA capability to system memory
+> >=20
+> > I see in my htmldocs output that the list above is long running paragra=
+ph instead.
+>=20
+> You are right, let me fix it in next version.
+
+OK.
+
+>=20
+> >=20
+> > > +When THC is configured to SPI mode, opcodes are used for determining=
+ the
+> > read/write IO mode.
+> > > +There are some OPCode examples for SPI IO mode::
+> > > +
+> > > + +--------+---------------------------------+
+> > > + | opcode |  Corresponding SPI command      |
+> > > + +=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+
+> > > + |  0x0B  | Read Single I/O                 |
+> > > + +--------+---------------------------------+
+> > > + |  0x02  | Write Single I/O                |
+> > > + +--------+---------------------------------+
+> > > + |  0xBB  | Read Dual I/O                   |
+> > > + +--------+---------------------------------+
+> > > + |  0xB2  | Write Dual I/O                  |
+> > > + +--------+---------------------------------+
+> > > + |  0xEB  | Read Quad I/O                   |
+> > > + +--------+---------------------------------+
+> > > + |  0xE2  | Write Quad I/O                  |
+> > > + +--------+---------------------------------+
+> > > +
+> > > <snipped>...
+> > > +When THC is working in I2C mode, opcodes are used to tell THC what's=
+ the
+> > next PIO type:
+> > > +I2C SubIP APB register read, I2C SubIP APB register write, I2C touch
+> > > +IC device read, I2C touch IC device write, I2C touch IC device write=
+ followed
+> > by read.
+> > > +
+> > > +Here are the THC pre-defined opcodes for I2C mode::
+> > > +
+> > > + +--------+-------------------------------------------+----------+
+> > > + | opcode |       Corresponding I2C command           | Address  |
+> > > +
+> > +=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+
+> > > + |  0x12  | Read I2C SubIP APB internal registers     | 0h - FFh |
+> > > + +--------+-------------------------------------------+----------+
+> > > + |  0x13  | Write I2C SubIP APB internal registers    | 0h - FFh |
+> > > + +--------+-------------------------------------------+----------+
+> > > + |  0x14  | Read external Touch IC through I2C bus    | N/A      |
+> > > + +--------+-------------------------------------------+----------+
+> > > + |  0x18  | Write external Touch IC through I2C bus   | N/A      |
+> > > + +--------+-------------------------------------------+----------+
+> > > + |  0x1C  | Write then read external Touch IC through | N/A      |
+> > > + |        | I2C bus                                   |          |
+> > > + +--------+-------------------------------------------+----------+
+> > > +
+> > > <snipped>...
+> > > +Intel THC uses PRD entry descriptor for every PRD entry. Every PRD
+> > > +entry descriptor occupies
+> > > +128 bits memories::
+> > > +
+> > > + +-------------------+---------+------------------------------------=
+------------+
+> > > + | struct field      | bit(s)  | description                        =
+            |
+> > > +
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > =3D=3D=3D
+> > > + +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+
+> > > + | dest_addr         | 53..0   | destination memory address, as ever=
+y entry     |
+> > > + |                   |         | is 4KB, ignore lowest 10 bits of ad=
+dress.      |
+> > > + +-------------------+---------+------------------------------------=
+------------+
+> > > + | reserved1         | 54..62  | reserved                           =
+            |
+> > > + +-------------------+---------+------------------------------------=
+------------+
+> > > + | int_on_completion | 63      | completion interrupt enable bit, if=
+ this bit   |
+> > > + |                   |         | set it means THC will trigger a com=
+pletion     |
+> > > + |                   |         | interrupt. This bit is set by SW dr=
+iver.       |
+> > > + +-------------------+---------+------------------------------------=
+------------+
+> > > + | len               | 87..64  | how many bytes of data in this entr=
+y.          |
+> > > + +-------------------+---------+------------------------------------=
+------------+
+> > > + | end_of_prd        | 88      | end of PRD table bit, if this bit i=
+s set,      |
+> > > + |                   |         | it means this entry is last entry i=
+n this PRD  |
+> > > + |                   |         | table. This bit is set by SW driver=
+=2E           |
+> > > + +-------------------+---------+------------------------------------=
+------------+
+> > > + | hw_status         | 90..89  | HW status bits                     =
+            |
+> > > + +-------------------+---------+------------------------------------=
+------------+
+> > > + | reserved2         | 127..91 | reserved                           =
+            |
+> > > + +-------------------+---------+------------------------------------=
+------------+
+> >=20
+> > Shouldn't these tables be formatted as tables?
+>=20
+> Good idea!
+> Let's format them.
+
+Just drop the literal block formatting, keeping the table as-is.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--uVNSzdUheHG0hrK6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZzcytwAKCRD2uYlJVVFO
+o2LmAQDBm2ZoF8NWpOlKkHK/zBJCK3b9hOg3hLAx4gWqeLZ2FQD9FuT+G8tjxh26
+v11BU4JtmOF6z8Zkj/nm5TsjZImLwgM=
+=kbBP
+-----END PGP SIGNATURE-----
+
+--uVNSzdUheHG0hrK6--
 
