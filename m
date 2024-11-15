@@ -1,148 +1,87 @@
-Return-Path: <linux-kernel+bounces-410452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E38C9CDBD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:49:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B0249CDBD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 10:49:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE42F283212
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:49:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36A7A1F235BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B5D19006B;
-	Fri, 15 Nov 2024 09:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GboblNsl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E3718CC10
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4B418EFD4;
+	Fri, 15 Nov 2024 09:49:19 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F1718CC10
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731664150; cv=none; b=oRxbq+aaG4Xd5wl0M5mLO5N3qX5bKWBxfi6OHG+M3rXK4EgwuYcGNxXt8/UBo4RVa7YkyOCc1iHJ7p2+rlcqtdtULjXPnHmOSk9ryU8c5dsp32HtfTDCD0Jn3+ds4sDZT0Zy4PcmDkRCn4nV7tK5/0GD2YN21q5BV4+TC0WUrb8=
+	t=1731664159; cv=none; b=kkqXKxax/axwXcMou5Yq5qLShjsfEXPlyQqqVbM19yF5GBqULtoLOjFzqwb9wcYTS9AveL27w4QxDtUAWGqNQorN9vUijJpGY/bLbCRO5PK3ynTnpRsMj/X+xx5u2K6GhwM3Su3Kh47Cacdk57/XjU55BfArMbrCQqZcz3+gslI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731664150; c=relaxed/simple;
-	bh=5JV+Q8/uDzvNYDwkc+mCN1HUPeABFq9Hs2oXi52V+FA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R70yILrMY+told6jmoioLV0VhZNpwLI3owAPJq97I9W56e3lc54PUs/8FCjp5PggSQPvFUMpvkK0V/IWAhW9+MtTy2CpHdch4KadXvKVOzJ5dUo8TG5lil2oqIh2DvydiAvDV8oCRFfZgbBUEw0Y9SXXU3XtYhpnECA0KDQ0J+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GboblNsl; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731664147;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e5/Gv1K21sheGKIrlLPLsT5HVFSu0SIwMyx7mgZQnuI=;
-	b=GboblNslEO9AJtSq4jN//JCSaiCO6lHIOmgGANpzVQz13xa+fL8NuTeEzFPjQ5xeakAmEi
-	vfLm7yhCgQ9mTznl+JOFc19QpjGLwsG0XUpY8ozW1ZVlupk1F0Y2pMLqYTpWFNWw06JaCl
-	ppiqsS6vL5JkKNQGVuLIU+ANGi0FA9E=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-348-YdO3XG1bNzqs4Bb4j1wJcg-1; Fri,
- 15 Nov 2024 04:49:02 -0500
-X-MC-Unique: YdO3XG1bNzqs4Bb4j1wJcg-1
-X-Mimecast-MFC-AGG-ID: YdO3XG1bNzqs4Bb4j1wJcg
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DE9CB1955E92;
-	Fri, 15 Nov 2024 09:48:59 +0000 (UTC)
-Received: from localhost (unknown [10.72.113.10])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3935D3003B71;
-	Fri, 15 Nov 2024 09:48:58 +0000 (UTC)
-Date: Fri, 15 Nov 2024 17:48:53 +0800
-From: Baoquan He <bhe@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
-	Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	Eric Farman <farman@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v1 00/11] fs/proc/vmcore: kdump support for virtio-mem on
- s390
-Message-ID: <ZzcZBU0USDP/CHcv@MiWiFi-R3L-srv>
-References: <20241025151134.1275575-1-david@redhat.com>
- <ZzcKY8hap3OMqTjC@MiWiFi-R3L-srv>
- <d7353fde-f560-4925-8ef8-0fe10654e87f@redhat.com>
+	s=arc-20240116; t=1731664159; c=relaxed/simple;
+	bh=vTO/IRNMGEhwCbdwSRgpkc9c3zuO8EDzihR47G7s/m0=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=tVBaNE8E5OAq90f71YYSbLD4KWrO7zhhRoepqrsxp31ec/ngSBYiVBPehQJrYaGTH3x4EPhdiW5mc2cpEsuLA4LtM+J4Y6pNmVoN4ZLB9oHJxO8JNffvPavZOir+pfpnGYe0pDl/7hpyWUngGT3ybIxUy/Q+/doosyjDssUgd/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee86737190fada-67b25;
+	Fri, 15 Nov 2024 17:49:08 +0800 (CST)
+X-RM-TRANSID:2ee86737190fada-67b25
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from ubuntu.localdomain (unknown[10.55.1.70])
+	by rmsmtp-syy-appsvr02-12002 (RichMail) with SMTP id 2ee26737191374d-f98cd;
+	Fri, 15 Nov 2024 17:49:08 +0800 (CST)
+X-RM-TRANSID:2ee26737191374d-f98cd
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
+To: catalin.marinas@arm.com
+Cc: will@kernel.org,
+	ardb@kernel.org,
+	peterx@redhat.com,
+	joey.gouly@arm.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	zhujun2@cmss.chinamobile.com
+Subject: [PATCH v2] arm64: asm: Fix typo in pgtable.h
+Date: Fri, 15 Nov 2024 01:49:04 -0800
+Message-Id: <20241115094904.7682-1-zhujun2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d7353fde-f560-4925-8ef8-0fe10654e87f@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 11/15/24 at 09:55am, David Hildenbrand wrote:
-> On 15.11.24 09:46, Baoquan He wrote:
-> > On 10/25/24 at 05:11pm, David Hildenbrand wrote:
-> > > This is based on "[PATCH v3 0/7] virtio-mem: s390 support" [1], which adds
-> > > virtio-mem support on s390.
-> > > 
-> > > The only "different than everything else" thing about virtio-mem on s390
-> > > is kdump: The crash (2nd) kernel allocates+prepares the elfcore hdr
-> > > during fs_init()->vmcore_init()->elfcorehdr_alloc(). Consequently, the
-> > > crash kernel must detect memory ranges of the crashed/panicked kernel to
-> > > include via PT_LOAD in the vmcore.
-> > > 
-> > > On other architectures, all RAM regions (boot + hotplugged) can easily be
-> > > observed on the old (to crash) kernel (e.g., using /proc/iomem) to create
-> > > the elfcore hdr.
-> > > 
-> > > On s390, information about "ordinary" memory (heh, "storage") can be
-> > > obtained by querying the hypervisor/ultravisor via SCLP/diag260, and
-> > > that information is stored early during boot in the "physmem" memblock
-> > > data structure.
-> > > 
-> > > But virtio-mem memory is always detected by as device driver, which is
-> > > usually build as a module. So in the crash kernel, this memory can only be
-> >                                         ~~~~~~~~~~~
-> >                                         Is it 1st kernel or 2nd kernel?
-> > Usually we call the 1st kernel as panicked kernel, crashed kernel, the
-> > 2nd kernel as kdump kernel.
-> 
-> It should have been called "kdump (2nd) kernel" here indeed.
-> 
-> > > properly detected once the virtio-mem driver started up.
-> > > 
-> > > The virtio-mem driver already supports the "kdump mode", where it won't
-> > > hotplug any memory but instead queries the device to implement the
-> > > pfn_is_ram() callback, to avoid reading unplugged memory holes when reading
-> > > the vmcore.
-> > > 
-> > > With this series, if the virtio-mem driver is included in the kdump
-> > > initrd -- which dracut already takes care of under Fedora/RHEL -- it will
-> > > now detect the device RAM ranges on s390 once it probes the devices, to add
-> > > them to the vmcore using the same callback mechanism we already have for
-> > > pfn_is_ram().
-> > 
-> > Do you mean on s390 virtio-mem memory region will be detected and added
-> > to vmcore in kdump kernel when virtio-mem driver is initialized? Not
-> > sure if I understand it correctly.
-> 
-> Yes exactly. In the kdump kernel, the driver gets probed and registers the
-> vmcore callbacks. From there, we detect and add the device regions.
+The word 'trasferring' is wrong, so fix it.
 
-I see now, thanks for your confirmation.
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+---
+v1->v2:
+	modify cacography to typo
+
+ arch/arm64/include/asm/pgtable.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index c329ea061dc9..4a5acf522c82 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -1338,7 +1338,7 @@ static inline void ___ptep_set_wrprotect(struct mm_struct *mm,
+ }
+ 
+ /*
+- * __ptep_set_wrprotect - mark read-only while trasferring potential hardware
++ * __ptep_set_wrprotect - mark read-only while transferring potential hardware
+  * dirty status (PTE_DBM && !PTE_RDONLY) to the software PTE_DIRTY bit.
+  */
+ static inline void __ptep_set_wrprotect(struct mm_struct *mm,
+-- 
+2.17.1
+
+
 
 
