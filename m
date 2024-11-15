@@ -1,109 +1,119 @@
-Return-Path: <linux-kernel+bounces-410346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 847D49CDA33
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:06:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E1109CDA38
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 09:07:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49B452832F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:06:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7A32283464
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0427718A931;
-	Fri, 15 Nov 2024 08:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32A218BBB9;
+	Fri, 15 Nov 2024 08:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="efqYc8gL"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b="pTsQ1HN4"
+Received: from a.mx.secunet.com (a.mx.secunet.com [62.96.220.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7211DFFD;
-	Fri, 15 Nov 2024 08:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AECE1DFFD;
+	Fri, 15 Nov 2024 08:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.96.220.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731657991; cv=none; b=qXT9y4JUH8fXKzKuHEJj7sAUWENWoKgXtuSNkkKUIH4luFYkC+KA3mBXNtAKRkRV8X4s5EXRoN4iKKrHMqpQJB6lMaCxhAftYWkkX4vpTXMHsbgbYA2gYb4lIb1GnoePo2uEF4lXYnmL/Os2F9ASptHyeNERwciAa/Ix/5NjGwA=
+	t=1731658059; cv=none; b=SFd6GqUbYPpsQJ/0Nmt89dUSbtl8UdGHUpDBQqQ/TXaksbywLCid7dNxtdyv3tsQUquwjQCPPtKPUzjXpDRV8RJ3X6oD9OrO8ZmcARGrWu+CchYjCLfudOmT/zclAHUb0UYE+2GmGf1R/0afvx9iyi4+RLDAquzKYhhsOp+187I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731657991; c=relaxed/simple;
-	bh=wTqrSMid13G+0klYJYbhdPy5F5lLjNiY0gORfror8jU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VYjHSA3hkDdh2m9T//4wpEHWj2wZijX2IZFKyJCH8Lpbn3VSEaa618WAhXbinjcNQQVXDIatLpaDtHlUedEfEgf8Q9YmAq5l9ajXqQCruzRgtiLgfWjc8NtfbeIpY+BzIOwl1EuBb7ehnudZ3bsQQlNOrKMqOcXsk6z887jx7uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=efqYc8gL; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1731657978; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=4JGE2MRK2jGTuCAstiyOZdisKvWJk80qjRoK8h7z0Pw=;
-	b=efqYc8gLDqeyz1yt29amFSbJCNaLgyro+N9d1iY7KiyV5OzsobpzKhtY3K907voMS/yqN4VGWP/f+cf7kArZkEhWeXagTRI19PLXYcgMl1jCn26UtAy6IarFIspCCwki+tWoCffJ4uP5Qu8huu8zgoCQRPDvELHDyXy/imXQIYA=
-Received: from 30.74.144.124(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WJSyP5f_1731657976 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 15 Nov 2024 16:06:17 +0800
-Message-ID: <0f56de2a-49f9-4a13-86fa-e6a7fb3e79b7@linux.alibaba.com>
-Date: Fri, 15 Nov 2024 16:06:15 +0800
+	s=arc-20240116; t=1731658059; c=relaxed/simple;
+	bh=1+p/mscZrLAnQ7sIlEXDO7iW/5pncMsKkAGqXXhzPH0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g1ddCK2q8FzoOfPVtzd7X/xEO5PJwNHMbfcKXJBUci8lOfKgbHPkyA0YsGpJ3tLwUJ/DPqI+af4su22HsMMKNdlPvCSPVFqCSH0nVISbDn7zACMCNqV0ceEZQgH1vEjQs+k5CXq3g/xMy6wUWzhTZqrOwZJ/Ke6SSQpX44ATkMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com; spf=pass smtp.mailfrom=secunet.com; dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b=pTsQ1HN4; arc=none smtp.client-ip=62.96.220.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=secunet.com
+Received: from localhost (localhost [127.0.0.1])
+	by a.mx.secunet.com (Postfix) with ESMTP id C7B0820870;
+	Fri, 15 Nov 2024 09:07:32 +0100 (CET)
+X-Virus-Scanned: by secunet
+Received: from a.mx.secunet.com ([127.0.0.1])
+	by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id L9Myi-YdyJ_K; Fri, 15 Nov 2024 09:07:24 +0100 (CET)
+Received: from cas-essen-02.secunet.de (rl2.secunet.de [10.53.40.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by a.mx.secunet.com (Postfix) with ESMTPS id D31F22085A;
+	Fri, 15 Nov 2024 09:07:24 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 a.mx.secunet.com D31F22085A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=secunet.com;
+	s=202301; t=1731658044;
+	bh=be3MroQoWJ6+StAwpuPSR7YGmORoS7e29Sa3/889s9c=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To:From;
+	b=pTsQ1HN4bkvwM1RUV/HT6FnRwP80/3n1QfcCmd4OjyYzxO1OfbZLeXSNSCGVD72c0
+	 fjcmjXPp4Gh13F1sLBKyRqQDyjILj8kc2d9IPl2E3rNQNB0I3Jj7wP2OfX9dPe0CLv
+	 Ut84QgDJIp5Ja98vZIrsdkypnvK44fn+mqcxITueCSiekAKX/nZ3XrVmWVak6sNfed
+	 dnDHWjPci1sqQpiCuLSAg/bsZ+DFtXmnPXdX7uWH5Xm24+WGP/rqayCim1wvvdAXO1
+	 6QpcNj1zj6wDLBgqtxx3k7wdTbLaEQUCxnGrDP/53/0HYh+vpEq8H/qTtWx4/zbXLw
+	 83WQlTS1HCSbg==
+Received: from mbx-essen-02.secunet.de (10.53.40.198) by
+ cas-essen-02.secunet.de (10.53.40.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 15 Nov 2024 09:07:24 +0100
+Received: from gauss2.secunet.de (10.182.7.193) by mbx-essen-02.secunet.de
+ (10.53.40.198) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 15 Nov
+ 2024 09:07:24 +0100
+Received: by gauss2.secunet.de (Postfix, from userid 1000)
+	id 2D97F3182ACC; Fri, 15 Nov 2024 09:07:24 +0100 (CET)
+Date: Fri, 15 Nov 2024 09:07:24 +0100
+From: Steffen Klassert <steffen.klassert@secunet.com>
+To: Everest K.C. <everestkc@everestkc.com.np>
+CC: Simon Horman <horms@kernel.org>, <herbert@gondor.apana.org.au>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <netdev@vger.kernel.org>,
+	<kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][next] xfrm: Add error handling when nla_put_u32()
+ returns an error
+Message-ID: <ZzcBPA+8nXwJdGBh@gauss3.secunet.de>
+References: <20241112233613.6444-1-everestkc@everestkc.com.np>
+ <20241113105939.GY4507@kernel.org>
+ <CAEO-vhFzEo12uU7EBOb6r6J7Ludhe4HNNGvfN71fSDQRmR16pQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] serial: sprd: Add support for sc9632
-To: wenhua lin <wenhua.lin1994@gmail.com>
-Cc: Wenhua Lin <Wenhua.Lin@unisoc.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>, Cixi Geng <cixi.geng@linux.dev>,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- devicetree@vger.kernel.org, Xiongpeng Wu <xiongpeng.wu@unisoc.com>,
- Zhaochen Su <Zhaochen.Su@unisoc.com>, Zhirong Qiu <Zhirong.Qiu@unisoc.com>
-References: <20241113110516.2166328-1-Wenhua.Lin@unisoc.com>
- <20241113110516.2166328-2-Wenhua.Lin@unisoc.com>
- <3f89369f-7c0a-47c3-a22a-a125847edb98@linux.alibaba.com>
- <CAB9BWhdi2Q3gViCPjYAUYeYktBKR_rc4DN5PqXKvAvA44LDd9g@mail.gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <CAB9BWhdi2Q3gViCPjYAUYeYktBKR_rc4DN5PqXKvAvA44LDd9g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEO-vhFzEo12uU7EBOb6r6J7Ludhe4HNNGvfN71fSDQRmR16pQ@mail.gmail.com>
+X-ClientProxiedBy: cas-essen-02.secunet.de (10.53.40.202) To
+ mbx-essen-02.secunet.de (10.53.40.198)
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
 
+On Thu, Nov 14, 2024 at 12:27:28PM -0700, Everest K.C. wrote:
+> On Wed, Nov 13, 2024 at 3:59 AM Simon Horman <horms@kernel.org> wrote:
+> >
+> > On Tue, Nov 12, 2024 at 04:36:06PM -0700, Everest K.C. wrote:
+> > > Error handling is missing when call to nla_put_u32() fails.
+> > > Handle the error when the call to nla_put_u32() returns an error.
+> > >
+> > > The error was reported by Coverity Scan.
+> > > Report:
+> > > CID 1601525: (#1 of 1): Unused value (UNUSED_VALUE)
+> > > returned_value: Assigning value from nla_put_u32(skb, XFRMA_SA_PCPU, x->pcpu_num)
+> > > to err here, but that stored value is overwritten before it can be used
+> > >
+> > > Fixes: 1ddf9916ac09 ("xfrm: Add support for per cpu xfrm state handling.")
+> > > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+> >
+> > Reviewed-by: Simon Horman <horms@kernel.org>
+> >
+> > For future reference, I think the appropriate target for this tree
+> > is ipsec-next rather than next.
+> >
+> >         Subject: [PATCH ipsec-next] xfrm: ...
+> Should I send a patch to ipsec-next ?
 
-
-On 2024/11/15 15:46, wenhua lin wrote:
-> On Fri, Nov 15, 2024 at 1:47 PM Baolin Wang
-> <baolin.wang@linux.alibaba.com> wrote:
->>
->>
->>
->> On 2024/11/13 19:05, Wenhua Lin wrote:
->>> Due to the platform's new project uart ip upgrade,
->>> the new project's timeout interrupt needs to use bit17
->>> while other projects' timeout interrupt needs to use
->>> bit13, using private data to adapt and be compatible
->>> with all projects.
->>>
->>> Signed-off-by: Wenhua Lin <Wenhua.Lin@unisoc.com>
->>> ---
->>>    drivers/tty/serial/sprd_serial.c | 41 ++++++++++++++++++++++++++++----
->>>    1 file changed, 36 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd_serial.c
->>> index 3fc54cc02a1f..882580c3cf37 100644
->>> --- a/drivers/tty/serial/sprd_serial.c
->>> +++ b/drivers/tty/serial/sprd_serial.c
->>> @@ -53,10 +53,12 @@
->>>    #define SPRD_IEN_TX_EMPTY   BIT(1)
->>>    #define SPRD_IEN_BREAK_DETECT       BIT(7)
->>>    #define SPRD_IEN_TIMEOUT    BIT(13)
->>> +#define SPRD_IEN_DATA_TIMEOUT        BIT(17)
->>
->> I don't know the meaning of 'DATA' in the new macro name. But I have no
->> better name now:) Otherwise look good to me.
->> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> 
-> Hi baolin:
->    TIMEOUT means only timeout, DATA_TIMEOUT means timeout and fifo is not empty.
->    Therefore, the macro name is distinguished by adding DATA.
-
-Good. These information should be added into commit message.
+No need to resend. This is now applied to ipsec-next,
+thanks a lot!
 
