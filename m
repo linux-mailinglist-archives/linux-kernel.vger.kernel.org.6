@@ -1,127 +1,123 @@
-Return-Path: <linux-kernel+bounces-410265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 647A69CD705
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:23:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3F749CD709
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:23:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C944DB21D12
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:23:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B7A51F22448
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB2A1862B8;
-	Fri, 15 Nov 2024 06:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AEB1684AC;
+	Fri, 15 Nov 2024 06:23:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EFC4fNDi"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="bpaXvYwt"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2B5156C6C
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D5D175D5D
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731651801; cv=none; b=tSZiQckkHYhqtTYncYf1ytHY0iAL0ReLa8otNFPolpHozm+Gx/DysN6e7e7CtH4L/Ea+o7B0aDoV8FNVJ5KVmV2NrqYI+B5fVoDSQBpngsPwT/UPloc5iKsaa5XzXgSNxa2ymR7RY7ldmXfvLSShgDbDVz6fBcA/oSt+yU3ouLk=
+	t=1731651816; cv=none; b=hFqWNz23FSeBwuvxQsNdhhCbCN5IdzoIZSF18jdGjapUxH8epsB+0M6kWxWnLoR+UTG+DKqLL1+onQFoNt/lpeFk518AKAgO7qoHCn2EiBrbSZl2CJtQQqN3k1nJPYUBdAmc1vDJGVf/O6s0FJGMJbzYTmLP33XNz74hYF76QsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731651801; c=relaxed/simple;
-	bh=jG8lHdWYMcxY4VtuEgQSaY9EfCc+In8obRiKFVgirDM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LhzjZw4lkd0W4BbHzMb+q7skaOxYZM3qsK9Vxt1Vcr2tKvKMN3KbTgx7DIHe08E2yZDP1HLzK+snPblFNhFd0RhyEMHmGZSSs6kB932UtHxljQ6iSRqiuQNNKgO9MpGzpeAl20hAL0iCxbK70K2KcHycsQkwPb5wQ3EvIRdkd38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EFC4fNDi; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7f8095a200eso1126615a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:23:19 -0800 (PST)
+	s=arc-20240116; t=1731651816; c=relaxed/simple;
+	bh=HDIsR4fluZYtTeIoaii/gTwhxDf8U6dUROcngneS9PQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HcxW+Oj+AlPoChvNtqfOvEqGynLBmC5tOJO5B8Q544C+gNH+9uRstTRWaJ8uWhxMZylhdxqUuYfkSsiRJdFTvHl0vTT8j+yavid0TiirxpsxlEyF1q2NdlHQE/r45WW4BbmQPw2WFE9uR/a34oc1l7TyEb+wGGZ55zRk7h24+Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=bpaXvYwt; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53da2140769so1494711e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:23:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731651799; x=1732256599; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ol78VBh/D7CSp35yDrIEurbh12ES8TpwH/o75vgdzhw=;
-        b=EFC4fNDirbAqzVAusfKHJLU1zpx7o9w/jPQ2FXnnxsf4BeW24qlFLv5RMDYISGe6Lw
-         7zf6PxevbAhgU5+0YnCSmeoICdP+LOj2p4FrR/ARIt4ed1lze7J2bZ377XMMmmx38/6n
-         A5DxKRkSJYSIrs5XrpBKWZ5t8Kp3CypDKn1mSp6d0sHocrlAAWlw4EsRQ55FcAUjhWve
-         9v5PYMf5eIMv84hvvzUVqWpU/KybEOeIAXObhb8edut7sBmZ+gCorgeXP/ysoRVe5d11
-         572N7ExmA4XR18E4YpT3deSR9aKx7n7AtK6AdeNA/BzZCjBfUIEH+vuVFm/8csv7tzs0
-         QoYw==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1731651813; x=1732256613; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z/chBSo/Ph0swDkMZqbxpKHgwAyER7f2Ug328BGT3Kc=;
+        b=bpaXvYwtrUXLp2d1NuJjviVWYWVK78XI0EFqhwmVqMvR2cCU3tzm+QU8ledHQjQhu2
+         V4XaYYHEemgJQ8t5JdHD+GH25M7UHi1RUC9EGNMY+/V6ncT3NG2joGt2x6DTgBcQm6j1
+         uBvUF/QFhVA1SyCFRs7hQTXVO3BbO5hkudLujn0Of8rJB7VpB5E30Xx3vTLddxP7/pHf
+         qDbfoySw/9FxfAF4xgXHwgAJkNy69/iIUYtO9KUSZ8Upsb+Ls9E9BegNLPjy+7Zlneri
+         JbVOcIUxWsbXRheiKDgKykivLITIkpHt5PlwFxoVbJVxQYw0ZJN0KUjCdu+AF42m59Aj
+         kilw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731651799; x=1732256599;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ol78VBh/D7CSp35yDrIEurbh12ES8TpwH/o75vgdzhw=;
-        b=H+utfWuAFlYhucD4RxoJWNmCdx+Rm9hs3Omy7kJGZaO5gRcSsiKnC+8If8ViJQgCiJ
-         VjU+CxSCmccPybnttNgOuDK8mO+SKpsAad6RC1D5abDeSSYjK+LCy2AYBGskMmbTtU+r
-         SQtyY2mIjdBV1sTwjIJhrvznHw4Edztven1lMXwL1uUB+xXMtSDiHmrpCFEAX5+zzPy/
-         6p7b5E7SzJ1p8P8zt9vFzHGgEyrDvJMOsulEDwDAvDAFu05WgK7ARTiek0aijNHEPc7A
-         Y5wqOOck12CSYRNQ3EYQ69DYTy1onzmbMJi8oKsz2nK6ifmOmxw/1GF3e1grLRg3GgNe
-         T9Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCW0562K4OsNilSbk1gJ8IwlKgh6YmFCABJK7YSolK5yMjp/29sXzVsApAoS9N9IUzlCb4MHXdV8uQFe0Qg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyErOt06NS1fAeXCiz/7Q3tqls+lvnJqv4VW01j3HcqMgaFFDhy
-	LJRHF1NcbWPKiM9kzalJ60CDTAmAc7JNkAD8A9xSu/Y5FbEBvG2GxwfmfYbqBA==
-X-Google-Smtp-Source: AGHT+IFsjPgI83lY+/CQYR1fF5tUl/aI/SHyGafNvcTIR62F6ZwmVxmR5O0Z6ZJ2qZDr9Hk5OmaZ8w==
-X-Received: by 2002:a17:902:f54d:b0:210:e760:77e with SMTP id d9443c01a7336-211d06cf054mr29524335ad.7.1731651798965;
-        Thu, 14 Nov 2024 22:23:18 -0800 (PST)
-Received: from thinkpad ([117.193.208.47])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f3680dsm5773815ad.146.2024.11.14.22.23.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 22:23:18 -0800 (PST)
-Date: Fri, 15 Nov 2024 11:53:10 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: mailbox: qcom-ipcc: Add SAR2130P compatible
-Message-ID: <20241115062310.lcpbjryojgzckovb@thinkpad>
-References: <20241017-sar2130p-mbox-v1-1-906aa78b1358@linaro.org>
+        d=1e100.net; s=20230601; t=1731651813; x=1732256613;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z/chBSo/Ph0swDkMZqbxpKHgwAyER7f2Ug328BGT3Kc=;
+        b=vaA43PtyzDbY1W+YVByhcanRvnD+e0Wix9DAh8nSW4krO2Do6cfigJd+d38+Uzbq1b
+         JHs/ZnL1ggnhTuuG8eiYzE1ectOxaR25cgJBp0k4OFVqk3TAwEIXB1nPAz5WVfikYzDW
+         jzIi4425lAPojr9ZqEiVxoJFlYmr/YhJ76L65uR9vtvwWnTSsYNhEGYUZ71puBrM4Mh9
+         vq/MJ2/o0D8mEruOOjETYrl8RMNiuyevd8C/kDd5JM3wq5ajqQsrkljL+6a5mhD98O6a
+         WLoYxF2NFKVQSPhzefpt2pJ0SQhc6X1X0GaIjEZn1OHN5tzJlZAY6lfx1lvwTqVEtQcY
+         E8zA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/abStA1fIBaeuWz+zQX/0b66YAPzrVGmPH6rJV/zC13QVkwGvnkw5VlK1UW+zYcvY7Xr2DLodnsGYq8M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQtgEsjpQ8JPV/uyTlQYoQ++gm04VW33fDiuEunbPhl49RG+tS
+	1CAIgTKMFWTOrhfNiY5x0RdfpMJqyGMOckv+tJBzNb1bPJa5gbBdt1IJWJ8SZ6lrNo8Gok2MZJ1
+	sSrob1bmsugVGAoWIY6/5h8BxTg49lHfaXZwFSNHVXSpetcDO
+X-Google-Smtp-Source: AGHT+IFCglpifdMxdVcqfiIEjCrQDyKPs0b3O4KUOnVgdSPNxABQK4FbRhYOa9ftpiAuv6TIl0kyBRGahAttwj1uxy8=
+X-Received: by 2002:a05:6512:239f:b0:536:9f02:17b4 with SMTP id
+ 2adb3069b0e04-53dab2b3c51mr433886e87.40.1731651812466; Thu, 14 Nov 2024
+ 22:23:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241017-sar2130p-mbox-v1-1-906aa78b1358@linaro.org>
+References: <20241008160947.81045-1-brgl@bgdev.pl> <173151232541.92239.8233789832026323394.b4-ty@linaro.org>
+ <yce7vswjat2bhda2l4c4ji4idtozo24c7tbmpahz56tmedmpw7@fn2h2t4hv7dd>
+In-Reply-To: <yce7vswjat2bhda2l4c4ji4idtozo24c7tbmpahz56tmedmpw7@fn2h2t4hv7dd>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 15 Nov 2024 07:23:21 +0100
+Message-ID: <CAMRc=Mdt0D4L17St06nn=mCuObG=e3btf42NHfsuTEOQepB6bQ@mail.gmail.com>
+Subject: Re: [PATCH] i2c: qup: use generic device property accessors
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-arm-msm@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 17, 2024 at 09:17:23PM +0300, Dmitry Baryshkov wrote:
-> Document compatible for the IPCC mailbox controller on SAR2130P platform.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On Thu, Nov 14, 2024 at 11:52=E2=80=AFPM Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> On Wed, Nov 13, 2024 at 04:39:23PM +0100, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> >
+> > On Tue, 08 Oct 2024 18:09:47 +0200, Bartosz Golaszewski wrote:
+> > > There's no reason for this driver to use OF-specific property helpers=
+.
+> > > Drop the last one in favor of the generic variant and no longer inclu=
+de
+> > > of.h.
+> > >
+> > >
+> >
+> > Applied, to the GPIO tree as the maintainer has been unresposive for tw=
+o
+> > months and the change is trivial.
+> >
+> > [1/1] i2c: qup: use generic device property accessors
+> >       commit: 400913bd4edd76ef1775bfd95543846bd6f5ed71
+>
+> I think it's a bad idea to pull unrelated patches just because you have
+> a GPIO tree.
+>
 
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+I know. I dropped it. But I have no idea what the recourse is if you
+have reviewed trivial refactorings that get stuck on the list forever
+because the maintainer whose address otherwise doesn't bounce and who
+is active on the list just chooses not to respond for weeks. There
+don't seem to be written rules on this.
 
-- Mani
+Greg: Can you take it instead?
 
-> ---
->  Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml b/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml
-> index 2d66770ed3612fd4bf9e28c334b273033e13684f..ecb4ec1e0a82856581f16391813b3c533c4f6f90 100644
-> --- a/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml
-> +++ b/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml
-> @@ -28,6 +28,7 @@ properties:
->            - qcom,qdu1000-ipcc
->            - qcom,sa8255p-ipcc
->            - qcom,sa8775p-ipcc
-> +          - qcom,sar2130p-ipcc
->            - qcom,sc7280-ipcc
->            - qcom,sc8280xp-ipcc
->            - qcom,sdx75-ipcc
-> 
-> ---
-> base-commit: 7df1e7189cecb6965ce672e820a5ec6cf499b65b
-> change-id: 20241017-sar2130p-mbox-1ff72d8eb5c8
-> 
-> Best regards,
-> -- 
-> Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+Bart
 
