@@ -1,169 +1,156 @@
-Return-Path: <linux-kernel+bounces-411114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9E739CF41D
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:40:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AD509CF38D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:04:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EA89B2C7E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:47:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3BB1B3313E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8427D1D61A3;
-	Fri, 15 Nov 2024 17:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D1A1D63F7;
+	Fri, 15 Nov 2024 17:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fiEZlS1z"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="QQBeKkAr"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237711A3035
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4538F1A3035
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731692844; cv=none; b=Zjy8Vs1kHICwLFoKWUUY2JzljWcPqAlgpDREXqNdWSDzcDWasU3fN270RWkNxHJyfg00xB/7o4D/4Auqznd+nACSsdN+A/SmZ6LiKBeEbYrv1woCqYJqdgl9ESnadWl8yxEnRcXtWpv6gxKK4mWSOz05qXGQDmN0Jahjm9Fr90k=
+	t=1731692909; cv=none; b=STpknayMtTVtHBjQV/JIza6J199ziQxa3HbLv0q/AQ4HghnOzICmJjsJrNRpfeYtIeGUz7rKW9Ht9MnT4e/DU1UceUsxyxEbEWMxtXswCUm0rSfZxBvKRS+ZgaNNkD6ecN1qUXBInLlwrcCun9UFF7VVaXzl1FP3hM9wDiriOEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731692844; c=relaxed/simple;
-	bh=M8pwNvD9B/yuT7abi8lk/RZ9h5awT0wqPUfRZxaGERk=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=eBVC2S2CGW4inFB38eVPFXPnG1EiYazkk1yjCXxxrfG0dr+2aCkqGmoHUSNn+rNhJCst3jDVKT7KNC/5a9Rhx+2jzsSbHGgj5409jqR5kGEOF8YdyYJESqogvxtwvA6oKoGPWV39d3S2gN+m8cHmW/1CeJ2jRjX0R50LAyR9tfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fiEZlS1z; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731692842;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m9Ta/CtP5pjWn4bPuxT4gm+0qsnrJMxo3ASMZDuEf1k=;
-	b=fiEZlS1zD79FITznVNlHWreyMuuZngJiPnzb4HMr4xv3uhABCtojmTlpMqqrmtCDfKpAZc
-	D4qffqC8EaI2npBIwBvQdfoaqoUIZgu/fVrSl5INOkvpEnm2gTd+fVFs5wFjIOdB/pywOu
-	6aKo50x4r2mvc4JnvopNOFdMXjw8ueA=
-Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
- [209.85.210.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-612--GAgoSitNvGo-3TngoPUOQ-1; Fri, 15 Nov 2024 12:47:20 -0500
-X-MC-Unique: -GAgoSitNvGo-3TngoPUOQ-1
-X-Mimecast-MFC-AGG-ID: -GAgoSitNvGo-3TngoPUOQ
-Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-71a491ce5f4so1901689a34.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:47:20 -0800 (PST)
+	s=arc-20240116; t=1731692909; c=relaxed/simple;
+	bh=nvmT+3K0LsnoLH8DW9urbKB/s3MZsBucjWWx++pMtUk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FcesjVEGVYA2srAa6YyYCpwY2Mt7XUJ3pLDpph2ZxaTxB4LELHitOfgif04WPt+x7AnwqzKCuKaJRlapkvasBz4kCGyix/sTBXvmGsv5iZ37yH02uVobHIMeNO4QpvKTnkAfTDrtfImkZzZFuY2K0hX/MYvJ6qe/UoVfjvwJ8p8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=QQBeKkAr; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7b155da5b0cso135955885a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 09:48:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1731692905; x=1732297705; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=r80U9a3N+Gcy1kzPeL8Qy1bUTpyxaoug1EvE/UJz4zM=;
+        b=QQBeKkArFIMlbzcvnS9XzdT82pcJFSw8lH8KPDzJ86IlWA00WsS8FJVaJXxqugd2Zs
+         me1qA4hZkLt1NT9Z1wsHvOsabJlmCCeaQgNJ/yKgr4LzjeHFmSlWGTB02jBS9GrV8PxW
+         xq7WsBUK0idFD6GRNpKPJRZwq+mUQ67AZgPFrhYyJfupNSyYm+qUeKZCqKCQJRQbrIGP
+         taaOtMeMUsgkklkAMPZ9GnwUn3uuZ2otkTo5NyDilwOoFzGeW7jSCrCxVItPWGRB3V/Q
+         XRcBxwQFmPaXC5qXAsFbeXwCi72yeod5c75bsiXkVA1Z9Mr+6VHqK15WkJjLerYXyo3X
+         fAWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731692840; x=1732297640;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
+        d=1e100.net; s=20230601; t=1731692905; x=1732297705;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m9Ta/CtP5pjWn4bPuxT4gm+0qsnrJMxo3ASMZDuEf1k=;
-        b=Xt80OSqw7yLiYDtQf2u6W1egkxUynbPCDtC4GT9dO/AQR03/DboqMBLt5JBdjhEaiV
-         RsJD7HQdazwlH+Dp8a8ufwRWTzWx2TzVDXcZJIRFXl8CzI1lJxvm5soNS8sA6w604a2w
-         Ji1B/smLAmkMLd06u1m7ayCTlqPNr9j3+Jm0Qg7XynMWe/CTp6E4Nmob7mJhku3j8UpV
-         uqMkkgjTSV2uqzFCoV1tOM9RWoL/VukuXu8pXhBcwAJGwWKUCJqJRm+vtrznItNFegM5
-         ax5I9zUksGkwIk5n/U4EgSn11E9SlMKqyTrbP+D99M/hSB3JlsOrC4oqI4lexp+m+WYP
-         /xeA==
-X-Gm-Message-State: AOJu0YynI1OVYwdiq9FzdRocmetaE/g65clTLyKp0IxYp89yx4GcD3qx
-	3PEX/XOLvo/budWseKYQEOZ7w3PUO9HTXjznQzI0Y2dI6Y3UIQXZPw0IVxRYpyNhcV8oVv5VSRh
-	D2BiIeLmALKSqJlu1XcJsGd1ugT0IVpSAdUv1sCEOCu/t9y0IScLi30fEG/8QCA==
-X-Received: by 2002:a05:6359:7996:b0:1aa:c492:1d34 with SMTP id e5c5f4694b2df-1c6cd297293mr274638455d.23.1731692840152;
-        Fri, 15 Nov 2024 09:47:20 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHbQZYj5r/0Y4qwHog4+zSYSxfUMed5vkN6uvv9z59ZF8VnJ2WLqn2tQa49TSKP40O4bTNprA==
-X-Received: by 2002:a05:6359:7996:b0:1aa:c492:1d34 with SMTP id e5c5f4694b2df-1c6cd297293mr274635855d.23.1731692839820;
-        Fri, 15 Nov 2024 09:47:19 -0800 (PST)
-Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3ee7d207csm19972696d6.70.2024.11.15.09.47.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 09:47:19 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <bfbedc6a-9f04-472f-afe9-828efe0387e6@redhat.com>
-Date: Fri, 15 Nov 2024 12:47:18 -0500
+        bh=r80U9a3N+Gcy1kzPeL8Qy1bUTpyxaoug1EvE/UJz4zM=;
+        b=PhC8VkjFYrsPPv5bU0Cfzub4N9FCya+Yj5g3U7xO56wUBcHsmTOvR/AX62/MV/4e21
+         G80+bsTMeCqk4oz5N71e0Y7iOpl4+n7JeNdu2pvI00gw5EHbctyapWgV6wtJm9mFcLQi
+         HpCyKbepBKiXi9xiVfN/fRxuk7yylT/gtQ9NYLlEUIH5jEYHL5NayQWUy6OEHB6CE4Qe
+         mkWGAwansqxYFjvBYmruHsM23vIeUWw4kY57kzUIw3T8g4TyhubammcnHSNliB0fUxTB
+         rmtNqMjG8rncswGzOad1CCwXkVsqqdLsvd8XYHFVs+P4HRfS0xMZctt/r4joDAVdkyEb
+         iUXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUHIPg2uBo+2sNH+I7CoTA/a96uPccRk8e0p9loluiFVjUenJe6dORQXV+Vv2J4HXVEMmjiULrZR4REpsw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzogOLC+MjWF6m/mmqW4NEbzfmZh7tLngAnUDV3N9mIAcJU4ge
+	TToLgccDRTSFETow4UCvGYY3TxRaQkItidXiu0vGNVJAKx4jokJeW9qP/rWDsA==
+X-Google-Smtp-Source: AGHT+IE8O0QAu8GlbaYXOlBUtc2EBhnFRVZHs+CnC0NtgIziKGMzGgCEU+LDunjz55eqqQN+/h6ZYA==
+X-Received: by 2002:a05:620a:2982:b0:7b1:4605:29be with SMTP id af79cd13be357-7b3623134c6mr481256585a.47.1731692905171;
+        Fri, 15 Nov 2024 09:48:25 -0800 (PST)
+Received: from rowland.harvard.edu (nat-65-112-8-56.harvard-secure.wrls.harvard.edu. [65.112.8.56])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b35ca4dce7sm178969685a.97.2024.11.15.09.48.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 09:48:24 -0800 (PST)
+Date: Fri, 15 Nov 2024 12:48:22 -0500
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Aleksandr Nogikh <nogikh@google.com>
+Cc: syzbot <syzbot+e8e879922808870c3437@syzkaller.appspotmail.com>,
+	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	syzkaller <syzkaller@googlegroups.com>
+Subject: Re: [syzbot] [usb?] KASAN: slab-use-after-free Read in ld_usb_release
+Message-ID: <efc7e41c-b4a3-469a-983a-24b167b944e3@rowland.harvard.edu>
+References: <6731d32b.050a0220.1fb99c.014d.GAE@google.com>
+ <1af819ae-cd88-4db0-af6e-02064489ebb2@rowland.harvard.edu>
+ <CANp29Y7RA00bKOinkjSDBchbkx3RDvWXGs4hr0PrPKyqSEC-_g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Additional issue with cpuset isolated partitions?
-To: Juri Lelli <juri.lelli@redhat.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Koutny <mkoutny@suse.com>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-References: <Zzd3G67_UwBUJaRt@jlelli-thinkpadt14gen4.remote.csb>
-Content-Language: en-US
-In-Reply-To: <Zzd3G67_UwBUJaRt@jlelli-thinkpadt14gen4.remote.csb>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANp29Y7RA00bKOinkjSDBchbkx3RDvWXGs4hr0PrPKyqSEC-_g@mail.gmail.com>
 
-On 11/15/24 11:30 AM, Juri Lelli wrote:
-> Hello,
->
-> While working on the recent cpuset/deadline fixes [1], I encountered
-> what looks like an issue to me. What I'm doing is (based on one of the
-> tests of test_cpuset_prs.sh):
->
-> # echo Y >/sys/kernel/debug/sched/verbose
-> # echo +cpuset >cgroup/cgroup.subtree_control
-> # mkdir cgroup/A1
-> # echo 0-3 >cgroup/A1/cpuset.cpus
-> # echo +cpuset >cgroup/A1/cgroup.subtree_control
-> # mkdir cgroup/A1/A2
-> # echo 1-3 >cgroup/A1/A2/cpuset.cpus
-> # echo +cpuset >cgroup/A1/A2/cgroup.subtree_control
-> # mkdir cgroup/A1/A2/A3
-> # echo 2-3 >cgroup/A1/A2/A3/cpuset.cpus
-> # echo 2-3 >cgroup/A1/cpuset.cpus.exclusive
-> # echo 2-3 >cgroup/A1/A2/cpuset.cpus.exclusive
-> # echo 2-3 >cgroup/A1/A2/A3/cpuset.cpus.exclusive
-> # echo isolated >cgroup/A1/A2/A3/cpuset.cpus.partition
->
-> and with this, on my 8 CPUs system, I correctly get a root domain for
-> 0-1,4-7 and 2,3 are left isolated (attached to default root domain).
->
-> I now put the shell into the A1/A2/A3 cpuset
->
-> # echo $$ >cgroup/A1/A2/A3/cgroup.procs
->
-> and hotplug CPU 2,3
->
-> # echo 0 >/sys/devices/system/cpu/cpu2/online
-> # echo 0 >/sys/devices/system/cpu/cpu3/online
->
-> guess the shell is moved to the non-isolated domain. So far so good
-> then, only that if I turn CPUs 2,3 back on they are attached to the root
-> domain containing the non-isolated cpus
-A valid partition must have CPUs associated with it. If no CPU is 
-available, it becomes invalid and fall back to use the CPUs from the 
-parent cgroup.
->
-> # echo 1 >/sys/devices/system/cpu/cpu2/online
-> ...
-> [  990.133593] root domain span: 0-2,4-7
-> [  990.134480] rd 0-2,4-7
->
-> # echo 1 >/sys/devices/system/cpu/cpu3/online
-> ...
-> [ 1082.858992] root domain span: 0-7
-> [ 1082.859530] rd 0-7
->
-> And now the A1/A2/A3 partition is not valid anymore
->
-> # cat cgroup/A1/A2/A3/cpuset.cpus.partition
-> isolated invalid (Invalid cpu list in cpuset.cpus.exclusive)
->
-> Is this expected? It looks like one need to put at least one process in
-> the partition before hotplugging its cpus for the above to reproduce
-> (hotpluging w/o processes involved leaves CPUs 2,3 in the default domain
-> and isolated).
+On Wed, Nov 13, 2024 at 11:46:00AM +0100, Aleksandr Nogikh wrote:
+> Hi Alan,
+> 
+> On Mon, Nov 11, 2024 at 4:45 PM Alan Stern <stern@rowland.harvard.edu> wrote:
+> >
+> > On Mon, Nov 11, 2024 at 01:49:31AM -0800, syzbot wrote:
+> > > Hello,
+> > >
+> > > syzbot found the following issue on:
+> > >
+> > > HEAD commit:    2e1b3cc9d7f7 Merge tag 'arm-fixes-6.12-2' of git://git.ker..
+> > > git tree:       upstream
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=1650d6a7980000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=b77c8a55ccf1d9e2
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=e8e879922808870c3437
+> > > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> > > userspace arch: i386
+> > >
+> > > Unfortunately, I don't have any reproducer for this issue yet.
+> >
+> > Question for the syzbot people:
+> >
+> > If I have a patch which I think will cause the issue to become
+> > reproducible, is there any way to ask syzbot to apply the same test that
+> > failed here to a kernel including my patch?
+> 
+> No, that's unfortunately not supported.
+> 
+> In this particular case, it's at least evident from `Comm: ` which
+> exact program was being executed when the kernel crashed:
+> 
+> [  178.539707][ T8305] BUG: KASAN: slab-use-after-free in
+> do_raw_spin_lock+0x271/0x2c0
+> [  178.542477][ T8305] Read of size 4 at addr ffff888022387c0c by task
+> syz.3.600/8305
+> [  178.546823][ T8305]
+> [  178.548202][ T8305] CPU: 3 UID: 0 PID: 8305 Comm: syz.3.600 Not
+> tainted 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7 #0
+> 
+> syz.3.600 means procid=3 and id=600, so it's the program that comes
+> after the following line in
+> https://syzkaller.appspot.com/x/log.txt?x=1650d6a7980000:
+> 
+> 551.627007ms ago: executing program 3 (id=600):
+> <...>
+> 
+> You may try to treat that program as a normal syz reproducer and run
+> it against your patched kernel locally, that should be quite
+> straightforward to do (just several commands). See e.g. the
+> instructions here:
+> https://github.com/google/syzkaller/blob/master/docs/syzbot_assets.md#run-a-syz-reproducer-directly
 
-Once a partition becomes invalid, there is no self recovery if the CPUs 
-become online again. Users have to explicitly re-enable it. It is really 
-a very rare case and so we don't spend effort to do that.
+One of the beauties of syzbot is that it will run potential reproducers 
+and test patches for us with very little effort on our part.
 
-If only one of 2 CPUs are offline and then online again, the full 2-CPU 
-isolated partition can be recovered.
+Can I request an enhancement of the "#syz test:" email command?  It 
+would be great if it would be willing to run a test even if the test 
+program isn't considered a bona fide reproducer.
 
-Please let me know if you have further question.
+I don't really need it for this particular bug report; the underlying 
+cause of the problem in this case is pretty clear.  But having this 
+capability in the future could be a big help.
 
-Cheers,
-Longman
-
+Alan Stern
 
