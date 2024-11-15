@@ -1,288 +1,244 @@
-Return-Path: <linux-kernel+bounces-410802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF05C9CE125
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:22:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE9C49CE126
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:22:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F8991F21BA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:22:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0AA0287CA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06AC1CEAD6;
-	Fri, 15 Nov 2024 14:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D961D0DDF;
+	Fri, 15 Nov 2024 14:22:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uZnmPiz5"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2089.outbound.protection.outlook.com [40.107.102.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TVJEV54D";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8I5+RuzT";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TVJEV54D";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8I5+RuzT"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692AE1B218E
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 14:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731680551; cv=fail; b=NFMFqoE3isuIWv/vN2OGf7g8tFtD9RlPtun/4kwJrYm1oCOZ7C6ED/OV2aLBNEzSOZbZtdcC0+lNJdvJf+C+aSPOeQ/11EFPBHwEP72wJ8HId77us/6ygGgHeA3R75D84p7NgeM0fytSVeMQE1x0CvDFYb1DnKNI8i6ceyP2B7c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731680551; c=relaxed/simple;
-	bh=XGytDwtxJzmdZZUB+sb6nOj2nOWhjxaYWgR8YaqB0/4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=f0iBNKERxnn55T521ka3u7pEVczK9Nk0CYZsJ8z2TKPBnOFN87W18SjwiEMLjQudBNi/AzNMVz41qokgT+9gO8hZ4zpBdS+DGcoJlTWdqNx5Bz3/u77I9NmrpUwa/obW8TohXawm3zocyL9v1nr5ewVp6T8CVRSIgrqLWcMuFe0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uZnmPiz5; arc=fail smtp.client-ip=40.107.102.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IfewNL9ZGDxRuw0/L+ECu/dcqykqRVcsRok/CEVVX8bxtbys9Xst1JpFCEbtAmQxiTnbTV3Wjt3o2rR97MoUibi4k5OdHxaNFB6UWL+K2QqrJ8SMGHREykJ8QrxlSTRfBZ8ok/VCWr7Cxp1Z/hQU/hyWgyTXkWBxpNTSBbv9z+d+tcznUm04UKvA2/npyQT/AEvHlhZNWybI/Kr+SDEufGvq7ET9RJzaZbdhFeB96z2wtZRJ7Ci0ypDHRFg8qPP04ix5wUCYVnRR7Y0qmMTHPeCcVhDK7Vrr0supxYDjcLS/0ArhgHRPOsUacnskjpK1cU5w0yrFYl+doPmGfJK9rw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=75KjmkmTSUJ+g3WSdT/s0X1nRRlDDVx6S3HKNXENNOE=;
- b=QlSt1++GnMVhkddzO9fJfyxTmiTrs3aiiaJWzgCapbUR6wXfw0pS63yTGII8SRJJuYz6VcJWXusmCVhFFiVQsVuipCkuIz6FS89a/s8knnFONP+LS3EaTsLljA8sFMr2C4lmw/Ki5vjHFZ+kcSNyr1oumiBou1mk6RhQ2HDj6f53vQnXgJwjDPAHhrkDNitLfRa+i4py2x5hJpSU6nUNW21MGPv06Od3l5nnml0jCnt1u3698mdeKg/6MR5P16w6yo8q/0P7duErWTXZZOu+aGzKXNMUZC6Q6uafBE7UbBxgpd0+s0027UvKdd3qTPAMuzj2TffPyccD1o1AaejYsg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=75KjmkmTSUJ+g3WSdT/s0X1nRRlDDVx6S3HKNXENNOE=;
- b=uZnmPiz5E3Mlm+JNh0hvKhE/xnQmkIFYN6BKdXC8cdZC13NACCOIboa41hEqHucA5y3ZqEOcezpYeCOna/T6PlwTAKSw06AB+7yccyIvDe3GxEOKr9EGnX323Df6mSkIu/7ubjjzU9Gn6JHQDX7lVk/KbduiLnucjPcitmmWhcM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
- by DS7PR12MB8229.namprd12.prod.outlook.com (2603:10b6:8:ea::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.17; Fri, 15 Nov
- 2024 14:22:27 +0000
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.8158.017; Fri, 15 Nov 2024
- 14:22:26 +0000
-Message-ID: <d6c946f5-8e7c-ca06-ed0a-4d4e8a82d679@amd.com>
-Date: Fri, 15 Nov 2024 08:22:24 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 1/3] x86/ioremap: introduce helper to check if physical
- address is in setup_data
-Content-Language: en-US
-To: Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org, bp@alien8.de
-Cc: x86@kernel.org
-References: <20241115012131.509226-1-bhe@redhat.com>
- <20241115012131.509226-2-bhe@redhat.com>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-In-Reply-To: <20241115012131.509226-2-bhe@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA1P222CA0108.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:806:3c5::29) To DM4PR12MB5070.namprd12.prod.outlook.com
- (2603:10b6:5:389::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3161CEEAA
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 14:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731680554; cv=none; b=NtZLYDgGi1cMI0um6p0D0OJGyHtOecOpZViCiyW254QUvGKtLb3uM3SROiz96Tje2t2EYuDWXoPW74N080d2GgKki3zI89xpkAawYV5HO1IvwEDdZPjYtlrY2gehvxeRvvvJUp7ho0oS6G9PYIsSPjQ5tOXvxXtY3xG29x4u5GA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731680554; c=relaxed/simple;
+	bh=mmqyevj/dPTQrSEM+jlj4BcvtH2dmVKNbXXLtbPGsIU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=jY6AVSTuS8cfneSwgC2aUA/71DFwdlq2UoW6u6XYp1ophcTP2NU/Xlx9W9nMlQI+i710J+r7OSStIh0b7VJZLf/qhps52xQ0R2BHdzok3+uqfNXZ+pLrF1e1I82JAeFHTRy7TTn0uG1dNV+R5NiZnHKmym/CPjoro4dr7NKB4kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TVJEV54D; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8I5+RuzT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TVJEV54D; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8I5+RuzT; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id AA4382127D;
+	Fri, 15 Nov 2024 14:22:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731680550; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
+	bh=19ewfW9UTUsKqRxUAhyaAYGUe64lA2CjC/VuqEemcmM=;
+	b=TVJEV54DFoB1kLSzDEKJb5Cp4pvGOc2jo0lcFX2d0GVoiM9PYazuKzcUbsoLujvPEtUNt2
+	ty1PwhMDD8GPCZWLDVXcgYddEoMG182vtFfFhdXSPvHOdveabQrNU0N5u9gjwpP20TEMNj
+	r8vLvYh4DFQFxVFQdYAhgyYKSLB2Hjw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731680550;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
+	bh=19ewfW9UTUsKqRxUAhyaAYGUe64lA2CjC/VuqEemcmM=;
+	b=8I5+RuzTSGCRZzi0vSFGYYpyXfnLx8JDHbu4dxkPgw/lR7KEPvV3Mofa4V90DatSlj3VML
+	76ByGF5JYDHx/5Bg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=TVJEV54D;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=8I5+RuzT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731680550; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
+	bh=19ewfW9UTUsKqRxUAhyaAYGUe64lA2CjC/VuqEemcmM=;
+	b=TVJEV54DFoB1kLSzDEKJb5Cp4pvGOc2jo0lcFX2d0GVoiM9PYazuKzcUbsoLujvPEtUNt2
+	ty1PwhMDD8GPCZWLDVXcgYddEoMG182vtFfFhdXSPvHOdveabQrNU0N5u9gjwpP20TEMNj
+	r8vLvYh4DFQFxVFQdYAhgyYKSLB2Hjw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731680550;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
+	bh=19ewfW9UTUsKqRxUAhyaAYGUe64lA2CjC/VuqEemcmM=;
+	b=8I5+RuzTSGCRZzi0vSFGYYpyXfnLx8JDHbu4dxkPgw/lR7KEPvV3Mofa4V90DatSlj3VML
+	76ByGF5JYDHx/5Bg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 94AC3134B8;
+	Fri, 15 Nov 2024 14:22:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id NhLgIyZZN2cbJwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 15 Nov 2024 14:22:30 +0000
+Message-ID: <03ec75a9-aade-4457-ac21-5649116afa98@suse.cz>
+Date: Fri, 15 Nov 2024 15:22:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|DS7PR12MB8229:EE_
-X-MS-Office365-Filtering-Correlation-Id: aa3008aa-eee0-4d5f-9944-08dd0580ee42
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bHY4T2pPa2ZtT0g5NGFsbmZBTjN5cHdJZTJCVnkrcFdSZWQ4c1NpTVp5WEsr?=
- =?utf-8?B?b3dTYzFCZUVnWlp4K1ZYY3FxMURLMWZPN0d0Q0lGRG9jM0FpMEdaaG9lakc4?=
- =?utf-8?B?SU9yV3ZBYXdZNzhkNWIrVDJQQUpxUXlvZHd5K1RQdFVqejN0Z0pkcERXQk9v?=
- =?utf-8?B?L0d3ZjNMWGtxRGtoRFdpMk8xd01yUlVaWmRhRndUQS9jMzVxRkhLVThySHc2?=
- =?utf-8?B?cHdiekFJMVQ4SitleVp3YXFhOUpMRkQ0MldpamxjY0M4Vy8vUHVlODFPTXdq?=
- =?utf-8?B?eUpsMWFhM2hEVDhKQ3QvNGxvTVpBRTUySDRRSERKemhmd052RnhoWlFqeU9P?=
- =?utf-8?B?WUZEQllXRGxYZGcwQnpEK0RaQWIvaG5vcHVjQ2F5eWJHSllLS3ZBRjIycFJD?=
- =?utf-8?B?cmFvd3dpMEFHSHp0MDVLOGtPR09uMC90N0l0dlVwVXV5UWRza0srL0krY1Ez?=
- =?utf-8?B?R2NEZU1NTGNHSUtxNnpTTDF2bDA4RE5QRU1RL3BlclBJeG50eGo4R2NkaCtu?=
- =?utf-8?B?Mm10VDNMYVdQMGtrbHJaSVdSUzVKYXFWeDlMa3VjYmVVblFBNzF1dWhYTEN1?=
- =?utf-8?B?cTZ3ZHFMQU5OTEN0WERuWHBmemMxTWM1WVN6TmZnVVhXZDFMSE5OYWYvWlZw?=
- =?utf-8?B?bWZCcGhvMkVyaDI4VkJ4ZFFVbG1aVzlyakhFTSt3aWdIaEVXZVd6Y1RSL3pp?=
- =?utf-8?B?czN4RGl2Z1Z0a0xITGtqVnBDUnV1UlY1RVp0c1V6c2VRc0Q5anpWQmVqaS9Y?=
- =?utf-8?B?UGdLREVuSVdFaDI3dURVbkYwMFdyVXc0UFFXcjRhdlFVZnR0ckc0L005OXlV?=
- =?utf-8?B?SjdmZmtQNUtva01TVW9UNUZnczJ1YXZFQmhOcWd2ZDFjM0xqMXhSNkd0ZndV?=
- =?utf-8?B?dldDR09sNjVFdks0Rkt0bHFqbUF2N0hYL3Zaekd5bFVDMFJjWU5NZ1diYWY5?=
- =?utf-8?B?UmRCWUZrMEtQeUVPMXR6Z0pzSTA0VTJPa3ZyeDZpRDJSM0hSanNIN3YwTzYy?=
- =?utf-8?B?cUtndnZqa0JORmFielpvUDFYeC9iVkFXSGtDRldGSGEyTHRGM0VzTGVEeVJ1?=
- =?utf-8?B?d0I4bFJMblZlSCtGQUJxKzd3M1dSVysxcHYzRDhEODdmM1BnbEIvQnh5aUZW?=
- =?utf-8?B?RVJOSklGM2hoMzFhVUFkcURoNlBSenhCRWxvbnA3ek5sbXRibjB3YjdjaUdU?=
- =?utf-8?B?blRRMUI5NUJEeVloSXhMc05Yd1BkcVYrZ1BDbHBwcFVBbml0Y3A1NDFWMmx1?=
- =?utf-8?B?TDVjTEEvb1REZVNPUjU5OG81MWFTenVDTmxwMDFoQkZuN2tNaFprV05WdGZF?=
- =?utf-8?B?WGxlTTBoRFFvc0M5Zk5BT1pkc01QcU14U3NnMWlDUGlJM2lZY2NObmZOS0lW?=
- =?utf-8?B?ZkgrZ2Ird0tnNjdIUjhEbTBEYkNXM3c2WTgzOXRzNEJtMTErY1RhN0xzOVEz?=
- =?utf-8?B?anJ6Q0V0bGZFQjhOb2JCZUVFRmpua2pNNjEzdldaRk5tTlhPN1o0NDF5bUlU?=
- =?utf-8?B?T1FiT1cydVQrMHdvMVFaMmVqN0hvWkRXSVNTTEVJSGtrZmRIeE16N2x2Nmw0?=
- =?utf-8?B?c1Q0TWdwRFN6dlBacUFJNjAvTWMwcEN3dlpQUnU2MnlMMHVmSzZ0cTgyQkdv?=
- =?utf-8?B?UG4wS2k3Q0F3Y0ZXQjBtUnFjU0xmS3p3OUwxcVY1ZlZkOHpjZmZXM3pZTi90?=
- =?utf-8?B?ZlJteldCcG8yN3djUVA0S0RJeVN4eGk4cm1DdFJ2ekt2bXRPL2VTcXV6MGk1?=
- =?utf-8?Q?UNJOG+JeHWQd37dUqj+AOJ1cJ0Ex2ihl0chVXs6?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QTg2RGxuMDJjVlluZVFuZ0haQ0pvb3hLdUI5WEcvdVVmZGZzUGhBUEY4bmJo?=
- =?utf-8?B?aTNYWnMzaXhQK1R6RlM3S2JQejA3RHl5Z3YxeHJnaG1rN3pkVmpXWFdCRkN3?=
- =?utf-8?B?TitaaG1OcFJpd2lQWDNvK0MrQjdJOXRkR2pkOUh4VCtod3VsdGtJNm04MTlH?=
- =?utf-8?B?MWVFSVJ6WVdFazA3MEtRSTUzSTVKL3hIaXJ5LzR1dlo5d1hXa1E3YUQ0enNY?=
- =?utf-8?B?RnVLVjMxa29oUmlmSjIxRzVzTEEzVnFuQnVKVnY4dlhoVDhSdGtaWVY0a0ww?=
- =?utf-8?B?bEkzdEhjd290ZlBqUzdtUHZQTmtqdDU1S2pzRXdiY2JRb2c2R0Q4TlgzRTJ2?=
- =?utf-8?B?cytVQVB5SzNpQWkvbEgzY2pmVGhSSnFnd00rU2p2WUcvRTFja0txbmdpUzFn?=
- =?utf-8?B?TzUrZW40TzNLa2luUTlENDk5c3M5S01EZ2hDbEkwdHhVNDFpd1NYcXZ2NmRl?=
- =?utf-8?B?L1Jza2NXUlpOcGJybEc2cmJrWkZRS0JrckdXU2JsMlJ0UDRyWVI3UUdNa1J1?=
- =?utf-8?B?TE16UmxvVXpObmFxMTV6aTBTT0F4bUJxNFdvSUpUOUlIbUIvQlZFSG1XL2d0?=
- =?utf-8?B?U0ZhZitudGJDTDdIU2xWbWtyN2pHU3J0bTdhTzhYNllwNjhuSW9GSEgwaVBq?=
- =?utf-8?B?cC9GVzdJS1lTWkdGWmhLampubjdMR1RrSTF3RzdqbzFueEJzVEh6OU4xWkc2?=
- =?utf-8?B?emV4V2FQSUNKVU9kbDU3bEpBTENsWElPdzk1VldKdldTWEw1QUZPaVVxRWJ4?=
- =?utf-8?B?RXAweVhFZCtQdGI5NlpjbjZZRS9PRVRQbWdJMVlHbTZSNVJLNFVBL01ZTXdu?=
- =?utf-8?B?djBmODgzbkw1ODVBREliTTlTUjlZN2hrdUJnWUsyNklXZDdDZUt2cEdBUzJJ?=
- =?utf-8?B?Rmk4TFk4TFFwbWIyWC90NVpLU0FLWDFIWUJoVW92UXB1THM0WU0vNzFVOVA1?=
- =?utf-8?B?cVRPYXBGT01GQlIwYjhQZStjNjhZUFdhSlFrWWE4c3UxU0k3Y0c5cytQbHNr?=
- =?utf-8?B?d01uRnhna2dHR3pKcHh5bEpsQXhMRTRMWi92ZEErT2hXL2c1R0lhSUtVcURk?=
- =?utf-8?B?RzhNMWlqVktGZjExLytEckZvdHJWek5Wd2QvcFZnWVNrZ0ZVQkVablUyOWZF?=
- =?utf-8?B?MU9SL2Q5Q3F3M2hhVDcrZzVIMzBnQTZ4Z2NqVW9XR0NjREFzMTFjWFE5UjRj?=
- =?utf-8?B?c3Q5RXJ6RmI5VW5tc1o1b05Jc0Y5MW9uME5pc3Y1MHR2MnAxQ1ROOXl2SDBE?=
- =?utf-8?B?NEpSckVabGx2NWNkY3lMTGt5dklSTHBQclE1aHg4WGg5UVpZanNxTVRXWEZP?=
- =?utf-8?B?WFpUS1VjK3UvMjhlNzUzOGJhRG16VGFTZUNpUjczQUl5MVhtcXZOYTY4UmVv?=
- =?utf-8?B?dHRQRmFUb0FQOE9QMUhPSU1XQ1FiVzlXNjdyc0F4b1RQWXVxS3RqZDJtWXlx?=
- =?utf-8?B?VlpFOGdmZ0hwamFyYy80Z1BYTWQwQm5WTms4SmJVWW1pd2x0QTVQc2d6aTNq?=
- =?utf-8?B?d0Q2dHh4RnQwem92STNLQU5uOXV0L2NlK1RxRVFTMVNheEcybFo3N1E4cFA2?=
- =?utf-8?B?b1FzckRramV3SWZ1UUlZVjE0cWozR2cwZm4rOEFIZGl5cU5hVmpUYTYrTHJn?=
- =?utf-8?B?WGtqSDNVY2V1NkVQMXhnOWJsR01EVE9CeEFucWZBUmNicDFDOERxZ1BBUVR5?=
- =?utf-8?B?SVdQdFpLeUdMQVZRRC9OSm5RQWJuYkpSblV6NDhtc0dHelpGeGl6U082KzZv?=
- =?utf-8?B?OUpmdnh1VFRXc01oYld1ZWpKTGpNcHhBb0Z6dFRwcVhqVm1aYWJOYWNNekdB?=
- =?utf-8?B?S2pqWUhNUC9HZ2FPWW1EQUk4UVJ3VzYrR1lXbkFrUy94VTZXbmd2NTlkeWJY?=
- =?utf-8?B?VE45SmtoYUIzV0w4dXlWNnFsNWtUb2lSZmZLU1NWQlBqT1RUQWlML3VGVUxB?=
- =?utf-8?B?VDdBbW45VWIxSTRRYmRFRkZ5MGhnb0t1MEREbUFaTkdIZ3NmYWhXWXFUN3NE?=
- =?utf-8?B?ZWYrU3diN1RLby9pTlZLWlNNdnVUZHV0Q0REKzZTbHZ2SU1yeEtrRmYxWStB?=
- =?utf-8?B?VkRCdzFYRDZoVmNuMGZENTRpSi9ORzNYMTdzNFFWTmZwaE1iVjhrQjBFTm5j?=
- =?utf-8?Q?jHX+HFKf+b+AlTgnj52CfMTH0?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aa3008aa-eee0-4d5f-9944-08dd0580ee42
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2024 14:22:26.9367
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: diCSHL6B/pzrsQcdYGcivLGW0MMa+p/PxZzZjT56ENvvzFRu6nMDjEgPx6LiwUcAdc/EbPPDYp+PMlCpslgJig==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8229
+User-Agent: Mozilla Thunderbird
+From: Vlastimil Babka <vbabka@suse.cz>
+Subject: [GIT PULL] slab updates for 6.13
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Rientjes <rientjes@google.com>, Christoph Lameter <cl@linux.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Content-Language: en-US
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: AA4382127D
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	FREEMAIL_CC(0.00)[google.com,linux.com,linux-foundation.org,kvack.org,vger.kernel.org,linux.dev,gmail.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
+X-Spam-Flag: NO
 
-On 11/14/24 19:21, Baoquan He wrote:
-> Functions memremap_is_setup_data() and early_memremap_is_setup_data()
-> share completely the same process and handling, except of the
-> different memremap/unmap invocations.
-> 
-> Add helper __memremap_is_setup_data() to extract the common part,
-> parameter 'early' is used to decide what kind of memremap/unmap
-> APIs are called.
-> 
-> Signed-off-by: Baoquan He <bhe@redhat.com>
-> ---
->  arch/x86/mm/ioremap.c | 81 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 81 insertions(+)
-> 
-> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-> index 8d29163568a7..5ef6182db630 100644
-> --- a/arch/x86/mm/ioremap.c
-> +++ b/arch/x86/mm/ioremap.c
-> @@ -628,6 +628,87 @@ static bool memremap_is_efi_data(resource_size_t phys_addr,
->  	return false;
->  }
->  
-> +#define SD_SIZE sizeof(struct setup_data)
-> +/*
-> + * Examine the physical address to determine if it is boot data by checking
-> + * it against the boot params setup_data chain.
-> + */
-> +static bool __init __memremap_is_setup_data(resource_size_t phys_addr,
+Hi Linus,
 
-You should remove the __init for this helper since it is called by a
-function that is outside of __init.
+please pull the latest slab updates from:
 
-> +						bool early)
-> +{
-> +	struct setup_indirect *indirect;
-> +	struct setup_data *data;
-> +	u64 paddr, paddr_next;
-> +
-> +	paddr = boot_params.hdr.setup_data;
-> +	while (paddr) {
-> +		unsigned int len, size;
-> +
-> +		if (phys_addr == paddr)
-> +			return true;
-> +
-> +		if (early)
-> +			data = early_memremap_decrypted(paddr, SD_SIZE);
-> +		else
-> +			data = memremap(paddr, SD_SIZE,
-> +					MEMREMAP_WB | MEMREMAP_DEC);
-> +		if (!data) {
-> +			pr_warn("failed to memremap setup_data entry\n");
-> +			return false;
-> +		}
-> +
-> +		size = SD_SIZE;
+  git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.13
 
-Just me, but I would use sizeof(*data) here instead of using a #define
-that is later undefined below.
+One new feature and non-critical fixes (mostly related to debugging).
+No conflicts to be expected, AFAIK.
 
 Thanks,
-Tom
+Vlastimil
 
-> +
-> +		paddr_next = data->next;
-> +		len = data->len;
-> +
-> +		if ((phys_addr > paddr) &&
-> +		    (phys_addr < (paddr + SD_SIZE + len))) {
-> +			if (early)
-> +				early_memunmap(data, SD_SIZE);
-> +			else
-> +				memunmap(data);
-> +			return true;
-> +		}
-> +
-> +		if (data->type == SETUP_INDIRECT) {
-> +			size += len;
-> +			if (early) {
-> +				early_memunmap(data, SD_SIZE);
-> +				data = early_memremap_decrypted(paddr, size);
-> +			} else {
-> +				memunmap(data);
-> +				data = memremap(paddr, size,
-> +						MEMREMAP_WB | MEMREMAP_DEC);
-> +			}
-> +			if (!data) {
-> +				pr_warn("failed to memremap indirect setup_data\n");
-> +				return false;
-> +			}
-> +
-> +			indirect = (struct setup_indirect *)data->data;
-> +
-> +			if (indirect->type != SETUP_INDIRECT) {
-> +				paddr = indirect->addr;
-> +				len = indirect->len;
-> +			}
-> +		}
-> +
-> +		if (early)
-> +			early_memunmap(data, size);
-> +		else
-> +			memunmap(data);
-> +
-> +		if ((phys_addr > paddr) && (phys_addr < (paddr + len)))
-> +			return true;
-> +
-> +		paddr = paddr_next;
-> +	}
-> +
-> +	return false;
-> +}
-> +#undef SD_SIZE
-> +
->  /*
->   * Examine the physical address to determine if it is boot data by checking
->   * it against the boot params setup_data chain.
+======================================
+
+- Add new slab_strict_numa boot parameter to enforce per-object memory policies
+  on top of slab folio policies, for systems where saving cost of remote
+  accesses is more important than minimizing slab allocation overhead
+  (Christoph Lameter)
+
+- krealloc() fixes for not violating __GFP_ZERO guarantees on krealloc() when
+  slub_debug (redzone and object tracking) is enabled (Feng Tang)
+
+- Fix a memory leak in case sysfs registration fails for a slab cache, and also
+  no longer fail to create the cache in that case (Hyeonggon Yoo)
+
+- Fix handling of detected consistency problems (due to buggy slab user) with
+  slub_debug enabled, so that it does not cause further list corruption bugs
+  (yuan.gao)
+
+- Code cleanup and kerneldocs polishing (Zhen Lei, Vlastimil Babka)
+
+----------------------------------------------------------------
+Christoph Lameter (1):
+      SLUB: Add support for per object memory policies
+
+Feng Tang (5):
+      mm/kasan: Don't store metadata inside kmalloc object when slub_debug_orig_size is on
+      mm/slub: Move krealloc() and related code to slub.c
+      mm/slub: Consider kfence case for get_orig_size()
+      mm/slub: Improve redzone check and zeroing for krealloc()
+      mm/slub, kunit: Add testcase for krealloc redzone and zeroing
+
+Hyeonggon Yoo (1):
+      mm/slab: Allow cache creation to proceed even if sysfs registration fails
+
+Vlastimil Babka (2):
+      mm, slab: add kerneldocs for common SLAB_ flags
+      Merge branch 'slab/for-6.13/features' into slab/for-next
+
+Zhen Lei (1):
+      mm/slab: remove duplicate check in create_cache()
+
+yuan.gao (1):
+      mm/slub: Avoid list corruption when removing a slab from the full list
+
+ Documentation/admin-guide/kernel-parameters.txt |  10 ++
+ Documentation/mm/slub.rst                       |   9 +
+ include/linux/slab.h                            |  60 ++++---
+ lib/slub_kunit.c                                |  42 +++++
+ mm/kasan/generic.c                              |   7 +-
+ mm/slab.h                                       |  11 ++
+ mm/slab_common.c                                | 101 ++---------
+ mm/slub.c                                       | 212 +++++++++++++++++++++---
+ 8 files changed, 320 insertions(+), 132 deletions(-)
 
