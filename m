@@ -1,97 +1,87 @@
-Return-Path: <linux-kernel+bounces-410553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A855C9CDD2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:01:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D54F9CDD32
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:02:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49541282A01
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:01:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEC2BB284F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604FC1B3933;
-	Fri, 15 Nov 2024 11:01:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174E219004D;
+	Fri, 15 Nov 2024 11:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="Iux2gwX6"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TqDukPty"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C11E154C00;
-	Fri, 15 Nov 2024 11:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765B9154C00
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731668509; cv=none; b=lpiYSZzmv4oYinXqjf22UxMeGDF23IJze31tPUlMdnSIZktxYhFm01Jzj3xEIHbGyF/q6aJ34JRGYwf7ieynkPHKL6Tg5fhxpAkebCY8V4SRA6E4D3+oxHmt9Fp/XI1ZOfdhqYjsmV4ZI8sJOmVZ3sVtnSuiSoxDIWKt2EqjdnY=
+	t=1731668560; cv=none; b=r+hjNINYeL20vzTSw9i5gHIpiLC3Ag7BnbBFQC6WIrPaik/w7fopfxS03fdx3s/jTnQ2iA/fOaD2wL2TK3zwUT5WiB861cxcups/bFaaE6QhhEsbfTS7NCy2P8ZAXWAXE1z2B5Rb3gO7RnRGNrHE9WGMS0O6O/AyKnl1E3PsrWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731668509; c=relaxed/simple;
-	bh=m7BVGvXyT71CEXI4yUkoMGjzzQM/AEOtiUKWoG93h/A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EQc4GyNxE8415gxVA4lv9uYrSareNujHf+2pBq4qVRSE5IwKhcCIUWAmU2klNFvrSouy1mjJjfth0BNVRjGGINiRI5w/QXNMo03ta77JVStY2AXiXgs0vEblJ9q1g+/SG5h2N9DghBhMfBtcsAc9Mu1cjrXZn2DOnBkhAa5sp1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=Iux2gwX6; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.96] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id DA0F82FC0057;
-	Fri, 15 Nov 2024 12:01:43 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1731668504;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cY/MafceW9ixF9GLI0m9zzx5gRSTc4nzvb8Dcslkwyw=;
-	b=Iux2gwX62e5wze1PTeurUKw63gE5CCyShDNJL0459p8btp12VCXfhe+DHDQ2zoQPVuLLRI
-	D2eeQsLjpk4GHUbNxFSOq12yXJ9x3nkZ71yXaiGwcwt7DUSLjFTLg9bv8jr59rxuv9qXh0
-	auIpj2pTdj86GE7pxwn2CiVVKL0eo+g=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <9e498b77-acfc-4aca-9734-16d5829518d4@tuxedocomputers.com>
-Date: Fri, 15 Nov 2024 12:01:43 +0100
+	s=arc-20240116; t=1731668560; c=relaxed/simple;
+	bh=hIoj3osNEHirSNbOBqBimm9X+4AIOxhpNWxXDoZcmxg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oYrWu1gpbBGGmdFJTU3RF4dpB4yh+IsS5gqljZXTt3xN9G3wGa08reWF27kPS0cB0wQYtICSt+0kJVOWbVzB3hr/iyBF+ifHEzRtqdj3e7Pird8DPdp1Xosr2K2tzLLN0RJZtxQlYbyJiLUwWEJ1+4ZrdvdQqn/FMCziUIgDV3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TqDukPty; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B2D7C4CECF
+	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:02:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731668560;
+	bh=hIoj3osNEHirSNbOBqBimm9X+4AIOxhpNWxXDoZcmxg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TqDukPty7IFx3XzAHGZTuv/o9c2G/vL2P62bjw1e0OtFuzV3UVUPWki3PR3TqxS41
+	 gAlTNoXzmTrMy9HeRXfOrX8U6nMLcFWnVkxXkf83JP4qIYQjV4bcFTpZXekZ3TmfcG
+	 J2AIlB5H2324ZzPCsoZ74ZQnLRQJCzSMYmr49Qo0+Q+jk7RGn24JgRp1iEEBtXMmws
+	 2jDr4cmtoFOzhfd9+K3k6RzEOdvqP6Ex6pKm2SPrZxZurzXa5DRo3fxITU5jGtuMcw
+	 YpeFPdIqa8wrEn3u7G5NC35IUpEJDL0BlH8xqe9Acvo/GoK74cmvq5G+9dYSJcOwaH
+	 dfDppBxYxVBCA==
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb5014e2daso16845601fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 03:02:40 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXRkYv248QLHeuSP4l385/nKnlw12CrPxpk9qnPZoSZWpmLGZB4bm9SLc4OOe2CMQ0dfl5my9SBzUpz3uk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHeExsQwLPOVkfqB1ask0+aM/C/gwYSYr14QylzIVKe9YVcOSm
+	cg9y4IoJl/JTrgNQ8SUvnaSCnYi4VVpv7zxNJOcPxC/vrwzkHUPDWV1O57hboOaLn7sqGzmcSl7
+	IkLrJ1nKY2egK+3lE+VZmx3hhamk=
+X-Google-Smtp-Source: AGHT+IHQNcdviMa6V+KDraXUHzktLvXHWUwAmijeZ8akuDLCagJe5z0Nh+rzP4N+f3y1N+5byIslnbLULRMANA9h4TI=
+X-Received: by 2002:a05:651c:12cb:b0:2fa:dbf1:5b2d with SMTP id
+ 38308e7fff4ca-2ff60711ecdmr12933681fa.39.1731668558501; Fri, 15 Nov 2024
+ 03:02:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
- symbols
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Luis Chamberlain
- <mcgrof@kernel.org>, tux@tuxedocomputers.com,
- Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>,
- Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
- linux-kernel@vger.kernel.org, Thorsten Leemhuis <linux@leemhuis.info>,
- Vinzenz Vietzke <vv@tuxedocomputers.com>, Christoffer Sandberg <cs@tuxedo.de>
-References: <20241114103133.547032-4-ukleinek@kernel.org>
- <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
- <2024111557-unlighted-giggle-0d86@gregkh>
- <6c1952bc-f58d-4c55-887e-6aa247daec5c@tuxedocomputers.com>
- <h5q36ajuzgwf5yrjmqv46x62evifcgoi5imxhcvsv7oxauvxak@sj54oisawqnf>
- <58b85a78-55aa-422c-a21d-254eb16cc8c6@tuxedocomputers.com>
- <2024111522-brush-excusably-cae5@gregkh>
- <3ea99d52-cafb-4c79-a78b-fdd1f9a9fcd5@tuxedocomputers.com>
- <y3lspnzleavkgvujrf66rly65yw3sskjomcvbginijgexaybys@bg53hyadhcbw>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <y3lspnzleavkgvujrf66rly65yw3sskjomcvbginijgexaybys@bg53hyadhcbw>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241115003505.9492-2-ragavendra.bn@gmail.com> <Zzcp75p3KTFRfW5O@gmail.com>
+In-Reply-To: <Zzcp75p3KTFRfW5O@gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 15 Nov 2024 12:02:27 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXHK4NxgWCieaQY7tT6BquSBv6Db10K8-V_8qFeZKv=BZA@mail.gmail.com>
+Message-ID: <CAMj1kXHK4NxgWCieaQY7tT6BquSBv6Db10K8-V_8qFeZKv=BZA@mail.gmail.com>
+Subject: Re: [PATCH] arch:x86:coco:sev: Initialize ctxt variable
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Ragavendra <ragavendra.bn@gmail.com>, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	thomas.lendacky@amd.com, ashish.kalra@amd.com, tzimmermann@suse.de, 
+	bhelgaas@google.com, x86@kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Fri, 15 Nov 2024 at 12:01, Ingo Molnar <mingo@kernel.org> wrote:
+>
+>
+> * Ragavendra <ragavendra.bn@gmail.com> wrote:
+>
+> > Updating the ctxt value to NULL in the svsm_perform_ghcb_protocol as
+> > it was not initialized.
+> >
+> > Fixes: 2e1b3cc9d7f7 (grafted) Merge tag 'arm-fixes-6.12-2' of git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc
+>
+> This 'Fixes' tag looks bogus.
+>
 
-Am 15.11.24 um 11:51 schrieb Uwe Kleine-König:
-> Hello Werner,
->
-> On Fri, Nov 15, 2024 at 10:40:56AM +0100, Werner Sembach wrote:
->> Then why does the proprietary NVIDIA driver exist?
-> Please don't use NVIDIA's behaviour as a blueprint for your actions.
-> INAL, but I would not recommend to deduce from "NVIDIA does it and
-> wasn't tried to stop" (for any value of "it") that "it" is legal, honest
-> and in line with the open source spirit.
-Ofc I don't want to use NVIDIA's behavior as a blueprint, it was just to show 
-where my misconception stems from.
->
-> Best regards
-> Uwe
+So does the patch itself - 'struct es_em_ctxt ctxt' is not a pointer.
 
