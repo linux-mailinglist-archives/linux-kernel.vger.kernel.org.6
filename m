@@ -1,130 +1,182 @@
-Return-Path: <linux-kernel+bounces-410123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A761A9CD4E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 02:14:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A37209CD4E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 02:15:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F0191F221D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 01:14:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6563F281494
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 01:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21E15B05E;
-	Fri, 15 Nov 2024 01:14:41 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0C85A7AA;
+	Fri, 15 Nov 2024 01:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BR0ya8wO"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FD22629D;
-	Fri, 15 Nov 2024 01:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91431E522;
+	Fri, 15 Nov 2024 01:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731633281; cv=none; b=h2qjMBPUjV9wVUQMfujn+QySv1/NbpIU4oe2ZdA5pZDovFCCgG56Ja9I/VRx2tmLJ7/382ILw3KwP7lVXjj7rJ6Hv97OiyoMOWaVKgwRInH1tFtq9gDgqpB4bCAjtB2atCiRHpJAhR1nEo4rkfIvQ6b0YDWkKbIB77fnGK86p8o=
+	t=1731633345; cv=none; b=g6Arx2Ie7cEvhvuEKBk6vzPGy1CCm+LwQthZzwMZ1cUjeIPYhjYDLDMpRNuylHZnMBI5E2JlIrIILVWfrxZsFGzI5SHBawUK0PC1/J2AWi/14TrjRUawhrEkL4PObY4EEMNcjJ7OBnuFutMT10H2VczxMW277kY0daEivYgtr50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731633281; c=relaxed/simple;
-	bh=ahzNLmvMNb/cOjUYom6iAdTIYn9HWcDKXlYNbiV3aoQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d7XZ1vsUSWJCL7yuZ/V44okLwNiw306eK4ogvujB2a1DLtsf2718ujhmyXHkUrGOODzZFkFFaYdAQjrWuwRRXQXd44qLnzNGAewwvgLMuacyvZhHPlDaR3+aPsX52pBmQSrAz6/8SwQoKi4qJPV3BQcGpCS5aPOQG5a7Ry3phq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XqJvW1YL4z4f3nT9;
-	Fri, 15 Nov 2024 09:14:15 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 6673C1A0359;
-	Fri, 15 Nov 2024 09:14:34 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP1 (Coremail) with SMTP id cCh0CgB3bK54oDZnQ0EVBw--.17204S2;
-	Fri, 15 Nov 2024 09:14:34 +0800 (CST)
-Message-ID: <2f755161-ec7e-4785-b0ca-ea68c01785a2@huaweicloud.com>
-Date: Fri, 15 Nov 2024 09:14:32 +0800
+	s=arc-20240116; t=1731633345; c=relaxed/simple;
+	bh=pJF6FnthLaZDlGhslANwjiqRlQJlVEyZ1a9Jnw0V2FE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TGuL9dKl+WOnBvtl12PsBzXzkjZcwLX+El0O5O5LadbyhYeOaWWbycrho97GApSJeEcWL5noYbs5altW9gXDiANVAI1po76R4pqS1HGIHLH/eTjqbSrHL8UfXsF5iEgoylvc3zLot8i3dy9HialrxyjB11YNv6dZJN4qA2qZaOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BR0ya8wO; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AEHHw9A000914;
+	Fri, 15 Nov 2024 01:15:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=zh7TTW8tLIxvXk1cjlASsZ
+	hsAqj2uXJLd5tfnba2ABw=; b=BR0ya8wOwYhyS5yr9qA1PtlUHUZObw+i42OrMq
+	W3uH/AHLNjGIsnx5n39SV0EeXThRSxolsdQboeUCqZW9FTtTxAoYWCCWJ02G6LKU
+	3T1lXXZiYWNKLQuYPnRJ0ESrNNHI/xMEX3mfCJTi/fXVo8j3V54Him+ZeSKtnQes
+	Cg+eL2tnxJWOEZvjv18POh+MxE9AL3xbGOlLKpE+kr6Ad2yqh/mrm+zlXmlvs59N
+	zZNQVEx589JS9BEZd/ELBFbNgeUUMYTPaRFoS5/WbwVu4LvXxb4n+dd/zVg19akj
+	eEX/9Y5X3WB7mElmk0PhqzcKEwGu/TCV8jql2gJf8ez9WjfQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42w9sv4364-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 01:15:33 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AF1FXJj009013
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 01:15:33 GMT
+Received: from hu-sibis-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 14 Nov 2024 17:15:29 -0800
+From: Sibi Sankar <quic_sibis@quicinc.com>
+To: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_rgottimu@quicinc.com>,
+        <quic_kshivnan@quicinc.com>, <quic_sibis@quicinc.com>,
+        <arm-scmi@vger.kernel.org>
+Subject: [PATCH V5 0/2] arm_scmi: vendors: Qualcomm Generic Vendor Extensions
+Date: Fri, 15 Nov 2024 06:45:13 +0530
+Message-ID: <20241115011515.1313447-1-quic_sibis@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] freezer, sched: report the frozen task stat as 'D'
-To: Tejun Heo <tj@kernel.org>
-Cc: Valentin Schneider <vschneid@redhat.com>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, =?UTF-8?Q?mkoutny=40suse=2Ecom_=3E=3E_Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>, linux-kernel@vger.kernel.org, wangweiyang2@huawei.com,
- cgroups@vger.kernel.org
-References: <20241111135431.1813729-1-chenridong@huaweicloud.com>
- <xhsmhv7wrb3sc.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <4f78d752-52ab-493d-8bf5-f12dc4f554c8@huaweicloud.com>
- <ZzYo19k9ZvkC7V-1@slm.duckdns.org>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <ZzYo19k9ZvkC7V-1@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgB3bK54oDZnQ0EVBw--.17204S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7CF1xXw4DXrWxKw4xurWfZrb_yoW8Xw1rpF
-	ZYk3Z8t3Z7KryqkrnFv3Z7WFyUtrs2qry5XFykGFWxGFnxXrn09ryIvryYgan0krWSyFyU
-	Za1Ygas7ZrW7ArUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	7KsUUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: zjtL2fq0-uBsnsOb6Yi41aMzSpjcu7mt
+X-Proofpoint-GUID: zjtL2fq0-uBsnsOb6Yi41aMzSpjcu7mt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ lowpriorityscore=0 impostorscore=0 adultscore=0 bulkscore=0 clxscore=1015
+ mlxlogscore=959 priorityscore=1501 phishscore=0 malwarescore=0
+ suspectscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411150009
+
+The QCOM SCMI vendor protocol provides a generic way of exposing a
+number of Qualcomm SoC specific features (like memory bus scaling)
+through a mixture of pre-determined algorithm strings and param_id
+pairs hosted on the SCMI controller. Introduce a client driver that
+uses the memlat algorithm string hosted on QCOM SCMI Vendor Protocol
+to detect memory latency workloads and control frequency/level of
+the various memory buses (DDR/LLCC/DDR_QOS).
+
+QCOM SCMI Generic Vendor protocol background:
+It was found that a lot of the vendor protocol used internally was
+for debug/internal development purposes that would either be super
+SoC specific or had to be disabled because of some features being
+fused out during production. This lead to a large number of vendor
+protocol numbers being quickly consumed and were never released
+either. Using a generic vendor protocol with functionality abstracted
+behind algorithm strings gave us the flexibility of allowing such
+functionality exist during initial development/debugging while
+still being able to expose functionality like memlat once they have
+matured enough. The param-ids are certainly expected to act as ABI
+for algorithms strings like MEMLAT.
+
+Thanks in advance for taking time to review the series.
+
+V4:
+* Splitting the series into vendor protocol and memlat client.
+  Also the move the memlat client implementation back to RFC
+  due to multiple opens.
+* Use common xfer helper to avoid code duplication [Dmitry]
+* Update enum documentation without duplicate enum info [Dmitry]
+* Update the protol attributes doc with more information. [Cristian]
+
+V3:
+* Restructure the bindings to mimic IMX [Christian]
+* Add documentation for the qcom generic vendor protocol [Christian/Sudeep]
+* Pick up Rb tag and fixup/re-order elements of the vendor ops [Christian]
+* Follow naming convention and folder structure used by IMX
+* Add missing enum in the vendor protocol and fix documentation [Konrad]
+* Add missing enum in the scmi memlat driver and fix documentation [Konrad]
+* Add checks for max memory and monitor [Shivnandan]
+* Fix typo from START_TIMER -> STOP_TIMER [Shivnandan]
+* Make populate_physical_mask func to void [Shivnandan]
+* Remove unecessary zero set [Shivnandan]
+* Use __free(device node) in init_cpufreq-memfreqmap [Christian/Konrad]
+* Use sdev->dev.of_node directly [Christian]
+* use return dev_err_probe in multiple places [Christian]
+
+V2:
+* Drop container dvfs memlat container node. [Rob]
+* Move scmi-memlat.yaml to protocol level given that a lot of vendors might end up
+* using the same protocol number. [Rob]
+* Replace qcom,cpulist with the standard "cpus" property. [Rob]
+* Fix up compute-type/ipm-ceil required. [Rob]
+* Make driver changes to the accommodate bindings changes. [Rob]
+* Minor fixups in subjects/coverletter.
+* Minor style fixes in dts.
+
+V1:
+* Add missing bindings for the protocol. [Konrad/Dmitry]
+* Use alternate bindings. [Dmitry/Konrad]
+* Rebase on top of Cristian's "SCMI multiple vendor protocol support" series. [Cristian]
+* Add more documentation wherever possible. [Sudeep]
+* Replace pr_err/info with it's dev equivalents.
+* Mixed tabs and initialization cleanups in the memlat driver. [Konrad]
+* Commit message update for the memlat driver. [Dmitry]
+* Cleanups/Fixes suggested for the client driver. [Dmitry/Konrad/Cristian]
+* Use opp-tables instead of memfreq-tbl. [Dmitry/Konrad]
+* Detect physical cpu to deal with variants with reduced cpu count.
+* Add support for DDR_QOS mem_type.
 
 
 
-On 2024/11/15 0:44, Tejun Heo wrote:
-> Hello,
-> 
-> On Thu, Nov 14, 2024 at 03:47:58PM +0800, Chen Ridong wrote:
->> On 2024/11/13 22:34, Valentin Schneider wrote:
->>> On 11/11/24 13:54, Chen Ridong wrote:
->>>> From: Chen Ridong <chenridong@huawei.com>
->>>>
->>>> Before the commit f5d39b020809 ("freezer,sched: Rewrite core freezer
->>>> logic"), the frozen task stat was reported as 'D' in cgroup v1.
->>>> However, after rewriting core freezer logic, the frozen task stat is
->>>> reported as 'R'. This is confusing, especially when a task with stat of
->>>> 'S' is frozen.
->>>>
->>>> This can be reproduced as bellow step:
->>>> cd /sys/fs/cgroup/freezer/
->>>> mkdir test
->>>> sleep 1000 &
->>>> [1] 739         // task whose stat is 'S'
->>>> echo 739 > test/cgroup.procs
->>>> echo FROZEN > test/freezer.state
->>>> ps -aux | grep 739
->>>> root     739  0.1  0.0   8376  1812 pts/0    R    10:56   0:00 sleep 1000
->>>>
->>>> As shown above, a task whose stat is 'S' was changed to 'R' when it was
->>>> frozen. To solve this issue, simply maintain the same reported state as
->>>> before the rewrite.
-> 
-> The whole point of the freezer rewrite was preventing userspace from causing
-> arbitrary and indefinite D states which leads to all sorts of problems. The
-> tasks in cgroup2 freezer are *not* in uninterruptible sleeps. They are in
-> task stop loops and thus can be killed, ptraced and so on. It *should*
-> report S.
-> 
-> Thanks.
-> 
+Sibi Sankar (2):
+  firmware: arm_scmi: Add QCOM Generic Vendor Protocol documentation
+  firmware: arm_scmi: vendors: Add QCOM SCMI Generic Extensions
 
-Hi, Tj, There is no ambiguity what cgroup v2 shows. However, in cgroup
-v1, the frozen tasks are reported as 'R'.  Do you think this is reseanable?
+ drivers/firmware/arm_scmi/Kconfig             |   1 +
+ drivers/firmware/arm_scmi/Makefile            |   1 +
+ .../firmware/arm_scmi/vendors/qcom/Kconfig    |  15 ++
+ .../firmware/arm_scmi/vendors/qcom/Makefile   |   2 +
+ .../arm_scmi/vendors/qcom/qcom-generic-ext.c  | 139 ++++++++++++
+ .../arm_scmi/vendors/qcom/qcom_generic.rst    | 211 ++++++++++++++++++
+ include/linux/scmi_qcom_protocol.h            |  37 +++
+ 7 files changed, 406 insertions(+)
+ create mode 100644 drivers/firmware/arm_scmi/vendors/qcom/Kconfig
+ create mode 100644 drivers/firmware/arm_scmi/vendors/qcom/Makefile
+ create mode 100644 drivers/firmware/arm_scmi/vendors/qcom/qcom-generic-ext.c
+ create mode 100644 drivers/firmware/arm_scmi/vendors/qcom/qcom_generic.rst
+ create mode 100644 include/linux/scmi_qcom_protocol.h
 
-Thanks,
-Ridong
+-- 
+2.34.1
 
 
