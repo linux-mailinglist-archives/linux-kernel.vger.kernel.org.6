@@ -1,178 +1,181 @@
-Return-Path: <linux-kernel+bounces-410742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61BB99CE06A
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:44:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 866409CE06C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 14:44:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD52CB287CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:44:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4696B288B97
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 13:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8132C1CEAD1;
-	Fri, 15 Nov 2024 13:41:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13D01CF28B;
+	Fri, 15 Nov 2024 13:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Bi38/vME"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cFoEq/ui"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D298C1CD21B
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 13:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6FD1CEE98;
+	Fri, 15 Nov 2024 13:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731678110; cv=none; b=iCHux+X8JBkH9TaQtUUoW2tP1YHsxuN+qUbCgsqPTQ+n2axahcQSQGl+O4Yjb1mHcduwPzgks0Thyy1gpX172rSVgq+2bk1bb0ZOunPEkp+4ZyF5mtaRnXGspxHsAqbxx+L9+H+UcvB4n7Oos/+Ge3uYO5PLWeiFVI3a5uiwRwk=
+	t=1731678119; cv=none; b=rT6cqBEvMUU9Nh65e0uphDIhvl4R8/+qxQtQQ2RdOwxkJ6ZL2mlvClaO/MuS/9mqrrtznrrEeg1j5Btn/sUiHgmeWJq4Q8XbPxHo7k/Rhi2VCEEDZ8jN8TFvjRkSS1wTgAYzDwbQiYjlmwaRZ1dK47gx6HYd5QLnwJAY9St4jyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731678110; c=relaxed/simple;
-	bh=b4OaTEz3T5Uhwk/Ra82qj5sL573WaPqkJnX3eHFAZIo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tkXpsdtyi1K+4RwW5EIi4EDWl5T/Gowb3WhSbt7irLu5jhLBrndKvORlZEtrq+NlwnWaNZgro7FvicHuQHho0rrFM1RQPZEIvFzOTZlCEhVdfVM/3qYty/mRFd8h9QPmPED7pHIuh4qV0CbFaKhrgCJ1ia4FHoh8pySLGDnVcLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Bi38/vME; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315df7b43fso15283895e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 05:41:48 -0800 (PST)
+	s=arc-20240116; t=1731678119; c=relaxed/simple;
+	bh=hRf+VnrslbS6Gra4rG8tKwLOvhJZYSoAdLoxpwx0n98=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XJ41KnStjmbo9aH4cwHTNJAa+es9jKn3AMUjtrNlYknIIUmWe9K8RtNUYCcUPlvJGEYHhsSJw0+getDYVSLle1ADeVdh8VuBCPOoeJlSUZDf6VDieNZJNiO+DfeXceSEZDJ9cnUw3iTqkBekS2i6NxGVKnUD5Gh2T2VsSeKbs/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cFoEq/ui; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a850270e2so343701566b.0;
+        Fri, 15 Nov 2024 05:41:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731678107; x=1732282907; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1smb8M8u3kZ9zTyhl0ig5iGFrkvBmbXBHd6InjP0eZM=;
-        b=Bi38/vMEeZzBwRz7CL0ISBG82vPrAUi/OtU2s8EK6EjZfDekIYDFe/LGp+RzCsxE7X
-         V5o8ydFTXryvRMnoKn8txwya9x0asTkIshgjDTQ9jWhqC/QpKz0WltYDJCn+Iep4P8He
-         nN3O8dMrxIviRRtXSVIxw8axEUsH4EA9AymepzDhYDi6UwOS2XF5aVoxiNR6fDjGR0jy
-         Sd3oPpYHTBMxjiL1aPfGNeG8CYIvxMIzIJPpzENBhQE6y6+DU51IyC+Z7/WF7sls/K9r
-         hHkXnwj9vk8tnHgMY/cnwQPlv/wSMv9rhdMJRJtRpLhgmwx9ApqV92luMxXvwg2Gri3h
-         rYxg==
+        d=gmail.com; s=20230601; t=1731678116; x=1732282916; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=DFKvh8X0eWRG0GFEe/XAbitN4YrNcuJmHBxKKcIml5E=;
+        b=cFoEq/uipf3+/Kqcw7+3YESu0qtF+lxzW7j6D1xraEw81fZZ4sp9vzw2QCoJF49Vx0
+         WijWOY3GH4A4zWH66rbVFYW0301vy3Yz1WCei8WvtVO2OZRKWEEcRcJeO2emNV+mqH20
+         blv79rSqWjG+3h5j5rYiOgsSFV1o0d6NN8UM38565ahGmjbqulvSA4wk74BYBF8k282+
+         xNRXPlT+xmj8YpxcOakuxr0UazeOM+WPpvu8Ood6umXef62NOg+KrRv0Q4GfIAs9CNNa
+         bFnCqZs8BiX1sJuM/iaj3QWMyB7n2+CrUlINPLlGEFmKvOiaR7g27B3OzbfDUBqaEF/m
+         PRXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731678107; x=1732282907;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1731678116; x=1732282916;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1smb8M8u3kZ9zTyhl0ig5iGFrkvBmbXBHd6InjP0eZM=;
-        b=pB7kKFSK9vcr/gpNqGJTqxFdxYQFZRmRL8j1qDhsac/Jtor5nFW6zyMw/A4318somV
-         gKBv1TKa0YkMVIBx5Hg76yY3xzulU2RBy5NZBx3qchAaV9y5sVz2hxpdqVv9NdztdeNS
-         kMiNr84lgykooCE+Gf0svu5Y/MAn3Uci5fsaShOmBZVyHmRAvcPMOSAJG/DZkNqVafDO
-         Uzta4fct7wML3CTQSH+dklqWw6MfXce6YUP2HXWQYQ9AoWDL4PvdWxm04xRqgD6025wm
-         dRY3vfjNF4LEbhoTNm411ggQewgZzzt6Oil34dlFaulnF23ZnqZg9OgekRtBRpX229cK
-         pOQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUmd34CdiCVZvLUYkUPWONRlQPjd9Umw/xL+g9OFzTpFbcf9kam4cI047YPeid7h3iRWLALC/S3uK+YGSo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz58N+7Ibw7mYaB14YZqtiySSgIbv8es2AMtxKuQdJh6u5p/LxD
-	zz63v/zf3oqzsruaWkWoI3jCoNWID85vtkGkSG4pzjrsAZ8B5b3yD62ML8+YPSw=
-X-Google-Smtp-Source: AGHT+IE/3oI4O4I+mkLYx/mRZ1mvnUF9eVOGFBiOib2xyb9Swwsg7/9DcDdSA3l1+BWSUIkfL+ONZg==
-X-Received: by 2002:a05:6000:788:b0:37d:4389:e9de with SMTP id ffacd0b85a97d-3822590b85bmr1972047f8f.1.1731678107177;
-        Fri, 15 Nov 2024 05:41:47 -0800 (PST)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821adbeb7dsm4337049f8f.58.2024.11.15.05.41.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 05:41:46 -0800 (PST)
-Date: Fri, 15 Nov 2024 14:41:45 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, hannes@cmpxchg.org, 
-	surenb@google.com, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 0/4] sched: Fix missing irq time when
- CONFIG_IRQ_TIME_ACCOUNTING is enabled
-Message-ID: <dmibxkog4sdbuddotjslmyv6zgyptgbq5voujhfnitdag2645m@bl4jphfz3xzg>
-References: <20241108132904.6932-1-laoar.shao@gmail.com>
+        bh=DFKvh8X0eWRG0GFEe/XAbitN4YrNcuJmHBxKKcIml5E=;
+        b=utt5VrYEZmQhjbvz3FElXbDNXnrviuamBPuhLXgEcpFWhh5flzUpZrRZE/l8zH8U7F
+         tXA6CYLg0OC1300NsUX+V0+7WxhPYfi2fmal3zw/FQft4Fsl813DDoe89BHHTZPFW5gy
+         xxW76neszPXUGEIwk8QYfmJXQmeN/PXr/Ng1oQQTUdBfCQJr82mXzlbt18EoZZHlQXVx
+         2gCCUptGwNuliT0Yd//7tmq1nf48SKVfvaOPn24cXfkEuRSqmdXwGpxhEiYiddJy2t8C
+         JKE7dXU9V+HzAH6XR8hDJP1CFUAQyAGsuk+a+mvXQUIBRzaO7oPPUcjCZKEfy0ayDjhN
+         njnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfhAiT0LCfpbpe56h02pTG4cDxKGZ9CPZdsbBWJOAeQqVc1DVk5mqExxHm/46J/SUcYq80fSbtFFt9N3c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMFbB5Dvv4Me5/sciOea09wy/STYzT794g+HEtl+vX5Di9Io/O
+	NkRZU7RKcOLRoGK0ONthRVAUzi4Hys9ooL3C7F8QfczpMxcur20/
+X-Google-Smtp-Source: AGHT+IEoHu0EWFGsk5B5nmRU8tr0m7Q8f4H38YW4o1/LtZol1g9TFT30zrsCH3v5q410wB/tfXRjMg==
+X-Received: by 2002:a17:907:9802:b0:a9a:1778:7024 with SMTP id a640c23a62f3a-aa483421c64mr246131566b.20.1731678116100;
+        Fri, 15 Nov 2024 05:41:56 -0800 (PST)
+Received: from ?IPV6:2a02:3100:b259:e900:7566:ab7c:4e9b:5c72? (dynamic-2a02-3100-b259-e900-7566-ab7c-4e9b-5c72.310.pool.telefonica.de. [2a02:3100:b259:e900:7566:ab7c:4e9b:5c72])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-aa20dfffc00sm183182066b.101.2024.11.15.05.41.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 05:41:54 -0800 (PST)
+Message-ID: <403be2f6-bab1-4a63-bad4-c7eac1e572ee@gmail.com>
+Date: Fri, 15 Nov 2024 14:41:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6k67xk3cawa3ll3a"
-Content-Disposition: inline
-In-Reply-To: <20241108132904.6932-1-laoar.shao@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2 0/2] Fix 'ethtool --show-eee' during initial stage
+To: Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+ Andrew Lunn <andrew@lunn.ch>, Russell King <linux@armlinux.org.uk>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+References: <20241115111151.183108-1-yong.liang.choong@linux.intel.com>
+Content-Language: en-US
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Autocrypt: addr=hkallweit1@gmail.com; keydata=
+ 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
+In-Reply-To: <20241115111151.183108-1-yong.liang.choong@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 15.11.2024 12:11, Choong Yong Liang wrote:
+> From: Choong Yong Liang <yong.liang.choong@intel.com>
+> 
+> When the MAC boots up with a Marvell PHY and phy_support_eee() is implemented,
+> the 'ethtool --show-eee' command shows that EEE is enabled, but in actuality,
+> the driver side is disabled. If we try to enable EEE through
+> 'ethtool --set-eee' for a Marvell PHY, nothing happens because the eee_cfg
+> matches the setting required to enable EEE in ethnl_set_eee().
+> 
+> This patch series will remove phydev->eee_enabled and replace it with
+> eee_cfg.eee_enabled. When performing genphy_c45_an_config_eee_aneg(), it
+> will follow the master configuration to have software and hardware in sync,
+> allowing 'ethtool --show-eee' to display the correct value during the
+> initial stage.
+> 
+> v2 changes:
+>  - Implement the prototype suggested by Russell
+>  - Check EEE before calling phy_support_eee()
+> 
+> Thanks to Russell for the proposed prototype in [1].
+> 
+> Reference:
+> [1] https://patchwork.kernel.org/comment/26121323/
+> 
+> Choong Yong Liang (2):
+>   net: phy: replace phydev->eee_enabled with eee_cfg.eee_enabled
+>   net: stmmac: set initial EEE policy configuration
+> 
+>  drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |  3 +++
+>  drivers/net/phy/phy-c45.c                         | 11 +++++------
+>  drivers/net/phy/phy_device.c                      |  6 +++---
+>  include/linux/phy.h                               |  5 ++---
+>  4 files changed, 13 insertions(+), 12 deletions(-)
+> 
 
---6k67xk3cawa3ll3a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Russell submitted the proposed patch already:
+https://patchwork.kernel.org/project/netdevbpf/patch/E1tBXAF-00341F-EQ@rmk-PC.armlinux.org.uk/
+So there's no need for your patch 1.
 
-Hello Yafang.
-
-On Fri, Nov 08, 2024 at 09:29:00PM GMT, Yafang Shao <laoar.shao@gmail.com> =
-wrote:
-> After enabling CONFIG_IRQ_TIME_ACCOUNTING to track IRQ pressure in our
-> container environment, we encountered several user-visible behavioral
-> changes:
->=20
-> - Interrupted IRQ/softirq time is excluded in the cpuacct cgroup
->=20
->   This breaks userspace applications that rely on CPU usage data from
->   cgroups to monitor CPU pressure. This patchset resolves the issue by
->   ensuring that IRQ/softirq time is included in the cgroup of the
->   interrupted tasks.
->=20
-> - getrusage(2) does not include time interrupted by IRQ/softirq
->=20
->   Some services use getrusage(2) to check if workloads are experiencing C=
-PU
->   pressure. Since IRQ/softirq time is no longer included in task runtime,
->   getrusage(2) can no longer reflect the CPU pressure caused by heavy
->   interrupts.
-=20
-I understand that IRQ/softirq time is difficult to attribute to an
-"accountable" entity and it's technically simplest to attribute it
-everyone/noone, i.e. to root cgroup (or through a global stat w/out
-cgroups).
-
-> This patchset addresses the first issue, which is relatively
-> straightforward. Once this solution is accepted, I will address the second
-> issue in a follow-up patchset.
-
-Is the first issue about cpuacct data or irq.pressure?
-
-It sounds kind of both and I noticed the docs for irq.pressure is
-lacking in Documentation/accounting/psi.rst. When you're touching this,
-could you please add a paragraph or sentence explaining what does this
-value represent?
-
-(Also, there is same change both for cpuacct and
-cgroup_base_stat_cputime_show(), right?)
-
->                    ----------------
->                    | Load Balancer|
->                    ----------------
->                 /    |      |        \
->                /     |      |         \=20
->           Server1 Server2 Server3 ... ServerN
->=20
-> Although the load balancer's algorithm is complex, it follows some core
-> principles:
->=20
-> - When server CPU utilization increases, it adds more servers and deploys
->   additional instances to meet SLA requirements.
-> - When server CPU utilization decreases, it scales down by decommissioning
->   servers and reducing the number of instances to save on costs.
-
-A server here references to a whole node (whole kernel) or to a cgroup
-(i.e. more servers on top of one kernel)?
-
-> The load balancer is malfunctioning due to the exclusion of IRQ time from
-> CPU utilization calculations.
-
-Could this be fixed by subtracting (global) IRQ time from (presumed
-total) system capacity that the balancer uses for its decisions? (i.e.
-without exact per-cgroup breakdown of IRQ time)
-
-Thanks,
-Michal
-
---6k67xk3cawa3ll3a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZzdPlgAKCRAt3Wney77B
-SQHeAQDXtJObG5fsVenK4tykTYooC4DGP5Zvc55ewS/GJ2SgSAEA3xaZ6007r4gD
-So/70wGjjcIUsDNFl3SjVFAoIcXxRQk=
-=MuN9
------END PGP SIGNATURE-----
-
---6k67xk3cawa3ll3a--
 
