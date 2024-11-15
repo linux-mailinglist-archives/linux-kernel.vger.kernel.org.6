@@ -1,147 +1,227 @@
-Return-Path: <linux-kernel+bounces-410595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E6269CDDB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:49:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF5709CDDA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:43:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FB03281071
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:49:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FAA628154F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB07B1B6D12;
-	Fri, 15 Nov 2024 11:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69C61B85E1;
+	Fri, 15 Nov 2024 11:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b="Qxe4IQKm"
-Received: from sonic310-19.consmr.mail.sg3.yahoo.com (sonic310-19.consmr.mail.sg3.yahoo.com [106.10.244.139])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tjVse01e";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2jl2eHDo";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tjVse01e";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2jl2eHDo"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B8D19CD08
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 11:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.244.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FD01B0F01;
+	Fri, 15 Nov 2024 11:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731671329; cv=none; b=X5sjiqkteFMdDaXKt4uBjDvQ+2VRPCygmWrxyhnS6T4LKKyr1xLxobaAOg9T/+xasPMIEkbdhEcUmrpS87Zid95Cmg4VWiES/IXjhjGqhTxGix9wxkJtDrZQzZGrDPOuDYsy01mMYHcdLKltLksp3cCmjLSXXgGfRAEoD8qvMLs=
+	t=1731671001; cv=none; b=GzQBt0ouwTWCUWJGmeupc84I0H2gF9JtraDa3hJc0LXQEFO4OPHoMqV8GG16oVD2lRceFv38X1/6DfvpxAiwQ2kxUcC0JknMQkHu2WMN+v+9zNP6ESG7gp69fWUji/aaBMR3P5JiZXDs3Up3DK/fYmPePDd2crKWvqb3wVqr4GE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731671329; c=relaxed/simple;
-	bh=OnDf94qXqJME3uv2xgfbcT2B3dWTZAKRDr8mjMcS1Og=;
+	s=arc-20240116; t=1731671001; c=relaxed/simple;
+	bh=GcLpIyPvJbNsw+NrTKj8LwVrdJQlG+ZNe2TcjmstYq0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NzD9aRBznArRv5akSBoZwbZIE2ZGOO4pg2CrntjQnXf+d7jLikRgR5A+pjAjYDAPJw237PssAH1I+aQa36fFrpzRv/fsyJI5Styuz+VIDPFGwRI6rS8jnQEuWE7coINq6yQwek7X+0OrQERQR1luUwAhoOioUmP2iA7F0Xu9uh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com; spf=pass smtp.mailfrom=myyahoo.com; dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b=Qxe4IQKm; arc=none smtp.client-ip=106.10.244.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=myyahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=myyahoo.com; s=s2048; t=1731671325; bh=ymy4YE4+32rvowGxGzjT8scqBj0xagLUgW/EaGm0XEw=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject:Reply-To; b=Qxe4IQKmEly0N8UiGAb98vMMzwDqZ6rL1wuGgBW2jJsMP9D83JAfOxfxmigOoss0z8LVYzl1HGd4CkbxjEKnKve6HMIPeFfhzv8grDqqW5NBYkruwMO0sRZ+GeIw3uY4RIZLK6RTWLNbQk2CrTNbsR/CeOdyahP8nWjPkUQhBjZCSRAooNqeGdKaJrrWMCrloZUmIAQ/gf7/eQjdN8reOruViJKg0b0RlQVOmfV8UZ8xbwM392FeXXr5TOQa+UCwRbO+UGLkfKwbRXqucJnfhpvu65B52w+qTUAmLZVYCR1SjacKbKPqHWGajB/YS1/VjG1in9NUAOukoVarOS2e6g==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731671325; bh=iLE9mFCD+xIQafzddIOo8fSiZzBI0W0CEH000RPu6zc=; h=X-Sonic-MF:Date:From:To:Subject:From:Subject; b=gXhr8360XiXZEuhTgQAQBi/UtLYemXQ3cBQOq7+lRpHyBBsCSHcZTtB9/P1mA3gv0N2IlkTf9Z25XF7rDklTsFURBkYCCs2Wl07tjIUaRHiLruKBC4bJPY2hWbrvhN7zSNe+i+dkG/No0z2ycYCkkbi/sMzYzX45NhVQfwtgyWdMtn9J6iU44zGyaQRkeGjyPRu2A7BQVmhGj+C7P9iFsem+nAzUY9B8CZdV9eVutrszzsbV43GzzSKvJxTM/QSxm0I0alTZ49lltu8guFamk3WHBpNO4/pRhJEWNO74j3ssGansyYkXSjxA2c9sTKdgXf57FbIXo+zRGqupKoc56Q==
-X-YMail-OSG: du_03PUVM1nbu2lPdtHThzF5TV29CnBdY6lXgjxfvaxZ5Y_Bqe5zChd2btCY7aZ
- rOppWLxupWCZ6p_EIvfOdhVo6ezHUCxgLUUMICiXdjsRtx1CJJMu6xiJU6xBHYwNDzY2byNu.J7B
- 0PDKYyt5Io5VpoL829OtGKv7KFGG7lV_PUd4bFREOf0ShMZOk0xL6yRroZYilH0fILAmJSq2aZBC
- W0.848M2I8b9SdTApUycXImFmZfl7Mc.MKJEkeLCHWnfU4IedfPd6WGfRQPNWlnAbgjV_ZCKuQn4
- w3o8d1KpMePySeHGx7NMyX95v3IBjyn36o6l1zJqlUe4kOoMcrx42ZREhb_ADs2H7MttdJxiGj4f
- RmL4OfxzRimzO7jAdyVL6nWmrgk3Sj6wJ09nXVbx.vG_3bWsHbmuD25ZFXm6LpWCV3P61QZ_N1Am
- b9iZc2PlVntlM.TiUv8jHea6zaXX.vmBSBfKh0ILO7x_RUFS0Vo.B6X1BZbmIVyLRA5HbUTzlfRB
- dt8opp7nElPt1yEnNXdGkVokdwhfgNopiaB4Ev1._3F.LeMlKJTIyJoUB4su0Kkyt8K_ILyWlcUg
- iXWdUz8CHIk4DNj4P8PJgLGQ1cw3K8IqvzMTYknsCo3dbH8Ayj8FQcDLnoUBS1BsmYAtNbjIZgcJ
- 0HXytukyagDlCHWgLtLXLM0cSu_Qra0kimGyFkJmb.m1m31smrzLbJUKnlLrViuP5Ays_1bpKbQi
- v23imAJfcty2yFZJEdnvVGQcmrePJIQSIwiUVc9GP85a7gBezucXNMPeIEji2V2tCGvIC4QdZS5n
- BlGnIRmDojFXW3HoqVdFSyA8UKIfAEZ0Il4386.z.8cHSHv4bHkyK91A7UZZtEHaa9GDtRssD4dm
- xTvPIUM00x6wedevSxIB9NIp1ghuw9kV9Gxh5ybzR16WWMjYcFEGjc4S8CEuLyg.JKzPgZeu4zTo
- YnkFHQAloy0GBPcWSk02f_dDJX_RwWqYfNGl6LXGxUpRM4xHtAQvC1byOIibAR6Pwqhyc_4PdmU4
- Xh5fWVDBu0O6_FNhmKVpF0SsbssnfvAlSXPoR5vtabDc26.HkDFp7ojauy3zHsUX.q1tjIAjbd1z
- ANjHoQcix2G5Yl5371xkER7Kg5NYPuZNBw.Pq4jNYnqd1J3C.ZJwLLFjRbGM8DT5yJbI7tXmix1N
- KcDSn85pupsggtt1SBfFOQKmRegDctJr8Y7BejFr9YWNyDFwKDk2LkwWAZa8HfqJ6J.HJhDTGI.j
- UzKZVaI8RHcchbdaXX.QnTB_k6cPpcaCVI9ubIgKKrJjEmFRIuIN87F_YkKFa2LWCN13yzV6UQKK
- vqxz0io.MSZzXw_Q5.IzjGmSQO7f13rl75qqgU8R5stt5jD43LfEgf4p2YATapbt9yGvTlV.GXUp
- 0ImS_gz2IgJ76.K0t69HsPzEunt_KibwE8QNHl4ZSbSPsGAqfwoDZpKNUcJs8FfsWVwb.37xQd2r
- 1Rs1nak_aB7Lsbf3qs.EmMhRaX0RPU47..wAPt1SkJnmxyiOqQcud8AcJfxKHbDhvAMvV98cbSWR
- u8VsmnOoqDZAGO0hF4ZpczuD27CrC5hz3uH91sj.oZatcqK7KyrZdwhvqc8EOXa22kSr_jjDW5RF
- rFDd9MwCeKQgh6E.e.stTHxKWk9vH1zAEmQPkZGRuoRWBTngooXAPwgoI00MxKNUuCuC0FCXdm.3
- yn.6QaG8x3JBKtcns7ZCBfZSIEFJyVERx.xs.ijmTyaYABPZM4sXjOYz8vm7WB5eYPbUFiRx4ZEP
- hTh.2HBzyoDmK89JZ8_826mjawBHNWm3QJ_nzL.JNzeCeub5fTnGtN_UcH2kIHKcE4YMtp9OJp6d
- rDYM07SCv.5NpaECwAy8TX.ZW5svQIZ84w8YZAUf3GHOirwaqMFpV93bEM49FSV8ZrjDbpKhVnwW
- wJgpJs1iN2NcC36.QTNy2fLQe7NjK_OCunI6g3lPyTINouv_.yrhmNQ4cGvNCxcKxmjd.8_SWHcb
- wfmoaX7G1tVQimuFpma9ZuG14FiAc9g0vT8aPEx_Gkz7OjYComjSk7iZmR7wF6mQOCPB.i_dptP7
- .1yhcgIEgvgNWF1_TkxzkjQ3OWBJdmVE1XAeC3Iy3ZbFfLF5l8jaFUa8eKqXmjvKbftH9u9FNnXG
- jhNqNQc.vwx_BWsTxjcTNth58tWxqkLFkQ4D9iYJ06UA3g0NT5frdJyr50blCmYsDt0ayfosna1G
- VGvBLAAxeFWkryTt8ZCPwpLKgnIop
-X-Sonic-MF: <abdul.rahim@myyahoo.com>
-X-Sonic-ID: 18578443-bbd6-4016-88d0-db83ff0caa55
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.sg3.yahoo.com with HTTP; Fri, 15 Nov 2024 11:48:45 +0000
-Received: by hermes--production-sg3-5b7954b588-zm2md (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 0ab1e331c5efdc675a72082945876b22;
-          Fri, 15 Nov 2024 11:38:33 +0000 (UTC)
-Date: Fri, 15 Nov 2024 17:08:29 +0530
-From: Abdul Rahim <abdul.rahim@myyahoo.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: xiubli@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Use strscpy() instead of strcpy()
-Message-ID: <2purmecq5zso5dlheclxftxfalzazwgdunwvjap3ukhpp2bj57@7txx4wiaed2p>
-References: <20241111221037.92853-1-abdul.rahim.ref@myyahoo.com>
- <20241111221037.92853-1-abdul.rahim@myyahoo.com>
- <8fef8eab-cd82-4e05-ad9b-1bb8b5fe974b@wanadoo.fr>
- <o6dz6grwkknan6er5lig6i37ocfekn6i3fljltptn7aol45sfl@n5amdhwr7wmt>
- <e7cfb6b2-51a4-4c8e-9c43-20653bd1443f@wanadoo.fr>
- <bigyu3u3rawsy5c5oxpe7xpmq24jhuxdrnklplaqjs2san7jxh@k3k2ypxcdspk>
- <62b1d5d1-a648-461f-8002-8373e600ef31@wanadoo.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oTzqNu/77rsW5/75ES465G0es8vaC5pW1jQ+hEInINkIbNl3szroEkB9EHRsZ2rAUTOFnyZleaUUWRNrBNHgKM38C2Mn89WNW1xqkbNhs0c3blaDB0OO3r/tIkCJBUFT7gtWRh82jm+dGVJ0Lv4ueYV0HtX17GIgyoZcdcaNjPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tjVse01e; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2jl2eHDo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tjVse01e; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2jl2eHDo; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id AE43D211D5;
+	Fri, 15 Nov 2024 11:43:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731670994; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K6g60W+2gZhvsDr9fUHhz3WwNsDPK21sc48It32UHeA=;
+	b=tjVse01eBLXmVrr2AOa50bY0G5E4KnuT0kUlzGAprjTX5Ayh2B0KBTsNAD8Up881IDLpIH
+	KTsWf1St+KcfKPhkx92mNw5jo0oAcCarc/Iuqv2oNhF+4mzLJ7bF5uzBUgLF1tUZ1hui7i
+	0ntbQIfQmoyhdAm1VTRgXCyZgimLv1A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731670994;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K6g60W+2gZhvsDr9fUHhz3WwNsDPK21sc48It32UHeA=;
+	b=2jl2eHDouD4ayn5dj7/o+6fICOU2BqOImSOaSl4zs3X2pfPAN+0XmFdYXGC1muAlYCqPmi
+	0UVE7Mw7IIEoUtCQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731670994; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K6g60W+2gZhvsDr9fUHhz3WwNsDPK21sc48It32UHeA=;
+	b=tjVse01eBLXmVrr2AOa50bY0G5E4KnuT0kUlzGAprjTX5Ayh2B0KBTsNAD8Up881IDLpIH
+	KTsWf1St+KcfKPhkx92mNw5jo0oAcCarc/Iuqv2oNhF+4mzLJ7bF5uzBUgLF1tUZ1hui7i
+	0ntbQIfQmoyhdAm1VTRgXCyZgimLv1A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731670994;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K6g60W+2gZhvsDr9fUHhz3WwNsDPK21sc48It32UHeA=;
+	b=2jl2eHDouD4ayn5dj7/o+6fICOU2BqOImSOaSl4zs3X2pfPAN+0XmFdYXGC1muAlYCqPmi
+	0UVE7Mw7IIEoUtCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A3082134B8;
+	Fri, 15 Nov 2024 11:43:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id vjPFJ9IzN2f5cAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 15 Nov 2024 11:43:14 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 668E5A0986; Fri, 15 Nov 2024 12:43:06 +0100 (CET)
+Date: Fri, 15 Nov 2024 12:43:06 +0100
+From: Jan Kara <jack@suse.cz>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com,
+	almaz.alexandrovich@paragon-software.com, brauner@kernel.org,
+	jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev,
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] fs: add check for symlink corrupted
+Message-ID: <20241115114306.5sgqa3opc56rhu4x@quack3>
+References: <67363c96.050a0220.1324f8.009e.GAE@google.com>
+ <20241115094908.3783952-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rlevuqj6vbf35pos"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <62b1d5d1-a648-461f-8002-8373e600ef31@wanadoo.fr>
-X-Mailer: WebService/1.1.22876 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+In-Reply-To: <20241115094908.3783952-1-lizhi.xu@windriver.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[73d8fc29ec7cba8286fa];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,appspotmail.com:email,suse.com:email]
+X-Spam-Score: -2.30
+X-Spam-Flag: NO
 
+On Fri 15-11-24 17:49:08, Lizhi Xu wrote:
+> syzbot reported a null-ptr-deref in pick_link. [1]
+> When symlink's inode is corrupted, the value of the i_link is 2 in this case,
+> it will trigger null pointer deref when accessing *res in pick_link(). 
+> 
+> To avoid this issue, add a check for inode mode, return -EINVAL when it's
+> not symlink.
+> 
+> [1]
+> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+> CPU: 0 UID: 0 PID: 5310 Comm: syz-executor255 Not tainted 6.12.0-rc6-syzkaller-00318-ga9cda7c0ffed #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> RIP: 0010:pick_link+0x51c/0xd50 fs/namei.c:1864
 
---rlevuqj6vbf35pos
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hum, based on line number is:
 
-On Thu, Nov 14, 2024 at 09:53:46PM +0100, Christophe JAILLET wrote:
-> Le 14/11/2024 =E0 10:14, Abdul Rahim a =E9crit=A0:
-> > On Wed, Nov 13, 2024 at 10:28:36PM +0100, Christophe JAILLET wrote:
->=20
-> ...
->=20
-> > diff --git a/fs/ceph/export.c b/fs/ceph/export.c
-> > index 0e5b3c7b3756..48265c879fcf 100644
-> > --- a/fs/ceph/export.c
-> > +++ b/fs/ceph/export.c
-> > @@ -452,7 +452,12 @@ static int __get_snap_name(struct dentry *parent, =
-char *name,
-> >   		goto out;
-> >   	if (ceph_snap(inode) =3D=3D CEPH_SNAPDIR) {
-> >   		if (ceph_snap(dir) =3D=3D CEPH_NOSNAP) {
-> > -			strcpy(name, fsc->mount_options->snapdir_name);
-> > +			/*
-> > +			 * get_name assumes that name is pointing to a
-> > +			 * NAME_MAX+1 sized buffer
-> > +			 */
->=20
-> It is a matter of taste, and I'm not the maintainer, but my personal feel=
-ing
-> would go for something like:
->=20
-> /* .get_name() from struct export_operations assumes that its 'name'
-> parameter is pointing to a NAME_MAX+1 sized buffer */
->=20
-> CJ
+        if (*res == '/') { <<<< HERE
+                error = nd_jump_root(nd);
+                if (unlikely(error))
 
-https://lore.kernel.org/lkml/20241115112419.11137-1-abdul.rahim@myyahoo.com/
+So res would be non-zero but a small number.
 
---rlevuqj6vbf35pos
-Content-Type: application/pgp-signature; name="signature.asc"
+> Code: c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 fc 00 e9 ff 48 8b 2b 48 85 ed 0f 84 92 00 00 00 e8 7b 36 7f ff 48 89 e8 48 c1 e8 03 <42> 0f b6 04 38 84 c0 0f 85 a2 05 00 00 0f b6 5d 00 bf 2f 00 00 00
+> RSP: 0018:ffffc9000d147998 EFLAGS: 00010246
+> RAX: 0000000000000000 RBX: ffff88804558dec8 RCX: ffff88801ec7a440
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: 0000000000000002 R08: ffffffff8215a35f R09: 1ffffffff203a13d
+> R10: dffffc0000000000 R11: fffffbfff203a13e R12: 1ffff92001a28f93
+> R13: ffffc9000d147af8 R14: 1ffff92001a28f5f R15: dffffc0000000000
+> FS:  0000555577611380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fcc0a595ed8 CR3: 0000000035760000 CR4: 0000000000352ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  step_into+0xca9/0x1080 fs/namei.c:1923
+>  lookup_last fs/namei.c:2556 [inline]
+>  path_lookupat+0x16f/0x450 fs/namei.c:2580
+>  filename_lookup+0x256/0x610 fs/namei.c:2609
+>  user_path_at+0x3a/0x60 fs/namei.c:3016
+>  do_mount fs/namespace.c:3844 [inline]
+>  __do_sys_mount fs/namespace.c:4057 [inline]
+>  __se_sys_mount+0x297/0x3c0 fs/namespace.c:4034
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f4b18ad5b19
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffc2e486c48 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 00007f4b18ad5b19
+> RDX: 0000000000000000 RSI: 00000000200000c0 RDI: 0000000000000000
+> RBP: 00007f4b18b685f0 R08: 0000000000000000 R09: 00005555776124c0
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc2e486c70
+> R13: 00007ffc2e486e98 R14: 431bde82d7b634db R15: 00007f4b18b1e03b
+>  </TASK>
+> 
+> Reported-and-tested-by: syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=73d8fc29ec7cba8286fa
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> ---
+>  fs/namei.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 4a4a22a08ac2..f5dbccb3aafc 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1844,6 +1844,9 @@ static const char *pick_link(struct nameidata *nd, struct path *link,
+>  	if (unlikely(error))
+>  		return ERR_PTR(error);
+>  
+> +	if (!S_ISLNK(inode->i_mode))
+> +		return ERR_PTR(-EINVAL);
+> +
 
------BEGIN PGP SIGNATURE-----
+So I don't see how we can get here without inode being a symlink.
+pick_link() is called from step_into() which has among other things:
 
-iHUEABYKAB0WIQQGANE32qobQCmkOMwCzg70Hch2QAUCZzcysQAKCRACzg70Hch2
-QPNVAQCRSkBTTIi1KB8EvapDt7zQyOobiFBctV3d1gbdb2zxMgD/fKrBzPgS64Ax
-o4tWD1kRcyJ4FQbNA/Der1k5YuLiHQk=
-=fFEH
------END PGP SIGNATURE-----
+if (likely(!d_is_symlink(path.dentry)) || ...)
+	do something and return
 
---rlevuqj6vbf35pos--
+so we are checking whether the inode is a symlink before calling
+pick_link(). And yes, the d_is_symlink() is using cached type in
+dentry->d_flags so they could mismatch. But inode is not supposed to change
+its type during its lifetime so if there is a mismatch that is the problem
+that needs to be fixed.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
