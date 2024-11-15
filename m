@@ -1,116 +1,144 @@
-Return-Path: <linux-kernel+bounces-411111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 488229CF445
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 19:48:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A41E9CF33D
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 18:47:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFA5EB2E3CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:40:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 254FCB2E643
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 17:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8411D63E4;
-	Fri, 15 Nov 2024 17:40:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628531D8E1E;
+	Fri, 15 Nov 2024 17:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="BqbclHQI"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="P5pZgxis"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469BE187561;
-	Fri, 15 Nov 2024 17:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5100E1D5ADB;
+	Fri, 15 Nov 2024 17:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731692405; cv=none; b=DUwudYy64AO8KgTnq0G6bSZ6Xdc4nOXaR2bxoOdWzcg7tFJLv859FBg9wkKX3ctYIhW38jBwC2Ze9uu5pNoE4jIfSw06CJEQHYV7Qli+zg2iLYGFlumbM6plw+LJRzA/iTEBqn1Q68gXpTe/SG9xtIfdmDfsGFuGq1yZIx+Oj7c=
+	t=1731692708; cv=none; b=RWIj+i9H11b4ZMkLfXJgkgaJFBXZVYZWGUKHteTUYzz6cfys7CRAXpwJI2ufI+Wp4fn7eXXDEOLg30KrVNDSJzCH5TzsL0zwikqjKNF8/pAO9ecxGWHq47UC18ljN4zJksesSjR6m+Wq7+If8eqJj9MGGV9bUNDO7vhNzHnDdyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731692405; c=relaxed/simple;
-	bh=p7ci1neMpIlILdwObEgt1kk2VCbDQw3dhgVddn4i4P0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y8s934WW++uNy8AE6JtM3emrv0FBptE3zjBqzEiCjIxsf7Dx/qzqWPKnQISpHEbXo+mxTQ4/ejmU2KFR8J16Z0XU5YU65p8Y8+Lw4Hjx+LsQ6wdfAnjyZViSfbvRO1rckJWzVYkUmN0plYmK1aXwzj9ST8BChX9hbLFZSJ9fnig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=BqbclHQI; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d49a7207cso1242139f8f.0;
-        Fri, 15 Nov 2024 09:40:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1731692402; x=1732297202; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S4kCyeAXmUMvmTaqsw8pK2lGpYkcX3PO6zCT06T8qxI=;
-        b=BqbclHQIP+ZqThsTNvBJ2WFk1gS6Pk0ssbTvAYmxCBYLnkJUsaXSb+OauubrkywXMv
-         64Hd+HIAyaxnw5JGN7XzOrzJ0SEUFSJM6QEjPG4W7XA1UwUOnRQI4XEo2+WfcWa1vGKx
-         x4PL0in/2FG802nvJCkA4eZ8D3O6DefSK8uJ/LWBBRY4UUxZunTVgllAlOIqic7zwAWd
-         DF4mBOtGHRHYNhbbRTy8ZhzzTKmh20RzuoEpBoQmJoCHMIVE2gQ9lDMFQXlNo0TzY3Xp
-         Sw/1X/G+mwpirZCxIXN3xgdeR7UvloWM3KeHmqwua06oejZpipNpiXw/b2JNjbqsHMYs
-         dZfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731692402; x=1732297202;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S4kCyeAXmUMvmTaqsw8pK2lGpYkcX3PO6zCT06T8qxI=;
-        b=XPHGruUq+rgZtVmuF8AWPj+ODp2eixCgT/AYwEN2DKlrPjq5HHzXMrJj94fWFMKv5n
-         iSSgRdmZgcbSrEe98U23X7HgPPjEdTUlOJ3gb2Fsb5KuDGIljnDDG98ERtPJPq0Lbo8Z
-         7krFiy6Txefk4nH46K2nwbpj1AIARtZ57W5aiV7UcgDEL8Rh7MB5NNd/+7jCtw3YwNU2
-         QA5cqykFVadhhqXFkSpJKQHxUPYu0nCOnWJUh9FFZpNsATLq0guhgouoyz+2JrOxfqhJ
-         ZFuPz4UxjgCputniU2ckO/VAxP0+ZBGEp8CLeqEmiXKPmCN8H363EKraBrdBQ0UFsoo/
-         2Wzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUIWMkv4EqJmDrJtWsl5dC/wj7tsRCIEItntiSBUNUUe9Gc85aETOW9v0ML6TXBWqZbgT7yTMF1@vger.kernel.org, AJvYcCXsNY09ge58g1GV75bfeUiJ7HVX2zz3gkXsJ7F7aj70+lPKW0fQ93i3G6/6gKdQQWGEkqFkarAdc6bQZzM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyQntOoEDMxO9AkR8tQ67K3rtOzLIbznogCRxUyTB3o3O19Mjy
-	YiUrPytlNff/Jcgt/DyEYWjToX0ojLUt0S3EAySDEKplmQqSycA=
-X-Google-Smtp-Source: AGHT+IE4AS7+FhYA0CzoCHJizPCmi4kWLoQILtvYYXD+QEbI9dEEwxD6J2O1Rvu2/4LDwK5TMY6G0Q==
-X-Received: by 2002:a5d:6da6:0:b0:37d:5364:d738 with SMTP id ffacd0b85a97d-38225a922d1mr2451204f8f.45.1731692402296;
-        Fri, 15 Nov 2024 09:40:02 -0800 (PST)
-Received: from [192.168.1.3] (p5b05792c.dip0.t-ipconnect.de. [91.5.121.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-382247849b0sm2959466f8f.97.2024.11.15.09.40.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 09:40:01 -0800 (PST)
-Message-ID: <588e886f-a626-4fc9-a49b-6767776a736d@googlemail.com>
-Date: Fri, 15 Nov 2024 18:40:00 +0100
+	s=arc-20240116; t=1731692708; c=relaxed/simple;
+	bh=QTWbwD3DKt0zr3HVsMrLQMkox5w7tN0rnElVWEnMM14=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OvimdVVK4oUWB/mfjAg9eFYRsY/fmj9xovm82dQPGMtreRRc9dpromr6ZCFuddZom4pMcAY5qdatcYvqrAocql/9ha7xvM27YTm2JIqSQxvjiUuqPJLX3pirNL8/ijagOVVr0UQqBZcIodEWyT7LTNllL/ExgabqfmUHPBa4LIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=P5pZgxis; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AFAYcWY008123;
+	Fri, 15 Nov 2024 17:45:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=9bwZzCyAvLguoe37pSaNCSSBT7z9
+	wKmcx4So1GTdFbs=; b=P5pZgxisEBU6TpexMjXjUUJAS4jxH9jyXTNIdgwdJ+l5
+	MmiOXh2qqtn11eBm6Ym3R+u+SyZ0o5u/bRJgTcoIvmcOdR3xG14U2FzUgKO6TO5O
+	2oAJWk+z1HvRX6lH1i9AMYLcoPcgHymjKabaDAnAsXWGUQXUYekVQ5p+Nj8rkppG
+	d9c6psyCrmoVLUfFoBhNX5vttE9gfp8hnfjOWCaYgiMNdNjYmL515FF1cNtfm0jH
+	l+WywwQhLRACCO6Yk5cwjuzZDAvo2zfAsAjylClZcNnI8k3amBmhCmuCOK4Hgfj2
+	gZELWBG9DMdCmLCdk2KAe5FbOdWV+VwYQNGdN07npg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42wu2vvsn5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 17:45:04 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AFHfs7v009421;
+	Fri, 15 Nov 2024 17:45:04 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42wu2vvsn1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 17:45:04 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AF8H6dM017821;
+	Fri, 15 Nov 2024 17:45:02 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42tk2n2se9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 15 Nov 2024 17:45:02 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AFHiwZb19726688
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 15 Nov 2024 17:44:58 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 438C32004D;
+	Fri, 15 Nov 2024 17:44:58 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1CD2820040;
+	Fri, 15 Nov 2024 17:44:58 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 15 Nov 2024 17:44:58 +0000 (GMT)
+From: Gerd Bayer <gbayer@linux.ibm.com>
+Date: Fri, 15 Nov 2024 18:44:57 +0100
+Subject: [PATCH net-next] net/smc: Run patches also by RDMA ML
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.11 00/63] 6.11.9-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20241115063725.892410236@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20241115063725.892410236@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241115-smc_lists-v1-1-a0a438125f13@linux.ibm.com>
+X-B4-Tracking: v=1; b=H4sIAJiIN2cC/22NywqDMBBFf0Vm3YiTFh9d9T+KFJOMdUATSVKxi
+ P/ekHWXh3s494BAninAvTjA08aBnU2AlwL0NNg3CTaJQVbyhljVIiz6NXOIQaiupbqVnbqihuS
+ vnkbec+sJlqKwtEfo0zIl3/lvPtkw7396GwoUXWO0GWmoGlSPme1nL1ktpXYL9Od5/gCTMqTIs
+ AAAAA==
+X-Change-ID: 20241106-smc_lists-b98e6829b31c
+To: Wenjia Zhang <wenjia@linux.ibm.com>, Jan Karcher <jaka@linux.ibm.com>,
+        "D. Wythe" <alibuda@linux.alibaba.com>,
+        Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
+        Leon Romanovsky <leon@kernel.org>
+Cc: Halil Pasic <pasic@linux.ibm.com>, linux-rdma@vger.kernel.org,
+        netdev@vger.kernel.org, linux390-list@tuxmaker.boeblingen.de.ibm.com,
+        linux-kernel@vger.kernel.org, Gerd Bayer <gbayer@linux.ibm.com>
+X-Mailer: b4 0.14.2
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: m24rJp-3g8Idy14-TaxmhZLjBXES-qUQ
+X-Proofpoint-GUID: LpD6NkObD4_44A3ElA8ZqYQXW7Vrk1nW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 suspectscore=0 bulkscore=0 mlxlogscore=999 impostorscore=0
+ malwarescore=0 mlxscore=0 clxscore=1011 adultscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411150148
 
-Am 15.11.2024 um 07:37 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.11.9 release.
-> There are 63 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Commits for the SMC protocol usually get carried through the netdev
+mailing list. Some portions use InfiniBand verbs that are discussed on
+the RDMA mailing list. So run patches by that list too to increase the
+likelihood that all interested parties can see them.
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+Signed-off-by: Gerd Bayer <gbayer@linux.ibm.com>
+---
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 32d157621b44fb919307e865e2481ab564eb17df..16024268b5fc1feb6c0d01eab3048bd9255d0bf9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20943,6 +20943,7 @@ M:	Jan Karcher <jaka@linux.ibm.com>
+ R:	D. Wythe <alibuda@linux.alibaba.com>
+ R:	Tony Lu <tonylu@linux.alibaba.com>
+ R:	Wen Gu <guwen@linux.alibaba.com>
++L:	linux-rdma@vger.kernel.org
+ L:	linux-s390@vger.kernel.org
+ S:	Supported
+ F:	net/smc/
 
-Beste Grüße,
-Peter Schneider
+---
+base-commit: 519b790af22e705ee3fae7d598f1afbb3d1cfdd5
+change-id: 20241106-smc_lists-b98e6829b31c
 
+Best regards,
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+Gerd Bayer <gbayer@linux.ibm.com>
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
