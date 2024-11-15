@@ -1,104 +1,121 @@
-Return-Path: <linux-kernel+bounces-410925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 892479CF082
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:45:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 951119CF084
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 16:45:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3550F1F266AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:45:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B05528F7CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 15:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3821D5AC9;
-	Fri, 15 Nov 2024 15:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5851F12E1;
+	Fri, 15 Nov 2024 15:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="UC3ExCUX"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ar0JnXH7"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7DC847C
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 15:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028EA1D5AC0;
+	Fri, 15 Nov 2024 15:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731685143; cv=none; b=CA6gS2EC7azAJBOTS3Q0pshMb15lk/md2D9yHOj/P+XzkP+f2jl1++rHJjAL+aMPimT2XyW0BQhkb51zh/XiNiI2u6WSJmOZ4ZI3TYjfmgZr4QWa/qNev79sQBQuQqCFYaflxNW2eUxhsx/g3hoAPj9RiikbwktX/a+6BdQHs8E=
+	t=1731685157; cv=none; b=W8QZboHJ/cFQVp3iCwMABF389hYUAqY9aGb/EfUOAvAoNIoPboo5nk9xXdG8LgTvH6FU99R94scFy2v5ObnG1y5FkRfQ1UKle73DqEJy8GZQnhNgqh96B72wyD7xpIscCFkjE575cCA/qBsgATOtHnA6baGCMmtTqvGFCClgQ3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731685143; c=relaxed/simple;
-	bh=YZf9OjMF0rWfp7DJck4HJJphVfS4WuI+ybgguJI0DfE=;
-	h=Date:Subject:CC:From:To:Message-ID; b=c8hIelhqISX5fO0FwZnELnhj+ghJhqolPdXdgyBQpRNIOLukGrg1eokDgG+mdp3ZzTfLJPVp3VUJ7xXBohURVox9xQ0iRFynIQGF3NMLQtD+dQNdbuSPDBflrt1bbbKoihCPaQHDOpSxKvs1s27+xL0m4MYW/X+vhdXMHqybbNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=UC3ExCUX; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7edb6879196so1447220a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 07:39:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1731685140; x=1732289940; darn=vger.kernel.org;
-        h=message-id:to:from:cc:subject:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ND7/dKOs1bs7dRKWzno0aqrE7dox+7Zrrq0GQ0dkX+4=;
-        b=UC3ExCUXhDPk7fK81yK375JlVpKswcAQwB3yDmNVe+RfLH+GhIcx6gXvLrCPRl1/SS
-         8nhKT3J9yLBM06GX8aJ6Xs47uWu1f57+X0On5HjhknO28zstEdITvn28qyxU9WF83/sU
-         g7TBbL/jqb3gJ6ehP5VawmBLOEllqZ2RaeKjp+uEecKdHQe6ilIUVZteHpZkE6WXhZ0J
-         wYz9nObbZs0e7UA3UragyswWUZnHF6mW2Y75O2D1aXf/7Fho/FYRLVYMk0QEul++T/q0
-         ygoE/SiB646nJPecFvnJrnmvosq/jM0xG6sk+QRSlEyM6Q2ja9LerkK6GRmd3K0JMAql
-         dqYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731685140; x=1732289940;
-        h=message-id:to:from:cc:subject:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ND7/dKOs1bs7dRKWzno0aqrE7dox+7Zrrq0GQ0dkX+4=;
-        b=L2t04Rmw+OP/Yhid4JKlgIMIh7m2N65eg6b1/T4QX4e/6HMit9nOlp/ma87ks//48N
-         fISQ+dWOcYJU232tWdH2bUAwU1RBuIOyw8X31KzNm/Jku6ZWkkybQ/740WncTicjnSal
-         MvvgDIZJ0JK1/dnWJnwO8CBIfGxX93+zDNE2rBGUtXsxPUkTxVoVuPlV66NVjiQiL7HA
-         ohTyCO40M+PngBYkrYcsla92oiqpuB8vQQVnOxubHHclg/qNMq+EhgR5RaX+Jvr/4+Lm
-         l2YtbmDkdyYnV+rjg5sVmAElz7US6yrcvkw66Pee1gA9ONgUs9qB/MVbNK1gZj4WJhY+
-         vPJA==
-X-Forwarded-Encrypted: i=1; AJvYcCVKEqGxREypNfa5olMtr/9UdElt7coxBiO6Xj130/StEJck5WEJiEITWlRlp/MLJsGX2iz0XOUNA7KlZ0w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBN+s83wjQqM3580M50O31aav5sRrdsl/FLEkHPw1kGdneZr1f
-	dmVumDtVgUFFeMjzB2lKlVLuB9uFJAE+/Rt+1f3pUtpdvEiB1vWO/9UFum+URR0dfJWfwN8bYde
-	a
-X-Google-Smtp-Source: AGHT+IHmyajOc05t7LbFFeyz1KQSLtKrSNK6NRQQd7WDn0DudtcjHK4tw6yfgrqZidHenGBcNslnHQ==
-X-Received: by 2002:a05:6a20:430f:b0:1db:f05f:55c1 with SMTP id adf61e73a8af0-1dc90be213emr3376469637.30.1731685140058;
-        Fri, 15 Nov 2024 07:39:00 -0800 (PST)
-Received: from localhost ([192.184.165.199])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724772001adsm1480640b3a.178.2024.11.15.07.38.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 07:38:59 -0800 (PST)
-Date: Fri, 15 Nov 2024 07:38:59 -0800 (PST)
-X-Google-Original-Date: Fri, 15 Nov 2024 07:38:57 PST (-0800)
-Subject: [GIT PULL] A Single RISC-V Fix for 6.12-rc8
-CC:         linux-riscv@lists.infradead.org,        linux-kernel@vger.kernel.org
-From: Palmer Dabbelt <palmer@rivosinc.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Message-ID: <mhng-257c7a1f-aca6-48f9-b3ec-6a4673f8d33e@palmer-ri-x1c9>
+	s=arc-20240116; t=1731685157; c=relaxed/simple;
+	bh=sdG3w+G9+OIVdjAMeB4TgelVxcnKeu3t8QBg4/G0eW0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=E0ffSQm6wdAIZbeG4eiDQuoS50QSLPj4AVLeWkoRSqBjhDQ+z3WYUXaqctjXPTzoE6dRAje9lGfLhCqATypE1ZtxcXx1IUgZTu4uMOs0bVFeDEQbL37nZgLRID9qd/4BT9TDFl11znxTIQO1imwv/B0wrzhxm7PrgpGS/TLCgc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ar0JnXH7; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DE87D60006;
+	Fri, 15 Nov 2024 15:39:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731685153;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=mhhEC7K7kk9X7QSzMnKg5dPF5YFUOEw6hgnKOERbfU0=;
+	b=ar0JnXH7A+g4vwgzpyWfRy8ixMfdNQhnWR2mEIRQ+4lwBSPnbb8qqk0J5kkcRUO7+BqAGe
+	oUbjdOEqT0ZSy2zmcMim9hF704WaD/D1ln9gUhEGazpBcw9HfTmgHW5hDV3l0F3Y0OZbj2
+	zDqC8jxFlVIyL6eFWFxfkMh0gp0rs2YmhS6vnymrgPS8EKDCeS0uDJ8QOZBgmKIy1wwgJE
+	TGwdYFmm2nmbypVXLZKbXrKHWqybRxsTjKtkl24pU/Ykbkofv7nSTs/3r7+iGrb7XNnhya
+	g7Xhuy3fJ+SiLiY8Ias/ybsnxcaRIvub9+YY1GF8Z3Atti76aXduXuNg/EcacA==
+From: Thomas Richard <thomas.richard@bootlin.com>
+Subject: [PATCH v3 0/2] Enable sensors support for the Congatec Board
+ Controller
+Date: Fri, 15 Nov 2024 16:39:07 +0100
+Message-Id: <20241115-congatec-board-controller-hwmon-v3-0-1c45637c8266@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABtrN2cC/4XOuU7EMBQF0F+JXGPkfZmK/0AUXl4mlpIYbBNAo
+ /w7TqaBarp3X3HuvaEKJUFFl+GGCmypprz2wJ8GFCa3XgGn2DNihAliiMUhr1fXIGCfXYlHbCX
+ PMxQ8fS15xWBB8WiljpyjrrwXGNP32fD6ds8FPj57Ubs/kXcVurMsqV0GOo4QiJFKj4IpR4O0H
+ Ag3wcWgqI+hn14ojQ5rSrXl8nOO3+iJHTspJeLhzo1igo2mIEKUNhp48Tm3Oa3Pfcqpb+yvaB6
+ LrItUAeeaWyOZ/i/u+/4L4UACbG4BAAA=
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+ thomas.petazzoni@bootlin.com, blake.vermeer@keysight.com, 
+ Thomas Richard <thomas.richard@bootlin.com>
+X-Mailer: b4 0.14.1
+X-GND-Sasl: thomas.richard@bootlin.com
 
-The following changes since commit 59b723cd2adbac2a34fc8e12c74ae26ae45bf230:
+This is the third iteration of this series which enables sensors support
+for the Congatec Board Controller.
 
-  Linux 6.12-rc6 (2024-11-03 14:05:52 -1000)
+The cgbc_hwmon_compute_curr_channel() macro which computed the channel for
+current sensor was removed. To get the channel id of a currrent sensor
+(from the Board Controller point of view) we just have to add a constant.
 
-are available in the Git repository at:
+Regards,
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-linus-6.12-rc8
+Thomas
 
-for you to fetch changes up to 57f7c7dc78cd09622b12920d92b40c1ce11b234e:
+Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
+---
+Changes in v3:
+- remove the cgbc_hwmon_compute_curr_channel() macro.
+- Link to v2: https://lore.kernel.org/r/20241108-congatec-board-controller-hwmon-v2-0-16e337398527@bootlin.com
 
-  drivers: perf: Fix wrong put_cpu() placement (2024-11-12 07:34:27 -0800)
+Changes in v2:
+- hwmon: use unsigned int type instead of u8 in struct cgbc_hwmon_sensor
+  and struct cgbc_hwmon_data.
+- hwmon: in cgbc_hwmon_probe_sensors() no need to request data for the
+  first sensor as the Board Controller returns data of the first sensors
+  with the number of sensors.
+- hwmon: fix typos in comments and improve them.
+- hwmon: remove dead code in cgbc_hwmon_read() and in
+  cgbc_hwmon_read_string() (deadcode was the 'return -ENODEV').
+- hwmon: remove useless platform_set_drvdata().
+- hwmon: channel id always refers to the same sensor.
+- hwmon: add a enum cgbc_sensor_types.
+- Link to v1: https://lore.kernel.org/r/20241104-congatec-board-controller-hwmon-v1-0-871e4cd59d8e@bootlin.com
 
-----------------------------------------------------------------
-A Single RISC-V Fix for 6.12-rc8
+---
+Thomas Richard (2):
+      hwmon: Add Congatec Board Controller monitoring driver
+      mfd: cgbc: add a hwmon cell
 
-* A fix for the CPU perf driver that avoids leaking CPU ID references on
-  systems without snapshot support.
+ MAINTAINERS                |   1 +
+ drivers/hwmon/Kconfig      |   9 ++
+ drivers/hwmon/Makefile     |   1 +
+ drivers/hwmon/cgbc-hwmon.c | 304 +++++++++++++++++++++++++++++++++++++++++++++
+ drivers/mfd/cgbc-core.c    |   1 +
+ 5 files changed, 316 insertions(+)
+---
+base-commit: 1ffec08567f426a1c593e038cadc61bdc38cb467
+change-id: 20240809-congatec-board-controller-hwmon-e9e63d957d33
 
-----------------------------------------------------------------
-Alexandre Ghiti (1):
-      drivers: perf: Fix wrong put_cpu() placement
+Best regards,
+-- 
+Thomas Richard <thomas.richard@bootlin.com>
 
- drivers/perf/riscv_pmu_sbi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
