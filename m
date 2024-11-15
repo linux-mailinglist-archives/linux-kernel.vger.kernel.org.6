@@ -1,275 +1,213 @@
-Return-Path: <linux-kernel+bounces-411301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 211EC9CF60F
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:30:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7C289CF5F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 21:25:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8636FB367C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:25:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FE771F24963
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 20:25:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2F01E283E;
-	Fri, 15 Nov 2024 20:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF121E378A;
+	Fri, 15 Nov 2024 20:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="EBqg/FG4"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2071.outbound.protection.outlook.com [40.107.244.71])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="muER5QqR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D5C15FD13;
-	Fri, 15 Nov 2024 20:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731702017; cv=fail; b=CNetmhIhXo8iorNhmUtqxFDe1D+1w2lQWuGuB/+Bp6lon3RQhry5kY1wTrUxBf2DoAR8CaTzlfK5j4zB90BiqxCMBgutXQHjIIH7EB4mLh6E6HLDwdeTs4wQbI9VbJtLbBz2eeuo30gq7VraVzsUSS7HfApJap3OIFxAV4W3GQA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731702017; c=relaxed/simple;
-	bh=ogzfXzq1WU9zm/Fqnuv6vbiKu5Bdds2/H8yqX79u0i0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=phP0hcfn9qKdHZ8BVE+sGL0LmquXS/0ua56GPjoFEOwoqn9txw9rnkmjngS50LuHQNh4mWmIhd3SPzn4uPN16JqsyKLcootcLI9G5hMj1fsf1eHQmQaQMhukr00FKHnVvsfjTSIZkbhIiDGpTJzixr1fbq4XYmrK/LYTCEeyOtE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=EBqg/FG4; arc=fail smtp.client-ip=40.107.244.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zIV1o5gGwfnBWqOcHLK+FGYo+HpRxG1yxMvaVriR1wFmyMQO0e98hpH7OfMxr0UibIXKJMaxi3G+k2wIld+iFK+tJ/AAeriZVq9JB1FRfdWjTbv1J8IT1u50i5qvMz4EdMiSzsIOtXI35hnDj6s8nssigacUPbk0ehn6ZoxKUIVdM1/SRS+AirZ0dsja7RbdOhzqfuAFObpuEbYp3eOdQYHNbLRza1+154RmG4Vnvz4585NZpUw6A4kuAH1qWa+nUNm/YywHkEf5BI8TH1M76jyLYHnetJct3O0NUWCyMqSWm7fF6fCLDeUrw5dtbZqwwTEu/DxxtjN00CSQWnRN1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bB08YCh3+9DROHQPaAXsRlnA3MHhfKmvhsmvUhy14y8=;
- b=kuFYcQN3lfy4AkKVbnNn2oojZFUuki+Kn/rp0rzuenilBKM3tD8dHFxCkygCvz4hPfKci7ADhAogDt2nwIwct2e+6RfQftMwOFSnNVW2m2DZzOcLFssZ+SZzNTCa4Rvyg5ww7XrJUayCxjdIF0rdnWGb5pwR3pE36csTvfunthxLU4g0xwDiNoM8Wz80HwwDZq7qeCaZL7WP6sxkvxSa5upSZL2VxR9Y6I5cVbcQyVWzb+2/oU9vQe6Cw56vbSDPB/4eriJtMmKtwkv2EZWyRVre6O3gEQlRJ/Mdw5qWNPWkU1W5q963vUoZtxf8dXlJ4Brl4Pi1/5u8m0VXt7b/mg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bB08YCh3+9DROHQPaAXsRlnA3MHhfKmvhsmvUhy14y8=;
- b=EBqg/FG4DzhPOHJq346/bF8Ls+uLaP9mVPzwN2ZfU3ht7VP/zMIQKIpMJRdROc/5j9Wh5Xb1DV1jycRA8UYcoAxiBu/VDD25s+Qyw5fBZkQBJq6gyU9lleDDM8oqwM5+I4MU4dyptVL/Ll0TnQbmyXJR4oDIwhzbASlkyuTvnQM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com (2603:10b6:8:ce::7) by
- MW6PR12MB8733.namprd12.prod.outlook.com (2603:10b6:303:24c::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8158.18; Fri, 15 Nov 2024 20:20:12 +0000
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f]) by DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f%3]) with mapi id 15.20.8158.017; Fri, 15 Nov 2024
- 20:20:12 +0000
-Message-ID: <a76394c4-8746-46c0-9cb5-bf0e2e0aa9b5@amd.com>
-Date: Fri, 15 Nov 2024 14:20:09 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] PCI/AER: Report fatal errors of RCiEP and EP if
- link recoverd
-To: Shuai Xue <xueshuai@linux.alibaba.com>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- bhelgaas@google.com, kbusch@kernel.org, Lukas Wunner <lukas@wunner.de>
-Cc: mahesh@linux.ibm.com, oohall@gmail.com,
- sathyanarayanan.kuppuswamy@linux.intel.com
-References: <20241112135419.59491-1-xueshuai@linux.alibaba.com>
- <20241112135419.59491-3-xueshuai@linux.alibaba.com>
-Content-Language: en-US
-From: "Bowman, Terry" <terry.bowman@amd.com>
-In-Reply-To: <20241112135419.59491-3-xueshuai@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN1PR12CA0077.namprd12.prod.outlook.com
- (2603:10b6:802:20::48) To DS0PR12MB6390.namprd12.prod.outlook.com
- (2603:10b6:8:ce::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422F41E32CC;
+	Fri, 15 Nov 2024 20:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731702041; cv=none; b=ofel3Y5CbXNaedG7rPiw4iazhtLTi6G26Jm5PnXQ4vEX/anzIAkhsNTuVORELM6J1fXCdiy/KGarGuVscpFTG1jZDkK+WDKok7PL6v+yNFdJDu5p0RVkxHTcCgT9tVTRRVQeLrOownbpTPNlGPoI18L+3Lz6vx6crwLJl5VHCkM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731702041; c=relaxed/simple;
+	bh=s65poLiuDz62CRLOs68ECur5fUUiqVtlnSqM0XtBTJk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cLbxmg3tky09gt1B5GMaDqDfwBQCrzewfNWy6rlF6tb70v9BCZleK0AkVMr6Ia77Z5g1c3Q1LtTnjc1lOrbmhTVYQq6+eAVXEBXh4/c9ErW4J9JKder7lKCZHgZ379sEJ0JpYvIxIHCexwY4xDkyj9Q3WK0ZkruvSGWNab7p96U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=muER5QqR; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731702040; x=1763238040;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=s65poLiuDz62CRLOs68ECur5fUUiqVtlnSqM0XtBTJk=;
+  b=muER5QqRnlx7FA+tUQ2+eTjSy8XCx8sEE6rVP3UiWY4t282LCqyNoJut
+   EhOMGRV6sWjxS+wBy5k7EElyrERkjHz92AwhE4i0njW5o19QgZP47C33C
+   bGFo5rPXAgGjjW9U60mDG2yKwWMChZqeud95j0heFbmDUs+926dsSNJfg
+   Rju+wTmAY06LSROquWCnYxpdXboSfRivxtuA8NPC1ocP0XQS7gyXOW6Hh
+   LF2QSIHEwTj9tMKOWy6WrVIokVz0ATt+Xw0004QVZtH9Vs9sWmnMrM7NS
+   vQAamUWosUHJsEMIROejXwULqzHMzV8HvfnWfHgMkjLv0TUsNc5Zc+OKE
+   Q==;
+X-CSE-ConnectionGUID: HvE3rASRSeOvUHvhZnQIRg==
+X-CSE-MsgGUID: 9UY06ZrFQC2JA/LEjmqwEw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11257"; a="54228326"
+X-IronPort-AV: E=Sophos;i="6.12,157,1728975600"; 
+   d="scan'208";a="54228326"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 12:20:39 -0800
+X-CSE-ConnectionGUID: oJm1fsdhTs20/RW2cyzdNw==
+X-CSE-MsgGUID: uYCNpBDaTG2HBOiRbh83YQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,157,1728975600"; 
+   d="scan'208";a="93599389"
+Received: from jairdeje-mobl1.amr.corp.intel.com (HELO rpedgeco-desk4..) ([10.124.221.173])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2024 12:20:38 -0800
+From: Rick Edgecombe <rick.p.edgecombe@intel.com>
+To: kvm@vger.kernel.org,
+	pbonzini@redhat.com,
+	seanjc@google.com,
+	dave.hansen@intel.com
+Cc: isaku.yamahata@gmail.com,
+	kai.huang@intel.com,
+	linux-kernel@vger.kernel.org,
+	tony.lindgren@linux.intel.com,
+	xiaoyao.li@intel.com,
+	yan.y.zhao@intel.com,
+	rick.p.edgecombe@intel.com,
+	x86@kernel.org,
+	adrian.hunter@intel.com
+Subject: [RFC PATCH 0/6] SEAMCALL Wrappers
+Date: Fri, 15 Nov 2024 12:20:21 -0800
+Message-ID: <20241115202028.1585487-1-rick.p.edgecombe@intel.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6390:EE_|MW6PR12MB8733:EE_
-X-MS-Office365-Filtering-Correlation-Id: 22b9330d-60ab-4cf7-a523-08dd05b2e880
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NWF0VFFZa1l2eEtnYldEUmJKSFJhUm9tL1ZHMStWUytyZXNvTkNzWWhlQVJC?=
- =?utf-8?B?bHVzeUZ6aXdGdHU2bjRMM2JLZXkyL3hCZVVBeXhvT3pHVlBMcjk1OU9FSEJJ?=
- =?utf-8?B?WTVrZlVYWlFub3Z4eDVYRUhIQXdQY1lCM3g1VVFHVWtURDdxTndoYlJIa0Ns?=
- =?utf-8?B?VTZYQ0lVb0cxdVZWS2RnWVNUcTFMTlJkQzZCQWdBSld3anNLWnZsRytCWk02?=
- =?utf-8?B?ZVVVaVBqTEJNNkk0NGZ1V1lUMXk3clN0bExqeTdZU0Q4VU9ocmhWdmUxT1di?=
- =?utf-8?B?VU1EeHJzb3YxQXJ4U3JJNnNrZ2FLT3I5UTFLNk1EcnVldUUxaWVYVk9MejJS?=
- =?utf-8?B?TFB1QkVtS3p2cnlrYmozUE1CQjZaWUI4VUd4cDUwRWJMdkxxVmFHamZhbXQz?=
- =?utf-8?B?MnlXMzZyYThBbHVXZGpKN1Q0azlMaktYRXQzeEdHU2tuZWI2VVdYaE9sSWZF?=
- =?utf-8?B?Q0xuSlQ4TXpvWVV3SlMwTTRhVUFxU1FwaGFWNEIvMmZSWXJwQVB6S054WFNL?=
- =?utf-8?B?TnZRcmFnZi9RTkQ5NGZHYVFwcEprSVdhcVloWkJ4NE1tZGtseSt1ZHdMaWZQ?=
- =?utf-8?B?Z1BSWVVGUFRNK2haWTd6Uzl4elZpbmpjbHJoaDFNdW11QlVzTmZWZE5FYmRs?=
- =?utf-8?B?aWk0R1pRZ0xYdnczMlVTQjdqeWp0RFR5Q2hrSkkyK0g4d2dvQ2sxcm5NRGlw?=
- =?utf-8?B?eW9CVjg5cW50QWJpY0xnWGlPTWlSQng2NE9wVTdSR2FsR2ZqVStnOUk5VzEr?=
- =?utf-8?B?UENFZzVwaitFcFhlc0lLZHlVSysyWFFHNnRmeGVySU5ZZkVNSnYvSmdRaGNx?=
- =?utf-8?B?RzlMRysvNjNMc3J5SUhkaXNJTWZIaVBWaHNQeVJjQThXdEV5VTU2N2VxNStn?=
- =?utf-8?B?MUxuU1BncVZOaGlpa0Z4cm4xV0NuK2FlSVl3b0o3b1lpOFplRlI4Nm1EOS9Y?=
- =?utf-8?B?WjdNb2F3T0doelhBWlQ4a2VqU2hyYUdLRllEMkpWdS85NTdXVjhsSUJFc3hR?=
- =?utf-8?B?MlJ5QVhva3lKU0w4dGNUNlBaT2hUMGJQV2gxNFhBenNEQVFGaGhhZ244UFVl?=
- =?utf-8?B?b3E2N2hDN2FlQ3RWanJqUjQyRjBpZzFCSmEyNUJ0MGJIMzU1YlpHd3cxSzhQ?=
- =?utf-8?B?N1BqOFhuTVdDcnRGeVpxY0hiTVoyQXM5VEFsTThGcGQ1cURHaXhBcENVRG5I?=
- =?utf-8?B?eEhUQld3dFNpUVlJV1Vzb3l2cFlOZ29hOWNMcGZNVXJGSFBuU09NQVVvZVVi?=
- =?utf-8?B?eHlCeDdPanFwdTBmSmNIRmRsU3V6MFRFT3EyTUhRemYrQzQwVjZWaFhINi9l?=
- =?utf-8?B?eG5jK0VSUUVSTUpxZ2w3Mjd4NVRhNytoT3JHajA2Wk14WllSbnowRDVNY0Nz?=
- =?utf-8?B?S0tRYmFTb3VFQWNGbE51QzI3SXE1MWhlNGE4TTBRVmI4cUdNUWt0eVA0d3By?=
- =?utf-8?B?dnRhdnVCK3d2Zlp2dC90VkJBYThyRWIxT0xyQUlzSjhQQThlcDdWZGNJLzd3?=
- =?utf-8?B?SzZvUmRZVEtIa2thLzF1U0RRdmpxekVDaFVYbXpmZmQzaFl0cXhxcW5xREVT?=
- =?utf-8?B?Rm5UblIzSVEwMk0wcTVFNXpTYVBrYlNtQU9JWERvbkZSelI4dUhiRDVsYTZE?=
- =?utf-8?B?d0dlandrRWFEa1NvYW9pY2kyOXA2YmxaZnpsV09QTHhVZWViVHVEV1EzVHNw?=
- =?utf-8?B?ME5XM3lHSVo2YWtOYm5TTXMrQkpBcGtVWkY5dkFPaWh5Nit3TEYyZGNocjhP?=
- =?utf-8?Q?zILItrsIE4OtGsg5oHiTdmjq79wJSc/bf1txrus?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6390.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eFhpR2UzMVZkQmE1ZDJUZm90UWJiUG00MTZnbkNLU1NCZUpFN2h5bUZFTzd1?=
- =?utf-8?B?SktEUW5ibG9OR3I4MlZZR0FFQkVzbXZRU2tlaE9PM2EyTmVBQUhCS3N4NW5Q?=
- =?utf-8?B?SndzT2lrMUoybjJ1cDRrUmtBdGNRNnZxSXFHTUo0eUFFSzdzYUdJZThiaHNB?=
- =?utf-8?B?WHAra3FGbEhUNmdXNEIzN1Z3cUFON05Lb2RqYyttdjF6TTJOLzFjdjZJRWZN?=
- =?utf-8?B?bndhNldralZXTm9NU0o2ckE4K0YvTFVDaVVlM1I4d3YwZEkyNmN6cHlrWkdx?=
- =?utf-8?B?enpEdHNOMEcxMDhUeHEycDdZb2M0eEpleWRXaDNHb0tyeWV1OVdmV2YyeGhQ?=
- =?utf-8?B?QjBWSm5QM3BKVTFLMlREbVcyeFh0cDVIb08xYkNxRnZqdUFnT3Q5SUlUUUwz?=
- =?utf-8?B?MnFkYlBEWEYydTlNSWxrc3VlbGxkOTJDRXlUZUlLaTgxOTVnSHU1cC8yRTNr?=
- =?utf-8?B?RWtCVytRbGlPRjVwRFBOYmJLWUR1YmkxVTVvTWh6ZkZBSXRTUE11SG9PZWcy?=
- =?utf-8?B?Qk5hOHl4aUJwNHZVMnpjejdBTDA5Mk14N014L2RkTHJDUHRHMmM3MzdESWkw?=
- =?utf-8?B?aXRqc29MclRMOWl6KzlVUzZGcjMyYytyQ2VWTERsQlZrcTRYVXVqL3d6eUJD?=
- =?utf-8?B?R25ra2w3RmdxVjUrdzltVGRwN3Q0VUtUWXZIVFdQS3BPaUE2N3E2RUIvcnNJ?=
- =?utf-8?B?Y0tia2E4VGUwblprY0hKRlRFdXljTmJhZUFUaFZvdktzeTBHZk51TzZVOEZ1?=
- =?utf-8?B?ZUU2N3NFUzJGWjFhbkhkM3hIak9wU3JGdis2VVhkNVFDMlZ1QlFRQmdGbkQw?=
- =?utf-8?B?NFByc0tzOU10T2E0c3NYeEVNVXJpRC9HbnBKclhHZ0VEMkJSRTI0d2EzUmxW?=
- =?utf-8?B?RmVJTkpVTEdUTjdJK1pMWG92WGFZUUpONUE5NEFBWjhyNm5VQXF2anp0VGR2?=
- =?utf-8?B?UTFPbU94UDNTTEpvbWk2TDZIcW5sRDVsSU1wOXBreWJCZWE3S3N4dTA5eHN3?=
- =?utf-8?B?ajh4TzZnMXZhLzlXVExzNWlRVTZ0MXp3ZDA1RzNKQWlJL2dUSG5Sc1lYaVc0?=
- =?utf-8?B?VnRTdUJ4UUNoVjRXTDFzMGJ6VVkvazRRaVBXRFA1eXZFRVl5V2JoQS9HaEx2?=
- =?utf-8?B?ZTkxZldZaXRMYXdDYmNLYU5hVU9lWXBidTl0c2ViM0NXd1h4SEcxOTFKeU1E?=
- =?utf-8?B?dHJsemZ3ODlPdmlIYTAyVWxkNXBWVmpyWE50NWZiOEhuaUZ1VGV4cGhSaU9H?=
- =?utf-8?B?c0tVeDRRQklPeXBsWG9SZkpMWjhRazhsbmxhUHlBcnFjTkx4aDEySndZOXZC?=
- =?utf-8?B?aDJnNVJUczJ5N0JtQXNScXRYaHBZWGFqZzhhOE1vcW53MDVpV0Znd3BCMmdr?=
- =?utf-8?B?YTcrN3Vyd1pMNWVjYnNZZUJaVDllbWZUelhPZDR3N25Gc1orcFhhS25lclJx?=
- =?utf-8?B?Y01WemtEUjVZS0tPeHVEbUJUSUdvd3NORkIyM2ViSDNCdXlGdE5EQXFHTm9Y?=
- =?utf-8?B?TjluQys1V25oZk9LQ2dxU0szeTlkUUdhWnlmd1B4bWp6dC9pdEJsK2libXlB?=
- =?utf-8?B?NEhPSk9vK2NIUzhSS3hFc1lvZGZFSVRKdjVKWG9XRFZFeHduU1lLQ0t4bDFz?=
- =?utf-8?B?TmdwSVVWc0JGeTRleEd6bU11TXMya2J1V05TZ3VMcUxLWTdLSTZoeHdMYXpU?=
- =?utf-8?B?NitQVlowSnJ5eUZBSjBZRTkxNHZYQjlhRW5DZFpxdW5QdmRaWVVWNS81SXM2?=
- =?utf-8?B?TFBXL3JFVFE2UGZYaEd3VXhTeCthdFZVT3kyUCtQTkQ1d25Pc1RiS1NpUWRP?=
- =?utf-8?B?c2lralphdEV5Q0hrREl6dVhDY0ZDRzFQNVJrajVTN2xPL08vbGhKSWtKZ1hI?=
- =?utf-8?B?S0orUldscmhHY1UwUkV2NVA5UTdDeVNxTEl5cENRaTBqN1ljdnNsOTBrWGVG?=
- =?utf-8?B?eW4zWERZSEJCYWtlWEN4SGFlU3hGS2w2MmJIWGE2MzdMM2lDdXNsTHhqUnBp?=
- =?utf-8?B?S2V5RGd2a3l1OGVzdnBFbFNVRnRDczZtOVVYdm1RdW9GZU5JZGlSV01EQ2Zm?=
- =?utf-8?B?cWp2bFIyRDNOaklWRmFHWk9YSURXWVlVY25YMXhPNEZURUhkdWhScEV2M2g4?=
- =?utf-8?Q?TpTSzf7CcOtY2/Cy9zFGfkydk?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 22b9330d-60ab-4cf7-a523-08dd05b2e880
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6390.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2024 20:20:12.2080
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BxwY2FMe3kX+DH6AdosUa5/cAoliMWGAIudufyyvAJU4/2moPSFhNKSMxdQsMB6faFKU4QV8sKqD/besl7AXMw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8733
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Shuai,
+Hi,
+
+This is a quick followup to Dave’s comments on the SEAMCALL wrappers in 
+the “TDX vCPU/VM creation” series [0]. To try to summarize Dave’s 
+comments, he noted that the SEAMCALL wrappers were very thin, not even 
+using proper types for things where types exist, like pages. There were a 
+couple directions discussed for passing the pages that are handed to TDX 
+module for it to use to manage a TD state:
+ - Using virtual addresses to host mappings for the page
+ - Using structs for each type of physical page, such that there could be
+   type checking on all of the similar tdXYZ TDX page types.
+ - Pulling in “linux/kvm_types.h” in arch/x86 code to handle types 
+   (especially since the later MMU SEAMCALLs take GFN arguments)
+
+There was also some repeated points made that the argument names could use 
+some semantic clarity, including possible creating enums for out args.
+
+But overall, I interpreted there to be a wish for the wrappers to do 
+something a little more useful than use the EXPORT infrastructure as an 
+allow list for approved SEAMCALLs.
+
+I first played around with basically keeping the existing design and using 
+KVM’s hpa_t, etc for the types. This really didn’t add much improvement. 
+Using virtual addresses simplified some of the code on the KVM side, but 
+contrasted with KVM code style that is used to handling physical addresses 
+for most things. It also was weird considering that these pages are 
+encrypted and can’t be used from the kernel.
+
+The solution in this RFC
+------------------------
+As we discussed on that series, the SEAMCALL wrappers used to take the KVM 
+defined structs that represent TDs and vCPUs, instead of raw tdXYZ page 
+references. This was pretty handy and good for avoiding passing the wrong 
+type of TDX tdXYZ page, but these structs have a bunch of other stuff that 
+is specific to KVM. We don’t want to leak that stuff outside of KVM. But I 
+think it is ok for the arch/x86 code to know about TDX arch specific things
+that VMMs are generally required to have to manage. So this RFC creates
+two structs that represent TDs and vCPUs. They hold references to the tdXYZ
+pages that are provided to the TDX module and associated with there 
+respective architectural concept (TD and vCPU):
+	struct tdx_td {
+		hpa_t tdr;
+		hpa_t *tdcs;
+	};
+
+	struct tdx_vp {
+		hpa_t tdvpr;
+		hpa_t *tdcx;
+	};
+
+I used hpa_t based on that it is commonly used to hold physical addresses 
+in KVM, including similar kernel allocated memory like TDP root pages. So 
+I thought it fit KVM better, stylistically. It was my best attempt at 
+guessing what KVM maintainers would like. Other options could be 
+kvm_pfn_t. Or just struct page.
+
+They are passed into the SEAMCALL wrappers like:
+	u64 tdh_mng_vpflushdone(struct tdx_td *td)
+
+These new structs are then placed inside KVM’s structs that track TDX 
+state for the same concept, where previously those KVM structs held the 
+references to the pages directly, like:
+struct kvm_tdx {
+	struct kvm kvm;
+
+-	u64 tdr;
+-	u64 *tdcs;
++	struct tdx_td td;
+	...
+};
+
+It does get a bit nested though, for example:
+	kvm->kvm_arch->(container_of)kvm_tdx->tdx_td->tdr
+...but the actual final dereferences in the code don’t need to go that
+deep, and look like:
+	err = tdh_mng_vpflushdone(&kvm_tdx->td);
+
+Overall, it's not a huge change, but does give the arch/x86 a little more
+purpose. Please let me know what you think.
+
+There also was a suggestion from Dave to create a helper to hold a comment 
+on the “CLFLUSH_BEFORE_ALLOC” reasoning. This is implemented in this RFC.
+
+Separate from discussions with Dave on the SEAMCALLs, there was some some 
+suggestions on how we might remove or combine specific SEAMCALLs. I didn’t 
+try this here, because this RFC is more about exploring in general how we 
+want to distribute things between KVM and arch/x86 for these SEAMCALL 
+wrappers.
+
+So in summary the RFC only has:
+ - Use structs to hold tdXYZ fields for TD and vCPUs
+ - Make helper to hold CLFLUSH_BEFORE_ALLOC comments
+ - Use semantic names for out args
+ - (Add Kai's sign-off that should have been in the last version)
+  
+Patches 1 and 3 contain new commit log verbiage justifying specific design
+choices behind the struct definitions.
+
+I didn’t create enums for the out args. Just using proper names for the 
+args seemed like a good balance between code clarity and not 
+over-engineering. But please correct if this was the wrong judgment.
+
+Here is a branch for seeing the callers. I didn’t squash the caller 
+changes into the patches yet either, the caller changes are all just in the
+HEAD commit. I also only converted the “VM/vCPU creation” SEAMCALLs to the
+approach described above:
+https://github.com/intel/tdx/tree/seamcall-rfc
+
+[0] https://lore.kernel.org/kvm/20241030190039.77971-1-rick.p.edgecombe@intel.com/
 
 
-On 11/12/2024 7:54 AM, Shuai Xue wrote:
-> The AER driver has historically avoided reading the configuration space of
-> an endpoint or RCiEP that reported a fatal error, considering the link to
-> that device unreliable. Consequently, when a fatal error occurs, the AER
-> and DPC drivers do not report specific error types, resulting in logs like:
-> 
->   pcieport 0000:30:03.0: EDR: EDR event received
->   pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
->   pcieport 0000:30:03.0: DPC: ERR_FATAL detected
->   pcieport 0000:30:03.0: AER: broadcast error_detected message
->   nvme nvme0: frozen state error detected, reset controller
->   nvme 0000:34:00.0: ready 0ms after DPC
->   pcieport 0000:30:03.0: AER: broadcast slot_reset message
-> 
-> AER status registers are sticky and Write-1-to-clear. If the link recovered
-> after hot reset, we can still safely access AER status of the error device.
-> In such case, report fatal errors which helps to figure out the error root
-> case.
-> 
-> After this patch, the logs like:
-> 
->   pcieport 0000:30:03.0: EDR: EDR event received
->   pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
->   pcieport 0000:30:03.0: DPC: ERR_FATAL detected
->   pcieport 0000:30:03.0: AER: broadcast error_detected message
->   nvme nvme0: frozen state error detected, reset controller
->   pcieport 0000:30:03.0: waiting 100 ms for downstream link, after activation
->   nvme 0000:34:00.0: ready 0ms after DPC
->   nvme 0000:34:00.0: PCIe Bus Error: severity=Uncorrectable (Fatal), type=Data Link Layer, (Receiver ID)
->   nvme 0000:34:00.0:   device [144d:a804] error status/mask=00000010/00504000
->   nvme 0000:34:00.0:    [ 4] DLP                    (First)
->   pcieport 0000:30:03.0: AER: broadcast slot_reset message
-> 
-> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
-> ---
->  drivers/pci/pci.h      |  3 ++-
->  drivers/pci/pcie/aer.c | 11 +++++++----
->  drivers/pci/pcie/dpc.c |  2 +-
->  drivers/pci/pcie/err.c |  9 +++++++++
->  4 files changed, 19 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 0866f79aec54..6f827c313639 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -504,7 +504,8 @@ struct aer_err_info {
->  	struct pcie_tlp_log tlp;	/* TLP Header */
->  };
->  
-> -int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info);
-> +int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info,
-> +			      bool link_healthy);
->  void aer_print_error(struct pci_dev *dev, struct aer_err_info *info);
->  #endif	/* CONFIG_PCIEAER */
->  
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index 13b8586924ea..97ec1c17b6f4 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -1200,12 +1200,14 @@ EXPORT_SYMBOL_GPL(aer_recover_queue);
->   * aer_get_device_error_info - read error status from dev and store it to info
->   * @dev: pointer to the device expected to have a error record
->   * @info: pointer to structure to store the error record
-> + * @link_healthy: link is healthy or not
->   *
->   * Return 1 on success, 0 on error.
->   *
->   * Note that @info is reused among all error devices. Clear fields properly.
->   */
-> -int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info)
-> +int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info,
-> +			      bool link_healthy)
->  {
->  	int type = pci_pcie_type(dev);
->  	int aer = dev->aer_cap;
-> @@ -1229,7 +1231,8 @@ int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info)
->  	} else if (type == PCI_EXP_TYPE_ROOT_PORT ||
->  		   type == PCI_EXP_TYPE_RC_EC ||
->  		   type == PCI_EXP_TYPE_DOWNSTREAM ||
-> -		   info->severity == AER_NONFATAL) {
-> +		   info->severity == AER_NONFATAL ||
-> +		   (info->severity == AER_FATAL && link_healthy)) {
->  
->  		/* Link is still healthy for IO reads */
->  		pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_STATUS,
-> @@ -1258,11 +1261,11 @@ static inline void aer_process_err_devices(struct aer_err_info *e_info)
->  
->  	/* Report all before handle them, not to lost records by reset etc. */
->  	for (i = 0; i < e_info->error_dev_num && e_info->dev[i]; i++) {
-> -		if (aer_get_device_error_info(e_info->dev[i], e_info))
-> +		if (aer_get_device_error_info(e_info->dev[i], e_info, false))
->  			aer_print_error(e_info->dev[i], e_info);
->  	}
+Rick Edgecombe (6):
+  x86/virt/tdx: Add SEAMCALL wrappers for TDX KeyID management
+  x86/virt/tdx: Add SEAMCALL wrappers for TDX TD creation
+  x86/virt/tdx: Add SEAMCALL wrappers for TDX vCPU creation
+  x86/virt/tdx: Add SEAMCALL wrappers for TDX page cache management
+  x86/virt/tdx: Add SEAMCALL wrappers for TDX VM/vCPU field access
+  x86/virt/tdx: Add SEAMCALL wrappers for TDX flush operations
 
-Would it be reasonable to detect if the link is intact and set the aer_get_device_error_info()
-function's 'link_healthy' parameter accordingly? I was thinking the port upstream capability 
-link status register could be used to indicate the link viability.
+ arch/x86/include/asm/tdx.h  |  29 +++++
+ arch/x86/virt/vmx/tdx/tdx.c | 224 ++++++++++++++++++++++++++++++++++++
+ arch/x86/virt/vmx/tdx/tdx.h |  38 ++++--
+ 3 files changed, 284 insertions(+), 7 deletions(-)
 
-Regards,
-Terry
+-- 
+2.47.0
+
 
