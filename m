@@ -1,263 +1,93 @@
-Return-Path: <linux-kernel+bounces-410587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D3B49CDD98
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:38:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB74F9CDD9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 12:41:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A49861F23C89
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:38:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47FBCB21FCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 11:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90131B6D15;
-	Fri, 15 Nov 2024 11:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901301B85CC;
+	Fri, 15 Nov 2024 11:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJYOwv0L"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="tCLhJN8t"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C281B218E;
-	Fri, 15 Nov 2024 11:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09891B218E;
+	Fri, 15 Nov 2024 11:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731670724; cv=none; b=dqhJrm2eLyLloGLARVaTNoYQE39PM45r+cMQKj07d2HoaGv3dvulvBxtXLDUMRyqmWRv9fNNjfWzPmazbbMsn2l3b6Lw0tTWoOdr0nXMQ+F173BJuqNl2DTwiOXH4DKQfM6aVJrL8XkWa6WAsX3Qf0u7oSZ0vXVRahaOR2qIckM=
+	t=1731670858; cv=none; b=Lzx4F+U88M8gFfAjsxvppbpPohvAvy3zRQmGXu2tmX8xF3etH4Ztrkt1lk45p+GJk+DUa4381rb0pKnVYr8ZUIWbkCs9OICbwq5fp95L8AvjZ1PSAYo2UwB4cwz9MOlPlpT+tCFmURWkdrtZdIVxTTsT97GIdPn8QkQdhiDTjyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731670724; c=relaxed/simple;
-	bh=KA1wJ8unO7gPRX1lcC6ak5FwkDhI3tExJbWL518o/kc=;
+	s=arc-20240116; t=1731670858; c=relaxed/simple;
+	bh=12bdiEiKv483zwlqqKVHS9k/riIHEl2XgpK5E95xqNQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PSfWsqKwMqy/T1XlqVn9IcrQrLnSXlJFWWDiZLaHoFbq+0LKAoWJlrx1xBrw0qL1xZFlt3H4KN9vUUSmGC8LB9d8jRbXojl80/OlBleaH/VsHP8K3GQoykb2xxHdRpRAsoAL0LjODu/MJ52ZjchPFrdnjkDv0AwbhlvDMC6scLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QJYOwv0L; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20cf3e36a76so6515385ad.0;
-        Fri, 15 Nov 2024 03:38:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731670720; x=1732275520; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JHPIeC3XGFKioJ4g6h+B7X6zDc+M6pjQLoDjxJwdy7w=;
-        b=QJYOwv0L7g79AmHm+80N2KzaUPGPO5PrpuAvpDZzsVPEYBj0wiv21UCypn0odFFy1P
-         PI5QYSdW9FZBjZOy18nKsutYy+dt1u66RAcqtECdvb4pTD5cBG+hWqaAYd9MKzObtqno
-         /8Ea8DAldzj6EB1i99YQH30lTDvqOonuv67Lh4R5J9ep5aYrS60frE8G5zfPpotII3qB
-         3Zn2yiKde+lME7w1XrKpDr56wscrAvHg/hPybq6oY2I66MQlojkWoE5huChbbT9RauHl
-         lASqxADwDkw1tSb4qGolVDu19DtZdy47l/dM/Em748QQrVsa47feGhyJBlHK8lKJqHXW
-         JbEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731670720; x=1732275520;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JHPIeC3XGFKioJ4g6h+B7X6zDc+M6pjQLoDjxJwdy7w=;
-        b=Q2CaXrGdw01g4sl0i7WupeUpiVUHLF6EW2VVEiK8eg+0pwcQLI5n7lTfYFiJ7nj6XP
-         QaDEe0IR3/repxHG2E7t4dGfhEJk8OG3/LYnXCJzUwtFpe12rmrd11bgiVESRyiHDV98
-         mX+5JXExK24kV/NF1lUlTX6INnSeGVlpRQ1kzlbTcaE+ZGnC1GdJ8thcoo4Gzd/h2Bf+
-         c3QWXg8tcbsMrV3zd70qc2cH6IM0sDy1cma9JcRcXKnChlLxo6wpkCHHfLR9Ax/Ot5O2
-         6gnFiV685typT9iObegMzjRfX31O2WITPzMqRravGeHNKmkpsYRkE8CVZ4ICmAyyhaiU
-         GNGw==
-X-Forwarded-Encrypted: i=1; AJvYcCXRGSwaLaYwDbGaYweBH5gigH+5netrnDxRgJGDgYH737POZ3qQCWvIhjwktXWG3r5fmWL1FHoaYROsF87M@vger.kernel.org, AJvYcCXUrNZP5n/EujeErtjFwRuSu2c7ipzGzXI9HpxKji6dLOCqYtPWrDRTbn2Hyg2kMBcSMqFWBcwGloU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1Qbu+lxKne6VfqVLfMN4VleyCWBROFq4LJXdck0DE06UBAqMP
-	P0/Mg+bNEuc1qXm8dgkGArPrs7vW1lsQQ29VVK0hvzSJGijTuB1R
-X-Google-Smtp-Source: AGHT+IG6OHx3pW59jhrT6WLGuyOxnUCn1Rlxtmzsn+sFxvxMITfwdreCtBKGFAMVWodO4RvRARs93g==
-X-Received: by 2002:a17:903:11c9:b0:20b:5645:d860 with SMTP id d9443c01a7336-211d0ecc3f0mr30942445ad.36.1731670719922;
-        Fri, 15 Nov 2024 03:38:39 -0800 (PST)
-Received: from archie.me ([103.124.138.80])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea06ef6a7esm2600102a91.4.2024.11.15.03.38.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 03:38:38 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id A34A443FF37D; Fri, 15 Nov 2024 18:38:36 +0700 (WIB)
-Date: Fri, 15 Nov 2024 18:38:36 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: "Xu, Even" <even.xu@intel.com>, "jikos@kernel.org" <jikos@kernel.org>,
-	"bentiss@kernel.org" <bentiss@kernel.org>,
-	"corbet@lwn.net" <corbet@lwn.net>,
-	"Aaron, Ma" <aaron.ma@canonical.com>
-Cc: "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"Sun, Xinpeng" <xinpeng.sun@intel.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: Re: [PATCH v2 01/22] HID: THC: Add documentation
-Message-ID: <ZzcyvPjkhCutD9ER@archie.me>
-References: <20241114053416.4085715-1-even.xu@intel.com>
- <20241114053416.4085715-2-even.xu@intel.com>
- <ZzbIP7tOEns0Fy-U@archie.me>
- <IA1PR11MB6098EC67DEAA5336F4F47B19F4242@IA1PR11MB6098.namprd11.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Za2317RoX7yCB68KVXkStTrtM0s/ayC8v50URAwLhFHPBI0VdPBAAX9tebEUQJRiUWiVwPTgBLTtjqwjhVriLqoYiBHXHtNx5cP5rhJj+98iAyS6mQ/KKwDLyEJBaOb7EmKj7UoGV/dVB8aOaAr5zZMuab+hqk10DQllPyihlXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=tCLhJN8t; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=U+8swLwqF2X83AK80kvODCLIKsVeONdbEHVvDm0uwjk=; b=tCLhJN8tAY3prXd8p6rS+OVy+Y
+	j+bYIBxLt8CwVkBOQ2qcUGG3PZ1iL67tud/C76A34ge7MHGs8q7sGhbGLQW0eW/G7W/2bh3J+rm8i
+	e6f79azl0SzqPmQOpVvFAh1jiDIgXzxanvBLkVD1OWA+RljuigUAUaA63fceQX+DTDgX4CMI3fmcv
+	hy93AUtjqmnq5J4Diks1LGLMt6hX+Nsz1QtWjE5wGZU8HDyPOxAIP79/Plxm1EMXUzgslNEsCM1/P
+	GPqn9t1ougoVP1Ue+a2E+d4Kn3+nJcDQGLW4F+KHHJgiH+BA7JkuhUdSzeep4SN3A9AqCAEY6k6tc
+	fhw+gixA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tBugk-00H1lk-2q;
+	Fri, 15 Nov 2024 19:40:35 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 15 Nov 2024 19:40:34 +0800
+Date: Fri, 15 Nov 2024 19:40:34 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Alexey Romanov <avromanov@salutedevices.com>
+Cc: neil.armstrong@linaro.org, clabbe@baylibre.com, davem@davemloft.net,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, khilman@baylibre.com,
+	jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
+	vadim.fedorenko@linux.dev, linux-crypto@vger.kernel.org,
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel@salutedevices.com
+Subject: Re: [PATCH v10 11/22] crypto: amlogic - Introduce hasher
+Message-ID: <ZzczMlpfC33yjQ0j@gondor.apana.org.au>
+References: <20241108102907.1788584-1-avromanov@salutedevices.com>
+ <20241108102907.1788584-12-avromanov@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uVNSzdUheHG0hrK6"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <IA1PR11MB6098EC67DEAA5336F4F47B19F4242@IA1PR11MB6098.namprd11.prod.outlook.com>
+In-Reply-To: <20241108102907.1788584-12-avromanov@salutedevices.com>
 
+On Fri, Nov 08, 2024 at 01:28:56PM +0300, Alexey Romanov wrote:
+>
+> +struct meson_hasher_req_ctx {
+> +	u8 state[SHA256_DIGEST_SIZE + 16] ____cacheline_aligned;
+> +	u8 partial[SHA256_BLOCK_SIZE] ____cacheline_aligned;
+> +	unsigned int partial_size ____cacheline_aligned;
 
---uVNSzdUheHG0hrK6
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Is this alignment for DMA? If so you cannot use ___cachealign_aligned
+to achieve what you want.
 
-On Fri, Nov 15, 2024 at 05:10:55AM +0000, Xu, Even wrote:
->=20
->=20
-> > -----Original Message-----
-> > From: Bagas Sanjaya <bagasdotme@gmail.com>
-> > Sent: Friday, November 15, 2024 12:04 PM
-> > To: Xu, Even <even.xu@intel.com>; jikos@kernel.org; bentiss@kernel.org;
-> > corbet@lwn.net; Aaron, Ma <aaron.ma@canonical.com>
-> > Cc: linux-input@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
-> > doc@vger.kernel.org; Sun, Xinpeng <xinpeng.sun@intel.com>; Srinivas
-> > Pandruvada <srinivas.pandruvada@linux.intel.com>
-> > Subject: Re: [PATCH v2 01/22] HID: THC: Add documentation
-> >=20
-> > On Thu, Nov 14, 2024 at 01:33:55PM +0800, Even Xu wrote:
-> > > +Touch Host Controller is the name of the IP block in PCH that interf=
-ace with
-> > Touch Devices (ex:
-> > > +touchscreen, touchpad etc.). It is comprised of 3 key functional blo=
-cks:
-> > > +- A natively half-duplex Quad I/O capable SPI master
-> > > +- Low latency I2C interface to support HIDI2C compliant devices
-> > > +- A HW sequencer with RW DMA capability to system memory
-> >=20
-> > I see in my htmldocs output that the list above is long running paragra=
-ph instead.
->=20
-> You are right, let me fix it in next version.
+Instead of this check out the crypto_ahash_ctx_dma helper.  For
+an example driver doing this for DMA, you could look at caam.
 
-OK.
-
->=20
-> >=20
-> > > +When THC is configured to SPI mode, opcodes are used for determining=
- the
-> > read/write IO mode.
-> > > +There are some OPCode examples for SPI IO mode::
-> > > +
-> > > + +--------+---------------------------------+
-> > > + | opcode |  Corresponding SPI command      |
-> > > + +=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+
-> > > + |  0x0B  | Read Single I/O                 |
-> > > + +--------+---------------------------------+
-> > > + |  0x02  | Write Single I/O                |
-> > > + +--------+---------------------------------+
-> > > + |  0xBB  | Read Dual I/O                   |
-> > > + +--------+---------------------------------+
-> > > + |  0xB2  | Write Dual I/O                  |
-> > > + +--------+---------------------------------+
-> > > + |  0xEB  | Read Quad I/O                   |
-> > > + +--------+---------------------------------+
-> > > + |  0xE2  | Write Quad I/O                  |
-> > > + +--------+---------------------------------+
-> > > +
-> > > <snipped>...
-> > > +When THC is working in I2C mode, opcodes are used to tell THC what's=
- the
-> > next PIO type:
-> > > +I2C SubIP APB register read, I2C SubIP APB register write, I2C touch
-> > > +IC device read, I2C touch IC device write, I2C touch IC device write=
- followed
-> > by read.
-> > > +
-> > > +Here are the THC pre-defined opcodes for I2C mode::
-> > > +
-> > > + +--------+-------------------------------------------+----------+
-> > > + | opcode |       Corresponding I2C command           | Address  |
-> > > +
-> > +=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+
-> > > + |  0x12  | Read I2C SubIP APB internal registers     | 0h - FFh |
-> > > + +--------+-------------------------------------------+----------+
-> > > + |  0x13  | Write I2C SubIP APB internal registers    | 0h - FFh |
-> > > + +--------+-------------------------------------------+----------+
-> > > + |  0x14  | Read external Touch IC through I2C bus    | N/A      |
-> > > + +--------+-------------------------------------------+----------+
-> > > + |  0x18  | Write external Touch IC through I2C bus   | N/A      |
-> > > + +--------+-------------------------------------------+----------+
-> > > + |  0x1C  | Write then read external Touch IC through | N/A      |
-> > > + |        | I2C bus                                   |          |
-> > > + +--------+-------------------------------------------+----------+
-> > > +
-> > > <snipped>...
-> > > +Intel THC uses PRD entry descriptor for every PRD entry. Every PRD
-> > > +entry descriptor occupies
-> > > +128 bits memories::
-> > > +
-> > > + +-------------------+---------+------------------------------------=
-------------+
-> > > + | struct field      | bit(s)  | description                        =
-            |
-> > > +
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > =3D=3D=3D
-> > > + +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+
-> > > + | dest_addr         | 53..0   | destination memory address, as ever=
-y entry     |
-> > > + |                   |         | is 4KB, ignore lowest 10 bits of ad=
-dress.      |
-> > > + +-------------------+---------+------------------------------------=
-------------+
-> > > + | reserved1         | 54..62  | reserved                           =
-            |
-> > > + +-------------------+---------+------------------------------------=
-------------+
-> > > + | int_on_completion | 63      | completion interrupt enable bit, if=
- this bit   |
-> > > + |                   |         | set it means THC will trigger a com=
-pletion     |
-> > > + |                   |         | interrupt. This bit is set by SW dr=
-iver.       |
-> > > + +-------------------+---------+------------------------------------=
-------------+
-> > > + | len               | 87..64  | how many bytes of data in this entr=
-y.          |
-> > > + +-------------------+---------+------------------------------------=
-------------+
-> > > + | end_of_prd        | 88      | end of PRD table bit, if this bit i=
-s set,      |
-> > > + |                   |         | it means this entry is last entry i=
-n this PRD  |
-> > > + |                   |         | table. This bit is set by SW driver=
-=2E           |
-> > > + +-------------------+---------+------------------------------------=
-------------+
-> > > + | hw_status         | 90..89  | HW status bits                     =
-            |
-> > > + +-------------------+---------+------------------------------------=
-------------+
-> > > + | reserved2         | 127..91 | reserved                           =
-            |
-> > > + +-------------------+---------+------------------------------------=
-------------+
-> >=20
-> > Shouldn't these tables be formatted as tables?
->=20
-> Good idea!
-> Let's format them.
-
-Just drop the literal block formatting, keeping the table as-is.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---uVNSzdUheHG0hrK6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZzcytwAKCRD2uYlJVVFO
-o2LmAQDBm2ZoF8NWpOlKkHK/zBJCK3b9hOg3hLAx4gWqeLZ2FQD9FuT+G8tjxh26
-v11BU4JtmOF6z8Zkj/nm5TsjZImLwgM=
-=kbBP
------END PGP SIGNATURE-----
-
---uVNSzdUheHG0hrK6--
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
