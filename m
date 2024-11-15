@@ -1,182 +1,118 @@
-Return-Path: <linux-kernel+bounces-411433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 378D49CFA30
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:39:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E640E9CF95B
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:12:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 286F5B4587C
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:12:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E4C5289F24
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 22:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7271F9ED5;
-	Fri, 15 Nov 2024 21:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE96D202636;
+	Fri, 15 Nov 2024 21:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a99cfkiJ"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8881FF05F
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 21:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b="WkU4eDBm"
+Received: from bout3.ijzerbout.nl (bout3.ijzerbout.nl [136.144.140.114])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB771FF05F;
+	Fri, 15 Nov 2024 21:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.140.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731707583; cv=none; b=S+CzsX9aj3as2cCnn9hXgtIq6G0nd6gWp1gjv7yAwqRJiH4u02zFRA8AnKTqM/q0ipOdWQ/Bb6HrVIn5CUfHepqmj2XC7DlrKQsjS+adzrpdeM95kUgtC3LhbzPhLY+VlAS/B3rettFMbIc7du4MbVjeJ6DWaS2WnALFS2vaGks=
+	t=1731707627; cv=none; b=fU0hhofHH/c1LxEfQw4TkNXt/8kaf1fwm2WPPVXqpFRy+Hm+hv1iycu3OwEgWAKrDWXiUdwKNF7if50RdmIgqB+zLzKrI+XLx+O31dLYGqQYjOVRF6Gudx9HHMJ87ZCr1l/I3RGC4Ja4ejUJdU8tXp5a64thnwKoiuTVEQeM330=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731707583; c=relaxed/simple;
-	bh=n4OKgydlm0TVJwIGzSF/rXT3pH9BAUZabTwfDhlmxBw=;
-	h=Date:Mime-Version:Message-ID:Subject:From:Cc:Content-Type; b=tHoNGiJp6V69PI51U0uP1+dC3DXVlWHC96OzWWnuxGyBEVOStBU7HOQWFspYAxLLcceR2wqM0Cb68UUMo674J1LNWNlfgSDorZTnNHU1+wJ9lkTEaSzMEg0WuCPlBMkSFROI9hqU/4Uujc+o5CPfLcl9EVcm38IPlsCZM9HolaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kaleshsingh.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a99cfkiJ; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kaleshsingh.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ee57ae0f61so23439287b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 13:53:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731707579; x=1732312379; darn=vger.kernel.org;
-        h=cc:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=F3Lr4WdOKy4VbAqfpb23fqAMFS0TE/YrDm6ZBGH4WtQ=;
-        b=a99cfkiJCYUPWAL4wNPXHukpv9rqlK+EM2chui0zUyYLCTDJJfqwpBgAJqeQRCdI4P
-         To7cShT0SSGJTOgnEddjQN+1KF+cGdXZmhakQ8NTrYVkAKr1Qdo/lg9zK45WV/K0k/+m
-         ek4dFWgu1pnSpiltdbL5oLlJzvpomHWBdY6exQlGbGunVEget+b4AKnq5g8Te8OM4k/5
-         KF90BTX38gmLJXXd3hmLWAobvJfd55FBSEjY4Ej/5CXoqE8AXKzx/gZB2lAzGiuXsw8y
-         N4MP6Pjg/F8PVOAVJgExanbTBtKo7G9K8NHtQv/luoTlgvrujo5kJtY7XrcRQZAfQCHa
-         /AoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731707579; x=1732312379;
-        h=cc:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=F3Lr4WdOKy4VbAqfpb23fqAMFS0TE/YrDm6ZBGH4WtQ=;
-        b=FdGBcOx/C4OZ+wgejN3kVvQgaxzy8X5GNgB8ASNGhzjVFSGA2h+uCcbZI4PBb9I3ci
-         dyjcnShfuAun0uJ0JgT+iNgKoywLtlLwxP+sKNFHBS0VJNo5amIbF6wOl1CATNpdCxqC
-         VqqwG9Vv7NH/FtCoKEJLXOCNFsVfJBHlI9DqMo6Ubk7xW8C06ykxjifOCiTyX6P7/0Nj
-         VW9ca5DVLd7a1FVp35a9ZxGRrt6CJnQOikTIr5NtOPEOSeARNOhxFdwKDRDa3xN8Gfvo
-         hNe1PrcBbFG3sFt56PXIiGUDb48D8/JHsmEdEz7/e5eBbNUEARjkYoNTB/f8HRoQUXTn
-         3EfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWM/scGFKenl0c8lZvNbqRY6qG+I8XqAwUFgpry4iJxCN70/exSW8exfjobtC9qwtP3GGAFtM2N5M4vse8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVRXB+d4phPv5ttOBEPgzpsuFTe+BRfk8mtEGI30MSPTeU4aAA
-	y+RKhH9wS4pGEVqwMpJrhYGZ3v6VSXCdIe7AI60ZxsPI+U3EJYq4+3X7WO3WFCVA3gBdpElAwNz
-	+qlkWTBN6rTkSCeMvtNfd8Q==
-X-Google-Smtp-Source: AGHT+IH2lTnSTmkXeTH4jQY5dTMIBM7aAaY2KmefhKNRgP76mCWxBocb32PIi9hyqSL27HkXkJlJGHgg1gmJMiKP0A==
-X-Received: from kalesh.mtv.corp.google.com ([2a00:79e0:2e3f:8:fabe:251a:db8:7fc4])
- (user=kaleshsingh job=sendgmr) by 2002:a05:690c:8f07:b0:6ea:34c3:742b with
- SMTP id 00721157ae682-6ee55c7a403mr497207b3.6.1731707579432; Fri, 15 Nov 2024
- 13:52:59 -0800 (PST)
-Date: Fri, 15 Nov 2024 13:52:53 -0800
+	s=arc-20240116; t=1731707627; c=relaxed/simple;
+	bh=Zc3jub9AseieKkXFd7dNqYp5WdAhShCU0Si0Xo4Io/E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bq/E7shjolP5+k4IELE1guxeQcG2qd0Hm2UPUyxoPdt7mb+3WrL4CKlcbNqNLMDMbBYrPfDcg25PsG2z4pvMQdKRRf+hCwVb/lnaP+GmSRJ7RoipmDmfdNLGquOfSKiLIze6wZ2wIupld2pqqgSNtu/RbMXwTZJs3hUE8UuSf+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl; spf=pass smtp.mailfrom=ijzerbout.nl; dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b=WkU4eDBm; arc=none smtp.client-ip=136.144.140.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ijzerbout.nl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ijzerbout.nl; s=key;
+	t=1731707622; bh=Zc3jub9AseieKkXFd7dNqYp5WdAhShCU0Si0Xo4Io/E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WkU4eDBmIOVQQ7JlaQGv5TuWpytYOEt01AQ522wbU2g1HNC1PxoSKKWKPfNj6xsFx
+	 Hihsg3sqXeKt3ef+YWZKeByQ+MdOkSQj68STs81TtUbHjdbvoiyFgS5ISw9DXlht5x
+	 5E8TvYZw2sNpAhBKFralW4ULkSC/5WdA/DIgCnDlHXh7WGRnuPVQ9cKHC4fn1CMuvL
+	 TOEz7eLs8LfQ+uEUNJUCAIsvwnaCXBhE89PM/dxtZGPwOMpuHg8N6PxZ9Av8ZPhMUU
+	 FzHUKKiub1GK0NXYeTTepcJA9zwCY2mHPxeEdA2AhOLLOIuhqNzcNEspOvNraMxC4C
+	 DVxFfegrZ8N9D7tJMXOm2K40gfj7P0m7D7lG0+VA3d7p/4qZu0ci6civcb/0YBEEPu
+	 NlG43J+bhRLwQkyzxl8wvCQk4OwuvfTwfanU4l4wAp6UrpCF1tAG2R+Fd3IwcjrfC8
+	 6w41uRfK2GP9NVKjRjV87csn5eS17meS16K8Oz/9ZHWeVH68Fr7dOkbY4uk+/A9CVy
+	 rlFIbzfZ+ZXAsPIgs70nsuE0chRN5w6woRbCdrFyEIZvvygyJN9dwSaAzLsacyrV2i
+	 cb3aviIfH4VWqJdp5D3s/tX9Ne/rKfl3FjlPfzqOyam6sYYPlWMu2ajEhszzwseMqG
+	 Bi/76fk38NyqpgxujFw+w0d4=
+Received: from [IPV6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a] (racer.ijzerbout.nl [IPv6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a])
+	by bout3.ijzerbout.nl (Postfix) with ESMTPSA id BA5D218E010;
+	Fri, 15 Nov 2024 22:53:42 +0100 (CET)
+Message-ID: <1d3623ee-1f16-487c-98cb-ca2647e7239d@ijzerbout.nl>
+Date: Fri, 15 Nov 2024 22:53:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241115215256.578125-1-kaleshsingh@google.com>
-Subject: [PATCH] mm: Respect mmap hint address when aligning for THP
-From: Kalesh Singh <kaleshsingh@google.com>
-Cc: kernel-team@android.com, android-mm@google.com, 
-	Kalesh Singh <kaleshsingh@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Yang Shi <yang@os.amperecomputing.com>, 
-	Rik van Riel <riel@surriel.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Minchan Kim <minchan@kernel.org>, Hans Boehm <hboehm@google.com>, 
-	Lokesh Gidra <lokeshgidra@google.com>, stable@vger.kernel.org, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Jann Horn <jannh@google.com>, Yang Shi <shy828301@gmail.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] spi: imx: support word delay
+To: Jonas Rebmann <jre@pengutronix.de>, Mark Brown <broonie@kernel.org>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>
+Cc: kernel@pengutronix.de, linux-spi@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241113-imx-spi-word-delay-v2-0-2b65b737bf29@pengutronix.de>
+ <20241113-imx-spi-word-delay-v2-2-2b65b737bf29@pengutronix.de>
+Content-Language: en-US
+From: Kees Bakker <kees@ijzerbout.nl>
+In-Reply-To: <20241113-imx-spi-word-delay-v2-2-2b65b737bf29@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Commit efa7df3e3bb5 ("mm: align larger anonymous mappings on THP
-boundaries") updated __get_unmapped_area() to align the start address
-for the VMA to a PMD boundary if CONFIG_TRANSPARENT_HUGEPAGE=y.
+Op 13-11-2024 om 13:18 schreef Jonas Rebmann:
+> Implement support for the word delay feature of i.MX51 (and onwards) via
+> the ECSPI interface.
+>
+> Convert the requested delay to SPI cycles and account for an extra
+> inter-word delay inserted by the controller in addition to the requested
+> number of cycles, which was observed when testing this patch.
+>
+> Disable dynamic burst when word delay is set. As the configurable delay
+> period in the controller is inserted after bursts, the burst length must
+> equal the word length.
+>
+> Account for word delay in the transfer time estimation for
+> polling_limit_us.
+>
+> Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
+> ---
+>   drivers/spi/spi-imx.c | 95 +++++++++++++++++++++++++++++++++++++++++++++------
+>   1 file changed, 85 insertions(+), 10 deletions(-)
+>
+> [...]
+> +static unsigned int spi_imx_transfer_estimate_time_us(struct spi_transfer *transfer)
+> +{
+> +	u64 result;
+> +
+> +	result = DIV_U64_ROUND_CLOSEST((u64)USEC_PER_SEC * transfer->len * BITS_PER_BYTE,
+> +				       transfer->effective_speed_hz);
+> +	if (transfer->word_delay.value) {
+> +		unsigned int word_delay_us;
+> +		unsigned int words;
+> +
+> +		words = DIV_ROUND_UP(transfer->len * BITS_PER_BYTE, transfer->bits_per_word);
+> +		word_delay_us = DIV_ROUND_CLOSEST(spi_delay_to_ns(&transfer->word_delay, transfer),
+> +						  NSEC_PER_USEC);
+> +		result += words * word_delay_us;
+If the multiplication can overflow 32 bits to need to force a 64 bits 
+multiply.
+     result += (u64)words * word_delay_us;
 
-It does this by effectively looking up a region that is of size,
-request_size + PMD_SIZE, and aligning up the start to a PMD boundary.
-
-Commit 4ef9ad19e176 ("mm: huge_memory: don't force huge page alignment
-on 32 bit") opted out of this for 32bit due to regressions in mmap base
-randomization.
-
-Commit d4148aeab412 ("mm, mmap: limit THP alignment of anonymous
-mappings to PMD-aligned sizes") restricted this to only mmap sizes that
-are multiples of the PMD_SIZE due to reported regressions in some
-performance benchmarks -- which seemed mostly due to the reduced spatial
-locality of related mappings due to the forced PMD-alignment.
-
-Another unintended side effect has emerged: When a user specifies an mmap
-hint address, the THP alignment logic modifies the behavior, potentially
-ignoring the hint even if a sufficiently large gap exists at the requested
-hint location.
-
-Example Scenario:
-
-Consider the following simplified virtual address (VA) space:
-
-    ...
-
-    0x200000-0x400000 --- VMA A
-    0x400000-0x600000 --- Hole
-    0x600000-0x800000 --- VMA B
-
-    ...
-
-A call to mmap() with hint=0x400000 and len=0x200000 behaves differently:
-
-  - Before THP alignment: The requested region (size 0x200000) fits into
-    the gap at 0x400000, so the hint is respected.
-
-  - After alignment: The logic searches for a region of size
-    0x400000 (len + PMD_SIZE) starting at 0x400000.
-    This search fails due to the mapping at 0x600000 (VMA B), and the hint
-    is ignored, falling back to arch_get_unmapped_area[_topdown]().
-
-In general the hint is effectively ignored, if there is any
-existing mapping in the below range:
-
-     [mmap_hint + mmap_size, mmap_hint + mmap_size + PMD_SIZE)
-
-This changes the semantics of mmap hint; from ""Respect the hint if a
-sufficiently large gap exists at the requested location" to "Respect the
-hint only if an additional PMD-sized gap exists beyond the requested size".
-
-This has performance implications for allocators that allocate their heap
-using mmap but try to keep it "as contiguous as possible" by using the
-end of the exisiting heap as the address hint. With the new behavior
-it's more likely to get a much less contiguous heap, adding extra
-fragmentation and performance overhead.
-
-To restore the expected behavior; don't use thp_get_unmapped_area_vmflags()
-when the user provided a hint address.
-
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Yang Shi <yang@os.amperecomputing.com>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Suren Baghdasaryan <surenb@google.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Hans Boehm <hboehm@google.com>
-Cc: Lokesh Gidra <lokeshgidra@google.com>
-Cc: <stable@vger.kernel.org>
-Fixes: efa7df3e3bb5 ("mm: align larger anonymous mappings on THP boundaries")
-Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
----
- mm/mmap.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 79d541f1502b..2f01f1a8e304 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -901,6 +901,7 @@ __get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
- 	if (get_area) {
- 		addr = get_area(file, addr, len, pgoff, flags);
- 	} else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)
-+		   && !addr /* no hint */
- 		   && IS_ALIGNED(len, PMD_SIZE)) {
- 		/* Ensures that larger anonymous mappings are THP aligned. */
- 		addr = thp_get_unmapped_area_vmflags(file, addr, len,
-
-base-commit: 2d5404caa8c7bb5c4e0435f94b28834ae5456623
--- 
-2.47.0.338.g60cca15819-goog
-
+But I'm wondering if `result` needs to be u64.
+> +	}
+> +
+> +	return min(result, U32_MAX);
+Do you really expect this much? You're clipping to U32_MAX.
+U32_MAX microsecs is already more than an hour.
+> +}
+> [...]
 
