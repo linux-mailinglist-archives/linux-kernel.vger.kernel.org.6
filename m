@@ -1,126 +1,114 @@
-Return-Path: <linux-kernel+bounces-410285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-410302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E25ED9CD80B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:47:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B3A9CD99C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 08:02:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 437591F22F5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 06:47:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24892B2719E
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 07:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED9617E015;
-	Fri, 15 Nov 2024 06:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A0C185949;
+	Fri, 15 Nov 2024 07:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m8pJrJBV"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="U40jpFcQ"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F60029A9
-	for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 06:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8141F95A;
+	Fri, 15 Nov 2024 07:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731653220; cv=none; b=NIbOHvRj0DuEyqexCnzLS7tBO5ijBhyOGJspPvyE0dX0ZrJKPy+cpX0kvhAP4XAwsorTkMJ+JLDRGCoMK4Lu+pVeLtstPZoHCnEhpLFKUtaPs/6meIHHlTVLc81hDpT1YcaAjPqh73gcVcd3C2A4p+JdrdqV+Kxbv/gLCt5si5A=
+	t=1731654134; cv=none; b=NoBFNldc+TlLWUtoUkFXJtfu1FgapFNRzDRXCWVrOwreGwiGNk/OCZayybgKij1EYosJ7ZKcQGx2fRtnV9da8/DAAxhTDXXJ5GdxVu82FlitVAYNInioYxveGzPnx2oHHGxC97p+d8QWWx71XcagagiACVMrwWuVVBeaja4GbXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731653220; c=relaxed/simple;
-	bh=6qPHPlugeDCueFbEoNB3un8kv4mr+aZBLbJBD2DhCFs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rZWw8PK1qvF7oLMCnH9o5ADI7ZByeCTtenCKeBBfQ3/kL7dHKM/6+xhBjFwtVnRli7PuSl/2ZHA6NoP3kHiLOgIbAcpP22e+5xUEPsUvK8CBtHOyJ9NYuzsx2h/Bxr3cZE+Ut9YITNyj6haF2942m+2YrkP1kaUg2W6zbMie8LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m8pJrJBV; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71e4244fdc6so1140944b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Nov 2024 22:46:59 -0800 (PST)
+	s=arc-20240116; t=1731654134; c=relaxed/simple;
+	bh=5tGM067wa+AlamSiUyUvtOdtPcUbA7Xj4tjlcN8ACzY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=InJGiU0FJikL6oVfbQxFwDoU3azef3L5YdiH94opUr/MQQML4bumGwB9/ltIbgNigu5g7QO1lT3rUNRqWDyKdAbjlmthpTMFR2Lgp3HsMJ2qCN06k9srUIsDb/1Spik6NCgyAJKRl1XLElOya6BcgCZ1SyKEhZGC8LQWV1Up7XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=U40jpFcQ; arc=none smtp.client-ip=212.227.126.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731653218; x=1732258018; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=G/BfAHb1ZSMqVdqDSvsNC7xvx5+b5HvV8VHYR/A40J0=;
-        b=m8pJrJBV9n+AxPJQfIgl0W7E8hqUkNg4pqq12rE9+gL/w7PIxtB/gmZhZ1GMl/vHlQ
-         +lJJ/raptPdx/ytjwGOV/dK/weZngEtVVo5XVpcjxuMKM92yvxwj/72nsEq/0XDEFx8A
-         jlpWympP9mfj0kac5DkioYx7kA7NtiYr/1CPaHdmBBswNeb7oEc9x27XfEd2iMntBkDp
-         LflkZoTGcUAUaPmuDu5kHa/B+LA4jk82my4QI9VxRZRhyA5S41F23SWM87jzERviCrde
-         Ur1PXnY9Jr5YSZTtWCc7TWBtEFgNPbFzb+fwtuxXhlECK5QuizIrLZFSt4RSc+K5F1tW
-         gOWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731653218; x=1732258018;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G/BfAHb1ZSMqVdqDSvsNC7xvx5+b5HvV8VHYR/A40J0=;
-        b=INzPapcImQ9rmxNldOXlbrxonjN4/B6fwIqLzjwxUp+5WwRLeXZgQIJ1qMzicPW8Yf
-         43IH8jCiVghwnhGHf/qCaqzXw6TukFgOnBoPVdKadwZjxRkw3t3DKZ0ALQZiWB0IlL2N
-         KHXpHFoRdqGo99As9sppqekvc7dGrqErAK/wVoKJc36JMRiqtf3HqCiid6/NqrW5aH/F
-         L33ZS95PoOK2v1Kb8NL6rULPxMSheDYqgxahJtp/yis3oBs+PRFeUnVOIwKkJM2WA6zz
-         XFRMXxiYM+tuyBuJO/My0XEQznm4hyEATDx6deTFxczPMRJtnfh0fKW02+R3LobyuZjK
-         rdhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxq0mOxxBmanq0rVEmFd1XZG98BBjThfOvpBeFiRXpS8aXDuXx0nJT0pxRfDjA99YtPxNkSQj8oIT1r78=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywuyB5rI/KYBeEHEbPnfWYaNvcYOmdRaXXvB2nXM/1inSfJEMH
-	QYuhpnz2Ac2oo24AS2d2YlDkCQb80gHW1JFV74YeK5dRdMh6kcGv6ZXKyfGU7w==
-X-Google-Smtp-Source: AGHT+IG7g6V+GncMskJmi31sl11CTfqGguPy66PiWd2w8mZ74T+uGZMa+rDBHSDEHgff9qIU3c4ZGw==
-X-Received: by 2002:a05:6a00:2309:b0:71e:1722:d019 with SMTP id d2e1a72fcca58-72476e7b88emr2343975b3a.22.1731653218397;
-        Thu, 14 Nov 2024 22:46:58 -0800 (PST)
-Received: from thinkpad ([117.193.208.47])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724770eef26sm661670b3a.33.2024.11.14.22.46.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 22:46:58 -0800 (PST)
-Date: Fri, 15 Nov 2024 12:16:48 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Ziyue Zhang <quic_ziyuzhan@quicinc.com>, vkoul@kernel.org,
-	kishon@kernel.org, robh+dt@kernel.org, bhelgaas@google.com,
-	kw@linux.com, lpieralisi@kernel.org, quic_qianyu@quicinc.com,
-	conor+dt@kernel.org, neil.armstrong@linaro.org,
-	andersson@kernel.org, konradybcio@kernel.org,
-	quic_shashim@quicinc.com, quic_kaushalk@quicinc.com,
-	quic_tdas@quicinc.com, quic_tingweiz@quicinc.com,
-	quic_aiquny@quicinc.com, kernel@quicinc.com,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
-Subject: Re: [PATCH 4/5] arm64: dts: qcom: qcs8300: enable pcie0 for QCS8300
-Message-ID: <20241115064648.7ugkijhsobc4gcda@thinkpad>
-References: <20241114095409.2682558-1-quic_ziyuzhan@quicinc.com>
- <20241114095409.2682558-5-quic_ziyuzhan@quicinc.com>
- <a02925d7-2d09-4902-97e4-5e7f09d7ef21@oss.qualcomm.com>
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1731654130; x=1732258930;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=5tGM067wa+AlamSiUyUvtOdtPcUbA7Xj4tjlcN8ACzY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=U40jpFcQkDmDy7VO+9uK1dBRbMvylijWgJQmVu/0DqXKrePCE3Hkw4n4VZd8xPQJ
+	 6ZuA6VzS0y2UuKK4wEQP/4oVjJFoNnJuKVx+GYbv0hZFkKTUk9yLFpx65gxAjhsqk
+	 wgVGN+MOD2Y00/1ECPB1PENhuVLVq9owgcV/Zczcxlf8I6qfssiKBFg6o5pUhWGgg
+	 q+EQPwaPYt/7RhsWfRthfQhHIhBaC05z2QMyea7Mq5ebx9oQ3GSlA6aJgts1vs+Gg
+	 bydnDYRiN9F9tg0MWjx0nesaaJMB56zAEUbthZCyalbX0QmWz6aIhKUZ002PSs7Jm
+	 IeoOWST4Dd3XT3vFDg==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.0.174] ([91.64.229.215]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MnaTt-1tbEnz3qC5-00dzeD; Fri, 15 Nov 2024 07:49:03 +0100
+Message-ID: <8d26f1f2-8d75-4dec-ae77-28e4cae81ab3@oldschoolsolutions.biz>
+Date: Fri, 15 Nov 2024 07:49:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a02925d7-2d09-4902-97e4-5e7f09d7ef21@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] bluetooth: qca: generate nvm fw name from boardid for
+ WCN6855
+To: quic_zijuhu <quic_zijuhu@quicinc.com>,
+ Marcel Holtmann <marcel@holtmann.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Steev Klimaszewski <steev@kali.org>, Bjorn Andersson <bjorande@quicinc.com>
+References: <20241003-bt-nvm-firmware-v1-1-79028931214f@oldschoolsolutions.biz>
+ <8500baf7-59e4-4d8c-8485-3ef7aa106f16@quicinc.com>
+Content-Language: en-US
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <8500baf7-59e4-4d8c-8485-3ef7aa106f16@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:POfjw7Ee0aU2xz7lJI3a/GQzJrRzifurxdY8BMePB2PZiBu1j0w
+ Ccg89dA5BmAXcFc2TRjTnIvWyU39/k0qaSXecRigNltvACYIMzLXaPs/RM4kGsQStGzDZu0
+ 4ycQkIURY+pzODHIMzoPm/LXUxV0orwagOqk8PI7RaZr6G6ifNAf3jrm1dPxMKd0lANMYu/
+ izCeNoTINn548QnMf/uAA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ed7+KrzYIys=;IdcJCvQvXnw/JnCBr4vd9ruLI7R
+ vHWNwSyKYZahVU/3+ltzESoZ6cNxajac3IRVEVf4iVyXRo1ttpXpRui0K+0lrKSBRN0wCIHUu
+ PeyklkO7d1S6buOLjsgkpC9qivP/Ox2sQpeb7vYzUD1TCao66mgcI+cc5u24H5zzuk/0ZBhi8
+ YyK3VJV+bFaIgLRhHiXVkqVHhnHO3PbmDTcHhDVtj9ObgNb8+B5Wf6FHVhmP7Spz8xE53X152
+ XA2TmxM1opdiFkGi+HbiZShCz5i2pBIT8bloGNXgSC+lVpzeOBz+Kablwb1uuIDCNMnfSA5Zt
+ IiAVN/hqgCXGE97G3qG+gJWZBEifOLqyRZg1+FIIYEY9zZFOw+12EFGgnoism7IAjt/QzJP9x
+ B5Co5ViAgxAOE98jmPb5lFSve9TncUDCu6wdmJjHX/yikr75T4WdizmZFnzS3UBTvzgD3VJPK
+ QuyqOlYFErAorpQ39MieX07jF5SfFZSRsTGU2Pkesn7fkSPw5Ai17j9m/cYq0Vy5PiLSsLhpr
+ zLRO87Q5P8PCc4sjvZUq1u+KGQNmbnjFNcW+3D+jE95A3GcRobj9JfU3lLdSsdJyfl5KQ1QKZ
+ 98y/S1mS5+lEl3FTohwI/NZxQ0BfKsMEHiyRve78HreZ8H2z4KLFZ8Pq0z9EzyoURsFQiG8Nt
+ iKlI5appWnBsuILNdCL0kwvDkRixppZHxtkXCbgut1U/dBrg6canXxeICx2GNCEECxKJ01Roq
+ oJcchHLbqBPzS9VFkIpktWKWJi5seTp8Z/SnML+Ses9Xq7cEw9AdsSWALLYPQQdD2/y9JvvuH
+ ugk/1weUxksGNjaa2xDxuGsnGWsJWsXkUiWmhkcsz7JSJhsGXBx9mcy90/aiuXdT9M
 
-On Thu, Nov 14, 2024 at 02:02:48PM +0100, Konrad Dybcio wrote:
+On 14.11.24 07:17, quic_zijuhu wrote:
+> On 10/4/2024 3:21 AM, Jens Glathe wrote:
+> why not to refer to existing qca_get_nvm_name_generic().
+>
+> i will post a patch and cc you.
+>
+Hi Ziju,
 
-[...]
+tested the patch [1] and works nicely. It is the cleaner solution
+(having dedicated fw name generator functions) than the one I proposed.
+Future-proof.
 
-> > +
-> > +			pcieport0: pcie@0 {
-> > +				device_type = "pci";
-> > +				reg = <0x0 0x0 0x0 0x0 0x0>;
-> > +				#address-cells = <3>;
-> > +				#size-cells = <2>;
-> > +				ranges;
-> > +				bus-range = <0x01 0xff>;
-> > +			};
-> 
-> Are you going to use this? If not, please drop
-> 
+with best regards
 
-Absolutely not! This describes the IP that is present in the SoC and that IP is
-being used. You can however keep it disabled in the soc.dtsi and enable in board
-dts when PCIe controller is enabled.
+Jens
 
-Moreover, I plan to move the slot supplies to this node soon, so it will be
-used mostly.
+[1]
+https://lore.kernel.org/all/20241113-x13s_wcn6855_fix-v1-1-15af0aa2549c@qu=
+icinc.com/
 
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
 
