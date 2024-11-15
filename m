@@ -1,105 +1,140 @@
-Return-Path: <linux-kernel+bounces-411508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48AEA9CFB4E
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:50:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F05C9CFB50
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:51:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF58E282565
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:50:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FD0DB2590F
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Nov 2024 23:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458D91AF0A6;
-	Fri, 15 Nov 2024 23:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F99B1AF0A5;
+	Fri, 15 Nov 2024 23:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IpOJXKcP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DEDe0Y20";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wtMf0vKV"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F26717E44A;
-	Fri, 15 Nov 2024 23:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596251AE01B;
+	Fri, 15 Nov 2024 23:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731714619; cv=none; b=u7uD6+FMupSqOwDJGVahiAVTHhVEdvNERsT4vV7ijDGGljNGgqyxBRcIrvaPMF+y8xWrMkRYVKqxhDuxtbjgsksTMDP0gGPDN0xhPenGT/Cv8EkxOJVlzZWs35oZHfCnbILtXLNLq0XJDMh9n9NA6yhXfV5vsjyS8I87rkZORx0=
+	t=1731714646; cv=none; b=J2DZBX3h1TvgGV+bqaWuKkmngm86VUOjdHv5CBoGwhw1rFdXjXcBmeeN9E3+5jeecLMF6Lrc2M2mar3yTbjP/Y/Kwt75I+I1fimYfYbOqDLMtciT5x8krIMHWo7usZ9PSo/2Ddttpvs8Qt3TD2Uk69iu3YYcseuHtnvfbSwiLEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731714619; c=relaxed/simple;
-	bh=TkxXcLqiBzWudjdSJSHUIznKHuSnjfJwPmFMTqBz248=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=njvpOcM7o22L6KcdZ5bJGFe+N3TPG8S1ci+czxtXtH/PjyAa8IG8Yo9uISmCqx59cIAwG0zs/kJM0udSVgVcYHI4v/A8d2A2LZvnVlQw6hEGAwCsPaPESHZ4MzDUe/od7L4WooHvEQIihJMro/XykN76DW+IkNRkMlMWFGMR31A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IpOJXKcP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DB88C4CECF;
-	Fri, 15 Nov 2024 23:50:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731714619;
-	bh=TkxXcLqiBzWudjdSJSHUIznKHuSnjfJwPmFMTqBz248=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=IpOJXKcP3lkZ9lTIz8dmKC6/Dzznp6radZqYa6jD851I/jpWcDXU3rPWK7o/ZOFTp
-	 3SO1aPDDl0Eqlu9yT4s/MkiA7Wekmghde38ohVFvcCMF12KMGe1gXP8+0nHRSD8WXK
-	 3wLjpyCY43bsvWm2h4+oRHxkv5mLYrjIwmd3uXxRM6JVSR5BzidYp3ZvJN2wl2ub9+
-	 FIKZtvpKYVT7t/TRKvoxJnj899tzn4HsG+fuE3RJs4G+9w+mVHd2NhYcGRVjTdmTJz
-	 6yidOeFyPM5/gb+VRkrFwAy7Isgd7MDnzulbA7XMLoKFmf8CmxoD34bxcFA8oHWF1s
-	 /yjwPFOXQVt4Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 340E33809A80;
-	Fri, 15 Nov 2024 23:50:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1731714646; c=relaxed/simple;
+	bh=maBdDELOHQBd+g5+tIPYR6dABYPJfCxmDeyoGZ2b9OQ=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=XH94zounNeyD2Y9hrOODDHZujXXHMo+LLAJi1f1S02SJs8NLD09yW/GHupGLXT2BTGsuBjLEg5DqfTVGha6fOL2GX954w49D25lkoPFtE2OMbD7mchgMnkn/s2cREMVGbCy3y/QfNn+rHMGcKVM3xBVx0QGc+ickLnHu9NV4xJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DEDe0Y20; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wtMf0vKV; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 15 Nov 2024 23:50:41 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731714642;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dqNpDI7gI+gzJsQxMzcH8AMU0zhgHwx7w7ONikav/P8=;
+	b=DEDe0Y20gC2gl2Jj6YlQzGElafP1suHZaQ59yQvzr+CeGc2KpknVFDpRs8btbI0YYQA1/A
+	75HCmhJtbUpFYCiYXUKVbfcPd57u4DZlpi0n979SRT8phLVJl6em2U0zlG1oediEQURuGv
+	bqWhMDfBa912IL6Wp2bXUKs0HrA6znZ/rhYX8v2AWIze0wt2W9dAU316O3yn2i+byq4j1Q
+	l3WnetWrSPHvh0GVaEaF9OBAZ+jIJQOPAWTDNGR9eBnKhMghIU7jkHHmF0J/8y1XrfEDvX
+	cX8ziASnpui1EJFfLzzCbMCoDHsHDYyp7R/rMqfBGRGs7jK/nNVaPaylns5RhQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731714642;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dqNpDI7gI+gzJsQxMzcH8AMU0zhgHwx7w7ONikav/P8=;
+	b=wtMf0vKVxOicMKLBMxdUL1zFObR3XCLDrkFScur2LBWTFaiJWkGJKPDqY9+lZe58TyLNY2
+	nb4kBdPALiOb8vCA==
+From: "tip-bot2 for Samuel Holland" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: irq/core] irqchip/riscv-aplic: Prevent crash when MSI domain is missing
+Cc: Samuel Holland <samuel.holland@sifive.com>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20241114200133.3069460-1-samuel.holland@sifive.com>
+References: <20241114200133.3069460-1-samuel.holland@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v4 0/7] enic: Use all the resources configured on
- VIC
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173171463001.2772765.5468131384631362067.git-patchwork-notify@kernel.org>
-Date: Fri, 15 Nov 2024 23:50:30 +0000
-References: <20241113-remove_vic_resource_limits-v4-0-a34cf8570c67@cisco.com>
-In-Reply-To: <20241113-remove_vic_resource_limits-v4-0-a34cf8570c67@cisco.com>
-To: Nelson Escobar (neescoba) <neescoba@cisco.com>
-Cc: johndale@cisco.com, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, benve@cisco.com, satishkh@cisco.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, horms@kernel.org
+Message-ID: <173171464193.412.13982264589277396499.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hello:
+The following commit has been merged into the irq/core branch of tip:
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Commit-ID:     1f181d1cda56c2fbe379c5ace1aa1fac6306669e
+Gitweb:        https://git.kernel.org/tip/1f181d1cda56c2fbe379c5ace1aa1fac6306669e
+Author:        Samuel Holland <samuel.holland@sifive.com>
+AuthorDate:    Thu, 14 Nov 2024 12:01:30 -08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sat, 16 Nov 2024 00:45:37 +01:00
 
-On Wed, 13 Nov 2024 23:56:32 +0000 you wrote:
-> Allow users to configure and use more than 8 rx queues and 8 tx queues
-> on the Cisco VIC.
-> 
-> This series changes the maximum number of tx and rx queues supported
-> from 8 to the hardware limit of 256, and allocates memory based on the
-> number of resources configured on the VIC.
-> 
-> [...]
+irqchip/riscv-aplic: Prevent crash when MSI domain is missing
 
-Here is the summary with links:
-  - [net-next,v4,1/7] enic: Create enic_wq/rq structures to bundle per wq/rq data
-    https://git.kernel.org/netdev/net-next/c/b67609c93153
-  - [net-next,v4,2/7] enic: Make MSI-X I/O interrupts come after the other required ones
-    https://git.kernel.org/netdev/net-next/c/231646cb6a8c
-  - [net-next,v4,3/7] enic: Save resource counts we read from HW
-    https://git.kernel.org/netdev/net-next/c/5aee3324724a
-  - [net-next,v4,4/7] enic: Allocate arrays in enic struct based on VIC config
-    https://git.kernel.org/netdev/net-next/c/a64e5492ca90
-  - [net-next,v4,5/7] enic: Adjust used MSI-X wq/rq/cq/interrupt resources in a more robust way
-    https://git.kernel.org/netdev/net-next/c/cc94d6c4d40c
-  - [net-next,v4,6/7] enic: Move enic resource adjustments to separate function
-    https://git.kernel.org/netdev/net-next/c/374f6c04df8e
-  - [net-next,v4,7/7] enic: Move kdump check into enic_adjust_resources()
-    https://git.kernel.org/netdev/net-next/c/a28ccf1d6c10
+If the APLIC driver is probed before the IMSIC driver, the parent MSI
+domain will be missing, which causes a NULL pointer dereference in
+msi_create_device_irq_domain().
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Avoid this by deferring probe until the parent MSI domain is available. Use
+dev_err_probe() to avoid printing an error message when returning
+-EPROBE_DEFER.
 
+Fixes: ca8df97fe679 ("irqchip/riscv-aplic: Add support for MSI-mode")
+Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20241114200133.3069460-1-samuel.holland@sifive.com
 
+---
+ drivers/irqchip/irq-riscv-aplic-main.c | 3 ++-
+ drivers/irqchip/irq-riscv-aplic-msi.c  | 3 +++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/irqchip/irq-riscv-aplic-main.c b/drivers/irqchip/irq-riscv-aplic-main.c
+index 900e725..93e7c51 100644
+--- a/drivers/irqchip/irq-riscv-aplic-main.c
++++ b/drivers/irqchip/irq-riscv-aplic-main.c
+@@ -207,7 +207,8 @@ static int aplic_probe(struct platform_device *pdev)
+ 	else
+ 		rc = aplic_direct_setup(dev, regs);
+ 	if (rc)
+-		dev_err(dev, "failed to setup APLIC in %s mode\n", msi_mode ? "MSI" : "direct");
++		dev_err_probe(dev, rc, "failed to setup APLIC in %s mode\n",
++			      msi_mode ? "MSI" : "direct");
+ 
+ #ifdef CONFIG_ACPI
+ 	if (!acpi_disabled)
+diff --git a/drivers/irqchip/irq-riscv-aplic-msi.c b/drivers/irqchip/irq-riscv-aplic-msi.c
+index 945bff2..fb8d183 100644
+--- a/drivers/irqchip/irq-riscv-aplic-msi.c
++++ b/drivers/irqchip/irq-riscv-aplic-msi.c
+@@ -266,6 +266,9 @@ int aplic_msi_setup(struct device *dev, void __iomem *regs)
+ 			if (msi_domain)
+ 				dev_set_msi_domain(dev, msi_domain);
+ 		}
++
++		if (!dev_get_msi_domain(dev))
++			return -EPROBE_DEFER;
+ 	}
+ 
+ 	if (!msi_create_device_irq_domain(dev, MSI_DEFAULT_DOMAIN, &aplic_msi_template,
 
