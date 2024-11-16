@@ -1,62 +1,65 @@
-Return-Path: <linux-kernel+bounces-411629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFA8C9CFD04
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 08:43:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 574A69CFD09
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 08:44:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2AF1B2826C
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 07:43:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D892287FDE
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 07:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A78192598;
-	Sat, 16 Nov 2024 07:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574EE192D8C;
+	Sat, 16 Nov 2024 07:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2W/t/W7Y"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DOQCUicn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29695181CE1;
-	Sat, 16 Nov 2024 07:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A486918F2FC;
+	Sat, 16 Nov 2024 07:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731743013; cv=none; b=oGDxOGflVqVXiKhy2i8D3rkfo6SxUUbBC68pGdKbltYh1+s2DfdoIOEcaogPSe0NzER15fY7+YbcvNpMGU/QnMoutEOk3AH3rW7XxJri1noyR6yo6bqSl5wq5nmhPhaR+IoSdcSh95RhfmEEIJxcyYXp+vu4VgsUvzp3i4hMmx0=
+	t=1731743055; cv=none; b=r26tXw1wlWs2hI4J+dJv36VA3iuI1cU7Jk31ILHtXrX8IZBzDOXGPjGXLw0Ki3FCSWbbvTf1SM1TLlzZOTVKXFgetVP6G6SNQ0P7KgSDNuNjY31jirDZRSSEbPaRaWDhpOIje1b2wAyIdYd6RfOLZ7JjK6XchDzhf7EhtfZWCwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731743013; c=relaxed/simple;
-	bh=7iY2SnGNn9JGQJ3Q4hJYLUfDCLFuWIm9yVt1xqdObDM=;
+	s=arc-20240116; t=1731743055; c=relaxed/simple;
+	bh=KjZjAEkpsSJVk26vPJowBhePl2ldo8B8xA9M+L+OP1Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RL+g87UPuMe8WQuubAPbEyVCDHZre9wCezjzw5XDiJ6xDOX3m/v5JVde+BO99E9TcrHqR9wDDp7BL8kwGl/6vJXMnqKCcy+qSMXd2Abk1MO1yengD9R2i8Mqrgbuepnn4zy3K+3EBGp4dvMmXuw2EFZQh5hBUKqDIIAqnuOyPoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2W/t/W7Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B139C4CEC3;
-	Sat, 16 Nov 2024 07:43:32 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=TolBG1P4YqFfEygud6Xq2kRbCB3zETKmJfnNpT/yd3BEPSZibmPXFj1BDCkeHupHC6iZ8/dj7HKd+o8auCQI1lloTL560kKjnUyw2OU4ebb3KymUFOq0MSL/Q6CkSkID8/gsO5iIYMNZJ1TEN0Z4uwBioOlv9d+bxjQh2gjN/Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DOQCUicn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93C5BC4CEC3;
+	Sat, 16 Nov 2024 07:44:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731743012;
-	bh=7iY2SnGNn9JGQJ3Q4hJYLUfDCLFuWIm9yVt1xqdObDM=;
+	s=korg; t=1731743055;
+	bh=KjZjAEkpsSJVk26vPJowBhePl2ldo8B8xA9M+L+OP1Q=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=2W/t/W7YNfEcJjMCIn1v831TZlxo+p2RFbe/VPyqnImZiAftx/qwNXqxiPSNDF6S3
-	 D25pOx4mp3Fbr+JxR8MMl4nVCKOuEjVWU45bKDIYWerPE8/HNLHLBeN/Rf9H4PTuf9
-	 Cz5jek3MVDMhOwk7gobsDN8YGH91RltSi9ceHTqU=
-Date: Sat, 16 Nov 2024 08:43:09 +0100
+	b=DOQCUicnwHNNzRTBmMFH15E3g7z4J3tIJqz7Dr9Ale/FyqEtTpNLZfPxqhM19/8CY
+	 E8lmIRCIY2Xcfm7maGcIKl1o/VmaE6VpJVF9DrbOnoeJS1bFBBLDCygNBuYtlN9iXn
+	 Pdtrt352UODTQ6+/exPN8L8OXRJwaEyEG43NYmh4=
+Date: Sat, 16 Nov 2024 08:43:52 +0100
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Saravana Kannan <saravanak@google.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-	Len Brown <len.brown@intel.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Marek Vasut <marex@denx.de>, Bird@google.com,
-	Tim <Tim.Bird@sony.com>, kernel-team@android.com,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/5] PM: sleep: Fix runtime PM issue in dpm_resume()
-Message-ID: <2024111648-drilling-jubilant-1285@gregkh>
-References: <20241114220921.2529905-1-saravanak@google.com>
- <20241114220921.2529905-2-saravanak@google.com>
+To: Daniel Wagner <wagi@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	John Garry <john.g.garry@oracle.com>,
+	Hannes Reinecke <hare@suse.de>, Ming Lei <ming.lei@redhat.com>,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, virtualization@lists.linux.dev,
+	linux-scsi@vger.kernel.org, megaraidlinux.pdl@broadcom.com,
+	mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com,
+	storagedev@microchip.com, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v5 1/8] driver core: bus: add irq_get_affinity callback
+ to bus_type
+Message-ID: <2024111642-bush-violet-da1a@gregkh>
+References: <20241115-refactor-blk-affinity-helpers-v5-0-c472afd84d9f@kernel.org>
+ <20241115-refactor-blk-affinity-helpers-v5-1-c472afd84d9f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,20 +68,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241114220921.2529905-2-saravanak@google.com>
+In-Reply-To: <20241115-refactor-blk-affinity-helpers-v5-1-c472afd84d9f@kernel.org>
 
-On Thu, Nov 14, 2024 at 02:09:15PM -0800, Saravana Kannan wrote:
-> Some devices might have their is_suspended flag set to false. In these
-> cases, dpm_resume() should skip doing anything for those devices.
-> However, runtime PM enable and a few others steps are done before
-> checking for this flag. Fix it so that we do things in the right order.
+On Fri, Nov 15, 2024 at 05:37:45PM +0100, Daniel Wagner wrote:
+> Introducing a callback in struct bus_type so that a subsystem
+> can hook up the getters directly. This approach avoids exposing
+> random getters in any subsystems APIs.
 > 
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Reviewed-by: Ming Lei <ming.lei@redhat.com>
+> Signed-off-by: Daniel Wagner <wagi@kernel.org>
 
-This looks like a nice generic fix as well, should it go to older
-kernels?
-
-thanks,
-
-greg k-h
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
