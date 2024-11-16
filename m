@@ -1,198 +1,161 @@
-Return-Path: <linux-kernel+bounces-411712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D94629CFEB1
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 12:51:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0345B9CFEB6
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 13:01:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B5DAB26DD8
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 11:51:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C576B28122
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 12:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32BC19A2A3;
-	Sat, 16 Nov 2024 11:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8686C28FF;
+	Sat, 16 Nov 2024 12:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="L5RpzLVG"
-Received: from forwardcorp1a.mail.yandex.net (forwardcorp1a.mail.yandex.net [178.154.239.72])
+	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="ReKLBLV5";
+	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="ojUDzAfH"
+Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D508191F79;
-	Sat, 16 Nov 2024 11:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.72
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731757893; cv=none; b=Yx0XWQJnU6NMmeWS+ph06NsuH9ZNtLW9ZL3DYjmcfydG7JLs5fktiHnALIgWgBhmOkYGBqKdWkmPgMA0k8PaTIIuyZTcb/C2JPqUk3maWqL2OvKeo06w8LdWgh+VCwlafVKY5gpi3K3ozDQ+5dZ620WVB+JRArOBRXzsjS9NqBs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731757893; c=relaxed/simple;
-	bh=zjSieOGSsTlLTPpNO6omIXwm9Z/p2nQc687IZdk4QMA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lSUfyjjl5z3vAn37hjlPi4Wza9bo2yl1BlGNrf53hGx3UlNqsZE36/juXUI82RU5FSfvXV4zm+Adas40UAZRsyb97q5keA3si08m5ciu+toF9Sekb/bfV071uY1BjdJ3j2zo6EsCHykQjsf5SyCe69s82RyjsZSkwr+zv8upmLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=L5RpzLVG; arc=none smtp.client-ip=178.154.239.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
-Received: from mail-nwsmtp-smtp-corp-main-62.myt.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-62.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:3012:0:640:8a85:0])
-	by forwardcorp1a.mail.yandex.net (Yandex) with ESMTPS id 0F18760DE7;
-	Sat, 16 Nov 2024 14:51:23 +0300 (MSK)
-Received: from [IPV6:2a02:6b8:b081:31::1:15] (unknown [2a02:6b8:b081:31::1:15])
-	by mail-nwsmtp-smtp-corp-main-62.myt.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id KpMb544IeW20-gFRURnEk;
-	Sat, 16 Nov 2024 14:51:22 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
-	s=default; t=1731757882;
-	bh=mLKf107S93FqCQbbr24sJjIFfMKG7H9cyJuCevJGsvE=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=L5RpzLVG6T8lr/LDHxEuMCXU2j2t3QKpJjPNWP+kUqmBqyf/1+brskCCiTRua0N7e
-	 CgNgXrhjBH8YSbKEhdydXJWozEuT2zNuhPqip1kpbumPTPoFnpAwU6FnhLD8WzofF8
-	 KEbXhezhJhhd5bWnQmUiIv/ouZqAwulupH9I5n3w=
-Authentication-Results: mail-nwsmtp-smtp-corp-main-62.myt.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
-Message-ID: <8160befa-322b-4f61-97e0-9caa32defc2a@yandex-team.ru>
-Date: Sat, 16 Nov 2024 14:51:20 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C99161;
+	Sat, 16 Nov 2024 12:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731758491; cv=fail; b=n2YbzBNjHEu8VwQhUS5yGa0ZjLTUwYvX+y1lxb7e0L7tyAkEAmTGRE/j+dbCaWpVYEiUM4Gjn4uc+Qr+2pMj9TamwbhEB8rE57FhWq8Y2ADcsQ9D0p+XCWAkhmwKrPwLmALUW+q7GI+fGCb9ppH+EISkxIY5fw0na6gucK0iHD0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731758491; c=relaxed/simple;
+	bh=imsdWN83wDqXvmIIqc8/aum484lB6doOW+UX9UO9VPw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=vEXqMQVW9lVeQ/i0p3X2qCrINSC0X6dNqpoODlTX87/yT/xGa/4kdIR4URNYpVDe8ekb/xpYYTn1mqw+Mbl+rjBXEX0evgaxpYBmaSU3YKp2nv2D9gBXLOJSOTBGI7rf0xKNsGCwtPTw+F58jbARPbnFoFa19J0W3ZxsM4oqCYY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=ReKLBLV5; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=ojUDzAfH; arc=fail smtp.client-ip=72.84.236.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
+Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
+   signature) header.d=sapience.com header.i=@sapience.com 
+   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
+   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
+Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by s1.sapience.com (Postfix) with ESMTPS id 489B64800BA;
+	Sat, 16 Nov 2024 07:01:29 -0500 (EST)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1731758489;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=+PURL2InYOsj3BhypDb0PKUe2mpdYPN2P0wnuC/FnZQ=;
+ b=ReKLBLV5D/Hgvbl/MRpObjWRnSBTK4LLu8VmJs3Nq0JtYsVTCF1zyvGF4bmvmV4/hr8Ff
+ Tt26ZunUn8FVfIfBQ==
+ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1731758489;
+	cv=none; b=UwPSPz9WEqRhHVKp8r5BGTZ/rFhoP6M+5mU60VPsJuPXmgkXPEDeRX0/hsoZNURVj71gyKHuMVChDFaXW0N7BlB60wftVAfSpG1KwNUYs3ISWtVzN3IzkXfkfRwQaPqzE6fei3WCPX0HRL0yP5GuwoBAPr8J8UCy8MFGS4NxsdSdPur8Sm6z5WD5mkmrI5zOPGKb8+gL5B4GcB2/QHXdSJOZ3SHtls+qlDSshDj0W65lzjiVq3YjDgiAd3apDAS7ywSacr7PGlLQiS63z7RBE4R9Dpjqg5c4Og4BoOSgiWrAFD8O5ZTehRWhEralXmFN2HM5gM+oRc6IKyvWUthWgg==
+ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
+	t=1731758489; c=relaxed/simple;
+	bh=imsdWN83wDqXvmIIqc8/aum484lB6doOW+UX9UO9VPw=;
+	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
+	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
+	 MIME-Version; b=xahICJHBXNEXopCshqzGUbFU/Nebt7i+KdwvsZsTiD1bB49Ygn80J8MSZGcBjHcPJIKrg09wylBwy3GZQDcaYbFBhxl83od+IyBa5K3nU6B9Pf45yTP1Gkm6ikRQ+y2Nt6RqkooFjv6bTLh585Xwj7AnSfFHxiT3M99V/gadl435teef2dFos08pINDNNQrZYuXGX1aTdiFQl5ZnAayf8kuZHE17qh9CMl2Xh2Mvb0GhxeyaHx/8GQxb+8VPT1mfRvN5k9c5GtHJYSSrds24mdh6QnWz5i14ZAtJvJBFycZ8B/2/nqYaaGxQurExDsrDmJeCVyTFj8Eo8h//ZjPSNw==
+ARC-Authentication-Results: i=1; arc-srv8.sapience.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1731758489;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=+PURL2InYOsj3BhypDb0PKUe2mpdYPN2P0wnuC/FnZQ=;
+ b=ojUDzAfHn+9fmwyxUE583DeO3yEandILLk86SVMNXqeIFsAtr1msNYt77UBtVCotHSFfM
+ RjOqNpdOvFIQUjUQ3nthJwbtbwhx8sRM9XeJTPaDdoz+ylIyVELYJgoP0f9REEBre0QIAw2
+ N4/35di8rNQXjVHSAC0hL6Tp7ssyq6zjE94QI2wIksyf/s68Xmf9Ld4cCNFVdWHXmZ1egrn
+ 3a90O1MabgszhmEcsTXGvbV2RpriMY/2F0h8YCDB+QqPPw7qyWkSvXL8NGAeNLq7PB57nzd
+ XRgZKgPUpQmKp9eHP/afoIiYkwbcAKppsENt2xpbXZYxDTgwzfejh57j6Sog==
+Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by srv8.sapience.com (Postfix) with ESMTPS id 0E54E28004A;
+	Sat, 16 Nov 2024 07:01:29 -0500 (EST)
+Message-ID: <9f1b81682e853655c74589ace5debf9a55edff51.camel@sapience.com>
+Subject: Re: md-raid 6.11.8 page fault oops
+From: Genes Lists <lists@sapience.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>, Song Liu <song@kernel.org>, 
+	dm-devel@lists.linux.dev, Alasdair Kergon <agk@redhat.com>, Mike Snitzer
+	 <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux@leemhuis.info, "yukuai (C)" <yukuai3@huawei.com>
+Date: Sat, 16 Nov 2024 07:01:28 -0500
+In-Reply-To: <058cd646-2d2a-202d-5f99-6e635a95fead@huaweicloud.com>
+References: <0b579808e848171fc64e04f0629e24735d034d32.camel@sapience.com>
+	 <CAPhsuW4kNYbcXERCQFqO-r8Q_rCLxrkQPt777cB_8TwyBfy8FA@mail.gmail.com>
+	 <058cd646-2d2a-202d-5f99-6e635a95fead@huaweicloud.com>
+Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
+ keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
+ 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
+ sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
+ vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
+ BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
+Content-Type: multipart/signed; micalg="pgp-sha384";
+	protocol="application/pgp-signature"; boundary="=-jBSfqBSm7l/Og52McZTK"
+User-Agent: Evolution 3.54.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] x86: KVM: Advertise AMD's speculation control
- features
-To: babu.moger@amd.com, Jim Mattson <jmattson@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
- seanjc@google.com, sandipan.das@amd.com, bp@alien8.de, mingo@redhat.com,
- tglx@linutronix.de, dave.hansen@linux.intel.com, hpa@zytor.com,
- pbonzini@redhat.com
-References: <20241113133042.702340-1-davydov-max@yandex-team.ru>
- <20241113133042.702340-3-davydov-max@yandex-team.ru>
- <2813ba0d-7e5d-03d4-26df-d5283b9c0549@amd.com>
- <CALMp9eT2RMe9ej_UbbeoKb+1hqWypxWswqg2aGodZHC0Vgoc=Q@mail.gmail.com>
- <3d182f98-d717-ff12-9640-f691a3840fbe@amd.com>
-Content-Language: en-US
-From: Maksim Davydov <davydov-max@yandex-team.ru>
-In-Reply-To: <3d182f98-d717-ff12-9640-f691a3840fbe@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-Hi!
 
-On 11/16/24 00:29, Moger, Babu wrote:
-> 
-> 
-> On 11/15/2024 2:32 PM, Jim Mattson wrote:
->> On Fri, Nov 15, 2024 at 12:13 PM Moger, Babu <bmoger@amd.com> wrote:
->>>
->>> Hi Maksim,
->>>
->>>
->>> On 11/13/2024 7:30 AM, Maksim Davydov wrote:
->>>> It seems helpful to expose to userspace some speculation control 
->>>> features
->>>> from 0x80000008_EBX function:
->>>> * 16 bit. IBRS always on. Indicates whether processor prefers that
->>>>     IBRS is always on. It simplifies speculation managing.
->>>
->>> Spec say bit 16 is reserved.
->>>
->>> 16 Reserved
->>>
->>> https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/programmer-references/57238.zip
->>
->> The APM volume 3 ( 24594—Rev. 3.36—March 2024) declares this bit as
->> "Processor prefers that STIBP be left on." Once a bit has been
->> documented like that, you have to assume that software has been
->> written that expects those semantics. AMD does not have the option of
->> undocumenting the bit.  You can deprecate it, but it now has the
->> originally documented semantics until the end of time.
-> 
-> Yes. Agreed.
-> 
->>
->>>> * 18 bit. IBRS is preferred over software solution. Indicates that
->>>>     software mitigations can be replaced with more performant IBRS.
->>>> * 19 bit. IBRS provides Same Mode Protection. Indicates that when IBRS
->>>>     is set indirect branch predictions are not influenced by any prior
->>>>     indirect branches.
->>>> * 29 bit. BTC_NO. Indicates that processor isn't affected by branch 
->>>> type
->>>>     confusion. It's used during mitigations setting up.
->>>> * 30 bit. IBPB clears return address predictor. It's used during
->>>>     mitigations setting up.
->>>>
->>>> Signed-off-by: Maksim Davydov <davydov-max@yandex-team.ru>
->>>> ---
->>>>    arch/x86/include/asm/cpufeatures.h | 3 +++
->>>>    arch/x86/kvm/cpuid.c               | 5 +++--
->>>>    2 files changed, 6 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/arch/x86/include/asm/cpufeatures.h 
->>>> b/arch/x86/include/asm/cpufeatures.h
->>>> index 2f8a858325a4..f5491bba75fc 100644
->>>> --- a/arch/x86/include/asm/cpufeatures.h
->>>> +++ b/arch/x86/include/asm/cpufeatures.h
->>>> @@ -340,7 +340,10 @@
->>>>    #define X86_FEATURE_AMD_IBPB                (13*32+12) /* 
->>>> Indirect Branch Prediction Barrier */
->>>>    #define X86_FEATURE_AMD_IBRS                (13*32+14) /* 
->>>> Indirect Branch Restricted Speculation */
->>>>    #define X86_FEATURE_AMD_STIBP               (13*32+15) /* Single 
->>>> Thread Indirect Branch Predictors */
->>>> +#define X86_FEATURE_AMD_IBRS_ALWAYS_ON       (13*32+16) /* Indirect 
->>>> Branch Restricted Speculation always-on preferred */
->>>
->>> You might have to remove this.
->>
->> No; it's fine. The bit can never be used for anything else.
-> 
-> That is true.
-> But, Hardware does not report this bit yet (at least on my system). So, 
-> I am thinking it may not be required to add at this point.
-> 
+--=-jBSfqBSm7l/Og52McZTK
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Yes, I used information about bits from "AMD64 Architecture Programmer’s 
-Manual". So I thought, if the bit is defined in this manual, it can be 
-used in any processor.
-I've checked PPRs for EPYC Rome, Milan and Genoa and the 16 bit is 
-reserved for all of these processors. But I don't know if there are any 
-other processors with the 16 bit set.
+On Sat, 2024-11-16 at 11:34 +0800, Yu Kuai wrote:
+>=20
+>=20
+> While reporting bugs, it'll be much helpful if you can provide
+> addr2line
+> here, fo example:
+>=20
+> gdb dm_mod.ko
+> list *(clone_endio+0x43)
+>=20
+> Thanks,
+> Kuai
+>=20
+Of course thank you.
 
->>
->>>>    #define X86_FEATURE_AMD_STIBP_ALWAYS_ON     (13*32+17) /* Single 
->>>> Thread Indirect Branch Predictors always-on preferred */
->>>> +#define X86_FEATURE_AMD_IBRS_PREFERRED       (13*32+18) /* Indirect 
->>>> Branch Restricted Speculation is preferred over SW solution */
->>>> +#define X86_FEATURE_AMD_IBRS_SMP     (13*32+19) /* Indirect Branch 
->>>> Restricted Speculation provides Same Mode Protection */
->>>>    #define X86_FEATURE_AMD_PPIN                (13*32+23) /* 
->>>> "amd_ppin" Protected Processor Inventory Number */
->>>>    #define X86_FEATURE_AMD_SSBD                (13*32+24) /* 
->>>> Speculative Store Bypass Disable */
->>>>    #define X86_FEATURE_VIRT_SSBD               (13*32+25) /* 
->>>> "virt_ssbd" Virtualized Speculative Store Bypass Disable */
->>>> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
->>>> index 30ce1bcfc47f..5b2d52913b18 100644
->>>> --- a/arch/x86/kvm/cpuid.c
->>>> +++ b/arch/x86/kvm/cpuid.c
->>>> @@ -754,8 +754,9 @@ void kvm_set_cpu_caps(void)
->>>>        kvm_cpu_cap_mask(CPUID_8000_0008_EBX,
->>>>                F(CLZERO) | F(XSAVEERPTR) |
->>>>                F(WBNOINVD) | F(AMD_IBPB) | F(AMD_IBRS) | F(AMD_SSBD) 
->>>> | F(VIRT_SSBD) |
->>>> -             F(AMD_SSB_NO) | F(AMD_STIBP) | F(AMD_STIBP_ALWAYS_ON) |
->>>> -             F(AMD_PSFD)
->>>> +             F(AMD_SSB_NO) | F(AMD_STIBP) | F(AMD_IBRS_ALWAYS_ON) |
->>>> +             F(AMD_STIBP_ALWAYS_ON) | F(AMD_IBRS_PREFERRED) |
->>>> +             F(AMD_IBRS_SMP) | F(AMD_PSFD) | F(BTC_NO) | 
->>>> F(AMD_IBPB_RET)
->>>>        );
->>>>
->>>>        /*
->>>
->>> -- 
->>> - Babu Moger
->>>
->>
-> 
+Let me know if there's anything else that would be helpful.
 
--- 
-Best regards,
-Maksim Davydov
+I needed to rebuild with debug turned on as production build has it off
+- but toolchain is unchanged so this should be valid:
+
+(gdb) list *(clone_endio+0x43)
+0x3733 is in clone_endio (drivers/md/dm.c:1111).
+1106	static void clone_endio(struct bio *bio)
+1107	{
+1108		blk_status_t error =3D bio->bi_status;
+1109		struct dm_target_io *tio =3D clone_to_tio(bio);
+1110		struct dm_target *ti =3D tio->ti;
+1111		dm_endio_fn endio =3D likely(ti !=3D NULL) ? ti->type-
+>end_io : NULL;
+1112		struct dm_io *io =3D tio->io;
+1113		struct mapped_device *md =3D io->md;
+1114=09
+1115		if (unlikely(error =3D=3D BLK_STS_TARGET)) {
+
+--=20
+Gene
+
+
+--=-jBSfqBSm7l/Og52McZTK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZziJmAAKCRA5BdB0L6Ze
+23lDAQDmKDRogYmRFOkIyrPg/zvJdLhQXFoaznflVHIJjkFMbwD/YzM8epUhSi2w
+SqsCzdjU83b511s+4dDdHwphvXL9OwI=
+=vF5u
+-----END PGP SIGNATURE-----
+
+--=-jBSfqBSm7l/Og52McZTK--
 
