@@ -1,75 +1,59 @@
-Return-Path: <linux-kernel+bounces-411787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF0B79CFF9F
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:40:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A831A9CFFB0
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:47:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68215B25103
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 15:40:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E2171F23229
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 15:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED403EA76;
-	Sat, 16 Nov 2024 15:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C640518787F;
+	Sat, 16 Nov 2024 15:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b36hKJ6g"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u5zVHCkT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA10144D1A
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 15:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5BA18052;
+	Sat, 16 Nov 2024 15:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731771639; cv=none; b=JFWrFcu6/V6IakjWArxzt7zelNl5zJZx3VfX/m0U6jSB6hbc4eKBAB0Vayp9ggyRdWLRqfYfDd/dtcGNSXNzHADs6aUpDGAXcE/DYq2z/IftoEu4s7rjh5KuE5dTko9w5ZIO/teX7KXmlWWu0tZoin0M2ElXgYybmpE86W+HsJI=
+	t=1731772064; cv=none; b=f8B/Uyj4B8ZOtKaoUSYUy9GrvqtkoGPmSCSgF1whwjgdLlNFIjf3TSrtCsG97ttDg+QbOV9gEHvcY6dHVgui6XXULa5SAndVa2vu3BDHR+emHNMZeyk7/U1uTZw+R1PZgDnkHpyWolBVgwIac0iJpCZ61hQzQZT81p5Xa/O/1L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731771639; c=relaxed/simple;
-	bh=Wd+7kLQISUZlzyPvYmSUTVOb8NV4Vyd3OpsFXw6X7a0=;
-	h=From:Message-ID:To:Subject:Date:MIME-Version:Content-Type; b=TlJDW7ijvbDtTmU7baCIlg5lvIWbqwaen6UYx6oDvUPrCcrVybl/yajEqoUqYHKCItZZlYIzb0dLkjtRweghK295UizkZJHoDW+hZs97+mUu6L/ae7ZoFUK62RQXcczbuaavMzxWx8n9oamm6/LKm84GIB2LqXq5XVyjMhpSxFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b36hKJ6g; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7f8cc29aaf2so896901a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 07:40:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731771637; x=1732376437; darn=vger.kernel.org;
-        h=mime-version:date:subject:to:reply-to:message-id:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XHEOkgJ64rwJ+cv0sVIqPUmbc8l+iTifR7HzGzNced0=;
-        b=b36hKJ6gQQncBj4DAuESdzbJIO03TFjIaKP3FnKRT3dCHkU3lVbv3l/lJkHYpXKqgE
-         5TmJoGvB/YhaLRqehE6VYQ08a2X97qyU5uci47kSCFw68PPMg+WaZOkX2kt/MALbWYqv
-         aRgeTPM1a4rFbGztgfWEzwH1rZwiEzH23GSivENJZIhdoRoihvgHDu7KymQcQTBpErly
-         JKR2L/+BKregRsTRUxjc0k25iEQwRwPQVn4Top8JMhB7RkzikfhYtz45/LCzUJdbuiLi
-         nE9tsqBmKBSOWTQPUclNgbNAW9hKYdkSePK/oLXl/RYFMsHH0KM8Iu8CHKC8MKeZRCVM
-         3+cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731771637; x=1732376437;
-        h=mime-version:date:subject:to:reply-to:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XHEOkgJ64rwJ+cv0sVIqPUmbc8l+iTifR7HzGzNced0=;
-        b=hWoFoPhKl2EWjWofF2YfZThYJ6Y/90VeeUnbASrwEJkNpGy/gL6l/TFOPAoAddJbHx
-         qcpGoqXMFz9SNs0qZw3U237I8sv5mZ4h/EdsRQLTAYOb6/wNqsH9thu3vVy1sn/ni7Xm
-         mbI1Fq6IYZQIs3VBWc+6sj4NmPHBSMAdy/qTiLTrG86nDbBHcPXoGDUMwHcgB8G+Afpz
-         VwZETkCS4fbMK6kJiv0+Yath/+JF07MpnWkQZcBJ68+ttQ2fq5FxARWOpkEMKiFptji2
-         q9XovY3Ukh17RrTI9KUyDy/FNytrjvr2lzjF5HeX8oUt0uwvqoRNE7r0Ku3+45By8hmh
-         vO1w==
-X-Gm-Message-State: AOJu0YzRSYm70MPdS+OV/Rqv853T9i5tb4LIwu8fWf/HL7gKk6CFpsbY
-	zYBQV7puuH+t+Lmwg7aGy8FuADkGGDjugE/t+SmwvWUcPB186UTxnguH2Q==
-X-Google-Smtp-Source: AGHT+IHRXBxFgJvoygabyn9sROQMrbJ8AchOkzjbLQLMyRVBTpGhtvybLiGwbRVyjhG9RvpncfOTlw==
-X-Received: by 2002:a05:6a20:12ce:b0:1d9:2b12:4165 with SMTP id adf61e73a8af0-1dc90b1fc14mr9333054637.13.1731771637145;
-        Sat, 16 Nov 2024 07:40:37 -0800 (PST)
-Received: from [103.67.163.162] ([103.67.163.162])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1dada40sm3086249a12.61.2024.11.16.07.40.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 16 Nov 2024 07:40:36 -0800 (PST)
-From: "Van. HR" <sk0673130@gmail.com>
-X-Google-Original-From: "Van. HR" <infodesk@information.com>
-Message-ID: <a56e712e53bbde3a6279c41d19f98dc9ba177904b36fc316b73c32be6a0f89f4@mx.google.com>
-Reply-To: dirofdptvancollin@gmail.com
-To: linux-kernel@vger.kernel.org
-Subject: Nov:16:24
-Date: Sat, 16 Nov 2024 10:40:34 -0500
+	s=arc-20240116; t=1731772064; c=relaxed/simple;
+	bh=M49TRIBAVxrm/P8SCFGwuYjCl0z57oQDk6m2q50Svuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EGPfhn0pedsecLqqrDcK1leVECTHjfGEt7WoOLkAa+k2+J8HyKvqrO759edPT18anLybPYDYFFTYxiBbUPUCvjFHYfGP0qtEmRmIZPqRyyT7gO1ay5g2z23qPMTj3TnyZSOrLy7RUO15bOWjOQUXaRVs+Zg53+3yNRyibHhPWAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u5zVHCkT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F2B9C4CED2;
+	Sat, 16 Nov 2024 15:47:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731772063;
+	bh=M49TRIBAVxrm/P8SCFGwuYjCl0z57oQDk6m2q50Svuc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u5zVHCkTZaYCMKKFM1HCFdYbMaSkcG538fSL09v7tLe9+8FqvMykEUHwYf3Io4U+G
+	 DkDHiM7vnKfgiyrZ51ogcqFviuK0aWXuh0tHMNe644GvKq3yl44B2iUKpRVppd+YMJ
+	 sbm7r/12eT9rUqPV7x+NpU2BvpU2UTaJy1H3cQ6m0yd3RahjJtL50sFDQOA+sWde7d
+	 +94/bH7fvAQ3jwb/0BlFiP4GT4sFi1SwL7CV4qn/wrxAxl8ekGYZMrsiTPVVapCDRh
+	 aRPq5VIY3vxVjtQFf9WwAwEDP7FE2hAKM1lVODFmXRIBnThkdDMlU71alyvBlXzX6K
+	 yvjo8DwMKzWMQ==
+Date: Sat, 16 Nov 2024 16:47:37 +0100
+From: Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>
+To: Fiona Behrens <me@kloenk.dev>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+	linux-leds@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [RFC PATCH 1/2] rust: LED abstraction
+Message-ID: <snsf4cc6valp5ovrrbjv7fefxtkthifsis5el4teajzwjhmv4x@ghxovfdqkhop>
+References: <20241009105759.579579-1-me@kloenk.dev>
+ <20241009105759.579579-2-me@kloenk.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,14 +61,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009105759.579579-2-me@kloenk.dev>
 
-Hello,
-I am a private investment consultant representing the interest of a multinational  conglomerate that wishes to place funds into a trust management portfolio.
+On Wed, Oct 09, 2024 at 12:57:58PM +0200, Fiona Behrens wrote:
 
-Please indicate your interest for additional information.
+> +/// Color of an LED.
+> +#[derive(Copy, Clone)]
+> +pub enum Color {
+> +    /// White
+> +    White,
+> +    /// Red
+> +    Red,
+> +    /// Green
+> +    Green,
+> +    /// Blue
+> +    Blue,
+> +    /// Amber
+> +    Amber,
+> +    /// Violet
+> +    Violet,
+> +    /// Yellow
+> +    Yellow,
+> +    /// Purple
+> +    Purple,
+> +    /// Orange
+> +    Orange,
+> +    /// Pink
+> +    Pink,
+> +    /// Cyan
+> +    Cyan,
+> +    /// Lime
+> +    Lime,
 
-Regards,
+Why these repetitions?
 
-Van Collin.
+> +impl TryFrom<u32> for Color {
+> +    type Error = Error;
+> +
+> +    fn try_from(value: u32) -> Result<Self, Self::Error> {
+> +        Ok(match value {
+> +            bindings::LED_COLOR_ID_WHITE => Color::White,
+> +            bindings::LED_COLOR_ID_RED => Color::Red,
+> +            bindings::LED_COLOR_ID_GREEN => Color::Green,
+> +            bindings::LED_COLOR_ID_BLUE => Color::Blue,
+> +            bindings::LED_COLOR_ID_AMBER => Color::Amber,
+> +            bindings::LED_COLOR_ID_VIOLET => Color::Violet,
+> +            bindings::LED_COLOR_ID_YELLOW => Color::Yellow,
+> +            bindings::LED_COLOR_ID_PURPLE => Color::Purple,
+> +            bindings::LED_COLOR_ID_ORANGE => Color::Orange,
+> +            bindings::LED_COLOR_ID_PINK => Color::Pink,
+> +            bindings::LED_COLOR_ID_CYAN => Color::Cyan,
+> +            bindings::LED_COLOR_ID_LIME => Color::Lime,
+> +            bindings::LED_COLOR_ID_IR => Color::IR,
+> +            bindings::LED_COLOR_ID_MULTI => Color::Multi,
+> +            bindings::LED_COLOR_ID_RGB => Color::RGB,
+> +            _ => return Err(EINVAL),
+> +        })
+> +    }
+> +}
 
+How does Rust compile these? If these constants compile to the same
+numeric values, i.e. if
+  LED_COLOR_ID_AMBER == Color::Amber,
+will the compiler compile away the function?
+
+How do enums work in Rust?
+
+> +impl<'a, T> Led<T>
+
+offtopic, what is 'a ? What does the ' mean? Is impl<> something like
+template in c++?
+
+> +where
+> +    T: Operations + 'a,
+
+What does + mean here?
+
+> +/// LED brightness.
+> +#[derive(Debug, Copy, Clone)]
+> +pub enum Brightness {
+> +    /// LED off.
+> +    Off,
+> +    /// Led set to the given value.
+> +    On(NonZeroU8),
+> +}
+> +
+> +impl Brightness {
+> +    /// Half LED brightness
+> +    // SAFETY: constant value non zero
+> +    pub const HALF: Self = Self::On(unsafe { NonZeroU8::new_unchecked(127) });
+> +    /// Full LED brightness.
+> +    pub const FULL: Self = Self::On(NonZeroU8::MAX);
+
+These LED_OFF, LED_ON, LED_HALF and LED_FULL are deprecated constants
+that should not be used anymore. enum led_brightness will be either
+uint8_t or usigned int in the future.
+
+Is it possible to not infect Rust with these deprecated constants?
+
+Marek
 
