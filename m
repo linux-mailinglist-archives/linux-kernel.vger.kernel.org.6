@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-411798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42BD49CFFBE
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:02:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 216F79CFFBF
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:03:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 040982859FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:02:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE5C11F23C5E
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43901946A2;
-	Sat, 16 Nov 2024 16:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B16197521;
+	Sat, 16 Nov 2024 16:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i6MHBgVE"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="er/M/OWY"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0F1191F9E
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 16:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0944C193091
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 16:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731772929; cv=none; b=bgow8B1wvX/KiHnGUdXGm2bX3x2OJqz0ZMuRVgrM7sFcePNI3Baqok6fhKDozZj2xq7S/28hY6MQ9GXq1iZeqHaRHlXN6VrpeGoLRQ/uW1gc5sXeNA4+wiCnhlVjNMDIFveqmVfzePezR6EKC6ew9BfxkpxRcaqnw3rHeUPeopo=
+	t=1731772932; cv=none; b=enSio9E+w0BQFqdG+8IYgJugcJeCMQ9awFQZ1JcrmN0ZUmYMLHQr5YMjQWfhBqwv4r68r/6GevQLrK6n2L69hXyvZLETTvq36cOz0AfhAQTLX30kvtBjwdGANVyVNDB/40Eh+X1R3/R07Hya68ZuwYKxoP6UGCf7vqhCWwp/XD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731772929; c=relaxed/simple;
-	bh=URoaSsWNsSTDBVnXKWM7IW6JYC7xxG/Zo/nPyLKGfmE=;
+	s=arc-20240116; t=1731772932; c=relaxed/simple;
+	bh=o0YDEjtcd9S385MR9NmR2UtjFN+yk2/00o7+024uHmg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Utj7Xy3ZzXGv5F9cdkieVVY5RlnkKrXxeoITW+cnnU1A9r1xLX0kvFtPh/HT7/yIyRXyjl7CBYmQz+8oYaf0qt2nUZzNU/l7vw0yhZh5WCOXkx98KYA4Ldq6PFGJq/8HiI7BGuIKxkiaYfiLQd6B/kwFB3+jHJamsRYn4Uw5BRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i6MHBgVE; arc=none smtp.client-ip=209.85.210.177
+	 MIME-Version; b=aoN/a960HJgOYzIflQvdFzxgeTxCIJiVYI33mwL168et6i1aKxWBeDCQPRtEOEPyAHlJlX80A0jYQyndEypCL5MD88wy1mvBjgjXRjpj3BEeP1+bH/iZRQQmpxXGFXzcJoEbXaX6A+RFpGADJPYl5yv1TF4sJbG0JSjmhLMVGUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=er/M/OWY; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-72410cc7be9so2341245b3a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 08:02:07 -0800 (PST)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-72487ebd2f5so429049b3a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 08:02:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731772927; x=1732377727; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731772930; x=1732377730; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QMycY57gYsPds40IIgx8o+5491JCQvawYObZO7Q8XFI=;
-        b=i6MHBgVE8LzYeh+rDZ8bcWGrbqktqn02pQs95G6o50+ribFMDQVFhGam5MHQPrSOIR
-         YkkgcErM2WTL99jTNfnio42Ngv3j5HRjKl4K498aro6J3pxIWOUTXMPZvLRw2teRI/hn
-         SvVxUwhGpdtz/iBZ7GCE6aQDUGIcYYPcyjNhs1kAeKHBw4RQxrRX2dAOf8DJjQsvOGeg
-         b5RAFCkqh010gXOkzvfNpxwl0QhugdudB/hztnhjvc1iWhV6zxKbNydVpMa/a6INi8xh
-         CQ6m4QTGS9eTfVqAR7SOOXW8jdoWa9c7AdptRBjFAnvu+N7Xc97g6uIkz6t3rbRMENRe
-         TG8g==
+        bh=p7JCDTTn3vTxFGmkfNj8ZEUqCT3sK0X8BFkqLAI6rAs=;
+        b=er/M/OWY7f4sTZMZClRH5p7RUR4cUHLG7NNPckI9x+pjU5npKRciRV4ywH8Wdd9hrQ
+         Zeri3tnQBG5rZgneNzUl4qw6lU7LKrgN4tJ+SS2ZZX8dsbyGKHaKF1e2tRXKTlQCV7f1
+         IuCsw90egnDvlZ3gj06mmNBtHiJHiCG6LN10RSFL0vzpSd1m9YT9mcWbVRFRorBA2VWq
+         Ws43wGRquQeercRGB2/490Y0G0s/GznqaT8iOLHGY9DKCpPgReMQVbIxiymYOHKVYGLK
+         9mwlqmLhrWQeBUJooUHVNSAOXZ4nvmm6Y4N3380GpntiFte6UutIAr/BrfQMTfvohPAT
+         1rdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731772927; x=1732377727;
+        d=1e100.net; s=20230601; t=1731772930; x=1732377730;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QMycY57gYsPds40IIgx8o+5491JCQvawYObZO7Q8XFI=;
-        b=J9GLP4oqayXUo439FJy0M5c3h0AFEZplMcKy+1GQQvDyA4eWMNvVZVLZX9q5BoVBr5
-         7avBM8qIoih7hpsEjfFj2Q8bzuYXge8xg5hbMePSoJVx6O4zpMF1UnJZh1phwIISehAm
-         QopH3N9xWNppn2pinrVLpI7JINgSHGPzIXZd6HRgJwUQR29lhwdM4cDjklhjZHizRrym
-         hvjKx4qjdtow2yLKOZ7Tp1TOX75+19jhPE4th3gqpKw/ALyJq0L0DZoEvgF3UoZ03Fc2
-         /nCMhSEkvT9I7lNpLNbpiyGhXhndZd3WxehtcKoxrn7ZSFYim1AT4z8EWOgm1KiFqjv0
-         5Pfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVrD1Rj74OjzT4jHSp97cl7yjyKVoeY+NAR8w+LCJZoWO1C0EUyIilodb1++M5Vn8QNcewhr+FpUQRUiTI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvVGt8C76fDI72dWg/SgQZSG0oHgsjZsUD/c7fioRTOpJ+KdpI
-	EMQ/R2S2DlEiST7ViusVbtq5FM/9JpIZlPwEPFnAi+zCunQKHPif
-X-Google-Smtp-Source: AGHT+IE+DCkEW3YrSTAVNT5/vS7NbVd6a7tuTAH7r7kjprhrp2a0mchf2rouZw05bxQPg+RJhdFpxA==
-X-Received: by 2002:a17:90b:3504:b0:2ea:4150:3f71 with SMTP id 98e67ed59e1d1-2ea415042cfmr2204374a91.14.1731772926543;
-        Sat, 16 Nov 2024 08:02:06 -0800 (PST)
+        bh=p7JCDTTn3vTxFGmkfNj8ZEUqCT3sK0X8BFkqLAI6rAs=;
+        b=U3yRLFYh1zhLHfWik3gNOZ5UXQKVhuXOGHvs980h8L41aa9Msq+DkLqMCqWHfApLVb
+         F9q2z+6lOc+zL1Nbc7gjLWB+UwtztcmizU9/XNrcv25ai4pckDVlcKdRwZ9ZA6qyiJ6W
+         HTngrsi+OS/e4Qt94nxiZxYUgAiyCURAQaHiWFlH6py+l8TksAyX91p4AYD3RoVRajjR
+         97imsLyIsBib8b9XOngQAJu3ise/GcbwijWx9p98yfobNJLWk1z39q299ztotupBFASS
+         pyur0m8HfSxcYcNE2mcIp5nggiGim5PcBgtCh9yONYfPkEuhMpWB69iAd3T1nIKlude7
+         OKlg==
+X-Forwarded-Encrypted: i=1; AJvYcCWSLFxS7RQwNK/bgj5iBJaAx2iWvm6lz8Vd2Xj5sYObRS6+rm2fZ+7qhmC6rQjLcpP7l8eFR6FgJUktJv0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykCNhT16dYpah1NgMDJ6RRVzs0d9LS/g9T2AI5C/8AOn1+PYUN
+	E8srUTdq5GNAG7lgspWtMSI+LXcW9XdFNuJ485ei7T/bsyN24Gly
+X-Google-Smtp-Source: AGHT+IEW3D+oOgg5ZmZqLrrYpAwHIzZ8WlZUJzEYdgoDk0OpEirTug6cOUYYnD5X4SsV8VqrXGnRhA==
+X-Received: by 2002:a05:6a00:10ce:b0:71e:3b8f:92e with SMTP id d2e1a72fcca58-72476b72b2bmr9148583b3a.3.1731772930052;
+        Sat, 16 Nov 2024 08:02:10 -0800 (PST)
 Received: from localhost ([58.29.143.236])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0eca518sm29315795ad.88.2024.11.16.08.02.05
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7247711de6fsm3291344b3a.61.2024.11.16.08.02.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Nov 2024 08:02:06 -0800 (PST)
+        Sat, 16 Nov 2024 08:02:09 -0800 (PST)
 From: Changwoo Min <multics69@gmail.com>
 X-Google-Original-From: Changwoo Min <changwoo@igalia.com>
 To: tj@kernel.org,
@@ -75,9 +75,9 @@ Cc: mingo@redhat.com,
 	changwoo@igalia.com,
 	kernel-dev@igalia.com,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/5] sched_ext: Implement scx_bpf_clock_get_ns()
-Date: Sun, 17 Nov 2024 01:01:24 +0900
-Message-ID: <20241116160126.29454-4-changwoo@igalia.com>
+Subject: [PATCH 4/5] sched_ext: Add scx_bpf_clock_get_ns() for BPF scheduler
+Date: Sun, 17 Nov 2024 01:01:25 +0900
+Message-ID: <20241116160126.29454-5-changwoo@igalia.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241116160126.29454-1-changwoo@igalia.com>
 References: <20241116160126.29454-1-changwoo@igalia.com>
@@ -89,130 +89,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Returns a high-performance monotonically non-decreasing clock for the
-current CPU. The clock returned is in nanoseconds.
-
-It provides the following properties:
-
-1) High performance: Many BPF schedulers call bpf_ktime_get_ns()
- frequently to account for execution time and track tasks' runtime
- properties. Unfortunately, in some hardware platforms, bpf_ktime_get_ns()
- -- which eventually reads a hardware timestamp counter -- is neither
- performant nor scalable. scx_bpf_clock_get_ns() aims to provide a
- high-performance clock by using the rq clock in the scheduler core
- whenever possible.
-
-2) High enough resolution for the BPF scheduler use cases: In most BPF
- scheduler use cases, the required clock resolution is lower than the
- most accurate hardware clock (e.g., rdtsc in x86). scx_bpf_clock_get_ns()
- basically uses the rq clock in the scheduler core whenever it is valid.
- It considers that the rq clock is valid from the time the rq clock is
- updated (update_rq_clock) until the rq is unlocked (rq_unpin_lock).
- In addition, it invalidates the rq clock after long operations --
- ops.running() and ops.update_idle() -- in the BPF scheduler.
-
-3) Monotonically non-decreasing clock for the same CPU:
- scx_bpf_clock_get_ns() guarantees the clock never goes backward when
- comparing them in the same CPU. On the other hand, when comparing clocks
- in different CPUs, there is no such guarantee -- the clock can go backward.
- It provides a monotonically *non-decreasing* clock so that it would provide
- the same clock values in two different scx_bpf_clock_get_ns() calls in the
- same CPU during the same period of when the rq clock is valid.
+scx_bpf_clock_get_ns() is added to the header files so the BPF
+scheduler can use it.
 
 Signed-off-by: Changwoo Min <changwoo@igalia.com>
 ---
- kernel/sched/ext.c | 71 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
+ tools/sched_ext/include/scx/common.bpf.h | 1 +
+ tools/sched_ext/include/scx/compat.bpf.h | 5 +++++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index b8ad776ef516..b0374274ead2 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -7541,6 +7541,76 @@ __bpf_kfunc struct cgroup *scx_bpf_task_cgroup(struct task_struct *p)
- }
- #endif
+diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
+index 2f36b7b6418d..230c7f2e8ad6 100644
+--- a/tools/sched_ext/include/scx/common.bpf.h
++++ b/tools/sched_ext/include/scx/common.bpf.h
+@@ -72,6 +72,7 @@ bool scx_bpf_task_running(const struct task_struct *p) __ksym;
+ s32 scx_bpf_task_cpu(const struct task_struct *p) __ksym;
+ struct rq *scx_bpf_cpu_rq(s32 cpu) __ksym;
+ struct cgroup *scx_bpf_task_cgroup(struct task_struct *p) __ksym __weak;
++u64 scx_bpf_clock_get_ns(void) __ksym __weak;
  
-+/**
-+ * scx_bpf_clock_get_ns - Returns a high-performance monotonically
-+ * non-decreasing clock for the current CPU. The clock returned is in
-+ * nanoseconds.
-+ *
-+ * It provides the following properties:
-+ *
-+ * 1) High performance: Many BPF schedulers call bpf_ktime_get_ns() frequently
-+ *  to account for execution time and track tasks' runtime properties.
-+ *  Unfortunately, in some hardware platforms, bpf_ktime_get_ns() -- which
-+ *  eventually reads a hardware timestamp counter -- is neither performant nor
-+ *  scalable. scx_bpf_clock_get_ns() aims to provide a high-performance clock
-+ *  by using the rq clock in the scheduler core whenever possible.
-+ *
-+ * 2) High enough resolution for the BPF scheduler use cases: In most BPF
-+ *  scheduler use cases, the required clock resolution is lower than the most
-+ *  accurate hardware clock (e.g., rdtsc in x86). scx_bpf_clock_get_ns()
-+ *  basically uses the rq clock in the scheduler core whenever it is valid.
-+ *  It considers that the rq clock is valid from the time the rq clock is
-+ *  updated (update_rq_clock) until the rq is unlocked (rq_unpin_lock).
-+ *  In addition, it invalidates the rq clock after long operations --
-+ *  ops.running() and ops.update_idle().
-+ *
-+ * 3) Monotonically non-decreasing clock for the same CPU:
-+ *  scx_bpf_clock_get_ns() guarantees the clock never goes backward when
-+ *  comparing them in the same CPU. On the other hand, when comparing clocks
-+ *  in different CPUs, there is no such guarantee -- the clock can go backward.
-+ *  It provides a monotonically *non-decreasing* clock so that it would provide
-+ *  the same clock values in two different scx_bpf_clock_get_ns() calls in the
-+ *  same CPU during the same period of when the rq clock is valid.
-+ */
-+__bpf_kfunc u64 scx_bpf_clock_get_ns(void)
-+{
-+	static DEFINE_PER_CPU(u64, prev_clk);
-+	struct rq *rq = this_rq();
-+	u64 pr_clk, cr_clk;
-+
-+	preempt_disable();
-+	pr_clk = __this_cpu_read(prev_clk);
-+
-+	/*
-+	 * If the rq clock is invalid, start a new rq clock period
-+	 * with a fresh sched_clock().
-+	 */
-+	if (!(rq->scx.flags & SCX_RQ_CLK_UPDATED)) {
-+		cr_clk = sched_clock();
-+		scx_rq_clock_update(rq, cr_clk);
-+	}
-+	/*
-+	 * If the rq clock is valid, use the cached rq clock
-+	 * whenever the clock does not go backward.
-+	 */
-+	else {
-+		cr_clk = rq->scx.clock;
-+		/*
-+		 * If the clock goes backward, start a new rq clock period
-+		 * with a fresh sched_clock().
-+		 */
-+		if (pr_clk > cr_clk) {
-+			cr_clk = sched_clock();
-+			scx_rq_clock_update(rq, cr_clk);
-+		}
-+	}
-+
-+	__this_cpu_write(prev_clk, cr_clk);
-+	preempt_enable();
-+
-+	return cr_clk;
-+}
-+
- __bpf_kfunc_end_defs();
+ /*
+  * Use the following as @it__iter when calling scx_bpf_dsq_move[_vtime]() from
+diff --git a/tools/sched_ext/include/scx/compat.bpf.h b/tools/sched_ext/include/scx/compat.bpf.h
+index d56520100a26..d295c59e3f05 100644
+--- a/tools/sched_ext/include/scx/compat.bpf.h
++++ b/tools/sched_ext/include/scx/compat.bpf.h
+@@ -125,6 +125,11 @@ bool scx_bpf_dispatch_vtime_from_dsq___compat(struct bpf_iter_scx_dsq *it__iter,
+ 	false;									\
+ })
  
- BTF_KFUNCS_START(scx_kfunc_ids_any)
-@@ -7572,6 +7642,7 @@ BTF_ID_FLAGS(func, scx_bpf_cpu_rq)
- #ifdef CONFIG_CGROUP_SCHED
- BTF_ID_FLAGS(func, scx_bpf_task_cgroup, KF_RCU | KF_ACQUIRE)
- #endif
-+BTF_ID_FLAGS(func, scx_bpf_clock_get_ns)
- BTF_KFUNCS_END(scx_kfunc_ids_any)
- 
- static const struct btf_kfunc_id_set scx_kfunc_set_any = {
++#define scx_bpf_clock_get_ns()							\
++	(bpf_ksym_exists(scx_bpf_clock_get_ns) ?				\
++	 scx_bpf_clock_get_ns() :						\
++	 bpf_ktime_get_ns())
++
+ /*
+  * Define sched_ext_ops. This may be expanded to define multiple variants for
+  * backward compatibility. See compat.h::SCX_OPS_LOAD/ATTACH().
 -- 
 2.47.0
 
