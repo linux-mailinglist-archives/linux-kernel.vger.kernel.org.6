@@ -1,141 +1,95 @@
-Return-Path: <linux-kernel+bounces-411653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9317B9CFD70
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 10:19:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98E629CFD71
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 10:21:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A3D4287C2A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 09:19:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E60D284026
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 09:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734D8192B88;
-	Sat, 16 Nov 2024 09:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23AF194137;
+	Sat, 16 Nov 2024 09:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ON2zqxJB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O+GYhW7a";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f+WHAsRb"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0F679D0;
-	Sat, 16 Nov 2024 09:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD1217E010;
+	Sat, 16 Nov 2024 09:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731748782; cv=none; b=Xp7Wv3WTCIzTndoZlM3iA+D5fPr8xMr9FMvCi6xvZZqNZQ/kw0Q5L5krfUzjDnWuD/haFXX/DmND8TvzD1+hDfx48k4TQwRX80YRTI7j1BmiMaDgaZRYteolljOUGqG6+MhZHOsyqngFoUAr0lhbrWHB07RjYdfKPGa8SsjzhTM=
+	t=1731748868; cv=none; b=E2g5y8Y9q79CCGzbe7/ELDCa88q9EM5Pqh1Y7rnzG5CMc9dspKzSQ1A5An2Yq29+8+78/6jRqrFwo3QS84ODX/BPvNMqKlVzKzGBvutUy96Pw5Kr+BkicGb20qBIOCtLja/h3ksfrAwD/ykj+4dbmTi7z9GRfnWWsIIJJ4s/u4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731748782; c=relaxed/simple;
-	bh=5YFDb9EGxDHpLuh9sMST5+YRVCn4Tzn8KJyyVcOnOFg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xn125lbLTnQVakvrdfa5iB9B5fcigvg0HLQgqZbUtFgRi22hAvCfzo3ye5pL+uNWP+IwUel8F/eoChiSIJnI6eKmYWiPqe2lsdVN+7BOcJQRJkXLuRq8t56Hy5qrI/i4zhIspRc7qjSpicDNDjyLW1zPQgJ1QQerL3Yq4GE+lXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ON2zqxJB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F32CC4CED5;
-	Sat, 16 Nov 2024 09:19:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731748782;
-	bh=5YFDb9EGxDHpLuh9sMST5+YRVCn4Tzn8KJyyVcOnOFg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ON2zqxJBYOfLMIoAwXbWmf16OoQbo92yQAvO/8FKQfvowc3is6ILR38Bj2jBjNWLj
-	 N4DTXhJWYZBA1hqvcj3TWmX2XrJzyJH7faRoQHF8ok8ENz8wOTpYs0XkJVw9uXUz11
-	 39EnI3tDoqtmeARKWu/f8bp9nww80Ttb6V/cjzwMCO9PFAtoKIXJk3wx0039IIjoHY
-	 AMbgMS7eFILtN/MP2eSVuefHf7xx5TdiEJU2qk+c1hFGe1seqbA+6ghl2gA03RfdJf
-	 X26fS1AYNpe2Jeyatt2ttFrWbaYoSFizw4/w3I/9APAKof37JiE49taoSis5Pda1l2
-	 HXq0o0Oe7pqKg==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb3110b964so2907501fa.1;
-        Sat, 16 Nov 2024 01:19:42 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXiAVgeYUnzFPBlkhBrhVSKP/er4anqALQcrKOqsKn6SdKpUjoMzwSX0Oz+ZbBq/oWL9GgzbTqVBcQOWqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw05DQpgFLexopdxg2jNbHCAIZcN4YvOLyRzHD/Cdl1dcYe7BAi
-	w+5zujtbd/Rm/VRsctOFzLanU8ObzCrFHZzVVBRH3/r6D44ttRcwByarITh//nhf+R71eJOego/
-	rO+P6ICAc9rnrWV5bI1/ye0Tuk/Y=
-X-Google-Smtp-Source: AGHT+IHY3QgYgVtivEhPjE7YP0TJGBWgi6zgfXrbod8MbwDHRHt/D9srwucNSPS9xKpoIUCwy4g8DYduLuXR3qFA+GY=
-X-Received: by 2002:a2e:be9a:0:b0:2f7:5f6e:d894 with SMTP id
- 38308e7fff4ca-2ff606f4f7dmr34216851fa.25.1731748780903; Sat, 16 Nov 2024
- 01:19:40 -0800 (PST)
+	s=arc-20240116; t=1731748868; c=relaxed/simple;
+	bh=O3UHc88BGrmZuWFLUNX/RVuv+mk344kjI4vqIwUHweE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=har/dxUUlGTxQIDwd5eCRIPuodRz+sctj9iKg8jkKPEXBXeeU533bLHPMZrcaUCN8BnAL1BMnIGYZB3SDrLEhM6dxwO0DPCK8cXrecFZJGcHw7dAYfvQ/UR3KltFnzuokpxaA/3UBOA/VoaJloOm6nySOusMIab4QRG3+pVjxGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O+GYhW7a; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f+WHAsRb; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 16 Nov 2024 10:21:02 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731748864;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vi1SW15jCJWLD4Kn5RiukUXN1MOkzbVBJehxjUb37tY=;
+	b=O+GYhW7ajMIM6MvyAF7F6i8Q1oaP6DvsRA62MtIrzVYvmp7u8x1f0u3eYl9+qlExJMyXx1
+	Dl6fculZZAHpZ8KgwSybnYMiv7M2zYL930KEwFHza6qNo1xm0S1TMDA9c1U9NQ1di3reMK
+	i7uX5gNpOBHKgVDIi8hOLLrMDxCnpHthhcRoKSVg1pWaU7VkRHN06zFMoWsdkLtSwzJDzd
+	38tVSNbHSla53qbDDT95FdVzcf0B3fjX21yWhMmI0mj0LkxtSLj4C90XTCO9biGCnuFdf8
+	q+YNV13fho1YGiJRtRHy6j5Q1jaYp/h0G94j38MvW4gD6ZA1qBfBV7X20UTHNA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731748864;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vi1SW15jCJWLD4Kn5RiukUXN1MOkzbVBJehxjUb37tY=;
+	b=f+WHAsRbOJKR+C3r1TBYrCwtn2Q605d1MK9RIf3aKwG+IcpkUDq9J5Ww7WfrlSCmv4jmCF
+	GPgwRh/gmoIHSbCw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Kunwu Chan <kunwu.chan@linux.dev>, ast@kernel.org, daniel@iogearbox.net,
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
+	song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com,
+	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
+	jolsa@kernel.org, clrkwllms@kernel.org, rostedt@goodmis.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev,
+	syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com,
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Subject: Re: [PATCH] bpf: Convert lpm_trie::lock to 'raw_spinlock_t'
+Message-ID: <20241116092102.O_30pj9W@linutronix.de>
+References: <20241108063214.578120-1-kunwu.chan@linux.dev>
+ <87v7wsmqv4.ffs@tglx>
+ <1e5910b1-ea54-4b7a-a68b-a02634a517dd@linux.dev>
+ <87sersyvuc.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113234526.402738-1-masahiroy@kernel.org> <20241113234526.402738-2-masahiroy@kernel.org>
-In-Reply-To: <20241113234526.402738-2-masahiroy@kernel.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 16 Nov 2024 18:19:04 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATENKMR0k1WiyOt3uv1+M0Ug+4tPFOYOhZdJ9BX0wd6SQ@mail.gmail.com>
-Message-ID: <CAK7LNATENKMR0k1WiyOt3uv1+M0Ug+4tPFOYOhZdJ9BX0wd6SQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] kbuild: move cmd_cc_o_c and cmd_as_o_S to scripts/Malefile.lib
-To: linux-kbuild@vger.kernel.org
-Cc: Paul Menzel <pmenzel@molgen.mpg.de>, Borislav Petkov <bp@alien8.de>, 
-	Nikolay Borisov <nik.borisov@suse.com>, Marco Elver <elver@google.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <87sersyvuc.ffs@tglx>
 
-On Thu, Nov 14, 2024 at 8:45=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> The cmd_cc_o_c and cmd_as_o_S macros are duplicated in
-> scripts/Makefile.{build,modfinal,vmlinux}.
->
-> This commit factors them out to scripts/Makefile.lib.
->
-> No functional changes are intended.
->
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
->
->  scripts/Makefile.build    |  8 --------
->  scripts/Makefile.lib      | 12 ++++++++++++
->  scripts/Makefile.modfinal |  6 ++----
->  scripts/Makefile.vmlinux  |  8 +-------
->  4 files changed, 15 insertions(+), 19 deletions(-)
->
-> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> index 1aa928a6fb4f..24e10c821461 100644
-> --- a/scripts/Makefile.build
-> +++ b/scripts/Makefile.build
-> @@ -141,11 +141,6 @@ ifdef CONFIG_LTO_CLANG
->  cmd_ld_single_m =3D $(if $(is-single-obj-m), ; $(LD) $(ld_flags) -r -o $=
-(tmp-target) $@; mv $(tmp-target) $@)
->  endif
->
-> -quiet_cmd_cc_o_c =3D CC $(quiet_modtag)  $@
-> -      cmd_cc_o_c =3D $(CC) $(c_flags) -c -o $@ $< \
-> -               $(cmd_ld_single_m) \
-> -               $(cmd_objtool)
-> -
->  ifdef CONFIG_MODVERSIONS
->  # When module versioning is enabled the following steps are executed:
->  # o compile a <file>.o from <file>.c
-> @@ -336,9 +331,6 @@ cmd_cpp_s_S       =3D $(CPP) $(a_flags) -o $@ $<
->  $(obj)/%.s: $(obj)/%.S FORCE
->         $(call if_changed_dep,cpp_s_S)
->
-> -quiet_cmd_as_o_S =3D AS $(quiet_modtag)  $@
-> -      cmd_as_o_S =3D $(CC) $(a_flags) -c -o $@ $< $(cmd_objtool)
-> -
->  ifdef CONFIG_ASM_MODVERSIONS
->
->  # versioning matches the C process described above, with difference that
-> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> index 5660dfc9ed36..73e385946855 100644
-> --- a/scripts/Makefile.lib
-> +++ b/scripts/Makefile.lib
-> @@ -298,6 +298,18 @@ $(foreach m, $1, \
->         $(addprefix $(obj)/, $(call suffix-search, $(patsubst $(obj)/%,%,=
-$m), $2, $3))))
->  endef
->
-> +# Build commads
+On 2024-11-15 23:29:31 [+0100], Thomas Gleixner wrote:
+> IIRC, BPF has it's own allocator which can be used everywhere.
 
-I will fix the typo.
+Thomas Wei=C3=9Fschuh made something. It appears to work. Need to take a
+closer look.
 
- s/commads/commands/
+> Thanks,
+>=20
+>         tglx
 
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+Sebastian
 
