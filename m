@@ -1,239 +1,161 @@
-Return-Path: <linux-kernel+bounces-411564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 881BF9CFBFD
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 02:28:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42AA39CFC27
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 02:38:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A07E28781B
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 01:28:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3CD01F24CA7
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 01:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC1818FDDF;
-	Sat, 16 Nov 2024 01:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83CE6190063;
+	Sat, 16 Nov 2024 01:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="TpdXh1eE"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ff5DyFGv"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2D6802;
-	Sat, 16 Nov 2024 01:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D66161;
+	Sat, 16 Nov 2024 01:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731720521; cv=none; b=NaTVNDzsjFW2tgrAVaC9xt74nITtJNaH9sR4tszq1LjfWLKZAkInRX8a14ClJYAMzEJ0jLXmEgozEyNRe/KvNCgzyN45UXsVlFJimXq2oSbSB8MYnkFZGTmkAmvYD8ZyDCYCzr8dgPjfVJMZ3Gbx8lSONg3FdWRLdVWcI7aNEkE=
+	t=1731721079; cv=none; b=lY2KhBj1ItTO21VAF2Iv0M7cAdwdhW+xNfT1uFHlN5kkV553jXShX0XZGEcQkSMXj303ab2w2QAron7VPKjYRUFuNbiUl4ImAfCQtvO1D0C6+CYcrAWEOi9qF57hxKgcC1pP6qoM324jpOluq28d7GswVn1vK3pIh/q5hzKSEOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731720521; c=relaxed/simple;
-	bh=dV3gE/Fce2fEyDTyKSUD8M4cTij8y1YTIeT44VzlWn4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rk+ijHWCHcOBHZjQUCP6qq7V2bOn5DoD1H+MQnUqeAELp/i8ZgJT2VEgPvlVuHE+5zuxg1gT1jZPkFDyoWilvyHq9BLzMotN51MBh3TSilzBxSNREp0KMybXx2J+AqjpplHQJRcPpMqfzKJeOxq24cu/AEKwFGJFFUn19ROVoMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=TpdXh1eE; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=0P3tBtXNpyEwEzMGSGyCB4PLtgx+5VH11spzu16y6tU=; b=TpdXh1eEobegRTQr
-	QYeBT//gbrcjPUmBZWLhhB+pS2AYN52qclAj3XdzNuUa0oY51pSSvsh0l1Z6JqyIGadOwYXuGwzpx
-	vcN2x61NBkBmRCyeQwrqvg6l2FnRED7cgtBWBhbpsNt+xeNqI8XBAbcpPgW238uqQZEpd4u6hj69R
-	qHA1efOYKyCEb1gdrBfY3nGs0yWqP6oFyu+GmjxKaip48eUxwDBGRC8P8zObxIbvM3nuUAQmaQXlF
-	VRMc2TLqnHS12simcTtrLsNjkhMFWbyF1HCu0yuI8p9gYZ8BnRt/HhkkQouYPMxHuMzs38crk734j
-	wvYVlpiMaUJ3zUgwFg==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tC7bx-000Fd6-2k;
-	Sat, 16 Nov 2024 01:28:29 +0000
-From: linux@treblig.org
-To: s.nawrocki@samsung.com,
-	mchehab@kernel.org,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com
-Cc: linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] media: platform: exynos4-is: Remove unused fimc_is_param_strerr
-Date: Sat, 16 Nov 2024 01:28:28 +0000
-Message-ID: <20241116012828.359002-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731721079; c=relaxed/simple;
+	bh=8nCsK2yqyN1I7U2nMMFN3q3U2Szp/zF7uNTwRCgC+CY=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=AkpxP8+IuwojQ36ai3h0RQd605VuVGwrSLyS+Gw6PV/7iN1TP2JK3vBVzp1E50P0505sJr12CZR5XJJM000mPgRSGZPZeCtlQkoYX/g0h8pb2YhjshA/jkYOMcnVU26jkH85PThmuYCM+zIhWMVg3cR1wVnvGjaruvXoXXWLzwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ff5DyFGv; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AFIwEah000944;
+	Sat, 16 Nov 2024 01:37:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=OzEcC6hVqatMryLUuXYNlU
+	PIrrbmM7lz2gc7C5tfUmE=; b=Ff5DyFGvwrok5H4jUfNv8745UM18nFHlfEgqUh
+	NWJwxLD7uKmbPDn/tVP1ZroXNNj9sWUVhHdmT4AMnnqYchNEbIzHKXg/xzddjuwe
+	PP1qMNMTePEdQl0uiDNTaiYfRcUjeUYJKMmyrKT8C0q2M5GeY/tbFe49rTPoHNqE
+	CxN7NEvy91vkln7ozBFg6UFmdAPqNVvmTF6YjjO8v4IzyTXV8brS4obpCWSx+aOq
+	+bjUx1IktYXQPZ1NrXfwz/vYAd6xWScedy/yNXBwu9QQe/vfcaalhQgVylv7XuRc
+	NAd/ZrJoGZDm0Wwv7loyCSOa8Qsnm7Drmj1/kO0LaIg7Ctlg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42w9sv7krf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 16 Nov 2024 01:37:46 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AG1bjHY022868
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 16 Nov 2024 01:37:45 GMT
+Received: from hu-krichai-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 15 Nov 2024 17:37:38 -0800
+From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Subject: [PATCH 0/4] PCI: dwc: Add support for configuring lane
+ equalization presets
+Date: Sat, 16 Nov 2024 07:07:29 +0530
+Message-ID: <20241116-presets-v1-0-878a837a4fee@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFn3N2cC/2XMQQ7CIBCF4asY1mJmgJbqynsYF0DBsrBVqETT9
+ O7Smtgal28y3z+QaIO3kRw2Awk2+ei7Ng/cbohpVHux1Nd5EwZMIHCgt2Cj7SO1BlFxK4TSnOT
+ vfHf+OZdO57wbH/suvOZwwun6aSDgt5GQIi0qzQFrxYHB8f7wxrdmZ7ormSqJrSSyRTIKFF1ZS
+ K1cKSvzL/laikXyLJ0weylBO6PZrxzH8Q0PH1UVFAEAAA==
+To: <quic_mrana@quicinc.com>, <quic_vbadigan@quicinc.com>,
+        <kernel@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Helgaas
+	<bhelgaas@google.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        "Manivannan
+ Sadhasivam" <manivannan.sadhasivam@linaro.org>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>,
+        =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        "Krishna
+ chaitanya chundru" <quic_krichai@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731721058; l=2198;
+ i=quic_krichai@quicinc.com; s=20230907; h=from:subject:message-id;
+ bh=8nCsK2yqyN1I7U2nMMFN3q3U2Szp/zF7uNTwRCgC+CY=;
+ b=kTN5PNrAZx/PNGwdCJ1jtnPPulbmjgu/PV5SllUhG1fcMQhB7Ge6b41eEsHEAev6opqjCJlMN
+ 8KcqOrFjVJWDqaxBVuO3AeTgv1/w3Q08thL6XiGbYArd2AZe49OxXQt
+X-Developer-Key: i=quic_krichai@quicinc.com; a=ed25519;
+ pk=10CL2pdAKFyzyOHbfSWHCD0X0my7CXxj8gJScmn1FAg=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: lt5DqAiarWOfJy_QlsdGrOGD6M5MOFU8
+X-Proofpoint-GUID: lt5DqAiarWOfJy_QlsdGrOGD6M5MOFU8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ lowpriorityscore=0 impostorscore=0 adultscore=0 bulkscore=0 clxscore=1015
+ mlxlogscore=838 priorityscore=1501 phishscore=0 malwarescore=0
+ suspectscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411160011
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+PCIe equalization presets are predefined settings used to optimize
+signal integrity by compensating for signal loss and distortion in
+high-speed data transmission.
 
-fimc_is_param_strerr() was added in 2013 by
-commit 9a761e436843 ("[media] exynos4-is: Add Exynos4x12 FIMC-IS driver")
-but has never been called.
+As per PCIe spec 6.0.1 revision section 8.3.3.3 & 4.2.4 for data rates
+of 8.0 GT/s, 16.0 GT/s, 32.0 GT/s, and 64.0 GT/s, there is a way to
+configure lane equalization presets for each lane to enhance the PCIe
+link reliability. Each preset value represents a different combination
+of pre-shoot and de-emphasis values. For each data rate, different
+registers are defined: for 8.0 GT/s, registers are defined in section
+7.7.3.4; for 16.0 GT/s, in section 7.7.5.9, etc. The 8.0 GT/s rate has
+an extra receiver preset hint, requiring 16 bits per lane, while the
+remaining data rates use 8 bits per lane.
 
-Remove it.
+Based on the number of lanes and the supported data rate, read the
+device tree property and stores in the presets structure.
 
-(The other possibility might be to add a call maybe in fimc-is-param ?)
+Based upon the lane width and supported data rate update lane
+equalization registers.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+This patch depends on the this dt binding pull request: https://github.com/devicetree-org/dt-schema/pull/146
+
+Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
 ---
- .../samsung/exynos4-is/fimc-is-errno.c        | 131 ------------------
- .../samsung/exynos4-is/fimc-is-errno.h        |   1 -
- 2 files changed, 132 deletions(-)
+Krishna chaitanya chundru (4):
+      arm64: dts: qcom: x1e80100: Add PCIe lane equalization preset properties
+      PCI: of: Add API to retrieve equalization presets from device tree
+      PCI: dwc: Improve handling of PCIe lane configuration
+      PCI: dwc: Add support for configuring lane equalization presets
 
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.c b/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.c
-index 7a48fad1df16..ac67a04e5eeb 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.c
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.c
-@@ -12,137 +12,6 @@
- 
- #include "fimc-is-errno.h"
- 
--const char *fimc_is_param_strerr(unsigned int error)
--{
--	switch (error) {
--	case ERROR_COMMON_CMD:
--		return "ERROR_COMMON_CMD: Invalid Command";
--	case ERROR_COMMON_PARAMETER:
--		return "ERROR_COMMON_PARAMETER: Invalid Parameter";
--	case ERROR_COMMON_SETFILE_LOAD:
--		return "ERROR_COMMON_SETFILE_LOAD: Illegal Setfile Loading";
--	case ERROR_COMMON_SETFILE_ADJUST:
--		return "ERROR_COMMON_SETFILE_ADJUST: Setfile isn't adjusted";
--	case ERROR_COMMON_SETFILE_INDEX:
--		return "ERROR_COMMON_SETFILE_INDEX: Invalid setfile index";
--	case ERROR_COMMON_INPUT_PATH:
--		return "ERROR_COMMON_INPUT_PATH: Input path can be changed in ready state";
--	case ERROR_COMMON_INPUT_INIT:
--		return "ERROR_COMMON_INPUT_INIT: IP can not start if input path is not set";
--	case ERROR_COMMON_OUTPUT_PATH:
--		return "ERROR_COMMON_OUTPUT_PATH: Output path can be changed in ready state (stop)";
--	case ERROR_COMMON_OUTPUT_INIT:
--		return "ERROR_COMMON_OUTPUT_INIT: IP can not start if output path is not set";
--	case ERROR_CONTROL_BYPASS:
--		return "ERROR_CONTROL_BYPASS";
--	case ERROR_OTF_INPUT_FORMAT:
--		return "ERROR_OTF_INPUT_FORMAT: Invalid format  (DRC: YUV444, FD: YUV444, 422, 420)";
--	case ERROR_OTF_INPUT_WIDTH:
--		return "ERROR_OTF_INPUT_WIDTH: Invalid width (DRC: 128~8192, FD: 32~8190)";
--	case ERROR_OTF_INPUT_HEIGHT:
--		return "ERROR_OTF_INPUT_HEIGHT: Invalid bit-width (DRC: 8~12bits, FD: 8bit)";
--	case ERROR_OTF_INPUT_BIT_WIDTH:
--		return "ERROR_OTF_INPUT_BIT_WIDTH: Invalid bit-width (DRC: 8~12bits, FD: 8bit)";
--	case ERROR_DMA_INPUT_WIDTH:
--		return "ERROR_DMA_INPUT_WIDTH: Invalid width (DRC: 128~8192, FD: 32~8190)";
--	case ERROR_DMA_INPUT_HEIGHT:
--		return "ERROR_DMA_INPUT_HEIGHT: Invalid height (DRC: 64~8192, FD: 16~8190)";
--	case ERROR_DMA_INPUT_FORMAT:
--		return "ERROR_DMA_INPUT_FORMAT: Invalid format (DRC: YUV444 or YUV422, FD: YUV444,422,420)";
--	case ERROR_DMA_INPUT_BIT_WIDTH:
--		return "ERROR_DMA_INPUT_BIT_WIDTH: Invalid bit-width (DRC: 8~12bits, FD: 8bit)";
--	case ERROR_DMA_INPUT_ORDER:
--		return "ERROR_DMA_INPUT_ORDER: Invalid order(DRC: YYCbCr,YCbYCr,FD:NO,YYCbCr,YCbYCr,CbCr,CrCb)";
--	case ERROR_DMA_INPUT_PLANE:
--		return "ERROR_DMA_INPUT_PLANE: Invalid plane (DRC: 3, FD: 1, 2, 3)";
--	case ERROR_OTF_OUTPUT_WIDTH:
--		return "ERROR_OTF_OUTPUT_WIDTH: Invalid width (DRC: 128~8192)";
--	case ERROR_OTF_OUTPUT_HEIGHT:
--		return "ERROR_OTF_OUTPUT_HEIGHT: Invalid height (DRC: 64~8192)";
--	case ERROR_OTF_OUTPUT_FORMAT:
--		return "ERROR_OTF_OUTPUT_FORMAT: Invalid format (DRC: YUV444)";
--	case ERROR_OTF_OUTPUT_BIT_WIDTH:
--		return "ERROR_OTF_OUTPUT_BIT_WIDTH: Invalid bit-width (DRC: 8~12bits, FD: 8bit)";
--	case ERROR_DMA_OUTPUT_WIDTH:
--		return "ERROR_DMA_OUTPUT_WIDTH";
--	case ERROR_DMA_OUTPUT_HEIGHT:
--		return "ERROR_DMA_OUTPUT_HEIGHT";
--	case ERROR_DMA_OUTPUT_FORMAT:
--		return "ERROR_DMA_OUTPUT_FORMAT";
--	case ERROR_DMA_OUTPUT_BIT_WIDTH:
--		return "ERROR_DMA_OUTPUT_BIT_WIDTH";
--	case ERROR_DMA_OUTPUT_PLANE:
--		return "ERROR_DMA_OUTPUT_PLANE";
--	case ERROR_DMA_OUTPUT_ORDER:
--		return "ERROR_DMA_OUTPUT_ORDER";
--
--	/* Sensor Error(100~199) */
--	case ERROR_SENSOR_I2C_FAIL:
--		return "ERROR_SENSOR_I2C_FAIL";
--	case ERROR_SENSOR_INVALID_FRAMERATE:
--		return "ERROR_SENSOR_INVALID_FRAMERATE";
--	case ERROR_SENSOR_INVALID_EXPOSURETIME:
--		return "ERROR_SENSOR_INVALID_EXPOSURETIME";
--	case ERROR_SENSOR_INVALID_SIZE:
--		return "ERROR_SENSOR_INVALID_SIZE";
--	case ERROR_SENSOR_INVALID_SETTING:
--		return "ERROR_SENSOR_INVALID_SETTING";
--	case ERROR_SENSOR_ACTUATOR_INIT_FAIL:
--		return "ERROR_SENSOR_ACTUATOR_INIT_FAIL";
--	case ERROR_SENSOR_INVALID_AF_POS:
--		return "ERROR_SENSOR_INVALID_AF_POS";
--	case ERROR_SENSOR_UNSUPPORT_FUNC:
--		return "ERROR_SENSOR_UNSUPPORT_FUNC";
--	case ERROR_SENSOR_UNSUPPORT_PERI:
--		return "ERROR_SENSOR_UNSUPPORT_PERI";
--	case ERROR_SENSOR_UNSUPPORT_AF:
--		return "ERROR_SENSOR_UNSUPPORT_AF";
--
--	/* ISP Error (200~299) */
--	case ERROR_ISP_AF_BUSY:
--		return "ERROR_ISP_AF_BUSY";
--	case ERROR_ISP_AF_INVALID_COMMAND:
--		return "ERROR_ISP_AF_INVALID_COMMAND";
--	case ERROR_ISP_AF_INVALID_MODE:
--		return "ERROR_ISP_AF_INVALID_MODE";
--
--	/* DRC Error (300~399) */
--	/* FD Error  (400~499) */
--	case ERROR_FD_CONFIG_MAX_NUMBER_STATE:
--		return "ERROR_FD_CONFIG_MAX_NUMBER_STATE";
--	case ERROR_FD_CONFIG_MAX_NUMBER_INVALID:
--		return "ERROR_FD_CONFIG_MAX_NUMBER_INVALID";
--	case ERROR_FD_CONFIG_YAW_ANGLE_STATE:
--		return "ERROR_FD_CONFIG_YAW_ANGLE_STATE";
--	case ERROR_FD_CONFIG_YAW_ANGLE_INVALID:
--		return "ERROR_FD_CONFIG_YAW_ANGLE_INVALID\n";
--	case ERROR_FD_CONFIG_ROLL_ANGLE_STATE:
--		return "ERROR_FD_CONFIG_ROLL_ANGLE_STATE";
--	case ERROR_FD_CONFIG_ROLL_ANGLE_INVALID:
--		return "ERROR_FD_CONFIG_ROLL_ANGLE_INVALID";
--	case ERROR_FD_CONFIG_SMILE_MODE_INVALID:
--		return "ERROR_FD_CONFIG_SMILE_MODE_INVALID";
--	case ERROR_FD_CONFIG_BLINK_MODE_INVALID:
--		return "ERROR_FD_CONFIG_BLINK_MODE_INVALID";
--	case ERROR_FD_CONFIG_EYES_DETECT_INVALID:
--		return "ERROR_FD_CONFIG_EYES_DETECT_INVALID";
--	case ERROR_FD_CONFIG_MOUTH_DETECT_INVALID:
--		return "ERROR_FD_CONFIG_MOUTH_DETECT_INVALID";
--	case ERROR_FD_CONFIG_ORIENTATION_STATE:
--		return "ERROR_FD_CONFIG_ORIENTATION_STATE";
--	case ERROR_FD_CONFIG_ORIENTATION_INVALID:
--		return "ERROR_FD_CONFIG_ORIENTATION_INVALID";
--	case ERROR_FD_CONFIG_ORIENTATION_VALUE_INVALID:
--		return "ERROR_FD_CONFIG_ORIENTATION_VALUE_INVALID";
--	case ERROR_FD_RESULT:
--		return "ERROR_FD_RESULT";
--	case ERROR_FD_MODE:
--		return "ERROR_FD_MODE";
--	default:
--		return "Unknown";
--	}
--}
--
- const char *fimc_is_strerr(unsigned int error)
- {
- 	error &= ~IS_ERROR_TIME_OUT_FLAG;
-diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h b/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h
-index 809e117331c0..fa8204ffec7b 100644
---- a/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h
-+++ b/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h
-@@ -240,6 +240,5 @@ enum fimc_is_error {
- };
- 
- const char *fimc_is_strerr(unsigned int error);
--const char *fimc_is_param_strerr(unsigned int error);
- 
- #endif /* FIMC_IS_ERR_H_ */
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi            |  8 +++
+ drivers/pci/controller/dwc/pcie-designware-host.c | 42 +++++++++++++++
+ drivers/pci/controller/dwc/pcie-designware.c      | 14 ++++-
+ drivers/pci/controller/dwc/pcie-designware.h      |  4 ++
+ drivers/pci/of.c                                  | 62 +++++++++++++++++++++++
+ drivers/pci/pci.h                                 | 17 ++++++-
+ include/uapi/linux/pci_regs.h                     |  3 ++
+ 7 files changed, 147 insertions(+), 3 deletions(-)
+---
+base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
+change-id: 20241030-presets-ec11a3e44ab3
+
+Best regards,
 -- 
-2.47.0
+Krishna chaitanya chundru <quic_krichai@quicinc.com>
 
 
