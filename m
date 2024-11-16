@@ -1,172 +1,254 @@
-Return-Path: <linux-kernel+bounces-411631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 330AC9CFD14
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 08:47:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C859CFD15
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 08:51:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABEA41F255B5
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 07:46:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 302DD1F253CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 07:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA7D194A43;
-	Sat, 16 Nov 2024 07:46:27 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9DA192B99;
+	Sat, 16 Nov 2024 07:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VmzF5U2G"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284B0282FB;
-	Sat, 16 Nov 2024 07:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AACD802;
+	Sat, 16 Nov 2024 07:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731743187; cv=none; b=DlB58Y2XGKckvPw04Rq5dXtQgxh9g+wCfGGw5KRvhnsFmJcUxz6U3CX+JbFubm4l4+L3sFwva9nJqwiMaB41dSuF04uM+ACgWWFXSyFA93hgMTVkQ1JHaXVfCpBaXW72f6av+VeGVvh02rmNaOtk5vG0IxroMEtd63mMbDLxVVo=
+	t=1731743486; cv=none; b=BrmuRC8xpmS9rhtpEC3YlnsLlG6zXkLEYyDJDHFAGsovNBQuVzrH5UKo9X887KnNLkTxGQa91dnGAiggZnQ6zjCl4O3saTFPMwfNgU0yVD+D3VGbA6wPdW+EKpmACW0CrSw2gEE66QNUgjwoD4w55USRIbIM9HAtX6+/eKbJtW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731743187; c=relaxed/simple;
-	bh=LrHKonL6AMDeiODs+r5O/Ry42Pdsy0sJz4fYgpA7IXU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dmTAOeyPGt97b60BS5Ig4oC5woUz2Gmw3J60BZfJKaCxD1szy0khTnEOiB4Rrq5QlCpU7W5v8Xae2wwAq/ZzNPV0zx2bgQkbHkODlGjSF2WSdwJaI8GMLE1mWdOcFuVOJotssyJ4AAevNoJzbhRO8bYL9fr9qHMV0k4BXeNXyXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Xr5YN504Vz9sSR;
-	Sat, 16 Nov 2024 08:46:16 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id lhQM5FPtGe1r; Sat, 16 Nov 2024 08:46:16 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Xr5YN3dzNz9sSL;
-	Sat, 16 Nov 2024 08:46:16 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 60E718B7A0;
-	Sat, 16 Nov 2024 08:46:16 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id DVfL0PgYOHHm; Sat, 16 Nov 2024 08:46:16 +0100 (CET)
-Received: from [192.168.232.159] (POS169858.IDSI0.si.c-s.fr [192.168.232.159])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 93F818B763;
-	Sat, 16 Nov 2024 08:46:12 +0100 (CET)
-Message-ID: <856ae9de-0712-4a44-ab3d-9e5077725877@csgroup.eu>
-Date: Sat, 16 Nov 2024 08:46:09 +0100
+	s=arc-20240116; t=1731743486; c=relaxed/simple;
+	bh=mZPS0730G2HHaSBY6kH55u+UIscYlBGMBKh/hEZW+A8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tm1Ysq2B1Pq/nqFOI6zXXeAF8K1hDKbopZobTs6jV08AujpEwY4088NdkiWny5BVqyw+Lc18fOHr8Y45Vyuqr03vCVQW70Kkow+BDdBcIOAvzCJHbq3N+ijIQoiUVR6/iJY4boFxdArXGmqlJ0LXypUaoLz/IQYEE4Jod/fJPeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VmzF5U2G; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4AG7ofrc2945424
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 16 Nov 2024 01:50:42 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1731743442;
+	bh=oqfqfZ6VieMQsutlunbcKNC7Mo7XdbEB8zfZM21lNKU=;
+	h=From:To:CC:Subject:Date;
+	b=VmzF5U2G7hY2S17NpTJOskM1c4/yqDbyi8guUmMdB5qBy5mY77hIH7PKl1lvXApOT
+	 lwv1qHntqdJmBMB7Td/UJoc00CFizqFEzy5+Twlh/urzeExX63BonIf+dlHEMtE2Lm
+	 qQhjT0kwtSAp/bAHXawEgxnAd/f9d8u3JxZKJKfA=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AG7ofl5112549;
+	Sat, 16 Nov 2024 01:50:41 -0600
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 16
+ Nov 2024 01:50:41 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sat, 16 Nov 2024 01:50:41 -0600
+Received: from lelvsmtp5.itg.ti.com ([10.250.165.138])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AG7oXf5030213;
+	Sat, 16 Nov 2024 01:50:34 -0600
+From: Baojun Xu <baojun.xu@ti.com>
+To: <tiwai@suse.de>
+CC: <robh+dt@kernel.org>, <andriy.shevchenko@linux.intel.com>,
+        <lgirdwood@gmail.com>, <perex@perex.cz>,
+        <pierre-louis.bossart@linux.intel.com>, <shenghao-ding@ti.com>,
+        <navada@ti.com>, <13916275206@139.com>, <v-hampiholi@ti.com>,
+        <v-po@ti.com>, <linux-sound@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <liam.r.girdwood@intel.com>,
+        <yung-chuan.liao@linux.intel.com>, <baojun.xu@ti.com>,
+        <broonie@kernel.org>, <antheas.dk@gmail.com>, <philm@manjaro.org>
+Subject: [PATCH v5] ALSA: hda/tas2781: Add speaker id check for ASUS projects
+Date: Sat, 16 Nov 2024 15:50:06 +0800
+Message-ID: <20241116075006.11994-1-baojun.xu@ti.com>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/21] Converge on using secs_to_jiffies()
-To: Easwar Hariharan <eahariha@linux.microsoft.com>,
- Pablo Neira Ayuso <pablo@netfilter.org>,
- Jozsef Kadlecsik <kadlec@netfilter.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
- Nicolas Palix <nicolas.palix@imag.fr>, Daniel Mack <daniel@zonque.org>,
- Haojian Zhuang <haojian.zhuang@gmail.com>,
- Robert Jarzmik <robert.jarzmik@free.fr>, Russell King
- <linux@armlinux.org.uk>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Ofir Bitton <obitton@habana.ai>,
- Oded Gabbay <ogabbay@kernel.org>, Lucas De Marchi
- <lucas.demarchi@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jeroen de Borst <jeroendb@google.com>,
- Praveen Kaligineedi <pkaligineedi@google.com>,
- Shailend Chand <shailend@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- James Smart <james.smart@broadcom.com>,
- Dick Kennedy <dick.kennedy@broadcom.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
- Jens Axboe <axboe@kernel.dk>, Kalle Valo <kvalo@kernel.org>,
- Jeff Johnson <jjohnson@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Andrew Morton <akpm@linux-foundation.org>,
- Jack Wang <jinpu.wang@cloud.ionos.com>, Marcel Holtmann
- <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Xiubo Li <xiubli@redhat.com>,
- Ilya Dryomov <idryomov@gmail.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
- Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Lucas Stach <l.stach@pengutronix.de>,
- Russell King <linux+etnaviv@armlinux.org.uk>,
- Christian Gmeiner <christian.gmeiner@gmail.com>,
- Louis Peens <louis.peens@corigine.com>, Michael Ellerman
- <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, cocci@inria.fr,
- linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
- dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- linux-scsi@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-block@vger.kernel.org, linux-wireless@vger.kernel.org,
- ath11k@lists.infradead.org, linux-mm@kvack.org,
- linux-bluetooth@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-rpi-kernel@lists.infradead.org, ceph-devel@vger.kernel.org,
- live-patching@vger.kernel.org, linux-sound@vger.kernel.org,
- etnaviv@lists.freedesktop.org, oss-drivers@corigine.com,
- linuxppc-dev@lists.ozlabs.org, Anna-Maria Behnsen <anna-maria@linutronix.de>
-References: <20241115-converge-secs-to-jiffies-v2-0-911fb7595e79@linux.microsoft.com>
- <10ee4e8f-d8b4-4502-a5e2-0657802aeb11@linux.microsoft.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <10ee4e8f-d8b4-4502-a5e2-0657802aeb11@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+Add speaker id check by gpio in ACPI for ASUS projects.
+In other vendors, speaker id was checked by BIOS, and was applied in
+last bit of subsys id, so we can load corresponding firmware binary file
+for its speaker by subsys id.
+But in ASUS project, the firmware binary name will be appended an extra
+number to tell the speakers from different vendors. And this single digit
+come from gpio level of speaker id in BIOS.
 
+Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+---
+v5:
+ - Change length in strncmp(), use strlen().
+v4:
+ - Change strncasecmp() to strncmp().
+ - Add error debug message print for "add driver gpio".
+ - Put error information (PTR_ERR) to ret for get gpio.
+ - Change %01d to %d in snprintf().
+v3:
+ - Change strstr() to strncasecmp() for compare subsystem id.
+ - Remove result check after devm_acpi_dev_add_driver_gpios().
+ - Remove spk_id > 1 check, as result of gpiod_get_value(),
+   must be 0 or 1, or negative if error happend.
+ - Change scnprintf() to snprintf(), as didn't care the length.
+ - Remove changes which not relative current patch.
+v2:
+ - Change ASUS id from 0x10430000 to "1043".
+ - Move gpio setting to tas2781_read_acpi() from probe.
+ - Remove interrupt gpio in acpi_gpio_mapping.
+ - Add sub and physdev in tas2781_read_acpi() for subsys id read.
+ - Add debug log for get acpi resource failed.
+ - Return error if get resource or subsys id failed.
+ - Return error if get gpio fail for speaker id with ASUS projects.
+ - Change fixed buffer lengh to sizeof().
+ - Change bits calculator to lower_16_bits().
+ - Remove unnecessary empty line in tas2781_hda_i2c_probe().
+---
+ include/sound/tas2781.h         |  3 ++
+ sound/pci/hda/tas2781_hda_i2c.c | 64 +++++++++++++++++++++++++++++----
+ 2 files changed, 61 insertions(+), 6 deletions(-)
 
-Le 15/11/2024 à 22:29, Easwar Hariharan a écrit :
-> [Vous ne recevez pas souvent de courriers de eahariha@linux.microsoft.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> On 11/15/2024 1:26 PM, Easwar Hariharan wrote:
->> This is a series that follows up on my previous series to introduce
->> secs_to_jiffies() and convert a few initial users.[1] In the review for
->> that series, Anna-Maria requested converting other users with
->> Coccinelle. This is part 1 that converts users of msecs_to_jiffies()
->> that use the multiply pattern of either of:
->> - msecs_to_jiffies(N*1000), or
->> - msecs_to_jiffies(N*MSEC_PER_SEC)
->>
->> The entire conversion is made with Coccinelle in the script added in
->> patch 2. Some changes suggested by Coccinelle have been deferred to
->> later parts that will address other possible variant patterns.
->>
->> CC: Anna-Maria Behnsen <anna-maria@linutronix.de>
->> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
->>
->> [1] https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Fall%2F20241030-open-coded-timeouts-v3-0-9ba123facf88%40linux.microsoft.com%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7Cff4857ad28a74e7051f708dd05bc8d45%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638673029556700628%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=q%2FHm%2Fal%2FBtK5J4nd%2BqJHNeSJ3f%2B0lVCKzigUUoL2vjw%3D&reserved=0
->> [2] https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Fall%2F8734kngfni.fsf%40somnus%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7Cff4857ad28a74e7051f708dd05bc8d45%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638673029556721028%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=PZiR%2B9GSo3Zk7cD85MyM4ZpqvIQtD0lSxd4G1gZ4UFE%3D&reserved=0
->>
->> ---
->> Changes in v2:
->> - EDITME: describe what is new in this series revision.
->> - EDITME: use bulletpoints and terse descriptions.
->> - Link to v1: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Fr%2F20241115-converge-secs-to-jiffies-v1-0-19aadc34941b%40linux.microsoft.com&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7Cff4857ad28a74e7051f708dd05bc8d45%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638673029556732854%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=NXdY%2FTuSufEPcy4ijIj%2F0%2BW3K%2FhkLs2JGu5C1WFMPOM%3D&reserved=0
->>
-> 
-> Apologies, I missed out on editing the changelog here. v1 included a
-> patch that's already been accepted, there are no other changes in v2.
+diff --git a/include/sound/tas2781.h b/include/sound/tas2781.h
+index 8cd6da0480b7..621ae485d3cb 100644
+--- a/include/sound/tas2781.h
++++ b/include/sound/tas2781.h
+@@ -107,6 +107,8 @@
+ #define TASDEVICE_CMD_DELAY		0x3
+ #define TASDEVICE_CMD_FIELD_W		0x4
+ 
++#define TAS2781_ASUS_ID			"1043"
++
+ enum audio_device {
+ 	TAS2563,
+ 	TAS2781,
+@@ -156,6 +158,7 @@ struct tasdevice_priv {
+ 	struct tasdevice_rca rcabin;
+ 	struct calidata cali_data;
+ 	struct tasdevice_fw *fmw;
++	struct gpio_desc *speaker_id;
+ 	struct gpio_desc *reset;
+ 	struct mutex codec_lock;
+ 	struct regmap *regmap;
+diff --git a/sound/pci/hda/tas2781_hda_i2c.c b/sound/pci/hda/tas2781_hda_i2c.c
+index 370d847517f9..f54bb3e0acd8 100644
+--- a/sound/pci/hda/tas2781_hda_i2c.c
++++ b/sound/pci/hda/tas2781_hda_i2c.c
+@@ -110,10 +110,19 @@ static int tas2781_get_i2c_res(struct acpi_resource *ares, void *data)
+ 	return 1;
+ }
+ 
++static const struct acpi_gpio_params speakerid_gpios = { 0, 0, false };
++
++static const struct acpi_gpio_mapping tas2781_speaker_id_gpios[] = {
++	{ "speakerid-gpios", &speakerid_gpios, 1 },
++	{ }
++};
++
+ static int tas2781_read_acpi(struct tasdevice_priv *p, const char *hid)
+ {
+ 	struct acpi_device *adev;
++	struct device *physdev;
+ 	LIST_HEAD(resources);
++	const char *sub;
+ 	int ret;
+ 
+ 	adev = acpi_dev_get_first_match_dev(hid, NULL, -1);
+@@ -123,18 +132,44 @@ static int tas2781_read_acpi(struct tasdevice_priv *p, const char *hid)
+ 		return -ENODEV;
+ 	}
+ 
+-	ret = acpi_dev_get_resources(adev, &resources, tas2781_get_i2c_res, p);
+-	if (ret < 0)
+-		goto err;
++	physdev = get_device(acpi_get_first_physical_node(adev));
++	ret = acpi_dev_get_resources(adev, &resources, tas2781_get_i2c_res, p);
++	if (ret < 0) {
++		dev_err(p->dev, "Failed to get ACPI resource.\n");
++		goto err;
++	}
++	sub = acpi_get_subsystem_id(ACPI_HANDLE(physdev));
++	if (IS_ERR(sub)) {
++		dev_err(p->dev, "Failed to get SUBSYS ID.\n");
++		goto err;
++	}
++	// Speaker id was needed for ASUS projects.
++	if (!strncmp(sub, TAS2781_ASUS_ID, strlen(TAS2781_ASUS_ID))) {
++		ret = devm_acpi_dev_add_driver_gpios(p->dev,
++			tas2781_speaker_id_gpios);
++		if (ret < 0)
++			dev_err(p->dev, "Failed to add driver gpio %d.\n",
++			ret);
++		p->speaker_id = devm_gpiod_get(p->dev, "speakerid", GPIOD_IN);
++		if (IS_ERR(p->speaker_id)) {
++			dev_err(p->dev, "Failed to get Speaker id.\n");
++			ret = PTR_ERR(p->speaker_id);
++			goto err;
++		}
++	} else {
++		p->speaker_id = NULL;
++	}
+ 
+ 	acpi_dev_free_resource_list(&resources);
+ 	strscpy(p->dev_name, hid, sizeof(p->dev_name));
++	put_device(physdev);
+ 	acpi_dev_put(adev);
+ 
+ 	return 0;
+ 
+ err:
+ 	dev_err(p->dev, "read acpi error, ret: %d\n", ret);
++	put_device(physdev);
+ 	acpi_dev_put(adev);
+ 
+ 	return ret;
+@@ -615,7 +650,7 @@ static void tasdev_fw_ready(const struct firmware *fmw, void *context)
+ 	struct tasdevice_priv *tas_priv = context;
+ 	struct tas2781_hda *tas_hda = dev_get_drvdata(tas_priv->dev);
+ 	struct hda_codec *codec = tas_priv->codec;
+-	int i, ret;
++	int i, ret, spk_id;
+ 
+ 	pm_runtime_get_sync(tas_priv->dev);
+ 	mutex_lock(&tas_priv->codec_lock);
+@@ -648,8 +683,25 @@ static void tasdev_fw_ready(const struct firmware *fmw, void *context)
+ 	tasdevice_dsp_remove(tas_priv);
+ 
+ 	tas_priv->fw_state = TASDEVICE_DSP_FW_PENDING;
+-	scnprintf(tas_priv->coef_binaryname, 64, "TAS2XXX%04X.bin",
+-		codec->core.subsystem_id & 0xffff);
++	if (tas_priv->speaker_id != NULL) {
++		// Speaker id need to be checked for ASUS only.
++		spk_id = gpiod_get_value(tas_priv->speaker_id);
++		if (spk_id < 0) {
++			// Speaker id is not valid, use default.
++			dev_dbg(tas_priv->dev, "Wrong spk_id = %d\n", spk_id);
++			spk_id = 0;
++		}
++		snprintf(tas_priv->coef_binaryname,
++			  sizeof(tas_priv->coef_binaryname),
++			  "TAS2XXX%04X%d.bin",
++			  lower_16_bits(codec->core.subsystem_id),
++			  spk_id);
++	} else {
++		snprintf(tas_priv->coef_binaryname,
++			  sizeof(tas_priv->coef_binaryname),
++			  "TAS2XXX%04X.bin",
++			  lower_16_bits(codec->core.subsystem_id));
++	}
+ 	ret = tasdevice_dsp_parser(tas_priv);
+ 	if (ret) {
+ 		dev_err(tas_priv->dev, "dspfw load %s error\n",
+-- 
+2.43.0
 
-You should refrain from sending such a patch bomb twice in 4 minutes. If 
-there is no other change you could have just replied to that already 
-included patch to say so.
-
-In any case wait a few days so that people have time to review and 
-provide comments.
-
-Christophe
 
