@@ -1,78 +1,81 @@
-Return-Path: <linux-kernel+bounces-411534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CE689CFBA3
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 01:23:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A97499CFBA4
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 01:23:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F31E61F21925
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:23:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F20A282EAB
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F274A2D;
-	Sat, 16 Nov 2024 00:23:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30D8610C;
+	Sat, 16 Nov 2024 00:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1hr6GmYm"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KJ3Sz5Z3"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091B01FA4
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 00:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E192107
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 00:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731716611; cv=none; b=KZeUSYy6B2vMdOw4QX766fOcwCa5KB/kV/dsdW9eBOdXLNLWmpC72cTNYbZkeJnPYtA30bKXr9297X2d4eSDyBOHJFEmFygCktnbio3k5Olf1wMx2Bu9cJnVgfkQetdSSuUOaGTULUSvo80FxPZKg+AsmXneotOJue60Emt9PgU=
+	t=1731716613; cv=none; b=Sel/PpOH5706ajZDWGCoE+A7bV/WPaRSDXXarWzsBSJUJ/rA4w4jO6fv55usBSU+Dgs2QBkPlDGv45HWe5Fy5MOpbQ5bmuaHGKBsyVYBxGix+arlxkviFTx3PAwB13s09S+Mnzv2NSbg887Elq633wzdNjU/YmctjxaffmVXkb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731716611; c=relaxed/simple;
-	bh=ThfM49seT36ShoQmc4VDUbcgkvLxGti2aAgI6hzoie0=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=K8fyBHMv4dAjd3lDuC7v55YXoTPFJ82yhVaq1C0gg2C5HVSrKMcJ9jOYIv/v9VOlmkNgLF/kwuvFT1rps4p5dtf9/foJlTOLk0BUmYgCdcgXkpVvlbzeEF9wmgiNKAWO/i8v8aD1QMd+xz30Awy9yDCxzc6hhivz55DNL7ma6Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1hr6GmYm; arc=none smtp.client-ip=209.85.214.202
+	s=arc-20240116; t=1731716613; c=relaxed/simple;
+	bh=WmS8zxT2Q1jka+KaHMF71D3onWxqZXl2ZWo6Thqnv24=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=YeSfOVhSh8uwlbqnrq5drHV/gZIJJLDSJ/DEmkGqZHbhU3Ah1Zp3sYfmHPC5maFDWpRWqSAeZ0GMPYbuHd2eHv2GdeQAcn+AWwukLBLk8JZWzW91rKMF4/OQqYeWful+GaZ70QoSULHhHwa6+bhdwt9+rO/UEyjmBUGksvyLJLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KJ3Sz5Z3; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-21159b15562so16515445ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 16:23:29 -0800 (PST)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ea3512feaeso265720a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 16:23:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731716609; x=1732321409; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8/PJntpvS80At3uXBJQS3gJiMTy4hYHZsHn0NNsIenw=;
-        b=1hr6GmYm28sl6q5sJ046EXz4O6CUhYE5XPEq2oeLJ5Q9PAOI6+kvqCLQje1NjfCg6Q
-         Kf/44+Pi8uzBF0d11rlu7KzU2WD9QRmUddYmW+ispm9fnskFt3NUkTe2WIzyvS3JPWAN
-         JokR7MfBqkK4BBWWXSfb1lNZH84quNsV8qvZK557CWvB/qaL6Apct4XhllNRCQrrm8Ka
-         MmJFkf8CN0YmS9cUi+wlMZRd4O3q9WdwRW3BHc9jcwiUufdJNX5NrRaISVYIQg0ITYIR
-         nbNpzW5EoxbNU9ts+7yMG7CSoAooGZ+Qtmuz5Ade1fbJMncHL6DI6VKgAzQGQdNIcsa7
-         C0cQ==
+        d=google.com; s=20230601; t=1731716611; x=1732321411; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mAISKCygyKfiQBAPwtOOB4Nt2ymKuY8x1KhZAspiXJk=;
+        b=KJ3Sz5Z3oIXvQPTnEQ1jv7NxBpaxnY5e7wr+XobSD60usLx+OHsgwFxiGrVGAM3p+5
+         2RolSqXgg0qOmhx4rOQXhusWuIqcr5qUFbvyG943p/NflzIZEuIXDporbvWtUfJhE4Lb
+         6HlFomgzNAdStkGMCChSK/IPyXW5cUffgBalQrvbGJTEBiHS0HNfnH3swBWJ66aRU9F7
+         hSj2+JMIr+vQKe3JNTRidFdC0j3R6+URDoTSo+aZ8g7JlcNE2iwGMU8BseXiJTr/+Ogu
+         0EQKB9JzHfXoJrxSLsWvO6tQLXRU58tg1u8vXfFaPT6m68HRQW6g1ODbkrcrYRmF48pf
+         HkaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731716609; x=1732321409;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8/PJntpvS80At3uXBJQS3gJiMTy4hYHZsHn0NNsIenw=;
-        b=JnX8SmX1jO9Ite0WQCuWfi+SNdoYajFuKhZ/tUKq8/c0FSFioScso9jT7quYdKJzzF
-         BmQsc+dMgdfrv5ck1fgCMH+VLcE4ROdJHqSRmD1CbpgMJC8L42M2zBi7LWo7Fim9jr+a
-         UOGJJgnVXbVR62h4uC56cKX1QaRaY0bfz/Kw8WxA5rI/NyE0lMowW0bhPYsJ80Iybezz
-         o1Fom/cZaRjjR+HQpN6HYMtgCiMDCGFhZoKxdzroF+rCdyGfFWayCM0VpYNT4EHxOhQ7
-         okrPfo+Hray5ITsFVooffi8z/i/lLbIFA2P0dORIFXyo2yahhrKB0hvb9nxtefIR2qoi
-         K9yQ==
-X-Gm-Message-State: AOJu0YxikSUb0tCTDGxKhyYceGGIVfevBSlu8sxyo936iAREuyMlrqWS
-	V8YfI1lmVQU5qGYjVDK2d9fviCegk98ak0pCmMtS3v+PJV0WQKZnAUHzJvj6mkBP7z1D1XTKxZT
-	TqxmemzcijvVk0gUonZHcAj1yiXVIPmowVKDzVriEFYGTI8nQSCnfZIWy9p7QNFZdnGUAS2uCjV
-	AfTGrqOYpqFomgy9XePzDX82/hsuaYS2kw0gUmgCITNXfN
-X-Google-Smtp-Source: AGHT+IGU8VXrhCvWMXSl1UyE/U3Yc5oah5iBrkLw4el4cmAlxA46pN5eRBAs++3dZJQ6MvaWpqaLvN+Tnk6B
+        d=1e100.net; s=20230601; t=1731716611; x=1732321411;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mAISKCygyKfiQBAPwtOOB4Nt2ymKuY8x1KhZAspiXJk=;
+        b=tc3VuRk3K37KZncgNw+6JDfQORD0sN4bSu4YUU38tsHx+uYIbzpk6ZG8OMso0qk7K/
+         gMr1DUJg3CroHQDnPOFyWnrQ/EJQW+MSpZDQEft9wMOA7i8N0QH2SzQW8ruPqzcDouI5
+         GqVwMkgAKdRnVe8JM+6gWxqd75mHK+LO4vXe27LA9laCyCFbRL0h/XAjIw0Dv0o7gDgo
+         +F4aXVjU+QmHP/SeenbdSRSTrA3CZ81avmOhPZFwygvGHgYAS3iV4Np0xYSP9sTzrGOc
+         F3icirxI71lbmNwW3tRuvheZ5I9oYahSzm5LjbE4fGFH5/iPFe8PCtQPTOPBy1P9h9No
+         qM/A==
+X-Gm-Message-State: AOJu0YyZ6qrhcI8u+J14KGbHTjlvJCpvh1X6/VWt5fcFP1a6rWqBMqHO
+	4h/lj3xTctRoq8dGhKTUUzSJBs2SzKRRcHoYHonGcHDk8mCIAlSt6sGxt0fGNeAukaARMkfwOx/
+	8gi01keKNeIej8G9AoGfjIyiM1YUlhsDHQnc7VAkHQmuohLe5blZRsXfue1BJnOIRwDy1HgfDNz
+	xyJE4TZZHsnsynRha1AKlAhMYRjeiWU7AbBHfFIJ6faqG0
+X-Google-Smtp-Source: AGHT+IGr0l6UsZgGwMT35aAhg8C7sVqD2sj0qJzMrrVgYieTOOz6I+qWRoA7NuiQlbYXeHiYWEpFlbsr70Ns
 X-Received: from jstultz-noogler2.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:600])
- (user=jstultz job=sendgmr) by 2002:a17:903:120e:b0:20b:7c00:5e3d with SMTP id
- d9443c01a7336-211d0ebc0a0mr123725ad.5.1731716608693; Fri, 15 Nov 2024
- 16:23:28 -0800 (PST)
-Date: Fri, 15 Nov 2024 16:23:06 -0800
+ (user=jstultz job=sendgmr) by 2002:a17:90a:ff04:b0:2ea:3177:f017 with SMTP id
+ 98e67ed59e1d1-2ea3177f170mr2524a91.1.1731716610858; Fri, 15 Nov 2024 16:23:30
+ -0800 (PST)
+Date: Fri, 15 Nov 2024 16:23:07 -0800
+In-Reply-To: <20241116002322.1035417-1-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20241116002322.1035417-1-jstultz@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241116002322.1035417-1-jstultz@google.com>
-Subject: [PATCH v2 1/2] lib: stacklog_debug: Introduce helper tool for
- collecting and displaying stacktraces
+Message-ID: <20241116002322.1035417-2-jstultz@google.com>
+Subject: [PATCH v2 2/2] lib: stackdepot: Avoid null pointer if
+ stack_depot_save is called too early
 From: John Stultz <jstultz@google.com>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: John Stultz <jstultz@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
@@ -80,27 +83,12 @@ Cc: John Stultz <jstultz@google.com>, Steven Rostedt <rostedt@goodmis.org>,
 	Andrew Morton <akpm@linux-foundation.org>, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 
-When debugging, its often useful to understand how a function is
-called and the different paths taken to get there. Usually
-dump_stack() can be used for this purpose. However there are a
-number of cases where a function is called very frequently,
-making dump_stack far too noisy to be useful.
+If stack_depot_save is called before stackdepot has initialized
+a null reference to the stack_table might be used, crashing the
+system.
 
-This is a little debug tool that utilizes stackdepot to capture
-unique stack traces and store them in a circular buffer.
-
-In the code, the developer adds: stacklog_debug_save() calls
-at points of interest (as they might with stack_dump()).
-
-Then after running the kernel, the developer can dump the unique
-stack traces from the buffer via:
-   cat /sys/kernel/debug/stacklog_debug
-
-This is pretty trivial, but I've had this hanging around for
-awhile and recently hit another case where it was helpful, so I
-figured it would be worth sending it out for feedback as to if
-others thought it would be useful enough to merge upstream or to
-possibly rework into stackdepot itself?
+Instead, check stack_table has been initialized before going
+further.
 
 Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: Alexander Potapenko <glider@google.com>
@@ -109,193 +97,23 @@ Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: kernel-team@android.com
 Signed-off-by: John Stultz <jstultz@google.com>
 ---
-v2:
-* Add dependency on STACKTRACE_SUPPORT as reported by
-  kernel test robot <lkp@intel.com>
-* Expand the Kconfig help to include basic usage
----
- include/linux/stacklog_debug.h |  13 ++++
- lib/Kconfig                    |  16 +++++
- lib/Makefile                   |   1 +
- lib/stacklog_debug.c           | 110 +++++++++++++++++++++++++++++++++
- 4 files changed, 140 insertions(+)
- create mode 100644 include/linux/stacklog_debug.h
- create mode 100644 lib/stacklog_debug.c
+ lib/stackdepot.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/include/linux/stacklog_debug.h b/include/linux/stacklog_debug.h
-new file mode 100644
-index 000000000000..d88f05d7000a
---- /dev/null
-+++ b/include/linux/stacklog_debug.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+
-+#ifndef _LINUX_STACKLOG_DEBUG_H
-+#define _LINUX_STACKLOG_DEBUG_H
-+
-+#ifdef CONFIG_STACKLOG_DEBUG
-+void stacklog_debug_save(void);
-+#else
-+static inline void stacklog_debug_save(void)
-+{
-+}
-+#endif
-+#endif
-diff --git a/lib/Kconfig b/lib/Kconfig
-index b38849af6f13..17eb0f8d30db 100644
---- a/lib/Kconfig
-+++ b/lib/Kconfig
-@@ -725,6 +725,22 @@ config REF_TRACKER
- 	depends on STACKTRACE_SUPPORT
- 	select STACKDEPOT
+diff --git a/lib/stackdepot.c b/lib/stackdepot.c
+index 5ed34cc963fc..09780c835362 100644
+--- a/lib/stackdepot.c
++++ b/lib/stackdepot.c
+@@ -611,6 +611,9 @@ depot_stack_handle_t stack_depot_save_flags(unsigned long *entries,
+ 	if (unlikely(nr_entries == 0) || stack_depot_disabled)
+ 		return 0;
  
-+config STACKLOG_DEBUG
-+	bool "Debug tool for logging and later displaying stacktraces"
-+	depends on STACKTRACE_SUPPORT
-+	select STACKDEPOT
-+	select STACKDEPOT_ALWAYS_INIT
-+	help
-+	  Enables debug infrastructure for logging unique stack traces at
-+	  a specific point, which can be later displayed from userland.
++	if (!stack_table)
++		return 0;
 +
-+	  The developer adds: stacklog_debug_save() calls at points of
-+	  interest (as they might with stack_dump()).
-+
-+	  Then after running the kernel, the developer can dump the unique
-+	  stack traces from the buffer via:
-+	    cat /sys/kernel/debug/stacklog_debug
-+
- config SBITMAP
- 	bool
+ 	hash = hash_stack(entries, nr_entries);
+ 	bucket = &stack_table[hash & stack_hash_mask];
  
-diff --git a/lib/Makefile b/lib/Makefile
-index 773adf88af41..5a07573be73c 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -264,6 +264,7 @@ obj-$(CONFIG_IRQ_POLL) += irq_poll.o
- 
- obj-$(CONFIG_POLYNOMIAL) += polynomial.o
- 
-+obj-$(CONFIG_STACKLOG_DEBUG) += stacklog_debug.o
- # stackdepot.c should not be instrumented or call instrumented functions.
- # Prevent the compiler from calling builtins like memcmp() or bcmp() from this
- # file.
-diff --git a/lib/stacklog_debug.c b/lib/stacklog_debug.c
-new file mode 100644
-index 000000000000..72ffbacee4b7
---- /dev/null
-+++ b/lib/stacklog_debug.c
-@@ -0,0 +1,110 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2014, The Linux Foundation. All rights reserved.
-+ */
-+#include <linux/kernel.h>
-+#include <linux/mm.h>
-+#include <linux/slab.h>
-+#include <linux/module.h>
-+#include <linux/sched.h>
-+#include <linux/vmalloc.h>
-+#include <linux/stackdepot.h>
-+#include <linux/debugfs.h>
-+#include <linux/stacklog_debug.h>
-+
-+#define STACKDEPTH 32
-+#define BUFSZ 4096
-+
-+#define LIST_ENTRIES 512
-+DEFINE_SPINLOCK(stack_lock);
-+depot_stack_handle_t stack_list[LIST_ENTRIES];
-+int head, tail;
-+
-+void stacklog_debug_save(void)
-+{
-+	unsigned long entries[STACKDEPTH];
-+	depot_stack_handle_t stack_hash;
-+	unsigned long flags;
-+	unsigned int n;
-+	int i;
-+
-+	n = stack_trace_save(entries, ARRAY_SIZE(entries), 1);
-+	stack_hash = stack_depot_save(entries, n, GFP_NOWAIT);
-+	if (!stack_hash)
-+		return;
-+
-+	spin_lock_irqsave(&stack_lock, flags);
-+	for (i = head; i < tail; i++)
-+		if (stack_list[i % LIST_ENTRIES] == stack_hash)
-+			goto out;
-+
-+	stack_list[(tail++ % LIST_ENTRIES)] = stack_hash;
-+
-+	if (tail % LIST_ENTRIES == head % LIST_ENTRIES)
-+		head++;
-+
-+	if (tail >= 2 * LIST_ENTRIES) {
-+		head %= LIST_ENTRIES;
-+		tail %= LIST_ENTRIES;
-+		if (tail < head)
-+			tail += LIST_ENTRIES;
-+	}
-+out:
-+	spin_unlock_irqrestore(&stack_lock, flags);
-+}
-+
-+#ifdef CONFIG_DEBUG_FS
-+static int stacklog_stats_show(struct seq_file *s, void *unused)
-+{
-+	char *buf = kmalloc(BUFSZ, GFP_NOWAIT);
-+	unsigned int nr_entries;
-+	unsigned long flags;
-+	int i, start, stop;
-+
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	spin_lock_irqsave(&stack_lock, flags);
-+	start = head;
-+	stop = tail;
-+	spin_unlock_irqrestore(&stack_lock, flags);
-+
-+	if (start == stop)
-+		goto out;
-+
-+	for (i = start; i < stop; i++) {
-+		unsigned long *ent;
-+		u32 hash;
-+
-+		/*
-+		 * We avoid holdings the lock over the entire loop
-+		 * just to be careful as we don't want to trip a
-+		 * call path that calls back into stacklog_debug_save
-+		 * which would deadlock, so hold the lock minimally
-+		 * (and be ok with the data changing between loop
-+		 * iterations).
-+		 */
-+		spin_lock_irqsave(&stack_lock, flags);
-+		hash = stack_list[i % LIST_ENTRIES];
-+		spin_unlock_irqrestore(&stack_lock, flags);
-+
-+		nr_entries = stack_depot_fetch(hash, &ent);
-+		stack_trace_snprint(buf, BUFSZ, ent, nr_entries, 0);
-+		seq_printf(s, "[idx: %i hash: %ld]====================\n%s\n\n",
-+			   i - start, (long)hash, buf);
-+	}
-+out:
-+	kfree(buf);
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(stacklog_stats);
-+
-+static int __init stacklog_debug_init(void)
-+{
-+	debugfs_create_file("stacklog_debug", 0400, NULL, NULL,
-+			    &stacklog_stats_fops);
-+	return 0;
-+}
-+
-+late_initcall(stacklog_debug_init);
-+#endif
 -- 
 2.47.0.338.g60cca15819-goog
 
