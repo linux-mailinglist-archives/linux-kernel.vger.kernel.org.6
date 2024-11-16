@@ -1,98 +1,90 @@
-Return-Path: <linux-kernel+bounces-411646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A319CFD55
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 09:26:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 833C29CFD56
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 09:27:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B700D286DF6
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 08:26:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FC5C1F22B1C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 08:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C58194089;
-	Sat, 16 Nov 2024 08:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE3A194137;
+	Sat, 16 Nov 2024 08:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="clAj8f6t"
-Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F7219306F;
-	Sat, 16 Nov 2024 08:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="q4WM7UrE"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4343319306F;
+	Sat, 16 Nov 2024 08:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731745599; cv=none; b=nJII1K9E9l5nY+DK018RKuogXLdmuXtSIsL3N6Byd/DD0wioiLTXh4cqNUsC6BNd1B6BoWpvQ+1fqzZB/zOxGD4eTw6tAuBu1LJWtASWw8G1BtWQ8RHbDbsV8Kox9umXs6nMurqUevwYQHaJEKn2ebKhIKD4EYTomZRtr/FwzHY=
+	t=1731745658; cv=none; b=Js4oIBwIqYEbJMJhOElN8zqmZDMJ7apInqks4xYywYlUk/cPtuEyXiVNBItF1FBOoNkmdsIIthjXZDHysF2Dt+Kf6i0Et9XGsA8NmAnNBJCQVPLsNJc20suF8o/P505jiivspU9iV0gymI5lPDg5rHkCl+nBEKomyjbFYYX7D7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731745599; c=relaxed/simple;
-	bh=OgH69nnHXhTLMLZ6FaS67kWb4+27ArjfgSN6GfqNt/8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AM0ovWTM2HY+KA+3cnSCH6O5FlCVcU8ESooIFZBMZDOSTQeIrJwnObkaMu4YNCrnPVvuEZmYNduHWA0J0OxMIjVRgIQHlOklcs9Cbf+3kH5/dFi6aiEmkpe6ykkCvxCpXN97dVoSBJKybY73WLSZSTmlz3huWjmKYJMyL6D2Cik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=clAj8f6t; arc=none smtp.client-ip=94.231.106.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.simply.com (Simply.com) with ESMTP id 4Xr6Rq1VnLz1DHVl;
-	Sat, 16 Nov 2024 09:26:31 +0100 (CET)
-Received: from [10.10.15.6] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by smtp.simply.com (Simply.com) with ESMTPSA id 4Xr6Rp5nq9z1DHnc;
-	Sat, 16 Nov 2024 09:26:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
-	s=unoeuro; t=1731745591;
-	bh=qlTPlWsDxw1bU6MSU5l/l3K4o7iUpqUvtFAPMZ/EGS4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=clAj8f6tJiEjWxZRCaZGxjsCYpOKpSN75MHGxoOMzJUtLRBgsIBIbVM80YDToUYZ5
-	 kYZLmCBrhDXlSvRsFw5cfMFxaLNl+aAsBRKKGeha0qd5AFiyiCjkpuw2H6ZMuWHapT
-	 jetN2ShAnVcLhZpO0XA3ydca2NKY+RUVdtF2Ebdo=
-Message-ID: <c2e1273d-00b0-4cf5-b315-46413153110b@gaisler.com>
-Date: Sat, 16 Nov 2024 09:26:29 +0100
+	s=arc-20240116; t=1731745658; c=relaxed/simple;
+	bh=MOVng9Ha4sMJk3+Jdat+wN9LMmfgLGKMsUzsSGUIiHE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=epnclM3RqZ1DYeUR/1lGo7KFnrEgcMFhwuexpMUdq6OPnuCUeHBGoXzLgcj7AGJ3fGMcUKx0SQFXGdxw0SoPpD20EOsGkSdpH54Uq25Z/oeUdUtqjCTS2Y5EL0VCJN1fU/Wz0kAWdGgFsOqopAnw+E/G8NGWeGmFrE5hL0qd+zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=q4WM7UrE; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id AE98B14C1E1;
+	Sat, 16 Nov 2024 09:27:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1731745645;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KswjZy/HqPntBZ/99MsDazDdPI3IQwrkpz4Pv2A/tBg=;
+	b=q4WM7UrEeKRUvgS0GdEXq6mFtoRBoOUipqcoVaH7brZbBaaVJiePYYgAnnkRls766U+cl0
+	0oAHnwy1nBRByk2gHT26ev0/u3Vgv/2mmb8q3TOqWIYL1vFeTOqzm0xH8gO7C8oa2zfVZW
+	4HcnfERgwNQkqw20mPDEob/naIxzC18LqoGuUSbKsDFXuyM3y12G6j5YnNCu4zQY9FQMZ9
+	46ds80N79P9ozyKMOt54n3WiHk3ZAeIgwpQWjYGKJ6ye1y9Alcctq0U7WdDHWycCGwCtWF
+	+LH45kV7LLDZTjpCatoaUGb1FSmZuiYpqJxCVVQ7HlbpfxKJAtb6CbhL1JVzRg==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id f7b2776e;
+	Sat, 16 Nov 2024 08:27:20 +0000 (UTC)
+Date: Sat, 16 Nov 2024 17:27:05 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Colin Ian King <colin.i.king@gmail.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	v9fs@lists.linux.dev, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][V2][next] fs/9p: replace functions
+ v9fs_cache_{register|unregister} with direct calls
+Message-ID: <ZzhXWfkxj3cY8zTm@codewreck.org>
+References: <20241107095756.10261-1-colin.i.king@gmail.com>
+ <Zyyt0XUv0Ypl56qI@codewreck.org>
+ <d410dce3-36ce-4663-94ca-25bad2f91ad4@suswa.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] sparc: Replace one-element array with flexible array
- member
-To: Thorsten Blum <thorsten.blum@linux.dev>,
- "David S. Miller" <davem@davemloft.net>, Arnd Bergmann <arnd@arndb.de>,
- Sam Ravnborg <sam@ravnborg.org>, Ingo Molnar <mingo@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-hardening@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241111204724.165263-2-thorsten.blum@linux.dev>
- <8EAE9B99-EB4F-4361-9C7C-4DBC4998F439@linux.dev>
-Content-Language: en-US
-From: Andreas Larsson <andreas@gaisler.com>
-In-Reply-To: <8EAE9B99-EB4F-4361-9C7C-4DBC4998F439@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <d410dce3-36ce-4663-94ca-25bad2f91ad4@suswa.mountain>
 
-On 2024-11-12 12:03, Thorsten Blum wrote:
-> On 11. Nov 2024, at 21:47, Thorsten Blum wrote:
->> Replace the deprecated one-element array with a modern flexible array
->> member in the struct hvtramp_descr.
->>
->> Additionally, 15 unnecessary bytes were allocated for hdesc, but instead
->> of fixing the parentheses in the open-coded version, use struct_size()
->> to calculate the correct number of bytes.
->>
->> Link: https://github.com/KSPP/linux/issues/79
->> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
->> ---
+Dan Carpenter wrote on Thu, Nov 07, 2024 at 04:56:55PM +0300:
+> On Thu, Nov 07, 2024 at 09:08:49PM +0900, Dominique Martinet wrote:
+> > @Dan, I don't have anything queued up 9p-wise so if you want to take it
+> > through the janitor tree it'll probably get in faster; otherwise (if
+> > you'd rather I take it or no reply in a while) I'll pick it up when
+> > other patches come in.
 > 
-> If this justifies a Fixes: tag, it should probably be:
-> 
-> Fixes: 64658743fdd4 ("[SPARC64]: Remove most limitations to kernel image size.")
+> There isn't a janitor tree or any rush on this.  ;)
 
-Reviewed-by: Andreas Larsson <andreas@gaisler.com>
+Sorry, I was somehow convinced you had a tree somewhere.
 
-Picking this up to my for-next.
+I've now taken it in 9p-next, will pobably submit it for next cycle.
+
 
 Thanks,
-Andreas
-
+-- 
+Dominique Martinet | Asmadeus
 
