@@ -1,102 +1,97 @@
-Return-Path: <linux-kernel+bounces-411716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F86C9CFEBB
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 13:13:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD079CFEB9
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 13:11:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9243B24203
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 12:13:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B78C71F23DEA
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 12:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0FA412C470;
-	Sat, 16 Nov 2024 12:13:22 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71407191F78;
+	Sat, 16 Nov 2024 12:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="d6aaOxeJ"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F5D161
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 12:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9812D12C470;
+	Sat, 16 Nov 2024 12:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731759202; cv=none; b=KS+6tQd+BEDrJ7hfvAFC/neVjmpAtBOavAFJcObxPJohTRNesjoKc4ZSnnZOGrmCFvK5g9PU0TRDVSG7zGXyqjWZHGBKrDl4ym3d3GHYu/OTI89frDaLQ1KlvwSbzMQkBJq2O/14frQVR23dKhy/tEDzZqECqB3UXH+zxzwD65M=
+	t=1731759082; cv=none; b=RlmoJCg0XVHGpZhqnxxCYGzVPiULb0qQocgxV9bagykzBb2q7vAvZ3+3EIxt0djf3CGsYilZF9APjgAD4KRXA3cvQ1nmcHCAsoHXBoFo948e4HPdcIXTj1EDTsUHbvZETBnXrriJxWePIAGgl0clOXTt+9Y7nQP1ggfuV/1HPho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731759202; c=relaxed/simple;
-	bh=JYMEaRjrLJZJp/WVYKY998cN7Lo7+syvrmumd73EB7M=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=u8dT/YwnNiYTLrrx5X8N5mzxDGbpWLNjBLmkkt3erdhvMlhgxzSNAS6otCRFHShqBHfjUngI2uck+yh4XbZwpqFUqKqDmFlBzt7Zw7fq6rpItsKuRnDLiqacM+xNfoaL6i72Vj/sYyBBVU9AEKUJMlxPTSoQdTKFF98kC6RS1u0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [192.168.2.4] (unknown [60.17.9.120])
-	by APP-03 (Coremail) with SMTP id rQCowADX34v2ijhnmFgAAw--.11080S2;
-	Sat, 16 Nov 2024 20:07:18 +0800 (CST)
-Message-ID: <a9058ac757636e4f5160a0bd11abeb3c111fc9a5.camel@iscas.ac.cn>
-Subject: [resend PATCH] riscv: fix memory leakage in
- process_accumulated_relocations
-From: laokz <zhangkai@iscas.ac.cn>
-To: Walmsley <paul.walmsley@sifive.com>, Dabbelt <palmer@dabbelt.com>, Ou
-	 <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Date: Sat, 16 Nov 2024 20:07:18 +0800
-X-Priority: 1
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1731759082; c=relaxed/simple;
+	bh=egQwIpjuW/D5jhfmjl0METYf/VduR4/1nUQkptqc3fU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d00lqP7d2Sg6UqSD3Lto3uCYvSgFIGr+Psaio0yXhOPjRHS50p7ZWn7k4uNzhLM+Pdsy93DOfJyAm2K222nKz8zK7RqVVmyXZg6jdlVdkEXAe8DMRKITJTLiCF28QiGY77rl0Yw8mr/3rGFZ5pkh6VLcfPgUSxfrowmQ5JiDYfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=d6aaOxeJ; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1376C40E0220;
+	Sat, 16 Nov 2024 12:11:17 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id zYrIag-FvatP; Sat, 16 Nov 2024 12:11:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1731759071; bh=/FV3qTwRs7dOV8QYsBXwilOpUzqkxkccQB0xUkgyk+Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d6aaOxeJ+AkFzCwKstKs79CbRsYgYzl+zA0X2N1q2TB+XfBD/5kKefHLu5nSD49Rf
+	 urATdBC45fsgPFC3piBIZccSDEs39uobqebQ4XN1v+SN3WS8r09LqQIS/lyBfl1kbC
+	 TD7C8vfP1sngqU8WyHeoOe6vLtglmdLGdF8J2f7TRqUCe/BTvJ6OEt7lzf/WeA67f7
+	 9nJPufr5BH1U35qOhhqb3FE/CPrzVbMH8xE76mk6f2fUs7VGVYHbLCqutoRAntRHMd
+	 HUqpsA0xBmUQD67SLylTT3ZedL4jJqvOEAw1bI9g79OofF2+CBPiPpSOfFKs2WWEfP
+	 5HNnQKwMA+ea5DECtTUz0fbckHmIS8Z9Jtv4vLm9xUoUedZ26pOPB6soJMoeGdYbs1
+	 FzW7ZriQj1SBm/PFnJHFeAmvG6Jl/B8JbF9JOeZcueI79KQ7c0uO7gsyDZr/E7uGJK
+	 O6K+4e+jrFQyNcgmtyhll4JmvI0/N0j6bhtjrI6LWr1IiUcW7H86oEwj65Wcy2wcJ/
+	 /tYLeHThYiZJQcDO98PKKd7M3Rn4aWgACLHflo+rk7t5bV1tfPFs91dbpudbXYWBCV
+	 WiRu8P/R/f4dwCDEqMzC6va7pvQNbEVzzrbas9JJ4w2gJYUHULV+eNb0+WcnQLBv4c
+	 tYQU3OfLLACdcO4zOAkGe3MU=
+Received: from zn.tnic (p200300ea9736a13e329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:9736:a13e:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E8A8240E0208;
+	Sat, 16 Nov 2024 12:10:58 +0000 (UTC)
+Date: Sat, 16 Nov 2024 13:10:53 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Maksim Davydov <davydov-max@yandex-team.ru>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, babu.moger@amd.com,
+	x86@kernel.org, seanjc@google.com, sandipan.das@amd.com,
+	mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
+	hpa@zytor.com, pbonzini@redhat.com
+Subject: Re: [PATCH 0/2] x86: KVM: Add missing AMD features
+Message-ID: <20241116121053.GBZziLzfKuQ7lyTrdX@fat_crate.local>
+References: <20241113133042.702340-1-davydov-max@yandex-team.ru>
+ <20241116114754.GAZziGausNsHqPnr3j@fat_crate.local>
+ <4d58d221-5327-4090-926e-a9c21c334ed4@yandex-team.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:rQCowADX34v2ijhnmFgAAw--.11080S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7urWxtw15Kr1fCw1rGFWUCFg_yoW8CFy5pr
-	1rGr1UGrW8Jr1kJF4Utw1kWryUGr1DCa17WF45JF1xJr13Jr1jvw1UXr1Fgrs8Jr48Jry7
-	Jr1UJr1jvryDJw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmSb7Iv0xC_KF4lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwV
-	C2z280aVCY1x0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
-	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJV
-	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFcxC0VAYjxAxZF0Ew4CEw7xC
-	0wACY4xI67k04243AVC20s07MxkF7I0En4kS14v26r126r1DMxkIecxEwVAFwVW5JwCF04
-	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
-	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr4
-	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1l
-	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
-	A2jsIEc7CjxVAFwI0_Gr0_Gr1UMs0E7xkvzxkvxsIE5cxS5wCE64xvF2IEb7IF0Fy7YxBI
-	daVFxhVjvjDU0xZFpf9x07jfHUDUUUUU=
-X-CM-SenderInfo: x2kd0wxndlqxpvfd2hldfou0/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4d58d221-5327-4090-926e-a9c21c334ed4@yandex-team.ru>
 
-U29ycnkgZm9yIGxhc3Qgd2VpcmQgZW1haWwuCi0tLQoKV2hlbiBtb2R1bGUgcmVsb2NhdGlvbiBp
-cyBkb25lLCBwcm9jZXNzX2FjY3VtdWxhdGVkX3JlbG9jYXRpb25zKCkKZnJlZXMgYWxsIGR5bmFt
-aWMgYWxsb2NhdGVkIG1lbW9yeS4gcmVsX2hlYWRfaXRlci0+cmVsX2VudHJ5IGlzCm1pc3NlZCB0
-byBmcmVlIHRoYXQga21lbWxlYWsgbWlnaHQgcmVwb3J0OgoKdW5yZWZlcmVuY2VkIG9iamVjdCAw
-eGZmZmZmZmQ4ODBjNWZjNDAgKHNpemUgMTYpOgrCoCBjb21tICJpbnNtb2QiLCBwaWQgMTEwMSwg
-amlmZmllcyA0Mjk1MDQ1MTM4CsKgIGhleCBkdW1wIChmaXJzdCAxNiBieXRlcyk6CsKgwqDCoCBl
-MCBjMCBmNSA4NyBkOCBmZiBmZiBmZiA2MCBjNSBmNSA4NyBkOCBmZiBmZiBmZsKgIC4uLi4uLi4u
-YC4uLi4uLi4KwqAgYmFja3RyYWNlIChjcmMgZDJlY2IyMGMpOgrCoMKgwqAgWzwwMDAwMDAwMGIw
-MTY1NWY2Pl0ga21hbGxvY190cmFjZV9ub3Byb2YrMHgyNjgvMHgyZjYKwqDCoMKgIFs8MDAwMDAw
-MDA2ZGMwMDY3YT5dCmFkZF9yZWxvY2F0aW9uX3RvX2FjY3VtdWxhdGUuY29uc3Rwcm9wLjArMHhm
-Mi8weDFhYQrCoMKgwqAgWzwwMDAwMDAwMGUxYjI5YTM2Pl0gYXBwbHlfcmVsb2NhdGVfYWRkKzB4
-MTNjLzB4MzZlCsKgwqDCoCBbPDAwMDAwMDAwNzU0M2YxZmI+XSBsb2FkX21vZHVsZSsweDVjNi8w
-eDgzZQrCoMKgwqAgWzwwMDAwMDAwMGFiY2UxMmU4Pl0gaW5pdF9tb2R1bGVfZnJvbV9maWxlKzB4
-NzQvMHhhYQrCoMKgwqAgWzwwMDAwMDAwMDQ5NDEzZTNkPl0gaWRlbXBvdGVudF9pbml0X21vZHVs
-ZSsweDExNi8weDIyZQrCoMKgwqAgWzwwMDAwMDAwMGY5Yjk4Yjg1Pl0gX19yaXNjdl9zeXNfZmlu
-aXRfbW9kdWxlKzB4NjIvMHhhZQoKU2lnbmVkLW9mZi1ieTogS2FpIFpoYW5nIDx6aGFuZ2thaUBp
-c2Nhcy5hYy5jbj4KLS0tCsKgYXJjaC9yaXNjdi9rZXJuZWwvbW9kdWxlLmMgfCAxICsKwqAxIGZp
-bGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykKCmRpZmYgLS1naXQgYS9hcmNoL3Jpc2N2L2tlcm5l
-bC9tb2R1bGUuYyBiL2FyY2gvcmlzY3Yva2VybmVsL21vZHVsZS5jCmluZGV4IDFjZDQ2MWYzZDg3
-Li5mOGMzYzRiNDdkYyAxMDA2NDQKLS0tIGEvYXJjaC9yaXNjdi9rZXJuZWwvbW9kdWxlLmMKKysr
-IGIvYXJjaC9yaXNjdi9rZXJuZWwvbW9kdWxlLmMKQEAgLTY0Myw2ICs2NDMsNyBAQCBwcm9jZXNz
-X2FjY3VtdWxhdGVkX3JlbG9jYXRpb25zKHN0cnVjdCBtb2R1bGUgKm1lLArCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIH0KwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZWxvY19oYW5kbGVyc1tjdXJyX3R5cGVdLmFjY3Vt
-dWxhdGVfaGFuZGxlcigKwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAgbWUsIGxvY2F0aW9uLCBidWZmZXIpOworwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAga2ZyZWUocmVsX2hlYWRfaXRlci0+cmVs
-X2VudHJ5KTsKwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBr
-ZnJlZShyZWxfaGVhZF9pdGVyKTsKwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIH0KwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGtmcmVlKGJ1Y2tldF9pdGVyKTsKCgo=
+On Sat, Nov 16, 2024 at 03:02:47PM +0300, Maksim Davydov wrote:
+> Yes, BTC_NO and AMD_IBPB_RET are used by guests while choosing mitigations.
 
+How?
+
+Basically what the current code does to do retbleed or IBPB on entry? Where
+latter means the HV allows writes to MSR_IA32_PRED_CMD...?
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
