@@ -1,164 +1,240 @@
-Return-Path: <linux-kernel+bounces-411789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A831A9CFFB0
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:47:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8225C9CFFB3
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:50:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E2171F23229
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 15:47:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B10CB234B4
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 15:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C640518787F;
-	Sat, 16 Nov 2024 15:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 389F8188A3B;
+	Sat, 16 Nov 2024 15:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u5zVHCkT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Yd5tjWPi"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5BA18052;
-	Sat, 16 Nov 2024 15:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9804F18052;
+	Sat, 16 Nov 2024 15:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731772064; cv=none; b=f8B/Uyj4B8ZOtKaoUSYUy9GrvqtkoGPmSCSgF1whwjgdLlNFIjf3TSrtCsG97ttDg+QbOV9gEHvcY6dHVgui6XXULa5SAndVa2vu3BDHR+emHNMZeyk7/U1uTZw+R1PZgDnkHpyWolBVgwIac0iJpCZ61hQzQZT81p5Xa/O/1L4=
+	t=1731772226; cv=none; b=nbJWJac3S7ra3Oahapsrd0zmXKmb/QY+5e97ASbRkMB+v7fNIEv+/cxzge/h+STYfAB+VI5SYTrutErsWzRkWkZGYFV5sxxooVOKR109g8LjAN6+0u01MxgBn1Cuvf6ZFCHAYfBGls5GorUaZw9n+mI9EU+BLyV6UwPXdEk++UU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731772064; c=relaxed/simple;
-	bh=M49TRIBAVxrm/P8SCFGwuYjCl0z57oQDk6m2q50Svuc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EGPfhn0pedsecLqqrDcK1leVECTHjfGEt7WoOLkAa+k2+J8HyKvqrO759edPT18anLybPYDYFFTYxiBbUPUCvjFHYfGP0qtEmRmIZPqRyyT7gO1ay5g2z23qPMTj3TnyZSOrLy7RUO15bOWjOQUXaRVs+Zg53+3yNRyibHhPWAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u5zVHCkT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F2B9C4CED2;
-	Sat, 16 Nov 2024 15:47:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731772063;
-	bh=M49TRIBAVxrm/P8SCFGwuYjCl0z57oQDk6m2q50Svuc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u5zVHCkTZaYCMKKFM1HCFdYbMaSkcG538fSL09v7tLe9+8FqvMykEUHwYf3Io4U+G
-	 DkDHiM7vnKfgiyrZ51ogcqFviuK0aWXuh0tHMNe644GvKq3yl44B2iUKpRVppd+YMJ
-	 sbm7r/12eT9rUqPV7x+NpU2BvpU2UTaJy1H3cQ6m0yd3RahjJtL50sFDQOA+sWde7d
-	 +94/bH7fvAQ3jwb/0BlFiP4GT4sFi1SwL7CV4qn/wrxAxl8ekGYZMrsiTPVVapCDRh
-	 aRPq5VIY3vxVjtQFf9WwAwEDP7FE2hAKM1lVODFmXRIBnThkdDMlU71alyvBlXzX6K
-	 yvjo8DwMKzWMQ==
-Date: Sat, 16 Nov 2024 16:47:37 +0100
-From: Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>
-To: Fiona Behrens <me@kloenk.dev>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
-	linux-leds@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [RFC PATCH 1/2] rust: LED abstraction
-Message-ID: <snsf4cc6valp5ovrrbjv7fefxtkthifsis5el4teajzwjhmv4x@ghxovfdqkhop>
-References: <20241009105759.579579-1-me@kloenk.dev>
- <20241009105759.579579-2-me@kloenk.dev>
+	s=arc-20240116; t=1731772226; c=relaxed/simple;
+	bh=wdABmWvmIPhgFkjip+5WZZhugtbvG99NFjnrsK3+dkU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=JUEs5gFVX450YjORUFYMZhfrMeKOnEDMiixH5QTuLyGNobWTDPJM3O9TaQu4qNLAdWcP9VKxG3vjjxEIcY3NqlJ95z3QBlcKb8I0AbWPJ2cH3ivZNo7v/mGcXY456dZq8YyO9fHk8JcEqMG0LgXwgVNKzEo2JN/hj9iNv4JPBGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Yd5tjWPi; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AGEN8Qx021009;
+	Sat, 16 Nov 2024 15:49:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=eb5NEXVzD8nXWbaNzThWpx
+	hQktIsdJ6cJpLZpuDHR0o=; b=Yd5tjWPiioyJhhvJd92kojHBwR1fV0F9bwW2NY
+	BUO2gVF1kweKcrBA+gjDN5FCGXy2jsukalxqtqulKVEWdUd8rh73odEn40XnZaGV
+	vxAfhSL/jsc7y3ojtBohXLXkbJT/5NlyfMq9XwcMk0Q+2zw+gk/a3VuzIGBWCg0M
+	7JnVK3z/QrKNvGAY8fzPAFkSEqiLK/GXLcvp8jEm+3hX/nqL+73keUoGq4KZCQOK
+	oUh6RbE/fQxh0Fs6Q5xaGv3FS3B2XZoQtChrqHItttwtuvUYXcp6pAxs712px5JP
+	bpRlA7tl5Adav5ucNZ/t0Wj8ZqwrF9tS+Z5/LQMggDbZ8d4w==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42xksqgxxd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 16 Nov 2024 15:49:58 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AGFnvs8012427
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 16 Nov 2024 15:49:57 GMT
+Received: from hu-zijuhu-lv.qualcomm.com (10.49.16.6) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sat, 16 Nov 2024 07:49:56 -0800
+From: Zijun Hu <quic_zijuhu@quicinc.com>
+Date: Sat, 16 Nov 2024 07:49:23 -0800
+Subject: [PATCH v2] Bluetooth: qca: Support downloading board ID specific
+ NVM for WCN6855
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009105759.579579-2-me@kloenk.dev>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-ID: <20241116-x13s_wcn6855_fix-v2-1-c08c298d5fbf@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAAK/OGcC/32NQQ7CIBREr9L8tZgCRdCV9zBNQ75g/0JaQbGm4
+ e5iD2Bm9SaZNyskF8klODUrRJcp0RQqiF0DONpwc4yulUG0ouOcS7ZwmYY3hoNRavC0MCVRaem
+ 9NtpAnc3R1XpTXvrKI6XnFD/bQ+a/9o8sc1ajrG+tFao74vnxIqSAe5zu0JdSvkrBk8+yAAAA
+To: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Steev
+ Klimaszewski" <steev@kali.org>
+CC: Paul Menzel <pmenzel@molgen.mpg.de>, Zijun Hu <zijun_hu@icloud.com>,
+        <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Luiz
+ Augusto von Dentz" <luiz.von.dentz@intel.com>,
+        Bjorn Andersson
+	<bjorande@quicinc.com>,
+        "Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>,
+        "Cheng
+ Jiang" <quic_chejiang@quicinc.com>,
+        Johan Hovold <johan@kernel.org>,
+        "Jens
+ Glathe" <jens.glathe@oldschoolsolutions.biz>,
+        <stable@vger.kernel.org>, "Johan Hovold" <johan+linaro@kernel.org>,
+        Zijun Hu <quic_zijuhu@quicinc.com>
+X-Mailer: b4 0.14.1
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: vSBH5XbeRvQPomDem-dl8sjvPxZoXU75
+X-Proofpoint-ORIG-GUID: vSBH5XbeRvQPomDem-dl8sjvPxZoXU75
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=999 impostorscore=0 adultscore=0 spamscore=0 bulkscore=0
+ lowpriorityscore=0 malwarescore=0 clxscore=1011 phishscore=0 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411160136
 
-On Wed, Oct 09, 2024 at 12:57:58PM +0200, Fiona Behrens wrote:
+For WCN6855, board ID specific NVM needs to be downloaded once board ID
+is available, but the default NVM is always downloaded currently, and
+the wrong NVM causes poor RF performance which effects user experience.
 
-> +/// Color of an LED.
-> +#[derive(Copy, Clone)]
-> +pub enum Color {
-> +    /// White
-> +    White,
-> +    /// Red
-> +    Red,
-> +    /// Green
-> +    Green,
-> +    /// Blue
-> +    Blue,
-> +    /// Amber
-> +    Amber,
-> +    /// Violet
-> +    Violet,
-> +    /// Yellow
-> +    Yellow,
-> +    /// Purple
-> +    Purple,
-> +    /// Orange
-> +    Orange,
-> +    /// Pink
-> +    Pink,
-> +    /// Cyan
-> +    Cyan,
-> +    /// Lime
-> +    Lime,
+Fix by downloading board ID specific NVM if board ID is available.
 
-Why these repetitions?
+Cc: Bjorn Andersson <bjorande@quicinc.com>
+Cc: Aiqun Yu (Maria) <quic_aiquny@quicinc.com>
+Cc: Cheng Jiang <quic_chejiang@quicinc.com>
+Cc: Johan Hovold <johan@kernel.org>
+Cc: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Cc: Steev Klimaszewski <steev@kali.org>
+Cc: Paul Menzel <pmenzel@molgen.mpg.de>
+Fixes: 095327fede00 ("Bluetooth: hci_qca: Add support for QTI Bluetooth chip wcn6855")
+Cc: stable@vger.kernel.org # 6.4
+Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+Tested-by: Johan Hovold <johan+linaro@kernel.org>
+Tested-by: Steev Klimaszewski <steev@kali.org>
+Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+Thank you Paul, Jens, Steev, Johan, Luiz for code review, various
+verification, comments and suggestions. these comments and suggestions
+are very good, and all of them are taken by this v2 patch.
 
-> +impl TryFrom<u32> for Color {
-> +    type Error = Error;
-> +
-> +    fn try_from(value: u32) -> Result<Self, Self::Error> {
-> +        Ok(match value {
-> +            bindings::LED_COLOR_ID_WHITE => Color::White,
-> +            bindings::LED_COLOR_ID_RED => Color::Red,
-> +            bindings::LED_COLOR_ID_GREEN => Color::Green,
-> +            bindings::LED_COLOR_ID_BLUE => Color::Blue,
-> +            bindings::LED_COLOR_ID_AMBER => Color::Amber,
-> +            bindings::LED_COLOR_ID_VIOLET => Color::Violet,
-> +            bindings::LED_COLOR_ID_YELLOW => Color::Yellow,
-> +            bindings::LED_COLOR_ID_PURPLE => Color::Purple,
-> +            bindings::LED_COLOR_ID_ORANGE => Color::Orange,
-> +            bindings::LED_COLOR_ID_PINK => Color::Pink,
-> +            bindings::LED_COLOR_ID_CYAN => Color::Cyan,
-> +            bindings::LED_COLOR_ID_LIME => Color::Lime,
-> +            bindings::LED_COLOR_ID_IR => Color::IR,
-> +            bindings::LED_COLOR_ID_MULTI => Color::Multi,
-> +            bindings::LED_COLOR_ID_RGB => Color::RGB,
-> +            _ => return Err(EINVAL),
-> +        })
-> +    }
-> +}
+Regarding the variant 'g', sorry for that i can say nothing due to
+confidential information (CCI), but fortunately, we don't need to
+care about its difference against one without 'g' from BT host
+perspective, qca_get_hsp_nvm_name_generic() shows how to map BT chip
+to firmware.
 
-How does Rust compile these? If these constants compile to the same
-numeric values, i.e. if
-  LED_COLOR_ID_AMBER == Color::Amber,
-will the compiler compile away the function?
+I will help to backport it to LTS kernels ASAP once this commit
+is mainlined.
+---
+Changes in v2:
+- Correct subject and commit message
+- Temporarily add nvm fallback logic to speed up backport.
+— Add fix/stable tags as suggested by Luiz and Johan
+- Link to v1: https://lore.kernel.org/r/20241113-x13s_wcn6855_fix-v1-1-15af0aa2549c@quicinc.com
+---
+ drivers/bluetooth/btqca.c | 44 +++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 41 insertions(+), 3 deletions(-)
 
-How do enums work in Rust?
+diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+index dfbbac92242a..ddfe7e3c9b50 100644
+--- a/drivers/bluetooth/btqca.c
++++ b/drivers/bluetooth/btqca.c
+@@ -717,6 +717,29 @@ static void qca_generate_hsp_nvm_name(char *fwname, size_t max_size,
+ 		snprintf(fwname, max_size, "qca/hpnv%02x%s.%x", rom_ver, variant, bid);
+ }
+ 
++static void qca_get_hsp_nvm_name_generic(struct qca_fw_config *cfg,
++					 struct qca_btsoc_version ver,
++					 u8 rom_ver, u16 bid)
++{
++	const char *variant;
++
++	/* hsp gf chip */
++	if ((le32_to_cpu(ver.soc_id) & QCA_HSP_GF_SOC_MASK) == QCA_HSP_GF_SOC_ID)
++		variant = "g";
++	else
++		variant = "";
++
++	if (bid == 0x0)
++		snprintf(cfg->fwname, sizeof(cfg->fwname), "qca/hpnv%02x%s.bin",
++			 rom_ver, variant);
++	else if (bid & 0xff00)
++		snprintf(cfg->fwname, sizeof(cfg->fwname), "qca/hpnv%02x%s.b%x",
++			 rom_ver, variant, bid);
++	else
++		snprintf(cfg->fwname, sizeof(cfg->fwname), "qca/hpnv%02x%s.b%02x",
++			 rom_ver, variant, bid);
++}
++
+ static inline void qca_get_nvm_name_generic(struct qca_fw_config *cfg,
+ 					    const char *stem, u8 rom_ver, u16 bid)
+ {
+@@ -810,8 +833,15 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+ 	/* Give the controller some time to get ready to receive the NVM */
+ 	msleep(10);
+ 
+-	if (soc_type == QCA_QCA2066 || soc_type == QCA_WCN7850)
++	switch (soc_type) {
++	case QCA_QCA2066:
++	case QCA_WCN6855:
++	case QCA_WCN7850:
+ 		qca_read_fw_board_id(hdev, &boardid);
++		break;
++	default:
++		break;
++	}
+ 
+ 	/* Download NVM configuration */
+ 	config.type = TLV_TYPE_NVM;
+@@ -848,8 +878,7 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+ 				 "qca/msnv%02x.bin", rom_ver);
+ 			break;
+ 		case QCA_WCN6855:
+-			snprintf(config.fwname, sizeof(config.fwname),
+-				 "qca/hpnv%02x.bin", rom_ver);
++			qca_get_hsp_nvm_name_generic(&config, ver, rom_ver, boardid);
+ 			break;
+ 		case QCA_WCN7850:
+ 			qca_get_nvm_name_generic(&config, "hmt", rom_ver, boardid);
+@@ -861,9 +890,18 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+ 		}
+ 	}
+ 
++download_nvm:
+ 	err = qca_download_firmware(hdev, &config, soc_type, rom_ver);
+ 	if (err < 0) {
+ 		bt_dev_err(hdev, "QCA Failed to download NVM (%d)", err);
++		if (err == -ENOENT && boardid != 0 &&
++		    soc_type == QCA_WCN6855) {
++			boardid = 0;
++			qca_get_hsp_nvm_name_generic(&config, ver,
++						     rom_ver, boardid);
++			bt_dev_warn(hdev, "QCA fallback to default NVM");
++			goto download_nvm;
++		}
+ 		return err;
+ 	}
+ 
 
-> +impl<'a, T> Led<T>
+---
+base-commit: e88b020190bf5bc3e7ce5bd8003fc39b23cc95fe
+change-id: 20241113-x13s_wcn6855_fix-53c573ff7878
 
-offtopic, what is 'a ? What does the ' mean? Is impl<> something like
-template in c++?
+Best regards,
+-- 
+Zijun Hu <quic_zijuhu@quicinc.com>
 
-> +where
-> +    T: Operations + 'a,
-
-What does + mean here?
-
-> +/// LED brightness.
-> +#[derive(Debug, Copy, Clone)]
-> +pub enum Brightness {
-> +    /// LED off.
-> +    Off,
-> +    /// Led set to the given value.
-> +    On(NonZeroU8),
-> +}
-> +
-> +impl Brightness {
-> +    /// Half LED brightness
-> +    // SAFETY: constant value non zero
-> +    pub const HALF: Self = Self::On(unsafe { NonZeroU8::new_unchecked(127) });
-> +    /// Full LED brightness.
-> +    pub const FULL: Self = Self::On(NonZeroU8::MAX);
-
-These LED_OFF, LED_ON, LED_HALF and LED_FULL are deprecated constants
-that should not be used anymore. enum led_brightness will be either
-uint8_t or usigned int in the future.
-
-Is it possible to not infect Rust with these deprecated constants?
-
-Marek
 
