@@ -1,79 +1,88 @@
-Return-Path: <linux-kernel+bounces-411823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 323AA9D0003
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 18:19:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFFC19D0005
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 18:20:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7F891F22058
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:19:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 763FE28273E
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED0718D64B;
-	Sat, 16 Nov 2024 17:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEAEF18D64B;
+	Sat, 16 Nov 2024 17:20:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="j5iEbpl8"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C58927715;
-	Sat, 16 Nov 2024 17:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yEHLCnJ+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C2180B;
+	Sat, 16 Nov 2024 17:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731777534; cv=none; b=ZuE1+D0w99CBg48erml62o4rgUQNLGUqsGCofT/b8gQi2Kn3YiOvX5n4GrDdr/6nQK3CpkhDBlyI4bQwOvvoIbb4G+W3VsV5ziCfsUMi6ulcCsm1WMhqlRwHo+fInbQbE0FfWuc0Ao8pDQCoiyhp4ZZILBiM8oPpgShcbf1kbdE=
+	t=1731777601; cv=none; b=Jua/cbhbn00qkwR2jzpM9XoDpR7rtfx5upDuWBoi2ZOJEQQvzLDMwpR/Sfe6e8COcjSYWeM/Fhql89vsLi3EzyPhzb4TFhbhWD4VJBCXeXrRBP+ZjrbT88bvgFtfLIax2K8MALZsb7wazgCxEA68cLzbTsc4vTqrOnDIw+zvlAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731777534; c=relaxed/simple;
-	bh=H5yKHa85K/kN38MCbIEu0HaXLqb/id9+omWJt6O4sx0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=ohKnHSIfQc7sSDro7oo2WkPi+kzswXmp1Or6G0lqQRIY4+S2CSBXk2CIFCfPa09G9dlI/hKqG/gQnj1Ba38Ks9fLGMmMYtrBmuXmLi7gAQAYRJhu9fatglTV+UXaThBaM43ehcAsE6pv+CS08U1/b+6WlNmKOT8f3nxr8VFrsS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=j5iEbpl8; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1158)
-	id E0E9D2064B05; Sat, 16 Nov 2024 09:18:52 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E0E9D2064B05
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1731777532;
-	bh=H5yKHa85K/kN38MCbIEu0HaXLqb/id9+omWJt6O4sx0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=j5iEbpl8bZBqd+21NcXPx0+Y/jC5+03q7xdrsrM+qfRREeKY7/fPd+nNTVjK9psQw
-	 J9AiM0/2MaKgXdE246IPLtPArEUYZ3U6MIo54B4MpHO3Qf+AhL36GbMztBZyVIyD4y
-	 ihdeBstSY5lRb8SzxTwGOIxS+QE2s1/RmVv7zNMo=
-From: Hardik Garg <hargar@linux.microsoft.com>
-To: gregkh@linuxfoundation.org
-Cc: akpm@linux-foundation.org,
-	broonie@kernel.org,
-	conor@kernel.org,
-	f.fainelli@gmail.com,
-	hargar@microsoft.com,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	lkft-triage@lists.linaro.org,
-	patches@kernelci.org,
-	patches@lists.linux.dev,
-	pavel@denx.de,
-	rwarsow@gmx.de,
-	shuah@kernel.org,
-	srw@sladewatkins.net,
-	stable@vger.kernel.org,
-	sudipm.mukherjee@gmail.com,
-	torvalds@linux-foundation.org
-Subject: Re: [PATCH 5.15] 5.15.173-rc1 review
-Date: Sat, 16 Nov 2024 09:18:52 -0800
-Message-Id: <1731777532-4159-1-git-send-email-hargar@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <20241115063721.172791419@linuxfoundation.org>
-References: <20241115063721.172791419@linuxfoundation.org>
+	s=arc-20240116; t=1731777601; c=relaxed/simple;
+	bh=yqI+iGQw0KKBlMGT5ZrpKAwYDUZLMe1fnYU3dBtqako=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TBpFepFkZLPrDiiAazWC50tuxaMQiUihJ9kncrqoxV2GHBEnLSBuool6QnT75kWvsc/Rs9i+7/X7SSZZR6d+ciBBU4fU9r5y2YqMVmPA5ewWqYncdwsE819qTpf8ib2L+Vgae2NW5iwNkrCGcz4x3ah3yzS4uikRH9lMwLAbk04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yEHLCnJ+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26596C4CEC3;
+	Sat, 16 Nov 2024 17:19:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1731777600;
+	bh=yqI+iGQw0KKBlMGT5ZrpKAwYDUZLMe1fnYU3dBtqako=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=yEHLCnJ+MZrzDtRrxiqoa/P/Wcs51HrOV9Ko+MbzQxXO+iL9dQE13amIPhm/mlKw8
+	 7GxKp+5fYrJlhA7USCJ73Nti6ZPHbvaIm3nrZSAk/PCwKmpyUxMhV4cYPcKEd6oZgA
+	 6NE/zDaNySVUpw94EiPGTkX6uDZZbYYY9tmSbRgk=
+Date: Sat, 16 Nov 2024 18:19:36 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-serial@vger.kernel.org, Jiri Slaby <jirislaby@kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: Re: serial 00:06: Runtime PM usage count underflow!
+Message-ID: <2024111656-try-flatten-b215@gregkh>
+References: <20241116170727.GCZzjRT5WGcOMKFDYq@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241116170727.GCZzjRT5WGcOMKFDYq@fat_crate.local>
 
-Tested-by: Hardik Garg <hargar@linux.microsoft.com>
+On Sat, Nov 16, 2024 at 06:07:27PM +0100, Borislav Petkov wrote:
+> Hi folks,
+> 
+> got a box here which says:
+> 
+> [    4.654361] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
+> [    4.660820] 00:06: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+> [    4.668313] printk: legacy console [ttyS0] disabled
+> [    4.676903] serial 00:06: Runtime PM usage count underflow!
+> [    4.677175] serial 00:06: disabled
+> [    4.677264] serial 00:06: unable to assign resources
+> [    4.677356] serial 00:06: probe with driver serial failed with error -16
+> [    4.677923] printk: legacy console [ttyS0] disabled
+> 
+> Any suggestions?
 
+Look in the bios, that seems to be the "old" pnp serial device?  Does it
+really have a serial port on the board?  Is it enabled properly?
 
+That is odd, what's the chance that someone didn't enable it in acpi
+somehow?
 
+> I'd like to use the serial cable to catch dmesg but somehow the driver doesn't
+> like the chip...
 
-Thanks,
-Hardik
+It should be the bog-standard 16550 PNP device, check the resource
+settings somewhere?  Sorry I can't think of anything else at the
+moment...
+
+greg k-h
 
