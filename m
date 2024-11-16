@@ -1,202 +1,134 @@
-Return-Path: <linux-kernel+bounces-411850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E97AC9D0062
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:06:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 952A39D004A
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:03:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 706401F22F41
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 18:06:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 273792875FF
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 18:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621B8191F9B;
-	Sat, 16 Nov 2024 18:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D1818E75A;
+	Sat, 16 Nov 2024 18:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HwUjZ4ED"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="oC/LTyTj"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE98318E050;
-	Sat, 16 Nov 2024 18:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B509418B492
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 18:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731780292; cv=none; b=L+6NVxsUBLhU8cV4frhja2ca2sPh6SXQmEv8B9K/Gr2NR4usIbGZC1GcqS6izyz26bGAMn3+r4/WNL5DWxPqrOOoF6XvMafmyBcdipWxh41SYOI0Q72oOPLz8NvuVR/bVpEG8sXPce4HEBd/7tOxSSs3He/ztUt0owXH1x73n0o=
+	t=1731780191; cv=none; b=dVurxtqEHep3PeBT/o9cmfPvBfuH884SsZlZ1CB9wGKPz3Y4rQJVG5SAz7rXdvXJXS3IK+rGITj89HcmO4RBDWQA7JzWEQmKjZdEswW2OBep/H8orR29q+PlH0LltBK/MA7E2+ZcQZLWWslokdca9V/XGMZduCdGqQpQ8lvXAO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731780292; c=relaxed/simple;
-	bh=2UW1oyhj/5fXyt7dy8CizliT7tVNM9uz1CiHknlAg60=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hqhoqSUuZlRTBQekcPcXjqjq2bUJ/HK3SjMwQCwNr9dIWuVYhGDOhkfpJ2tSzegEWIoOXOS86g9387hJ4BnNY45jGh/n9qj1OrMhZ5I1DNQiqfn4WfKZYvZqapMfzQxerOHOfRpE1TLBXJMd/aY9axeyrPQCbwk4qzKLCcvMj/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HwUjZ4ED; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AG9FFSM010223;
-	Sat, 16 Nov 2024 17:59:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=Z0QfZ8696wqjKtXYeQtjOtRDnHmp6C
-	x9y9ByhIPMbg0=; b=HwUjZ4EDhW08tkQSXoKjF+dgpcTJadPGb0nQNkxLGVmmpE
-	EAdJ1B6Vetav4GsLuYb2ThtE92FyqMk5wHxmvpL/hXjSAw0CJuZFy2R7zelslbuI
-	ErfVdwa9pMhlDl8SCx03xirtVLgEr2pVMS2oAfeiYhlS/tkJU+9NnlJ8Xtlcz7cu
-	0QkpQ8JoqtwLiPET8TsWUcs7i+lBDv9/SH8Cobo/C/E2pEM6rZhTDZGzS8LWRrmp
-	EY0uuubmPZ2hOA9mUTZT+7kBueVXbJVebAstXMGl8XxSeKGYM7f3ubJJAVuylfvt
-	SvwoKUFKOAwm8x/UvbreNFitt9WWy4pdXGYj7oGw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xk20j86j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 16 Nov 2024 17:59:39 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AGHxcP0021318;
-	Sat, 16 Nov 2024 17:59:38 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xk20j86h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 16 Nov 2024 17:59:38 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AGHjc98008243;
-	Sat, 16 Nov 2024 17:59:38 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42tjf0xgp1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 16 Nov 2024 17:59:38 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AGHxaO316646434
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 16 Nov 2024 17:59:36 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1241620043;
-	Sat, 16 Nov 2024 17:59:36 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B4A8820040;
-	Sat, 16 Nov 2024 17:59:34 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.39.27.238])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Sat, 16 Nov 2024 17:59:34 +0000 (GMT)
-Date: Sat, 16 Nov 2024 23:29:30 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Ritesh Harjani <ritesh.list@gmail.com>
-Cc: linux-ext4@vger.kernel.org, Jan Kara <jack@suse.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Disha Goel <disgoel@linux.ibm.com>, Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH 1/1] quota: flush quota_release_work upon quota writeback
-Message-ID: <ZzjdggicyuGqaVs8@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <20241115183449.2058590-1-ojaswin@linux.ibm.com>
- <20241115183449.2058590-2-ojaswin@linux.ibm.com>
- <87plmwcjcd.fsf@gmail.com>
+	s=arc-20240116; t=1731780191; c=relaxed/simple;
+	bh=3fmsZVtcET08j6sLy4Df00S5MnbnA34nvqPE7UPj5hw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sZdTFC6eDQpiTW53/0akzHtNBMqZoDiqH3ghh08z6Q6I7iMh4aUIQpertQZvqFJWW97zJTk8lPJsZ5cXqPUKu2GyEl0gzZMyk0fEcwcN6D5Fe3Zc8V2V6+GnafkA8HF6Rtrnrhrh47WBnLBwBSG76c2gIcRoOyIV+kUrPULfaX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=oC/LTyTj; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa1e51ce601so137224466b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 10:03:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1731780188; x=1732384988; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aGohF+muowKkt4fdau+AubKELBZgZqyCJ8OaVgT7H9o=;
+        b=oC/LTyTj/72ySlTJfLnuFL5lK1WaRqdZ9aYrdNW1KNbYDIm/KPdg6SwzY3yQ7Yh3zs
+         7oetmFgbetS04KmrljW3+mmv3jrEfbrcrfpuZi2wz5/NcZs2FfaFaWv9/pqoO2lLDC64
+         NsNWBnylr+tyrZwGZreC8THfj+Rj+X4NW4Zow=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731780188; x=1732384988;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aGohF+muowKkt4fdau+AubKELBZgZqyCJ8OaVgT7H9o=;
+        b=JeOMOM0vkboAyw6nvcTIwqdTPS77XM2AJNVaEtvEg+l05QwKXtH5x//GdggTFD3Xam
+         7V507Qz7m35dq8/k44aTns/bDkxRibsqNdMni1oQhrgGB80vq5uxAFWQZB9Jpd0I3qFY
+         IZzFoMuB2AzFA1k2hxYGWS+7qnwGdZ5b88EDewIC7WLKn1aG+cBNDp5+wSrx3W//oorU
+         1vYxHorIp+qHOuVfcLhn8UwGukjEOx3qnRoiwoG4I4Iw6uBblfQoczy4n6na0UgwKEQ1
+         NRCrGKAIKn89Cf+NGkoBUMz9ikBmaM3GwdBPk5BZx43GqNBnMiPiBHKJlj7vrmWu2NqP
+         Hd3w==
+X-Gm-Message-State: AOJu0Yyr+1nQIWFGBgXXwGSEQRKyIbyimr8jWx1FfTRFOhjF48vxN+4D
+	5lFSfHtbvj6YaIPYSE+if+sEpq1ysWRot3A8QfGYDtFjRo1A1827DbR4Qt60m7PV78tZE5Tm3DT
+	3
+X-Google-Smtp-Source: AGHT+IG2ObGwiCvfIl++zWd9qF2zaGLlhIycmyruL6/OHxRiEVmPAs5MlD90c/NhVLeiofEJ0atIOw==
+X-Received: by 2002:a17:907:9413:b0:aa3:722c:cc8a with SMTP id a640c23a62f3a-aa483525d25mr654985366b.40.1731780186523;
+        Sat, 16 Nov 2024 10:03:06 -0800 (PST)
+Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-82-54-94-193.retail.telecomitalia.it. [82.54.94.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20dc6d364sm329549066b.0.2024.11.16.10.03.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Nov 2024 10:03:06 -0800 (PST)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-amarula@amarulasolutions.com,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Akshay Bhat <akshay.bhat@timesys.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Dong Aisheng <b29396@freescale.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Fengguang Wu <fengguang.wu@intel.com>,
+	Gerhard Bertelsmann <info@gerhard-bertelsmann.de>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	"Ji-Ze Hong (Peter Hong)" <peter_hong@fintek.com.tw>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Marek Vasut <marex@denx.de>,
+	Maxime Ripard <mripard@kernel.org>,
+	Oliver Hartkopp <oliver.hartkopp@volkswagen.de>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Sebastian Haas <haas@ems-wuensche.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Varka Bhadram <varkabhadram@gmail.com>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Wolfgang Grandegger <wg@grandegger.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-can@vger.kernel.org,
+	linux-sunxi@lists.linux.dev,
+	netdev@vger.kernel.org
+Subject: [PATCH 0/7] Fix {rx,tx}_errors CAN statistics
+Date: Sat, 16 Nov 2024 19:02:29 +0100
+Message-ID: <20241116180301.3935879-1-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87plmwcjcd.fsf@gmail.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: MN_jCb_wmg8aw1tZ8P52oUg1Hijx2hyM
-X-Proofpoint-GUID: JYv-_k6ck9lkUefTOi1SpU9UtLlPw0rn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
- mlxlogscore=999 lowpriorityscore=0 priorityscore=1501 suspectscore=0
- malwarescore=0 clxscore=1011 mlxscore=0 spamscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411160156
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 16, 2024 at 02:20:26AM +0530, Ritesh Harjani wrote:
-> Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
-> 
-> > One of the paths quota writeback is called from is:
-> >
-> > freeze_super()
-> >   sync_filesystem()
-> >     ext4_sync_fs()
-> >       dquot_writeback_dquots()
-> >
-> > Since we currently don't always flush the quota_release_work queue in
-> > this path, we can end up with the following race:
-> >
-> >  1. dquot are added to releasing_dquots list during regular operations.
-> >  2. FS freeze starts, however, this does not flush the quota_release_work queue.
-> >  3. Freeze completes.
-> >  4. Kernel eventually tries to flush the workqueue while FS is frozen which
-> >     hits a WARN_ON since transaction gets started during frozen state:
-> >
-> >   ext4_journal_check_start+0x28/0x110 [ext4] (unreliable)
-> >   __ext4_journal_start_sb+0x64/0x1c0 [ext4]
-> >   ext4_release_dquot+0x90/0x1d0 [ext4]
-> >   quota_release_workfn+0x43c/0x4d0
-> >
-> > Which is the following line:
-> >
-> >   WARN_ON(sb->s_writers.frozen == SB_FREEZE_COMPLETE);
-> >
-> > Which ultimately results in generic/390 failing due to dmesg
-> > noise. This was detected on powerpc machine 15 cores.
-> >
-> > To avoid this, make sure to flush the workqueue during
-> > dquot_writeback_dquots() so we dont have any pending workitems after
-> > freeze.
-> 
-> Not just that, sync_filesystem can also be called from other places and
-> quota_release_workfn() could write out and and release the dquot
-> structures if such are found during processing of releasing_dquots list. 
-> IIUC, this was earlier done in the same dqput() context but had races
-> with dquot_mark_dquot_dirty(). Hence the final dqput() will now add the
-> dquot structures to releasing_dquots list and will schedule a delayed
-> workfn which will process the releasing_dquots list. 
-Hi Ritesh,
+This series extends the patch 4d6d26537940 ("can: c_can: fix {rx,tx}_errors statistics"),
+already merged into the mainline, to other CAN devices that similarly do
+not correctly increment the error counters for reception/transmission.
 
-Ohh right, thanks for the context. I see this was done here:
 
-  dabc8b207566 quota: fix dqput() to follow the guarantees dquot_srcu
-  should provide
+Dario Binacchi (7):
+  can: m_can: fix {rx,tx}_errors statistics
+  can: ifi_canfd: fix {rx,tx}_errors statistics
+  can: hi311x: fix {rx,tx}_errors statistics
+  can: sja1000: fix {rx,tx}_errors statistics
+  can: sun4i_can: fix {rx,tx}_errors statistics
+  can: ems_usb: fix {rx,tx}_errors statistics
+  can: f81604: fix {rx,tx}_errors statistics
 
-Which went in v6.5. Let me cc Baokun as well.
-> 
-> And so after the final dqput and before the release_workfn gets
-> scheduled, if dquot gets marked as dirty or dquot_transfer gets called -
-> then I am suspecting that it could lead to a dirty or an active dquot.
-> 
-> Hence, flushing the delayed quota_release_work at the end of
-> dquot_writeback_dquots() looks like the right thing to do IMO.
-> 
-> But I can give another look as this part of the code is not that well
-> known to me. 
-> 
-> >
-> > Reported-by: Disha Goel <disgoel@linux.ibm.com>
-> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> > ---
-> 
-> Maybe a fixes tag as well?
+ drivers/net/can/ifi_canfd/ifi_canfd.c | 29 +++++++++++++++++++--------
+ drivers/net/can/m_can/m_can.c         |  7 ++++++-
+ drivers/net/can/sja1000/sja1000.c     |  7 +++++--
+ drivers/net/can/spi/hi311x.c          | 17 ++++++++++------
+ drivers/net/can/sun4i_can.c           |  7 +++++--
+ drivers/net/can/usb/ems_usb.c         |  7 +++++--
+ drivers/net/can/usb/f81604.c          |  7 +++++--
+ 7 files changed, 58 insertions(+), 23 deletions(-)
 
-Right, I'll add that in the next revision. I believe it would be:
+-- 
+2.43.0
 
-Fixes: dabc8b207566 ("quota: fix dqput() to follow the guarantees dquot_srcu should provide")
-
-Regards,
-ojaswin
-
-> 
-> >  fs/quota/dquot.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-> > index 3dd8d6f27725..2782cfc8c302 100644
-> > --- a/fs/quota/dquot.c
-> > +++ b/fs/quota/dquot.c
-> > @@ -729,6 +729,8 @@ int dquot_writeback_dquots(struct super_block *sb, int type)
-> >  			sb->dq_op->write_info(sb, cnt);
-> >  	dqstats_inc(DQST_SYNCS);
-> >  
-> > +	flush_delayed_work(&quota_release_work);
-> > +
-> >  	return ret;
-> >  }
-> >  EXPORT_SYMBOL(dquot_writeback_dquots);
-> > -- 
-> > 2.43.5
 
