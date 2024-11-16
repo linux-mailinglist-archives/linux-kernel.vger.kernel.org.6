@@ -1,75 +1,93 @@
-Return-Path: <linux-kernel+bounces-411868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B5179D0096
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 20:07:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B8469D009B
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 20:10:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EACD71F236A5
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:07:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFEC6286EDF
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC77194C77;
-	Sat, 16 Nov 2024 19:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF62195B1A;
+	Sat, 16 Nov 2024 19:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xIQWahUA"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="izhK2+jp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601CF79F6;
-	Sat, 16 Nov 2024 19:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03AF818E361;
+	Sat, 16 Nov 2024 19:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731784050; cv=none; b=EvT5dlmBTqKYS/XBv4zJnDEZedAh+meDlERICkBq4SYywn+mD5ZfpFVBMYsHwSnRm+8HHiQmoSSI73yOGuJ+53QOGLBPN255JtEPBqCJvPgywnoEAJIIiOtbwR3dOleU0nGvou3TX+nMJv4SSpKOgM1BYhyLN7ALP7uGwj2dBDw=
+	t=1731784219; cv=none; b=cauXiqu33WMGEmJ7+D4ZG/Z8QoGtSgijOUYIRS36bNCBzjPis7lC98672B+PsxeNCDpPNnEMYSJaBA1xXjnEr9v67Pdnn645uc1bpxYh/vukIY8EEGMiv1+P2PZNSTD6fb9VS3XABvO+6hjPPxNJC/oJEnw8MapBx43MTBxCBLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731784050; c=relaxed/simple;
-	bh=QGG0kSisYfxhMiSKSBjW6Mg6IYCqM6RD6litW91JUyE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nEDrSnVvIOLBzP0lBDxtG7ymWv01neJUXrInpZYflZ0BScW4wfu3WeYx7ufV3aHl+EajFjumsUGqRYBnV6F2RGzkhy1LK201Unu3/NjHCsEwUqGDWZp/vdULz+ds0XRqnFZQVvB19CITIOfV+lmLpXb2ocjrf6qN1T307wMPg+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xIQWahUA; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=7lqTnwwBmKNlBnmwiFv7Fs4kjvB3qTXjJ5WtSHx0T44=; b=xIQWahUAV+c0SClpQpa0inp7kK
-	OsbMpZ/GVu76cubAISu91at5V6tW3iiZLfq7AStOm7LuAuNTjJP/jxIq2QCK03cXuNFrle6sM/hxk
-	8K3Uy8Sa1wTzM8FfpGPClb6TyNoUyr4DehGYXz4wXasKQ/hH1WvY0tsdiHvHsfh77wnI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tCO8h-00DXVh-Mk; Sat, 16 Nov 2024 20:07:23 +0100
-Date: Sat, 16 Nov 2024 20:07:23 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Justin Lai <justinlai0215@realtek.com>
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, andrew+netdev@lunn.ch,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	horms@kernel.org, pkshih@realtek.com, larry.chiu@realtek.com
-Subject: Re: [PATCH net v2 3/5] rtase: Add support for RTL907XD-VA PCIe port
-Message-ID: <939ab163-a537-417f-9edc-0823644a2a1d@lunn.ch>
-References: <20241115095429.399029-1-justinlai0215@realtek.com>
- <20241115095429.399029-4-justinlai0215@realtek.com>
+	s=arc-20240116; t=1731784219; c=relaxed/simple;
+	bh=hb0BtxQfSKLwtGoEe9IqH1yWl6HwZtBzF6p7BZGZ9LQ=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=cgY216eYhfAMLhwQyaSldjbcYSejsJK0XrEfCzZR0UsuXfE8yT1ARW/QPCA5VWsR5CRvrI421TYjO85nBDe2FldwFe/OWKSKfP13GDcpJA5SurDhrTaIeWuq0rtJiupBd8V8W/MdV/oz3AEZnNwFXA6nau6IAR76ostCzi7c4xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=izhK2+jp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BB51C4CEC3;
+	Sat, 16 Nov 2024 19:10:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731784217;
+	bh=hb0BtxQfSKLwtGoEe9IqH1yWl6HwZtBzF6p7BZGZ9LQ=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=izhK2+jpyDwZ6YBfbYb40Ke3tk0KyZceCMu/MmT/BXcman1ZyLK+P6khMgdhtAF+R
+	 ro2c1kwIO+4Ik/DvFv3CArJ1ZN+sDFCz7RZukqNxtPgwbBWhFulxNsmx9FziR6LNr6
+	 tZwrK8KrO7StRSQI1HE7DrTHP7tNAPQ9AW4h2SM617ixSFxQNmmRm1m0tkAI8cb9wl
+	 0C0i5RriNiGG20g/oD2I6uyb20FEJ/ER2AmwNU8en6idFP/wK5cbfFvRG6nuudoEC0
+	 PiFU2aCJ0XDeVi1YEzMpoU8R89Ihd6jMSbDb+HnUReXbBjUARjRGfj+LTxT3APPShc
+	 a6D2aE6R9yYOg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD1E3809A80;
+	Sat, 16 Nov 2024 19:10:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241115095429.399029-4-justinlai0215@realtek.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] libbpf: Change hash_combine parameters from long to unsigned
+ long
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173178422850.2975805.12239084632087642111.git-patchwork-notify@kernel.org>
+Date: Sat, 16 Nov 2024 19:10:28 +0000
+References: <20241116081054.65195-1-sidong.yang@furiosa.ai>
+In-Reply-To: <20241116081054.65195-1-sidong.yang@furiosa.ai>
+To: Sidong Yang <sidong.yang@furiosa.ai>
+Cc: martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+ andrii.nakryiko@gmail.com, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2024 at 05:54:27PM +0800, Justin Lai wrote:
-> 1. Add RTL907XD-VA hardware version id.
-> 2. Add the reported speed for RTL907XD-VA.
+Hello:
 
-This is not a fix, it never worked on this device as far as i see. So
-this should be for net-next.
+This patch was applied to bpf/bpf-next.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
 
-Please separate these patches out into real fixes, and new features.
+On Sat, 16 Nov 2024 17:10:52 +0900 you wrote:
+> The hash_combine() could be trapped when compiled with sanitizer like "zig cc"
+> or clang with signed-integer-overflow option. This patch parameters and return
+> type to unsigned long to remove the potential overflow.
+> 
+> Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+> ---
+>  tools/lib/bpf/btf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-	Andrew
+Here is the summary with links:
+  - libbpf: Change hash_combine parameters from long to unsigned long
+    https://git.kernel.org/bpf/bpf-next/c/2c8b09ac2537
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
