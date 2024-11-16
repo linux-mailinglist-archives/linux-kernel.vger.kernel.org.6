@@ -1,168 +1,116 @@
-Return-Path: <linux-kernel+bounces-411928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E749D016E
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 00:22:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A83919D0170
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 00:26:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26AA51F2351C
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 23:22:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5346128172E
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 23:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FD21AAE23;
-	Sat, 16 Nov 2024 23:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="p36JVddU"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04C91993B4;
+	Sat, 16 Nov 2024 23:26:05 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF0818C008;
-	Sat, 16 Nov 2024 23:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A6818C008
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 23:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731799340; cv=none; b=aPCHRnESZ+LksDe2iW/hZlCwtx01E56FFVP2ZrfOvwYNWUX06nYVsyofCv//vKh/WjDezx+dBDYsD2QFBt1Ag+UB1WsZG2Y91ufMyHBZqrDOJRnqgO1qvFHqXv5DQfMCjkLQRL4+57Cu/nb4KsRbr9l1ajw/ixRLoh6zkSfSRTM=
+	t=1731799565; cv=none; b=R8B5hRxSNODS9BAbS8o+EG5YA33gd4QJQopKWxrC48eTPm42I8H63wewqTUKyb653/UKKQjrKSgrShUxvRMWO3HFhZA0Qi+hYUNtlDuEtvMY2s7YkCxl5CD7NwLP2qIsS8W6ewmL4oZdDlomujvjZq/rc4eQtivnWa9kVsdtTHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731799340; c=relaxed/simple;
-	bh=hlDAqD7B9xoSkBa/4eiClvoljR+dK557brn+9rmbF+s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rR3pzB4p7lpbRUm28FGVRJ2qefsELiJ+WG4z6Y7ANkrJQ3nE4DprWjv6Vp3dyiwiVHcgKsgixduR16EqSaZt22yik8UiaA0iwxPxFDoOToBrvz0XCXn/H7MikEM2EmOWV5Ayfh/3stildTFYfjXWT9p3IpDxNAFjHD2F8RnkBWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=p36JVddU; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1731799334;
-	bh=hlDAqD7B9xoSkBa/4eiClvoljR+dK557brn+9rmbF+s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=p36JVddUrAA0pa+xJHFYYjoedQ+zcIHWixrC64AqnF/KpKTnJmUOBKZc7rohrvGe5
-	 HxXbbcfvTVeskRu7F9pDywq+bO1hW6F34lDDlahH/ptXmrbE0+PMXQd7+tGZnJUvOT
-	 DXiqwODd90KComjPo+Ah6bahP1WJYHhh89TaEGP8O1ZIuhXhJ3iQqhkez3HjcZ0Fgy
-	 ahPGszMl9tEI0d9x5HesZd8rmMc4/QgmY/CfFdFPZmPK+cXtNJKOH2z6UXirCxTxKl
-	 Ktx/M42KINi3bsXuqYafQXtRQCbxXsAZY9x8llkjtduURwfTgsiIOpzPpPHVBcL//d
-	 KskbCQkGKa5jg==
-Received: from [192.168.1.90] (unknown [86.120.21.57])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1B2A017E0CD2;
-	Sun, 17 Nov 2024 00:22:14 +0100 (CET)
-Message-ID: <3d330c00-cdf0-4103-ac4b-b3d4e5c81335@collabora.com>
-Date: Sun, 17 Nov 2024 01:22:13 +0200
+	s=arc-20240116; t=1731799565; c=relaxed/simple;
+	bh=vuWs0S3EeniurAZhOiHHv6a0bd9kr4WIi/phRwjnM70=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=f1PueBwxv76D4aolebSI4kwurMXUWg/k2rYUPGkSBHdjMbcEjzm/C0SmMaYRnnYeeW83dOlGU07Iiu4TzZnwr82LqQk9EJY10mnSusLk+b4kKcLdBnhSUF1J+wnp8dAUkTOyPTata0aHOKk7EuaB6GBaRL37z9pPDhJR6thD0DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83abf723da3so69308939f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 15:26:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731799563; x=1732404363;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KS/3T9912Ge5sdPaeEv3HURQfOnZbK0lLGF2BFMXebQ=;
+        b=NdFED9luykiS8uNTnegcbGexVg86lwLNKXqnWPFLyulm5JpUSiZhd9pfvnBKOS3iev
+         RhDiikywAyu2GFWjooWCTqVeVIF/nihtcYW8aCUQA3V2kFa/sCfn61K0amqo8YbvdcTe
+         xcdU7xYI1fOygwqo7ehQwphIW/GyH3pfe10PRx0QpQ9yWCgUrkNMlQFjlxdYPl7YjQzh
+         wk61uYg1RM6DLqn4MIrHB7hNTF3a9EObdFw0v5gh5VKXOvK11L2EKOBgC7f7IGdhT1Td
+         Kyk6YmueR3A5a2gpRttDOOs44hB/02TFnFjHROQbjJws9SifhW46eofjBYI7165nYYc/
+         0/yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWwHkzgdw1G8Th8txd2IyPQHNpTmD8aUMg5Amx/uQuvZzV0XXiPL0s3ceSKxCdHf3YqriqXtgIo7GmBz6w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfC+Ks55kNgfqcx2DaF9pTw9eqgB4EcqkJRbCSouUYU4QQetbb
+	x+yWqzqvivXWu8/wmPLGHrmHL925JUlLpvpCA6c25rHxa76vrplrFFP1v455mXHhLkOkA4yv5Bv
+	T84oEV8B+Oyc7EWiWtfhtHD93r9u8k14TIdAMOge0jxFcNpv9ArTxhP4=
+X-Google-Smtp-Source: AGHT+IGprvu6a8h0hNiDccxdISSaTeNbmVI4V5PIwX9b7n9MJ/OWR4hJAF8hK7igkuNsF+C//MGCs2plOW7WoB5XWiwEjlsnJ/HT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] drm/rockchip: vop2: Improve display modes handling on
- RK3588 HDMI0
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241116-vop2-hdmi0-disp-modes-v1-0-2bca51db4898@collabora.com>
- <20241116-vop2-hdmi0-disp-modes-v1-3-2bca51db4898@collabora.com>
- <c79c1878-370d-45fa-a802-1d175498bb1c@kwiboo.se>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <c79c1878-370d-45fa-a802-1d175498bb1c@kwiboo.se>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:3d04:b0:3a5:e7a5:afc with SMTP id
+ e9e14a558f8ab-3a74800ee54mr66240775ab.2.1731799562924; Sat, 16 Nov 2024
+ 15:26:02 -0800 (PST)
+Date: Sat, 16 Nov 2024 15:26:02 -0800
+In-Reply-To: <20241116230913.1124-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67392a0a.050a0220.e1c64.0008.GAE@google.com>
+Subject: Re: [syzbot] [fs?] WARNING in rcu_sync_dtor (2)
+From: syzbot <syzbot+823cd0d24881f21ab9f1@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Jonas,
+Hello,
 
-On 11/16/24 9:12 PM, Jonas Karlman wrote:
-> Hi Cristian,
-> 
-> On 2024-11-16 19:22, Cristian Ciocaltea wrote:
->> The RK3588 specific implementation is currently quite limited in terms
->> of handling the full range of display modes supported by the connected
->> screens, e.g. 2560x1440@75Hz, 2048x1152@60Hz, 1024x768@60Hz are just a
->> few of them.
->>
->> Additionally, it doesn't cope well with non-integer refresh rates like
->> 59.94, 29.97, 23.98, etc.
->>
->> Make use of HDMI0 PHY PLL as a more accurate DCLK source to handle
->> all display modes up to 4K@60Hz.
->>
->> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
->> ---
->>  drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 34 ++++++++++++++++++++++++++++
->>  1 file changed, 34 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
->> index 3e4c1cfd0bac6fa90f4cab85e27c2a69b86fc9aa..dfe1a50132d596f036430d7db3631398d0802972 100644
->> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
->> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in rcu_sync_dtor
 
-[...]
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 47 at kernel/rcu/sync.c:177 rcu_sync_dtor+0xcd/0x180 kernel/rcu/sync.c:177
+Modules linked in:
+CPU: 1 UID: 0 PID: 47 Comm: kworker/1:1 Not tainted 6.12.0-rc7-syzkaller-00192-gb5a24181e461-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: events destroy_super_work
+RIP: 0010:rcu_sync_dtor+0xcd/0x180 kernel/rcu/sync.c:177
+Code: 74 19 e8 96 dd 00 00 43 0f b6 44 25 00 84 c0 0f 85 82 00 00 00 41 83 3f 00 75 1d 5b 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc 90 <0f> 0b 90 e9 66 ff ff ff 90 0f 0b 90 eb 89 90 0f 0b 90 eb dd 44 89
+RSP: 0018:ffffc90000b77b30 EFLAGS: 00010246
+RAX: 0000000000000002 RBX: 1ffff1100acad877 RCX: ffff8880206cbc00
+RDX: 0000000000000000 RSI: ffffffff8c6038c0 RDI: ffff88805656c350
+RBP: 0000000000000236 R08: ffffffff820f0554 R09: 1ffffffff1cfbc21
+R10: dffffc0000000000 R11: fffffbfff1cfbc22 R12: dffffc0000000000
+R13: 1ffff1100acad86a R14: ffff88805656c350 R15: ffff88805656c350
+FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555583944808 CR3: 0000000012ac6000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ percpu_free_rwsem+0x41/0x80 kernel/locking/percpu-rwsem.c:42
+ destroy_super_work+0xef/0x130 fs/super.c:282
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
->> +	/*
->> +	 * Switch to HDMI PHY PLL as DCLK source for display modes up
->> +	 * to 4K@60Hz, if available, otherwise keep using the system CRU.
->> +	 */
->> +	if (vop2->pll_hdmiphy0 && mode->crtc_clock <= VOP2_MAX_DCLK_RATE) {
->> +		drm_for_each_encoder_mask(encoder, crtc->dev, crtc_state->encoder_mask) {
->> +			struct rockchip_encoder *rkencoder = to_rockchip_encoder(encoder);
->> +
->> +			if (rkencoder->crtc_endpoint_id == ROCKCHIP_VOP2_EP_HDMI0) {
->> +				if (!vp->dclk_src)
->> +					vp->dclk_src = clk_get_parent(vp->dclk);
->> +
->> +				ret = clk_set_parent(vp->dclk, vop2->pll_hdmiphy0);
->> +				if (ret < 0)
->> +					drm_warn(vop2->drm,
->> +						 "Could not switch to HDMI0 PHY PLL: %d\n", ret);
->> +				break;
->> +			}
->> +		}
->> +	}
-> 
-> Why do we need to do this dynamically here?
-> 
-> The device tree set PLL_HPLL as parent:
-> 
-> &vop {
-> 	assigned-clocks = <&cru DCLK_VOP0>, <&cru DCLK_VOP1>;
-> 	assigned-clock-parents = <&pmucru PLL_HPLL>, <&cru PLL_VPLL>;
-> 	status = "okay";
-> };
-> 
-> Could this not just be changed to assign hdptxphy_hdmi0 as parent?
-> 
-> &vop {
-> 	assigned-clocks = <&cru DCLK_VOP0>, <&cru DCLK_VOP1>;
-> 	assigned-clock-parents = <&hdptxphy_hdmi0>, <&cru PLL_VPLL>;
-> 	status = "okay";
-> };
-> 
-> or something similar?
-> 
-> For RK3328 the vop dclk parent is assigned to hdmiphy using DT.
 
-Yes, that would normally work.  The problem is that the PHY PLLs cannot
-provide pixel clocks for resolutions above 4K@60Hz (hence limited to
-HDMI 2.0), while VOP2 on RK3588 supports up to 8K@60Hz (making use of
-HDMI 2.1).
+Tested on:
 
-On top of that, the 2 PLLs are shared between 3 out of the 4 video ports
-of the display controller.  There is quite a bit of complexity in
-downstream driver to handle all possible usecases - see [1] for a brief
-description on how is that supposed to work.
-
-Regards,
-Cristian
-
-[1] https://github.com/radxa/kernel/blob/linux-6.1-stan-rkr4.1/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c#L4742
+commit:         b5a24181 Merge tag 'trace-ringbuffer-v6.12-rc7-2' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13cb52c0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1503500c6f615d24
+dashboard link: https://syzkaller.appspot.com/bug?extid=823cd0d24881f21ab9f1
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=117bb130580000
 
 
