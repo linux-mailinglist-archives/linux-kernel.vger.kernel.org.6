@@ -1,112 +1,130 @@
-Return-Path: <linux-kernel+bounces-411862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 372A99D0088
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:41:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF92D9D008A
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:41:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1640282761
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 18:41:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CE05B24BB6
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 18:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E4C193064;
-	Sat, 16 Nov 2024 18:41:08 +0000 (UTC)
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CBA1946A2;
+	Sat, 16 Nov 2024 18:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="uIiICG1h"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2E018E35D;
-	Sat, 16 Nov 2024 18:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF22519046E;
+	Sat, 16 Nov 2024 18:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731782468; cv=none; b=jgZgExylpuhnECw//x1NZmcdn8uJPLOi/tS9ajymwrmx+i/Krhl7ytxaj6R+HzMl9Veu+BKFOl1ZaRLMAkCVf0XZZzRrc+iLHI/17bN9yLnX/nW7Sp8Uy+odmWbCn8FendTCaLQ1zrG5pFaU4tp5xu+Wbymlcvb3LThl49G/OpM=
+	t=1731782495; cv=none; b=axogZAmDvbfmHk3qyTjZLNXyHyCLcVl1+tnrPJjBXb5okV+2BA+8x0wRrEAb2Wl6eLaidv6p9EKWbNncxVyeED0TIa3POLOudlXv2lhxBE9Lyy9am/rn3nILvR+uFBddMunmFUQUDsc+qDg+FUJWnPSHvWLGHsPamT/+Kfdk2Kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731782468; c=relaxed/simple;
-	bh=IRz7sUjYrGHPvsSE0pzBCsINEQiVvdX8CXirsCR5/M8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RWkdCsmfzae7yGrIhC7Vw/fshSKlOQjeudUWdok2XrKro1x7yIkSSdCPFvuHpYti5/wp3IIR7aTK4og0MsivjXUvCT744Cl0tW5bcqKwCkE+402qsWB/26cpeNmLoFWKH78vN1UwGildbuL/MvUN9KSR4cQFV9xk+NdUZxqOFHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20c7ee8fe6bso29601215ad.2;
-        Sat, 16 Nov 2024 10:41:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731782466; x=1732387266;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C6zrqPiWQC7rDWZoE/g4GnXAN9sjElaRR3twDuAtjOo=;
-        b=u5FZDY3vNKv9Vb2nxY9KTf2eYi0xTVCUpz2hdfjIv/93vJ0bEt115OOq7ECLAc7M/P
-         NLU9jhDSeVthdRwlAJDFDoXUAi3SH8z9XNUWfVA2KnL4Z1o5D2nq6hd8xsrGhkWh2CCT
-         lwCkzXwAgnpQE2yMFAa22kbwb39vzixMicxAsddw1Jro62tgqPXbHQW60pE2WXZZGCZd
-         GUyuRa7Tx2qZ31SXxgHN0/fauFPagsEh1DmlbxFB4ZESGkd1W/CgjfaWYfB0FJ11n3PE
-         6wEtu9aiFwkEiZsxHnye9jeQ6OYMx69MSH1Df61z625lNB+b/9MHEYDAlv5ZLolpNyPA
-         Crfw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2POhgZ58E/GWCHEslqOdgz8MGZFqDfmIbPp2Hj2TsXo9uGo/wVnv60ltMN4qX6J3uZpsenznWWhm+@vger.kernel.org, AJvYcCWIp5OugHzoh0N/73Lz/Fm5thEBTOtcPxU+8bQGk5osZxWop7fOc9fnMJ9ppVQj+RLUnU+EngUsOe7oY18=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTpZXYCMXzOJ474uEUJ+vn3dtXjRqsOpkWLsU1bu0oBXltcAfv
-	XV60yZ3sji7Mt15hiw7zJ1sbRC/ihKVj/2xy/YDk5l5FeARQKO0u
-X-Google-Smtp-Source: AGHT+IGklcX91lB3aw+DDj0CMsZ/9DbTURDoBMutuQQkQS6lg5ZoMyrEgDcYr82v0d6dAwEYAmdy0A==
-X-Received: by 2002:a17:902:ec92:b0:20e:57c8:6aae with SMTP id d9443c01a7336-211d0d62503mr101325775ad.3.1731782465801;
-        Sat, 16 Nov 2024 10:41:05 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f5555esm30390095ad.259.2024.11.16.10.41.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Nov 2024 10:41:05 -0800 (PST)
-Date: Sun, 17 Nov 2024 03:41:03 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Bjorn Helgaas <helgaas@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	stable+noautosel@kernel.org,
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Subject: Re: [PATCH v2 2/5] PCI/pwrctl: Create pwrctl devices only if at
- least one power supply is present
-Message-ID: <20241116184103.GD890334@rocinante>
-References: <20241025-pci-pwrctl-rework-v2-2-568756156cbe@linaro.org>
- <20241106212826.GA1540916@bhelgaas>
- <CAMRc=Mcy8eo-nHFj+s8TO_NekTz6x-y=BYevz5Z2RTwuUpdcbA@mail.gmail.com>
- <20241107111538.2koeeb2gcch5zq3t@thinkpad>
+	s=arc-20240116; t=1731782495; c=relaxed/simple;
+	bh=TUu/axCnwXUSPjl7DmdASpjS+JzTdRRaW1X3JGCd1HQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nz8pFabJKedlC8Q8t3fIFwTr5KcI1IFH9Jh/1UTzHGqwOorRaYqlMC7YAT472uZbqsHKgWZ7hTCx2f33fpiAZKIg7YMMPV97GG0gWP0kQ2uUJKKM1gP9W3BnT/+cV3nrG3xIBrXh1z6qcjtnyCj2Ji3+Ux8qEYoZTZEHDNzHlPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=uIiICG1h; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.27] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id C853F2FC0057;
+	Sat, 16 Nov 2024 19:41:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1731782483;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JBqRSlWZvIoHn8A7/4oK+jcLVTVxG6tAyXjnQGfUghI=;
+	b=uIiICG1h2poU+bwTMHITZuDQcptlbgqEOAAnOCIGILOZD9Hv6bx5l3Wqf79Ur0CmY59/rx
+	glWr+qRCSZdkWmfpEGs3/JDEAxjRfenJHwV/cyWoPz+RyfvR4uXEcBvRfQtrG3eKtJ90Eh
+	9v+4fIO4zBiQEpyBTg9IIdb1YSx1gdU=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <2a82f2e1-070a-4269-8b8e-26c5f188c85f@tuxedocomputers.com>
+Date: Sat, 16 Nov 2024 19:41:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241107111538.2koeeb2gcch5zq3t@thinkpad>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
+ symbols
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, tux@tuxedocomputers.com,
+ Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>,
+ Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Thorsten Leemhuis <linux@leemhuis.info>
+References: <20241114103133.547032-4-ukleinek@kernel.org>
+ <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
+ <e7d97b3d-1880-4c89-bbf2-a742d6ac9e6b@kernel.org>
+ <ozjiojcjmdjppmtardffvrqkuksnexyhfttzbyandihzhg6n3t@ssscyybngobw>
+Content-Language: de-DE
+From: Werner Sembach <wse@tuxedocomputers.com>
+In-Reply-To: <ozjiojcjmdjppmtardffvrqkuksnexyhfttzbyandihzhg6n3t@ssscyybngobw>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Hello Uwe,
 
-[...]
-> > > > +bool of_pci_is_supply_present(struct device_node *np)
-> > > > +{
-> > > > +     struct property *prop;
-> > > > +     char *supply;
-> > > > +
-> > > > +     if (!np)
-> > > > +             return false;
-> > >
-> > > Why do we need to test !np here?  It should always be non-NULL.
-> > >
-> > 
-> > Right, I think this can be dropped. We check for the OF node in the
-> > function above.
-> > 
-> 
-> I think it was a leftover that I didn't cleanup. But I do plan to move this API
-> to drivers/of once 6.13-rc1 is out. So even if it didn't get dropped now, I will
-> do it later.
+Am 16.11.24 um 18:49 schrieb Uwe Kleine-König:
+> Hello,
+>
+> On Thu, Nov 14, 2024 at 12:14:16PM +0100, Uwe Kleine-König wrote:
+>> On 11/14/24 11:49, Werner Sembach wrote:
+>>> Am 14.11.24 um 11:31 schrieb Uwe Kleine-König:
+>>>> the kernel modules provided by Tuxedo on
+>>>> https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers
+>>>> are licensed under GPLv3 or later. This is incompatible with the
+>>>> kernel's license and so makes it impossible for distributions and other
+>>>> third parties to support these at least in pre-compiled form and so
+>>>> limits user experience and the possibilities to work on mainlining these
+>>>> drivers.
+>>>>
+>>>> This incompatibility is created on purpose to control the upstream
+>>>> process. See https://fosstodon.org/@kernellogger/113423314337991594 for
+>>>> a nice summary of the situation and some further links about the issue.
+>>>>
+>>>> Note that the pull request that fixed the MODULE_LICENSE invocations to
+>>>> stop claiming GPL(v2) compatibility was accepted and then immediately
+>>>> reverted "for the time being until the legal stuff is sorted out"
+>>>> (https://gitlab.com/tuxedocomputers/development/packages/tuxedo-
+>>>> drivers/-/commit/a8c09b6c2ce6393fe39d8652d133af9f06cfb427).
+>>> As already being implied by that commit message, this is sadly not an
+>>> issue that can be sorted out over night.
+>>>
+>>> We ended up in this situation as MODULE_LICENSE("GPL") on its own does
+>>> not hint at GPL v2, if one is not aware of the license definition table
+>>> in the documentation.
+>> That statement isn't consistent with you saying to pick GPLv3 as an
+>> explicitly incompatible license to control the mainlining process. So you
+>> knew that it's legally at least questionable to combine these licenses.
+> When I wrote this mail I missed the possibility that while Werner knew
+> GPLv3 isn't ok for in-kernel code might still have considered GPLv3 ok
+> for external modules anyhow.
+>
+> So I take back what I said and excuse me for my words. They were not
+> intended as harsh as Werner obviously took them, but still I regret
+> having written my reply with this suggestion.
+>
+> I'm sorry,
+> Uwe
+Thank you very much for these words.
 
-I removed the NULL check directly on the branch.  Thank you!
+I hope that in my replies I wasn't too harsh from my side and if so, I 
+too want to apologize for it.
 
-	Krzysztof
+No more bad feelings going forward.
+
+Best regards,
+
+Werner Sembach
+
 
