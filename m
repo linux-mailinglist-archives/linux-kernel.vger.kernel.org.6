@@ -1,114 +1,142 @@
-Return-Path: <linux-kernel+bounces-411813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BDA39CFFE9
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:39:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC209CFFED
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:43:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10A67B23553
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:39:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EF6D1F24208
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496B4F9CB;
-	Sat, 16 Nov 2024 16:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17C718F2C3;
+	Sat, 16 Nov 2024 16:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="f5W+6J6d"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gTAl+eYU"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2471B16631C
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 16:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972AE126C01;
+	Sat, 16 Nov 2024 16:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731775165; cv=none; b=LhJmeRJZxfAkhi5rkbW29XMPwVxE11qsWbqikpV2dKYMl+frfK3fKpIym0MQZUbRTWL+jrDWqyY/pz25vgJvk9Jh69bww7a5DT18RyWW//7GUC+y72z32TrXCLVd3K6SoUEVvlrIHyDApumj/UJ4eZxo/kIoIySnngPgqoSSQYw=
+	t=1731775384; cv=none; b=kV5m2z0p7j4evXv+3KSCQJ0YVnJNXHQqRoML/lElRGDUBYbEppd7KdyC6kt5mLglgxXa+6ItDlvpA5EZmm8wnOdkc/FBXPSaQBisIaNYad2mYN5I1L/PwUhPcbVv5+8tbWLM7CW1WGTyzY0BbxbAYUirp2NGIRPsIf0tKo5SE9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731775165; c=relaxed/simple;
-	bh=Ju1vKYcXPfGrU5JtGW8xJmpGlmxzgbsR7TH8Z+s9Tmw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=SwJyHeuOqzhysCg0Qt/Yxg61YdwzEpLxujYP7p79AmLOz+N3voRbde4XVPSzOXDEPxZZR/45txhizsRGVjEO0jIXMPyyM/PNYWx07eIjLaOcBTT+s2njEYnvx0HB5EwzDkUmnCfAEa7D8rxm+LaYuNGLfKIB9NzMRGM2P5V0+R0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=f5W+6J6d; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2114214c63eso24327675ad.3
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 08:39:22 -0800 (PST)
+	s=arc-20240116; t=1731775384; c=relaxed/simple;
+	bh=pYjbgnkOs1b1lmociUmZeMIJViJjLIkw8QLnkNEo5dA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cwrY75F9iaRF61WPJv7l770W2WWMj1ERWOCwFfSe/xAD5kMtraWqTyiT5PkrHyU1cG64Q4HexQHZ5VySIhAl8i3NvBVTak70T4g9NZvJqqxYfPWjEjL1YRuWRg7MYIFnbxgh2lymK+BpIYqx7eOME+BcVO9xaF9AdWbniArZeRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gTAl+eYU; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43169902057so23327215e9.0;
+        Sat, 16 Nov 2024 08:43:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731775162; x=1732379962; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1731775381; x=1732380181; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aaS9yT+LFixmnX0w9Dji74va3CcSNWVDjKsOe6+nxZs=;
-        b=f5W+6J6d4ADMKJLTSh/whH+MJNPJthCPG2XrmxfX3oucRxymxLWkEr1f7dE19SmWnl
-         IKE5l2j2x904fsRCRPxNBN4gRVgAZAVLW/wH+2EBrXe2sGIay9p+FmpDmzCCtTVHAyoP
-         uTJE3nWec37QTaAWyyQHciLrOWnZQrdH3zERiVrJzhowTmZUw3kinIZn9N4t3IeYXMZy
-         38oos1tcnqaLYmTZEFt9fdasrAxIuUVd8p4OmFAF87UaCh895lJHEi8aqNrNJ8UMBOJT
-         zub8aoDbHSN3n1iN6Sc5YCvqVMYh85X3z0uVz2wdbIV5NLCCoztEMIjosxpx3vOqulau
-         Ae1w==
+        bh=pYjbgnkOs1b1lmociUmZeMIJViJjLIkw8QLnkNEo5dA=;
+        b=gTAl+eYUcBuv1ZNUA7z4sAhwZ4wbJotSlBuluRFqYSBUb7SH0CtZwjD/Pg2r5sAT6Q
+         0H1sCMRaXOunWFG05uSguxvFDCcEN19VPYSsV8lHGW9WB9tVuvf7wy6pt6l06Tgzpdqr
+         kScG7sGZ/8awnW/SSn+xfg51gjBK9GFbUK/PgKjDxirKjnuK3fnyyXVHdDA7nshl5jFk
+         ys2nUEjAcNzmXfx1f+DCHG0ZaL6e72lcMG+LPOzUhgB7yN18YIecFGDhr7ckl4qPM4XI
+         S9zjIQW/eKMi2QcolLsytdHLiB4qL4hweMm7Mc2dTcbQj1/mkZlbYVFI1Y8Vid0qVefb
+         2GUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731775162; x=1732379962;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1731775381; x=1732380181;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aaS9yT+LFixmnX0w9Dji74va3CcSNWVDjKsOe6+nxZs=;
-        b=uLdcQDd8Zh3WIOpPaVoTcF77TnRPbPgRwmxmeFnJ2EfNZcXHMhh6zVukt9ZOD4fny1
-         nbgJbn4P2zdjtl3p2kAZ5iSuvQqGR8ZXOJl6hlzMBxVG1218FuRy5mXuFVPmKSALMPlX
-         yAiHfveq9tNgmS6E8U7oNlfXsrNjPb/ICMTYl6vwDChiWP6im3qLqnN93pn3CP3EuWvx
-         T9vj2m9MSDdUf6SCcQ/+MwokRChrYQVrFomYwzukuv2rQOMiAQgu0av/jolaWBixkVnv
-         QnyAXBtRlO3tYhDidHUmu8iAMXUQTpwxNVJw3e3zcLMvCFApoNvbQp/srKxqaGB5iwxZ
-         BOJg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1/flkl05jUnpOweBMUesxzKSaviJA2CqaJEHA4bzwgwCWvZQLpgWM0szt/b3Mds8arMErLhFI5dQCZMs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypvHzHryOaTNlEYF1yz4wgDoevCDD7LGqT3DC6vAdyQJhRqhl4
-	5Uoi5YO7RLuZDAts+4GiBDBLC3JZQSqrR+R6GrIXZ5CUdqUU3kMeB+c8afDEBLwcnfOJ5SK5jUw
-	mVZ8=
-X-Google-Smtp-Source: AGHT+IFnt0eFVI6/O62s6Ylev4hjkponIRITqAVg4CxXYJ3HTDzLRcwaBUFCsdkRrpS8TfdcrcXoAg==
-X-Received: by 2002:a17:902:f548:b0:20c:bb1c:d216 with SMTP id d9443c01a7336-211d0d73ce2mr72479105ad.21.1731775162216;
-        Sat, 16 Nov 2024 08:39:22 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0dc312csm29297245ad.27.2024.11.16.08.39.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Nov 2024 08:39:21 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: asml.silence@gmail.com, hexue <xue01.he@samsung.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241115070013.882470-1-xue01.he@samsung.com>
-References: <CGME20241115070021epcas5p4bf0dddfd2e511f43efd4587ba408e6ed@epcas5p4.samsung.com>
- <20241115070013.882470-1-xue01.he@samsung.com>
-Subject: Re: [PATCH liburing v3] test: add test cases for hybrid iopoll
-Message-Id: <173177516080.2575635.9204944482118823666.b4-ty@kernel.dk>
-Date: Sat, 16 Nov 2024 09:39:20 -0700
+        bh=pYjbgnkOs1b1lmociUmZeMIJViJjLIkw8QLnkNEo5dA=;
+        b=RfrrzwL7qO4yqzuX+NhH+Vq2gwZPqu6j6DMjlpdCCZUyZSq1zmuSbOu9dowVVYlZuV
+         6gIjFFChumThC3oST+FKYapsVrufcQdcYak3ZfqBbz7GHcPLv1LXEtOSlWBooMp+7wGJ
+         lV9zzfcqW7iYNBX/QwtSmx2M4EdBcqUSYa26wSIB4t0PpB1Tv2tH9lb8hGCaiu5CE55F
+         7kUZhpG/TsVtJjtjjc66OMrMeNRKNOyBeK6PRaBxf1uGPABCCLf8I9yjyo0jmUJATLsS
+         NNv+CNVv12wCKhGBv7MkET0/AgSXeT+JEOcY6fKosx6xplRDtf/PpOFn4bkWTD3528DW
+         3NhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWhtNsIn87LHLFJg4QxJuxAuhPBpBoNGcXq5KhSy0HRXEAf0WjjYaKaqjo4Yr2StnOn1N8IADIt0Nfc01WI@vger.kernel.org, AJvYcCXXqAGGWgc0yUfOw1oy86rgKg6muHzoOH9uv1/Di9/IEFLOC4FxKZSBwp6fhPhOJDbnafU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0ps7p4YbnDStW4R9AvrUENp8+ve8WAIFp4QDAhZ3gxzslyAHu
+	myGYo/6DjKUmBc/H0aLE37qrEPe8NmEm9/K/YXo3xnp1sUxG1L9dVSaQACtCN3bDSZGZxK4DpVC
+	/JthMdlSgUm1t7P1dVV9O0j6S/cc=
+X-Google-Smtp-Source: AGHT+IHZuIblvCjZxwjk9MUHPMHsNmj3JdzxQOOvtr63PNRuKmUVsEBKip1QMj+H+7R1Ymgzl0upNJPmM4UPzjOeT6U=
+X-Received: by 2002:a5d:64c8:0:b0:382:2276:c93c with SMTP id
+ ffacd0b85a97d-38225a8a36cmr6494006f8f.44.1731775380800; Sat, 16 Nov 2024
+ 08:43:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+References: <20241108063214.578120-1-kunwu.chan@linux.dev> <87v7wsmqv4.ffs@tglx>
+ <1e5910b1-ea54-4b7a-a68b-a02634a517dd@linux.dev> <87sersyvuc.ffs@tglx>
+ <20241116092102.O_30pj9W@linutronix.de> <CAADnVQ+ToRZ6ZQL44Z9TAn6c=ecqrDgrnJenH7-miHJSWe7Nsw@mail.gmail.com>
+ <1ed46394-f065-4e8b-8f37-c450b0c1b3a9@t-8ch.de>
+In-Reply-To: <1ed46394-f065-4e8b-8f37-c450b0c1b3a9@t-8ch.de>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Sat, 16 Nov 2024 08:42:49 -0800
+Message-ID: <CAADnVQJBGKioLA0JuyCQdD-jRKn2bpb7A7r6Yo4drBb9G1tvbg@mail.gmail.com>
+Subject: Re: [PATCH] bpf: Convert lpm_trie::lock to 'raw_spinlock_t'
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>, 
+	Kunwu Chan <kunwu.chan@linux.dev>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, clrkwllms@kernel.org, 
+	Steven Rostedt <rostedt@goodmis.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-rt-devel@lists.linux.dev, 
+	syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, Nov 16, 2024 at 8:15=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@weisss=
+chuh.net> wrote:
+>
+> On 2024-11-16 08:01:49-0800, Alexei Starovoitov wrote:
+> > On Sat, Nov 16, 2024 at 1:21=E2=80=AFAM Sebastian Andrzej Siewior
+> > <bigeasy@linutronix.de> wrote:
+> > >
+> > > On 2024-11-15 23:29:31 [+0100], Thomas Gleixner wrote:
+> > > > IIRC, BPF has it's own allocator which can be used everywhere.
+> > >
+> > > Thomas Wei=C3=9Fschuh made something. It appears to work. Need to tak=
+e a
+> > > closer look.
+> >
+> > Any more details?
+> > bpf_mem_alloc is a stop gap.
+>
+> It is indeed using bpf_mem_alloc.
+> It is a fairly straightforward conversion, using one cache for
+> intermediate and one for non-intermediate nodes.
 
-On Fri, 15 Nov 2024 15:00:13 +0800, hexue wrote:
-> Add a test file for hybrid iopoll to make sure it works safe.Test case
-> include basic read/write tests, and run in normal iopoll mode and
-> passthrough mode respectively.
-> 
-> --
-> changes since v1:
-> - remove iopoll-hybridpoll.c
-> - test hybrid poll with exsiting iopoll and io_uring_passthrough
-> - add a misconfiguration check
-> 
-> [...]
+Sounds like you're proposing to allocate two lpm specific bpf_ma-s ?
+Just use bpf_global_ma.
+More ma-s means more memory pinned in bpf specific freelists.
+That's the main reason to teach slub and page_alloc about bpf requirements.
+All memory should be shared by all subsystems.
+Custom memory pools / freelists, whether it's bpf, networking
+or whatever else, is a pain point for somebody.
+The kernel needs to be optimal for all use cases.
 
-Applied, thanks!
+> I'll try to send it early next week.
 
-[1/1] test: add test cases for hybrid iopoll
-      commit: d20600d52bef100401164b28f59843c37d549ace
+Looking forward.
 
-Best regards,
--- 
-Jens Axboe
-
-
-
+> > As Vlastimil Babka suggested long ago:
+> > https://lwn.net/Articles/974138/
+> > "...next on the target list is the special allocator used by the BPF
+> > subsystem. This allocator is intended to succeed in any calling
+> > context, including in non-maskable interrupts (NMIs). BPF maintainer
+> > Alexei Starovoitov is evidently in favor of this removal if SLUB is
+> > able to handle the same use cases..."
+> >
+> > Here is the first step:
+> > https://lore.kernel.org/bpf/20241116014854.55141-1-alexei.starovoitov@g=
+mail.com/
 
