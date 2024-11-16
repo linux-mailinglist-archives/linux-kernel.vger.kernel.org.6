@@ -1,214 +1,127 @@
-Return-Path: <linux-kernel+bounces-411571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4AA49CFC46
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 02:41:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C1A79CFC4D
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 02:58:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4460EB2A821
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 01:41:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51B3F2887F8
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 01:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4891917F3;
-	Sat, 16 Nov 2024 01:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E4B18FDDA;
+	Sat, 16 Nov 2024 01:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nCINxAY4"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hpH5LTrF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1672213C682
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 01:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588262913;
+	Sat, 16 Nov 2024 01:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731721283; cv=none; b=fABvPXpIFGGt/lUhJeVVSlX07xZvE7rcCPQq+mV/hXrhVq435MjUjUsVyqv7p9YIpsgN7XU1RjS70AufTMhk1GgWIAlbqJuEv5cpptDYV6di1BdRwRQnFyX/kNWr0o1qErM/ld1lgvk1QUjizle6v0pdrqUCz3nkjpa/EPuZUJQ=
+	t=1731722321; cv=none; b=Vgw+ZILK2x7i6ETq1V1O+qYGrqEEAfWv7eoXksaq0PVfG3jGQ87q8NIwca4Hbru6fQL4UygLBwuUC/IfTw1V5Yn1jK9U+LXSRTF1FP7IAzo6+GLaD4PIZ5EwyjEQCgSdrWHhHhsJ2uO3EZ3UiubJXXzeznhHXEFlx2gLDLaUWgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731721283; c=relaxed/simple;
-	bh=kcxd4DpdqlwLGPsME9mBHqRp/DFmOWM6BPvURFNvPRg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ky1Rhs3qMWRmZiDhEcM5LGjoQEowBM/cnGpPE2vtK1pc4QXUikICMKGU28ryihwdLV0dLS8FbJoaoJxNR6C52qUn9lwqKcTfogVGMGoEbf3aT0dpM4hTJg3C3bIddi0TSpvt402JDNLL3Pj7FLZkFcGjOeSUki5YrG3lGsIGgJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nCINxAY4; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a99f646ff1bso339944666b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:41:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731721280; x=1732326080; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kT52XIvuMeYgn+oMzKuzUITdq0BanYWIJNtHWfhNXjg=;
-        b=nCINxAY4t3fu/XsrobMFILi+7nlvarNI+OaOMSNgLcrxQ0T3smUWUvm8GugXYvJLVW
-         sZopt2mqjfg20KfZxIiWsulMcfh1Q/17zfCPgvH55z4k638X3FOWi6mzgiAl8nbt7jol
-         A29QtuRbax93KL0FwO4gU0TyVy9QogZgaYsvpQfs+Q2h4xtGebGiLrwIPdwRGwnDlOuW
-         zktyiVr2+nQz+Jc/lvdmL1RgRFl2+8TX1tbxpaRGMSvTZ7ZiKt8W82q/TLu5LAg/iops
-         tf8wAKglP6JPniJAJEGiP6TW/lQoDF4D2PHNYhF6quWJFsjpw+FblQ0pzc/0po5fiz7R
-         EP2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731721280; x=1732326080;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=kT52XIvuMeYgn+oMzKuzUITdq0BanYWIJNtHWfhNXjg=;
-        b=gxZJB+HMOZg9p8y1WZ1tnFS3JHAD1bUQB6je+YIO3hmWnxraQqegtsICA/HQhTx0Nh
-         6cZsiSL144u2fydbzZP+8fLpRqNJ5ZqRo804QUIIagWzFde0qae3cQ9uVR1zxb/was03
-         xurUqrcWHvU8Rq7De6VD0k2OdfEYr4wmjOrP9BhQq/W/ewBthTe8zMeS997CAPpbTYcx
-         Yr212hO+LjlR7yJlkhk/+nJHJOvxddvbXOwktZSQAaiTLbsMpmDER4cXKkY2oVa/UGnL
-         n5kXfOLl4epNNOUACVivCcXeFcRQrj6iWuCUT/E2Pn/uM1ECO8jT4Yb1rMSLCxtRz3HQ
-         A8Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCVL8347zXmM0kgeX1PxORemCGDTUU7VTkH73NClSIBUKIOvyJwJTiZgKzq23WEKAxjUKucTGFvpWyTPg9Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwMdHap2fx+Hg/GrJEfOctMI2OfhhAlaQQunfUtL5tHaFoQe/d
-	E32qdwERMpf9d0ugKhj+O4bxdauhDTHHL9/SjM0ZqtichBgOQ8tVz+gB/g==
-X-Google-Smtp-Source: AGHT+IHzlLHHlYLC08RK++hR/9MtTAwXU9ob5isqHjfuY7I5J3gS2FmEQxNmTR5MMGxb+W1kaKCzjw==
-X-Received: by 2002:a17:907:809:b0:a99:5021:bcf0 with SMTP id a640c23a62f3a-aa483454541mr333282266b.34.1731721280067;
-        Fri, 15 Nov 2024 17:41:20 -0800 (PST)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df26598sm237246266b.2.2024.11.15.17.41.17
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 15 Nov 2024 17:41:18 -0800 (PST)
-Date: Sat, 16 Nov 2024 01:41:16 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-Cc: Wei Yang <richard.weiyang@gmail.com>, linux-kernel@vger.kernel.org,
-	maple-tree@lists.infradead.org, linux-mm@kvack.org,
-	akpm@linux-foundation.org, liam.howlett@oracle.com
-Subject: Re: [PATCH 3/5] maple_tree: use vacant nodes to reduce worst case
- allocations
-Message-ID: <20241116014116.a7am7z4p7k33rkl5@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20241114170524.64391-1-sidhartha.kumar@oracle.com>
- <20241114170524.64391-4-sidhartha.kumar@oracle.com>
- <20241115075203.ojspk255cw3sr3s3@master>
- <2aa439f1-d33d-43ee-9945-5ac570506c7e@oracle.com>
+	s=arc-20240116; t=1731722321; c=relaxed/simple;
+	bh=YpKqZkkXKh9vi9wPu8pqea+VYDD9G5A8z/ZyYchkG9k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aMUlZTDNQwZvRkQVZ6E4fftDzR75+UmG2UOWh216V43U5VMVmxyO5HXifXivyIdYUyQOnkQyrUVvQKy1OepQ7GPlWhteHSgBTMEfsLMr7iaKMiIN/4mltYpwehKwT8rnaboPOa28VD4aOSXxRQ6YE2VWRaDRNxtBvlbciPvbXro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hpH5LTrF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1F56C4CECF;
+	Sat, 16 Nov 2024 01:58:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731722320;
+	bh=YpKqZkkXKh9vi9wPu8pqea+VYDD9G5A8z/ZyYchkG9k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hpH5LTrFT3T4HqFaINW0+opeFJazWvFJZb304m4Z3bWbFR3H6ovOSETh+Rm5T4Bb1
+	 oDHN47t4OrPoSpIyWERE8GTepAQjebM5dKktap1D8DNBP2lx9zbCyFwveFYKZAinkb
+	 UgttPZJ7RT6cWJBj6ogrIjXainLi+KXtdpqpLnE660bwIN+OhfEa6CMJKmL9QTtMLR
+	 QAad8cP07olO8nzaFikQCe+xlOAZJAGz+/ka7fNoRsFVhM4Jfa4ktv6G1WVuQDjKWb
+	 WJnjH8IOxbMCkitIbnJqL3azHywn3TQjTw3oPr8M3PMRRdjb6YuhMXuJzHiaqaz+uW
+	 cNKO5GbOIxUpQ==
+Date: Fri, 15 Nov 2024 17:58:38 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Dmitry Safonov <0x7f454c46@gmail.com>
+Cc: Dmitry Safonov via B4 Relay <devnull+0x7f454c46.gmail.com@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+ <horms@kernel.org>, David Ahern <dsahern@kernel.org>, Ivan Delalande
+ <colona@arista.com>, Matthieu Baerts <matttbe@kernel.org>, Mat Martineau
+ <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, John Fastabend
+ <john.fastabend@gmail.com>, Davide Caratti <dcaratti@redhat.com>, Kuniyuki
+ Iwashima <kuniyu@amazon.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, mptcp@lists.linux.dev, Johannes Berg
+ <johannes@sipsolutions.net>
+Subject: Re: [PATCH net v2 0/5] Make TCP-MD5-diag slightly less broken
+Message-ID: <20241115175838.4dec771a@kernel.org>
+In-Reply-To: <CAJwJo6ax-Ltpa2xY7J7VxjDkUq_5NJqYx_g+yNn9yfrNHfWeYA@mail.gmail.com>
+References: <20241113-tcp-md5-diag-prep-v2-0-00a2a7feb1fa@gmail.com>
+	<20241115160816.09df40eb@kernel.org>
+	<CAJwJo6ax-Ltpa2xY7J7VxjDkUq_5NJqYx_g+yNn9yfrNHfWeYA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2aa439f1-d33d-43ee-9945-5ac570506c7e@oracle.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 15, 2024 at 03:34:55PM -0500, Sidhartha Kumar wrote:
->On 11/15/24 2:52 AM, Wei Yang wrote:
->> On Thu, Nov 14, 2024 at 12:05:22PM -0500, Sidhartha Kumar wrote:
->> > In order to determine the store type for a maple tree operation, a walk
->> > of the tree is done through mas_wr_walk(). This function descends the
->> > tree until a spanning write is detected or we reach a leaf node. While
->> > descending, keep track of the height at which we encounter a node with
->> > available space. This is done by checking if mas->end is less than the
->> > number of slots a given node type can fit.
->> > 
->> > Now that the height of the vacant node is tracked, we can use the
->> > difference between the height of the tree and the height of the vacant
->> > node to know how many levels we will have to propagate creating new
->> > nodes. Update mas_prealloc_calc() to consider the vacant height and
->> > reduce the number of worst allocations.
->> > 
->> > Rebalancing stores are not supported and fall back to using the full
->> > height of the tree for allocations.
->> > 
->> > Update preallocation testing assertions to take into account vacant
->> > height.
->> > 
->> > Signed-off-by: Sidhartha <sidhartha.kumar@oracle.com>
->> > ---
->> > include/linux/maple_tree.h       |  2 +
->> > lib/maple_tree.c                 | 13 +++--
->> > tools/testing/radix-tree/maple.c | 97 +++++++++++++++++++++++++++++---
->> > 3 files changed, 100 insertions(+), 12 deletions(-)
->> > 
->> > diff --git a/include/linux/maple_tree.h b/include/linux/maple_tree.h
->> > index cbbcd18d4186..7d777aa2d9ed 100644
->> > --- a/include/linux/maple_tree.h
->> > +++ b/include/linux/maple_tree.h
->> > @@ -463,6 +463,7 @@ struct ma_wr_state {
->> > 	void __rcu **slots;		/* mas->node->slots pointer */
->> > 	void *entry;			/* The entry to write */
->> > 	void *content;			/* The existing entry that is being overwritten */
->> > +	unsigned char vacant_height;	/* Depth of lowest node with free space */
->>                               ^^^           ^^^
->> 
->> Would this be a little misleading?
->> 
->
->Could you elaborate on how its misleading?
->
+On Sat, 16 Nov 2024 00:48:17 +0000 Dmitry Safonov wrote:
+> On Sat, 16 Nov 2024 at 00:08, Jakub Kicinski <kuba@kernel.org> wrote:
+> > On Wed, 13 Nov 2024 18:46:39 +0000 Dmitry Safonov via B4 Relay wrote:  
+> > > 2. Inet-diag allocates netlink message for sockets in
+> > >    inet_diag_dump_one_icsk(), which uses a TCP-diag callback
+> > >    .idiag_get_aux_size(), that pre-calculates the needed space for
+> > >    TCP-diag related information. But as neither socket lock nor
+> > >    rcu_readlock() are held between allocation and the actual TCP
+> > >    info filling, the TCP-related space requirement may change before
+> > >    reaching tcp_diag_put_md5sig(). I.e., the number of TCP-MD5 keys on
+> > >    a socket. Thankfully, TCP-MD5-diag won't overwrite the skb, but will
+> > >    return EMSGSIZE, triggering WARN_ON() in inet_diag_dump_one_icsk().  
+> >
+> > Would it be too ugly if we simply retried with a 32kB skb if the initial
+> > dump failed with EMSGSIZE?  
+> 
+> Yeah, I'm not sure. I thought of keeping it simple and just marking
+> the nlmsg "inconsistent". This is arguably a change of meaning for
+> NLM_F_DUMP_INTR because previously, it meant that the multi-message
+> dump became inconsistent between recvmsg() calls. And now, it is also
+> utilized in the "do" version if it raced with the socket setsockopts()
+> in another thread.
 
-As you mentioned in previous patch, depth and height has different meaning.
+NLM_F_DUMP_INTR is an interesting idea, but exactly as you say NLM_F_DUMP_INTR
+was a workaround for consistency of the dump as a whole. Single message
+we can re-generate quite easily in the kernel, so forcing the user to
+handle INTR and retry seems unnecessarily cruel ;)
 
-Root node has depth of 0 and height of 1. So I may wandering whether this is
-depth or height.
+> > > In order to remove the new limit from (4) solution, my plan is to
+> > > convert the dump of TCP-MD5 keys from an array to
+> > > NL_ATTR_TYPE_NESTED_ARRAY (or alike), which should also address (1).
+> > > And for (3), it's needed to teach tcp-diag how-to remember not only
+> > > socket on which previous recvmsg() stopped, but potentially TCP-MD5
+> > > key as well.  
+> >
+> > Just putting the same attribute type multiple times is preferable
+> > to array types.  
+> 
+> Cool. I didn't know that. I think I was confused by iproute way of
+> parsing [which I read very briefly, so might have misunderstood]:
+> : while (RTA_OK(rta, len)) {
+> :         type = rta->rta_type & ~flags;
+> :         if ((type <= max) && (!tb[type]))
+> :                 tb[type] = rta;
+> :         rta = RTA_NEXT(rta, len);
+> : }
+> https://github.com/iproute2/iproute2/blob/main/lib/libnetlink.c#L1526
+> 
+> which seems like it will just ignore duplicate attributes.
+> 
+> That doesn't mean iproute has to dictate new code in kernel, for sure.
 
->> > };
->> > 
->> > #define mas_lock(mas)           spin_lock(&((mas)->tree->ma_lock))
->> > @@ -498,6 +499,7 @@ struct ma_wr_state {
->> > 		.mas = ma_state,					\
->> > 		.content = NULL,					\
->> > 		.entry = wr_entry,					\
->> > +		.vacant_height = 0					\
->> > 	}
->> > 
->> > #define MA_TOPIARY(name, tree)						\
->> > diff --git a/lib/maple_tree.c b/lib/maple_tree.c
->> > index 21289e350382..f14d70c171c2 100644
->> > --- a/lib/maple_tree.c
->> > +++ b/lib/maple_tree.c
->> > @@ -3545,6 +3545,9 @@ static bool mas_wr_walk(struct ma_wr_state *wr_mas)
->> > 		if (ma_is_leaf(wr_mas->type))
->> > 			return true;
->> > 
->> > +		if (mas->end < mt_slots[wr_mas->type] - 1)
->> > +			wr_mas->vacant_height = mas->depth + 1;
->> 
->> For some cases in rebalance, we may split data into three parts, which means
->> we need 2 extra vacant slot.
->> 
->> Maybe this check is not accurate?
->> 
->
->The triple split scenario which you are describing comes from the spanning
->store case not on the wr_rebalance case. There is a check before we set
->vacant height to return if is_span_wr() so I believe this is correct still.
->
-
-Hmm... I come up with a case in which vacant_height may not high enough.
-
-Here is the subtree where spanning write locates. The first level is the
-parent node of the second level nodes.
-
-                vacant node
-                +--------+-+-+-------+
-                |        |l|r|       |
-                +--------+-+-+-------+
-
-                l                 r                 
-    +------+    +----+-------+    +---------+--+    +------+
-    |      |    |    |       |    |         |  |    |      |
-    +------+    +----+-------+    +---------+--+    +------+
-                     ^                      ^
-		     |                      |
-		   index                   last
-
-When mas_wr_walk_descend() to node l, mas_is_span_wr() return true since last
-is in the right sibling, node r. Let's say the parent is vacant and l/r is
-leaf. So the request number is (1 * 3) + 1.
-
-Let's assume:
-
-  * vacant node is just sufficient
-  * l's left part + r's right part is sufficient but not overflow
-
-Then the "new vacant node" would be deficient and needs another round
-rebalance.
-
-For this case, I am afraid it doesn't allocate enough nodes. Or I
-misunderstand this?
-
--- 
-Wei Yang
-Help you, Help me
+Right, the table based parsing doesn't work well with multi-attr,
+but other table formats aren't fundamentally better. Or at least
+I never came up with a good way of solving this. And the multi-attr
+at least doesn't suffer from the u16 problem.
 
