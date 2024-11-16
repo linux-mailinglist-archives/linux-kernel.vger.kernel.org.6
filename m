@@ -1,116 +1,184 @@
-Return-Path: <linux-kernel+bounces-411858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D10C19D007D
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:24:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16E3B9D0080
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:32:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D2C11F233A0
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 18:24:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6112285547
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 18:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A0418E050;
-	Sat, 16 Nov 2024 18:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HbcYmcuw"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A23192590;
+	Sat, 16 Nov 2024 18:32:28 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4716F199FA1;
-	Sat, 16 Nov 2024 18:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89248F6E
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 18:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731781374; cv=none; b=N1V087XkiPH5F/G7fnH+8vrssFojtrkjqUjqXuqJrno1GzohdFaT8fPKEn93WY7uWLEjg8jGy70wAUYS7T9AuNcGWBpXnKFTJOtWdueZg9Xc6R9Zu7tFUkJHZEvMwTVksR/zZTozUh7vQxqo9cwhQ7SDZSWRNEUcChM4FFa0Gxg=
+	t=1731781948; cv=none; b=Fxvmg/3NfLXgEYr7Qal3YNuZYBpGZ9CZmhvxyYN7Q8yB3yAK+TMB6jpst4hXBR8M7mGT/7UgsqraLebd0eef2ap8oASD9YArp6gJ2D1ZFaq9/tZwYr0sPi1glP32HmkZs+Bo4W10tnZfViqbZanLJy0voGwdS+6rgdDEE0/zS8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731781374; c=relaxed/simple;
-	bh=uXHOo9+TzfRpI5IDnIvDAsLN/tG0WK21O4XtRokY5rA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XQ+GBVUbjNz0yFK6FK9OsD9JBEhzp2baV1WXkm4st8X/0NRn5Jg09mzWcBYoqIZN0N+QtSL0FJnyinjZCz3d9tV7BBDsWBQGoXUcT/CT8cE9+9dovyYHFZT9LupAAOs4VCIDSsuWXoLq4a8uGOpc0nqy9Q0jmpMjn1znCZkLE/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HbcYmcuw; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1731781365;
-	bh=uXHOo9+TzfRpI5IDnIvDAsLN/tG0WK21O4XtRokY5rA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=HbcYmcuw3KJPwpeen8ioxtv0tN99gDIhC7+J248GqCRUeGsPLf7p0P4AlLJ6NSYoV
-	 LDLgkCJU8LE6MGVcKhpTYkLYR0K/GLDlWr7jrpI8mrzM33sOZCkIRyWYgKRlHcmQv9
-	 b9r+vejMaaOTjzqjSkVFQPAC2TV9J3VsKiPGt5I+7DQTGG/55G/mtSYcq7bEYWPlCA
-	 4dxtZf09hiVqQ+4UQUGa3t2jEzqSKOrQ3gdlJ0frXWs4YrA9wnJOndnFKdX6KM1Q/p
-	 m+9nUQYn1s9LzFgM+1AHuyZ+E4BrWgoON2gB1qVGvLa2IbA1ml+o9Smr87sgSt0BKY
-	 fndRSwruUh1HA==
-Received: from localhost (unknown [86.120.21.57])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9146917E377E;
-	Sat, 16 Nov 2024 19:22:45 +0100 (CET)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Sat, 16 Nov 2024 20:22:36 +0200
-Subject: [PATCH 5/5] arm64: dts: rockchip: Add HDMI0 PHY PLL clock source
- to VOP2 on RK3588
+	s=arc-20240116; t=1731781948; c=relaxed/simple;
+	bh=mlB0+thn19nCuu7bVxLlqBKuRmMSG4g4oTMX2iUi41s=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=S9ZABlTNusqh2yAyvJ6DvGDiRsGPakR5Pvi4clmQ8a8OAh7f1IircyUC94qSSTFCvQCqnW27OIa+znjJt+Kil2ACaS8U20TcLofzM6MhGJPB1UA9pf/WCU0xyIVeqVgdFwkraR7N/Dm9RlljjuSN4nbfFQVHEK/nX6Oz/UtnxAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83aaedba7b5so55354139f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 10:32:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731781946; x=1732386746;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xfePePTsXYhBX39P9elCNwfVWb5sKbJgwAbl39C7W5Q=;
+        b=qmM6svAXyPBjA+tg0tLXXCXiK6yQ77GpKW1+6Hjj6j8f7NpNN7bt4PnSvmI3w8fxNR
+         h89uLWq7GLx2uDkJ+guV1OvxcyuJOvPuzh6tZ/QiADDZaUADPkDMNeV95u++bmCP90kZ
+         vV7firNkrpIfZzdTpSzpkN/EoSmFV1VaY1MykZc3l8WHHKD5zJB8jqNn9hEMT3SB5gnU
+         CYSybpmEKVwFn7yoAzGt/maEDWcXjxCUkO67uHkgnJ3H6ieuaA/VG1MHW7xn0GAzYJN3
+         cKr3C0GyxK7ep6gWlk0togdWhxZrGLsV6ZwOcFORIir35e3GAIHQ5SGyb1J7Mf41/I24
+         0mXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWL9SBpI6wMNtv1o0n3791FfVL7bcojGFJ/04RimhzPFpcrq4iW/+uZfAaA+QMyPUo3jtsrdZvlLQqTdEo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYPbMrW9CRmPvFIkZRUpZAuQN9mwJuEO2t79zongRGFKX0Ed/3
+	bTvXTlPxz/N1baAC3X+NJn4lkGci2DxJnZTSX/xP1dGHaTVBwm1RwtPwEuxYMRpHYqRjuIXQVpH
+	KX7Xs5Q8TfBJMtG73fr52/0ZGWbe2r+P+7PdHZC5rCQuSw/6Le9dIYsI=
+X-Google-Smtp-Source: AGHT+IH5zsJbo7kUAodC0qUZi4w5wICKVzNYKcoIEvFzES9l/os3tvmiytos6O8rUa0AZi+fkVAsQWqx5o0NxU5XOvi+07IUEkxY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241116-vop2-hdmi0-disp-modes-v1-5-2bca51db4898@collabora.com>
-References: <20241116-vop2-hdmi0-disp-modes-v1-0-2bca51db4898@collabora.com>
-In-Reply-To: <20241116-vop2-hdmi0-disp-modes-v1-0-2bca51db4898@collabora.com>
-To: Sandy Huang <hjc@rock-chips.com>, 
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
- Andy Yan <andy.yan@rock-chips.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
+X-Received: by 2002:a05:6e02:b43:b0:3a7:1b96:220f with SMTP id
+ e9e14a558f8ab-3a7480417e3mr59740755ab.9.1731781945870; Sat, 16 Nov 2024
+ 10:32:25 -0800 (PST)
+Date: Sat, 16 Nov 2024 10:32:25 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6738e539.050a0220.e1c64.0002.GAE@google.com>
+Subject: [syzbot] [net?] WARNING in sk_skb_reason_drop
+From: syzbot <syzbot+52fbd90f020788ec7709@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dongml2@chinatelecom.cn, dsahern@kernel.org, 
+	edumazet@google.com, horms@kernel.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, menglong8.dong@gmail.com, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-VOP2 on RK3588 is able to use the HDMI PHY PLL as an alternative and
-more accurate pixel clock source to improve handling of display modes up
-to 4K@60Hz on video ports 0, 1 and 2.
+Hello,
 
-For now only HDMI0 output is supported, hence add the related PLL clock.
+syzbot found the following issue on:
 
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+HEAD commit:    a58f00ed24b8 net: sched: cls_api: improve the error messag..
+git tree:       net-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=140a735f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=47cb6c16bf912470
+dashboard link: https://syzkaller.appspot.com/bug?extid=52fbd90f020788ec7709
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=132804c0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14f481a7980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d28dcea68102/disk-a58f00ed.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8ec032ea06c6/vmlinux-a58f00ed.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/da9b8f80c783/bzImage-a58f00ed.xz
+
+The issue was bisected to:
+
+commit 82d9983ebeb871cb5abd27c12a950c14c68772e1
+Author: Menglong Dong <menglong8.dong@gmail.com>
+Date:   Thu Nov 7 12:55:58 2024 +0000
+
+    net: ip: make ip_route_input_noref() return drop reasons
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10ae41a7980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=12ae41a7980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14ae41a7980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+52fbd90f020788ec7709@syzkaller.appspotmail.com
+Fixes: 82d9983ebeb8 ("net: ip: make ip_route_input_noref() return drop reasons")
+
+netlink: 'syz-executor371': attribute type 4 has an invalid length.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5842 at net/core/skbuff.c:1219 __sk_skb_reason_drop net/core/skbuff.c:1216 [inline]
+WARNING: CPU: 0 PID: 5842 at net/core/skbuff.c:1219 sk_skb_reason_drop+0x87/0x380 net/core/skbuff.c:1241
+Modules linked in:
+CPU: 0 UID: 0 PID: 5842 Comm: syz-executor371 Not tainted 6.12.0-rc6-syzkaller-01362-ga58f00ed24b8 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+RIP: 0010:__sk_skb_reason_drop net/core/skbuff.c:1216 [inline]
+RIP: 0010:sk_skb_reason_drop+0x87/0x380 net/core/skbuff.c:1241
+Code: 00 00 00 fc ff df 41 8d 9e 00 00 fc ff bf 01 00 fc ff 89 de e8 ea 9f 08 f8 81 fb 00 00 fc ff 77 3a 4c 89 e5 e8 9a 9b 08 f8 90 <0f> 0b 90 eb 5e bf 01 00 00 00 89 ee e8 c8 9f 08 f8 85 ed 0f 8e 49
+RSP: 0018:ffffc90003d57078 EFLAGS: 00010293
+RAX: ffffffff898c3ec6 RBX: 00000000fffbffea RCX: ffff8880347a5a00
+RDX: 0000000000000000 RSI: 00000000fffbffea RDI: 00000000fffc0001
+RBP: dffffc0000000000 R08: ffffffff898c3eb6 R09: 1ffff110023eb7d4
+R10: dffffc0000000000 R11: ffffed10023eb7d5 R12: dffffc0000000000
+R13: ffff888011f5bdc0 R14: 00000000ffffffea R15: 0000000000000000
+FS:  000055557d41e380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000056519d31d608 CR3: 000000007854e000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ kfree_skb_reason include/linux/skbuff.h:1263 [inline]
+ ip_rcv_finish_core+0xfde/0x1b50 net/ipv4/ip_input.c:424
+ ip_list_rcv_finish net/ipv4/ip_input.c:610 [inline]
+ ip_sublist_rcv+0x3b1/0xab0 net/ipv4/ip_input.c:636
+ ip_list_rcv+0x42b/0x480 net/ipv4/ip_input.c:670
+ __netif_receive_skb_list_ptype net/core/dev.c:5715 [inline]
+ __netif_receive_skb_list_core+0x94e/0x980 net/core/dev.c:5762
+ __netif_receive_skb_list net/core/dev.c:5814 [inline]
+ netif_receive_skb_list_internal+0xa51/0xe30 net/core/dev.c:5905
+ netif_receive_skb_list+0x55/0x4b0 net/core/dev.c:5957
+ xdp_recv_frames net/bpf/test_run.c:280 [inline]
+ xdp_test_run_batch net/bpf/test_run.c:361 [inline]
+ bpf_test_run_xdp_live+0x1b5e/0x21b0 net/bpf/test_run.c:390
+ bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1318
+ bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4266
+ __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5671
+ __do_sys_bpf kernel/bpf/syscall.c:5760 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5758 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5758
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f18af25a8e9
+Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffee4090af8 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f18af25a8e9
+RDX: 0000000000000048 RSI: 0000000020000600 RDI: 000000000000000a
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+
+
 ---
- arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-index 22462e86f48027ab7c5e270f2fa04df7afcc1d24..d07be2a81f28b4cbfe314992c662d8cfb3d3d344 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
-@@ -1262,14 +1262,16 @@ vop: vop@fdd90000 {
- 			 <&cru DCLK_VOP1>,
- 			 <&cru DCLK_VOP2>,
- 			 <&cru DCLK_VOP3>,
--			 <&cru PCLK_VOP_ROOT>;
-+			 <&cru PCLK_VOP_ROOT>,
-+			 <&hdptxphy_hdmi0>;
- 		clock-names = "aclk",
- 			      "hclk",
- 			      "dclk_vp0",
- 			      "dclk_vp1",
- 			      "dclk_vp2",
- 			      "dclk_vp3",
--			      "pclk_vop";
-+			      "pclk_vop",
-+			      "pll_hdmiphy0";
- 		iommus = <&vop_mmu>;
- 		power-domains = <&power RK3588_PD_VOP>;
- 		rockchip,grf = <&sys_grf>;
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
--- 
-2.47.0
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
