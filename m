@@ -1,240 +1,160 @@
-Return-Path: <linux-kernel+bounces-411707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A93849CFEA7
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 12:40:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 160B79CFEAA
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 12:40:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6172F1F22E2A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 11:40:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D001E28752D
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 11:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B148E195FD1;
-	Sat, 16 Nov 2024 11:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86471195985;
+	Sat, 16 Nov 2024 11:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o89VX3P8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EveRJaJT"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18EF28FF;
-	Sat, 16 Nov 2024 11:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7FF191F9B;
+	Sat, 16 Nov 2024 11:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731757220; cv=none; b=reJcTpHmgnjylQ1IIY59fbfNIrHRrzr94mtOpAJDe0tSnBSQOSo6fIk2uFRd/owCfN+fV9JQOWFRU/Bwyw8bjV/0CItBfK2g092/5+eWrxlBWL8LAdMNLI4j4Fl2HlLp1NdzAbZ/S+CQtSjvkNk1RNATqmYuwVRPlPlswwMQCAM=
+	t=1731757240; cv=none; b=RMOyYYL4LbdU+nDwBJdJuBplb840vFwzWlChyA48Xu8rcQC0Z4JfJYeENaB435lLIyddOhRj1GovGCMoFb6VNziytCS+Xg17crx43Fh7M91bRhVnoZkBn6uhiCipG1wyonDkEVu/y+QfPdeg/4rCL1LOfSJHRp/BKuNlj7vg6fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731757220; c=relaxed/simple;
-	bh=60OKvHXhdre1WdESOhl4PN0wFXXZX9ys+VzQSc8Ckvo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Et+VduYsGd6H1D9KOnhfggAoY9GDIInubqyE8woK8acV1pmP9E88Ei/BqBBMS0Exhg6dL0/ikPXj0a/Ofd8oGZqSwWe9f+zsYNaVfOmCPv3uIF8ED5PUlCHQQaFebkUdFW6x1GHq12aEwQLqFcM2wFQzLvOC9lJ5Kehz32PfhfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o89VX3P8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EACAEC4CEC3;
-	Sat, 16 Nov 2024 11:40:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731757218;
-	bh=60OKvHXhdre1WdESOhl4PN0wFXXZX9ys+VzQSc8Ckvo=;
-	h=From:Date:Subject:To:Cc:From;
-	b=o89VX3P8gIX/OLjjFWG7M8lFeQDKC8NDBK02ozvjc3IC8h80unwcsuRp2OT5VaNZy
-	 dzR4byuw5+bBxkSnfP8pbCkA9tSgjdJ8BMTAe9N3W9ViBpXTm4GjPUD9iyaGv7bclq
-	 R8UNZEzB8dm1ZydAHAw8qGP9MqM+Pb62jI6WUg/GEsrhpXV5QgmpqSRWGq6Dhpf9Lk
-	 L3gD8ZXRSpi1pbgdbetLQqA1uqVm5I3wpLt4uGx45LGBTsX0m2p8NFvHD5S6ZQcl6U
-	 LL8SAON+UhKpK+aVRY2i9IwDFlT688nGhQ3dYAYIyAg4iYz+LRs1UMsWRodEdQOK4t
-	 eOtGXwUbLThVg==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Sat, 16 Nov 2024 12:40:04 +0100
-Subject: [PATCH] dt-bindings: remoteproc: Consolidate SC8180X and SM8150
- PAS files
+	s=arc-20240116; t=1731757240; c=relaxed/simple;
+	bh=4yqtf3TxzZLdieOGloCVo+/KNale2JTxAEniThZmU1A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AEMKA78ymybC+9RLILiceGRuJuVf1wc5HUwuahGV6MS6ogvuz6sAkOOujwi51niYxVzPG8sdTWFkiqqX6Z3fnbUdc+hAwlP4MaoR5EXy4hAyqO3c2nZ0VRUQCljFYbr2FHRanD5PJeAoUDLfWUAeJFFRN9FXN+p/Gga9tKkML9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EveRJaJT; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7f8b37edeb7so2161374a12.0;
+        Sat, 16 Nov 2024 03:40:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731757239; x=1732362039; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QES5ivYy4we8CGU9IJFUjy9+jaCCLBYcx/iDh9H/oSQ=;
+        b=EveRJaJTbOH6ZpgiTkqh+0F+JaO5ZjSNQYJHy1tFj/Qqs3z4qn02bpfQ0bKfL20z1G
+         /6KGQZ4RcFS5OMaFvkdAcgEcnBPtva7edTLVq5HkbeiFnBrede2h5ht9KDEuhnL2HeSu
+         KYqtj29VgJoXBfVIbx4PH0czHjRv08NDs2RMTGoIqTy7svmTYkDPH9mcupW3pE7liCWI
+         zJX9EuUsSQFiGF5Th7uk9PghqUlEPMoQ24D2SBgLCBoRYsfTEBOstYc3d6IuePTfBWh7
+         mEIx1NFHtvRM1bar4ND6ACocsCGGOM6m5V8yYdtzPCxlIWO+g6Yj26aKGUAsPPUZFgC0
+         NXRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731757239; x=1732362039;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QES5ivYy4we8CGU9IJFUjy9+jaCCLBYcx/iDh9H/oSQ=;
+        b=grsrTG8ZTlLjCG7T4NB6ozMYPR2wQ87c9YKnO1PF8nmp2VtL/IgcTC06PCm1qS6HRY
+         Vv0Vy1aohmOAeGPbRIXpPv0BPDMwo6J65/t99cDyDgyV0x9sHCGO+6eRsBUyMcSQnzW7
+         f1JOnjR4Y6m5YOtpi+7YlkGcR9CE8/3CU5MIkxGGVQBOWoJ4XnQptDcE96K4V7V0VQ6S
+         aGpkwlVO1ynMyeipsltnGL1S38d77XSswzaOMnXVM+Lcrmzj5lMdfS6p0DT7Qj1ZRCLn
+         3rpocnHQ+2IIrIFTTOk5Ee5YUl0Vl/C4VLoigOJ+Ffp2G4RZW7oZB2G4hp+WP0nqomsd
+         zOcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsr4+H3DeUCyoJF34vBk53Q356+W6+ODonKTnc+hZ7JkxynEZrguXe1Y2NoVg9mg9qGYCWOMO1uKbH@vger.kernel.org, AJvYcCXmNzAh8H+zwPIL94Zl0IndDMqJNvPA1/zlA7LOTo4dfQaoJRnuvdUZycZb3DSyvtKMIijmlKLIzmy9YE6A@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7s3AkSiMf+Hm8WxlDXkWrkRPW27+PQGWXe9oO+fTVkKh8TNyA
+	jo56/dhLrv6R6UNDZb8p8gmiuvJQ6l/yuYbAWFW9jEqM8tYjtRnf
+X-Google-Smtp-Source: AGHT+IEcEqeRIULoqbB9V79aG/v2fsxloM/p8RLsB1XrG/4rD4IVC3xsTHDvM3Zh3WY/8ejIOOSrsA==
+X-Received: by 2002:a17:903:2b04:b0:20c:79f1:fed9 with SMTP id d9443c01a7336-211d0d7e444mr87833935ad.25.1731757238639;
+        Sat, 16 Nov 2024 03:40:38 -0800 (PST)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([2409:4040:6e99:f02a:954f:e157:760e:3d30])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f346d7sm26078255ad.138.2024.11.16.03.40.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Nov 2024 03:40:38 -0800 (PST)
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+To: surajsonawane0215@gmail.com,
+	dan.j.williams@intel.com
+Cc: dave.jiang@intel.com,
+	ira.weiny@intel.com,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	nvdimm@lists.linux.dev,
+	rafael@kernel.org,
+	syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com,
+	vishal.l.verma@intel.com
+Subject: [PATCH v5] acpi: nfit: vmalloc-out-of-bounds Read in acpi_nfit_ctl
+Date: Sat, 16 Nov 2024 17:10:27 +0530
+Message-Id: <20241116114027.19303-1-surajsonawane0215@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241116-topic-sc8180x_rproc_bindings-v1-1-ae5d3f7ab261@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAJOEOGcC/x3MwQqDMAwA0F+RnFdonBPZr4whTcxcLm1JxhDEf
- 7d4fJe3g4upODy7HUz+6lpyA9464G/KqwRdmqGP/YCIY/iVqhycJ5ziNlu1wjNpXjSvHsZ7TOl
- BxAMRtKKafHS7+tf7OE7I4nw0bgAAAA==
-X-Change-ID: 20241116-topic-sc8180x_rproc_bindings-630aa5bbc4bb
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731757214; l=4789;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=Ote622R1lsChP50GYMobPReGO2KWFh19mtnf6zeHaqA=;
- b=1AkvhDBUkPfaYdiv0YYNTl8mHDbWivLaoVNs6UgnQxwHzvoLnX19T9ZEnk4BJ+8jaDMVLMmj6
- Oelh11NfvoRCE9e6elTcgBOv0uOFp1XZxdICEjqcAl/vbNAelp5aYsf
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+Content-Transfer-Encoding: 8bit
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Fix an issue detected by syzbot with KASAN:
 
-SC8180X PAS bindings are plain wrong, resulting in false-positive
-dt checker errors. SC8180X's remoteprocs happen to be identical to
-SM8150's from the kernel point of view, so reuse that binding instead.
+BUG: KASAN: vmalloc-out-of-bounds in cmd_to_func drivers/acpi/nfit/
+core.c:416 [inline]
+BUG: KASAN: vmalloc-out-of-bounds in acpi_nfit_ctl+0x20e8/0x24a0
+drivers/acpi/nfit/core.c:459
 
-Fixes: 4865ed136045 ("dt-bindings: remoteproc: qcom: pas: Add SC8180X adsp, cdsp and mpss")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+The issue occurs in cmd_to_func when the call_pkg->nd_reserved2
+array is accessed without verifying that call_pkg points to a buffer
+that is appropriately sized as a struct nd_cmd_pkg. This can lead
+to out-of-bounds access and undefined behavior if the buffer does not
+have sufficient space.
+
+To address this, a check was added in acpi_nfit_ctl() to ensure that
+buf is not NULL and that buf_len is less than sizeof(*call_pkg)
+before accessing it. This ensures safe access to the members of
+call_pkg, including the nd_reserved2 array.
+
+Reported-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=7534f060ebda6b8b51b3
+Tested-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
+Fixes: ebe9f6f19d80 ("acpi/nfit: Fix bus command validation")
+Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
 ---
- .../bindings/remoteproc/qcom,sc8180x-pas.yaml      | 96 ----------------------
- .../bindings/remoteproc/qcom,sm8150-pas.yaml       |  7 ++
- 2 files changed, 7 insertions(+), 96 deletions(-)
+V1: https://lore.kernel.org/lkml/20241111080429.9861-1-surajsonawane0215@gmail.com/ 
+V2: Initialized `out_obj` to `NULL` in `acpi_nfit_ctl()` to prevent
+potential uninitialized variable usage if condition is true.
+V3: Changed the condition to if (!buf || buf_len < sizeof(*call_pkg))
+and updated the Fixes tag to reference the correct commit.
+V4: Removed the explicit cast to maintain the original code style.
+V5: Re-Initialized `out_obj` to NULL. To prevent
+potential uninitialized variable usage if condition is true.
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml
-deleted file mode 100644
-index 45ee9fbe09664ac93ab697d73d84ea55127a219b..0000000000000000000000000000000000000000
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml
-+++ /dev/null
-@@ -1,96 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
--%YAML 1.2
-----
--$id: http://devicetree.org/schemas/remoteproc/qcom,sc8180x-pas.yaml#
--$schema: http://devicetree.org/meta-schemas/core.yaml#
--
--title: Qualcomm SC8180X Peripheral Authentication Service
--
--maintainers:
--  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
--
--description:
--  Qualcomm SC8180X SoC Peripheral Authentication Service loads and boots
--  firmware on the Qualcomm DSP Hexagon cores.
--
--properties:
--  compatible:
--    enum:
--      - qcom,sc8180x-adsp-pas
--      - qcom,sc8180x-cdsp-pas
--      - qcom,sc8180x-mpss-pas
--
--  reg:
--    maxItems: 1
--
--  clocks:
--    items:
--      - description: XO clock
--
--  clock-names:
--    items:
--      - const: xo
--
--  qcom,qmp:
--    $ref: /schemas/types.yaml#/definitions/phandle
--    description: Reference to the AOSS side-channel message RAM.
--
--  smd-edge: false
--
--  memory-region:
--    maxItems: 1
--    description: Reference to the reserved-memory for the Hexagon core
--
--  firmware-name:
--    maxItems: 1
--    description: Firmware name for the Hexagon core
--
--required:
--  - compatible
--  - reg
--  - memory-region
--
--allOf:
--  - $ref: /schemas/remoteproc/qcom,pas-common.yaml#
--  - if:
--      properties:
--        compatible:
--          enum:
--            - qcom,sc8180x-adsp-pas
--            - qcom,sc8180x-cdsp-pas
--    then:
--      properties:
--        interrupts:
--          maxItems: 5
--        interrupt-names:
--          maxItems: 5
--    else:
--      properties:
--        interrupts:
--          minItems: 6
--        interrupt-names:
--          minItems: 6
--
--  - if:
--      properties:
--        compatible:
--          enum:
--            - qcom,sc8180x-adsp-pas
--            - qcom,sc8180x-cdsp-pas
--    then:
--      properties:
--        power-domains:
--          items:
--            - description: LCX power domain
--            - description: LMX power domain
--        power-domain-names:
--          items:
--            - const: lcx
--            - const: lmx
--    else:
--      properties:
--        # TODO: incomplete
--        power-domains: false
--        power-domain-names: false
--
--unevaluatedProperties: false
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
-index d67386c50fa4d6e4f9b844b36e17ffa1db613adb..56ff6386534ddfa76cd42d84569ddfcf847e9178 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
-@@ -60,6 +60,9 @@ allOf:
-       properties:
-         compatible:
-           enum:
-+            - qcom,sc8180x-adsp-pas
-+            - qcom,sc8180x-cdsp-pas
-+            - qcom,sc8180x-slpi-pas
-             - qcom,sm8150-adsp-pas
-             - qcom,sm8150-cdsp-pas
-             - qcom,sm8150-slpi-pas
-@@ -83,6 +86,8 @@ allOf:
-       properties:
-         compatible:
-           enum:
-+            - qcom,sc8180x-adsp-pas
-+            - qcom,sc8180x-cdsp-pas
-             - qcom,sm8150-adsp-pas
-             - qcom,sm8150-cdsp-pas
-             - qcom,sm8250-cdsp-pas
-@@ -99,6 +104,7 @@ allOf:
-       properties:
-         compatible:
-           enum:
-+            - qcom,sc8180x-mpss-pas
-             - qcom,sm8150-mpss-pas
-     then:
-       properties:
-@@ -115,6 +121,7 @@ allOf:
-       properties:
-         compatible:
-           enum:
-+            - qcom,sc8180x-slpi-pas
-             - qcom,sm8150-slpi-pas
-             - qcom,sm8250-adsp-pas
-             - qcom,sm8250-slpi-pas
+ drivers/acpi/nfit/core.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
----
-base-commit: 744cf71b8bdfcdd77aaf58395e068b7457634b2c
-change-id: 20241116-topic-sc8180x_rproc_bindings-630aa5bbc4bb
-
-Best regards,
+diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+index 5429ec9ef..573ed264c 100644
+--- a/drivers/acpi/nfit/core.c
++++ b/drivers/acpi/nfit/core.c
+@@ -439,7 +439,7 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
+ {
+ 	struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
+ 	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
+-	union acpi_object in_obj, in_buf, *out_obj;
++	union acpi_object in_obj, in_buf, *out_obj = NULL;
+ 	const struct nd_cmd_desc *desc = NULL;
+ 	struct device *dev = acpi_desc->dev;
+ 	struct nd_cmd_pkg *call_pkg = NULL;
+@@ -454,8 +454,15 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
+ 	if (cmd_rc)
+ 		*cmd_rc = -EINVAL;
+ 
+-	if (cmd == ND_CMD_CALL)
++	if (cmd == ND_CMD_CALL) {
++		if (!buf || buf_len < sizeof(*call_pkg)) {
++			rc = -EINVAL;
++			goto out;
++		}
++
+ 		call_pkg = buf;
++	}
++
+ 	func = cmd_to_func(nfit_mem, cmd, call_pkg, &family);
+ 	if (func < 0)
+ 		return func;
 -- 
-Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+2.34.1
 
 
